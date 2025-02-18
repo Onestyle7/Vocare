@@ -13,6 +13,7 @@ namespace VocareAPI.Application.Mapping
                 .ForMember(dest => dest.PasswordHash, opt => opt.Ignore());
             CreateMap<LoginDto, User>()
                 .ForMember(dest => dest.PasswordHash, opt => opt.Ignore());
+            CreateMap<UserProfile, UserProfileDto>().ReverseMap();
         }
     }
 }
