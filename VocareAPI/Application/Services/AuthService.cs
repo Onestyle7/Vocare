@@ -19,13 +19,15 @@ namespace VocareAPI.Application.Services
         private readonly IMapper _mapper;
         private readonly PasswordHasher<User> _passwordHasher;
         private readonly JwtSettings _jwtSettings;
+        private readonly ILogger<AuthService> _logger;
 
-        public AuthService(VocareDbContext context, IMapper mapper, PasswordHasher<User> passwordHasher, JwtSettings jwtSettings)
+        public AuthService(VocareDbContext context, IMapper mapper, PasswordHasher<User> passwordHasher, JwtSettings jwtSettings, ILogger<AuthService> logger)
         {
             _context = context;
             _mapper = mapper;
             _passwordHasher = passwordHasher;
             _jwtSettings = jwtSettings;
+            _logger = logger;
         }
        public async Task<User> RegisterUserAsync(RegisterDto registerDto)
        {
@@ -45,6 +47,8 @@ namespace VocareAPI.Application.Services
             user.PasswordHash = _passwordHasher.HashPassword(user, registerDto.Password);
             _context.Users.Add(user);
             await _context.SaveChangesAsync();
+
+            _logger.LogInformation($"Zarejestrowano nowego użytkownika: {user.Email}");
             return user;
        }
        public async Task<User> LoginUserAsync(LoginDto loginDto)
@@ -63,11 +67,13 @@ namespace VocareAPI.Application.Services
             if(result == PasswordVerificationResult.Failed)
                 throw new Exception("Niepoprawne hasło");
 
+            _logger.LogInformation($"Użytkownik zalogowany: {user.Email}");
             return user;
 
        }
        public string GenerateJwtToken(User user)
         {
+            _logger.LogInformation($"Generowanie tokenu Jwt dla użytkownika: {user.Email}");
             var claims = new[]
             {
                 new Claim(JwtRegisteredClaimNames.Sub, user.Id.ToString()),
@@ -86,7 +92,10 @@ namespace VocareAPI.Application.Services
                 signingCredentials: creds
             );
 
-            return new JwtSecurityTokenHandler().WriteToken(token);
+            var tokenString = new JwtSecurityTokenHandler().WriteToken(token);
+            _logger.LogInformation($"Token JWT został wygenerowany {tokenString}", tokenString);
+
+            return tokenString;
         }
 
 
