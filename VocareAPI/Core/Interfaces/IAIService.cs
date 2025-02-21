@@ -8,6 +8,6 @@ namespace VocareAPI.Core.Interfaces
 {
     public interface IAIService
     {
-        Task<UserProfile> ReturnCareerRecomendation(UserProfile userProfile); 
+        Task<string> GetCareerRecommendationAsync(UserProfile profile); 
     }
 }

@@ -9,8 +9,12 @@ using VocareAPI.Application.Services;
 using Microsoft.AspNetCore.Identity;
 using VocareAPI.Core.Entities;
 using Microsoft.OpenApi.Models;
+using VocareAPI.Core;
+using VocareAPI.Core.Interfaces;
+using VocareAPI.Infrastructure;
 
 var builder = WebApplication.CreateBuilder(args);
+var apiKey = builder.Configuration["OpenAI:ApiKey"];
 
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer(); 
@@ -52,39 +56,59 @@ builder.Services.AddScoped<IAuthService, AuthService>();
 builder.Services.AddScoped<PasswordHasher<User>>();
 builder.Services.AddHttpContextAccessor();
 builder.Services.AddScoped<IProfileService, ProfileService>();
+builder.Services.AddScoped<IAIService, OpenAICareerService>();
 
 
-// Rejestracja JwtSettings – używamy sekcji "Jwt"
-var jwtSection = builder.Configuration.GetSection("JwtSettings");
-var jwtSettings = jwtSection.Get<VocareAPI.Core.JwtSettings>(); // Upewnij się, że namespace się zgadza
+//Konfiguracja Ustawien JWT
+var jwtSettings = builder.Configuration.GetSection("JwtSettings").Get<JwtSettings>()!;
 builder.Services.AddSingleton(jwtSettings);
 
-// Konfiguracja JWT
-builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
-    .AddJwtBearer(options =>
+builder.Services.AddAuthentication(options =>
+{
+    options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+    options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+})
+.AddJwtBearer(options =>
+{
+    options.TokenValidationParameters = new TokenValidationParameters
     {
-        options.TokenValidationParameters = new TokenValidationParameters
+        ValidateIssuer = true,
+        ValidateAudience = true,
+        ValidateIssuerSigningKey = true,
+        ValidateLifetime = true,
+        ValidIssuer = jwtSettings.Issuer,
+        ValidAudience = jwtSettings.Audience,
+        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtSettings.SecretKey)),
+        // Opcjonalnie: ustawienie ClockSkew na zero, by wyeliminować domyślny margines 5 minut
+        ClockSkew = TimeSpan.Zero
+    };
+
+    options.Events = new JwtBearerEvents
+    {
+        OnMessageReceived = context =>
         {
-            ValidateIssuer = false,
-            ValidateAudience = false,
-            ValidateLifetime = false,
-            ValidateIssuerSigningKey = true,
-            ClockSkew = TimeSpan.FromMinutes(5),
-            ValidIssuer = builder.Configuration["JwtSettings:Issuer"],
-            ValidAudience = builder.Configuration["JwtSettings:Audience"],
-            IssuerSigningKey = new SymmetricSecurityKey(
-                Encoding.UTF8.GetBytes(builder.Configuration["JwtSettings:SecretKey"] ?? throw new InvalidOperationException("JwtSettings SecretKey is missing"))
-            )
-        };
-        options.Events = new JwtBearerEvents
+            // Logujemy odebranie tokena
+            var logger = context.HttpContext.RequestServices.GetRequiredService<ILogger<Program>>();
+            logger.LogInformation("Token odebrany: {Token}", context.Token);
+            return Task.CompletedTask;
+        },
+        OnTokenValidated = context =>
         {
-            OnAuthenticationFailed = context =>
-            {
-                Console.WriteLine("Auth failed: " + context.Exception.Message);
-                return Task.CompletedTask;
-            }
-        };
-    });
+            // Logujemy pomyślną walidację tokena
+            var logger = context.HttpContext.RequestServices.GetRequiredService<ILogger<Program>>();
+            logger.LogInformation("Token został pomyślnie zweryfikowany. Użytkownik: {User}", context.Principal?.Identity?.Name);
+            return Task.CompletedTask;
+        },
+        OnAuthenticationFailed = context =>
+        {
+            // Logujemy błąd autoryzacji
+            var logger = context.HttpContext.RequestServices.GetRequiredService<ILogger<Program>>();
+            logger.LogError("Błąd autoryzacji: {Error}", context.Exception.Message);
+            return Task.CompletedTask;
+        }
+    };
+});
+        
 
 var app = builder.Build();
 
@@ -103,7 +127,6 @@ if (app.Environment.IsDevelopment())
 app.UseHttpsRedirection();
 app.UseAuthentication();
 app.UseAuthorization();
-
 app.MapControllers();
 
 app.Run();
