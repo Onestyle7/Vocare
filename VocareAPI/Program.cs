@@ -10,8 +10,11 @@ using Microsoft.AspNetCore.Identity;
 using VocareAPI.Core.Entities;
 using Microsoft.OpenApi.Models;
 using VocareAPI.Core;
+using VocareAPI.Core.Interfaces;
+using VocareAPI.Infrastructure;
 
 var builder = WebApplication.CreateBuilder(args);
+var apiKey = builder.Configuration["OpenAI:ApiKey"];
 
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer(); 
@@ -53,6 +56,7 @@ builder.Services.AddScoped<IAuthService, AuthService>();
 builder.Services.AddScoped<PasswordHasher<User>>();
 builder.Services.AddHttpContextAccessor();
 builder.Services.AddScoped<IProfileService, ProfileService>();
+builder.Services.AddScoped<IAIService, OpenAICareerService>();
 
 
 //Konfiguracja Ustawien JWT
