@@ -40,8 +40,8 @@ namespace VocareAPI.Infrastructure
             // Tworzymy obiekt zapytania do Completion
            var chatRequest = new ChatCompletionCreateRequest
             {
-                Model = Models.ChatGpt3_5Turbo, 
-                MaxTokens = 500,
+                Model = Models.Gpt_4, 
+                MaxTokens = 1500,
                 Temperature = 0.7f,
                 Messages = new List<ChatMessage>
                 {

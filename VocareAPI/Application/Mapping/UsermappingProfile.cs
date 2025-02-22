@@ -14,6 +14,7 @@ namespace VocareAPI.Application.Mapping
             CreateMap<LoginDto, User>()
                 .ForMember(dest => dest.PasswordHash, opt => opt.Ignore());
             CreateMap<UserProfile, UserProfileDto>().ReverseMap();
+            CreateMap<RecommendationHistory, RecommendationHistoryDto>().ReverseMap();
         }
     }
 }

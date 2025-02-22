@@ -57,7 +57,7 @@ builder.Services.AddScoped<PasswordHasher<User>>();
 builder.Services.AddHttpContextAccessor();
 builder.Services.AddScoped<IProfileService, ProfileService>();
 builder.Services.AddScoped<IAIService, OpenAICareerService>();
-
+builder.Services.AddScoped<IRecommendationHistoryService, RecommendationHistoryService>();
 
 //Konfiguracja Ustawien JWT
 var jwtSettings = builder.Configuration.GetSection("JwtSettings").Get<JwtSettings>()!;
