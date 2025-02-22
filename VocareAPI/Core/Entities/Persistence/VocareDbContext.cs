@@ -15,6 +15,7 @@ namespace VocareAPI.Core.Interfaces.Persistence
         //DbSet dla encji
         public DbSet<User> Users { get; set; }
         public DbSet<UserProfile> UserProfiles { get; set; }
+        public DbSet<RecommendationHistory> RecommendationHistories { get; set; }
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             //Konfiguracja relacji jeden do jeden
