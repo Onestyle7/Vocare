@@ -45,6 +45,9 @@ namespace VocareAPI.Presentation.Controllers
                 // Pobieramy użytkownika z bazy danych
                 var user = await _context.Users
                     .Include(u => u.UserProfile)
+                        .ThenInclude(up => up.Experience)
+                    .Include(u => u.UserProfile)
+                        .ThenInclude(up => up.Skills)
                     .FirstOrDefaultAsync(u => u.Id == userId);
 
                 if(user == null || user.UserProfile == null){

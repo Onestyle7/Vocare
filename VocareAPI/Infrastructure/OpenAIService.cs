@@ -4,6 +4,8 @@ using OpenAI.GPT3.ObjectModels.RequestModels;
 using OpenAI.GPT3.ObjectModels;
 using OpenAI.GPT3.Managers;
 using OpenAI.GPT3;
+using VocareAPI.Core.Interfaces.Persistence;
+using Microsoft.EntityFrameworkCore;
 
 
 namespace VocareAPI.Infrastructure
@@ -28,14 +30,20 @@ namespace VocareAPI.Infrastructure
 
         public async Task<string> GetCareerRecommendationAsync(UserProfile profile)
         {
+            
+
             // Przygotowujemy prompt
-            string prompt = $"Na podstawie doświadczenia: {profile.Experience}, umiejętności: {profile.Skills}, " +
-                            $"zainteresowań: {profile.Interests} oraz celów: {profile.Goals} " +
-                            "Przygotuj najlepszy możliwy plan kariery dla użytkownika. Sugerując mu co najmniej 3 ścieżki kariery z przygotowanym planem działania " +
-                            "oraz wskazując na możliwe szkolenia, kursy, certyfikaty, które mogą pomóc w realizacji celów zawodowych. " +
-                            "Pamiętaj, że użytkownik jest ambitny i chce się rozwijać. " +
-                            "Przenalizuj każdą ścieżkę kariery pod kątem możliwości rozwoju, zarobków, wymagań oraz perspektyw na przyszłość" + 
-                            "Wypisz szczegółowo za i przeciw do każdej propozycji, uśrednij możliwe zarobki na każdym z podanych stanowisk" ;
+           string prompt = 
+            $"Użytkownik chce zdobyć lepszą pracę na podstawie swoich predyspozycji i umiejętności. " +
+            $"Na podstawie jego doświadczenia: {SerializeExperience(profile.Experience)}, " +
+            $"umiejętności: {SerializeSkills(profile.Skills)}, " +
+            $"zainteresowań: {string.Join(", ", profile.Interests)}, " +
+            $"preferencji środowiska pracy: {profile.WorkEnvironmentPreference}, " +
+            $"oczekiwanego wynagrodzenia: {profile.ExpectedSalary} PLN, " +
+            $"i dostępności czasowej na naukę: {profile.WeeklyLearningAvailability} godzin tygodniowo, " +
+            "zaproponuj trzy możliwe ścieżki kariery, które mogą pasować do jego profilu. " +
+            "Dla każdej ścieżki podaj opis, wymagane umiejętności, sugerowane kroki do podjęcia " +
+            "(np. kursy, certyfikaty), potencjalne zarobki i perspektywy rozwoju.";
 
             // Tworzymy obiekt zapytania do Completion
            var chatRequest = new ChatCompletionCreateRequest
@@ -53,11 +61,19 @@ namespace VocareAPI.Infrastructure
             var chatResponse = await _openAiService.ChatCompletion.CreateCompletion(chatRequest);
             Console.WriteLine("=== OpenAI Completion Result ===");
             Console.WriteLine(System.Text.Json.JsonSerializer.Serialize(chatResponse));
-
+            if(chatResponse.Error is not null){
+                System.Console.WriteLine($"OpenAI Error: {chatResponse.Error.Message}");
+                return $"Błąd OpenAI: {chatResponse.Error.Message}";
+            }
             // Pobieramy wynik z pierwszego "choice"
             var recommendation = chatResponse.Choices?.FirstOrDefault()?.Message?.Content;
 
             return recommendation ?? "Brak rekomendacji";
         }
+        private string SerializeExperience(List<ExperienceEntry> experience)
+         => string.Join(", ", experience.Select(e => $"{e.Position} ({e.Industry})"));
+
+        private string SerializeSkills(List<SkillEntry> skills)
+            => string.Join(", ", skills.Select(s => $"{s.Name}"));
     }
 }

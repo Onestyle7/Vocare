@@ -1,3 +1,4 @@
+using System.Linq;
 using System.Security.Claims;
 using Microsoft.EntityFrameworkCore;
 using VocareAPI.Application.DTOs;
@@ -48,10 +49,21 @@ namespace VocareAPI.Application.Services
                 user.UserProfile.Name = userProfileDto.Name;
                 user.UserProfile.Surname = userProfileDto.Surname;
                 user.UserProfile.PhoneNumber = userProfileDto.PhoneNumber;
-                user.UserProfile.Experience = userProfileDto.Experience;
-                user.UserProfile.Skills = userProfileDto.Skills;
+                user.UserProfile.Experience = userProfileDto.Experience
+                    .Select(e => new ExperienceEntry
+                    {
+                        Position = e.Position,
+                        Industry = e.Industry,
+                        YearsOfExperience = e.YearsOfExperience,
+                        Achievements = e.Achievements
+                    })
+                    .ToList();
+                user.UserProfile.Skills = userProfileDto.Skills
+                    .Select(s => new SkillEntry
+                    {
+                        Name = s.Name,
+                    }).ToList();
                 user.UserProfile.Interests = userProfileDto.Interests;
-                user.UserProfile.Goals = userProfileDto.Goals;
 
                 await _dbContext.SaveChangesAsync();
             }
