@@ -1,0 +1,163 @@
+@import url("https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&family=Press+Start+2P&display=swap");
+
+/* Żółte tło całej strony */
+.outerContainer {
+  background-color: #ffc619; /* Żółte tło, jak na zrzucie */
+  height: 100vh; /* Pełna wysokość ekranu */
+  width: 100%; /* Pełna szerokość */
+  overflow: hidden; /* Ukrywa elementy wychodzące poza kontener */
+}
+
+/* Czarny kontener z treścią */
+.container {
+  background-color: #191919; /* Czarne tło dla treści, jak na zrzucie */
+  height: 100%; /* Pełna wysokość wewnętrznego kontenera */
+  width: 100%; /* Pełna szerokość */
+  max-width: 1200px; /* Ograniczenie szerokości, aby pasowało do zrzutu */
+  margin: 3rem auto; /* Centrowanie poziome */
+  position: relative; /* Umożliwia pozycjonowanie elementów dekoracyjnych */
+  border-radius: 16px; /* Lekkie zaokrąglenie rogów, jak na zrzucie */
+  overflow: hidden; /* Ukrywa elementy wychodzące poza kontener */
+}
+
+/* Żółte kółko po lewej */
+.decorativeCircleLeft {
+  position: absolute;
+  top: 50%;
+  left: 15%; /* Po lewej stronie, poza ekranem, ale widoczne częściowo */
+  width: 360px; /* Rozmiar kółka */
+  height: 360px;
+  background-color: #ffe75c; /* Żółty kolor, jak na zrzucie */
+  border-radius: 50%; /* Kształt koła */
+  z-index: 0; /* Pod treścią */
+  opacity: 1; /* Lekkie przyciemnienie, aby pasowało do zrzutu */
+  transform: translate(-130%, -50%); /* Centrowanie kółka */
+}
+.decorativeRingLeft {
+  position: absolute;
+  top: 50%;
+  left: 15%;
+  width: 400px;
+  height: 400px;
+  border: 1px solid #ffe75c;
+  border-radius: 50%;
+  z-index: 0;
+  opacity: 1;
+  fill: none;
+  transform: translate(-120%, -50%);
+}
+.decorativeRingLeft2 {
+  position: absolute;
+  top: 50%;
+  left: 15%;
+  width: 500px;
+  height: 500px;
+  border: 1px solid #ffe75c;
+  border-radius: 50%;
+  z-index: 0;
+  opacity: 1;
+  fill: none;
+  transform: translate(-105%, -50%);
+}
+.decorativeRingLeft3 {
+  position: absolute;
+  top: 50%;
+  left: 15%;
+  width: 600px;
+  height: 600px;
+  border: 1px solid #ffe75c;
+  border-radius: 50%;
+  z-index: 0;
+  opacity: 1;
+  fill: none;
+  transform: translate(-95%, -50%);
+}
+/* Żółte kółko po prawej */
+.decorativeCircleRight {
+  position: absolute;
+  top: 40%;
+  right: 12%;
+  width: 360px;
+  height: 360px;
+  background-color: #ffe75c;
+  border-radius: 50%;
+  z-index: 0; /* Kółko nad pierścieniami */
+  opacity: 1;
+  transform: translate(
+    130%,
+    -50%
+  ); /* Przesunięcie w prawo, symetryczne do lewej strony */
+}
+
+/* Żółty pierścień po prawej (pierwszy) */
+.decorativeRingRight {
+  position: absolute;
+  top: 40%;
+  right: 12%;
+  width: 400px;
+  height: 400px;
+  border: 1px solid #ffe75c;
+  border-radius: 50%;
+  z-index: 0;
+  opacity: 1;
+  transform: translate(
+    120%,
+    -50%
+  ); /* Przesunięcie w prawo, symetryczne do lewej strony */
+}
+
+/* Żółty pierścień po prawej (drugi) */
+.decorativeRingRight2 {
+  position: absolute;
+  top: 40%;
+  right: 12%;
+  width: 500px;
+  height: 500px;
+  border: 1px solid #ffe75c;
+  border-radius: 50%;
+  z-index: 0;
+  opacity: 1;
+  transform: translate(
+    105%,
+    -50%
+  ); /* Przesunięcie w prawo, symetryczne do lewej strony */
+}
+
+/* Żółty pierścień po prawej (trzeci) */
+.decorativeRingRight3 {
+  position: absolute;
+  top: 40%;
+  right: 12%;
+  width: 600px;
+  height: 600px;
+  border: 1px solid #ffe75c;
+  border-radius: 50%;
+  z-index: 0;
+  opacity: 1;
+  transform: translate(
+    95%,
+    -50%
+  ); /* Przesunięcie w prawo, symetryczne do lewej strony */
+}
+
+/* Główny kontener treści */
+.content {
+  position: relative; /* Umożliwia pozycjonowanie względem kontenera */
+  z-index: 2; /* Upewnia się, że treść jest ponad kółkami */
+  color: white; /* Biały tekst, jak na zrzucie */
+  text-align: center; /* Centrowanie tekstu na razie */
+  padding: 20px; /* Odstęp od krawędzi */
+}
+.navbar {
+  background-color: red;
+  height: 40px;
+}
+.logo {
+  display: flex;
+  align-items: center;
+  background-color: transparent;
+  color: white;
+  font-family: "Press Start 2P" serif;
+  font-weight: 700;
+  font-size: 1.5rem;
+}
