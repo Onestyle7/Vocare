@@ -161,3 +161,23 @@
   font-weight: 700;
   font-size: 1.5rem;
 }
+.skills-path {
+  position: relative;
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  width: 100%;
+  max-width: 1200px; /* Dostosuj szerokość */
+}
+
+/* Opcjonalna linia pod tagami */
+.skills-path::after {
+  content: "";
+  position: absolute;
+  width: 100%;
+  height: 2px;
+  background: #ffffff33; /* Lekko przezroczysta linia */
+  top: 50%;
+  transform: translateY(-50%);
+  z-index: -1;
+}
