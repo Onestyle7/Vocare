@@ -85,40 +85,63 @@ export default function Home() {
               Find you best path to improve your skills and knowledge with us.
               Your career, our mission. Move forward
             </p>
-            <button className="bg-white text-black font-medium py-3 px-8 rounded-full hover:bg-gray-100 transition-colors">
+            <button className="bg-white text-black font-medium py-3 px-8 rounded-full hover:bg-gray-100 transition-colors text-center ">
               Get Started
             </button>
           </div>
           {/*Sekcja skills*/}
-          <div className="realative mt-8 mb-24 w-full overflow-hidden">
-            <div className="flex items-center justify-center gap-2 -rotate-3">
-              {/*Różowe tagi*/}
-              <div className="bg-pink-600 text-white px-6 py-2 rounded-full transform -rotate-6">
+          <div
+            className={`relative mt-8 mb-24 w-full overflow-visible ${styles.skillWave}`}
+          >
+            <div className="flex flex-wrap items-center justify-center">
+              {/* Gradient tags */}
+              <div
+                className={`${styles.gradientTag} transform mx-2 my-1 z-10 text-`}
+                style={{ transform: "rotate(-13deg)" }}
+              >
                 Illustration
               </div>
-              {/*Pomarańczowe tagi*/}
-              <div className="bg-orange-500 text-white px-6 py-2 rounded-full transform rotate-3">
-                Graphic Desaigner
+
+              <div
+                className={`${styles.gradientTag} transform -rotate-15 mx-2 my-1 z-10`}
+                style={{ transform: "rotate(10deg)" }}
+              >
+                Graphic Designer
               </div>
-              {/* Kolejne tagi z różnymi kolorami i rotacjami */}
-              <div className="bg-pink-600 text-white px-6 py-2 rounded-full transform -rotate-2">
+
+              <div
+                className={`${styles.gradientTag} transform -rotate-10 mx-2 my-1 z-10`}
+                style={{ transform: "rotate(-22deg)" }}
+              >
                 Web Development
               </div>
 
-              <div className="bg-orange-500 text-white px-6 py-2 rounded-full transform rotate-1">
-                Software enginer
+              <div
+                className={`${styles.gradientTag} transform -rotate-8 mx-2 my-1 z-10`}
+                style={{ transform: "rotate(8deg)" }}
+              >
+                Software Engineer
               </div>
 
-              <div className="bg-pink-600 text-white px-6 py-2 rounded-full transform -rotate-4">
+              <div
+                className={`${styles.gradientTag} transform -rotate-45 mx-2 my-1 z-10`}
+                style={{ transform: "rotate(-20deg)" }}
+              >
                 UI / UX
               </div>
 
-              <div className="bg-orange-500 text-white px-6 py-2 rounded-full transform rotate-2">
+              <div
+                className={`${styles.gradientTag} transform -rotate-6 mx-2 my-1 z-10`}
+                style={{ transform: "rotate(19deg)" }}
+              >
                 CopyWriter
               </div>
 
-              <div className="bg-pink-600 text-white px-6 py-2 rounded-full transform -rotate-3">
-                Product desiner
+              <div
+                className={`${styles.gradientTag} transform -rotate-6 mx-2 my-1 z-10`}
+                style={{ transform: "rotate(-13deg)" }}
+              >
+                Product Designer
               </div>
             </div>
           </div>
