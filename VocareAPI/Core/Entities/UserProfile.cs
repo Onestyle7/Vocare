@@ -17,10 +17,12 @@ namespace VocareAPI.Core.Entities
         [MaxLength(50)]
         public string Surname { get; set; } = "";
         public string? PhoneNumber { get; set; }
-        public string? Experience { get; set; }
-        public string? Skills { get; set; }
-        public string? Interests { get; set; }
-        public string? Goals { get; set; }
+        public List<ExperienceEntry> Experience { get; set; } = new List<ExperienceEntry>();
+        public List<SkillEntry> Skills { get; set; } = new List<SkillEntry>();
+        public string WorkEnvironmentPreference { get; set; } = "";
+        public decimal? ExpectedSalary { get; set; }
+        public int? WeeklyLearningAvailability { get; set; }
+        public List<string> Interests { get; set; } = new List<string>();
 
         //Klucz obcy do User
         public Guid UserId { get; set; }
