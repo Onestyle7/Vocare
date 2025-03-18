@@ -1,5 +1,5 @@
-# Created by https://www.toptal.com/developers/gitignore/api/aspnetcore,react,flutter
-# Edit at https://www.toptal.com/developers/gitignore?templates=aspnetcore,react,flutter
+# Created by https://www.toptal.com/developers/gitignore/api/aspnetcore,dotnetcore,react,nextjs,flutter
+# Edit at https://www.toptal.com/developers/gitignore?templates=aspnetcore,dotnetcore,react,nextjs,flutter
 
 ### ASPNETCore ###
 ## Ignore Visual Studio temporary files, build results, and
@@ -271,6 +271,15 @@ __pycache__/
 # Cake - Uncomment if you are using it
 # tools/
 
+### DotnetCore ###
+# .NET Core build folders
+bin/
+obj/
+
+# Common node modules locations
+/node_modules
+/wwwroot/node_modules
+
 ### Flutter ###
 # Flutter/Dart/Pub related
 **/doc/api/
@@ -335,6 +344,41 @@ lib/generated_plugin_registrant.dart
 !**/ios/**/default.perspectivev3
 !/packages/flutter_tools/test/data/dart_dependencies_test/**/.packages
 
+### NextJS ###
+# dependencies
+/.pnp
+.pnp.js
+
+# testing
+/coverage
+
+# next.js
+/.next/
+/out/
+
+# production
+/build
+
+# misc
+.DS_Store
+*.pem
+
+# debug
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+.pnpm-debug.log*
+
+# local env files
+.env*.local
+
+# vercel
+.vercel
+
+# typescript
+*.tsbuildinfo
+next-env.d.ts
+
 ### react ###
 .DS_*
 logs
@@ -350,4 +394,4 @@ psd
 thumb
 sketch
 
-# End of https://www.toptal.com/developers/gitignore/api/aspnetcore,react,flutter
+# End of https://www.toptal.com/developers/gitignore/api/aspnetcore,dotnetcore,react,nextjs,flutter
