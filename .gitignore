@@ -350,4 +350,10 @@ psd
 thumb
 sketch
 
+obj/
+bin/
+*.assets.json
+*.nuget.dgspec.json
+*.assets.cache
+
 # End of https://www.toptal.com/developers/gitignore/api/aspnetcore,react,flutter
