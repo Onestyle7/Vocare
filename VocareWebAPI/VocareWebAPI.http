@@ -1,0 +1,6 @@
+@VocareWebAPI_HostAddress = http://localhost:5273
+
+GET {{VocareWebAPI_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
