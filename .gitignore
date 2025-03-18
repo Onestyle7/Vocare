@@ -394,4 +394,5 @@ psd
 thumb
 sketch
 
-# End of https://www.toptal.com/developers/gitignore/api/aspnetcore,dotnetcore,react,nextjs,flutter
+# End of https://www.toptal.com/developers/gitignore/api/aspnetcore,react,flutter
+>>>>>>> 1187a8b432be38f72f7d809e13658c305b688a05
