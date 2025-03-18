@@ -13,7 +13,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("VocareWebAPI")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+d3aa747e822440ee1c49f9b97c6ef8604326d506")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+731301e44d6b575fe8c148cccb57dcb092253646")]
 [assembly: System.Reflection.AssemblyProductAttribute("VocareWebAPI")]
 [assembly: System.Reflection.AssemblyTitleAttribute("VocareWebAPI")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]
