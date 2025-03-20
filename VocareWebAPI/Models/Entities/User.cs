@@ -6,5 +6,8 @@ using Microsoft.AspNetCore.Identity;
 
 namespace VocareWebAPI.Models.Entities
 {
-    public class User : IdentityUser { }
+    public class User : IdentityUser
+    {
+        public UserProfile UserProfile { get; set; }
+    }
 }
