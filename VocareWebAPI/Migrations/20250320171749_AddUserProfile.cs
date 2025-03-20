@@ -28,7 +28,7 @@ namespace VocareWebAPI.Migrations
                     Certificates = table.Column<List<string>>(type: "text[]", nullable: false),
                     Languages = table.Column<List<string>>(type: "text[]", nullable: false),
                     AdditionalInformation = table.Column<string>(type: "text", nullable: false),
-                    AboutMe = table.Column<string>(type: "text", nullable: false)
+                    AboutMe = table.Column<string>(type: "text", nullable: false),
                 },
                 constraints: table =>
                 {
@@ -39,16 +39,16 @@ namespace VocareWebAPI.Migrations
                         principalSchema: "Identity",
                         principalTable: "AspNetUsers",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                });
+                        onDelete: ReferentialAction.Cascade
+                    );
+                }
+            );
         }
 
         /// <inheritdoc />
         protected override void Down(MigrationBuilder migrationBuilder)
         {
-            migrationBuilder.DropTable(
-                name: "UserProfiles",
-                schema: "Identity");
+            migrationBuilder.DropTable(name: "UserProfiles", schema: "Identity");
         }
     }
 }

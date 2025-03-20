@@ -3,7 +3,10 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
 using Microsoft.OpenApi.Models;
+using Polly;
+using Polly.Extensions.Http;
 using VocareWebAPI.Data;
+using VocareWebAPI.Models.Config;
 using VocareWebAPI.Models.Entities;
 using VocareWebAPI.Services;
 
@@ -15,6 +18,15 @@ builder.Services.AddOpenApi();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddControllers();
 builder.Services.AddScoped<UserProfileService>();
+builder.Services.Configure<AiConfig>(builder.Configuration.GetSection("PerplexityAI"));
+builder
+    .Services.AddHttpClient<IAiService, PerplexityAiService>(client =>
+    {
+        var config = builder.Configuration.GetSection("PerplexityAI").Get<AiConfig>();
+        client.BaseAddress = new Uri(config.BaseUrl);
+    })
+    .AddPolicyHandler(GetRetryPolicy());
+builder.Services.AddScoped<IAiService, PerplexityAiService>();
 builder.Services.AddAutoMapper(typeof(UserProfileService).Assembly);
 builder.Services.AddSwaggerGen(c =>
 {
@@ -98,4 +110,12 @@ app.UseAuthentication();
 app.UseAuthorization();
 app.MapControllers();
 app.MapIdentityApi<User>();
+
+static IAsyncPolicy<HttpResponseMessage> GetRetryPolicy()
+{
+    return HttpPolicyExtensions
+        .HandleTransientHttpError()
+        .OrResult(msg => msg.StatusCode == System.Net.HttpStatusCode.TooManyRequests)
+        .WaitAndRetryAsync(3, retryAttempt => TimeSpan.FromSeconds(Math.Pow(2, retryAttempt)));
+}
 app.Run();
