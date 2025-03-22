@@ -9,7 +9,7 @@ class HomePageScreen extends StatelessWidget {
       ),
       body: Center(
         child: Text("To jest strona Home"),
-          child: 
+          
       ),
     );
   }
