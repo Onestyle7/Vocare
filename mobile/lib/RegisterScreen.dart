@@ -18,7 +18,7 @@ class RegisterScreen extends StatelessWidget {
               
        ), 
         child: Padding(
-          padding: const EdgeInsets.all(8.0),
+          padding: const EdgeInsets.all(8.e0),
           child: Column(
             children: [
              TextField( decoration: InputDecoration(
