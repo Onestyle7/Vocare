@@ -13,6 +13,7 @@ import {
 import { Input } from "@/components/ui/input";
 import Image from "next/image";
 import Link from "next/link";
+import { toast } from "sonner";
 
 type FormType = "sign-in" | "sign-up";
 
@@ -39,6 +40,9 @@ const AuthForm = ({ type }: { type: FormType }) => {
           email: values.email,
           password: values.password,
         });
+        toast.success("Registration successful!", {
+          description: "You have successfully created an account. Please sign in.",
+        });
         router.push("/sign-in");
       } else {
         const data = await loginUser({
@@ -46,11 +50,34 @@ const AuthForm = ({ type }: { type: FormType }) => {
           password: values.password,
         });
         localStorage.setItem("token", data.accessToken);
+        toast.success("Login successful!", {
+          description: "Welcome back!",
+        });
         router.push("/");
       }
     } catch (error: any) {
-      console.error(error);
-      alert(error.response?.data || "An error occurred");
+      console.error("Error:", error);
+
+      const errorMessage = error.message?.toLowerCase() || "An error occurred";
+      const status = error.response?.status; 
+
+      if (status === 401 || errorMessage.includes("invalid") || errorMessage.includes("unauthorized")) {
+        toast.error("Invalid credentials", {
+          description: "Please check your email or password and try again.",
+        });
+      } else if (
+        errorMessage.includes("network") ||
+        errorMessage.includes("failed to fetch") ||
+        errorMessage.includes("service unavailable")
+      ) {
+        toast.error("Connection error", {
+          description: "Unable to connect to the server. Please try again later.",
+        });
+      } else {
+        toast.error("An error occurred", {
+          description: errorMessage || "Something went wrong. Please try again.",
+        });
+      }
     } finally {
       setIsLoading(false);
     }
