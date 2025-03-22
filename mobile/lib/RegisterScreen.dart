@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 
 class RegisterScreen extends StatelessWidget {
+  const RegisterScreen({super.key});
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -18,7 +20,7 @@ class RegisterScreen extends StatelessWidget {
               
        ), 
         child: Padding(
-          padding: const EdgeInsets.all(8.e0),
+          padding: const EdgeInsets.all(8.0),
           child: Column(
             children: [
              TextField( decoration: InputDecoration(
