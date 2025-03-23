@@ -33,5 +33,6 @@ namespace VocareWebAPI.Models.Dtos
         public List<string>? Languages { get; set; }
         public string? AdditionalInformation { get; set; }
         public string? AboutMe { get; set; }
+        
     }
 }

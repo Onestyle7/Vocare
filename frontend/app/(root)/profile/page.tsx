@@ -28,7 +28,7 @@ import {
   InputOTPSeparator,
   InputOTPSlot,
 } from "@/components/ui/input-otp";
-import { TagInput } from "@/components/TagInput"; // Nowy komponent
+import { TagInput } from "@/components/TagInput";
 import { toast } from "sonner";
 
 export default function ProfileForm() {
@@ -97,15 +97,21 @@ export default function ProfileForm() {
     };
 
     try {
+      let profileData;
       if (isEditMode) {
-        await updateUserProfile(formattedData, token);
+        profileData = await updateUserProfile(formattedData, token);
         toast.success("Profile updated successfully!");
       } else {
-        await createUserProfile(formattedData, token);
+        profileData = await createUserProfile(formattedData, token);
         toast.success("Profile created successfully!");
         setEditMode(true);
       }
-      router.refresh();
+
+      // Zapisz dane profilu w localStorage
+      localStorage.setItem("userProfile", JSON.stringify(profileData));
+
+      // Przekieruj na stronę /assistant
+      router.push("/assistant");
     } catch (error: any) {
       console.error(error);
       toast.error("An error occurred", {
