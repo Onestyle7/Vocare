@@ -30,6 +30,8 @@ import {
 } from "@/components/ui/input-otp";
 import { TagInput } from "@/components/TagInput";
 import { toast } from "sonner";
+import { ArrowLeft } from "lucide-react";
+import Link from "next/link";
 
 export default function ProfileForm() {
   const [isLoading, setLoading] = useState(false);
@@ -151,6 +153,10 @@ export default function ProfileForm() {
 
   return (
     <div className="max-w-2xl mx-auto p-8">
+      <Link className="flex space-x-4 mb-4" href="/">
+          <ArrowLeft />
+          <span>Go back</span>
+      </Link>
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
           {/* First Name */}
