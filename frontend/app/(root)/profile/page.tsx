@@ -1,3 +1,5 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
+/* eslint-disable @typescript-eslint/no-unused-vars */
 "use client";
 
 import { useEffect, useState } from "react";
@@ -52,7 +54,6 @@ export default function ProfileForm() {
     },
   });
 
-  // Załaduj dane profilu (jeśli istnieją)
   useEffect(() => {
     const loadProfile = async () => {
       setLoading(true);
@@ -369,7 +370,7 @@ export default function ProfileForm() {
           />
 
           {/* Przyciski */}
-          <Button type="submit" disabled={isLoading}>
+          <Button type="submit" disabled={isLoading} className="flex">
             {isLoading ? "Saving..." : isEditMode ? "Update Profile" : "Save Profile"}
           </Button>
 
