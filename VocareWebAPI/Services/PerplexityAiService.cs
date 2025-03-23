@@ -1,12 +1,9 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Text.Json;
-using System.Threading.Tasks;
 using Microsoft.Extensions.Options;
 using VocareWebAPI.Models.Config;
 using VocareWebAPI.Models.Dtos;
 using VocareWebAPI.Models.Entities;
+using VocareWebAPI.Repositories;
 
 namespace VocareWebAPI.Services
 {
@@ -14,11 +11,17 @@ namespace VocareWebAPI.Services
     {
         private readonly HttpClient _httpClient;
         private readonly AiConfig _config;
+        private readonly IUserProfileRepository _userProfileRepository;
 
-        public PerplexityAiService(IOptions<AiConfig> config, HttpClient httpClient)
+        public PerplexityAiService(
+            IOptions<AiConfig> config,
+            HttpClient httpClient,
+            IUserProfileRepository userProfileRepository
+        )
         {
             _config = config.Value;
             _httpClient = httpClient;
+            _userProfileRepository = userProfileRepository;
 
             _httpClient.DefaultRequestHeaders.Add("Authorization", $"Bearer {_config.ApiKey}");
             _httpClient.DefaultRequestHeaders.Add("Accept", "application/json");
@@ -64,9 +67,7 @@ namespace VocareWebAPI.Services
                                 new JsonSerializerOptions { PropertyNameCaseInsensitive = true }
                             );
                         }
-                        catch (JsonException)
-                        { /* Kontynuuj do następnej metody */
-                        }
+                        catch (JsonException) { }
                     }
                 }
 
@@ -92,12 +93,72 @@ namespace VocareWebAPI.Services
                 // Upewnij się, że podstawowe struktury nie są null
                 InitializeNullProperties(result);
 
+                await SaveRecommendationToUserProfile(profile.UserId, result);
                 return result;
             }
             catch (HttpRequestException e)
             {
                 throw new AiServiceException("Błąd komunikacji z API", e);
             }
+        }
+
+        private async Task SaveRecommendationToUserProfile(
+            string userId,
+            AiCareerResponseDto recommendation
+        )
+        {
+            try
+            {
+                Console.WriteLine($"Próba zapisu dla użytkownika: {userId}");
+                var userProfile = await _userProfileRepository.GetUserProfileByIdAsync(userId);
+
+                if (userProfile == null)
+                {
+                    Console.WriteLine("Profil użytkownika nie istnieje!");
+                    return;
+                }
+
+                // Logowanie danych przed zapisem
+                Console.WriteLine($"JSON do zapisu: {JsonSerializer.Serialize(recommendation)}");
+
+                userProfile.LastRecommendationJson = JsonSerializer.Serialize(recommendation);
+                userProfile.LastRecommendationDate = DateTime.UtcNow;
+                userProfile.RecommendedCareerPath =
+                    recommendation.Recommendation?.PrimaryPath ?? "Brak ścieżki";
+
+                await _userProfileRepository.UpdateUserProfileAsync(userProfile);
+                Console.WriteLine("Zapisano pomyślnie!");
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"BŁĄD ZAPISU: {ex.Message}");
+            }
+        }
+
+        public async Task<AiCareerResponseDto> GetLastRecommendationAsync(string userId)
+        {
+            var userProfile = await _userProfileRepository.GetUserProfileByIdAsync(userId);
+
+            if (userProfile != null && !string.IsNullOrEmpty(userProfile.LastRecommendationJson))
+            {
+                try
+                {
+                    var recommendation = JsonSerializer.Deserialize<AiCareerResponseDto>(
+                        userProfile.LastRecommendationJson,
+                        new JsonSerializerOptions { PropertyNameCaseInsensitive = true }
+                    );
+
+                    InitializeNullProperties(recommendation);
+                    return recommendation;
+                }
+                catch (JsonException ex)
+                {
+                    throw new AiServiceException("Błąd odczytu zapisanej rekomendacji", ex);
+                }
+            }
+
+            // Dodaj zwracanie null lub odpowiedni obiekt w przypadku braku danych
+            return null; // lub throw new Exception("Brak historii rekomendacji");
         }
 
         // Inicjalizacja null-owych właściwości, aby uniknąć NullReferenceException
@@ -201,11 +262,11 @@ namespace VocareWebAPI.Services
                 5. Zwróć tylko czysty JSON bez dodatkowych objaśnień czy komentarzy.
                 """;
         }
-    }
 
-    public class AiServiceException : Exception
-    {
-        public AiServiceException(string message, Exception inner)
-            : base(message, inner) { }
+        public class AiServiceException : Exception
+        {
+            public AiServiceException(string message, Exception inner)
+                : base(message, inner) { }
+        }
     }
 }

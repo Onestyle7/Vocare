@@ -10,5 +10,6 @@ namespace VocareWebAPI.Services
     public interface IAiService
     {
         Task<AiCareerResponseDto> GetCareerRecommendationsAsync(UserProfile profile);
+        Task<AiCareerResponseDto> GetLastRecommendationAsync(string userId);
     }
 }

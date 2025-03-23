@@ -1,10 +1,13 @@
 using System.Security.Claims;
+using System.Text.Json;
 using AutoMapper;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.RateLimiting;
+using VocareWebAPI.Models.Dtos;
 using VocareWebAPI.Repositories;
 using VocareWebAPI.Services;
+using static VocareWebAPI.Services.PerplexityAiService;
 
 namespace VocareWebAPI.Controllers
 {
@@ -52,10 +55,32 @@ namespace VocareWebAPI.Controllers
                 );
             }
         }
-        /* Zaimplementować DTO do formatu odpowiedzi na obiektJSON */
-        /*  private CareerRecommendationDto ParseResponse(string rawResponse)
-         {
-             return JsonSerializer.Deserialize<CareerRecommendationDto>(rawResponse);
-         } */
+
+        [HttpGet("last-recommendation")]
+        public async Task<IActionResult> GetLastRecommendation()
+        {
+            var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            if (string.IsNullOrEmpty(userId))
+                return Unauthorized();
+
+            try
+            {
+                var profile = await _userProfileRepository.GetUserProfileByIdAsync(userId);
+                if (profile == null)
+                    return NotFound("Profil użytkownika nie został znaleziony.");
+
+                if (string.IsNullOrEmpty(profile.LastRecommendationJson))
+                    return NotFound("Brak ostatniej rekomendacji.");
+
+                var recommendation = JsonSerializer.Deserialize<AiCareerResponseDto>(
+                    profile.LastRecommendationJson
+                );
+                return Ok(recommendation);
+            }
+            catch (AiServiceException e)
+            {
+                return Problem(detail: e.Message, statusCode: 500);
+            }
+        }
     }
 }

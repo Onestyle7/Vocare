@@ -21,5 +21,11 @@ namespace VocareWebAPI.Repositories
         {
             return await _context.UserProfiles.FirstOrDefaultAsync(u => u.UserId == userId);
         }
+
+        public async Task UpdateUserProfileAsync(UserProfile profile)
+        {
+            _context.Entry(profile).State = EntityState.Modified;
+            await _context.SaveChangesAsync();
+        }
     }
 }
