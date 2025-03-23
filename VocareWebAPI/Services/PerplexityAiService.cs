@@ -1,9 +1,11 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text.Json;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Options;
 using VocareWebAPI.Models.Config;
+using VocareWebAPI.Models.Dtos;
 using VocareWebAPI.Models.Entities;
 
 namespace VocareWebAPI.Services
@@ -22,7 +24,7 @@ namespace VocareWebAPI.Services
             _httpClient.DefaultRequestHeaders.Add("Accept", "application/json");
         }
 
-        public async Task<string> GetCareerRecommendationsAsync(UserProfile profile)
+        public async Task<AiCareerResponseDto> GetCareerRecommendationsAsync(UserProfile profile)
         {
             var prompt = BuildPrompt(profile);
 
@@ -36,8 +38,61 @@ namespace VocareWebAPI.Services
                 var absoluteUri = new Uri(_config.BaseUrl + "/chat/completions");
                 var response = await _httpClient.PostAsJsonAsync(absoluteUri, requestBody);
 
-                response.EnsureSuccessStatusCode();
-                return await response.Content.ReadAsStringAsync();
+                var responseContent = await response.Content.ReadAsStringAsync();
+                var apiResponse = JsonSerializer.Deserialize<PerplexityApiResponseDto>(
+                    responseContent,
+                    new JsonSerializerOptions { PropertyNameCaseInsensitive = true }
+                );
+
+                // Wyodrębnij JSON z pola content
+                var rawContent = apiResponse.Choices[0].Message.Content;
+
+                AiCareerResponseDto result = null;
+
+                // Najpierw spróbuj znaleźć blok json
+                if (rawContent.Contains("```json") && rawContent.Contains("```"))
+                {
+                    var jsonStart = rawContent.IndexOf("```json") + "```json".Length;
+                    var jsonEnd = rawContent.LastIndexOf("```");
+                    if (jsonStart >= "```json".Length && jsonEnd > jsonStart)
+                    {
+                        var cleanJson = rawContent.Substring(jsonStart, jsonEnd - jsonStart).Trim();
+                        try
+                        {
+                            result = JsonSerializer.Deserialize<AiCareerResponseDto>(
+                                cleanJson,
+                                new JsonSerializerOptions { PropertyNameCaseInsensitive = true }
+                            );
+                        }
+                        catch (JsonException)
+                        { /* Kontynuuj do następnej metody */
+                        }
+                    }
+                }
+
+                // Jeśli nie udało się, spróbuj ekstrakcji całej treści jako JSON
+                if (result == null)
+                {
+                    try
+                    {
+                        result = JsonSerializer.Deserialize<AiCareerResponseDto>(
+                            rawContent,
+                            new JsonSerializerOptions { PropertyNameCaseInsensitive = true }
+                        );
+                    }
+                    catch (JsonException ex)
+                    {
+                        throw new AiServiceException(
+                            "Nie udało się przetworzyć odpowiedzi AI jako JSON",
+                            ex
+                        );
+                    }
+                }
+
+                // Upewnij się, że podstawowe struktury nie są null
+                InitializeNullProperties(result);
+
+                return result;
             }
             catch (HttpRequestException e)
             {
@@ -45,31 +100,105 @@ namespace VocareWebAPI.Services
             }
         }
 
+        // Inicjalizacja null-owych właściwości, aby uniknąć NullReferenceException
+        private void InitializeNullProperties(AiCareerResponseDto response)
+        {
+            if (response.CareerPaths == null)
+                response.CareerPaths = new List<CareerPathDto>();
+
+            if (response.Recommendation == null)
+                response.Recommendation = new FinalRecommendationDto();
+
+            foreach (var path in response.CareerPaths)
+            {
+                path.RequiredSkills ??= new List<string>();
+                path.MarketAnalysis ??= new List<string>();
+                path.RecommendedCourses ??= new List<string>();
+
+                if (path.SwotAnalysis == null)
+                {
+                    path.SwotAnalysis = new SwotAnalysisDto
+                    {
+                        Strengths = new List<string>(),
+                        Weaknesses = new List<string>(),
+                        Opportunities = new List<string>(),
+                        Threats = new List<string>(),
+                    };
+                }
+                else
+                {
+                    path.SwotAnalysis.Strengths ??= new List<string>();
+                    path.SwotAnalysis.Weaknesses ??= new List<string>();
+                    path.SwotAnalysis.Opportunities ??= new List<string>();
+                    path.SwotAnalysis.Threats ??= new List<string>();
+                }
+            }
+
+            response.Recommendation.NextSteps ??= new List<string>();
+        }
+
         private string BuildPrompt(UserProfile profile)
         {
-            return $"""
+            return $$"""
                 Jesteś doradcą zawodowym. Na podstawie poniższych danych użytkownika:
-                - Imię: {profile.FirstName} {profile.LastName}
-                - Umiejętności: {string.Join(", ", profile.Skills)}
-                - Doświadczenie: {profile.WorkExperience} lat {string.Join(
+                - Imię: {{profile.FirstName}} {{profile.LastName}}
+                - Umiejętności: {{string.Join(", ", profile.Skills)}}
+                - Doświadczenie: {{profile.WorkExperience}} lat {{string.Join(
                     ", ",
                     profile.Certificates
-                )}
-                - Lokalizacja: {profile.Country}, {profile.Address}
-                - Wykształcenie: {profile.Education}
-                - Języki: {string.Join(", ", profile.Languages)}
-                - Dodatkowe informacje: {profile.AdditionalInformation}
-                - O mnie: {profile.AboutMe}
+                )}}
+                - Lokalizacja: {{profile.Country}}, {{profile.Address}}
+                - Wykształcenie: {{profile.Education}}
+                - Języki: {{string.Join(", ", profile.Languages)}}
+                - Dodatkowe informacje: {{profile.AdditionalInformation}}
+                - O mnie: {{profile.AboutMe}}
 
-                Wygeneruj 3 propozycje ścieżek kariery w formacie JSON z polami:
-                - careerName (nazwa ścieżki)
-                - description (krótki opis)
-                - probability (szansa powodzenia w %)
-                - requiredSkills (brakujące umiejętności)
-                Do każdej z wygenerowanych ścieżek przeprowadź analizę rynku konkurencji i zwróć 3 najważniejsze wnioski.
-                Do tego Wygeneruj 3 propozycje kursów, które użytkownik powinien ukończyć, aby osiągnąć sukces w danej ścieżce kariery.
-                Podsumuj to analizą SWOT, w której przedstawisz mocne i słabe strony, szanse i zagrożenia dla każdej z propozycji.
-                Na koniec zwróć użytkownikowi pełną rekomendację zawodową w formacie JSON.
+                Wygeneruj wyłącznie dokładnie taki obiekt JSON, bez żadnego dodatkowego tekstu w języku ${{profile.Country}}:
+                { 
+                  "careerPaths": [
+                    {
+                      "careerName": "Nazwa ścieżki 1",
+                      "description": "Krótki opis ścieżki",
+                      "probability": 85,
+                      "requiredSkills": ["Umiejętność 1", "Umiejętność 2"],
+                      "marketAnalysis": [
+                        "Wniosek z analizy rynku 1",
+                        "Wniosek z analizy rynku 2",
+                        "Wniosek z analizy rynku 3"
+                      ],
+                      "recommendedCourses": [
+                        "Kurs 1",
+                        "Kurs 2",
+                        "Kurs 3"
+                      ],
+                      "swot": {
+                        "strengths": ["Mocna strona 1", "Mocna strona 2"],
+                        "weaknesses": ["Słaba strona 1", "Słaba strona 2"],
+                        "opportunities": ["Szansa 1", "Szansa 2"],
+                        "threats": ["Zagrożenie 1", "Zagrożenie 2"]
+                      }
+                    },
+                    // Dodaj jeszcze dwie ścieżki kariery w takiej samej strukturze
+                  ],
+                  "recommendation": {
+                    "primaryPath": "Nazwa rekomendowanej ścieżki",
+                    "justification": "Uzasadnienie wyboru tej ścieżki",
+                    "nextSteps": [
+                      "Krok 1",
+                      "Krok 2",
+                      "Krok 3",
+                      "Krok 4"
+                    ],
+                    "longTermGoal": "Długoterminowy cel"
+                  }
+                }
+
+                Ważne: 
+                1. Wygeneruj dokładnie taki format JSON z trzema ścieżkami kariery.
+                2. Wypełnij wszystkie pola sensownymi wartościami - nie pozostawiaj żadnych pól pustych.
+                3. Każda ścieżka kariery musi zawierać pełną analizę SWOT we wskazanej strukturze.
+                4. W polu "recommendation" musi być uzasadnienie i długoterminowy cel.
+                5. Zwróć tylko czysty JSON bez dodatkowych objaśnień czy komentarzy.
                 """;
         }
     }
