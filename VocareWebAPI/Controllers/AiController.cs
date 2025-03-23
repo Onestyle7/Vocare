@@ -1,15 +1,13 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
+using System.Security.Claims;
 using System.Text.Json;
-using System.Threading.Tasks;
 using AutoMapper;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.RateLimiting;
 using VocareWebAPI.Models.Dtos;
-using VocareWebAPI.Models.Entities;
+using VocareWebAPI.Repositories;
 using VocareWebAPI.Services;
+using static VocareWebAPI.Services.PerplexityAiService;
 
 namespace VocareWebAPI.Controllers
 {
@@ -19,24 +17,34 @@ namespace VocareWebAPI.Controllers
     public class AiController : ControllerBase
     {
         private readonly IAiService _aiService;
-        private readonly IMapper _mapper;
+        private readonly IUserProfileRepository _userProfileRepository;
 
-        public AiController(IAiService aiService, IMapper mapper)
+        public AiController(IAiService aiService, IUserProfileRepository userProfileRepository)
         {
             _aiService = aiService;
-            _mapper = mapper;
+            _userProfileRepository = userProfileRepository;
         }
 
-        [HttpPost("recommendations")]
+        [HttpGet("recommendations")]
         [EnableRateLimiting("AiPolicy")]
-        public async Task<IActionResult> GetRecommendations([FromBody] UserProfileDto profileDto)
+        public async Task<IActionResult> GetRecommendations()
         {
             try
             {
-                var profile = _mapper.Map<UserProfile>(profileDto);
-                var result = await _aiService.GetCareerRecommendationsAsync(profile);
+                var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+                if (string.IsNullOrEmpty(userId))
+                {
+                    return Unauthorized("Brak identyfikatora użytkownika w tokenie.");
+                }
 
-                return Content(result, "application/json");
+                var profile = await _userProfileRepository.GetUserProfileByIdAsync(userId);
+                if (profile == null)
+                {
+                    return NotFound("Profil użytkownika nie został znaleziony.");
+                }
+
+                var result = await _aiService.GetCareerRecommendationsAsync(profile);
+                return Ok(result);
             }
             catch (AiServiceException e)
             {
@@ -47,10 +55,32 @@ namespace VocareWebAPI.Controllers
                 );
             }
         }
-        /* Zaimplementować DTO do formatu odpowiedzi na obiektJSON */
-        /*  private CareerRecommendationDto ParseResponse(string rawResponse)
-         {
-             return JsonSerializer.Deserialize<CareerRecommendationDto>(rawResponse);
-         } */
+
+        [HttpGet("last-recommendation")]
+        public async Task<IActionResult> GetLastRecommendation()
+        {
+            var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            if (string.IsNullOrEmpty(userId))
+                return Unauthorized();
+
+            try
+            {
+                var profile = await _userProfileRepository.GetUserProfileByIdAsync(userId);
+                if (profile == null)
+                    return NotFound("Profil użytkownika nie został znaleziony.");
+
+                if (string.IsNullOrEmpty(profile.LastRecommendationJson))
+                    return NotFound("Brak ostatniej rekomendacji.");
+
+                var recommendation = JsonSerializer.Deserialize<AiCareerResponseDto>(
+                    profile.LastRecommendationJson
+                );
+                return Ok(recommendation);
+            }
+            catch (AiServiceException e)
+            {
+                return Problem(detail: e.Message, statusCode: 500);
+            }
+        }
     }
 }
