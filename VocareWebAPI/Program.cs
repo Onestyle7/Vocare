@@ -3,8 +3,12 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
 using Microsoft.OpenApi.Models;
+using Polly;
+using Polly.Extensions.Http;
 using VocareWebAPI.Data;
+using VocareWebAPI.Models.Config;
 using VocareWebAPI.Models.Entities;
+using VocareWebAPI.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -12,6 +16,18 @@ var builder = WebApplication.CreateBuilder(args);
 // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
 builder.Services.AddOpenApi();
 builder.Services.AddEndpointsApiExplorer();
+builder.Services.AddControllers();
+builder.Services.AddScoped<UserProfileService>();
+builder.Services.Configure<AiConfig>(builder.Configuration.GetSection("PerplexityAI"));
+builder
+    .Services.AddHttpClient<IAiService, PerplexityAiService>(client =>
+    {
+        var config = builder.Configuration.GetSection("PerplexityAI").Get<AiConfig>();
+        client.BaseAddress = new Uri(config.BaseUrl);
+    })
+    .AddPolicyHandler(GetRetryPolicy());
+builder.Services.AddScoped<IAiService, PerplexityAiService>();
+builder.Services.AddAutoMapper(typeof(UserProfileService).Assembly);
 builder.Services.AddSwaggerGen(c =>
 {
     c.SwaggerDoc(
@@ -69,6 +85,17 @@ builder.Services.AddDbContext<AppDbContext>(options =>
 {
     options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection"));
 });
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("AllowAll", policy =>
+    {
+        policy.WithOrigins("https://localhost:3000", "http://localhost:3000")
+              .AllowAnyHeader()
+              .AllowAnyMethod()
+              .AllowCredentials();
+    });
+});
+
 
 var app = builder.Build();
 
@@ -78,50 +105,19 @@ if (app.Environment.IsDevelopment())
     app.UseSwagger();
     app.UseSwaggerUI();
 }
-
+app.UseHttpsRedirection();
 app.UseRouting();
 app.UseCors("AllowAll");
 app.UseAuthentication();
 app.UseAuthorization();
-app.UseHttpsRedirection();
+app.MapControllers();
 app.MapIdentityApi<User>();
-app.MapGet(
-        "/users/me",
-        async (ClaimsPrincipal claims, AppDbContext context) =>
-        {
-            try
-            {
-                if (!claims.Identity.IsAuthenticated)
-                    return Results.Unauthorized();
 
-                string userId = claims
-                    .Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier)
-                    ?.Value;
-                if (string.IsNullOrEmpty(userId))
-                    return Results.Problem("Brak identyfikatora użytkownika w tokenie.");
-
-                var user = await context.Users.FindAsync(userId);
-                if (user == null)
-                    return Results.NotFound("Użytkownik nie znaleziony");
-
-                return Results.Ok(user);
-            }
-            catch (Exception ex)
-            {
-                return Results.Problem($"Błąd: {ex.Message}");
-            }
-        }
-    )
-    .RequireAuthorization(); // Wrzucić to potem w controller -> wszystkie dane zalogowanego użytkownika
-app.MapGet(
-    "/debug-claims",
-    (ClaimsPrincipal user) =>
-    {
-        var claims = user.Claims.Select(c => new { c.Type, c.Value }).ToList();
-        return Results.Ok(
-            new { isAuthenticated = user.Identity?.IsAuthenticated ?? false, claims = claims }
-        );
-    }
-);
-app.MapGet("/test", () => "Test endpoint works!");
+static IAsyncPolicy<HttpResponseMessage> GetRetryPolicy()
+{
+    return HttpPolicyExtensions
+        .HandleTransientHttpError()
+        .OrResult(msg => msg.StatusCode == System.Net.HttpStatusCode.TooManyRequests)
+        .WaitAndRetryAsync(3, retryAttempt => TimeSpan.FromSeconds(Math.Pow(2, retryAttempt)));
+}
 app.Run();
