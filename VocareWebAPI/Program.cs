@@ -8,6 +8,7 @@ using Polly.Extensions.Http;
 using VocareWebAPI.Data;
 using VocareWebAPI.Models.Config;
 using VocareWebAPI.Models.Entities;
+using VocareWebAPI.Repositories;
 using VocareWebAPI.Services;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -27,6 +28,7 @@ builder
     })
     .AddPolicyHandler(GetRetryPolicy());
 builder.Services.AddScoped<IAiService, PerplexityAiService>();
+builder.Services.AddScoped<IUserProfileRepository, UserProfileRepository>();
 builder.Services.AddAutoMapper(typeof(UserProfileService).Assembly);
 builder.Services.AddSwaggerGen(c =>
 {
