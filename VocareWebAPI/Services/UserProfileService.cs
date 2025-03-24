@@ -1,9 +1,4 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 using AutoMapper;
-using AutoMapper.Configuration.Annotations;
 using Microsoft.EntityFrameworkCore;
 using VocareWebAPI.Data;
 using VocareWebAPI.Models.Dtos;
@@ -46,7 +41,7 @@ namespace VocareWebAPI.Services
             _mapper.Map(userProfileDto, profile);
 
             await _context.SaveChangesAsync();
-            return profile == null ? null : _mapper.Map<UserProfileDto>(profile);
+            return _mapper.Map<UserProfileDto>(profile);
         }
 
         public async Task<UserProfileDto> UpdateUserProfileAsync(

@@ -27,8 +27,8 @@ namespace VocareWebAPI.Models.Entities
         public string AdditionalInformation { get; set; }
         public string AboutMe { get; set; }
 
-        public string LastRecommendationJson { get; set; }
+        public string LastRecommendationJson { get; set; } = "{}";
         public DateTime? LastRecommendationDate { get; set; }
-        public string RecommendedCareerPath { get; set; }
+        public string RecommendedCareerPath { get; set; } = "{}";
     }
 }
