@@ -11,17 +11,26 @@ class StartScreen extends StatefulWidget {
 
 class _StartScreenState extends State<StartScreen> {
   // Kontrolery dla pól tekstowych
-  final TextEditingController emailController = TextEditingController();
-  final TextEditingController passwordController = TextEditingController();
-  
-  @override
-  void dispose() {
-    // Zwalniamy kontrolery gdy nie są już potrzebne
-    emailController.dispose();
-    passwordController.dispose();
-    super.dispose();
+  final  _emailController = TextEditingController();
+  final  _passwordController = TextEditingController();
+
+  void _handleSingIn(){
+    final mail = _emailController.text;
+    final password = _passwordController.text;
+
+    if(mail.isNotEmpty && password.isNotEmpty){
+      Navigator.push(context, MaterialPageRoute(builder:(context)=>HomePageScreen()));
+    } 
+    else if(mail.isEmpty && password.isEmpty){
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content :Text("Uzupełnij dane logowania")));
+    }
+    else if(mail.isEmpty){ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("Uzupełnij mail"),));}
+    else if(password.isEmpty){ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("Uzupelnij hasło"),));}
+
   }
 
+  
+  @override
   @override
   Widget build(context) {
     return Scaffold(
@@ -47,7 +56,7 @@ class _StartScreenState extends State<StartScreen> {
 
               // Email input
               TextField(
-                controller: emailController,
+                controller: _emailController,
                 decoration: InputDecoration(
                   hintText: "Your email",
                   labelText: "Email",
@@ -66,7 +75,7 @@ class _StartScreenState extends State<StartScreen> {
 
               // Password input
               TextField(
-                controller: passwordController,
+                controller: _passwordController,
                 decoration: InputDecoration(
                   hintText: "Your password",
                   labelText: "Password",
@@ -84,25 +93,8 @@ class _StartScreenState extends State<StartScreen> {
               SizedBox(height: 20),
 
               // Login button
-              TextButton(
-                onPressed: () {
-                  String email = emailController.text;
-                  String password = passwordController.text;
-
-                  print("Email: $email");
-                  print("Hasło: $password");
-
-                  // Tu możesz dodać sprawdzenie loginu, np. porównanie z testowymi danymi
-                  if (email.isNotEmpty && password.isNotEmpty) {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(builder: (context) => HomePageScreen()),
-                    );
-                  } else {
-                    // Pokaż alert, snackbar albo print
-                    print("Uzupełnij pola logowania!");
-                  }
-                },
+              ElevatedButton(
+                onPressed: _handleSingIn,
                 child: Text("Zaloguj się"),
               ),
 

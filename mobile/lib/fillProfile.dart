@@ -39,21 +39,28 @@ class _FillProfileState extends State<FillProfile> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: AppBar(
+        title: Text("Profil użytkownika"),
+      ),
       body: Center(
         child: Column(
           children: [
             TextFormField(
               controller: _nameController,
-              decoration: InputDecoration(labelText: "Name")),
+              decoration: InputDecoration(labelText: "Name"),
+            ),
             TextFormField(
               controller: _surnameController,
-              decoration: InputDecoration(labelText: "Surname")),
+              decoration: InputDecoration(labelText: "Surname"),
+            ),
             TextFormField(
               controller: _phoneController,
-              decoration: InputDecoration(labelText: "Number")),
+              decoration: InputDecoration(labelText: "Number"),
+            ),
             TextFormField(
               controller: _addressController,
-              decoration: InputDecoration(labelText: "Adress")),
+              decoration: InputDecoration(labelText: "Adress"),
+            ),
             TextFormField(
               controller: _birthDateController,
               decoration: InputDecoration(
@@ -65,11 +72,12 @@ class _FillProfileState extends State<FillProfile> {
             ),
             TextFormField(
               controller: _languagesController,
-              decoration: InputDecoration(labelText: "Languages"),),
-              TextFormField(
-                controller: _skillController,
-                decoration: InputDecoration(labelText: 'Skill'),
-              )
+              decoration: InputDecoration(labelText: "Languages"),
+            ),
+            TextFormField(
+              controller: _skillController,
+              decoration: InputDecoration(labelText: 'Skill'),
+            ),
           ],
         ),
       ),
