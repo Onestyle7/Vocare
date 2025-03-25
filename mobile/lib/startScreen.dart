@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:vocare/RegisterScreen.dart' show RegisterScreen;
 import 'package:vocare/homePageScreen.dart';
+import 'package:http/http.dart' as http;
+import 'dart:convert';
 
 class StartScreen extends StatefulWidget {
   const StartScreen({super.key});
@@ -11,28 +13,73 @@ class StartScreen extends StatefulWidget {
 
 class _StartScreenState extends State<StartScreen> {
   // Kontrolery dla pól tekstowych
-  final  _emailController = TextEditingController();
-  final  _passwordController = TextEditingController();
+  final _emailController = TextEditingController();
+  final _passwordController = TextEditingController();
 
-  void _handleSingIn(){
+    Future<void> loginUser(String email, String password) async{
+    final url = Uri.parse('https://localhost:5001/login');
+
+    try {
+    final response = await http.post( 
+      url,
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: jsonEncode({
+        'email': email,
+        'password': password,
+        'twoFactorCode': '',
+        'twoFactorRecoveryCode': ''
+      }),
+    );
+
+    if (response.statusCode == 200) {
+      final data = jsonDecode(response.body);
+      final accessToken = data['accessToken'];
+      print('Zalogowano! Token: $accessToken');
+
+      Navigator.push(
+        context,
+        MaterialPageRoute(builder: (context) => HomePageScreen()),
+      );
+    } else {
+      print('Błąd logowania: ${response.statusCode}');
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Niepoprawny login lub hasło')),
+      );
+    }
+  } catch (e) {
+    print('Błąd połączenia: $e');
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(content: Text('Nie można połączyć z serwerem')),
+    );
+  }
+}
+
+
+  void _handleSingIn() {
     final mail = _emailController.text;
     final password = _passwordController.text;
 
-    if(mail.isNotEmpty && password.isNotEmpty){
-      Navigator.push(context, MaterialPageRoute(builder:(context)=>HomePageScreen()));
-    } 
-    else if(mail.isEmpty && password.isEmpty){
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content :Text("Uzupełnij dane logowania")));
+    if (mail.isNotEmpty && password.isNotEmpty) {
+      loginUser(mail, password);
+    } else if (mail.isEmpty && password.isEmpty) {
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text("Uzupełnij dane logowania")));
+    } else if (mail.isEmpty) {
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text("Uzupełnij mail")));
+    } else if (password.isEmpty) {
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text("Uzupelnij hasło")));
     }
-    else if(mail.isEmpty){ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("Uzupełnij mail"),));}
-    else if(password.isEmpty){ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("Uzupelnij hasło"),));}
-
   }
 
-  
-  @override
-  @override
-  Widget build(context) {
+   @override
+  Widget build(BuildContext context) {
     return Scaffold(
       body: Center(
         child: Padding(
@@ -123,3 +170,6 @@ class _StartScreenState extends State<StartScreen> {
     );
   }
 }
+
+
+ 
