@@ -8,6 +8,7 @@ using Polly.Extensions.Http;
 using VocareWebAPI.Data;
 using VocareWebAPI.Models.Config;
 using VocareWebAPI.Models.Entities;
+using VocareWebAPI.Repositories;
 using VocareWebAPI.Services;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -24,9 +25,12 @@ builder
     {
         var config = builder.Configuration.GetSection("PerplexityAI").Get<AiConfig>();
         client.BaseAddress = new Uri(config.BaseUrl);
+        client.DefaultRequestHeaders.Add("Authorization", $"Bearer {config.ApiKey}");
+        client.DefaultRequestHeaders.Add("Accept", "application/json");
     })
     .AddPolicyHandler(GetRetryPolicy());
 builder.Services.AddScoped<IAiService, PerplexityAiService>();
+builder.Services.AddScoped<IUserProfileRepository, UserProfileRepository>();
 builder.Services.AddAutoMapper(typeof(UserProfileService).Assembly);
 builder.Services.AddSwaggerGen(c =>
 {
@@ -96,8 +100,6 @@ builder.Services.AddCors(options =>
             .AllowCredentials();
     });
 });
-
-
 
 var app = builder.Build();
 

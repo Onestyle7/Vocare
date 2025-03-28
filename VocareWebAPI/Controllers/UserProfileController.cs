@@ -1,8 +1,4 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Security.Claims;
-using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using VocareWebAPI.Models.Dtos;
@@ -22,7 +18,7 @@ namespace VocareWebAPI.Controllers
             _userProfileService = userProfileService;
         }
 
-        [HttpGet]
+        [HttpGet("GetCurrentUserProfile")]
         public async Task<IActionResult> GetCurrentUserProfile()
         {
             string userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
@@ -38,7 +34,7 @@ namespace VocareWebAPI.Controllers
             return Ok(profile);
         }
 
-        [HttpPost]
+        [HttpPost("CreateCurrentUserProfile")]
         public async Task<IActionResult> CreateCurrentUserProfile(
             [FromBody] UserProfileDto userProfile
         )
@@ -52,7 +48,7 @@ namespace VocareWebAPI.Controllers
             return Ok(profile);
         }
 
-        [HttpPut]
+        [HttpPut("UpdateCurrentUserProfile")]
         public async Task<IActionResult> UpdateCurrentUserProfile(
             [FromBody] UserProfileDto userProfile
         )
@@ -70,7 +66,7 @@ namespace VocareWebAPI.Controllers
             return Ok(new { message = "Profil użytkownika został zaktualizowany." });
         }
 
-        [HttpDelete]
+        [HttpDelete("DeleteCurrentUserProfile")]
         public async Task<IActionResult> DeleteCurrentUserProfile()
         {
             string userId = User.FindFirstValue(ClaimTypes.NameIdentifier);

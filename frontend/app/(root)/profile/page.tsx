@@ -1,3 +1,5 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
+/* eslint-disable @typescript-eslint/no-unused-vars */
 "use client";
 
 import { useEffect, useState } from "react";
@@ -26,8 +28,10 @@ import {
   InputOTPSeparator,
   InputOTPSlot,
 } from "@/components/ui/input-otp";
-import { TagInput } from "@/components/TagInput"; // Nowy komponent
+import { TagInput } from "@/components/TagInput";
 import { toast } from "sonner";
+import { ArrowLeft } from "lucide-react";
+import Link from "next/link";
 
 export default function ProfileForm() {
   const [isLoading, setLoading] = useState(false);
@@ -52,7 +56,6 @@ export default function ProfileForm() {
     },
   });
 
-  // Załaduj dane profilu (jeśli istnieją)
   useEffect(() => {
     const loadProfile = async () => {
       setLoading(true);
@@ -96,15 +99,21 @@ export default function ProfileForm() {
     };
 
     try {
+      let profileData;
       if (isEditMode) {
-        await updateUserProfile(formattedData, token);
+        profileData = await updateUserProfile(formattedData, token);
         toast.success("Profile updated successfully!");
       } else {
-        await createUserProfile(formattedData, token);
+        profileData = await createUserProfile(formattedData, token);
         toast.success("Profile created successfully!");
         setEditMode(true);
       }
-      router.refresh();
+
+      // Zapisz dane profilu w localStorage
+      localStorage.setItem("userProfile", JSON.stringify(profileData));
+
+      // Przekieruj na stronę /assistant
+      router.push("/assistant");
     } catch (error: any) {
       console.error(error);
       toast.error("An error occurred", {
@@ -144,6 +153,10 @@ export default function ProfileForm() {
 
   return (
     <div className="max-w-2xl mx-auto p-8">
+      <Link className="flex space-x-4 mb-4" href="/">
+          <ArrowLeft />
+          <span>Go back</span>
+      </Link>
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
           {/* First Name */}
@@ -369,7 +382,7 @@ export default function ProfileForm() {
           />
 
           {/* Przyciski */}
-          <Button type="submit" disabled={isLoading}>
+          <Button type="submit" disabled={isLoading} className="flex">
             {isLoading ? "Saving..." : isEditMode ? "Update Profile" : "Save Profile"}
           </Button>
 
