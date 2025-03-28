@@ -3,6 +3,7 @@ import 'package:vocare/RegisterScreen.dart' show RegisterScreen;
 import 'package:vocare/homePageScreen.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class StartScreen extends StatefulWidget {
   const StartScreen({super.key});
@@ -16,46 +17,49 @@ class _StartScreenState extends State<StartScreen> {
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
 
-    Future<void> loginUser(String email, String password) async{
+  Future<void> loginUser(String email, String password) async {
     final url = Uri.parse('https://localhost:5001/login');
 
     try {
-    final response = await http.post( 
-      url,
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: jsonEncode({
-        'email': email,
-        'password': password,
-        'twoFactorCode': '',
-        'twoFactorRecoveryCode': ''
-      }),
-    );
+      
+      final response = await http.post(
+        url,
+        headers: {'Content-Type': 'application/json'},
+        body: jsonEncode({
+          'email': email,
+          'password': password,
+          'twoFactorCode': '',
+          'twoFactorRecoveryCode': '',
+        }),
+      );
 
-    if (response.statusCode == 200) {
-      final data = jsonDecode(response.body);
-      final accessToken = data['accessToken'];
-      print('Zalogowano! Token: $accessToken');
+      if (response.statusCode == 200) {
+        final data = jsonDecode(response.body);
+        final accessToken = data['accessToken'];
 
-      Navigator.push(
+        // ZAPISZ token do pamięci urządzenia
+        final prefs = await SharedPreferences.getInstance();
+        await prefs.setString('accessToken', accessToken);
+        print('TOKEN ZOSTAŁ ZAPISANY: $accessToken');
+
+        // Przejdź dalej
+        Navigator.push(
+          context,
+          MaterialPageRoute(builder: (context) => HomePageScreen()),
+        );
+      } else {
+        print('Błąd logowania: ${response.statusCode}');
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(SnackBar(content: Text('Niepoprawny login lub hasło')));
+      }
+    } catch (e) {
+      print('Błąd połączenia: $e');
+      ScaffoldMessenger.of(
         context,
-        MaterialPageRoute(builder: (context) => HomePageScreen()),
-      );
-    } else {
-      print('Błąd logowania: ${response.statusCode}');
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Niepoprawny login lub hasło')),
-      );
+      ).showSnackBar(SnackBar(content: Text('Nie można połączyć z serwerem')));
     }
-  } catch (e) {
-    print('Błąd połączenia: $e');
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text('Nie można połączyć z serwerem')),
-    );
   }
-}
-
 
   void _handleSingIn() {
     final mail = _emailController.text;
@@ -78,7 +82,7 @@ class _StartScreenState extends State<StartScreen> {
     }
   }
 
-   @override
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
       body: Center(
@@ -170,6 +174,3 @@ class _StartScreenState extends State<StartScreen> {
     );
   }
 }
-
-
- 
