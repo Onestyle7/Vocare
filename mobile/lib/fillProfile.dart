@@ -39,7 +39,7 @@ class _FillProfileState extends State<FillProfile> {
     'W trakcie studiów',
   ];
 
-  Future<void> userPrifile(
+  Future<void> createUserPrifile(
     String name,
     String lastName,
     String country,
@@ -54,7 +54,7 @@ class _FillProfileState extends State<FillProfile> {
     String aboutMe,
     
   ) async {
-    final url = Uri.parse('https://localhost:5001/api/UserProfile');
+    final url = Uri.parse('https://localhost:5001/api/UserProfile/CreateCurrentUserProfile');
     final bodyEncode = jsonEncode({
       "firstName": _nameController.text,
       "lastName": _surnameController.text,
@@ -79,7 +79,7 @@ class _FillProfileState extends State<FillProfile> {
     final prefs = await SharedPreferences.getInstance();
     final token = prefs.getString('accessToken') ?? '';
     print('TOKEN POBRANY Z PAMIĘCI: $token');
-  print('BODY WYSYŁANY DO BACKENDU: $bodyEncode');
+    print('BODY WYSYŁANY DO BACKENDU: $bodyEncode');
 
     try {
       print('BODY WYSYŁANY DO BACKENDU: $bodyEncode');
@@ -112,6 +112,51 @@ class _FillProfileState extends State<FillProfile> {
       );
     }
   }
+
+  Future<void> loadUserProfile() async {
+  final prefs = await SharedPreferences.getInstance();
+  final token = prefs.getString('accessToken') ?? '';
+
+  final url = Uri.parse('https://localhost:5001/api/UserProfile/GetCurrentUserProfile');
+  
+  try {
+    final response = await http.get(url, headers: {
+      'Content-Type': 'application/json',
+      'Authorization': 'Bearer $token',
+    });
+
+    if (response.statusCode == 200) {
+      final data = jsonDecode(response.body);
+
+      setState(() {
+        _nameController.text = data['firstName'] ?? '';
+        _surnameController.text = data['lastName'] ?? '';
+        selectedCountry = data['country'] ?? '';
+        _addressController.text = data['address'] ?? '';
+        _phoneController.text = data['phoneNumber'] ?? '';
+        _selectEducation = data['education'] ?? '';
+
+        _workExperienceController.text = (data['workExperience'] as List).join(', ');
+        _skillController.text = (data['skills'] as List).join(', ');
+        _certicateController.text = (data['certificates'] as List).join(', ');
+        _languagesController.text = (data['languages'] as List).join(', ');
+        _additionallInformationController.text = data['additionalInformation'] ?? '';
+        _aboutMeController.text = data['aboutMe'] ?? '';
+      });
+
+    } else {
+      print("Nie udało się pobrać danych: ${response.statusCode}");
+    }
+  } catch (e) {
+    print("Błąd podczas pobierania danych: $e");
+  }
+}
+
+@override
+void initState() {
+  super.initState();
+  loadUserProfile();
+}
       
 
   @override
@@ -210,7 +255,7 @@ class _FillProfileState extends State<FillProfile> {
                 ),
                 maxLines: 3,
               ),
-              ElevatedButton(onPressed: () {userPrifile(_nameController.text,
+              ElevatedButton(onPressed: () {createUserPrifile(_nameController.text,
             _surnameController.text,
             selectedCountry,
             _addressController.text,
