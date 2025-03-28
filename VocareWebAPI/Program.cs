@@ -25,6 +25,8 @@ builder
     {
         var config = builder.Configuration.GetSection("PerplexityAI").Get<AiConfig>();
         client.BaseAddress = new Uri(config.BaseUrl);
+        client.DefaultRequestHeaders.Add("Authorization", $"Bearer {config.ApiKey}");
+        client.DefaultRequestHeaders.Add("Accept", "application/json");
     })
     .AddPolicyHandler(GetRetryPolicy());
 builder.Services.AddScoped<IAiService, PerplexityAiService>();
@@ -91,13 +93,13 @@ builder.Services.AddCors(options =>
 {
     options.AddPolicy("AllowAll", policy =>
     {
-        policy.WithOrigins("https://localhost:3000", "http://localhost:3000")
-              .AllowAnyHeader()
-              .AllowAnyMethod()
-              .AllowCredentials();
+        policy
+            .SetIsOriginAllowed(origin => true) // zezwól na wszystkie originy (do testów)
+            .AllowAnyHeader()
+            .AllowAnyMethod()
+            .AllowCredentials();
     });
 });
-
 
 var app = builder.Build();
 

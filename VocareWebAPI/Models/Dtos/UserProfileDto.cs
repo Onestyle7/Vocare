@@ -22,7 +22,7 @@ namespace VocareWebAPI.Models.Dtos
 
         [Required(ErrorMessage = "Numer telefonu jest wymagany.")]
         [Phone(ErrorMessage = "Niepoprawny numer telefonu.")]
-        public string PhoneNumber { get; set; }
+        public string? PhoneNumber { get; set; }
 
         [Required(ErrorMessage = "Wykształcenie jest wymagane.")]
         public string Education { get; set; }
@@ -33,6 +33,5 @@ namespace VocareWebAPI.Models.Dtos
         public List<string>? Languages { get; set; }
         public string? AdditionalInformation { get; set; }
         public string? AboutMe { get; set; }
-        
     }
 }

@@ -1,10 +1,7 @@
 using System.Security.Claims;
-using System.Text.Json;
-using AutoMapper;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.RateLimiting;
-using VocareWebAPI.Models.Dtos;
 using VocareWebAPI.Repositories;
 using VocareWebAPI.Services;
 using static VocareWebAPI.Services.PerplexityAiService;
@@ -65,16 +62,10 @@ namespace VocareWebAPI.Controllers
 
             try
             {
-                var profile = await _userProfileRepository.GetUserProfileByIdAsync(userId);
-                if (profile == null)
-                    return NotFound("Profil użytkownika nie został znaleziony.");
-
-                if (string.IsNullOrEmpty(profile.LastRecommendationJson))
+                var recommendation = await _aiService.GetLastRecommendationAsync(userId);
+                if (recommendation == null)
                     return NotFound("Brak ostatniej rekomendacji.");
 
-                var recommendation = JsonSerializer.Deserialize<AiCareerResponseDto>(
-                    profile.LastRecommendationJson
-                );
                 return Ok(recommendation);
             }
             catch (AiServiceException e)
