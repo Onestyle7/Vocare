@@ -15,11 +15,16 @@ namespace VocareWebAPI.Services
 
         public PerplexityAiService(
             IOptions<AiConfig> config,
+            HttpClient httpClient,
             IUserProfileRepository userProfileRepository
         )
         {
             _config = config.Value;
+            _httpClient = httpClient;
             _userProfileRepository = userProfileRepository;
+
+            _httpClient.DefaultRequestHeaders.Add("Authorization", $"Bearer {_config.ApiKey}");
+            _httpClient.DefaultRequestHeaders.Add("Accept", "application/json");
         }
 
         public async Task<AiCareerResponseDto> GetCareerRecommendationsAsync(UserProfile profile)
