@@ -1,8 +1,229 @@
 @import "tailwindcss";
 @import "tw-animate-css";
 
+@plugin "tailwindcss-animate";
+
 
 @custom-variant dark (&:is(.dark *));
+
+@import "tailwindcss";
+
+@utility remove-scrollbar {
+  &::-webkit-scrollbar {
+    width: 0px;
+    height: 0px;
+    border-radius: 0px;
+  }
+  &::-webkit-scrollbar-track {
+    background: transparent;
+  }
+  &::-webkit-scrollbar-thumb {
+    background: transparent;
+    border-radius: 0px;
+  }
+  &::-webkit-scrollbar-thumb:hover {
+    background: transparent;
+  }
+  -ms-overflow-style: none; /* IE i Edge */
+  scrollbar-width: none; /* Firefox */
+}
+
+/* SizmoLinePro warianty */
+@font-face {
+  font-family: "SizmoLinePro";
+  src: url("/fonts/SizmoLinePro-Bold.woff2") format("woff2");
+  font-weight: 800; /* Bold */
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "SizmoLinePro";
+  src: url("/fonts/SizmoLinePro-Demibold.woff2") format("woff2");
+  font-weight: 600; /* Demibold */
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "SizmoLinePro";
+  src: url("/fonts/SizmoLinePro-Light.woff2") format("woff2");
+  font-weight: 300; /* Light */
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "SizmoLinePro";
+  src: url("/fonts/SizmoLinePro-Medium.woff2") format("woff2");
+  font-weight: 500; /* Medium */
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "SizmoLinePro";
+  src: url("/fonts/SizmoLinePro.woff2") format("woff2");
+  font-weight: 400; /* Regular */
+  font-style: normal;
+  font-display: swap;
+}
+
+/* SizmoPro warianty */
+@font-face {
+  font-family: "SizmoPro";
+  src: url("/fonts/SizmoPro-Bold.woff2") format("woff2");
+  font-weight: 800; /* Bold */
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "SizmoPro";
+  src: url("/fonts/SizmoPro-BoldOblique.woff2") format("woff2");
+  font-weight: 800; /* Bold */
+  font-style: italic; /* Oblique */
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "SizmoPro";
+  src: url("/fonts/SizmoPro-Demibold.woff2") format("woff2");
+  font-weight: 600; /* Demibold */
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "SizmoPro";
+  src: url("/fonts/SizmoPro-DemiboldOblique.woff2") format("woff2");
+  font-weight: 600; /* Demibold */
+  font-style: italic; /* Oblique */
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "SizmoPro";
+  src: url("/fonts/SizmoPro-Light.woff2") format("woff2");
+  font-weight: 300; /* Light */
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "SizmoPro";
+  src: url("/fonts/SizmoPro-LightOblique.woff2") format("woff2");
+  font-weight: 300; /* Light */
+  font-style: italic; /* Oblique */
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "SizmoPro";
+  src: url("/fonts/SizmoPro-Medium.woff2") format("woff2");
+  font-weight: 500; /* Medium */
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "SizmoPro";
+  src: url("/fonts/SizmoPro-MediumOblique.woff2") format("woff2");
+  font-weight: 500; /* Medium */
+  font-style: italic; /* Oblique */
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "SizmoPro";
+  src: url("/fonts/SizmoPro-Oblique.woff2") format("woff2");
+  font-weight: 400; /* Regular */
+  font-style: italic; /* Oblique */
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "SizmoPro";
+  src: url("/fonts/SizmoPro.woff2") format("woff2");
+  font-weight: 400; /* Regular */
+  font-style: normal;
+  font-display: swap;
+}
+
+@theme {
+  --font-family-sizmo-line: "SizmoLinePro", sans-serif;
+  --font-family-sizmo: "SizmoPro", sans-serif;
+}
+
+/* Klasy użytkowe dla SizmoLinePro */
+.font-sizmo-line {
+  @apply font-[var(--font-family-sizmo-line)];
+}
+
+.font-sizmo-line-light {
+  @apply font-[var(--font-family-sizmo-line)] font-light; /* 300 */
+}
+
+.font-sizmo-line-regular {
+  @apply font-[var(--font-family-sizmo-line)] font-normal; /* 400 */
+}
+
+.font-sizmo-line-medium {
+  @apply font-[var(--font-family-sizmo-line)] font-medium; /* 500 */
+}
+
+.font-sizmo-line-demibold {
+  @apply font-[var(--font-family-sizmo-line)] font-semibold; /* 600 */
+}
+
+.font-sizmo-line-bold {
+  @apply font-[var(--font-family-sizmo-line)] font-bold; /* 800 */
+}
+
+/* Klasy użytkowe dla SizmoPro */
+.font-sizmo {
+  @apply font-[var(--font-family-sizmo)];
+}
+
+.font-sizmo-light {
+  @apply font-[var(--font-family-sizmo)] font-light; /* 300 */
+}
+
+.font-sizmo-light-oblique {
+  @apply font-[var(--font-family-sizmo)] font-light italic; /* 300, italic */
+}
+
+.font-sizmo-regular {
+  @apply font-[var(--font-family-sizmo)] font-normal; /* 400 */
+}
+
+.font-sizmo-oblique {
+  @apply font-[var(--font-family-sizmo)] font-normal italic; /* 400, italic */
+}
+
+.font-sizmo-medium {
+  @apply font-[var(--font-family-sizmo)] font-medium; /* 500 */
+}
+
+.font-sizmo-medium-oblique {
+  @apply font-[var(--font-family-sizmo)] font-medium italic; /* 500, italic */
+}
+
+.font-sizmo-demibold {
+  @apply font-[var(--font-family-sizmo)] font-semibold; /* 600 */
+}
+
+.font-sizmo-demibold-oblique {
+  @apply font-[var(--font-family-sizmo)] font-semibold italic; /* 600, italic */
+}
+
+.font-sizmo-bold {
+  @apply font-[var(--font-family-sizmo)] font-bold; /* 800 */
+}
+
+.font-sizmo-bold-oblique {
+  @apply font-[var(--font-family-sizmo)] font-bold italic; /* 800, italic */
+}
 
 @theme inline {
   --color-background: var(--background);
@@ -115,7 +336,7 @@
 
 @layer base {
   * {
-    @apply border-border outline-ring/50;
+    @apply border-border outline-ring/50 remove-scrollbar;
   }
   body {
     @apply bg-background text-foreground;
@@ -132,9 +353,11 @@
   .form-title {
     @apply text-[34px] text-center md:text-left;
   }
+
   .form-submit-button {
     @apply h-[66px];
   }
+
   .error-message {
     @apply mx-auto w-fit rounded-xl px-8 py-4 text-center;
   }
