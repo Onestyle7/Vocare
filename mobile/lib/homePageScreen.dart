@@ -14,6 +14,26 @@ class HomePageScreen extends StatefulWidget {
 class _HomePageScreenState extends State<HomePageScreen> {
   final TextEditingController _recommendationController = TextEditingController();
 
+String buildRecommendationText(Map<String, dynamic> json) {
+  final recommendation = json['recommendation'];
+  if (recommendation == null) return "Brak danych";
+
+  final primaryPath = recommendation['primaryPath'] ?? "Nieznana ścieżka";
+  final justification = recommendation['justification'] ?? "Brak uzasadnienia";
+  final nextSteps = List<String>.from(recommendation['nextSteps'] ?? []);
+
+  return '''
+🎯 Ścieżka kariery: $primaryPath
+
+📌 Uzasadnienie:
+$justification
+
+🪜 Następne kroki:
+- ${nextSteps.join('\n- ')}
+''';
+}
+
+
   Future<void> fetchRecommendation() async {
     final prefs = await SharedPreferences.getInstance();
     final token = prefs.getString('accessToken') ?? '';
@@ -25,9 +45,14 @@ class _HomePageScreenState extends State<HomePageScreen> {
     });
 
     if (response.statusCode == 200) {
+      print(response.body);
       final data = jsonDecode(response.body);
+      print(response.body);
       setState(() {
-        _recommendationController.text = data['recommendations'] ?? 'Brak rekomendacji';
+        final resultText = buildRecommendationText(data);
+setState(() {
+  _recommendationController.text = resultText;
+});
       });
     } else {
       setState(() {
