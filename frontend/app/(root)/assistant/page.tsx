@@ -6,6 +6,8 @@ import { UserProfile } from "@/app/types/profile";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button"; 
 import { AiCareerResponse } from "@/lib/recommendations";
+import Link from "next/link";
+import { ArrowLeft } from "lucide-react";
 
 export default function AssistantPage() {
   const [profile, setProfile] = useState<UserProfile | null>(null);
@@ -94,6 +96,10 @@ export default function AssistantPage() {
 
   return (
     <div className="max-w-2xl mx-auto p-8">
+      <Link className="flex space-x-4 mb-4" href="/">
+          <ArrowLeft />
+          <span>Go back</span>
+      </Link>
       <h1 className="text-2xl font-bold mb-4">
         Rekomendacje dla {profile.firstName} {profile.lastName}
       </h1>

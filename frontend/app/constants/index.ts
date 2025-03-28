@@ -1,9 +1,3 @@
-export const NavLinks = [
-    { label: "Home", url: "/"},
-    { label: "Profile", url: "/profile"},
-    { label: "Assistant", url: "/assistant"},
-]
-
 // Countries
 
 export const countries = [
@@ -200,3 +194,17 @@ export const countries = [
     { value: "Zambia", label: "Zambia" },
     { value: "Zimbabwe", label: "Zimbabwe" },
   ];
+
+
+// NavLinks 
+
+export const NavLinks = [
+    { label: "Home", url: "/"},
+    { label: "Profile", url: "/profile"},
+    { label: "Assistant", url: "/assistant"},
+    { label: "Landing", url: "/landing-tweak"},
+]
+
+// Spiner
+
+export const Spinner = "/svg/spinner.svg"

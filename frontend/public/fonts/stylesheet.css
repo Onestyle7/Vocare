@@ -1,0 +1,180 @@
+@font-face {
+    font-family: 'FF Sizmo Pro';
+    src: url('SizmoPro-Demibold.eot');
+    src: local('FF Sizmo Pro DemiBold'), local('SizmoPro-Demibold'),
+        url('SizmoPro-Demibold.eot?#iefix') format('embedded-opentype'),
+        url('SizmoPro-Demibold.woff2') format('woff2'),
+        url('SizmoPro-Demibold.woff') format('woff'),
+        url('SizmoPro-Demibold.ttf') format('truetype');
+    font-weight: 600;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: 'FF Sizmo Pro Line';
+    src: url('SizmoLinePro.eot');
+    src: local('FF Sizmo Pro Line'), local('SizmoLinePro'),
+        url('SizmoLinePro.eot?#iefix') format('embedded-opentype'),
+        url('SizmoLinePro.woff2') format('woff2'),
+        url('SizmoLinePro.woff') format('woff'),
+        url('SizmoLinePro.ttf') format('truetype');
+    font-weight: normal;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: 'FF Sizmo Pro Medium Oblique';
+    src: url('SizmoPro-MediumOblique.eot');
+    src: local('FF Sizmo Pro Medium Oblique'), local('SizmoPro-MediumOblique'),
+        url('SizmoPro-MediumOblique.eot?#iefix') format('embedded-opentype'),
+        url('SizmoPro-MediumOblique.woff2') format('woff2'),
+        url('SizmoPro-MediumOblique.woff') format('woff'),
+        url('SizmoPro-MediumOblique.ttf') format('truetype');
+    font-weight: 500;
+    font-style: italic;
+}
+
+@font-face {
+    font-family: 'FF Sizmo Pro Line';
+    src: url('SizmoLinePro-Demibold.eot');
+    src: local('FF Sizmo Pro Line DemiBold'), local('SizmoLinePro-Demibold'),
+        url('SizmoLinePro-Demibold.eot?#iefix') format('embedded-opentype'),
+        url('SizmoLinePro-Demibold.woff2') format('woff2'),
+        url('SizmoLinePro-Demibold.woff') format('woff'),
+        url('SizmoLinePro-Demibold.ttf') format('truetype');
+    font-weight: 600;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: 'FF Sizmo Pro DemiBold Oblique';
+    src: url('SizmoPro-DemiboldOblique.eot');
+    src: local('FF Sizmo Pro DemiBold Oblique'), local('SizmoPro-DemiboldOblique'),
+        url('SizmoPro-DemiboldOblique.eot?#iefix') format('embedded-opentype'),
+        url('SizmoPro-DemiboldOblique.woff2') format('woff2'),
+        url('SizmoPro-DemiboldOblique.woff') format('woff'),
+        url('SizmoPro-DemiboldOblique.ttf') format('truetype');
+    font-weight: 600;
+    font-style: italic;
+}
+
+@font-face {
+    font-family: 'FF Sizmo Pro';
+    src: url('SizmoPro-Light.eot');
+    src: local('FF Sizmo Pro Light'), local('SizmoPro-Light'),
+        url('SizmoPro-Light.eot?#iefix') format('embedded-opentype'),
+        url('SizmoPro-Light.woff2') format('woff2'),
+        url('SizmoPro-Light.woff') format('woff'),
+        url('SizmoPro-Light.ttf') format('truetype');
+    font-weight: 300;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: 'FF Sizmo Pro';
+    src: url('SizmoPro-Medium.eot');
+    src: local('FF Sizmo Pro Medium'), local('SizmoPro-Medium'),
+        url('SizmoPro-Medium.eot?#iefix') format('embedded-opentype'),
+        url('SizmoPro-Medium.woff2') format('woff2'),
+        url('SizmoPro-Medium.woff') format('woff'),
+        url('SizmoPro-Medium.ttf') format('truetype');
+    font-weight: 500;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: 'FF Sizmo Pro Line';
+    src: url('SizmoLinePro-Light.eot');
+    src: local('FF Sizmo Pro Line Light'), local('SizmoLinePro-Light'),
+        url('SizmoLinePro-Light.eot?#iefix') format('embedded-opentype'),
+        url('SizmoLinePro-Light.woff2') format('woff2'),
+        url('SizmoLinePro-Light.woff') format('woff'),
+        url('SizmoLinePro-Light.ttf') format('truetype');
+    font-weight: 300;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: 'FF Sizmo Pro Line';
+    src: url('SizmoLinePro-Medium.eot');
+    src: local('FF Sizmo Pro Line Medium'), local('SizmoLinePro-Medium'),
+        url('SizmoLinePro-Medium.eot?#iefix') format('embedded-opentype'),
+        url('SizmoLinePro-Medium.woff2') format('woff2'),
+        url('SizmoLinePro-Medium.woff') format('woff'),
+        url('SizmoLinePro-Medium.ttf') format('truetype');
+    font-weight: 500;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: 'FF Sizmo Pro';
+    src: url('SizmoPro-Bold.eot');
+    src: local('FF Sizmo Pro Bold'), local('SizmoPro-Bold'),
+        url('SizmoPro-Bold.eot?#iefix') format('embedded-opentype'),
+        url('SizmoPro-Bold.woff2') format('woff2'),
+        url('SizmoPro-Bold.woff') format('woff'),
+        url('SizmoPro-Bold.ttf') format('truetype');
+    font-weight: bold;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: 'FF Sizmo Pro Line';
+    src: url('SizmoLinePro-Bold.eot');
+    src: local('FF Sizmo Pro Line Bold'), local('SizmoLinePro-Bold'),
+        url('SizmoLinePro-Bold.eot?#iefix') format('embedded-opentype'),
+        url('SizmoLinePro-Bold.woff2') format('woff2'),
+        url('SizmoLinePro-Bold.woff') format('woff'),
+        url('SizmoLinePro-Bold.ttf') format('truetype');
+    font-weight: bold;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: 'FF Sizmo Pro Bold Oblique';
+    src: url('SizmoPro-BoldOblique.eot');
+    src: local('FF Sizmo Pro Bold Oblique'), local('SizmoPro-BoldOblique'),
+        url('SizmoPro-BoldOblique.eot?#iefix') format('embedded-opentype'),
+        url('SizmoPro-BoldOblique.woff2') format('woff2'),
+        url('SizmoPro-BoldOblique.woff') format('woff'),
+        url('SizmoPro-BoldOblique.ttf') format('truetype');
+    font-weight: bold;
+    font-style: italic;
+}
+
+@font-face {
+    font-family: 'FF Sizmo Pro Light Oblique';
+    src: url('SizmoPro-LightOblique.eot');
+    src: local('FF Sizmo Pro Light Oblique'), local('SizmoPro-LightOblique'),
+        url('SizmoPro-LightOblique.eot?#iefix') format('embedded-opentype'),
+        url('SizmoPro-LightOblique.woff2') format('woff2'),
+        url('SizmoPro-LightOblique.woff') format('woff'),
+        url('SizmoPro-LightOblique.ttf') format('truetype');
+    font-weight: 300;
+    font-style: italic;
+}
+
+@font-face {
+    font-family: 'FF Sizmo Pro Oblique';
+    src: url('SizmoPro-Oblique.eot');
+    src: local('FF Sizmo Pro Oblique'), local('SizmoPro-Oblique'),
+        url('SizmoPro-Oblique.eot?#iefix') format('embedded-opentype'),
+        url('SizmoPro-Oblique.woff2') format('woff2'),
+        url('SizmoPro-Oblique.woff') format('woff'),
+        url('SizmoPro-Oblique.ttf') format('truetype');
+    font-weight: normal;
+    font-style: italic;
+}
+
+@font-face {
+    font-family: 'FF Sizmo Pro';
+    src: url('SizmoPro.eot');
+    src: local('FF Sizmo Pro'), local('SizmoPro'),
+        url('SizmoPro.eot?#iefix') format('embedded-opentype'),
+        url('SizmoPro.woff2') format('woff2'),
+        url('SizmoPro.woff') format('woff'),
+        url('SizmoPro.ttf') format('truetype');
+    font-weight: normal;
+    font-style: normal;
+}
+
