@@ -1,5 +1,7 @@
 using System.Text.Json;
+using AutoMapper;
 using Microsoft.Extensions.Options;
+using VocareWebAPI.Models;
 using VocareWebAPI.Models.Config;
 using VocareWebAPI.Models.Dtos;
 using VocareWebAPI.Models.Entities;
@@ -12,16 +14,22 @@ namespace VocareWebAPI.Services
         private readonly HttpClient _httpClient;
         private readonly AiConfig _config;
         private readonly IUserProfileRepository _userProfileRepository;
+        private readonly IAiRecommendationRepository _recommendationRepository;
+        private readonly IMapper _mapper;
 
         public PerplexityAiService(
             IOptions<AiConfig> config,
             HttpClient httpClient,
-            IUserProfileRepository userProfileRepository
+            IUserProfileRepository userProfileRepository,
+            IAiRecommendationRepository recommendationRepository,
+            IMapper mapper
         )
         {
             _config = config.Value;
             _httpClient = httpClient;
             _userProfileRepository = userProfileRepository;
+            _recommendationRepository = recommendationRepository;
+            _mapper = mapper;
 
             _httpClient.DefaultRequestHeaders.Add("Authorization", $"Bearer {_config.ApiKey}");
             _httpClient.DefaultRequestHeaders.Add("Accept", "application/json");
@@ -110,55 +118,42 @@ namespace VocareWebAPI.Services
             try
             {
                 Console.WriteLine($"Próba zapisu dla użytkownika: {userId}");
-                var userProfile = await _userProfileRepository.GetUserProfileByIdAsync(userId);
 
-                if (userProfile == null)
-                {
-                    Console.WriteLine("Profil użytkownika nie istnieje!");
-                    return;
-                }
+                // Stara logika (do usunięcia):
+                // var userProfile = await _userProfileRepository.GetUserProfileByIdAsync(userId);
+                // userProfile.LastRecommendationJson = JsonSerializer.Serialize(recommendation);
 
-                // Logowanie danych przed zapisem
-                Console.WriteLine($"JSON do zapisu: {JsonSerializer.Serialize(recommendation)}");
+                // Nowa logika z AiRecommendation:
+                var recommendationEntity = _mapper.Map<AiRecommendation>(recommendation);
+                recommendationEntity.UserId = userId;
+                recommendationEntity.RecommendationDate = DateTime.UtcNow;
 
-                userProfile.LastRecommendationJson = JsonSerializer.Serialize(recommendation);
-                userProfile.LastRecommendationDate = DateTime.UtcNow;
-                userProfile.RecommendedCareerPath =
-                    recommendation.Recommendation?.PrimaryPath ?? "Brak ścieżki";
-
-                await _userProfileRepository.UpdateUserProfileAsync(userProfile);
+                await _recommendationRepository.AddRecommendationAsync(recommendationEntity);
                 Console.WriteLine("Zapisano pomyślnie!");
             }
             catch (Exception ex)
             {
                 Console.WriteLine($"BŁĄD ZAPISU: {ex.Message}");
+                throw;
             }
         }
 
         public async Task<AiCareerResponseDto> GetLastRecommendationAsync(string userId)
         {
-            var userProfile = await _userProfileRepository.GetUserProfileByIdAsync(userId);
+            var recommendation = await _recommendationRepository.GetLatestByUserIdAsync(userId);
 
-            if (userProfile != null && !string.IsNullOrEmpty(userProfile.LastRecommendationJson))
+            if (recommendation == null)
+                return null;
+
+            var dto = _mapper.Map<AiCareerResponseDto>(recommendation);
+            dto.Recommendation = new FinalRecommendationDto
             {
-                try
-                {
-                    var recommendation = JsonSerializer.Deserialize<AiCareerResponseDto>(
-                        userProfile.LastRecommendationJson,
-                        new JsonSerializerOptions { PropertyNameCaseInsensitive = true }
-                    );
-
-                    InitializeNullProperties(recommendation);
-                    return recommendation;
-                }
-                catch (JsonException ex)
-                {
-                    throw new AiServiceException("Błąd odczytu zapisanej rekomendacji", ex);
-                }
-            }
-
-            // Dodaj zwracanie null lub odpowiedni obiekt w przypadku braku danych
-            return null; // lub throw new Exception("Brak historii rekomendacji");
+                PrimaryPath = recommendation.PrimaryPath,
+                Justification = recommendation.Justification,
+                LongTermGoal = recommendation.LongTermGoal,
+                NextSteps = recommendation.NextSteps.Select(ns => ns.Step).ToList(),
+            };
+            return dto;
         }
 
         // Inicjalizacja null-owych właściwości, aby uniknąć NullReferenceException

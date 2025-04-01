@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
+using VocareWebAPI.Models;
 using VocareWebAPI.Models.Entities;
 
 namespace VocareWebAPI.Data
@@ -10,6 +11,7 @@ namespace VocareWebAPI.Data
             : base(options) { }
 
         public DbSet<UserProfile> UserProfiles { get; set; }
+        public DbSet<AiRecommendation> AiRecommendations { get; set; }
 
         protected override void OnModelCreating(ModelBuilder builder)
         {

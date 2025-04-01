@@ -20,7 +20,7 @@ namespace VocareWebAPI.Models
         [ForeignKey("UserId")] // Relacaj 1;1
         public UserProfile UserProfile { get; set; }
         public DateTime RecommendationDate { get; set; }
-        public string PrimatyPath { get; set; }
+        public string PrimaryPath { get; set; }
         public string Justification { get; set; }
         public string LongTermGoal { get; set; }
         public List<CareerPath> CareerPaths { get; set; } = new();
