@@ -6,6 +6,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using VocareWebAPI.Models.Dtos;
 using VocareWebAPI.Models.Entities;
+using VocareWebAPI.Models.Entities.MarketAnalysis;
 
 namespace VocareWebAPI.Models
 {
@@ -25,5 +26,7 @@ namespace VocareWebAPI.Models
         public string LongTermGoal { get; set; }
         public List<CareerPath> CareerPaths { get; set; } = new();
         public List<NextStep> NextSteps { get; set; } = new();
+
+        public List<MarketTrends> InfluencingTrends { get; set; } = new();
     }
 }
