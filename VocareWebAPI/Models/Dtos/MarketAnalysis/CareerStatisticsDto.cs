@@ -1,20 +1,16 @@
 using System;
 using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace VocareWebAPI.Models.Entities.MarketAnalysis
+namespace VocareWebAPI.Models.Dtos.MarketAnalysis
 {
-    public class CareerStatistics
+    public class CareerStatisticsDto
     {
-        [Key]
-        public Guid Id { get; set; }
         public string CareerName { get; set; }
         public decimal AverageSalary { get; set; }
         public int EmploymentRate { get; set; }
         public string GrowthForecast { get; set; }
         public DateTime LastUpdated { get; set; }
-        public Guid AiRecommendationId { get; set; } // Klucz obcy do AiRecommendation
     }
 }

@@ -15,5 +15,6 @@ namespace VocareWebAPI.Models.Entities.MarketAnalysis
         public string Impact { get; set; }
         public DateTime StartDate { get; set; }
         public DateTime? EndDate { get; set; }
+        public Guid AiRecommendationId { get; set; } // Klucz obcy do AiRecommendation
     }
 }

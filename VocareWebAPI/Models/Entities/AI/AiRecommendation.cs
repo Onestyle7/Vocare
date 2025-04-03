@@ -28,5 +28,8 @@ namespace VocareWebAPI.Models
         public List<NextStep> NextSteps { get; set; } = new();
 
         public List<MarketTrends> InfluencingTrends { get; set; } = new();
+        public List<CareerStatistics> CareerStatistics { get; set; } = new();
+        public List<SkillDemand> SkillDemands { get; set; } = new();
+        public List<MarketTrends> MarketTrends { get; set; } = new();
     }
 }
