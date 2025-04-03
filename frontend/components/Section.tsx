@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import SectionSvg from "@/public/svg/SectionSvg";
 
 const Section = ({
@@ -21,8 +22,8 @@ const Section = ({
     >
       {children}
 
-      <div className="hidden absolute top-0 left-5 w-[0.5px] h-full bg-stroke-1 pointer-events-none lg:block lg:left-7.5 xl:left-10 bg-gray-300 dark:bg-gray-700" />
-      <div className="hidden absolute top-0 right-5 w-[0.5px] h-full bg-stroke-1 pointer-events-none lg:block lg:right-7.5 xl:right-10 bg-gray-300 dark:bg-gray-700" />
+      <div className="hidden absolute top-0 left-5 w-[0.5px] h-screen bg-stroke-1 pointer-events-none lg:block lg:left-7.5 xl:left-10 bg-gray-300 dark:bg-gray-700" />
+      <div className="hidden absolute top-0 right-5 w-[0.5px] h-screen bg-stroke-1 pointer-events-none lg:block lg:right-7.5 xl:right-10 bg-gray-300 dark:bg-gray-700" />
 
       {crosses && (
         <>

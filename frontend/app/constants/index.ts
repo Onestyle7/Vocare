@@ -208,3 +208,20 @@ export const NavLinks = [
 // Spiner
 
 export const Spinner = "/svg/spinner.svg"
+
+// Hero section
+
+export const plus = "/images/plus.png"
+
+// Feature section
+
+// grid
+
+
+export const gridTiles = [
+  { name: "Item1", subtext: "Sub1"},
+  { name: "Item2", subtext: "Sub2"},
+  { name: "Item3", subtext: "Sub3"},
+  { name: "Item4", subtext: "Sub4"},
+]
+

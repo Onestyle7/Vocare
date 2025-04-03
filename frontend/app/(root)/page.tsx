@@ -13,7 +13,7 @@ export default function Home() {
 
   const handleLogout = () => {
     logoutUser();
-    router.push("/sign-in"); // przekierowanie po wylogowaniu
+    router.push("/sign-in"); 
   };
 
   return (
