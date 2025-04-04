@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 using VocareWebAPI.Data;
@@ -12,9 +13,11 @@ using VocareWebAPI.Data;
 namespace VocareWebAPI.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250403184456_AddMarketAnalysisEntitiesAndDtos2")]
+    partial class AddMarketAnalysisEntitiesAndDtos2
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -247,10 +250,7 @@ namespace VocareWebAPI.Migrations
                     b.Property<Guid>("AiRecommendationId")
                         .HasColumnType("uuid");
 
-                    b.Property<decimal>("AverageSalaryMax")
-                        .HasColumnType("numeric");
-
-                    b.Property<decimal>("AverageSalaryMin")
+                    b.Property<decimal>("AverageSalary")
                         .HasColumnType("numeric");
 
                     b.Property<string>("CareerName")
@@ -322,9 +322,8 @@ namespace VocareWebAPI.Migrations
                     b.Property<Guid>("AiRecommendationId")
                         .HasColumnType("uuid");
 
-                    b.Property<string>("DemandLevel")
-                        .IsRequired()
-                        .HasColumnType("text");
+                    b.Property<int>("DemandLevel")
+                        .HasColumnType("integer");
 
                     b.Property<string>("Industry")
                         .IsRequired()
