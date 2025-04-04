@@ -200,7 +200,7 @@ namespace VocareWebAPI.Services.Implementations
                         Id = Guid.NewGuid(),
                         SkillName = skill.Skill,
                         Industry = skill.Industry,
-                        DemandLevel = int.Parse(skill.DemandLevel),
+                        DemandLevel = skill.DemandLevel,
                         LastUpdated = DateTime.UtcNow,
                         AiRecommendationId = aiRecommendationId,
                     };
@@ -254,7 +254,7 @@ namespace VocareWebAPI.Services.Implementations
         private string BuildPrompt(AiRecommendation recommendation)
         {
             return $$"""
-                Jesteś ekspertem ds. analizy rynku pracy. Na podstawie poniższych danych z rekomendacji zawodowych użytkownika:
+                Jesteś ekspertem ds. analizy rynku pracy. Upewnij się, że działasz wyłącznie na danych z 2024 i 2025 roku. Na podstawie poniższych danych z rekomendacji zawodowych użytkownika:
 
                 Rekomendowane ścieżki kariery:
                 {{string.Join(", ", recommendation.CareerPaths.Select(cp => cp.CareerName))}}
@@ -269,7 +269,7 @@ namespace VocareWebAPI.Services.Implementations
                 {{string.Join(", ", recommendation.NextSteps.Select(ns => ns.Step))}}
 
                 Lokalizacja użytkownika:
-                {{recommendation.UserProfile.Country}}, {{recommendation.UserProfile.Address}}
+                {{recommendation.UserProfile.Country}}, {{recommendation.UserProfile.Address}} Dopilnuj, żeby język odpowiedzi był zgodny z {{recommendation.UserProfile.Country}}.
 
                 Wygeneruj wyłącznie obiekt JSON z analizą rynku w języku {{recommendation.UserProfile.Country}}, który pomoże użytkownikowi zrozumieć aktualne trendy i zapotrzebowanie na rynku pracy w kontekście jego rekomendowanych ścieżek kariery. Struktura JSON musi być następująca:
 
@@ -287,7 +287,7 @@ namespace VocareWebAPI.Services.Implementations
                     "skillDemand": [
                       {
                         "skill": "Nazwa umiejętności",
-                        "demandLevel": "Poziom zapotrzebowania (1-10)",
+                        "demandLevel": "Poziom zapotrzebowania (niski/średni/wysoki/bardzo wysoki)",
                         "industry": "Branża"
                       }
                       // Dodaj zapotrzebowanie dla co najmniej 5 umiejętności związanych z rekomendowanymi ścieżkami

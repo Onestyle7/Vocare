@@ -255,6 +255,7 @@ namespace VocareWebAPI.Services
                 3. Każda ścieżka kariery musi zawierać pełną analizę SWOT we wskazanej strukturze.
                 4. W polu "recommendation" musi być uzasadnienie i długoterminowy cel.
                 5. Zwróć tylko czysty JSON bez dodatkowych objaśnień czy komentarzy.
+                6. Upewnij się że działasz wyłącznie na najnowszy danych z 2024 i 2025 roku.
                 """;
         }
 
