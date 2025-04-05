@@ -4,7 +4,7 @@ import React from 'react'
 import About from '../aboutVocare/page'
 import WhyUs from '@/components/WhyUs'
 import About2 from '@/components/About2'
-import Brain from '@/components/Brain'
+import MobileFeature from '@/components/Brain'
 
 const page = () => {
   return (
@@ -13,7 +13,7 @@ const page = () => {
       <HeroTweak />
       <About />
       <About2 />
-      <Brain />
+      <MobileFeature />
       {/* <WhyUs /> */}
     </main>
   )

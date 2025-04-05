@@ -48,6 +48,10 @@ const About = () => {
       "-=0.5"
     );
 
+    tl.to(cards[2], { y: -40, duration: 1 }, 1.5);
+    tl.to(cards[1], { y: -80, duration: 1 }, 1.75);
+    tl.to(cards[0], { y: -80, duration: 1 }, 1.9);
+
     tl.to(cards[2], { y: 0, duration: 1 }, 1.5);
     tl.to(cards[1], { y: -20, duration: 1 }, 1.75);
     tl.to(cards[0], { y: -20, duration: 1 }, 1.9);

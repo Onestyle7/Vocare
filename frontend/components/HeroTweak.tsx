@@ -79,6 +79,7 @@ const HeroTweak = () => {
       </div>
         <div className="flex items-center justify-center relative flex-col px-[40px] mt-14 w-full">
           <div className="flex items-center justify-center h-full flex-col mb-2">
+          <h3 className='text-sm uppercase md:text-[10px] mb-8'>Meet Us</h3>
             <h2 className="xl:text-[158px] lg:text-[138px] md:text-[108px] sm:text-[78px] text-5xl font-bold">
               OUR VISION</h2>
             <div className="flex lg:flex-row items-center justify-between w-full text-xl uppercase xl:px-3 lg:px-2 md:px-1 sm:px-1">
