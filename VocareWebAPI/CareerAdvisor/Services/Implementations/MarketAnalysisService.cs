@@ -95,40 +95,29 @@ namespace VocareWebAPI.Services.Implementations
 
                 MarketAnalysisResponseDto result = null;
 
-                // Szukamy bloku Json
-
-                if (rawContent.Contains("```json") && rawContent.Contains("```"))
+                // Szukamy bloku JSON używając wyrażeń regularnych
+                var jsonMatch = System.Text.RegularExpressions.Regex.Match(
+                    rawContent,
+                    @"```json\s*([\s\S]*?)\s*```"
+                );
+                if (jsonMatch.Success)
                 {
-                    var jsonStart = rawContent.IndexOf("```json") + "```json".Length;
-                    var jsonEnd = rawContent.LastIndexOf("```");
-                    if (jsonStart >= "```json".Length && jsonEnd > jsonStart)
+                    var cleanJson = jsonMatch.Groups[1].Value.Trim();
+                    try
                     {
-                        var cleanJson = rawContent.Substring(jsonStart, jsonEnd - jsonStart).Trim();
-                        // Usuń dodatkowe białe znaki lub linie
-                        cleanJson = cleanJson.TrimStart('\n').TrimEnd('\n');
-                        try
-                        {
-                            result = JsonSerializer.Deserialize<MarketAnalysisResponseDto>(
-                                cleanJson,
-                                new JsonSerializerOptions { PropertyNameCaseInsensitive = true }
-                            );
-                        }
-                        catch (JsonException ex)
-                        {
-                            _logger.LogError(
-                                "Failed to parse JSON block: {cleanJson}. Error: {ex}",
-                                cleanJson,
-                                ex
-                            );
-                            throw; // Opcjonalnie: zgłoś błąd dalej
-                        }
+                        result = JsonSerializer.Deserialize<MarketAnalysisResponseDto>(
+                            cleanJson,
+                            new JsonSerializerOptions { PropertyNameCaseInsensitive = true }
+                        );
                     }
-                    else
+                    catch (JsonException ex)
                     {
                         _logger.LogError(
-                            "Invalid JSON block boundaries in raw content: {rawContent}",
-                            rawContent
+                            "Failed to parse JSON block: {cleanJson}. Error: {ex}",
+                            cleanJson,
+                            ex
                         );
+                        throw; // Opcjonalnie: zgłoś błąd dalej
                     }
                 }
                 else
@@ -137,10 +126,8 @@ namespace VocareWebAPI.Services.Implementations
                         "No JSON block found in raw content: {rawContent}",
                         rawContent
                     );
-                }
 
-                if (result == null)
-                {
+                    // Próba deserializacji całej odpowiedzi jako JSON
                     try
                     {
                         result = JsonSerializer.Deserialize<MarketAnalysisResponseDto>(
@@ -158,6 +145,7 @@ namespace VocareWebAPI.Services.Implementations
                         throw new Exception("Failed to parse the response content as JSON.", ex);
                     }
                 }
+
                 // Inicjalizujemy null properties
                 InitializeNullProperties(result);
 
@@ -179,20 +167,47 @@ namespace VocareWebAPI.Services.Implementations
             {
                 foreach (var industryStat in analysis.MarketAnalysis.IndustryStatistics)
                 {
-                    var salaryRange = industryStat.AverageSalary.Replace(" PLN", "").Split('-');
+                    // Usuwamy spacje i wartość PLN, zastępujemy przecinki kropkami
+                    var salaryText = industryStat
+                        .AverageSalary.Replace(" PLN", "")
+                        .Replace(",", "");
+
+                    var salaryRange = salaryText.Split('-');
+                    decimal minSalary = 0;
+                    decimal maxSalary = 0;
+
+                    // Sprawdzamy czy mamy zakres czy pojedynczą wartość
+                    if (salaryRange.Length == 2)
+                    {
+                        decimal.TryParse(salaryRange[0], out minSalary);
+                        decimal.TryParse(salaryRange[1], out maxSalary);
+                    }
+                    else if (salaryRange.Length == 1)
+                    {
+                        decimal.TryParse(salaryRange[0], out minSalary);
+                        maxSalary = minSalary;
+                    }
+
+                    // Usuwamy znak % z wartości
+                    var employmentRateText = industryStat.EmploymentRate.Replace("%", "");
+                    int employmentRate = 0;
+                    int.TryParse(employmentRateText, out employmentRate);
+
                     var careerStat = new CareerStatistics
                     {
                         Id = Guid.NewGuid(),
                         CareerName = industryStat.Industry,
-                        AverageSalaryMin = decimal.Parse(salaryRange[0]),
-                        AverageSalaryMax = decimal.Parse(salaryRange[1]),
-                        EmploymentRate = int.Parse(industryStat.EmploymentRate.Replace("%", "")),
+                        AverageSalaryMin = minSalary,
+                        AverageSalaryMax = maxSalary,
+                        EmploymentRate = employmentRate,
                         GrowthForecast = industryStat.GrowthForecast,
                         LastUpdated = DateTime.UtcNow,
                         AiRecommendationId = aiRecommendationId,
                     };
                     await _careerStatisticsRepository.AddAsync(careerStat);
                 }
+
+                // Pozostały kod pozostaje bez zmian
                 foreach (var skill in analysis.MarketAnalysis.SkillDemand)
                 {
                     var skillDemand = new SkillDemand
@@ -206,6 +221,7 @@ namespace VocareWebAPI.Services.Implementations
                     };
                     await _skillDemandRepository.AddAsync(skillDemand);
                 }
+
                 foreach (var trend in analysis.MarketAnalysis.MarketTrends)
                 {
                     var marketTrend = new MarketTrends
@@ -218,12 +234,12 @@ namespace VocareWebAPI.Services.Implementations
                         EndDate = null,
                         AiRecommendationId = aiRecommendationId,
                     };
-
                     await _marketTrendsRepository.AddAsync(marketTrend);
                 }
             }
             catch (Exception ex)
             {
+                _logger.LogError("Error while saving market analysis: {error}", ex.Message);
                 throw new Exception("Error while saving market analysis to the database.", ex);
             }
         }
