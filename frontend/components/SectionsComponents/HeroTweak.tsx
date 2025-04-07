@@ -2,12 +2,12 @@
 
 import { useEffect, useState } from "react";
 import { lazy, Suspense } from "react";
-import Section from "./Section";
+import Section from "../Section";
 import Image from "next/image";
 import { Spinner } from "@/app/constants";
-import { SpinningText } from "./magicui/spinning-text";
-import CustomCursor from "./CustomCursor";
-import CustomButton from "./ui/CustomButton";
+import { SpinningText } from "../magicui/spinning-text";
+import CustomCursor from "../CustomCursor";
+import CustomButton from "../ui/CustomButton";
 import { ArrowRight } from "lucide-react";
 
 const LazySpline = lazy(() => import("@splinetool/react-spline"));

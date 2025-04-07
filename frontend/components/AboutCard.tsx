@@ -1,21 +1,29 @@
-import { plus } from '@/app/constants'
 import Image from 'next/image'
 import React from 'react'
 
-const AboutCard = ({ img, title, description } : { img: string, title: string, description: string }) => {
+const AboutCard = ({ img, title, description }: { img: string, title: string, description: string }) => {
+  const titleParts = title.split(' ')
+
   return (
-    <div className='border border-gray-800 dark:border-gray-700 dark:bg-[#0e0f11] bg-[#e9e0ef]  rounded-xl flex flex-col xl:w-[320px] min-lg:w-[280px] w-full lg:h-[400px] h-full px-6 py-6'>
-        <div className='flex w-full lg:h-1/2 items-start justify-start mb-10'>
-            <Image src={img} alt='icon' width={90} height={90} />
-        </div>
-        <div className='flex flex-col w-full h-1/2 items-start justify-between'>
-        <div className='flex w-full items-center justify-start text-4xl font-medium'>
-            {title}
+    <div className='border border-gray-800 dark:border-gray-700 dark:bg-[#0e0f11] bg-[#e9e0ef] rounded-xl flex flex-col xl:w-[320px] min-lg:w-[280px] w-full lg:h-[400px] h-full px-6 py-6'>
+      <div className='flex w-full lg:h-1/2 items-start justify-start mb-10'>
+        <Image src={img} alt='icon' width={90} height={90} className='hover:rotate-45 transition'/>
+      </div>
+      <div className='flex flex-col w-full h-1/2 items-start justify-between'>
+        <div className='flex w-full items-start justify-start text-4xl font-medium flex-col mb-4'>
+          {titleParts.length === 2 ? (
+            <>
+              <span className='flex'>{titleParts[0]} </span>
+              <span className='dark:bg-[#915EFF] bg-[#bda7ef] p-[0.5px] rounded-[4px]'>{titleParts[1]}</span>
+            </>
+          ) : (
+            title
+          )}
         </div>
         <div className='flex w-full items-center justify-start'>
-            {description}
+          {description}
         </div>
-        </div>
+      </div>
     </div>
   )
 }

@@ -6,15 +6,12 @@ import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { plus } from '@/app/constants';
 import AboutCard from '@/components/AboutCard';
 import Section from '@/components/Section';
-import { TextAnimate } from '@/components/magicui/text-animate';
 
 gsap.registerPlugin(ScrollTrigger);
 
-const About = () => {
+const AboutCards = () => {
   const containerRef = useRef<HTMLDivElement | null>(null);
-  const titleRef = useRef<HTMLHeadingElement | null>(null); // Dodajemy ref dla h3
 
-  // Animacja kart (pozostaje bez zmian)
   useEffect(() => {
     if (!window.matchMedia('(min-width: 1280px)').matches) return;
     if (!containerRef.current) return;
@@ -25,7 +22,7 @@ const About = () => {
       scrollTrigger: {
         trigger: containerRef.current,
         start: 'top center',
-        end: '+=500 center',
+        end: '+=400 center',
         scrub: true,
       },
     });
@@ -33,53 +30,41 @@ const About = () => {
     tl.fromTo(
       cards[2],
       { autoAlpha: 0, y: 100, rotation: 0 },
-      { autoAlpha: 1, y: 0, rotation: -5, duration: 1 }
+      { autoAlpha: 1, y: 0, rotation: 5, duration: 1 }
     );
     tl.fromTo(
       cards[1],
       { autoAlpha: 0, y: 100, rotation: 0 },
       { autoAlpha: 1, y: 0, rotation: -10, duration: 1 },
-      "-=0.5"
+      "+=0.3"
     );
     tl.fromTo(
       cards[0],
       { autoAlpha: 0, y: 100, rotation: 0 },
-      { autoAlpha: 1, y: 0, rotation: -3, duration: 1 },
-      "-=0.5"
+      { autoAlpha: 1, y: 0, rotation: 3, duration: 1 },
     );
 
-    tl.to(cards[2], { y: -40, duration: 1 }, 1.5);
-    tl.to(cards[1], { y: -80, duration: 1 }, 1.75);
-    tl.to(cards[0], { y: -80, duration: 1 }, 1.9);
+    tl.to(cards[2], { y: -30, duration: 1 }, 1.5);
+    tl.to(cards[1], { y: 0, duration: 1 }, 1.75);
+    tl.to(cards[0], { y: 0, duration: 1 }, 1.9);
+
+    tl.to(cards[2], { y: 30, duration: 1 }, 1.5);
+    tl.to(cards[1], { y: -20, duration: 1 }, 1.75);
+    tl.to(cards[0], { y: -40, duration: 1 }, 1.9);
 
     tl.to(cards[2], { y: 0, duration: 1 }, 1.5);
-    tl.to(cards[1], { y: -20, duration: 1 }, 1.75);
-    tl.to(cards[0], { y: -20, duration: 1 }, 1.9);
+    tl.to(cards[1], { y: 0, duration: 1 }, 1.75);
+    tl.to(cards[0], { y: 0, duration: 1 }, 1.9);
+
+    tl.to(cards[2], { y: -30, duration: 1 }, 1.5);
+    tl.to(cards[1], { y: 20, duration: 1 }, 1.75);
+    tl.to(cards[0], { y: 40, duration: 1 }, 1.9);
 
     tl.to(cards[2], { y: -660, rotation: 0, duration: 2 }, 3.0);
     tl.to(cards[1], { y: -640, rotation: 0, duration: 2 }, 3.25);
     tl.to(cards[0], { y: -620, rotation: 0, duration: 2 }, 3.5);
   }, []);
 
-  // Nowa animacja dla h3
-  useEffect(() => {
-    if (!titleRef.current) return;
-
-    gsap.fromTo(
-      titleRef.current,
-      { opacity: 0 }, // Początkowy stan
-      {
-        opacity: 1, // Końcowy stan
-        duration: 1,
-        scrollTrigger: {
-          trigger: titleRef.current,
-          start: 'bottom 80%', // Zaczyna się, gdy góra h3 jest w 80% wysokości viewportu
-          end: 'top 20%',   // Kończy się, gdy góra h3 jest w 20% wysokości viewportu
-          scrub: true,      // Płynne przejście zsynchronizowane ze scrollem
-        },
-      }
-    );
-  }, []);
 
   return (
     <Section
@@ -125,4 +110,4 @@ const About = () => {
   );
 };
 
-export default About;
+export default AboutCards;

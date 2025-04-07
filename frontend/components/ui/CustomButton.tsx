@@ -10,10 +10,10 @@ interface CustomButtonProps {
 }
 
 const variantStyles: Record<string, string> = {
-  primary: 'bg-blue-600 text-white hover:bg-blue-700 shadow-[0_2px_4px_rgba(59,130,246,0.5)]',
+  primary: 'bg-[#915EFF] text-white hover:bg-[#713ae8] shadow-[0_2px_4px_rgba(145,94,255,0.5)]',
   secondary: 'bg-gray-200 text-gray-800 hover:bg-gray-300',
   destructive: 'bg-red-600 text-white hover:bg-red-700',
-  outline: 'border border-gray-300 text-gray-700 hover:bg-gray-100',
+  outline: 'border border-[#915EFF] dark:text-white hover:hover:bg-[#713ae8] shadow-[0_2px_4px_rgba(145,94,255,0.5)] text-black',
 };
 
 const CustomButton: React.FC<CustomButtonProps> = ({

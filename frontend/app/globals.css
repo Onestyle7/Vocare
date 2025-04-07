@@ -6,6 +6,8 @@
 @custom-variant dark (&:is(.dark *));
 
 @import "tailwindcss";
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap');
+
 
 @utility remove-scrollbar {
   &::-webkit-scrollbar {
@@ -224,6 +226,10 @@
   @apply font-[var(--font-family-sizmo)] font-bold italic; /* 800, italic */
 }
 
+.font-poppins {
+  font-family: 'Poppins', sans-serif;
+}
+
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
@@ -282,7 +288,7 @@
 :root {
   --radius: 0.625rem;
   --background: #F3F3F3;
-  --foreground: oklch(0.145 0 0);
+  --foreground: #101014;
   --card: oklch(1 0 0);
   --card-foreground: oklch(0.145 0 0);
   --popover: oklch(1 0 0);
@@ -326,7 +332,7 @@
 
 .dark {
   --background: #101014;
-  --foreground: oklch(0.985 0 0);
+  --foreground: #F3F3F3;
   --card: oklch(0.205 0 0);
   --card-foreground: oklch(0.985 0 0);
   --popover: oklch(0.205 0 0);
@@ -403,6 +409,10 @@
     clip-path: polygon(0 0, 100% 0, 100% 100%, 0 100%);
   }
 
+  .feature-text {
+    @apply text-red-500
+  }
+
 }
 
 @layer base {
@@ -410,6 +420,6 @@
     @apply border-border outline-ring/50;
   }
   body {
-    @apply bg-background text-foreground;
+    @apply bg-background text-foreground cursor-none;
   }
 }

@@ -225,3 +225,49 @@ export const gridTiles = [
   { name: "Item4", subtext: "Sub4"},
 ]
 
+export const avatars = [
+  {
+    imageUrl: "https://avatars.githubusercontent.com/u/16860528",
+    profileUrl: "https://github.com/dillionverma",
+  },
+  {
+    imageUrl: "https://avatars.githubusercontent.com/u/20110627",
+    profileUrl: "https://github.com/tomonarifeehan",
+  },
+  {
+    imageUrl: "https://avatars.githubusercontent.com/u/106103625",
+    profileUrl: "https://github.com/BankkRoll",
+  },
+  {
+    imageUrl: "https://avatars.githubusercontent.com/u/59228569",
+    profileUrl: "https://github.com/safethecode",
+  },
+];
+
+export const mobileView = "/images/mobileView.jpeg"
+
+// footer
+
+export const links_social = [
+  { name: "X(TWITTER)", url: "/"},
+  { name: "INSTAGRAM", url: "/"},
+  { name: "BLUESKY", url: "/"},
+  { name: "LINKEDIN", url: "/"},
+]
+
+export const links_pages = [
+  { name: "HOME", url: "/"},
+  { name: "COLLECTION", url: "/"},
+  { name: "FAQ", url: "/"},
+  { name: "PRICING", url: "/"},
+]
+
+export const contact_pages = [
+  { name: "REACH US", url: "/"},
+]
+
+export const down_links = [
+  { name: "2025©", url: "/"},
+  { name: "PERMISSIONS & TERMS", url: "/"},
+  { name: "PRIVACY POLICY", url: "/"},
+]

@@ -297,7 +297,7 @@ const defaultItemAnimationVariants: Record<
   },
 };
 
-export function TextAnimate({
+export function TextAnimateLight({
   children,
   delay = 0,
   duration = 0.3,
@@ -383,7 +383,7 @@ export function TextAnimate({
         whileInView={startOnView ? "show" : undefined}
         animate={startOnView ? undefined : "show"}
         exit="exit"
-        className={cn("whitespace-pre-wrap", className)}
+        className={cn("whitespace-pre-wrap text-[#101014]", className)}
         viewport={{ once }}
         {...props}
       >
