@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:vocare/screens/fill_profile_screen.dart';
 import 'package:vocare/services/ai_api.dart';
+import 'package:vocare/widgets/nav_bar_button.dart';
+import 'package:vocare/widgets/theme_toggle_button.dart';
 
 class HomePageScreen extends StatefulWidget {
   const HomePageScreen({super.key});
@@ -22,14 +24,41 @@ class _HomePageScreenState extends State<HomePageScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text("Strona główna"),
+    appBar: AppBar(
+  automaticallyImplyLeading: false, // usuwa strzałkę "wstecz"
+  title: null, // brak tekstu
+  centerTitle: true,
+  toolbarHeight: 60,
+  backgroundColor: Theme.of(context).appBarTheme.backgroundColor,
+  flexibleSpace: SafeArea(
+    child: Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 75),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+        children: const [
+          ThemeToggleButton(),
+          NavBarButtons(destinations: [
+            NavDestination.home,
+            NavDestination.profile,
+            NavDestination.logout,
+          ]),
+        ],
       ),
+    ),
+  ),
+),
+
       body: Padding(
         padding: const EdgeInsets.all(16),
         child: Column(
-          children: [
-            Text("To jest strona Home"),
+          children: [Positioned(
+              left: 100,
+              top: 928,
+              child: Text(
+                "Vocare",
+                style: TextStyle(fontSize: 55),
+              ),
+            ),
             SizedBox(height: 16),
             ElevatedButton(
               onPressed: _getRecommendation,
@@ -41,19 +70,11 @@ class _HomePageScreenState extends State<HomePageScreen> {
               maxLines: 10,
               decoration: InputDecoration(
                 labelText: "Rekomendacja AI",
-                border: OutlineInputBorder(),
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(25),
+                ),
               ),
               readOnly: true,
-            ),
-            SizedBox(height: 16),
-            TextButton(
-              onPressed: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (context) => FillProfileScreen()),
-                );
-              },
-              child: Text("Profil"),
             ),
           ],
         ),

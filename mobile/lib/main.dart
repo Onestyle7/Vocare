@@ -30,7 +30,7 @@ class MyApp extends StatelessWidget {
       theme: ThemeData.light(),
       darkTheme: ThemeData.dark(),
       themeMode: themeService.isDarkMode ? ThemeMode.dark : ThemeMode.light,
-      home: LoginScreen(),
+      home: FillProfileScreen(),
     );
   }
 }
