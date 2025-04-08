@@ -7,8 +7,8 @@ const ContentPage2 = () => {
       <div className="flex max-md:m-4 lg:items-center lgjustify-center lg:h-screen lg:w-1/6 lg:text-[600px] font-poppins text-7xl text-[#101014]">
         2
       </div>
-      <div className="flex max-md:m-4 lg:items-center lg:justify-center max-md:h-1/2 lg:w-1/2 relative my-20">
-        <video controls className="w-full h-full object-cover">
+      <div className="flex max-lg:m-4 xl:items-center xl:justify-center max-lg:h-1/2 xl:w-1/2 relative my-20">
+        <video muted loop autoPlay className="w-full h-full object-cover">
           <source src="/videos/video1.mp4" type="video/mp4" />
           Your browser does not support the video tag.
         </video>

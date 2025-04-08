@@ -1,10 +1,10 @@
 import type { Metadata } from "next";
-import localFont from "next/font/local"; // Zmieniamy import z next/font/google na next/font/local
+import localFont from "next/font/local"; 
 import "./globals.css";
 import { ThemeProvider } from "@/components/ui/theme-provider";
 import { Toaster } from "@/components/ui/sonner";
+import LenisProvider from "@/components/SupportComponents/LenisProvider";
 
-// Definiujemy czcionkę SizmoPro z wszystkimi wariantami
 const sizmoPro = localFont({
   src: [
     {
@@ -58,7 +58,7 @@ const sizmoPro = localFont({
       style: "italic",
     },
   ],
-  variable: "--font-sizmo-pro", // Zmienna CSS, którą możemy użyć w Tailwind
+  variable: "--font-sizmo-pro", 
 });
 
 export const metadata: Metadata = {
@@ -73,11 +73,13 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" suppressHydrationWarning>
-      <body className={`${sizmoPro.className} antialiased`}>
-        <ThemeProvider attribute="class" defaultTheme="light">
-          {children}
-          <Toaster />
-        </ThemeProvider>
+      <body className={`${sizmoPro.className} antialiased h-full`}>
+        <LenisProvider>
+          <ThemeProvider attribute="class" defaultTheme="light">
+            {children}
+            <Toaster />
+          </ThemeProvider>
+        </LenisProvider>
       </body>
     </html>
   );

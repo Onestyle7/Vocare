@@ -383,6 +383,14 @@
   }
 }
 
+@layer base {
+  html,
+  body {
+    height: 100%;
+    scroll-behavior: auto;
+  }
+}
+
 @layer components {
 
   .auth-form {
