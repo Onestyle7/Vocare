@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Threading.Tasks;
+using VocareWebAPI.UserManagement.Models.Enums;
 
 namespace VocareWebAPI.Models.Dtos
 {
@@ -26,12 +27,16 @@ namespace VocareWebAPI.Models.Dtos
 
         [Required(ErrorMessage = "Wykształcenie jest wymagane.")]
         public string Education { get; set; }
+        public string? AdditionalInformation { get; set; }
+        public string? AboutMe { get; set; }
+
+        [Required(ErrorMessage = "Typ osobowości jest wymagany.")]
+        [Range(1, 16, ErrorMessage = "Typ osobowości musi być liczbą od 1 do 16")]
+        public PersonalityType PersonalityType { get; set; }
 
         public List<string>? WorkExperience { get; set; }
         public List<string>? Skills { get; set; }
         public List<string>? Certificates { get; set; }
         public List<string>? Languages { get; set; }
-        public string? AdditionalInformation { get; set; }
-        public string? AboutMe { get; set; }
     }
 }
