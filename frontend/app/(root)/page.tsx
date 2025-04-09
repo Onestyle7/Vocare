@@ -1,31 +1,24 @@
-"use client"
+import HeroTweak from '@/components/SectionsComponents/HeroTweak'
+import Header from '@/components/SectionsComponents/Header'
+import React from 'react'
+import MobileFeature from '@/components/SectionsComponents/MobileFeature'
+import Faq from '@/components/SectionsComponents/Faq'
+import Footer from '@/components/SectionsComponents/Footer'
+import AboutCards from '@/components/SectionsComponents/AboutCards'
+import Features from '@/components/SectionsComponents/Features'
 
-import { ModeToggle } from "@/components/ModeToggle";
-import { Button } from "@/components/ui/button";
-import { NavLinks } from "../constants";
-import Link from "next/link";
-import { useRouter } from "next/navigation";
-import { logoutUser } from "@/lib/auth";
-
-export default function Home() {
-
-  const router = useRouter();
-
-  const handleLogout = () => {
-    logoutUser();
-    router.push("/sign-in"); 
-  };
-
+const page = () => {
   return (
-
-    <div className="flex items-center justify-center h-screen space-x-4">
-      <Button className="bg-red-500" onClick={handleLogout}>Log Out</Button>
-      <ModeToggle />
-      {NavLinks.map((item) => (
-        <div className="flex" key={item.label}>
-          <Link href={item.url}>{item.label}</Link>
-        </div>
-      ))}
-    </div>
-  );
+    <main>
+      <Header />
+      <HeroTweak />
+      <AboutCards />
+      <Features />
+      <MobileFeature />
+      <Faq />
+      <Footer />
+    </main>
+  )
 }
+
+export default page

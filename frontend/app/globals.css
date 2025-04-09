@@ -397,14 +397,6 @@
     @apply flex max-h-[800px] w-full max-w-[580px] flex-col justify-center space-y-6 transition-all lg:h-full lg:space-y-8;
   }
 
-  .form-title {
-    @apply text-[34px] text-center md:text-left;
-  }
-
-  .form-submit-button {
-    @apply h-[66px];
-  }
-
   .error-message {
     @apply mx-auto w-fit rounded-xl px-8 py-4 text-center;
   }
@@ -428,6 +420,44 @@
     @apply border-border outline-ring/50;
   }
   body {
-    @apply bg-background text-foreground cursor-none;
+    @apply bg-background text-foreground;
   }
+}
+
+/* Auth form */
+
+.form-button {
+  @apply bg-[#915EFF] text-xl rounded-full;
+}
+
+.h1 {
+  @apply text-[34px] leading-[42px] font-bold;
+}
+
+.body-1 {
+  @apply text-[16px] leading-[24px] font-normal;
+}
+
+.form-title {
+  @apply text-[34px] text-center md:text-left text-[#101014] dark:text-[#F3F3F3] font-semibold;
+}
+
+.input-form {
+  @apply border border-gray-200 rounded-full
+}
+
+.arrow-animation {
+  @apply ml-2 transition-transform duration-300 group-hover:translate-x-2;
+}
+
+input:-webkit-autofill {
+  box-shadow: 0 0 0px 1000px #ffffff61 inset !important;
+  -webkit-text-fill-color: #101014 !important; 
+  font-family: "SizmoPro", sans-serif !important;
+  transition: background-color 5000s ease-in-out 0s;
+}
+
+.dark input:-webkit-autofill {
+  box-shadow: 0 0 0px 1000px rgba(16, 16, 20, 0.102) inset !important;
+  -webkit-text-fill-color: #f3f3f3 !important; 
 }

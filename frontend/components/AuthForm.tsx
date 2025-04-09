@@ -6,7 +6,6 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { authFormSchema, AuthFormType } from "@/schemas/authSchema";
 import { registerUser, loginUser } from "@/lib/auth";
-import { Button } from "@/components/ui/button";
 import {
   Form, FormControl, FormField, FormItem, FormLabel, FormMessage
 } from "@/components/ui/form";
@@ -14,6 +13,8 @@ import { Input } from "@/components/ui/input";
 import Image from "next/image";
 import Link from "next/link";
 import { toast } from "sonner";
+import { ButtonForm } from "./ui/button-form";
+import { ArrowRight } from "lucide-react";
 
 type FormType = "sign-in" | "sign-up";
 
@@ -97,7 +98,7 @@ const AuthForm = ({ type }: { type: FormType }) => {
               <FormItem>
                 <FormLabel>Full Name</FormLabel>
                 <FormControl>
-                  <Input placeholder="Enter your full name" {...field} />
+                  <Input placeholder="Joe Doe.." {...field} className="input-form"/>
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -112,7 +113,7 @@ const AuthForm = ({ type }: { type: FormType }) => {
             <FormItem>
               <FormLabel>Email</FormLabel>
               <FormControl>
-                <Input placeholder="Enter your email" {...field} />
+              <Input placeholder="joedoe@gmail.com.." {...field} className="input-form"/>
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -126,7 +127,8 @@ const AuthForm = ({ type }: { type: FormType }) => {
             <FormItem>
               <FormLabel>Password</FormLabel>
               <FormControl>
-                <Input type="password" placeholder="Password" {...field} />
+                <Input type="password" placeholder="Password" {...field} 
+                className="input-form"/>
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -141,7 +143,9 @@ const AuthForm = ({ type }: { type: FormType }) => {
               <FormItem>
                 <FormLabel>Confirm Password</FormLabel>
                 <FormControl>
-                  <Input type="password" placeholder="Confirm Password" {...field} />
+                  <Input type="password" placeholder="Confirm Password" {...field} 
+                  className="input-form"
+                  /> 
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -149,8 +153,9 @@ const AuthForm = ({ type }: { type: FormType }) => {
           />
         )}
 
-        <Button type="submit" disabled={isLoading}>
-          {type === "sign-in" ? "Sign In" : "Sign Up"}
+        <ButtonForm type="submit" disabled={isLoading} className="group form-button">
+          {type === "sign-in" ? "Sign In" : "Join Vocare"}
+          <span className="arrow-animation"><ArrowRight /></span>
           {isLoading && (
             <Image
               src="/assets/icons/loader.svg"
@@ -160,17 +165,24 @@ const AuthForm = ({ type }: { type: FormType }) => {
               className="ml-2 animate-spin"
             />
           )}
-        </Button>
+        </ButtonForm>
 
         <div className="flex justify-center mt-4">
           <p>
             {type === "sign-in" ? "Don't have an account?" : "Already have an account?"}
           </p>
-          <Link href={type === "sign-in" ? "/sign-up" : "/sign-in"} className="ml-2 text-brand">
+          <Link
+            href={type === "sign-in" ? "/sign-up" : "/sign-in"}
+            className="relative ml-2 font-semibold text-[#915EFF] transition duration-300 
+                      after:content-[''] after:absolute after:left-0 after:bottom-0 
+                      after:h-[2px] after:w-0 after:bg-[#915EFF] after:transition-all 
+                      after:duration-300 hover:after:w-full"
+          >
             {type === "sign-in" ? "Sign Up" : "Sign In"}
           </Link>
+
           {type === "sign-in" && (
-            <Link href="/forgot-password" className="ml-4">
+            <Link href="/forgot-password" className="ml-4 text-gray-500">
               Forgot Password?
             </Link>
           )}

@@ -54,7 +54,7 @@ const HeroTweak = () => {
                 <CustomButton variant="primary" className="group xl:mt-8 mt-4 cursor-none flex items-center justify-center overflow-hidden">
                   <span className="flex flex-row">
                     Try it out
-                    <ArrowRight className="ml-2 transition-transform duration-300 group-hover:translate-x-2"/>
+                    <ArrowRight className="ml-2 transition-transform duration-300 group-hover:translate-x-2 scale-75"/>
                   </span>
                 </CustomButton>
             </div>

@@ -1,7 +1,6 @@
 "use client";
 
 import { useForm } from "react-hook-form";
-import { Button } from "@/components/ui/button";
 import {
   Form,
   FormControl,
@@ -13,6 +12,9 @@ import {
 import { Input } from "@/components/ui/input";
 import { useState } from "react";
 import Image from "next/image";
+import { ButtonForm } from "@/components/ui/button-form";
+import { ArrowRight } from "lucide-react";
+import Link from "next/link";
 
 const ForgotPasswordForm = () => {
   const [isLoading, setIsLoading] = useState(false);
@@ -43,7 +45,7 @@ const ForgotPasswordForm = () => {
                 <FormControl>
                   <Input
                     placeholder="Enter Your e-mail"
-                    className="shad-input"
+                    className="input-form"
                     {...field}
                   />
                 </FormControl>
@@ -52,12 +54,13 @@ const ForgotPasswordForm = () => {
             </FormItem>
           )}
         />
-        <Button
+        <ButtonForm
           type="submit"
-          className="form-submit-button"
+          className="group form-button"
           disabled={isLoading}
         >
-          Send Link
+          Reset Password
+          <span className="arrow-animation"><ArrowRight /></span>
           {isLoading && (
             <Image
               src="/assets/icons/loader.svg"
@@ -67,7 +70,19 @@ const ForgotPasswordForm = () => {
               className="ml-2 animate-spin"
             />
           )}
-        </Button>
+        </ButtonForm>
+
+        <div className="flex items-center justify-center">
+          <Link
+              href="/sign-in"
+              className="relative ml-2 font-semibold text-[#915EFF] transition duration-300 
+                        after:content-[''] after:absolute after:left-0 after:bottom-0 
+                        after:h-[2px] after:w-0 after:bg-[#915EFF] after:transition-all 
+                        after:duration-300 hover:after:w-full"
+            >
+              I remember the password
+            </Link>
+        </div>
       </form>
     </Form>
   );
