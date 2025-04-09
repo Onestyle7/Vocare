@@ -1,18 +1,23 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable @typescript-eslint/no-unused-vars */
-"use client";
+'use client';
 
-import { useEffect, useState } from "react";
-import { useForm, Controller } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { profileSchema, ProfileFormType } from "@/schemas/profileSchema";
-import { createUserProfile, updateUserProfile, deleteUserProfile, getUserProfile } from "@/lib/profile";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Textarea } from "@/components/ui/textarea";
-import { useRouter } from "next/navigation";
-import { UserProfile } from "@/app/types/profile";
-import ProfileDetails from "@/components/ProfileDeatail";
+import { useEffect, useState } from 'react';
+import { useForm, Controller } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { profileSchema, ProfileFormType } from '@/schemas/profileSchema';
+import {
+  createUserProfile,
+  updateUserProfile,
+  deleteUserProfile,
+  getUserProfile,
+} from '@/lib/profile';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Textarea } from '@/components/ui/textarea';
+import { useRouter } from 'next/navigation';
+import { UserProfile } from '@/app/types/profile';
+import ProfileDetails from '@/components/ProfileDeatail';
 import {
   Form,
   FormField,
@@ -20,18 +25,18 @@ import {
   FormLabel,
   FormControl,
   FormMessage,
-} from "@/components/ui/form";
-import { CountryCombobox } from "@/components/CountryCombobox";
+} from '@/components/ui/form';
+import { CountryCombobox } from '@/components/CountryCombobox';
 import {
   InputOTP,
   InputOTPGroup,
   InputOTPSeparator,
   InputOTPSlot,
-} from "@/components/ui/input-otp";
-import { TagInput } from "@/components/TagInput";
-import { toast } from "sonner";
-import { ArrowLeft } from "lucide-react";
-import Link from "next/link";
+} from '@/components/ui/input-otp';
+import { TagInput } from '@/components/TagInput';
+import { toast } from 'sonner';
+import { ArrowLeft } from 'lucide-react';
+import Link from 'next/link';
 
 export default function ProfileForm() {
   const [isLoading, setLoading] = useState(false);
@@ -41,27 +46,27 @@ export default function ProfileForm() {
   const form = useForm<ProfileFormType>({
     resolver: zodResolver(profileSchema),
     defaultValues: {
-      firstName: "",
-      lastName: "",
-      country: "",
-      address: "",
-      phoneNumber: "",
-      education: "",
+      firstName: '',
+      lastName: '',
+      country: '',
+      address: '',
+      phoneNumber: '',
+      education: '',
       workExperience: [],
       skills: [],
       certificates: [],
       languages: [],
-      additionalInformation: "",
-      aboutMe: "",
+      additionalInformation: '',
+      aboutMe: '',
     },
   });
 
   useEffect(() => {
     const loadProfile = async () => {
       setLoading(true);
-      const token = localStorage.getItem("token");
+      const token = localStorage.getItem('token');
       if (!token) {
-        router.push("/sign-in");
+        router.push('/sign-in');
         return;
       }
       try {
@@ -71,7 +76,7 @@ export default function ProfileForm() {
           form.reset(profileData);
         }
       } catch (error) {
-        console.error("No existing profile found or error fetching data");
+        console.error('No existing profile found or error fetching data');
       } finally {
         setLoading(false);
       }
@@ -82,42 +87,42 @@ export default function ProfileForm() {
 
   const onSubmit = async (data: ProfileFormType) => {
     setLoading(true);
-    const token = localStorage.getItem("token");
+    const token = localStorage.getItem('token');
     if (!token) {
-      toast.error("Authentication required", {
-        description: "Please sign in to continue.",
+      toast.error('Authentication required', {
+        description: 'Please sign in to continue.',
       });
-      router.push("/sign-in");
+      router.push('/sign-in');
       return;
     }
 
     const formattedData: UserProfile = {
       ...data,
       certificates: data.certificates ?? [],
-      phoneNumber: data.phoneNumber ?? "",
-      additionalInformation: data.additionalInformation ?? "",
+      phoneNumber: data.phoneNumber ?? '',
+      additionalInformation: data.additionalInformation ?? '',
     };
 
     try {
       let profileData;
       if (isEditMode) {
         profileData = await updateUserProfile(formattedData, token);
-        toast.success("Profile updated successfully!");
+        toast.success('Profile updated successfully!');
       } else {
         profileData = await createUserProfile(formattedData, token);
-        toast.success("Profile created successfully!");
+        toast.success('Profile created successfully!');
         setEditMode(true);
       }
 
       // Zapisz dane profilu w localStorage
-      localStorage.setItem("userProfile", JSON.stringify(profileData));
+      localStorage.setItem('userProfile', JSON.stringify(profileData));
 
       // Przekieruj na stronę /assistant
-      router.push("/assistant");
+      router.push('/assistant');
     } catch (error: any) {
       console.error(error);
-      toast.error("An error occurred", {
-        description: error.response?.data || "Please try again.",
+      toast.error('An error occurred', {
+        description: error.response?.data || 'Please try again.',
       });
     } finally {
       setLoading(false);
@@ -125,26 +130,26 @@ export default function ProfileForm() {
   };
 
   const handleDelete = async () => {
-    if (!confirm("Are you sure you want to delete your profile?")) return;
+    if (!confirm('Are you sure you want to delete your profile?')) return;
 
-    const token = localStorage.getItem("token");
+    const token = localStorage.getItem('token');
     if (!token) {
-      toast.error("Authentication required", {
-        description: "Please sign in to continue.",
+      toast.error('Authentication required', {
+        description: 'Please sign in to continue.',
       });
-      router.push("/sign-in");
+      router.push('/sign-in');
       return;
     }
 
     setLoading(true);
     try {
       await deleteUserProfile(token);
-      toast.success("Profile deleted successfully!");
-      router.push("/");
+      toast.success('Profile deleted successfully!');
+      router.push('/');
     } catch (error) {
       console.error(error);
-      toast.error("An error occurred", {
-        description: "Failed to delete profile. Please try again.",
+      toast.error('An error occurred', {
+        description: 'Failed to delete profile. Please try again.',
       });
     } finally {
       setLoading(false);
@@ -152,10 +157,10 @@ export default function ProfileForm() {
   };
 
   return (
-    <div className="max-w-2xl mx-auto p-8">
-      <Link className="flex space-x-4 mb-4" href="/">
-          <ArrowLeft />
-          <span>Go back</span>
+    <div className="mx-auto max-w-2xl p-8">
+      <Link className="mb-4 flex space-x-4" href="/">
+        <ArrowLeft />
+        <span>Go back</span>
       </Link>
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
@@ -383,16 +388,11 @@ export default function ProfileForm() {
 
           {/* Przyciski */}
           <Button type="submit" disabled={isLoading} className="flex">
-            {isLoading ? "Saving..." : isEditMode ? "Update Profile" : "Save Profile"}
+            {isLoading ? 'Saving...' : isEditMode ? 'Update Profile' : 'Save Profile'}
           </Button>
 
           {isEditMode && (
-            <Button
-              type="button"
-              variant="destructive"
-              onClick={handleDelete}
-              disabled={isLoading}
-            >
+            <Button type="button" variant="destructive" onClick={handleDelete} disabled={isLoading}>
               Delete Profile
             </Button>
           )}

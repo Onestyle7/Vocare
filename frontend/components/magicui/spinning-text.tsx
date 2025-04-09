@@ -1,7 +1,7 @@
-"use client";
-import { cn } from "@/lib/utils";
-import { motion, Transition, Variants } from "motion/react";
-import React, { CSSProperties } from "react";
+'use client';
+import { cn } from '@/lib/utils';
+import { motion, Transition, Variants } from 'motion/react';
+import React, { CSSProperties } from 'react';
 
 type SpinningTextProps = {
   children: string | string[];
@@ -20,7 +20,7 @@ type SpinningTextProps = {
 
 const BASE_TRANSITION = {
   repeat: Infinity,
-  ease: "linear",
+  ease: 'linear',
 };
 
 const BASE_ITEM_VARIANTS = {
@@ -42,20 +42,20 @@ export function SpinningText({
   transition,
   variants,
 }: SpinningTextProps) {
-  if (typeof children !== "string" && !Array.isArray(children)) {
-    throw new Error("children must be a string or an array of strings");
+  if (typeof children !== 'string' && !Array.isArray(children)) {
+    throw new Error('children must be a string or an array of strings');
   }
 
   if (Array.isArray(children)) {
     // Validate all elements are strings
-    if (!children.every((child) => typeof child === "string")) {
-      throw new Error("all elements in children array must be strings");
+    if (!children.every((child) => typeof child === 'string')) {
+      throw new Error('all elements in children array must be strings');
     }
-    children = children.join("");
+    children = children.join('');
   }
 
-  const letters = children.split("");
-  letters.push(" ");
+  const letters = children.split('');
+  letters.push(' ');
 
   const finalTransition = {
     ...BASE_TRANSITION,
@@ -75,7 +75,7 @@ export function SpinningText({
 
   return (
     <motion.div
-      className={cn("relative", className)}
+      className={cn('relative', className)}
       style={{
         ...style,
       }}
@@ -89,18 +89,18 @@ export function SpinningText({
           aria-hidden="true"
           key={`${index}-${letter}`}
           variants={itemVariants}
-          className="absolute left-1/2 top-1/2 inline-block 2xl:scale-150 xl:scale-125"
+          className="absolute top-1/2 left-1/2 inline-block xl:scale-125 2xl:scale-150"
           style={
             {
-              "--index": index,
-              "--total": letters.length,
-              "--radius": radius,
+              '--index': index,
+              '--total': letters.length,
+              '--radius': radius,
               transform: `
                   translate(-50%, -50%)
                   rotate(calc(360deg / var(--total) * var(--index)))
                   translateY(calc(var(--radius, 5) * -1ch))
                 `,
-              transformOrigin: "center",
+              transformOrigin: 'center',
             } as React.CSSProperties
           }
         >

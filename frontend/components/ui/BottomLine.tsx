@@ -1,14 +1,13 @@
-import PlusSvg from "@/public/svg/PlusSvg";
+import PlusSvg from '@/public/svg/PlusSvg';
 
 export const BottomLine = () => {
-    return (
-      <>
-        <div className="hidden absolute left-10 -bottom-1.5 right-10 h-0.25 dark:h-[0.5px] bg-n-6 pointer-events-none xl:block bg-gray-300 dark:bg-gray-700" />
-  
-        <PlusSvg className="hidden absolute left-[2.1875rem] z-12 pointer-events-none xl:block" />
-  
-        <PlusSvg className="hidden absolute right-[2.1875rem] z-12 pointer-events-none xl:block" />
-      </>
-    );
-  };
-    
+  return (
+    <>
+      <div className="bg-n-6 pointer-events-none absolute right-10 -bottom-1.5 left-10 hidden h-0.25 bg-gray-300 xl:block dark:h-[0.5px] dark:bg-gray-700" />
+
+      <PlusSvg className="pointer-events-none absolute left-[2.1875rem] z-12 hidden xl:block" />
+
+      <PlusSvg className="pointer-events-none absolute right-[2.1875rem] z-12 hidden xl:block" />
+    </>
+  );
+};

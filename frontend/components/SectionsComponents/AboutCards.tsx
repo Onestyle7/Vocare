@@ -1,11 +1,11 @@
-"use client";
+'use client';
 
-import { useEffect, useRef } from "react";
-import { gsap } from "gsap";
-import { ScrollTrigger } from "gsap/ScrollTrigger";
-import AboutCard from "@/components/AboutCard";
-import Section from "@/components/Section";
-import { plus } from "@/app/constants";
+import { useEffect, useRef } from 'react';
+import { gsap } from 'gsap';
+import { ScrollTrigger } from 'gsap/ScrollTrigger';
+import AboutCard from '@/components/AboutCard';
+import Section from '@/components/Section';
+import { plus } from '@/app/constants';
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -13,13 +13,13 @@ const AboutCards = () => {
   const containerRef = useRef<HTMLDivElement | null>(null);
 
   useEffect(() => {
-    if (!window.matchMedia("(min-width: 1280px)").matches) return;
+    if (!window.matchMedia('(min-width: 1280px)').matches) return;
     if (!containerRef.current) return;
 
-    const cards = containerRef.current.querySelectorAll(".about-card");
+    const cards = containerRef.current.querySelectorAll('.about-card');
 
     cards.forEach((card, index) => {
-      const offset = index * 60; 
+      const offset = index * 60;
 
       const tl = gsap.timeline({
         scrollTrigger: {
@@ -38,31 +38,31 @@ const AboutCards = () => {
           y: 0,
           rotation: index % 2 === 0 ? -5 : 5,
           duration: 1,
-          ease: "power2.out",
+          ease: 'power2.out',
         }
       )
-        .to(card, { y: -40, duration: 1.6, ease: "sine.inOut" })
-        .to(card, { y: 40, duration: 1.6, ease: "sine.inOut" })
-        .to(card, { y: 0, duration: 1.5, ease: "sine.inOut" })
+        .to(card, { y: -40, duration: 1.6, ease: 'sine.inOut' })
+        .to(card, { y: 40, duration: 1.6, ease: 'sine.inOut' })
+        .to(card, { y: 0, duration: 1.5, ease: 'sine.inOut' })
         .to(card, {
           y: -600,
           autoAlpha: 0,
           rotation: 0,
           duration: 2,
-          ease: "power1.in",
+          ease: 'power1.in',
         });
     });
   }, []);
 
   return (
     <Section
-      className="pt-[7.5rem] -mt-[2.25rem] relative"
+      className="relative -mt-[2.25rem] pt-[7.5rem]"
       crossesOffset="lg:translate-y-[7.5rem]"
       customPaddings
       id="about"
     >
-      <div ref={containerRef} className="relative lg:w-full flex main-font-color">
-        <div className="flex items-center justify-center w-full flex-col lg:flex-row lg:space-x-4 max-lg:space-y-4 mx-8">
+      <div ref={containerRef} className="main-font-color relative flex lg:w-full">
+        <div className="mx-8 flex w-full flex-col items-center justify-center max-lg:space-y-4 lg:flex-row lg:space-x-4">
           {[...Array(3)].map((_, i) => (
             <div className="about-card" key={i}>
               <AboutCard

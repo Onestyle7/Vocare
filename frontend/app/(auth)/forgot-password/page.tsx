@@ -1,6 +1,6 @@
-"use client";
+'use client';
 
-import { useForm } from "react-hook-form";
+import { useForm } from 'react-hook-form';
 import {
   Form,
   FormControl,
@@ -8,20 +8,20 @@ import {
   FormItem,
   FormLabel,
   FormMessage,
-} from "@/components/ui/form";
-import { Input } from "@/components/ui/input";
-import { useState } from "react";
-import Image from "next/image";
-import { ButtonForm } from "@/components/ui/button-form";
-import { ArrowRight } from "lucide-react";
-import Link from "next/link";
+} from '@/components/ui/form';
+import { Input } from '@/components/ui/input';
+import { useState } from 'react';
+import Image from 'next/image';
+import { ButtonForm } from '@/components/ui/button-form';
+import { ArrowRight } from 'lucide-react';
+import Link from 'next/link';
 
 const ForgotPasswordForm = () => {
   const [isLoading, setIsLoading] = useState(false);
 
   const form = useForm({
     defaultValues: {
-      email: "",
+      email: '',
     },
   });
 
@@ -43,24 +43,18 @@ const ForgotPasswordForm = () => {
               <div className="shad-form-item">
                 <FormLabel className="shad-form-label mb-2">E-mail</FormLabel>
                 <FormControl>
-                  <Input
-                    placeholder="Enter Your e-mail"
-                    className="input-form"
-                    {...field}
-                  />
+                  <Input placeholder="Enter Your e-mail" className="input-form" {...field} />
                 </FormControl>
               </div>
               <FormMessage className="shad-form-message" />
             </FormItem>
           )}
         />
-        <ButtonForm
-          type="submit"
-          className="group form-button"
-          disabled={isLoading}
-        >
+        <ButtonForm type="submit" className="group form-button" disabled={isLoading}>
           Reset Password
-          <span className="arrow-animation"><ArrowRight /></span>
+          <span className="arrow-animation">
+            <ArrowRight />
+          </span>
           {isLoading && (
             <Image
               src="/assets/icons/loader.svg"
@@ -74,14 +68,11 @@ const ForgotPasswordForm = () => {
 
         <div className="flex items-center justify-center">
           <Link
-              href="/sign-in"
-              className="relative ml-2 font-semibold text-[#915EFF] transition duration-300 
-                        after:content-[''] after:absolute after:left-0 after:bottom-0 
-                        after:h-[2px] after:w-0 after:bg-[#915EFF] after:transition-all 
-                        after:duration-300 hover:after:w-full"
-            >
-              I remember the password
-            </Link>
+            href="/sign-in"
+            className="relative ml-2 font-semibold text-[#915EFF] transition duration-300 after:absolute after:bottom-0 after:left-0 after:h-[2px] after:w-0 after:bg-[#915EFF] after:transition-all after:duration-300 after:content-[''] hover:after:w-full"
+          >
+            I remember the password
+          </Link>
         </div>
       </form>
     </Form>

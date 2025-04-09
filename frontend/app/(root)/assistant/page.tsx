@@ -1,13 +1,13 @@
-"use client";
+'use client';
 
-import { useEffect, useState } from "react";
-import axios from "axios";
-import { UserProfile } from "@/app/types/profile";
-import { toast } from "sonner";
-import { Button } from "@/components/ui/button"; 
-import { AiCareerResponse } from "@/lib/recommendations";
-import Link from "next/link";
-import { ArrowLeft } from "lucide-react";
+import { useEffect, useState } from 'react';
+import axios from 'axios';
+import { UserProfile } from '@/app/types/profile';
+import { toast } from 'sonner';
+import { Button } from '@/components/ui/button';
+import { AiCareerResponse } from '@/lib/recommendations';
+import Link from 'next/link';
+import { ArrowLeft } from 'lucide-react';
 
 export default function AssistantPage() {
   const [profile, setProfile] = useState<UserProfile | null>(null);
@@ -16,11 +16,11 @@ export default function AssistantPage() {
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    const storedProfile = localStorage.getItem("userProfile");
+    const storedProfile = localStorage.getItem('userProfile');
     if (storedProfile) {
       setProfile(JSON.parse(storedProfile));
     } else {
-      setError("Brak danych profilu. Wróć do formularza.");
+      setError('Brak danych profilu. Wróć do formularza.');
     }
   }, []);
 
@@ -29,10 +29,10 @@ export default function AssistantPage() {
       if (!profile) return;
 
       setLoading(true);
-      const token = localStorage.getItem("token");
+      const token = localStorage.getItem('token');
       if (!token) {
-        toast.error("Authentication required", {
-          description: "Please sign in to continue.",
+        toast.error('Authentication required', {
+          description: 'Please sign in to continue.',
         });
         setLoading(false);
         return;
@@ -41,23 +41,23 @@ export default function AssistantPage() {
       try {
         try {
           const lastRecommendationResponse = await axios.get<AiCareerResponse>(
-            "https://localhost:5001/api/AI/last-recommendation",
+            'https://localhost:5001/api/AI/last-recommendation',
             {
               headers: {
                 Authorization: `Bearer ${token}`,
-                "Content-Type": "application/json",
+                'Content-Type': 'application/json',
               },
             }
           );
-          console.log("Ostatnie rekomendacje:", lastRecommendationResponse.data);
+          console.log('Ostatnie rekomendacje:', lastRecommendationResponse.data);
           setRecommendations(lastRecommendationResponse.data);
           setLoading(false);
-          return; 
+          return;
         } catch (lastError: any) {
           if (lastError.response?.status !== 404) {
-            console.error("Błąd podczas pobierania ostatnich rekomendacji:", lastError);
+            console.error('Błąd podczas pobierania ostatnich rekomendacji:', lastError);
             setError(
-              lastError.response?.data?.detail || "Błąd podczas pobierania ostatnich rekomendacji."
+              lastError.response?.data?.detail || 'Błąd podczas pobierania ostatnich rekomendacji.'
             );
             setLoading(false);
             return;
@@ -65,21 +65,19 @@ export default function AssistantPage() {
         }
 
         const response = await axios.get<AiCareerResponse>(
-          "https://localhost:5001/api/AI/recommendations",
+          'https://localhost:5001/api/AI/recommendations',
           {
             headers: {
               Authorization: `Bearer ${token}`,
-              "Content-Type": "application/json",
+              'Content-Type': 'application/json',
             },
           }
         );
-        console.log("Nowe rekomendacje:", response.data);
+        console.log('Nowe rekomendacje:', response.data);
         setRecommendations(response.data);
       } catch (err: any) {
-        console.error("Błąd podczas pobierania rekomendacji:", err);
-        setError(
-          err.response?.data?.detail || "Nie udało się pobrać rekomendacji."
-        );
+        console.error('Błąd podczas pobierania rekomendacji:', err);
+        setError(err.response?.data?.detail || 'Nie udało się pobrać rekomendacji.');
       } finally {
         setLoading(false);
       }
@@ -95,12 +93,12 @@ export default function AssistantPage() {
   }
 
   return (
-    <div className="max-w-2xl mx-auto p-8">
-      <Link className="flex space-x-4 mb-4" href="/">
-          <ArrowLeft />
-          <span>Go back</span>
+    <div className="mx-auto max-w-2xl p-8">
+      <Link className="mb-4 flex space-x-4" href="/">
+        <ArrowLeft />
+        <span>Go back</span>
       </Link>
-      <h1 className="text-2xl font-bold mb-4">
+      <h1 className="mb-4 text-2xl font-bold">
         Rekomendacje dla {profile.firstName} {profile.lastName}
       </h1>
       {error && <p className="text-red-500">{error}</p>}
@@ -108,7 +106,7 @@ export default function AssistantPage() {
         <p>Ładowanie rekomendacji...</p>
       ) : recommendations ? (
         <div>
-          <h2 className="text-xl font-semibold mb-2">Rekomendacje:</h2>
+          <h2 className="mb-2 text-xl font-semibold">Rekomendacje:</h2>
           <div className="mb-6">
             <h3 className="text-lg font-medium">Główna ścieżka kariery:</h3>
             <p>
@@ -125,9 +123,9 @@ export default function AssistantPage() {
             <p>{recommendations.recommendation.longTermGoal}</p>
           </div>
 
-          <h3 className="text-lg font-medium mb-2">Proponowane ścieżki kariery:</h3>
+          <h3 className="mb-2 text-lg font-medium">Proponowane ścieżki kariery:</h3>
           {recommendations.careerPaths.map((path, index) => (
-            <div key={index} className="mb-4 p-4 border rounded-lg">
+            <div key={index} className="mb-4 rounded-lg border p-4">
               <h4 className="font-medium">{path.careerName}</h4>
               <p>{path.description}</p>
               <p>
@@ -193,28 +191,28 @@ export default function AssistantPage() {
             <Button
               onClick={async () => {
                 setLoading(true);
-                const token = localStorage.getItem("token");
+                const token = localStorage.getItem('token');
                 if (!token) {
-                  toast.error("Authentication required", {
-                    description: "Please sign in to continue.",
+                  toast.error('Authentication required', {
+                    description: 'Please sign in to continue.',
                   });
                   setLoading(false);
                   return;
                 }
                 try {
                   const response = await axios.get<AiCareerResponse>(
-                    "https://localhost:5001/api/AI/recommendations",
+                    'https://localhost:5001/api/AI/recommendations',
                     {
                       headers: {
                         Authorization: `Bearer ${token}`,
-                        "Content-Type": "application/json",
+                        'Content-Type': 'application/json',
                       },
                     }
                   );
                   setRecommendations(response.data);
                 } catch (err: any) {
                   setError(
-                    err.response?.data?.detail || "Nie udało się wygenerować nowych rekomendacji."
+                    err.response?.data?.detail || 'Nie udało się wygenerować nowych rekomendacji.'
                   );
                 } finally {
                   setLoading(false);

@@ -1,10 +1,8 @@
 'use client';
 
-
 import Image from 'next/image';
 import { useEffect, useRef, useState } from 'react';
 import { twMerge } from 'tailwind-merge';
-
 
 const CustomCursor: React.FC = () => {
   const cursorRef = useRef<HTMLDivElement>(null);
@@ -13,37 +11,30 @@ const CustomCursor: React.FC = () => {
   const isMoving = useRef(false);
   const [showArrow, setShowArrow] = useState(false);
 
-
   useEffect(() => {
     const moveCursor = (e: MouseEvent) => {
       if (cursorRef.current && followerRef.current) {
         cursorRef.current.style.left = `${e.clientX}px`;
         cursorRef.current.style.top = `${e.clientY}px`;
 
-
         isMoving.current =
           Math.abs(e.clientX - lastPosition.current.x) > 1 ||
           Math.abs(e.clientY - lastPosition.current.y) > 1;
         lastPosition.current = { x: e.clientX, y: e.clientY };
 
-
         const targetX = e.clientX + 20;
         const targetY = e.clientY;
 
-
         const followerX = parseFloat(followerRef.current.style.left || '0');
         const followerY = parseFloat(followerRef.current.style.top || '0');
-
 
         const dx = targetX - followerX;
         const dy = targetY - followerY;
         const newX = followerX + dx * 0.1;
         const newY = followerY + dy * 0.1;
 
-
         followerRef.current.style.left = `${newX}px`;
         followerRef.current.style.top = `${newY}px`;
-
 
         const target = e.target as HTMLElement;
         if ((target as HTMLElement).closest('button, a')) {
@@ -57,7 +48,6 @@ const CustomCursor: React.FC = () => {
         }
       }
     };
-
 
     const checkMovement = () => {
       if (cursorRef.current && followerRef.current && !isMoving.current) {
@@ -76,10 +66,8 @@ const CustomCursor: React.FC = () => {
       }
     };
 
-
     document.addEventListener('mousemove', moveCursor);
     const intervalId = setInterval(checkMovement, 16);
-
 
     return () => {
       document.removeEventListener('mousemove', moveCursor);
@@ -87,23 +75,21 @@ const CustomCursor: React.FC = () => {
     };
   }, [showArrow]);
 
-
   return (
     <>
       <div
         ref={cursorRef}
         className={twMerge(
-          'fixed pointer-events-none z-50 w-2 h-2 rounded-full bg-black dark:bg-white',
-          'transform -translate-x-1/2 -translate-y-1/2 transition-opacity duration-200'
+          'pointer-events-none fixed z-50 h-2 w-2 rounded-full bg-black dark:bg-white',
+          '-translate-x-1/2 -translate-y-1/2 transform transition-opacity duration-200'
         )}
       />
-
 
       <div
         ref={followerRef}
         className={twMerge(
-          'fixed pointer-events-none z-50 w-8 h-8 rounded-full border-1 border-black dark:border-white',
-          'transform -translate-x-1/2 -translate-y-1/2 transition-transform duration-200',
+          'pointer-events-none fixed z-50 h-8 w-8 rounded-full border-1 border-black dark:border-white',
+          '-translate-x-1/2 -translate-y-1/2 transform transition-transform duration-200',
           'flex items-center justify-center antialiased'
         )}
       >
@@ -113,7 +99,7 @@ const CustomCursor: React.FC = () => {
           width={4}
           height={4}
           className={twMerge(
-            'w-4 h-4 transition-opacity duration-200 dark:invert',
+            'h-4 w-4 transition-opacity duration-200 dark:invert',
             showArrow ? 'opacity-100' : 'opacity-0'
           )}
         />
@@ -123,4 +109,3 @@ const CustomCursor: React.FC = () => {
 };
 
 export default CustomCursor;
-

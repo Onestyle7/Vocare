@@ -1,21 +1,21 @@
-"use client";
+'use client';
 
-import { cn } from "@/lib/utils";
-import { AnimatePresence, motion, MotionProps, Variants } from "motion/react";
-import { ElementType } from "react";
+import { cn } from '@/lib/utils';
+import { AnimatePresence, motion, MotionProps, Variants } from 'motion/react';
+import { ElementType } from 'react';
 
-type AnimationType = "text" | "word" | "character" | "line";
+type AnimationType = 'text' | 'word' | 'character' | 'line';
 type AnimationVariant =
-  | "fadeIn"
-  | "blurIn"
-  | "blurInUp"
-  | "blurInDown"
-  | "slideUp"
-  | "slideDown"
-  | "slideLeft"
-  | "slideRight"
-  | "scaleUp"
-  | "scaleDown";
+  | 'fadeIn'
+  | 'blurIn'
+  | 'blurInUp'
+  | 'blurInDown'
+  | 'slideUp'
+  | 'slideDown'
+  | 'slideLeft'
+  | 'slideRight'
+  | 'scaleUp'
+  | 'scaleDown';
 
 interface TextAnimateProps extends MotionProps {
   /**
@@ -124,17 +124,17 @@ const defaultItemAnimationVariants: Record<
   blurIn: {
     container: defaultContainerVariants,
     item: {
-      hidden: { opacity: 0, filter: "blur(10px)" },
+      hidden: { opacity: 0, filter: 'blur(10px)' },
       show: {
         opacity: 1,
-        filter: "blur(0px)",
+        filter: 'blur(0px)',
         transition: {
           duration: 0.3,
         },
       },
       exit: {
         opacity: 0,
-        filter: "blur(10px)",
+        filter: 'blur(10px)',
         transition: { duration: 0.3 },
       },
     },
@@ -142,10 +142,10 @@ const defaultItemAnimationVariants: Record<
   blurInUp: {
     container: defaultContainerVariants,
     item: {
-      hidden: { opacity: 0, filter: "blur(10px)", y: 20 },
+      hidden: { opacity: 0, filter: 'blur(10px)', y: 20 },
       show: {
         opacity: 1,
-        filter: "blur(0px)",
+        filter: 'blur(0px)',
         y: 0,
         transition: {
           y: { duration: 0.3 },
@@ -155,7 +155,7 @@ const defaultItemAnimationVariants: Record<
       },
       exit: {
         opacity: 0,
-        filter: "blur(10px)",
+        filter: 'blur(10px)',
         y: 20,
         transition: {
           y: { duration: 0.3 },
@@ -168,10 +168,10 @@ const defaultItemAnimationVariants: Record<
   blurInDown: {
     container: defaultContainerVariants,
     item: {
-      hidden: { opacity: 0, filter: "blur(10px)", y: -20 },
+      hidden: { opacity: 0, filter: 'blur(10px)', y: -20 },
       show: {
         opacity: 1,
-        filter: "blur(0px)",
+        filter: 'blur(0px)',
         y: 0,
         transition: {
           y: { duration: 0.3 },
@@ -259,7 +259,7 @@ const defaultItemAnimationVariants: Record<
         transition: {
           duration: 0.3,
           scale: {
-            type: "spring",
+            type: 'spring',
             damping: 15,
             stiffness: 300,
           },
@@ -282,7 +282,7 @@ const defaultItemAnimationVariants: Record<
         transition: {
           duration: 0.3,
           scale: {
-            type: "spring",
+            type: 'spring',
             damping: 15,
             stiffness: 300,
           },
@@ -304,27 +304,27 @@ export function TextAnimateLight({
   variants,
   className,
   segmentClassName,
-  as: Component = "p",
+  as: Component = 'p',
   startOnView = true,
   once = false,
-  by = "word",
-  animation = "fadeIn",
+  by = 'word',
+  animation = 'fadeIn',
   ...props
 }: TextAnimateProps) {
   const MotionComponent = motion.create(Component);
 
   let segments: string[] = [];
   switch (by) {
-    case "word":
+    case 'word':
       segments = children.split(/(\s+)/);
       break;
-    case "character":
-      segments = children.split("");
+    case 'character':
+      segments = children.split('');
       break;
-    case "line":
-      segments = children.split("\n");
+    case 'line':
+      segments = children.split('\n');
       break;
-    case "text":
+    case 'text':
     default:
       segments = [children];
       break;
@@ -380,10 +380,10 @@ export function TextAnimateLight({
       <MotionComponent
         variants={finalVariants.container as Variants}
         initial="hidden"
-        whileInView={startOnView ? "show" : undefined}
-        animate={startOnView ? undefined : "show"}
+        whileInView={startOnView ? 'show' : undefined}
+        animate={startOnView ? undefined : 'show'}
         exit="exit"
-        className={cn("whitespace-pre-wrap text-[#101014]", className)}
+        className={cn('whitespace-pre-wrap text-[#101014]', className)}
         viewport={{ once }}
         {...props}
       >
@@ -393,9 +393,9 @@ export function TextAnimateLight({
             variants={finalVariants.item}
             custom={i * staggerTimings[by]}
             className={cn(
-              by === "line" ? "block" : "inline-block whitespace-pre",
-              by === "character" && "",
-              segmentClassName,
+              by === 'line' ? 'block' : 'inline-block whitespace-pre',
+              by === 'character' && '',
+              segmentClassName
             )}
           >
             {segment}

@@ -1,6 +1,6 @@
-"use client";
+'use client';
 
-import { cn } from "@/lib/utils";
+import { cn } from '@/lib/utils';
 
 interface Avatar {
   imageUrl: string;
@@ -12,20 +12,11 @@ interface AvatarCirclesProps {
   avatarUrls: Avatar[];
 }
 
-export const AvatarCircles = ({
-  numPeople,
-  className,
-  avatarUrls,
-}: AvatarCirclesProps) => {
+export const AvatarCircles = ({ numPeople, className, avatarUrls }: AvatarCirclesProps) => {
   return (
-    <div className={cn("z-10 flex -space-x-4 rtl:space-x-reverse", className)}>
+    <div className={cn('z-10 flex -space-x-4 rtl:space-x-reverse', className)}>
       {avatarUrls.map((url, index) => (
-        <a
-          key={index}
-          href={url.profileUrl}
-          target="_blank"
-          rel="noopener noreferrer"
-        >
+        <a key={index} href={url.profileUrl} target="_blank" rel="noopener noreferrer">
           <img
             key={index}
             className="h-10 w-10 rounded-full border-2 border-white dark:border-gray-800"

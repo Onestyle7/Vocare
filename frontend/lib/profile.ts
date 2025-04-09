@@ -1,7 +1,7 @@
-import { UserProfile } from "@/app/types/profile";
-import axios from "axios";
+import { UserProfile } from '@/app/types/profile';
+import axios from 'axios';
 
-const BASE_API_URL = "https://localhost:5001/api/UserProfile";
+const BASE_API_URL = 'https://localhost:5001/api/UserProfile';
 
 // GET: Retrieve the current user profile
 export const getUserProfile = async (token: string) => {
