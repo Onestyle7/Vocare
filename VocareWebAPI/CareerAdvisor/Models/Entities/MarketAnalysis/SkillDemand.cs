@@ -6,6 +6,9 @@ using System.Threading.Tasks;
 
 namespace VocareWebAPI.Models.Entities.MarketAnalysis
 {
+    /// <summary>
+    /// Encja reprezentująca zapotrzebowanie na konkretną umiejętność w kontekście zaproponowanego przez AI zawodu
+    /// </summary>
     public class SkillDemand
     {
         [Key]

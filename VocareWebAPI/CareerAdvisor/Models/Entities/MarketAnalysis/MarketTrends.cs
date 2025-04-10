@@ -6,6 +6,9 @@ using System.Threading.Tasks;
 
 namespace VocareWebAPI.Models.Entities.MarketAnalysis
 {
+    /// <summary>
+    /// Encja reprezentująca trendy rynkowe w kontekście rekomendacji
+    /// </summary>
     public class MarketTrends
     {
         [Key]

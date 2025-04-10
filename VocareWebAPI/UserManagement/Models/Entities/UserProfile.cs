@@ -8,6 +8,9 @@ using VocareWebAPI.UserManagement.Models.Enums;
 
 namespace VocareWebAPI.Models.Entities
 {
+    /// <summary>
+    /// Encja reprezentująca profil użytkowniak w bazie danych
+    /// </summary>
     public class UserProfile
     {
         [Key]

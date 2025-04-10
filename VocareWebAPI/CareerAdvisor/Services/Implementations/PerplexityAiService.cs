@@ -9,6 +9,9 @@ using VocareWebAPI.Repositories;
 
 namespace VocareWebAPI.Services
 {
+    /// <summary>
+    /// Serwis odpowiedzialny za generowanie rekomendacji zawodowych przy użyciu API Perplexity
+    /// </summary>
     public class PerplexityAiService : IAiService
     {
         private readonly HttpClient _httpClient;
@@ -17,6 +20,14 @@ namespace VocareWebAPI.Services
         private readonly IAiRecommendationRepository _recommendationRepository;
         private readonly IMapper _mapper;
 
+        /// <summary>
+        /// Inicjalizuje nową instację serwisu PerplexityAiService
+        /// </summary>
+        /// <param name="config">Konfiguracja AI</param>
+        /// <param name="httpClient">Klient HTTP do komunikacji z API AI</param>
+        /// <param name="userProfileRepository">Repozytorium profili użytkowników</param>
+        /// <param name="recommendationRepository">Repozytorium rekomendacji AI</param>
+        /// <param name="mapper">Mapper do mapowania obiektów</param>
         public PerplexityAiService(
             IOptions<AiConfig> config,
             HttpClient httpClient,
@@ -35,6 +46,12 @@ namespace VocareWebAPI.Services
             _httpClient.DefaultRequestHeaders.Add("Accept", "application/json");
         }
 
+        /// <summary>
+        /// Generuje rekomendacje zawodowe na podstawie profilu użytkownika
+        /// </summary>
+        /// <param name="profile">Profil użytkownika</param>
+        /// <returns>Rekomendacje zawodowe w formacie DTO</returns>
+        /// <exception cref="AiServiceException">Rzucane, gdy wystąpi bład w komunikacji z API AI lub podczas przetwarzania odpowiedzi</exception>
         public async Task<AiCareerResponseDto> GetCareerRecommendationsAsync(UserProfile profile)
         {
             var prompt = BuildPrompt(profile);
@@ -110,6 +127,13 @@ namespace VocareWebAPI.Services
             }
         }
 
+        /// <summary>
+        /// Zapisuje rekomendację zawodową do profilu użytkownika w baziee danych
+        /// </summary>
+        /// <param name="userId">Id użytkownika</param>
+        /// <param name="recommendation">Rekomendacja zawodowa w formaci DTO</param>
+        /// <returns>Task reprezentujacy operację asynchroniczną</returns>
+        /// <exception cref="AiServiceException">Rzucane, gdy wystąpi błąd podczas zapisu</exception>
         private async Task SaveRecommendationToUserProfile(
             string userId,
             AiCareerResponseDto recommendation
@@ -138,6 +162,12 @@ namespace VocareWebAPI.Services
             }
         }
 
+        /// <summary>
+        /// Pobiera ostatnią rekomendację zawodową dla użytkowika
+        /// </summary>
+        /// <param name="userId">Id użytkownika</param>
+        /// <returns>Ostatnia rekomendacja zawodowa w formacie DTO lub null, jesli nie znaleziono</returns>
+
         public async Task<AiCareerResponseDto> GetLastRecommendationAsync(string userId)
         {
             var recommendation = await _recommendationRepository.GetLatestByUserIdAsync(userId);
@@ -156,6 +186,10 @@ namespace VocareWebAPI.Services
             return dto;
         }
 
+        /// <summary>
+        /// Inicjalizuje właściwości, które mogą być null, aby uniknąć NullReferenceException
+        /// </summary>
+        /// <param name="response"></param>
         // Inicjalizacja null-owych właściwości, aby uniknąć NullReferenceException
         private void InitializeNullProperties(AiCareerResponseDto response)
         {
@@ -193,6 +227,11 @@ namespace VocareWebAPI.Services
             response.Recommendation.NextSteps ??= new List<string>();
         }
 
+        /// <summary>
+        /// Buduje prompt do wysłania do API Perplexity na podstawie profilu użytkownika
+        /// </summary>
+        /// <param name="profile">Profil użytkownika</param>
+        /// <returns>Prompt w formacie string</returns>
         private string BuildPrompt(UserProfile profile)
         {
             return $$"""
@@ -260,6 +299,9 @@ namespace VocareWebAPI.Services
                 """;
         }
 
+        /// <summary>
+        /// Wyjątek rzucany w przupadku błędów w serwisie AI
+        /// </summary>
         public class AiServiceException : Exception
         {
             public AiServiceException(string message, Exception inner)

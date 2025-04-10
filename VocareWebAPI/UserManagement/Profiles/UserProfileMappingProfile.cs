@@ -5,10 +5,13 @@ using VocareWebAPI.UserManagement.Models.Enums;
 
 namespace VocareWebAPI.Profiles
 {
+    ///<summary>
+    /// Profil Automapper dla mapowania między encją UserProfile a UserProfileDto
+    /// </summary>
     public class UserProfileMappingProfile : Profile
     {
-        ///<summary>
-        ///
+        /// <summary>
+        /// Inicjalizacja profilu mapowania
         /// </summary>
         public UserProfileMappingProfile()
         {

@@ -13,6 +13,9 @@ using VocareWebAPI.Repositories.Interfaces;
 
 namespace VocareWebAPI.Services.Implementations
 {
+    /// <summary>
+    /// Serwis odpowiedzialny za generowanie analizy rynku pracy na podstawie rekomendacji AI
+    /// </summary>
     public class MarketAnalysisService : IMarketAnalysisService
     {
         private readonly HttpClient _httpClient;
@@ -24,6 +27,17 @@ namespace VocareWebAPI.Services.Implementations
         private readonly IAiRecommendationRepository _aiRecommendationRepository;
         private readonly ILogger<MarketAnalysisService> _logger;
 
+        /// <summary>
+        /// Inicjalizuje nową instancję serwisu MarketAnalysisService
+        /// </summary>
+        /// <param name="httpClient">Klient HTTP do komunikacji z API AI</param>
+        /// <param name="config">Konfiguracja AI</param>
+        /// <param name="userProfileRepository">Repozytorium profili uzytkowników</param>
+        /// <param name="marketAnalysisRepository">Repozytorium statystyki zawodowych</param>
+        /// <param name="skillDemandRepository">Repozytorium zapotrzebowania na umiejętności</param>
+        /// <param name="marketTrendsRepository">Repozytorium trendów rynkowych</param>
+        /// <param name="aiRecommendationRepository">Repozytorium rekomendacji AI</param>
+        /// <param name="logger">Logger do rejestracji zdarzeń</param>
         public MarketAnalysisService(
             HttpClient httpClient,
             IOptions<AiConfig> config,
@@ -48,6 +62,12 @@ namespace VocareWebAPI.Services.Implementations
             _httpClient.DefaultRequestHeaders.Add("Accept", "application/json");
         }
 
+        /// <summary>
+        /// Generuje analizę rynku pracy dla użytkownika na podstawie jego rekomendacji AI
+        /// </summary>
+        /// <param name="userId">Identyfikator użytkownika</param>
+        /// <returns>Analiza rynku pracy w formacie DTO</returns>
+        /// <exception cref="Exception">Rzucane, gdy profil użytkownika lub rekomendacja nie zostaną znalezione, lub gdy wystąpi błąd w API AI</exception>
         public async Task<MarketAnalysisResponseDto> GetMarketAnalysisAsync(string userId)
         {
             //Pobieramy profil użytkownika
@@ -158,6 +178,13 @@ namespace VocareWebAPI.Services.Implementations
             }
         }
 
+        /// <summary>
+        /// Zapisuje dane znalizy rynku do bazy danych
+        /// </summary>
+        /// <param name="analysis">Analiza rynku w formacie DTO</param>
+        /// <param name="aiRecommendationId">Identyfikator powiązanej rekomendacji AI</param>
+        /// <returns>Task reprezentujący operację asynchroniczną</returns>
+        /// <exception cref="Exception">Rzucane, gdy wystąpi błąd podczas zapisu do bazy danych</exception>
         private async Task SaveMarketAnalysisToDatabase(
             MarketAnalysisResponseDto analysis,
             Guid aiRecommendationId
@@ -244,6 +271,10 @@ namespace VocareWebAPI.Services.Implementations
             }
         }
 
+        /// <summary>
+        /// Inicjalizuje właściwości null w odpowiedzi analizy rynku
+        /// /// </summary>
+        /// <param name="response">Odpowiedź analizy rynku w formacie Dto</param>
         private void InitializeNullProperties(MarketAnalysisResponseDto response)
         {
             if (response.MarketAnalysis == null)
@@ -267,6 +298,11 @@ namespace VocareWebAPI.Services.Implementations
             }
         }
 
+        /// <summary>
+        /// Buduje prompt dla API AI na podstawie rekomendacji użytkownika
+        /// </summary>
+        /// <param name="recommendation">Rekomendacja AI dla użytkownika</param>
+        /// <returns>Prompt w formacie string</returns>
         private string BuildPrompt(AiRecommendation recommendation)
         {
             return $$"""
@@ -327,6 +363,9 @@ namespace VocareWebAPI.Services.Implementations
                 """;
         }
 
+        /// <summary>
+        /// Wyjatek rzucany w przupadku błędów w serwisie analizy rynku
+        /// </summary>
         public class MarketAnalysisException : Exception
         {
             public MarketAnalysisException(string message, Exception inner)

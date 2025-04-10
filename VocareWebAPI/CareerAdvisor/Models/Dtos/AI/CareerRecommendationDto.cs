@@ -6,6 +6,9 @@ using System.Threading.Tasks;
 
 namespace VocareWebAPI.Models.Dtos
 {
+    /// <summary>
+    /// DTO reprezentujące pojedyucza ścieżkę zawodowa |
+    /// </summary>
     public class CareerPathDto
     {
         [JsonPropertyName("careerName")]

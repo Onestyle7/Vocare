@@ -5,6 +5,9 @@ using System.Threading.Tasks;
 
 namespace VocareWebAPI.Models.Dtos.MarketAnalysis
 {
+    /// <summary>
+    /// DTO reprezentujące statystyki dla konkretnej ścieżki zawodowej
+    /// </summary>
     public class CareerStatisticsDto
     {
         public string CareerName { get; set; }

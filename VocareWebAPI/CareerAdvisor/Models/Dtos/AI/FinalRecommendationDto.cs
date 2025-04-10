@@ -6,6 +6,9 @@ using System.Threading.Tasks;
 
 namespace VocareWebAPI.Models.Dtos
 {
+    /// <summary>
+    /// DTO reprezentujący końcową rekomendację zawodową
+    /// </summary>
     public class FinalRecommendationDto
     {
         [JsonPropertyName("primaryPath")]

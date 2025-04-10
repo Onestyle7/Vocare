@@ -5,6 +5,9 @@ using System.Threading.Tasks;
 
 namespace VocareWebAPI.Models.Config
 {
+    /// <summary>
+    /// Klasa konfiguracyjna dla AI.
+    /// </summary>
     public class AiConfig
     {
         public string BaseUrl { get; set; }

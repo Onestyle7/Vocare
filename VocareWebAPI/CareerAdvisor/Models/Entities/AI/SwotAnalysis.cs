@@ -6,6 +6,9 @@ using System.Threading.Tasks;
 
 namespace VocareWebAPI.Models.Entities
 {
+    /// <summary>
+    /// Encja reprezentująca analizę SWOT dla danej ścieżki zawodowej
+    /// </summary>
     public class SwotAnalysis
     {
         [Key]

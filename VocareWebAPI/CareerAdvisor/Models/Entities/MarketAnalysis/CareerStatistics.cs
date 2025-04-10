@@ -6,6 +6,9 @@ using System.Threading.Tasks;
 
 namespace VocareWebAPI.Models.Entities.MarketAnalysis
 {
+    /// <summary>
+    /// Encja reprezentująca statystyki dla konkretnej ścieżki zawodowej w ramach analizy rynku
+    /// </summary>
     public class CareerStatistics
     {
         [Key]
