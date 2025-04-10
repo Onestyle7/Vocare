@@ -273,6 +273,7 @@
   --color-color-2: var(----color-2);
   --color-color-1: var(----color-1);
   --animate-rainbow: rainbow var(--speed, 2s) infinite linear;
+  --color-brand: var(----brand);
 
   @keyframes rainbow {
     0% {
@@ -280,6 +281,30 @@
     }
     100% {
       background-position: 200%;
+    }
+  }
+
+  --animate-aurora: aurora 8s ease-in-out infinite alternate;
+  @keyframes aurora {
+    0% {
+      backgroundposition: 0% 50%;
+      transform: rotate(-5deg) scale(0.9);
+    }
+    25% {
+      backgroundposition: 50% 100%;
+      transform: rotate(5deg) scale(1.1);
+    }
+    50% {
+      backgroundposition: 100% 50%;
+      transform: rotate(-3deg) scale(0.95);
+    }
+    75% {
+      backgroundposition: 50% 0%;
+      transform: rotate(3deg) scale(1.05);
+    }
+    100% {
+      backgroundposition: 0% 50%;
+      transform: rotate(-5deg) scale(0.9);
     }
   }
 }
@@ -327,10 +352,11 @@
   --chart-3: 197 37% 24%;
   --chart-4: 43 74% 66%;
   --chart-5: 27 87% 67%;
+  --brand: hsl(50 100% 50%);
 }
 
 .dark {
-  --background: #101014;
+  --background: #0e100f;
   --foreground: #f3f3f3;
   --card: oklch(0.205 0 0);
   --card-foreground: oklch(0.985 0 0);
@@ -371,6 +397,7 @@
   --chart-3: 30 80% 55%;
   --chart-4: 280 65% 60%;
   --chart-5: 340 75% 55%;
+  --brand: hsl(50 100% 50%);
 }
 
 @layer base {

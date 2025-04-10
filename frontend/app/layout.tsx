@@ -75,7 +75,7 @@ export default function RootLayout({
     <html lang="en" suppressHydrationWarning>
       <body className={`${sizmoPro.className} h-full antialiased`}>
         <LenisProvider>
-          <ThemeProvider attribute="class" defaultTheme="light">
+          <ThemeProvider attribute="class" defaultTheme="dark">
             {children}
             <Toaster />
           </ThemeProvider>

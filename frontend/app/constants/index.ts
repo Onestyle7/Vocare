@@ -267,3 +267,5 @@ export const down_links = [
   { name: 'PERMISSIONS & TERMS', url: '/' },
   { name: 'PRIVACY POLICY', url: '/' },
 ];
+
+export const letterImg = '/images/as1.png';
