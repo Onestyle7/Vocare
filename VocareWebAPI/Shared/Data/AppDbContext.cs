@@ -6,16 +6,47 @@ using VocareWebAPI.Models.Entities.MarketAnalysis;
 
 namespace VocareWebAPI.Data
 {
+    /// <summary>
+    /// Kontekst bazy danych aplikacji VocareWebAPI, obsługujący encje i relacje
+    /// </summary>
     public class AppDbContext : IdentityDbContext<User>
     {
+        /// <summary>
+        /// Inicjalizuje nową instancję kontekstu bazy danych AppDbContext
+        /// </summary>
+        /// <param name="options">Opcje konfiguracyjne dla kontekstu bazy danych.</param>
         public AppDbContext(DbContextOptions<AppDbContext> options)
             : base(options) { }
 
+        /// <summary>
+        /// Zbiór profili użytkowników w bazie danych
+        /// </summary>
         public DbSet<UserProfile> UserProfiles { get; set; }
+
+        /// <summary>
+        /// Zbiór rekomendacji AI w bazie danych
+        /// </summary>
         public DbSet<AiRecommendation> AiRecommendations { get; set; }
+
+        /// <summary>
+        /// Zbiór ścieżek kariery w bazie danych
+        /// </summary>
         public DbSet<CareerStatistics> CareerStatistics { get; set; }
+
+        /// <summary>
+        /// Zbiór trendów rynkowych w bazie danych
+        /// </summary>
         public DbSet<MarketTrends> MarketTrends { get; set; }
+
+        /// <summary>
+        /// Zbiór zapotrzebowania na umiejętności w bazie danych
+        /// </summary>
         public DbSet<SkillDemand> SkillDemand { get; set; }
+
+        /// <summary>
+        /// Konfiguruje model bazy danych, definiując schemat i relacje między encjami
+        /// </summary>
+        /// <param name="builder"></param>
 
         protected override void OnModelCreating(ModelBuilder builder)
         {

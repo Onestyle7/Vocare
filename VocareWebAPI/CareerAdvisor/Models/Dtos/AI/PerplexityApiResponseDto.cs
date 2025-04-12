@@ -6,18 +6,27 @@ using System.Threading.Tasks;
 
 namespace VocareWebAPI.Models.Dtos
 {
+    /// <summary>
+    /// DTO reprezentujące odpowiedź z API Perplexity
+    /// </summary>
     public class PerplexityApiResponseDto
     {
         [JsonPropertyName("choices")]
         public List<ChoiceDto> Choices { get; set; }
     }
 
+    /// <summary>
+    /// DTO reprezentujące pojedyncza odpowiedz z API Perplexity
+    /// </summary>
     public class ChoiceDto
     {
         [JsonPropertyName("message")]
         public MessageDto Message { get; set; }
     }
 
+    /// <summary>
+    /// DTO reprezentujące treść wiadomości z API Perplexity
+    /// </summary>
     public class MessageDto
     {
         [JsonPropertyName("content")]

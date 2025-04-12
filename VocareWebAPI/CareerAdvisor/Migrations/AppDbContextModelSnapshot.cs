@@ -496,6 +496,9 @@ namespace VocareWebAPI.Migrations
                         .IsRequired()
                         .HasColumnType("text");
 
+                    b.Property<int>("PersonalityType")
+                        .HasColumnType("integer");
+
                     b.Property<string>("PhoneNumber")
                         .HasColumnType("text");
 

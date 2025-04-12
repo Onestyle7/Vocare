@@ -4,9 +4,13 @@ using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using System.Threading.Tasks;
+using VocareWebAPI.UserManagement.Models.Enums;
 
 namespace VocareWebAPI.Models.Entities
 {
+    /// <summary>
+    /// Encja reprezentująca profil użytkowniak w bazie danych
+    /// </summary>
     public class UserProfile
     {
         [Key]
@@ -26,8 +30,9 @@ namespace VocareWebAPI.Models.Entities
         public List<string> Languages { get; set; }
         public string AdditionalInformation { get; set; }
         public string AboutMe { get; set; }
+        public PersonalityType PersonalityType { get; set; }
 
-        /* ublic string LastRecommendationJson { get; set; } = "{}";
+        /* public string LastRecommendationJson { get; set; } = "{}";
         public DateTime? LastRecommendationDate { get; set; }
         public string RecommendedCareerPath { get; set; } = "{}"; */
         public List<AiRecommendation> Recommendations { get; set; } = new();

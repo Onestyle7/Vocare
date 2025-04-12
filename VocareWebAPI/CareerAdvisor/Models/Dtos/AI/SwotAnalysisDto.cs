@@ -6,6 +6,9 @@ using System.Threading.Tasks;
 
 namespace VocareWebAPI.Models.Dtos
 {
+    /// <summary>
+    /// DTO reprezentujące analizę SWOT dla ścieżki zawodowej
+    /// </summary>
     public class SwotAnalysisDto
     {
         [JsonPropertyName("strengths")]

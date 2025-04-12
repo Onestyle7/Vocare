@@ -1,9 +1,9 @@
-"use client";
+'use client';
 
-import * as React from "react";
-import { Check, ChevronsUpDown } from "lucide-react";
-import { cn } from "@/lib/utils";
-import { Button } from "@/components/ui/button";
+import * as React from 'react';
+import { Check, ChevronsUpDown } from 'lucide-react';
+import { cn } from '@/lib/utils';
+import { Button } from '@/components/ui/button';
 import {
   Command,
   CommandEmpty,
@@ -11,14 +11,10 @@ import {
   CommandInput,
   CommandItem,
   CommandList,
-} from "@/components/ui/command";
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from "@/components/ui/popover";
-import { UseFormReturn } from "react-hook-form";
-import { countries } from "@/app/constants";
+} from '@/components/ui/command';
+import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
+import { UseFormReturn } from 'react-hook-form';
+import { countries } from '@/app/constants';
 
 interface CountryComboboxProps {
   form: UseFormReturn<any>;
@@ -38,8 +34,8 @@ export function CountryCombobox({ form, name }: CountryComboboxProps) {
           aria-expanded={open}
           className="w-full justify-between"
         >
-          {value ? countries.find((c) => c.value === value)?.label : "Select country..."}
-          <ChevronsUpDown className="opacity-50 ml-2" size={18} />
+          {value ? countries.find((c) => c.value === value)?.label : 'Select country...'}
+          <ChevronsUpDown className="ml-2 opacity-50" size={18} />
         </Button>
       </PopoverTrigger>
       <PopoverContent className="w-[300px] p-0">
@@ -53,15 +49,15 @@ export function CountryCombobox({ form, name }: CountryComboboxProps) {
                   key={country.value}
                   value={country.value}
                   onSelect={(currentValue) => {
-                    form.setValue(name, currentValue === value ? "" : currentValue);
+                    form.setValue(name, currentValue === value ? '' : currentValue);
                     setOpen(false);
                   }}
                 >
                   {country.label}
                   <Check
                     className={cn(
-                      "ml-auto h-4 w-4",
-                      value === country.value ? "opacity-100" : "opacity-0"
+                      'ml-auto h-4 w-4',
+                      value === country.value ? 'opacity-100' : 'opacity-0'
                     )}
                   />
                 </CommandItem>

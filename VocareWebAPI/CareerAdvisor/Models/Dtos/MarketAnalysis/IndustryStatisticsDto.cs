@@ -5,6 +5,9 @@ using System.Threading.Tasks;
 
 namespace VocareWebAPI.Models.Dtos.MarketAnalysis
 {
+    /// <summary>
+    /// DTO reprezentujące statystyki dla konkretnej branży
+    /// </summary>
     public class IndustryStatisticsDto
     {
         public string Industry { get; set; }

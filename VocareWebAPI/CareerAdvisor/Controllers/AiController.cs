@@ -8,6 +8,9 @@ using static VocareWebAPI.Services.PerplexityAiService;
 
 namespace VocareWebAPI.Controllers
 {
+    /// <summary>
+    /// Controller do obsługi rekomendacji AI.
+    /// </summary>
     [ApiController]
     [Route("api/[controller]")]
     [Authorize]
@@ -16,12 +19,21 @@ namespace VocareWebAPI.Controllers
         private readonly IAiService _aiService;
         private readonly IUserProfileRepository _userProfileRepository;
 
+        /// <summary>
+        /// Inicjalizuje nową instancję kontrolera AiController.
+        /// </summary>
+        /// <param name="aiService">Serwis AI do generowania rekomendacji.</param>
+        /// <param name="userProfileRepository">Repozytorium profili użytkownika</param>
         public AiController(IAiService aiService, IUserProfileRepository userProfileRepository)
         {
             _aiService = aiService;
             _userProfileRepository = userProfileRepository;
         }
 
+        /// <summary>
+        /// Pobiera rekomendacje kariery na podstawie profilu użytkownika.
+        /// </summary>
+        /// <returns>Zwraca rekomendacje zawodowe</returns>
         [HttpGet("recommendations")]
         [EnableRateLimiting("AiPolicy")]
         public async Task<IActionResult> GetRecommendations()
@@ -53,6 +65,10 @@ namespace VocareWebAPI.Controllers
             }
         }
 
+        /// <summary>
+        /// Pobiera ostatnią rekomendację zawodową dla zalogowanego użytkownika.
+        /// </summary>
+        /// <returns></returns>
         [HttpGet("last-recommendation")]
         public async Task<IActionResult> GetLastRecommendation()
         {
