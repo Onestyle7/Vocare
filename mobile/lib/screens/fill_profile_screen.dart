@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:country_code_picker/country_code_picker.dart';
-import 'package:vocare/screens/home_page_screen.dart';
+import 'package:vocare/screens/aI_asistent_screen.dart';
 import 'package:vocare/services/profile_api.dart';
 import 'package:vocare/widgets/nav_bar_button.dart';
 import 'package:vocare/widgets/theme_toggle_button.dart';
@@ -85,7 +85,7 @@ class _FillProfileScreenState extends State<FillProfileScreen> {
     if (success) {
       Navigator.pushReplacement(
         context,
-        MaterialPageRoute(builder: (_) => const HomePageScreen()),
+        MaterialPageRoute(builder: (_) => const AIAsistentPageScreen()),
       );
     } else {
       ScaffoldMessenger.of(context).showSnackBar(
@@ -98,28 +98,32 @@ class _FillProfileScreenState extends State<FillProfileScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
        appBar: AppBar(
+      backgroundColor: Colors.black87,
   automaticallyImplyLeading: false, // usuwa strzałkę "wstecz"
-  title: null, // brak tekstu
-  centerTitle: true,
   toolbarHeight: 60,
-  backgroundColor: Theme.of(context).appBarTheme.backgroundColor,
+ 
   flexibleSpace: SafeArea(
     child: Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 75),
+      padding: const EdgeInsets.symmetric(horizontal: 16),
       child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: const [
           ThemeToggleButton(),
-          NavBarButtons(destinations: [
-            NavDestination.home,
-            NavDestination.profile,
-            NavDestination.logout,
-          ]),
+          NavBarButtons(
+            destinations: [
+              NavDestination.home,
+              NavDestination.profile,
+              NavDestination.logout,
+              NavDestination.assistent,
+            ],
+          ),
         ],
       ),
     ),
   ),
 ),
+
+
       body: SafeArea(
         child: SingleChildScrollView(
           padding: const EdgeInsets.all(16),
@@ -203,6 +207,7 @@ class _FillProfileScreenState extends State<FillProfileScreen> {
   InputDecoration _inputDecoration(String label) {
     return InputDecoration(
       labelText: label,
+      
       border: OutlineInputBorder(
         borderRadius: BorderRadius.circular(25),
       ),

@@ -4,14 +4,14 @@ import 'package:vocare/services/ai_api.dart';
 import 'package:vocare/widgets/nav_bar_button.dart';
 import 'package:vocare/widgets/theme_toggle_button.dart';
 
-class HomePageScreen extends StatefulWidget {
-  const HomePageScreen({super.key});
+class AIAsistentPageScreen extends StatefulWidget {
+  const AIAsistentPageScreen({super.key});
 
   @override
-  State<HomePageScreen> createState() => _HomePageScreenState();
+  State<AIAsistentPageScreen> createState() => _AIAsistentPageScreenState();
 }
 
-class _HomePageScreenState extends State<HomePageScreen> {
+class _AIAsistentPageScreenState extends State<AIAsistentPageScreen> {
   final TextEditingController _recommendationController = TextEditingController();
 
   void _getRecommendation() async {
@@ -25,28 +25,31 @@ class _HomePageScreenState extends State<HomePageScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
     appBar: AppBar(
+      backgroundColor: Colors.black87,
   automaticallyImplyLeading: false, // usuwa strzałkę "wstecz"
-  title: null, // brak tekstu
-  centerTitle: true,
   toolbarHeight: 60,
-  backgroundColor: Theme.of(context).appBarTheme.backgroundColor,
+ 
   flexibleSpace: SafeArea(
     child: Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 75),
+      padding: const EdgeInsets.symmetric(horizontal: 16),
       child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: const [
           ThemeToggleButton(),
-          NavBarButtons(destinations: [
-            NavDestination.home,
-            NavDestination.profile,
-            NavDestination.logout,
-          ]),
+          NavBarButtons(
+            destinations: [
+              NavDestination.home,
+              NavDestination.profile,
+              NavDestination.logout,
+              NavDestination.assistent,
+            ],
+          ),
         ],
       ),
     ),
   ),
 ),
+
 
       body: Padding(
         padding: const EdgeInsets.all(16),

@@ -26,6 +26,7 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     final themeService = Provider.of<ThemeService>(context);
     return MaterialApp(
+      debugShowCheckedModeBanner: false,
       title: 'Vocare',
       theme: ThemeData.light(),
       darkTheme: ThemeData.dark(),
