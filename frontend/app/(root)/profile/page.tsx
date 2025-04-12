@@ -1,11 +1,9 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
-/* eslint-disable @typescript-eslint/no-unused-vars */
 'use client';
 
 import { useEffect, useState } from 'react';
 import { useForm, Controller } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { profileSchema, ProfileFormType } from '@/schemas/profileSchema';
+import { profileSchema, ProfileFormType, personalityTypes } from '@/schemas/profileSchema';
 import {
   createUserProfile,
   updateUserProfile,
@@ -37,6 +35,13 @@ import { TagInput } from '@/components/TagInput';
 import { toast } from 'sonner';
 import { ArrowLeft } from 'lucide-react';
 import Link from 'next/link';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
 
 export default function ProfileForm() {
   const [isLoading, setLoading] = useState(false);
@@ -58,6 +63,7 @@ export default function ProfileForm() {
       languages: [],
       additionalInformation: '',
       aboutMe: '',
+      personalityType: undefined,
     },
   });
 
@@ -290,6 +296,36 @@ export default function ProfileForm() {
                 <FormControl>
                   <Textarea placeholder="I like to sing..." {...field} />
                 </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+
+          {/* Personality Type */}
+          <FormField
+            control={form.control}
+            name="personalityType"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Personality Type</FormLabel>
+                <Select
+                  onValueChange={(value) => field.onChange(Number(value))}
+                  defaultValue={field.value?.toString()}
+                  value={field.value?.toString()}
+                >
+                  <FormControl>
+                    <SelectTrigger>
+                      <SelectValue placeholder="Select your personality type" />
+                    </SelectTrigger>
+                  </FormControl>
+                  <SelectContent>
+                    {Object.entries(personalityTypes).map(([value, label]) => (
+                      <SelectItem key={value} value={value}>
+                        {label}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
                 <FormMessage />
               </FormItem>
             )}
