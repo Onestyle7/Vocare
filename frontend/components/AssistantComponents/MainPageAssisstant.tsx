@@ -7,8 +7,11 @@ import { toast } from 'sonner';
 import { Button } from '@/components/ui/button';
 import { AiCareerResponse } from '@/lib/recommendations';
 import Link from 'next/link';
-import { ArrowLeft } from 'lucide-react';
+import { ArrowDown, ArrowLeft } from 'lucide-react';
 import GenerateRecommendation from './GenerateRecommendationFail';
+import SectionsNum from './SectionsNum';
+import gsap from 'gsap';
+import { Separator } from '../ui/separator';
 
 export default function AssistantPage() {
   const [profile, setProfile] = useState<UserProfile | null>(null);
@@ -113,20 +116,27 @@ export default function AssistantPage() {
     );
   }
 
+
   return (
-    <div className="mx-auto max-w-7xl p-4 md:p-8">
+    <div className="mx-auto max-w-7xl p-4 md:p-8 font-poppins">
       {/* Main recommendation section */}
-      <div className="flex flex-col md:flex-row mb-8 border rounded-lg overflow-hidden shadow-sm">
-        <div className="flex items-center justify-center bg-blue-100 p-4 md:p-8 md:w-1/6">
-          <span className="text-4xl md:text-6xl font-bold text-blue-600">1</span>
+      <div className="flex flex-col md:flex-row mb-1 border rounded-[28px] overflow-hidden shadow-sm">
+        <div className="flex items-center justify-center bg-[#915EFF] p-4 md:p-8 md:w-1/6">
+          <span className="text-4xl md:text-6xl font-bold text-white" id='num'>1</span>
         </div>
         <div className="p-4 md:p-6 md:w-5/6">
-          <h2 className="text-xl font-semibold mb-3">Główna rekomendacja</h2>
+        <div className='flex flex-row justify-between items-center'>
+          <h2 className="text-xl font-semibold mb-3">Main Recommendation</h2>
+          <Button className='flex group overflow-hidden'>
+            Collapse
+            <span><ArrowDown className="ml-2 transition-transform duration-300 group-hover:translate-y-2"/></span>
+          </Button>
+        </div>
           <div className="space-y-3">
-            <h3 className="text-lg font-medium text-blue-700">
+            <h3 className="text-lg font-medium text-[#915EFF]">
               {recommendations.recommendation.primaryPath}
             </h3>
-            <p className="text-gray-700">{recommendations.recommendation.justification}</p>
+            <p className="text-gray-500">{recommendations.recommendation.justification}</p>
             
             <div className="mt-4">
               <h4 className="font-medium">Kolejne kroki:</h4>
@@ -136,7 +146,7 @@ export default function AssistantPage() {
                 ))}
               </ul>
             </div>
-            
+            <Separator/>
             <div className="mt-4">
               <h4 className="font-medium">Cel długoterminowy:</h4>
               <p className="mt-1">{recommendations.recommendation.longTermGoal}</p>
@@ -147,15 +157,15 @@ export default function AssistantPage() {
 
       {/* Career paths sections */}
       {recommendations.careerPaths.map((path, index) => (
-        <div key={index} className="flex flex-col md:flex-row mb-8 border rounded-lg overflow-hidden shadow-sm">
+        <div key={index} className="flex flex-col md:flex-row mb-1 border rounded-[28px] overflow-hidden shadow-sm">
           <div className={`flex items-center justify-center p-4 md:p-8 md:w-1/6 
-            ${index === 0 ? 'bg-green-100' : index === 1 ? 'bg-yellow-100' : 'bg-purple-100'}`}>
+            ${index === 0 ? 'bg-[#A985FF]' : index === 1 ? 'bg-[#BD9EFF]' : 'bg-[#D1B7FF]'}`}>
             <span className={`text-4xl md:text-6xl font-bold 
               ${index === 0 
-                ? 'text-green-600' 
+                ? 'text-white' 
                 : index === 1 
-                  ? 'text-yellow-600' 
-                  : 'text-purple-600'}`}>
+                  ? 'text-white' 
+                  : 'text-white'}`}>
               {index + 2}
             </span>
           </div>
@@ -200,7 +210,7 @@ export default function AssistantPage() {
               <div className="mt-6">
                 <h4 className="font-medium mb-3">Analiza SWOT:</h4>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <div className="bg-green-50 p-3 rounded">
+                  <div className="bg-green-50 p-3 rounded-xl border-b-4 border-green-500">
                     <strong className="text-green-700">Mocne strony:</strong>
                     <ul className="list-disc pl-5 mt-1 space-y-1 text-black">
                       {path.swot.strengths.map((strength, strengthIndex) => (
@@ -208,7 +218,7 @@ export default function AssistantPage() {
                       ))}
                     </ul>
                   </div>
-                  <div className="bg-red-50 p-3 rounded">
+                  <div className="bg-red-50 p-3 rounded-xl border-b-4 border-red-500">
                     <strong className="text-red-700">Słabe strony:</strong>
                     <ul className="list-disc pl-5 mt-1 space-y-1 text-black">
                       {path.swot.weaknesses.map((weakness, weaknessIndex) => (
@@ -216,7 +226,7 @@ export default function AssistantPage() {
                       ))}
                     </ul>
                   </div>
-                  <div className="bg-blue-50 p-3 rounded">
+                  <div className="bg-blue-50 p-3 rounded-xl border-b-4 border-blue-500">
                     <strong className="text-blue-700">Szanse:</strong>
                     <ul className="list-disc pl-5 mt-1 space-y-1 text-black">
                       {path.swot.opportunities.map((opportunity, oppIndex) => (
@@ -224,7 +234,7 @@ export default function AssistantPage() {
                       ))}
                     </ul>
                   </div>
-                  <div className="bg-orange-50 p-3 rounded">
+                  <div className="bg-orange-50 p-3 rounded-xl border-b-4 border-orange-500">
                     <strong className="text-orange-700">Zagrożenia:</strong>
                     <ul className="list-disc pl-5 mt-1 space-y-1 text-black">
                       {path.swot.threats.map((threat, threatIndex) => (
