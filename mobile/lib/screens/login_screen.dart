@@ -117,7 +117,7 @@ class _LoginScreenState extends State<LoginScreen> {
             ElevatedButton(
               onPressed: _handleLogin,
               style: ElevatedButton.styleFrom(
-                backgroundColor: const Color.fromARGB(255, 82, 164, 232),
+                backgroundColor: Color(0xFF915EFF)
               ),
               child: const Text("Zaloguj się"),
             ),
@@ -129,7 +129,7 @@ class _LoginScreenState extends State<LoginScreen> {
                   MaterialPageRoute(builder: (_) => const RegisterScreen()),
                 );
               },
-              style: ElevatedButton.styleFrom(backgroundColor: Colors.blue),
+              style: ElevatedButton.styleFrom(backgroundColor:  Color(0xFF915EFF)),
               child: const Text("Nie masz konta? Zarejestruj się"),
             ),
           ],

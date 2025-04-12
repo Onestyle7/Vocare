@@ -97,6 +97,7 @@ class _FillProfileScreenState extends State<FillProfileScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      bottomNavigationBar:() ,
        appBar: AppBar(
       backgroundColor: Colors.black87,
   automaticallyImplyLeading: false, // usuwa strzałkę "wstecz"
