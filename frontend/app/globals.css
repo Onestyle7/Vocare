@@ -1,12 +1,13 @@
-@import "tailwindcss";
-@import "tw-animate-css";
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap');
+
+@import 'tailwindcss';
+@import 'tw-animate-css';
 
 @plugin "tailwindcss-animate";
 
-
 @custom-variant dark (&:is(.dark *));
 
-@import "tailwindcss";
+@import 'tailwindcss';
 
 @utility remove-scrollbar {
   &::-webkit-scrollbar {
@@ -30,40 +31,40 @@
 
 /* SizmoLinePro warianty */
 @font-face {
-  font-family: "SizmoLinePro";
-  src: url("/fonts/SizmoLinePro-Bold.woff2") format("woff2");
+  font-family: 'SizmoLinePro';
+  src: url('/fonts/SizmoLinePro-Bold.woff2') format('woff2');
   font-weight: 800; /* Bold */
   font-style: normal;
   font-display: swap;
 }
 
 @font-face {
-  font-family: "SizmoLinePro";
-  src: url("/fonts/SizmoLinePro-Demibold.woff2") format("woff2");
+  font-family: 'SizmoLinePro';
+  src: url('/fonts/SizmoLinePro-Demibold.woff2') format('woff2');
   font-weight: 600; /* Demibold */
   font-style: normal;
   font-display: swap;
 }
 
 @font-face {
-  font-family: "SizmoLinePro";
-  src: url("/fonts/SizmoLinePro-Light.woff2") format("woff2");
+  font-family: 'SizmoLinePro';
+  src: url('/fonts/SizmoLinePro-Light.woff2') format('woff2');
   font-weight: 300; /* Light */
   font-style: normal;
   font-display: swap;
 }
 
 @font-face {
-  font-family: "SizmoLinePro";
-  src: url("/fonts/SizmoLinePro-Medium.woff2") format("woff2");
+  font-family: 'SizmoLinePro';
+  src: url('/fonts/SizmoLinePro-Medium.woff2') format('woff2');
   font-weight: 500; /* Medium */
   font-style: normal;
   font-display: swap;
 }
 
 @font-face {
-  font-family: "SizmoLinePro";
-  src: url("/fonts/SizmoLinePro.woff2") format("woff2");
+  font-family: 'SizmoLinePro';
+  src: url('/fonts/SizmoLinePro.woff2') format('woff2');
   font-weight: 400; /* Regular */
   font-style: normal;
   font-display: swap;
@@ -71,88 +72,88 @@
 
 /* SizmoPro warianty */
 @font-face {
-  font-family: "SizmoPro";
-  src: url("/fonts/SizmoPro-Bold.woff2") format("woff2");
+  font-family: 'SizmoPro';
+  src: url('/fonts/SizmoPro-Bold.woff2') format('woff2');
   font-weight: 800; /* Bold */
   font-style: normal;
   font-display: swap;
 }
 
 @font-face {
-  font-family: "SizmoPro";
-  src: url("/fonts/SizmoPro-BoldOblique.woff2") format("woff2");
+  font-family: 'SizmoPro';
+  src: url('/fonts/SizmoPro-BoldOblique.woff2') format('woff2');
   font-weight: 800; /* Bold */
   font-style: italic; /* Oblique */
   font-display: swap;
 }
 
 @font-face {
-  font-family: "SizmoPro";
-  src: url("/fonts/SizmoPro-Demibold.woff2") format("woff2");
+  font-family: 'SizmoPro';
+  src: url('/fonts/SizmoPro-Demibold.woff2') format('woff2');
   font-weight: 600; /* Demibold */
   font-style: normal;
   font-display: swap;
 }
 
 @font-face {
-  font-family: "SizmoPro";
-  src: url("/fonts/SizmoPro-DemiboldOblique.woff2") format("woff2");
+  font-family: 'SizmoPro';
+  src: url('/fonts/SizmoPro-DemiboldOblique.woff2') format('woff2');
   font-weight: 600; /* Demibold */
   font-style: italic; /* Oblique */
   font-display: swap;
 }
 
 @font-face {
-  font-family: "SizmoPro";
-  src: url("/fonts/SizmoPro-Light.woff2") format("woff2");
+  font-family: 'SizmoPro';
+  src: url('/fonts/SizmoPro-Light.woff2') format('woff2');
   font-weight: 300; /* Light */
   font-style: normal;
   font-display: swap;
 }
 
 @font-face {
-  font-family: "SizmoPro";
-  src: url("/fonts/SizmoPro-LightOblique.woff2") format("woff2");
+  font-family: 'SizmoPro';
+  src: url('/fonts/SizmoPro-LightOblique.woff2') format('woff2');
   font-weight: 300; /* Light */
   font-style: italic; /* Oblique */
   font-display: swap;
 }
 
 @font-face {
-  font-family: "SizmoPro";
-  src: url("/fonts/SizmoPro-Medium.woff2") format("woff2");
+  font-family: 'SizmoPro';
+  src: url('/fonts/SizmoPro-Medium.woff2') format('woff2');
   font-weight: 500; /* Medium */
   font-style: normal;
   font-display: swap;
 }
 
 @font-face {
-  font-family: "SizmoPro";
-  src: url("/fonts/SizmoPro-MediumOblique.woff2") format("woff2");
+  font-family: 'SizmoPro';
+  src: url('/fonts/SizmoPro-MediumOblique.woff2') format('woff2');
   font-weight: 500; /* Medium */
   font-style: italic; /* Oblique */
   font-display: swap;
 }
 
 @font-face {
-  font-family: "SizmoPro";
-  src: url("/fonts/SizmoPro-Oblique.woff2") format("woff2");
+  font-family: 'SizmoPro';
+  src: url('/fonts/SizmoPro-Oblique.woff2') format('woff2');
   font-weight: 400; /* Regular */
   font-style: italic; /* Oblique */
   font-display: swap;
 }
 
 @font-face {
-  font-family: "SizmoPro";
-  src: url("/fonts/SizmoPro.woff2") format("woff2");
+  font-family: 'SizmoPro';
+  src: url('/fonts/SizmoPro.woff2') format('woff2');
   font-weight: 400; /* Regular */
   font-style: normal;
   font-display: swap;
 }
 
 @theme {
-  --font-family-sizmo-line: "SizmoLinePro", sans-serif;
-  --font-family-sizmo: "SizmoPro", sans-serif;
+  --font-family-sizmo-line: 'SizmoLinePro', sans-serif;
+  --font-family-sizmo: 'SizmoPro', sans-serif;
 }
 
 /* Klasy użytkowe dla SizmoLinePro */
@@ -225,6 +226,10 @@
   @apply font-[var(--font-family-sizmo)] font-bold italic; /* 800, italic */
 }
 
+.font-poppins {
+  font-family: 'Poppins', sans-serif;
+}
+
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
@@ -263,12 +268,52 @@
   --radius-md: calc(var(--radius) - 2px);
   --radius-lg: var(--radius);
   --radius-xl: calc(var(--radius) + 4px);
+  --color-color-5: var(----color-5);
+  --color-color-4: var(----color-4);
+  --color-color-3: var(----color-3);
+  --color-color-2: var(----color-2);
+  --color-color-1: var(----color-1);
+  --animate-rainbow: rainbow var(--speed, 2s) infinite linear;
+  --color-brand: var(----brand);
+
+  @keyframes rainbow {
+    0% {
+      background-position: 0%;
+    }
+    100% {
+      background-position: 200%;
+    }
+  }
+
+  --animate-aurora: aurora 8s ease-in-out infinite alternate;
+  @keyframes aurora {
+    0% {
+      backgroundposition: 0% 50%;
+      transform: rotate(-5deg) scale(0.9);
+    }
+    25% {
+      backgroundposition: 50% 100%;
+      transform: rotate(5deg) scale(1.1);
+    }
+    50% {
+      backgroundposition: 100% 50%;
+      transform: rotate(-3deg) scale(0.95);
+    }
+    75% {
+      backgroundposition: 50% 0%;
+      transform: rotate(3deg) scale(1.05);
+    }
+    100% {
+      backgroundposition: 0% 50%;
+      transform: rotate(-5deg) scale(0.9);
+    }
+  }
 }
 
 :root {
   --radius: 0.625rem;
-  --background: oklch(1 0 0);
-  --foreground: oklch(0.145 0 0);
+  --background: #f3f3f3;
+  --foreground: #101014;
   --card: oklch(1 0 0);
   --card-foreground: oklch(0.145 0 0);
   --popover: oklch(1 0 0);
@@ -298,11 +343,22 @@
   --sidebar-accent-foreground: oklch(0.205 0 0);
   --sidebar-border: oklch(0.922 0 0);
   --sidebar-ring: oklch(0.708 0 0);
+  --color-1: hsl(0 100% 63%);
+  --color-2: hsl(270 100% 63%);
+  --color-3: hsl(210 100% 63%);
+  --color-4: hsl(195 100% 63%);
+  --color-5: hsl(90 100% 63%);
+  --chart-1: 12 76% 61%;
+  --chart-2: 173 58% 39%;
+  --chart-3: 197 37% 24%;
+  --chart-4: 43 74% 66%;
+  --chart-5: 27 87% 67%;
+  --brand: hsl(50 100% 50%);
 }
 
 .dark {
-  --background: oklch(0.145 0 0);
-  --foreground: oklch(0.985 0 0);
+  --background: #0e100f;
+  --foreground: #f3f3f3;
   --card: oklch(0.205 0 0);
   --card-foreground: oklch(0.985 0 0);
   --popover: oklch(0.205 0 0);
@@ -332,6 +388,17 @@
   --sidebar-accent-foreground: oklch(0.985 0 0);
   --sidebar-border: oklch(1 0 0 / 10%);
   --sidebar-ring: oklch(0.556 0 0);
+  --color-1: hsl(0 100% 63%);
+  --color-2: hsl(270 100% 63%);
+  --color-3: hsl(210 100% 63%);
+  --color-4: hsl(195 100% 63%);
+  --color-5: hsl(90 100% 63%);
+  --chart-1: 220 70% 50%;
+  --chart-2: 160 60% 45%;
+  --chart-3: 30 80% 55%;
+  --chart-4: 280 65% 60%;
+  --chart-5: 340 75% 55%;
+  --brand: hsl(50 100% 50%);
 }
 
 @layer base {
@@ -343,23 +410,80 @@
   }
 }
 
+@layer base {
+  html,
+  body {
+    height: 100%;
+    scroll-behavior: auto;
+  }
+}
 
 @layer components {
-
   .auth-form {
     @apply flex max-h-[800px] w-full max-w-[580px] flex-col justify-center space-y-6 transition-all lg:h-full lg:space-y-8;
-  }
-
-  .form-title {
-    @apply text-[34px] text-center md:text-left;
-  }
-
-  .form-submit-button {
-    @apply h-[66px];
   }
 
   .error-message {
     @apply mx-auto w-fit rounded-xl px-8 py-4 text-center;
   }
-  
+
+  .main-font-color {
+    @apply text-[#191A23] dark:text-[#F3F3F3];
+  }
+
+  .mask-clip-path {
+    clip-path: polygon(0 0, 100% 0, 100% 100%, 0 100%);
+  }
+
+  .feature-text {
+    @apply text-red-500;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border outline-ring/50;
+  }
+  body {
+    @apply bg-background text-foreground;
+  }
+}
+
+/* Auth form */
+
+.form-button {
+  @apply rounded-full bg-[#915EFF] text-xl;
+}
+
+.h1 {
+  @apply text-[34px] leading-[42px] font-bold;
+}
+
+.body-1 {
+  @apply text-[16px] leading-[24px] font-normal;
+}
+
+.form-title {
+  @apply text-center text-[34px] font-semibold text-[#101014] md:text-left dark:text-[#F3F3F3];
+}
+
+.input-form {
+  @apply rounded-full border border-gray-200;
+}
+
+.arrow-animation {
+  @apply ml-2 transition-transform duration-300 group-hover:translate-x-2;
+}
+
+
+input:-webkit-autofill {
+  box-shadow: 0 0 0px 1000px #ffffff61 inset !important;
+  -webkit-text-fill-color: #101014 !important;
+  font-family: 'SizmoPro', sans-serif !important;
+  transition: background-color 5000s ease-in-out 0s;
+}
+
+.dark input:-webkit-autofill {
+  box-shadow: 0 0 0px 1000px rgba(16, 16, 20, 0.102) inset !important;
+  -webkit-text-fill-color: #f3f3f3 !important;
 }
