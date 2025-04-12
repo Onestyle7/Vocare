@@ -6,6 +6,9 @@ using System.Threading.Tasks;
 
 namespace VocareWebAPI.Models.Entities
 {
+    /// <summary>
+    /// Encja kolejnego kroku w realizacji rekomendacji zawodowej
+    /// </summary>
     public class NextStep
     {
         [Key]

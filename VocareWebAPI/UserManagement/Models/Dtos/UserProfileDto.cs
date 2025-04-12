@@ -7,6 +7,9 @@ using VocareWebAPI.UserManagement.Models.Enums;
 
 namespace VocareWebAPI.Models.Dtos
 {
+    /// <summary>
+    /// Dto reprezentujące dane profilu użytkownika
+    /// </summary>
     public class UserProfileDto
     {
         [Required(ErrorMessage = "Imię jest wymagane.")]

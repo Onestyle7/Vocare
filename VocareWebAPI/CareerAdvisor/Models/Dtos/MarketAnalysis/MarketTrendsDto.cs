@@ -5,6 +5,9 @@ using System.Threading.Tasks;
 
 namespace VocareWebAPI.Models.Dtos.MarketAnalysis
 {
+    /// <summary>
+    /// DTO reprezentujące trend rynkowy
+    /// </summary>
     public class MarketTrendsDto
     {
         public string TrendName { get; set; }

@@ -9,6 +9,9 @@ using VocareWebAPI.Repositories.Interfaces;
 
 namespace VocareWebAPI.Controllers
 {
+    /// <summary>
+    /// Kontroler odpowiedzialny za operacje związane z analizą rynku pracy.
+    /// </summary>
     [ApiController]
     [Route("api/[controller]")]
     [Authorize]
@@ -17,6 +20,11 @@ namespace VocareWebAPI.Controllers
         private readonly IMarketAnalysisService _marketAnalysisService;
         private readonly ILogger<MarketAnalysisController> _logger;
 
+        /// <summary>
+        /// Inicjalizuje nową instancję kontrolera
+        /// </summary>
+        /// <param name="marketAnalysisService">Serwis odpowiedzialny za analizę rynku pracy.</param>
+        /// <param name="logger">Logger do rejestrowania zdarzeń kontrolera</param>
         public MarketAnalysisController(
             IMarketAnalysisService marketAnalysisService,
             ILogger<MarketAnalysisController> logger
@@ -26,9 +34,8 @@ namespace VocareWebAPI.Controllers
             _logger = logger;
         }
 
-        /// <summary>Pobieramy analizę rynku dla danego użytkownika</summary>
-        /// <param name="userId">Identyfikator użytkownika</param>
-        /// <returns>Analiza rynku</returns>
+        /// <summary>Pobieramy analizę rynku dla zalogowanego użytkownika</summary>
+        /// <returns>Zwraca analizę rynku pracy</returns>
         [HttpGet]
         public async Task<IActionResult> GetMarketAnalysis()
         {

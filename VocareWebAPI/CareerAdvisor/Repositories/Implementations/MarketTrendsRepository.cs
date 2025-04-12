@@ -8,15 +8,27 @@ using VocareWebAPI.Repositories.Interfaces;
 
 namespace VocareWebAPI.Repositories.Implementations
 {
+    /// <summary>
+    /// Repozytorium odpowiedzialne za operacje na trendach rynkowych w bazie danych
+    /// </summary>
     public class MarketTrendsRepository : IMarketTrendsRepository
     {
         private readonly AppDbContext _context;
 
+        /// <summary>
+        /// Inicjalizuje instancję repozytorium
+        /// </summary>
+        /// <param name="context"></param>
         public MarketTrendsRepository(AppDbContext context)
         {
             _context = context;
         }
 
+        /// <summary>
+        /// Dodaje nowy tren rynkowy do bazy danych
+        /// </summary>
+        /// <param name="entity">Trend rynkowy do dodania</param>
+        /// <returns>Task reprezentujący operację asynchroniczną</returns>
         public async Task AddAsync(MarketTrends entity)
         {
             await _context.MarketTrends.AddAsync(entity);

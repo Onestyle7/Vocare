@@ -10,6 +10,9 @@ using VocareWebAPI.Models.Entities.MarketAnalysis;
 
 namespace VocareWebAPI.Models
 {
+    /// <summary>
+    /// Encja rekomendacji zawodowej, wygenerowanej przez AI dla zalogowanego użytkownika
+    /// </summary>
     public class AiRecommendation
     {
         [Key]

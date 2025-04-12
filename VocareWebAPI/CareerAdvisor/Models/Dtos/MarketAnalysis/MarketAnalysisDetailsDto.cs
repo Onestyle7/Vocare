@@ -5,7 +5,9 @@ using System.Threading.Tasks;
 
 namespace VocareWebAPI.Models.Dtos.MarketAnalysis
 {
-    //To Dto słuzy do transfery danych między serwisem a API perplexity
+    /// <summary>
+    /// DTO reprezentujące szczegółowe dane analizy rynku pracy, używany do transferu danych między serwisem a API Perplexity.
+    /// </summary>
     public class MarketAnalysisDetailsDto
     {
         public List<IndustryStatisticsDto> IndustryStatistics { get; set; }

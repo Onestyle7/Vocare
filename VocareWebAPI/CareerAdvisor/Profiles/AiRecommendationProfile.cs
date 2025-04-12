@@ -8,9 +8,12 @@ namespace VocareWebAPI.Profiles
 {
     public class AiRecommendationProfile : Profile
     {
+        /// <summary>
+        /// Profil automapper dla mapowań związanych z rekomendacjami AI
+        /// </summary>
         public AiRecommendationProfile()
         {
-            // Główne mapowanie
+            // Główne mapowanie: Dto na Encję i odwrotnie
             CreateMap<AiCareerResponseDto, AiRecommendation>()
                 .ForMember(
                     dest => dest.PrimaryPath,

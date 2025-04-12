@@ -8,6 +8,9 @@ using VocareWebAPI.Models.Entities.MarketAnalysis;
 
 namespace VocareWebAPI.Models.Entities
 {
+    /// <summary>
+    /// Encja pojedyńczej ścieżki zawodowej w ramach rekomendacji
+    /// </summary>
     public class CareerPath
     {
         [Key]
