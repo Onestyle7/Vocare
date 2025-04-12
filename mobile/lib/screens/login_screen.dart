@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:vocare/screens/home_page_screen.dart';
+import 'package:vocare/screens/aI_asistent_screen.dart';
 import 'package:vocare/screens/register_screen.dart';
 import 'package:vocare/services/them_service.dart';
+import 'package:vocare/widgets/nav_bar_button.dart'
+    show NavBarButtons, NavDestination;
 import 'package:vocare/widgets/theme_toggle_button.dart';
 import '../repositories/auth_repository.dart';
 
@@ -34,7 +36,7 @@ class _LoginScreenState extends State<LoginScreen> {
     if (isLoggedIn) {
       Navigator.pushReplacement(
         context,
-        MaterialPageRoute(builder: (_) => const HomePageScreen()),
+        MaterialPageRoute(builder: (_) => const AIAsistentPageScreen()),
       );
     } else {
       ScaffoldMessenger.of(context).showSnackBar(
@@ -51,9 +53,31 @@ class _LoginScreenState extends State<LoginScreen> {
 
     return Scaffold(
       appBar: AppBar(
-        actions: [ThemeToggleButton()
-        ],
+        backgroundColor: Colors.black87,
+        automaticallyImplyLeading: false, // usuwa strzałkę "wstecz"
+        toolbarHeight: 60,
+
+        flexibleSpace: SafeArea(
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 16),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: const [
+                ThemeToggleButton(),
+                NavBarButtons(
+                  destinations: [
+                    NavDestination.home,
+                    NavDestination.profile,
+                    NavDestination.logout,
+                    NavDestination.assistent,
+                  ],
+                ),
+              ],
+            ),
+          ),
+        ),
       ),
+
       body: Padding(
         padding: const EdgeInsets.all(16),
         child: Column(
@@ -61,10 +85,7 @@ class _LoginScreenState extends State<LoginScreen> {
             Positioned(
               left: 100,
               top: 928,
-              child: Text(
-                "Vocare",
-                style: TextStyle(fontSize: 55),
-              ),
+              child: Text("Vocare", style: TextStyle(fontSize: 55)),
             ),
 
             SizedBox(height: 150),
@@ -95,16 +116,20 @@ class _LoginScreenState extends State<LoginScreen> {
             const SizedBox(height: 16),
             ElevatedButton(
               onPressed: _handleLogin,
+              style: ElevatedButton.styleFrom(
+                backgroundColor: Color(0xFF915EFF)
+              ),
               child: const Text("Zaloguj się"),
             ),
             const SizedBox(height: 12),
-            TextButton(
+            ElevatedButton(
               onPressed: () {
                 Navigator.push(
                   context,
                   MaterialPageRoute(builder: (_) => const RegisterScreen()),
                 );
               },
+              style: ElevatedButton.styleFrom(backgroundColor:  Color(0xFF915EFF)),
               child: const Text("Nie masz konta? Zarejestruj się"),
             ),
           ],

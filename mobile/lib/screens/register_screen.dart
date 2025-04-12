@@ -1,7 +1,7 @@
 // lib/screens/register_screen.dart
 import 'package:flutter/material.dart';
 import 'package:vocare/repositories/auth_repository.dart';
-import 'package:vocare/screens/home_page_screen.dart';
+import 'package:vocare/screens/aI_asistent_screen.dart';
 import 'package:vocare/widgets/theme_toggle_button.dart';
 
 class RegisterScreen extends StatefulWidget {
@@ -30,7 +30,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
       if (success) {
         Navigator.pushReplacement(
           context,
-          MaterialPageRoute(builder: (context) => HomePageScreen()),
+          MaterialPageRoute(builder: (context) => AIAsistentPageScreen()),
         );
       } else {
         ScaffoldMessenger.of(

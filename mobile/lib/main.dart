@@ -26,11 +26,12 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     final themeService = Provider.of<ThemeService>(context);
     return MaterialApp(
+      debugShowCheckedModeBanner: false,
       title: 'Vocare',
       theme: ThemeData.light(),
       darkTheme: ThemeData.dark(),
       themeMode: themeService.isDarkMode ? ThemeMode.dark : ThemeMode.light,
-      home: LoginScreen(),
+      home: FillProfileScreen(),
     );
   }
 }

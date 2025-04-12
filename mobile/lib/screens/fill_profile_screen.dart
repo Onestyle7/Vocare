@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:country_code_picker/country_code_picker.dart';
-import 'package:vocare/screens/home_page_screen.dart';
+import 'package:vocare/screens/aI_asistent_screen.dart';
 import 'package:vocare/services/profile_api.dart';
+import 'package:vocare/widgets/nav_bar_button.dart';
 import 'package:vocare/widgets/theme_toggle_button.dart';
 
 class FillProfileScreen extends StatefulWidget {
@@ -25,7 +26,7 @@ class _FillProfileScreenState extends State<FillProfileScreen> {
   String selectedCountry = '';
   String? _selectEducation;
 
-  List<String> educationList = [
+  final List<String> educationList = [
     'Wykształcenie podstawowe',
     'Wykształcenie gimnazjalne',
     'Wykształcenie średnie',
@@ -82,44 +83,66 @@ class _FillProfileScreenState extends State<FillProfileScreen> {
     final success = await ProfileApi.createUserProfile(profileData);
 
     if (success) {
-      Navigator.push(context, MaterialPageRoute(builder: (context) => HomePageScreen()));
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(builder: (_) => const AIAsistentPageScreen()),
+      );
     } else {
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Nie udało się zapisać danych')));
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Nie udało się zapisać danych')),
+      );
     }
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text("Profil użytkownika"),actions: [ThemeToggleButton()]),
+      bottomNavigationBar:(Text("Test")) ,
+       appBar: AppBar(
+      backgroundColor: Colors.black87,
+  automaticallyImplyLeading: false, // usuwa strzałkę "wstecz"
+  toolbarHeight: 60,
+ 
+  flexibleSpace: SafeArea(
+    child: Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 16),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: const [
+          ThemeToggleButton(),
+          NavBarButtons(
+            destinations: [
+              NavDestination.home,
+              NavDestination.profile,
+              NavDestination.logout,
+              NavDestination.assistent,
+            ],
+          ),
+        ],
+      ),
+    ),
+  ),
+),
+
+
       body: SafeArea(
         child: SingleChildScrollView(
           padding: const EdgeInsets.all(16),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Positioned(
-              left: 100,
-              top: 928,
-              child: Text(
-                "Vocare",
-                style: TextStyle(fontSize: 55),
+              Center(
+                child: Text(
+                  "Vocare",
+                  style: TextStyle(
+                    fontSize: 36,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
               ),
-            ),
-              TextFormField(
-                controller: _nameController,
-                decoration: InputDecoration(labelText: "Name",border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(25),
-                ),),
-                
-              ),
-              SizedBox(height: 16),
-              TextFormField(
-                controller: _surnameController,
-                decoration: InputDecoration(labelText: "Last name",border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(25),
-                ),),
-              ),
+              const SizedBox(height: 24),
+              _buildTextField("Name", _nameController),
+              _buildTextField("Last name", _surnameController),
               CountryCodePicker(
                 onChanged: (country) {
                   setState(() {
@@ -130,26 +153,11 @@ class _FillProfileScreenState extends State<FillProfileScreen> {
                 showCountryOnly: true,
                 showOnlyCountryWhenClosed: true,
               ),
-              SizedBox(height: 16),
-              TextFormField(
-                controller: _addressController,
-                decoration: InputDecoration(labelText: "Address",border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(25),
-                ),),
-              ),
-              SizedBox(height: 16),
-              TextFormField(
-                controller: _phoneController,
-                decoration: InputDecoration(labelText: "Phone number",border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(25),
-                ),),
-              ),
-              SizedBox(height: 16),
+              _buildTextField("Address", _addressController),
+              _buildTextField("Phone number", _phoneController),
               DropdownButtonFormField<String>(
                 value: _selectEducation,
-                decoration: InputDecoration(labelText: "Wykształcenie",border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(25),
-                ),),
+                decoration: _inputDecoration("Wykształcenie"),
                 items: educationList.map((e) => DropdownMenuItem(value: e, child: Text(e))).toList(),
                 onChanged: (value) {
                   setState(() {
@@ -157,51 +165,52 @@ class _FillProfileScreenState extends State<FillProfileScreen> {
                   });
                 },
               ),
-              SizedBox(height: 12),
-              TextFormField(
-                controller: _workExperienceController,
-                decoration: InputDecoration(labelText: "Work expieriance", border: OutlineInputBorder(borderRadius: BorderRadius.circular(25),),),
-                maxLines: 5,
-              ),
-              SizedBox(height: 12),
-              TextFormField(
-                controller: _skillController,
-                decoration: InputDecoration(labelText: "Skill",border: OutlineInputBorder(borderRadius: BorderRadius.circular(25),)),
-                maxLines: 5,
-              ),
-              SizedBox(height: 12),
-              TextFormField(
-                controller: _certicateController,
-                decoration: InputDecoration(labelText: "Certicates",border: OutlineInputBorder(borderRadius: BorderRadius.circular(25),)),
-                maxLines: 5,
-                
-              ),
-              SizedBox(height: 12),
-              TextFormField(
-                controller: _languagesController,
-                decoration: InputDecoration(labelText: "Languages",border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(25),
-                ),),
-              ),
               const SizedBox(height: 12),
-              TextFormField(
-                controller: _aboutMeController,
-                decoration: InputDecoration(labelText: "About Me", border: OutlineInputBorder(borderRadius: BorderRadius.circular(25),)),
-                maxLines: 3,
-              ),
-              const SizedBox(height: 12),
-              TextFormField(
-                controller: _additionallInformationController,
-                decoration: InputDecoration(labelText: "Additional Information", border: OutlineInputBorder(borderRadius: BorderRadius.circular(25),)),
-                maxLines: 3,
-              ),
+              _buildMultilineField("Work experience", _workExperienceController),
+              _buildMultilineField("Skills", _skillController),
+              _buildMultilineField("Certificates", _certicateController),
+              _buildTextField("Languages", _languagesController),
+              _buildMultilineField("About Me", _aboutMeController),
+              _buildMultilineField("Additional Information", _additionallInformationController),
+              const SizedBox(height: 16),
               ElevatedButton(
                 onPressed: _saveProfile,
-                child: Text("Zapisz dane"),
+                child: const Text("Zapisz dane"),
               ),
             ],
           ),
         ),
+      ),
+    );
+  }
+
+  Widget _buildTextField(String label, TextEditingController controller) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 8),
+      child: TextFormField(
+        controller: controller,
+        decoration: _inputDecoration(label),
+      ),
+    );
+  }
+
+  Widget _buildMultilineField(String label, TextEditingController controller) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 8),
+      child: TextFormField(
+        controller: controller,
+        maxLines: 4,
+        decoration: _inputDecoration(label),
+      ),
+    );
+  }
+
+  InputDecoration _inputDecoration(String label) {
+    return InputDecoration(
+      labelText: label,
+      
+      border: OutlineInputBorder(
+        borderRadius: BorderRadius.circular(25),
       ),
     );
   }
