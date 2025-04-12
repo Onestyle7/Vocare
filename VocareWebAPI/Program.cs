@@ -9,7 +9,10 @@ using VocareWebAPI.Data;
 using VocareWebAPI.Models.Config;
 using VocareWebAPI.Models.Entities;
 using VocareWebAPI.Repositories;
+using VocareWebAPI.Repositories.Implementations;
+using VocareWebAPI.Repositories.Interfaces;
 using VocareWebAPI.Services;
+using VocareWebAPI.Services.Implementations;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -29,8 +32,25 @@ builder
         client.DefaultRequestHeaders.Add("Accept", "application/json");
     })
     .AddPolicyHandler(GetRetryPolicy());
+
+builder
+    .Services.AddHttpClient<IMarketAnalysisService, MarketAnalysisService>(client =>
+    {
+        var config = builder.Configuration.GetSection("PerplexityAI").Get<AiConfig>();
+        client.BaseAddress = new Uri(config.BaseUrl);
+        client.DefaultRequestHeaders.Add("Authorization", $"Bearer {config.ApiKey}");
+        client.DefaultRequestHeaders.Add("Accept", "application/json");
+    })
+    .AddPolicyHandler(GetRetryPolicy());
+
 builder.Services.AddScoped<IAiService, PerplexityAiService>();
 builder.Services.AddScoped<IUserProfileRepository, UserProfileRepository>();
+builder.Services.AddScoped<IAiRecommendationRepository, AiRecommendationRepository>();
+builder.Services.AddScoped<ICareerStatisticsRepository, CareerStatisticsRepository>();
+builder.Services.AddScoped<ISkillDemandRepository, SkillDemandRepository>();
+builder.Services.AddScoped<IMarketTrendsRepository, MarketTrendsRepository>();
+builder.Services.AddScoped<IMarketAnalysisService, MarketAnalysisService>();
+
 builder.Services.AddAutoMapper(typeof(UserProfileService).Assembly);
 builder.Services.AddSwaggerGen(c =>
 {
@@ -91,14 +111,17 @@ builder.Services.AddDbContext<AppDbContext>(options =>
 });
 builder.Services.AddCors(options =>
 {
-    options.AddPolicy("AllowAll", policy =>
-    {
-        policy
-            .SetIsOriginAllowed(origin => true) // zezwól na wszystkie originy (do testów)
-            .AllowAnyHeader()
-            .AllowAnyMethod()
-            .AllowCredentials();
-    });
+    options.AddPolicy(
+        "AllowAll",
+        policy =>
+        {
+            policy
+                .SetIsOriginAllowed(origin => true) // zezwól na wszystkie originy (do testów)
+                .AllowAnyHeader()
+                .AllowAnyMethod()
+                .AllowCredentials();
+        }
+    );
 });
 
 var app = builder.Build();
