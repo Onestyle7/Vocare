@@ -5,7 +5,7 @@
 namespace VocareWebAPI.Migrations
 {
     /// <inheritdoc />
-    public partial class AddMarketAnalysisEntitiesAndDtos2 : Migration
+    public partial class ChangePersonalityTypeToEnum : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)

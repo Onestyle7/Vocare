@@ -13,8 +13,8 @@ using VocareWebAPI.Data;
 namespace VocareWebAPI.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20250403170720_AddMarketAnalysisEntities")]
-    partial class AddMarketAnalysisEntities
+    [Migration("20250413113332_ChangePersonalityTypeToEnum")]
+    partial class ChangePersonalityTypeToEnum
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -247,7 +247,13 @@ namespace VocareWebAPI.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uuid");
 
-                    b.Property<decimal>("AverageSalary")
+                    b.Property<Guid>("AiRecommendationId")
+                        .HasColumnType("uuid");
+
+                    b.Property<decimal>("AverageSalaryMax")
+                        .HasColumnType("numeric");
+
+                    b.Property<decimal>("AverageSalaryMin")
                         .HasColumnType("numeric");
 
                     b.Property<string>("CareerName")
@@ -266,6 +272,8 @@ namespace VocareWebAPI.Migrations
 
                     b.HasKey("Id");
 
+                    b.HasIndex("AiRecommendationId");
+
                     b.ToTable("CareerStatistics", "Identity");
                 });
 
@@ -275,7 +283,10 @@ namespace VocareWebAPI.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uuid");
 
-                    b.Property<Guid?>("AiRecommendationId")
+                    b.Property<Guid>("AiRecommendationId")
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid?>("AiRecommendationId1")
                         .HasColumnType("uuid");
 
                     b.Property<string>("Description")
@@ -300,7 +311,40 @@ namespace VocareWebAPI.Migrations
 
                     b.HasIndex("AiRecommendationId");
 
+                    b.HasIndex("AiRecommendationId1");
+
                     b.ToTable("MarketTrends", "Identity");
+                });
+
+            modelBuilder.Entity("VocareWebAPI.Models.Entities.MarketAnalysis.SkillDemand", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid>("AiRecommendationId")
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("DemandLevel")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("Industry")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<DateTime>("LastUpdated")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("SkillName")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("AiRecommendationId");
+
+                    b.ToTable("SkillDemand", "Identity");
                 });
 
             modelBuilder.Entity("VocareWebAPI.Models.Entities.NextStep", b =>
@@ -455,6 +499,9 @@ namespace VocareWebAPI.Migrations
                         .IsRequired()
                         .HasColumnType("text");
 
+                    b.Property<int>("PersonalityType")
+                        .HasColumnType("integer");
+
                     b.Property<string>("PhoneNumber")
                         .HasColumnType("text");
 
@@ -554,11 +601,35 @@ namespace VocareWebAPI.Migrations
                     b.Navigation("SwotAnalysis");
                 });
 
+            modelBuilder.Entity("VocareWebAPI.Models.Entities.MarketAnalysis.CareerStatistics", b =>
+                {
+                    b.HasOne("VocareWebAPI.Models.AiRecommendation", null)
+                        .WithMany("CareerStatistics")
+                        .HasForeignKey("AiRecommendationId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
             modelBuilder.Entity("VocareWebAPI.Models.Entities.MarketAnalysis.MarketTrends", b =>
                 {
                     b.HasOne("VocareWebAPI.Models.AiRecommendation", null)
+                        .WithMany("MarketTrends")
+                        .HasForeignKey("AiRecommendationId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("VocareWebAPI.Models.AiRecommendation", null)
                         .WithMany("InfluencingTrends")
-                        .HasForeignKey("AiRecommendationId");
+                        .HasForeignKey("AiRecommendationId1");
+                });
+
+            modelBuilder.Entity("VocareWebAPI.Models.Entities.MarketAnalysis.SkillDemand", b =>
+                {
+                    b.HasOne("VocareWebAPI.Models.AiRecommendation", null)
+                        .WithMany("SkillDemands")
+                        .HasForeignKey("AiRecommendationId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
                 });
 
             modelBuilder.Entity("VocareWebAPI.Models.Entities.NextStep", b =>
@@ -583,9 +654,15 @@ namespace VocareWebAPI.Migrations
                 {
                     b.Navigation("CareerPaths");
 
+                    b.Navigation("CareerStatistics");
+
                     b.Navigation("InfluencingTrends");
 
+                    b.Navigation("MarketTrends");
+
                     b.Navigation("NextSteps");
+
+                    b.Navigation("SkillDemands");
                 });
 
             modelBuilder.Entity("VocareWebAPI.Models.Entities.User", b =>

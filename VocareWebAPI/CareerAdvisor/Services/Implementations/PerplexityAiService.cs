@@ -242,7 +242,7 @@ namespace VocareWebAPI.Services
                 - Języki: {{string.Join(", ", profile.Languages)}}
                 - Dodatkowe informacje: {{profile.AdditionalInformation}}
                 - O mnie: {{profile.AboutMe}}
-                - Typ osobowości: {{profile.PersonalityType}}
+                - Typ osobowości: {{profile.PersonalityType.ToString()}}
 
                 Wygeneruj wyłącznie dokładnie taki obiekt JSON, bez żadnego dodatkowego tekstu w języku ${{profile.Country}}:
                 { 

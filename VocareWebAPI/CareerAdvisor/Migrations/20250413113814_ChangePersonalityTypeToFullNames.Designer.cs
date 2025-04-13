@@ -13,8 +13,8 @@ using VocareWebAPI.Data;
 namespace VocareWebAPI.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20250403184441_AddMarketAnalysisEntitiesAndDtos")]
-    partial class AddMarketAnalysisEntitiesAndDtos
+    [Migration("20250413113814_ChangePersonalityTypeToFullNames")]
+    partial class ChangePersonalityTypeToFullNames
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -250,7 +250,10 @@ namespace VocareWebAPI.Migrations
                     b.Property<Guid>("AiRecommendationId")
                         .HasColumnType("uuid");
 
-                    b.Property<decimal>("AverageSalary")
+                    b.Property<decimal>("AverageSalaryMax")
+                        .HasColumnType("numeric");
+
+                    b.Property<decimal>("AverageSalaryMin")
                         .HasColumnType("numeric");
 
                     b.Property<string>("CareerName")
@@ -322,8 +325,9 @@ namespace VocareWebAPI.Migrations
                     b.Property<Guid>("AiRecommendationId")
                         .HasColumnType("uuid");
 
-                    b.Property<int>("DemandLevel")
-                        .HasColumnType("integer");
+                    b.Property<string>("DemandLevel")
+                        .IsRequired()
+                        .HasColumnType("text");
 
                     b.Property<string>("Industry")
                         .IsRequired()
@@ -494,6 +498,9 @@ namespace VocareWebAPI.Migrations
                     b.Property<string>("LastName")
                         .IsRequired()
                         .HasColumnType("text");
+
+                    b.Property<int>("PersonalityType")
+                        .HasColumnType("integer");
 
                     b.Property<string>("PhoneNumber")
                         .HasColumnType("text");
