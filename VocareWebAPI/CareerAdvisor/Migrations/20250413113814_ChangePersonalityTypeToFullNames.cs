@@ -5,7 +5,7 @@
 namespace VocareWebAPI.Migrations
 {
     /// <inheritdoc />
-    public partial class FixRecommendationSaving : Migration
+    public partial class ChangePersonalityTypeToFullNames : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)

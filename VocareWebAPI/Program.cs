@@ -1,4 +1,5 @@
 using System.Security.Claims;
+using System.Text.Json.Serialization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
@@ -50,6 +51,12 @@ builder.Services.AddScoped<ICareerStatisticsRepository, CareerStatisticsReposito
 builder.Services.AddScoped<ISkillDemandRepository, SkillDemandRepository>();
 builder.Services.AddScoped<IMarketTrendsRepository, MarketTrendsRepository>();
 builder.Services.AddScoped<IMarketAnalysisService, MarketAnalysisService>();
+builder
+    .Services.AddControllers()
+    .AddJsonOptions(options =>
+    {
+        options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter());
+    });
 
 builder.Services.AddAutoMapper(typeof(UserProfileService).Assembly);
 builder.Services.AddSwaggerGen(c =>

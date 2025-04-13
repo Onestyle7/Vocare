@@ -34,8 +34,12 @@ namespace VocareWebAPI.Models.Dtos
         public string? AboutMe { get; set; }
 
         [Required(ErrorMessage = "Typ osobowości jest wymagany.")]
-        [Range(1, 16, ErrorMessage = "Typ osobowości musi być liczbą od 1 do 16")]
-        public PersonalityType PersonalityType { get; set; }
+        [Range(
+            1,
+            17,
+            ErrorMessage = "Typ osobowości musi być liczbą od 1 do 17. Gdzie 17 = nie wiem"
+        )]
+        public PersonalityType? PersonalityType { get; set; }
 
         public List<string>? WorkExperience { get; set; }
         public List<string>? Skills { get; set; }
