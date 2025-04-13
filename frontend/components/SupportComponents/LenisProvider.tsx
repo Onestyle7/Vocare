@@ -6,7 +6,7 @@ export default function LenisProvider({ children }: { children: React.ReactNode 
   useEffect(() => {
     document.body.style.height = '100%';
     document.documentElement.style.height = '100%';
-    
+
     const lenis = new Lenis({
       duration: 1.8,
       easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
@@ -28,7 +28,7 @@ export default function LenisProvider({ children }: { children: React.ReactNode 
     const resizeObserver = new ResizeObserver(() => {
       lenis.resize();
     });
-    
+
     resizeObserver.observe(document.body);
 
     window.addEventListener('load', () => {
@@ -43,9 +43,5 @@ export default function LenisProvider({ children }: { children: React.ReactNode 
     };
   }, []);
 
-  return (
-    <div data-lenis-wrapper>
-      {children}
-    </div>
-  );
+  return <div data-lenis-wrapper>{children}</div>;
 }

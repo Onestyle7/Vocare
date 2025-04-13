@@ -8,7 +8,7 @@ const ContentPage = () => {
         1
       </div>
       <div className="relative my-20 flex max-lg:m-4 max-lg:h-1/2 xl:w-1/2 xl:items-center xl:justify-center">
-        <video muted loop autoPlay className="h-full w-full object-cover">
+        <video muted loop autoPlay playsInline className="h-full w-full object-cover">
           <source src="/videos/video1.mp4" type="video/mp4" />
           Your browser does not support the video tag.
         </video>

@@ -269,3 +269,5 @@ export const down_links = [
 ];
 
 export const letterImg = '/images/as1.png';
+
+export const check = '/svg/check.svg';
