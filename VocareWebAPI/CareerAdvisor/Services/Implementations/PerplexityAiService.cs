@@ -143,11 +143,6 @@ namespace VocareWebAPI.Services
             {
                 Console.WriteLine($"Próba zapisu dla użytkownika: {userId}");
 
-                // Stara logika (do usunięcia):
-                // var userProfile = await _userProfileRepository.GetUserProfileByIdAsync(userId);
-                // userProfile.LastRecommendationJson = JsonSerializer.Serialize(recommendation);
-
-                // Nowa logika z AiRecommendation:
                 var recommendationEntity = _mapper.Map<AiRecommendation>(recommendation);
                 recommendationEntity.UserId = userId;
                 recommendationEntity.RecommendationDate = DateTime.UtcNow;

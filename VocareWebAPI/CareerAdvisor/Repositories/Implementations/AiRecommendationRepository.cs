@@ -46,7 +46,9 @@ namespace VocareWebAPI.Repositories
                 .AiRecommendations.Include(r => r.CareerPaths)
                 .ThenInclude(cp => cp.SwotAnalysis)
                 .Include(r => r.NextSteps)
-                .FirstOrDefaultAsync(r => r.UserId == userId);
+                .Where(r => r.UserId == userId)
+                .OrderByDescending(r => r.RecommendationDate) // Sortowanie malejąco po dacie rekomendacji
+                .FirstOrDefaultAsync();
         }
     }
 }
