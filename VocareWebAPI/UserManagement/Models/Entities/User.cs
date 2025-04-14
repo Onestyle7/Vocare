@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Identity;
+using VocareWebAPI.Billing.Models.Entities;
 
 namespace VocareWebAPI.Models.Entities
 {
@@ -12,5 +13,6 @@ namespace VocareWebAPI.Models.Entities
     public class User : IdentityUser
     {
         public UserProfile UserProfile { get; set; }
+        public UserBilling Billing { get; set; }
     }
 }

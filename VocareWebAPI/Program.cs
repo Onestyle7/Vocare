@@ -6,6 +6,7 @@ using Microsoft.Extensions.Options;
 using Microsoft.OpenApi.Models;
 using Polly;
 using Polly.Extensions.Http;
+using Stripe;
 using VocareWebAPI.Data;
 using VocareWebAPI.Models.Config;
 using VocareWebAPI.Models.Entities;
@@ -130,7 +131,7 @@ builder.Services.AddCors(options =>
         }
     );
 });
-
+StripeConfiguration.ApiKey = builder.Configuration["Stripe:SecretKey"];
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
