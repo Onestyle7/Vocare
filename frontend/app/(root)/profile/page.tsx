@@ -1,4 +1,4 @@
-import ProfileForm from '@/components/ProfileFormComponents/ProfileForm';
+import ProfileDetails from '@/components/ProfileDeatail';
 import Header from '@/components/SectionsComponents/Header';
 import React from 'react';
 
@@ -6,7 +6,7 @@ const page = () => {
   return (
     <div>
       <Header />
-      <ProfileForm />
+      <ProfileDetails />
     </div>
   );
 };
