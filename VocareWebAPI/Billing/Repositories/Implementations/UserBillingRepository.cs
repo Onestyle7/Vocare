@@ -149,7 +149,7 @@ namespace VocareWebAPI.Billing.Repositories.Implementations
                 throw new ArgumentException("Amount must be greater than zero.", nameof(amount));
             }
 
-            var transaction = await _context.Database.BeginTransactionAsync();
+            using var transaction = await _context.Database.BeginTransactionAsync();
             try
             {
                 var userBilling = await _context

@@ -36,7 +36,7 @@ namespace VocareWebAPI.Billing.Repositories.Implementations
                 transaction.CreatedAt = DateTime.UtcNow;
             }
 
-            var dbTransaction = await _context.Database.BeginTransactionAsync();
+            using var dbTransaction = await _context.Database.BeginTransactionAsync();
             try
             {
                 await _context.TokenTransactions.AddAsync(transaction);
