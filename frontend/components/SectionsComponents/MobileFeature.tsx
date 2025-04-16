@@ -129,7 +129,7 @@ const MobileFeature = () => {
           <h2 className="mt-[36px] text-sm uppercase md:text-[10px]">Always in Your pocket</h2>
           <div className="mt-5 text-center text-4xl leading-[0.9] font-bold uppercase md:text-[6rem]">
             Take Your Advisor <br />{' '}
-            <span className="items-center justify-center rounded-[8px] bg-[#915EFF] p-[1px]">
+            <span className="items-center justify-center rounded-[8px] bg-[#915EFF] p-[1px] 2xl:mt-8">
               with You
             </span>
           </div>

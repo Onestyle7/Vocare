@@ -455,16 +455,22 @@ import {
 import { useRouter } from 'next/navigation';
 import { UserProfile } from '@/app/types/profile';
 import { toast } from 'sonner';
-import { ArrowLeft } from 'lucide-react';
-import Link from 'next/link';
 import { Form } from '@/components/ui/form';
 import StepOne from '@/app/(root)/steps/StepOne';
 import StepTwo from '@/app/(root)/steps/StepTwo';
 import StepThree from '@/app/(root)/steps/StepThree';
 import StepFour from '@/app/(root)/steps/StepFour';
 import StepProgress from '@/app/(root)/steps/ProgressBar';
+import { Button } from '@/components/ui/button';
+import { Popover, PopoverTrigger, PopoverContent } from '@/components/ui/popover';
 
-export default function ProfileForm() {
+export default function ProfileForm({
+  initialData,
+  onCancel,
+}: {
+  initialData?: UserProfile;
+  onCancel?: () => void;
+}) {
   const [isLoading, setLoading] = useState(false);
   const [isEditMode, setEditMode] = useState(false);
   const [currentStep, setCurrentStep] = useState(1);
@@ -498,6 +504,14 @@ export default function ProfileForm() {
         router.push('/sign-in');
         return;
       }
+
+      if (initialData) {
+        setEditMode(true);
+        form.reset(initialData);
+        setLoading(false);
+        return;
+      }
+
       try {
         const profileData = await getUserProfile(token);
         if (profileData) {
@@ -512,23 +526,16 @@ export default function ProfileForm() {
     };
 
     loadProfile();
-  }, [form, router]);
+  }, [form, initialData, router]);
 
-  const nextStep = () => {
-    setCurrentStep((prev) => Math.min(prev + 1, totalSteps));
-  };
-
-  const prevStep = () => {
-    setCurrentStep((prev) => Math.max(prev - 1, 1));
-  };
+  const nextStep = () => setCurrentStep((prev) => Math.min(prev + 1, totalSteps));
+  const prevStep = () => setCurrentStep((prev) => Math.max(prev - 1, 1));
 
   const onSubmit = async (data: ProfileFormType) => {
     setLoading(true);
     const token = localStorage.getItem('token');
     if (!token) {
-      toast.error('Authentication required', {
-        description: 'Please sign in to continue.',
-      });
+      toast.error('Authentication required', { description: 'Please sign in to continue.' });
       router.push('/sign-in');
       return;
     }
@@ -551,10 +558,7 @@ export default function ProfileForm() {
         setEditMode(true);
       }
 
-      // Zapisz dane profilu w localStorage
       localStorage.setItem('userProfile', JSON.stringify(profileData));
-
-      // Przekieruj na stronę /assistant
       router.push('/assistant');
     } catch (error: any) {
       console.error(error);
@@ -571,9 +575,7 @@ export default function ProfileForm() {
 
     const token = localStorage.getItem('token');
     if (!token) {
-      toast.error('Authentication required', {
-        description: 'Please sign in to continue.',
-      });
+      toast.error('Authentication required', { description: 'Please sign in to continue.' });
       router.push('/sign-in');
       return;
     }
@@ -593,25 +595,81 @@ export default function ProfileForm() {
     }
   };
 
-  // Renderowanie odpowiedniego kroku
+  const CancelButton = () =>
+    onCancel ? (
+      <Popover>
+        <PopoverTrigger asChild>
+          <Button
+            type="button"
+            variant="outline"
+            className="font-poppins rounded-full"
+            disabled={!form.formState.isDirty}
+          >
+            Cancel
+          </Button>
+        </PopoverTrigger>
+        <PopoverContent className="font-poppins w-64 space-y-4 text-center">
+          <p className="text-sm">Are you sure you want to discard changes?</p>
+          <div className="flex justify-center gap-2">
+            <Button variant="destructive" onClick={onCancel}>
+              Yes
+            </Button>
+            <Button variant="secondary">No</Button>
+          </div>
+        </PopoverContent>
+      </Popover>
+    ) : null;
+
   const renderStep = () => {
+    const sharedProps = {
+      form,
+      onNext: nextStep,
+      onBack: prevStep,
+    };
+
     switch (currentStep) {
       case 1:
-        return <StepOne form={form} onNext={nextStep} />;
+        return (
+          <div>
+            <StepOne {...sharedProps} />
+            <div className="mt-6 flex justify-center">
+              <CancelButton />
+            </div>
+          </div>
+        );
       case 2:
-        return <StepTwo form={form} onNext={nextStep} onBack={prevStep} />;
+        return (
+          <div>
+            <StepTwo {...sharedProps} />
+            <div className="mt-6 flex justify-end">
+              <CancelButton />
+            </div>
+          </div>
+        );
       case 3:
-        return <StepThree form={form} onNext={nextStep} onBack={prevStep} />;
+        return (
+          <div>
+            <StepThree {...sharedProps} />
+            <div className="mt-6 flex justify-end">
+              <CancelButton />
+            </div>
+          </div>
+        );
       case 4:
         return (
-          <StepFour
-            form={form}
-            onBack={prevStep}
-            onSubmit={onSubmit}
-            isLoading={isLoading}
-            isEditMode={isEditMode}
-            handleDelete={handleDelete}
-          />
+          <div>
+            <StepFour
+              form={form}
+              onBack={prevStep}
+              onSubmit={onSubmit}
+              isLoading={isLoading}
+              isEditMode={isEditMode}
+              handleDelete={handleDelete}
+            />
+            <div className="mt-6 flex justify-end">
+              <CancelButton />
+            </div>
+          </div>
         );
       default:
         return <StepOne form={form} onNext={nextStep} />;
@@ -619,9 +677,8 @@ export default function ProfileForm() {
   };
 
   return (
-    <div className="mx-auto max-w-2xl p-8 border rounded-xl lg:mt-10">
+    <div className="mx-auto max-w-2xl rounded-xl border p-8 lg:mt-10">
       <StepProgress currentStep={currentStep} totalSteps={totalSteps} />
-
       <Form {...form}>{renderStep()}</Form>
     </div>
   );

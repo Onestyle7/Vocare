@@ -27,7 +27,7 @@ const Faq: React.FC = () => {
   }, []);
 
   return (
-    <section className="relative flex h-[100vh] w-[100vw] overflow-hidden max-xl:mt-[220px]">
+    <section className="relative flex h-[100vh] w-[100vw] overflow-hidden max-xl:mt-[240px]">
       <div className="my-10 flex w-full items-center justify-center bg-[#101014] dark:bg-[#F3F3F3]">
         <div
           ref={textRef}

@@ -108,7 +108,7 @@ export default function CareerPathSection({ path, index }: CareerPathSectionProp
         </div>
 
         {/* Zawsze widoczne */}
-        <h3 className="text-lg font-medium">{path.careerName}</h3>
+        <h3 className="text-lg font-medium text-[#915EFF]">{path.careerName}</h3>
         <p className="mt-2 text-gray-700">{path.description}</p>
 
         {/* Zwijana zawartość */}

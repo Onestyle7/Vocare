@@ -4,13 +4,14 @@ import { useEffect, useState, useRef } from 'react';
 import axios from 'axios';
 import { UserProfile } from '@/app/types/profile';
 import { toast } from 'sonner';
-import { Button } from '@/components/ui/button';
 import { AiCareerResponse } from '@/lib/recommendations';
 import GenerateRecommendation from './GenerateRecommendationFail';
 import { Separator } from '../ui/separator';
 import { gsap } from 'gsap';
 import CollapsibleButton from './CollapsibleButton';
 import CareerPathSection from './CareerPathSection';
+import { GradientButton } from '../ui/ButtonGenerate';
+import CustomButton from '../ui/CustomButton';
 
 export default function AssistantPage() {
   const [profile, setProfile] = useState<UserProfile | null>(null);
@@ -229,8 +230,8 @@ export default function AssistantPage() {
       ))}
 
       {/* Button for generating new recommendations */}
-      <div className="mt-8 flex justify-center">
-        <Button
+      <div className="mt-8 mx-20 flex justify-center">
+        <CustomButton
           onClick={async () => {
             setLoading(true);
             const token = localStorage.getItem('token');
@@ -261,10 +262,10 @@ export default function AssistantPage() {
             }
           }}
           disabled={isLoading}
-          className="px-6 py-2"
+          className="px-6 py-2 cursor-pointer"
         >
           {isLoading ? 'Generowanie...' : 'Wygeneruj nowe rekomendacje'}
-        </Button>
+        </CustomButton>
       </div>
     </div>
   );

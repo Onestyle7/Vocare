@@ -8,6 +8,7 @@ import { plus } from '@/app/constants';
 import ContentPage from '../ui/ContentPage';
 import ContentPage2 from '../ui/CustomPage2';
 import ContentPage3 from '../ui/CustomPage3';
+import Section from '../Section';
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -119,7 +120,14 @@ const Features = () => {
   });
 
   return (
-    <div className="min-h-screen w-screen">
+    <Section
+      className="relative -mt-[2.25rem] pt-[7.5rem]"
+      crossesOffset="lg:translate-y-[7.5rem]"
+      crosses
+      customPaddings
+      id="about"
+    >
+    <div className="min-h-screen w-screen border">
       <div className="relative mt-36 mb-8 flex flex-col items-center gap-5">
         <h2 className="text-sm uppercase md:text-[10px]">seamless integration</h2>
         <div className="mt-5 text-center text-4xl leading-[0.8] font-bold uppercase md:text-[6rem]">
@@ -169,6 +177,7 @@ const Features = () => {
         </div>
       </div>
     </div>
+    </Section>
   );
 };
 

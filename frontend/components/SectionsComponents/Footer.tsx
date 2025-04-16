@@ -23,7 +23,7 @@ const Footer = () => {
             You can unsubscribe at any time.
           </div>
         </div>
-        <div className="m-4 flex w-full flex-row items-start justify-center xl:w-1/2">
+        <div className="flex w-full flex-row items-start justify-center xl:w-1/2">
           <div className="flex w-1/3 flex-col items-center justify-center">
             <div>
               <span className="mb-2 text-sm text-gray-400/90">SOCIAL</span>

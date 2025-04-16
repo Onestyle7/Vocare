@@ -19,7 +19,6 @@ import {
   AlertDialogAction,
 } from '@/components/ui/alert-dialog';
 
-
 interface StepFourProps {
   form: UseFormReturn<ProfileFormType>;
   onBack: () => void;
@@ -98,7 +97,7 @@ export default function StepFour({
             className="font-poppins group h-[46px] w-[45%] rounded-full bg-[#915EFF] text-lg text-white shadow-[0_2px_4px_rgba(145,94,255,0.5)] hover:bg-[#713ae8]"
           >
             <span className="flex flex-row items-center justify-center">
-               Save
+              Save
               <ArrowRight className="ml-2 transition-transform duration-300 group-hover:translate-x-2" />
             </span>
           </Button>
@@ -106,42 +105,42 @@ export default function StepFour({
       </div>
 
       {isEditMode && (
-        <div className='flex items-center justify-center'>
-            <AlertDialog>
-              <AlertDialogTrigger asChild>
-                <Button
-                  type="button"
-                  variant="destructive"
-                  className="font-poppins group h-[46px] w-[95%] rounded-full border border-black bg-transparent text-lg text-black hover:bg-transparent sm:w-[93%] dark:border-[0.5px] dark:border-white dark:text-white"
+        <div className="flex items-center justify-center">
+          <AlertDialog>
+            <AlertDialogTrigger asChild>
+              <Button
+                type="button"
+                variant="destructive"
+                className="font-poppins group h-[46px] w-[95%] rounded-full border border-black bg-transparent text-lg text-black hover:bg-transparent sm:w-[93%] dark:border-[0.5px] dark:border-white dark:text-white"
+              >
+                <span className="flex flex-row items-center justify-center">
+                  Delete Profile
+                  <ArrowRight className="ml-2 transition-transform duration-300 group-hover:translate-x-2" />
+                </span>
+              </Button>
+            </AlertDialogTrigger>
+            <AlertDialogContent className="font-poppins">
+              <AlertDialogHeader>
+                <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
+                <AlertDialogDescription>
+                  This action cannot be undone. This will permanently delete your profile and all
+                  related data.
+                </AlertDialogDescription>
+              </AlertDialogHeader>
+              <AlertDialogFooter>
+                <AlertDialogCancel>Cancel</AlertDialogCancel>
+                <AlertDialogAction
+                  onClick={handleDelete}
+                  disabled={isLoading}
+                  className="bg-destructive hover:bg-destructive/80 text-white"
                 >
-                  <span className="flex flex-row items-center justify-center">
-                    Delete Profile
-                    <ArrowRight className="ml-2 transition-transform duration-300 group-hover:translate-x-2" />
-                  </span>
-                </Button>
-              </AlertDialogTrigger>
-              <AlertDialogContent className="font-poppins">
-                <AlertDialogHeader>
-                  <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
-                  <AlertDialogDescription>
-                    This action cannot be undone. This will permanently delete your profile and all related data.
-                  </AlertDialogDescription>
-                </AlertDialogHeader>
-                <AlertDialogFooter>
-                  <AlertDialogCancel>Cancel</AlertDialogCancel>
-                  <AlertDialogAction
-                    onClick={handleDelete}
-                    disabled={isLoading}
-                    className="bg-destructive text-white hover:bg-destructive/80"
-                  >
-                    Yes, delete it
-                  </AlertDialogAction>
-                </AlertDialogFooter>
-              </AlertDialogContent>
-            </AlertDialog>
+                  Yes, delete it
+                </AlertDialogAction>
+              </AlertDialogFooter>
+            </AlertDialogContent>
+          </AlertDialog>
         </div>
-)}
-
+      )}
     </div>
   );
 }

@@ -9,6 +9,7 @@ import { SpinningText } from '../magicui/spinning-text';
 import CustomCursor from '../CustomCursor';
 import CustomButton from '../ui/CustomButton';
 import { ArrowRight } from 'lucide-react';
+import Link from 'next/link';
 
 const LazySpline = lazy(() => import('@splinetool/react-spline'));
 
@@ -54,15 +55,17 @@ const HeroTweak = () => {
               Your
               <br /> growth
             </h1>
-            <CustomButton
-              variant="primary"
-              className="group mt-4 flex cursor-none items-center justify-center overflow-hidden xl:mt-8"
-            >
-              <span className="flex flex-row">
-                Try it out
-                <ArrowRight className="ml-2 scale-75 transition-transform duration-300 group-hover:translate-x-2" />
-              </span>
-            </CustomButton>
+            <Link href="/assistant" className='flex xl:w-full max-md:items-center max-md:justify-center'>
+              <CustomButton
+                variant="primary"
+                className="group mt-4 flex cursor-none items-center justify-center overflow-hidden xl:mt-8"
+              >
+                <span className="flex flex-row">
+                  Try it out
+                  <ArrowRight className="ml-2 scale-75 transition-transform duration-300 group-hover:translate-x-2" />
+                </span>
+              </CustomButton>
+            </Link>
           </div>
           <div className="flex h-full flex-col items-center justify-center max-md:mt-6 sm:w-full lg:w-1/2">
             <SpinningText>learn more • earn more • grow more •</SpinningText>

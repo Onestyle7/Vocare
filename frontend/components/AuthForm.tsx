@@ -134,7 +134,12 @@ const AuthForm = ({ type }: { type: FormType }) => {
             <FormItem>
               <FormLabel>Password</FormLabel>
               <FormControl>
-                <Input type="password" placeholder="Password" {...field} className="input-profile" />
+                <Input
+                  type="password"
+                  placeholder="Password"
+                  {...field}
+                  className="input-profile"
+                />
               </FormControl>
               <FormMessage />
             </FormItem>
