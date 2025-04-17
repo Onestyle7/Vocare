@@ -127,7 +127,7 @@ const Features = () => {
       customPaddings
       id="about"
     >
-    <div className="min-h-screen w-screen border">
+    <div className="min-h-screen border-t mx-[34px]">
       <div className="relative mt-36 mb-8 flex flex-col items-center gap-5">
         <h2 className="text-sm uppercase md:text-[10px]">seamless integration</h2>
         <div className="mt-5 text-center text-4xl leading-[0.8] font-bold uppercase md:text-[6rem]">
@@ -138,7 +138,7 @@ const Features = () => {
           <p>let us rocket Your career to the sky</p>
         </div>
       </div>
-      <div className="h-dvh w-screen" id="clip">
+      <div className="h-dvh" id="clip">
         <div className="mask-clip-path absolute top-0 left-1/2 z-20 h-[60vh] w-96 origin-center -translate-x-1/2 overflow-hidden rounded-3xl md:w-[30vw]">
           <div className="absolute top-0 left-0 h-full w-full bg-[#101014] object-cover dark:bg-[#F3F3F3]">
             <div className="flex h-full items-center justify-center">

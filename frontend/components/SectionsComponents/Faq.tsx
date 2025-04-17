@@ -27,11 +27,11 @@ const Faq: React.FC = () => {
   }, []);
 
   return (
-    <section className="relative flex h-[100vh] w-[100vw] overflow-hidden max-xl:mt-[240px]">
+    <section className="relative flex h-[100vh] overflow-hidden xl:px-10 max-xl:mt-[240px]">
       <div className="my-10 flex w-full items-center justify-center bg-[#101014] dark:bg-[#F3F3F3]">
         <div
           ref={textRef}
-          className="flex w-full items-center justify-center text-4xl font-bold text-[#F3F3F3] xl:text-[180px] dark:text-[#101014]"
+          className="flex w-full items-center justify-center text-3xl font-bold text-[#F3F3F3] xl:text-[180px] dark:text-[#101014]"
         >
           Ready to change Your life?
         </div>

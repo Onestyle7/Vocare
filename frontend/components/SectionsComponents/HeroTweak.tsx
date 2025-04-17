@@ -67,7 +67,7 @@ const HeroTweak = () => {
               </CustomButton>
             </Link>
           </div>
-          <div className="flex h-full flex-col items-center justify-center max-md:mt-6 sm:w-full lg:w-1/2">
+          <div className="flex h-full flex-col items-center justify-center 2xl:items-end 2xl:w-1/3 max-md:mt-6 sm:w-full lg:w-1/2">
             <SpinningText>learn more • earn more • grow more •</SpinningText>
           </div>
         </div>
