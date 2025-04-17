@@ -235,7 +235,7 @@ export default function ProfileDetails() {
   const pageIndicators = ['Personal Info', 'Skills & Experience', 'About Me'];
 
   return (
-    <div className="font-poppins mt-16 2xl:max-w-[1480px] max-w-7xl mx-auto">
+    <div className="font-poppins mt-16 2xl:max-w-[1480px] max-w-7xl mx-auto max-sm:mx-4">
       <div className="flex h-screen flex-col xl:flex-row">
         <div className="hidden xl:block xl:w-1/2 xl:pr-8">
           <div className="flex h-3/4 items-center justify-center">

@@ -79,7 +79,7 @@ export default function StepTwo({ form, onNext, onBack }: StepTwoProps) {
                     maxLength={9}
                     value={value}
                     onChange={(newValue) => onChange(newValue)}
-                    className="scale-50"
+                    className="max-lg:scale-50"
                   >
                     <InputOTPGroup>
                       <InputOTPSlot index={0} />

@@ -595,30 +595,51 @@ export default function ProfileForm({
     }
   };
 
-  const CancelButton = () =>
-    onCancel ? (
-      <Popover>
-        <PopoverTrigger asChild>
+  const CancelButton = () => {
+    const [open, setOpen] = useState(false);
+    
+    if (!onCancel) return null;
+    
+    return (
+      <>
+        {form.formState.isDirty ? (
+          <Popover open={open} onOpenChange={setOpen}>
+            <PopoverTrigger asChild>
+              <Button
+                type="button"
+                variant="outline"
+                className="font-poppins rounded-full"
+              >
+                Cancel
+              </Button>
+            </PopoverTrigger>
+            <PopoverContent
+              className="font-poppins w-80 space-y-6 text-center p-6"
+            >
+              <p className="text-base">Are you sure you want to discard changes?</p>
+              <div className="flex justify-center gap-4">
+                <Button variant="destructive" onClick={onCancel} className="px-6">
+                  Yes, I&apos;m sure
+                </Button>
+                <Button variant="secondary" onClick={() => setOpen(false)} className="px-6">
+                  No
+                </Button>
+              </div>
+            </PopoverContent>
+          </Popover>
+        ) : (
           <Button
             type="button"
             variant="outline"
             className="font-poppins rounded-full"
-            disabled={!form.formState.isDirty}
+            onClick={onCancel}
           >
             Cancel
           </Button>
-        </PopoverTrigger>
-        <PopoverContent className="font-poppins w-64 space-y-4 text-center">
-          <p className="text-sm">Are you sure you want to discard changes?</p>
-          <div className="flex justify-center gap-2">
-            <Button variant="destructive" onClick={onCancel}>
-              Yes
-            </Button>
-            <Button variant="secondary">No</Button>
-          </div>
-        </PopoverContent>
-      </Popover>
-    ) : null;
+        )}
+      </>
+    );
+  };
 
   const renderStep = () => {
     const sharedProps = {

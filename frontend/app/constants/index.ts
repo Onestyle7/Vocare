@@ -211,6 +211,10 @@ export const Spinner = '/svg/spinner.svg';
 
 export const plus = '/images/plus.png';
 
+// Loader 
+
+export const loader = '/svg/loader.svg';
+
 // Feature section
 
 // grid

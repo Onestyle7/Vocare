@@ -17,7 +17,7 @@ const Features = () => {
     {
       title: 'First Panel',
       content: (
-        <div className="panel-content">
+        <div className="panel-content font-poppins">
           <ContentPage />
         </div>
       ),
@@ -25,7 +25,7 @@ const Features = () => {
     {
       title: 'Second Panel',
       content: (
-        <div className="panel-content">
+        <div className="panel-content font-poppins">
           <ContentPage2 />
         </div>
       ),
@@ -33,7 +33,7 @@ const Features = () => {
     {
       title: 'Third Panel',
       content: (
-        <div className="panel-content">
+        <div className="panel-content font-poppins">
           <ContentPage3 />
         </div>
       ),
@@ -45,7 +45,7 @@ const Features = () => {
       scrollTrigger: {
         trigger: '#clip',
         start: 'center center',
-        end: '+=3000 center',
+        end: '+=2000 center',
         scrub: 0.5,
         pin: true,
         pinSpacing: true,

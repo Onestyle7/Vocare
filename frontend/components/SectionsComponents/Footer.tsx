@@ -8,7 +8,7 @@ import Section from '../Section';
 const Footer = () => {
   return (
     <Section
-      className="relative -mt-[2.25rem] pt-[7.5rem] px-10"
+      className="relative -mt-[2.25rem] pt-[7.5rem] xl:px-10"
       crossesOffset="lg:translate-y-[7.5rem]"
       crosses
       customPaddings

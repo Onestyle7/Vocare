@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import gsap from 'gsap';
 import { Button } from '../ui/button';
 import { ArrowRight } from 'lucide-react';
@@ -12,6 +12,14 @@ const GenerateRecommendationFail = () => {
   const flippingURef = useRef<HTMLSpanElement | null>(null);
   const shakeRef = useRef<HTMLSpanElement | null>(null);
   const flowerRef = useRef<HTMLImageElement | null>(null);
+
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+
+useEffect(() => {
+  const token = localStorage.getItem('token');
+  setIsLoggedIn(!!token);
+}, []);
+
 
   useEffect(() => {
     if (flippingURef.current) {
@@ -119,14 +127,15 @@ const GenerateRecommendationFail = () => {
               </div>
             </div>
 
-            <Link href="/profile">
-              <Button className="group flex h-[56px] rounded-full bg-[#915EFF] text-[clamp(1.3rem,1vw,12rem)] font-semibold max-md:mt-6 xl:w-[250px]">
-                <span className="flex flex-row items-center">
-                  Profile
-                  <ArrowRight className="ml-2 scale-125 transition-transform duration-300 group-hover:translate-x-2" />
-                </span>
-              </Button>
-            </Link>
+            <Link href={isLoggedIn ? '/profile' : '/sign-in'}>
+            <Button className="group flex h-[56px] rounded-full bg-[#915EFF] text-[clamp(1.3rem,1vw,12rem)] font-semibold max-md:mt-6 xl:w-[250px]">
+    <span className="flex flex-row items-center">
+      {isLoggedIn ? 'Profile' : 'Create an account'}
+      <ArrowRight className="ml-2 scale-125 transition-transform duration-300 group-hover:translate-x-2" />
+    </span>
+  </Button>
+</Link>
+
           </div>
         </div>
       </div>

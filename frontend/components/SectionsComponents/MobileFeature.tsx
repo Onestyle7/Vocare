@@ -159,7 +159,7 @@ const MobileFeature = () => {
                   </div>
                 </ScrollParallax>
               </div>
-              <div className="flex h-full flex-col items-center justify-center px-6 text-xl font-light sm:text-3xl lg:w-1/2">
+              <div className="flex h-full flex-col items-center justify-center text-xl font-light sm:text-3xl lg:w-1/2">
                 <p className="font-poppins">
                   Discover your perfect{' '}
                   <del className="rounded-[8px] bg-[#915EFF]/40 px-[6px]">job</del>{' '}

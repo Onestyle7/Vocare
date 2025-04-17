@@ -170,7 +170,7 @@ export default function AssistantPage() {
   if (!recommendations) {
     return (
       <div className="flex min-h-screen items-center justify-center">
-        <p className="text-lg">Brak rekomendacji.</p>
+        <GenerateRecommendation />;
       </div>
     );
   }
