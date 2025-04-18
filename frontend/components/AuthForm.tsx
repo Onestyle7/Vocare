@@ -105,7 +105,7 @@ const AuthForm = ({ type }: { type: FormType }) => {
               <FormItem>
                 <FormLabel>Full Name</FormLabel>
                 <FormControl>
-                  <Input placeholder="Joe Doe.." {...field} className="input-form" />
+                  <Input placeholder="Joe Doe.." {...field} className="input-profile" />
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -120,7 +120,7 @@ const AuthForm = ({ type }: { type: FormType }) => {
             <FormItem>
               <FormLabel>Email</FormLabel>
               <FormControl>
-                <Input placeholder="joedoe@gmail.com.." {...field} className="input-form" />
+                <Input placeholder="joedoe@gmail.com.." {...field} className="input-profile" />
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -134,7 +134,12 @@ const AuthForm = ({ type }: { type: FormType }) => {
             <FormItem>
               <FormLabel>Password</FormLabel>
               <FormControl>
-                <Input type="password" placeholder="Password" {...field} className="input-form" />
+                <Input
+                  type="password"
+                  placeholder="Password"
+                  {...field}
+                  className="input-profile"
+                />
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -153,7 +158,7 @@ const AuthForm = ({ type }: { type: FormType }) => {
                     type="password"
                     placeholder="Confirm Password"
                     {...field}
-                    className="input-form"
+                    className="input-profile"
                   />
                 </FormControl>
                 <FormMessage />
@@ -169,7 +174,7 @@ const AuthForm = ({ type }: { type: FormType }) => {
           </span>
           {isLoading && (
             <Image
-              src="/assets/icons/loader.svg"
+              src="/svg/loader.svg"
               alt="loader"
               width={24}
               height={24}

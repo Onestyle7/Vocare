@@ -47,11 +47,7 @@ export const FormProvider = ({ children }: { children: React.ReactNode }) => {
     loadData();
   }, [form]);
 
-  return (
-    <FormContext.Provider value={{ form, isEditMode }}>
-      {children}
-    </FormContext.Provider>
-  );
+  return <FormContext.Provider value={{ form, isEditMode }}>{children}</FormContext.Provider>;
 };
 
 export const useProfileForm = () => useContext(FormContext);

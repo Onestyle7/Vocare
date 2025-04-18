@@ -201,7 +201,7 @@ export const NavLinks = [
   { label: 'Home', url: '/' },
   { label: 'Profile', url: '/profile' },
   { label: 'Assistant', url: '/assistant' },
-  { label: 'Landing', url: '/landing-tweak' },
+  { label: 'Market Analysis', url: '/market-analysis' },
 ];
 
 // Spiner
@@ -211,6 +211,10 @@ export const Spinner = '/svg/spinner.svg';
 // Hero section
 
 export const plus = '/images/plus.png';
+
+// Loader 
+
+export const loader = '/svg/loader.svg';
 
 // Feature section
 
@@ -269,3 +273,5 @@ export const down_links = [
 ];
 
 export const letterImg = '/images/as1.png';
+
+export const check = '/svg/check.svg';

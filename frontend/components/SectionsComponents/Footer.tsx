@@ -3,10 +3,18 @@ import CustomButton from '../ui/CustomButton';
 import { Input } from '../ui/input';
 import { contact_pages, down_links, links_pages, links_social } from '@/app/constants';
 import Link from 'next/link';
+import Section from '../Section';
 
 const Footer = () => {
   return (
-    <footer className="flex h-[90vh] w-[100vw] flex-col items-center justify-center">
+    <Section
+      className="relative -mt-[2.25rem] pt-[7.5rem] xl:px-10"
+      crossesOffset="lg:translate-y-[7.5rem]"
+      crosses
+      customPaddings
+      id="footer"
+    >
+    <footer className="flex h-[90vh] flex-col items-center justify-center xl:border">
       <div className="flex h-1/2 w-full justify-center max-sm:items-center">
         <div className="flex w-1/2 items-center justify-center">
           <CustomButton className="uppercase">Try Vocare</CustomButton>
@@ -23,7 +31,7 @@ const Footer = () => {
             You can unsubscribe at any time.
           </div>
         </div>
-        <div className="m-4 flex w-full flex-row items-start justify-center xl:w-1/2">
+        <div className="flex w-full flex-row items-start justify-center xl:w-1/2">
           <div className="flex w-1/3 flex-col items-center justify-center">
             <div>
               <span className="mb-2 text-sm text-gray-400/90">SOCIAL</span>
@@ -70,7 +78,7 @@ const Footer = () => {
           </div>
         </div>
       </div>
-      <div className="flex h-1/2 w-full flex-col items-center justify-center border xl:flex-row">
+      <div className="flex h-1/2 w-full flex-col items-center justify-center border-t xl:flex-row">
         <div className="mx-10 flex w-full items-center justify-center space-x-8 max-xl:flex-col xl:justify-between">
           <div className="flex space-x-4 text-sm text-gray-400/90">
             {down_links.map((link, index) => (
@@ -89,6 +97,7 @@ const Footer = () => {
         </div>
       </div>
     </footer>
+    </Section>
   );
 };
 

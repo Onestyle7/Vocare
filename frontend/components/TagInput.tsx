@@ -5,6 +5,8 @@ import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { X } from 'lucide-react';
 import { cn } from '@/lib/utils';
+import Image from 'next/image';
+import { plus } from '@/app/constants';
 
 interface TagInputProps {
   value: string[];
@@ -15,12 +17,14 @@ interface TagInputProps {
 
 export function TagInput({ value, onChange, placeholder, className }: TagInputProps) {
   const [inputValue, setInputValue] = React.useState('');
+  const [isRotated, setIsRotated] = React.useState(false);
 
   const handleAddTag = () => {
     if (inputValue.trim()) {
       onChange([...value, inputValue.trim()]);
       setInputValue('');
     }
+    setIsRotated((prev) => !prev); // zmienia stan obracania
   };
 
   const handleRemoveTag = (index: number) => {
@@ -37,16 +41,22 @@ export function TagInput({ value, onChange, placeholder, className }: TagInputPr
   return (
     <div className={cn('space-y-2', className)}>
       {/* Pole do wpisywania */}
-      <div className="flex gap-2">
+      <div className="flex items-center gap-2">
         <Input
           value={inputValue}
           onChange={(e) => setInputValue(e.target.value)}
           onKeyDown={handleKeyDown}
           placeholder={placeholder}
-          className="flex-1"
+          className="input-profile flex-1"
         />
-        <Button type="button" onClick={handleAddTag}>
-          Add
+        <Button type="button" onClick={handleAddTag} className="group dark:bg-primary h-[43px]">
+          <Image
+            src={plus}
+            width={12}
+            height={12}
+            alt="add"
+            className={`transition-transform duration-300 dark:invert ${isRotated ? 'rotate-180' : ''}`}
+          />
         </Button>
       </div>
 
@@ -54,13 +64,13 @@ export function TagInput({ value, onChange, placeholder, className }: TagInputPr
         {value.map((tag, index) => (
           <div
             key={index}
-            className="flex items-center gap-1 rounded-full bg-gray-200 px-3 py-1 text-sm font-medium text-gray-800"
+            className="dark:bg-secondary flex items-center gap-1 rounded-full bg-gray-200 px-3 py-1 text-sm font-medium text-gray-800 dark:text-gray-300"
           >
             <span>{tag}</span>
             <button
               type="button"
               onClick={() => handleRemoveTag(index)}
-              className="text-gray-500 hover:text-gray-700"
+              className="cursor-pointer text-gray-500 hover:text-gray-700"
             >
               <X size={14} />
             </button>

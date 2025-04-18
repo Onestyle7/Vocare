@@ -8,6 +8,7 @@ import { plus } from '@/app/constants';
 import ContentPage from '../ui/ContentPage';
 import ContentPage2 from '../ui/CustomPage2';
 import ContentPage3 from '../ui/CustomPage3';
+import SectionGsap from '../ui/SectionGsap';
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -16,7 +17,7 @@ const Features = () => {
     {
       title: 'First Panel',
       content: (
-        <div className="panel-content">
+        <div className="panel-content font-poppins">
           <ContentPage />
         </div>
       ),
@@ -24,7 +25,7 @@ const Features = () => {
     {
       title: 'Second Panel',
       content: (
-        <div className="panel-content">
+        <div className="panel-content font-poppins">
           <ContentPage2 />
         </div>
       ),
@@ -32,7 +33,7 @@ const Features = () => {
     {
       title: 'Third Panel',
       content: (
-        <div className="panel-content">
+        <div className="panel-content font-poppins">
           <ContentPage3 />
         </div>
       ),
@@ -44,7 +45,7 @@ const Features = () => {
       scrollTrigger: {
         trigger: '#clip',
         start: 'center center',
-        end: '+=3000 center',
+        end: '+=2000 center',
         scrub: 0.5,
         pin: true,
         pinSpacing: true,
@@ -119,7 +120,14 @@ const Features = () => {
   });
 
   return (
-    <div className="min-h-screen w-screen">
+    <SectionGsap
+      className="relative -mt-[2.25rem] pt-[7.5rem]"
+      crossesOffset="lg:translate-y-[7.5rem]"
+      crosses
+      customPaddings
+      id="about"
+    >
+    <div className="min-h-screen xl:border dark:border-gray-700 xl:ml-[40px] xl:mr-[39px]">
       <div className="relative mt-36 mb-8 flex flex-col items-center gap-5">
         <h2 className="text-sm uppercase md:text-[10px]">seamless integration</h2>
         <div className="mt-5 text-center text-4xl leading-[0.8] font-bold uppercase md:text-[6rem]">
@@ -130,8 +138,8 @@ const Features = () => {
           <p>let us rocket Your career to the sky</p>
         </div>
       </div>
-      <div className="h-dvh w-screen" id="clip">
-        <div className="mask-clip-path absolute top-0 left-1/2 z-20 h-[60vh] w-96 origin-center -translate-x-1/2 overflow-hidden rounded-3xl md:w-[30vw]">
+      <div className="h-dvh" id="clip">
+        <div className="mask-clip-path absolute top-0 left-1/2 z-30 h-[60vh] w-96 origin-center -translate-x-1/2 overflow-hidden rounded-3xl md:w-[30vw]">
           <div className="absolute top-0 left-0 h-full w-full bg-[#101014] object-cover dark:bg-[#F3F3F3]">
             <div className="flex h-full items-center justify-center">
               <div className="relative flex h-full w-full flex-col items-center justify-center text-black">
@@ -169,6 +177,7 @@ const Features = () => {
         </div>
       </div>
     </div>
+    </SectionGsap>
   );
 };
 

@@ -123,13 +123,14 @@ const MobileFeature = () => {
   }, []);
 
   return (
-    <Section crosses customPaddings id="brain" className="min-h-screen w-screen">
-      <div className="min-h-screen w-screen">
+    <Section crosses customPaddings className="relative px-10"
+    crossesOffset id="brain">
+      <div className="min-h-screen">
         <div className="relative mx-[10%] mb-8 flex flex-col items-center gap-5">
           <h2 className="mt-[36px] text-sm uppercase md:text-[10px]">Always in Your pocket</h2>
           <div className="mt-5 text-center text-4xl leading-[0.9] font-bold uppercase md:text-[6rem]">
             Take Your Advisor <br />{' '}
-            <span className="items-center justify-center rounded-[8px] bg-[#915EFF] p-[1px]">
+            <span className="items-center justify-center rounded-[8px] bg-[#915EFF] p-[1px] 2xl:mt-8">
               with You
             </span>
           </div>
@@ -158,7 +159,7 @@ const MobileFeature = () => {
                   </div>
                 </ScrollParallax>
               </div>
-              <div className="flex h-full flex-col items-center justify-center px-6 text-xl font-light sm:text-3xl lg:w-1/2">
+              <div className="flex h-full flex-col items-center justify-center text-xl font-light sm:text-3xl lg:w-1/2">
                 <p className="font-poppins">
                   Discover your perfect{' '}
                   <del className="rounded-[8px] bg-[#915EFF]/40 px-[6px]">job</del>{' '}

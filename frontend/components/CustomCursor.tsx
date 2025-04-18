@@ -89,7 +89,7 @@ const CustomCursor: React.FC = () => {
         ref={followerRef}
         className={twMerge(
           'pointer-events-none fixed z-50 h-8 w-8 rounded-full border-1 border-black dark:border-white',
-          '-translate-x-1/2 -translate-y-1/2 transform transition-transform duration-200',
+          'transform transition-transform duration-200',
           'flex items-center justify-center antialiased'
         )}
       >
