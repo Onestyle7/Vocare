@@ -1,3 +1,4 @@
+using Microsoft.EntityFrameworkCore;
 using Stripe;
 using VocareWebAPI.Billing.Models.Entities;
 using VocareWebAPI.Billing.Models.Enums;
@@ -154,7 +155,6 @@ namespace VocareWebAPI.Billing.Services.Implementations
                 );
             }
 
-            // Obsługa różnych typów zdarzeń
             switch (stripeEvent.Type)
             {
                 case "checkout.session.completed":
@@ -167,7 +167,6 @@ namespace VocareWebAPI.Billing.Services.Implementations
                         );
                     }
 
-                    // Pobierz userId z metadanych sesji
                     string userId =
                         session.Metadata?["userId"]
                         ?? throw new InvalidOperationException(
@@ -185,11 +184,9 @@ namespace VocareWebAPI.Billing.Services.Implementations
                     using var transaction = await _dbContext.Database.BeginTransactionAsync();
                     try
                     {
-                        // Dodaj tokeny (np. 50 za jednorazowy zakup)
                         const int tokensToAdd = 50;
                         await _userBillingRepository.AddTokensAsync(userId, tokensToAdd);
 
-                        // Zapisz transakcję
                         var tokenTransaction = new TokenTransaction
                         {
                             UserId = userId,
@@ -223,14 +220,12 @@ namespace VocareWebAPI.Billing.Services.Implementations
                         );
                     }
 
-                    // Pobierz userId z metadanych subskrypcji
                     string userId =
                         subscription.Metadata?["userId"]
                         ?? throw new InvalidOperationException(
                             "UserId not found in subscription metadata."
                         );
 
-                    // Teraz używasz prawidłowego userId do pobrania informacji o użytkowniku
                     var userBilling = await _userBillingRepository.GetByUserIdAsync(userId);
                     if (userBilling == null)
                     {
@@ -239,7 +234,6 @@ namespace VocareWebAPI.Billing.Services.Implementations
                         );
                     }
 
-                    // Reszta kodu pozostaje bez zmian
                     var newStatus = subscription.Status switch
                     {
                         "active" => SubscriptionStatus.Active,
@@ -253,6 +247,94 @@ namespace VocareWebAPI.Billing.Services.Implementations
                     userBilling.SubscriptionStatus = newStatus;
                     userBilling.StripeSubscriptionId = subscription.Id;
                     await _userBillingRepository.UpdateAsync(userBilling);
+                    break;
+                }
+
+                case "customer.subscription.deleted":
+                {
+                    var subscription = stripeEvent.Data.Object as Stripe.Subscription;
+                    if (subscription == null)
+                    {
+                        throw new InvalidOperationException(
+                            "Invalid subscription data in webhook event."
+                        );
+                    }
+
+                    string userId =
+                        subscription.Metadata?["userId"]
+                        ?? throw new InvalidOperationException(
+                            "UserId not found in subscription metadata."
+                        );
+
+                    var userBilling = await _userBillingRepository.GetByUserIdAsync(userId);
+                    if (userBilling == null)
+                    {
+                        throw new KeyNotFoundException(
+                            $"User billing information for user ID {userId} not found."
+                        );
+                    }
+
+                    using var transaction = await _dbContext.Database.BeginTransactionAsync();
+                    try
+                    {
+                        userBilling.SubscriptionStatus = SubscriptionStatus.Canceled;
+                        userBilling.SubscriptionLevel = SubscriptionLevel.None;
+                        userBilling.SubscriptionEndDate = DateTime.UtcNow;
+                        await _userBillingRepository.UpdateAsync(userBilling);
+                        await transaction.CommitAsync();
+                    }
+                    catch (Exception ex)
+                    {
+                        await transaction.RollbackAsync();
+                        throw new InvalidOperationException(
+                            "Failed to process customer.subscription.deleted event.",
+                            ex
+                        );
+                    }
+                    break;
+                }
+
+                case "invoice.payment_failed":
+                {
+                    var invoice = stripeEvent.Data.Object as Stripe.Invoice;
+                    if (invoice == null)
+                    {
+                        throw new InvalidOperationException(
+                            "Invalid invoice data in webhook event."
+                        );
+                    }
+
+                    string customerId =
+                        invoice.CustomerId
+                        ?? throw new InvalidOperationException(
+                            "CustomerId not found in invoice data."
+                        );
+
+                    var userBilling = await _dbContext
+                        .UserBillings.Where(ub => ub.StripeCustomerId == customerId)
+                        .FirstOrDefaultAsync();
+                    if (userBilling == null)
+                    {
+                        throw new KeyNotFoundException(
+                            $"User billing information for customer ID {customerId} not found."
+                        );
+                    }
+
+                    using var transaction = await _dbContext.Database.BeginTransactionAsync();
+                    try
+                    {
+                        userBilling.SubscriptionStatus = SubscriptionStatus.PastDue;
+                        await _userBillingRepository.UpdateAsync(userBilling);
+                        await transaction.CommitAsync();
+                    }
+                    catch (Exception ex)
+                    {
+                        await transaction.RollbackAsync();
+                        throw new InvalidOperationException(
+                            "Failed to process invoice.payment_failed event.",
+                            ex
+                        );
+                    }
                     break;
                 }
 
