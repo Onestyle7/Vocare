@@ -201,6 +201,7 @@ export const NavLinks = [
   { label: 'Home', url: '/' },
   { label: 'Profile', url: '/profile' },
   { label: 'Assistant', url: '/assistant' },
+  { label: 'Market Analysis', url: '/market-analysis' },
 ];
 
 // Spiner
