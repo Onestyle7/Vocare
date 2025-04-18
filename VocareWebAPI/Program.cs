@@ -1,12 +1,13 @@
-using System.Security.Claims;
 using System.Text.Json.Serialization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Options;
 using Microsoft.OpenApi.Models;
 using Polly;
 using Polly.Extensions.Http;
 using Stripe;
+using VocareWebAPI.Billing.Repositories.Implementations;
+using VocareWebAPI.Billing.Repositories.Interfaces;
+using VocareWebAPI.Billing.Services.Interfaces;
 using VocareWebAPI.Data;
 using VocareWebAPI.Models.Config;
 using VocareWebAPI.Models.Entities;
@@ -15,6 +16,8 @@ using VocareWebAPI.Repositories.Implementations;
 using VocareWebAPI.Repositories.Interfaces;
 using VocareWebAPI.Services;
 using VocareWebAPI.Services.Implementations;
+using LocalBillingService = VocareWebAPI.Billing.Services.Implementations.BillingService;
+using LocalStripeService = VocareWebAPI.Billing.Services.Implementations.StripeService;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -46,12 +49,21 @@ builder
     .AddPolicyHandler(GetRetryPolicy());
 
 builder.Services.AddScoped<IAiService, PerplexityAiService>();
+
+builder.Services.AddScoped<IMarketAnalysisService, MarketAnalysisService>();
+builder.Services.AddScoped<IBillingService, LocalBillingService>();
+builder.Services.AddScoped<IStripeService, LocalStripeService>();
+
+// repozytoria
+builder.Services.AddScoped<IUserBillingRepository, UserBillingRepository>();
+builder.Services.AddScoped<ITokenTransactionRepository, TokenTransactionRepository>();
+builder.Services.AddScoped<IServiceCostRepository, ServiceCostRepository>();
 builder.Services.AddScoped<IUserProfileRepository, UserProfileRepository>();
 builder.Services.AddScoped<IAiRecommendationRepository, AiRecommendationRepository>();
 builder.Services.AddScoped<ICareerStatisticsRepository, CareerStatisticsRepository>();
 builder.Services.AddScoped<ISkillDemandRepository, SkillDemandRepository>();
 builder.Services.AddScoped<IMarketTrendsRepository, MarketTrendsRepository>();
-builder.Services.AddScoped<IMarketAnalysisService, MarketAnalysisService>();
+
 builder
     .Services.AddControllers()
     .AddJsonOptions(options =>

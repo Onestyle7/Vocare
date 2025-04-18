@@ -63,44 +63,46 @@ namespace VocareWebAPI.Billing.Services.Implementations
 
         public async Task DeductTokensForServiceAsync(string userId, string serviceName)
         {
-            if (string.IsNullOrEmpty(userId) || string.IsNullOrEmpty(serviceName))
-            {
+            // 1️⃣ Walidacja argumentów
+            if (string.IsNullOrWhiteSpace(userId) || string.IsNullOrWhiteSpace(serviceName))
                 throw new ArgumentException("User ID and service name cannot be null or empty.");
-            }
 
+            // 2️⃣ Pobranie ceny usługi
             var serviceCost = await _serviceCostRepository.GetServiceCostAsync(serviceName);
             if (serviceCost <= 0)
-            {
                 throw new InvalidOperationException(
                     $"Service cost for {serviceName} is not valid."
                 );
-            }
 
-            var userBilling = await _userBillingRepository.GetByUserIdAsync(userId);
-            if (userBilling == null)
-            {
+            // 3️⃣ Pobranie danych billingowych użytkownika
+            var userBilling = await _dbContext.UserBillings.FirstOrDefaultAsync(ub =>
+                ub.UserId == userId
+            );
+            if (userBilling is null)
                 throw new KeyNotFoundException(
                     $"User billing information for user ID {userId} not found."
                 );
-            }
 
+            // 4️⃣ Jeśli ma aktywną subskrypcję, nic nie robimy
             if (userBilling.SubscriptionStatus == SubscriptionStatus.Active)
-            {
                 return;
-            }
 
+            // 5️⃣ Sprawdzenie salda tokenów
             if (userBilling.TokenBalance < serviceCost)
-            {
                 throw new InvalidOperationException(
                     $"User {userId} does not have enough tokens to access {serviceName}."
                 );
-            }
 
-            using var transaction = await _dbContext.Database.BeginTransactionAsync();
+            // 6️⃣ Rozpoczęcie transakcji, aby operacje były atomowe
+            await using var trx = await _dbContext.Database.BeginTransactionAsync();
             try
             {
-                await _userBillingRepository.DeductTokensAsync(userId, serviceCost);
+                // 7️⃣ Aktualizacja salda
+                userBilling.TokenBalance -= serviceCost;
+                userBilling.LastTokenPurchaseDate = DateTime.UtcNow;
+                // EF Core śledzi userBilling, więc nie musimy wywoływać Update()
 
+                // 8️⃣ Dodanie zapisu transakcji
                 var tokenTransaction = new TokenTransaction
                 {
                     UserId = userId,
@@ -109,13 +111,17 @@ namespace VocareWebAPI.Billing.Services.Implementations
                     Amount = -serviceCost,
                     CreatedAt = DateTime.UtcNow,
                 };
+                await _dbContext.TokenTransactions.AddAsync(tokenTransaction);
 
-                await _tokenTransactionRepository.AddTransactionAsync(tokenTransaction);
-                await transaction.CommitAsync();
+                // 9️⃣ Zapis wszystkich zmian w jednym SaveChanges
+                await _dbContext.SaveChangesAsync();
+
+                // 🔟 Commit transakcji
+                await trx.CommitAsync();
             }
             catch (Exception ex)
             {
-                await transaction.RollbackAsync();
+                await trx.RollbackAsync();
                 throw new InvalidOperationException("Failed to deduct tokens for service.", ex);
             }
         }

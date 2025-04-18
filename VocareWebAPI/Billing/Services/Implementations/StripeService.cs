@@ -1,3 +1,4 @@
+using Microsoft.EntityFrameworkCore;
 using Stripe;
 using Stripe.Checkout;
 using VocareWebAPI.Billing.Models.Entities;
@@ -138,6 +139,7 @@ namespace VocareWebAPI.Billing.Services.Implementations
 
         public async Task<string> CreateCheckoutSessionForTokenAsync(string userId, string priceId)
         {
+            // ---------- walidacja parametrów ----------
             if (string.IsNullOrEmpty(userId) || string.IsNullOrEmpty(priceId))
             {
                 _logger.LogWarning(
@@ -148,57 +150,92 @@ namespace VocareWebAPI.Billing.Services.Implementations
                 throw new ArgumentException("User ID and price ID cannot be null or empty.");
             }
 
+            // ---------- pobranie / przygotowanie UserBilling ----------
+            bool isNew = false;
             UserBilling userBilling;
+
             try
             {
                 userBilling = await _userBillingRepository.GetByUserIdAsync(userId);
             }
             catch (KeyNotFoundException)
             {
-                _logger.LogInformation(
-                    "UserBilling not found for userId={UserId}. Creating new record.",
-                    userId
-                );
+                // rekord nie istnieje – przygotujemy nowy
+                isNew = true;
                 userBilling = new UserBilling
                 {
                     UserId = userId,
-                    StripeCustomerId = null,
                     TokenBalance = 0,
                     SubscriptionStatus = SubscriptionStatus.None,
                     SubscriptionLevel = SubscriptionLevel.None,
+                    // StripeCustomerId ustawimy po utworzeniu klienta Stripe
                 };
-                using var transaction = await _dbContext.Database.BeginTransactionAsync();
-                try
+
+                _logger.LogInformation(
+                    "UserBilling not found for userId={UserId}. Will create a new one.",
+                    userId
+                );
+            }
+
+            // ---------- upewnij się, że mamy StripeCustomerId ----------
+            if (string.IsNullOrEmpty(userBilling.StripeCustomerId))
+            {
+                // pobranie e‑maila zalogowanego użytkownika z ASP Identity
+                string email = await _dbContext
+                    .Users.Where(u => u.Id == userId)
+                    .Select(u => u.Email)
+                    .FirstOrDefaultAsync();
+
+                if (string.IsNullOrEmpty(email))
                 {
-                    await _userBillingRepository.CreateAsync(userBilling);
-                    await transaction.CommitAsync();
-                }
-                catch (Exception ex)
-                {
-                    await transaction.RollbackAsync();
-                    _logger.LogError(
-                        ex,
-                        "Failed to create UserBilling for userId={UserId}.",
+                    _logger.LogWarning(
+                        "Email is required to create a Stripe customer for userId={UserId}.",
                         userId
                     );
                     throw new InvalidOperationException(
-                        $"Failed to create UserBilling for user {userId}.",
+                        "Email is required to create a Stripe customer."
+                    );
+                }
+
+                var customerService = new CustomerService();
+                var customer = await customerService.CreateAsync(
+                    new CustomerCreateOptions
+                    {
+                        Email = email,
+                        Metadata = new Dictionary<string, string> { { "UserId", userId } },
+                    }
+                );
+
+                userBilling.StripeCustomerId = customer.Id;
+
+                // zapis / aktualizacja w transakcji
+                using var trx = await _dbContext.Database.BeginTransactionAsync();
+                try
+                {
+                    if (isNew)
+                        await _userBillingRepository.CreateAsync(userBilling);
+                    else
+                        await _userBillingRepository.UpdateAsync(userBilling);
+
+                    await trx.CommitAsync();
+                    _logger.LogInformation(
+                        "Stripe customer created (id={CustomerId}) and userBilling saved for userId={UserId}.",
+                        customer.Id,
+                        userId
+                    );
+                }
+                catch (Exception ex)
+                {
+                    await trx.RollbackAsync();
+                    _logger.LogError(ex, "Failed to save userBilling for userId={UserId}.", userId);
+                    throw new InvalidOperationException(
+                        $"Failed to save UserBilling for user {userId}.",
                         ex
                     );
                 }
             }
 
-            if (string.IsNullOrEmpty(userBilling.StripeCustomerId))
-            {
-                _logger.LogWarning(
-                    "Email is required to create a Stripe customer for userId={UserId}.",
-                    userId
-                );
-                throw new InvalidOperationException(
-                    "Email is required to create a Stripe customer. Please provide email or configure user email retrieval."
-                );
-            }
-
+            // ---------- budowanie sesji Checkout ----------
             var successUrl =
                 _configuration["Stripe:SuccessUrl"]
                 ?? throw new InvalidOperationException("Success URL not configured.");
@@ -224,18 +261,20 @@ namespace VocareWebAPI.Billing.Services.Implementations
             {
                 var sessionService = new SessionService();
                 var session = await sessionService.CreateAsync(sessionOptions);
+
                 _logger.LogInformation(
-                    "Created checkout session for userId={UserId} with sessionUrl={SessionUrl}.",
+                    "Created checkout session for userId={UserId} with url={SessionUrl}.",
                     userId,
                     session.Url
                 );
+
                 return session.Url;
             }
             catch (StripeException ex)
             {
                 _logger.LogError(
                     ex,
-                    "Failed to create checkout session for userId={UserId}: {StripeErrorMessage}.",
+                    "Failed to create checkout session for userId={UserId}: {StripeError}.",
                     userId,
                     ex.StripeError?.Message
                 );

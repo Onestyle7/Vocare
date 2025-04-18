@@ -179,40 +179,28 @@ namespace VocareWebAPI.Billing.Repositories.Implementations
 
         public async Task AddTokensAsync(string userId, int amount)
         {
-            if (string.IsNullOrEmpty(userId))
-            {
+            if (string.IsNullOrWhiteSpace(userId))
                 throw new ArgumentException("User ID cannot be null or empty.", nameof(userId));
-            }
+
             if (amount <= 0)
-            {
                 throw new ArgumentException("Amount must be greater than zero.", nameof(amount));
-            }
 
-            using var transaction = await _context.Database.BeginTransactionAsync();
-            try
-            {
-                var userBilling = await _context
-                    .UserBillings.Where(ub => ub.UserId == userId)
-                    .FirstOrDefaultAsync();
+            // pobierz rekord
+            var userBilling = await _context.UserBillings.FirstOrDefaultAsync(ub =>
+                ub.UserId == userId
+            );
 
-                if (userBilling == null)
-                {
-                    throw new KeyNotFoundException(
-                        $"User billing information for user ID {userId} not found."
-                    );
-                }
+            if (userBilling is null)
+                throw new KeyNotFoundException(
+                    $"User billing information for user ID {userId} not found."
+                );
 
-                userBilling.TokenBalance += amount;
-                _context.UserBillings.Update(userBilling);
+            // aktualizuj saldo
+            userBilling.TokenBalance += amount;
+            userBilling.LastTokenPurchaseDate = DateTime.UtcNow;
 
-                await _context.SaveChangesAsync();
-                await transaction.CommitAsync();
-            }
-            catch (Exception ex)
-            {
-                await transaction.RollbackAsync();
-                throw new Exception("Error while adding tokens.", ex);
-            }
+            // pojedyncze SaveChanges – jeśli zewnętrzna transakcja istnieje, EF w niej zapisze
+            await _context.SaveChangesAsync();
         }
     }
 }
