@@ -1,5 +1,4 @@
 using Microsoft.EntityFrameworkCore;
-using Stripe;
 using VocareWebAPI.Billing.Models.Entities;
 using VocareWebAPI.Billing.Models.Enums;
 using VocareWebAPI.Billing.Repositories.Interfaces;
@@ -128,72 +127,36 @@ namespace VocareWebAPI.Billing.Services.Implementations
 
         public async Task HandleWebhookAsync(string json, string stripeSignature)
         {
-            if (string.IsNullOrEmpty(json))
-            {
-                throw new ArgumentException(
-                    "Webhook payload cannot be null or empty.",
-                    nameof(json)
-                );
-            }
+            if (string.IsNullOrEmpty(json) || string.IsNullOrEmpty(stripeSignature))
+                throw new ArgumentException("Invalid webhook payload or missing signature.");
 
-            if (string.IsNullOrEmpty(stripeSignature))
-            {
-                throw new ArgumentException(
-                    "Stripe signature cannot be null or empty.",
-                    nameof(stripeSignature)
-                );
-            }
+            var stripeEvent = Stripe.EventUtility.ConstructEvent(
+                json,
+                stripeSignature,
+                _webhookSecret,
+                throwOnApiVersionMismatch: false
+            );
 
-            Event stripeEvent;
-            try
+            if (stripeEvent.Type == "checkout.session.completed")
             {
-                stripeEvent = Stripe.EventUtility.ConstructEvent(
-                    json,
-                    stripeSignature,
-                    _webhookSecret
-                );
-            }
-            catch (StripeException ex)
-            {
-                throw new InvalidOperationException(
-                    "Failed to verify Stripe webhook signature.",
-                    ex
-                );
-            }
-
-            switch (stripeEvent.Type)
-            {
-                case "checkout.session.completed":
+                var session = stripeEvent.Data.Object as Stripe.Checkout.Session;
+                if (session?.Mode == "payment")
                 {
-                    var session = stripeEvent.Data.Object as Stripe.Checkout.Session;
-                    if (session == null)
-                    {
-                        throw new InvalidOperationException(
-                            "Invalid checkout session data in webhook event."
-                        );
-                    }
-
-                    string userId =
+                    var userId =
                         session.Metadata?["userId"]
-                        ?? throw new InvalidOperationException(
-                            "UserId not found in checkout session metadata."
-                        );
+                        ?? throw new InvalidOperationException("userId missing in metadata");
 
-                    var userBilling = await _userBillingRepository.GetByUserIdAsync(userId);
-                    if (userBilling == null)
-                    {
-                        throw new KeyNotFoundException(
-                            $"User billing information for user ID {userId} not found."
-                        );
-                    }
+                    var ub = await _userBillingRepository.GetByUserIdAsync(userId);
+                    if (ub == null)
+                        throw new KeyNotFoundException($"No billing for {userId}");
 
-                    using var transaction = await _dbContext.Database.BeginTransactionAsync();
+                    await using var tx = await _dbContext.Database.BeginTransactionAsync();
                     try
                     {
                         const int tokensToAdd = 50;
                         await _userBillingRepository.AddTokensAsync(userId, tokensToAdd);
 
-                        var tokenTransaction = new TokenTransaction
+                        var tt = new TokenTransaction
                         {
                             UserId = userId,
                             ServiceName = "TokenPurchase",
@@ -201,152 +164,16 @@ namespace VocareWebAPI.Billing.Services.Implementations
                             Amount = tokensToAdd,
                             CreatedAt = DateTime.UtcNow,
                         };
-                        await _tokenTransactionRepository.AddTransactionAsync(tokenTransaction);
+                        await _tokenTransactionRepository.AddTransactionAsync(tt);
 
-                        await transaction.CommitAsync();
+                        await tx.CommitAsync();
                     }
-                    catch (Exception ex)
+                    catch
                     {
-                        await transaction.RollbackAsync();
-                        throw new InvalidOperationException(
-                            "Failed to process checkout.session.completed event.",
-                            ex
-                        );
+                        await tx.RollbackAsync();
+                        throw;
                     }
-                    break;
                 }
-
-                case "customer.subscription.updated":
-                {
-                    var subscription = stripeEvent.Data.Object as Stripe.Subscription;
-                    if (subscription == null)
-                    {
-                        throw new InvalidOperationException(
-                            "Invalid subscription data in webhook event."
-                        );
-                    }
-
-                    string userId =
-                        subscription.Metadata?["userId"]
-                        ?? throw new InvalidOperationException(
-                            "UserId not found in subscription metadata."
-                        );
-
-                    var userBilling = await _userBillingRepository.GetByUserIdAsync(userId);
-                    if (userBilling == null)
-                    {
-                        throw new KeyNotFoundException(
-                            $"User billing information for user ID {userId} not found."
-                        );
-                    }
-
-                    var newStatus = subscription.Status switch
-                    {
-                        "active" => SubscriptionStatus.Active,
-                        "canceled" => SubscriptionStatus.Canceled,
-                        "past_due" => SubscriptionStatus.PastDue,
-                        _ => throw new InvalidOperationException(
-                            $"Unsupported subscription status: {subscription.Status}"
-                        ),
-                    };
-
-                    userBilling.SubscriptionStatus = newStatus;
-                    userBilling.StripeSubscriptionId = subscription.Id;
-                    await _userBillingRepository.UpdateAsync(userBilling);
-                    break;
-                }
-
-                case "customer.subscription.deleted":
-                {
-                    var subscription = stripeEvent.Data.Object as Stripe.Subscription;
-                    if (subscription == null)
-                    {
-                        throw new InvalidOperationException(
-                            "Invalid subscription data in webhook event."
-                        );
-                    }
-
-                    string userId =
-                        subscription.Metadata?["userId"]
-                        ?? throw new InvalidOperationException(
-                            "UserId not found in subscription metadata."
-                        );
-
-                    var userBilling = await _userBillingRepository.GetByUserIdAsync(userId);
-                    if (userBilling == null)
-                    {
-                        throw new KeyNotFoundException(
-                            $"User billing information for user ID {userId} not found."
-                        );
-                    }
-
-                    using var transaction = await _dbContext.Database.BeginTransactionAsync();
-                    try
-                    {
-                        userBilling.SubscriptionStatus = SubscriptionStatus.Canceled;
-                        userBilling.SubscriptionLevel = SubscriptionLevel.None;
-                        userBilling.SubscriptionEndDate = DateTime.UtcNow;
-                        await _userBillingRepository.UpdateAsync(userBilling);
-                        await transaction.CommitAsync();
-                    }
-                    catch (Exception ex)
-                    {
-                        await transaction.RollbackAsync();
-                        throw new InvalidOperationException(
-                            "Failed to process customer.subscription.deleted event.",
-                            ex
-                        );
-                    }
-                    break;
-                }
-
-                case "invoice.payment_failed":
-                {
-                    var invoice = stripeEvent.Data.Object as Stripe.Invoice;
-                    if (invoice == null)
-                    {
-                        throw new InvalidOperationException(
-                            "Invalid invoice data in webhook event."
-                        );
-                    }
-
-                    string customerId =
-                        invoice.CustomerId
-                        ?? throw new InvalidOperationException(
-                            "CustomerId not found in invoice data."
-                        );
-
-                    var userBilling = await _dbContext
-                        .UserBillings.Where(ub => ub.StripeCustomerId == customerId)
-                        .FirstOrDefaultAsync();
-                    if (userBilling == null)
-                    {
-                        throw new KeyNotFoundException(
-                            $"User billing information for customer ID {customerId} not found."
-                        );
-                    }
-
-                    using var transaction = await _dbContext.Database.BeginTransactionAsync();
-                    try
-                    {
-                        userBilling.SubscriptionStatus = SubscriptionStatus.PastDue;
-                        await _userBillingRepository.UpdateAsync(userBilling);
-                        await transaction.CommitAsync();
-                    }
-                    catch (Exception ex)
-                    {
-                        await transaction.RollbackAsync();
-                        throw new InvalidOperationException(
-                            "Failed to process invoice.payment_failed event.",
-                            ex
-                        );
-                    }
-                    break;
-                }
-
-                default:
-                    // Ignoruj nieobsługiwane zdarzenia
-                    break;
             }
         }
     }

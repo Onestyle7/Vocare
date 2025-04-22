@@ -76,6 +76,10 @@ namespace VocareWebAPI.Data
             //Określenie klucza głównego dla UserBilling
             builder.Entity<UserBilling>().HasKey(ub => ub.UserId);
 
+            builder.Entity<UserBilling>().Property(ub => ub.StripeCustomerId).IsRequired(false); // Umożliwienie null dla StripeCustomerId
+
+            builder.Entity<UserBilling>().Property(ub => ub.StripeSubscriptionId).IsRequired(false); // Umożliwienie null dla StripeSubscriptionId
+
             //konfiguracja tokenTransaction
             builder.Entity<TokenTransaction>().HasKey(tt => tt.Id);
 
