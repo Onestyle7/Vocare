@@ -9,7 +9,7 @@ import Features from '@/components/SectionsComponents/Features';
 
 const page = () => {
   return (
-    <main className='max-w-7xl mx-auto'>
+    <main className='max-w-7xl mx-auto overflow-x-hidden'>
       <Header />
       <HeroTweak />
       <AboutCards />

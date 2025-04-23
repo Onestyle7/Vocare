@@ -1,26 +1,18 @@
-export interface CareerPath {
-  careerName: string;
-  description: string;
-  probability: number;
-  requiredSkills: string[];
-  marketAnalysis: string[];
-  recommendedCourses: string[];
-  swot: {
-    strengths: string[];
-    weaknesses: string[];
-    opportunities: string[];
-    threats: string[];
-  };
-}
+export async function fetchMarketAnalysis() {
+  const token = localStorage.getItem('token');
 
-export interface Recommendation {
-  primaryPath: string;
-  justification: string;
-  nextSteps: string[];
-  longTermGoal: string;
-}
+  const res = await fetch('https://localhost:5001/api/MarketAnalysis', {
+    headers: {
+      'Authorization': `Bearer ${token}`,
+      'Accept': 'application/json',
+    },
+    cache: 'no-store',
+  });
 
-export interface AiCareerResponse {
-  careerPaths: CareerPath[];
-  recommendation: Recommendation;
+  if (!res.ok) {
+    console.error(`Status: ${res.status} - ${res.statusText}`);
+    throw new Error('Failed to fetch market analysis');
+  }
+
+  return res.json();
 }

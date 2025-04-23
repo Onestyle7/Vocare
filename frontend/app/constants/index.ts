@@ -218,6 +218,9 @@ export const loader = '/svg/loader.svg';
 
 // Feature section
 
+export const shape1 = '/images/shape1.png';
+
+
 // grid
 
 export const gridTiles = [

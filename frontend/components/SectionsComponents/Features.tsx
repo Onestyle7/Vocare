@@ -9,6 +9,7 @@ import ContentPage from '../ui/ContentPage';
 import ContentPage2 from '../ui/CustomPage2';
 import ContentPage3 from '../ui/CustomPage3';
 import SectionGsap from '../ui/SectionGsap';
+import AnimatedHeadline from '../AnimatedText';
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -130,9 +131,12 @@ const Features = () => {
     <div className="min-h-screen xl:border dark:border-gray-700 xl:ml-[40px] xl:mr-[39px]">
       <div className="relative mt-36 mb-8 flex flex-col items-center gap-5">
         <h2 className="text-sm uppercase md:text-[10px]">seamless integration</h2>
-        <div className="mt-5 text-center text-4xl leading-[0.8] font-bold uppercase md:text-[6rem]">
-          Discover the world <br /> <span>dive into it</span>
-        </div>
+        <div className="mt-5 text-center text-4xl font-bold uppercase md:text-[6rem] xl:leading-[0.8]">
+            <AnimatedHeadline
+              lines={['Discover', '', 'the world', 'dive into it']}
+              className="items-center max-md:items-center"
+            />
+          </div>
         <div className="font-circular-web absolute bottom-[-80dvh] left-1/2 w-full max-w-96 -translate-x-1/2 text-center text-lg md:max-w-[34rem]">
           <p>The game of games beginns</p>
           <p>let us rocket Your career to the sky</p>
