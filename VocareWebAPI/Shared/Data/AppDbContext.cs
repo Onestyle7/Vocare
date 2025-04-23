@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
+using VocareWebAPI.Billing.Models.Entities;
 using VocareWebAPI.Models;
 using VocareWebAPI.Models.Entities;
 using VocareWebAPI.Models.Entities.MarketAnalysis;
@@ -43,6 +44,11 @@ namespace VocareWebAPI.Data
         /// </summary>
         public DbSet<SkillDemand> SkillDemand { get; set; }
 
+        //Dodać tutaj XML
+        public DbSet<UserBilling> UserBillings { get; set; }
+        public DbSet<TokenTransaction> TokenTransactions { get; set; }
+        public DbSet<ServiceCost> ServiceCosts { get; set; }
+
         /// <summary>
         /// Konfiguruje model bazy danych, definiując schemat i relacje między encjami
         /// </summary>
@@ -59,6 +65,26 @@ namespace VocareWebAPI.Data
                 .HasOne(u => u.UserProfile) // User ma jeden profil
                 .WithOne(u => u.User) // Profil ma jednego usera
                 .HasForeignKey<UserProfile>(u => u.UserId);
+
+            //Relacja 1;1 miedz User a UserBilling
+            builder
+                .Entity<User>()
+                .HasOne(u => u.Billing)
+                .WithOne()
+                .HasForeignKey<UserBilling>(ub => ub.UserId); // User ma jeden profil
+
+            //Określenie klucza głównego dla UserBilling
+            builder.Entity<UserBilling>().HasKey(ub => ub.UserId);
+
+            builder.Entity<UserBilling>().Property(ub => ub.StripeCustomerId).IsRequired(false); // Umożliwienie null dla StripeCustomerId
+
+            builder.Entity<UserBilling>().Property(ub => ub.StripeSubscriptionId).IsRequired(false); // Umożliwienie null dla StripeSubscriptionId
+
+            //konfiguracja tokenTransaction
+            builder.Entity<TokenTransaction>().HasKey(tt => tt.Id);
+
+            //Konfiguracja ServiceCost
+            builder.Entity<ServiceCost>().HasKey(sc => sc.Id);
 
             builder
                 .Entity<AiRecommendation>()
@@ -77,6 +103,30 @@ namespace VocareWebAPI.Data
                 .HasMany(r => r.SkillDemands)
                 .WithOne()
                 .HasForeignKey("AiRecommendationId");
+
+            //Seedowanie koszatów usług
+            builder
+                .Entity<ServiceCost>()
+                .HasData(
+                    new ServiceCost
+                    {
+                        Id = 1,
+                        ServiceName = "AnalyzeProfile",
+                        TokenCost = 5,
+                    },
+                    new ServiceCost
+                    {
+                        Id = 2,
+                        ServiceName = "GenerateCV",
+                        TokenCost = 5,
+                    },
+                    new ServiceCost
+                    {
+                        Id = 3,
+                        ServiceName = "MarketAnalysis",
+                        TokenCost = 5,
+                    }
+                );
         }
     }
 }
