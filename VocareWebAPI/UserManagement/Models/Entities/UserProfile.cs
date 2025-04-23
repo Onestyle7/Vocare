@@ -4,6 +4,7 @@ using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using System.Threading.Tasks;
+using VocareWebAPI.UserManagement.Models.Entities;
 using VocareWebAPI.UserManagement.Models.Enums;
 
 namespace VocareWebAPI.Models.Entities
@@ -21,15 +22,15 @@ namespace VocareWebAPI.Models.Entities
         public string FirstName { get; set; }
         public string LastName { get; set; }
         public string Country { get; set; }
-        public string Address { get; set; }
+        public string? Address { get; set; }
         public string? PhoneNumber { get; set; }
-        public string Education { get; set; }
-        public List<string> WorkExperience { get; set; }
-        public List<string> Skills { get; set; }
-        public List<string> Certificates { get; set; }
-        public List<string> Languages { get; set; }
-        public string AdditionalInformation { get; set; }
-        public string AboutMe { get; set; }
+        public List<EducationEntry> Education { get; set; } = new();
+        public List<WorkExperienceEntry> WorkExperience { get; set; } = new();
+        public List<string> Skills { get; set; } = new();
+        public List<CertificateEntry> Certificates { get; set; } = new();
+        public List<LanguageEntry> Languages { get; set; } = new();
+        public string? AdditionalInformation { get; set; }
+        public string? AboutMe { get; set; }
         public PersonalityType PersonalityType { get; set; }
 
         /* public string LastRecommendationJson { get; set; } = "{}";
