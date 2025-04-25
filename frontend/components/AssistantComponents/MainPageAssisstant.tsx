@@ -12,6 +12,8 @@ import CollapsibleButton from './CollapsibleButton';
 import CareerPathSection from './CareerPathSection';
 import { GradientButton } from '../ui/ButtonGenerate';
 import CustomButton from '../ui/CustomButton';
+import { GridBackgroundDemo } from '../MarketComponents/GridBackgroundDemo';
+import { TerminalDemo } from '../MarketComponents/LoadingTerminal';
 
 export default function AssistantPage() {
   const [profile, setProfile] = useState<UserProfile | null>(null);
@@ -161,10 +163,11 @@ export default function AssistantPage() {
 
   if (isLoading) {
     return (
-      <div className="flex min-h-screen items-center justify-center">
-        <p className="text-lg">Ładowanie rekomendacji...</p>
-      </div>
-    );
+          <div className="mb-1 flex flex-col overflow-hidden rounded-[28px] h-screen items-center justify-center -mt-20 max-w-7xl mx-auto max-xl:mx-4">
+            <GridBackgroundDemo />
+            <TerminalDemo />
+          </div>
+        );
   }
 
   if (!recommendations) {

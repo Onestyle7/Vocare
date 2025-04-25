@@ -128,7 +128,7 @@ const Features = () => {
       customPaddings
       id="about"
     >
-    <div className="min-h-screen xl:border dark:border-gray-700 xl:ml-[40px] xl:mr-[39px]">
+    <div className="min-h-screen xl:border-t xl:border-r xl:border-l dark:border-gray-700 xl:ml-[40px] xl:mr-[39px]">
       <div className="relative mt-36 mb-8 flex flex-col items-center gap-5">
         <h2 className="text-sm uppercase md:text-[10px]">seamless integration</h2>
         <div className="mt-5 text-center text-4xl font-bold uppercase md:text-[6rem] xl:leading-[0.8]">

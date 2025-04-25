@@ -5,6 +5,9 @@ import { MarketAnalysisResponseDto } from '@/app/types/marketAnalysis';
 import { fetchMarketAnalysis } from '@/lib/recommendations';
 import { gsap } from 'gsap';
 import CollapsibleButton from '../AssistantComponents/CollapsibleButton';
+import { TerminalDemo } from './LoadingTerminal';
+import { GridBackgroundDemo } from './GridBackgroundDemo';
+import GenerateRecommendationFail from '../AssistantComponents/GenerateRecommendationFail';
 
 export default function MarketAnalysis() {
   const [data, setData] = useState<MarketAnalysisResponseDto | null>(null);
@@ -26,30 +29,28 @@ export default function MarketAnalysis() {
     loadData();
   }, []);
 
+
+  // useEffect(() => {
+  //   setLoading(true);
+  // }, []);
+
+  
   if (error) {
     return (
-      <div className="mb-1 flex flex-col overflow-hidden rounded-[28px] border shadow-sm md:flex-row">
-        <div className="flex items-center justify-center bg-red-500 p-4 md:w-1/6 md:p-8">
-          <span className="text-4xl font-bold text-white md:text-6xl">!</span>
-        </div>
-        <div className="p-4 md:w-5/6 md:p-6">
-          <h2 className="mb-3 text-xl font-semibold">Market Analysis</h2>
-          <p className="text-red-600">Error: {error}</p>
-        </div>
-      </div>
+      <GenerateRecommendationFail />
     );
   }
 
   if (isLoading) {
     return (
-      <div className="mb-1 flex flex-col overflow-hidden rounded-[28px] border shadow-sm md:flex-row">
-        <div className="flex items-center justify-center bg-[#D1B7FF] p-4 md:w-1/6 md:p-8">
-          <span className="text-4xl font-bold text-white md:text-6xl">⏳</span>
+      <div className="mb-1 flex flex-col overflow-hidden rounded-[28px] h-screen items-center justify-center -mt-20 max-w-7xl mx-auto max-xl:mx-4">
+        <GridBackgroundDemo />
+        {/* <ScrollParallax isAbsolutelyPositioned zIndex={20}>
+        <div className="absolute top-1/2 left-1/4 z-20">
+          <Image src={shape1} alt="shape" width={78} height={78} className="-rotate-20" />
         </div>
-        <div className="p-4 md:w-5/6 md:p-6 mt-8">
-          <h2 className="mb-3 text-xl font-semibold">Market Analysis</h2>
-          <p className="text-gray-500">Loading market analysis...</p>
-        </div>
+        </ScrollParallax> */}
+        <TerminalDemo />
       </div>
     );
   }

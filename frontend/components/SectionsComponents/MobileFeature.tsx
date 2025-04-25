@@ -9,6 +9,7 @@ import { ArrowRight, Search, CheckCircle, ListChecks } from 'lucide-react';
 import { gsap } from 'gsap';
 import { AvatarCircles } from '../magicui/avatar-circles';
 import { avatars, mobileView } from '@/app/constants';
+import AnimatedHeadline from '../AnimatedText';
 
 const MobileFeature = () => {
   const parallaxRef = useRef<HTMLDivElement>(null);
@@ -125,16 +126,16 @@ const MobileFeature = () => {
   return (
     <Section crosses customPaddings className="relative px-10"
     crossesOffset id="brain">
-      <div className="min-h-screen">
+      <div className="min-h-screen border-b">
         <div className="relative mx-[10%] mb-8 flex flex-col items-center gap-5">
           <h2 className="mt-[36px] text-sm uppercase md:text-[10px]">Always in Your pocket</h2>
-          <div className="mt-5 text-center text-4xl leading-[0.9] font-bold uppercase md:text-[6rem]">
-            Take Your Advisor <br />{' '}
-            <span className="items-center justify-center rounded-[8px] bg-[#915EFF] p-[1px] 2xl:mt-8">
-              with You
-            </span>
+          <div className="mt-5 text-center text-4xl font-bold uppercase md:text-[6rem] xl:leading-[0.8]">
+            <AnimatedHeadline
+              lines={['Take Your', 'advisor', 'with You']}
+              className="items-center max-md:items-center"
+            />
           </div>
-          <div className="mt-10 flex h-[60dvh] w-full flex-col items-center justify-center lg:flex-row">
+          <div className="flex mt-10 h-[45dvh] w-full flex-col items-center justify-center lg:flex-row ">
             <div className="flex h-full w-full flex-col max-md:space-y-12 lg:flex-row">
               <div className="relative flex h-full lg:w-1/2" ref={parallaxRef}>
                 <Iphone15Pro className="size-full" src={mobileView} />
@@ -162,7 +163,6 @@ const MobileFeature = () => {
               <div className="flex h-full flex-col items-center justify-center text-xl font-light sm:text-3xl lg:w-1/2">
                 <p className="font-poppins">
                   Discover your perfect{' '}
-                  <del className="rounded-[8px] bg-[#915EFF]/40 px-[6px]">job</del>{' '}
                   <strong>career</strong> path with our mobile application Get personalized advice,
                   insights, and recommendations tailored to your skills and aspirations—right at
                   your fingertips. Start your journey today!
@@ -172,7 +172,7 @@ const MobileFeature = () => {
                     variant="outline"
                     className="group flex scale-90 cursor-none items-center justify-center overflow-hidden max-md:mt-8 max-md:w-full xl:mt-8"
                   >
-                    <span className="flex flex-row items-center justify-center">
+                    <span className="flex flex-row items-center justify-center text-lg">
                       Try it out
                       <ArrowRight className="ml-2 transition-transform duration-300 group-hover:translate-x-2" />
                     </span>
