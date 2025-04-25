@@ -220,6 +220,10 @@ export const loader = '/svg/loader.svg';
 
 export const shape1 = '/images/shape1.png';
 
+// Generate button 
+
+export const star_generate = "/svg/star_generate.svg"
+
 
 // grid
 

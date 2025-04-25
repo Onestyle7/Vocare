@@ -4,12 +4,13 @@ import gsap from 'gsap';
 import { useGSAP } from '@gsap/react';
 import { ScrollTrigger } from 'gsap/all';
 import Image from 'next/image';
-import { plus } from '@/app/constants';
+import { plus, shape1 } from '@/app/constants';
 import ContentPage from '../ui/ContentPage';
 import ContentPage2 from '../ui/CustomPage2';
 import ContentPage3 from '../ui/CustomPage3';
 import SectionGsap from '../ui/SectionGsap';
 import AnimatedHeadline from '../AnimatedText';
+import { ScrollParallax } from 'react-just-parallax';
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -141,8 +142,13 @@ const Features = () => {
           <p>The game of games beginns</p>
           <p>let us rocket Your career to the sky</p>
         </div>
+              <ScrollParallax isAbsolutelyPositioned zIndex={20}>
+        <div className="absolute -bottom-30 xl:left-0 sm:left-10 md:left-10 left-0  z-20 xl:bottom-1/5">
+          <Image src={shape1} alt="shape" width={78} height={78} className="-rotate-20" />
+        </div>
+      </ScrollParallax>
       </div>
-      <div className="h-dvh" id="clip">
+      <div className="h-dvh z-30" id="clip">
         <div className="mask-clip-path absolute top-0 left-1/2 z-30 h-[60vh] w-96 origin-center -translate-x-1/2 overflow-hidden rounded-3xl md:w-[30vw]">
           <div className="absolute top-0 left-0 h-full w-full bg-[#101014] object-cover dark:bg-[#F3F3F3]">
             <div className="flex h-full items-center justify-center">
