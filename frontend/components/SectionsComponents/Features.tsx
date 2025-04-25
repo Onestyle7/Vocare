@@ -4,11 +4,13 @@ import gsap from 'gsap';
 import { useGSAP } from '@gsap/react';
 import { ScrollTrigger } from 'gsap/all';
 import Image from 'next/image';
-import { plus } from '@/app/constants';
+import { plus, shape1 } from '@/app/constants';
 import ContentPage from '../ui/ContentPage';
 import ContentPage2 from '../ui/CustomPage2';
 import ContentPage3 from '../ui/CustomPage3';
 import SectionGsap from '../ui/SectionGsap';
+import AnimatedHeadline from '../AnimatedText';
+import { ScrollParallax } from 'react-just-parallax';
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -127,18 +129,26 @@ const Features = () => {
       customPaddings
       id="about"
     >
-    <div className="min-h-screen xl:border dark:border-gray-700 xl:ml-[40px] xl:mr-[39px]">
+    <div className="min-h-screen xl:border-t xl:border-r xl:border-l dark:border-gray-700 xl:ml-[40px] xl:mr-[39px]">
       <div className="relative mt-36 mb-8 flex flex-col items-center gap-5">
         <h2 className="text-sm uppercase md:text-[10px]">seamless integration</h2>
-        <div className="mt-5 text-center text-4xl leading-[0.8] font-bold uppercase md:text-[6rem]">
-          Discover the world <br /> <span>dive into it</span>
-        </div>
+        <div className="mt-5 text-center text-4xl font-bold uppercase md:text-[6rem] xl:leading-[0.8]">
+            <AnimatedHeadline
+              lines={['Discover', '', 'the world', 'dive into it']}
+              className="items-center max-md:items-center"
+            />
+          </div>
         <div className="font-circular-web absolute bottom-[-80dvh] left-1/2 w-full max-w-96 -translate-x-1/2 text-center text-lg md:max-w-[34rem]">
           <p>The game of games beginns</p>
           <p>let us rocket Your career to the sky</p>
         </div>
+              <ScrollParallax isAbsolutelyPositioned zIndex={20}>
+        <div className="absolute -bottom-30 xl:left-0 sm:left-10 md:left-10 left-0  z-20 xl:bottom-1/5">
+          <Image src={shape1} alt="shape" width={78} height={78} className="-rotate-20" />
+        </div>
+      </ScrollParallax>
       </div>
-      <div className="h-dvh" id="clip">
+      <div className="h-dvh z-30" id="clip">
         <div className="mask-clip-path absolute top-0 left-1/2 z-30 h-[60vh] w-96 origin-center -translate-x-1/2 overflow-hidden rounded-3xl md:w-[30vw]">
           <div className="absolute top-0 left-0 h-full w-full bg-[#101014] object-cover dark:bg-[#F3F3F3]">
             <div className="flex h-full items-center justify-center">

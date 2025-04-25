@@ -2,6 +2,7 @@
 
 import React, { useEffect, useRef } from 'react';
 import { gsap } from 'gsap';
+import Section from '../Section';
 
 const Faq: React.FC = () => {
   const textRef = useRef<HTMLDivElement>(null);
@@ -27,7 +28,9 @@ const Faq: React.FC = () => {
   }, []);
 
   return (
-    <section className="relative flex h-[100vh] overflow-hidden xl:px-10 max-xl:mt-[280px]">
+    <Section crosses customPaddings className="relative"
+    crossesOffset id="faq">
+    <section className="relative flex h-[100vh] overflow-hidden xl:px-10 max-xl:mt-[320px]">
       <div className="my-10 flex w-full items-center justify-center bg-[#101014] dark:bg-[#F3F3F3]">
         <div
           ref={textRef}
@@ -37,6 +40,7 @@ const Faq: React.FC = () => {
         </div>
       </div>
     </section>
+    </Section>
   );
 };
 

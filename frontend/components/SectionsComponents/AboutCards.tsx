@@ -5,7 +5,9 @@ import { gsap } from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import AboutCard from '@/components/AboutCard';
 import Section from '@/components/Section';
-import { plus } from '@/app/constants';
+import { plus, shape1 } from '@/app/constants';
+import { ScrollParallax } from 'react-just-parallax';
+import Image from 'next/image';
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -61,10 +63,16 @@ const AboutCards = () => {
       customPaddings
       id="about"
     >
+      <ScrollParallax isAbsolutelyPositioned zIndex={20}>
+        <div className="absolute top-1/2 right-2 z-20">
+          <Image src={shape1} alt="shape" width={78} height={78} className="rotate-20" />
+        </div>
+      </ScrollParallax>
+
       <div ref={containerRef} className="main-font-color relative flex lg:w-full">
         <div className="mx-8 flex w-full flex-col items-center justify-center max-lg:space-y-4 lg:flex-row lg:space-x-4">
           {[...Array(3)].map((_, i) => (
-            <div className="about-card" key={i}>
+            <div className="about-card z-30" key={i}>
               <AboutCard
                 img={plus}
                 title="Beginners friendly"

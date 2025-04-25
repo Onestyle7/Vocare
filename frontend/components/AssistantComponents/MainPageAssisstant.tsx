@@ -10,14 +10,28 @@ import { Separator } from '../ui/separator';
 import { gsap } from 'gsap';
 import CollapsibleButton from './CollapsibleButton';
 import CareerPathSection from './CareerPathSection';
-import { GradientButton } from '../ui/ButtonGenerate';
 import CustomButton from '../ui/CustomButton';
+import { GridBackgroundDemo } from '../MarketComponents/GridBackgroundDemo';
+import { TerminalDemo } from '../MarketComponents/LoadingTerminal';
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "../ui/alert-dialog";
+import Image from 'next/image';
+import { star_generate } from '@/app/constants';
 
 export default function AssistantPage() {
   const [profile, setProfile] = useState<UserProfile | null>(null);
   const [recommendations, setRecommendations] = useState<AiCareerResponse | null>(null);
   const [isLoading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [isConfirmDialogOpen, setIsConfirmDialogOpen] = useState(false);
 
   const [isCollapsed, setIsCollapsed] = useState(false);
   const contentRef = useRef<HTMLDivElement>(null);
@@ -151,6 +165,40 @@ export default function AssistantPage() {
     }
   }, [profile]);
 
+  const handleGenerateNewRecommendations = async () => {
+    setLoading(true);
+    const token = localStorage.getItem('token');
+    if (!token) {
+      toast.error('Authentication required', {
+        description: 'Please sign in to continue.',
+      });
+      setLoading(false);
+      return;
+    }
+    try {
+      const response = await axios.get<AiCareerResponse>(
+        'https://localhost:5001/api/AI/recommendations',
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+            'Content-Type': 'application/json',
+          },
+        }
+      );
+      setRecommendations(response.data);
+      toast.success('Wygenerowano nowe rekomendacje');
+    } catch (err: any) {
+      setError(
+        err.response?.data?.detail || 'Nie udało się wygenerować nowych rekomendacji.'
+      );
+      toast.error('Błąd', {
+        description: 'Nie udało się wygenerować nowych rekomendacji.',
+      });
+    } finally {
+      setLoading(false);
+    }
+  };
+
   if (!profile) {
     return <div className="p-8 text-center">Brak danych profilu. Wróć do formularza.</div>;
   }
@@ -161,8 +209,9 @@ export default function AssistantPage() {
 
   if (isLoading) {
     return (
-      <div className="flex min-h-screen items-center justify-center">
-        <p className="text-lg">Ładowanie rekomendacji...</p>
+      <div className="mb-1 flex flex-col overflow-hidden rounded-[28px] h-screen items-center justify-center -mt-20 max-w-7xl mx-auto max-xl:mx-4">
+        <GridBackgroundDemo />
+        <TerminalDemo />
       </div>
     );
   }
@@ -232,41 +281,40 @@ export default function AssistantPage() {
       {/* Button for generating new recommendations */}
       <div className="mt-8 mx-20 flex justify-center">
         <CustomButton
-          onClick={async () => {
-            setLoading(true);
-            const token = localStorage.getItem('token');
-            if (!token) {
-              toast.error('Authentication required', {
-                description: 'Please sign in to continue.',
-              });
-              setLoading(false);
-              return;
-            }
-            try {
-              const response = await axios.get<AiCareerResponse>(
-                'https://localhost:5001/api/AI/recommendations',
-                {
-                  headers: {
-                    Authorization: `Bearer ${token}`,
-                    'Content-Type': 'application/json',
-                  },
-                }
-              );
-              setRecommendations(response.data);
-            } catch (err: any) {
-              setError(
-                err.response?.data?.detail || 'Nie udało się wygenerować nowych rekomendacji.'
-              );
-            } finally {
-              setLoading(false);
-            }
-          }}
+          onClick={() => setIsConfirmDialogOpen(true)}
           disabled={isLoading}
           className="px-6 py-2 cursor-pointer"
         >
-          {isLoading ? 'Generowanie...' : 'Wygeneruj nowe rekomendacje'}
+          {isLoading ? 'Generating...' : 'Generate new recommendation'}
         </CustomButton>
       </div>
+
+      {/* Confirmation Dialog */}
+      <AlertDialog open={isConfirmDialogOpen} onOpenChange={setIsConfirmDialogOpen}>
+        <AlertDialogContent className="max-w-md mx-auto font-poppins">
+          <AlertDialogHeader>
+            <AlertDialogTitle className="text-xl font-bold text-center">
+              Generate new recommendation?
+            </AlertDialogTitle>
+            <AlertDialogDescription className="text-center">
+              This will take <b className='text-[#915EFF]'>50 credits</b> from Your account
+              <div className="mt-2 font-extralight">
+                Current balance: <span className='font-bold'>200</span>
+              </div>
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter className="flex justify-center gap-4 sm:justify-center">
+            <AlertDialogCancel className="border-gray-200">Cancel</AlertDialogCancel>
+            <AlertDialogAction
+              onClick={handleGenerateNewRecommendations}
+              className="bg-[#915EFF] hover:bg-[#7b4ee0] text-white"
+            >
+              Generate
+              <Image src={star_generate} alt='star' width={16} height={16}/>
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
   );
 }
