@@ -12,7 +12,8 @@ class AIAsistentPageScreen extends StatefulWidget {
 }
 
 class _AIAsistentPageScreenState extends State<AIAsistentPageScreen> {
-  final TextEditingController _recommendationController = TextEditingController();
+  final TextEditingController _recommendationController =
+      TextEditingController();
 
   void _getRecommendation() async {
     final result = await AiApi.fetchRecommendation();
@@ -24,43 +25,14 @@ class _AIAsistentPageScreenState extends State<AIAsistentPageScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-    appBar: AppBar(
-      backgroundColor: Colors.black87,
-  automaticallyImplyLeading: false, // usuwa strzałkę "wstecz"
-  toolbarHeight: 60,
- 
-  flexibleSpace: SafeArea(
-    child: Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 16),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: const [
-          ThemeToggleButton(),
-          NavBarButtons(
-            destinations: [
-              NavDestination.home,
-              NavDestination.profile,
-              NavDestination.logout,
-              NavDestination.assistent,
-            ],
-          ),
-        ],
-      ),
-    ),
-  ),
-),
-
-
       body: Padding(
         padding: const EdgeInsets.all(16),
         child: Column(
-          children: [Positioned(
+          children: [
+            Positioned(
               left: 100,
               top: 928,
-              child: Text(
-                "Vocare",
-                style: TextStyle(fontSize: 55),
-              ),
+              child: Text("Vocare", style: TextStyle(fontSize: 55)),
             ),
             SizedBox(height: 16),
             ElevatedButton(
@@ -80,6 +52,35 @@ class _AIAsistentPageScreenState extends State<AIAsistentPageScreen> {
               readOnly: true,
             ),
           ],
+        ),
+      ),
+      bottomNavigationBar: Container(
+        height: 60,
+        decoration: BoxDecoration(
+          color: Colors.black87,
+          borderRadius: const BorderRadius.only(
+            topLeft: Radius.circular(16),
+            topRight: Radius.circular(16),
+          ),
+        ),
+        child: SafeArea(
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 16),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: const [
+                ThemeToggleButton(),
+                NavBarButtons(
+                  destinations: [
+                    NavDestination.home,
+                    NavDestination.profile,
+                    NavDestination.logout,
+                    NavDestination.assistent,
+                  ],
+                ),
+              ],
+            ),
+          ),
         ),
       ),
     );

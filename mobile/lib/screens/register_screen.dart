@@ -2,6 +2,9 @@
 import 'package:flutter/material.dart';
 import 'package:vocare/repositories/auth_repository.dart';
 import 'package:vocare/screens/aI_asistent_screen.dart';
+import 'package:vocare/widgets/custom_button.dart';
+import 'package:vocare/widgets/custom_input.dart';
+import 'package:vocare/widgets/nav_bar_button.dart';
 import 'package:vocare/widgets/theme_toggle_button.dart';
 
 class RegisterScreen extends StatefulWidget {
@@ -12,8 +15,7 @@ class RegisterScreen extends StatefulWidget {
 }
 
 class _RegisterScreenState extends State<RegisterScreen> {
-  final _nameController = TextEditingController();
-  final _surnameController = TextEditingController();
+  final _fullNameController = TextEditingController();
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
   final _confirmPasswordController = TextEditingController();
@@ -47,7 +49,6 @@ class _RegisterScreenState extends State<RegisterScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(actions: [ThemeToggleButton()]),
       body: Container(
         padding: const EdgeInsets.all(8.0),
         child: Column(
@@ -58,62 +59,58 @@ class _RegisterScreenState extends State<RegisterScreen> {
               child: Text("Vocare", style: TextStyle(fontSize: 55)),
             ),
             SizedBox(height: 55),
-            TextField(
-              controller: _surnameController,
-              decoration: InputDecoration(
-                labelText: "Full name",
-                hintText: "type your full name",
-                prefix: Icon(Icons.person),
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(25),
-                ),
-              ),
+            CustomInput(
+              label: "Full name",
+              hintText: "Type your full name",
+              controller: _fullNameController,
+              prefixIcon: Icon(Icons.person),
             ),
-            SizedBox(height: 16),
-            TextField(
+
+            CustomInput(
+              label: "Email",
+              hintText: "Type your email",
               controller: _emailController,
-              decoration: InputDecoration(
-                labelText: "Email",
-                hintText: "type your email",
-                prefix: Icon(Icons.email),
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(25),
-                ),
-              ),
-              keyboardType: TextInputType.emailAddress,
+              prefixIcon: Icon(Icons.email),
             ),
-            SizedBox(height: 16),
-            TextField(
+
+            CustomInput(
+              label: "Password",
+              hintText: "Type your password",
               controller: _passwordController,
-              decoration: InputDecoration(
-                labelText: "Password",
-                hintText: "Type your password",
-                prefix: Icon(Icons.security),
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(25),
-                ),
-              ),
-              obscureText: true,
+              prefixIcon: Icon(Icons.security),
             ),
-            SizedBox(height: 16),
-            TextField(
+
+            CustomInput(
+              label: "Confirm password",
+              hintText: "Type your password",
               controller: _confirmPasswordController,
-              decoration: InputDecoration(
-                labelText: "Confirm Password",
-                hintText: "Confirm your password",
-                prefix: Icon(Icons.security),
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(25),
-                ),
-              ),
-              obscureText: true,
+              prefixIcon: Icon(Icons.security),
             ),
-            SizedBox(height: 26),
-            ElevatedButton(
-              onPressed: _handleRegister,
-              child: Text("Zarejestruj się"),
-            ),
+
+            CustomButton(text: "Register", onPressed: _handleRegister),
           ],
+        ),
+      ),
+      bottomNavigationBar: Container(
+        height: 60,
+        decoration: BoxDecoration(
+          color: Colors.black87,
+          borderRadius: const BorderRadius.only(
+            topLeft: Radius.circular(16),
+            topRight: Radius.circular(16),
+          ),
+        ),
+        child: SafeArea(
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 16),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: const [
+                ThemeToggleButton(),
+                NavBarButtons(destinations: [NavDestination.logout]),
+              ],
+            ),
+          ),
         ),
       ),
     );
