@@ -50,7 +50,7 @@ const HeroTweak = () => {
     >
       <CustomCursor />
       <div className="main-font-color relative flex h-[390px] flex-row px-[40px] lg:w-full z-30">
-        <div className="inset-0 flex w-full flex-col items-center justify-center sm:pl-[40px] md:flex-row md:justify-start md:border-t md:border-b lg:w-3/5">
+        <div className="inset-0 flex w-full flex-col items-center justify-center md:pl-[40px] md:flex-row md:justify-start xl:border-t xl:border-b lg:w-3/5">
           <div className="flex flex-col justify-center max-md:mb-8 lg:w-1/2 xl:items-start">
           <h1 className="text-[60px] leading-17 font-bold uppercase max-md:text-center lg:text-[78px] xl:text-[88px] 2xl:text-[108px] 2xl:leading-21">
               <AnimatedHeadline
@@ -77,7 +77,7 @@ const HeroTweak = () => {
         {!isMobile && (
           <Suspense fallback={<Image src={Spinner} alt="spinner" width={60} height={60} />}>
             {showSpline && (
-              <div className="inset-0 flex w-2/5 items-center border-t border-b border-l">
+              <div className="inset-0 flex w-2/5 items-center xl:border-t xl:border-b xl:border-l">
                 <LazySpline
                   scene="https://prod.spline.design/mZBrYNcnoESGlTUG/scene.splinecode"
                   className="flex items-center justify-center"
@@ -102,7 +102,7 @@ const HeroTweak = () => {
       </div>
       {/* <BottomLine /> */}
       <ScrollParallax isAbsolutelyPositioned zIndex={20}>
-        <div className="absolute -bottom-30 left-0 z-20 xl:bottom-1/5">
+        <div className="absolute -bottom-30 left-2 z-20 xl:bottom-1/5">
           <Image src={shape1} alt="shape" width={78} height={78} className="-rotate-20" />
         </div>
       </ScrollParallax>

@@ -126,7 +126,7 @@ const MobileFeature = () => {
   return (
     <Section crosses customPaddings className="relative px-10"
     crossesOffset id="brain">
-      <div className="min-h-screen border-b">
+      <div className="min-h-screen xl:border-b xl:border-t mt-4">
         <div className="relative mx-[10%] mb-8 flex flex-col items-center gap-5">
           <h2 className="mt-[36px] text-sm uppercase md:text-[10px]">Always in Your pocket</h2>
           <div className="mt-5 text-center text-4xl font-bold uppercase md:text-[6rem] xl:leading-[0.8]">

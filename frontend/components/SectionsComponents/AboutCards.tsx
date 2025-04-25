@@ -64,7 +64,7 @@ const AboutCards = () => {
       id="about"
     >
       <ScrollParallax isAbsolutelyPositioned zIndex={20}>
-        <div className="absolute top-1/2 right-0 z-20">
+        <div className="absolute top-1/2 right-2 z-20">
           <Image src={shape1} alt="shape" width={78} height={78} className="rotate-20" />
         </div>
       </ScrollParallax>
