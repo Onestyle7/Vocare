@@ -19,9 +19,9 @@ export default function ProfileDetails() {
   const router = useRouter();
 
   const handleLogout = () => {
-      logoutUser();
-      router.push('/sign-in');
-    };
+    logoutUser();
+    router.push('/sign-in');
+  };
 
   useEffect(() => {
     const token = localStorage.getItem('token');
@@ -129,7 +129,7 @@ export default function ProfileDetails() {
             {profile.languages.map((lang, index) => (
               <span
                 key={index}
-                className="rounded-full bg-[#efe7ff] dark:bg-gray-900/50 px-3 py-1 text-sm text-[#915EFF]"
+                className="rounded-full bg-[#efe7ff] px-3 py-1 text-sm text-[#915EFF] dark:bg-gray-900/50"
               >
                 {lang}
               </span>
@@ -153,7 +153,7 @@ export default function ProfileDetails() {
             {profile.skills.map((skill, index) => (
               <span
                 key={index}
-                className="rounded-full bg-[#efe7ff] dark:bg-gray-900/50  px-3 py-1 text-sm text-[#915EFF]"
+                className="rounded-full bg-[#efe7ff] px-3 py-1 text-sm text-[#915EFF] dark:bg-gray-900/50"
               >
                 {skill}
               </span>
@@ -235,7 +235,7 @@ export default function ProfileDetails() {
   const pageIndicators = ['Personal Info', 'Skills & Experience', 'About Me'];
 
   return (
-    <div className="font-poppins mt-16 2xl:max-w-[1480px] max-w-7xl mx-auto max-sm:mx-4">
+    <div className="font-poppins mx-auto mt-16 max-w-7xl max-sm:mx-4 2xl:max-w-[1480px]">
       <div className="flex h-screen flex-col xl:flex-row">
         <div className="hidden xl:block xl:w-1/2 xl:pr-8">
           <div className="flex h-3/4 items-center justify-center">
@@ -247,12 +247,12 @@ export default function ProfileDetails() {
         <div className="w-full rounded-xl border p-4 xl:h-3/4 xl:w-1/2">
           <div className="flex h-full flex-col">
             <div className="flex flex-row items-start justify-between border-b">
-              <h1 className="mb-4 xl:text-3xl text-2xl font-bold text-gray-800 dark:text-gray-200">
+              <h1 className="mb-4 text-2xl font-bold text-gray-800 xl:text-3xl dark:text-gray-200">
                 {profile.firstName} {profile.lastName}
               </h1>
-              <div className='flex flex-row gap-2'>
+              <div className="flex flex-row gap-2">
                 <Button
-                  className="flex flex-row items-center justify-center rounded-full bg-[#915EFF] group hover:bg-[#b594fd]"
+                  className="group flex flex-row items-center justify-center rounded-full bg-[#915EFF] hover:bg-[#b594fd]"
                   onClick={handleEdit}
                 >
                   Edit
@@ -261,7 +261,7 @@ export default function ProfileDetails() {
                   </span>
                 </Button>
                 <Button
-                  className="flex flex-row items-center justify-center rounded-full bg-transparent hover:bg-transparent border border-[#915EFF]"
+                  className="flex flex-row items-center justify-center rounded-full border border-[#915EFF] bg-transparent hover:bg-transparent"
                   onClick={handleLogout}
                 >
                   <span>

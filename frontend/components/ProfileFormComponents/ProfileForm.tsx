@@ -597,25 +597,19 @@ export default function ProfileForm({
 
   const CancelButton = () => {
     const [open, setOpen] = useState(false);
-    
+
     if (!onCancel) return null;
-    
+
     return (
       <>
         {form.formState.isDirty ? (
           <Popover open={open} onOpenChange={setOpen}>
             <PopoverTrigger asChild>
-              <Button
-                type="button"
-                variant="outline"
-                className="font-poppins rounded-full"
-              >
+              <Button type="button" variant="outline" className="font-poppins rounded-full">
                 Cancel
               </Button>
             </PopoverTrigger>
-            <PopoverContent
-              className="font-poppins w-80 space-y-6 text-center p-6"
-            >
+            <PopoverContent className="font-poppins w-80 space-y-6 p-6 text-center">
               <p className="text-base">Are you sure you want to discard changes?</p>
               <div className="flex justify-center gap-4">
                 <Button variant="destructive" onClick={onCancel} className="px-6">

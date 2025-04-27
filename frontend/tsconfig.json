@@ -23,6 +23,17 @@
       "@/*": ["./*"]
     }
   },
-  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts", "src/**/*", "types/**/*", "app/card/page.jsx", "app/card/page.jsx", "app/card/BadgeTexture.jsx", "components/ProfileFormComponents/ProfileCard.jsx"],
+  "include": [
+    "next-env.d.ts",
+    "**/*.ts",
+    "**/*.tsx",
+    ".next/types/**/*.ts",
+    "src/**/*",
+    "types/**/*",
+    "app/card/page.jsx",
+    "app/card/page.jsx",
+    "app/card/BadgeTexture.jsx",
+    "components/ProfileFormComponents/ProfileCard.jsx"
+  ],
   "exclude": ["node_modules"]
 }

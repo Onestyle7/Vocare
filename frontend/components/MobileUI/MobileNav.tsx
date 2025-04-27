@@ -97,7 +97,7 @@ const MobileNav = () => {
               </SheetClose>
             </li>
           ))}
-    <ThemeSwitch />
+          <ThemeSwitch />
         </ul>
       </SheetContent>
     </Sheet>
