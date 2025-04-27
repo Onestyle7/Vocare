@@ -7,6 +7,7 @@ import { usePathname } from 'next/navigation';
 import { cn } from '@/lib/utils';
 import { Sheet, SheetContent, SheetTrigger, SheetClose, SheetTitle } from '@/components/ui/sheet';
 import { gsap } from 'gsap';
+import ThemeSwitch from '../ThemeSwitch';
 
 const MobileNav = () => {
   const pathname = usePathname();
@@ -96,6 +97,7 @@ const MobileNav = () => {
               </SheetClose>
             </li>
           ))}
+    <ThemeSwitch />
         </ul>
       </SheetContent>
     </Sheet>
