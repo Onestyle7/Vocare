@@ -1,5 +1,6 @@
 using System;
 using System.ComponentModel.DataAnnotations;
+using System.Security.Claims;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -38,10 +39,10 @@ namespace VocareWebAPI.CvGenerator.Controllers
         [HttpPost("generate")]
         public async Task<ActionResult<CvDto>> GenerateCv([FromBody] GenerateCvRequestDto request)
         {
-            var userId = User.FindFirst("sub")?.Value;
-            if (userId == null)
+            string userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            if (string.IsNullOrEmpty(userId))
             {
-                return Unauthorized("User ID not found in token.");
+                return BadRequest("Brak identyfikatora użytkownika w tokenie.");
             }
 
             try

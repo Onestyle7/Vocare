@@ -13,16 +13,22 @@ namespace VocareWebAPI.Services
     {
         private readonly AppDbContext _context;
         private readonly IMapper _mapper;
+        private readonly ILogger<UserProfileService> _logger;
 
         /// <summary>
         /// Inicjalizuje nową instację serwisu UserProfileService
         /// </summary>
         /// <param name="context">Kontekst bazy danych aplikacji</param>
         /// <param name="mapper">Mapper do mapowania obiektów</param>
-        public UserProfileService(AppDbContext context, IMapper mapper)
+        public UserProfileService(
+            AppDbContext context,
+            IMapper mapper,
+            ILogger<UserProfileService> logger
+        )
         {
             _context = context;
             _mapper = mapper;
+            _logger = logger;
         }
 
         /// <summary>
@@ -32,11 +38,22 @@ namespace VocareWebAPI.Services
         /// <returns>Profil użytkowniak w formacie dto lub null, jesli nie znaleziono</returns>
         public async Task<UserProfileDto> GetUserProfileAsync(string UserId)
         {
-            var profile = await _context.UserProfiles.FirstOrDefaultAsync(u => u.UserId == UserId);
+            _logger.LogInformation("Fetching profile for UserId: {UserId}", UserId);
+
+            var profile = await _context
+                .UserProfiles.Include(u => u.Education)
+                .Include(u => u.WorkExperience)
+                .Include(u => u.Certificates)
+                .Include(u => u.Languages)
+                .FirstOrDefaultAsync(u => u.UserId == UserId);
+
             if (profile == null)
             {
+                _logger.LogWarning("Profile not found for UserId: {UserId}", UserId);
                 return null;
             }
+
+            _logger.LogInformation("Profile found for UserId: {UserId}", UserId);
             return _mapper.Map<UserProfileDto>(profile);
         }
 
@@ -51,16 +68,39 @@ namespace VocareWebAPI.Services
             UserProfileDto userProfileDto
         )
         {
+            _logger.LogInformation("Creating profile for UserId: {UserId}", UserId);
+
             var profile = await _context.UserProfiles.FindAsync(UserId);
             if (profile == null)
             {
+                _logger.LogInformation(
+                    "Profile not found, creating new for UserId: {UserId}",
+                    UserId
+                );
                 profile = new UserProfile { UserId = UserId };
                 _context.UserProfiles.Add(profile);
             }
+            else
+            {
+                _logger.LogInformation("Profile already exists for UserId: {UserId}", UserId);
+            }
+
             _mapper.Map(userProfileDto, profile);
 
-            await _context.SaveChangesAsync();
-            return _mapper.Map<UserProfileDto>(profile);
+            try
+            {
+                await _context.SaveChangesAsync();
+                _logger.LogInformation("Profile saved successfully for UserId: {UserId}", UserId);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error saving profile for UserId: {UserId}", UserId);
+                throw;
+            }
+
+            var result = _mapper.Map<UserProfileDto>(profile);
+            _logger.LogInformation("Profile mapped to DTO for UserId: {UserId}", UserId);
+            return result;
         }
 
         /// <summary>
@@ -74,12 +114,56 @@ namespace VocareWebAPI.Services
             UserProfileDto userProfileDto
         )
         {
-            var profile = await _context.UserProfiles.FindAsync(UserId);
+            var profile = await _context
+                .UserProfiles.Include(u => u.Education)
+                .Include(u => u.WorkExperience)
+                .Include(u => u.Certificates)
+                .Include(u => u.Languages)
+                .FirstOrDefaultAsync(u => u.UserId == UserId);
+
             if (profile == null)
             {
                 return null;
             }
+
+            // Czyszczenie kolekcji
+            profile.Education.Clear();
+            profile.WorkExperience.Clear();
+            profile.Certificates.Clear();
+            profile.Languages.Clear();
+
+            // Mapowanie danych
             _mapper.Map(userProfileDto, profile);
+
+            // Logowanie wartości DateTime dla debugowania
+            foreach (var education in profile.Education)
+            {
+                _logger.LogInformation(
+                    "Education: StartDate={StartDate}, EndDate={EndDate}, Kind(StartDate)={KindStart}, Kind(EndDate)={KindEnd}",
+                    education.StartDate,
+                    education.EndDate,
+                    education.StartDate?.Kind,
+                    education.EndDate?.Kind
+                );
+            }
+            foreach (var work in profile.WorkExperience)
+            {
+                _logger.LogInformation(
+                    "WorkExperience: StartDate={StartDate}, EndDate={EndDate}, Kind(StartDate)={KindStart}, Kind(EndDate)={KindEnd}",
+                    work.StartDate,
+                    work.EndDate,
+                    work.StartDate?.Kind,
+                    work.EndDate?.Kind
+                );
+            }
+            foreach (var certificate in profile.Certificates)
+            {
+                _logger.LogInformation(
+                    "Certificate: Date={Date}, Kind(Date)={Kind}",
+                    certificate.Date,
+                    certificate.Date?.Kind
+                );
+            }
 
             await _context.SaveChangesAsync();
             return _mapper.Map<UserProfileDto>(profile);
@@ -92,12 +176,16 @@ namespace VocareWebAPI.Services
         /// <returns>Usunięty profil użytkownika w formacie DTO lub null, jeśli nie znaleziono</returns>
         public async Task<UserProfileDto> DeleteUserProfileAsync(string UserId)
         {
-            var profile = await _context.UserProfiles.FindAsync(UserId);
+            var profile = await _context.UserProfiles.FirstOrDefaultAsync(u => u.UserId == UserId);
+
             if (profile == null)
             {
                 return null;
             }
+
+            _logger.LogInformation("Removing UserProfile for UserId {UserId}", UserId);
             _context.UserProfiles.Remove(profile);
+
             await _context.SaveChangesAsync();
             return _mapper.Map<UserProfileDto>(profile);
         }

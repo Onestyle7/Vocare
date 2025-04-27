@@ -8,6 +8,10 @@ using Stripe;
 using VocareWebAPI.Billing.Repositories.Implementations;
 using VocareWebAPI.Billing.Repositories.Interfaces;
 using VocareWebAPI.Billing.Services.Interfaces;
+using VocareWebAPI.CvGenerator.Repositories.Implementations;
+using VocareWebAPI.CvGenerator.Repositories.Interfaces;
+using VocareWebAPI.CvGenerator.Services.Implementations;
+using VocareWebAPI.CvGenerator.Services.Interfaces;
 using VocareWebAPI.Data;
 using VocareWebAPI.Models.Config;
 using VocareWebAPI.Models.Entities;
@@ -49,10 +53,10 @@ builder
     .AddPolicyHandler(GetRetryPolicy());
 
 builder.Services.AddScoped<IAiService, PerplexityAiService>();
-
 builder.Services.AddScoped<IMarketAnalysisService, MarketAnalysisService>();
 builder.Services.AddScoped<IBillingService, LocalBillingService>();
 builder.Services.AddScoped<IStripeService, LocalStripeService>();
+builder.Services.AddScoped<ICvGenerationService, CvGenerationService>();
 
 // repozytoria
 builder.Services.AddScoped<IUserBillingRepository, UserBillingRepository>();
@@ -63,6 +67,7 @@ builder.Services.AddScoped<IAiRecommendationRepository, AiRecommendationReposito
 builder.Services.AddScoped<ICareerStatisticsRepository, CareerStatisticsRepository>();
 builder.Services.AddScoped<ISkillDemandRepository, SkillDemandRepository>();
 builder.Services.AddScoped<IMarketTrendsRepository, MarketTrendsRepository>();
+builder.Services.AddScoped<IGeneratedCvRepository, GeneratedCvrepository>();
 
 builder
     .Services.AddControllers()
