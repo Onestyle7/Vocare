@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 using VocareWebAPI.Data;
@@ -12,9 +13,11 @@ using VocareWebAPI.Data;
 namespace VocareWebAPI.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250423174216_AddedAnotherFieldsToUserProfile")]
+    partial class AddedAnotherFieldsToUserProfile
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -193,12 +196,6 @@ namespace VocareWebAPI.Migrations
                             Id = 3,
                             ServiceName = "MarketAnalysis",
                             TokenCost = 5
-                        },
-                        new
-                        {
-                            Id = 4,
-                            ServiceName = "GenerateCv",
-                            TokenCost = 1
                         });
                 });
 
@@ -263,39 +260,6 @@ namespace VocareWebAPI.Migrations
                     b.ToTable("UserBillings", "Identity");
                 });
 
-            modelBuilder.Entity("VocareWebAPI.CvGenerator.Models.GeneratedCv", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uuid");
-
-                    b.Property<string>("CvJson")
-                        .IsRequired()
-                        .HasMaxLength(8000)
-                        .HasColumnType("character varying(8000)");
-
-                    b.Property<DateTime>("GeneratedAt")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.Property<string>("Position")
-                        .HasColumnType("text");
-
-                    b.Property<string>("RawApiResponse")
-                        .IsRequired()
-                        .HasMaxLength(8000)
-                        .HasColumnType("character varying(8000)");
-
-                    b.Property<string>("UserId")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("UserId");
-
-                    b.ToTable("GeneratedCvs", "Identity");
-                });
-
             modelBuilder.Entity("VocareWebAPI.Models.AiRecommendation", b =>
                 {
                     b.Property<Guid>("Id")
@@ -321,14 +285,9 @@ namespace VocareWebAPI.Migrations
                         .IsRequired()
                         .HasColumnType("text");
 
-                    b.Property<string>("UserProfileUserId")
-                        .HasColumnType("text");
-
                     b.HasKey("Id");
 
                     b.HasIndex("UserId");
-
-                    b.HasIndex("UserProfileUserId");
 
                     b.ToTable("AiRecommendations", "Identity");
                 });
@@ -688,7 +647,7 @@ namespace VocareWebAPI.Migrations
                         .IsRequired()
                         .HasColumnType("text");
 
-                    b.Property<string>("Institution")
+                    b.Property<string>("Insititution")
                         .IsRequired()
                         .HasColumnType("text");
 
@@ -753,9 +712,6 @@ namespace VocareWebAPI.Migrations
                     b.Property<string>("Position")
                         .IsRequired()
                         .HasColumnType("text");
-
-                    b.PrimitiveCollection<List<string>>("Responsibilities")
-                        .HasColumnType("text[]");
 
                     b.Property<DateTime?>("StartDate")
                         .HasColumnType("timestamp with time zone");
@@ -830,27 +786,13 @@ namespace VocareWebAPI.Migrations
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("VocareWebAPI.CvGenerator.Models.GeneratedCv", b =>
-                {
-                    b.HasOne("VocareWebAPI.Models.Entities.User", null)
-                        .WithMany()
-                        .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-                });
-
             modelBuilder.Entity("VocareWebAPI.Models.AiRecommendation", b =>
                 {
                     b.HasOne("VocareWebAPI.Models.Entities.UserProfile", "UserProfile")
-                        .WithMany()
+                        .WithMany("Recommendations")
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
-
-                    b.HasOne("VocareWebAPI.Models.Entities.UserProfile", null)
-                        .WithMany("Recommendations")
-                        .HasForeignKey("UserProfileUserId")
-                        .OnDelete(DeleteBehavior.Cascade);
 
                     b.Navigation("UserProfile");
                 });
@@ -929,32 +871,28 @@ namespace VocareWebAPI.Migrations
                 {
                     b.HasOne("VocareWebAPI.Models.Entities.UserProfile", null)
                         .WithMany("Certificates")
-                        .HasForeignKey("UserProfileUserId")
-                        .OnDelete(DeleteBehavior.Cascade);
+                        .HasForeignKey("UserProfileUserId");
                 });
 
             modelBuilder.Entity("VocareWebAPI.UserManagement.Models.Entities.EducationEntry", b =>
                 {
                     b.HasOne("VocareWebAPI.Models.Entities.UserProfile", null)
                         .WithMany("Education")
-                        .HasForeignKey("UserProfileUserId")
-                        .OnDelete(DeleteBehavior.Cascade);
+                        .HasForeignKey("UserProfileUserId");
                 });
 
             modelBuilder.Entity("VocareWebAPI.UserManagement.Models.Entities.LanguageEntry", b =>
                 {
                     b.HasOne("VocareWebAPI.Models.Entities.UserProfile", null)
                         .WithMany("Languages")
-                        .HasForeignKey("UserProfileUserId")
-                        .OnDelete(DeleteBehavior.Cascade);
+                        .HasForeignKey("UserProfileUserId");
                 });
 
             modelBuilder.Entity("VocareWebAPI.UserManagement.Models.Entities.WorkExperienceEntry", b =>
                 {
                     b.HasOne("VocareWebAPI.Models.Entities.UserProfile", null)
                         .WithMany("WorkExperience")
-                        .HasForeignKey("UserProfileUserId")
-                        .OnDelete(DeleteBehavior.Cascade);
+                        .HasForeignKey("UserProfileUserId");
                 });
 
             modelBuilder.Entity("VocareWebAPI.Models.AiRecommendation", b =>
