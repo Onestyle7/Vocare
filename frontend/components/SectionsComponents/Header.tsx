@@ -2,11 +2,12 @@
 
 import React, { useState, useEffect } from 'react';
 import ThemeSwitch from '../ThemeSwitch';
-import { NavLinks } from '@/app/constants';
+import { logo, NavLinks } from '@/app/constants';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { cn } from '@/lib/utils';
 import MobileNav from '../MobileUI/MobileNav';
+import Image from 'next/image';
 
 const Header = () => {
   const pathname = usePathname();
@@ -25,7 +26,7 @@ const Header = () => {
         <MobileNav />
       ) : (
         <nav className="mx-20 mt-10 flex w-full items-center justify-between space-x-10">
-          <h1 className="text-[20px] font-medium text-gray-400 uppercase">Vocare</h1>
+          <Image src={logo} alt='vocare' width={220} height={220} className='invert dark:invert-0 pointer-events-none'/>
           <div className="flex items-center justify-center space-x-4">
             <ul className="flex items-center justify-center space-x-4">
               {NavLinks.map(({ label, url }) => (

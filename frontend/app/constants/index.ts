@@ -224,6 +224,10 @@ export const shape1 = '/images/shape1.png';
 
 export const star_generate = "/svg/star_generate.svg"
 
+// Logo
+
+export const logo = "/icons/vocare.png"
+
 
 // grid
 
