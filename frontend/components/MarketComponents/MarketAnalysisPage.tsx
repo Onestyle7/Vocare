@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect, useState, useRef } from 'react';
-import { MarketAnalysisResponseDto } from '@/app/types/marketAnalysis';
+import { MarketAnalysisResponseDto } from '@/lib/types/marketAnalysis';
 import { fetchMarketAnalysis } from '@/lib/recommendations';
 import { gsap } from 'gsap';
 import CollapsibleButton from '../AssistantComponents/CollapsibleButton';

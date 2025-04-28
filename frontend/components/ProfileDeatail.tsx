@@ -2,7 +2,7 @@
 import { useEffect, useState } from 'react';
 import { getUserProfile } from '@/lib/profile';
 import { useRouter } from 'next/navigation';
-import { UserProfile } from '@/app/types/profile';
+import { UserProfile } from '@/lib/types/profile';
 import { toast } from 'sonner';
 import ProfileCard from './ProfileFormComponents/ProfileCard';
 import { ArrowLeft, ArrowRight, LogOut } from 'lucide-react';

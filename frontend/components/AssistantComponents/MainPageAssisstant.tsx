@@ -2,7 +2,7 @@
 
 import { useEffect, useState, useRef } from 'react';
 import axios from 'axios';
-import { UserProfile } from '@/app/types/profile';
+import { UserProfile } from '@/lib/types/profile';
 import { toast } from 'sonner';
 import { AiCareerResponse } from '@/lib/recommendations';
 import GenerateRecommendation from './GenerateRecommendationFail';

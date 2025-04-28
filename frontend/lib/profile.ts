@@ -1,4 +1,4 @@
-import { UserProfile } from '@/app/types/profile';
+import { UserProfile } from '@/lib/types/profile';
 import axios from 'axios';
 
 const BASE_API_URL = 'https://localhost:5001/api/UserProfile';
