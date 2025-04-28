@@ -2,7 +2,7 @@
 
 import React from 'react';
 import { UseFormReturn } from 'react-hook-form';
-import { ProfileFormType } from '@/schemas/profileSchema';
+import { ProfileFormType } from '@/lib/schemas/profileSchema';
 import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
 import { FormField, FormItem, FormLabel, FormControl, FormMessage } from '@/components/ui/form';

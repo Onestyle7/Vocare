@@ -2,7 +2,7 @@
 
 import React from 'react';
 import { UseFormReturn } from 'react-hook-form';
-import { ProfileFormType, personalityTypes } from '@/schemas/profileSchema';
+import { ProfileFormType, personalityTypes } from '@/lib/schemas/profileSchema';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { FormField, FormItem, FormLabel, FormControl, FormMessage } from '@/components/ui/form';
