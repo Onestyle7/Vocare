@@ -1,4 +1,4 @@
-"use client"
+'use client';
 
 import { pricingPlans, shape1 } from '@/app/constants';
 import AnimatedHeadline from '@/components/AnimatedText';
@@ -18,8 +18,8 @@ const PricingMain = () => {
       customPaddings
       id="pricing"
     >
-      <div className="main-font-color relative flex flex-col items-center justify-center xl:border mx-10">
-      <GridBackgroundDemo />
+      <div className="main-font-color relative mx-10 flex flex-col items-center justify-center xl:border">
+        <GridBackgroundDemo />
 
         <div className="relative mx-auto flex max-w-7xl flex-col items-center justify-center">
           <h1 className="text-[60px] leading-17 font-bold uppercase max-md:text-center lg:text-[78px] xl:mt-10 xl:text-[88px] 2xl:text-[108px] 2xl:leading-21">
@@ -28,22 +28,22 @@ const PricingMain = () => {
               className="items-start max-md:items-center"
             />
           </h1>
-          <div className="font-poppins grid gap-8 px-4 md:grid-cols-3 md:px-6 xl:mt-20 mt-10 mb-10">
-          <ScrollParallax isAbsolutelyPositioned zIndex={20}>
-          <div className="absolute -left-4 z-20 xl:top-0 top-1/7">
-          <Image src={shape1} alt="shape" width={78} height={78} className="-rotate-20" />
-        </div>
-        <div className="absolute left-0 z-20 xl:bottom-0 bottom-20">
-          <Image src={shape1} alt="shape" width={78} height={78} className="-rotate-20" />
-        </div>
-        <div className="absolute -right-4  z-20 top-1/2">
-          <Image src={shape1} alt="shape" width={78} height={78} className="-rotate-20" />
-        </div>
-      </ScrollParallax>
+          <div className="font-poppins mt-10 mb-10 grid gap-8 px-4 md:grid-cols-3 md:px-6 xl:mt-20">
+            <ScrollParallax isAbsolutelyPositioned zIndex={20}>
+              <div className="absolute top-1/7 -left-4 z-20 xl:top-0">
+                <Image src={shape1} alt="shape" width={78} height={78} className="-rotate-20" />
+              </div>
+              <div className="absolute bottom-20 left-0 z-20 xl:bottom-0">
+                <Image src={shape1} alt="shape" width={78} height={78} className="-rotate-20" />
+              </div>
+              <div className="absolute top-1/2 -right-4 z-20">
+                <Image src={shape1} alt="shape" width={78} height={78} className="-rotate-20" />
+              </div>
+            </ScrollParallax>
             {pricingPlans.map((plan, index) => (
               <div
                 key={index}
-                className={`flex flex-col justify-between rounded-lg border p-6 dark:bg-[#0e100f] bg-[#f3f3f3] z-30 ${
+                className={`z-30 flex flex-col justify-between rounded-lg border bg-[#b71010] p-6 dark:bg-[#0e100f] ${
                   plan.popular ? 'border-primary' : 'border-gray-200'
                 } ${index === 1 ? 'md:origin-bottom md:scale-y-105 md:transform' : ''}`}
               >
@@ -94,4 +94,3 @@ const PricingMain = () => {
 };
 
 export default PricingMain;
-
