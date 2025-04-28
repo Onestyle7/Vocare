@@ -43,7 +43,7 @@ const PricingMain = () => {
             {pricingPlans.map((plan, index) => (
               <div
                 key={index}
-                className={`z-30 flex flex-col justify-between rounded-lg border bg-[#b71010] p-6 dark:bg-[#0e100f] ${
+                className={`z-30 flex flex-col justify-between rounded-lg border bg-[#f3f3f3] p-6 dark:bg-[#0e100f] ${
                   plan.popular ? 'border-primary' : 'border-gray-200'
                 } ${index === 1 ? 'md:origin-bottom md:scale-y-105 md:transform' : ''}`}
               >
