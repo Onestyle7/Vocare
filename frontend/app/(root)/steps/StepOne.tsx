@@ -2,7 +2,7 @@
 
 import React from 'react';
 import { UseFormReturn } from 'react-hook-form';
-import { ProfileFormType, personalityTypes } from '@/lib/schemas/profileSchema';
+import { CreateProfileFormType, UpdateProfileFormType } from '@/lib/schemas/profileSchema';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { FormField, FormItem, FormLabel, FormControl, FormMessage } from '@/components/ui/form';
@@ -14,9 +14,11 @@ import {
   SelectValue,
 } from '@/components/ui/select';
 import { ArrowRight } from 'lucide-react';
+import { personalityTypeLabels } from '@/lib/enums/personalityTypes';
+
 
 interface StepOneProps {
-  form: UseFormReturn<ProfileFormType>;
+  form: UseFormReturn<CreateProfileFormType | UpdateProfileFormType>;
   onNext: () => void;
 }
 
@@ -74,11 +76,11 @@ export default function StepOne({ form, onNext }: StepOneProps) {
             >
               <FormControl>
                 <SelectTrigger>
-                  <SelectValue placeholder="Wybierz swój typ osobowości" />
+                  <SelectValue placeholder="Select your personality type" />
                 </SelectTrigger>
               </FormControl>
               <SelectContent>
-                {Object.entries(personalityTypes).map(([value, label]) => (
+                {Object.entries(personalityTypeLabels).map(([value, label]) => (
                   <SelectItem key={value} value={value}>
                     {label}
                   </SelectItem>
@@ -90,6 +92,7 @@ export default function StepOne({ form, onNext }: StepOneProps) {
         )}
       />
 
+      {/* Continue Button */}
       <div className="pt-6">
         <Button
           type="button"

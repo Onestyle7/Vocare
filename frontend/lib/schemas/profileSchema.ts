@@ -1,38 +1,54 @@
 import { z } from 'zod';
+import { PersonalityType } from '@/lib/enums/personalityTypes';
 
-export const personalityTypes = {
-  1: 'INFP - Mediator',
-  2: 'INFJ - Advocate',
-  3: 'INTP - Logician',
-  4: 'INTJ - Architect',
-  5: 'ENFP - Campaigner',
-  6: 'ENFJ - Protagonist',
-  7: 'ENTP - Debater',
-  8: 'ENTJ - Commander',
-  9: 'ISFP - Adventurer',
-  10: 'ISFJ - Defender',
-  11: 'ISTP - Virtuoso',
-  12: 'ISTJ - Logistician',
-  13: 'ESFP - Entertainer',
-  14: 'ESFJ - Consul',
-  15: 'ESTP - Entrepreneur',
-  16: 'ESTJ - Executive',
-};
-
-export const profileSchema = z.object({
-  firstName: z.string().min(1, 'Required'),
-  lastName: z.string().min(1, 'Required'),
-  country: z.string().min(1, 'Required'),
-  address: z.string().min(1, 'Required'),
-  phoneNumber: z.string().optional(),
-  education: z.string().min(1, 'Required'),
-  workExperience: z.array(z.string()).nonempty('At least one required'),
-  skills: z.array(z.string()).nonempty('At least one required'),
-  certificates: z.array(z.string()).optional(),
-  languages: z.array(z.string()).nonempty('At least one required'),
-  additionalInformation: z.string().optional(),
-  aboutMe: z.string().min(1, 'Required'),
-  personalityType: z.number().int().min(1).max(16),
+const certificateEntrySchema = z.object({
+  name: z.string().min(1, 'Certificate name is required'),
+  date: z.string().optional(),
+  issuer: z.string().optional(),
 });
 
-export type ProfileFormType = z.infer<typeof profileSchema>;
+const educationEntrySchema = z.object({
+  institution: z.string().min(1, 'Institution name is required'),
+  degree: z.string().optional(),
+  field: z.string().optional(),
+  startDate: z.string().optional(),
+  endDate: z.string().optional(),
+});
+
+const workExperienceEntrySchema = z.object({
+  company: z.string().min(1, 'Company name is required'),
+  position: z.string().min(1, 'Position is required'),
+  description: z.string().min(1, 'Company name is required'),
+  responsibilities: z.array(z.string()).optional(),
+  startDate: z.string().optional(),
+  endDate: z.string().optional(),
+});
+
+const languageEntrySchema = z.object({
+  language: z.string().min(1, 'Language name is required'),
+  level: z.string().optional(),
+});
+
+const baseProfileSchema = z.object({
+  firstName: z.string().min(1, 'First name is required'),
+  lastName: z.string().min(1, 'Last name is required'),
+  country: z.string().min(1, 'Country is required'),
+  address: z.string().optional(),
+  phoneNumber: z.string().optional(),
+  education: z.array(educationEntrySchema).optional(),
+  workExperience: z.array(workExperienceEntrySchema).optional(),
+  skills: z.array(z.string()).optional(),
+  certificates: z.array(certificateEntrySchema).optional(),
+  languages: z.array(languageEntrySchema).optional(),
+  additionalInformation: z.string().optional(),
+  aboutMe: z.string().optional(),
+  personalityType: z.nativeEnum(PersonalityType),
+});
+
+export const createProfileSchema = baseProfileSchema;
+
+export const updateProfileSchema = baseProfileSchema;
+
+
+export type CreateProfileFormType = z.infer<typeof createProfileSchema>;
+export type UpdateProfileFormType = z.infer<typeof updateProfileSchema>;

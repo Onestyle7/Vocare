@@ -2,22 +2,32 @@
 
 import React from 'react';
 import { UseFormReturn } from 'react-hook-form';
-import { ProfileFormType } from '@/lib/schemas/profileSchema';
+import { CreateProfileFormType, UpdateProfileFormType } from '@/lib/schemas/profileSchema';
 import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
+
 import { FormField, FormItem, FormLabel, FormControl, FormMessage } from '@/components/ui/form';
 import { TagInput } from '@/components/TagInput';
 import { ArrowLeft, ArrowRight } from 'lucide-react';
+import { LanguageInput } from '@/components/LanguageInput';
+import { EducationInput } from '@/components/EducationInput';
+import { WorkExperienceInput } from '@/components/WorkExperienceInput';
+import { CertificateInput } from '@/components/CertificateInput';
 
 interface StepThreeProps {
-  form: UseFormReturn<ProfileFormType>;
+  form: UseFormReturn<CreateProfileFormType | UpdateProfileFormType>;
   onNext: () => void;
   onBack: () => void;
 }
 
 export default function StepThree({ form, onNext, onBack }: StepThreeProps) {
   const validateStep = async () => {
-    const result = await form.trigger(['education', 'workExperience', 'languages', 'certificates']);
+    const result = await form.trigger([
+      'education',
+      'workExperience',
+      'skills',
+      'languages',
+      'certificates',
+    ]);
     if (result) onNext();
   };
 
@@ -25,59 +35,7 @@ export default function StepThree({ form, onNext, onBack }: StepThreeProps) {
     <div className="font-poppins space-y-6">
       <h2 className="mb-6 text-2xl font-bold">Experience and Skills</h2>
 
-      {/* Education */}
-      <FormField
-        control={form.control}
-        name="education"
-        render={({ field }) => (
-          <FormItem>
-            <FormLabel>Education</FormLabel>
-            <FormControl>
-              <Input placeholder="Master's Degree" {...field} className="input-profile" />
-            </FormControl>
-            <FormMessage />
-          </FormItem>
-        )}
-      />
-
-      {/* Work Experience */}
-      <FormField
-        control={form.control}
-        name="workExperience"
-        render={({ field }) => (
-          <FormItem>
-            <FormLabel>Professional Experience</FormLabel>
-            <FormControl>
-              <TagInput
-                value={field.value || []}
-                onChange={field.onChange}
-                placeholder="Add experience (e.g., Developer at XYZ 2020–2023)"
-              />
-            </FormControl>
-            <FormMessage />
-          </FormItem>
-        )}
-      />
-
-      {/* Languages */}
-      <FormField
-        control={form.control}
-        name="languages"
-        render={({ field }) => (
-          <FormItem>
-            <FormLabel>Languages</FormLabel>
-            <FormControl>
-              <TagInput
-                value={field.value || []}
-                onChange={field.onChange}
-                placeholder="Add language (e.g., English C1)"
-              />
-            </FormControl>
-            <FormMessage />
-          </FormItem>
-        )}
-      />
-
+      {/* Skills */}
       <FormField
         control={form.control}
         name="skills"
@@ -96,25 +54,75 @@ export default function StepThree({ form, onNext, onBack }: StepThreeProps) {
         )}
       />
 
-      {/* Certificates */}
+      {/* Languages */}
       <FormField
         control={form.control}
-        name="certificates"
+        name="languages"
         render={({ field }) => (
           <FormItem>
-            <FormLabel>Certificates</FormLabel>
+            <FormLabel>Languages</FormLabel>
             <FormControl>
-              <TagInput
-                value={field.value || []}
-                onChange={field.onChange}
-                placeholder="Add certificate (e.g., AWS Certified Developer)"
-              />
+              <LanguageInput value={field.value || []} onChange={field.onChange} />
             </FormControl>
             <FormMessage />
           </FormItem>
         )}
       />
 
+      {/* Work Experience */}
+      <FormField
+  control={form.control}
+  name="workExperience"
+  render={({ field }) => (
+    <FormItem>
+      <FormLabel>Professional Experience</FormLabel>
+      <FormControl>
+        <WorkExperienceInput
+          value={field.value || []}
+          onChange={field.onChange}
+        />
+      </FormControl>
+      <FormMessage />
+    </FormItem>
+  )}
+/>
+
+
+      {/* Education */}
+      <FormField
+  control={form.control}
+  name="education"
+  render={({ field }) => (
+    <FormItem>
+      <FormLabel>Education</FormLabel>
+      <FormControl>
+        <EducationInput value={field.value || []} onChange={field.onChange} />
+      </FormControl>
+      <FormMessage />
+    </FormItem>
+  )}
+/>
+
+      {/* Certificates */}
+      <FormField
+  control={form.control}
+  name="certificates"
+  render={({ field }) => (
+    <FormItem>
+      <FormLabel>Certificates</FormLabel>
+      <FormControl>
+        <CertificateInput
+          value={field.value || []}
+          onChange={field.onChange}
+        />
+      </FormControl>
+      <FormMessage />
+    </FormItem>
+  )}
+/>
+
+
+      {/* Navigation Buttons */}
       <div className="flex items-center justify-between space-x-2 pt-6">
         <Button
           type="button"

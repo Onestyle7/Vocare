@@ -3,15 +3,8 @@
 import { useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { profileSchema, ProfileFormType } from '@/lib/schemas/profileSchema';
-import {
-  createUserProfile,
-  updateUserProfile,
-  deleteUserProfile,
-  getUserProfile,
-} from '@/lib/profile';
+import { createUserProfile, updateUserProfile, deleteUserProfile, getUserProfile } from '@/lib/profile';
 import { useRouter } from 'next/navigation';
-import { UserProfile } from '@/lib/types/profile';
 import { toast } from 'sonner';
 import { Form } from '@/components/ui/form';
 import StepOne from '@/app/(root)/steps/StepOne';
@@ -21,7 +14,9 @@ import StepFour from '@/app/(root)/steps/StepFour';
 import StepProgress from '@/app/(root)/steps/ProgressBar';
 import { Button } from '@/components/ui/button';
 import { Popover, PopoverTrigger, PopoverContent } from '@/components/ui/popover';
-import { getErrorMessage } from '../SupportComponents/ErrorFunction';
+import { CreateProfileFormType } from '@/lib/schemas/profileSchema';
+import { createProfileSchema } from '@/lib/schemas/profileSchema';
+import { UserProfile } from '@/lib/types/profile';
 
 export default function ProfileForm({
   initialData,
@@ -36,15 +31,15 @@ export default function ProfileForm({
   const totalSteps = 4;
   const router = useRouter();
 
-  const form = useForm<ProfileFormType>({
-    resolver: zodResolver(profileSchema),
+  const form = useForm<CreateProfileFormType>({
+    resolver: zodResolver(createProfileSchema),
     defaultValues: {
       firstName: '',
       lastName: '',
       country: '',
       address: '',
       phoneNumber: '',
-      education: '',
+      education: [],
       workExperience: [],
       skills: [],
       certificates: [],
@@ -54,6 +49,41 @@ export default function ProfileForm({
       personalityType: undefined,
     },
   });
+
+  const formatDateIfNeeded = (date?: string) => {
+    if (!date) return undefined;
+    try {
+      return new Date(date).toISOString();
+    } catch {
+      return undefined;
+    }
+  };
+  
+  const formatProfileDates = (data: UserProfile): UserProfile => ({
+    ...data,
+    certificates: data.certificates?.map(cert => ({
+      ...cert,
+      date: formatDateIfNeeded(cert.date),
+    })) ?? [],
+    education: data.education?.map(edu => ({
+      ...edu,
+      startDate: formatDateIfNeeded(edu.startDate),
+      endDate: formatDateIfNeeded(edu.endDate),
+    })) ?? [],
+    workExperience: data.workExperience?.map(work => ({
+      ...work,
+      startDate: formatDateIfNeeded(work.startDate),
+      endDate: formatDateIfNeeded(work.endDate),
+      description: work.description ?? '',
+      responsibilities: work.responsibilities ?? [],
+    })) ?? [],
+    phoneNumber: data.phoneNumber ?? '',
+    additionalInformation: data.additionalInformation ?? '',
+    aboutMe: data.aboutMe ?? '',
+    skills: data.skills ?? [],
+    languages: data.languages ?? [],
+  });
+  
 
   useEffect(() => {
     const loadProfile = async () => {
@@ -66,7 +96,7 @@ export default function ProfileForm({
 
       if (initialData) {
         setEditMode(true);
-        form.reset(initialData);
+        form.reset(formatProfileDates(initialData)); // <--- WAŻNE
         setLoading(false);
         return;
       }
@@ -75,10 +105,10 @@ export default function ProfileForm({
         const profileData = await getUserProfile(token);
         if (profileData) {
           setEditMode(true);
-          form.reset(profileData);
+          form.reset(formatProfileDates(profileData)); // <--- WAŻNE
         }
       } catch (error) {
-        console.error('No existing profile found or error fetching data', error);
+        console.error('No existing profile found or error fetching data');
       } finally {
         setLoading(false);
       }
@@ -90,7 +120,7 @@ export default function ProfileForm({
   const nextStep = () => setCurrentStep((prev) => Math.min(prev + 1, totalSteps));
   const prevStep = () => setCurrentStep((prev) => Math.max(prev - 1, 1));
 
-  const onSubmit = async (data: ProfileFormType) => {
+  const onSubmit = async (data: CreateProfileFormType) => {
     setLoading(true);
     const token = localStorage.getItem('token');
     if (!token) {
@@ -99,19 +129,17 @@ export default function ProfileForm({
       return;
     }
 
-    const formattedData: UserProfile = {
-      ...data,
-      certificates: data.certificates ?? [],
-      phoneNumber: data.phoneNumber ?? '',
-      additionalInformation: data.additionalInformation ?? '',
-    };
+    const formattedData = formatProfileDates(data);
 
+    console.log('Certificates:', formattedData.certificates);
+    
     try {
       let profileData;
       if (isEditMode) {
         profileData = await updateUserProfile(formattedData, token);
         toast.success('Profile updated successfully!');
       } else {
+        console.log('DATA SENT TO BACKEND:', formattedData);
         profileData = await createUserProfile(formattedData, token);
         toast.success('Profile created successfully!');
         setEditMode(true);
@@ -119,10 +147,10 @@ export default function ProfileForm({
 
       localStorage.setItem('userProfile', JSON.stringify(profileData));
       router.push('/assistant');
-    } catch (error: unknown) {
+    } catch (error: any) {
       console.error(error);
       toast.error('An error occurred', {
-        description: getErrorMessage(error),
+        description: error.response?.data || 'Please try again.',
       });
     } finally {
       setLoading(false);
@@ -195,58 +223,14 @@ export default function ProfileForm({
   };
 
   const renderStep = () => {
-    const sharedProps = {
-      form,
-      onNext: nextStep,
-      onBack: prevStep,
-    };
+    const sharedProps = { form, onNext: nextStep, onBack: prevStep };
 
     switch (currentStep) {
-      case 1:
-        return (
-          <div>
-            <StepOne {...sharedProps} />
-            <div className="mt-6 flex justify-center">
-              <CancelButton />
-            </div>
-          </div>
-        );
-      case 2:
-        return (
-          <div>
-            <StepTwo {...sharedProps} />
-            <div className="mt-6 flex justify-end">
-              <CancelButton />
-            </div>
-          </div>
-        );
-      case 3:
-        return (
-          <div>
-            <StepThree {...sharedProps} />
-            <div className="mt-6 flex justify-end">
-              <CancelButton />
-            </div>
-          </div>
-        );
-      case 4:
-        return (
-          <div>
-            <StepFour
-              form={form}
-              onBack={prevStep}
-              onSubmit={onSubmit}
-              isLoading={isLoading}
-              isEditMode={isEditMode}
-              handleDelete={handleDelete}
-            />
-            <div className="mt-6 flex justify-end">
-              <CancelButton />
-            </div>
-          </div>
-        );
-      default:
-        return <StepOne form={form} onNext={nextStep} />;
+      case 1: return <><StepOne {...sharedProps} /><div className="mt-6 flex justify-center"><CancelButton /></div></>;
+      case 2: return <><StepTwo {...sharedProps} /><div className="mt-6 flex justify-end"><CancelButton /></div></>;
+      case 3: return <><StepThree {...sharedProps} /><div className="mt-6 flex justify-end"><CancelButton /></div></>;
+      case 4: return <><StepFour form={form} onBack={prevStep} onSubmit={onSubmit} isLoading={isLoading} isEditMode={isEditMode} handleDelete={handleDelete} /><div className="mt-6 flex justify-end"><CancelButton /></div></>;
+      default: return <StepOne form={form} onNext={nextStep} />;
     }
   };
 

@@ -1,8 +1,8 @@
 'use client';
 
 import React from 'react';
-import { UseFormReturn, Controller } from 'react-hook-form';
-import { ProfileFormType } from '@/lib/schemas/profileSchema';
+import { UseFormReturn } from 'react-hook-form';
+import { CreateProfileFormType, UpdateProfileFormType } from '@/lib/schemas/profileSchema';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { FormField, FormItem, FormLabel, FormControl, FormMessage } from '@/components/ui/form';
@@ -16,7 +16,7 @@ import {
 import { ArrowLeft, ArrowRight } from 'lucide-react';
 
 interface StepTwoProps {
-  form: UseFormReturn<ProfileFormType>;
+  form: UseFormReturn<CreateProfileFormType | UpdateProfileFormType>;
   onNext: () => void;
   onBack: () => void;
 }
@@ -50,7 +50,7 @@ export default function StepTwo({ form, onNext, onBack }: StepTwoProps) {
         name="address"
         render={({ field }) => (
           <FormItem>
-            <FormLabel>Adress</FormLabel>
+            <FormLabel>Address</FormLabel> {/* poprawiona literówka */}
             <FormControl>
               <Input
                 placeholder="ul. Marszałkowska 1, 00-001 Warszawa"
@@ -71,42 +71,37 @@ export default function StepTwo({ form, onNext, onBack }: StepTwoProps) {
           <FormItem>
             <FormLabel>Phone number</FormLabel>
             <FormControl>
-              <Controller
-                control={form.control}
-                name="phoneNumber"
-                render={({ field: { onChange, value } }) => (
-                  <InputOTP
-                    maxLength={9}
-                    value={value}
-                    onChange={(newValue) => onChange(newValue)}
-                    className="max-lg:scale-50"
-                  >
-                    <InputOTPGroup>
-                      <InputOTPSlot index={0} />
-                      <InputOTPSlot index={1} />
-                      <InputOTPSlot index={2} />
-                    </InputOTPGroup>
-                    <InputOTPSeparator />
-                    <InputOTPGroup>
-                      <InputOTPSlot index={3} />
-                      <InputOTPSlot index={4} />
-                      <InputOTPSlot index={5} />
-                    </InputOTPGroup>
-                    <InputOTPSeparator />
-                    <InputOTPGroup>
-                      <InputOTPSlot index={6} />
-                      <InputOTPSlot index={7} />
-                      <InputOTPSlot index={8} />
-                    </InputOTPGroup>
-                  </InputOTP>
-                )}
-              />
+              <InputOTP
+                maxLength={9}
+                value={field.value || ''}
+                onChange={(newValue) => field.onChange(newValue)}
+                className="max-lg:scale-50"
+              >
+                <InputOTPGroup>
+                  <InputOTPSlot index={0} />
+                  <InputOTPSlot index={1} />
+                  <InputOTPSlot index={2} />
+                </InputOTPGroup>
+                <InputOTPSeparator />
+                <InputOTPGroup>
+                  <InputOTPSlot index={3} />
+                  <InputOTPSlot index={4} />
+                  <InputOTPSlot index={5} />
+                </InputOTPGroup>
+                <InputOTPSeparator />
+                <InputOTPGroup>
+                  <InputOTPSlot index={6} />
+                  <InputOTPSlot index={7} />
+                  <InputOTPSlot index={8} />
+                </InputOTPGroup>
+              </InputOTP>
             </FormControl>
             <FormMessage />
           </FormItem>
         )}
       />
 
+      {/* Navigation Buttons */}
       <div className="flex items-center justify-between space-x-2 pt-6">
         <Button
           type="button"
