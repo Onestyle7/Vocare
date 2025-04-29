@@ -49,6 +49,5 @@ export const createProfileSchema = baseProfileSchema;
 
 export const updateProfileSchema = baseProfileSchema;
 
-
 export type CreateProfileFormType = z.infer<typeof createProfileSchema>;
 export type UpdateProfileFormType = z.infer<typeof updateProfileSchema>;

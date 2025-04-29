@@ -90,11 +90,7 @@ export function WorkExperienceInput({ value, onChange }: WorkExperienceInputProp
           </button>
         </div>
       ))}
-      <button
-        type="button"
-        onClick={addExperience}
-        className="text-blue-500 hover:text-blue-700"
-      >
+      <button type="button" onClick={addExperience} className="text-blue-500 hover:text-blue-700">
         + Add Work Experience
       </button>
     </div>

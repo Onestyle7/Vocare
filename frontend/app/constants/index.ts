@@ -205,6 +205,12 @@ export const NavLinks = [
   { label: 'Pricing', url: '/pricing' },
 ];
 
+// Form
+
+export const user = '/svg/user.svg';
+
+export const shape2 = '/images/shape2.png';
+
 // Spiner
 
 export const Spinner = '/svg/spinner.svg';
@@ -293,13 +299,13 @@ export const pricingPlans = [
   {
     name: 'Starter',
     price: 9,
-    tokens: "1,000",
+    tokens: '1,000',
     description: 'Perfect for getting started with our platform.',
     features: [
-      "1,000 tokens included",
-      "Basic access to AI models",
-      "Up to 5 requests per day",
-      "Standard response time",
+      '1,000 tokens included',
+      'Basic access to AI models',
+      'Up to 5 requests per day',
+      'Standard response time',
     ],
   },
   {
@@ -308,25 +314,25 @@ export const pricingPlans = [
     tokens: '5,000',
     description: 'The best choice for scaling your projects.',
     features: [
-      "5,000 tokens included",
-      "Full access to all AI models",
-      "Unlimited daily requests",
-      "Priority response time",
-      "Export results in multiple formats",
+      '5,000 tokens included',
+      'Full access to all AI models',
+      'Unlimited daily requests',
+      'Priority response time',
+      'Export results in multiple formats',
     ],
     popular: true,
   },
   {
     name: 'Unlimited',
     price: 48,
-    tokens: "Unlimited",
+    tokens: 'Unlimited',
     description: 'Unlimited tokens and premium experience for personal use.',
     features: [
-      "Unlimited tokens for one user",
-      "Access to all advanced AI models",
-      "Dedicated premium support",
-      "Fastest response time",
-      "Personalized onboarding assistance",
+      'Unlimited tokens for one user',
+      'Access to all advanced AI models',
+      'Dedicated premium support',
+      'Fastest response time',
+      'Personalized onboarding assistance',
     ],
   },
 ];

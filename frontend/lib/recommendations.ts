@@ -3,8 +3,8 @@ export async function fetchMarketAnalysis() {
 
   const res = await fetch('https://localhost:5001/api/MarketAnalysis', {
     headers: {
-      'Authorization': `Bearer ${token}`,
-      'Accept': 'application/json',
+      Authorization: `Bearer ${token}`,
+      Accept: 'application/json',
     },
     cache: 'no-store',
   });

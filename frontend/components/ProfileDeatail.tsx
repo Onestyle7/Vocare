@@ -11,6 +11,7 @@ import { Separator } from './ui/separator';
 import { Button } from './ui/button';
 import ProfileForm from './ProfileFormComponents/ProfileForm';
 import { logoutUser } from '@/lib/auth';
+import { formatDate } from './SupportComponents/formatSimpleDate';
 
 export default function ProfileDetails() {
   const [profile, setProfile] = useState<UserProfile | null>(null);
@@ -39,7 +40,7 @@ export default function ProfileDetails() {
       } catch (error) {
         console.error(error);
         toast.error('Provide additional information', {
-          description: 'Filling the Profile Form will allow You to use the full power of Vocare.',
+          description: 'Filling the Profile Form will allow you to use the full power of Vocare.',
         });
       } finally {
         setLoading(false);
@@ -60,48 +61,82 @@ export default function ProfileDetails() {
   const handleEdit = () => setIsEditing(true);
   const handleCancelEdit = () => setIsEditing(false);
 
+  const isProfileEmpty = !profile;
+
   if (loading) {
     return <div className="flex h-screen items-center justify-center">Loading profile...</div>;
   }
 
-  if (!profile) {
-    return <ProfileForm />;
-  }
-
   if (isEditing) {
-    return <ProfileForm initialData={profile} onCancel={handleCancelEdit} />;
+    return <ProfileForm initialData={profile ?? undefined} onCancel={handleCancelEdit} />;
   }
 
   const renderPersonalInfoPage = () => (
-    <div className="space-y-8">
+    <div className="relative space-y-8">
       <div className="mt-4 space-y-4">
         <div className="flex flex-row items-center">
-          <h2 className="text-2xl font-medium text-gray-700 dark:text-gray-200">Personal Information</h2>
+          <h2 className="text-2xl font-medium text-gray-700 dark:text-gray-200">
+            Personal Information
+          </h2>
           <div className="ml-2 h-2 w-2 rounded-full bg-[#915EFF]" />
         </div>
         <div className="grid grid-cols-1 gap-4">
           <div className="flex justify-between rounded-lg">
             <span className="font-medium text-gray-600 dark:text-gray-200">Country:</span>
-            <span className="ml-2">{profile.country}</span>
+            <span className="ml-2">{profile?.country || '—'}</span>
           </div>
           <Separator />
           <div className="flex justify-between rounded-lg">
             <span className="font-medium text-gray-600 dark:text-gray-200">Address:</span>
-            <span className="ml-2">{profile.address}</span>
+            <span className="ml-2">{profile?.address || '—'}</span>
           </div>
           <Separator />
           <div className="flex justify-between rounded-lg">
             <span className="font-medium text-gray-600 dark:text-gray-200">Phone:</span>
-            <span className="ml-2">{profile.phoneNumber}</span>
+            <span className="ml-2">{profile?.phoneNumber || '—'}</span>
           </div>
           <Separator />
           <div className="flex flex-col space-y-2">
-            <span className="font-medium text-gray-600 dark:text-gray-200">Education:</span>
-            {profile.education?.map((edu, index) => (
-              <div key={index} className="text-sm">
-                {edu.institution} ({edu.degree}, {edu.field}) {edu.startDate} - {edu.endDate || 'Present'}
-              </div>
-            ))}
+            <span className="flex items-center text-2xl font-medium text-gray-700 dark:text-gray-200">
+              Education <div className="ml-2 h-2 w-2 rounded-full bg-[#915EFF]" />
+            </span>
+
+            {profile?.education?.length ? (
+              profile.education.map((edu, index) => (
+                <div key={index} className="space-y-4 rounded-lg p-2">
+                  <div className="flex justify-between">
+                    <span className="font-medium text-gray-600 dark:text-gray-200">
+                      Institution:
+                    </span>
+                    <span className="ml-2 text-right">{edu.institution}</span>
+                  </div>
+                  <Separator />
+
+                  <div className="flex justify-between">
+                    <span className="font-medium text-gray-600 dark:text-gray-200">Degree:</span>
+                    <span className="ml-2 text-right">{edu.degree}</span>
+                  </div>
+                  <Separator />
+
+                  <div className="flex justify-between">
+                    <span className="font-medium text-gray-600 dark:text-gray-200">Field:</span>
+                    <span className="ml-2 text-right">{edu.field}</span>
+                  </div>
+                  <Separator />
+
+                  <div className="flex justify-between">
+                    <span className="font-medium text-gray-600 dark:text-gray-200">Duration:</span>
+                    <span className="ml-2 w-fit rounded-md border px-2 py-0.5 text-right">
+                      {formatDate(edu.startDate)} –{' '}
+                      {edu.endDate ? formatDate(edu.endDate) : 'Present'}
+                    </span>
+                  </div>
+                  {index !== profile.education.length - 1 && <Separator className="mt-4" />}
+                </div>
+              ))
+            ) : (
+              <p className="text-gray-500 italic">No education data</p>
+            )}
           </div>
         </div>
       </div>
@@ -112,11 +147,18 @@ export default function ProfileDetails() {
           <div className="ml-2 h-2 w-2 rounded-full bg-[#915EFF]" />
         </div>
         <div className="flex flex-wrap gap-2">
-          {profile.languages?.map((lang, index) => (
-            <span key={index} className="rounded-full bg-[#efe7ff] px-3 py-1 text-sm text-[#915EFF] dark:bg-gray-900/50">
-              {lang.language} {lang.level && `(${lang.level})`}
-            </span>
-          ))}
+          {profile?.languages?.length ? (
+            profile.languages.map((lang, index) => (
+              <span
+                key={index}
+                className="rounded-full bg-[#efe7ff] px-3 py-1 text-sm text-[#915EFF] dark:bg-gray-900/50"
+              >
+                {lang.language} {lang.level && `(${lang.level})`}
+              </span>
+            ))
+          ) : (
+            <p className="text-gray-500 italic">No languages</p>
+          )}
         </div>
       </div>
     </div>
@@ -124,66 +166,74 @@ export default function ProfileDetails() {
 
   const renderSkillsAndWorkPage = () => (
     <div className="space-y-8">
-      <div className="space-y-2">
+      <div className="mt-4 space-y-2">
         <h2 className="text-2xl font-medium text-gray-700 dark:text-gray-200">Skills</h2>
         <div className="flex flex-wrap gap-2">
-          {profile.skills?.map((skill, index) => (
-            <span key={index} className="rounded-full bg-[#efe7ff] px-3 py-1 text-sm text-[#915EFF] dark:bg-gray-900/50">
-              {skill}
-            </span>
-          ))}
+          {profile?.skills?.length ? (
+            profile.skills.map((skill, index) => (
+              <span
+                key={index}
+                className="rounded-full bg-[#efe7ff] px-3 py-1 text-sm text-[#915EFF] dark:bg-gray-900/50"
+              >
+                {skill}
+              </span>
+            ))
+          ) : (
+            <p className="text-gray-500 italic">No skills</p>
+          )}
         </div>
       </div>
 
-      <div className="space-y-2">
-        <h2 className="text-2xl font-medium text-gray-700 dark:text-gray-200">Work Experience</h2>
-        <ul className="space-y-2">
-          {profile.workExperience?.map((exp, index) => (
-            <li key={index}>
-              <strong>{exp.position}</strong> at {exp.company} ({exp.startDate} - {exp.endDate || 'Present'})
-              <div className="text-sm">{exp.description}</div>
-              {exp.responsibilities?.length > 0 && (
-                <ul className="ml-4 list-disc">
-                  {exp.responsibilities.map((resp, idx) => (
-                    <li key={idx} className="text-sm">{resp}</li>
-                  ))}
-                </ul>
-              )}
-            </li>
-          ))}
-        </ul>
-      </div>
+      <div className="flex flex-col space-y-2">
+        <span className="flex items-center text-2xl font-medium text-gray-700 dark:text-gray-200">
+          Work Experience <div className="ml-2 h-2 w-2 rounded-full bg-[#915EFF]" />
+        </span>
 
-      <div className="space-y-2">
-        <h2 className="text-2xl font-medium text-gray-700 dark:text-gray-200">Certificates</h2>
-        <ul className="space-y-2">
-          {profile.certificates?.map((cert, index) => (
-            <li key={index}>
-              {cert.name} {cert.issuer && `(Issued by: ${cert.issuer})`} {cert.date && `on ${cert.date}`}
-            </li>
-          ))}
-        </ul>
+        {profile?.workExperience?.length ? (
+          profile.workExperience.map((exp, index) => (
+            <div key={index} className="space-y-4 rounded-lg p-2">
+              <div className="flex justify-between">
+                <span className="font-medium text-gray-600 dark:text-gray-200">Position:</span>
+                <span className="ml-2 text-right text-[#915EFF]">{exp.position}</span>
+              </div>
+              <Separator />
+
+              <div className="flex justify-between">
+                <span className="font-medium text-gray-600 dark:text-gray-200">Company:</span>
+                <span className="ml-2 text-right">{exp.company}</span>
+              </div>
+              <Separator />
+
+              <div className="flex items-start justify-between gap-4">
+                <span className="font-medium text-gray-600 dark:text-gray-200">Description:</span>
+                <span className="ml-2 max-w-md text-right text-sm">{exp.description || '—'}</span>
+              </div>
+              <Separator />
+
+              <div className="flex justify-between">
+                <span className="font-medium text-gray-600 dark:text-gray-200">Duration:</span>
+                <span className="ml-2 w-fit rounded-md border px-2 py-0.5 text-right">
+                  {formatDate(exp.startDate)} – {exp.endDate ? formatDate(exp.endDate) : 'Present'}
+                </span>
+              </div>
+              {index !== profile.workExperience.length - 1 && <Separator className="mt-4" />}
+            </div>
+          ))
+        ) : (
+          <p className="text-gray-500 italic">No work experience</p>
+        )}
       </div>
     </div>
   );
 
   const renderAboutMePage = () => (
     <div className="space-y-8">
-      <div className="space-y-2">
+      <div className="mt-4 space-y-2">
         <h2 className="text-2xl font-medium text-gray-700 dark:text-gray-200">About Me</h2>
         <div className="rounded-lg bg-gray-50/60 p-4 dark:bg-black/20">
-          <p>{profile.aboutMe}</p>
+          <p>{profile?.aboutMe || 'No description yet.'}</p>
         </div>
       </div>
-
-      {profile.additionalInformation && (
-        <div className="space-y-2">
-          <h2 className="text-2xl font-medium text-gray-700 dark:text-gray-200">Additional Information</h2>
-          <div className="rounded-lg bg-gray-50/60 p-4 dark:bg-black/20">
-            <p>{profile.additionalInformation}</p>
-          </div>
-        </div>
-      )}
     </div>
   );
 
@@ -198,14 +248,17 @@ export default function ProfileDetails() {
           </div>
         </div>
 
-        <div className="w-full rounded-xl border p-4 xl:h-3/4 xl:w-1/2">
+        <div className="bg-background relative z-10 w-full rounded-xl border p-4 xl:h-3/4 xl:w-1/2 dark:bg-[#0e100f]">
           <div className="flex h-full flex-col">
             <div className="flex flex-row items-start justify-between border-b">
               <h1 className="mb-4 text-2xl font-bold text-gray-800 xl:text-3xl dark:text-gray-200">
-                {profile.firstName} {profile.lastName}
+                {isProfileEmpty ? 'Your Profile' : `${profile.firstName} ${profile.lastName}`}
               </h1>
               <div className="flex gap-2">
-                <Button onClick={handleEdit} className="rounded-full bg-[#915EFF] hover:bg-[#b594fd]">
+                <Button
+                  onClick={handleEdit}
+                  className="rounded-full bg-[#915EFF] hover:bg-[#b594fd]"
+                >
                   Edit
                 </Button>
                 <Button onClick={handleLogout} variant="outline" className="rounded-full">

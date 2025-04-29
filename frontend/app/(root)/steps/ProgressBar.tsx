@@ -1,6 +1,6 @@
 'use client';
 
-import { check } from '@/app/constants';
+import { check, shape1, shape2 } from '@/app/constants';
 import Image from 'next/image';
 import React from 'react';
 
@@ -32,7 +32,7 @@ export default function StepProgress({ currentStep, totalSteps }: StepProgressPr
               }`}
             >
               {step.number < currentStep ? (
-                <Image src={check} width={36} height={36} alt="check" />
+                <Image src={shape2} width={36} height={36} alt="check" />
               ) : (
                 step.number
               )}

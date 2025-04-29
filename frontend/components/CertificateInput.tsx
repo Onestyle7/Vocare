@@ -64,11 +64,7 @@ export function CertificateInput({ value, onChange }: CertificateInputProps) {
           </button>
         </div>
       ))}
-      <button
-        type="button"
-        onClick={addCertificate}
-        className="text-blue-500 hover:text-blue-700"
-      >
+      <button type="button" onClick={addCertificate} className="text-blue-500 hover:text-blue-700">
         + Add Certificate
       </button>
     </div>

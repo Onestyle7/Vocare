@@ -80,11 +80,7 @@ export function EducationInput({ value, onChange }: EducationInputProps) {
           </button>
         </div>
       ))}
-      <button
-        type="button"
-        onClick={addEducation}
-        className="text-blue-500 hover:text-blue-700"
-      >
+      <button type="button" onClick={addEducation} className="text-blue-500 hover:text-blue-700">
         + Add Education
       </button>
     </div>

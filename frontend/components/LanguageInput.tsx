@@ -56,11 +56,7 @@ export function LanguageInput({ value, onChange }: LanguageInputProps) {
           </button>
         </div>
       ))}
-      <button
-        type="button"
-        onClick={addLanguage}
-        className="text-blue-500 hover:text-blue-700"
-      >
+      <button type="button" onClick={addLanguage} className="text-blue-500 hover:text-blue-700">
         + Add Language
       </button>
     </div>

@@ -16,7 +16,6 @@ import {
 import { ArrowRight } from 'lucide-react';
 import { personalityTypeLabels } from '@/lib/enums/personalityTypes';
 
-
 interface StepOneProps {
   form: UseFormReturn<CreateProfileFormType | UpdateProfileFormType>;
   onNext: () => void;
@@ -55,7 +54,7 @@ export default function StepOne({ form, onNext }: StepOneProps) {
           <FormItem>
             <FormLabel>Surname</FormLabel>
             <FormControl>
-              <Input placeholder="Doe" {...field} className="input-profile" />
+              <Input placeholder="Doe" {...field} className="input-profile font-poppins" />
             </FormControl>
             <FormMessage />
           </FormItem>

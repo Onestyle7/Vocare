@@ -3,7 +3,12 @@
 import { useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { createUserProfile, updateUserProfile, deleteUserProfile, getUserProfile } from '@/lib/profile';
+import {
+  createUserProfile,
+  updateUserProfile,
+  deleteUserProfile,
+  getUserProfile,
+} from '@/lib/profile';
 import { useRouter } from 'next/navigation';
 import { toast } from 'sonner';
 import { Form } from '@/components/ui/form';
@@ -58,32 +63,34 @@ export default function ProfileForm({
       return undefined;
     }
   };
-  
+
   const formatProfileDates = (data: UserProfile): UserProfile => ({
     ...data,
-    certificates: data.certificates?.map(cert => ({
-      ...cert,
-      date: formatDateIfNeeded(cert.date),
-    })) ?? [],
-    education: data.education?.map(edu => ({
-      ...edu,
-      startDate: formatDateIfNeeded(edu.startDate),
-      endDate: formatDateIfNeeded(edu.endDate),
-    })) ?? [],
-    workExperience: data.workExperience?.map(work => ({
-      ...work,
-      startDate: formatDateIfNeeded(work.startDate),
-      endDate: formatDateIfNeeded(work.endDate),
-      description: work.description ?? '',
-      responsibilities: work.responsibilities ?? [],
-    })) ?? [],
+    certificates:
+      data.certificates?.map((cert) => ({
+        ...cert,
+        date: formatDateIfNeeded(cert.date),
+      })) ?? [],
+    education:
+      data.education?.map((edu) => ({
+        ...edu,
+        startDate: formatDateIfNeeded(edu.startDate),
+        endDate: formatDateIfNeeded(edu.endDate),
+      })) ?? [],
+    workExperience:
+      data.workExperience?.map((work) => ({
+        ...work,
+        startDate: formatDateIfNeeded(work.startDate),
+        endDate: formatDateIfNeeded(work.endDate),
+        description: work.description ?? '',
+        responsibilities: work.responsibilities ?? [],
+      })) ?? [],
     phoneNumber: data.phoneNumber ?? '',
     additionalInformation: data.additionalInformation ?? '',
     aboutMe: data.aboutMe ?? '',
     skills: data.skills ?? [],
     languages: data.languages ?? [],
   });
-  
 
   useEffect(() => {
     const loadProfile = async () => {
@@ -132,7 +139,7 @@ export default function ProfileForm({
     const formattedData = formatProfileDates(data);
 
     console.log('Certificates:', formattedData.certificates);
-    
+
     try {
       let profileData;
       if (isEditMode) {
@@ -226,18 +233,66 @@ export default function ProfileForm({
     const sharedProps = { form, onNext: nextStep, onBack: prevStep };
 
     switch (currentStep) {
-      case 1: return <><StepOne {...sharedProps} /><div className="mt-6 flex justify-center"><CancelButton /></div></>;
-      case 2: return <><StepTwo {...sharedProps} /><div className="mt-6 flex justify-end"><CancelButton /></div></>;
-      case 3: return <><StepThree {...sharedProps} /><div className="mt-6 flex justify-end"><CancelButton /></div></>;
-      case 4: return <><StepFour form={form} onBack={prevStep} onSubmit={onSubmit} isLoading={isLoading} isEditMode={isEditMode} handleDelete={handleDelete} /><div className="mt-6 flex justify-end"><CancelButton /></div></>;
-      default: return <StepOne form={form} onNext={nextStep} />;
+      case 1:
+        return (
+          <>
+            <StepOne {...sharedProps} />
+            <div className="mt-6 flex justify-center">
+              <CancelButton />
+            </div>
+          </>
+        );
+      case 2:
+        return (
+          <>
+            <StepTwo {...sharedProps} />
+            <div className="mt-6 flex justify-end">
+              <CancelButton />
+            </div>
+          </>
+        );
+      case 3:
+        return (
+          <>
+            <StepThree {...sharedProps} />
+            <div className="mt-6 flex justify-end">
+              <CancelButton />
+            </div>
+          </>
+        );
+      case 4:
+        return (
+          <>
+            <StepFour
+              form={form}
+              onBack={prevStep}
+              onSubmit={onSubmit}
+              isLoading={isLoading}
+              isEditMode={isEditMode}
+              handleDelete={handleDelete}
+            />
+            <div className="mt-6 flex justify-end">
+              <CancelButton />
+            </div>
+          </>
+        );
+      default:
+        return <StepOne form={form} onNext={nextStep} />;
     }
   };
 
   return (
-    <div className="mx-auto max-w-2xl rounded-xl border p-8 lg:mt-10">
-      <StepProgress currentStep={currentStep} totalSteps={totalSteps} />
-      <Form {...form}>{renderStep()}</Form>
+    <div className="relative mx-auto max-w-2xl rounded-xl border bg-[#f3f3f3] p-8 lg:mt-10 dark:bg-[#0e100f]">
+      <div className="relative z-30">
+        <StepProgress currentStep={currentStep} totalSteps={totalSteps} />
+        <Form {...form}>{renderStep()}</Form>
+      </div>
+
+      {/* <ScrollParallax isAbsolutelyPositioned zIndex={10}>
+        <div className="absolute top-1/4 -left-35 hidden xl:block">
+          <Image src={shape1} alt="shape" width={78} height={78} className="-rotate-20" />
+        </div>
+      </ScrollParallax> */}
     </div>
   );
 }

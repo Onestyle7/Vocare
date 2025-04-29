@@ -47,6 +47,7 @@ const Header = () => {
             </ul>
           </div>
           <ThemeSwitch />
+          <ThemeSwitch />
         </nav>
       )}
     </header>
