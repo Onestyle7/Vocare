@@ -198,11 +198,11 @@ export const countries = [
 // NavLinks
 
 export const NavLinks = [
-  { label: 'Home', url: '/' },
   { label: 'Profile', url: '/profile' },
   { label: 'Assistant', url: '/assistant' },
   { label: 'Market Analysis', url: '/market-analysis' },
   { label: 'Pricing', url: '/pricing' },
+  { label: 'Resume', url: '/resume' },
 ];
 
 // Form
@@ -217,6 +217,13 @@ export const shape3 = '/images/shape3.png';
 
 export const shape4 = '/images/shape4.png';
 
+// Market analysis
+
+export const wallet = '/svg/wallet.svg';
+
+export const chart = '/svg/chart.svg';
+
+export const fire = '/svg/fire.svg';
 
 // Spiner
 

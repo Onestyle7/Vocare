@@ -8,6 +8,8 @@ import CollapsibleButton from '../AssistantComponents/CollapsibleButton';
 import { TerminalDemo } from './LoadingTerminal';
 import { GridBackgroundDemo } from './GridBackgroundDemo';
 import GenerateRecommendationFail from '../AssistantComponents/GenerateRecommendationFail';
+import Image from 'next/image';
+import { chart, fire, shape3, wallet } from '@/app/constants';
 
 export default function MarketAnalysis() {
   const [data, setData] = useState<MarketAnalysisResponseDto | null>(null);
@@ -53,7 +55,7 @@ export default function MarketAnalysis() {
 
   return (
     <div className="font-poppins mx-auto mt-8 max-w-7xl">
-      <h2 className="mb-4 text-2xl font-bold text-[#915EFF]">Job Market Analysis</h2>
+      <h2 className="mb-4 ml-4 text-2xl font-bold text-[#915EFF]">Job Market Analysis</h2>
 
       {data?.marketAnalysis.industryStatistics.map((stat, index) => (
         <IndustrySection key={index} data={stat} index={index} />
@@ -122,12 +124,140 @@ function IndustrySection({ data, index }: IndustryProps) {
   const [isCollapsed, setIsCollapsed] = useState(false);
   const contentRef = useRef<HTMLDivElement>(null);
   const contentWrapperRef = useRef<HTMLDivElement>(null);
+  const imageRef = useRef<HTMLImageElement | null>(null);
+  const salaryBoxRef = useRef<HTMLDivElement | null>(null);
+
+  const imageRef1 = useRef<HTMLImageElement | null>(null);
+  const chartBoxRef = useRef<HTMLDivElement | null>(null);
+
+  const imageRef2 = useRef<HTMLImageElement | null>(null);
+  const fireBoxRef = useRef<HTMLDivElement | null>(null);
 
   const colors = ['bg-[#A985FF]', 'bg-[#BD9EFF]', 'bg-[#D1B7FF]', 'bg-[#E5D8FF]'];
 
   const getColorClass = (idx: number) => {
     return colors[idx % colors.length];
   };
+
+  useEffect(() => {
+    if (typeof window !== 'undefined' && window.innerWidth >= 1024) {
+      const ctx = gsap.context(() => {
+        if (!salaryBoxRef.current || !imageRef.current) return;
+
+        gsap.set(imageRef.current, { opacity: 0, x: 50, y: 50 });
+
+        const onEnter = () => {
+          gsap.to(imageRef.current, {
+            opacity: 1,
+            x: 0,
+            y: 0,
+            duration: 0.5,
+            ease: 'power3.out',
+          });
+        };
+
+        const onLeave = () => {
+          gsap.to(imageRef.current, {
+            opacity: 0,
+            x: 50,
+            y: 50,
+            duration: 0.4,
+            ease: 'power3.in',
+          });
+        };
+
+        salaryBoxRef.current.addEventListener('mouseenter', onEnter);
+        salaryBoxRef.current.addEventListener('mouseleave', onLeave);
+
+        return () => {
+          salaryBoxRef.current?.removeEventListener('mouseenter', onEnter);
+          salaryBoxRef.current?.removeEventListener('mouseleave', onLeave);
+        };
+      }, salaryBoxRef);
+
+      return () => ctx.revert();
+    }
+  }, []);
+
+  useEffect(() => {
+    if (typeof window !== 'undefined' && window.innerWidth >= 1024) {
+      const ctx = gsap.context(() => {
+        if (!chartBoxRef.current || !imageRef1.current) return;
+
+        gsap.set(imageRef1.current, { opacity: 0, x: 50, y: 50 });
+
+        const onEnter = () => {
+          gsap.to(imageRef1.current, {
+            opacity: 1,
+            x: 0,
+            y: 0,
+            duration: 0.5,
+            ease: 'power3.out',
+          });
+        };
+
+        const onLeave = () => {
+          gsap.to(imageRef1.current, {
+            opacity: 0,
+            x: 50,
+            y: 50,
+            duration: 0.4,
+            ease: 'power3.in',
+          });
+        };
+
+        chartBoxRef.current.addEventListener('mouseenter', onEnter);
+        chartBoxRef.current.addEventListener('mouseleave', onLeave);
+
+        return () => {
+          salaryBoxRef.current?.removeEventListener('mouseenter', onEnter);
+          salaryBoxRef.current?.removeEventListener('mouseleave', onLeave);
+        };
+      }, salaryBoxRef);
+
+      return () => ctx.revert();
+    }
+  }, []);
+
+  useEffect(() => {
+    if (typeof window !== 'undefined' && window.innerWidth >= 1024) {
+      const ctx = gsap.context(() => {
+        if (!fireBoxRef.current || !imageRef2.current) return;
+
+        gsap.set(imageRef2.current, { opacity: 0, x: 50, y: 50 });
+
+        const onEnter = () => {
+          gsap.to(imageRef2.current, {
+            opacity: 1,
+            x: 0,
+            y: 0,
+            duration: 0.5,
+            ease: 'power3.out',
+          });
+        };
+
+        const onLeave = () => {
+          gsap.to(imageRef2.current, {
+            opacity: 0,
+            x: 50,
+            y: 50,
+            duration: 0.4,
+            ease: 'power3.in',
+          });
+        };
+
+        fireBoxRef.current.addEventListener('mouseenter', onEnter);
+        fireBoxRef.current.addEventListener('mouseleave', onLeave);
+
+        return () => {
+          salaryBoxRef.current?.removeEventListener('mouseenter', onEnter);
+          salaryBoxRef.current?.removeEventListener('mouseleave', onLeave);
+        };
+      }, salaryBoxRef);
+
+      return () => ctx.revert();
+    }
+  }, []);
 
   const toggleCollapse = () => {
     if (!contentRef.current || !contentWrapperRef.current) return;
@@ -195,7 +325,7 @@ function IndustrySection({ data, index }: IndustryProps) {
   };
 
   return (
-    <div className="mb-1 flex flex-col overflow-hidden rounded-[28px] border shadow-sm md:flex-row">
+    <div className="mx-4 mb-1 flex flex-col overflow-hidden rounded-[28px] border shadow-sm md:flex-row">
       <div
         className={`flex items-center justify-center p-4 md:w-1/6 md:p-8 ${getColorClass(index)}`}
       >
@@ -210,15 +340,40 @@ function IndustrySection({ data, index }: IndustryProps) {
         <h3 className="text-lg font-medium text-[#915EFF]">{data.industry}</h3>
 
         <div className="mt-2 grid grid-cols-1 gap-2 md:grid-cols-3">
-          <div className="rounded-lg border border-gray-700/20 bg-gray-50 p-3 dark:border-gray-700 dark:bg-[#101014]/40">
+          <div
+            className="relative overflow-hidden rounded-lg border border-dashed border-gray-700/20 bg-gray-50 p-3 dark:border-gray-700 dark:bg-[#101014]/40"
+            ref={salaryBoxRef}
+          >
             <p className="text-sm text-gray-500">Average Salary</p>
             <p className="text-lg font-medium text-black dark:text-white">{data.averageSalary}</p>
+            <Image
+              src={wallet}
+              alt="shape"
+              width={48}
+              height={48}
+              className="absolute right-4 bottom-1/5 invert dark:invert-0"
+              ref={imageRef}
+            />
           </div>
-          <div className="rounded-lg border border-gray-700/20 bg-gray-50 p-3 dark:border-gray-700 dark:bg-[#101014]/40">
-            <p className="text-sm text-gray-500">Employment Rate</p>
+          <div
+            className="relative overflow-hidden rounded-lg border border-dashed border-gray-700/20 bg-gray-50 p-3 dark:border-gray-700 dark:bg-[#101014]/40"
+            ref={chartBoxRef}
+          >
+            <p className="text-sm text-gray-500">Average Salary</p>
             <p className="text-lg font-medium text-black dark:text-white">{data.employmentRate}</p>
+            <Image
+              src={chart}
+              alt="shape"
+              width={48}
+              height={48}
+              className="absolute right-4 bottom-1/6 invert dark:invert-0"
+              ref={imageRef1}
+            />
           </div>
-          <div className="rounded-lg border border-gray-700/20 bg-gray-50 p-3 dark:border-gray-700 dark:bg-[#101014]/40">
+          <div
+            className="relative overflow-hidden rounded-lg border border-dashed border-gray-700/20 bg-gray-50 p-3 dark:border-gray-700 dark:bg-[#101014]/40"
+            ref={fireBoxRef}
+          >
             <p className="text-sm text-gray-500">Growth Forecast</p>
             <div className="flex items-center">
               <span
@@ -227,6 +382,14 @@ function IndustrySection({ data, index }: IndustryProps) {
                 {data.growthForecast}
               </span>
             </div>
+            <Image
+              src={fire}
+              alt="shape"
+              width={48}
+              height={48}
+              className="absolute right-4 bottom-1/6 invert dark:invert-0"
+              ref={imageRef2}
+            />
           </div>
         </div>
 
