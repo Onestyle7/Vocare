@@ -211,6 +211,13 @@ export const user = '/svg/user.svg';
 
 export const shape2 = '/images/shape2.png';
 
+// Billing
+
+export const shape3 = '/images/shape3.png';
+
+export const shape4 = '/images/shape4.png';
+
+
 // Spiner
 
 export const Spinner = '/svg/spinner.svg';

@@ -241,17 +241,17 @@ function IndustrySection({ data, index }: IndustryProps) {
         >
           <div ref={contentRef} className="mt-4 space-y-3">
             <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
-              <div className="rounded-xl border-b-4 border-green-500 bg-green-50 p-3">
-                <strong className="text-green-700">Industry Strengths:</strong>
-                <ul className="mt-1 list-disc space-y-1 pl-5 text-black">
+              <div className="rounded-xl border-b-4 border-[#915EFF] p-3">
+                <strong className="text-[#915EFF]">Industry Strengths:</strong>
+                <ul className="mt-1 list-disc space-y-1 pl-5 text-black dark:text-[#F3F3F3]">
                   <li>High demand for professionals</li>
                   <li>Flexible employment options</li>
                   <li>Remote work opportunities</li>
                 </ul>
               </div>
-              <div className="rounded-xl border-b-4 border-blue-500 bg-blue-50 p-3">
-                <strong className="text-blue-700">Development Prospects:</strong>
-                <ul className="mt-1 list-disc space-y-1 pl-5 text-black">
+              <div className="rounded-xl border-b-4 border-[#915EFF] p-3">
+                <strong className="text-[#915EFF]">Development Prospects:</strong>
+                <ul className="mt-1 list-disc space-y-1 pl-5 text-black dark:text-[#F3F3F3]">
                   <li>Innovative technologies</li>
                   <li>Global job opportunities</li>
                   <li>Increasing investments in the sector</li>
