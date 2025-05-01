@@ -17,5 +17,6 @@ namespace VocareWebAPI.Repositories.Interfaces
         /// <param name="entity">Statystyki zawodowe do dodania</param>
         /// <returns>Task reprezentujący operację async</returns>
         Task AddAsync(CareerStatistics entity);
+        Task<List<CareerStatistics>> GetByAiRecommendationIdAsync(Guid aiRecommendationId);
     }
 }
