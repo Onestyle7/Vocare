@@ -76,5 +76,26 @@ namespace VocareWebAPI.Controllers
                 return Problem(detail: ex.Message, statusCode: 500);
             }
         }
+
+        [HttpGet("latest")]
+        public async Task<IActionResult> GetLatestMarketAnalysis()
+        {
+            try
+            {
+                var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+                if (string.IsNullOrEmpty(userId))
+                {
+                    return Unauthorized("Brak identyfikatora użytkownika w tokenie.");
+                }
+
+                var result = await _marketAnalysisService.GetLatestMarketAnalysisAsync(userId);
+                return Ok(result);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error in GetLatestMarketAnalysis");
+                return Problem(detail: ex.Message, statusCode: 500);
+            }
+        }
     }
 }

@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.EntityFrameworkCore;
 using Polly;
 using VocareWebAPI.Data;
 using VocareWebAPI.Models.Entities.MarketAnalysis;
@@ -34,6 +35,16 @@ namespace VocareWebAPI.Repositories.Implementations
         {
             await _context.CareerStatistics.AddAsync(entity);
             await _context.SaveChangesAsync();
+        }
+
+        public async Task<List<CareerStatistics>> GetByAiRecommendationIdAsync(
+            Guid aiRecommendationId
+        )
+        {
+            return await _context
+                .CareerStatistics.Where(cs => cs.AiRecommendationId == aiRecommendationId)
+                .OrderByDescending(cs => cs.LastUpdated)
+                .ToListAsync();
         }
     }
 }

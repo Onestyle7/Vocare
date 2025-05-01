@@ -371,5 +371,61 @@ namespace VocareWebAPI.Services.Implementations
             public MarketAnalysisException(string message, Exception inner)
                 : base(message, inner) { }
         }
+
+        public async Task<MarketAnalysisResponseDto> GetLatestMarketAnalysisAsync(string userId)
+        {
+            var recommendation = await _aiRecommendationRepository.GetLatestByUserIdAsync(userId);
+            if (recommendation == null)
+            {
+                throw new Exception($"AI recommendation for user with ID:{userId} not found.");
+            }
+
+            // Pobierz dane powiązane z najnowszą rekomendacją
+            var careerStats = await _careerStatisticsRepository.GetByAiRecommendationIdAsync(
+                recommendation.Id
+            );
+            var skillDemands = await _skillDemandRepository.GetByAiRecommendationIdAsync(
+                recommendation.Id
+            );
+            var marketTrends = await _marketTrendsRepository.GetByAiRecommendationIdAsync(
+                recommendation.Id
+            );
+
+            // Mapuj dane na DTO
+            var result = new MarketAnalysisResponseDto
+            {
+                MarketAnalysis = new MarketAnalysisDetailsDto
+                {
+                    IndustryStatistics = careerStats
+                        .Select(cs => new IndustryStatisticsDto
+                        {
+                            Industry = cs.CareerName,
+                            AverageSalary = $"{cs.AverageSalaryMin}-{cs.AverageSalaryMax} PLN",
+                            EmploymentRate = $"{cs.EmploymentRate}%",
+                            GrowthForecast = cs.GrowthForecast,
+                        })
+                        .ToList(),
+                    SkillDemand = skillDemands
+                        .Select(sd => new SkillDemandDto
+                        {
+                            Skill = sd.SkillName,
+                            Industry = sd.Industry,
+                            DemandLevel = sd.DemandLevel,
+                        })
+                        .ToList(),
+                    MarketTrends = marketTrends
+                        .Select(mt => new MarketTrendsDto
+                        {
+                            TrendName = mt.TrendName,
+                            Description = mt.Description,
+                            Impact = mt.Impact,
+                        })
+                        .ToList(),
+                },
+            };
+
+            InitializeNullProperties(result);
+            return result;
+        }
     }
 }
