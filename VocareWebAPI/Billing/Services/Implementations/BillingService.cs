@@ -176,5 +176,21 @@ namespace VocareWebAPI.Billing.Services.Implementations
                 }
             }
         }
+
+        public async Task<UserBilling> GetUserBillingAsync(string userId)
+        {
+            if (string.IsNullOrEmpty(userId))
+            {
+                throw new ArgumentException("User ID cannot be null or empty.", nameof(userId));
+            }
+            var userBilling = await _userBillingRepository.GetByUserIdAsync(userId);
+            if (userBilling == null)
+            {
+                throw new KeyNotFoundException(
+                    $"User billing information for user ID {userId} not found."
+                );
+            }
+            return userBilling;
+        }
     }
 }
