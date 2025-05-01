@@ -1,5 +1,6 @@
 using System;
 using System.IO;
+using System.Security.Claims;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -114,6 +115,33 @@ namespace VocareWebAPI.Controllers
         public IActionResult Cancel()
         {
             return Ok(new { Message = "Payment canceled." });
+        }
+
+        [HttpGet("get-token-balance")]
+        [Authorize]
+        public async Task<IActionResult> GetTokenBalance()
+        {
+            try
+            {
+                string userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+                if (string.IsNullOrEmpty(userId))
+                {
+                    return BadRequest("Brak identyfikatora użytkownika w tokenie.");
+                }
+
+                var userBilling = await _billingService.GetUserBillingAsync(userId);
+                if (userBilling == null)
+                {
+                    return NotFound("Nie znaleziono informacji o płatności dla tego użytkownika.");
+                }
+
+                return Ok(new { TokenBalance = userBilling.TokenBalance });
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Błąd podczas pobierania salda tokenów.");
+                return StatusCode(500, "Wystąpił błąd podczas przetwarzania żądania.");
+            }
         }
     }
 }
