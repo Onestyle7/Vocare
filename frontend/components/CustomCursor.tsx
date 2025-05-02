@@ -10,8 +10,21 @@ const CustomCursor: React.FC = () => {
   const lastPosition = useRef({ x: 0, y: 0 });
   const isMoving = useRef(false);
   const [showArrow, setShowArrow] = useState(false);
+  const [isDesktop, setIsDesktop] = useState(false);
 
   useEffect(() => {
+    const handleResize = () => {
+      setIsDesktop(window.innerWidth >= 1024); 
+    };
+
+    handleResize();
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
+
+  useEffect(() => {
+    if (!isDesktop) return;
+
     const moveCursor = (e: MouseEvent) => {
       if (cursorRef.current && followerRef.current) {
         cursorRef.current.style.left = `${e.clientX}px`;
@@ -73,7 +86,9 @@ const CustomCursor: React.FC = () => {
       document.removeEventListener('mousemove', moveCursor);
       clearInterval(intervalId);
     };
-  }, [showArrow]);
+  }, [showArrow, isDesktop]);
+
+  if (!isDesktop) return null;
 
   return (
     <>

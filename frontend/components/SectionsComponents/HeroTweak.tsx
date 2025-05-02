@@ -49,16 +49,19 @@ const HeroTweak = () => {
       id="hero"
     >
       <CustomCursor />
-      <div className="main-font-color relative flex h-[390px] flex-row px-[40px] lg:w-full z-30">
-        <div className="inset-0 flex w-full flex-col items-center justify-center md:pl-[40px] md:flex-row md:justify-start xl:border-t xl:border-b lg:w-3/5">
+      <div className="main-font-color relative z-30 flex h-[390px] flex-row px-[40px] lg:w-full">
+        <div className="inset-0 flex w-full flex-col items-center justify-center md:flex-row md:justify-start md:pl-[40px] lg:w-3/5 xl:border-t xl:border-b">
           <div className="flex flex-col justify-center max-md:mb-8 lg:w-1/2 xl:items-start">
-          <h1 className="text-[60px] leading-17 font-bold uppercase max-md:text-center lg:text-[78px] xl:text-[88px] 2xl:text-[108px] 2xl:leading-21">
+            <h1 className="text-[60px] leading-17 font-bold uppercase max-md:text-center lg:text-[78px] xl:text-[88px] 2xl:text-[108px] 2xl:leading-21">
               <AnimatedHeadline
                 lines={['unlock', 'your', 'growth']}
                 className="items-start max-md:items-center"
               />
             </h1>
-            <Link href="/assistant" className='flex xl:w-full max-md:items-center max-md:justify-center'>
+            <Link
+              href="/assistant"
+              className="flex max-md:items-center max-md:justify-center xl:w-full"
+            >
               <CustomButton
                 variant="primary"
                 className="group mt-4 flex cursor-none items-center justify-center overflow-hidden xl:mt-8"
@@ -70,7 +73,7 @@ const HeroTweak = () => {
               </CustomButton>
             </Link>
           </div>
-          <div className="flex h-full flex-col items-center justify-center 2xl:items-end 2xl:w-1/3 max-md:mt-6 sm:w-full lg:w-1/2">
+          <div className="flex h-full flex-col items-center justify-center max-md:mt-6 sm:w-full lg:w-1/2 2xl:w-1/3 2xl:items-end">
             <SpinningText>learn more • earn more • grow more •</SpinningText>
           </div>
         </div>
@@ -87,10 +90,10 @@ const HeroTweak = () => {
           </Suspense>
         )}
       </div>
-      <div className="relative mt-14 flex w-full flex-col items-center justify-center px-[40px]">
+      <div className="relative mx-10 mt-14 flex flex-col items-center justify-center border-gray-300 px-[40px] xl:border-r xl:border-l dark:border-gray-700">
         <div className="mb-2 flex h-full flex-col items-center justify-center">
           <h3 className="mb-8 text-sm uppercase md:text-[10px]">Meet Us</h3>
-          <h2 className="text-5xl font-bold sm:text-[78px] md:text-[108px] lg:text-[138px] xl:text-[158px]">
+          <h2 className="text-[42px] font-bold sm:text-[78px] md:text-[108px] lg:text-[138px] xl:text-[158px]">
             OUR VISION
           </h2>
           <div className="flex w-full items-center justify-between text-xl uppercase sm:px-1 md:px-1 lg:flex-row lg:px-2 xl:px-3">
@@ -106,7 +109,6 @@ const HeroTweak = () => {
           <Image src={shape1} alt="shape" width={78} height={78} className="-rotate-20" />
         </div>
       </ScrollParallax>
-
     </Section>
   );
 };

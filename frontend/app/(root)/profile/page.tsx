@@ -1,3 +1,4 @@
+import { GridBackgroundDemo } from '@/components/MarketComponents/GridBackgroundDemo';
 import ProfileDetails from '@/components/ProfileDeatail';
 import Header from '@/components/SectionsComponents/Header';
 import React from 'react';
@@ -6,6 +7,7 @@ const page = () => {
   return (
     <div>
       <Header />
+      <GridBackgroundDemo />
       <ProfileDetails />
     </div>
   );

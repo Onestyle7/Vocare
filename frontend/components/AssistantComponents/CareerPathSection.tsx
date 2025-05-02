@@ -25,7 +25,7 @@ interface CareerPathSectionProps {
 }
 
 export default function CareerPathSection({ path, index }: CareerPathSectionProps) {
-  const [isCollapsed, setIsCollapsed] = useState(false);
+  const [isCollapsed, setIsCollapsed] = useState(true);
   const contentRef = useRef<HTMLDivElement>(null);
   const contentWrapperRef = useRef<HTMLDivElement>(null);
 
@@ -109,7 +109,7 @@ export default function CareerPathSection({ path, index }: CareerPathSectionProp
 
         {/* Zawsze widoczne */}
         <h3 className="text-lg font-medium text-[#915EFF]">{path.careerName}</h3>
-        <p className="mt-2 text-gray-700">{path.description}</p>
+        <p className="mt-2 text-gray-500">{path.description}</p>
 
         {/* Zwijana zawartość */}
         <div
@@ -154,33 +154,33 @@ export default function CareerPathSection({ path, index }: CareerPathSectionProp
             <div className="mt-6">
               <h4 className="mb-3 font-medium">Analiza SWOT:</h4>
               <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
-                <div className="rounded-xl border-b-4 border-green-500 bg-green-50 p-3">
-                  <strong className="text-green-700">Mocne strony:</strong>
-                  <ul className="mt-1 list-disc space-y-1 pl-5 text-black">
+                <div className="rounded-xl border-t border-b-4 border-[#915EFF] p-3">
+                  <strong className="text-[#915EFF]">Mocne strony:</strong>
+                  <ul className="mt-1 list-disc space-y-1 pl-5">
                     {path.swot.strengths.map((strength, strengthIndex) => (
                       <li key={strengthIndex}>{strength}</li>
                     ))}
                   </ul>
                 </div>
-                <div className="rounded-xl border-b-4 border-red-500 bg-red-50 p-3">
-                  <strong className="text-red-700">Słabe strony:</strong>
-                  <ul className="mt-1 list-disc space-y-1 pl-5 text-black">
+                <div className="rounded-xl border-t border-b-4 border-[#915EFF] p-3">
+                  <strong className="text-[#915EFF]">Słabe strony:</strong>
+                  <ul className="mt-1 list-disc space-y-1 pl-5">
                     {path.swot.weaknesses.map((weakness, weaknessIndex) => (
                       <li key={weaknessIndex}>{weakness}</li>
                     ))}
                   </ul>
                 </div>
-                <div className="rounded-xl border-b-4 border-blue-500 bg-blue-50 p-3">
-                  <strong className="text-blue-700">Szanse:</strong>
-                  <ul className="mt-1 list-disc space-y-1 pl-5 text-black">
+                <div className="rounded-xl border-t border-b-4 border-[#915EFF] p-3">
+                  <strong className="text-[#915EFF]">Szanse:</strong>
+                  <ul className="mt-1 list-disc space-y-1 pl-5">
                     {path.swot.opportunities.map((opportunity, oppIndex) => (
                       <li key={oppIndex}>{opportunity}</li>
                     ))}
                   </ul>
                 </div>
-                <div className="rounded-xl border-b-4 border-orange-500 bg-orange-50 p-3">
-                  <strong className="text-orange-700">Zagrożenia:</strong>
-                  <ul className="mt-1 list-disc space-y-1 pl-5 text-black">
+                <div className="rounded-xl border-t border-b-4 border-[#915EFF] p-3">
+                  <strong className="text-[#915EFF]">Zagrożenia:</strong>
+                  <ul className="mt-1 list-disc space-y-1 pl-5">
                     {path.swot.threats.map((threat, threatIndex) => (
                       <li key={threatIndex}>{threat}</li>
                     ))}

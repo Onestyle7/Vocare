@@ -53,5 +53,9 @@ export default function LenisProvider({ children }: { children: React.ReactNode 
     };
   }, []);
 
-  return <div data-lenis-wrapper className="min-h-screen">{children}</div>;
+  return (
+    <div data-lenis-wrapper className="min-h-screen">
+      {children}
+    </div>
+  );
 }

@@ -124,9 +124,8 @@ const MobileFeature = () => {
   }, []);
 
   return (
-    <Section crosses customPaddings className="relative px-10"
-    crossesOffset id="brain">
-      <div className="min-h-screen xl:border-b xl:border-t mt-4">
+    <Section crosses customPaddings className="relative px-10" crossesOffset id="brain">
+      <div className="mt-4 min-h-screen xl:border-t xl:border-b">
         <div className="relative mx-[10%] mb-8 flex flex-col items-center gap-5">
           <h2 className="mt-[36px] text-sm uppercase md:text-[10px]">Always in Your pocket</h2>
           <div className="mt-5 text-center text-4xl font-bold uppercase md:text-[6rem] xl:leading-[0.8]">
@@ -135,7 +134,7 @@ const MobileFeature = () => {
               className="items-center max-md:items-center"
             />
           </div>
-          <div className="flex mt-10 h-[45dvh] w-full flex-col items-center justify-center lg:flex-row ">
+          <div className="mt-10 flex h-[45dvh] w-full flex-col items-center justify-center lg:flex-row">
             <div className="flex h-full w-full flex-col max-md:space-y-12 lg:flex-row">
               <div className="relative flex h-full lg:w-1/2" ref={parallaxRef}>
                 <Iphone15Pro className="size-full" src={mobileView} />
@@ -162,10 +161,9 @@ const MobileFeature = () => {
               </div>
               <div className="flex h-full flex-col items-center justify-center text-xl font-light sm:text-3xl lg:w-1/2">
                 <p className="font-poppins">
-                  Discover your perfect{' '}
-                  <strong>career</strong> path with our mobile application Get personalized advice,
-                  insights, and recommendations tailored to your skills and aspirations—right at
-                  your fingertips. Start your journey today!
+                  Discover your perfect <strong>career</strong> path with our mobile application Get
+                  personalized advice, insights, and recommendations tailored to your skills and
+                  aspirations—right at your fingertips. Start your journey today!
                 </p>
                 <div className="flex w-full max-md:items-center max-md:justify-center">
                   <CustomButton

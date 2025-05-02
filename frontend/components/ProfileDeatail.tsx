@@ -1,8 +1,9 @@
 'use client';
+
 import { useEffect, useState } from 'react';
 import { getUserProfile } from '@/lib/profile';
 import { useRouter } from 'next/navigation';
-import { UserProfile } from '@/app/types/profile';
+import { UserProfile } from '@/lib/types/profile';
 import { toast } from 'sonner';
 import ProfileCard from './ProfileFormComponents/ProfileCard';
 import { ArrowLeft, ArrowRight, LogOut } from 'lucide-react';
@@ -10,6 +11,7 @@ import { Separator } from './ui/separator';
 import { Button } from './ui/button';
 import ProfileForm from './ProfileFormComponents/ProfileForm';
 import { logoutUser } from '@/lib/auth';
+import { formatDate } from './SupportComponents/formatSimpleDate';
 
 export default function ProfileDetails() {
   const [profile, setProfile] = useState<UserProfile | null>(null);
@@ -19,9 +21,9 @@ export default function ProfileDetails() {
   const router = useRouter();
 
   const handleLogout = () => {
-      logoutUser();
-      router.push('/sign-in');
-    };
+    logoutUser();
+    router.push('/sign-in');
+  };
 
   useEffect(() => {
     const token = localStorage.getItem('token');
@@ -38,7 +40,7 @@ export default function ProfileDetails() {
       } catch (error) {
         console.error(error);
         toast.error('Provide additional information', {
-          description: 'Filling the Profile Form will allow You to use the full power of Vocare.',
+          description: 'Filling the Profile Form will allow you to use the full power of Vocare.',
         });
       } finally {
         setLoading(false);
@@ -49,41 +51,28 @@ export default function ProfileDetails() {
   }, [router]);
 
   const goToNextPage = () => {
-    if (currentPage < 2) {
-      setCurrentPage(currentPage + 1);
-    }
+    if (currentPage < 2) setCurrentPage(currentPage + 1);
   };
 
   const goToPreviousPage = () => {
-    if (currentPage > 0) {
-      setCurrentPage(currentPage - 1);
-    }
+    if (currentPage > 0) setCurrentPage(currentPage - 1);
   };
 
-  function handleEdit() {
-    setIsEditing(true);
-  }
+  const handleEdit = () => setIsEditing(true);
+  const handleCancelEdit = () => setIsEditing(false);
 
-  function handleCancelEdit() {
-    setIsEditing(false);
-  }
+  const isProfileEmpty = !profile;
 
   if (loading) {
     return <div className="flex h-screen items-center justify-center">Loading profile...</div>;
   }
 
-  if (!profile) {
-    return <ProfileForm />;
-  }
-
   if (isEditing) {
-    return <ProfileForm initialData={profile} onCancel={handleCancelEdit} />;
+    return <ProfileForm initialData={profile ?? undefined} onCancel={handleCancelEdit} />;
   }
 
-  // Page content components
   const renderPersonalInfoPage = () => (
-    <div className="space-y-8">
-      {/* Personal Information */}
+    <div className="relative space-y-8">
       <div className="mt-4 space-y-4">
         <div className="flex flex-row items-center">
           <h2 className="text-2xl font-medium text-gray-700 dark:text-gray-200">
@@ -94,47 +83,82 @@ export default function ProfileDetails() {
         <div className="grid grid-cols-1 gap-4">
           <div className="flex justify-between rounded-lg">
             <span className="font-medium text-gray-600 dark:text-gray-200">Country:</span>
-            <span className="ml-2">{profile.country}</span>
+            <span className="ml-2">{profile?.country || '—'}</span>
           </div>
           <Separator />
-
           <div className="flex justify-between rounded-lg">
             <span className="font-medium text-gray-600 dark:text-gray-200">Address:</span>
-            <span className="ml-2">{profile.address}</span>
+            <span className="ml-2">{profile?.address || '—'}</span>
           </div>
           <Separator />
-
           <div className="flex justify-between rounded-lg">
             <span className="font-medium text-gray-600 dark:text-gray-200">Phone:</span>
-            <span className="ml-2">{profile.phoneNumber}</span>
+            <span className="ml-2">{profile?.phoneNumber || '—'}</span>
           </div>
           <Separator />
+          <div className="flex flex-col space-y-2">
+            <span className="flex items-center text-2xl font-medium text-gray-700 dark:text-gray-200">
+              Education <div className="ml-2 h-2 w-2 rounded-full bg-[#915EFF]" />
+            </span>
 
-          <div className="flex justify-between rounded-lg">
-            <span className="font-medium text-gray-600 dark:text-gray-200">Education:</span>
-            <span className="ml-2">{profile.education}</span>
+            {profile?.education?.length ? (
+              profile.education.map((edu, index) => (
+                <div key={index} className="space-y-4 rounded-lg p-2">
+                  <div className="flex justify-between">
+                    <span className="font-medium text-gray-600 dark:text-gray-200">
+                      Institution:
+                    </span>
+                    <span className="ml-2 text-right">{edu.institution}</span>
+                  </div>
+                  <Separator />
+
+                  <div className="flex justify-between">
+                    <span className="font-medium text-gray-600 dark:text-gray-200">Degree:</span>
+                    <span className="ml-2 text-right">{edu.degree}</span>
+                  </div>
+                  <Separator />
+
+                  <div className="flex justify-between">
+                    <span className="font-medium text-gray-600 dark:text-gray-200">Field:</span>
+                    <span className="ml-2 text-right">{edu.field}</span>
+                  </div>
+                  <Separator />
+
+                  <div className="flex justify-between">
+                    <span className="font-medium text-gray-600 dark:text-gray-200">Duration:</span>
+                    <span className="ml-2 w-fit rounded-md border px-2 py-0.5 text-right">
+                      {formatDate(edu.startDate)} –{' '}
+                      {edu.endDate ? formatDate(edu.endDate) : 'Present'}
+                    </span>
+                  </div>
+                  {index !== profile.education.length - 1 && <Separator className="mt-4" />}
+                </div>
+              ))
+            ) : (
+              <p className="text-gray-500 italic">No education data</p>
+            )}
           </div>
         </div>
-        <Separator />
       </div>
 
-      {/* Languages */}
       <div className="space-y-2">
         <div className="flex flex-row items-center">
           <h2 className="text-2xl font-medium text-gray-700 dark:text-gray-200">Languages</h2>
           <div className="ml-2 h-2 w-2 rounded-full bg-[#915EFF]" />
         </div>
-        <div className="rounded-lg py-4">
-          <div className="flex flex-wrap gap-2">
-            {profile.languages.map((lang, index) => (
+        <div className="flex flex-wrap gap-2">
+          {profile?.languages?.length ? (
+            profile.languages.map((lang, index) => (
               <span
                 key={index}
-                className="rounded-full bg-[#efe7ff] dark:bg-gray-900/50 px-3 py-1 text-sm text-[#915EFF]"
+                className="rounded-full bg-[#efe7ff] px-3 py-1 text-sm text-[#915EFF] dark:bg-gray-900/50"
               >
-                {lang}
+                {lang.language} {lang.level && `(${lang.level})`}
               </span>
-            ))}
-          </div>
+            ))
+          ) : (
+            <p className="text-gray-500 italic">No languages</p>
+          )}
         </div>
       </div>
     </div>
@@ -142,100 +166,81 @@ export default function ProfileDetails() {
 
   const renderSkillsAndWorkPage = () => (
     <div className="space-y-8">
-      {/* Skills */}
       <div className="mt-4 space-y-2">
-        <div className="flex flex-row items-center">
-          <h2 className="text-2xl font-medium text-gray-700 dark:text-gray-200">Skills</h2>
-          <div className="ml-2 h-2 w-2 rounded-full bg-[#915EFF]" />
-        </div>
-        <div className="rounded-lg">
-          <div className="flex flex-wrap gap-2">
-            {profile.skills.map((skill, index) => (
+        <h2 className="text-2xl font-medium text-gray-700 dark:text-gray-200">Skills</h2>
+        <div className="flex flex-wrap gap-2">
+          {profile?.skills?.length ? (
+            profile.skills.map((skill, index) => (
               <span
                 key={index}
-                className="rounded-full bg-[#efe7ff] dark:bg-gray-900/50  px-3 py-1 text-sm text-[#915EFF]"
+                className="rounded-full bg-[#efe7ff] px-3 py-1 text-sm text-[#915EFF] dark:bg-gray-900/50"
               >
                 {skill}
               </span>
-            ))}
-          </div>
+            ))
+          ) : (
+            <p className="text-gray-500 italic">No skills</p>
+          )}
         </div>
       </div>
 
-      {/* Work Experience */}
-      <div className="space-y-2">
-        <div className="flex flex-row items-center">
-          <h2 className="text-2xl font-medium text-gray-700 dark:text-gray-200">Work Experience</h2>
-          <div className="ml-2 h-2 w-2 rounded-full bg-[#915EFF]" />
-        </div>
-        <div className="rounded-lg p-4">
-          <ul className="space-y-2">
-            {profile.workExperience.map((exp, index) => (
-              <li key={index} className="flex items-start">
-                <span className="mr-2 text-blue-500">•</span>
-                <span>{exp}</span>
-              </li>
-            ))}
-          </ul>
-        </div>
-      </div>
+      <div className="flex flex-col space-y-2">
+        <span className="flex items-center text-2xl font-medium text-gray-700 dark:text-gray-200">
+          Work Experience <div className="ml-2 h-2 w-2 rounded-full bg-[#915EFF]" />
+        </span>
 
-      {/* Certificates */}
-      <div className="space-y-2">
-        <div className="flex flex-row items-center">
-          <h2 className="text-2xl font-medium text-gray-700 dark:text-gray-200">Certificates</h2>
-          <div className="ml-2 h-2 w-2 rounded-full bg-[#915EFF]" />
-        </div>
-        <div className="rounded-lg p-4">
-          <ul className="space-y-2">
-            {profile.certificates.map((cert, index) => (
-              <li key={index} className="flex items-start">
-                <span className="mr-2 text-green-500">•</span>
-                <span>{cert}</span>
-              </li>
-            ))}
-          </ul>
-        </div>
+        {profile?.workExperience?.length ? (
+          profile.workExperience.map((exp, index) => (
+            <div key={index} className="space-y-4 rounded-lg p-2">
+              <div className="flex justify-between">
+                <span className="font-medium text-gray-600 dark:text-gray-200">Position:</span>
+                <span className="ml-2 text-right text-[#915EFF]">{exp.position}</span>
+              </div>
+              <Separator />
+
+              <div className="flex justify-between">
+                <span className="font-medium text-gray-600 dark:text-gray-200">Company:</span>
+                <span className="ml-2 text-right">{exp.company}</span>
+              </div>
+              <Separator />
+
+              <div className="flex items-start justify-between gap-4">
+                <span className="font-medium text-gray-600 dark:text-gray-200">Description:</span>
+                <span className="ml-2 max-w-md text-right text-sm">{exp.description || '—'}</span>
+              </div>
+              <Separator />
+
+              <div className="flex justify-between">
+                <span className="font-medium text-gray-600 dark:text-gray-200">Duration:</span>
+                <span className="ml-2 w-fit rounded-md border px-2 py-0.5 text-right">
+                  {formatDate(exp.startDate)} – {exp.endDate ? formatDate(exp.endDate) : 'Present'}
+                </span>
+              </div>
+              {index !== profile.workExperience.length - 1 && <Separator className="mt-4" />}
+            </div>
+          ))
+        ) : (
+          <p className="text-gray-500 italic">No work experience</p>
+        )}
       </div>
     </div>
   );
 
   const renderAboutMePage = () => (
     <div className="space-y-8">
-      {/* About Me */}
       <div className="mt-4 space-y-2">
-        <div className="flex flex-row items-center">
-          <h2 className="text-2xl font-medium text-gray-700 dark:text-gray-200">About Me</h2>
-          <div className="ml-2 h-2 w-2 rounded-full bg-[#915EFF]" />
-        </div>
+        <h2 className="text-2xl font-medium text-gray-700 dark:text-gray-200">About Me</h2>
         <div className="rounded-lg bg-gray-50/60 p-4 dark:bg-black/20">
-          <p>{profile.aboutMe}</p>
+          <p>{profile?.aboutMe || 'No description yet.'}</p>
         </div>
       </div>
-
-      {/* Additional Information */}
-      {profile.additionalInformation && (
-        <div className="space-y-2">
-          <div className="flex flex-row items-center">
-            <h2 className="text-2xl font-medium text-gray-700 dark:text-gray-200">
-              Additional Information
-            </h2>
-            <div className="ml-2 h-2 w-2 rounded-full bg-[#915EFF]" />
-          </div>
-          <div className="rounded-lg bg-gray-50/60 p-4 dark:bg-black/20">
-            <p>{profile.additionalInformation}</p>
-          </div>
-        </div>
-      )}
     </div>
   );
 
   const pages = [renderPersonalInfoPage, renderSkillsAndWorkPage, renderAboutMePage];
 
-  const pageIndicators = ['Personal Info', 'Skills & Experience', 'About Me'];
-
   return (
-    <div className="font-poppins mt-16 2xl:max-w-[1480px] max-w-7xl mx-auto max-sm:mx-4">
+    <div className="font-poppins mx-auto mt-16 max-w-7xl max-sm:mx-4 2xl:max-w-[1480px]">
       <div className="flex h-screen flex-col xl:flex-row">
         <div className="hidden xl:block xl:w-1/2 xl:pr-8">
           <div className="flex h-3/4 items-center justify-center">
@@ -243,62 +248,32 @@ export default function ProfileDetails() {
           </div>
         </div>
 
-        {/* Right side - Profile Details */}
-        <div className="w-full rounded-xl border p-4 xl:h-3/4 xl:w-1/2">
+        <div className="bg-background relative z-10 w-full rounded-xl border p-4 xl:h-3/4 xl:w-1/2 dark:bg-[#0e100f]">
           <div className="flex h-full flex-col">
             <div className="flex flex-row items-start justify-between border-b">
-              <h1 className="mb-4 xl:text-3xl text-2xl font-bold text-gray-800 dark:text-gray-200">
-                {profile.firstName} {profile.lastName}
+              <h1 className="mb-4 text-2xl font-bold text-gray-800 xl:text-3xl dark:text-gray-200">
+                {isProfileEmpty ? 'Your Profile' : `${profile.firstName} ${profile.lastName}`}
               </h1>
-              <div className='flex flex-row gap-2'>
+              <div className="flex gap-2">
                 <Button
-                  className="flex flex-row items-center justify-center rounded-full bg-[#915EFF] group hover:bg-[#b594fd]"
                   onClick={handleEdit}
+                  className="rounded-full bg-[#915EFF] hover:bg-[#b594fd]"
                 >
                   Edit
-                  <span>
-                    <ArrowRight className="ml-2 transition-transform duration-300 group-hover:translate-x-2" />
-                  </span>
                 </Button>
-                <Button
-                  className="flex flex-row items-center justify-center rounded-full bg-transparent hover:bg-transparent border border-[#915EFF]"
-                  onClick={handleLogout}
-                >
-                  <span>
-                    <LogOut className="text-black dark:text-white" />
-                  </span>
+                <Button onClick={handleLogout} variant="outline" className="rounded-full">
+                  <LogOut />
                 </Button>
               </div>
             </div>
 
-            {/* Content area */}
             <div className="flex-grow overflow-y-auto">{pages[currentPage]()}</div>
 
-            {/* Navigation */}
             <div className="mt-6 flex items-center justify-between border-t pt-4">
-              <button
-                onClick={goToPreviousPage}
-                disabled={currentPage === 0}
-                className={`flex items-center ${currentPage === 0 ? 'cursor-not-allowed text-gray-300' : 'cursor-pointer text-black hover:text-black/40 dark:text-white'}`}
-              >
+              <button onClick={goToPreviousPage} disabled={currentPage === 0}>
                 <ArrowLeft />
               </button>
-
-              <div className="flex space-x-2">
-                {pageIndicators.map((label, index) => (
-                  <span
-                    key={index}
-                    className={`h-2 w-2 rounded-full ${currentPage === index ? 'bg-black dark:bg-white' : 'bg-gray-300 dark:bg-gray-700'}`}
-                    title={label}
-                  />
-                ))}
-              </div>
-
-              <button
-                onClick={goToNextPage}
-                disabled={currentPage === 2}
-                className={`flex items-center ${currentPage === 2 ? 'cursor-not-allowed text-gray-300' : 'cursor-pointer text-black hover:text-black/40 dark:text-white'}`}
-              >
+              <button onClick={goToNextPage} disabled={currentPage === 2}>
                 <ArrowRight />
               </button>
             </div>

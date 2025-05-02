@@ -1,13 +1,15 @@
 'use client';
 
 import { useEffect, useState, useRef } from 'react';
-import { MarketAnalysisResponseDto } from '@/app/types/marketAnalysis';
+import { MarketAnalysisResponseDto } from '@/lib/types/marketAnalysis';
 import { fetchMarketAnalysis } from '@/lib/recommendations';
 import { gsap } from 'gsap';
 import CollapsibleButton from '../AssistantComponents/CollapsibleButton';
 import { TerminalDemo } from './LoadingTerminal';
 import { GridBackgroundDemo } from './GridBackgroundDemo';
 import GenerateRecommendationFail from '../AssistantComponents/GenerateRecommendationFail';
+import Image from 'next/image';
+import { chart, fire, shape3, wallet } from '@/app/constants';
 
 export default function MarketAnalysis() {
   const [data, setData] = useState<MarketAnalysisResponseDto | null>(null);
@@ -29,21 +31,17 @@ export default function MarketAnalysis() {
     loadData();
   }, []);
 
-
   // useEffect(() => {
   //   setLoading(true);
   // }, []);
 
-  
   if (error) {
-    return (
-      <GenerateRecommendationFail />
-    );
+    return <GenerateRecommendationFail />;
   }
 
   if (isLoading) {
     return (
-      <div className="mb-1 flex flex-col overflow-hidden rounded-[28px] h-screen items-center justify-center -mt-20 max-w-7xl mx-auto max-xl:mx-4">
+      <div className="mx-auto -mt-20 mb-1 flex h-screen max-w-7xl flex-col items-center justify-center overflow-hidden rounded-[28px] max-xl:mx-4">
         <GridBackgroundDemo />
         {/* <ScrollParallax isAbsolutelyPositioned zIndex={20}>
         <div className="absolute top-1/2 left-1/4 z-20">
@@ -56,13 +54,13 @@ export default function MarketAnalysis() {
   }
 
   return (
-    <div className="font-poppins mx-auto max-w-7xl mt-8">
-      <h2 className="mb-4 text-2xl font-bold text-[#915EFF]">Job Market Analysis</h2>
-      
+    <div className="font-poppins mx-auto mt-8 max-w-7xl">
+      <h2 className="mb-4 ml-4 text-2xl font-bold text-[#915EFF]">Job Market Analysis</h2>
+
       {data?.marketAnalysis.industryStatistics.map((stat, index) => (
         <IndustrySection key={index} data={stat} index={index} />
       ))}
-      
+
       {data?.marketAnalysis.marketTrends && data.marketAnalysis.marketTrends.length > 0 && (
         <div className="mt-8 rounded-[28px] border p-6 shadow-sm">
           <h3 className="mb-4 text-xl font-semibold">Current Market Trends</h3>
@@ -91,13 +89,15 @@ export default function MarketAnalysis() {
                 <p className="text-sm text-gray-500">{skill.industry}</p>
                 <div className="mt-2 flex items-center">
                   <span className="mr-2 text-sm">Demand level:</span>
-                  <span className={`rounded-full px-2 py-1 text-xs font-medium ${
-                    skill.demandLevel === 'High' 
-                      ? 'bg-green-100 text-green-800' 
-                      : skill.demandLevel === 'Medium' 
-                        ? 'bg-yellow-100 text-yellow-800' 
-                        : 'bg-red-100 text-red-800'
-                  }`}>
+                  <span
+                    className={`rounded-full px-2 py-1 text-xs font-medium ${
+                      skill.demandLevel === 'High'
+                        ? 'bg-green-100 text-green-800'
+                        : skill.demandLevel === 'Medium'
+                          ? 'bg-yellow-100 text-yellow-800'
+                          : 'bg-red-100 text-red-800'
+                    }`}
+                  >
                     {skill.demandLevel}
                   </span>
                 </div>
@@ -124,17 +124,140 @@ function IndustrySection({ data, index }: IndustryProps) {
   const [isCollapsed, setIsCollapsed] = useState(false);
   const contentRef = useRef<HTMLDivElement>(null);
   const contentWrapperRef = useRef<HTMLDivElement>(null);
-  
-  const colors = [
-    'bg-[#A985FF]',
-    'bg-[#BD9EFF]',
-    'bg-[#D1B7FF]',
-    'bg-[#E5D8FF]'
-  ];
+  const imageRef = useRef<HTMLImageElement | null>(null);
+  const salaryBoxRef = useRef<HTMLDivElement | null>(null);
+
+  const imageRef1 = useRef<HTMLImageElement | null>(null);
+  const chartBoxRef = useRef<HTMLDivElement | null>(null);
+
+  const imageRef2 = useRef<HTMLImageElement | null>(null);
+  const fireBoxRef = useRef<HTMLDivElement | null>(null);
+
+  const colors = ['bg-[#A985FF]', 'bg-[#BD9EFF]', 'bg-[#D1B7FF]', 'bg-[#E5D8FF]'];
 
   const getColorClass = (idx: number) => {
     return colors[idx % colors.length];
   };
+
+  useEffect(() => {
+    if (typeof window !== 'undefined' && window.innerWidth >= 1024) {
+      const ctx = gsap.context(() => {
+        if (!salaryBoxRef.current || !imageRef.current) return;
+
+        gsap.set(imageRef.current, { opacity: 0, x: 50, y: 50 });
+
+        const onEnter = () => {
+          gsap.to(imageRef.current, {
+            opacity: 1,
+            x: 0,
+            y: 0,
+            duration: 0.5,
+            ease: 'power3.out',
+          });
+        };
+
+        const onLeave = () => {
+          gsap.to(imageRef.current, {
+            opacity: 0,
+            x: 50,
+            y: 50,
+            duration: 0.4,
+            ease: 'power3.in',
+          });
+        };
+
+        salaryBoxRef.current.addEventListener('mouseenter', onEnter);
+        salaryBoxRef.current.addEventListener('mouseleave', onLeave);
+
+        return () => {
+          salaryBoxRef.current?.removeEventListener('mouseenter', onEnter);
+          salaryBoxRef.current?.removeEventListener('mouseleave', onLeave);
+        };
+      }, salaryBoxRef);
+
+      return () => ctx.revert();
+    }
+  }, []);
+
+  useEffect(() => {
+    if (typeof window !== 'undefined' && window.innerWidth >= 1024) {
+      const ctx = gsap.context(() => {
+        if (!chartBoxRef.current || !imageRef1.current) return;
+
+        gsap.set(imageRef1.current, { opacity: 0, x: 50, y: 50 });
+
+        const onEnter = () => {
+          gsap.to(imageRef1.current, {
+            opacity: 1,
+            x: 0,
+            y: 0,
+            duration: 0.5,
+            ease: 'power3.out',
+          });
+        };
+
+        const onLeave = () => {
+          gsap.to(imageRef1.current, {
+            opacity: 0,
+            x: 50,
+            y: 50,
+            duration: 0.4,
+            ease: 'power3.in',
+          });
+        };
+
+        chartBoxRef.current.addEventListener('mouseenter', onEnter);
+        chartBoxRef.current.addEventListener('mouseleave', onLeave);
+
+        return () => {
+          salaryBoxRef.current?.removeEventListener('mouseenter', onEnter);
+          salaryBoxRef.current?.removeEventListener('mouseleave', onLeave);
+        };
+      }, salaryBoxRef);
+
+      return () => ctx.revert();
+    }
+  }, []);
+
+  useEffect(() => {
+    if (typeof window !== 'undefined' && window.innerWidth >= 1024) {
+      const ctx = gsap.context(() => {
+        if (!fireBoxRef.current || !imageRef2.current) return;
+
+        gsap.set(imageRef2.current, { opacity: 0, x: 50, y: 50 });
+
+        const onEnter = () => {
+          gsap.to(imageRef2.current, {
+            opacity: 1,
+            x: 0,
+            y: 0,
+            duration: 0.5,
+            ease: 'power3.out',
+          });
+        };
+
+        const onLeave = () => {
+          gsap.to(imageRef2.current, {
+            opacity: 0,
+            x: 50,
+            y: 50,
+            duration: 0.4,
+            ease: 'power3.in',
+          });
+        };
+
+        fireBoxRef.current.addEventListener('mouseenter', onEnter);
+        fireBoxRef.current.addEventListener('mouseleave', onLeave);
+
+        return () => {
+          salaryBoxRef.current?.removeEventListener('mouseenter', onEnter);
+          salaryBoxRef.current?.removeEventListener('mouseleave', onLeave);
+        };
+      }, salaryBoxRef);
+
+      return () => ctx.revert();
+    }
+  }, []);
 
   const toggleCollapse = () => {
     if (!contentRef.current || !contentWrapperRef.current) return;
@@ -202,8 +325,10 @@ function IndustrySection({ data, index }: IndustryProps) {
   };
 
   return (
-    <div className="mb-1 flex flex-col overflow-hidden rounded-[28px] border shadow-sm md:flex-row">
-      <div className={`flex items-center justify-center p-4 md:w-1/6 md:p-8 ${getColorClass(index)}`}>
+    <div className="mx-4 mb-1 flex flex-col overflow-hidden rounded-[28px] border shadow-sm md:flex-row">
+      <div
+        className={`flex items-center justify-center p-4 md:w-1/6 md:p-8 ${getColorClass(index)}`}
+      >
         <span className="text-4xl font-bold text-white md:text-6xl">{index + 1}</span>
       </div>
       <div className="p-4 md:w-5/6 md:p-6">
@@ -213,23 +338,58 @@ function IndustrySection({ data, index }: IndustryProps) {
         </div>
 
         <h3 className="text-lg font-medium text-[#915EFF]">{data.industry}</h3>
-        
+
         <div className="mt-2 grid grid-cols-1 gap-2 md:grid-cols-3">
-          <div className="rounded-lg bg-gray-50 dark:bg-[#101014]/40 border-gray-700/20 dark:border-gray-700 border p-3">
+          <div
+            className="relative overflow-hidden rounded-lg border border-dashed border-gray-700/20 bg-gray-50 p-3 dark:border-gray-700 dark:bg-[#101014]/40"
+            ref={salaryBoxRef}
+          >
             <p className="text-sm text-gray-500">Average Salary</p>
             <p className="text-lg font-medium text-black dark:text-white">{data.averageSalary}</p>
+            <Image
+              src={wallet}
+              alt="shape"
+              width={48}
+              height={48}
+              className="absolute right-4 bottom-1/5 invert dark:invert-0"
+              ref={imageRef}
+            />
           </div>
-          <div className="rounded-lg bg-gray-50 dark:bg-[#101014]/40 border-gray-700/20 dark:border-gray-700 border p-3">
-            <p className="text-sm text-gray-500">Employment Rate</p>
+          <div
+            className="relative overflow-hidden rounded-lg border border-dashed border-gray-700/20 bg-gray-50 p-3 dark:border-gray-700 dark:bg-[#101014]/40"
+            ref={chartBoxRef}
+          >
+            <p className="text-sm text-gray-500">Average Salary</p>
             <p className="text-lg font-medium text-black dark:text-white">{data.employmentRate}</p>
+            <Image
+              src={chart}
+              alt="shape"
+              width={48}
+              height={48}
+              className="absolute right-4 bottom-1/6 invert dark:invert-0"
+              ref={imageRef1}
+            />
           </div>
-          <div className="rounded-lg bg-gray-50 dark:bg-[#101014]/40 border-gray-700/20 dark:border-gray-700 border p-3">
+          <div
+            className="relative overflow-hidden rounded-lg border border-dashed border-gray-700/20 bg-gray-50 p-3 dark:border-gray-700 dark:bg-[#101014]/40"
+            ref={fireBoxRef}
+          >
             <p className="text-sm text-gray-500">Growth Forecast</p>
             <div className="flex items-center">
-              <span className={`mt-1 rounded-full px-2 py-1 text-xs font-medium ${getGrowthBadgeClass(data.growthForecast)}`}>
+              <span
+                className={`mt-1 rounded-full px-2 py-1 text-xs font-medium ${getGrowthBadgeClass(data.growthForecast)}`}
+              >
                 {data.growthForecast}
               </span>
             </div>
+            <Image
+              src={fire}
+              alt="shape"
+              width={48}
+              height={48}
+              className="absolute right-4 bottom-1/6 invert dark:invert-0"
+              ref={imageRef2}
+            />
           </div>
         </div>
 
@@ -244,17 +404,17 @@ function IndustrySection({ data, index }: IndustryProps) {
         >
           <div ref={contentRef} className="mt-4 space-y-3">
             <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
-              <div className="rounded-xl border-b-4 border-green-500 bg-green-50 p-3">
-                <strong className="text-green-700">Industry Strengths:</strong>
-                <ul className="mt-1 list-disc space-y-1 pl-5 text-black">
+              <div className="rounded-xl border-b-4 border-[#915EFF] p-3">
+                <strong className="text-[#915EFF]">Industry Strengths:</strong>
+                <ul className="mt-1 list-disc space-y-1 pl-5 text-black dark:text-[#F3F3F3]">
                   <li>High demand for professionals</li>
                   <li>Flexible employment options</li>
                   <li>Remote work opportunities</li>
                 </ul>
               </div>
-              <div className="rounded-xl border-b-4 border-blue-500 bg-blue-50 p-3">
-                <strong className="text-blue-700">Development Prospects:</strong>
-                <ul className="mt-1 list-disc space-y-1 pl-5 text-black">
+              <div className="rounded-xl border-b-4 border-[#915EFF] p-3">
+                <strong className="text-[#915EFF]">Development Prospects:</strong>
+                <ul className="mt-1 list-disc space-y-1 pl-5 text-black dark:text-[#F3F3F3]">
                   <li>Innovative technologies</li>
                   <li>Global job opportunities</li>
                   <li>Increasing investments in the sector</li>

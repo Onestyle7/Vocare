@@ -15,11 +15,10 @@ const GenerateRecommendationFail = () => {
 
   const [isLoggedIn, setIsLoggedIn] = useState(false);
 
-useEffect(() => {
-  const token = localStorage.getItem('token');
-  setIsLoggedIn(!!token);
-}, []);
-
+  useEffect(() => {
+    const token = localStorage.getItem('token');
+    setIsLoggedIn(!!token);
+  }, []);
 
   useEffect(() => {
     if (flippingURef.current) {
@@ -128,14 +127,13 @@ useEffect(() => {
             </div>
 
             <Link href={isLoggedIn ? '/profile' : '/sign-in'}>
-            <Button className="group flex h-[56px] rounded-full bg-[#915EFF] text-[clamp(1.3rem,1vw,12rem)] font-semibold max-md:mt-6 xl:w-[250px]">
-    <span className="flex flex-row items-center">
-      {isLoggedIn ? 'Profile' : 'Create an account'}
-      <ArrowRight className="ml-2 scale-125 transition-transform duration-300 group-hover:translate-x-2" />
-    </span>
-  </Button>
-</Link>
-
+              <Button className="group flex h-[56px] rounded-full bg-[#915EFF] text-[clamp(1.3rem,1vw,12rem)] font-semibold max-md:mt-6 xl:w-[250px]">
+                <span className="flex flex-row items-center">
+                  {isLoggedIn ? 'Profile' : 'Create an account'}
+                  <ArrowRight className="ml-2 scale-125 transition-transform duration-300 group-hover:translate-x-2" />
+                </span>
+              </Button>
+            </Link>
           </div>
         </div>
       </div>

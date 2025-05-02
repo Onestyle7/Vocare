@@ -4,7 +4,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { authFormSchema, AuthFormType } from '@/schemas/authSchema';
+import { authFormSchema, AuthFormType } from '@/lib/schemas/authSchema';
 import { registerUser, loginUser } from '@/lib/auth';
 import {
   Form,

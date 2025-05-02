@@ -2,7 +2,7 @@
 
 import { useEffect, useState, useRef } from 'react';
 import axios from 'axios';
-import { UserProfile } from '@/app/types/profile';
+import { UserProfile } from '@/lib/types/profile';
 import { toast } from 'sonner';
 import { AiCareerResponse } from '@/lib/recommendations';
 import GenerateRecommendation from './GenerateRecommendationFail';
@@ -22,7 +22,7 @@ import {
   AlertDialogFooter,
   AlertDialogHeader,
   AlertDialogTitle,
-} from "../ui/alert-dialog";
+} from '../ui/alert-dialog';
 import Image from 'next/image';
 import { star_generate } from '@/app/constants';
 
@@ -33,7 +33,7 @@ export default function AssistantPage() {
   const [error, setError] = useState<string | null>(null);
   const [isConfirmDialogOpen, setIsConfirmDialogOpen] = useState(false);
 
-  const [isCollapsed, setIsCollapsed] = useState(false);
+  const [isCollapsed, setIsCollapsed] = useState(true);
   const contentRef = useRef<HTMLDivElement>(null);
   const contentWrapperRef = useRef<HTMLDivElement>(null);
 
@@ -188,9 +188,7 @@ export default function AssistantPage() {
       setRecommendations(response.data);
       toast.success('Wygenerowano nowe rekomendacje');
     } catch (err: any) {
-      setError(
-        err.response?.data?.detail || 'Nie udało się wygenerować nowych rekomendacji.'
-      );
+      setError(err.response?.data?.detail || 'Nie udało się wygenerować nowych rekomendacji.');
       toast.error('Błąd', {
         description: 'Nie udało się wygenerować nowych rekomendacji.',
       });
@@ -209,7 +207,7 @@ export default function AssistantPage() {
 
   if (isLoading) {
     return (
-      <div className="mb-1 flex flex-col overflow-hidden rounded-[28px] h-screen items-center justify-center -mt-20 max-w-7xl mx-auto max-xl:mx-4">
+      <div className="mx-auto -mt-20 mb-1 flex h-screen max-w-7xl flex-col items-center justify-center overflow-hidden rounded-[28px] max-xl:mx-4">
         <GridBackgroundDemo />
         <TerminalDemo />
       </div>
@@ -279,11 +277,11 @@ export default function AssistantPage() {
       ))}
 
       {/* Button for generating new recommendations */}
-      <div className="mt-8 mx-20 flex justify-center">
+      <div className="mx-20 mt-8 flex justify-center">
         <CustomButton
           onClick={() => setIsConfirmDialogOpen(true)}
           disabled={isLoading}
-          className="px-6 py-2 cursor-pointer"
+          className="cursor-pointer px-6 py-2"
         >
           {isLoading ? 'Generating...' : 'Generate new recommendation'}
         </CustomButton>
@@ -291,15 +289,15 @@ export default function AssistantPage() {
 
       {/* Confirmation Dialog */}
       <AlertDialog open={isConfirmDialogOpen} onOpenChange={setIsConfirmDialogOpen}>
-        <AlertDialogContent className="max-w-md mx-auto font-poppins">
+        <AlertDialogContent className="font-poppins mx-auto max-w-md">
           <AlertDialogHeader>
-            <AlertDialogTitle className="text-xl font-bold text-center">
+            <AlertDialogTitle className="text-center text-xl font-bold">
               Generate new recommendation?
             </AlertDialogTitle>
             <AlertDialogDescription className="text-center">
-              This will take <b className='text-[#915EFF]'>50 credits</b> from Your account
+              This will take <b className="text-[#915EFF]">50 credits</b> from Your account
               <div className="mt-2 font-extralight">
-                Current balance: <span className='font-bold'>200</span>
+                Current balance: <span className="font-bold">200</span>
               </div>
             </AlertDialogDescription>
           </AlertDialogHeader>
@@ -307,10 +305,10 @@ export default function AssistantPage() {
             <AlertDialogCancel className="border-gray-200">Cancel</AlertDialogCancel>
             <AlertDialogAction
               onClick={handleGenerateNewRecommendations}
-              className="bg-[#915EFF] hover:bg-[#7b4ee0] text-white"
+              className="bg-[#915EFF] text-white hover:bg-[#7b4ee0]"
             >
               Generate
-              <Image src={star_generate} alt='star' width={16} height={16}/>
+              <Image src={star_generate} alt="star" width={16} height={16} />
             </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>

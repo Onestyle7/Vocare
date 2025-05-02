@@ -3,7 +3,7 @@
 import { createContext, useContext, useState, useEffect } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { profileSchema, ProfileFormType } from '@/schemas/profileSchema';
+import { profileSchema, ProfileFormType } from '@/lib/schemas/profileSchema';
 import { getUserProfile } from '@/lib/profile';
 import { useRouter } from 'next/navigation';
 

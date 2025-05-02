@@ -11,8 +11,8 @@ const Section = ({ className, id, crosses, crossesOffset, customPaddings, childr
     >
       {children}
 
-      <div className="bg-stroke-1 pointer-events-none absolute top-0 left-5 hidden h-screen w-[0.5px] bg-gray-300 lg:left-7.5 xl:block xl:left-10 dark:bg-gray-700" />
-      <div className="bg-stroke-1 pointer-events-none absolute top-0 right-5 hidden h-screen w-[0.5px] bg-gray-300 lg:right-7.5 xl:block xl:right-10 dark:bg-gray-700" />
+      <div className="bg-stroke-1 pointer-events-none absolute top-0 left-5 hidden h-screen w-[0.5px] bg-gray-300 lg:left-7.5 xl:left-10 xl:block dark:bg-gray-700" />
+      <div className="bg-stroke-1 pointer-events-none absolute top-0 right-5 hidden h-screen w-[0.5px] bg-gray-300 lg:right-7.5 xl:right-10 xl:block dark:bg-gray-700" />
 
       {crosses && (
         <>

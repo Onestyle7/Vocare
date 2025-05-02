@@ -198,11 +198,32 @@ export const countries = [
 // NavLinks
 
 export const NavLinks = [
-  { label: 'Home', url: '/' },
   { label: 'Profile', url: '/profile' },
   { label: 'Assistant', url: '/assistant' },
   { label: 'Market Analysis', url: '/market-analysis' },
+  { label: 'Pricing', url: '/pricing' },
+  { label: 'Resume', url: '/resume' },
 ];
+
+// Form
+
+export const user = '/svg/user.svg';
+
+export const shape2 = '/images/shape2.png';
+
+// Billing
+
+export const shape3 = '/images/shape3.png';
+
+export const shape4 = '/images/shape4.png';
+
+// Market analysis
+
+export const wallet = '/svg/wallet.svg';
+
+export const chart = '/svg/chart.svg';
+
+export const fire = '/svg/fire.svg';
 
 // Spiner
 
@@ -212,7 +233,7 @@ export const Spinner = '/svg/spinner.svg';
 
 export const plus = '/images/plus.png';
 
-// Loader 
+// Loader
 
 export const loader = '/svg/loader.svg';
 
@@ -220,14 +241,13 @@ export const loader = '/svg/loader.svg';
 
 export const shape1 = '/images/shape1.png';
 
-// Generate button 
+// Generate button
 
-export const star_generate = "/svg/star_generate.svg"
+export const star_generate = '/svg/star_generate.svg';
 
 // Logo
 
-export const logo = "/icons/vocare.png"
-
+export const logo = '/icons/vocare.png';
 
 // grid
 
@@ -286,3 +306,47 @@ export const down_links = [
 export const letterImg = '/images/as1.png';
 
 export const check = '/svg/check.svg';
+
+// PRICING
+
+export const pricingPlans = [
+  {
+    name: 'Starter',
+    price: 9,
+    tokens: '1,000',
+    description: 'Perfect for getting started with our platform.',
+    features: [
+      '1,000 tokens included',
+      'Basic access to AI models',
+      'Up to 5 requests per day',
+      'Standard response time',
+    ],
+  },
+  {
+    name: 'Growth',
+    price: 32,
+    tokens: '5,000',
+    description: 'The best choice for scaling your projects.',
+    features: [
+      '5,000 tokens included',
+      'Full access to all AI models',
+      'Unlimited daily requests',
+      'Priority response time',
+      'Export results in multiple formats',
+    ],
+    popular: true,
+  },
+  {
+    name: 'Unlimited',
+    price: 48,
+    tokens: 'Unlimited',
+    description: 'Unlimited tokens and premium experience for personal use.',
+    features: [
+      'Unlimited tokens for one user',
+      'Access to all advanced AI models',
+      'Dedicated premium support',
+      'Fastest response time',
+      'Personalized onboarding assistance',
+    ],
+  },
+];
