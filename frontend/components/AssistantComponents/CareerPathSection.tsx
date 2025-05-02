@@ -25,7 +25,7 @@ interface CareerPathSectionProps {
 }
 
 export default function CareerPathSection({ path, index }: CareerPathSectionProps) {
-  const [isCollapsed, setIsCollapsed] = useState(false);
+  const [isCollapsed, setIsCollapsed] = useState(true);
   const contentRef = useRef<HTMLDivElement>(null);
   const contentWrapperRef = useRef<HTMLDivElement>(null);
 

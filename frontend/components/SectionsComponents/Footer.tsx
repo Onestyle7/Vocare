@@ -78,7 +78,7 @@ const Footer = () => {
             </div>
           </div>
         </div>
-        <div className="flex h-1/2 w-full flex-col items-center justify-center border-t xl:flex-row">
+        <div className="flex h-1/2 w-full flex-col items-center justify-center border-t xl:flex-row max-lg:mt-4">
           <div className="mx-10 flex w-full items-center justify-center space-x-8 max-xl:flex-col xl:justify-between">
             <div className="flex space-x-4 text-sm text-gray-400/90">
               {down_links.map((link, index) => (
@@ -91,7 +91,7 @@ const Footer = () => {
                 </Link>
               ))}
             </div>
-            <div className="daek:text-[#F3F3F3] text-6xl font-semibold max-xl:mt-4 xl:text-[80px]">
+            <div className="dark:text-[#F3F3F3] text-4xl sm:text-6xl font-semibold max-xl:mt-4 xl:text-[80px]">
               Find Your Path
             </div>
           </div>
