@@ -25,6 +25,7 @@ import {
 } from '../ui/alert-dialog';
 import Image from 'next/image';
 import { star_generate } from '@/app/constants';
+import { useTokenBalanceContext } from '@/lib/contexts/TokenBalanceContext';
 
 export default function AssistantPage() {
   const [profile, setProfile] = useState<UserProfile | null>(null);
@@ -32,6 +33,7 @@ export default function AssistantPage() {
   const [isLoading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [isConfirmDialogOpen, setIsConfirmDialogOpen] = useState(false);
+  const { tokenBalance, isLoading: isBalanceLoading, refresh } = useTokenBalanceContext();
 
   const [isCollapsed, setIsCollapsed] = useState(true);
   const contentRef = useRef<HTMLDivElement>(null);
@@ -297,14 +299,18 @@ export default function AssistantPage() {
             <AlertDialogDescription className="text-center">
               This will take <b className="text-[#915EFF]">50 credits</b> from Your account
               <div className="mt-2 font-extralight">
-                Current balance: <span className="font-bold">200</span>
+                Current balance:{' '}
+                <span className="font-bold">{isBalanceLoading ? '...' : tokenBalance}</span>
               </div>
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter className="flex justify-center gap-4 sm:justify-center">
             <AlertDialogCancel className="border-gray-200">Cancel</AlertDialogCancel>
             <AlertDialogAction
-              onClick={handleGenerateNewRecommendations}
+              onClick={async () => {
+                await handleGenerateNewRecommendations();
+                refresh();
+              }}
               className="bg-[#915EFF] text-white hover:bg-[#7b4ee0]"
             >
               Generate

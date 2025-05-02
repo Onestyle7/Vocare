@@ -1,39 +1,166 @@
 'use client';
 
 import { useEffect, useState, useRef } from 'react';
-import { MarketAnalysisResponseDto } from '@/lib/types/marketAnalysis';
-import { fetchMarketAnalysis } from '@/lib/recommendations';
+import axios from 'axios';
 import { gsap } from 'gsap';
 import CollapsibleButton from '../AssistantComponents/CollapsibleButton';
 import { TerminalDemo } from './LoadingTerminal';
 import { GridBackgroundDemo } from './GridBackgroundDemo';
 import GenerateRecommendationFail from '../AssistantComponents/GenerateRecommendationFail';
 import Image from 'next/image';
-import { chart, fire, shape3, wallet } from '@/app/constants';
+import { chart, fire, wallet, star_generate } from '@/app/constants';
+import { toast } from 'sonner';
+import CustomButton from '../ui/CustomButton';
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from '../ui/alert-dialog';
+import { useTokenBalanceContext } from '@/lib/contexts/TokenBalanceContext';
 
 export default function MarketAnalysis() {
-  const [data, setData] = useState<MarketAnalysisResponseDto | null>(null);
+  const [data, setData] = useState<any>(null); // Using any temporarily to help debug
   const [error, setError] = useState<string | null>(null);
   const [isLoading, setLoading] = useState(true);
+  const [dataStructure, setDataStructure] = useState<string>('Unknown');
+  const [isConfirmDialogOpen, setIsConfirmDialogOpen] = useState(false);
+  const { tokenBalance, isLoading: isBalanceLoading, refresh } = useTokenBalanceContext();
+
+  const loadData = async (useNewData = false) => {
+    setLoading(true);
+    const token = localStorage.getItem('token');
+    if (!token) {
+      toast.error('Authentication required', {
+        description: 'Please sign in to continue.',
+      });
+      setLoading(false);
+      return;
+    }
+
+    try {
+      // First try to fetch the latest market analysis (unless we're explicitly requesting new data)
+      if (!useNewData) {
+        try {
+          const latestResponse = await axios.get(
+            'https://localhost:5001/api/MarketAnalysis/latest',
+            {
+              headers: {
+                Authorization: `Bearer ${token}`,
+                'Content-Type': 'application/json',
+              },
+            }
+          );
+
+          console.log('Latest market analysis raw data:', latestResponse.data);
+          console.log('Response data type:', typeof latestResponse.data);
+          console.log('Response data structure:', Object.keys(latestResponse.data));
+
+          // Analyze the data structure and set appropriate format
+          const responseData = latestResponse.data;
+
+          // Case 1: Direct API response is the MarketAnalysisResponseDto
+          if (responseData && responseData.marketAnalysis) {
+            console.log('Case 1: Data already has marketAnalysis property');
+            setData(responseData);
+            setDataStructure('With marketAnalysis property');
+          }
+          // Case 2: API response is directly the marketAnalysis object
+          else if (responseData && responseData.industryStatistics) {
+            console.log('Case 2: Data is the marketAnalysis object itself');
+            setData({ marketAnalysis: responseData });
+            setDataStructure('Direct marketAnalysis object');
+          }
+          // Case 3: API response has a different structure
+          else {
+            console.log('Case 3: Unknown data structure, logging full response');
+            console.log(JSON.stringify(responseData, null, 2));
+
+            // Just store the raw data for now
+            setData(responseData);
+            setDataStructure('Unknown structure');
+          }
+
+          setLoading(false);
+          return;
+        } catch (latestError: any) {
+          // If 404 error (no latest analysis found), proceed to generate a new one
+          if (latestError.response?.status !== 404) {
+            console.error('Error fetching latest market analysis:', latestError);
+            setError(
+              latestError.response?.data?.detail || 'Error fetching latest market analysis.'
+            );
+            setLoading(false);
+            return;
+          }
+        }
+      }
+
+      // If no latest analysis, fetch a new one using the fallback endpoint
+      const response = await axios.get('https://localhost:5001/api/MarketAnalysis', {
+        headers: {
+          Authorization: `Bearer ${token}`,
+          'Content-Type': 'application/json',
+        },
+      });
+
+      console.log('New market analysis raw data:', response.data);
+      console.log('Fallback response data type:', typeof response.data);
+      console.log('Fallback response structure:', Object.keys(response.data));
+
+      // Analyze the data structure from fallback endpoint
+      const responseData = response.data;
+
+      // Case 1: Direct API response is the MarketAnalysisResponseDto
+      if (responseData && responseData.marketAnalysis) {
+        console.log('Fallback Case 1: Data already has marketAnalysis property');
+        setData(responseData);
+        setDataStructure('With marketAnalysis property (fallback)');
+      }
+      // Case 2: API response is directly the marketAnalysis object
+      else if (responseData && responseData.industryStatistics) {
+        console.log('Fallback Case 2: Data is the marketAnalysis object itself');
+        setData({ marketAnalysis: responseData });
+        setDataStructure('Direct marketAnalysis object (fallback)');
+      }
+      // Case 3: API response has a different structure
+      else {
+        console.log('Fallback Case 3: Unknown data structure, logging full response');
+        console.log(JSON.stringify(responseData, null, 2));
+
+        // Just store the raw data for now
+        setData(responseData);
+        setDataStructure('Unknown structure (fallback)');
+      }
+
+      if (useNewData) {
+        toast.success('Generated new market analysis');
+      }
+    } catch (err: any) {
+      console.error('Error fetching market analysis:', err);
+      setError(err.response?.data?.detail || 'Error generating market analysis');
+
+      if (useNewData) {
+        toast.error('Error', {
+          description: 'Failed to generate new market analysis.',
+        });
+      }
+    } finally {
+      setLoading(false);
+    }
+  };
 
   useEffect(() => {
-    const loadData = async () => {
-      setLoading(true);
-      try {
-        const result = await fetchMarketAnalysis();
-        setData(result);
-      } catch (err: any) {
-        setError(err.message);
-      } finally {
-        setLoading(false);
-      }
-    };
     loadData();
   }, []);
 
-  // useEffect(() => {
-  //   setLoading(true);
-  // }, []);
+  const handleGenerateNewAnalysis = async () => {
+    await loadData(true);
+  };
 
   if (error) {
     return <GenerateRecommendationFail />;
@@ -43,29 +170,47 @@ export default function MarketAnalysis() {
     return (
       <div className="mx-auto -mt-20 mb-1 flex h-screen max-w-7xl flex-col items-center justify-center overflow-hidden rounded-[28px] max-xl:mx-4">
         <GridBackgroundDemo />
-        {/* <ScrollParallax isAbsolutelyPositioned zIndex={20}>
-        <div className="absolute top-1/2 left-1/4 z-20">
-          <Image src={shape1} alt="shape" width={78} height={78} className="-rotate-20" />
-        </div>
-        </ScrollParallax> */}
         <TerminalDemo />
       </div>
     );
   }
 
+  // For debugging - log the current data structure
+  console.log('Rendering with data structure:', data);
+
+  const getMarketAnalysis = () => {
+    if (!data) return null;
+    // If data is already in the right format, use it directly
+    if (data.marketAnalysis?.industryStatistics) return data.marketAnalysis;
+    // If data itself is the marketAnalysis object
+    if (data.industryStatistics) return data;
+    return null;
+  };
+
+  const marketAnalysis = getMarketAnalysis();
+
   return (
-    <div className="font-poppins mx-auto mt-8 max-w-7xl">
+    <div className="font-poppins mx-auto mt-8 mb-4 max-w-7xl">
       <h2 className="mb-4 ml-4 text-2xl font-bold text-[#915EFF]">Job Market Analysis</h2>
 
-      {data?.marketAnalysis.industryStatistics.map((stat, index) => (
+      {/* Debug info - remove in production
+      <div className="mb-4 ml-4 rounded border border-gray-300 bg-gray-50 p-2 text-xs dark:bg-gray-800">
+        <p><strong>Data Structure:</strong> {dataStructure}</p>
+        <p><strong>Has Data Object:</strong> {data ? 'Yes' : 'No'}</p>
+        <p><strong>Data Keys:</strong> {data ? Object.keys(data).join(', ') : 'None'}</p>
+        <p><strong>Market Analysis Keys:</strong> {getMarketAnalysis() ? Object.keys(getMarketAnalysis()).join(', ') : 'None'}</p>
+        <p><strong>Has Industry Statistics:</strong> {getMarketAnalysis()?.industryStatistics ? 'Yes' : 'No'}</p>
+      </div> */}
+
+      {marketAnalysis?.industryStatistics?.map((stat, index) => (
         <IndustrySection key={index} data={stat} index={index} />
       ))}
 
-      {data?.marketAnalysis.marketTrends && data.marketAnalysis.marketTrends.length > 0 && (
+      {marketAnalysis?.marketTrends && marketAnalysis.marketTrends.length > 0 && (
         <div className="mt-8 rounded-[28px] border p-6 shadow-sm">
           <h3 className="mb-4 text-xl font-semibold">Current Market Trends</h3>
           <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
-            {data.marketAnalysis.marketTrends.map((trend, index) => (
+            {marketAnalysis.marketTrends.map((trend, index) => (
               <div key={index} className="rounded-lg border p-4 shadow-sm">
                 <h4 className="mb-2 font-medium text-[#915EFF]">{trend.trendName}</h4>
                 <p className="mb-2 text-gray-700">{trend.description}</p>
@@ -79,11 +224,11 @@ export default function MarketAnalysis() {
         </div>
       )}
 
-      {data?.marketAnalysis.skillDemand && data.marketAnalysis.skillDemand.length > 0 && (
+      {marketAnalysis?.skillDemand && marketAnalysis.skillDemand.length > 0 && (
         <div className="mt-8 rounded-[28px] border p-6 shadow-sm">
           <h3 className="mb-4 text-xl font-semibold">In-Demand Skills</h3>
           <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
-            {data.marketAnalysis.skillDemand.map((skill, index) => (
+            {marketAnalysis.skillDemand.map((skill, index) => (
               <div key={index} className="rounded-lg border p-4 shadow-sm">
                 <h4 className="mb-1 font-medium">{skill.skill}</h4>
                 <p className="text-sm text-gray-500">{skill.industry}</p>
@@ -106,6 +251,48 @@ export default function MarketAnalysis() {
           </div>
         </div>
       )}
+
+      {/* Button for generating new market analysis */}
+      <div className="mx-20 mt-8 flex justify-center">
+        <CustomButton
+          onClick={() => setIsConfirmDialogOpen(true)}
+          disabled={isLoading}
+          className="cursor-pointer px-6 py-2"
+        >
+          {isLoading ? 'Generating...' : 'Generate new market analysis'}
+        </CustomButton>
+      </div>
+
+      {/* Confirmation Dialog */}
+      <AlertDialog open={isConfirmDialogOpen} onOpenChange={setIsConfirmDialogOpen}>
+        <AlertDialogContent className="font-poppins mx-auto max-w-md">
+          <AlertDialogHeader>
+            <AlertDialogTitle className="text-center text-xl font-bold">
+              Generate new market analysis?
+            </AlertDialogTitle>
+            <AlertDialogDescription className="text-center">
+              This will take <b className="text-[#915EFF]">30 credits</b> from Your account
+              <div className="mt-2 font-extralight">
+                Current balance:{' '}
+                <span className="font-bold">{isBalanceLoading ? '...' : tokenBalance}</span>
+              </div>
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter className="flex justify-center gap-4 sm:justify-center">
+            <AlertDialogCancel className="border-gray-200">Cancel</AlertDialogCancel>
+            <AlertDialogAction
+              onClick={async () => {
+                await handleGenerateNewAnalysis();
+                refresh();
+              }}
+              className="bg-[#915EFF] text-white hover:bg-[#7b4ee0]"
+            >
+              Generate
+              <Image src={star_generate} alt="star" width={16} height={16} />
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
   );
 }
@@ -121,7 +308,7 @@ interface IndustryProps {
 }
 
 function IndustrySection({ data, index }: IndustryProps) {
-  const [isCollapsed, setIsCollapsed] = useState(false);
+  const [isCollapsed, setIsCollapsed] = useState(true);
   const contentRef = useRef<HTMLDivElement>(null);
   const contentWrapperRef = useRef<HTMLDivElement>(null);
   const imageRef = useRef<HTMLImageElement | null>(null);
@@ -359,7 +546,7 @@ function IndustrySection({ data, index }: IndustryProps) {
             className="relative overflow-hidden rounded-lg border border-dashed border-gray-700/20 bg-gray-50 p-3 dark:border-gray-700 dark:bg-[#101014]/40"
             ref={chartBoxRef}
           >
-            <p className="text-sm text-gray-500">Average Salary</p>
+            <p className="text-sm text-gray-500">Employment Rate</p>
             <p className="text-lg font-medium text-black dark:text-white">{data.employmentRate}</p>
             <Image
               src={chart}
