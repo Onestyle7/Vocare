@@ -224,21 +224,22 @@ namespace VocareWebAPI.CvGenerator.Services.Implementations
         private string BuildPrompt(UserProfile profile, string? position)
         {
             return $$"""
-                Jesteś ekspertem w pisaniu profesjonalnych CV. Twoim zadaniem jest wygenerowanie CV w formacie JSON na podstawie danych użytkownika:
+                    Jesteś ekspertem w pisaniu profesjonalnych CV. Twoim zadaniem jest wygenerowanie CV w formacie JSON na podstawie danych użytkownika. **Nie dodawaj żadnych fikcyjnych informacji, takich jak nowe doświadczenie zawodowe, certyfikaty czy umiejętności, jeśli nie są one wyraźnie podane w danych użytkownika.** CV ma być zgodne z danymi użytkownika i dostosowane do podanego stanowiska, ale w sposób realistyczny, bez wyolbrzymiania kompetencji.
 
-                Imię: {{profile.FirstName}}
-                Nazwisko: {{profile.LastName}}
-                Telefon: {{profile.PhoneNumber ?? "Brak"}}
-                Email: {{profile.User?.Email ?? "Brak"}}
-                O mnie: {{profile.AboutMe ?? "Brak"}}
-                Lokalizacja: {{profile.Address ?? "Brak"}}, {{profile.Country}}
-                Doświadczenie zawodowe:
+                    ### Dane użytkownika:
+                    Imię: {{profile.FirstName}}
+                    Nazwisko: {{profile.LastName}}
+                    Telefon: {{profile.PhoneNumber ?? "Brak"}}
+                    Email: {{profile.User?.Email ?? "Brak"}}
+                    O mnie: {{profile.AboutMe ?? "Brak"}}
+                    Lokalizacja: {{profile.Address ?? "Brak"}}, {{profile.Country}}
+                    Doświadczenie zawodowe:
                 {{(
                     profile.WorkExperience != null
                         ? string.Join(
                             "\n",
                             profile.WorkExperience.Select(w =>
-                                $"- {w.Position} w {w.Company}, od {w.StartDate:yyyy-MM-dd} do {(w.EndDate.HasValue ? w.EndDate.Value.ToString("yyyy-MM-dd") : "Obecnie")}"
+                                $"- {w.Position} w {w.Company}, od {w.StartDate:yyyy-MM-dd} do {(w.EndDate.HasValue ? w.EndDate.Value.ToString("yyyy-MM-dd") : "Obecnie")}\n  Obowiązki: {string.Join("; ", w.Responsibilities ?? new List<string>())}"
                             )
                         )
                         : "Brak"
@@ -260,7 +261,7 @@ namespace VocareWebAPI.CvGenerator.Services.Implementations
                         ? string.Join(
                             "\n",
                             profile.Certificates.Select(c =>
-                                $"- {c.Name}, {c.Date?.ToString("yyyy-MM-dd") ?? "Brak daty"}"
+                                $"- {c.Name}, wydany przez {c.Issuer ?? "Brak wydawcy"}, data: {c.Date?.ToString("yyyy-MM-dd") ?? "Brak daty"}"
                             )
                         )
                         : "Brak"
@@ -277,37 +278,44 @@ namespace VocareWebAPI.CvGenerator.Services.Implementations
                         )
                         : "Brak"
                 )}}
+                Dodatkowe informacje: {{profile.AdditionalInformation ?? "Brak"}}
 
-                {{(
-                    position != null
-                        ? $"Wygeneruj CV dla stanowiska: {position}."
-                        : "Wygeneruj ogólne CV."
-                )}}
+                ### Instrukcje:
+                1. Wygeneruj CV dla stanowiska: {{position ?? "ogólnego"}}.
+                2. **Używaj wyłącznie danych podanych powyżej.** Nie twórz nowych doświadczeń zawodowych, certyfikatów, umiejętności ani innych informacji, jeśli nie są one wyraźnie wymienione.
+                3. W sekcji `summary` stwórz zwięzłe podsumowanie (2-3 zdania), które realistycznie odzwierciedla doświadczenie i umiejętności użytkownika, dostosowane do stanowiska {{position ?? "ogólnego"}}. Podkreśl mocne strony użytkownika, ale nie przypisuj mu kompetencji, których nie posiada.
+                4. W sekcji `work` uwzględnij wszystkie podane doświadczenia zawodowe z dokładnymi datami (format: YYYY-MM) i obowiązkami. Nie zmieniaj nazw stanowisk ani firm.
+                5. W sekcji `education` podaj dokładne informacje o wykształceniu, w tym daty i kierunek studiów.
+                6. W sekcji `certificates` uwzględnij tylko podane certyfikaty z dokładnymi nazwami, datami i wydawcami.
+                7. W sekcji `skills` wymień tylko umiejętności podane w danych użytkownika. Nie dodawaj nowych umiejętności, nawet jeśli wydają się odpowiednie dla stanowiska.
+                8. W sekcji `languages` podaj języki i ich poziomy dokładnie tak, jak w danych użytkownika.
+                9. Dostosuj CV do lokalizacji użytkownika ({{profile.Country}}). Używaj polskiego języka w opisach, jeśli użytkownik jest z Polski.
+                10. Zwróć odpowiedź w **czystym formacie JSON**, bez żadnych komentarzy, zgodnym z poniższą strukturą:
 
-                Zwróć odpowiedź w formacie JSON zgodnym z następującą strukturą:
+                ```json
                 {
-                  "basics": {
+                "basics": {
                     "firstName": "",
                     "lastName": "",
                     "phoneNumber": "",
                     "email": "",
                     "summary": "",
                     "location": { "city": "", "country": "" }
-                  },
-                  "work": [
+                },
+                "work": [
                     { "company": "", "position": "", "startDate": "", "endDate": "", "description": "" }
-                  ],
-                  "education": [
+                ],
+                "education": [
                     { "institution": "", "degree": "", "field": "", "startDate": "", "endDate": "" }
-                  ],
-                  "certificates": [
+                ],
+                "certificates": [
                     { "name": "", "date": "" }
-                  ],
-                  "skills": [""],
-                  "languages": [
+                ],
+                "skills": [""],
+                "languages": [
                     { "language": "", "fluency": "" }
-                  ]
-                }
+                ]
+        
 
                 Ważne:
                 1. Wygeneruj dokładnie taki format JSON, wypełniając wszystkie pola sensownymi wartościami na podstawie danych użytkownika.
