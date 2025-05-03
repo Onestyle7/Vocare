@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:country_code_picker/country_code_picker.dart';
-import 'package:vocare/screens/aI_asistent_screen.dart';
-import 'package:vocare/services/profile_api.dart';
 import 'package:vocare/widgets/custom_button.dart';
 import 'package:vocare/widgets/custom_input.dart';
+import 'package:vocare/services/profile_api.dart';
+import 'package:vocare/screens/aI_asistent_screen.dart';
 import 'package:vocare/widgets/nav_bar_button.dart';
 import 'package:vocare/widgets/theme_toggle_button.dart';
 
@@ -15,6 +15,10 @@ class FillProfileScreen extends StatefulWidget {
 }
 
 class _FillProfileScreenState extends State<FillProfileScreen> {
+  final PageController _pageController = PageController();
+  int _currentPage = 0;
+  bool _isLoading = false;
+
   final _nameController = TextEditingController();
   final _surnameController = TextEditingController();
   final _addressController = TextEditingController();
@@ -28,7 +32,6 @@ class _FillProfileScreenState extends State<FillProfileScreen> {
 
   String selectedCountry = '';
   String? _selectEducation;
-  int _currentStep = 0;
 
   final List<String> educationList = [
     'Wykształcenie podstawowe',
@@ -42,36 +45,31 @@ class _FillProfileScreenState extends State<FillProfileScreen> {
     'W trakcie studiów',
   ];
 
-  @override
-  void initState() {
-    super.initState();
-    loadUserProfile();
+  void _nextPage() {
+    if (_currentPage < 2) {
+      setState(() => _currentPage++);
+      _pageController.animateToPage(
+        _currentPage,
+        duration: const Duration(milliseconds: 300),
+        curve: Curves.ease,
+      );
+    }
   }
 
-  Future<void> loadUserProfile() async {
-    final data = await ProfileApi.getUserProfile();
-    if (data != null) {
-      setState(() {
-        _nameController.text = data['firstName'] ?? '';
-        _surnameController.text = data['lastName'] ?? '';
-        selectedCountry = data['country'] ?? '';
-        _addressController.text = data['address'] ?? '';
-        _phoneController.text = data['phoneNumber'] ?? '';
-        _selectEducation = data['education'] ?? '';
-        _workExperienceController.text = (data['workExperience'] as List).join(
-          ', ',
-        );
-        _skillController.text = (data['skills'] as List).join(', ');
-        _certicateController.text = (data['certificates'] as List).join(', ');
-        _languagesController.text = (data['languages'] as List).join(', ');
-        _additionallInformationController.text =
-            data['additionalInformation'] ?? '';
-        _aboutMeController.text = data['aboutMe'] ?? '';
-      });
+  void _prevPage() {
+    if (_currentPage > 0) {
+      setState(() => _currentPage--);
+      _pageController.animateToPage(
+        _currentPage,
+        duration: const Duration(milliseconds: 300),
+        curve: Curves.ease,
+      );
     }
   }
 
   void _saveProfile() async {
+    setState(() => _isLoading = true);
+
     final profileData = {
       "firstName": _nameController.text,
       "lastName": _surnameController.text,
@@ -95,6 +93,8 @@ class _FillProfileScreenState extends State<FillProfileScreen> {
 
     final success = await ProfileApi.createUserProfile(profileData);
 
+    setState(() => _isLoading = false);
+
     if (success) {
       Navigator.pushReplacement(
         context,
@@ -110,141 +110,46 @@ class _FillProfileScreenState extends State<FillProfileScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Stepper(
-        currentStep: _currentStep,
-        type: StepperType.vertical,
-        onStepContinue: () {
-          if (_currentStep < 3) {
-            setState(() => _currentStep += 1);
-          } else {
-            _saveProfile();
-          }
-        },
-        onStepCancel: () {
-          if (_currentStep > 0) {
-            setState(() => _currentStep -= 1);
-          }
-        },
-        steps: [
-          Step(
-            title: const Text("Personal data"),
-            content: Column(
-              children: [
-                CountryCodePicker(
-                  onChanged: (country) {
-                    setState(() {
-                      selectedCountry = country.name ?? '';
-                    });
-                  },
-                  initialSelection: 'PL',
-                  showCountryOnly: true,
-                  showOnlyCountryWhenClosed: true,
-                ),
-                CustomInput(
-                  label: "Name",
-                  hintText: "Type your Name",
-                  controller: _nameController,
-                  prefixIcon: Icon(Icons.person_3),
-                ),
-                CustomInput(
-                  label: "Last name",
-                  hintText: "Type your Last name",
-                  controller: _surnameController,
-                  prefixIcon: Icon(Icons.person_4),
-                ),
-                CustomInput(
-                  label: "Adress",
-                  hintText: "Type your address",
-                  controller: _addressController,
-                  prefixIcon: Icon(Icons.home_max),
-                ),
-                CustomInput(
-                  label: "Phone number",
-                  hintText: "Type yopur Phone number",
-                  controller: _phoneController,
-                  prefixIcon: Icon(Icons.phone),
-                ),
-              ],
+      appBar: AppBar(title: const Text('Uzupełnij profil')),
+      body: SafeArea(
+        child: Column(
+          children: [
+            LinearProgressIndicator(
+              value: (_currentPage + 1) / 3,
+              minHeight: 6,
             ),
-            isActive: _currentStep >= 0,
-          ),
-          Step(
-            title: const Text("Education and experience"),
-            content: Column(
-              children: [
-                DropdownButtonFormField<String>(
-                  value: _selectEducation,
-                  decoration: _inputDecoration("Wykształcenie"),
-                  items:
-                      educationList
-                          .map(
-                            (e) => DropdownMenuItem(value: e, child: Text(e)),
-                          )
-                          .toList(),
-                  onChanged: (value) {
-                    setState(() {
-                      _selectEducation = value;
-                    });
-                  },
-                ),
-
-                CustomInput(
-                  label: "certificate",
-                  hintText: "Type your certificate",
-                  controller: _certicateController,
-                  prefixIcon: Icon(Icons.ac_unit),
-                ),
-                CustomInput(
-                  label: "Skill",
-                  hintText: "Type your skill",
-                  controller: _skillController,
-                  prefixIcon: Icon(Icons.screen_lock_landscape_outlined),
-                ),
-                CustomInput(
-                  label: "Experience",
-                  hintText: "Type your work experience",
-                  controller: _workExperienceController,
-                  prefixIcon: Icon(Icons.person_2),
-                ),
-              ],
+            Expanded(
+              child: PageView(
+                controller: _pageController,
+                physics: const NeverScrollableScrollPhysics(),
+                children: [
+                  _buildPersonalDataPage(),
+                  _buildEducationPage(),
+                  _buildAdditionalInfoPage(),
+                ],
+              ),
             ),
-            isActive: _currentStep >= 1,
-          ),
-          Step(
-            title: const Text("Additional information"),
-            content: Column(
-              children: [
-                CustomInput(
-                  label: "Languages",
-                  hintText: "Type languages",
-                  controller: _languagesController,
-                  prefixIcon: Icon(Icons.language),
-                ),
-                CustomInput(
-                  label: "About Me",
-                  hintText: "Type information about you",
-                  controller: _aboutMeController,
-                  prefixIcon: Icon(Icons.person_2),
-                ),
-                CustomInput(
-                  label: "additional information",
-                  hintText: "Type additional information",
-                  controller: _additionallInformationController,
-                  prefixIcon: Icon(Icons.info),
-                ),
-              ],
+            Padding(
+              padding: const EdgeInsets.all(16),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  if (_currentPage > 0)
+                    CustomButton(text: 'Wstecz', onPressed: _prevPage),
+                  if (_currentPage < 2)
+                    CustomButton(text: 'Dalej', onPressed: _nextPage),
+                  if (_currentPage == 2)
+                    _isLoading
+                        ? const CircularProgressIndicator()
+                        : CustomButton(
+                          text: 'Zapisz dane',
+                          onPressed: _saveProfile,
+                        ),
+                ],
+              ),
             ),
-            isActive: _currentStep >= 2,
-          ),
-          Step(
-            title: const Text("Save the data"),
-            content: CustomButton(
-              text: "Save the data",
-              onPressed: _saveProfile,
-            ),
-            isActive: _currentStep >= 3,
-          ),
-        ],
+          ],
+        ),
       ),
       bottomNavigationBar: Container(
         height: 60,
@@ -278,13 +183,105 @@ class _FillProfileScreenState extends State<FillProfileScreen> {
     );
   }
 
-  Widget _buildMultilineField(String label, TextEditingController controller) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 8),
-      child: TextFormField(
-        controller: controller,
-        maxLines: 4,
-        decoration: _inputDecoration(label),
+  Widget _buildPersonalDataPage() {
+    return SingleChildScrollView(
+      padding: const EdgeInsets.all(16),
+      child: Column(
+        children: [
+          CountryCodePicker(
+            onChanged: (country) {
+              setState(() {
+                selectedCountry = country.name ?? '';
+              });
+            },
+            initialSelection: 'PL',
+            showCountryOnly: true,
+            showOnlyCountryWhenClosed: true,
+          ),
+          CustomInput(
+            label: "Name",
+            hintText: "Type your name",
+            controller: _nameController,
+          ),
+          CustomInput(
+            label: "Last name",
+            hintText: "Type your last name",
+            controller: _surnameController,
+          ),
+          CustomInput(
+            label: "Address",
+            hintText: "Type your address",
+            controller: _addressController,
+          ),
+          CustomInput(
+            label: "Phone number",
+            hintText: "Type your phone number",
+            controller: _phoneController,
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildEducationPage() {
+    return SingleChildScrollView(
+      padding: const EdgeInsets.all(16),
+      child: Column(
+        children: [
+          DropdownButtonFormField<String>(
+            value: _selectEducation,
+            decoration: _inputDecoration("Wykształcenie"),
+            items:
+                educationList
+                    .map((e) => DropdownMenuItem(value: e, child: Text(e)))
+                    .toList(),
+            onChanged: (value) {
+              setState(() {
+                _selectEducation = value;
+              });
+            },
+          ),
+          CustomInput(
+            label: "Work experience",
+            hintText: "Work experience",
+            controller: _workExperienceController,
+          ),
+          CustomInput(
+            label: "Skills",
+            hintText: "Your skills",
+            controller: _skillController,
+          ),
+          CustomInput(
+            label: "Certificates",
+            hintText: "Certificates",
+            controller: _certicateController,
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildAdditionalInfoPage() {
+    return SingleChildScrollView(
+      padding: const EdgeInsets.all(16),
+      child: Column(
+        children: [
+          CustomInput(
+            label: "Languages",
+            hintText: "Languages",
+            controller: _languagesController,
+          ),
+          CustomInput(
+            label: "About Me",
+            hintText: "About Me",
+            controller: _aboutMeController,
+          ),
+          CustomInput(
+            label: "Additional Information",
+            hintText: "Additional Information",
+            controller: _additionallInformationController,
+          ),
+        ],
       ),
     );
   }
