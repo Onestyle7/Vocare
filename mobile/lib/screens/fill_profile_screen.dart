@@ -7,6 +7,29 @@ import 'package:vocare/screens/aI_asistent_screen.dart';
 import 'package:vocare/widgets/nav_bar_button.dart';
 import 'package:vocare/widgets/theme_toggle_button.dart';
 
+enum PersonalityType {
+  mediator('Mediator'),
+  advocate('Advocate'),
+  logician('Logician'),
+  architect('Architect'),
+  campaigner('Campaigner'),
+  protagonist('Protagonist'),
+  debater('Debater'),
+  commander('Commander'),
+  adventurer('Adventurer'),
+  defender('Defender'),
+  virtuoso('Virtuoso'),
+  logistician('Logistician'),
+  entertainer('Entertainer'),
+  consul('Consul'),
+  entrepreneur('Entrepreneur'),
+  executive('Executive'),
+  unknown('Unknown');
+
+  final String label;
+  const PersonalityType(this.label);
+}
+
 class FillProfileScreen extends StatefulWidget {
   const FillProfileScreen({super.key});
 
@@ -32,6 +55,7 @@ class _FillProfileScreenState extends State<FillProfileScreen> {
 
   String selectedCountry = '';
   String? _selectEducation;
+  PersonalityType? _selectedPersonalityType;
 
   final List<String> educationList = [
     'Wykształcenie podstawowe',
@@ -44,6 +68,43 @@ class _FillProfileScreenState extends State<FillProfileScreen> {
     'Brak wykształcenia',
     'W trakcie studiów',
   ];
+
+  @override
+  void initState() {
+    super.initState();
+    loadUserProfile();
+  }
+
+  Future<void> loadUserProfile() async {
+    final data = await ProfileApi.getUserProfile();
+    if (data != null) {
+      setState(() {
+        _nameController.text = data['firstName'] ?? '';
+        _surnameController.text = data['lastName'] ?? '';
+        selectedCountry = data['country'] ?? '';
+        _addressController.text = data['address'] ?? '';
+        _phoneController.text = data['phoneNumber'] ?? '';
+        _selectEducation = data['education'] ?? '';
+        _workExperienceController.text =
+            (data['workExperience'] as List?)?.join(', ') ?? '';
+        _skillController.text = (data['skills'] as List?)?.join(', ') ?? '';
+        _certicateController.text =
+            (data['certificates'] as List?)?.join(', ') ?? '';
+        _languagesController.text =
+            (data['languages'] as List?)?.join(', ') ?? '';
+        _aboutMeController.text = data['aboutMe'] ?? '';
+        _additionallInformationController.text =
+            data['additionalInformation'] ?? '';
+
+        final personalityString =
+            data['personalityType']?.toString()?.toLowerCase();
+        _selectedPersonalityType = PersonalityType.values.firstWhere(
+          (e) => e.name == personalityString,
+          orElse: () => PersonalityType.unknown,
+        );
+      });
+    }
+  }
 
   void _nextPage() {
     if (_currentPage < 2) {
@@ -77,6 +138,7 @@ class _FillProfileScreenState extends State<FillProfileScreen> {
       "address": _addressController.text,
       "phoneNumber": _phoneController.text,
       "education": _selectEducation,
+      "personalityType": _selectedPersonalityType?.name, // np. "logician"
       "workExperience":
           _workExperienceController.text
               .split(',')
@@ -235,10 +297,22 @@ class _FillProfileScreenState extends State<FillProfileScreen> {
                 educationList
                     .map((e) => DropdownMenuItem(value: e, child: Text(e)))
                     .toList(),
+            onChanged: (value) => setState(() => _selectEducation = value),
+          ),
+          DropdownButtonFormField<PersonalityType>(
+            value: _selectedPersonalityType,
+            decoration: _inputDecoration("Typ osobowości"),
+            items:
+                PersonalityType.values
+                    .map(
+                      (type) => DropdownMenuItem(
+                        value: type,
+                        child: Text(type.label),
+                      ),
+                    )
+                    .toList(),
             onChanged: (value) {
-              setState(() {
-                _selectEducation = value;
-              });
+              setState(() => _selectedPersonalityType = value);
             },
           ),
           CustomInput(

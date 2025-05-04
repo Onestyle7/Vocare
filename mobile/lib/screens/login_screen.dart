@@ -58,13 +58,16 @@ class _LoginScreenState extends State<LoginScreen> {
         padding: const EdgeInsets.all(16),
         child: Column(
           children: [
-            Positioned(
-              left: 100,
-              top: 928,
-              child: Text("Vocare", style: TextStyle(fontSize: 55)),
+            const SizedBox(height: 92),
+            Center(
+              child: Image.asset(
+                'assets/img/vocare.png',
+                height: 80,
+                fit: BoxFit.contain,
+              ),
             ),
 
-            SizedBox(height: 150),
+            SizedBox(height: 70),
             CustomInput(
               label: "Email",
               hintText: "Type your email",

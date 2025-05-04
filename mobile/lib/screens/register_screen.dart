@@ -53,12 +53,15 @@ class _RegisterScreenState extends State<RegisterScreen> {
         padding: const EdgeInsets.all(8.0),
         child: Column(
           children: [
-            Positioned(
-              left: 100,
-              top: 928,
-              child: Text("Vocare", style: TextStyle(fontSize: 55)),
+            const SizedBox(height: 72),
+            Center(
+              child: Image.asset(
+                'assets/img/vocare.png',
+                height: 80,
+                fit: BoxFit.contain,
+              ),
             ),
-            SizedBox(height: 55),
+            SizedBox(height: 25),
             CustomInput(
               label: "Full name",
               hintText: "Type your full name",
