@@ -8,7 +8,6 @@ class ProfileApi {
   static Future<bool> createUserProfile(Map<String, dynamic> data) async {
     final prefs = await SharedPreferences.getInstance();
     final token = prefs.getString('accessToken') ?? '';
-    
 
     final url = Uri.parse('$baseUrl/CreateCurrentUserProfile');
 
@@ -45,7 +44,15 @@ class ProfileApi {
       );
 
       if (response.statusCode == 200) {
-        return jsonDecode(response.body);
+        final fullResponse = jsonDecode(response.body);
+        final userProfile = fullResponse['userProfile'];
+
+        if (userProfile == null) {
+          print("Brak pola 'userProfile' w odpowiedzi.");
+          return null;
+        }
+
+        return userProfile;
       } else {
         print("Nie udało się pobrać danych: ${response.statusCode}");
         return null;

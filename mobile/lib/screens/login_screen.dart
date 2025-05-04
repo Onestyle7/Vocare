@@ -3,6 +3,8 @@ import 'package:provider/provider.dart';
 import 'package:vocare/screens/aI_asistent_screen.dart';
 import 'package:vocare/screens/register_screen.dart';
 import 'package:vocare/services/them_service.dart';
+import 'package:vocare/widgets/custom_button.dart';
+import 'package:vocare/widgets/custom_input.dart';
 import 'package:vocare/widgets/nav_bar_button.dart'
     show NavBarButtons, NavDestination;
 import 'package:vocare/widgets/theme_toggle_button.dart';
@@ -52,12 +54,85 @@ class _LoginScreenState extends State<LoginScreen> {
     ); // <- dostęp do przełącznika
 
     return Scaffold(
-      appBar: AppBar(
-        backgroundColor: Colors.black87,
-        automaticallyImplyLeading: false, // usuwa strzałkę "wstecz"
-        toolbarHeight: 60,
+      body: Padding(
+        padding: const EdgeInsets.all(16),
+        child: Column(
+          children: [
+            const SizedBox(height: 92),
+            Center(
+              child: Image.asset(
+                'assets/img/vocare.png',
+                height: 80,
+                fit: BoxFit.contain,
+              ),
+            ),
 
-        flexibleSpace: SafeArea(
+            SizedBox(height: 70),
+            CustomInput(
+              label: "Email",
+              hintText: "Type your email",
+              controller: _emailController,
+              prefixIcon: Icon(Icons.email),
+            ),
+
+            CustomInput(
+              label: "Password",
+              hintText: "Type your passsword",
+              controller: _passwordController,
+              prefixIcon: Icon(Icons.password),
+            ),
+
+            const SizedBox(height: 16),
+
+            CustomButton(text: "Log In", onPressed: _handleLogin),
+            const SizedBox(height: 12),
+
+            RichText(
+              text: TextSpan(
+                style: TextStyle(fontSize: 16),
+                children: [
+                  TextSpan(
+                    text: "Don't have an account? ",
+                    style: TextStyle(
+                      color: Theme.of(context).textTheme.bodyMedium?.color,
+                      fontSize: 16,
+                    ),
+                  ),
+                  WidgetSpan(
+                    child: GestureDetector(
+                      onTap: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (_) => const RegisterScreen(),
+                          ),
+                        );
+                      },
+                      child: Text(
+                        "Sign up",
+                        style: TextStyle(
+                          color: Color(0xFF915EFF),
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
+      ),
+      bottomNavigationBar: Container(
+        height: 60,
+        decoration: BoxDecoration(
+          color: const Color.fromARGB(222, 16, 14, 14),
+          borderRadius: const BorderRadius.only(
+            topLeft: Radius.circular(16),
+            topRight: Radius.circular(16),
+          ),
+        ),
+        child: SafeArea(
           child: Padding(
             padding: const EdgeInsets.symmetric(horizontal: 16),
             child: Row(
@@ -75,64 +150,6 @@ class _LoginScreenState extends State<LoginScreen> {
               ],
             ),
           ),
-        ),
-      ),
-
-      body: Padding(
-        padding: const EdgeInsets.all(16),
-        child: Column(
-          children: [
-            Positioned(
-              left: 100,
-              top: 928,
-              child: Text("Vocare", style: TextStyle(fontSize: 55)),
-            ),
-
-            SizedBox(height: 150),
-            TextFormField(
-              controller: _emailController,
-              decoration: InputDecoration(
-                labelText: "Email",
-                hintText: "Type your email",
-                prefixIcon: const Icon(Icons.email),
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(25),
-                ),
-              ),
-            ),
-            const SizedBox(height: 16),
-            TextFormField(
-              controller: _passwordController,
-              decoration: InputDecoration(
-                labelText: "Password",
-                hintText: "Type your password",
-                prefixIcon: const Icon(Icons.security),
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(25),
-                ),
-              ),
-              obscureText: true,
-            ),
-            const SizedBox(height: 16),
-            ElevatedButton(
-              onPressed: _handleLogin,
-              style: ElevatedButton.styleFrom(
-                backgroundColor: Color(0xFF915EFF)
-              ),
-              child: const Text("Zaloguj się"),
-            ),
-            const SizedBox(height: 12),
-            ElevatedButton(
-              onPressed: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (_) => const RegisterScreen()),
-                );
-              },
-              style: ElevatedButton.styleFrom(backgroundColor:  Color(0xFF915EFF)),
-              child: const Text("Nie masz konta? Zarejestruj się"),
-            ),
-          ],
         ),
       ),
     );
