@@ -8,7 +8,7 @@ import { usePathname } from 'next/navigation';
 import { cn } from '@/lib/utils';
 import MobileNav from '../MobileUI/MobileNav';
 import Image from 'next/image';
-import TokenCounter from '../PricingComponents/TokenCounter';
+import { TokenCounter } from '../PricingComponents/TokenCounter';
 
 const Header = () => {
   const pathname = usePathname();

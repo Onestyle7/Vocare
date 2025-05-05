@@ -81,7 +81,10 @@ const PricingMain = () => {
                     ))}
                   </ul>
                 </div>
-                <Button className="mt-auto w-full rounded-full h-10" variant={plan.popular ? 'default' : 'outline'}>
+                <Button
+                  className="mt-auto h-10 w-full rounded-full"
+                  variant={plan.popular ? 'default' : 'outline'}
+                >
                   Buy plan
                 </Button>
               </div>

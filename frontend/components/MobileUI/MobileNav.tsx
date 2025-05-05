@@ -8,6 +8,7 @@ import { cn } from '@/lib/utils';
 import { Sheet, SheetContent, SheetTrigger, SheetClose, SheetTitle } from '@/components/ui/sheet';
 import { gsap } from 'gsap';
 import ThemeSwitch from '../ThemeSwitch';
+import TokenCounter from '../PricingComponents/TokenCounter';
 
 const MobileNav = () => {
   const pathname = usePathname();
@@ -97,6 +98,7 @@ const MobileNav = () => {
               </SheetClose>
             </li>
           ))}
+          <TokenCounter />
           <ThemeSwitch />
         </ul>
       </SheetContent>
