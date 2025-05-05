@@ -161,6 +161,27 @@ export default function ProfileDetails() {
           )}
         </div>
       </div>
+
+      <div className="space-y-2">
+        <div className="flex flex-row items-center">
+          <h2 className="text-2xl font-medium text-gray-700 dark:text-gray-200">Certificates</h2>
+          <div className="ml-2 h-2 w-2 rounded-full bg-[#915EFF]" />
+        </div>
+        <div className="flex flex-wrap gap-2">
+          {profile?.certificates?.length ? (
+            profile.certificates.map((cert, index) => (
+              <span
+                key={index}
+                className="rounded-full bg-[#efe7ff] px-3 py-1 text-sm text-[#915EFF] dark:bg-gray-900/50"
+              >
+                {cert.name}
+              </span>
+            ))
+          ) : (
+            <p className="text-gray-500 italic">No certificates</p>
+          )}
+        </div>
+      </div>
     </div>
   );
 

@@ -31,6 +31,31 @@ export default function MarketAnalysis() {
   const [isConfirmDialogOpen, setIsConfirmDialogOpen] = useState(false);
   const { tokenBalance, isLoading: isBalanceLoading, refresh } = useTokenBalanceContext();
 
+  const [showFixedButton, setShowFixedButton] = useState(false);
+  const lastScrollY = useRef(0);
+
+  useEffect(() => {
+    const handleScroll = () => {
+      const currentScrollY = window.scrollY;
+
+      // Scroll w górę
+      if (currentScrollY < lastScrollY.current) {
+        setShowFixedButton(true);
+      }
+
+      // Scroll w dół
+      if (currentScrollY > lastScrollY.current) {
+        setShowFixedButton(false);
+      }
+
+      lastScrollY.current = currentScrollY;
+    };
+
+    window.addEventListener('scroll', handleScroll);
+
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
+
   const loadData = async (useNewData = false) => {
     setLoading(true);
     const token = localStorage.getItem('token');
@@ -43,7 +68,7 @@ export default function MarketAnalysis() {
     }
 
     try {
-      // First try to fetch the latest market analysis (unless we're explicitly requesting new data)
+      // First try to fetch the latest market analysis
       if (!useNewData) {
         try {
           const latestResponse = await axios.get(
@@ -175,7 +200,7 @@ export default function MarketAnalysis() {
     );
   }
 
-  // For debugging - log the current data structure
+  // For debugging
   console.log('Rendering with data structure:', data);
 
   const getMarketAnalysis = () => {
@@ -252,8 +277,13 @@ export default function MarketAnalysis() {
         </div>
       )}
 
-      {/* Button for generating new market analysis */}
-      <div className="mx-20 mt-8 flex justify-center">
+      <div
+        className={`${
+          showFixedButton
+            ? 'fixed bottom-6 left-1/2 z-50 -translate-x-1/2 translate-y-0 opacity-100'
+            : 'fixed bottom-0 left-1/2 z-50 -translate-x-1/2 translate-y-full opacity-0'
+        } flex w-1/2 items-center justify-center transition-all duration-500 ease-in-out`}
+      >
         <CustomButton
           onClick={() => setIsConfirmDialogOpen(true)}
           disabled={isLoading}
@@ -263,7 +293,17 @@ export default function MarketAnalysis() {
         </CustomButton>
       </div>
 
-      {/* Confirmation Dialog */}
+      {/* STATIC button always under content */}
+      <div className="mt-16 flex justify-center">
+        <CustomButton
+          onClick={() => setIsConfirmDialogOpen(true)}
+          disabled={isLoading}
+          className="cursor-pointer px-6 py-2"
+        >
+          {isLoading ? 'Generating...' : 'Generate new market analysis'}
+        </CustomButton>
+      </div>
+
       <AlertDialog open={isConfirmDialogOpen} onOpenChange={setIsConfirmDialogOpen}>
         <AlertDialogContent className="font-poppins mx-auto max-w-md">
           <AlertDialogHeader>

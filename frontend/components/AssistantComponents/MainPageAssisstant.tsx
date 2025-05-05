@@ -39,6 +39,31 @@ export default function AssistantPage() {
   const contentRef = useRef<HTMLDivElement>(null);
   const contentWrapperRef = useRef<HTMLDivElement>(null);
 
+  const [showFixedButton, setShowFixedButton] = useState(false);
+  const lastScrollY = useRef(0);
+
+  useEffect(() => {
+    const handleScroll = () => {
+      const currentScrollY = window.scrollY;
+
+      // Scroll w górę
+      if (currentScrollY < lastScrollY.current) {
+        setShowFixedButton(true);
+      }
+
+      // Scroll w dół
+      if (currentScrollY > lastScrollY.current) {
+        setShowFixedButton(false);
+      }
+
+      lastScrollY.current = currentScrollY;
+    };
+
+    window.addEventListener('scroll', handleScroll);
+
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
+
   useEffect(() => {
     if (contentRef.current && contentWrapperRef.current && recommendations) {
       if (!isCollapsed) {
@@ -128,15 +153,16 @@ export default function AssistantPage() {
               },
             }
           );
-          console.log('Ostatnie rekomendacje:', lastRecommendationResponse.data);
+          console.log('Last recommendations:', lastRecommendationResponse.data);
           setRecommendations(lastRecommendationResponse.data);
           setLoading(false);
           return;
         } catch (lastError: any) {
           if (lastError.response?.status !== 404) {
-            console.error('Błąd podczas pobierania ostatnich rekomendacji:', lastError);
+            console.error('Something went wrong while generating last recommendations:', lastError);
             setError(
-              lastError.response?.data?.detail || 'Błąd podczas pobierania ostatnich rekomendacji.'
+              lastError.response?.data?.detail ||
+                'Something went wrong while generating last recommendations.'
             );
             setLoading(false);
             return;
@@ -188,11 +214,13 @@ export default function AssistantPage() {
         }
       );
       setRecommendations(response.data);
-      toast.success('Wygenerowano nowe rekomendacje');
+      toast.success('New recommendations have been generated');
     } catch (err: any) {
-      setError(err.response?.data?.detail || 'Nie udało się wygenerować nowych rekomendacji.');
+      setError(
+        err.response?.data?.detail || 'Something went wrong while generating new recommendations'
+      );
       toast.error('Błąd', {
-        description: 'Nie udało się wygenerować nowych rekomendacji.',
+        description: 'Something went wrong while generating new recommendations',
       });
     } finally {
       setLoading(false);
@@ -279,7 +307,24 @@ export default function AssistantPage() {
       ))}
 
       {/* Button for generating new recommendations */}
-      <div className="mx-20 mt-8 flex justify-center">
+      <div
+        className={`${
+          showFixedButton
+            ? 'fixed bottom-6 left-1/2 z-50 -translate-x-1/2 translate-y-0 opacity-100'
+            : 'fixed bottom-0 left-1/2 z-50 -translate-x-1/2 translate-y-full opacity-0'
+        } flex w-1/2 items-center justify-center transition-all duration-500 ease-in-out`}
+      >
+        <CustomButton
+          onClick={() => setIsConfirmDialogOpen(true)}
+          disabled={isLoading}
+          className="cursor-pointer px-6 py-2"
+        >
+          {isLoading ? 'Generating...' : 'Generate new recommendation'}
+        </CustomButton>
+      </div>
+
+      {/* STATIC button always under content */}
+      <div className="mt-16 flex justify-center">
         <CustomButton
           onClick={() => setIsConfirmDialogOpen(true)}
           disabled={isLoading}
@@ -297,13 +342,15 @@ export default function AssistantPage() {
               Generate new recommendation?
             </AlertDialogTitle>
             <AlertDialogDescription className="text-center">
-              This will take <b className="text-[#915EFF]">50 credits</b> from Your account
-              <div className="mt-2 font-extralight">
-                Current balance:{' '}
-                <span className="font-bold">{isBalanceLoading ? '...' : tokenBalance}</span>
-              </div>
+              This will take <b className="text-[#915EFF]">50 credits</b> from Your account.
             </AlertDialogDescription>
+
+            <div className="mt-2 text-center text-sm font-extralight">
+              Current balance:{' '}
+              <span className="font-bold">{isBalanceLoading ? '...' : tokenBalance}</span>
+            </div>
           </AlertDialogHeader>
+
           <AlertDialogFooter className="flex justify-center gap-4 sm:justify-center">
             <AlertDialogCancel className="border-gray-200">Cancel</AlertDialogCancel>
             <AlertDialogAction
