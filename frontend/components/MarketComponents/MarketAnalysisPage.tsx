@@ -366,125 +366,125 @@ function IndustrySection({ data, index }: IndustryProps) {
     return colors[idx % colors.length];
   };
 
-  useEffect(() => {
-    if (typeof window !== 'undefined' && window.innerWidth >= 1024) {
-      const ctx = gsap.context(() => {
-        if (!salaryBoxRef.current || !imageRef.current) return;
+  // useEffect(() => {
+  //   if (typeof window !== 'undefined' && window.innerWidth >= 1024) {
+  //     const ctx = gsap.context(() => {
+  //       if (!salaryBoxRef.current || !imageRef.current) return;
 
-        gsap.set(imageRef.current, { opacity: 0, x: 50, y: 50 });
+  //       gsap.set(imageRef.current, { opacity: 0, x: 50, y: 50 });
 
-        const onEnter = () => {
-          gsap.to(imageRef.current, {
-            opacity: 1,
-            x: 0,
-            y: 0,
-            duration: 0.5,
-            ease: 'power3.out',
-          });
-        };
+  //       const onEnter = () => {
+  //         gsap.to(imageRef.current, {
+  //           opacity: 1,
+  //           x: 0,
+  //           y: 0,
+  //           duration: 0.5,
+  //           ease: 'power3.out',
+  //         });
+  //       };
 
-        const onLeave = () => {
-          gsap.to(imageRef.current, {
-            opacity: 0,
-            x: 50,
-            y: 50,
-            duration: 0.4,
-            ease: 'power3.in',
-          });
-        };
+  //       const onLeave = () => {
+  //         gsap.to(imageRef.current, {
+  //           opacity: 0,
+  //           x: 50,
+  //           y: 50,
+  //           duration: 0.4,
+  //           ease: 'power3.in',
+  //         });
+  //       };
 
-        salaryBoxRef.current.addEventListener('mouseenter', onEnter);
-        salaryBoxRef.current.addEventListener('mouseleave', onLeave);
+  //       salaryBoxRef.current.addEventListener('mouseenter', onEnter);
+  //       salaryBoxRef.current.addEventListener('mouseleave', onLeave);
 
-        return () => {
-          salaryBoxRef.current?.removeEventListener('mouseenter', onEnter);
-          salaryBoxRef.current?.removeEventListener('mouseleave', onLeave);
-        };
-      }, salaryBoxRef);
+  //       return () => {
+  //         salaryBoxRef.current?.removeEventListener('mouseenter', onEnter);
+  //         salaryBoxRef.current?.removeEventListener('mouseleave', onLeave);
+  //       };
+  //     }, salaryBoxRef);
 
-      return () => ctx.revert();
-    }
-  }, []);
+  //     return () => ctx.revert();
+  //   }
+  // }, []);
 
-  useEffect(() => {
-    if (typeof window !== 'undefined' && window.innerWidth >= 1024) {
-      const ctx = gsap.context(() => {
-        if (!chartBoxRef.current || !imageRef1.current) return;
+  // useEffect(() => {
+  //   if (typeof window !== 'undefined' && window.innerWidth >= 1024) {
+  //     const ctx = gsap.context(() => {
+  //       if (!chartBoxRef.current || !imageRef1.current) return;
 
-        gsap.set(imageRef1.current, { opacity: 0, x: 50, y: 50 });
+  //       gsap.set(imageRef1.current, { opacity: 0, x: 50, y: 50 });
 
-        const onEnter = () => {
-          gsap.to(imageRef1.current, {
-            opacity: 1,
-            x: 0,
-            y: 0,
-            duration: 0.5,
-            ease: 'power3.out',
-          });
-        };
+  //       const onEnter = () => {
+  //         gsap.to(imageRef1.current, {
+  //           opacity: 1,
+  //           x: 0,
+  //           y: 0,
+  //           duration: 0.5,
+  //           ease: 'power3.out',
+  //         });
+  //       };
 
-        const onLeave = () => {
-          gsap.to(imageRef1.current, {
-            opacity: 0,
-            x: 50,
-            y: 50,
-            duration: 0.4,
-            ease: 'power3.in',
-          });
-        };
+  //       const onLeave = () => {
+  //         gsap.to(imageRef1.current, {
+  //           opacity: 0,
+  //           x: 50,
+  //           y: 50,
+  //           duration: 0.4,
+  //           ease: 'power3.in',
+  //         });
+  //       };
 
-        chartBoxRef.current.addEventListener('mouseenter', onEnter);
-        chartBoxRef.current.addEventListener('mouseleave', onLeave);
+  //       chartBoxRef.current.addEventListener('mouseenter', onEnter);
+  //       chartBoxRef.current.addEventListener('mouseleave', onLeave);
 
-        return () => {
-          salaryBoxRef.current?.removeEventListener('mouseenter', onEnter);
-          salaryBoxRef.current?.removeEventListener('mouseleave', onLeave);
-        };
-      }, salaryBoxRef);
+  //       return () => {
+  //         salaryBoxRef.current?.removeEventListener('mouseenter', onEnter);
+  //         salaryBoxRef.current?.removeEventListener('mouseleave', onLeave);
+  //       };
+  //     }, salaryBoxRef);
 
-      return () => ctx.revert();
-    }
-  }, []);
+  //     return () => ctx.revert();
+  //   }
+  // }, []);
 
-  useEffect(() => {
-    if (typeof window !== 'undefined' && window.innerWidth >= 1024) {
-      const ctx = gsap.context(() => {
-        if (!fireBoxRef.current || !imageRef2.current) return;
+  // useEffect(() => {
+  //   if (typeof window !== 'undefined' && window.innerWidth >= 1024) {
+  //     const ctx = gsap.context(() => {
+  //       if (!fireBoxRef.current || !imageRef2.current) return;
 
-        gsap.set(imageRef2.current, { opacity: 0, x: 50, y: 50 });
+  //       gsap.set(imageRef2.current, { opacity: 0, x: 50, y: 50 });
 
-        const onEnter = () => {
-          gsap.to(imageRef2.current, {
-            opacity: 1,
-            x: 0,
-            y: 0,
-            duration: 0.5,
-            ease: 'power3.out',
-          });
-        };
+  //       const onEnter = () => {
+  //         gsap.to(imageRef2.current, {
+  //           opacity: 1,
+  //           x: 0,
+  //           y: 0,
+  //           duration: 0.5,
+  //           ease: 'power3.out',
+  //         });
+  //       };
 
-        const onLeave = () => {
-          gsap.to(imageRef2.current, {
-            opacity: 0,
-            x: 50,
-            y: 50,
-            duration: 0.4,
-            ease: 'power3.in',
-          });
-        };
+  //       const onLeave = () => {
+  //         gsap.to(imageRef2.current, {
+  //           opacity: 0,
+  //           x: 50,
+  //           y: 50,
+  //           duration: 0.4,
+  //           ease: 'power3.in',
+  //         });
+  //       };
 
-        fireBoxRef.current.addEventListener('mouseenter', onEnter);
-        fireBoxRef.current.addEventListener('mouseleave', onLeave);
+  //       fireBoxRef.current.addEventListener('mouseenter', onEnter);
+  //       fireBoxRef.current.addEventListener('mouseleave', onLeave);
 
-        return () => {
-          salaryBoxRef.current?.removeEventListener('mouseenter', onEnter);
-          salaryBoxRef.current?.removeEventListener('mouseleave', onLeave);
-        };
-      }, salaryBoxRef);
+  //       return () => {
+  //         salaryBoxRef.current?.removeEventListener('mouseenter', onEnter);
+  //         salaryBoxRef.current?.removeEventListener('mouseleave', onLeave);
+  //       };
+  //     }, salaryBoxRef);
 
-      return () => ctx.revert();
-    }
-  }, []);
+  //     return () => ctx.revert();
+  //   }
+  // }, []);
 
   const toggleCollapse = () => {
     if (!contentRef.current || !contentWrapperRef.current) return;

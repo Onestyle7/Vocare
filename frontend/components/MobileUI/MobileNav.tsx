@@ -1,14 +1,15 @@
 'use client';
 
 import React, { useRef, useEffect } from 'react';
-import { NavLinks } from '@/app/constants';
+import { logo, NavLinks } from '@/app/constants';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { cn } from '@/lib/utils';
 import { Sheet, SheetContent, SheetTrigger, SheetClose, SheetTitle } from '@/components/ui/sheet';
 import { gsap } from 'gsap';
 import ThemeSwitch from '../ThemeSwitch';
-import TokenCounter from '../PricingComponents/TokenCounter';
+import { TokenCounter } from '../PricingComponents/TokenCounter';
+import Image from 'next/image';
 
 const MobileNav = () => {
   const pathname = usePathname();
@@ -60,7 +61,9 @@ const MobileNav = () => {
 
   return (
     <Sheet open={isOpen} onOpenChange={setIsOpen}>
-      <div className="ml-4 flex w-full text-2xl">Vocare_</div>
+      <div className="ml-4 flex w-full text-2xl">
+        <Image src={logo} alt="Vocare" width={128} height={128} className="invert dark:invert-0" />
+      </div>
       <SheetTrigger asChild>
         <button className="relative p-8" aria-label="menu" onClick={() => setIsOpen(!isOpen)}>
           <span

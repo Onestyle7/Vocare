@@ -1,155 +1,282 @@
-import { CvDto } from '@/lib/types/resume';
+'use client';
 
-export function ResumeDetails({ cv }: { cv: CvDto }) {
+import { CvDto } from '@/lib/types/resume';
+import { useEffect, useState } from 'react';
+
+// This interface matches the backend CvDto structure
+interface CvTemplateProps {
+  cv: CvDto;
+}
+
+export default function ResumeDetails({ cv }: CvTemplateProps) {
+  const [isLoaded, setIsLoaded] = useState(false);
+
+  useEffect(() => {
+    setIsLoaded(true);
+  }, []);
+
+  // Format date from YYYY-MM-DD to display format
+  const formatDate = (dateString?: string): string => {
+    if (!dateString) return '';
+    if (dateString === 'Present') return 'PRESENT';
+
+    // Extract year and month from YYYY-MM-DD
+    const parts = dateString.split('-');
+    if (parts.length >= 2) {
+      // Convert to format like "2021 – PRESENT"
+      return parts[0]; // Just return the year
+    }
+    return dateString;
+  };
+
+  // Format date ranges for display
+  const formatDateRange = (startDate?: string, endDate?: string): string => {
+    const start = formatDate(startDate);
+    const end = endDate ? formatDate(endDate) : 'PRESENT';
+
+    return `${start} – ${end}`;
+  };
+
+  // Combine first name and last name
+  const fullName = cv?.basics ? `${cv.basics.firstName} ${cv.basics.lastName}` : '';
+
+  // Create a description from summary
+  const description = cv?.basics?.summary || '';
+
+  // Create personal info array from CV data
+  const personalInfo = [
+    { label: 'PROFESSION', value: cv?.work?.[0]?.position || 'PROFESSIONAL' },
+    {
+      label: 'LOCATION',
+      value: cv?.basics?.location
+        ? `${cv.basics.location.city}, ${cv.basics.location.country}`
+        : '',
+    },
+    { label: 'EDUCATION', value: cv?.education?.[0]?.degree || 'HIGHER EDUCATION' },
+  ];
+
   return (
-    <div className="mx-auto max-w-4xl rounded-lg bg-white px-4 py-8 shadow-sm">
-      <header className="mb-10 border-b border-purple-100 pb-6">
-        <h1 className="mb-2 text-3xl font-bold text-gray-800">
-          {cv.basics?.firstName} {cv.basics?.lastName}
-        </h1>
-        <div className="flex flex-wrap gap-4 text-sm text-gray-600">
-          {cv.basics?.email && (
-            <div className="flex items-center">
-              <svg className="mr-2 h-4 w-4 text-purple-500" fill="currentColor" viewBox="0 0 20 20">
-                <path d="M2.003 5.884L10 9.882l7.997-3.998A2 2 0 0016 4H4a2 2 0 00-1.997 1.884z"></path>
-                <path d="M18 8.118l-8 4-8-4V14a2 2 0 002 2h12a2 2 0 002-2V8.118z"></path>
-              </svg>
-              <span>{cv.basics.email}</span>
+    <div className="font-poppins mt-[90%] min-h-screen rounded-xl bg-white font-sans text-black shadow-2xl max-sm:mt-[400%]">
+      {/* Header */}
+      <header
+        className="px-6 pt-12 pb-6 transition-all duration-1000 ease-out md:px-12 lg:px-20"
+        style={{
+          opacity: isLoaded ? 1 : 0,
+          transform: isLoaded ? 'translateY(0)' : 'translateY(-50px)',
+        }}
+      >
+        <div className="flex flex-col">
+          <h1 className="text-3xl font-bold md:text-5xl">
+            {cv?.work?.[0]?.position || 'PROFESSIONAL'}
+          </h1>
+          <h2 className="text-3xl font-bold md:text-5xl">
+            PASSION AND <span className="italic underline">EXPERIENCE.</span>
+          </h2>
+
+          <div className="mt-4 flex justify-end space-x-4">
+            <div className="flex h-8 w-8 items-center justify-center rounded-full bg-black">
+              <span className="text-sm text-white">IG</span>
             </div>
-          )}
-          {cv.basics?.phoneNumber && (
-            <div className="flex items-center">
-              <svg className="mr-2 h-4 w-4 text-purple-500" fill="currentColor" viewBox="0 0 20 20">
-                <path d="M2 3a1 1 0 011-1h2.153a1 1 0 01.986.836l.74 4.435a1 1 0 01-.54 1.06l-1.548.773a11.037 11.037 0 006.105 6.105l.774-1.548a1 1 0 011.059-.54l4.435.74a1 1 0 01.836.986V17a1 1 0 01-1 1h-2C7.82 18 2 12.18 2 5V3z"></path>
-              </svg>
-              <span>{cv.basics.phoneNumber}</span>
+            <div className="flex h-8 w-8 items-center justify-center rounded-full border border-black">
+              <span className="text-sm text-black">f</span>
             </div>
-          )}
-          {cv.basics?.location?.city && (
-            <div className="flex items-center">
-              <svg className="mr-2 h-4 w-4 text-purple-500" fill="currentColor" viewBox="0 0 20 20">
-                <path
-                  fillRule="evenodd"
-                  d="M5.05 4.05a7 7 0 119.9 9.9L10 18.9l-4.95-4.95a7 7 0 010-9.9zM10 11a2 2 0 100-4 2 2 0 000 4z"
-                  clipRule="evenodd"
-                ></path>
-              </svg>
-              <span>
-                {cv.basics.location.city}
-                {cv.basics.location.country && `, ${cv.basics.location.country}`}
-              </span>
+            <div className="flex h-8 w-8 items-center justify-center rounded-full border border-black">
+              <span className="text-sm text-black">in</span>
             </div>
-          )}
+          </div>
         </div>
-        {cv.basics?.summary && <p className="mt-4 text-gray-700 italic">{cv.basics.summary}</p>}
       </header>
 
-      <div className="grid grid-cols-1 gap-8 md:grid-cols-3">
-        <div className="space-y-8 md:col-span-2">
-          {cv.work?.length ? (
-            <section>
-              <h2 className="mb-4 border-b border-purple-100 pb-2 text-xl font-bold text-gray-800">
-                <span className="border-b-2 border-purple-500 pb-2">Doświadczenie</span>
-              </h2>
-              <div className="space-y-6">
-                {cv.work.map((w, i) => (
+      {/* Main Content */}
+      <main className="px-6 pb-20 md:px-12 lg:px-20">
+        <div className="flex flex-col gap-8 md:flex-row md:gap-16">
+          {/* Left Column - Profile */}
+          <div
+            className="w-full transition-all delay-200 duration-1000 ease-out md:w-1/3"
+            style={{
+              opacity: isLoaded ? 1 : 0,
+              transform: isLoaded ? 'translateX(0)' : 'translateX(-50px)',
+            }}
+          >
+            <div className="mb-8">
+              <div className="mb-6 h-48 w-48 overflow-hidden rounded-full bg-gray-300">
+                <img
+                  src="/api/placeholder/192/192"
+                  alt="Profile placeholder"
+                  className="h-full w-full object-cover"
+                />
+              </div>
+
+              <h2 className="mb-1 text-2xl font-bold">{fullName}</h2>
+              <p className="mb-4 text-sm">{description}</p>
+
+              <div className="mb-8 space-y-4">
+                {personalInfo.map((info, index) => (
+                  <div key={index} className="flex flex-col border-b border-gray-300 pb-1">
+                    <span className="text-xs font-semibold">{info.label}</span>
+                    <span className="text-sm">{info.value}</span>
+                  </div>
+                ))}
+              </div>
+
+              <div className="mb-4 border-b border-gray-300 pb-1">
+                <span className="text-xs font-semibold">CONTACT</span>
+                <p className="text-sm">{cv?.basics?.email || ''}</p>
+                <p className="text-sm">{cv?.basics?.phoneNumber || ''}</p>
+              </div>
+
+              <button className="w-full cursor-pointer border border-black px-4 py-2 text-center transition duration-300 hover:bg-black hover:text-white">
+                SEND MESSAGE
+              </button>
+            </div>
+          </div>
+
+          {/* Right Column - Experience, Education, Skills */}
+          <div
+            className="w-full transition-all delay-400 duration-1000 ease-out md:w-2/3"
+            style={{
+              opacity: isLoaded ? 1 : 0,
+              transform: isLoaded ? 'translateX(0)' : 'translateX(50px)',
+            }}
+          >
+            {/* Experience Section */}
+            <section className="mb-12">
+              <h2 className="mb-4 text-2xl font-bold">EXPERIENCE</h2>
+              <div className="mb-8 border-t-2 border-black"></div>
+
+              {cv?.work?.map((exp, index) => (
+                <div
+                  key={index}
+                  className="mb-8 transition-all duration-500 ease-out"
+                  style={{
+                    opacity: isLoaded ? 1 : 0,
+                    transform: isLoaded ? 'translateY(0)' : 'translateY(20px)',
+                    transitionDelay: `${500 + index * 200}ms`,
+                  }}
+                >
+                  <div className="mb-2 flex items-start justify-between">
+                    <h3 className="text-lg font-semibold">{exp.company}</h3>
+                    <div className="text-right">
+                      <p className="text-sm text-gray-600">
+                        {formatDateRange(exp.startDate, exp.endDate)}
+                      </p>
+                      <p className="text-sm font-semibold">{exp.position}</p>
+                    </div>
+                  </div>
+                  <p className="text-sm text-gray-700">{exp.description}</p>
+                </div>
+              ))}
+            </section>
+
+            {/* Education and Skills in two columns for larger screens */}
+            <div className="flex flex-col gap-8">
+              {/* Education Section */}
+              <section className="mb-12 w-full">
+                <h2 className="mb-4 text-2xl font-bold">EDUCATION</h2>
+                <div className="mb-8 border-t-2 border-black"></div>
+
+                {cv?.education?.map((edu, index) => (
                   <div
-                    key={i}
-                    className="relative border-l-2 border-purple-100 pl-6 transition-colors hover:border-purple-300"
+                    key={index}
+                    className="mb-6 transition-all duration-500 ease-out"
+                    style={{
+                      opacity: isLoaded ? 1 : 0,
+                      transform: isLoaded ? 'translateY(0)' : 'translateY(20px)',
+                      transitionDelay: `${900 + index * 200}ms`,
+                    }}
                   >
-                    <div className="absolute top-1 left-[-7px] h-3 w-3 rounded-full bg-purple-500"></div>
-                    <h3 className="font-semibold text-gray-800">{w.position}</h3>
-                    <p className="text-sm font-medium text-purple-700">{w.company}</p>
-                    <p className="mt-1 text-xs text-gray-500">
-                      {w.startDate} – {w.endDate || 'Obecnie'}
+                    <div className="mb-2 flex items-start justify-between">
+                      <h3 className="text-lg font-semibold">{edu.institution}</h3>
+                      <div className="inline-block rounded-full border border-black px-3 py-1 text-xs">
+                        {formatDateRange(edu.startDate, edu.endDate)}
+                      </div>
+                    </div>
+                    <p className="text-sm text-gray-700">
+                      {edu.degree} in {edu.field}
                     </p>
-                    <p className="mt-2 text-sm text-gray-600">{w.description}</p>
+                  </div>
+                ))}
+              </section>
+
+              {/* Certificates Section */}
+              <section className="mb-12 w-full">
+                <h2 className="mb-4 text-2xl font-bold">CERTIFICATES</h2>
+                <div className="mb-8 border-t-2 border-black"></div>
+
+                {cv?.certificates?.map((cert, index) => (
+                  <div
+                    key={index}
+                    className="mb-6 transition-all duration-500 ease-out"
+                    style={{
+                      opacity: isLoaded ? 1 : 0,
+                      transform: isLoaded ? 'translateY(0)' : 'translateY(20px)',
+                      transitionDelay: `${1500 + index * 200}ms`,
+                    }}
+                  >
+                    <div className="mb-2 flex items-start justify-between">
+                      <h3 className="text-lg font-semibold">{cert.name}</h3>
+                      {cert.date && (
+                        <div className="inline-block rounded-full border border-black px-3 py-1 text-xs">
+                          {formatDate(cert.date)}
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                ))}
+              </section>
+            </div>
+
+            {/* Skills Section */}
+            <section>
+              <h2 className="mb-4 text-2xl font-bold">SKILLS</h2>
+              <div className="mb-8 border-t-2 border-black"></div>
+              <div
+                className="grid grid-cols-2 gap-4 transition-all duration-500 ease-out md:grid-cols-3"
+                style={{
+                  opacity: isLoaded ? 1 : 0,
+                  transform: isLoaded ? 'translateY(0)' : 'translateY(20px)',
+                  transitionDelay: '1900ms',
+                }}
+              >
+                {cv?.skills?.map((skill, index) => (
+                  <div
+                    key={index}
+                    className="rounded border border-gray-300 px-3 py-2 text-center text-sm"
+                  >
+                    {skill}
                   </div>
                 ))}
               </div>
             </section>
-          ) : null}
 
-          {cv.education?.length ? (
-            <section>
-              <h2 className="mb-4 border-b border-purple-100 pb-2 text-xl font-bold text-gray-800">
-                <span className="border-b-2 border-purple-500 pb-2">Edukacja</span>
-              </h2>
-              <div className="space-y-6">
-                {cv.education.map((e, i) => (
-                  <div
-                    key={i}
-                    className="relative border-l-2 border-purple-100 pl-6 transition-colors hover:border-purple-300"
-                  >
-                    <div className="absolute top-1 left-[-7px] h-3 w-3 rounded-full bg-purple-500"></div>
-                    <h3 className="font-semibold text-gray-800">{e.degree}</h3>
-                    <p className="text-sm font-medium text-purple-700">
-                      {e.field} • {e.institution}
-                    </p>
-                    <p className="mt-1 text-xs text-gray-500">
-                      {e.startDate} – {e.endDate || 'Obecnie'}
-                    </p>
-                  </div>
-                ))}
-              </div>
-            </section>
-          ) : null}
+            {/* Languages Section */}
+            {cv?.languages && cv.languages.length > 0 && (
+              <section className="mt-12">
+                <h2 className="mb-4 text-2xl font-bold">LANGUAGES</h2>
+                <div className="mb-8 border-t-2 border-black"></div>
+                <div
+                  className="grid grid-cols-1 gap-4 transition-all duration-500 ease-out md:grid-cols-2"
+                  style={{
+                    opacity: isLoaded ? 1 : 0,
+                    transform: isLoaded ? 'translateY(0)' : 'translateY(20px)',
+                    transitionDelay: '2100ms',
+                  }}
+                >
+                  {cv.languages.map((lang, index) => (
+                    <div
+                      key={index}
+                      className="flex items-center justify-between border-b border-gray-200 pb-2"
+                    >
+                      <span className="font-medium">{lang.language}</span>
+                      <span className="text-sm text-gray-600">{lang.fluency}</span>
+                    </div>
+                  ))}
+                </div>
+              </section>
+            )}
+          </div>
         </div>
-
-        <div className="space-y-8">
-          {cv.skills?.length ? (
-            <section className="rounded-lg bg-gray-50 p-4">
-              <h2 className="mb-4 text-xl font-bold text-gray-800">
-                <span className="border-b-2 border-purple-500 pb-1">Umiejętności</span>
-              </h2>
-              <div className="flex flex-wrap gap-2">
-                {cv.skills.map((s, i) => (
-                  <span
-                    key={i}
-                    className="rounded-full bg-purple-50 px-3 py-1 text-sm text-purple-700"
-                  >
-                    {s}
-                  </span>
-                ))}
-              </div>
-            </section>
-          ) : null}
-
-          {cv.languages?.length ? (
-            <section className="rounded-lg bg-gray-50 p-4">
-              <h2 className="mb-4 text-xl font-bold text-gray-800">
-                <span className="border-b-2 border-purple-500 pb-1">Języki</span>
-              </h2>
-              <ul className="space-y-2">
-                {cv.languages.map((l, i) => (
-                  <li key={i} className="flex items-center justify-between">
-                    <span className="font-medium text-gray-700">{l.language}</span>
-                    <span className="rounded bg-purple-50 px-2 py-1 text-sm text-purple-700">
-                      {l.fluency}
-                    </span>
-                  </li>
-                ))}
-              </ul>
-            </section>
-          ) : null}
-
-          {cv.certificates?.length ? (
-            <section className="rounded-lg bg-gray-50 p-4">
-              <h2 className="mb-4 text-xl font-bold text-gray-800">
-                <span className="border-b-2 border-purple-500 pb-1">Certyfikaty</span>
-              </h2>
-              <ul className="space-y-3">
-                {cv.certificates.map((c, i) => (
-                  <li key={i} className="flex flex-col">
-                    <span className="font-medium text-gray-700">{c.name}</span>
-                    <span className="text-xs text-gray-500">{c.date}</span>
-                  </li>
-                ))}
-              </ul>
-            </section>
-          ) : null}
-        </div>
-      </div>
+      </main>
     </div>
   );
 }
