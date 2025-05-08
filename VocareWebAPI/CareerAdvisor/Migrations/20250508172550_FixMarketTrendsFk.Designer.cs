@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 using VocareWebAPI.Data;
@@ -12,9 +13,11 @@ using VocareWebAPI.Data;
 namespace VocareWebAPI.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250508172550_FixMarketTrendsFk")]
+    partial class FixMarketTrendsFk
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -302,9 +305,6 @@ namespace VocareWebAPI.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uuid");
 
-                    b.Property<Guid?>("AiRecommendationId")
-                        .HasColumnType("uuid");
-
                     b.Property<string>("Justification")
                         .IsRequired()
                         .HasColumnType("text");
@@ -324,11 +324,14 @@ namespace VocareWebAPI.Migrations
                         .IsRequired()
                         .HasColumnType("text");
 
+                    b.Property<string>("UserProfileUserId")
+                        .HasColumnType("text");
+
                     b.HasKey("Id");
 
-                    b.HasIndex("AiRecommendationId");
-
                     b.HasIndex("UserId");
+
+                    b.HasIndex("UserProfileUserId");
 
                     b.ToTable("AiRecommendations", "Identity");
                 });
@@ -428,6 +431,9 @@ namespace VocareWebAPI.Migrations
                     b.Property<Guid>("AiRecommendationId")
                         .HasColumnType("uuid");
 
+                    b.Property<Guid?>("AiRecommendationId1")
+                        .HasColumnType("uuid");
+
                     b.Property<string>("Description")
                         .IsRequired()
                         .HasColumnType("text");
@@ -449,6 +455,8 @@ namespace VocareWebAPI.Migrations
                     b.HasKey("Id");
 
                     b.HasIndex("AiRecommendationId");
+
+                    b.HasIndex("AiRecommendationId1");
 
                     b.ToTable("MarketTrends", "Identity");
                 });
@@ -836,15 +844,16 @@ namespace VocareWebAPI.Migrations
 
             modelBuilder.Entity("VocareWebAPI.Models.AiRecommendation", b =>
                 {
-                    b.HasOne("VocareWebAPI.Models.AiRecommendation", null)
-                        .WithMany("Recommendations")
-                        .HasForeignKey("AiRecommendationId");
-
                     b.HasOne("VocareWebAPI.Models.Entities.UserProfile", "UserProfile")
-                        .WithMany("Recommendations")
+                        .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+
+                    b.HasOne("VocareWebAPI.Models.Entities.UserProfile", null)
+                        .WithMany("Recommendations")
+                        .HasForeignKey("UserProfileUserId")
+                        .OnDelete(DeleteBehavior.Cascade);
 
                     b.Navigation("UserProfile");
                 });
@@ -886,6 +895,10 @@ namespace VocareWebAPI.Migrations
                         .HasForeignKey("AiRecommendationId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+
+                    b.HasOne("VocareWebAPI.Models.AiRecommendation", null)
+                        .WithMany("InfluencingTrends")
+                        .HasForeignKey("AiRecommendationId1");
 
                     b.Navigation("AiRecommendation");
                 });
@@ -955,11 +968,11 @@ namespace VocareWebAPI.Migrations
 
                     b.Navigation("CareerStatistics");
 
+                    b.Navigation("InfluencingTrends");
+
                     b.Navigation("MarketTrends");
 
                     b.Navigation("NextSteps");
-
-                    b.Navigation("Recommendations");
 
                     b.Navigation("SkillDemands");
                 });

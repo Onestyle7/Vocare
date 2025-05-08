@@ -13,11 +13,11 @@ namespace VocareWebAPI.Models.Entities.MarketAnalysis
     {
         [Key]
         public Guid Id { get; set; }
-        public string CareerName { get; set; }
+        public string CareerName { get; set; } = String.Empty; // Nazwa ścieżki zawodowej, np. "Programista Python"
         public decimal AverageSalaryMin { get; set; }
         public decimal AverageSalaryMax { get; set; }
         public int EmploymentRate { get; set; }
-        public string GrowthForecast { get; set; }
+        public string GrowthForecast { get; set; } = String.Empty; // Prognoza wzrostu zatrudnienia
         public DateTime LastUpdated { get; set; }
         public Guid AiRecommendationId { get; set; } // Klucz obcy do AiRecommendation
     }

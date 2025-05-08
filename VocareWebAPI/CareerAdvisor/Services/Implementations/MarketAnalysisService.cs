@@ -1,5 +1,7 @@
+using System.Globalization;
 using System.Security.Claims;
 using System.Text.Json;
+using System.Text.RegularExpressions;
 using AutoMapper;
 using Microsoft.Extensions.Options;
 using VocareWebAPI.Models;
@@ -70,20 +72,14 @@ namespace VocareWebAPI.Services.Implementations
         /// <exception cref="Exception">Rzucane, gdy profil użytkownika lub rekomendacja nie zostaną znalezione, lub gdy wystąpi błąd w API AI</exception>
         public async Task<MarketAnalysisResponseDto> GetMarketAnalysisAsync(string userId)
         {
-            //Pobieramy profil użytkownika
-            var userProfile = await _userProfileRepository.GetUserProfileByIdAsync(userId);
-
-            if (userProfile == null)
-            {
-                throw new Exception($"User profile with ID:{userId} not found.");
-            }
-
-            // Pobieramy rekomendację AI dla użytkownika
             var recommendation = await _aiRecommendationRepository.GetLatestByUserIdAsync(userId);
             if (recommendation == null)
-            {
                 throw new Exception($"AI recommendation for user with ID:{userId} not found.");
-            }
+
+            if (recommendation.UserProfile == null)
+                throw new Exception(
+                    $"User profile for recommendation {recommendation.Id} not found."
+                );
 
             var prompt = BuildPrompt(recommendation);
             var requestBody = new
@@ -198,23 +194,38 @@ namespace VocareWebAPI.Services.Implementations
                 foreach (var industryStat in analysis.MarketAnalysis.IndustryStatistics)
                 {
                     // Usuwamy spacje i wartość PLN, zastępujemy przecinki kropkami
-                    var salaryText = industryStat
-                        .AverageSalary.Replace(" PLN", "")
-                        .Replace(",", "");
+                    var raw = industryStat.AverageSalary ?? "";
+                    var cleaned = Regex.Replace(raw, @"[^\d\.\-\,]", "");
 
-                    var salaryRange = salaryText.Split('-');
+                    var salaryRange = cleaned.Split('-', StringSplitOptions.RemoveEmptyEntries);
                     decimal minSalary = 0;
                     decimal maxSalary = 0;
 
-                    // Sprawdzamy czy mamy zakres czy pojedynczą wartość
                     if (salaryRange.Length == 2)
                     {
-                        decimal.TryParse(salaryRange[0], out minSalary);
-                        decimal.TryParse(salaryRange[1], out maxSalary);
+                        // gdy mamy zakres «min-max»
+                        decimal.TryParse(
+                            salaryRange[0],
+                            NumberStyles.AllowThousands | NumberStyles.AllowDecimalPoint,
+                            CultureInfo.InvariantCulture,
+                            out minSalary
+                        );
+                        decimal.TryParse(
+                            salaryRange[1],
+                            NumberStyles.AllowThousands | NumberStyles.AllowDecimalPoint,
+                            CultureInfo.InvariantCulture,
+                            out maxSalary
+                        );
                     }
                     else if (salaryRange.Length == 1)
                     {
-                        decimal.TryParse(salaryRange[0], out minSalary);
+                        // gdy mamy tylko jedną liczbę
+                        decimal.TryParse(
+                            salaryRange[0],
+                            NumberStyles.AllowThousands | NumberStyles.AllowDecimalPoint,
+                            CultureInfo.InvariantCulture,
+                            out minSalary
+                        );
                         maxSalary = minSalary;
                     }
 
@@ -333,7 +344,7 @@ namespace VocareWebAPI.Services.Implementations
                     "industryStatistics": [
                       {
                         "industry": "Nazwa branży",
-                        "averageSalary": "Średnie zarobki (np. 10000 PLN)",
+                        "averageSalary": "Średnie zarobki (np. 10000 PLN) |to muszą być średnie zarobki miesięczne brutto|",
                         "employmentRate": "Poziom zatrudnienia (np. 85%)",
                         "growthForecast": "Prognoza wzrostu (High/Medium/Low)"
                       }

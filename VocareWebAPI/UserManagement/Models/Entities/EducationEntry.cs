@@ -10,9 +10,9 @@ namespace VocareWebAPI.UserManagement.Models.Entities
     {
         [Key]
         public int Id { get; set; } // Identyfikator wpisu
-        public string Institution { get; set; } // Nazwa uczelni, np. Politechnika Wrocławska
-        public string Degree { get; set; } // np. Licencjat, Magister, Doktor
-        public string Field { get; set; } // Kierunek studiów, np. Informatyka
+        public string Institution { get; set; } = String.Empty; // Nazwa uczelni, np. Politechnika Wrocławska
+        public string Degree { get; set; } = String.Empty; // np. Licencjat, Magister, Doktor
+        public string Field { get; set; } = String.Empty; // Kierunek studiów, np. Informatyka
 
         [RegularExpression(
             @"^\d{4}-\d{2}-\d{2}$",

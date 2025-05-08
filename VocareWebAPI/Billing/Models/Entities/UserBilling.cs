@@ -10,7 +10,7 @@ namespace VocareWebAPI.Billing.Models.Entities
     public class UserBilling
     {
         [Key]
-        public string UserId { get; set; }
+        public required string UserId { get; set; } = string.Empty;
         public int TokenBalance { get; set; }
         public string? StripeCustomerId { get; set; }
         public string? StripeSubscriptionId { get; set; }

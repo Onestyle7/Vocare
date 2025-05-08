@@ -7,6 +7,6 @@ namespace VocareWebAPI.Billing.Models.Dtos
 {
     public class CreateCheckoutSessionRequestDto
     {
-        public string PriceId { get; set; }
+        public required string PriceId { get; set; }
     }
 }

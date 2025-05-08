@@ -9,7 +9,7 @@ namespace VocareWebAPI.UserManagement.Models.Dtos
     public class CertificateEntryDto
     {
         [Required(ErrorMessage = "Nazwa certyfikatu jest wymagana.")]
-        public string Name { get; set; }
+        public string Name { get; set; } = String.Empty; // Nazwa certyfikatu, np. Certyfikat Google
 
         public string? Date { get; set; } // Format: yyyy-MM-dd
 

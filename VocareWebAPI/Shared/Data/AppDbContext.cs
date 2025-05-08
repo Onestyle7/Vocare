@@ -112,6 +112,20 @@ namespace VocareWebAPI.Data
                     }
                 }
             }
+            builder
+                .Entity<AiRecommendation>()
+                .HasOne(ar => ar.UserProfile)
+                .WithMany(up => up.Recommendations)
+                .HasForeignKey(ar => ar.UserId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            builder
+                .Entity<MarketTrends>()
+                .HasOne(m => m.AiRecommendation)
+                .WithMany(a => a.MarketTrends)
+                .HasForeignKey(m => m.AiRecommendationId)
+                .OnDelete(DeleteBehavior.Cascade);
+
             // Konfiguracja kaskadowego usuwania dla kolekcji UserProfile
             builder
                 .Entity<UserProfile>()
@@ -137,13 +151,6 @@ namespace VocareWebAPI.Data
             builder
                 .Entity<UserProfile>()
                 .HasMany(p => p.Languages)
-                .WithOne()
-                .HasForeignKey("UserProfileUserId")
-                .OnDelete(DeleteBehavior.Cascade);
-
-            builder
-                .Entity<UserProfile>()
-                .HasMany(p => p.Recommendations)
                 .WithOne()
                 .HasForeignKey("UserProfileUserId")
                 .OnDelete(DeleteBehavior.Cascade);
@@ -174,24 +181,6 @@ namespace VocareWebAPI.Data
 
             // Konfiguracja ServiceCost
             builder.Entity<ServiceCost>().HasKey(sc => sc.Id);
-
-            builder
-                .Entity<AiRecommendation>()
-                .HasMany(r => r.CareerStatistics)
-                .WithOne()
-                .HasForeignKey("AiRecommendationId");
-
-            builder
-                .Entity<AiRecommendation>()
-                .HasMany(r => r.MarketTrends)
-                .WithOne()
-                .HasForeignKey("AiRecommendationId");
-
-            builder
-                .Entity<AiRecommendation>()
-                .HasMany(r => r.SkillDemands)
-                .WithOne()
-                .HasForeignKey("AiRecommendationId");
 
             // Konfiguracja GeneratedCv
             builder.Entity<GeneratedCv>().HasKey(gc => gc.Id);
