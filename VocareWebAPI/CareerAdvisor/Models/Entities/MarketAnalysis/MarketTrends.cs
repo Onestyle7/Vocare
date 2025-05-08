@@ -19,6 +19,6 @@ namespace VocareWebAPI.Models.Entities.MarketAnalysis
         public DateTime StartDate { get; set; }
         public DateTime? EndDate { get; set; }
         public Guid AiRecommendationId { get; set; } // Klucz obcy do AiRecommendation
-        public AiRecommendation AiRecommendation { get; set; } = new AiRecommendation(); // Nawiazanie do encji AiRecommendation
+        public AiRecommendation AiRecommendation { get; set; } = default!; // Nawiazanie do encji AiRecommendation
     }
 }

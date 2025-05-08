@@ -113,6 +113,13 @@ namespace VocareWebAPI.Data
                 }
             }
             builder
+                .Entity<AiRecommendation>()
+                .HasOne(ar => ar.UserProfile)
+                .WithMany(up => up.Recommendations)
+                .HasForeignKey(ar => ar.UserId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            builder
                 .Entity<MarketTrends>()
                 .HasOne(m => m.AiRecommendation)
                 .WithMany(a => a.MarketTrends)
@@ -148,13 +155,6 @@ namespace VocareWebAPI.Data
                 .HasForeignKey("UserProfileUserId")
                 .OnDelete(DeleteBehavior.Cascade);
 
-            builder
-                .Entity<UserProfile>()
-                .HasMany(p => p.Recommendations)
-                .WithOne()
-                .HasForeignKey("UserProfileUserId")
-                .OnDelete(DeleteBehavior.Cascade);
-
             builder.HasDefaultSchema("Identity");
 
             builder
@@ -181,18 +181,6 @@ namespace VocareWebAPI.Data
 
             // Konfiguracja ServiceCost
             builder.Entity<ServiceCost>().HasKey(sc => sc.Id);
-
-            builder
-                .Entity<AiRecommendation>()
-                .HasMany(r => r.CareerStatistics)
-                .WithOne()
-                .HasForeignKey("AiRecommendationId");
-
-            builder
-                .Entity<AiRecommendation>()
-                .HasMany(r => r.SkillDemands)
-                .WithOne()
-                .HasForeignKey("AiRecommendationId");
 
             // Konfiguracja GeneratedCv
             builder.Entity<GeneratedCv>().HasKey(gc => gc.Id);

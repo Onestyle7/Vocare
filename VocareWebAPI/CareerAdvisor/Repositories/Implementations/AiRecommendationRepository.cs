@@ -40,15 +40,16 @@ namespace VocareWebAPI.Repositories
         /// </summary>
         /// <param name="userId">Id użytkownika</param>
         /// <returns>Najnowsza rekomendacja AI</returns>
-        public async Task<AiRecommendation> GetLatestByUserIdAsync(string userId)
+        public async Task<AiRecommendation?> GetLatestByUserIdAsync(string userId)
         {
             return await _context
-                .AiRecommendations.Include(r => r.CareerPaths)
+                .AiRecommendations.Include(r => r.UserProfile)
+                .Include(r => r.CareerPaths)
                 .ThenInclude(cp => cp.SwotAnalysis)
                 .Include(r => r.NextSteps)
-                .Where(r => r.UserId == userId)
-                .OrderByDescending(r => r.RecommendationDate) // Sortowanie malejąco po dacie rekomendacji
-                .FirstOrDefaultAsync();
+                .AsNoTracking()
+                .OrderByDescending(r => r.RecommendationDate)
+                .FirstOrDefaultAsync(r => r.UserId == userId);
         }
     }
 }
