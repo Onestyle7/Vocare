@@ -1,5 +1,5 @@
 import { GridBackgroundDemo } from '@/components/MarketComponents/GridBackgroundDemo';
-import ProfileDetails from '@/components/ProfileDeatail';
+import ProfileDetails from '@/components/ProfileFormComponents/ProfileDeatail';
 import Header from '@/components/SectionsComponents/Header';
 import React from 'react';
 

@@ -4,7 +4,6 @@ import { useEffect, useState, useRef } from 'react';
 import axios from 'axios';
 import { UserProfile } from '@/lib/types/profile';
 import { toast } from 'sonner';
-import { AiCareerResponse } from '@/lib/recommendations';
 import GenerateRecommendation from './GenerateRecommendationFail';
 import { Separator } from '../ui/separator';
 import { gsap } from 'gsap';
@@ -27,6 +26,8 @@ import Image from 'next/image';
 import { star_generate } from '@/app/constants';
 import { useTokenBalanceContext } from '@/lib/contexts/TokenBalanceContext';
 import Link from 'next/link';
+import { AxiosError } from 'axios';
+import { AiCareerResponse, CareerPath } from '@/lib/types/recommendation';
 
 export default function AssistantPage() {
   const [profile, setProfile] = useState<UserProfile | null>(null);
@@ -156,8 +157,8 @@ export default function AssistantPage() {
           setRecommendations(lastRecommendationResponse.data);
           setLoading(false);
           return;
-        } catch (lastError: any) {
-          if (lastError.response?.status !== 404) {
+        } catch (lastError: unknown) {
+          if (lastError instanceof AxiosError && lastError.response?.status !== 404) {
             console.error('Something went wrong while generating last recommendations:', lastError);
             setError(
               lastError.response?.data?.detail ||
@@ -179,27 +180,29 @@ export default function AssistantPage() {
         );
         console.log('Nowe rekomendacje:', response.data);
         setRecommendations(response.data);
-      } catch (err: any) {
-        console.error('Szczegółowy błąd:', err);
-        console.error('Status odpowiedzi:', err.response?.status);
-        console.error('Dane odpowiedzi:', err.response?.data);
-        console.error('Błąd podczas pobierania rekomendacji:', err);
-        if (err.response?.status === 500 && 
-          err.response?.data && 
-          typeof err.response.data === 'string' && 
-          err.response.data.includes('User billing information')) {
-        // Specjalna obsługa dla błędu braku informacji rozliczeniowych
-        setError('billing_info_missing');
-        toast.error('Brak informacji rozliczeniowych', {
-          description: 'Uzupełnij dane rozliczeniowe w ustawieniach konta.',
-        });
-      } else {
-        // Standardowa obsługa innych błędów
-        setError(err.response?.data?.detail || 'Błąd podczas generowania rekomendacji');
+      } catch (err: unknown) {
+        if (err instanceof AxiosError) {
+          console.error('Szczegółowy błąd:', err);
+          console.error('Status odpowiedzi:', err.response?.status);
+          console.error('Dane odpowiedzi:', err.response?.data);
+
+          if (
+            err.response?.status === 500 &&
+            typeof err.response.data === 'string' &&
+            err.response.data.includes('User billing information')
+          ) {
+            setError('billing_info_missing');
+            toast.error('Brak informacji rozliczeniowych', {
+              description: 'Uzupełnij dane rozliczeniowe w ustawieniach konta.',
+            });
+          } else {
+            setError(err.response?.data?.detail || 'Błąd podczas generowania rekomendacji');
+          }
+        } else {
+          console.error('Unknown error:', err);
+          setError('Unexpected error occurred');
+        }
       }
-    } finally {
-      setLoading(false);
-    }
     };
 
     if (profile) {
@@ -229,13 +232,21 @@ export default function AssistantPage() {
       );
       setRecommendations(response.data);
       toast.success('New recommendations have been generated');
-    } catch (err: any) {
-      setError(
-        err.response?.data?.detail || 'Something went wrong while generating new recommendations'
-      );
-      toast.error('Błąd', {
-        description: 'Something went wrong while generating new recommendations',
-      });
+    } catch (err: unknown) {
+      if (err instanceof AxiosError) {
+        setError(
+          err.response?.data?.detail || 'Something went wrong while generating new recommendations'
+        );
+        toast.error('Błąd', {
+          description: 'Something went wrong while generating new recommendations',
+        });
+      } else {
+        setError('Unexpected error');
+        toast.error('Unexpected error', {
+          description: 'An unknown error occurred while generating recommendations',
+        });
+        console.error('Unexpected error:', err);
+      }
     } finally {
       setLoading(false);
     }
@@ -267,7 +278,9 @@ export default function AssistantPage() {
   }
 
   return (
-    <div className="font-poppins mx-auto max-w-7xl p-4 md:p-8">
+    <div className="font-poppins mx-auto max-w-7xl p-4 md:p-8 flex items-center justify-center flex-col">
+      <h2 className="mb-4 ml-4 text-2xl font-bold text-[#915EFF]">Carrer Recommendation</h2>
+      <div>
       {/* Main recommendation section */}
       <div className="mb-1 flex flex-col overflow-hidden rounded-[28px] border shadow-sm md:flex-row">
         <div className="flex items-center justify-center bg-[#915EFF] p-4 md:w-1/6 md:p-8">
@@ -300,7 +313,7 @@ export default function AssistantPage() {
               <div className="mt-4">
                 <h4 className="font-medium">Kolejne kroki:</h4>
                 <ul className="mt-2 list-disc space-y-1 pl-5">
-                  {recommendations.recommendation.nextSteps.map((step, index) => (
+                  {recommendations.recommendation.nextSteps.map((step: string, index: number) => (
                     <li key={index}>{step}</li>
                   ))}
                 </ul>
@@ -314,13 +327,13 @@ export default function AssistantPage() {
           </div>
         </div>
       </div>
+      </div>
 
       {/* Career paths sections */}
-      {recommendations.careerPaths.map((path, index) => (
+      {recommendations.careerPaths.map((path: CareerPath, index: number) => (
         <CareerPathSection key={index} path={path} index={index} />
       ))}
 
-      {/* Button for generating new recommendations */}
       <div
         className={`${
           showFixedButton
@@ -337,8 +350,7 @@ export default function AssistantPage() {
         </CustomButton>
       </div>
 
-      {/* STATIC button always under content */}
-      <div className="mt-16 flex justify-center">
+      <div className="mt-16 flex justify-center w-full">
         <CustomButton
           onClick={() => setIsConfirmDialogOpen(true)}
           disabled={isLoading}
@@ -350,50 +362,49 @@ export default function AssistantPage() {
 
       {/* Confirmation Dialog */}
       <AlertDialog open={isConfirmDialogOpen} onOpenChange={setIsConfirmDialogOpen}>
-  <AlertDialogContent className="font-poppins mx-auto max-w-md">
-    <AlertDialogHeader>
-      <AlertDialogTitle className="text-center text-xl font-bold">
-        Generate new recommendation?
-      </AlertDialogTitle>
-      <AlertDialogDescription className="text-center">
-        This will take <b className="text-[#915EFF]">50 credits</b> from Your account.
-      </AlertDialogDescription>
+        <AlertDialogContent className="font-poppins mx-auto max-w-md">
+          <AlertDialogHeader>
+            <AlertDialogTitle className="text-center text-xl font-bold">
+              Generate new recommendation?
+            </AlertDialogTitle>
+            <AlertDialogDescription className="text-center">
+              This will take <b className="text-[#915EFF]">50 credits</b> from Your account.
+            </AlertDialogDescription>
 
-      <div className="mt-2 text-center text-sm font-extralight">
-        Current balance:{' '}
-        <span className="font-bold">{isBalanceLoading ? '...' : tokenBalance}</span>
-      </div>
-    </AlertDialogHeader>
+            <div className="mt-2 text-center text-sm font-extralight">
+              Current balance:{' '}
+              <span className="font-bold">{isBalanceLoading ? '...' : tokenBalance}</span>
+            </div>
+          </AlertDialogHeader>
 
-    <AlertDialogFooter className="flex justify-center gap-4 sm:justify-center">
-      <AlertDialogCancel className="border-gray-200">Cancel</AlertDialogCancel>
-      
-      {/* Conditionally render either Get Tokens button or Generate button */}
-      {!isBalanceLoading && typeof tokenBalance === 'number' && tokenBalance < 5 ? (
-        <Link href="/pricing">
-          <AlertDialogAction
-            className="bg-[#915EFF] text-white hover:bg-[#7b4ee0]"
-            onClick={() => setIsConfirmDialogOpen(false)}
-          >
-            Get tokens
-            <Image src={star_generate} alt="star" width={16} height={16} />
-          </AlertDialogAction>
-        </Link>
-      ) : (
-        <AlertDialogAction
-          onClick={async () => {
-            await handleGenerateNewRecommendations();
-            refresh();
-          }}
-          className="bg-[#915EFF] text-white hover:bg-[#7b4ee0]"
-        >
-          Generate
-          <Image src={star_generate} alt="star" width={16} height={16} />
-        </AlertDialogAction>
-      )}
-    </AlertDialogFooter>
-  </AlertDialogContent>
-</AlertDialog>
+          <AlertDialogFooter className="flex justify-center gap-4 sm:justify-center">
+            <AlertDialogCancel className="border-gray-200">Cancel</AlertDialogCancel>
+
+            {!isBalanceLoading && typeof tokenBalance === 'number' && tokenBalance < 5 ? (
+              <Link href="/pricing">
+                <AlertDialogAction
+                  className="bg-[#915EFF] text-white hover:bg-[#7b4ee0]"
+                  onClick={() => setIsConfirmDialogOpen(false)}
+                >
+                  Get tokens
+                  <Image src={star_generate} alt="star" width={16} height={16} />
+                </AlertDialogAction>
+              </Link>
+            ) : (
+              <AlertDialogAction
+                onClick={async () => {
+                  await handleGenerateNewRecommendations();
+                  refresh();
+                }}
+                className="bg-[#915EFF] text-white hover:bg-[#7b4ee0]"
+              >
+                Generate
+                <Image src={star_generate} alt="star" width={16} height={16} />
+              </AlertDialogAction>
+            )}
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
   );
 }

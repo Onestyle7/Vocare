@@ -5,13 +5,13 @@ import { getUserProfile } from '@/lib/profile';
 import { useRouter } from 'next/navigation';
 import { UserProfile } from '@/lib/types/profile';
 import { toast } from 'sonner';
-import ProfileCard from './ProfileFormComponents/ProfileCard';
 import { ArrowLeft, ArrowRight, LogOut } from 'lucide-react';
-import { Separator } from './ui/separator';
-import { Button } from './ui/button';
-import ProfileForm from './ProfileFormComponents/ProfileForm';
 import { logoutUser } from '@/lib/auth';
-import { formatDate } from './SupportComponents/formatSimpleDate';
+import { formatDate } from '../SupportComponents/formatSimpleDate';
+import ProfileForm from './ProfileForm';
+import { Separator } from '../ui/separator';
+import ProfileCard from './ProfileCard';
+import { Button } from '../ui/button';
 
 export default function ProfileDetails() {
   const [profile, setProfile] = useState<UserProfile | null>(null);
@@ -102,7 +102,7 @@ export default function ProfileDetails() {
             </span>
 
             {profile?.education?.length ? (
-              profile.education.map((edu, index) => (
+              profile.education?.map((edu, index) => (
                 <div key={index} className="space-y-4 rounded-lg p-2">
                   <div className="flex justify-between">
                     <span className="font-medium text-gray-600 dark:text-gray-200">
@@ -131,7 +131,9 @@ export default function ProfileDetails() {
                       {edu.endDate ? formatDate(edu.endDate) : 'Present'}
                     </span>
                   </div>
-                  {index !== profile.education.length - 1 && <Separator className="mt-4" />}
+                  {profile.education && index !== profile.education.length - 1 && (
+                    <Separator className="mt-4" />
+                  )}
                 </div>
               ))
             ) : (
@@ -214,7 +216,7 @@ export default function ProfileDetails() {
         </span>
 
         {profile?.workExperience?.length ? (
-          profile.workExperience.map((exp, index) => (
+          profile.workExperience?.map((exp, index) => (
             <div key={index} className="space-y-4 rounded-lg p-2">
               <div className="flex justify-between">
                 <span className="font-medium text-gray-600 dark:text-gray-200">Position:</span>
@@ -240,7 +242,9 @@ export default function ProfileDetails() {
                   {formatDate(exp.startDate)} – {exp.endDate ? formatDate(exp.endDate) : 'Present'}
                 </span>
               </div>
-              {index !== profile.workExperience.length - 1 && <Separator className="mt-4" />}
+              {profile.workExperience && index !== profile.workExperience.length - 1 && (
+                <Separator className="mt-4" />
+              )}
             </div>
           ))
         ) : (
@@ -274,7 +278,7 @@ export default function ProfileDetails() {
   const pages = [renderPersonalInfoPage, renderSkillsAndWorkPage, renderAboutMePage];
 
   return (
-    <div className="font-poppins mx-auto mt-16 max-w-7xl max-sm:mx-4 2xl:max-w-[1480px]">
+    <div className="font-poppins xl:mx-auto mx-4 mt-16 max-w-7xl max-sm:mx-4 2xl:max-w-[1480px]">
       <div className="flex h-screen flex-col xl:flex-row">
         <div className="hidden xl:block xl:w-1/2 xl:pr-8">
           <div className="flex h-3/4 items-center justify-center">

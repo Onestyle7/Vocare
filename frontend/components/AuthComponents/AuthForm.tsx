@@ -18,8 +18,9 @@ import { Input } from '@/components/ui/input';
 import Image from 'next/image';
 import Link from 'next/link';
 import { toast } from 'sonner';
-import { ButtonForm } from './ui/button-form';
 import { ArrowRight } from 'lucide-react';
+import { ButtonForm } from '../ui/button-form';
+import { AxiosError } from 'axios';
 
 type FormType = 'sign-in' | 'sign-up';
 
@@ -61,11 +62,18 @@ const AuthForm = ({ type }: { type: FormType }) => {
         });
         router.push('/');
       }
-    } catch (error: any) {
-      console.error('Error:', error);
+    } catch (error: unknown) {
+      let errorMessage = 'An unknown error occurred';
+      let status: number | undefined;
 
-      const errorMessage = error.message?.toLowerCase() || 'An error occurred';
-      const status = error.response?.status;
+      if (error instanceof AxiosError) {
+        errorMessage = error.message.toLowerCase();
+        status = error.response?.status;
+      } else if (error instanceof Error) {
+        errorMessage = error.message.toLowerCase();
+      }
+
+      console.error('Error:', error);
 
       if (
         status === 401 ||

@@ -3,7 +3,7 @@ import CustomButton from '../ui/CustomButton';
 import { Input } from '../ui/input';
 import { contact_pages, down_links, links_pages, links_social } from '@/app/constants';
 import Link from 'next/link';
-import Section from '../Section';
+import Section from '../SupportComponents/Section';
 
 const Footer = () => {
   return (

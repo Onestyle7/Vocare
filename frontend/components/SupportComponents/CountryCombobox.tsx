@@ -16,9 +16,13 @@ import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover
 import { UseFormReturn } from 'react-hook-form';
 import { countries } from '@/app/constants';
 
+interface CountryFormValues {
+  country: string;
+}
+
 interface CountryComboboxProps {
-  form: UseFormReturn<any>;
-  name: string;
+  form: UseFormReturn<CountryFormValues>;
+  name: keyof CountryFormValues;
 }
 
 export function CountryCombobox({ form, name }: CountryComboboxProps) {

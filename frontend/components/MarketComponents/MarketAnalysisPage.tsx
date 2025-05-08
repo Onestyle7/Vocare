@@ -85,7 +85,7 @@ export default function MarketAnalysis() {
     setLoading(true);
     setError(null);
     setData(null); // 🔧 Reset danych przed nowym załadunkiem
-  
+
     const token = localStorage.getItem('token');
     if (!token) {
       toast.error('Authentication required', {
@@ -94,7 +94,7 @@ export default function MarketAnalysis() {
       setLoading(false);
       return;
     }
-  
+
     try {
       if (useNewData) {
         const response = await axios.get('https://localhost:5001/api/MarketAnalysis', {
@@ -103,7 +103,7 @@ export default function MarketAnalysis() {
             'Content-Type': 'application/json',
           },
         });
-  
+
         console.log('New market analysis raw data:', response.data);
         handleResponseData(response.data);
         toast.success('Generated new market analysis');
@@ -118,7 +118,7 @@ export default function MarketAnalysis() {
               },
             }
           );
-  
+
           console.log('Latest market analysis raw data:', latestResponse.data);
           handleResponseData(latestResponse.data);
         } catch (latestError: any) {
@@ -130,7 +130,7 @@ export default function MarketAnalysis() {
                 'Content-Type': 'application/json',
               },
             });
-  
+
             console.log('First market analysis raw data:', response.data);
             handleResponseData(response.data);
           } else {
@@ -144,7 +144,7 @@ export default function MarketAnalysis() {
     } catch (err: any) {
       console.error('Error fetching market analysis:', err);
       setError(err.response?.data?.detail || 'Error generating market analysis');
-  
+
       if (useNewData) {
         toast.error('Error', {
           description: 'Failed to generate new market analysis.',
@@ -154,7 +154,6 @@ export default function MarketAnalysis() {
       setLoading(false);
     }
   };
-  
 
   useEffect(() => {
     loadData();
@@ -192,15 +191,15 @@ export default function MarketAnalysis() {
   const marketAnalysis = getMarketAnalysis();
 
   return (
-    <div className="font-poppins mx-auto mt-8 mb-4 max-w-7xl">
+    <div className="font-poppins mx-auto mt-8 mb-4 max-w-7xl items-center justify-center flex flex-col">
       <h2 className="mb-4 ml-4 text-2xl font-bold text-[#915EFF]">Job Market Analysis</h2>
-
+      <div>
       {marketAnalysis?.industryStatistics?.map((stat, index) => (
         <IndustrySection key={index} data={stat} index={index} />
       ))}
 
       {marketAnalysis?.marketTrends && marketAnalysis.marketTrends.length > 0 && (
-        <div className="mt-8 rounded-[28px] border p-6 shadow-sm">
+        <div className="mt-8 rounded-[28px] border p-6 shadow-sm mx-4">
           <h3 className="mb-4 text-xl font-semibold">Current Market Trends</h3>
           <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
             {marketAnalysis.marketTrends.map((trend, index) => (
@@ -218,7 +217,7 @@ export default function MarketAnalysis() {
       )}
 
       {marketAnalysis?.skillDemand && marketAnalysis.skillDemand.length > 0 && (
-        <div className="mt-8 rounded-[28px] border p-6 shadow-sm">
+        <div className="mt-8 rounded-[28px] border p-6 shadow-sm mx-4">
           <h3 className="mb-4 text-xl font-semibold">In-Demand Skills</h3>
           <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
             {marketAnalysis.skillDemand.map((skill, index) => (
@@ -301,6 +300,7 @@ export default function MarketAnalysis() {
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>
+    </div>
     </div>
   );
 }

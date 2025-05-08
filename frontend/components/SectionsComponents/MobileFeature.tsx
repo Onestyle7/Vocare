@@ -1,6 +1,6 @@
 'use client';
 import React, { useRef, useEffect } from 'react';
-import Section from '../Section';
+import Section from '../SupportComponents/Section';
 import Iphone15Pro from '../magicui/iphone-15-pro';
 import { ScrollParallax } from 'react-just-parallax';
 import CustomButton from '../ui/CustomButton';
@@ -9,7 +9,7 @@ import { ArrowRight, Search, CheckCircle, ListChecks } from 'lucide-react';
 import { gsap } from 'gsap';
 import { AvatarCircles } from '../magicui/avatar-circles';
 import { avatars, mobileView } from '@/app/constants';
-import AnimatedHeadline from '../AnimatedText';
+import AnimatedHeadline from '../SupportComponents/AnimatedText';
 
 const MobileFeature = () => {
   const parallaxRef = useRef<HTMLDivElement>(null);
@@ -33,7 +33,7 @@ const MobileFeature = () => {
       repeat: -1,
     });
 
-    states.forEach((state, index) => {
+    states.forEach((state) => {
       tl.call(() => {
         if (textElement) {
           textElement.textContent = state.text;

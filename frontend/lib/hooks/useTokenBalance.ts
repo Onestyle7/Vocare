@@ -47,7 +47,7 @@ export const useTokenBalance = () => {
       const response = await axios.get(`${API_URL}/api/Billing/get-token-balance`, {
         headers: token ? { Authorization: `Bearer ${token}` } : {},
       });
-      
+
       const data = response.data;
       if (typeof data === 'object') {
         if ('tokenBalance' in data) setTokenBalance(data.tokenBalance);
@@ -75,7 +75,7 @@ export const useTokenBalance = () => {
     fetchBalance();
   }, [fetchBalance, authToken]);
 
-  // Funkcję refreshu dla integracji z komponentami 
+  // Funkcję refreshu dla integracji z komponentami
   const refresh = useCallback(() => {
     fetchBalance();
   }, [fetchBalance]);

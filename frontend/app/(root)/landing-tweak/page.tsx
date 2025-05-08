@@ -1,6 +1,6 @@
 'use client';
 
-import { ModeToggle } from '@/components/ModeToggle';
+import { ModeToggle } from '@/components/SupportComponents/ModeToggle';
 import { Button } from '@/components/ui/button';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
