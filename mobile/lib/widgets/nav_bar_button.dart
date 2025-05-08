@@ -6,8 +6,9 @@ import 'package:vocare/screens/fill_profile_screen.dart';
 import 'package:vocare/screens/home_screen.dart';
 import 'package:vocare/screens/login_screen.dart';
 import 'package:phosphor_flutter/phosphor_flutter.dart';
+import 'package:vocare/screens/market_analysis.dart';
 
-enum NavDestination { home, profile, logout, assistent }
+enum NavDestination { home, profile, logout, assistent, marketAnalysis }
 
 class NavBarButtons extends StatelessWidget {
   final List<NavDestination> destinations;
@@ -27,7 +28,7 @@ class NavBarButtons extends StatelessWidget {
                     height: 40.11,
                     width: 35.77,
                     colorFilter: const ColorFilter.mode(
-                       Colors.blue,
+                      Colors.blue,
                       BlendMode.srcIn,
                     ),
                   ),
@@ -41,13 +42,15 @@ class NavBarButtons extends StatelessWidget {
 
               case NavDestination.profile:
                 return IconButton(
-                  icon: SvgPicture.asset('assets/icons/profile.svg',
-                  height: 40.11,
-                  width: 35.77,
-                   colorFilter: const ColorFilter.mode(
+                  icon: SvgPicture.asset(
+                    'assets/icons/profile.svg',
+                    height: 40.11,
+                    width: 35.77,
+                    colorFilter: const ColorFilter.mode(
                       Colors.blue,
                       BlendMode.srcIn,
-                    ),),
+                    ),
+                  ),
                   tooltip: 'Profil',
                   onPressed:
                       () => Navigator.push(
@@ -59,9 +62,11 @@ class NavBarButtons extends StatelessWidget {
                 );
               case NavDestination.logout:
                 return IconButton(
-                  icon: const Icon(Icons.logout, color: Colors.blue,
-                  weight: 35.77,
-                  size: 40.11,
+                  icon: const Icon(
+                    Icons.logout,
+                    color: Colors.blue,
+                    weight: 35.77,
+                    size: 40.11,
                   ),
                   tooltip: 'Wyloguj się',
                   onPressed: () async {
@@ -75,10 +80,30 @@ class NavBarButtons extends StatelessWidget {
                 );
               case NavDestination.assistent:
                 return IconButton(
-                  icon: const Icon(PhosphorIcons.messengerLogo, color: Colors.blue,
-                  weight: 35.77,
-                  size: 40.11,),
+                  icon: const Icon(
+                    PhosphorIcons.messengerLogo,
+                    color: Colors.blue,
+                    weight: 35.77,
+                    size: 40.11,
+                  ),
                   tooltip: 'Strona główna',
+                  onPressed:
+                      () => Navigator.pushReplacement(
+                        context,
+                        MaterialPageRoute(
+                          builder: (_) => const AIAsistentPageScreen(),
+                        ),
+                      ),
+                );
+              case NavDestination.marketAnalysis:
+                return IconButton(
+                  icon: const Icon(
+                    PhosphorIcons.chartLineUp,
+                    color: Colors.blue,
+                    weight: 35.77,
+                    size: 40.11,
+                  ),
+                  tooltip: 'Market analysis',
                   onPressed:
                       () => Navigator.pushReplacement(
                         context,
