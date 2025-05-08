@@ -188,7 +188,10 @@ export default function ProfileDetails() {
   const renderSkillsAndWorkPage = () => (
     <div className="space-y-8">
       <div className="mt-4 space-y-2">
-        <h2 className="text-2xl font-medium text-gray-700 dark:text-gray-200">Skills</h2>
+        <h2 className="flex items-center text-2xl font-medium text-gray-700 dark:text-gray-200">
+          Skills
+          <div className="ml-2 h-2 w-2 rounded-full bg-[#915EFF]" />
+        </h2>
         <div className="flex flex-wrap gap-2">
           {profile?.skills?.length ? (
             profile.skills.map((skill, index) => (
@@ -250,9 +253,19 @@ export default function ProfileDetails() {
   const renderAboutMePage = () => (
     <div className="space-y-8">
       <div className="mt-4 space-y-2">
-        <h2 className="text-2xl font-medium text-gray-700 dark:text-gray-200">About Me</h2>
+        <h2 className="flex items-center text-2xl font-medium text-gray-700 dark:text-gray-200">
+          About Me
+          <div className="ml-2 h-2 w-2 rounded-full bg-[#915EFF]" />
+        </h2>
         <div className="rounded-lg bg-gray-50/60 p-4 dark:bg-black/20">
           <p>{profile?.aboutMe || 'No description yet.'}</p>
+        </div>
+        <h2 className="flex items-center text-2xl font-medium text-gray-700 dark:text-gray-200">
+          Addidtional Informations
+          <div className="ml-2 h-2 w-2 rounded-full bg-[#915EFF]" />
+        </h2>
+        <div className="rounded-lg bg-gray-50/60 p-4 dark:bg-black/20">
+          <p>{profile?.additionalInformation || 'No additional informations yet.'}</p>
         </div>
       </div>
     </div>

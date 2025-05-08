@@ -48,11 +48,7 @@ export default function StepFour({
           <FormItem>
             <FormLabel>About me</FormLabel>
             <FormControl>
-              <Textarea
-                placeholder="Opowiedz coś o sobie..."
-                className="min-h-[120px]"
-                {...field}
-              />
+              <Textarea placeholder="Tell about yourself..." className="min-h-[120px]" {...field} />
             </FormControl>
             <FormMessage />
           </FormItem>
@@ -68,7 +64,7 @@ export default function StepFour({
             <FormLabel>Additional Information</FormLabel>
             <FormControl>
               <Textarea
-                placeholder="Dodatkowe informacje, które chcesz udostępnić..."
+                placeholder="Additional informations that you want to share..."
                 className="min-h-[120px]"
                 {...field}
               />

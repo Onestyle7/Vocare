@@ -56,8 +56,36 @@ export default function MarketAnalysis() {
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
+  // Dodana funkcja pomocnicza do obsługi odpowiedzi API
+  const handleResponseData = (responseData) => {
+    // Case 1: Direct API response is the MarketAnalysisResponseDto
+    if (responseData && responseData.marketAnalysis) {
+      console.log('Case 1: Data already has marketAnalysis property');
+      setData(responseData);
+      setDataStructure('With marketAnalysis property');
+    }
+    // Case 2: API response is directly the marketAnalysis object
+    else if (responseData && responseData.industryStatistics) {
+      console.log('Case 2: Data is the marketAnalysis object itself');
+      setData({ marketAnalysis: responseData });
+      setDataStructure('Direct marketAnalysis object');
+    }
+    // Case 3: API response has a different structure
+    else {
+      console.log('Case 3: Unknown data structure, logging full response');
+      console.log(JSON.stringify(responseData, null, 2));
+
+      // Just store the raw data for now
+      setData(responseData);
+      setDataStructure('Unknown structure');
+    }
+  };
+
   const loadData = async (useNewData = false) => {
     setLoading(true);
+    setError(null);
+    setData(null); // 🔧 Reset danych przed nowym załadunkiem
+  
     const token = localStorage.getItem('token');
     if (!token) {
       toast.error('Authentication required', {
@@ -66,10 +94,20 @@ export default function MarketAnalysis() {
       setLoading(false);
       return;
     }
-
+  
     try {
-      // First try to fetch the latest market analysis
-      if (!useNewData) {
+      if (useNewData) {
+        const response = await axios.get('https://localhost:5001/api/MarketAnalysis', {
+          headers: {
+            Authorization: `Bearer ${token}`,
+            'Content-Type': 'application/json',
+          },
+        });
+  
+        console.log('New market analysis raw data:', response.data);
+        handleResponseData(response.data);
+        toast.success('Generated new market analysis');
+      } else {
         try {
           const latestResponse = await axios.get(
             'https://localhost:5001/api/MarketAnalysis/latest',
@@ -80,95 +118,33 @@ export default function MarketAnalysis() {
               },
             }
           );
-
+  
           console.log('Latest market analysis raw data:', latestResponse.data);
-          console.log('Response data type:', typeof latestResponse.data);
-          console.log('Response data structure:', Object.keys(latestResponse.data));
-
-          // Analyze the data structure and set appropriate format
-          const responseData = latestResponse.data;
-
-          // Case 1: Direct API response is the MarketAnalysisResponseDto
-          if (responseData && responseData.marketAnalysis) {
-            console.log('Case 1: Data already has marketAnalysis property');
-            setData(responseData);
-            setDataStructure('With marketAnalysis property');
-          }
-          // Case 2: API response is directly the marketAnalysis object
-          else if (responseData && responseData.industryStatistics) {
-            console.log('Case 2: Data is the marketAnalysis object itself');
-            setData({ marketAnalysis: responseData });
-            setDataStructure('Direct marketAnalysis object');
-          }
-          // Case 3: API response has a different structure
-          else {
-            console.log('Case 3: Unknown data structure, logging full response');
-            console.log(JSON.stringify(responseData, null, 2));
-
-            // Just store the raw data for now
-            setData(responseData);
-            setDataStructure('Unknown structure');
-          }
-
-          setLoading(false);
-          return;
+          handleResponseData(latestResponse.data);
         } catch (latestError: any) {
-          // If 404 error (no latest analysis found), proceed to generate a new one
-          if (latestError.response?.status !== 404) {
+          if (latestError.response?.status === 404) {
+            console.log('No existing analysis found, generating a new one...');
+            const response = await axios.get('https://localhost:5001/api/MarketAnalysis', {
+              headers: {
+                Authorization: `Bearer ${token}`,
+                'Content-Type': 'application/json',
+              },
+            });
+  
+            console.log('First market analysis raw data:', response.data);
+            handleResponseData(response.data);
+          } else {
             console.error('Error fetching latest market analysis:', latestError);
             setError(
               latestError.response?.data?.detail || 'Error fetching latest market analysis.'
             );
-            setLoading(false);
-            return;
           }
         }
-      }
-
-      // If no latest analysis, fetch a new one using the fallback endpoint
-      const response = await axios.get('https://localhost:5001/api/MarketAnalysis', {
-        headers: {
-          Authorization: `Bearer ${token}`,
-          'Content-Type': 'application/json',
-        },
-      });
-
-      console.log('New market analysis raw data:', response.data);
-      console.log('Fallback response data type:', typeof response.data);
-      console.log('Fallback response structure:', Object.keys(response.data));
-
-      // Analyze the data structure from fallback endpoint
-      const responseData = response.data;
-
-      // Case 1: Direct API response is the MarketAnalysisResponseDto
-      if (responseData && responseData.marketAnalysis) {
-        console.log('Fallback Case 1: Data already has marketAnalysis property');
-        setData(responseData);
-        setDataStructure('With marketAnalysis property (fallback)');
-      }
-      // Case 2: API response is directly the marketAnalysis object
-      else if (responseData && responseData.industryStatistics) {
-        console.log('Fallback Case 2: Data is the marketAnalysis object itself');
-        setData({ marketAnalysis: responseData });
-        setDataStructure('Direct marketAnalysis object (fallback)');
-      }
-      // Case 3: API response has a different structure
-      else {
-        console.log('Fallback Case 3: Unknown data structure, logging full response');
-        console.log(JSON.stringify(responseData, null, 2));
-
-        // Just store the raw data for now
-        setData(responseData);
-        setDataStructure('Unknown structure (fallback)');
-      }
-
-      if (useNewData) {
-        toast.success('Generated new market analysis');
       }
     } catch (err: any) {
       console.error('Error fetching market analysis:', err);
       setError(err.response?.data?.detail || 'Error generating market analysis');
-
+  
       if (useNewData) {
         toast.error('Error', {
           description: 'Failed to generate new market analysis.',
@@ -178,6 +154,7 @@ export default function MarketAnalysis() {
       setLoading(false);
     }
   };
+  
 
   useEffect(() => {
     loadData();
@@ -217,15 +194,6 @@ export default function MarketAnalysis() {
   return (
     <div className="font-poppins mx-auto mt-8 mb-4 max-w-7xl">
       <h2 className="mb-4 ml-4 text-2xl font-bold text-[#915EFF]">Job Market Analysis</h2>
-
-      {/* Debug info - remove in production
-      <div className="mb-4 ml-4 rounded border border-gray-300 bg-gray-50 p-2 text-xs dark:bg-gray-800">
-        <p><strong>Data Structure:</strong> {dataStructure}</p>
-        <p><strong>Has Data Object:</strong> {data ? 'Yes' : 'No'}</p>
-        <p><strong>Data Keys:</strong> {data ? Object.keys(data).join(', ') : 'None'}</p>
-        <p><strong>Market Analysis Keys:</strong> {getMarketAnalysis() ? Object.keys(getMarketAnalysis()).join(', ') : 'None'}</p>
-        <p><strong>Has Industry Statistics:</strong> {getMarketAnalysis()?.industryStatistics ? 'Yes' : 'No'}</p>
-      </div> */}
 
       {marketAnalysis?.industryStatistics?.map((stat, index) => (
         <IndustrySection key={index} data={stat} index={index} />
@@ -437,10 +405,10 @@ function IndustrySection({ data, index }: IndustryProps) {
         chartBoxRef.current.addEventListener('mouseleave', onLeave);
 
         return () => {
-          salaryBoxRef.current?.removeEventListener('mouseenter', onEnter);
-          salaryBoxRef.current?.removeEventListener('mouseleave', onLeave);
+          chartBoxRef.current?.removeEventListener('mouseenter', onEnter);
+          chartBoxRef.current?.removeEventListener('mouseleave', onLeave);
         };
-      }, salaryBoxRef);
+      }, chartBoxRef);
 
       return () => ctx.revert();
     }
@@ -477,10 +445,10 @@ function IndustrySection({ data, index }: IndustryProps) {
         fireBoxRef.current.addEventListener('mouseleave', onLeave);
 
         return () => {
-          salaryBoxRef.current?.removeEventListener('mouseenter', onEnter);
-          salaryBoxRef.current?.removeEventListener('mouseleave', onLeave);
+          fireBoxRef.current?.removeEventListener('mouseenter', onEnter);
+          fireBoxRef.current?.removeEventListener('mouseleave', onLeave);
         };
-      }, salaryBoxRef);
+      }, fireBoxRef);
 
       return () => ctx.revert();
     }

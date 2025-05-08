@@ -26,6 +26,7 @@ import {
 import Image from 'next/image';
 import { star_generate } from '@/app/constants';
 import { useTokenBalanceContext } from '@/lib/contexts/TokenBalanceContext';
+import Link from 'next/link';
 
 export default function AssistantPage() {
   const [profile, setProfile] = useState<UserProfile | null>(null);
@@ -46,12 +47,10 @@ export default function AssistantPage() {
     const handleScroll = () => {
       const currentScrollY = window.scrollY;
 
-      // Scroll w górę
       if (currentScrollY < lastScrollY.current) {
         setShowFixedButton(true);
       }
 
-      // Scroll w dół
       if (currentScrollY > lastScrollY.current) {
         setShowFixedButton(false);
       }
@@ -181,11 +180,26 @@ export default function AssistantPage() {
         console.log('Nowe rekomendacje:', response.data);
         setRecommendations(response.data);
       } catch (err: any) {
+        console.error('Szczegółowy błąd:', err);
+        console.error('Status odpowiedzi:', err.response?.status);
+        console.error('Dane odpowiedzi:', err.response?.data);
         console.error('Błąd podczas pobierania rekomendacji:', err);
+        if (err.response?.status === 500 && 
+          err.response?.data && 
+          typeof err.response.data === 'string' && 
+          err.response.data.includes('User billing information')) {
+        // Specjalna obsługa dla błędu braku informacji rozliczeniowych
+        setError('billing_info_missing');
+        toast.error('Brak informacji rozliczeniowych', {
+          description: 'Uzupełnij dane rozliczeniowe w ustawieniach konta.',
+        });
+      } else {
+        // Standardowa obsługa innych błędów
         setError(err.response?.data?.detail || 'Błąd podczas generowania rekomendacji');
-      } finally {
-        setLoading(false);
       }
+    } finally {
+      setLoading(false);
+    }
     };
 
     if (profile) {
@@ -336,36 +350,50 @@ export default function AssistantPage() {
 
       {/* Confirmation Dialog */}
       <AlertDialog open={isConfirmDialogOpen} onOpenChange={setIsConfirmDialogOpen}>
-        <AlertDialogContent className="font-poppins mx-auto max-w-md">
-          <AlertDialogHeader>
-            <AlertDialogTitle className="text-center text-xl font-bold">
-              Generate new recommendation?
-            </AlertDialogTitle>
-            <AlertDialogDescription className="text-center">
-              This will take <b className="text-[#915EFF]">50 credits</b> from Your account.
-            </AlertDialogDescription>
+  <AlertDialogContent className="font-poppins mx-auto max-w-md">
+    <AlertDialogHeader>
+      <AlertDialogTitle className="text-center text-xl font-bold">
+        Generate new recommendation?
+      </AlertDialogTitle>
+      <AlertDialogDescription className="text-center">
+        This will take <b className="text-[#915EFF]">50 credits</b> from Your account.
+      </AlertDialogDescription>
 
-            <div className="mt-2 text-center text-sm font-extralight">
-              Current balance:{' '}
-              <span className="font-bold">{isBalanceLoading ? '...' : tokenBalance}</span>
-            </div>
-          </AlertDialogHeader>
+      <div className="mt-2 text-center text-sm font-extralight">
+        Current balance:{' '}
+        <span className="font-bold">{isBalanceLoading ? '...' : tokenBalance}</span>
+      </div>
+    </AlertDialogHeader>
 
-          <AlertDialogFooter className="flex justify-center gap-4 sm:justify-center">
-            <AlertDialogCancel className="border-gray-200">Cancel</AlertDialogCancel>
-            <AlertDialogAction
-              onClick={async () => {
-                await handleGenerateNewRecommendations();
-                refresh();
-              }}
-              className="bg-[#915EFF] text-white hover:bg-[#7b4ee0]"
-            >
-              Generate
-              <Image src={star_generate} alt="star" width={16} height={16} />
-            </AlertDialogAction>
-          </AlertDialogFooter>
-        </AlertDialogContent>
-      </AlertDialog>
+    <AlertDialogFooter className="flex justify-center gap-4 sm:justify-center">
+      <AlertDialogCancel className="border-gray-200">Cancel</AlertDialogCancel>
+      
+      {/* Conditionally render either Get Tokens button or Generate button */}
+      {!isBalanceLoading && typeof tokenBalance === 'number' && tokenBalance < 5 ? (
+        <Link href="/pricing">
+          <AlertDialogAction
+            className="bg-[#915EFF] text-white hover:bg-[#7b4ee0]"
+            onClick={() => setIsConfirmDialogOpen(false)}
+          >
+            Get tokens
+            <Image src={star_generate} alt="star" width={16} height={16} />
+          </AlertDialogAction>
+        </Link>
+      ) : (
+        <AlertDialogAction
+          onClick={async () => {
+            await handleGenerateNewRecommendations();
+            refresh();
+          }}
+          className="bg-[#915EFF] text-white hover:bg-[#7b4ee0]"
+        >
+          Generate
+          <Image src={star_generate} alt="star" width={16} height={16} />
+        </AlertDialogAction>
+      )}
+    </AlertDialogFooter>
+  </AlertDialogContent>
+</AlertDialog>
     </div>
   );
 }
