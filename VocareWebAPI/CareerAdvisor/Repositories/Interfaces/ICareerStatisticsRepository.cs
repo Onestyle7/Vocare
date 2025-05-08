@@ -18,5 +18,6 @@ namespace VocareWebAPI.Repositories.Interfaces
         /// <returns>Task reprezentujący operację async</returns>
         Task AddAsync(CareerStatistics entity);
         Task<List<CareerStatistics>> GetByAiRecommendationIdAsync(Guid aiRecommendationId);
+        Task DeleteByAiRecommendationIdAsync(Guid aiRecommendationId);
     }
 }

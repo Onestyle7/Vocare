@@ -190,6 +190,9 @@ namespace VocareWebAPI.Services.Implementations
             Guid aiRecommendationId
         )
         {
+            await _careerStatisticsRepository.DeleteByAiRecommendationIdAsync(aiRecommendationId);
+            await _skillDemandRepository.DeleteByAiRecommendationIdAsync(aiRecommendationId);
+            await _marketTrendsRepository.DeleteByAiRecommendationIdAsync(aiRecommendationId);
             try
             {
                 foreach (var industryStat in analysis.MarketAnalysis.IndustryStatistics)
