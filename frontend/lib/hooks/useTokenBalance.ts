@@ -7,16 +7,47 @@ export const useTokenBalance = () => {
   const [tokenBalance, setTokenBalance] = useState<number | string>(0);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  // Dodajemy stan dla aktualnego tokena autoryzacji
+  const [authToken, setAuthToken] = useState<string | null>(null);
+
+  // Śledzenie tokena autoryzacji
+  useEffect(() => {
+    // Funkcja do pobrania aktualnego tokena
+    const getAuthToken = () => {
+      const token = localStorage.getItem('token');
+      setAuthToken(token);
+    };
+
+    // Pobiera token przy inicjalizacji
+    getAuthToken();
+
+    const handleStorageChange = (e: StorageEvent) => {
+      if (e.key === 'token') {
+        getAuthToken();
+      }
+    };
+
+    // Czeka na zmiany w localStorage
+    window.addEventListener('storage', handleStorageChange);
+
+    // Interwał czasowy aby dodatkowo sprawdzał zmiany w ilości tokenów
+    const intervalCheck = setInterval(getAuthToken, 2000);
+
+    return () => {
+      window.removeEventListener('storage', handleStorageChange);
+      clearInterval(intervalCheck);
+    };
+  }, []);
 
   const fetchBalance = useCallback(async () => {
     try {
       setIsLoading(true);
-      const token = localStorage.getItem('token');
-
+      // Użycie aktualnego tokena ze stanu zamiast pobierać go ponownie
+      const token = authToken || localStorage.getItem('token');
       const response = await axios.get(`${API_URL}/api/Billing/get-token-balance`, {
         headers: token ? { Authorization: `Bearer ${token}` } : {},
       });
-
+      
       const data = response.data;
       if (typeof data === 'object') {
         if ('tokenBalance' in data) setTokenBalance(data.tokenBalance);
@@ -29,7 +60,6 @@ export const useTokenBalance = () => {
       } else {
         setTokenBalance(data);
       }
-
       setError(null);
     } catch (err) {
       console.error(err);
@@ -38,17 +68,17 @@ export const useTokenBalance = () => {
     } finally {
       setIsLoading(false);
     }
-  }, []);
+  }, [authToken]); // authToken jako -> zależność
 
+  // Odpalany jest fetchBalance, gdy zmieni się token autoryzacji
   useEffect(() => {
+    fetchBalance();
+  }, [fetchBalance, authToken]);
+
+  // Funkcję refreshu dla integracji z komponentami 
+  const refresh = useCallback(() => {
     fetchBalance();
   }, [fetchBalance]);
 
-  // Optional: auto-refresh every 60s
-  // useEffect(() => {
-  //   const interval = setInterval(fetchBalance, 60000);
-  //   return () => clearInterval(interval);
-  // }, [fetchBalance]);
-
-  return { tokenBalance, isLoading, error, refresh: fetchBalance };
+  return { tokenBalance, isLoading, error, refresh };
 };
