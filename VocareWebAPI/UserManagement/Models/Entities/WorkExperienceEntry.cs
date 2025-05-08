@@ -10,9 +10,9 @@ namespace VocareWebAPI.UserManagement.Models.Entities
     {
         [Key]
         public int Id { get; set; } // Identyfikator wpisu
-        public string Company { get; set; } // Nazwa firmy, np. Google
-        public string Position { get; set; } // Stanowisko, np. Programista
-        public string Description { get; set; } // Opis stanowiska, np. Pracowałem nad projektem X | Krótki opis obowiązków
+        public string Company { get; set; } = String.Empty; // Nazwa firmy, np. Google
+        public string Position { get; set; } = String.Empty; // Stanowisko, np. Programista
+        public string Description { get; set; } = String.Empty; // Opis stanowiska, np. Pracowałem nad projektem X | Krótki opis obowiązków
         public List<string>? Responsibilities { get; set; } // Opis stanowiska, np. Pracowałem nad projektem X | Krótki opis obowiązków
 
         [RegularExpression(

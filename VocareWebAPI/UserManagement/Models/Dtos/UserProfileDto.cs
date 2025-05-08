@@ -14,13 +14,13 @@ namespace VocareWebAPI.Models.Dtos
     public class UserProfileDto
     {
         [Required(ErrorMessage = "Imię jest wymagane.")]
-        public string FirstName { get; set; }
+        public string FirstName { get; set; } = string.Empty;
 
         [Required(ErrorMessage = "Nazwisko jest wymagane.")]
-        public string LastName { get; set; }
+        public string LastName { get; set; } = string.Empty;
 
         [Required(ErrorMessage = "Kraj jest wymagany.")]
-        public string Country { get; set; }
+        public string Country { get; set; } = string.Empty;
 
         public string? Address { get; set; }
 

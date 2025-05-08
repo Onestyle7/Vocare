@@ -31,7 +31,12 @@ namespace VocareWebAPI.Repositories
         /// <returns>Profil użytkownika lub null, jesli nie znaleziono</returns>
         public async Task<UserProfile> GetUserProfileByIdAsync(string userId)
         {
-            return await _context.UserProfiles.FirstOrDefaultAsync(u => u.UserId == userId);
+            var profile = await _context.UserProfiles.FirstOrDefaultAsync(p => p.UserId == userId);
+            if (profile == null)
+            {
+                return null;
+            }
+            return profile;
         }
 
         /// <summary>

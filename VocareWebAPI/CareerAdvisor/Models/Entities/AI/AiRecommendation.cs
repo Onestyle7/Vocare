@@ -22,11 +22,11 @@ namespace VocareWebAPI.Models
         public string UserId { get; set; }
 
         [ForeignKey("UserId")] // Relacaj 1;1
-        public UserProfile UserProfile { get; set; }
+        public UserProfile UserProfile { get; set; } = new(); // Profil użytkownika, dla którego została wygenerowana rekomendacja
         public DateTime RecommendationDate { get; set; }
-        public string PrimaryPath { get; set; }
-        public string Justification { get; set; }
-        public string LongTermGoal { get; set; }
+        public string PrimaryPath { get; set; } = String.Empty; // Główna ścieżka zawodowa, np. "Programista Python"
+        public string Justification { get; set; } = String.Empty; // Uzasadnienie rekomendacji, np. "Wysokie zapotrzebowanie na rynku pracy"
+        public string LongTermGoal { get; set; } = String.Empty; // Długoterminowy cel zawodowy, np. "Zostać ekspertem w dziedzinie AI"
         public List<CareerPath> CareerPaths { get; set; } = new();
         public List<NextStep> NextSteps { get; set; } = new();
 

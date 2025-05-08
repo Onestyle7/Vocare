@@ -7,6 +7,6 @@ namespace VocareWebAPI.Billing.Models.Dtos
 {
     public class CancelSubscriptionRequestDto
     {
-        public string SubscriptionId { get; set; }
+        public required string SubscriptionId { get; set; }
     }
 }
