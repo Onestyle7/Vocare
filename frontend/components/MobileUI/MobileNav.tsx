@@ -11,7 +11,11 @@ import ThemeSwitch from '../ThemeSwitch';
 import { TokenCounter } from '../PricingComponents/TokenCounter';
 import Image from 'next/image';
 
-const MobileNav = () => {
+interface MobileNavProps {
+  isAuthenticated: boolean;
+}
+
+const MobileNav: React.FC<MobileNavProps> = ({ isAuthenticated }) => {
   const pathname = usePathname();
   const line1Ref = useRef(null);
   const line2Ref = useRef(null);
@@ -38,7 +42,6 @@ const MobileNav = () => {
         ease: 'power2.inOut',
       });
     } else {
-      // Animacja do stanu "close"
       gsap.to(line1Ref.current, {
         rotation: 0,
         top: '35%',
@@ -59,34 +62,36 @@ const MobileNav = () => {
     }
   }, [isOpen]);
 
+  const filteredLinks = isAuthenticated ? NavLinks : [];
+
   return (
     <Sheet open={isOpen} onOpenChange={setIsOpen}>
-      <div className="ml-4 flex w-full text-2xl">
+      <Link href="/" className="ml-4 flex w-full text-2xl">
         <Image src={logo} alt="Vocare" width={128} height={128} className="invert dark:invert-0" />
-      </div>
+      </Link>
       <SheetTrigger asChild>
         <button className="relative p-8" aria-label="menu" onClick={() => setIsOpen(!isOpen)}>
           <span
             ref={line1Ref}
             className="absolute h-0.5 w-8 bg-black dark:bg-white"
             style={{ left: '50%', top: '35%', transform: 'translate(-50%, -50%)' }}
-          ></span>
+          />
           <span
             ref={line2Ref}
             className="absolute h-0.5 w-8 bg-black dark:bg-white"
             style={{ left: '50%', top: '50%', transform: 'translate(-50%, -50%)' }}
-          ></span>
+          />
           <span
             ref={line3Ref}
             className="absolute h-0.5 w-8 bg-black dark:bg-white"
             style={{ left: '50%', bottom: '30%', transform: 'translate(-50%, -50%)' }}
-          ></span>
+          />
         </button>
       </SheetTrigger>
       <SheetContent side="top" className="h-full">
         <SheetTitle className="hidden">Vocare</SheetTitle>
         <ul className="mt-10 flex h-full flex-col items-center justify-center space-y-4">
-          {NavLinks.map(({ label, url }) => (
+          {filteredLinks.map(({ label, url }) => (
             <li key={label}>
               <SheetClose asChild>
                 <Link
@@ -101,7 +106,17 @@ const MobileNav = () => {
               </SheetClose>
             </li>
           ))}
-          <TokenCounter />
+          {!isAuthenticated && (
+            <SheetClose asChild>
+              <Link
+                href="/sign-in"
+                className="text-[18px] font-normal uppercase"
+              >
+                Sign In
+              </Link>
+            </SheetClose>
+          )}
+          {isAuthenticated && <TokenCounter />}
           <ThemeSwitch />
         </ul>
       </SheetContent>

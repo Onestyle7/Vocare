@@ -18,11 +18,11 @@ const PricingMain = () => {
       customPaddings
       id="pricing"
     >
-      <div className="main-font-color relative mx-10 flex flex-col items-center justify-center xl:border">
+      <div className="main-font-color relative xl:mx-10 flex flex-col items-center justify-center xl:border max-lg:overflow-x-hidden">
         <GridBackgroundDemo />
 
         <div className="relative mx-auto flex max-w-7xl flex-col items-center justify-center">
-          <h1 className="text-[60px] leading-17 font-bold uppercase max-md:text-center lg:text-[78px] xl:mt-10 xl:text-[88px] 2xl:text-[108px] 2xl:leading-21">
+          <h1 className="text-[50px] leading-14 xl:leading-17 font-bold uppercase max-md:text-center lg:text-[78px] xl:mt-10 xl:text-[88px] 2xl:text-[108px] 2xl:leading-21">
             <AnimatedHeadline
               lines={['Tailored to', 'Your Needs']}
               className="items-start max-md:items-center"
