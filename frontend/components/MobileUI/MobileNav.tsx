@@ -7,7 +7,7 @@ import { usePathname } from 'next/navigation';
 import { cn } from '@/lib/utils';
 import { Sheet, SheetContent, SheetTrigger, SheetClose, SheetTitle } from '@/components/ui/sheet';
 import { gsap } from 'gsap';
-import ThemeSwitch from '../ThemeSwitch';
+import ThemeSwitch from '../SupportComponents/ThemeSwitch';
 import { TokenCounter } from '../PricingComponents/TokenCounter';
 import Image from 'next/image';
 
@@ -108,10 +108,7 @@ const MobileNav: React.FC<MobileNavProps> = ({ isAuthenticated }) => {
           ))}
           {!isAuthenticated && (
             <SheetClose asChild>
-              <Link
-                href="/sign-in"
-                className="text-[18px] font-normal uppercase"
-              >
+              <Link href="/sign-in" className="text-[18px] font-normal uppercase">
                 Sign In
               </Link>
             </SheetClose>

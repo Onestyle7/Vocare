@@ -1,9 +1,9 @@
 'use client';
 
 import { pricingPlans, shape1 } from '@/app/constants';
-import AnimatedHeadline from '@/components/AnimatedText';
+import AnimatedHeadline from '@/components/SupportComponents/AnimatedText';
 import { GridBackgroundDemo } from '@/components/MarketComponents/GridBackgroundDemo';
-import Section from '@/components/Section';
+import Section from '@/components/SupportComponents/Section';
 import { Button } from '@/components/ui/button';
 import Image from 'next/image';
 import React from 'react';
@@ -18,11 +18,11 @@ const PricingMain = () => {
       customPaddings
       id="pricing"
     >
-      <div className="main-font-color relative xl:mx-10 flex flex-col items-center justify-center xl:border max-lg:overflow-x-hidden">
+      <div className="main-font-color relative flex flex-col items-center justify-center max-lg:overflow-x-hidden xl:mx-10 xl:border">
         <GridBackgroundDemo />
 
         <div className="relative mx-auto flex max-w-7xl flex-col items-center justify-center">
-          <h1 className="text-[50px] leading-14 xl:leading-17 font-bold uppercase max-md:text-center lg:text-[78px] xl:mt-10 xl:text-[88px] 2xl:text-[108px] 2xl:leading-21">
+          <h1 className="text-[50px] leading-14 font-bold uppercase max-md:text-center lg:text-[78px] xl:mt-10 xl:text-[88px] xl:leading-17 2xl:text-[108px] 2xl:leading-21">
             <AnimatedHeadline
               lines={['Tailored to', 'Your Needs']}
               className="items-start max-md:items-center"

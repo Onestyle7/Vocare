@@ -3,8 +3,8 @@
 import { useEffect, useRef } from 'react';
 import { gsap } from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
-import AboutCard from '@/components/AboutCard';
-import Section from '@/components/Section';
+import AboutCard from '@/components/GhostComponents/AboutCard';
+import Section from '@/components/SupportComponents/Section';
 import { plus, shape1 } from '@/app/constants';
 import { ScrollParallax } from 'react-just-parallax';
 import Image from 'next/image';

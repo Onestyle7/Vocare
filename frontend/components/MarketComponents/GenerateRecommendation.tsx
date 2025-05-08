@@ -22,19 +22,22 @@ const GenerateRecommendation = () => {
             className="mb-6"
           />
         </div>
-        
+
         <h3 className="mb-4 text-2xl font-semibold">No Market Analysis Available</h3>
-        
+
         <p className="mb-6 max-w-2xl text-gray-600 dark:text-gray-300">
-          There is currently no job market analysis data available. Generate a new analysis to see insights about industry trends, employment rates, and in-demand skills.
+          There is currently no job market analysis data available. Generate a new analysis to see
+          insights about industry trends, employment rates, and in-demand skills.
         </p>
-        
+
         <div className="rounded-lg bg-purple-50 p-5 dark:bg-purple-900/20">
-          <h4 className="mb-3 text-lg font-medium text-[#915EFF]">What You'll Get:</h4>
+          <h4 className="mb-3 text-lg font-medium text-[#915EFF]">What You&apos;ll Get:</h4>
           <ul className="text-left">
             <li className="mb-2 flex items-start">
               <span className="mr-2 text-[#915EFF]">•</span>
-              <span>Detailed industry statistics including average salaries and growth forecasts</span>
+              <span>
+                Detailed industry statistics including average salaries and growth forecasts
+              </span>
             </li>
             <li className="mb-2 flex items-start">
               <span className="mr-2 text-[#915EFF]">•</span>

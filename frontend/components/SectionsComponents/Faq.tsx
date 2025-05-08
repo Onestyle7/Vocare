@@ -2,7 +2,7 @@
 
 import React, { useEffect, useRef } from 'react';
 import { gsap } from 'gsap';
-import Section from '../Section';
+import Section from '../SupportComponents/Section';
 
 const Faq: React.FC = () => {
   const textRef = useRef<HTMLDivElement>(null);

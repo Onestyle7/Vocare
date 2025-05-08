@@ -9,7 +9,7 @@ import ContentPage from '../ui/ContentPage';
 import ContentPage2 from '../ui/CustomPage2';
 import ContentPage3 from '../ui/CustomPage3';
 import SectionGsap from '../ui/SectionGsap';
-import AnimatedHeadline from '../AnimatedText';
+import AnimatedHeadline from '../SupportComponents/AnimatedText';
 import { ScrollParallax } from 'react-just-parallax';
 
 gsap.registerPlugin(ScrollTrigger);

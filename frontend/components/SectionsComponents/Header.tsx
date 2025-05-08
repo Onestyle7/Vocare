@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
-import ThemeSwitch from '../ThemeSwitch';
+import ThemeSwitch from '../SupportComponents/ThemeSwitch';
 import { logo, NavLinks } from '@/app/constants';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';

@@ -14,7 +14,7 @@ export const TokenCounter = () => {
             {isLoading ? '...' : error ? 'N/A' : String(tokenBalance)}
           </span>
         </div>
-        <div className="hidden absolute -right-8 xl:flex h-8 w-8 items-center justify-center rounded-full border border-[#915EFF] opacity-0 transition-all duration-300 group-hover:right-[-2.5rem] group-hover:opacity-100">
+        <div className="absolute -right-8 hidden h-8 w-8 items-center justify-center rounded-full border border-[#915EFF] opacity-0 transition-all duration-300 group-hover:right-[-2.5rem] group-hover:opacity-100 xl:flex">
           <Plus
             className="text-[#915EFF] transition-transform duration-300 group-hover:rotate-90"
             size={14}

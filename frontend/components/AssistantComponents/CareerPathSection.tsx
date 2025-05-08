@@ -3,21 +3,7 @@
 import { useEffect, useState, useRef } from 'react';
 import { gsap } from 'gsap';
 import CollapsibleButton from './CollapsibleButton';
-
-interface CareerPath {
-  careerName: string;
-  description: string;
-  probability: number;
-  requiredSkills: string[];
-  recommendedCourses: string[];
-  marketAnalysis: string[];
-  swot: {
-    strengths: string[];
-    weaknesses: string[];
-    opportunities: string[];
-    threats: string[];
-  };
-}
+import { CareerPath } from '@/lib/types/recommendation';
 
 interface CareerPathSectionProps {
   path: CareerPath;
