@@ -64,6 +64,7 @@ class _HomeScreenState extends State<HomeScreen> {
                     NavDestination.profile,
                     NavDestination.logout,
                     NavDestination.assistent,
+                    NavDestination.marketAnalysis,
                   ],
                 ),
               ],

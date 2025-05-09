@@ -1,134 +1,96 @@
 import 'package:flutter/material.dart';
+import 'package:vocare/models/industry_section.dart';
 import 'package:vocare/services/market_AnalysisAPI.dart';
-import 'package:vocare/widgets/expandable_service_card.dart';
-import 'package:vocare/widgets/theme_toggle_button.dart';
-import 'package:vocare/widgets/nav_bar_button.dart';
+import 'package:vocare/widgets/industry_section_card.dart';
 
-class MarketAnalysisPageScreen extends StatefulWidget {
-  const MarketAnalysisPageScreen({Key? key}) : super(key: key);
+class MarketAnalysisPage extends StatefulWidget {
+  const MarketAnalysisPage({super.key});
 
   @override
-  State<MarketAnalysisPageScreen> createState() =>
-      _MarketAnalysisPageScreenState();
+  State<MarketAnalysisPage> createState() => _MarketAnalysisPageState();
 }
 
-class _MarketAnalysisPageScreenState extends State<MarketAnalysisPageScreen> {
-  final key1 = GlobalKey<ExpandableServiceCardState>();
-  final key2 = GlobalKey<ExpandableServiceCardState>();
-  final key3 = GlobalKey<ExpandableServiceCardState>();
-  final key4 = GlobalKey<ExpandableServiceCardState>();
+class _MarketAnalysisPageState extends State<MarketAnalysisPage> {
+  bool _loading = true;
+  List<IndustrySection> _sections = [];
 
-  bool _loading = false;
-  bool _hasData = false;
+  @override
+  void initState() {
+    super.initState();
+    _loadData();
+  }
 
-  Future<void> _loadAnalysis() async {
+  Future<void> _loadData() async {
     setState(() => _loading = true);
+    final result = await MarketAnalysisApi.fetchIndustryStatistics();
 
-    final all = await MarketAnalysisApi.fetchAll();
-    ();
-
-    setState(() {
-      _loading = false;
-      _hasData = all != null && all.length >= 4;
-    });
-
-    if (_hasData) {
-      key1.currentState?.loadExternalData({
-        'subtitle': 'Insight 1',
-        'content': all![0],
+    if (result != null) {
+      setState(() {
+        _sections = result;
+        _loading = false;
       });
-      key2.currentState?.loadExternalData({
-        'subtitle': 'Insight 2',
-        'content': all![1],
-      });
-      key3.currentState?.loadExternalData({
-        'subtitle': 'Insight 3',
-        'content': all![2],
-      });
-      key4.currentState?.loadExternalData({
-        'subtitle': 'Insight 4',
-        'content': all![3],
-      });
+    } else {
+      setState(() => _loading = false);
     }
+  }
+
+  Future<void> _generateNewAnalysis() async {
+    // Jeśli masz POST /api/MarketAnalysis/generate – możesz go tu wywołać
+    // await MarketAnalysisApi.generateNewAnalysis();
+    await _loadData(); // Na razie tylko ponowne pobranie
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Market Analysis'),
-        backgroundColor: const Color.fromARGB(222, 16, 14, 14),
+        title: const Text("Job Market Analysis"),
+        backgroundColor: Colors.black87,
       ),
-      body: SafeArea(
-        child: Padding(
-          padding: const EdgeInsets.all(16),
-          child:
-              _loading
-                  ? const Center(child: CircularProgressIndicator())
-                  : !_hasData
-                  ? Center(
-                    child: ElevatedButton(
-                      onPressed: _loadAnalysis,
-                      child: const Text('Load Market Analysis'),
+      body: Column(
+        children: [
+          Expanded(
+            child:
+                _loading
+                    ? const Center(child: CircularProgressIndicator())
+                    : _sections.isEmpty
+                    ? const Center(child: Text("Brak danych do wyświetlenia"))
+                    : ListView.builder(
+                      padding: const EdgeInsets.all(16),
+                      itemCount: _sections.length,
+                      itemBuilder: (context, index) {
+                        final industry = _sections[index];
+                        return IndustrySectionCard(
+                          index: index,
+                          industry: industry.industry,
+                          averageSalary: industry.averageSalary,
+                          employmentRate: industry.employmentRate,
+                          growthForecast: industry.growthForecast,
+                        );
+                      },
                     ),
-                  )
-                  : SingleChildScrollView(
-                    child: Column(
-                      children: [
-                        ExpandableServiceCard(
-                          key: key1,
-                          number: 1,
-                          title: 'Insight 1',
-                        ),
-                        ExpandableServiceCard(
-                          key: key2,
-                          number: 2,
-                          title: 'Insight 2',
-                        ),
-                        ExpandableServiceCard(
-                          key: key3,
-                          number: 3,
-                          title: 'Insight 3',
-                        ),
-                        ExpandableServiceCard(
-                          key: key4,
-                          number: 4,
-                          title: 'Insight 4',
-                        ),
-                      ],
-                    ),
-                  ),
-        ),
-      ),
-      bottomNavigationBar: Container(
-        height: 60,
-        decoration: const BoxDecoration(
-          color: Color.fromARGB(222, 16, 14, 14),
-          borderRadius: BorderRadius.only(
-            topLeft: Radius.circular(16),
-            topRight: Radius.circular(16),
           ),
-        ),
-        child: SafeArea(
-          child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 16),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: const [
-                ThemeToggleButton(),
-                NavBarButtons(
-                  destinations: [
-                    NavDestination.home,
-                    NavDestination.profile,
-                    NavDestination.logout,
-                    NavDestination.assistent,
-                    NavDestination.marketAnalysis,
-                  ],
+          Padding(
+            padding: const EdgeInsets.all(16),
+            child: ElevatedButton(
+              style: ElevatedButton.styleFrom(
+                backgroundColor: const Color(0xFF915EFF),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(24),
                 ),
-              ],
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 32,
+                  vertical: 14,
+                ),
+              ),
+              onPressed: _generateNewAnalysis,
+              child: const Text(
+                "Generuj nową analizę rynku",
+                style: TextStyle(fontSize: 16, color: Colors.white),
+              ),
             ),
           ),
-        ),
+        ],
       ),
     );
   }

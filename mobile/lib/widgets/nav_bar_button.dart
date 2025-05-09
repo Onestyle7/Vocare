@@ -108,7 +108,7 @@ class NavBarButtons extends StatelessWidget {
                       () => Navigator.pushReplacement(
                         context,
                         MaterialPageRoute(
-                          builder: (_) => const AIAsistentPageScreen(),
+                          builder: (_) => const MarketAnalysisPage(),
                         ),
                       ),
                 );
