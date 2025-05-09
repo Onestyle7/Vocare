@@ -10,8 +10,8 @@ namespace VocareWebAPI.Models.Dtos.MarketAnalysis
     /// </summary>
     public class MarketTrendsDto
     {
-        public string TrendName { get; set; }
-        public string Description { get; set; }
-        public string Impact { get; set; }
+        public string TrendName { get; set; } = string.Empty;
+        public string Description { get; set; } = string.Empty;
+        public string Impact { get; set; } = string.Empty;
     }
 }

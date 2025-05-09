@@ -10,6 +10,7 @@ namespace VocareWebAPI.Models.Dtos.MarketAnalysis
     /// </summary>
     public class MarketAnalysisResponseDto
     {
-        public MarketAnalysisDetailsDto MarketAnalysis { get; set; }
+        public MarketAnalysisDetailsDto MarketAnalysis { get; set; } =
+            new MarketAnalysisDetailsDto();
     }
 }

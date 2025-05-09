@@ -35,7 +35,7 @@ namespace VocareWebAPI.Controllers
         [HttpGet("GetCurrentUserProfile")]
         public async Task<IActionResult> GetCurrentUserProfile()
         {
-            string userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            string userId = User.FindFirstValue(ClaimTypes.NameIdentifier)!;
             if (string.IsNullOrEmpty(userId))
             {
                 return BadRequest("Brak identyfikatora użytkownika w tokenie.");
@@ -58,7 +58,7 @@ namespace VocareWebAPI.Controllers
             [FromBody] UserProfileDto userProfile
         )
         {
-            string userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            string userId = User.FindFirstValue(ClaimTypes.NameIdentifier)!;
             if (string.IsNullOrEmpty(userId))
             {
                 return BadRequest("Brak identyfikatora użytkownika w tokenie.");
@@ -77,7 +77,7 @@ namespace VocareWebAPI.Controllers
             [FromBody] UserProfileDto userProfile
         )
         {
-            string userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            string userId = User.FindFirstValue(ClaimTypes.NameIdentifier)!;
             if (string.IsNullOrEmpty(userId))
             {
                 return BadRequest("Brak identyfikatora użytkownika w tokenie.");
@@ -97,7 +97,7 @@ namespace VocareWebAPI.Controllers
         [HttpDelete("DeleteCurrentUserProfile")]
         public async Task<IActionResult> DeleteCurrentUserProfile()
         {
-            string userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            string userId = User.FindFirstValue(ClaimTypes.NameIdentifier)!;
             if (string.IsNullOrEmpty(userId))
             {
                 return BadRequest("Brak identyfikatora użytkownika w tokenie.");

@@ -7,7 +7,7 @@ namespace VocareWebAPI.CvGenerator.Models.Dtos
 {
     public class CvLanguageEntryDto
     {
-        public string Language { get; set; }
-        public string Fluency { get; set; }
+        public string Language { get; set; } = string.Empty;
+        public string Fluency { get; set; } = string.Empty;
     }
 }

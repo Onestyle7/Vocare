@@ -42,6 +42,12 @@ namespace VocareWebAPI.Repositories
         /// <returns>Najnowsza rekomendacja AI</returns>
         public async Task<AiRecommendation?> GetLatestByUserIdAsync(string userId)
         {
+            if (string.IsNullOrEmpty(userId))
+            {
+                throw new ArgumentException("User ID cannot be null or empty.", nameof(userId));
+            }
+
+            // Pobierz najnowszą rekomendację AI dla danego użytkownika
             return await _context
                 .AiRecommendations.Include(r => r.UserProfile)
                 .Include(r => r.CareerPaths)

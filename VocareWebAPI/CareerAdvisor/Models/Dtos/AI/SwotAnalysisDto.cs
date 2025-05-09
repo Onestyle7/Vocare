@@ -12,15 +12,15 @@ namespace VocareWebAPI.Models.Dtos
     public class SwotAnalysisDto
     {
         [JsonPropertyName("strengths")]
-        public List<string> Strengths { get; set; }
+        public List<string> Strengths { get; set; } = new List<string>();
 
         [JsonPropertyName("weaknesses")]
-        public List<string> Weaknesses { get; set; }
+        public List<string> Weaknesses { get; set; } = new List<string>();
 
         [JsonPropertyName("opportunities")]
-        public List<string> Opportunities { get; set; }
+        public List<string> Opportunities { get; set; } = new List<string>();
 
         [JsonPropertyName("threats")]
-        public List<string> Threats { get; set; }
+        public List<string> Threats { get; set; } = new List<string>();
     }
 }

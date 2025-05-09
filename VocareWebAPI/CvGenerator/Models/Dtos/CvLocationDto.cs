@@ -7,7 +7,7 @@ namespace VocareWebAPI.CvGenerator.Models.Dtos
 {
     public class CvLocationDto
     {
-        public string City { get; set; }
-        public string Country { get; set; }
+        public string City { get; set; } = string.Empty;
+        public string Country { get; set; } = string.Empty;
     }
 }
