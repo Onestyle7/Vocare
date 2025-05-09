@@ -12,7 +12,7 @@ namespace VocareWebAPI.Models.Dtos
     public class PerplexityApiResponseDto
     {
         [JsonPropertyName("choices")]
-        public List<ChoiceDto> Choices { get; set; }
+        public List<ChoiceDto> Choices { get; set; } = new List<ChoiceDto>();
     }
 
     /// <summary>
@@ -21,7 +21,7 @@ namespace VocareWebAPI.Models.Dtos
     public class ChoiceDto
     {
         [JsonPropertyName("message")]
-        public MessageDto Message { get; set; }
+        public MessageDto Message { get; set; } = new MessageDto();
     }
 
     /// <summary>
@@ -30,6 +30,6 @@ namespace VocareWebAPI.Models.Dtos
     public class MessageDto
     {
         [JsonPropertyName("content")]
-        public string Content { get; set; }
+        public string Content { get; set; } = string.Empty;
     }
 }

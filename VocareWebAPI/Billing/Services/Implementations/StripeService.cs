@@ -177,11 +177,10 @@ namespace VocareWebAPI.Billing.Services.Implementations
                 );
             }
 
-            // ---------- upewnij się, że mamy StripeCustomerId ----------
             if (string.IsNullOrEmpty(userBilling.StripeCustomerId))
             {
                 // pobranie e‑maila zalogowanego użytkownika z ASP Identity
-                string email = await _dbContext
+                string? email = await _dbContext
                     .Users.Where(u => u.Id == userId)
                     .Select(u => u.Email)
                     .FirstOrDefaultAsync();

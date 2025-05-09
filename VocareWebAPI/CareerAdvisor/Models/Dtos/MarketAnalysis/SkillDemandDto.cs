@@ -10,8 +10,8 @@ namespace VocareWebAPI.Models.Dtos.MarketAnalysis
     /// </summary>
     public class SkillDemandDto
     {
-        public string Skill { get; set; }
-        public string DemandLevel { get; set; }
-        public string Industry { get; set; }
+        public string Skill { get; set; } = string.Empty;
+        public string DemandLevel { get; set; } = string.Empty;
+        public string Industry { get; set; } = string.Empty;
     }
 }

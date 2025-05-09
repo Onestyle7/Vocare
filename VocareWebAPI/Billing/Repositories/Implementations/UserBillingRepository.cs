@@ -34,7 +34,7 @@ namespace VocareWebAPI.Billing.Repositories.Implementations
                     $"User billing information for user ID {userId} not found."
                 );
             }
-            return await _context.UserBillings.FindAsync(userId);
+            return userBilling;
         }
 
         public async Task<UserBilling> CreateAsync(UserBilling userBilling)

@@ -39,7 +39,7 @@ namespace VocareWebAPI.CvGenerator.Controllers
         [HttpPost("generate")]
         public async Task<ActionResult<CvDto>> GenerateCv([FromBody] GenerateCvRequestDto request)
         {
-            string userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            string userId = User.FindFirstValue(ClaimTypes.NameIdentifier)!;
             if (string.IsNullOrEmpty(userId))
             {
                 return BadRequest("Brak identyfikatora użytkownika w tokenie.");

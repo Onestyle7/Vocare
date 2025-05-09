@@ -36,7 +36,9 @@ namespace VocareWebAPI.Repositories
                 .FirstOrDefaultAsync(p => p.UserId == userId);
             if (profile == null)
             {
-                return null;
+                throw new KeyNotFoundException(
+                    $"Profil użytkownika o ID {userId} nie został znaleziony."
+                );
             }
             return profile;
         }

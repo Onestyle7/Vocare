@@ -106,10 +106,19 @@ namespace VocareWebAPI.Services.Implementations
                     new JsonSerializerOptions { PropertyNameCaseInsensitive = true }
                 );
 
+                if (
+                    apiResponse?.Choices == null
+                    || apiResponse.Choices.Count == 0
+                    || apiResponse.Choices[0].Message?.Content == null
+                )
+                {
+                    throw new Exception("Invalid AI API response: missing content block.");
+                }
+
                 // Wyodrębniamy JSON z pola content
                 var rawContent = apiResponse.Choices[0].Message.Content;
 
-                MarketAnalysisResponseDto result = null;
+                MarketAnalysisResponseDto? result = null;
 
                 // Szukamy bloku JSON używając wyrażeń regularnych
                 var jsonMatch = System.Text.RegularExpressions.Regex.Match(
@@ -160,6 +169,10 @@ namespace VocareWebAPI.Services.Implementations
                         );
                         throw new Exception("Failed to parse the response content as JSON.", ex);
                     }
+                }
+                if (result == null)
+                {
+                    throw new Exception("Failed to parse market analysis JSON.");
                 }
 
                 // Inicjalizujemy null properties
