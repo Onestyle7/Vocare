@@ -1,7 +1,23 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import SectionSvg from '@/public/svg/SectionSvg';
+import { ReactNode } from 'react';
 
-const Section = ({ className, id, crosses, crossesOffset, customPaddings, children }: any) => {
+interface SectionProps {
+  className?: string;
+  id?: string;
+  crosses?: boolean;
+  crossesOffset?: string;
+  customPaddings?: string;
+  children: ReactNode;
+}
+
+const Section = ({
+  className,
+  id,
+  crosses,
+  crossesOffset,
+  customPaddings,
+  children,
+}: SectionProps) => {
   return (
     <div
       id={id}
@@ -18,7 +34,7 @@ const Section = ({ className, id, crosses, crossesOffset, customPaddings, childr
         <>
           <div
             className={`bg-stroke-1 absolute top-0 right-7.5 left-7.5 hidden h-0.25 ${
-              crossesOffset && crossesOffset
+              crossesOffset ?? ''
             } pointer-events-none right-10 lg:block xl:left-10`}
           />
           <SectionSvg crossesOffset={crossesOffset} />

@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect, useState, useRef } from 'react';
-import axios from 'axios';
+import axios, { AxiosError } from 'axios';
 import { gsap } from 'gsap';
 import CollapsibleButton from '../AssistantComponents/CollapsibleButton';
 import { TerminalDemo } from './LoadingTerminal';
@@ -22,12 +22,40 @@ import {
   AlertDialogTitle,
 } from '../ui/alert-dialog';
 import { useTokenBalanceContext } from '@/lib/contexts/TokenBalanceContext';
+// Define the types here since they seem to be missing or incorrectly defined in the imported files
+interface MarketTrend {
+  trendName: string;
+  description: string;
+  impact: string;
+}
+
+interface SkillDemand {
+  skill: string;
+  industry: string;
+  demandLevel: string;
+}
+
+interface IndustryStatistic {
+  industry: string;
+  averageSalary: string;
+  employmentRate: string;
+  growthForecast: string;
+}
+
+interface MarketAnalysisDto {
+  industryStatistics: IndustryStatistic[];
+  marketTrends: MarketTrend[];
+  skillDemand: SkillDemand[];
+}
+
+interface ApiResponse {
+  marketAnalysis: MarketAnalysisDto;
+}
 
 export default function MarketAnalysis() {
-  const [data, setData] = useState<any>(null); // Using any temporarily to help debug
+  const [data, setData] = useState<ApiResponse | MarketAnalysisDto | null>(null); 
   const [error, setError] = useState<string | null>(null);
   const [isLoading, setLoading] = useState(true);
-  const [dataStructure, setDataStructure] = useState<string>('Unknown');
   const [isConfirmDialogOpen, setIsConfirmDialogOpen] = useState(false);
   const { tokenBalance, isLoading: isBalanceLoading, refresh } = useTokenBalanceContext();
 
@@ -56,35 +84,29 @@ export default function MarketAnalysis() {
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
-  // Dodana funkcja pomocnicza do obsługi odpowiedzi API
-  const handleResponseData = (responseData) => {
-    // Case 1: Direct API response is the MarketAnalysisResponseDto
-    if (responseData && responseData.marketAnalysis) {
-      console.log('Case 1: Data already has marketAnalysis property');
-      setData(responseData);
-      setDataStructure('With marketAnalysis property');
-    }
-    // Case 2: API response is directly the marketAnalysis object
-    else if (responseData && responseData.industryStatistics) {
-      console.log('Case 2: Data is the marketAnalysis object itself');
-      setData({ marketAnalysis: responseData });
-      setDataStructure('Direct marketAnalysis object');
-    }
-    // Case 3: API response has a different structure
-    else {
-      console.log('Case 3: Unknown data structure, logging full response');
-      console.log(JSON.stringify(responseData, null, 2));
-
-      // Just store the raw data for now
-      setData(responseData);
-      setDataStructure('Unknown structure');
+  const handleResponseData = (responseData: unknown) => {
+    if (
+      typeof responseData === 'object' &&
+      responseData !== null &&
+      'marketAnalysis' in responseData
+    ) {
+      setData(responseData as ApiResponse);
+    } else if (
+      typeof responseData === 'object' &&
+      responseData !== null &&
+      'industryStatistics' in responseData
+    ) {
+      setData({ marketAnalysis: responseData as MarketAnalysisDto });
+    } else {
+      setData(responseData as ApiResponse | MarketAnalysisDto | null); 
     }
   };
+  
 
   const loadData = async (useNewData = false) => {
     setLoading(true);
     setError(null);
-    setData(null); // 🔧 Reset danych przed nowym załadunkiem
+    setData(null); 
 
     const token = localStorage.getItem('token');
     if (!token) {
@@ -121,8 +143,9 @@ export default function MarketAnalysis() {
 
           console.log('Latest market analysis raw data:', latestResponse.data);
           handleResponseData(latestResponse.data);
-        } catch (latestError: any) {
-          if (latestError.response?.status === 404) {
+        } catch (latestError) {
+          const axiosError = latestError as AxiosError;
+          if (axiosError.response?.status === 404) {
             console.log('No existing analysis found, generating a new one...');
             const response = await axios.get('https://localhost:5001/api/MarketAnalysis', {
               headers: {
@@ -136,14 +159,17 @@ export default function MarketAnalysis() {
           } else {
             console.error('Error fetching latest market analysis:', latestError);
             setError(
-              latestError.response?.data?.detail || 'Error fetching latest market analysis.'
+              (axiosError.response?.data as { detail?: string })?.detail || 'Error fetching latest market analysis.'
             );
           }
         }
       }
-    } catch (err: any) {
+    } catch (err) {
+      const axiosError = err as AxiosError;
       console.error('Error fetching market analysis:', err);
-      setError(err.response?.data?.detail || 'Error generating market analysis');
+      setError(
+        (axiosError.response?.data as { detail?: string })?.detail || 'Error generating market analysis'
+      );
 
       if (useNewData) {
         toast.error('Error', {
@@ -179,12 +205,19 @@ export default function MarketAnalysis() {
   // For debugging
   console.log('Rendering with data structure:', data);
 
-  const getMarketAnalysis = () => {
+  const getMarketAnalysis = (): MarketAnalysisDto | null => {
     if (!data) return null;
-    // If data is already in the right format, use it directly
-    if (data.marketAnalysis?.industryStatistics) return data.marketAnalysis;
-    // If data itself is the marketAnalysis object
-    if (data.industryStatistics) return data;
+    
+    // Check if data is an ApiResponse with marketAnalysis property
+    if ('marketAnalysis' in data && data.marketAnalysis) {
+      return data.marketAnalysis;
+    }
+    
+    // Check if data is directly a MarketAnalysisDto
+    if ('industryStatistics' in data) {
+      return data as MarketAnalysisDto;
+    }
+    
     return null;
   };
 
@@ -305,13 +338,16 @@ export default function MarketAnalysis() {
   );
 }
 
+interface IndustryStatistic {
+  industry: string;
+  averageSalary: string;
+  employmentRate: string;
+  growthForecast: string;
+}
+
+// This interface is already defined above, so we don't need to redefine it here
 interface IndustryProps {
-  data: {
-    industry: string;
-    averageSalary: string;
-    employmentRate: string;
-    growthForecast: string;
-  };
+  data: IndustryStatistic;
   index: number;
 }
 

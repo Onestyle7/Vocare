@@ -31,11 +31,16 @@ export function WorkExperienceInput({ value, onChange }: WorkExperienceInputProp
     ]);
   };
 
-  const updateExperience = (index: number, key: keyof WorkExperienceEntry, newValue: any) => {
+  const updateExperience = <K extends keyof WorkExperienceEntry>(
+    index: number,
+    key: K,
+    newValue: WorkExperienceEntry[K]
+  ) => {
     const updated = [...value];
     updated[index][key] = newValue;
     onChange(updated);
   };
+  
 
   const removeExperience = (index: number) => {
     const updated = [...value];

@@ -139,13 +139,118 @@
 //   );
 // }
 
-import React from 'react';
+'use client';
+
+import React, { useState } from 'react';
+import ResumeDetails from './ResumeDetails';
+import Section from '../SupportComponents/Section';
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from '../ui/alert-dialog';
+import { useTokenBalanceContext } from '@/lib/contexts/TokenBalanceContext';
+import Image from 'next/image';
+import Link from 'next/link';
+import { star_generate } from '@/app/constants';
 
 const ResumePage = () => {
+  const [isConfirmDialogOpen, setIsConfirmDialogOpen] = useState(false);
+  const [hasAccess, setHasAccess] = useState(false);
+  const { tokenBalance, isLoading: isBalanceLoading, refresh } = useTokenBalanceContext();
+
+  const handleGenerateResume = async () => {
+    // Tu można dodać logikę odejmowania tokenów
+    console.log('Token deducted and resume unlocked');
+    setHasAccess(true);
+    refresh();
+  };
+
   return (
-    <div className="flex h-[85vh] items-center justify-center">
-      <h1 className="font-poppins font-bold sm:text-5xl">Comming soon</h1>
-    </div>
+    <Section
+      className="relative -mt-[5.25rem] pt-[7.5rem]"
+      crosses
+      crossesOffset="lg:translate-y-[7.5rem]"
+      customPaddings
+      id="hero"
+    >
+      {!hasAccess && (
+        <>
+          <div className="mb-12 flex flex-col items-center text-center font-poppins">
+            <h2 className="mb-2 text-2xl font-bold text-[#915EFF]">Your Resume</h2>
+            <p className="max-w-2xl text-sm text-gray-600 dark:text-gray-300">
+              This CV is created using a layout compatible with AI-based CV scanners. <br />
+              The data shown here is pulled from your profile. If you&apos;d like to make changes, simply update your profile and regenerate your CV.
+            </p>
+          </div>
+
+          <div className="mt-16 flex justify-center">
+            <button
+              onClick={() => setIsConfirmDialogOpen(true)}
+              className="rounded-md bg-[#915EFF] px-6 py-3 text-white hover:bg-[#7b4ee0] transition font-poppins"
+            >
+              Generate Resume
+            </button>
+          </div>
+        </>
+      )}
+
+      {hasAccess && (
+        <div className="mt-8">
+          <ResumeDetails />
+        </div>
+      )}
+
+      <AlertDialog open={isConfirmDialogOpen} onOpenChange={setIsConfirmDialogOpen}>
+        <AlertDialogContent className="font-poppins mx-auto max-w-md">
+          <AlertDialogHeader>
+            <AlertDialogTitle className="text-center text-xl font-bold">
+              Generate new resume?
+            </AlertDialogTitle>
+            <AlertDialogDescription className="text-center">
+              This will take <b className="text-[#915EFF]">50 credits</b> from your account.
+            </AlertDialogDescription>
+
+            <div className="mt-2 text-center text-sm font-extralight">
+              Current balance:{' '}
+              <span className="font-bold">{isBalanceLoading ? '...' : tokenBalance}</span>
+            </div>
+          </AlertDialogHeader>
+
+          <AlertDialogFooter className="flex justify-center gap-4 sm:justify-center">
+            <AlertDialogCancel className="border-gray-200">Cancel</AlertDialogCancel>
+
+            {!isBalanceLoading && typeof tokenBalance === 'number' && tokenBalance < 50 ? (
+              <Link href="/pricing">
+                <AlertDialogAction
+                  className="bg-[#915EFF] text-white hover:bg-[#7b4ee0]"
+                  onClick={() => setIsConfirmDialogOpen(false)}
+                >
+                  Get tokens
+                  <Image src={star_generate} alt="star" width={16} height={16} />
+                </AlertDialogAction>
+              </Link>
+            ) : (
+              <AlertDialogAction
+                onClick={async () => {
+                  await handleGenerateResume();
+                  setIsConfirmDialogOpen(false);
+                }}
+                className="bg-[#915EFF] text-white hover:bg-[#7b4ee0]"
+              >
+                Generate
+                <Image src={star_generate} alt="star" width={16} height={16} />
+              </AlertDialogAction>
+            )}
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
+    </Section>
   );
 };
 

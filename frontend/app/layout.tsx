@@ -3,7 +3,7 @@ import localFont from 'next/font/local';
 import './globals.css';
 import { ThemeProvider } from '@/components/ui/theme-provider';
 import { Toaster } from '@/components/ui/sonner';
-import LenisProvider from '@/components/SupportComponents/LenisProvider';
+// import LenisProvider from '@/components/SupportComponents/LenisProvider';
 import { TokenBalanceProvider } from '@/lib/contexts/TokenBalanceContext';
 
 const sizmoPro = localFont({

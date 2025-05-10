@@ -1,5 +1,4 @@
 'use client';
-
 import { useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -35,7 +34,7 @@ export default function ProfileForm({
   const [currentStep, setCurrentStep] = useState(1);
   const totalSteps = 4;
   const router = useRouter();
-
+  
   const form = useForm<CreateProfileFormType>({
     resolver: zodResolver(createProfileSchema),
     defaultValues: {
@@ -54,7 +53,7 @@ export default function ProfileForm({
       personalityType: undefined,
     },
   });
-
+  
   const formatDateIfNeeded = (date?: string) => {
     if (!date) return undefined;
     try {
@@ -63,7 +62,7 @@ export default function ProfileForm({
       return undefined;
     }
   };
-
+  
   const formatProfileDates = (data: UserProfile): UserProfile => ({
     ...data,
     certificates:
@@ -91,7 +90,7 @@ export default function ProfileForm({
     skills: data.skills ?? [],
     languages: data.languages ?? [],
   });
-
+  
   useEffect(() => {
     const loadProfile = async () => {
       setLoading(true);
@@ -100,33 +99,30 @@ export default function ProfileForm({
         router.push('/sign-in');
         return;
       }
-
       if (initialData) {
         setEditMode(true);
-        form.reset(formatProfileDates(initialData)); // <--- WAŻNE
+        form.reset(formatProfileDates(initialData)); 
         setLoading(false);
         return;
       }
-
       try {
         const profileData = await getUserProfile(token);
         if (profileData) {
           setEditMode(true);
-          form.reset(formatProfileDates(profileData)); // <--- WAŻNE
+          form.reset(formatProfileDates(profileData)); 
         }
-      } catch (error) {
-        console.error('No existing profile found or error fetching data');
+      } catch (err) {
+        console.error('No existing profile found or error fetching data', err);
       } finally {
         setLoading(false);
       }
     };
-
     loadProfile();
   }, [form, initialData, router]);
-
+  
   const nextStep = () => setCurrentStep((prev) => Math.min(prev + 1, totalSteps));
   const prevStep = () => setCurrentStep((prev) => Math.max(prev - 1, 1));
-
+  
   const onSubmit = async (data: CreateProfileFormType) => {
     setLoading(true);
     const token = localStorage.getItem('token');
@@ -135,11 +131,8 @@ export default function ProfileForm({
       router.push('/sign-in');
       return;
     }
-
     const formattedData = formatProfileDates(data);
-
     console.log('Certificates:', formattedData.certificates);
-
     try {
       let profileData;
       if (isEditMode) {
@@ -151,36 +144,34 @@ export default function ProfileForm({
         toast.success('Profile created successfully!');
         setEditMode(true);
       }
-
       localStorage.setItem('userProfile', JSON.stringify(profileData));
       router.push('/assistant');
-    } catch (error: any) {
-      console.error(error);
+    } catch (err: unknown) {
+      console.error(err);
+      const errorMessage = err instanceof Error ? err.message : 'Please try again.';
       toast.error('An error occurred', {
-        description: error.response?.data || 'Please try again.',
+        description: errorMessage,
       });
     } finally {
       setLoading(false);
     }
   };
-
+  
   const handleDelete = async () => {
     if (!confirm('Are you sure you want to delete your profile?')) return;
-
     const token = localStorage.getItem('token');
     if (!token) {
       toast.error('Authentication required', { description: 'Please sign in to continue.' });
       router.push('/sign-in');
       return;
     }
-
     setLoading(true);
     try {
       await deleteUserProfile(token);
       toast.success('Profile deleted successfully!');
       router.push('/');
-    } catch (error) {
-      console.error(error);
+    } catch (err) {
+      console.error(err);
       toast.error('An error occurred', {
         description: 'Failed to delete profile. Please try again.',
       });
@@ -188,12 +179,10 @@ export default function ProfileForm({
       setLoading(false);
     }
   };
-
+  
   const CancelButton = () => {
     const [open, setOpen] = useState(false);
-
     if (!onCancel) return null;
-
     return (
       <>
         {form.formState.isDirty ? (
@@ -228,10 +217,9 @@ export default function ProfileForm({
       </>
     );
   };
-
+  
   const renderStep = () => {
     const sharedProps = { form, onNext: nextStep, onBack: prevStep };
-
     switch (currentStep) {
       case 1:
         return (
@@ -280,19 +268,18 @@ export default function ProfileForm({
         return <StepOne form={form} onNext={nextStep} />;
     }
   };
-
+  
   return (
     <div className="relative mx-auto max-w-2xl rounded-xl border bg-[#f3f3f3] p-8 lg:mt-10 dark:bg-[#0e100f]">
       <div className="relative z-30">
         <StepProgress currentStep={currentStep} totalSteps={totalSteps} />
         <Form {...form}>{renderStep()}</Form>
       </div>
-
       {/* <ScrollParallax isAbsolutelyPositioned zIndex={10}>
-        <div className="absolute top-1/4 -left-35 hidden xl:block">
-          <Image src={shape1} alt="shape" width={78} height={78} className="-rotate-20" />
-        </div>
-      </ScrollParallax> */}
+       * <div className="absolute top-1/4 -left-35 hidden xl:block">
+       * <Image src={shape1} alt="shape" width={78} height={78} className="-rotate-20" />
+       * </div>
+       * </ScrollParallax> */}
     </div>
   );
 }
