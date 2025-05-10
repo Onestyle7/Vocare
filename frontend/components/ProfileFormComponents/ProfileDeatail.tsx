@@ -278,7 +278,7 @@ export default function ProfileDetails() {
   const pages = [renderPersonalInfoPage, renderSkillsAndWorkPage, renderAboutMePage];
 
   return (
-    <div className="font-poppins xl:mx-auto mx-4 mt-16 max-w-7xl max-sm:mx-4 2xl:max-w-[1480px]">
+    <div className="font-poppins mx-4 mt-16 max-w-7xl max-sm:mx-4 xl:mx-auto 2xl:max-w-[1480px]">
       <div className="flex h-screen flex-col xl:flex-row">
         <div className="hidden xl:block xl:w-1/2 xl:pr-8">
           <div className="flex h-3/4 items-center justify-center">

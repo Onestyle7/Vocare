@@ -40,7 +40,6 @@ export function WorkExperienceInput({ value, onChange }: WorkExperienceInputProp
     updated[index][key] = newValue;
     onChange(updated);
   };
-  
 
   const removeExperience = (index: number) => {
     const updated = [...value];

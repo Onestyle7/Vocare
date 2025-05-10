@@ -181,18 +181,19 @@ const ResumePage = () => {
     >
       {!hasAccess && (
         <>
-          <div className="mb-12 flex flex-col items-center text-center font-poppins">
+          <div className="font-poppins mb-12 flex flex-col items-center text-center">
             <h2 className="mb-2 text-2xl font-bold text-[#915EFF]">Your Resume</h2>
             <p className="max-w-2xl text-sm text-gray-600 dark:text-gray-300">
               This CV is created using a layout compatible with AI-based CV scanners. <br />
-              The data shown here is pulled from your profile. If you&apos;d like to make changes, simply update your profile and regenerate your CV.
+              The data shown here is pulled from your profile. If you&apos;d like to make changes,
+              simply update your profile and regenerate your CV.
             </p>
           </div>
 
           <div className="mt-16 flex justify-center">
             <button
               onClick={() => setIsConfirmDialogOpen(true)}
-              className="rounded-md bg-[#915EFF] px-6 py-3 text-white hover:bg-[#7b4ee0] transition font-poppins"
+              className="font-poppins rounded-md bg-[#915EFF] px-6 py-3 text-white transition hover:bg-[#7b4ee0]"
             >
               Generate Resume
             </button>

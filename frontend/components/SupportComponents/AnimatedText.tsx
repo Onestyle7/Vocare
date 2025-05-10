@@ -21,7 +21,7 @@ const AnimatedHeadline = ({ lines, className }: AnimatedTextProps) => {
 
   const randomizedDelays = useMemo(() => {
     return lines.map((line) => line.split('').map(() => Math.random() * 0.8));
-  }, [uniqueKey]);
+  }, [lines]);
 
   return (
     <div ref={ref} className={`flex flex-col ${className}`}>

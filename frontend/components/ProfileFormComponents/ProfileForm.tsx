@@ -1,5 +1,5 @@
 'use client';
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import {
@@ -34,7 +34,7 @@ export default function ProfileForm({
   const [currentStep, setCurrentStep] = useState(1);
   const totalSteps = 4;
   const router = useRouter();
-  
+
   const form = useForm<CreateProfileFormType>({
     resolver: zodResolver(createProfileSchema),
     defaultValues: {
@@ -53,7 +53,7 @@ export default function ProfileForm({
       personalityType: undefined,
     },
   });
-  
+
   const formatDateIfNeeded = (date?: string) => {
     if (!date) return undefined;
     try {
@@ -62,35 +62,38 @@ export default function ProfileForm({
       return undefined;
     }
   };
-  
-  const formatProfileDates = (data: UserProfile): UserProfile => ({
-    ...data,
-    certificates:
-      data.certificates?.map((cert) => ({
-        ...cert,
-        date: formatDateIfNeeded(cert.date),
-      })) ?? [],
-    education:
-      data.education?.map((edu) => ({
-        ...edu,
-        startDate: formatDateIfNeeded(edu.startDate),
-        endDate: formatDateIfNeeded(edu.endDate),
-      })) ?? [],
-    workExperience:
-      data.workExperience?.map((work) => ({
-        ...work,
-        startDate: formatDateIfNeeded(work.startDate),
-        endDate: formatDateIfNeeded(work.endDate),
-        description: work.description ?? '',
-        responsibilities: work.responsibilities ?? [],
-      })) ?? [],
-    phoneNumber: data.phoneNumber ?? '',
-    additionalInformation: data.additionalInformation ?? '',
-    aboutMe: data.aboutMe ?? '',
-    skills: data.skills ?? [],
-    languages: data.languages ?? [],
-  });
-  
+
+  const formatProfileDates = useCallback(
+    (data: UserProfile): UserProfile => ({
+      ...data,
+      certificates:
+        data.certificates?.map((cert) => ({
+          ...cert,
+          date: formatDateIfNeeded(cert.date),
+        })) ?? [],
+      education:
+        data.education?.map((edu) => ({
+          ...edu,
+          startDate: formatDateIfNeeded(edu.startDate),
+          endDate: formatDateIfNeeded(edu.endDate),
+        })) ?? [],
+      workExperience:
+        data.workExperience?.map((work) => ({
+          ...work,
+          startDate: formatDateIfNeeded(work.startDate),
+          endDate: formatDateIfNeeded(work.endDate),
+          description: work.description ?? '',
+          responsibilities: work.responsibilities ?? [],
+        })) ?? [],
+      phoneNumber: data.phoneNumber ?? '',
+      additionalInformation: data.additionalInformation ?? '',
+      aboutMe: data.aboutMe ?? '',
+      skills: data.skills ?? [],
+      languages: data.languages ?? [],
+    }),
+    []
+  );
+
   useEffect(() => {
     const loadProfile = async () => {
       setLoading(true);
@@ -101,7 +104,7 @@ export default function ProfileForm({
       }
       if (initialData) {
         setEditMode(true);
-        form.reset(formatProfileDates(initialData)); 
+        form.reset(formatProfileDates(initialData));
         setLoading(false);
         return;
       }
@@ -109,7 +112,7 @@ export default function ProfileForm({
         const profileData = await getUserProfile(token);
         if (profileData) {
           setEditMode(true);
-          form.reset(formatProfileDates(profileData)); 
+          form.reset(formatProfileDates(profileData));
         }
       } catch (err) {
         console.error('No existing profile found or error fetching data', err);
@@ -118,11 +121,11 @@ export default function ProfileForm({
       }
     };
     loadProfile();
-  }, [form, initialData, router]);
-  
+  }, [form, initialData, router, formatProfileDates]);
+
   const nextStep = () => setCurrentStep((prev) => Math.min(prev + 1, totalSteps));
   const prevStep = () => setCurrentStep((prev) => Math.max(prev - 1, 1));
-  
+
   const onSubmit = async (data: CreateProfileFormType) => {
     setLoading(true);
     const token = localStorage.getItem('token');
@@ -156,7 +159,7 @@ export default function ProfileForm({
       setLoading(false);
     }
   };
-  
+
   const handleDelete = async () => {
     if (!confirm('Are you sure you want to delete your profile?')) return;
     const token = localStorage.getItem('token');
@@ -179,7 +182,7 @@ export default function ProfileForm({
       setLoading(false);
     }
   };
-  
+
   const CancelButton = () => {
     const [open, setOpen] = useState(false);
     if (!onCancel) return null;
@@ -217,7 +220,7 @@ export default function ProfileForm({
       </>
     );
   };
-  
+
   const renderStep = () => {
     const sharedProps = { form, onNext: nextStep, onBack: prevStep };
     switch (currentStep) {
@@ -268,7 +271,7 @@ export default function ProfileForm({
         return <StepOne form={form} onNext={nextStep} />;
     }
   };
-  
+
   return (
     <div className="relative mx-auto max-w-2xl rounded-xl border bg-[#f3f3f3] p-8 lg:mt-10 dark:bg-[#0e100f]">
       <div className="relative z-30">
