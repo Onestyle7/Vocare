@@ -2,11 +2,11 @@
 
 import { useEffect, useRef } from 'react';
 import gsap from 'gsap';
-import { Button } from '../ui/button';
 import { ArrowRight } from 'lucide-react';
 import { letterImg } from '@/app/constants';
 import Image from 'next/image';
 import Link from 'next/link';
+import { Button } from '@/components/ui/button';
 
 const Mockup = () => {
   const flippingURef = useRef<HTMLSpanElement | null>(null);

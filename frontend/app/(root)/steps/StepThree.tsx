@@ -23,7 +23,7 @@ import { Badge } from '@/components/ui/badge';
 
 type Language = {
   language: string;
-  level: string;
+  level?: string;
 };
 
 interface LanguagePopoverProps {
@@ -51,7 +51,7 @@ type Education = {
   field: string;
   startDate: string;
   endDate: string;
-  current: boolean;
+  current?: boolean;
 };
 
 interface EducationPopoverProps {
@@ -633,7 +633,14 @@ export default function StepThree({ form, onNext, onBack }: StepThreeProps) {
           <FormItem>
             <FormLabel>Professional Experience</FormLabel>
             <FormControl>
-              <WorkExperiencePopover value={field.value || []} onChange={field.onChange} />
+              <WorkExperiencePopover
+                value={(field.value || []).map((item) => ({
+                  ...item,
+                  startDate: item.startDate ?? '',
+                  endDate: item.endDate ?? '',
+                }))}
+                onChange={field.onChange}
+              />
             </FormControl>
             <FormMessage />
           </FormItem>
@@ -648,7 +655,16 @@ export default function StepThree({ form, onNext, onBack }: StepThreeProps) {
           <FormItem>
             <FormLabel>Education</FormLabel>
             <FormControl>
-              <EducationPopover value={field.value || []} onChange={field.onChange} />
+              <EducationPopover
+                value={(field.value || []).map((item) => ({
+                  ...item,
+                  degree: item.degree ?? '',
+                  field: item.field ?? '',
+                  startDate: item.startDate ?? '',
+                  endDate: item.endDate ?? '',
+                }))}
+                onChange={field.onChange}
+              />
             </FormControl>
             <FormMessage />
           </FormItem>
@@ -663,7 +679,16 @@ export default function StepThree({ form, onNext, onBack }: StepThreeProps) {
           <FormItem>
             <FormLabel>Certificates</FormLabel>
             <FormControl>
-              <CertificatePopover value={field.value || []} onChange={field.onChange} />
+              <CertificatePopover
+                value={(field.value || []).map((c) => ({
+                  name: c.name ?? '',
+                  issuer: c.issuer ?? '',
+                  issueDate: c.issueDate ?? '',
+                  expiryDate: c.expiryDate ?? '',
+                  noExpiry: c.noExpiry ?? false,
+                }))}
+                onChange={field.onChange}
+              />
             </FormControl>
             <FormMessage />
           </FormItem>

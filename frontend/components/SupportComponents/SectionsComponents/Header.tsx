@@ -1,15 +1,15 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
-import ThemeSwitch from '../SupportComponents/ThemeSwitch';
 import { logo, NavLinks } from '@/app/constants';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { cn } from '@/lib/utils';
-import MobileNav from '../MobileUI/MobileNav';
 import Image from 'next/image';
-import { TokenCounter } from '../PricingComponents/TokenCounter';
 import { useAuth } from '@/lib/hooks/useAuth';
+import MobileNav from '@/components/MobileUI/MobileNav';
+import { TokenCounter } from '@/components/PricingComponents/TokenCounter';
+import ThemeSwitch from '../ThemeSwitch';
 
 const Header = () => {
   const pathname = usePathname();

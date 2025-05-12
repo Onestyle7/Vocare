@@ -2,16 +2,16 @@
 
 import { useEffect, useState } from 'react';
 import { lazy, Suspense } from 'react';
-import Section from '../SupportComponents/Section';
 import Image from 'next/image';
 import { shape1, Spinner } from '@/app/constants';
-import { SpinningText } from '../magicui/spinning-text';
-import CustomCursor from '../SupportComponents/CustomCursor';
-import CustomButton from '../ui/CustomButton';
 import { ArrowRight } from 'lucide-react';
 import Link from 'next/link';
 import { ScrollParallax } from 'react-just-parallax';
-import AnimatedHeadline from '../SupportComponents/AnimatedText';
+import AnimatedHeadline from '../AnimatedText';
+import CustomCursor from '../CustomCursor';
+import Section from '../Section';
+import CustomButton from '@/components/ui/CustomButton';
+import { SpinningText } from '@/components/magicui/spinning-text';
 
 const LazySpline = lazy(() => import('@splinetool/react-spline'));
 

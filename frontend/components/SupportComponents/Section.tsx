@@ -5,7 +5,7 @@ interface SectionProps {
   className?: string;
   id?: string;
   crosses?: boolean;
-  crossesOffset?: string;
+  crossesOffset?: boolean | string;
   customPaddings?: boolean;
   children: ReactNode;
 }

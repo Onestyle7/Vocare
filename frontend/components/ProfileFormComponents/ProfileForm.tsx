@@ -68,15 +68,23 @@ export default function ProfileForm({
       ...data,
       certificates:
         data.certificates?.map((cert) => ({
-          ...cert,
-          date: formatDateIfNeeded(cert.date),
+          name: cert.name,
+          issuer: cert.issuer ?? '',
+          issueDate: formatDateIfNeeded(cert.issueDate) ?? '',
+          expiryDate: formatDateIfNeeded(cert.expiryDate) ?? '',
+          noExpiry: cert.noExpiry ?? false,
         })) ?? [],
+
       education:
         data.education?.map((edu) => ({
           ...edu,
-          startDate: formatDateIfNeeded(edu.startDate),
-          endDate: formatDateIfNeeded(edu.endDate),
+          degree: edu.degree ?? '',
+          field: edu.field ?? '',
+          startDate: formatDateIfNeeded(edu.startDate) ?? '',
+          endDate: formatDateIfNeeded(edu.endDate) ?? '',
+          current: edu.current ?? false,
         })) ?? [],
+
       workExperience:
         data.workExperience?.map((work) => ({
           ...work,
@@ -84,6 +92,7 @@ export default function ProfileForm({
           endDate: formatDateIfNeeded(work.endDate),
           description: work.description ?? '',
           responsibilities: work.responsibilities ?? [],
+          current: work.current ?? false,
         })) ?? [],
       phoneNumber: data.phoneNumber ?? '',
       additionalInformation: data.additionalInformation ?? '',

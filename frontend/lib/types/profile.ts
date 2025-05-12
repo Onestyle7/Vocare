@@ -1,7 +1,9 @@
 export type CertificateEntry = {
   name: string;
-  date?: string; // Format: yyyy-MM-dd
   issuer?: string;
+  issueDate?: string; // yyyy-MM-dd
+  expiryDate?: string; // yyyy-MM-dd
+  noExpiry?: boolean; // true if the certificate does not expire
 };
 
 export type EducationEntry = {
@@ -10,6 +12,7 @@ export type EducationEntry = {
   field?: string;
   startDate?: string; // yyyy-MM-dd
   endDate?: string; // yyyy-MM-dd
+  current?: boolean;
 };
 
 export type WorkExperienceEntry = {
@@ -19,6 +22,7 @@ export type WorkExperienceEntry = {
   responsibilities?: string[];
   startDate?: string; // yyyy-MM-dd
   endDate?: string; // yyyy-MM-dd lub 'Present'
+  current?: boolean;
 };
 
 export type LanguageEntry = {

@@ -1,9 +1,9 @@
 import React from 'react';
-import CustomButton from '../ui/CustomButton';
-import { Input } from '../ui/input';
 import { contact_pages, down_links, links_pages, links_social } from '@/app/constants';
 import Link from 'next/link';
-import Section from '../SupportComponents/Section';
+import Section from '../Section';
+import CustomButton from '@/components/ui/CustomButton';
+import { Input } from '@/components/ui/input';
 
 const Footer = () => {
   return (

@@ -18,7 +18,7 @@ export enum PersonalityType {
   Unknown,
 }
 
-export const personalityTypeLabels: Record<number, string> = {
+export const personalityTypeLabels: Record<string, string> = {
   1: 'Mediator',
   2: 'Advocate',
   3: 'Logician',

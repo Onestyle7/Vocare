@@ -9,6 +9,7 @@ interface WorkExperienceEntry {
   responsibilities?: string[];
   startDate?: string;
   endDate?: string;
+  current?: boolean;
 }
 
 interface WorkExperienceInputProps {
@@ -27,6 +28,7 @@ export function WorkExperienceInput({ value, onChange }: WorkExperienceInputProp
         responsibilities: [],
         startDate: '',
         endDate: '',
+        current: false,
       },
     ]);
   };
