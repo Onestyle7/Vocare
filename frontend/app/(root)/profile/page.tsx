@@ -1,3 +1,5 @@
+"use client";
+
 import { GridBackgroundDemo } from '@/components/MarketComponents/GridBackgroundDemo';
 import ProfileDetails from '@/components/ProfileFormComponents/ProfileDeatail';
 import Header from '@/components/SupportComponents/SectionsComponents/Header';

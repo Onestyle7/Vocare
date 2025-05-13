@@ -1,4 +1,3 @@
-// BadgeTexture.tsx
 'use client';
 
 import { Center, PerspectiveCamera, Text3D } from '@react-three/drei';

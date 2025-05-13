@@ -1,3 +1,5 @@
+"use client";
+
 import AboutCards from '@/components/SupportComponents/SectionsComponents/AboutCards';
 import Faq from '@/components/SupportComponents/SectionsComponents/Faq';
 import Features from '@/components/SupportComponents/SectionsComponents/Features';
