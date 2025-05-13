@@ -52,7 +52,6 @@ import axios from 'axios';
 
 const API_URL = 'https://localhost:5001';
 
-// Example usage for fetching CV data from the API
 export async function fetchGeneratedCv(position?: string): Promise<CvDto> {
   try {
     const token = getAuthToken();
@@ -75,8 +74,6 @@ export async function fetchGeneratedCv(position?: string): Promise<CvDto> {
   }
 }
 
-// Helper function to get the authentication token
 function getAuthToken(): string {
-  // Get token from localStorage consistent with your login implementation
   return localStorage.getItem('token') || '';
 }

@@ -5,12 +5,13 @@ import { useGSAP } from '@gsap/react';
 import { ScrollTrigger } from 'gsap/all';
 import Image from 'next/image';
 import { plus, shape1 } from '@/app/constants';
-import ContentPage from '../ui/ContentPage';
-import ContentPage2 from '../ui/CustomPage2';
-import ContentPage3 from '../ui/CustomPage3';
-import SectionGsap from '../ui/SectionGsap';
-import AnimatedHeadline from '../SupportComponents/AnimatedText';
+
 import { ScrollParallax } from 'react-just-parallax';
+import ContentPage from '@/components/ui/ContentPage';
+import ContentPage2 from '@/components/ui/CustomPage2';
+import ContentPage3 from '@/components/ui/CustomPage3';
+import SectionGsap from '@/components/ui/SectionGsap';
+import AnimatedHeadline from '../AnimatedText';
 
 gsap.registerPlugin(ScrollTrigger);
 

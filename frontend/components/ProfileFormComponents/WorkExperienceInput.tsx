@@ -9,6 +9,7 @@ interface WorkExperienceEntry {
   responsibilities?: string[];
   startDate?: string;
   endDate?: string;
+  current?: boolean;
 }
 
 interface WorkExperienceInputProps {
@@ -27,11 +28,16 @@ export function WorkExperienceInput({ value, onChange }: WorkExperienceInputProp
         responsibilities: [],
         startDate: '',
         endDate: '',
+        current: false,
       },
     ]);
   };
 
-  const updateExperience = (index: number, key: keyof WorkExperienceEntry, newValue: any) => {
+  const updateExperience = <K extends keyof WorkExperienceEntry>(
+    index: number,
+    key: K,
+    newValue: WorkExperienceEntry[K]
+  ) => {
     const updated = [...value];
     updated[index][key] = newValue;
     onChange(updated);

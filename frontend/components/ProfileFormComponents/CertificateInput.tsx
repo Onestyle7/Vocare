@@ -4,8 +4,10 @@ import React from 'react';
 
 interface CertificateEntry {
   name: string;
-  date?: string;
   issuer?: string;
+  issueDate?: string; // yyyy-MM-dd
+  expiryDate?: string; // yyyy-MM-dd
+  noExpiry?: boolean; // true if the certificate does not expire
 }
 
 interface CertificateInputProps {
@@ -15,12 +17,25 @@ interface CertificateInputProps {
 
 export function CertificateInput({ value, onChange }: CertificateInputProps) {
   const addCertificate = () => {
-    onChange([...value, { name: '', date: '', issuer: '' }]);
+    onChange([
+      ...value,
+      {
+        name: '',
+        issuer: '',
+        issueDate: '',
+        expiryDate: '',
+        noExpiry: false,
+      },
+    ]);
   };
 
-  const updateCertificate = (index: number, key: keyof CertificateEntry, newValue: string) => {
+  const updateCertificate = (
+    index: number,
+    key: keyof CertificateEntry,
+    newValue: string | boolean
+  ) => {
     const updated = [...value];
-    updated[index][key] = newValue;
+    updated[index][key] = newValue as never;
     onChange(updated);
   };
 
@@ -43,18 +58,34 @@ export function CertificateInput({ value, onChange }: CertificateInputProps) {
           />
           <input
             type="text"
-            placeholder="Date (yyyy-mm-dd) (optional)"
-            value={entry.date || ''}
-            onChange={(e) => updateCertificate(index, 'date', e.target.value)}
-            className="input-profile w-full"
-          />
-          <input
-            type="text"
             placeholder="Issuer (optional)"
             value={entry.issuer || ''}
             onChange={(e) => updateCertificate(index, 'issuer', e.target.value)}
             className="input-profile w-full"
           />
+          <input
+            type="date"
+            placeholder="Issue Date"
+            value={entry.issueDate || ''}
+            onChange={(e) => updateCertificate(index, 'issueDate', e.target.value)}
+            className="input-profile w-full"
+          />
+          <input
+            type="date"
+            placeholder="Expiry Date"
+            value={entry.expiryDate || ''}
+            onChange={(e) => updateCertificate(index, 'expiryDate', e.target.value)}
+            className="input-profile w-full"
+            disabled={entry.noExpiry}
+          />
+          <label className="flex items-center gap-2">
+            <input
+              type="checkbox"
+              checked={entry.noExpiry || false}
+              onChange={(e) => updateCertificate(index, 'noExpiry', e.target.checked)}
+            />
+            No expiration date
+          </label>
           <button
             type="button"
             onClick={() => removeCertificate(index)}

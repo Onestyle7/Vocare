@@ -278,55 +278,55 @@ export default function AssistantPage() {
   }
 
   return (
-    <div className="font-poppins mx-auto max-w-7xl p-4 md:p-8 flex items-center justify-center flex-col">
+    <div className="font-poppins mx-auto flex max-w-7xl flex-col items-center justify-center p-4 md:p-8">
       <h2 className="mb-4 ml-4 text-2xl font-bold text-[#915EFF]">Carrer Recommendation</h2>
       <div>
-      {/* Main recommendation section */}
-      <div className="mb-1 flex flex-col overflow-hidden rounded-[28px] border shadow-sm md:flex-row">
-        <div className="flex items-center justify-center bg-[#915EFF] p-4 md:w-1/6 md:p-8">
-          <span className="text-4xl font-bold text-white md:text-6xl" id="num">
-            1
-          </span>
-        </div>
-        <div className="p-4 md:w-5/6 md:p-6">
-          <div className="flex flex-row items-center justify-between">
-            <h2 className="mb-3 text-xl font-semibold">Main Recommendation</h2>
-            <CollapsibleButton isCollapsed={isCollapsed} toggleCollapse={toggleCollapse} />
+        {/* Main recommendation section */}
+        <div className="mb-1 flex flex-col overflow-hidden rounded-[28px] border shadow-sm md:flex-row">
+          <div className="flex items-center justify-center bg-[#915EFF] p-4 md:w-1/6 md:p-8">
+            <span className="text-4xl font-bold text-white md:text-6xl" id="num">
+              1
+            </span>
           </div>
+          <div className="p-4 md:w-5/6 md:p-6">
+            <div className="flex flex-row items-center justify-between">
+              <h2 className="mb-3 text-xl font-semibold">Main Recommendation</h2>
+              <CollapsibleButton isCollapsed={isCollapsed} toggleCollapse={toggleCollapse} />
+            </div>
 
-          <h3 className="text-lg font-medium text-[#915EFF]">
-            {recommendations.recommendation.primaryPath}
-          </h3>
+            <h3 className="text-lg font-medium text-[#915EFF]">
+              {recommendations.recommendation.primaryPath}
+            </h3>
 
-          <p className="text-gray-500">{recommendations.recommendation.justification}</p>
+            <p className="text-gray-500">{recommendations.recommendation.justification}</p>
 
-          <div
-            ref={contentWrapperRef}
-            className="overflow-hidden"
-            style={{
-              height: isCollapsed ? 0 : 'auto',
-              opacity: isCollapsed ? 0 : 1,
-              visibility: isCollapsed ? 'hidden' : 'visible',
-            }}
-          >
-            <div ref={contentRef} className="space-y-3">
-              <div className="mt-4">
-                <h4 className="font-medium">Kolejne kroki:</h4>
-                <ul className="mt-2 list-disc space-y-1 pl-5">
-                  {recommendations.recommendation.nextSteps.map((step: string, index: number) => (
-                    <li key={index}>{step}</li>
-                  ))}
-                </ul>
-              </div>
-              <Separator />
-              <div className="mt-4">
-                <h4 className="font-medium">Cel długoterminowy:</h4>
-                <p className="mt-1">{recommendations.recommendation.longTermGoal}</p>
+            <div
+              ref={contentWrapperRef}
+              className="overflow-hidden"
+              style={{
+                height: isCollapsed ? 0 : 'auto',
+                opacity: isCollapsed ? 0 : 1,
+                visibility: isCollapsed ? 'hidden' : 'visible',
+              }}
+            >
+              <div ref={contentRef} className="space-y-3">
+                <div className="mt-4">
+                  <h4 className="font-medium">Kolejne kroki:</h4>
+                  <ul className="mt-2 list-disc space-y-1 pl-5">
+                    {recommendations.recommendation.nextSteps.map((step: string, index: number) => (
+                      <li key={index}>{step}</li>
+                    ))}
+                  </ul>
+                </div>
+                <Separator />
+                <div className="mt-4">
+                  <h4 className="font-medium">Cel długoterminowy:</h4>
+                  <p className="mt-1">{recommendations.recommendation.longTermGoal}</p>
+                </div>
               </div>
             </div>
           </div>
         </div>
-      </div>
       </div>
 
       {/* Career paths sections */}
@@ -350,7 +350,7 @@ export default function AssistantPage() {
         </CustomButton>
       </div>
 
-      <div className="mt-16 flex justify-center w-full">
+      <div className="mt-16 flex w-full justify-center">
         <CustomButton
           onClick={() => setIsConfirmDialogOpen(true)}
           disabled={isLoading}

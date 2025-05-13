@@ -3,8 +3,10 @@ import { PersonalityType } from '@/lib/enums/personalityTypes';
 
 const certificateEntrySchema = z.object({
   name: z.string().min(1, 'Certificate name is required'),
-  date: z.string().optional(),
   issuer: z.string().optional(),
+  issueDate: z.string().optional(),
+  expiryDate: z.string().optional(),
+  noExpiry: z.boolean().default(false),
 });
 
 const educationEntrySchema = z.object({
@@ -13,6 +15,7 @@ const educationEntrySchema = z.object({
   field: z.string().optional(),
   startDate: z.string().optional(),
   endDate: z.string().optional(),
+  current: z.boolean().default(false),
 });
 
 const workExperienceEntrySchema = z.object({
@@ -22,6 +25,7 @@ const workExperienceEntrySchema = z.object({
   responsibilities: z.array(z.string()).optional(),
   startDate: z.string().optional(),
   endDate: z.string().optional(),
+  current: z.boolean().default(false),
 });
 
 const languageEntrySchema = z.object({

@@ -1,6 +1,6 @@
 'use client';
 
-import { check, shape1, shape2 } from '@/app/constants';
+import { shape2 } from '@/app/constants';
 import Image from 'next/image';
 import React from 'react';
 

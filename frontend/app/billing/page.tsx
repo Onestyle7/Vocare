@@ -18,7 +18,7 @@ import { useRef } from 'react';
 import { Confetti, ConfettiRef } from '@/components/ui/confetti';
 
 const Page = () => {
-  const isSuccess = false;
+  const isSuccess = true;
 
   const confettiRef = useRef<ConfettiRef>(null);
 

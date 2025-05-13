@@ -1,6 +1,5 @@
 'use client';
-
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import {
@@ -64,33 +63,45 @@ export default function ProfileForm({
     }
   };
 
-  const formatProfileDates = (data: UserProfile): UserProfile => ({
-    ...data,
-    certificates:
-      data.certificates?.map((cert) => ({
-        ...cert,
-        date: formatDateIfNeeded(cert.date),
-      })) ?? [],
-    education:
-      data.education?.map((edu) => ({
-        ...edu,
-        startDate: formatDateIfNeeded(edu.startDate),
-        endDate: formatDateIfNeeded(edu.endDate),
-      })) ?? [],
-    workExperience:
-      data.workExperience?.map((work) => ({
-        ...work,
-        startDate: formatDateIfNeeded(work.startDate),
-        endDate: formatDateIfNeeded(work.endDate),
-        description: work.description ?? '',
-        responsibilities: work.responsibilities ?? [],
-      })) ?? [],
-    phoneNumber: data.phoneNumber ?? '',
-    additionalInformation: data.additionalInformation ?? '',
-    aboutMe: data.aboutMe ?? '',
-    skills: data.skills ?? [],
-    languages: data.languages ?? [],
-  });
+  const formatProfileDates = useCallback(
+    (data: UserProfile): UserProfile => ({
+      ...data,
+      certificates:
+        data.certificates?.map((cert) => ({
+          name: cert.name,
+          issuer: cert.issuer ?? '',
+          issueDate: formatDateIfNeeded(cert.issueDate) ?? '',
+          expiryDate: formatDateIfNeeded(cert.expiryDate) ?? '',
+          noExpiry: cert.noExpiry ?? false,
+        })) ?? [],
+
+      education:
+        data.education?.map((edu) => ({
+          ...edu,
+          degree: edu.degree ?? '',
+          field: edu.field ?? '',
+          startDate: formatDateIfNeeded(edu.startDate) ?? '',
+          endDate: formatDateIfNeeded(edu.endDate) ?? '',
+          current: edu.current ?? false,
+        })) ?? [],
+
+      workExperience:
+        data.workExperience?.map((work) => ({
+          ...work,
+          startDate: formatDateIfNeeded(work.startDate),
+          endDate: formatDateIfNeeded(work.endDate),
+          description: work.description ?? '',
+          responsibilities: work.responsibilities ?? [],
+          current: work.current ?? false,
+        })) ?? [],
+      phoneNumber: data.phoneNumber ?? '',
+      additionalInformation: data.additionalInformation ?? '',
+      aboutMe: data.aboutMe ?? '',
+      skills: data.skills ?? [],
+      languages: data.languages ?? [],
+    }),
+    []
+  );
 
   useEffect(() => {
     const loadProfile = async () => {
@@ -100,29 +111,26 @@ export default function ProfileForm({
         router.push('/sign-in');
         return;
       }
-
       if (initialData) {
         setEditMode(true);
-        form.reset(formatProfileDates(initialData)); // <--- WAŻNE
+        form.reset(formatProfileDates(initialData));
         setLoading(false);
         return;
       }
-
       try {
         const profileData = await getUserProfile(token);
         if (profileData) {
           setEditMode(true);
-          form.reset(formatProfileDates(profileData)); // <--- WAŻNE
+          form.reset(formatProfileDates(profileData));
         }
-      } catch (error) {
-        console.error('No existing profile found or error fetching data');
+      } catch (err) {
+        console.error('No existing profile found or error fetching data', err);
       } finally {
         setLoading(false);
       }
     };
-
     loadProfile();
-  }, [form, initialData, router]);
+  }, [form, initialData, router, formatProfileDates]);
 
   const nextStep = () => setCurrentStep((prev) => Math.min(prev + 1, totalSteps));
   const prevStep = () => setCurrentStep((prev) => Math.max(prev - 1, 1));
@@ -135,11 +143,8 @@ export default function ProfileForm({
       router.push('/sign-in');
       return;
     }
-
     const formattedData = formatProfileDates(data);
-
     console.log('Certificates:', formattedData.certificates);
-
     try {
       let profileData;
       if (isEditMode) {
@@ -151,13 +156,13 @@ export default function ProfileForm({
         toast.success('Profile created successfully!');
         setEditMode(true);
       }
-
       localStorage.setItem('userProfile', JSON.stringify(profileData));
       router.push('/assistant');
-    } catch (error: any) {
-      console.error(error);
+    } catch (err: unknown) {
+      console.error(err);
+      const errorMessage = err instanceof Error ? err.message : 'Please try again.';
       toast.error('An error occurred', {
-        description: error.response?.data || 'Please try again.',
+        description: errorMessage,
       });
     } finally {
       setLoading(false);
@@ -166,21 +171,19 @@ export default function ProfileForm({
 
   const handleDelete = async () => {
     if (!confirm('Are you sure you want to delete your profile?')) return;
-
     const token = localStorage.getItem('token');
     if (!token) {
       toast.error('Authentication required', { description: 'Please sign in to continue.' });
       router.push('/sign-in');
       return;
     }
-
     setLoading(true);
     try {
       await deleteUserProfile(token);
       toast.success('Profile deleted successfully!');
       router.push('/');
-    } catch (error) {
-      console.error(error);
+    } catch (err) {
+      console.error(err);
       toast.error('An error occurred', {
         description: 'Failed to delete profile. Please try again.',
       });
@@ -191,9 +194,7 @@ export default function ProfileForm({
 
   const CancelButton = () => {
     const [open, setOpen] = useState(false);
-
     if (!onCancel) return null;
-
     return (
       <>
         {form.formState.isDirty ? (
@@ -231,7 +232,6 @@ export default function ProfileForm({
 
   const renderStep = () => {
     const sharedProps = { form, onNext: nextStep, onBack: prevStep };
-
     switch (currentStep) {
       case 1:
         return (
@@ -287,12 +287,11 @@ export default function ProfileForm({
         <StepProgress currentStep={currentStep} totalSteps={totalSteps} />
         <Form {...form}>{renderStep()}</Form>
       </div>
-
       {/* <ScrollParallax isAbsolutelyPositioned zIndex={10}>
-        <div className="absolute top-1/4 -left-35 hidden xl:block">
-          <Image src={shape1} alt="shape" width={78} height={78} className="-rotate-20" />
-        </div>
-      </ScrollParallax> */}
+       * <div className="absolute top-1/4 -left-35 hidden xl:block">
+       * <Image src={shape1} alt="shape" width={78} height={78} className="-rotate-20" />
+       * </div>
+       * </ScrollParallax> */}
     </div>
   );
 }

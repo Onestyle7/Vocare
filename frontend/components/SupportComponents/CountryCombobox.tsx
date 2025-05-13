@@ -1,5 +1,4 @@
 'use client';
-
 import * as React from 'react';
 import { Check, ChevronsUpDown } from 'lucide-react';
 import { cn } from '@/lib/utils';
@@ -13,19 +12,18 @@ import {
   CommandList,
 } from '@/components/ui/command';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
-import { UseFormReturn } from 'react-hook-form';
+import { UseFormReturn, Path, PathValue } from 'react-hook-form';
 import { countries } from '@/app/constants';
 
-interface CountryFormValues {
-  country: string;
+interface CountryComboboxProps<TFieldValues extends Record<string, unknown>> {
+  form: UseFormReturn<TFieldValues>;
+  name: Path<TFieldValues>;
 }
 
-interface CountryComboboxProps {
-  form: UseFormReturn<CountryFormValues>;
-  name: keyof CountryFormValues;
-}
-
-export function CountryCombobox({ form, name }: CountryComboboxProps) {
+export function CountryCombobox<TFieldValues extends Record<string, unknown>>({
+  form,
+  name,
+}: CountryComboboxProps<TFieldValues>) {
   const [open, setOpen] = React.useState(false);
   const value = form.watch(name);
 
@@ -53,7 +51,13 @@ export function CountryCombobox({ form, name }: CountryComboboxProps) {
                   key={country.value}
                   value={country.value}
                   onSelect={(currentValue) => {
-                    form.setValue(name, currentValue === value ? '' : currentValue);
+                    form.setValue(
+                      name,
+                      (currentValue === value ? '' : currentValue) as PathValue<
+                        TFieldValues,
+                        Path<TFieldValues>
+                      >
+                    );
                     setOpen(false);
                   }}
                 >
