@@ -35,7 +35,7 @@ jobs:
         continue-on-error: true
 
       - name: Upload backend artifact
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: backend-release
           path: VocareWebAPI/bin/Release
@@ -71,7 +71,7 @@ jobs:
         continue-on-error: true
 
       - name: Upload frontend artifact
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: frontend-build
           path: frontend/build
