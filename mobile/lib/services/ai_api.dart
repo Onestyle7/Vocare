@@ -1,46 +1,33 @@
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:vocare/models/ai_career_response.dart'; // UWAGA: dodaj ten plik najpierw
 
 class AiApi {
-  static Future<String> fetchRecommendation() async {
+  static Future<AiCareerResponse?> fetchFullRecommendation() async {
     final prefs = await SharedPreferences.getInstance();
     final token = prefs.getString('accessToken') ?? '';
     final url = Uri.parse('https://localhost:5001/api/Ai/recommendations');
 
     try {
-      final response = await http.get(url, headers: {
-        'Authorization': 'Bearer $token',
-        'accept': 'application/json',
-      });
+      final response = await http.get(
+        url,
+        headers: {
+          'Authorization': 'Bearer $token',
+          'accept': 'application/json',
+        },
+      );
 
       if (response.statusCode == 200) {
         final data = jsonDecode(response.body);
-        return _buildRecommendationText(data);
+        return AiCareerResponse.fromJson(data);
       } else {
-        return 'Błąd pobierania danych: ${response.statusCode}';
+        print("Błąd API: ${response.statusCode}");
+        return null;
       }
     } catch (e) {
-      return 'Błąd połączenia: $e';
+      print("Błąd połączenia: $e");
+      return null;
     }
-  }
-
-  static String _buildRecommendationText(Map<String, dynamic> json) {
-    final recommendation = json['recommendation'];
-    if (recommendation == null) return "Brak danych";
-
-    final primaryPath = recommendation['primaryPath'] ?? "Nieznana ścieżka";
-    final justification = recommendation['justification'] ?? "Brak uzasadnienia";
-    final nextSteps = List<String>.from(recommendation['nextSteps'] ?? []);
-
-    return '''
-🎯 Ścieżka kariery: $primaryPath
-
-📌 Uzasadnienie:
-$justification
-
-🪜 Następne kroki:
-- ${nextSteps.join('\n- ')}
-''';
   }
 }

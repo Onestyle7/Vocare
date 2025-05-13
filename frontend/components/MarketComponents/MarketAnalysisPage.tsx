@@ -1,39 +1,194 @@
 'use client';
 
-import { useEffect, useState, useRef } from 'react';
-import { MarketAnalysisResponseDto } from '@/lib/types/marketAnalysis';
-import { fetchMarketAnalysis } from '@/lib/recommendations';
+import { useEffect, useState, useRef, useCallback } from 'react';
+import axios, { AxiosError } from 'axios';
 import { gsap } from 'gsap';
 import CollapsibleButton from '../AssistantComponents/CollapsibleButton';
 import { TerminalDemo } from './LoadingTerminal';
 import { GridBackgroundDemo } from './GridBackgroundDemo';
 import GenerateRecommendationFail from '../AssistantComponents/GenerateRecommendationFail';
 import Image from 'next/image';
-import { chart, fire, shape3, wallet } from '@/app/constants';
+import { chart, fire, wallet, star_generate } from '@/app/constants';
+import { toast } from 'sonner';
+import CustomButton from '../ui/CustomButton';
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from '../ui/alert-dialog';
+import { useTokenBalanceContext } from '@/lib/contexts/TokenBalanceContext';
+// Define the types here since they seem to be missing or incorrectly defined in the imported files
+interface MarketTrend {
+  trendName: string;
+  description: string;
+  impact: string;
+}
+
+interface SkillDemand {
+  skill: string;
+  industry: string;
+  demandLevel: string;
+}
+
+interface IndustryStatistic {
+  industry: string;
+  averageSalary: string;
+  employmentRate: string;
+  growthForecast: string;
+}
+
+interface MarketAnalysisDto {
+  industryStatistics: IndustryStatistic[];
+  marketTrends: MarketTrend[];
+  skillDemand: SkillDemand[];
+}
+
+interface ApiResponse {
+  marketAnalysis: MarketAnalysisDto;
+}
 
 export default function MarketAnalysis() {
-  const [data, setData] = useState<MarketAnalysisResponseDto | null>(null);
+  const [data, setData] = useState<ApiResponse | MarketAnalysisDto | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [isLoading, setLoading] = useState(true);
+  const [isConfirmDialogOpen, setIsConfirmDialogOpen] = useState(false);
+  const { tokenBalance, isLoading: isBalanceLoading, refresh } = useTokenBalanceContext();
+
+  const [showFixedButton, setShowFixedButton] = useState(false);
+  const lastScrollY = useRef(0);
 
   useEffect(() => {
-    const loadData = async () => {
-      setLoading(true);
-      try {
-        const result = await fetchMarketAnalysis();
-        setData(result);
-      } catch (err: any) {
-        setError(err.message);
-      } finally {
-        setLoading(false);
+    const handleScroll = () => {
+      const currentScrollY = window.scrollY;
+
+      // Scroll w górę
+      if (currentScrollY < lastScrollY.current) {
+        setShowFixedButton(true);
       }
+
+      // Scroll w dół
+      if (currentScrollY > lastScrollY.current) {
+        setShowFixedButton(false);
+      }
+
+      lastScrollY.current = currentScrollY;
     };
-    loadData();
+
+    window.addEventListener('scroll', handleScroll);
+
+    return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
-  // useEffect(() => {
-  //   setLoading(true);
-  // }, []);
+  const handleResponseData = (responseData: unknown) => {
+    if (
+      typeof responseData === 'object' &&
+      responseData !== null &&
+      'marketAnalysis' in responseData
+    ) {
+      setData(responseData as ApiResponse);
+    } else if (
+      typeof responseData === 'object' &&
+      responseData !== null &&
+      'industryStatistics' in responseData
+    ) {
+      setData({ marketAnalysis: responseData as MarketAnalysisDto });
+    } else {
+      setData(responseData as ApiResponse | MarketAnalysisDto | null);
+    }
+  };
+
+  const loadData = useCallback(async (useNewData = false) => {
+    setLoading(true);
+    setError(null);
+    setData(null);
+
+    const token = localStorage.getItem('token');
+    if (!token) {
+      toast.error('Authentication required', {
+        description: 'Please sign in to continue.',
+      });
+      setLoading(false);
+      return;
+    }
+
+    try {
+      if (useNewData) {
+        const response = await axios.get('https://localhost:5001/api/MarketAnalysis', {
+          headers: {
+            Authorization: `Bearer ${token}`,
+            'Content-Type': 'application/json',
+          },
+        });
+
+        console.log('New market analysis raw data:', response.data);
+        handleResponseData(response.data);
+        toast.success('Generated new market analysis');
+      } else {
+        try {
+          const latestResponse = await axios.get(
+            'https://localhost:5001/api/MarketAnalysis/latest',
+            {
+              headers: {
+                Authorization: `Bearer ${token}`,
+                'Content-Type': 'application/json',
+              },
+            }
+          );
+
+          console.log('Latest market analysis raw data:', latestResponse.data);
+          handleResponseData(latestResponse.data);
+        } catch (latestError) {
+          const axiosError = latestError as AxiosError;
+          if (axiosError.response?.status === 404) {
+            console.log('No existing analysis found, generating a new one...');
+            const response = await axios.get('https://localhost:5001/api/MarketAnalysis', {
+              headers: {
+                Authorization: `Bearer ${token}`,
+                'Content-Type': 'application/json',
+              },
+            });
+
+            console.log('First market analysis raw data:', response.data);
+            handleResponseData(response.data);
+          } else {
+            console.error('Error fetching latest market analysis:', latestError);
+            setError(
+              (axiosError.response?.data as { detail?: string })?.detail ||
+                'Error fetching latest market analysis.'
+            );
+          }
+        }
+      }
+    } catch (err) {
+      const axiosError = err as AxiosError;
+      console.error('Error fetching market analysis:', err);
+      setError(
+        (axiosError.response?.data as { detail?: string })?.detail ||
+          'Error generating market analysis'
+      );
+
+      if (useNewData) {
+        toast.error('Error', {
+          description: 'Failed to generate new market analysis.',
+        });
+      }
+    } finally {
+      setLoading(false);
+    }
+  }, []);
+
+  useEffect(() => {
+    loadData();
+  }, [loadData]);
+
+  const handleGenerateNewAnalysis = async () => {
+    await loadData(true);
+  };
 
   if (error) {
     return <GenerateRecommendationFail />;
@@ -43,85 +198,162 @@ export default function MarketAnalysis() {
     return (
       <div className="mx-auto -mt-20 mb-1 flex h-screen max-w-7xl flex-col items-center justify-center overflow-hidden rounded-[28px] max-xl:mx-4">
         <GridBackgroundDemo />
-        {/* <ScrollParallax isAbsolutelyPositioned zIndex={20}>
-        <div className="absolute top-1/2 left-1/4 z-20">
-          <Image src={shape1} alt="shape" width={78} height={78} className="-rotate-20" />
-        </div>
-        </ScrollParallax> */}
         <TerminalDemo />
       </div>
     );
   }
 
+  // For debugging
+  console.log('Rendering with data structure:', data);
+
+  const getMarketAnalysis = (): MarketAnalysisDto | null => {
+    if (!data) return null;
+
+    // Check if data is an ApiResponse with marketAnalysis property
+    if ('marketAnalysis' in data && data.marketAnalysis) {
+      return data.marketAnalysis;
+    }
+
+    // Check if data is directly a MarketAnalysisDto
+    if ('industryStatistics' in data) {
+      return data as MarketAnalysisDto;
+    }
+
+    return null;
+  };
+
+  const marketAnalysis = getMarketAnalysis();
+
   return (
-    <div className="font-poppins mx-auto mt-8 max-w-7xl">
+    <div className="font-poppins mx-auto mt-8 mb-4 flex max-w-7xl flex-col items-center justify-center">
       <h2 className="mb-4 ml-4 text-2xl font-bold text-[#915EFF]">Job Market Analysis</h2>
+      <div>
+        {marketAnalysis?.industryStatistics?.map((stat, index) => (
+          <IndustrySection key={index} data={stat} index={index} />
+        ))}
 
-      {data?.marketAnalysis.industryStatistics.map((stat, index) => (
-        <IndustrySection key={index} data={stat} index={index} />
-      ))}
-
-      {data?.marketAnalysis.marketTrends && data.marketAnalysis.marketTrends.length > 0 && (
-        <div className="mt-8 rounded-[28px] border p-6 shadow-sm">
-          <h3 className="mb-4 text-xl font-semibold">Current Market Trends</h3>
-          <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
-            {data.marketAnalysis.marketTrends.map((trend, index) => (
-              <div key={index} className="rounded-lg border p-4 shadow-sm">
-                <h4 className="mb-2 font-medium text-[#915EFF]">{trend.trendName}</h4>
-                <p className="mb-2 text-gray-700">{trend.description}</p>
-                <p className="text-sm font-medium">
-                  <span className="text-gray-500">Impact: </span>
-                  {trend.impact}
-                </p>
-              </div>
-            ))}
-          </div>
-        </div>
-      )}
-
-      {data?.marketAnalysis.skillDemand && data.marketAnalysis.skillDemand.length > 0 && (
-        <div className="mt-8 rounded-[28px] border p-6 shadow-sm">
-          <h3 className="mb-4 text-xl font-semibold">In-Demand Skills</h3>
-          <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
-            {data.marketAnalysis.skillDemand.map((skill, index) => (
-              <div key={index} className="rounded-lg border p-4 shadow-sm">
-                <h4 className="mb-1 font-medium">{skill.skill}</h4>
-                <p className="text-sm text-gray-500">{skill.industry}</p>
-                <div className="mt-2 flex items-center">
-                  <span className="mr-2 text-sm">Demand level:</span>
-                  <span
-                    className={`rounded-full px-2 py-1 text-xs font-medium ${
-                      skill.demandLevel === 'High'
-                        ? 'bg-green-100 text-green-800'
-                        : skill.demandLevel === 'Medium'
-                          ? 'bg-yellow-100 text-yellow-800'
-                          : 'bg-red-100 text-red-800'
-                    }`}
-                  >
-                    {skill.demandLevel}
-                  </span>
+        {marketAnalysis?.marketTrends && marketAnalysis.marketTrends.length > 0 && (
+          <div className="mx-4 mt-8 rounded-[28px] border p-6 shadow-sm">
+            <h3 className="mb-4 text-xl font-semibold">Current Market Trends</h3>
+            <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
+              {marketAnalysis.marketTrends.map((trend, index) => (
+                <div key={index} className="rounded-lg border p-4 shadow-sm">
+                  <h4 className="mb-2 font-medium text-[#915EFF]">{trend.trendName}</h4>
+                  <p className="mb-2 text-gray-700">{trend.description}</p>
+                  <p className="text-sm font-medium">
+                    <span className="text-gray-500">Impact: </span>
+                    {trend.impact}
+                  </p>
                 </div>
-              </div>
-            ))}
+              ))}
+            </div>
           </div>
+        )}
+
+        {marketAnalysis?.skillDemand && marketAnalysis.skillDemand.length > 0 && (
+          <div className="mx-4 mt-8 rounded-[28px] border p-6 shadow-sm">
+            <h3 className="mb-4 text-xl font-semibold">In-Demand Skills</h3>
+            <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
+              {marketAnalysis.skillDemand.map((skill, index) => (
+                <div key={index} className="rounded-lg border p-4 shadow-sm">
+                  <h4 className="mb-1 font-medium">{skill.skill}</h4>
+                  <p className="text-sm text-gray-500">{skill.industry}</p>
+                  <div className="mt-2 flex items-center">
+                    <span className="mr-2 text-sm">Demand level:</span>
+                    <span
+                      className={`rounded-full px-2 py-1 text-xs font-medium ${
+                        skill.demandLevel === 'High'
+                          ? 'bg-green-100 text-green-800'
+                          : skill.demandLevel === 'Medium'
+                            ? 'bg-yellow-100 text-yellow-800'
+                            : 'bg-red-100 text-red-800'
+                      }`}
+                    >
+                      {skill.demandLevel}
+                    </span>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
+
+        <div
+          className={`${
+            showFixedButton
+              ? 'fixed bottom-6 left-1/2 z-50 -translate-x-1/2 translate-y-0 opacity-100'
+              : 'fixed bottom-0 left-1/2 z-50 -translate-x-1/2 translate-y-full opacity-0'
+          } flex w-1/2 items-center justify-center transition-all duration-500 ease-in-out`}
+        >
+          <CustomButton
+            onClick={() => setIsConfirmDialogOpen(true)}
+            disabled={isLoading}
+            className="cursor-pointer px-6 py-2"
+          >
+            {isLoading ? 'Generating...' : 'Generate new market analysis'}
+          </CustomButton>
         </div>
-      )}
+
+        {/* STATIC button always under content */}
+        <div className="mt-16 flex justify-center">
+          <CustomButton
+            onClick={() => setIsConfirmDialogOpen(true)}
+            disabled={isLoading}
+            className="cursor-pointer px-6 py-2"
+          >
+            {isLoading ? 'Generating...' : 'Generate new market analysis'}
+          </CustomButton>
+        </div>
+
+        <AlertDialog open={isConfirmDialogOpen} onOpenChange={setIsConfirmDialogOpen}>
+          <AlertDialogContent className="font-poppins mx-auto max-w-md">
+            <AlertDialogHeader>
+              <AlertDialogTitle className="text-center text-xl font-bold">
+                Generate new market analysis?
+              </AlertDialogTitle>
+              <AlertDialogDescription className="text-center">
+                This will take <b className="text-[#915EFF]">30 credits</b> from Your account
+                <div className="mt-2 font-extralight">
+                  Current balance:{' '}
+                  <span className="font-bold">{isBalanceLoading ? '...' : tokenBalance}</span>
+                </div>
+              </AlertDialogDescription>
+            </AlertDialogHeader>
+            <AlertDialogFooter className="flex justify-center gap-4 sm:justify-center">
+              <AlertDialogCancel className="border-gray-200">Cancel</AlertDialogCancel>
+              <AlertDialogAction
+                onClick={async () => {
+                  await handleGenerateNewAnalysis();
+                  refresh();
+                }}
+                className="bg-[#915EFF] text-white hover:bg-[#7b4ee0]"
+              >
+                Generate
+                <Image src={star_generate} alt="star" width={16} height={16} />
+              </AlertDialogAction>
+            </AlertDialogFooter>
+          </AlertDialogContent>
+        </AlertDialog>
+      </div>
     </div>
   );
 }
 
+interface IndustryStatistic {
+  industry: string;
+  averageSalary: string;
+  employmentRate: string;
+  growthForecast: string;
+}
+
+// This interface is already defined above, so we don't need to redefine it here
 interface IndustryProps {
-  data: {
-    industry: string;
-    averageSalary: string;
-    employmentRate: string;
-    growthForecast: string;
-  };
+  data: IndustryStatistic;
   index: number;
 }
 
 function IndustrySection({ data, index }: IndustryProps) {
-  const [isCollapsed, setIsCollapsed] = useState(false);
+  const [isCollapsed, setIsCollapsed] = useState(true);
   const contentRef = useRef<HTMLDivElement>(null);
   const contentWrapperRef = useRef<HTMLDivElement>(null);
   const imageRef = useRef<HTMLImageElement | null>(null);
@@ -210,10 +442,10 @@ function IndustrySection({ data, index }: IndustryProps) {
         chartBoxRef.current.addEventListener('mouseleave', onLeave);
 
         return () => {
-          salaryBoxRef.current?.removeEventListener('mouseenter', onEnter);
-          salaryBoxRef.current?.removeEventListener('mouseleave', onLeave);
+          chartBoxRef.current?.removeEventListener('mouseenter', onEnter);
+          chartBoxRef.current?.removeEventListener('mouseleave', onLeave);
         };
-      }, salaryBoxRef);
+      }, chartBoxRef);
 
       return () => ctx.revert();
     }
@@ -250,10 +482,10 @@ function IndustrySection({ data, index }: IndustryProps) {
         fireBoxRef.current.addEventListener('mouseleave', onLeave);
 
         return () => {
-          salaryBoxRef.current?.removeEventListener('mouseenter', onEnter);
-          salaryBoxRef.current?.removeEventListener('mouseleave', onLeave);
+          fireBoxRef.current?.removeEventListener('mouseenter', onEnter);
+          fireBoxRef.current?.removeEventListener('mouseleave', onLeave);
         };
-      }, salaryBoxRef);
+      }, fireBoxRef);
 
       return () => ctx.revert();
     }
@@ -359,7 +591,7 @@ function IndustrySection({ data, index }: IndustryProps) {
             className="relative overflow-hidden rounded-lg border border-dashed border-gray-700/20 bg-gray-50 p-3 dark:border-gray-700 dark:bg-[#101014]/40"
             ref={chartBoxRef}
           >
-            <p className="text-sm text-gray-500">Average Salary</p>
+            <p className="text-sm text-gray-500">Employment Rate</p>
             <p className="text-lg font-medium text-black dark:text-white">{data.employmentRate}</p>
             <Image
               src={chart}

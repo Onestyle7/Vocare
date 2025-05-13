@@ -4,7 +4,6 @@ import { useEffect, useState, useRef } from 'react';
 import axios from 'axios';
 import { UserProfile } from '@/lib/types/profile';
 import { toast } from 'sonner';
-import { AiCareerResponse } from '@/lib/recommendations';
 import GenerateRecommendation from './GenerateRecommendationFail';
 import { Separator } from '../ui/separator';
 import { gsap } from 'gsap';
@@ -25,6 +24,10 @@ import {
 } from '../ui/alert-dialog';
 import Image from 'next/image';
 import { star_generate } from '@/app/constants';
+import { useTokenBalanceContext } from '@/lib/contexts/TokenBalanceContext';
+import Link from 'next/link';
+import { AxiosError } from 'axios';
+import { AiCareerResponse, CareerPath } from '@/lib/types/recommendation';
 
 export default function AssistantPage() {
   const [profile, setProfile] = useState<UserProfile | null>(null);
@@ -32,10 +35,34 @@ export default function AssistantPage() {
   const [isLoading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [isConfirmDialogOpen, setIsConfirmDialogOpen] = useState(false);
+  const { tokenBalance, isLoading: isBalanceLoading, refresh } = useTokenBalanceContext();
 
   const [isCollapsed, setIsCollapsed] = useState(true);
   const contentRef = useRef<HTMLDivElement>(null);
   const contentWrapperRef = useRef<HTMLDivElement>(null);
+
+  const [showFixedButton, setShowFixedButton] = useState(false);
+  const lastScrollY = useRef(0);
+
+  useEffect(() => {
+    const handleScroll = () => {
+      const currentScrollY = window.scrollY;
+
+      if (currentScrollY < lastScrollY.current) {
+        setShowFixedButton(true);
+      }
+
+      if (currentScrollY > lastScrollY.current) {
+        setShowFixedButton(false);
+      }
+
+      lastScrollY.current = currentScrollY;
+    };
+
+    window.addEventListener('scroll', handleScroll);
+
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
 
   useEffect(() => {
     if (contentRef.current && contentWrapperRef.current && recommendations) {
@@ -126,15 +153,16 @@ export default function AssistantPage() {
               },
             }
           );
-          console.log('Ostatnie rekomendacje:', lastRecommendationResponse.data);
+          console.log('Last recommendations:', lastRecommendationResponse.data);
           setRecommendations(lastRecommendationResponse.data);
           setLoading(false);
           return;
-        } catch (lastError: any) {
-          if (lastError.response?.status !== 404) {
-            console.error('Błąd podczas pobierania ostatnich rekomendacji:', lastError);
+        } catch (lastError: unknown) {
+          if (lastError instanceof AxiosError && lastError.response?.status !== 404) {
+            console.error('Something went wrong while generating last recommendations:', lastError);
             setError(
-              lastError.response?.data?.detail || 'Błąd podczas pobierania ostatnich rekomendacji.'
+              lastError.response?.data?.detail ||
+                'Something went wrong while generating last recommendations.'
             );
             setLoading(false);
             return;
@@ -152,11 +180,28 @@ export default function AssistantPage() {
         );
         console.log('Nowe rekomendacje:', response.data);
         setRecommendations(response.data);
-      } catch (err: any) {
-        console.error('Błąd podczas pobierania rekomendacji:', err);
-        setError(err.response?.data?.detail || 'Błąd podczas generowania rekomendacji');
-      } finally {
-        setLoading(false);
+      } catch (err: unknown) {
+        if (err instanceof AxiosError) {
+          console.error('Szczegółowy błąd:', err);
+          console.error('Status odpowiedzi:', err.response?.status);
+          console.error('Dane odpowiedzi:', err.response?.data);
+
+          if (
+            err.response?.status === 500 &&
+            typeof err.response.data === 'string' &&
+            err.response.data.includes('User billing information')
+          ) {
+            setError('billing_info_missing');
+            toast.error('Brak informacji rozliczeniowych', {
+              description: 'Uzupełnij dane rozliczeniowe w ustawieniach konta.',
+            });
+          } else {
+            setError(err.response?.data?.detail || 'Błąd podczas generowania rekomendacji');
+          }
+        } else {
+          console.error('Unknown error:', err);
+          setError('Unexpected error occurred');
+        }
       }
     };
 
@@ -186,12 +231,22 @@ export default function AssistantPage() {
         }
       );
       setRecommendations(response.data);
-      toast.success('Wygenerowano nowe rekomendacje');
-    } catch (err: any) {
-      setError(err.response?.data?.detail || 'Nie udało się wygenerować nowych rekomendacji.');
-      toast.error('Błąd', {
-        description: 'Nie udało się wygenerować nowych rekomendacji.',
-      });
+      toast.success('New recommendations have been generated');
+    } catch (err: unknown) {
+      if (err instanceof AxiosError) {
+        setError(
+          err.response?.data?.detail || 'Something went wrong while generating new recommendations'
+        );
+        toast.error('Błąd', {
+          description: 'Something went wrong while generating new recommendations',
+        });
+      } else {
+        setError('Unexpected error');
+        toast.error('Unexpected error', {
+          description: 'An unknown error occurred while generating recommendations',
+        });
+        console.error('Unexpected error:', err);
+      }
     } finally {
       setLoading(false);
     }
@@ -223,48 +278,51 @@ export default function AssistantPage() {
   }
 
   return (
-    <div className="font-poppins mx-auto max-w-7xl p-4 md:p-8">
-      {/* Main recommendation section */}
-      <div className="mb-1 flex flex-col overflow-hidden rounded-[28px] border shadow-sm md:flex-row">
-        <div className="flex items-center justify-center bg-[#915EFF] p-4 md:w-1/6 md:p-8">
-          <span className="text-4xl font-bold text-white md:text-6xl" id="num">
-            1
-          </span>
-        </div>
-        <div className="p-4 md:w-5/6 md:p-6">
-          <div className="flex flex-row items-center justify-between">
-            <h2 className="mb-3 text-xl font-semibold">Main Recommendation</h2>
-            <CollapsibleButton isCollapsed={isCollapsed} toggleCollapse={toggleCollapse} />
+    <div className="font-poppins mx-auto flex max-w-7xl flex-col items-center justify-center p-4 md:p-8">
+      <h2 className="mb-4 ml-4 text-2xl font-bold text-[#915EFF]">Carrer Recommendation</h2>
+      <div>
+        {/* Main recommendation section */}
+        <div className="mb-1 flex flex-col overflow-hidden rounded-[28px] border shadow-sm md:flex-row">
+          <div className="flex items-center justify-center bg-[#915EFF] p-4 md:w-1/6 md:p-8">
+            <span className="text-4xl font-bold text-white md:text-6xl" id="num">
+              1
+            </span>
           </div>
+          <div className="p-4 md:w-5/6 md:p-6">
+            <div className="flex flex-row items-center justify-between">
+              <h2 className="mb-3 text-xl font-semibold">Main Recommendation</h2>
+              <CollapsibleButton isCollapsed={isCollapsed} toggleCollapse={toggleCollapse} />
+            </div>
 
-          <h3 className="text-lg font-medium text-[#915EFF]">
-            {recommendations.recommendation.primaryPath}
-          </h3>
+            <h3 className="text-lg font-medium text-[#915EFF]">
+              {recommendations.recommendation.primaryPath}
+            </h3>
 
-          <p className="text-gray-500">{recommendations.recommendation.justification}</p>
+            <p className="text-gray-500">{recommendations.recommendation.justification}</p>
 
-          <div
-            ref={contentWrapperRef}
-            className="overflow-hidden"
-            style={{
-              height: isCollapsed ? 0 : 'auto',
-              opacity: isCollapsed ? 0 : 1,
-              visibility: isCollapsed ? 'hidden' : 'visible',
-            }}
-          >
-            <div ref={contentRef} className="space-y-3">
-              <div className="mt-4">
-                <h4 className="font-medium">Kolejne kroki:</h4>
-                <ul className="mt-2 list-disc space-y-1 pl-5">
-                  {recommendations.recommendation.nextSteps.map((step, index) => (
-                    <li key={index}>{step}</li>
-                  ))}
-                </ul>
-              </div>
-              <Separator />
-              <div className="mt-4">
-                <h4 className="font-medium">Cel długoterminowy:</h4>
-                <p className="mt-1">{recommendations.recommendation.longTermGoal}</p>
+            <div
+              ref={contentWrapperRef}
+              className="overflow-hidden"
+              style={{
+                height: isCollapsed ? 0 : 'auto',
+                opacity: isCollapsed ? 0 : 1,
+                visibility: isCollapsed ? 'hidden' : 'visible',
+              }}
+            >
+              <div ref={contentRef} className="space-y-3">
+                <div className="mt-4">
+                  <h4 className="font-medium">Kolejne kroki:</h4>
+                  <ul className="mt-2 list-disc space-y-1 pl-5">
+                    {recommendations.recommendation.nextSteps.map((step: string, index: number) => (
+                      <li key={index}>{step}</li>
+                    ))}
+                  </ul>
+                </div>
+                <Separator />
+                <div className="mt-4">
+                  <h4 className="font-medium">Cel długoterminowy:</h4>
+                  <p className="mt-1">{recommendations.recommendation.longTermGoal}</p>
+                </div>
               </div>
             </div>
           </div>
@@ -272,12 +330,27 @@ export default function AssistantPage() {
       </div>
 
       {/* Career paths sections */}
-      {recommendations.careerPaths.map((path, index) => (
+      {recommendations.careerPaths.map((path: CareerPath, index: number) => (
         <CareerPathSection key={index} path={path} index={index} />
       ))}
 
-      {/* Button for generating new recommendations */}
-      <div className="mx-20 mt-8 flex justify-center">
+      <div
+        className={`${
+          showFixedButton
+            ? 'fixed bottom-6 left-1/2 z-50 -translate-x-1/2 translate-y-0 opacity-100'
+            : 'fixed bottom-0 left-1/2 z-50 -translate-x-1/2 translate-y-full opacity-0'
+        } flex w-1/2 items-center justify-center transition-all duration-500 ease-in-out`}
+      >
+        <CustomButton
+          onClick={() => setIsConfirmDialogOpen(true)}
+          disabled={isLoading}
+          className="cursor-pointer px-6 py-2"
+        >
+          {isLoading ? 'Generating...' : 'Generate new recommendation'}
+        </CustomButton>
+      </div>
+
+      <div className="mt-16 flex w-full justify-center">
         <CustomButton
           onClick={() => setIsConfirmDialogOpen(true)}
           disabled={isLoading}
@@ -295,21 +368,40 @@ export default function AssistantPage() {
               Generate new recommendation?
             </AlertDialogTitle>
             <AlertDialogDescription className="text-center">
-              This will take <b className="text-[#915EFF]">50 credits</b> from Your account
-              <div className="mt-2 font-extralight">
-                Current balance: <span className="font-bold">200</span>
-              </div>
+              This will take <b className="text-[#915EFF]">50 credits</b> from Your account.
             </AlertDialogDescription>
+
+            <div className="mt-2 text-center text-sm font-extralight">
+              Current balance:{' '}
+              <span className="font-bold">{isBalanceLoading ? '...' : tokenBalance}</span>
+            </div>
           </AlertDialogHeader>
+
           <AlertDialogFooter className="flex justify-center gap-4 sm:justify-center">
             <AlertDialogCancel className="border-gray-200">Cancel</AlertDialogCancel>
-            <AlertDialogAction
-              onClick={handleGenerateNewRecommendations}
-              className="bg-[#915EFF] text-white hover:bg-[#7b4ee0]"
-            >
-              Generate
-              <Image src={star_generate} alt="star" width={16} height={16} />
-            </AlertDialogAction>
+
+            {!isBalanceLoading && typeof tokenBalance === 'number' && tokenBalance < 5 ? (
+              <Link href="/pricing">
+                <AlertDialogAction
+                  className="bg-[#915EFF] text-white hover:bg-[#7b4ee0]"
+                  onClick={() => setIsConfirmDialogOpen(false)}
+                >
+                  Get tokens
+                  <Image src={star_generate} alt="star" width={16} height={16} />
+                </AlertDialogAction>
+              </Link>
+            ) : (
+              <AlertDialogAction
+                onClick={async () => {
+                  await handleGenerateNewRecommendations();
+                  refresh();
+                }}
+                className="bg-[#915EFF] text-white hover:bg-[#7b4ee0]"
+              >
+                Generate
+                <Image src={star_generate} alt="star" width={16} height={16} />
+              </AlertDialogAction>
+            )}
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>

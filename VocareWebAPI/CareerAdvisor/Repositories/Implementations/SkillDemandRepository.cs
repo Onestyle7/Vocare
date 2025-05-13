@@ -43,5 +43,14 @@ namespace VocareWebAPI.Repositories.Implementations
                 .OrderByDescending(sd => sd.LastUpdated)
                 .ToListAsync();
         }
+
+        public async Task DeleteByAiRecommendationIdAsync(Guid aiRecommendationId)
+        {
+            var toDelete = _context.SkillDemand.Where(cs =>
+                cs.AiRecommendationId == aiRecommendationId
+            );
+            _context.SkillDemand.RemoveRange(toDelete);
+            await _context.SaveChangesAsync();
+        }
     }
 }

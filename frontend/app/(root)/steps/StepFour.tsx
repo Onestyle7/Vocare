@@ -2,9 +2,9 @@
 
 import React from 'react';
 import { UseFormReturn } from 'react-hook-form';
-import { ProfileFormType } from '@/lib/schemas/profileSchema';
 import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
+import { CreateProfileFormType } from '@/lib/schemas/profileSchema';
 import { FormField, FormItem, FormLabel, FormControl, FormMessage } from '@/components/ui/form';
 import { ArrowLeft, ArrowRight } from 'lucide-react';
 import {
@@ -20,9 +20,9 @@ import {
 } from '@/components/ui/alert-dialog';
 
 interface StepFourProps {
-  form: UseFormReturn<ProfileFormType>;
+  form: UseFormReturn<CreateProfileFormType>;
   onBack: () => void;
-  onSubmit: (data: ProfileFormType) => Promise<void>;
+  onSubmit: (data: CreateProfileFormType) => Promise<void>;
   isLoading: boolean;
   isEditMode: boolean;
   handleDelete: () => Promise<void>;
@@ -48,11 +48,7 @@ export default function StepFour({
           <FormItem>
             <FormLabel>About me</FormLabel>
             <FormControl>
-              <Textarea
-                placeholder="Opowiedz coś o sobie..."
-                className="min-h-[120px]"
-                {...field}
-              />
+              <Textarea placeholder="Tell about yourself..." className="min-h-[120px]" {...field} />
             </FormControl>
             <FormMessage />
           </FormItem>
@@ -68,7 +64,7 @@ export default function StepFour({
             <FormLabel>Additional Information</FormLabel>
             <FormControl>
               <Textarea
-                placeholder="Dodatkowe informacje, które chcesz udostępnić..."
+                placeholder="Additional informations that you want to share..."
                 className="min-h-[120px]"
                 {...field}
               />

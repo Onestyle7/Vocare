@@ -71,11 +71,16 @@ namespace VocareWebAPI.Services
                     responseContent,
                     new JsonSerializerOptions { PropertyNameCaseInsensitive = true }
                 );
+                if (apiResponse?.Choices == null || apiResponse.Choices.Count == 0)
+                    throw new AiServiceException("Invalid API response: missing choices.");
+                var message = apiResponse.Choices[0].Message;
 
                 // Wyodrębnij JSON z pola content
-                var rawContent = apiResponse.Choices[0].Message.Content;
+                var rawContent = message?.Content;
+                if (string.IsNullOrWhiteSpace(rawContent))
+                    throw new AiServiceException("Invalid API response: missing content block.");
 
-                AiCareerResponseDto result = null;
+                AiCareerResponseDto? result = null;
 
                 // Najpierw spróbuj znaleźć blok json
                 if (rawContent.Contains("```json") && rawContent.Contains("```"))
@@ -114,7 +119,10 @@ namespace VocareWebAPI.Services
                         );
                     }
                 }
-
+                if (result == null)
+                    throw new AiServiceException(
+                        "Nie udało się przetworzyć odpowiedzi AI jako JSON"
+                    );
                 // Upewnij się, że podstawowe struktury nie są null
                 InitializeNullProperties(result);
 
@@ -168,7 +176,7 @@ namespace VocareWebAPI.Services
             var recommendation = await _recommendationRepository.GetLatestByUserIdAsync(userId);
 
             if (recommendation == null)
-                return null;
+                throw new AiServiceException("Nie znaleziono rekomendacji dla tego użytkownika.");
 
             var dto = _mapper.Map<AiCareerResponseDto>(recommendation);
             dto.Recommendation = new FinalRecommendationDto
@@ -378,6 +386,9 @@ namespace VocareWebAPI.Services
         /// </summary>
         public class AiServiceException : Exception
         {
+            public AiServiceException(string message)
+                : base(message) { }
+
             public AiServiceException(string message, Exception inner)
                 : base(message, inner) { }
         }

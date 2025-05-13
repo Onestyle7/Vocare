@@ -1,5 +1,4 @@
 import React, { lazy, Suspense } from 'react';
-import { Skeleton } from '@/components/ui/skeleton';
 import { VelocityScroll } from '@/components/magicui/scroll-based-velocity';
 import { logo, Spinner } from '../constants';
 import Image from 'next/image';

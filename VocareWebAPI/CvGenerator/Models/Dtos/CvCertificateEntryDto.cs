@@ -7,7 +7,7 @@ namespace VocareWebAPI.CvGenerator.Models.Dtos
 {
     public class CvCertificateEntryDto
     {
-        public string Name { get; set; }
-        public string? Date { get; set; } // Format: YYYY-MM-DD | null
+        public string Name { get; set; } = string.Empty;
+        public string Date { get; set; } = string.Empty;
     }
 }

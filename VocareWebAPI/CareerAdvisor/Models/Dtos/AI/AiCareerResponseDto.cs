@@ -8,9 +8,9 @@ namespace VocareWebAPI.Models.Dtos
     public class AiCareerResponseDto
     {
         [JsonPropertyName("careerPaths")]
-        public List<CareerPathDto> CareerPaths { get; set; }
+        public List<CareerPathDto> CareerPaths { get; set; } = new List<CareerPathDto>();
 
         [JsonPropertyName("recommendation")]
-        public FinalRecommendationDto Recommendation { get; set; }
+        public FinalRecommendationDto Recommendation { get; set; } = new FinalRecommendationDto();
     }
 }

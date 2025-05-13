@@ -50,7 +50,7 @@ namespace VocareWebAPI.Services
             if (profile == null)
             {
                 _logger.LogWarning("Profile not found for UserId: {UserId}", UserId);
-                return null;
+                throw new KeyNotFoundException($"Profile not found for UserId: {UserId}");
             }
 
             _logger.LogInformation("Profile found for UserId: {UserId}", UserId);
@@ -123,7 +123,7 @@ namespace VocareWebAPI.Services
 
             if (profile == null)
             {
-                return null;
+                throw new KeyNotFoundException($"Profile not found for UserId: {UserId}");
             }
 
             // Czyszczenie kolekcji
@@ -180,7 +180,7 @@ namespace VocareWebAPI.Services
 
             if (profile == null)
             {
-                return null;
+                throw new KeyNotFoundException($"Profile not found for UserId: {UserId}");
             }
 
             _logger.LogInformation("Removing UserProfile for UserId {UserId}", UserId);

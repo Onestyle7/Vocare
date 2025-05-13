@@ -10,9 +10,9 @@ namespace VocareWebAPI.Models.Dtos.MarketAnalysis
     /// </summary>
     public class IndustryStatisticsDto
     {
-        public string Industry { get; set; }
-        public string AverageSalary { get; set; }
-        public string EmploymentRate { get; set; }
-        public string GrowthForecast { get; set; }
+        public string Industry { get; set; } = string.Empty;
+        public string AverageSalary { get; set; } = string.Empty;
+        public string EmploymentRate { get; set; } = string.Empty;
+        public string GrowthForecast { get; set; } = string.Empty;
     }
 }

@@ -6,7 +6,7 @@ import { CreateProfileFormType, UpdateProfileFormType } from '@/lib/schemas/prof
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { FormField, FormItem, FormLabel, FormControl, FormMessage } from '@/components/ui/form';
-import { CountryCombobox } from '@/components/CountryCombobox';
+import { CountryCombobox } from '@/components/SupportComponents/CountryCombobox';
 import {
   InputOTP,
   InputOTPGroup,

@@ -10,8 +10,9 @@ namespace VocareWebAPI.Models.Dtos.MarketAnalysis
     /// </summary>
     public class MarketAnalysisDetailsDto
     {
-        public List<IndustryStatisticsDto> IndustryStatistics { get; set; }
-        public List<SkillDemandDto> SkillDemand { get; set; }
-        public List<MarketTrendsDto> MarketTrends { get; set; }
+        public List<IndustryStatisticsDto> IndustryStatistics { get; set; } =
+            new List<IndustryStatisticsDto>();
+        public List<SkillDemandDto> SkillDemand { get; set; } = new List<SkillDemandDto>();
+        public List<MarketTrendsDto> MarketTrends { get; set; } = new List<MarketTrendsDto>();
     }
 }

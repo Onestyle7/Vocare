@@ -10,7 +10,7 @@ namespace VocareWebAPI.UserManagement.Models.Entities
     {
         [Key]
         public int Id { get; set; } // Identyfikator wpisu
-        public string Name { get; set; } // Nazwa certyfikatu, np. Certyfikat Google
+        public string Name { get; set; } = String.Empty; // Nazwa certyfikatu, np. Certyfikat Google
         public DateTime? Date { get; set; } // Data uzyskania certyfikatu
         public string? Issuer { get; set; } // Wydawca certyfikatu, np. Google
     }

@@ -35,7 +35,7 @@ builder.Services.Configure<AiConfig>(builder.Configuration.GetSection("Perplexit
 builder
     .Services.AddHttpClient<IAiService, PerplexityAiService>(client =>
     {
-        var config = builder.Configuration.GetSection("PerplexityAI").Get<AiConfig>();
+        var config = builder.Configuration.GetSection("PerplexityAI").Get<AiConfig>()!;
         client.BaseAddress = new Uri(config.BaseUrl);
         client.DefaultRequestHeaders.Add("Authorization", $"Bearer {config.ApiKey}");
         client.DefaultRequestHeaders.Add("Accept", "application/json");
@@ -45,7 +45,7 @@ builder
 builder
     .Services.AddHttpClient<IMarketAnalysisService, MarketAnalysisService>(client =>
     {
-        var config = builder.Configuration.GetSection("PerplexityAI").Get<AiConfig>();
+        var config = builder.Configuration.GetSection("PerplexityAI").Get<AiConfig>()!;
         client.BaseAddress = new Uri(config.BaseUrl);
         client.DefaultRequestHeaders.Add("Authorization", $"Bearer {config.ApiKey}");
         client.DefaultRequestHeaders.Add("Accept", "application/json");

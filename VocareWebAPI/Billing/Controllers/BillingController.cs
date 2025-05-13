@@ -97,7 +97,7 @@ namespace VocareWebAPI.Controllers
                 return BadRequest(new { Error = "Invalid webhook request." });
             }
 
-            await _billingService.HandleWebhookAsync(json, stripeSignature);
+            await _billingService.HandleWebhookAsync(json, stripeSignature!);
             _logger.LogInformation("Successfully processed webhook.");
 
             return Ok();
@@ -123,7 +123,7 @@ namespace VocareWebAPI.Controllers
         {
             try
             {
-                string userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+                string userId = User.FindFirstValue(ClaimTypes.NameIdentifier)!;
                 if (string.IsNullOrEmpty(userId))
                 {
                     return BadRequest("Brak identyfikatora użytkownika w tokenie.");

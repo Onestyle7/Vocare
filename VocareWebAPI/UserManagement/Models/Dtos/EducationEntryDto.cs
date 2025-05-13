@@ -9,14 +9,14 @@ namespace VocareWebAPI.UserManagement.Models.Dtos
     public class EducationEntryDto
     {
         [Required(ErrorMessage = "Nazwa instytucji jest wymagana.")]
-        public string Institution { get; set; }
+        public string Institution { get; set; } = string.Empty;
 
-        public string? Degree { get; set; }
+        public string Degree { get; set; } = string.Empty;
 
-        public string? Field { get; set; }
+        public string Field { get; set; } = string.Empty;
 
-        public string? StartDate { get; set; } // Format: yyyy-MM-dd
+        public string StartDate { get; set; } = string.Empty; // Format: yyyy-MM-dd
 
-        public string? EndDate { get; set; } // Format: yyyy-MM-dd
+        public string EndDate { get; set; } = string.Empty; // Format: yyyy-MM-dd
     }
 }
