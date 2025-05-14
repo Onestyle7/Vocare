@@ -475,6 +475,15 @@
   @apply ml-2 transition-transform duration-300 group-hover:translate-x-2;
 }
 
+/* Profile Form */
+
+.input-profile {
+  @apply rounded-lg border;
+}
+
+.profile-button {
+  @apply w-full bg-[#915EFF] text-black hover:bg-[#713ae8] dark:text-white;
+}
 
 input:-webkit-autofill {
   box-shadow: 0 0 0px 1000px #ffffff61 inset !important;

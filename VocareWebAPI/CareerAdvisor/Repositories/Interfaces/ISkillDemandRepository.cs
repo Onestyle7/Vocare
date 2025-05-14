@@ -17,5 +17,7 @@ namespace VocareWebAPI.Repositories.Interfaces
         /// <param name="entity">Zapotrzebowanie na umiejętność do dodania</param>
         /// <returns>Task reprezentujący operację asynchroniczną</returns>
         Task AddAsync(SkillDemand entity);
+        Task<List<SkillDemand>> GetByAiRecommendationIdAsync(Guid aiRecommendationId);
+        Task DeleteByAiRecommendationIdAsync(Guid aiRecommendationId);
     }
 }

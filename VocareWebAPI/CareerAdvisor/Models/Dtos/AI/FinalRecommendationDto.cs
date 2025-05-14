@@ -12,15 +12,15 @@ namespace VocareWebAPI.Models.Dtos
     public class FinalRecommendationDto
     {
         [JsonPropertyName("primaryPath")]
-        public string PrimaryPath { get; set; }
+        public string PrimaryPath { get; set; } = string.Empty;
 
         [JsonPropertyName("justification")]
-        public string Justification { get; set; }
+        public string Justification { get; set; } = string.Empty;
 
         [JsonPropertyName("nextSteps")]
-        public List<string> NextSteps { get; set; }
+        public List<string> NextSteps { get; set; } = new List<string>();
 
         [JsonPropertyName("longTermGoal")]
-        public string LongTermGoal { get; set; }
+        public string LongTermGoal { get; set; } = string.Empty;
     }
 }

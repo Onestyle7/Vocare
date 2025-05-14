@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import gsap from 'gsap';
 import { Button } from '../ui/button';
 import { ArrowRight } from 'lucide-react';
@@ -12,6 +12,13 @@ const GenerateRecommendationFail = () => {
   const flippingURef = useRef<HTMLSpanElement | null>(null);
   const shakeRef = useRef<HTMLSpanElement | null>(null);
   const flowerRef = useRef<HTMLImageElement | null>(null);
+
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+
+  useEffect(() => {
+    const token = localStorage.getItem('token');
+    setIsLoggedIn(!!token);
+  }, []);
 
   useEffect(() => {
     if (flippingURef.current) {
@@ -54,8 +61,8 @@ const GenerateRecommendationFail = () => {
   }, []);
 
   return (
-    <div className="flex items-center justify-center h-screen w-screen overflow-hidden fixed inset-0">
-      <div className="flex flex-col items-center justify-center max-w-full">
+    <div className="fixed inset-0 flex h-screen w-screen items-center justify-center overflow-hidden">
+      <div className="flex max-w-full flex-col items-center justify-center">
         <div className="flex w-full flex-col">
           <div className="flex">
             <h1 className="text-[clamp(4rem,18vw,14rem)] leading-none font-semibold">
@@ -87,47 +94,47 @@ const GenerateRecommendationFail = () => {
           </div>
 
           <div className="mt-8 flex w-full flex-col items-center justify-between space-y-4 md:flex-row md:items-center md:space-y-0 md:space-x-4">
-  <div className="flex items-center">
-    <div className="-mr-4 flex scale-125 items-center xl:scale-150">
-      <svg
-        xmlns="http://www.w3.org/2000/svg"
-        viewBox="0 0 24 24"
-        className="h-[60px] w-auto dark:text-white text-black"
-        fill="none"
-        stroke="currentColor"
-        strokeWidth="0.5"
-      >
-        <path d="M12 4c-1.5 0-2.5 1.2-2.5 2.5v3c0 1-1 2-2 2 1 0 2 1 2 2v3c0 1.3 1 2.5 2.5 2.5" />
-      </svg>
-    </div>
-    <div className="flex min-h-[60px] items-center text-center text-[clamp(1.2rem,1vw,2rem)] leading-snug dark:text-white text-black">
-      <span>
-        You have to fill the <br /> profile form first
-      </span>
-    </div>
-    <div className="-ml-4 flex scale-125 items-center xl:scale-150">
-      <svg
-        xmlns="http://www.w3.org/2000/svg"
-        viewBox="0 0 24 24"
-        className="h-[60px] w-auto dark:text-white text-black"
-        fill="none"
-        stroke="currentColor"
-        strokeWidth="0.5"
-      >
-        <path d="M12 4c1.5 0 2.5 1.2 2.5 2.5v3c0 1 1 2 2 2-1 0-2 1-2 2v3c0 1.3-1 2.5-2.5 2.5" />
-      </svg>
-    </div>
-  </div>
-  
-  <Link href="/profile">
-  <Button className="flex h-[56px] rounded-full bg-[#915EFF] text-[clamp(1.3rem,1vw,12rem)] font-semibold xl:w-[250px] max-md:mt-6 group">
-    <span className="flex flex-row items-center">
-      Profile
-      <ArrowRight className="ml-2 scale-125 transition-transform duration-300 group-hover:translate-x-2" />
-    </span>
-  </Button>
-  </Link>
-</div>
+            <div className="flex items-center">
+              <div className="-mr-4 flex scale-125 items-center xl:scale-150">
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  viewBox="0 0 24 24"
+                  className="h-[60px] w-auto text-black dark:text-white"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="0.5"
+                >
+                  <path d="M12 4c-1.5 0-2.5 1.2-2.5 2.5v3c0 1-1 2-2 2 1 0 2 1 2 2v3c0 1.3 1 2.5 2.5 2.5" />
+                </svg>
+              </div>
+              <div className="flex min-h-[60px] items-center text-center text-[clamp(1.2rem,1vw,2rem)] leading-snug text-black dark:text-white">
+                <span>
+                  You have to fill the <br /> profile form first
+                </span>
+              </div>
+              <div className="-ml-4 flex scale-125 items-center xl:scale-150">
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  viewBox="0 0 24 24"
+                  className="h-[60px] w-auto text-black dark:text-white"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="0.5"
+                >
+                  <path d="M12 4c1.5 0 2.5 1.2 2.5 2.5v3c0 1 1 2 2 2-1 0-2 1-2 2v3c0 1.3-1 2.5-2.5 2.5" />
+                </svg>
+              </div>
+            </div>
+
+            <Link href={isLoggedIn ? '/profile' : '/sign-in'}>
+              <Button className="group flex h-[56px] rounded-full bg-[#915EFF] text-[clamp(1.3rem,1vw,12rem)] font-semibold max-md:mt-6 xl:w-[250px]">
+                <span className="flex flex-row items-center">
+                  {isLoggedIn ? 'Profile' : 'Create an account'}
+                  <ArrowRight className="ml-2 scale-125 transition-transform duration-300 group-hover:translate-x-2" />
+                </span>
+              </Button>
+            </Link>
+          </div>
         </div>
       </div>
     </div>

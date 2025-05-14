@@ -10,10 +10,10 @@ namespace VocareWebAPI.Models.Dtos.MarketAnalysis
     /// </summary>
     public class CareerStatisticsDto
     {
-        public string CareerName { get; set; }
-        public decimal AverageSalary { get; set; }
-        public int EmploymentRate { get; set; }
-        public string GrowthForecast { get; set; }
-        public DateTime LastUpdated { get; set; }
+        public string CareerName { get; set; } = string.Empty;
+        public decimal AverageSalary { get; set; } = 0;
+        public int EmploymentRate { get; set; } = 0;
+        public string GrowthForecast { get; set; } = string.Empty;
+        public DateTime LastUpdated { get; set; } = DateTime.UtcNow;
     }
 }

@@ -13,32 +13,36 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-      backgroundColor: Colors.black87,
-  automaticallyImplyLeading: false, // usuwa strzałkę "wstecz"
-  toolbarHeight: 60,
- 
-  flexibleSpace: SafeArea(
-    child: Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 16),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: const [
-          ThemeToggleButton(),
-          NavBarButtons(
-            destinations: [
-              NavDestination.home,
-              NavDestination.profile,
-              NavDestination.logout,
-              NavDestination.assistent,
-            ],
-          ),
-        ],
-      ),
-    ),
-  ),
-),
       body: Center(child: Text('Hello World')),
+      bottomNavigationBar: Container(
+        height: 60,
+        decoration: BoxDecoration(
+          color: Colors.black87,
+          borderRadius: const BorderRadius.only(
+            topLeft: Radius.circular(16),
+            topRight: Radius.circular(16),
+          ),
+        ),
+        child: SafeArea(
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 16),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: const [
+                ThemeToggleButton(),
+                NavBarButtons(
+                  destinations: [
+                    NavDestination.home,
+                    NavDestination.profile,
+                    NavDestination.logout,
+                    NavDestination.assistent,
+                  ],
+                ),
+              ],
+            ),
+          ),
+        ),
+      ),
     );
   }
 }

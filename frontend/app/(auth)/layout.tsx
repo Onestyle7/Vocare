@@ -1,7 +1,6 @@
 import React, { lazy, Suspense } from 'react';
-import { Skeleton } from '@/components/ui/skeleton';
 import { VelocityScroll } from '@/components/magicui/scroll-based-velocity';
-import { Spinner } from '../constants';
+import { logo, Spinner } from '../constants';
 import Image from 'next/image';
 
 const LazySpline = lazy(() => import('@splinetool/react-spline'));
@@ -12,7 +11,7 @@ const Layout = ({ children }: { children: React.ReactNode }) => {
       <div className="flex flex-1 flex-row">
         <section className="hidden w-1/2 items-center justify-center bg-[#101014] p-10 lg:flex xl:w-2/5 dark:bg-[#F3F3F3]">
           <div className="flex max-h-[800px] max-w-[430px] flex-col justify-center space-y-12">
-            <Skeleton className="h-[125px] w-[250px] rounded-xl bg-gray-200/20" />
+            <Image src={logo} alt="vocare" width={256} height={256} className="dark:invert" />
 
             <div className="space-y-5 text-[#F3F3F3] dark:text-[#101014]">
               <h1 className="h1">Rocket You career</h1>
@@ -31,7 +30,13 @@ const Layout = ({ children }: { children: React.ReactNode }) => {
 
         <section className="flex flex-1 flex-col items-center p-4 py-10 lg:justify-center lg:p-10 lg:py-0">
           <div className="mb-16 lg:hidden">
-            <Skeleton className="h-[87px] w-[224px] rounded-xl bg-gray-200/80" />
+            <Image
+              src={logo}
+              alt="vocare"
+              width={256}
+              height={256}
+              className="invert dark:invert-0"
+            />
           </div>
           {children}
         </section>

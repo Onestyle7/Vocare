@@ -25,10 +25,8 @@ const CustomButton: React.FC<CustomButtonProps> = ({
   url,
   disabled = false,
 }) => {
-  // Bazowe klasy wspólne dla wszystkich wariantów
   const baseStyles = 'px-4 py-2 rounded-full font-medium focus:outline-none lg:w-1/2';
 
-  // Łączenie stylów: bazowe + wariant + dodatkowe klasy
   const buttonStyles = `${baseStyles} ${variantStyles[variant] || ''} ${className} ${
     disabled ? 'opacity-50 cursor-not-allowed' : ''
   }`;

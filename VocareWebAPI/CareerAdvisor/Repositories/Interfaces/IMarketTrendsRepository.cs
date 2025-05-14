@@ -17,5 +17,7 @@ namespace VocareWebAPI.Repositories.Interfaces
         /// <param name="entity">Trend rynkowy do dodania</param>
         /// <returns>Task reprezentujący operację asynchroniczną</returns>
         Task AddAsync(MarketTrends entity);
+        Task<List<MarketTrends>> GetByAiRecommendationIdAsync(Guid aiRecommendationId);
+        Task DeleteByAiRecommendationIdAsync(Guid aiRecommendationId);
     }
 }

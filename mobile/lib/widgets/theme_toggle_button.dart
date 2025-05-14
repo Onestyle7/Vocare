@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:vocare/services/them_service.dart';
 
-
 class ThemeToggleButton extends StatelessWidget {
   const ThemeToggleButton({super.key});
 
@@ -12,7 +11,11 @@ class ThemeToggleButton extends StatelessWidget {
 
     return IconButton(
       icon: Icon(
-        themeService.isDarkMode ? Icons.dark_mode: Icons.light_mode,
+        themeService.isDarkMode ? Icons.dark_mode : Icons.light_mode,
+        color:
+            themeService.isDarkMode
+                ? Colors.white
+                : Colors.black87, // 🎯 kolor ikony
       ),
       onPressed: () => themeService.toggleTheme(),
     );

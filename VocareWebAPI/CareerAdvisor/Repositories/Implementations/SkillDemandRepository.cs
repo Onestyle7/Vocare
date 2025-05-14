@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.EntityFrameworkCore;
 using VocareWebAPI.Data;
 using VocareWebAPI.Models.Entities.MarketAnalysis;
 using VocareWebAPI.Repositories.Interfaces;
@@ -32,6 +33,23 @@ namespace VocareWebAPI.Repositories.Implementations
         public async Task AddAsync(SkillDemand entity)
         {
             await _context.SkillDemand.AddAsync(entity);
+            await _context.SaveChangesAsync();
+        }
+
+        public async Task<List<SkillDemand>> GetByAiRecommendationIdAsync(Guid aiRecommendationId)
+        {
+            return await _context
+                .SkillDemand.Where(sd => sd.AiRecommendationId == aiRecommendationId)
+                .OrderByDescending(sd => sd.LastUpdated)
+                .ToListAsync();
+        }
+
+        public async Task DeleteByAiRecommendationIdAsync(Guid aiRecommendationId)
+        {
+            var toDelete = _context.SkillDemand.Where(cs =>
+                cs.AiRecommendationId == aiRecommendationId
+            );
+            _context.SkillDemand.RemoveRange(toDelete);
             await _context.SaveChangesAsync();
         }
     }

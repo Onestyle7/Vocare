@@ -1,10 +1,17 @@
-using System.Security.Claims;
+using System.Text.Json.Serialization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Options;
 using Microsoft.OpenApi.Models;
 using Polly;
 using Polly.Extensions.Http;
+using Stripe;
+using VocareWebAPI.Billing.Repositories.Implementations;
+using VocareWebAPI.Billing.Repositories.Interfaces;
+using VocareWebAPI.Billing.Services.Interfaces;
+using VocareWebAPI.CvGenerator.Repositories.Implementations;
+using VocareWebAPI.CvGenerator.Repositories.Interfaces;
+using VocareWebAPI.CvGenerator.Services.Implementations;
+using VocareWebAPI.CvGenerator.Services.Interfaces;
 using VocareWebAPI.Data;
 using VocareWebAPI.Models.Config;
 using VocareWebAPI.Models.Entities;
@@ -13,6 +20,8 @@ using VocareWebAPI.Repositories.Implementations;
 using VocareWebAPI.Repositories.Interfaces;
 using VocareWebAPI.Services;
 using VocareWebAPI.Services.Implementations;
+using LocalBillingService = VocareWebAPI.Billing.Services.Implementations.BillingService;
+using LocalStripeService = VocareWebAPI.Billing.Services.Implementations.StripeService;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -26,7 +35,7 @@ builder.Services.Configure<AiConfig>(builder.Configuration.GetSection("Perplexit
 builder
     .Services.AddHttpClient<IAiService, PerplexityAiService>(client =>
     {
-        var config = builder.Configuration.GetSection("PerplexityAI").Get<AiConfig>();
+        var config = builder.Configuration.GetSection("PerplexityAI").Get<AiConfig>()!;
         client.BaseAddress = new Uri(config.BaseUrl);
         client.DefaultRequestHeaders.Add("Authorization", $"Bearer {config.ApiKey}");
         client.DefaultRequestHeaders.Add("Accept", "application/json");
@@ -36,7 +45,7 @@ builder
 builder
     .Services.AddHttpClient<IMarketAnalysisService, MarketAnalysisService>(client =>
     {
-        var config = builder.Configuration.GetSection("PerplexityAI").Get<AiConfig>();
+        var config = builder.Configuration.GetSection("PerplexityAI").Get<AiConfig>()!;
         client.BaseAddress = new Uri(config.BaseUrl);
         client.DefaultRequestHeaders.Add("Authorization", $"Bearer {config.ApiKey}");
         client.DefaultRequestHeaders.Add("Accept", "application/json");
@@ -44,12 +53,28 @@ builder
     .AddPolicyHandler(GetRetryPolicy());
 
 builder.Services.AddScoped<IAiService, PerplexityAiService>();
+builder.Services.AddScoped<IMarketAnalysisService, MarketAnalysisService>();
+builder.Services.AddScoped<IBillingService, LocalBillingService>();
+builder.Services.AddScoped<IStripeService, LocalStripeService>();
+builder.Services.AddScoped<ICvGenerationService, CvGenerationService>();
+
+// repozytoria
+builder.Services.AddScoped<IUserBillingRepository, UserBillingRepository>();
+builder.Services.AddScoped<ITokenTransactionRepository, TokenTransactionRepository>();
+builder.Services.AddScoped<IServiceCostRepository, ServiceCostRepository>();
 builder.Services.AddScoped<IUserProfileRepository, UserProfileRepository>();
 builder.Services.AddScoped<IAiRecommendationRepository, AiRecommendationRepository>();
 builder.Services.AddScoped<ICareerStatisticsRepository, CareerStatisticsRepository>();
 builder.Services.AddScoped<ISkillDemandRepository, SkillDemandRepository>();
 builder.Services.AddScoped<IMarketTrendsRepository, MarketTrendsRepository>();
-builder.Services.AddScoped<IMarketAnalysisService, MarketAnalysisService>();
+builder.Services.AddScoped<IGeneratedCvRepository, GeneratedCvrepository>();
+
+builder
+    .Services.AddControllers()
+    .AddJsonOptions(options =>
+    {
+        options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter());
+    });
 
 builder.Services.AddAutoMapper(typeof(UserProfileService).Assembly);
 builder.Services.AddSwaggerGen(c =>
@@ -123,7 +148,7 @@ builder.Services.AddCors(options =>
         }
     );
 });
-
+StripeConfiguration.ApiKey = builder.Configuration["Stripe:SecretKey"];
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
@@ -148,3 +173,4 @@ static IAsyncPolicy<HttpResponseMessage> GetRetryPolicy()
         .WaitAndRetryAsync(3, retryAttempt => TimeSpan.FromSeconds(Math.Pow(2, retryAttempt)));
 }
 app.Run();
+//Test ci/cd

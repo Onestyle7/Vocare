@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.EntityFrameworkCore;
 using VocareWebAPI.Data;
 using VocareWebAPI.Models.Entities.MarketAnalysis;
 using VocareWebAPI.Repositories.Interfaces;
@@ -32,6 +33,23 @@ namespace VocareWebAPI.Repositories.Implementations
         public async Task AddAsync(MarketTrends entity)
         {
             await _context.MarketTrends.AddAsync(entity);
+            await _context.SaveChangesAsync();
+        }
+
+        public async Task<List<MarketTrends>> GetByAiRecommendationIdAsync(Guid aiRecommendationId)
+        {
+            return await _context
+                .MarketTrends.Where(mt => mt.AiRecommendationId == aiRecommendationId)
+                .OrderByDescending(mt => mt.StartDate)
+                .ToListAsync();
+        }
+
+        public async Task DeleteByAiRecommendationIdAsync(Guid aiRecommendationId)
+        {
+            var toDelete = _context.MarketTrends.Where(cs =>
+                cs.AiRecommendationId == aiRecommendationId
+            );
+            _context.MarketTrends.RemoveRange(toDelete);
             await _context.SaveChangesAsync();
         }
     }

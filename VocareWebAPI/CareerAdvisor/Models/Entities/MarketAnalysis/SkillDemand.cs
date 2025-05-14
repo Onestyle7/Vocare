@@ -13,9 +13,9 @@ namespace VocareWebAPI.Models.Entities.MarketAnalysis
     {
         [Key]
         public Guid Id { get; set; }
-        public string SkillName { get; set; }
-        public string Industry { get; set; }
-        public string DemandLevel { get; set; }
+        public string SkillName { get; set; } = String.Empty; // Nazwa umiejętności, np. "Programowanie w Pythonie"
+        public string Industry { get; set; } = String.Empty; // Branża, w której umiejętność jest poszukiwana, np. "IT", "Medycyna"
+        public string DemandLevel { get; set; } = String.Empty; // Poziom zapotrzebowania na umiejętność, np. "Wysokie", "Średnie", "Niskie"
         public DateTime LastUpdated { get; set; }
         public Guid AiRecommendationId { get; set; } // Klucz obcy do AiRecommendation
     }

@@ -71,11 +71,16 @@ namespace VocareWebAPI.Services
                     responseContent,
                     new JsonSerializerOptions { PropertyNameCaseInsensitive = true }
                 );
+                if (apiResponse?.Choices == null || apiResponse.Choices.Count == 0)
+                    throw new AiServiceException("Invalid API response: missing choices.");
+                var message = apiResponse.Choices[0].Message;
 
                 // Wyodrębnij JSON z pola content
-                var rawContent = apiResponse.Choices[0].Message.Content;
+                var rawContent = message?.Content;
+                if (string.IsNullOrWhiteSpace(rawContent))
+                    throw new AiServiceException("Invalid API response: missing content block.");
 
-                AiCareerResponseDto result = null;
+                AiCareerResponseDto? result = null;
 
                 // Najpierw spróbuj znaleźć blok json
                 if (rawContent.Contains("```json") && rawContent.Contains("```"))
@@ -114,7 +119,10 @@ namespace VocareWebAPI.Services
                         );
                     }
                 }
-
+                if (result == null)
+                    throw new AiServiceException(
+                        "Nie udało się przetworzyć odpowiedzi AI jako JSON"
+                    );
                 // Upewnij się, że podstawowe struktury nie są null
                 InitializeNullProperties(result);
 
@@ -143,11 +151,6 @@ namespace VocareWebAPI.Services
             {
                 Console.WriteLine($"Próba zapisu dla użytkownika: {userId}");
 
-                // Stara logika (do usunięcia):
-                // var userProfile = await _userProfileRepository.GetUserProfileByIdAsync(userId);
-                // userProfile.LastRecommendationJson = JsonSerializer.Serialize(recommendation);
-
-                // Nowa logika z AiRecommendation:
                 var recommendationEntity = _mapper.Map<AiRecommendation>(recommendation);
                 recommendationEntity.UserId = userId;
                 recommendationEntity.RecommendationDate = DateTime.UtcNow;
@@ -173,7 +176,7 @@ namespace VocareWebAPI.Services
             var recommendation = await _recommendationRepository.GetLatestByUserIdAsync(userId);
 
             if (recommendation == null)
-                return null;
+                throw new AiServiceException("Nie znaleziono rekomendacji dla tego użytkownika.");
 
             var dto = _mapper.Map<AiCareerResponseDto>(recommendation);
             dto.Recommendation = new FinalRecommendationDto
@@ -238,64 +241,143 @@ namespace VocareWebAPI.Services
                 Jesteś doradcą zawodowym. Na podstawie poniższych danych użytkownika:
                 - Imię: {{profile.FirstName}} {{profile.LastName}}
                 - Umiejętności: {{string.Join(", ", profile.Skills)}}
-                - Doświadczenie: {{profile.WorkExperience}} lat {{string.Join(
-                    ", ",
-                    profile.Certificates
+                - Doświadczenie zawodowe:
+                {{(
+                    profile.WorkExperience != null
+                        ? string.Join(
+                            "\n",
+                            profile.WorkExperience.Select(w =>
+                                $"- {w.Position} w {w.Company} (od {w.StartDate:yyyy-MM-dd} do {(w.EndDate.HasValue ? w.EndDate.Value.ToString("yyyy-MM-dd") : "obecnie")}): {w.Description}"
+                            )
+                        )
+                        : "Brak doświadczenia zawodowego"
+                )}}
+                - Wykształcenie: {{profile.Education}}}
+                - Certyfikaty:
+                {{(
+                    profile.Certificates != null
+                        ? string.Join(
+                            "\n",
+                            profile.Certificates.Select(c =>
+                                $"- {c.Name} (wydany przez {c.Issuer ?? "Brak wydawcy"}, {c.Date?.ToString("yyyy-MM-dd") ?? "Brak daty"})"
+                            )
+                        )
+                        : "Brak certyfikatów"
                 )}}
                 - Lokalizacja: {{profile.Country}}, {{profile.Address}}
-                - Wykształcenie: {{profile.Education}}
-                - Języki: {{string.Join(", ", profile.Languages)}}
-                - Dodatkowe informacje: {{profile.AdditionalInformation}}
-                - O mnie: {{profile.AboutMe}}
-                - Typ osobowości: {{profile.PersonalityType}}
+                - Języki: {{string.Join(", ", profile.Languages )}}
+                - Dodatkowe informacje: {{profile.AdditionalInformation ?? "Brak dodatkowych informacji"}}
+                - O mnie: {{profile.AboutMe ?? "Brak opisu 'o mnie'"}}
+                - Typ osobowości: {{profile.PersonalityType.ToString()}}
 
-                Wygeneruj wyłącznie dokładnie taki obiekt JSON, bez żadnego dodatkowego tekstu w języku ${{profile.Country}}:
+                Wygeneruj dokładnie taki obiekt JSON, bez żadnego dodatkowego tekstu, w języku {{profile.Country}}:
                 { 
-                  "careerPaths": [
+                "careerPaths": [
                     {
-                      "careerName": "Nazwa ścieżki 1",
-                      "description": "Krótki opis ścieżki",
-                      "probability": 85,
-                      "requiredSkills": ["Umiejętność 1", "Umiejętność 2"],
-                      "marketAnalysis": [
+                    "careerName": "Nazwa ścieżki 1",
+                    "description": "Krótki opis ścieżki",
+                    "probability": 85,
+                    "requiredSkills": ["Umiejętność 1", "Umiejętność 2"],
+                    "marketAnalysis": [
                         "Wniosek z analizy rynku 1",
                         "Wniosek z analizy rynku 2",
                         "Wniosek z analizy rynku 3"
-                      ],
-                      "recommendedCourses": [
+                    ],
+                    "recommendedCourses": [
                         "Kurs 1",
                         "Kurs 2",
                         "Kurs 3"
-                      ],
-                      "swot": {
+                    ],
+                    "swot": {
                         "strengths": ["Mocna strona 1", "Mocna strona 2"],
                         "weaknesses": ["Słaba strona 1", "Słaba strona 2"],
                         "opportunities": ["Szansa 1", "Szansa 2"],
                         "threats": ["Zagrożenie 1", "Zagrożenie 2"]
-                      }
                     },
-                    // Dodaj jeszcze dwie ścieżki kariery w takiej samej strukturze
-                  ],
-                  "recommendation": {
+                    "careerStatistics": {
+                        "averageSalary": "Średnie wynagrodzenie",
+                        "jobOpenings": "Liczba ofert pracy",
+                        "growthRate": "Tempo wzrostu"
+                    }
+                    },
+                    {
+                    "careerName": "Nazwa ścieżki 2",
+                    "description": "Krótki opis ścieżki",
+                    "probability": 70,
+                    "requiredSkills": ["Umiejętność 3", "Umiejętność 4"],
+                    "marketAnalysis": [
+                        "Wniosek z analizy rynku 1",
+                        "Wniosek z analizy rynku 2",
+                        "Wniosek z analizy rynku 3"
+                    ],
+                    "recommendedCourses": [
+                        "Kurs 1",
+                        "Kurs 2",
+                        "Kurs 3"
+                    ],
+                    "swot": {
+                        "strengths": ["Mocna strona 1", "Mocna strona 2"],
+                        "weaknesses": ["Słaba strona 1", "Słaba strona 2"],
+                        "opportunities": ["Szansa 1", "Szansa 2"],
+                        "threats": ["Zagrożenie 1", "Zagrożenie 2"]
+                    },
+                    "careerStatistics": {
+                        "averageSalary": "Średnie wynagrodzenie",
+                        "jobOpenings": "Liczba ofert pracy",
+                        "growthRate": "Tempo wzrostu"
+                    }
+                    },
+                    {
+                    "careerName": "Nazwa ścieżki 3",
+                    "description": "Krótki opis ścieżki",
+                    "probability": 60,
+                    "requiredSkills": ["Umiejętność 5", "Umiejętność 6"],
+                    "marketAnalysis": [
+                        "Wniosek z analizy rynku 1",
+                        "Wniosek z analizy rynku 2",
+                        "Wniosek z analizy rynku 3"
+                    ],
+                    "recommendedCourses": [
+                        "Kurs 1",
+                        "Kurs 2",
+                        "Kurs 3"
+                    ],
+                    "swot": {
+                        "strengths": ["Mocna strona 1", "Mocna strona 2"],
+                        "weaknesses": ["Słaba strona 1", "Słaba strona 2"],
+                        "opportunities": ["Szansa 1", "Szansa 2"],
+                        "threats": ["Zagrożenie 1", "Zagrożenie 2"]
+                    },
+                    "careerStatistics": {
+                        "averageSalary": "Średnie wynagrodzenie",
+                        "jobOpenings": "Liczba ofert pracy",
+                        "growthRate": "Tempo wzrostu"
+                    }
+                    }
+                ],
+                "recommendation": {
                     "primaryPath": "Nazwa rekomendowanej ścieżki",
                     "justification": "Uzasadnienie wyboru tej ścieżki",
                     "nextSteps": [
-                      "Krok 1",
-                      "Krok 2",
-                      "Krok 3",
-                      "Krok 4"
+                    "Krok 1",
+                    "Krok 2",
+                    "Krok 3",
+                    "Krok 4"
                     ],
                     "longTermGoal": "Długoterminowy cel"
-                  }
+                }
                 }
 
-                Ważne: 
-                1. Wygeneruj dokładnie taki format JSON z trzema ścieżkami kariery.
-                2. Wypełnij wszystkie pola sensownymi wartościami - nie pozostawiaj żadnych pól pustych.
-                3. Każda ścieżka kariery musi zawierać pełną analizę SWOT we wskazanej strukturze.
-                4. W polu "recommendation" musi być uzasadnienie i długoterminowy cel.
-                5. Zwróć tylko czysty JSON bez dodatkowych objaśnień czy komentarzy.
-                6. Upewnij się że działasz wyłącznie na najnowszy danych z 2024 i 2025 roku.
+                Ważne:
+                1. Generuj trzy ścieżki kariery na podstawie umiejętności, doświadczenia, wykształcenia i lokalizacji użytkownika.
+                2. Wypełniaj wszystkie pola sensownymi wartościami, dostosowanymi do profilu użytkownika i ogólnych trendów rynkowych.
+                3. Prawdopodobieństwo sukcesu (probability) oblicz na podstawie dopasowania profilu użytkownika do ścieżki.
+                4. Analiza rynku (marketAnalysis) powinna odzwierciedlać trendy w {{profile.Country}}.
+                5. Rekomendowane kursy (recommendedCourses) powinny być konkretne i dostępne w regionie użytkownika lub online.
+                6. Analiza SWOT musi być kompletna i powiązana z profilem użytkownika oraz rynkiem pracy.
+                7. W sekcji 'recommendation' wybierz jedną ścieżkę, uzasadnij wybór i podaj konkretne kroki.
+                8. Wypełnij 'careerStatistics' danymi statystycznymi, takimi jak średnie wynagrodzenie, liczba ofert pracy i tempo wzrostu.
+                9. Bazuj na ogólnej wiedzy o rynku pracy, bez odwoływania się do konkretnych danych z 2024 czy 2025 roku.
                 """;
         }
 
@@ -304,6 +386,9 @@ namespace VocareWebAPI.Services
         /// </summary>
         public class AiServiceException : Exception
         {
+            public AiServiceException(string message)
+                : base(message) { }
+
             public AiServiceException(string message, Exception inner)
                 : base(message, inner) { }
         }
