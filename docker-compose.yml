@@ -12,8 +12,8 @@ services:
 
   api:
     build:
-      context: ./VocareWebAPI         # tu masz swój .csproj i Dockerfile
-      dockerfile: Dockerfile          # odwołuje się do VocareWebAPI/Dockerfile
+      context: ./VocareWebAPI         
+      dockerfile: Dockerfile          
     environment:
       ASPNETCORE_ENVIRONMENT: Development
       ConnectionStrings__DefaultConnection: |
@@ -25,7 +25,7 @@ services:
 
   frontend:
     build:
-      context: ./frontend             # tu masz Next.js i Dockerfile dla frontu
+      context: ./frontend            
       dockerfile: Dockerfile
     environment:
       NEXT_PUBLIC_API_URL: http://api:8080
