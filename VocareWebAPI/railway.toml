@@ -1,0 +1,13 @@
+[[services]]
+  name = "api"
+  dockerfilePath = "VocareWebAPI/Dockerfile"
+  # build context, czyli katalog, w którym zostanie wykonany `docker build`
+  buildContext = "."
+  # port, na którym kontener wystawia serwis
+  port = 8080
+
+[[services]]
+  name = "frontend"
+  dockerfilePath = "frontend/Dockerfile"
+  buildContext = "."
+  port = 3000
