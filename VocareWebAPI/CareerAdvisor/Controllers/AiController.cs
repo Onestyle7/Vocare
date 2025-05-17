@@ -100,7 +100,7 @@ namespace VocareWebAPI.Controllers
             }
             catch (AiServiceException e)
             {
-                return Problem(detail: e.Message, statusCode: 500);
+                return Problem(detail: e.Message, statusCode: 404);
             }
         }
     }
