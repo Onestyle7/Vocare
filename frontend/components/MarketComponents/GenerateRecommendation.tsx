@@ -15,7 +15,7 @@ const GenerateRecommendation = () => {
       >
         <div className="flex justify-center">
           <Image
-            src="/images/no-data.svg" // Add this to your public/images directory
+            src="/images/no-data.svg"
             alt="No market analysis data"
             width={200}
             height={200}

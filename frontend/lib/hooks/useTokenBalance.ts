@@ -1,7 +1,7 @@
 import { useEffect, useState, useCallback } from 'react';
 import axios from 'axios';
 
-const API_URL = 'https://localhost:5001';
+const API_URL = 'http://localhost:8080';
 
 export const useTokenBalance = () => {
   const [tokenBalance, setTokenBalance] = useState<number | string>(0);
