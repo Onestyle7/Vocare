@@ -1,4 +1,4 @@
-version: '3.9'
+version: "3.9"
 services:
   db:
     image: postgres:15
@@ -13,12 +13,23 @@ services:
     networks:
       - app-net
 
+  adminer:
+    image: adminer
+    restart: always
+    depends_on:
+      - db
+    networks:
+      - app-net
+    ports:
+      - "8081:8080"
+
   api:
     build:
       context: ./VocareWebAPI
       dockerfile: Dockerfile
     environment:
-      - PERPLEXITY_API_KEY=${PERPLEXITY_API_KEY}
+      - ASPNETCORE_URLS=http://+:8080
+      - PerplexityAI__ApiKey=${PerplexityAI__ApiKey}
       - ASPNETCORE_ENVIRONMENT=Development
       - ConnectionStrings__DefaultConnection=Host=db;Port=5432;Database=Vocare_db;Username=postgres;Password=postgrespw;
     depends_on:
@@ -36,7 +47,7 @@ services:
         - NEXT_PUBLIC_API_URL=http://localhost:8080
     environment:
       - NODE_ENV=production
-      - PERPLEXITY_API_KEY=${PERPLEXITY_API_KEY}
+      - PerplexityAI__ApiKey=${PerplexityAI__ApiKey}
     depends_on:
       - api
     ports:
