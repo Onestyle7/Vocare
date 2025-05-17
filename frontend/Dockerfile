@@ -2,12 +2,17 @@
 FROM node:18-alpine AS builder
 WORKDIR /app
 
-# 1.1) Skopiuj package.json + lockfile i zainstaluj zależności
+# 1.0) Deklarujemy build-arg
+ARG NEXT_PUBLIC_API_URL
+
+# 1.1) Ustawiamy go jako ENV tak, by Next.js podczas buildu widział tę zmienną
+ENV NEXT_PUBLIC_API_URL=${NEXT_PUBLIC_API_URL}
+
+# 1.2) Skopiuj package.json + lockfile i zainstaluj zależności
 COPY package.json package-lock.json ./
-# → tu dodajemy legacy-peer-deps, żeby npm nie wywalał błędem
 RUN npm ci --legacy-peer-deps
 
-# 1.2) Kopiuj resztę kodu i zbuduj
+# 1.3) Kopiuj resztę kodu i zbuduj
 COPY . .
 RUN npm run build
 
