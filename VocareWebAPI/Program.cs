@@ -3,7 +3,6 @@ using System.Threading;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi.Models;
-using Npgsql;
 using Polly;
 using Polly.Extensions.Http;
 using Stripe;
@@ -132,51 +131,10 @@ builder.Services.AddAuthorization();
 
 builder.Services.AddIdentityCore<User>().AddEntityFrameworkStores<AppDbContext>().AddApiEndpoints();
 
-// Konfiguracja połączenia z bazą danych z uwzględnieniem Railway
-// Najpierw próbujemy użyć DATABASE_URL, jeśli dostępny
-var databaseUrl = Environment.GetEnvironmentVariable("DATABASE_URL");
-if (!string.IsNullOrEmpty(databaseUrl))
+builder.Services.AddDbContext<AppDbContext>(options =>
 {
-    // Parsowanie URL i utworzenie connection string
-    var uri = new Uri(databaseUrl);
-    var userInfo = uri.UserInfo.Split(':');
-    var connectionString = new NpgsqlConnectionStringBuilder
-    {
-        Host = uri.Host,
-        Port = uri.Port,
-        Username = userInfo[0],
-        Password = userInfo[1],
-        Database = uri.AbsolutePath.TrimStart('/'),
-        SslMode = Npgsql.SslMode.Require,
-        TrustServerCertificate = true,
-    }.ToString();
-
-    builder.Services.AddDbContext<AppDbContext>(options =>
-        options.UseNpgsql(connectionString));
-    
-    Console.WriteLine("Konfiguracja bazy danych z DATABASE_URL");
-}
-else
-{
-    // Jeśli DATABASE_URL jest niedostępny, użyj konfiguracji z appsettings.json
-    // Aktualizacja ConnectionString na podstawie danych z Railway
-    var connString = builder.Configuration.GetConnectionString("DefaultConnection");
-    if (connString?.Contains("postgres.railway.internal") == true)
-    {
-        // Zaktualizuj connection string, aby użyć zewnętrznego adresu zamiast wewnętrznego
-        connString = connString.Replace("postgres.railway.internal", "ballast.proxy.rlwy.net")
-                               .Replace("Port=5432", "Port=44153");
-        
-        // Dla debugowania
-        Console.WriteLine("Zaktualizowano connection string na zewnętrzny adres");
-    }
-    
-    builder.Services.AddDbContext<AppDbContext>(options =>
-        options.UseNpgsql(connString));
-    
-    Console.WriteLine("Konfiguracja bazy danych z DefaultConnection");
-}
-
+    options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection"));
+});
 builder.Services.AddCors(options =>
 {
     options.AddPolicy(
@@ -215,42 +173,6 @@ static IAsyncPolicy<HttpResponseMessage> GetRetryPolicy()
         .OrResult(msg => msg.StatusCode == System.Net.HttpStatusCode.TooManyRequests)
         .WaitAndRetryAsync(3, retryAttempt => TimeSpan.FromSeconds(Math.Pow(2, retryAttempt)));
 }
-
-// Testowanie połączenia z bazą danych przed migracją
-try
-{
-    using (var scope = app.Services.CreateScope())
-    {
-        var db = scope.ServiceProvider.GetRequiredService<AppDbContext>();
-        var canConnect = db.Database.CanConnect();
-        Console.WriteLine($"Połączenie z bazą danych: {(canConnect ? "SUKCES" : "BŁĄD")}");
-        
-        // Wyświetl informacje o kontekście bazy danych
-        Console.WriteLine($"Provider: {db.Database.ProviderName}");
-        
-        // Sprawdź migracje
-        var appliedMigrations = db.Database.GetAppliedMigrations().ToList();
-        Console.WriteLine($"Ilość zastosowanych migracji: {appliedMigrations.Count}");
-        
-        var pendingMigrations = db.Database.GetPendingMigrations().ToList();
-        Console.WriteLine($"Ilość oczekujących migracji: {pendingMigrations.Count}");
-        
-        if (pendingMigrations.Any())
-        {
-            Console.WriteLine("Oczekujące migracje:");
-            foreach (var migration in pendingMigrations)
-            {
-                Console.WriteLine($" - {migration}");
-            }
-        }
-    }
-}
-catch (Exception ex)
-{
-    Console.WriteLine($"Błąd podczas testowania połączenia: {ex.Message}");
-}
-
-// Migracja bazy danych
 using (var scope = app.Services.CreateScope())
 {
     var db = scope.ServiceProvider.GetRequiredService<AppDbContext>();
@@ -260,20 +182,14 @@ using (var scope = app.Services.CreateScope())
     {
         try
         {
-            Console.WriteLine("Próba migracji bazy danych...");
             db.Database.Migrate();
-            Console.WriteLine("Migracja zakończona sukcesem!");
             break;
         }
         catch (Exception ex)
         {
             retries++;
-            Console.WriteLine($"Błąd migracji: {ex.Message}");
             if (retries >= maxRetries)
-            {
-                Console.WriteLine("Przekroczono maksymalną liczbę prób migracji.");
                 throw; // po 10 próbach wyrzuć dalej
-            }
             Console.WriteLine($"DB unavailable, retrying in 5s... ({retries}/{maxRetries})");
             Thread.Sleep(5000);
         }

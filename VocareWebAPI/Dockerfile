@@ -23,4 +23,3 @@ EXPOSE 8080
 
 # 2.3) Uruchomienie
 ENTRYPOINT ["dotnet", "VocareWebAPI.dll"]
-
