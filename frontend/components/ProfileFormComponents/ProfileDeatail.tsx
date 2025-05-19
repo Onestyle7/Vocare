@@ -12,6 +12,7 @@ import ProfileForm from './ProfileForm';
 import { Separator } from '../ui/separator';
 import ProfileCard from './ProfileCard';
 import { Button } from '../ui/button';
+import Section from '../SupportComponents/Section';
 
 export default function ProfileDetails() {
   const [profile, setProfile] = useState<UserProfile | null>(null);
@@ -278,10 +279,18 @@ export default function ProfileDetails() {
   const pages = [renderPersonalInfoPage, renderSkillsAndWorkPage, renderAboutMePage];
 
   return (
-    <div className="font-poppins mx-4 mt-16 max-w-7xl max-sm:mx-4 xl:mx-auto 2xl:max-w-[1480px]">
-      <div className="flex h-screen flex-col xl:flex-row">
+    <Section
+      className="relative -mt-[5.25rem] pt-[3.5rem]"
+      crosses
+      crossesOffset="lg:translate-y-[7.5rem]"
+      customPaddings
+      id="profile"
+    >
+    <div className="font-poppins xl:mx-10 xl:mt-16 xl:border-t border-l border-r">
+      <div className='font-poppins mx-4 mt-8 max-w-7xl max-sm:mx-4 xl:mx-auto 2xl:max-w-[1480px]'>
+      <div className="flex h-screen flex-col xl:flex-row mt-2">
         <div className="hidden xl:block xl:w-1/2 xl:pr-8">
-          <div className="flex h-3/4 items-center justify-center">
+          <div className="flex h-3/4 -mt-8 items-center justify-center">
             <ProfileCard />
           </div>
         </div>
@@ -318,6 +327,9 @@ export default function ProfileDetails() {
           </div>
         </div>
       </div>
+            </div>
+
     </div>
+    </Section>
   );
 }
