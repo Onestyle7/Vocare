@@ -3,6 +3,7 @@ using System.Threading;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi.Models;
+using Npgsql;
 using Polly;
 using Polly.Extensions.Http;
 using Stripe;
@@ -131,9 +132,18 @@ builder.Services.AddAuthorization();
 
 builder.Services.AddIdentityCore<User>().AddEntityFrameworkStores<AppDbContext>().AddApiEndpoints();
 
+// odczytujemy URL z env var
+var pgUrl = Environment.GetEnvironmentVariable("DATABASE_URL")!;
+
+// budujemy NpgsqlConnectionStringBuilder z URL-a
+var npgBuilder = new NpgsqlConnectionStringBuilder(pgUrl)
+{
+    SslMode = SslMode.Require,
+    TrustServerCertificate = true,
+};
 builder.Services.AddDbContext<AppDbContext>(options =>
 {
-    options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection"));
+    options.UseNpgsql(npgBuilder.ConnectionString);
 });
 builder.Services.AddCors(options =>
 {
