@@ -155,7 +155,7 @@ namespace VocareWebAPI.Data
                 .HasForeignKey("UserProfileUserId")
                 .OnDelete(DeleteBehavior.Cascade);
 
-            builder.HasDefaultSchema("Identity");
+            builder.HasDefaultSchema("public");
 
             builder
                 .Entity<User>()
