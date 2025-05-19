@@ -3,11 +3,11 @@ FROM mcr.microsoft.com/dotnet/sdk:9.0 AS build
 WORKDIR /src
 
 # 1.1) Przywróć pakiety tylko dla projektu API
-COPY VocareWebAPI.csproj ./
+COPY ./VocareWebAPI/VocareWebAPI.csproj ./VocareWebAPI.csproj
 RUN dotnet restore
 
 # 1.2) Skopiuj resztę plików i opublikuj
-COPY . ./
+COPY ./VocareWebAPI/. ./
 RUN dotnet publish -c Release -o /app/publish
 
 # 2) ETAP RUNTIME
