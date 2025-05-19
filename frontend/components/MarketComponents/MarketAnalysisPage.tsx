@@ -118,7 +118,7 @@ export default function MarketAnalysis() {
 
     try {
       if (useNewData) {
-        const response = await axios.get('https://localhost:5001/api/MarketAnalysis', {
+        const response = await axios.get('http://localhost:8080/api/MarketAnalysis', {
           headers: {
             Authorization: `Bearer ${token}`,
             'Content-Type': 'application/json',
@@ -131,7 +131,7 @@ export default function MarketAnalysis() {
       } else {
         try {
           const latestResponse = await axios.get(
-            'https://localhost:5001/api/MarketAnalysis/latest',
+            'http://localhost:8080/api/MarketAnalysis/latest',
             {
               headers: {
                 Authorization: `Bearer ${token}`,
@@ -146,7 +146,7 @@ export default function MarketAnalysis() {
           const axiosError = latestError as AxiosError;
           if (axiosError.response?.status === 404) {
             console.log('No existing analysis found, generating a new one...');
-            const response = await axios.get('https://localhost:5001/api/MarketAnalysis', {
+            const response = await axios.get('http://localhost:8080/api/MarketAnalysis', {
               headers: {
                 Authorization: `Bearer ${token}`,
                 'Content-Type': 'application/json',

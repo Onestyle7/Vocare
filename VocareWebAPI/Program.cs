@@ -1,4 +1,5 @@
 using System.Text.Json.Serialization;
+using System.Threading;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi.Models;
@@ -172,5 +173,28 @@ static IAsyncPolicy<HttpResponseMessage> GetRetryPolicy()
         .OrResult(msg => msg.StatusCode == System.Net.HttpStatusCode.TooManyRequests)
         .WaitAndRetryAsync(3, retryAttempt => TimeSpan.FromSeconds(Math.Pow(2, retryAttempt)));
 }
+using (var scope = app.Services.CreateScope())
+{
+    var db = scope.ServiceProvider.GetRequiredService<AppDbContext>();
+    var retries = 0;
+    const int maxRetries = 10;
+    while (true)
+    {
+        try
+        {
+            db.Database.Migrate();
+            break;
+        }
+        catch (Exception ex)
+        {
+            retries++;
+            if (retries >= maxRetries)
+                throw; // po 10 próbach wyrzuć dalej
+            Console.WriteLine($"DB unavailable, retrying in 5s... ({retries}/{maxRetries})");
+            Thread.Sleep(5000);
+        }
+    }
+}
+
 app.Run();
 //Test ci/cd

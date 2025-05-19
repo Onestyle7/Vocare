@@ -94,7 +94,7 @@ namespace VocareWebAPI.Controllers
             catch (Exception ex)
             {
                 _logger.LogError(ex, "Error in GetLatestMarketAnalysis");
-                return Problem(detail: ex.Message, statusCode: 500);
+                return Problem(detail: ex.Message, statusCode: 404);
             }
         }
     }

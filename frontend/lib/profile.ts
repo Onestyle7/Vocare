@@ -1,44 +1,43 @@
 import { UserProfile } from '@/lib/types/profile';
-import axios from 'axios';
+import { api } from './api';
 
-const BASE_API_URL = 'https://localhost:5001/api/UserProfile';
+const PREFIX = '/api/UserProfile';
 
-// GET: Retrieve the current user profile
-export const getUserProfile = async (token: string) => {
-  const response = await axios.get(`${BASE_API_URL}/GetCurrentUserProfile`, {
-    headers: {
-      Authorization: `Bearer ${token}`,
-    },
-  });
-  return response.data;
+export const getUserProfile = async (token: string): Promise<UserProfile> => {
+  const { data } = await api.get(
+    `${PREFIX}/GetCurrentUserProfile`,
+    { headers: { Authorization: `Bearer ${token}` } }
+  );
+  return data;
 };
 
-// POST: Create a new user profile
-export const createUserProfile = async (profile: UserProfile, token: string) => {
-  const response = await axios.post(`${BASE_API_URL}/CreateCurrentUserProfile`, profile, {
-    headers: {
-      Authorization: `Bearer ${token}`,
-    },
-  });
-  return response.data;
+export const createUserProfile = async (
+  profile: UserProfile,
+  token: string
+): Promise<UserProfile> => {
+  const { data } = await api.post(
+    `${PREFIX}/CreateCurrentUserProfile`,
+    profile,
+    { headers: { Authorization: `Bearer ${token}` } }
+  );
+  return data;
 };
 
-// PUT: Update the current user profile
-export const updateUserProfile = async (profile: UserProfile, token: string) => {
-  const response = await axios.put(`${BASE_API_URL}/UpdateCurrentUserProfile`, profile, {
-    headers: {
-      Authorization: `Bearer ${token}`,
-    },
-  });
-  return response.data;
+export const updateUserProfile = async (
+  profile: UserProfile,
+  token: string
+): Promise<UserProfile> => {
+  const { data } = await api.put(
+    `${PREFIX}/UpdateCurrentUserProfile`,
+    profile,
+    { headers: { Authorization: `Bearer ${token}` } }
+  );
+  return data;
 };
 
-// DELETE: Delete the current user profile
-export const deleteUserProfile = async (token: string) => {
-  const response = await axios.delete(`${BASE_API_URL}/DeleteCurrentUserProfile`, {
-    headers: {
-      Authorization: `Bearer ${token}`,
-    },
-  });
-  return response.data;
+export const deleteUserProfile = async (token: string): Promise<void> => {
+  await api.delete(
+    `${PREFIX}/DeleteCurrentUserProfile`,
+    { headers: { Authorization: `Bearer ${token}` } }
+  );
 };
