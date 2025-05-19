@@ -1,15 +1,4 @@
-[[services]]
-  name = "api"
-  dockerfilePath = "VocareWebAPI/Dockerfile"
-  buildContext = "."
-  port = 8080
-  buildCommand = "docker build -t vocare-api -f VocareWebAPI/Dockerfile ."
-  startCommand = "docker run -p 8080:8080 vocare-api"
 
-[[services]]
-  name = "frontend"
-  dockerfilePath = "frontend/Dockerfile"
-  buildContext = "."
-  port = 3000
-  buildCommand = "docker build -t vocare-frontend -f frontend/Dockerfile ."
-  startCommand = "docker run -p 3000:3000 vocare-frontend"
+[build]
+builder = "dockerfile"
+dockerfilePath = "VocareWebAPI/Dockerfile"
