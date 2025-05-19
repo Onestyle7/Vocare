@@ -6,9 +6,10 @@ if (!API_URL) {
 }
 
 export const api = axios.create({
-  baseURL: API_URL,
-  headers: { 'Content-Type': 'application/json' },
+  baseURL: process.env.NEXT_PUBLIC_API_URL,
+  withCredentials: true, // jeśli używasz cookies
 });
+
 
 // Ten interceptor używa localStorage, więc musi działać tylko po stronie klienta
 // Dodaj sprawdzenie czy jesteśmy w przeglądarce

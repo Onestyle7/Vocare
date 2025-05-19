@@ -182,7 +182,7 @@ export default function MarketAnalysis() {
     } finally {
       setLoading(false);
     }
-  }, []);
+  }, [API_URL]);
 
   useEffect(() => {
     loadData();

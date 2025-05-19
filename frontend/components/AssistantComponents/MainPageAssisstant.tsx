@@ -4,7 +4,7 @@ import { useEffect, useState, useRef } from 'react';
 import axios from 'axios';
 import { UserProfile } from '@/lib/types/profile';
 import { toast } from 'sonner';
-import GenerateRecommendation from './GenerateRecommendationFail';
+import GenerateRecommendationFail from './GenerateRecommendationFail';
 import { Separator } from '../ui/separator';
 import { gsap } from 'gsap';
 import CollapsibleButton from './CollapsibleButton';
@@ -35,7 +35,9 @@ export default function AssistantPage() {
   const [isLoading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [isConfirmDialogOpen, setIsConfirmDialogOpen] = useState(false);
+  const [hasExistingRecommendation, setHasExistingRecommendation] = useState(false);
   const { tokenBalance, isLoading: isBalanceLoading, refresh } = useTokenBalanceContext();
+  const API_URL = process.env.NEXT_PUBLIC_API_URL;
 
   const [isCollapsed, setIsCollapsed] = useState(true);
   const contentRef = useRef<HTMLDivElement>(null);
@@ -129,48 +131,21 @@ export default function AssistantPage() {
   }, []);
 
   useEffect(() => {
-    const fetchRecommendations = async () => {
+    const checkLastRecommendation = async () => {
       if (!profile) return;
 
-      setLoading(true);
       const token = localStorage.getItem('token');
       if (!token) {
         toast.error('Authentication required', {
           description: 'Please sign in to continue.',
         });
-        setLoading(false);
         return;
       }
 
       try {
-        try {
-          const lastRecommendationResponse = await axios.get<AiCareerResponse>(
-            'http://localhost:8080/api/AI/last-recommendation',
-            {
-              headers: {
-                Authorization: `Bearer ${token}`,
-                'Content-Type': 'application/json',
-              },
-            }
-          );
-          console.log('Last recommendations:', lastRecommendationResponse.data);
-          setRecommendations(lastRecommendationResponse.data);
-          setLoading(false);
-          return;
-        } catch (lastError: unknown) {
-          if (lastError instanceof AxiosError && lastError.response?.status !== 404) {
-            console.error('Something went wrong while generating last recommendations:', lastError);
-            setError(
-              lastError.response?.data?.detail ||
-                'Something went wrong while generating last recommendations.'
-            );
-            setLoading(false);
-            return;
-          }
-        }
-
-        const response = await axios.get<AiCareerResponse>(
-          'http://localhost:8080/api/AI/recommendations',
+        // Fix: Changed API/last-recommendation to Ai/last-recommendation to match Postman
+        const lastRecommendationResponse = await axios.get<AiCareerResponse>(
+          `${API_URL}/api/Ai/last-recommendation`,
           {
             headers: {
               Authorization: `Bearer ${token}`,
@@ -178,40 +153,38 @@ export default function AssistantPage() {
             },
           }
         );
-        console.log('Nowe rekomendacje:', response.data);
-        setRecommendations(response.data);
-      } catch (err: unknown) {
-        if (err instanceof AxiosError) {
-          console.error('Szczegółowy błąd:', err);
-          console.error('Status odpowiedzi:', err.response?.status);
-          console.error('Dane odpowiedzi:', err.response?.data);
-
-          if (
-            err.response?.status === 500 &&
-            typeof err.response.data === 'string' &&
-            err.response.data.includes('User billing information')
-          ) {
-            setError('billing_info_missing');
-            toast.error('Brak informacji rozliczeniowych', {
-              description: 'Uzupełnij dane rozliczeniowe w ustawieniach konta.',
-            });
-          } else {
-            setError(err.response?.data?.detail || 'Błąd podczas generowania rekomendacji');
-          }
+        
+        console.log('Last recommendations:', lastRecommendationResponse.data);
+        setRecommendations(lastRecommendationResponse.data);
+        setHasExistingRecommendation(true);
+      } catch (lastError: unknown) {
+        console.log('Error checking last recommendations:', lastError);
+        
+        if (lastError instanceof AxiosError && lastError.response?.status === 404) {
+          console.log('No existing recommendations found, showing confirmation dialog');
+          // Nie ma wcześniejszych rekomendacji, więc pokazujemy popup
+          setIsConfirmDialogOpen(true);
+          setHasExistingRecommendation(false);
         } else {
-          console.error('Unknown error:', err);
-          setError('Unexpected error occurred');
+          console.error('Error while checking last recommendations:', lastError);
+          setError(
+            lastError instanceof AxiosError && lastError.response?.data?.detail
+              ? lastError.response.data.detail
+              : 'Something went wrong while checking recommendations.'
+          );
         }
       }
     };
 
     if (profile) {
-      fetchRecommendations();
+      checkLastRecommendation();
     }
-  }, [profile]);
+  }, [profile, API_URL]);
 
   const handleGenerateNewRecommendations = async () => {
     setLoading(true);
+    setIsConfirmDialogOpen(false);
+    
     const token = localStorage.getItem('token');
     if (!token) {
       toast.error('Authentication required', {
@@ -220,9 +193,11 @@ export default function AssistantPage() {
       setLoading(false);
       return;
     }
+    
     try {
+      // Fix: Changed API/recommendations to Ai/recommendations to match Postman
       const response = await axios.get<AiCareerResponse>(
-        'http://localhost:8080/api/AI/recommendations',
+        `${API_URL}/api/Ai/recommendations`,
         {
           headers: {
             Authorization: `Bearer ${token}`,
@@ -234,12 +209,23 @@ export default function AssistantPage() {
       toast.success('New recommendations have been generated');
     } catch (err: unknown) {
       if (err instanceof AxiosError) {
-        setError(
-          err.response?.data?.detail || 'Something went wrong while generating new recommendations'
-        );
-        toast.error('Błąd', {
-          description: 'Something went wrong while generating new recommendations',
-        });
+        const errorDetail = err.response?.data?.detail || 'Something went wrong while generating new recommendations';
+        setError(errorDetail);
+        
+        if (
+          err.response?.status === 500 &&
+          typeof err.response.data === 'string' &&
+          err.response.data.includes('User billing information')
+        ) {
+          setError('billing_info_missing');
+          toast.error('Brak informacji rozliczeniowych', {
+            description: 'Uzupełnij dane rozliczeniowe w ustawieniach konta.',
+          });
+        } else {
+          toast.error('Error', {
+            description: errorDetail,
+          });
+        }
       } else {
         setError('Unexpected error');
         toast.error('Unexpected error', {
@@ -252,12 +238,16 @@ export default function AssistantPage() {
     }
   };
 
-  if (!profile) {
-    return <div className="p-8 text-center">Brak danych profilu. Wróć do formularza.</div>;
-  }
+  const handleCancelGeneration = () => {
+    setIsConfirmDialogOpen(false);
+    // Jeśli nie ma istniejących rekomendacji, przekieruj lub pokaż odpowiedni komunikat
+    if (!hasExistingRecommendation) {
+      setError('no_recommendations');
+    }
+  };
 
-  if (error) {
-    return <GenerateRecommendation />;
+  if (!profile || error) {
+    return <GenerateRecommendationFail />;
   }
 
   if (isLoading) {
@@ -272,14 +262,14 @@ export default function AssistantPage() {
   if (!recommendations) {
     return (
       <div className="flex min-h-screen items-center justify-center">
-        <GenerateRecommendation />;
+        <GenerateRecommendationFail />
       </div>
     );
   }
 
   return (
     <div className="font-poppins mx-auto flex max-w-7xl flex-col items-center justify-center p-4 md:p-8">
-      <h2 className="mb-4 ml-4 text-2xl font-bold text-[#915EFF]">Carrer Recommendation</h2>
+      <h2 className="mb-4 ml-4 text-2xl font-bold text-[#915EFF]">Career Recommendation</h2>
       <div>
         {/* Main recommendation section */}
         <div className="mb-1 flex flex-col overflow-hidden rounded-[28px] border shadow-sm md:flex-row">
@@ -378,9 +368,14 @@ export default function AssistantPage() {
           </AlertDialogHeader>
 
           <AlertDialogFooter className="flex justify-center gap-4 sm:justify-center">
-            <AlertDialogCancel className="border-gray-200">Cancel</AlertDialogCancel>
+            <AlertDialogCancel 
+              className="border-gray-200"
+              onClick={handleCancelGeneration}
+            >
+              Cancel
+            </AlertDialogCancel>
 
-            {!isBalanceLoading && typeof tokenBalance === 'number' && tokenBalance < 5 ? (
+            {!isBalanceLoading && typeof tokenBalance === 'number' && tokenBalance < 50 ? (
               <Link href="/pricing">
                 <AlertDialogAction
                   className="bg-[#915EFF] text-white hover:bg-[#7b4ee0]"
