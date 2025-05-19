@@ -10,6 +10,7 @@ import { useAuth } from '@/lib/hooks/useAuth';
 import MobileNav from '@/components/MobileUI/MobileNav';
 import { TokenCounter } from '@/components/PricingComponents/TokenCounter';
 import ThemeSwitch from '../ThemeSwitch';
+import { Badge } from '@/components/ui/badge';
 
 const Header = () => {
   const pathname = usePathname();
@@ -43,14 +44,30 @@ const Header = () => {
 
           {isAuthenticated ? (
             <ul className="flex items-center justify-center space-x-4">
-              {filteredLinks.map(({ label, url }) => (
-                <Link key={label} href={url}>
-                  <li className={cn('w-full', pathname === url && 'underline')}>
-                    <p className="text-[18px] font-normal uppercase">{label}</p>
-                  </li>
-                </Link>
-              ))}
-            </ul>
+  {filteredLinks.map(({ label, url, disabled }) => (
+    <li
+      key={label}
+      className={cn(
+        'relative w-full',
+        pathname === url && !disabled && 'underline',
+        disabled && 'opacity-50 cursor-not-allowed'
+      )}
+    >
+      {disabled ? (
+        <div className="flex items-center space-x-2 text-[18px] font-normal uppercase relative">
+  <span>{label}</span>
+  <Badge variant="outline" className="absolute -right-6 -top-4 scale-75">soon</Badge>
+</div>
+
+      ) : (
+        <Link href={url}>
+          <p className="text-[18px] font-normal uppercase">{label}</p>
+        </Link>
+      )}
+    </li>
+  ))}
+</ul>
+
           ) : (
             <div />
           )}

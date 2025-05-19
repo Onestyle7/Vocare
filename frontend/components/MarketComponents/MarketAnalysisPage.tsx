@@ -6,7 +6,6 @@ import { gsap } from 'gsap';
 import CollapsibleButton from '../AssistantComponents/CollapsibleButton';
 import { TerminalDemo } from './LoadingTerminal';
 import { GridBackgroundDemo } from './GridBackgroundDemo';
-import GenerateRecommendationFail from '../AssistantComponents/GenerateRecommendationFail';
 import Image from 'next/image';
 import { chart, fire, wallet, star_generate } from '@/app/constants';
 import { toast } from 'sonner';
@@ -22,6 +21,8 @@ import {
   AlertDialogTitle,
 } from '../ui/alert-dialog';
 import { useTokenBalanceContext } from '@/lib/contexts/TokenBalanceContext';
+import Link from 'next/link';
+import GenerateMarketFail from './GenerateMarketFail';
 // Define the types here since they seem to be missing or incorrectly defined in the imported files
 interface MarketTrend {
   trendName: string;
@@ -61,6 +62,8 @@ export default function MarketAnalysis() {
 
   const [showFixedButton, setShowFixedButton] = useState(false);
   const lastScrollY = useRef(0);
+  const API_URL = process.env.NEXT_PUBLIC_API_URL;
+
 
   useEffect(() => {
     const handleScroll = () => {
@@ -118,7 +121,7 @@ export default function MarketAnalysis() {
 
     try {
       if (useNewData) {
-        const response = await axios.get('http://localhost:8080/api/MarketAnalysis', {
+        const response = await axios.get(`${API_URL}/api/MarketAnalysis`, {
           headers: {
             Authorization: `Bearer ${token}`,
             'Content-Type': 'application/json',
@@ -130,8 +133,7 @@ export default function MarketAnalysis() {
         toast.success('Generated new market analysis');
       } else {
         try {
-          const latestResponse = await axios.get(
-            'http://localhost:8080/api/MarketAnalysis/latest',
+          const latestResponse = await axios.get(`${API_URL}/api/MarketAnalysis/latest`,
             {
               headers: {
                 Authorization: `Bearer ${token}`,
@@ -191,7 +193,7 @@ export default function MarketAnalysis() {
   };
 
   if (error) {
-    return <GenerateRecommendationFail />;
+    return <GenerateMarketFail />;
   }
 
   if (isLoading) {
@@ -295,7 +297,7 @@ export default function MarketAnalysis() {
         </div>
 
         {/* STATIC button always under content */}
-        <div className="mt-16 flex justify-center">
+        <div className="mt-16 flex justify-center w-full">
           <CustomButton
             onClick={() => setIsConfirmDialogOpen(true)}
             disabled={isLoading}
@@ -306,21 +308,40 @@ export default function MarketAnalysis() {
         </div>
 
         <AlertDialog open={isConfirmDialogOpen} onOpenChange={setIsConfirmDialogOpen}>
-          <AlertDialogContent className="font-poppins mx-auto max-w-md">
-            <AlertDialogHeader>
-              <AlertDialogTitle className="text-center text-xl font-bold">
-                Generate new market analysis?
-              </AlertDialogTitle>
-              <AlertDialogDescription className="text-center">
-                This will take <b className="text-[#915EFF]">30 credits</b> from Your account
-                <div className="mt-2 font-extralight">
-                  Current balance:{' '}
-                  <span className="font-bold">{isBalanceLoading ? '...' : tokenBalance}</span>
-                </div>
-              </AlertDialogDescription>
-            </AlertDialogHeader>
-            <AlertDialogFooter className="flex justify-center gap-4 sm:justify-center">
-              <AlertDialogCancel className="border-gray-200">Cancel</AlertDialogCancel>
+        <AlertDialogContent className="font-poppins mx-auto max-w-md">
+          <AlertDialogHeader>
+            <AlertDialogTitle className="text-center text-xl font-bold">
+              Generate new recommendation?
+            </AlertDialogTitle>
+            <AlertDialogDescription className="text-center">
+              This will take <b className="text-[#915EFF]">50 credits</b> from Your account.
+            </AlertDialogDescription>
+
+            <div className="mt-2 text-center text-sm font-extralight">
+              Current balance:{' '}
+              <span className="font-bold">{isBalanceLoading ? '...' : tokenBalance}</span>
+            </div>
+          </AlertDialogHeader>
+
+          <AlertDialogFooter className="flex justify-center gap-4 sm:justify-center">
+            <AlertDialogCancel 
+              className="border-gray-200"
+              onClick={handleGenerateNewAnalysis}
+            >
+              Cancel
+            </AlertDialogCancel>
+
+            {!isBalanceLoading && typeof tokenBalance === 'number' && tokenBalance < 50 ? (
+              <Link href="/pricing">
+                <AlertDialogAction
+                  className="bg-[#915EFF] text-white hover:bg-[#7b4ee0]"
+                  onClick={() => setIsConfirmDialogOpen(false)}
+                >
+                  Get tokens
+                  <Image src={star_generate} alt="star" width={16} height={16} />
+                </AlertDialogAction>
+              </Link>
+            ) : (
               <AlertDialogAction
                 onClick={async () => {
                   await handleGenerateNewAnalysis();
@@ -331,9 +352,10 @@ export default function MarketAnalysis() {
                 Generate
                 <Image src={star_generate} alt="star" width={16} height={16} />
               </AlertDialogAction>
-            </AlertDialogFooter>
-          </AlertDialogContent>
-        </AlertDialog>
+            )}
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
       </div>
     </div>
   );
