@@ -23,7 +23,10 @@ import {
 import { useTokenBalanceContext } from '@/lib/contexts/TokenBalanceContext';
 import Link from 'next/link';
 import GenerateMarketFail from './GenerateMarketFail';
-// Define the types here since they seem to be missing or incorrectly defined in the imported files
+import EmptyStateComponent from './EmptyStateComponent';
+import Section from '../SupportComponents/Section';
+
+// Type definitions
 interface MarketTrend {
   trendName: string;
   description: string;
@@ -64,17 +67,16 @@ export default function MarketAnalysis() {
   const lastScrollY = useRef(0);
   const API_URL = process.env.NEXT_PUBLIC_API_URL;
 
-
   useEffect(() => {
     const handleScroll = () => {
       const currentScrollY = window.scrollY;
 
-      // Scroll w górę
+      // Scroll up
       if (currentScrollY < lastScrollY.current) {
         setShowFixedButton(true);
       }
 
-      // Scroll w dół
+      // Scroll down
       if (currentScrollY > lastScrollY.current) {
         setShowFixedButton(false);
       }
@@ -147,16 +149,8 @@ export default function MarketAnalysis() {
         } catch (latestError) {
           const axiosError = latestError as AxiosError;
           if (axiosError.response?.status === 404) {
-            console.log('No existing analysis found, generating a new one...');
-            const response = await axios.get('http://localhost:8080/api/MarketAnalysis', {
-              headers: {
-                Authorization: `Bearer ${token}`,
-                'Content-Type': 'application/json',
-              },
-            });
-
-            console.log('First market analysis raw data:', response.data);
-            handleResponseData(response.data);
+            console.log('No existing analysis found, setting data to null');
+            setData(null);
           } else {
             console.error('Error fetching latest market analysis:', latestError);
             setError(
@@ -226,15 +220,38 @@ export default function MarketAnalysis() {
 
   const marketAnalysis = getMarketAnalysis();
 
+  // If there's no market analysis data, show the EmptyStateComponent
+  if (!marketAnalysis || !marketAnalysis.industryStatistics || marketAnalysis.industryStatistics.length === 0) {
+    return (
+      <EmptyStateComponent 
+        onGenerateAnalysis={handleGenerateNewAnalysis}
+        isLoading={isLoading}
+        tokenBalance={tokenBalance}
+        isBalanceLoading={isBalanceLoading}
+        refresh={refresh}
+      />
+    );
+  }
+
+  // Otherwise, show the full market analysis UI
   return (
+    <Section
+      className="relative -mt-[5.25rem] pt-[3.5rem]"
+      crosses
+      crossesOffset="lg:translate-y-[7.5rem]"
+      customPaddings
+      id="profile"
+    >
+      <div className='xl:border-t xl:mt-16 xl:mx-10 xl:border-r xl:border-l'>
+
     <div className="font-poppins mx-auto mt-8 mb-4 flex max-w-7xl flex-col items-center justify-center">
       <h2 className="mb-4 ml-4 text-2xl font-bold text-[#915EFF]">Job Market Analysis</h2>
       <div>
-        {marketAnalysis?.industryStatistics?.map((stat, index) => (
+        {marketAnalysis.industryStatistics.map((stat, index) => (
           <IndustrySection key={index} data={stat} index={index} />
         ))}
 
-        {marketAnalysis?.marketTrends && marketAnalysis.marketTrends.length > 0 && (
+        {marketAnalysis.marketTrends && marketAnalysis.marketTrends.length > 0 && (
           <div className="mx-4 mt-8 rounded-[28px] border p-6 shadow-sm">
             <h3 className="mb-4 text-xl font-semibold">Current Market Trends</h3>
             <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
@@ -252,7 +269,7 @@ export default function MarketAnalysis() {
           </div>
         )}
 
-        {marketAnalysis?.skillDemand && marketAnalysis.skillDemand.length > 0 && (
+        {marketAnalysis.skillDemand && marketAnalysis.skillDemand.length > 0 && (
           <div className="mx-4 mt-8 rounded-[28px] border p-6 shadow-sm">
             <h3 className="mb-4 text-xl font-semibold">In-Demand Skills</h3>
             <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
@@ -326,7 +343,6 @@ export default function MarketAnalysis() {
           <AlertDialogFooter className="flex justify-center gap-4 sm:justify-center">
             <AlertDialogCancel 
               className="border-gray-200"
-              onClick={handleGenerateNewAnalysis}
             >
               Cancel
             </AlertDialogCancel>
@@ -358,23 +374,17 @@ export default function MarketAnalysis() {
       </AlertDialog>
       </div>
     </div>
+    </div>
+    </Section>
   );
 }
 
-interface IndustryStatistic {
-  industry: string;
-  averageSalary: string;
-  employmentRate: string;
-  growthForecast: string;
-}
-
-// This interface is already defined above, so we don't need to redefine it here
-interface IndustryProps {
+interface IndustrySectionProps {
   data: IndustryStatistic;
   index: number;
 }
 
-function IndustrySection({ data, index }: IndustryProps) {
+function IndustrySection({ data, index }: IndustrySectionProps) {
   const [isCollapsed, setIsCollapsed] = useState(true);
   const contentRef = useRef<HTMLDivElement>(null);
   const contentWrapperRef = useRef<HTMLDivElement>(null);

@@ -249,6 +249,12 @@ export const star_generate = '/svg/star_generate.svg';
 
 export const logo = '/icons/vocare.png';
 
+// curved lines
+
+export const curved1 = '/svg/curve-1.svg';
+export const curved2 = '/svg/curve-2.svg';
+
+
 // grid
 
 export const gridTiles = [

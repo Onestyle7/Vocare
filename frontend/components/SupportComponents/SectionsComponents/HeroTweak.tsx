@@ -12,6 +12,7 @@ import CustomCursor from '../CustomCursor';
 import Section from '../Section';
 import CustomButton from '@/components/ui/CustomButton';
 import { SpinningText } from '@/components/magicui/spinning-text';
+import AnimatedTextH3 from '../AnimatedTextH3';
 
 const LazySpline = lazy(() => import('@splinetool/react-spline'));
 
@@ -52,7 +53,7 @@ const HeroTweak = () => {
       <div className="main-font-color relative z-30 flex h-[390px] flex-row px-[40px] lg:w-full">
         <div className="inset-0 flex w-full flex-col items-center justify-center md:flex-row md:justify-start md:pl-[40px] lg:w-3/5 xl:border-t xl:border-b">
           <div className="flex flex-col justify-center max-md:mb-8 lg:w-1/2 xl:items-start">
-            <h1 className="text-[60px] leading-17 font-bold uppercase max-md:text-center lg:text-[78px] xl:text-[88px] 2xl:text-[108px] 2xl:leading-21">
+            <h1 className="text-[60px] max-sm:leading-12 leading-17 font-bold uppercase max-md:text-center lg:text-[78px] xl:text-[88px] 2xl:text-[108px] 2xl:leading-21">
               <AnimatedHeadline
                 lines={['unlock', 'your', 'growth']}
                 className="items-start max-md:items-center"
@@ -97,9 +98,9 @@ const HeroTweak = () => {
             OUR VISION
           </h2>
           <div className="flex w-full items-center justify-between text-xl uppercase sm:px-1 md:px-1 lg:flex-row lg:px-2 xl:px-3">
-            <h3>learn</h3>
-            <h3>grow</h3>
-            <h3>earn</h3>
+            <AnimatedTextH3 delay={0}>learn</AnimatedTextH3>
+            <AnimatedTextH3 delay={0.6}>grow</AnimatedTextH3>
+            <AnimatedTextH3 delay={0.9}>earn</AnimatedTextH3>
           </div>
         </div>
       </div>

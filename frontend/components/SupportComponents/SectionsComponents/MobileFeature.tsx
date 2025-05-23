@@ -4,12 +4,13 @@ import { ScrollParallax } from 'react-just-parallax';
 import { ArrowRight, Search, CheckCircle, ListChecks } from 'lucide-react';
 
 import { gsap } from 'gsap';
-import { avatars, mobileView } from '@/app/constants';
+import { avatars, mobileView, shape1 } from '@/app/constants';
 import Section from '../Section';
 import AnimatedHeadline from '../AnimatedText';
 import Iphone15Pro from '@/components/magicui/iphone-15-pro';
 import { AvatarCircles } from '@/components/magicui/avatar-circles';
 import CustomButton from '@/components/ui/CustomButton';
+import Image from 'next/image';
 
 const MobileFeature = () => {
   const parallaxRef = useRef<HTMLDivElement>(null);
@@ -125,6 +126,14 @@ const MobileFeature = () => {
 
   return (
     <Section crosses customPaddings className="relative px-10" crossesOffset id="brain">
+      <ScrollParallax isAbsolutelyPositioned zIndex={-20}>
+              <div className="absolute top-1/4 max-sm:-left-10 left-2 z-20 xl:bottom-1/5">
+                <Image src={shape1} alt="shape" width={78} height={78} className="-rotate-20" />
+              </div>
+              <div className="absolute bottom-1/4 max-sm:-right-10 right-2 z-20 xl:bottom-1/5">
+                <Image src={shape1} alt="shape" width={78} height={78} className="-rotate-20" />
+              </div>
+            </ScrollParallax>
       <div className="mt-4 min-h-screen xl:border-t xl:border-b">
         <div className="relative mx-[10%] mb-8 flex flex-col items-center gap-5">
           <h2 className="mt-[36px] text-sm uppercase md:text-[10px]">Always in Your pocket</h2>
@@ -160,13 +169,11 @@ const MobileFeature = () => {
                 </ScrollParallax>
               </div>
               <div className="flex h-full flex-col items-center justify-center text-xl font-light sm:text-3xl lg:w-1/2">
-                <p className="font-poppins">
-                  Discover your perfect <strong>career</strong> path with our mobile application Get
-                  personalized advice, insights, and recommendations tailored to your skills and
-                  aspirations—right at your fingertips. Start your journey today!
-                </p>
+                <div className="overflow-hidden border-2 p-2">
+                  <h3 className='text-5xl mx-0 leading-0.8'>SOME TEXT</h3>
+                </div>
                 <div className="flex w-full max-md:items-center max-md:justify-center">
-                  <CustomButton
+                  {/* <CustomButton
                     variant="outline"
                     className="group flex scale-90 cursor-none items-center justify-center overflow-hidden max-md:mt-8 max-md:w-full xl:mt-8"
                   >
@@ -174,7 +181,7 @@ const MobileFeature = () => {
                       Try it out
                       <ArrowRight className="ml-2 transition-transform duration-300 group-hover:translate-x-2" />
                     </span>
-                  </CustomButton>
+                  </CustomButton> */}
                 </div>
               </div>
             </div>

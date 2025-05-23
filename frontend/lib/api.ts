@@ -6,13 +6,10 @@ if (!API_URL) {
 }
 
 export const api = axios.create({
-  baseURL: process.env.NEXT_PUBLIC_API_URL,
-  withCredentials: true, // jeśli używasz cookies
+  baseURL: API_URL,
+  withCredentials: true, 
 });
 
-
-// Ten interceptor używa localStorage, więc musi działać tylko po stronie klienta
-// Dodaj sprawdzenie czy jesteśmy w przeglądarce
 if (typeof window !== 'undefined') {
   api.interceptors.request.use(config => {
     const token = localStorage.getItem('token');
