@@ -4,7 +4,6 @@ import './globals.css';
 import { ThemeProvider } from '@/components/ui/theme-provider';
 import { Toaster } from '@/components/ui/sonner';
 import { TokenBalanceProvider } from '@/lib/contexts/TokenBalanceContext';
-import { ReactLenis } from '@/lib/utils/lenis';
 
 const sizmoPro = localFont({
   src: [
@@ -75,7 +74,6 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" suppressHydrationWarning>
-          <ReactLenis root>
       <body className={`${sizmoPro.className} h-full antialiased selection:bg-[#915EFF]`}>
         <TokenBalanceProvider>
           <ThemeProvider attribute="class" defaultTheme="dark">
@@ -84,7 +82,6 @@ export default function RootLayout({
           </ThemeProvider>
         </TokenBalanceProvider>
       </body>
-          </ReactLenis>
     </html>
   );
 }
