@@ -2,6 +2,7 @@
 import React, { useRef, useEffect } from 'react';
 import { ScrollParallax } from 'react-just-parallax';
 import { ArrowRight, Search, CheckCircle, ListChecks } from 'lucide-react';
+import { SplitText, ScrollTrigger } from 'gsap/all';
 
 import { gsap } from 'gsap';
 import { avatars, mobileView, shape1 } from '@/app/constants';
@@ -12,11 +13,57 @@ import { AvatarCircles } from '@/components/magicui/avatar-circles';
 import CustomButton from '@/components/ui/CustomButton';
 import Image from 'next/image';
 
+gsap.registerPlugin(SplitText, ScrollTrigger);
+
 const MobileFeature = () => {
   const parallaxRef = useRef<HTMLDivElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
   const textRef = useRef<HTMLSpanElement>(null);
   const iconRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    if (typeof window === 'undefined') return;
+
+    const splitElement = document.querySelector('#split');
+    if (!splitElement) return;
+
+    // Dzielimy tekst na linie zamiast na znaki
+    const mySplitText = new SplitText(splitElement, { type: 'lines' });
+    const lines = mySplitText.lines;
+
+    // Opakowujemy każdą linię w dodatkowy div dla lepszej kontroli overflow
+    lines.forEach(line => {
+      const wrapper = document.createElement('div');
+      wrapper.style.overflow = 'hidden';
+      line.parentNode.insertBefore(wrapper, line);
+      wrapper.appendChild(line);
+    });
+
+    // Animujemy linie od dołu do góry
+    gsap.fromTo(lines, 
+      {
+        yPercent: 100,
+        opacity: 0
+      },
+      {
+        yPercent: 0,
+        opacity: 1,
+        duration: 0.8,
+        stagger: 0.2, // Opóźnienie między liniami
+        ease: 'power2.out',
+        scrollTrigger: {
+          trigger: '#split',
+          start: 'top 85%',
+          end: 'bottom 20%',
+          toggleActions: 'play none none reset',
+        },
+      }
+    );
+
+    return () => {
+      mySplitText.revert();
+    };
+  }, []);
 
   useEffect(() => {
     if (!containerRef.current) return;
@@ -169,8 +216,8 @@ const MobileFeature = () => {
                 </ScrollParallax>
               </div>
               <div className="flex h-full flex-col items-center justify-center text-xl font-light sm:text-3xl lg:w-1/2">
-                <div className="overflow-hidden border-2 p-2">
-                  <h3 className='text-5xl mx-0 leading-0.8'>SOME TEXT</h3>
+                <div className="overflow-hidden p-2">
+                  <h3 id='split' className='text-3xl mx-0 leading-0.8 font-poppins'>Unlock your future with our mobile app, designed to guide you through every step of your career journey. </h3>
                 </div>
                 <div className="flex w-full max-md:items-center max-md:justify-center">
                   {/* <CustomButton

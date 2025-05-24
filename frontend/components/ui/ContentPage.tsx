@@ -3,7 +3,7 @@ import { TextAnimateLight } from '../magicui/text-animate-light';
 
 const ContentPage2 = () => {
   return (
-    <div className="flex h-screen w-screen flex-row bg-[#101014] max-md:flex-col">
+    <div className="flex h-screen w-screen flex-row bg-[#0e100f] max-md:flex-col">
       <div className="lgjustify-center font-poppins flex text-7xl text-[#F3F3F3] max-md:m-4 lg:h-screen lg:w-1/6 lg:items-center lg:text-[600px]">
         1
       </div>
