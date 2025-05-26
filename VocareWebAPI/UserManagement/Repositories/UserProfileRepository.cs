@@ -33,6 +33,11 @@ namespace VocareWebAPI.Repositories
         {
             var profile = await _context
                 .UserProfiles.AsNoTracking()
+                .Include(p => p.User) // ✅ Email
+                .Include(p => p.WorkExperience) // ✅ KLUCZOWE - doświadczenie zawodowe
+                .Include(p => p.Education) // ✅ KLUCZOWE - wykształcenie
+                .Include(p => p.Certificates) // ✅ KLUCZOWE - certyfikaty
+                .Include(p => p.Languages) // ✅ KLUCZOWE - języki
                 .FirstOrDefaultAsync(p => p.UserId == userId);
             if (profile == null)
             {

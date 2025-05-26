@@ -155,8 +155,54 @@ var app = builder.Build();
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
-    app.UseSwagger();
-    app.UseSwaggerUI();
+    using var scope = app.Services.CreateScope();
+    var db = scope.ServiceProvider.GetRequiredService<AppDbContext>();
+    var logger = scope.ServiceProvider.GetRequiredService<ILogger<Program>>();
+
+    var retries = 0;
+    const int maxRetries = 10;
+
+    while (retries < maxRetries)
+    {
+        try
+        {
+            logger.LogInformation(
+                "Attempting database migration... ({Attempt}/{MaxRetries})",
+                retries + 1,
+                maxRetries
+            );
+            await db.Database.MigrateAsync();
+            logger.LogInformation("Database migration completed successfully.");
+            break;
+        }
+        catch (Exception ex)
+        {
+            retries++;
+            if (retries >= maxRetries)
+            {
+                logger.LogError(
+                    ex,
+                    "Database migration failed after {MaxRetries} attempts. Application will start without migrations.",
+                    maxRetries
+                );
+                break; // Pozwól aplikacji startować nawet bez bazy
+            }
+
+            logger.LogWarning(
+                "DB unavailable, retrying in 5s... ({Attempt}/{MaxRetries}). Error: {Error}",
+                retries,
+                maxRetries,
+                ex.Message
+            );
+            await Task.Delay(5000);
+        }
+    }
+}
+else
+{
+    // W produkcji nie rób auto-migrate - używaj CI/CD pipeline
+    var logger = app.Services.GetRequiredService<ILogger<Program>>();
+    logger.LogInformation("Production environment - skipping automatic migrations.");
 }
 
 /* app.UseHttpsRedirection(); */
@@ -173,28 +219,6 @@ static IAsyncPolicy<HttpResponseMessage> GetRetryPolicy()
         .HandleTransientHttpError()
         .OrResult(msg => msg.StatusCode == System.Net.HttpStatusCode.TooManyRequests)
         .WaitAndRetryAsync(3, retryAttempt => TimeSpan.FromSeconds(Math.Pow(2, retryAttempt)));
-}
-using (var scope = app.Services.CreateScope())
-{
-    var db = scope.ServiceProvider.GetRequiredService<AppDbContext>();
-    var retries = 0;
-    const int maxRetries = 10;
-    while (true)
-    {
-        try
-        {
-            db.Database.Migrate();
-            break;
-        }
-        catch (Exception ex)
-        {
-            retries++;
-            if (retries >= maxRetries)
-                throw; // po 10 próbach wyrzuć dalej
-            Console.WriteLine($"DB unavailable, retrying in 5s... ({retries}/{maxRetries})");
-            Thread.Sleep(5000);
-        }
-    }
 }
 
 app.Run();
