@@ -252,7 +252,17 @@ namespace VocareWebAPI.Services
                         )
                         : "Brak doświadczenia zawodowego"
                 )}}
-                - Wykształcenie: {{profile.Education}}}
+                - Wykształcenie:
+                {{(
+                    profile.Education != null && profile.Education.Any()
+                        ? string.Join(
+                            "\n",
+                            profile.Education.Select(e =>
+                                $"- {e.Degree} w {e.Field}, {e.Institution} (od {e.StartDate?.ToString("yyyy-MM-dd") ?? "Brak"} do {(e.EndDate?.ToString("yyyy-MM-dd") ?? "obecnie")})"
+                            )
+                        )
+                        : "Brak wykształcenia"
+                )}}
                 - Certyfikaty:
                 {{(
                     profile.Certificates != null

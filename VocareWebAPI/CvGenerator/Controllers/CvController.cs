@@ -50,10 +50,6 @@ namespace VocareWebAPI.CvGenerator.Controllers
                 var cv = await _cvGenerationService.GenerateCvAsync(userId, request.Position);
                 return Ok(cv);
             }
-            catch (CvGenerationService.CvGenerationException ex)
-            {
-                return BadRequest(ex.Message);
-            }
             catch (Exception)
             {
                 return StatusCode(500, "Wystąpił błąd serwera podczas generowania CV.");
