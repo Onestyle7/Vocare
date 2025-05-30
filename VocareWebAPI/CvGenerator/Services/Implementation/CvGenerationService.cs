@@ -264,7 +264,7 @@ namespace VocareWebAPI.CvGenerator.Services.Implementations
                     cvDto,
                     new JsonSerializerOptions
                     {
-                        WriteIndented = true,
+                        WriteIndented = false,
                         PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
                     }
                 );

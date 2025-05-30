@@ -20,6 +20,5 @@ namespace VocareWebAPI.Models.Entities.MarketAnalysis
         public string GrowthForecast { get; set; } = String.Empty; // Prognoza wzrostu zatrudnienia
         public DateTime LastUpdated { get; set; }
         public Guid AiRecommendationId { get; set; } // Klucz obcy do AiRecommendation
-        //asdaghjv
     }
 }
