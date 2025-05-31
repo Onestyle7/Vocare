@@ -10,4 +10,4 @@ build/
 .env*.local-dev
 .env*.production
 Dockerfile.dev
-docker-compose.dev.yml
+docker-compose.dev-db-only.yml

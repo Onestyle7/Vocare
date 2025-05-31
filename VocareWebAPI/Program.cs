@@ -235,7 +235,7 @@ app.UseAuthorization();
 app.MapControllers();
 app.MapIdentityApi<User>();
 app.MapPost(
-        "/register",
+        "/api/register",
         async (
             [FromBody] RegisterRequest request,
             UserManager<User> userManager,

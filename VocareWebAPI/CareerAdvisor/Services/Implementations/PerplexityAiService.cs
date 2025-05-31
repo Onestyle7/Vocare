@@ -253,6 +253,12 @@ namespace VocareWebAPI.Services
                         )
                         : "Brak doświadczenia zawodowego"
                 )}}
+                - Wymagania finansowe:
+                {{(
+                    profile.FinancialSurvey != null
+                        ? $"Aktualne zarobki {profile.FinancialSurvey.CurrentSalary} PLN, W ciągu najbliższych miesięcy chciałbym rozpocząć drogę do {profile.FinancialSurvey.DesiredSalary} PLN miesięcznie, Status zadłużeń to {profile.FinancialSurvey.HasLoans }, szczegóły zadłużeń: {profile.FinancialSurvey.LoanDetails ?? "Brak"}, Poziom ryzyka jakie jest gotów podjąć: {profile.FinancialSurvey.RiskAppetite}, czy relokacja wchodzi w grę Relokacja: {profile.FinancialSurvey.WillingToRelocate}"
+                        : "Brak danych finansowych"
+                )}}
                 - Wykształcenie:
                 {{(
                     profile.Education != null && profile.Education.Any()
