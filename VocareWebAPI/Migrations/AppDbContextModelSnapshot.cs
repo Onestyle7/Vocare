@@ -631,6 +631,10 @@ namespace VocareWebAPI.Migrations
                         .IsRequired()
                         .HasColumnType("text[]");
 
+                    b.PrimitiveCollection<List<string>>("SoftSkills")
+                        .IsRequired()
+                        .HasColumnType("text[]");
+
                     b.HasKey("UserId");
 
                     b.ToTable("UserProfiles", "public");

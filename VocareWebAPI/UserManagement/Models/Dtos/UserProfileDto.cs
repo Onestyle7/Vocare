@@ -32,6 +32,7 @@ namespace VocareWebAPI.Models.Dtos
         public List<WorkExperienceEntryDto>? WorkExperience { get; set; }
 
         public List<string>? Skills { get; set; }
+        public List<string>? SoftSkills { get; set; }
 
         public List<CertificateEntryDto>? Certificates { get; set; }
 
