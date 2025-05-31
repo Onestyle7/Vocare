@@ -55,6 +55,7 @@ namespace VocareWebAPI.Profiles
                 )
                 .ReverseMap();
 
+            CreateMap<FinancialSurvey, FinancialSurveyDto>().ReverseMap();
             CreateMap<WorkExperienceEntryDto, WorkExperienceEntry>()
                 .ForMember(
                     dest => dest.StartDate,
