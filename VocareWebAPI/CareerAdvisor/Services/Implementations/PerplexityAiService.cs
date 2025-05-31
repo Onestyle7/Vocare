@@ -240,7 +240,8 @@ namespace VocareWebAPI.Services
             return $$"""
                 Jesteś doradcą zawodowym. Na podstawie poniższych danych użytkownika:
                 - Imię: {{profile.FirstName}} {{profile.LastName}}
-                - Umiejętności: {{string.Join(", ", profile.Skills)}}
+                - Umiejętności: {{string.Join(", ", profile.Skills)}},
+                - Umiejętności miękkie: {{string.Join(", ", profile.SoftSkills)}},
                 - Doświadczenie zawodowe:
                 {{(
                     profile.WorkExperience != null

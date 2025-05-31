@@ -13,8 +13,8 @@ using VocareWebAPI.Data;
 namespace VocareWebAPI.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20250526192006_UpdateModels")]
-    partial class UpdateModels
+    [Migration("20250531082919_InitialCreate")]
+    partial class InitialCreate
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -631,6 +631,10 @@ namespace VocareWebAPI.Migrations
                         .HasColumnType("text");
 
                     b.PrimitiveCollection<List<string>>("Skills")
+                        .IsRequired()
+                        .HasColumnType("text[]");
+
+                    b.PrimitiveCollection<List<string>>("SoftSkills")
                         .IsRequired()
                         .HasColumnType("text[]");
 
