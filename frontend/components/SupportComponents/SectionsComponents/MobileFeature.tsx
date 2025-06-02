@@ -1,15 +1,20 @@
 'use client';
 import React, { useRef, useEffect } from 'react';
 import { ScrollParallax } from 'react-just-parallax';
-import { ArrowRight, Search, CheckCircle, ListChecks } from 'lucide-react';
+import { Search, CheckCircle, ListChecks } from 'lucide-react';
+import { SplitText, ScrollTrigger } from 'gsap/all';
 
 import { gsap } from 'gsap';
-import { avatars, mobileView } from '@/app/constants';
+import { avatars, mobileView, shape1 } from '@/app/constants';
 import Section from '../Section';
-import AnimatedHeadline from '../AnimatedText';
 import Iphone15Pro from '@/components/magicui/iphone-15-pro';
 import { AvatarCircles } from '@/components/magicui/avatar-circles';
 import CustomButton from '@/components/ui/CustomButton';
+import Image from 'next/image';
+import { animateTextLines } from '@/app/constants/animation';
+import Copy from '../Copy';
+
+gsap.registerPlugin(SplitText, ScrollTrigger);
 
 const MobileFeature = () => {
   const parallaxRef = useRef<HTMLDivElement>(null);
@@ -123,19 +128,50 @@ const MobileFeature = () => {
     };
   }, []);
 
+  useEffect(() => {
+    if (typeof window === 'undefined') return;
+
+    const cleanup = animateTextLines('#split-mobile', {
+      duration: 0.8,
+      stagger: 0.2,
+      ease: 'power2.out',
+      scrollTrigger: {
+        start: 'top 85%',
+        end: 'bottom 20%',
+        toggleActions: 'play none none reset',
+      },
+    });
+
+    return cleanup;
+  }, []);
+
   return (
-    <Section crosses customPaddings className="relative px-10" crossesOffset id="brain">
+    <Section
+      crosses
+      customPaddings
+      className="relative px-10 max-md:mt-14"
+      crossesOffset
+      id="brain"
+    >
+      <ScrollParallax isAbsolutelyPositioned zIndex={-20}>
+        <div className="absolute top-1/4 left-2 z-20 max-sm:-left-10 xl:bottom-1/5">
+          <Image src={shape1} alt="shape" width={78} height={78} className="-rotate-20" />
+        </div>
+        <div className="absolute right-2 bottom-1/4 z-20 max-sm:-right-10 xl:bottom-1/5">
+          <Image src={shape1} alt="shape" width={78} height={78} className="-rotate-20" />
+        </div>
+      </ScrollParallax>
       <div className="mt-4 min-h-screen xl:border-t xl:border-b">
         <div className="relative mx-[10%] mb-8 flex flex-col items-center gap-5">
-          <h2 className="mt-[36px] text-sm uppercase md:text-[10px]">Always in Your pocket</h2>
-          <div className="mt-5 text-center text-4xl font-bold uppercase md:text-[6rem] xl:leading-[0.8]">
-            <AnimatedHeadline
-              lines={['Take Your', 'advisor', 'with You']}
-              className="items-center max-md:items-center"
-            />
-          </div>
+          <h2 className="mt-[36px] text-sm uppercase md:text-[12px]">Always in Your pocket</h2>
+          <Copy>
+            <h1 className="font-poppins text-color mt-5 text-center text-4xl font-bold uppercase md:text-[4rem] xl:leading-[0.8]">
+              Your advisor <br /> always with you
+            </h1>
+          </Copy>
+
           <div className="mt-10 flex h-[45dvh] w-full flex-col items-center justify-center lg:flex-row">
-            <div className="flex h-full w-full flex-col max-md:space-y-12 lg:flex-row">
+            <div className="flex h-full w-full flex-col max-xl:space-x-20 max-lg:space-y-12 max-lg:space-x-0 lg:flex-row">
               <div className="relative flex h-full lg:w-1/2" ref={parallaxRef}>
                 <Iphone15Pro className="size-full" src={mobileView} />
                 <ScrollParallax isAbsolutelyPositioned>
@@ -160,21 +196,13 @@ const MobileFeature = () => {
                 </ScrollParallax>
               </div>
               <div className="flex h-full flex-col items-center justify-center text-xl font-light sm:text-3xl lg:w-1/2">
-                <p className="font-poppins">
-                  Discover your perfect <strong>career</strong> path with our mobile application Get
-                  personalized advice, insights, and recommendations tailored to your skills and
-                  aspirations—right at your fingertips. Start your journey today!
-                </p>
-                <div className="flex w-full max-md:items-center max-md:justify-center">
-                  <CustomButton
-                    variant="outline"
-                    className="group flex scale-90 cursor-none items-center justify-center overflow-hidden max-md:mt-8 max-md:w-full xl:mt-8"
-                  >
-                    <span className="flex flex-row items-center justify-center text-lg">
-                      Try it out
-                      <ArrowRight className="ml-2 transition-transform duration-300 group-hover:translate-x-2" />
-                    </span>
-                  </CustomButton>
+                <div className="overflow-hidden p-2">
+                  <Copy>
+                    <h3 className="font-poppins mx-0 text-3xl leading-[1.2]">
+                      Unlock your future with our mobile app, designed to guide you through every
+                      step of your career journey.
+                    </h3>
+                  </Copy>
                 </div>
               </div>
             </div>

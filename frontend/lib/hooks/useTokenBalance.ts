@@ -1,7 +1,7 @@
 import { useEffect, useState, useCallback } from 'react';
 import axios from 'axios';
 
-const API_URL = 'https://vocare-production-e568.up.railway.app';
+const API_URL = process.env.NEXT_PUBLIC_API_URL;
 
 export const useTokenBalance = () => {
   const [tokenBalance, setTokenBalance] = useState<number | string>(0);

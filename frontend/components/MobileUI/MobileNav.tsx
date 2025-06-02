@@ -10,6 +10,7 @@ import { gsap } from 'gsap';
 import ThemeSwitch from '../SupportComponents/ThemeSwitch';
 import { TokenCounter } from '../PricingComponents/TokenCounter';
 import Image from 'next/image';
+import { Badge } from '../ui/badge';
 
 interface MobileNavProps {
   isAuthenticated: boolean;
@@ -90,20 +91,36 @@ const MobileNav: React.FC<MobileNavProps> = ({ isAuthenticated }) => {
       </SheetTrigger>
       <SheetContent side="top" className="h-full">
         <SheetTitle className="hidden">Vocare</SheetTitle>
+
         <ul className="mt-10 flex h-full flex-col items-center justify-center space-y-4">
-          {filteredLinks.map(({ label, url }) => (
+          {filteredLinks.map(({ label, url, disabled }) => (
             <li key={label}>
-              <SheetClose asChild>
-                <Link
-                  href={url}
-                  className={cn(
-                    'text-[18px] font-normal uppercase',
-                    pathname === url && 'underline'
-                  )}
+              {disabled ? (
+                <div
+                  className="relative cursor-not-allowed text-[18px] font-normal uppercase opacity-50"
+                  title="Coming soon"
                 >
                   {label}
-                </Link>
-              </SheetClose>
+                  <Badge
+                    variant="outline"
+                    className="absolute -top-2 -right-12 scale-75 sm:-right-10"
+                  >
+                    soon
+                  </Badge>
+                </div>
+              ) : (
+                <SheetClose asChild>
+                  <Link
+                    href={url}
+                    className={cn(
+                      'text-[18px] font-normal uppercase',
+                      pathname === url && 'underline'
+                    )}
+                  >
+                    {label}
+                  </Link>
+                </SheetClose>
+              )}
             </li>
           ))}
           {!isAuthenticated && (
