@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.VisualBasic;
 using VocareWebAPI.UserManagement.Models.Dtos;
 using VocareWebAPI.UserManagement.Models.Enums;
 
@@ -32,6 +33,7 @@ namespace VocareWebAPI.Models.Dtos
         public List<WorkExperienceEntryDto>? WorkExperience { get; set; }
 
         public List<string>? Skills { get; set; }
+        public List<string>? SoftSkills { get; set; }
 
         public List<CertificateEntryDto>? Certificates { get; set; }
 
@@ -48,5 +50,6 @@ namespace VocareWebAPI.Models.Dtos
             ErrorMessage = "Typ osobowości musi być liczbą od 1 do 17. Gdzie 17 = nie wiem"
         )]
         public PersonalityType? PersonalityType { get; set; }
+        public FinancialSurveyDto? FinancialSurvey { get; set; }
     }
 }

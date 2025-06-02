@@ -13,15 +13,15 @@ using VocareWebAPI.Data;
 namespace VocareWebAPI.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20250514193214_InitialCreate")]
-    partial class InitialCreate
+    [Migration("20250531100043_AddFinancialSurveyToUserProfile")]
+    partial class AddFinancialSurveyToUserProfile
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasDefaultSchema("Identity")
+                .HasDefaultSchema("public")
                 .HasAnnotation("ProductVersion", "9.0.3")
                 .HasAnnotation("Relational:MaxIdentifierLength", 63);
 
@@ -50,7 +50,7 @@ namespace VocareWebAPI.Migrations
                         .IsUnique()
                         .HasDatabaseName("RoleNameIndex");
 
-                    b.ToTable("AspNetRoles", "Identity");
+                    b.ToTable("AspNetRoles", "public");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
@@ -75,7 +75,7 @@ namespace VocareWebAPI.Migrations
 
                     b.HasIndex("RoleId");
 
-                    b.ToTable("AspNetRoleClaims", "Identity");
+                    b.ToTable("AspNetRoleClaims", "public");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserClaim<string>", b =>
@@ -100,7 +100,7 @@ namespace VocareWebAPI.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("AspNetUserClaims", "Identity");
+                    b.ToTable("AspNetUserClaims", "public");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserLogin<string>", b =>
@@ -122,7 +122,7 @@ namespace VocareWebAPI.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("AspNetUserLogins", "Identity");
+                    b.ToTable("AspNetUserLogins", "public");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserRole<string>", b =>
@@ -137,7 +137,7 @@ namespace VocareWebAPI.Migrations
 
                     b.HasIndex("RoleId");
 
-                    b.ToTable("AspNetUserRoles", "Identity");
+                    b.ToTable("AspNetUserRoles", "public");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserToken<string>", b =>
@@ -156,7 +156,7 @@ namespace VocareWebAPI.Migrations
 
                     b.HasKey("UserId", "LoginProvider", "Name");
 
-                    b.ToTable("AspNetUserTokens", "Identity");
+                    b.ToTable("AspNetUserTokens", "public");
                 });
 
             modelBuilder.Entity("VocareWebAPI.Billing.Models.Entities.ServiceCost", b =>
@@ -176,7 +176,7 @@ namespace VocareWebAPI.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("ServiceCosts", "Identity");
+                    b.ToTable("ServiceCosts", "public");
 
                     b.HasData(
                         new
@@ -232,7 +232,7 @@ namespace VocareWebAPI.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("TokenTransactions", "Identity");
+                    b.ToTable("TokenTransactions", "public");
                 });
 
             modelBuilder.Entity("VocareWebAPI.Billing.Models.Entities.UserBilling", b =>
@@ -263,7 +263,7 @@ namespace VocareWebAPI.Migrations
 
                     b.HasKey("UserId");
 
-                    b.ToTable("UserBillings", "Identity");
+                    b.ToTable("UserBillings", "public");
                 });
 
             modelBuilder.Entity("VocareWebAPI.CvGenerator.Models.GeneratedCv", b =>
@@ -296,7 +296,7 @@ namespace VocareWebAPI.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("GeneratedCvs", "Identity");
+                    b.ToTable("GeneratedCvs", "public");
                 });
 
             modelBuilder.Entity("VocareWebAPI.Models.AiRecommendation", b =>
@@ -333,7 +333,7 @@ namespace VocareWebAPI.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("AiRecommendations", "Identity");
+                    b.ToTable("AiRecommendations", "public");
                 });
 
             modelBuilder.Entity("VocareWebAPI.Models.Entities.CareerPath", b =>
@@ -383,7 +383,7 @@ namespace VocareWebAPI.Migrations
 
                     b.HasIndex("SwotAnalysisId");
 
-                    b.ToTable("CareerPath", "Identity");
+                    b.ToTable("CareerPath", "public");
                 });
 
             modelBuilder.Entity("VocareWebAPI.Models.Entities.MarketAnalysis.CareerStatistics", b =>
@@ -419,7 +419,7 @@ namespace VocareWebAPI.Migrations
 
                     b.HasIndex("AiRecommendationId");
 
-                    b.ToTable("CareerStatistics", "Identity");
+                    b.ToTable("CareerStatistics", "public");
                 });
 
             modelBuilder.Entity("VocareWebAPI.Models.Entities.MarketAnalysis.MarketTrends", b =>
@@ -453,7 +453,7 @@ namespace VocareWebAPI.Migrations
 
                     b.HasIndex("AiRecommendationId");
 
-                    b.ToTable("MarketTrends", "Identity");
+                    b.ToTable("MarketTrends", "public");
                 });
 
             modelBuilder.Entity("VocareWebAPI.Models.Entities.MarketAnalysis.SkillDemand", b =>
@@ -484,7 +484,7 @@ namespace VocareWebAPI.Migrations
 
                     b.HasIndex("AiRecommendationId");
 
-                    b.ToTable("SkillDemand", "Identity");
+                    b.ToTable("SkillDemand", "public");
                 });
 
             modelBuilder.Entity("VocareWebAPI.Models.Entities.NextStep", b =>
@@ -504,7 +504,7 @@ namespace VocareWebAPI.Migrations
 
                     b.HasIndex("AiRecommendationId");
 
-                    b.ToTable("NextStep", "Identity");
+                    b.ToTable("NextStep", "public");
                 });
 
             modelBuilder.Entity("VocareWebAPI.Models.Entities.SwotAnalysis", b =>
@@ -531,7 +531,7 @@ namespace VocareWebAPI.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("SwotAnalysis", "Identity");
+                    b.ToTable("SwotAnalysis", "public");
                 });
 
             modelBuilder.Entity("VocareWebAPI.Models.Entities.User", b =>
@@ -595,7 +595,7 @@ namespace VocareWebAPI.Migrations
                         .IsUnique()
                         .HasDatabaseName("UserNameIndex");
 
-                    b.ToTable("AspNetUsers", "Identity");
+                    b.ToTable("AspNetUsers", "public");
                 });
 
             modelBuilder.Entity("VocareWebAPI.Models.Entities.UserProfile", b =>
@@ -634,9 +634,13 @@ namespace VocareWebAPI.Migrations
                         .IsRequired()
                         .HasColumnType("text[]");
 
+                    b.PrimitiveCollection<List<string>>("SoftSkills")
+                        .IsRequired()
+                        .HasColumnType("text[]");
+
                     b.HasKey("UserId");
 
-                    b.ToTable("UserProfiles", "Identity");
+                    b.ToTable("UserProfiles", "public");
                 });
 
             modelBuilder.Entity("VocareWebAPI.UserManagement.Models.Entities.CertificateEntry", b =>
@@ -664,7 +668,7 @@ namespace VocareWebAPI.Migrations
 
                     b.HasIndex("UserProfileUserId");
 
-                    b.ToTable("CertificateEntry", "Identity");
+                    b.ToTable("CertificateEntry", "public");
                 });
 
             modelBuilder.Entity("VocareWebAPI.UserManagement.Models.Entities.EducationEntry", b =>
@@ -700,7 +704,35 @@ namespace VocareWebAPI.Migrations
 
                     b.HasIndex("UserProfileUserId");
 
-                    b.ToTable("EducationEntry", "Identity");
+                    b.ToTable("EducationEntry", "public");
+                });
+
+            modelBuilder.Entity("VocareWebAPI.UserManagement.Models.Entities.FinancialSurvey", b =>
+                {
+                    b.Property<string>("UserId")
+                        .HasColumnType("text");
+
+                    b.Property<decimal?>("CurrentSalary")
+                        .HasColumnType("numeric");
+
+                    b.Property<decimal?>("DesiredSalary")
+                        .HasColumnType("numeric");
+
+                    b.Property<bool>("HasLoans")
+                        .HasColumnType("boolean");
+
+                    b.Property<string>("LoanDetails")
+                        .HasColumnType("text");
+
+                    b.Property<int>("RiskAppetite")
+                        .HasColumnType("integer");
+
+                    b.Property<bool>("WillingToRelocate")
+                        .HasColumnType("boolean");
+
+                    b.HasKey("UserId");
+
+                    b.ToTable("FinancialSurveys", "public");
                 });
 
             modelBuilder.Entity("VocareWebAPI.UserManagement.Models.Entities.LanguageEntry", b =>
@@ -726,7 +758,7 @@ namespace VocareWebAPI.Migrations
 
                     b.HasIndex("UserProfileUserId");
 
-                    b.ToTable("LanguageEntry", "Identity");
+                    b.ToTable("LanguageEntry", "public");
                 });
 
             modelBuilder.Entity("VocareWebAPI.UserManagement.Models.Entities.WorkExperienceEntry", b =>
@@ -765,7 +797,7 @@ namespace VocareWebAPI.Migrations
 
                     b.HasIndex("UserProfileUserId");
 
-                    b.ToTable("WorkExperienceEntry", "Identity");
+                    b.ToTable("WorkExperienceEntry", "public");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
@@ -936,6 +968,17 @@ namespace VocareWebAPI.Migrations
                         .OnDelete(DeleteBehavior.Cascade);
                 });
 
+            modelBuilder.Entity("VocareWebAPI.UserManagement.Models.Entities.FinancialSurvey", b =>
+                {
+                    b.HasOne("VocareWebAPI.Models.Entities.UserProfile", "UserProfile")
+                        .WithOne("FinancialSurvey")
+                        .HasForeignKey("VocareWebAPI.UserManagement.Models.Entities.FinancialSurvey", "UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("UserProfile");
+                });
+
             modelBuilder.Entity("VocareWebAPI.UserManagement.Models.Entities.LanguageEntry", b =>
                 {
                     b.HasOne("VocareWebAPI.Models.Entities.UserProfile", null)
@@ -981,6 +1024,8 @@ namespace VocareWebAPI.Migrations
                     b.Navigation("Certificates");
 
                     b.Navigation("Education");
+
+                    b.Navigation("FinancialSurvey");
 
                     b.Navigation("Languages");
 

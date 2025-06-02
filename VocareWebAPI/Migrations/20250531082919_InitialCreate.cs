@@ -16,11 +16,11 @@ namespace VocareWebAPI.Migrations
         protected override void Up(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.EnsureSchema(
-                name: "Identity");
+                name: "public");
 
             migrationBuilder.CreateTable(
                 name: "AspNetRoles",
-                schema: "Identity",
+                schema: "public",
                 columns: table => new
                 {
                     Id = table.Column<string>(type: "text", nullable: false),
@@ -35,7 +35,7 @@ namespace VocareWebAPI.Migrations
 
             migrationBuilder.CreateTable(
                 name: "AspNetUsers",
-                schema: "Identity",
+                schema: "public",
                 columns: table => new
                 {
                     Id = table.Column<string>(type: "text", nullable: false),
@@ -61,7 +61,7 @@ namespace VocareWebAPI.Migrations
 
             migrationBuilder.CreateTable(
                 name: "ServiceCosts",
-                schema: "Identity",
+                schema: "public",
                 columns: table => new
                 {
                     Id = table.Column<int>(type: "integer", nullable: false)
@@ -76,7 +76,7 @@ namespace VocareWebAPI.Migrations
 
             migrationBuilder.CreateTable(
                 name: "SwotAnalysis",
-                schema: "Identity",
+                schema: "public",
                 columns: table => new
                 {
                     Id = table.Column<Guid>(type: "uuid", nullable: false),
@@ -92,7 +92,7 @@ namespace VocareWebAPI.Migrations
 
             migrationBuilder.CreateTable(
                 name: "TokenTransactions",
-                schema: "Identity",
+                schema: "public",
                 columns: table => new
                 {
                     Id = table.Column<int>(type: "integer", nullable: false)
@@ -110,7 +110,7 @@ namespace VocareWebAPI.Migrations
 
             migrationBuilder.CreateTable(
                 name: "AspNetRoleClaims",
-                schema: "Identity",
+                schema: "public",
                 columns: table => new
                 {
                     Id = table.Column<int>(type: "integer", nullable: false)
@@ -125,7 +125,7 @@ namespace VocareWebAPI.Migrations
                     table.ForeignKey(
                         name: "FK_AspNetRoleClaims_AspNetRoles_RoleId",
                         column: x => x.RoleId,
-                        principalSchema: "Identity",
+                        principalSchema: "public",
                         principalTable: "AspNetRoles",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
@@ -133,7 +133,7 @@ namespace VocareWebAPI.Migrations
 
             migrationBuilder.CreateTable(
                 name: "AspNetUserClaims",
-                schema: "Identity",
+                schema: "public",
                 columns: table => new
                 {
                     Id = table.Column<int>(type: "integer", nullable: false)
@@ -148,7 +148,7 @@ namespace VocareWebAPI.Migrations
                     table.ForeignKey(
                         name: "FK_AspNetUserClaims_AspNetUsers_UserId",
                         column: x => x.UserId,
-                        principalSchema: "Identity",
+                        principalSchema: "public",
                         principalTable: "AspNetUsers",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
@@ -156,7 +156,7 @@ namespace VocareWebAPI.Migrations
 
             migrationBuilder.CreateTable(
                 name: "AspNetUserLogins",
-                schema: "Identity",
+                schema: "public",
                 columns: table => new
                 {
                     LoginProvider = table.Column<string>(type: "text", nullable: false),
@@ -170,7 +170,7 @@ namespace VocareWebAPI.Migrations
                     table.ForeignKey(
                         name: "FK_AspNetUserLogins_AspNetUsers_UserId",
                         column: x => x.UserId,
-                        principalSchema: "Identity",
+                        principalSchema: "public",
                         principalTable: "AspNetUsers",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
@@ -178,7 +178,7 @@ namespace VocareWebAPI.Migrations
 
             migrationBuilder.CreateTable(
                 name: "AspNetUserRoles",
-                schema: "Identity",
+                schema: "public",
                 columns: table => new
                 {
                     UserId = table.Column<string>(type: "text", nullable: false),
@@ -190,14 +190,14 @@ namespace VocareWebAPI.Migrations
                     table.ForeignKey(
                         name: "FK_AspNetUserRoles_AspNetRoles_RoleId",
                         column: x => x.RoleId,
-                        principalSchema: "Identity",
+                        principalSchema: "public",
                         principalTable: "AspNetRoles",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
                         name: "FK_AspNetUserRoles_AspNetUsers_UserId",
                         column: x => x.UserId,
-                        principalSchema: "Identity",
+                        principalSchema: "public",
                         principalTable: "AspNetUsers",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
@@ -205,7 +205,7 @@ namespace VocareWebAPI.Migrations
 
             migrationBuilder.CreateTable(
                 name: "AspNetUserTokens",
-                schema: "Identity",
+                schema: "public",
                 columns: table => new
                 {
                     UserId = table.Column<string>(type: "text", nullable: false),
@@ -219,7 +219,7 @@ namespace VocareWebAPI.Migrations
                     table.ForeignKey(
                         name: "FK_AspNetUserTokens_AspNetUsers_UserId",
                         column: x => x.UserId,
-                        principalSchema: "Identity",
+                        principalSchema: "public",
                         principalTable: "AspNetUsers",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
@@ -227,7 +227,7 @@ namespace VocareWebAPI.Migrations
 
             migrationBuilder.CreateTable(
                 name: "GeneratedCvs",
-                schema: "Identity",
+                schema: "public",
                 columns: table => new
                 {
                     Id = table.Column<Guid>(type: "uuid", nullable: false),
@@ -243,7 +243,7 @@ namespace VocareWebAPI.Migrations
                     table.ForeignKey(
                         name: "FK_GeneratedCvs_AspNetUsers_UserId",
                         column: x => x.UserId,
-                        principalSchema: "Identity",
+                        principalSchema: "public",
                         principalTable: "AspNetUsers",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
@@ -251,7 +251,7 @@ namespace VocareWebAPI.Migrations
 
             migrationBuilder.CreateTable(
                 name: "UserBillings",
-                schema: "Identity",
+                schema: "public",
                 columns: table => new
                 {
                     UserId = table.Column<string>(type: "text", nullable: false),
@@ -269,7 +269,7 @@ namespace VocareWebAPI.Migrations
                     table.ForeignKey(
                         name: "FK_UserBillings_AspNetUsers_UserId",
                         column: x => x.UserId,
-                        principalSchema: "Identity",
+                        principalSchema: "public",
                         principalTable: "AspNetUsers",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
@@ -277,7 +277,7 @@ namespace VocareWebAPI.Migrations
 
             migrationBuilder.CreateTable(
                 name: "UserProfiles",
-                schema: "Identity",
+                schema: "public",
                 columns: table => new
                 {
                     UserId = table.Column<string>(type: "text", nullable: false),
@@ -289,7 +289,8 @@ namespace VocareWebAPI.Migrations
                     Skills = table.Column<List<string>>(type: "text[]", nullable: false),
                     AdditionalInformation = table.Column<string>(type: "text", nullable: true),
                     AboutMe = table.Column<string>(type: "text", nullable: true),
-                    PersonalityType = table.Column<int>(type: "integer", nullable: false)
+                    PersonalityType = table.Column<int>(type: "integer", nullable: false),
+                    SoftSkills = table.Column<List<string>>(type: "text[]", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -297,7 +298,7 @@ namespace VocareWebAPI.Migrations
                     table.ForeignKey(
                         name: "FK_UserProfiles_AspNetUsers_UserId",
                         column: x => x.UserId,
-                        principalSchema: "Identity",
+                        principalSchema: "public",
                         principalTable: "AspNetUsers",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
@@ -305,7 +306,7 @@ namespace VocareWebAPI.Migrations
 
             migrationBuilder.CreateTable(
                 name: "AiRecommendations",
-                schema: "Identity",
+                schema: "public",
                 columns: table => new
                 {
                     Id = table.Column<Guid>(type: "uuid", nullable: false),
@@ -322,13 +323,13 @@ namespace VocareWebAPI.Migrations
                     table.ForeignKey(
                         name: "FK_AiRecommendations_AiRecommendations_AiRecommendationId",
                         column: x => x.AiRecommendationId,
-                        principalSchema: "Identity",
+                        principalSchema: "public",
                         principalTable: "AiRecommendations",
                         principalColumn: "Id");
                     table.ForeignKey(
                         name: "FK_AiRecommendations_UserProfiles_UserId",
                         column: x => x.UserId,
-                        principalSchema: "Identity",
+                        principalSchema: "public",
                         principalTable: "UserProfiles",
                         principalColumn: "UserId",
                         onDelete: ReferentialAction.Cascade);
@@ -336,7 +337,7 @@ namespace VocareWebAPI.Migrations
 
             migrationBuilder.CreateTable(
                 name: "CertificateEntry",
-                schema: "Identity",
+                schema: "public",
                 columns: table => new
                 {
                     Id = table.Column<int>(type: "integer", nullable: false)
@@ -352,7 +353,7 @@ namespace VocareWebAPI.Migrations
                     table.ForeignKey(
                         name: "FK_CertificateEntry_UserProfiles_UserProfileUserId",
                         column: x => x.UserProfileUserId,
-                        principalSchema: "Identity",
+                        principalSchema: "public",
                         principalTable: "UserProfiles",
                         principalColumn: "UserId",
                         onDelete: ReferentialAction.Cascade);
@@ -360,7 +361,7 @@ namespace VocareWebAPI.Migrations
 
             migrationBuilder.CreateTable(
                 name: "EducationEntry",
-                schema: "Identity",
+                schema: "public",
                 columns: table => new
                 {
                     Id = table.Column<int>(type: "integer", nullable: false)
@@ -378,7 +379,7 @@ namespace VocareWebAPI.Migrations
                     table.ForeignKey(
                         name: "FK_EducationEntry_UserProfiles_UserProfileUserId",
                         column: x => x.UserProfileUserId,
-                        principalSchema: "Identity",
+                        principalSchema: "public",
                         principalTable: "UserProfiles",
                         principalColumn: "UserId",
                         onDelete: ReferentialAction.Cascade);
@@ -386,7 +387,7 @@ namespace VocareWebAPI.Migrations
 
             migrationBuilder.CreateTable(
                 name: "LanguageEntry",
-                schema: "Identity",
+                schema: "public",
                 columns: table => new
                 {
                     Id = table.Column<int>(type: "integer", nullable: false)
@@ -401,7 +402,7 @@ namespace VocareWebAPI.Migrations
                     table.ForeignKey(
                         name: "FK_LanguageEntry_UserProfiles_UserProfileUserId",
                         column: x => x.UserProfileUserId,
-                        principalSchema: "Identity",
+                        principalSchema: "public",
                         principalTable: "UserProfiles",
                         principalColumn: "UserId",
                         onDelete: ReferentialAction.Cascade);
@@ -409,7 +410,7 @@ namespace VocareWebAPI.Migrations
 
             migrationBuilder.CreateTable(
                 name: "WorkExperienceEntry",
-                schema: "Identity",
+                schema: "public",
                 columns: table => new
                 {
                     Id = table.Column<int>(type: "integer", nullable: false)
@@ -428,7 +429,7 @@ namespace VocareWebAPI.Migrations
                     table.ForeignKey(
                         name: "FK_WorkExperienceEntry_UserProfiles_UserProfileUserId",
                         column: x => x.UserProfileUserId,
-                        principalSchema: "Identity",
+                        principalSchema: "public",
                         principalTable: "UserProfiles",
                         principalColumn: "UserId",
                         onDelete: ReferentialAction.Cascade);
@@ -436,7 +437,7 @@ namespace VocareWebAPI.Migrations
 
             migrationBuilder.CreateTable(
                 name: "CareerStatistics",
-                schema: "Identity",
+                schema: "public",
                 columns: table => new
                 {
                     Id = table.Column<Guid>(type: "uuid", nullable: false),
@@ -454,7 +455,7 @@ namespace VocareWebAPI.Migrations
                     table.ForeignKey(
                         name: "FK_CareerStatistics_AiRecommendations_AiRecommendationId",
                         column: x => x.AiRecommendationId,
-                        principalSchema: "Identity",
+                        principalSchema: "public",
                         principalTable: "AiRecommendations",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
@@ -462,7 +463,7 @@ namespace VocareWebAPI.Migrations
 
             migrationBuilder.CreateTable(
                 name: "MarketTrends",
-                schema: "Identity",
+                schema: "public",
                 columns: table => new
                 {
                     Id = table.Column<Guid>(type: "uuid", nullable: false),
@@ -479,7 +480,7 @@ namespace VocareWebAPI.Migrations
                     table.ForeignKey(
                         name: "FK_MarketTrends_AiRecommendations_AiRecommendationId",
                         column: x => x.AiRecommendationId,
-                        principalSchema: "Identity",
+                        principalSchema: "public",
                         principalTable: "AiRecommendations",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
@@ -487,7 +488,7 @@ namespace VocareWebAPI.Migrations
 
             migrationBuilder.CreateTable(
                 name: "NextStep",
-                schema: "Identity",
+                schema: "public",
                 columns: table => new
                 {
                     Id = table.Column<Guid>(type: "uuid", nullable: false),
@@ -500,14 +501,14 @@ namespace VocareWebAPI.Migrations
                     table.ForeignKey(
                         name: "FK_NextStep_AiRecommendations_AiRecommendationId",
                         column: x => x.AiRecommendationId,
-                        principalSchema: "Identity",
+                        principalSchema: "public",
                         principalTable: "AiRecommendations",
                         principalColumn: "Id");
                 });
 
             migrationBuilder.CreateTable(
                 name: "SkillDemand",
-                schema: "Identity",
+                schema: "public",
                 columns: table => new
                 {
                     Id = table.Column<Guid>(type: "uuid", nullable: false),
@@ -523,7 +524,7 @@ namespace VocareWebAPI.Migrations
                     table.ForeignKey(
                         name: "FK_SkillDemand_AiRecommendations_AiRecommendationId",
                         column: x => x.AiRecommendationId,
-                        principalSchema: "Identity",
+                        principalSchema: "public",
                         principalTable: "AiRecommendations",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
@@ -531,7 +532,7 @@ namespace VocareWebAPI.Migrations
 
             migrationBuilder.CreateTable(
                 name: "CareerPath",
-                schema: "Identity",
+                schema: "public",
                 columns: table => new
                 {
                     Id = table.Column<Guid>(type: "uuid", nullable: false),
@@ -551,26 +552,26 @@ namespace VocareWebAPI.Migrations
                     table.ForeignKey(
                         name: "FK_CareerPath_AiRecommendations_AiRecommendationId",
                         column: x => x.AiRecommendationId,
-                        principalSchema: "Identity",
+                        principalSchema: "public",
                         principalTable: "AiRecommendations",
                         principalColumn: "Id");
                     table.ForeignKey(
                         name: "FK_CareerPath_CareerStatistics_CareerStatisticsId",
                         column: x => x.CareerStatisticsId,
-                        principalSchema: "Identity",
+                        principalSchema: "public",
                         principalTable: "CareerStatistics",
                         principalColumn: "Id");
                     table.ForeignKey(
                         name: "FK_CareerPath_SwotAnalysis_SwotAnalysisId",
                         column: x => x.SwotAnalysisId,
-                        principalSchema: "Identity",
+                        principalSchema: "public",
                         principalTable: "SwotAnalysis",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.InsertData(
-                schema: "Identity",
+                schema: "public",
                 table: "ServiceCosts",
                 columns: new[] { "Id", "ServiceName", "TokenCost" },
                 values: new object[,]
@@ -583,129 +584,129 @@ namespace VocareWebAPI.Migrations
 
             migrationBuilder.CreateIndex(
                 name: "IX_AiRecommendations_AiRecommendationId",
-                schema: "Identity",
+                schema: "public",
                 table: "AiRecommendations",
                 column: "AiRecommendationId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_AiRecommendations_UserId",
-                schema: "Identity",
+                schema: "public",
                 table: "AiRecommendations",
                 column: "UserId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_AspNetRoleClaims_RoleId",
-                schema: "Identity",
+                schema: "public",
                 table: "AspNetRoleClaims",
                 column: "RoleId");
 
             migrationBuilder.CreateIndex(
                 name: "RoleNameIndex",
-                schema: "Identity",
+                schema: "public",
                 table: "AspNetRoles",
                 column: "NormalizedName",
                 unique: true);
 
             migrationBuilder.CreateIndex(
                 name: "IX_AspNetUserClaims_UserId",
-                schema: "Identity",
+                schema: "public",
                 table: "AspNetUserClaims",
                 column: "UserId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_AspNetUserLogins_UserId",
-                schema: "Identity",
+                schema: "public",
                 table: "AspNetUserLogins",
                 column: "UserId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_AspNetUserRoles_RoleId",
-                schema: "Identity",
+                schema: "public",
                 table: "AspNetUserRoles",
                 column: "RoleId");
 
             migrationBuilder.CreateIndex(
                 name: "EmailIndex",
-                schema: "Identity",
+                schema: "public",
                 table: "AspNetUsers",
                 column: "NormalizedEmail");
 
             migrationBuilder.CreateIndex(
                 name: "UserNameIndex",
-                schema: "Identity",
+                schema: "public",
                 table: "AspNetUsers",
                 column: "NormalizedUserName",
                 unique: true);
 
             migrationBuilder.CreateIndex(
                 name: "IX_CareerPath_AiRecommendationId",
-                schema: "Identity",
+                schema: "public",
                 table: "CareerPath",
                 column: "AiRecommendationId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_CareerPath_CareerStatisticsId",
-                schema: "Identity",
+                schema: "public",
                 table: "CareerPath",
                 column: "CareerStatisticsId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_CareerPath_SwotAnalysisId",
-                schema: "Identity",
+                schema: "public",
                 table: "CareerPath",
                 column: "SwotAnalysisId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_CareerStatistics_AiRecommendationId",
-                schema: "Identity",
+                schema: "public",
                 table: "CareerStatistics",
                 column: "AiRecommendationId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_CertificateEntry_UserProfileUserId",
-                schema: "Identity",
+                schema: "public",
                 table: "CertificateEntry",
                 column: "UserProfileUserId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_EducationEntry_UserProfileUserId",
-                schema: "Identity",
+                schema: "public",
                 table: "EducationEntry",
                 column: "UserProfileUserId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_GeneratedCvs_UserId",
-                schema: "Identity",
+                schema: "public",
                 table: "GeneratedCvs",
                 column: "UserId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_LanguageEntry_UserProfileUserId",
-                schema: "Identity",
+                schema: "public",
                 table: "LanguageEntry",
                 column: "UserProfileUserId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_MarketTrends_AiRecommendationId",
-                schema: "Identity",
+                schema: "public",
                 table: "MarketTrends",
                 column: "AiRecommendationId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_NextStep_AiRecommendationId",
-                schema: "Identity",
+                schema: "public",
                 table: "NextStep",
                 column: "AiRecommendationId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_SkillDemand_AiRecommendationId",
-                schema: "Identity",
+                schema: "public",
                 table: "SkillDemand",
                 column: "AiRecommendationId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_WorkExperienceEntry_UserProfileUserId",
-                schema: "Identity",
+                schema: "public",
                 table: "WorkExperienceEntry",
                 column: "UserProfileUserId");
         }
@@ -715,95 +716,95 @@ namespace VocareWebAPI.Migrations
         {
             migrationBuilder.DropTable(
                 name: "AspNetRoleClaims",
-                schema: "Identity");
+                schema: "public");
 
             migrationBuilder.DropTable(
                 name: "AspNetUserClaims",
-                schema: "Identity");
+                schema: "public");
 
             migrationBuilder.DropTable(
                 name: "AspNetUserLogins",
-                schema: "Identity");
+                schema: "public");
 
             migrationBuilder.DropTable(
                 name: "AspNetUserRoles",
-                schema: "Identity");
+                schema: "public");
 
             migrationBuilder.DropTable(
                 name: "AspNetUserTokens",
-                schema: "Identity");
+                schema: "public");
 
             migrationBuilder.DropTable(
                 name: "CareerPath",
-                schema: "Identity");
+                schema: "public");
 
             migrationBuilder.DropTable(
                 name: "CertificateEntry",
-                schema: "Identity");
+                schema: "public");
 
             migrationBuilder.DropTable(
                 name: "EducationEntry",
-                schema: "Identity");
+                schema: "public");
 
             migrationBuilder.DropTable(
                 name: "GeneratedCvs",
-                schema: "Identity");
+                schema: "public");
 
             migrationBuilder.DropTable(
                 name: "LanguageEntry",
-                schema: "Identity");
+                schema: "public");
 
             migrationBuilder.DropTable(
                 name: "MarketTrends",
-                schema: "Identity");
+                schema: "public");
 
             migrationBuilder.DropTable(
                 name: "NextStep",
-                schema: "Identity");
+                schema: "public");
 
             migrationBuilder.DropTable(
                 name: "ServiceCosts",
-                schema: "Identity");
+                schema: "public");
 
             migrationBuilder.DropTable(
                 name: "SkillDemand",
-                schema: "Identity");
+                schema: "public");
 
             migrationBuilder.DropTable(
                 name: "TokenTransactions",
-                schema: "Identity");
+                schema: "public");
 
             migrationBuilder.DropTable(
                 name: "UserBillings",
-                schema: "Identity");
+                schema: "public");
 
             migrationBuilder.DropTable(
                 name: "WorkExperienceEntry",
-                schema: "Identity");
+                schema: "public");
 
             migrationBuilder.DropTable(
                 name: "AspNetRoles",
-                schema: "Identity");
+                schema: "public");
 
             migrationBuilder.DropTable(
                 name: "CareerStatistics",
-                schema: "Identity");
+                schema: "public");
 
             migrationBuilder.DropTable(
                 name: "SwotAnalysis",
-                schema: "Identity");
+                schema: "public");
 
             migrationBuilder.DropTable(
                 name: "AiRecommendations",
-                schema: "Identity");
+                schema: "public");
 
             migrationBuilder.DropTable(
                 name: "UserProfiles",
-                schema: "Identity");
+                schema: "public");
 
             migrationBuilder.DropTable(
                 name: "AspNetUsers",
-                schema: "Identity");
+                schema: "public");
         }
     }
 }

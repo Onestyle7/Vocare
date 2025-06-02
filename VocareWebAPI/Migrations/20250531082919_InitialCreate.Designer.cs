@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 using VocareWebAPI.Data;
@@ -12,9 +13,11 @@ using VocareWebAPI.Data;
 namespace VocareWebAPI.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250531082919_InitialCreate")]
+    partial class InitialCreate
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -704,34 +707,6 @@ namespace VocareWebAPI.Migrations
                     b.ToTable("EducationEntry", "public");
                 });
 
-            modelBuilder.Entity("VocareWebAPI.UserManagement.Models.Entities.FinancialSurvey", b =>
-                {
-                    b.Property<string>("UserId")
-                        .HasColumnType("text");
-
-                    b.Property<decimal?>("CurrentSalary")
-                        .HasColumnType("numeric");
-
-                    b.Property<decimal?>("DesiredSalary")
-                        .HasColumnType("numeric");
-
-                    b.Property<bool>("HasLoans")
-                        .HasColumnType("boolean");
-
-                    b.Property<string>("LoanDetails")
-                        .HasColumnType("text");
-
-                    b.Property<int>("RiskAppetite")
-                        .HasColumnType("integer");
-
-                    b.Property<bool>("WillingToRelocate")
-                        .HasColumnType("boolean");
-
-                    b.HasKey("UserId");
-
-                    b.ToTable("FinancialSurveys", "public");
-                });
-
             modelBuilder.Entity("VocareWebAPI.UserManagement.Models.Entities.LanguageEntry", b =>
                 {
                     b.Property<int>("Id")
@@ -965,17 +940,6 @@ namespace VocareWebAPI.Migrations
                         .OnDelete(DeleteBehavior.Cascade);
                 });
 
-            modelBuilder.Entity("VocareWebAPI.UserManagement.Models.Entities.FinancialSurvey", b =>
-                {
-                    b.HasOne("VocareWebAPI.Models.Entities.UserProfile", "UserProfile")
-                        .WithOne("FinancialSurvey")
-                        .HasForeignKey("VocareWebAPI.UserManagement.Models.Entities.FinancialSurvey", "UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("UserProfile");
-                });
-
             modelBuilder.Entity("VocareWebAPI.UserManagement.Models.Entities.LanguageEntry", b =>
                 {
                     b.HasOne("VocareWebAPI.Models.Entities.UserProfile", null)
@@ -1021,8 +985,6 @@ namespace VocareWebAPI.Migrations
                     b.Navigation("Certificates");
 
                     b.Navigation("Education");
-
-                    b.Navigation("FinancialSurvey");
 
                     b.Navigation("Languages");
 
