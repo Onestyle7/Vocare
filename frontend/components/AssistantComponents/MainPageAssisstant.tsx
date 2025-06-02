@@ -146,7 +146,7 @@ export default function AssistantPage() {
       try {
         try {
           const lastRecommendationResponse = await axios.get<AiCareerResponse>(
-            'https://localhost:8080/api/AI/last-recommendation',
+            'http://localhost:8080/api/AI/last-recommendation',
             {
               headers: {
                 Authorization: `Bearer ${token}`,
@@ -171,7 +171,7 @@ export default function AssistantPage() {
         }
 
         const response = await axios.get<AiCareerResponse>(
-          'https://localhost:8080/api/AI/recommendations',
+          'http://localhost:8080/api/AI/recommendations',
           {
             headers: {
               Authorization: `Bearer ${token}`,
@@ -223,7 +223,7 @@ export default function AssistantPage() {
     }
     try {
       const response = await axios.get<AiCareerResponse>(
-        'https://localhost:8080/api/AI/recommendations',
+        'http://localhost:8080/api/AI/recommendations',
         {
           headers: {
             Authorization: `Bearer ${token}`,

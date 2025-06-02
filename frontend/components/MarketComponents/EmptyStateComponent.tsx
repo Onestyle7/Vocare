@@ -163,7 +163,7 @@ export default function EmptyStateComponent({
               Generate market analysis?
             </AlertDialogTitle>
             <AlertDialogDescription className="text-center">
-              This will take <b className="text-[#915EFF]">50 credits</b> from your account.
+              This will take <b className="text-[#915EFF]">5 credits</b> from your account.
             </AlertDialogDescription>
 
             <div className="mt-2 text-center text-sm font-extralight">
@@ -180,7 +180,7 @@ export default function EmptyStateComponent({
               Cancel
             </AlertDialogCancel>
 
-            {!isBalanceLoading && typeof tokenBalance === 'number' && tokenBalance < 50 ? (
+            {!isBalanceLoading && typeof tokenBalance === 'number' && tokenBalance < 5 ? (
               <Link href="/pricing">
                 <AlertDialogAction
                   className="bg-[#915EFF] text-white hover:bg-[#7b4ee0]"

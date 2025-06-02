@@ -335,7 +335,7 @@ export default function MarketAnalysis() {
                     Generate new recommendation?
                   </AlertDialogTitle>
                   <AlertDialogDescription className="text-center">
-                    This will take <b className="text-[#915EFF]">50 credits</b> from Your account.
+                    This will take <b className="text-[#915EFF]">5 credits</b> from Your account.
                   </AlertDialogDescription>
 
                   <div className="mt-2 text-center text-sm font-extralight">
@@ -347,7 +347,7 @@ export default function MarketAnalysis() {
                 <AlertDialogFooter className="flex justify-center gap-4 sm:justify-center">
                   <AlertDialogCancel className="border-gray-200">Cancel</AlertDialogCancel>
 
-                  {!isBalanceLoading && typeof tokenBalance === 'number' && tokenBalance < 50 ? (
+                  {!isBalanceLoading && typeof tokenBalance === 'number' && tokenBalance < 5 ? (
                     <Link href="/pricing">
                       <AlertDialogAction
                         className="bg-[#915EFF] text-white hover:bg-[#7b4ee0]"

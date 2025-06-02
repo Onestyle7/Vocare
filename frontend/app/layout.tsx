@@ -85,14 +85,14 @@ export default function RootLayout({
   return (
     <html lang="en" suppressHydrationWarning>
       <body className={`${sizmoPro.className} h-full antialiased selection:bg-[#915EFF]`}>
-        <SmoothScrollProvider>
+        {/* <SmoothScrollProvider> */}
           <TokenBalanceProvider>
             <ThemeProvider attribute="class" defaultTheme="dark">
               {children}
               <Toaster />
             </ThemeProvider>
           </TokenBalanceProvider>
-        </SmoothScrollProvider>
+        {/* </SmoothScrollProvider> */}
       </body>
     </html>
   );
