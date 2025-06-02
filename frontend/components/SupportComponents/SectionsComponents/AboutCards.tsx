@@ -5,7 +5,7 @@ import { gsap } from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import AboutCard from '@/components/GhostComponents/AboutCard';
 import Section from '@/components/SupportComponents/Section';
-import { plus, shape1 } from '@/app/constants';
+import { aboutCardsData, plus, shape1 } from '@/app/constants';
 import { ScrollParallax } from 'react-just-parallax';
 import Image from 'next/image';
 
@@ -71,12 +71,12 @@ const AboutCards = () => {
 
       <div ref={containerRef} className="main-font-color relative flex lg:w-full">
         <div className="mx-8 flex w-full flex-col items-center justify-center max-lg:space-y-4 lg:flex-row lg:space-x-4">
-          {[...Array(3)].map((_, i) => (
-            <div className="about-card z-30" key={i}>
+          {aboutCardsData.map((cardData, index) => (
+            <div className="about-card z-30" key={index}>
               <AboutCard
-                img={plus}
-                title="Beginners friendly"
-                description="Jump right in! Our resources cater to all skill levels, ensuring a smooth learning curve for newcomers."
+                img={cardData.img}
+                title={cardData.title}
+                description={cardData.description}
               />
             </div>
           ))}

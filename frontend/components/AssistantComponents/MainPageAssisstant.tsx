@@ -286,138 +286,138 @@ export default function AssistantPage() {
       customPaddings
       id="profile"
     >
-      <div className='xl:border-t xl:mt-16 xl:mx-10 xl:border-r xl:border-l'>
-    <div className="font-poppins mx-auto flex max-w-7xl flex-col items-center justify-center p-4 md:p-8">
-      <h2 className="mb-4 ml-4 text-2xl font-bold text-[#915EFF]">Carrer Recommendation</h2>
-      <div>
-        {/* Main recommendation section */}
-        <div className="mb-1 flex flex-col overflow-hidden rounded-[28px] border shadow-sm md:flex-row">
-          <div className="flex items-center justify-center bg-[#915EFF] p-4 md:w-1/6 md:p-8">
-            <span className="text-4xl font-bold text-white md:text-6xl" id="num">
-              1
-            </span>
-          </div>
-          <div className="p-4 md:w-5/6 md:p-6">
-            <div className="flex flex-row items-center justify-between">
-              <h2 className="mb-3 text-xl font-semibold">Main Recommendation</h2>
-              <CollapsibleButton isCollapsed={isCollapsed} toggleCollapse={toggleCollapse} />
-            </div>
-
-            <h3 className="text-lg font-medium text-[#915EFF]">
-              {recommendations.recommendation.primaryPath}
-            </h3>
-
-            <p className="text-gray-500">{recommendations.recommendation.justification}</p>
-
-            <div
-              ref={contentWrapperRef}
-              className="overflow-hidden"
-              style={{
-                height: isCollapsed ? 0 : 'auto',
-                opacity: isCollapsed ? 0 : 1,
-                visibility: isCollapsed ? 'hidden' : 'visible',
-              }}
-            >
-              <div ref={contentRef} className="space-y-3">
-                <div className="mt-4">
-                  <h4 className="font-medium">Kolejne kroki:</h4>
-                  <ul className="mt-2 list-disc space-y-1 pl-5">
-                    {recommendations.recommendation.nextSteps.map((step: string, index: number) => (
-                      <li key={index}>{step}</li>
-                    ))}
-                  </ul>
+      <div className="xl:mx-10 xl:mt-16 xl:border-t xl:border-r xl:border-l">
+        <div className="font-poppins mx-auto flex max-w-7xl flex-col items-center justify-center p-4 md:p-8">
+          <h2 className="mb-4 ml-4 text-2xl font-bold text-[#915EFF]">Carrer Recommendation</h2>
+          <div>
+            {/* Main recommendation section */}
+            <div className="mb-1 flex flex-col overflow-hidden rounded-[28px] border shadow-sm md:flex-row">
+              <div className="flex items-center justify-center bg-[#915EFF] p-4 md:w-1/6 md:p-8">
+                <span className="text-4xl font-bold text-white md:text-6xl" id="num">
+                  1
+                </span>
+              </div>
+              <div className="p-4 md:w-5/6 md:p-6">
+                <div className="flex flex-row items-center justify-between">
+                  <h2 className="mb-3 text-xl font-semibold">Main Recommendation</h2>
+                  <CollapsibleButton isCollapsed={isCollapsed} toggleCollapse={toggleCollapse} />
                 </div>
-                <Separator />
-                <div className="mt-4">
-                  <h4 className="font-medium">Cel długoterminowy:</h4>
-                  <p className="mt-1">{recommendations.recommendation.longTermGoal}</p>
+
+                <h3 className="text-lg font-medium text-[#915EFF]">
+                  {recommendations.recommendation.primaryPath}
+                </h3>
+
+                <p className="text-gray-500">{recommendations.recommendation.justification}</p>
+
+                <div
+                  ref={contentWrapperRef}
+                  className="overflow-hidden"
+                  style={{
+                    height: isCollapsed ? 0 : 'auto',
+                    opacity: isCollapsed ? 0 : 1,
+                    visibility: isCollapsed ? 'hidden' : 'visible',
+                  }}
+                >
+                  <div ref={contentRef} className="space-y-3">
+                    <div className="mt-4">
+                      <h4 className="font-medium">Kolejne kroki:</h4>
+                      <ul className="mt-2 list-disc space-y-1 pl-5">
+                        {recommendations.recommendation.nextSteps.map(
+                          (step: string, index: number) => (
+                            <li key={index}>{step}</li>
+                          )
+                        )}
+                      </ul>
+                    </div>
+                    <Separator />
+                    <div className="mt-4">
+                      <h4 className="font-medium">Cel długoterminowy:</h4>
+                      <p className="mt-1">{recommendations.recommendation.longTermGoal}</p>
+                    </div>
+                  </div>
                 </div>
               </div>
             </div>
           </div>
+
+          {/* Career paths sections */}
+          {recommendations.careerPaths.map((path: CareerPath, index: number) => (
+            <CareerPathSection key={index} path={path} index={index} />
+          ))}
+
+          <div
+            className={`${
+              showFixedButton
+                ? 'fixed bottom-6 left-1/2 z-50 -translate-x-1/2 translate-y-0 opacity-100'
+                : 'fixed bottom-0 left-1/2 z-50 -translate-x-1/2 translate-y-full opacity-0'
+            } flex w-1/2 items-center justify-center transition-all duration-500 ease-in-out`}
+          >
+            <CustomButton
+              onClick={() => setIsConfirmDialogOpen(true)}
+              disabled={isLoading}
+              className="cursor-pointer px-6 py-2"
+            >
+              {isLoading ? 'Generating...' : 'Generate new recommendation'}
+            </CustomButton>
+          </div>
+
+          <div className="mt-16 flex w-full justify-center">
+            <CustomButton
+              onClick={() => setIsConfirmDialogOpen(true)}
+              disabled={isLoading}
+              className="cursor-pointer px-6 py-2"
+            >
+              {isLoading ? 'Generating...' : 'Generate new recommendation'}
+            </CustomButton>
+          </div>
+
+          {/* Confirmation Dialog */}
+          <AlertDialog open={isConfirmDialogOpen} onOpenChange={setIsConfirmDialogOpen}>
+            <AlertDialogContent className="font-poppins mx-auto max-w-md">
+              <AlertDialogHeader>
+                <AlertDialogTitle className="text-center text-xl font-bold">
+                  Generate new recommendation?
+                </AlertDialogTitle>
+                <AlertDialogDescription className="text-center">
+                  This will take <b className="text-[#915EFF]">50 credits</b> from Your account.
+                </AlertDialogDescription>
+
+                <div className="mt-2 text-center text-sm font-extralight">
+                  Current balance:{' '}
+                  <span className="font-bold">{isBalanceLoading ? '...' : tokenBalance}</span>
+                </div>
+              </AlertDialogHeader>
+
+              <AlertDialogFooter className="flex justify-center gap-4 sm:justify-center">
+                <AlertDialogCancel className="border-gray-200">Cancel</AlertDialogCancel>
+
+                {!isBalanceLoading && typeof tokenBalance === 'number' && tokenBalance < 5 ? (
+                  <Link href="/pricing">
+                    <AlertDialogAction
+                      className="bg-[#915EFF] text-white hover:bg-[#7b4ee0]"
+                      onClick={() => setIsConfirmDialogOpen(false)}
+                    >
+                      Get tokens
+                      <Image src={star_generate} alt="star" width={16} height={16} />
+                    </AlertDialogAction>
+                  </Link>
+                ) : (
+                  <AlertDialogAction
+                    onClick={async () => {
+                      await handleGenerateNewRecommendations();
+                      refresh();
+                    }}
+                    className="bg-[#915EFF] text-white hover:bg-[#7b4ee0]"
+                  >
+                    Generate
+                    <Image src={star_generate} alt="star" width={16} height={16} />
+                  </AlertDialogAction>
+                )}
+              </AlertDialogFooter>
+            </AlertDialogContent>
+          </AlertDialog>
         </div>
       </div>
-      
-
-      {/* Career paths sections */}
-      {recommendations.careerPaths.map((path: CareerPath, index: number) => (
-        <CareerPathSection key={index} path={path} index={index} />
-      ))}
-
-      <div
-        className={`${
-          showFixedButton
-            ? 'fixed bottom-6 left-1/2 z-50 -translate-x-1/2 translate-y-0 opacity-100'
-            : 'fixed bottom-0 left-1/2 z-50 -translate-x-1/2 translate-y-full opacity-0'
-        } flex w-1/2 items-center justify-center transition-all duration-500 ease-in-out`}
-      >
-        <CustomButton
-          onClick={() => setIsConfirmDialogOpen(true)}
-          disabled={isLoading}
-          className="cursor-pointer px-6 py-2"
-        >
-          {isLoading ? 'Generating...' : 'Generate new recommendation'}
-        </CustomButton>
-      </div>
-
-      <div className="mt-16 flex w-full justify-center">
-        <CustomButton
-          onClick={() => setIsConfirmDialogOpen(true)}
-          disabled={isLoading}
-          className="cursor-pointer px-6 py-2"
-        >
-          {isLoading ? 'Generating...' : 'Generate new recommendation'}
-        </CustomButton>
-      </div>
-      
-
-      {/* Confirmation Dialog */}
-      <AlertDialog open={isConfirmDialogOpen} onOpenChange={setIsConfirmDialogOpen}>
-        <AlertDialogContent className="font-poppins mx-auto max-w-md">
-          <AlertDialogHeader>
-            <AlertDialogTitle className="text-center text-xl font-bold">
-              Generate new recommendation?
-            </AlertDialogTitle>
-            <AlertDialogDescription className="text-center">
-              This will take <b className="text-[#915EFF]">50 credits</b> from Your account.
-            </AlertDialogDescription>
-
-            <div className="mt-2 text-center text-sm font-extralight">
-              Current balance:{' '}
-              <span className="font-bold">{isBalanceLoading ? '...' : tokenBalance}</span>
-            </div>
-          </AlertDialogHeader>
-
-          <AlertDialogFooter className="flex justify-center gap-4 sm:justify-center">
-            <AlertDialogCancel className="border-gray-200">Cancel</AlertDialogCancel>
-
-            {!isBalanceLoading && typeof tokenBalance === 'number' && tokenBalance < 5 ? (
-              <Link href="/pricing">
-                <AlertDialogAction
-                  className="bg-[#915EFF] text-white hover:bg-[#7b4ee0]"
-                  onClick={() => setIsConfirmDialogOpen(false)}
-                >
-                  Get tokens
-                  <Image src={star_generate} alt="star" width={16} height={16} />
-                </AlertDialogAction>
-              </Link>
-            ) : (
-              <AlertDialogAction
-                onClick={async () => {
-                  await handleGenerateNewRecommendations();
-                  refresh();
-                }}
-                className="bg-[#915EFF] text-white hover:bg-[#7b4ee0]"
-              >
-                Generate
-                <Image src={star_generate} alt="star" width={16} height={16} />
-              </AlertDialogAction>
-            )}
-          </AlertDialogFooter>
-        </AlertDialogContent>
-      </AlertDialog>
-    </div>
-    </div>
-      </Section>
+    </Section>
   );
 }

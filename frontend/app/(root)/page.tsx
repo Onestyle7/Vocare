@@ -1,4 +1,4 @@
-"use client";
+'use client';
 
 import AboutCards from '@/components/SupportComponents/SectionsComponents/AboutCards';
 import Faq from '@/components/SupportComponents/SectionsComponents/Faq';
@@ -10,15 +10,17 @@ import MobileFeature from '@/components/SupportComponents/SectionsComponents/Mob
 
 const page = () => {
   return (
-    <main className="mx-auto max-w-7xl overflow-x-hidden">
-      <Header />
-      <HeroTweak />
-      <AboutCards />
-      <Features />
-      <MobileFeature />
-      <Faq />
-      <Footer />
-    </main>
+    <>
+      <main className="mx-auto max-w-7xl max-md:overflow-x-hidden">
+        <Header />
+        <HeroTweak />
+        <AboutCards />
+        <Features />
+        <MobileFeature />
+        <Faq />
+        <Footer />
+      </main>
+    </>
   );
 };
 

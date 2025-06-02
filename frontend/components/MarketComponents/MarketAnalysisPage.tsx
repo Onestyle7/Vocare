@@ -107,76 +107,77 @@ export default function MarketAnalysis() {
     }
   };
 
-  const loadData = useCallback(async (useNewData = false) => {
-    setLoading(true);
-    setError(null);
-    setData(null);
+  const loadData = useCallback(
+    async (useNewData = false) => {
+      setLoading(true);
+      setError(null);
+      setData(null);
 
-    const token = localStorage.getItem('token');
-    if (!token) {
-      toast.error('Authentication required', {
-        description: 'Please sign in to continue.',
-      });
-      setLoading(false);
-      return;
-    }
-
-    try {
-      if (useNewData) {
-        const response = await axios.get(`${API_URL}/api/MarketAnalysis`, {
-          headers: {
-            Authorization: `Bearer ${token}`,
-            'Content-Type': 'application/json',
-          },
+      const token = localStorage.getItem('token');
+      if (!token) {
+        toast.error('Authentication required', {
+          description: 'Please sign in to continue.',
         });
+        setLoading(false);
+        return;
+      }
 
-        console.log('New market analysis raw data:', response.data);
-        handleResponseData(response.data);
-        toast.success('Generated new market analysis');
-      } else {
-        try {
-          const latestResponse = await axios.get(`${API_URL}/api/MarketAnalysis/latest`,
-            {
+      try {
+        if (useNewData) {
+          const response = await axios.get(`${API_URL}/api/MarketAnalysis`, {
+            headers: {
+              Authorization: `Bearer ${token}`,
+              'Content-Type': 'application/json',
+            },
+          });
+
+          console.log('New market analysis raw data:', response.data);
+          handleResponseData(response.data);
+          toast.success('Generated new market analysis');
+        } else {
+          try {
+            const latestResponse = await axios.get(`${API_URL}/api/MarketAnalysis/latest`, {
               headers: {
                 Authorization: `Bearer ${token}`,
                 'Content-Type': 'application/json',
               },
-            }
-          );
+            });
 
-          console.log('Latest market analysis raw data:', latestResponse.data);
-          handleResponseData(latestResponse.data);
-        } catch (latestError) {
-          const axiosError = latestError as AxiosError;
-          if (axiosError.response?.status === 404) {
-            console.log('No existing analysis found, setting data to null');
-            setData(null);
-          } else {
-            console.error('Error fetching latest market analysis:', latestError);
-            setError(
-              (axiosError.response?.data as { detail?: string })?.detail ||
-                'Error fetching latest market analysis.'
-            );
+            console.log('Latest market analysis raw data:', latestResponse.data);
+            handleResponseData(latestResponse.data);
+          } catch (latestError) {
+            const axiosError = latestError as AxiosError;
+            if (axiosError.response?.status === 404) {
+              console.log('No existing analysis found, setting data to null');
+              setData(null);
+            } else {
+              console.error('Error fetching latest market analysis:', latestError);
+              setError(
+                (axiosError.response?.data as { detail?: string })?.detail ||
+                  'Error fetching latest market analysis.'
+              );
+            }
           }
         }
-      }
-    } catch (err) {
-      const axiosError = err as AxiosError;
-      console.error('Error fetching market analysis:', err);
-      setError(
-        (axiosError.response?.data as { detail?: string })?.detail ||
-          'Error generating market analysis'
-      );
+      } catch (err) {
+        const axiosError = err as AxiosError;
+        console.error('Error fetching market analysis:', err);
+        setError(
+          (axiosError.response?.data as { detail?: string })?.detail ||
+            'Error generating market analysis'
+        );
 
-      if (useNewData) {
-        toast.error('Error', {
-          description: 'Failed to generate new market analysis.',
-        });
+        if (useNewData) {
+          toast.error('Error', {
+            description: 'Failed to generate new market analysis.',
+          });
+        }
+      } finally {
+        setLoading(false);
       }
-    } finally {
-      setLoading(false);
-    }
-  }, [API_URL]);
+    },
+    [API_URL]
+  );
 
   useEffect(() => {
     loadData();
@@ -221,9 +222,13 @@ export default function MarketAnalysis() {
   const marketAnalysis = getMarketAnalysis();
 
   // If there's no market analysis data, show the EmptyStateComponent
-  if (!marketAnalysis || !marketAnalysis.industryStatistics || marketAnalysis.industryStatistics.length === 0) {
+  if (
+    !marketAnalysis ||
+    !marketAnalysis.industryStatistics ||
+    marketAnalysis.industryStatistics.length === 0
+  ) {
     return (
-      <EmptyStateComponent 
+      <EmptyStateComponent
         onGenerateAnalysis={handleGenerateNewAnalysis}
         isLoading={isLoading}
         tokenBalance={tokenBalance}
@@ -242,139 +247,134 @@ export default function MarketAnalysis() {
       customPaddings
       id="profile"
     >
-      <div className='xl:border-t xl:mt-16 xl:mx-10 xl:border-r xl:border-l'>
+      <div className="xl:mx-10 xl:mt-16 xl:border-t xl:border-r xl:border-l">
+        <div className="font-poppins mx-auto mt-8 mb-4 flex max-w-7xl flex-col items-center justify-center">
+          <h2 className="mb-4 ml-4 text-2xl font-bold text-[#915EFF]">Job Market Analysis</h2>
+          <div>
+            {marketAnalysis.industryStatistics.map((stat, index) => (
+              <IndustrySection key={index} data={stat} index={index} />
+            ))}
 
-    <div className="font-poppins mx-auto mt-8 mb-4 flex max-w-7xl flex-col items-center justify-center">
-      <h2 className="mb-4 ml-4 text-2xl font-bold text-[#915EFF]">Job Market Analysis</h2>
-      <div>
-        {marketAnalysis.industryStatistics.map((stat, index) => (
-          <IndustrySection key={index} data={stat} index={index} />
-        ))}
-
-        {marketAnalysis.marketTrends && marketAnalysis.marketTrends.length > 0 && (
-          <div className="mx-4 mt-8 rounded-[28px] border p-6 shadow-sm">
-            <h3 className="mb-4 text-xl font-semibold">Current Market Trends</h3>
-            <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
-              {marketAnalysis.marketTrends.map((trend, index) => (
-                <div key={index} className="rounded-lg border p-4 shadow-sm">
-                  <h4 className="mb-2 font-medium text-[#915EFF]">{trend.trendName}</h4>
-                  <p className="mb-2 text-gray-700">{trend.description}</p>
-                  <p className="text-sm font-medium">
-                    <span className="text-gray-500">Impact: </span>
-                    {trend.impact}
-                  </p>
+            {marketAnalysis.marketTrends && marketAnalysis.marketTrends.length > 0 && (
+              <div className="mx-4 mt-8 rounded-[28px] border p-6 shadow-sm">
+                <h3 className="mb-4 text-xl font-semibold">Current Market Trends</h3>
+                <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
+                  {marketAnalysis.marketTrends.map((trend, index) => (
+                    <div key={index} className="rounded-lg border p-4 shadow-sm">
+                      <h4 className="mb-2 font-medium text-[#915EFF]">{trend.trendName}</h4>
+                      <p className="mb-2 text-gray-700">{trend.description}</p>
+                      <p className="text-sm font-medium">
+                        <span className="text-gray-500">Impact: </span>
+                        {trend.impact}
+                      </p>
+                    </div>
+                  ))}
                 </div>
-              ))}
-            </div>
-          </div>
-        )}
-
-        {marketAnalysis.skillDemand && marketAnalysis.skillDemand.length > 0 && (
-          <div className="mx-4 mt-8 rounded-[28px] border p-6 shadow-sm">
-            <h3 className="mb-4 text-xl font-semibold">In-Demand Skills</h3>
-            <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
-              {marketAnalysis.skillDemand.map((skill, index) => (
-                <div key={index} className="rounded-lg border p-4 shadow-sm">
-                  <h4 className="mb-1 font-medium">{skill.skill}</h4>
-                  <p className="text-sm text-gray-500">{skill.industry}</p>
-                  <div className="mt-2 flex items-center">
-                    <span className="mr-2 text-sm">Demand level:</span>
-                    <span
-                      className={`rounded-full px-2 py-1 text-xs font-medium ${
-                        skill.demandLevel === 'High'
-                          ? 'bg-green-100 text-green-800'
-                          : skill.demandLevel === 'Medium'
-                            ? 'bg-yellow-100 text-yellow-800'
-                            : 'bg-red-100 text-red-800'
-                      }`}
-                    >
-                      {skill.demandLevel}
-                    </span>
-                  </div>
-                </div>
-              ))}
-            </div>
-          </div>
-        )}
-
-        <div
-          className={`${
-            showFixedButton
-              ? 'fixed bottom-6 left-1/2 z-50 -translate-x-1/2 translate-y-0 opacity-100'
-              : 'fixed bottom-0 left-1/2 z-50 -translate-x-1/2 translate-y-full opacity-0'
-          } flex w-1/2 items-center justify-center transition-all duration-500 ease-in-out`}
-        >
-          <CustomButton
-            onClick={() => setIsConfirmDialogOpen(true)}
-            disabled={isLoading}
-            className="cursor-pointer px-6 py-2"
-          >
-            {isLoading ? 'Generating...' : 'Generate new market analysis'}
-          </CustomButton>
-        </div>
-
-        {/* STATIC button always under content */}
-        <div className="mt-16 flex justify-center w-full">
-          <CustomButton
-            onClick={() => setIsConfirmDialogOpen(true)}
-            disabled={isLoading}
-            className="cursor-pointer px-6 py-2"
-          >
-            {isLoading ? 'Generating...' : 'Generate new market analysis'}
-          </CustomButton>
-        </div>
-
-        <AlertDialog open={isConfirmDialogOpen} onOpenChange={setIsConfirmDialogOpen}>
-        <AlertDialogContent className="font-poppins mx-auto max-w-md">
-          <AlertDialogHeader>
-            <AlertDialogTitle className="text-center text-xl font-bold">
-              Generate new recommendation?
-            </AlertDialogTitle>
-            <AlertDialogDescription className="text-center">
-              This will take <b className="text-[#915EFF]">50 credits</b> from Your account.
-            </AlertDialogDescription>
-
-            <div className="mt-2 text-center text-sm font-extralight">
-              Current balance:{' '}
-              <span className="font-bold">{isBalanceLoading ? '...' : tokenBalance}</span>
-            </div>
-          </AlertDialogHeader>
-
-          <AlertDialogFooter className="flex justify-center gap-4 sm:justify-center">
-            <AlertDialogCancel 
-              className="border-gray-200"
-            >
-              Cancel
-            </AlertDialogCancel>
-
-            {!isBalanceLoading && typeof tokenBalance === 'number' && tokenBalance < 50 ? (
-              <Link href="/pricing">
-                <AlertDialogAction
-                  className="bg-[#915EFF] text-white hover:bg-[#7b4ee0]"
-                  onClick={() => setIsConfirmDialogOpen(false)}
-                >
-                  Get tokens
-                  <Image src={star_generate} alt="star" width={16} height={16} />
-                </AlertDialogAction>
-              </Link>
-            ) : (
-              <AlertDialogAction
-                onClick={async () => {
-                  await handleGenerateNewAnalysis();
-                  refresh();
-                }}
-                className="bg-[#915EFF] text-white hover:bg-[#7b4ee0]"
-              >
-                Generate
-                <Image src={star_generate} alt="star" width={16} height={16} />
-              </AlertDialogAction>
+              </div>
             )}
-          </AlertDialogFooter>
-        </AlertDialogContent>
-      </AlertDialog>
+
+            {marketAnalysis.skillDemand && marketAnalysis.skillDemand.length > 0 && (
+              <div className="mx-4 mt-8 rounded-[28px] border p-6 shadow-sm">
+                <h3 className="mb-4 text-xl font-semibold">In-Demand Skills</h3>
+                <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
+                  {marketAnalysis.skillDemand.map((skill, index) => (
+                    <div key={index} className="rounded-lg border p-4 shadow-sm">
+                      <h4 className="mb-1 font-medium">{skill.skill}</h4>
+                      <p className="text-sm text-gray-500">{skill.industry}</p>
+                      <div className="mt-2 flex items-center">
+                        <span className="mr-2 text-sm">Demand level:</span>
+                        <span
+                          className={`rounded-full px-2 py-1 text-xs font-medium ${
+                            skill.demandLevel === 'High'
+                              ? 'bg-green-100 text-green-800'
+                              : skill.demandLevel === 'Medium'
+                                ? 'bg-yellow-100 text-yellow-800'
+                                : 'bg-red-100 text-red-800'
+                          }`}
+                        >
+                          {skill.demandLevel}
+                        </span>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+
+            <div
+              className={`${
+                showFixedButton
+                  ? 'fixed bottom-6 left-1/2 z-50 -translate-x-1/2 translate-y-0 opacity-100'
+                  : 'fixed bottom-0 left-1/2 z-50 -translate-x-1/2 translate-y-full opacity-0'
+              } flex w-1/2 items-center justify-center transition-all duration-500 ease-in-out`}
+            >
+              <CustomButton
+                onClick={() => setIsConfirmDialogOpen(true)}
+                disabled={isLoading}
+                className="cursor-pointer px-6 py-2"
+              >
+                {isLoading ? 'Generating...' : 'Generate new market analysis'}
+              </CustomButton>
+            </div>
+
+            {/* STATIC button always under content */}
+            <div className="mt-16 flex w-full justify-center">
+              <CustomButton
+                onClick={() => setIsConfirmDialogOpen(true)}
+                disabled={isLoading}
+                className="cursor-pointer px-6 py-2"
+              >
+                {isLoading ? 'Generating...' : 'Generate new market analysis'}
+              </CustomButton>
+            </div>
+
+            <AlertDialog open={isConfirmDialogOpen} onOpenChange={setIsConfirmDialogOpen}>
+              <AlertDialogContent className="font-poppins mx-auto max-w-md">
+                <AlertDialogHeader>
+                  <AlertDialogTitle className="text-center text-xl font-bold">
+                    Generate new recommendation?
+                  </AlertDialogTitle>
+                  <AlertDialogDescription className="text-center">
+                    This will take <b className="text-[#915EFF]">50 credits</b> from Your account.
+                  </AlertDialogDescription>
+
+                  <div className="mt-2 text-center text-sm font-extralight">
+                    Current balance:{' '}
+                    <span className="font-bold">{isBalanceLoading ? '...' : tokenBalance}</span>
+                  </div>
+                </AlertDialogHeader>
+
+                <AlertDialogFooter className="flex justify-center gap-4 sm:justify-center">
+                  <AlertDialogCancel className="border-gray-200">Cancel</AlertDialogCancel>
+
+                  {!isBalanceLoading && typeof tokenBalance === 'number' && tokenBalance < 50 ? (
+                    <Link href="/pricing">
+                      <AlertDialogAction
+                        className="bg-[#915EFF] text-white hover:bg-[#7b4ee0]"
+                        onClick={() => setIsConfirmDialogOpen(false)}
+                      >
+                        Get tokens
+                        <Image src={star_generate} alt="star" width={16} height={16} />
+                      </AlertDialogAction>
+                    </Link>
+                  ) : (
+                    <AlertDialogAction
+                      onClick={async () => {
+                        await handleGenerateNewAnalysis();
+                        refresh();
+                      }}
+                      className="bg-[#915EFF] text-white hover:bg-[#7b4ee0]"
+                    >
+                      Generate
+                      <Image src={star_generate} alt="star" width={16} height={16} />
+                    </AlertDialogAction>
+                  )}
+                </AlertDialogFooter>
+              </AlertDialogContent>
+            </AlertDialog>
+          </div>
+        </div>
       </div>
-    </div>
-    </div>
     </Section>
   );
 }

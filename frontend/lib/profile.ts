@@ -8,16 +8,12 @@ export const getUserProfile = async (): Promise<UserProfile> => {
   return data;
 };
 
-export const createUserProfile = async (
-  profile: UserProfile
-): Promise<UserProfile> => {
+export const createUserProfile = async (profile: UserProfile): Promise<UserProfile> => {
   const { data } = await api.post(`${PREFIX}/CreateCurrentUserProfile`, profile);
   return data;
 };
 
-export const updateUserProfile = async (
-  profile: UserProfile
-): Promise<UserProfile> => {
+export const updateUserProfile = async (profile: UserProfile): Promise<UserProfile> => {
   const { data } = await api.put(`${PREFIX}/UpdateCurrentUserProfile`, profile);
   return data;
 };

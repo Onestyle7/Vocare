@@ -31,7 +31,7 @@ export default function EmptyStateComponent({
   isLoading,
   tokenBalance,
   isBalanceLoading,
-  refresh
+  refresh,
 }: EmptyStateComponentProps) {
   const [isConfirmDialogOpen, setIsConfirmDialogOpen] = useState(false);
   const flippingURef = useRef<HTMLSpanElement | null>(null);
@@ -92,7 +92,7 @@ export default function EmptyStateComponent({
             </h1>
           </div>
 
-<div className="flex items-center justify-end gap-4">
+          <div className="flex items-center justify-end gap-4">
             <Image
               ref={flowerRef}
               width={64}
@@ -144,15 +144,14 @@ export default function EmptyStateComponent({
               </div>
             </div>
 
-           <CustomButton
-  onClick={() => setIsConfirmDialogOpen(true)}
-  disabled={isLoading}
-  className="group flex h-[56px] rounded-full bg-[#915EFF] px-6 text-[clamp(1.1rem,1vw,1.5rem)] font-medium text-white hover:bg-[#7b4ee0] max-md:mt-6 xl:w-[280px] justify-center items-center cursor-pointer"
->
-  <span>{isLoading ? 'Generating...' : 'Generate analysis'}</span>
-  <ArrowRight className="scale-125 transition-transform duration-300 group-hover:translate-x-2 ml-4" />
-</CustomButton>
-
+            <CustomButton
+              onClick={() => setIsConfirmDialogOpen(true)}
+              disabled={isLoading}
+              className="group flex h-[56px] cursor-pointer items-center justify-center rounded-full bg-[#915EFF] px-6 text-[clamp(1.1rem,1vw,1.5rem)] font-medium text-white hover:bg-[#7b4ee0] max-md:mt-6 xl:w-[280px]"
+            >
+              <span>{isLoading ? 'Generating...' : 'Generate analysis'}</span>
+              <ArrowRight className="ml-4 scale-125 transition-transform duration-300 group-hover:translate-x-2" />
+            </CustomButton>
           </div>
         </div>
       </div>
@@ -174,7 +173,7 @@ export default function EmptyStateComponent({
           </AlertDialogHeader>
 
           <AlertDialogFooter className="flex justify-center gap-4 sm:justify-center">
-            <AlertDialogCancel 
+            <AlertDialogCancel
               className="border-gray-200"
               onClick={() => setIsConfirmDialogOpen(false)}
             >

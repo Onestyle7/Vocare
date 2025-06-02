@@ -1,6 +1,7 @@
 import type { NextConfig } from 'next';
 
 const nextConfig: NextConfig = {
+  transpilePackages: ['gsap', 'lenis'],
   reactStrictMode: true,
   env: {
     NEXT_PUBLIC_API_URL: process.env.NEXT_PUBLIC_API_URL!,
@@ -13,7 +14,7 @@ const nextConfig: NextConfig = {
         port: '',
         pathname: '/**',
       },
-      { 
+      {
         protocol: 'https',
         hostname: 'avatars.githubusercontent.com',
         port: '',

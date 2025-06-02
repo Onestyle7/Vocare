@@ -15,11 +15,7 @@ interface AnimatedTextH3Props {
   delay?: number;
 }
 
-const AnimatedTextH3: React.FC<AnimatedTextH3Props> = ({ 
-  children, 
-  className = '', 
-  delay = 0 
-}) => {
+const AnimatedTextH3: React.FC<AnimatedTextH3Props> = ({ children, className = '', delay = 0 }) => {
   const textRef = useRef<HTMLHeadingElement>(null);
 
   useEffect(() => {
@@ -28,17 +24,20 @@ const AnimatedTextH3: React.FC<AnimatedTextH3Props> = ({
 
     // Dzielimy tekst na poszczególne litery
     const text = element.textContent || '';
-    const letters = text.split('').map((letter) => {
-      return `<span style="display: inline-block; transform: translateY(20px); opacity: 0; overflow: hidden;">${letter === ' ' ? '&nbsp;' : letter}</span>`;
-    }).join('');
-    
+    const letters = text
+      .split('')
+      .map((letter) => {
+        return `<span style="display: inline-block; transform: translateY(20px); opacity: 0; overflow: hidden;">${letter === ' ' ? '&nbsp;' : letter}</span>`;
+      })
+      .join('');
+
     element.innerHTML = letters;
     const letterElements = element.querySelectorAll('span');
 
     // Ustaw początkowy stan - niewidoczne ale w pozycji
     gsap.set(letterElements, {
       y: 20,
-      opacity: 0
+      opacity: 0,
     });
 
     // Animacja z ScrollTrigger - płynne pojawianie się
@@ -46,7 +45,7 @@ const AnimatedTextH3: React.FC<AnimatedTextH3Props> = ({
       y: 0,
       opacity: 1,
       duration: 0.5,
-      ease: "power2.out",
+      ease: 'power2.out',
       stagger: 0.04,
       paused: true, // Zatrzymujemy animację
     });
@@ -54,8 +53,8 @@ const AnimatedTextH3: React.FC<AnimatedTextH3Props> = ({
     // ScrollTrigger z właściwym delay
     ScrollTrigger.create({
       trigger: element,
-      start: "top 85%",
-      end: "bottom 20%",
+      start: 'top 85%',
+      end: 'bottom 20%',
       onEnter: () => {
         gsap.delayedCall(delay, () => animation.play());
       },
@@ -63,13 +62,13 @@ const AnimatedTextH3: React.FC<AnimatedTextH3Props> = ({
       onEnterBack: () => {
         gsap.delayedCall(delay, () => animation.play());
       },
-      onLeaveBack: () => animation.reverse()
+      onLeaveBack: () => animation.reverse(),
     });
 
     // Cleanup function
     return () => {
       animation.kill();
-      ScrollTrigger.getAll().forEach(trigger => {
+      ScrollTrigger.getAll().forEach((trigger) => {
         if (trigger.trigger === element) {
           trigger.kill();
         }
