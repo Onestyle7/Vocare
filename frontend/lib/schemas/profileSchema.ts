@@ -1,5 +1,6 @@
 import { z } from 'zod';
 import { PersonalityType } from '@/lib/enums/personalityTypes';
+import { Risk } from '@/lib/enums/risk';
 
 const certificateEntrySchema = z.object({
   name: z.string().min(1, 'Certificate name is required'),
@@ -33,6 +34,15 @@ const languageEntrySchema = z.object({
   level: z.string().optional(),
 });
 
+const financialSurveySchema = z.object({
+  currentSalary: z.number().optional(),
+  desiredSalary: z.number().optional(),
+  hasLoans: z.boolean().default(false),
+  loanDetails: z.string().optional(),
+  riskAppetite: z.nativeEnum(Risk).default(Risk.Unknown),
+  willingToRelocate: z.boolean().default(false),
+});
+
 const baseProfileSchema = z.object({
   firstName: z.string().min(1, 'First name is required'),
   lastName: z.string().min(1, 'Last name is required'),
@@ -47,6 +57,7 @@ const baseProfileSchema = z.object({
   additionalInformation: z.string().optional(),
   aboutMe: z.string().optional(),
   personalityType: z.nativeEnum(PersonalityType),
+  financialSurvey: financialSurveySchema.optional(),
 });
 
 export const createProfileSchema = baseProfileSchema;
