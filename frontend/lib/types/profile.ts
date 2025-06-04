@@ -1,3 +1,5 @@
+import { Risk } from '@/lib/enums/risk';
+
 export type CertificateEntry = {
   name: string;
   issuer?: string;
@@ -50,13 +52,6 @@ export enum PersonalityType {
   Unknown,
 }
 
-export enum Risk {
-  Low = 1,
-  Medium,
-  High,
-  Critical,
-  Unknown,
-}
 
 export type FinancialSurvey = {
   currentSalary?: number;
