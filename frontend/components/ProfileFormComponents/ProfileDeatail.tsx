@@ -14,6 +14,7 @@ import ProfileCard from './ProfileCard';
 import { Button } from '../ui/button';
 import Section from '../SupportComponents/Section';
 import { Risk, riskLabels } from '@/lib/enums/risk';
+import { PersonalityType, personalityTypeLabels } from '@/lib/enums/personalityTypes';
 
 export default function ProfileDetails() {
   const [profile, setProfile] = useState<UserProfile | null>(null);
@@ -98,6 +99,11 @@ export default function ProfileDetails() {
           <div className="flex justify-between rounded-lg">
             <span className="font-medium text-gray-600 dark:text-gray-200">Phone:</span>
             <span className="ml-2">{profile?.phoneNumber || '—'}</span>
+          </div>
+          <Separator />
+          <div className="flex justify-between rounded-lg">
+            <span className="font-medium text-gray-600 dark:text-gray-200">Personality Type:</span>
+            <span className="ml-2">{personalityTypeLabels[(profile?.personalityType ?? PersonalityType.Unknown).toString()]}</span>
           </div>
           <Separator />
           <div className="flex flex-col space-y-2">
@@ -313,7 +319,9 @@ export default function ProfileDetails() {
           <Separator />
           <div className="flex justify-between rounded-lg">
             <span className="font-medium text-gray-600 dark:text-gray-200">Risk Appetite:</span>
-            <span className="ml-2">{riskLabels[profile?.financialSurvey?.riskAppetite ?? Risk.Unknown]}</span>
+            <span className="ml-2">
+              {riskLabels[(profile?.financialSurvey?.riskAppetite ?? Risk.Unknown) as keyof typeof riskLabels] || riskLabels[Risk.Unknown]}
+            </span>
           </div>
           <Separator />
           <div className="flex justify-between rounded-lg">
