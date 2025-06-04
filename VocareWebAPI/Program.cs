@@ -195,7 +195,7 @@ if (app.Environment.IsDevelopment())
 }
 
 // ===== MIDDLEWARE PIPELINE =====
-// app.UseHttpsRedirection(); // zakomentowane w oryginalnym kodzie
+// app.UseHttpsRedirection();
 app.UseRouting();
 app.UseCors("AllowAll");
 app.UseAuthentication();
@@ -279,7 +279,6 @@ if (app.Environment.IsDevelopment())
 }
 else
 {
-    // W produkcji nie rób auto-migrate - używaj CI/CD pipeline
     var logger = app.Services.GetRequiredService<ILogger<Program>>();
     logger.LogInformation("Production environment - skipping automatic migrations.");
 }
