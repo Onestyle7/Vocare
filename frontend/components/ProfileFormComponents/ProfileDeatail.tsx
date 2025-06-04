@@ -13,7 +13,7 @@ import { Separator } from '../ui/separator';
 import ProfileCard from './ProfileCard';
 import { Button } from '../ui/button';
 import Section from '../SupportComponents/Section';
-import { riskLabels } from '@/lib/enums/risk';
+import { Risk, riskLabels } from '@/lib/enums/risk';
 
 export default function ProfileDetails() {
   const [profile, setProfile] = useState<UserProfile | null>(null);
@@ -313,7 +313,7 @@ export default function ProfileDetails() {
           <Separator />
           <div className="flex justify-between rounded-lg">
             <span className="font-medium text-gray-600 dark:text-gray-200">Risk Appetite:</span>
-            <span className="ml-2">{riskLabels[String(profile?.financialSurvey?.riskAppetite ?? 5)]}</span>
+            <span className="ml-2">{riskLabels[profile?.financialSurvey?.riskAppetite ?? Risk.Unknown]}</span>
           </div>
           <Separator />
           <div className="flex justify-between rounded-lg">

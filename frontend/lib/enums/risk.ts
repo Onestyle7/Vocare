@@ -6,10 +6,10 @@ export enum Risk {
   Unknown,
 }
 
-export const riskLabels: Record<string, string> = {
-  1: 'Low',
-  2: 'Medium',
-  3: 'High',
-  4: 'Critical',
-  5: 'Unknown',
+export const riskLabels: Record<Risk, string> = {
+  [Risk.Low]: 'Low',
+  [Risk.Medium]: 'Medium',
+  [Risk.High]: 'High',
+  [Risk.Critical]: 'Critical',
+  [Risk.Unknown]: 'Unknown',
 };

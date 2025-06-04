@@ -56,10 +56,10 @@ export enum PersonalityType {
 export type FinancialSurvey = {
   currentSalary?: number;
   desiredSalary?: number;
-  hasLoans?: boolean;
+  hasLoans: boolean;
   loanDetails?: string;
   riskAppetite: Risk;
-  willingToRelocate?: boolean;
+  willingToRelocate: boolean;
 };
 
 export type UserProfile = {
