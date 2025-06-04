@@ -87,6 +87,12 @@ namespace VocareWebAPI.Services
 
             _mapper.Map(userProfileDto, profile);
 
+            // Ensure the nested FinancialSurvey has the correct foreign key
+            if (profile.FinancialSurvey != null)
+            {
+                profile.FinancialSurvey.UserId = profile.UserId;
+            }
+
             try
             {
                 await _context.SaveChangesAsync();
@@ -134,6 +140,12 @@ namespace VocareWebAPI.Services
 
             // Mapowanie danych
             _mapper.Map(userProfileDto, profile);
+
+            // Ensure the nested FinancialSurvey has the correct foreign key
+            if (profile.FinancialSurvey != null)
+            {
+                profile.FinancialSurvey.UserId = profile.UserId;
+            }
 
             // Logowanie wartości DateTime dla debugowania
             foreach (var education in profile.Education)
