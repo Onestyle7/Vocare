@@ -22,6 +22,7 @@ import { Popover, PopoverTrigger, PopoverContent } from '@/components/ui/popover
 import { CreateProfileFormType } from '@/lib/schemas/profileSchema';
 import { createProfileSchema } from '@/lib/schemas/profileSchema';
 import { UserProfile } from '@/lib/types/profile';
+import { Risk } from '@/lib/enums/risk';
 
 export default function ProfileForm({
   initialData,
@@ -113,7 +114,12 @@ export default function ProfileForm({
         desiredSalary: data.financialSurvey?.desiredSalary,
         hasLoans: data.financialSurvey?.hasLoans ?? false,
         loanDetails: data.financialSurvey?.loanDetails ?? '',
-        riskAppetite: data.financialSurvey?.riskAppetite ?? 5,
+        riskAppetite:
+          typeof data.financialSurvey?.riskAppetite === 'string'
+            ? Risk[
+                data.financialSurvey?.riskAppetite as keyof typeof Risk
+              ] ?? Risk.Unknown
+            : data.financialSurvey?.riskAppetite ?? Risk.Unknown,
         willingToRelocate: data.financialSurvey?.willingToRelocate ?? false,
       },
     }),
