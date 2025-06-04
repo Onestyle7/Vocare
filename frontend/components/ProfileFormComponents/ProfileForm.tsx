@@ -15,6 +15,7 @@ import StepOne from '@/app/(root)/steps/StepOne';
 import StepTwo from '@/app/(root)/steps/StepTwo';
 import StepThree from '@/app/(root)/steps/StepThree';
 import StepFour from '@/app/(root)/steps/StepFour';
+import StepFive from '@/app/(root)/steps/StepFive';
 import StepProgress from '@/app/(root)/steps/ProgressBar';
 import { Button } from '@/components/ui/button';
 import { Popover, PopoverTrigger, PopoverContent } from '@/components/ui/popover';
@@ -32,7 +33,7 @@ export default function ProfileForm({
   const [isLoading, setLoading] = useState(false);
   const [isEditMode, setEditMode] = useState(false);
   const [currentStep, setCurrentStep] = useState(1);
-  const totalSteps = 4;
+  const totalSteps = 5;
   const router = useRouter();
 
   const form = useForm<CreateProfileFormType>({
@@ -51,6 +52,14 @@ export default function ProfileForm({
       additionalInformation: '',
       aboutMe: '',
       personalityType: undefined,
+      financialSurvey: {
+        currentSalary: undefined,
+        desiredSalary: undefined,
+        hasLoans: false,
+        loanDetails: '',
+        riskAppetite: 5,
+        willingToRelocate: false,
+      },
     },
   });
 
@@ -99,6 +108,14 @@ export default function ProfileForm({
       aboutMe: data.aboutMe ?? '',
       skills: data.skills ?? [],
       languages: data.languages ?? [],
+      financialSurvey: {
+        currentSalary: data.financialSurvey?.currentSalary,
+        desiredSalary: data.financialSurvey?.desiredSalary,
+        hasLoans: data.financialSurvey?.hasLoans ?? false,
+        loanDetails: data.financialSurvey?.loanDetails ?? '',
+        riskAppetite: data.financialSurvey?.riskAppetite ?? 5,
+        willingToRelocate: data.financialSurvey?.willingToRelocate ?? false,
+      },
     }),
     []
   );
@@ -264,6 +281,19 @@ export default function ProfileForm({
         return (
           <>
             <StepFour
+              form={form}
+              onBack={prevStep}
+              onNext={nextStep}
+            />
+            <div className="mt-6 flex justify-end">
+              <CancelButton />
+            </div>
+          </>
+        );
+      case 5:
+        return (
+          <>
+            <StepFive
               form={form}
               onBack={prevStep}
               onSubmit={onSubmit}

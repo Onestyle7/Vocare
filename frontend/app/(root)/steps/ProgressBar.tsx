@@ -15,6 +15,7 @@ export default function StepProgress({ currentStep, totalSteps }: StepProgressPr
     { number: 2, name: 'Contact' },
     { number: 3, name: 'Experience' },
     { number: 4, name: 'Additional' },
+    { number: 5, name: 'Financial' },
   ];
 
   return (

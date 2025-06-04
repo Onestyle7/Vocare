@@ -13,6 +13,7 @@ import { Separator } from '../ui/separator';
 import ProfileCard from './ProfileCard';
 import { Button } from '../ui/button';
 import Section from '../SupportComponents/Section';
+import { riskLabels } from '@/lib/enums/risk';
 
 export default function ProfileDetails() {
   const [profile, setProfile] = useState<UserProfile | null>(null);
@@ -51,8 +52,10 @@ export default function ProfileDetails() {
     fetchProfile();
   }, [router]);
 
+  const totalPages = 4;
+
   const goToNextPage = () => {
-    if (currentPage < 2) setCurrentPage(currentPage + 1);
+    if (currentPage < totalPages - 1) setCurrentPage(currentPage + 1);
   };
 
   const goToPreviousPage = () => {
@@ -276,7 +279,58 @@ export default function ProfileDetails() {
     </div>
   );
 
-  const pages = [renderPersonalInfoPage, renderSkillsAndWorkPage, renderAboutMePage];
+  const renderFinancialSurveyPage = () => (
+    <div className="space-y-8">
+      <div className="mt-4 space-y-2">
+        <h2 className="flex items-center text-2xl font-medium text-gray-700 dark:text-gray-200">
+          Financial Survey
+          <div className="ml-2 h-2 w-2 rounded-full bg-[#915EFF]" />
+        </h2>
+        <div className="grid grid-cols-1 gap-4">
+          <div className="flex justify-between rounded-lg">
+            <span className="font-medium text-gray-600 dark:text-gray-200">Current Salary:</span>
+            <span className="ml-2">{profile?.financialSurvey?.currentSalary ?? '—'}</span>
+          </div>
+          <Separator />
+          <div className="flex justify-between rounded-lg">
+            <span className="font-medium text-gray-600 dark:text-gray-200">Desired Salary:</span>
+            <span className="ml-2">{profile?.financialSurvey?.desiredSalary ?? '—'}</span>
+          </div>
+          <Separator />
+          <div className="flex justify-between rounded-lg">
+            <span className="font-medium text-gray-600 dark:text-gray-200">Has Loans:</span>
+            <span className="ml-2">{profile?.financialSurvey?.hasLoans ? 'Yes' : 'No'}</span>
+          </div>
+          {profile?.financialSurvey?.hasLoans && (
+            <>
+              <Separator />
+              <div className="flex justify-between rounded-lg">
+                <span className="font-medium text-gray-600 dark:text-gray-200">Loan Details:</span>
+                <span className="ml-2">{profile?.financialSurvey?.loanDetails || '—'}</span>
+              </div>
+            </>
+          )}
+          <Separator />
+          <div className="flex justify-between rounded-lg">
+            <span className="font-medium text-gray-600 dark:text-gray-200">Risk Appetite:</span>
+            <span className="ml-2">{riskLabels[String(profile?.financialSurvey?.riskAppetite ?? 5)]}</span>
+          </div>
+          <Separator />
+          <div className="flex justify-between rounded-lg">
+            <span className="font-medium text-gray-600 dark:text-gray-200">Willing To Relocate:</span>
+            <span className="ml-2">{profile?.financialSurvey?.willingToRelocate ? 'Yes' : 'No'}</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+
+  const pages = [
+    renderPersonalInfoPage,
+    renderSkillsAndWorkPage,
+    renderAboutMePage,
+    renderFinancialSurveyPage,
+  ];
 
   return (
     <Section
@@ -320,7 +374,7 @@ export default function ProfileDetails() {
                   <button onClick={goToPreviousPage} disabled={currentPage === 0}>
                     <ArrowLeft />
                   </button>
-                  <button onClick={goToNextPage} disabled={currentPage === 2}>
+                  <button onClick={goToNextPage} disabled={currentPage === totalPages - 1}>
                     <ArrowRight />
                   </button>
                 </div>

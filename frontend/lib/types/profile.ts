@@ -50,6 +50,23 @@ export enum PersonalityType {
   Unknown,
 }
 
+export enum Risk {
+  Low = 1,
+  Medium,
+  High,
+  Critical,
+  Unknown,
+}
+
+export type FinancialSurvey = {
+  currentSalary?: number;
+  desiredSalary?: number;
+  hasLoans?: boolean;
+  loanDetails?: string;
+  riskAppetite: Risk;
+  willingToRelocate?: boolean;
+};
+
 export type UserProfile = {
   firstName: string;
   lastName: string;
@@ -64,4 +81,5 @@ export type UserProfile = {
   additionalInformation?: string;
   aboutMe?: string;
   personalityType: PersonalityType;
+  financialSurvey?: FinancialSurvey;
 };
