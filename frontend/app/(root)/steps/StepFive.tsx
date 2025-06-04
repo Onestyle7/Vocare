@@ -52,7 +52,12 @@ export default function StepFive({
           <FormItem>
             <FormLabel>Current salary</FormLabel>
             <FormControl>
-              <Input type="number" placeholder="e.g., 3500" {...field} />
+              <Input
+                type="number"
+                placeholder="e.g., 3500"
+                value={field.value ?? ''}
+                onChange={field.onChange}
+              />
             </FormControl>
             <FormMessage />
           </FormItem>
@@ -66,7 +71,12 @@ export default function StepFive({
           <FormItem>
             <FormLabel>Desired salary</FormLabel>
             <FormControl>
-              <Input type="number" placeholder="e.g., 5000" {...field} />
+              <Input
+                type="number"
+                placeholder="e.g., 5000"
+                value={field.value ?? ''}
+                onChange={field.onChange}
+              />
             </FormControl>
             <FormMessage />
           </FormItem>
