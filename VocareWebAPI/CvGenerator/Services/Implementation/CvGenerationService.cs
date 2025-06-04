@@ -107,7 +107,7 @@ namespace VocareWebAPI.CvGenerator.Services.Implementations
             };
         }
 
-        private List<CvWorkEntryDto> MapWorkExperience(List<WorkExperienceEntry> workExperience)
+        private List<CvWorkEntryDto> MapWorkExperience(List<WorkExperienceEntry>? workExperience)
         {
             return workExperience
                     ?.Select(work => new CvWorkEntryDto
@@ -121,7 +121,7 @@ namespace VocareWebAPI.CvGenerator.Services.Implementations
                     .ToList() ?? new List<CvWorkEntryDto>();
         }
 
-        private List<CvEducationEntryDto> MapEducation(List<EducationEntry> education)
+        private List<CvEducationEntryDto> MapEducation(List<EducationEntry>? education)
         {
             return education
                     ?.Select(edu => new CvEducationEntryDto
@@ -135,7 +135,7 @@ namespace VocareWebAPI.CvGenerator.Services.Implementations
                     .ToList() ?? new List<CvEducationEntryDto>();
         }
 
-        private List<CvCertificateEntryDto> MapCertificates(List<CertificateEntry> certificates)
+        private List<CvCertificateEntryDto> MapCertificates(List<CertificateEntry>? certificates)
         {
             return certificates
                     ?.Select(cert => new CvCertificateEntryDto
@@ -146,12 +146,12 @@ namespace VocareWebAPI.CvGenerator.Services.Implementations
                     .ToList() ?? new List<CvCertificateEntryDto>();
         }
 
-        private List<string> MapSkills(List<string> skills)
+        private List<string> MapSkills(List<string>? skills)
         {
             return skills ?? new List<string>();
         }
 
-        private List<CvLanguageEntryDto> MapLanguages(List<LanguageEntry> languages)
+        private List<CvLanguageEntryDto> MapLanguages(List<LanguageEntry>? languages)
         {
             return languages
                     ?.Select(lang => new CvLanguageEntryDto

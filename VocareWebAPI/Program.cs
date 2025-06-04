@@ -1,5 +1,4 @@
 using System.Text.Json.Serialization;
-using System.Threading;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.Data;
 using Microsoft.AspNetCore.Mvc;
@@ -32,56 +31,9 @@ using LocalStripeService = VocareWebAPI.Billing.Services.Implementations.StripeS
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container.
-// Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
+// ===== PODSTAWOWA KONFIGURACJA =====
 builder.Services.AddOpenApi();
 builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddControllers();
-builder.Services.AddScoped<UserProfileService>();
-builder.Services.Configure<AiConfig>(builder.Configuration.GetSection("PerplexityAI"));
-builder.Services.Configure<UserRegistrationConfig>(
-    builder.Configuration.GetSection("UserRegistration")
-);
-builder
-    .Services.AddHttpClient<IAiService, PerplexityAiService>(client =>
-    {
-        var config = builder.Configuration.GetSection("PerplexityAI").Get<AiConfig>()!;
-        client.BaseAddress = new Uri(config.BaseUrl);
-        client.DefaultRequestHeaders.Add("Authorization", $"Bearer {config.ApiKey}");
-        client.DefaultRequestHeaders.Add("Accept", "application/json");
-    })
-    .AddPolicyHandler(GetRetryPolicy());
-
-builder
-    .Services.AddHttpClient<IMarketAnalysisService, MarketAnalysisService>(client =>
-    {
-        var config = builder.Configuration.GetSection("PerplexityAI").Get<AiConfig>()!;
-        client.BaseAddress = new Uri(config.BaseUrl);
-        client.DefaultRequestHeaders.Add("Authorization", $"Bearer {config.ApiKey}");
-        client.DefaultRequestHeaders.Add("Accept", "application/json");
-    })
-    .AddPolicyHandler(GetRetryPolicy());
-
-builder.Services.AddScoped<UserRegistrationHandler>();
-
-builder.Services.AddScoped<IAiService, PerplexityAiService>();
-builder.Services.AddScoped<IMarketAnalysisService, MarketAnalysisService>();
-builder.Services.AddScoped<IBillingService, LocalBillingService>();
-builder.Services.AddScoped<IStripeService, LocalStripeService>();
-builder.Services.AddScoped<ICvGenerationService, CvGenerationService>();
-builder.Services.AddScoped<IUserSetupService, UserSetupService>();
-
-// repozytoria
-builder.Services.AddScoped<IUserBillingRepository, UserBillingRepository>();
-builder.Services.AddScoped<ITokenTransactionRepository, TokenTransactionRepository>();
-builder.Services.AddScoped<IServiceCostRepository, ServiceCostRepository>();
-builder.Services.AddScoped<IUserProfileRepository, UserProfileRepository>();
-builder.Services.AddScoped<IAiRecommendationRepository, AiRecommendationRepository>();
-builder.Services.AddScoped<ICareerStatisticsRepository, CareerStatisticsRepository>();
-builder.Services.AddScoped<ISkillDemandRepository, SkillDemandRepository>();
-builder.Services.AddScoped<IMarketTrendsRepository, MarketTrendsRepository>();
-builder.Services.AddScoped<IGeneratedCvRepository, GeneratedCvrepository>();
-
 builder
     .Services.AddControllers()
     .AddJsonOptions(options =>
@@ -89,46 +41,22 @@ builder
         options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter());
     });
 
-builder.Services.AddAutoMapper(typeof(UserProfileService).Assembly);
-builder.Services.AddSwaggerGen(c =>
-{
-    c.SwaggerDoc(
-        "v1",
-        new OpenApiInfo
-        {
-            Title = "VocareWebAPI",
-            Version = "v1",
-            Description = "Web Api for vocare application",
-        }
-    );
-    c.AddSecurityDefinition(
-        "Bearer",
-        new OpenApiSecurityScheme
-        {
-            In = ParameterLocation.Header,
-            Description = "Wpisz token JWT",
-            Name = "Authorization",
-            Type = SecuritySchemeType.Http,
-            Scheme = "Bearer",
-        }
-    );
-    c.AddSecurityRequirement(
-        new OpenApiSecurityRequirement
-        {
-            {
-                new OpenApiSecurityScheme
-                {
-                    Reference = new OpenApiReference
-                    {
-                        Type = ReferenceType.SecurityScheme,
-                        Id = "Bearer",
-                    },
-                },
-                new string[] { }
-            },
-        }
-    );
-});
+// ===== KONFIGURACJA (Options Pattern) =====
+builder.Services.Configure<AiConfig>(builder.Configuration.GetSection("PerplexityAI"));
+builder.Services.Configure<UserRegistrationConfig>(
+    builder.Configuration.GetSection("UserRegistration")
+);
+
+// ===== BAZA DANYCH =====
+builder.Services.AddDbContext<AppDbContext>(options =>
+    options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection"))
+);
+
+// ===== IDENTITY & AUTORYZACJA =====
+builder
+    .Services.AddIdentityCore<User>()
+    .AddEntityFrameworkStores<AppDbContext>()
+    .AddApiEndpoints();
 
 builder
     .Services.AddAuthentication(options =>
@@ -141,12 +69,100 @@ builder
 
 builder.Services.AddAuthorization();
 
-builder.Services.AddIdentityCore<User>().AddEntityFrameworkStores<AppDbContext>().AddApiEndpoints();
+// ===== HTTP CLIENTS =====
+var retryPolicy = HttpPolicyExtensions
+    .HandleTransientHttpError()
+    .OrResult(msg => msg.StatusCode == System.Net.HttpStatusCode.TooManyRequests)
+    .WaitAndRetryAsync(3, retryAttempt => TimeSpan.FromSeconds(Math.Pow(2, retryAttempt)));
 
-builder.Services.AddDbContext<AppDbContext>(options =>
+builder
+    .Services.AddHttpClient<IAiService, PerplexityAiService>(client =>
+    {
+        var config = builder.Configuration.GetSection("PerplexityAI").Get<AiConfig>()!;
+        client.BaseAddress = new Uri(config.BaseUrl);
+        client.DefaultRequestHeaders.Add("Authorization", $"Bearer {config.ApiKey}");
+        client.DefaultRequestHeaders.Add("Accept", "application/json");
+    })
+    .AddPolicyHandler(retryPolicy);
+
+builder
+    .Services.AddHttpClient<IMarketAnalysisService, MarketAnalysisService>(client =>
+    {
+        var config = builder.Configuration.GetSection("PerplexityAI").Get<AiConfig>()!;
+        client.BaseAddress = new Uri(config.BaseUrl);
+        client.DefaultRequestHeaders.Add("Authorization", $"Bearer {config.ApiKey}");
+        client.DefaultRequestHeaders.Add("Accept", "application/json");
+    })
+    .AddPolicyHandler(retryPolicy);
+
+// ===== SERWISY APLIKACJI =====
+builder.Services.AddScoped<UserProfileService>();
+builder.Services.AddScoped<UserRegistrationHandler>();
+builder.Services.AddScoped<IAiService, PerplexityAiService>();
+builder.Services.AddScoped<IMarketAnalysisService, MarketAnalysisService>();
+builder.Services.AddScoped<IBillingService, LocalBillingService>();
+builder.Services.AddScoped<IStripeService, LocalStripeService>();
+builder.Services.AddScoped<ICvGenerationService, CvGenerationService>();
+builder.Services.AddScoped<IUserSetupService, UserSetupService>();
+
+// ===== REPOZYTORIA =====
+builder.Services.AddScoped<IUserBillingRepository, UserBillingRepository>();
+builder.Services.AddScoped<ITokenTransactionRepository, TokenTransactionRepository>();
+builder.Services.AddScoped<IServiceCostRepository, ServiceCostRepository>();
+builder.Services.AddScoped<IUserProfileRepository, UserProfileRepository>();
+builder.Services.AddScoped<IAiRecommendationRepository, AiRecommendationRepository>();
+builder.Services.AddScoped<ICareerStatisticsRepository, CareerStatisticsRepository>();
+builder.Services.AddScoped<ISkillDemandRepository, SkillDemandRepository>();
+builder.Services.AddScoped<IMarketTrendsRepository, MarketTrendsRepository>();
+builder.Services.AddScoped<IGeneratedCvRepository, GeneratedCvrepository>();
+
+// ===== AUTOMAPPER =====
+builder.Services.AddAutoMapper(typeof(UserProfileService).Assembly);
+
+// ===== SWAGGER =====
+builder.Services.AddSwaggerGen(c =>
 {
-    options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection"));
+    c.SwaggerDoc(
+        "v1",
+        new OpenApiInfo
+        {
+            Title = "VocareWebAPI",
+            Version = "v1",
+            Description = "Web Api for vocare application",
+        }
+    );
+
+    c.AddSecurityDefinition(
+        "Bearer",
+        new OpenApiSecurityScheme
+        {
+            In = ParameterLocation.Header,
+            Description = "Wpisz token JWT",
+            Name = "Authorization",
+            Type = SecuritySchemeType.Http,
+            Scheme = "Bearer",
+        }
+    );
+
+    c.AddSecurityRequirement(
+        new OpenApiSecurityRequirement
+        {
+            {
+                new OpenApiSecurityScheme
+                {
+                    Reference = new OpenApiReference
+                    {
+                        Type = ReferenceType.SecurityScheme,
+                        Id = "Bearer",
+                    },
+                },
+                Array.Empty<string>()
+            },
+        }
+    );
 });
+
+// ===== CORS =====
 builder.Services.AddCors(options =>
 {
     options.AddPolicy(
@@ -161,9 +177,13 @@ builder.Services.AddCors(options =>
         }
     );
 });
+
+// ===== STRIPE =====
 StripeConfiguration.ApiKey = builder.Configuration["Stripe:SecretKey"];
 
 var app = builder.Build();
+
+// ===== SWAGGER UI =====
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
@@ -174,7 +194,44 @@ if (app.Environment.IsDevelopment())
     });
 }
 
-// Configure the HTTP request pipeline.
+// ===== MIDDLEWARE PIPELINE =====
+// app.UseHttpsRedirection(); // zakomentowane w oryginalnym kodzie
+app.UseRouting();
+app.UseCors("AllowAll");
+app.UseAuthentication();
+app.UseAuthorization();
+
+// ===== ENDPOINTS =====
+app.MapControllers();
+app.MapIdentityApi<User>();
+
+// Custom registration endpoint z logiką dodawania tokenów
+app.MapPost(
+        "/api/register",
+        async (
+            [FromBody] RegisterRequest request,
+            UserManager<User> userManager,
+            UserRegistrationHandler registrationHandler
+        ) =>
+        {
+            // Standardowa rejestracja Identity
+            var user = new User { UserName = request.Email, Email = request.Email };
+            var result = await userManager.CreateAsync(user, request.Password);
+
+            if (result.Succeeded)
+            {
+                // Setup billing po udanej rejestracji
+                await registrationHandler.HandleUserRegistrationAsync(user.Id);
+
+                return Results.Ok(new { message = "User registered successfully" });
+            }
+
+            return Results.BadRequest(result.Errors);
+        }
+    )
+    .AllowAnonymous();
+
+// ===== MIGRACJA BAZY DANYCH =====
 if (app.Environment.IsDevelopment())
 {
     using var scope = app.Services.CreateScope();
@@ -227,45 +284,4 @@ else
     logger.LogInformation("Production environment - skipping automatic migrations.");
 }
 
-/* app.UseHttpsRedirection(); */
-app.UseRouting();
-app.UseCors("AllowAll");
-app.UseAuthentication();
-app.UseAuthorization();
-app.MapControllers();
-app.MapIdentityApi<User>();
-app.MapPost(
-        "/api/register",
-        async (
-            [FromBody] RegisterRequest request,
-            UserManager<User> userManager,
-            UserRegistrationHandler registrationHandler
-        ) =>
-        {
-            // Standardowa rejestracja Identity
-            var user = new User { UserName = request.Email, Email = request.Email };
-            var result = await userManager.CreateAsync(user, request.Password);
-
-            if (result.Succeeded)
-            {
-                // Setup billing po udanej rejestracji
-                await registrationHandler.HandleUserRegistrationAsync(user.Id);
-
-                return Results.Ok(new { message = "User registered successfully" });
-            }
-
-            return Results.BadRequest(result.Errors);
-        }
-    )
-    .AllowAnonymous();
-
-static IAsyncPolicy<HttpResponseMessage> GetRetryPolicy()
-{
-    return HttpPolicyExtensions
-        .HandleTransientHttpError()
-        .OrResult(msg => msg.StatusCode == System.Net.HttpStatusCode.TooManyRequests)
-        .WaitAndRetryAsync(3, retryAttempt => TimeSpan.FromSeconds(Math.Pow(2, retryAttempt)));
-}
-
 app.Run();
-//Test ci/cd
