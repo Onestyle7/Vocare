@@ -15,12 +15,15 @@ import StepOne from '@/app/(root)/steps/StepOne';
 import StepTwo from '@/app/(root)/steps/StepTwo';
 import StepThree from '@/app/(root)/steps/StepThree';
 import StepFour from '@/app/(root)/steps/StepFour';
+import StepFive from '@/app/(root)/steps/StepFive';
 import StepProgress from '@/app/(root)/steps/ProgressBar';
 import { Button } from '@/components/ui/button';
 import { Popover, PopoverTrigger, PopoverContent } from '@/components/ui/popover';
 import { CreateProfileFormType } from '@/lib/schemas/profileSchema';
 import { createProfileSchema } from '@/lib/schemas/profileSchema';
 import { UserProfile } from '@/lib/types/profile';
+import { Risk } from '@/lib/enums/risk';
+import { PersonalityType } from '@/lib/enums/personalityTypes';
 
 export default function ProfileForm({
   initialData,
@@ -32,7 +35,7 @@ export default function ProfileForm({
   const [isLoading, setLoading] = useState(false);
   const [isEditMode, setEditMode] = useState(false);
   const [currentStep, setCurrentStep] = useState(1);
-  const totalSteps = 4;
+  const totalSteps = 5;
   const router = useRouter();
 
   const form = useForm<CreateProfileFormType>({
@@ -51,6 +54,14 @@ export default function ProfileForm({
       additionalInformation: '',
       aboutMe: '',
       personalityType: undefined,
+      financialSurvey: {
+        currentSalary: undefined,
+        desiredSalary: undefined,
+        hasLoans: false,
+        loanDetails: '',
+        riskAppetite: 5,
+        willingToRelocate: false,
+      },
     },
   });
 
@@ -99,6 +110,31 @@ export default function ProfileForm({
       aboutMe: data.aboutMe ?? '',
       skills: data.skills ?? [],
       languages: data.languages ?? [],
+      personalityType:
+        typeof data.personalityType === 'string'
+          ? isNaN(Number(data.personalityType))
+            ?
+              PersonalityType[
+                data.personalityType as keyof typeof PersonalityType
+              ] ?? PersonalityType.Unknown
+            : Number(data.personalityType)
+          : data.personalityType ?? PersonalityType.Unknown,
+      financialSurvey: {
+        currentSalary: data.financialSurvey?.currentSalary,
+        desiredSalary: data.financialSurvey?.desiredSalary,
+        hasLoans: data.financialSurvey?.hasLoans ?? false,
+        loanDetails: data.financialSurvey?.loanDetails ?? '',
+        riskAppetite:
+          typeof data.financialSurvey?.riskAppetite === 'string'
+            ? isNaN(Number(data.financialSurvey?.riskAppetite))
+              ?
+                Risk[
+                  data.financialSurvey?.riskAppetite as keyof typeof Risk
+                ] ?? Risk.Unknown
+              : Number(data.financialSurvey?.riskAppetite)
+            : data.financialSurvey?.riskAppetite ?? Risk.Unknown,
+        willingToRelocate: data.financialSurvey?.willingToRelocate ?? false,
+      },
     }),
     []
   );
@@ -264,6 +300,19 @@ export default function ProfileForm({
         return (
           <>
             <StepFour
+              form={form}
+              onBack={prevStep}
+              onNext={nextStep}
+            />
+            <div className="mt-6 flex justify-end">
+              <CancelButton />
+            </div>
+          </>
+        );
+      case 5:
+        return (
+          <>
+            <StepFive
               form={form}
               onBack={prevStep}
               onSubmit={onSubmit}
