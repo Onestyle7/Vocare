@@ -23,6 +23,7 @@ import { CreateProfileFormType } from '@/lib/schemas/profileSchema';
 import { createProfileSchema } from '@/lib/schemas/profileSchema';
 import { UserProfile } from '@/lib/types/profile';
 import { Risk } from '@/lib/enums/risk';
+import { PersonalityType } from '@/lib/enums/personalityTypes';
 
 export default function ProfileForm({
   initialData,
@@ -109,6 +110,12 @@ export default function ProfileForm({
       aboutMe: data.aboutMe ?? '',
       skills: data.skills ?? [],
       languages: data.languages ?? [],
+      personalityType:
+        typeof data.personalityType === 'string'
+          ? PersonalityType[
+              data.personalityType as keyof typeof PersonalityType
+            ] ?? PersonalityType.Unknown
+          : data.personalityType ?? PersonalityType.Unknown,
       financialSurvey: {
         currentSalary: data.financialSurvey?.currentSalary,
         desiredSalary: data.financialSurvey?.desiredSalary,
