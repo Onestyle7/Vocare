@@ -16,6 +16,37 @@ import Section from '../SupportComponents/Section';
 import { Risk, riskLabels } from '@/lib/enums/risk';
 import { PersonalityType, personalityTypeLabels } from '@/lib/enums/personalityTypes';
 
+const getPersonalityLabel = (
+  value: PersonalityType | string | undefined
+): string => {
+  if (value === undefined || value === null || value === '') {
+    return personalityTypeLabels[PersonalityType.Unknown.toString()];
+  }
+  const numeric =
+    typeof value === 'string'
+      ? isNaN(Number(value))
+        ? PersonalityType[value as keyof typeof PersonalityType] ?? PersonalityType.Unknown
+        : Number(value)
+      : value;
+  return (
+    personalityTypeLabels[numeric.toString()] ??
+    personalityTypeLabels[PersonalityType.Unknown.toString()]
+  );
+};
+
+const getRiskLabel = (value: Risk | string | undefined): string => {
+  if (value === undefined || value === null || value === '') {
+    return riskLabels[Risk.Unknown];
+  }
+  const numeric =
+    typeof value === 'string'
+      ? isNaN(Number(value))
+        ? Risk[value as keyof typeof Risk] ?? Risk.Unknown
+        : Number(value)
+      : value;
+  return riskLabels[numeric as Risk] ?? riskLabels[Risk.Unknown];
+};
+
 export default function ProfileDetails() {
   const [profile, setProfile] = useState<UserProfile | null>(null);
   const [loading, setLoading] = useState(true);
@@ -103,7 +134,7 @@ export default function ProfileDetails() {
           <Separator />
           <div className="flex justify-between rounded-lg">
             <span className="font-medium text-gray-600 dark:text-gray-200">Personality Type:</span>
-            <span className="ml-2">{personalityTypeLabels[(profile?.personalityType ?? PersonalityType.Unknown).toString()]}</span>
+            <span className="ml-2">{getPersonalityLabel(profile?.personalityType)}</span>
           </div>
           <Separator />
           <div className="flex flex-col space-y-2">
@@ -319,9 +350,7 @@ export default function ProfileDetails() {
           <Separator />
           <div className="flex justify-between rounded-lg">
             <span className="font-medium text-gray-600 dark:text-gray-200">Risk Appetite:</span>
-            <span className="ml-2">
-              {riskLabels[(profile?.financialSurvey?.riskAppetite ?? Risk.Unknown) as keyof typeof riskLabels] || riskLabels[Risk.Unknown]}
-            </span>
+            <span className="ml-2">{getRiskLabel(profile?.financialSurvey?.riskAppetite)}</span>
           </div>
           <Separator />
           <div className="flex justify-between rounded-lg">
