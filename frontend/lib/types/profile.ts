@@ -52,7 +52,6 @@ export enum PersonalityType {
   Unknown,
 }
 
-
 export type FinancialSurvey = {
   currentSalary?: number;
   desiredSalary?: number;
