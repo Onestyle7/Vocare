@@ -112,9 +112,12 @@ export default function ProfileForm({
       languages: data.languages ?? [],
       personalityType:
         typeof data.personalityType === 'string'
-          ? PersonalityType[
-              data.personalityType as keyof typeof PersonalityType
-            ] ?? PersonalityType.Unknown
+          ? isNaN(Number(data.personalityType))
+            ?
+              PersonalityType[
+                data.personalityType as keyof typeof PersonalityType
+              ] ?? PersonalityType.Unknown
+            : Number(data.personalityType)
           : data.personalityType ?? PersonalityType.Unknown,
       financialSurvey: {
         currentSalary: data.financialSurvey?.currentSalary,
@@ -123,9 +126,12 @@ export default function ProfileForm({
         loanDetails: data.financialSurvey?.loanDetails ?? '',
         riskAppetite:
           typeof data.financialSurvey?.riskAppetite === 'string'
-            ? Risk[
-                data.financialSurvey?.riskAppetite as keyof typeof Risk
-              ] ?? Risk.Unknown
+            ? isNaN(Number(data.financialSurvey?.riskAppetite))
+              ?
+                Risk[
+                  data.financialSurvey?.riskAppetite as keyof typeof Risk
+                ] ?? Risk.Unknown
+              : Number(data.financialSurvey?.riskAppetite)
             : data.financialSurvey?.riskAppetite ?? Risk.Unknown,
         willingToRelocate: data.financialSurvey?.willingToRelocate ?? false,
       },

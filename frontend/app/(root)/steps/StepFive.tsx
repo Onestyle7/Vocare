@@ -126,7 +126,6 @@ export default function StepFive({
             <FormLabel>Risk appetite</FormLabel>
             <Select
               onValueChange={(value) => field.onChange(Number(value))}
-              defaultValue={field.value?.toString() ?? ''}
               value={field.value != null ? field.value.toString() : ''}
             >
               <FormControl>
