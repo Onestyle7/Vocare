@@ -22,23 +22,19 @@ jobs:
       - name: Setup .NET
         uses: actions/setup-dotnet@v4
         with:
-          dotnet-version: "9.0.x"
+          dotnet-version: "9.0.x" 
 
       - name: Update certificates
         run: sudo update-ca-certificates --fresh
 
       - name: Restore dependencies
-        run: dotnet restore VocareWebAPI/VocareWebAPI.csproj \
-          --source https://api.nuget.org/v3/index.json \
-          --source https://www.nuget.org/api/v2
+        run: dotnet restore VocareWebAPI/VocareWebAPI.csproj --source https://api.nuget.org/v3/index.json --source https://www.nuget.org/api/v2
 
       - name: Build
-        run: dotnet build VocareWebAPI/VocareWebAPI.csproj \
-          --configuration Release --no-restore
+        run: dotnet build VocareWebAPI/VocareWebAPI.csproj --configuration Release --no-restore
 
       - name: Test
-        run: dotnet test VocareWebAPI/VocareWebAPI.Tests.csproj \
-          --no-build --verbosity normal
+        run: dotnet test VocareWebAPI/VocareWebAPI.Tests.csproj --no-build --verbosity normal
         continue-on-error: true
 
       - name: Upload backend artifact
@@ -53,24 +49,19 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Setup Node.js (v18)
-        uses: actions/setup-node@v4
-        with:
-          node-version: "18"
-
       - name: Cache npm modules
         uses: actions/cache@v3
         with:
-          # Dodajemy node-version do klucza, żeby cache rozdzielał się przy zmianie wersji Node
           path: frontend/node_modules
-          key: ${{ runner.os }}-node-18-${{ hashFiles('frontend/package-lock.json') }}
+          key: ${{ runner.os }}-node-${{ hashFiles('frontend/package-lock.json') }}
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
 
       - name: Install dependencies
         run: npm ci --force
-        working-directory: frontend
-
-      - name: Rebuild LightningCSS
-        run: npm rebuild lightningcss
         working-directory: frontend
 
       - name: Build
