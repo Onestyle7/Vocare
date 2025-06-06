@@ -1,4 +1,5 @@
 name: CI/CD Pipeline
+
 on:
   push:
     branches: [develop]
@@ -11,31 +12,31 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
-      
+
       - name: Cache NuGet packages
         uses: actions/cache@v3
         with:
           path: ~/.nuget/packages
           key: ${{ runner.os }}-nuget-${{ hashFiles('**/*.csproj') }}
-      
+
       - name: Setup .NET
         uses: actions/setup-dotnet@v4
         with:
-          dotnet-version: "9.0.x"
-      
+          dotnet-version: "9.0.x" 
+
       - name: Update certificates
         run: sudo update-ca-certificates --fresh
-      
+
       - name: Restore dependencies
         run: dotnet restore VocareWebAPI/VocareWebAPI.csproj --source https://api.nuget.org/v3/index.json --source https://www.nuget.org/api/v2
-      
+
       - name: Build
         run: dotnet build VocareWebAPI/VocareWebAPI.csproj --configuration Release --no-restore
-      
+
       - name: Test
         run: dotnet test VocareWebAPI/VocareWebAPI.Tests.csproj --no-build --verbosity normal
         continue-on-error: true
-      
+
       - name: Upload backend artifact
         uses: actions/upload-artifact@v4
         with:
@@ -47,53 +48,33 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
-      
+
       - name: Cache npm modules
         uses: actions/cache@v3
         with:
           path: frontend/node_modules
           key: ${{ runner.os }}-node-${{ hashFiles('frontend/package-lock.json') }}
-      
+
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
           node-version: "20"
-      
-      - name: Install system dependencies
-        run: |
-          sudo apt-get update
-          sudo apt-get install -y python3 make g++ libc6-dev
-      
-      - name: Clear npm cache
-        run: npm cache clean --force
-        working-directory: frontend
-      
-      - name: Delete node_modules and package-lock
-        run: |
-          rm -rf node_modules
-          rm -f package-lock.json
-        working-directory: frontend
-      
+
       - name: Install dependencies
         run: |
-          npm install --legacy-peer-deps
-          npm rebuild --legacy-peer-deps
+          npm ci --legacy-peer-deps
+          npm install lightningcss --force
         working-directory: frontend
-        env:
-          NODE_OPTIONS: --max_old_space_size=4096
-      
+
       - name: Build
         run: npm run build
         working-directory: frontend
-        env:
-          NODE_OPTIONS: --max_old_space_size=4096
-          NEXT_TELEMETRY_DISABLED: 1
-      
+
       - name: Test
         run: npm run test
         working-directory: frontend
         continue-on-error: true
-      
+
       - name: Upload frontend artifact
         uses: actions/upload-artifact@v4
         with:
