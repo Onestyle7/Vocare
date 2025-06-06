@@ -64,6 +64,11 @@ jobs:
         run: npm ci --force
         working-directory: frontend
 
+      # <<< DODANY KROK: odbuduj LightningCSS, żeby pobrać binarkę pod Linuksa >>>
+      - name: Rebuild LightningCSS
+        run: npm rebuild lightningcss
+        working-directory: frontend
+
       - name: Build
         run: npm run build
         working-directory: frontend
