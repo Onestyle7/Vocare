@@ -41,8 +41,9 @@ interface SkillDemand {
 
 interface IndustryStatistic {
   industry: string;
-  averageSalary: string;
-  employmentRate: string;
+  minSalary: number;
+  maxSalary: number;
+  employmentRate: number;
   growthForecast: string;
 }
 
@@ -403,6 +404,15 @@ function IndustrySection({ data, index }: IndustrySectionProps) {
     return colors[idx % colors.length];
   };
 
+  const formatSalaryRange = (min: number, max: number) => {
+    if (min === 0 && max === 0) return '—';
+    const formatter = new Intl.NumberFormat('pl-PL');
+    return `${formatter.format(min)} - ${formatter.format(max)} PLN`;
+  };
+
+  const formatEmploymentRate = (rate: number) =>
+    rate !== undefined ? `${rate}%` : '—';
+
   useEffect(() => {
     if (typeof window !== 'undefined' && window.innerWidth >= 1024) {
       const ctx = gsap.context(() => {
@@ -609,7 +619,9 @@ function IndustrySection({ data, index }: IndustrySectionProps) {
             ref={salaryBoxRef}
           >
             <p className="text-sm text-gray-500">Average Salary</p>
-            <p className="text-lg font-medium text-black dark:text-white">{data.averageSalary}</p>
+            <p className="text-lg font-medium text-black dark:text-white">
+              {formatSalaryRange(data.minSalary, data.maxSalary)}
+            </p>
             <Image
               src={wallet}
               alt="shape"
@@ -624,7 +636,9 @@ function IndustrySection({ data, index }: IndustrySectionProps) {
             ref={chartBoxRef}
           >
             <p className="text-sm text-gray-500">Employment Rate</p>
-            <p className="text-lg font-medium text-black dark:text-white">{data.employmentRate}</p>
+            <p className="text-lg font-medium text-black dark:text-white">
+              {formatEmploymentRate(data.employmentRate)}
+            </p>
             <Image
               src={chart}
               alt="shape"
