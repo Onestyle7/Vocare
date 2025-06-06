@@ -49,6 +49,7 @@ export default function ProfileForm({
       education: [],
       workExperience: [],
       skills: [],
+      softSkills: [],
       certificates: [],
       languages: [],
       additionalInformation: '',
@@ -109,6 +110,7 @@ export default function ProfileForm({
       additionalInformation: data.additionalInformation ?? '',
       aboutMe: data.aboutMe ?? '',
       skills: data.skills ?? [],
+      softSkills: data.softSkills ?? [],
       languages: data.languages ?? [],
       personalityType:
         typeof data.personalityType === 'string'

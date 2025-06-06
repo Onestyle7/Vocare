@@ -70,6 +70,7 @@ export type UserProfile = {
   education?: EducationEntry[];
   workExperience?: WorkExperienceEntry[];
   skills?: string[];
+  softSkills?: string[];
   certificates?: CertificateEntry[];
   languages?: LanguageEntry[];
   additionalInformation?: string;

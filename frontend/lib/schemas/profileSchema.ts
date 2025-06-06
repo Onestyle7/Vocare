@@ -62,6 +62,7 @@ const baseProfileSchema = z.object({
   education: z.array(educationEntrySchema).optional(),
   workExperience: z.array(workExperienceEntrySchema).optional(),
   skills: z.array(z.string()).optional(),
+  softSkills: z.array(z.string()).optional(),
   certificates: z.array(certificateEntrySchema).optional(),
   languages: z.array(languageEntrySchema).optional(),
   additionalInformation: z.string().optional(),

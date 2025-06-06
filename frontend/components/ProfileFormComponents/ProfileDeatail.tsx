@@ -251,6 +251,27 @@ export default function ProfileDetails() {
         </div>
       </div>
 
+      <div className="space-y-2">
+        <h2 className="flex items-center text-2xl font-medium text-gray-700 dark:text-gray-200">
+          Soft Skills
+          <div className="ml-2 h-2 w-2 rounded-full bg-[#915EFF]" />
+        </h2>
+        <div className="flex flex-wrap gap-2">
+          {profile?.softSkills?.length ? (
+            profile.softSkills.map((skill, index) => (
+              <span
+                key={index}
+                className="rounded-full bg-[#efe7ff] px-3 py-1 text-sm text-[#915EFF] dark:bg-gray-900/50"
+              >
+                {skill}
+              </span>
+            ))
+          ) : (
+            <p className="text-gray-500 italic">No soft skills</p>
+          )}
+        </div>
+      </div>
+
       <div className="flex flex-col space-y-2">
         <span className="flex items-center text-2xl font-medium text-gray-700 dark:text-gray-200">
           Work Experience <div className="ml-2 h-2 w-2 rounded-full bg-[#915EFF]" />
