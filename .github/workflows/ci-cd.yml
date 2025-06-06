@@ -22,7 +22,7 @@ jobs:
       - name: Setup .NET
         uses: actions/setup-dotnet@v4
         with:
-          dotnet-version: "9.0.x" 
+          dotnet-version: "9.0.x"
 
       - name: Update certificates
         run: sudo update-ca-certificates --fresh
@@ -63,6 +63,7 @@ jobs:
       - name: Install dependencies
         run: |
           npm ci --force
+          npm rebuild @tailwindcss/oxide --force
           npm install lightningcss --force
         working-directory: frontend
 
