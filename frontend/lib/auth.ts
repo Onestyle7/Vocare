@@ -24,7 +24,7 @@ if (typeof window !== 'undefined') {
 }
 
 export const registerUser = async ({ email, password }: RegisterInput) => {
-  const response = await api.post('/register', { email, password });
+  const response = await api.post('/api/register', { email, password });
   return response.data;
 };
 

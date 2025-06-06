@@ -41,8 +41,9 @@ interface SkillDemand {
 
 interface IndustryStatistic {
   industry: string;
-  averageSalary: string;
-  employmentRate: string;
+  minSalary: number;
+  maxSalary: number;
+  employmentRate: number;
   growthForecast: string;
 }
 
@@ -335,7 +336,7 @@ export default function MarketAnalysis() {
                     Generate new recommendation?
                   </AlertDialogTitle>
                   <AlertDialogDescription className="text-center">
-                    This will take <b className="text-[#915EFF]">50 credits</b> from Your account.
+                    This will take <b className="text-[#915EFF]">5 credits</b> from Your account.
                   </AlertDialogDescription>
 
                   <div className="mt-2 text-center text-sm font-extralight">
@@ -347,7 +348,7 @@ export default function MarketAnalysis() {
                 <AlertDialogFooter className="flex justify-center gap-4 sm:justify-center">
                   <AlertDialogCancel className="border-gray-200">Cancel</AlertDialogCancel>
 
-                  {!isBalanceLoading && typeof tokenBalance === 'number' && tokenBalance < 50 ? (
+                  {!isBalanceLoading && typeof tokenBalance === 'number' && tokenBalance < 5 ? (
                     <Link href="/pricing">
                       <AlertDialogAction
                         className="bg-[#915EFF] text-white hover:bg-[#7b4ee0]"
@@ -402,6 +403,14 @@ function IndustrySection({ data, index }: IndustrySectionProps) {
   const getColorClass = (idx: number) => {
     return colors[idx % colors.length];
   };
+
+  const formatSalaryRange = (min: number, max: number) => {
+    if (min === 0 && max === 0) return '—';
+    const formatter = new Intl.NumberFormat('pl-PL');
+    return `${formatter.format(min)} - ${formatter.format(max)} PLN`;
+  };
+
+  const formatEmploymentRate = (rate: number) => (rate !== undefined ? `${rate}%` : '—');
 
   useEffect(() => {
     if (typeof window !== 'undefined' && window.innerWidth >= 1024) {
@@ -609,7 +618,9 @@ function IndustrySection({ data, index }: IndustrySectionProps) {
             ref={salaryBoxRef}
           >
             <p className="text-sm text-gray-500">Average Salary</p>
-            <p className="text-lg font-medium text-black dark:text-white">{data.averageSalary}</p>
+            <p className="text-lg font-medium text-black dark:text-white">
+              {formatSalaryRange(data.minSalary, data.maxSalary)}
+            </p>
             <Image
               src={wallet}
               alt="shape"
@@ -624,7 +635,9 @@ function IndustrySection({ data, index }: IndustrySectionProps) {
             ref={chartBoxRef}
           >
             <p className="text-sm text-gray-500">Employment Rate</p>
-            <p className="text-lg font-medium text-black dark:text-white">{data.employmentRate}</p>
+            <p className="text-lg font-medium text-black dark:text-white">
+              {formatEmploymentRate(data.employmentRate)}
+            </p>
             <Image
               src={chart}
               alt="shape"

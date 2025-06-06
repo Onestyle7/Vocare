@@ -3,6 +3,7 @@ using Microsoft.EntityFrameworkCore;
 using VocareWebAPI.Data;
 using VocareWebAPI.Models.Dtos;
 using VocareWebAPI.Models.Entities;
+using VocareWebAPI.UserManagement.Models.Entities;
 
 namespace VocareWebAPI.Services
 {
@@ -45,6 +46,7 @@ namespace VocareWebAPI.Services
                 .Include(u => u.WorkExperience)
                 .Include(u => u.Certificates)
                 .Include(u => u.Languages)
+                .Include(u => u.FinancialSurvey)
                 .FirstOrDefaultAsync(u => u.UserId == UserId);
 
             if (profile == null)
@@ -70,7 +72,10 @@ namespace VocareWebAPI.Services
         {
             _logger.LogInformation("Creating profile for UserId: {UserId}", UserId);
 
-            var profile = await _context.UserProfiles.FindAsync(UserId);
+            var profile = await _context
+                .UserProfiles
+                .Include(u => u.FinancialSurvey)
+                .FirstOrDefaultAsync(u => u.UserId == UserId);
             if (profile == null)
             {
                 _logger.LogInformation(
@@ -85,7 +90,24 @@ namespace VocareWebAPI.Services
                 _logger.LogInformation("Profile already exists for UserId: {UserId}", UserId);
             }
 
+            // Zachowujemy istniejącą ankietę finansową, aby uniknąć duplikacji
+            var existingSurvey = profile.FinancialSurvey;
+
+            // Mapowanie danych podstawowych
             _mapper.Map(userProfileDto, profile);
+
+            if (userProfileDto.FinancialSurvey != null)
+            {
+                if (existingSurvey == null)
+                {
+                    existingSurvey = new FinancialSurvey { UserId = profile.UserId };
+                    _context.FinancialSurveys.Add(existingSurvey);
+                }
+
+                _mapper.Map(userProfileDto.FinancialSurvey, existingSurvey);
+                existingSurvey.UserId = profile.UserId;
+                profile.FinancialSurvey = existingSurvey;
+            }
 
             try
             {
@@ -119,6 +141,7 @@ namespace VocareWebAPI.Services
                 .Include(u => u.WorkExperience)
                 .Include(u => u.Certificates)
                 .Include(u => u.Languages)
+                .Include(u => u.FinancialSurvey)
                 .FirstOrDefaultAsync(u => u.UserId == UserId);
 
             if (profile == null)
@@ -132,8 +155,24 @@ namespace VocareWebAPI.Services
             profile.Certificates.Clear();
             profile.Languages.Clear();
 
-            // Mapowanie danych
+            // Zachowujemy istniejącą ankietę finansową, aby uniknąć duplikacji
+            var existingSurvey = profile.FinancialSurvey;
+
+            // Mapowanie danych podstawowych
             _mapper.Map(userProfileDto, profile);
+
+            if (userProfileDto.FinancialSurvey != null)
+            {
+                if (existingSurvey == null)
+                {
+                    existingSurvey = new FinancialSurvey { UserId = profile.UserId };
+                    _context.FinancialSurveys.Add(existingSurvey);
+                }
+
+                _mapper.Map(userProfileDto.FinancialSurvey, existingSurvey);
+                existingSurvey.UserId = profile.UserId;
+                profile.FinancialSurvey = existingSurvey;
+            }
 
             // Logowanie wartości DateTime dla debugowania
             foreach (var education in profile.Education)

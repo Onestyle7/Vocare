@@ -14,7 +14,7 @@ import Link from 'next/link';
 gsap.registerPlugin(SplitText, ScrollTrigger);
 
 const Features = () => {
-  const videoRef = useRef(null);
+  const videoRef = useRef<HTMLDivElement>(null);
 
   useGSAP(() => {
     const clipAnimation = gsap.timeline({

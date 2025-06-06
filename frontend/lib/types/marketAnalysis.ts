@@ -1,6 +1,7 @@
 export interface CareerStatisticsDto {
   careerName: string;
-  averageSalary: number;
+  averageSalaryMin: number;
+  averageSalaryMax: number;
   employmentRate: number;
   growthForecast: string;
   lastUpdated: string;
@@ -8,8 +9,9 @@ export interface CareerStatisticsDto {
 
 export interface IndustryStatisticsDto {
   industry: string;
-  averageSalary: string;
-  employmentRate: string;
+  minSalary: number;
+  maxSalary: number;
+  employmentRate: number;
   growthForecast: string;
 }
 

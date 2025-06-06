@@ -9,9 +9,7 @@ import { avatars, mobileView, shape1 } from '@/app/constants';
 import Section from '../Section';
 import Iphone15Pro from '@/components/magicui/iphone-15-pro';
 import { AvatarCircles } from '@/components/magicui/avatar-circles';
-import CustomButton from '@/components/ui/CustomButton';
 import Image from 'next/image';
-import { animateTextLines } from '@/app/constants/animation';
 import Copy from '../Copy';
 
 gsap.registerPlugin(SplitText, ScrollTrigger);
@@ -126,23 +124,6 @@ const MobileFeature = () => {
     return () => {
       tl.kill();
     };
-  }, []);
-
-  useEffect(() => {
-    if (typeof window === 'undefined') return;
-
-    const cleanup = animateTextLines('#split-mobile', {
-      duration: 0.8,
-      stagger: 0.2,
-      ease: 'power2.out',
-      scrollTrigger: {
-        start: 'top 85%',
-        end: 'bottom 20%',
-        toggleActions: 'play none none reset',
-      },
-    });
-
-    return cleanup;
   }, []);
 
   return (
