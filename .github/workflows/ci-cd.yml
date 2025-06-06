@@ -62,7 +62,7 @@ jobs:
 
       - name: Install dependencies
         run: |
-          npm ci --legacy-peer-deps
+          npm ci --force
           npm install lightningcss --force
         working-directory: frontend
 
