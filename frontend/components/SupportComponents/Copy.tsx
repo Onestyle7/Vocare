@@ -99,8 +99,8 @@ export default function Copy({ children, animateOnScroll = true, delay = 0 }: Co
 
     // Sprawdzamy czy to jest React element (nie string, number, etc.)
     if (React.isValidElement(child)) {
-      return React.cloneElement(child, {
-        ref: containerRef as React.Ref<any>,
+      return React.cloneElement(child as React.ReactElement, {
+        ref: containerRef,
       });
     }
 
