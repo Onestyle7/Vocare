@@ -99,9 +99,10 @@ export default function Copy({ children, animateOnScroll = true, delay = 0 }: Co
 
     // Sprawdzamy czy to jest React element (nie string, number, etc.)
     if (React.isValidElement(child)) {
-      return React.cloneElement(child as React.ReactElement, {
-        ref: containerRef,
-      });
+      const element = child as React.ReactElement<{
+        ref?: React.Ref<HTMLDivElement>;
+      }>;
+      return React.cloneElement(element, { ref: containerRef });
     }
 
     // Jeśli to nie jest React element, owijamy w div
