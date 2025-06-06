@@ -18,7 +18,7 @@ import {
   AlertDialogCancel,
   AlertDialogAction,
 } from '@/components/ui/alert-dialog';
-import { Risk, riskLabels } from '@/lib/enums/risk';
+import { riskLabels } from '@/lib/enums/risk';
 import { CreateProfileFormType } from '@/lib/schemas/profileSchema';
 import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from '@/components/ui/select';
 
@@ -56,7 +56,8 @@ export default function StepFive({
                 type="number"
                 placeholder="e.g., 3500"
                 value={field.value ?? ''}
-                onChange={field.onChange}
+                onChange={field.onChange} 
+                className='rounded-lg border'
               />
             </FormControl>
             <FormMessage />
@@ -76,6 +77,7 @@ export default function StepFive({
                 placeholder="e.g., 5000"
                 value={field.value ?? ''}
                 onChange={field.onChange}
+                className='rounded-lg border'
               />
             </FormControl>
             <FormMessage />
