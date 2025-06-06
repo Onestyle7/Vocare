@@ -62,8 +62,8 @@ export default function StepFive({
                 type="number"
                 placeholder="e.g., 3500"
                 value={field.value ?? ''}
-                onChange={field.onChange} 
-                className='rounded-lg border'
+                onChange={field.onChange}
+                className="rounded-lg border"
               />
             </FormControl>
             <FormMessage />
@@ -83,7 +83,7 @@ export default function StepFive({
                 placeholder="e.g., 5000"
                 value={field.value ?? ''}
                 onChange={field.onChange}
-                className='rounded-lg border'
+                className="rounded-lg border"
               />
             </FormControl>
             <FormMessage />

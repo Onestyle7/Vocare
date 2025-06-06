@@ -18,33 +18,30 @@ export default function StepProgress({ currentStep, totalSteps }: StepProgressPr
   const visibleSteps = steps.slice(0, totalSteps);
 
   return (
-    <div className="font-poppins mb-8 w-full max-w-4xl mx-auto">
-      <div className="flex items-center justify-between relative">
+    <div className="font-poppins mx-auto mb-8 w-full max-w-4xl">
+      <div className="relative flex items-center justify-between">
         {visibleSteps.map((step, index) => (
           <React.Fragment key={step.number}>
             {/* Step Circle */}
-            <div className="flex flex-col items-center relative z-10">
+            <div className="relative z-10 flex flex-col items-center">
               <div
-                className={`
-                  relative flex h-8 w-8 sm:h-10 sm:w-10 items-center justify-center rounded-full 
-                  transition-all duration-500 ease-in-out transform
-                  ${
-                    step.number === currentStep
-                      ? 'text-white scale-110 shadow-lg' 
-                      : step.number < currentStep
+                className={`relative flex h-8 w-8 transform items-center justify-center rounded-full transition-all duration-500 ease-in-out sm:h-10 sm:w-10 ${
+                  step.number === currentStep
+                    ? 'scale-110 text-white shadow-lg'
+                    : step.number < currentStep
                       ? 'text-white shadow-md'
                       : 'bg-gray-200 text-gray-500 dark:bg-gray-700 dark:text-gray-400'
-                  }
-                `}
+                } `}
                 style={{
                   backgroundColor: step.number <= currentStep ? '#915EFF' : undefined,
-                  boxShadow: step.number === currentStep ? '0 10px 25px rgba(145, 94, 255, 0.3)' : undefined
+                  boxShadow:
+                    step.number === currentStep ? '0 10px 25px rgba(145, 94, 255, 0.3)' : undefined,
                 }}
               >
                 {step.number < currentStep ? (
                   <div className="relative">
                     <svg
-                      className="w-4 h-4 sm:w-6 sm:h-6 animate-bounce-in"
+                      className="animate-bounce-in h-4 w-4 sm:h-6 sm:w-6"
                       fill="none"
                       stroke="currentColor"
                       viewBox="0 0 24 24"
@@ -60,25 +57,19 @@ export default function StepProgress({ currentStep, totalSteps }: StepProgressPr
                     </svg>
                   </div>
                 ) : (
-                  <span className="text-sm sm:text-lg font-semibold">{step.number}</span>
+                  <span className="text-sm font-semibold sm:text-lg">{step.number}</span>
                 )}
-                
-
               </div>
-              
+
               {/* Step Label */}
-              <span 
-                className={`
-                  mt-2 text-xs sm:text-sm font-medium text-center max-w-20 sm:max-w-none
-                  transition-colors duration-300
-                  ${
-                    step.number <= currentStep
-                      ? 'dark:text-purple-400'
-                      : 'text-gray-500 dark:text-gray-400'
-                  }
-                `}
+              <span
+                className={`mt-2 max-w-20 text-center text-xs font-medium transition-colors duration-300 sm:max-w-none sm:text-sm ${
+                  step.number <= currentStep
+                    ? 'dark:text-purple-400'
+                    : 'text-gray-500 dark:text-gray-400'
+                } `}
                 style={{
-                  color: step.number <= currentStep ? '#915EFF' : undefined
+                  color: step.number <= currentStep ? '#915EFF' : undefined,
                 }}
               >
                 {step.name}
@@ -87,19 +78,14 @@ export default function StepProgress({ currentStep, totalSteps }: StepProgressPr
 
             {/* Connecting Line */}
             {index < visibleSteps.length - 1 && (
-              <div className="flex-1 flex items-center px-2 sm:px-4 -mt-6">
-                <div className="w-full h-1 bg-gray-200 dark:bg-gray-700 rounded-full overflow-hidden">
+              <div className="-mt-6 flex flex-1 items-center px-2 sm:px-4">
+                <div className="h-1 w-full overflow-hidden rounded-full bg-gray-200 dark:bg-gray-700">
                   <div
-                    className={`
-                      h-full rounded-full transition-all duration-700 ease-in-out
-                      ${
-                        step.number < currentStep
-                          ? 'w-full'
-                          : 'w-0'
-                      }
-                    `}
+                    className={`h-full rounded-full transition-all duration-700 ease-in-out ${
+                      step.number < currentStep ? 'w-full' : 'w-0'
+                    } `}
                     style={{
-                      backgroundColor: step.number < currentStep ? '#915EFF' : undefined
+                      backgroundColor: step.number < currentStep ? '#915EFF' : undefined,
                     }}
                   />
                 </div>
