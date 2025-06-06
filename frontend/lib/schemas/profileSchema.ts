@@ -36,16 +36,10 @@ const languageEntrySchema = z.object({
 
 const financialSurveySchema = z.object({
   currentSalary: z
-    .preprocess(
-      (val) => (val === '' || val === null ? undefined : Number(val)),
-      z.number()
-    )
+    .preprocess((val) => (val === '' || val === null ? undefined : Number(val)), z.number())
     .optional(),
   desiredSalary: z
-    .preprocess(
-      (val) => (val === '' || val === null ? undefined : Number(val)),
-      z.number()
-    )
+    .preprocess((val) => (val === '' || val === null ? undefined : Number(val)), z.number())
     .optional(),
   hasLoans: z.boolean().default(false),
   loanDetails: z.string().optional(),

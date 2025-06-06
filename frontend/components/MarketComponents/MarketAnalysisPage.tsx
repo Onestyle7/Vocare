@@ -410,8 +410,7 @@ function IndustrySection({ data, index }: IndustrySectionProps) {
     return `${formatter.format(min)} - ${formatter.format(max)} PLN`;
   };
 
-  const formatEmploymentRate = (rate: number) =>
-    rate !== undefined ? `${rate}%` : '—';
+  const formatEmploymentRate = (rate: number) => (rate !== undefined ? `${rate}%` : '—');
 
   useEffect(() => {
     if (typeof window !== 'undefined' && window.innerWidth >= 1024) {

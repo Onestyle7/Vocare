@@ -14,7 +14,6 @@ import { SpinningText } from '@/components/magicui/spinning-text';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { SplitText } from 'gsap/SplitText';
 import gsap from 'gsap';
-import { animateTextLines } from '@/app/constants/animation';
 import Copy from '../Copy';
 
 gsap.registerPlugin(ScrollTrigger, SplitText);
@@ -45,23 +44,6 @@ const HeroTweak = () => {
       return () => clearTimeout(timer);
     }
   }, [isMobile]);
-
-  useEffect(() => {
-    if (typeof window === 'undefined') return;
-
-    const cleanup = animateTextLines('#split-hero', {
-      duration: 0.8,
-      stagger: 0.2,
-      ease: 'power2.out',
-      scrollTrigger: {
-        start: 'top 85%',
-        end: 'bottom 20%',
-        toggleActions: 'play reverse play reset',
-      },
-    });
-
-    return cleanup;
-  }, []);
 
   return (
     <Section

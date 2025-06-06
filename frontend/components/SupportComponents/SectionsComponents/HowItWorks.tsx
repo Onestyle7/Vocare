@@ -63,11 +63,11 @@ export const HowItWorks = ({
             {features[0] && (
               <div className="border-border flex flex-col overflow-clip rounded-xl border md:col-span-2 md:grid md:grid-cols-2 md:gap-6 lg:gap-8">
                 <div className="md:min-h-[24rem] lg:min-h-[28rem] xl:min-h-[32rem]">
-                  <img
+                  {/* <img
                     src={features[0].image}
                     alt={features[0].title}
                     className="aspect-[16/9] h-full w-full object-cover object-center"
-                  />
+                  /> */}
                 </div>
                 <div className="flex flex-col justify-center px-6 py-8 md:px-8 md:py-10 lg:px-10 lg:py-12">
                   <h3 className="mb-3 text-lg font-semibold md:mb-4 md:text-2xl lg:mb-6">
@@ -83,11 +83,11 @@ export const HowItWorks = ({
                 className="border-border flex flex-col overflow-clip rounded-xl border"
               >
                 <div>
-                  <img
+                  {/* <img
                     src={feature.image}
                     alt={feature.title}
                     className="aspect-[16/9] h-full w-full object-cover object-center"
-                  />
+                  /> */}
                 </div>
                 <div className="px-6 py-8 md:px-8 md:py-10 lg:px-10 lg:py-12">
                   <h3 className="mb-3 text-lg font-semibold md:mb-4 md:text-2xl lg:mb-6">

@@ -14,11 +14,7 @@ interface StepFourProps {
   onNext: () => void;
 }
 
-export default function StepFour({
-  form,
-  onBack,
-  onNext,
-}: StepFourProps) {
+export default function StepFour({ form, onBack, onNext }: StepFourProps) {
   return (
     <div className="font-poppins space-y-6">
       <h2 className="mb-6 text-2xl font-bold">Additional Information</h2>
@@ -81,7 +77,6 @@ export default function StepFour({
           </Button>
         </div>
       </div>
-
     </div>
   );
 }

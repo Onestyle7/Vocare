@@ -16,16 +16,14 @@ import Section from '../SupportComponents/Section';
 import { Risk, riskLabels } from '@/lib/enums/risk';
 import { PersonalityType, personalityTypeLabels } from '@/lib/enums/personalityTypes';
 
-const getPersonalityLabel = (
-  value: PersonalityType | string | undefined
-): string => {
+const getPersonalityLabel = (value: PersonalityType | string | undefined): string => {
   if (value === undefined || value === null || value === '') {
     return personalityTypeLabels[PersonalityType.Unknown.toString()];
   }
   const numeric =
     typeof value === 'string'
       ? isNaN(Number(value))
-        ? PersonalityType[value as keyof typeof PersonalityType] ?? PersonalityType.Unknown
+        ? (PersonalityType[value as keyof typeof PersonalityType] ?? PersonalityType.Unknown)
         : Number(value)
       : value;
   return (
@@ -41,7 +39,7 @@ const getRiskLabel = (value: Risk | string | undefined): string => {
   const numeric =
     typeof value === 'string'
       ? isNaN(Number(value))
-        ? Risk[value as keyof typeof Risk] ?? Risk.Unknown
+        ? (Risk[value as keyof typeof Risk] ?? Risk.Unknown)
         : Number(value)
       : value;
   return riskLabels[numeric as Risk] ?? riskLabels[Risk.Unknown];
@@ -69,7 +67,7 @@ export default function ProfileDetails() {
     const fetchProfile = async () => {
       setLoading(true);
       try {
-        const data = await getUserProfile(token);
+        const data = await getUserProfile();
         setProfile(data);
       } catch (error) {
         console.error(error);
@@ -375,8 +373,12 @@ export default function ProfileDetails() {
           </div>
           <Separator />
           <div className="flex justify-between rounded-lg">
-            <span className="font-medium text-gray-600 dark:text-gray-200">Willing To Relocate:</span>
-            <span className="ml-2">{profile?.financialSurvey?.willingToRelocate ? 'Yes' : 'No'}</span>
+            <span className="font-medium text-gray-600 dark:text-gray-200">
+              Willing To Relocate:
+            </span>
+            <span className="ml-2">
+              {profile?.financialSurvey?.willingToRelocate ? 'Yes' : 'No'}
+            </span>
           </div>
         </div>
       </div>
@@ -398,7 +400,7 @@ export default function ProfileDetails() {
       customPaddings
       id="profile"
     >
-      <div className="font-poppins border-r border-l mt-10 xl:mx-10 xl:mt-16 xl:border-t">
+      <div className="font-poppins mt-10 border-r border-l xl:mx-10 xl:mt-16 xl:border-t">
         <div className="font-poppins mx-4 mt-8 max-w-7xl max-sm:mx-4 xl:mx-auto 2xl:max-w-[1480px]">
           <div className="mt-2 flex h-screen flex-col xl:flex-row">
             <div className="hidden xl:block xl:w-1/2 xl:pr-8">

@@ -18,9 +18,15 @@ import {
   AlertDialogCancel,
   AlertDialogAction,
 } from '@/components/ui/alert-dialog';
-import { Risk, riskLabels } from '@/lib/enums/risk';
+import { riskLabels } from '@/lib/enums/risk';
 import { CreateProfileFormType } from '@/lib/schemas/profileSchema';
-import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from '@/components/ui/select';
+import {
+  Select,
+  SelectTrigger,
+  SelectValue,
+  SelectContent,
+  SelectItem,
+} from '@/components/ui/select';
 
 interface StepFiveProps {
   form: UseFormReturn<CreateProfileFormType>;
@@ -110,7 +116,11 @@ export default function StepFive({
             <FormItem>
               <FormLabel>Loan details</FormLabel>
               <FormControl>
-                <Textarea placeholder="Describe your loans..." className="min-h-[120px]" {...field} />
+                <Textarea
+                  placeholder="Describe your loans..."
+                  className="min-h-[120px]"
+                  {...field}
+                />
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -231,4 +241,3 @@ export default function StepFive({
     </div>
   );
 }
-

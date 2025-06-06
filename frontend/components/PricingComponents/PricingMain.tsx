@@ -1,7 +1,6 @@
 'use client';
 
 import { pricingPlans, shape1 } from '@/app/constants';
-import AnimatedHeadline from '@/components/SupportComponents/AnimatedText';
 import { GridBackgroundDemo } from '@/components/MarketComponents/GridBackgroundDemo';
 import Section from '@/components/SupportComponents/Section';
 import { Button } from '@/components/ui/button';
