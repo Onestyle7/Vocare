@@ -49,6 +49,7 @@ export default function ProfileForm({
       education: [],
       workExperience: [],
       skills: [],
+      softSkills: [],
       certificates: [],
       languages: [],
       additionalInformation: '',
@@ -109,16 +110,15 @@ export default function ProfileForm({
       additionalInformation: data.additionalInformation ?? '',
       aboutMe: data.aboutMe ?? '',
       skills: data.skills ?? [],
+      softSkills: data.softSkills ?? [],
       languages: data.languages ?? [],
       personalityType:
         typeof data.personalityType === 'string'
           ? isNaN(Number(data.personalityType))
-            ?
-              PersonalityType[
-                data.personalityType as keyof typeof PersonalityType
-              ] ?? PersonalityType.Unknown
+            ? (PersonalityType[data.personalityType as keyof typeof PersonalityType] ??
+              PersonalityType.Unknown)
             : Number(data.personalityType)
-          : data.personalityType ?? PersonalityType.Unknown,
+          : (data.personalityType ?? PersonalityType.Unknown),
       financialSurvey: {
         currentSalary: data.financialSurvey?.currentSalary,
         desiredSalary: data.financialSurvey?.desiredSalary,
@@ -127,12 +127,9 @@ export default function ProfileForm({
         riskAppetite:
           typeof data.financialSurvey?.riskAppetite === 'string'
             ? isNaN(Number(data.financialSurvey?.riskAppetite))
-              ?
-                Risk[
-                  data.financialSurvey?.riskAppetite as keyof typeof Risk
-                ] ?? Risk.Unknown
+              ? (Risk[data.financialSurvey?.riskAppetite as keyof typeof Risk] ?? Risk.Unknown)
               : Number(data.financialSurvey?.riskAppetite)
-            : data.financialSurvey?.riskAppetite ?? Risk.Unknown,
+            : (data.financialSurvey?.riskAppetite ?? Risk.Unknown),
         willingToRelocate: data.financialSurvey?.willingToRelocate ?? false,
       },
     }),
@@ -154,7 +151,7 @@ export default function ProfileForm({
         return;
       }
       try {
-        const profileData = await getUserProfile(token);
+        const profileData = await getUserProfile();
         if (profileData) {
           setEditMode(true);
           form.reset(formatProfileDates(profileData));
@@ -184,11 +181,11 @@ export default function ProfileForm({
     try {
       let profileData;
       if (isEditMode) {
-        profileData = await updateUserProfile(formattedData, token);
+        profileData = await updateUserProfile(formattedData);
         toast.success('Profile updated successfully!');
       } else {
         console.log('DATA SENT TO BACKEND:', formattedData);
-        profileData = await createUserProfile(formattedData, token);
+        profileData = await createUserProfile(formattedData);
         toast.success('Profile created successfully!');
         setEditMode(true);
       }
@@ -215,7 +212,7 @@ export default function ProfileForm({
     }
     setLoading(true);
     try {
-      await deleteUserProfile(token);
+      await deleteUserProfile();
       toast.success('Profile deleted successfully!');
       router.push('/');
     } catch (err) {
@@ -299,11 +296,7 @@ export default function ProfileForm({
       case 4:
         return (
           <>
-            <StepFour
-              form={form}
-              onBack={prevStep}
-              onNext={nextStep}
-            />
+            <StepFour form={form} onBack={prevStep} onNext={nextStep} />
             <div className="mt-6 flex justify-end">
               <CancelButton />
             </div>

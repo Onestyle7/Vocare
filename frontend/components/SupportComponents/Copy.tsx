@@ -1,5 +1,5 @@
 'use client';
-import React, { useRef, ReactElement, ReactNode } from 'react';
+import React, { useRef, ReactNode } from 'react';
 import gsap from 'gsap';
 import { SplitText } from 'gsap/SplitText';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
@@ -99,12 +99,12 @@ export default function Copy({ children, animateOnScroll = true, delay = 0 }: Co
 
     // Sprawdzamy czy to jest React element (nie string, number, etc.)
     if (React.isValidElement(child)) {
-      return React.cloneElement(child, {
-        ref: containerRef as React.Ref<any>,
-      });
+      const element = child as React.ReactElement<{
+        ref?: React.Ref<HTMLDivElement>;
+      }>;
+      return React.cloneElement(element, { ref: containerRef });
     }
 
-    // Jeśli to nie jest React element, owijamy w div
     return <div ref={containerRef}>{child}</div>;
   }
 

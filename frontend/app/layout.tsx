@@ -5,7 +5,7 @@ import { ThemeProvider } from '@/components/ui/theme-provider';
 import { Toaster } from '@/components/ui/sonner';
 
 import { TokenBalanceProvider } from '@/lib/contexts/TokenBalanceContext';
-import SmoothScrollProvider from '@/components/SupportComponents/SmoothScrollProvider';
+// import SmoothScrollProvider from '@/components/SupportComponents/SmoothScrollProvider';
 
 const sizmoPro = localFont({
   src: [
@@ -86,12 +86,12 @@ export default function RootLayout({
     <html lang="en" suppressHydrationWarning>
       <body className={`${sizmoPro.className} h-full antialiased selection:bg-[#915EFF]`}>
         {/* <SmoothScrollProvider> */}
-          <TokenBalanceProvider>
-            <ThemeProvider attribute="class" defaultTheme="dark">
-              {children}
-              <Toaster />
-            </ThemeProvider>
-          </TokenBalanceProvider>
+        <TokenBalanceProvider>
+          <ThemeProvider attribute="class" defaultTheme="dark">
+            {children}
+            <Toaster />
+          </ThemeProvider>
+        </TokenBalanceProvider>
         {/* </SmoothScrollProvider> */}
       </body>
     </html>

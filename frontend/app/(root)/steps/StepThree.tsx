@@ -581,6 +581,7 @@ export default function StepThree({ form, onNext, onBack }: StepThreeProps) {
       'education',
       'workExperience',
       'skills',
+      'softSkills',
       'languages',
       'certificates',
     ]);
@@ -603,6 +604,25 @@ export default function StepThree({ form, onNext, onBack }: StepThreeProps) {
                 value={field.value || []}
                 onChange={field.onChange}
                 placeholder="Add a skill (e.g., JavaScript)"
+              />
+            </FormControl>
+            <FormMessage />
+          </FormItem>
+        )}
+      />
+
+      {/* Soft Skills */}
+      <FormField
+        control={form.control}
+        name="softSkills"
+        render={({ field }) => (
+          <FormItem>
+            <FormLabel>Soft Skills</FormLabel>
+            <FormControl>
+              <TagInput
+                value={field.value || []}
+                onChange={field.onChange}
+                placeholder="Add a soft skill (e.g., Teamwork)"
               />
             </FormControl>
             <FormMessage />
