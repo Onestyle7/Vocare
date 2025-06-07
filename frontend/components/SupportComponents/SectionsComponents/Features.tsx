@@ -144,7 +144,7 @@ const Features = () => {
       id="feature"
     >
       <div className="min-h-screen border-gray-700 xl:mr-[40px] xl:ml-[40px] xl:border-t-[0.5px] xl:border-r-[0.5px] xl:border-l-[0.5px]">
-        <div className="relative mt-36 mb-8 flex flex-col items-center gap-5">
+        <div className="relative mt-36 max-md:mt-0 mb-8 flex flex-col items-center gap-5">
           <h2 className="text-sm uppercase md:text-[12px]">seamless integration</h2>
           <Copy>
             <h1 className="font-poppins text-color mt-5 text-center text-4xl font-bold uppercase md:text-[4rem] xl:leading-[0.8]">
