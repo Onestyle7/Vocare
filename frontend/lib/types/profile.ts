@@ -1,3 +1,5 @@
+import { Risk } from '@/lib/enums/risk';
+
 export type CertificateEntry = {
   name: string;
   issuer?: string;
@@ -50,6 +52,15 @@ export enum PersonalityType {
   Unknown,
 }
 
+export type FinancialSurvey = {
+  currentSalary?: number;
+  desiredSalary?: number;
+  hasLoans: boolean;
+  loanDetails?: string;
+  riskAppetite: Risk;
+  willingToRelocate: boolean;
+};
+
 export type UserProfile = {
   firstName: string;
   lastName: string;
@@ -59,9 +70,11 @@ export type UserProfile = {
   education?: EducationEntry[];
   workExperience?: WorkExperienceEntry[];
   skills?: string[];
+  softSkills?: string[];
   certificates?: CertificateEntry[];
   languages?: LanguageEntry[];
   additionalInformation?: string;
   aboutMe?: string;
   personalityType: PersonalityType;
+  financialSurvey?: FinancialSurvey;
 };

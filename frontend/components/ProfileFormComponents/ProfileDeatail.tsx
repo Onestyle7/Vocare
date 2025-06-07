@@ -12,6 +12,38 @@ import ProfileForm from './ProfileForm';
 import { Separator } from '../ui/separator';
 import ProfileCard from './ProfileCard';
 import { Button } from '../ui/button';
+import Section from '../SupportComponents/Section';
+import { Risk, riskLabels } from '@/lib/enums/risk';
+import { PersonalityType, personalityTypeLabels } from '@/lib/enums/personalityTypes';
+
+const getPersonalityLabel = (value: PersonalityType | string | undefined): string => {
+  if (value === undefined || value === null || value === '') {
+    return personalityTypeLabels[PersonalityType.Unknown.toString()];
+  }
+  const numeric =
+    typeof value === 'string'
+      ? isNaN(Number(value))
+        ? (PersonalityType[value as keyof typeof PersonalityType] ?? PersonalityType.Unknown)
+        : Number(value)
+      : value;
+  return (
+    personalityTypeLabels[numeric.toString()] ??
+    personalityTypeLabels[PersonalityType.Unknown.toString()]
+  );
+};
+
+const getRiskLabel = (value: Risk | string | undefined): string => {
+  if (value === undefined || value === null || value === '') {
+    return riskLabels[Risk.Unknown];
+  }
+  const numeric =
+    typeof value === 'string'
+      ? isNaN(Number(value))
+        ? (Risk[value as keyof typeof Risk] ?? Risk.Unknown)
+        : Number(value)
+      : value;
+  return riskLabels[numeric as Risk] ?? riskLabels[Risk.Unknown];
+};
 
 export default function ProfileDetails() {
   const [profile, setProfile] = useState<UserProfile | null>(null);
@@ -35,7 +67,7 @@ export default function ProfileDetails() {
     const fetchProfile = async () => {
       setLoading(true);
       try {
-        const data = await getUserProfile(token);
+        const data = await getUserProfile();
         setProfile(data);
       } catch (error) {
         console.error(error);
@@ -50,8 +82,10 @@ export default function ProfileDetails() {
     fetchProfile();
   }, [router]);
 
+  const totalPages = 4;
+
   const goToNextPage = () => {
-    if (currentPage < 2) setCurrentPage(currentPage + 1);
+    if (currentPage < totalPages - 1) setCurrentPage(currentPage + 1);
   };
 
   const goToPreviousPage = () => {
@@ -94,6 +128,11 @@ export default function ProfileDetails() {
           <div className="flex justify-between rounded-lg">
             <span className="font-medium text-gray-600 dark:text-gray-200">Phone:</span>
             <span className="ml-2">{profile?.phoneNumber || '—'}</span>
+          </div>
+          <Separator />
+          <div className="flex justify-between rounded-lg">
+            <span className="font-medium text-gray-600 dark:text-gray-200">Personality Type:</span>
+            <span className="ml-2">{getPersonalityLabel(profile?.personalityType)}</span>
           </div>
           <Separator />
           <div className="flex flex-col space-y-2">
@@ -210,6 +249,27 @@ export default function ProfileDetails() {
         </div>
       </div>
 
+      <div className="space-y-2">
+        <h2 className="flex items-center text-2xl font-medium text-gray-700 dark:text-gray-200">
+          Soft Skills
+          <div className="ml-2 h-2 w-2 rounded-full bg-[#915EFF]" />
+        </h2>
+        <div className="flex flex-wrap gap-2">
+          {profile?.softSkills?.length ? (
+            profile.softSkills.map((skill, index) => (
+              <span
+                key={index}
+                className="rounded-full bg-[#efe7ff] px-3 py-1 text-sm text-[#915EFF] dark:bg-gray-900/50"
+              >
+                {skill}
+              </span>
+            ))
+          ) : (
+            <p className="text-gray-500 italic">No soft skills</p>
+          )}
+        </div>
+      </div>
+
       <div className="flex flex-col space-y-2">
         <span className="flex items-center text-2xl font-medium text-gray-700 dark:text-gray-200">
           Work Experience <div className="ml-2 h-2 w-2 rounded-full bg-[#915EFF]" />
@@ -275,49 +335,114 @@ export default function ProfileDetails() {
     </div>
   );
 
-  const pages = [renderPersonalInfoPage, renderSkillsAndWorkPage, renderAboutMePage];
-
-  return (
-    <div className="font-poppins mx-4 mt-16 max-w-7xl max-sm:mx-4 xl:mx-auto 2xl:max-w-[1480px]">
-      <div className="flex h-screen flex-col xl:flex-row">
-        <div className="hidden xl:block xl:w-1/2 xl:pr-8">
-          <div className="flex h-3/4 items-center justify-center">
-            <ProfileCard />
+  const renderFinancialSurveyPage = () => (
+    <div className="space-y-8">
+      <div className="mt-4 space-y-2">
+        <h2 className="flex items-center text-2xl font-medium text-gray-700 dark:text-gray-200">
+          Financial Survey
+          <div className="ml-2 h-2 w-2 rounded-full bg-[#915EFF]" />
+        </h2>
+        <div className="grid grid-cols-1 gap-4">
+          <div className="flex justify-between rounded-lg">
+            <span className="font-medium text-gray-600 dark:text-gray-200">Current Salary:</span>
+            <span className="ml-2">{profile?.financialSurvey?.currentSalary ?? '—'}</span>
           </div>
-        </div>
-
-        <div className="bg-background relative z-10 w-full rounded-xl border p-4 xl:h-3/4 xl:w-1/2 dark:bg-[#0e100f]">
-          <div className="flex h-full flex-col">
-            <div className="flex flex-row items-start justify-between border-b">
-              <h1 className="mb-4 text-2xl font-bold text-gray-800 xl:text-3xl dark:text-gray-200">
-                {isProfileEmpty ? 'Your Profile' : `${profile.firstName} ${profile.lastName}`}
-              </h1>
-              <div className="flex gap-2">
-                <Button
-                  onClick={handleEdit}
-                  className="rounded-full bg-[#915EFF] hover:bg-[#b594fd]"
-                >
-                  Edit
-                </Button>
-                <Button onClick={handleLogout} variant="outline" className="rounded-full">
-                  <LogOut />
-                </Button>
+          <Separator />
+          <div className="flex justify-between rounded-lg">
+            <span className="font-medium text-gray-600 dark:text-gray-200">Desired Salary:</span>
+            <span className="ml-2">{profile?.financialSurvey?.desiredSalary ?? '—'}</span>
+          </div>
+          <Separator />
+          <div className="flex justify-between rounded-lg">
+            <span className="font-medium text-gray-600 dark:text-gray-200">Has Loans:</span>
+            <span className="ml-2">{profile?.financialSurvey?.hasLoans ? 'Yes' : 'No'}</span>
+          </div>
+          {profile?.financialSurvey?.hasLoans && (
+            <>
+              <Separator />
+              <div className="flex justify-between rounded-lg">
+                <span className="font-medium text-gray-600 dark:text-gray-200">Loan Details:</span>
+                <span className="ml-2">{profile?.financialSurvey?.loanDetails || '—'}</span>
               </div>
-            </div>
-
-            <div className="flex-grow overflow-y-auto">{pages[currentPage]()}</div>
-
-            <div className="mt-6 flex items-center justify-between border-t pt-4">
-              <button onClick={goToPreviousPage} disabled={currentPage === 0}>
-                <ArrowLeft />
-              </button>
-              <button onClick={goToNextPage} disabled={currentPage === 2}>
-                <ArrowRight />
-              </button>
-            </div>
+            </>
+          )}
+          <Separator />
+          <div className="flex justify-between rounded-lg">
+            <span className="font-medium text-gray-600 dark:text-gray-200">Risk Appetite:</span>
+            <span className="ml-2">{getRiskLabel(profile?.financialSurvey?.riskAppetite)}</span>
+          </div>
+          <Separator />
+          <div className="flex justify-between rounded-lg">
+            <span className="font-medium text-gray-600 dark:text-gray-200">
+              Willing To Relocate:
+            </span>
+            <span className="ml-2">
+              {profile?.financialSurvey?.willingToRelocate ? 'Yes' : 'No'}
+            </span>
           </div>
         </div>
       </div>
     </div>
+  );
+
+  const pages = [
+    renderPersonalInfoPage,
+    renderSkillsAndWorkPage,
+    renderAboutMePage,
+    renderFinancialSurveyPage,
+  ];
+
+  return (
+    <Section
+      className="relative -mt-[5.25rem] pt-[3.5rem]"
+      crosses
+      crossesOffset="lg:translate-y-[7.5rem]"
+      customPaddings
+      id="profile"
+    >
+      <div className="font-poppins mt-10 border-r border-l xl:mx-10 xl:mt-16 xl:border-t">
+        <div className="font-poppins mx-4 mt-8 max-w-7xl max-sm:mx-4 xl:mx-auto 2xl:max-w-[1480px]">
+          <div className="mt-2 flex h-screen flex-col xl:flex-row">
+            <div className="hidden xl:block xl:w-1/2 xl:pr-8">
+              <div className="-mt-8 flex h-3/4 items-center justify-center">
+                <ProfileCard />
+              </div>
+            </div>
+
+            <div className="bg-background relative z-10 w-full rounded-xl border p-4 xl:h-3/4 xl:w-1/2 dark:bg-[#0e100f]">
+              <div className="flex h-full flex-col">
+                <div className="flex flex-row items-start justify-between border-b">
+                  <h1 className="mb-4 text-2xl font-bold text-gray-800 xl:text-3xl dark:text-gray-200">
+                    {isProfileEmpty ? 'Your Profile' : `${profile.firstName} ${profile.lastName}`}
+                  </h1>
+                  <div className="flex gap-2">
+                    <Button
+                      onClick={handleEdit}
+                      className="rounded-full bg-[#915EFF] hover:bg-[#b594fd]"
+                    >
+                      Edit
+                    </Button>
+                    <Button onClick={handleLogout} variant="outline" className="rounded-full">
+                      <LogOut />
+                    </Button>
+                  </div>
+                </div>
+
+                <div className="flex-grow overflow-y-auto">{pages[currentPage]()}</div>
+
+                <div className="mt-6 flex items-center justify-between border-t pt-4">
+                  <button onClick={goToPreviousPage} disabled={currentPage === 0}>
+                    <ArrowLeft />
+                  </button>
+                  <button onClick={goToNextPage} disabled={currentPage === totalPages - 1}>
+                    <ArrowRight />
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </Section>
   );
 }

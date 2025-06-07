@@ -7,11 +7,16 @@ import { shape1, Spinner } from '@/app/constants';
 import { ArrowRight } from 'lucide-react';
 import Link from 'next/link';
 import { ScrollParallax } from 'react-just-parallax';
-import AnimatedHeadline from '../AnimatedText';
 import CustomCursor from '../CustomCursor';
 import Section from '../Section';
 import CustomButton from '@/components/ui/CustomButton';
 import { SpinningText } from '@/components/magicui/spinning-text';
+import { ScrollTrigger } from 'gsap/ScrollTrigger';
+import { SplitText } from 'gsap/SplitText';
+import gsap from 'gsap';
+import Copy from '../Copy';
+
+gsap.registerPlugin(ScrollTrigger, SplitText);
 
 const LazySpline = lazy(() => import('@splinetool/react-spline'));
 
@@ -51,20 +56,26 @@ const HeroTweak = () => {
       <CustomCursor />
       <div className="main-font-color relative z-30 flex h-[390px] flex-row px-[40px] lg:w-full">
         <div className="inset-0 flex w-full flex-col items-center justify-center md:flex-row md:justify-start md:pl-[40px] lg:w-3/5 xl:border-t xl:border-b">
-          <div className="flex flex-col justify-center max-md:mb-8 lg:w-1/2 xl:items-start">
-            <h1 className="text-[60px] leading-17 font-bold uppercase max-md:text-center lg:text-[78px] xl:text-[88px] 2xl:text-[108px] 2xl:leading-21">
-              <AnimatedHeadline
-                lines={['unlock', 'your', 'growth']}
-                className="items-start max-md:items-center"
-              />
-            </h1>
+          <div className="flex w-full flex-col items-center justify-center max-md:mt-10 max-md:mb-8 lg:w-1/2 xl:items-start">
+            <Copy>
+              <h1 className="font-poppins overflow-hidden text-4xl leading-tight font-bold whitespace-nowrap text-neutral-800 max-md:text-center sm:text-4xl md:text-5xl lg:text-4xl xl:text-5xl 2xl:text-7xl dark:text-neutral-300">
+                Unlock Your <br /> Growth
+              </h1>
+            </Copy>
+            <Copy>
+              <h2 className="text-muted-foreground ibm-plex-mono-regular mt-8 max-w-xl px-4 text-center text-sm max-md:block sm:mt-4 sm:text-base md:px-0 md:text-left md:text-lg lg:text-base xl:text-sm">
+                An intelligent AI-powered career advisor that analyzes your skills, goals, and
+                market trends to guide you toward the best professional path.
+              </h2>
+            </Copy>
+
             <Link
               href="/assistant"
-              className="flex max-md:items-center max-md:justify-center xl:w-full"
+              className="mt-3 flex max-md:items-center max-md:justify-center sm:mt-4 xl:w-full"
             >
               <CustomButton
                 variant="primary"
-                className="group mt-4 flex cursor-none items-center justify-center overflow-hidden xl:mt-8"
+                className="group mt-4 flex cursor-none items-center justify-center overflow-hidden max-md:mt-10"
               >
                 <span className="flex flex-row">
                   Try it out
@@ -73,7 +84,7 @@ const HeroTweak = () => {
               </CustomButton>
             </Link>
           </div>
-          <div className="flex h-full flex-col items-center justify-center max-md:mt-6 sm:w-full lg:w-1/2 2xl:w-1/3 2xl:items-end">
+          <div className="flex h-full flex-col items-center justify-center max-md:mt-20 sm:w-full lg:w-1/2 2xl:w-1/3 2xl:items-end">
             <SpinningText>learn more • earn more • grow more •</SpinningText>
           </div>
         </div>
@@ -90,20 +101,16 @@ const HeroTweak = () => {
           </Suspense>
         )}
       </div>
-      <div className="relative mx-10 mt-14 flex flex-col items-center justify-center border-gray-300 px-[40px] xl:border-r xl:border-l dark:border-gray-700">
+      <div className="relative mx-10 mt-14 flex flex-col items-center justify-center border-gray-300 px-[40px] max-md:mt-40 xl:border-r xl:border-l dark:border-gray-700">
         <div className="mb-2 flex h-full flex-col items-center justify-center">
-          <h3 className="mb-8 text-sm uppercase md:text-[10px]">Meet Us</h3>
-          <h2 className="text-[42px] font-bold sm:text-[78px] md:text-[108px] lg:text-[138px] xl:text-[158px]">
-            OUR VISION
-          </h2>
-          <div className="flex w-full items-center justify-between text-xl uppercase sm:px-1 md:px-1 lg:flex-row lg:px-2 xl:px-3">
-            <h3>learn</h3>
-            <h3>grow</h3>
-            <h3>earn</h3>
-          </div>
+          <h3 className="text-sm uppercase md:text-[12px]">Meet Us</h3>
+          <Copy>
+            <h2 className="font-poppins text-[42px] font-bold tracking-wide text-neutral-800 uppercase sm:text-[78px] md:text-[108px] lg:text-[138px] xl:text-7xl dark:text-neutral-300">
+              Our Vision
+            </h2>
+          </Copy>
         </div>
       </div>
-      {/* <BottomLine /> */}
       <ScrollParallax isAbsolutelyPositioned zIndex={20}>
         <div className="absolute -bottom-30 left-2 z-20 xl:bottom-1/5">
           <Image src={shape1} alt="shape" width={78} height={78} className="-rotate-20" />

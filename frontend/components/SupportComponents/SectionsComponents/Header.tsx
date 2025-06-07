@@ -10,6 +10,7 @@ import { useAuth } from '@/lib/hooks/useAuth';
 import MobileNav from '@/components/MobileUI/MobileNav';
 import { TokenCounter } from '@/components/PricingComponents/TokenCounter';
 import ThemeSwitch from '../ThemeSwitch';
+import { Badge } from '@/components/ui/badge';
 
 const Header = () => {
   const pathname = usePathname();
@@ -26,7 +27,7 @@ const Header = () => {
   const filteredLinks = isAuthenticated ? NavLinks : [];
 
   return (
-    <header className="relative z-[100] flex items-center justify-end md:justify-center">
+    <header className="relative z-[100] flex items-center justify-end border-gray-400 max-md:border-b-[1px] md:justify-center dark:border-white/10">
       {isMobile ? (
         <MobileNav isAuthenticated={isAuthenticated} />
       ) : (
@@ -43,12 +44,28 @@ const Header = () => {
 
           {isAuthenticated ? (
             <ul className="flex items-center justify-center space-x-4">
-              {filteredLinks.map(({ label, url }) => (
-                <Link key={label} href={url}>
-                  <li className={cn('w-full', pathname === url && 'underline')}>
-                    <p className="text-[18px] font-normal uppercase">{label}</p>
-                  </li>
-                </Link>
+              {filteredLinks.map(({ label, url, disabled }) => (
+                <li
+                  key={label}
+                  className={cn(
+                    'relative w-full',
+                    pathname === url && !disabled && 'underline',
+                    disabled && 'cursor-not-allowed opacity-50'
+                  )}
+                >
+                  {disabled ? (
+                    <div className="relative flex items-center space-x-2 text-[18px] font-normal uppercase">
+                      <span>{label}</span>
+                      <Badge variant="outline" className="absolute -top-4 -right-6 scale-75">
+                        soon
+                      </Badge>
+                    </div>
+                  ) : (
+                    <Link href={url}>
+                      <p className="text-[18px] font-normal uppercase">{label}</p>
+                    </Link>
+                  )}
+                </li>
               ))}
             </ul>
           ) : (

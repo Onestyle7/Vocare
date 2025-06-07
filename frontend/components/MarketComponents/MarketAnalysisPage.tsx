@@ -6,7 +6,6 @@ import { gsap } from 'gsap';
 import CollapsibleButton from '../AssistantComponents/CollapsibleButton';
 import { TerminalDemo } from './LoadingTerminal';
 import { GridBackgroundDemo } from './GridBackgroundDemo';
-import GenerateRecommendationFail from '../AssistantComponents/GenerateRecommendationFail';
 import Image from 'next/image';
 import { chart, fire, wallet, star_generate } from '@/app/constants';
 import { toast } from 'sonner';
@@ -22,7 +21,12 @@ import {
   AlertDialogTitle,
 } from '../ui/alert-dialog';
 import { useTokenBalanceContext } from '@/lib/contexts/TokenBalanceContext';
-// Define the types here since they seem to be missing or incorrectly defined in the imported files
+import Link from 'next/link';
+import GenerateMarketFail from './GenerateMarketFail';
+import EmptyStateComponent from './EmptyStateComponent';
+import Section from '../SupportComponents/Section';
+
+// Type definitions
 interface MarketTrend {
   trendName: string;
   description: string;
@@ -37,8 +41,9 @@ interface SkillDemand {
 
 interface IndustryStatistic {
   industry: string;
-  averageSalary: string;
-  employmentRate: string;
+  minSalary: number;
+  maxSalary: number;
+  employmentRate: number;
   growthForecast: string;
 }
 
@@ -61,17 +66,18 @@ export default function MarketAnalysis() {
 
   const [showFixedButton, setShowFixedButton] = useState(false);
   const lastScrollY = useRef(0);
+  const API_URL = process.env.NEXT_PUBLIC_API_URL;
 
   useEffect(() => {
     const handleScroll = () => {
       const currentScrollY = window.scrollY;
 
-      // Scroll w górę
+      // Scroll up
       if (currentScrollY < lastScrollY.current) {
         setShowFixedButton(true);
       }
 
-      // Scroll w dół
+      // Scroll down
       if (currentScrollY > lastScrollY.current) {
         setShowFixedButton(false);
       }
@@ -102,85 +108,77 @@ export default function MarketAnalysis() {
     }
   };
 
-  const loadData = useCallback(async (useNewData = false) => {
-    setLoading(true);
-    setError(null);
-    setData(null);
+  const loadData = useCallback(
+    async (useNewData = false) => {
+      setLoading(true);
+      setError(null);
+      setData(null);
 
-    const token = localStorage.getItem('token');
-    if (!token) {
-      toast.error('Authentication required', {
-        description: 'Please sign in to continue.',
-      });
-      setLoading(false);
-      return;
-    }
-
-    try {
-      if (useNewData) {
-        const response = await axios.get('https://vocare-production-e568.up.railway.app/api/MarketAnalysis', {
-          headers: {
-            Authorization: `Bearer ${token}`,
-            'Content-Type': 'application/json',
-          },
+      const token = localStorage.getItem('token');
+      if (!token) {
+        toast.error('Authentication required', {
+          description: 'Please sign in to continue.',
         });
+        setLoading(false);
+        return;
+      }
 
-        console.log('New market analysis raw data:', response.data);
-        handleResponseData(response.data);
-        toast.success('Generated new market analysis');
-      } else {
-        try {
-          const latestResponse = await axios.get(
-            'https://vocare-production-e568.up.railway.app/api/MarketAnalysis/latest',
-            {
-              headers: {
-                Authorization: `Bearer ${token}`,
-                'Content-Type': 'application/json',
-              },
-            }
-          );
+      try {
+        if (useNewData) {
+          const response = await axios.get(`${API_URL}/api/MarketAnalysis`, {
+            headers: {
+              Authorization: `Bearer ${token}`,
+              'Content-Type': 'application/json',
+            },
+          });
 
-          console.log('Latest market analysis raw data:', latestResponse.data);
-          handleResponseData(latestResponse.data);
-        } catch (latestError) {
-          const axiosError = latestError as AxiosError;
-          if (axiosError.response?.status === 404) {
-            console.log('No existing analysis found, generating a new one...');
-            const response = await axios.get('https://vocare-production-e568.up.railway.app/api/MarketAnalysis', {
+          console.log('New market analysis raw data:', response.data);
+          handleResponseData(response.data);
+          toast.success('Generated new market analysis');
+        } else {
+          try {
+            const latestResponse = await axios.get(`${API_URL}/api/MarketAnalysis/latest`, {
               headers: {
                 Authorization: `Bearer ${token}`,
                 'Content-Type': 'application/json',
               },
             });
 
-            console.log('First market analysis raw data:', response.data);
-            handleResponseData(response.data);
-          } else {
-            console.error('Error fetching latest market analysis:', latestError);
-            setError(
-              (axiosError.response?.data as { detail?: string })?.detail ||
-                'Error fetching latest market analysis.'
-            );
+            console.log('Latest market analysis raw data:', latestResponse.data);
+            handleResponseData(latestResponse.data);
+          } catch (latestError) {
+            const axiosError = latestError as AxiosError;
+            if (axiosError.response?.status === 404) {
+              console.log('No existing analysis found, setting data to null');
+              setData(null);
+            } else {
+              console.error('Error fetching latest market analysis:', latestError);
+              setError(
+                (axiosError.response?.data as { detail?: string })?.detail ||
+                  'Error fetching latest market analysis.'
+              );
+            }
           }
         }
-      }
-    } catch (err) {
-      const axiosError = err as AxiosError;
-      console.error('Error fetching market analysis:', err);
-      setError(
-        (axiosError.response?.data as { detail?: string })?.detail ||
-          'Error generating market analysis'
-      );
+      } catch (err) {
+        const axiosError = err as AxiosError;
+        console.error('Error fetching market analysis:', err);
+        setError(
+          (axiosError.response?.data as { detail?: string })?.detail ||
+            'Error generating market analysis'
+        );
 
-      if (useNewData) {
-        toast.error('Error', {
-          description: 'Failed to generate new market analysis.',
-        });
+        if (useNewData) {
+          toast.error('Error', {
+            description: 'Failed to generate new market analysis.',
+          });
+        }
+      } finally {
+        setLoading(false);
       }
-    } finally {
-      setLoading(false);
-    }
-  }, []);
+    },
+    [API_URL]
+  );
 
   useEffect(() => {
     loadData();
@@ -191,7 +189,7 @@ export default function MarketAnalysis() {
   };
 
   if (error) {
-    return <GenerateRecommendationFail />;
+    return <GenerateMarketFail />;
   }
 
   if (isLoading) {
@@ -224,135 +222,170 @@ export default function MarketAnalysis() {
 
   const marketAnalysis = getMarketAnalysis();
 
+  // If there's no market analysis data, show the EmptyStateComponent
+  if (
+    !marketAnalysis ||
+    !marketAnalysis.industryStatistics ||
+    marketAnalysis.industryStatistics.length === 0
+  ) {
+    return (
+      <EmptyStateComponent
+        onGenerateAnalysis={handleGenerateNewAnalysis}
+        isLoading={isLoading}
+        tokenBalance={tokenBalance}
+        isBalanceLoading={isBalanceLoading}
+        refresh={refresh}
+      />
+    );
+  }
+
+  // Otherwise, show the full market analysis UI
   return (
-    <div className="font-poppins mx-auto mt-8 mb-4 flex max-w-7xl flex-col items-center justify-center">
-      <h2 className="mb-4 ml-4 text-2xl font-bold text-[#915EFF]">Job Market Analysis</h2>
-      <div>
-        {marketAnalysis?.industryStatistics?.map((stat, index) => (
-          <IndustrySection key={index} data={stat} index={index} />
-        ))}
+    <Section
+      className="relative -mt-[5.25rem] pt-[3.5rem]"
+      crosses
+      crossesOffset="lg:translate-y-[7.5rem]"
+      customPaddings
+      id="profile"
+    >
+      <div className="xl:mx-10 xl:mt-16 xl:border-t xl:border-r xl:border-l">
+        <div className="font-poppins mx-auto mt-8 mb-4 flex max-w-7xl flex-col items-center justify-center">
+          <h2 className="mb-4 ml-4 text-2xl font-bold text-[#915EFF]">Job Market Analysis</h2>
+          <div>
+            {marketAnalysis.industryStatistics.map((stat, index) => (
+              <IndustrySection key={index} data={stat} index={index} />
+            ))}
 
-        {marketAnalysis?.marketTrends && marketAnalysis.marketTrends.length > 0 && (
-          <div className="mx-4 mt-8 rounded-[28px] border p-6 shadow-sm">
-            <h3 className="mb-4 text-xl font-semibold">Current Market Trends</h3>
-            <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
-              {marketAnalysis.marketTrends.map((trend, index) => (
-                <div key={index} className="rounded-lg border p-4 shadow-sm">
-                  <h4 className="mb-2 font-medium text-[#915EFF]">{trend.trendName}</h4>
-                  <p className="mb-2 text-gray-700">{trend.description}</p>
-                  <p className="text-sm font-medium">
-                    <span className="text-gray-500">Impact: </span>
-                    {trend.impact}
-                  </p>
+            {marketAnalysis.marketTrends && marketAnalysis.marketTrends.length > 0 && (
+              <div className="mx-4 mt-8 rounded-[28px] border p-6 shadow-sm">
+                <h3 className="mb-4 text-xl font-semibold">Current Market Trends</h3>
+                <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
+                  {marketAnalysis.marketTrends.map((trend, index) => (
+                    <div key={index} className="rounded-lg border p-4 shadow-sm">
+                      <h4 className="mb-2 font-medium text-[#915EFF]">{trend.trendName}</h4>
+                      <p className="mb-2 text-gray-700">{trend.description}</p>
+                      <p className="text-sm font-medium">
+                        <span className="text-gray-500">Impact: </span>
+                        {trend.impact}
+                      </p>
+                    </div>
+                  ))}
                 </div>
-              ))}
-            </div>
-          </div>
-        )}
+              </div>
+            )}
 
-        {marketAnalysis?.skillDemand && marketAnalysis.skillDemand.length > 0 && (
-          <div className="mx-4 mt-8 rounded-[28px] border p-6 shadow-sm">
-            <h3 className="mb-4 text-xl font-semibold">In-Demand Skills</h3>
-            <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
-              {marketAnalysis.skillDemand.map((skill, index) => (
-                <div key={index} className="rounded-lg border p-4 shadow-sm">
-                  <h4 className="mb-1 font-medium">{skill.skill}</h4>
-                  <p className="text-sm text-gray-500">{skill.industry}</p>
-                  <div className="mt-2 flex items-center">
-                    <span className="mr-2 text-sm">Demand level:</span>
-                    <span
-                      className={`rounded-full px-2 py-1 text-xs font-medium ${
-                        skill.demandLevel === 'High'
-                          ? 'bg-green-100 text-green-800'
-                          : skill.demandLevel === 'Medium'
-                            ? 'bg-yellow-100 text-yellow-800'
-                            : 'bg-red-100 text-red-800'
-                      }`}
-                    >
-                      {skill.demandLevel}
-                    </span>
-                  </div>
+            {marketAnalysis.skillDemand && marketAnalysis.skillDemand.length > 0 && (
+              <div className="mx-4 mt-8 rounded-[28px] border p-6 shadow-sm">
+                <h3 className="mb-4 text-xl font-semibold">In-Demand Skills</h3>
+                <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
+                  {marketAnalysis.skillDemand.map((skill, index) => (
+                    <div key={index} className="rounded-lg border p-4 shadow-sm">
+                      <h4 className="mb-1 font-medium">{skill.skill}</h4>
+                      <p className="text-sm text-gray-500">{skill.industry}</p>
+                      <div className="mt-2 flex items-center">
+                        <span className="mr-2 text-sm">Demand level:</span>
+                        <span
+                          className={`rounded-full px-2 py-1 text-xs font-medium ${
+                            skill.demandLevel === 'High'
+                              ? 'bg-green-100 text-green-800'
+                              : skill.demandLevel === 'Medium'
+                                ? 'bg-yellow-100 text-yellow-800'
+                                : 'bg-red-100 text-red-800'
+                          }`}
+                        >
+                          {skill.demandLevel}
+                        </span>
+                      </div>
+                    </div>
+                  ))}
                 </div>
-              ))}
-            </div>
-          </div>
-        )}
+              </div>
+            )}
 
-        <div
-          className={`${
-            showFixedButton
-              ? 'fixed bottom-6 left-1/2 z-50 -translate-x-1/2 translate-y-0 opacity-100'
-              : 'fixed bottom-0 left-1/2 z-50 -translate-x-1/2 translate-y-full opacity-0'
-          } flex w-1/2 items-center justify-center transition-all duration-500 ease-in-out`}
-        >
-          <CustomButton
-            onClick={() => setIsConfirmDialogOpen(true)}
-            disabled={isLoading}
-            className="cursor-pointer px-6 py-2"
-          >
-            {isLoading ? 'Generating...' : 'Generate new market analysis'}
-          </CustomButton>
-        </div>
-
-        {/* STATIC button always under content */}
-        <div className="mt-16 flex justify-center">
-          <CustomButton
-            onClick={() => setIsConfirmDialogOpen(true)}
-            disabled={isLoading}
-            className="cursor-pointer px-6 py-2"
-          >
-            {isLoading ? 'Generating...' : 'Generate new market analysis'}
-          </CustomButton>
-        </div>
-
-        <AlertDialog open={isConfirmDialogOpen} onOpenChange={setIsConfirmDialogOpen}>
-          <AlertDialogContent className="font-poppins mx-auto max-w-md">
-            <AlertDialogHeader>
-              <AlertDialogTitle className="text-center text-xl font-bold">
-                Generate new market analysis?
-              </AlertDialogTitle>
-              <AlertDialogDescription className="text-center">
-                This will take <b className="text-[#915EFF]">30 credits</b> from Your account
-                <div className="mt-2 font-extralight">
-                  Current balance:{' '}
-                  <span className="font-bold">{isBalanceLoading ? '...' : tokenBalance}</span>
-                </div>
-              </AlertDialogDescription>
-            </AlertDialogHeader>
-            <AlertDialogFooter className="flex justify-center gap-4 sm:justify-center">
-              <AlertDialogCancel className="border-gray-200">Cancel</AlertDialogCancel>
-              <AlertDialogAction
-                onClick={async () => {
-                  await handleGenerateNewAnalysis();
-                  refresh();
-                }}
-                className="bg-[#915EFF] text-white hover:bg-[#7b4ee0]"
+            <div
+              className={`${
+                showFixedButton
+                  ? 'fixed bottom-6 left-1/2 z-50 -translate-x-1/2 translate-y-0 opacity-100'
+                  : 'fixed bottom-0 left-1/2 z-50 -translate-x-1/2 translate-y-full opacity-0'
+              } flex w-1/2 items-center justify-center transition-all duration-500 ease-in-out`}
+            >
+              <CustomButton
+                onClick={() => setIsConfirmDialogOpen(true)}
+                disabled={isLoading}
+                className="cursor-pointer px-6 py-2"
               >
-                Generate
-                <Image src={star_generate} alt="star" width={16} height={16} />
-              </AlertDialogAction>
-            </AlertDialogFooter>
-          </AlertDialogContent>
-        </AlertDialog>
+                {isLoading ? 'Generating...' : 'Generate new market analysis'}
+              </CustomButton>
+            </div>
+
+            {/* STATIC button always under content */}
+            <div className="mt-16 flex w-full justify-center">
+              <CustomButton
+                onClick={() => setIsConfirmDialogOpen(true)}
+                disabled={isLoading}
+                className="cursor-pointer px-6 py-2"
+              >
+                {isLoading ? 'Generating...' : 'Generate new market analysis'}
+              </CustomButton>
+            </div>
+
+            <AlertDialog open={isConfirmDialogOpen} onOpenChange={setIsConfirmDialogOpen}>
+              <AlertDialogContent className="font-poppins mx-auto max-w-md">
+                <AlertDialogHeader>
+                  <AlertDialogTitle className="text-center text-xl font-bold">
+                    Generate new recommendation?
+                  </AlertDialogTitle>
+                  <AlertDialogDescription className="text-center">
+                    This will take <b className="text-[#915EFF]">5 credits</b> from Your account.
+                  </AlertDialogDescription>
+
+                  <div className="mt-2 text-center text-sm font-extralight">
+                    Current balance:{' '}
+                    <span className="font-bold">{isBalanceLoading ? '...' : tokenBalance}</span>
+                  </div>
+                </AlertDialogHeader>
+
+                <AlertDialogFooter className="flex justify-center gap-4 sm:justify-center">
+                  <AlertDialogCancel className="border-gray-200">Cancel</AlertDialogCancel>
+
+                  {!isBalanceLoading && typeof tokenBalance === 'number' && tokenBalance < 5 ? (
+                    <Link href="/pricing">
+                      <AlertDialogAction
+                        className="bg-[#915EFF] text-white hover:bg-[#7b4ee0]"
+                        onClick={() => setIsConfirmDialogOpen(false)}
+                      >
+                        Get tokens
+                        <Image src={star_generate} alt="star" width={16} height={16} />
+                      </AlertDialogAction>
+                    </Link>
+                  ) : (
+                    <AlertDialogAction
+                      onClick={async () => {
+                        await handleGenerateNewAnalysis();
+                        refresh();
+                      }}
+                      className="bg-[#915EFF] text-white hover:bg-[#7b4ee0]"
+                    >
+                      Generate
+                      <Image src={star_generate} alt="star" width={16} height={16} />
+                    </AlertDialogAction>
+                  )}
+                </AlertDialogFooter>
+              </AlertDialogContent>
+            </AlertDialog>
+          </div>
+        </div>
       </div>
-    </div>
+    </Section>
   );
 }
 
-interface IndustryStatistic {
-  industry: string;
-  averageSalary: string;
-  employmentRate: string;
-  growthForecast: string;
-}
-
-// This interface is already defined above, so we don't need to redefine it here
-interface IndustryProps {
+interface IndustrySectionProps {
   data: IndustryStatistic;
   index: number;
 }
 
-function IndustrySection({ data, index }: IndustryProps) {
+function IndustrySection({ data, index }: IndustrySectionProps) {
   const [isCollapsed, setIsCollapsed] = useState(true);
   const contentRef = useRef<HTMLDivElement>(null);
   const contentWrapperRef = useRef<HTMLDivElement>(null);
@@ -370,6 +403,14 @@ function IndustrySection({ data, index }: IndustryProps) {
   const getColorClass = (idx: number) => {
     return colors[idx % colors.length];
   };
+
+  const formatSalaryRange = (min: number, max: number) => {
+    if (min === 0 && max === 0) return '—';
+    const formatter = new Intl.NumberFormat('pl-PL');
+    return `${formatter.format(min)} - ${formatter.format(max)} PLN`;
+  };
+
+  const formatEmploymentRate = (rate: number) => (rate !== undefined ? `${rate}%` : '—');
 
   useEffect(() => {
     if (typeof window !== 'undefined' && window.innerWidth >= 1024) {
@@ -577,7 +618,9 @@ function IndustrySection({ data, index }: IndustryProps) {
             ref={salaryBoxRef}
           >
             <p className="text-sm text-gray-500">Average Salary</p>
-            <p className="text-lg font-medium text-black dark:text-white">{data.averageSalary}</p>
+            <p className="text-lg font-medium text-black dark:text-white">
+              {formatSalaryRange(data.minSalary, data.maxSalary)}
+            </p>
             <Image
               src={wallet}
               alt="shape"
@@ -592,7 +635,9 @@ function IndustrySection({ data, index }: IndustryProps) {
             ref={chartBoxRef}
           >
             <p className="text-sm text-gray-500">Employment Rate</p>
-            <p className="text-lg font-medium text-black dark:text-white">{data.employmentRate}</p>
+            <p className="text-lg font-medium text-black dark:text-white">
+              {formatEmploymentRate(data.employmentRate)}
+            </p>
             <Image
               src={chart}
               alt="shape"

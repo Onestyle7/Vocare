@@ -1,5 +1,6 @@
 using System.Text.Json;
 using Microsoft.Extensions.Options;
+using Stripe;
 using VocareWebAPI.CvGenerator.Models;
 using VocareWebAPI.CvGenerator.Models.Dtos;
 using VocareWebAPI.CvGenerator.Repositories.Interfaces;
@@ -9,6 +10,7 @@ using VocareWebAPI.Models.Dtos;
 using VocareWebAPI.Models.Entities;
 using VocareWebAPI.Repositories;
 using VocareWebAPI.Repositories.Interfaces;
+using VocareWebAPI.UserManagement.Models.Entities;
 
 namespace VocareWebAPI.CvGenerator.Services.Implementations
 {
@@ -17,317 +19,271 @@ namespace VocareWebAPI.CvGenerator.Services.Implementations
     /// </summary>
     public class CvGenerationService : ICvGenerationService
     {
-        private readonly HttpClient _httpClient;
-        private readonly AiConfig _config;
         private readonly IUserProfileRepository _userProfileRepository;
         private readonly IGeneratedCvRepository _generatedCvRepository;
         private readonly ILogger<CvGenerationService> _logger;
 
         public CvGenerationService(
-            HttpClient httpClient,
-            IOptions<AiConfig> config,
             IUserProfileRepository userProfileRepository,
             IGeneratedCvRepository generatedCvRepository,
             ILogger<CvGenerationService> logger
         )
         {
-            _httpClient = httpClient;
-            _config = config.Value;
             _userProfileRepository = userProfileRepository;
             _generatedCvRepository = generatedCvRepository;
             _logger = logger;
-
-            _httpClient.DefaultRequestHeaders.Add("Authorization", $"Bearer {_config.ApiKey}");
-            _httpClient.DefaultRequestHeaders.Add("Accept", "application/json");
         }
 
         public async Task<CvDto> GenerateCvAsync(string userId, string? position)
         {
-            var userProfile = await _userProfileRepository.GetUserProfileByIdAsync(userId);
-            if (userProfile == null)
-            {
-                throw new CvGenerationException($"User profile with ID: {userId} not found.", null);
-            }
-
-            var prompt = BuildPrompt(userProfile, position);
-            var requestBody = new
-            {
-                model = _config.Model,
-                messages = new[] { new { role = "user", content = prompt } },
-            };
-
             try
             {
-                var absoluteUri = new Uri(_config.BaseUrl + "/chat/completions");
-                var response = await _httpClient.PostAsJsonAsync(absoluteUri, requestBody);
-
-                var responseContent = await response.Content.ReadAsStringAsync();
                 _logger.LogInformation(
-                    "Perplexity API Response: {responseContent}",
-                    responseContent
-                );
-                if (!response.IsSuccessStatusCode)
-                {
-                    throw new CvGenerationException(
-                        $"API returned error {response.StatusCode}: {responseContent}",
-                        null
-                    );
-                }
-
-                var apiResponse = JsonSerializer.Deserialize<PerplexityApiResponseDto>(
-                    responseContent,
-                    new JsonSerializerOptions { PropertyNameCaseInsensitive = true }
+                    $"Starting CV generation for user: {userId}, position: {position}"
                 );
 
-                if (
-                    apiResponse == null
-                    || apiResponse.Choices == null
-                    || !apiResponse.Choices.Any()
-                )
+                var userProfile = await _userProfileRepository.GetUserProfileByIdAsync(userId);
+                if (userProfile == null)
                 {
-                    throw new CvGenerationException(
-                        "Invalid API response: Choices are missing or empty.",
-                        null
-                    );
+                    throw new Exception($"User profile not found for userId: {userId}");
                 }
 
-                var rawContent = apiResponse.Choices[0].Message.Content;
+                var cvDto = MapUserProfileToCv(userProfile, position);
 
-                CvDto? result = null;
+                // Zapisujemy wygenerowane CV do bazy danych
+                await SaveGeneratedCvAsync(userId, position, cvDto);
+                _logger.LogInformation($"Cv generation completed successfully for user: {userId}");
+                return cvDto;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error generating CV for user {UserId}", userId);
+                throw new Exception("An error occurred while generating the CV.");
+            }
+        }
 
-                var jsonMatch = System.Text.RegularExpressions.Regex.Match(
-                    rawContent,
-                    @"```json\s*([\s\S]*?)\s*```"
+        private CvDto MapUserProfileToCv(UserProfile userProfile, string? position)
+        {
+            // ✅ Debug - sprawdź co jest załadowane
+            _logger.LogInformation("Mapping CV for user: {UserId}", userProfile.UserId);
+            _logger.LogInformation(
+                "WorkExperience count: {Count}",
+                userProfile.WorkExperience?.Count ?? 0
+            );
+            _logger.LogInformation("Education count: {Count}", userProfile.Education?.Count ?? 0);
+            _logger.LogInformation(
+                "Certificates count: {Count}",
+                userProfile.Certificates?.Count ?? 0
+            );
+            _logger.LogInformation("Languages count: {Count}", userProfile.Languages?.Count ?? 0);
+            _logger.LogInformation("Skills count: {Count}", userProfile.Skills?.Count ?? 0);
+
+            var cv = new CvDto
+            {
+                Basics = MapBasics(userProfile, position),
+                Work = MapWorkExperience(userProfile.WorkExperience),
+                Education = MapEducation(userProfile.Education),
+                Certificates = MapCertificates(userProfile.Certificates),
+                Skills = userProfile.Skills ?? new List<string>(),
+                Languages = MapLanguages(userProfile.Languages),
+            };
+            return cv;
+        }
+
+        private CvBasicsDto MapBasics(UserProfile profile, string? position)
+        {
+            return new CvBasicsDto
+            {
+                FirstName = profile.FirstName,
+                LastName = profile.LastName,
+                PhoneNumber = profile.PhoneNumber ?? string.Empty,
+                Email = profile.User?.Email ?? $"user-{profile.FirstName}@gmail.com",
+                Summary = GenerateSummary(profile, position),
+                Location = new CvLocationDto
+                {
+                    City = profile.Address ?? string.Empty,
+                    Country = profile.Country,
+                },
+            };
+        }
+
+        private List<CvWorkEntryDto> MapWorkExperience(List<WorkExperienceEntry>? workExperience)
+        {
+            return workExperience
+                    ?.Select(work => new CvWorkEntryDto
+                    {
+                        Company = work.Company,
+                        Position = work.Position,
+                        StartDate = FormatDate(work.StartDate),
+                        EndDate = FormatDate(work.EndDate) ?? "Present",
+                        Description = BuildWorkDescription(work),
+                    })
+                    .ToList() ?? new List<CvWorkEntryDto>();
+        }
+
+        private List<CvEducationEntryDto> MapEducation(List<EducationEntry>? education)
+        {
+            return education
+                    ?.Select(edu => new CvEducationEntryDto
+                    {
+                        Institution = edu.Institution,
+                        Degree = edu.Degree,
+                        Field = edu.Field,
+                        StartDate = FormatDate(edu.StartDate),
+                        EndDate = FormatDate(edu.EndDate) ?? "Present",
+                    })
+                    .ToList() ?? new List<CvEducationEntryDto>();
+        }
+
+        private List<CvCertificateEntryDto> MapCertificates(List<CertificateEntry>? certificates)
+        {
+            return certificates
+                    ?.Select(cert => new CvCertificateEntryDto
+                    {
+                        Name = cert.Name,
+                        Date = FormatDate(cert.Date) ?? string.Empty,
+                    })
+                    .ToList() ?? new List<CvCertificateEntryDto>();
+        }
+
+        private List<string> MapSkills(List<string>? skills)
+        {
+            return skills ?? new List<string>();
+        }
+
+        private List<CvLanguageEntryDto> MapLanguages(List<LanguageEntry>? languages)
+        {
+            return languages
+                    ?.Select(lang => new CvLanguageEntryDto
+                    {
+                        Language = lang.Language,
+                        Fluency = lang.Level,
+                    })
+                    .ToList() ?? new List<CvLanguageEntryDto>();
+        }
+
+        private string GenerateSummary(UserProfile profile, string? position)
+        {
+            // Podstawowe podsumowanie na podstawie danych profilu
+            var summaryParts = new List<string>();
+
+            if (!string.IsNullOrEmpty(profile.AboutMe))
+            {
+                summaryParts.Add(profile.AboutMe);
+            }
+
+            // Dodaj informacje o doświadczeniu zawodowym
+            if (profile.WorkExperience?.Any() == true)
+            {
+                var yearsOfExperience = CalculateYearsOfExperience(profile.WorkExperience);
+                if (yearsOfExperience > 0)
+                {
+                    var experienceText =
+                        yearsOfExperience == 1
+                            ? "rok doświadczenia zawodowego"
+                            : $"{yearsOfExperience} lat doświadczenia zawodowego";
+
+                    summaryParts.Add($"Posiadam {experienceText}.");
+                }
+            }
+
+            // Dodaj informacje o wykształceniu
+            if (profile.Education?.Any() == true)
+            {
+                var highestEducation = profile
+                    .Education.OrderByDescending(e => e.EndDate ?? DateTime.MaxValue)
+                    .FirstOrDefault();
+
+                if (highestEducation != null)
+                {
+                    summaryParts.Add(
+                        $"Wykształcenie: {highestEducation.Degree} w dziedzinie {highestEducation.Field}."
+                    );
+                }
+            }
+
+            // Dodaj informacje o stanowisku, jeśli zostało podane
+            if (!string.IsNullOrEmpty(position))
+            {
+                summaryParts.Add($"Zainteresowany stanowiskiem: {position}.");
+            }
+
+            return summaryParts.Any()
+                ? string.Join(" ", summaryParts)
+                : "Profesjonalista poszukujący nowych wyzwań zawodowych.";
+        }
+
+        private string BuildWorkDescription(WorkExperienceEntry work)
+        {
+            var descriptionParts = new List<string>();
+
+            if (!string.IsNullOrEmpty(work.Description))
+            {
+                descriptionParts.Add(work.Description);
+            }
+            if (work.Responsibilities?.Any() == true)
+            {
+                var responsibilitesText =
+                    "Główne obowiązki: " + string.Join(", ", work.Responsibilities);
+                descriptionParts.Add(responsibilitesText);
+            }
+            return descriptionParts.Any()
+                ? string.Join(" ", descriptionParts)
+                : $"Praca na stanowisku {work.Position} w firmie {work.Company}.";
+        }
+
+        private int CalculateYearsOfExperience(List<WorkExperienceEntry> workExperience)
+        {
+            if (workExperience?.Any() != true)
+            {
+                return 0;
+            }
+            var totalMonths = 0;
+            foreach (var work in workExperience.Where(w => w.StartDate.HasValue))
+            {
+                var startDate = work.StartDate!.Value;
+                var endDate = work.EndDate ?? DateTime.Now;
+
+                var months =
+                    ((endDate.Year - startDate.Year) * 12) + endDate.Month - startDate.Month;
+                totalMonths += Math.Max(0, months);
+            }
+            return totalMonths / 12;
+        }
+
+        private string? FormatDate(DateTime? date)
+        {
+            return date?.ToString("yyyy-MM-dd");
+        }
+
+        private async Task SaveGeneratedCvAsync(string userId, string? position, CvDto cvDto)
+        {
+            try
+            {
+                var cvJson = JsonSerializer.Serialize(
+                    cvDto,
+                    new JsonSerializerOptions
+                    {
+                        WriteIndented = false,
+                        PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
+                    }
                 );
-                if (jsonMatch.Success)
-                {
-                    var cleanJson = jsonMatch.Groups[1].Value.Trim();
-                    try
-                    {
-                        result = JsonSerializer.Deserialize<CvDto>(
-                            cleanJson,
-                            new JsonSerializerOptions { PropertyNameCaseInsensitive = true }
-                        );
-                    }
-                    catch (JsonException ex)
-                    {
-                        _logger.LogError(
-                            "Failed to parse JSON block: {cleanJson}. Error: {ex}",
-                            cleanJson,
-                            ex
-                        );
-                        throw new CvGenerationException(
-                            "Failed to parse the JSON block from API response.",
-                            ex
-                        );
-                    }
-                }
-                else
-                {
-                    _logger.LogWarning(
-                        "No JSON block found in raw content: {rawContent}",
-                        rawContent
-                    );
-                    try
-                    {
-                        result = JsonSerializer.Deserialize<CvDto>(
-                            rawContent,
-                            new JsonSerializerOptions { PropertyNameCaseInsensitive = true }
-                        );
-                    }
-                    catch (JsonException ex)
-                    {
-                        _logger.LogError(
-                            "Failed to parse raw content as JSON: {rawContent}. Error: {ex}",
-                            rawContent,
-                            ex
-                        );
-                        throw new CvGenerationException(
-                            "Failed to parse the response content as JSON.",
-                            ex
-                        );
-                    }
-                }
-
-                if (result == null)
-                {
-                    throw new CvGenerationException(
-                        "Failed to deserialize the API response into CvDto.",
-                        null
-                    );
-                }
-
-                InitializeNullProperties(result);
-
-                // Zapisujemy wygenerowane CV do bazy
-                var cvJson = JsonSerializer.Serialize(result);
                 var generatedCv = new GeneratedCv
                 {
                     Id = Guid.NewGuid(),
                     UserId = userId,
                     Position = position,
                     CvJson = cvJson,
-                    RawApiResponse = responseContent,
+                    RawApiResponse = "Generated by mapping service", //Placeholder dla kompatybilności
                     GeneratedAt = DateTime.UtcNow,
                 };
                 await _generatedCvRepository.AddAsync(generatedCv);
-
-                return result;
+                _logger.LogInformation("Cv saved to database for user: {UserId}", userId);
             }
             catch (Exception ex)
             {
-                throw new CvGenerationException(
-                    "Error while generating CV via Perplexity API.",
-                    ex
-                );
+                _logger.LogError(ex, "Error saving generated CV for user {UserId}", userId);
             }
-        }
-
-        private void InitializeNullProperties(CvDto? cv)
-        {
-            if (cv == null)
-            {
-                throw new ArgumentNullException(nameof(cv), "CvDto cannot be null.");
-            }
-
-            if (cv.Basics == null)
-            {
-                cv.Basics = new CvBasicsDto();
-            }
-
-            if (cv.Work == null)
-            {
-                cv.Work = new List<CvWorkEntryDto>();
-            }
-
-            if (cv.Education == null)
-            {
-                cv.Education = new List<CvEducationEntryDto>();
-            }
-
-            if (cv.Certificates == null)
-            {
-                cv.Certificates = new List<CvCertificateEntryDto>();
-            }
-
-            if (cv.Skills == null)
-            {
-                cv.Skills = new List<string>();
-            }
-
-            if (cv.Languages == null)
-            {
-                cv.Languages = new List<CvLanguageEntryDto>();
-            }
-        }
-
-        private string BuildPrompt(UserProfile profile, string? position)
-        {
-            return $$"""
-                    Jesteś ekspertem w pisaniu profesjonalnych CV. Twoim zadaniem jest wygenerowanie CV w formacie JSON na podstawie danych użytkownika. **Nie dodawaj żadnych fikcyjnych informacji, takich jak nowe doświadczenie zawodowe, certyfikaty czy umiejętności, jeśli nie są one wyraźnie podane w danych użytkownika.** CV ma być zgodne z danymi użytkownika i dostosowane do podanego stanowiska, ale w sposób realistyczny, bez wyolbrzymiania kompetencji.
-
-                    ### Dane użytkownika:
-                    Imię: {{profile.FirstName}}
-                    Nazwisko: {{profile.LastName}}
-                    Telefon: {{profile.PhoneNumber ?? "Brak"}}
-                    Email: {{profile.User?.Email ?? "Brak"}}
-                    O mnie: {{profile.AboutMe ?? "Brak"}}
-                    Lokalizacja: {{profile.Address ?? "Brak"}}, {{profile.Country}}
-                    Doświadczenie zawodowe:
-                {{(
-                    profile.WorkExperience != null
-                        ? string.Join(
-                            "\n",
-                            profile.WorkExperience.Select(w =>
-                                $"- {w.Position} w {w.Company}, od {w.StartDate:yyyy-MM-dd} do {(w.EndDate.HasValue ? w.EndDate.Value.ToString("yyyy-MM-dd") : "Obecnie")}\n  Obowiązki: {string.Join("; ", w.Responsibilities ?? new List<string>())}"
-                            )
-                        )
-                        : "Brak"
-                )}}
-                Wykształcenie:
-                {{(
-                    profile.Education != null
-                        ? string.Join(
-                            "\n",
-                            profile.Education.Select(e =>
-                                $"- {e.Degree} w {e.Field}, {e.Institution}, od {e.StartDate:yyyy-MM-dd} do {e.EndDate?.ToString("yyyy-MM-dd") ?? "Obecnie"}"
-                            )
-                        )
-                        : "Brak"
-                )}}
-                Certyfikaty:
-                {{(
-                    profile.Certificates != null
-                        ? string.Join(
-                            "\n",
-                            profile.Certificates.Select(c =>
-                                $"- {c.Name}, wydany przez {c.Issuer ?? "Brak wydawcy"}, data: {c.Date?.ToString("yyyy-MM-dd") ?? "Brak daty"}"
-                            )
-                        )
-                        : "Brak"
-                )}}
-                Umiejętności: {{string.Join(", ", profile.Skills ?? new List<string>())}}
-                Języki:
-                {{(
-                    profile.Languages != null
-                        ? string.Join(
-                            "\n",
-                            profile.Languages.Select(l =>
-                                $"- {l.Language}, poziom: {l.Level ?? "Brak"}"
-                            )
-                        )
-                        : "Brak"
-                )}}
-                Dodatkowe informacje: {{profile.AdditionalInformation ?? "Brak"}}
-
-                ### Instrukcje:
-                1. Wygeneruj CV dla stanowiska: {{position ?? "ogólnego"}}.
-                2. **Używaj wyłącznie danych podanych powyżej.** Nie twórz nowych doświadczeń zawodowych, certyfikatów, umiejętności ani innych informacji, jeśli nie są one wyraźnie wymienione.
-                3. W sekcji `summary` stwórz zwięzłe podsumowanie (2-3 zdania), które realistycznie odzwierciedla doświadczenie i umiejętności użytkownika, dostosowane do stanowiska {{position ?? "ogólnego"}}. Podkreśl mocne strony użytkownika, ale nie przypisuj mu kompetencji, których nie posiada.
-                4. W sekcji `work` uwzględnij wszystkie podane doświadczenia zawodowe z dokładnymi datami (format: YYYY-MM) i obowiązkami. Nie zmieniaj nazw stanowisk ani firm.
-                5. W sekcji `education` podaj dokładne informacje o wykształceniu, w tym daty i kierunek studiów.
-                6. W sekcji `certificates` uwzględnij tylko podane certyfikaty z dokładnymi nazwami, datami i wydawcami.
-                7. W sekcji `skills` wymień tylko umiejętności podane w danych użytkownika. Nie dodawaj nowych umiejętności, nawet jeśli wydają się odpowiednie dla stanowiska.
-                8. W sekcji `languages` podaj języki i ich poziomy dokładnie tak, jak w danych użytkownika.
-                9. Dostosuj CV do lokalizacji użytkownika ({{profile.Country}}). Używaj polskiego języka w opisach, jeśli użytkownik jest z Polski.
-                10. Zwróć odpowiedź w **czystym formacie JSON**, bez żadnych komentarzy, zgodnym z poniższą strukturą:
-
-                ```json
-                {
-                "basics": {
-                    "firstName": "",
-                    "lastName": "",
-                    "phoneNumber": "",
-                    "email": "",
-                    "summary": "",
-                    "location": { "city": "", "country": "" }
-                },
-                "work": [
-                    { "company": "", "position": "", "startDate": "", "endDate": "", "description": "" }
-                ],
-                "education": [
-                    { "institution": "", "degree": "", "field": "", "startDate": "", "endDate": "" }
-                ],
-                "certificates": [
-                    { "name": "", "date": "" }
-                ],
-                "skills": [""],
-                "languages": [
-                    { "language": "", "fluency": "" }
-                ]
-        
-
-                Ważne:
-                1. Wygeneruj dokładnie taki format JSON, wypełniając wszystkie pola sensownymi wartościami na podstawie danych użytkownika.
-                2. Dostosuj CV do lokalizacji użytkownika ({{profile.Country}}).
-                3. Zwróć tylko czysty JSON bez dodatkowych komentarzy.
-                """;
-        }
-
-        public class CvGenerationException : Exception
-        {
-            public CvGenerationException(string message, Exception? inner)
-                : base(message, inner) { }
         }
     }
 }

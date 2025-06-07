@@ -200,9 +200,9 @@ export const countries = [
 export const NavLinks = [
   { label: 'Profile', url: '/profile' },
   { label: 'Assistant', url: '/assistant' },
-  { label: 'Market Analysis', url: '/market-analysis' },
+  { label: 'Analysis', url: '/market-analysis' },
   { label: 'Pricing', url: '/pricing' },
-  { label: 'Resume', url: '/resume' },
+  { label: 'Resume', url: '/resume', disabled: true },
 ];
 
 // Form
@@ -248,6 +248,11 @@ export const star_generate = '/svg/star_generate.svg';
 // Logo
 
 export const logo = '/icons/vocare.png';
+
+// curved lines
+
+export const curved1 = '/svg/curve-1.svg';
+export const curved2 = '/svg/curve-2.svg';
 
 // grid
 
@@ -348,5 +353,52 @@ export const pricingPlans = [
       'Fastest response time',
       'Personalized onboarding assistance',
     ],
+  },
+];
+
+// Cards
+
+export const aboutCardsData = [
+  {
+    img: '/images/plus.png',
+    title: 'Beginners friendly',
+    description:
+      'Jump right in! Our resources cater to all skill levels, ensuring a smooth learning curve for newcomers.',
+  },
+  {
+    img: '/images/plus.png',
+    title: 'Advanced features',
+    description:
+      'Explore cutting-edge tools and techniques designed for experienced developers looking to push boundaries.',
+  },
+  {
+    img: '/images/plus.png',
+    title: 'Community driven',
+    description:
+      'Join thousands of developers sharing knowledge, best practices, and building amazing projects together.',
+  },
+];
+
+export const slides = [
+  {
+    image: '/images/slide-img-1.jpg',
+  },
+  {
+    image: '/images/slide-img-2.jpg',
+  },
+  {
+    image: '/images/slide-img-3.jpg',
+  },
+  {
+    image: '/images/slide-img-4.jpg',
+  },
+  {
+    image: '/images/slide-img-5.jpg',
+  },
+];
+
+export const slide = [
+  {
+    image: '/images/slide-img-1.jpg',
   },
 ];

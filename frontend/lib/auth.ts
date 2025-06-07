@@ -1,6 +1,4 @@
-import axios from 'axios';
-
-const API_URL = process.env.NEXT_PUBLIC_API_URL!;
+import { api } from './api';
 
 interface RegisterInput {
   email: string;
@@ -12,13 +10,26 @@ interface LoginInput {
   password: string;
 }
 
+if (typeof window !== 'undefined') {
+  api.interceptors.response.use(
+    (response) => response,
+    (error) => {
+      if (error.response?.status === 401) {
+        localStorage.removeItem('token');
+        window.location.href = '/sign-in';
+      }
+      return Promise.reject(error);
+    }
+  );
+}
+
 export const registerUser = async ({ email, password }: RegisterInput) => {
-  const response = await axios.post(`${API_URL}/register`, { email, password });
+  const response = await api.post('/api/register', { email, password });
   return response.data;
 };
 
 export const loginUser = async ({ email, password }: LoginInput) => {
-  const response = await axios.post(`${API_URL}/login`, { email, password });
+  const response = await api.post('/login', { email, password });
   const token = response.data.token;
   if (token) {
     localStorage.setItem('token', token);
@@ -28,4 +39,5 @@ export const loginUser = async ({ email, password }: LoginInput) => {
 
 export const logoutUser = () => {
   localStorage.removeItem('token');
+  window.location.href = '/sign-in';
 };

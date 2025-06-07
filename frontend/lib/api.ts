@@ -7,13 +7,11 @@ if (!API_URL) {
 
 export const api = axios.create({
   baseURL: API_URL,
-  headers: { 'Content-Type': 'application/json' },
+  withCredentials: true,
 });
 
-// Ten interceptor używa localStorage, więc musi działać tylko po stronie klienta
-// Dodaj sprawdzenie czy jesteśmy w przeglądarce
 if (typeof window !== 'undefined') {
-  api.interceptors.request.use(config => {
+  api.interceptors.request.use((config) => {
     const token = localStorage.getItem('token');
     if (token) {
       config.headers = config.headers ?? {};

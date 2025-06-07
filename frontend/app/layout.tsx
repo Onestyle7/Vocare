@@ -3,8 +3,9 @@ import localFont from 'next/font/local';
 import './globals.css';
 import { ThemeProvider } from '@/components/ui/theme-provider';
 import { Toaster } from '@/components/ui/sonner';
+
 import { TokenBalanceProvider } from '@/lib/contexts/TokenBalanceContext';
-import { ReactLenis } from '@/lib/utils/lenis';
+// import SmoothScrollProvider from '@/components/SupportComponents/SmoothScrollProvider';
 
 const sizmoPro = localFont({
   src: [
@@ -62,6 +63,14 @@ const sizmoPro = localFont({
   variable: '--font-sizmo-pro',
 });
 
+// const notch = localFont({
+//   src: [
+//      {
+//       path: '../public/fonts/Notch/FormulaCondensed Regular.otf',
+//     },
+//   ]
+// })
+
 export const metadata: Metadata = {
   title: 'Vocare',
   description:
@@ -75,16 +84,16 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" suppressHydrationWarning>
-          <ReactLenis root>
       <body className={`${sizmoPro.className} h-full antialiased selection:bg-[#915EFF]`}>
+        {/* <SmoothScrollProvider> */}
         <TokenBalanceProvider>
           <ThemeProvider attribute="class" defaultTheme="dark">
             {children}
             <Toaster />
           </ThemeProvider>
         </TokenBalanceProvider>
+        {/* </SmoothScrollProvider> */}
       </body>
-          </ReactLenis>
     </html>
   );
 }
