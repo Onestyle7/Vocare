@@ -34,3 +34,20 @@ You can check out [the Next.js GitHub repository](https://github.com/vercel/next
 The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
 
 Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+
+## Cypress Tests
+
+End-to-end tests are written with [Cypress](https://www.cypress.io). Test
+specifications live in `cypress/e2e`:
+
+- `login.cy.ts` verifies the sign-in flow
+- `register.cy.ts` verifies the sign-up flow
+
+Start the development server and run the tests with:
+
+```bash
+npm run dev &
+npm run cy:open    # open the Cypress GUI
+# or
+npm run cy:run     # run all tests headlessly
+```
