@@ -248,6 +248,41 @@ while (retries < maxRetries)
             retries + 1,
             maxRetries
         );
+
+        // Sprawdź czy tabele faktycznie istnieją
+        var tableExists = false;
+        try
+        {
+            // Sprawdź czy istnieje jakakolwiek z tabel aplikacji (np. UserProfiles)
+            var count = await db.Database.ExecuteSqlRawAsync(
+                "SELECT COUNT(*) FROM information_schema.tables WHERE table_schema = 'public' AND table_name = 'UserProfiles'"
+            );
+            tableExists = true;
+        }
+        catch
+        {
+            logger.LogWarning("Table UserProfiles does not exist, will force migration.");
+        }
+
+        // Jeśli historia migracji mówi że są zastosowane, ale tabel nie ma
+        var appliedMigrations = await db.Database.GetAppliedMigrationsAsync();
+        var pendingMigrations = await db.Database.GetPendingMigrationsAsync();
+
+        logger.LogInformation(
+            "Applied migrations: {Applied}, Pending migrations: {Pending}",
+            appliedMigrations.Count(),
+            pendingMigrations.Count()
+        );
+
+        if (appliedMigrations.Any() && !tableExists)
+        {
+            logger.LogWarning(
+                "Database inconsistency detected: migrations marked as applied but tables don't exist. Clearing migration history."
+            );
+            await db.Database.ExecuteSqlRawAsync("TRUNCATE TABLE \"__EFMigrationsHistory\"");
+        }
+
+        // Wykonaj migracje
         await db.Database.MigrateAsync();
         logger.LogInformation("Database migration completed successfully.");
         break;
@@ -259,10 +294,10 @@ while (retries < maxRetries)
         {
             logger.LogError(
                 ex,
-                "Database migration failed after {MaxRetries} attempts. Application will start without migrations.",
+                "Database migration failed after {MaxRetries} attempts.",
                 maxRetries
             );
-            break;
+            throw;
         }
 
         logger.LogWarning(
