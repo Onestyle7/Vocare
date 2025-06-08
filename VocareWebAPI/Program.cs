@@ -49,8 +49,36 @@ builder.Services.Configure<UserRegistrationConfig>(
 
 // ===== BAZA DANYCH =====
 builder.Services.AddDbContext<AppDbContext>(options =>
-    options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection"))
-);
+{
+    var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
+
+    // Na Railway użyj DATABASE_URL
+    var databaseUrl = Environment.GetEnvironmentVariable("DATABASE_URL");
+    if (!string.IsNullOrEmpty(databaseUrl))
+    {
+        // Konwertuj DATABASE_URL z formatu Postgres na connection string
+        var databaseUri = new Uri(databaseUrl);
+        var userInfo = databaseUri.UserInfo.Split(':');
+
+        connectionString =
+            $"Host={databaseUri.Host};"
+            + $"Port={databaseUri.Port};"
+            + $"Database={databaseUri.LocalPath.TrimStart('/')};"
+            + $"Username={userInfo[0]};"
+            + $"Password={userInfo[1]};"
+            + $"SSL Mode=Require;Trust Server Certificate=true";
+
+        Console.WriteLine(
+            $"Using DATABASE_URL from Railway: Host={databaseUri.Host}, Database={databaseUri.LocalPath.TrimStart('/')}"
+        );
+    }
+    else
+    {
+        Console.WriteLine("No DATABASE_URL found, using connection string from appsettings");
+    }
+
+    options.UseNpgsql(connectionString);
+});
 
 // ===== IDENTITY & AUTORYZACJA =====
 builder
