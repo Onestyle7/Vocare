@@ -1,6 +1,6 @@
 export async function callPerplexityAPI(prompt: string) {
   const apiKey = process.env.PERPLEXITY_API_KEY;
-  
+
   if (!apiKey) {
     throw new Error('PERPLEXITY_API_KEY is not defined in environment variables');
   }
@@ -9,7 +9,7 @@ export async function callPerplexityAPI(prompt: string) {
     const response = await fetch('https://api.perplexity.ai/chat/completions', {
       method: 'POST',
       headers: {
-        'Authorization': `Bearer ${apiKey}`,
+        Authorization: `Bearer ${apiKey}`,
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({

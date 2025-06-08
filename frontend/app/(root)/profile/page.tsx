@@ -1,4 +1,4 @@
-"use client";
+'use client';
 
 import { GridBackgroundDemo } from '@/components/MarketComponents/GridBackgroundDemo';
 import ProfileDetails from '@/components/ProfileFormComponents/ProfileDeatail';

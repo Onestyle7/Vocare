@@ -9,7 +9,7 @@ interface CareerPathSectionProps {
   path: CareerPath;
   index: number;
 }
-
+//asd
 export default function CareerPathSection({ path, index }: CareerPathSectionProps) {
   const [isCollapsed, setIsCollapsed] = useState(true);
   const contentRef = useRef<HTMLDivElement>(null);

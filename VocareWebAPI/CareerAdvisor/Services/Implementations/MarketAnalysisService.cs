@@ -199,61 +199,22 @@ namespace VocareWebAPI.Services.Implementations
             Guid aiRecommendationId
         )
         {
+            // Usuń stare dane
             await _careerStatisticsRepository.DeleteByAiRecommendationIdAsync(aiRecommendationId);
             await _skillDemandRepository.DeleteByAiRecommendationIdAsync(aiRecommendationId);
             await _marketTrendsRepository.DeleteByAiRecommendationIdAsync(aiRecommendationId);
+
             try
             {
                 foreach (var industryStat in analysis.MarketAnalysis.IndustryStatistics)
                 {
-                    // Usuwamy spacje i wartość PLN, zastępujemy przecinki kropkami
-                    var raw = industryStat.AverageSalary ?? "";
-                    var cleaned = Regex.Replace(raw, @"[^\d\.\-\,]", "");
-
-                    var salaryRange = cleaned.Split('-', StringSplitOptions.RemoveEmptyEntries);
-                    decimal minSalary = 0;
-                    decimal maxSalary = 0;
-
-                    if (salaryRange.Length == 2)
-                    {
-                        // gdy mamy zakres «min-max»
-                        decimal.TryParse(
-                            salaryRange[0],
-                            NumberStyles.AllowThousands | NumberStyles.AllowDecimalPoint,
-                            CultureInfo.InvariantCulture,
-                            out minSalary
-                        );
-                        decimal.TryParse(
-                            salaryRange[1],
-                            NumberStyles.AllowThousands | NumberStyles.AllowDecimalPoint,
-                            CultureInfo.InvariantCulture,
-                            out maxSalary
-                        );
-                    }
-                    else if (salaryRange.Length == 1)
-                    {
-                        // gdy mamy tylko jedną liczbę
-                        decimal.TryParse(
-                            salaryRange[0],
-                            NumberStyles.AllowThousands | NumberStyles.AllowDecimalPoint,
-                            CultureInfo.InvariantCulture,
-                            out minSalary
-                        );
-                        maxSalary = minSalary;
-                    }
-
-                    // Usuwamy znak % z wartości
-                    var employmentRateText = industryStat.EmploymentRate.Replace("%", "");
-                    int employmentRate = 0;
-                    int.TryParse(employmentRateText, out employmentRate);
-
                     var careerStat = new CareerStatistics
                     {
                         Id = Guid.NewGuid(),
                         CareerName = industryStat.Industry,
-                        AverageSalaryMin = minSalary,
-                        AverageSalaryMax = maxSalary,
-                        EmploymentRate = employmentRate,
+                        AverageSalaryMin = industryStat.MinSalary,
+                        AverageSalaryMax = industryStat.MaxSalary,
+                        EmploymentRate = industryStat.EmploymentRate,
                         GrowthForecast = industryStat.GrowthForecast,
                         LastUpdated = DateTime.UtcNow,
                         AiRecommendationId = aiRecommendationId,
@@ -261,7 +222,7 @@ namespace VocareWebAPI.Services.Implementations
                     await _careerStatisticsRepository.AddAsync(careerStat);
                 }
 
-                // Pozostały kod pozostaje bez zmian
+                // Skill demand i market trends bez zmian
                 foreach (var skill in analysis.MarketAnalysis.SkillDemand)
                 {
                     var skillDemand = new SkillDemand
@@ -357,8 +318,9 @@ namespace VocareWebAPI.Services.Implementations
                     "industryStatistics": [
                       {
                         "industry": "Nazwa branży",
-                        "averageSalary": "Średnie zarobki (np. 10000 PLN) |to muszą być średnie zarobki miesięczne brutto|",
-                        "employmentRate": "Poziom zatrudnienia (np. 85%)",
+                        "minSalary": 8000,
+                        "maxSalary": 12000,
+                        "employmentRate": 85, // Zachowując skalę 0-100 w statystykach zatrudnienia i porównaniu do pozostałych danych
                         "growthForecast": "Prognoza wzrostu (High/Medium/Low)"
                       }
                       // Dodaj statystyki dla co najmniej 3 branż powiązanych z rekomendowanymi ścieżkami
@@ -427,8 +389,9 @@ namespace VocareWebAPI.Services.Implementations
                         .Select(cs => new IndustryStatisticsDto
                         {
                             Industry = cs.CareerName,
-                            AverageSalary = $"{cs.AverageSalaryMin}-{cs.AverageSalaryMax} PLN",
-                            EmploymentRate = $"{cs.EmploymentRate}%",
+                            MinSalary = (int)cs.AverageSalaryMin,
+                            MaxSalary = (int)cs.AverageSalaryMax,
+                            EmploymentRate = cs.EmploymentRate,
                             GrowthForecast = cs.GrowthForecast,
                         })
                         .ToList(),

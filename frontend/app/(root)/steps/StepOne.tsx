@@ -70,8 +70,7 @@ export default function StepOne({ form, onNext }: StepOneProps) {
             <FormLabel>Personality type</FormLabel>
             <Select
               onValueChange={(value) => field.onChange(Number(value))}
-              defaultValue={field.value?.toString()}
-              value={field.value?.toString()}
+              value={field.value != null ? field.value.toString() : ''}
             >
               <FormControl>
                 <SelectTrigger>

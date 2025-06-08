@@ -7,19 +7,13 @@ export async function POST(request: NextRequest) {
     const { prompt } = body;
 
     if (!prompt) {
-      return NextResponse.json(
-        { error: 'Prompt is required' },
-        { status: 400 }
-      );
+      return NextResponse.json({ error: 'Prompt is required' }, { status: 400 });
     }
 
     const result = await callPerplexityAPI(prompt);
     return NextResponse.json(result);
   } catch (error) {
     console.error('Error in Perplexity API route:', error);
-    return NextResponse.json(
-      { error: 'Failed to process request' },
-      { status: 500 }
-    );
+    return NextResponse.json({ error: 'Failed to process request' }, { status: 500 });
   }
 }

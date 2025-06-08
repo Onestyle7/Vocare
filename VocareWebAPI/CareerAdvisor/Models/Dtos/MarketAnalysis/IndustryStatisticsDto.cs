@@ -11,8 +11,9 @@ namespace VocareWebAPI.Models.Dtos.MarketAnalysis
     public class IndustryStatisticsDto
     {
         public string Industry { get; set; } = string.Empty;
-        public string AverageSalary { get; set; } = string.Empty;
-        public string EmploymentRate { get; set; } = string.Empty;
+        public int MinSalary { get; set; } = 0;
+        public int MaxSalary { get; set; } = 0;
+        public int EmploymentRate { get; set; } = 0;
         public string GrowthForecast { get; set; } = string.Empty;
     }
 }

@@ -6,6 +6,7 @@ using VocareWebAPI.CvGenerator.Models; // Poprawiony namespace
 using VocareWebAPI.Models;
 using VocareWebAPI.Models.Entities;
 using VocareWebAPI.Models.Entities.MarketAnalysis;
+using VocareWebAPI.UserManagement.Models.Entities;
 
 namespace VocareWebAPI.Data
 {
@@ -65,6 +66,7 @@ namespace VocareWebAPI.Data
         /// Zbiór wygenerowanych CV w bazie danych.
         /// </summary>
         public DbSet<GeneratedCv> GeneratedCvs { get; set; }
+        public DbSet<FinancialSurvey> FinancialSurveys { get; set; }
 
         /// <summary>
         /// Konfiguruje model bazy danych, definiując schemat i relacje między encjami.
@@ -112,6 +114,19 @@ namespace VocareWebAPI.Data
                     }
                 }
             }
+            builder.Entity<FinancialSurvey>().HasKey(f => f.UserId);
+            builder
+                .Entity<FinancialSurvey>()
+                .HasOne(f => f.UserProfile)
+                .WithOne()
+                .HasForeignKey<FinancialSurvey>(f => f.UserId)
+                .OnDelete(DeleteBehavior.Cascade);
+            builder
+                .Entity<UserProfile>()
+                .HasOne(up => up.FinancialSurvey)
+                .WithOne(fs => fs.UserProfile)
+                .HasForeignKey<FinancialSurvey>(fs => fs.UserId)
+                .OnDelete(DeleteBehavior.Cascade);
             builder
                 .Entity<AiRecommendation>()
                 .HasOne(ar => ar.UserProfile)
@@ -155,7 +170,7 @@ namespace VocareWebAPI.Data
                 .HasForeignKey("UserProfileUserId")
                 .OnDelete(DeleteBehavior.Cascade);
 
-            builder.HasDefaultSchema("Identity");
+            builder.HasDefaultSchema("public");
 
             builder
                 .Entity<User>()

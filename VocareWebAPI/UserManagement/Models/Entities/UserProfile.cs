@@ -33,5 +33,7 @@ namespace VocareWebAPI.Models.Entities
         public string? AboutMe { get; set; }
         public PersonalityType PersonalityType { get; set; } = PersonalityType.Unknown; // Typ osobowości użytkownika, domyślnie Unknown
         public List<AiRecommendation> Recommendations { get; set; } = new();
+        public List<string> SoftSkills { get; set; } = new(); // Lista umiejętności miękkich użytkownika
+        public FinancialSurvey? FinancialSurvey { get; set; } = default!; // Ankieta finansowa użytkownika
     }
 }

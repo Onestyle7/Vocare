@@ -1,13 +1,13 @@
 'use client';
 
 import { pricingPlans, shape1 } from '@/app/constants';
-import AnimatedHeadline from '@/components/SupportComponents/AnimatedText';
 import { GridBackgroundDemo } from '@/components/MarketComponents/GridBackgroundDemo';
 import Section from '@/components/SupportComponents/Section';
 import { Button } from '@/components/ui/button';
 import Image from 'next/image';
 import React from 'react';
 import { ScrollParallax } from 'react-just-parallax';
+import Copy from '../SupportComponents/Copy';
 
 const PricingMain = () => {
   return (
@@ -22,13 +22,14 @@ const PricingMain = () => {
         <GridBackgroundDemo />
 
         <div className="relative mx-auto flex max-w-7xl flex-col items-center justify-center">
-          <h1 className="text-[50px] leading-14 font-bold uppercase max-md:text-center lg:text-[78px] xl:mt-10 xl:text-[88px] xl:leading-17 2xl:text-[108px] 2xl:leading-21">
-            <AnimatedHeadline
-              lines={['Tailored to', 'Your Needs']}
-              className="items-start max-md:items-center"
-            />
-          </h1>
-          <div className="font-poppins mt-10 mb-10 grid gap-8 px-4 md:grid-cols-3 md:px-6 xl:mt-20">
+          <Copy>
+            <h1 className="font-poppins text-color mt-10 text-center text-4xl font-bold uppercase md:text-[4rem] xl:leading-[0.8]">
+              Tailored to
+              <br />
+              your needs
+            </h1>
+          </Copy>
+          <div className="font-poppins mt-10 mb-10 grid gap-8 px-4 md:grid-cols-3 md:px-6 xl:mt-18">
             <ScrollParallax isAbsolutelyPositioned zIndex={20}>
               <div className="absolute top-1/7 -left-4 z-20 xl:top-0">
                 <Image src={shape1} alt="shape" width={78} height={78} className="-rotate-20" />

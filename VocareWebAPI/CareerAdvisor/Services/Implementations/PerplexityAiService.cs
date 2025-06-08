@@ -240,7 +240,8 @@ namespace VocareWebAPI.Services
             return $$"""
                 Jesteś doradcą zawodowym. Na podstawie poniższych danych użytkownika:
                 - Imię: {{profile.FirstName}} {{profile.LastName}}
-                - Umiejętności: {{string.Join(", ", profile.Skills)}}
+                - Umiejętności: {{string.Join(", ", profile.Skills)}},
+                - Umiejętności miękkie: {{string.Join(", ", profile.SoftSkills)}},
                 - Doświadczenie zawodowe:
                 {{(
                     profile.WorkExperience != null
@@ -252,7 +253,23 @@ namespace VocareWebAPI.Services
                         )
                         : "Brak doświadczenia zawodowego"
                 )}}
-                - Wykształcenie: {{profile.Education}}}
+                - Wymagania finansowe:
+                {{(
+                    profile.FinancialSurvey != null
+                        ? $"Aktualne zarobki {profile.FinancialSurvey.CurrentSalary} PLN, W ciągu najbliższych miesięcy chciałbym rozpocząć drogę do {profile.FinancialSurvey.DesiredSalary} PLN miesięcznie, Status zadłużeń to {profile.FinancialSurvey.HasLoans }, szczegóły zadłużeń: {profile.FinancialSurvey.LoanDetails ?? "Brak"}, Poziom ryzyka jakie jest gotów podjąć: {profile.FinancialSurvey.RiskAppetite}, czy relokacja wchodzi w grę Relokacja: {profile.FinancialSurvey.WillingToRelocate}"
+                        : "Brak danych finansowych"
+                )}}
+                - Wykształcenie:
+                {{(
+                    profile.Education != null && profile.Education.Any()
+                        ? string.Join(
+                            "\n",
+                            profile.Education.Select(e =>
+                                $"- {e.Degree} w {e.Field}, {e.Institution} (od {e.StartDate?.ToString("yyyy-MM-dd") ?? "Brak"} do {(e.EndDate?.ToString("yyyy-MM-dd") ?? "obecnie")})"
+                            )
+                        )
+                        : "Brak wykształcenia"
+                )}}
                 - Certyfikaty:
                 {{(
                     profile.Certificates != null
