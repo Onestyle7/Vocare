@@ -277,43 +277,65 @@ while (retries < maxRetries)
             maxRetries
         );
 
-        // Sprawdź czy tabele faktycznie istnieją
-        var tableExists = false;
-        try
+        // Sprawdź czy baza danych istnieje i czy można się połączyć
+        if (await db.Database.CanConnectAsync())
         {
-            // Sprawdź czy istnieje jakakolwiek z tabel aplikacji (np. UserProfiles)
-            var count = await db.Database.ExecuteSqlRawAsync(
-                "SELECT COUNT(*) FROM information_schema.tables WHERE table_schema = 'public' AND table_name = 'UserProfiles'"
+            logger.LogInformation("Database connection successful");
+
+            // Sprawdź czy istnieją jakiekolwiek tabele
+            var tableCount = await db.Database.ExecuteSqlRawAsync(
+                "SELECT COUNT(*) FROM information_schema.tables WHERE table_schema = 'public' AND table_type = 'BASE TABLE'"
             );
-            tableExists = true;
+
+            logger.LogInformation("Number of existing tables: {TableCount}", tableCount);
+
+            // Jeśli nie ma tabel, ale istnieje historia migracji, wyczyść ją
+            try
+            {
+                var migrationHistory = await db.Database.GetAppliedMigrationsAsync();
+                if (migrationHistory.Any() && tableCount == 0)
+                {
+                    logger.LogWarning(
+                        "Migration history exists but no tables found. Clearing migration history."
+                    );
+                    await db.Database.ExecuteSqlRawAsync("DELETE FROM \"__EFMigrationsHistory\"");
+                }
+            }
+            catch (Exception ex)
+            {
+                logger.LogWarning(
+                    ex,
+                    "Could not check or clear migration history (this is normal for first deployment)"
+                );
+            }
+
+            // Wykonaj migracje
+            logger.LogInformation("Executing database migrations...");
+            await db.Database.MigrateAsync();
+
+            // Sprawdź czy ServiceCosts mają dane
+            try
+            {
+                var serviceCostCount = await db.ServiceCosts.CountAsync();
+                if (serviceCostCount == 0)
+                {
+                    logger.LogInformation("Seeding ServiceCosts data...");
+                    // EF Core powinno to zrobić automatycznie przez HasData, ale na wszelki wypadek
+                    await db.SaveChangesAsync();
+                }
+            }
+            catch (Exception ex)
+            {
+                logger.LogWarning(ex, "Could not check ServiceCosts (table might not exist yet)");
+            }
+
+            logger.LogInformation("Database migration completed successfully.");
+            break;
         }
-        catch
+        else
         {
-            logger.LogWarning("Table UserProfiles does not exist, will force migration.");
+            throw new Exception("Cannot connect to database");
         }
-
-        // Jeśli historia migracji mówi że są zastosowane, ale tabel nie ma
-        var appliedMigrations = await db.Database.GetAppliedMigrationsAsync();
-        var pendingMigrations = await db.Database.GetPendingMigrationsAsync();
-
-        logger.LogInformation(
-            "Applied migrations: {Applied}, Pending migrations: {Pending}",
-            appliedMigrations.Count(),
-            pendingMigrations.Count()
-        );
-
-        if (appliedMigrations.Any() && !tableExists)
-        {
-            logger.LogWarning(
-                "Database inconsistency detected: migrations marked as applied but tables don't exist. Clearing migration history."
-            );
-            await db.Database.ExecuteSqlRawAsync("TRUNCATE TABLE \"__EFMigrationsHistory\"");
-        }
-
-        // Wykonaj migracje
-        await db.Database.MigrateAsync();
-        logger.LogInformation("Database migration completed successfully.");
-        break;
     }
     catch (Exception ex)
     {
@@ -329,7 +351,7 @@ while (retries < maxRetries)
         }
 
         logger.LogWarning(
-            "DB unavailable, retrying in 5s... ({Attempt}/{MaxRetries}). Error: {Error}",
+            "DB migration attempt failed, retrying in 5s... ({Attempt}/{MaxRetries}). Error: {Error}",
             retries,
             maxRetries,
             ex.Message
@@ -337,5 +359,4 @@ while (retries < maxRetries)
         await Task.Delay(5000);
     }
 }
-
 app.Run();
