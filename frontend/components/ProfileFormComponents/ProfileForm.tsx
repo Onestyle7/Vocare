@@ -213,6 +213,7 @@ export default function ProfileForm({
     setLoading(true);
     try {
       await deleteUserProfile();
+      localStorage.removeItem('userProfile');
       toast.success('Profile deleted successfully!');
       router.push('/');
     } catch (err) {

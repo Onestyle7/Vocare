@@ -39,5 +39,6 @@ export const loginUser = async ({ email, password }: LoginInput) => {
 
 export const logoutUser = () => {
   localStorage.removeItem('token');
+  localStorage.removeItem('userProfile');
   window.location.href = '/sign-in';
 };
