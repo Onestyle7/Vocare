@@ -121,38 +121,64 @@ export default function AssistantPage() {
   };
 
   // Zastąp oba useEffecty tym jednym:
-useEffect(() => {
-  const loadProfileAndRecommendations = async () => {
-    setLoading(true);
-    setError(null);
-    
-    // 1. Sprawdź profil
-    const storedProfile = localStorage.getItem('userProfile');
-    if (!storedProfile) {
-      setError('Brak danych profilu. Wróć do formularza.');
-      setLoading(false);
-      return;
-    }
-    
-    const parsedProfile = JSON.parse(storedProfile);
-    setProfile(parsedProfile);
-    
-    // 2. Sprawdź token
-    const token = localStorage.getItem('token');
-    if (!token) {
-      toast.error('Authentication required', {
-        description: 'Please sign in to continue.',
-      });
-      setLoading(false);
-      return;
-    }
+  useEffect(() => {
+    const loadProfileAndRecommendations = async () => {
+      setLoading(true);
+      setError(null);
 
-    // 3. Pobierz rekomendacje
-    try {
-      // Najpierw spróbuj pobrać ostatnie rekomendacje
+      // 1. Sprawdź profil
+      const storedProfile = localStorage.getItem('userProfile');
+      if (!storedProfile) {
+        setError('Brak danych profilu. Wróć do formularza.');
+        setLoading(false);
+        return;
+      }
+
+      const parsedProfile = JSON.parse(storedProfile);
+      setProfile(parsedProfile);
+
+      // 2. Sprawdź token
+      const token = localStorage.getItem('token');
+      if (!token) {
+        toast.error('Authentication required', {
+          description: 'Please sign in to continue.',
+        });
+        setLoading(false);
+        return;
+      }
+
+      // 3. Pobierz rekomendacje
       try {
-        const lastRecommendationResponse = await axios.get<AiCareerResponse>(
-          'http://localhost:8080/api/AI/last-recommendation',
+        // Najpierw spróbuj pobrać ostatnie rekomendacje
+        try {
+          const lastRecommendationResponse = await axios.get<AiCareerResponse>(
+            'http://localhost:8080/api/AI/last-recommendation',
+            {
+              headers: {
+                Authorization: `Bearer ${token}`,
+                'Content-Type': 'application/json',
+              },
+            }
+          );
+          console.log('Last recommendations:', lastRecommendationResponse.data);
+          setRecommendations(lastRecommendationResponse.data);
+          setLoading(false);
+          return;
+        } catch (lastError: unknown) {
+          if (lastError instanceof AxiosError && lastError.response?.status !== 404) {
+            console.error('Something went wrong while getting last recommendations:', lastError);
+            setError(
+              lastError.response?.data?.detail ||
+                'Something went wrong while getting last recommendations.'
+            );
+            setLoading(false);
+            return;
+          }
+        }
+
+        // Jeśli brak ostatnich rekomendacji, wygeneruj nowe
+        const response = await axios.get<AiCareerResponse>(
+          'http://localhost:8080/api/AI/recommendations',
           {
             headers: {
               Authorization: `Bearer ${token}`,
@@ -160,64 +186,37 @@ useEffect(() => {
             },
           }
         );
-        console.log('Last recommendations:', lastRecommendationResponse.data);
-        setRecommendations(lastRecommendationResponse.data);
-        setLoading(false);
-        return;
-      } catch (lastError: unknown) {
-        if (lastError instanceof AxiosError && lastError.response?.status !== 404) {
-          console.error('Something went wrong while getting last recommendations:', lastError);
-          setError(
-            lastError.response?.data?.detail ||
-              'Something went wrong while getting last recommendations.'
-          );
-          setLoading(false);
-          return;
-        }
-      }
+        console.log('New recommendations:', response.data);
+        setRecommendations(response.data);
+      } catch (err: unknown) {
+        if (err instanceof AxiosError) {
+          console.error('Detailed error:', err);
+          console.error('Response status:', err.response?.status);
+          console.error('Response data:', err.response?.data);
 
-      // Jeśli brak ostatnich rekomendacji, wygeneruj nowe
-      const response = await axios.get<AiCareerResponse>(
-        'http://localhost:8080/api/AI/recommendations',
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-            'Content-Type': 'application/json',
-          },
-        }
-      );
-      console.log('New recommendations:', response.data);
-      setRecommendations(response.data);
-      
-    } catch (err: unknown) {
-      if (err instanceof AxiosError) {
-        console.error('Detailed error:', err);
-        console.error('Response status:', err.response?.status);
-        console.error('Response data:', err.response?.data);
-
-        if (
-          err.response?.status === 500 &&
-          typeof err.response.data === 'string' &&
-          err.response.data.includes('User billing information')
-        ) {
-          setError('billing_info_missing');
-          toast.error('Brak informacji rozliczeniowych', {
-            description: 'Uzupełnij dane rozliczeniowe w ustawieniach konta.',
-          });
+          if (
+            err.response?.status === 500 &&
+            typeof err.response.data === 'string' &&
+            err.response.data.includes('User billing information')
+          ) {
+            setError('billing_info_missing');
+            toast.error('Brak informacji rozliczeniowych', {
+              description: 'Uzupełnij dane rozliczeniowe w ustawieniach konta.',
+            });
+          } else {
+            setError(err.response?.data?.detail || 'Błąd podczas generowania rekomendacji');
+          }
         } else {
-          setError(err.response?.data?.detail || 'Błąd podczas generowania rekomendacji');
+          console.error('Unknown error:', err);
+          setError('Unexpected error occurred');
         }
-      } else {
-        console.error('Unknown error:', err);
-        setError('Unexpected error occurred');
+      } finally {
+        setLoading(false);
       }
-    } finally {
-      setLoading(false);
-    }
-  };
+    };
 
-  loadProfileAndRecommendations();
-}, []); 
+    loadProfileAndRecommendations();
+  }, []);
 
   const handleGenerateNewRecommendations = async () => {
     setLoading(true);

@@ -105,18 +105,18 @@ const NewEmptyStateComponent = ({
     <CustomButton
       onClick={() => setIsConfirmDialogOpen(true)}
       disabled={isLoading}
-      className="group flex h-[56px] cursor-pointer items-center justify-center rounded-full bg-[#915EFF] px-6 text-[clamp(1.1rem,1vw,1.5rem)] font-medium text-white hover:bg-[#7b4ee0] max-md:mt-6 xl:w-[280px]"
+      className="group flex h-[56px] cursor-pointer items-center justify-center rounded-full bg-[#915EFF] px-6 text-[clamp(1rem,1vw,1.5rem)] font-medium text-white hover:bg-[#7b4ee0] max-md:mt-6 xl:w-[280px] font-poppins"
     >
       <span>{isLoading ? 'Generating...' : 'Generate analysis'}</span>
-      <ArrowRight className="ml-4 scale-125 transition-transform duration-300 group-hover:translate-x-2" />
+      <ArrowRight className="ml-4 scale-90 transition-transform duration-300 group-hover:translate-x-2" />
     </CustomButton>
   ) : (
     <CustomButton
       url="/assistant"
-      className="group flex h-[56px] cursor-pointer items-center justify-center rounded-full bg-[#915EFF] px-6 text-[clamp(1.1rem,1vw,1.5rem)] font-medium text-white hover:bg-[#7b4ee0] max-md:mt-6 xl:w-[280px]"
+      className="group flex h-[56px] cursor-pointer items-center justify-center rounded-full bg-[#915EFF] px-6 text-[clamp(1rem,1vw,1.5rem)] font-medium text-white hover:bg-[#7b4ee0] max-md:mt-6 xl:w-[280px] font-poppins"
     >
-      <span>You have to generate recommendation first</span>
-      <ArrowRight className="ml-4 scale-125 transition-transform duration-300 group-hover:translate-x-2" />
+      <span>Recommendation first</span>
+      <ArrowRight className="ml-4 scale-90 transition-transform duration-300 group-hover:translate-x-2" />
     </CustomButton>
   );
 
@@ -203,12 +203,16 @@ const NewEmptyStateComponent = ({
               </AlertDialogDescription>
 
               <div className="mt-2 text-center text-sm font-extralight">
-                Current balance: <span className="font-bold">{isBalanceLoading ? '...' : tokenBalance}</span>
+                Current balance:{' '}
+                <span className="font-bold">{isBalanceLoading ? '...' : tokenBalance}</span>
               </div>
             </AlertDialogHeader>
 
             <AlertDialogFooter className="flex justify-center gap-4 sm:justify-center">
-              <AlertDialogCancel className="border-gray-200" onClick={() => setIsConfirmDialogOpen(false)}>
+              <AlertDialogCancel
+                className="border-gray-200"
+                onClick={() => setIsConfirmDialogOpen(false)}
+              >
                 Cancel
               </AlertDialogCancel>
 

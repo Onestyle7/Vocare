@@ -2,11 +2,11 @@
 
 import { useEffect, useRef, useState } from 'react';
 import gsap from 'gsap';
-import { Button } from '../ui/button';
 import { ArrowRight } from 'lucide-react';
 import { letterImg } from '@/app/constants';
 import Image from 'next/image';
 import Link from 'next/link';
+import CustomButton from '../ui/CustomButton';
 
 const GenerateRecommendationFail = () => {
   const flippingURef = useRef<HTMLSpanElement | null>(null);
@@ -127,12 +127,12 @@ const GenerateRecommendationFail = () => {
             </div>
 
             <Link href={isLoggedIn ? '/profile' : '/sign-in'}>
-              <Button className="group flex h-[56px] rounded-full bg-[#915EFF] text-[clamp(1.3rem,1vw,12rem)] font-semibold max-md:mt-6 xl:w-[250px]">
+              <CustomButton className="group flex h-[56px] cursor-pointer items-center justify-center rounded-full bg-[#915EFF] px-6 text-[clamp(1.1rem,1vw,1.5rem)] font-medium text-white hover:bg-[#7b4ee0] max-md:mt-6 xl:w-[280px] font-poppins">
                 <span className="flex flex-row items-center">
                   {isLoggedIn ? 'Profile' : 'Create an account'}
-                  <ArrowRight className="ml-2 scale-125 transition-transform duration-300 group-hover:translate-x-2" />
+                  <ArrowRight className="ml-2 scale-90 transition-transform duration-300 group-hover:translate-x-2" />
                 </span>
-              </Button>
+              </CustomButton>
             </Link>
           </div>
         </div>

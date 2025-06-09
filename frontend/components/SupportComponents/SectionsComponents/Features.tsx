@@ -143,8 +143,8 @@ const Features = () => {
       customPaddings
       id="feature"
     >
-      <div className="min-h-screen border-gray-700 xl:mr-[40px] xl:ml-[40px] lg:border-t-[0.5px] lg:border-r-[0.5px] lg:border-l-[0.5px]">
-        <div className="relative mt-36 max-md:mt-0 mb-8 flex flex-col items-center gap-5">
+      <div className="min-h-screen border-gray-700 lg:border-t-[0.5px] lg:border-r-[0.5px] lg:border-l-[0.5px] xl:mr-[40px] xl:ml-[40px]">
+        <div className="relative mt-36 mb-8 flex flex-col items-center gap-5 max-md:mt-0">
           <h2 className="text-sm uppercase md:text-[12px]">seamless integration</h2>
           <Copy>
             <h1 className="font-poppins text-color mt-5 text-center text-4xl font-bold md:text-[4rem] xl:leading-[0.8]">
@@ -195,7 +195,7 @@ const Features = () => {
               {/* Sign-up Button - wsuwa się z dołu, prosty czarny button */}
               <div className="signup-button absolute right-0 bottom-0 left-0 flex items-end justify-center pb-8 opacity-0 sm:pb-12 md:pb-16 lg:pb-20">
                 <Link href="/sign-up">
-                  <button className="font-poppins rounded-full bg-black px-6 py-3 text-base font-semibold text-white transition-all duration-300 active:scale-95 sm:px-8 sm:py-4 sm:text-lg">
+                  <button className="font-poppins rounded-lg bg-black px-6 py-3 text-base font-semibold text-white transition-all duration-300 active:scale-95 sm:px-8 sm:py-4 sm:text-lg">
                     Get Started Now
                   </button>
                 </Link>
