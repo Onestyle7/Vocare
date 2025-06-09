@@ -40,8 +40,21 @@ export default function EmptyStateComponent({
   const flowerRef = useRef<HTMLImageElement | null>(null);
 
   useEffect(() => {
-    const storedProfile = localStorage.getItem('userProfile');
-    setHasProfile(!!storedProfile);
+    const checkProfile = () => {
+      const stored = localStorage.getItem('userProfile');
+      if (!stored || stored === 'null' || stored === 'undefined') {
+        setHasProfile(false);
+      } else {
+        setHasProfile(true);
+      }
+    };
+
+    checkProfile();
+    window.addEventListener('storage', checkProfile);
+
+    return () => {
+      window.removeEventListener('storage', checkProfile);
+    };
   }, []);
 
   useEffect(() => {
