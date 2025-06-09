@@ -34,9 +34,15 @@ export default function EmptyStateComponent({
   refresh,
 }: EmptyStateComponentProps) {
   const [isConfirmDialogOpen, setIsConfirmDialogOpen] = useState(false);
+  const [hasProfile, setHasProfile] = useState(false);
   const flippingURef = useRef<HTMLSpanElement | null>(null);
   const shakeRef = useRef<HTMLSpanElement | null>(null);
   const flowerRef = useRef<HTMLImageElement | null>(null);
+
+  useEffect(() => {
+    const storedProfile = localStorage.getItem('userProfile');
+    setHasProfile(!!storedProfile);
+  }, []);
 
   useEffect(() => {
     if (flippingURef.current) {
@@ -144,20 +150,32 @@ export default function EmptyStateComponent({
               </div>
             </div>
 
-            <CustomButton
-              onClick={() => setIsConfirmDialogOpen(true)}
-              disabled={isLoading}
-              className="group flex h-[56px] cursor-pointer items-center justify-center rounded-full bg-[#915EFF] px-6 text-[clamp(1.1rem,1vw,1.5rem)] font-medium text-white hover:bg-[#7b4ee0] max-md:mt-6 xl:w-[280px]"
-            >
-              <span>{isLoading ? 'Generating...' : 'Generate analysis'}</span>
-              <ArrowRight className="ml-4 scale-125 transition-transform duration-300 group-hover:translate-x-2" />
-            </CustomButton>
+            {hasProfile ? (
+              <CustomButton
+                onClick={() => setIsConfirmDialogOpen(true)}
+                disabled={isLoading}
+                className="group flex h-[56px] cursor-pointer items-center justify-center rounded-full bg-[#915EFF] px-6 text-[clamp(1.1rem,1vw,1.5rem)] font-medium text-white hover:bg-[#7b4ee0] max-md:mt-6 xl:w-[280px]"
+              >
+                <span>{isLoading ? 'Generating...' : 'Generate analysis'}</span>
+                <ArrowRight className="ml-4 scale-125 transition-transform duration-300 group-hover:translate-x-2" />
+              </CustomButton>
+            ) : (
+              <Link href="/profile">
+                <CustomButton
+                  className="group flex h-[56px] cursor-pointer items-center justify-center rounded-full bg-[#915EFF] px-6 text-[clamp(1.1rem,1vw,1.5rem)] font-medium text-white hover:bg-[#7b4ee0] max-md:mt-6 xl:w-[280px]"
+                >
+                  <span>Profile</span>
+                  <ArrowRight className="ml-4 scale-125 transition-transform duration-300 group-hover:translate-x-2" />
+                </CustomButton>
+              </Link>
+            )}
           </div>
         </div>
       </div>
 
-      <AlertDialog open={isConfirmDialogOpen} onOpenChange={setIsConfirmDialogOpen}>
-        <AlertDialogContent className="font-poppins mx-auto max-w-md">
+      {hasProfile && (
+        <AlertDialog open={isConfirmDialogOpen} onOpenChange={setIsConfirmDialogOpen}>
+          <AlertDialogContent className="font-poppins mx-auto max-w-md">
           <AlertDialogHeader>
             <AlertDialogTitle className="text-center text-xl font-bold">
               Generate market analysis?
@@ -205,7 +223,8 @@ export default function EmptyStateComponent({
             )}
           </AlertDialogFooter>
         </AlertDialogContent>
-      </AlertDialog>
+        </AlertDialog>
+      )}
     </div>
   );
 }
