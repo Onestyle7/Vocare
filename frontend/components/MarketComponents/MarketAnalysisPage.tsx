@@ -23,8 +23,8 @@ import {
 import { useTokenBalanceContext } from '@/lib/contexts/TokenBalanceContext';
 import Link from 'next/link';
 import GenerateMarketFail from './GenerateMarketFail';
-import EmptyStateComponent from './EmptyStateComponent';
 import Section from '../SupportComponents/Section';
+import NewEmptyStateComponent from './NewEmptyStateComponent';
 
 // Type definitions
 interface MarketTrend {
@@ -229,7 +229,7 @@ export default function MarketAnalysis() {
     marketAnalysis.industryStatistics.length === 0
   ) {
     return (
-      <EmptyStateComponent
+      <NewEmptyStateComponent
         onGenerateAnalysis={handleGenerateNewAnalysis}
         isLoading={isLoading}
         tokenBalance={tokenBalance}
