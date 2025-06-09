@@ -21,7 +21,7 @@ const Features = () => {
       scrollTrigger: {
         trigger: '#clip',
         start: 'center center',
-        end: '+=8000 center', // Zmniejszona długość scrollowania
+        end: '+=5000 center', // Zmniejszona długość scrollowania
         scrub: 0.5,
         pin: true,
         pinSpacing: true,
@@ -143,11 +143,11 @@ const Features = () => {
       customPaddings
       id="feature"
     >
-      <div className="min-h-screen border-gray-700 xl:mr-[40px] xl:ml-[40px] xl:border-t-[0.5px] xl:border-r-[0.5px] xl:border-l-[0.5px]">
+      <div className="min-h-screen border-gray-700 xl:mr-[40px] xl:ml-[40px] lg:border-t-[0.5px] lg:border-r-[0.5px] lg:border-l-[0.5px]">
         <div className="relative mt-36 max-md:mt-0 mb-8 flex flex-col items-center gap-5">
           <h2 className="text-sm uppercase md:text-[12px]">seamless integration</h2>
           <Copy>
-            <h1 className="font-poppins text-color mt-5 text-center text-4xl font-bold uppercase md:text-[4rem] xl:leading-[0.8]">
+            <h1 className="font-poppins text-color mt-5 text-center text-4xl font-bold md:text-[4rem] xl:leading-[0.8]">
               Discover the world <br /> dive into it
             </h1>
           </Copy>

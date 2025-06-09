@@ -23,7 +23,7 @@ const PricingMain = () => {
 
         <div className="relative mx-auto flex max-w-7xl flex-col items-center justify-center">
           <Copy>
-            <h1 className="font-poppins text-color mt-10 text-center text-4xl font-bold uppercase md:text-[4rem] xl:leading-[0.8]">
+            <h1 className="font-poppins text-color mt-10 text-center text-4xl font-bold md:text-[4rem] xl:leading-[0.8]">
               Tailored to
               <br />
               your needs
