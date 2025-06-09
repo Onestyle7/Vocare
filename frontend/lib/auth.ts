@@ -33,11 +33,13 @@ export const loginUser = async ({ email, password }: LoginInput) => {
   const token = response.data.token;
   if (token) {
     localStorage.setItem('token', token);
+    document.cookie = `token=${token}; path=/`;
   }
   return response.data;
 };
 
 export const logoutUser = () => {
   localStorage.removeItem('token');
+  document.cookie = 'token=; Max-Age=0; path=/';
   window.location.href = '/sign-in';
 };

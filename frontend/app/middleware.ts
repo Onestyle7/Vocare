@@ -3,8 +3,15 @@ import type { NextRequest } from 'next/server';
 
 export function middleware(request: NextRequest) {
   const isAuth = request.cookies.get('token')?.value;
+  const { pathname } = request.nextUrl;
 
-  if (!isAuth && request.nextUrl.pathname.startsWith('/profile')) {
+  const publicPaths = ['/', '/sign-in', '/sign-up', '/forgot-password'];
+  const isPublic = publicPaths.includes(pathname) ||
+    pathname.startsWith('/_next') ||
+    pathname.startsWith('/api') ||
+    pathname === '/favicon.ico';
+
+  if (!isAuth && !isPublic) {
     return NextResponse.redirect(new URL('/sign-in', request.url));
   }
 
@@ -12,5 +19,5 @@ export function middleware(request: NextRequest) {
 }
 
 export const config = {
-  matcher: ['/profile', '/profile/:path*'],
+  matcher: '/:path*',
 };

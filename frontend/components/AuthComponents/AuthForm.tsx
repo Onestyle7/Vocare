@@ -52,11 +52,10 @@ const AuthForm = ({ type }: { type: FormType }) => {
         });
         router.push('/sign-in');
       } else {
-        const data = await loginUser({
+        await loginUser({
           email: values.email,
           password: values.password,
         });
-        localStorage.setItem('token', data.accessToken);
         toast.success('Login successful!', {
           description: 'Welcome back!',
         });
