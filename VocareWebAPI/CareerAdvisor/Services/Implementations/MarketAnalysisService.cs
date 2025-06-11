@@ -311,8 +311,7 @@ namespace VocareWebAPI.Services.Implementations
                 Lokalizacja użytkownika:
                 {{recommendation.UserProfile.Country}}, {{recommendation.UserProfile.Address}} Dopilnuj, żeby język odpowiedzi był zgodny z {{recommendation.UserProfile.Country}}.
 
-                Wygeneruj wyłącznie obiekt JSON z analizą rynku w języku {{recommendation.UserProfile.Country}}, który pomoże użytkownikowi zrozumieć aktualne trendy i zapotrzebowanie na rynku pracy w kontekście jego rekomendowanych ścieżek kariery. Struktura JSON musi być następująca:
-
+                Wygeneruj wyłącznie obiekt JSON z analizą rynku w języku Polskim, jeżeli powyższe inforamcje są w języku Polski, jeśli nie to wygeneruj w języku Angielskim, który pomoże użytkownikowi zrozumieć aktualne trendy i zapotrzebowanie na rynku pracy w kontekście jego rekomendowanych ścieżek kariery. Struktura JSON musi być następująca: 
                 {
                   "marketAnalysis": {
                     "industryStatistics": [
