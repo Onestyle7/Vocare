@@ -287,8 +287,7 @@ namespace VocareWebAPI.Services
                 - O mnie: {{profile.AboutMe ?? "Brak opisu 'o mnie'"}}
                 - Typ osobowości: {{profile.PersonalityType.ToString()}}
 
-                Wygeneruj dokładnie taki obiekt JSON, bez żadnego dodatkowego tekstu, w języku {{profile.Country}}:
-                { 
+                Wygeneruj dokładnie taki obiekt JSON, bez żadnego dodatkowego tekstu w języku Polskim, jeżeli powyższe inforamcje są w języku Polskim, jeśli nie to wygeneruj w języku Angielskim:                 { 
                 "careerPaths": [
                     {
                     "careerName": "Nazwa ścieżki 1",
