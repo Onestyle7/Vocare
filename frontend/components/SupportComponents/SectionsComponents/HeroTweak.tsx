@@ -84,7 +84,7 @@ const HeroTweak = () => {
               </CustomButton>
             </Link>
           </div>
-          <div className="flex h-full flex-col items-center justify-center max-md:mt-20 sm:w-full lg:w-1/2 2xl:w-1/3 2xl:items-end">
+          <div className="flex h-full flex-col items-center justify-center max-md:mt-20 sm:w-full lg:w-1/2 2xl:w-1/4 2xl:items-end">
             <SpinningText>learn more • earn more • grow more •</SpinningText>
           </div>
         </div>
@@ -101,7 +101,7 @@ const HeroTweak = () => {
           </Suspense>
         )}
       </div>
-      <div className="relative mx-10 mt-14 flex flex-col items-center justify-center border-gray-300 px-[40px] max-md:mt-40 xl:border-r xl:border-l dark:border-gray-700">
+      <div className="relative mt-14 flex flex-col items-center justify-center border-gray-300 px-[40px] max-md:mt-40 dark:border-gray-600/30">
         <div className="mb-2 flex h-full flex-col items-center justify-center">
           <h3 className="text-sm uppercase md:text-[12px]">Meet Us</h3>
           <Copy>
