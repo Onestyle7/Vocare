@@ -47,12 +47,24 @@ const financialSurveySchema = z.object({
   willingToRelocate: z.boolean().default(false),
 });
 
+
 const baseProfileSchema = z.object({
   firstName: z.string().min(1, 'First name is required'),
   lastName: z.string().min(1, 'Last name is required'),
   country: z.string().min(1, 'Country is required'),
-  address: z.string().optional(),
-  phoneNumber: z.string().optional(),
+  address: z.string().min(1, 'Address is required'), 
+  phoneNumber: z
+    .preprocess(
+      (val) => {
+        if (typeof val === 'string') {
+          return val.replace(/[\s\-]/g, '');
+        }
+        return val;
+      },
+      z.string()
+        .min(1, 'Phone number is required') 
+        .regex(/^\d{9}$/, 'Nmber must be 9 digits long')
+    ),
   education: z.array(educationEntrySchema).optional(),
   workExperience: z.array(workExperienceEntrySchema).optional(),
   skills: z.array(z.string()).optional(),

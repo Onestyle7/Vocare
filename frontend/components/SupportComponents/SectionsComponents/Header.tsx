@@ -27,7 +27,7 @@ const Header = () => {
   const filteredLinks = isAuthenticated ? NavLinks : [];
 
   return (
-    <header className="relative z-[100] flex items-center justify-end border-gray-400 max-md:border-b-[1px] md:justify-center dark:border-white/10">
+    <header className="relative z-[100] flex items-center justify-end border-gray-400 max-md:border-b-[1px] md:justify-center dark:border-gray-600/30">
       {isMobile ? (
         <MobileNav isAuthenticated={isAuthenticated} />
       ) : (
