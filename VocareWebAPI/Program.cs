@@ -112,7 +112,7 @@ builder.Services.AddScoped<UserRegistrationHandler>();
 builder.Services.AddScoped<IAiService, OpenAIService>();
 
 /* builder.Services.AddScoped<IAiService, PerplexityAiService>();
- */builder.Services.AddScoped<IMarketAnalysisService, MarketAnalysisService>();
+ */builder.Services.AddScoped<IMarketAnalysisService, OpenAiMarketAnalysisService>();
 builder.Services.AddScoped<IBillingService, LocalBillingService>();
 builder.Services.AddScoped<IStripeService, LocalStripeService>();
 builder.Services.AddScoped<ICvGenerationService, CvGenerationService>();
