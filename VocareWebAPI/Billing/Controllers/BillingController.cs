@@ -135,7 +135,7 @@ namespace VocareWebAPI.Controllers
                     return NotFound("Nie znaleziono informacji o płatności dla tego użytkownika.");
                 }
 
-                return Ok(new { TokenBalance = userBilling.TokenBalance });
+                return Ok(new { tokenBalance = userBilling.TokenBalance });
             }
             catch (Exception ex)
             {
