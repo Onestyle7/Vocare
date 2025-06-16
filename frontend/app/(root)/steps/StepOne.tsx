@@ -95,7 +95,7 @@ export default function StepOne({ form, onNext }: StepOneProps) {
         <Button
           type="button"
           onClick={validateStep}
-          className="font-poppins group h-[46px] w-full rounded-full bg-[#915EFF] text-lg text-white shadow-[0_2px_4px_rgba(145,94,255,0.5)] hover:bg-[#713ae8]"
+          className="font-poppins group h-[46px] w-full rounded-lg bg-[#915EFF] text-lg text-white shadow-[0_2px_4px_rgba(145,94,255,0.5)] hover:bg-[#713ae8]"
         >
           <span className="flex flex-row items-center justify-center">
             Continue

@@ -11,7 +11,7 @@ import MobileFeature from '@/components/SupportComponents/SectionsComponents/Mob
 const page = () => {
   return (
     <>
-      <main className="mx-auto max-w-7xl max-md:overflow-x-hidden">
+      <main className="mx-auto max-w-7xl max-md:overflow-x-hidden cursor-none">
         <Header />
         <HeroTweak />
         <AboutCards />

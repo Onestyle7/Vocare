@@ -324,7 +324,7 @@ export default function ProfileForm({
   };
 
   return (
-    <div className="relative mx-auto max-w-2xl rounded-xl border bg-[#f3f3f3] p-8 lg:mt-10 dark:bg-[#0e100f]">
+    <div className="relative sm:mx-auto max-w-2xl rounded-xl border bg-[#f3f3f3] p-6 lg:mt-10 dark:bg-[#0e100f] h-[620px] overflow-y-auto mx-2 max-sm:mt-2">
       <div className="relative z-30">
         <StepProgress currentStep={currentStep} totalSteps={totalSteps} />
         <Form {...form}>{renderStep()}</Form>

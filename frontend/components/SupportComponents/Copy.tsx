@@ -60,7 +60,7 @@ export default function Copy({ children, animateOnScroll = true, delay = 0 }: Co
         lines.current.push(...(split.lines as HTMLElement[]));
       });
 
-      gsap.set(lines.current, { y: '100%' });
+      gsap.set(lines.current, { y: '110%' });
 
       const animationProps = {
         y: '0%',

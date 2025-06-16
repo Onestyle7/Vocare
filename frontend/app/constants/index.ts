@@ -402,3 +402,8 @@ export const slide = [
     image: '/images/slide-img-1.jpg',
   },
 ];
+
+// Auth
+
+export const google = '/svg/google.svg';
+export const facebook = '/svg/facebook.svg';

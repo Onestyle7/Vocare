@@ -23,8 +23,8 @@ import {
 import { useTokenBalanceContext } from '@/lib/contexts/TokenBalanceContext';
 import Link from 'next/link';
 import GenerateMarketFail from './GenerateMarketFail';
-import EmptyStateComponent from './EmptyStateComponent';
 import Section from '../SupportComponents/Section';
+import NewEmptyStateComponent from './NewEmptyStateComponent';
 
 // Type definitions
 interface MarketTrend {
@@ -229,7 +229,7 @@ export default function MarketAnalysis() {
     marketAnalysis.industryStatistics.length === 0
   ) {
     return (
-      <EmptyStateComponent
+      <NewEmptyStateComponent
         onGenerateAnalysis={handleGenerateNewAnalysis}
         isLoading={isLoading}
         tokenBalance={tokenBalance}
@@ -248,7 +248,7 @@ export default function MarketAnalysis() {
       customPaddings
       id="profile"
     >
-      <div className="xl:mx-10 xl:mt-16 xl:border-t xl:border-r xl:border-l">
+      <div className="xl:mx-10 xl:mt-16 mt-8 xl:border-t xl:border-r xl:border-l">
         <div className="font-poppins mx-auto mt-8 mb-4 flex max-w-7xl flex-col items-center justify-center">
           <h2 className="mb-4 ml-4 text-2xl font-bold text-[#915EFF]">Job Market Analysis</h2>
           <div>

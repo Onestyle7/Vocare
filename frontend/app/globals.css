@@ -537,7 +537,7 @@
 /* Auth form */
 
 .form-button {
-  @apply rounded-full bg-[#915EFF] text-xl;
+  @apply rounded-lg bg-[#915EFF] text-xl;
 }
 
 .h1 {
