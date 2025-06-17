@@ -139,7 +139,7 @@ namespace VocareWebAPI.CareerAdvisor.Services.Implementations
                 PrimaryPath = recommendation.PrimaryPath,
                 Justification = recommendation.Justification,
                 LongTermGoal = recommendation.LongTermGoal,
-                NextSteps = recommendation.NextSteps.Select(ns => ns.ToString()).ToList(),
+                NextSteps = recommendation.NextSteps.Select(ns => ns.Step).ToList(),
             };
             return dto;
         }
