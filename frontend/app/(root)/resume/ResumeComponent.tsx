@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { User, Mail, Phone, MapPin, Briefcase, GraduationCap, Award, Languages, Home, Trash2, ZoomIn, ZoomOut, Move } from 'lucide-react';
+import { User, Mail, Phone, MapPin, Briefcase, GraduationCap, Award, Languages, Home, Trash2, ZoomIn, ZoomOut, Move, Tag } from 'lucide-react';
 
 interface PersonalInfo {
   firstName: string;
@@ -35,6 +35,11 @@ interface Skill {
   name: string;
 }
 
+interface Hobby {
+  id: string;
+  name: string;
+}
+
 const CVCreator: React.FC = () => {
   const [personalInfo, setPersonalInfo] = useState<PersonalInfo>({
     firstName: '',
@@ -49,6 +54,7 @@ const CVCreator: React.FC = () => {
   const [experiences, setExperiences] = useState<Experience[]>([]);
   const [education, setEducation] = useState<Education[]>([]);
   const [skills, setSkills] = useState<Skill[]>([]);
+  const [hobbies, setHobbies] = useState<Hobby[]>([]);
   const [showFullDates, setShowFullDates] = useState(true);
   
   // CV Preview controls
@@ -120,6 +126,21 @@ const CVCreator: React.FC = () => {
     setSkills(skills.filter(skill => skill.id !== id));
   };
 
+   const addHobby = () => {
+    const newHobby: Hobby = { id: Date.now().toString(), name: '' };
+    setHobbies([...hobbies, newHobby]);
+  };
+
+  const updateHobby = (id: string, field: keyof Hobby, value: string) => {
+    setHobbies(hobbies.map(hobby => 
+      hobby.id === id ? { ...hobby, [field]: value } : hobby
+    ));
+  };
+
+  const removeHobby = (id: string) => {
+    setHobbies(hobbies.filter(hobby => hobby.id !== id));
+  };
+
   const formatDate = (dateString: string) => {
     if (!dateString) return '';
     const date = new Date(dateString);
@@ -165,7 +186,7 @@ const CVCreator: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 flex flex-col lg:flex-row lg:pt-6 font-poppins">
+    <div className="h-screen bg-gray-50 flex flex-col lg:flex-row lg:pt-6 font-poppins overflow-hidden">
       {/* Top Navigation for Mobile */}
       <div className="lg:hidden bg-white shadow-lg flex justify-center items-center py-4 mb-4">
         <button
@@ -189,10 +210,10 @@ const CVCreator: React.FC = () => {
       </div>
 
       {/* Main Content */}
-      <div className="flex flex-col lg:flex-row flex-1 gap-3 px-3 lg:px-0">
+      <div className="flex flex-col lg:flex-row flex-1 gap-3 px-3 lg:px-0 h-full overflow-hidden">
         {/* Left Panel - Form Inputs */}
-        <div className="lg:w-1/2 bg-white shadow-lg overflow-y-auto rounded-lg">
-          <div className="p-4 lg:p-6">
+        <div className="lg:w-1/2 bg-white shadow-lg overflow-y-auto rounded-lg h-full">
+          <div className="p-4 lg:p-6 max-h-full overflow-y-auto">
             <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6 gap-4">
               <h1 className="text-xl lg:text-2xl font-bold text-gray-800">Kreator CV</h1>
               <div className="flex items-center space-x-3">
@@ -390,50 +411,13 @@ const CVCreator: React.FC = () => {
               ))}
               <button
                 onClick={addExperience}
-                className="text-red-600 font-medium flex items-center hover:text-red-700"
+                className="text-red-600 font-medium flex items-center hover:text-red-700 cursor-pointer"
               >
                 <span className="text-xl mr-2">+</span>
                 Dodaj doświadczenie zawodowe
               </button>
             </div>
 
-            {/* Skills Section */}
-            <div className="bg-gray-50 rounded-lg p-4 lg:p-6 mb-6">
-              <h2 className="text-lg font-semibold text-gray-700 mb-4 flex items-center">
-                <Award className="mr-2" size={20} />
-                Umiejętności
-              </h2>
-              <p className="text-sm text-gray-600 mb-4">
-                Opisz swoje obszary specjalizacji, koncentrując się na odpowiednich umiejętnościach twardych.
-              </p>
-              {skills.map((skill) => (
-                <div key={skill.id} className="mb-3 p-3 bg-white border border-gray-200 rounded-lg group">
-                  <div className="flex justify-between items-center">
-                    <input
-                      type="text"
-                      placeholder="Nazwa umiejętności"
-                      value={skill.name}
-                      onChange={(e) => updateSkill(skill.id, 'name', e.target.value)}
-                      className="flex-1 border border-gray-300 rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                    />
-                    <button
-                      onClick={() => removeSkill(skill.id)}
-                      className="ml-2 p-2 opacity-0 group-hover:opacity-100 text-red-500 hover:text-red-700 hover:bg-red-50 rounded transition-all"
-                      title="Usuń umiejętność"
-                    >
-                      <Trash2 size={16} />
-                    </button>
-                  </div>
-                </div>
-              ))}
-              <button
-                onClick={addSkill}
-                className="text-red-600 font-medium flex items-center hover:text-red-700"
-              >
-                <span className="text-xl mr-2">+</span>
-                Dodaj umiejętności
-              </button>
-            </div>
 
             {/* Education Section */}
             <div className="bg-gray-50 rounded-lg p-4 lg:p-6 mb-6">
@@ -508,10 +492,76 @@ const CVCreator: React.FC = () => {
               ))}
               <button
                 onClick={addEducation}
-                className="text-red-600 font-medium flex items-center hover:text-red-700"
+                className="text-red-600 font-medium flex items-center hover:text-red-700 cursor-pointer"
               >
                 <span className="text-xl mr-2">+</span>
                 Dodaj wykształcenie
+              </button>
+            </div>
+
+            {/* Skills Section */}
+            <div className="bg-gray-50 rounded-lg p-4 lg:p-6 mb-6">
+              <h2 className="text-lg font-semibold text-gray-700 mb-4 flex items-center">
+                <Award className="mr-2" size={20} />
+                Umiejętności
+              </h2>
+              <p className="text-sm text-gray-600 mb-4">
+                Opisz swoje obszary specjalizacji, koncentrując się na odpowiednich umiejętnościach twardych.
+              </p>
+              {skills.map((skill) => (
+                <div key={skill.id} className="mb-3 p-3 bg-white border border-gray-200 rounded-lg group">
+                  <div className="flex justify-between items-center">
+                    <input
+                      type="text"
+                      placeholder="Nazwa umiejętności"
+                      value={skill.name}
+                      onChange={(e) => updateSkill(skill.id, 'name', e.target.value)}
+                      className="flex-1 border border-gray-300 rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    />
+                    <button
+                      onClick={() => removeSkill(skill.id)}
+                      className="ml-2 p-2 opacity-0 group-hover:opacity-100 text-red-500 hover:text-red-700 hover:bg-red-50 rounded transition-all"
+                      title="Usuń umiejętność"
+                    >
+                      <Trash2 size={16} />
+                    </button>
+                  </div>
+                </div>
+              ))}
+              <button
+                onClick={addSkill}
+                className="text-red-600 font-medium flex items-center hover:text-red-700 cursor-pointer"
+              >
+                <span className="text-xl mr-2">+</span>
+                Dodaj umiejętności
+              </button>
+            </div>
+
+            <div className="bg-gray-50 rounded-lg p-4 lg:p-6 mb-6">
+              <h2 className="text-lg font-semibold text-gray-700 mb-4 flex items-center">
+                <Tag className="mr-2" size={20} />
+                Hobby
+              </h2>
+              <p className="text-sm text-gray-600 mb-4">
+                Dodaj swoje zainteresowania i zajęcia pozazawodowe, które odzwierciedlają Twoją osobowość.
+              </p>
+              {hobbies.map(hobby => (
+                <div key={hobby.id} className="mb-3 p-3 bg-white border border-gray-200 rounded-lg group flex items-center">
+                  <input
+                    type="text"
+                    placeholder="Nazwa hobby"
+                    value={hobby.name}
+                    onChange={e => updateHobby(hobby.id, 'name', e.target.value)}
+                    className="flex-1 border border-gray-300 rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  />
+                  <button onClick={() => removeHobby(hobby.id)} className="ml-2 p-2 opacity-0 group-hover:opacity-100 text-red-500 hover:text-red-700 hover:bg-red-50 rounded">
+                    <Trash2 size={16} />
+                  </button>
+                </div>
+              ))}
+              <button onClick={addHobby} className="text-red-600 font-medium flex items-center hover:text-red-700">
+                <span className="text-xl mr-2">+</span>
+                Dodaj hobby
               </button>
             </div>
           </div>
@@ -651,26 +701,6 @@ const CVCreator: React.FC = () => {
                     </div>
                   )}
 
-                  {/* Skills Section */}
-                  {skills.length > 0 && (
-                    <div className="mb-5">
-                      <h3 className="text-lg font-semibold text-gray-800 mb-2 border-b border-gray-300 pb-1 flex items-center">
-                        <Award size={16} className="mr-2" />
-                        Umiejętności
-                      </h3>
-                      <div className="flex flex-wrap gap-2">
-                        {skills.map((skill) => (
-                          <span 
-                            key={skill.id} 
-                            className="bg-blue-100 text-blue-800 px-2 py-1 rounded-full text-xs font-medium"
-                          >
-                            {skill.name || 'Umiejętność'}
-                          </span>
-                        ))}
-                      </div>
-                    </div>
-                  )}
-
                   {/* Education Section */}
                   {education.length > 0 && (
                     <div className="mb-5">
@@ -691,6 +721,44 @@ const CVCreator: React.FC = () => {
                           </div>
                         </div>
                       ))}
+                    </div>
+                  )}
+
+
+                  {/* Skills Section */}
+                  {skills.length > 0 && (
+                    <div className="mb-5">
+                      <h3 className="text-lg font-semibold text-gray-800 mb-2 border-b border-gray-300 pb-1 flex items-center">
+                        <Award size={16} className="mr-2" />
+                        Umiejętności
+                      </h3>
+                      <div className="flex flex-wrap gap-2">
+                        {skills.map((skill) => (
+                          <span 
+                            key={skill.id} 
+                            className="bg-blue-100 text-blue-800 px-2 py-1 rounded-full text-xs font-medium"
+                          >
+                            {skill.name || 'Umiejętność'}
+                          </span>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+
+                  {/* Hobbies Section */}
+                  {hobbies.length > 0 && (
+                    <div className="mb-5">
+                      <h3 className="text-lg font-semibold text-gray-800 mb-2 border-b border-gray-300 pb-1 flex items-center">
+                        <Tag size={16} className="mr-2" />
+                        Hobby
+                      </h3>
+                      <div className="flex flex-wrap gap-2">
+                        {hobbies.map(hobby => (
+                          <span key={hobby.id} className="bg-green-100 text-green-800 px-2 py-1 rounded-full text-xs font-medium">
+                            {hobby.name || 'Hobby'}
+                          </span>
+                        ))}
+                      </div>
                     </div>
                   )}
 
