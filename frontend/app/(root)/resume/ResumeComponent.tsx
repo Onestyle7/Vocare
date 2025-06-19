@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { User, Mail, Phone, MapPin, Briefcase, GraduationCap, Award, Languages, Home, Trash2, ZoomIn, ZoomOut, Move, Tag } from 'lucide-react';
+import { User, Mail, Phone, MapPin, Briefcase, GraduationCap, Award, Languages, Home, Trash2, ZoomIn, ZoomOut, Move, Tag, GripVertical } from 'lucide-react';
 
 interface PersonalInfo {
   firstName: string;
@@ -40,6 +40,12 @@ interface Hobby {
   name: string;
 }
 
+interface Language {
+  id: string;
+  name: string;
+  level: string; 
+}
+
 const CVCreator: React.FC = () => {
   const [personalInfo, setPersonalInfo] = useState<PersonalInfo>({
     firstName: '',
@@ -56,12 +62,87 @@ const CVCreator: React.FC = () => {
   const [skills, setSkills] = useState<Skill[]>([]);
   const [hobbies, setHobbies] = useState<Hobby[]>([]);
   const [showFullDates, setShowFullDates] = useState(true);
+  const [languages, setLanguages] = useState<Language[]>([]);
   
   // CV Preview controls
   const [cvScale, setCvScale] = useState(0.8);
   const [cvPosition, setCvPosition] = useState({ x: 0, y: 0 });
   const [isDragging, setIsDragging] = useState(false);
   const [dragStart, setDragStart] = useState({ x: 0, y: 0 });
+
+  // Section ordering
+const [sectionOrder, setSectionOrder] = useState([
+  'profile',
+  'experience', 
+  'education',
+  'skills',
+  'languages',
+  'hobbies'
+]);
+const [draggedSection, setDraggedSection] = useState<string | null>(null);
+const [dragOverSection, setDragOverSection] = useState<string | null>(null);
+
+  const addLanguage = () => {
+  const newLanguage: Language = {
+    id: Date.now().toString(),
+    name: '',
+    level: 'Beginner'
+  };
+  setLanguages([...languages, newLanguage]);
+};
+
+const updateLanguage = (id: string, field: keyof Language, value: string) => {
+  setLanguages(languages.map(lang => 
+    lang.id === id ? { ...lang, [field]: value } : lang
+  ));
+};
+
+const removeLanguage = (id: string) => {
+  setLanguages(languages.filter(lang => lang.id !== id));
+};
+
+// Section drag & drop handlers
+const handleSectionDragStart = (e: React.DragEvent, sectionId: string) => {
+  setDraggedSection(sectionId);
+  e.dataTransfer.effectAllowed = 'move';
+};
+
+const handleSectionDragOver = (e: React.DragEvent, sectionId: string) => {
+  e.preventDefault();
+  e.dataTransfer.dropEffect = 'move';
+  setDragOverSection(sectionId);
+};
+
+const handleSectionDragLeave = () => {
+  setDragOverSection(null);
+};
+
+const handleSectionDrop = (e: React.DragEvent, targetSectionId: string) => {
+  e.preventDefault();
+  
+  if (!draggedSection || draggedSection === targetSectionId) {
+    setDraggedSection(null);
+    setDragOverSection(null);
+    return;
+  }
+
+  const currentOrder = [...sectionOrder];
+  const draggedIndex = currentOrder.indexOf(draggedSection);
+  const targetIndex = currentOrder.indexOf(targetSectionId);
+  
+  // Remove dragged item and insert at new position
+  currentOrder.splice(draggedIndex, 1);
+  currentOrder.splice(targetIndex, 0, draggedSection);
+  
+  setSectionOrder(currentOrder);
+  setDraggedSection(null);
+  setDragOverSection(null);
+};
+
+const handleSectionDragEnd = () => {
+  setDraggedSection(null);
+  setDragOverSection(null);
+};
 
   const addExperience = () => {
     const newExp: Experience = {
@@ -184,6 +265,129 @@ const CVCreator: React.FC = () => {
     setCvScale(0.8);
     setCvPosition({ x: 0, y: 0 });
   };
+
+  const renderSectionInPreview = (sectionId: string) => {
+  switch (sectionId) {
+    case 'profile':
+      return personalInfo.summary ? (
+        <div className="mb-5" key="profile">
+          <h3 className="text-lg font-semibold text-gray-800 mb-2 border-b border-gray-300 pb-1">
+            Profil Osobisty
+          </h3>
+          <p className="text-gray-700 text-sm leading-relaxed">{personalInfo.summary}</p>
+        </div>
+      ) : null;
+
+    case 'experience':
+      return experiences.length > 0 ? (
+        <div className="mb-5" key="experience">
+          <h3 className="text-lg font-semibold text-gray-800 mb-2 border-b border-gray-300 pb-1 flex items-center">
+            <Briefcase size={16} className="mr-2" />
+            Doświadczenie Zawodowe
+          </h3>
+          {experiences.map((exp) => (
+            <div key={exp.id} className="mb-3">
+              <div className="flex justify-between items-start mb-1">
+                <div className="flex-1 min-w-0">
+                  <h4 className="font-semibold text-gray-900 truncate">{exp.position || 'Stanowisko'}</h4>
+                  <p className="text-gray-700 font-medium truncate">{exp.company || 'Nazwa firmy'}</p>
+                </div>
+                <div className="text-xs text-gray-600 ml-2 flex-shrink-0">
+                  {formatDate(exp.startDate)} - {exp.isCurrent || !exp.endDate ? 'obecnie' : formatDate(exp.endDate)}
+                </div>
+              </div>
+              {exp.description && (
+                <p className="text-xs text-gray-700 leading-relaxed">{exp.description}</p>
+              )}
+            </div>
+          ))}
+        </div>
+      ) : null;
+
+    case 'education':
+      return education.length > 0 ? (
+        <div className="mb-5" key="education">
+          <h3 className="text-lg font-semibold text-gray-800 mb-2 border-b border-gray-300 pb-1 flex items-center">
+            <GraduationCap size={16} className="mr-2" />
+            Edukacja
+          </h3>
+          {education.map((edu) => (
+            <div key={edu.id} className="mb-3">
+              <div className="flex justify-between items-start mb-1">
+                <div className="flex-1 min-w-0">
+                  <h4 className="font-semibold text-gray-900 truncate">{edu.degree || 'Kierunek/Stopień'}</h4>
+                  <p className="text-gray-700 truncate">{edu.school || 'Nazwa uczelni/szkoły'}</p>
+                </div>
+                <div className="text-xs text-gray-600 ml-2 flex-shrink-0">
+                  {formatDate(edu.startDate)} - {edu.isCurrent || !edu.endDate ? 'obecnie' : formatDate(edu.endDate)}
+                </div>
+              </div>
+            </div>
+          ))}
+        </div>
+      ) : null;
+
+    case 'skills':
+      return skills.length > 0 ? (
+        <div className="mb-5" key="skills">
+          <h3 className="text-lg font-semibold text-gray-800 mb-2 border-b border-gray-300 pb-1 flex items-center">
+            <Award size={16} className="mr-2" />
+            Umiejętności
+          </h3>
+          <div className="flex flex-wrap gap-2">
+            {skills.map((skill) => (
+              <span 
+                key={skill.id} 
+                className="bg-blue-100 text-blue-800 px-2 py-1 rounded-full text-xs font-medium"
+              >
+                {skill.name || 'Umiejętność'}
+              </span>
+            ))}
+          </div>
+        </div>
+      ) : null;
+
+    case 'languages':
+      return languages.length > 0 ? (
+        <div className="mb-5" key="languages">
+          <h3 className="text-lg font-semibold text-gray-800 mb-2 border-b border-gray-300 pb-1 flex items-center">
+            <Languages size={16} className="mr-2" />
+            Języki
+          </h3>
+          <div className="flex flex-wrap gap-2">
+            {languages.map((language) => (
+              <span 
+                key={language.id} 
+                className="bg-purple-100 text-purple-800 px-2 py-1 rounded-full text-xs font-medium"
+              >
+                {language.name || 'Język'} - {language.level}
+              </span>
+            ))}
+          </div>
+        </div>
+      ) : null;
+
+    case 'hobbies':
+      return hobbies.length > 0 ? (
+        <div className="mb-5" key="hobbies">
+          <h3 className="text-lg font-semibold text-gray-800 mb-2 border-b border-gray-300 pb-1 flex items-center">
+            <Tag size={16} className="mr-2" />
+            Hobby
+          </h3>
+          <div className="flex flex-wrap gap-2">
+            {hobbies.map(hobby => (
+              <span key={hobby.id} className="bg-green-100 text-green-800 px-2 py-1 rounded-full text-xs font-medium">
+                {hobby.name || 'Hobby'}
+              </span>
+            ))}
+          </div>
+        </div>
+      ) : null;
+
+    default:
+      return null;
+  }
+};
 
   return (
     <div className="h-screen bg-gray-50 flex flex-col lg:flex-row lg:pt-6 font-poppins overflow-hidden">
@@ -315,8 +519,23 @@ const CVCreator: React.FC = () => {
             </div>
 
             {/* Profile Section */}
-            <div className="bg-gray-50 rounded-lg p-4 lg:p-6 mb-6">
-              <h2 className="text-lg font-semibold text-gray-700 mb-4">Profil osobisty</h2>
+            <div 
+  className={`bg-gray-50 rounded-lg p-4 lg:p-6 mb-6 transition-all ${
+    dragOverSection === 'profile' ? 'ring-2 ring-blue-400 bg-blue-50' : ''
+  } ${draggedSection === 'profile' ? 'opacity-50' : ''}`}
+  draggable
+  onDragStart={(e) => handleSectionDragStart(e, 'profile')}
+  onDragOver={(e) => handleSectionDragOver(e, 'profile')}
+  onDragLeave={handleSectionDragLeave}
+  onDrop={(e) => handleSectionDrop(e, 'profile')}
+  onDragEnd={handleSectionDragEnd}
+>
+  <div className="flex items-center justify-between mb-4">
+    <h2 className="text-lg font-semibold text-gray-700 flex items-center">
+      <GripVertical className="mr-2 text-gray-400 cursor-grab" size={20} />
+      Profil osobisty
+    </h2>
+  </div>
               <p className="text-sm text-gray-600 mb-4">
                 Krótka informacja na górze CV, która podsumowuje odpowiednie doświadczenie i kwalifikacje w 4-6 zdaniach.
               </p>
@@ -330,11 +549,24 @@ const CVCreator: React.FC = () => {
             </div>
 
             {/* Experience Section */}
-            <div className="bg-gray-50 rounded-lg p-4 lg:p-6 mb-6">
-              <h2 className="text-lg font-semibold text-gray-700 mb-4 flex items-center">
-                <Briefcase className="mr-2" size={20} />
-                Doświadczenie zawodowe
-              </h2>
+            <div 
+  className={`bg-gray-50 rounded-lg p-4 lg:p-6 mb-6 transition-all ${
+    dragOverSection === 'experience' ? 'ring-2 ring-blue-400 bg-blue-50' : ''
+  } ${draggedSection === 'experience' ? 'opacity-50' : ''}`}
+  draggable
+  onDragStart={(e) => handleSectionDragStart(e, 'experience')}
+  onDragOver={(e) => handleSectionDragOver(e, 'experience')}
+  onDragLeave={handleSectionDragLeave}
+  onDrop={(e) => handleSectionDrop(e, 'experience')}
+  onDragEnd={handleSectionDragEnd}
+>
+  <div className="flex items-center justify-between mb-4">
+    <h2 className="text-lg font-semibold text-gray-700 flex items-center">
+      <GripVertical className="mr-2 text-gray-400 cursor-grab" size={20} />
+      <Briefcase className="mr-2" size={20} />
+      Doświadczenie zawodowe
+    </h2>
+  </div>
               <p className="text-sm text-gray-600 mb-4">
                 Pochwal się swoimi osiągnięciami, opisując swoje codzienne obowiązki w 3-6 zdaniach, a następnie podaj co najmniej dwa kluczowe osiągnięcia.
               </p>
@@ -420,11 +652,24 @@ const CVCreator: React.FC = () => {
 
 
             {/* Education Section */}
-            <div className="bg-gray-50 rounded-lg p-4 lg:p-6 mb-6">
-              <h2 className="text-lg font-semibold text-gray-700 mb-4 flex items-center">
-                <GraduationCap className="mr-2" size={20} />
-                Edukacja
-              </h2>
+            <div 
+  className={`bg-gray-50 rounded-lg p-4 lg:p-6 mb-6 transition-all ${
+    dragOverSection === 'education' ? 'ring-2 ring-blue-400 bg-blue-50' : ''
+  } ${draggedSection === 'education' ? 'opacity-50' : ''}`}
+  draggable
+  onDragStart={(e) => handleSectionDragStart(e, 'education')}
+  onDragOver={(e) => handleSectionDragOver(e, 'education')}
+  onDragLeave={handleSectionDragLeave}
+  onDrop={(e) => handleSectionDrop(e, 'education')}
+  onDragEnd={handleSectionDragEnd}
+>
+  <div className="flex items-center justify-between mb-4">
+    <h2 className="text-lg font-semibold text-gray-700 flex items-center">
+      <GripVertical className="mr-2 text-gray-400 cursor-grab" size={20} />
+      <GraduationCap className="mr-2" size={20} />
+      Edukacja
+    </h2>
+  </div>
               <p className="text-sm text-gray-600 mb-4">
                 Dodaj swoje wykształcenie, niezależnie od tego, czy jest średnie, czy wyższe. W razie potrzeby dodaj odpowiednie kursy, projekty lub osiągnięcia (np. wyniki).
               </p>
@@ -500,11 +745,24 @@ const CVCreator: React.FC = () => {
             </div>
 
             {/* Skills Section */}
-            <div className="bg-gray-50 rounded-lg p-4 lg:p-6 mb-6">
-              <h2 className="text-lg font-semibold text-gray-700 mb-4 flex items-center">
-                <Award className="mr-2" size={20} />
-                Umiejętności
-              </h2>
+            <div 
+  className={`bg-gray-50 rounded-lg p-4 lg:p-6 mb-6 transition-all ${
+    dragOverSection === 'skills' ? 'ring-2 ring-blue-400 bg-blue-50' : ''
+  } ${draggedSection === 'skills' ? 'opacity-50' : ''}`}
+  draggable
+  onDragStart={(e) => handleSectionDragStart(e, 'skills')}
+  onDragOver={(e) => handleSectionDragOver(e, 'skills')}
+  onDragLeave={handleSectionDragLeave}
+  onDrop={(e) => handleSectionDrop(e, 'skills')}
+  onDragEnd={handleSectionDragEnd}
+>
+  <div className="flex items-center justify-between mb-4">
+    <h2 className="text-lg font-semibold text-gray-700 flex items-center">
+      <GripVertical className="mr-2 text-gray-400 cursor-grab" size={20} />
+      <Award className="mr-2" size={20} />
+      Umiejętności
+    </h2>
+  </div>
               <p className="text-sm text-gray-600 mb-4">
                 Opisz swoje obszary specjalizacji, koncentrując się na odpowiednich umiejętnościach twardych.
               </p>
@@ -537,11 +795,91 @@ const CVCreator: React.FC = () => {
               </button>
             </div>
 
-            <div className="bg-gray-50 rounded-lg p-4 lg:p-6 mb-6">
-              <h2 className="text-lg font-semibold text-gray-700 mb-4 flex items-center">
-                <Tag className="mr-2" size={20} />
-                Hobby
-              </h2>
+            {/* Languages Section */}
+<div 
+  className={`bg-gray-50 rounded-lg p-4 lg:p-6 mb-6 transition-all ${
+    dragOverSection === 'languages' ? 'ring-2 ring-blue-400 bg-blue-50' : ''
+  } ${draggedSection === 'languages' ? 'opacity-50' : ''}`}
+  draggable
+  onDragStart={(e) => handleSectionDragStart(e, 'languages')}
+  onDragOver={(e) => handleSectionDragOver(e, 'languages')}
+  onDragLeave={handleSectionDragLeave}
+  onDrop={(e) => handleSectionDrop(e, 'languages')}
+  onDragEnd={handleSectionDragEnd}
+>
+  <div className="flex items-center justify-between mb-4">
+    <h2 className="text-lg font-semibold text-gray-700 flex items-center">
+      <GripVertical className="mr-2 text-gray-400 cursor-grab" size={20} />
+      <Languages className="mr-2" size={20} />
+      Języki
+    </h2>
+  </div>
+  <p className="text-sm text-gray-600 mb-4">
+    Dodaj języki które znasz wraz z poziomem ich znajomości.
+  </p>
+  {languages.map((language) => (
+    <div key={language.id} className="mb-3 p-3 bg-white border border-gray-200 rounded-lg group">
+      <div className="flex justify-between items-center">
+        <div className="flex flex-1 gap-3">
+          <input
+            type="text"
+            placeholder="Nazwa języka"
+            value={language.name}
+            onChange={(e) => updateLanguage(language.id, 'name', e.target.value)}
+            className="flex-1 border border-gray-300 rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+          />
+          <select
+            value={language.level}
+            onChange={(e) => updateLanguage(language.id, 'level', e.target.value)}
+            className="border border-gray-300 rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+          >
+            <option value="Ogólny">Ogólny</option>
+            <option value="Beginner">Beginner</option>
+            <option value="Conversational">Conversational</option>
+            <option value="Advanced">Advanced</option>
+            <option value="Proficient">Proficient</option>
+            <option value="Native speaker">Native speaker</option>
+          </select>
+        </div>
+        <button
+          onClick={() => removeLanguage(language.id)}
+          className="ml-2 p-2 opacity-0 group-hover:opacity-100 text-red-500 hover:text-red-700 hover:bg-red-50 rounded transition-all"
+          title="Usuń język"
+        >
+          <Trash2 size={16} />
+        </button>
+      </div>
+    </div>
+  ))}
+  <button
+    onClick={addLanguage}
+    className="text-red-600 font-medium flex items-center hover:text-red-700 cursor-pointer"
+  >
+    <span className="text-xl mr-2">+</span>
+    Dodaj język
+  </button>
+</div>
+
+            {/* Hobbies Section */}
+
+            <div 
+  className={`bg-gray-50 rounded-lg p-4 lg:p-6 mb-6 transition-all ${
+    dragOverSection === 'hobbies' ? 'ring-2 ring-blue-400 bg-blue-50' : ''
+  } ${draggedSection === 'hobbies' ? 'opacity-50' : ''}`}
+  draggable
+  onDragStart={(e) => handleSectionDragStart(e, 'hobbies')}
+  onDragOver={(e) => handleSectionDragOver(e, 'hobbies')}
+  onDragLeave={handleSectionDragLeave}
+  onDrop={(e) => handleSectionDrop(e, 'hobbies')}
+  onDragEnd={handleSectionDragEnd}
+>
+  <div className="flex items-center justify-between mb-4">
+    <h2 className="text-lg font-semibold text-gray-700 flex items-center">
+      <GripVertical className="mr-2 text-gray-400 cursor-grab" size={20} />
+      <Tag className="mr-2" size={20} />
+      Hobby
+    </h2>
+  </div>
               <p className="text-sm text-gray-600 mb-4">
                 Dodaj swoje zainteresowania i zajęcia pozazawodowe, które odzwierciedlają Twoją osobowość.
               </p>
@@ -744,6 +1082,26 @@ const CVCreator: React.FC = () => {
                       </div>
                     </div>
                   )}
+
+                  {/* Languages Section */}
+{languages.length > 0 && (
+  <div className="mb-5">
+    <h3 className="text-lg font-semibold text-gray-800 mb-2 border-b border-gray-300 pb-1 flex items-center">
+      <Languages size={16} className="mr-2" />
+      Języki
+    </h3>
+    <div className="flex flex-wrap gap-2">
+      {languages.map((language) => (
+        <span 
+          key={language.id} 
+          className="bg-purple-100 text-purple-800 px-2 py-1 rounded-full text-xs font-medium"
+        >
+          {language.name || 'Język'} - {language.level}
+        </span>
+      ))}
+    </div>
+  </div>
+)}
 
                   {/* Hobbies Section */}
                   {hobbies.length > 0 && (
