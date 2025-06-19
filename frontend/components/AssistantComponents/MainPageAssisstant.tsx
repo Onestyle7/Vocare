@@ -293,7 +293,7 @@ export default function AssistantPage() {
       customPaddings
       id="profile"
     >
-      <div className="xl:mx-10 xl:mt-16 mt-8 xl:border-t xl:border-r xl:border-l">
+      <div className="mt-8 xl:mx-10 xl:mt-16 xl:border-t xl:border-r xl:border-l">
         <div className="font-poppins mx-auto flex max-w-7xl flex-col items-center justify-center p-4 md:p-8">
           <h2 className="mb-4 ml-4 text-2xl font-bold text-[#915EFF]">Carrer Recommendation</h2>
           <div>

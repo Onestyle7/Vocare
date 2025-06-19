@@ -38,7 +38,7 @@ export default function StepTwo({ form, onNext, onBack }: StepTwoProps) {
         render={() => (
           <FormItem>
             <FormLabel>Country</FormLabel>
-            <CountryCombobox form={form} name="country"/>
+            <CountryCombobox form={form} name="country" />
             <FormMessage />
           </FormItem>
         )}

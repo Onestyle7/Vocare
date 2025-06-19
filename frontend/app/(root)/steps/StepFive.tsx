@@ -102,10 +102,10 @@ export default function StepFive({
                 <Button
                   type="button"
                   onClick={() => field.onChange(true)}
-                  className={`flex-1 rounded-lg transition-all h-12 ${
+                  className={`h-12 flex-1 rounded-lg transition-all ${
                     field.value === true
                       ? 'bg-[#915EFF] text-white shadow-[0_2px_4px_rgba(145,94,255,0.5)] dark:hover:bg-[#713ae8]'
-                      : 'bg-gray-200 text-gray-700 hover:bg-gray-300 dark:bg-[#262626] dark:text-gray-300 dark:hover:bg-gray-400/30 border'
+                      : 'border bg-gray-200 text-gray-700 hover:bg-gray-300 dark:bg-[#262626] dark:text-gray-300 dark:hover:bg-gray-400/30'
                   }`}
                 >
                   Yes
@@ -113,10 +113,10 @@ export default function StepFive({
                 <Button
                   type="button"
                   onClick={() => field.onChange(false)}
-                  className={`flex-1 rounded-lg transition-all h-12 ${
+                  className={`h-12 flex-1 rounded-lg transition-all ${
                     field.value === false
                       ? 'bg-[#915EFF] text-white shadow-[0_2px_4px_rgba(145,94,255,0.5)] dark:hover:bg-[#713ae8]'
-                      : 'bg-gray-200 text-gray-700 hover:bg-gray-300 dark:bg-[#262626] dark:text-gray-300 dark:hover:bg-gray-400/30 border'
+                      : 'border bg-gray-200 text-gray-700 hover:bg-gray-300 dark:bg-[#262626] dark:text-gray-300 dark:hover:bg-gray-400/30'
                   }`}
                 >
                   No
@@ -159,10 +159,10 @@ export default function StepFive({
                 <Button
                   type="button"
                   onClick={() => field.onChange(true)}
-                  className={`flex-1 rounded-lg transition-all h-12 ${
+                  className={`h-12 flex-1 rounded-lg transition-all ${
                     field.value === true
                       ? 'bg-[#915EFF] text-white shadow-[0_2px_4px_rgba(145,94,255,0.5)] dark:hover:bg-[#713ae8]'
-                      : 'bg-gray-200 text-gray-700 hover:bg-gray-300 dark:bg-[#262626] dark:text-gray-300 dark:hover:bg-gray-400/30 border'
+                      : 'border bg-gray-200 text-gray-700 hover:bg-gray-300 dark:bg-[#262626] dark:text-gray-300 dark:hover:bg-gray-400/30'
                   }`}
                 >
                   Yes
@@ -170,10 +170,10 @@ export default function StepFive({
                 <Button
                   type="button"
                   onClick={() => field.onChange(false)}
-                  className={`flex-1 rounded-lg transition-all h-12 ${
+                  className={`h-12 flex-1 rounded-lg transition-all ${
                     field.value === false
                       ? 'bg-[#915EFF] text-white shadow-[0_2px_4px_rgba(145,94,255,0.5)] dark:hover:bg-[#713ae8]'
-                      : 'bg-gray-200 text-gray-700 dark:bg-[#262626] dark:text-gray-300 dark:hover:bg-gray-400/30 border'
+                      : 'border bg-gray-200 text-gray-700 dark:bg-[#262626] dark:text-gray-300 dark:hover:bg-gray-400/30'
                   }`}
                 >
                   No
