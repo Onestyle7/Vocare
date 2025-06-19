@@ -467,7 +467,7 @@ const CVCreator: React.FC = () => {
                       onChange={(e) =>
                         setPersonalInfo({ ...personalInfo, firstName: e.target.value })
                       }
-                      className="w-full rounded-sm border border-gray-300 px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:outline-none"
+                      className="w-full rounded-sm border border-gray-300 px-3 py-3 focus:ring-2 focus:ring-blue-500 focus:outline-none"
                     />
                   </div>
                   <div>
@@ -479,7 +479,7 @@ const CVCreator: React.FC = () => {
                       onChange={(e) =>
                         setPersonalInfo({ ...personalInfo, lastName: e.target.value })
                       }
-                      className="w-full rounded-sm border border-gray-300 px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:outline-none"
+                      className="w-full rounded-sm border border-gray-300 px-3 py-3 focus:ring-2 focus:ring-blue-500 focus:outline-none"
                     />
                   </div>
                 </div>
@@ -491,7 +491,7 @@ const CVCreator: React.FC = () => {
                     placeholder="Email"
                     value={personalInfo.email}
                     onChange={(e) => setPersonalInfo({ ...personalInfo, email: e.target.value })}
-                    className="w-full rounded-sm border border-gray-300 px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:outline-none"
+                    className="w-full rounded-sm border border-gray-300 px-3 py-3 focus:ring-2 focus:ring-blue-500 focus:outline-none"
                   />
                 </div>
 
@@ -504,7 +504,7 @@ const CVCreator: React.FC = () => {
                     onChange={(e) =>
                       setPersonalInfo({ ...personalInfo, profession: e.target.value })
                     }
-                    className="w-full rounded-sm border border-gray-300 px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:outline-none"
+                    className="w-full rounded-sm border border-gray-300 px-3 py-3 focus:ring-2 focus:ring-blue-500 focus:outline-none"
                   />
                 </div>
 
@@ -524,7 +524,7 @@ const CVCreator: React.FC = () => {
                           onChange={(e) =>
                             setPersonalInfo({ ...personalInfo, phone: e.target.value })
                           }
-                          className="w-full rounded-sm border border-gray-300 px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:outline-none"
+                          className="w-full rounded-sm border border-gray-300 px-3 py-3 focus:ring-2 focus:ring-blue-500 focus:outline-none"
                         />
                       </div>
                       <div>
@@ -536,7 +536,7 @@ const CVCreator: React.FC = () => {
                           onChange={(e) =>
                             setPersonalInfo({ ...personalInfo, address: e.target.value })
                           }
-                          className="w-full rounded-sm border border-gray-300 px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:outline-none"
+                          className="w-full rounded-sm border border-gray-300 px-3 py-3 focus:ring-2 focus:ring-blue-500 focus:outline-none"
                         />
                       </div>
                     </div>
@@ -805,7 +805,7 @@ const CVCreator: React.FC = () => {
               {skills.map((skill) => (
                 <div
                   key={skill.id}
-                  className="group mb-3 rounded-lg border border-gray-200 bg-white p-3"
+                  className="group mb-3 rounded-md border border-gray-200 bg-white p-3"
                 >
                   <div className="flex items-center justify-between">
                     <input
@@ -813,7 +813,7 @@ const CVCreator: React.FC = () => {
                       placeholder="Nazwa umiejętności"
                       value={skill.name}
                       onChange={(e) => updateSkill(skill.id, 'name', e.target.value)}
-                      className="flex-1 rounded border border-gray-300 px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:outline-none"
+                      className="flex-1 focus:outline-none"
                     />
                     <button
                       onClick={() => removeSkill(skill.id)}
@@ -859,7 +859,7 @@ const CVCreator: React.FC = () => {
               {languages.map((language) => (
                 <div
                   key={language.id}
-                  className="group mb-3 rounded-lg border border-gray-200 bg-white p-3"
+                  className="group mb-3 rounded-lg border border-gray-200 bg-white/60 p-3"
                 >
                   <div className="flex items-center justify-between">
                     <div className="flex flex-1 gap-3">
@@ -868,12 +868,12 @@ const CVCreator: React.FC = () => {
                         placeholder="Nazwa języka"
                         value={language.name}
                         onChange={(e) => updateLanguage(language.id, 'name', e.target.value)}
-                        className="flex-1 rounded border border-gray-300 px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:outline-none"
+                        className="flex-1 focus:outline-none"
                       />
                       <select
                         value={language.level}
                         onChange={(e) => updateLanguage(language.id, 'level', e.target.value)}
-                        className="rounded border border-gray-300 px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:outline-none"
+                        className="rounded-sm focus:outline-none border px-3 py-2"
                       >
                         <option value="Ogólny">Ogólny</option>
                         <option value="Beginner">Beginner</option>
@@ -936,7 +936,7 @@ const CVCreator: React.FC = () => {
                     placeholder="Nazwa hobby"
                     value={hobby.name}
                     onChange={(e) => updateHobby(hobby.id, 'name', e.target.value)}
-                    className="flex-1 rounded border border-gray-300 px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:outline-none"
+                    className="flex-1 focus:outline-none"
                   />
                   <button
                     onClick={() => removeHobby(hobby.id)}
