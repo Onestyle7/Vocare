@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import {
   User,
   Mail,
@@ -85,6 +85,26 @@ const CVCreator: React.FC = () => {
   const [cvPosition, setCvPosition] = useState({ x: 0, y: 0 });
   const [isDragging, setIsDragging] = useState(false);
   const [dragStart, setDragStart] = useState({ x: 0, y: 0 });
+
+  // Pagination refs and state
+  const pageRef = useRef<HTMLDivElement>(null);
+  const contentRef = useRef<HTMLDivElement>(null);
+  const [pageCount, setPageCount] = useState(1);
+  const [pageHeight, setPageHeight] = useState(0);
+
+  useEffect(() => {
+    if (pageRef.current) {
+      setPageHeight(pageRef.current.getBoundingClientRect().height);
+    }
+  }, [cvScale]);
+
+  useEffect(() => {
+    if (contentRef.current && pageHeight) {
+      const contentHeight = contentRef.current.getBoundingClientRect().height;
+      const count = Math.max(1, Math.ceil(contentHeight / pageHeight));
+      setPageCount(count);
+    }
+  }, [personalInfo, experiences, education, skills, hobbies, languages, sectionOrder, showFullDates, pageHeight]);
   
 
   // Section ordering
@@ -272,6 +292,60 @@ const CVCreator: React.FC = () => {
     setCvScale(0.8);
     setCvPosition({ x: 0, y: 0 });
   };
+
+  const renderResumeContent = (isFirstPage: boolean) => (
+    <div ref={isFirstPage ? contentRef : undefined} className="p-8">
+      {/* Header Section */}
+      <div className="mb-6">
+        <h1 className="mb-2 text-3xl leading-tight font-bold text-gray-900">
+          {personalInfo.firstName || personalInfo.lastName
+            ? `${personalInfo.firstName} ${personalInfo.lastName}`.trim()
+            : 'Twoje Imię i Nazwisko'}
+        </h1>
+        {personalInfo.profession && (
+          <h2 className="mb-4 text-xl text-gray-600">{personalInfo.profession}</h2>
+        )}
+
+        {/* Contact Information */}
+        <div className="flex flex-wrap gap-4 text-sm text-gray-600">
+          {personalInfo.email && (
+            <div className="flex items-center">
+              <Mail size={14} className="mr-2 flex-shrink-0" />
+              <span className="break-all">{personalInfo.email}</span>
+            </div>
+          )}
+          {personalInfo.phone && (
+            <div className="flex items-center">
+              <Phone size={14} className="mr-2 flex-shrink-0" />
+              {personalInfo.phone}
+            </div>
+          )}
+          {personalInfo.address && (
+            <div className="flex items-center">
+              <MapPin size={14} className="mr-2 flex-shrink-0" />
+              {personalInfo.address}
+            </div>
+          )}
+        </div>
+      </div>
+
+      {sectionOrder.map((sectionId) => renderSectionInPreview(sectionId))}
+
+      {/* Empty state message */}
+      {!personalInfo.firstName &&
+        !personalInfo.lastName &&
+        !personalInfo.email &&
+        experiences.length === 0 &&
+        skills.length === 0 &&
+        education.length === 0 && (
+          <div className="mt-20 text-center text-gray-500">
+            <p className="text-lg">
+              Rozpocznij wypełnianie formularza, aby zobaczyć podgląd CV
+            </p>
+          </div>
+        )}
+    </div>
+  );
 
   const renderSectionInForm = (sectionId: string) => {
   switch (sectionId) {
@@ -1031,76 +1105,30 @@ return (personalInfo.firstName || personalInfo.lastName || personalInfo.email ||
             onMouseLeave={handleMouseUp}
           >
             <div
-              className={`absolute inset-0 flex items-center justify-center ${isDragging ? 'cursor-grabbing' : 'cursor-grab'}`}
+              className={`absolute inset-0 flex flex-col items-center space-y-6 ${isDragging ? 'cursor-grabbing' : 'cursor-grab'}`}
               style={{
                 transform: `translate(${cvPosition.x}px, ${cvPosition.y}px)`,
               }}
               onMouseDown={handleMouseDown}
             >
-              {/* A4 Paper with exact dimensions */}
-              <div
-                className="rounded-sm bg-white shadow-md"
-                style={{
-                  width: `${210 * cvScale}mm`,
-                  height: `${297 * cvScale}mm`,
-                  transform: `scale(${cvScale})`,
-                  transformOrigin: 'center center',
-                  fontSize: `${cvScale * 16}px`,
-                }}
-              >
-                <div className="h-full overflow-hidden p-8">
-                  {/* Header Section */}
-                  <div className="mb-6">
-                    <h1 className="mb-2 text-3xl leading-tight font-bold text-gray-900">
-                      {personalInfo.firstName || personalInfo.lastName
-                        ? `${personalInfo.firstName} ${personalInfo.lastName}`.trim()
-                        : 'Twoje Imię i Nazwisko'}
-                    </h1>
-                    {personalInfo.profession && (
-                      <h2 className="mb-4 text-xl text-gray-600">{personalInfo.profession}</h2>
-                    )}
-
-                    {/* Contact Information */}
-                    <div className="flex flex-wrap gap-4 text-sm text-gray-600">
-                      {personalInfo.email && (
-                        <div className="flex items-center">
-                          <Mail size={14} className="mr-2 flex-shrink-0" />
-                          <span className="break-all">{personalInfo.email}</span>
-                        </div>
-                      )}
-                      {personalInfo.phone && (
-                        <div className="flex items-center">
-                          <Phone size={14} className="mr-2 flex-shrink-0" />
-                          {personalInfo.phone}
-                        </div>
-                      )}
-                      {personalInfo.address && (
-                        <div className="flex items-center">
-                          <MapPin size={14} className="mr-2 flex-shrink-0" />
-                          {personalInfo.address}
-                        </div>
-                      )}
-                    </div>
+              {Array.from({ length: pageCount }).map((_, pageIndex) => (
+                <div
+                  key={pageIndex}
+                  ref={pageIndex === 0 ? pageRef : null}
+                  className="rounded-sm bg-white shadow-md overflow-hidden"
+                  style={{
+                    width: `${210 * cvScale}mm`,
+                    height: `${297 * cvScale}mm`,
+                    transform: `scale(${cvScale})`,
+                    transformOrigin: 'top center',
+                    fontSize: `${cvScale * 16}px`,
+                  }}
+                >
+                  <div style={{ transform: `translateY(-${pageIndex * pageHeight}px)` }}>
+                    {renderResumeContent(pageIndex === 0)}
                   </div>
-
-                  {sectionOrder.map((sectionId) => renderSectionInPreview(sectionId))}
-
-
-                  {/* Empty state message */}
-                  {!personalInfo.firstName &&
-                    !personalInfo.lastName &&
-                    !personalInfo.email &&
-                    experiences.length === 0 &&
-                    skills.length === 0 &&
-                    education.length === 0 && (
-                      <div className="mt-20 text-center text-gray-500">
-                        <p className="text-lg">
-                          Rozpocznij wypełnianie formularza, aby zobaczyć podgląd CV
-                        </p>
-                      </div>
-                    )}
                 </div>
-              </div>
+              ))}
             </div>
           </div>
         </div>
