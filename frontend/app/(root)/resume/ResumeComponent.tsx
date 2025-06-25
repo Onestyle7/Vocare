@@ -891,7 +891,7 @@ return (personalInfo.firstName || personalInfo.lastName || personalInfo.email ||
       </div>
 
       {/* Sidebar for Desktop */}
-      <div className="mx-3 hidden w-16 flex-col items-center rounded-lg bg-white py-6 shadow-lg lg:flex">
+      <div className="mx-3 hidden w-16 flex-col items-center justify-between rounded-lg bg-white py-6 shadow-lg lg:flex">
         <button
           onClick={() => (window.location.href = '/')}
           className="rounded-lg p-3 transition-colors hover:bg-gray-100"
@@ -899,6 +899,9 @@ return (personalInfo.firstName || personalInfo.lastName || personalInfo.email ||
         >
           <Home size={24} className="text-gray-600" />
         </button>
+        <div className='w-12 h-12 bg-gray-200/40 rounded-sm flex items-center justify-center'>
+            <span>v1.0</span>
+        </div>
       </div>
 
       {/* Main Content */}
