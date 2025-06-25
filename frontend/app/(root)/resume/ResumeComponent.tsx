@@ -15,7 +15,9 @@ import {
   Move,
   Tag,
   GripVertical,
+  PencilLine,
 } from 'lucide-react';
+import { DatePickerWithCurrent } from './DatePickerWithCurrent';
 
 interface PersonalInfo {
   firstName: string;
@@ -47,7 +49,7 @@ interface Education {
 }
 
 interface Skill {
-  id: string;
+  id: string; 
   name: string;
 }
 
@@ -60,6 +62,11 @@ interface Language {
   id: string;
   name: string;
   level: string;
+}
+
+interface PrivacyStatement {
+  id: string;
+  content: string;
 }
 
 const CVCreator: React.FC = () => {
@@ -79,6 +86,10 @@ const CVCreator: React.FC = () => {
   const [hobbies, setHobbies] = useState<Hobby[]>([]);
   const [showFullDates, setShowFullDates] = useState(true);
   const [languages, setLanguages] = useState<Language[]>([]);
+  const [privacyStatement, setPrivacyStatement] = useState<PrivacyStatement>({
+  id: 'privacy',
+  content: '',
+});
 
   // CV Preview controls
   const [cvScale, setCvScale] = useState(0.8);
@@ -95,6 +106,7 @@ const CVCreator: React.FC = () => {
     'skills',
     'languages',
     'hobbies',
+    'privacy',
   ]);
   const [draggedSection, setDraggedSection] = useState<string | null>(null);
   const [dragOverSection, setDragOverSection] = useState<string | null>(null);
@@ -293,15 +305,14 @@ const CVCreator: React.FC = () => {
             <h2 className="flex items-center text-lg font-semibold text-gray-700">
               <GripVertical className="mr-2 cursor-grab text-gray-400" size={20} />
               <User className="mr-2" size={20} />
-              Dane osobowe
+              Personal profile
             </h2>
           </div>
           <p className="mb-4 text-sm text-gray-600">
-            Krótka informacja na górze CV, która podsumowuje odpowiednie doświadczenie i
-            kwalifikacje w 4-6 zdaniach.
+            A short summary at the top of your CV that highlights relevant experience and qualifications in 4–6 sentences.
           </p>
           <textarea
-            placeholder="Kierownik projektu z ponad 5-letnim doświadczeniem poszukujący nowych możliwości."
+            placeholder="Project Manager with over 5 years of experience, seeking new opportunities."
             value={personalInfo.summary}
             onChange={(e) => setPersonalInfo({ ...personalInfo, summary: e.target.value })}
             rows={4}
@@ -328,12 +339,11 @@ const CVCreator: React.FC = () => {
             <h2 className="flex items-center text-lg font-semibold text-gray-700">
               <GripVertical className="mr-2 cursor-grab text-gray-400" size={20} />
               <Briefcase className="mr-2" size={20} />
-              Doświadczenie zawodowe
+              Work experience
             </h2>
           </div>
           <p className="mb-4 text-sm text-gray-600">
-            Pochwal się swoimi osiągnięciami, opisując swoje codzienne obowiązki w 3-6 zdaniach,
-            a następnie podaj co najmniej dwa kluczowe osiągnięcia.
+            Showcase your achievements by describing your daily responsibilities in 3–6 sentences, then list at least two key accomplishments.
           </p>
           {experiences.map((exp) => (
             <div
@@ -345,64 +355,53 @@ const CVCreator: React.FC = () => {
                   <div className="mb-2 grid grid-cols-1 gap-4 sm:grid-cols-2">
                     <input
                       type="text"
-                      placeholder="Firma"
+                      placeholder="Company"
                       value={exp.company}
                       onChange={(e) => updateExperience(exp.id, 'company', e.target.value)}
-                      className="rounded border border-gray-300 px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:outline-none"
+                      className="w-full rounded-sm border border-gray-300 px-3 py-3 focus:ring-2 focus:ring-blue-500 focus:outline-none"
                     />
                     <input
                       type="text"
-                      placeholder="Stanowisko"
+                      placeholder="Position"
                       value={exp.position}
                       onChange={(e) => updateExperience(exp.id, 'position', e.target.value)}
-                      className="rounded border border-gray-300 px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:outline-none"
+                      className="w-full rounded-sm border border-gray-300 px-3 py-3 focus:ring-2 focus:ring-blue-500 focus:outline-none"
                     />
                   </div>
                   <div className="mb-2 grid grid-cols-1 gap-4 sm:grid-cols-2">
-                    <input
-                      type="date"
-                      placeholder="Data rozpoczęcia"
-                      value={exp.startDate}
-                      onChange={(e) => updateExperience(exp.id, 'startDate', e.target.value)}
-                      className="rounded border border-gray-300 px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:outline-none"
-                    />
-                    <div className="flex items-center space-x-2">
-                      <input
-                        type="date"
-                        placeholder="Data zakończenia"
-                        value={exp.endDate}
-                        onChange={(e) => updateExperience(exp.id, 'endDate', e.target.value)}
-                        className="flex-1 rounded border border-gray-300 px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:outline-none"
-                        disabled={exp.isCurrent}
-                      />
-                      <label className="flex items-center text-sm text-gray-600">
-                        <input
-                          type="checkbox"
-                          checked={exp.isCurrent}
-                          onChange={(e) => {
-                            updateExperience(exp.id, 'isCurrent', e.target.checked);
-                            if (e.target.checked) {
-                              updateExperience(exp.id, 'endDate', '');
-                            }
-                          }}
-                          className="mr-1"
-                        />
-                        Obecnie
-                      </label>
-                    </div>
+  <div>
+    <label className="mb-1 block text-sm text-gray-600">Start date</label>
+    <DatePickerWithCurrent
+      value={exp.startDate}
+      onChange={(date) => updateExperience(exp.id, 'startDate', date)}
+      isCurrent={false}
+      onCurrentChange={() => {}} 
+      placeholder="Select start date"
+    />
+  </div>
+  <div>
+    <label className="mb-1 block text-sm text-gray-600">End date</label>
+    <DatePickerWithCurrent
+      value={exp.endDate}
+      onChange={(date) => updateExperience(exp.id, 'endDate', date)}
+      isCurrent={exp.isCurrent}
+      onCurrentChange={(current) => updateExperience(exp.id, 'isCurrent', current)}
+      placeholder="Select end date"
+    />
+  </div>
                   </div>
                   <textarea
-                    placeholder="Opis obowiązków"
+                    placeholder="Job description / Responsibilities"
                     value={exp.description}
                     onChange={(e) => updateExperience(exp.id, 'description', e.target.value)}
                     rows={2}
-                    className="w-full rounded border border-gray-300 px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:outline-none"
+                    className="w-full rounded-sm border border-gray-300 px-3 py-3 focus:ring-2 focus:ring-blue-500 focus:outline-none"
                   />
                 </div>
                 <button
                   onClick={() => removeExperience(exp.id)}
                   className="ml-2 rounded p-2 text-red-500 opacity-0 transition-all group-hover:opacity-100 hover:bg-red-50 hover:text-red-700"
-                  title="Usuń doświadczenie"
+                  title="remove Work experience"
                 >
                   <Trash2 size={16} />
                 </button>
@@ -414,7 +413,7 @@ const CVCreator: React.FC = () => {
             className="flex cursor-pointer items-center font-medium text-red-600 hover:text-red-700"
           >
             <span className="mr-2 text-xl">+</span>
-            Dodaj doświadczenie zawodowe
+             Add work experience
           </button>
         </div>
       );
@@ -437,12 +436,11 @@ const CVCreator: React.FC = () => {
             <h2 className="flex items-center text-lg font-semibold text-gray-700">
               <GripVertical className="mr-2 cursor-grab text-gray-400" size={20} />
               <GraduationCap className="mr-2" size={20} />
-              Edukacja
+              Education
             </h2>
           </div>
           <p className="mb-4 text-sm text-gray-600">
-            Dodaj swoje wykształcenie, niezależnie od tego, czy jest średnie, czy wyższe. W
-            razie potrzeby dodaj odpowiednie kursy, projekty lub osiągnięcia (np. wyniki).
+            Add your education, whether it&apos;s secondary or higher. If needed, include relevant courses, projects, or achievements (e.g., grades).
           </p>
           {education.map((edu) => (
             <div
@@ -454,55 +452,51 @@ const CVCreator: React.FC = () => {
                   <div className="mb-2 grid grid-cols-1 gap-4 sm:grid-cols-2">
                     <input
                       type="text"
-                      placeholder="Uczelnia/Szkoła"
+                      placeholder="School/University"
                       value={edu.school}
                       onChange={(e) => updateEducation(edu.id, 'school', e.target.value)}
-                      className="rounded border border-gray-300 px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:outline-none"
+                      className="w-full rounded-sm border border-gray-300 px-3 py-3 focus:ring-2 focus:ring-blue-500 focus:outline-none"
                     />
                     <input
                       type="text"
-                      placeholder="Kierunek/Stopień"
+                      placeholder="Field of Study/Degree"
                       value={edu.degree}
                       onChange={(e) => updateEducation(edu.id, 'degree', e.target.value)}
-                      className="rounded border border-gray-300 px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:outline-none"
+                      className="w-full rounded-sm border border-gray-300 px-3 py-3 focus:ring-2 focus:ring-blue-500 focus:outline-none"
                     />
                   </div>
-                  <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-                    <input
-                      type="date"
-                      value={edu.startDate}
-                      onChange={(e) => updateEducation(edu.id, 'startDate', e.target.value)}
-                      className="rounded border border-gray-300 px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:outline-none"
-                    />
-                    <div className="flex items-center space-x-2">
-                      <input
-                        type="date"
-                        value={edu.endDate}
-                        onChange={(e) => updateEducation(edu.id, 'endDate', e.target.value)}
-                        className="flex-1 rounded border border-gray-300 px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:outline-none"
-                        disabled={edu.isCurrent}
-                      />
-                      <label className="flex items-center text-sm text-gray-600">
-                        <input
-                          type="checkbox"
-                          checked={edu.isCurrent}
-                          onChange={(e) => {
-                            updateEducation(edu.id, 'isCurrent', e.target.checked);
-                            if (e.target.checked) {
-                              updateEducation(edu.id, 'endDate', '');
-                            }
-                          }}
-                          className="mr-1"
-                        />
-                        Obecnie
-                      </label>
-                    </div>
-                  </div>
+                  <div className="mb-2 grid grid-cols-1 gap-4 sm:grid-cols-2">
+  <div>
+    <label className="mb-1 block text-sm text-gray-600">Start date</label>
+    <DatePickerWithCurrent
+      value={edu.startDate}
+      onChange={(date) => updateEducation(edu.id, 'startDate', date)}
+      isCurrent={false}
+      onCurrentChange={() => {}}
+      placeholder="Select start date"
+    />
+  </div>
+  <div>
+    <label className="mb-1 block text-sm text-gray-600">End date</label>
+    <DatePickerWithCurrent
+      value={edu.endDate}
+      onChange={(date) => updateEducation(edu.id, 'endDate', date)}
+      isCurrent={edu.isCurrent}
+      onCurrentChange={(current) => {
+        updateEducation(edu.id, 'isCurrent', current);
+        if (current) {
+          updateEducation(edu.id, 'endDate', '');
+        }
+      }}
+      placeholder="Select end date"
+    />
+  </div>
+</div>
                 </div>
                 <button
                   onClick={() => removeEducation(edu.id)}
                   className="ml-2 rounded p-2 text-red-500 opacity-0 transition-all group-hover:opacity-100 hover:bg-red-50 hover:text-red-700"
-                  title="Usuń wykształcenie"
+                  title="Remove education"
                 >
                   <Trash2 size={16} />
                 </button>
@@ -514,7 +508,7 @@ const CVCreator: React.FC = () => {
             className="flex cursor-pointer items-center font-medium text-red-600 hover:text-red-700"
           >
             <span className="mr-2 text-xl">+</span>
-            Dodaj wykształcenie
+            Add education
           </button>
         </div>
       );
@@ -537,12 +531,11 @@ const CVCreator: React.FC = () => {
             <h2 className="flex items-center text-lg font-semibold text-gray-700">
               <GripVertical className="mr-2 cursor-grab text-gray-400" size={20} />
               <Award className="mr-2" size={20} />
-              Umiejętności
+              Skills
             </h2>
           </div>
           <p className="mb-4 text-sm text-gray-600">
-            Opisz swoje obszary specjalizacji, koncentrując się na odpowiednich umiejętnościach
-            twardych.
+            Describe your areas of specialization, focusing on relevant hard skills.
           </p>
           {skills.map((skill) => (
             <div
@@ -552,7 +545,7 @@ const CVCreator: React.FC = () => {
               <div className="flex items-center justify-between">
                 <input
                   type="text"
-                  placeholder="Nazwa umiejętności"
+                  placeholder="Skill name"
                   value={skill.name}
                   onChange={(e) => updateSkill(skill.id, 'name', e.target.value)}
                   className="flex-1 focus:outline-none"
@@ -560,7 +553,7 @@ const CVCreator: React.FC = () => {
                 <button
                   onClick={() => removeSkill(skill.id)}
                   className="ml-2 rounded p-2 text-red-500 opacity-0 transition-all group-hover:opacity-100 hover:bg-red-50 hover:text-red-700"
-                  title="Usuń umiejętność"
+                  title="Remove skill"
                 >
                   <Trash2 size={16} />
                 </button>
@@ -572,7 +565,7 @@ const CVCreator: React.FC = () => {
             className="flex cursor-pointer items-center font-medium text-red-600 hover:text-red-700"
           >
             <span className="mr-2 text-xl">+</span>
-            Dodaj umiejętności
+            Add skill
           </button>
         </div>
       );
@@ -595,11 +588,11 @@ const CVCreator: React.FC = () => {
             <h2 className="flex items-center text-lg font-semibold text-gray-700">
               <GripVertical className="mr-2 cursor-grab text-gray-400" size={20} />
               <Languages className="mr-2" size={20} />
-              Języki
+              Languages
             </h2>
           </div>
           <p className="mb-4 text-sm text-gray-600">
-            Dodaj języki które znasz wraz z poziomem ich znajomości.
+            Add the languages you know along with your level of proficiency.
           </p>
           {languages.map((language) => (
             <div
@@ -610,7 +603,7 @@ const CVCreator: React.FC = () => {
                 <div className="flex flex-1 gap-3">
                   <input
                     type="text"
-                    placeholder="Nazwa języka"
+                    placeholder="Language"
                     value={language.name}
                     onChange={(e) => updateLanguage(language.id, 'name', e.target.value)}
                     className="flex-1 focus:outline-none"
@@ -631,7 +624,7 @@ const CVCreator: React.FC = () => {
                 <button
                   onClick={() => removeLanguage(language.id)}
                   className="ml-2 rounded p-2 text-red-500 opacity-0 transition-all group-hover:opacity-100 hover:bg-red-50 hover:text-red-700"
-                  title="Usuń język"
+                  title="Remove language"
                 >
                   <Trash2 size={16} />
                 </button>
@@ -643,7 +636,7 @@ const CVCreator: React.FC = () => {
             className="flex cursor-pointer items-center font-medium text-red-600 hover:text-red-700"
           >
             <span className="mr-2 text-xl">+</span>
-            Dodaj język
+            Add language
           </button>
         </div>
       );
@@ -670,8 +663,7 @@ const CVCreator: React.FC = () => {
             </h2>
           </div>
           <p className="mb-4 text-sm text-gray-600">
-            Dodaj swoje zainteresowania i zajęcia pozazawodowe, które odzwierciedlają Twoją
-            osobowość.
+            Add your interests and extracurricular activities that reflect your personality.
           </p>
           {hobbies.map((hobby) => (
             <div
@@ -680,7 +672,7 @@ const CVCreator: React.FC = () => {
             >
               <input
                 type="text"
-                placeholder="Nazwa hobby"
+                placeholder="e.g., Reading, Traveling, Cooking"
                 value={hobby.name}
                 onChange={(e) => updateHobby(hobby.id, 'name', e.target.value)}
                 className="flex-1 focus:outline-none"
@@ -698,10 +690,43 @@ const CVCreator: React.FC = () => {
             className="flex items-center font-medium text-red-600 hover:text-red-700"
           >
             <span className="mr-2 text-xl">+</span>
-            Dodaj hobby
+            Add hobby
           </button>
         </div>
       );
+      case 'privacy':
+  return (
+    <div
+      key="privacy"
+      className={`mb-6 rounded-lg bg-gray-50 p-4 transition-all lg:p-6 ${
+        dragOverSection === 'privacy' ? 'bg-blue-50 ring-2 ring-blue-400' : ''
+      } ${draggedSection === 'privacy' ? 'opacity-50' : ''}`}
+      draggable
+      onDragStart={(e) => handleSectionDragStart(e, 'privacy')}
+      onDragOver={(e) => handleSectionDragOver(e, 'privacy')}
+      onDragLeave={handleSectionDragLeave}
+      onDrop={(e) => handleSectionDrop(e, 'privacy')}
+      onDragEnd={handleSectionDragEnd}
+    >
+      <div className="mb-4 flex items-center justify-between">
+        <h2 className="flex items-center text-lg font-semibold text-gray-700">
+          <GripVertical className="mr-2 cursor-grab text-gray-400" size={20} />
+          <PencilLine className="mr-2" size={20} />
+          Privacy Statement
+        </h2>
+      </div>
+      <p className="mb-4 text-sm text-gray-600">
+        Add your privacy statement or data processing consent information.
+      </p>
+      <textarea
+        placeholder="I agree to the processing of personal data provided in this document for the purposes of the recruitment process..."
+        value={privacyStatement.content}
+        onChange={(e) => setPrivacyStatement({ ...privacyStatement, content: e.target.value })}
+        rows={3}
+        className="w-full resize-none rounded-lg border border-gray-300 px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:outline-none"
+      />
+    </div>
+  );
 
     default:
       return null;
@@ -714,7 +739,7 @@ const CVCreator: React.FC = () => {
 return (personalInfo.firstName || personalInfo.lastName || personalInfo.email || personalInfo.phone || personalInfo.address || personalInfo.profession || personalInfo.summary) ? (
           <div className="mb-5" key="profile">
             <h3 className="mb-2 border-b border-gray-300 pb-1 text-lg font-semibold text-gray-800">
-              Profil Osobisty
+              Personal Profile
             </h3>
             <p className="text-sm leading-relaxed text-gray-700">{personalInfo.summary}</p>
           </div>
@@ -725,22 +750,22 @@ return (personalInfo.firstName || personalInfo.lastName || personalInfo.email ||
           <div className="mb-5" key="experience">
             <h3 className="mb-2 flex items-center border-b border-gray-300 pb-1 text-lg font-semibold text-gray-800">
               <Briefcase size={16} className="mr-2" />
-              Doświadczenie Zawodowe
+              Work Exeperience
             </h3>
             {experiences.map((exp) => (
               <div key={exp.id} className="mb-3">
                 <div className="mb-1 flex items-start justify-between">
                   <div className="min-w-0 flex-1">
                     <h4 className="truncate font-semibold text-gray-900">
-                      {exp.position || 'Stanowisko'}
+                      {exp.position || 'Position'}
                     </h4>
                     <p className="truncate font-medium text-gray-700">
-                      {exp.company || 'Nazwa firmy'}
+                      {exp.company || 'Company name'}
                     </p>
                   </div>
                   <div className="ml-2 flex-shrink-0 text-xs text-gray-600">
                     {formatDate(exp.startDate)} -{' '}
-                    {exp.isCurrent || !exp.endDate ? 'obecnie' : formatDate(exp.endDate)}
+                    {exp.isCurrent || !exp.endDate ? 'present' : formatDate(exp.endDate)}
                   </div>
                 </div>
                 {exp.description && (
@@ -756,20 +781,20 @@ return (personalInfo.firstName || personalInfo.lastName || personalInfo.email ||
           <div className="mb-5" key="education">
             <h3 className="mb-2 flex items-center border-b border-gray-300 pb-1 text-lg font-semibold text-gray-800">
               <GraduationCap size={16} className="mr-2" />
-              Edukacja
+              Education
             </h3>
             {education.map((edu) => (
               <div key={edu.id} className="mb-3">
                 <div className="mb-1 flex items-start justify-between">
                   <div className="min-w-0 flex-1">
                     <h4 className="truncate font-semibold text-gray-900">
-                      {edu.degree || 'Kierunek/Stopień'}
+                      {edu.degree || 'Field of Study/Degree'}
                     </h4>
-                    <p className="truncate text-gray-700">{edu.school || 'Nazwa uczelni/szkoły'}</p>
+                    <p className="truncate text-gray-700">{edu.school || 'School/University'}</p>
                   </div>
                   <div className="ml-2 flex-shrink-0 text-xs text-gray-600">
                     {formatDate(edu.startDate)} -{' '}
-                    {edu.isCurrent || !edu.endDate ? 'obecnie' : formatDate(edu.endDate)}
+                    {edu.isCurrent || !edu.endDate ? 'present' : formatDate(edu.endDate)}
                   </div>
                 </div>
               </div>
@@ -782,7 +807,7 @@ return (personalInfo.firstName || personalInfo.lastName || personalInfo.email ||
           <div className="mb-5" key="skills">
             <h3 className="mb-2 flex items-center border-b border-gray-300 pb-1 text-lg font-semibold text-gray-800">
               <Award size={16} className="mr-2" />
-              Umiejętności
+              Skills
             </h3>
             <div className="flex flex-wrap gap-2">
               {skills.map((skill) => (
@@ -790,7 +815,7 @@ return (personalInfo.firstName || personalInfo.lastName || personalInfo.email ||
                   key={skill.id}
                   className="rounded-full bg-blue-100 px-2 py-1 text-xs font-medium text-blue-800"
                 >
-                  {skill.name || 'Umiejętność'}
+                  {skill.name || 'Skill'}
                 </span>
               ))}
             </div>
@@ -802,7 +827,7 @@ return (personalInfo.firstName || personalInfo.lastName || personalInfo.email ||
           <div className="mb-5" key="languages">
             <h3 className="mb-2 flex items-center border-b border-gray-300 pb-1 text-lg font-semibold text-gray-800">
               <Languages size={16} className="mr-2" />
-              Języki
+              Languages
             </h3>
             <div className="flex flex-wrap gap-2">
               {languages.map((language) => (
@@ -810,7 +835,7 @@ return (personalInfo.firstName || personalInfo.lastName || personalInfo.email ||
                   key={language.id}
                   className="rounded-full bg-purple-100 px-2 py-1 text-xs font-medium text-purple-800"
                 >
-                  {language.name || 'Język'} - {language.level}
+                  {language.name || 'Language'} - {language.level}
                 </span>
               ))}
             </div>
@@ -836,6 +861,16 @@ return (personalInfo.firstName || personalInfo.lastName || personalInfo.email ||
             </div>
           </div>
         ) : null;
+        
+        case 'privacy':
+  return privacyStatement.content ? (
+    <div className="mb-5" key="privacy">
+      <h3 className="mb-2 border-b border-gray-300 pb-1 text-lg font-semibold text-gray-800">
+        Privacy Statement
+      </h3>
+      <p className="text-xs leading-relaxed text-gray-700">{privacyStatement.content}</p>
+    </div>
+  ) : null;
 
       default:
         return null;
@@ -843,7 +878,7 @@ return (personalInfo.firstName || personalInfo.lastName || personalInfo.email ||
   };
 
   return (
-    <div className="font-poppins flex h-screen flex-col overflow-hidden bg-gray-50 lg:flex-row lg:pt-6">
+    <div className="font-poppins flex h-screen flex-col overflow-hidden bg-gray-50 lg:flex-row lg:pt-6 dark:text-black">
       {/* Top Navigation for Mobile */}
       <div className="mb-4 flex items-center justify-center bg-white py-4 shadow-lg lg:hidden">
         <button
@@ -872,16 +907,16 @@ return (personalInfo.firstName || personalInfo.lastName || personalInfo.email ||
         <div className="h-full overflow-y-auto rounded-lg bg-white shadow-lg lg:w-1/2">
           <div className="max-h-full overflow-y-auto p-4 lg:p-6">
             <div className="mb-6 flex flex-col items-start justify-between gap-4 sm:flex-row sm:items-center">
-              <h1 className="text-xl font-bold text-gray-800 lg:text-2xl">Kreator CV</h1>
+              <h1 className="text-xl font-bold text-gray-800 lg:text-2xl">Resume creator</h1>
               <div className="flex items-center space-x-3">
-                <label className="text-sm text-gray-600">Format dat:</label>
+                <label className="text-sm text-gray-600">Date format:</label>
                 <select
                   value={showFullDates ? 'full' : 'year'}
                   onChange={(e) => setShowFullDates(e.target.value === 'full')}
                   className="rounded border border-gray-300 px-2 py-1 text-sm focus:ring-2 focus:ring-blue-500 focus:outline-none"
                 >
-                  <option value="full">Miesiąc i rok</option>
-                  <option value="year">Tylko rok</option>
+                  <option value="full">Month & year</option>
+                  <option value="year">Just year</option>
                 </select>
               </div>
             </div>
@@ -890,15 +925,15 @@ return (personalInfo.firstName || personalInfo.lastName || personalInfo.email ||
             <div className="mb-6 rounded-lg bg-gray-50 p-4 lg:p-6">
               <h2 className="mb-4 flex items-center text-lg font-semibold text-gray-700">
                 <User className="mr-2" size={20} />
-                Dane osobowe
+                Personal details
               </h2>
               <div className="space-y-4">
                 <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
                   <div>
-                    <label className="mb-1 block text-sm text-gray-600">Imię</label>
+                    <label className="mb-1 block text-sm text-gray-600">Name</label>
                     <input
                       type="text"
-                      placeholder="Imię"
+                      placeholder="Joe"
                       value={personalInfo.firstName}
                       onChange={(e) =>
                         setPersonalInfo({ ...personalInfo, firstName: e.target.value })
@@ -907,10 +942,10 @@ return (personalInfo.firstName || personalInfo.lastName || personalInfo.email ||
                     />
                   </div>
                   <div>
-                    <label className="mb-1 block text-sm text-gray-600">Nazwisko</label>
+                    <label className="mb-1 block text-sm text-gray-600">Last Name</label>
                     <input
                       type="text"
-                      placeholder="Nazwisko"
+                      placeholder="Doe"
                       value={personalInfo.lastName}
                       onChange={(e) =>
                         setPersonalInfo({ ...personalInfo, lastName: e.target.value })
@@ -921,10 +956,10 @@ return (personalInfo.firstName || personalInfo.lastName || personalInfo.email ||
                 </div>
 
                 <div>
-                  <label className="mb-1 block text-sm text-gray-600">Adres e-mail</label>
+                  <label className="mb-1 block text-sm text-gray-600">E-mail addres</label>
                   <input
                     type="email"
-                    placeholder="Email"
+                    placeholder="joedoe@gmail.com"
                     value={personalInfo.email}
                     onChange={(e) => setPersonalInfo({ ...personalInfo, email: e.target.value })}
                     className="w-full rounded-sm border border-gray-300 px-3 py-3 focus:ring-2 focus:ring-blue-500 focus:outline-none"
@@ -932,10 +967,10 @@ return (personalInfo.firstName || personalInfo.lastName || personalInfo.email ||
                 </div>
 
                 <div>
-                  <label className="mb-1 block text-sm text-gray-600">Pozycja</label>
+                  <label className="mb-1 block text-sm text-gray-600">Position</label>
                   <input
                     type="text"
-                    placeholder="np. Projektant serwisu"
+                    placeholder="e.g., Project Manager"
                     value={personalInfo.profession}
                     onChange={(e) =>
                       setPersonalInfo({ ...personalInfo, profession: e.target.value })
@@ -947,15 +982,15 @@ return (personalInfo.firstName || personalInfo.lastName || personalInfo.email ||
                 {/* Collapsible Additional Fields */}
                 <details className="group">
                   <summary className="cursor-pointer font-medium text-red-600">
-                    Pokaż dodatkowe pola
+                    Show additional fields
                   </summary>
                   <div className="mt-4 space-y-4">
                     <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
                       <div>
-                        <label className="mb-1 block text-sm text-gray-600">Numer telefonu</label>
+                        <label className="mb-1 block text-sm text-gray-600">Phone number</label>
                         <input
                           type="tel"
-                          placeholder="np. +48 22 263 98 31"
+                          placeholder="e.g., +48 22 263 98 31"
                           value={personalInfo.phone}
                           onChange={(e) =>
                             setPersonalInfo({ ...personalInfo, phone: e.target.value })
@@ -964,10 +999,10 @@ return (personalInfo.firstName || personalInfo.lastName || personalInfo.email ||
                         />
                       </div>
                       <div>
-                        <label className="mb-1 block text-sm text-gray-600">Adres</label>
+                        <label className="mb-1 block text-sm text-gray-600">Adress</label>
                         <input
                           type="text"
-                          placeholder="np. ul. Partyzantów 16"
+                          placeholder="e.g., 221B Baker Street, London"
                           value={personalInfo.address}
                           onChange={(e) =>
                             setPersonalInfo({ ...personalInfo, address: e.target.value })
@@ -990,35 +1025,35 @@ return (personalInfo.firstName || personalInfo.lastName || personalInfo.email ||
         <div className="flex flex-col overflow-hidden rounded-lg bg-gray-100 lg:w-1/2">
           {/* Preview Controls */}
           <div className="flex items-center justify-between border-b border-gray-200 bg-white p-4">
-            <h2 className="text-lg font-semibold text-gray-700">Podgląd CV</h2>
+            <h2 className="text-lg font-semibold text-gray-700">Resume Preview</h2>
             <div className="flex items-center space-x-2">
               <button
                 onClick={handleZoomOut}
-                className="rounded p-2 transition-colors hover:bg-gray-100"
+                className="rounded p-2 transition-colors hover:bg-gray-100 cursor-pointer"
                 title="Pomniejsz"
               >
                 <ZoomOut size={18} />
               </button>
-              <span className="min-w-12 text-center text-sm text-gray-600">
+              <span className="min-w-12 text-center text-sm text-gray-600 cursor-none">
                 {Math.round(cvScale * 100)}%
               </span>
               <button
                 onClick={handleZoomIn}
-                className="rounded p-2 transition-colors hover:bg-gray-100"
+                className="rounded p-2 transition-colors hover:bg-gray-100 cursor-pointer"
                 title="Powiększ"
               >
                 <ZoomIn size={18} />
               </button>
               <button
                 onClick={resetView}
-                className="rounded p-2 text-sm transition-colors hover:bg-gray-100"
+                className="rounded p-2 text-sm transition-colors hover:bg-gray-100 cursor-pointer"
                 title="Resetuj widok"
               >
                 Reset
               </button>
-              <div className="flex items-center text-sm text-gray-500">
+              <div className="flex items-center text-sm text-gray-500 cursor-none">
                 <Move size={16} className="mr-1" />
-                Przeciągnij
+                Drag and move
               </div>
             </div>
           </div>
@@ -1054,7 +1089,7 @@ return (personalInfo.firstName || personalInfo.lastName || personalInfo.email ||
                     <h1 className="mb-2 text-3xl leading-tight font-bold text-gray-900">
                       {personalInfo.firstName || personalInfo.lastName
                         ? `${personalInfo.firstName} ${personalInfo.lastName}`.trim()
-                        : 'Twoje Imię i Nazwisko'}
+                        : 'Joe Doe'}
                     </h1>
                     {personalInfo.profession && (
                       <h2 className="mb-4 text-xl text-gray-600">{personalInfo.profession}</h2>
@@ -1095,7 +1130,7 @@ return (personalInfo.firstName || personalInfo.lastName || personalInfo.email ||
                     education.length === 0 && (
                       <div className="mt-20 text-center text-gray-500">
                         <p className="text-lg">
-                          Rozpocznij wypełnianie formularza, aby zobaczyć podgląd CV
+                          Start filling the form on the left to create your CV.
                         </p>
                       </div>
                     )}
