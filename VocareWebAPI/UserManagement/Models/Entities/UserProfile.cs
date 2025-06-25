@@ -31,6 +31,7 @@ namespace VocareWebAPI.Models.Entities
         public List<LanguageEntry> Languages { get; set; } = new();
         public string? AdditionalInformation { get; set; }
         public string? AboutMe { get; set; }
+        public bool WillingToRebrand { get; set; } = false; // Czy użytkownik jest gotów się przebranżowić
         public PersonalityType PersonalityType { get; set; } = PersonalityType.Unknown; // Typ osobowości użytkownika, domyślnie Unknown
         public List<AiRecommendation> Recommendations { get; set; } = new();
         public List<string> SoftSkills { get; set; } = new(); // Lista umiejętności miękkich użytkownika

@@ -283,6 +283,7 @@ namespace VocareWebAPI.Services
                 - Dodatkowe informacje: {{profile.AdditionalInformation ?? "Brak dodatkowych informacji"}}
                 - O mnie: {{profile.AboutMe ?? "Brak opisu 'o mnie'"}}
                 - Typ osobowości: {{profile.PersonalityType.ToString()}}
+                - Czy gotów do przebranżowienia: {{profile.WillingToRebrand}}
 
                 Wygeneruj dokładnie taki obiekt JSON, bez żadnego dodatkowego tekstu w języku Polskim, jeżeli powyższe inforamcje są w języku Polskim, jeśli nie to wygeneruj w języku Angielskim:                 { 
                 "careerPaths": [
