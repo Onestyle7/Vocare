@@ -226,6 +226,7 @@ namespace VocareWebAPI.CareerAdvisor.Services.Implementations
                 - Lokalizacja: {{profile.Country}}, {{profile.Address}}
                 - Języki: {{string.Join(", ", profile.Languages.Select(l => $"{l.Language} ({l.Level})"))}}
                 - Typ osobowości: {{profile.PersonalityType.ToString()}}
+                - Czy gotów do przebranżowienia: {{profile.WillingToRebrand}}
 
                 Na podstawie powyższych danych, wygeneruj dokładnie 3 rekomendacje ścieżek kariery.
                 Wykorzystaj swoją wiedzę o aktualnym rynku pracy, trendach technologicznych i zapotrzebowaniu na specjalistów.

@@ -40,6 +40,7 @@ namespace VocareWebAPI.Models.Dtos
         public List<LanguageEntryDto>? Languages { get; set; }
 
         public string? AdditionalInformation { get; set; }
+        public bool WillingToRebrand { get; set; }
 
         public string? AboutMe { get; set; }
 
