@@ -16,8 +16,11 @@ import {
   Tag,
   GripVertical,
   PencilLine,
+  StarsIcon,
+  MessageCircleQuestion,
 } from 'lucide-react';
 import { DatePickerWithCurrent } from './DatePickerWithCurrent';
+import { HoverCard, HoverCardContent, HoverCardTrigger } from '@/components/ui/hover-card';
 
 interface PersonalInfo {
   firstName: string;
@@ -49,7 +52,7 @@ interface Education {
 }
 
 interface Skill {
-  id: string; 
+  id: string;
   name: string;
 }
 
@@ -80,6 +83,8 @@ const CVCreator: React.FC = () => {
     summary: '',
   });
 
+  const [isPremium] = useState(false);
+
   const [experiences, setExperiences] = useState<Experience[]>([]);
   const [education, setEducation] = useState<Education[]>([]);
   const [skills, setSkills] = useState<Skill[]>([]);
@@ -87,16 +92,15 @@ const CVCreator: React.FC = () => {
   const [showFullDates, setShowFullDates] = useState(true);
   const [languages, setLanguages] = useState<Language[]>([]);
   const [privacyStatement, setPrivacyStatement] = useState<PrivacyStatement>({
-  id: 'privacy',
-  content: '',
-});
+    id: 'privacy',
+    content: '',
+  });
 
   // CV Preview controls
   const [cvScale, setCvScale] = useState(0.8);
   const [cvPosition, setCvPosition] = useState({ x: 0, y: 0 });
   const [isDragging, setIsDragging] = useState(false);
   const [dragStart, setDragStart] = useState({ x: 0, y: 0 });
-  
 
   // Section ordering
   const [sectionOrder, setSectionOrder] = useState([
@@ -286,457 +290,528 @@ const CVCreator: React.FC = () => {
   };
 
   const renderSectionInForm = (sectionId: string) => {
-  switch (sectionId) {
-    case 'profile':
-      return (
-        <div
-          key="profile"
-          className={`mb-6 rounded-lg bg-gray-50 p-4 transition-all lg:p-6 ${
-            dragOverSection === 'profile' ? 'bg-blue-50 ring-2 ring-blue-400' : ''
-          } ${draggedSection === 'profile' ? 'opacity-50' : ''}`}
-          draggable
-          onDragStart={(e) => handleSectionDragStart(e, 'profile')}
-          onDragOver={(e) => handleSectionDragOver(e, 'profile')}
-          onDragLeave={handleSectionDragLeave}
-          onDrop={(e) => handleSectionDrop(e, 'profile')}
-          onDragEnd={handleSectionDragEnd}
-        >
-          <div className="mb-4 flex items-center justify-between">
-            <h2 className="flex items-center text-lg font-semibold text-gray-700">
-              <GripVertical className="mr-2 cursor-grab text-gray-400" size={20} />
-              <User className="mr-2" size={20} />
-              Personal profile
-            </h2>
+    switch (sectionId) {
+      case 'profile':
+        return (
+          <div
+            key="profile"
+            className={`mb-6 rounded-lg bg-gray-50 p-4 transition-all lg:p-6 ${
+              dragOverSection === 'profile' ? 'bg-blue-50 ring-2 ring-blue-400' : ''
+            } ${draggedSection === 'profile' ? 'opacity-50' : ''}`}
+            draggable
+            onDragStart={(e) => handleSectionDragStart(e, 'profile')}
+            onDragOver={(e) => handleSectionDragOver(e, 'profile')}
+            onDragLeave={handleSectionDragLeave}
+            onDrop={(e) => handleSectionDrop(e, 'profile')}
+            onDragEnd={handleSectionDragEnd}
+          >
+            <div className="mb-4 flex items-center justify-between">
+              <h2 className="flex items-center text-lg font-semibold text-gray-700">
+                <GripVertical className="mr-2 cursor-grab text-gray-400" size={20} />
+                <User className="mr-2" size={20} />
+                Personal profile
+              </h2>
+            </div>
+            <p className="mb-4 text-sm text-gray-600">
+              A short summary at the top of your CV that highlights relevant experience and
+              qualifications in 4–6 sentences.
+            </p>
+            <textarea
+              placeholder="Project Manager with over 5 years of experience, seeking new opportunities."
+              value={personalInfo.summary}
+              onChange={(e) => setPersonalInfo({ ...personalInfo, summary: e.target.value })}
+              rows={4}
+              className="w-full resize-none rounded-lg border border-gray-300 px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:outline-none"
+            />
+            <div className="flex w-full items-center justify-end space-x-2">
+                      <HoverCard>
+                        <HoverCardTrigger asChild>
+                          <button className="flex h-10 w-10 cursor-pointer items-center justify-center rounded-sm bg-gray-100">
+                            <MessageCircleQuestion className="text-gray-400" size={20} />
+                          </button>
+                        </HoverCardTrigger>
+                        <HoverCardContent className="font-poppins w-80">
+                          <div className="flex justify-between gap-4">
+                            <div className="space-y-1">
+                              <h4 className="text-sm font-semibold">Will it acutally help me?</h4>
+                              <p className="text-sm">
+                                It&apos;ll surely do. Our AI models are trained specifically to match
+                                requirements of the algorithms used by recruiters.
+                              </p>
+                              <div className="text-muted-foreground text-xs">
+                                Confirmed by 1000+ users.
+                              </div>
+                            </div>
+                          </div>
+                        </HoverCardContent>
+                      </HoverCard>
+                      <button
+                        className={`flex flex-row items-center justify-center rounded-sm border bg-red-500 px-3 py-2 text-sm text-white transition-all hover:bg-red-500/90 focus:outline-none ${isPremium ? 'cursor-pointer' : 'cursor-not-allowed opacity-50'}`}
+                      >
+                        <span className="text-sm text-white">Achieve more with AI</span>
+                        <StarsIcon className="ml-2 scale-70" />
+                      </button>
+                    </div>
           </div>
-          <p className="mb-4 text-sm text-gray-600">
-            A short summary at the top of your CV that highlights relevant experience and qualifications in 4–6 sentences.
-          </p>
-          <textarea
-            placeholder="Project Manager with over 5 years of experience, seeking new opportunities."
-            value={personalInfo.summary}
-            onChange={(e) => setPersonalInfo({ ...personalInfo, summary: e.target.value })}
-            rows={4}
-            className="w-full resize-none rounded-lg border border-gray-300 px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:outline-none"
-          />
-        </div>
-      );
+        );
 
-    case 'experience':
-      return (
-        <div
-          key="experience"
-          className={`mb-6 rounded-lg bg-gray-50 p-4 transition-all lg:p-6 ${
-            dragOverSection === 'experience' ? 'bg-blue-50 ring-2 ring-blue-400' : ''
-          } ${draggedSection === 'experience' ? 'opacity-50' : ''}`}
-          draggable
-          onDragStart={(e) => handleSectionDragStart(e, 'experience')}
-          onDragOver={(e) => handleSectionDragOver(e, 'experience')}
-          onDragLeave={handleSectionDragLeave}
-          onDrop={(e) => handleSectionDrop(e, 'experience')}
-          onDragEnd={handleSectionDragEnd}
-        >
-          <div className="mb-4 flex items-center justify-between">
-            <h2 className="flex items-center text-lg font-semibold text-gray-700">
-              <GripVertical className="mr-2 cursor-grab text-gray-400" size={20} />
-              <Briefcase className="mr-2" size={20} />
-              Work experience
-            </h2>
-          </div>
-          <p className="mb-4 text-sm text-gray-600">
-            Showcase your achievements by describing your daily responsibilities in 3–6 sentences, then list at least two key accomplishments.
-          </p>
-          {experiences.map((exp) => (
-            <div
-              key={exp.id}
-              className="group mb-4 rounded-lg border border-gray-200 bg-white p-4"
+      case 'experience':
+        return (
+          <div
+            key="experience"
+            className={`mb-6 rounded-lg bg-gray-50 p-4 transition-all lg:p-6 ${
+              dragOverSection === 'experience' ? 'bg-blue-50 ring-2 ring-blue-400' : ''
+            } ${draggedSection === 'experience' ? 'opacity-50' : ''}`}
+            draggable
+            onDragStart={(e) => handleSectionDragStart(e, 'experience')}
+            onDragOver={(e) => handleSectionDragOver(e, 'experience')}
+            onDragLeave={handleSectionDragLeave}
+            onDrop={(e) => handleSectionDrop(e, 'experience')}
+            onDragEnd={handleSectionDragEnd}
+          >
+            <div className="mb-4 flex items-center justify-between">
+              <h2 className="flex items-center text-lg font-semibold text-gray-700">
+                <GripVertical className="mr-2 cursor-grab text-gray-400" size={20} />
+                <Briefcase className="mr-2" size={20} />
+                Work experience
+              </h2>
+            </div>
+            <p className="mb-4 text-sm text-gray-600">
+              Showcase your achievements by describing your daily responsibilities in 3–6 sentences,
+              then list at least two key accomplishments.
+            </p>
+            {experiences.map((exp) => (
+              <div
+                key={exp.id}
+                className="group mb-4 rounded-lg border border-gray-200 bg-white p-4"
+              >
+                <div className="mb-2 flex items-start justify-between">
+                  <div className="flex-1">
+                    <div className="mb-2 grid grid-cols-1 gap-4 sm:grid-cols-2">
+                      <input
+                        type="text"
+                        placeholder="Company"
+                        value={exp.company}
+                        onChange={(e) => updateExperience(exp.id, 'company', e.target.value)}
+                        className="w-full rounded-sm border border-gray-300 px-3 py-3 focus:ring-2 focus:ring-blue-500 focus:outline-none"
+                      />
+                      <input
+                        type="text"
+                        placeholder="Position"
+                        value={exp.position}
+                        onChange={(e) => updateExperience(exp.id, 'position', e.target.value)}
+                        className="w-full rounded-sm border border-gray-300 px-3 py-3 focus:ring-2 focus:ring-blue-500 focus:outline-none"
+                      />
+                    </div>
+                    <div className="mb-2 grid grid-cols-1 gap-4 sm:grid-cols-2">
+                      <div>
+                        <label className="mb-1 block text-sm text-gray-600">Start date</label>
+                        <DatePickerWithCurrent
+                          value={exp.startDate}
+                          onChange={(date) => updateExperience(exp.id, 'startDate', date)}
+                          isCurrent={false}
+                          onCurrentChange={() => {}}
+                          placeholder="Select start date"
+                        />
+                      </div>
+                      <div>
+                        <label className="mb-1 block text-sm text-gray-600">End date</label>
+                        <DatePickerWithCurrent
+                          value={exp.endDate}
+                          onChange={(date) => updateExperience(exp.id, 'endDate', date)}
+                          isCurrent={exp.isCurrent}
+                          onCurrentChange={(current) =>
+                            updateExperience(exp.id, 'isCurrent', current)
+                          }
+                          placeholder="Select end date"
+                        />
+                      </div>
+                    </div>
+                    <textarea
+                      placeholder="Job description / Responsibilities"
+                      value={exp.description}
+                      onChange={(e) => updateExperience(exp.id, 'description', e.target.value)}
+                      rows={2}
+                      className="w-full rounded-sm border border-gray-300 px-3 py-3 focus:ring-2 focus:ring-blue-500 focus:outline-none"
+                    />
+                    <div className="flex w-full items-center justify-end space-x-2">
+                      <button
+                    onClick={() => removeExperience(exp.id)}
+                    className="ml-2 rounded p-2 text-red-500 opacity-0 transition-all group-hover:opacity-100 hover:bg-red-50 hover:text-red-700 w-10 h-10 flex items-center justify-center cursor-pointer"
+                    title="remove Work experience"
+                  >
+                    <Trash2 size={16} />
+                  </button>
+                      <HoverCard>
+                        <HoverCardTrigger asChild>
+                          <button className="flex h-10 w-10 cursor-pointer items-center justify-center rounded-sm bg-gray-100">
+                            <MessageCircleQuestion className="text-gray-400" size={20} />
+                          </button>
+                        </HoverCardTrigger>
+                        <HoverCardContent className="font-poppins w-80">
+                          <div className="flex justify-between gap-4">
+                            <div className="space-y-1">
+                              <h4 className="text-sm font-semibold">Will it acutally help me?</h4>
+                              <p className="text-sm">
+                                It&apos;ll surely do. Our AI models are trained specifically to match
+                                requirements of the algorithms used by recruiters.
+                              </p>
+                              <div className="text-muted-foreground text-xs">
+                                Confirmed by 1000+ users.
+                              </div>
+                            </div>
+                          </div>
+                        </HoverCardContent>
+                      </HoverCard>
+                      <button
+                        className={`flex flex-row items-center justify-center rounded-sm border bg-red-500 px-3 py-2 text-sm text-white transition-all hover:bg-red-500/90 focus:outline-none ${isPremium ? 'cursor-pointer' : 'cursor-not-allowed opacity-50'}`}
+                      >
+                        <span className="text-sm text-white">Achieve more with AI</span>
+                        <StarsIcon className="ml-2 scale-70" />
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            ))}
+            <button
+              onClick={addExperience}
+              className="flex cursor-pointer items-center font-medium text-red-600 hover:text-red-700"
             >
-              <div className="mb-2 flex items-start justify-between">
-                <div className="flex-1">
-                  <div className="mb-2 grid grid-cols-1 gap-4 sm:grid-cols-2">
-                    <input
-                      type="text"
-                      placeholder="Company"
-                      value={exp.company}
-                      onChange={(e) => updateExperience(exp.id, 'company', e.target.value)}
-                      className="w-full rounded-sm border border-gray-300 px-3 py-3 focus:ring-2 focus:ring-blue-500 focus:outline-none"
-                    />
-                    <input
-                      type="text"
-                      placeholder="Position"
-                      value={exp.position}
-                      onChange={(e) => updateExperience(exp.id, 'position', e.target.value)}
-                      className="w-full rounded-sm border border-gray-300 px-3 py-3 focus:ring-2 focus:ring-blue-500 focus:outline-none"
-                    />
+              <span className="mr-2 text-xl">+</span>
+              Add work experience
+            </button>
+          </div>
+        );
+
+      case 'education':
+        return (
+          <div
+            key="education"
+            className={`mb-6 rounded-lg bg-gray-50 p-4 transition-all lg:p-6 ${
+              dragOverSection === 'education' ? 'bg-blue-50 ring-2 ring-blue-400' : ''
+            } ${draggedSection === 'education' ? 'opacity-50' : ''}`}
+            draggable
+            onDragStart={(e) => handleSectionDragStart(e, 'education')}
+            onDragOver={(e) => handleSectionDragOver(e, 'education')}
+            onDragLeave={handleSectionDragLeave}
+            onDrop={(e) => handleSectionDrop(e, 'education')}
+            onDragEnd={handleSectionDragEnd}
+          >
+            <div className="mb-4 flex items-center justify-between">
+              <h2 className="flex items-center text-lg font-semibold text-gray-700">
+                <GripVertical className="mr-2 cursor-grab text-gray-400" size={20} />
+                <GraduationCap className="mr-2" size={20} />
+                Education
+              </h2>
+            </div>
+            <p className="mb-4 text-sm text-gray-600">
+              Add your education, whether it&apos;s secondary or higher. If needed, include relevant
+              courses, projects, or achievements (e.g., grades).
+            </p>
+            {education.map((edu) => (
+              <div
+                key={edu.id}
+                className="group mb-4 rounded-lg border border-gray-200 bg-white p-4"
+              >
+                <div className="flex items-start justify-between">
+                  <div className="flex-1">
+                    <div className="mb-2 grid grid-cols-1 gap-4 sm:grid-cols-2">
+                      <input
+                        type="text"
+                        placeholder="School/University"
+                        value={edu.school}
+                        onChange={(e) => updateEducation(edu.id, 'school', e.target.value)}
+                        className="w-full rounded-sm border border-gray-300 px-3 py-3 focus:ring-2 focus:ring-blue-500 focus:outline-none"
+                      />
+                      <input
+                        type="text"
+                        placeholder="Field of Study/Degree"
+                        value={edu.degree}
+                        onChange={(e) => updateEducation(edu.id, 'degree', e.target.value)}
+                        className="w-full rounded-sm border border-gray-300 px-3 py-3 focus:ring-2 focus:ring-blue-500 focus:outline-none"
+                      />
+                    </div>
+                    <div className="mb-2 grid grid-cols-1 gap-4 sm:grid-cols-2">
+                      <div>
+                        <label className="mb-1 block text-sm text-gray-600">Start date</label>
+                        <DatePickerWithCurrent
+                          value={edu.startDate}
+                          onChange={(date) => updateEducation(edu.id, 'startDate', date)}
+                          isCurrent={false}
+                          onCurrentChange={() => {}}
+                          placeholder="Select start date"
+                        />
+                      </div>
+                      <div>
+                        <label className="mb-1 block text-sm text-gray-600">End date</label>
+                        <DatePickerWithCurrent
+                          value={edu.endDate}
+                          onChange={(date) => updateEducation(edu.id, 'endDate', date)}
+                          isCurrent={edu.isCurrent}
+                          onCurrentChange={(current) => {
+                            updateEducation(edu.id, 'isCurrent', current);
+                            if (current) {
+                              updateEducation(edu.id, 'endDate', '');
+                            }
+                          }}
+                          placeholder="Select end date"
+                        />
+                      </div>
+                    </div>
                   </div>
-                  <div className="mb-2 grid grid-cols-1 gap-4 sm:grid-cols-2">
-  <div>
-    <label className="mb-1 block text-sm text-gray-600">Start date</label>
-    <DatePickerWithCurrent
-      value={exp.startDate}
-      onChange={(date) => updateExperience(exp.id, 'startDate', date)}
-      isCurrent={false}
-      onCurrentChange={() => {}} 
-      placeholder="Select start date"
-    />
-  </div>
-  <div>
-    <label className="mb-1 block text-sm text-gray-600">End date</label>
-    <DatePickerWithCurrent
-      value={exp.endDate}
-      onChange={(date) => updateExperience(exp.id, 'endDate', date)}
-      isCurrent={exp.isCurrent}
-      onCurrentChange={(current) => updateExperience(exp.id, 'isCurrent', current)}
-      placeholder="Select end date"
-    />
-  </div>
-                  </div>
-                  <textarea
-                    placeholder="Job description / Responsibilities"
-                    value={exp.description}
-                    onChange={(e) => updateExperience(exp.id, 'description', e.target.value)}
-                    rows={2}
-                    className="w-full rounded-sm border border-gray-300 px-3 py-3 focus:ring-2 focus:ring-blue-500 focus:outline-none"
+                  <button
+                    onClick={() => removeEducation(edu.id)}
+                    className="ml-2 rounded p-2 text-red-500 opacity-0 transition-all group-hover:opacity-100 hover:bg-red-50 hover:text-red-700 w-10 h-10 flex items-center justify-center cursor-pointer"
+                    title="Remove education"
+                  >
+                    <Trash2 size={16} />
+                  </button>
+                </div>
+              </div>
+            ))}
+            <button
+              onClick={addEducation}
+              className="flex cursor-pointer items-center font-medium text-red-600 hover:text-red-700"
+            >
+              <span className="mr-2 text-xl">+</span>
+              Add education
+            </button>
+          </div>
+        );
+
+      case 'skills':
+        return (
+          <div
+            key="skills"
+            className={`mb-6 rounded-lg bg-gray-50 p-4 transition-all lg:p-6 ${
+              dragOverSection === 'skills' ? 'bg-blue-50 ring-2 ring-blue-400' : ''
+            } ${draggedSection === 'skills' ? 'opacity-50' : ''}`}
+            draggable
+            onDragStart={(e) => handleSectionDragStart(e, 'skills')}
+            onDragOver={(e) => handleSectionDragOver(e, 'skills')}
+            onDragLeave={handleSectionDragLeave}
+            onDrop={(e) => handleSectionDrop(e, 'skills')}
+            onDragEnd={handleSectionDragEnd}
+          >
+            <div className="mb-4 flex items-center justify-between">
+              <h2 className="flex items-center text-lg font-semibold text-gray-700">
+                <GripVertical className="mr-2 cursor-grab text-gray-400" size={20} />
+                <Award className="mr-2" size={20} />
+                Skills
+              </h2>
+            </div>
+            <p className="mb-4 text-sm text-gray-600">
+              Describe your areas of specialization, focusing on relevant hard skills.
+            </p>
+            {skills.map((skill) => (
+              <div
+                key={skill.id}
+                className="group mb-3 rounded-md border border-gray-200 bg-white p-3"
+              >
+                <div className="flex items-center justify-between">
+                  <input
+                    type="text"
+                    placeholder="Skill name"
+                    value={skill.name}
+                    onChange={(e) => updateSkill(skill.id, 'name', e.target.value)}
+                    className="flex-1 focus:outline-none"
                   />
+                  <button
+                    onClick={() => removeSkill(skill.id)}
+                    className="ml-2 rounded p-2 text-red-500 opacity-0 transition-all group-hover:opacity-100 hover:bg-red-50 hover:text-red-700"
+                    title="Remove skill"
+                  >
+                    <Trash2 size={16} />
+                  </button>
                 </div>
-                <button
-                  onClick={() => removeExperience(exp.id)}
-                  className="ml-2 rounded p-2 text-red-500 opacity-0 transition-all group-hover:opacity-100 hover:bg-red-50 hover:text-red-700"
-                  title="remove Work experience"
-                >
-                  <Trash2 size={16} />
-                </button>
               </div>
-            </div>
-          ))}
-          <button
-            onClick={addExperience}
-            className="flex cursor-pointer items-center font-medium text-red-600 hover:text-red-700"
-          >
-            <span className="mr-2 text-xl">+</span>
-             Add work experience
-          </button>
-        </div>
-      );
-
-    case 'education':
-      return (
-        <div
-          key="education"
-          className={`mb-6 rounded-lg bg-gray-50 p-4 transition-all lg:p-6 ${
-            dragOverSection === 'education' ? 'bg-blue-50 ring-2 ring-blue-400' : ''
-          } ${draggedSection === 'education' ? 'opacity-50' : ''}`}
-          draggable
-          onDragStart={(e) => handleSectionDragStart(e, 'education')}
-          onDragOver={(e) => handleSectionDragOver(e, 'education')}
-          onDragLeave={handleSectionDragLeave}
-          onDrop={(e) => handleSectionDrop(e, 'education')}
-          onDragEnd={handleSectionDragEnd}
-        >
-          <div className="mb-4 flex items-center justify-between">
-            <h2 className="flex items-center text-lg font-semibold text-gray-700">
-              <GripVertical className="mr-2 cursor-grab text-gray-400" size={20} />
-              <GraduationCap className="mr-2" size={20} />
-              Education
-            </h2>
-          </div>
-          <p className="mb-4 text-sm text-gray-600">
-            Add your education, whether it&apos;s secondary or higher. If needed, include relevant courses, projects, or achievements (e.g., grades).
-          </p>
-          {education.map((edu) => (
-            <div
-              key={edu.id}
-              className="group mb-4 rounded-lg border border-gray-200 bg-white p-4"
+            ))}
+            <button
+              onClick={addSkill}
+              className="flex cursor-pointer items-center font-medium text-red-600 hover:text-red-700"
             >
-              <div className="flex items-start justify-between">
-                <div className="flex-1">
-                  <div className="mb-2 grid grid-cols-1 gap-4 sm:grid-cols-2">
+              <span className="mr-2 text-xl">+</span>
+              Add skill
+            </button>
+          </div>
+        );
+
+      case 'languages':
+        return (
+          <div
+            key="languages"
+            className={`mb-6 rounded-lg bg-gray-50 p-4 transition-all lg:p-6 ${
+              dragOverSection === 'languages' ? 'bg-blue-50 ring-2 ring-blue-400' : ''
+            } ${draggedSection === 'languages' ? 'opacity-50' : ''}`}
+            draggable
+            onDragStart={(e) => handleSectionDragStart(e, 'languages')}
+            onDragOver={(e) => handleSectionDragOver(e, 'languages')}
+            onDragLeave={handleSectionDragLeave}
+            onDrop={(e) => handleSectionDrop(e, 'languages')}
+            onDragEnd={handleSectionDragEnd}
+          >
+            <div className="mb-4 flex items-center justify-between">
+              <h2 className="flex items-center text-lg font-semibold text-gray-700">
+                <GripVertical className="mr-2 cursor-grab text-gray-400" size={20} />
+                <Languages className="mr-2" size={20} />
+                Languages
+              </h2>
+            </div>
+            <p className="mb-4 text-sm text-gray-600">
+              Add the languages you know along with your level of proficiency.
+            </p>
+            {languages.map((language) => (
+              <div
+                key={language.id}
+                className="group mb-3 rounded-lg border border-gray-200 bg-white/60 p-3"
+              >
+                <div className="flex items-center justify-between">
+                  <div className="flex flex-1 gap-3">
                     <input
                       type="text"
-                      placeholder="School/University"
-                      value={edu.school}
-                      onChange={(e) => updateEducation(edu.id, 'school', e.target.value)}
-                      className="w-full rounded-sm border border-gray-300 px-3 py-3 focus:ring-2 focus:ring-blue-500 focus:outline-none"
+                      placeholder="Language"
+                      value={language.name}
+                      onChange={(e) => updateLanguage(language.id, 'name', e.target.value)}
+                      className="flex-1 focus:outline-none"
                     />
-                    <input
-                      type="text"
-                      placeholder="Field of Study/Degree"
-                      value={edu.degree}
-                      onChange={(e) => updateEducation(edu.id, 'degree', e.target.value)}
-                      className="w-full rounded-sm border border-gray-300 px-3 py-3 focus:ring-2 focus:ring-blue-500 focus:outline-none"
-                    />
+                    <select
+                      value={language.level}
+                      onChange={(e) => updateLanguage(language.id, 'level', e.target.value)}
+                      className="rounded-sm border px-3 py-2 focus:outline-none"
+                    >
+                      <option value="Ogólny">Ogólny</option>
+                      <option value="Beginner">Beginner</option>
+                      <option value="Conversational">Conversational</option>
+                      <option value="Advanced">Advanced</option>
+                      <option value="Proficient">Proficient</option>
+                      <option value="Native speaker">Native speaker</option>
+                    </select>
                   </div>
-                  <div className="mb-2 grid grid-cols-1 gap-4 sm:grid-cols-2">
-  <div>
-    <label className="mb-1 block text-sm text-gray-600">Start date</label>
-    <DatePickerWithCurrent
-      value={edu.startDate}
-      onChange={(date) => updateEducation(edu.id, 'startDate', date)}
-      isCurrent={false}
-      onCurrentChange={() => {}}
-      placeholder="Select start date"
-    />
-  </div>
-  <div>
-    <label className="mb-1 block text-sm text-gray-600">End date</label>
-    <DatePickerWithCurrent
-      value={edu.endDate}
-      onChange={(date) => updateEducation(edu.id, 'endDate', date)}
-      isCurrent={edu.isCurrent}
-      onCurrentChange={(current) => {
-        updateEducation(edu.id, 'isCurrent', current);
-        if (current) {
-          updateEducation(edu.id, 'endDate', '');
-        }
-      }}
-      placeholder="Select end date"
-    />
-  </div>
-</div>
+                  <button
+                    onClick={() => removeLanguage(language.id)}
+                    className="ml-2 rounded p-2 text-red-500 opacity-0 transition-all group-hover:opacity-100 hover:bg-red-50 hover:text-red-700"
+                    title="Remove language"
+                  >
+                    <Trash2 size={16} />
+                  </button>
                 </div>
-                <button
-                  onClick={() => removeEducation(edu.id)}
-                  className="ml-2 rounded p-2 text-red-500 opacity-0 transition-all group-hover:opacity-100 hover:bg-red-50 hover:text-red-700"
-                  title="Remove education"
-                >
-                  <Trash2 size={16} />
-                </button>
               </div>
-            </div>
-          ))}
-          <button
-            onClick={addEducation}
-            className="flex cursor-pointer items-center font-medium text-red-600 hover:text-red-700"
-          >
-            <span className="mr-2 text-xl">+</span>
-            Add education
-          </button>
-        </div>
-      );
-
-    case 'skills':
-      return (
-        <div
-          key="skills"
-          className={`mb-6 rounded-lg bg-gray-50 p-4 transition-all lg:p-6 ${
-            dragOverSection === 'skills' ? 'bg-blue-50 ring-2 ring-blue-400' : ''
-          } ${draggedSection === 'skills' ? 'opacity-50' : ''}`}
-          draggable
-          onDragStart={(e) => handleSectionDragStart(e, 'skills')}
-          onDragOver={(e) => handleSectionDragOver(e, 'skills')}
-          onDragLeave={handleSectionDragLeave}
-          onDrop={(e) => handleSectionDrop(e, 'skills')}
-          onDragEnd={handleSectionDragEnd}
-        >
-          <div className="mb-4 flex items-center justify-between">
-            <h2 className="flex items-center text-lg font-semibold text-gray-700">
-              <GripVertical className="mr-2 cursor-grab text-gray-400" size={20} />
-              <Award className="mr-2" size={20} />
-              Skills
-            </h2>
-          </div>
-          <p className="mb-4 text-sm text-gray-600">
-            Describe your areas of specialization, focusing on relevant hard skills.
-          </p>
-          {skills.map((skill) => (
-            <div
-              key={skill.id}
-              className="group mb-3 rounded-md border border-gray-200 bg-white p-3"
+            ))}
+            <button
+              onClick={addLanguage}
+              className="flex cursor-pointer items-center font-medium text-red-600 hover:text-red-700"
             >
-              <div className="flex items-center justify-between">
+              <span className="mr-2 text-xl">+</span>
+              Add language
+            </button>
+          </div>
+        );
+
+      case 'hobbies':
+        return (
+          <div
+            key="hobbies"
+            className={`mb-6 rounded-lg bg-gray-50 p-4 transition-all lg:p-6 ${
+              dragOverSection === 'hobbies' ? 'bg-blue-50 ring-2 ring-blue-400' : ''
+            } ${draggedSection === 'hobbies' ? 'opacity-50' : ''}`}
+            draggable
+            onDragStart={(e) => handleSectionDragStart(e, 'hobbies')}
+            onDragOver={(e) => handleSectionDragOver(e, 'hobbies')}
+            onDragLeave={handleSectionDragLeave}
+            onDrop={(e) => handleSectionDrop(e, 'hobbies')}
+            onDragEnd={handleSectionDragEnd}
+          >
+            <div className="mb-4 flex items-center justify-between">
+              <h2 className="flex items-center text-lg font-semibold text-gray-700">
+                <GripVertical className="mr-2 cursor-grab text-gray-400" size={20} />
+                <Tag className="mr-2" size={20} />
+                Hobby
+              </h2>
+            </div>
+            <p className="mb-4 text-sm text-gray-600">
+              Add your interests and extracurricular activities that reflect your personality.
+            </p>
+            {hobbies.map((hobby) => (
+              <div
+                key={hobby.id}
+                className="group mb-3 flex items-center rounded-lg border border-gray-200 bg-white p-3"
+              >
                 <input
                   type="text"
-                  placeholder="Skill name"
-                  value={skill.name}
-                  onChange={(e) => updateSkill(skill.id, 'name', e.target.value)}
+                  placeholder="e.g., Reading, Traveling, Cooking"
+                  value={hobby.name}
+                  onChange={(e) => updateHobby(hobby.id, 'name', e.target.value)}
                   className="flex-1 focus:outline-none"
                 />
                 <button
-                  onClick={() => removeSkill(skill.id)}
-                  className="ml-2 rounded p-2 text-red-500 opacity-0 transition-all group-hover:opacity-100 hover:bg-red-50 hover:text-red-700"
-                  title="Remove skill"
+                  onClick={() => removeHobby(hobby.id)}
+                  className="ml-2 rounded p-2 text-red-500 opacity-0 group-hover:opacity-100 hover:bg-red-50 hover:text-red-700"
                 >
                   <Trash2 size={16} />
                 </button>
               </div>
-            </div>
-          ))}
-          <button
-            onClick={addSkill}
-            className="flex cursor-pointer items-center font-medium text-red-600 hover:text-red-700"
-          >
-            <span className="mr-2 text-xl">+</span>
-            Add skill
-          </button>
-        </div>
-      );
-
-    case 'languages':
-      return (
-        <div
-          key="languages"
-          className={`mb-6 rounded-lg bg-gray-50 p-4 transition-all lg:p-6 ${
-            dragOverSection === 'languages' ? 'bg-blue-50 ring-2 ring-blue-400' : ''
-          } ${draggedSection === 'languages' ? 'opacity-50' : ''}`}
-          draggable
-          onDragStart={(e) => handleSectionDragStart(e, 'languages')}
-          onDragOver={(e) => handleSectionDragOver(e, 'languages')}
-          onDragLeave={handleSectionDragLeave}
-          onDrop={(e) => handleSectionDrop(e, 'languages')}
-          onDragEnd={handleSectionDragEnd}
-        >
-          <div className="mb-4 flex items-center justify-between">
-            <h2 className="flex items-center text-lg font-semibold text-gray-700">
-              <GripVertical className="mr-2 cursor-grab text-gray-400" size={20} />
-              <Languages className="mr-2" size={20} />
-              Languages
-            </h2>
-          </div>
-          <p className="mb-4 text-sm text-gray-600">
-            Add the languages you know along with your level of proficiency.
-          </p>
-          {languages.map((language) => (
-            <div
-              key={language.id}
-              className="group mb-3 rounded-lg border border-gray-200 bg-white/60 p-3"
+            ))}
+            <button
+              onClick={addHobby}
+              className="flex items-center font-medium text-red-600 hover:text-red-700"
             >
-              <div className="flex items-center justify-between">
-                <div className="flex flex-1 gap-3">
-                  <input
-                    type="text"
-                    placeholder="Language"
-                    value={language.name}
-                    onChange={(e) => updateLanguage(language.id, 'name', e.target.value)}
-                    className="flex-1 focus:outline-none"
-                  />
-                  <select
-                    value={language.level}
-                    onChange={(e) => updateLanguage(language.id, 'level', e.target.value)}
-                    className="rounded-sm focus:outline-none border px-3 py-2"
-                  >
-                    <option value="Ogólny">Ogólny</option>
-                    <option value="Beginner">Beginner</option>
-                    <option value="Conversational">Conversational</option>
-                    <option value="Advanced">Advanced</option>
-                    <option value="Proficient">Proficient</option>
-                    <option value="Native speaker">Native speaker</option>
-                  </select>
-                </div>
-                <button
-                  onClick={() => removeLanguage(language.id)}
-                  className="ml-2 rounded p-2 text-red-500 opacity-0 transition-all group-hover:opacity-100 hover:bg-red-50 hover:text-red-700"
-                  title="Remove language"
-                >
-                  <Trash2 size={16} />
-                </button>
-              </div>
-            </div>
-          ))}
-          <button
-            onClick={addLanguage}
-            className="flex cursor-pointer items-center font-medium text-red-600 hover:text-red-700"
-          >
-            <span className="mr-2 text-xl">+</span>
-            Add language
-          </button>
-        </div>
-      );
-
-    case 'hobbies':
-      return (
-        <div
-          key="hobbies"
-          className={`mb-6 rounded-lg bg-gray-50 p-4 transition-all lg:p-6 ${
-            dragOverSection === 'hobbies' ? 'bg-blue-50 ring-2 ring-blue-400' : ''
-          } ${draggedSection === 'hobbies' ? 'opacity-50' : ''}`}
-          draggable
-          onDragStart={(e) => handleSectionDragStart(e, 'hobbies')}
-          onDragOver={(e) => handleSectionDragOver(e, 'hobbies')}
-          onDragLeave={handleSectionDragLeave}
-          onDrop={(e) => handleSectionDrop(e, 'hobbies')}
-          onDragEnd={handleSectionDragEnd}
-        >
-          <div className="mb-4 flex items-center justify-between">
-            <h2 className="flex items-center text-lg font-semibold text-gray-700">
-              <GripVertical className="mr-2 cursor-grab text-gray-400" size={20} />
-              <Tag className="mr-2" size={20} />
-              Hobby
-            </h2>
+              <span className="mr-2 text-xl">+</span>
+              Add hobby
+            </button>
           </div>
-          <p className="mb-4 text-sm text-gray-600">
-            Add your interests and extracurricular activities that reflect your personality.
-          </p>
-          {hobbies.map((hobby) => (
-            <div
-              key={hobby.id}
-              className="group mb-3 flex items-center rounded-lg border border-gray-200 bg-white p-3"
-            >
-              <input
-                type="text"
-                placeholder="e.g., Reading, Traveling, Cooking"
-                value={hobby.name}
-                onChange={(e) => updateHobby(hobby.id, 'name', e.target.value)}
-                className="flex-1 focus:outline-none"
-              />
-              <button
-                onClick={() => removeHobby(hobby.id)}
-                className="ml-2 rounded p-2 text-red-500 opacity-0 group-hover:opacity-100 hover:bg-red-50 hover:text-red-700"
-              >
-                <Trash2 size={16} />
-              </button>
-            </div>
-          ))}
-          <button
-            onClick={addHobby}
-            className="flex items-center font-medium text-red-600 hover:text-red-700"
-          >
-            <span className="mr-2 text-xl">+</span>
-            Add hobby
-          </button>
-        </div>
-      );
+        );
       case 'privacy':
-  return (
-    <div
-      key="privacy"
-      className={`mb-6 rounded-lg bg-gray-50 p-4 transition-all lg:p-6 ${
-        dragOverSection === 'privacy' ? 'bg-blue-50 ring-2 ring-blue-400' : ''
-      } ${draggedSection === 'privacy' ? 'opacity-50' : ''}`}
-      draggable
-      onDragStart={(e) => handleSectionDragStart(e, 'privacy')}
-      onDragOver={(e) => handleSectionDragOver(e, 'privacy')}
-      onDragLeave={handleSectionDragLeave}
-      onDrop={(e) => handleSectionDrop(e, 'privacy')}
-      onDragEnd={handleSectionDragEnd}
-    >
-      <div className="mb-4 flex items-center justify-between">
-        <h2 className="flex items-center text-lg font-semibold text-gray-700">
-          <GripVertical className="mr-2 cursor-grab text-gray-400" size={20} />
-          <PencilLine className="mr-2" size={20} />
-          Privacy Statement
-        </h2>
-      </div>
-      <p className="mb-4 text-sm text-gray-600">
-        Add your privacy statement or data processing consent information.
-      </p>
-      <textarea
-        placeholder="I agree to the processing of personal data provided in this document for the purposes of the recruitment process..."
-        value={privacyStatement.content}
-        onChange={(e) => setPrivacyStatement({ ...privacyStatement, content: e.target.value })}
-        rows={3}
-        className="w-full resize-none rounded-lg border border-gray-300 px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:outline-none"
-      />
-    </div>
-  );
+        return (
+          <div
+            key="privacy"
+            className={`mb-6 rounded-lg bg-gray-50 p-4 transition-all lg:p-6 ${
+              dragOverSection === 'privacy' ? 'bg-blue-50 ring-2 ring-blue-400' : ''
+            } ${draggedSection === 'privacy' ? 'opacity-50' : ''}`}
+            draggable
+            onDragStart={(e) => handleSectionDragStart(e, 'privacy')}
+            onDragOver={(e) => handleSectionDragOver(e, 'privacy')}
+            onDragLeave={handleSectionDragLeave}
+            onDrop={(e) => handleSectionDrop(e, 'privacy')}
+            onDragEnd={handleSectionDragEnd}
+          >
+            <div className="mb-4 flex items-center justify-between">
+              <h2 className="flex items-center text-lg font-semibold text-gray-700">
+                <GripVertical className="mr-2 cursor-grab text-gray-400" size={20} />
+                <PencilLine className="mr-2" size={20} />
+                Privacy Statement
+              </h2>
+            </div>
+            <p className="mb-4 text-sm text-gray-600">
+              Add your privacy statement or data processing consent information.
+            </p>
+            <textarea
+              placeholder="I agree to the processing of personal data provided in this document for the purposes of the recruitment process..."
+              value={privacyStatement.content}
+              onChange={(e) =>
+                setPrivacyStatement({ ...privacyStatement, content: e.target.value })
+              }
+              rows={3}
+              className="w-full resize-none rounded-lg border border-gray-300 px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:outline-none"
+            />
+          </div>
+        );
 
-    default:
-      return null;
-  }
-};
+      default:
+        return null;
+    }
+  };
 
   const renderSectionInPreview = (sectionId: string) => {
     switch (sectionId) {
       case 'profile':
-return (personalInfo.firstName || personalInfo.lastName || personalInfo.email || personalInfo.phone || personalInfo.address || personalInfo.profession || personalInfo.summary) ? (
+        return personalInfo.firstName ||
+          personalInfo.lastName ||
+          personalInfo.email ||
+          personalInfo.phone ||
+          personalInfo.address ||
+          personalInfo.profession ||
+          personalInfo.summary ? (
           <div className="mb-5" key="profile">
             <h3 className="mb-2 border-b border-gray-300 pb-1 text-lg font-semibold text-gray-800">
               Personal Profile
@@ -861,16 +936,16 @@ return (personalInfo.firstName || personalInfo.lastName || personalInfo.email ||
             </div>
           </div>
         ) : null;
-        
-        case 'privacy':
-  return privacyStatement.content ? (
-    <div className="mb-5" key="privacy">
-      <h3 className="mb-2 border-b border-gray-300 pb-1 text-lg font-semibold text-gray-800">
-        Privacy Statement
-      </h3>
-      <p className="text-xs leading-relaxed text-gray-700">{privacyStatement.content}</p>
-    </div>
-  ) : null;
+
+      case 'privacy':
+        return privacyStatement.content ? (
+          <div className="mb-5" key="privacy">
+            <h3 className="mb-2 border-b border-gray-300 pb-1 text-lg font-semibold text-gray-800">
+              Privacy Statement
+            </h3>
+            <p className="text-xs leading-relaxed text-gray-700">{privacyStatement.content}</p>
+          </div>
+        ) : null;
 
       default:
         return null;
@@ -899,8 +974,8 @@ return (personalInfo.firstName || personalInfo.lastName || personalInfo.email ||
         >
           <Home size={24} className="text-gray-600" />
         </button>
-        <div className='w-12 h-12 bg-gray-200/40 rounded-sm flex items-center justify-center'>
-            <span>v1.0</span>
+        <div className="flex h-12 w-12 items-center justify-center rounded-sm bg-gray-200/40">
+          <span>v1.0</span>
         </div>
       </div>
 
@@ -1020,7 +1095,6 @@ return (personalInfo.firstName || personalInfo.lastName || personalInfo.email ||
             </div>
 
             {sectionOrder.map((sectionId) => renderSectionInForm(sectionId))}
-
           </div>
         </div>
 
@@ -1032,29 +1106,29 @@ return (personalInfo.firstName || personalInfo.lastName || personalInfo.email ||
             <div className="flex items-center space-x-2">
               <button
                 onClick={handleZoomOut}
-                className="rounded p-2 transition-colors hover:bg-gray-100 cursor-pointer"
+                className="cursor-pointer rounded p-2 transition-colors hover:bg-gray-100"
                 title="Pomniejsz"
               >
                 <ZoomOut size={18} />
               </button>
-              <span className="min-w-12 text-center text-sm text-gray-600 cursor-none">
+              <span className="min-w-12 cursor-none text-center text-sm text-gray-600">
                 {Math.round(cvScale * 100)}%
               </span>
               <button
                 onClick={handleZoomIn}
-                className="rounded p-2 transition-colors hover:bg-gray-100 cursor-pointer"
+                className="cursor-pointer rounded p-2 transition-colors hover:bg-gray-100"
                 title="Powiększ"
               >
                 <ZoomIn size={18} />
               </button>
               <button
                 onClick={resetView}
-                className="rounded p-2 text-sm transition-colors hover:bg-gray-100 cursor-pointer"
+                className="cursor-pointer rounded p-2 text-sm transition-colors hover:bg-gray-100"
                 title="Resetuj widok"
               >
                 Reset
               </button>
-              <div className="flex items-center text-sm text-gray-500 cursor-none">
+              <div className="flex cursor-none items-center text-sm text-gray-500">
                 <Move size={16} className="mr-1" />
                 Drag and move
               </div>
@@ -1122,7 +1196,6 @@ return (personalInfo.firstName || personalInfo.lastName || personalInfo.email ||
                   </div>
 
                   {sectionOrder.map((sectionId) => renderSectionInPreview(sectionId))}
-
 
                   {/* Empty state message */}
                   {!personalInfo.firstName &&
