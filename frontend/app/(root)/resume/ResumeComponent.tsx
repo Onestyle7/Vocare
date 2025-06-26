@@ -120,6 +120,9 @@ const CVCreator: React.FC = () => {
   const [draggedSection, setDraggedSection] = useState<string | null>(null);
   const [dragOverSection, setDragOverSection] = useState<string | null>(null);
 
+  const [isHovered, setIsHovered] = useState(false);
+
+
   useEffect(() => {
   checkContentOverflow();
 }, [experiences, education, skills, languages, hobbies, personalInfo, privacyStatement]);
@@ -1012,7 +1015,7 @@ const goToPage = (page) => {
           <Home size={24} className="text-gray-600" />
         </button>
         <div className="flex h-12 w-12 items-center justify-center rounded-sm bg-gray-200/40">
-          <span>v1.0</span>
+          <span className='font-poppins'>v1.0</span>
         </div>
       </div>
 
@@ -1177,8 +1180,13 @@ const goToPage = (page) => {
   className="relative flex-1 overflow-hidden bg-gray-100/20"
   onMouseMove={handleMouseMove}
   onMouseUp={handleMouseUp}
-  onMouseLeave={handleMouseUp}
+  onMouseLeave={() => {
+    handleMouseUp();
+    setIsHovered(false);
+  }}
+  onMouseEnter={() => setIsHovered(true)}
 >
+
   <div
     className={`absolute inset-0 flex items-center justify-center ${isDragging ? 'cursor-grabbing' : 'cursor-grab'}`}
     style={{
@@ -1261,44 +1269,57 @@ const goToPage = (page) => {
 
   {/* Pagination Controls - dodaj na dole kontenera */}
   {totalPages > 1 && (
-    <div className="absolute bottom-4 left-1/2 transform -translate-x-1/2 flex items-center space-x-2 bg-white rounded-lg shadow-lg px-4 py-2">
-      <button
-        onClick={goToPrevPage}
-        disabled={currentPage === 1}
-        className={`p-2 rounded ${currentPage === 1 ? 'text-gray-400 cursor-not-allowed' : 'text-gray-700 hover:bg-gray-100 cursor-pointer'}`}
-      >
-        <ChevronLeft size={16} />
-      </button>
-      
-      <div className="flex space-x-1">
-        {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (
-          <button
-            key={page}
-            onClick={() => goToPage(page)}
-            className={`w-8 h-8 rounded text-sm font-medium cursor-pointer ${
-              currentPage === page
-                ? 'bg-blue-500 text-white'
-                : 'text-gray-700 hover:bg-gray-100'
-            }`}
-          >
-            {page}
-          </button>
-        ))}
-      </div>
-      
-      <button
-        onClick={goToNextPage}
-        disabled={currentPage === totalPages}
-        className={`p-2 rounded ${currentPage === totalPages ? 'text-gray-400 cursor-not-allowed' : 'text-gray-700 hover:bg-gray-100 cursor-pointer'}`}
-      >
-        <ChevronRight size={16} />
-      </button>
-      
-      <span className="text-sm text-gray-600 ml-2">
-        {currentPage} / {totalPages}
-      </span>
+  <div
+    className={`absolute bottom-5 left-1/2 transform -translate-x-1/2 transition-all duration-500 ${
+      isHovered ? 'translate-y-0 opacity-100' : 'translate-y-16 opacity-0 pointer-events-none'
+    } flex items-center space-x-2 bg-white rounded-lg shadow-lg px-4 py-2`}
+  >
+    <button
+      onClick={goToPrevPage}
+      disabled={currentPage === 1}
+      className={`p-2 rounded ${
+        currentPage === 1
+          ? 'text-gray-400 cursor-not-allowed'
+          : 'text-gray-700 hover:bg-gray-100 cursor-pointer'
+      }`}
+    >
+      <ChevronLeft size={16} />
+    </button>
+
+    <div className="flex space-x-1">
+      {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (
+        <button
+          key={page}
+          onClick={() => goToPage(page)}
+          className={`w-8 h-8 rounded text-sm font-medium cursor-pointer ${
+            currentPage === page
+              ? 'bg-blue-500 text-white'
+              : 'text-gray-700 hover:bg-gray-100'
+          }`}
+        >
+          {page}
+        </button>
+      ))}
     </div>
-  )}
+
+    <button
+      onClick={goToNextPage}
+      disabled={currentPage === totalPages}
+      className={`p-2 rounded ${
+        currentPage === totalPages
+          ? 'text-gray-400 cursor-not-allowed'
+          : 'text-gray-700 hover:bg-gray-100 cursor-pointer'
+      }`}
+    >
+      <ChevronRight size={16} />
+    </button>
+
+    <span className="text-sm text-gray-600 ml-2">
+      {currentPage} / {totalPages}
+    </span>
+  </div>
+)}
+
 </div>
         </div>
       </div>
