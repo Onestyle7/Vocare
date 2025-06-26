@@ -816,7 +816,7 @@ const CVCreator: React.FC = () => {
             <h3 className="mb-2 border-b border-gray-300 pb-1 text-lg font-semibold text-gray-800">
               Personal Profile
             </h3>
-            <p className="text-sm leading-relaxed text-gray-700">{personalInfo.summary}</p>
+            <p className="text-sm leading-relaxed break-words text-gray-700">{personalInfo.summary}</p>
           </div>
         ) : null;
 
@@ -982,7 +982,7 @@ const CVCreator: React.FC = () => {
       {/* Main Content */}
       <div className="flex h-full flex-1 flex-col gap-3 overflow-hidden px-3 lg:flex-row lg:px-0">
         {/* Left Panel - Form Inputs */}
-        <div className="h-full overflow-y-auto rounded-lg bg-white shadow-lg lg:w-1/2">
+        <div className="h-full overflow-y-auto rounded-lg bg-white shadow-lg lg:w-1/2">        
           <div className="max-h-full overflow-y-auto p-4 lg:p-6">
             <div className="mb-6 flex flex-col items-start justify-between gap-4 sm:flex-row sm:items-center">
               <h1 className="text-xl font-bold text-gray-800 lg:text-2xl">Resume creator</h1>
