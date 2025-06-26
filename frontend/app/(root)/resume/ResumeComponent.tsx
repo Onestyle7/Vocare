@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   User,
   Mail,
@@ -18,6 +18,8 @@ import {
   PencilLine,
   StarsIcon,
   MessageCircleQuestion,
+  ChevronRight,
+  ChevronLeft,
 } from 'lucide-react';
 import { DatePickerWithCurrent } from './DatePickerWithCurrent';
 import { HoverCard, HoverCardContent, HoverCardTrigger } from '@/components/ui/hover-card';
@@ -85,6 +87,9 @@ const CVCreator: React.FC = () => {
 
   const [isPremium] = useState(false);
 
+  const [currentPage, setCurrentPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
+
   const [experiences, setExperiences] = useState<Experience[]>([]);
   const [education, setEducation] = useState<Education[]>([]);
   const [skills, setSkills] = useState<Skill[]>([]);
@@ -114,6 +119,10 @@ const CVCreator: React.FC = () => {
   ]);
   const [draggedSection, setDraggedSection] = useState<string | null>(null);
   const [dragOverSection, setDragOverSection] = useState<string | null>(null);
+
+  useEffect(() => {
+  checkContentOverflow();
+}, [experiences, education, skills, languages, hobbies, personalInfo, privacyStatement]);
 
   const addLanguage = () => {
     const newLanguage: Language = {
@@ -288,6 +297,34 @@ const CVCreator: React.FC = () => {
     setCvScale(0.8);
     setCvPosition({ x: 0, y: 0 });
   };
+
+  const checkContentOverflow = () => {
+  const cvElement = document.querySelector('.cv-content');
+  if (cvElement) {
+    const contentHeight = cvElement.scrollHeight;
+    const pageHeight = 297 * 2.83; // A4 height in pixels (297mm * 2.83 pixels/mm)
+    const newTotalPages = Math.ceil(contentHeight / pageHeight);
+    setTotalPages(newTotalPages);
+  }
+};
+
+const goToNextPage = () => {
+  if (currentPage < totalPages) {
+    setCurrentPage(currentPage + 1);
+  }
+};
+
+const goToPrevPage = () => {
+  if (currentPage > 1) {
+    setCurrentPage(currentPage - 1);
+  }
+};
+
+const goToPage = (page) => {
+  if (page >= 1 && page <= totalPages) {
+    setCurrentPage(page);
+  }
+};
 
   const renderSectionInForm = (sectionId: string) => {
     switch (sectionId) {
@@ -1137,83 +1174,132 @@ const CVCreator: React.FC = () => {
 
           {/* CV Preview Container */}
           <div
-            className="relative flex-1 overflow-hidden bg-gray-100/20"
-            onMouseMove={handleMouseMove}
-            onMouseUp={handleMouseUp}
-            onMouseLeave={handleMouseUp}
-          >
-            <div
-              className={`absolute inset-0 flex items-center justify-center ${isDragging ? 'cursor-grabbing' : 'cursor-grab'}`}
-              style={{
-                transform: `translate(${cvPosition.x}px, ${cvPosition.y}px)`,
-              }}
-              onMouseDown={handleMouseDown}
-            >
-              {/* A4 Paper with exact dimensions */}
-              <div
-                className="rounded-sm bg-white shadow-md"
-                style={{
-                  width: `${210 * cvScale}mm`,
-                  height: `${297 * cvScale}mm`,
-                  transform: `scale(${cvScale})`,
-                  transformOrigin: 'center center',
-                  fontSize: `${cvScale * 16}px`,
-                }}
-              >
-                <div className="h-full overflow-hidden p-8">
-                  {/* Header Section */}
-                  <div className="mb-6">
-                    <h1 className="mb-2 text-3xl leading-tight font-bold text-gray-900">
-                      {personalInfo.firstName || personalInfo.lastName
-                        ? `${personalInfo.firstName} ${personalInfo.lastName}`.trim()
-                        : 'Joe Doe'}
-                    </h1>
-                    {personalInfo.profession && (
-                      <h2 className="mb-4 text-xl text-gray-600">{personalInfo.profession}</h2>
-                    )}
+  className="relative flex-1 overflow-hidden bg-gray-100/20"
+  onMouseMove={handleMouseMove}
+  onMouseUp={handleMouseUp}
+  onMouseLeave={handleMouseUp}
+>
+  <div
+    className={`absolute inset-0 flex items-center justify-center ${isDragging ? 'cursor-grabbing' : 'cursor-grab'}`}
+    style={{
+      transform: `translate(${cvPosition.x}px, ${cvPosition.y}px)`,
+    }}
+    onMouseDown={handleMouseDown}
+  >
+    {/* A4 Paper with exact dimensions */}
+<div
+  className="rounded-sm bg-white shadow-md cv-content"
+  style={{
+    width: '210mm',
+    height: '297mm',
+    transform: `scale(${cvScale})`,
+    transformOrigin: 'center center',
+    overflow: 'hidden',
+  }}
+>
+      <div 
+        className="h-full p-8 transition-transform duration-300 ease-in-out"
+        style={{
+          transform: `translateY(-${(currentPage - 1) * 100}%)`,
+        }}
+      >
+        {/* Header Section - pokazuj tylko na pierwszej stronie */}
+        {currentPage === 1 && (
+          <div className="mb-6">
+            <h1 className="mb-2 text-3xl leading-tight font-bold text-gray-900">
+              {personalInfo.firstName || personalInfo.lastName
+                ? `${personalInfo.firstName} ${personalInfo.lastName}`.trim()
+                : 'Joe Doe'}
+            </h1>
+            {personalInfo.profession && (
+              <h2 className="mb-4 text-xl text-gray-600">{personalInfo.profession}</h2>
+            )}
 
-                    {/* Contact Information */}
-                    <div className="flex flex-wrap gap-4 text-sm text-gray-600">
-                      {personalInfo.email && (
-                        <div className="flex items-center">
-                          <Mail size={14} className="mr-2 flex-shrink-0" />
-                          <span className="break-all">{personalInfo.email}</span>
-                        </div>
-                      )}
-                      {personalInfo.phone && (
-                        <div className="flex items-center">
-                          <Phone size={14} className="mr-2 flex-shrink-0" />
-                          {personalInfo.phone}
-                        </div>
-                      )}
-                      {personalInfo.address && (
-                        <div className="flex items-center">
-                          <MapPin size={14} className="mr-2 flex-shrink-0" />
-                          {personalInfo.address}
-                        </div>
-                      )}
-                    </div>
-                  </div>
-
-                  {sectionOrder.map((sectionId) => renderSectionInPreview(sectionId))}
-
-                  {/* Empty state message */}
-                  {!personalInfo.firstName &&
-                    !personalInfo.lastName &&
-                    !personalInfo.email &&
-                    experiences.length === 0 &&
-                    skills.length === 0 &&
-                    education.length === 0 && (
-                      <div className="mt-20 text-center text-gray-500">
-                        <p className="text-lg">
-                          Start filling the form on the left to create your CV.
-                        </p>
-                      </div>
-                    )}
+            {/* Contact Information */}
+            <div className="flex flex-wrap gap-4 text-sm text-gray-600">
+              {personalInfo.email && (
+                <div className="flex items-center">
+                  <Mail size={14} className="mr-2 flex-shrink-0" />
+                  <span className="break-all">{personalInfo.email}</span>
                 </div>
-              </div>
+              )}
+              {personalInfo.phone && (
+                <div className="flex items-center">
+                  <Phone size={14} className="mr-2 flex-shrink-0" />
+                  {personalInfo.phone}
+                </div>
+              )}
+              {personalInfo.address && (
+                <div className="flex items-center">
+                  <MapPin size={14} className="mr-2 flex-shrink-0" />
+                  {personalInfo.address}
+                </div>
+              )}
             </div>
           </div>
+        )}
+
+        {sectionOrder.map((sectionId) => renderSectionInPreview(sectionId))}
+
+        {/* Empty state message */}
+        {!personalInfo.firstName &&
+          !personalInfo.lastName &&
+          !personalInfo.email &&
+          experiences.length === 0 &&
+          skills.length === 0 &&
+          education.length === 0 &&
+          currentPage === 1 && (
+            <div className="mt-20 text-center text-gray-500">
+              <p className="text-lg">
+                Start filling the form on the left to create your CV.
+              </p>
+            </div>
+          )}
+      </div>
+    </div>
+  </div>
+
+  {/* Pagination Controls - dodaj na dole kontenera */}
+  {totalPages > 1 && (
+    <div className="absolute bottom-4 left-1/2 transform -translate-x-1/2 flex items-center space-x-2 bg-white rounded-lg shadow-lg px-4 py-2">
+      <button
+        onClick={goToPrevPage}
+        disabled={currentPage === 1}
+        className={`p-2 rounded ${currentPage === 1 ? 'text-gray-400 cursor-not-allowed' : 'text-gray-700 hover:bg-gray-100 cursor-pointer'}`}
+      >
+        <ChevronLeft size={16} />
+      </button>
+      
+      <div className="flex space-x-1">
+        {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (
+          <button
+            key={page}
+            onClick={() => goToPage(page)}
+            className={`w-8 h-8 rounded text-sm font-medium cursor-pointer ${
+              currentPage === page
+                ? 'bg-blue-500 text-white'
+                : 'text-gray-700 hover:bg-gray-100'
+            }`}
+          >
+            {page}
+          </button>
+        ))}
+      </div>
+      
+      <button
+        onClick={goToNextPage}
+        disabled={currentPage === totalPages}
+        className={`p-2 rounded ${currentPage === totalPages ? 'text-gray-400 cursor-not-allowed' : 'text-gray-700 hover:bg-gray-100 cursor-pointer'}`}
+      >
+        <ChevronRight size={16} />
+      </button>
+      
+      <span className="text-sm text-gray-600 ml-2">
+        {currentPage} / {totalPages}
+      </span>
+    </div>
+  )}
+</div>
         </div>
       </div>
     </div>
