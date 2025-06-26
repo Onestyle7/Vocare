@@ -323,22 +323,21 @@ export default function ProfileForm({
     }
   };
 
-return (
-  <div className="relative mx-2 h-[620px] max-w-2xl overflow-y-auto rounded-xl border bg-[#f3f3f3] p-0 max-sm:mt-2 sm:mx-auto lg:mt-10 dark:bg-[#0e100f]">
-  <div className="relative z-30">
-    {/* Sticky StepProgress */}
-    <div className="sticky top-0 z-40">
-      <div className="px-6 pt-6 pb-2 bg-[#f3f3f3] dark:bg-[#0e100f]">
-        <StepProgress currentStep={currentStep} totalSteps={totalSteps} />
+  return (
+    <div className="relative mx-2 h-[620px] max-w-2xl overflow-y-auto rounded-xl border bg-[#f3f3f3] p-0 max-sm:mt-2 sm:mx-auto lg:mt-10 dark:bg-[#0e100f]">
+      <div className="relative z-30">
+        {/* Sticky StepProgress */}
+        <div className="sticky top-0 z-40">
+          <div className="bg-[#f3f3f3] px-6 pt-6 pb-2 dark:bg-[#0e100f]">
+            <StepProgress currentStep={currentStep} totalSteps={totalSteps} />
+          </div>
+        </div>
+
+        {/* Form content */}
+        <div className="px-6 pb-6">
+          <Form {...form}>{renderStep()}</Form>
+        </div>
       </div>
     </div>
-
-    {/* Form content */}
-    <div className="px-6 pb-6">
-      <Form {...form}>{renderStep()}</Form>
-    </div>
-  </div>
-</div>
-
-);
+  );
 }

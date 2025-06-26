@@ -122,10 +122,9 @@ const CVCreator: React.FC = () => {
 
   const [isHovered, setIsHovered] = useState(false);
 
-
   useEffect(() => {
-  checkContentOverflow();
-}, [experiences, education, skills, languages, hobbies, personalInfo, privacyStatement]);
+    checkContentOverflow();
+  }, [experiences, education, skills, languages, hobbies, personalInfo, privacyStatement]);
 
   const addLanguage = () => {
     const newLanguage: Language = {
@@ -302,32 +301,32 @@ const CVCreator: React.FC = () => {
   };
 
   const checkContentOverflow = () => {
-  const cvElement = document.querySelector('.cv-content');
-  if (cvElement) {
-    const contentHeight = cvElement.scrollHeight;
-    const pageHeight = 297 * 2.83; // A4 height in pixels (297mm * 2.83 pixels/mm)
-    const newTotalPages = Math.ceil(contentHeight / pageHeight);
-    setTotalPages(newTotalPages);
-  }
-};
+    const cvElement = document.querySelector('.cv-content');
+    if (cvElement) {
+      const contentHeight = cvElement.scrollHeight;
+      const pageHeight = 297 * 2.83; // A4 height in pixels (297mm * 2.83 pixels/mm)
+      const newTotalPages = Math.ceil(contentHeight / pageHeight);
+      setTotalPages(newTotalPages);
+    }
+  };
 
-const goToNextPage = () => {
-  if (currentPage < totalPages) {
-    setCurrentPage(currentPage + 1);
-  }
-};
+  const goToNextPage = () => {
+    if (currentPage < totalPages) {
+      setCurrentPage(currentPage + 1);
+    }
+  };
 
-const goToPrevPage = () => {
-  if (currentPage > 1) {
-    setCurrentPage(currentPage - 1);
-  }
-};
+  const goToPrevPage = () => {
+    if (currentPage > 1) {
+      setCurrentPage(currentPage - 1);
+    }
+  };
 
-const goToPage = (page) => {
-  if (page >= 1 && page <= totalPages) {
-    setCurrentPage(page);
-  }
-};
+  const goToPage = (page) => {
+    if (page >= 1 && page <= totalPages) {
+      setCurrentPage(page);
+    }
+  };
 
   const renderSectionInForm = (sectionId: string) => {
     switch (sectionId) {
@@ -364,34 +363,32 @@ const goToPage = (page) => {
               className="w-full resize-none rounded-lg border border-gray-300 px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:outline-none"
             />
             <div className="flex w-full items-center justify-end space-x-2">
-                      <HoverCard>
-                        <HoverCardTrigger asChild>
-                          <button className="flex h-10 w-10 cursor-pointer items-center justify-center rounded-sm bg-gray-100">
-                            <MessageCircleQuestion className="text-gray-400" size={20} />
-                          </button>
-                        </HoverCardTrigger>
-                        <HoverCardContent className="font-poppins w-80">
-                          <div className="flex justify-between gap-4">
-                            <div className="space-y-1">
-                              <h4 className="text-sm font-semibold">Will it acutally help me?</h4>
-                              <p className="text-sm">
-                                It&apos;ll surely do. Our AI models are trained specifically to match
-                                requirements of the algorithms used by recruiters.
-                              </p>
-                              <div className="text-muted-foreground text-xs">
-                                Confirmed by 1000+ users.
-                              </div>
-                            </div>
-                          </div>
-                        </HoverCardContent>
-                      </HoverCard>
-                      <button
-                        className={`flex flex-row items-center justify-center rounded-sm border bg-red-500 px-3 py-2 text-sm text-white transition-all hover:bg-red-500/90 focus:outline-none ${isPremium ? 'cursor-pointer' : 'cursor-not-allowed opacity-50'}`}
-                      >
-                        <span className="text-sm text-white">Achieve more with AI</span>
-                        <StarsIcon className="ml-2 scale-70" />
-                      </button>
+              <HoverCard>
+                <HoverCardTrigger asChild>
+                  <button className="flex h-10 w-10 cursor-pointer items-center justify-center rounded-sm bg-gray-100">
+                    <MessageCircleQuestion className="text-gray-400" size={20} />
+                  </button>
+                </HoverCardTrigger>
+                <HoverCardContent className="font-poppins w-80">
+                  <div className="flex justify-between gap-4">
+                    <div className="space-y-1">
+                      <h4 className="text-sm font-semibold">Will it acutally help me?</h4>
+                      <p className="text-sm">
+                        It&apos;ll surely do. Our AI models are trained specifically to match
+                        requirements of the algorithms used by recruiters.
+                      </p>
+                      <div className="text-muted-foreground text-xs">Confirmed by 1000+ users.</div>
                     </div>
+                  </div>
+                </HoverCardContent>
+              </HoverCard>
+              <button
+                className={`flex flex-row items-center justify-center rounded-sm border bg-red-500 px-3 py-2 text-sm text-white transition-all hover:bg-red-500/90 focus:outline-none ${isPremium ? 'cursor-pointer' : 'cursor-not-allowed opacity-50'}`}
+              >
+                <span className="text-sm text-white">Achieve more with AI</span>
+                <StarsIcon className="ml-2 scale-70" />
+              </button>
+            </div>
           </div>
         );
 
@@ -476,12 +473,12 @@ const goToPage = (page) => {
                     />
                     <div className="flex w-full items-center justify-end space-x-2">
                       <button
-                    onClick={() => removeExperience(exp.id)}
-                    className="ml-2 rounded p-2 text-red-500 opacity-0 transition-all group-hover:opacity-100 hover:bg-red-50 hover:text-red-700 w-10 h-10 flex items-center justify-center cursor-pointer"
-                    title="remove Work experience"
-                  >
-                    <Trash2 size={16} />
-                  </button>
+                        onClick={() => removeExperience(exp.id)}
+                        className="ml-2 flex h-10 w-10 cursor-pointer items-center justify-center rounded p-2 text-red-500 opacity-0 transition-all group-hover:opacity-100 hover:bg-red-50 hover:text-red-700"
+                        title="remove Work experience"
+                      >
+                        <Trash2 size={16} />
+                      </button>
                       <HoverCard>
                         <HoverCardTrigger asChild>
                           <button className="flex h-10 w-10 cursor-pointer items-center justify-center rounded-sm bg-gray-100">
@@ -493,8 +490,8 @@ const goToPage = (page) => {
                             <div className="space-y-1">
                               <h4 className="text-sm font-semibold">Will it acutally help me?</h4>
                               <p className="text-sm">
-                                It&apos;ll surely do. Our AI models are trained specifically to match
-                                requirements of the algorithms used by recruiters.
+                                It&apos;ll surely do. Our AI models are trained specifically to
+                                match requirements of the algorithms used by recruiters.
                               </p>
                               <div className="text-muted-foreground text-xs">
                                 Confirmed by 1000+ users.
@@ -602,7 +599,7 @@ const goToPage = (page) => {
                   </div>
                   <button
                     onClick={() => removeEducation(edu.id)}
-                    className="ml-2 rounded p-2 text-red-500 opacity-0 transition-all group-hover:opacity-100 hover:bg-red-50 hover:text-red-700 w-10 h-10 flex items-center justify-center cursor-pointer"
+                    className="ml-2 flex h-10 w-10 cursor-pointer items-center justify-center rounded p-2 text-red-500 opacity-0 transition-all group-hover:opacity-100 hover:bg-red-50 hover:text-red-700"
                     title="Remove education"
                   >
                     <Trash2 size={16} />
@@ -856,7 +853,9 @@ const goToPage = (page) => {
             <h3 className="mb-2 border-b border-gray-300 pb-1 text-lg font-semibold text-gray-800">
               Personal Profile
             </h3>
-            <p className="text-sm leading-relaxed break-words text-gray-700">{personalInfo.summary}</p>
+            <p className="text-sm leading-relaxed break-words text-gray-700">
+              {personalInfo.summary}
+            </p>
           </div>
         ) : null;
 
@@ -1015,14 +1014,14 @@ const goToPage = (page) => {
           <Home size={24} className="text-gray-600" />
         </button>
         <div className="flex h-12 w-12 items-center justify-center rounded-sm bg-gray-200/40">
-          <span className='font-poppins'>v1.0</span>
+          <span className="font-poppins">v1.0</span>
         </div>
       </div>
 
       {/* Main Content */}
       <div className="flex h-full flex-1 flex-col gap-3 overflow-hidden px-3 lg:flex-row lg:px-0">
         {/* Left Panel - Form Inputs */}
-        <div className="h-full overflow-y-auto rounded-lg bg-white shadow-lg lg:w-1/2">        
+        <div className="h-full overflow-y-auto rounded-lg bg-white shadow-lg lg:w-1/2">
           <div className="max-h-full overflow-y-auto p-4 lg:p-6">
             <div className="mb-6 flex flex-col items-start justify-between gap-4 sm:flex-row sm:items-center">
               <h1 className="text-xl font-bold text-gray-800 lg:text-2xl">Resume creator</h1>
@@ -1177,150 +1176,150 @@ const goToPage = (page) => {
 
           {/* CV Preview Container */}
           <div
-  className="relative flex-1 overflow-hidden bg-gray-100/20"
-  onMouseMove={handleMouseMove}
-  onMouseUp={handleMouseUp}
-  onMouseLeave={() => {
-    handleMouseUp();
-    setIsHovered(false);
-  }}
-  onMouseEnter={() => setIsHovered(true)}
->
+            className="relative flex-1 overflow-hidden bg-gray-100/20"
+            onMouseMove={handleMouseMove}
+            onMouseUp={handleMouseUp}
+            onMouseLeave={() => {
+              handleMouseUp();
+              setIsHovered(false);
+            }}
+            onMouseEnter={() => setIsHovered(true)}
+          >
+            <div
+              className={`absolute inset-0 flex items-center justify-center ${isDragging ? 'cursor-grabbing' : 'cursor-grab'}`}
+              style={{
+                transform: `translate(${cvPosition.x}px, ${cvPosition.y}px)`,
+              }}
+              onMouseDown={handleMouseDown}
+            >
+              {/* A4 Paper with exact dimensions */}
+              <div
+                className="cv-content rounded-sm bg-white shadow-md"
+                style={{
+                  width: '210mm',
+                  height: '297mm',
+                  transform: `scale(${cvScale})`,
+                  transformOrigin: 'center center',
+                  overflow: 'hidden',
+                }}
+              >
+                <div
+                  className="h-full p-8 transition-transform duration-300 ease-in-out"
+                  style={{
+                    transform: `translateY(-${(currentPage - 1) * 100}%)`,
+                  }}
+                >
+                  {/* Header Section - pokazuj tylko na pierwszej stronie */}
+                  {currentPage === 1 && (
+                    <div className="mb-6">
+                      <h1 className="mb-2 text-3xl leading-tight font-bold text-gray-900">
+                        {personalInfo.firstName || personalInfo.lastName
+                          ? `${personalInfo.firstName} ${personalInfo.lastName}`.trim()
+                          : 'Joe Doe'}
+                      </h1>
+                      {personalInfo.profession && (
+                        <h2 className="mb-4 text-xl text-gray-600">{personalInfo.profession}</h2>
+                      )}
 
-  <div
-    className={`absolute inset-0 flex items-center justify-center ${isDragging ? 'cursor-grabbing' : 'cursor-grab'}`}
-    style={{
-      transform: `translate(${cvPosition.x}px, ${cvPosition.y}px)`,
-    }}
-    onMouseDown={handleMouseDown}
-  >
-    {/* A4 Paper with exact dimensions */}
-<div
-  className="rounded-sm bg-white shadow-md cv-content"
-  style={{
-    width: '210mm',
-    height: '297mm',
-    transform: `scale(${cvScale})`,
-    transformOrigin: 'center center',
-    overflow: 'hidden',
-  }}
->
-      <div 
-        className="h-full p-8 transition-transform duration-300 ease-in-out"
-        style={{
-          transform: `translateY(-${(currentPage - 1) * 100}%)`,
-        }}
-      >
-        {/* Header Section - pokazuj tylko na pierwszej stronie */}
-        {currentPage === 1 && (
-          <div className="mb-6">
-            <h1 className="mb-2 text-3xl leading-tight font-bold text-gray-900">
-              {personalInfo.firstName || personalInfo.lastName
-                ? `${personalInfo.firstName} ${personalInfo.lastName}`.trim()
-                : 'Joe Doe'}
-            </h1>
-            {personalInfo.profession && (
-              <h2 className="mb-4 text-xl text-gray-600">{personalInfo.profession}</h2>
+                      {/* Contact Information */}
+                      <div className="flex flex-wrap gap-4 text-sm text-gray-600">
+                        {personalInfo.email && (
+                          <div className="flex items-center">
+                            <Mail size={14} className="mr-2 flex-shrink-0" />
+                            <span className="break-all">{personalInfo.email}</span>
+                          </div>
+                        )}
+                        {personalInfo.phone && (
+                          <div className="flex items-center">
+                            <Phone size={14} className="mr-2 flex-shrink-0" />
+                            {personalInfo.phone}
+                          </div>
+                        )}
+                        {personalInfo.address && (
+                          <div className="flex items-center">
+                            <MapPin size={14} className="mr-2 flex-shrink-0" />
+                            {personalInfo.address}
+                          </div>
+                        )}
+                      </div>
+                    </div>
+                  )}
+
+                  {sectionOrder.map((sectionId) => renderSectionInPreview(sectionId))}
+
+                  {/* Empty state message */}
+                  {!personalInfo.firstName &&
+                    !personalInfo.lastName &&
+                    !personalInfo.email &&
+                    experiences.length === 0 &&
+                    skills.length === 0 &&
+                    education.length === 0 &&
+                    currentPage === 1 && (
+                      <div className="mt-20 text-center text-gray-500">
+                        <p className="text-lg">
+                          Start filling the form on the left to create your CV.
+                        </p>
+                      </div>
+                    )}
+                </div>
+              </div>
+            </div>
+
+            {/* Pagination Controls - dodaj na dole kontenera */}
+            {totalPages > 1 && (
+              <div
+                className={`absolute bottom-5 left-1/2 -translate-x-1/2 transform transition-all duration-500 ${
+                  isHovered
+                    ? 'translate-y-0 opacity-100'
+                    : 'pointer-events-none translate-y-16 opacity-0'
+                } flex items-center space-x-2 rounded-lg bg-white px-4 py-2 shadow-lg`}
+              >
+                <button
+                  onClick={goToPrevPage}
+                  disabled={currentPage === 1}
+                  className={`rounded p-2 ${
+                    currentPage === 1
+                      ? 'cursor-not-allowed text-gray-400'
+                      : 'cursor-pointer text-gray-700 hover:bg-gray-100'
+                  }`}
+                >
+                  <ChevronLeft size={16} />
+                </button>
+
+                <div className="flex space-x-1">
+                  {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (
+                    <button
+                      key={page}
+                      onClick={() => goToPage(page)}
+                      className={`h-8 w-8 cursor-pointer rounded text-sm font-medium ${
+                        currentPage === page
+                          ? 'bg-red-500 text-white'
+                          : 'text-gray-700 hover:bg-gray-100'
+                      }`}
+                    >
+                      {page}
+                    </button>
+                  ))}
+                </div>
+
+                <button
+                  onClick={goToNextPage}
+                  disabled={currentPage === totalPages}
+                  className={`rounded p-2 ${
+                    currentPage === totalPages
+                      ? 'cursor-not-allowed text-gray-400'
+                      : 'cursor-pointer text-gray-700 hover:bg-gray-100'
+                  }`}
+                >
+                  <ChevronRight size={16} />
+                </button>
+
+                <span className="ml-2 text-sm text-gray-600">
+                  {currentPage} / {totalPages}
+                </span>
+              </div>
             )}
-
-            {/* Contact Information */}
-            <div className="flex flex-wrap gap-4 text-sm text-gray-600">
-              {personalInfo.email && (
-                <div className="flex items-center">
-                  <Mail size={14} className="mr-2 flex-shrink-0" />
-                  <span className="break-all">{personalInfo.email}</span>
-                </div>
-              )}
-              {personalInfo.phone && (
-                <div className="flex items-center">
-                  <Phone size={14} className="mr-2 flex-shrink-0" />
-                  {personalInfo.phone}
-                </div>
-              )}
-              {personalInfo.address && (
-                <div className="flex items-center">
-                  <MapPin size={14} className="mr-2 flex-shrink-0" />
-                  {personalInfo.address}
-                </div>
-              )}
-            </div>
           </div>
-        )}
-
-        {sectionOrder.map((sectionId) => renderSectionInPreview(sectionId))}
-
-        {/* Empty state message */}
-        {!personalInfo.firstName &&
-          !personalInfo.lastName &&
-          !personalInfo.email &&
-          experiences.length === 0 &&
-          skills.length === 0 &&
-          education.length === 0 &&
-          currentPage === 1 && (
-            <div className="mt-20 text-center text-gray-500">
-              <p className="text-lg">
-                Start filling the form on the left to create your CV.
-              </p>
-            </div>
-          )}
-      </div>
-    </div>
-  </div>
-
-  {/* Pagination Controls - dodaj na dole kontenera */}
-  {totalPages > 1 && (
-  <div
-    className={`absolute bottom-5 left-1/2 transform -translate-x-1/2 transition-all duration-500 ${
-      isHovered ? 'translate-y-0 opacity-100' : 'translate-y-16 opacity-0 pointer-events-none'
-    } flex items-center space-x-2 bg-white rounded-lg shadow-lg px-4 py-2`}
-  >
-    <button
-      onClick={goToPrevPage}
-      disabled={currentPage === 1}
-      className={`p-2 rounded ${
-        currentPage === 1
-          ? 'text-gray-400 cursor-not-allowed'
-          : 'text-gray-700 hover:bg-gray-100 cursor-pointer'
-      }`}
-    >
-      <ChevronLeft size={16} />
-    </button>
-
-    <div className="flex space-x-1">
-      {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (
-        <button
-          key={page}
-          onClick={() => goToPage(page)}
-          className={`w-8 h-8 rounded text-sm font-medium cursor-pointer ${
-            currentPage === page
-              ? 'bg-blue-500 text-white'
-              : 'text-gray-700 hover:bg-gray-100'
-          }`}
-        >
-          {page}
-        </button>
-      ))}
-    </div>
-
-    <button
-      onClick={goToNextPage}
-      disabled={currentPage === totalPages}
-      className={`p-2 rounded ${
-        currentPage === totalPages
-          ? 'text-gray-400 cursor-not-allowed'
-          : 'text-gray-700 hover:bg-gray-100 cursor-pointer'
-      }`}
-    >
-      <ChevronRight size={16} />
-    </button>
-
-    <span className="text-sm text-gray-600 ml-2">
-      {currentPage} / {totalPages}
-    </span>
-  </div>
-)}
-
-</div>
         </div>
       </div>
     </div>
