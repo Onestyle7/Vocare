@@ -3,6 +3,7 @@
 import { useEffect, useState, useRef } from 'react';
 import axios from 'axios';
 import { UserProfile } from '@/lib/types/profile';
+import { getUserProfile } from '@/lib/profile';
 import { toast } from 'sonner';
 import GenerateRecommendation from './GenerateRecommendationFail';
 import { Separator } from '../ui/separator';
@@ -127,15 +128,22 @@ export default function AssistantPage() {
       setError(null);
 
       // 1. Sprawdź profil
+      let profileData: UserProfile | null = null;
       const storedProfile = localStorage.getItem('userProfile');
-      if (!storedProfile) {
-        setError('Brak danych profilu. Wróć do formularza.');
-        setLoading(false);
-        return;
+      if (storedProfile) {
+        profileData = JSON.parse(storedProfile);
+      } else {
+        try {
+          profileData = await getUserProfile();
+          localStorage.setItem('userProfile', JSON.stringify(profileData));
+        } catch {
+          setError('Brak danych profilu. Wróć do formularza.');
+          setLoading(false);
+          return;
+        }
       }
 
-      const parsedProfile = JSON.parse(storedProfile);
-      setProfile(parsedProfile);
+      setProfile(profileData);
 
       // 2. Sprawdź token
       const token = localStorage.getItem('token');
