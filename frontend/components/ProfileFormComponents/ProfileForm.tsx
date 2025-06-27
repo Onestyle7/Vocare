@@ -54,6 +54,7 @@ export default function ProfileForm({
       languages: [],
       additionalInformation: '',
       aboutMe: '',
+      willingToRebrand: false,
       personalityType: undefined,
       financialSurvey: {
         currentSalary: undefined,
@@ -109,6 +110,7 @@ export default function ProfileForm({
       phoneNumber: data.phoneNumber ?? '',
       additionalInformation: data.additionalInformation ?? '',
       aboutMe: data.aboutMe ?? '',
+      willingToRebrand: data.willingToRebrand ?? false,
       skills: data.skills ?? [],
       softSkills: data.softSkills ?? [],
       languages: data.languages ?? [],

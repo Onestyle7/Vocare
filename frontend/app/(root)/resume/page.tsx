@@ -1,7 +1,5 @@
 'use client';
 
-import ResumePage from '@/components/ResumeComponents/ResumePage';
-import Header from '@/components/SupportComponents/SectionsComponents/Header';
 import React from 'react';
 import CVCreator from './ResumeComponent';
 
