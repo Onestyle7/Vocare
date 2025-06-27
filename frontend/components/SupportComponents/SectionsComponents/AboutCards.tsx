@@ -69,7 +69,7 @@ const AboutCards = () => {
         </div>
       </ScrollParallax>
 
-      <div ref={containerRef} className="max-md:-top-10 main-font-color relative flex lg:w-full">
+      <div ref={containerRef} className="main-font-color relative flex max-md:-top-10 lg:w-full">
         <div className="mx-8 flex w-full flex-col items-center justify-center max-lg:space-y-4 lg:flex-row lg:space-x-4">
           {aboutCardsData.map((cardData, index) => (
             <div className="about-card z-30" key={index}>

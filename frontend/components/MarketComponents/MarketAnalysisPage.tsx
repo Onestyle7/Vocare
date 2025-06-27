@@ -7,7 +7,7 @@ import CollapsibleButton from '../AssistantComponents/CollapsibleButton';
 import { TerminalDemo } from './LoadingTerminal';
 import { GridBackgroundDemo } from './GridBackgroundDemo';
 import Image from 'next/image';
-import { chart, fire, wallet, star_generate } from '@/app/constants';
+import { star_generate } from '@/app/constants';
 import { toast } from 'sonner';
 import CustomButton from '../ui/CustomButton';
 import {
@@ -23,8 +23,8 @@ import {
 import { useTokenBalanceContext } from '@/lib/contexts/TokenBalanceContext';
 import Link from 'next/link';
 import GenerateMarketFail from './GenerateMarketFail';
-import EmptyStateComponent from './EmptyStateComponent';
 import Section from '../SupportComponents/Section';
+import NewEmptyStateComponent from './NewEmptyStateComponent';
 
 // Type definitions
 interface MarketTrend {
@@ -229,7 +229,7 @@ export default function MarketAnalysis() {
     marketAnalysis.industryStatistics.length === 0
   ) {
     return (
-      <EmptyStateComponent
+      <NewEmptyStateComponent
         onGenerateAnalysis={handleGenerateNewAnalysis}
         isLoading={isLoading}
         tokenBalance={tokenBalance}
@@ -248,7 +248,7 @@ export default function MarketAnalysis() {
       customPaddings
       id="profile"
     >
-      <div className="xl:mx-10 xl:mt-16 xl:border-t xl:border-r xl:border-l">
+      <div className="mt-8 xl:mx-10 xl:mt-16 xl:border-t xl:border-r xl:border-l">
         <div className="font-poppins mx-auto mt-8 mb-4 flex max-w-7xl flex-col items-center justify-center">
           <h2 className="mb-4 ml-4 text-2xl font-bold text-[#915EFF]">Job Market Analysis</h2>
           <div>
@@ -621,14 +621,6 @@ function IndustrySection({ data, index }: IndustrySectionProps) {
             <p className="text-lg font-medium text-black dark:text-white">
               {formatSalaryRange(data.minSalary, data.maxSalary)}
             </p>
-            <Image
-              src={wallet}
-              alt="shape"
-              width={48}
-              height={48}
-              className="absolute right-4 bottom-1/5 invert dark:invert-0"
-              ref={imageRef}
-            />
           </div>
           <div
             className="relative overflow-hidden rounded-lg border border-dashed border-gray-700/20 bg-gray-50 p-3 dark:border-gray-700 dark:bg-[#101014]/40"
@@ -638,14 +630,6 @@ function IndustrySection({ data, index }: IndustrySectionProps) {
             <p className="text-lg font-medium text-black dark:text-white">
               {formatEmploymentRate(data.employmentRate)}
             </p>
-            <Image
-              src={chart}
-              alt="shape"
-              width={48}
-              height={48}
-              className="absolute right-4 bottom-1/6 invert dark:invert-0"
-              ref={imageRef1}
-            />
           </div>
           <div
             className="relative overflow-hidden rounded-lg border border-dashed border-gray-700/20 bg-gray-50 p-3 dark:border-gray-700 dark:bg-[#101014]/40"
@@ -654,19 +638,11 @@ function IndustrySection({ data, index }: IndustrySectionProps) {
             <p className="text-sm text-gray-500">Growth Forecast</p>
             <div className="flex items-center">
               <span
-                className={`mt-1 rounded-full px-2 py-1 text-xs font-medium ${getGrowthBadgeClass(data.growthForecast)}`}
+                className={`mt-1 rounded-lg px-2 py-1 text-xs font-medium ${getGrowthBadgeClass(data.growthForecast)}`}
               >
                 {data.growthForecast}
               </span>
             </div>
-            <Image
-              src={fire}
-              alt="shape"
-              width={48}
-              height={48}
-              className="absolute right-4 bottom-1/6 invert dark:invert-0"
-              ref={imageRef2}
-            />
           </div>
         </div>
 

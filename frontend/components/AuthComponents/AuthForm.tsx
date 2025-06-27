@@ -21,6 +21,8 @@ import { toast } from 'sonner';
 import { ArrowRight } from 'lucide-react';
 import { ButtonForm } from '../ui/button-form';
 import { AxiosError } from 'axios';
+// import OAuthButton from './OAuthButton';
+// import { facebook, google } from '@/app/constants';
 
 type FormType = 'sign-in' | 'sign-up';
 
@@ -103,7 +105,7 @@ const AuthForm = ({ type }: { type: FormType }) => {
 
   return (
     <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)} className="auth-form">
+      <form onSubmit={form.handleSubmit(onSubmit)} className="auth-form font-poppins">
         <h1 className="form-title">{type === 'sign-in' ? 'Sign In' : 'Sign Up'}</h1>
         {type === 'sign-up' && (
           <FormField
@@ -191,21 +193,38 @@ const AuthForm = ({ type }: { type: FormType }) => {
           )}
         </ButtonForm>
 
-        <div className="mt-4 flex justify-center">
-          <p>{type === 'sign-in' ? "Don't have an account?" : 'Already have an account?'}</p>
-          <Link
-            href={type === 'sign-in' ? '/sign-up' : '/sign-in'}
-            className="relative ml-2 font-semibold text-[#915EFF] transition duration-300 after:absolute after:bottom-0 after:left-0 after:h-[2px] after:w-0 after:bg-[#915EFF] after:transition-all after:duration-300 after:content-[''] hover:after:w-full"
-          >
-            {type === 'sign-in' ? 'Sign Up' : 'Sign In'}
-          </Link>
+        <div className="mt-4 flex items-center justify-between">
+          <div className="flex items-center">
+            <p>{type === 'sign-in' ? "Don't have an account?" : 'Already have an account?'}</p>
+            <Link
+              href={type === 'sign-in' ? '/sign-up' : '/sign-in'}
+              className="relative ml-2 font-semibold text-[#915EFF] transition duration-300 after:absolute after:bottom-0 after:left-0 after:h-[2px] after:w-0 after:bg-[#915EFF] after:transition-all after:duration-300 after:content-[''] hover:after:w-full"
+            >
+              {type === 'sign-in' ? 'Sign Up' : 'Sign In'}
+            </Link>
+          </div>
 
           {type === 'sign-in' && (
-            <Link href="/forgot-password" className="ml-4 text-gray-500">
+            <Link href="/forgot-password" className="text-gray-500">
               Forgot Password?
             </Link>
           )}
         </div>
+
+        {/* {type === 'sign-in' && (
+          <div className="flex w-full flex-col items-center justify-center gap-4 text-sm text-gray-400">
+            <div className="flex w-full items-center">
+              <div className="h-[0.5px] w-full bg-gray-500/80" />
+              <span className="mx-4 whitespace-nowrap text-gray-500">or login with</span>
+              <div className="h-[0.5px] w-full bg-gray-500/80" />
+            </div>
+
+            <div className="tems-center mt-4 flex w-full flex-row justify-center gap-2">
+              <OAuthButton icon={google} label="Login with Google" url="/api/auth/google"/>
+              <OAuthButton icon={facebook} label="Login with Facebook" url="/api/auth/google" />
+            </div>
+          </div>
+        )} */}
       </form>
     </Form>
   );

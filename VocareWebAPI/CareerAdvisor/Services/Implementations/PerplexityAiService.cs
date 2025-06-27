@@ -16,7 +16,6 @@ namespace VocareWebAPI.Services
     {
         private readonly HttpClient _httpClient;
         private readonly AiConfig _config;
-        private readonly IUserProfileRepository _userProfileRepository;
         private readonly IAiRecommendationRepository _recommendationRepository;
         private readonly IMapper _mapper;
 
@@ -31,14 +30,12 @@ namespace VocareWebAPI.Services
         public PerplexityAiService(
             IOptions<AiConfig> config,
             HttpClient httpClient,
-            IUserProfileRepository userProfileRepository,
             IAiRecommendationRepository recommendationRepository,
             IMapper mapper
         )
         {
             _config = config.Value;
             _httpClient = httpClient;
-            _userProfileRepository = userProfileRepository;
             _recommendationRepository = recommendationRepository;
             _mapper = mapper;
 
@@ -286,9 +283,9 @@ namespace VocareWebAPI.Services
                 - Dodatkowe informacje: {{profile.AdditionalInformation ?? "Brak dodatkowych informacji"}}
                 - O mnie: {{profile.AboutMe ?? "Brak opisu 'o mnie'"}}
                 - Typ osobowości: {{profile.PersonalityType.ToString()}}
+                - Czy gotów do przebranżowienia: {{profile.WillingToRebrand}}
 
-                Wygeneruj dokładnie taki obiekt JSON, bez żadnego dodatkowego tekstu, w języku {{profile.Country}}:
-                { 
+                Wygeneruj dokładnie taki obiekt JSON, bez żadnego dodatkowego tekstu w języku Polskim, jeżeli powyższe inforamcje są w języku Polskim, jeśli nie to wygeneruj w języku Angielskim:                 { 
                 "careerPaths": [
                     {
                     "careerName": "Nazwa ścieżki 1",
@@ -396,6 +393,11 @@ namespace VocareWebAPI.Services
                 8. Wypełnij 'careerStatistics' danymi statystycznymi, takimi jak średnie wynagrodzenie, liczba ofert pracy i tempo wzrostu.
                 9. Bazuj na ogólnej wiedzy o rynku pracy, bez odwoływania się do konkretnych danych z 2024 czy 2025 roku.
                 """;
+        }
+
+        public List<string> GetAvailableProviders()
+        {
+            throw new NotImplementedException();
         }
 
         /// <summary>

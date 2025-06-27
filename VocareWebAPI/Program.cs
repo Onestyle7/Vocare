@@ -10,6 +10,7 @@ using Stripe;
 using VocareWebAPI.Billing.Repositories.Implementations;
 using VocareWebAPI.Billing.Repositories.Interfaces;
 using VocareWebAPI.Billing.Services.Interfaces;
+using VocareWebAPI.CareerAdvisor.Services.Implementations;
 using VocareWebAPI.CvGenerator.Repositories.Implementations;
 using VocareWebAPI.CvGenerator.Repositories.Interfaces;
 using VocareWebAPI.CvGenerator.Services.Implementations;
@@ -46,6 +47,7 @@ builder.Services.Configure<AiConfig>(builder.Configuration.GetSection("Perplexit
 builder.Services.Configure<UserRegistrationConfig>(
     builder.Configuration.GetSection("UserRegistration")
 );
+builder.Services.Configure<AiConfig>(builder.Configuration.GetSection("OpenAI"));
 
 // ===== BAZA DANYCH =====
 builder.Services.AddDbContext<AppDbContext>(options =>
@@ -122,12 +124,23 @@ builder
         client.DefaultRequestHeaders.Add("Accept", "application/json");
     })
     .AddPolicyHandler(retryPolicy);
+builder
+    .Services.AddHttpClient<OpenAIService>(client =>
+    {
+        var config = builder.Configuration.GetSection("OpenAI").Get<AiConfig>()!;
+        client.BaseAddress = new Uri(config.BaseUrl);
+        client.DefaultRequestHeaders.Add("Authorization", $"Bearer {config.ApiKey}");
+        client.DefaultRequestHeaders.Add("Accept", "application/json");
+    })
+    .AddPolicyHandler(retryPolicy);
 
 // ===== SERWISY APLIKACJI =====
 builder.Services.AddScoped<UserProfileService>();
 builder.Services.AddScoped<UserRegistrationHandler>();
-builder.Services.AddScoped<IAiService, PerplexityAiService>();
-builder.Services.AddScoped<IMarketAnalysisService, MarketAnalysisService>();
+builder.Services.AddScoped<IAiService, OpenAIService>();
+
+/* builder.Services.AddScoped<IAiService, PerplexityAiService>();
+ */builder.Services.AddScoped<IMarketAnalysisService, OpenAiMarketAnalysisService>();
 builder.Services.AddScoped<IBillingService, LocalBillingService>();
 builder.Services.AddScoped<IStripeService, LocalStripeService>();
 builder.Services.AddScoped<ICvGenerationService, CvGenerationService>();

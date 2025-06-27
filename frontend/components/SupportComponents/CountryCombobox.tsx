@@ -29,7 +29,7 @@ export function CountryCombobox<TFieldValues extends Record<string, unknown>>({
 
   return (
     <Popover open={open} onOpenChange={setOpen}>
-      <PopoverTrigger asChild>
+      <PopoverTrigger asChild className="h-12">
         <Button
           variant="outline"
           role="combobox"

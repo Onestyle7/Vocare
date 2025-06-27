@@ -14,19 +14,22 @@ namespace VocareWebAPI.Billing.Services.Implementations
         private readonly IUserBillingRepository _userBillingRepository;
         private readonly ITokenTransactionRepository _tokenTransactionRepository;
         private readonly string _webhookSecret;
+        private readonly ILogger<BillingService> _logger;
 
         public BillingService(
             AppDbContext context,
             IServiceCostRepository serviceCostRepository,
             IUserBillingRepository userBillingRepository,
             ITokenTransactionRepository tokenTransactionRepository,
-            IConfiguration configuration
+            IConfiguration configuration,
+            ILogger<BillingService> logger
         )
         {
             _dbContext = context;
             _serviceCostRepository = serviceCostRepository;
             _userBillingRepository = userBillingRepository;
             _tokenTransactionRepository = tokenTransactionRepository;
+            _logger = logger;
             _webhookSecret =
                 configuration["Stripe:WebhookSecret"]
                 ?? throw new ArgumentNullException(
@@ -184,6 +187,8 @@ namespace VocareWebAPI.Billing.Services.Implementations
                 throw new ArgumentException("User ID cannot be null or empty.", nameof(userId));
             }
             var userBilling = await _userBillingRepository.GetByUserIdAsync(userId);
+            _logger.LogInformation($"GetUserBillingAsync for userId: {userId}");
+            _logger.LogInformation($"Found billing: {userBilling != null}");
             if (userBilling == null)
             {
                 throw new KeyNotFoundException(

@@ -292,7 +292,7 @@ export default function ProfileDetails() {
 
               <div className="flex items-start justify-between gap-4">
                 <span className="font-medium text-gray-600 dark:text-gray-200">Description:</span>
-                <span className="ml-2 max-w-md text-right text-sm">{exp.description || '—'}</span>
+                <span className="ml-2 max-w-md text-left text-sm">{exp.description || '—'}</span>
               </div>
               <Separator />
 
@@ -353,9 +353,11 @@ export default function ProfileDetails() {
             <span className="ml-2">{profile?.financialSurvey?.desiredSalary ?? '—'}</span>
           </div>
           <Separator />
-          <div className="flex justify-between rounded-lg">
+          <div className="flex items-center justify-between rounded-lg">
             <span className="font-medium text-gray-600 dark:text-gray-200">Has Loans:</span>
-            <span className="ml-2">{profile?.financialSurvey?.hasLoans ? 'Yes' : 'No'}</span>
+            <span className="ml-2 rounded-lg border px-4 py-2 text-gray-600 dark:text-gray-200">
+              {profile?.financialSurvey?.hasLoans ? 'Yes' : 'No'}
+            </span>
           </div>
           {profile?.financialSurvey?.hasLoans && (
             <>
@@ -367,18 +369,27 @@ export default function ProfileDetails() {
             </>
           )}
           <Separator />
-          <div className="flex justify-between rounded-lg">
-            <span className="font-medium text-gray-600 dark:text-gray-200">Risk Appetite:</span>
-            <span className="ml-2">{getRiskLabel(profile?.financialSurvey?.riskAppetite)}</span>
-          </div>
-          <Separator />
-          <div className="flex justify-between rounded-lg">
+          <div className="flex items-center justify-between rounded-lg">
             <span className="font-medium text-gray-600 dark:text-gray-200">
               Willing To Relocate:
             </span>
-            <span className="ml-2">
+            <span className="ml-2 rounded-lg border px-4 py-2 text-gray-600 dark:text-gray-200">
               {profile?.financialSurvey?.willingToRelocate ? 'Yes' : 'No'}
             </span>
+          </div>
+          <Separator />
+          <div className="flex items-center justify-between rounded-lg">
+            <span className="font-medium text-gray-600 dark:text-gray-200">
+              Willing To Rebrand:
+            </span>
+            <span className="ml-2 rounded-lg border px-4 py-2 text-gray-600 dark:text-gray-200">
+              {profile?.willingToRebrand ? 'Yes' : 'No'}
+            </span>
+          </div>
+          <Separator />
+          <div className="flex justify-between rounded-lg">
+            <span className="font-medium text-gray-600 dark:text-gray-200">Risk Appetite:</span>
+            <span className="ml-2">{getRiskLabel(profile?.financialSurvey?.riskAppetite)}</span>
           </div>
         </div>
       </div>

@@ -21,7 +21,7 @@ const Features = () => {
       scrollTrigger: {
         trigger: '#clip',
         start: 'center center',
-        end: '+=8000 center', // Zmniejszona długość scrollowania
+        end: '+=5000 center', // Zmniejszona długość scrollowania
         scrub: 0.5,
         pin: true,
         pinSpacing: true,
@@ -143,11 +143,11 @@ const Features = () => {
       customPaddings
       id="feature"
     >
-      <div className="min-h-screen border-gray-700 xl:mr-[40px] xl:ml-[40px] xl:border-t-[0.5px] xl:border-r-[0.5px] xl:border-l-[0.5px]">
-        <div className="relative mt-36 max-md:mt-0 mb-8 flex flex-col items-center gap-5">
+      <div className="min-h-screen border-gray-600/30 lg:border-t-[0.5px] lg:border-r-[0.5px] lg:border-l-[0.5px] xl:mr-[40px] xl:ml-[40px]">
+        <div className="relative mt-36 mb-8 flex flex-col items-center gap-5 max-md:mt-0">
           <h2 className="text-sm uppercase md:text-[12px]">seamless integration</h2>
           <Copy>
-            <h1 className="font-poppins text-color mt-5 text-center text-4xl font-bold uppercase md:text-[4rem] xl:leading-[0.8]">
+            <h1 className="font-poppins text-color mt-5 text-center text-4xl font-bold md:text-[4rem] xl:leading-[0.8]">
               Discover the world <br /> dive into it
             </h1>
           </Copy>
@@ -186,16 +186,16 @@ const Features = () => {
                 </div>
               </div>
 
-              <div className="signup-tag absolute right-0 bottom-24 left-0 flex items-end justify-center opacity-0 sm:bottom-28 md:bottom-32 lg:bottom-36">
+              <div className="signup-tag absolute right-0 bottom-24 left-0 flex items-end justify-center opacity-0 sm:bottom-28 md:bottom-32 lg:bottom-26">
                 <h3 className="font-poppins mb-4 px-4 text-center text-lg font-medium text-black sm:text-xl md:text-2xl lg:text-3xl">
                   Ready to transform your workflow?
                 </h3>
               </div>
 
               {/* Sign-up Button - wsuwa się z dołu, prosty czarny button */}
-              <div className="signup-button absolute right-0 bottom-0 left-0 flex items-end justify-center pb-8 opacity-0 sm:pb-12 md:pb-16 lg:pb-20">
+              <div className="signup-button absolute right-0 bottom-0 left-0 flex items-end justify-center pb-8 opacity-0 sm:pb-12 md:pb-16 lg:pb-10">
                 <Link href="/sign-up">
-                  <button className="font-poppins rounded-full bg-black px-6 py-3 text-base font-semibold text-white transition-all duration-300 active:scale-95 sm:px-8 sm:py-4 sm:text-lg">
+                  <button className="font-poppins rounded-lg bg-black px-6 py-3 text-base font-semibold text-white transition-all duration-300 active:scale-95 sm:px-8 sm:py-4 sm:text-lg">
                     Get Started Now
                   </button>
                 </Link>

@@ -120,20 +120,24 @@ export default function AssistantPage() {
     setIsCollapsed(!isCollapsed);
   };
 
+  // Zastąp oba useEffecty tym jednym:
   useEffect(() => {
-    const storedProfile = localStorage.getItem('userProfile');
-    if (storedProfile) {
-      setProfile(JSON.parse(storedProfile));
-    } else {
-      setError('Brak danych profilu. Wróć do formularza.');
-    }
-  }, []);
-
-  useEffect(() => {
-    const fetchRecommendations = async () => {
-      if (!profile) return;
-
+    const loadProfileAndRecommendations = async () => {
       setLoading(true);
+      setError(null);
+
+      // 1. Sprawdź profil
+      const storedProfile = localStorage.getItem('userProfile');
+      if (!storedProfile) {
+        setError('Brak danych profilu. Wróć do formularza.');
+        setLoading(false);
+        return;
+      }
+
+      const parsedProfile = JSON.parse(storedProfile);
+      setProfile(parsedProfile);
+
+      // 2. Sprawdź token
       const token = localStorage.getItem('token');
       if (!token) {
         toast.error('Authentication required', {
@@ -143,7 +147,9 @@ export default function AssistantPage() {
         return;
       }
 
+      // 3. Pobierz rekomendacje
       try {
+        // Najpierw spróbuj pobrać ostatnie rekomendacje
         try {
           const lastRecommendationResponse = await axios.get<AiCareerResponse>(
             'https://vocare-production-e568.up.railway.app/api/AI/last-recommendation',
@@ -160,16 +166,17 @@ export default function AssistantPage() {
           return;
         } catch (lastError: unknown) {
           if (lastError instanceof AxiosError && lastError.response?.status !== 404) {
-            console.error('Something went wrong while generating last recommendations:', lastError);
+            console.error('Something went wrong while getting last recommendations:', lastError);
             setError(
               lastError.response?.data?.detail ||
-                'Something went wrong while generating last recommendations.'
+                'Something went wrong while getting last recommendations.'
             );
             setLoading(false);
             return;
           }
         }
 
+        // Jeśli brak ostatnich rekomendacji, wygeneruj nowe
         const response = await axios.get<AiCareerResponse>(
           'https://vocare-production-e568.up.railway.app/api/AI/recommendations',
           {
@@ -179,13 +186,13 @@ export default function AssistantPage() {
             },
           }
         );
-        console.log('Nowe rekomendacje:', response.data);
+        console.log('New recommendations:', response.data);
         setRecommendations(response.data);
       } catch (err: unknown) {
         if (err instanceof AxiosError) {
-          console.error('Szczegółowy błąd:', err);
-          console.error('Status odpowiedzi:', err.response?.status);
-          console.error('Dane odpowiedzi:', err.response?.data);
+          console.error('Detailed error:', err);
+          console.error('Response status:', err.response?.status);
+          console.error('Response data:', err.response?.data);
 
           if (
             err.response?.status === 500 &&
@@ -203,13 +210,13 @@ export default function AssistantPage() {
           console.error('Unknown error:', err);
           setError('Unexpected error occurred');
         }
+      } finally {
+        setLoading(false);
       }
     };
 
-    if (profile) {
-      fetchRecommendations();
-    }
-  }, [profile]);
+    loadProfileAndRecommendations();
+  }, []);
 
   const handleGenerateNewRecommendations = async () => {
     setLoading(true);
@@ -286,7 +293,7 @@ export default function AssistantPage() {
       customPaddings
       id="profile"
     >
-      <div className="xl:mx-10 xl:mt-16 xl:border-t xl:border-r xl:border-l">
+      <div className="mt-8 xl:mx-10 xl:mt-16 xl:border-t xl:border-r xl:border-l">
         <div className="font-poppins mx-auto flex max-w-7xl flex-col items-center justify-center p-4 md:p-8">
           <h2 className="mb-4 ml-4 text-2xl font-bold text-[#915EFF]">Carrer Recommendation</h2>
           <div>

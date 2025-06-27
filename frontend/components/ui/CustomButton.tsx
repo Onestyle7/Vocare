@@ -26,7 +26,7 @@ const CustomButton: React.FC<CustomButtonProps> = ({
   disabled = false,
 }) => {
   const baseStyles =
-    'px-4 py-2 rounded-full font-medium focus:outline-none lg:w-1/2 transition-all duration-300 ease-out border-b-3 border-r-3 border-transparent hover:dark:border-neutral-300 hover:border-neutral-800 hover:-translate-y-2';
+    'px-4 py-2 rounded-lg font-medium focus:outline-none lg:w-1/2 transition-all duration-300 ease-out border-b-3 border-r-3 border-transparent hover:dark:border-neutral-300 hover:border-neutral-800 hover:-translate-y-2 cursor-none';
 
   const buttonStyles = `${baseStyles} ${variantStyles[variant] || ''} ${className} ${
     disabled ? 'opacity-50 cursor-not-allowed' : ''

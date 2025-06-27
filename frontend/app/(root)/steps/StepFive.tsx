@@ -95,16 +95,34 @@ export default function StepFive({
         control={form.control}
         name="financialSurvey.hasLoans"
         render={({ field }) => (
-          <FormItem className="flex items-center space-x-2">
+          <FormItem>
+            <FormLabel>Do you have any loans?</FormLabel>
             <FormControl>
-              <input
-                id="hasLoans"
-                type="checkbox"
-                checked={field.value ?? false}
-                onChange={field.onChange}
-              />
+              <div className="flex space-x-2">
+                <Button
+                  type="button"
+                  onClick={() => field.onChange(true)}
+                  className={`h-12 flex-1 rounded-lg transition-all ${
+                    field.value === true
+                      ? 'bg-[#915EFF] text-white shadow-[0_2px_4px_rgba(145,94,255,0.5)] dark:hover:bg-[#713ae8]'
+                      : 'border bg-gray-200 text-gray-700 hover:bg-gray-300 dark:bg-[#262626] dark:text-gray-300 dark:hover:bg-gray-400/30'
+                  }`}
+                >
+                  Yes
+                </Button>
+                <Button
+                  type="button"
+                  onClick={() => field.onChange(false)}
+                  className={`h-12 flex-1 rounded-lg transition-all ${
+                    field.value === false
+                      ? 'bg-[#915EFF] text-white shadow-[0_2px_4px_rgba(145,94,255,0.5)] dark:hover:bg-[#713ae8]'
+                      : 'border bg-gray-200 text-gray-700 hover:bg-gray-300 dark:bg-[#262626] dark:text-gray-300 dark:hover:bg-gray-400/30'
+                  }`}
+                >
+                  No
+                </Button>
+              </div>
             </FormControl>
-            <FormLabel htmlFor="hasLoans">Do you have any loans?</FormLabel>
             <FormMessage />
           </FormItem>
         )}
@@ -129,6 +147,80 @@ export default function StepFive({
           )}
         />
       )}
+
+      <FormField
+        control={form.control}
+        name="financialSurvey.willingToRelocate"
+        render={({ field }) => (
+          <FormItem>
+            <FormLabel>Willing to relocate?</FormLabel>
+            <FormControl>
+              <div className="flex space-x-2">
+                <Button
+                  type="button"
+                  onClick={() => field.onChange(true)}
+                  className={`h-12 flex-1 rounded-lg transition-all ${
+                    field.value === true
+                      ? 'bg-[#915EFF] text-white shadow-[0_2px_4px_rgba(145,94,255,0.5)] dark:hover:bg-[#713ae8]'
+                      : 'border bg-gray-200 text-gray-700 hover:bg-gray-300 dark:bg-[#262626] dark:text-gray-300 dark:hover:bg-gray-400/30'
+                  }`}
+                >
+                  Yes
+                </Button>
+                <Button
+                  type="button"
+                  onClick={() => field.onChange(false)}
+                  className={`h-12 flex-1 rounded-lg transition-all ${
+                    field.value === false
+                      ? 'bg-[#915EFF] text-white shadow-[0_2px_4px_rgba(145,94,255,0.5)] dark:hover:bg-[#713ae8]'
+                      : 'border bg-gray-200 text-gray-700 dark:bg-[#262626] dark:text-gray-300 dark:hover:bg-gray-400/30'
+                  }`}
+                >
+                  No
+                </Button>
+              </div>
+            </FormControl>
+            <FormMessage />
+          </FormItem>
+        )}
+      />
+
+      <FormField
+        control={form.control}
+        name="willingToRebrand"
+        render={({ field }) => (
+          <FormItem>
+            <FormLabel>Willing to rebrand?</FormLabel>
+            <FormControl>
+              <div className="flex space-x-2">
+                <Button
+                  type="button"
+                  onClick={() => field.onChange(true)}
+                  className={`h-12 flex-1 rounded-lg transition-all ${
+                    field.value === true
+                      ? 'bg-[#915EFF] text-white shadow-[0_2px_4px_rgba(145,94,255,0.5)] dark:hover:bg-[#713ae8]'
+                      : 'border bg-gray-200 text-gray-700 hover:bg-gray-300 dark:bg-[#262626] dark:text-gray-300 dark:hover:bg-gray-400/30'
+                  }`}
+                >
+                  Yes
+                </Button>
+                <Button
+                  type="button"
+                  onClick={() => field.onChange(false)}
+                  className={`h-12 flex-1 rounded-lg transition-all ${
+                    field.value === false
+                      ? 'bg-[#915EFF] text-white shadow-[0_2px_4px_rgba(145,94,255,0.5)] dark:hover:bg-[#713ae8]'
+                      : 'border bg-gray-200 text-gray-700 dark:bg-[#262626] dark:text-gray-300 dark:hover:bg-gray-400/30'
+                  }`}
+                >
+                  No
+                </Button>
+              </div>
+            </FormControl>
+            <FormMessage />
+          </FormItem>
+        )}
+      />
 
       <FormField
         control={form.control}
@@ -158,31 +250,12 @@ export default function StepFive({
         )}
       />
 
-      <FormField
-        control={form.control}
-        name="financialSurvey.willingToRelocate"
-        render={({ field }) => (
-          <FormItem className="flex items-center space-x-2">
-            <FormControl>
-              <input
-                id="willingToRelocate"
-                type="checkbox"
-                checked={field.value ?? false}
-                onChange={field.onChange}
-              />
-            </FormControl>
-            <FormLabel htmlFor="willingToRelocate">Willing to relocate?</FormLabel>
-            <FormMessage />
-          </FormItem>
-        )}
-      />
-
       <div className="flex flex-col space-y-4 pt-6">
         <div className="flex flex-row items-center justify-center space-x-4">
           <Button
             type="button"
             onClick={onBack}
-            className="font-poppins group h-[46px] w-[45%] rounded-full bg-[#915EFF] text-lg text-white shadow-[0_2px_4px_rgba(145,94,255,0.5)] hover:bg-[#713ae8]"
+            className="font-poppins group h-[46px] w-[45%] rounded-lg bg-[#915EFF] text-lg text-white shadow-[0_2px_4px_rgba(145,94,255,0.5)] hover:bg-[#713ae8]"
           >
             <span className="flex flex-row items-center justify-center">
               <ArrowLeft className="mr-2 transition-transform duration-300 group-hover:-translate-x-2" />
@@ -193,7 +266,7 @@ export default function StepFive({
             type="button"
             onClick={form.handleSubmit(onSubmit)}
             disabled={isLoading}
-            className="font-poppins group h-[46px] w-[45%] rounded-full bg-[#915EFF] text-lg text-white shadow-[0_2px_4px_rgba(145,94,255,0.5)] hover:bg-[#713ae8]"
+            className="font-poppins group h-[46px] w-[45%] rounded-lg bg-[#915EFF] text-lg text-white shadow-[0_2px_4px_rgba(145,94,255,0.5)] hover:bg-[#713ae8]"
           >
             <span className="flex flex-row items-center justify-center">
               Save
@@ -210,7 +283,7 @@ export default function StepFive({
               <Button
                 type="button"
                 variant="destructive"
-                className="font-poppins group h-[46px] w-[95%] rounded-full border border-black bg-transparent text-lg text-black hover:bg-transparent sm:w-[93%] dark:border-[0.5px] dark:border-white dark:text-white"
+                className="font-poppins group h-[46px] w-[95%] rounded-lg border border-black bg-transparent text-lg text-black hover:bg-transparent sm:w-[93%] dark:border-[0.5px] dark:border-white dark:text-white"
               >
                 <span className="flex flex-row items-center justify-center">
                   Delete Profile

@@ -83,7 +83,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" suppressHydrationWarning>
+    <html lang="en" suppressHydrationWarning className="">
       <body className={`${sizmoPro.className} h-full antialiased selection:bg-[#915EFF]`}>
         {/* <SmoothScrollProvider> */}
         <TokenBalanceProvider>
