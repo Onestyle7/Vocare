@@ -212,28 +212,19 @@ const AuthForm = ({ type }: { type: FormType }) => {
         </div>
 
         {type === 'sign-in' && (
-  <div className="flex flex-col items-center justify-center text-sm text-gray-400 w-full gap-4">
-    <div className="flex items-center w-full">
-      <div className="h-[0.5px] w-full bg-gray-500/80" />
-      <span className="mx-4 whitespace-nowrap text-gray-500">or login with</span>
-      <div className="h-[0.5px] w-full bg-gray-500/80" />
-    </div>
+          <div className="flex w-full flex-col items-center justify-center gap-4 text-sm text-gray-400">
+            <div className="flex w-full items-center">
+              <div className="h-[0.5px] w-full bg-gray-500/80" />
+              <span className="mx-4 whitespace-nowrap text-gray-500">or login with</span>
+              <div className="h-[0.5px] w-full bg-gray-500/80" />
+            </div>
 
-    <div className="flex tems-center justify-center w-full gap-2 flex-row mt-4">
-      <OAuthButton
-        icon={google}
-        label="Login with Google"
-        url="/api/auth/google"
-      />
-      <OAuthButton
-        icon={facebook}
-        label="Login with Facebook"
-        url="/api/auth/google"
-      />
-    </div>
-  </div>
-)}
-
+            <div className="tems-center mt-4 flex w-full flex-row justify-center gap-2">
+              <OAuthButton icon={google} label="Login with Google" url="/api/auth/google" />
+              <OAuthButton icon={facebook} label="Login with Facebook" url="/api/auth/google" />
+            </div>
+          </div>
+        )}
       </form>
     </Form>
   );

@@ -18,10 +18,10 @@ const ThemeSwitch = () => {
     if (mounted && theme && !initialized) {
       const darkMode = theme === 'dark';
       setIsDark(darkMode);
-      
+
       if (divRef.current) {
         gsap.set(divRef.current, {
-          rotation: darkMode ? 180 : 0
+          rotation: darkMode ? 180 : 0,
         });
       }
       setInitialized(true);
@@ -29,8 +29,8 @@ const ThemeSwitch = () => {
   }, [mounted, theme, initialized]);
 
   const rotateSwitch = () => {
-    if (!mounted) return; 
-    
+    if (!mounted) return;
+
     const newIsDark = !isDark;
     const newRotation = newIsDark ? 180 : 0;
     const newTheme = newIsDark ? 'dark' : 'light';

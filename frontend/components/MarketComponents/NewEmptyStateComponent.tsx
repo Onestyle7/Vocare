@@ -105,7 +105,7 @@ const NewEmptyStateComponent = ({
     <CustomButton
       onClick={() => setIsConfirmDialogOpen(true)}
       disabled={isLoading}
-      className="group flex h-[56px] cursor-pointer items-center justify-center rounded-full bg-[#915EFF] px-6 text-[clamp(1rem,1vw,1.5rem)] font-medium text-white hover:bg-[#7b4ee0] max-md:mt-6 xl:w-[280px] font-poppins"
+      className="group font-poppins flex h-[56px] cursor-pointer items-center justify-center rounded-full bg-[#915EFF] px-6 text-[clamp(1rem,1vw,1.5rem)] font-medium text-white hover:bg-[#7b4ee0] max-md:mt-6 xl:w-[280px]"
     >
       <span>{isLoading ? 'Generating...' : 'Generate analysis'}</span>
       <ArrowRight className="ml-4 scale-90 transition-transform duration-300 group-hover:translate-x-2" />
@@ -113,7 +113,7 @@ const NewEmptyStateComponent = ({
   ) : (
     <CustomButton
       url="/assistant"
-      className="group flex h-[56px] cursor-pointer items-center justify-center rounded-full bg-[#915EFF] px-6 text-[clamp(1rem,1vw,1.5rem)] font-medium text-white hover:bg-[#7b4ee0] max-md:mt-6 xl:w-[280px] font-poppins"
+      className="group font-poppins flex h-[56px] cursor-pointer items-center justify-center rounded-full bg-[#915EFF] px-6 text-[clamp(1rem,1vw,1.5rem)] font-medium text-white hover:bg-[#7b4ee0] max-md:mt-6 xl:w-[280px]"
     >
       <span>Recommendation first</span>
       <ArrowRight className="ml-4 scale-90 transition-transform duration-300 group-hover:translate-x-2" />

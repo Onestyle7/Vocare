@@ -127,7 +127,7 @@ const GenerateRecommendationFail = () => {
             </div>
 
             <Link href={isLoggedIn ? '/profile' : '/sign-in'}>
-              <CustomButton className="group flex h-[56px] cursor-pointer items-center justify-center rounded-full bg-[#915EFF] px-6 text-[clamp(1.1rem,1vw,1.5rem)] font-medium text-white hover:bg-[#7b4ee0] max-md:mt-6 xl:w-[280px] font-poppins">
+              <CustomButton className="group font-poppins flex h-[56px] cursor-pointer items-center justify-center rounded-full bg-[#915EFF] px-6 text-[clamp(1.1rem,1vw,1.5rem)] font-medium text-white hover:bg-[#7b4ee0] max-md:mt-6 xl:w-[280px]">
                 <span className="flex flex-row items-center">
                   {isLoggedIn ? 'Profile' : 'Create an account'}
                   <ArrowRight className="ml-2 scale-90 transition-transform duration-300 group-hover:translate-x-2" />

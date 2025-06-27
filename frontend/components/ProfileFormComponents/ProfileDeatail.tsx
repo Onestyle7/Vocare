@@ -353,9 +353,11 @@ export default function ProfileDetails() {
             <span className="ml-2">{profile?.financialSurvey?.desiredSalary ?? '—'}</span>
           </div>
           <Separator />
-          <div className="flex justify-between rounded-lg items-center">
+          <div className="flex items-center justify-between rounded-lg">
             <span className="font-medium text-gray-600 dark:text-gray-200">Has Loans:</span>
-            <span className="ml-2 border py-2 px-4 rounded-lg text-gray-600 dark:text-gray-200">{profile?.financialSurvey?.hasLoans ? 'Yes' : 'No'}</span>
+            <span className="ml-2 rounded-lg border px-4 py-2 text-gray-600 dark:text-gray-200">
+              {profile?.financialSurvey?.hasLoans ? 'Yes' : 'No'}
+            </span>
           </div>
           {profile?.financialSurvey?.hasLoans && (
             <>
@@ -367,11 +369,11 @@ export default function ProfileDetails() {
             </>
           )}
           <Separator />
-          <div className="flex justify-between rounded-lg items-center">
+          <div className="flex items-center justify-between rounded-lg">
             <span className="font-medium text-gray-600 dark:text-gray-200">
               Willing To Relocate:
             </span>
-            <span className="ml-2 border py-2 px-4 rounded-lg text-gray-600 dark:text-gray-200">
+            <span className="ml-2 rounded-lg border px-4 py-2 text-gray-600 dark:text-gray-200">
               {profile?.financialSurvey?.willingToRelocate ? 'Yes' : 'No'}
             </span>
           </div>

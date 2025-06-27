@@ -12,7 +12,7 @@ export default function Maintenance() {
 
   useEffect(() => {
     const interval = setInterval(() => {
-      setDots(prev => prev.length >= 3 ? '' : prev + '.');
+      setDots((prev) => (prev.length >= 3 ? '' : prev + '.'));
     }, 500);
     return () => clearInterval(interval);
   }, []);
@@ -65,7 +65,8 @@ export default function Maintenance() {
         }
 
         @keyframes pulseGlow {
-          0%, 100% {
+          0%,
+          100% {
             text-shadow: 0 0 20px rgba(0, 0, 0, 0.3);
           }
           50% {
@@ -74,10 +75,18 @@ export default function Maintenance() {
         }
 
         @keyframes wrenchSpin {
-          0% { transform: rotate(0deg); }
-          25% { transform: rotate(-15deg); }
-          75% { transform: rotate(15deg); }
-          100% { transform: rotate(0deg); }
+          0% {
+            transform: rotate(0deg);
+          }
+          25% {
+            transform: rotate(-15deg);
+          }
+          75% {
+            transform: rotate(15deg);
+          }
+          100% {
+            transform: rotate(0deg);
+          }
         }
 
         .line-animate {
@@ -159,9 +168,11 @@ export default function Maintenance() {
 
           <div className="absolute inset-0 flex items-center justify-center">
             <div className="text-center">
-              <div className={`${isLoaded ? 'text-center-animate maintenance-glow' : 'translate-y-12 opacity-0'}`}>
+              <div
+                className={`${isLoaded ? 'text-center-animate maintenance-glow' : 'translate-y-12 opacity-0'}`}
+              >
                 <h2
-                  className="block leading-none font-black select-none mb-6"
+                  className="mb-6 block leading-none font-black select-none"
                   style={{
                     fontSize: 'clamp(3rem, 8vw, 6rem)',
                     color: '#000',

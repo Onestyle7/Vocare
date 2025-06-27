@@ -71,7 +71,7 @@ const HeroTweak = () => {
 
             <Link
               href="/assistant"
-              className="mt-3 flex max-md:items-center max-md:justify-center sm:mt-4 lg:w-full cursor-none"
+              className="mt-3 flex cursor-none max-md:items-center max-md:justify-center sm:mt-4 lg:w-full"
             >
               <CustomButton
                 variant="primary"
