@@ -203,20 +203,46 @@ builder.Services.AddSwaggerGen(c =>
     );
 });
 
-// ===== CORS =====
+// ===== CORS - POPRAWIONA KONFIGURACJA =====
 builder.Services.AddCors(options =>
 {
-    options.AddPolicy(
-        "AllowAll",
-        policy =>
-        {
-            policy
-                .SetIsOriginAllowed(origin => true) // zezwól na wszystkie originy (do testów)
-                .AllowAnyHeader()
-                .AllowAnyMethod()
-                .AllowCredentials();
-        }
-    );
+    // Polityka dla produkcji
+    options.AddPolicy("ProductionPolicy", policy =>
+    {
+        policy.WithOrigins("https://vocare-three.vercel.app")
+              .AllowAnyHeader()
+              .AllowAnyMethod()
+              .AllowCredentials();
+    });
+    
+    // Polityka dla developmentu
+    options.AddPolicy("DevelopmentPolicy", policy =>
+    {
+        policy.WithOrigins(
+                "http://localhost:3000",
+                "http://localhost:3001", 
+                "http://localhost:5173", // Vite
+                "https://vocare-three.vercel.app",
+                "https://localhost:3000",
+                "https://localhost:3001",
+                "https://localhost:5173"
+              )
+              .AllowAnyHeader()
+              .AllowAnyMethod()
+              .AllowCredentials();
+    });
+
+    // Polityka uniwersalna (jeśli potrzebujesz)
+    options.AddPolicy("FlexiblePolicy", policy =>
+    {
+        var allowedOrigins = Environment.GetEnvironmentVariable("ALLOWED_ORIGINS")?.Split(',') 
+            ?? new[] { "https://vocare-three.vercel.app" };
+        
+        policy.WithOrigins(allowedOrigins)
+              .AllowAnyHeader()
+              .AllowAnyMethod()
+              .AllowCredentials();
+    });
 });
 
 // ===== STRIPE =====
@@ -235,10 +261,12 @@ if (app.Environment.IsDevelopment())
     });
 }
 
-// ===== MIDDLEWARE PIPELINE =====
-// app.UseHttpsRedirection();
+// ===== MIDDLEWARE PIPELINE - POPRAWIONA KOLEJNOŚĆ =====
+// CORS musi być PRZED UseRouting!
+app.UseCors(app.Environment.IsDevelopment() ? "DevelopmentPolicy" : "ProductionPolicy");
+
+// app.UseHttpsRedirection(); // Odkomentuj jeśli potrzebujesz HTTPS redirect
 app.UseRouting();
-app.UseCors("AllowAll");
 app.UseAuthentication();
 app.UseAuthorization();
 
@@ -372,4 +400,5 @@ while (retries < maxRetries)
         await Task.Delay(5000);
     }
 }
+
 app.Run();
