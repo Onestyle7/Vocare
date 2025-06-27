@@ -120,7 +120,6 @@ export default function AssistantPage() {
     setIsCollapsed(!isCollapsed);
   };
 
-  // Zastąp oba useEffecty tym jednym:
   useEffect(() => {
     const loadProfileAndRecommendations = async () => {
       setLoading(true);
@@ -381,7 +380,6 @@ export default function AssistantPage() {
             </CustomButton>
           </div>
 
-          {/* Confirmation Dialog */}
           <AlertDialog open={isConfirmDialogOpen} onOpenChange={setIsConfirmDialogOpen}>
             <AlertDialogContent className="font-poppins mx-auto max-w-md">
               <AlertDialogHeader>
