@@ -202,7 +202,7 @@ export const NavLinks = [
   { label: 'Assistant', url: '/assistant' },
   { label: 'Analysis', url: '/market-analysis' },
   { label: 'Pricing', url: '/pricing' },
-  { label: 'Resume', url: '/resume', disabled: true },
+  { label: 'Resume', url: '/resume', disabled: false },
 ];
 
 // Form

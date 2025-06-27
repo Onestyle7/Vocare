@@ -187,6 +187,43 @@ export default function StepFive({
 
       <FormField
         control={form.control}
+        name="willingToRebrand"
+        render={({ field }) => (
+          <FormItem>
+            <FormLabel>Willing to rebrand?</FormLabel>
+            <FormControl>
+              <div className="flex space-x-2">
+                <Button
+                  type="button"
+                  onClick={() => field.onChange(true)}
+                  className={`h-12 flex-1 rounded-lg transition-all ${
+                    field.value === true
+                      ? 'bg-[#915EFF] text-white shadow-[0_2px_4px_rgba(145,94,255,0.5)] dark:hover:bg-[#713ae8]'
+                      : 'border bg-gray-200 text-gray-700 hover:bg-gray-300 dark:bg-[#262626] dark:text-gray-300 dark:hover:bg-gray-400/30'
+                  }`}
+                >
+                  Yes
+                </Button>
+                <Button
+                  type="button"
+                  onClick={() => field.onChange(false)}
+                  className={`h-12 flex-1 rounded-lg transition-all ${
+                    field.value === false
+                      ? 'bg-[#915EFF] text-white shadow-[0_2px_4px_rgba(145,94,255,0.5)] dark:hover:bg-[#713ae8]'
+                      : 'border bg-gray-200 text-gray-700 dark:bg-[#262626] dark:text-gray-300 dark:hover:bg-gray-400/30'
+                  }`}
+                >
+                  No
+                </Button>
+              </div>
+            </FormControl>
+            <FormMessage />
+          </FormItem>
+        )}
+      />
+
+      <FormField
+        control={form.control}
         name="financialSurvey.riskAppetite"
         render={({ field }) => (
           <FormItem>
