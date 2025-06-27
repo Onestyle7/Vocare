@@ -165,12 +165,36 @@ export default function AssistantPage() {
           setLoading(false);
           return;
         } catch (lastError: unknown) {
-          if (lastError instanceof AxiosError && lastError.response?.status !== 404) {
-            console.error('Something went wrong while getting last recommendations:', lastError);
-            setError(
-              lastError.response?.data?.detail ||
-                'Something went wrong while getting last recommendations.'
+          if (lastError instanceof AxiosError) {
+            const status = lastError.response?.status;
+            const detail =
+              lastError.response?.data?.detail || lastError.response?.data;
+
+            const notFound =
+              status === 404 ||
+              (status === 500 &&
+                typeof detail === 'string' &&
+                /no recommendation|nie znaleziono/i.test(detail));
+
+            if (!notFound) {
+              console.error(
+                'Something went wrong while getting last recommendations:',
+                lastError
+              );
+              setError(
+                typeof detail === 'string'
+                  ? detail
+                  : 'Something went wrong while getting last recommendations.'
+              );
+              setLoading(false);
+              return;
+            }
+          } else {
+            console.error(
+              'Unknown error while getting last recommendations:',
+              lastError
             );
+            setError('Unexpected error occurred');
             setLoading(false);
             return;
           }
