@@ -72,6 +72,7 @@ const baseProfileSchema = z.object({
   languages: z.array(languageEntrySchema).optional(),
   additionalInformation: z.string().optional(),
   aboutMe: z.string().optional(),
+  willingToRebrand: z.boolean().default(false),
   personalityType: z.nativeEnum(PersonalityType),
   financialSurvey: financialSurveySchema.optional(),
 });

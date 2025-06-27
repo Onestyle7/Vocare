@@ -75,6 +75,7 @@ export type UserProfile = {
   languages?: LanguageEntry[];
   additionalInformation?: string;
   aboutMe?: string;
+  willingToRebrand?: boolean;
   personalityType: PersonalityType;
   financialSurvey?: FinancialSurvey;
 };

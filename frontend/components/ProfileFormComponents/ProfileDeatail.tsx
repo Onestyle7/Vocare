@@ -378,6 +378,15 @@ export default function ProfileDetails() {
             </span>
           </div>
           <Separator />
+          <div className="flex items-center justify-between rounded-lg">
+            <span className="font-medium text-gray-600 dark:text-gray-200">
+              Willing To Rebrand:
+            </span>
+            <span className="ml-2 rounded-lg border px-4 py-2 text-gray-600 dark:text-gray-200">
+              {profile?.willingToRebrand ? 'Yes' : 'No'}
+            </span>
+          </div>
+          <Separator />
           <div className="flex justify-between rounded-lg">
             <span className="font-medium text-gray-600 dark:text-gray-200">Risk Appetite:</span>
             <span className="ml-2">{getRiskLabel(profile?.financialSurvey?.riskAppetite)}</span>
