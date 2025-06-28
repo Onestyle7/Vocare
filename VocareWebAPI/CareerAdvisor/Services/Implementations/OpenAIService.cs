@@ -15,7 +15,6 @@ namespace VocareWebAPI.CareerAdvisor.Services.Implementations
     {
         private readonly HttpClient _httpClient;
         private readonly AiConfig _config;
-        private readonly IUserProfileRepository _userProfileRepository;
         private readonly IAiRecommendationRepository _aiRecommendationRepository;
         private readonly IMapper _mapper;
         private readonly ILogger<OpenAIService> _logger;
@@ -23,7 +22,6 @@ namespace VocareWebAPI.CareerAdvisor.Services.Implementations
         public OpenAIService(
             HttpClient httpClient,
             IOptions<AiConfig> aiConfig,
-            IUserProfileRepository userProfileRepository,
             IAiRecommendationRepository aiRecommendationRepository,
             IMapper mapper,
             ILogger<OpenAIService> logger
@@ -31,7 +29,6 @@ namespace VocareWebAPI.CareerAdvisor.Services.Implementations
         {
             _httpClient = httpClient;
             _config = aiConfig.Value;
-            _userProfileRepository = userProfileRepository;
             _aiRecommendationRepository = aiRecommendationRepository;
             _mapper = mapper;
             _logger = logger;

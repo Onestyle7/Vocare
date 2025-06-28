@@ -125,7 +125,7 @@ builder
     })
     .AddPolicyHandler(retryPolicy);
 builder
-    .Services.AddHttpClient<OpenAIService>(client =>
+    .Services.AddHttpClient<IAiService, OpenAIService>(client =>
     {
         var config = builder.Configuration.GetSection("OpenAI").Get<AiConfig>()!;
         client.BaseAddress = new Uri(config.BaseUrl);
