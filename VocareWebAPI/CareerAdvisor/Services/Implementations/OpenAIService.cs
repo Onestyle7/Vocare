@@ -1,9 +1,5 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Text.Json;
 using System.Text.Json.Serialization;
-using System.Threading.Tasks;
 using AutoMapper;
 using Microsoft.Extensions.Options;
 using VocareWebAPI.Models;
@@ -12,7 +8,6 @@ using VocareWebAPI.Models.Dtos;
 using VocareWebAPI.Models.Entities;
 using VocareWebAPI.Repositories;
 using VocareWebAPI.Services;
-using static VocareWebAPI.Services.PerplexityAiService;
 
 namespace VocareWebAPI.CareerAdvisor.Services.Implementations
 {
