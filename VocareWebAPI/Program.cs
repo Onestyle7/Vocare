@@ -137,7 +137,7 @@ builder
 // ===== SERWISY APLIKACJI =====
 builder.Services.AddScoped<UserProfileService>();
 builder.Services.AddScoped<UserRegistrationHandler>();
-builder.Services.AddScoped<IAiService, PerplexityAiService>();
+builder.Services.AddScoped<IAiService, OpenAIService>();
 
 /* builder.Services.AddScoped<IAiService, PerplexityAiService>();
  */builder.Services.AddScoped<IMarketAnalysisService, OpenAiMarketAnalysisService>();
