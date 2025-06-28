@@ -98,9 +98,9 @@ namespace VocareWebAPI.Controllers
 
                 return Ok(recommendation);
             }
-            catch (AiServiceException e)
+            catch (AiServiceException ex) when (ex.Message.Contains("No recommendation found"))
             {
-                return Problem(detail: e.Message, statusCode: 404);
+                return NotFound("No previous recommendation found for the user");
             }
         }
     }
