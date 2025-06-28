@@ -120,7 +120,6 @@ export default function AssistantPage() {
     setIsCollapsed(!isCollapsed);
   };
 
-  // Zastąp oba useEffecty tym jednym:
   useEffect(() => {
     const loadProfileAndRecommendations = async () => {
       setLoading(true);
@@ -165,7 +164,9 @@ export default function AssistantPage() {
           setLoading(false);
           return;
         } catch (lastError: unknown) {
-          if (lastError instanceof AxiosError && lastError.response?.status !== 404) {
+          if (lastError instanceof AxiosError && 
+              lastError.response?.status !== 404 && 
+              lastError.response?.status !== 500) {
             console.error('Something went wrong while getting last recommendations:', lastError);
             setError(
               lastError.response?.data?.detail ||
@@ -174,6 +175,7 @@ export default function AssistantPage() {
             setLoading(false);
             return;
           }
+          console.log('No last recommendations found or server error, generating new ones...');
         }
 
         // Jeśli brak ostatnich rekomendacji, wygeneruj nowe
@@ -378,7 +380,6 @@ export default function AssistantPage() {
             </CustomButton>
           </div>
 
-          {/* Confirmation Dialog */}
           <AlertDialog open={isConfirmDialogOpen} onOpenChange={setIsConfirmDialogOpen}>
             <AlertDialogContent className="font-poppins mx-auto max-w-md">
               <AlertDialogHeader>
