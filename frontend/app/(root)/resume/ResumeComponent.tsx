@@ -23,6 +23,8 @@ import {
 } from 'lucide-react';
 import { DatePickerWithCurrent } from './DatePickerWithCurrent';
 import { HoverCard, HoverCardContent, HoverCardTrigger } from '@/components/ui/hover-card';
+import html2canvas from 'html2canvas-pro';
+import jsPDF from 'jspdf';
 
 interface PersonalInfo {
   firstName: string;
@@ -325,6 +327,124 @@ const CVCreator: React.FC = () => {
   const goToPage = (page: number) => {
     if (page >= 1 && page <= totalPages) {
       setCurrentPage(page);
+    }
+  };
+
+  const downloadPDF = async () => {
+    try {
+      // ► Zamiana querySelector na generyczny HTMLElement
+      const cvElement = document.querySelector<HTMLElement>('.cv-content');
+      if (!cvElement) return;
+
+      // Tymczasowo ustaw skalę na 1 dla lepszej jakości
+      const originalScale = cvScale;
+      setCvScale(1);
+
+      // Poczekaj na przerender
+      await new Promise((resolve) => setTimeout(resolve, 100));
+
+      // ► Rzutowanie dla html2canvas
+      const canvas = await html2canvas(cvElement as HTMLElement, {
+        scale: 2,
+        useCORS: true,
+        allowTaint: true,
+        backgroundColor: '#ffffff', // Explicit HEX color
+        width: cvElement.offsetWidth,
+        height: cvElement.offsetHeight,
+      });
+
+      // Przywróć oryginalną skalę
+      setCvScale(originalScale);
+
+      const imgData = canvas.toDataURL('image/png');
+
+      // A4 rozmiary w mm
+      const pdf = new jsPDF('portrait', 'mm', 'a4');
+      const pdfWidth = 210;
+      const pdfHeight = 297;
+
+      // Oblicz wymiary obrazu zachowując proporcje
+      const imgWidth = pdfWidth;
+      const imgHeight = (canvas.height * pdfWidth) / canvas.width;
+
+      if (imgHeight <= pdfHeight) {
+        // Zmieści się na jednej stronie
+        pdf.addImage(imgData, 'PNG', 0, 0, imgWidth, imgHeight);
+      } else {
+        // Podziel na kilka stron
+        let yPosition = 0;
+        let pageCount = 0;
+
+        while (yPosition < imgHeight) {
+          if (pageCount > 0) {
+            pdf.addPage();
+          }
+
+          const sourceY = (yPosition * canvas.height) / imgHeight;
+          const sourceHeight = Math.min(
+            (pdfHeight * canvas.height) / imgHeight,
+            canvas.height - sourceY
+          );
+
+          // Utwórz canvas dla fragmentu
+          const pageCanvas = document.createElement('canvas');
+          // ► Po wywołaniu getContext() sprawdź, czy nie jest null
+          const pageCtx = pageCanvas.getContext('2d');
+          if (!pageCtx) {
+            console.error('Could not get 2D context from pageCanvas');
+            return; // lub rzucić błąd, w zależności od Twojej logiki
+          }
+
+          pageCanvas.width = canvas.width;
+          pageCanvas.height = sourceHeight;
+
+          pageCtx.drawImage(
+            canvas,
+            0,
+            sourceY,
+            canvas.width,
+            sourceHeight,
+            0,
+            0,
+            canvas.width,
+            sourceHeight
+          );
+
+          pageCanvas.width = canvas.width;
+          pageCanvas.height = sourceHeight;
+
+          pageCtx.drawImage(
+            canvas,
+            0,
+            sourceY,
+            canvas.width,
+            sourceHeight,
+            0,
+            0,
+            canvas.width,
+            sourceHeight
+          );
+
+          const pageImgData = pageCanvas.toDataURL('image/png');
+          const pageImgHeight = (sourceHeight * pdfWidth) / canvas.width;
+
+          pdf.addImage(pageImgData, 'PNG', 0, 0, imgWidth, pageImgHeight);
+
+          yPosition += pdfHeight;
+          pageCount++;
+        }
+      }
+
+      // Wygeneruj nazwę pliku
+      const fileName =
+        personalInfo.firstName && personalInfo.lastName
+          ? `${personalInfo.firstName}_${personalInfo.lastName}_CV.pdf`
+          : 'My_CV.pdf';
+
+      pdf.save(fileName);
+    } catch (error) {
+      console.error('Błąd podczas generowania PDF:', error);
+      alert('Wystąpił błąd podczas pobierania CV. Spróbuj ponownie.');
     }
   };
 
@@ -982,7 +1102,9 @@ const CVCreator: React.FC = () => {
             <h3 className="mb-2 border-b border-gray-300 pb-1 text-lg font-semibold text-gray-800">
               Privacy Statement
             </h3>
-            <p className="text-xs leading-relaxed text-gray-700">{privacyStatement.content}</p>
+            <p className="text-xs leading-relaxed break-words text-gray-700">
+              {privacyStatement.content}
+            </p>
           </div>
         ) : null;
 
@@ -1143,6 +1265,47 @@ const CVCreator: React.FC = () => {
           <div className="flex items-center justify-between border-b border-gray-200 bg-white p-4">
             <h2 className="text-lg font-semibold text-gray-700">Resume Preview</h2>
             <div className="flex items-center space-x-2">
+              {/* Przycisk pobierania - NOWY */}
+              <button
+                onClick={downloadPDF}
+                className="flex items-center space-x-2 rounded border border-red-500 bg-red-500 px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-red-600"
+                title="Pobierz CV jako PDF"
+              >
+                <svg
+                  width="16"
+                  height="16"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  xmlns="http://www.w3.org/2000/svg"
+                >
+                  <path
+                    d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"
+                    stroke="currentColor"
+                    strokeWidth="2"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                  />
+                  <polyline
+                    points="7,10 12,15 17,10"
+                    stroke="currentColor"
+                    strokeWidth="2"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                  />
+                  <line
+                    x1="12"
+                    y1="15"
+                    x2="12"
+                    y2="3"
+                    stroke="currentColor"
+                    strokeWidth="2"
+                    strokeLinecap="round"
+                  />
+                </svg>
+                <span>Download</span>
+              </button>
+
+              {/* Istniejące przyciski zoom */}
               <button
                 onClick={handleZoomOut}
                 className="cursor-pointer rounded p-2 transition-colors hover:bg-gray-100"
@@ -1194,13 +1357,16 @@ const CVCreator: React.FC = () => {
             >
               {/* A4 Paper with exact dimensions */}
               <div
-                className="cv-content rounded-sm bg-white shadow-md"
+                className="cv-content rounded-sm"
                 style={{
                   width: '210mm',
-                  height: '297mm',
+                  height: '237mm',
                   transform: `scale(${cvScale})`,
                   transformOrigin: 'center center',
                   overflow: 'hidden',
+                  backgroundColor: '#ffffff', // Force HEX
+                  color: '#000000', // Force HEX
+                  boxShadow: '0 4px 6px rgba(0,0,0,0.1)', // Use RGBA for shadow
                 }}
               >
                 <div
