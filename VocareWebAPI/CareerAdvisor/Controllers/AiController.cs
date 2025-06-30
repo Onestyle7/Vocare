@@ -2,6 +2,7 @@ using System.Security.Claims;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.RateLimiting;
+using Microsoft.Extensions.Logging;
 using VocareWebAPI.Billing.Services.Interfaces;
 using VocareWebAPI.Repositories;
 using VocareWebAPI.Services;
@@ -20,6 +21,7 @@ namespace VocareWebAPI.Controllers
         private readonly IAiService _aiService;
         private readonly IUserProfileRepository _userProfileRepository;
         private IBillingService _billingService;
+        private readonly ILogger<AiController> _logger;
 
         /// <summary>
         /// Inicjalizuje nową instancję kontrolera AiController.
@@ -29,12 +31,14 @@ namespace VocareWebAPI.Controllers
         public AiController(
             IAiService aiService,
             IUserProfileRepository userProfileRepository,
-            IBillingService billingService
+            IBillingService billingService,
+            ILogger<AiController> logger
         )
         {
             _billingService = billingService;
             _aiService = aiService;
             _userProfileRepository = userProfileRepository;
+            _logger = logger;
         }
 
         /// <summary>
@@ -98,9 +102,12 @@ namespace VocareWebAPI.Controllers
 
                 return Ok(recommendation);
             }
-            catch (AiServiceException ex) when (ex.Message.Contains("No recommendation found"))
+            catch (Exception ex)
             {
-                return NotFound("No previous recommendation found for the user");
+                _logger.LogError(ex, "Error getting last recommendation");
+                return NotFound(
+                    new { message = "Brak ostatniej rekomendacji.", error = ex.Message }
+                );
             }
         }
     }

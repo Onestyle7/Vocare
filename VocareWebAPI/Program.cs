@@ -51,8 +51,36 @@ builder.Services.Configure<AiConfig>(builder.Configuration.GetSection("OpenAI"))
 
 // ===== BAZA DANYCH =====
 builder.Services.AddDbContext<AppDbContext>(options =>
-    options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection"))
-);
+{
+    var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
+
+    // Na Railway użyj DATABASE_URL
+    var databaseUrl = Environment.GetEnvironmentVariable("DATABASE_URL");
+    if (!string.IsNullOrEmpty(databaseUrl))
+    {
+        // Konwertuj DATABASE_URL z formatu Postgres na connection string
+        var databaseUri = new Uri(databaseUrl);
+        var userInfo = databaseUri.UserInfo.Split(':');
+
+        connectionString =
+            $"Host={databaseUri.Host};"
+            + $"Port={databaseUri.Port};"
+            + $"Database={databaseUri.LocalPath.TrimStart('/')};"
+            + $"Username={userInfo[0]};"
+            + $"Password={userInfo[1]};"
+            + $"SSL Mode=Require;Trust Server Certificate=true";
+
+        Console.WriteLine(
+            $"Using DATABASE_URL from Railway: Host={databaseUri.Host}, Database={databaseUri.LocalPath.TrimStart('/')}"
+        );
+    }
+    else
+    {
+        Console.WriteLine("No DATABASE_URL found, using connection string from appsettings");
+    }
+
+    options.UseNpgsql(connectionString);
+});
 
 // ===== IDENTITY & AUTORYZACJA =====
 builder
@@ -97,7 +125,7 @@ builder
     })
     .AddPolicyHandler(retryPolicy);
 builder
-    .Services.AddHttpClient<OpenAIService>(client =>
+    .Services.AddHttpClient<IAiService, OpenAIService>(client =>
     {
         var config = builder.Configuration.GetSection("OpenAI").Get<AiConfig>()!;
         client.BaseAddress = new Uri(config.BaseUrl);
@@ -245,55 +273,103 @@ app.MapPost(
     .AllowAnonymous();
 
 // ===== MIGRACJA BAZY DANYCH =====
-if (app.Environment.IsDevelopment())
+using var scope = app.Services.CreateScope();
+var db = scope.ServiceProvider.GetRequiredService<AppDbContext>();
+var logger = scope.ServiceProvider.GetRequiredService<ILogger<Program>>();
+
+var retries = 0;
+const int maxRetries = 10;
+
+while (retries < maxRetries)
 {
-    using var scope = app.Services.CreateScope();
-    var db = scope.ServiceProvider.GetRequiredService<AppDbContext>();
-    var logger = scope.ServiceProvider.GetRequiredService<ILogger<Program>>();
-
-    var retries = 0;
-    const int maxRetries = 10;
-
-    while (retries < maxRetries)
+    try
     {
-        try
+        logger.LogInformation(
+            "Attempting database migration... ({Attempt}/{MaxRetries})",
+            retries + 1,
+            maxRetries
+        );
+
+        // Sprawdź czy baza danych istnieje i czy można się połączyć
+        if (await db.Database.CanConnectAsync())
         {
-            logger.LogInformation(
-                "Attempting database migration... ({Attempt}/{MaxRetries})",
-                retries + 1,
-                maxRetries
+            logger.LogInformation("Database connection successful");
+
+            // Sprawdź czy istnieją jakiekolwiek tabele
+            var tableCount = await db.Database.ExecuteSqlRawAsync(
+                "SELECT COUNT(*) FROM information_schema.tables WHERE table_schema = 'public' AND table_type = 'BASE TABLE'"
             );
+
+            logger.LogInformation("Number of existing tables: {TableCount}", tableCount);
+
+            // Jeśli nie ma tabel, ale istnieje historia migracji, wyczyść ją
+            try
+            {
+                var migrationHistory = await db.Database.GetAppliedMigrationsAsync();
+                if (migrationHistory.Any() && tableCount == 0)
+                {
+                    logger.LogWarning(
+                        "Migration history exists but no tables found. Clearing migration history."
+                    );
+                    await db.Database.ExecuteSqlRawAsync("DELETE FROM \"__EFMigrationsHistory\"");
+                }
+            }
+            catch (Exception ex)
+            {
+                logger.LogWarning(
+                    ex,
+                    "Could not check or clear migration history (this is normal for first deployment)"
+                );
+            }
+
+            // Wykonaj migracje
+            logger.LogInformation("Executing database migrations...");
             await db.Database.MigrateAsync();
+
+            // Sprawdź czy ServiceCosts mają dane
+            try
+            {
+                var serviceCostCount = await db.ServiceCosts.CountAsync();
+                if (serviceCostCount == 0)
+                {
+                    logger.LogInformation("Seeding ServiceCosts data...");
+                    // EF Core powinno to zrobić automatycznie przez HasData, ale na wszelki wypadek
+                    await db.SaveChangesAsync();
+                }
+            }
+            catch (Exception ex)
+            {
+                logger.LogWarning(ex, "Could not check ServiceCosts (table might not exist yet)");
+            }
+
             logger.LogInformation("Database migration completed successfully.");
             break;
         }
-        catch (Exception ex)
+        else
         {
-            retries++;
-            if (retries >= maxRetries)
-            {
-                logger.LogError(
-                    ex,
-                    "Database migration failed after {MaxRetries} attempts. Application will start without migrations.",
-                    maxRetries
-                );
-                break; // Pozwól aplikacji startować nawet bez bazy
-            }
-
-            logger.LogWarning(
-                "DB unavailable, retrying in 5s... ({Attempt}/{MaxRetries}). Error: {Error}",
-                retries,
-                maxRetries,
-                ex.Message
-            );
-            await Task.Delay(5000);
+            throw new Exception("Cannot connect to database");
         }
     }
-}
-else
-{
-    var logger = app.Services.GetRequiredService<ILogger<Program>>();
-    logger.LogInformation("Production environment - skipping automatic migrations.");
-}
+    catch (Exception ex)
+    {
+        retries++;
+        if (retries >= maxRetries)
+        {
+            logger.LogError(
+                ex,
+                "Database migration failed after {MaxRetries} attempts.",
+                maxRetries
+            );
+            throw;
+        }
 
+        logger.LogWarning(
+            "DB migration attempt failed, retrying in 5s... ({Attempt}/{MaxRetries}). Error: {Error}",
+            retries,
+            maxRetries,
+            ex.Message
+        );
+        await Task.Delay(5000);
+    }
+}
 app.Run();
