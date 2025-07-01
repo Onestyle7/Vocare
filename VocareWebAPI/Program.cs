@@ -13,6 +13,7 @@ using VocareWebAPI.Billing.Services.Interfaces;
 using VocareWebAPI.CareerAdvisor.Services.Implementations;
 using VocareWebAPI.CvGenerator.Repositories.Implementations;
 using VocareWebAPI.CvGenerator.Repositories.Interfaces;
+using VocareWebAPI.CvGenerator.Services.Implementation;
 using VocareWebAPI.CvGenerator.Services.Implementations;
 using VocareWebAPI.CvGenerator.Services.Interfaces;
 using VocareWebAPI.Data;
@@ -110,6 +111,7 @@ builder
 builder.Services.AddScoped<UserProfileService>();
 builder.Services.AddScoped<UserRegistrationHandler>();
 builder.Services.AddScoped<IAiService, OpenAIService>();
+builder.Services.AddScoped<ICvManagementService, CvManagementService>();
 
 /* builder.Services.AddScoped<IAiService, PerplexityAiService>();
  */builder.Services.AddScoped<IMarketAnalysisService, OpenAiMarketAnalysisService>();
