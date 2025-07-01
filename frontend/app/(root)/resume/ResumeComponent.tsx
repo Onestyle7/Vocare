@@ -25,6 +25,7 @@ import { DatePickerWithCurrent } from './DatePickerWithCurrent';
 import { HoverCard, HoverCardContent, HoverCardTrigger } from '@/components/ui/hover-card';
 import html2canvas from 'html2canvas-pro';
 import jsPDF from 'jspdf';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 
 interface PersonalInfo {
   firstName: string;
@@ -77,7 +78,9 @@ interface PrivacyStatement {
 }
 
 const CVCreator: React.FC = () => {
-  const [personalInfo, setPersonalInfo] = useState<PersonalInfo>({
+  const [personalInfo, setPersonalInfo] = useState<PersonalInfo>(() => {
+  const saved = localStorage.getItem('personalInfo');
+  return saved ? JSON.parse(saved) : {
     firstName: '',
     lastName: '',
     email: '',
@@ -85,23 +88,41 @@ const CVCreator: React.FC = () => {
     address: '',
     profession: '',
     summary: '',
-  });
+  };
+});
 
   const [isPremium] = useState(false);
 
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
 
-  const [experiences, setExperiences] = useState<Experience[]>([]);
-  const [education, setEducation] = useState<Education[]>([]);
-  const [skills, setSkills] = useState<Skill[]>([]);
-  const [hobbies, setHobbies] = useState<Hobby[]>([]);
+  const [experiences, setExperiences] = useState<Experience[]>(() => {
+  const saved = localStorage.getItem('experiences');
+  return saved ? JSON.parse(saved) : [];
+});
+  const [education, setEducation] = useState<Education[]>(() => {
+  const saved = localStorage.getItem('education');
+  return saved ? JSON.parse(saved) : [];
+});
+
+const [skills, setSkills] = useState<Skill[]>(() => {
+  const saved = localStorage.getItem('skills');
+  return saved ? JSON.parse(saved) : [];
+});
+  const [hobbies, setHobbies] = useState<Hobby[]>(() => {
+  const saved = localStorage.getItem('hobbies');
+  return saved ? JSON.parse(saved) : [];
+});
   const [showFullDates, setShowFullDates] = useState(true);
-  const [languages, setLanguages] = useState<Language[]>([]);
-  const [privacyStatement, setPrivacyStatement] = useState<PrivacyStatement>({
-    id: 'privacy',
-    content: '',
-  });
+const [languages, setLanguages] = useState<Language[]>(() => {
+  const saved = localStorage.getItem('languages');
+  return saved ? JSON.parse(saved) : [];
+});  
+
+const [privacyStatement, setPrivacyStatement] = useState<PrivacyStatement>(() => {
+  const saved = localStorage.getItem('privacyStatement');
+  return saved ? JSON.parse(saved) : { id: 'privacy', content: '' };
+});
 
   // CV Preview controls
   const [cvScale, setCvScale] = useState(0.8);
@@ -109,20 +130,56 @@ const CVCreator: React.FC = () => {
   const [isDragging, setIsDragging] = useState(false);
   const [dragStart, setDragStart] = useState({ x: 0, y: 0 });
 
-  // Section ordering
-  const [sectionOrder, setSectionOrder] = useState([
-    'profile',
-    'experience',
-    'education',
-    'skills',
-    'languages',
-    'hobbies',
-    'privacy',
-  ]);
+const [sectionOrder, setSectionOrder] = useState<string[]>(() => {
+  const saved = localStorage.getItem('sectionOrder');
+  return saved
+    ? JSON.parse(saved)
+    : ['profile', 'experience', 'education', 'skills', 'languages', 'hobbies', 'privacy'];
+});
   const [draggedSection, setDraggedSection] = useState<string | null>(null);
   const [dragOverSection, setDragOverSection] = useState<string | null>(null);
 
   const [isHovered, setIsHovered] = useState(false);
+
+  // Save personalInfo to localStorage
+useEffect(() => {
+  localStorage.setItem('personalInfo', JSON.stringify(personalInfo));
+}, [personalInfo]);
+
+// Save experiences to localStorage
+useEffect(() => {
+  localStorage.setItem('experiences', JSON.stringify(experiences));
+}, [experiences]);
+
+// Save education to localStorage
+useEffect(() => {
+  localStorage.setItem('education', JSON.stringify(education));
+}, [education]);
+
+// Save skills to localStorage
+useEffect(() => {
+  localStorage.setItem('skills', JSON.stringify(skills));
+}, [skills]);
+
+// Save languages to localStorage
+useEffect(() => {
+  localStorage.setItem('languages', JSON.stringify(languages));
+}, [languages]);
+
+// Save hobbies to localStorage
+useEffect(() => {
+  localStorage.setItem('hobbies', JSON.stringify(hobbies));
+}, [hobbies]);
+
+// Save privacyStatement to localStorage
+useEffect(() => {
+  localStorage.setItem('privacyStatement', JSON.stringify(privacyStatement));
+}, [privacyStatement]);
+
+// Save sectionOrder to localStorage
+useEffect(() => {
+  localStorage.setItem('sectionOrder', JSON.stringify(sectionOrder));
+}, [sectionOrder]);
 
   useEffect(() => {
     checkContentOverflow();
@@ -303,14 +360,14 @@ const CVCreator: React.FC = () => {
   };
 
   const checkContentOverflow = () => {
-    const cvElement = document.querySelector('.cv-content');
-    if (cvElement) {
-      const contentHeight = cvElement.scrollHeight;
-      const pageHeight = 297 * 2.83; // A4 height in pixels (297mm * 2.83 pixels/mm)
-      const newTotalPages = Math.ceil(contentHeight / pageHeight);
-      setTotalPages(newTotalPages);
-    }
-  };
+  const cvElement = document.querySelector<HTMLElement>('.cv-content');
+  if (!cvElement) return;
+  const contentHeight = cvElement.scrollHeight;
+  const pageHeight = cvElement.clientHeight;
+  const newTotalPages = Math.ceil(contentHeight / pageHeight);
+  setTotalPages(newTotalPages);
+};
+
 
   const goToNextPage = () => {
     if (currentPage < totalPages) {
@@ -1003,7 +1060,7 @@ const CVCreator: React.FC = () => {
                   </div>
                 </div>
                 {exp.description && (
-                  <p className="text-xs leading-relaxed text-gray-700">{exp.description}</p>
+                  <p className="text-xs leading-relaxed break-words text-gray-700">{exp.description}</p>
                 )}
               </div>
             ))}
@@ -1119,7 +1176,7 @@ const CVCreator: React.FC = () => {
       <div className="mb-4 flex items-center justify-center bg-white py-4 shadow-lg lg:hidden">
         <button
           onClick={() => (window.location.href = '/')}
-          className="rounded-lg p-3 transition-colors hover:bg-gray-100"
+          className="rounded-lg p-3 transition-colors hover:bg-gray-100 cursor-pointer"
           title="Strona główna"
         >
           <Home size={24} className="text-gray-600" />
@@ -1130,7 +1187,7 @@ const CVCreator: React.FC = () => {
       <div className="mx-3 hidden w-16 flex-col items-center justify-between rounded-lg bg-white py-6 shadow-lg lg:flex">
         <button
           onClick={() => (window.location.href = '/')}
-          className="rounded-lg p-3 transition-colors hover:bg-gray-100"
+          className="rounded-lg p-3 transition-colors hover:bg-gray-100 cursor-pointer"
           title="Strona główna"
         >
           <Home size={24} className="text-gray-600" />
@@ -1149,14 +1206,18 @@ const CVCreator: React.FC = () => {
               <h1 className="text-xl font-bold text-gray-800 lg:text-2xl">Resume creator</h1>
               <div className="flex items-center space-x-3">
                 <label className="text-sm text-gray-600">Date format:</label>
-                <select
-                  value={showFullDates ? 'full' : 'year'}
-                  onChange={(e) => setShowFullDates(e.target.value === 'full')}
-                  className="rounded border border-gray-300 px-2 py-1 text-sm focus:ring-2 focus:ring-blue-500 focus:outline-none"
-                >
-                  <option value="full">Month & year</option>
-                  <option value="year">Just year</option>
-                </select>
+                <Select
+            value={showFullDates ? 'full' : 'year'}
+            onValueChange={(value) => setShowFullDates(value === 'full')}
+          >
+            <SelectTrigger className="w-40 rounded-sm border border-gray-300 px-2 text-sm focus:ring-2 focus:ring-blue-500 focus:outline-none font-poppins">
+              <SelectValue />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="full">Month & year</SelectItem>
+              <SelectItem value="year">Just year</SelectItem>
+            </SelectContent>
+          </Select>
               </div>
             </div>
 
@@ -1265,10 +1326,9 @@ const CVCreator: React.FC = () => {
           <div className="flex items-center justify-between border-b border-gray-200 bg-white p-4">
             <h2 className="text-lg font-semibold text-gray-700">Resume Preview</h2>
             <div className="flex items-center space-x-2">
-              {/* Przycisk pobierania - NOWY */}
               <button
                 onClick={downloadPDF}
-                className="flex items-center space-x-2 rounded border border-red-500 bg-red-500 px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-red-600"
+                className="flex items-center space-x-2 rounded border border-red-500 bg-red-500 px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-red-600 cursor-pointer"
                 title="Pobierz CV jako PDF"
               >
                 <svg
@@ -1313,7 +1373,7 @@ const CVCreator: React.FC = () => {
               >
                 <ZoomOut size={18} />
               </button>
-              <span className="min-w-12 cursor-none text-center text-sm text-gray-600">
+              <span className="min-w-12 text-center text-sm text-gray-600">
                 {Math.round(cvScale * 100)}%
               </span>
               <button
@@ -1330,7 +1390,7 @@ const CVCreator: React.FC = () => {
               >
                 Reset
               </button>
-              <div className="flex cursor-none items-center text-sm text-gray-500">
+              <div className="flex items-center text-sm text-gray-500">
                 <Move size={16} className="mr-1" />
                 Drag and move
               </div>
@@ -1360,7 +1420,7 @@ const CVCreator: React.FC = () => {
                 className="cv-content rounded-sm"
                 style={{
                   width: '210mm',
-                  height: '237mm',
+                  height: '257mm',
                   transform: `scale(${cvScale})`,
                   transformOrigin: 'center center',
                   overflow: 'hidden',
@@ -1370,7 +1430,7 @@ const CVCreator: React.FC = () => {
                 }}
               >
                 <div
-                  className="h-full p-8 transition-transform duration-300 ease-in-out"
+                  className="h-full p-8"
                   style={{
                     transform: `translateY(-${(currentPage - 1) * 100}%)`,
                   }}
