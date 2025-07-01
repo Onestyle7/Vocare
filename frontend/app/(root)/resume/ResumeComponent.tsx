@@ -1420,7 +1420,7 @@ useEffect(() => {
                 className="cv-content rounded-sm"
                 style={{
                   width: '210mm',
-                  height: '257mm',
+                  height: '297mm',
                   transform: `scale(${cvScale})`,
                   transformOrigin: 'center center',
                   overflow: 'hidden',
@@ -1435,8 +1435,6 @@ useEffect(() => {
                     transform: `translateY(-${(currentPage - 1) * 100}%)`,
                   }}
                 >
-                  {/* Header Section - pokazuj tylko na pierwszej stronie */}
-                  {currentPage === 1 && (
                     <div className="mb-6">
                       <h1 className="mb-2 text-3xl leading-tight font-bold text-gray-900">
                         {personalInfo.firstName || personalInfo.lastName
@@ -1469,7 +1467,7 @@ useEffect(() => {
                         )}
                       </div>
                     </div>
-                  )}
+                  
 
                   {sectionOrder.map((sectionId) => renderSectionInPreview(sectionId))}
 
@@ -1488,7 +1486,7 @@ useEffect(() => {
                       </div>
                     )}
                 </div>
-              </div>
+                </div>
             </div>
 
             {/* Pagination Controls - dodaj na dole kontenera */}
