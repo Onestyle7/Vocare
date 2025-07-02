@@ -23,7 +23,7 @@ import {
   Upload,
 } from 'lucide-react';
 import { createCv } from '@/lib/api/cv';
-import { CvDto } from '@/lib/types/cv';
+import { CvDto, CvDetailsDto } from '@/lib/types/cv';
 import { DatePickerWithCurrent } from './DatePickerWithCurrent';
 import { HoverCard, HoverCardContent, HoverCardTrigger } from '@/components/ui/hover-card';
 import html2canvas from 'html2canvas-pro';
@@ -94,7 +94,11 @@ interface PrivacyStatement {
   content: string;
 }
 
-const CVCreator: React.FC = () => {
+interface CVCreatorProps {
+  initialCv?: CvDetailsDto;
+}
+
+const CVCreator: React.FC<CVCreatorProps> = ({ initialCv }) => {
   const [personalInfo, setPersonalInfo] = useState<PersonalInfo>(() => {
     const saved = localStorage.getItem('personalInfo');
     return saved
@@ -522,6 +526,12 @@ const CVCreator: React.FC = () => {
       console.error('Failed to generate CV from profile', err);
     }
   };
+
+  useEffect(() => {
+    if (initialCv) {
+      populateFromCv(initialCv.cvData, initialCv.targetPosition || undefined);
+    }
+  }, [initialCv]);
 
   const downloadPDF = async () => {
     try {
