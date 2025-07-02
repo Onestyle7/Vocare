@@ -21,6 +21,8 @@ import {
   ChevronRight,
   ChevronLeft,
 } from 'lucide-react';
+import { createCv } from '@/lib/api/cv';
+import { CvDto } from '@/lib/types/cv';
 import { DatePickerWithCurrent } from './DatePickerWithCurrent';
 import { HoverCard, HoverCardContent, HoverCardTrigger } from '@/components/ui/hover-card';
 import html2canvas from 'html2canvas-pro';
@@ -39,6 +41,7 @@ interface PersonalInfo {
   email: string;
   phone: string;
   address: string;
+  country: string;
   profession: string;
   summary: string;
 }
@@ -57,6 +60,7 @@ interface Education {
   id: string;
   school: string;
   degree: string;
+  field: string;
   startDate: string;
   endDate: string;
   isCurrent: boolean;
@@ -78,6 +82,12 @@ interface Language {
   level: string;
 }
 
+interface Certificate {
+  id: string;
+  name: string;
+  date: string;
+}
+
 interface PrivacyStatement {
   id: string;
   content: string;
@@ -94,6 +104,7 @@ const CVCreator: React.FC = () => {
           email: '',
           phone: '',
           address: '',
+          country: '',
           profession: '',
           summary: '',
         };
@@ -127,6 +138,11 @@ const CVCreator: React.FC = () => {
     return saved ? JSON.parse(saved) : [];
   });
 
+  const [certificates, setCertificates] = useState<Certificate[]>(() => {
+    const saved = localStorage.getItem('certificates');
+    return saved ? JSON.parse(saved) : [];
+  });
+
   const [privacyStatement, setPrivacyStatement] = useState<PrivacyStatement>(() => {
     const saved = localStorage.getItem('privacyStatement');
     return saved ? JSON.parse(saved) : { id: 'privacy', content: '' };
@@ -142,7 +158,16 @@ const CVCreator: React.FC = () => {
     const saved = localStorage.getItem('sectionOrder');
     return saved
       ? JSON.parse(saved)
-      : ['profile', 'experience', 'education', 'skills', 'languages', 'hobbies', 'privacy'];
+      : [
+          'profile',
+          'experience',
+          'education',
+          'certificates',
+          'skills',
+          'languages',
+          'hobbies',
+          'privacy',
+        ];
   });
   const [draggedSection, setDraggedSection] = useState<string | null>(null);
   const [dragOverSection, setDragOverSection] = useState<string | null>(null);
@@ -174,6 +199,11 @@ const CVCreator: React.FC = () => {
     localStorage.setItem('languages', JSON.stringify(languages));
   }, [languages]);
 
+  // Save certificates to localStorage
+  useEffect(() => {
+    localStorage.setItem('certificates', JSON.stringify(certificates));
+  }, [certificates]);
+
   // Save hobbies to localStorage
   useEffect(() => {
     localStorage.setItem('hobbies', JSON.stringify(hobbies));
@@ -191,7 +221,7 @@ const CVCreator: React.FC = () => {
 
   useEffect(() => {
     checkContentOverflow();
-  }, [experiences, education, skills, languages, hobbies, personalInfo, privacyStatement]);
+  }, [experiences, education, skills, languages, certificates, hobbies, personalInfo, privacyStatement]);
 
   const addLanguage = () => {
     const newLanguage: Language = {
@@ -208,6 +238,31 @@ const CVCreator: React.FC = () => {
 
   const removeLanguage = (id: string) => {
     setLanguages(languages.filter((lang) => lang.id !== id));
+  };
+
+  const addCertificate = () => {
+    const newCert: Certificate = {
+      id: Date.now().toString(),
+      name: '',
+      date: '',
+    };
+    setCertificates([...certificates, newCert]);
+  };
+
+  const updateCertificate = (
+    id: string,
+    field: keyof Certificate,
+    value: string,
+  ) => {
+    setCertificates(
+      certificates.map((cert) =>
+        cert.id === id ? { ...cert, [field]: value } : cert,
+      ),
+    );
+  };
+
+  const removeCertificate = (id: string) => {
+    setCertificates(certificates.filter((cert) => cert.id !== id));
   };
 
   // Section drag & drop handlers
@@ -279,6 +334,7 @@ const CVCreator: React.FC = () => {
       id: Date.now().toString(),
       school: '',
       degree: '',
+      field: '',
       startDate: '',
       endDate: '',
       isCurrent: false,
@@ -391,6 +447,78 @@ const CVCreator: React.FC = () => {
   const goToPage = (page: number) => {
     if (page >= 1 && page <= totalPages) {
       setCurrentPage(page);
+    }
+  };
+
+  const populateFromCv = (cv: CvDto, position?: string) => {
+    if (cv.basics) {
+      setPersonalInfo({
+        firstName: cv.basics.firstName,
+        lastName: cv.basics.lastName,
+        email: cv.basics.email,
+        phone: cv.basics.phoneNumber,
+        address: cv.basics.location?.city || '',
+        country: cv.basics.location?.country || '',
+        profession: position || personalInfo.profession,
+        summary: cv.basics.summary,
+      });
+    }
+
+    setExperiences(
+      cv.work?.map((w, idx) => ({
+        id: `${Date.now()}${idx}`,
+        company: w.company || '',
+        position: w.position || '',
+        startDate: w.startDate || '',
+        endDate: w.endDate && w.endDate !== 'Present' ? w.endDate : '',
+        description: w.description || '',
+        isCurrent: w.endDate === 'Present',
+      })) || [],
+    );
+
+    setEducation(
+      cv.education?.map((e, idx) => ({
+        id: `${Date.now()}${idx}`,
+        school: e.institution || '',
+        degree: e.degree || '',
+        field: e.field || '',
+        startDate: e.startDate || '',
+        endDate: e.endDate && e.endDate !== 'Present' ? e.endDate : '',
+        isCurrent: e.endDate === 'Present',
+      })) || [],
+    );
+
+    setCertificates(
+      cv.certificates?.map((c, idx) => ({
+        id: `${Date.now()}${idx}`,
+        name: c.name,
+        date: c.date || '',
+      })) || [],
+    );
+
+    setSkills(
+      cv.skills?.map((s, idx) => ({ id: `${Date.now()}${idx}`, name: s })) || [],
+    );
+
+    setLanguages(
+      cv.languages?.map((l, idx) => ({
+        id: `${Date.now()}${idx}`,
+        name: l.language,
+        level: l.fluency,
+      })) || [],
+    );
+  };
+
+  const loadFromProfile = async () => {
+    try {
+      const cv = await createCv({
+        name: 'Generated CV',
+        targetPosition: personalInfo.profession,
+        createFromProfile: true,
+      });
+      populateFromCv(cv.cvData, cv.targetPosition || undefined);
+    } catch (err) {
+      console.error('Failed to generate CV from profile', err);
     }
   };
 
@@ -747,9 +875,16 @@ const CVCreator: React.FC = () => {
                       />
                       <input
                         type="text"
-                        placeholder="Field of Study/Degree"
+                        placeholder="Degree"
                         value={edu.degree}
                         onChange={(e) => updateEducation(edu.id, 'degree', e.target.value)}
+                        className="w-full rounded-sm border border-gray-300 px-3 py-3 focus:ring-2 focus:ring-blue-500 focus:outline-none"
+                      />
+                      <input
+                        type="text"
+                        placeholder="Field of study"
+                        value={edu.field}
+                        onChange={(e) => updateEducation(edu.id, 'field', e.target.value)}
                         className="w-full rounded-sm border border-gray-300 px-3 py-3 focus:ring-2 focus:ring-blue-500 focus:outline-none"
                       />
                     </div>
@@ -797,6 +932,67 @@ const CVCreator: React.FC = () => {
             >
               <span className="mr-2 text-xl">+</span>
               Add education
+            </button>
+          </div>
+        );
+
+      case 'certificates':
+        return (
+          <div
+            key="certificates"
+            className={`mb-6 rounded-lg bg-gray-50 p-4 transition-all lg:p-6 ${
+              dragOverSection === 'certificates' ? 'bg-blue-50 ring-2 ring-blue-400' : ''
+            } ${draggedSection === 'certificates' ? 'opacity-50' : ''}`}
+            draggable
+            onDragStart={(e) => handleSectionDragStart(e, 'certificates')}
+            onDragOver={(e) => handleSectionDragOver(e, 'certificates')}
+            onDragLeave={handleSectionDragLeave}
+            onDrop={(e) => handleSectionDrop(e, 'certificates')}
+            onDragEnd={handleSectionDragEnd}
+          >
+            <div className="mb-4 flex items-center justify-between">
+              <h2 className="flex items-center text-lg font-semibold text-gray-700">
+                <GripVertical className="mr-2 cursor-grab text-gray-400" size={20} />
+                <Award className="mr-2" size={20} />
+                Certificates
+              </h2>
+            </div>
+            <p className="mb-4 text-sm text-gray-600">List your certifications.</p>
+            {certificates.map((cert) => (
+              <div
+                key={cert.id}
+                className="group mb-3 rounded-lg border border-gray-200 bg-white p-3"
+              >
+                <div className="flex items-center justify-between gap-2">
+                  <input
+                    type="text"
+                    placeholder="Certificate name"
+                    value={cert.name}
+                    onChange={(e) => updateCertificate(cert.id, 'name', e.target.value)}
+                    className="flex-1 focus:outline-none"
+                  />
+                  <input
+                    type="date"
+                    value={cert.date}
+                    onChange={(e) => updateCertificate(cert.id, 'date', e.target.value)}
+                    className="rounded-sm border px-3 py-2 focus:outline-none"
+                  />
+                  <button
+                    onClick={() => removeCertificate(cert.id)}
+                    className="ml-2 rounded p-2 text-red-500 opacity-0 transition-all group-hover:opacity-100 hover:bg-red-50 hover:text-red-700"
+                    title="Remove certificate"
+                  >
+                    <Trash2 size={16} />
+                  </button>
+                </div>
+              </div>
+            ))}
+            <button
+              onClick={addCertificate}
+              className="flex cursor-pointer items-center font-medium text-red-600 hover:text-red-700"
+            >
+              <span className="mr-2 text-xl">+</span>
+              Add certificate
             </button>
           </div>
         );
@@ -1088,8 +1284,11 @@ const CVCreator: React.FC = () => {
                 <div className="mb-1 flex items-start justify-between">
                   <div className="min-w-0 flex-1">
                     <h4 className="truncate font-semibold text-gray-900">
-                      {edu.degree || 'Field of Study/Degree'}
+                      {edu.degree || 'Degree'}
                     </h4>
+                    <p className="truncate text-gray-700">
+                      {edu.field || 'Field of study'}
+                    </p>
                     <p className="truncate text-gray-700">{edu.school || 'School/University'}</p>
                   </div>
                   <div className="ml-2 flex-shrink-0 text-xs text-gray-600">
@@ -1099,6 +1298,24 @@ const CVCreator: React.FC = () => {
                 </div>
               </div>
             ))}
+          </div>
+        ) : null;
+
+      case 'certificates':
+        return certificates.length > 0 ? (
+          <div className="mb-5" key="certificates">
+            <h3 className="mb-2 flex items-center border-b border-gray-300 pb-1 text-lg font-semibold text-gray-800">
+              <Award size={16} className="mr-2" />
+              Certificates
+            </h3>
+            <div className="space-y-1">
+              {certificates.map((cert) => (
+                <p key={cert.id} className="text-sm text-gray-700">
+                  {cert.name}
+                  {cert.date ? ` (${formatDate(cert.date)})` : ''}
+                </p>
+              ))}
+            </div>
           </div>
         ) : null;
 
@@ -1227,6 +1444,12 @@ const CVCreator: React.FC = () => {
                     <SelectItem value="year">Just year</SelectItem>
                   </SelectContent>
                 </Select>
+                <button
+                  onClick={loadFromProfile}
+                  className="rounded-sm border bg-blue-500 px-3 py-2 text-xs text-white hover:bg-blue-600"
+                >
+                  Load from profile
+                </button>
               </div>
             </div>
 
@@ -1315,6 +1538,18 @@ const CVCreator: React.FC = () => {
                           value={personalInfo.address}
                           onChange={(e) =>
                             setPersonalInfo({ ...personalInfo, address: e.target.value })
+                          }
+                          className="w-full rounded-sm border border-gray-300 px-3 py-3 focus:ring-2 focus:ring-blue-500 focus:outline-none"
+                        />
+                      </div>
+                      <div>
+                        <label className="mb-1 block text-sm text-gray-600">Country</label>
+                        <input
+                          type="text"
+                          placeholder="e.g., Poland"
+                          value={personalInfo.country}
+                          onChange={(e) =>
+                            setPersonalInfo({ ...personalInfo, country: e.target.value })
                           }
                           className="w-full rounded-sm border border-gray-300 px-3 py-3 focus:ring-2 focus:ring-blue-500 focus:outline-none"
                         />
