@@ -235,7 +235,7 @@ export default function ProfileForm({
         {form.formState.isDirty ? (
           <Popover open={open} onOpenChange={setOpen}>
             <PopoverTrigger asChild>
-              <Button type="button" variant="outline" className="font-poppins rounded-full">
+              <Button type="button" variant="outline" className="font-poppins rounded-sm">
                 Cancel
               </Button>
             </PopoverTrigger>
@@ -255,7 +255,7 @@ export default function ProfileForm({
           <Button
             type="button"
             variant="outline"
-            className="font-poppins rounded-full"
+            className="font-poppins rounded-sm"
             onClick={onCancel}
           >
             Cancel
