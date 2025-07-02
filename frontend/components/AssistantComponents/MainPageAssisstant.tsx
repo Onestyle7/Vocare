@@ -164,9 +164,11 @@ export default function AssistantPage() {
           setLoading(false);
           return;
         } catch (lastError: unknown) {
-          if (lastError instanceof AxiosError && 
-              lastError.response?.status !== 404 && 
-              lastError.response?.status !== 500) {
+          if (
+            lastError instanceof AxiosError &&
+            lastError.response?.status !== 404 &&
+            lastError.response?.status !== 500
+          ) {
             console.error('Something went wrong while getting last recommendations:', lastError);
             setError(
               lastError.response?.data?.detail ||

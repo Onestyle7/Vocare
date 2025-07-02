@@ -23,6 +23,15 @@ import {
 } from 'lucide-react';
 import { DatePickerWithCurrent } from './DatePickerWithCurrent';
 import { HoverCard, HoverCardContent, HoverCardTrigger } from '@/components/ui/hover-card';
+import html2canvas from 'html2canvas-pro';
+import jsPDF from 'jspdf';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
 
 interface PersonalInfo {
   firstName: string;
@@ -75,14 +84,19 @@ interface PrivacyStatement {
 }
 
 const CVCreator: React.FC = () => {
-  const [personalInfo, setPersonalInfo] = useState<PersonalInfo>({
-    firstName: '',
-    lastName: '',
-    email: '',
-    phone: '',
-    address: '',
-    profession: '',
-    summary: '',
+  const [personalInfo, setPersonalInfo] = useState<PersonalInfo>(() => {
+    const saved = localStorage.getItem('personalInfo');
+    return saved
+      ? JSON.parse(saved)
+      : {
+          firstName: '',
+          lastName: '',
+          email: '',
+          phone: '',
+          address: '',
+          profession: '',
+          summary: '',
+        };
   });
 
   const [isPremium] = useState(false);
@@ -90,15 +104,32 @@ const CVCreator: React.FC = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
 
-  const [experiences, setExperiences] = useState<Experience[]>([]);
-  const [education, setEducation] = useState<Education[]>([]);
-  const [skills, setSkills] = useState<Skill[]>([]);
-  const [hobbies, setHobbies] = useState<Hobby[]>([]);
+  const [experiences, setExperiences] = useState<Experience[]>(() => {
+    const saved = localStorage.getItem('experiences');
+    return saved ? JSON.parse(saved) : [];
+  });
+  const [education, setEducation] = useState<Education[]>(() => {
+    const saved = localStorage.getItem('education');
+    return saved ? JSON.parse(saved) : [];
+  });
+
+  const [skills, setSkills] = useState<Skill[]>(() => {
+    const saved = localStorage.getItem('skills');
+    return saved ? JSON.parse(saved) : [];
+  });
+  const [hobbies, setHobbies] = useState<Hobby[]>(() => {
+    const saved = localStorage.getItem('hobbies');
+    return saved ? JSON.parse(saved) : [];
+  });
   const [showFullDates, setShowFullDates] = useState(true);
-  const [languages, setLanguages] = useState<Language[]>([]);
-  const [privacyStatement, setPrivacyStatement] = useState<PrivacyStatement>({
-    id: 'privacy',
-    content: '',
+  const [languages, setLanguages] = useState<Language[]>(() => {
+    const saved = localStorage.getItem('languages');
+    return saved ? JSON.parse(saved) : [];
+  });
+
+  const [privacyStatement, setPrivacyStatement] = useState<PrivacyStatement>(() => {
+    const saved = localStorage.getItem('privacyStatement');
+    return saved ? JSON.parse(saved) : { id: 'privacy', content: '' };
   });
 
   // CV Preview controls
@@ -107,20 +138,56 @@ const CVCreator: React.FC = () => {
   const [isDragging, setIsDragging] = useState(false);
   const [dragStart, setDragStart] = useState({ x: 0, y: 0 });
 
-  // Section ordering
-  const [sectionOrder, setSectionOrder] = useState([
-    'profile',
-    'experience',
-    'education',
-    'skills',
-    'languages',
-    'hobbies',
-    'privacy',
-  ]);
+  const [sectionOrder, setSectionOrder] = useState<string[]>(() => {
+    const saved = localStorage.getItem('sectionOrder');
+    return saved
+      ? JSON.parse(saved)
+      : ['profile', 'experience', 'education', 'skills', 'languages', 'hobbies', 'privacy'];
+  });
   const [draggedSection, setDraggedSection] = useState<string | null>(null);
   const [dragOverSection, setDragOverSection] = useState<string | null>(null);
 
   const [isHovered, setIsHovered] = useState(false);
+
+  // Save personalInfo to localStorage
+  useEffect(() => {
+    localStorage.setItem('personalInfo', JSON.stringify(personalInfo));
+  }, [personalInfo]);
+
+  // Save experiences to localStorage
+  useEffect(() => {
+    localStorage.setItem('experiences', JSON.stringify(experiences));
+  }, [experiences]);
+
+  // Save education to localStorage
+  useEffect(() => {
+    localStorage.setItem('education', JSON.stringify(education));
+  }, [education]);
+
+  // Save skills to localStorage
+  useEffect(() => {
+    localStorage.setItem('skills', JSON.stringify(skills));
+  }, [skills]);
+
+  // Save languages to localStorage
+  useEffect(() => {
+    localStorage.setItem('languages', JSON.stringify(languages));
+  }, [languages]);
+
+  // Save hobbies to localStorage
+  useEffect(() => {
+    localStorage.setItem('hobbies', JSON.stringify(hobbies));
+  }, [hobbies]);
+
+  // Save privacyStatement to localStorage
+  useEffect(() => {
+    localStorage.setItem('privacyStatement', JSON.stringify(privacyStatement));
+  }, [privacyStatement]);
+
+  // Save sectionOrder to localStorage
+  useEffect(() => {
+    localStorage.setItem('sectionOrder', JSON.stringify(sectionOrder));
+  }, [sectionOrder]);
 
   useEffect(() => {
     checkContentOverflow();
@@ -301,13 +368,12 @@ const CVCreator: React.FC = () => {
   };
 
   const checkContentOverflow = () => {
-    const cvElement = document.querySelector('.cv-content');
-    if (cvElement) {
-      const contentHeight = cvElement.scrollHeight;
-      const pageHeight = 297 * 2.83; // A4 height in pixels (297mm * 2.83 pixels/mm)
-      const newTotalPages = Math.ceil(contentHeight / pageHeight);
-      setTotalPages(newTotalPages);
-    }
+    const cvElement = document.querySelector<HTMLElement>('.cv-content');
+    if (!cvElement) return;
+    const contentHeight = cvElement.scrollHeight;
+    const pageHeight = cvElement.clientHeight;
+    const newTotalPages = Math.ceil(contentHeight / pageHeight);
+    setTotalPages(newTotalPages);
   };
 
   const goToNextPage = () => {
@@ -325,6 +391,124 @@ const CVCreator: React.FC = () => {
   const goToPage = (page: number) => {
     if (page >= 1 && page <= totalPages) {
       setCurrentPage(page);
+    }
+  };
+
+  const downloadPDF = async () => {
+    try {
+      // ► Zamiana querySelector na generyczny HTMLElement
+      const cvElement = document.querySelector<HTMLElement>('.cv-content');
+      if (!cvElement) return;
+
+      // Tymczasowo ustaw skalę na 1 dla lepszej jakości
+      const originalScale = cvScale;
+      setCvScale(1);
+
+      // Poczekaj na przerender
+      await new Promise((resolve) => setTimeout(resolve, 100));
+
+      // ► Rzutowanie dla html2canvas
+      const canvas = await html2canvas(cvElement as HTMLElement, {
+        scale: 2,
+        useCORS: true,
+        allowTaint: true,
+        backgroundColor: '#ffffff', // Explicit HEX color
+        width: cvElement.offsetWidth,
+        height: cvElement.offsetHeight,
+      });
+
+      // Przywróć oryginalną skalę
+      setCvScale(originalScale);
+
+      const imgData = canvas.toDataURL('image/png');
+
+      // A4 rozmiary w mm
+      const pdf = new jsPDF('portrait', 'mm', 'a4');
+      const pdfWidth = 210;
+      const pdfHeight = 297;
+
+      // Oblicz wymiary obrazu zachowując proporcje
+      const imgWidth = pdfWidth;
+      const imgHeight = (canvas.height * pdfWidth) / canvas.width;
+
+      if (imgHeight <= pdfHeight) {
+        // Zmieści się na jednej stronie
+        pdf.addImage(imgData, 'PNG', 0, 0, imgWidth, imgHeight);
+      } else {
+        // Podziel na kilka stron
+        let yPosition = 0;
+        let pageCount = 0;
+
+        while (yPosition < imgHeight) {
+          if (pageCount > 0) {
+            pdf.addPage();
+          }
+
+          const sourceY = (yPosition * canvas.height) / imgHeight;
+          const sourceHeight = Math.min(
+            (pdfHeight * canvas.height) / imgHeight,
+            canvas.height - sourceY
+          );
+
+          // Utwórz canvas dla fragmentu
+          const pageCanvas = document.createElement('canvas');
+          // ► Po wywołaniu getContext() sprawdź, czy nie jest null
+          const pageCtx = pageCanvas.getContext('2d');
+          if (!pageCtx) {
+            console.error('Could not get 2D context from pageCanvas');
+            return; // lub rzucić błąd, w zależności od Twojej logiki
+          }
+
+          pageCanvas.width = canvas.width;
+          pageCanvas.height = sourceHeight;
+
+          pageCtx.drawImage(
+            canvas,
+            0,
+            sourceY,
+            canvas.width,
+            sourceHeight,
+            0,
+            0,
+            canvas.width,
+            sourceHeight
+          );
+
+          pageCanvas.width = canvas.width;
+          pageCanvas.height = sourceHeight;
+
+          pageCtx.drawImage(
+            canvas,
+            0,
+            sourceY,
+            canvas.width,
+            sourceHeight,
+            0,
+            0,
+            canvas.width,
+            sourceHeight
+          );
+
+          const pageImgData = pageCanvas.toDataURL('image/png');
+          const pageImgHeight = (sourceHeight * pdfWidth) / canvas.width;
+
+          pdf.addImage(pageImgData, 'PNG', 0, 0, imgWidth, pageImgHeight);
+
+          yPosition += pdfHeight;
+          pageCount++;
+        }
+      }
+
+      // Wygeneruj nazwę pliku
+      const fileName =
+        personalInfo.firstName && personalInfo.lastName
+          ? `${personalInfo.firstName}_${personalInfo.lastName}_CV.pdf`
+          : 'My_CV.pdf';
+
+      pdf.save(fileName);
+    } catch (error) {
+      console.error('Błąd podczas generowania PDF:', error);
+      alert('Wystąpił błąd podczas pobierania CV. Spróbuj ponownie.');
     }
   };
 
@@ -883,7 +1067,9 @@ const CVCreator: React.FC = () => {
                   </div>
                 </div>
                 {exp.description && (
-                  <p className="text-xs leading-relaxed text-gray-700">{exp.description}</p>
+                  <p className="text-xs leading-relaxed break-words text-gray-700">
+                    {exp.description}
+                  </p>
                 )}
               </div>
             ))}
@@ -982,7 +1168,9 @@ const CVCreator: React.FC = () => {
             <h3 className="mb-2 border-b border-gray-300 pb-1 text-lg font-semibold text-gray-800">
               Privacy Statement
             </h3>
-            <p className="text-xs leading-relaxed text-gray-700">{privacyStatement.content}</p>
+            <p className="text-xs leading-relaxed break-words text-gray-700">
+              {privacyStatement.content}
+            </p>
           </div>
         ) : null;
 
@@ -997,7 +1185,7 @@ const CVCreator: React.FC = () => {
       <div className="mb-4 flex items-center justify-center bg-white py-4 shadow-lg lg:hidden">
         <button
           onClick={() => (window.location.href = '/')}
-          className="rounded-lg p-3 transition-colors hover:bg-gray-100"
+          className="cursor-pointer rounded-lg p-3 transition-colors hover:bg-gray-100"
           title="Strona główna"
         >
           <Home size={24} className="text-gray-600" />
@@ -1008,7 +1196,7 @@ const CVCreator: React.FC = () => {
       <div className="mx-3 hidden w-16 flex-col items-center justify-between rounded-lg bg-white py-6 shadow-lg lg:flex">
         <button
           onClick={() => (window.location.href = '/')}
-          className="rounded-lg p-3 transition-colors hover:bg-gray-100"
+          className="cursor-pointer rounded-lg p-3 transition-colors hover:bg-gray-100"
           title="Strona główna"
         >
           <Home size={24} className="text-gray-600" />
@@ -1027,14 +1215,18 @@ const CVCreator: React.FC = () => {
               <h1 className="text-xl font-bold text-gray-800 lg:text-2xl">Resume creator</h1>
               <div className="flex items-center space-x-3">
                 <label className="text-sm text-gray-600">Date format:</label>
-                <select
+                <Select
                   value={showFullDates ? 'full' : 'year'}
-                  onChange={(e) => setShowFullDates(e.target.value === 'full')}
-                  className="rounded border border-gray-300 px-2 py-1 text-sm focus:ring-2 focus:ring-blue-500 focus:outline-none"
+                  onValueChange={(value) => setShowFullDates(value === 'full')}
                 >
-                  <option value="full">Month & year</option>
-                  <option value="year">Just year</option>
-                </select>
+                  <SelectTrigger className="font-poppins w-40 rounded-sm border border-gray-300 px-2 text-sm focus:ring-2 focus:ring-blue-500 focus:outline-none">
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="full">Month & year</SelectItem>
+                    <SelectItem value="year">Just year</SelectItem>
+                  </SelectContent>
+                </Select>
               </div>
             </div>
 
@@ -1144,13 +1336,53 @@ const CVCreator: React.FC = () => {
             <h2 className="text-lg font-semibold text-gray-700">Resume Preview</h2>
             <div className="flex items-center space-x-2">
               <button
+                onClick={downloadPDF}
+                className="flex cursor-pointer items-center space-x-2 rounded border border-red-500 bg-red-500 px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-red-600"
+                title="Pobierz CV jako PDF"
+              >
+                <svg
+                  width="16"
+                  height="16"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  xmlns="http://www.w3.org/2000/svg"
+                >
+                  <path
+                    d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"
+                    stroke="currentColor"
+                    strokeWidth="2"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                  />
+                  <polyline
+                    points="7,10 12,15 17,10"
+                    stroke="currentColor"
+                    strokeWidth="2"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                  />
+                  <line
+                    x1="12"
+                    y1="15"
+                    x2="12"
+                    y2="3"
+                    stroke="currentColor"
+                    strokeWidth="2"
+                    strokeLinecap="round"
+                  />
+                </svg>
+                <span>Download</span>
+              </button>
+
+              {/* Istniejące przyciski zoom */}
+              <button
                 onClick={handleZoomOut}
                 className="cursor-pointer rounded p-2 transition-colors hover:bg-gray-100"
                 title="Pomniejsz"
               >
                 <ZoomOut size={18} />
               </button>
-              <span className="min-w-12 cursor-none text-center text-sm text-gray-600">
+              <span className="min-w-12 text-center text-sm text-gray-600">
                 {Math.round(cvScale * 100)}%
               </span>
               <button
@@ -1167,7 +1399,7 @@ const CVCreator: React.FC = () => {
               >
                 Reset
               </button>
-              <div className="flex cursor-none items-center text-sm text-gray-500">
+              <div className="flex items-center text-sm text-gray-500">
                 <Move size={16} className="mr-1" />
                 Drag and move
               </div>
@@ -1194,56 +1426,56 @@ const CVCreator: React.FC = () => {
             >
               {/* A4 Paper with exact dimensions */}
               <div
-                className="cv-content rounded-sm bg-white shadow-md"
+                className="cv-content rounded-sm"
                 style={{
                   width: '210mm',
                   height: '297mm',
                   transform: `scale(${cvScale})`,
                   transformOrigin: 'center center',
                   overflow: 'hidden',
+                  backgroundColor: '#ffffff', // Force HEX
+                  color: '#000000', // Force HEX
+                  boxShadow: '0 4px 6px rgba(0,0,0,0.1)', // Use RGBA for shadow
                 }}
               >
                 <div
-                  className="h-full p-8 transition-transform duration-300 ease-in-out"
+                  className="h-full p-8"
                   style={{
                     transform: `translateY(-${(currentPage - 1) * 100}%)`,
                   }}
                 >
-                  {/* Header Section - pokazuj tylko na pierwszej stronie */}
-                  {currentPage === 1 && (
-                    <div className="mb-6">
-                      <h1 className="mb-2 text-3xl leading-tight font-bold text-gray-900">
-                        {personalInfo.firstName || personalInfo.lastName
-                          ? `${personalInfo.firstName} ${personalInfo.lastName}`.trim()
-                          : 'Joe Doe'}
-                      </h1>
-                      {personalInfo.profession && (
-                        <h2 className="mb-4 text-xl text-gray-600">{personalInfo.profession}</h2>
-                      )}
+                  <div className="mb-6">
+                    <h1 className="mb-2 text-3xl leading-tight font-bold text-gray-900">
+                      {personalInfo.firstName || personalInfo.lastName
+                        ? `${personalInfo.firstName} ${personalInfo.lastName}`.trim()
+                        : 'Joe Doe'}
+                    </h1>
+                    {personalInfo.profession && (
+                      <h2 className="mb-4 text-xl text-gray-600">{personalInfo.profession}</h2>
+                    )}
 
-                      {/* Contact Information */}
-                      <div className="flex flex-wrap gap-4 text-sm text-gray-600">
-                        {personalInfo.email && (
-                          <div className="flex items-center">
-                            <Mail size={14} className="mr-2 flex-shrink-0" />
-                            <span className="break-all">{personalInfo.email}</span>
-                          </div>
-                        )}
-                        {personalInfo.phone && (
-                          <div className="flex items-center">
-                            <Phone size={14} className="mr-2 flex-shrink-0" />
-                            {personalInfo.phone}
-                          </div>
-                        )}
-                        {personalInfo.address && (
-                          <div className="flex items-center">
-                            <MapPin size={14} className="mr-2 flex-shrink-0" />
-                            {personalInfo.address}
-                          </div>
-                        )}
-                      </div>
+                    {/* Contact Information */}
+                    <div className="flex flex-wrap gap-4 text-sm text-gray-600">
+                      {personalInfo.email && (
+                        <div className="flex items-center">
+                          <Mail size={14} className="mr-2 flex-shrink-0" />
+                          <span className="break-all">{personalInfo.email}</span>
+                        </div>
+                      )}
+                      {personalInfo.phone && (
+                        <div className="flex items-center">
+                          <Phone size={14} className="mr-2 flex-shrink-0" />
+                          {personalInfo.phone}
+                        </div>
+                      )}
+                      {personalInfo.address && (
+                        <div className="flex items-center">
+                          <MapPin size={14} className="mr-2 flex-shrink-0" />
+                          {personalInfo.address}
+                        </div>
+                      )}
                     </div>
-                  )}
+                  </div>
 
                   {sectionOrder.map((sectionId) => renderSectionInPreview(sectionId))}
 
