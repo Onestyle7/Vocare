@@ -52,7 +52,7 @@ export const DatePickerWithCurrent: React.FC<DatePickerWithCurrentProps> = ({
       <PopoverTrigger asChild>
         <Button
           variant="outline"
-          className={`h-12 w-full justify-start rounded-sm text-left font-normal dark:border dark:border-gray-400/50 hover:text-gray-600 ${
+          className={`h-12 w-full justify-start rounded-sm text-left font-normal hover:text-gray-600 dark:border dark:border-gray-400/50 ${
             disabled ? 'cursor-not-allowed opacity-50' : ''
           } ${!value && !isCurrent ? 'text-gray-500' : ''}`}
           disabled={disabled}

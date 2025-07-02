@@ -25,7 +25,13 @@ import { DatePickerWithCurrent } from './DatePickerWithCurrent';
 import { HoverCard, HoverCardContent, HoverCardTrigger } from '@/components/ui/hover-card';
 import html2canvas from 'html2canvas-pro';
 import jsPDF from 'jspdf';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
 
 interface PersonalInfo {
   firstName: string;
@@ -79,17 +85,19 @@ interface PrivacyStatement {
 
 const CVCreator: React.FC = () => {
   const [personalInfo, setPersonalInfo] = useState<PersonalInfo>(() => {
-  const saved = localStorage.getItem('personalInfo');
-  return saved ? JSON.parse(saved) : {
-    firstName: '',
-    lastName: '',
-    email: '',
-    phone: '',
-    address: '',
-    profession: '',
-    summary: '',
-  };
-});
+    const saved = localStorage.getItem('personalInfo');
+    return saved
+      ? JSON.parse(saved)
+      : {
+          firstName: '',
+          lastName: '',
+          email: '',
+          phone: '',
+          address: '',
+          profession: '',
+          summary: '',
+        };
+  });
 
   const [isPremium] = useState(false);
 
@@ -97,32 +105,32 @@ const CVCreator: React.FC = () => {
   const [totalPages, setTotalPages] = useState(1);
 
   const [experiences, setExperiences] = useState<Experience[]>(() => {
-  const saved = localStorage.getItem('experiences');
-  return saved ? JSON.parse(saved) : [];
-});
+    const saved = localStorage.getItem('experiences');
+    return saved ? JSON.parse(saved) : [];
+  });
   const [education, setEducation] = useState<Education[]>(() => {
-  const saved = localStorage.getItem('education');
-  return saved ? JSON.parse(saved) : [];
-});
+    const saved = localStorage.getItem('education');
+    return saved ? JSON.parse(saved) : [];
+  });
 
-const [skills, setSkills] = useState<Skill[]>(() => {
-  const saved = localStorage.getItem('skills');
-  return saved ? JSON.parse(saved) : [];
-});
+  const [skills, setSkills] = useState<Skill[]>(() => {
+    const saved = localStorage.getItem('skills');
+    return saved ? JSON.parse(saved) : [];
+  });
   const [hobbies, setHobbies] = useState<Hobby[]>(() => {
-  const saved = localStorage.getItem('hobbies');
-  return saved ? JSON.parse(saved) : [];
-});
+    const saved = localStorage.getItem('hobbies');
+    return saved ? JSON.parse(saved) : [];
+  });
   const [showFullDates, setShowFullDates] = useState(true);
-const [languages, setLanguages] = useState<Language[]>(() => {
-  const saved = localStorage.getItem('languages');
-  return saved ? JSON.parse(saved) : [];
-});  
+  const [languages, setLanguages] = useState<Language[]>(() => {
+    const saved = localStorage.getItem('languages');
+    return saved ? JSON.parse(saved) : [];
+  });
 
-const [privacyStatement, setPrivacyStatement] = useState<PrivacyStatement>(() => {
-  const saved = localStorage.getItem('privacyStatement');
-  return saved ? JSON.parse(saved) : { id: 'privacy', content: '' };
-});
+  const [privacyStatement, setPrivacyStatement] = useState<PrivacyStatement>(() => {
+    const saved = localStorage.getItem('privacyStatement');
+    return saved ? JSON.parse(saved) : { id: 'privacy', content: '' };
+  });
 
   // CV Preview controls
   const [cvScale, setCvScale] = useState(0.8);
@@ -130,56 +138,56 @@ const [privacyStatement, setPrivacyStatement] = useState<PrivacyStatement>(() =>
   const [isDragging, setIsDragging] = useState(false);
   const [dragStart, setDragStart] = useState({ x: 0, y: 0 });
 
-const [sectionOrder, setSectionOrder] = useState<string[]>(() => {
-  const saved = localStorage.getItem('sectionOrder');
-  return saved
-    ? JSON.parse(saved)
-    : ['profile', 'experience', 'education', 'skills', 'languages', 'hobbies', 'privacy'];
-});
+  const [sectionOrder, setSectionOrder] = useState<string[]>(() => {
+    const saved = localStorage.getItem('sectionOrder');
+    return saved
+      ? JSON.parse(saved)
+      : ['profile', 'experience', 'education', 'skills', 'languages', 'hobbies', 'privacy'];
+  });
   const [draggedSection, setDraggedSection] = useState<string | null>(null);
   const [dragOverSection, setDragOverSection] = useState<string | null>(null);
 
   const [isHovered, setIsHovered] = useState(false);
 
   // Save personalInfo to localStorage
-useEffect(() => {
-  localStorage.setItem('personalInfo', JSON.stringify(personalInfo));
-}, [personalInfo]);
+  useEffect(() => {
+    localStorage.setItem('personalInfo', JSON.stringify(personalInfo));
+  }, [personalInfo]);
 
-// Save experiences to localStorage
-useEffect(() => {
-  localStorage.setItem('experiences', JSON.stringify(experiences));
-}, [experiences]);
+  // Save experiences to localStorage
+  useEffect(() => {
+    localStorage.setItem('experiences', JSON.stringify(experiences));
+  }, [experiences]);
 
-// Save education to localStorage
-useEffect(() => {
-  localStorage.setItem('education', JSON.stringify(education));
-}, [education]);
+  // Save education to localStorage
+  useEffect(() => {
+    localStorage.setItem('education', JSON.stringify(education));
+  }, [education]);
 
-// Save skills to localStorage
-useEffect(() => {
-  localStorage.setItem('skills', JSON.stringify(skills));
-}, [skills]);
+  // Save skills to localStorage
+  useEffect(() => {
+    localStorage.setItem('skills', JSON.stringify(skills));
+  }, [skills]);
 
-// Save languages to localStorage
-useEffect(() => {
-  localStorage.setItem('languages', JSON.stringify(languages));
-}, [languages]);
+  // Save languages to localStorage
+  useEffect(() => {
+    localStorage.setItem('languages', JSON.stringify(languages));
+  }, [languages]);
 
-// Save hobbies to localStorage
-useEffect(() => {
-  localStorage.setItem('hobbies', JSON.stringify(hobbies));
-}, [hobbies]);
+  // Save hobbies to localStorage
+  useEffect(() => {
+    localStorage.setItem('hobbies', JSON.stringify(hobbies));
+  }, [hobbies]);
 
-// Save privacyStatement to localStorage
-useEffect(() => {
-  localStorage.setItem('privacyStatement', JSON.stringify(privacyStatement));
-}, [privacyStatement]);
+  // Save privacyStatement to localStorage
+  useEffect(() => {
+    localStorage.setItem('privacyStatement', JSON.stringify(privacyStatement));
+  }, [privacyStatement]);
 
-// Save sectionOrder to localStorage
-useEffect(() => {
-  localStorage.setItem('sectionOrder', JSON.stringify(sectionOrder));
-}, [sectionOrder]);
+  // Save sectionOrder to localStorage
+  useEffect(() => {
+    localStorage.setItem('sectionOrder', JSON.stringify(sectionOrder));
+  }, [sectionOrder]);
 
   useEffect(() => {
     checkContentOverflow();
@@ -360,14 +368,13 @@ useEffect(() => {
   };
 
   const checkContentOverflow = () => {
-  const cvElement = document.querySelector<HTMLElement>('.cv-content');
-  if (!cvElement) return;
-  const contentHeight = cvElement.scrollHeight;
-  const pageHeight = cvElement.clientHeight;
-  const newTotalPages = Math.ceil(contentHeight / pageHeight);
-  setTotalPages(newTotalPages);
-};
-
+    const cvElement = document.querySelector<HTMLElement>('.cv-content');
+    if (!cvElement) return;
+    const contentHeight = cvElement.scrollHeight;
+    const pageHeight = cvElement.clientHeight;
+    const newTotalPages = Math.ceil(contentHeight / pageHeight);
+    setTotalPages(newTotalPages);
+  };
 
   const goToNextPage = () => {
     if (currentPage < totalPages) {
@@ -1060,7 +1067,9 @@ useEffect(() => {
                   </div>
                 </div>
                 {exp.description && (
-                  <p className="text-xs leading-relaxed break-words text-gray-700">{exp.description}</p>
+                  <p className="text-xs leading-relaxed break-words text-gray-700">
+                    {exp.description}
+                  </p>
                 )}
               </div>
             ))}
@@ -1176,7 +1185,7 @@ useEffect(() => {
       <div className="mb-4 flex items-center justify-center bg-white py-4 shadow-lg lg:hidden">
         <button
           onClick={() => (window.location.href = '/')}
-          className="rounded-lg p-3 transition-colors hover:bg-gray-100 cursor-pointer"
+          className="cursor-pointer rounded-lg p-3 transition-colors hover:bg-gray-100"
           title="Strona główna"
         >
           <Home size={24} className="text-gray-600" />
@@ -1187,7 +1196,7 @@ useEffect(() => {
       <div className="mx-3 hidden w-16 flex-col items-center justify-between rounded-lg bg-white py-6 shadow-lg lg:flex">
         <button
           onClick={() => (window.location.href = '/')}
-          className="rounded-lg p-3 transition-colors hover:bg-gray-100 cursor-pointer"
+          className="cursor-pointer rounded-lg p-3 transition-colors hover:bg-gray-100"
           title="Strona główna"
         >
           <Home size={24} className="text-gray-600" />
@@ -1207,17 +1216,17 @@ useEffect(() => {
               <div className="flex items-center space-x-3">
                 <label className="text-sm text-gray-600">Date format:</label>
                 <Select
-            value={showFullDates ? 'full' : 'year'}
-            onValueChange={(value) => setShowFullDates(value === 'full')}
-          >
-            <SelectTrigger className="w-40 rounded-sm border border-gray-300 px-2 text-sm focus:ring-2 focus:ring-blue-500 focus:outline-none font-poppins">
-              <SelectValue />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="full">Month & year</SelectItem>
-              <SelectItem value="year">Just year</SelectItem>
-            </SelectContent>
-          </Select>
+                  value={showFullDates ? 'full' : 'year'}
+                  onValueChange={(value) => setShowFullDates(value === 'full')}
+                >
+                  <SelectTrigger className="font-poppins w-40 rounded-sm border border-gray-300 px-2 text-sm focus:ring-2 focus:ring-blue-500 focus:outline-none">
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="full">Month & year</SelectItem>
+                    <SelectItem value="year">Just year</SelectItem>
+                  </SelectContent>
+                </Select>
               </div>
             </div>
 
@@ -1328,7 +1337,7 @@ useEffect(() => {
             <div className="flex items-center space-x-2">
               <button
                 onClick={downloadPDF}
-                className="flex items-center space-x-2 rounded border border-red-500 bg-red-500 px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-red-600 cursor-pointer"
+                className="flex cursor-pointer items-center space-x-2 rounded border border-red-500 bg-red-500 px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-red-600"
                 title="Pobierz CV jako PDF"
               >
                 <svg
@@ -1435,39 +1444,38 @@ useEffect(() => {
                     transform: `translateY(-${(currentPage - 1) * 100}%)`,
                   }}
                 >
-                    <div className="mb-6">
-                      <h1 className="mb-2 text-3xl leading-tight font-bold text-gray-900">
-                        {personalInfo.firstName || personalInfo.lastName
-                          ? `${personalInfo.firstName} ${personalInfo.lastName}`.trim()
-                          : 'Joe Doe'}
-                      </h1>
-                      {personalInfo.profession && (
-                        <h2 className="mb-4 text-xl text-gray-600">{personalInfo.profession}</h2>
-                      )}
+                  <div className="mb-6">
+                    <h1 className="mb-2 text-3xl leading-tight font-bold text-gray-900">
+                      {personalInfo.firstName || personalInfo.lastName
+                        ? `${personalInfo.firstName} ${personalInfo.lastName}`.trim()
+                        : 'Joe Doe'}
+                    </h1>
+                    {personalInfo.profession && (
+                      <h2 className="mb-4 text-xl text-gray-600">{personalInfo.profession}</h2>
+                    )}
 
-                      {/* Contact Information */}
-                      <div className="flex flex-wrap gap-4 text-sm text-gray-600">
-                        {personalInfo.email && (
-                          <div className="flex items-center">
-                            <Mail size={14} className="mr-2 flex-shrink-0" />
-                            <span className="break-all">{personalInfo.email}</span>
-                          </div>
-                        )}
-                        {personalInfo.phone && (
-                          <div className="flex items-center">
-                            <Phone size={14} className="mr-2 flex-shrink-0" />
-                            {personalInfo.phone}
-                          </div>
-                        )}
-                        {personalInfo.address && (
-                          <div className="flex items-center">
-                            <MapPin size={14} className="mr-2 flex-shrink-0" />
-                            {personalInfo.address}
-                          </div>
-                        )}
-                      </div>
+                    {/* Contact Information */}
+                    <div className="flex flex-wrap gap-4 text-sm text-gray-600">
+                      {personalInfo.email && (
+                        <div className="flex items-center">
+                          <Mail size={14} className="mr-2 flex-shrink-0" />
+                          <span className="break-all">{personalInfo.email}</span>
+                        </div>
+                      )}
+                      {personalInfo.phone && (
+                        <div className="flex items-center">
+                          <Phone size={14} className="mr-2 flex-shrink-0" />
+                          {personalInfo.phone}
+                        </div>
+                      )}
+                      {personalInfo.address && (
+                        <div className="flex items-center">
+                          <MapPin size={14} className="mr-2 flex-shrink-0" />
+                          {personalInfo.address}
+                        </div>
+                      )}
                     </div>
-                  
+                  </div>
 
                   {sectionOrder.map((sectionId) => renderSectionInPreview(sectionId))}
 
@@ -1486,7 +1494,7 @@ useEffect(() => {
                       </div>
                     )}
                 </div>
-                </div>
+              </div>
             </div>
 
             {/* Pagination Controls - dodaj na dole kontenera */}
