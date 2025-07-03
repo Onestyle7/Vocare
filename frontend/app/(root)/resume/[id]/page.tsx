@@ -1,7 +1,39 @@
-import React from 'react';
+'use client';
 
-const page = () => {
-  return <div>page</div>;
+import React, { useEffect, useState } from 'react';
+import { useParams } from 'next/navigation';
+import CVCreator from '../ResumeComponent';
+import { getCvDetails } from '@/lib/api/cv';
+import { CvDetailsDto } from '@/lib/types/cv';
+
+const ResumeDetailPage = () => {
+  const params = useParams();
+  const id = typeof params.id === 'string' ? params.id : '';
+  const [cv, setCv] = useState<CvDetailsDto | null>(null);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchCv = async () => {
+      if (!id) return;
+      try {
+        const data = await getCvDetails(id);
+        setCv(data);
+      } catch (err) {
+        console.error('Failed to load CV details', err);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchCv();
+  }, [id]);
+
+  return (
+    <div className="font-poppins">
+        <div className="relative z-10">
+          {loading ? <p>Loading...</p> : cv && <CVCreator initialCv={cv} />}
+        </div>
+      </div>
+  );
 };
 
-export default page;
+export default ResumeDetailPage;

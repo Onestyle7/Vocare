@@ -59,6 +59,23 @@ export interface CvDetailsDto {
   notes?: string;
 }
 
+export interface CvListItemDto {
+  id: string;
+  name: string;
+  targetPosition?: string;
+  isDefault: boolean;
+  createdAt: string;
+  lastModifiedAt: string;
+  version: number;
+  notes?: string;
+}
+
+export interface CvLimits {
+  canCreateNew: boolean;
+  currentCount: number;
+  maxLimit: number;
+}
+
 export interface CreateCvDto {
   name: string;
   targetPosition?: string;
