@@ -156,57 +156,6 @@ namespace VocareWebAPI.CvGenerator.Services.Implementations
                     .ToList() ?? new List<CvLanguageEntryDto>();
         }
 
-        private string GenerateSummary(UserProfile profile, string? position)
-        {
-            // Podstawowe podsumowanie na podstawie danych profilu
-            var summaryParts = new List<string>();
-
-            if (!string.IsNullOrEmpty(profile.AboutMe))
-            {
-                summaryParts.Add(profile.AboutMe);
-            }
-
-            // Dodaj informacje o doświadczeniu zawodowym
-            if (profile.WorkExperience?.Any() == true)
-            {
-                var yearsOfExperience = CalculateYearsOfExperience(profile.WorkExperience);
-                if (yearsOfExperience > 0)
-                {
-                    var experienceText =
-                        yearsOfExperience == 1
-                            ? "rok doświadczenia zawodowego"
-                            : $"{yearsOfExperience} lat doświadczenia zawodowego";
-
-                    summaryParts.Add($"Posiadam {experienceText}.");
-                }
-            }
-
-            // Dodaj informacje o wykształceniu
-            if (profile.Education?.Any() == true)
-            {
-                var highestEducation = profile
-                    .Education.OrderByDescending(e => e.EndDate ?? DateTime.MaxValue)
-                    .FirstOrDefault();
-
-                if (highestEducation != null)
-                {
-                    summaryParts.Add(
-                        $"Wykształcenie: {highestEducation.Degree} w dziedzinie {highestEducation.Field}."
-                    );
-                }
-            }
-
-            // Dodaj informacje o stanowisku, jeśli zostało podane
-            if (!string.IsNullOrEmpty(position))
-            {
-                summaryParts.Add($"Zainteresowany stanowiskiem: {position}.");
-            }
-
-            return summaryParts.Any()
-                ? string.Join(" ", summaryParts)
-                : "Profesjonalista poszukujący nowych wyzwań zawodowych.";
-        }
-
         private string BuildWorkDescription(WorkExperienceEntry work)
         {
             var descriptionParts = new List<string>();
