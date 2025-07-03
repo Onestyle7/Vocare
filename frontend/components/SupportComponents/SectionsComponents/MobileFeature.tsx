@@ -146,7 +146,7 @@ const MobileFeature = () => {
         <div className="relative mx-[10%] mb-8 flex flex-col items-center gap-5">
           <h2 className="mt-[36px] text-sm uppercase md:text-[12px]">Always in Your pocket</h2>
           <Copy>
-            <h1 className="font-poppins text-color mt-5 text-center text-4xl font-bold md:text-[4rem] xl:leading-[0.8]">
+            <h1 className="font-poppins text-color mt-5 text-center text-4xl font-bold md:text-6xl xl:leading-[0.8]">
               Your advisor <br /> always with you
             </h1>
           </Copy>
