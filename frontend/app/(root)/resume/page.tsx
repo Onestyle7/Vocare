@@ -32,17 +32,17 @@ const ResumeDashboard = () => {
   }, []);
 
   const SkeletonCard = () => (
-    <div className="group backdrop-blur-sm bg-white/40 dark:bg-gray-900/40 border border-white/20 dark:border-gray-700/30 rounded-2xl p-5 transition-all duration-300">
-      <div className="mb-4 h-28 w-full animate-pulse rounded-xl bg-white/30 dark:bg-gray-800/50" />
+    <div className="group backdrop-blur-sm bg-white/40 dark:bg-gray-900/40 border border-white/20 dark:border-gray-700/30 rounded-md p-5 transition-all duration-300">
+      <div className="mb-4 h-28 w-full animate-pulse rounded-md bg-white/30 dark:bg-gray-800/50" />
       <div className="space-y-3">
-        <div className="h-3 w-3/4 animate-pulse rounded-full bg-white/30 dark:bg-gray-800/50" />
-        <div className="h-2 w-1/2 animate-pulse rounded-full bg-white/20 dark:bg-gray-800/30" />
+        <div className="h-3 w-3/4 animate-pulse rounded-md bg-white/30 dark:bg-gray-800/50" />
+        <div className="h-2 w-1/2 animate-pulse rounded-md bg-white/20 dark:bg-gray-800/30" />
       </div>
     </div>
   );
 
   const EmptyState = () => (
-    <div className="flex h-52 flex-col items-center justify-center rounded-2xl border border-white/20 dark:border-gray-700/30 backdrop-blur-sm bg-white/30 dark:bg-gray-900/30 text-center">
+    <div className="flex h-52 flex-col items-center justify-center rounded-md border border-white/20 dark:border-gray-700/30 backdrop-blur-sm bg-white/30 dark:bg-gray-900/30 text-center">
       <FileText className="mb-3 h-10 w-10 text-gray-500/70 dark:text-gray-400/70" />
       <h3 className="mb-2 text-base font-medium text-gray-800 dark:text-gray-200">
         No resumes yet
@@ -52,7 +52,7 @@ const ResumeDashboard = () => {
       </p>
       <Link
         href="/resume/create"
-        className="inline-flex items-center gap-2 rounded-xl backdrop-blur-sm bg-[#915EFF]/90 hover:bg-[#915EFF] px-4 py-2 text-sm font-medium text-white transition-all duration-200 border border-[#915EFF]/20"
+        className="inline-flex items-center gap-2 rounded-md backdrop-blur-sm bg-[#915EFF]/90 hover:bg-[#915EFF] px-4 py-2 text-sm font-medium text-white transition-all duration-200 border border-[#915EFF]/20"
       >
         <Plus className="h-4 w-4" />
         Create Resume
@@ -75,13 +75,13 @@ const ResumeDashboard = () => {
               {limits && (
                 <div className="mt-3 flex items-center gap-3 text-sm text-gray-600/80 dark:text-gray-400/80">
                   <div className="flex items-center gap-2">
-                    <div className="h-1.5 w-1.5 rounded-full bg-[#915EFF]/70" />
+                    <div className="h-1.5 w-1.5 rounded-md bg-[#915EFF]/70" />
                     <span className="font-light">
                       {limits.currentCount} of {limits.maxLimit} used
                     </span>
                   </div>
                   {limits.currentCount < limits.maxLimit && (
-                    <div className="h-0.5 w-20 overflow-hidden rounded-full bg-white/30 dark:bg-gray-700/50">
+                    <div className="h-0.5 w-20 overflow-hidden rounded-md bg-white/30 dark:bg-gray-700/50">
                       <div
                         className="h-full bg-gradient-to-r from-[#915EFF]/70 to-[#915EFF] transition-all duration-500"
                         style={{
@@ -97,7 +97,7 @@ const ResumeDashboard = () => {
             {!loading && cvs.length > 0 && (
               <Link
                 href="/resume/create"
-                className="inline-flex items-center gap-2 rounded-xl backdrop-blur-sm bg-white/60 hover:bg-white/80 dark:bg-gray-800/60 dark:hover:bg-gray-800/80 border border-white/30 dark:border-gray-700/50 px-4 py-2.5 text-sm font-medium text-gray-700 dark:text-gray-300 transition-all duration-200 hover:shadow-lg shadow-black/5"
+                className="inline-flex items-center gap-2 rounded-md backdrop-blur-sm bg-white/60 hover:bg-white/80 dark:bg-gray-800/60 dark:hover:bg-gray-800/80 border border-white/30 dark:border-gray-700/50 px-4 py-2.5 text-sm font-medium text-gray-700 dark:text-gray-300 transition-all duration-200 hover:shadow-lg shadow-black/5"
               >
                 <Plus className="h-4 w-4" />
                 New Resume
@@ -120,11 +120,11 @@ const ResumeDashboard = () => {
                 <Link
                   key={cv.id}
                   href={`/resume/${cv.id}`}
-                  className="group relative block backdrop-blur-sm bg-white/40 hover:bg-white/60 dark:bg-gray-900/40 dark:hover:bg-gray-900/60 border border-white/20 dark:border-gray-700/30 hover:border-white/40 dark:hover:border-gray-700/50 rounded-2xl p-5 transition-all duration-300 hover:shadow-xl hover:shadow-black/5 hover:-translate-y-1"
+                  className="group relative block backdrop-blur-sm bg-white/40 hover:bg-white/60 dark:bg-gray-900/40 dark:hover:bg-gray-900/60 border border-white/20 dark:border-gray-700/30 hover:border-white/40 dark:hover:border-gray-700/50 rounded-md p-5 transition-all duration-300 hover:shadow-xl hover:shadow-black/5 hover:-translate-y-1"
                 >
                   {/* Card Header */}
                   <div className="mb-4 flex items-start justify-between">
-                    <div className="flex h-10 w-10 items-center justify-center rounded-xl backdrop-blur-sm bg-gradient-to-br from-[#915EFF]/20 to-[#7c4ddb]/20 border border-[#915EFF]/20">
+                    <div className="flex h-10 w-10 items-center justify-center rounded-md backdrop-blur-sm bg-gradient-to-br from-[#915EFF]/20 to-[#7c4ddb]/20 border border-[#915EFF]/20">
                       <FileText className="h-5 w-5 text-[#915EFF]/80" />
                     </div>
                     <button className="opacity-0 transition-all duration-200 group-hover:opacity-60 hover:opacity-100">
@@ -133,7 +133,7 @@ const ResumeDashboard = () => {
                   </div>
 
                   {/* Preview Area */}
-                  <div className="mb-4 h-28 w-full overflow-hidden rounded-xl backdrop-blur-sm bg-white/30 dark:bg-gray-800/30 border border-white/20 dark:border-gray-700/30">
+                  <div className="mb-4 h-28 w-full overflow-hidden rounded-md backdrop-blur-sm bg-white/30 dark:bg-gray-800/30 border border-white/20 dark:border-gray-700/30">
                     <div className="flex h-full items-center justify-center">
                       <Image
                         src="/svg/file.svg"
@@ -165,15 +165,16 @@ const ResumeDashboard = () => {
 
                   {/* Card Actions */}
                   <div className="mt-4 flex items-center gap-2">
-                    <div className="flex flex-1 items-center justify-center gap-2 rounded-lg backdrop-blur-sm bg-white/40 dark:bg-gray-800/40 border border-white/30 dark:border-gray-700/40 px-3 py-1.5 text-xs font-light text-gray-700 dark:text-gray-300">
+                    <div className="flex flex-1 items-center justify-center gap-2 rounded-md backdrop-blur-sm bg-white/40 dark:bg-gray-800/40 border border-white/30 dark:border-gray-700/40 px-3 py-1.5 text-xs font-light text-gray-700 dark:text-gray-300">
                       <Eye className="h-3 w-3" />
                       View
                     </div>
+
                   </div>
 
                   {/* Subtle Hover Glow */}
-                  <div className="absolute inset-0 rounded-2xl opacity-0 transition-opacity duration-300 group-hover:opacity-100">
-                    <div className="absolute inset-0 rounded-2xl bg-gradient-to-br from-[#915EFF]/5 to-transparent" />
+                  <div className="absolute inset-0 rounded-md opacity-0 transition-opacity duration-300 group-hover:opacity-100">
+                    <div className="absolute inset-0 rounded-md bg-gradient-to-br from-[#915EFF]/5 to-transparent" />
                   </div>
                 </Link>
               ))}

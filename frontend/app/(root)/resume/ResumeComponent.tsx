@@ -1409,7 +1409,7 @@ const CVCreator: React.FC<CVCreatorProps> = ({ initialCv }) => {
       {/* Top Navigation for Mobile */}
       <div className="mb-4 flex items-center justify-center bg-white py-4 shadow-lg lg:hidden">
         <button
-          onClick={() => (window.location.href = '/')}
+          onClick={() => (window.location.href = '/resume')}
           className="cursor-pointer rounded-lg p-3 transition-colors hover:bg-gray-100"
           title="Strona główna"
         >
@@ -1420,7 +1420,7 @@ const CVCreator: React.FC<CVCreatorProps> = ({ initialCv }) => {
       {/* Sidebar for Desktop */}
       <div className="mx-3 hidden w-16 flex-col items-center justify-between rounded-lg bg-white py-6 shadow-lg lg:flex">
         <button
-          onClick={() => (window.location.href = '/')}
+          onClick={() => (window.location.href = '/resume')}
           className="cursor-pointer rounded-lg p-3 transition-colors hover:bg-gray-100"
           title="Strona główna"
         >
