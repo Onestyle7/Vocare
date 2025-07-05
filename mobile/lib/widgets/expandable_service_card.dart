@@ -19,7 +19,6 @@ class ExpandableServiceCardState extends State<ExpandableServiceCard> {
   String? _subtitle;
   String? _content;
 
-  /// 🔄 Publiczna metoda do załadowania danych z zewnątrz
   void loadExternalData(Map<String, String> data) {
     setState(() {
       _subtitle = data['subtitle'];

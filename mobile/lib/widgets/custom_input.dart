@@ -10,7 +10,7 @@ class CustomInput extends StatelessWidget {
   final EdgeInsetsGeometry padding;
   final Color fillColor;
   final Color textColor;
-  final TextInputType? keyboardType; // 🆕 Dodane pole
+  final TextInputType? keyboardType;
 
   const CustomInput({
     super.key,

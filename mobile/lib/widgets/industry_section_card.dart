@@ -26,7 +26,6 @@ class IndustrySectionCard extends StatelessWidget {
       ),
       child: Row(
         children: [
-          // Fioletowy pasek z numerem
           Container(
             width: 60,
             height: 100,
