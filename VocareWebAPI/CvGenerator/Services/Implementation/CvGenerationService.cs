@@ -92,7 +92,6 @@ namespace VocareWebAPI.CvGenerator.Services.Implementations
                 LastName = profile.LastName,
                 PhoneNumber = profile.PhoneNumber ?? string.Empty,
                 Email = profile.User?.Email ?? $"user-{profile.FirstName}@gmail.com",
-                Summary = GenerateSummary(profile, position),
                 Location = new CvLocationDto
                 {
                     City = profile.Address ?? string.Empty,
