@@ -28,6 +28,8 @@ using VocareWebAPI.UserManagement;
 using VocareWebAPI.UserManagement.Interfaces;
 using VocareWebAPI.UserManagement.Models.Entities;
 using VocareWebAPI.UserManagement.Services;
+using VocareWebAPI.UserManagement.Services.Implementations;
+using VocareWebAPI.UserManagement.Services.Interfaces;
 using LocalBillingService = VocareWebAPI.Billing.Services.Implementations.BillingService;
 using LocalStripeService = VocareWebAPI.Billing.Services.Implementations.StripeService;
 
@@ -85,8 +87,26 @@ builder.Services.AddDbContext<AppDbContext>(options =>
 
 // ===== IDENTITY & AUTORYZACJA =====
 builder
-    .Services.AddIdentityCore<User>()
+    .Services.AddIdentity<User, IdentityRole>(options =>
+    {
+        // Konfiguracja wymagań hasła
+        options.Password.RequireDigit = true;
+        options.Password.RequiredLength = 6;
+        options.Password.RequireNonAlphanumeric = true;
+        options.Password.RequireUppercase = true;
+        options.Password.RequireLowercase = true;
+        options.Password.RequiredUniqueChars = 1;
+
+        // Konfiguracja użytkownika
+        options.User.RequireUniqueEmail = true;
+
+        // Konfiguracja lockout
+        options.Lockout.DefaultLockoutTimeSpan = TimeSpan.FromMinutes(5);
+        options.Lockout.MaxFailedAccessAttempts = 5;
+        options.Lockout.AllowedForNewUsers = true;
+    })
     .AddEntityFrameworkStores<AppDbContext>()
+    .AddDefaultTokenProviders() // Potrzebne do reset hasła
     .AddApiEndpoints();
 
 builder
@@ -99,6 +119,10 @@ builder
     .AddBearerToken(IdentityConstants.BearerScheme);
 
 builder.Services.AddAuthorization();
+builder.Services.Configure<DataProtectionTokenProviderOptions>(options =>
+{
+    options.TokenLifespan = TimeSpan.FromHours(24); // Token ważny przez 24h
+});
 
 // ===== HTTP CLIENTS =====
 var retryPolicy = HttpPolicyExtensions
@@ -140,6 +164,7 @@ builder.Services.AddScoped<UserProfileService>();
 builder.Services.AddScoped<UserRegistrationHandler>();
 builder.Services.AddScoped<IAiService, OpenAIService>();
 builder.Services.AddScoped<ICvManagementService, CvManagementService>();
+builder.Services.AddScoped<IEmailService, EmailService>();
 
 /* builder.Services.AddScoped<IAiService, PerplexityAiService>();
  */builder.Services.AddScoped<IMarketAnalysisService, OpenAiMarketAnalysisService>();
