@@ -1,10 +1,21 @@
 'use client';
 import React, { useEffect, useState } from 'react';
 import { GridBackgroundDemo } from '@/components/MarketComponents/GridBackgroundDemo';
-import { getUserCvs, getCvLimits } from '@/lib/api/cv';
+import { getUserCvs, getCvLimits, deleteCv } from '@/lib/api/cv';
 import { CvListItemDto, CvLimits } from '@/lib/types/cv';
 import Link from 'next/link';
 import { Plus, FileText, Clock, Trash2 } from 'lucide-react';
+import {
+  AlertDialog,
+  AlertDialogTrigger,
+  AlertDialogContent,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogCancel,
+  AlertDialogAction,
+} from '@/components/ui/alert-dialog';
 import { Badge } from '@/components/ui/badge';
 import { Separator } from '@/components/ui/separator';
 import { Button } from '@/components/ui/button';
@@ -97,11 +108,15 @@ const ResumeDashboard = () => {
     </div>
   );
 
-  const handleDelete = async (cvId: string, e: React.MouseEvent) => {
-    e.preventDefault();
-    e.stopPropagation();
-
-    console.log('Delete CV:', cvId);
+  const handleDelete = async (cvId: string) => {
+    try {
+      await deleteCv(cvId);
+      setCvs((prev) => prev.filter((cv) => cv.id !== cvId));
+      const updatedLimits = await getCvLimits();
+      setLimits(updatedLimits);
+    } catch (err) {
+      console.error('Failed to delete CV', err);
+    }
   };
 
   return (
@@ -175,12 +190,35 @@ const ResumeDashboard = () => {
 
                               {/* Delete Button */}
                               <div className="absolute top-0 left-0 p-2">
-                                <button
-                                  onClick={(e) => handleDelete(cv.id, e)}
-                                  className="flex h-10 w-10 cursor-pointer items-center justify-center rounded border border-white/20 bg-white/30 p-2 text-white opacity-0 shadow-md backdrop-blur-md transition-all group-hover:opacity-100 hover:bg-red-500/80"
-                                >
-                                  <Trash2 size={16} className="transition-all hover:scale-110" />
-                                </button>
+                                <AlertDialog>
+                                  <AlertDialogTrigger asChild>
+                                    <button
+                                      onClick={(e) => {
+                                        e.preventDefault();
+                                        e.stopPropagation();
+                                      }}
+                                      className="flex h-10 w-10 cursor-pointer items-center justify-center rounded border border-white/20 bg-white/30 p-2 text-white opacity-0 shadow-md backdrop-blur-md transition-all group-hover:opacity-100 hover:bg-red-500/80"
+                                    >
+                                      <Trash2 size={16} className="transition-all hover:scale-110" />
+                                    </button>
+                                  </AlertDialogTrigger>
+                                  <AlertDialogContent className="font-poppins">
+                                    <AlertDialogHeader>
+                                      <AlertDialogTitle>
+                                        Delete resume?
+                                      </AlertDialogTitle>
+                                      <AlertDialogDescription>
+                                        This action cannot be undone.
+                                      </AlertDialogDescription>
+                                    </AlertDialogHeader>
+                                    <AlertDialogFooter>
+                                      <AlertDialogCancel>Cancel</AlertDialogCancel>
+                                      <AlertDialogAction onClick={() => handleDelete(cv.id)}>
+                                        Delete
+                                      </AlertDialogAction>
+                                    </AlertDialogFooter>
+                                  </AlertDialogContent>
+                                </AlertDialog>
                               </div>
 
                               {/* Preview Area */}
