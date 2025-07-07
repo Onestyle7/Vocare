@@ -73,8 +73,7 @@ namespace VocareWebAPI.Services
             _logger.LogInformation("Creating profile for UserId: {UserId}", UserId);
 
             var profile = await _context
-                .UserProfiles
-                .Include(u => u.FinancialSurvey)
+                .UserProfiles.Include(u => u.FinancialSurvey)
                 .FirstOrDefaultAsync(u => u.UserId == UserId);
             if (profile == null)
             {

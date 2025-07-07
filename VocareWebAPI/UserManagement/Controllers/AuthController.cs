@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.VisualBasic;
+using VocareWebAPI.Models.Entities;
 using VocareWebAPI.UserManagement.Models.Dtos;
 using VocareWebAPI.UserManagement.Services.Interfaces;
 
@@ -16,13 +17,13 @@ namespace VocareWebAPI.UserManagement.Controllers
     [Route("api/[controller]")]
     public class AuthController : ControllerBase
     {
-        private readonly UserManager<IdentityUser> _userManager;
+        private readonly UserManager<User> _userManager;
         private readonly IEmailService _emailService;
         private readonly IConfiguration _configuration;
         private readonly ILogger<AuthController> _logger;
 
         public AuthController(
-            UserManager<IdentityUser> userManager,
+            UserManager<User> userManager,
             IEmailService emailService,
             IConfiguration configuration,
             ILogger<AuthController> logger
