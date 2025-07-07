@@ -24,6 +24,7 @@ const ResumeDashboard = () => {
   const [cvs, setCvs] = useState<CvListItemDto[]>([]);
   const [limits, setLimits] = useState<CvLimits | null>(null);
   const [loading, setLoading] = useState(true);
+  const [deleteId, setDeleteId] = useState<string | null>(null);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -116,6 +117,8 @@ const ResumeDashboard = () => {
       setLimits(updatedLimits);
     } catch (err) {
       console.error('Failed to delete CV', err);
+    } finally {
+      setDeleteId(null);
     }
   };
 
@@ -190,12 +193,18 @@ const ResumeDashboard = () => {
 
                               {/* Delete Button */}
                               <div className="absolute top-0 left-0 p-2">
-                                <AlertDialog>
+                                <AlertDialog
+                                  open={deleteId === cv.id}
+                                  onOpenChange={(open) =>
+                                    setDeleteId(open ? cv.id : null)
+                                  }
+                                >
                                   <AlertDialogTrigger asChild>
                                     <button
                                       onClick={(e) => {
                                         e.preventDefault();
                                         e.stopPropagation();
+                                        setDeleteId(cv.id);
                                       }}
                                       className="flex h-10 w-10 cursor-pointer items-center justify-center rounded border border-white/20 bg-white/30 p-2 text-white opacity-0 shadow-md backdrop-blur-md transition-all group-hover:opacity-100 hover:bg-red-500/80"
                                     >
