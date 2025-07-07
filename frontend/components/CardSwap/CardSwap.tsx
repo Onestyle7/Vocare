@@ -9,8 +9,8 @@ import React, {
   useEffect,
   useMemo,
   useRef,
-} from "react";
-import gsap from "gsap";
+} from 'react';
+import gsap from 'gsap';
 
 export interface CardSwapProps {
   width?: number | string;
@@ -21,7 +21,7 @@ export interface CardSwapProps {
   pauseOnHover?: boolean;
   onCardClick?: (idx: number) => void;
   skewAmount?: number;
-  easing?: "linear" | "elastic";
+  easing?: 'linear' | 'elastic';
   children: ReactNode;
 }
 
@@ -29,16 +29,14 @@ export interface CardProps extends React.HTMLAttributes<HTMLDivElement> {
   customClass?: string;
 }
 
-export const Card = forwardRef<HTMLDivElement, CardProps>(
-  ({ customClass, ...rest }, ref) => (
-    <div
-      ref={ref}
-      {...rest}
-      className={`absolute top-1/2 left-1/2 rounded-md border-[0.5px] border-white bg-black [transform-style:preserve-3d] [will-change:transform] [backface-visibility:hidden] ${customClass ?? ""} ${rest.className ?? ""}`.trim()}
-    />
-  )
-);
-Card.displayName = "Card";
+export const Card = forwardRef<HTMLDivElement, CardProps>(({ customClass, ...rest }, ref) => (
+  <div
+    ref={ref}
+    {...rest}
+    className={`absolute top-1/2 left-1/2 rounded-md border-[0.5px] border-white bg-black [will-change:transform] [backface-visibility:hidden] [transform-style:preserve-3d] ${customClass ?? ''} ${rest.className ?? ''}`.trim()}
+  />
+));
+Card.displayName = 'Card';
 
 type CardRef = RefObject<HTMLDivElement>;
 interface Slot {
@@ -48,12 +46,7 @@ interface Slot {
   zIndex: number;
 }
 
-const makeSlot = (
-  i: number,
-  distX: number,
-  distY: number,
-  total: number
-): Slot => ({
+const makeSlot = (i: number, distX: number, distY: number, total: number): Slot => ({
   x: i * distX,
   y: -i * distY,
   z: -i * distX * 1.5,
@@ -68,7 +61,7 @@ const placeNow = (el: HTMLElement, slot: Slot, skew: number) =>
     xPercent: -50,
     yPercent: -50,
     skewY: skew,
-    transformOrigin: "center center",
+    transformOrigin: 'center center',
     zIndex: slot.zIndex,
     force3D: true,
   });
@@ -82,13 +75,13 @@ const CardSwap: React.FC<CardSwapProps> = ({
   pauseOnHover = false,
   onCardClick,
   skewAmount = 6,
-  easing = "elastic",
+  easing = 'elastic',
   children,
 }) => {
   const config =
-    easing === "elastic"
+    easing === 'elastic'
       ? {
-          ease: "elastic.out(0.6,0.9)",
+          ease: 'elastic.out(0.6,0.9)',
           durDrop: 2,
           durMove: 2,
           durReturn: 2,
@@ -96,7 +89,7 @@ const CardSwap: React.FC<CardSwapProps> = ({
           returnDelay: 0.05,
         }
       : {
-          ease: "power1.inOut",
+          ease: 'power1.inOut',
           durDrop: 0.8,
           durMove: 0.8,
           durReturn: 0.8,
@@ -113,9 +106,7 @@ const CardSwap: React.FC<CardSwapProps> = ({
     [childArr.length]
   );
 
-  const order = useRef<number[]>(
-    Array.from({ length: childArr.length }, (_, i) => i)
-  );
+  const order = useRef<number[]>(Array.from({ length: childArr.length }, (_, i) => i));
 
   const tlRef = useRef<gsap.core.Timeline | null>(null);
   const intervalRef = useRef<number>();
@@ -124,11 +115,7 @@ const CardSwap: React.FC<CardSwapProps> = ({
   useEffect(() => {
     const total = refs.length;
     refs.forEach((r, i) =>
-      placeNow(
-        r.current!,
-        makeSlot(i, cardDistance, verticalDistance, total),
-        skewAmount
-      )
+      placeNow(r.current!, makeSlot(i, cardDistance, verticalDistance, total), skewAmount)
     );
 
     const swap = () => {
@@ -140,16 +127,16 @@ const CardSwap: React.FC<CardSwapProps> = ({
       tlRef.current = tl;
 
       tl.to(elFront, {
-        y: "+=500",
+        y: '+=500',
         duration: config.durDrop,
         ease: config.ease,
       });
 
-      tl.addLabel("promote", `-=${config.durDrop * config.promoteOverlap}`);
+      tl.addLabel('promote', `-=${config.durDrop * config.promoteOverlap}`);
       rest.forEach((idx, i) => {
         const el = refs[idx].current!;
         const slot = makeSlot(i, cardDistance, verticalDistance, refs.length);
-        tl.set(el, { zIndex: slot.zIndex }, "promote");
+        tl.set(el, { zIndex: slot.zIndex }, 'promote');
         tl.to(
           el,
           {
@@ -163,21 +150,16 @@ const CardSwap: React.FC<CardSwapProps> = ({
         );
       });
 
-      const backSlot = makeSlot(
-        refs.length - 1,
-        cardDistance,
-        verticalDistance,
-        refs.length
-      );
-      tl.addLabel("return", `promote+=${config.durMove * config.returnDelay}`);
+      const backSlot = makeSlot(refs.length - 1, cardDistance, verticalDistance, refs.length);
+      tl.addLabel('return', `promote+=${config.durMove * config.returnDelay}`);
       tl.call(
         () => {
           gsap.set(elFront, { zIndex: backSlot.zIndex });
         },
         undefined,
-        "return"
+        'return'
       );
-      tl.set(elFront, { x: backSlot.x, z: backSlot.z }, "return");
+      tl.set(elFront, { x: backSlot.x, z: backSlot.z }, 'return');
       tl.to(
         elFront,
         {
@@ -185,7 +167,7 @@ const CardSwap: React.FC<CardSwapProps> = ({
           duration: config.durReturn,
           ease: config.ease,
         },
-        "return"
+        'return'
       );
 
       tl.call(() => {
@@ -206,11 +188,11 @@ const CardSwap: React.FC<CardSwapProps> = ({
         tlRef.current?.play();
         intervalRef.current = window.setInterval(swap, delay);
       };
-      node.addEventListener("mouseenter", pause);
-      node.addEventListener("mouseleave", resume);
+      node.addEventListener('mouseenter', pause);
+      node.addEventListener('mouseleave', resume);
       return () => {
-        node.removeEventListener("mouseenter", pause);
-        node.removeEventListener("mouseleave", resume);
+        node.removeEventListener('mouseenter', pause);
+        node.removeEventListener('mouseleave', resume);
         clearInterval(intervalRef.current);
       };
     }
@@ -234,7 +216,7 @@ const CardSwap: React.FC<CardSwapProps> = ({
   return (
     <div
       ref={container}
-      className="absolute bottom-0 right-0 transform translate-x-[5%] translate-y-[20%] origin-bottom-right perspective-[900px] overflow-visible max-[768px]:translate-x-[25%] max-[768px]:translate-y-[25%] max-[768px]:scale-[0.75] max-[480px]:translate-x-[25%] max-[480px]:translate-y-[25%] max-[480px]:scale-[0.55]"
+      className="absolute right-0 bottom-0 origin-bottom-right translate-x-[5%] translate-y-[20%] transform overflow-visible perspective-[900px] max-[768px]:translate-x-[25%] max-[768px]:translate-y-[25%] max-[768px]:scale-[0.75] max-[480px]:translate-x-[25%] max-[480px]:translate-y-[25%] max-[480px]:scale-[0.55]"
       style={{ width, height }}
     >
       {rendered}

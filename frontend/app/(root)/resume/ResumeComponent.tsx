@@ -226,7 +226,16 @@ const CVCreator: React.FC<CVCreatorProps> = ({ initialCv }) => {
 
   useEffect(() => {
     checkContentOverflow();
-  }, [experiences, education, skills, languages, certificates, hobbies, personalInfo, privacyStatement]);
+  }, [
+    experiences,
+    education,
+    skills,
+    languages,
+    certificates,
+    hobbies,
+    personalInfo,
+    privacyStatement,
+  ]);
 
   const addLanguage = () => {
     const newLanguage: Language = {
@@ -254,15 +263,9 @@ const CVCreator: React.FC<CVCreatorProps> = ({ initialCv }) => {
     setCertificates([...certificates, newCert]);
   };
 
-  const updateCertificate = (
-    id: string,
-    field: keyof Certificate,
-    value: string,
-  ) => {
+  const updateCertificate = (id: string, field: keyof Certificate, value: string) => {
     setCertificates(
-      certificates.map((cert) =>
-        cert.id === id ? { ...cert, [field]: value } : cert,
-      ),
+      certificates.map((cert) => (cert.id === id ? { ...cert, [field]: value } : cert))
     );
   };
 
@@ -478,7 +481,7 @@ const CVCreator: React.FC<CVCreatorProps> = ({ initialCv }) => {
         endDate: w.endDate && w.endDate !== 'Present' ? w.endDate : '',
         description: w.description || '',
         isCurrent: w.endDate === 'Present',
-      })) || [],
+      })) || []
     );
 
     setEducation(
@@ -490,7 +493,7 @@ const CVCreator: React.FC<CVCreatorProps> = ({ initialCv }) => {
         startDate: e.startDate || '',
         endDate: e.endDate && e.endDate !== 'Present' ? e.endDate : '',
         isCurrent: e.endDate === 'Present',
-      })) || [],
+      })) || []
     );
 
     setCertificates(
@@ -498,19 +501,17 @@ const CVCreator: React.FC<CVCreatorProps> = ({ initialCv }) => {
         id: `${Date.now()}${idx}`,
         name: c.name,
         date: c.date || '',
-      })) || [],
+      })) || []
     );
 
-    setSkills(
-      cv.skills?.map((s, idx) => ({ id: `${Date.now()}${idx}`, name: s })) || [],
-    );
+    setSkills(cv.skills?.map((s, idx) => ({ id: `${Date.now()}${idx}`, name: s })) || []);
 
     setLanguages(
       cv.languages?.map((l, idx) => ({
         id: `${Date.now()}${idx}`,
         name: l.language,
         level: l.fluency,
-      })) || [],
+      })) || []
     );
   };
 
@@ -1297,7 +1298,9 @@ const CVCreator: React.FC<CVCreatorProps> = ({ initialCv }) => {
                     <h4 className="truncate font-semibold text-gray-900">
                       {edu.field || 'Field of study'} - {edu.degree || 'Degree'}
                     </h4>
-                    <p className="truncate font-medium text-gray-700">{edu.school || 'School/University'}</p>
+                    <p className="truncate font-medium text-gray-700">
+                      {edu.school || 'School/University'}
+                    </p>
                   </div>
                   <div className="ml-2 flex-shrink-0 text-xs text-gray-600">
                     {formatDate(edu.startDate)} -{' '}
@@ -1444,7 +1447,7 @@ const CVCreator: React.FC<CVCreatorProps> = ({ initialCv }) => {
                   value={showFullDates ? 'full' : 'year'}
                   onValueChange={(value) => setShowFullDates(value === 'full')}
                 >
-                  <SelectTrigger className="font-poppins w-40 h-10! rounded-sm border border-gray-300 px-2 text-sm focus:ring-2 focus:ring-blue-500 focus:outline-none">
+                  <SelectTrigger className="font-poppins h-10! w-40 rounded-sm border border-gray-300 px-2 text-sm focus:ring-2 focus:ring-blue-500 focus:outline-none">
                     <SelectValue />
                   </SelectTrigger>
                   <SelectContent>
@@ -1455,9 +1458,9 @@ const CVCreator: React.FC<CVCreatorProps> = ({ initialCv }) => {
                 <button
                   onClick={loadFromProfile}
                   className="flex cursor-pointer items-center space-x-2 rounded border border-red-500 bg-red-500 px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-red-600"
-                title="Load data from profile and save time"
+                  title="Load data from profile and save time"
                 >
-                  <Upload size={16} className="text-white mr-2" />
+                  <Upload size={16} className="mr-2 text-white" />
                   Load profile
                 </button>
               </div>

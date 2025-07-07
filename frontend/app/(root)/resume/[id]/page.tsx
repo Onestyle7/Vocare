@@ -29,10 +29,10 @@ const ResumeDetailPage = () => {
 
   return (
     <div className="font-poppins">
-        <div className="relative z-10">
-          {loading ? <p>Loading...</p> : cv && <CVCreator initialCv={cv} />}
-        </div>
+      <div className="relative z-10">
+        {loading ? <p>Loading...</p> : cv && <CVCreator initialCv={cv} />}
       </div>
+    </div>
   );
 };
 
