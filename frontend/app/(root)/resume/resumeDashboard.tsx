@@ -16,6 +16,7 @@ import {
   AlertDialogCancel,
   AlertDialogAction,
 } from '@/components/ui/alert-dialog';
+import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { Badge } from '@/components/ui/badge';
 import { Separator } from '@/components/ui/separator';
 import { Button } from '@/components/ui/button';
@@ -25,6 +26,7 @@ const ResumeDashboard = () => {
   const [limits, setLimits] = useState<CvLimits | null>(null);
   const [loading, setLoading] = useState(true);
   const [deleteId, setDeleteId] = useState<string | null>(null);
+  const [limitPopoverOpen, setLimitPopoverOpen] = useState(false);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -136,12 +138,37 @@ const ResumeDashboard = () => {
                     {limits ? `${limits.currentCount}/${limits.maxLimit}` : 'Basic'}
                   </Badge>
                   {!loading && cvs.length > 0 && (
-                    <Link href="/resume/create">
-                      <Button variant="outline" className="gap-2">
-                        <Plus className="h-4 w-4" />
-                        New Resume
-                      </Button>
-                    </Link>
+                    limits && limits.currentCount >= limits.maxLimit ? (
+                      <Popover open={limitPopoverOpen} onOpenChange={setLimitPopoverOpen}>
+                        <PopoverTrigger asChild>
+                          <Button variant="outline" className="gap-2">
+                            <Plus className="h-4 w-4" />
+                            New Resume
+                          </Button>
+                        </PopoverTrigger>
+                        <PopoverContent className="font-poppins w-72">
+                          <div className="flex flex-col gap-3">
+                            <h4 className="text-sm font-medium">You have reached the maximum number of resumes.</h4>
+                            <p className="text-muted-foreground text-xs">Remove some resumes or upgrade your plan.</p>
+                            <div className="flex justify-end gap-2 pt-2">
+                              <Button variant="outline" size="sm" onClick={() => setLimitPopoverOpen(false)}>
+                                Close
+                              </Button>
+                              <Link href="/pricing">
+                                <Button size="sm">Upgrade</Button>
+                              </Link>
+                            </div>
+                          </div>
+                        </PopoverContent>
+                      </Popover>
+                    ) : (
+                      <Link href="/resume/create">
+                        <Button variant="outline" className="gap-2">
+                          <Plus className="h-4 w-4" />
+                          New Resume
+                        </Button>
+                      </Link>
+                    )
                   )}
                 </div>
                 <div className="flex flex-col gap-2">
