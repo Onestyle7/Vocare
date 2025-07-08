@@ -1,5 +1,11 @@
 import { api } from '../api';
-import { CreateCvDto, CvDetailsDto, CvListItemDto, CvLimits } from '../types/cv';
+import {
+  CreateCvDto,
+  CvDetailsDto,
+  CvListItemDto,
+  CvLimits,
+  UpdateCvDto,
+} from '../types/cv';
 
 export const createCv = async (payload: CreateCvDto): Promise<CvDetailsDto> => {
   const { data } = await api.post('/api/cvs/create', payload);
@@ -23,4 +29,11 @@ export const getCvLimits = async (): Promise<CvLimits> => {
 
 export const deleteCv = async (id: string): Promise<void> => {
   await api.delete(`/api/cvs/delete/${id}`);
+};
+
+export const updateCv = async (
+  payload: UpdateCvDto,
+): Promise<CvDetailsDto> => {
+  const { data } = await api.put(`/api/cvs/update/${payload.id}`, payload);
+  return data;
 };

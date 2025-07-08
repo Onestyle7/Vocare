@@ -83,3 +83,11 @@ export interface CreateCvDto {
   initialData?: CvDto;
   notes?: string;
 }
+
+export interface UpdateCvDto {
+  id: string;
+  name: string;
+  targetPosition?: string;
+  cvData: CvDto;
+  notes?: string;
+}

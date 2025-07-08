@@ -23,9 +23,10 @@ import {
   ChevronRight,
   ChevronLeft,
   Upload,
+  Save,
 } from 'lucide-react';
-import { createCv } from '@/lib/api/cv';
-import { CvDto, CvDetailsDto } from '@/lib/types/cv';
+import { createCv, updateCv } from '@/lib/api/cv';
+import { CvDto, CvDetailsDto, UpdateCvDto } from '@/lib/types/cv';
 import { DatePickerWithCurrent } from './DatePickerWithCurrent';
 import { HoverCard, HoverCardContent, HoverCardTrigger } from '@/components/ui/hover-card';
 import html2canvas from 'html2canvas-pro';
@@ -118,6 +119,8 @@ const CVCreator: React.FC<CVCreatorProps> = ({ initialCv }) => {
   });
 
   const [isPremium] = useState(false);
+  const [cvId, setCvId] = useState<string | null>(initialCv?.id ?? null);
+  const [resumeName] = useState<string>(initialCv?.name ?? 'New Resume');
 
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
@@ -517,6 +520,56 @@ const CVCreator: React.FC<CVCreatorProps> = ({ initialCv }) => {
     );
   };
 
+  const buildCvDto = (): CvDto => {
+    return {
+      basics: {
+        firstName: personalInfo.firstName,
+        lastName: personalInfo.lastName,
+        phoneNumber: personalInfo.phone,
+        email: personalInfo.email,
+        summary: personalInfo.summary,
+        location: {
+          city: personalInfo.address,
+          country: personalInfo.country,
+        },
+      },
+      work: experiences.map((w) => ({
+        company: w.company,
+        position: w.position,
+        startDate: w.startDate,
+        endDate: w.isCurrent ? 'Present' : w.endDate,
+        description: w.description,
+      })),
+      education: education.map((e) => ({
+        institution: e.school,
+        degree: e.degree,
+        field: e.field,
+        startDate: e.startDate,
+        endDate: e.isCurrent ? 'Present' : e.endDate,
+      })),
+      certificates: certificates.map((c) => ({ name: c.name, date: c.date })),
+      skills: skills.map((s) => s.name),
+      languages: languages.map((l) => ({ language: l.name, fluency: l.level })),
+    };
+  };
+
+  const handleSave = async () => {
+    if (!cvId) return;
+
+    const payload: UpdateCvDto = {
+      id: cvId,
+      name: resumeName,
+      targetPosition: personalInfo.profession || undefined,
+      cvData: buildCvDto(),
+    };
+
+    try {
+      await updateCv(payload);
+    } catch (err) {
+      console.error('Failed to save CV', err);
+    }
+  };
+
   const loadFromProfile = async () => {
     try {
       const cv = await createCv({
@@ -533,6 +586,7 @@ const CVCreator: React.FC<CVCreatorProps> = ({ initialCv }) => {
   useEffect(() => {
     if (initialCv) {
       populateFromCv(initialCv.cvData, initialCv.targetPosition || undefined);
+      setCvId(initialCv.id);
     }
   }, [initialCv]);
 
@@ -1464,6 +1518,14 @@ const CVCreator: React.FC<CVCreatorProps> = ({ initialCv }) => {
                 >
                   <Upload size={16} className="mr-2 text-white" />
                   Load profile
+                </button>
+                <button
+                  onClick={handleSave}
+                  className="flex cursor-pointer items-center space-x-2 rounded border border-blue-500 bg-blue-500 px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-blue-600"
+                  title="Save resume"
+                >
+                  <Save size={16} className="mr-2 text-white" />
+                  Save
                 </button>
               </div>
             </div>

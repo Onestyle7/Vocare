@@ -221,7 +221,13 @@ const ResumeDashboard = () => {
                                     </AlertDialogHeader>
                                     <AlertDialogFooter>
                                       <AlertDialogCancel>Keep the resume</AlertDialogCancel>
-                                      <AlertDialogAction className='bg-red-500 text-white hover:bg-red-400' onClick={() => handleDelete(cv.id)}>
+                                      <AlertDialogAction
+                                        className='bg-red-500 text-white hover:bg-red-400'
+                                        onClick={(e) => {
+                                          e.preventDefault();
+                                          e.stopPropagation();
+                                          handleDelete(cv.id);
+                                        }}>
                                         Yes, I want to delete
                                       </AlertDialogAction>
                                     </AlertDialogFooter>
