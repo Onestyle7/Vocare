@@ -1,0 +1,17 @@
+
+
+To: klusbartek8@gmail.comSubject: Reset hasła - VocareDate: 2025-07-07 16:19:56 UTC
+
+Cześć klusbartek8@gmail.com,
+
+Otrzymaliśmy prośbę o reset hasła dla Twojego konta w Vocare.
+
+Aby ustawić nowe hasło, kliknij poniższy link:
+http://localhost:3000/reset-password?token=CfDJ8E6%2fFwGY0UdGrhrnUqDSivmr6KkfzsZEWcPZBryvYqOyKECz8YLQIV4LuXyPOPM5lMoWUjXHolnu%2b9Z%2f49oKQ1lLsGgTMo2qWnbxaXpb42xIDjwzTD%2bQ3VFsxInaCHHC7tLlsnn07I3Bpg9TQTc37ANzjk03YA7UlO4wMRGMxQIhzKQiUnwsIfIqw%2f9TYgUFG3OxJ19GDUmrurgM52ETEJsXn8QM6arh%2basueGLsVNC%2b&email=klusbartek8%40gmail.com
+
+Link jest ważny przez 24 godziny.
+
+Jeśli nie prosiłeś o reset hasła, możesz zignorować tę wiadomość.
+
+Pozdrawiamy,
+Zespół Vocare
