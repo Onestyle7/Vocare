@@ -1,10 +1,21 @@
 'use client';
 import React, { useEffect, useState } from 'react';
 import { GridBackgroundDemo } from '@/components/MarketComponents/GridBackgroundDemo';
-import { getUserCvs, getCvLimits } from '@/lib/api/cv';
+import { getUserCvs, getCvLimits, deleteCv } from '@/lib/api/cv';
 import { CvListItemDto, CvLimits } from '@/lib/types/cv';
 import Link from 'next/link';
 import { Plus, FileText, Clock, Trash2 } from 'lucide-react';
+import {
+  AlertDialog,
+  AlertDialogTrigger,
+  AlertDialogContent,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogCancel,
+  AlertDialogAction,
+} from '@/components/ui/alert-dialog';
 import { Badge } from '@/components/ui/badge';
 import { Separator } from '@/components/ui/separator';
 import { Button } from '@/components/ui/button';
@@ -13,6 +24,7 @@ const ResumeDashboard = () => {
   const [cvs, setCvs] = useState<CvListItemDto[]>([]);
   const [limits, setLimits] = useState<CvLimits | null>(null);
   const [loading, setLoading] = useState(true);
+  const [deleteId, setDeleteId] = useState<string | null>(null);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -97,11 +109,17 @@ const ResumeDashboard = () => {
     </div>
   );
 
-  const handleDelete = async (cvId: string, e: React.MouseEvent) => {
-    e.preventDefault();
-    e.stopPropagation();
-
-    console.log('Delete CV:', cvId);
+  const handleDelete = async (cvId: string) => {
+    try {
+      await deleteCv(cvId);
+      setCvs((prev) => prev.filter((cv) => cv.id !== cvId));
+      const updatedLimits = await getCvLimits();
+      setLimits(updatedLimits);
+    } catch (err) {
+      console.error('Failed to delete CV', err);
+    } finally {
+      setDeleteId(null);
+    }
   };
 
   return (
@@ -152,7 +170,7 @@ const ResumeDashboard = () => {
                   <>
                     {cvs.map((cv) => (
                       <Link key={cv.id} href={`/resume/${cv.id}`} className="block">
-                        <div className="group flex h-[400px] flex-col gap-2 rounded-xl border p-4 transition-shadow hover:shadow-lg">
+                        <div className="group flex h-[400px] flex-col gap-2 rounded-xl border p-4 transition-shadow hover:shadow-lg bg-background">
                           <div className="flex h-full flex-col rounded-md border">
                             <div className="bg-muted group relative mb-2 h-1/2 rounded-tl-md rounded-tr-md">
                               {/* Badge - conditionally rendered based on CV status */}
@@ -175,12 +193,40 @@ const ResumeDashboard = () => {
 
                               {/* Delete Button */}
                               <div className="absolute top-0 left-0 p-2">
-                                <button
-                                  onClick={(e) => handleDelete(cv.id, e)}
-                                  className="flex h-10 w-10 cursor-pointer items-center justify-center rounded border border-white/20 bg-white/30 p-2 text-white opacity-0 shadow-md backdrop-blur-md transition-all group-hover:opacity-100 hover:bg-red-500/80"
+                                <AlertDialog
+                                  open={deleteId === cv.id}
+                                  onOpenChange={(open) => setDeleteId(open ? cv.id : null)}
                                 >
-                                  <Trash2 size={16} className="transition-all hover:scale-110" />
-                                </button>
+                                  <AlertDialogTrigger asChild>
+                                    <button
+                                      onClick={(e) => {
+                                        e.preventDefault();
+                                        e.stopPropagation();
+                                        setDeleteId(cv.id);
+                                      }}
+                                      className="flex h-10 w-10 cursor-pointer items-center justify-center rounded border border-white/20 bg-white/30 p-2 text-white opacity-0 shadow-md backdrop-blur-md transition-all group-hover:opacity-100 hover:bg-red-500/80"
+                                    >
+                                      <Trash2
+                                        size={16}
+                                        className="transition-all hover:scale-110"
+                                      />
+                                    </button>
+                                  </AlertDialogTrigger>
+                                  <AlertDialogContent className="font-poppins">
+                                    <AlertDialogHeader>
+                                      <AlertDialogTitle>Delete resume?</AlertDialogTitle>
+                                      <AlertDialogDescription>
+                                        This action cannot be undone.
+                                      </AlertDialogDescription>
+                                    </AlertDialogHeader>
+                                    <AlertDialogFooter>
+                                      <AlertDialogCancel>Keep the resume</AlertDialogCancel>
+                                      <AlertDialogAction className='bg-red-500 text-white hover:bg-red-400' onClick={() => handleDelete(cv.id)}>
+                                        Yes, I want to delete
+                                      </AlertDialogAction>
+                                    </AlertDialogFooter>
+                                  </AlertDialogContent>
+                                </AlertDialog>
                               </div>
 
                               {/* Preview Area */}

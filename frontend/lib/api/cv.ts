@@ -20,3 +20,7 @@ export const getCvLimits = async (): Promise<CvLimits> => {
   const { data } = await api.get('/api/cvs/limits');
   return data;
 };
+
+export const deleteCv = async (id: string): Promise<void> => {
+  await api.delete(`/api/cvs/delete/${id}`);
+};
