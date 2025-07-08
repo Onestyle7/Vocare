@@ -15,7 +15,7 @@ namespace VocareWebAPI.UserManagement.Services.Implementations
     public class EmailService : IEmailService
     {
         private readonly IConfiguration _configuration;
-        private readonly ILogger _logger;
+        private readonly ILogger<EmailService> _logger;
         private readonly IWebHostEnvironment _webHostEnvironment;
         private readonly HttpClient _httpClient;
 
@@ -59,16 +59,24 @@ namespace VocareWebAPI.UserManagement.Services.Implementations
             var devSubject = $"[DEV] {subject}";
             var devBody =
                 $@"
+--- DEVELOPMENT EMAIL ---
+Original recipient: {to}
+Original subject: {subject}
+---
 
---- DEV EMAIL ---Original recipient: {to}
 {body}";
+
             await SendViaResend(testEmail, devSubject, devBody);
             await SaveEmailToFile(to, subject, body);
         }
 
         private async Task SendViaResend(string to, string subject, string body)
         {
-            var fromEmail = _configuration["Resend:TestFromEmail"] ?? "onboarding@resend.dev";
+            // W produkcji użyj swojej domeny, w dev użyj testowej
+            var fromEmail = _webHostEnvironment.IsProduction()
+                ? _configuration["Resend:FromEmail"] ?? "noreply@vocare.pl"
+                : _configuration["Resend:TestFromEmail"] ?? "onboarding@resend.dev";
+
             var fromName = _configuration["Resend:FromName"] ?? "Vocare Team";
 
             var payload = new
@@ -76,7 +84,7 @@ namespace VocareWebAPI.UserManagement.Services.Implementations
                 from = $"{fromName} <{fromEmail}>",
                 to = new[] { to },
                 subject = subject,
-                html = body,
+                html = ConvertToHtml(body),
                 text = StripHtml(body),
             };
 
@@ -86,7 +94,18 @@ namespace VocareWebAPI.UserManagement.Services.Implementations
             try
             {
                 var response = await _httpClient.PostAsync("emails", content);
-                response.EnsureSuccessStatusCode();
+                var responseContent = await response.Content.ReadAsStringAsync();
+
+                if (!response.IsSuccessStatusCode)
+                {
+                    _logger.LogError(
+                        "Email sending failed. Status: {StatusCode}, Response: {Response}",
+                        response.StatusCode,
+                        responseContent
+                    );
+                    throw new HttpRequestException($"Email sending failed: {responseContent}");
+                }
+
                 _logger.LogInformation("Email sent successfully to {Email}", to);
             }
             catch (HttpRequestException ex)
@@ -101,21 +120,38 @@ namespace VocareWebAPI.UserManagement.Services.Implementations
             var emailsDir = Path.Combine(_webHostEnvironment.ContentRootPath, "DevEmails");
             Directory.CreateDirectory(emailsDir);
 
-            var fileName = $"{DateTime.UtcNow:yyyyMMdd_HHmmss}_{to.Replace("@", "_at_")}.txt";
+            var fileName = $"{DateTime.UtcNow:yyyyMMdd_HHmmss}_{SanitizeFileName(to)}.txt";
             var filePath = Path.Combine(emailsDir, fileName);
 
             var content =
-                $@"
+                $@"To: {to}
+Subject: {subject}
+Date: {DateTime.UtcNow:yyyy-MM-dd HH:mm:ss} UTC
 
-To: {to}Subject: {subject}Date: {DateTime.UtcNow:yyyy-MM-dd HH:mm:ss} UTC
 {body}";
+
             await File.WriteAllTextAsync(filePath, content);
             _logger.LogInformation("Email saved to file: {FilePath}", filePath);
+        }
+
+        private string ConvertToHtml(string text)
+        {
+            // Prosta konwersja tekstu na HTML
+            return text.Replace("\n", "<br>");
         }
 
         private string StripHtml(string html)
         {
             return Regex.Replace(html, "<.*?>", string.Empty);
+        }
+
+        private string SanitizeFileName(string fileName)
+        {
+            var invalidChars = Path.GetInvalidFileNameChars();
+            return string.Join(
+                "_",
+                fileName.Split(invalidChars, StringSplitOptions.RemoveEmptyEntries)
+            );
         }
     }
 }
