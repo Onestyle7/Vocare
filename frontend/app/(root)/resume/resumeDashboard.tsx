@@ -1,5 +1,6 @@
 'use client';
 import React, { useEffect, useState } from 'react';
+import { useRouter } from 'next/navigation';
 import { GridBackgroundDemo } from '@/components/MarketComponents/GridBackgroundDemo';
 import { getUserCvs, getCvLimits, deleteCv } from '@/lib/api/cv';
 import { CvListItemDto, CvLimits } from '@/lib/types/cv';
@@ -25,6 +26,8 @@ const ResumeDashboard = () => {
   const [limits, setLimits] = useState<CvLimits | null>(null);
   const [loading, setLoading] = useState(true);
   const [deleteId, setDeleteId] = useState<string | null>(null);
+  const [limitAlertOpen, setLimitAlertOpen] = useState(false);
+  const router = useRouter();
 
   useEffect(() => {
     const fetchData = async () => {
@@ -100,12 +103,10 @@ const ResumeDashboard = () => {
       <p className="text-muted-foreground mb-4 max-w-sm text-center text-sm">
         Create your first resume to get started with your career journey.
       </p>
-      <Link href="/resume/create">
-        <Button className="gap-2">
-          <Plus className="h-4 w-4" />
-          Create Resume
-        </Button>
-      </Link>
+      <Button className="gap-2" onClick={handleNewResumeClick}>
+        <Plus className="h-4 w-4" />
+        Create Resume
+      </Button>
     </div>
   );
 
@@ -122,6 +123,17 @@ const ResumeDashboard = () => {
     }
   };
 
+  const handleNewResumeClick = (
+    e: React.MouseEvent<HTMLButtonElement, MouseEvent>,
+  ) => {
+    e.preventDefault();
+    if (limits && !limits.canCreateNew) {
+      setLimitAlertOpen(true);
+      return;
+    }
+    router.push('/resume/create');
+  };
+
   return (
     <div className="min-h-screen">
       <div className="font-poppins relative">
@@ -136,12 +148,14 @@ const ResumeDashboard = () => {
                     {limits ? `${limits.currentCount}/${limits.maxLimit}` : 'Basic'}
                   </Badge>
                   {!loading && cvs.length > 0 && (
-                    <Link href="/resume/create">
-                      <Button variant="outline" className="gap-2">
-                        <Plus className="h-4 w-4" />
-                        New Resume
-                      </Button>
-                    </Link>
+                    <Button
+                      variant="outline"
+                      className="gap-2"
+                      onClick={handleNewResumeClick}
+                    >
+                      <Plus className="h-4 w-4" />
+                      New Resume
+                    </Button>
                   )}
                 </div>
                 <div className="flex flex-col gap-2">
@@ -220,7 +234,14 @@ const ResumeDashboard = () => {
                                       </AlertDialogDescription>
                                     </AlertDialogHeader>
                                     <AlertDialogFooter>
-                                      <AlertDialogCancel>Keep the resume</AlertDialogCancel>
+                                      <AlertDialogCancel
+                                        onClick={(e) => {
+                                          e.preventDefault();
+                                          e.stopPropagation();
+                                        }}
+                                      >
+                                        Keep the resume
+                                      </AlertDialogCancel>
                                       <AlertDialogAction
                                         className='bg-red-500 text-white hover:bg-red-400'
                                         onClick={(e) => {
@@ -275,7 +296,37 @@ const ResumeDashboard = () => {
         </div>
       </div>
     </div>
+    <AlertDialog open={limitAlertOpen} onOpenChange={setLimitAlertOpen}>
+      <AlertDialogContent className="font-poppins">
+        <AlertDialogHeader>
+          <AlertDialogTitle>You have reached the limit</AlertDialogTitle>
+          <AlertDialogDescription>
+            Delete unnecessary resumes or upgrade your plan.
+          </AlertDialogDescription>
+        </AlertDialogHeader>
+        <AlertDialogFooter>
+          <AlertDialogCancel
+            onClick={(e) => {
+              e.stopPropagation();
+            }}
+          >
+            Cancel
+          </AlertDialogCancel>
+          <Link href="/pricing">
+            <AlertDialogAction
+              className="bg-[#915EFF] text-white hover:bg-[#7b4ee0]"
+              onClick={(e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                setLimitAlertOpen(false);
+              }}
+            >
+              Upgrade
+            </AlertDialogAction>
+          </Link>
+        </AlertDialogFooter>
+      </AlertDialogContent>
+    </AlertDialog>
   );
 };
-
 export default ResumeDashboard;
