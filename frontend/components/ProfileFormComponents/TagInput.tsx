@@ -64,7 +64,7 @@ export function TagInput({ value, onChange, placeholder, className }: TagInputPr
         {value.map((tag, index) => (
           <div
             key={index}
-            className="dark:bg-secondary flex items-center gap-1 rounded-full bg-gray-200 px-3 py-1 text-sm font-medium text-gray-800 dark:text-gray-300"
+            className="dark:bg-secondary flex items-center gap-1 rounded-lg bg-gray-200 px-3 py-1 text-sm font-medium text-gray-800 dark:text-gray-300"
           >
             <span>{tag}</span>
             <button
