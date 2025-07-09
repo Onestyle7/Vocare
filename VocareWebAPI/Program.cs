@@ -99,6 +99,7 @@ builder
 
         // Konfiguracja użytkownika
         options.User.RequireUniqueEmail = true;
+        options.SignIn.RequireConfirmedEmail = false;
 
         // Konfiguracja lockout
         options.Lockout.DefaultLockoutTimeSpan = TimeSpan.FromMinutes(5);
@@ -271,33 +272,8 @@ app.UseAuthorization();
 
 // ===== ENDPOINTS =====
 app.MapControllers();
-app.MapIdentityApi<User>();
 
-// Custom registration endpoint z logiką dodawania tokenów
-app.MapPost(
-        "/api/register",
-        async (
-            [FromBody] RegisterRequest request,
-            UserManager<User> userManager,
-            UserRegistrationHandler registrationHandler
-        ) =>
-        {
-            // Standardowa rejestracja Identity
-            var user = new User { UserName = request.Email, Email = request.Email };
-            var result = await userManager.CreateAsync(user, request.Password);
-
-            if (result.Succeeded)
-            {
-                // Setup billing po udanej rejestracji
-                await registrationHandler.HandleUserRegistrationAsync(user.Id);
-
-                return Results.Ok(new { message = "User registered successfully" });
-            }
-
-            return Results.BadRequest(result.Errors);
-        }
-    )
-    .AllowAnonymous();
+// Wszystkie endpointy autoryzacji są teraz w AuthController
 
 // ===== MIGRACJA BAZY DANYCH =====
 using var scope = app.Services.CreateScope();
