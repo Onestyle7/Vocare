@@ -25,6 +25,7 @@ const ResumeDashboard = () => {
   const [limits, setLimits] = useState<CvLimits | null>(null);
   const [loading, setLoading] = useState(true);
   const [deleteId, setDeleteId] = useState<string | null>(null);
+  const [showLimitDialog, setShowLimitDialog] = useState(false);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -122,6 +123,16 @@ const ResumeDashboard = () => {
     }
   };
 
+  const handleNewResumeClick = () => {
+    if (limits && limits.currentCount >= limits.maxLimit) {
+      setShowLimitDialog(true);
+    } else {
+      window.location.href = '/resume/create';
+    }
+  };
+
+  const isLimitReached = limits && limits.currentCount >= limits.maxLimit;
+
   return (
     <div className="min-h-screen">
       <div className="font-poppins relative">
@@ -136,12 +147,14 @@ const ResumeDashboard = () => {
                     {limits ? `${limits.currentCount}/${limits.maxLimit}` : 'Basic'}
                   </Badge>
                   {!loading && cvs.length > 0 && (
-                    <Link href="/resume/create">
-                      <Button variant="outline" className="gap-2">
-                        <Plus className="h-4 w-4" />
-                        New Resume
-                      </Button>
-                    </Link>
+                    <Button 
+                      variant="outline" 
+                      className="gap-2"
+                      onClick={handleNewResumeClick}
+                    >
+                      <Plus className="h-4 w-4" />
+                      New Resume
+                    </Button>
                   )}
                 </div>
                 <div className="flex flex-col gap-2">
@@ -220,7 +233,15 @@ const ResumeDashboard = () => {
                                       </AlertDialogDescription>
                                     </AlertDialogHeader>
                                     <AlertDialogFooter>
-                                      <AlertDialogCancel>Keep the resume</AlertDialogCancel>
+                                      <AlertDialogCancel 
+                                        onClick={(e) => {
+                                          e.preventDefault();
+                                          e.stopPropagation();
+                                          setDeleteId(null);
+                                        }}
+                                      >
+                                        Keep the resume
+                                      </AlertDialogCancel>
                                       <AlertDialogAction
                                         className='bg-red-500 text-white hover:bg-red-400'
                                         onClick={(e) => {
@@ -274,6 +295,28 @@ const ResumeDashboard = () => {
           </div>
         </div>
       </div>
+
+      {/* Limit Reached Alert Dialog */}
+      <AlertDialog open={showLimitDialog} onOpenChange={setShowLimitDialog}>
+        <AlertDialogContent className="font-poppins">
+          <AlertDialogHeader>
+            <AlertDialogTitle>You've reached your resume limit</AlertDialogTitle>
+            <AlertDialogDescription>
+              Delete unused resumes or upgrade your plan to create more.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Cancel</AlertDialogCancel>
+            <AlertDialogAction
+              onClick={() => {
+                window.location.href = '/pricing';
+              }}
+            >
+              Upgrade
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
   );
 };
