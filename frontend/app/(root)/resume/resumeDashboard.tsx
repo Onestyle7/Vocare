@@ -131,8 +131,6 @@ const ResumeDashboard = () => {
     }
   };
 
-  const isLimitReached = limits && limits.currentCount >= limits.maxLimit;
-
   return (
     <div className="min-h-screen">
       <div className="font-poppins relative">
@@ -300,7 +298,7 @@ const ResumeDashboard = () => {
       <AlertDialog open={showLimitDialog} onOpenChange={setShowLimitDialog}>
         <AlertDialogContent className="font-poppins">
           <AlertDialogHeader>
-            <AlertDialogTitle>You've reached your resume limit</AlertDialogTitle>
+            <AlertDialogTitle>You&apos;ve reached your resume limit</AlertDialogTitle>
             <AlertDialogDescription>
               Delete unused resumes or upgrade your plan to create more.
             </AlertDialogDescription>

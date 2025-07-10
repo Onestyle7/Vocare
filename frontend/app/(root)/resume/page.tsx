@@ -5,8 +5,9 @@ import React from 'react';
 const page = () => {
   return (
     <div className="mx-auto max-w-7xl">
-      <Header />
-      <div className="font-poppins -mt-10 p-4 sm:-mt-30">
+        <Header />
+        <div className='w-full sm:border-[0.5px] mt-8'/>
+      <div className="font-poppins -mt-10 p-4 sm:-mt-30 sm:border">
         <ResumeDashboard />
       </div>
     </div>
