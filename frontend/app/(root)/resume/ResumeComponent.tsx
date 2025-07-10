@@ -1291,7 +1291,11 @@ const CVCreator: React.FC<CVCreatorProps> = ({ initialCv }) => {
           personalInfo.address ||
           personalInfo.profession ||
           personalInfo.summary ? (
-          <div className="mb-5" key="profile">
+          <div
+            className="mb-5"
+            key="profile"
+            style={{ breakInside: 'avoid', pageBreakInside: 'avoid' }}
+          >
             <h3 className="mb-2 border-b border-gray-300 pb-1 text-lg font-semibold text-gray-800">
               Personal Profile
             </h3>
@@ -1303,7 +1307,11 @@ const CVCreator: React.FC<CVCreatorProps> = ({ initialCv }) => {
 
       case 'experience':
         return experiences.length > 0 ? (
-          <div className="mb-5" key="experience">
+          <div
+            className="mb-5"
+            key="experience"
+            style={{ breakInside: 'avoid', pageBreakInside: 'avoid' }}
+          >
             <h3 className="mb-2 flex items-center border-b border-gray-300 pb-1 text-lg font-semibold text-gray-800">
               <Briefcase size={16} className="mr-2" />
               Work Exeperience
@@ -1336,7 +1344,11 @@ const CVCreator: React.FC<CVCreatorProps> = ({ initialCv }) => {
 
       case 'education':
         return education.length > 0 ? (
-          <div className="mb-5" key="education">
+          <div
+            className="mb-5"
+            key="education"
+            style={{ breakInside: 'avoid', pageBreakInside: 'avoid' }}
+          >
             <h3 className="mb-2 flex items-center border-b border-gray-300 pb-1 text-lg font-semibold text-gray-800">
               <GraduationCap size={16} className="mr-2" />
               Education
@@ -1364,7 +1376,11 @@ const CVCreator: React.FC<CVCreatorProps> = ({ initialCv }) => {
 
       case 'certificates':
         return certificates.length > 0 ? (
-          <div className="mb-5" key="certificates">
+          <div
+            className="mb-5"
+            key="certificates"
+            style={{ breakInside: 'avoid', pageBreakInside: 'avoid' }}
+          >
             <h3 className="mb-2 flex items-center border-b border-gray-300 pb-1 text-lg font-semibold text-gray-800">
               <Award size={16} className="mr-2" />
               Certificates
@@ -1382,7 +1398,11 @@ const CVCreator: React.FC<CVCreatorProps> = ({ initialCv }) => {
 
       case 'skills':
         return skills.length > 0 ? (
-          <div className="mb-5" key="skills">
+          <div
+            className="mb-5"
+            key="skills"
+            style={{ breakInside: 'avoid', pageBreakInside: 'avoid' }}
+          >
             <h3 className="mb-2 flex items-center border-b border-gray-300 pb-1 text-lg font-semibold text-gray-800">
               <Award size={16} className="mr-2" />
               Skills
@@ -1402,7 +1422,11 @@ const CVCreator: React.FC<CVCreatorProps> = ({ initialCv }) => {
 
       case 'languages':
         return languages.length > 0 ? (
-          <div className="mb-5" key="languages">
+          <div
+            className="mb-5"
+            key="languages"
+            style={{ breakInside: 'avoid', pageBreakInside: 'avoid' }}
+          >
             <h3 className="mb-2 flex items-center border-b border-gray-300 pb-1 text-lg font-semibold text-gray-800">
               <Languages size={16} className="mr-2" />
               Languages
@@ -1422,7 +1446,11 @@ const CVCreator: React.FC<CVCreatorProps> = ({ initialCv }) => {
 
       case 'hobbies':
         return hobbies.length > 0 ? (
-          <div className="mb-5" key="hobbies">
+          <div
+            className="mb-5"
+            key="hobbies"
+            style={{ breakInside: 'avoid', pageBreakInside: 'avoid' }}
+          >
             <h3 className="mb-2 flex items-center border-b border-gray-300 pb-1 text-lg font-semibold text-gray-800">
               <Tag size={16} className="mr-2" />
               Hobby
@@ -1442,7 +1470,11 @@ const CVCreator: React.FC<CVCreatorProps> = ({ initialCv }) => {
 
       case 'privacy':
         return privacyStatement.content ? (
-          <div className="mb-5" key="privacy">
+          <div
+            className="mb-5"
+            key="privacy"
+            style={{ breakInside: 'avoid', pageBreakInside: 'avoid' }}
+          >
             <h3 className="mb-2 border-b border-gray-300 pb-1 text-lg font-semibold text-gray-800">
               Privacy Statement
             </h3>
@@ -1744,9 +1776,12 @@ const CVCreator: React.FC<CVCreatorProps> = ({ initialCv }) => {
                 }}
               >
                 <div
-                  className="h-full p-8"
+                  className="p-8"
                   style={{
-                    transform: `translateY(-${(currentPage - 1) * 100}%)`,
+                    height: `calc(100% * ${totalPages})`,
+                    transform: `translateY(-${
+                      (currentPage - 1) * (100 / totalPages)
+                    }%)`,
                   }}
                 >
                   <div className="mb-6">
