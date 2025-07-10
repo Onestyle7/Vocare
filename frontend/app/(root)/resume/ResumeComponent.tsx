@@ -596,7 +596,6 @@ const CVCreator: React.FC<CVCreatorProps> = ({ initialCv }) => {
       const cvElement = document.querySelector<HTMLElement>('.cv-content');
       if (!cvElement) return;
 
-      // Tymczasowo ustaw skalę na 1 dla lepszej jakości
       const originalScale = cvScale;
       setCvScale(1);
 
@@ -608,12 +607,11 @@ const CVCreator: React.FC<CVCreatorProps> = ({ initialCv }) => {
         scale: 2,
         useCORS: true,
         allowTaint: true,
-        backgroundColor: '#ffffff', // Explicit HEX color
+        backgroundColor: '#ffffff', 
         width: cvElement.offsetWidth,
         height: cvElement.offsetHeight,
       });
 
-      // Przywróć oryginalną skalę
       setCvScale(originalScale);
 
       const imgData = canvas.toDataURL('image/png');
@@ -628,10 +626,8 @@ const CVCreator: React.FC<CVCreatorProps> = ({ initialCv }) => {
       const imgHeight = (canvas.height * pdfWidth) / canvas.width;
 
       if (imgHeight <= pdfHeight) {
-        // Zmieści się na jednej stronie
         pdf.addImage(imgData, 'PNG', 0, 0, imgWidth, imgHeight);
       } else {
-        // Podziel na kilka stron
         let yPosition = 0;
         let pageCount = 0;
 
@@ -646,13 +642,11 @@ const CVCreator: React.FC<CVCreatorProps> = ({ initialCv }) => {
             canvas.height - sourceY
           );
 
-          // Utwórz canvas dla fragmentu
           const pageCanvas = document.createElement('canvas');
-          // ► Po wywołaniu getContext() sprawdź, czy nie jest null
           const pageCtx = pageCanvas.getContext('2d');
           if (!pageCtx) {
             console.error('Could not get 2D context from pageCanvas');
-            return; // lub rzucić błąd, w zależności od Twojej logiki
+            return; 
           }
 
           pageCanvas.width = canvas.width;
