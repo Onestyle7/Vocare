@@ -117,7 +117,18 @@ builder
         options.DefaultChallengeScheme = IdentityConstants.BearerScheme;
         options.DefaultScheme = IdentityConstants.BearerScheme;
     })
-    .AddBearerToken(IdentityConstants.BearerScheme);
+    .AddBearerToken(IdentityConstants.BearerScheme)
+    .AddGoogle(options =>
+    {
+        options.ClientId = builder.Configuration["Authentication:Google:ClientId"]!;
+        options.ClientSecret = builder.Configuration["Authentication:Google:ClientSecret"]!;
+        options.SaveTokens = true;
+
+        //scope'y potrzebne do uzyskania danych użytkownika
+        options.Scope.Add("openid");
+        options.Scope.Add("profile");
+        options.Scope.Add("email");
+    });
 
 builder.Services.AddAuthorization();
 builder.Services.Configure<DataProtectionTokenProviderOptions>(options =>
@@ -273,7 +284,8 @@ app.UseAuthorization();
 // ===== ENDPOINTS =====
 app.MapControllers();
 
-// Wszystkie endpointy autoryzacji są teraz w AuthController
+// Wszystkie endpointy autoryzacji są w AuthController
+// Identity bearer token authentication jest obsługiwane automatycznie
 
 // ===== MIGRACJA BAZY DANYCH =====
 using var scope = app.Services.CreateScope();
