@@ -21,8 +21,8 @@ import { toast } from 'sonner';
 import { ArrowRight } from 'lucide-react';
 import { ButtonForm } from '../ui/button-form';
 import { AxiosError } from 'axios';
-// import OAuthButton from './OAuthButton';
-// import { facebook, google } from '@/app/constants';
+import OAuthButton from './OAuthButton';
+import { facebook, google } from '@/app/constants';
 
 type FormType = 'sign-in' | 'sign-up';
 
@@ -211,7 +211,7 @@ const AuthForm = ({ type }: { type: FormType }) => {
           )}
         </div>
 
-        {/* {type === 'sign-in' && (
+        {type === 'sign-in' && (
           <div className="flex w-full flex-col items-center justify-center gap-4 text-sm text-gray-400">
             <div className="flex w-full items-center">
               <div className="h-[0.5px] w-full bg-gray-500/80" />
@@ -221,10 +221,10 @@ const AuthForm = ({ type }: { type: FormType }) => {
 
             <div className="tems-center mt-4 flex w-full flex-row justify-center gap-2">
               <OAuthButton icon={google} label="Login with Google" url="/api/auth/google"/>
-              <OAuthButton icon={facebook} label="Login with Facebook" url="/api/auth/google" />
+              {/* <OAuthButton icon={facebook} label="Login with Facebook" url="/api/auth/google" /> */}
             </div>
           </div>
-        )} */}
+        )}
       </form>
     </Form>
   );
