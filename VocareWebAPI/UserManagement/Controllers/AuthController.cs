@@ -274,6 +274,7 @@ Zespół Vocare
                 return BadRequest(ModelState);
             }
 
+            // Ustaw scheme na Bearer dla Identity
             _signInManager.AuthenticationScheme = IdentityConstants.BearerScheme;
 
             var result = await _signInManager.PasswordSignInAsync(
@@ -304,7 +305,14 @@ Zespół Vocare
             }
 
             _logger.LogInformation("User logged in successfully: {UserId}", user.Id);
-            return Ok(new { message = "Login successful" });
+            return Ok(
+                new
+                {
+                    message = "Login successful",
+                    userId = user.Id,
+                    email = user.Email,
+                }
+            );
         }
 
         [HttpPost("refresh")]
@@ -330,6 +338,183 @@ Zespół Vocare
             await _signInManager.SignOutAsync();
             _logger.LogInformation("User logged out: {UserId}", User.Identity?.Name);
             return Ok(new { message = "Logged out successfully" });
+        }
+
+        [HttpGet("google-auth-url")]
+        [AllowAnonymous]
+        public IActionResult GetGoogleAuthUrl([FromQuery] string? returnUrl = null)
+        {
+            try
+            {
+                var redirectUrl = Url.Action(
+                    nameof(GoogleCallback),
+                    "Auth",
+                    new { returnUrl },
+                    Request.Scheme
+                );
+                var properties = _signInManager.ConfigureExternalAuthenticationProperties(
+                    "Google",
+                    redirectUrl
+                );
+
+                // Buduj URL ręcznie używając Google OAuth parametrów
+                var googleClientId = _configuration["Authentication:Google:ClientId"];
+                var scope = Uri.EscapeDataString("openid profile email");
+                var state = properties.Items.ContainsKey("state")
+                    ? properties.Items["state"]
+                    : Guid.NewGuid().ToString();
+
+                var googleAuthUrl =
+                    "https://accounts.google.com/o/oauth2/v2/auth?"
+                    + $"client_id={googleClientId}&"
+                    + $"redirect_uri={Uri.EscapeDataString(redirectUrl!)}&"
+                    + $"scope={scope}&"
+                    + $"response_type=code&"
+                    + $"state={Uri.EscapeDataString(state)}";
+
+                _logger.LogInformation("Generated Google auth URL for redirect");
+
+                return Ok(
+                    new
+                    {
+                        authUrl = googleAuthUrl,
+                        message = "Google authentication URL generated successfully",
+                    }
+                );
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error generating Google auth URL");
+                return BadRequest(new { message = "Failed to generate Google authentication URL" });
+            }
+        }
+
+        [HttpGet("google-signin")]
+        [AllowAnonymous]
+        public IActionResult GoogleSignIn(string? returnUrl = null)
+        {
+            var redirectUrl = Url.Action(nameof(GoogleCallback), "Auth", new { returnUrl });
+            var properties = _signInManager.ConfigureExternalAuthenticationProperties(
+                "Google",
+                redirectUrl
+            );
+            return Challenge(properties, "Google");
+        }
+
+        [HttpGet("google-callback")]
+        [AllowAnonymous]
+        public async Task<IActionResult> GoogleCallback(
+            string? returnUrl = null,
+            string? remoteError = null
+        )
+        {
+            var frontendUrl = _configuration["Frontend:Url"] ?? "https://app.vocare.pl";
+
+            if (remoteError != null)
+            {
+                _logger.LogError("Google authentication error: {Error}", remoteError);
+                return Redirect($"{frontendUrl}?error=google_auth_failed");
+            }
+
+            var info = await _signInManager.GetExternalLoginInfoAsync();
+            if (info == null)
+            {
+                _logger.LogError("Error loading external login information from Google");
+                return Redirect($"{frontendUrl}?error=external_login_failed");
+            }
+
+            // Sprawdź czy użytkownik już ma konto połączone z Google
+            var signInResult = await _signInManager.ExternalLoginSignInAsync(
+                info.LoginProvider,
+                info.ProviderKey,
+                isPersistent: false,
+                bypassTwoFactor: true
+            );
+
+            if (signInResult.Succeeded)
+            {
+                _logger.LogInformation(
+                    "User logged in with Google provider: {Email}",
+                    info.Principal.FindFirst(System.Security.Claims.ClaimTypes.Email)?.Value
+                );
+
+                // Użytkownik zalogowany pomyślnie - przekieruj do frontendu
+                return Redirect($"{frontendUrl}?googleLogin=success");
+            }
+
+            // Jeśli użytkownik nie ma konta, utwórz nowe
+            var email = info.Principal.FindFirst(System.Security.Claims.ClaimTypes.Email)?.Value;
+            if (string.IsNullOrEmpty(email))
+            {
+                _logger.LogError("Email claim not received from Google");
+                return Redirect($"{frontendUrl}?error=no_email_from_google");
+            }
+
+            var existingUser = await _userManager.FindByEmailAsync(email);
+            if (existingUser == null)
+            {
+                // Utwórz nowego użytkownika
+                var name =
+                    info.Principal.FindFirst(System.Security.Claims.ClaimTypes.Name)?.Value
+                    ?? email;
+                existingUser = new User
+                {
+                    UserName = email,
+                    Email = email,
+                    EmailConfirmed = true, // Google już zweryfikował email
+                };
+
+                var createResult = await _userManager.CreateAsync(existingUser);
+                if (!createResult.Succeeded)
+                {
+                    _logger.LogError(
+                        "Failed to create user from Google: {Errors}",
+                        string.Join(", ", createResult.Errors.Select(e => e.Description))
+                    );
+                    return Redirect($"{frontendUrl}?error=user_creation_failed");
+                }
+
+                try
+                {
+                    // Setup billing dla nowego użytkownika
+                    await _registrationHandler.HandleUserRegistrationAsync(existingUser.Id);
+                    _logger.LogInformation(
+                        "Google user registered with billing setup: {UserId}",
+                        existingUser.Id
+                    );
+                }
+                catch (Exception ex)
+                {
+                    _logger.LogError(
+                        ex,
+                        "Failed to setup billing for Google user: {UserId}",
+                        existingUser.Id
+                    );
+                    // Kontynuuj mimo błędu billing
+                }
+            }
+
+            // Połącz konto z Google (ważne dla Identity!)
+            var addLoginResult = await _userManager.AddLoginAsync(existingUser, info);
+            if (!addLoginResult.Succeeded)
+            {
+                _logger.LogError(
+                    "Failed to add Google login for user {UserId}: {Errors}",
+                    existingUser.Id,
+                    string.Join(", ", addLoginResult.Errors.Select(e => e.Description))
+                );
+                return Redirect($"{frontendUrl}?error=login_association_failed");
+            }
+
+            // Zaloguj użytkownika
+            await _signInManager.SignInAsync(existingUser, isPersistent: false);
+            _logger.LogInformation(
+                "User created account and signed in using Google provider: {UserId}",
+                existingUser.Id
+            );
+
+            // Przekieruj z informacją o pomyślnym logowaniu
+            return Redirect($"{frontendUrl}?googleLogin=success");
         }
     }
 }
