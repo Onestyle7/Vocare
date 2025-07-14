@@ -1,6 +1,7 @@
 'use client';
 
 import AboutCards from '@/components/SupportComponents/SectionsComponents/AboutCards';
+import CardFeature from '@/components/SupportComponents/SectionsComponents/CardSwapper';
 import Faq from '@/components/SupportComponents/SectionsComponents/Faq';
 import Features from '@/components/SupportComponents/SectionsComponents/Features';
 import Footer from '@/components/SupportComponents/SectionsComponents/Footer';
@@ -15,8 +16,9 @@ const page = () => {
         <Header />
         <HeroTweak />
         <AboutCards />
-        <Features />
+        {/* <Features /> */}
         <MobileFeature />
+        <CardFeature />
         <Faq />
         <Footer />
       </main>

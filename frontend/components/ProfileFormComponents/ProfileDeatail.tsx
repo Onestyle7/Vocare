@@ -192,7 +192,7 @@ export default function ProfileDetails() {
             profile.languages.map((lang, index) => (
               <span
                 key={index}
-                className="rounded-full bg-[#efe7ff] px-3 py-1 text-sm text-[#915EFF] dark:bg-gray-900/50"
+                className="rounded-lg bg-[#efe7ff] px-3 py-1 text-sm text-[#915EFF] dark:bg-gray-900/50"
               >
                 {lang.language} {lang.level && `(${lang.level})`}
               </span>
@@ -231,14 +231,14 @@ export default function ProfileDetails() {
       <div className="mt-4 space-y-2">
         <h2 className="flex items-center text-2xl font-medium text-gray-700 dark:text-gray-200">
           Skills
-          <div className="ml-2 h-2 w-2 rounded-full bg-[#915EFF]" />
+          <div className="ml-2 h-2 w-2 rounded-lg bg-[#915EFF]" />
         </h2>
         <div className="flex flex-wrap gap-2">
           {profile?.skills?.length ? (
             profile.skills.map((skill, index) => (
               <span
                 key={index}
-                className="rounded-full bg-[#efe7ff] px-3 py-1 text-sm text-[#915EFF] dark:bg-gray-900/50"
+                className="rounded-lg bg-[#efe7ff] px-3 py-1 text-sm text-[#915EFF] dark:bg-gray-900/50"
               >
                 {skill}
               </span>
@@ -259,7 +259,7 @@ export default function ProfileDetails() {
             profile.softSkills.map((skill, index) => (
               <span
                 key={index}
-                className="rounded-full bg-[#efe7ff] px-3 py-1 text-sm text-[#915EFF] dark:bg-gray-900/50"
+                className="rounded-lg bg-[#efe7ff] px-3 py-1 text-sm text-[#915EFF] dark:bg-gray-900/50"
               >
                 {skill}
               </span>
@@ -411,7 +411,7 @@ export default function ProfileDetails() {
       customPaddings
       id="profile"
     >
-      <div className="font-poppins mt-10 border-r border-l xl:mx-10 xl:mt-16 xl:border-t">
+      <div className="font-poppins mt-10 xl:mx-10 xl:mt-16 xl:border-t lg:px-4">
         <div className="font-poppins mx-4 mt-8 max-w-7xl max-sm:mx-4 xl:mx-auto 2xl:max-w-[1480px]">
           <div className="mt-2 flex h-screen flex-col xl:flex-row">
             <div className="hidden xl:block xl:w-1/2 xl:pr-8">

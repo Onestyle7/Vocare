@@ -191,7 +191,7 @@ const WorkExperiencePopover = ({ value = [], onChange }: WorkExperiencePopoverPr
 
   return (
     <div className="space-y-4">
-      <div className="space-y-2">
+      <div className="space-y-2 border rounded-lg">
         {value.map((item, index) => (
           <Card key={index} className="p-2">
             <CardContent className="p-2">
@@ -328,7 +328,7 @@ const EducationPopover = ({ value = [], onChange }: EducationPopoverProps) => {
 
   return (
     <div className="space-y-4">
-      <div className="space-y-2">
+      <div className="space-y-2 border rounded-lg">
         {value.map((item, index) => (
           <Card key={index} className="p-2">
             <CardContent className="p-2">
@@ -475,7 +475,7 @@ const CertificatePopover = ({ value = [], onChange }: CertificatePopoverProps) =
 
   return (
     <div className="space-y-4">
-      <div className="space-y-2">
+      <div className="space-y-2 border rounded-lg">
         {value.map((item, index) => (
           <Card key={index} className="p-2">
             <CardContent className="p-2">
