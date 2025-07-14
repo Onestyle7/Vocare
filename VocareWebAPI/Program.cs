@@ -123,6 +123,15 @@ builder
         options.ClientId = builder.Configuration["Authentication:Google:ClientId"]!;
         options.ClientSecret = builder.Configuration["Authentication:Google:ClientSecret"]!;
         options.SaveTokens = true;
+        options.Events.OnRedirectToAuthorizationEndpoint = context =>
+        {
+            Console.WriteLine($"=== GOOGLE REDIRECT ===");
+            Console.WriteLine($"Redirect URI: {context.RedirectUri}");
+            Console.WriteLine($"======================");
+
+            context.Response.Redirect(context.RedirectUri);
+            return Task.CompletedTask;
+        };
 
         //scope'y potrzebne do uzyskania danych użytkownika
         options.Scope.Add("openid");
