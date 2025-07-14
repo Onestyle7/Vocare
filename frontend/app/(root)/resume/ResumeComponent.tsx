@@ -1154,18 +1154,23 @@ const CVCreator: React.FC<CVCreatorProps> = ({ initialCv }) => {
                       onChange={(e) => updateLanguage(language.id, 'name', e.target.value)}
                       className="flex-1 focus:outline-none"
                     />
-                    <select
-                      value={language.level}
-                      onChange={(e) => updateLanguage(language.id, 'level', e.target.value)}
-                      className="rounded-sm border px-3 py-2 focus:outline-none"
-                    >
-                      <option value="Ogólny">Ogólny</option>
-                      <option value="Beginner">Beginner</option>
-                      <option value="Conversational">Conversational</option>
-                      <option value="Advanced">Advanced</option>
-                      <option value="Proficient">Proficient</option>
-                      <option value="Native speaker">Native speaker</option>
-                    </select>
+                    <Select
+  value={language.level}
+  onValueChange={(value) => updateLanguage(language.id, 'level', value)}
+>
+  <SelectTrigger className="font-poppins h-10 w-40 rounded-sm border border-gray-300 px-2 text-sm focus:ring-2 focus:ring-blue-500 focus:outline-none">
+    <SelectValue />
+  </SelectTrigger>
+  <SelectContent>
+    <SelectItem value="Ogólny">Ogólny</SelectItem>
+    <SelectItem value="Beginner">Beginner</SelectItem>
+    <SelectItem value="Conversational">Conversational</SelectItem>
+    <SelectItem value="Advanced">Advanced</SelectItem>
+    <SelectItem value="Proficient">Proficient</SelectItem>
+    <SelectItem value="Native speaker">Native speaker</SelectItem>
+  </SelectContent>
+</Select>
+
                   </div>
                   <button
                     onClick={() => removeLanguage(language.id)}
@@ -1464,7 +1469,7 @@ const CVCreator: React.FC<CVCreatorProps> = ({ initialCv }) => {
         <button
           onClick={() => (window.location.href = '/resume')}
           className="cursor-pointer rounded-lg p-3 transition-colors hover:bg-gray-100"
-          title="Strona główna"
+          title="Dashboard"
         >
           <Home size={24} className="text-gray-600" />
         </button>
@@ -1475,7 +1480,7 @@ const CVCreator: React.FC<CVCreatorProps> = ({ initialCv }) => {
         <button
           onClick={() => (window.location.href = '/resume')}
           className="cursor-pointer rounded-lg p-3 transition-colors hover:bg-gray-100"
-          title="Strona główna"
+          title="Dashboard"
         >
           <Home size={24} className="text-gray-600" />
         </button>
@@ -1486,9 +1491,34 @@ const CVCreator: React.FC<CVCreatorProps> = ({ initialCv }) => {
                 >
                   <Save size={16} className="text-black w-6 h-6" />
                 </button>
-        <div className="flex h-12 w-12 items-center justify-center rounded-sm bg-gray-200/40">
-          <span className="font-poppins">v1.0</span>
-        </div>
+
+
+
+<HoverCard>
+                <HoverCardTrigger asChild>
+                  <button className="flex h-12 w-12 cursor-pointer items-center justify-center rounded-sm bg-gray-100">
+                    v0.1.2
+                  </button>
+                </HoverCardTrigger>
+                <HoverCardContent className="font-poppins w-80">
+                  <div className="flex justify-between gap-4">
+                    <div className="space-y-1">
+                      <h4 className="text-sm font-semibold">Beta version</h4>
+                      <p className="text-sm">
+                        Be aware of bugs or missing features. We are working hard to improve the
+                        application.
+                      </p>
+                      <div className="text-muted-foreground text-xs">Vocare team</div>
+                    </div>
+                  </div>
+                </HoverCardContent>
+              </HoverCard>
+
+
+
+        {/* <div className="flex h-12 w-12 items-center justify-center rounded-sm bg-gray-200/40">
+          <span className="font-poppins">v0.1.2</span>
+        </div> */}
       </div>
 
       {/* Main Content */}
