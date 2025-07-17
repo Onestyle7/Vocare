@@ -435,7 +435,7 @@ Zespół Vocare
             );
 
             User user;
-            
+
             if (signInResult.Succeeded)
             {
                 _logger.LogInformation(
@@ -454,7 +454,9 @@ Zespół Vocare
             else
             {
                 // Jeśli użytkownik nie ma konta, utwórz nowe
-                var email = info.Principal.FindFirst(System.Security.Claims.ClaimTypes.Email)?.Value;
+                var email = info
+                    .Principal.FindFirst(System.Security.Claims.ClaimTypes.Email)
+                    ?.Value;
                 if (string.IsNullOrEmpty(email))
                 {
                     _logger.LogError("Email claim not received from Google");
@@ -530,12 +532,12 @@ Zespół Vocare
             // Po pomyślnym Google OAuth, przekieruj do frontendu z informacją
             // że może teraz użyć automatycznego Identity API /login endpoint
             // z credentials użytkownika żeby otrzymać bearer token
-            
+
             // Ale problema jest taki, że nie mamy hasła użytkownika Google
             // Więc musimy wygenerować token w inny sposób
-            
+
             _logger.LogInformation("User logged in with Google OAuth: {UserId}", user.Id);
-            
+
             // Przekieruj do frontendu z informacją o pomyślnym Google login
             // Frontend może teraz użyć cookie-based sesji lub zastanowić się nad tokenami
             return Redirect($"{frontendUrl}?googleLogin=success&userId={user.Id}");
@@ -563,19 +565,21 @@ Zespół Vocare
 
                 // Zaloguj użytkownika z Bearer scheme żeby wygenerować token
                 _signInManager.AuthenticationScheme = IdentityConstants.BearerScheme;
-                
+
                 // Użyj SignInManager do generowania bearer token sesji
                 await _signInManager.SignInAsync(user, isPersistent: false);
-                
+
                 _logger.LogInformation("Generated bearer token for Google user: {UserId}", user.Id);
-                
-                return Ok(new 
-                { 
-                    message = "Login successful",
-                    userId = user.Id,
-                    email = user.Email,
-                    // Token będzie automatycznie dostępny w authorization headerze response
-                });
+
+                return Ok(
+                    new
+                    {
+                        message = "Login successful",
+                        userId = user.Id,
+                        email = user.Email,
+                        // Token będzie automatycznie dostępny w authorization headerze response
+                    }
+                );
             }
             catch (Exception ex)
             {
