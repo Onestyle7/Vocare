@@ -293,6 +293,9 @@ app.UseAuthorization();
 // ===== ENDPOINTS =====
 app.MapControllers();
 
+// Dodaj Identity API endpoints dla bearer tokenów
+app.MapIdentityApi<User>();
+
 // Wszystkie endpointy autoryzacji są w AuthController
 // Identity bearer token authentication jest obsługiwane automatycznie
 
