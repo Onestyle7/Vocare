@@ -36,7 +36,7 @@ using LocalStripeService = VocareWebAPI.Billing.Services.Implementations.StripeS
 var builder = WebApplication.CreateBuilder(args);
 
 // ===== PODSTAWOWA KONFIGURACJA =====
-builder.Services.AddOpenApi();
+
 builder.Services.AddEndpointsApiExplorer();
 builder
     .Services.AddControllers()
@@ -221,6 +221,7 @@ builder.Services.AddSwaggerGen(c =>
         }
     );
 
+    c.CustomSchemaIds(type => type.FullName);
     c.AddSecurityDefinition(
         "Bearer",
         new OpenApiSecurityScheme
@@ -279,7 +280,7 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI(c =>
     {
         c.SwaggerEndpoint("/swagger/v1/swagger.json", "VocareWebAPI v1");
-        c.RoutePrefix = string.Empty; // Swagger będzie dostępny na głównej stronie
+        c.RoutePrefix = "swagger";
     });
 }
 
