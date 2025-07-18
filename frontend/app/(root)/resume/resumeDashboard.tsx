@@ -145,11 +145,7 @@ const ResumeDashboard = () => {
                     {limits ? `${limits.currentCount}/${limits.maxLimit}` : 'Basic'}
                   </Badge>
                   {!loading && cvs.length > 0 && (
-                    <Button 
-                      variant="outline" 
-                      className="gap-2"
-                      onClick={handleNewResumeClick}
-                    >
+                    <Button variant="outline" className="gap-2" onClick={handleNewResumeClick}>
                       <Plus className="h-4 w-4" />
                       New Resume
                     </Button>
@@ -181,7 +177,7 @@ const ResumeDashboard = () => {
                   <>
                     {cvs.map((cv) => (
                       <Link key={cv.id} href={`/resume/${cv.id}`} className="block">
-                        <div className="group flex h-[400px] flex-col gap-2 rounded-xl border p-4 transition-shadow hover:shadow-lg bg-background">
+                        <div className="group bg-background flex h-[400px] flex-col gap-2 rounded-xl border p-4 transition-shadow hover:shadow-lg">
                           <div className="flex h-full flex-col rounded-md border">
                             <div className="bg-muted group relative mb-2 h-1/2 rounded-tl-md rounded-tr-md">
                               {/* Badge - conditionally rendered based on CV status */}
@@ -231,7 +227,7 @@ const ResumeDashboard = () => {
                                       </AlertDialogDescription>
                                     </AlertDialogHeader>
                                     <AlertDialogFooter>
-                                      <AlertDialogCancel 
+                                      <AlertDialogCancel
                                         onClick={(e) => {
                                           e.preventDefault();
                                           e.stopPropagation();
@@ -241,12 +237,13 @@ const ResumeDashboard = () => {
                                         Keep the resume
                                       </AlertDialogCancel>
                                       <AlertDialogAction
-                                        className='bg-red-500 text-white hover:bg-red-400'
+                                        className="bg-red-500 text-white hover:bg-red-400"
                                         onClick={(e) => {
                                           e.preventDefault();
                                           e.stopPropagation();
                                           handleDelete(cv.id);
-                                        }}>
+                                        }}
+                                      >
                                         Yes, I want to delete
                                       </AlertDialogAction>
                                     </AlertDialogFooter>

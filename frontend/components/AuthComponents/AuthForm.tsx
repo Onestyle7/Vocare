@@ -220,7 +220,7 @@ const AuthForm = ({ type }: { type: FormType }) => {
             </div>
 
             <div className="tems-center mt-4 flex w-full flex-row justify-center gap-2">
-              <OAuthButton icon={google} label="Login with Google" url="/api/auth/google"/>
+              <OAuthButton icon={google} label="Login with Google" url="/api/auth/google" />
               {/* <OAuthButton icon={facebook} label="Login with Facebook" url="/api/auth/google" /> */}
             </div>
           </div>
