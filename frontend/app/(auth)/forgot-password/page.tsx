@@ -9,7 +9,7 @@ import {
   FormMessage,
 } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import Image from 'next/image';
 import { ButtonForm } from '@/components/ui/button-form';
 import { ArrowRight } from 'lucide-react';
@@ -26,6 +26,7 @@ import Link from 'next/link';
 const ForgotPasswordForm = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [openDialog, setOpenDialog] = useState(false);
+  const [timer, setTimer] = useState(0); // ⏳ timer in seconds
 
   const form = useForm({
     defaultValues: {
@@ -38,12 +39,25 @@ const ForgotPasswordForm = () => {
     console.log(values);
     setIsLoading(false);
     setOpenDialog(true);
+    setTimer(60); // start 60-second countdown
   };
 
   const handleResendEmail = () => {
-    // Logic to resend email
     console.log('Resending email to:', form.getValues('email'));
+    setTimer(60); // restart timer
   };
+
+  useEffect(() => {
+    let interval: NodeJS.Timeout;
+
+    if (timer > 0) {
+      interval = setInterval(() => {
+        setTimer((prev) => prev - 1);
+      }, 1000);
+    }
+
+    return () => clearInterval(interval);
+  }, [timer]);
 
   return (
     <>
@@ -111,12 +125,16 @@ const ForgotPasswordForm = () => {
             >
               Got it
             </AlertDialogAction>
+
             <button
               type="button"
               onClick={handleResendEmail}
-              className="cursor-pointer text-sm text-gray-600 underline transition-colors duration-200 hover:text-[#915EFF]"
+              className={`cursor-pointer text-sm underline transition-colors duration-200 ${
+                timer === 0 ? 'text-gray-600 hover:text-[#915EFF]' : 'text-gray-400 cursor-not-allowed'
+              }`}
+              disabled={timer > 0}
             >
-              Email didn&apos;t arrive? Send again
+              {timer > 0 ? `Send again in ${timer}s` : `Email didn’t arrive? Send again`}
             </button>
           </div>
         </AlertDialogContent>
