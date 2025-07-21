@@ -283,6 +283,16 @@ if (app.Environment.IsDevelopment())
     });
 }
 
+if (app.Environment.IsStaging())
+{
+    app.UseSwagger();
+    app.UseSwaggerUI(c =>
+    {
+        c.SwaggerEndpoint("/swagger/v1/swagger.json", "VocareWebAPI v1");
+        c.RoutePrefix = string.Empty; // Swagger będzie dostępny na głównej stronie
+    });
+}
+
 // ===== MIDDLEWARE PIPELINE =====
 // app.UseHttpsRedirection();
 app.UseRouting();
