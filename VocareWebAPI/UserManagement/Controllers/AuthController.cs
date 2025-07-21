@@ -1,8 +1,11 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Claims;
+using System.Text.Json;
 using System.Threading.Tasks;
 using System.Web;
+using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -389,158 +392,181 @@ Zespół Vocare
             }
         }
 
+        [HttpPost("google-verify")]
+        [AllowAnonymous]
+        public async Task<IActionResult> GoogleVerify([FromBody] GoogleVerifyRequest request)
+        {
+            try
+            {
+                // Weryfikuj token Google ręcznie
+                using var httpClient = new HttpClient();
+                var response = await httpClient.GetAsync(
+                    $"https://www.googleapis.com/oauth2/v1/tokeninfo?access_token={request.AccessToken}"
+                );
+
+                if (!response.IsSuccessStatusCode)
+                {
+                    return BadRequest(new { message = "Invalid Google token" });
+                }
+
+                var tokenInfo = await response.Content.ReadAsStringAsync();
+                var json = JsonDocument.Parse(tokenInfo);
+
+                var email = json.RootElement.GetProperty("email").GetString();
+
+                if (string.IsNullOrEmpty(email))
+                {
+                    return BadRequest(new { message = "No email in Google token" });
+                }
+
+                // Znajdź/utwórz użytkownika
+                var user = await _userManager.FindByEmailAsync(email);
+                if (user == null)
+                {
+                    user = new User
+                    {
+                        UserName = email,
+                        Email = email,
+                        EmailConfirmed = true,
+                    };
+                    await _userManager.CreateAsync(user);
+                    await _registrationHandler.HandleUserRegistrationAsync(user.Id);
+                }
+
+                // Wygeneruj nasz Bearer token
+                _signInManager.AuthenticationScheme = IdentityConstants.BearerScheme;
+                await _signInManager.SignInAsync(user, isPersistent: false);
+
+                return Ok(
+                    new
+                    {
+                        message = "Login successful",
+                        userId = user.Id,
+                        email = user.Email,
+                    }
+                );
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error verifying Google token");
+                return BadRequest(new { message = "Google verification failed" });
+            }
+        }
+
         [HttpGet("google-signin")]
         [AllowAnonymous]
         public IActionResult GoogleSignIn(string? returnUrl = null)
         {
-            var redirectUrl = Url.Action(nameof(GoogleCallback), "Auth", new { returnUrl });
-            var properties = _signInManager.ConfigureExternalAuthenticationProperties(
-                "Google",
-                redirectUrl
-            );
-            return Challenge(properties, "Google");
+            try
+            {
+                _logger.LogInformation("Starting Google signin process");
+
+                var properties = _signInManager.ConfigureExternalAuthenticationProperties(
+                    "Google",
+                    "/api/auth/google-callback"
+                );
+
+                properties.Items["LoginProvider"] = "Google";
+                if (!string.IsNullOrEmpty(returnUrl))
+                {
+                    properties.Items["returnUrl"] = returnUrl;
+                }
+
+                _logger.LogInformation(
+                    "Google properties configured. RedirectUri: {RedirectUri}",
+                    properties.RedirectUri
+                );
+
+                return Challenge(properties, "Google");
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error in GoogleSignIn");
+                return BadRequest(new { message = ex.Message, stackTrace = ex.StackTrace });
+            }
         }
 
         [HttpGet("google-callback")]
         [AllowAnonymous]
-        public async Task<IActionResult> GoogleCallback(
-            string? returnUrl = null,
-            string? remoteError = null
-        )
+        public async Task<IActionResult> GoogleCallback()
         {
-            var frontendUrl = _configuration["Frontend:Url"] ?? "https://app.vocare.pl";
+            var frontendUrl = _configuration["Frontend:Url"] ?? "http://localhost:3000";
 
-            if (remoteError != null)
+            try
             {
-                _logger.LogError("Google authentication error: {Error}", remoteError);
-                return Redirect($"{frontendUrl}?error=google_auth_failed");
-            }
+                // Prosta weryfikacja bez state checking
+                var result = await HttpContext.AuthenticateAsync(IdentityConstants.ExternalScheme);
 
-            var info = await _signInManager.GetExternalLoginInfoAsync();
-            if (info == null)
-            {
-                _logger.LogError("Error loading external login information from Google");
-                return Redirect($"{frontendUrl}?error=external_login_failed");
-            }
-
-            // Ustaw scheme na Bearer dla Identity (tak jak w zwykłym loginie)
-            _signInManager.AuthenticationScheme = IdentityConstants.BearerScheme;
-
-            // Sprawdź czy użytkownik już ma konto połączone z Google
-            var signInResult = await _signInManager.ExternalLoginSignInAsync(
-                info.LoginProvider,
-                info.ProviderKey,
-                isPersistent: false,
-                bypassTwoFactor: true
-            );
-
-            User user;
-
-            if (signInResult.Succeeded)
-            {
-                _logger.LogInformation(
-                    "User logged in with Google provider: {Email}",
-                    info.Principal.FindFirst(System.Security.Claims.ClaimTypes.Email)?.Value
-                );
-
-                // Pobierz użytkownika dla tokenu
-                user = await _userManager.FindByLoginAsync(info.LoginProvider, info.ProviderKey);
-                if (user == null)
+                if (!result.Succeeded)
                 {
-                    _logger.LogError("User not found after successful Google login");
-                    return Redirect($"{frontendUrl}?error=user_not_found");
+                    _logger.LogError("Google authentication failed");
+                    return Redirect($"{frontendUrl}?error=google_auth_failed");
                 }
-            }
-            else
-            {
-                // Jeśli użytkownik nie ma konta, utwórz nowe
-                var email = info
-                    .Principal.FindFirst(System.Security.Claims.ClaimTypes.Email)
-                    ?.Value;
+
+                var email = result.Principal.FindFirst(ClaimTypes.Email)?.Value;
+                var name = result.Principal.FindFirst(ClaimTypes.Name)?.Value;
+
                 if (string.IsNullOrEmpty(email))
                 {
-                    _logger.LogError("Email claim not received from Google");
-                    return Redirect($"{frontendUrl}?error=no_email_from_google");
+                    return Redirect($"{frontendUrl}?error=no_email");
                 }
 
-                var existingUser = await _userManager.FindByEmailAsync(email);
-                if (existingUser == null)
+                // Znajdź/utwórz użytkownika
+                var user = await _userManager.FindByEmailAsync(email);
+                if (user == null)
                 {
-                    // Utwórz nowego użytkownika
-                    var name =
-                        info.Principal.FindFirst(System.Security.Claims.ClaimTypes.Name)?.Value
-                        ?? email;
-                    existingUser = new User
+                    user = new User
                     {
                         UserName = email,
                         Email = email,
-                        EmailConfirmed = true, // Google już zweryfikował email
+                        EmailConfirmed = true,
                     };
-
-                    var createResult = await _userManager.CreateAsync(existingUser);
-                    if (!createResult.Succeeded)
-                    {
-                        _logger.LogError(
-                            "Failed to create user from Google: {Errors}",
-                            string.Join(", ", createResult.Errors.Select(e => e.Description))
-                        );
-                        return Redirect($"{frontendUrl}?error=user_creation_failed");
-                    }
-
-                    try
-                    {
-                        // Setup billing dla nowego użytkownika
-                        await _registrationHandler.HandleUserRegistrationAsync(existingUser.Id);
-                        _logger.LogInformation(
-                            "Google user registered with billing setup: {UserId}",
-                            existingUser.Id
-                        );
-                    }
-                    catch (Exception ex)
-                    {
-                        _logger.LogError(
-                            ex,
-                            "Failed to setup billing for Google user: {UserId}",
-                            existingUser.Id
-                        );
-                        // Kontynuuj mimo błędu billing
-                    }
+                    await _userManager.CreateAsync(user);
+                    await _registrationHandler.HandleUserRegistrationAsync(user.Id);
                 }
 
-                // Połącz konto z Google (ważne dla Identity!)
-                var addLoginResult = await _userManager.AddLoginAsync(existingUser, info);
-                if (!addLoginResult.Succeeded)
-                {
-                    _logger.LogError(
-                        "Failed to add Google login for user {UserId}: {Errors}",
-                        existingUser.Id,
-                        string.Join(", ", addLoginResult.Errors.Select(e => e.Description))
-                    );
-                    return Redirect($"{frontendUrl}?error=login_association_failed");
-                }
-
-                user = existingUser;
-
-                // Zaloguj użytkownika z Bearer scheme
+                // Zaloguj użytkownika
                 await _signInManager.SignInAsync(user, isPersistent: false);
-                _logger.LogInformation(
-                    "User created account and signed in using Google provider: {UserId}",
-                    user.Id
+
+                return Redirect($"{frontendUrl}?googleLogin=success&userId={user.Id}");
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Exception in Google callback");
+                return Redirect($"{frontendUrl}?error=exception");
+            }
+        }
+
+        [HttpGet("google-status")]
+        [Authorize]
+        public async Task<IActionResult> GoogleStatus()
+        {
+            try
+            {
+                var user = await _userManager.GetUserAsync(User);
+                if (user == null)
+                {
+                    return BadRequest(new { message = "User not found" });
+                }
+
+                var logins = await _userManager.GetLoginsAsync(user);
+                var hasGoogleLogin = logins.Any(x => x.LoginProvider == "Google");
+
+                return Ok(
+                    new
+                    {
+                        userId = user.Id,
+                        email = user.Email,
+                        hasGoogleLogin,
+                        isAuthenticated = true,
+                    }
                 );
             }
-
-            // Po pomyślnym Google OAuth, przekieruj do frontendu z informacją
-            // że może teraz użyć automatycznego Identity API /login endpoint
-            // z credentials użytkownika żeby otrzymać bearer token
-
-            // Ale problema jest taki, że nie mamy hasła użytkownika Google
-            // Więc musimy wygenerować token w inny sposób
-
-            _logger.LogInformation("User logged in with Google OAuth: {UserId}", user.Id);
-
-            // Przekieruj do frontendu z informacją o pomyślnym Google login
-            // Frontend może teraz użyć cookie-based sesji lub zastanowić się nad tokenami
-            return Redirect($"{frontendUrl}?googleLogin=success&userId={user.Id}");
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error checking Google status");
+                return BadRequest(new { message = "Failed to check Google status" });
+            }
         }
 
         [HttpPost("google-get-token")]
