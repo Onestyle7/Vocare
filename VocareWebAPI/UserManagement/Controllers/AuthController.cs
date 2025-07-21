@@ -1,13 +1,9 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+using System.Text.Json;
 using System.Web;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using VocareWebAPI.Models.Entities;
-using VocareWebAPI.UserManagement;
 using VocareWebAPI.UserManagement.Models.Dtos;
 using VocareWebAPI.UserManagement.Services.Interfaces;
 
@@ -389,6 +385,67 @@ Zespół Vocare
             }
         }
 
+        [HttpPost("google-verify")]
+        [AllowAnonymous]
+        public async Task<IActionResult> GoogleVerify([FromBody] GoogleVerifyRequest request)
+        {
+            try
+            {
+                // Weryfikuj token Google ręcznie
+                using var httpClient = new HttpClient();
+                var response = await httpClient.GetAsync(
+                    $"https://www.googleapis.com/oauth2/v1/tokeninfo?access_token={request.AccessToken}"
+                );
+
+                if (!response.IsSuccessStatusCode)
+                {
+                    return BadRequest(new { message = "Invalid Google token" });
+                }
+
+                var tokenInfo = await response.Content.ReadAsStringAsync();
+                var json = JsonDocument.Parse(tokenInfo);
+
+                var email = json.RootElement.GetProperty("email").GetString();
+
+                if (string.IsNullOrEmpty(email))
+                {
+                    return BadRequest(new { message = "No email in Google token" });
+                }
+
+                // Znajdź/utwórz użytkownika
+                var user = await _userManager.FindByEmailAsync(email);
+                if (user == null)
+                {
+                    user = new User
+                    {
+                        UserName = email,
+                        Email = email,
+                        EmailConfirmed = true,
+                    };
+                    await _userManager.CreateAsync(user);
+                    await _registrationHandler.HandleUserRegistrationAsync(user.Id);
+                }
+
+                // Wygeneruj nasz Bearer token
+                _signInManager.AuthenticationScheme = IdentityConstants.BearerScheme;
+                await _signInManager.SignInAsync(user, isPersistent: false);
+
+                return Ok(
+                    new
+                    {
+                        message = "Login successful",
+                        userId = user.Id,
+                        email = user.Email,
+                    }
+                );
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error verifying Google token");
+                return BadRequest(new { message = "Google verification failed" });
+            }
+        }
+
         [HttpGet("google-signin")]
         [AllowAnonymous]
         public IActionResult GoogleSignIn(string? returnUrl = null)
@@ -435,7 +492,7 @@ Zespół Vocare
             );
 
             User user;
-            
+
             if (signInResult.Succeeded)
             {
                 _logger.LogInformation(
@@ -454,7 +511,9 @@ Zespół Vocare
             else
             {
                 // Jeśli użytkownik nie ma konta, utwórz nowe
-                var email = info.Principal.FindFirst(System.Security.Claims.ClaimTypes.Email)?.Value;
+                var email = info
+                    .Principal.FindFirst(System.Security.Claims.ClaimTypes.Email)
+                    ?.Value;
                 if (string.IsNullOrEmpty(email))
                 {
                     _logger.LogError("Email claim not received from Google");
@@ -530,12 +589,12 @@ Zespół Vocare
             // Po pomyślnym Google OAuth, przekieruj do frontendu z informacją
             // że może teraz użyć automatycznego Identity API /login endpoint
             // z credentials użytkownika żeby otrzymać bearer token
-            
+
             // Ale problema jest taki, że nie mamy hasła użytkownika Google
             // Więc musimy wygenerować token w inny sposób
-            
+
             _logger.LogInformation("User logged in with Google OAuth: {UserId}", user.Id);
-            
+
             // Przekieruj do frontendu z informacją o pomyślnym Google login
             // Frontend może teraz użyć cookie-based sesji lub zastanowić się nad tokenami
             return Redirect($"{frontendUrl}?googleLogin=success&userId={user.Id}");
@@ -563,19 +622,21 @@ Zespół Vocare
 
                 // Zaloguj użytkownika z Bearer scheme żeby wygenerować token
                 _signInManager.AuthenticationScheme = IdentityConstants.BearerScheme;
-                
+
                 // Użyj SignInManager do generowania bearer token sesji
                 await _signInManager.SignInAsync(user, isPersistent: false);
-                
+
                 _logger.LogInformation("Generated bearer token for Google user: {UserId}", user.Id);
-                
-                return Ok(new 
-                { 
-                    message = "Login successful",
-                    userId = user.Id,
-                    email = user.Email,
-                    // Token będzie automatycznie dostępny w authorization headerze response
-                });
+
+                return Ok(
+                    new
+                    {
+                        message = "Login successful",
+                        userId = user.Id,
+                        email = user.Email,
+                        // Token będzie automatycznie dostępny w authorization headerze response
+                    }
+                );
             }
             catch (Exception ex)
             {
