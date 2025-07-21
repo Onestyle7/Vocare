@@ -1,5 +1,7 @@
 import { api } from './api';
 
+const AUTH_PREFIX = '/api/auth';
+
 interface RegisterInput {
   email: string;
   password: string;
@@ -13,7 +15,7 @@ interface LoginInput {
 api.interceptors.response.use(
   (response) => response,
   (error) => {
-    const isLoginRoute = error.config?.url?.includes('/login');
+    const isLoginRoute = error.config?.url?.includes(`${AUTH_PREFIX}/login`);
 
     if (error.response?.status === 401 && !isLoginRoute) {
       localStorage.removeItem('token');
@@ -25,12 +27,12 @@ api.interceptors.response.use(
 );
 
 export const registerUser = async ({ email, password }: RegisterInput) => {
-  const response = await api.post('/register', { email, password });
+  const response = await api.post(`${AUTH_PREFIX}/register`, { email, password });
   return response.data;
 };
 
 export const loginUser = async ({ email, password }: LoginInput) => {
-  const response = await api.post('/login', { email, password });
+  const response = await api.post(`${AUTH_PREFIX}/login`, { email, password });
   const token = response.data.token;
   if (token) {
     localStorage.setItem('token', token);
@@ -38,7 +40,13 @@ export const loginUser = async ({ email, password }: LoginInput) => {
   return response.data;
 };
 
-export const logoutUser = () => {
-  localStorage.removeItem('token');
-  window.location.href = '/sign-in';
+export const logoutUser = async () => {
+  try {
+    await api.post(`${AUTH_PREFIX}/logout`);
+  } catch {
+    // Ignore any errors
+  } finally {
+    localStorage.removeItem('token');
+    window.location.href = '/sign-in';
+  }
 };

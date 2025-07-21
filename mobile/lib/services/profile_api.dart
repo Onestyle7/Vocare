@@ -3,7 +3,7 @@ import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 
 class ProfileApi {
-  static const String baseUrl = 'https://localhost:5001/api/UserProfile';
+  static const String baseUrl = 'http://localhost:8080/api/UserProfile';
 
   static Future<bool> createUserProfile(Map<String, dynamic> data) async {
     final prefs = await SharedPreferences.getInstance();

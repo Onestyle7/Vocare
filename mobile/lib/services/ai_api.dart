@@ -7,7 +7,7 @@ class AiApi {
   static Future<AiCareerResponse?> fetchFullRecommendation() async {
     final prefs = await SharedPreferences.getInstance();
     final token = prefs.getString('accessToken') ?? '';
-    final url = Uri.parse('https://localhost:5001/api/Ai/recommendations');
+    final url = Uri.parse('http://localhost:8080/api/Ai/recommendations');
 
     try {
       final response = await http.get(

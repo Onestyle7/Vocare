@@ -2,8 +2,10 @@ import 'package:http/http.dart' as http;
 import 'dart:convert';
 
 class AuthApi {
+  static const String _baseUrl = 'http://localhost:8080/api/auth';
+
   Future<String?> loginUser(String email, String password) async {
-    final url = Uri.parse('https://localhost:5001/login');
+    final url = Uri.parse('$_baseUrl/login');
 
     try {
       final response = await http.post(
@@ -32,7 +34,7 @@ class AuthApi {
   }
 
   static Future<String?> registerUser(String email, String password) async {
-    final url = Uri.parse('https://localhost:5001/register');
+    final url = Uri.parse('$_baseUrl/register');
 
     try {
       final response = await http.post(
