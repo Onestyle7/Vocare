@@ -36,7 +36,6 @@ using LocalStripeService = VocareWebAPI.Billing.Services.Implementations.StripeS
 var builder = WebApplication.CreateBuilder(args);
 
 // ===== PODSTAWOWA KONFIGURACJA =====
-
 builder.Services.AddEndpointsApiExplorer();
 builder
     .Services.AddControllers()
@@ -110,20 +109,45 @@ builder
     .AddDefaultTokenProviders() // Potrzebne do reset hasła
     .AddApiEndpoints();
 
+// ===== COOKIE POLICY CONFIGURATION =====
 builder.Services.Configure<CookiePolicyOptions>(options =>
 {
     options.CheckConsentNeeded = context => false;
     options.MinimumSameSitePolicy = SameSiteMode.Lax;
 });
 
+// ===== AUTHENTICATION CONFIGURATION =====
 builder
     .Services.AddAuthentication(options =>
     {
-        options.DefaultAuthenticateScheme = IdentityConstants.ApplicationScheme;
-        options.DefaultChallengeScheme = IdentityConstants.ApplicationScheme;
-        options.DefaultScheme = IdentityConstants.ApplicationScheme;
+        // Dla Bearer tokens (Identity API)
+        options.DefaultAuthenticateScheme = IdentityConstants.BearerScheme;
+        options.DefaultChallengeScheme = IdentityConstants.BearerScheme;
+        options.DefaultScheme = IdentityConstants.BearerScheme;
     })
-    .AddBearerToken(IdentityConstants.BearerScheme);
+    .AddBearerToken(IdentityConstants.BearerScheme)
+    .AddGoogle(options =>
+    {
+        options.ClientId = builder.Configuration["Authentication:Google:ClientId"]!;
+        options.ClientSecret = builder.Configuration["Authentication:Google:ClientSecret"]!;
+        options.SaveTokens = true;
+        options.Events.OnRedirectToAuthorizationEndpoint = context =>
+        {
+            Console.WriteLine($"=== GOOGLE REDIRECT ===");
+            Console.WriteLine($"Redirect URI: {context.RedirectUri}");
+            Console.WriteLine($"======================");
+
+            context.Response.Redirect(context.RedirectUri);
+            return Task.CompletedTask;
+        };
+
+        //scope'y potrzebne do uzyskania danych użytkownika
+        options.Scope.Add("openid");
+        options.Scope.Add("profile");
+        options.Scope.Add("email");
+    });
+
+// ===== APPLICATION COOKIE CONFIGURATION =====
 builder.Services.ConfigureApplicationCookie(options =>
 {
     options.LoginPath = "/api/auth/login";
@@ -139,7 +163,10 @@ builder.Services.ConfigureApplicationCookie(options =>
         return Task.CompletedTask;
     };
 });
+
 builder.Services.AddAuthorization();
+
+// ===== DATA PROTECTION CONFIGURATION =====
 builder.Services.Configure<DataProtectionTokenProviderOptions>(options =>
 {
     options.TokenLifespan = TimeSpan.FromHours(24); // Token ważny przez 24h
@@ -170,6 +197,7 @@ builder
         client.DefaultRequestHeaders.Add("Accept", "application/json");
     })
     .AddPolicyHandler(retryPolicy);
+
 builder
     .Services.AddHttpClient<IAiService, OpenAIService>(client =>
     {
@@ -188,7 +216,8 @@ builder.Services.AddScoped<ICvManagementService, CvManagementService>();
 builder.Services.AddScoped<IEmailService, EmailService>();
 
 /* builder.Services.AddScoped<IAiService, PerplexityAiService>();
- */builder.Services.AddScoped<IMarketAnalysisService, OpenAiMarketAnalysisService>();
+ */
+builder.Services.AddScoped<IMarketAnalysisService, OpenAiMarketAnalysisService>();
 builder.Services.AddScoped<IBillingService, LocalBillingService>();
 builder.Services.AddScoped<IStripeService, LocalStripeService>();
 builder.Services.AddScoped<ICvGenerationService, CvGenerationService>();
@@ -221,7 +250,9 @@ builder.Services.AddSwaggerGen(c =>
         }
     );
 
+    // ✅ NAPRAWKA: Dodano CustomSchemaIds dla rozwiązania konfliktów schematów
     c.CustomSchemaIds(type => type.FullName);
+
     c.AddSecurityDefinition(
         "Bearer",
         new OpenApiSecurityScheme
@@ -279,16 +310,41 @@ if (app.Environment.IsDevelopment())
     app.UseSwagger();
     app.UseSwaggerUI(c =>
     {
-        c.SwaggerEndpoint("/swagger/v1/swagger.json", "VocareWebAPI v1");
-        c.RoutePrefix = "swagger";
+        c.SwaggerEndpoint("/swagger/v1/swagger.json", "VocareWebAPI Development v1");
+        c.RoutePrefix = "swagger"; // Swagger dostępny na /swagger
+        c.DocumentTitle = "Vocare API - Development";
     });
+}
+
+if (app.Environment.IsStaging())
+{
+    app.UseSwagger();
+    app.UseSwaggerUI(c =>
+    {
+        c.SwaggerEndpoint("/swagger/v1/swagger.json", "VocareWebAPI Staging v1");
+        c.RoutePrefix = "swagger"; // Swagger dostępny na /swagger
+        c.DocumentTitle = "Vocare API - STAGING ENVIRONMENT";
+
+        // Oznacz staging wyraźnie
+        c.HeadContent += "<style>.topbar { background-color: #ff9800 !important; }</style>";
+    });
+
+    // Dodaj middleware do oznaczania odpowiedzi jako staging
+    app.Use(
+        async (context, next) =>
+        {
+            context.Response.Headers.Add("X-Environment", "Staging");
+            context.Response.Headers.Add("X-Warning", "This is staging environment");
+            await next();
+        }
+    );
 }
 
 // ===== MIDDLEWARE PIPELINE =====
 // app.UseHttpsRedirection();
 app.UseRouting();
 app.UseCors("AllowAll");
-app.UseCookiePolicy();
+app.UseCookiePolicy(); // ✅ NAPRAWKA: Dodano UseCookiePolicy
 app.UseAuthentication();
 app.UseAuthorization();
 
@@ -301,13 +357,43 @@ app.MapIdentityApi<User>();
 // Wszystkie endpointy autoryzacji są w AuthController
 // Identity bearer token authentication jest obsługiwane automatycznie
 
+// ===== DEBUG ENDPOINT (opcjonalnie - dla staging/development) =====
+if (!app.Environment.IsProduction())
+{
+    app.MapGet(
+            "/debug/environment",
+            (IWebHostEnvironment env) =>
+                new
+                {
+                    Environment = env.EnvironmentName,
+                    IsProduction = env.IsProduction(),
+                    IsStaging = env.IsStaging(),
+                    IsDevelopment = env.IsDevelopment(),
+                    MachineName = Environment.MachineName,
+                    Variables = new
+                    {
+                        DOTNET_ENVIRONMENT = Environment.GetEnvironmentVariable(
+                            "DOTNET_ENVIRONMENT"
+                        ),
+                        ASPNETCORE_ENVIRONMENT = Environment.GetEnvironmentVariable(
+                            "ASPNETCORE_ENVIRONMENT"
+                        ),
+                        DATABASE_URL_SET = !string.IsNullOrEmpty(
+                            Environment.GetEnvironmentVariable("DATABASE_URL")
+                        ),
+                    },
+                }
+        )
+        .AllowAnonymous();
+}
+
 // ===== MIGRACJA BAZY DANYCH =====
 using var scope = app.Services.CreateScope();
 var db = scope.ServiceProvider.GetRequiredService<AppDbContext>();
 var logger = scope.ServiceProvider.GetRequiredService<ILogger<Program>>();
 
 var retries = 0;
-const int maxRetries = 10;
+const int maxRetries = 10; // Więcej retry dla staging
 
 while (retries < maxRetries)
 {
@@ -392,13 +478,16 @@ while (retries < maxRetries)
             throw;
         }
 
+        var delay = app.Environment.IsStaging() ? 10000 : 5000; // Dłuższy delay dla staging
         logger.LogWarning(
-            "DB migration attempt failed, retrying in 5s... ({Attempt}/{MaxRetries}). Error: {Error}",
+            "DB migration attempt failed, retrying in {Delay}ms... ({Attempt}/{MaxRetries}). Error: {Error}",
+            delay,
             retries,
             maxRetries,
             ex.Message
         );
-        await Task.Delay(5000);
+        await Task.Delay(delay);
     }
 }
+
 app.Run();
