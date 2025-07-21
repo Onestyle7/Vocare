@@ -33,10 +33,23 @@ export const registerUser = async ({ email, password }: RegisterInput) => {
 
 export const loginUser = async ({ email, password }: LoginInput) => {
   const response = await api.post(`/login`, { email, password });
-  const token = response.data.token;
+
+  // Try to retrieve token from common locations
+  let token: string | undefined =
+    response.data?.accessToken || response.data?.token;
+
+  // Fallback to Authorization header used by ASP.NET Identity
+  if (!token) {
+    const authHeader = response.headers['authorization'] as string | undefined;
+    if (authHeader?.startsWith('Bearer ')) {
+      token = authHeader.replace('Bearer ', '');
+    }
+  }
+
   if (token) {
     localStorage.setItem('token', token);
   }
+
   return response.data;
 };
 

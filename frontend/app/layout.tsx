@@ -6,6 +6,7 @@ import { Toaster } from '@/components/ui/sonner';
 
 import { TokenBalanceProvider } from '@/lib/contexts/TokenBalanceContext';
 // import SmoothScrollProvider from '@/components/SupportComponents/SmoothScrollProvider';
+import GoogleAuthHandler from '@/components/AuthComponents/GoogleAuthHandler';
 
 const sizmoPro = localFont({
   src: [
@@ -87,6 +88,7 @@ export default function RootLayout({
       <body className={`${sizmoPro.className} h-full antialiased selection:bg-[#915EFF]`}>
         {/* <SmoothScrollProvider> */}
         <TokenBalanceProvider>
+          <GoogleAuthHandler />
           <ThemeProvider attribute="class" defaultTheme="dark">
             {children}
             <Toaster />
