@@ -607,7 +607,7 @@ const CVCreator: React.FC<CVCreatorProps> = ({ initialCv }) => {
         scale: 2,
         useCORS: true,
         allowTaint: true,
-        backgroundColor: '#ffffff', 
+        backgroundColor: '#ffffff',
         width: cvElement.offsetWidth,
         height: cvElement.offsetHeight,
       });
@@ -646,7 +646,7 @@ const CVCreator: React.FC<CVCreatorProps> = ({ initialCv }) => {
           const pageCtx = pageCanvas.getContext('2d');
           if (!pageCtx) {
             console.error('Could not get 2D context from pageCanvas');
-            return; 
+            return;
           }
 
           pageCanvas.width = canvas.width;
@@ -1155,22 +1155,21 @@ const CVCreator: React.FC<CVCreatorProps> = ({ initialCv }) => {
                       className="flex-1 focus:outline-none"
                     />
                     <Select
-  value={language.level}
-  onValueChange={(value) => updateLanguage(language.id, 'level', value)}
->
-  <SelectTrigger className="font-poppins h-10 w-40 rounded-sm border border-gray-300 px-2 text-sm focus:ring-2 focus:ring-blue-500 focus:outline-none">
-    <SelectValue />
-  </SelectTrigger>
-  <SelectContent>
-    <SelectItem value="Ogólny">Ogólny</SelectItem>
-    <SelectItem value="Beginner">Beginner</SelectItem>
-    <SelectItem value="Conversational">Conversational</SelectItem>
-    <SelectItem value="Advanced">Advanced</SelectItem>
-    <SelectItem value="Proficient">Proficient</SelectItem>
-    <SelectItem value="Native speaker">Native speaker</SelectItem>
-  </SelectContent>
-</Select>
-
+                      value={language.level}
+                      onValueChange={(value) => updateLanguage(language.id, 'level', value)}
+                    >
+                      <SelectTrigger className="font-poppins h-10 w-40 rounded-sm border border-gray-300 px-2 text-sm focus:ring-2 focus:ring-blue-500 focus:outline-none">
+                        <SelectValue />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="Ogólny">Ogólny</SelectItem>
+                        <SelectItem value="Beginner">Beginner</SelectItem>
+                        <SelectItem value="Conversational">Conversational</SelectItem>
+                        <SelectItem value="Advanced">Advanced</SelectItem>
+                        <SelectItem value="Proficient">Proficient</SelectItem>
+                        <SelectItem value="Native speaker">Native speaker</SelectItem>
+                      </SelectContent>
+                    </Select>
                   </div>
                   <button
                     onClick={() => removeLanguage(language.id)}
@@ -1485,36 +1484,32 @@ const CVCreator: React.FC<CVCreatorProps> = ({ initialCv }) => {
           <Home size={24} className="text-gray-600" />
         </button>
         <button
-                  onClick={handleSave}
-                  className="cursor-pointer rounded-lg p-3 transition-colors hover:bg-gray-100"
-                  title="Save resume"
-                >
-                  <Save size={16} className="text-black w-6 h-6" />
-                </button>
+          onClick={handleSave}
+          className="cursor-pointer rounded-lg p-3 transition-colors hover:bg-gray-100"
+          title="Save resume"
+        >
+          <Save size={16} className="h-6 w-6 text-black" />
+        </button>
 
-
-
-<HoverCard>
-                <HoverCardTrigger asChild>
-                  <button className="flex h-12 w-12 cursor-pointer items-center justify-center rounded-sm bg-gray-100">
-                    v0.1.2
-                  </button>
-                </HoverCardTrigger>
-                <HoverCardContent className="font-poppins w-80">
-                  <div className="flex justify-between gap-4">
-                    <div className="space-y-1">
-                      <h4 className="text-sm font-semibold">Beta version</h4>
-                      <p className="text-sm">
-                        Be aware of bugs or missing features. We are working hard to improve the
-                        application.
-                      </p>
-                      <div className="text-muted-foreground text-xs">Vocare team</div>
-                    </div>
-                  </div>
-                </HoverCardContent>
-              </HoverCard>
-
-
+        <HoverCard>
+          <HoverCardTrigger asChild>
+            <button className="flex h-12 w-12 cursor-pointer items-center justify-center rounded-sm bg-gray-100">
+              v0.1.2
+            </button>
+          </HoverCardTrigger>
+          <HoverCardContent className="font-poppins w-80">
+            <div className="flex justify-between gap-4">
+              <div className="space-y-1">
+                <h4 className="text-sm font-semibold">Beta version</h4>
+                <p className="text-sm">
+                  Be aware of bugs or missing features. We are working hard to improve the
+                  application.
+                </p>
+                <div className="text-muted-foreground text-xs">Vocare team</div>
+              </div>
+            </div>
+          </HoverCardContent>
+        </HoverCard>
 
         {/* <div className="flex h-12 w-12 items-center justify-center rounded-sm bg-gray-200/40">
           <span className="font-poppins">v0.1.2</span>
