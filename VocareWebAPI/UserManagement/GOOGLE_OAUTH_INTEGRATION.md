@@ -7,6 +7,7 @@ Successfully integrated Google OAuth authentication to work with ASP.NET Core Id
 ## Architecture
 
 ### 1. Authentication Schemes Configuration (Program.cs)
+
 ```csharp
 builder.Services.AddAuthentication(options =>
 {
@@ -25,12 +26,14 @@ builder.Services.AddAuthentication(options =>
 ```
 
 ### 2. Identity API Endpoints
+
 ```csharp
 // Enable automatic Identity endpoints: /login, /refresh, /logout
 app.MapIdentityApi<User>();
 ```
 
 This provides standard endpoints:
+
 - `POST /login` - Email/password authentication returning bearer tokens
 - `POST /refresh` - Token refresh
 - `POST /logout` - Token invalidation
@@ -38,12 +41,16 @@ This provides standard endpoints:
 ## Google OAuth Flow
 
 ### Step 1: Initiate Google Login
+
 **Endpoint:** `GET /auth/google-signin`
+
 - Redirects to Google OAuth consent screen
 - Configured with required scopes (openid, profile, email)
 
 ### Step 2: Handle Google Callback
+
 **Endpoint:** `GET /auth/google-callback`
+
 - Processes Google OAuth response
 - Creates user account if doesn't exist
 - Sets up billing for new users
@@ -51,30 +58,35 @@ This provides standard endpoints:
 - Redirects to frontend with userId parameter
 
 **Frontend redirect format:**
+
 ```
 {frontendUrl}?googleLogin=success&userId={user.Id}
 ```
 
 ### Step 3: Generate Bearer Token
+
 **Endpoint:** `POST /auth/google-get-token`
 
 **Request:**
+
 ```json
 {
-    "userId": "user-id-from-callback"
+  "userId": "user-id-from-callback"
 }
 ```
 
 **Response:**
+
 ```json
 {
-    "message": "Login successful",
-    "userId": "user-id",
-    "email": "user@example.com"
+  "message": "Login successful",
+  "userId": "user-id",
+  "email": "user@example.com"
 }
 ```
 
 **Key Implementation:**
+
 ```csharp
 // Verify user has Google login
 var logins = await _userManager.GetLoginsAsync(user);
@@ -90,47 +102,53 @@ await _signInManager.SignInAsync(user, isPersistent: false);
 ## Frontend Integration
 
 ### 1. Google Login Button
+
 ```javascript
 // Redirect to Google OAuth
-window.location.href = '/auth/google-signin';
+window.location.href = "/auth/google-signin";
 ```
 
 ### 2. Handle OAuth Callback
+
 ```javascript
 // Extract userId from URL parameters after redirect
-const urlParams = new URLSearchParams(window.location.search);
-const googleLogin = urlParams.get('googleLogin');
-const userId = urlParams.get('userId');
+const urlParams = new URLSearchParams(
+  window.location.search
+);
+const googleLogin = urlParams.get("googleLogin");
+const userId = urlParams.get("userId");
 
-if (googleLogin === 'success' && userId) {
-    // Step 3: Get bearer token
-    const response = await fetch('/auth/google-get-token', {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({ userId })
-    });
-    
-    if (response.ok) {
-        // Extract bearer token from Authorization header or response
-        const authHeader = response.headers.get('Authorization');
-        const token = authHeader?.replace('Bearer ', '');
-        
-        // Store token for API calls
-        localStorage.setItem('bearer_token', token);
-    }
+if (googleLogin === "success" && userId) {
+  // Step 3: Get bearer token
+  const response = await fetch("/auth/google-get-token", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({ userId }),
+  });
+
+  if (response.ok) {
+    // Extract bearer token from Authorization header or response
+    const authHeader =
+      response.headers.get("Authorization");
+    const token = authHeader?.replace("Bearer ", "");
+
+    // Store token for API calls
+    localStorage.setItem("bearer_token", token);
+  }
 }
 ```
 
 ### 3. Use Bearer Token for API Calls
-```javascript
-const token = localStorage.getItem('bearer_token');
 
-fetch('/api/protected-endpoint', {
-    headers: {
-        'Authorization': `Bearer ${token}`
-    }
+```javascript
+const token = localStorage.getItem("bearer_token");
+
+fetch("/api/protected-endpoint", {
+  headers: {
+    Authorization: `Bearer ${token}`,
+  },
 });
 ```
 
