@@ -1,6 +1,6 @@
 using System.Text.Json.Serialization;
-using Microsoft.AspNetCore.DataProtection;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Identity.Data;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi.Models;
@@ -36,7 +36,7 @@ using LocalStripeService = VocareWebAPI.Billing.Services.Implementations.StripeS
 var builder = WebApplication.CreateBuilder(args);
 
 // ===== PODSTAWOWA KONFIGURACJA =====
-
+builder.Services.AddOpenApi();
 builder.Services.AddEndpointsApiExplorer();
 builder
     .Services.AddControllers()
@@ -110,35 +110,35 @@ builder
     .AddDefaultTokenProviders() // Potrzebne do reset hasła
     .AddApiEndpoints();
 
-builder.Services.Configure<CookiePolicyOptions>(options =>
-{
-    options.CheckConsentNeeded = context => false;
-    options.MinimumSameSitePolicy = SameSiteMode.Lax;
-});
-
 builder
     .Services.AddAuthentication(options =>
     {
-        options.DefaultAuthenticateScheme = IdentityConstants.ApplicationScheme;
-        options.DefaultChallengeScheme = IdentityConstants.ApplicationScheme;
-        options.DefaultScheme = IdentityConstants.ApplicationScheme;
+        options.DefaultAuthenticateScheme = IdentityConstants.BearerScheme;
+        options.DefaultChallengeScheme = IdentityConstants.BearerScheme;
+        options.DefaultScheme = IdentityConstants.BearerScheme;
     })
-    .AddBearerToken(IdentityConstants.BearerScheme);
-builder.Services.ConfigureApplicationCookie(options =>
-{
-    options.LoginPath = "/api/auth/login";
-    options.LogoutPath = "/api/auth/logout";
-    options.Events.OnRedirectToLogin = context =>
+    .AddBearerToken(IdentityConstants.BearerScheme)
+    .AddGoogle(options =>
     {
-        context.Response.StatusCode = 401;
-        return Task.CompletedTask;
-    };
-    options.Events.OnRedirectToAccessDenied = context =>
-    {
-        context.Response.StatusCode = 403;
-        return Task.CompletedTask;
-    };
-});
+        options.ClientId = builder.Configuration["Authentication:Google:ClientId"]!;
+        options.ClientSecret = builder.Configuration["Authentication:Google:ClientSecret"]!;
+        options.SaveTokens = true;
+        options.Events.OnRedirectToAuthorizationEndpoint = context =>
+        {
+            Console.WriteLine($"=== GOOGLE REDIRECT ===");
+            Console.WriteLine($"Redirect URI: {context.RedirectUri}");
+            Console.WriteLine($"======================");
+
+            context.Response.Redirect(context.RedirectUri);
+            return Task.CompletedTask;
+        };
+
+        //scope'y potrzebne do uzyskania danych użytkownika
+        options.Scope.Add("openid");
+        options.Scope.Add("profile");
+        options.Scope.Add("email");
+    });
+
 builder.Services.AddAuthorization();
 builder.Services.Configure<DataProtectionTokenProviderOptions>(options =>
 {
@@ -221,7 +221,6 @@ builder.Services.AddSwaggerGen(c =>
         }
     );
 
-    c.CustomSchemaIds(type => type.FullName);
     c.AddSecurityDefinition(
         "Bearer",
         new OpenApiSecurityScheme
@@ -280,7 +279,17 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI(c =>
     {
         c.SwaggerEndpoint("/swagger/v1/swagger.json", "VocareWebAPI v1");
-        c.RoutePrefix = "swagger";
+        c.RoutePrefix = string.Empty; // Swagger będzie dostępny na głównej stronie
+    });
+}
+
+if (app.Environment.IsStaging())
+{
+    app.UseSwagger();
+    app.UseSwaggerUI(c =>
+    {
+        c.SwaggerEndpoint("/swagger/v1/swagger.json", "VocareWebAPI v1");
+        c.RoutePrefix = string.Empty; // Swagger będzie dostępny na głównej stronie
     });
 }
 
@@ -288,7 +297,6 @@ if (app.Environment.IsDevelopment())
 // app.UseHttpsRedirection();
 app.UseRouting();
 app.UseCors("AllowAll");
-app.UseCookiePolicy();
 app.UseAuthentication();
 app.UseAuthorization();
 
