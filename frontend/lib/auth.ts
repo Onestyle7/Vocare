@@ -44,7 +44,6 @@ export const logoutUser = async () => {
   try {
     await api.post(`${AUTH_PREFIX}/logout`);
   } catch {
-    // Ignore any errors
   } finally {
     localStorage.removeItem('token');
     window.location.href = '/sign-in';
