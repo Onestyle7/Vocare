@@ -19,6 +19,8 @@ builder.Services.AddAuthentication(options =>
 .AddGoogle(options => {
     options.ClientId = googleClientId;
     options.ClientSecret = googleClientSecret;
+    // Google must redirect back to this exact path
+    options.CallbackPath = "/api/auth/google-callback";
     options.Scope.Add("openid");
     options.Scope.Add("profile");
     options.Scope.Add("email");

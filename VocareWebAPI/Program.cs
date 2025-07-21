@@ -130,6 +130,9 @@ builder
     {
         options.ClientId = builder.Configuration["Authentication:Google:ClientId"]!;
         options.ClientSecret = builder.Configuration["Authentication:Google:ClientSecret"]!;
+        // Ensure the OAuth redirect URI matches the configured backend endpoint
+        // so Google does not reject the request with a redirect_uri_mismatch error
+        options.CallbackPath = "/api/auth/google-callback";
         options.SaveTokens = true;
         options.Events.OnRedirectToAuthorizationEndpoint = context =>
         {
