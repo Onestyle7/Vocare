@@ -5,7 +5,7 @@ import { useForm } from 'react-hook-form';
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { authFormSchema, AuthFormType } from '@/lib/schemas/authSchema';
-import { registerUser, loginUser, verifyGoogleToken } from '@/lib/auth';
+import { registerUser, loginUser } from '@/lib/auth';
 import {
   Form,
   FormControl,
@@ -33,7 +33,6 @@ const AuthForm = ({ type }: { type: FormType }) => {
 
   const googleLogin = useGoogleLogin({
     scope: 'openid profile email',
-    ux_mode: 'redirect',
     redirect_uri:
       process.env.NEXT_PUBLIC_GOOGLE_REDIRECT_URI ||
       `${window.location.origin}/google-callback`,
