@@ -103,12 +103,6 @@ const AuthForm = ({ type }: { type: FormType }) => {
     }
   }
 
-  // Funkcja do obsługi logowania przez Google
-  const handleGoogleSignIn = () => {
-    // Przekierowanie na endpoint Google OAuth
-    window.location.href = 'http://localhost:8080/api/auth/google-signin';
-  };
-
   return (
     <Form {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)} className="auth-form font-poppins">
@@ -229,7 +223,6 @@ const AuthForm = ({ type }: { type: FormType }) => {
               <OAuthButton 
                 icon={google} 
                 label="Login with Google" 
-                onClick={handleGoogleSignIn}
               />
               {/* <OAuthButton icon={facebook} label="Login with Facebook" onClick={handleFacebookSignIn} /> */}
             </div>
