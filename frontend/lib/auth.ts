@@ -40,6 +40,16 @@ export const loginUser = async ({ email, password }: LoginInput) => {
   return response.data;
 };
 
+export const verifyGoogleToken = async (accessToken: string) => {
+  const response = await api.post(`/auth/google-verify`, { accessToken });
+  const authHeader = response.headers['authorization'] as string | undefined;
+  if (authHeader?.startsWith('Bearer ')) {
+    const token = authHeader.slice('Bearer '.length);
+    localStorage.setItem('token', token);
+  }
+  return response.data;
+};
+
 export const logoutUser = async () => {
   try {
     await api.post(`${AUTH_PREFIX}/logout`);

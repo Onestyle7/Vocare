@@ -5,7 +5,7 @@ import { useForm } from 'react-hook-form';
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { authFormSchema, AuthFormType } from '@/lib/schemas/authSchema';
-import { registerUser, loginUser } from '@/lib/auth';
+import { registerUser, loginUser, verifyGoogleToken } from '@/lib/auth';
 import {
   Form,
   FormControl,
@@ -23,12 +23,23 @@ import { ButtonForm } from '../ui/button-form';
 import { AxiosError } from 'axios';
 import OAuthButton from './OAuthButton';
 import { google } from '@/app/constants';
+import { useGoogleLogin } from '@react-oauth/google';
 
 type FormType = 'sign-in' | 'sign-up';
 
 const AuthForm = ({ type }: { type: FormType }) => {
   const [isLoading, setIsLoading] = useState(false);
   const router = useRouter();
+
+  const googleLogin = useGoogleLogin({
+    scope: 'openid profile email',
+    ux_mode: 'redirect',
+    redirect_uri:
+      process.env.NEXT_PUBLIC_GOOGLE_REDIRECT_URI ||
+      `${window.location.origin}/google-callback`,
+    flow: 'implicit',
+    onError: () => toast.error('Google login failed'),
+  });
 
   const formSchema = authFormSchema(type);
   const form = useForm<AuthFormType>({
@@ -220,9 +231,10 @@ const AuthForm = ({ type }: { type: FormType }) => {
             </div>
 
             <div className="tems-center mt-4 flex w-full flex-row justify-center gap-2">
-              <OAuthButton 
-                icon={google} 
-                label="Login with Google" 
+              <OAuthButton
+                icon={google}
+                label="Login with Google"
+                onClick={() => googleLogin()}
               />
               {/* <OAuthButton icon={facebook} label="Login with Facebook" onClick={handleFacebookSignIn} /> */}
             </div>
