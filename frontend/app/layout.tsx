@@ -3,6 +3,7 @@ import localFont from 'next/font/local';
 import './globals.css';
 import { ThemeProvider } from '@/components/ui/theme-provider';
 import { Toaster } from '@/components/ui/sonner';
+import { GoogleOAuthProvider } from '@react-oauth/google';
 
 import { TokenBalanceProvider } from '@/lib/contexts/TokenBalanceContext';
 // import SmoothScrollProvider from '@/components/SupportComponents/SmoothScrollProvider';
@@ -82,16 +83,22 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const googleClientId = process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID!;
+  if (!googleClientId) {
+    throw new Error('NEXT_PUBLIC_GOOGLE_CLIENT_ID not set');
+  }
   return (
     <html lang="en" suppressHydrationWarning className="">
       <body className={`${sizmoPro.className} h-full antialiased selection:bg-[#915EFF]`}>
         {/* <SmoothScrollProvider> */}
-        <TokenBalanceProvider>
-          <ThemeProvider attribute="class" defaultTheme="dark">
-            {children}
-            <Toaster />
-          </ThemeProvider>
-        </TokenBalanceProvider>
+        <GoogleOAuthProvider clientId={googleClientId}>
+          <TokenBalanceProvider>
+            <ThemeProvider attribute="class" defaultTheme="dark">
+              {children}
+              <Toaster />
+            </ThemeProvider>
+          </TokenBalanceProvider>
+        </GoogleOAuthProvider>
         {/* </SmoothScrollProvider> */}
       </body>
     </html>
