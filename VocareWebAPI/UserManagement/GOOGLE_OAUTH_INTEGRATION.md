@@ -4,6 +4,16 @@
 
 Successfully integrated Google OAuth authentication to work with ASP.NET Core Identity Bearer tokens. This implementation allows users to authenticate via Google and receive bearer tokens for API access, just like regular email/password login.
 
+### Google Cloud Setup
+
+Add the following URL to the list of authorized OAuth redirect URIs in the Google Cloud console:
+
+```
+http://localhost:8080/api/auth/google-callback
+```
+
+This matches the callback path configured in `Program.cs`.
+
 ## Architecture
 
 ### 1. Authentication Schemes Configuration (Program.cs)

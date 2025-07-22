@@ -130,6 +130,7 @@ builder
     {
         options.ClientId = builder.Configuration["Authentication:Google:ClientId"]!;
         options.ClientSecret = builder.Configuration["Authentication:Google:ClientSecret"]!;
+        options.CallbackPath = "/api/auth/google-callback";
         options.SaveTokens = true;
         options.Events.OnRedirectToAuthorizationEndpoint = context =>
         {
