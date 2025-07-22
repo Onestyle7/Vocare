@@ -3,6 +3,7 @@ import localFont from 'next/font/local';
 import './globals.css';
 import { ThemeProvider } from '@/components/ui/theme-provider';
 import { Toaster } from '@/components/ui/sonner';
+import GoogleOAuthHandler from '@/components/AuthComponents/GoogleOAuthHandler';
 
 import { TokenBalanceProvider } from '@/lib/contexts/TokenBalanceContext';
 // import SmoothScrollProvider from '@/components/SupportComponents/SmoothScrollProvider';
@@ -88,6 +89,7 @@ export default function RootLayout({
         {/* <SmoothScrollProvider> */}
         <TokenBalanceProvider>
           <ThemeProvider attribute="class" defaultTheme="dark">
+            <GoogleOAuthHandler />
             {children}
             <Toaster />
           </ThemeProvider>

@@ -105,8 +105,12 @@ const AuthForm = ({ type }: { type: FormType }) => {
 
   // Funkcja do obsługi logowania przez Google
   const handleGoogleSignIn = () => {
-    // Przekierowanie na endpoint Google OAuth
-    window.location.href = 'http://localhost:8080/api/auth/google-signin';
+    const apiUrl = process.env.NEXT_PUBLIC_API_URL;
+    if (!apiUrl) {
+      toast.error('API url not configured');
+      return;
+    }
+    window.location.href = `${apiUrl}/api/auth/google-signin`;
   };
 
   return (
