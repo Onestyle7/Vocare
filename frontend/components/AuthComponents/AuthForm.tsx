@@ -31,20 +31,15 @@ const AuthForm = ({ type }: { type: FormType }) => {
   const router = useRouter();
 
 const handleGoogleRedirect = () => {
-  const clientId = process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID!;
-  const redirectUri = process.env.NEXT_PUBLIC_GOOGLE_REDIRECT_URI!;
-  
-  console.log('Client ID:', clientId);
-  console.log('Redirect URI:', redirectUri);
+  const apiUrl = process.env.NEXT_PUBLIC_API_URL;
+  if (!apiUrl) {
+    console.error('NEXT_PUBLIC_API_URL not set');
+    return;
+  }
 
-  const googleUrl = `https://accounts.google.com/o/oauth2/v2/auth?` +
-  `client_id=${clientId}&` +
-  `redirect_uri=${encodeURIComponent(redirectUri)}&` +
-  `response_type=code&` +
-  `scope=openid%20email%20profile`;
-
-  console.log('Final Google URL:', googleUrl);
-  window.location.href = googleUrl;
+  const signinUrl = `${apiUrl}/api/Auth/google-signin`;
+  console.log('Redirecting to:', signinUrl);
+  window.location.href = signinUrl;
 };
 
   const formSchema = authFormSchema(type);
