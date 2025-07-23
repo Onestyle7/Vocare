@@ -9,50 +9,40 @@ const GoogleCallbackPage = () => {
   useEffect(() => {
     const fetchGoogleLogin = async () => {
       const urlParams = new URLSearchParams(window.location.search);
-      const code = urlParams.get('code');
-      
-      if (!code) {
-        toast.error('Brak kodu logowania Google');
+      const googleLogin = urlParams.get('googleLogin');
+      const userId = urlParams.get('userId');
+
+      if (googleLogin !== 'success' || !userId) {
+        toast.error('Błędny callback z Google');
         return router.push('/sign-in');
       }
 
       try {
-        // 1. Wyślij kod do backendu żeby otrzymać token
-        const tokenRes = await fetch('http://localhost:8080/api/Auth/google-get-token', {
+        const tokenRes = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/Auth/google-get-token`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ 
-            code,
-            redirectUri: process.env.NEXT_PUBLIC_GOOGLE_REDIRECT_URI 
-          }),
+          body: JSON.stringify({ userId }),
         });
 
-        const tokenData = await tokenRes.json();
-        
-        if (!tokenData.success || !tokenData.accessToken) {
+        if (!tokenRes.ok) {
           toast.error('Błąd podczas pobierania tokenu Google');
           return router.push('/sign-in');
         }
 
-        // 2. Zweryfikuj token
-        const verifyRes = await fetch('http://localhost:8080/api/Auth/google-verify', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ accessToken: tokenData.accessToken }),
-        });
+        const authHeader = tokenRes.headers.get('Authorization');
+        const token = authHeader?.replace('Bearer ', '');
+        const data = await tokenRes.json();
 
-        const result = await verifyRes.json();
-
-        if (result.success && result.token) {
-          localStorage.setItem('token', result.token);
-          localStorage.setItem('userId', result.userId);
-          localStorage.setItem('userEmail', result.email);
-          toast.success('Zalogowano przez Google!');
-          router.push('/');
-        } else {
-          toast.error(result.message || 'Logowanie nieudane');
-          router.push('/sign-in');
+        if (!token) {
+          toast.error('Brak tokenu w odpowiedzi');
+          return router.push('/sign-in');
         }
+
+        localStorage.setItem('token', token);
+        localStorage.setItem('userId', data.userId);
+        localStorage.setItem('userEmail', data.email);
+        toast.success('Zalogowano przez Google!');
+        router.push('/');
       } catch (err) {
         console.error('Google login error:', err);
         toast.error('Błąd połączenia z serwerem');
