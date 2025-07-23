@@ -103,11 +103,7 @@ const AuthForm = ({ type }: { type: FormType }) => {
     }
   }
 
-  // Funkcja do obsługi logowania przez Google
-  const handleGoogleSignIn = () => {
-    // Przekierowanie na endpoint Google OAuth
-    window.location.href = 'http://localhost:8080/api/auth/google-signin';
-  };
+  const handleGoogleSignIn = () => {};
 
   return (
     <Form {...form}>
