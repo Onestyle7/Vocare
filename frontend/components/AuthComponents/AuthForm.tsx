@@ -5,7 +5,7 @@ import { useForm } from 'react-hook-form';
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { authFormSchema, AuthFormType } from '@/lib/schemas/authSchema';
-import { registerUser, loginUser, verifyGoogleToken } from '@/lib/auth';
+import { registerUser, loginUser } from '@/lib/auth';
 import {
   Form,
   FormControl,
@@ -23,7 +23,6 @@ import { ButtonForm } from '../ui/button-form';
 import { AxiosError } from 'axios';
 import OAuthButton from './OAuthButton';
 import { google } from '@/app/constants';
-import { useGoogleLogin } from '@react-oauth/google';
 
 type FormType = 'sign-in' | 'sign-up';
 
@@ -31,15 +30,22 @@ const AuthForm = ({ type }: { type: FormType }) => {
   const [isLoading, setIsLoading] = useState(false);
   const router = useRouter();
 
-  const googleLogin = useGoogleLogin({
-    scope: 'openid profile email',
-    ux_mode: 'redirect',
-    redirect_uri:
-      process.env.NEXT_PUBLIC_GOOGLE_REDIRECT_URI ||
-      `${window.location.origin}/google-callback`,
-    flow: 'implicit',
-    onError: () => toast.error('Google login failed'),
-  });
+const handleGoogleRedirect = () => {
+  const clientId = process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID!;
+  const redirectUri = process.env.NEXT_PUBLIC_GOOGLE_REDIRECT_URI!;
+  
+  console.log('Client ID:', clientId);
+  console.log('Redirect URI:', redirectUri);
+
+  const googleUrl = `https://accounts.google.com/o/oauth2/v2/auth?` +
+  `client_id=${clientId}&` +
+  `redirect_uri=${encodeURIComponent(redirectUri)}&` +
+  `response_type=code&` +
+  `scope=openid%20email%20profile`;
+
+  console.log('Final Google URL:', googleUrl);
+  window.location.href = googleUrl;
+};
 
   const formSchema = authFormSchema(type);
   const form = useForm<AuthFormType>({
@@ -232,11 +238,11 @@ const AuthForm = ({ type }: { type: FormType }) => {
 
             <div className="tems-center mt-4 flex w-full flex-row justify-center gap-2">
               <OAuthButton
-                icon={google}
-                label="Login with Google"
-                onClick={() => googleLogin()}
-              />
-              {/* <OAuthButton icon={facebook} label="Login with Facebook" onClick={handleFacebookSignIn} /> */}
+  icon={google}
+  label="Login with Google"
+  onClick={() => handleGoogleRedirect()}
+/>
+
             </div>
           </div>
         )}
