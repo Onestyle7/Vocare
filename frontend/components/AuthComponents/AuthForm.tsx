@@ -2,10 +2,10 @@
 
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { authFormSchema, AuthFormType } from '@/lib/schemas/authSchema';
-import { registerUser, loginUser } from '@/lib/auth';
+import { registerUser, loginUser, googleVerify } from '@/lib/auth';
 import {
   Form,
   FormControl,
@@ -29,6 +29,17 @@ type FormType = 'sign-in' | 'sign-up';
 const AuthForm = ({ type }: { type: FormType }) => {
   const [isLoading, setIsLoading] = useState(false);
   const router = useRouter();
+
+  useEffect(() => {
+    const script = document.createElement('script');
+    script.src = 'https://accounts.google.com/gsi/client';
+    script.async = true;
+    script.defer = true;
+    document.body.appendChild(script);
+    return () => {
+      document.body.removeChild(script);
+    };
+  }, []);
 
   const formSchema = authFormSchema(type);
   const form = useForm<AuthFormType>({
@@ -103,7 +114,37 @@ const AuthForm = ({ type }: { type: FormType }) => {
     }
   }
 
-  const handleGoogleSignIn = () => {};
+  const handleGoogleSignIn = () => {
+    if (!(window as any).google?.accounts?.oauth2) {
+      toast.error('Google SDK not loaded');
+      return;
+    }
+
+    const client = (window as any).google.accounts.oauth2.initTokenClient({
+      client_id: process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID!,
+      scope: 'openid profile email',
+      callback: async (tokenResponse: any) => {
+        if (tokenResponse.error) {
+          toast.error('Google authentication failed');
+          return;
+        }
+
+        setIsLoading(true);
+        try {
+          await googleVerify(tokenResponse.access_token);
+          toast.success('Login successful!', { description: 'Welcome back!' });
+          router.push('/');
+        } catch (err) {
+          console.error(err);
+          toast.error('Google login failed');
+        } finally {
+          setIsLoading(false);
+        }
+      },
+    });
+
+    client.requestAccessToken();
+  };
 
   return (
     <Form {...form}>

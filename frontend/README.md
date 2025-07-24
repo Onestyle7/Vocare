@@ -14,6 +14,13 @@ pnpm dev
 bun dev
 ```
 
+Create a `.env.local` file with the following variables to configure API access and Google OAuth:
+
+```env
+NEXT_PUBLIC_API_URL=http://localhost:8080
+NEXT_PUBLIC_GOOGLE_CLIENT_ID=your-google-client-id
+```
+
 Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
 
 You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
