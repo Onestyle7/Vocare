@@ -50,3 +50,17 @@ export const logoutUser = async () => {
     window.location.href = '/sign-in';
   }
 };
+
+export const googleVerify = async (accessToken: string) => {
+  const response = await api.post('/api/Auth/google-verify', { accessToken });
+  const token =
+    response.data.token ||
+    response.data.accessToken ||
+    response.headers['authorization']?.replace('Bearer ', '');
+
+  if (token) {
+    localStorage.setItem('token', token);
+  }
+
+  return response.data;
+};
