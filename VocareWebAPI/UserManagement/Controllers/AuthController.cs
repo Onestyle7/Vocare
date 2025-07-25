@@ -68,7 +68,7 @@ namespace VocareWebAPI.UserManagement.Controllers
                 var encodedToken = HttpUtility.UrlEncode(token);
 
                 // Buduj link
-                var frontendUrl = _configuration["Frontend:Url"] ?? "https://app.vocare.pl";
+                var frontendUrl = _configuration["Frontend:Url"] ?? "https://vocare.pl";
                 var resetLink =
                     $"{frontendUrl}/reset-password?token={encodedToken}&email={HttpUtility.UrlEncode(dto.Email)}";
 
@@ -168,7 +168,7 @@ Zespół Vocare
 
         [HttpGet("validate-reset-token")]
         [AllowAnonymous]
-        public async Task<IActionResult> ValudateResetToken(
+        public async Task<IActionResult> ValidateResetToken(
             [FromQuery] string token,
             [FromQuery] string email
         )
