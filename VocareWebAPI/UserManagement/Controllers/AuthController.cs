@@ -3,6 +3,7 @@ using System.Text;
 using System.Text.Json;
 using System.Web;
 using System.Net.Http.Headers;
+using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authentication.BearerToken;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.DataProtection;
@@ -460,7 +461,7 @@ Zespół Vocare
                 }
 
                 // ✅ NAPRAWKA: Użyj poprawnego zwracanego typu
-                var tokenResponse = GenerateBearerTokenForUser(user);
+                var tokenResponse = await GenerateBearerTokenForUserAsync(user);
 
                 return Ok(
                     new
@@ -482,8 +483,8 @@ Zespół Vocare
             }
         }
 
-        // ✅ NAPRAWKA: Zwracaj obiekt, nie string + usuń async (nie jest potrzebne)
-        private (string accessToken, int expiresIn, string refreshToken) GenerateBearerTokenForUser(
+        // ✅ NAPRAWKA: Zwracaj obiekt, nie string i korzystaj z async
+        private async Task<(string accessToken, int expiresIn, string refreshToken)> GenerateBearerTokenForUserAsync(
             User user
         )
         {
@@ -493,10 +494,7 @@ Zespół Vocare
                 _signInManager.AuthenticationScheme = IdentityConstants.BearerScheme;
 
                 // ✅ NAPRAWKA: Użyj SignInAsync zamiast PasswordSignInAsync (nie potrzeba hasła)
-                _signInManager
-                    .SignInAsync(user, isPersistent: false, IdentityConstants.BearerScheme)
-                    .GetAwaiter()
-                    .GetResult(); // Synchroniczne wykonanie
+                await _signInManager.SignInAsync(user, isPersistent: false, IdentityConstants.BearerScheme);
 
                 // Prosty token (wystarczający dla większości przypadków)
                 var accessToken = Convert.ToBase64String(
