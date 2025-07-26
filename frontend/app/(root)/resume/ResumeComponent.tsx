@@ -757,7 +757,7 @@ const CVCreator: React.FC<CVCreatorProps> = ({ initialCv }) => {
                 </HoverCardContent>
               </HoverCard>
               <button
-                className={`flex flex-row items-center justify-center rounded-sm border bg-red-500 px-3 py-2 text-sm text-white transition-all hover:bg-red-500/90 focus:outline-none ${isPremium ? 'cursor-pointer' : 'cursor-not-allowed opacity-50'}`}
+                className={`flex flex-row items-center justify-center rounded-sm border bg-[#915EFF] px-3 py-2 text-sm text-white transition-all hover:bg-[#713ae8] focus:outline-none ${isPremium ? 'cursor-pointer' : 'cursor-not-allowed opacity-50'}`}
               >
                 <span className="text-sm text-white">Achieve more with AI</span>
                 <StarsIcon className="ml-2 scale-70" />
@@ -875,7 +875,7 @@ const CVCreator: React.FC<CVCreatorProps> = ({ initialCv }) => {
                         </HoverCardContent>
                       </HoverCard>
                       <button
-                        className={`flex flex-row items-center justify-center rounded-sm border bg-red-500 px-3 py-2 text-sm text-white transition-all hover:bg-red-500/90 focus:outline-none ${isPremium ? 'cursor-pointer' : 'cursor-not-allowed opacity-50'}`}
+                        className={`flex flex-row items-center justify-center rounded-sm border bg-[#915EFF] px-3 py-2 text-sm text-white transition-all hover:bg-[#713ae8] focus:outline-none ${isPremium ? 'cursor-pointer' : 'cursor-not-allowed opacity-50'}`}
                       >
                         <span className="text-sm text-white">Achieve more with AI</span>
                         <StarsIcon className="ml-2 scale-70" />
@@ -887,7 +887,7 @@ const CVCreator: React.FC<CVCreatorProps> = ({ initialCv }) => {
             ))}
             <button
               onClick={addExperience}
-              className="flex cursor-pointer items-center font-medium text-red-600 hover:text-red-700"
+              className="flex cursor-pointer items-center font-medium text-[#915EFF]"
             >
               <span className="mr-2 text-xl">+</span>
               Add work experience
@@ -990,7 +990,7 @@ const CVCreator: React.FC<CVCreatorProps> = ({ initialCv }) => {
             ))}
             <button
               onClick={addEducation}
-              className="flex cursor-pointer items-center font-medium text-red-600 hover:text-red-700"
+              className="flex cursor-pointer items-center font-medium text-[#915EFF]"
             >
               <span className="mr-2 text-xl">+</span>
               Add education
@@ -1051,7 +1051,7 @@ const CVCreator: React.FC<CVCreatorProps> = ({ initialCv }) => {
             ))}
             <button
               onClick={addCertificate}
-              className="flex cursor-pointer items-center font-medium text-red-600 hover:text-red-700"
+              className="flex cursor-pointer items-center font-medium text-[#915EFF]"
             >
               <span className="mr-2 text-xl">+</span>
               Add certificate
@@ -1108,7 +1108,7 @@ const CVCreator: React.FC<CVCreatorProps> = ({ initialCv }) => {
             ))}
             <button
               onClick={addSkill}
-              className="flex cursor-pointer items-center font-medium text-red-600 hover:text-red-700"
+              className="flex cursor-pointer items-center font-medium text-[#915EFF]"
             >
               <span className="mr-2 text-xl">+</span>
               Add skill
@@ -1183,7 +1183,7 @@ const CVCreator: React.FC<CVCreatorProps> = ({ initialCv }) => {
             ))}
             <button
               onClick={addLanguage}
-              className="flex cursor-pointer items-center font-medium text-red-600 hover:text-red-700"
+              className="flex cursor-pointer items-center font-medium text-[#915EFF]"
             >
               <span className="mr-2 text-xl">+</span>
               Add language
@@ -1237,7 +1237,7 @@ const CVCreator: React.FC<CVCreatorProps> = ({ initialCv }) => {
             ))}
             <button
               onClick={addHobby}
-              className="flex items-center font-medium text-red-600 hover:text-red-700"
+              className="flex items-center font-medium text-[#915EFF]"
             >
               <span className="mr-2 text-xl">+</span>
               Add hobby
@@ -1539,7 +1539,7 @@ const CVCreator: React.FC<CVCreatorProps> = ({ initialCv }) => {
                 </Select>
                 <button
                   onClick={loadFromProfile}
-                  className="flex cursor-pointer items-center space-x-2 rounded border border-red-500 bg-red-500 px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-red-600"
+                  className="flex cursor-pointer items-center space-x-2 rounded border border-[#915EFF] bg-[#915EFF] px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-[#713ae8]"
                   title="Load data from profile and save time"
                 >
                   <Upload size={16} className="mr-2 text-white" />
@@ -1608,7 +1608,7 @@ const CVCreator: React.FC<CVCreatorProps> = ({ initialCv }) => {
 
                 {/* Collapsible Additional Fields */}
                 <details className="group">
-                  <summary className="cursor-pointer font-medium text-red-600">
+                  <summary className="cursor-pointer font-medium text-[#915EFF]">
                     Show additional fields
                   </summary>
                   <div className="mt-4 space-y-4">
@@ -1667,7 +1667,7 @@ const CVCreator: React.FC<CVCreatorProps> = ({ initialCv }) => {
             <div className="flex items-center space-x-2">
               <button
                 onClick={downloadPDF}
-                className="flex cursor-pointer items-center space-x-2 rounded border border-red-500 bg-red-500 px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-red-600"
+                className="flex cursor-pointer items-center space-x-2 rounded border border-[#915EFF] bg-[#915EFF] px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-[#713ae8]"
                 title="Pobierz CV jako PDF"
               >
                 <svg
