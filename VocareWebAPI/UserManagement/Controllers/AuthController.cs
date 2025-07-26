@@ -2,6 +2,7 @@ using System.Security.Claims;
 using System.Text;
 using System.Text.Json;
 using System.Web;
+using System.Net.Http.Headers;
 using Microsoft.AspNetCore.Authentication.BearerToken;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.DataProtection;
@@ -402,10 +403,16 @@ Zespół Vocare
 
             try
             {
-                // Weryfikuj token Google ręcznie
+                // Pobierz dane użytkownika z Google API
                 using var httpClient = new HttpClient();
+                httpClient.DefaultRequestHeaders.Authorization =
+                    new AuthenticationHeaderValue(
+                        "Bearer",
+                        request.AccessToken
+                    );
+
                 var response = await httpClient.GetAsync(
-                    $"https://www.googleapis.com/oauth2/v1/tokeninfo?access_token={request.AccessToken}"
+                    "https://www.googleapis.com/oauth2/v3/userinfo"
                 );
 
                 if (!response.IsSuccessStatusCode)
@@ -414,9 +421,14 @@ Zespół Vocare
                 }
 
                 var tokenInfo = await response.Content.ReadAsStringAsync();
-                using var json = JsonDocument.Parse(tokenInfo); // ✅ using dla disposal
+                using var json = JsonDocument.Parse(tokenInfo);
 
-                var email = json.RootElement.GetProperty("email").GetString();
+                if (!json.RootElement.TryGetProperty("email", out var emailProp))
+                {
+                    return BadRequest(new { message = "No email in Google token" });
+                }
+
+                var email = emailProp.GetString();
 
                 if (string.IsNullOrEmpty(email))
                 {
