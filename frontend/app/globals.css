@@ -587,3 +587,8 @@ input:-webkit-autofill {
   box-shadow: 0 0 0px 1000px rgba(16, 16, 20, 0.102) inset !important;
   -webkit-text-fill-color: #f9f5ee !important;
 }
+
+.avoid-break {
+  break-inside: avoid;
+  page-break-inside: avoid;
+}

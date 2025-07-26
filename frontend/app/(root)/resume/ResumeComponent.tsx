@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import {
   User,
   Mail,
@@ -183,6 +183,8 @@ const CVCreator: React.FC<CVCreatorProps> = ({ initialCv }) => {
   const [dragOverSection, setDragOverSection] = useState<string | null>(null);
 
   const [isHovered, setIsHovered] = useState(false);
+  const contentRef = useRef<HTMLDivElement>(null);
+  const [pageHeight, setPageHeight] = useState(0);
 
   // Save personalInfo to localStorage
   useEffect(() => {
@@ -228,6 +230,13 @@ const CVCreator: React.FC<CVCreatorProps> = ({ initialCv }) => {
   useEffect(() => {
     localStorage.setItem('sectionOrder', JSON.stringify(sectionOrder));
   }, [sectionOrder]);
+
+  useEffect(() => {
+    const cvElement = document.querySelector<HTMLElement>('.cv-content');
+    if (cvElement) {
+      setPageHeight(cvElement.clientHeight);
+    }
+  }, []);
 
   useEffect(() => {
     checkContentOverflow();
@@ -438,10 +447,12 @@ const CVCreator: React.FC<CVCreatorProps> = ({ initialCv }) => {
 
   const checkContentOverflow = () => {
     const cvElement = document.querySelector<HTMLElement>('.cv-content');
-    if (!cvElement) return;
-    const contentHeight = cvElement.scrollHeight;
-    const pageHeight = cvElement.clientHeight;
-    const newTotalPages = Math.ceil(contentHeight / pageHeight);
+    const contentElement = contentRef.current;
+    if (!cvElement || !contentElement) return;
+    const contentHeight = contentElement.scrollHeight;
+    const pageHeightPx = cvElement.clientHeight;
+    setPageHeight(pageHeightPx);
+    const newTotalPages = Math.ceil(contentHeight / pageHeightPx);
     setTotalPages(newTotalPages);
   };
 
@@ -1295,7 +1306,7 @@ const CVCreator: React.FC<CVCreatorProps> = ({ initialCv }) => {
           personalInfo.address ||
           personalInfo.profession ||
           personalInfo.summary ? (
-          <div className="mb-5" key="profile">
+          <div className="mb-5 avoid-break" key="profile">
             <h3 className="mb-2 border-b border-gray-300 pb-1 text-lg font-semibold text-gray-800">
               Personal Profile
             </h3>
@@ -1307,7 +1318,7 @@ const CVCreator: React.FC<CVCreatorProps> = ({ initialCv }) => {
 
       case 'experience':
         return experiences.length > 0 ? (
-          <div className="mb-5" key="experience">
+          <div className="mb-5 avoid-break" key="experience">
             <h3 className="mb-2 flex items-center border-b border-gray-300 pb-1 text-lg font-semibold text-gray-800">
               <Briefcase size={16} className="mr-2" />
               Work Exeperience
@@ -1340,7 +1351,7 @@ const CVCreator: React.FC<CVCreatorProps> = ({ initialCv }) => {
 
       case 'education':
         return education.length > 0 ? (
-          <div className="mb-5" key="education">
+          <div className="mb-5 avoid-break" key="education">
             <h3 className="mb-2 flex items-center border-b border-gray-300 pb-1 text-lg font-semibold text-gray-800">
               <GraduationCap size={16} className="mr-2" />
               Education
@@ -1368,7 +1379,7 @@ const CVCreator: React.FC<CVCreatorProps> = ({ initialCv }) => {
 
       case 'certificates':
         return certificates.length > 0 ? (
-          <div className="mb-5" key="certificates">
+          <div className="mb-5 avoid-break" key="certificates">
             <h3 className="mb-2 flex items-center border-b border-gray-300 pb-1 text-lg font-semibold text-gray-800">
               <Award size={16} className="mr-2" />
               Certificates
@@ -1386,7 +1397,7 @@ const CVCreator: React.FC<CVCreatorProps> = ({ initialCv }) => {
 
       case 'skills':
         return skills.length > 0 ? (
-          <div className="mb-5" key="skills">
+          <div className="mb-5 avoid-break" key="skills">
             <h3 className="mb-2 flex items-center border-b border-gray-300 pb-1 text-lg font-semibold text-gray-800">
               <Award size={16} className="mr-2" />
               Skills
@@ -1406,7 +1417,7 @@ const CVCreator: React.FC<CVCreatorProps> = ({ initialCv }) => {
 
       case 'languages':
         return languages.length > 0 ? (
-          <div className="mb-5" key="languages">
+          <div className="mb-5 avoid-break" key="languages">
             <h3 className="mb-2 flex items-center border-b border-gray-300 pb-1 text-lg font-semibold text-gray-800">
               <Languages size={16} className="mr-2" />
               Languages
@@ -1426,7 +1437,7 @@ const CVCreator: React.FC<CVCreatorProps> = ({ initialCv }) => {
 
       case 'hobbies':
         return hobbies.length > 0 ? (
-          <div className="mb-5" key="hobbies">
+          <div className="mb-5 avoid-break" key="hobbies">
             <h3 className="mb-2 flex items-center border-b border-gray-300 pb-1 text-lg font-semibold text-gray-800">
               <Tag size={16} className="mr-2" />
               Hobby
@@ -1446,7 +1457,7 @@ const CVCreator: React.FC<CVCreatorProps> = ({ initialCv }) => {
 
       case 'privacy':
         return privacyStatement.content ? (
-          <div className="mb-5" key="privacy">
+          <div className="mb-5 avoid-break" key="privacy">
             <h3 className="mb-2 border-b border-gray-300 pb-1 text-lg font-semibold text-gray-800">
               Privacy Statement
             </h3>
@@ -1769,9 +1780,10 @@ const CVCreator: React.FC<CVCreatorProps> = ({ initialCv }) => {
                 }}
               >
                 <div
-                  className="h-full p-8"
+                  ref={contentRef}
+                  className="min-h-[297mm] p-8 pb-12"
                   style={{
-                    transform: `translateY(-${(currentPage - 1) * 100}%)`,
+                    transform: `translateY(-${(currentPage - 1) * pageHeight}px)`,
                   }}
                 >
                   <div className="mb-6">
