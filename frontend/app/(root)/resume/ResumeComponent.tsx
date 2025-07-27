@@ -1699,7 +1699,7 @@ const CVCreator: React.FC<CVCreatorProps> = ({ initialCv }) => {
             >
               {/* A4 Paper with exact dimensions */}
               <div
-                className="cv-content rounded-sm border border-red-500"
+                className="cv-content rounded-sm"
                 style={{
                   width: '210mm',
                   height: '253mm',
@@ -1713,7 +1713,7 @@ const CVCreator: React.FC<CVCreatorProps> = ({ initialCv }) => {
                 }}
               >
                 <div
-                  className="h-full box-border p-8 border border-blue-500"
+                  className="h-full box-border p-8 border"
                   style={{
                     transform: `translateY(-${(currentPage - 1) * 100}%)`,
                   }}
