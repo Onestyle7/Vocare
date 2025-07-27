@@ -1799,7 +1799,7 @@ const CVCreator: React.FC<CVCreatorProps> = ({ initialCv }) => {
                       onClick={() => goToPage(page)}
                       className={`h-8 w-8 cursor-pointer rounded text-sm font-medium ${
                         currentPage === page
-                          ? 'bg-red-500 text-white'
+                          ? 'bg-[#915EFF] text-white'
                           : 'text-gray-700 hover:bg-gray-100'
                       }`}
                     >
