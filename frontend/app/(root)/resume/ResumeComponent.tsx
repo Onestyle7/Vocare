@@ -1713,7 +1713,7 @@ const CVCreator: React.FC<CVCreatorProps> = ({ initialCv }) => {
                 }}
               >
                 <div
-                  className="h-full p-8"
+                  className="h-full p-8 box-border"
                   style={{
                     transform: `translateY(-${(currentPage - 1) * 100}%)`,
                   }}
