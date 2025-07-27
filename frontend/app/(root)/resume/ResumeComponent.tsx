@@ -590,63 +590,57 @@ const CVCreator: React.FC<CVCreatorProps> = ({ initialCv }) => {
     }
   }, [initialCv]);
 
-  const downloadPDF = async () => {
-  try {
-    const frame = document.querySelector<HTMLElement>('.cv-frame');
-    if (!frame) return;
+const downloadPDF = async () => {
+  const frame = document.querySelector<HTMLElement>('.cv-frame');
+  if (!frame) return;
 
-    // przywróć oryginalne skalowanie i stronę
-    const originalScale = cvScale;
-    const originalPage  = currentPage;
-    setCvScale(1);
+  // zapamiętaj oryginalne wartości
+  const origScale = cvScale;
+  const origPage  = currentPage;
+  const origTransform = frame.style.transform;
 
-    // poczekaj na re-render
+  // przywróć 100% skalę
+  setCvScale(1);
+  // usuń transformację z ramki
+  frame.style.transform = 'none';
+  await new Promise((r) => setTimeout(r, 100));
+
+  const pdf = new jsPDF('portrait', 'mm', 'a4');
+  const pdfWidth = 210;
+
+  for (let page = 1; page <= totalPages; page++) {
+    setCurrentPage(page);
     await new Promise((r) => setTimeout(r, 100));
 
-    const pdf = new jsPDF('portrait', 'mm', 'a4');
-    const pdfWidth  = 210;
-    // obszar roboczy w px, zawierający padding
-    const frameW = frame.offsetWidth;
-    const frameH = frame.offsetHeight;
+    const canvas = await html2canvas(frame, {
+      scale: 2,
+      useCORS: true,
+      allowTaint: true,
+      backgroundColor: '#ffffff',
+      // bez width/height/scrollY — html2canvas złapie całą ramkę
+    });
 
-    for (let page = 1; page <= totalPages; page++) {
-      setCurrentPage(page);
-      await new Promise((r) => setTimeout(r, 100));
+    const imgData = canvas.toDataURL('image/png');
+    const imgH    = (canvas.height * pdfWidth) / canvas.width;
 
-      // przesuwamy .cv-content wewnątrz, ale robimy capture całego frame'u
-      const canvas = await html2canvas(frame, {
-        scale: 2,
-        useCORS: true,
-        allowTaint: true,
-        backgroundColor: '#ffffff',
-        width: frameW,
-        height: frameH,
-        // musimy wymusić, żeby snapshot robił z WIĘKSZYM przesunięciem .cv-content
-        scrollY: -(page - 1) * frameH * cvScale,  
-      });
-
-      const imgData = canvas.toDataURL('image/png');
-      const imgH     = (canvas.height * pdfWidth) / canvas.width;
-
-      if (page > 1) pdf.addPage();
-      pdf.addImage(imgData, 'PNG', 0, 0, pdfWidth, imgH);
-    }
-
-    // przywróć stan
-    setCurrentPage(originalPage);
-    setCvScale(originalScale);
-
-    const fileName =
-      personalInfo.firstName && personalInfo.lastName
-        ? `${personalInfo.firstName}_${personalInfo.lastName}_CV.pdf`
-        : 'My_CV.pdf';
-
-    pdf.save(fileName);
-  } catch (err) {
-    console.error(err);
-    alert('Coś poszło nie tak przy generowaniu PDF.');
+    if (page > 1) pdf.addPage();
+    pdf.addImage(imgData, 'PNG', 0, 0, pdfWidth, imgH);
   }
+
+  // przywróć wszystko do stanu pierwotnego
+  setCvScale(origScale);
+  setCurrentPage(origPage);
+  frame.style.transform = origTransform;
+
+  const fileName =
+    personalInfo.firstName && personalInfo.lastName
+      ? `${personalInfo.firstName}_${personalInfo.lastName}_CV.pdf`
+      : 'My_CV.pdf';
+
+  pdf.save(fileName);
 };
+
+
 
 
   const renderSectionInForm = (sectionId: string) => {
