@@ -423,9 +423,26 @@ app.Use(
         {
             try
             {
-                // Dekoduj token
-                var json = Encoding.UTF8.GetString(Convert.FromBase64String(token));
+                // ✅ Użyj tego samego Data Protection provider
+                var protector = context
+                    .RequestServices.GetRequiredService<IDataProtectionProvider>()
+                    .CreateProtector("VocareAuth"); // Ten sam purpose string!
+
+                // Deszyfruj token
+                var json = protector.Unprotect(token);
                 var tokenData = JsonSerializer.Deserialize<JsonElement>(json);
+
+                // ✅ Sprawdź expiration NAJPIERW
+                if (tokenData.TryGetProperty("exp", out var expElement))
+                {
+                    var exp = expElement.GetInt64();
+                    if (DateTimeOffset.FromUnixTimeSeconds(exp) <= DateTimeOffset.UtcNow)
+                    {
+                        // Token wygasł - nie uwierzytelniaj
+                        await next();
+                        return;
+                    }
+                }
 
                 if (tokenData.TryGetProperty("sub", out var sub))
                 {
@@ -445,7 +462,13 @@ app.Use(
                     }
                 }
             }
-            catch { }
+            catch (Exception ex)
+            {
+                // ✅ Log błędy ale nie przerywaj request
+                var logger = context.RequestServices.GetRequiredService<ILogger<Program>>();
+                logger.LogWarning(ex, "Failed to validate custom token");
+                // Kontynuuj bez uwierzytelnienia
+            }
         }
 
         await next();
