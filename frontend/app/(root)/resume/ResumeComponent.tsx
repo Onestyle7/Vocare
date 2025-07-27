@@ -440,7 +440,7 @@ const CVCreator: React.FC<CVCreatorProps> = ({ initialCv }) => {
     const cvElement = document.querySelector<HTMLElement>('.cv-content');
     if (!cvElement) return;
     const contentHeight = cvElement.scrollHeight;
-    const pageHeight = cvElement.clientHeight;
+    const pageHeight = 1123; // A4 height in pixels at 96 DPI (approx. 1123px)
     const newTotalPages = Math.ceil(contentHeight / pageHeight);
     setTotalPages(newTotalPages);
   };
@@ -1702,7 +1702,7 @@ const CVCreator: React.FC<CVCreatorProps> = ({ initialCv }) => {
                 className="cv-content rounded-sm border border-red-500"
                 style={{
                   width: '210mm',
-                  height: '242mm',
+                  height: '253mm',
                   transform: `scale(${cvScale})`,
                   transformOrigin: 'center center',
                   overflow: 'hidden',
