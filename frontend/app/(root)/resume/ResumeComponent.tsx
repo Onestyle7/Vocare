@@ -31,6 +31,7 @@ import { DatePickerWithCurrent } from './DatePickerWithCurrent';
 import { HoverCard, HoverCardContent, HoverCardTrigger } from '@/components/ui/hover-card';
 import html2canvas from 'html2canvas-pro';
 import jsPDF from 'jspdf';
+import Ruler from '@/components/ResumeComponents/Ruler';
 import {
   Select,
   SelectContent,
@@ -1697,21 +1698,28 @@ const CVCreator: React.FC<CVCreatorProps> = ({ initialCv }) => {
               }}
               onMouseDown={handleMouseDown}
             >
-              {/* A4 Paper with exact dimensions */}
+              {/* Wrapper scales preview and ruler together */}
               <div
-                className="cv-content rounded-sm border border-red-500"
+                className="relative"
                 style={{
-                  width: '210mm',
-                  height: '253mm',
                   transform: `scale(${cvScale})`,
                   transformOrigin: 'center center',
-                  overflow: 'hidden',
-                  backgroundColor: '#ffffff', // Force HEX
-                  color: '#000000', // Force HEX
-                  boxShadow: '0 4px 6px rgba(0,0,0,0.1)', 
-                  boxSizing: 'border-box',
                 }}
               >
+                {/* A4 Paper with exact dimensions */}
+                <Ruler widthMM={210} heightMM={253} />
+                <div
+                  className="cv-content rounded-sm border border-red-500"
+                  style={{
+                    width: '210mm',
+                    height: '253mm',
+                    overflow: 'hidden',
+                    backgroundColor: '#ffffff', // Force HEX
+                    color: '#000000', // Force HEX
+                    boxShadow: '0 4px 6px rgba(0,0,0,0.1)',
+                    boxSizing: 'border-box',
+                  }}
+                >
                 <div
                   className="h-full box-border p-8 border border-blue-500"
                   style={{
