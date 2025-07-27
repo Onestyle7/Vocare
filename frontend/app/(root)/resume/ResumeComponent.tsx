@@ -1272,7 +1272,7 @@ const CVCreator: React.FC<CVCreatorProps> = ({ initialCv }) => {
                   </div>
                 </div>
                 {exp.description && (
-                  <p className="text-xs leading-relaxed break-words text-gray-700">
+                  <p className="text-sm leading-relaxed break-words text-gray-700">
                     {exp.description}
                   </p>
                 )}
@@ -1708,7 +1708,8 @@ const CVCreator: React.FC<CVCreatorProps> = ({ initialCv }) => {
                   overflow: 'hidden',
                   backgroundColor: '#ffffff', // Force HEX
                   color: '#000000', // Force HEX
-                  boxShadow: '0 4px 6px rgba(0,0,0,0.1)', // Use RGBA for shadow
+                  boxShadow: '0 4px 6px rgba(0,0,0,0.1)', 
+                  boxSizing: 'border-box',
                 }}
               >
                 <div
