@@ -1329,7 +1329,7 @@ const CVCreator: React.FC<CVCreatorProps> = ({ initialCv }) => {
                   </div>
                 </div>
                 {exp.description && (
-                  <p className="text-xs leading-relaxed break-words text-gray-700">
+                  <p className="text-sm leading-relaxed break-words text-gray-700">
                     {exp.description}
                   </p>
                 )}
