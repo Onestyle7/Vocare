@@ -58,7 +58,7 @@ const AboutCards = () => {
 
   return (
     <Section
-      className="relative -mt-[2.25rem] pt-[7.5rem] overflow-hidden"
+      className="relative -mt-[2.25rem] pt-[7.5rem] max-md:overflow-hidden"
       crossesOffset="lg:translate-y-[7.5rem]"
       customPaddings
       id="about"

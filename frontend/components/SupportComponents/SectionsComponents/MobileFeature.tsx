@@ -131,7 +131,7 @@ const MobileFeature = () => {
       crosses
       customPaddings
       className="relative px-10 max-md:mt-14 max-md:-mb-60 overflow-hidden"
-      crossesOffset
+      crossesOffset="lg:translate-y-[1rem]"
       id="brain"
     >
       <ScrollParallax isAbsolutelyPositioned zIndex={-20}>
