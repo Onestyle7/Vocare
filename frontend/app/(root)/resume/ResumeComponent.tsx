@@ -591,59 +591,63 @@ const CVCreator: React.FC<CVCreatorProps> = ({ initialCv }) => {
   }, [initialCv]);
 
   const downloadPDF = async () => {
-    try {
-      const cvElement = document.querySelector<HTMLElement>('.cv-content');
-      if (!cvElement) return;
+  try {
+    const frame = document.querySelector<HTMLElement>('.cv-frame');
+    if (!frame) return;
 
-      const originalScale = cvScale;
-      const originalPage = currentPage;
-      setCvScale(1);
+    // przywróć oryginalne skalowanie i stronę
+    const originalScale = cvScale;
+    const originalPage  = currentPage;
+    setCvScale(1);
 
-      // wait for re-render after scale update
-      await new Promise((resolve) => setTimeout(resolve, 100));
+    // poczekaj na re-render
+    await new Promise((r) => setTimeout(r, 100));
 
-      const pdf = new jsPDF('portrait', 'mm', 'a4');
-      const pdfWidth = 210;
+    const pdf = new jsPDF('portrait', 'mm', 'a4');
+    const pdfWidth  = 210;
+    // obszar roboczy w px, zawierający padding
+    const frameW = frame.offsetWidth;
+    const frameH = frame.offsetHeight;
 
-      for (let page = 1; page <= totalPages; page++) {
-        setCurrentPage(page);
-        // allow DOM to update to the correct page view
-        await new Promise((resolve) => setTimeout(resolve, 100));
+    for (let page = 1; page <= totalPages; page++) {
+      setCurrentPage(page);
+      await new Promise((r) => setTimeout(r, 100));
 
-        const canvas = await html2canvas(cvElement as HTMLElement, {
-          scale: 2,
-          useCORS: true,
-          allowTaint: true,
-          backgroundColor: '#ffffff',
-          width: cvElement.offsetWidth,
-          height: cvElement.offsetHeight,
-        });
+      // przesuwamy .cv-content wewnątrz, ale robimy capture całego frame'u
+      const canvas = await html2canvas(frame, {
+        scale: 2,
+        useCORS: true,
+        allowTaint: true,
+        backgroundColor: '#ffffff',
+        width: frameW,
+        height: frameH,
+        // musimy wymusić, żeby snapshot robił z WIĘKSZYM przesunięciem .cv-content
+        scrollY: -(page - 1) * frameH * cvScale,  
+      });
 
-        const imgData = canvas.toDataURL('image/png');
-        const imgHeight = (canvas.height * pdfWidth) / canvas.width;
+      const imgData = canvas.toDataURL('image/png');
+      const imgH     = (canvas.height * pdfWidth) / canvas.width;
 
-        if (page > 1) {
-          pdf.addPage();
-        }
-
-        pdf.addImage(imgData, 'PNG', 0, 0, pdfWidth, imgHeight);
-      }
-
-      // restore view
-      setCurrentPage(originalPage);
-      setCvScale(originalScale);
-
-      const fileName =
-        personalInfo.firstName && personalInfo.lastName
-          ? `${personalInfo.firstName}_${personalInfo.lastName}_CV.pdf`
-          : 'My_CV.pdf';
-
-      pdf.save(fileName);
-    } catch (error) {
-      console.error('Błąd podczas generowania PDF:', error);
-      alert('Wystąpił błąd podczas pobierania CV. Spróbuj ponownie.');
+      if (page > 1) pdf.addPage();
+      pdf.addImage(imgData, 'PNG', 0, 0, pdfWidth, imgH);
     }
-  };
+
+    // przywróć stan
+    setCurrentPage(originalPage);
+    setCvScale(originalScale);
+
+    const fileName =
+      personalInfo.firstName && personalInfo.lastName
+        ? `${personalInfo.firstName}_${personalInfo.lastName}_CV.pdf`
+        : 'My_CV.pdf';
+
+    pdf.save(fileName);
+  } catch (err) {
+    console.error(err);
+    alert('Coś poszło nie tak przy generowaniu PDF.');
+  }
+};
+
 
   const renderSectionInForm = (sectionId: string) => {
     switch (sectionId) {
@@ -1698,22 +1702,28 @@ const CVCreator: React.FC<CVCreatorProps> = ({ initialCv }) => {
               onMouseDown={handleMouseDown}
             >
               {/* A4 Paper with exact dimensions */}
-              <div
-                className="cv-content rounded-sm"
-                style={{
-                  width: '210mm',
-                  height: '253mm',
-                  transform: `scale(${cvScale})`,
-                  transformOrigin: 'center center',
-                  overflow: 'hidden',
-                  backgroundColor: '#ffffff', // Force HEX
-                  color: '#000000', // Force HEX
-                  boxShadow: '0 4px 6px rgba(0,0,0,0.1)', 
-                  boxSizing: 'border-box',
-                }}
-              >
+              <div 
+  className="cv-frame rounded-sm overflow-hidden" 
+  style={{
+    width:  '210mm',
+    padding: '32px',          // ← tutaj widoczny margines
+    boxSizing: 'border-box',
+    backgroundColor: '#fff',
+    boxShadow: '0 4px 6px rgba(0,0,0,0.1)',
+    transform: `scale(${cvScale})`,
+    transformOrigin: 'center center',
+  }}
+>
+  <div 
+    className="cv-content" 
+    style={{
+      width:  '100%',         // 210mm
+      height: '297mm',        // dokładnie obszar "przelamywania"
+      overflow: 'hidden',
+    }}
+  >
                 <div
-                  className="h-full box-border p-8 border"
+                  className="h-full box-border"
                   style={{
                     transform: `translateY(-${(currentPage - 1) * 100}%)`,
                   }}
@@ -1768,6 +1778,7 @@ const CVCreator: React.FC<CVCreatorProps> = ({ initialCv }) => {
                       </div>
                     )}
                 </div>
+              </div>
               </div>
             </div>
 
