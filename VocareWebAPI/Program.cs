@@ -1,3 +1,5 @@
+using System.Text;
+using System.Text.Json;
 using System.Text.Json.Serialization;
 using Microsoft.AspNetCore.DataProtection;
 using Microsoft.AspNetCore.Identity;
@@ -113,7 +115,8 @@ builder
 builder.Services.Configure<CookiePolicyOptions>(options =>
 {
     options.CheckConsentNeeded = context => false;
-    options.MinimumSameSitePolicy = SameSiteMode.Lax;
+    options.MinimumSameSitePolicy = SameSiteMode.None;
+    options.Secure = CookieSecurePolicy.SameAsRequest;
 });
 
 // ===== AUTHENTICATION CONFIGURATION =====
@@ -291,7 +294,13 @@ builder.Services.AddCors(options =>
         policy =>
         {
             policy
-                .SetIsOriginAllowed(origin => true) // zezwól na wszystkie originy (do testów)
+                .WithOrigins(
+                    "http://localhost:3000", // Dodaj konkretne originy
+                    "https://vocare.pl",
+                    "https://app.vocare.pl",
+                    "https://vocare-frontend.vercel.app",
+                    "http://localhost:8080"
+                ) // zezwól na wszystkie originy (do testów)
                 .AllowAnyHeader()
                 .AllowAnyMethod()
                 .AllowCredentials();
@@ -343,9 +352,104 @@ if (app.Environment.IsStaging())
 // ===== MIDDLEWARE PIPELINE =====
 // app.UseHttpsRedirection();
 app.UseRouting();
+
+app.Use(
+    async (context, next) =>
+    {
+        // Obsługa OPTIONS dla preflight
+        if (
+            context.Request.Method == "OPTIONS"
+            && context.Request.Path.StartsWithSegments("/api/auth/google-verify")
+        )
+        {
+            var origin = context.Request.Headers["Origin"].ToString();
+            if (!string.IsNullOrEmpty(origin))
+            {
+                context.Response.Headers.Add("Access-Control-Allow-Origin", origin);
+                context.Response.Headers.Add("Access-Control-Allow-Credentials", "true");
+                context.Response.Headers.Add("Access-Control-Allow-Methods", "POST, OPTIONS");
+                context.Response.Headers.Add(
+                    "Access-Control-Allow-Headers",
+                    "Content-Type, Authorization"
+                );
+            }
+            context.Response.StatusCode = 204;
+            return; // Zakończ przetwarzanie dla OPTIONS
+        }
+
+        // Dla innych requestów, dodaj nagłówki PO wykonaniu next()
+        if (context.Request.Path.StartsWithSegments("/api/auth/google-verify"))
+        {
+            // Ustaw callback który doda nagłówki zanim response zostanie wysłany
+            context.Response.OnStarting(() =>
+            {
+                var origin = context.Request.Headers["Origin"].ToString();
+                if (
+                    !string.IsNullOrEmpty(origin)
+                    && !context.Response.Headers.ContainsKey("Access-Control-Allow-Origin")
+                )
+                {
+                    context.Response.Headers.Add("Access-Control-Allow-Origin", origin);
+                    context.Response.Headers.Add("Access-Control-Allow-Credentials", "true");
+                }
+                return Task.CompletedTask;
+            });
+        }
+
+        await next();
+    }
+);
+
+// Middleware dla nagłówków bezpieczeństwa - ten może zostać jak jest
+app.Use(
+    async (context, next) =>
+    {
+        context.Response.Headers.Add("X-Content-Type-Options", "nosniff");
+        context.Response.Headers.Add("X-Frame-Options", "SAMEORIGIN");
+        context.Response.Headers.Add("Referrer-Policy", "strict-origin-when-cross-origin");
+        await next();
+    }
+);
 app.UseCors("AllowAll");
 app.UseCookiePolicy(); // ✅ NAPRAWKA: Dodano UseCookiePolicy
 app.UseAuthentication();
+app.Use(
+    async (context, next) =>
+    {
+        var token = context.Request.Headers["Authorization"].FirstOrDefault()?.Split(" ").Last();
+
+        if (!string.IsNullOrEmpty(token) && context.User?.Identity?.IsAuthenticated != true)
+        {
+            try
+            {
+                // Dekoduj token
+                var json = Encoding.UTF8.GetString(Convert.FromBase64String(token));
+                var tokenData = JsonSerializer.Deserialize<JsonElement>(json);
+
+                if (tokenData.TryGetProperty("sub", out var sub))
+                {
+                    var userId = sub.GetString();
+                    var userManager = context.RequestServices.GetRequiredService<
+                        UserManager<User>
+                    >();
+                    var user = await userManager.FindByIdAsync(userId);
+
+                    if (user != null)
+                    {
+                        var principal = await context
+                            .RequestServices.GetRequiredService<IUserClaimsPrincipalFactory<User>>()
+                            .CreateAsync(user);
+
+                        context.User = principal;
+                    }
+                }
+            }
+            catch { }
+        }
+
+        await next();
+    }
+);
 app.UseAuthorization();
 
 // ===== ENDPOINTS =====
@@ -491,4 +595,3 @@ while (retries < maxRetries)
 }
 
 app.Run();
-
