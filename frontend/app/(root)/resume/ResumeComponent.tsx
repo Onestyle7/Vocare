@@ -619,7 +619,7 @@ const CVCreator: React.FC<CVCreatorProps> = ({ initialCv }) => {
       // A4 rozmiary w mm
       const pdf = new jsPDF('portrait', 'mm', 'a4');
       const pdfWidth = 210;
-      const pdfHeight = 297;
+      const pdfHeight = 277;
 
       // Oblicz wymiary obrazu zachowując proporcje
       const imgWidth = pdfWidth;
@@ -1759,7 +1759,7 @@ const CVCreator: React.FC<CVCreatorProps> = ({ initialCv }) => {
                 className="cv-content rounded-sm"
                 style={{
                   width: '210mm',
-                  height: '297mm',
+                  height: '242mm',
                   transform: `scale(${cvScale})`,
                   transformOrigin: 'center center',
                   overflow: 'hidden',
