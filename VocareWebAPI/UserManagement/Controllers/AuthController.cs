@@ -24,6 +24,7 @@ namespace VocareWebAPI.UserManagement.Controllers
         private readonly IConfiguration _configuration;
         private readonly ILogger<AuthController> _logger;
         private readonly UserRegistrationHandler _registrationHandler;
+        private readonly HttpClient _httpClient;
 
         public AuthController(
             UserManager<User> userManager,
@@ -31,7 +32,8 @@ namespace VocareWebAPI.UserManagement.Controllers
             IEmailService emailService,
             IConfiguration configuration,
             ILogger<AuthController> logger,
-            UserRegistrationHandler registrationHandler
+            UserRegistrationHandler registrationHandler,
+            IHttpClientFactory httpClientFactory
         )
         {
             _userManager = userManager;
@@ -40,6 +42,7 @@ namespace VocareWebAPI.UserManagement.Controllers
             _configuration = configuration;
             _logger = logger;
             _registrationHandler = registrationHandler;
+            _httpClient = httpClientFactory.CreateClient();
         }
 
         [HttpPost("forgot-password")]
@@ -155,7 +158,6 @@ Zespół Vocare
                 return BadRequest(new { message = "Invalid or expired token." });
             }
             _logger.LogInformation("Password reset successful for user: {UserId}", user.Id);
-            // Opcjonalnie: wyślij mail potwierdzający
             try
             {
                 await _emailService.SendEmailAsync(
@@ -260,7 +262,7 @@ Zespół Vocare
             {
                 _logger.LogError(ex, "Failed to setup billing for user: {UserId}", user.Id);
                 // Nie przerywamy procesu rejestracji - użytkownik zostanie utworzony
-                // Ale logujemy błąd dla administratora
+                // Ale logujemy błąd
             }
 
             return Ok(new { message = "User registered successfully" });
@@ -316,6 +318,8 @@ Zespół Vocare
             );
         }
 
+        // Placeholder endpoint do odświeżania tokena
+
         [HttpPost("refresh")]
         [AllowAnonymous]
         public IActionResult Refresh([FromBody] RefreshRequest request)
@@ -324,9 +328,6 @@ Zespół Vocare
             {
                 return BadRequest(ModelState);
             }
-
-            // Identity API automatycznie obsługuje refresh tokeny przez Bearer token middleware
-            // Ten endpoint jest placeholder - rzeczywista implementacja zależy od konfiguracji tokenów
 
             _logger.LogInformation("Refresh token request received");
             return Ok(new { message = "Please login again to refresh your session" });
@@ -353,8 +354,7 @@ Zespół Vocare
             try
             {
                 // Weryfikuj token Google
-                using var httpClient = new HttpClient();
-                var response = await httpClient.GetAsync(
+                var response = await _httpClient.GetAsync(
                     $"https://www.googleapis.com/oauth2/v1/tokeninfo?access_token={request.AccessToken}"
                 );
 
@@ -411,24 +411,6 @@ Zespół Vocare
                     await _registrationHandler.HandleUserRegistrationAsync(user.Id);
                 }
 
-                // ✅ KLUCZOWE: Dla Identity Bearer tokens musimy mieć hasło
-                // Opcja A: Ustaw losowe hasło dla użytkowników Google
-                /* if (!await _userManager.HasPasswordAsync(user))
-                {
-                    var randomPassword = GenerateRandomPassword();
-                    await _userManager.AddPasswordAsync(user, randomPassword);
-
-                    // Zapisz informację że to użytkownik Google (opcjonalnie)
-                    await _userManager.SetAuthenticationTokenAsync(
-                        user,
-                        "Google",
-                        "login_type",
-                        "oauth"
-                    );
-                } */
-
-                // Opcja B: Użyj Identity API do generowania tokenów
-                // Stwórz HttpContext dla wewnętrznego wywołania
                 var httpContext = HttpContext;
                 var baseUrl = $"{httpContext.Request.Scheme}://{httpContext.Request.Host}";
 
@@ -460,20 +442,16 @@ Zespół Vocare
                     tokenResponse.refreshToken
                 );
 
-                // Zwróć w formacie oczekiwanym przez frontend
                 return Ok(
                     new
                     {
-                        // Frontend szuka 'token' - daj mu to!
                         token = tokenResponse.accessToken,
 
-                        // Dodaj też resztę dla kompatybilności
                         accessToken = tokenResponse.accessToken,
                         refreshToken = tokenResponse.refreshToken,
                         expiresIn = tokenResponse.expiresIn,
                         tokenType = tokenResponse.tokenType,
 
-                        // Dodatkowe informacje
                         userId = user.Id,
                         email = user.Email,
                         isNewUser = isNewUser,
@@ -490,10 +468,9 @@ Zespół Vocare
 
         private string GenerateIdentityCompatibleToken(User user)
         {
-            // ✅ Użyj Data Protection - bezpieczniej niż Base64
             var protector = HttpContext
                 .RequestServices.GetRequiredService<IDataProtectionProvider>()
-                .CreateProtector("VocareAuth"); // Własny purpose string
+                .CreateProtector("VocareAuth");
 
             var tokenData = new
             {
