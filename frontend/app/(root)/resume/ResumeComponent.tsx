@@ -590,6 +590,7 @@ const CVCreator: React.FC<CVCreatorProps> = ({ initialCv }) => {
     }
   }, [initialCv]);
 
+
 const downloadPDF = async () => {
   const frame = document.querySelector<HTMLElement>('.cv-frame');
   if (!frame) return;
@@ -639,9 +640,6 @@ const downloadPDF = async () => {
 
   pdf.save(fileName);
 };
-
-
-
 
   const renderSectionInForm = (sectionId: string) => {
     switch (sectionId) {
