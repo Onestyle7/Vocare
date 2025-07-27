@@ -437,10 +437,12 @@ const CVCreator: React.FC<CVCreatorProps> = ({ initialCv }) => {
   };
 
   const checkContentOverflow = () => {
-    const cvElement = document.querySelector<HTMLElement>('.cv-content');
-    if (!cvElement) return;
-    const contentHeight = cvElement.scrollHeight;
-    const pageHeight = cvElement.clientHeight;
+    const container = document.querySelector<HTMLElement>('.cv-content');
+    const pages = container?.querySelector<HTMLElement>('.cv-pages');
+    if (!container || !pages) return;
+
+    const contentHeight = pages.scrollHeight;
+    const pageHeight = container.clientHeight;
     const newTotalPages = Math.ceil(contentHeight / pageHeight);
     setTotalPages(newTotalPages);
   };
@@ -1699,7 +1701,7 @@ const CVCreator: React.FC<CVCreatorProps> = ({ initialCv }) => {
             >
               {/* A4 Paper with exact dimensions */}
               <div
-                className="cv-content rounded-sm"
+                className="cv-content rounded-sm p-8"
                 style={{
                   width: '210mm',
                   height: '242mm',
@@ -1709,10 +1711,11 @@ const CVCreator: React.FC<CVCreatorProps> = ({ initialCv }) => {
                   backgroundColor: '#ffffff', // Force HEX
                   color: '#000000', // Force HEX
                   boxShadow: '0 4px 6px rgba(0,0,0,0.1)', // Use RGBA for shadow
+                  boxSizing: 'border-box',
                 }}
               >
                 <div
-                  className="h-full p-8"
+                  className="cv-pages h-full box-border"
                   style={{
                     transform: `translateY(-${(currentPage - 1) * 100}%)`,
                   }}
