@@ -413,7 +413,7 @@ Zespół Vocare
 
                 // ✅ KLUCZOWE: Dla Identity Bearer tokens musimy mieć hasło
                 // Opcja A: Ustaw losowe hasło dla użytkowników Google
-                if (!await _userManager.HasPasswordAsync(user))
+                /* if (!await _userManager.HasPasswordAsync(user))
                 {
                     var randomPassword = GenerateRandomPassword();
                     await _userManager.AddPasswordAsync(user, randomPassword);
@@ -425,7 +425,7 @@ Zespół Vocare
                         "login_type",
                         "oauth"
                     );
-                }
+                } */
 
                 // Opcja B: Użyj Identity API do generowania tokenów
                 // Stwórz HttpContext dla wewnętrznego wywołania
@@ -488,33 +488,24 @@ Zespół Vocare
             }
         }
 
-        private string GenerateRandomPassword()
-        {
-            // Generuj hasło spełniające wymagania Identity
-            var chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!@#$%^&*";
-            var random = new Random();
-            var password = new string(
-                Enumerable.Repeat(chars, 16).Select(s => s[random.Next(s.Length)]).ToArray()
-            );
-
-            // Upewnij się że spełnia wymagania
-            return password + "Aa1!";
-        }
-
         private string GenerateIdentityCompatibleToken(User user)
         {
-            // To jest uproszczony token - w produkcji użyj prawdziwego JWT
-            // Identity Bearer token to w rzeczywistości encrypted data
+            // ✅ Użyj Data Protection - bezpieczniej niż Base64
+            var protector = HttpContext
+                .RequestServices.GetRequiredService<IDataProtectionProvider>()
+                .CreateProtector("VocareAuth"); // Własny purpose string
+
             var tokenData = new
             {
                 sub = user.Id,
                 email = user.Email,
                 jti = Guid.NewGuid().ToString(),
                 exp = DateTimeOffset.UtcNow.AddHours(1).ToUnixTimeSeconds(),
+                iat = DateTimeOffset.UtcNow.ToUnixTimeSeconds(),
             };
 
             var json = JsonSerializer.Serialize(tokenData);
-            return Convert.ToBase64String(Encoding.UTF8.GetBytes(json));
+            return protector.Protect(json);
         }
     }
 }
