@@ -1702,7 +1702,7 @@ const CVCreator: React.FC<CVCreatorProps> = ({ initialCv }) => {
                 className="cv-content rounded-sm border border-red-500"
                 style={{
                   width: '210mm',
-                  height: '253mm',
+                  height: '242mm',
                   transform: `scale(${cvScale})`,
                   transformOrigin: 'center center',
                   overflow: 'hidden',
