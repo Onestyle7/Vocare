@@ -130,7 +130,7 @@ const MobileFeature = () => {
     <Section
       crosses
       customPaddings
-      className="relative px-10 max-md:mt-14"
+      className="relative px-10 max-md:mt-14 max-md:-mb-60 overflow-hidden"
       crossesOffset
       id="brain"
     >
@@ -144,9 +144,9 @@ const MobileFeature = () => {
       </ScrollParallax>
       <div className="mt-4 min-h-screen xl:border-t xl:border-b">
         <div className="relative mx-[10%] mb-8 flex flex-col items-center gap-5">
-          <h2 className="mt-[36px] text-sm uppercase md:text-[12px]">Always in Your pocket</h2>
+          <h2 className="mt-[36px] font-poppins font-normal text-gray-400">Always in Your pocket</h2>
           <Copy>
-            <h1 className="font-poppins text-color mt-5 text-center text-4xl font-bold md:text-6xl xl:leading-[0.8]">
+            <h1 className="font-poppins text-color mt-4 text-center text-4xl font-bold md:text-6xl xl:leading-[0.8]">
               Your advisor <br /> always with you
             </h1>
           </Copy>
@@ -179,7 +179,7 @@ const MobileFeature = () => {
               <div className="flex h-full flex-col items-center justify-center text-xl font-light sm:text-3xl lg:w-1/2">
                 <div className="overflow-hidden p-2">
                   <Copy>
-                    <h3 className="font-poppins mx-0 text-3xl leading-[1.2]">
+                    <h3 className="font-poppins mx-0 text-md sm:text-3xl leading-[1.2] max-sm:text-center">
                       Unlock your future with our mobile app, designed to guide you through every
                       step of your career journey.
                     </h3>
