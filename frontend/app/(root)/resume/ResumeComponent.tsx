@@ -592,104 +592,47 @@ const CVCreator: React.FC<CVCreatorProps> = ({ initialCv }) => {
 
   const downloadPDF = async () => {
     try {
-      // ► Zamiana querySelector na generyczny HTMLElement
       const cvElement = document.querySelector<HTMLElement>('.cv-content');
       if (!cvElement) return;
 
       const originalScale = cvScale;
+      const originalPage = currentPage;
       setCvScale(1);
 
-      // Poczekaj na przerender
+      // wait for re-render after scale update
       await new Promise((resolve) => setTimeout(resolve, 100));
 
-      // ► Rzutowanie dla html2canvas
-      const canvas = await html2canvas(cvElement as HTMLElement, {
-        scale: 2,
-        useCORS: true,
-        allowTaint: true,
-        backgroundColor: '#ffffff',
-        width: cvElement.offsetWidth,
-        height: cvElement.offsetHeight,
-      });
-
-      setCvScale(originalScale);
-
-      const imgData = canvas.toDataURL('image/png');
-
-      // A4 rozmiary w mm
       const pdf = new jsPDF('portrait', 'mm', 'a4');
       const pdfWidth = 210;
-      const pdfHeight = 277;
 
-      // Oblicz wymiary obrazu zachowując proporcje
-      const imgWidth = pdfWidth;
-      const imgHeight = (canvas.height * pdfWidth) / canvas.width;
+      for (let page = 1; page <= totalPages; page++) {
+        setCurrentPage(page);
+        // allow DOM to update to the correct page view
+        await new Promise((resolve) => setTimeout(resolve, 100));
 
-      if (imgHeight <= pdfHeight) {
-        pdf.addImage(imgData, 'PNG', 0, 0, imgWidth, imgHeight);
-      } else {
-        let yPosition = 0;
-        let pageCount = 0;
+        const canvas = await html2canvas(cvElement as HTMLElement, {
+          scale: 2,
+          useCORS: true,
+          allowTaint: true,
+          backgroundColor: '#ffffff',
+          width: cvElement.offsetWidth,
+          height: cvElement.offsetHeight,
+        });
 
-        while (yPosition < imgHeight) {
-          if (pageCount > 0) {
-            pdf.addPage();
-          }
+        const imgData = canvas.toDataURL('image/png');
+        const imgHeight = (canvas.height * pdfWidth) / canvas.width;
 
-          const sourceY = (yPosition * canvas.height) / imgHeight;
-          const sourceHeight = Math.min(
-            (pdfHeight * canvas.height) / imgHeight,
-            canvas.height - sourceY
-          );
-
-          const pageCanvas = document.createElement('canvas');
-          const pageCtx = pageCanvas.getContext('2d');
-          if (!pageCtx) {
-            console.error('Could not get 2D context from pageCanvas');
-            return;
-          }
-
-          pageCanvas.width = canvas.width;
-          pageCanvas.height = sourceHeight;
-
-          pageCtx.drawImage(
-            canvas,
-            0,
-            sourceY,
-            canvas.width,
-            sourceHeight,
-            0,
-            0,
-            canvas.width,
-            sourceHeight
-          );
-
-          pageCanvas.width = canvas.width;
-          pageCanvas.height = sourceHeight;
-
-          pageCtx.drawImage(
-            canvas,
-            0,
-            sourceY,
-            canvas.width,
-            sourceHeight,
-            0,
-            0,
-            canvas.width,
-            sourceHeight
-          );
-
-          const pageImgData = pageCanvas.toDataURL('image/png');
-          const pageImgHeight = (sourceHeight * pdfWidth) / canvas.width;
-
-          pdf.addImage(pageImgData, 'PNG', 0, 0, imgWidth, pageImgHeight);
-
-          yPosition += pdfHeight;
-          pageCount++;
+        if (page > 1) {
+          pdf.addPage();
         }
+
+        pdf.addImage(imgData, 'PNG', 0, 0, pdfWidth, imgHeight);
       }
 
-      // Wygeneruj nazwę pliku
+      // restore view
+      setCurrentPage(originalPage);
+      setCvScale(originalScale);
+
       const fileName =
         personalInfo.firstName && personalInfo.lastName
           ? `${personalInfo.firstName}_${personalInfo.lastName}_CV.pdf`
