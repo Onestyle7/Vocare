@@ -14,6 +14,8 @@ import { useState } from 'react';
 import Image from 'next/image';
 import { ButtonForm } from '@/components/ui/button-form';
 import { ArrowRight } from 'lucide-react';
+import { forgotPassword } from '@/lib/auth';
+import { toast } from 'sonner';
 import {
   AlertDialog,
   AlertDialogContent,
@@ -41,14 +43,19 @@ const ForgotPasswordForm = () => {
 
   const onSubmit = async (values: { email: string }) => {
     setIsLoading(true);
-    console.log(values);
-    setIsLoading(false);
-    setOpenDialog(true);
+    try {
+      await forgotPassword(values.email);
+      toast.success('If the email is registered, a reset link will be sent.');
+      setOpenDialog(true);
+    } catch (error) {
+      toast.error('Failed to send reset email');
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   const handleResendEmail = () => {
-    // Logic to resend email
-    console.log('Resending email to:', form.getValues('email'));
+    forgotPassword(form.getValues('email'));
   };
 
   return (

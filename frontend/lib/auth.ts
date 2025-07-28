@@ -42,3 +42,27 @@ export const logoutUser = () => {
   localStorage.removeItem('token');
   window.location.href = '/sign-in';
 };
+
+export const forgotPassword = async (email: string) => {
+  const { data } = await api.post('/api/auth/forgot-password', { email });
+  return data;
+};
+
+interface ResetPasswordInput {
+  email: string;
+  token: string;
+  newPassword: string;
+  confirmPassword: string;
+}
+
+export const resetPassword = async (payload: ResetPasswordInput) => {
+  const { data } = await api.post('/api/auth/reset-password', payload);
+  return data;
+};
+
+export const validateResetToken = async (token: string, email: string) => {
+  const { data } = await api.get('/api/auth/validate-reset-token', {
+    params: { token, email },
+  });
+  return data;
+};
