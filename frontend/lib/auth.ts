@@ -64,3 +64,27 @@ export const googleVerify = async (accessToken: string) => {
 
   return response.data;
 };
+
+export const requestPasswordReset = async (email: string) => {
+  const { data } = await api.post(`${AUTH_PREFIX}/forgot-password`, { email });
+  return data;
+};
+
+interface ResetPasswordInput {
+  email: string;
+  token: string;
+  newPassword: string;
+  confirmPassword: string;
+}
+
+export const resetPassword = async (payload: ResetPasswordInput) => {
+  const { data } = await api.post(`${AUTH_PREFIX}/reset-password`, payload);
+  return data;
+};
+
+export const validateResetToken = async (token: string, email: string) => {
+  const { data } = await api.get(`${AUTH_PREFIX}/validate-reset-token`, {
+    params: { token, email },
+  });
+  return data;
+};

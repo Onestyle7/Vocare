@@ -1,5 +1,12 @@
 'use client';
 import { useForm } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
+import {
+  forgotPasswordSchema,
+  ForgotPasswordFormType,
+} from '@/lib/schemas/passwordSchema';
+import { requestPasswordReset } from '@/lib/auth';
+import { toast } from 'sonner';
 import {
   Form,
   FormControl,
@@ -28,23 +35,36 @@ const ForgotPasswordForm = () => {
   const [openDialog, setOpenDialog] = useState(false);
   const [timer, setTimer] = useState(0); // ⏳ timer in seconds
 
-  const form = useForm({
+  const form = useForm<ForgotPasswordFormType>({
+    resolver: zodResolver(forgotPasswordSchema),
     defaultValues: {
       email: '',
     },
   });
 
-  const onSubmit = async (values: { email: string }) => {
+  const onSubmit = async (values: ForgotPasswordFormType) => {
     setIsLoading(true);
-    console.log(values);
-    setIsLoading(false);
-    setOpenDialog(true);
-    setTimer(60); // start 60-second countdown
+    try {
+      await requestPasswordReset(values.email);
+      toast.success('If entered email is registered, a reset link will be sent.');
+      setOpenDialog(true);
+      setTimer(60);
+    } catch (err) {
+      console.error(err);
+      toast.error('Failed to send reset link');
+    } finally {
+      setIsLoading(false);
+    }
   };
 
-  const handleResendEmail = () => {
-    console.log('Resending email to:', form.getValues('email'));
-    setTimer(60); // restart timer
+  const handleResendEmail = async () => {
+    try {
+      await requestPasswordReset(form.getValues('email'));
+      setTimer(60);
+    } catch (err) {
+      console.error(err);
+      toast.error('Failed to resend email');
+    }
   };
 
   useEffect(() => {
