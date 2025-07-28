@@ -234,6 +234,7 @@ useEffect(() => {
   setTimeout(() => {
     checkSectionBreaks();
     forcePageBreakForLongSections();
+    checkItemBreaks();
   }, 150); // Zwiększ opóźnienie
 }, [
   experiences,
@@ -571,6 +572,36 @@ const forcePageBreakForLongSections = () => {
         const pushToNextPage = pageHeight - spaceFromTop;
         section.style.marginTop = `${pushToNextPage}px`;
       }
+    }
+  });
+};
+
+const checkItemBreaks = () => {
+  const cvContent = document.querySelector('.cv-content');
+  if (!cvContent) return;
+
+  const pageHeight = 1123;
+  const items = cvContent.querySelectorAll('[data-item="experience"]') as NodeListOf<HTMLElement>;
+
+  items.forEach((item) => {
+    item.style.marginTop = '';
+    item.style.pageBreakBefore = '';
+  });
+
+  items.forEach((item) => {
+    const rect = item.getBoundingClientRect();
+    const cvRect = cvContent.getBoundingClientRect();
+    const itemTop = rect.top - cvRect.top + cvContent.scrollTop;
+    const itemBottom = itemTop + item.scrollHeight;
+
+    const startPage = Math.floor(itemTop / pageHeight) + 1;
+    const endPage = Math.floor(itemBottom / pageHeight) + 1;
+
+    if (startPage !== endPage) {
+      const spaceFromTop = itemTop % pageHeight;
+      const pushToNextPage = pageHeight - spaceFromTop;
+      item.style.marginTop = `${pushToNextPage}px`;
+      item.style.pageBreakBefore = 'always';
     }
   });
 };
@@ -1391,7 +1422,7 @@ const downloadPDF = async () => {
               Work Exeperience
             </h3>
             {experiences.map((exp) => (
-              <div key={exp.id} className="mb-3">
+              <div key={exp.id} className="mb-3" data-item="experience">
                 <div className="mb-1 flex items-start justify-between">
                   <div className="min-w-0 flex-1">
                     <h4 className="truncate font-semibold text-gray-900">
