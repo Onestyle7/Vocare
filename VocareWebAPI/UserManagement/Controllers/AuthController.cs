@@ -248,7 +248,11 @@ Zespół Vocare
                     }
                 );
             }
-
+            _logger.LogInformation("User created successfully: {UserId}", user.Id);
+            _logger.LogInformation(
+                "About to call HandleUserRegistrationAsync for user: {UserId}",
+                user.Id
+            );
             try
             {
                 // Setup billing po udanej rejestracji - to jest nasza dodatkowa logika biznesowa
@@ -261,6 +265,10 @@ Zespół Vocare
             catch (Exception ex)
             {
                 _logger.LogError(ex, "Failed to setup billing for user: {UserId}", user.Id);
+                return StatusCode(
+                    500,
+                    new { message = "User registered, but billing setup failed. Please try again" }
+                );
             }
 
             return Ok(new { message = "User registered successfully" });
