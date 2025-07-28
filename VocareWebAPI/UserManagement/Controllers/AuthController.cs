@@ -261,8 +261,6 @@ Zespół Vocare
             catch (Exception ex)
             {
                 _logger.LogError(ex, "Failed to setup billing for user: {UserId}", user.Id);
-                // Nie przerywamy procesu rejestracji - użytkownik zostanie utworzony
-                // Ale logujemy błąd
             }
 
             return Ok(new { message = "User registered successfully" });

@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Stripe;
 using VocareWebAPI.Billing.Models.Dtos;
+using VocareWebAPI.Billing.Repositories.Interfaces;
 using VocareWebAPI.Billing.Services.Interfaces;
 
 namespace VocareWebAPI.Controllers
@@ -18,16 +19,19 @@ namespace VocareWebAPI.Controllers
         private readonly IStripeService _stripeService;
         private readonly IBillingService _billingService;
         private readonly ILogger<BillingController> _logger;
+        private readonly IUserBillingRepository _userBillingRepository;
 
         public BillingController(
             IStripeService stripeService,
             IBillingService billingService,
-            ILogger<BillingController> logger
+            ILogger<BillingController> logger,
+            IUserBillingRepository userBillingRepository
         )
         {
             _stripeService = stripeService;
             _billingService = billingService;
             _logger = logger;
+            _userBillingRepository = userBillingRepository;
         }
 
         [HttpPost("create-checkout-session")]
