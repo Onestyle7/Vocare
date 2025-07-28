@@ -488,10 +488,10 @@ useEffect(() => {
   };
 
 const checkSectionBreaks = () => {
-  const cvContent = document.querySelector('.cv-content');
+  const cvContent = document.querySelector('.cv-content') as HTMLElement | null;
   if (!cvContent) return;
 
-  const pageHeight = 1123; // wysokość strony A4 w pikselach
+  const pageHeight = cvContent.clientHeight;
   const sections = cvContent.querySelectorAll('[data-section]') as NodeListOf<HTMLElement>;
   
   sections.forEach((section) => {
@@ -501,11 +501,8 @@ const checkSectionBreaks = () => {
     
     // Pobierz rzeczywistą wysokość sekcji
     const sectionHeight = section.scrollHeight;
-    const rect = section.getBoundingClientRect();
-    const cvRect = cvContent.getBoundingClientRect();
-    
-    // Oblicz pozycję sekcji względem początku CV
-    const sectionTop = rect.top - cvRect.top + cvContent.scrollTop;
+
+    const sectionTop = section.offsetTop;
     const sectionBottom = sectionTop + sectionHeight;
     
     // Określ na której stronie zaczyna się sekcja
@@ -554,7 +551,7 @@ const forcePageBreakForLongSections = () => {
   const cvContent = document.querySelector('.cv-content');
   if (!cvContent) return;
 
-  const pageHeight = 1123;
+  const pageHeight = cvContent.clientHeight;
   const sections = cvContent.querySelectorAll('[data-section]') as NodeListOf<HTMLElement>;
   
   sections.forEach((section) => {
@@ -562,9 +559,7 @@ const forcePageBreakForLongSections = () => {
     
     // Jeśli sekcja jest bardzo długa, podziel ją lub przenieś całkowicie
     if (sectionHeight > pageHeight * 0.6) {
-      const rect = section.getBoundingClientRect();
-      const cvRect = cvContent.getBoundingClientRect();
-      const sectionTop = rect.top - cvRect.top + cvContent.scrollTop;
+      const sectionTop = section.offsetTop;
       const spaceFromTop = sectionTop % pageHeight;
       
       // Jeśli długa sekcja zaczyna się w drugiej połowie strony, przenieś ją
@@ -577,10 +572,10 @@ const forcePageBreakForLongSections = () => {
 };
 
 const checkItemBreaks = () => {
-  const cvContent = document.querySelector('.cv-content');
+  const cvContent = document.querySelector('.cv-content') as HTMLElement | null;
   if (!cvContent) return;
 
-  const pageHeight = 1123;
+  const pageHeight = cvContent.clientHeight;
   const items = cvContent.querySelectorAll('[data-item="experience"]') as NodeListOf<HTMLElement>;
 
   items.forEach((item) => {
@@ -589,10 +584,8 @@ const checkItemBreaks = () => {
   });
 
   items.forEach((item) => {
-    const rect = item.getBoundingClientRect();
-    const cvRect = cvContent.getBoundingClientRect();
-    const itemTop = rect.top - cvRect.top + cvContent.scrollTop;
-    const itemBottom = itemTop + item.scrollHeight;
+    const itemTop = item.offsetTop;
+    const itemBottom = itemTop + item.offsetHeight;
 
     const startPage = Math.floor(itemTop / pageHeight) + 1;
     const endPage = Math.floor(itemBottom / pageHeight) + 1;
@@ -611,7 +604,7 @@ const checkItemBreaks = () => {
     const cvElement = document.querySelector<HTMLElement>('.cv-content');
     if (!cvElement) return;
     const contentHeight = cvElement.scrollHeight;
-    const pageHeight = 1123; // A4 height in pixels at 96 DPI (approx. 1123px)
+    const pageHeight = cvElement.clientHeight;
     const newTotalPages = Math.ceil(contentHeight / pageHeight);
     setTotalPages(newTotalPages);
   };
