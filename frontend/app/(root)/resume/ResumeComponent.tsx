@@ -251,13 +251,14 @@ useEffect(() => {
   const style = document.createElement('style');
   style.textContent = `
     .cv-content [data-section] {
+      display: block;
+      min-height: 60px;
+    }
+
+    .cv-content [data-item] {
       break-inside: avoid;
       page-break-inside: avoid;
       -webkit-column-break-inside: avoid;
-      
-      display: block;
-      
-      min-height: 60px;
     }
     
     .cv-content [data-section="experience"],
@@ -576,7 +577,7 @@ const checkItemBreaks = () => {
   if (!cvContent) return;
 
   const pageHeight = cvContent.clientHeight;
-  const items = cvContent.querySelectorAll('[data-item="experience"]') as NodeListOf<HTMLElement>;
+  const items = cvContent.querySelectorAll('[data-item]') as NodeListOf<HTMLElement>;
 
   items.forEach((item) => {
     item.style.marginTop = '';
@@ -1448,7 +1449,7 @@ const downloadPDF = async () => {
               Education
             </h3>
             {education.map((edu) => (
-              <div key={edu.id} className="mb-3">
+              <div key={edu.id} className="mb-3" data-item="education">
                 <div className="mb-1 flex items-start justify-between">
                   <div className="min-w-0 flex-1">
                     <h4 className="truncate font-semibold text-gray-900">
@@ -1477,7 +1478,7 @@ const downloadPDF = async () => {
             </h3>
             <div className="space-y-1">
               {certificates.map((cert) => (
-                <p key={cert.id} className="text-sm text-gray-700">
+                <p key={cert.id} className="text-sm text-gray-700" data-item="certificate">
                   {cert.name}
                   {cert.date ? ` (${formatDate(cert.date)})` : ''}
                 </p>
@@ -1498,6 +1499,7 @@ const downloadPDF = async () => {
                 <span
                   key={skill.id}
                   className="rounded-full bg-blue-100 px-2 py-1 text-xs font-medium text-blue-800"
+                  data-item="skill"
                 >
                   {skill.name || 'Skill'}
                 </span>
@@ -1518,6 +1520,7 @@ const downloadPDF = async () => {
                 <span
                   key={language.id}
                   className="rounded-full bg-purple-100 px-2 py-1 text-xs font-medium text-purple-800"
+                  data-item="language"
                 >
                   {language.name || 'Language'} - {language.level}
                 </span>
@@ -1538,6 +1541,7 @@ const downloadPDF = async () => {
                 <span
                   key={hobby.id}
                   className="rounded-full bg-green-100 px-2 py-1 text-xs font-medium text-green-800"
+                  data-item="hobby"
                 >
                   {hobby.name || 'Hobby'}
                 </span>
