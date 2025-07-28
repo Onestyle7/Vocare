@@ -72,7 +72,7 @@ const ForgotPasswordForm = () => {
                 <div className="shad-form-item">
                   <FormLabel className="shad-form-label mb-2">E-mail</FormLabel>
                   <FormControl>
-                    <Input placeholder="Enter Your e-mail" className="input-profile" {...field} />
+                    <Input placeholder="Enter Your e-mail" className="input-profile font-poppins" {...field} />
                   </FormControl>
                 </div>
                 <FormMessage className="shad-form-message" />
