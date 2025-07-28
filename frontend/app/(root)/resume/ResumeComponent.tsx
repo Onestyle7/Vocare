@@ -1101,7 +1101,6 @@ const downloadPDF = async () => {
                         <SelectValue />
                       </SelectTrigger>
                       <SelectContent>
-                        <SelectItem value="Ogólny">Ogólny</SelectItem>
                         <SelectItem value="Beginner">Beginner</SelectItem>
                         <SelectItem value="Conversational">Conversational</SelectItem>
                         <SelectItem value="Advanced">Advanced</SelectItem>
