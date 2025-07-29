@@ -12,30 +12,59 @@ class ExpandableCareerPathCard extends StatelessWidget {
       color: const Color(0xFF1C1C1E),
       margin: const EdgeInsets.symmetric(vertical: 8),
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-      child: ExpansionTile(
-        title: Text(
-          careerPath.careerName,
-          style: const TextStyle(
-            fontWeight: FontWeight.bold,
-            color: Colors.white,
-          ),
+      child: IntrinsicHeight(
+        child: Row(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            Container(
+              width: 40,
+              decoration: const BoxDecoration(
+                color: Color(0xFF915EFF),
+                borderRadius: BorderRadius.only(
+                  topLeft: Radius.circular(12),
+                  bottomLeft: Radius.circular(12),
+                ),
+              ),
+            ),
+            Expanded(
+              child: ExpansionTile(
+                tilePadding: const EdgeInsets.symmetric(
+                  horizontal: 16,
+                  vertical: 8,
+                ),
+                iconColor: Colors.purpleAccent,
+                collapsedIconColor: Colors.purpleAccent,
+                title: Text(
+                  careerPath.careerName,
+                  style: const TextStyle(
+                    fontWeight: FontWeight.bold,
+                    color: Colors.white,
+                  ),
+                ),
+                subtitle: Text(
+                  "Prawdopodobieństwo: ${careerPath.probability}%",
+                  style: const TextStyle(color: Colors.purpleAccent),
+                ),
+                children: [
+                  _buildSection("📝 Opis", careerPath.description),
+                  _buildList(
+                    "🔧 Wymagane umiejętności",
+                    careerPath.requiredSkills,
+                  ),
+                  _buildList(
+                    "🎓 Rekomendowane kursy",
+                    careerPath.recommendedCourses,
+                  ),
+                  _buildList("📊 Analiza rynku", careerPath.marketAnalysis),
+                  _buildList("💪 Mocne strony", careerPath.swot.strengths),
+                  _buildList("📉 Słabości", careerPath.swot.weaknesses),
+                  _buildList("🚀 Szanse", careerPath.swot.opportunities),
+                  _buildList("⚠️ Zagrożenia", careerPath.swot.threats),
+                ],
+              ),
+            ),
+          ],
         ),
-        subtitle: Text(
-          "Prawdopodobieństwo: ${(careerPath.probability * 100).toStringAsFixed(1)}%",
-          style: const TextStyle(color: Colors.purpleAccent),
-        ),
-        iconColor: Colors.purpleAccent,
-        collapsedIconColor: Colors.purpleAccent,
-        children: [
-          _buildSection("📝 Opis", careerPath.description),
-          _buildList("🔧 Wymagane umiejętności", careerPath.requiredSkills),
-          _buildList("🎓 Rekomendowane kursy", careerPath.recommendedCourses),
-          _buildList("📊 Analiza rynku", careerPath.marketAnalysis),
-          _buildList("💪 Mocne strony", careerPath.swot.strengths),
-          _buildList("📉 Słabości", careerPath.swot.weaknesses),
-          _buildList("🚀 Szanse", careerPath.swot.opportunities),
-          _buildList("⚠️ Zagrożenia", careerPath.swot.threats),
-        ],
       ),
     );
   }

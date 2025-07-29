@@ -8,8 +8,9 @@ class CustomInput extends StatelessWidget {
   final Color borderColor;
   final double borderRadius;
   final EdgeInsetsGeometry padding;
-  final Color fillColor; // 🆕 kolor tła inputa
-  final Color textColor; // 🆕 kolor tekstu
+  final Color fillColor;
+  final Color textColor;
+  final TextInputType? keyboardType;
 
   const CustomInput({
     super.key,
@@ -20,8 +21,9 @@ class CustomInput extends StatelessWidget {
     this.borderColor = const Color(0xFF915EFF),
     this.borderRadius = 25,
     this.padding = const EdgeInsets.all(16),
-    this.fillColor = const Color(0xFF191A23), // domyślny kolor tła
-    this.textColor = Colors.white, // domyślny kolor tekstu
+    this.fillColor = const Color(0xFF191A23),
+    this.textColor = Colors.white,
+    this.keyboardType, // 🆕 Dodane do konstruktora
   });
 
   @override
@@ -30,17 +32,16 @@ class CustomInput extends StatelessWidget {
       padding: padding,
       child: TextField(
         controller: controller,
-        style: TextStyle(color: textColor), // kolor tekstu
+        keyboardType: keyboardType, // 🆕 Użycie keyboardType
+        style: TextStyle(color: textColor),
         decoration: InputDecoration(
           labelText: label,
           hintText: hintText,
-          hintStyle: TextStyle(
-            color: textColor.withOpacity(0.6),
-          ), // kolor podpowiedzi
-          labelStyle: TextStyle(color: textColor), // kolor etykiety
+          hintStyle: TextStyle(color: textColor.withOpacity(0.6)),
+          labelStyle: TextStyle(color: textColor),
           prefixIcon: prefixIcon,
           filled: true,
-          fillColor: fillColor, // 🎨 kolor środka inputa
+          fillColor: fillColor,
           border: OutlineInputBorder(
             borderRadius: BorderRadius.circular(borderRadius),
             borderSide: BorderSide(color: borderColor, width: 2),
