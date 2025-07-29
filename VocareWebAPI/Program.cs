@@ -353,6 +353,7 @@ if (app.Environment.IsStaging())
 
 // app.UseHttpsRedirection();
 app.UseRouting();
+app.UseCors("AllowAll");
 
 app.Use(
     async (context, next) =>
@@ -366,10 +367,11 @@ app.Use(
             var origin = context.Request.Headers["Origin"].ToString();
             if (!string.IsNullOrEmpty(origin))
             {
-                context.Response.Headers.Add("Access-Control-Allow-Origin", origin);
-                context.Response.Headers.Add("Access-Control-Allow-Credentials", "true");
-                context.Response.Headers.Add("Access-Control-Allow-Methods", "POST, OPTIONS");
-                context.Response.Headers.Add(
+                // Użyj TryAdd zamiast Add, żeby uniknąć duplikatów
+                context.Response.Headers.TryAdd("Access-Control-Allow-Origin", origin);
+                context.Response.Headers.TryAdd("Access-Control-Allow-Credentials", "true");
+                context.Response.Headers.TryAdd("Access-Control-Allow-Methods", "POST, OPTIONS");
+                context.Response.Headers.TryAdd(
                     "Access-Control-Allow-Headers",
                     "Content-Type, Authorization"
                 );
@@ -378,20 +380,23 @@ app.Use(
             return; // Zakończ przetwarzanie dla OPTIONS
         }
 
-        // Dla innych requestów, dodaj nagłówki PO wykonaniu next()
+        // Dla innych requestów Google verify
         if (context.Request.Path.StartsWithSegments("/api/auth/google-verify"))
         {
-            // Ustaw callback który doda nagłówki zanim response zostanie wysłany
+            // Dodaj headers BEZPIECZNIE - sprawdź czy response się jeszcze nie rozpoczął
             context.Response.OnStarting(() =>
             {
-                var origin = context.Request.Headers["Origin"].ToString();
-                if (
-                    !string.IsNullOrEmpty(origin)
-                    && !context.Response.Headers.ContainsKey("Access-Control-Allow-Origin")
-                )
+                if (!context.Response.HasStarted)
                 {
-                    context.Response.Headers.Add("Access-Control-Allow-Origin", origin);
-                    context.Response.Headers.Add("Access-Control-Allow-Credentials", "true");
+                    var origin = context.Request.Headers["Origin"].ToString();
+                    if (
+                        !string.IsNullOrEmpty(origin)
+                        && !context.Response.Headers.ContainsKey("Access-Control-Allow-Origin")
+                    )
+                    {
+                        context.Response.Headers.TryAdd("Access-Control-Allow-Origin", origin);
+                        context.Response.Headers.TryAdd("Access-Control-Allow-Credentials", "true");
+                    }
                 }
                 return Task.CompletedTask;
             });
@@ -401,49 +406,58 @@ app.Use(
     }
 );
 
-// Middleware dla nagłówków bezpieczeństwa - ten może zostać jak jest
+// 3. Security headers middleware - ZROBIĆ BEZPIECZNIE
 app.Use(
     async (context, next) =>
     {
-        context.Response.Headers.Add("X-Content-Type-Options", "nosniff");
-        context.Response.Headers.Add("X-Frame-Options", "SAMEORIGIN");
-        context.Response.Headers.Add("Referrer-Policy", "strict-origin-when-cross-origin");
+        // Dodaj security headers PRZED wykonaniem akcji
+        if (!context.Response.HasStarted)
+        {
+            context.Response.Headers.TryAdd("X-Content-Type-Options", "nosniff");
+            context.Response.Headers.TryAdd("X-Frame-Options", "SAMEORIGIN");
+            context.Response.Headers.TryAdd("Referrer-Policy", "strict-origin-when-cross-origin");
+        }
+
         await next();
     }
 );
-app.UseCors("AllowAll");
-app.UseCookiePolicy(); // ✅ NAPRAWKA: Dodano UseCookiePolicy
+
+app.UseCookiePolicy();
 app.UseAuthentication();
+
+// 4. Custom token middleware - UPROSZCZONY I BEZPIECZNY
 app.Use(
     async (context, next) =>
     {
-        var token = context.Request.Headers["Authorization"].FirstOrDefault()?.Split(" ").Last();
+        var token = context
+            .Request.Headers["Authorization"]
+            .FirstOrDefault()
+            ?.Split(" ")
+            .LastOrDefault();
 
         if (!string.IsNullOrEmpty(token) && context.User?.Identity?.IsAuthenticated != true)
         {
             try
             {
-                // ✅ Użyj tego samego Data Protection provider
                 var protector = context
                     .RequestServices.GetRequiredService<IDataProtectionProvider>()
-                    .CreateProtector("VocareAuth"); // Ten sam purpose string!
+                    .CreateProtector("VocareAuth");
 
-                // Deszyfruj token
                 var json = protector.Unprotect(token);
                 var tokenData = JsonSerializer.Deserialize<JsonElement>(json);
 
-                // ✅ Sprawdź expiration NAJPIERW
+                // Sprawdź expiration
                 if (tokenData.TryGetProperty("exp", out var expElement))
                 {
                     var exp = expElement.GetInt64();
                     if (DateTimeOffset.FromUnixTimeSeconds(exp) <= DateTimeOffset.UtcNow)
                     {
-                        // Token wygasł - nie uwierzytelniaj
                         await next();
                         return;
                     }
                 }
 
+                // Ustaw użytkownika
                 if (tokenData.TryGetProperty("sub", out var sub))
                 {
                     var userId = sub.GetString();
@@ -457,17 +471,14 @@ app.Use(
                         var principal = await context
                             .RequestServices.GetRequiredService<IUserClaimsPrincipalFactory<User>>()
                             .CreateAsync(user);
-
                         context.User = principal;
                     }
                 }
             }
             catch (Exception ex)
             {
-                // ✅ Log błędy ale nie przerywaj request
                 var logger = context.RequestServices.GetRequiredService<ILogger<Program>>();
                 logger.LogWarning(ex, "Failed to validate custom token");
-                // Kontynuuj bez uwierzytelnienia
             }
         }
 

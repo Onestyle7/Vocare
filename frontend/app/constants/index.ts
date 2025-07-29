@@ -239,6 +239,8 @@ export const fire = '/svg/fire.svg';
 
 export const Spinner = '/svg/spinner.svg';
 
+export const spinner_terminal = '/svg/spinner_terminal.svg';
+
 // Hero section
 
 export const plus = '/images/plus.png';

@@ -130,7 +130,9 @@ const ForgotPasswordForm = () => {
               type="button"
               onClick={handleResendEmail}
               className={`cursor-pointer text-sm underline transition-colors duration-200 ${
-                timer === 0 ? 'text-gray-600 hover:text-[#915EFF]' : 'text-gray-400 cursor-not-allowed'
+                timer === 0
+                  ? 'text-gray-600 hover:text-[#915EFF]'
+                  : 'cursor-not-allowed text-gray-400'
               }`}
               disabled={timer > 0}
             >

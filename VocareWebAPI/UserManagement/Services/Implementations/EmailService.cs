@@ -43,40 +43,68 @@ namespace VocareWebAPI.UserManagement.Services.Implementations
 
         public async Task SendEmailAsync(string to, string subject, string body)
         {
-            if (_webHostEnvironment.IsDevelopment())
+            // Sprawdź czy powinniśmy używać testowego emaila
+            var useTestEmail = ShouldUseTestEmail();
+
+            if (useTestEmail)
             {
-                await SendViaResendDev(to, subject, body);
+                await SendToTestEmail(to, subject, body);
             }
             else
             {
+                // Na produkcji ZAWSZE wysyłaj na prawdziwy adres
                 await SendViaResend(to, subject, body);
             }
         }
 
-        private async Task SendViaResendDev(string to, string subject, string body)
+        private bool ShouldUseTestEmail()
+        {
+            // Najpierw sprawdź czy jest to development
+            if (_webHostEnvironment.IsDevelopment())
+            {
+                return true;
+            }
+
+            // Następnie sprawdź czy jest ustawiona flaga w konfiguracji
+            // To pozwala na testowanie emaili nawet na staging
+            var useTestEmailConfig = _configuration.GetValue<bool?>("Resend:UseTestEmail");
+            if (useTestEmailConfig.HasValue)
+            {
+                return useTestEmailConfig.Value;
+            }
+
+            // Domyślnie na produkcji NIE używaj testowego emaila
+            return false;
+        }
+
+        private async Task SendToTestEmail(string originalTo, string subject, string body)
         {
             var testEmail = _configuration["Resend:TestEmail"] ?? "delivered@resend.dev";
-            var devSubject = $"[DEV] {subject}";
-            var devBody =
+            var envName = _webHostEnvironment.EnvironmentName;
+            var modifiedSubject = $"[{envName.ToUpper()}] {subject}";
+            var modifiedBody =
                 $@"
---- DEVELOPMENT EMAIL ---
-Original recipient: {to}
+--- {envName.ToUpper()} TEST EMAIL ---
+Original recipient: {originalTo}
 Original subject: {subject}
+Environment: {envName}
 ---
 
 {body}";
 
-            await SendViaResend(testEmail, devSubject, devBody);
-            await SaveEmailToFile(to, subject, body);
+            await SendViaResend(testEmail, modifiedSubject, modifiedBody);
+
+            // Zapisz do pliku tylko w development
+            if (_webHostEnvironment.IsDevelopment())
+            {
+                await SaveEmailToFile(originalTo, subject, body);
+            }
         }
 
         private async Task SendViaResend(string to, string subject, string body)
         {
-            // W produkcji użyj swojej domeny, w dev użyj testowej
-            var fromEmail = _webHostEnvironment.IsProduction()
-                ? _configuration["Resend:FromEmail"] ?? "noreply@vocare.pl"
-                : _configuration["Resend:TestFromEmail"] ?? "onboarding@resend.dev";
-
+            // Określ adres nadawcy na podstawie środowiska
+            var fromEmail = GetFromEmail();
             var fromName = _configuration["Resend:FromName"] ?? "Vocare Team";
 
             var payload = new
@@ -99,20 +127,37 @@ Original subject: {subject}
                 if (!response.IsSuccessStatusCode)
                 {
                     _logger.LogError(
-                        "Email sending failed. Status: {StatusCode}, Response: {Response}",
+                        "Email sending failed. Status: {StatusCode}, Response: {Response}, To: {To}",
                         response.StatusCode,
-                        responseContent
+                        responseContent,
+                        to
                     );
                     throw new HttpRequestException($"Email sending failed: {responseContent}");
                 }
 
-                _logger.LogInformation("Email sent successfully to {Email}", to);
+                _logger.LogInformation(
+                    "Email sent successfully to {Email} in {Environment} environment",
+                    to,
+                    _webHostEnvironment.EnvironmentName
+                );
             }
             catch (HttpRequestException ex)
             {
                 _logger.LogError(ex, "Error sending email to {Email}", to);
                 throw;
             }
+        }
+
+        private string GetFromEmail()
+        {
+            // W produkcji zawsze używaj prawdziwej domeny
+            if (_webHostEnvironment.IsProduction())
+            {
+                return _configuration["Resend:FromEmail"] ?? "noreply@vocare.pl";
+            }
+
+            // W innych środowiskach możesz użyć testowej domeny
+            return _configuration["Resend:TestFromEmail"] ?? "onboarding@resend.dev";
         }
 
         private async Task SaveEmailToFile(string to, string subject, string body)
@@ -127,6 +172,7 @@ Original subject: {subject}
                 $@"To: {to}
 Subject: {subject}
 Date: {DateTime.UtcNow:yyyy-MM-dd HH:mm:ss} UTC
+Environment: {_webHostEnvironment.EnvironmentName}
 
 {body}";
 
@@ -137,7 +183,8 @@ Date: {DateTime.UtcNow:yyyy-MM-dd HH:mm:ss} UTC
         private string ConvertToHtml(string text)
         {
             // Prosta konwersja tekstu na HTML
-            return text.Replace("\n", "<br>");
+            var html = System.Security.SecurityElement.Escape(text);
+            return html.Replace("\n", "<br>");
         }
 
         private string StripHtml(string html)
