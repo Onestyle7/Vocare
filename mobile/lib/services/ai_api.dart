@@ -1,7 +1,7 @@
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:vocare/models/ai_career_response.dart'; // UWAGA: dodaj ten plik najpierw
+import 'package:vocare/models/ai_career_response.dart';
 
 class AiApi {
   static Future<AiCareerResponse?> fetchFullRecommendation() async {

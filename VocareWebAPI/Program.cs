@@ -350,6 +350,7 @@ if (app.Environment.IsStaging())
 }
 
 // ===== MIDDLEWARE PIPELINE =====
+
 // app.UseHttpsRedirection();
 app.UseRouting();
 app.UseCors("AllowAll");

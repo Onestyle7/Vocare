@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:vocare/models/ai_career_response.dart';
 import 'package:vocare/services/ai_api.dart';
 import 'package:vocare/widgets/custom_button.dart';
-import 'package:vocare/widgets/main_recommendation_card.dart';
 import 'package:vocare/widgets/expandable_career_path_card.dart';
+import 'package:vocare/widgets/main_recommendation_card.dart';
 import 'package:vocare/widgets/nav_bar_button.dart';
 import 'package:vocare/widgets/theme_toggle_button.dart';
 
@@ -15,15 +15,15 @@ class AIAsistentPageScreen extends StatefulWidget {
 }
 
 class _AIAsistentPageScreenState extends State<AIAsistentPageScreen> {
-  AiCareerResponse? _careerResponse;
   bool _loading = false;
+  AiCareerResponse? _recommendation;
 
   Future<void> _loadRecommendation() async {
     setState(() => _loading = true);
     final result = await AiApi.fetchFullRecommendation();
     setState(() {
-      _careerResponse = result;
       _loading = false;
+      _recommendation = result;
     });
   }
 
@@ -31,77 +31,42 @@ class _AIAsistentPageScreenState extends State<AIAsistentPageScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        title: const Text("Assistant"),
         backgroundColor: Colors.black87,
-        automaticallyImplyLeading: false,
-        toolbarHeight: 60,
-        flexibleSpace: SafeArea(
-          child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 16),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: const [
-                ThemeToggleButton(),
-                NavBarButtons(
-                  destinations: [
-                    NavDestination.home,
-                    NavDestination.profile,
-                    NavDestination.logout,
-                    NavDestination.assistent,
-                  ],
-                ),
-              ],
-            ),
-          ),
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back),
+          onPressed: () => Navigator.pop(context),
         ),
+        actions: const [ThemeToggleButton()],
       ),
       body: SafeArea(
         child: Padding(
           padding: const EdgeInsets.all(16),
-          child:
+          child: ListView(
+            children: [
+              if (_recommendation != null) ...[
+                MainRecommendationCard(
+                  recommendation: _recommendation!.recommendation,
+                ),
+                ExpandableCareerPathCard(
+                  careerPath: _recommendation!.careerPaths[0],
+                ),
+                ExpandableCareerPathCard(
+                  careerPath: _recommendation!.careerPaths[1],
+                ),
+                ExpandableCareerPathCard(
+                  careerPath: _recommendation!.careerPaths[2],
+                ),
+              ],
+              const SizedBox(height: 16),
               _loading
                   ? const Center(child: CircularProgressIndicator())
-                  : _careerResponse == null
-                  ? Center(
-                    child: CustomButton(
-                      text: "Generuj rekomendację AI",
-                      onPressed: _loadRecommendation,
-                    ),
-                  )
-                  : SingleChildScrollView(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        const Text(
-                          "🎯 Główna rekomendacja",
-                          style: TextStyle(
-                            fontSize: 20,
-                            fontWeight: FontWeight.bold,
-                            color: Colors.white,
-                          ),
-                        ),
-                        const SizedBox(height: 12),
-                        MainRecommendationCard(
-                          recommendation: _careerResponse!.recommendation,
-                        ),
-                        const SizedBox(height: 24),
-                        const Text(
-                          "💼 Alternatywne ścieżki kariery",
-                          style: TextStyle(
-                            fontSize: 20,
-                            fontWeight: FontWeight.bold,
-                            color: Colors.white,
-                          ),
-                        ),
-                        const SizedBox(height: 12),
-                        ..._careerResponse!.careerPaths
-                            .take(3)
-                            .map(
-                              (path) =>
-                                  ExpandableCareerPathCard(careerPath: path),
-                            ),
-                      ],
-                    ),
+                  : CustomButton(
+                    text: "Generate new recommendation",
+                    onPressed: _loadRecommendation,
                   ),
+            ],
+          ),
         ),
       ),
     );
