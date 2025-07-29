@@ -5,6 +5,7 @@ const AUTH_PREFIX = '/api/Auth';
 interface RegisterInput {
   email: string;
   password: string;
+  confirmPassword: string;
 }
 
 interface LoginInput {
@@ -26,8 +27,8 @@ api.interceptors.response.use(
   }
 );
 
-export const registerUser = async ({ email, password }: RegisterInput) => {
-  const response = await api.post(`${AUTH_PREFIX}/register`, { email, password });
+export const registerUser = async ({ email, password, confirmPassword }: RegisterInput) => {
+  const response = await api.post(`${AUTH_PREFIX}/register`, { email, password, confirmPassword });
   return response.data;
 };
 
