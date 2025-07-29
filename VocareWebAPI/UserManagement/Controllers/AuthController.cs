@@ -316,13 +316,21 @@ Zespół Vocare
                 return BadRequest(ModelState);
             }
 
-            // Ustaw scheme na Bearer dla Identity
-            _signInManager.AuthenticationScheme = IdentityConstants.BearerScheme;
+            // Znajdź użytkownika najpierw
+            var user = await _userManager.FindByEmailAsync(request.Email);
+            if (user == null)
+            {
+                _logger.LogWarning(
+                    "Failed login attempt for non-existent user: {Email}",
+                    request.Email
+                );
+                return BadRequest(new { message = "Invalid email or password." });
+            }
 
-            var result = await _signInManager.PasswordSignInAsync(
-                request.Email,
+            // Sprawdź hasło
+            var result = await _signInManager.CheckPasswordSignInAsync(
+                user,
                 request.Password,
-                isPersistent: false,
                 lockoutOnFailure: true
             );
 
@@ -340,19 +348,21 @@ Zespół Vocare
                 return BadRequest(new { message = "Invalid email or password." });
             }
 
-            var user = await _userManager.FindByEmailAsync(request.Email);
-            if (user == null)
-            {
-                return BadRequest(new { message = "Invalid email or password." });
-            }
+            // Generuj token (tak jak w GoogleVerify)
+            var token = GenerateIdentityCompatibleToken(user);
 
             _logger.LogInformation("User logged in successfully: {UserId}", user.Id);
+
             return Ok(
                 new
                 {
                     message = "Login successful",
                     userId = user.Id,
                     email = user.Email,
+                    token = token, // Dodaj token do odpowiedzi!
+                    accessToken = token, // Dla kompatybilności
+                    tokenType = "Bearer",
+                    expiresIn = 3600,
                 }
             );
         }

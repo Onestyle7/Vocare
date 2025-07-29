@@ -14,8 +14,8 @@ interface LoginInput {
 }
 
 api.interceptors.response.use(
-  response => response,
-  error => {
+  (response) => response,
+  (error) => {
     const isLoginRoute = error.config?.url?.includes(`${AUTH_PREFIX}/login`);
     if (error.response?.status === 401 && !isLoginRoute) {
       localStorage.removeItem('token');
@@ -31,7 +31,7 @@ export const registerUser = async ({ email, password, confirmPassword }: Registe
 };
 
 export const loginUser = async ({ email, password }: LoginInput) => {
-  const response = await api.post(`${AUTH_PREFIX}/login`, { email, password });
+  const response = await api.post(`/login`, { email, password });
   const token = response.data.token;
   if (token) {
     localStorage.setItem('token', token);
