@@ -101,6 +101,12 @@ const HeroTweak = () => {
           </Suspense>
         )}
       </div>
+      <div className='h-[70px] w-full flex'>
+        <div className='border-b w-full h-full mx-10'>
+
+        </div>
+
+        </div>
       <div className="relative mt-14 flex flex-col items-center justify-center border-gray-300 px-[40px] max-md:mt-40 dark:border-gray-600/30">
         <div className="mb-2 flex h-full flex-col items-center justify-center">
           <h3 className="font-poppins font-normal text-gray-400">Meet Us</h3>
