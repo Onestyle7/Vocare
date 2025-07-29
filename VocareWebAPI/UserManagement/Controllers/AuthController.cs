@@ -222,8 +222,11 @@ Zespół Vocare
         [AllowAnonymous]
         public async Task<IActionResult> Register([FromBody] RegisterDto request)
         {
+            _logger.LogInformation("=== REGISTER START === Email: {Email}", request.Email);
+
             if (!ModelState.IsValid)
             {
+                _logger.LogWarning("Invalid model state for registration");
                 return BadRequest(ModelState);
             }
 
@@ -231,6 +234,7 @@ Zespół Vocare
             var existingUser = await _userManager.FindByEmailAsync(request.Email);
             if (existingUser != null)
             {
+                _logger.LogWarning("User already exists: {Email}", request.Email);
                 return BadRequest(new { message = "User with this email already exists." });
             }
 
@@ -240,6 +244,11 @@ Zespół Vocare
 
             if (!result.Succeeded)
             {
+                _logger.LogError(
+                    "User creation failed for {Email}: {Errors}",
+                    request.Email,
+                    string.Join(", ", result.Errors.Select(e => e.Description))
+                );
                 return BadRequest(
                     new
                     {
@@ -248,30 +257,54 @@ Zespół Vocare
                     }
                 );
             }
-            _logger.LogInformation("User created successfully: {UserId}", user.Id);
+
             _logger.LogInformation(
-                "About to call HandleUserRegistrationAsync for user: {UserId}",
-                user.Id
+                "=== USER CREATED === UserId: {UserId}, Email: {Email}",
+                user.Id,
+                user.Email
             );
+
             try
             {
-                // Setup billing po udanej rejestracji - to jest nasza dodatkowa logika biznesowa
-                await _registrationHandler.HandleUserRegistrationAsync(user.Id);
                 _logger.LogInformation(
-                    "User registered successfully with billing setup: {UserId}",
+                    "=== CALLING HandleUserRegistrationAsync === UserId: {UserId}",
                     user.Id
                 );
+
+                // Sprawdź czy handler nie jest null
+                if (_registrationHandler == null)
+                {
+                    _logger.LogError("RegistrationHandler is NULL!");
+                    throw new InvalidOperationException("RegistrationHandler is not initialized");
+                }
+
+                await _registrationHandler.HandleUserRegistrationAsync(user.Id);
+
+                _logger.LogInformation("=== BILLING SETUP COMPLETE === UserId: {UserId}", user.Id);
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "Failed to setup billing for user: {UserId}", user.Id);
+                _logger.LogError(
+                    ex,
+                    "=== BILLING SETUP FAILED === UserId: {UserId}, Error: {Error}",
+                    user.Id,
+                    ex.Message
+                );
+                _logger.LogError("StackTrace: {StackTrace}", ex.StackTrace);
+
                 return StatusCode(
                     500,
-                    new { message = "User registered, but billing setup failed. Please try again" }
+                    new
+                    {
+                        message = "User registered, but billing setup failed",
+                        error = ex.Message,
+                        userId = user.Id, // Dodajmy userId do odpowiedzi żeby móc debugować
+                    }
                 );
             }
 
-            return Ok(new { message = "User registered successfully" });
+            _logger.LogInformation("=== REGISTER COMPLETE === UserId: {UserId}", user.Id);
+            return Ok(new { message = "User registered successfully", userId = user.Id });
         }
 
         [HttpPost("login")]

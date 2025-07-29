@@ -33,13 +33,23 @@ namespace VocareWebAPI.UserManagement.Services
             try
             {
                 _logger.LogInformation($"Setting up new user: {userId}");
+                _logger.LogInformation(
+                    "Config - WelcomeTokens: {WelcomeTokens}, DefaultSubscriptionStatus: {DefaultSubscriptionStatus}, DefaultSubscriptionLevel: {DefaultSubscriptionLevel}",
+                    _config.WelcomeTokens,
+                    _config.DefaultSubscriptionStatus,
+                    _config.DefaultSubscriptionLevel
+                );
                 UserBilling? existingBilling = null;
 
                 try
                 {
                     existingBilling = await _userBillingRepository.GetByUserIdAsync(userId);
+                    _logger.LogInformation("found existing UserBilling for user: {UserId}", userId);
                 }
-                catch (KeyNotFoundException) { }
+                catch (KeyNotFoundException)
+                {
+                    _logger.LogInformation("UserBilling not found for user: {UserId}", userId);
+                }
 
                 if (existingBilling != null)
                 {
@@ -86,6 +96,7 @@ namespace VocareWebAPI.UserManagement.Services
                     StripeSubscriptionId = null,
                     SubscriptionEndDate = null,
                 };
+                _logger.LogInformation("Creating new UserBilling for user: {UserId}", userId);
                 await _userBillingRepository.CreateAsync(userBilling);
                 _logger.LogInformation("UserBilling created for user: {UserId}", userId);
             }
