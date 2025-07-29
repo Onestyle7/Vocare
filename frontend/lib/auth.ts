@@ -1,6 +1,6 @@
 import { api } from './api';
 
-const AUTH_PREFIX = '/api/auth';
+const AUTH_PREFIX = '/api/Auth';
 
 interface RegisterInput {
   email: string;
@@ -13,8 +13,8 @@ interface LoginInput {
 }
 
 api.interceptors.response.use(
-  (response) => response,
-  (error) => {
+  response => response,
+  error => {
     const isLoginRoute = error.config?.url?.includes(`${AUTH_PREFIX}/login`);
 
     if (error.response?.status === 401 && !isLoginRoute) {
@@ -27,12 +27,12 @@ api.interceptors.response.use(
 );
 
 export const registerUser = async ({ email, password }: RegisterInput) => {
-  const response = await api.post(`/register`, { email, password });
+  const response = await api.post(`${AUTH_PREFIX}/register`, { email, password });
   return response.data;
 };
 
 export const loginUser = async ({ email, password }: LoginInput) => {
-  const response = await api.post(`/login`, { email, password });
+  const response = await api.post(`${AUTH_PREFIX}/login`, { email, password });
   const token = response.data.token;
   if (token) {
     localStorage.setItem('token', token);
@@ -52,7 +52,8 @@ export const logoutUser = async () => {
 };
 
 export const googleVerify = async (accessToken: string) => {
-  const response = await api.post('/api/Auth/google-verify', { accessToken });
+  // tutaj można zostawić pełną ścieżkę lub użyć AUTH_PREFIX:
+  const response = await api.post(`${AUTH_PREFIX}/google-verify`, { accessToken });
   const token =
     response.data.token ||
     response.data.accessToken ||
