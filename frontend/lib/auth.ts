@@ -17,12 +17,10 @@ api.interceptors.response.use(
   response => response,
   error => {
     const isLoginRoute = error.config?.url?.includes(`${AUTH_PREFIX}/login`);
-
     if (error.response?.status === 401 && !isLoginRoute) {
       localStorage.removeItem('token');
       window.location.href = '/sign-in';
     }
-
     return Promise.reject(error);
   }
 );
@@ -53,16 +51,13 @@ export const logoutUser = async () => {
 };
 
 export const googleVerify = async (accessToken: string) => {
-  // tutaj można zostawić pełną ścieżkę lub użyć AUTH_PREFIX:
   const response = await api.post(`${AUTH_PREFIX}/google-verify`, { accessToken });
   const token =
     response.data.token ||
     response.data.accessToken ||
     response.headers['authorization']?.replace('Bearer ', '');
-
   if (token) {
     localStorage.setItem('token', token);
   }
-
   return response.data;
 };

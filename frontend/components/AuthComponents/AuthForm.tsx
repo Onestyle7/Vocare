@@ -53,29 +53,34 @@ const AuthForm = ({ type }: { type: FormType }) => {
   });
 
   async function onSubmit(values: AuthFormType) {
-    setIsLoading(true);
-    try {
-      if (type === 'sign-up') {
-        await registerUser({
-          email: values.email,
-          password: values.password,
-        });
-        toast.success('Registration successful!', {
-          description: 'You have successfully created an account. Please sign in.',
-        });
-        router.push('/sign-in');
-      } else {
-        const data = await loginUser({
-          email: values.email,
-          password: values.password,
-        });
-        localStorage.setItem('token', data.accessToken);
-        toast.success('Login successful!', {
-          description: 'Welcome back!',
-        });
-        router.push('/');
+  setIsLoading(true);
+  try {
+    if (type === 'sign-up') {
+      if (!values.confirmPassword) {
+        throw new Error('Confirm password is required');
       }
-    } catch (error: unknown) {
+      
+      await registerUser({
+        email: values.email,
+        password: values.password,
+        confirmPassword: values.confirmPassword,
+      });
+      toast.success('Registration successful!', {
+        description: 'You have successfully created an account. Please sign in.',
+      });
+      router.push('/sign-in');
+    } else {
+      const data = await loginUser({
+        email: values.email,
+        password: values.password,
+      });
+      localStorage.setItem('token', data.accessToken);
+      toast.success('Login successful!', {
+        description: 'Welcome back!',
+      });
+      router.push('/');
+    }
+  } catch (error: unknown) {
       let errorMessage = 'An unknown error occurred';
       let status: number | undefined;
 
