@@ -213,7 +213,7 @@ export const companies = [
   { name: 'YouTube', url: 'https://cdn.magicui.design/companies/YouTube.svg' },
   // { name: 'Instagram', url: 'https://cdn.magicui.design/companies/Instagram.svg' },
   // { name: 'Uber', url: 'https://cdn.magicui.design/companies/Uber.svg' },
-  // { name: 'Spotify', url: 'https://cdn.magicui.design/companies/Spotify.svg' },
+  { name: 'Spotify', url: 'https://cdn.magicui.design/companies/Spotify.svg' },
 ];
 // Form
 

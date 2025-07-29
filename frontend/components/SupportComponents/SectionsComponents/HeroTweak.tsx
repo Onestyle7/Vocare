@@ -101,20 +101,29 @@ const HeroTweak = () => {
           </Suspense>
         )}
       </div>
-      <div className='h-[70px] w-full flex'>
-  <div className='border-b w-full h-full mx-10 flex items-center justify-between'>
-    {companies.map((company) => (
-      <Image
+      
+        <div className="h-[70px] w-full hidden lg:flex">
+  <div className="flex h-full w-full mx-10">
+    {companies.map(company => (
+      <div
         key={company.name}
-        src={company.url}
-        alt={company.name}
-        className="h-full w-full border object-contain"
-        width={80}
-        height={32}
-      />
+        className="flex-1 h-full border-r border-l border-b flex items-center justify-center"
+      >
+        <div className="relative h-full w-full flex items-center justify-center">
+          <Image
+            src={company.url}
+            alt={company.name}
+            width={84}
+            height={10}
+            className="object-contain dark:brightness-0 dark:invert grayscale hover:grayscale-0 hover:brightness-100 dark:hover:brightness-0 dark:hover:invert transition-all duration-200 ease-out opacity-30 hover:opacity-100"
+          />
+        </div>
+      </div>
     ))}
   </div>
 </div>
+
+
       <div className="relative mt-14 flex flex-col items-center justify-center border-gray-300 px-[40px] max-md:mt-40 dark:border-gray-600/30">
         <div className="mb-2 flex h-full flex-col items-center justify-center">
           <h3 className="font-poppins font-normal text-gray-400">Meet Us</h3>
