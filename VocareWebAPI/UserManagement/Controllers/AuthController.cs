@@ -175,7 +175,7 @@ Zespół Vocare
 
         [HttpGet("validate-reset-token")]
         [AllowAnonymous]
-        public async Task<IActionResult> ValudateResetToken(
+        public async Task<IActionResult> ValidateResetToken(
             [FromQuery] string token,
             [FromQuery] string email
         )
