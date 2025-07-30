@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:vocare/screens/aI_asistent_screen.dart';
+import 'package:vocare/screens/home_screen.dart';
 import 'package:vocare/screens/register_screen.dart';
 import 'package:vocare/services/them_service.dart';
 import 'package:vocare/widgets/custom_button.dart';
@@ -38,7 +39,7 @@ class _LoginScreenState extends State<LoginScreen> {
     if (isLoggedIn) {
       Navigator.pushReplacement(
         context,
-        MaterialPageRoute(builder: (_) => const AIAsistentPageScreen()),
+        MaterialPageRoute(builder: (_) => const HomeScreen()),
       );
     } else {
       ScaffoldMessenger.of(context).showSnackBar(
@@ -145,6 +146,7 @@ class _LoginScreenState extends State<LoginScreen> {
                     NavDestination.profile,
                     NavDestination.logout,
                     NavDestination.assistent,
+                    NavDestination.marketAnalysis,
                   ],
                 ),
               ],

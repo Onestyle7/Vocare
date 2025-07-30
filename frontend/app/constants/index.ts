@@ -205,6 +205,16 @@ export const NavLinks = [
   { label: 'Resume', url: '/resume', disabled: false },
 ];
 
+export const companies = [
+  { name: 'Google', url: 'https://cdn.magicui.design/companies/Google.svg' },
+  { name: 'Microsoft', url: 'https://cdn.magicui.design/companies/Microsoft.svg' },
+  { name: 'Amazon', url: 'https://cdn.magicui.design/companies/Amazon.svg' },
+  { name: 'Netflix', url: 'https://cdn.magicui.design/companies/Netflix.svg' },
+  { name: 'YouTube', url: 'https://cdn.magicui.design/companies/YouTube.svg' },
+  // { name: 'Instagram', url: 'https://cdn.magicui.design/companies/Instagram.svg' },
+  // { name: 'Uber', url: 'https://cdn.magicui.design/companies/Uber.svg' },
+  { name: 'Spotify', url: 'https://cdn.magicui.design/companies/Spotify.svg' },
+];
 // Form
 
 export const user = '/svg/user.svg';
@@ -228,6 +238,8 @@ export const fire = '/svg/fire.svg';
 // Spiner
 
 export const Spinner = '/svg/spinner.svg';
+
+export const spinner_terminal = '/svg/spinner_terminal.svg';
 
 // Hero section
 

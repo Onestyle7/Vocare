@@ -33,15 +33,58 @@ namespace VocareWebAPI.UserManagement.Services
             try
             {
                 _logger.LogInformation($"Setting up new user: {userId}");
+                _logger.LogInformation(
+                    "Config - WelcomeTokens: {WelcomeTokens}, DefaultSubscriptionStatus: {DefaultSubscriptionStatus}, DefaultSubscriptionLevel: {DefaultSubscriptionLevel}",
+                    _config.WelcomeTokens,
+                    _config.DefaultSubscriptionStatus,
+                    _config.DefaultSubscriptionLevel
+                );
+                UserBilling? existingBilling = null;
 
                 try
                 {
-                    var existingBilling = await _userBillingRepository.GetByUserIdAsync(userId);
-                    _logger.LogWarning("UserBilling already exists for user: {UserId}", userId);
+                    existingBilling = await _userBillingRepository.GetByUserIdAsync(userId);
+                    _logger.LogInformation("found existing UserBilling for user: {UserId}", userId);
+                }
+                catch (KeyNotFoundException)
+                {
+                    _logger.LogInformation("UserBilling not found for user: {UserId}", userId);
+                }
+
+                if (existingBilling != null)
+                {
+                    _logger.LogInformation("UserBilling already exists for user: {UserId}", userId);
+
+                    // Sprawdzamy czy ma już tokeny welcome
+                    if (existingBilling.TokenBalance >= _config.WelcomeTokens)
+                    {
+                        _logger.LogInformation(
+                            "User {userId} already has enough tokens: {TokenBalance}",
+                            userId,
+                            existingBilling.TokenBalance
+                        );
+                        return;
+                    }
+
+                    // Jeśli ma mniej niż welcome tokens, to ustawiamy mu je
+
+                    var tokensToAdd = Math.Max(
+                        0,
+                        _config.WelcomeTokens - existingBilling.TokenBalance
+                    );
+                    if (tokensToAdd > 0)
+                    {
+                        existingBilling.TokenBalance += tokensToAdd;
+                        await _userBillingRepository.UpdateAsync(existingBilling);
+                        _logger.LogInformation(
+                            "Added {TokensToAdd} welcome tokens to user: {UserId}",
+                            tokensToAdd,
+                            userId
+                        );
+                    }
                     return;
                 }
-                catch (KeyNotFoundException) { }
-
+                // Tworzenie nowego billing dla nowego użytkownika
                 var userBilling = new UserBilling
                 {
                     UserId = userId,
@@ -53,12 +96,14 @@ namespace VocareWebAPI.UserManagement.Services
                     StripeSubscriptionId = null,
                     SubscriptionEndDate = null,
                 };
+                _logger.LogInformation("Creating new UserBilling for user: {UserId}", userId);
                 await _userBillingRepository.CreateAsync(userBilling);
                 _logger.LogInformation("UserBilling created for user: {UserId}", userId);
             }
             catch (Exception ex)
             {
                 _logger.LogInformation(ex, "Created UserBilling for user: {UserId} failed", userId);
+                throw;
             }
         }
     }

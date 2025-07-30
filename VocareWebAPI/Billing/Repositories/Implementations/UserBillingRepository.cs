@@ -12,10 +12,12 @@ namespace VocareWebAPI.Billing.Repositories.Implementations
     public class UserBillingRepository : IUserBillingRepository
     {
         private readonly AppDbContext _context;
+        private readonly ILogger<UserBillingRepository> _logger;
 
-        public UserBillingRepository(AppDbContext context)
+        public UserBillingRepository(AppDbContext context, ILogger<UserBillingRepository> logger)
         {
             _context = context;
+            _logger = logger;
         }
 
         public async Task<UserBilling> GetByUserIdAsync(string userId)
@@ -55,21 +57,82 @@ namespace VocareWebAPI.Billing.Repositories.Implementations
                 );
             }
 
+            // Logowanie przed sprawdzeniem
+            _logger.LogInformation(
+                "Attempting to create UserBilling for UserId: {UserId}",
+                userBilling.UserId
+            );
+
             // Sprawdzamy czy istnieje już billing dla tego użytkownika
-            // Jeśli istnieje, to rzucamy wyjątek
             var existingUserBilling = await _context
                 .UserBillings.Where(ub => ub.UserId == userBilling.UserId)
                 .FirstOrDefaultAsync();
+
             if (existingUserBilling != null)
             {
+                _logger.LogWarning(
+                    "UserBilling already exists for UserId: {UserId}, TokenBalance: {TokenBalance}",
+                    existingUserBilling.UserId,
+                    existingUserBilling.TokenBalance
+                );
+
                 throw new InvalidOperationException(
                     $"User billing information for user ID {userBilling.UserId} already exists."
                 );
             }
 
-            // Dodajemy nowy obiekt UserBilling do kontekstu i zapisujemy w bazie danych
+            // Logowanie przed dodaniem
+            _logger.LogInformation(
+                "Adding UserBilling to context for UserId: {UserId}, TokenBalance: {TokenBalance}",
+                userBilling.UserId,
+                userBilling.TokenBalance
+            );
+
+            // Dodajemy nowy obiekt UserBilling do kontekstu
             _context.UserBillings.Add(userBilling);
-            await _context.SaveChangesAsync();
+
+            try
+            {
+                // Zapisujemy w bazie danych
+                var savedCount = await _context.SaveChangesAsync();
+                _logger.LogInformation(
+                    "SaveChangesAsync returned {SavedCount} for UserId: {UserId}",
+                    savedCount,
+                    userBilling.UserId
+                );
+
+                // Weryfikujemy czy zapisało się
+                var verifyBilling = await _context.UserBillings.FirstOrDefaultAsync(ub =>
+                    ub.UserId == userBilling.UserId
+                );
+
+                if (verifyBilling != null)
+                {
+                    _logger.LogInformation(
+                        "Successfully verified UserBilling creation for UserId: {UserId}, TokenBalance: {TokenBalance}",
+                        verifyBilling.UserId,
+                        verifyBilling.TokenBalance
+                    );
+                }
+                else
+                {
+                    _logger.LogError(
+                        "Failed to verify UserBilling creation for UserId: {UserId}",
+                        userBilling.UserId
+                    );
+                }
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(
+                    ex,
+                    "Error saving UserBilling for UserId: {UserId}. Exception: {ExceptionMessage}",
+                    userBilling.UserId,
+                    ex.Message
+                );
+                throw;
+            }
+
             return userBilling;
         }
 

@@ -2,10 +2,10 @@
 
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { authFormSchema, AuthFormType } from '@/lib/schemas/authSchema';
-import { registerUser, loginUser } from '@/lib/auth';
+import { registerUser, loginUser, googleVerify } from '@/lib/auth';
 import {
   Form,
   FormControl,
@@ -22,13 +22,24 @@ import { ArrowRight } from 'lucide-react';
 import { ButtonForm } from '../ui/button-form';
 import { AxiosError } from 'axios';
 import OAuthButton from './OAuthButton';
-import { facebook, google } from '@/app/constants';
+import { google } from '@/app/constants';
 
 type FormType = 'sign-in' | 'sign-up';
 
 const AuthForm = ({ type }: { type: FormType }) => {
   const [isLoading, setIsLoading] = useState(false);
   const router = useRouter();
+
+  useEffect(() => {
+    const script = document.createElement('script');
+    script.src = 'https://accounts.google.com/gsi/client';
+    script.async = true;
+    script.defer = true;
+    document.body.appendChild(script);
+    return () => {
+      document.body.removeChild(script);
+    };
+  }, []);
 
   const formSchema = authFormSchema(type);
   const form = useForm<AuthFormType>({
@@ -42,29 +53,34 @@ const AuthForm = ({ type }: { type: FormType }) => {
   });
 
   async function onSubmit(values: AuthFormType) {
-    setIsLoading(true);
-    try {
-      if (type === 'sign-up') {
-        await registerUser({
-          email: values.email,
-          password: values.password,
-        });
-        toast.success('Registration successful!', {
-          description: 'You have successfully created an account. Please sign in.',
-        });
-        router.push('/sign-in');
-      } else {
-        const data = await loginUser({
-          email: values.email,
-          password: values.password,
-        });
-        localStorage.setItem('token', data.accessToken);
-        toast.success('Login successful!', {
-          description: 'Welcome back!',
-        });
-        router.push('/');
+  setIsLoading(true);
+  try {
+    if (type === 'sign-up') {
+      if (!values.confirmPassword) {
+        throw new Error('Confirm password is required');
       }
-    } catch (error: unknown) {
+      
+      await registerUser({
+        email: values.email,
+        password: values.password,
+        confirmPassword: values.confirmPassword,
+      });
+      toast.success('Registration successful!', {
+        description: 'You have successfully created an account. Please sign in.',
+      });
+      router.push('/sign-in');
+    } else {
+      const data = await loginUser({
+        email: values.email,
+        password: values.password,
+      });
+      localStorage.setItem('token', data.accessToken);
+      toast.success('Login successful!', {
+        description: 'Welcome back!',
+      });
+      router.push('/');
+    }
+  } catch (error: unknown) {
       let errorMessage = 'An unknown error occurred';
       let status: number | undefined;
 
@@ -102,6 +118,38 @@ const AuthForm = ({ type }: { type: FormType }) => {
       setIsLoading(false);
     }
   }
+
+  const handleGoogleSignIn = () => {
+    if (!(window as any).google?.accounts?.oauth2) {
+      toast.error('Google SDK not loaded');
+      return;
+    }
+
+    const client = (window as any).google.accounts.oauth2.initTokenClient({
+      client_id: process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID!,
+      scope: 'openid profile email',
+      callback: async (tokenResponse: any) => {
+        if (tokenResponse.error) {
+          toast.error('Google authentication failed');
+          return;
+        }
+
+        setIsLoading(true);
+        try {
+          await googleVerify(tokenResponse.access_token);
+          toast.success('Login successful!', { description: 'Welcome back!' });
+          router.push('/');
+        } catch (err) {
+          console.error(err);
+          toast.error('Google login failed');
+        } finally {
+          setIsLoading(false);
+        }
+      },
+    });
+
+    client.requestAccessToken();
+  };
 
   return (
     <Form {...form}>
@@ -220,8 +268,8 @@ const AuthForm = ({ type }: { type: FormType }) => {
             </div>
 
             <div className="tems-center mt-4 flex w-full flex-row justify-center gap-2">
-              <OAuthButton icon={google} label="Login with Google" url="/api/auth/google"/>
-              {/* <OAuthButton icon={facebook} label="Login with Facebook" url="/api/auth/google" /> */}
+              <OAuthButton icon={google} label="Login with Google" onClick={handleGoogleSignIn} />
+              {/* <OAuthButton icon={facebook} label="Login with Facebook" onClick={handleFacebookSignIn} /> */}
             </div>
           </div>
         )}

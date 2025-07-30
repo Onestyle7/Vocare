@@ -411,7 +411,7 @@ export default function ProfileDetails() {
       customPaddings
       id="profile"
     >
-      <div className="font-poppins mt-10 xl:mx-10 xl:mt-16 xl:border-t lg:px-4">
+      <div className="font-poppins mt-10 lg:px-4 xl:mx-10 xl:mt-16 xl:border-t">
         <div className="font-poppins mx-4 mt-8 max-w-7xl max-sm:mx-4 xl:mx-auto 2xl:max-w-[1480px]">
           <div className="mt-2 flex h-screen flex-col xl:flex-row">
             <div className="hidden xl:block xl:w-1/2 xl:pr-8">
