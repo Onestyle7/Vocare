@@ -295,7 +295,8 @@ builder.Services.AddCors(options =>
         {
             policy
                 .WithOrigins(
-                    "http://localhost:3000", // Dodaj konkretne originy
+                    "http://localhost:56622/", // Mobilka
+                    "http://localhost:3000", // Frontend
                     "https://vocare.pl",
                     "https://app.vocare.pl",
                     "https://vocare-frontend.vercel.app",
