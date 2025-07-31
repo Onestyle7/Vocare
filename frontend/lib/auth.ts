@@ -13,6 +13,22 @@ interface LoginInput {
   password: string;
 }
 
+interface ForgotPasswordInput {
+  email: string;
+}
+
+interface ResetPasswordInput {
+  email: string;
+  token: string;
+  newPassword: string;
+  confirmPassword: string;
+}
+
+interface ValidateTokenInput {
+  token: string;
+  email: string;
+}
+
 api.interceptors.response.use(
   (response) => response,
   (error) => {
@@ -59,5 +75,28 @@ export const googleVerify = async (accessToken: string) => {
   if (token) {
     localStorage.setItem('token', token);
   }
+  return response.data;
+};
+
+
+export const forgotPassword = async ({ email }: ForgotPasswordInput) => {
+  const response = await api.post(`${AUTH_PREFIX}/forgot-password`, { email });
+  return response.data;
+};
+
+export const validateResetToken = async ({ token, email }: ValidateTokenInput) => {
+  const response = await api.get(`${AUTH_PREFIX}/validate-reset-token`, {
+    params: { token, email }
+  });
+  return response.data;
+};
+
+export const resetPassword = async ({ email, token, newPassword, confirmPassword }: ResetPasswordInput) => {
+  const response = await api.post(`${AUTH_PREFIX}/reset-password`, {
+    email,
+    token,
+    newPassword,
+    confirmPassword
+  });
   return response.data;
 };
