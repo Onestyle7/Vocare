@@ -293,18 +293,47 @@ builder.Services.AddCors(options =>
         "AllowAll",
         policy =>
         {
-            policy
-                .WithOrigins(
-                    "http://localhost:56622/", // Mobilka
-                    "http://localhost:3000", // Frontend
-                    "https://vocare.pl",
-                    "https://app.vocare.pl",
-                    "https://vocare-frontend.vercel.app",
-                    "http://localhost:8080"
-                ) // zezwól na wszystkie originy (do testów)
-                .AllowAnyHeader()
-                .AllowAnyMethod()
-                .AllowCredentials();
+            if (builder.Environment.IsDevelopment())
+            {
+                // W developmencie zezwól na wszystkie localhost porty
+                policy
+                    .SetIsOriginAllowed(origin =>
+                    {
+                        if (string.IsNullOrEmpty(origin))
+                            return false;
+
+                        var uri = new Uri(origin);
+
+                        // Zezwól na wszystkie localhost porty
+                        if (uri.Host == "localhost" || uri.Host == "127.0.0.1")
+                            return true;
+
+                        // Zezwól na produkcyjne domeny
+                        var allowedHosts = new[]
+                        {
+                            "vocare.pl",
+                            "app.vocare.pl",
+                            "vocare-frontend.vercel.app",
+                        };
+                        return allowedHosts.Contains(uri.Host);
+                    })
+                    .AllowAnyHeader()
+                    .AllowAnyMethod()
+                    .AllowCredentials();
+            }
+            else
+            {
+                // W produkcji/staging tylko konkretne domeny
+                policy
+                    .WithOrigins(
+                        "https://vocare.pl",
+                        "https://app.vocare.pl",
+                        "https://vocare-frontend.vercel.app"
+                    )
+                    .AllowAnyHeader()
+                    .AllowAnyMethod()
+                    .AllowCredentials();
+            }
         }
     );
 });
