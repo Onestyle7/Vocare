@@ -18,7 +18,7 @@ const OAuthButton = ({ icon, label, url, onClick, bgColor, className }: OAuthBut
       style={bgColor ? { backgroundColor: bgColor } : { backgroundColor: 'transparent' }}
       className={`flex h-[50px] w-full items-center justify-center border-2 ${className || ''}`}
       onClick={onClick}
-      type={onClick ? "button" : undefined}
+      type={onClick ? 'button' : undefined}
     >
       <Image src={icon} alt={label} width={24} height={24} />
       <span className="ml-2 text-gray-500">{label}</span>

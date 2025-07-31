@@ -1,5 +1,7 @@
 'use client';
 import { useForm } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { z } from 'zod';
 import {
   Form,
   FormControl,
@@ -22,31 +24,81 @@ import {
   AlertDialogAction,
 } from '@/components/ui/alert-dialog';
 import Link from 'next/link';
+import { forgotPassword } from '@/lib/auth';
+import { toast } from 'sonner';
+
+// Schema walidacji
+const forgotPasswordSchema = z.object({
+  email: z.string().min(1, 'Email is required').email('Invalid email address'),
+});
+
+type ForgotPasswordForm = z.infer<typeof forgotPasswordSchema>;
 
 const ForgotPasswordForm = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [openDialog, setOpenDialog] = useState(false);
-  const [timer, setTimer] = useState(0); // ⏳ timer in seconds
+  const [timer, setTimer] = useState(0);
+  const [error, setError] = useState<string | null>(null);
 
-  const form = useForm({
+  const form = useForm<ForgotPasswordForm>({
+    resolver: zodResolver(forgotPasswordSchema),
     defaultValues: {
       email: '',
     },
   });
 
-  const onSubmit = async (values: { email: string }) => {
+  const onSubmit = async (values: ForgotPasswordForm) => {
     setIsLoading(true);
-    console.log(values);
-    setIsLoading(false);
-    setOpenDialog(true);
-    setTimer(60); // start 60-second countdown
+    setError(null);
+
+    try {
+      const response = await forgotPassword({ email: values.email });
+      
+      // Backend zawsze zwraca sukces dla bezpieczeństwa
+      console.log('Password reset response:', response);
+      
+      setOpenDialog(true);
+      setTimer(60); // start 60-second countdown
+      
+      // Opcjonalnie: pokaż toast z sukcesem
+      toast.success('Reset link sent successfully');
+      
+    } catch (error: any) {
+      console.error('Error sending password reset email:', error);
+      
+      // Wyświetl konkretny błąd jeśli jest dostępny
+      const errorMessage = error.response?.data?.message || 
+                          error.response?.data?.errors?.[0] || 
+                          'Failed to send reset email. Please try again.';
+      
+      setError(errorMessage);
+      toast.error(errorMessage);
+      
+    } finally {
+      setIsLoading(false);
+    }
   };
 
-  const handleResendEmail = () => {
-    console.log('Resending email to:', form.getValues('email'));
-    setTimer(60); // restart timer
+  const handleResendEmail = async () => {
+    if (timer > 0) return; // Zabezpieczenie przed wielokrotnym kliknięciem
+    
+    const email = form.getValues('email');
+    if (!email) {
+      toast.error('Please enter your email first');
+      return;
+    }
+
+    try {
+      await forgotPassword({ email });
+      setTimer(60); // restart timer
+      toast.success('Reset link sent again');
+    } catch (error: any) {
+      console.error('Error resending email:', error);
+      toast.error('Failed to resend email. Please try again.');
+    }
   };
 
+  // Timer countdown effect
   useEffect(() => {
     let interval: NodeJS.Timeout;
 
@@ -64,6 +116,14 @@ const ForgotPasswordForm = () => {
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)} className="auth-form">
           <h1 className="form-title">Reset Password</h1>
+          
+          {/* Wyświetl błąd globalny */}
+          {error && (
+            <div className="mb-4 p-3 text-sm text-red-600 bg-red-50 border border-red-200 rounded-md">
+              {error}
+            </div>
+          )}
+          
           <FormField
             control={form.control}
             name="email"
@@ -72,19 +132,26 @@ const ForgotPasswordForm = () => {
                 <div className="shad-form-item">
                   <FormLabel className="shad-form-label mb-2">E-mail</FormLabel>
                   <FormControl>
-                    <Input placeholder="Enter Your e-mail" className="input-profile" {...field} />
+                    <Input 
+                      placeholder="Enter Your e-mail" 
+                      className="input-profile" 
+                      type="email"
+                      autoComplete="email"
+                      {...field} 
+                    />
                   </FormControl>
                 </div>
                 <FormMessage className="shad-form-message" />
               </FormItem>
             )}
           />
+          
           <ButtonForm
             type="submit"
             className="group form-button"
-            disabled={isLoading || !form.watch('email')}
+            disabled={isLoading || !form.watch('email') || !!form.formState.errors.email}
           >
-            Reset Password
+            {isLoading ? 'Sending...' : 'Reset Password'}
             <span className="arrow-animation">
               <ArrowRight />
             </span>
@@ -98,6 +165,7 @@ const ForgotPasswordForm = () => {
               />
             )}
           </ButtonForm>
+          
           <div className="flex items-center justify-center">
             <Link
               href="/sign-in"
@@ -109,8 +177,9 @@ const ForgotPasswordForm = () => {
         </form>
       </Form>
 
+      {/* Success Dialog */}
       <AlertDialog open={openDialog} onOpenChange={setOpenDialog}>
-        <AlertDialogContent className="font-poppins w-[30%]">
+        <AlertDialogContent className="font-poppins w-[90%] max-w-md">
           <AlertDialogHeader>
             <AlertDialogTitle className="text-center">Check your inbox</AlertDialogTitle>
             <AlertDialogDescription className="text-center">
@@ -130,11 +199,13 @@ const ForgotPasswordForm = () => {
               type="button"
               onClick={handleResendEmail}
               className={`cursor-pointer text-sm underline transition-colors duration-200 ${
-                timer === 0 ? 'text-gray-600 hover:text-[#915EFF]' : 'text-gray-400 cursor-not-allowed'
+                timer === 0
+                  ? 'text-gray-600 hover:text-[#915EFF]'
+                  : 'cursor-not-allowed text-gray-400'
               }`}
               disabled={timer > 0}
             >
-              {timer > 0 ? `Send again in ${timer}s` : `Email didn’t arrive? Send again`}
+              {timer > 0 ? `Send again in ${timer}s` : `Email didn't arrive? Send again`}
             </button>
           </div>
         </AlertDialogContent>
