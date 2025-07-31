@@ -31,14 +31,22 @@ class AuthApi {
     }
   }
 
-  static Future<String?> registerUser(String email, String password) async {
+  static Future<String?> registerUser(
+    String email,
+    String password,
+    String confirmPassword,
+  ) async {
     final url = Uri.parse('http://localhost:8080/api/Auth/register');
 
     try {
       final response = await http.post(
         url,
         headers: {'Content-Type': 'application/json'},
-        body: jsonEncode({"email": email, "password": password}),
+        body: jsonEncode({
+          "email": email,
+          "password": password,
+          "confirmPassword": confirmPassword,
+        }),
       );
 
       if (response.statusCode == 200) {

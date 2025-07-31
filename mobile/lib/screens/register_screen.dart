@@ -28,7 +28,11 @@ class _RegisterScreenState extends State<RegisterScreen> {
     final confirmPassword = _confirmPasswordController.text;
 
     if (email.isNotEmpty && password == confirmPassword) {
-      final success = await _authRepository.register(email, password);
+      final success = await _authRepository.register(
+        email,
+        password,
+        confirmPassword,
+      );
       if (success) {
         Navigator.pushReplacement(
           context,
