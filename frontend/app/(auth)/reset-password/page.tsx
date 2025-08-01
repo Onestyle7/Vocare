@@ -211,7 +211,7 @@ const ResetPasswordContent = () => {
       <form onSubmit={form.handleSubmit(onSubmit)} className="auth-form">
         <h1 className="items-center justify-center flex text-3xl font-bold">Set New Password</h1>
         <p className="mb-6 text-center text-sm text-gray-600">
-          Enter your new password for <span className="font-semibold text-[#915EFF]">{email}</span>
+          Enter your new password for <br /> <span className="font-semibold text-[#915EFF]">{email}</span>
         </p>
 
         {/* Display global error */}
