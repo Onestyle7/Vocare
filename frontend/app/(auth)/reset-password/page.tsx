@@ -191,7 +191,7 @@ const ResetPasswordContent = () => {
         <div className="mb-6">
           <Check className="mx-auto h-16 w-16 text-green-500" />
         </div>
-        <h1 className="form-title">Password Reset Successful!</h1>
+        <h1 className="flex items-center justify-center text-3xl">Password Reset Successful!</h1>
         <p className="mb-6 text-gray-600">
           Your password has been successfully updated. You will be redirected to the sign-in page.
         </p>
@@ -209,7 +209,7 @@ const ResetPasswordContent = () => {
   return (
     <Form {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)} className="auth-form">
-        <h1 className="form-title">Set New Password</h1>
+        <h1 className="items-center justify-center flex text-3xl font-bold">Set New Password</h1>
         <p className="mb-6 text-center text-sm text-gray-600">
           Enter your new password for <span className="font-semibold text-[#915EFF]">{email}</span>
         </p>
