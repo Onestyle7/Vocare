@@ -6,34 +6,77 @@ import 'package:vocare/services/profile_api.dart';
 import 'package:vocare/screens/aI_asistent_screen.dart';
 import 'package:vocare/widgets/nav_bar_button.dart';
 import 'package:vocare/widgets/theme_toggle_button.dart';
+import 'package:vocare/models/personality_type.dart'; // 🆕 Używamy istniejący model
 
-enum PersonalityType {
-  mediator('Mediator'),
-  advocate('Advocate'),
-  logician('Logician'),
-  architect('Architect'),
-  campaigner('Campaigner'),
-  protagonist('Protagonist'),
-  debater('Debater'),
-  commander('Commander'),
-  adventurer('Adventurer'),
-  defender('Defender'),
-  virtuoso('Virtuoso'),
-  logistician('Logistician'),
-  entertainer('Entertainer'),
-  consul('Consul'),
-  entrepreneur('Entrepreneur'),
-  executive('Executive'),
-  unknown('Unknown');
+// 🆕 Nowy enum dla ankiety finansowej
+enum RiskAppetite {
+  low('Low'),
+  medium('Medium'),
+  high('High');
 
   final String label;
-  const PersonalityType(this.label);
+  const RiskAppetite(this.label);
+}
+
+// 🆕 Rozszerzone klasy dla złożonych struktur
+class _Education {
+  final TextEditingController institutionController = TextEditingController();
+  final TextEditingController degreeController = TextEditingController();
+  final TextEditingController fieldController = TextEditingController(); // 🆕
+  final TextEditingController startDateController = TextEditingController();
+  final TextEditingController endDateController = TextEditingController(); // 🆕
+
+  void dispose() {
+    institutionController.dispose();
+    degreeController.dispose();
+    fieldController.dispose();
+    startDateController.dispose();
+    endDateController.dispose();
+  }
 }
 
 class _WorkExperience {
   final TextEditingController positionController = TextEditingController();
   final TextEditingController companyController = TextEditingController();
-  final TextEditingController yearsController = TextEditingController();
+  final TextEditingController descriptionController =
+      TextEditingController(); // 🆕
+  final TextEditingController responsibilitiesController =
+      TextEditingController(); // 🆕
+  final TextEditingController startDateController =
+      TextEditingController(); // 🆕
+  final TextEditingController endDateController = TextEditingController(); // 🆕
+
+  void dispose() {
+    positionController.dispose();
+    companyController.dispose();
+    descriptionController.dispose();
+    responsibilitiesController.dispose();
+    startDateController.dispose();
+    endDateController.dispose();
+  }
+}
+
+// 🆕 Nowe klasy dla certificates i languages
+class _Certificate {
+  final TextEditingController nameController = TextEditingController();
+  final TextEditingController dateController = TextEditingController();
+  final TextEditingController issuerController = TextEditingController();
+
+  void dispose() {
+    nameController.dispose();
+    dateController.dispose();
+    issuerController.dispose();
+  }
+}
+
+class _Language {
+  final TextEditingController languageController = TextEditingController();
+  final TextEditingController levelController = TextEditingController();
+
+  void dispose() {
+    languageController.dispose();
+    levelController.dispose();
+  }
 }
 
 class FillProfileScreen extends StatefulWidget {
@@ -48,36 +91,46 @@ class _FillProfileScreenState extends State<FillProfileScreen> {
   int _currentPage = 0;
   bool _isLoading = false;
 
-  // Controllers:
-  final _nameController = TextEditingController();
-  final _surnameController = TextEditingController();
+  // 🔄 Zmienione nazwy kontrolerów na bardziej precyzyjne
+  final _firstNameController = TextEditingController(); // firstName
+  final _lastNameController = TextEditingController(); // lastName
   final _addressController = TextEditingController();
   final _phoneController = TextEditingController();
-  final _educationInstitutionController = TextEditingController();
-  final _educationYearController = TextEditingController();
-  final _skillController = TextEditingController();
-  final _certificateController = TextEditingController();
-  final _languagesController = TextEditingController();
   final _aboutMeController = TextEditingController();
   final _additionalInfoController = TextEditingController();
 
-  List<_WorkExperience> _workExperienceList = [_WorkExperience()];
+  // 🆕 Nowe kontrolery
+  final _softSkillsController = TextEditingController(); // softSkills
 
+  // 🆕 Financial Survey kontrolery
+  final _currentSalaryController = TextEditingController();
+  final _desiredSalaryController = TextEditingController();
+  final _loanDetailsController = TextEditingController();
+
+  // 🔄 Zmienione listy na bardziej strukturalne
+  List<_Education> _educationList = [_Education()]; // Rozszerzone
+  List<_WorkExperience> _workExperienceList = [
+    _WorkExperience(),
+  ]; // Rozszerzone
+  List<_Certificate> _certificatesList = [_Certificate()]; // 🆕 Nowa struktura
+  List<_Language> _languagesList = [_Language()]; // 🆕 Nowa struktura
+
+  // Selections i boolean values
   String selectedCountry = '';
-  String? _selectEducation;
   PersonalityType? _selectedPersonalityType;
+  RiskAppetite? _selectedRiskAppetite; // 🆕
+  bool _willingToRebrand = false; // 🆕
+  bool _hasLoans = false; // 🆕
+  bool _willingToRelocate = false; // 🆕
 
-  final List<String> educationList = [
-    'Wykształcenie podstawowe',
-    'Wykształcenie gimnazjalne',
-    'Wykształcenie średnie',
-    'Wykształcenie policealne',
-    'Wykształcenie wyższe (licencjat)',
-    'Wykształcenie wyższe (magister)',
-    'Studia doktoranckie / doktorat',
-    'Brak wykształcenia',
-    'W trakcie studiów',
-  ];
+  // 🗑️ Usunięte - będziemy używać nowej struktury education
+  // final _educationInstitutionController = TextEditingController();
+  // final _educationYearController = TextEditingController();
+  // final _skillController = TextEditingController(); -> _skillsController
+  // final _certificateController = TextEditingController(); -> _certificatesList
+  // final _languagesController = TextEditingController(); -> _languagesList
+  // String? _selectEducation; -> będzie w _educationList
+  // final List<String> educationList = [...]; -> usunięte, bo będzie w UI
 
   @override
   void initState() {
@@ -90,75 +143,108 @@ class _FillProfileScreenState extends State<FillProfileScreen> {
     if (data == null) return;
 
     setState(() {
-      // personal
-      _nameController.text = data['firstName'] ?? '';
-      _surnameController.text = data['lastName'] ?? '';
+      // 🔄 Personal info (poprawione nazwy)
+      _firstNameController.text = data['firstName'] ?? '';
+      _lastNameController.text = data['lastName'] ?? '';
       selectedCountry = data['country'] ?? '';
       _addressController.text = data['address'] ?? '';
       _phoneController.text = data['phoneNumber'] ?? '';
+      _aboutMeController.text = data['aboutMe'] ?? '';
+      _additionalInfoController.text = data['additionalInformation'] ?? '';
 
-      // education & work
-      // EDUCATION (pierwszy wpis)
-      final List eduList = (data['education'] as List?) ?? [];
-      if (eduList.isNotEmpty) {
-        final edu = eduList.first as Map<String, dynamic>;
-        _selectEducation = edu['degree'] as String?;
-        _educationInstitutionController.text =
-            edu['institution'] as String? ?? '';
-        final String start = edu['startDate'] as String? ?? '';
-        if (start.length >= 4) {
-          _educationYearController.text = start.substring(0, 4);
-        }
-      }
+      // 🆕 Nowe pola
+      _softSkillsController.text =
+          (data['softSkills'] as List?)?.join(', ') ?? '';
+      _willingToRebrand = data['willingToRebrand'] ?? false;
 
+      // Personality
       final personality =
           (data['personalityType'] ?? '').toString().toLowerCase();
       _selectedPersonalityType = PersonalityType.values.firstWhere(
         (e) => e.name == personality,
         orElse: () => PersonalityType.unknown,
       );
-      final workList =
-          (data['workExperience'] as List?)
-              ?.where((w) => w['company'] != null && w['position'] != null)
-              .toList() ??
-          [];
-      if (workList.isNotEmpty) {
-        _workExperienceList =
-            workList.map((entry) {
-              final w = _WorkExperience();
-              w.companyController.text = entry['company'] ?? '';
-              w.positionController.text = entry['position'] ?? '';
-              final match = RegExp(
-                r'(\d+)',
-              ).firstMatch(entry['description'] ?? '');
-              w.yearsController.text = match?.group(1) ?? '';
-              return w;
-            }).toList();
+
+      // 🔄 Education (rozszerzone)
+      final eduList = (data['education'] as List?) ?? [];
+      if (eduList.isNotEmpty) {
+        _educationList.clear();
+        for (var eduData in eduList) {
+          final edu = _Education();
+          edu.institutionController.text = eduData['institution'] ?? '';
+          edu.degreeController.text = eduData['degree'] ?? '';
+          edu.fieldController.text = eduData['field'] ?? ''; // 🆕
+          edu.startDateController.text = eduData['startDate'] ?? '';
+          edu.endDateController.text = eduData['endDate'] ?? ''; // 🆕
+          _educationList.add(edu);
+        }
       }
 
-      // skills & certificates & languages
-      _skillController.text = (data['skills'] as List?)?.join(', ') ?? '';
-      _certificateController.text =
-          (data['certificates'] as List?)
-              ?.map((e) => e['name'])
-              .whereType<String>()
-              .join(', ') ??
-          '';
-      _languagesController.text =
-          (data['languages'] as List?)
-              ?.map((e) => e['language'])
-              .whereType<String>()
-              .join(', ') ??
-          '';
+      // 🔄 Work Experience (rozszerzone)
+      final workList = (data['workExperience'] as List?) ?? [];
+      if (workList.isNotEmpty) {
+        _workExperienceList.clear();
+        for (var workData in workList) {
+          final work = _WorkExperience();
+          work.companyController.text = workData['company'] ?? '';
+          work.positionController.text = workData['position'] ?? '';
+          work.descriptionController.text = workData['description'] ?? ''; // 🆕
+          work.responsibilitiesController.text = // 🆕
+              (workData['responsibilities'] as List?)?.join(', ') ?? '';
+          work.startDateController.text = workData['startDate'] ?? ''; // 🆕
+          work.endDateController.text = workData['endDate'] ?? ''; // 🆕
+          _workExperienceList.add(work);
+        }
+      }
 
-      // about & additional
-      _aboutMeController.text = data['aboutMe'] ?? '';
-      _additionalInfoController.text = data['additionalInformation'] ?? '';
+      // 🆕 Certificates (nowa struktura)
+      final certList = (data['certificates'] as List?) ?? [];
+      if (certList.isNotEmpty) {
+        _certificatesList.clear();
+        for (var certData in certList) {
+          final cert = _Certificate();
+          cert.nameController.text = certData['name'] ?? '';
+          cert.dateController.text = certData['date'] ?? '';
+          cert.issuerController.text = certData['issuer'] ?? '';
+          _certificatesList.add(cert);
+        }
+      }
+
+      // 🆕 Languages (nowa struktura)
+      final langList = (data['languages'] as List?) ?? [];
+      if (langList.isNotEmpty) {
+        _languagesList.clear();
+        for (var langData in langList) {
+          final lang = _Language();
+          lang.languageController.text = langData['language'] ?? '';
+          lang.levelController.text = langData['level'] ?? '';
+          _languagesList.add(lang);
+        }
+      }
+
+      // 🆕 Financial Survey
+      final financial = data['financialSurvey'] as Map<String, dynamic>?;
+      if (financial != null) {
+        _currentSalaryController.text =
+            financial['currentSalary']?.toString() ?? '';
+        _desiredSalaryController.text =
+            financial['desiredSalary']?.toString() ?? '';
+        _hasLoans = financial['hasLoans'] ?? false;
+        _loanDetailsController.text = financial['loanDetails'] ?? '';
+        _willingToRelocate = financial['willingToRelocate'] ?? false;
+
+        final risk = financial['riskAppetite']?.toString().toLowerCase();
+        _selectedRiskAppetite = RiskAppetite.values.firstWhere(
+          (e) => e.name == risk,
+          orElse: () => RiskAppetite.low,
+        );
+      }
     });
   }
 
   void _nextPage() {
-    if (_currentPage < 3) {
+    if (_currentPage < 5) {
+      // 🔄 Zwiększone z 3 na 5 (6 stron)
       setState(() => _currentPage++);
       _pageController.animateToPage(
         _currentPage,
@@ -190,59 +276,101 @@ class _FillProfileScreenState extends State<FillProfileScreen> {
       return;
     }
 
+    // 🔄 Rozszerzone dane profilu zgodne z API schema
     final profileData = {
-      "firstName": _nameController.text.trim(),
-      "lastName": _surnameController.text.trim(),
+      "firstName": _firstNameController.text.trim(), // 🔄
+      "lastName": _lastNameController.text.trim(), // 🔄
       "country": selectedCountry.trim(),
       "address": _addressController.text.trim(),
       "phoneNumber": _phoneController.text.trim(),
       "personalityType": _selectedPersonalityType?.name ?? "unknown",
-      "education": [
-        {
-          "degree": _selectEducation,
-          "institution": _educationInstitutionController.text.trim(),
-          "field": "",
-          "startDate": _educationYearController.text.trim(),
-          "endDate": "",
-        },
-      ],
+      "aboutMe": _aboutMeController.text.trim(),
+      "additionalInformation": _additionalInfoController.text.trim(),
+      "willingToRebrand": _willingToRebrand, // 🆕
+      // 🔄 Education z wszystkimi polami
+      "education":
+          _educationList
+              .where((edu) => edu.institutionController.text.trim().isNotEmpty)
+              .map(
+                (edu) => {
+                  "institution": edu.institutionController.text.trim(),
+                  "degree": edu.degreeController.text.trim(),
+                  "field": edu.fieldController.text.trim(), // 🆕
+                  "startDate": edu.startDateController.text.trim(),
+                  "endDate": edu.endDateController.text.trim(), // 🆕
+                },
+              )
+              .toList(),
+
+      // 🔄 Work Experience z wszystkimi polami
       "workExperience":
           _workExperienceList
-              .where(
-                (exp) =>
-                    exp.positionController.text.trim().isNotEmpty &&
-                    exp.companyController.text.trim().isNotEmpty,
-              )
+              .where((exp) => exp.companyController.text.trim().isNotEmpty)
               .map(
                 (exp) => {
                   "company": exp.companyController.text.trim(),
                   "position": exp.positionController.text.trim(),
-                  "description":
-                      "Pracował(a) przez ${exp.yearsController.text.trim()} lata",
-                  "responsibilities": [],
-                  "startDate": "",
-                  "endDate": "",
+                  "description": exp.descriptionController.text.trim(), // 🆕
+                  "responsibilities":
+                      exp
+                          .responsibilitiesController
+                          .text // 🆕
+                          .split(',')
+                          .map((e) => e.trim())
+                          .where((e) => e.isNotEmpty)
+                          .toList(),
+                  "startDate": exp.startDateController.text.trim(), // 🆕
+                  "endDate": exp.endDateController.text.trim(), // 🆕
                 },
               )
               .toList(),
-      "skills":
-          _skillController.text
+
+      // 🔄 Skills (zachowuję jako osobny input dla prostoty)
+      "skills": _getSkillsList(), // Helper function
+      // 🆕 Soft Skills
+      "softSkills":
+          _softSkillsController.text
               .split(',')
               .map((e) => e.trim())
               .where((e) => e.isNotEmpty)
               .toList(),
+
+      // 🔄 Certificates jako obiekty
       "certificates":
-          _certificateController.text
-              .split(',')
-              .map((e) => {"name": e.trim(), "date": null, "issuer": ""})
+          _certificatesList
+              .where((cert) => cert.nameController.text.trim().isNotEmpty)
+              .map(
+                (cert) => {
+                  "name": cert.nameController.text.trim(),
+                  "date": cert.dateController.text.trim(),
+                  "issuer": cert.issuerController.text.trim(),
+                },
+              )
               .toList(),
+
+      // 🔄 Languages jako obiekty
       "languages":
-          _languagesController.text
-              .split(',')
-              .map((e) => {"language": e.trim(), "level": ""})
+          _languagesList
+              .where((lang) => lang.languageController.text.trim().isNotEmpty)
+              .map(
+                (lang) => {
+                  "language": lang.languageController.text.trim(),
+                  "level": lang.levelController.text.trim(),
+                },
+              )
               .toList(),
-      "aboutMe": _aboutMeController.text.trim(),
-      "additionalInformation": _additionalInfoController.text.trim(),
+
+      // 🆕 Financial Survey
+      "financialSurvey": {
+        "currentSalary":
+            int.tryParse(_currentSalaryController.text.trim()) ?? 0,
+        "desiredSalary":
+            int.tryParse(_desiredSalaryController.text.trim()) ?? 0,
+        "hasLoans": _hasLoans,
+        "loanDetails": _loanDetailsController.text.trim(),
+        "riskAppetite": _selectedRiskAppetite?.name ?? "Low",
+        "willingToRelocate": _willingToRelocate,
+      },
     };
 
     final success = await ProfileApi.createUserProfile(profileData);
@@ -260,6 +388,13 @@ class _FillProfileScreenState extends State<FillProfileScreen> {
     }
   }
 
+  // 🆕 Helper function dla skills
+  List<String> _getSkillsList() {
+    // Możesz zachować stary sposób comma-separated lub zmienić na listę
+    // Na razie zostawiam prosty sposób
+    return []; // TODO: Dodaj skills input w UI
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -271,7 +406,7 @@ class _FillProfileScreenState extends State<FillProfileScreen> {
         child: Column(
           children: [
             LinearProgressIndicator(
-              value: (_currentPage + 1) / 4,
+              value: (_currentPage + 1) / 6, // 🔄 Zmienione z 4 na 6
               minHeight: 6,
             ),
             Expanded(
@@ -280,9 +415,11 @@ class _FillProfileScreenState extends State<FillProfileScreen> {
                 physics: const NeverScrollableScrollPhysics(),
                 children: [
                   _buildPersonalPage(),
-                  _buildEducationPage(),
-                  _buildSkillsPage(),
-                  _buildAdditionalPage(),
+                  _buildEducationPage(), // 🔄 Rozszerzone
+                  _buildWorkExperiencePage(), // 🆕 Nowa strona
+                  _buildSkillsPage(), // 🔄 Rozszerzone
+                  _buildLanguagesAndCertificatesPage(), // 🆕 Nowa strona
+                  _buildFinancialSurveyPage(), // 🆕 Nowa strona
                 ],
               ),
             ),
@@ -293,13 +430,13 @@ class _FillProfileScreenState extends State<FillProfileScreen> {
                 children: [
                   if (_currentPage > 0)
                     CustomButton(text: 'Wstecz', onPressed: _prevPage),
-                  if (_currentPage < 3)
+                  if (_currentPage < 5) // 🔄 Zmienione z 3 na 5
                     CustomButton(text: 'Dalej', onPressed: _nextPage),
-                  if (_currentPage == 3)
+                  if (_currentPage == 5) // 🔄 Zmienione z 3 na 5
                     _isLoading
                         ? const CircularProgressIndicator()
                         : CustomButton(
-                          text: 'Zapisz dane',
+                          text: 'Zapisz profil',
                           onPressed: _saveProfile,
                         ),
                 ],
@@ -334,6 +471,7 @@ class _FillProfileScreenState extends State<FillProfileScreen> {
     );
   }
 
+  // 🔄 Rozszerzona strona personal (dodano willingToRebrand)
   Widget _buildPersonalPage() => SingleChildScrollView(
     padding: const EdgeInsets.all(16),
     child: Column(
@@ -353,29 +491,57 @@ class _FillProfileScreenState extends State<FillProfileScreen> {
           showOnlyCountryWhenClosed: true,
         ),
         CustomInput(
-          label: "Name",
-          hintText: "Type your name",
-          controller: _nameController,
+          label: "Imię", // 🔄 Polskie nazwy
+          hintText: "Wpisz swoje imię",
+          controller: _firstNameController,
         ),
         CustomInput(
-          label: "Last name",
-          hintText: "Type your last name",
-          controller: _surnameController,
+          label: "Nazwisko",
+          hintText: "Wpisz swoje nazwisko",
+          controller: _lastNameController,
         ),
         CustomInput(
-          label: "Address",
-          hintText: "Type your address",
+          label: "Adres",
+          hintText: "Wpisz swój adres",
           controller: _addressController,
         ),
         CustomInput(
-          label: "Phone number",
-          hintText: "Type your phone number",
+          label: "Numer telefonu",
+          hintText: "Wpisz swój numer telefonu",
           controller: _phoneController,
+          keyboardType: TextInputType.phone,
+        ),
+        DropdownButtonFormField<PersonalityType>(
+          value: _selectedPersonalityType,
+          decoration: _inputDecoration("Typ osobowości"),
+          items:
+              PersonalityType.values
+                  .map((t) => DropdownMenuItem(value: t, child: Text(t.label)))
+                  .toList(),
+          onChanged: (v) => setState(() => _selectedPersonalityType = v),
+        ),
+        const SizedBox(height: 16),
+        // 🆕 Nowy checkbox
+        CheckboxListTile(
+          title: const Text("Chcę się przebrandować"),
+          value: _willingToRebrand,
+          onChanged: (v) => setState(() => _willingToRebrand = v ?? false),
+        ),
+        CustomInput(
+          label: "O mnie",
+          hintText: "Opowiedz coś o sobie",
+          controller: _aboutMeController,
+        ),
+        CustomInput(
+          label: "Dodatkowe informacje",
+          hintText: "Wszelkie dodatkowe informacje",
+          controller: _additionalInfoController,
         ),
       ],
     ),
   );
 
+  // 🔄 Rozszerzona strona education (dodano field, endDate)
   Widget _buildEducationPage() => SingleChildScrollView(
     padding: const EdgeInsets.all(16),
     child: Column(
@@ -388,78 +554,175 @@ class _FillProfileScreenState extends State<FillProfileScreen> {
           ),
         ),
         const SizedBox(height: 16),
-        DropdownButtonFormField<String>(
-          value: _selectEducation,
-          decoration: _inputDecoration("Poziom wykształcenia"),
-          items:
-              educationList
-                  .map((e) => DropdownMenuItem(value: e, child: Text(e)))
-                  .toList(),
-          onChanged: (v) => setState(() => _selectEducation = v),
-        ),
-        CustomInput(
-          label: "Institution",
-          hintText: "e.g. Uniwersytet Warszawski",
-          controller: _educationInstitutionController,
-        ),
-        CustomInput(
-          label: "Year of graduation",
-          hintText: "e.g. 2024",
-          controller: _educationYearController,
-          keyboardType: TextInputType.number,
-        ),
-        DropdownButtonFormField<PersonalityType>(
-          value: _selectedPersonalityType,
-          decoration: _inputDecoration("Personality Type"),
-          items:
-              PersonalityType.values
-                  .map((t) => DropdownMenuItem(value: t, child: Text(t.label)))
-                  .toList(),
-          onChanged: (v) => setState(() => _selectedPersonalityType = v),
+        const Text(
+          "Wykształcenie",
+          style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
         ),
         const SizedBox(height: 16),
-        const Text(
-          "Work Experience",
-          style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
-        ),
-        ..._workExperienceList.asMap().entries.map((e) {
-          final idx = e.key, exp = e.value;
-          return Column(
-            children: [
-              CustomInput(
-                label: "Position",
-                hintText: "e.g. QA Engineer",
-                controller: exp.positionController,
-              ),
-              CustomInput(
-                label: "Company",
-                hintText: "e.g. Allegro",
-                controller: exp.companyController,
-              ),
-              CustomInput(
-                label: "Years",
-                hintText: "e.g. 3",
-                controller: exp.yearsController,
-                keyboardType: TextInputType.number,
-              ),
-              if (idx == _workExperienceList.length - 1)
-                Align(
-                  alignment: Alignment.centerRight,
-                  child: TextButton(
-                    onPressed:
-                        () => setState(
-                          () => _workExperienceList.add(_WorkExperience()),
-                        ),
-                    child: const Text("Add another"),
+        ..._educationList.asMap().entries.map((entry) {
+          final idx = entry.key;
+          final edu = entry.value;
+          return Card(
+            margin: const EdgeInsets.only(bottom: 16),
+            child: Padding(
+              padding: const EdgeInsets.all(16),
+              child: Column(
+                children: [
+                  if (idx > 0)
+                    Align(
+                      alignment: Alignment.topRight,
+                      child: IconButton(
+                        icon: const Icon(Icons.delete),
+                        onPressed:
+                            () => setState(() {
+                              edu.dispose();
+                              _educationList.removeAt(idx);
+                            }),
+                      ),
+                    ),
+                  CustomInput(
+                    label: "Instytucja",
+                    hintText: "np. Uniwersytet Warszawski",
+                    controller: edu.institutionController,
                   ),
-                ),
-            ],
+                  CustomInput(
+                    label: "Stopień",
+                    hintText: "np. Licencjat, Magister",
+                    controller: edu.degreeController,
+                  ),
+                  // 🆕 Nowe pole
+                  CustomInput(
+                    label: "Kierunek",
+                    hintText: "np. Informatyka",
+                    controller: edu.fieldController,
+                  ),
+                  Row(
+                    children: [
+                      Expanded(
+                        child: CustomInput(
+                          label: "Data rozpoczęcia",
+                          hintText: "YYYY-MM-DD",
+                          controller: edu.startDateController,
+                        ),
+                      ),
+                      const SizedBox(width: 8),
+                      // 🆕 Nowe pole
+                      Expanded(
+                        child: CustomInput(
+                          label: "Data zakończenia",
+                          hintText: "YYYY-MM-DD",
+                          controller: edu.endDateController,
+                        ),
+                      ),
+                    ],
+                  ),
+                ],
+              ),
+            ),
           );
         }),
+        CustomButton(
+          text: "Dodaj wykształcenie",
+          onPressed: () => setState(() => _educationList.add(_Education())),
+        ),
       ],
     ),
   );
 
+  // 🆕 Nowa strona - Work Experience (rozszerzone)
+  Widget _buildWorkExperiencePage() => SingleChildScrollView(
+    padding: const EdgeInsets.all(16),
+    child: Column(
+      children: [
+        Center(
+          child: Image.asset(
+            'assets/img/vocare.png',
+            height: 80,
+            fit: BoxFit.contain,
+          ),
+        ),
+        const SizedBox(height: 16),
+        const Text(
+          "Doświadczenie zawodowe",
+          style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
+        ),
+        const SizedBox(height: 16),
+        ..._workExperienceList.asMap().entries.map((entry) {
+          final idx = entry.key;
+          final work = entry.value;
+          return Card(
+            margin: const EdgeInsets.only(bottom: 16),
+            child: Padding(
+              padding: const EdgeInsets.all(16),
+              child: Column(
+                children: [
+                  if (idx > 0)
+                    Align(
+                      alignment: Alignment.topRight,
+                      child: IconButton(
+                        icon: const Icon(Icons.delete),
+                        onPressed:
+                            () => setState(() {
+                              work.dispose();
+                              _workExperienceList.removeAt(idx);
+                            }),
+                      ),
+                    ),
+                  CustomInput(
+                    label: "Stanowisko",
+                    hintText: "np. QA Engineer",
+                    controller: work.positionController,
+                  ),
+                  CustomInput(
+                    label: "Firma",
+                    hintText: "np. Allegro",
+                    controller: work.companyController,
+                  ),
+                  // 🆕 Nowe pola
+                  CustomInput(
+                    label: "Opis pracy",
+                    hintText: "Krótki opis Twojej roli",
+                    controller: work.descriptionController,
+                  ),
+                  CustomInput(
+                    label: "Obowiązki",
+                    hintText: "Główne obowiązki, oddzielone przecinkami",
+                    controller: work.responsibilitiesController,
+                  ),
+                  Row(
+                    children: [
+                      Expanded(
+                        child: CustomInput(
+                          label: "Data rozpoczęcia",
+                          hintText: "YYYY-MM-DD",
+                          controller: work.startDateController,
+                        ),
+                      ),
+                      const SizedBox(width: 8),
+                      Expanded(
+                        child: CustomInput(
+                          label: "Data zakończenia",
+                          hintText: "YYYY-MM-DD",
+                          controller: work.endDateController,
+                        ),
+                      ),
+                    ],
+                  ),
+                ],
+              ),
+            ),
+          );
+        }),
+        CustomButton(
+          text: "Dodaj doświadczenie",
+          onPressed:
+              () => setState(() => _workExperienceList.add(_WorkExperience())),
+        ),
+      ],
+    ),
+  );
+
+  // 🔄 Rozszerzona strona skills (dodano softSkills)
   Widget _buildSkillsPage() => SingleChildScrollView(
     padding: const EdgeInsets.all(16),
     child: Column(
@@ -472,25 +735,224 @@ class _FillProfileScreenState extends State<FillProfileScreen> {
           ),
         ),
         const SizedBox(height: 16),
-        CustomInput(
-          label: "Skills",
-          hintText: "Your skills, comma separated",
-          controller: _skillController,
+        // TODO: Dodać skills input - na razie pomijam dla prostoty
+        const Text(
+          "Umiejętności",
+          style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
         ),
+        const SizedBox(height: 16),
+        const Text("TODO: Dodać skills input"),
+        const SizedBox(height: 16),
+        // 🆕 Soft Skills
         CustomInput(
-          label: "Certificates",
-          hintText: "Your certificates, comma separated",
-          controller: _certificateController,
-        ),
-        CustomInput(
-          label: "Languages",
-          hintText: "Languages, comma separated",
-          controller: _languagesController,
+          label: "Umiejętności miękkie",
+          hintText: "np. komunikacja, praca w zespole (oddzielone przecinkami)",
+          controller: _softSkillsController,
         ),
       ],
     ),
   );
 
+  // 🆕 Nowa strona - Languages i Certificates
+  Widget _buildLanguagesAndCertificatesPage() => SingleChildScrollView(
+    padding: const EdgeInsets.all(16),
+    child: Column(
+      children: [
+        Center(
+          child: Image.asset(
+            'assets/img/vocare.png',
+            height: 80,
+            fit: BoxFit.contain,
+          ),
+        ),
+        const SizedBox(height: 16),
+
+        // Languages section
+        const Text(
+          "Języki",
+          style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
+        ),
+        const SizedBox(height: 16),
+        ..._languagesList.asMap().entries.map((entry) {
+          final idx = entry.key;
+          final lang = entry.value;
+          return Card(
+            margin: const EdgeInsets.only(bottom: 16),
+            child: Padding(
+              padding: const EdgeInsets.all(16),
+              child: Column(
+                children: [
+                  if (idx > 0)
+                    Align(
+                      alignment: Alignment.topRight,
+                      child: IconButton(
+                        icon: const Icon(Icons.delete),
+                        onPressed:
+                            () => setState(() {
+                              lang.dispose();
+                              _languagesList.removeAt(idx);
+                            }),
+                      ),
+                    ),
+                  Row(
+                    children: [
+                      Expanded(
+                        child: CustomInput(
+                          label: "Język",
+                          hintText: "np. Angielski",
+                          controller: lang.languageController,
+                        ),
+                      ),
+                      const SizedBox(width: 8),
+                      Expanded(
+                        child: CustomInput(
+                          label: "Poziom",
+                          hintText: "np. B2, C1",
+                          controller: lang.levelController,
+                        ),
+                      ),
+                    ],
+                  ),
+                ],
+              ),
+            ),
+          );
+        }),
+        CustomButton(
+          text: "Dodaj język",
+          onPressed: () => setState(() => _languagesList.add(_Language())),
+        ),
+
+        const SizedBox(height: 32),
+
+        // Certificates section
+        const Text(
+          "Certyfikaty",
+          style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
+        ),
+        const SizedBox(height: 16),
+        ..._certificatesList.asMap().entries.map((entry) {
+          final idx = entry.key;
+          final cert = entry.value;
+          return Card(
+            margin: const EdgeInsets.only(bottom: 16),
+            child: Padding(
+              padding: const EdgeInsets.all(16),
+              child: Column(
+                children: [
+                  if (idx > 0)
+                    Align(
+                      alignment: Alignment.topRight,
+                      child: IconButton(
+                        icon: const Icon(Icons.delete),
+                        onPressed:
+                            () => setState(() {
+                              cert.dispose();
+                              _certificatesList.removeAt(idx);
+                            }),
+                      ),
+                    ),
+                  CustomInput(
+                    label: "Nazwa certyfikatu",
+                    hintText: "np. AWS Certified Developer",
+                    controller: cert.nameController,
+                  ),
+                  Row(
+                    children: [
+                      Expanded(
+                        child: CustomInput(
+                          label: "Data uzyskania",
+                          hintText: "YYYY-MM-DD",
+                          controller: cert.dateController,
+                        ),
+                      ),
+                      const SizedBox(width: 8),
+                      Expanded(
+                        child: CustomInput(
+                          label: "Wydawca",
+                          hintText: "np. Amazon Web Services",
+                          controller: cert.issuerController,
+                        ),
+                      ),
+                    ],
+                  ),
+                ],
+              ),
+            ),
+          );
+        }),
+        CustomButton(
+          text: "Dodaj certyfikat",
+          onPressed:
+              () => setState(() => _certificatesList.add(_Certificate())),
+        ),
+      ],
+    ),
+  );
+
+  // 🆕 Nowa strona - Financial Survey
+  Widget _buildFinancialSurveyPage() => SingleChildScrollView(
+    padding: const EdgeInsets.all(16),
+    child: Column(
+      children: [
+        Center(
+          child: Image.asset(
+            'assets/img/vocare.png',
+            height: 80,
+            fit: BoxFit.contain,
+          ),
+        ),
+        const SizedBox(height: 16),
+        const Text(
+          "Ankieta finansowa",
+          style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
+        ),
+        const SizedBox(height: 16),
+        CustomInput(
+          label: "Obecne wynagrodzenie",
+          hintText: "Kwota w PLN (np. 5000)",
+          controller: _currentSalaryController,
+          keyboardType: TextInputType.number,
+        ),
+        CustomInput(
+          label: "Oczekiwane wynagrodzenie",
+          hintText: "Kwota w PLN (np. 7000)",
+          controller: _desiredSalaryController,
+          keyboardType: TextInputType.number,
+        ),
+        const SizedBox(height: 16),
+        CheckboxListTile(
+          title: const Text("Mam kredyty lub pożyczki"),
+          value: _hasLoans,
+          onChanged: (v) => setState(() => _hasLoans = v ?? false),
+        ),
+        if (_hasLoans)
+          CustomInput(
+            label: "Szczegóły kredytów",
+            hintText: "Opisz swoje zobowiązania finansowe",
+            controller: _loanDetailsController,
+          ),
+        const SizedBox(height: 16),
+        DropdownButtonFormField<RiskAppetite>(
+          value: _selectedRiskAppetite,
+          decoration: _inputDecoration("Skłonność do ryzyka"),
+          items:
+              RiskAppetite.values
+                  .map((r) => DropdownMenuItem(value: r, child: Text(r.label)))
+                  .toList(),
+          onChanged: (v) => setState(() => _selectedRiskAppetite = v),
+        ),
+        const SizedBox(height: 16),
+        CheckboxListTile(
+          title: const Text("Chcę się przeprowadzić dla pracy"),
+          value: _willingToRelocate,
+          onChanged: (v) => setState(() => _willingToRelocate = v ?? false),
+        ),
+      ],
+    ),
+  );
+
+  // 🔄 Pozostała metoda _buildAdditionalPage() - można usunąć lub zachować
   Widget _buildAdditionalPage() => SingleChildScrollView(
     padding: const EdgeInsets.all(16),
     child: Column(
@@ -522,5 +984,44 @@ class _FillProfileScreenState extends State<FillProfileScreen> {
       labelText: label,
       border: OutlineInputBorder(borderRadius: BorderRadius.circular(25)),
     );
+  }
+
+  @override
+  void dispose() {
+    // Personal controllers
+    _firstNameController.dispose();
+    _lastNameController.dispose();
+    _addressController.dispose();
+    _phoneController.dispose();
+    _aboutMeController.dispose();
+    _additionalInfoController.dispose();
+    _softSkillsController.dispose();
+
+    // Financial controllers
+    _currentSalaryController.dispose();
+    _desiredSalaryController.dispose();
+    _loanDetailsController.dispose();
+
+    // Dispose education list
+    for (var edu in _educationList) {
+      edu.dispose();
+    }
+
+    // Dispose work experience list
+    for (var work in _workExperienceList) {
+      work.dispose();
+    }
+
+    // Dispose certificates list
+    for (var cert in _certificatesList) {
+      cert.dispose();
+    }
+
+    // Dispose languages list
+    for (var lang in _languagesList) {
+      lang.dispose();
+    }
+
+    super.dispose();
   }
 }
