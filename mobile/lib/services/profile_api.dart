@@ -109,7 +109,7 @@ class ProfileApi {
 
       if (response.statusCode == 200) {
         final fullResponse = jsonDecode(response.body);
-        final userProfile = fullResponse['userProfile'];
+        final userProfile = fullResponse;
 
         if (userProfile == null) {
           print("⚠️ Warning: No 'userProfile' field in response");

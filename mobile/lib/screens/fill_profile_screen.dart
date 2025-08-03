@@ -511,14 +511,29 @@ class _FillProfileScreenState extends State<FillProfileScreen> {
           controller: _phoneController,
           keyboardType: TextInputType.phone,
         ),
-        DropdownButtonFormField<PersonalityType>(
-          value: _selectedPersonalityType,
-          decoration: _inputDecoration("Typ osobowości"),
-          items:
-              PersonalityType.values
-                  .map((t) => DropdownMenuItem(value: t, child: Text(t.label)))
-                  .toList(),
-          onChanged: (v) => setState(() => _selectedPersonalityType = v),
+
+        Container(
+          margin: const EdgeInsets.all(16),
+          child: DropdownButtonFormField<PersonalityType>(
+            value: _selectedPersonalityType,
+            decoration: _inputDecoration("Typ osobowości"),
+            dropdownColor: const Color(0xFF191A23),
+            style: const TextStyle(color: Colors.white),
+            icon: const Icon(Icons.keyboard_arrow_down, color: Colors.white),
+            items:
+                PersonalityType.values
+                    .map(
+                      (t) => DropdownMenuItem(
+                        value: t,
+                        child: Text(
+                          t.label,
+                          style: const TextStyle(color: Colors.white),
+                        ),
+                      ),
+                    )
+                    .toList(),
+            onChanged: (v) => setState(() => _selectedPersonalityType = v),
+          ),
         ),
         const SizedBox(height: 16),
         // 🆕 Nowy checkbox
@@ -982,7 +997,24 @@ class _FillProfileScreenState extends State<FillProfileScreen> {
   InputDecoration _inputDecoration(String label) {
     return InputDecoration(
       labelText: label,
-      border: OutlineInputBorder(borderRadius: BorderRadius.circular(25)),
+      labelStyle: const TextStyle(color: Colors.white),
+      filled: true,
+      fillColor: const Color(0xFF191A23),
+      hintStyle: const TextStyle(color: Colors.white70),
+      border: OutlineInputBorder(
+        borderRadius: BorderRadius.circular(25),
+        borderSide: const BorderSide(color: Color(0xFF915EFF), width: 2),
+      ),
+      enabledBorder: OutlineInputBorder(
+        borderRadius: BorderRadius.circular(25),
+        borderSide: const BorderSide(color: Color(0xFF915EFF), width: 2),
+      ),
+      focusedBorder: OutlineInputBorder(
+        borderRadius: BorderRadius.circular(25),
+        borderSide: const BorderSide(color: Color(0xFF915EFF), width: 2),
+      ),
+      // 🎨 Dopasuj padding do CustomInput
+      contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
     );
   }
 
