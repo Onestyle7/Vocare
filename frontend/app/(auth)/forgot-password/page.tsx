@@ -54,27 +54,26 @@ const ForgotPasswordForm = () => {
 
     try {
       const response = await forgotPassword({ email: values.email });
-      
+
       // Backend zawsze zwraca sukces dla bezpieczeństwa
       console.log('Password reset response:', response);
-      
+
       setOpenDialog(true);
       setTimer(60); // start 60-second countdown
-      
+
       // Opcjonalnie: pokaż toast z sukcesem
       toast.success('Reset link sent successfully');
-      
     } catch (error: any) {
       console.error('Error sending password reset email:', error);
-      
+
       // Wyświetl konkretny błąd jeśli jest dostępny
-      const errorMessage = error.response?.data?.message || 
-                          error.response?.data?.errors?.[0] || 
-                          'Failed to send reset email. Please try again.';
-      
+      const errorMessage =
+        error.response?.data?.message ||
+        error.response?.data?.errors?.[0] ||
+        'Failed to send reset email. Please try again.';
+
       setError(errorMessage);
       toast.error(errorMessage);
-      
     } finally {
       setIsLoading(false);
     }
@@ -82,7 +81,7 @@ const ForgotPasswordForm = () => {
 
   const handleResendEmail = async () => {
     if (timer > 0) return; // Zabezpieczenie przed wielokrotnym kliknięciem
-    
+
     const email = form.getValues('email');
     if (!email) {
       toast.error('Please enter your email first');
@@ -117,14 +116,14 @@ const ForgotPasswordForm = () => {
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)} className="auth-form">
           <h1 className="form-title">Reset Password</h1>
-          
+
           {/* Wyświetl błąd globalny */}
           {error && (
-            <div className="mb-4 p-3 text-sm text-red-600 bg-red-50 border border-red-200 rounded-md">
+            <div className="mb-4 rounded-md border border-red-200 bg-red-50 p-3 text-sm text-red-600">
               {error}
             </div>
           )}
-          
+
           <FormField
             control={form.control}
             name="email"
@@ -133,12 +132,12 @@ const ForgotPasswordForm = () => {
                 <div className="shad-form-item">
                   <FormLabel className="shad-form-label mb-2">E-mail</FormLabel>
                   <FormControl>
-                    <Input 
-                      placeholder="Enter Your e-mail" 
-                      className="input-profile" 
+                    <Input
+                      placeholder="Enter Your e-mail"
+                      className="input-profile"
                       type="email"
                       autoComplete="email"
-                      {...field} 
+                      {...field}
                     />
                   </FormControl>
                 </div>
@@ -146,7 +145,7 @@ const ForgotPasswordForm = () => {
               </FormItem>
             )}
           />
-          
+
           <ButtonForm
             type="submit"
             className="group form-button"
@@ -166,7 +165,7 @@ const ForgotPasswordForm = () => {
               />
             )}
           </ButtonForm>
-          
+
           <div className="flex items-center justify-center">
             <Link
               href="/sign-in"
