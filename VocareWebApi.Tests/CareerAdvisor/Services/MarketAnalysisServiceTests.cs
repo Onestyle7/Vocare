@@ -339,7 +339,7 @@ namespace VocareWebApi.Tests.CareerAdvisor.Services
             {
                 Id = Guid.NewGuid(),
                 UserId = userId,
-                UserProfile = null, // Brak profilu użytkownika
+                UserProfile = null!, // Brak profilu użytkownika
             };
 
             _mockAiRecommendationRepo

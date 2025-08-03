@@ -145,13 +145,13 @@ namespace VocareWebApi.Tests.Billing.Services
         [InlineData("user", null)]
         [InlineData("user", "")]
         public async Task CanAccessServiceAsync_InvalidParameters_ThrowsArgumentException(
-            string userId,
-            string serviceName
+            string? userId,
+            string? serviceName
         )
         {
             // Act & Assert
             var action = async () =>
-                await _billingService.CanAccessServiceAsync(userId, serviceName);
+                await _billingService.CanAccessServiceAsync(userId!, serviceName!);
 
             await action
                 .Should()

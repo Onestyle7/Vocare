@@ -65,18 +65,18 @@ namespace VocareWebAPI.Billing.Services.Implementations
 
         public async Task DeductTokensForServiceAsync(string userId, string serviceName)
         {
-            // 1️⃣ Walidacja argumentów
+            // 1️⃣ Walidacja argumentów
             if (string.IsNullOrWhiteSpace(userId) || string.IsNullOrWhiteSpace(serviceName))
                 throw new ArgumentException("User ID and service name cannot be null or empty.");
 
-            // 2️⃣ Pobranie ceny usługi
+            // 2️⃣ Pobranie ceny usługi
             var serviceCost = await _serviceCostRepository.GetServiceCostAsync(serviceName);
             if (serviceCost <= 0)
                 throw new InvalidOperationException(
                     $"Service cost for {serviceName} is not valid."
                 );
 
-            // 3️⃣ Pobranie danych billingowych użytkownika
+            // 3️⃣ Pobranie danych billingowych użytkownika
             var userBilling = await _dbContext.UserBillings.FirstOrDefaultAsync(ub =>
                 ub.UserId == userId
             );
@@ -85,47 +85,66 @@ namespace VocareWebAPI.Billing.Services.Implementations
                     $"User billing information for user ID {userId} not found."
                 );
 
-            // 4️⃣ Jeśli ma aktywną subskrypcję, nic nie robimy
+            // 4️⃣ Jeśli ma aktywną subskrypcję, nic nie robimy
             if (userBilling.SubscriptionStatus == SubscriptionStatus.Active)
                 return;
 
-            // 5️⃣ Sprawdzenie salda tokenów
+            // 5️⃣ Sprawdzenie salda tokenów
             if (userBilling.TokenBalance < serviceCost)
                 throw new InvalidOperationException(
                     $"User {userId} does not have enough tokens to access {serviceName}."
                 );
 
-            // 6️⃣ Rozpoczęcie transakcji, aby operacje były atomowe
-            await using var trx = await _dbContext.Database.BeginTransactionAsync();
-            try
-            {
-                // 7️⃣ Aktualizacja salda
-                userBilling.TokenBalance -= serviceCost;
-                userBilling.LastTokenPurchaseDate = DateTime.UtcNow;
-                // EF Core śledzi userBilling, więc nie musimy wywoływać Update()
+            // 6️⃣ Sprawdzamy czy provider obsługuje transakcje
+            var isInMemory =
+                _dbContext.Database.ProviderName == "Microsoft.EntityFrameworkCore.InMemory";
 
-                // 8️⃣ Dodanie zapisu transakcji
-                var tokenTransaction = new TokenTransaction
+            if (isInMemory)
+            {
+                // Dla InMemory - bez transakcji (operacje są atomowe z natury)
+                await ProcessTokenDeductionAsync(userBilling, userId, serviceName, serviceCost);
+            }
+            else
+            {
+                // Dla prawdziwych baz danych - z transakcją
+                await using var trx = await _dbContext.Database.BeginTransactionAsync();
+                try
                 {
-                    UserId = userId,
-                    ServiceName = serviceName,
-                    Type = TransactionType.Usage,
-                    Amount = -serviceCost,
-                    CreatedAt = DateTime.UtcNow,
-                };
-                await _dbContext.TokenTransactions.AddAsync(tokenTransaction);
-
-                // 9️⃣ Zapis wszystkich zmian w jednym SaveChanges
-                await _dbContext.SaveChangesAsync();
-
-                // 🔟 Commit transakcji
-                await trx.CommitAsync();
+                    await ProcessTokenDeductionAsync(userBilling, userId, serviceName, serviceCost);
+                    await trx.CommitAsync();
+                }
+                catch (Exception ex)
+                {
+                    await trx.RollbackAsync();
+                    throw new InvalidOperationException("Failed to deduct tokens for service.", ex);
+                }
             }
-            catch (Exception ex)
+        }
+
+        private async Task ProcessTokenDeductionAsync(
+            UserBilling userBilling,
+            string userId,
+            string serviceName,
+            int serviceCost
+        )
+        {
+            // 7️⃣ Aktualizacja salda
+            userBilling.TokenBalance -= serviceCost;
+            userBilling.LastTokenPurchaseDate = DateTime.UtcNow;
+
+            // 8️⃣ Dodanie zapisu transakcji
+            var tokenTransaction = new TokenTransaction
             {
-                await trx.RollbackAsync();
-                throw new InvalidOperationException("Failed to deduct tokens for service.", ex);
-            }
+                UserId = userId,
+                ServiceName = serviceName,
+                Type = TransactionType.Usage,
+                Amount = -serviceCost,
+                CreatedAt = DateTime.UtcNow,
+            };
+            await _dbContext.TokenTransactions.AddAsync(tokenTransaction);
+
+            // 9️⃣ Zapis wszystkich zmian
+            await _dbContext.SaveChangesAsync();
         }
 
         public async Task HandleWebhookAsync(string json, string stripeSignature)

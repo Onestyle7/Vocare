@@ -79,10 +79,10 @@ namespace VocareWebApi.Tests.Billing.Repositories
                 .WithMessage("Service cost for \"NonExistentService\" not found.");
         }
 
-        [Theory] // Theory pozwala testować różne przypadki z różnymi danymi wejściowymi
+        [Theory]
         [InlineData("")]
         [InlineData(" ")]
-        [InlineData(null)]
+        [InlineData("   ")]
         public async Task GetServiceCostAsync_WhenServiceNameIsInvalid_ThrowsArgumentException(
             string serviceName
         )
@@ -99,22 +99,33 @@ namespace VocareWebApi.Tests.Billing.Repositories
         }
 
         [Fact]
-        public async Task GetServiceCostAsync_IsCaseInsensitive_PostgreSQL()
+        public async Task GetServiceCostAsync_WhenServiceNameIsNull_ThrowsArgumentException()
         {
-            // Arrange - Dla InMemory database używamy case-sensitive porównania
-            // W prawdziwym PostgreSQL z EF.Functions.ILike byłoby case-insensitive
-            // Dla testów jednostkowych możemy tylko sprawdzić dokładne dopasowanie
+            // Act & Assert
+            var action = async () => await _repository.GetServiceCostAsync(null!);
 
-            // Act
-            var result = await _repository.GetServiceCostAsync("AnalyzeProfile");
+            var exception = await action
+                .Should()
+                .ThrowAsync<ArgumentException>()
+                .WithMessage("Service name cannot be null or empty.*");
 
-            // Assert
-            result.Should().Be(5);
+            exception.And.ParamName.Should().Be("serviceName");
+        }
 
-            // Uwaga: W rzeczywistym PostgreSQL z ILike te testy by przeszły:
-            // var result1 = await _repository.GetServiceCostAsync("analyzeprofile");
-            // var result2 = await _repository.GetServiceCostAsync("ANALYZEPROFILE");
-            // Ale InMemory database nie wspiera ILike
+        [Fact]
+        public async Task GetServiceCostAsync_IsCaseInsensitive_WorksWithInMemory()
+        {
+            // Arrange & Act - testujemy różne warianty wielkości liter
+            var result1 = await _repository.GetServiceCostAsync("AnalyzeProfile");
+            var result2 = await _repository.GetServiceCostAsync("analyzeprofile");
+            var result3 = await _repository.GetServiceCostAsync("ANALYZEPROFILE");
+            var result4 = await _repository.GetServiceCostAsync("AnalyzePROFILE");
+
+            // Assert - wszystkie warianty powinny zwrócić ten sam wynik
+            result1.Should().Be(5);
+            result2.Should().Be(5);
+            result3.Should().Be(5);
+            result4.Should().Be(5);
         }
 
         [Fact]

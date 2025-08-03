@@ -166,7 +166,7 @@ namespace VocareWebApi.Tests.CareerAdvisor.Services
 
             await action
                 .Should()
-                .ThrowAsync<Exception>()
+                .ThrowAsync<KeyNotFoundException>() // Zmieniono z Exception na KeyNotFoundException
                 .WithMessage($"User profile not found for userId: {userId}");
         }
 
@@ -183,13 +183,13 @@ namespace VocareWebApi.Tests.CareerAdvisor.Services
                 Country = "USA",
                 // Wszystkie kolekcje są puste lub null
                 Skills = new List<string>(),
-                WorkExperience = null,
-                Education = null,
-                Certificates = null,
-                Languages = null,
-                PhoneNumber = null,
-                Address = null,
-                User = null,
+                WorkExperience = null!,
+                Education = null!,
+                Certificates = null!,
+                Languages = null!,
+                PhoneNumber = null!,
+                Address = null!,
+                User = null!,
             };
 
             _mockUserProfileRepo

@@ -262,7 +262,7 @@ namespace VocareWebApi.Tests.Billing.Controllers
         }
 
         [Fact]
-        public async Task Success_ReturnsOkWithMessage()
+        public void Success_ReturnsOkWithMessage()
         {
             // Act
             var result = _controller.Success();
@@ -277,7 +277,7 @@ namespace VocareWebApi.Tests.Billing.Controllers
         }
 
         [Fact]
-        public async Task Cancel_ReturnsOkWithMessage()
+        public void Cancel_ReturnsOkWithMessage()
         {
             // Act
             var result = _controller.Cancel();
