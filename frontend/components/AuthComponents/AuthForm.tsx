@@ -253,7 +253,7 @@ const AuthForm = ({ type }: { type: FormType }) => {
           </div>
 
           {type === 'sign-in' && (
-            <Link href="/forgot-password" className="relative ml-2 font-medium text-gray-500 transition duration-300 after:absolute after:bottom-0 after:left-0 after:h-[1px] after:w-0 after:bg-gray-500 after:transition-all after:duration-300 after:content-[''] hover:after:w-full">
+            <Link href="/forgot-password" className="relative ml-2 font-medium text-gray-500 transition duration-300 after:absolute after:bottom-0 after:left-0 after:h-[2px] after:w-0 after:bg-gray-500 after:transition-all after:duration-300 after:content-[''] hover:after:w-full">
               Forgot Password?
             </Link>
           )}
