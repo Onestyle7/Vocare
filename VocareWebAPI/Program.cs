@@ -491,3 +491,5 @@ while (retries < maxRetries)
 }
 
 app.Run();
+
+public partial class Program { }
