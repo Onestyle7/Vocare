@@ -266,6 +266,8 @@ export const logo = '/icons/vocare.png';
 export const curved1 = '/svg/curve-1.svg';
 export const curved2 = '/svg/curve-2.svg';
 
+export const upper_arrow = '/images/upper-arrow.png';
+
 // grid
 
 export const gridTiles = [
