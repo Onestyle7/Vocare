@@ -9,6 +9,7 @@ using Microsoft.Extensions.Logging;
 using Moq;
 using VocareWebAPI.Billing.Models.Dtos;
 using VocareWebAPI.Billing.Models.Entities;
+using VocareWebAPI.Billing.Repositories.Interfaces;
 using VocareWebAPI.Billing.Services.Interfaces;
 using VocareWebAPI.Controllers;
 using Xunit;
@@ -21,19 +22,22 @@ namespace VocareWebApi.Tests.Billing.Controllers
         private readonly Mock<IBillingService> _mockBillingService;
         private readonly Mock<ILogger<BillingController>> _mockLogger;
         private readonly BillingController _controller;
+        private readonly Mock<IUserBillingRepository> _mockUserBillingRepository;
 
         public BillingControllerTests()
         {
             // Arrange - inicjalizacja mocków
             _mockStripeService = new Mock<IStripeService>();
             _mockBillingService = new Mock<IBillingService>();
+            _mockUserBillingRepository = new Mock<IUserBillingRepository>(); // ✅ Dodano
             _mockLogger = new Mock<ILogger<BillingController>>();
 
             // Tworzenie instancji kontrolera z mockami
             _controller = new BillingController(
                 _mockStripeService.Object,
                 _mockBillingService.Object,
-                _mockLogger.Object
+                _mockLogger.Object,
+                _mockUserBillingRepository.Object // ✅ Dodano
             );
 
             // Konfiguracja kontekstu HTTP z użytkownikiem
@@ -112,7 +116,8 @@ namespace VocareWebApi.Tests.Billing.Controllers
             var controllerWithoutUser = new BillingController(
                 _mockStripeService.Object,
                 _mockBillingService.Object,
-                _mockLogger.Object
+                _mockLogger.Object,
+                _mockUserBillingRepository.Object
             );
 
             controllerWithoutUser.ControllerContext = new ControllerContext
