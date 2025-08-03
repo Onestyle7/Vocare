@@ -23,14 +23,17 @@ const GenerateRecommendationFail = () => {
               </p>
             </div>
             <div className="w-full">
-              <Link href="/profile" className="text-md text-muted-foreground flex flex-row">
+              <Link
+                href="/profile"
+                className="text-md text-muted-foreground group flex flex-row items-center transition-all duration-300"
+              >
                 Navigate to profile
                 <Image
                   src={upper_arrow}
                   alt="arrow"
                   width={24}
                   height={24}
-                  className="ml-1 scale-90 opacity-50 dark:invert"
+                  className="ml-1 scale-90 opacity-50 transition-transform duration-300 group-hover:translate-x-2 dark:invert"
                 />
               </Link>
             </div>
@@ -49,14 +52,17 @@ const GenerateRecommendationFail = () => {
               </p>
             </div>
             <div className="w-full">
-              <Link href="/profile" className="text-md text-muted-foreground flex flex-row">
+              <Link
+                href="/profile"
+                className="text-md text-muted-foreground group flex flex-row items-center transition-all duration-300"
+              >
                 Learn how we protect data
                 <Image
                   src={upper_arrow}
                   alt="arrow"
                   width={24}
                   height={24}
-                  className="ml-1 scale-90 opacity-50 dark:invert"
+                  className="ml-1 scale-90 opacity-50 transition-transform duration-300 group-hover:translate-x-2 dark:invert"
                 />
               </Link>
             </div>
@@ -73,14 +79,17 @@ const GenerateRecommendationFail = () => {
               </p>
             </div>
             <div className="w-full">
-              <Link href="/profile" className="text-md text-muted-foreground flex flex-row">
+              <Link
+                href="/profile"
+                className="text-md text-muted-foreground group flex flex-row items-center transition-all duration-300"
+              >
                 Visit the FAQ section
                 <Image
                   src={upper_arrow}
                   alt="arrow"
                   width={24}
                   height={24}
-                  className="ml-1 scale-90 opacity-50 dark:invert"
+                  className="ml-1 scale-90 opacity-50 transition-transform duration-300 group-hover:translate-x-2 dark:invert"
                 />
               </Link>
             </div>
