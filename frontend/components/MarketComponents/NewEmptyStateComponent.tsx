@@ -90,198 +90,200 @@ const NewEmptyStateComponent = ({
       customPaddings
       id="pricing"
     >
-          <div className="flex flex-col items-center space-y-10 lg:border-t mx-10">
-      {/* Header */}
-      <div className="flex flex-col items-center justify-center mt-10">
-        <h1 className="font-poppins max-md:text-center text-3xl font-bold">How to use AI Market analiser?</h1>
-        <p className="font-poppins text-md text-gray-500 mt-4">It&apos;s that simple.</p>
-      </div>
+      <div className="mx-10 flex flex-col items-center space-y-10 lg:border-t">
+        {/* Header */}
+        <div className="mt-10 flex flex-col items-center justify-center">
+          <h1 className="font-poppins text-3xl font-bold max-md:text-center">
+            How to use AI Market analiser?
+          </h1>
+          <p className="font-poppins text-md mt-4 text-gray-500">It&apos;s that simple.</p>
+        </div>
 
-      {/* Cards */}
-      <div className="flex flex-col max-lg:space-y-3 lg:flex-row lg:space-x-4">
-        <AnimatedContent
-          distance={150}
-          direction="horizontal"
-          reverse={false}
-          duration={1.2}
-          initialOpacity={0.2}
-          animateOpacity
-          scale={1}
-          threshold={0.2}
-          delay={0.3}
-        >
-          <SpotlightCard className="bg-muted h-[300px] w-[350px]">
-            <div className="font-poppins flex h-full flex-col items-center justify-center">
-              <div className="w-full items-center justify-start">
-                <p className="text-muted-foreground text-xl">1.</p>
-              </div>
-              <div className="mt-4 h-full w-full items-center justify-start">
-                <p className="text-muted-foreground text-lg">
-                  Start by updating <b>Your profile</b>. Simply use the <i>profile</i> button
-                </p>
-              </div>
-              <div className="w-full">
-                <Link
-                  href="/profile"
-                  className="text-md text-muted-foreground group flex flex-row items-center transition-all duration-300"
-                >
-                  Navigate to profile
-                  <Image
-                    src={upper_arrow}
-                    alt="arrow"
-                    width={24}
-                    height={24}
-                    className="ml-1 scale-90 opacity-50 transition-transform duration-300 group-hover:translate-x-2 dark:invert"
-                  />
-                </Link>
-              </div>
-            </div>
-          </SpotlightCard>
-        </AnimatedContent>
-
-        <AnimatedContent
-          distance={150}
-          direction="horizontal"
-          reverse={false}
-          duration={1.2}
-          initialOpacity={0.2}
-          animateOpacity
-          scale={1}
-          threshold={0.2}
-          delay={0.6}
-        >
-          <SpotlightCard className="bg-muted h-[300px] w-[350px]">
-            <div className="font-poppins flex h-full flex-col items-center justify-center">
-              <div className="w-full items-center justify-start">
-                <p className="text-muted-foreground text-xl">2.</p>
-              </div>
-              <div className="mt-4 h-full w-full items-center justify-start">
-                <p className="text-muted-foreground text-lg">
-                  After updating Your profile, you&apos;ll gain access to every <br /> <b>AI tool</b>{' '}
-                  that Vocare offers.
-                </p>
-              </div>
-              <div className="w-full">
-                <Link
-                  href="/profile"
-                  className="text-md text-muted-foreground group flex flex-row items-center transition-all duration-300"
-                >
-                  Learn how we protect data
-                  <Image
-                    src={upper_arrow}
-                    alt="arrow"
-                    width={24}
-                    height={24}
-                    className="ml-1 scale-90 opacity-50 transition-transform duration-300 group-hover:translate-x-2 dark:invert"
-                  />
-                </Link>
-              </div>
-            </div>
-          </SpotlightCard>
-        </AnimatedContent>
-
-        <AnimatedContent
-          distance={150}
-          direction="horizontal"
-          reverse={false}
-          duration={1.2}
-          initialOpacity={0.2}
-          animateOpacity
-          scale={1}
-          threshold={0.2}
-          delay={0.9}
-        >
-          <SpotlightCard className="bg-muted h-[300px] w-[350px]">
-            <div className="font-poppins flex h-full flex-col items-center justify-center">
-              <div className="w-full items-center justify-start">
-                <p className="text-muted-foreground text-xl">3.</p>
-              </div>
-              <div className="mt-4 h-full w-full items-center justify-start">
-                <p className="text-muted-foreground text-lg">
-                  Use <b>AI Career Advisor</b> and generate market analysis based on the recommended career paths.
-                </p>
-              </div>
-              <div className="w-full">
-                <Link
-                  href="/profile"
-                  className="text-md text-muted-foreground group flex flex-row items-center transition-all duration-300"
-                >
-                  Navigate to AI Career Advisor
-                  <Image
-                    src={upper_arrow}
-                    alt="arrow"
-                    width={24}
-                    height={24}
-                    className="ml-1 scale-90 opacity-50 transition-transform duration-300 group-hover:translate-x-2 dark:invert"
-                  />
-                </Link>
-              </div>
-            </div>
-          </SpotlightCard>
-        </AnimatedContent>
-      </div>
-
-      {/* Sekcja z przyciskiem pod kartami */}
-      <div className="mt-8 flex w-full max-w-4xl flex-col items-center space-y-6 justify-center">
-          <div>{buttonContent}</div>
-      </div>
-
-      {/* Dialog potwierdzenia */}
-      {hasRecommendations && (
-        <AlertDialog open={isConfirmDialogOpen} onOpenChange={setIsConfirmDialogOpen}>
-          <AlertDialogContent className="font-poppins mx-auto max-w-md">
-            <AlertDialogHeader>
-              <AlertDialogTitle className="text-center text-xl font-bold">
-                Generate market analysis?
-              </AlertDialogTitle>
-              <AlertDialogDescription className="text-center">
-                This will take <b className="text-[#915EFF]">5 credits</b> from your account.
-              </AlertDialogDescription>
-
-              <div className="mt-2 text-center text-sm font-extralight">
-                Current balance:{' '}
-                <span className="font-bold">{isBalanceLoading ? '...' : tokenBalance}</span>
-              </div>
-            </AlertDialogHeader>
-
-            <AlertDialogFooter className="flex justify-center gap-4 sm:justify-center">
-              <AlertDialogCancel
-                className="border-gray-200"
-                onClick={() => setIsConfirmDialogOpen(false)}
-              >
-                Cancel
-              </AlertDialogCancel>
-
-              {!isBalanceLoading && typeof tokenBalance === 'number' && tokenBalance < 5 ? (
-                <Link href="/pricing">
-                  <AlertDialogAction
-                    className="bg-[#915EFF] text-white hover:bg-[#7b4ee0]"
-                    onClick={() => setIsConfirmDialogOpen(false)}
+        {/* Cards */}
+        <div className="flex flex-col max-lg:space-y-3 lg:flex-row lg:space-x-4">
+          <AnimatedContent
+            distance={150}
+            direction="horizontal"
+            reverse={false}
+            duration={1.2}
+            initialOpacity={0.2}
+            animateOpacity
+            scale={1}
+            threshold={0.2}
+            delay={0.3}
+          >
+            <SpotlightCard className="bg-muted h-[300px] w-[350px]">
+              <div className="font-poppins flex h-full flex-col items-center justify-center">
+                <div className="w-full items-center justify-start">
+                  <p className="text-muted-foreground text-xl">1.</p>
+                </div>
+                <div className="mt-4 h-full w-full items-center justify-start">
+                  <p className="text-muted-foreground text-lg">
+                    Start by updating <b>Your profile</b>. Simply use the <i>profile</i> button
+                  </p>
+                </div>
+                <div className="w-full">
+                  <Link
+                    href="/profile"
+                    className="text-md text-muted-foreground group flex flex-row items-center transition-all duration-300"
                   >
-                    Get tokens
+                    Navigate to profile
+                    <Image
+                      src={upper_arrow}
+                      alt="arrow"
+                      width={24}
+                      height={24}
+                      className="ml-1 scale-90 opacity-50 transition-transform duration-300 group-hover:translate-x-2 dark:invert"
+                    />
+                  </Link>
+                </div>
+              </div>
+            </SpotlightCard>
+          </AnimatedContent>
+
+          <AnimatedContent
+            distance={150}
+            direction="horizontal"
+            reverse={false}
+            duration={1.2}
+            initialOpacity={0.2}
+            animateOpacity
+            scale={1}
+            threshold={0.2}
+            delay={0.6}
+          >
+            <SpotlightCard className="bg-muted h-[300px] w-[350px]">
+              <div className="font-poppins flex h-full flex-col items-center justify-center">
+                <div className="w-full items-center justify-start">
+                  <p className="text-muted-foreground text-xl">2.</p>
+                </div>
+                <div className="mt-4 h-full w-full items-center justify-start">
+                  <p className="text-muted-foreground text-lg">
+                    After updating Your profile, you&apos;ll gain access to every <br />{' '}
+                    <b>AI tool</b> that Vocare offers.
+                  </p>
+                </div>
+                <div className="w-full">
+                  <Link
+                    href="/profile"
+                    className="text-md text-muted-foreground group flex flex-row items-center transition-all duration-300"
+                  >
+                    Learn how we protect data
+                    <Image
+                      src={upper_arrow}
+                      alt="arrow"
+                      width={24}
+                      height={24}
+                      className="ml-1 scale-90 opacity-50 transition-transform duration-300 group-hover:translate-x-2 dark:invert"
+                    />
+                  </Link>
+                </div>
+              </div>
+            </SpotlightCard>
+          </AnimatedContent>
+
+          <AnimatedContent
+            distance={150}
+            direction="horizontal"
+            reverse={false}
+            duration={1.2}
+            initialOpacity={0.2}
+            animateOpacity
+            scale={1}
+            threshold={0.2}
+            delay={0.9}
+          >
+            <SpotlightCard className="bg-muted h-[300px] w-[350px]">
+              <div className="font-poppins flex h-full flex-col items-center justify-center">
+                <div className="w-full items-center justify-start">
+                  <p className="text-muted-foreground text-xl">3.</p>
+                </div>
+                <div className="mt-4 h-full w-full items-center justify-start">
+                  <p className="text-muted-foreground text-lg">
+                    Use <b>AI Career Advisor</b> and generate market analysis based on the
+                    recommended career paths.
+                  </p>
+                </div>
+                <div className="w-full">
+                  <Link
+                    href="/profile"
+                    className="text-md text-muted-foreground group flex flex-row items-center transition-all duration-300"
+                  >
+                    Navigate to AI Career Advisor
+                    <Image
+                      src={upper_arrow}
+                      alt="arrow"
+                      width={24}
+                      height={24}
+                      className="ml-1 scale-90 opacity-50 transition-transform duration-300 group-hover:translate-x-2 dark:invert"
+                    />
+                  </Link>
+                </div>
+              </div>
+            </SpotlightCard>
+          </AnimatedContent>
+        </div>
+
+        {/* Sekcja z przyciskiem pod kartami */}
+        <div className="mt-8 flex w-full max-w-4xl flex-col items-center justify-center space-y-6">
+          <div>{buttonContent}</div>
+        </div>
+
+        {/* Dialog potwierdzenia */}
+        {hasRecommendations && (
+          <AlertDialog open={isConfirmDialogOpen} onOpenChange={setIsConfirmDialogOpen}>
+            <AlertDialogContent className="font-poppins mx-auto max-w-md">
+              <AlertDialogHeader>
+                <AlertDialogTitle className="text-center text-xl font-bold">
+                  Generate market analysis?
+                </AlertDialogTitle>
+                <AlertDialogDescription className="text-center">
+                  This will take <b className="text-[#915EFF]">5 credits</b> from your account.
+                </AlertDialogDescription>
+
+                <div className="mt-2 text-center text-sm font-extralight">
+                  Current balance:{' '}
+                  <span className="font-bold">{isBalanceLoading ? '...' : tokenBalance}</span>
+                </div>
+              </AlertDialogHeader>
+
+              <AlertDialogFooter className="flex justify-center gap-4 sm:justify-center">
+                <AlertDialogCancel
+                  className="border-gray-200"
+                  onClick={() => setIsConfirmDialogOpen(false)}
+                >
+                  Cancel
+                </AlertDialogCancel>
+
+                {!isBalanceLoading && typeof tokenBalance === 'number' && tokenBalance < 5 ? (
+                  <Link href="/pricing">
+                    <AlertDialogAction
+                      className="bg-[#915EFF] text-white hover:bg-[#7b4ee0]"
+                      onClick={() => setIsConfirmDialogOpen(false)}
+                    >
+                      Get tokens
+                      <Image src={star_generate} alt="star" width={16} height={16} />
+                    </AlertDialogAction>
+                  </Link>
+                ) : (
+                  <AlertDialogAction
+                    onClick={async () => {
+                      await onGenerateAnalysis();
+                      refresh();
+                      setIsConfirmDialogOpen(false);
+                    }}
+                    className="bg-[#915EFF] text-white hover:bg-[#7b4ee0]"
+                  >
+                    Generate
                     <Image src={star_generate} alt="star" width={16} height={16} />
                   </AlertDialogAction>
-                </Link>
-              ) : (
-                <AlertDialogAction
-                  onClick={async () => {
-                    await onGenerateAnalysis();
-                    refresh();
-                    setIsConfirmDialogOpen(false);
-                  }}
-                  className="bg-[#915EFF] text-white hover:bg-[#7b4ee0]"
-                >
-                  Generate
-                  <Image src={star_generate} alt="star" width={16} height={16} />
-                </AlertDialogAction>
-              )}
-            </AlertDialogFooter>
-          </AlertDialogContent>
-        </AlertDialog>
-      )}
-    </div>
-        </Section>
-
+                )}
+              </AlertDialogFooter>
+            </AlertDialogContent>
+          </AlertDialog>
+        )}
+      </div>
+    </Section>
   );
 };
 
