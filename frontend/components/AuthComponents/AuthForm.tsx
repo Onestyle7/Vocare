@@ -4,7 +4,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
-import { authFormSchema, AuthFormType } from '@/lib/schemas/authSchema';
+import { signInSchema, signUpSchema, SignInFormType, SignUpFormType } from '@/lib/schemas/authSchema';
 import { registerUser, loginUser, googleVerify } from '@/lib/auth';
 import {
   Form,
@@ -23,10 +23,23 @@ import { ButtonForm } from '../ui/button-form';
 import { AxiosError } from 'axios';
 import OAuthButton from './OAuthButton';
 import { google } from '@/app/constants';
+import {
+  WindowWithGoogle,
+  GoogleTokenResponse,
+  GoogleTokenClient,
+} from '@/lib/types/google-oauth';
 
 type FormType = 'sign-in' | 'sign-up';
+type FormDataMap = {
+  'sign-in': SignInFormType;
+  'sign-up': SignUpFormType;
+};
 
-const AuthForm = ({ type }: { type: FormType }) => {
+interface AuthFormProps {
+  type: FormType;
+}
+
+const AuthForm = ({ type }: AuthFormProps) => {
   const [isLoading, setIsLoading] = useState(false);
   const router = useRouter();
 
@@ -41,46 +54,50 @@ const AuthForm = ({ type }: { type: FormType }) => {
     };
   }, []);
 
-  const formSchema = authFormSchema(type);
-  const form = useForm<AuthFormType>({
-    resolver: zodResolver(formSchema),
-    defaultValues: {
-      fullName: '',
-      email: '',
-      password: '',
-      confirmPassword: '',
-    },
+  const isSignUp = type === 'sign-up';
+  const resolver = zodResolver(isSignUp ? signUpSchema : signInSchema);
+  const form = useForm<FormDataMap[FormType]>({
+    resolver,
+    defaultValues: isSignUp
+      ? {
+          fullName: '',
+          email: '',
+          password: '',
+          confirmPassword: '',
+        }
+      : {
+          email: '',
+          password: '',
+        },
   });
 
-  async function onSubmit(values: AuthFormType) {
-  setIsLoading(true);
-  try {
-    if (type === 'sign-up') {
-      if (!values.confirmPassword) {
-        throw new Error('Confirm password is required');
+  async function onSubmit(values: SignInFormType | SignUpFormType) {
+    setIsLoading(true);
+    try {
+      if (isSignUp) {
+        const { email, password, confirmPassword } = values as SignUpFormType;
+        await registerUser({
+          email,
+          password,
+          confirmPassword,
+        });
+        toast.success('Registration successful!', {
+          description: 'You have successfully created an account. Please sign in.',
+        });
+        router.push('/sign-in');
+      } else {
+        const { email, password } = values as SignInFormType;
+        const data = await loginUser({
+          email,
+          password,
+        });
+        localStorage.setItem('token', data.accessToken);
+        toast.success('Login successful!', {
+          description: 'Welcome back!',
+        });
+        router.push('/');
       }
-      
-      await registerUser({
-        email: values.email,
-        password: values.password,
-        confirmPassword: values.confirmPassword,
-      });
-      toast.success('Registration successful!', {
-        description: 'You have successfully created an account. Please sign in.',
-      });
-      router.push('/sign-in');
-    } else {
-      const data = await loginUser({
-        email: values.email,
-        password: values.password,
-      });
-      localStorage.setItem('token', data.accessToken);
-      toast.success('Login successful!', {
-        description: 'Welcome back!',
-      });
-      router.push('/');
-    }
-  } catch (error: unknown) {
+    } catch (error: unknown) {
       let errorMessage = 'An unknown error occurred';
       let status: number | undefined;
 
@@ -94,41 +111,44 @@ const AuthForm = ({ type }: { type: FormType }) => {
       console.error('Error:', error);
 
       if (
-        status === 401 ||
-        errorMessage.includes('invalid') ||
-        errorMessage.includes('unauthorized')
-      ) {
-        toast.error('Invalid credentials', {
-          description: 'Please check your email or password and try again.',
-        });
-      } else if (
-        errorMessage.includes('network') ||
-        errorMessage.includes('failed to fetch') ||
-        errorMessage.includes('service unavailable')
-      ) {
-        toast.error('Connection error', {
-          description: 'Unable to connect to the server. Please try again later.',
-        });
-      } else {
-        toast.error('An error occurred', {
-          description: errorMessage || 'Something went wrong. Please try again.',
-        });
-      }
-    } finally {
-      setIsLoading(false);
-    }
+    status === 400 ||  // 👈 DODANE: obsługa błędu 400
+    status === 401 ||
+    errorMessage.includes('invalid') ||
+    errorMessage.includes('unauthorized')
+  ) {
+    toast.error('Invalid credentials', {
+      description: 'Please check your email or password and try again.',
+    });
+  } else if (
+    errorMessage.includes('network') ||
+    errorMessage.includes('failed to fetch') ||
+    errorMessage.includes('service unavailable')
+  ) {
+    toast.error('Connection error', {
+      description: 'Unable to connect to the server. Please try again later.',
+    });
+  } else {
+    toast.error('An error occurred', {
+      description: errorMessage || 'Something went wrong. Please try again.',
+    });
+  }
+} finally {
+  setIsLoading(false);
+}
   }
 
   const handleGoogleSignIn = () => {
-    if (!(window as any).google?.accounts?.oauth2) {
+    const windowWithGoogle = window as WindowWithGoogle;
+
+    if (!windowWithGoogle.google?.accounts?.oauth2) {
       toast.error('Google SDK not loaded');
       return;
     }
 
-    const client = (window as any).google.accounts.oauth2.initTokenClient({
+    const client: GoogleTokenClient = windowWithGoogle.google.accounts.oauth2.initTokenClient({
       client_id: process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID!,
       scope: 'openid profile email',
-      callback: async (tokenResponse: any) => {
+      callback: async (tokenResponse: GoogleTokenResponse) => {
         if (tokenResponse.error) {
           toast.error('Google authentication failed');
           return;
@@ -154,8 +174,9 @@ const AuthForm = ({ type }: { type: FormType }) => {
   return (
     <Form {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)} className="auth-form font-poppins">
-        <h1 className="form-title">{type === 'sign-in' ? 'Sign In' : 'Sign Up'}</h1>
-        {type === 'sign-up' && (
+        <h1 className="form-title">{isSignUp ? 'Sign Up' : 'Sign In'}</h1>
+
+        {isSignUp && (
           <FormField
             control={form.control}
             name="fullName"
@@ -204,7 +225,7 @@ const AuthForm = ({ type }: { type: FormType }) => {
           )}
         />
 
-        {type === 'sign-up' && (
+        {isSignUp && (
           <FormField
             control={form.control}
             name="confirmPassword"
@@ -226,7 +247,7 @@ const AuthForm = ({ type }: { type: FormType }) => {
         )}
 
         <ButtonForm type="submit" disabled={isLoading} className="group form-button">
-          {type === 'sign-in' ? 'Sign In' : 'Join Vocare'}
+          {isSignUp ? 'Join Vocare' : 'Sign In'}
           <span className="arrow-animation">
             <ArrowRight />
           </span>
@@ -243,23 +264,26 @@ const AuthForm = ({ type }: { type: FormType }) => {
 
         <div className="mt-4 flex items-center justify-between">
           <div className="flex items-center">
-            <p>{type === 'sign-in' ? "Don't have an account?" : 'Already have an account?'}</p>
+            <p>{isSignUp ? 'Already have an account?' : "Don't have an account?"}</p>
             <Link
-              href={type === 'sign-in' ? '/sign-up' : '/sign-in'}
+              href={isSignUp ? '/sign-in' : '/sign-up'}
               className="relative ml-2 font-semibold text-[#915EFF] transition duration-300 after:absolute after:bottom-0 after:left-0 after:h-[2px] after:w-0 after:bg-[#915EFF] after:transition-all after:duration-300 after:content-[''] hover:after:w-full"
             >
-              {type === 'sign-in' ? 'Sign Up' : 'Sign In'}
+              {isSignUp ? 'Sign In' : 'Sign Up'}
             </Link>
           </div>
 
-          {type === 'sign-in' && (
-            <Link href="/forgot-password" className="relative ml-2 font-medium text-gray-500 transition duration-300 after:absolute after:bottom-0 after:left-0 after:h-[2px] after:w-0 after:bg-gray-500 after:transition-all after:duration-300 after:content-[''] hover:after:w-full">
+          {!isSignUp && (
+            <Link
+              href="/forgot-password"
+              className="relative ml-2 font-medium text-gray-500 transition duration-300 after:absolute after:bottom-0 after:left-0 after:h-[2px] after:w-0 after:bg-gray-500 after:transition-all after:duration-300 after:content-[''] hover:after:w-full"
+            >
               Forgot Password?
             </Link>
           )}
         </div>
 
-        {type === 'sign-in' && (
+        {!isSignUp && (
           <div className="flex w-full flex-col items-center justify-center gap-4 text-sm text-gray-400">
             <div className="flex w-full items-center">
               <div className="h-[0.5px] w-full bg-gray-500/80" />
@@ -269,7 +293,6 @@ const AuthForm = ({ type }: { type: FormType }) => {
 
             <div className="tems-center mt-4 flex w-full flex-row justify-center gap-2">
               <OAuthButton icon={google} label="Login with Google" onClick={handleGoogleSignIn} />
-              {/* <OAuthButton icon={facebook} label="Login with Facebook" onClick={handleFacebookSignIn} /> */}
             </div>
           </div>
         )}
