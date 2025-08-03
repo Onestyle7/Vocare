@@ -82,6 +82,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
 
             CustomInput(
               label: "Password",
+              obscureText: true,
               hintText: "Type your password",
               controller: _passwordController,
               prefixIcon: Icon(Icons.security),
@@ -89,6 +90,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
 
             CustomInput(
               label: "Confirm password",
+              obscureText: true,
               hintText: "Type your password",
               controller: _confirmPasswordController,
               prefixIcon: Icon(Icons.security),
