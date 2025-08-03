@@ -182,8 +182,14 @@ namespace VocareWebAPI.Controllers
 
                 return Ok(new { tokenBalance = userBilling.TokenBalance });
             }
+            catch (KeyNotFoundException)
+            {
+                // Specyficzny catch dla KeyNotFoundException - zwraca 404
+                return NotFound("Nie znaleziono informacji o płatności dla tego użytkownika.");
+            }
             catch (Exception ex)
             {
+                // Ogólny catch dla innych błędów - zwraca 500
                 _logger.LogError(ex, "Błąd podczas pobierania salda tokenów.");
                 return StatusCode(500, "Wystąpił błąd podczas przetwarzania żądania.");
             }

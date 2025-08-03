@@ -392,146 +392,143 @@ Zespół Vocare
         }
 
         [HttpPost("google-verify")]
-        [AllowAnonymous]
-        public async Task<IActionResult> GoogleVerify([FromBody] GoogleVerifyRequest request)
+[AllowAnonymous]
+public async Task<IActionResult> GoogleVerify([FromBody] GoogleVerifyRequest request)
+{
+    if (request?.AccessToken == null)
+    {
+        return BadRequest(new { message = "Access token is required" });
+    }
+
+    try
+    {
+        // Weryfikuj token Google
+        var response = await _httpClient.GetAsync(
+            $"https://www.googleapis.com/oauth2/v1/tokeninfo?access_token={request.AccessToken}"
+        );
+
+        if (!response.IsSuccessStatusCode)
         {
-            if (request?.AccessToken == null)
-            {
-                return BadRequest(new { message = "Access token is required" });
-            }
-
-            try
-            {
-                // Weryfikuj token Google
-                var response = await _httpClient.GetAsync(
-                    $"https://www.googleapis.com/oauth2/v1/tokeninfo?access_token={request.AccessToken}"
-                );
-
-                if (!response.IsSuccessStatusCode)
-                {
-                    return BadRequest(new { message = "Invalid Google token" });
-                }
-
-                var tokenInfo = await response.Content.ReadAsStringAsync();
-                using var json = JsonDocument.Parse(tokenInfo);
-                var email = json.RootElement.GetProperty("email").GetString();
-
-                if (string.IsNullOrEmpty(email))
-                {
-                    return BadRequest(new { message = "No email in Google token" });
-                }
-
-                // Znajdź/utwórz użytkownika
-                var user = await _userManager.FindByEmailAsync(email);
-                var isNewUser = false;
-
-                if (user == null)
-                {
-                    isNewUser = true;
-                    user = new User
-                    {
-                        UserName = email,
-                        Email = email,
-                        EmailConfirmed = true,
-                    };
-
-                    var createResult = await _userManager.CreateAsync(user);
-                    if (!createResult.Succeeded)
-                    {
-                        return BadRequest(
-                            new
-                            {
-                                message = "Failed to create user account",
-                                errors = createResult.Errors,
-                            }
-                        );
-                    }
-
-                    // Dodaj informację o logowaniu przez Google
-                    await _userManager.AddLoginAsync(
-                        user,
-                        new UserLoginInfo(
-                            "Google",
-                            json.RootElement.GetProperty("user_id").GetString() ?? email,
-                            "Google"
-                        )
-                    );
-
-                    await _registrationHandler.HandleUserRegistrationAsync(user.Id);
-                }
-
-                var httpContext = HttpContext;
-                var baseUrl = $"{httpContext.Request.Scheme}://{httpContext.Request.Host}";
-
-                // Przygotuj request do Identity login endpoint
-                using var client = new HttpClient();
-                client.BaseAddress = new Uri(baseUrl);
-
-                // Generuj tymczasowy token dostępu
-                var accessToken = await _userManager.GenerateUserTokenAsync(
-                    user,
-                    TokenOptions.DefaultAuthenticatorProvider,
-                    "access"
-                );
-
-                // Identity Bearer Token Response format
-                var tokenResponse = new
-                {
-                    tokenType = "Bearer",
-                    accessToken = GenerateIdentityCompatibleToken(user),
-                    expiresIn = 3600,
-                    refreshToken = Guid.NewGuid().ToString(),
-                };
-
-                // Zapisz refresh token
-                await _userManager.SetAuthenticationTokenAsync(
-                    user,
-                    IdentityConstants.BearerScheme,
-                    "refresh_token",
-                    tokenResponse.refreshToken
-                );
-
-                return Ok(
-                    new
-                    {
-                        token = tokenResponse.accessToken,
-
-                        accessToken = tokenResponse.accessToken,
-                        refreshToken = tokenResponse.refreshToken,
-                        expiresIn = tokenResponse.expiresIn,
-                        tokenType = tokenResponse.tokenType,
-
-                        userId = user.Id,
-                        email = user.Email,
-                        isNewUser = isNewUser,
-                        message = "Login successful",
-                    }
-                );
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, "Error in GoogleVerify");
-                return BadRequest(new { message = "Google verification failed" });
-            }
+            return BadRequest(new { message = "Invalid Google token" });
         }
 
-        private string GenerateIdentityCompatibleToken(User user)
-        {
-            var protector = HttpContext
-                .RequestServices.GetRequiredService<IDataProtectionProvider>()
-                .CreateProtector("VocareAuth");
+        var tokenInfo = await response.Content.ReadAsStringAsync();
+        using var json = JsonDocument.Parse(tokenInfo);
+        var email = json.RootElement.GetProperty("email").GetString();
 
-            var tokenData = new
+        if (string.IsNullOrEmpty(email))
+        {
+            return BadRequest(new { message = "No email in Google token" });
+        }
+
+        // Znajdź/utwórz użytkownika
+        var user = await _userManager.FindByEmailAsync(email);
+        var isNewUser = false;
+
+        if (user == null)
+        {
+            isNewUser = true;
+            user = new User
             {
-                sub = user.Id,
-                email = user.Email,
-                jti = Guid.NewGuid().ToString(),
-                exp = DateTimeOffset.UtcNow.AddHours(1).ToUnixTimeSeconds(),
-                iat = DateTimeOffset.UtcNow.ToUnixTimeSeconds(),
+                UserName = email,
+                Email = email,
+                EmailConfirmed = true,
             };
 
-            var json = JsonSerializer.Serialize(tokenData);
-            return protector.Protect(json);
+            var createResult = await _userManager.CreateAsync(user);
+            if (!createResult.Succeeded)
+            {
+                return BadRequest(
+                    new
+                    {
+                        message = "Failed to create user account",
+                        errors = createResult.Errors,
+                    }
+                );
+            }
+
+            // Dodaj informację o logowaniu przez Google
+            await _userManager.AddLoginAsync(
+                user,
+                new UserLoginInfo(
+                    "Google",
+                    json.RootElement.GetProperty("user_id").GetString() ?? email,
+                    "Google"
+                )
+            );
+
+            await _registrationHandler.HandleUserRegistrationAsync(user.Id);
         }
+
+        var httpContext = HttpContext;
+        var baseUrl = $"{httpContext.Request.Scheme}://{httpContext.Request.Host}";
+
+        // Przygotuj request do Identity login endpoint
+        using var client = new HttpClient();
+        client.BaseAddress = new Uri(baseUrl);
+
+        // Generuj tymczasowy token dostępu
+        var accessToken = await _userManager.GenerateUserTokenAsync(
+            user,
+            TokenOptions.DefaultAuthenticatorProvider,
+            "access"
+        );
+
+        // Identity Bearer Token Response format
+        var tokenResponse = new
+        {
+            tokenType = "Bearer",
+            accessToken = GenerateIdentityCompatibleToken(user),
+            expiresIn = 3600,
+            refreshToken = Guid.NewGuid().ToString(),
+        };
+
+        // Zapisz refresh token
+        await _userManager.SetAuthenticationTokenAsync(
+            user,
+            IdentityConstants.BearerScheme,
+            "refresh_token",
+            tokenResponse.refreshToken
+        );
+
+        return Ok(
+            new
+            {
+                token = tokenResponse.accessToken,
+                accessToken = tokenResponse.accessToken,
+                refreshToken = tokenResponse.refreshToken,
+                expiresIn = tokenResponse.expiresIn,
+                tokenType = tokenResponse.tokenType,
+                userId = user.Id,
+                email = user.Email,
+                isNewUser = isNewUser,
+                message = "Login successful",
+            }
+        );
     }
+    catch (Exception ex)
+    {
+        _logger.LogError(ex, "Error in GoogleVerify");
+        return BadRequest(new { message = "Google verification failed" });
+    }
+}
+
+private string GenerateIdentityCompatibleToken(User user)
+{
+    var protector = HttpContext
+        .RequestServices.GetRequiredService<IDataProtectionProvider>()
+        .CreateProtector("VocareAuth");
+
+    var tokenData = new
+    {
+        sub = user.Id,
+        email = user.Email,
+        jti = Guid.NewGuid().ToString(),
+        exp = DateTimeOffset.UtcNow.AddHours(1).ToUnixTimeSeconds(),
+        iat = DateTimeOffset.UtcNow.ToUnixTimeSeconds(),
+    };
+
+    var json = JsonSerializer.Serialize(tokenData);
+    return protector.Protect(json);
+}
 }
