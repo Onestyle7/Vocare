@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Stripe;
 using VocareWebAPI.Billing.Models.Dtos;
+using VocareWebAPI.Billing.Repositories.Interfaces;
 using VocareWebAPI.Billing.Services.Interfaces;
 
 namespace VocareWebAPI.Controllers
@@ -18,16 +19,19 @@ namespace VocareWebAPI.Controllers
         private readonly IStripeService _stripeService;
         private readonly IBillingService _billingService;
         private readonly ILogger<BillingController> _logger;
+        private readonly IUserBillingRepository _userBillingRepository;
 
         public BillingController(
             IStripeService stripeService,
             IBillingService billingService,
-            ILogger<BillingController> logger
+            ILogger<BillingController> logger,
+            IUserBillingRepository userBillingRepository
         )
         {
             _stripeService = stripeService;
             _billingService = billingService;
             _logger = logger;
+            _userBillingRepository = userBillingRepository;
         }
 
         [HttpPost("create-checkout-session")]
@@ -81,6 +85,47 @@ namespace VocareWebAPI.Controllers
                     userId
                 );
                 return StatusCode(500, new { Error = "An unexpected error occurred." });
+            }
+        }
+
+        [HttpGet("debug/user-billing/{userId}")]
+        [Authorize] // Tylko dla zalogowanych użytkowników
+        public async Task<IActionResult> DebugUserBilling(string userId)
+        {
+            try
+            {
+                // Sprawdź czy wywołujący użytkownik to admin lub sam użytkownik
+                var currentUserId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+                if (currentUserId != userId && !User.IsInRole("Admin"))
+                {
+                    return Forbid("You can only view your own billing information.");
+                }
+
+                var userBilling = await _billingService.GetUserBillingAsync(userId);
+
+                return Ok(
+                    new
+                    {
+                        userId = userBilling.UserId,
+                        tokenBalance = userBilling.TokenBalance,
+                        stripeCustomerId = userBilling.StripeCustomerId,
+                        subscriptionStatus = userBilling.SubscriptionStatus.ToString(),
+                        subscriptionLevel = userBilling.SubscriptionLevel.ToString(),
+                        lastTokenPurchaseDate = userBilling.LastTokenPurchaseDate,
+                        subscriptionEndDate = userBilling.SubscriptionEndDate,
+                    }
+                );
+            }
+            catch (KeyNotFoundException)
+            {
+                return NotFound(
+                    new { message = $"No billing information found for user {userId}" }
+                );
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error getting billing info for user {UserId}", userId);
+                return StatusCode(500, new { message = "Error retrieving billing information" });
             }
         }
 

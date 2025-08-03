@@ -151,7 +151,7 @@ export default function AssistantPage() {
         // Najpierw spróbuj pobrać ostatnie rekomendacje
         try {
           const lastRecommendationResponse = await axios.get<AiCareerResponse>(
-            'https://vocare-production-e568.up.railway.app/api/AI/last-recommendation',
+            'http://localhost:8080/api/Ai/last-recommendation',
             {
               headers: {
                 Authorization: `Bearer ${token}`,
@@ -182,7 +182,7 @@ export default function AssistantPage() {
 
         // Jeśli brak ostatnich rekomendacji, wygeneruj nowe
         const response = await axios.get<AiCareerResponse>(
-          'https://vocare-production-e568.up.railway.app/api/AI/recommendations',
+          'http://localhost:8080/api/Ai/recommendations',
           {
             headers: {
               Authorization: `Bearer ${token}`,
@@ -234,7 +234,7 @@ export default function AssistantPage() {
     }
     try {
       const response = await axios.get<AiCareerResponse>(
-        'https://vocare-production-e568.up.railway.app/api/AI/recommendations',
+        'http://localhost:8080/api/Ai/recommendations',
         {
           headers: {
             Authorization: `Bearer ${token}`,
@@ -263,7 +263,6 @@ export default function AssistantPage() {
       setLoading(false);
     }
   };
-
   if (!profile) {
     return <div className="p-8 text-center">Brak danych profilu. Wróć do formularza.</div>;
   }
