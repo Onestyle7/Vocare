@@ -1,13 +1,16 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 using AutoMapper;
+using FluentAssertions;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using Moq;
 using VocareWebAPI.Data;
+using VocareWebAPI.Models.Dtos;
+using VocareWebAPI.Models.Entities;
+using VocareWebAPI.Profiles;
 using VocareWebAPI.Services;
+using VocareWebAPI.UserManagement.Models.Dtos;
+using VocareWebAPI.UserManagement.Models.Entities;
+using VocareWebAPI.UserManagement.Models.Enums;
 using Xunit;
 
 namespace VocareWebApi.Tests.UserManagement.Services
