@@ -199,7 +199,7 @@ export const countries = [
 
 export const NavLinks = [
   { label: 'Profile', url: '/profile' },
-  { label: 'Assistant', url: '/assistant' },
+  { label: 'Advisor', url: '/assistant' },
   { label: 'Analysis', url: '/market-analysis' },
   { label: 'Pricing', url: '/pricing' },
   { label: 'Resume', url: '/resume', disabled: false },

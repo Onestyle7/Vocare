@@ -2,16 +2,36 @@ import React from 'react';
 import SpotlightCard from '../SpotlightCard/SpotlightCard';
 import Link from 'next/link';
 import Image from 'next/image';
-import { curved1, upper_arrow } from '@/app/constants';
+import { upper_arrow } from '@/app/constants';
+import AnimatedContent from '../AnimatedContent/AnimatedContent';
+import Section from '../SupportComponents/Section';
 
 const GenerateRecommendationFail = () => {
   return (
-    <div className="mt-16 flex flex-col items-center space-y-10">
-      <div className="flex flex-col items-center justify-center">
-        <h1 className="font-poppins text-3xl font-bold">How to use Vocare?</h1>
-        <p className="font-poppins text-md text-gray-500">It&apos;s that simple.</p>
+    <Section
+      className="relative -mt-[5.25rem] pt-[7.5rem]"
+      crosses
+      crossesOffset="lg:translate-y-[7.5rem]"
+      customPaddings
+      id="pricing"
+    >
+    <div className="flex flex-col items-center space-y-10 lg:border-t mx-10">
+      <div className="flex flex-col items-center justify-center mt-10">
+        <h1 className="font-poppins text-3xl font-bold max-md:text-center">How to use AI career advisor?</h1>
+        <p className="font-poppins text-md text-gray-500 mt-4">It&apos;s that simple.</p>
       </div>
       <div className="flex flex-col max-lg:space-y-3 lg:flex-row lg:space-x-4">
+        <AnimatedContent
+        distance={150}
+direction="horizontal"
+reverse={false}
+duration={1.2}
+initialOpacity={0.2}
+animateOpacity
+scale={1}
+threshold={0.2}
+delay={0.3}
+>
         <SpotlightCard className="bg-muted h-[300px] w-[350px]">
           <div className="font-poppins flex h-full flex-col items-center justify-center">
             <div className="w-full items-center justify-start">
@@ -39,7 +59,19 @@ const GenerateRecommendationFail = () => {
             </div>
           </div>
         </SpotlightCard>
+        </AnimatedContent>
         {/* <Image src={curved1} alt='curved' width={324} height={324} className='invert opacity-30'/> */}
+        <AnimatedContent
+        distance={150}
+direction="horizontal"
+reverse={false}
+duration={1.2}
+initialOpacity={0.2}
+animateOpacity
+scale={1}
+threshold={0.2}
+delay={0.6}
+>
         <SpotlightCard className="bg-muted h-[300px] w-[350px]">
           <div className="font-poppins flex h-full flex-col items-center justify-center">
             <div className="w-full items-center justify-start">
@@ -68,7 +100,19 @@ const GenerateRecommendationFail = () => {
             </div>
           </div>
         </SpotlightCard>
-        <SpotlightCard className="bg-muted h-[300px] w-[350px]">
+        </AnimatedContent>
+        <AnimatedContent
+        distance={150}
+direction="horizontal"
+reverse={false}
+duration={1.2}
+initialOpacity={0.2}
+animateOpacity
+scale={1}
+threshold={0.2}
+delay={0.9}
+>
+            <SpotlightCard className="bg-muted h-[300px] w-[350px]">
           <div className="font-poppins flex h-full flex-col items-center justify-center">
             <div className="w-full items-center justify-start">
               <p className="text-muted-foreground text-xl">3.</p>
@@ -95,8 +139,10 @@ const GenerateRecommendationFail = () => {
             </div>
           </div>
         </SpotlightCard>
+        </AnimatedContent>
       </div>
     </div>
+    </Section>
   );
 };
 
