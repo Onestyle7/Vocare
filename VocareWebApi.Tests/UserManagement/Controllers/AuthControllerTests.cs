@@ -1,5 +1,4 @@
 using System.Text.Json;
-using System.Threading.Tasks;
 using Microsoft.AspNetCore.DataProtection;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
@@ -26,7 +25,21 @@ namespace VocareWebAPI.Tests.UserManagement.Controllers
         private readonly Mock<IConfiguration> _mockConfiguration;
         private readonly Mock<ILogger<AuthController>> _mockLogger;
         private readonly AuthController _controller;
+        private readonly Mock<IHttpClientFactory> _mockHttpClientFactory;
 
+        /// <summary>
+        /// Fake implementacja IDataProtector dla testów
+        /// </summary>
+        public class FakeDataProtector : IDataProtector
+        {
+            public IDataProtector CreateProtector(string purpose) => this;
+
+            public byte[] Protect(byte[] plaintext) => plaintext; // Zwraca to samo dla testów
+
+            public byte[] Unprotect(byte[] protectedData) => protectedData; // Zwraca to samo dla testów
+        }
+
+        // ✅ Zaktualizowany konstruktor:
         public AuthControllerTests()
         {
             // Setup UserManager mock
@@ -60,7 +73,14 @@ namespace VocareWebAPI.Tests.UserManagement.Controllers
             _mockConfiguration = new Mock<IConfiguration>();
             _mockLogger = new Mock<ILogger<AuthController>>();
 
-            // ✅ Stwórz prawdziwy UserRegistrationHandler z mock dependencies
+            // ✅ HttpClientFactory mock
+            _mockHttpClientFactory = new Mock<IHttpClientFactory>();
+            var mockHttpClient = new HttpClient();
+            _mockHttpClientFactory
+                .Setup(x => x.CreateClient(It.IsAny<string>()))
+                .Returns(mockHttpClient);
+
+            // ✅ UserRegistrationHandler
             var mockUserSetupService = new Mock<IUserSetupService>();
             var mockRegistrationLogger = new Mock<ILogger<UserRegistrationHandler>>();
             UserRegistrationHandler registrationHandler = new UserRegistrationHandler(
@@ -74,20 +94,26 @@ namespace VocareWebAPI.Tests.UserManagement.Controllers
                 _mockEmailService.Object,
                 _mockConfiguration.Object,
                 _mockLogger.Object,
-                registrationHandler // ✅ Prawdziwy obiekt
+                registrationHandler,
+                _mockHttpClientFactory.Object
             );
 
-            // Setup HttpContext
+            // ✅ POPRAWKA: Używamy Fake DataProtector zamiast mocka
             var httpContext = new DefaultHttpContext();
-            var dataProtector = new Mock<IDataProtector>();
+
+            // Fake DataProtector - nie mockujemy extension methods!
+            var fakeDataProtector = new FakeDataProtector();
+
             var dataProtectionProvider = new Mock<IDataProtectionProvider>();
             dataProtectionProvider
                 .Setup(x => x.CreateProtector(It.IsAny<string>()))
-                .Returns(dataProtector.Object);
+                .Returns(fakeDataProtector); // ✅ Zwracamy fake implementację
 
-            httpContext.RequestServices = new ServiceCollection()
-                .AddSingleton(dataProtectionProvider.Object)
-                .BuildServiceProvider();
+            // ServiceProvider setup
+            var services = new ServiceCollection();
+            services.AddSingleton(dataProtectionProvider.Object);
+
+            httpContext.RequestServices = services.BuildServiceProvider();
 
             _controller.ControllerContext = new ControllerContext { HttpContext = httpContext };
         }
@@ -187,13 +213,12 @@ namespace VocareWebAPI.Tests.UserManagement.Controllers
 
             _mockUserManager.Setup(x => x.FindByEmailAsync(loginRequest.Email)).ReturnsAsync(user);
 
-            // ✅ NAJWAŻNIEJSZA POPRAWKA: Mock PasswordSignInAsync (nie CheckPasswordSignInAsync!)
+            // ✅ POPRAWKA: Mock CheckPasswordSignInAsync (nie PasswordSignInAsync!)
             _mockSignInManager
                 .Setup(x =>
-                    x.PasswordSignInAsync(
-                        loginRequest.Email, // userName
-                        loginRequest.Password, // password
-                        false, // isPersistent
+                    x.CheckPasswordSignInAsync(
+                        user,
+                        loginRequest.Password,
                         true // lockoutOnFailure
                     )
                 )
@@ -225,10 +250,14 @@ namespace VocareWebAPI.Tests.UserManagement.Controllers
 
             _mockUserManager.Setup(x => x.FindByEmailAsync(loginRequest.Email)).ReturnsAsync(user);
 
-            // ✅ Mock PasswordSignInAsync z Failed result
+            // ✅ POPRAWKA: Mock CheckPasswordSignInAsync z Failed result
             _mockSignInManager
                 .Setup(x =>
-                    x.PasswordSignInAsync(loginRequest.Email, loginRequest.Password, false, true)
+                    x.CheckPasswordSignInAsync(
+                        user,
+                        loginRequest.Password,
+                        true // lockoutOnFailure
+                    )
                 )
                 .ReturnsAsync(Microsoft.AspNetCore.Identity.SignInResult.Failed);
 
