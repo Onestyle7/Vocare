@@ -4,6 +4,7 @@ using System.Security.Claims;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.RateLimiting;
 using Microsoft.Extensions.Logging;
 using Stripe;
 using VocareWebAPI.Billing.Models.Dtos;
@@ -88,7 +89,9 @@ namespace VocareWebAPI.Controllers
             }
         }
 
+#if DEBUG
         [HttpGet("debug/user-billing/{userId}")]
+#endif
         [Authorize] // Tylko dla zalogowanych użytkowników
         public async Task<IActionResult> DebugUserBilling(string userId)
         {
@@ -131,6 +134,7 @@ namespace VocareWebAPI.Controllers
 
         [HttpPost("webhook")]
         [AllowAnonymous]
+        [EnableRateLimiting("WebhookPolicy")]
         public async Task<IActionResult> Webhook()
         {
             var json = await new StreamReader(Request.Body).ReadToEndAsync();

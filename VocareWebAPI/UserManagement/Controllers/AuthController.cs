@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.DataProtection;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.RateLimiting;
 using Microsoft.Extensions.Options;
 using VocareWebAPI.Models.Entities;
 using VocareWebAPI.UserManagement.Models.Dtos;
@@ -47,6 +48,7 @@ namespace VocareWebAPI.UserManagement.Controllers
 
         [HttpPost("forgot-password")]
         [AllowAnonymous]
+        [EnableRateLimiting("LoginPolicy")]
         public async Task<IActionResult> ForgotPassword([FromBody] ForgotPasswordDto dto)
         {
             if (!ModelState.IsValid)
@@ -115,6 +117,7 @@ Zespół Vocare
 
         [HttpPost("reset-password")]
         [AllowAnonymous]
+        [EnableRateLimiting("LoginPolicy")]
         public async Task<IActionResult> ResetPassword([FromBody] ResetPasswordDto dto)
         {
             if (!ModelState.IsValid)
@@ -175,6 +178,7 @@ Zespół Vocare
 
         [HttpGet("validate-reset-token")]
         [AllowAnonymous]
+        [EnableRateLimiting("LoginPolicy")]
         public async Task<IActionResult> ValidateResetToken(
             [FromQuery] string token,
             [FromQuery] string email
@@ -220,6 +224,7 @@ Zespół Vocare
 
         [HttpPost("register")]
         [AllowAnonymous]
+        [EnableRateLimiting("LoginPolicy")]
         public async Task<IActionResult> Register([FromBody] RegisterDto request)
         {
             _logger.LogInformation("=== REGISTER START === Email: {Email}", request.Email);
@@ -309,6 +314,7 @@ Zespół Vocare
 
         [HttpPost("login")]
         [AllowAnonymous]
+        [EnableRateLimiting("LoginPolicy")]
         public async Task<IActionResult> Login([FromBody] LoginRequest request)
         {
             if (!ModelState.IsValid)
