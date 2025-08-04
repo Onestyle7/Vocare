@@ -16,7 +16,7 @@ import {
 } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
 import { ButtonForm } from '@/components/ui/button-form';
-import { ArrowRight, Eye, EyeOff, Check, X } from 'lucide-react';
+import { ArrowRight, Eye, EyeOff, Check, X, ClockAlert } from 'lucide-react';
 import { resetPassword, validateResetToken } from '@/lib/auth';
 import { toast } from 'sonner';
 
@@ -159,33 +159,31 @@ const ResetPasswordContent = () => {
 
   // Invalid token state
   if (tokenValid === false) {
-    return (
-      <div className="auth-form text-center">
-        <div className="mb-6">
-          <X className="mx-auto h-16 w-16 text-red-500" />
-        </div>
-        <h1 className="form-title">Invalid Reset Link</h1>
-        <p className="mb-6 text-gray-600">
-          {error || 'This password reset link is invalid or has expired.'}
-        </p>
-        <div className="space-y-4">
-          <Link
-            href="/forgot-password"
-            className="block w-full rounded-md bg-[#915EFF] px-4 py-3 text-center text-white transition-colors duration-200 hover:bg-[#7C3AED]"
-          >
-            Request New Reset Link
-          </Link>
-          <Link
-            href="/sign-in"
-            className="block text-center text-[#915EFF] hover:underline"
-          >
+  return (
+    <div className="auth-form text-center">
+      <span className='items-center justify-center flex'>
+        <ClockAlert className='h-24 w-24'/>
+      </span>
+      <h1 className="text-3xl font-bold">Invalid Reset Link</h1>
+      <p className="mb-6 text-gray-600">
+        {'This password reset link is invalid or has expired.'}
+      </p>
+      <div className="space-y-4 flex-col flex items-center justify-center">
+        <Link href="/forgot-password">
+          <ButtonForm className="group form-button">
+            Request new reset link
+            <span className="arrow-animation mx-2">
+          <ArrowRight />
+        </span>
+          </ButtonForm>
+        </Link>
+         <Link href="/forgot-password" className="relative ml-2 font-semibold text-[#915EFF] transition duration-300 after:absolute after:bottom-0 after:left-0 after:h-[2px] after:w-0 after:bg-[#915EFF] after:transition-all after:duration-300 after:content-[''] hover:after:w-full">
             Back to Sign In
-          </Link>
-        </div>
+        </Link>
       </div>
-    );
-  }
-
+    </div>
+  );
+}
   // Success state
   if (success) {
     return (
@@ -193,7 +191,7 @@ const ResetPasswordContent = () => {
         <div className="mb-6">
           <Check className="mx-auto h-16 w-16 text-green-500" />
         </div>
-        <h1 className="form-title">Password Reset Successful!</h1>
+        <h1 className="flex items-center justify-center text-3xl">Password Reset Successful!</h1>
         <p className="mb-6 text-gray-600">
           Your password has been successfully updated. You will be redirected to the sign-in page.
         </p>
@@ -211,9 +209,9 @@ const ResetPasswordContent = () => {
   return (
     <Form {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)} className="auth-form">
-        <h1 className="form-title">Set New Password</h1>
+        <h1 className="items-center justify-center flex text-3xl font-bold">Set New Password</h1>
         <p className="mb-6 text-center text-sm text-gray-600">
-          Enter your new password for <span className="font-semibold text-[#915EFF]">{email}</span>
+          Enter your new password for <br /> <span className="font-semibold text-[#915EFF]">{email}</span>
         </p>
 
         {/* Display global error */}

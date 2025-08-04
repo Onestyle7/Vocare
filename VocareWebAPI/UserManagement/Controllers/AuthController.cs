@@ -133,10 +133,8 @@ Zespół Vocare
                 );
                 return BadRequest(new { message = "Invalid email or token." });
             }
-            // Dekoduj token
-            var decodedToken = HttpUtility.UrlDecode(dto.Token);
 
-            var result = await _userManager.ResetPasswordAsync(user, decodedToken, dto.NewPassword);
+            var result = await _userManager.ResetPasswordAsync(user, dto.Token, dto.NewPassword);
 
             if (!result.Succeeded)
             {
@@ -197,14 +195,11 @@ Zespół Vocare
 
             try
             {
-                var decodedToken = HttpUtility.UrlDecode(token);
-
-                // Identity nie ma metody do samej walidacji, więc używamy VerifyUserTokenAsync
                 var isValid = await _userManager.VerifyUserTokenAsync(
                     user,
                     _userManager.Options.Tokens.PasswordResetTokenProvider,
                     "ResetPassword",
-                    decodedToken
+                    token
                 );
 
                 return Ok(
