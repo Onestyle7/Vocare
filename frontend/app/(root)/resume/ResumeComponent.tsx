@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useCallback } from 'react';
 import {
   User,
   Mail,
@@ -38,6 +38,11 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
+
+// Exact A4 dimensions at 96 DPI
+const PAGE_WIDTH = 794; // px
+const PAGE_HEIGHT = 1123; // px
+const PAGE_PADDING = 40; // px
 
 interface PersonalInfo {
   firstName: string;
@@ -230,11 +235,7 @@ const CVCreator: React.FC<CVCreatorProps> = ({ initialCv }) => {
   }, [sectionOrder]);
 
 useEffect(() => {
-  checkContentOverflow();
-  setTimeout(() => {
-    checkSectionBreaks();
-    forcePageBreakForLongSections();
-  }, 150); // Zwiększ opóźnienie
+  paginateSections();
 }, [
   experiences,
   education,
@@ -244,7 +245,14 @@ useEffect(() => {
   hobbies,
   personalInfo,
   privacyStatement,
+  sectionOrder,
+  paginateSections,
 ]);
+
+useEffect(() => {
+  window.addEventListener('resize', paginateSections);
+  return () => window.removeEventListener('resize', paginateSections);
+}, [paginateSections]);
 
 useEffect(() => {
   const style = document.createElement('style');
@@ -486,104 +494,62 @@ useEffect(() => {
     setCvPosition({ x: 0, y: 0 });
   };
 
-const checkSectionBreaks = () => {
-  const cvContent = document.querySelector('.cv-content');
-  if (!cvContent) return;
+const paginateSections = useCallback(() => {
+  const frame = document.querySelector<HTMLElement>('.cv-frame');
+  const content = document.querySelector<HTMLElement>('.cv-content');
+  if (!frame || !content) return;
 
-  const pageHeight = 1123; // wysokość strony A4 w pikselach
-  const sections = cvContent.querySelectorAll('[data-section]') as NodeListOf<HTMLElement>;
-  
+  const pageHeight = frame.clientHeight;
+  const sections = Array.from(
+    content.querySelectorAll('[data-section]')
+  ) as HTMLElement[];
+
+  // reset previous offsets
   sections.forEach((section) => {
-    // Resetuj wcześniejsze style
     section.style.marginTop = '';
-    section.style.pageBreakBefore = '';
-    
-    // Pobierz rzeczywistą wysokość sekcji
-    const sectionHeight = section.scrollHeight;
-    const rect = section.getBoundingClientRect();
-    const cvRect = cvContent.getBoundingClientRect();
-    
-    // Oblicz pozycję sekcji względem początku CV
-    const sectionTop = rect.top - cvRect.top + cvContent.scrollTop;
-    const sectionBottom = sectionTop + sectionHeight;
-    
-    // Określ na której stronie zaczyna się sekcja
-    const startPage = Math.floor(sectionTop / pageHeight) + 1;
-    const endPage = Math.floor(sectionBottom / pageHeight) + 1;
-    
-    // Jeśli sekcja przekracza na następną stronę
-    if (startPage !== endPage) {
-      const spaceFromTop = sectionTop - ((startPage - 1) * pageHeight);
-      const remainingSpaceOnPage = pageHeight - spaceFromTop;
-      
-      // KLUCZ: Zmniejszamy próg z 80% na 50% lub sprawdzamy czy sekcja się nie mieści
-      const shouldMoveToNextPage = 
-        spaceFromTop > pageHeight * 0.5 || // Jeśli zaczyna się w drugiej połowie strony
-        remainingSpaceOnPage < sectionHeight * 0.3; // Albo jeśli mniej niż 30% sekcji mieści się na stronie
-      
-      if (shouldMoveToNextPage) {
-        const pushToNextPage = pageHeight - spaceFromTop;
-        section.style.marginTop = `${pushToNextPage}px`;
-        
-        // Dodatkowe CSS dla lepszego łamania stron
-        section.style.pageBreakBefore = 'always';
-      }
-    }
-    
-    // Dodatkowe zabezpieczenie: jeśli sekcja jest bardzo długa i nie mieści się na jednej stronie
-    if (sectionHeight > pageHeight * 0.8) {
-      section.style.pageBreakInside = 'avoid';
-    }
-  });
-  
-  // Wywołaj ponownie po krótkim opóźnieniu dla stabilności
-  setTimeout(() => {
-    // Sprawdź czy wszystkie sekcje są prawidłowo pozycjonowane
-    sections.forEach((section) => {
-      // Jeśli sekcja nadal źle się łamie, spróbuj alternatywnego podejścia
-      if (section.scrollHeight > pageHeight * 0.8) {
-        section.style.breakInside = 'avoid';
-        section.style.pageBreakInside = 'avoid';
-      }
+    Array.from(section.children).forEach((child) => {
+      (child as HTMLElement).style.marginTop = '';
     });
-  }, 50);
-};
+  });
 
-const forcePageBreakForLongSections = () => {
-  const cvContent = document.querySelector('.cv-content');
-  if (!cvContent) return;
+  let currentHeight = 0;
+  let pages = 1;
 
-  const pageHeight = 1123;
-  const sections = cvContent.querySelectorAll('[data-section]') as NodeListOf<HTMLElement>;
-  
   sections.forEach((section) => {
-    const sectionHeight = section.scrollHeight;
-    
-    // Jeśli sekcja jest bardzo długa, podziel ją lub przenieś całkowicie
-    if (sectionHeight > pageHeight * 0.6) {
-      const rect = section.getBoundingClientRect();
-      const cvRect = cvContent.getBoundingClientRect();
-      const sectionTop = rect.top - cvRect.top + cvContent.scrollTop;
-      const spaceFromTop = sectionTop % pageHeight;
-      
-      // Jeśli długa sekcja zaczyna się w drugiej połowie strony, przenieś ją
-      if (spaceFromTop > pageHeight * 0.4) {
-        const pushToNextPage = pageHeight - spaceFromTop;
-        section.style.marginTop = `${pushToNextPage}px`;
-      }
+    const secHeight = section.offsetHeight;
+
+    if (secHeight > pageHeight) {
+      const items = Array.from(section.children) as HTMLElement[];
+      items.forEach((item) => {
+        const itemHeight = item.offsetHeight;
+        if (currentHeight + itemHeight > pageHeight) {
+          const push = pageHeight - currentHeight;
+          item.style.marginTop = `${push}px`;
+          pages++;
+          currentHeight = itemHeight;
+        } else {
+          currentHeight += itemHeight;
+        }
+      });
+      return;
+    }
+
+    if (currentHeight + secHeight > pageHeight) {
+      const push = pageHeight - currentHeight;
+      section.style.marginTop = `${push}px`;
+      pages++;
+      currentHeight = secHeight;
+    } else {
+      currentHeight += secHeight;
     }
   });
-};
 
-
-  const checkContentOverflow = () => {
-    const cvElement = document.querySelector<HTMLElement>('.cv-content');
-    if (!cvElement) return;
-    const contentHeight = cvElement.scrollHeight;
-    const pageHeight = 1123; // A4 height in pixels at 96 DPI (approx. 1123px)
-    const newTotalPages = Math.ceil(contentHeight / pageHeight);
-    setTotalPages(newTotalPages);
-  };
+  content.style.height = `${pages * pageHeight}px`;
+  setTotalPages(pages);
+  if (currentPage > pages) {
+    setCurrentPage(pages);
+  }
+}, [currentPage]);
 
   const goToNextPage = () => {
     if (currentPage < totalPages) {
@@ -603,7 +569,7 @@ const forcePageBreakForLongSections = () => {
     }
   };
 
-  const populateFromCv = (cv: CvDto, position?: string) => {
+  const populateFromCv = useCallback((cv: CvDto, position?: string) => {
     if (cv.basics) {
       setPersonalInfo({
         firstName: cv.basics.firstName,
@@ -658,7 +624,7 @@ const forcePageBreakForLongSections = () => {
         level: l.fluency,
       })) || []
     );
-  };
+  }, [personalInfo.profession]);
 
   const buildCvDto = (): CvDto => {
     return {
@@ -728,7 +694,7 @@ const forcePageBreakForLongSections = () => {
       populateFromCv(initialCv.cvData, initialCv.targetPosition || undefined);
       setCvId(initialCv.id);
     }
-  }, [initialCv]);
+  }, [initialCv, populateFromCv]);
 
 
 const downloadPDF = async () => {
@@ -1833,30 +1799,27 @@ const downloadPDF = async () => {
               onMouseDown={handleMouseDown}
             >
               {/* A4 Paper with exact dimensions */}
-              <div 
-  className="cv-frame rounded-sm overflow-hidden" 
-  style={{
-    width:  '210mm',
-    padding: '32px',          // ← tutaj widoczny margines
-    boxSizing: 'border-box',
-    backgroundColor: '#fff',
-    boxShadow: '0 4px 6px rgba(0,0,0,0.1)',
-    transform: `scale(${cvScale})`,
-    transformOrigin: 'center center',
-  }}
->
-  <div 
-    className="cv-content border border-red-500" 
-    style={{
-      width:  '100%',         // 210mm
-      height: '238.5mm',        // dokładnie obszar "przelamywania"
-      overflow: 'hidden',
-    }}
-  >
+              <div
+                className="cv-frame rounded-sm overflow-hidden"
+                style={{
+                  width: `${PAGE_WIDTH}px`,
+                  height: `${PAGE_HEIGHT}px`,
+                  padding: `${PAGE_PADDING}px`,
+                  boxSizing: 'border-box',
+                  backgroundColor: '#fff',
+                  boxShadow: '0 4px 6px rgba(0,0,0,0.1)',
+                  transform: `scale(${cvScale})`,
+                  transformOrigin: 'center center',
+                  position: 'relative',
+                }}
+              >
                 <div
-                  className="h-full box-border"
+                  className="cv-content"
                   style={{
-                    transform: `translateY(-${(currentPage - 1) * 100}%)`,
+                    width: '100%',
+                    height: `${totalPages * PAGE_HEIGHT}px`,
+                    transform: `translateY(-${(currentPage - 1) * PAGE_HEIGHT}px)`,
+                    transition: 'transform 0.3s ease',
                   }}
                 >
                   <div className="mb-6">
@@ -1910,9 +1873,8 @@ const downloadPDF = async () => {
                     )}
                 </div>
               </div>
-              </div>
             </div>
-
+            
             {/* Pagination Controls - dodaj na dole kontenera */}
             {true && (
               <div
