@@ -61,9 +61,9 @@ export default function StepProgress({ currentStep, totalSteps }: StepProgressPr
                 )}
               </div>
 
-              {/* Step Label */}
+              {/* Step Label (hidden on small screens) */}
               <span
-                className={`mt-2 max-w-20 text-center text-xs font-medium transition-colors duration-300 sm:max-w-none sm:text-sm ${
+                className={`hidden sm:block mt-2 max-w-20 text-center text-xs font-medium transition-colors duration-300 sm:max-w-none sm:text-sm ${
                   step.number <= currentStep
                     ? 'dark:text-purple-400'
                     : 'text-gray-500 dark:text-gray-400'
@@ -76,9 +76,9 @@ export default function StepProgress({ currentStep, totalSteps }: StepProgressPr
               </span>
             </div>
 
-            {/* Connecting Line */}
+            {/* Connecting Line (adjust margin on small screens) */}
             {index < visibleSteps.length - 1 && (
-              <div className="-mt-6 flex flex-1 items-center px-2 sm:px-4">
+              <div className="mt-0 sm:-mt-6 flex flex-1 items-center px-2 sm:px-4">
                 <div className="h-1 w-full overflow-hidden rounded-full bg-gray-200 dark:bg-gray-700">
                   <div
                     className={`h-full rounded-full transition-all duration-700 ease-in-out ${

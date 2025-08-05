@@ -10,7 +10,6 @@ import { CountryCombobox } from '@/components/SupportComponents/CountryCombobox'
 import {
   InputOTP,
   InputOTPGroup,
-  InputOTPSeparator,
   InputOTPSlot,
 } from '@/components/ui/input-otp';
 import { ArrowLeft, ArrowRight } from 'lucide-react';
@@ -63,7 +62,6 @@ export default function StepTwo({ form, onNext, onBack }: StepTwoProps) {
         )}
       />
 
-      {/* Phone Number */}
       <FormField
         control={form.control}
         name="phoneNumber"
@@ -77,18 +75,16 @@ export default function StepTwo({ form, onNext, onBack }: StepTwoProps) {
                 onChange={(newValue) => field.onChange(newValue)}
                 className="max-lg:scale-50"
               >
-                <InputOTPGroup>
+                <InputOTPGroup className='mr-1 sm:mr-2'>
                   <InputOTPSlot index={0} />
                   <InputOTPSlot index={1} />
                   <InputOTPSlot index={2} />
                 </InputOTPGroup>
-                <InputOTPSeparator />
-                <InputOTPGroup>
+                <InputOTPGroup className='mr-1 sm:mr-2'>
                   <InputOTPSlot index={3} />
                   <InputOTPSlot index={4} />
                   <InputOTPSlot index={5} />
                 </InputOTPGroup>
-                <InputOTPSeparator />
                 <InputOTPGroup>
                   <InputOTPSlot index={6} />
                   <InputOTPSlot index={7} />
