@@ -1846,7 +1846,7 @@ const downloadPDF = async () => {
   }}
 >
   <div 
-    className="cv-content" 
+    className="cv-content border border-red-500" 
     style={{
       width:  '100%',         // 210mm
       height: '238.5mm',        // dokładnie obszar "przelamywania"
