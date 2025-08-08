@@ -6,7 +6,7 @@ import '../models/skill_demand.dart';
 import '../models/market_trend.dart';
 
 class MarketAnalysisApi {
-  static const _base = 'https://localhost:5001/api/MarketAnalysis';
+  static const _base = 'https://localhost:8080/api/MarketAnalysis';
 
   static Future<Map<String, dynamic>?> _getMarketAnalysisData() async {
     try {
