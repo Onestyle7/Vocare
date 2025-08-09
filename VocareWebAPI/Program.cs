@@ -521,8 +521,7 @@ app.Use(
                         + "style-src 'self' 'unsafe-inline'; "
                         + "img-src 'self' data: https:; "
                         + "font-src 'self' data:; "
-                        + // Dodaj fonty!
-                        "connect-src 'self' https://api.stripe.com https://*.vocare.pl;"
+                        + "connect-src 'self' https://api.stripe.com https://*.vocare.pl;"
                 );
             }
 
