@@ -26,6 +26,7 @@ import {
 import Link from 'next/link';
 import { forgotPassword } from '@/lib/auth';
 import { toast } from 'sonner';
+import { loader, spinner_terminal } from '@/app/constants';
 
 // Schema walidacji
 const forgotPasswordSchema = z.object({
@@ -157,11 +158,11 @@ const ForgotPasswordForm = () => {
             </span>
             {isLoading && (
               <Image
-                src="/assets/icons/loader.svg"
+                src={spinner_terminal}
                 alt="loader"
                 width={24}
                 height={24}
-                className="ml-2 animate-spin"
+                className="ml-2 animate-spin dark:invert"
               />
             )}
           </ButtonForm>

@@ -47,7 +47,7 @@ export const registerUser = async ({ email, password, confirmPassword }: Registe
 };
 
 export const loginUser = async ({ email, password }: LoginInput) => {
-  const response = await api.post(`/login`, { email, password });
+  const response = await api.post(`${AUTH_PREFIX}/login`, { email, password });
   const token = response.data.token;
   if (token) {
     localStorage.setItem('token', token);
