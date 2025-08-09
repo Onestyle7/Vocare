@@ -235,7 +235,26 @@ Zespół Vocare
             if (existingUser != null)
             {
                 _logger.LogWarning("User already exists: {Email}", request.Email);
-                return BadRequest(new { message = "User with this email already exists." });
+
+                var logins = await _userManager.GetLoginsAsync(existingUser);
+                if (logins.Any(l => l.LoginProvider == "Google"))
+                {
+                    _logger.LogWarning(
+                        "User with Google login already exists: {Email}",
+                        request.Email
+                    );
+                    return BadRequest(
+                        new { message = "User with this email already exists with Google login." }
+                    );
+                }
+                return BadRequest(
+                    new
+                    {
+                        message = "Account already exists. Please sign in using Google.",
+                        authMethod = "Google",
+                        suggestOAuth = true,
+                    }
+                );
             }
 
             // Standardowa rejestracja Identity
@@ -459,6 +478,28 @@ Zespół Vocare
                     );
 
                     await _registrationHandler.HandleUserRegistrationAsync(user.Id);
+                }
+                else
+                {
+                    // User istnieje, sprawdź czy ma login Google
+                    var logins = await _userManager.GetLoginsAsync(user);
+                    var hasGoogleLogin = logins.Any(l => l.LoginProvider == "Google");
+
+                    if (!hasGoogleLogin)
+                    {
+                        // Dodaj Google jako metodę logowania
+                        var googleUserId =
+                            json.RootElement.GetProperty("user_id").GetString() ?? email;
+                        await _userManager.AddLoginAsync(
+                            user,
+                            new UserLoginInfo("Google", googleUserId, "Google")
+                        );
+
+                        _logger.LogInformation(
+                            "Added Google login to existing user: {UserId}",
+                            user.Id
+                        );
+                    }
                 }
 
                 var httpContext = HttpContext;
