@@ -47,15 +47,13 @@ namespace VocareWebAPI.CareerAdvisor.Services.Implementations
                 {
                     new
                     {
-                        role = "system",
+                        role = "assistant",
                         content = "Jesteś ekspertem doradztwa zawodowego z wieloletnim doświadczeniem. "
                             + "Twoje analizy są oparte na aktualnych trendach rynkowych i realnych danych. "
                             + "Zawsze odpowiadasz w formacie JSON.",
                     },
                     new { role = "user", content = prompt },
                 },
-                temperature = 0.7,
-                max_tokens = 4000,
                 response_format = new { type = "json_object" }, // Wymusza odpowiedź JSON
             };
             try
