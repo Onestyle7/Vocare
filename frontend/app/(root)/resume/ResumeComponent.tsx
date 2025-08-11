@@ -38,6 +38,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
+import { useAutosave } from '@/lib/hooks/useAutosave';
 
 interface PersonalInfo {
   firstName: string;
@@ -118,6 +119,7 @@ const CVCreator: React.FC<CVCreatorProps> = ({ initialCv }) => {
         };
   });
 
+  const [skipAutosaveOnce, setSkipAutosaveOnce] = useState(false);
   const [isPremium] = useState(false);
   const [cvId, setCvId] = useState<string | null>(initialCv?.id ?? null);
   const [resumeName] = useState<string>(initialCv?.name ?? 'New Resume');
@@ -691,6 +693,44 @@ const CVCreator: React.FC<CVCreatorProps> = ({ initialCv }) => {
     };
   };
 
+  const canAutosave = Boolean(cvId);
+
+  const autosavePayload = {
+    id: cvId!,
+    name: resumeName,
+    targetPosition: personalInfo.profession || undefined,
+    cvData: buildCvDto(), // zakładam, że masz taką funkcję generującą aktualne dane CV
+  };
+
+  const { status: autosaveStatus, trigger } = useAutosave({
+    value: autosavePayload,
+    enabled: canAutosave,
+    delay: 3000, // 3s od ostatniej zmiany
+    skipOnce: skipAutosaveOnce, // flaga ustawiana po "Load profile"
+    onSkipConsumed: () => setSkipAutosaveOnce(false),
+  });
+
+  const autosaveFn = async (payload: typeof autosavePayload, signal: AbortSignal) => {
+    await updateCv(payload, { signal });
+  };
+
+  useEffect(() => {
+    if (!canAutosave) return;
+    trigger(autosaveFn);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [
+    personalInfo,
+    experiences,
+    education,
+    skills,
+    languages,
+    certificates,
+    hobbies,
+    privacyStatement,
+    sectionOrder,
+    resumeName,
+  ]);
+
   const handleSave = async () => {
     if (!cvId) return;
 
@@ -708,33 +748,36 @@ const CVCreator: React.FC<CVCreatorProps> = ({ initialCv }) => {
     }
   };
 
-const loadFromProfile = async () => {
-  try {
-    if (!cvId) return; // mamy bieżące CV utworzone na /resume/create
-    const generated = await createCv({
-      name: 'Generated CV',
-      targetPosition: personalInfo.profession,
-      createFromProfile: true,
-    });
+  const loadFromProfile = async () => {
+    try {
+      if (!cvId) return;
 
-    // 1) Podmień dane w AKTUALNYM CV (tym na którym pracujesz)
-    await updateCv({
-      id: cvId,
-      name: resumeName,
-      targetPosition: generated.targetPosition,
-      cvData: generated.cvData,
-    });
+      const generated = await createCv({
+        name: 'Generated CV',
+        targetPosition: personalInfo.profession,
+        createFromProfile: true,
+      });
 
-    // 2) Wypełnij formularz na froncie
-    populateFromCv(generated.cvData, generated.targetPosition || undefined);
+      // 1) Zapisz dane do bieżącego CV
+      await updateCv({
+        id: cvId,
+        name: resumeName,
+        targetPosition: generated.targetPosition,
+        cvData: generated.cvData,
+      });
 
-    // 3) Usuń tymczasowo utworzone CV, żeby nie zaśmiecać dashboardu
-    await deleteCv(generated.id);
-  } catch (e) {
-    console.error('Failed to load from profile', e);
-  }
-};
+      // 2) Wypełnij formularz danymi
+      populateFromCv(generated.cvData, generated.targetPosition || undefined);
 
+      // 3) Usuń tymczasowy rekord
+      await deleteCv(generated.id);
+
+      // 4) Pomiń JEDEN autosave (żeby nie zapisywać od razu po wczytaniu profilu)
+      setSkipAutosaveOnce(true);
+    } catch (err) {
+      console.error('Failed to generate CV from profile', err);
+    }
+  };
 
   useEffect(() => {
     if (initialCv) {
@@ -1572,16 +1615,21 @@ const loadFromProfile = async () => {
         </button>
         <button
           onClick={handleSave}
-          className="cursor-pointer rounded-lg p-3 transition-colors hover:bg-gray-100"
+          className="cursor-pointer rounded-lg p-3 transition-colors hover:bg-gray-100 flex items-center justify-center flex-col"
           title="Save resume"
         >
           <Save size={16} className="h-6 w-6 text-black" />
+          <div className="flex flex-row items-center justify-center text-xs mt-2">
+                {autosaveStatus === 'saving' && <span className="text-gray-500">Saving…</span>}
+                {autosaveStatus === 'saved' && <span className="text-green-600">Saved ✓</span>}
+                {autosaveStatus === 'error' && <span className="text-red-500">Save failed</span>}
+              </div>
         </button>
 
         <HoverCard>
           <HoverCardTrigger asChild>
             <button className="flex h-12 w-12 cursor-pointer items-center justify-center rounded-sm bg-gray-100">
-              v0.1.2
+              v0.1.3
             </button>
           </HoverCardTrigger>
           <HoverCardContent className="font-poppins w-80">
@@ -1616,7 +1664,7 @@ const loadFromProfile = async () => {
                   value={showFullDates ? 'full' : 'year'}
                   onValueChange={(value) => setShowFullDates(value === 'full')}
                 >
-                  <SelectTrigger className="font-poppins h-10! w-40 rounded-sm border border-gray-300 px-2 text-sm focus:ring-2 focus:ring-blue-500 focus:outline-none">
+                  <SelectTrigger className="font-poppins h-10 w-40 rounded-sm border border-gray-300 px-2 text-sm focus:ring-2 focus:ring-blue-500 focus:outline-none">
                     <SelectValue />
                   </SelectTrigger>
                   <SelectContent>
