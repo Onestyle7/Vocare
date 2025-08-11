@@ -23,7 +23,7 @@ export const signUpSchema = z
         message: 'Passwords do not match',
         path: ['confirmPassword'],
       });
-    } 
+    }
   });
 
 // Sign-in schema: tylko email i hasło, bez złożonej walidacji hasła

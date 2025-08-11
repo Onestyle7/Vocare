@@ -101,28 +101,27 @@ const HeroTweak = () => {
           </Suspense>
         )}
       </div>
-      
-        <div className="h-[70px] w-full hidden lg:flex">
-  <div className="flex h-full w-full mx-10">
-    {companies.map(company => (
-      <div
-        key={company.name}
-        className="flex-1 h-full border-r border-l border-b flex items-center justify-center"
-      >
-        <div className="relative h-full w-full flex items-center justify-center">
-          <Image
-            src={company.url}
-            alt={company.name}
-            width={84}
-            height={10}
-            className="object-contain dark:brightness-0 dark:invert grayscale hover:grayscale-0 hover:brightness-100 dark:hover:brightness-0 dark:hover:invert transition-all duration-200 ease-out opacity-30 hover:opacity-100"
-          />
+
+      <div className="hidden h-[70px] w-full lg:flex">
+        <div className="mx-10 flex h-full w-full">
+          {companies.map((company) => (
+            <div
+              key={company.name}
+              className="flex h-full flex-1 items-center justify-center border-r border-b border-l"
+            >
+              <div className="relative flex h-full w-full items-center justify-center">
+                <Image
+                  src={company.url}
+                  alt={company.name}
+                  width={84}
+                  height={10}
+                  className="object-contain opacity-30 grayscale transition-all duration-200 ease-out hover:opacity-100 hover:brightness-100 hover:grayscale-0 dark:brightness-0 dark:invert dark:hover:brightness-0 dark:hover:invert"
+                />
+              </div>
+            </div>
+          ))}
         </div>
       </div>
-    ))}
-  </div>
-</div>
-
 
       <div className="relative mt-14 flex flex-col items-center justify-center border-gray-300 px-[40px] max-md:mt-40 dark:border-gray-600/30">
         <div className="mb-2 flex h-full flex-col items-center justify-center">

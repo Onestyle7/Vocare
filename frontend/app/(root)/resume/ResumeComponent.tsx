@@ -25,7 +25,7 @@ import {
   Upload,
   Save,
 } from 'lucide-react';
-import { createCv, updateCv } from '@/lib/api/cv';
+import { createCv, deleteCv, updateCv } from '@/lib/api/cv';
 import { CvDto, CvDetailsDto, UpdateCvDto } from '@/lib/types/cv';
 import { DatePickerWithCurrent } from './DatePickerWithCurrent';
 import { HoverCard, HoverCardContent, HoverCardTrigger } from '@/components/ui/hover-card';
@@ -38,6 +38,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
+import { useAutosave } from '@/lib/hooks/useAutosave';
 
 interface PersonalInfo {
   firstName: string;
@@ -118,6 +119,7 @@ const CVCreator: React.FC<CVCreatorProps> = ({ initialCv }) => {
         };
   });
 
+  const [skipAutosaveOnce, setSkipAutosaveOnce] = useState(false);
   const [isPremium] = useState(false);
   const [cvId, setCvId] = useState<string | null>(initialCv?.id ?? null);
   const [resumeName] = useState<string>(initialCv?.name ?? 'New Resume');
@@ -229,26 +231,26 @@ const CVCreator: React.FC<CVCreatorProps> = ({ initialCv }) => {
     localStorage.setItem('sectionOrder', JSON.stringify(sectionOrder));
   }, [sectionOrder]);
 
-useEffect(() => {
-  checkContentOverflow();
-  setTimeout(() => {
-    checkSectionBreaks();
-    forcePageBreakForLongSections();
-  }, 150); // Zwiększ opóźnienie
-}, [
-  experiences,
-  education,
-  skills,
-  languages,
-  certificates,
-  hobbies,
-  personalInfo,
-  privacyStatement,
-]);
+  useEffect(() => {
+    checkContentOverflow();
+    setTimeout(() => {
+      checkSectionBreaks();
+      forcePageBreakForLongSections();
+    }, 150); // Zwiększ opóźnienie
+  }, [
+    experiences,
+    education,
+    skills,
+    languages,
+    certificates,
+    hobbies,
+    personalInfo,
+    privacyStatement,
+  ]);
 
-useEffect(() => {
-  const style = document.createElement('style');
-  style.textContent = `
+  useEffect(() => {
+    const style = document.createElement('style');
+    style.textContent = `
     .cv-content [data-section] {
       break-inside: avoid;
       page-break-inside: avoid;
@@ -282,15 +284,14 @@ useEffect(() => {
       margin-bottom: 8px;
     }
   `;
-  document.head.appendChild(style);
-  
-  return () => {
-    if (document.head.contains(style)) {
-      document.head.removeChild(style);
-    }
-  };
-}, []);
+    document.head.appendChild(style);
 
+    return () => {
+      if (document.head.contains(style)) {
+        document.head.removeChild(style);
+      }
+    };
+  }, []);
 
   const addLanguage = () => {
     const newLanguage: Language = {
@@ -486,95 +487,94 @@ useEffect(() => {
     setCvPosition({ x: 0, y: 0 });
   };
 
-const checkSectionBreaks = () => {
-  const cvContent = document.querySelector('.cv-content');
-  if (!cvContent) return;
+  const checkSectionBreaks = () => {
+    const cvContent = document.querySelector('.cv-content');
+    if (!cvContent) return;
 
-  const pageHeight = 1123; // wysokość strony A4 w pikselach
-  const sections = cvContent.querySelectorAll('[data-section]') as NodeListOf<HTMLElement>;
-  
-  sections.forEach((section) => {
-    // Resetuj wcześniejsze style
-    section.style.marginTop = '';
-    section.style.pageBreakBefore = '';
-    
-    // Pobierz rzeczywistą wysokość sekcji
-    const sectionHeight = section.scrollHeight;
-    const rect = section.getBoundingClientRect();
-    const cvRect = cvContent.getBoundingClientRect();
-    
-    // Oblicz pozycję sekcji względem początku CV
-    const sectionTop = rect.top - cvRect.top + cvContent.scrollTop;
-    const sectionBottom = sectionTop + sectionHeight;
-    
-    // Określ na której stronie zaczyna się sekcja
-    const startPage = Math.floor(sectionTop / pageHeight) + 1;
-    const endPage = Math.floor(sectionBottom / pageHeight) + 1;
-    
-    // Jeśli sekcja przekracza na następną stronę
-    if (startPage !== endPage) {
-      const spaceFromTop = sectionTop - ((startPage - 1) * pageHeight);
-      const remainingSpaceOnPage = pageHeight - spaceFromTop;
-      
-      // KLUCZ: Zmniejszamy próg z 80% na 50% lub sprawdzamy czy sekcja się nie mieści
-      const shouldMoveToNextPage = 
-        spaceFromTop > pageHeight * 0.5 || // Jeśli zaczyna się w drugiej połowie strony
-        remainingSpaceOnPage < sectionHeight * 0.3; // Albo jeśli mniej niż 30% sekcji mieści się na stronie
-      
-      if (shouldMoveToNextPage) {
-        const pushToNextPage = pageHeight - spaceFromTop;
-        section.style.marginTop = `${pushToNextPage}px`;
-        
-        // Dodatkowe CSS dla lepszego łamania stron
-        section.style.pageBreakBefore = 'always';
-      }
-    }
-    
-    // Dodatkowe zabezpieczenie: jeśli sekcja jest bardzo długa i nie mieści się na jednej stronie
-    if (sectionHeight > pageHeight * 0.8) {
-      section.style.pageBreakInside = 'avoid';
-    }
-  });
-  
-  // Wywołaj ponownie po krótkim opóźnieniu dla stabilności
-  setTimeout(() => {
-    // Sprawdź czy wszystkie sekcje są prawidłowo pozycjonowane
+    const pageHeight = 1123; // wysokość strony A4 w pikselach
+    const sections = cvContent.querySelectorAll('[data-section]') as NodeListOf<HTMLElement>;
+
     sections.forEach((section) => {
-      // Jeśli sekcja nadal źle się łamie, spróbuj alternatywnego podejścia
-      if (section.scrollHeight > pageHeight * 0.8) {
-        section.style.breakInside = 'avoid';
+      // Resetuj wcześniejsze style
+      section.style.marginTop = '';
+      section.style.pageBreakBefore = '';
+
+      // Pobierz rzeczywistą wysokość sekcji
+      const sectionHeight = section.scrollHeight;
+      const rect = section.getBoundingClientRect();
+      const cvRect = cvContent.getBoundingClientRect();
+
+      // Oblicz pozycję sekcji względem początku CV
+      const sectionTop = rect.top - cvRect.top + cvContent.scrollTop;
+      const sectionBottom = sectionTop + sectionHeight;
+
+      // Określ na której stronie zaczyna się sekcja
+      const startPage = Math.floor(sectionTop / pageHeight) + 1;
+      const endPage = Math.floor(sectionBottom / pageHeight) + 1;
+
+      // Jeśli sekcja przekracza na następną stronę
+      if (startPage !== endPage) {
+        const spaceFromTop = sectionTop - (startPage - 1) * pageHeight;
+        const remainingSpaceOnPage = pageHeight - spaceFromTop;
+
+        // KLUCZ: Zmniejszamy próg z 80% na 50% lub sprawdzamy czy sekcja się nie mieści
+        const shouldMoveToNextPage =
+          spaceFromTop > pageHeight * 0.5 || // Jeśli zaczyna się w drugiej połowie strony
+          remainingSpaceOnPage < sectionHeight * 0.3; // Albo jeśli mniej niż 30% sekcji mieści się na stronie
+
+        if (shouldMoveToNextPage) {
+          const pushToNextPage = pageHeight - spaceFromTop;
+          section.style.marginTop = `${pushToNextPage}px`;
+
+          // Dodatkowe CSS dla lepszego łamania stron
+          section.style.pageBreakBefore = 'always';
+        }
+      }
+
+      // Dodatkowe zabezpieczenie: jeśli sekcja jest bardzo długa i nie mieści się na jednej stronie
+      if (sectionHeight > pageHeight * 0.8) {
         section.style.pageBreakInside = 'avoid';
       }
     });
-  }, 50);
-};
 
-const forcePageBreakForLongSections = () => {
-  const cvContent = document.querySelector('.cv-content');
-  if (!cvContent) return;
+    // Wywołaj ponownie po krótkim opóźnieniu dla stabilności
+    setTimeout(() => {
+      // Sprawdź czy wszystkie sekcje są prawidłowo pozycjonowane
+      sections.forEach((section) => {
+        // Jeśli sekcja nadal źle się łamie, spróbuj alternatywnego podejścia
+        if (section.scrollHeight > pageHeight * 0.8) {
+          section.style.breakInside = 'avoid';
+          section.style.pageBreakInside = 'avoid';
+        }
+      });
+    }, 50);
+  };
 
-  const pageHeight = 1123;
-  const sections = cvContent.querySelectorAll('[data-section]') as NodeListOf<HTMLElement>;
-  
-  sections.forEach((section) => {
-    const sectionHeight = section.scrollHeight;
-    
-    // Jeśli sekcja jest bardzo długa, podziel ją lub przenieś całkowicie
-    if (sectionHeight > pageHeight * 0.6) {
-      const rect = section.getBoundingClientRect();
-      const cvRect = cvContent.getBoundingClientRect();
-      const sectionTop = rect.top - cvRect.top + cvContent.scrollTop;
-      const spaceFromTop = sectionTop % pageHeight;
-      
-      // Jeśli długa sekcja zaczyna się w drugiej połowie strony, przenieś ją
-      if (spaceFromTop > pageHeight * 0.4) {
-        const pushToNextPage = pageHeight - spaceFromTop;
-        section.style.marginTop = `${pushToNextPage}px`;
+  const forcePageBreakForLongSections = () => {
+    const cvContent = document.querySelector('.cv-content');
+    if (!cvContent) return;
+
+    const pageHeight = 1123;
+    const sections = cvContent.querySelectorAll('[data-section]') as NodeListOf<HTMLElement>;
+
+    sections.forEach((section) => {
+      const sectionHeight = section.scrollHeight;
+
+      // Jeśli sekcja jest bardzo długa, podziel ją lub przenieś całkowicie
+      if (sectionHeight > pageHeight * 0.6) {
+        const rect = section.getBoundingClientRect();
+        const cvRect = cvContent.getBoundingClientRect();
+        const sectionTop = rect.top - cvRect.top + cvContent.scrollTop;
+        const spaceFromTop = sectionTop % pageHeight;
+
+        // Jeśli długa sekcja zaczyna się w drugiej połowie strony, przenieś ją
+        if (spaceFromTop > pageHeight * 0.4) {
+          const pushToNextPage = pageHeight - spaceFromTop;
+          section.style.marginTop = `${pushToNextPage}px`;
+        }
       }
-    }
-  });
-};
-
+    });
+  };
 
   const checkContentOverflow = () => {
     const cvElement = document.querySelector<HTMLElement>('.cv-content');
@@ -693,6 +693,44 @@ const forcePageBreakForLongSections = () => {
     };
   };
 
+  const canAutosave = Boolean(cvId);
+
+  const autosavePayload = {
+    id: cvId!,
+    name: resumeName,
+    targetPosition: personalInfo.profession || undefined,
+    cvData: buildCvDto(), // zakładam, że masz taką funkcję generującą aktualne dane CV
+  };
+
+  const { status: autosaveStatus, trigger } = useAutosave({
+    value: autosavePayload,
+    enabled: canAutosave,
+    delay: 3000, // 3s od ostatniej zmiany
+    skipOnce: skipAutosaveOnce, // flaga ustawiana po "Load profile"
+    onSkipConsumed: () => setSkipAutosaveOnce(false),
+  });
+
+  const autosaveFn = async (payload: typeof autosavePayload, signal: AbortSignal) => {
+    await updateCv(payload, { signal });
+  };
+
+  useEffect(() => {
+    if (!canAutosave) return;
+    trigger(autosaveFn);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [
+    personalInfo,
+    experiences,
+    education,
+    skills,
+    languages,
+    certificates,
+    hobbies,
+    privacyStatement,
+    sectionOrder,
+    resumeName,
+  ]);
+
   const handleSave = async () => {
     if (!cvId) return;
 
@@ -712,12 +750,30 @@ const forcePageBreakForLongSections = () => {
 
   const loadFromProfile = async () => {
     try {
-      const cv = await createCv({
+      if (!cvId) return;
+
+      const generated = await createCv({
         name: 'Generated CV',
         targetPosition: personalInfo.profession,
         createFromProfile: true,
       });
-      populateFromCv(cv.cvData, cv.targetPosition || undefined);
+
+      // 1) Zapisz dane do bieżącego CV
+      await updateCv({
+        id: cvId,
+        name: resumeName,
+        targetPosition: generated.targetPosition,
+        cvData: generated.cvData,
+      });
+
+      // 2) Wypełnij formularz danymi
+      populateFromCv(generated.cvData, generated.targetPosition || undefined);
+
+      // 3) Usuń tymczasowy rekord
+      await deleteCv(generated.id);
+
+      // 4) Pomiń JEDEN autosave (żeby nie zapisywać od razu po wczytaniu profilu)
+      setSkipAutosaveOnce(true);
     } catch (err) {
       console.error('Failed to generate CV from profile', err);
     }
@@ -730,56 +786,55 @@ const forcePageBreakForLongSections = () => {
     }
   }, [initialCv]);
 
+  const downloadPDF = async () => {
+    const frame = document.querySelector<HTMLElement>('.cv-frame');
+    if (!frame) return;
 
-const downloadPDF = async () => {
-  const frame = document.querySelector<HTMLElement>('.cv-frame');
-  if (!frame) return;
+    // zapamiętaj oryginalne wartości
+    const origScale = cvScale;
+    const origPage = currentPage;
+    const origTransform = frame.style.transform;
 
-  // zapamiętaj oryginalne wartości
-  const origScale = cvScale;
-  const origPage  = currentPage;
-  const origTransform = frame.style.transform;
-
-  // przywróć 100% skalę
-  setCvScale(1);
-  // usuń transformację z ramki
-  frame.style.transform = 'none';
-  await new Promise((r) => setTimeout(r, 100));
-
-  const pdf = new jsPDF('portrait', 'mm', 'a4');
-  const pdfWidth = 210;
-
-  for (let page = 1; page <= totalPages; page++) {
-    setCurrentPage(page);
+    // przywróć 100% skalę
+    setCvScale(1);
+    // usuń transformację z ramki
+    frame.style.transform = 'none';
     await new Promise((r) => setTimeout(r, 100));
 
-    const canvas = await html2canvas(frame, {
-      scale: 2,
-      useCORS: true,
-      allowTaint: true,
-      backgroundColor: '#ffffff',
-      // bez width/height/scrollY — html2canvas złapie całą ramkę
-    });
+    const pdf = new jsPDF('portrait', 'mm', 'a4');
+    const pdfWidth = 210;
 
-    const imgData = canvas.toDataURL('image/png');
-    const imgH    = (canvas.height * pdfWidth) / canvas.width;
+    for (let page = 1; page <= totalPages; page++) {
+      setCurrentPage(page);
+      await new Promise((r) => setTimeout(r, 100));
 
-    if (page > 1) pdf.addPage();
-    pdf.addImage(imgData, 'PNG', 0, 0, pdfWidth, imgH);
-  }
+      const canvas = await html2canvas(frame, {
+        scale: 2,
+        useCORS: true,
+        allowTaint: true,
+        backgroundColor: '#ffffff',
+        // bez width/height/scrollY — html2canvas złapie całą ramkę
+      });
 
-  // przywróć wszystko do stanu pierwotnego
-  setCvScale(origScale);
-  setCurrentPage(origPage);
-  frame.style.transform = origTransform;
+      const imgData = canvas.toDataURL('image/png');
+      const imgH = (canvas.height * pdfWidth) / canvas.width;
 
-  const fileName =
-    personalInfo.firstName && personalInfo.lastName
-      ? `${personalInfo.firstName}_${personalInfo.lastName}_CV.pdf`
-      : 'My_CV.pdf';
+      if (page > 1) pdf.addPage();
+      pdf.addImage(imgData, 'PNG', 0, 0, pdfWidth, imgH);
+    }
 
-  pdf.save(fileName);
-};
+    // przywróć wszystko do stanu pierwotnego
+    setCvScale(origScale);
+    setCurrentPage(origPage);
+    frame.style.transform = origTransform;
+
+    const fileName =
+      personalInfo.firstName && personalInfo.lastName
+        ? `${personalInfo.firstName}_${personalInfo.lastName}_CV.pdf`
+        : 'My_CV.pdf';
+
+    pdf.save(fileName);
+  };
 
   const renderSectionInForm = (sectionId: string) => {
     switch (sectionId) {
@@ -1313,10 +1368,7 @@ const downloadPDF = async () => {
                 </button>
               </div>
             ))}
-            <button
-              onClick={addHobby}
-              className="flex items-center font-medium text-[#915EFF]"
-            >
+            <button onClick={addHobby} className="flex items-center font-medium text-[#915EFF]">
               <span className="mr-2 text-xl">+</span>
               Add hobby
             </button>
@@ -1563,16 +1615,21 @@ const downloadPDF = async () => {
         </button>
         <button
           onClick={handleSave}
-          className="cursor-pointer rounded-lg p-3 transition-colors hover:bg-gray-100"
+          className="cursor-pointer rounded-lg p-3 transition-colors hover:bg-gray-100 flex items-center justify-center flex-col"
           title="Save resume"
         >
           <Save size={16} className="h-6 w-6 text-black" />
+          <div className="flex flex-row items-center justify-center text-xs mt-2">
+                {autosaveStatus === 'saving' && <span className="text-gray-500">Saving…</span>}
+                {autosaveStatus === 'saved' && <span className="text-green-600">Saved ✓</span>}
+                {autosaveStatus === 'error' && <span className="text-red-500">Save failed</span>}
+              </div>
         </button>
 
         <HoverCard>
           <HoverCardTrigger asChild>
             <button className="flex h-12 w-12 cursor-pointer items-center justify-center rounded-sm bg-gray-100">
-              v0.1.2
+              v0.1.3
             </button>
           </HoverCardTrigger>
           <HoverCardContent className="font-poppins w-80">
@@ -1607,7 +1664,7 @@ const downloadPDF = async () => {
                   value={showFullDates ? 'full' : 'year'}
                   onValueChange={(value) => setShowFullDates(value === 'full')}
                 >
-                  <SelectTrigger className="font-poppins h-10! w-40 rounded-sm border border-gray-300 px-2 text-sm focus:ring-2 focus:ring-blue-500 focus:outline-none">
+                  <SelectTrigger className="font-poppins h-10 w-40 rounded-sm border border-gray-300 px-2 text-sm focus:ring-2 focus:ring-blue-500 focus:outline-none">
                     <SelectValue />
                   </SelectTrigger>
                   <SelectContent>
@@ -1833,83 +1890,83 @@ const downloadPDF = async () => {
               onMouseDown={handleMouseDown}
             >
               {/* A4 Paper with exact dimensions */}
-              <div 
-  className="cv-frame rounded-sm overflow-hidden" 
-  style={{
-    width:  '210mm',
-    padding: '32px',          // ← tutaj widoczny margines
-    boxSizing: 'border-box',
-    backgroundColor: '#fff',
-    boxShadow: '0 4px 6px rgba(0,0,0,0.1)',
-    transform: `scale(${cvScale})`,
-    transformOrigin: 'center center',
-  }}
->
-  <div 
-    className="cv-content" 
-    style={{
-      width:  '100%',         // 210mm
-      height: '238.5mm',        // dokładnie obszar "przelamywania"
-      overflow: 'hidden',
-    }}
-  >
+              <div
+                className="cv-frame overflow-hidden rounded-sm"
+                style={{
+                  width: '210mm',
+                  padding: '32px', // ← tutaj widoczny margines
+                  boxSizing: 'border-box',
+                  backgroundColor: '#fff',
+                  boxShadow: '0 4px 6px rgba(0,0,0,0.1)',
+                  transform: `scale(${cvScale})`,
+                  transformOrigin: 'center center',
+                }}
+              >
                 <div
-                  className="h-full box-border"
+                  className="cv-content"
                   style={{
-                    transform: `translateY(-${(currentPage - 1) * 100}%)`,
+                    width: '100%', // 210mm
+                    height: '238.5mm', // dokładnie obszar "przelamywania"
+                    overflow: 'hidden',
                   }}
                 >
-                  <div className="mb-6">
-                    <h1 className="mb-2 text-3xl leading-tight font-bold text-gray-900">
-                      {personalInfo.firstName || personalInfo.lastName
-                        ? `${personalInfo.firstName} ${personalInfo.lastName}`.trim()
-                        : 'Joe Doe'}
-                    </h1>
-                    {personalInfo.profession && (
-                      <h2 className="mb-4 text-xl text-gray-600">{personalInfo.profession}</h2>
-                    )}
-
-                    {/* Contact Information */}
-                    <div className="flex flex-wrap gap-4 text-sm text-gray-600">
-                      {personalInfo.email && (
-                        <div className="flex items-center">
-                          <Mail size={14} className="mr-2 flex-shrink-0" />
-                          <span className="break-all">{personalInfo.email}</span>
-                        </div>
+                  <div
+                    className="box-border h-full"
+                    style={{
+                      transform: `translateY(-${(currentPage - 1) * 100}%)`,
+                    }}
+                  >
+                    <div className="mb-6">
+                      <h1 className="mb-2 text-3xl leading-tight font-bold text-gray-900">
+                        {personalInfo.firstName || personalInfo.lastName
+                          ? `${personalInfo.firstName} ${personalInfo.lastName}`.trim()
+                          : 'Joe Doe'}
+                      </h1>
+                      {personalInfo.profession && (
+                        <h2 className="mb-4 text-xl text-gray-600">{personalInfo.profession}</h2>
                       )}
-                      {personalInfo.phone && (
-                        <div className="flex items-center">
-                          <Phone size={14} className="mr-2 flex-shrink-0" />
-                          {personalInfo.phone}
-                        </div>
-                      )}
-                      {personalInfo.address && (
-                        <div className="flex items-center">
-                          <MapPin size={14} className="mr-2 flex-shrink-0" />
-                          {personalInfo.address}
-                        </div>
-                      )}
-                    </div>
-                  </div>
 
-                  {sectionOrder.map((sectionId) => renderSectionInPreview(sectionId))}
-
-                  {/* Empty state message */}
-                  {!personalInfo.firstName &&
-                    !personalInfo.lastName &&
-                    !personalInfo.email &&
-                    experiences.length === 0 &&
-                    skills.length === 0 &&
-                    education.length === 0 &&
-                    currentPage === 1 && (
-                      <div className="mt-20 text-center text-gray-500">
-                        <p className="text-lg">
-                          Start filling the form on the left to create your CV.
-                        </p>
+                      {/* Contact Information */}
+                      <div className="flex flex-wrap gap-4 text-sm text-gray-600">
+                        {personalInfo.email && (
+                          <div className="flex items-center">
+                            <Mail size={14} className="mr-2 flex-shrink-0" />
+                            <span className="break-all">{personalInfo.email}</span>
+                          </div>
+                        )}
+                        {personalInfo.phone && (
+                          <div className="flex items-center">
+                            <Phone size={14} className="mr-2 flex-shrink-0" />
+                            {personalInfo.phone}
+                          </div>
+                        )}
+                        {personalInfo.address && (
+                          <div className="flex items-center">
+                            <MapPin size={14} className="mr-2 flex-shrink-0" />
+                            {personalInfo.address}
+                          </div>
+                        )}
                       </div>
-                    )}
+                    </div>
+
+                    {sectionOrder.map((sectionId) => renderSectionInPreview(sectionId))}
+
+                    {/* Empty state message */}
+                    {!personalInfo.firstName &&
+                      !personalInfo.lastName &&
+                      !personalInfo.email &&
+                      experiences.length === 0 &&
+                      skills.length === 0 &&
+                      education.length === 0 &&
+                      currentPage === 1 && (
+                        <div className="mt-20 text-center text-gray-500">
+                          <p className="text-lg">
+                            Start filling the form on the left to create your CV.
+                          </p>
+                        </div>
+                      )}
+                  </div>
                 </div>
-              </div>
               </div>
             </div>
 
