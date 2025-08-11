@@ -1,12 +1,12 @@
 const companies = [
-  "Google",
-  "Microsoft",
-  "Amazon",
-  "Netflix",
-  "YouTube",
-  "Instagram",
-  "Uber",
-  "Spotify",
+  'Google',
+  'Microsoft',
+  'Amazon',
+  'Netflix',
+  'YouTube',
+  'Instagram',
+  'Uber',
+  'Spotify',
 ];
 
 export function Companies() {

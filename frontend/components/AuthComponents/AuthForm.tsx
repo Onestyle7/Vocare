@@ -4,7 +4,12 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
-import { signInSchema, signUpSchema, SignInFormType, SignUpFormType } from '@/lib/schemas/authSchema';
+import {
+  signInSchema,
+  signUpSchema,
+  SignInFormType,
+  SignUpFormType,
+} from '@/lib/schemas/authSchema';
 import { registerUser, loginUser, googleVerify } from '@/lib/auth';
 import {
   Form,
@@ -23,11 +28,7 @@ import { ButtonForm } from '../ui/button-form';
 import { AxiosError } from 'axios';
 import OAuthButton from './OAuthButton';
 import { google } from '@/app/constants';
-import {
-  WindowWithGoogle,
-  GoogleTokenResponse,
-  GoogleTokenClient,
-} from '@/lib/types/google-oauth';
+import { WindowWithGoogle, GoogleTokenResponse, GoogleTokenClient } from '@/lib/types/google-oauth';
 
 type FormType = 'sign-in' | 'sign-up';
 type FormDataMap = {
@@ -111,30 +112,30 @@ const AuthForm = ({ type }: AuthFormProps) => {
       console.error('Error:', error);
 
       if (
-    status === 400 ||  // 👈 DODANE: obsługa błędu 400
-    status === 401 ||
-    errorMessage.includes('invalid') ||
-    errorMessage.includes('unauthorized')
-  ) {
-    toast.error('Invalid credentials', {
-      description: 'Please check your email or password and try again.',
-    });
-  } else if (
-    errorMessage.includes('network') ||
-    errorMessage.includes('failed to fetch') ||
-    errorMessage.includes('service unavailable')
-  ) {
-    toast.error('Connection error', {
-      description: 'Unable to connect to the server. Please try again later.',
-    });
-  } else {
-    toast.error('An error occurred', {
-      description: errorMessage || 'Something went wrong. Please try again.',
-    });
-  }
-} finally {
-  setIsLoading(false);
-}
+        status === 400 || // 👈 DODANE: obsługa błędu 400
+        status === 401 ||
+        errorMessage.includes('invalid') ||
+        errorMessage.includes('unauthorized')
+      ) {
+        toast.error('Invalid credentials', {
+          description: 'Please check your email or password and try again.',
+        });
+      } else if (
+        errorMessage.includes('network') ||
+        errorMessage.includes('failed to fetch') ||
+        errorMessage.includes('service unavailable')
+      ) {
+        toast.error('Connection error', {
+          description: 'Unable to connect to the server. Please try again later.',
+        });
+      } else {
+        toast.error('An error occurred', {
+          description: errorMessage || 'Something went wrong. Please try again.',
+        });
+      }
+    } finally {
+      setIsLoading(false);
+    }
   }
 
   const handleGoogleSignIn = () => {

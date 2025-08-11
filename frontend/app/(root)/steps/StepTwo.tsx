@@ -7,11 +7,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { FormField, FormItem, FormLabel, FormControl, FormMessage } from '@/components/ui/form';
 import { CountryCombobox } from '@/components/SupportComponents/CountryCombobox';
-import {
-  InputOTP,
-  InputOTPGroup,
-  InputOTPSlot,
-} from '@/components/ui/input-otp';
+import { InputOTP, InputOTPGroup, InputOTPSlot } from '@/components/ui/input-otp';
 import { ArrowLeft, ArrowRight } from 'lucide-react';
 
 interface StepTwoProps {
@@ -75,12 +71,12 @@ export default function StepTwo({ form, onNext, onBack }: StepTwoProps) {
                 onChange={(newValue) => field.onChange(newValue)}
                 className="max-lg:scale-50"
               >
-                <InputOTPGroup className='mr-1 sm:mr-2'>
+                <InputOTPGroup className="mr-1 sm:mr-2">
                   <InputOTPSlot index={0} />
                   <InputOTPSlot index={1} />
                   <InputOTPSlot index={2} />
                 </InputOTPGroup>
-                <InputOTPGroup className='mr-1 sm:mr-2'>
+                <InputOTPGroup className="mr-1 sm:mr-2">
                   <InputOTPSlot index={3} />
                   <InputOTPSlot index={4} />
                   <InputOTPSlot index={5} />
