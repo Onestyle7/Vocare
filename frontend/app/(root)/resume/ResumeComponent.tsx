@@ -25,7 +25,7 @@ import {
   Upload,
   Save,
 } from 'lucide-react';
-import { createCv, updateCv } from '@/lib/api/cv';
+import { createCv, deleteCv, updateCv } from '@/lib/api/cv';
 import { CvDto, CvDetailsDto, UpdateCvDto } from '@/lib/types/cv';
 import { DatePickerWithCurrent } from './DatePickerWithCurrent';
 import { HoverCard, HoverCardContent, HoverCardTrigger } from '@/components/ui/hover-card';
@@ -708,18 +708,33 @@ const CVCreator: React.FC<CVCreatorProps> = ({ initialCv }) => {
     }
   };
 
-  const loadFromProfile = async () => {
-    try {
-      const cv = await createCv({
-        name: 'Generated CV',
-        targetPosition: personalInfo.profession,
-        createFromProfile: true,
-      });
-      populateFromCv(cv.cvData, cv.targetPosition || undefined);
-    } catch (err) {
-      console.error('Failed to generate CV from profile', err);
-    }
-  };
+const loadFromProfile = async () => {
+  try {
+    if (!cvId) return; // mamy bieżące CV utworzone na /resume/create
+    const generated = await createCv({
+      name: 'Generated CV',
+      targetPosition: personalInfo.profession,
+      createFromProfile: true,
+    });
+
+    // 1) Podmień dane w AKTUALNYM CV (tym na którym pracujesz)
+    await updateCv({
+      id: cvId,
+      name: resumeName,
+      targetPosition: generated.targetPosition,
+      cvData: generated.cvData,
+    });
+
+    // 2) Wypełnij formularz na froncie
+    populateFromCv(generated.cvData, generated.targetPosition || undefined);
+
+    // 3) Usuń tymczasowo utworzone CV, żeby nie zaśmiecać dashboardu
+    await deleteCv(generated.id);
+  } catch (e) {
+    console.error('Failed to load from profile', e);
+  }
+};
+
 
   useEffect(() => {
     if (initialCv) {
