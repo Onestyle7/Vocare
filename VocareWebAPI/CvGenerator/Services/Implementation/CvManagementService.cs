@@ -40,37 +40,6 @@ namespace VocareWebAPI.CvGenerator.Services.Implementation
 
             var cvs = await _cvRepository.GetUserCvsAsync(userId);
 
-            // Jeśli użytkownik nie ma żadnych CV, automatycznie utwórz pierwsze na podstawie profilu
-            if (!cvs.Any())
-            {
-                _logger.LogInformation(
-                    "No CVs found for user {UserId}, creating initial CV from profile",
-                    userId
-                );
-
-                try
-                {
-                    var initialCv = await CreateCvAsync(
-                        userId,
-                        new CreateCvDto
-                        {
-                            Name = "Moje pierwsze CV",
-                            CreateFromProfile = true,
-                            Notes = "Automatycznie utworzone na podstawie profilu użytkownika",
-                        }
-                    );
-
-                    // Pobierz listę ponownie, żeby zwrócić aktualny stan
-                    cvs = await _cvRepository.GetUserCvsAsync(userId);
-                }
-                catch (Exception ex)
-                {
-                    _logger.LogError(ex, "Failed to create initial CV for user {UserId}", userId);
-                    // Zwróć pustą listę jeśli nie udało się utworzyć
-                    return new List<CvListItemDto>();
-                }
-            }
-
             return cvs.Select(cv => new CvListItemDto
                 {
                     Id = cv.Id,
