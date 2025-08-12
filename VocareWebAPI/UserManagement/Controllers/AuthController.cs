@@ -554,24 +554,5 @@ Zespół Vocare
                 return BadRequest(new { message = "Google verification failed" });
             }
         }
-
-        private string GenerateIdentityCompatibleToken(User user)
-        {
-            var protector = HttpContext
-                .RequestServices.GetRequiredService<IDataProtectionProvider>()
-                .CreateProtector("VocareAuth");
-
-            var tokenData = new
-            {
-                sub = user.Id,
-                email = user.Email,
-                jti = Guid.NewGuid().ToString(),
-                exp = DateTimeOffset.UtcNow.AddHours(1).ToUnixTimeSeconds(),
-                iat = DateTimeOffset.UtcNow.ToUnixTimeSeconds(),
-            };
-
-            var json = JsonSerializer.Serialize(tokenData);
-            return protector.Protect(json);
-        }
     }
 }
