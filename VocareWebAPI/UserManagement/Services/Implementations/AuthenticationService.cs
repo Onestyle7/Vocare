@@ -1,19 +1,15 @@
-using System;
-using System.Collections.Generic;
-using System.Configuration;
-using System.Linq;
 using System.Text.Json;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Authentication;
+using System.Web;
 using Microsoft.AspNetCore.DataProtection;
 using Microsoft.AspNetCore.Identity;
 using VocareWebAPI.Models.Entities;
 using VocareWebAPI.Shared.Models;
 using VocareWebAPI.UserManagement.Models.Results;
+using VocareWebAPI.UserManagement.Services.Interfaces;
 
 namespace VocareWebAPI.UserManagement.Services.Implementations
 {
-    public class AuthenticationService : IAuthenticationService
+    public class AuthenticationService : IAuthenticationServiceOwn
     {
         private readonly UserManager<User> _userManager;
         private readonly SignInManager<User> _signInManager;
@@ -21,6 +17,8 @@ namespace VocareWebAPI.UserManagement.Services.Implementations
         private readonly IConfiguration _configuration;
         private readonly HttpClient _httpClient;
         private readonly IHttpContextAccessor _httpContextAccessor;
+        private readonly IEmailService _emailService;
+        private readonly UserRegistrationHandler _registrationHandler;
 
         public AuthenticationService(
             UserManager<User> userManager,
@@ -28,7 +26,9 @@ namespace VocareWebAPI.UserManagement.Services.Implementations
             ILogger<AuthenticationService> logger,
             IConfiguration configuration,
             IHttpClientFactory httpClientFactory,
-            IHttpContextAccessor httpContextAccessor
+            IHttpContextAccessor httpContextAccessor,
+            IEmailService emailService,
+            UserRegistrationHandler registrationHandler
         )
         {
             _userManager = userManager;
@@ -37,6 +37,8 @@ namespace VocareWebAPI.UserManagement.Services.Implementations
             _httpClient = httpClientFactory.CreateClient();
             _configuration = configuration;
             _httpContextAccessor = httpContextAccessor;
+            _emailService = emailService;
+            _registrationHandler = registrationHandler;
         }
 
         public async Task<Result<LoginResult>> LoginAsync(string email, string password)
@@ -44,7 +46,7 @@ namespace VocareWebAPI.UserManagement.Services.Implementations
             var user = await _userManager.FindByEmailAsync(email);
             if (user == null)
             {
-                _logger.LogWarning("Failed login attempt for non-existent user: {Email}");
+                _logger.LogWarning("Failed login attempt for non-existent user: {Email}", email);
                 return Result<LoginResult>.Failure("Invalid email or password.");
             }
 
@@ -57,12 +59,12 @@ namespace VocareWebAPI.UserManagement.Services.Implementations
             {
                 if (result.IsLockedOut)
                 {
-                    _logger.LogWarning("User account locked out {Email}", email);
+                    _logger.LogWarning("User account locked out: {Email}", email);
                     return Result<LoginResult>.Failure(
-                        "Account is locked out. PLease try again later"
+                        "Account is locked out. Please try again later."
                     );
                 }
-                _logger.LogWarning("Failed login attempt for user: {Email}", email);
+                _logger.LogWarning("Failed login attempt for: {Email}", email);
                 return Result<LoginResult>.Failure("Invalid email or password.");
             }
 
@@ -94,39 +96,382 @@ namespace VocareWebAPI.UserManagement.Services.Implementations
             return protector.Protect(json);
         }
 
-        private async Task<Result<RegisterResult>> RegisterAsync(string email, string password)
+        public async Task<Result<RegisterResult>> RegisterAsync(string email, string password)
         {
+            _logger.LogInformation("=== REGISTER START === Email: {Email}", email);
+
             var existingUser = await _userManager.FindByEmailAsync(email);
             if (existingUser != null)
             {
-                _logger.LogWarning(
-                    "Registration attempt for already existing user: {Email}",
-                    email
+                _logger.LogWarning("User already exists: {Email}", email);
+
+                var logins = await _userManager.GetLoginsAsync(existingUser);
+                if (logins.Any(l => l.LoginProvider == "Google"))
+                {
+                    _logger.LogWarning("User with Google login already exists: {Email}", email);
+                    return Result<RegisterResult>.Failure(
+                        "User with this email already exists with Google login."
+                    );
+                }
+                return Result<RegisterResult>.Failure(
+                    "Account already exists. Please sign in using Google."
                 );
-                return Result<RegisterResult>.Failure("A user with this email already exists.");
             }
 
             var user = new User { UserName = email, Email = email };
-
             var result = await _userManager.CreateAsync(user, password);
+
             if (!result.Succeeded)
             {
-                var errors = string.Join(",", result.Errors.Select(e => e.Description));
-                _logger.LogWarning(
-                    "Failed to register user: {Email}. Errors: {Errors}",
+                _logger.LogError(
+                    "User creation failed for {Email}: {Errors}",
                     email,
-                    errors
+                    string.Join(", ", result.Errors.Select(e => e.Description))
                 );
-                return Result<RegisterResult>.Failure("Failed to register user.");
+                return Result<RegisterResult>.Failure("Registration failed");
             }
 
-            await _signInManager.SignInAsync(user, isPersistent: false);
+            _logger.LogInformation(
+                "=== USER CREATED === UserId: {UserId}, Email: {Email}",
+                user.Id,
+                user.Email
+            );
 
-            var token = GenerateIdentityCompatibleToken(user);
+            try
+            {
+                _logger.LogInformation(
+                    "=== CALLING HandleUserRegistrationAsync === UserId: {UserId}",
+                    user.Id
+                );
 
-            _logger.LogInformation("User registered and logged in successfully: {UserId}", user.Id);
+                await _registrationHandler.HandleUserRegistrationAsync(user.Id);
 
+                _logger.LogInformation("=== BILLING SETUP COMPLETE === UserId: {UserId}", user.Id);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(
+                    ex,
+                    "=== BILLING SETUP FAILED === UserId: {UserId}, Error: {Error}",
+                    user.Id,
+                    ex.Message
+                );
+                return Result<RegisterResult>.Failure("User registered, but billing setup failed");
+            }
+
+            _logger.LogInformation("=== REGISTER COMPLETE === UserId: {UserId}", user.Id);
             return Result<RegisterResult>.Success(RegisterResult.Successful(user.Id));
+        }
+
+        public async Task<Result<ForgotPasswordResult>> ForgotPasswordAsync(string email)
+        {
+            var user = await _userManager.FindByEmailAsync(email);
+            if (user == null)
+            {
+                _logger.LogWarning(
+                    "Password reset requested for non-existent email {Email}",
+                    email
+                );
+                return Result<ForgotPasswordResult>.Success(
+                    ForgotPasswordResult.Successful(
+                        "If entered email is registered, a reset link will be sent."
+                    )
+                );
+            }
+            try
+            {
+                var token = await _userManager.GeneratePasswordResetTokenAsync(user);
+                var encodedToken = HttpUtility.UrlEncode(token);
+
+                var frontendUrl = _configuration["Frontend:Url"] ?? "https://vocare.pl";
+
+                var resetLink =
+                    $"{frontendUrl}/reset-password?token={encodedToken}&email={HttpUtility.UrlEncode(email)}";
+                var emailBody =
+                    $@"
+Cześć {user.UserName},
+
+Otrzymaliśmy prośbę o reset hasła dla Twojego konta w Vocare.
+
+Aby ustawić nowe hasło, kliknij poniższy link:
+{resetLink}
+
+Link jest ważny przez 24 godziny.
+
+Jeśli nie prosiłeś o reset hasła, możesz zignorować tę wiadomość.
+
+Pozdrawiamy,
+Zespół Vocare
+";
+
+                await _emailService.SendEmailAsync(email, "Reset hasła - Vocare", emailBody);
+
+                _logger.LogInformation("Password reset email sent to user: {UserId}", user.Id);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(
+                    ex,
+                    "Error sending password reset email for user: {UserId}",
+                    user?.Id
+                );
+            }
+
+            return Result<ForgotPasswordResult>.Success(
+                ForgotPasswordResult.Successful(
+                    "If entered email is registered, a reset link will be sent."
+                )
+            );
+        }
+
+        public async Task<Result<ResetPasswordResult>> ResetPasswordAsync(
+            string email,
+            string token,
+            string newPassword
+        )
+        {
+            var user = await _userManager.FindByEmailAsync(email);
+            if (user == null)
+            {
+                _logger.LogWarning(
+                    "Password reset attempted for non-existent email: {Email}",
+                    email
+                );
+                return Result<ResetPasswordResult>.Failure("Invalid email or token.");
+            }
+            var decodedToken = HttpUtility.UrlDecode(token);
+
+            var result = await _userManager.ResetPasswordAsync(user, decodedToken, newPassword);
+
+            if (!result.Succeeded)
+            {
+                _logger.LogWarning(
+                    "Password reset failed for user: {UserId}. Errors: {Errors}",
+                    user.Id,
+                    string.Join(", ", result.Errors.Select(e => e.Description))
+                );
+
+                if (result.Errors.Any(e => e.Code.Contains("Password")))
+                {
+                    return Result<ResetPasswordResult>.Failure(
+                        "Password does not meet requirements."
+                    );
+                }
+
+                return Result<ResetPasswordResult>.Failure("Invalid or expired token.");
+            }
+            _logger.LogInformation("Password reset successful for user: {UserId}", user.Id);
+
+            try
+            {
+                await _emailService.SendEmailAsync(
+                    email,
+                    "Hasło zostało zmienione - Vocare",
+                    "Twoje hasło zostało pomyślnie zmienione. Jeśli to nie Ty, skontaktuj się z nami natychmiast."
+                );
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(
+                    ex,
+                    "Failed to send password change confirmation email for user: {UserId}",
+                    user.Id
+                );
+            }
+            return Result<ResetPasswordResult>.Success(
+                ResetPasswordResult.Successful("Password has been reset successfully.")
+            );
+        }
+
+        public async Task<Result<ValidateResetTokenResult>> ValidateResetTokenAsync(
+            string token,
+            string email
+        )
+        {
+            if (string.IsNullOrEmpty(token) || string.IsNullOrEmpty(email))
+            {
+                return Result<ValidateResetTokenResult>.Failure("Token and email are required.");
+            }
+
+            var user = await _userManager.FindByEmailAsync(email);
+            if (user == null)
+            {
+                return Result<ValidateResetTokenResult>.Failure("User not found.");
+            }
+            try
+            {
+                var decodedToken = HttpUtility.UrlDecode(token);
+
+                var isValid = await _userManager.VerifyUserTokenAsync(
+                    user,
+                    _userManager.Options.Tokens.PasswordResetTokenProvider,
+                    "ResetPassword",
+                    decodedToken
+                );
+                if (isValid)
+                {
+                    return Result<ValidateResetTokenResult>.Success(
+                        ValidateResetTokenResult.Successful(true, "Token ważny")
+                    );
+                }
+                else
+                {
+                    return Result<ValidateResetTokenResult>.Success(
+                        ValidateResetTokenResult.Successful(
+                            false,
+                            "Token wygasł lub jest nieprawidłowy"
+                        )
+                    );
+                }
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error validating reset token for user: {Email}", email);
+                return Result<ValidateResetTokenResult>.Failure("Błąd walidacji tokenu.");
+            }
+        }
+
+        public async Task<Result<RefreshResult>> RefreshAsync(string refreshToken)
+        {
+            _logger.LogInformation("Refresh token request received");
+            return Result<RefreshResult>.Failure("Please login again to refresh your session");
+        }
+
+        public async Task<Result<LogoutResult>> LogoutAsync()
+        {
+            try
+            {
+                var user = await _userManager.GetUserAsync(_httpContextAccessor.HttpContext.User);
+                if (user != null)
+                {
+                    await _signInManager.SignOutAsync();
+                    _logger.LogInformation("User logged out: {UserId}", user.Id);
+                    return Result<LogoutResult>.Success(LogoutResult.Successful());
+                }
+                else
+                {
+                    _logger.LogWarning("Logout attempt for non-logged in user.");
+                    return Result<LogoutResult>.Failure("User is not logged in.");
+                }
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error logging out user.");
+                return Result<LogoutResult>.Failure("An error occurred while logging out.");
+            }
+        }
+
+        public async Task<Result<GoogleLoginResult>> GoogleLoginAsync(string accessToken)
+        {
+            if (accessToken == null)
+            {
+                return Result<GoogleLoginResult>.Failure("Access token is required");
+            }
+            try
+            {
+                var response = await _httpClient.GetAsync(
+                    $"https://www.googleapis.com/oauth2/v1/tokeninfo?access_token={accessToken}"
+                );
+                if (!response.IsSuccessStatusCode)
+                {
+                    _logger.LogWarning(
+                        "Failed to validate Google access token: {StatusCode}",
+                        response.StatusCode
+                    );
+                    return Result<GoogleLoginResult>.Failure("Invalid Google token");
+                }
+
+                var tokenInfo = await response.Content.ReadAsStringAsync();
+                using var json = JsonDocument.Parse(tokenInfo);
+                var email = json.RootElement.GetProperty("email").GetString();
+
+                if (string.IsNullOrEmpty(email))
+                {
+                    return Result<GoogleLoginResult>.Failure("No email in Google token");
+                }
+
+                var user = await _userManager.FindByEmailAsync(email);
+                var isNewUser = false;
+
+                if (user == null)
+                {
+                    isNewUser = true;
+                    user = new User
+                    {
+                        UserName = email,
+                        Email = email,
+                        EmailConfirmed = true,
+                    };
+
+                    var createResult = await _userManager.CreateAsync(user);
+                    if (!createResult.Succeeded)
+                    {
+                        _logger.LogError(
+                            "Failed to create user for Google login: {Email}. Errors: {Errors}",
+                            email,
+                            string.Join(", ", createResult.Errors.Select(e => e.Description))
+                        );
+                        return Result<GoogleLoginResult>.Failure("Failed to create user account");
+                    }
+
+                    await _userManager.AddLoginAsync(
+                        user,
+                        new UserLoginInfo(
+                            "Google",
+                            json.RootElement.GetProperty("user_id").GetString() ?? email,
+                            "Google"
+                        )
+                    );
+
+                    await _registrationHandler.HandleUserRegistrationAsync(user.Id);
+                }
+                else
+                {
+                    var logins = await _userManager.GetLoginsAsync(user);
+                    var hasGoogleLogin = logins.Any(l => l.LoginProvider == "Google");
+
+                    if (!hasGoogleLogin)
+                    {
+                        var googleUserId =
+                            json.RootElement.GetProperty("user_id").GetString() ?? email;
+                        await _userManager.AddLoginAsync(
+                            user,
+                            new UserLoginInfo("Google", googleUserId, "Google")
+                        );
+
+                        _logger.LogInformation(
+                            "Added Google login to existing user: {UserId}",
+                            user.Id
+                        );
+                    }
+                }
+
+                var accessTokenGenerated = GenerateIdentityCompatibleToken(user);
+                var refreshToken = Guid.NewGuid().ToString();
+
+                await _userManager.SetAuthenticationTokenAsync(
+                    user,
+                    IdentityConstants.BearerScheme,
+                    "refresh_token",
+                    refreshToken
+                );
+
+                return Result<GoogleLoginResult>.Success(
+                    GoogleLoginResult.Successful(
+                        accessTokenGenerated,
+                        refreshToken,
+                        user.Id,
+                        user.Email,
+                        isNewUser,
+                        3600
+                    )
+                );
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error in GoogleVerify");
+                return Result<GoogleLoginResult>.Failure("Google verification failed");
+            }
         }
     }
 }

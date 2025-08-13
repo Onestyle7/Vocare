@@ -4,7 +4,7 @@ using VocareWebAPI.UserManagement.Models.Results; // Dla custom Result models ja
 
 namespace VocareWebAPI.UserManagement.Services.Interfaces
 {
-    public interface IAuthenticationService
+    public interface IAuthenticationServiceOwn
     {
         Task<Result<ForgotPasswordResult>> ForgotPasswordAsync(string email);
 

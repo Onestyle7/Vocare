@@ -276,6 +276,7 @@ builder.Services.AddScoped<UserRegistrationHandler>();
 builder.Services.AddScoped<IAiService, OpenAIService>();
 builder.Services.AddScoped<ICvManagementService, CvManagementService>();
 builder.Services.AddScoped<IEmailService, EmailService>();
+builder.Services.AddScoped<IAuthenticationServiceOwn, AuthenticationService>();
 
 /* builder.Services.AddScoped<IAiService, PerplexityAiService>();
  */
