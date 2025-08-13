@@ -1615,15 +1615,15 @@ const CVCreator: React.FC<CVCreatorProps> = ({ initialCv }) => {
         </button>
         <button
           onClick={handleSave}
-          className="cursor-pointer rounded-lg p-3 transition-colors hover:bg-gray-100 flex items-center justify-center flex-col"
+          className="flex cursor-pointer flex-col items-center justify-center rounded-lg p-3 transition-colors hover:bg-gray-100"
           title="Save resume"
         >
           <Save size={16} className="h-6 w-6 text-black" />
-          <div className="flex flex-row items-center justify-center text-xs mt-2">
-                {autosaveStatus === 'saving' && <span className="text-gray-500">Saving…</span>}
-                {autosaveStatus === 'saved' && <span className="text-green-600">Saved ✓</span>}
-                {autosaveStatus === 'error' && <span className="text-red-500">Save failed</span>}
-              </div>
+          <div className="mt-2 flex flex-row items-center justify-center text-xs">
+            {autosaveStatus === 'saving' && <span className="text-gray-500">Saving…</span>}
+            {autosaveStatus === 'saved' && <span className="text-green-600">Saved ✓</span>}
+            {autosaveStatus === 'error' && <span className="text-red-500">Save failed</span>}
+          </div>
         </button>
 
         <HoverCard>
