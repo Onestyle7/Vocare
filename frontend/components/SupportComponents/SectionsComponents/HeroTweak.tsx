@@ -90,15 +90,15 @@ const HeroTweak = () => {
         </div>
         {!isMobile && (
           <div className="inset-0 flex w-2/5 items-center lg:border-t lg:border-b lg:border-l">
-          <Suspense fallback={<Image src={Spinner} alt="spinner" width={60} height={60} />}>
-            {showSpline && (
+            <Suspense fallback={<Image src={Spinner} alt="spinner" width={60} height={60} />}>
+              {showSpline && (
                 <LazySpline
                   scene="https://prod.spline.design/mZBrYNcnoESGlTUG/scene.splinecode"
                   className="flex items-center justify-center"
                 />
               )}
-          </Suspense>
-              </div>
+            </Suspense>
+          </div>
         )}
       </div>
 

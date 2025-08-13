@@ -429,11 +429,11 @@ export default function ProfileDetails() {
                   <div className="flex gap-2">
                     <Button
                       onClick={handleEdit}
-                      className="rounded-full bg-[#915EFF] hover:bg-[#b594fd]"
+                      className="rounded-md bg-[#915EFF] hover:bg-[#b594fd]"
                     >
                       Edit
                     </Button>
-                    <Button onClick={handleLogout} variant="outline" className="rounded-full">
+                    <Button onClick={handleLogout} variant="outline" className="rounded-md">
                       <LogOut />
                     </Button>
                   </div>

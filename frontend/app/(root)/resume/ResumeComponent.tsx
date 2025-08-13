@@ -14,7 +14,6 @@ import {
   Trash2,
   ZoomIn,
   ZoomOut,
-  Move,
   Tag,
   GripVertical,
   PencilLine,
@@ -1555,13 +1554,6 @@ const CVCreator: React.FC<CVCreatorProps> = ({ initialCv }) => {
         >
           <Home size={24} className="text-gray-600" />
         </button>
-        <button
-          onClick={handleSave}
-          className="cursor-pointer rounded-lg p-3 transition-colors hover:bg-gray-100"
-          title="Save resume"
-        >
-          <Save size={16} className="h-6 w-6 text-black" />
-        </button>
 
         <HoverCard>
           <HoverCardTrigger asChild>
@@ -1738,6 +1730,16 @@ const CVCreator: React.FC<CVCreatorProps> = ({ initialCv }) => {
             <h2 className="text-lg font-semibold text-gray-700">Resume Preview</h2>
             <div className="flex items-center space-x-2">
               <button
+                onClick={handleSave}
+                className="flex cursor-pointer items-center space-x-2 rounded border border-[#915EFF] bg-[#915EFF] px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-[#713ae8]"
+                title="Pobierz CV jako PDF"
+              >
+                <Save className="h-5 w-5" />
+
+                <span>Save</span>
+              </button>
+
+              <button
                 onClick={downloadPDF}
                 className="flex cursor-pointer items-center space-x-2 rounded border border-[#915EFF] bg-[#915EFF] px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-[#713ae8]"
                 title="Pobierz CV jako PDF"
@@ -1801,10 +1803,6 @@ const CVCreator: React.FC<CVCreatorProps> = ({ initialCv }) => {
               >
                 Reset
               </button>
-              <div className="flex items-center text-sm text-gray-500">
-                <Move size={16} className="mr-1" />
-                Drag and move
-              </div>
             </div>
           </div>
 
