@@ -382,8 +382,14 @@ const CVCreator: React.FC<CVCreatorProps> = ({ initialCv }) => {
     setExperiences([...experiences, newExp]);
   };
 
-  const updateExperience = (id: string, field: keyof Experience, value: string | boolean) => {
-    setExperiences(experiences.map((exp) => (exp.id === id ? { ...exp, [field]: value } : exp)));
+  const updateExperience = (
+    id: string,
+    field: keyof Experience,
+    value: string | boolean
+  ) => {
+    setExperiences((prev) =>
+      prev.map((exp) => (exp.id === id ? { ...exp, [field]: value } : exp))
+    );
   };
 
   const removeExperience = (id: string) => {
@@ -403,8 +409,14 @@ const CVCreator: React.FC<CVCreatorProps> = ({ initialCv }) => {
     setEducation([...education, newEdu]);
   };
 
-  const updateEducation = (id: string, field: keyof Education, value: string | boolean) => {
-    setEducation(education.map((edu) => (edu.id === id ? { ...edu, [field]: value } : edu)));
+  const updateEducation = (
+    id: string,
+    field: keyof Education,
+    value: string | boolean
+  ) => {
+    setEducation((prev) =>
+      prev.map((edu) => (edu.id === id ? { ...edu, [field]: value } : edu))
+    );
   };
 
   const removeEducation = (id: string) => {
@@ -1042,12 +1054,9 @@ const CVCreator: React.FC<CVCreatorProps> = ({ initialCv }) => {
                           value={edu.endDate}
                           onChange={(date) => updateEducation(edu.id, 'endDate', date)}
                           isCurrent={edu.isCurrent}
-                          onCurrentChange={(current) => {
-                            updateEducation(edu.id, 'isCurrent', current);
-                            if (current) {
-                              updateEducation(edu.id, 'endDate', '');
-                            }
-                          }}
+                          onCurrentChange={(current) =>
+                            updateEducation(edu.id, 'isCurrent', current)
+                          }
                           placeholder="Select end date"
                         />
                       </div>
