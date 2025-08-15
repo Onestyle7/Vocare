@@ -264,7 +264,7 @@ export default function AssistantPage() {
     }
   };
   if (!profile) {
-    return <div className="p-8 text-center">Brak danych profilu. Wróć do formularza.</div>;
+    return <GenerateRecommendation />;
   }
 
   if (error) {
