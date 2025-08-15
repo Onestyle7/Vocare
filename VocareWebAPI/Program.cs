@@ -69,8 +69,10 @@ builder.Services.AddRateLimiter(options =>
         "LoginPolicy",
         limiterOptions =>
         {
-            limiterOptions.PermitLimit = 5;
+            limiterOptions.PermitLimit = builder.Environment.IsDevelopment() ? 50 : 20;
             limiterOptions.Window = TimeSpan.FromMinutes(5);
+            limiterOptions.QueueProcessingOrder = QueueProcessingOrder.OldestFirst;
+            limiterOptions.QueueLimit = 3;
         }
     );
     options.AddFixedWindowLimiter(
@@ -85,23 +87,33 @@ builder.Services.AddRateLimiter(options =>
     // Polityka globalna - 100 requestów na minutę
     options.GlobalLimiter = PartitionedRateLimiter.Create<HttpContext, string>(context =>
         RateLimitPartition.GetFixedWindowLimiter(
-            context.User?.Identity?.Name ?? context.Request.Headers.Host.ToString(),
+            context.User?.Identity?.IsAuthenticated == true
+                ? $"user_{context.User.Identity.Name}"
+                : $"ip_{context.Connection.RemoteIpAddress?.ToString() ?? "unknown"}",
             factory => new FixedWindowRateLimiterOptions
             {
                 AutoReplenishment = true,
-                PermitLimit = 100,
+                PermitLimit = builder.Environment.IsDevelopment() ? 300 : 150,
                 Window = TimeSpan.FromMinutes(1),
+                QueueProcessingOrder = QueueProcessingOrder.OldestFirst,
+                QueueLimit = 10,
             }
         )
     );
 
     options.OnRejected = async (context, token) =>
     {
-        context.HttpContext.Response.StatusCode = 429; // Too Many Requests
-        await context.HttpContext.Response.WriteAsync(
-            "Too many requests, please try again later.",
-            token
-        );
+        context.HttpContext.Response.StatusCode = 429;
+        context.HttpContext.Response.Headers.Add("Retry-After", "60");
+
+        var response = new
+        {
+            error = "rate_limit_exceeded",
+            message = "Too many requests, please try again later.",
+            retryAfterSeconds = 60,
+        };
+
+        await context.HttpContext.Response.WriteAsJsonAsync(response, cancellationToken: token);
     };
 });
 
