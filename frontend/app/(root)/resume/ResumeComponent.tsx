@@ -40,6 +40,17 @@ import {
 } from '@/components/ui/select';
 import { useAutosave } from '@/lib/hooks/useAutosave';
 
+// Constants that define the exact size of an A4 page. These values are
+// reused for both the on‑screen preview and the generated PDF so that they
+// share identical dimensions and margins.
+const PAGE_WIDTH_MM = 210;
+const PAGE_HEIGHT_MM = 297;
+const PAGE_PADDING_MM = 10; // top/bottom/left/right padding of the page
+const PAGE_CONTENT_HEIGHT_MM = PAGE_HEIGHT_MM - PAGE_PADDING_MM * 2;
+// Conversion factor used when we need the printable area in pixels.
+const MM_TO_PX = 3.7795275591;
+const PAGE_CONTENT_HEIGHT_PX = PAGE_CONTENT_HEIGHT_MM * MM_TO_PX;
+
 interface PersonalInfo {
   firstName: string;
   lastName: string;
@@ -491,7 +502,7 @@ const CVCreator: React.FC<CVCreatorProps> = ({ initialCv }) => {
     const cvContent = document.querySelector('.cv-content');
     if (!cvContent) return;
 
-    const pageHeight = 1123; // wysokość strony A4 w pikselach
+    const pageHeight = PAGE_CONTENT_HEIGHT_PX; // wysokość obszaru roboczego strony A4 w pikselach
     const sections = cvContent.querySelectorAll('[data-section]') as NodeListOf<HTMLElement>;
 
     sections.forEach((section) => {
@@ -554,7 +565,7 @@ const CVCreator: React.FC<CVCreatorProps> = ({ initialCv }) => {
     const cvContent = document.querySelector('.cv-content');
     if (!cvContent) return;
 
-    const pageHeight = 1123;
+    const pageHeight = PAGE_CONTENT_HEIGHT_PX;
     const sections = cvContent.querySelectorAll('[data-section]') as NodeListOf<HTMLElement>;
 
     sections.forEach((section) => {
@@ -580,7 +591,7 @@ const CVCreator: React.FC<CVCreatorProps> = ({ initialCv }) => {
     const cvElement = document.querySelector<HTMLElement>('.cv-content');
     if (!cvElement) return;
     const contentHeight = cvElement.scrollHeight;
-    const pageHeight = 1123; // A4 height in pixels at 96 DPI (approx. 1123px)
+    const pageHeight = PAGE_CONTENT_HEIGHT_PX; // A4 printable height in pixels
     const newTotalPages = Math.ceil(contentHeight / pageHeight);
     setTotalPages(newTotalPages);
   };
@@ -802,7 +813,6 @@ const CVCreator: React.FC<CVCreatorProps> = ({ initialCv }) => {
     await new Promise((r) => setTimeout(r, 100));
 
     const pdf = new jsPDF('portrait', 'mm', 'a4');
-    const pdfWidth = 210;
 
     for (let page = 1; page <= totalPages; page++) {
       setCurrentPage(page);
@@ -817,10 +827,9 @@ const CVCreator: React.FC<CVCreatorProps> = ({ initialCv }) => {
       });
 
       const imgData = canvas.toDataURL('image/png');
-      const imgH = (canvas.height * pdfWidth) / canvas.width;
 
       if (page > 1) pdf.addPage();
-      pdf.addImage(imgData, 'PNG', 0, 0, pdfWidth, imgH);
+      pdf.addImage(imgData, 'PNG', 0, 0, PAGE_WIDTH_MM, PAGE_HEIGHT_MM);
     }
 
     // przywróć wszystko do stanu pierwotnego
@@ -1893,8 +1902,9 @@ const CVCreator: React.FC<CVCreatorProps> = ({ initialCv }) => {
               <div
                 className="cv-frame overflow-hidden rounded-sm"
                 style={{
-                  width: '210mm',
-                  padding: '32px', // ← tutaj widoczny margines
+                  width: `${PAGE_WIDTH_MM}mm`,
+                  height: `${PAGE_HEIGHT_MM}mm`,
+                  padding: `${PAGE_PADDING_MM}mm`,
                   boxSizing: 'border-box',
                   backgroundColor: '#fff',
                   boxShadow: '0 4px 6px rgba(0,0,0,0.1)',
@@ -1905,8 +1915,8 @@ const CVCreator: React.FC<CVCreatorProps> = ({ initialCv }) => {
                 <div
                   className="cv-content"
                   style={{
-                    width: '100%', // 210mm
-                    height: '238.5mm', // dokładnie obszar "przelamywania"
+                    width: '100%',
+                    height: `${PAGE_CONTENT_HEIGHT_MM}mm`,
                     overflow: 'hidden',
                   }}
                 >
