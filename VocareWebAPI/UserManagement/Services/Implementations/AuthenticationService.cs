@@ -178,6 +178,22 @@ namespace VocareWebAPI.UserManagement.Services.Implementations
                     )
                 );
             }
+            var logins = await _userManager.GetLoginsAsync(user);
+            var hasGoogleLogin = logins.Any(l => l.LoginProvider == "Google");
+            var hasPassword = await _userManager.HasPasswordAsync(user);
+            if (hasGoogleLogin && hasPassword)
+            {
+                _logger.LogWarning(
+                    "Password reset requested for user with both Google and password login: {Email}",
+                    email
+                );
+                // Dla bezpieczeństwa zwracamy ten sam komunikat
+                return Result<ForgotPasswordResult>.Success(
+                    ForgotPasswordResult.Successful(
+                        "If entered email is registered, a reset link will be sent."
+                    )
+                );
+            }
             try
             {
                 var token = await _userManager.GeneratePasswordResetTokenAsync(user);

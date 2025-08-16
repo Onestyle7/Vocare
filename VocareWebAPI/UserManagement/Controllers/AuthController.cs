@@ -34,8 +34,16 @@ namespace VocareWebAPI.UserManagement.Controllers
             var result = await _authenticationService.LoginAsync(request.Email, request.Password);
 
             if (!result.IsSuccess)
-                return BadRequest(new { message = result.Error });
+            {
+                if (result.Error.Contains("locked"))
+                {
+                    return BadRequest(new { message = result.Error, errorCode = "ACCOUNT_LOCKED" });
+                }
 
+                return BadRequest(
+                    new { message = result.Error, errorCode = "INVALID_CREDENTIALS" }
+                );
+            }
             var login = result.Value;
             return Ok(
                 new
@@ -63,6 +71,15 @@ namespace VocareWebAPI.UserManagement.Controllers
                 request.Email,
                 request.Password
             );
+            if (!result.IsSuccess)
+            {
+                if (result.Error.Contains("Google"))
+                {
+                    return BadRequest(
+                        new { message = result.Error, errorCode = "GOOGLE_ACCOUNT_EXISTS" }
+                    );
+                }
+            }
             return result.IsSuccess ? Ok(result.Value) : BadRequest(new { message = result.Error });
         }
 
