@@ -74,8 +74,6 @@ namespace VocareWebAPI.CareerAdvisor.Services.Implementations
                     },
                     new { role = "user", content = prompt },
                 },
-                temperature = 0.7,
-                max_tokens = 3000,
                 response_format = new { type = "json_object" },
             };
             try
@@ -161,15 +159,6 @@ namespace VocareWebAPI.CareerAdvisor.Services.Implementations
                 Lokalizacja użytkownika:
                 {{recommendation.UserProfile.Country}}, {{recommendation.UserProfile.Address}}
 
-                INSTRUKCJE:
-                Wygeneruj wyłącznie obiekt JSON z analizą rynku w języku {{(
-                    recommendation.UserProfile.Country == "Poland"
-                    || recommendation.UserProfile.Country == "Polska"
-                        ? "polskim"
-                        : "angielskim"
-                )}}, 
-                który pomoże użytkownikowi zrozumieć aktualne trendy i zapotrzebowanie na rynku pracy w kontekście jego rekomendowanych ścieżek kariery.
-
                 Struktura JSON MUSI być dokładnie taka:
                 {
                   "marketAnalysis": {
@@ -225,6 +214,7 @@ namespace VocareWebAPI.CareerAdvisor.Services.Implementations
                    - Podaj konkretny, mierzalny wpływ
 
                 WAŻNE: Zwróć TYLKO czysty JSON bez żadnych dodatkowych objaśnień, komentarzy czy tekstu.
+                Pamiętaj: odpowiedź musi być w języku polskim i zawierać realistyczne dane rynkowe(wszystkie teksty, nazwy, opisy po polsku).
                 """;
         }
 

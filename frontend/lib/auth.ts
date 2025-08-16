@@ -47,7 +47,7 @@ export const registerUser = async ({ email, password, confirmPassword }: Registe
 };
 
 export const loginUser = async ({ email, password }: LoginInput) => {
-  const response = await api.post(`/login`, { email, password });
+  const response = await api.post(`${AUTH_PREFIX}/login`, { email, password });
   const token = response.data.token;
   if (token) {
     localStorage.setItem('token', token);
@@ -78,7 +78,6 @@ export const googleVerify = async (accessToken: string) => {
   return response.data;
 };
 
-
 export const forgotPassword = async ({ email }: ForgotPasswordInput) => {
   const response = await api.post(`${AUTH_PREFIX}/forgot-password`, { email });
   return response.data;
@@ -86,17 +85,22 @@ export const forgotPassword = async ({ email }: ForgotPasswordInput) => {
 
 export const validateResetToken = async ({ token, email }: ValidateTokenInput) => {
   const response = await api.get(`${AUTH_PREFIX}/validate-reset-token`, {
-    params: { token, email }
+    params: { token, email },
   });
   return response.data;
 };
 
-export const resetPassword = async ({ email, token, newPassword, confirmPassword }: ResetPasswordInput) => {
+export const resetPassword = async ({
+  email,
+  token,
+  newPassword,
+  confirmPassword,
+}: ResetPasswordInput) => {
   const response = await api.post(`${AUTH_PREFIX}/reset-password`, {
     email,
     token,
     newPassword,
-    confirmPassword
+    confirmPassword,
   });
   return response.data;
 };

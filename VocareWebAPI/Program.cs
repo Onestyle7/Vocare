@@ -1,9 +1,12 @@
 using System.Text;
 using System.Text.Json;
 using System.Text.Json.Serialization;
+using System.Threading.RateLimiting;
+using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.DataProtection;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.RateLimiting;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi.Models;
 using Polly;
@@ -45,6 +48,74 @@ builder
     {
         options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter());
     });
+
+// ===== RATE LIMITING =====
+builder.Services.AddRateLimiter(options =>
+{
+    // Polityka dla AI - 3 requestów na minutę
+    options.AddFixedWindowLimiter(
+        "AiPolicy",
+        limiterOptions =>
+        {
+            limiterOptions.PermitLimit = 3;
+            limiterOptions.Window = TimeSpan.FromMinutes(1);
+            limiterOptions.QueueProcessingOrder = QueueProcessingOrder.OldestFirst;
+            limiterOptions.QueueLimit = 2;
+        }
+    );
+
+    // Polityka dla logowania - 5 prób na 5 minut
+    options.AddFixedWindowLimiter(
+        "LoginPolicy",
+        limiterOptions =>
+        {
+            limiterOptions.PermitLimit = builder.Environment.IsDevelopment() ? 50 : 20;
+            limiterOptions.Window = TimeSpan.FromMinutes(5);
+            limiterOptions.QueueProcessingOrder = QueueProcessingOrder.OldestFirst;
+            limiterOptions.QueueLimit = 3;
+        }
+    );
+    options.AddFixedWindowLimiter(
+        "WebhookPolicy",
+        limiterOptions =>
+        {
+            limiterOptions.PermitLimit = 100; // Stripe i tak nie wysyła więcej
+            limiterOptions.Window = TimeSpan.FromMinutes(1);
+        }
+    );
+
+    // Polityka globalna - 100 requestów na minutę
+    options.GlobalLimiter = PartitionedRateLimiter.Create<HttpContext, string>(context =>
+        RateLimitPartition.GetFixedWindowLimiter(
+            context.User?.Identity?.IsAuthenticated == true
+                ? $"user_{context.User.Identity.Name}"
+                : $"ip_{context.Connection.RemoteIpAddress?.ToString() ?? "unknown"}",
+            factory => new FixedWindowRateLimiterOptions
+            {
+                AutoReplenishment = true,
+                PermitLimit = builder.Environment.IsDevelopment() ? 300 : 150,
+                Window = TimeSpan.FromMinutes(1),
+                QueueProcessingOrder = QueueProcessingOrder.OldestFirst,
+                QueueLimit = 10,
+            }
+        )
+    );
+
+    options.OnRejected = async (context, token) =>
+    {
+        context.HttpContext.Response.StatusCode = 429;
+        context.HttpContext.Response.Headers.Add("Retry-After", "60");
+
+        var response = new
+        {
+            error = "rate_limit_exceeded",
+            message = "Too many requests, please try again later.",
+            retryAfterSeconds = 60,
+        };
+
+        await context.HttpContext.Response.WriteAsJsonAsync(response, cancellationToken: token);
+    };
+});
 
 // ===== KONFIGURACJA (Options Pattern) =====
 builder.Services.Configure<AiConfig>(builder.Configuration.GetSection("PerplexityAI"));
@@ -217,6 +288,7 @@ builder.Services.AddScoped<UserRegistrationHandler>();
 builder.Services.AddScoped<IAiService, OpenAIService>();
 builder.Services.AddScoped<ICvManagementService, CvManagementService>();
 builder.Services.AddScoped<IEmailService, EmailService>();
+builder.Services.AddScoped<IAuthenticationServiceOwn, AuthenticationService>();
 
 /* builder.Services.AddScoped<IAiService, PerplexityAiService>();
  */
@@ -253,7 +325,6 @@ builder.Services.AddSwaggerGen(c =>
         }
     );
 
-    // ✅ NAPRAWKA: Dodano CustomSchemaIds dla rozwiązania konfliktów schematów
     c.CustomSchemaIds(type => type.FullName);
 
     c.AddSecurityDefinition(
@@ -295,7 +366,7 @@ builder.Services.AddCors(options =>
         {
             if (builder.Environment.IsDevelopment())
             {
-                // W developmencie zezwól na wszystkie localhost porty
+                // W developmencie zezwalamy na wszystkie domeny
                 policy
                     .SetIsOriginAllowed(origin =>
                     {
@@ -364,11 +435,9 @@ if (app.Environment.IsStaging())
         c.RoutePrefix = "swagger"; // Swagger dostępny na /swagger
         c.DocumentTitle = "Vocare API - STAGING ENVIRONMENT";
 
-        // Oznacz staging wyraźnie
         c.HeadContent += "<style>.topbar { background-color: #ff9800 !important; }</style>";
     });
 
-    // Dodaj middleware do oznaczania odpowiedzi jako staging
     app.Use(
         async (context, next) =>
         {
@@ -381,14 +450,12 @@ if (app.Environment.IsStaging())
 
 // ===== MIDDLEWARE PIPELINE =====
 
-// app.UseHttpsRedirection();
 app.UseRouting();
 app.UseCors("AllowAll");
 
 app.Use(
     async (context, next) =>
     {
-        // Obsługa OPTIONS dla preflight
         if (
             context.Request.Method == "OPTIONS"
             && context.Request.Path.StartsWithSegments("/api/auth/google-verify")
@@ -407,13 +474,12 @@ app.Use(
                 );
             }
             context.Response.StatusCode = 204;
-            return; // Zakończ przetwarzanie dla OPTIONS
+            return;
         }
 
         // Dla innych requestów Google verify
         if (context.Request.Path.StartsWithSegments("/api/auth/google-verify"))
         {
-            // Dodaj headers BEZPIECZNIE - sprawdź czy response się jeszcze nie rozpoczął
             context.Response.OnStarting(() =>
             {
                 if (!context.Response.HasStarted)
@@ -436,26 +502,58 @@ app.Use(
     }
 );
 
-// 3. Security headers middleware - ZROBIĆ BEZPIECZNIE
 app.Use(
     async (context, next) =>
     {
-        // Dodaj security headers PRZED wykonaniem akcji
         if (!context.Response.HasStarted)
         {
             context.Response.Headers.TryAdd("X-Content-Type-Options", "nosniff");
             context.Response.Headers.TryAdd("X-Frame-Options", "SAMEORIGIN");
             context.Response.Headers.TryAdd("Referrer-Policy", "strict-origin-when-cross-origin");
-        }
 
+            // CSP różne dla środowisk
+            if (app.Environment.IsDevelopment())
+            {
+                // Luźniejsze dla developmentu - React/Angular potrzebują 'unsafe-eval'
+                context.Response.Headers.TryAdd(
+                    "Content-Security-Policy",
+                    "default-src 'self'; "
+                        + "script-src 'self' 'unsafe-inline' 'unsafe-eval' https://js.stripe.com; "
+                        + "style-src 'self' 'unsafe-inline'; "
+                        + "img-src 'self' data: https: blob:; "
+                        + "connect-src 'self' https://api.stripe.com ws://localhost:* http://localhost:*;"
+                );
+            }
+            else
+            {
+                // Restrykcyjne dla staging/produkcji
+                context.Response.Headers.TryAdd(
+                    "Content-Security-Policy",
+                    "default-src 'self'; "
+                        + "script-src 'self' https://js.stripe.com; "
+                        + "style-src 'self' 'unsafe-inline'; "
+                        + "img-src 'self' data: https:; "
+                        + "font-src 'self' data:; "
+                        + "connect-src 'self' https://api.stripe.com https://*.vocare.pl;"
+                );
+            }
+
+            if (app.Environment.IsProduction())
+            {
+                context.Response.Headers.TryAdd(
+                    "Strict-Transport-Security",
+                    "max-age=31536000; includeSubDomains"
+                );
+            }
+        }
         await next();
     }
 );
 
+app.UseRateLimiter();
 app.UseCookiePolicy();
 app.UseAuthentication();
 
-// 4. Custom token middleware - UPROSZCZONY I BEZPIECZNY
 app.Use(
     async (context, next) =>
     {
@@ -519,12 +617,7 @@ app.UseAuthorization();
 
 // ===== ENDPOINTS =====
 app.MapControllers();
-
-// Dodaj Identity API endpoints dla bearer tokenów
 app.MapIdentityApi<User>();
-
-// Wszystkie endpointy autoryzacji są w AuthController
-// Identity bearer token authentication jest obsługiwane automatycznie
 
 // ===== DEBUG ENDPOINT (opcjonalnie - dla staging/development) =====
 if (!app.Environment.IsProduction())
@@ -660,3 +753,5 @@ while (retries < maxRetries)
 }
 
 app.Run();
+
+public partial class Program { }
