@@ -239,9 +239,8 @@ Zespół Vocare
                 );
                 return Result<ResetPasswordResult>.Failure("Invalid email or token.");
             }
-            var decodedToken = HttpUtility.UrlDecode(token);
 
-            var result = await _userManager.ResetPasswordAsync(user, decodedToken, newPassword);
+            var result = await _userManager.ResetPasswordAsync(user, token, newPassword);
 
             if (!result.Succeeded)
             {
@@ -300,13 +299,11 @@ Zespół Vocare
             }
             try
             {
-                var decodedToken = HttpUtility.UrlDecode(token);
-
                 var isValid = await _userManager.VerifyUserTokenAsync(
                     user,
                     _userManager.Options.Tokens.PasswordResetTokenProvider,
                     "ResetPassword",
-                    decodedToken
+                    token
                 );
                 if (isValid)
                 {
