@@ -135,7 +135,7 @@ const ResumeDashboard = () => {
     <div className="min-h-screen">
       <div className="font-poppins relative">
         <GridBackgroundDemo />
-        <div className="relative z-10 w-full py-20 lg:py-40">
+        <div className="relative z-10 w-full py-4 lg:py-40">
           <div className="container mx-auto">
             <div className="flex flex-col gap-10">
               {/* Header Section */}

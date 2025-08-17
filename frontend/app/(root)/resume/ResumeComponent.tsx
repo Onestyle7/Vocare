@@ -1443,28 +1443,31 @@ const CVCreator: React.FC<CVCreatorProps> = ({ initialCv }) => {
               Work Exeperience
             </h3>
             {experiences.map((exp) => (
-              <div key={exp.id} className="mb-3">
-                <div className="mb-1 flex items-start justify-between">
-                  <div className="min-w-0 flex-1">
-                    <h4 className="truncate font-semibold text-gray-900">
-                      {exp.position || 'Position'}
-                    </h4>
-                    <p className="truncate font-medium text-gray-700">
-                      {exp.company || 'Company name'}
-                    </p>
-                  </div>
-                  <div className="ml-2 flex-shrink-0 text-xs text-gray-600">
-                    {formatDate(exp.startDate)} -{' '}
-                    {exp.isCurrent || !exp.endDate ? 'present' : formatDate(exp.endDate)}
-                  </div>
-                </div>
-                {exp.description && (
-                  <p className="text-sm leading-relaxed break-words text-gray-700">
-                    {exp.description}
-                  </p>
-                )}
-              </div>
-            ))}
+  <div key={exp.id} className="exp-item mb-4">
+    {/* Nagłówek stanowisko + firma */}
+    <div className="exp-header mb-1 flex items-start justify-between">
+      <div className="min-w-0 flex-1">
+        <div className="truncate font-semibold text-gray-900">
+          {exp.position || "Position"}
+        </div>
+        <div className="truncate font-medium text-gray-700">
+          {exp.company || "Company name"}
+        </div>
+      </div>
+      <div className="ml-2 flex-shrink-0 text-xs text-gray-600">
+        {formatDate(exp.startDate)} - {exp.isCurrent || !exp.endDate ? "present" : formatDate(exp.endDate)}
+      </div>
+    </div>
+
+    {/* Opis */}
+    {exp.description && (
+      <div className="exp-desc text-sm text-gray-700 leading-relaxed">
+        {exp.description}
+      </div>
+    )}
+  </div>
+))}
+
           </div>
         ) : null;
 
@@ -1873,7 +1876,7 @@ const CVCreator: React.FC<CVCreatorProps> = ({ initialCv }) => {
 
           {/* CV Preview Container */}
           <div
-            className="relative flex-1 overflow-hidden bg-gray-100/20"
+            className="relative flex-1 overflow-hidden bg-gray-100/20 border border-blue-500"
             onMouseMove={handleMouseMove}
             onMouseUp={handleMouseUp}
             onMouseLeave={() => {
@@ -1883,7 +1886,7 @@ const CVCreator: React.FC<CVCreatorProps> = ({ initialCv }) => {
             onMouseEnter={() => setIsHovered(true)}
           >
             <div
-              className={`absolute inset-0 flex items-center justify-center ${isDragging ? 'cursor-grabbing' : 'cursor-grab'}`}
+              className={`absolute inset-0 flex items-center justify-center border border-red-500 ${isDragging ? 'cursor-grabbing' : 'cursor-grab'}`}
               style={{
                 transform: `translate(${cvPosition.x}px, ${cvPosition.y}px)`,
               }}
@@ -1891,9 +1894,10 @@ const CVCreator: React.FC<CVCreatorProps> = ({ initialCv }) => {
             >
               {/* A4 Paper with exact dimensions */}
               <div
-                className="cv-frame overflow-hidden rounded-sm"
+                className="cv-frame overflow-hidden border border-green-500 rounded-sm"
                 style={{
                   width: '210mm',
+                  height: '257mm',
                   padding: '32px', // ← tutaj widoczny margines
                   boxSizing: 'border-box',
                   backgroundColor: '#fff',
@@ -1903,10 +1907,10 @@ const CVCreator: React.FC<CVCreatorProps> = ({ initialCv }) => {
                 }}
               >
                 <div
-                  className="cv-content"
+                  className="cv-content border border-purple-500 "
                   style={{
                     width: '100%', // 210mm
-                    height: '238.5mm', // dokładnie obszar "przelamywania"
+                    height: '100%', // dokładnie obszar "przelamywania"
                     overflow: 'hidden',
                   }}
                 >
