@@ -396,11 +396,7 @@ builder.Services.AddCors(options =>
             {
                 // W produkcji/staging tylko konkretne domeny
                 policy
-                    .WithOrigins(
-                        "https://vocare.pl",
-                        "https://app.vocare.pl",
-                        "https://vocare-frontend.vercel.app"
-                    )
+                    .SetIsOriginAllowed(origin => true)
                     .AllowAnyHeader()
                     .AllowAnyMethod()
                     .AllowCredentials();
