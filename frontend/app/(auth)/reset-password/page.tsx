@@ -21,6 +21,17 @@ import { resetPassword, validateResetToken } from '@/lib/auth';
 import { toast } from 'sonner';
 import { spinner_terminal } from '@/app/constants';
 
+// Typy dla błędów API
+interface ApiError {
+  response?: {
+    data?: {
+      message?: string;
+      errors?: string[];
+    };
+  };
+  message?: string;
+}
+
 // Schema walidacji
 const resetPasswordSchema = z
   .object({
@@ -79,10 +90,17 @@ const ResetPasswordContent = () => {
         if (!response.isValid) {
           setError(response.message || 'Reset token has expired or is invalid.');
         }
-      } catch (error: any) {
-        console.error('Token validation error:', error);
+      } catch (err: unknown) {
+        console.error('Token validation error:', err);
         setTokenValid(false);
-        setError('Failed to validate reset token. Please try again.');
+
+        // Type guard dla błędów
+        const error = err as ApiError;
+        const errorMessage =
+          error.response?.data?.message ||
+          error.message ||
+          'Failed to validate reset token. Please try again.';
+        setError(errorMessage);
       } finally {
         setIsValidating(false);
       }
@@ -116,12 +134,15 @@ const ResetPasswordContent = () => {
       setTimeout(() => {
         router.push('/sign-in');
       }, 3000);
-    } catch (error: any) {
-      console.error('Error resetting password:', error);
+    } catch (err: unknown) {
+      console.error('Error resetting password:', err);
 
+      // Type guard dla błędów
+      const error = err as ApiError;
       const errorMessage =
         error.response?.data?.message ||
         error.response?.data?.errors?.[0] ||
+        error.message ||
         'Failed to reset password. Please try again.';
 
       setError(errorMessage);
@@ -131,17 +152,20 @@ const ResetPasswordContent = () => {
     }
   };
 
-const getPasswordStrength = (password: string) => {
-  const checks = [
-    { test: password.length >= 6, label: 'At least 6 characters' },
-    { test: /[a-z]/.test(password), label: 'One lowercase letter' },
-    { test: /[A-Z]/.test(password), label: 'One uppercase letter' },
-    { test: /\d/.test(password), label: 'One number' },
-    { test: /[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]/.test(password), label: 'One special character' },
-  ];
+  const getPasswordStrength = (password: string) => {
+    const checks = [
+      { test: password.length >= 6, label: 'At least 6 characters' },
+      { test: /[a-z]/.test(password), label: 'One lowercase letter' },
+      { test: /[A-Z]/.test(password), label: 'One uppercase letter' },
+      { test: /\d/.test(password), label: 'One number' },
+      {
+        test: /[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]/.test(password),
+        label: 'One special character',
+      },
+    ];
 
-  return checks;
-};
+    return checks;
+  };
 
   const passwordValue = form.watch('newPassword');
   const passwordChecks = getPasswordStrength(passwordValue || '');

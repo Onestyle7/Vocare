@@ -26,7 +26,18 @@ import {
 import Link from 'next/link';
 import { forgotPassword } from '@/lib/auth';
 import { toast } from 'sonner';
-import { loader, spinner_terminal } from '@/app/constants';
+import { spinner_terminal } from '@/app/constants';
+
+// Typy dla błędów API
+interface ApiError {
+  response?: {
+    data?: {
+      message?: string;
+      errors?: string[];
+    };
+  };
+  message?: string;
+}
 
 // Schema walidacji
 const forgotPasswordSchema = z.object({
@@ -63,13 +74,15 @@ const ForgotPasswordForm = () => {
 
       // Opcjonalnie: pokaż toast z sukcesem
       toast.success('Reset link sent successfully');
-    } catch (error: any) {
-      console.error('Error sending password reset email:', error);
+    } catch (err: unknown) {
+      console.error('Error sending password reset email:', err);
 
-      // Wyświetl konkretny błąd jeśli jest dostępny
+      // Type guard dla błędów
+      const error = err as ApiError;
       const errorMessage =
         error.response?.data?.message ||
         error.response?.data?.errors?.[0] ||
+        error.message ||
         'Failed to send reset email. Please try again.';
 
       setError(errorMessage);
@@ -92,9 +105,16 @@ const ForgotPasswordForm = () => {
       await forgotPassword({ email });
       setTimer(60); // restart timer
       toast.success('Reset link sent again');
-    } catch (error: any) {
-      console.error('Error resending email:', error);
-      toast.error('Failed to resend email. Please try again.');
+    } catch (err: unknown) {
+      console.error('Error resending email:', err);
+
+      // Type guard dla błędów
+      const error = err as ApiError;
+      const errorMessage =
+        error.response?.data?.message ||
+        error.message ||
+        'Failed to resend email. Please try again.';
+      toast.error(errorMessage);
     }
   };
 

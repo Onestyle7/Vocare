@@ -111,15 +111,12 @@ const AuthForm = ({ type }: AuthFormProps) => {
 
       console.error('Error:', error);
 
-
       if (status === 429) {
-  toast.error('Too many login attempts', {
-    description: 'Please wait a few minutes before trying again.',
-  });
-} 
-
-      else if (
-        status === 400 || 
+        toast.error('Too many login attempts', {
+          description: 'Please wait a few minutes before trying again.',
+        });
+      } else if (
+        status === 400 ||
         status === 401 ||
         errorMessage.includes('invalid') ||
         errorMessage.includes('unauthorized')
