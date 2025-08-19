@@ -16,8 +16,17 @@ class AuthRepository {
 
     return false;
   }
-   Future<bool> register(String email, String password) async {
-    final accessToken = await AuthApi.registerUser(email, password);
+
+  Future<bool> register(
+    String email,
+    String password,
+    String confirmPassword,
+  ) async {
+    final accessToken = await AuthApi.registerUser(
+      email,
+      password,
+      confirmPassword,
+    );
     if (accessToken != null) {
       final prefs = await SharedPreferences.getInstance();
       await prefs.setString('accessToken', accessToken);

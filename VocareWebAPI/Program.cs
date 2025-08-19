@@ -1,7 +1,12 @@
+using System.Text;
+using System.Text.Json;
 using System.Text.Json.Serialization;
+using System.Threading.RateLimiting;
+using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.DataProtection;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.RateLimiting;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi.Models;
 using Polly;
@@ -43,6 +48,74 @@ builder
     {
         options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter());
     });
+
+// ===== RATE LIMITING =====
+builder.Services.AddRateLimiter(options =>
+{
+    // Polityka dla AI - 3 requestów na minutę
+    options.AddFixedWindowLimiter(
+        "AiPolicy",
+        limiterOptions =>
+        {
+            limiterOptions.PermitLimit = 3;
+            limiterOptions.Window = TimeSpan.FromMinutes(1);
+            limiterOptions.QueueProcessingOrder = QueueProcessingOrder.OldestFirst;
+            limiterOptions.QueueLimit = 2;
+        }
+    );
+
+    // Polityka dla logowania - 5 prób na 5 minut
+    options.AddFixedWindowLimiter(
+        "LoginPolicy",
+        limiterOptions =>
+        {
+            limiterOptions.PermitLimit = builder.Environment.IsDevelopment() ? 50 : 20;
+            limiterOptions.Window = TimeSpan.FromMinutes(5);
+            limiterOptions.QueueProcessingOrder = QueueProcessingOrder.OldestFirst;
+            limiterOptions.QueueLimit = 3;
+        }
+    );
+    options.AddFixedWindowLimiter(
+        "WebhookPolicy",
+        limiterOptions =>
+        {
+            limiterOptions.PermitLimit = 100; // Stripe i tak nie wysyła więcej
+            limiterOptions.Window = TimeSpan.FromMinutes(1);
+        }
+    );
+
+    // Polityka globalna - 100 requestów na minutę
+    options.GlobalLimiter = PartitionedRateLimiter.Create<HttpContext, string>(context =>
+        RateLimitPartition.GetFixedWindowLimiter(
+            context.User?.Identity?.IsAuthenticated == true
+                ? $"user_{context.User.Identity.Name}"
+                : $"ip_{context.Connection.RemoteIpAddress?.ToString() ?? "unknown"}",
+            factory => new FixedWindowRateLimiterOptions
+            {
+                AutoReplenishment = true,
+                PermitLimit = builder.Environment.IsDevelopment() ? 300 : 150,
+                Window = TimeSpan.FromMinutes(1),
+                QueueProcessingOrder = QueueProcessingOrder.OldestFirst,
+                QueueLimit = 10,
+            }
+        )
+    );
+
+    options.OnRejected = async (context, token) =>
+    {
+        context.HttpContext.Response.StatusCode = 429;
+        context.HttpContext.Response.Headers.Add("Retry-After", "60");
+
+        var response = new
+        {
+            error = "rate_limit_exceeded",
+            message = "Too many requests, please try again later.",
+            retryAfterSeconds = 60,
+        };
+
+        await context.HttpContext.Response.WriteAsJsonAsync(response, cancellationToken: token);
+    };
+});
 
 // ===== KONFIGURACJA (Options Pattern) =====
 builder.Services.Configure<AiConfig>(builder.Configuration.GetSection("PerplexityAI"));
@@ -113,7 +186,8 @@ builder
 builder.Services.Configure<CookiePolicyOptions>(options =>
 {
     options.CheckConsentNeeded = context => false;
-    options.MinimumSameSitePolicy = SameSiteMode.Lax;
+    options.MinimumSameSitePolicy = SameSiteMode.None;
+    options.Secure = CookieSecurePolicy.SameAsRequest;
 });
 
 // ===== AUTHENTICATION CONFIGURATION =====
@@ -214,6 +288,7 @@ builder.Services.AddScoped<UserRegistrationHandler>();
 builder.Services.AddScoped<IAiService, OpenAIService>();
 builder.Services.AddScoped<ICvManagementService, CvManagementService>();
 builder.Services.AddScoped<IEmailService, EmailService>();
+builder.Services.AddScoped<IAuthenticationServiceOwn, AuthenticationService>();
 
 /* builder.Services.AddScoped<IAiService, PerplexityAiService>();
  */
@@ -250,7 +325,6 @@ builder.Services.AddSwaggerGen(c =>
         }
     );
 
-    // ✅ NAPRAWKA: Dodano CustomSchemaIds dla rozwiązania konfliktów schematów
     c.CustomSchemaIds(type => type.FullName);
 
     c.AddSecurityDefinition(
@@ -290,11 +364,47 @@ builder.Services.AddCors(options =>
         "AllowAll",
         policy =>
         {
-            policy
-                .SetIsOriginAllowed(origin => true) // zezwól na wszystkie originy (do testów)
-                .AllowAnyHeader()
-                .AllowAnyMethod()
-                .AllowCredentials();
+            if (builder.Environment.IsDevelopment())
+            {
+                // W developmencie zezwalamy na wszystkie domeny
+                policy
+                    .SetIsOriginAllowed(origin =>
+                    {
+                        if (string.IsNullOrEmpty(origin))
+                            return false;
+
+                        var uri = new Uri(origin);
+
+                        // Zezwól na wszystkie localhost porty
+                        if (uri.Host == "localhost" || uri.Host == "127.0.0.1")
+                            return true;
+
+                        // Zezwól na produkcyjne domeny
+                        var allowedHosts = new[]
+                        {
+                            "vocare.pl",
+                            "app.vocare.pl",
+                            "vocare-frontend.vercel.app",
+                        };
+                        return allowedHosts.Contains(uri.Host);
+                    })
+                    .AllowAnyHeader()
+                    .AllowAnyMethod()
+                    .AllowCredentials();
+            }
+            else
+            {
+                // W produkcji/staging tylko konkretne domeny
+                policy
+                    .WithOrigins(
+                        "https://vocare.pl",
+                        "https://app.vocare.pl",
+                        "https://vocare-frontend.vercel.app"
+                    )
+                    .AllowAnyHeader()
+                    .AllowAnyMethod()
+                    .AllowCredentials();
+            }
         }
     );
 });
@@ -325,11 +435,9 @@ if (app.Environment.IsStaging())
         c.RoutePrefix = "swagger"; // Swagger dostępny na /swagger
         c.DocumentTitle = "Vocare API - STAGING ENVIRONMENT";
 
-        // Oznacz staging wyraźnie
         c.HeadContent += "<style>.topbar { background-color: #ff9800 !important; }</style>";
     });
 
-    // Dodaj middleware do oznaczania odpowiedzi jako staging
     app.Use(
         async (context, next) =>
         {
@@ -341,21 +449,175 @@ if (app.Environment.IsStaging())
 }
 
 // ===== MIDDLEWARE PIPELINE =====
-// app.UseHttpsRedirection();
+
 app.UseRouting();
 app.UseCors("AllowAll");
-app.UseCookiePolicy(); // ✅ NAPRAWKA: Dodano UseCookiePolicy
+
+app.Use(
+    async (context, next) =>
+    {
+        if (
+            context.Request.Method == "OPTIONS"
+            && context.Request.Path.StartsWithSegments("/api/auth/google-verify")
+        )
+        {
+            var origin = context.Request.Headers["Origin"].ToString();
+            if (!string.IsNullOrEmpty(origin))
+            {
+                // Użyj TryAdd zamiast Add, żeby uniknąć duplikatów
+                context.Response.Headers.TryAdd("Access-Control-Allow-Origin", origin);
+                context.Response.Headers.TryAdd("Access-Control-Allow-Credentials", "true");
+                context.Response.Headers.TryAdd("Access-Control-Allow-Methods", "POST, OPTIONS");
+                context.Response.Headers.TryAdd(
+                    "Access-Control-Allow-Headers",
+                    "Content-Type, Authorization"
+                );
+            }
+            context.Response.StatusCode = 204;
+            return;
+        }
+
+        // Dla innych requestów Google verify
+        if (context.Request.Path.StartsWithSegments("/api/auth/google-verify"))
+        {
+            context.Response.OnStarting(() =>
+            {
+                if (!context.Response.HasStarted)
+                {
+                    var origin = context.Request.Headers["Origin"].ToString();
+                    if (
+                        !string.IsNullOrEmpty(origin)
+                        && !context.Response.Headers.ContainsKey("Access-Control-Allow-Origin")
+                    )
+                    {
+                        context.Response.Headers.TryAdd("Access-Control-Allow-Origin", origin);
+                        context.Response.Headers.TryAdd("Access-Control-Allow-Credentials", "true");
+                    }
+                }
+                return Task.CompletedTask;
+            });
+        }
+
+        await next();
+    }
+);
+
+app.Use(
+    async (context, next) =>
+    {
+        if (!context.Response.HasStarted)
+        {
+            context.Response.Headers.TryAdd("X-Content-Type-Options", "nosniff");
+            context.Response.Headers.TryAdd("X-Frame-Options", "SAMEORIGIN");
+            context.Response.Headers.TryAdd("Referrer-Policy", "strict-origin-when-cross-origin");
+
+            // CSP różne dla środowisk
+            if (app.Environment.IsDevelopment())
+            {
+                // Luźniejsze dla developmentu - React/Angular potrzebują 'unsafe-eval'
+                context.Response.Headers.TryAdd(
+                    "Content-Security-Policy",
+                    "default-src 'self'; "
+                        + "script-src 'self' 'unsafe-inline' 'unsafe-eval' https://js.stripe.com; "
+                        + "style-src 'self' 'unsafe-inline'; "
+                        + "img-src 'self' data: https: blob:; "
+                        + "connect-src 'self' https://api.stripe.com ws://localhost:* http://localhost:*;"
+                );
+            }
+            else
+            {
+                // Restrykcyjne dla staging/produkcji
+                context.Response.Headers.TryAdd(
+                    "Content-Security-Policy",
+                    "default-src 'self'; "
+                        + "script-src 'self' https://js.stripe.com; "
+                        + "style-src 'self' 'unsafe-inline'; "
+                        + "img-src 'self' data: https:; "
+                        + "font-src 'self' data:; "
+                        + "connect-src 'self' https://api.stripe.com https://*.vocare.pl;"
+                );
+            }
+
+            if (app.Environment.IsProduction())
+            {
+                context.Response.Headers.TryAdd(
+                    "Strict-Transport-Security",
+                    "max-age=31536000; includeSubDomains"
+                );
+            }
+        }
+        await next();
+    }
+);
+
+app.UseRateLimiter();
+app.UseCookiePolicy();
 app.UseAuthentication();
+
+app.Use(
+    async (context, next) =>
+    {
+        var token = context
+            .Request.Headers["Authorization"]
+            .FirstOrDefault()
+            ?.Split(" ")
+            .LastOrDefault();
+
+        if (!string.IsNullOrEmpty(token) && context.User?.Identity?.IsAuthenticated != true)
+        {
+            try
+            {
+                var protector = context
+                    .RequestServices.GetRequiredService<IDataProtectionProvider>()
+                    .CreateProtector("VocareAuth");
+
+                var json = protector.Unprotect(token);
+                var tokenData = JsonSerializer.Deserialize<JsonElement>(json);
+
+                // Sprawdź expiration
+                if (tokenData.TryGetProperty("exp", out var expElement))
+                {
+                    var exp = expElement.GetInt64();
+                    if (DateTimeOffset.FromUnixTimeSeconds(exp) <= DateTimeOffset.UtcNow)
+                    {
+                        await next();
+                        return;
+                    }
+                }
+
+                // Ustaw użytkownika
+                if (tokenData.TryGetProperty("sub", out var sub))
+                {
+                    var userId = sub.GetString();
+                    var userManager = context.RequestServices.GetRequiredService<
+                        UserManager<User>
+                    >();
+                    var user = await userManager.FindByIdAsync(userId);
+
+                    if (user != null)
+                    {
+                        var principal = await context
+                            .RequestServices.GetRequiredService<IUserClaimsPrincipalFactory<User>>()
+                            .CreateAsync(user);
+                        context.User = principal;
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                var logger = context.RequestServices.GetRequiredService<ILogger<Program>>();
+                logger.LogWarning(ex, "Failed to validate custom token");
+            }
+        }
+
+        await next();
+    }
+);
 app.UseAuthorization();
 
 // ===== ENDPOINTS =====
 app.MapControllers();
-
-// Dodaj Identity API endpoints dla bearer tokenów
 app.MapIdentityApi<User>();
-
-// Wszystkie endpointy autoryzacji są w AuthController
-// Identity bearer token authentication jest obsługiwane automatycznie
 
 // ===== DEBUG ENDPOINT (opcjonalnie - dla staging/development) =====
 if (!app.Environment.IsProduction())
@@ -491,3 +753,5 @@ while (retries < maxRetries)
 }
 
 app.Run();
+
+public partial class Program { }

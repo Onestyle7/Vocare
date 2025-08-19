@@ -1,4 +1,6 @@
+import Image from 'next/image';
 import { AnimatedSpan, Terminal, TypingAnimation } from '../magicui/terminal';
+import { spinner_terminal } from '@/app/constants';
 
 export function TerminalDemo() {
   return (
@@ -50,9 +52,20 @@ export function TerminalDemo() {
         Success! Career analysis completed.
       </TypingAnimation>
 
-      <TypingAnimation delay={7000} className="text-muted-foreground">
-        Your personalized career paths are ready.
-      </TypingAnimation>
+      <div className="text-muted-foreground flex flex-row items-center space-x-2">
+        <AnimatedSpan delay={7000}>
+          <Image
+            src={spinner_terminal}
+            alt="spinner"
+            width={16}
+            height={16}
+            className="animate-spin"
+          />
+        </AnimatedSpan>
+        <TypingAnimation delay={7000}>
+          Your personalized career paths are almost ready...
+        </TypingAnimation>
+      </div>
     </Terminal>
   );
 }

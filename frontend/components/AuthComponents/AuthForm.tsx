@@ -2,10 +2,15 @@
 
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
-import { authFormSchema, AuthFormType } from '@/lib/schemas/authSchema';
-import { registerUser, loginUser } from '@/lib/auth';
+import {
+  signInSchema,
+  signUpSchema,
+  SignInFormType,
+  SignUpFormType,
+} from '@/lib/schemas/authSchema';
+import { registerUser, loginUser, googleVerify } from '@/lib/auth';
 import {
   Form,
   FormControl,
@@ -22,41 +27,70 @@ import { ArrowRight } from 'lucide-react';
 import { ButtonForm } from '../ui/button-form';
 import { AxiosError } from 'axios';
 import OAuthButton from './OAuthButton';
-import { facebook, google } from '@/app/constants';
+import { google } from '@/app/constants';
+import { WindowWithGoogle, GoogleTokenResponse, GoogleTokenClient } from '@/lib/types/google-oauth';
 
 type FormType = 'sign-in' | 'sign-up';
+type FormDataMap = {
+  'sign-in': SignInFormType;
+  'sign-up': SignUpFormType;
+};
 
-const AuthForm = ({ type }: { type: FormType }) => {
+interface AuthFormProps {
+  type: FormType;
+}
+
+const AuthForm = ({ type }: AuthFormProps) => {
   const [isLoading, setIsLoading] = useState(false);
   const router = useRouter();
 
-  const formSchema = authFormSchema(type);
-  const form = useForm<AuthFormType>({
-    resolver: zodResolver(formSchema),
-    defaultValues: {
-      fullName: '',
-      email: '',
-      password: '',
-      confirmPassword: '',
-    },
+  useEffect(() => {
+    const script = document.createElement('script');
+    script.src = 'https://accounts.google.com/gsi/client';
+    script.async = true;
+    script.defer = true;
+    document.body.appendChild(script);
+    return () => {
+      document.body.removeChild(script);
+    };
+  }, []);
+
+  const isSignUp = type === 'sign-up';
+  const resolver = zodResolver(isSignUp ? signUpSchema : signInSchema);
+  const form = useForm<FormDataMap[FormType]>({
+    resolver,
+    defaultValues: isSignUp
+      ? {
+          fullName: '',
+          email: '',
+          password: '',
+          confirmPassword: '',
+        }
+      : {
+          email: '',
+          password: '',
+        },
   });
 
-  async function onSubmit(values: AuthFormType) {
+  async function onSubmit(values: SignInFormType | SignUpFormType) {
     setIsLoading(true);
     try {
-      if (type === 'sign-up') {
+      if (isSignUp) {
+        const { email, password, confirmPassword } = values as SignUpFormType;
         await registerUser({
-          email: values.email,
-          password: values.password,
+          email,
+          password,
+          confirmPassword,
         });
         toast.success('Registration successful!', {
           description: 'You have successfully created an account. Please sign in.',
         });
         router.push('/sign-in');
       } else {
+        const { email, password } = values as SignInFormType;
         const data = await loginUser({
-          email: values.email,
-          password: values.password,
+          email,
+          password,
         });
         localStorage.setItem('token', data.accessToken);
         toast.success('Login successful!', {
@@ -77,7 +111,12 @@ const AuthForm = ({ type }: { type: FormType }) => {
 
       console.error('Error:', error);
 
-      if (
+      if (status === 429) {
+        toast.error('Too many login attempts', {
+          description: 'Please wait a few minutes before trying again.',
+        });
+      } else if (
+        status === 400 ||
         status === 401 ||
         errorMessage.includes('invalid') ||
         errorMessage.includes('unauthorized')
@@ -103,11 +142,46 @@ const AuthForm = ({ type }: { type: FormType }) => {
     }
   }
 
+  const handleGoogleSignIn = () => {
+    const windowWithGoogle = window as WindowWithGoogle;
+
+    if (!windowWithGoogle.google?.accounts?.oauth2) {
+      toast.error('Google SDK not loaded');
+      return;
+    }
+
+    const client: GoogleTokenClient = windowWithGoogle.google.accounts.oauth2.initTokenClient({
+      client_id: process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID!,
+      scope: 'openid profile email',
+      callback: async (tokenResponse: GoogleTokenResponse) => {
+        if (tokenResponse.error) {
+          toast.error('Google authentication failed');
+          return;
+        }
+
+        setIsLoading(true);
+        try {
+          await googleVerify(tokenResponse.access_token);
+          toast.success('Login successful!', { description: 'Welcome back!' });
+          router.push('/');
+        } catch (err) {
+          console.error(err);
+          toast.error('Google login failed');
+        } finally {
+          setIsLoading(false);
+        }
+      },
+    });
+
+    client.requestAccessToken();
+  };
+
   return (
     <Form {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)} className="auth-form font-poppins">
-        <h1 className="form-title">{type === 'sign-in' ? 'Sign In' : 'Sign Up'}</h1>
-        {type === 'sign-up' && (
+        <h1 className="form-title">{isSignUp ? 'Sign Up' : 'Sign In'}</h1>
+
+        {isSignUp && (
           <FormField
             control={form.control}
             name="fullName"
@@ -156,7 +230,7 @@ const AuthForm = ({ type }: { type: FormType }) => {
           )}
         />
 
-        {type === 'sign-up' && (
+        {isSignUp && (
           <FormField
             control={form.control}
             name="confirmPassword"
@@ -178,7 +252,7 @@ const AuthForm = ({ type }: { type: FormType }) => {
         )}
 
         <ButtonForm type="submit" disabled={isLoading} className="group form-button">
-          {type === 'sign-in' ? 'Sign In' : 'Join Vocare'}
+          {isSignUp ? 'Join Vocare' : 'Sign In'}
           <span className="arrow-animation">
             <ArrowRight />
           </span>
@@ -195,23 +269,26 @@ const AuthForm = ({ type }: { type: FormType }) => {
 
         <div className="mt-4 flex items-center justify-between">
           <div className="flex items-center">
-            <p>{type === 'sign-in' ? "Don't have an account?" : 'Already have an account?'}</p>
+            <p>{isSignUp ? 'Already have an account?' : "Don't have an account?"}</p>
             <Link
-              href={type === 'sign-in' ? '/sign-up' : '/sign-in'}
+              href={isSignUp ? '/sign-in' : '/sign-up'}
               className="relative ml-2 font-semibold text-[#915EFF] transition duration-300 after:absolute after:bottom-0 after:left-0 after:h-[2px] after:w-0 after:bg-[#915EFF] after:transition-all after:duration-300 after:content-[''] hover:after:w-full"
             >
-              {type === 'sign-in' ? 'Sign Up' : 'Sign In'}
+              {isSignUp ? 'Sign In' : 'Sign Up'}
             </Link>
           </div>
 
-          {type === 'sign-in' && (
-            <Link href="/forgot-password" className="text-gray-500">
+          {!isSignUp && (
+            <Link
+              href="/forgot-password"
+              className="relative ml-2 font-medium text-gray-500 transition duration-300 after:absolute after:bottom-0 after:left-0 after:h-[2px] after:w-0 after:bg-gray-500 after:transition-all after:duration-300 after:content-[''] hover:after:w-full"
+            >
               Forgot Password?
             </Link>
           )}
         </div>
 
-        {type === 'sign-in' && (
+        {!isSignUp && (
           <div className="flex w-full flex-col items-center justify-center gap-4 text-sm text-gray-400">
             <div className="flex w-full items-center">
               <div className="h-[0.5px] w-full bg-gray-500/80" />
@@ -220,8 +297,7 @@ const AuthForm = ({ type }: { type: FormType }) => {
             </div>
 
             <div className="tems-center mt-4 flex w-full flex-row justify-center gap-2">
-              <OAuthButton icon={google} label="Login with Google" url="/api/auth/google"/>
-              {/* <OAuthButton icon={facebook} label="Login with Facebook" url="/api/auth/google" /> */}
+              <OAuthButton icon={google} label="Login with Google" onClick={handleGoogleSignIn} />
             </div>
           </div>
         )}

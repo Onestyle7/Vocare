@@ -16,14 +16,14 @@ const Header = () => {
   const pathname = usePathname();
   const [isMobile, setIsMobile] = useState(false);
   const { isAuthenticated } = useAuth();
-  
+
   // Magnetic hover states
   const navRef = useRef<HTMLUListElement>(null);
   const [dotLeft, setDotLeft] = useState(0);
   const [dotOpacity, setDotOpacity] = useState(0);
   const [activeDotLeft, setActiveDotLeft] = useState(0);
   const [activeDotOpacity, setActiveDotOpacity] = useState(0);
-  
+
   useEffect(() => {
     const handleResize = () => setIsMobile(window.innerWidth < 768);
     handleResize();
@@ -50,9 +50,9 @@ const Header = () => {
     const node = e.currentTarget;
     const rect = node.getBoundingClientRect();
     const navRect = navRef.current?.getBoundingClientRect();
-    
+
     if (navRect) {
-      const relativeLeft = rect.left - navRect.left + rect.width / 2 - 3; 
+      const relativeLeft = rect.left - navRect.left + rect.width / 2 - 3;
       setDotLeft(relativeLeft);
       setDotOpacity(1);
     }
@@ -81,7 +81,7 @@ const Header = () => {
           </Link>
           {isAuthenticated ? (
             <div className="relative">
-              <ul 
+              <ul
                 ref={navRef}
                 onMouseLeave={handleMouseLeave}
                 className="flex items-center justify-center space-x-4"
@@ -91,10 +91,7 @@ const Header = () => {
                     key={label}
                     onMouseEnter={handleMouseEnter}
                     data-active={pathname === url && !disabled}
-                    className={cn(
-                      'relative w-full',
-                      disabled && 'cursor-not-allowed opacity-50'
-                    )}
+                    className={cn('relative w-full', disabled && 'cursor-not-allowed opacity-50')}
                   >
                     {disabled ? (
                       <div className="relative flex items-center space-x-2 text-[18px] font-normal uppercase">
@@ -113,26 +110,26 @@ const Header = () => {
               </ul>
               {/* Animowana kropka na hover */}
               <motion.div
-                animate={{ 
-                  left: dotLeft, 
-                  opacity: dotOpacity 
+                animate={{
+                  left: dotLeft,
+                  opacity: dotOpacity,
                 }}
-                transition={{ 
-                  type: "spring", 
-                  stiffness: 400, 
-                  damping: 30 
+                transition={{
+                  type: 'spring',
+                  stiffness: 400,
+                  damping: 30,
                 }}
                 className="absolute -bottom-2 h-1.5 w-1.5 rounded-full bg-current"
               />
               <motion.div
-                animate={{ 
-                  left: activeDotLeft, 
-                  opacity: activeDotOpacity 
+                animate={{
+                  left: activeDotLeft,
+                  opacity: activeDotOpacity,
                 }}
-                transition={{ 
-                  type: "spring", 
-                  stiffness: 300, 
-                  damping: 25 
+                transition={{
+                  type: 'spring',
+                  stiffness: 300,
+                  damping: 25,
                 }}
                 className="absolute -bottom-2 h-1.5 w-1.5 rounded-full bg-gray-400/70"
               />
