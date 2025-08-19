@@ -20,17 +20,14 @@ namespace VocareWebAPI.CvGenerator.Services.Implementations
     public class CvGenerationService : ICvGenerationService
     {
         private readonly IUserProfileRepository _userProfileRepository;
-        private readonly IGeneratedCvRepository _generatedCvRepository;
         private readonly ILogger<CvGenerationService> _logger;
 
         public CvGenerationService(
             IUserProfileRepository userProfileRepository,
-            IGeneratedCvRepository generatedCvRepository,
             ILogger<CvGenerationService> logger
         )
         {
             _userProfileRepository = userProfileRepository;
-            _generatedCvRepository = generatedCvRepository;
             _logger = logger;
         }
 
@@ -45,18 +42,27 @@ namespace VocareWebAPI.CvGenerator.Services.Implementations
                 var userProfile = await _userProfileRepository.GetUserProfileByIdAsync(userId);
                 if (userProfile == null)
                 {
-                    throw new Exception($"User profile not found for userId: {userId}");
+                    // Używamy KeyNotFoundException zamiast Exception - to nie będzie łapane przez catch
+                    throw new KeyNotFoundException($"User profile not found for userId: {userId}");
                 }
 
                 var cvDto = MapUserProfileToCv(userProfile, position);
-
-                // Zapisujemy wygenerowane CV do bazy danych
-                await SaveGeneratedCvAsync(userId, position, cvDto);
                 _logger.LogInformation($"Cv generation completed successfully for user: {userId}");
                 return cvDto;
             }
+            catch (KeyNotFoundException)
+            {
+                // Przepuszczamy KeyNotFoundException bez opakowywania
+                throw;
+            }
+            catch (ArgumentException)
+            {
+                // Przepuszczamy ArgumentException bez opakowywania
+                throw;
+            }
             catch (Exception ex)
             {
+                // Tylko nieznane błędy opakowujemy w generyczną wiadomość
                 _logger.LogError(ex, "Error generating CV for user {UserId}", userId);
                 throw new Exception("An error occurred while generating the CV.");
             }
@@ -64,7 +70,6 @@ namespace VocareWebAPI.CvGenerator.Services.Implementations
 
         private CvDto MapUserProfileToCv(UserProfile userProfile, string? position)
         {
-            // ✅ Debug - sprawdź co jest załadowane
             _logger.LogInformation("Mapping CV for user: {UserId}", userProfile.UserId);
             _logger.LogInformation(
                 "WorkExperience count: {Count}",
@@ -98,7 +103,6 @@ namespace VocareWebAPI.CvGenerator.Services.Implementations
                 LastName = profile.LastName,
                 PhoneNumber = profile.PhoneNumber ?? string.Empty,
                 Email = profile.User?.Email ?? $"user-{profile.FirstName}@gmail.com",
-                Summary = GenerateSummary(profile, position),
                 Location = new CvLocationDto
                 {
                     City = profile.Address ?? string.Empty,
@@ -162,57 +166,6 @@ namespace VocareWebAPI.CvGenerator.Services.Implementations
                     .ToList() ?? new List<CvLanguageEntryDto>();
         }
 
-        private string GenerateSummary(UserProfile profile, string? position)
-        {
-            // Podstawowe podsumowanie na podstawie danych profilu
-            var summaryParts = new List<string>();
-
-            if (!string.IsNullOrEmpty(profile.AboutMe))
-            {
-                summaryParts.Add(profile.AboutMe);
-            }
-
-            // Dodaj informacje o doświadczeniu zawodowym
-            if (profile.WorkExperience?.Any() == true)
-            {
-                var yearsOfExperience = CalculateYearsOfExperience(profile.WorkExperience);
-                if (yearsOfExperience > 0)
-                {
-                    var experienceText =
-                        yearsOfExperience == 1
-                            ? "rok doświadczenia zawodowego"
-                            : $"{yearsOfExperience} lat doświadczenia zawodowego";
-
-                    summaryParts.Add($"Posiadam {experienceText}.");
-                }
-            }
-
-            // Dodaj informacje o wykształceniu
-            if (profile.Education?.Any() == true)
-            {
-                var highestEducation = profile
-                    .Education.OrderByDescending(e => e.EndDate ?? DateTime.MaxValue)
-                    .FirstOrDefault();
-
-                if (highestEducation != null)
-                {
-                    summaryParts.Add(
-                        $"Wykształcenie: {highestEducation.Degree} w dziedzinie {highestEducation.Field}."
-                    );
-                }
-            }
-
-            // Dodaj informacje o stanowisku, jeśli zostało podane
-            if (!string.IsNullOrEmpty(position))
-            {
-                summaryParts.Add($"Zainteresowany stanowiskiem: {position}.");
-            }
-
-            return summaryParts.Any()
-                ? string.Join(" ", summaryParts)
-                : "Profesjonalista poszukujący nowych wyzwań zawodowych.";
-        }
-
         private string BuildWorkDescription(WorkExperienceEntry work)
         {
             var descriptionParts = new List<string>();
@@ -254,36 +207,6 @@ namespace VocareWebAPI.CvGenerator.Services.Implementations
         private string? FormatDate(DateTime? date)
         {
             return date?.ToString("yyyy-MM-dd");
-        }
-
-        private async Task SaveGeneratedCvAsync(string userId, string? position, CvDto cvDto)
-        {
-            try
-            {
-                var cvJson = JsonSerializer.Serialize(
-                    cvDto,
-                    new JsonSerializerOptions
-                    {
-                        WriteIndented = false,
-                        PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
-                    }
-                );
-                var generatedCv = new GeneratedCv
-                {
-                    Id = Guid.NewGuid(),
-                    UserId = userId,
-                    Position = position,
-                    CvJson = cvJson,
-                    RawApiResponse = "Generated by mapping service", //Placeholder dla kompatybilności
-                    GeneratedAt = DateTime.UtcNow,
-                };
-                await _generatedCvRepository.AddAsync(generatedCv);
-                _logger.LogInformation("Cv saved to database for user: {UserId}", userId);
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, "Error saving generated CV for user {UserId}", userId);
-            }
         }
     }
 }

@@ -316,7 +316,7 @@ namespace VocareWebAPI.Services.Implementations
                   "marketAnalysis": {
                     "industryStatistics": [
                       {
-                        "industry": "Nazwa branży",
+                        "industry": "Nazwa branży (Nazwa branży powiązanej z umiejętnością)",
                         "minSalary": 8000,
                         "maxSalary": 12000,
                         "employmentRate": 85, // Zachowując skalę 0-100 w statystykach zatrudnienia i porównaniu do pozostałych danych
@@ -328,7 +328,7 @@ namespace VocareWebAPI.Services.Implementations
                       {
                         "skill": "Nazwa umiejętności",
                         "demandLevel": "Poziom zapotrzebowania (niski/średni/wysoki/bardzo wysoki)",
-                        "industry": "Branża"
+                        "industry": "Branża (Nazwa branży powiązanej z umiejętnością)"
                       }
                       // Dodaj zapotrzebowanie dla co najmniej 5 umiejętności związanych z rekomendowanymi ścieżkami
                     ],

@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
@@ -198,18 +199,40 @@ namespace VocareWebAPI.Data
             builder.Entity<ServiceCost>().HasKey(sc => sc.Id);
 
             // Konfiguracja GeneratedCv
-            builder.Entity<GeneratedCv>().HasKey(gc => gc.Id);
-            builder.Entity<GeneratedCv>().Property(gc => gc.UserId).IsRequired();
-            builder.Entity<GeneratedCv>().Property(gc => gc.CvJson).IsRequired().HasMaxLength(8000);
-            builder
-                .Entity<GeneratedCv>()
-                .Property(gc => gc.RawApiResponse)
-                .IsRequired()
-                .HasMaxLength(8000);
-            builder.Entity<GeneratedCv>().Property(gc => gc.GeneratedAt).IsRequired();
+            builder.Entity<GeneratedCv>(entity =>
+            {
+                entity.HasKey(e => e.Id);
 
-            // Relacja między GeneratedCv a User
-            builder.Entity<GeneratedCv>().HasOne<User>().WithMany().HasForeignKey(gc => gc.UserId);
+                entity.Property(e => e.UserId).IsRequired();
+
+                entity.Property(e => e.Name).IsRequired().HasMaxLength(100);
+
+                entity.Property(e => e.TargetPosition).HasMaxLength(100);
+
+                entity.Property(e => e.CvJson).IsRequired();
+
+                entity.Property(e => e.IsActive).IsRequired().HasDefaultValue(true);
+
+                entity.Property(e => e.IsDefault).IsRequired().HasDefaultValue(false);
+
+                entity.Property(e => e.CreatedAt).IsRequired();
+
+                entity.Property(e => e.LastModifiedAt).IsRequired();
+
+                entity.Property(e => e.Version).IsRequired().HasDefaultValue(1);
+
+                entity.Property(e => e.Notes).HasMaxLength(500);
+
+                // Relacja do User
+                entity
+                    .HasOne(e => e.User)
+                    .WithMany()
+                    .HasForeignKey(e => e.UserId)
+                    .OnDelete(DeleteBehavior.Cascade);
+
+                // Indeks dla szybszego wyszukiwania
+                entity.HasIndex(e => new { e.UserId, e.IsActive });
+            });
 
             // Seedowanie kosztów usług
             builder

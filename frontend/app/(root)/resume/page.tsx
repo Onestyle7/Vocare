@@ -1,17 +1,16 @@
-'use client';
-
+import Header from '@/components/SupportComponents/SectionsComponents/Header';
+import ResumeDashboard from '@/app/(root)/resume/resumeDashboard';
 import React from 'react';
-import CVCreator from './ResumeComponent';
 
 const page = () => {
   return (
-    <main>
-      {/* <div className="flex h-screen flex-col items-center justify-center">
-        <h1 className="text-4xl font-bold">In progress</h1>
-      </div> */}
-      {/* <ResumePage /> */}
-      <CVCreator />
-    </main>
+    <div className="mx-auto max-w-7xl">
+      <Header />
+      <div className="mt-8 w-full sm:border-[0.5px]" />
+      <div className="font-poppins -mt-10 p-4 sm:-mt-30 sm:border">
+        <ResumeDashboard />
+      </div>
+    </div>
   );
 };
 

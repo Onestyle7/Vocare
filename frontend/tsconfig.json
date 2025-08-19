@@ -33,7 +33,8 @@
     "app/card/page.jsx",
     "app/card/page.jsx",
     "app/card/BadgeTexture.jsx",
-    "components/ProfileFormComponents/ProfileCard.jsx"
+    "components/ProfileFormComponents/ProfileCard.jsx",
+    "components/CardSwap/CardSwap.tsx"
   ],
   "exclude": ["node_modules"]
 }

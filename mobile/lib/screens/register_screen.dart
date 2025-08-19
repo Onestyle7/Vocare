@@ -28,7 +28,11 @@ class _RegisterScreenState extends State<RegisterScreen> {
     final confirmPassword = _confirmPasswordController.text;
 
     if (email.isNotEmpty && password == confirmPassword) {
-      final success = await _authRepository.register(email, password);
+      final success = await _authRepository.register(
+        email,
+        password,
+        confirmPassword,
+      );
       if (success) {
         Navigator.pushReplacement(
           context,
@@ -78,6 +82,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
 
             CustomInput(
               label: "Password",
+              obscureText: true,
               hintText: "Type your password",
               controller: _passwordController,
               prefixIcon: Icon(Icons.security),
@@ -85,6 +90,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
 
             CustomInput(
               label: "Confirm password",
+              obscureText: true,
               hintText: "Type your password",
               controller: _confirmPasswordController,
               prefixIcon: Icon(Icons.security),

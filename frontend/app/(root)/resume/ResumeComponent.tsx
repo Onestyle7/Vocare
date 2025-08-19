@@ -1,3 +1,5 @@
+'use client';
+
 import React, { useEffect, useState } from 'react';
 import {
   User,
@@ -20,9 +22,23 @@ import {
   MessageCircleQuestion,
   ChevronRight,
   ChevronLeft,
+  Upload,
+  Save,
 } from 'lucide-react';
+import { createCv, deleteCv, updateCv } from '@/lib/api/cv';
+import { CvDto, CvDetailsDto, UpdateCvDto } from '@/lib/types/cv';
 import { DatePickerWithCurrent } from './DatePickerWithCurrent';
 import { HoverCard, HoverCardContent, HoverCardTrigger } from '@/components/ui/hover-card';
+import html2canvas from 'html2canvas-pro';
+import jsPDF from 'jspdf';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
+import { useAutosave } from '@/lib/hooks/useAutosave';
 
 interface PersonalInfo {
   firstName: string;
@@ -30,6 +46,7 @@ interface PersonalInfo {
   email: string;
   phone: string;
   address: string;
+  country: string;
   profession: string;
   summary: string;
 }
@@ -48,6 +65,7 @@ interface Education {
   id: string;
   school: string;
   degree: string;
+  field: string;
   startDate: string;
   endDate: string;
   isCurrent: boolean;
@@ -69,36 +87,77 @@ interface Language {
   level: string;
 }
 
+interface Certificate {
+  id: string;
+  name: string;
+  date: string;
+}
+
 interface PrivacyStatement {
   id: string;
   content: string;
 }
 
-const CVCreator: React.FC = () => {
-  const [personalInfo, setPersonalInfo] = useState<PersonalInfo>({
-    firstName: '',
-    lastName: '',
-    email: '',
-    phone: '',
-    address: '',
-    profession: '',
-    summary: '',
+interface CVCreatorProps {
+  initialCv?: CvDetailsDto;
+}
+
+const CVCreator: React.FC<CVCreatorProps> = ({ initialCv }) => {
+  const [personalInfo, setPersonalInfo] = useState<PersonalInfo>(() => {
+    const saved = localStorage.getItem('personalInfo');
+    return saved
+      ? JSON.parse(saved)
+      : {
+          firstName: '',
+          lastName: '',
+          email: '',
+          phone: '',
+          address: '',
+          country: '',
+          profession: '',
+          summary: '',
+        };
   });
 
+  const [skipAutosaveOnce, setSkipAutosaveOnce] = useState(false);
   const [isPremium] = useState(false);
+  const [cvId, setCvId] = useState<string | null>(initialCv?.id ?? null);
+  const [resumeName] = useState<string>(initialCv?.name ?? 'New Resume');
 
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
 
-  const [experiences, setExperiences] = useState<Experience[]>([]);
-  const [education, setEducation] = useState<Education[]>([]);
-  const [skills, setSkills] = useState<Skill[]>([]);
-  const [hobbies, setHobbies] = useState<Hobby[]>([]);
+  const [experiences, setExperiences] = useState<Experience[]>(() => {
+    const saved = localStorage.getItem('experiences');
+    return saved ? JSON.parse(saved) : [];
+  });
+  const [education, setEducation] = useState<Education[]>(() => {
+    const saved = localStorage.getItem('education');
+    return saved ? JSON.parse(saved) : [];
+  });
+
+  const [skills, setSkills] = useState<Skill[]>(() => {
+    const saved = localStorage.getItem('skills');
+    return saved ? JSON.parse(saved) : [];
+  });
+  const [hobbies, setHobbies] = useState<Hobby[]>(() => {
+    const saved = localStorage.getItem('hobbies');
+    return saved ? JSON.parse(saved) : [];
+  });
   const [showFullDates, setShowFullDates] = useState(true);
-  const [languages, setLanguages] = useState<Language[]>([]);
-  const [privacyStatement, setPrivacyStatement] = useState<PrivacyStatement>({
-    id: 'privacy',
-    content: '',
+  const [languages, setLanguages] = useState<Language[]>(() => {
+    const saved = localStorage.getItem('languages');
+    return saved ? JSON.parse(saved) : [];
+  });
+
+  const [certificates, setCertificates] = useState<Certificate[]>(() => {
+    const saved = localStorage.getItem('certificates');
+    return saved ? JSON.parse(saved) : [];
+  });
+
+  const [privacyStatement, setPrivacyStatement] = useState<PrivacyStatement>(() => {
+    const saved = localStorage.getItem('privacyStatement');
+    return saved ? JSON.parse(saved) : { id: 'privacy', content: '' };
   });
 
   // CV Preview controls
@@ -107,24 +166,132 @@ const CVCreator: React.FC = () => {
   const [isDragging, setIsDragging] = useState(false);
   const [dragStart, setDragStart] = useState({ x: 0, y: 0 });
 
-  // Section ordering
-  const [sectionOrder, setSectionOrder] = useState([
-    'profile',
-    'experience',
-    'education',
-    'skills',
-    'languages',
-    'hobbies',
-    'privacy',
-  ]);
+  const [sectionOrder, setSectionOrder] = useState<string[]>(() => {
+    const saved = localStorage.getItem('sectionOrder');
+    return saved
+      ? JSON.parse(saved)
+      : [
+          'profile',
+          'experience',
+          'education',
+          'certificates',
+          'skills',
+          'languages',
+          'hobbies',
+          'privacy',
+        ];
+  });
   const [draggedSection, setDraggedSection] = useState<string | null>(null);
   const [dragOverSection, setDragOverSection] = useState<string | null>(null);
 
   const [isHovered, setIsHovered] = useState(false);
 
+  // Save personalInfo to localStorage
+  useEffect(() => {
+    localStorage.setItem('personalInfo', JSON.stringify(personalInfo));
+  }, [personalInfo]);
+
+  // Save experiences to localStorage
+  useEffect(() => {
+    localStorage.setItem('experiences', JSON.stringify(experiences));
+  }, [experiences]);
+
+  // Save education to localStorage
+  useEffect(() => {
+    localStorage.setItem('education', JSON.stringify(education));
+  }, [education]);
+
+  // Save skills to localStorage
+  useEffect(() => {
+    localStorage.setItem('skills', JSON.stringify(skills));
+  }, [skills]);
+
+  // Save languages to localStorage
+  useEffect(() => {
+    localStorage.setItem('languages', JSON.stringify(languages));
+  }, [languages]);
+
+  // Save certificates to localStorage
+  useEffect(() => {
+    localStorage.setItem('certificates', JSON.stringify(certificates));
+  }, [certificates]);
+
+  // Save hobbies to localStorage
+  useEffect(() => {
+    localStorage.setItem('hobbies', JSON.stringify(hobbies));
+  }, [hobbies]);
+
+  // Save privacyStatement to localStorage
+  useEffect(() => {
+    localStorage.setItem('privacyStatement', JSON.stringify(privacyStatement));
+  }, [privacyStatement]);
+
+  // Save sectionOrder to localStorage
+  useEffect(() => {
+    localStorage.setItem('sectionOrder', JSON.stringify(sectionOrder));
+  }, [sectionOrder]);
+
   useEffect(() => {
     checkContentOverflow();
-  }, [experiences, education, skills, languages, hobbies, personalInfo, privacyStatement]);
+    setTimeout(() => {
+      checkSectionBreaks();
+      forcePageBreakForLongSections();
+    }, 150); // Zwiększ opóźnienie
+  }, [
+    experiences,
+    education,
+    skills,
+    languages,
+    certificates,
+    hobbies,
+    personalInfo,
+    privacyStatement,
+  ]);
+
+  useEffect(() => {
+    const style = document.createElement('style');
+    style.textContent = `
+    .cv-content [data-section] {
+      break-inside: avoid;
+      page-break-inside: avoid;
+      -webkit-column-break-inside: avoid;
+      
+      display: block;
+      
+      min-height: 60px;
+    }
+    
+    .cv-content [data-section="experience"],
+    .cv-content [data-section="education"] {
+      orphans: 3;
+      widows: 3;
+    }
+    
+    .cv-content [data-section="skills"],
+    .cv-content [data-section="languages"],
+    .cv-content [data-section="hobbies"] {
+      break-inside: avoid !important;
+      page-break-inside: avoid !important;
+    }
+    
+    .cv-content [data-section] > div:last-child {
+      margin-bottom: 0;
+    }
+    
+    .cv-content [data-section] h3 {
+      break-after: avoid;
+      page-break-after: avoid;
+      margin-bottom: 8px;
+    }
+  `;
+    document.head.appendChild(style);
+
+    return () => {
+      if (document.head.contains(style)) {
+        document.head.removeChild(style);
+      }
+    };
+  }, []);
 
   const addLanguage = () => {
     const newLanguage: Language = {
@@ -141,6 +308,25 @@ const CVCreator: React.FC = () => {
 
   const removeLanguage = (id: string) => {
     setLanguages(languages.filter((lang) => lang.id !== id));
+  };
+
+  const addCertificate = () => {
+    const newCert: Certificate = {
+      id: Date.now().toString(),
+      name: '',
+      date: '',
+    };
+    setCertificates([...certificates, newCert]);
+  };
+
+  const updateCertificate = (id: string, field: keyof Certificate, value: string) => {
+    setCertificates(
+      certificates.map((cert) => (cert.id === id ? { ...cert, [field]: value } : cert))
+    );
+  };
+
+  const removeCertificate = (id: string) => {
+    setCertificates(certificates.filter((cert) => cert.id !== id));
   };
 
   // Section drag & drop handlers
@@ -212,6 +398,7 @@ const CVCreator: React.FC = () => {
       id: Date.now().toString(),
       school: '',
       degree: '',
+      field: '',
       startDate: '',
       endDate: '',
       isCurrent: false,
@@ -300,14 +487,102 @@ const CVCreator: React.FC = () => {
     setCvPosition({ x: 0, y: 0 });
   };
 
+  const checkSectionBreaks = () => {
+    const cvContent = document.querySelector('.cv-content');
+    if (!cvContent) return;
+
+    const pageHeight = 1123; // wysokość strony A4 w pikselach
+    const sections = cvContent.querySelectorAll('[data-section]') as NodeListOf<HTMLElement>;
+
+    sections.forEach((section) => {
+      // Resetuj wcześniejsze style
+      section.style.marginTop = '';
+      section.style.pageBreakBefore = '';
+
+      // Pobierz rzeczywistą wysokość sekcji
+      const sectionHeight = section.scrollHeight;
+      const rect = section.getBoundingClientRect();
+      const cvRect = cvContent.getBoundingClientRect();
+
+      // Oblicz pozycję sekcji względem początku CV
+      const sectionTop = rect.top - cvRect.top + cvContent.scrollTop;
+      const sectionBottom = sectionTop + sectionHeight;
+
+      // Określ na której stronie zaczyna się sekcja
+      const startPage = Math.floor(sectionTop / pageHeight) + 1;
+      const endPage = Math.floor(sectionBottom / pageHeight) + 1;
+
+      // Jeśli sekcja przekracza na następną stronę
+      if (startPage !== endPage) {
+        const spaceFromTop = sectionTop - (startPage - 1) * pageHeight;
+        const remainingSpaceOnPage = pageHeight - spaceFromTop;
+
+        // KLUCZ: Zmniejszamy próg z 80% na 50% lub sprawdzamy czy sekcja się nie mieści
+        const shouldMoveToNextPage =
+          spaceFromTop > pageHeight * 0.5 || // Jeśli zaczyna się w drugiej połowie strony
+          remainingSpaceOnPage < sectionHeight * 0.3; // Albo jeśli mniej niż 30% sekcji mieści się na stronie
+
+        if (shouldMoveToNextPage) {
+          const pushToNextPage = pageHeight - spaceFromTop;
+          section.style.marginTop = `${pushToNextPage}px`;
+
+          // Dodatkowe CSS dla lepszego łamania stron
+          section.style.pageBreakBefore = 'always';
+        }
+      }
+
+      // Dodatkowe zabezpieczenie: jeśli sekcja jest bardzo długa i nie mieści się na jednej stronie
+      if (sectionHeight > pageHeight * 0.8) {
+        section.style.pageBreakInside = 'avoid';
+      }
+    });
+
+    // Wywołaj ponownie po krótkim opóźnieniu dla stabilności
+    setTimeout(() => {
+      // Sprawdź czy wszystkie sekcje są prawidłowo pozycjonowane
+      sections.forEach((section) => {
+        // Jeśli sekcja nadal źle się łamie, spróbuj alternatywnego podejścia
+        if (section.scrollHeight > pageHeight * 0.8) {
+          section.style.breakInside = 'avoid';
+          section.style.pageBreakInside = 'avoid';
+        }
+      });
+    }, 50);
+  };
+
+  const forcePageBreakForLongSections = () => {
+    const cvContent = document.querySelector('.cv-content');
+    if (!cvContent) return;
+
+    const pageHeight = 1123;
+    const sections = cvContent.querySelectorAll('[data-section]') as NodeListOf<HTMLElement>;
+
+    sections.forEach((section) => {
+      const sectionHeight = section.scrollHeight;
+
+      // Jeśli sekcja jest bardzo długa, podziel ją lub przenieś całkowicie
+      if (sectionHeight > pageHeight * 0.6) {
+        const rect = section.getBoundingClientRect();
+        const cvRect = cvContent.getBoundingClientRect();
+        const sectionTop = rect.top - cvRect.top + cvContent.scrollTop;
+        const spaceFromTop = sectionTop % pageHeight;
+
+        // Jeśli długa sekcja zaczyna się w drugiej połowie strony, przenieś ją
+        if (spaceFromTop > pageHeight * 0.4) {
+          const pushToNextPage = pageHeight - spaceFromTop;
+          section.style.marginTop = `${pushToNextPage}px`;
+        }
+      }
+    });
+  };
+
   const checkContentOverflow = () => {
-    const cvElement = document.querySelector('.cv-content');
-    if (cvElement) {
-      const contentHeight = cvElement.scrollHeight;
-      const pageHeight = 297 * 2.83; // A4 height in pixels (297mm * 2.83 pixels/mm)
-      const newTotalPages = Math.ceil(contentHeight / pageHeight);
-      setTotalPages(newTotalPages);
-    }
+    const cvElement = document.querySelector<HTMLElement>('.cv-content');
+    if (!cvElement) return;
+    const contentHeight = cvElement.scrollHeight;
+    const pageHeight = 1123; // A4 height in pixels at 96 DPI (approx. 1123px)
+    const newTotalPages = Math.ceil(contentHeight / pageHeight);
+    setTotalPages(newTotalPages);
   };
 
   const goToNextPage = () => {
@@ -326,6 +601,240 @@ const CVCreator: React.FC = () => {
     if (page >= 1 && page <= totalPages) {
       setCurrentPage(page);
     }
+  };
+
+  const populateFromCv = (cv: CvDto, position?: string) => {
+    if (cv.basics) {
+      setPersonalInfo({
+        firstName: cv.basics.firstName,
+        lastName: cv.basics.lastName,
+        email: cv.basics.email,
+        phone: cv.basics.phoneNumber,
+        address: cv.basics.location?.city || '',
+        country: cv.basics.location?.country || '',
+        profession: position || personalInfo.profession,
+        summary: cv.basics.summary,
+      });
+    }
+
+    setExperiences(
+      cv.work?.map((w, idx) => ({
+        id: `${Date.now()}${idx}`,
+        company: w.company || '',
+        position: w.position || '',
+        startDate: w.startDate || '',
+        endDate: w.endDate && w.endDate !== 'Present' ? w.endDate : '',
+        description: w.description || '',
+        isCurrent: w.endDate === 'Present',
+      })) || []
+    );
+
+    setEducation(
+      cv.education?.map((e, idx) => ({
+        id: `${Date.now()}${idx}`,
+        school: e.institution || '',
+        degree: e.degree || '',
+        field: e.field || '',
+        startDate: e.startDate || '',
+        endDate: e.endDate && e.endDate !== 'Present' ? e.endDate : '',
+        isCurrent: e.endDate === 'Present',
+      })) || []
+    );
+
+    setCertificates(
+      cv.certificates?.map((c, idx) => ({
+        id: `${Date.now()}${idx}`,
+        name: c.name,
+        date: c.date || '',
+      })) || []
+    );
+
+    setSkills(cv.skills?.map((s, idx) => ({ id: `${Date.now()}${idx}`, name: s })) || []);
+
+    setLanguages(
+      cv.languages?.map((l, idx) => ({
+        id: `${Date.now()}${idx}`,
+        name: l.language,
+        level: l.fluency,
+      })) || []
+    );
+  };
+
+  const buildCvDto = (): CvDto => {
+    return {
+      basics: {
+        firstName: personalInfo.firstName,
+        lastName: personalInfo.lastName,
+        phoneNumber: personalInfo.phone,
+        email: personalInfo.email,
+        summary: personalInfo.summary,
+        location: {
+          city: personalInfo.address,
+          country: personalInfo.country,
+        },
+      },
+      work: experiences.map((w) => ({
+        company: w.company,
+        position: w.position,
+        startDate: w.startDate,
+        endDate: w.isCurrent ? 'Present' : w.endDate,
+        description: w.description,
+      })),
+      education: education.map((e) => ({
+        institution: e.school,
+        degree: e.degree,
+        field: e.field,
+        startDate: e.startDate,
+        endDate: e.isCurrent ? 'Present' : e.endDate,
+      })),
+      certificates: certificates.map((c) => ({ name: c.name, date: c.date })),
+      skills: skills.map((s) => s.name),
+      languages: languages.map((l) => ({ language: l.name, fluency: l.level })),
+    };
+  };
+
+  const canAutosave = Boolean(cvId);
+
+  const autosavePayload = {
+    id: cvId!,
+    name: resumeName,
+    targetPosition: personalInfo.profession || undefined,
+    cvData: buildCvDto(), // zakładam, że masz taką funkcję generującą aktualne dane CV
+  };
+
+  const { status: autosaveStatus, trigger } = useAutosave({
+    value: autosavePayload,
+    enabled: canAutosave,
+    delay: 3000, // 3s od ostatniej zmiany
+    skipOnce: skipAutosaveOnce, // flaga ustawiana po "Load profile"
+    onSkipConsumed: () => setSkipAutosaveOnce(false),
+  });
+
+  const autosaveFn = async (payload: typeof autosavePayload, signal: AbortSignal) => {
+    await updateCv(payload, { signal });
+  };
+
+  useEffect(() => {
+    if (!canAutosave) return;
+    trigger(autosaveFn);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [
+    personalInfo,
+    experiences,
+    education,
+    skills,
+    languages,
+    certificates,
+    hobbies,
+    privacyStatement,
+    sectionOrder,
+    resumeName,
+  ]);
+
+  const handleSave = async () => {
+    if (!cvId) return;
+
+    const payload: UpdateCvDto = {
+      id: cvId,
+      name: resumeName,
+      targetPosition: personalInfo.profession || undefined,
+      cvData: buildCvDto(),
+    };
+
+    try {
+      await updateCv(payload);
+    } catch (err) {
+      console.error('Failed to save CV', err);
+    }
+  };
+
+  const loadFromProfile = async () => {
+    try {
+      if (!cvId) return;
+
+      const generated = await createCv({
+        name: 'Generated CV',
+        targetPosition: personalInfo.profession,
+        createFromProfile: true,
+      });
+
+      // 1) Zapisz dane do bieżącego CV
+      await updateCv({
+        id: cvId,
+        name: resumeName,
+        targetPosition: generated.targetPosition,
+        cvData: generated.cvData,
+      });
+
+      // 2) Wypełnij formularz danymi
+      populateFromCv(generated.cvData, generated.targetPosition || undefined);
+
+      // 3) Usuń tymczasowy rekord
+      await deleteCv(generated.id);
+
+      // 4) Pomiń JEDEN autosave (żeby nie zapisywać od razu po wczytaniu profilu)
+      setSkipAutosaveOnce(true);
+    } catch (err) {
+      console.error('Failed to generate CV from profile', err);
+    }
+  };
+
+  useEffect(() => {
+    if (initialCv) {
+      populateFromCv(initialCv.cvData, initialCv.targetPosition || undefined);
+      setCvId(initialCv.id);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [initialCv]);
+
+  const downloadPDF = async () => {
+    const frame = document.querySelector<HTMLElement>('.cv-frame');
+    if (!frame) return;
+
+    // zapamiętaj oryginalne wartości
+    const origScale = cvScale;
+    const origPage = currentPage;
+    const origTransform = frame.style.transform;
+
+    // przywróć 100% skalę
+    setCvScale(1);
+    // usuń transformację z ramki
+    frame.style.transform = 'none';
+    await new Promise((r) => setTimeout(r, 100));
+
+    const pdf = new jsPDF('portrait', 'mm', 'a4');
+    const pdfWidth = 210;
+
+    for (let page = 1; page <= totalPages; page++) {
+      setCurrentPage(page);
+      await new Promise((r) => setTimeout(r, 100));
+
+      const canvas = await html2canvas(frame, {
+        scale: 2,
+        useCORS: true,
+        allowTaint: true,
+        backgroundColor: '#ffffff',
+        // bez width/height/scrollY — html2canvas złapie całą ramkę
+      });
+
+      const imgData = canvas.toDataURL('image/png');
+      const imgH = (canvas.height * pdfWidth) / canvas.width;
+
+      if (page > 1) pdf.addPage();
+      pdf.addImage(imgData, 'PNG', 0, 0, pdfWidth, imgH);
+    }
+
+    // przywróć wszystko do stanu pierwotnego
+    setCvScale(origScale);
+    setCurrentPage(origPage);
+    frame.style.transform = origTransform;
+
+    const fileName =
+      personalInfo.firstName && personalInfo.lastName
+        ? `${personalInfo.firstName}_${personalInfo.lastName}_CV.pdf`
+        : 'My_CV.pdf';
+
+    pdf.save(fileName);
   };
 
   const renderSectionInForm = (sectionId: string) => {
@@ -383,7 +892,7 @@ const CVCreator: React.FC = () => {
                 </HoverCardContent>
               </HoverCard>
               <button
-                className={`flex flex-row items-center justify-center rounded-sm border bg-red-500 px-3 py-2 text-sm text-white transition-all hover:bg-red-500/90 focus:outline-none ${isPremium ? 'cursor-pointer' : 'cursor-not-allowed opacity-50'}`}
+                className={`flex flex-row items-center justify-center rounded-sm border bg-[#915EFF] px-3 py-2 text-sm text-white transition-all hover:bg-[#713ae8] focus:outline-none ${isPremium ? 'cursor-pointer' : 'cursor-not-allowed opacity-50'}`}
               >
                 <span className="text-sm text-white">Achieve more with AI</span>
                 <StarsIcon className="ml-2 scale-70" />
@@ -501,7 +1010,7 @@ const CVCreator: React.FC = () => {
                         </HoverCardContent>
                       </HoverCard>
                       <button
-                        className={`flex flex-row items-center justify-center rounded-sm border bg-red-500 px-3 py-2 text-sm text-white transition-all hover:bg-red-500/90 focus:outline-none ${isPremium ? 'cursor-pointer' : 'cursor-not-allowed opacity-50'}`}
+                        className={`flex flex-row items-center justify-center rounded-sm border bg-[#915EFF] px-3 py-2 text-sm text-white transition-all hover:bg-[#713ae8] focus:outline-none ${isPremium ? 'cursor-pointer' : 'cursor-not-allowed opacity-50'}`}
                       >
                         <span className="text-sm text-white">Achieve more with AI</span>
                         <StarsIcon className="ml-2 scale-70" />
@@ -513,7 +1022,7 @@ const CVCreator: React.FC = () => {
             ))}
             <button
               onClick={addExperience}
-              className="flex cursor-pointer items-center font-medium text-red-600 hover:text-red-700"
+              className="flex cursor-pointer items-center font-medium text-[#915EFF]"
             >
               <span className="mr-2 text-xl">+</span>
               Add work experience
@@ -563,9 +1072,16 @@ const CVCreator: React.FC = () => {
                       />
                       <input
                         type="text"
-                        placeholder="Field of Study/Degree"
+                        placeholder="Degree"
                         value={edu.degree}
                         onChange={(e) => updateEducation(edu.id, 'degree', e.target.value)}
+                        className="w-full rounded-sm border border-gray-300 px-3 py-3 focus:ring-2 focus:ring-blue-500 focus:outline-none"
+                      />
+                      <input
+                        type="text"
+                        placeholder="Field of study"
+                        value={edu.field}
+                        onChange={(e) => updateEducation(edu.id, 'field', e.target.value)}
                         className="w-full rounded-sm border border-gray-300 px-3 py-3 focus:ring-2 focus:ring-blue-500 focus:outline-none"
                       />
                     </div>
@@ -609,10 +1125,71 @@ const CVCreator: React.FC = () => {
             ))}
             <button
               onClick={addEducation}
-              className="flex cursor-pointer items-center font-medium text-red-600 hover:text-red-700"
+              className="flex cursor-pointer items-center font-medium text-[#915EFF]"
             >
               <span className="mr-2 text-xl">+</span>
               Add education
+            </button>
+          </div>
+        );
+
+      case 'certificates':
+        return (
+          <div
+            key="certificates"
+            className={`mb-6 rounded-lg bg-gray-50 p-4 transition-all lg:p-6 ${
+              dragOverSection === 'certificates' ? 'bg-blue-50 ring-2 ring-blue-400' : ''
+            } ${draggedSection === 'certificates' ? 'opacity-50' : ''}`}
+            draggable
+            onDragStart={(e) => handleSectionDragStart(e, 'certificates')}
+            onDragOver={(e) => handleSectionDragOver(e, 'certificates')}
+            onDragLeave={handleSectionDragLeave}
+            onDrop={(e) => handleSectionDrop(e, 'certificates')}
+            onDragEnd={handleSectionDragEnd}
+          >
+            <div className="mb-4 flex items-center justify-between">
+              <h2 className="flex items-center text-lg font-semibold text-gray-700">
+                <GripVertical className="mr-2 cursor-grab text-gray-400" size={20} />
+                <Award className="mr-2" size={20} />
+                Certificates
+              </h2>
+            </div>
+            <p className="mb-4 text-sm text-gray-600">List your certifications.</p>
+            {certificates.map((cert) => (
+              <div
+                key={cert.id}
+                className="group mb-3 rounded-lg border border-gray-200 bg-white p-3"
+              >
+                <div className="flex items-center justify-between gap-2">
+                  <input
+                    type="text"
+                    placeholder="Certificate name"
+                    value={cert.name}
+                    onChange={(e) => updateCertificate(cert.id, 'name', e.target.value)}
+                    className="flex-1 focus:outline-none"
+                  />
+                  <input
+                    type="date"
+                    value={cert.date}
+                    onChange={(e) => updateCertificate(cert.id, 'date', e.target.value)}
+                    className="rounded-sm border px-3 py-2 focus:outline-none"
+                  />
+                  <button
+                    onClick={() => removeCertificate(cert.id)}
+                    className="ml-2 rounded p-2 text-red-500 opacity-0 transition-all group-hover:opacity-100 hover:bg-red-50 hover:text-red-700"
+                    title="Remove certificate"
+                  >
+                    <Trash2 size={16} />
+                  </button>
+                </div>
+              </div>
+            ))}
+            <button
+              onClick={addCertificate}
+              className="flex cursor-pointer items-center font-medium text-[#915EFF]"
+            >
+              <span className="mr-2 text-xl">+</span>
+              Add certificate
             </button>
           </div>
         );
@@ -666,7 +1243,7 @@ const CVCreator: React.FC = () => {
             ))}
             <button
               onClick={addSkill}
-              className="flex cursor-pointer items-center font-medium text-red-600 hover:text-red-700"
+              className="flex cursor-pointer items-center font-medium text-[#915EFF]"
             >
               <span className="mr-2 text-xl">+</span>
               Add skill
@@ -712,18 +1289,21 @@ const CVCreator: React.FC = () => {
                       onChange={(e) => updateLanguage(language.id, 'name', e.target.value)}
                       className="flex-1 focus:outline-none"
                     />
-                    <select
+                    <Select
                       value={language.level}
-                      onChange={(e) => updateLanguage(language.id, 'level', e.target.value)}
-                      className="rounded-sm border px-3 py-2 focus:outline-none"
+                      onValueChange={(value) => updateLanguage(language.id, 'level', value)}
                     >
-                      <option value="Ogólny">Ogólny</option>
-                      <option value="Beginner">Beginner</option>
-                      <option value="Conversational">Conversational</option>
-                      <option value="Advanced">Advanced</option>
-                      <option value="Proficient">Proficient</option>
-                      <option value="Native speaker">Native speaker</option>
-                    </select>
+                      <SelectTrigger className="font-poppins h-10 w-40 rounded-sm border border-gray-300 px-2 text-sm focus:ring-2 focus:ring-blue-500 focus:outline-none">
+                        <SelectValue />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="Beginner">Beginner</SelectItem>
+                        <SelectItem value="Conversational">Conversational</SelectItem>
+                        <SelectItem value="Advanced">Advanced</SelectItem>
+                        <SelectItem value="Proficient">Proficient</SelectItem>
+                        <SelectItem value="Native speaker">Native speaker</SelectItem>
+                      </SelectContent>
+                    </Select>
                   </div>
                   <button
                     onClick={() => removeLanguage(language.id)}
@@ -737,7 +1317,7 @@ const CVCreator: React.FC = () => {
             ))}
             <button
               onClick={addLanguage}
-              className="flex cursor-pointer items-center font-medium text-red-600 hover:text-red-700"
+              className="flex cursor-pointer items-center font-medium text-[#915EFF]"
             >
               <span className="mr-2 text-xl">+</span>
               Add language
@@ -789,10 +1369,7 @@ const CVCreator: React.FC = () => {
                 </button>
               </div>
             ))}
-            <button
-              onClick={addHobby}
-              className="flex items-center font-medium text-red-600 hover:text-red-700"
-            >
+            <button onClick={addHobby} className="flex items-center font-medium text-[#915EFF]">
               <span className="mr-2 text-xl">+</span>
               Add hobby
             </button>
@@ -861,7 +1438,7 @@ const CVCreator: React.FC = () => {
 
       case 'experience':
         return experiences.length > 0 ? (
-          <div className="mb-5" key="experience">
+          <div className="mb-5" key="experience" data-section="experience">
             <h3 className="mb-2 flex items-center border-b border-gray-300 pb-1 text-lg font-semibold text-gray-800">
               <Briefcase size={16} className="mr-2" />
               Work Exeperience
@@ -883,7 +1460,9 @@ const CVCreator: React.FC = () => {
                   </div>
                 </div>
                 {exp.description && (
-                  <p className="text-xs leading-relaxed text-gray-700">{exp.description}</p>
+                  <p className="text-sm leading-relaxed break-words text-gray-700">
+                    {exp.description}
+                  </p>
                 )}
               </div>
             ))}
@@ -892,7 +1471,7 @@ const CVCreator: React.FC = () => {
 
       case 'education':
         return education.length > 0 ? (
-          <div className="mb-5" key="education">
+          <div className="mb-5" key="education" data-section="education">
             <h3 className="mb-2 flex items-center border-b border-gray-300 pb-1 text-lg font-semibold text-gray-800">
               <GraduationCap size={16} className="mr-2" />
               Education
@@ -902,9 +1481,11 @@ const CVCreator: React.FC = () => {
                 <div className="mb-1 flex items-start justify-between">
                   <div className="min-w-0 flex-1">
                     <h4 className="truncate font-semibold text-gray-900">
-                      {edu.degree || 'Field of Study/Degree'}
+                      {edu.field || 'Field of study'} - {edu.degree || 'Degree'}
                     </h4>
-                    <p className="truncate text-gray-700">{edu.school || 'School/University'}</p>
+                    <p className="truncate font-medium text-gray-700">
+                      {edu.school || 'School/University'}
+                    </p>
                   </div>
                   <div className="ml-2 flex-shrink-0 text-xs text-gray-600">
                     {formatDate(edu.startDate)} -{' '}
@@ -916,9 +1497,27 @@ const CVCreator: React.FC = () => {
           </div>
         ) : null;
 
+      case 'certificates':
+        return certificates.length > 0 ? (
+          <div className="mb-5" key="certificates" data-section="certificates">
+            <h3 className="mb-2 flex items-center border-b border-gray-300 pb-1 text-lg font-semibold text-gray-800">
+              <Award size={16} className="mr-2" />
+              Certificates
+            </h3>
+            <div className="space-y-1">
+              {certificates.map((cert) => (
+                <p key={cert.id} className="text-sm text-gray-700">
+                  {cert.name}
+                  {cert.date ? ` (${formatDate(cert.date)})` : ''}
+                </p>
+              ))}
+            </div>
+          </div>
+        ) : null;
+
       case 'skills':
         return skills.length > 0 ? (
-          <div className="mb-5" key="skills">
+          <div className="mb-5" key="skills" data-section="skills">
             <h3 className="mb-2 flex items-center border-b border-gray-300 pb-1 text-lg font-semibold text-gray-800">
               <Award size={16} className="mr-2" />
               Skills
@@ -938,7 +1537,7 @@ const CVCreator: React.FC = () => {
 
       case 'languages':
         return languages.length > 0 ? (
-          <div className="mb-5" key="languages">
+          <div className="mb-5" key="languages" data-section="languages">
             <h3 className="mb-2 flex items-center border-b border-gray-300 pb-1 text-lg font-semibold text-gray-800">
               <Languages size={16} className="mr-2" />
               Languages
@@ -958,7 +1557,7 @@ const CVCreator: React.FC = () => {
 
       case 'hobbies':
         return hobbies.length > 0 ? (
-          <div className="mb-5" key="hobbies">
+          <div className="mb-5" key="hobbies" data-section="hobbies">
             <h3 className="mb-2 flex items-center border-b border-gray-300 pb-1 text-lg font-semibold text-gray-800">
               <Tag size={16} className="mr-2" />
               Hobby
@@ -978,11 +1577,13 @@ const CVCreator: React.FC = () => {
 
       case 'privacy':
         return privacyStatement.content ? (
-          <div className="mb-5" key="privacy">
+          <div className="mb-5" key="privacy" data-section="privacy">
             <h3 className="mb-2 border-b border-gray-300 pb-1 text-lg font-semibold text-gray-800">
               Privacy Statement
             </h3>
-            <p className="text-xs leading-relaxed text-gray-700">{privacyStatement.content}</p>
+            <p className="text-xs leading-relaxed break-words text-gray-700">
+              {privacyStatement.content}
+            </p>
           </div>
         ) : null;
 
@@ -996,9 +1597,9 @@ const CVCreator: React.FC = () => {
       {/* Top Navigation for Mobile */}
       <div className="mb-4 flex items-center justify-center bg-white py-4 shadow-lg lg:hidden">
         <button
-          onClick={() => (window.location.href = '/')}
-          className="rounded-lg p-3 transition-colors hover:bg-gray-100"
-          title="Strona główna"
+          onClick={() => (window.location.href = '/resume')}
+          className="cursor-pointer rounded-lg p-3 transition-colors hover:bg-gray-100"
+          title="Dashboard"
         >
           <Home size={24} className="text-gray-600" />
         </button>
@@ -1007,34 +1608,79 @@ const CVCreator: React.FC = () => {
       {/* Sidebar for Desktop */}
       <div className="mx-3 hidden w-16 flex-col items-center justify-between rounded-lg bg-white py-6 shadow-lg lg:flex">
         <button
-          onClick={() => (window.location.href = '/')}
-          className="rounded-lg p-3 transition-colors hover:bg-gray-100"
-          title="Strona główna"
+          onClick={() => (window.location.href = '/resume')}
+          className="cursor-pointer rounded-lg p-3 transition-colors hover:bg-gray-100"
+          title="Dashboard"
         >
           <Home size={24} className="text-gray-600" />
         </button>
-        <div className="flex h-12 w-12 items-center justify-center rounded-sm bg-gray-200/40">
-          <span className="font-poppins">v1.0</span>
-        </div>
+        <button
+          onClick={handleSave}
+          className="flex cursor-pointer flex-col items-center justify-center rounded-lg p-3 transition-colors hover:bg-gray-100"
+          title="Save resume"
+        >
+          <Save size={16} className="h-6 w-6 text-black" />
+          <div className="mt-2 flex flex-row items-center justify-center text-xs">
+            {autosaveStatus === 'saving' && <span className="text-gray-500">Saving…</span>}
+            {autosaveStatus === 'saved' && <span className="text-green-600">Saved ✓</span>}
+            {autosaveStatus === 'error' && <span className="text-red-500">Save failed</span>}
+          </div>
+        </button>
+
+        <HoverCard>
+          <HoverCardTrigger asChild>
+            <button className="flex h-12 w-12 cursor-pointer items-center justify-center rounded-sm bg-gray-100">
+              v0.1.3
+            </button>
+          </HoverCardTrigger>
+          <HoverCardContent className="font-poppins w-80">
+            <div className="flex justify-between gap-4">
+              <div className="space-y-1">
+                <h4 className="text-sm font-semibold">Beta version</h4>
+                <p className="text-sm">
+                  Be aware of bugs or missing features. We are working hard to improve the
+                  application.
+                </p>
+                <div className="text-muted-foreground text-xs">Vocare team</div>
+              </div>
+            </div>
+          </HoverCardContent>
+        </HoverCard>
+
+        {/* <div className="flex h-12 w-12 items-center justify-center rounded-sm bg-gray-200/40">
+          <span className="font-poppins">v0.1.2</span>
+        </div> */}
       </div>
 
       {/* Main Content */}
       <div className="flex h-full flex-1 flex-col gap-3 overflow-hidden px-3 lg:flex-row lg:px-0">
         {/* Left Panel - Form Inputs */}
-        <div className="h-full overflow-y-auto rounded-lg bg-white shadow-lg lg:w-1/2">
+        <div className="h-full overflow-y-auto rounded-lg bg-white shadow-lg lg:w-[48%]">
           <div className="max-h-full overflow-y-auto p-4 lg:p-6">
             <div className="mb-6 flex flex-col items-start justify-between gap-4 sm:flex-row sm:items-center">
-              <h1 className="text-xl font-bold text-gray-800 lg:text-2xl">Resume creator</h1>
+              <h1 className="text-xl font-bold text-gray-800 lg:text-xl">Resume creator</h1>
               <div className="flex items-center space-x-3">
                 <label className="text-sm text-gray-600">Date format:</label>
-                <select
+                <Select
                   value={showFullDates ? 'full' : 'year'}
-                  onChange={(e) => setShowFullDates(e.target.value === 'full')}
-                  className="rounded border border-gray-300 px-2 py-1 text-sm focus:ring-2 focus:ring-blue-500 focus:outline-none"
+                  onValueChange={(value) => setShowFullDates(value === 'full')}
                 >
-                  <option value="full">Month & year</option>
-                  <option value="year">Just year</option>
-                </select>
+                  <SelectTrigger className="font-poppins h-10 w-40 rounded-sm border border-gray-300 px-2 text-sm focus:ring-2 focus:ring-blue-500 focus:outline-none">
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="full">Month & year</SelectItem>
+                    <SelectItem value="year">Just year</SelectItem>
+                  </SelectContent>
+                </Select>
+                <button
+                  onClick={loadFromProfile}
+                  className="flex cursor-pointer items-center space-x-2 rounded border border-[#915EFF] bg-[#915EFF] px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-[#713ae8]"
+                  title="Load data from profile and save time"
+                >
+                  <Upload size={16} className="mr-2 text-white" />
+                  Load profile
+                </button>
               </div>
             </div>
 
@@ -1098,7 +1744,7 @@ const CVCreator: React.FC = () => {
 
                 {/* Collapsible Additional Fields */}
                 <details className="group">
-                  <summary className="cursor-pointer font-medium text-red-600">
+                  <summary className="cursor-pointer font-medium text-[#915EFF]">
                     Show additional fields
                   </summary>
                   <div className="mt-4 space-y-4">
@@ -1127,6 +1773,18 @@ const CVCreator: React.FC = () => {
                           className="w-full rounded-sm border border-gray-300 px-3 py-3 focus:ring-2 focus:ring-blue-500 focus:outline-none"
                         />
                       </div>
+                      <div>
+                        <label className="mb-1 block text-sm text-gray-600">Country</label>
+                        <input
+                          type="text"
+                          placeholder="e.g., Poland"
+                          value={personalInfo.country}
+                          onChange={(e) =>
+                            setPersonalInfo({ ...personalInfo, country: e.target.value })
+                          }
+                          className="w-full rounded-sm border border-gray-300 px-3 py-3 focus:ring-2 focus:ring-blue-500 focus:outline-none"
+                        />
+                      </div>
                     </div>
                   </div>
                 </details>
@@ -1138,11 +1796,51 @@ const CVCreator: React.FC = () => {
         </div>
 
         {/* Right Panel - CV Preview */}
-        <div className="flex flex-col overflow-hidden rounded-lg bg-gray-100 lg:w-1/2">
+        <div className="flex flex-col overflow-hidden rounded-lg bg-gray-100 lg:w-[52%]">
           {/* Preview Controls */}
           <div className="flex items-center justify-between border-b border-gray-200 bg-white p-4">
             <h2 className="text-lg font-semibold text-gray-700">Resume Preview</h2>
             <div className="flex items-center space-x-2">
+              <button
+                onClick={downloadPDF}
+                className="flex cursor-pointer items-center space-x-2 rounded border border-[#915EFF] bg-[#915EFF] px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-[#713ae8]"
+                title="Pobierz CV jako PDF"
+              >
+                <svg
+                  width="16"
+                  height="16"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  xmlns="http://www.w3.org/2000/svg"
+                >
+                  <path
+                    d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"
+                    stroke="currentColor"
+                    strokeWidth="2"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                  />
+                  <polyline
+                    points="7,10 12,15 17,10"
+                    stroke="currentColor"
+                    strokeWidth="2"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                  />
+                  <line
+                    x1="12"
+                    y1="15"
+                    x2="12"
+                    y2="3"
+                    stroke="currentColor"
+                    strokeWidth="2"
+                    strokeLinecap="round"
+                  />
+                </svg>
+                <span>Download</span>
+              </button>
+
+              {/* Istniejące przyciski zoom */}
               <button
                 onClick={handleZoomOut}
                 className="cursor-pointer rounded p-2 transition-colors hover:bg-gray-100"
@@ -1150,7 +1848,7 @@ const CVCreator: React.FC = () => {
               >
                 <ZoomOut size={18} />
               </button>
-              <span className="min-w-12 cursor-none text-center text-sm text-gray-600">
+              <span className="min-w-12 text-center text-sm text-gray-600">
                 {Math.round(cvScale * 100)}%
               </span>
               <button
@@ -1167,7 +1865,7 @@ const CVCreator: React.FC = () => {
               >
                 Reset
               </button>
-              <div className="flex cursor-none items-center text-sm text-gray-500">
+              <div className="flex items-center text-sm text-gray-500">
                 <Move size={16} className="mr-1" />
                 Drag and move
               </div>
@@ -1194,23 +1892,31 @@ const CVCreator: React.FC = () => {
             >
               {/* A4 Paper with exact dimensions */}
               <div
-                className="cv-content rounded-sm bg-white shadow-md"
+                className="cv-frame overflow-hidden rounded-sm"
                 style={{
                   width: '210mm',
-                  height: '297mm',
+                  padding: '32px', // ← tutaj widoczny margines
+                  boxSizing: 'border-box',
+                  backgroundColor: '#fff',
+                  boxShadow: '0 4px 6px rgba(0,0,0,0.1)',
                   transform: `scale(${cvScale})`,
                   transformOrigin: 'center center',
-                  overflow: 'hidden',
                 }}
               >
                 <div
-                  className="h-full p-8 transition-transform duration-300 ease-in-out"
+                  className="cv-content"
                   style={{
-                    transform: `translateY(-${(currentPage - 1) * 100}%)`,
+                    width: '100%', // 210mm
+                    height: '238.5mm', // dokładnie obszar "przelamywania"
+                    overflow: 'hidden',
                   }}
                 >
-                  {/* Header Section - pokazuj tylko na pierwszej stronie */}
-                  {currentPage === 1 && (
+                  <div
+                    className="box-border h-full"
+                    style={{
+                      transform: `translateY(-${(currentPage - 1) * 100}%)`,
+                    }}
+                  >
                     <div className="mb-6">
                       <h1 className="mb-2 text-3xl leading-tight font-bold text-gray-900">
                         {personalInfo.firstName || personalInfo.lastName
@@ -1243,30 +1949,30 @@ const CVCreator: React.FC = () => {
                         )}
                       </div>
                     </div>
-                  )}
 
-                  {sectionOrder.map((sectionId) => renderSectionInPreview(sectionId))}
+                    {sectionOrder.map((sectionId) => renderSectionInPreview(sectionId))}
 
-                  {/* Empty state message */}
-                  {!personalInfo.firstName &&
-                    !personalInfo.lastName &&
-                    !personalInfo.email &&
-                    experiences.length === 0 &&
-                    skills.length === 0 &&
-                    education.length === 0 &&
-                    currentPage === 1 && (
-                      <div className="mt-20 text-center text-gray-500">
-                        <p className="text-lg">
-                          Start filling the form on the left to create your CV.
-                        </p>
-                      </div>
-                    )}
+                    {/* Empty state message */}
+                    {!personalInfo.firstName &&
+                      !personalInfo.lastName &&
+                      !personalInfo.email &&
+                      experiences.length === 0 &&
+                      skills.length === 0 &&
+                      education.length === 0 &&
+                      currentPage === 1 && (
+                        <div className="mt-20 text-center text-gray-500">
+                          <p className="text-lg">
+                            Start filling the form on the left to create your CV.
+                          </p>
+                        </div>
+                      )}
+                  </div>
                 </div>
               </div>
             </div>
 
             {/* Pagination Controls - dodaj na dole kontenera */}
-            {totalPages > 1 && (
+            {true && (
               <div
                 className={`absolute bottom-5 left-1/2 -translate-x-1/2 transform transition-all duration-500 ${
                   isHovered
@@ -1293,7 +1999,7 @@ const CVCreator: React.FC = () => {
                       onClick={() => goToPage(page)}
                       className={`h-8 w-8 cursor-pointer rounded text-sm font-medium ${
                         currentPage === page
-                          ? 'bg-red-500 text-white'
+                          ? 'bg-[#915EFF] text-white'
                           : 'text-gray-700 hover:bg-gray-100'
                       }`}
                     >

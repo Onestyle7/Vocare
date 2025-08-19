@@ -17,7 +17,7 @@ const Layout = ({ children }: { children: React.ReactNode }) => {
               <h1 className="h1">Rocket You career</h1>
               <p className="body-1">learn more • earn more • grow more</p>
             </div>
-            <div className="main-font-color relative flex h-[390px] flex-row px-[40px] lg:w-full">
+            <div className="main-font-color relative flex h-[385px] flex-row px-[40px] lg:w-full">
               <Suspense fallback={<Image src={Spinner} alt="spinner" width={60} height={60} />}>
                 <LazySpline
                   scene="https://prod.spline.design/mZBrYNcnoESGlTUG/scene.splinecode"
