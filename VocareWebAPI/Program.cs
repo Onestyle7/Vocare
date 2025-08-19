@@ -360,7 +360,7 @@ builder.Services.AddSwaggerGen(c =>
 // ===== CORS =====
 builder.Services.AddCors(options =>
 {
-    options.AddPolicy(
+    /* options.AddPolicy(
         "AllowAll",
         policy =>
         {
@@ -401,6 +401,17 @@ builder.Services.AddCors(options =>
                     .AllowAnyMethod()
                     .AllowCredentials();
             }
+        }
+    ); */
+    options.AddPolicy(
+        "AllowAll",
+        policy =>
+        {
+            policy
+                .SetIsOriginAllowed(origin => true) // Akceptuj wszystkie origins
+                .AllowAnyHeader()
+                .AllowAnyMethod()
+                .AllowCredentials();
         }
     );
 });
