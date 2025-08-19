@@ -458,51 +458,34 @@ if (app.Environment.IsStaging())
 // ===== MIDDLEWARE PIPELINE =====
 
 app.UseRouting();
-app.UseCors("AllowAll");
 
+/* app.UseCors("AllowAll");
+ */
 app.Use(
     async (context, next) =>
     {
-        if (
-            context.Request.Method == "OPTIONS"
-            && context.Request.Path.StartsWithSegments("/api/auth/google-verify")
-        )
+        var origin = context.Request.Headers["Origin"].ToString();
+
+        // DLA WSZYSTKICH REQUESTÓW ustaw nagłówki CORS
+        if (!string.IsNullOrEmpty(origin))
         {
-            var origin = context.Request.Headers["Origin"].ToString();
-            if (!string.IsNullOrEmpty(origin))
-            {
-                // Użyj TryAdd zamiast Add, żeby uniknąć duplikatów
-                context.Response.Headers.TryAdd("Access-Control-Allow-Origin", origin);
-                context.Response.Headers.TryAdd("Access-Control-Allow-Credentials", "true");
-                context.Response.Headers.TryAdd("Access-Control-Allow-Methods", "POST, OPTIONS");
-                context.Response.Headers.TryAdd(
-                    "Access-Control-Allow-Headers",
-                    "Content-Type, Authorization"
-                );
-            }
-            context.Response.StatusCode = 204;
-            return;
+            context.Response.Headers.Add("Access-Control-Allow-Origin", origin);
+            context.Response.Headers.Add("Access-Control-Allow-Credentials", "true");
+            context.Response.Headers.Add(
+                "Access-Control-Allow-Methods",
+                "GET, POST, PUT, DELETE, OPTIONS"
+            );
+            context.Response.Headers.Add(
+                "Access-Control-Allow-Headers",
+                "Content-Type, Authorization"
+            );
         }
 
-        // Dla innych requestów Google verify
-        if (context.Request.Path.StartsWithSegments("/api/auth/google-verify"))
+        // Dla OPTIONS zwróć 204 (dla wszystkich endpointów)
+        if (context.Request.Method == "OPTIONS")
         {
-            context.Response.OnStarting(() =>
-            {
-                if (!context.Response.HasStarted)
-                {
-                    var origin = context.Request.Headers["Origin"].ToString();
-                    if (
-                        !string.IsNullOrEmpty(origin)
-                        && !context.Response.Headers.ContainsKey("Access-Control-Allow-Origin")
-                    )
-                    {
-                        context.Response.Headers.TryAdd("Access-Control-Allow-Origin", origin);
-                        context.Response.Headers.TryAdd("Access-Control-Allow-Credentials", "true");
-                    }
-                }
-                return Task.CompletedTask;
-            });
+            context.Response.StatusCode = 204;
+            return;
         }
 
         await next();
