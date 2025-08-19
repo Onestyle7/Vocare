@@ -784,6 +784,7 @@ const CVCreator: React.FC<CVCreatorProps> = ({ initialCv }) => {
       populateFromCv(initialCv.cvData, initialCv.targetPosition || undefined);
       setCvId(initialCv.id);
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [initialCv]);
 
   const downloadPDF = async () => {
