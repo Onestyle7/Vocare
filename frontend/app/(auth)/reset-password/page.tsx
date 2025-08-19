@@ -19,6 +19,7 @@ import { ButtonForm } from '@/components/ui/button-form';
 import { ArrowRight, Eye, EyeOff, Check, X, ClockAlert } from 'lucide-react';
 import { resetPassword, validateResetToken } from '@/lib/auth';
 import { toast } from 'sonner';
+import { spinner_terminal } from '@/app/constants';
 
 // Schema walidacji
 const resetPasswordSchema = z
@@ -130,16 +131,17 @@ const ResetPasswordContent = () => {
     }
   };
 
-  const getPasswordStrength = (password: string) => {
-    const checks = [
-      { test: password.length >= 6, label: 'At least 6 characters' },
-      { test: /[a-z]/.test(password), label: 'One lowercase letter' },
-      { test: /[A-Z]/.test(password), label: 'One uppercase letter' },
-      { test: /\d/.test(password), label: 'One number' },
-    ];
+const getPasswordStrength = (password: string) => {
+  const checks = [
+    { test: password.length >= 6, label: 'At least 6 characters' },
+    { test: /[a-z]/.test(password), label: 'One lowercase letter' },
+    { test: /[A-Z]/.test(password), label: 'One uppercase letter' },
+    { test: /\d/.test(password), label: 'One number' },
+    { test: /[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]/.test(password), label: 'One special character' },
+  ];
 
-    return checks;
-  };
+  return checks;
+};
 
   const passwordValue = form.watch('newPassword');
   const passwordChecks = getPasswordStrength(passwordValue || '');
@@ -149,7 +151,7 @@ const ResetPasswordContent = () => {
     return (
       <div className="auth-form flex flex-col items-center justify-center">
         <Image
-          src="/assets/icons/loader.svg"
+          src={spinner_terminal}
           alt="Validating..."
           width={48}
           height={48}
@@ -321,7 +323,7 @@ const ResetPasswordContent = () => {
           </span>
           {isLoading && (
             <Image
-              src="/assets/icons/loader.svg"
+              src={spinner_terminal}
               alt="loader"
               width={24}
               height={24}
@@ -349,7 +351,7 @@ const ResetPasswordPage = () => {
       fallback={
         <div className="auth-form flex items-center justify-center">
           <Image
-            src="/assets/icons/loader.svg"
+            src={spinner_terminal}
             alt="Loading..."
             width={48}
             height={48}

@@ -117,6 +117,7 @@ const AuthForm = ({ type }: AuthFormProps) => {
     description: 'Please wait a few minutes before trying again.',
   });
 } 
+
       else if (
         status === 400 || 
         status === 401 ||
