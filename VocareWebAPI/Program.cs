@@ -464,31 +464,67 @@ app.UseRouting();
 app.Use(
     async (context, next) =>
     {
-        var origin = context.Request.Headers["Origin"].ToString();
-
-        // DLA WSZYSTKICH REQUESTÓW ustaw nagłówki CORS
-        if (!string.IsNullOrEmpty(origin))
+        try
         {
-            context.Response.Headers.Add("Access-Control-Allow-Origin", origin);
-            context.Response.Headers.Add("Access-Control-Allow-Credentials", "true");
-            context.Response.Headers.Add(
-                "Access-Control-Allow-Methods",
-                "GET, POST, PUT, DELETE, OPTIONS"
-            );
-            context.Response.Headers.Add(
-                "Access-Control-Allow-Headers",
-                "Content-Type, Authorization"
-            );
-        }
+            // Ustaw CORS dla WSZYSTKICH requestów od razu
+            var origin = context.Request.Headers["Origin"].ToString();
+            if (!string.IsNullOrEmpty(origin))
+            {
+                context.Response.Headers.Add("Access-Control-Allow-Origin", origin);
+                context.Response.Headers.Add("Access-Control-Allow-Credentials", "true");
+                context.Response.Headers.Add(
+                    "Access-Control-Allow-Methods",
+                    "GET, POST, PUT, DELETE, OPTIONS"
+                );
+                context.Response.Headers.Add(
+                    "Access-Control-Allow-Headers",
+                    "Content-Type, Authorization"
+                );
+            }
 
-        // Dla OPTIONS zwróć 204 (dla wszystkich endpointów)
-        if (context.Request.Method == "OPTIONS")
+            if (context.Request.Method == "OPTIONS")
+            {
+                context.Response.StatusCode = 204;
+                return;
+            }
+
+            await next();
+        }
+        catch (Exception ex)
         {
-            context.Response.StatusCode = 204;
-            return;
-        }
+            // Loguj błąd
+            var logger = context.RequestServices.GetRequiredService<ILogger<Program>>();
+            logger.LogError(
+                ex,
+                "Unhandled exception for {Method} {Path}",
+                context.Request.Method,
+                context.Request.Path
+            );
 
-        await next();
+            // WAŻNE: Ustaw CORS nawet przy błędzie!
+            var origin = context.Request.Headers["Origin"].ToString();
+            if (!string.IsNullOrEmpty(origin) && !context.Response.HasStarted)
+            {
+                context.Response.Headers.TryAdd("Access-Control-Allow-Origin", origin);
+                context.Response.Headers.TryAdd("Access-Control-Allow-Credentials", "true");
+            }
+
+            // Zwróć błąd
+            if (!context.Response.HasStarted)
+            {
+                context.Response.StatusCode = 500;
+                context.Response.ContentType = "application/json";
+
+                var error = new
+                {
+                    error = "Internal server error",
+                    message = ex.Message,
+                    path = context.Request.Path.ToString(),
+                };
+
+                await context.Response.WriteAsync(System.Text.Json.JsonSerializer.Serialize(error));
+            }
+        }
     }
 );
 
