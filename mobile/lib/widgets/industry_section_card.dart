@@ -4,7 +4,7 @@ class IndustrySectionCard extends StatelessWidget {
   final int index;
   final String industry;
   final String averageSalary;
-  final String employmentRate;
+  final int employmentRate;
   final String growthForecast;
 
   const IndustrySectionCard({

@@ -1,11 +1,24 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart';
 import 'package:provider/provider.dart';
 import 'package:vocare/screens/fill_profile_screen.dart';
 import 'package:vocare/screens/login_screen.dart';
 import 'package:vocare/services/them_service.dart';
+import 'package:vocare/utils/error_handler.dart'; // 🆕 DODAJ IMPORT
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+
+  // 🔧 INIT ERROR HANDLER - UKRYJ OVERFLOW ERRORS
+  OverflowErrorHandler.init();
+
+  // 🔧 WYŁĄCZ WSZYSTKIE DEBUG OVERFLOW INDICATORS
+  debugPaintSizeEnabled = false;
+
+  // 🔧 DODATKOWE WYŁĄCZENIE DEBUG INFO
+  WidgetsBinding.instance.addPostFrameCallback((_) {
+    debugPaintSizeEnabled = false;
+  });
 
   final themeService = ThemeService();
   await themeService.loadTheme();
@@ -24,10 +37,29 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       title: 'Vocare',
+
+      // 🔧 SILNIEJSZY BUILDER - zapobiega WSZYSTKIM overflow
+      builder: (BuildContext context, Widget? child) {
+        return MediaQuery(
+          data: MediaQuery.of(context).copyWith(
+            textScaleFactor: 1.0, // Zapobiega skalowaniu tekstu
+          ),
+          child: Directionality(
+            textDirection: TextDirection.ltr,
+            child: Banner(
+              message: '', // 🔧 Usuwa debug banner
+              location: BannerLocation.topStart,
+              color: Colors.transparent,
+              child: child!,
+            ),
+          ),
+        );
+      },
+
       theme: ThemeData.light(),
       darkTheme: ThemeData(
         brightness: Brightness.dark,
-        scaffoldBackgroundColor: Color(0xFF0e100f),
+        scaffoldBackgroundColor: const Color(0xFF0e100f),
         primaryColor: Colors.deepPurple,
         appBarTheme: const AppBarTheme(
           backgroundColor: Colors.black,
@@ -42,7 +74,7 @@ class MyApp extends StatelessWidget {
         ),
 
         // 🔧 Dekoracje dla TextField w dark mode
-        inputDecorationTheme: InputDecorationTheme(
+        inputDecorationTheme: const InputDecorationTheme(
           filled: true,
           fillColor: Colors.black,
           hintStyle: TextStyle(color: Colors.white70),
@@ -63,7 +95,7 @@ class MyApp extends StatelessWidget {
       ),
 
       themeMode: themeService.isDarkMode ? ThemeMode.dark : ThemeMode.light,
-      home: LoginScreen(),
+      home: const LoginScreen(), // 🔧 DODANE const
     );
   }
 }

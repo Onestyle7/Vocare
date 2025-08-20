@@ -2,11 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:country_code_picker/country_code_picker.dart';
 import 'package:vocare/widgets/custom_button.dart';
 import 'package:vocare/widgets/custom_input.dart';
+import 'package:vocare/widgets/custom_date_input.dart'; // 🆕 NOWY IMPORT
 import 'package:vocare/services/profile_api.dart';
 import 'package:vocare/screens/aI_asistent_screen.dart';
 import 'package:vocare/widgets/nav_bar_button.dart';
 import 'package:vocare/widgets/theme_toggle_button.dart';
-import 'package:vocare/models/personality_type.dart'; // 🆕 Używamy istniejący model
+import 'package:vocare/models/personality_type.dart';
 
 // 🆕 Nowy enum dla ankiety finansowej
 enum RiskAppetite {
@@ -18,13 +19,16 @@ enum RiskAppetite {
   const RiskAppetite(this.label);
 }
 
-// 🆕 Rozszerzone klasy dla złożonych struktur
+// 🔄 Rozszerzone klasy dla złożonych struktur z checkboxami
 class _Education {
   final TextEditingController institutionController = TextEditingController();
   final TextEditingController degreeController = TextEditingController();
-  final TextEditingController fieldController = TextEditingController(); // 🆕
+  final TextEditingController fieldController = TextEditingController();
   final TextEditingController startDateController = TextEditingController();
-  final TextEditingController endDateController = TextEditingController(); // 🆕
+  final TextEditingController endDateController = TextEditingController();
+
+  // 🆕 Nowe pole dla checkbox "Currently studying here"
+  bool isCurrentlyStudying = false;
 
   void dispose() {
     institutionController.dispose();
@@ -38,13 +42,14 @@ class _Education {
 class _WorkExperience {
   final TextEditingController positionController = TextEditingController();
   final TextEditingController companyController = TextEditingController();
-  final TextEditingController descriptionController =
-      TextEditingController(); // 🆕
+  final TextEditingController descriptionController = TextEditingController();
   final TextEditingController responsibilitiesController =
-      TextEditingController(); // 🆕
-  final TextEditingController startDateController =
-      TextEditingController(); // 🆕
-  final TextEditingController endDateController = TextEditingController(); // 🆕
+      TextEditingController();
+  final TextEditingController startDateController = TextEditingController();
+  final TextEditingController endDateController = TextEditingController();
+
+  // 🆕 Nowe pole dla checkbox "Currently working here"
+  bool isCurrentlyWorking = false;
 
   void dispose() {
     positionController.dispose();
@@ -123,27 +128,19 @@ class _FillProfileScreenState extends State<FillProfileScreen> {
   bool _hasLoans = false; // 🆕
   bool _willingToRelocate = false; // 🆕
 
-  // 🗑️ Usunięte - będziemy używać nowej struktury education
-  // final _educationInstitutionController = TextEditingController();
-  // final _educationYearController = TextEditingController();
-  // final _skillController = TextEditingController(); -> _skillsController
-  // final _certificateController = TextEditingController(); -> _certificatesList
-  // final _languagesController = TextEditingController(); -> _languagesList
-  // String? _selectEducation; -> będzie w _educationList
-  // final List<String> educationList = [...]; -> usunięte, bo będzie w UI
-
   @override
   void initState() {
     super.initState();
     _loadUserProfile();
   }
 
+  // 🔄 ZAKTUALIZOWANA METODA ŁADOWANIA PROFILU Z OBSŁUGĄ CHECKBOXÓW
   Future<void> _loadUserProfile() async {
     final data = await ProfileApi.getUserProfile();
     if (data == null) return;
 
     setState(() {
-      // 🔄 Personal info (poprawione nazwy)
+      // Personal info
       _firstNameController.text = data['firstName'] ?? '';
       _lastNameController.text = data['lastName'] ?? '';
       selectedCountry = data['country'] ?? '';
@@ -151,8 +148,6 @@ class _FillProfileScreenState extends State<FillProfileScreen> {
       _phoneController.text = data['phoneNumber'] ?? '';
       _aboutMeController.text = data['aboutMe'] ?? '';
       _additionalInfoController.text = data['additionalInformation'] ?? '';
-
-      // 🆕 Nowe pola
       _softSkillsController.text =
           (data['softSkills'] as List?)?.join(', ') ?? '';
       _willingToRebrand = data['willingToRebrand'] ?? false;
@@ -165,7 +160,7 @@ class _FillProfileScreenState extends State<FillProfileScreen> {
         orElse: () => PersonalityType.unknown,
       );
 
-      // 🔄 Education (rozszerzone)
+      // 🔄 Education z obsługą checkbox
       final eduList = (data['education'] as List?) ?? [];
       if (eduList.isNotEmpty) {
         _educationList.clear();
@@ -173,14 +168,21 @@ class _FillProfileScreenState extends State<FillProfileScreen> {
           final edu = _Education();
           edu.institutionController.text = eduData['institution'] ?? '';
           edu.degreeController.text = eduData['degree'] ?? '';
-          edu.fieldController.text = eduData['field'] ?? ''; // 🆕
+          edu.fieldController.text = eduData['field'] ?? '';
           edu.startDateController.text = eduData['startDate'] ?? '';
-          edu.endDateController.text = eduData['endDate'] ?? ''; // 🆕
+          edu.endDateController.text = eduData['endDate'] ?? '';
+
+          // 🆕 Ustaw checkbox na podstawie endDate lub dodatkowego pola
+          edu.isCurrentlyStudying =
+              eduData['isCurrentlyStudying'] ??
+              (eduData['endDate'] == null ||
+                  eduData['endDate'].toString().trim().isEmpty);
+
           _educationList.add(edu);
         }
       }
 
-      // 🔄 Work Experience (rozszerzone)
+      // 🔄 Work Experience z obsługą checkbox
       final workList = (data['workExperience'] as List?) ?? [];
       if (workList.isNotEmpty) {
         _workExperienceList.clear();
@@ -188,11 +190,18 @@ class _FillProfileScreenState extends State<FillProfileScreen> {
           final work = _WorkExperience();
           work.companyController.text = workData['company'] ?? '';
           work.positionController.text = workData['position'] ?? '';
-          work.descriptionController.text = workData['description'] ?? ''; // 🆕
-          work.responsibilitiesController.text = // 🆕
+          work.descriptionController.text = workData['description'] ?? '';
+          work.responsibilitiesController.text =
               (workData['responsibilities'] as List?)?.join(', ') ?? '';
-          work.startDateController.text = workData['startDate'] ?? ''; // 🆕
-          work.endDateController.text = workData['endDate'] ?? ''; // 🆕
+          work.startDateController.text = workData['startDate'] ?? '';
+          work.endDateController.text = workData['endDate'] ?? '';
+
+          // 🆕 Ustaw checkbox na podstawie endDate lub dodatkowego pola
+          work.isCurrentlyWorking =
+              workData['isCurrentlyWorking'] ??
+              (workData['endDate'] == null ||
+                  workData['endDate'].toString().trim().isEmpty);
+
           _workExperienceList.add(work);
         }
       }
@@ -244,7 +253,6 @@ class _FillProfileScreenState extends State<FillProfileScreen> {
 
   void _nextPage() {
     if (_currentPage < 5) {
-      // 🔄 Zwiększone z 3 na 5 (6 stron)
       setState(() => _currentPage++);
       _pageController.animateToPage(
         _currentPage,
@@ -265,6 +273,7 @@ class _FillProfileScreenState extends State<FillProfileScreen> {
     }
   }
 
+  // 🔄 ZAKTUALIZOWANA METODA ZAPISYWANIA PROFILU Z OBSŁUGĄ CHECKBOXÓW
   Future<void> _saveProfile() async {
     setState(() => _isLoading = true);
 
@@ -276,18 +285,18 @@ class _FillProfileScreenState extends State<FillProfileScreen> {
       return;
     }
 
-    // 🔄 Rozszerzone dane profilu zgodne z API schema
     final profileData = {
-      "firstName": _firstNameController.text.trim(), // 🔄
-      "lastName": _lastNameController.text.trim(), // 🔄
+      "firstName": _firstNameController.text.trim(),
+      "lastName": _lastNameController.text.trim(),
       "country": selectedCountry.trim(),
       "address": _addressController.text.trim(),
       "phoneNumber": _phoneController.text.trim(),
       "personalityType": _selectedPersonalityType?.name ?? "unknown",
       "aboutMe": _aboutMeController.text.trim(),
       "additionalInformation": _additionalInfoController.text.trim(),
-      "willingToRebrand": _willingToRebrand, // 🆕
-      // 🔄 Education z wszystkimi polami
+      "willingToRebrand": _willingToRebrand,
+
+      // 🔄 Education z obsługą checkbox
       "education":
           _educationList
               .where((edu) => edu.institutionController.text.trim().isNotEmpty)
@@ -295,14 +304,20 @@ class _FillProfileScreenState extends State<FillProfileScreen> {
                 (edu) => {
                   "institution": edu.institutionController.text.trim(),
                   "degree": edu.degreeController.text.trim(),
-                  "field": edu.fieldController.text.trim(), // 🆕
+                  "field": edu.fieldController.text.trim(),
                   "startDate": edu.startDateController.text.trim(),
-                  "endDate": edu.endDateController.text.trim(), // 🆕
+                  // Jeśli obecnie studiuje, endDate jest pustą stringą
+                  "endDate":
+                      edu.isCurrentlyStudying
+                          ? ""
+                          : edu.endDateController.text.trim(),
+                  "isCurrentlyStudying":
+                      edu.isCurrentlyStudying, // 🆕 Dodatkowe pole
                 },
               )
               .toList(),
 
-      // 🔄 Work Experience z wszystkimi polami
+      // 🔄 Work Experience z obsługą checkbox
       "workExperience":
           _workExperienceList
               .where((exp) => exp.companyController.text.trim().isNotEmpty)
@@ -310,24 +325,26 @@ class _FillProfileScreenState extends State<FillProfileScreen> {
                 (exp) => {
                   "company": exp.companyController.text.trim(),
                   "position": exp.positionController.text.trim(),
-                  "description": exp.descriptionController.text.trim(), // 🆕
+                  "description": exp.descriptionController.text.trim(),
                   "responsibilities":
-                      exp
-                          .responsibilitiesController
-                          .text // 🆕
+                      exp.responsibilitiesController.text
                           .split(',')
                           .map((e) => e.trim())
                           .where((e) => e.isNotEmpty)
                           .toList(),
-                  "startDate": exp.startDateController.text.trim(), // 🆕
-                  "endDate": exp.endDateController.text.trim(), // 🆕
+                  "startDate": exp.startDateController.text.trim(),
+                  // Jeśli obecnie pracuje, endDate jest pustą stringą
+                  "endDate":
+                      exp.isCurrentlyWorking
+                          ? ""
+                          : exp.endDateController.text.trim(),
+                  "isCurrentlyWorking":
+                      exp.isCurrentlyWorking, // 🆕 Dodatkowe pole
                 },
               )
               .toList(),
 
-      // 🔄 Skills (zachowuję jako osobny input dla prostoty)
-      "skills": _getSkillsList(), // Helper function
-      // 🆕 Soft Skills
+      "skills": _getSkillsList(),
       "softSkills":
           _softSkillsController.text
               .split(',')
@@ -335,7 +352,6 @@ class _FillProfileScreenState extends State<FillProfileScreen> {
               .where((e) => e.isNotEmpty)
               .toList(),
 
-      // 🔄 Certificates jako obiekty
       "certificates":
           _certificatesList
               .where((cert) => cert.nameController.text.trim().isNotEmpty)
@@ -348,7 +364,6 @@ class _FillProfileScreenState extends State<FillProfileScreen> {
               )
               .toList(),
 
-      // 🔄 Languages jako obiekty
       "languages":
           _languagesList
               .where((lang) => lang.languageController.text.trim().isNotEmpty)
@@ -360,7 +375,6 @@ class _FillProfileScreenState extends State<FillProfileScreen> {
               )
               .toList(),
 
-      // 🆕 Financial Survey
       "financialSurvey": {
         "currentSalary":
             int.tryParse(_currentSalaryController.text.trim()) ?? 0,
@@ -368,7 +382,7 @@ class _FillProfileScreenState extends State<FillProfileScreen> {
             int.tryParse(_desiredSalaryController.text.trim()) ?? 0,
         "hasLoans": _hasLoans,
         "loanDetails": _loanDetailsController.text.trim(),
-        "riskAppetite": _selectedRiskAppetite?.name ?? "Low",
+        "riskAppetite": _selectedRiskAppetite?.name ?? "low",
         "willingToRelocate": _willingToRelocate,
       },
     };
@@ -388,11 +402,8 @@ class _FillProfileScreenState extends State<FillProfileScreen> {
     }
   }
 
-  // 🆕 Helper function dla skills
   List<String> _getSkillsList() {
-    // Możesz zachować stary sposób comma-separated lub zmienić na listę
-    // Na razie zostawiam prosty sposób
-    return []; // TODO: Dodaj skills input w UI
+    return [];
   }
 
   @override
@@ -406,7 +417,7 @@ class _FillProfileScreenState extends State<FillProfileScreen> {
         child: Column(
           children: [
             LinearProgressIndicator(
-              value: (_currentPage + 1) / 6, // 🔄 Zmienione z 4 na 6
+              value: (_currentPage + 1) / 6,
               minHeight: 6,
             ),
             Expanded(
@@ -415,11 +426,11 @@ class _FillProfileScreenState extends State<FillProfileScreen> {
                 physics: const NeverScrollableScrollPhysics(),
                 children: [
                   _buildPersonalPage(),
-                  _buildEducationPage(), // 🔄 Rozszerzone
-                  _buildWorkExperiencePage(), // 🆕 Nowa strona
-                  _buildSkillsPage(), // 🔄 Rozszerzone
-                  _buildLanguagesAndCertificatesPage(), // 🆕 Nowa strona
-                  _buildFinancialSurveyPage(), // 🆕 Nowa strona
+                  _buildEducationPage(),
+                  _buildWorkExperiencePage(),
+                  _buildSkillsPage(),
+                  _buildLanguagesAndCertificatesPage(),
+                  _buildFinancialSurveyPage(),
                 ],
               ),
             ),
@@ -430,9 +441,9 @@ class _FillProfileScreenState extends State<FillProfileScreen> {
                 children: [
                   if (_currentPage > 0)
                     CustomButton(text: 'Wstecz', onPressed: _prevPage),
-                  if (_currentPage < 5) // 🔄 Zmienione z 3 na 5
+                  if (_currentPage < 5)
                     CustomButton(text: 'Dalej', onPressed: _nextPage),
-                  if (_currentPage == 5) // 🔄 Zmienione z 3 na 5
+                  if (_currentPage == 5)
                     _isLoading
                         ? const CircularProgressIndicator()
                         : CustomButton(
@@ -491,7 +502,7 @@ class _FillProfileScreenState extends State<FillProfileScreen> {
           showOnlyCountryWhenClosed: true,
         ),
         CustomInput(
-          label: "Imię", // 🔄 Polskie nazwy
+          label: "Imię",
           hintText: "Wpisz swoje imię",
           controller: _firstNameController,
         ),
@@ -536,7 +547,6 @@ class _FillProfileScreenState extends State<FillProfileScreen> {
           ),
         ),
         const SizedBox(height: 16),
-        // 🆕 Nowy checkbox
         CheckboxListTile(
           title: const Text("Chcę się przebrandować"),
           value: _willingToRebrand,
@@ -556,7 +566,7 @@ class _FillProfileScreenState extends State<FillProfileScreen> {
     ),
   );
 
-  // 🔄 Rozszerzona strona education (dodano field, endDate)
+  // 🔄 ZAKTUALIZOWANA STRONA EDUCATION Z DATE PICKERAMI I CHECKBOXAMI
   Widget _buildEducationPage() => SingleChildScrollView(
     padding: const EdgeInsets.all(16),
     child: Column(
@@ -605,7 +615,6 @@ class _FillProfileScreenState extends State<FillProfileScreen> {
                     hintText: "np. Licencjat, Magister",
                     controller: edu.degreeController,
                   ),
-                  // 🆕 Nowe pole
                   CustomInput(
                     label: "Kierunek",
                     hintText: "np. Informatyka",
@@ -614,22 +623,39 @@ class _FillProfileScreenState extends State<FillProfileScreen> {
                   Row(
                     children: [
                       Expanded(
-                        child: CustomInput(
+                        child: CustomDateInput(
+                          // 🔄 ZMIENIONE NA DATE PICKER
                           label: "Data rozpoczęcia",
-                          hintText: "YYYY-MM-DD",
+                          hintText: "Wybierz datę",
                           controller: edu.startDateController,
                         ),
                       ),
                       const SizedBox(width: 8),
-                      // 🆕 Nowe pole
                       Expanded(
-                        child: CustomInput(
+                        child: CustomDateInput(
+                          // 🔄 ZMIENIONE NA DATE PICKER
                           label: "Data zakończenia",
-                          hintText: "YYYY-MM-DD",
+                          hintText: "Wybierz datę",
                           controller: edu.endDateController,
+                          enabled:
+                              !edu.isCurrentlyStudying, // 🆕 WYŁĄCZ JEŚLI OBECNIE STUDIUJE
                         ),
                       ),
                     ],
+                  ),
+                  // 🆕 NOWY CHECKBOX
+                  CurrentlyHereCheckbox(
+                    label: "Currently studying ",
+                    value: edu.isCurrentlyStudying,
+                    onChanged: (value) {
+                      setState(() {
+                        edu.isCurrentlyStudying = value ?? false;
+                        if (edu.isCurrentlyStudying) {
+                          edu.endDateController
+                              .clear(); // Wyczyść datę zakończenia
+                        }
+                      });
+                    },
                   ),
                 ],
               ),
@@ -644,7 +670,7 @@ class _FillProfileScreenState extends State<FillProfileScreen> {
     ),
   );
 
-  // 🆕 Nowa strona - Work Experience (rozszerzone)
+  // 🆕 NOWA STRONA - Work Experience z date pickerami i checkboxami
   Widget _buildWorkExperiencePage() => SingleChildScrollView(
     padding: const EdgeInsets.all(16),
     child: Column(
@@ -693,7 +719,6 @@ class _FillProfileScreenState extends State<FillProfileScreen> {
                     hintText: "np. Allegro",
                     controller: work.companyController,
                   ),
-                  // 🆕 Nowe pola
                   CustomInput(
                     label: "Opis pracy",
                     hintText: "Krótki opis Twojej roli",
@@ -707,21 +732,40 @@ class _FillProfileScreenState extends State<FillProfileScreen> {
                   Row(
                     children: [
                       Expanded(
-                        child: CustomInput(
+                        child: CustomDateInput(
+                          // 🔄 ZMIENIONE NA DATE PICKER
                           label: "Data rozpoczęcia",
-                          hintText: "YYYY-MM-DD",
+                          hintText: "Wybierz datę",
                           controller: work.startDateController,
                         ),
                       ),
                       const SizedBox(width: 8),
                       Expanded(
-                        child: CustomInput(
+                        child: CustomDateInput(
+                          // 🔄 ZMIENIONE NA DATE PICKER
                           label: "Data zakończenia",
-                          hintText: "YYYY-MM-DD",
+                          hintText: "Wybierz datę",
                           controller: work.endDateController,
+                          enabled:
+                              !work
+                                  .isCurrentlyWorking, // 🆕 WYŁĄCZ JEŚLI OBECNIE PRACUJE
                         ),
                       ),
                     ],
+                  ),
+                  // 🆕 NOWY CHECKBOX
+                  CurrentlyHereCheckbox(
+                    label: "I currently work here",
+                    value: work.isCurrentlyWorking,
+                    onChanged: (value) {
+                      setState(() {
+                        work.isCurrentlyWorking = value ?? false;
+                        if (work.isCurrentlyWorking) {
+                          work.endDateController
+                              .clear(); // Wyczyść datę zakończenia
+                        }
+                      });
+                    },
                   ),
                 ],
               ),
@@ -750,7 +794,6 @@ class _FillProfileScreenState extends State<FillProfileScreen> {
           ),
         ),
         const SizedBox(height: 16),
-        // TODO: Dodać skills input - na razie pomijam dla prostoty
         const Text(
           "Umiejętności",
           style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
@@ -758,7 +801,6 @@ class _FillProfileScreenState extends State<FillProfileScreen> {
         const SizedBox(height: 16),
         const Text("TODO: Dodać skills input"),
         const SizedBox(height: 16),
-        // 🆕 Soft Skills
         CustomInput(
           label: "Umiejętności miękkie",
           hintText: "np. komunikacja, praca w zespole (oddzielone przecinkami)",
@@ -768,7 +810,7 @@ class _FillProfileScreenState extends State<FillProfileScreen> {
     ),
   );
 
-  // 🆕 Nowa strona - Languages i Certificates
+  // 🆕 Nowa strona - Languages i Certificates z date pickerem dla certyfikatów
   Widget _buildLanguagesAndCertificatesPage() => SingleChildScrollView(
     padding: const EdgeInsets.all(16),
     child: Column(
@@ -840,7 +882,7 @@ class _FillProfileScreenState extends State<FillProfileScreen> {
 
         const SizedBox(height: 32),
 
-        // Certificates section
+        // 🔄 ZAKTUALIZOWANA SEKCJA CERTIFICATES Z DATE PICKEREM
         const Text(
           "Certyfikaty",
           style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
@@ -875,9 +917,10 @@ class _FillProfileScreenState extends State<FillProfileScreen> {
                   Row(
                     children: [
                       Expanded(
-                        child: CustomInput(
+                        child: CustomDateInput(
+                          // 🔄 ZMIENIONE NA DATE PICKER
                           label: "Data uzyskania",
-                          hintText: "YYYY-MM-DD",
+                          hintText: "Wybierz datę",
                           controller: cert.dateController,
                         ),
                       ),
@@ -967,33 +1010,6 @@ class _FillProfileScreenState extends State<FillProfileScreen> {
     ),
   );
 
-  // 🔄 Pozostała metoda _buildAdditionalPage() - można usunąć lub zachować
-  Widget _buildAdditionalPage() => SingleChildScrollView(
-    padding: const EdgeInsets.all(16),
-    child: Column(
-      children: [
-        Center(
-          child: Image.asset(
-            'assets/img/vocare.png',
-            height: 80,
-            fit: BoxFit.contain,
-          ),
-        ),
-        const SizedBox(height: 16),
-        CustomInput(
-          label: "About Me",
-          hintText: "Tell us about yourself",
-          controller: _aboutMeController,
-        ),
-        CustomInput(
-          label: "Additional Information",
-          hintText: "Any extra info",
-          controller: _additionalInfoController,
-        ),
-      ],
-    ),
-  );
-
   InputDecoration _inputDecoration(String label) {
     return InputDecoration(
       labelText: label,
@@ -1013,7 +1029,6 @@ class _FillProfileScreenState extends State<FillProfileScreen> {
         borderRadius: BorderRadius.circular(25),
         borderSide: const BorderSide(color: Color(0xFF915EFF), width: 2),
       ),
-      // 🎨 Dopasuj padding do CustomInput
       contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
     );
   }

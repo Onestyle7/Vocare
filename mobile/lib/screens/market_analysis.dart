@@ -1,8 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:vocare/models/industry_section.dart';
 import 'package:vocare/services/market_AnalysisAPI.dart';
+import 'package:vocare/services/biling_api.dart'; // 🆕 DODANY IMPORT
 import 'package:vocare/widgets/industry_section_card.dart';
 import 'package:vocare/widgets/custom_button.dart';
+import 'package:vocare/widgets/theme_toggle_button.dart'; // 🆕 DODANY IMPORT
+import 'package:vocare/screens/pricing_screen.dart'; // 🆕 DODANY IMPORT
 import 'dart:async';
 
 class MarketAnalysisPage extends StatefulWidget {
@@ -18,11 +21,21 @@ class _MarketAnalysisPageState extends State<MarketAnalysisPage>
   bool _showTerminalAnimation = false;
   bool _hasData = false;
   List<IndustrySection> _sections = [];
+  int _tokenBalance = 0; // 🆕 DODANY TOKEN BALANCE
 
   @override
   void initState() {
     super.initState();
+    _loadTokenBalance(); // 🆕 DODANE
     // Nie ładujemy automatycznie - czekamy na kliknięcie
+  }
+
+  // 🆕 DODANA FUNKCJA
+  Future<void> _loadTokenBalance() async {
+    final balance = await BillingApi.getTokenBalance() ?? 0;
+    setState(() {
+      _tokenBalance = balance;
+    });
   }
 
   Future<void> _generateMarketAnalysis() async {
@@ -50,6 +63,50 @@ class _MarketAnalysisPageState extends State<MarketAnalysisPage>
       _hasData = result != null && result.isNotEmpty;
       _sections = result ?? [];
     });
+
+    // 🆕 DODANE: Odśwież token balance po analizie
+    _loadTokenBalance();
+  }
+
+  // 🆕 DODANA FUNKCJA - identyczna jak w AI Assistant
+  Widget _buildTokenBalance() {
+    return GestureDetector(
+      onTap: () {
+        // Przejście do pricing screen po kliknięciu w token balance
+        Navigator.of(
+          context,
+        ).push(MaterialPageRoute(builder: (context) => const PricingScreen()));
+      },
+      child: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+        decoration: BoxDecoration(
+          color: const Color(0xFF915EFF).withOpacity(0.1),
+          borderRadius: BorderRadius.circular(20),
+          border: Border.all(color: const Color(0xFF915EFF), width: 1),
+        ),
+        child: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            const Icon(
+              Icons.account_balance_wallet,
+              color: Color(0xFF915EFF),
+              size: 18,
+            ),
+            const SizedBox(width: 6),
+            Text(
+              '$_tokenBalance',
+              style: const TextStyle(
+                color: Color(0xFF915EFF),
+                fontWeight: FontWeight.bold,
+                fontSize: 14,
+              ),
+            ),
+            const SizedBox(width: 4),
+            const Icon(Icons.add, color: Color(0xFF915EFF), size: 16),
+          ],
+        ),
+      ),
+    );
   }
 
   @override
@@ -66,6 +123,8 @@ class _MarketAnalysisPageState extends State<MarketAnalysisPage>
                   icon: const Icon(Icons.arrow_back),
                   onPressed: () => Navigator.pop(context),
                 ),
+                // 🆕 DODANE: Token balance i theme toggle w AppBar
+                actions: [_buildTokenBalance(), const ThemeToggleButton()],
               ),
       body: SafeArea(
         child:

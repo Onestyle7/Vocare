@@ -1,7 +1,7 @@
 class IndustrySection {
   final String industry;
   final String averageSalary;
-  final String employmentRate;
+  final int employmentRate;
   final String growthForecast;
 
   IndustrySection({
@@ -15,7 +15,7 @@ class IndustrySection {
     return IndustrySection(
       industry: json['industry'] ?? '',
       averageSalary: json['averageSalary'] ?? '',
-      employmentRate: json['employmentRate'] ?? '',
+      employmentRate: json['employmentRate'] ?? 0,
       growthForecast: json['growthForecast'] ?? '',
     );
   }

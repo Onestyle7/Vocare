@@ -19,13 +19,15 @@ class MarketAnalysisApi {
       }
 
       final url = Uri.parse(_base);
-      final resp = await http.get(
-        url,
-        headers: {
-          'Authorization': 'Bearer $token',
-          'Content-Type': 'application/json',
-        },
-      );
+      final resp = await http
+          .get(
+            url,
+            headers: {
+              'Authorization': 'Bearer $token',
+              'Content-Type': 'application/json',
+            },
+          )
+          .timeout(Duration(minutes: 5));
 
       if (resp.statusCode == 200) {
         final body = jsonDecode(resp.body);
