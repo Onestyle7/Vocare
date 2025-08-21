@@ -22,6 +22,8 @@ using VocareWebAPI.CvGenerator.Services.Implementation;
 using VocareWebAPI.CvGenerator.Services.Implementations;
 using VocareWebAPI.CvGenerator.Services.Interfaces;
 using VocareWebAPI.Data;
+using VocareWebAPI.Extensions.ApplicationBuilderExtensions; // NOWY IMPORT
+using VocareWebAPI.Extensions.ServiceCollectionExtensions; // NOWY IMPORT
 using VocareWebAPI.Models.Config;
 using VocareWebAPI.Models.Entities;
 using VocareWebAPI.Repositories;
@@ -124,38 +126,8 @@ builder.Services.Configure<UserRegistrationConfig>(
 );
 builder.Services.Configure<AiConfig>(builder.Configuration.GetSection("OpenAI"));
 
-// ===== BAZA DANYCH =====
-builder.Services.AddDbContext<AppDbContext>(options =>
-{
-    var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
-
-    // Na Railway użyj DATABASE_URL
-    var databaseUrl = Environment.GetEnvironmentVariable("DATABASE_URL");
-    if (!string.IsNullOrEmpty(databaseUrl))
-    {
-        // Konwertuj DATABASE_URL z formatu Postgres na connection string
-        var databaseUri = new Uri(databaseUrl);
-        var userInfo = databaseUri.UserInfo.Split(':');
-
-        connectionString =
-            $"Host={databaseUri.Host};"
-            + $"Port={databaseUri.Port};"
-            + $"Database={databaseUri.LocalPath.TrimStart('/')};"
-            + $"Username={userInfo[0]};"
-            + $"Password={userInfo[1]};"
-            + $"SSL Mode=Require;Trust Server Certificate=true";
-
-        Console.WriteLine(
-            $"Using DATABASE_URL from Railway: Host={databaseUri.Host}, Database={databaseUri.LocalPath.TrimStart('/')}"
-        );
-    }
-    else
-    {
-        Console.WriteLine("No DATABASE_URL found, using connection string from appsettings");
-    }
-
-    options.UseNpgsql(connectionString);
-});
+// ===== BAZA DANYCH - REFACTORED =====
+builder.Services.AddDatabase(builder.Configuration);
 
 // ===== IDENTITY & AUTORYZACJA =====
 builder
@@ -360,49 +332,6 @@ builder.Services.AddSwaggerGen(c =>
 // ===== CORS =====
 builder.Services.AddCors(options =>
 {
-    /* options.AddPolicy(
-        "AllowAll",
-        policy =>
-        {
-            if (builder.Environment.IsDevelopment())
-            {
-                // W developmencie zezwalamy na wszystkie domeny
-                policy
-                    .SetIsOriginAllowed(origin =>
-                    {
-                        if (string.IsNullOrEmpty(origin))
-                            return false;
-
-                        var uri = new Uri(origin);
-
-                        // Zezwól na wszystkie localhost porty
-                        if (uri.Host == "localhost" || uri.Host == "127.0.0.1")
-                            return true;
-
-                        // Zezwól na produkcyjne domeny
-                        var allowedHosts = new[]
-                        {
-                            "vocare.pl",
-                            "app.vocare.pl",
-                            "vocare-frontend.vercel.app",
-                        };
-                        return allowedHosts.Contains(uri.Host);
-                    })
-                    .AllowAnyHeader()
-                    .AllowAnyMethod()
-                    .AllowCredentials();
-            }
-            else
-            {
-                // W produkcji/staging tylko konkretne domeny
-                policy
-                    .SetIsOriginAllowed(origin => true)
-                    .AllowAnyHeader()
-                    .AllowAnyMethod()
-                    .AllowCredentials();
-            }
-        }
-    ); */
     options.AddPolicy(
         "AllowAll",
         policy =>
@@ -675,108 +604,8 @@ if (!app.Environment.IsProduction())
         .AllowAnonymous();
 }
 
-// ===== MIGRACJA BAZY DANYCH =====
-using var scope = app.Services.CreateScope();
-var db = scope.ServiceProvider.GetRequiredService<AppDbContext>();
-var logger = scope.ServiceProvider.GetRequiredService<ILogger<Program>>();
-
-var retries = 0;
-const int maxRetries = 10; // Więcej retry dla staging
-
-while (retries < maxRetries)
-{
-    try
-    {
-        logger.LogInformation(
-            "Attempting database migration... ({Attempt}/{MaxRetries})",
-            retries + 1,
-            maxRetries
-        );
-
-        // Sprawdź czy baza danych istnieje i czy można się połączyć
-        if (await db.Database.CanConnectAsync())
-        {
-            logger.LogInformation("Database connection successful");
-
-            // Sprawdź czy istnieją jakiekolwiek tabele
-            var tableCount = await db.Database.ExecuteSqlRawAsync(
-                "SELECT COUNT(*) FROM information_schema.tables WHERE table_schema = 'public' AND table_type = 'BASE TABLE'"
-            );
-
-            logger.LogInformation("Number of existing tables: {TableCount}", tableCount);
-
-            // Jeśli nie ma tabel, ale istnieje historia migracji, wyczyść ją
-            try
-            {
-                var migrationHistory = await db.Database.GetAppliedMigrationsAsync();
-                if (migrationHistory.Any() && tableCount == 0)
-                {
-                    logger.LogWarning(
-                        "Migration history exists but no tables found. Clearing migration history."
-                    );
-                    await db.Database.ExecuteSqlRawAsync("DELETE FROM \"__EFMigrationsHistory\"");
-                }
-            }
-            catch (Exception ex)
-            {
-                logger.LogWarning(
-                    ex,
-                    "Could not check or clear migration history (this is normal for first deployment)"
-                );
-            }
-
-            // Wykonaj migracje
-            logger.LogInformation("Executing database migrations...");
-            await db.Database.MigrateAsync();
-
-            // Sprawdź czy ServiceCosts mają dane
-            try
-            {
-                var serviceCostCount = await db.ServiceCosts.CountAsync();
-                if (serviceCostCount == 0)
-                {
-                    logger.LogInformation("Seeding ServiceCosts data...");
-                    // EF Core powinno to zrobić automatycznie przez HasData, ale na wszelki wypadek
-                    await db.SaveChangesAsync();
-                }
-            }
-            catch (Exception ex)
-            {
-                logger.LogWarning(ex, "Could not check ServiceCosts (table might not exist yet)");
-            }
-
-            logger.LogInformation("Database migration completed successfully.");
-            break;
-        }
-        else
-        {
-            throw new Exception("Cannot connect to database");
-        }
-    }
-    catch (Exception ex)
-    {
-        retries++;
-        if (retries >= maxRetries)
-        {
-            logger.LogError(
-                ex,
-                "Database migration failed after {MaxRetries} attempts.",
-                maxRetries
-            );
-            throw;
-        }
-
-        var delay = app.Environment.IsStaging() ? 10000 : 5000; // Dłuższy delay dla staging
-        logger.LogWarning(
-            "DB migration attempt failed, retrying in {Delay}ms... ({Attempt}/{MaxRetries}). Error: {Error}",
-            delay,
-            retries,
-            maxRetries,
-            ex.Message
-        );
-        await Task.Delay(delay);
-    }
-}
+// ===== MIGRACJA BAZY DANYCH - REFACTORED =====
+await app.MigrateDatabaseAsync(); // TYLKO JEDNA LINIJKA!
 
 app.Run();
 
