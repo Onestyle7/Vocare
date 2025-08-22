@@ -14,6 +14,7 @@ import {
   Trash2,
   ZoomIn,
   ZoomOut,
+  Move,
   Tag,
   GripVertical,
   PencilLine,
@@ -24,7 +25,7 @@ import {
   Upload,
   Save,
 } from 'lucide-react';
-import { createCv, updateCv } from '@/lib/api/cv';
+import { createCv, deleteCv, updateCv } from '@/lib/api/cv';
 import { CvDto, CvDetailsDto, UpdateCvDto } from '@/lib/types/cv';
 import { DatePickerWithCurrent } from './DatePickerWithCurrent';
 import { HoverCard, HoverCardContent, HoverCardTrigger } from '@/components/ui/hover-card';
@@ -37,6 +38,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
+import { useAutosave } from '@/lib/hooks/useAutosave';
 
 interface PersonalInfo {
   firstName: string;
@@ -117,6 +119,7 @@ const CVCreator: React.FC<CVCreatorProps> = ({ initialCv }) => {
         };
   });
 
+  const [skipAutosaveOnce, setSkipAutosaveOnce] = useState(false);
   const [isPremium] = useState(false);
   const [cvId, setCvId] = useState<string | null>(initialCv?.id ?? null);
   const [resumeName] = useState<string>(initialCv?.name ?? 'New Resume');
@@ -382,14 +385,8 @@ const CVCreator: React.FC<CVCreatorProps> = ({ initialCv }) => {
     setExperiences([...experiences, newExp]);
   };
 
-  const updateExperience = (
-    id: string,
-    field: keyof Experience,
-    value: string | boolean
-  ) => {
-    setExperiences((prev) =>
-      prev.map((exp) => (exp.id === id ? { ...exp, [field]: value } : exp))
-    );
+  const updateExperience = (id: string, field: keyof Experience, value: string | boolean) => {
+    setExperiences(experiences.map((exp) => (exp.id === id ? { ...exp, [field]: value } : exp)));
   };
 
   const removeExperience = (id: string) => {
@@ -409,14 +406,8 @@ const CVCreator: React.FC<CVCreatorProps> = ({ initialCv }) => {
     setEducation([...education, newEdu]);
   };
 
-  const updateEducation = (
-    id: string,
-    field: keyof Education,
-    value: string | boolean
-  ) => {
-    setEducation((prev) =>
-      prev.map((edu) => (edu.id === id ? { ...edu, [field]: value } : edu))
-    );
+  const updateEducation = (id: string, field: keyof Education, value: string | boolean) => {
+    setEducation(education.map((edu) => (edu.id === id ? { ...edu, [field]: value } : edu)));
   };
 
   const removeEducation = (id: string) => {
@@ -702,6 +693,44 @@ const CVCreator: React.FC<CVCreatorProps> = ({ initialCv }) => {
     };
   };
 
+  const canAutosave = Boolean(cvId);
+
+  const autosavePayload = {
+    id: cvId!,
+    name: resumeName,
+    targetPosition: personalInfo.profession || undefined,
+    cvData: buildCvDto(), // zakładam, że masz taką funkcję generującą aktualne dane CV
+  };
+
+  const { status: autosaveStatus, trigger } = useAutosave({
+    value: autosavePayload,
+    enabled: canAutosave,
+    delay: 3000, // 3s od ostatniej zmiany
+    skipOnce: skipAutosaveOnce, // flaga ustawiana po "Load profile"
+    onSkipConsumed: () => setSkipAutosaveOnce(false),
+  });
+
+  const autosaveFn = async (payload: typeof autosavePayload, signal: AbortSignal) => {
+    await updateCv(payload, { signal });
+  };
+
+  useEffect(() => {
+    if (!canAutosave) return;
+    trigger(autosaveFn);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [
+    personalInfo,
+    experiences,
+    education,
+    skills,
+    languages,
+    certificates,
+    hobbies,
+    privacyStatement,
+    sectionOrder,
+    resumeName,
+  ]);
+
   const handleSave = async () => {
     if (!cvId) return;
 
@@ -721,12 +750,30 @@ const CVCreator: React.FC<CVCreatorProps> = ({ initialCv }) => {
 
   const loadFromProfile = async () => {
     try {
-      const cv = await createCv({
+      if (!cvId) return;
+
+      const generated = await createCv({
         name: 'Generated CV',
         targetPosition: personalInfo.profession,
         createFromProfile: true,
       });
-      populateFromCv(cv.cvData, cv.targetPosition || undefined);
+
+      // 1) Zapisz dane do bieżącego CV
+      await updateCv({
+        id: cvId,
+        name: resumeName,
+        targetPosition: generated.targetPosition,
+        cvData: generated.cvData,
+      });
+
+      // 2) Wypełnij formularz danymi
+      populateFromCv(generated.cvData, generated.targetPosition || undefined);
+
+      // 3) Usuń tymczasowy rekord
+      await deleteCv(generated.id);
+
+      // 4) Pomiń JEDEN autosave (żeby nie zapisywać od razu po wczytaniu profilu)
+      setSkipAutosaveOnce(true);
     } catch (err) {
       console.error('Failed to generate CV from profile', err);
     }
@@ -1054,9 +1101,12 @@ const CVCreator: React.FC<CVCreatorProps> = ({ initialCv }) => {
                           value={edu.endDate}
                           onChange={(date) => updateEducation(edu.id, 'endDate', date)}
                           isCurrent={edu.isCurrent}
-                          onCurrentChange={(current) =>
-                            updateEducation(edu.id, 'isCurrent', current)
-                          }
+                          onCurrentChange={(current) => {
+                            updateEducation(edu.id, 'isCurrent', current);
+                            if (current) {
+                              updateEducation(edu.id, 'endDate', '');
+                            }
+                          }}
                           placeholder="Select end date"
                         />
                       </div>
@@ -1393,28 +1443,31 @@ const CVCreator: React.FC<CVCreatorProps> = ({ initialCv }) => {
               Work Exeperience
             </h3>
             {experiences.map((exp) => (
-              <div key={exp.id} className="mb-3">
-                <div className="mb-1 flex items-start justify-between">
-                  <div className="min-w-0 flex-1">
-                    <h4 className="truncate font-semibold text-gray-900">
-                      {exp.position || 'Position'}
-                    </h4>
-                    <p className="truncate font-medium text-gray-700">
-                      {exp.company || 'Company name'}
-                    </p>
-                  </div>
-                  <div className="ml-2 flex-shrink-0 text-xs text-gray-600">
-                    {formatDate(exp.startDate)} -{' '}
-                    {exp.isCurrent || !exp.endDate ? 'present' : formatDate(exp.endDate)}
-                  </div>
-                </div>
-                {exp.description && (
-                  <p className="text-sm leading-relaxed break-words text-gray-700">
-                    {exp.description}
-                  </p>
-                )}
-              </div>
-            ))}
+  <div key={exp.id} className="exp-item mb-4">
+    {/* Nagłówek stanowisko + firma */}
+    <div className="exp-header mb-1 flex items-start justify-between">
+      <div className="min-w-0 flex-1">
+        <div className="truncate font-semibold text-gray-900">
+          {exp.position || "Position"}
+        </div>
+        <div className="truncate font-medium text-gray-700">
+          {exp.company || "Company name"}
+        </div>
+      </div>
+      <div className="ml-2 flex-shrink-0 text-xs text-gray-600">
+        {formatDate(exp.startDate)} - {exp.isCurrent || !exp.endDate ? "present" : formatDate(exp.endDate)}
+      </div>
+    </div>
+
+    {/* Opis */}
+    {exp.description && (
+      <div className="exp-desc text-sm text-gray-700 leading-relaxed">
+        {exp.description}
+      </div>
+    )}
+  </div>
+))}
+
           </div>
         ) : null;
 
@@ -1563,11 +1616,23 @@ const CVCreator: React.FC<CVCreatorProps> = ({ initialCv }) => {
         >
           <Home size={24} className="text-gray-600" />
         </button>
+        <button
+          onClick={handleSave}
+          className="flex cursor-pointer flex-col items-center justify-center rounded-lg p-3 transition-colors hover:bg-gray-100"
+          title="Save resume"
+        >
+          <Save size={16} className="h-6 w-6 text-black" />
+          <div className="mt-2 flex flex-row items-center justify-center text-xs">
+            {autosaveStatus === 'saving' && <span className="text-gray-500">Saving…</span>}
+            {autosaveStatus === 'saved' && <span className="text-green-600">Saved ✓</span>}
+            {autosaveStatus === 'error' && <span className="text-red-500">Save failed</span>}
+          </div>
+        </button>
 
         <HoverCard>
           <HoverCardTrigger asChild>
             <button className="flex h-12 w-12 cursor-pointer items-center justify-center rounded-sm bg-gray-100">
-              v0.1.2
+              v0.1.3
             </button>
           </HoverCardTrigger>
           <HoverCardContent className="font-poppins w-80">
@@ -1602,7 +1667,7 @@ const CVCreator: React.FC<CVCreatorProps> = ({ initialCv }) => {
                   value={showFullDates ? 'full' : 'year'}
                   onValueChange={(value) => setShowFullDates(value === 'full')}
                 >
-                  <SelectTrigger className="font-poppins h-10! w-40 rounded-sm border border-gray-300 px-2 text-sm focus:ring-2 focus:ring-blue-500 focus:outline-none">
+                  <SelectTrigger className="font-poppins h-10 w-40 rounded-sm border border-gray-300 px-2 text-sm focus:ring-2 focus:ring-blue-500 focus:outline-none">
                     <SelectValue />
                   </SelectTrigger>
                   <SelectContent>
@@ -1739,16 +1804,6 @@ const CVCreator: React.FC<CVCreatorProps> = ({ initialCv }) => {
             <h2 className="text-lg font-semibold text-gray-700">Resume Preview</h2>
             <div className="flex items-center space-x-2">
               <button
-                onClick={handleSave}
-                className="flex cursor-pointer items-center space-x-2 rounded border border-[#915EFF] bg-[#915EFF] px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-[#713ae8]"
-                title="Pobierz CV jako PDF"
-              >
-                <Save className="h-5 w-5" />
-
-                <span>Save</span>
-              </button>
-
-              <button
                 onClick={downloadPDF}
                 className="flex cursor-pointer items-center space-x-2 rounded border border-[#915EFF] bg-[#915EFF] px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-[#713ae8]"
                 title="Pobierz CV jako PDF"
@@ -1812,12 +1867,16 @@ const CVCreator: React.FC<CVCreatorProps> = ({ initialCv }) => {
               >
                 Reset
               </button>
+              <div className="flex items-center text-sm text-gray-500">
+                <Move size={16} className="mr-1" />
+                Drag and move
+              </div>
             </div>
           </div>
 
           {/* CV Preview Container */}
           <div
-            className="relative flex-1 overflow-hidden bg-gray-100/20"
+            className="relative flex-1 overflow-hidden bg-gray-100/20 border border-blue-500"
             onMouseMove={handleMouseMove}
             onMouseUp={handleMouseUp}
             onMouseLeave={() => {
@@ -1827,7 +1886,7 @@ const CVCreator: React.FC<CVCreatorProps> = ({ initialCv }) => {
             onMouseEnter={() => setIsHovered(true)}
           >
             <div
-              className={`absolute inset-0 flex items-center justify-center ${isDragging ? 'cursor-grabbing' : 'cursor-grab'}`}
+              className={`absolute inset-0 flex items-center justify-center border border-red-500 ${isDragging ? 'cursor-grabbing' : 'cursor-grab'}`}
               style={{
                 transform: `translate(${cvPosition.x}px, ${cvPosition.y}px)`,
               }}
@@ -1835,9 +1894,10 @@ const CVCreator: React.FC<CVCreatorProps> = ({ initialCv }) => {
             >
               {/* A4 Paper with exact dimensions */}
               <div
-                className="cv-frame overflow-hidden rounded-sm"
+                className="cv-frame overflow-hidden border border-green-500 rounded-sm"
                 style={{
                   width: '210mm',
+                  height: '257mm',
                   padding: '32px', // ← tutaj widoczny margines
                   boxSizing: 'border-box',
                   backgroundColor: '#fff',
@@ -1847,10 +1907,10 @@ const CVCreator: React.FC<CVCreatorProps> = ({ initialCv }) => {
                 }}
               >
                 <div
-                  className="cv-content"
+                  className="cv-content border border-purple-500 "
                   style={{
                     width: '100%', // 210mm
-                    height: '238.5mm', // dokładnie obszar "przelamywania"
+                    height: '100%', // dokładnie obszar "przelamywania"
                     overflow: 'hidden',
                   }}
                 >

@@ -1,8 +1,10 @@
-Microsoft Visual Studio Solution File, Format Version 12.00
+﻿Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.5.2.0
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "VocareWebAPI", "VocareWebAPI\VocareWebAPI.csproj", "{79310BFF-0DE3-2839-BDFA-CD570CF48DDB}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "VocareWebApi.Tests", "VocareWebApi.Tests\VocareWebApi.Tests.csproj", "{BEC1F40A-F8BB-4CA0-B208-B691723A7531}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -14,6 +16,10 @@ Global
 		{79310BFF-0DE3-2839-BDFA-CD570CF48DDB}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{79310BFF-0DE3-2839-BDFA-CD570CF48DDB}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{79310BFF-0DE3-2839-BDFA-CD570CF48DDB}.Release|Any CPU.Build.0 = Release|Any CPU
+		{BEC1F40A-F8BB-4CA0-B208-B691723A7531}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{BEC1F40A-F8BB-4CA0-B208-B691723A7531}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{BEC1F40A-F8BB-4CA0-B208-B691723A7531}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{BEC1F40A-F8BB-4CA0-B208-B691723A7531}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
