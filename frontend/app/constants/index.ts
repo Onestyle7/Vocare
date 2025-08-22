@@ -199,7 +199,7 @@ export const countries = [
 
 export const NavLinks = [
   { label: 'Profile', url: '/profile' },
-  { label: 'Assistant', url: '/assistant' },
+  { label: 'Advisor', url: '/assistant' },
   { label: 'Analysis', url: '/market-analysis' },
   { label: 'Pricing', url: '/pricing' },
   { label: 'Resume', url: '/resume', disabled: false },
@@ -265,6 +265,8 @@ export const logo = '/icons/vocare.png';
 
 export const curved1 = '/svg/curve-1.svg';
 export const curved2 = '/svg/curve-2.svg';
+
+export const upper_arrow = '/images/upper-arrow.png';
 
 // grid
 
