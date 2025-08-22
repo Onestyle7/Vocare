@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef, useLayoutEffect, useCallback } from 'react';
 import {
   User,
   Mail,
@@ -166,6 +166,9 @@ const CVCreator: React.FC<CVCreatorProps> = ({ initialCv }) => {
   const [isDragging, setIsDragging] = useState(false);
   const [dragStart, setDragStart] = useState({ x: 0, y: 0 });
 
+  const cvRef = useRef<HTMLDivElement>(null);
+  const getPageHeight = () => cvRef.current?.clientHeight ?? 1123;
+
   const [sectionOrder, setSectionOrder] = useState<string[]>(() => {
     const saved = localStorage.getItem('sectionOrder');
     return saved
@@ -231,12 +234,16 @@ const CVCreator: React.FC<CVCreatorProps> = ({ initialCv }) => {
     localStorage.setItem('sectionOrder', JSON.stringify(sectionOrder));
   }, [sectionOrder]);
 
-  useEffect(() => {
-    checkContentOverflow();
-    setTimeout(() => {
+  useLayoutEffect(() => {
+    const el = cvRef.current;
+    if (!el) return;
+    const ro = new ResizeObserver(() => {
+      checkContentOverflow();
       checkSectionBreaks();
       forcePageBreakForLongSections();
-    }, 150); // Zwiększ opóźnienie
+    });
+    ro.observe(el);
+    return () => ro.disconnect();
   }, [
     experiences,
     education,
@@ -246,95 +253,11 @@ const CVCreator: React.FC<CVCreatorProps> = ({ initialCv }) => {
     hobbies,
     personalInfo,
     privacyStatement,
+    sectionOrder,
+    checkContentOverflow,
+    checkSectionBreaks,
+    forcePageBreakForLongSections,
   ]);
-
-  useEffect(() => {
-  const style = document.createElement('style');
-  style.textContent = `
-    .cv-content {
-      /* Prevent word breaking and hyphenation */
-      hyphens: none;
-      -webkit-hyphens: none;
-      -moz-hyphens: none;
-      word-break: keep-all;
-      overflow-wrap: break-word;
-      text-rendering: optimizeLegibility;
-    }
-
-    .cv-content [data-section] {
-      break-inside: avoid;
-      page-break-inside: avoid;
-      -webkit-column-break-inside: avoid;
-      
-      display: block;
-      min-height: 60px;
-      
-      /* Prevent orphans and widows */
-      orphans: 3;
-      widows: 3;
-    }
-    
-    .cv-content [data-section="experience"] .exp-item,
-    .cv-content [data-section="education"] .edu-item {
-      break-inside: avoid !important;
-      page-break-inside: avoid !important;
-      orphans: 2;
-      widows: 2;
-      margin-bottom: 1em;
-    }
-    
-    .cv-content [data-section="skills"],
-    .cv-content [data-section="languages"],
-    .cv-content [data-section="hobbies"] {
-      break-inside: avoid !important;
-      page-break-inside: avoid !important;
-    }
-    
-    .cv-content [data-section] h3 {
-      break-after: avoid;
-      page-break-after: avoid;
-      keep-with-next: always;
-      margin-bottom: 8px;
-    }
-
-    /* Specific text wrapping rules */
-    .cv-content p,
-    .cv-content div:not(.cv-frame):not(.cv-content) {
-      orphans: 2;
-      widows: 2;
-      line-height: 1.4;
-      word-break: normal;
-      overflow-wrap: break-word;
-    }
-
-    /* Skill tags and similar elements */
-    .cv-content .skill-tag,
-    .cv-content .language-tag,
-    .cv-content .hobby-tag {
-      break-inside: avoid !important;
-      page-break-inside: avoid !important;
-      white-space: nowrap;
-    }
-
-    /* Long text descriptions */
-    .cv-content .exp-desc,
-    .cv-content .text-break-safe {
-      word-break: normal;
-      overflow-wrap: break-word;
-      hyphens: none;
-      line-height: 1.5;
-      orphans: 2;
-      widows: 2;
-    }
-  `;
-  document.head.appendChild(style);
-
-  return () => {
-    if (document.head.contains(style)) {
-      document.head.removeChild(style);
-    }
-  };
-}, []);
 
   const addLanguage = () => {
     const newLanguage: Language = {
@@ -530,104 +453,63 @@ const CVCreator: React.FC<CVCreatorProps> = ({ initialCv }) => {
     setCvPosition({ x: 0, y: 0 });
   };
 
-  const checkSectionBreaks = () => {
-  const cvContent = document.querySelector('.cv-content');
-  if (!cvContent) return;
-
-  const pageHeight = 1123;
-  const sections = cvContent.querySelectorAll('[data-section]') as NodeListOf<HTMLElement>;
-
-  sections.forEach((section) => {
-    // Reset previous styles
-    section.style.marginTop = '';
-    section.style.pageBreakBefore = '';
-
-    const sectionHeight = section.scrollHeight;
-    const rect = section.getBoundingClientRect();
-    const cvRect = cvContent.getBoundingClientRect();
-
-    const sectionTop = rect.top - cvRect.top + cvContent.scrollTop;
-    const sectionBottom = sectionTop + sectionHeight;
-
-    const startPage = Math.floor(sectionTop / pageHeight) + 1;
-    const endPage = Math.floor(sectionBottom / pageHeight) + 1;
-
-    // If section spans multiple pages
-    if (startPage !== endPage) {
-      const spaceFromTop = sectionTop - (startPage - 1) * pageHeight;
-      const remainingSpaceOnPage = pageHeight - spaceFromTop;
-
-      // More conservative approach - ensure enough space for text
-      const minRequiredSpace = Math.min(sectionHeight * 0.4, 200); // At least 40% or 200px
-      
-      if (remainingSpaceOnPage < minRequiredSpace) {
-        const pushToNextPage = pageHeight - spaceFromTop;
-        section.style.marginTop = `${pushToNextPage}px`;
-        section.style.pageBreakBefore = 'always';
-      }
-    }
-
-    // Additional safety for text elements
-    const textElements = section.querySelectorAll('p, div:not(.flex)') as NodeListOf<HTMLElement>;
-    textElements.forEach(element => {
-      // Ensure text elements have safe breaking properties
-      element.style.wordBreak = 'normal';
-      element.style.overflowWrap = 'break-word';
-      element.style.hyphens = 'none';
-    });
-  });
-};
-
-const renderSafeText = (text: string, className: string = '') => {
-  return (
-    <div 
-      className={`${className} text-break-safe`}
-      style={{ 
-        wordBreak: 'normal', 
-        overflowWrap: 'break-word', 
-        hyphens: 'none',
-        lineHeight: '1.4'
-      }}
-    >
-      {text}
-    </div>
-  );
-};
-
-  const forcePageBreakForLongSections = () => {
-    const cvContent = document.querySelector('.cv-content');
+  const checkSectionBreaks = useCallback(() => {
+    const cvContent = cvRef.current;
     if (!cvContent) return;
 
-    const pageHeight = 1123;
+    const pageHeight = getPageHeight();
+    const sections = cvContent.querySelectorAll('[data-section]') as NodeListOf<HTMLElement>;
+
+    sections.forEach((section) => {
+      section.style.marginTop = '';
+
+      const sectionTop = section.offsetTop;
+      const sectionBottom = sectionTop + section.offsetHeight;
+
+      const startPage = Math.floor(sectionTop / pageHeight) + 1;
+      const endPage = Math.floor(sectionBottom / pageHeight) + 1;
+
+      if (startPage !== endPage) {
+        const spaceFromTop = sectionTop - (startPage - 1) * pageHeight;
+        const remaining = pageHeight - spaceFromTop;
+        const minRequired = Math.min(section.offsetHeight * 0.4, 200);
+        if (remaining < minRequired) {
+          const push = pageHeight - spaceFromTop;
+          section.style.marginTop = `${push}px`;
+        }
+      }
+    });
+  }, []);
+  const forcePageBreakForLongSections = useCallback(() => {
+    const cvContent = cvRef.current;
+    if (!cvContent) return;
+
+    const pageHeight = getPageHeight();
     const sections = cvContent.querySelectorAll('[data-section]') as NodeListOf<HTMLElement>;
 
     sections.forEach((section) => {
       const sectionHeight = section.scrollHeight;
 
-      // Jeśli sekcja jest bardzo długa, podziel ją lub przenieś całkowicie
       if (sectionHeight > pageHeight * 0.6) {
-        const rect = section.getBoundingClientRect();
-        const cvRect = cvContent.getBoundingClientRect();
-        const sectionTop = rect.top - cvRect.top + cvContent.scrollTop;
+        const sectionTop = section.offsetTop;
         const spaceFromTop = sectionTop % pageHeight;
 
-        // Jeśli długa sekcja zaczyna się w drugiej połowie strony, przenieś ją
         if (spaceFromTop > pageHeight * 0.4) {
-          const pushToNextPage = pageHeight - spaceFromTop;
-          section.style.marginTop = `${pushToNextPage}px`;
+          const push = pageHeight - spaceFromTop;
+          section.style.marginTop = `${push}px`;
         }
       }
     });
-  };
+  }, []);
 
-  const checkContentOverflow = () => {
-    const cvElement = document.querySelector<HTMLElement>('.cv-content');
+  const checkContentOverflow = useCallback(() => {
+    const cvElement = cvRef.current;
     if (!cvElement) return;
     const contentHeight = cvElement.scrollHeight;
-    const pageHeight = 1123; // A4 height in pixels at 96 DPI (approx. 1123px)
+    const pageHeight = getPageHeight();
     const newTotalPages = Math.ceil(contentHeight / pageHeight);
     setTotalPages(newTotalPages);
-  };
+  }, []);
 
   const goToNextPage = () => {
     if (currentPage < totalPages) {
@@ -647,7 +529,7 @@ const renderSafeText = (text: string, className: string = '') => {
     }
   };
 
-  const populateFromCv = (cv: CvDto, position?: string) => {
+  const populateFromCv = useCallback((cv: CvDto, position?: string) => {
     if (cv.basics) {
       setPersonalInfo({
         firstName: cv.basics.firstName,
@@ -702,7 +584,7 @@ const renderSafeText = (text: string, className: string = '') => {
         level: l.fluency,
       })) || []
     );
-  };
+  }, [personalInfo.profession]);
 
   const buildCvDto = (): CvDto => {
     return {
@@ -828,7 +710,7 @@ const renderSafeText = (text: string, className: string = '') => {
       populateFromCv(initialCv.cvData, initialCv.targetPosition || undefined);
       setCvId(initialCv.id);
     }
-  }, [initialCv]);
+  }, [initialCv, populateFromCv]);
 
   const downloadPDF = async () => {
     const frame = document.querySelector<HTMLElement>('.cv-frame');
@@ -1469,11 +1351,11 @@ const renderSafeText = (text: string, className: string = '') => {
           personalInfo.address ||
           personalInfo.profession ||
           personalInfo.summary ? (
-          <div className="mb-5" key="profile">
+          <div className="mb-5" key="profile" data-section="profile">
             <h3 className="mb-2 border-b border-gray-300 pb-1 text-lg font-semibold text-gray-800">
               Personal Profile
             </h3>
-            <p className="text-sm leading-relaxed break-words text-gray-700">
+            <p className="text-sm leading-relaxed text-gray-700 text-break-safe">
               {personalInfo.summary}
             </p>
           </div>
@@ -1627,7 +1509,7 @@ const renderSafeText = (text: string, className: string = '') => {
             <h3 className="mb-2 border-b border-gray-300 pb-1 text-lg font-semibold text-gray-800">
               Privacy Statement
             </h3>
-            <p className="text-xs leading-relaxed break-words text-gray-700">
+            <p className="text-xs leading-relaxed text-gray-700 text-break-safe">
               {privacyStatement.content}
             </p>
           </div>
@@ -1941,7 +1823,7 @@ const renderSafeText = (text: string, className: string = '') => {
                 className="cv-frame overflow-hidden border border-green-500 rounded-sm"
                 style={{
                   width: '210mm',
-                  height: '257mm',
+                  height: '297mm',
                   padding: '32px', // ← tutaj widoczny margines
                   boxSizing: 'border-box',
                   backgroundColor: '#fff',
@@ -1951,6 +1833,7 @@ const renderSafeText = (text: string, className: string = '') => {
                 }}
               >
                 <div
+                  ref={cvRef}
                   className="cv-content border border-purple-500 "
                   style={{
                     width: '100%', // 210mm
