@@ -249,22 +249,38 @@ const CVCreator: React.FC<CVCreatorProps> = ({ initialCv }) => {
   ]);
 
   useEffect(() => {
-    const style = document.createElement('style');
-    style.textContent = `
+  const style = document.createElement('style');
+  style.textContent = `
+    .cv-content {
+      /* Prevent word breaking and hyphenation */
+      hyphens: none;
+      -webkit-hyphens: none;
+      -moz-hyphens: none;
+      word-break: keep-all;
+      overflow-wrap: break-word;
+      text-rendering: optimizeLegibility;
+    }
+
     .cv-content [data-section] {
       break-inside: avoid;
       page-break-inside: avoid;
       -webkit-column-break-inside: avoid;
       
       display: block;
-      
       min-height: 60px;
-    }
-    
-    .cv-content [data-section="experience"],
-    .cv-content [data-section="education"] {
+      
+      /* Prevent orphans and widows */
       orphans: 3;
       widows: 3;
+    }
+    
+    .cv-content [data-section="experience"] .exp-item,
+    .cv-content [data-section="education"] .edu-item {
+      break-inside: avoid !important;
+      page-break-inside: avoid !important;
+      orphans: 2;
+      widows: 2;
+      margin-bottom: 1em;
     }
     
     .cv-content [data-section="skills"],
@@ -274,24 +290,51 @@ const CVCreator: React.FC<CVCreatorProps> = ({ initialCv }) => {
       page-break-inside: avoid !important;
     }
     
-    .cv-content [data-section] > div:last-child {
-      margin-bottom: 0;
-    }
-    
     .cv-content [data-section] h3 {
       break-after: avoid;
       page-break-after: avoid;
+      keep-with-next: always;
       margin-bottom: 8px;
     }
-  `;
-    document.head.appendChild(style);
 
-    return () => {
-      if (document.head.contains(style)) {
-        document.head.removeChild(style);
-      }
-    };
-  }, []);
+    /* Specific text wrapping rules */
+    .cv-content p,
+    .cv-content div:not(.cv-frame):not(.cv-content) {
+      orphans: 2;
+      widows: 2;
+      line-height: 1.4;
+      word-break: normal;
+      overflow-wrap: break-word;
+    }
+
+    /* Skill tags and similar elements */
+    .cv-content .skill-tag,
+    .cv-content .language-tag,
+    .cv-content .hobby-tag {
+      break-inside: avoid !important;
+      page-break-inside: avoid !important;
+      white-space: nowrap;
+    }
+
+    /* Long text descriptions */
+    .cv-content .exp-desc,
+    .cv-content .text-break-safe {
+      word-break: normal;
+      overflow-wrap: break-word;
+      hyphens: none;
+      line-height: 1.5;
+      orphans: 2;
+      widows: 2;
+    }
+  `;
+  document.head.appendChild(style);
+
+  return () => {
+    if (document.head.contains(style)) {
+      document.head.removeChild(style);
+    }
+  };
+}, []);
 
   const addLanguage = () => {
     const newLanguage: Language = {
@@ -488,67 +531,68 @@ const CVCreator: React.FC<CVCreatorProps> = ({ initialCv }) => {
   };
 
   const checkSectionBreaks = () => {
-    const cvContent = document.querySelector('.cv-content');
-    if (!cvContent) return;
+  const cvContent = document.querySelector('.cv-content');
+  if (!cvContent) return;
 
-    const pageHeight = 1123; // wysokość strony A4 w pikselach
-    const sections = cvContent.querySelectorAll('[data-section]') as NodeListOf<HTMLElement>;
+  const pageHeight = 1123;
+  const sections = cvContent.querySelectorAll('[data-section]') as NodeListOf<HTMLElement>;
 
-    sections.forEach((section) => {
-      // Resetuj wcześniejsze style
-      section.style.marginTop = '';
-      section.style.pageBreakBefore = '';
+  sections.forEach((section) => {
+    // Reset previous styles
+    section.style.marginTop = '';
+    section.style.pageBreakBefore = '';
 
-      // Pobierz rzeczywistą wysokość sekcji
-      const sectionHeight = section.scrollHeight;
-      const rect = section.getBoundingClientRect();
-      const cvRect = cvContent.getBoundingClientRect();
+    const sectionHeight = section.scrollHeight;
+    const rect = section.getBoundingClientRect();
+    const cvRect = cvContent.getBoundingClientRect();
 
-      // Oblicz pozycję sekcji względem początku CV
-      const sectionTop = rect.top - cvRect.top + cvContent.scrollTop;
-      const sectionBottom = sectionTop + sectionHeight;
+    const sectionTop = rect.top - cvRect.top + cvContent.scrollTop;
+    const sectionBottom = sectionTop + sectionHeight;
 
-      // Określ na której stronie zaczyna się sekcja
-      const startPage = Math.floor(sectionTop / pageHeight) + 1;
-      const endPage = Math.floor(sectionBottom / pageHeight) + 1;
+    const startPage = Math.floor(sectionTop / pageHeight) + 1;
+    const endPage = Math.floor(sectionBottom / pageHeight) + 1;
 
-      // Jeśli sekcja przekracza na następną stronę
-      if (startPage !== endPage) {
-        const spaceFromTop = sectionTop - (startPage - 1) * pageHeight;
-        const remainingSpaceOnPage = pageHeight - spaceFromTop;
+    // If section spans multiple pages
+    if (startPage !== endPage) {
+      const spaceFromTop = sectionTop - (startPage - 1) * pageHeight;
+      const remainingSpaceOnPage = pageHeight - spaceFromTop;
 
-        // KLUCZ: Zmniejszamy próg z 80% na 50% lub sprawdzamy czy sekcja się nie mieści
-        const shouldMoveToNextPage =
-          spaceFromTop > pageHeight * 0.5 || // Jeśli zaczyna się w drugiej połowie strony
-          remainingSpaceOnPage < sectionHeight * 0.3; // Albo jeśli mniej niż 30% sekcji mieści się na stronie
-
-        if (shouldMoveToNextPage) {
-          const pushToNextPage = pageHeight - spaceFromTop;
-          section.style.marginTop = `${pushToNextPage}px`;
-
-          // Dodatkowe CSS dla lepszego łamania stron
-          section.style.pageBreakBefore = 'always';
-        }
+      // More conservative approach - ensure enough space for text
+      const minRequiredSpace = Math.min(sectionHeight * 0.4, 200); // At least 40% or 200px
+      
+      if (remainingSpaceOnPage < minRequiredSpace) {
+        const pushToNextPage = pageHeight - spaceFromTop;
+        section.style.marginTop = `${pushToNextPage}px`;
+        section.style.pageBreakBefore = 'always';
       }
+    }
 
-      // Dodatkowe zabezpieczenie: jeśli sekcja jest bardzo długa i nie mieści się na jednej stronie
-      if (sectionHeight > pageHeight * 0.8) {
-        section.style.pageBreakInside = 'avoid';
-      }
+    // Additional safety for text elements
+    const textElements = section.querySelectorAll('p, div:not(.flex)') as NodeListOf<HTMLElement>;
+    textElements.forEach(element => {
+      // Ensure text elements have safe breaking properties
+      element.style.wordBreak = 'normal';
+      element.style.overflowWrap = 'break-word';
+      element.style.hyphens = 'none';
     });
+  });
+};
 
-    // Wywołaj ponownie po krótkim opóźnieniu dla stabilności
-    setTimeout(() => {
-      // Sprawdź czy wszystkie sekcje są prawidłowo pozycjonowane
-      sections.forEach((section) => {
-        // Jeśli sekcja nadal źle się łamie, spróbuj alternatywnego podejścia
-        if (section.scrollHeight > pageHeight * 0.8) {
-          section.style.breakInside = 'avoid';
-          section.style.pageBreakInside = 'avoid';
-        }
-      });
-    }, 50);
-  };
+const renderSafeText = (text: string, className: string = '') => {
+  return (
+    <div 
+      className={`${className} text-break-safe`}
+      style={{ 
+        wordBreak: 'normal', 
+        overflowWrap: 'break-word', 
+        hyphens: 'none',
+        lineHeight: '1.4'
+      }}
+    >
+      {text}
+    </div>
+  );
+};
 
   const forcePageBreakForLongSections = () => {
     const cvContent = document.querySelector('.cv-content');
