@@ -491,7 +491,7 @@ const CVCreator: React.FC<CVCreatorProps> = ({ initialCv }) => {
     const cvContent = document.querySelector('.cv-content');
     if (!cvContent) return;
 
-    const pageHeight = 1123; // wysokość strony A4 w pikselach
+    const pageHeight = cvContent.getBoundingClientRect().height;
     const sections = cvContent.querySelectorAll('[data-section]') as NodeListOf<HTMLElement>;
 
     sections.forEach((section) => {
@@ -554,7 +554,7 @@ const CVCreator: React.FC<CVCreatorProps> = ({ initialCv }) => {
     const cvContent = document.querySelector('.cv-content');
     if (!cvContent) return;
 
-    const pageHeight = 1123;
+    const pageHeight = cvContent.getBoundingClientRect().height;
     const sections = cvContent.querySelectorAll('[data-section]') as NodeListOf<HTMLElement>;
 
     sections.forEach((section) => {
@@ -580,7 +580,7 @@ const CVCreator: React.FC<CVCreatorProps> = ({ initialCv }) => {
     const cvElement = document.querySelector<HTMLElement>('.cv-content');
     if (!cvElement) return;
     const contentHeight = cvElement.scrollHeight;
-    const pageHeight = 1123; // A4 height in pixels at 96 DPI (approx. 1123px)
+    const pageHeight = cvElement.offsetHeight;
     const newTotalPages = Math.ceil(contentHeight / pageHeight);
     setTotalPages(newTotalPages);
   };
