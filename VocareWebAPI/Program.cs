@@ -9,36 +9,14 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.RateLimiting;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi.Models;
-using Polly;
-using Polly.Extensions.Http;
 using Stripe;
-using VocareWebAPI.Billing.Repositories.Implementations;
-using VocareWebAPI.Billing.Repositories.Interfaces;
-using VocareWebAPI.Billing.Services.Interfaces;
-using VocareWebAPI.CareerAdvisor.Services.Implementations;
-using VocareWebAPI.CvGenerator.Repositories.Implementations;
-using VocareWebAPI.CvGenerator.Repositories.Interfaces;
-using VocareWebAPI.CvGenerator.Services.Implementation;
-using VocareWebAPI.CvGenerator.Services.Implementations;
-using VocareWebAPI.CvGenerator.Services.Interfaces;
 using VocareWebAPI.Data;
-using VocareWebAPI.Extensions.ApplicationBuilderExtensions; // NOWY IMPORT
-using VocareWebAPI.Extensions.ServiceCollectionExtensions; // NOWY IMPORT
-using VocareWebAPI.Models.Config;
+using VocareWebAPI.Extensions.ApplicationBuilderExtensions;
+using VocareWebAPI.Extensions.ServiceCollectionExtensions;
 using VocareWebAPI.Models.Entities;
-using VocareWebAPI.Repositories;
-using VocareWebAPI.Repositories.Implementations;
-using VocareWebAPI.Repositories.Interfaces;
 using VocareWebAPI.Services;
 using VocareWebAPI.Services.Implementations;
-using VocareWebAPI.UserManagement;
-using VocareWebAPI.UserManagement.Interfaces;
 using VocareWebAPI.UserManagement.Models.Entities;
-using VocareWebAPI.UserManagement.Services;
-using VocareWebAPI.UserManagement.Services.Implementations;
-using VocareWebAPI.UserManagement.Services.Interfaces;
-using LocalBillingService = VocareWebAPI.Billing.Services.Implementations.BillingService;
-using LocalStripeService = VocareWebAPI.Billing.Services.Implementations.StripeService;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -77,6 +55,7 @@ builder.Services.AddRateLimiter(options =>
             limiterOptions.QueueLimit = 3;
         }
     );
+
     options.AddFixedWindowLimiter(
         "WebhookPolicy",
         limiterOptions =>
@@ -119,15 +98,14 @@ builder.Services.AddRateLimiter(options =>
     };
 });
 
-// ===== KONFIGURACJA (Options Pattern) =====
-builder.Services.Configure<AiConfig>(builder.Configuration.GetSection("PerplexityAI"));
-builder.Services.Configure<UserRegistrationConfig>(
-    builder.Configuration.GetSection("UserRegistration")
-);
-builder.Services.Configure<AiConfig>(builder.Configuration.GetSection("OpenAI"));
-
-// ===== BAZA DANYCH - REFACTORED =====
-builder.Services.AddDatabase(builder.Configuration);
+// ===== KONFIGURACJA, BAZA, HTTP, DI - REFACTORED =====
+builder
+    .Services.AddConfiguration(builder.Configuration) // Options Pattern
+    .AddDatabase(builder.Configuration) // Baza danych
+    .AddHttpClients(builder.Configuration) // HTTP Clients
+    .AddApplicationServices() // Serwisy
+    .AddRepositories() // Repozytoria
+    .AddAutoMapper(typeof(UserProfileService).Assembly); // AutoMapper
 
 // ===== IDENTITY & AUTORYZACJA =====
 builder
@@ -217,72 +195,6 @@ builder.Services.Configure<DataProtectionTokenProviderOptions>(options =>
 {
     options.TokenLifespan = TimeSpan.FromHours(24); // Token ważny przez 24h
 });
-
-// ===== HTTP CLIENTS =====
-var retryPolicy = HttpPolicyExtensions
-    .HandleTransientHttpError()
-    .OrResult(msg => msg.StatusCode == System.Net.HttpStatusCode.TooManyRequests)
-    .WaitAndRetryAsync(3, retryAttempt => TimeSpan.FromSeconds(Math.Pow(2, retryAttempt)));
-
-builder
-    .Services.AddHttpClient<IAiService, PerplexityAiService>(client =>
-    {
-        var config = builder.Configuration.GetSection("PerplexityAI").Get<AiConfig>()!;
-        client.BaseAddress = new Uri(config.BaseUrl);
-        client.DefaultRequestHeaders.Add("Authorization", $"Bearer {config.ApiKey}");
-        client.DefaultRequestHeaders.Add("Accept", "application/json");
-    })
-    .AddPolicyHandler(retryPolicy);
-
-builder
-    .Services.AddHttpClient<IMarketAnalysisService, MarketAnalysisService>(client =>
-    {
-        var config = builder.Configuration.GetSection("PerplexityAI").Get<AiConfig>()!;
-        client.BaseAddress = new Uri(config.BaseUrl);
-        client.DefaultRequestHeaders.Add("Authorization", $"Bearer {config.ApiKey}");
-        client.DefaultRequestHeaders.Add("Accept", "application/json");
-    })
-    .AddPolicyHandler(retryPolicy);
-
-builder
-    .Services.AddHttpClient<IAiService, OpenAIService>(client =>
-    {
-        var config = builder.Configuration.GetSection("OpenAI").Get<AiConfig>()!;
-        client.BaseAddress = new Uri(config.BaseUrl);
-        client.DefaultRequestHeaders.Add("Authorization", $"Bearer {config.ApiKey}");
-        client.DefaultRequestHeaders.Add("Accept", "application/json");
-    })
-    .AddPolicyHandler(retryPolicy);
-
-// ===== SERWISY APLIKACJI =====
-builder.Services.AddScoped<UserProfileService>();
-builder.Services.AddScoped<UserRegistrationHandler>();
-builder.Services.AddScoped<IAiService, OpenAIService>();
-builder.Services.AddScoped<ICvManagementService, CvManagementService>();
-builder.Services.AddScoped<IEmailService, EmailService>();
-builder.Services.AddScoped<IAuthenticationServiceOwn, AuthenticationService>();
-
-/* builder.Services.AddScoped<IAiService, PerplexityAiService>();
- */
-builder.Services.AddScoped<IMarketAnalysisService, OpenAiMarketAnalysisService>();
-builder.Services.AddScoped<IBillingService, LocalBillingService>();
-builder.Services.AddScoped<IStripeService, LocalStripeService>();
-builder.Services.AddScoped<ICvGenerationService, CvGenerationService>();
-builder.Services.AddScoped<IUserSetupService, UserSetupService>();
-
-// ===== REPOZYTORIA =====
-builder.Services.AddScoped<IUserBillingRepository, UserBillingRepository>();
-builder.Services.AddScoped<ITokenTransactionRepository, TokenTransactionRepository>();
-builder.Services.AddScoped<IServiceCostRepository, ServiceCostRepository>();
-builder.Services.AddScoped<IUserProfileRepository, UserProfileRepository>();
-builder.Services.AddScoped<IAiRecommendationRepository, AiRecommendationRepository>();
-builder.Services.AddScoped<ICareerStatisticsRepository, CareerStatisticsRepository>();
-builder.Services.AddScoped<ISkillDemandRepository, SkillDemandRepository>();
-builder.Services.AddScoped<IMarketTrendsRepository, MarketTrendsRepository>();
-builder.Services.AddScoped<IGeneratedCvRepository, GeneratedCvrepository>();
-
-// ===== AUTOMAPPER =====
-builder.Services.AddAutoMapper(typeof(UserProfileService).Assembly);
 
 // ===== SWAGGER =====
 builder.Services.AddSwaggerGen(c =>
@@ -451,7 +363,7 @@ app.Use(
                     path = context.Request.Path.ToString(),
                 };
 
-                await context.Response.WriteAsync(System.Text.Json.JsonSerializer.Serialize(error));
+                await context.Response.WriteAsync(JsonSerializer.Serialize(error));
             }
         }
     }
@@ -568,6 +480,7 @@ app.Use(
         await next();
     }
 );
+
 app.UseAuthorization();
 
 // ===== ENDPOINTS =====
@@ -605,7 +518,7 @@ if (!app.Environment.IsProduction())
 }
 
 // ===== MIGRACJA BAZY DANYCH - REFACTORED =====
-await app.MigrateDatabaseAsync(); // TYLKO JEDNA LINIJKA!
+await app.MigrateDatabaseAsync();
 
 app.Run();
 
