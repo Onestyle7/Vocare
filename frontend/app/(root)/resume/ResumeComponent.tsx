@@ -491,7 +491,7 @@ const CVCreator: React.FC<CVCreatorProps> = ({ initialCv }) => {
     const cvContent = document.querySelector('.cv-content');
     if (!cvContent) return;
 
-    const pageHeight = cvContent.getBoundingClientRect().height;
+    const pageHeight = cvContent.offsetHeight;
     const sections = cvContent.querySelectorAll('[data-section]') as NodeListOf<HTMLElement>;
 
     sections.forEach((section) => {
@@ -554,7 +554,7 @@ const CVCreator: React.FC<CVCreatorProps> = ({ initialCv }) => {
     const cvContent = document.querySelector('.cv-content');
     if (!cvContent) return;
 
-    const pageHeight = cvContent.getBoundingClientRect().height;
+    const pageHeight = cvContent.offsetHeight;
     const sections = cvContent.querySelectorAll('[data-section]') as NodeListOf<HTMLElement>;
 
     sections.forEach((section) => {
