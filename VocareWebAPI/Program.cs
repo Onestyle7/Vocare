@@ -197,49 +197,7 @@ builder.Services.Configure<DataProtectionTokenProviderOptions>(options =>
 });
 
 // ===== SWAGGER =====
-builder.Services.AddSwaggerGen(c =>
-{
-    c.SwaggerDoc(
-        "v1",
-        new OpenApiInfo
-        {
-            Title = "VocareWebAPI",
-            Version = "v1",
-            Description = "Web Api for vocare application",
-        }
-    );
-
-    c.CustomSchemaIds(type => type.FullName);
-
-    c.AddSecurityDefinition(
-        "Bearer",
-        new OpenApiSecurityScheme
-        {
-            In = ParameterLocation.Header,
-            Description = "Wpisz token JWT",
-            Name = "Authorization",
-            Type = SecuritySchemeType.Http,
-            Scheme = "Bearer",
-        }
-    );
-
-    c.AddSecurityRequirement(
-        new OpenApiSecurityRequirement
-        {
-            {
-                new OpenApiSecurityScheme
-                {
-                    Reference = new OpenApiReference
-                    {
-                        Type = ReferenceType.SecurityScheme,
-                        Id = "Bearer",
-                    },
-                },
-                Array.Empty<string>()
-            },
-        }
-    );
-});
+builder.Services.AddSwaggerConfiguration();
 
 // ===== CORS =====
 builder.Services.AddCorsConfiguration(builder.Environment);
@@ -250,29 +208,11 @@ StripeConfiguration.ApiKey = builder.Configuration["Stripe:SecretKey"];
 var app = builder.Build();
 
 // ===== SWAGGER UI =====
-if (app.Environment.IsDevelopment())
-{
-    app.UseSwagger();
-    app.UseSwaggerUI(c =>
-    {
-        c.SwaggerEndpoint("/swagger/v1/swagger.json", "VocareWebAPI Development v1");
-        c.RoutePrefix = "swagger"; // Swagger dostępny na /swagger
-        c.DocumentTitle = "Vocare API - Development";
-    });
-}
+app.UseSwaggerConfiguration(app.Environment);
 
+// ===== STAGING SPECIFIC HEADERS =====
 if (app.Environment.IsStaging())
 {
-    app.UseSwagger();
-    app.UseSwaggerUI(c =>
-    {
-        c.SwaggerEndpoint("/swagger/v1/swagger.json", "VocareWebAPI Staging v1");
-        c.RoutePrefix = "swagger"; // Swagger dostępny na /swagger
-        c.DocumentTitle = "Vocare API - STAGING ENVIRONMENT";
-
-        c.HeadContent += "<style>.topbar { background-color: #ff9800 !important; }</style>";
-    });
-
     app.Use(
         async (context, next) =>
         {
