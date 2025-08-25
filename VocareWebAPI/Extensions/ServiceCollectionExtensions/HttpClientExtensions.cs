@@ -49,6 +49,7 @@ namespace VocareWebAPI.Extensions.ServiceCollectionExtensions
                 .AddHttpClient<IAiService, OpenAIService>(client =>
                 {
                     ConfigureAiClient(client, configuration, "OpenAI");
+                    client.Timeout = TimeSpan.FromMinutes(3);
                 })
                 .AddPolicyHandler(retryPolicy);
 
