@@ -30,6 +30,48 @@
   scrollbar-width: none; /* Firefox */
 }
 
+@layer utilities {
+  .clip-corner-bevel {
+    --cut: 76px;
+    position: relative;
+  }
+  
+  .clip-corner-bevel::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: #27282c;
+    z-index: -1;
+  }
+  
+  .clip-corner-bevel::after {
+    content: '';
+    position: absolute;
+    top: 0.5px;
+    left: 0.5px;
+    right: 1px;
+    bottom: 0.5px;
+    background: #0f1015;
+    z-index: -1;
+  }
+  
+  /* Tylko na ekranach mniejszych niż md (768px) */
+  @media (max-width: 767px) {
+    .clip-corner-bevel {
+      clip-path: polygon(0 0, calc(100% - var(--cut)) 0, 100% var(--cut), 100% 100%, 0 100%);
+    }
+    
+    .clip-corner-bevel::before,
+    .clip-corner-bevel::after {
+      clip-path: polygon(0 0, calc(100% - var(--cut)) 0, 100% var(--cut), 100% 100%, 0 100%);
+    }
+  }
+}
+
+
 /* SizmoLinePro warianty */
 @font-face {
   font-family: 'SizmoLinePro';

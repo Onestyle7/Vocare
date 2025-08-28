@@ -48,7 +48,7 @@ export default function CollapsibleButton({ isCollapsed, toggleCollapse }: Colla
   return (
     <Button
       variant="outline"
-      className="flex h-9 w-9 items-center justify-center overflow-hidden rounded-full border border-[#915EFF]/50 p-0"
+      className="flex h-9 w-9 items-center justify-center overflow-hidden rounded-md border border-[#915EFF]/50 p-0"
       onClick={toggleCollapse}
     >
       <div className="relative h-6 w-6">
