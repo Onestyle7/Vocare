@@ -4,6 +4,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using VocareWebAPI.Billing.Models.Entities;
 using VocareWebAPI.CvGenerator.Models; // Poprawiony namespace
+using VocareWebAPI.JobRecommendationService.Models.Entities;
 using VocareWebAPI.Models;
 using VocareWebAPI.Models.Entities;
 using VocareWebAPI.Models.Entities.MarketAnalysis;
@@ -68,6 +69,11 @@ namespace VocareWebAPI.Data
         /// </summary>
         public DbSet<GeneratedCv> GeneratedCvs { get; set; }
         public DbSet<FinancialSurvey> FinancialSurveys { get; set; }
+
+        /// <summary>
+        /// Zbiór ofert pracy w bazie danych.
+        /// </summary>
+        public DbSet<JobOffer> JobOffers { get; set; } = null!;
 
         /// <summary>
         /// Konfiguruje model bazy danych, definiując schemat i relacje między encjami.
