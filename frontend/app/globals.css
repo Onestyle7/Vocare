@@ -227,6 +227,124 @@
   @apply font-[var(--font-family-sizmo)] font-bold italic; /* 800, italic */
 }
 
+@font-face {
+  font-family: 'Korbin';
+  src: url('/fonts/korbin/fonnts.com-Korbin_Light.otf') format('opentype');
+  font-weight: 300;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'Korbin';
+  src: url('/fonts/korbin/fonnts.com-Korbin_Light_Italic.otf') format('opentype');
+  font-weight: 300;
+  font-style: italic;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'Korbin';
+  src: url('/fonts/korbin/fonnts.com-Korbin_Book.otf') format('opentype');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'Korbin';
+  src: url('/fonts/korbin/fonnts.com-Korbin_Book_Italic.otf') format('opentype');
+  font-weight: 400;
+  font-style: italic;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'Korbin';
+  src: url('/fonts/korbin/fonnts.com-Korbin_Medium.otf') format('opentype');
+  font-weight: 500;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'Korbin';
+  src: url('/fonts/korbin/fonnts.com-Korbin_Medium_Italic.otf') format('opentype');
+  font-weight: 500;
+  font-style: italic;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'Korbin';
+  src: url('/fonts/korbin/fonnts.com-Korbin_Bold.otf') format('opentype');
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'Korbin';
+  src: url('/fonts/korbin/fonnts.com-Korbin_Bold_Italic.otf') format('opentype');
+  font-weight: 700;
+  font-style: italic;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'Korbin';
+  src: url('/fonts/korbin/fonnts.com-Korbin_Black.otf') format('opentype');
+  font-weight: 900;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'Korbin';
+  src: url('/fonts/korbin/fonnts.com-Korbin_Black_Italic.otf') format('opentype');
+  font-weight: 900;
+  font-style: italic;
+  font-display: swap;
+}
+
+/* Token Tailwind v4 (pozwala na klasę `font-korbin`) */
+@theme {
+  --font-korbin:
+    'Korbin', ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial,
+    'Noto Sans';
+}
+
+/* Klasy użytkowe Korbin (spójne z Twoim stylem dla Sizmo*) */
+.font-korbin {
+  @apply font-[var(--font-korbin)];
+}
+
+.font-korbin-light {
+  @apply font-[var(--font-korbin)] font-light;
+} /* 300 */
+.font-korbin-light-italic {
+  @apply font-[var(--font-korbin)] font-light italic;
+}
+
+.font-korbin-regular {
+  @apply font-[var(--font-korbin)] font-normal;
+} /* 400 (Book) */
+.font-korbin-regular-italic {
+  @apply font-[var(--font-korbin)] font-normal italic;
+}
+
+.font-korbin-medium {
+  @apply font-[var(--font-korbin)] font-medium;
+} /* 500 */
+.font-korbin-medium-italic {
+  @apply font-[var(--font-korbin)] font-medium italic;
+}
+
+.font-korbin-bold {
+  @apply font-[var(--font-korbin)] font-bold;
+} /* 700 */
+.font-korbin-bold-italic {
+  @apply font-[var(--font-korbin)] font-bold italic;
+}
+
+.font-korbin-black {
+  @apply font-[var(--font-korbin)] font-black;
+} /* 900 */
+.font-korbin-black-italic {
+  @apply font-[var(--font-korbin)] font-black italic;
+}
+
 .font-poppins {
   font-family: 'Poppins', sans-serif;
 }
@@ -586,4 +704,16 @@ input:-webkit-autofill {
 .dark input:-webkit-autofill {
   box-shadow: 0 0 0px 1000px rgba(16, 16, 20, 0.102) inset !important;
   -webkit-text-fill-color: #f9f5ee !important;
+}
+
+.mask-bubble {
+  mask-image: url('/masks/bubble.svg');
+  mask-size: contain;
+  mask-repeat: no-repeat;
+  mask-position: center;
+
+  -webkit-mask-image: url('/masks/bubble.svg');
+  -webkit-mask-size: contain;
+  -webkit-mask-repeat: no-repeat;
+  -webkit-mask-position: center;
 }

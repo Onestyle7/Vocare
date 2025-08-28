@@ -130,7 +130,7 @@ const MobileFeature = () => {
     <Section
       crosses
       customPaddings
-      className="relative overflow-hidden px-10 max-md:mt-14 max-md:-mb-60"
+      className="font-korbin relative overflow-hidden px-10 max-md:mt-14 max-md:-mb-60"
       crossesOffset="lg:translate-y-[1rem]"
       id="brain"
     >
@@ -181,7 +181,7 @@ const MobileFeature = () => {
               <div className="flex h-full flex-col items-center justify-center text-xl font-light sm:text-3xl lg:w-1/2">
                 <div className="overflow-hidden p-2">
                   <Copy>
-                    <h3 className="font-poppins text-md mx-0 leading-[1.2] max-sm:text-center sm:text-3xl">
+                    <h3 className="font-korbin text-md mx-0 leading-[1.2] max-sm:text-center sm:text-3xl">
                       Unlock your future with our mobile app, designed to guide you through every
                       step of your career journey.
                     </h3>

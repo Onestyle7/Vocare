@@ -301,7 +301,7 @@ export const mobileView = '/images/mobileView.jpeg';
 // footer
 
 export const links_social = [
-  { name: 'X(TWITTER)', url: '/' },
+  { name: 'X', url: '/' },
   { name: 'INSTAGRAM', url: '/' },
   { name: 'BLUESKY', url: '/' },
   { name: 'LINKEDIN', url: '/' },
@@ -318,7 +318,7 @@ export const contact_pages = [{ name: 'REACH US', url: '/' }];
 
 export const down_links = [
   { name: '2025©', url: '/' },
-  { name: 'PERMISSIONS & TERMS', url: '/' },
+  { name: 'PERMISSIONS AND TERMS', url: '/' },
   { name: 'PRIVACY POLICY', url: '/' },
 ];
 

@@ -8,7 +8,7 @@ import { Input } from '@/components/ui/input';
 const Footer = () => {
   return (
     <Section
-      className="relative -mt-[2.25rem] pt-[7.5rem] xl:px-10"
+      className="font-korbin relative -mt-[2.25rem] pt-[7.5rem] xl:px-10"
       crossesOffset="lg:translate-y-[7.5rem]"
       crosses
       customPaddings

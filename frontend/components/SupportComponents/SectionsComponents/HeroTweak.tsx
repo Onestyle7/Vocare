@@ -75,7 +75,7 @@ const HeroTweak = () => {
             >
               <CustomButton
                 variant="primary"
-                className="group mt-4 flex cursor-none items-center justify-center overflow-hidden max-md:mt-10"
+                className="group font-korbin mt-4 flex cursor-none items-center justify-center overflow-hidden max-md:mt-10"
               >
                 <span className="flex flex-row">
                   Try it out
