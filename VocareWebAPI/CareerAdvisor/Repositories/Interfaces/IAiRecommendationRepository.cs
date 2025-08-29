@@ -24,5 +24,6 @@ namespace VocareWebAPI.Repositories
         /// <param name="userId">Id użytkownika</param>
         /// <returns>Najnowsza rekomendacja AI</returns>
         Task<AiRecommendation?> GetLatestByUserIdAsync(string userId);
+        Task<AiRecommendation?> GetByIdAsync(Guid id);
     }
 }

@@ -57,5 +57,13 @@ namespace VocareWebAPI.Repositories
                 .OrderByDescending(r => r.RecommendationDate)
                 .FirstOrDefaultAsync(r => r.UserId == userId);
         }
+
+        public async Task<AiRecommendation?> GetByIdAsync(Guid id)
+        {
+            return await _context
+                .AiRecommendations.Include(r => r.UserProfile)
+                .Include(r => r.CareerPaths)
+                .FirstOrDefaultAsync(r => r.Id == id);
+        }
     }
 }

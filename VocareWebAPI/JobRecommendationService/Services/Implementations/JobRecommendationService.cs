@@ -36,6 +36,12 @@ namespace VocareWebAPI.JobRecommendationService.Services.Implementations
             _jobOfferRepository = jobOfferRepository;
             _aiRecommendationRepository = aiRecommendationRepository;
             _logger = logger;
+
+            _httpClient.DefaultRequestHeaders.Add(
+                "Authorization",
+                $"Bearer {_config.Value.ApiKey}"
+            );
+            _httpClient.DefaultRequestHeaders.Add("Accept", "application/json");
         }
 
         public async Task<JobRecommendationsResponseDto> GetJobRecommendationsAsync(string userId)
@@ -88,8 +94,8 @@ namespace VocareWebAPI.JobRecommendationService.Services.Implementations
                 );
 
                 // 1. Pobierz AI recommendation details (potrzebujemy userId)
-                var recommendation = await _aiRecommendationRepository.GetLatestByUserIdAsync(
-                    recommendationId.ToString()
+                var recommendation = await _aiRecommendationRepository.GetByIdAsync(
+                    recommendationId
                 );
 
                 if (recommendation == null)

@@ -57,12 +57,12 @@ namespace VocareWebAPI.JobRecommendationService.Repositories.Implementations
             await _context.SaveChangesAsync();
         }
 
-        public async Task<JobOffer> GetLatestByUserIdAsync(string userId)
+        public async Task<List<JobOffer>> GetJobOffersByUserIdAsync(string userId)
         {
             return await _context
                 .JobOffers.Where(jo => jo.UserId == userId)
                 .OrderByDescending(jo => jo.CreatedAt)
-                .FirstOrDefaultAsync();
+                .ToListAsync();
         }
     }
 }

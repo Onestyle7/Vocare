@@ -24,5 +24,6 @@ namespace VocareWebAPI.JobRecommendationService.Models.Entities
         public int MatchScore { get; set; } = 0; // Wynik dopasowania
         public string Source { get; set; } = ""; // Źródło oferty
         public DateTime CreatedAt { get; set; } = DateTime.UtcNow; // Data utworzenia oferty
+        public List<string> Requirements { get; set; } = new(); // Wymagania
     }
 }

@@ -10,6 +10,7 @@ namespace VocareWebAPI.JobRecommendationService.Repositories.Interfaces
     {
         Task AddJobOffersAsync(List<JobOffer> offers);
         Task<List<JobOffer>> GetJobOffersByRecommendationIdAsync(Guid recommendationId);
-        Task DeleteOldJobOffersForUserAsync(string userId, Guid currentRecommendationId); // DODANE
+        Task DeleteOldJobOffersForUserAsync(string userId, Guid currentRecommendationId);
+        Task<List<JobOffer>> GetJobOffersByUserIdAsync(string userId);
     }
 }
