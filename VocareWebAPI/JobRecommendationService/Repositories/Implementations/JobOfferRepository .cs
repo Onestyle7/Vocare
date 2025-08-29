@@ -56,5 +56,13 @@ namespace VocareWebAPI.JobRecommendationService.Repositories.Implementations
             _context.JobOffers.RemoveRange(oldOffers);
             await _context.SaveChangesAsync();
         }
+
+        public async Task<JobOffer> GetLatestByUserIdAsync(string userId)
+        {
+            return await _context
+                .JobOffers.Where(jo => jo.UserId == userId)
+                .OrderByDescending(jo => jo.CreatedAt)
+                .FirstOrDefaultAsync();
+        }
     }
 }

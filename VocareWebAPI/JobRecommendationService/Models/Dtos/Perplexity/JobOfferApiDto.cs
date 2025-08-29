@@ -4,13 +4,10 @@ using System.Linq;
 using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 
-namespace VocareWebAPI.JobRecommendationService.Models.Dtos.JobRecommendations
+namespace VocareWebAPI.JobRecommendationService.Models.Dtos.Perplexity
 {
-    public class JobOfferDto
+    public class JobOfferApiDto
     {
-        [JsonPropertyName("id")]
-        public Guid Id { get; set; }
-
         [JsonPropertyName("company")]
         public string Company { get; set; } = string.Empty;
 
@@ -31,9 +28,6 @@ namespace VocareWebAPI.JobRecommendationService.Models.Dtos.JobRecommendations
 
         [JsonPropertyName("source")]
         public string Source { get; set; } = string.Empty;
-
-        [JsonPropertyName("createdAt")]
-        public DateTime CreatedAt { get; set; }
 
         [JsonPropertyName("requirements")]
         public List<string> Requirements { get; set; } = new();
