@@ -213,15 +213,14 @@ const NewAssistantComponent = () => {
               </div>
               <div className="-mt-20 h-full items-center justify-center px-4">
                 {recommendations?.recommendation?.nextSteps?.length ? (
-  <ol className="font-poppins mt-1 list-inside list-decimal text-sm text-gray-600">
-    {recommendations.recommendation.nextSteps.map((step, index) => (
-      <li key={index} className="mt-1">
-        {step}
-      </li>
-    ))}
-  </ol>
-) : null}
-
+                  <ol className="font-poppins mt-1 list-inside list-decimal text-sm text-gray-600">
+                    {recommendations.recommendation.nextSteps.map((step, index) => (
+                      <li key={index} className="mt-1">
+                        {step}
+                      </li>
+                    ))}
+                  </ol>
+                ) : null}
               </div>
 
               <div className="flex h-[40%] w-full items-start justify-center overflow-hidden border-t p-4 transition-all hover:-translate-y-32">

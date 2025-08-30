@@ -421,3 +421,7 @@ export const slide = [
 
 export const google = '/svg/google.svg';
 export const facebook = '/svg/facebook.svg';
+
+// Timeline
+
+export const info_circle = '/svg/info-circle.svg';

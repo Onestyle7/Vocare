@@ -297,42 +297,44 @@ export default function AssistantPage() {
       id="profile"
     >
       <div className="mt-8 xl:mx-10 xl:mt-16 xl:border-t xl:border-r xl:border-l">
-        <div className="font-poppins mx-auto flex max-w-7xl flex-col items-center justify-center p-4 md:p-8">
-          <h2 className="mb-4 ml-4 text-2xl font-korbin text-[#915EFF]">Carrer Recommendation</h2>
+        <div className="font-korbin mx-auto flex max-w-7xl flex-col items-center justify-center p-4 md:p-8">
+          <h2 className="font-korbin mt-1 mb-6 flex h-[38px] w-[180px] items-center justify-center rounded-full border-[0.5px] border-white/60 text-sm">
+            AI Career Advisor
+          </h2>
           <div>
             {/* Main recommendation section */}
             {/* odstepy  */}
-            <div className="
-  mb-4 flex flex-col rounded-[28px] sm:border border-b border-l border-t shadow-sm md:flex-row overflow-hidden clip-corner-bevel
-">
-  <div className="relative flex items-center justify-center p-4 md:w-1/6 md:p-8 md:border-r overflow-hidden">
-    <Image
-      src="/images/cone.png"
-      alt="decor"
-      width={148}
-      height={148}
-      className="absolute -top-2 -left-14 z-10 pointer-events-none"
-    />
-    <Image
-      src="/images/cone-2.png"
-      alt="decor"
-      width={148}
-      height={148}
-      className="absolute bottom-2 sm:-bottom-8 -right-8 sm:-right-14 -rotate-12 z-10 pointer-events-none"
-    />
-    <span className="relative z-20 text-4xl font-bold text-white md:text-6xl font-korbin border border-r-6 border-b-6 rounded-xl px-6 py-2">1</span>
-  </div>
-              <div className="p-4 md:w-5/6 md:p-6 max-md:border-t">
+            <div className="clip-corner-bevel mb-4 flex flex-col overflow-hidden rounded-[28px] border-t border-b border-l shadow-sm sm:border md:flex-row">
+              <div className="relative flex items-center justify-center overflow-hidden p-4 md:w-1/6 md:border-r md:p-8">
+                <Image
+                  src="/images/cone.png"
+                  alt="decor"
+                  width={148}
+                  height={148}
+                  className="pointer-events-none absolute -top-2 -left-14 z-10"
+                />
+                <Image
+                  src="/images/cone-2.png"
+                  alt="decor"
+                  width={148}
+                  height={148}
+                  className="pointer-events-none absolute -right-8 bottom-2 z-10 -rotate-12 sm:-right-14 sm:-bottom-8"
+                />
+                <span className="font-korbin relative z-20 rounded-xl border border-r-6 border-b-6 px-6 py-2 text-4xl font-bold text-white md:text-6xl">
+                  1
+                </span>
+              </div>
+              <div className="p-4 max-md:border-t md:w-5/6 md:p-6">
                 <div className="flex flex-row items-center justify-between">
-                  <h2 className="mb-1 text-xl font-korbin">Main Recommendation</h2>
+                  <h2 className="font-korbin mb-1 text-xl">Main Recommendation</h2>
                   <CollapsibleButton isCollapsed={isCollapsed} toggleCollapse={toggleCollapse} />
                 </div>
 
-                <h3 className="text-lg mb-2 font-medium text-[#915EFF]">
+                <h3 className="text-md mb-2 w-fit rounded-lg border-gray-600/40 font-medium text-[#915EFF] sm:text-lg">
                   {recommendations.recommendation.primaryPath}
                 </h3>
 
-                <p className="text-gray-500">{recommendations.recommendation.justification}</p>
+                <p className="text-gray-400">{recommendations.recommendation.justification}</p>
 
                 <div
                   ref={contentWrapperRef}
@@ -344,9 +346,9 @@ export default function AssistantPage() {
                   }}
                 >
                   <div ref={contentRef} className="space-y-3">
-                    <div className="mt-4">
-                      <h4 className="font-korbin font-bold">Kolejne kroki:</h4>
-                      <ul className="mt-2 list-decimal space-y-1 pl-5">
+                    <div className="mt-4 rounded-xl border p-2">
+                      <h4 className="font-korbin font-bold">Next steps:</h4>
+                      <ul className="mt-2 list-decimal space-y-1 pl-5 text-gray-400">
                         {recommendations.recommendation.nextSteps.map(
                           (step: string, index: number) => (
                             <li key={index}>{step}</li>
@@ -355,9 +357,11 @@ export default function AssistantPage() {
                       </ul>
                     </div>
                     <Separator />
-                    <div className="mt-4">
-                      <h4 className="font-korbin font-bold">Cel długoterminowy:</h4>
-                      <p className="mt-1">{recommendations.recommendation.longTermGoal}</p>
+                    <div className="mt-4 rounded-xl p-2">
+                      <h4 className="font-korbin font-bold"> Long-term goal:</h4>
+                      <p className="mt-1 text-gray-400">
+                        {recommendations.recommendation.longTermGoal}
+                      </p>
                     </div>
                   </div>
                 </div>
