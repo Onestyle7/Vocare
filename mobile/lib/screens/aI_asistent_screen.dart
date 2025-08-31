@@ -51,57 +51,18 @@ class _AIAsistentPageScreenState extends State<AIAsistentPageScreen>
       _isCheckingProfile = false;
     });
 
-    // 🔄 ZMIANA: Jeśli ma profil, sprawdź czy ma już rekomendacje
+    // Jeśli ma profil, automatycznie załaduj rekomendację
     if (hasProfile) {
       WidgetsBinding.instance.addPostFrameCallback((_) {
-        _loadExistingRecommendation(); // 🆕 Sprawdź istniejące zamiast generować nowe
+        _loadRecommendation();
       });
     }
   }
 
-  /// 🆕 Sprawdza czy użytkownik ma już wygenerowane rekomendacje
-  Future<void> _loadExistingRecommendation() async {
+  Future<void> _loadRecommendation() async {
     setState(() {
       _isLoading = true;
-      _showTerminalAnimation =
-          false; // 🔄 Nie pokazuj animacji dla istniejących
-      _recommendation = null;
-    });
-
-    // Sprawdź ostatnie rekomendacje (bez kosztów)
-    final AiCareerResponse? result = await AiApi.fetchLastRecommendation();
-
-    setState(() {
-      _isLoading = false;
-      _recommendation = result;
-    });
-
-    // 🔍 DEBUG: Sprawdź ile wyników otrzymujemy
-    if (result != null) {
-      print('🔍 DEBUG API Response:');
-      print(
-        '   - mainCareerPath: ${result.mainCareerPath?.careerName ?? "NULL"}',
-      );
-      print('   - careerPaths.length: ${result.careerPaths.length}');
-      print(
-        '   - additionalCareerPaths.length: ${result.additionalCareerPaths.length}',
-      );
-      print('   - careerPaths names:');
-      for (int i = 0; i < result.careerPaths.length; i++) {
-        print('     ${i + 1}. ${result.careerPaths[i].careerName}');
-      }
-    }
-
-    print(
-      '📊 Existing recommendations: ${result != null ? "FOUND" : "NOT FOUND"}',
-    );
-  }
-
-  /// 🔄 Generuje NOWE rekomendacje (kosztuje tokeny)
-  Future<void> _generateNewRecommendation() async {
-    setState(() {
-      _isLoading = true;
-      _showTerminalAnimation = true; // 🔄 Pokaż animację dla nowych
+      _showTerminalAnimation = true;
       _recommendation = null;
     });
 
@@ -109,8 +70,9 @@ class _AIAsistentPageScreenState extends State<AIAsistentPageScreen>
     final Future<void> animationDelay = Future.delayed(
       const Duration(seconds: 8),
     );
-    final Future<AiCareerResponse?> apiCall =
-        AiApi.generateNewRecommendation(); // 🆕 Nowa metoda
+
+    // 🔧 UŻYWAMY DZIAŁAJĄCEGO ENDPOINTU
+    final Future<AiCareerResponse?> apiCall = AiApi.fetchFullRecommendation();
 
     // Czekaj na oba - animację i API
     final results = await Future.wait([animationDelay, apiCall]);
@@ -122,34 +84,27 @@ class _AIAsistentPageScreenState extends State<AIAsistentPageScreen>
       _recommendation = result;
     });
 
-    // Odśwież stan tokenów po generowaniu
+    // Odśwież stan tokenów po generowaniu (jeśli używamy tokenów)
     final newBalance = await BillingApi.getTokenBalance() ?? 0;
     setState(() {
       _tokenBalance = newBalance;
     });
 
-    // 🔍 DEBUG: Sprawdź ile wyników otrzymujemy
+    // Debug info
     if (result != null) {
-      print('🔍 DEBUG NEW API Response:');
+      print('🔍 DEBUG API Response:');
       print(
         '   - mainCareerPath: ${result.mainCareerPath?.careerName ?? "NULL"}',
       );
       print('   - careerPaths.length: ${result.careerPaths.length}');
-      print(
-        '   - additionalCareerPaths.length: ${result.additionalCareerPaths.length}',
-      );
       print('   - careerPaths names:');
       for (int i = 0; i < result.careerPaths.length; i++) {
         print('     ${i + 1}. ${result.careerPaths[i].careerName}');
       }
     }
-
-    print(
-      '🤖 New recommendations generated: ${result != null ? "SUCCESS" : "FAILED"}',
-    );
   }
 
-  /// 🔄 Modal tokenów - tylko dla nowych rekomendacji
+  /// Modal tokenów - dla przyszłych wersji z płatnością
   Future<void> _showTokenConfirmationModal() async {
     const tokensRequired = 5;
 
@@ -160,7 +115,7 @@ class _AIAsistentPageScreenState extends State<AIAsistentPageScreen>
     );
 
     if (confirmed == true) {
-      _generateNewRecommendation(); // 🆕 Użyj nowej metody
+      _loadRecommendation();
     }
   }
 
@@ -204,7 +159,6 @@ class _AIAsistentPageScreenState extends State<AIAsistentPageScreen>
   Widget _buildTokenBalance() {
     return GestureDetector(
       onTap: () {
-        // Przejście do pricing screen po kliknięciu w token balance
         Navigator.of(
           context,
         ).push(MaterialPageRoute(builder: (context) => const PricingScreen()));
@@ -254,7 +208,7 @@ class _AIAsistentPageScreenState extends State<AIAsistentPageScreen>
         ),
         const SizedBox(height: 40),
 
-        // Terminal Animation (używamy istniejący widget)
+        // Terminal Animation
         const TerminalDemo(),
 
         const SizedBox(height: 40),
@@ -277,9 +231,7 @@ class _AIAsistentPageScreenState extends State<AIAsistentPageScreen>
             Expanded(
               child: Container(
                 width: constraints.maxWidth,
-                height:
-                    constraints.maxHeight -
-                    100, // 🔧 Rezerwuj miejsce na przycisk
+                height: constraints.maxHeight - 100,
                 child:
                     _isLoading
                         ? const Center(child: CircularProgressIndicator())
@@ -288,10 +240,10 @@ class _AIAsistentPageScreenState extends State<AIAsistentPageScreen>
                         : _buildEmptyState(),
               ),
             ),
-            // 🔧 Przycisk na dole - FIXED HEIGHT
+            // Przycisk na dole
             Container(
               width: constraints.maxWidth,
-              height: 100, // 🔧 STAŁA WYSOKOŚĆ
+              height: 100,
               padding: const EdgeInsets.all(16),
               color: Theme.of(context).scaffoldBackgroundColor,
               child: Center(child: _buildGenerateButton()),
@@ -319,7 +271,7 @@ class _AIAsistentPageScreenState extends State<AIAsistentPageScreen>
                 padding: const EdgeInsets.all(16),
                 child: Column(
                   children: [
-                    // 🆕 NAGŁÓWEK "Career Recommendation"
+                    // Nagłówek
                     const Text(
                       'Career Recommendation',
                       style: TextStyle(
@@ -331,80 +283,204 @@ class _AIAsistentPageScreenState extends State<AIAsistentPageScreen>
                     ),
                     const SizedBox(height: 20),
 
-                    // 🔧 KARTA 1 - Główna rekomendacja (mainCareerPath)
-                    if (_recommendation!.mainCareerPath != null)
-                      TweenAnimationBuilder<double>(
-                        duration: const Duration(milliseconds: 800),
-                        tween: Tween(begin: 0.0, end: 1.0),
-                        builder: (context, value, child) {
-                          return Transform.translate(
-                            offset: Offset(0, 20 * (1 - value)),
-                            child: Opacity(
-                              opacity: value,
-                              child: ExpandableCareerPathCard(
-                                number: 1,
-                                careerPath: _recommendation!.mainCareerPath!,
-                                mainRecommendation:
-                                    _recommendation!.recommendation,
-                                isMainRecommendation: true,
+                    // GŁÓWNA REKOMENDACJA - osobna karta bez numeru
+                    TweenAnimationBuilder<double>(
+                      duration: const Duration(milliseconds: 600),
+                      tween: Tween(begin: 0.0, end: 1.0),
+                      builder: (context, value, child) {
+                        return Transform.translate(
+                          offset: Offset(0, 20 * (1 - value)),
+                          child: Opacity(
+                            opacity: value,
+                            child: Container(
+                              margin: const EdgeInsets.only(bottom: 16),
+                              decoration: BoxDecoration(
+                                color: const Color(0xFF1C1C1E),
+                                borderRadius: BorderRadius.circular(12),
+                                border: Border.all(
+                                  color: Colors.amber,
+                                  width: 2,
+                                ),
+                                boxShadow: [
+                                  BoxShadow(
+                                    color: Colors.amber.withOpacity(0.2),
+                                    blurRadius: 8,
+                                    spreadRadius: 1,
+                                  ),
+                                ],
+                              ),
+                              child: Row(
+                                children: [
+                                  // Pasek głównej rekomendacji
+                                  Container(
+                                    width: 60,
+                                    height: 80,
+                                    decoration: const BoxDecoration(
+                                      color: Colors.amber,
+                                      borderRadius: BorderRadius.only(
+                                        topLeft: Radius.circular(12),
+                                        bottomLeft: Radius.circular(12),
+                                      ),
+                                    ),
+                                    child: const Column(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.center,
+                                      children: [
+                                        Icon(
+                                          Icons.star,
+                                          color: Colors.black,
+                                          size: 32,
+                                        ),
+                                        SizedBox(height: 4),
+                                        Text(
+                                          'MAIN',
+                                          style: TextStyle(
+                                            color: Colors.black,
+                                            fontSize: 10,
+                                            fontWeight: FontWeight.bold,
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                  // Treść
+                                  Expanded(
+                                    child: ExpansionTile(
+                                      tilePadding: const EdgeInsets.symmetric(
+                                        horizontal: 16,
+                                        vertical: 8,
+                                      ),
+                                      childrenPadding: const EdgeInsets.all(16),
+                                      iconColor: Colors.amber,
+                                      collapsedIconColor: Colors.amber,
+                                      title: const Text(
+                                        'Main Recommendation',
+                                        style: TextStyle(
+                                          fontWeight: FontWeight.bold,
+                                          color: Colors.white,
+                                          fontSize: 16,
+                                        ),
+                                      ),
+                                      subtitle: Column(
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
+                                        children: [
+                                          const SizedBox(height: 8),
+                                          Text(
+                                            _recommendation!
+                                                .recommendation
+                                                .careerName,
+                                            style: const TextStyle(
+                                              color: Colors.amber,
+                                              fontSize: 16,
+                                              fontWeight: FontWeight.w600,
+                                            ),
+                                          ),
+                                          const SizedBox(height: 4),
+                                          const Text(
+                                            "🏆 GŁÓWNA REKOMENDACJA",
+                                            style: TextStyle(
+                                              color: Colors.amber,
+                                              fontWeight: FontWeight.bold,
+                                              fontSize: 12,
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                      children: [
+                                        Container(
+                                          constraints: const BoxConstraints(
+                                            maxHeight: 300,
+                                          ),
+                                          child: SingleChildScrollView(
+                                            child: Column(
+                                              crossAxisAlignment:
+                                                  CrossAxisAlignment.start,
+                                              children: [
+                                                const Text(
+                                                  "🎯 Uzasadnienie",
+                                                  style: TextStyle(
+                                                    color: Colors.white,
+                                                    fontWeight: FontWeight.bold,
+                                                  ),
+                                                ),
+                                                const SizedBox(height: 4),
+                                                Text(
+                                                  _recommendation!
+                                                      .recommendation
+                                                      .justification,
+                                                  style: const TextStyle(
+                                                    color: Colors.white70,
+                                                  ),
+                                                ),
+                                                const SizedBox(height: 12),
+                                                const Text(
+                                                  "🪜 Następne kroki",
+                                                  style: TextStyle(
+                                                    color: Colors.white,
+                                                    fontWeight: FontWeight.bold,
+                                                  ),
+                                                ),
+                                                const SizedBox(height: 4),
+                                                ..._recommendation!
+                                                    .recommendation
+                                                    .nextSteps
+                                                    .map(
+                                                      (step) => Padding(
+                                                        padding:
+                                                            const EdgeInsets.only(
+                                                              bottom: 2,
+                                                            ),
+                                                        child: Text(
+                                                          "• $step",
+                                                          style: const TextStyle(
+                                                            color:
+                                                                Colors.white70,
+                                                          ),
+                                                        ),
+                                                      ),
+                                                    ),
+                                                const SizedBox(height: 12),
+                                                const Text(
+                                                  "🚀 Cel długoterminowy",
+                                                  style: TextStyle(
+                                                    color: Colors.white,
+                                                    fontWeight: FontWeight.bold,
+                                                  ),
+                                                ),
+                                                const SizedBox(height: 4),
+                                                Text(
+                                                  _recommendation!
+                                                      .recommendation
+                                                      .longTermGoal,
+                                                  style: const TextStyle(
+                                                    color: Colors.white70,
+                                                  ),
+                                                ),
+                                              ],
+                                            ),
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                ],
                               ),
                             ),
-                          );
-                        },
-                      ),
-
-                    // 🔧 KARTY 2, 3, 4 - DOKŁADNIE 3 dodatkowe rekomendacje
-                    ...(() {
-                      // 🔍 DEBUG: Sprawdź strukturę danych
-                      print('🔍 DEBUG Recommendation Structure:');
-                      print(
-                        '   - mainCareerPath: ${_recommendation!.mainCareerPath?.careerName ?? "NULL"}',
-                      );
-                      print(
-                        '   - careerPaths.length: ${_recommendation!.careerPaths.length}',
-                      );
-                      print('   - Wszystkie careerPaths:');
-                      for (
-                        int i = 0;
-                        i < _recommendation!.careerPaths.length;
-                        i++
-                      ) {
-                        print(
-                          '     $i. ${_recommendation!.careerPaths[i].careerName}',
+                          ),
                         );
-                      }
+                      },
+                    ),
 
-                      // 🔧 Logika: Pomiń pierwszą jeśli to duplikat mainCareerPath
-                      List<CareerPath> additionalPaths;
-                      if (_recommendation!.mainCareerPath != null &&
-                          _recommendation!.careerPaths.isNotEmpty &&
-                          _recommendation!.careerPaths.first.careerName ==
-                              _recommendation!.mainCareerPath!.careerName) {
-                        // Pierwsza to duplikat - pomiń ją i weź następne 3
-                        additionalPaths =
-                            _recommendation!.careerPaths
-                                .skip(1)
-                                .take(3)
-                                .toList();
-                        print('   - DUPLIKAT wykryty - pomijam pierwszą');
-                      } else {
-                        // Brak duplikatu - weź pierwsze 3
-                        additionalPaths =
-                            _recommendation!.careerPaths.take(3).toList();
-                        print('   - BRAK duplikatu - biorę pierwsze 3');
-                      }
-
-                      print(
-                        '   - Wyświetlam ${additionalPaths.length} dodatkowych kart',
-                      );
-
-                      return additionalPaths;
-                    })().asMap().entries.map((entry) {
-                      final index = entry.key; // 0, 1, 2
+                    // WSZYSTKIE ŚCIEŻKI KARIERY - numerowane 1, 2, 3
+                    ..._recommendation!.careerPaths.asMap().entries.map((
+                      entry,
+                    ) {
+                      final index = entry.key;
                       final careerPath = entry.value;
 
                       return TweenAnimationBuilder<double>(
-                        duration: Duration(milliseconds: 1000 + (index * 200)),
+                        duration: Duration(milliseconds: 800 + (index * 200)),
                         tween: Tween(begin: 0.0, end: 1.0),
                         builder: (context, value, child) {
                           return Transform.translate(
@@ -412,10 +488,9 @@ class _AIAsistentPageScreenState extends State<AIAsistentPageScreen>
                             child: Opacity(
                               opacity: value,
                               child: ExpandableCareerPathCard(
-                                number: index + 2, // 🔢 Numery 2, 3, 4
+                                number: index + 1, // Numery 1, 2, 3
                                 careerPath: careerPath,
-                                isMainRecommendation:
-                                    false, // 📋 Dodatkowe rekomendacje
+                                isMainRecommendation: false,
                               ),
                             ),
                           );
@@ -423,7 +498,6 @@ class _AIAsistentPageScreenState extends State<AIAsistentPageScreen>
                       );
                     }).toList(),
 
-                    // 🔧 Dodatkowo space na dole żeby przycisk nie nachodzi
                     const SizedBox(height: 20),
                   ],
                 ),
@@ -480,30 +554,24 @@ class _AIAsistentPageScreenState extends State<AIAsistentPageScreen>
                 ),
               ),
               const SizedBox(width: 12),
-              Text(
-                _showTerminalAnimation
-                    ? 'Generating new recommendations...'
-                    : 'Loading existing recommendations...',
-              ),
+              const Text('Generating recommendations...'),
             ],
           ),
         )
         : CustomButton(
           text:
               _recommendation != null
-                  ? "Generate new recommendation (5 tokens)" // 🔄 Ma już rekomendacje - generuj nowe za tokeny
-                  : "Generate AI recommendation (5 tokens)", // 🔄 Nie ma rekomendacji - pierwsza generacja za tokeny
+                  ? "Generate new recommendation (5 tokens)"
+                  : "Generate AI recommendation (5 tokens)",
           onPressed:
               _recommendation != null
-                  ? _showTokenConfirmationModal // 🔄 Ma rekomendacje - pokaż modal tokenów
-                  : _generateNewRecommendation, // 🔄 Nie ma rekomendacji - generuj od razu (ale dalej za tokeny)
+                  ? _showTokenConfirmationModal // Pokaż modal dla kolejnych generacji
+                  : _loadRecommendation, // Pierwsza generacja bez modala (lub z modalem jeśli chcesz)
         );
   }
 }
 
-// Pozostałe komponenty (TerminalDemo, TypingText) zachowują swoją obecną implementację
-// z poprzedniego pliku - nie zmieniam ich, bo działają dobrze
-
+// Terminal Demo Component - identyczny z działającej wersji
 class TerminalDemo extends StatefulWidget {
   const TerminalDemo({super.key});
 
