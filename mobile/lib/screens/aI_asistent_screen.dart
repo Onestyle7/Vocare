@@ -283,7 +283,7 @@ class _AIAsistentPageScreenState extends State<AIAsistentPageScreen>
                     ),
                     const SizedBox(height: 20),
 
-                    // GŁÓWNA REKOMENDACJA - osobna karta bez numeru
+                    // GŁÓWNA REKOMENDACJA - fioletowa z numerem 1
                     TweenAnimationBuilder<double>(
                       duration: const Duration(milliseconds: 600),
                       tween: Tween(begin: 0.0, end: 1.0),
@@ -298,12 +298,14 @@ class _AIAsistentPageScreenState extends State<AIAsistentPageScreen>
                                 color: const Color(0xFF1C1C1E),
                                 borderRadius: BorderRadius.circular(12),
                                 border: Border.all(
-                                  color: Colors.amber,
+                                  color: const Color(0xFF915EFF),
                                   width: 2,
                                 ),
                                 boxShadow: [
                                   BoxShadow(
-                                    color: Colors.amber.withOpacity(0.2),
+                                    color: const Color(
+                                      0xFF915EFF,
+                                    ).withOpacity(0.2),
                                     blurRadius: 8,
                                     spreadRadius: 1,
                                   ),
@@ -311,12 +313,12 @@ class _AIAsistentPageScreenState extends State<AIAsistentPageScreen>
                               ),
                               child: Row(
                                 children: [
-                                  // Pasek głównej rekomendacji
+                                  // Pełny fioletowy pasek z numerem 1
                                   Container(
                                     width: 60,
-                                    height: 80,
+                                    height: 100, // Zwiększona wysokość
                                     decoration: const BoxDecoration(
-                                      color: Colors.amber,
+                                      color: Color(0xFF915EFF),
                                       borderRadius: BorderRadius.only(
                                         topLeft: Radius.circular(12),
                                         bottomLeft: Radius.circular(12),
@@ -326,19 +328,19 @@ class _AIAsistentPageScreenState extends State<AIAsistentPageScreen>
                                       mainAxisAlignment:
                                           MainAxisAlignment.center,
                                       children: [
-                                        Icon(
-                                          Icons.star,
-                                          color: Colors.black,
-                                          size: 32,
+                                        Text(
+                                          '1',
+                                          style: TextStyle(
+                                            fontSize: 28,
+                                            fontWeight: FontWeight.bold,
+                                            color: Colors.white,
+                                          ),
                                         ),
                                         SizedBox(height: 4),
-                                        Text(
-                                          'MAIN',
-                                          style: TextStyle(
-                                            color: Colors.black,
-                                            fontSize: 10,
-                                            fontWeight: FontWeight.bold,
-                                          ),
+                                        Icon(
+                                          Icons.star,
+                                          color: Colors.amber,
+                                          size: 20,
                                         ),
                                       ],
                                     ),
@@ -351,8 +353,10 @@ class _AIAsistentPageScreenState extends State<AIAsistentPageScreen>
                                         vertical: 8,
                                       ),
                                       childrenPadding: const EdgeInsets.all(16),
-                                      iconColor: Colors.amber,
-                                      collapsedIconColor: Colors.amber,
+                                      iconColor: const Color(0xFF915EFF),
+                                      collapsedIconColor: const Color(
+                                        0xFF915EFF,
+                                      ),
                                       title: const Text(
                                         'Main Recommendation',
                                         style: TextStyle(
@@ -371,7 +375,7 @@ class _AIAsistentPageScreenState extends State<AIAsistentPageScreen>
                                                 .recommendation
                                                 .careerName,
                                             style: const TextStyle(
-                                              color: Colors.amber,
+                                              color: Color(0xFF915EFF),
                                               fontSize: 16,
                                               fontWeight: FontWeight.w600,
                                             ),
@@ -380,7 +384,7 @@ class _AIAsistentPageScreenState extends State<AIAsistentPageScreen>
                                           const Text(
                                             "🏆 GŁÓWNA REKOMENDACJA",
                                             style: TextStyle(
-                                              color: Colors.amber,
+                                              color: Color(0xFF915EFF),
                                               fontWeight: FontWeight.bold,
                                               fontSize: 12,
                                             ),
@@ -472,7 +476,7 @@ class _AIAsistentPageScreenState extends State<AIAsistentPageScreen>
                       },
                     ),
 
-                    // WSZYSTKIE ŚCIEŻKI KARIERY - numerowane 1, 2, 3
+                    // WSZYSTKIE ŚCIEŻKI KARIERY - numerowane 2, 3, 4
                     ..._recommendation!.careerPaths.asMap().entries.map((
                       entry,
                     ) {
@@ -488,7 +492,7 @@ class _AIAsistentPageScreenState extends State<AIAsistentPageScreen>
                             child: Opacity(
                               opacity: value,
                               child: ExpandableCareerPathCard(
-                                number: index + 1, // Numery 1, 2, 3
+                                number: index + 2, // Numery 2, 3, 4
                                 careerPath: careerPath,
                                 isMainRecommendation: false,
                               ),
