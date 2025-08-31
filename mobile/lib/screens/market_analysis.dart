@@ -1,11 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:vocare/models/industry_section.dart';
 import 'package:vocare/services/market_AnalysisAPI.dart';
-import 'package:vocare/services/biling_api.dart'; // 🆕 DODANY IMPORT
-import 'package:vocare/widgets/industry_section_card.dart';
+import 'package:vocare/services/biling_api.dart';
+import 'package:vocare/widgets/industry_section_card.dart'; // 🔄 UŻYWAMY ISTNIEJĄCEGO WIDGETU
 import 'package:vocare/widgets/custom_button.dart';
-import 'package:vocare/widgets/theme_toggle_button.dart'; // 🆕 DODANY IMPORT
-import 'package:vocare/screens/pricing_screen.dart'; // 🆕 DODANY IMPORT
+import 'package:vocare/widgets/theme_toggle_button.dart';
+import 'package:vocare/widgets/token_confirmation_modal.dart';
+import 'package:vocare/screens/pricing_screen.dart';
 import 'dart:async';
 
 class MarketAnalysisPage extends StatefulWidget {
@@ -21,16 +22,15 @@ class _MarketAnalysisPageState extends State<MarketAnalysisPage>
   bool _showTerminalAnimation = false;
   bool _hasData = false;
   List<IndustrySection> _sections = [];
-  int _tokenBalance = 0; // 🆕 DODANY TOKEN BALANCE
+  int _tokenBalance = 0;
 
   @override
   void initState() {
     super.initState();
-    _loadTokenBalance(); // 🆕 DODANE
-    // Nie ładujemy automatycznie - czekamy na kliknięcie
+    _loadTokenBalance();
+    _loadExistingAnalysis(); // 🆕 Sprawdź istniejące analizy
   }
 
-  // 🆕 DODANA FUNKCJA
   Future<void> _loadTokenBalance() async {
     final balance = await BillingApi.getTokenBalance() ?? 0;
     setState(() {
@@ -38,7 +38,29 @@ class _MarketAnalysisPageState extends State<MarketAnalysisPage>
     });
   }
 
-  Future<void> _generateMarketAnalysis() async {
+  /// 🆕 Sprawdza czy użytkownik ma już wygenerowane analizy
+  Future<void> _loadExistingAnalysis() async {
+    setState(() {
+      _isLoading = true;
+      _showTerminalAnimation = false;
+    });
+
+    final List<IndustrySection>? result =
+        await MarketAnalysisApi.fetchIndustryStatistics();
+
+    setState(() {
+      _isLoading = false;
+      _hasData = result != null && result.isNotEmpty;
+      _sections = result ?? [];
+    });
+
+    print(
+      '📊 Existing market analysis: ${result != null ? "FOUND ${result.length} industries" : "NOT FOUND"}',
+    );
+  }
+
+  /// 🔄 Generuje NOWE analizy (kosztuje tokeny)
+  Future<void> _generateNewAnalysis() async {
     setState(() {
       _isLoading = true;
       _showTerminalAnimation = true;
@@ -46,9 +68,9 @@ class _MarketAnalysisPageState extends State<MarketAnalysisPage>
       _sections.clear();
     });
 
-    // Minimum 6 sekund animacji + rzeczywisty czas API
+    // Minimum 8 sekund animacji + rzeczywisty czas API
     final Future<void> animationDelay = Future.delayed(
-      const Duration(seconds: 6),
+      const Duration(seconds: 8),
     );
     final Future<List<IndustrySection>?> apiCall =
         MarketAnalysisApi.fetchIndustryStatistics();
@@ -64,15 +86,35 @@ class _MarketAnalysisPageState extends State<MarketAnalysisPage>
       _sections = result ?? [];
     });
 
-    // 🆕 DODANE: Odśwież token balance po analizie
-    _loadTokenBalance();
+    // Odśwież stan tokenów po generowaniu
+    final newBalance = await BillingApi.getTokenBalance() ?? 0;
+    setState(() {
+      _tokenBalance = newBalance;
+    });
+
+    print(
+      '🤖 New market analysis generated: ${result != null ? "SUCCESS with ${result.length} industries" : "FAILED"}',
+    );
   }
 
-  // 🆕 DODANA FUNKCJA - identyczna jak w AI Assistant
+  /// 🔄 Modal tokenów - tylko dla nowych analiz
+  Future<void> _showTokenConfirmationModal() async {
+    const tokensRequired = 3; // Market analysis kosztuje 3 tokeny
+
+    final confirmed = await TokenConfirmationModal.show(
+      context: context,
+      tokensRequired: tokensRequired,
+      currentBalance: _tokenBalance,
+    );
+
+    if (confirmed == true) {
+      _generateNewAnalysis();
+    }
+  }
+
   Widget _buildTokenBalance() {
     return GestureDetector(
       onTap: () {
-        // Przejście do pricing screen po kliknięciu w token balance
         Navigator.of(
           context,
         ).push(MaterialPageRoute(builder: (context) => const PricingScreen()));
@@ -123,15 +165,12 @@ class _MarketAnalysisPageState extends State<MarketAnalysisPage>
                   icon: const Icon(Icons.arrow_back),
                   onPressed: () => Navigator.pop(context),
                 ),
-                // 🆕 DODANE: Token balance i theme toggle w AppBar
                 actions: [_buildTokenBalance(), const ThemeToggleButton()],
               ),
-      body: SafeArea(
-        child:
-            _showTerminalAnimation
-                ? _buildTerminalAnimationView()
-                : _buildMainContent(),
-      ),
+      body:
+          _showTerminalAnimation
+              ? _buildTerminalAnimationView()
+              : _buildMainContent(),
     );
   }
 
@@ -139,20 +178,12 @@ class _MarketAnalysisPageState extends State<MarketAnalysisPage>
     return Column(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
-        // Logo Vocare z gradientem
-        ShaderMask(
-          shaderCallback:
-              (bounds) => const LinearGradient(
-                colors: [Color(0xFF00D4FF), Color(0xFF915EFF)],
-                begin: Alignment.topLeft,
-                end: Alignment.bottomRight,
-              ).createShader(bounds),
-          child: Image.asset(
-            'assets/img/vocare.png',
-            height: 100,
-            fit: BoxFit.contain,
-            color: Colors.white,
-          ),
+        // Logo Vocare
+        Image.asset(
+          'assets/img/vocare.png',
+          height: 100,
+          fit: BoxFit.contain,
+          color: Colors.white,
         ),
         const SizedBox(height: 40),
 
@@ -163,7 +194,7 @@ class _MarketAnalysisPageState extends State<MarketAnalysisPage>
 
         // Status text
         Text(
-          'Analyzing current job market trends...',
+          'Generating your personalized market analysis...',
           style: TextStyle(color: Colors.grey.shade400, fontSize: 16),
           textAlign: TextAlign.center,
         ),
@@ -172,233 +203,169 @@ class _MarketAnalysisPageState extends State<MarketAnalysisPage>
   }
 
   Widget _buildMainContent() {
-    if (!_hasData && !_isLoading) {
-      // Welcome screen
-      return _buildWelcomeScreen();
-    } else if (_hasData) {
-      // Results screen
-      return _buildResultsScreen();
-    } else {
-      // Loading screen (fallback)
-      return const Center(child: CircularProgressIndicator());
-    }
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        return Column(
+          children: [
+            Expanded(
+              child: Container(
+                width: constraints.maxWidth,
+                height:
+                    constraints.maxHeight - 100, // Rezerwuj miejsce na przycisk
+                child:
+                    _isLoading
+                        ? const Center(child: CircularProgressIndicator())
+                        : _hasData
+                        ? _buildAnalysisContent()
+                        : _buildEmptyState(),
+              ),
+            ),
+            // Przycisk na dole - FIXED HEIGHT
+            Container(
+              width: constraints.maxWidth,
+              height: 100,
+              padding: const EdgeInsets.all(16),
+              color: Theme.of(context).scaffoldBackgroundColor,
+              child: Center(child: _buildGenerateButton()),
+            ),
+          ],
+        );
+      },
+    );
   }
 
-  Widget _buildWelcomeScreen() {
-    return Padding(
-      padding: const EdgeInsets.all(24),
+  Widget _buildAnalysisContent() {
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        return AnimatedOpacity(
+          opacity: _hasData ? 1.0 : 0.0,
+          duration: const Duration(milliseconds: 500),
+          child: SingleChildScrollView(
+            physics: const ClampingScrollPhysics(),
+            child: ConstrainedBox(
+              constraints: BoxConstraints(
+                minHeight: constraints.maxHeight,
+                maxWidth: constraints.maxWidth,
+              ),
+              child: Padding(
+                padding: const EdgeInsets.all(16),
+                child: Column(
+                  children: [
+                    // 🆕 NAGŁÓWEK "Market Analysis"
+                    const Text(
+                      'Market Analysis',
+                      style: TextStyle(
+                        fontSize: 24,
+                        fontWeight: FontWeight.bold,
+                        color: Color(0xFF915EFF),
+                      ),
+                      textAlign: TextAlign.center,
+                    ),
+                    const SizedBox(height: 20),
+
+                    // 🔧 UŻYWAMY ISTNIEJĄCEGO IndustrySectionCard - TYLKO 3 PIERWSZE
+                    ...(_sections.take(3).toList()).asMap().entries.map((
+                      entry,
+                    ) {
+                      final index = entry.key; // 0, 1, 2
+                      final industrySection = entry.value;
+
+                      return TweenAnimationBuilder<double>(
+                        duration: Duration(milliseconds: 800 + (index * 200)),
+                        tween: Tween(begin: 0.0, end: 1.0),
+                        builder: (context, value, child) {
+                          return Transform.translate(
+                            offset: Offset(0, 20 * (1 - value)),
+                            child: Opacity(
+                              opacity: value,
+                              child: IndustrySectionCard(
+                                index: index, // 🔢 Indexy 0, 1, 2
+                                industry: industrySection.industry,
+                                averageSalary: industrySection.averageSalary,
+                                employmentRate: industrySection.employmentRate,
+                                growthForecast: industrySection.growthForecast,
+                              ),
+                            ),
+                          );
+                        },
+                      );
+                    }).toList(),
+
+                    // Dodatkowo space na dole żeby przycisk nie nachodzi
+                    const SizedBox(height: 20),
+                  ],
+                ),
+              ),
+            ),
+          ),
+        );
+      },
+    );
+  }
+
+  Widget _buildEmptyState() {
+    return Center(
       child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          // Top navigation bar dla welcome screen
-          Row(
-            children: [
-              Container(
-                decoration: BoxDecoration(
-                  color:
-                      Theme.of(context).brightness == Brightness.dark
-                          ? Colors.grey.shade800
-                          : Colors.grey.shade200,
-                  borderRadius: BorderRadius.circular(12),
-                ),
-                child: IconButton(
-                  icon: const Icon(Icons.arrow_back, size: 24),
-                  onPressed: () => Navigator.pop(context),
-                  color:
-                      Theme.of(context).brightness == Brightness.dark
-                          ? Colors.white
-                          : Colors.grey.shade700,
-                ),
-              ),
-              const SizedBox(width: 16),
-              const Text(
-                "Market Analysis",
-                style: TextStyle(fontSize: 18, fontWeight: FontWeight.w600),
-              ),
-            ],
-          ),
-
-          const Spacer(),
-
-          // Główny tekst z gradientem
-          ShaderMask(
-            shaderCallback:
-                (bounds) => const LinearGradient(
-                  colors: [Colors.white, Color(0xFF915EFF)],
-                  begin: Alignment.topCenter,
-                  end: Alignment.bottomCenter,
-                ).createShader(bounds),
-            child: const Text(
-              'Generate',
-              style: TextStyle(
-                fontSize: 72,
-                fontWeight: FontWeight.bold,
-                color: Colors.white,
-                height: 0.9,
-              ),
-              textAlign: TextAlign.center,
+          Icon(Icons.analytics, size: 80, color: Colors.grey.shade400),
+          const SizedBox(height: 20),
+          Text(
+            'Ready to analyze the job market?',
+            style: TextStyle(
+              fontSize: 18,
+              color: Colors.grey.shade600,
+              fontWeight: FontWeight.w500,
             ),
+            textAlign: TextAlign.center,
           ),
-
-          // "future" z ikoną
-          Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Container(
-                width: 48,
-                height: 48,
-                decoration: BoxDecoration(
-                  gradient: const LinearGradient(
-                    colors: [Color(0xFF00D4FF), Color(0xFF915EFF)],
-                    begin: Alignment.topLeft,
-                    end: Alignment.bottomRight,
-                  ),
-                  borderRadius: BorderRadius.circular(12),
-                ),
-                child: const Icon(
-                  Icons.trending_up,
-                  color: Colors.white,
-                  size: 28,
-                ),
-              ),
-              const SizedBox(width: 16),
-              const Text(
-                'future',
-                style: TextStyle(
-                  fontSize: 72,
-                  fontWeight: FontWeight.bold,
-                  color: Colors.black,
-                  height: 0.9,
-                ),
-              ),
-            ],
+          const SizedBox(height: 10),
+          Text(
+            'Click the button below to generate personalized market insights based on current trends.',
+            style: TextStyle(fontSize: 14, color: Colors.grey.shade500),
+            textAlign: TextAlign.center,
           ),
-
-          const SizedBox(height: 32),
-
-          // Subtitle
-          Container(
-            padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 8),
-            decoration: BoxDecoration(
-              border: Border.all(color: Colors.grey.shade300),
-              borderRadius: BorderRadius.circular(20),
-            ),
-            child: const Text(
-              'Get valuable insights about current job market trends',
-              style: TextStyle(
-                fontSize: 14,
-                color: Colors.grey,
-                letterSpacing: 0.5,
-              ),
-            ),
-          ),
-
-          const Spacer(),
-
-          // Generate button
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 20),
-            child: Row(
-              children: [
-                Expanded(
-                  child: CustomButton(
-                    text: "Recommendation first",
-                    onPressed: _generateMarketAnalysis,
-                    backgroundColor: const Color(0xFF915EFF),
-                    padding: const EdgeInsets.symmetric(vertical: 16),
-                  ),
-                ),
-                const SizedBox(width: 12),
-                Container(
-                  decoration: BoxDecoration(
-                    color: const Color(0xFF915EFF),
-                    borderRadius: BorderRadius.circular(25),
-                  ),
-                  child: IconButton(
-                    icon: const Icon(Icons.arrow_forward, color: Colors.white),
-                    onPressed: _generateMarketAnalysis,
-                  ),
-                ),
-              ],
-            ),
-          ),
-
-          const SizedBox(height: 40),
         ],
       ),
     );
   }
 
-  Widget _buildResultsScreen() {
-    return Column(
-      children: [
-        // Header z przyciskiem refresh
-        Container(
-          padding: const EdgeInsets.all(16),
-          decoration: BoxDecoration(
-            color: Theme.of(context).scaffoldBackgroundColor,
-            boxShadow: [
-              BoxShadow(
-                color: Colors.black.withOpacity(0.1),
-                blurRadius: 4,
-                offset: const Offset(0, 2),
-              ),
-            ],
-          ),
+  Widget _buildGenerateButton() {
+    return _isLoading
+        ? Container(
+          padding: const EdgeInsets.symmetric(vertical: 16),
           child: Row(
+            mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              const Icon(Icons.analytics, color: Color(0xFF915EFF)),
-              const SizedBox(width: 12),
-              const Expanded(
-                child: Text(
-                  "Market Analysis Results",
-                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+              SizedBox(
+                width: 20,
+                height: 20,
+                child: CircularProgressIndicator(
+                  strokeWidth: 2,
+                  valueColor: AlwaysStoppedAnimation<Color>(
+                    Theme.of(context).primaryColor,
+                  ),
                 ),
               ),
-              IconButton(
-                icon: const Icon(Icons.refresh, color: Color(0xFF915EFF)),
-                onPressed: _generateMarketAnalysis,
-                tooltip: "Generate new analysis",
+              const SizedBox(width: 12),
+              Text(
+                _showTerminalAnimation
+                    ? 'Generating new market analysis...'
+                    : 'Loading existing analysis...',
               ),
             ],
           ),
-        ),
-
-        // Results list
-        Expanded(
-          child: AnimatedOpacity(
-            opacity: _hasData ? 1.0 : 0.0,
-            duration: const Duration(milliseconds: 500),
-            child: ListView.builder(
-              padding: const EdgeInsets.all(16),
-              itemCount: _sections.length,
-              itemBuilder: (context, index) {
-                final industry = _sections[index];
-
-                return TweenAnimationBuilder<double>(
-                  duration: Duration(milliseconds: 300 + (index * 100)),
-                  tween: Tween(begin: 0.0, end: 1.0),
-                  builder: (context, value, child) {
-                    return Transform.translate(
-                      offset: Offset(0, 20 * (1 - value)),
-                      child: Opacity(
-                        opacity: value,
-                        child: IndustrySectionCard(
-                          index: index,
-                          industry: industry.industry,
-                          averageSalary: industry.averageSalary,
-                          employmentRate: industry.employmentRate,
-                          growthForecast: industry.growthForecast,
-                        ),
-                      ),
-                    );
-                  },
-                );
-              },
-            ),
-          ),
-        ),
-      ],
-    );
+        )
+        : CustomButton(
+          text:
+              _hasData
+                  ? "Generate new analysis (3 tokens)" // Ma już analizy - generuj nowe za tokeny
+                  : "Generate market analysis (3 tokens)", // Nie ma analiz - pierwsza generacja za tokeny
+          onPressed:
+              _hasData
+                  ? _showTokenConfirmationModal // Ma analizy - pokaż modal tokenów
+                  : _generateNewAnalysis, // Nie ma analiz - generuj od razu (ale dalej za tokeny)
+        );
   }
 }
 
@@ -451,6 +418,11 @@ class _MarketAnalysisTerminalState extends State<MarketAnalysisTerminal>
       'delay': 5600,
       'text': 'Success! Market trends ready for review.',
       'type': 'typing',
+    },
+    {
+      'delay': 6200,
+      'text': 'Preparing detailed insights...',
+      'type': 'loading',
     },
   ];
 
@@ -526,6 +498,19 @@ class _MarketAnalysisTerminalState extends State<MarketAnalysisTerminal>
               child: Row(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
+                  if (type == 'loading') ...[
+                    SizedBox(
+                      width: 14,
+                      height: 14,
+                      child: CircularProgressIndicator(
+                        strokeWidth: 2,
+                        valueColor: AlwaysStoppedAnimation<Color>(
+                          Colors.grey.shade400,
+                        ),
+                      ),
+                    ),
+                    const SizedBox(width: 8),
+                  ],
                   Expanded(
                     child:
                         type == 'typing'
@@ -575,7 +560,6 @@ class _MarketAnalysisTerminalState extends State<MarketAnalysisTerminal>
         crossAxisAlignment: CrossAxisAlignment.start,
         mainAxisSize: MainAxisSize.min,
         children: [
-          // Terminal header
           Row(
             children: [
               Container(
@@ -616,7 +600,6 @@ class _MarketAnalysisTerminalState extends State<MarketAnalysisTerminal>
             ],
           ),
           const SizedBox(height: 12),
-          // Terminal content
           Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
