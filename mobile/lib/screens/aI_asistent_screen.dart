@@ -11,6 +11,7 @@ import 'package:vocare/widgets/token_confirmation_modal.dart';
 import 'package:vocare/widgets/create_future_view.dart';
 import 'package:vocare/screens/pricing_screen.dart';
 import 'dart:async';
+import 'package:vocare/screens/home_screen.dart';
 
 class AIAsistentPageScreen extends StatefulWidget {
   const AIAsistentPageScreen({super.key});
@@ -182,7 +183,12 @@ class _AIAsistentPageScreenState extends State<AIAsistentPageScreen>
                 backgroundColor: Colors.black87,
                 leading: IconButton(
                   icon: const Icon(Icons.arrow_back),
-                  onPressed: () => Navigator.pop(context),
+                  onPressed:
+                      () => Navigator.pushReplacement(
+                        // 🆕 NOWA WERSJA
+                        context,
+                        MaterialPageRoute(builder: (_) => const HomeScreen()),
+                      ),
                 ),
                 actions: [
                   // Token balance w app bar

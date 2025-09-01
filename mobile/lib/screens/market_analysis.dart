@@ -2,10 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:vocare/models/industry_section.dart';
 import 'package:vocare/services/market_AnalysisAPI.dart';
 import 'package:vocare/services/biling_api.dart';
-import 'package:vocare/widgets/industry_section_card.dart'; // 🔄 UŻYWAMY ISTNIEJĄCEGO WIDGETU
+import 'package:vocare/services/profile_api.dart'; // 🆕 DODANY IMPORT
+import 'package:vocare/widgets/industry_section_card.dart';
 import 'package:vocare/widgets/custom_button.dart';
 import 'package:vocare/widgets/theme_toggle_button.dart';
 import 'package:vocare/widgets/token_confirmation_modal.dart';
+import 'package:vocare/widgets/create_future_view.dart'; // 🆕 DODANY IMPORT
 import 'package:vocare/screens/pricing_screen.dart';
 import 'dart:async';
 
@@ -24,11 +26,59 @@ class _MarketAnalysisPageState extends State<MarketAnalysisPage>
   List<IndustrySection> _sections = [];
   int _tokenBalance = 0;
 
+  // 🆕 NOWE STATE VARIABLES - identyczne jak w AI Assistant
+  bool _hasProfile = false;
+  bool _isCheckingProfile = true;
+
   @override
   void initState() {
     super.initState();
-    _loadTokenBalance();
-    _loadExistingAnalysis(); // 🆕 Sprawdź istniejące analizy
+    _checkProfileAndTokens(); // 🔄 Zaktualizowana metoda
+  }
+
+  // 🔄 ZAKTUALIZOWANA METODA - sprawdza profil + tokeny
+  Future<void> _checkProfileAndTokens() async {
+    // 👤 Sprawdź czy użytkownik ma profil
+    final profile = await ProfileApi.getUserProfile();
+    final hasProfile =
+        profile != null &&
+        profile['firstName'] != null &&
+        profile['firstName'].toString().trim().isNotEmpty;
+
+    // 💰 Pobierz stan tokenów
+    final balance = await BillingApi.getTokenBalance() ?? 0;
+
+    setState(() {
+      _hasProfile = hasProfile;
+      _tokenBalance = balance;
+      _isCheckingProfile = false;
+    });
+
+    print(
+      '👤 Profile check result: hasProfile=$hasProfile, tokenBalance=$balance',
+    );
+
+    // 📊 Jeśli ma profil, sprawdź czy są już dane zamiast od razu generować
+    if (hasProfile) {
+      WidgetsBinding.instance.addPostFrameCallback((_) async {
+        // Szybkie sprawdzenie czy są już dane (bez animacji)
+        print('🔍 Quick check for existing market analysis...');
+        final existingAnalysis =
+            await MarketAnalysisApi.fetchIndustryStatistics();
+
+        if (existingAnalysis != null && existingAnalysis.isNotEmpty) {
+          // Są dane - pokaż je od razu bez animacji
+          print('⚡ Showing existing analysis immediately');
+          setState(() {
+            _hasData = true;
+            _sections = existingAnalysis;
+          });
+        } else {
+          // Brak danych - czekaj na kliknięcie przycisku
+          print('📋 No existing data - waiting for user action');
+        }
+      });
+    }
   }
 
   Future<void> _loadTokenBalance() async {
@@ -38,28 +88,79 @@ class _MarketAnalysisPageState extends State<MarketAnalysisPage>
     });
   }
 
-  /// 🆕 Sprawdza czy użytkownik ma już wygenerowane analizy
+  /// 🆕 Sprawdza czy użytkownik ma już wygenerowane analizy - SMART LOADING
   Future<void> _loadExistingAnalysis() async {
     setState(() {
       _isLoading = true;
-      _showTerminalAnimation = false;
+      _showTerminalAnimation = true;
+      _hasData = false;
+      _sections.clear();
     });
 
-    final List<IndustrySection>? result =
-        await MarketAnalysisApi.fetchIndustryStatistics();
+    // Minimum 8 sekund animacji + rzeczywisty czas API
+    final Future<void> animationDelay = Future.delayed(
+      const Duration(seconds: 8),
+    );
+
+    // 🆕 NOWA LOGIKA: Najpierw sprawdź czy są ostatnie dane
+    print('🔍 Sprawdzanie czy istnieją ostatnie analizy rynku...');
+
+    final Future<List<IndustrySection>?> lastAnalysisCheck =
+        MarketAnalysisApi.fetchIndustryStatistics();
+
+    // Sprawdź istniejące dane
+    final List<IndustrySection>? existingAnalysis = await lastAnalysisCheck;
+
+    List<IndustrySection>? finalResult;
+
+    if (existingAnalysis != null && existingAnalysis.isNotEmpty) {
+      // 🟢 ZNALEZIONO OSTATNIE DANE - użyj ich
+      print('✅ Znaleziono istniejące analizy rynku - wyświetlam');
+      finalResult = existingAnalysis;
+
+      // Czekaj na zakończenie animacji
+      await animationDelay;
+    } else {
+      // 🔴 BRAK DANYCH - wygeneruj nowe
+      print('❌ Brak istniejących analiz - generuję nowe');
+
+      // Generuj nowe dane równolegle z animacją
+      final Future<List<IndustrySection>?> newAnalysisCall =
+          MarketAnalysisApi.fetchIndustryStatistics();
+
+      // Czekaj na oba - animację i API
+      final results = await Future.wait([animationDelay, newAnalysisCall]);
+      finalResult = results[1] as List<IndustrySection>?;
+
+      if (finalResult != null && finalResult.isNotEmpty) {
+        print('✅ Wygenerowano nowe analizy rynku');
+      } else {
+        print('❌ Błąd generowania nowych analiz');
+      }
+    }
 
     setState(() {
       _isLoading = false;
-      _hasData = result != null && result.isNotEmpty;
-      _sections = result ?? [];
+      _showTerminalAnimation = false;
+      _hasData = finalResult != null && finalResult.isNotEmpty;
+      _sections = finalResult ?? [];
     });
 
+    // Odśwież stan tokenów po generowaniu (tylko jeśli generowano nowe)
+    if (existingAnalysis == null || existingAnalysis.isEmpty) {
+      final newBalance = await BillingApi.getTokenBalance() ?? 0;
+      setState(() {
+        _tokenBalance = newBalance;
+      });
+      print('🔄 Odświeżono stan tokenów: $newBalance');
+    }
+
     print(
-      '📊 Existing market analysis: ${result != null ? "FOUND ${result.length} industries" : "NOT FOUND"}',
+      '📊 Final Analysis Result: ${finalResult != null && finalResult.isNotEmpty ? "SUCCESS with ${finalResult?.length} industries" : "FAILED"}',
     );
   }
 
-  /// 🔄 Generuje NOWE analizy (kosztuje tokeny)
+  /// 🔄 Generuje NOWE analizy (kosztuje tokeny) - WYMUŚ NOWĄ GENERACJĘ
   Future<void> _generateNewAnalysis() async {
     setState(() {
       _isLoading = true;
@@ -72,11 +173,14 @@ class _MarketAnalysisPageState extends State<MarketAnalysisPage>
     final Future<void> animationDelay = Future.delayed(
       const Duration(seconds: 8),
     );
-    final Future<List<IndustrySection>?> apiCall =
+
+    // 🔄 WYMUŚ NOWĄ GENERACJĘ - pomiń sprawdzanie istniejących
+    print('🤖 Wymuszanie generacji nowych analiz rynku...');
+    final Future<List<IndustrySection>?> newAnalysisCall =
         MarketAnalysisApi.fetchIndustryStatistics();
 
     // Czekaj na oba - animację i API
-    final results = await Future.wait([animationDelay, apiCall]);
+    final results = await Future.wait([animationDelay, newAnalysisCall]);
     final List<IndustrySection>? result = results[1] as List<IndustrySection>?;
 
     setState(() {
@@ -93,7 +197,9 @@ class _MarketAnalysisPageState extends State<MarketAnalysisPage>
     });
 
     print(
-      '🤖 New market analysis generated: ${result != null ? "SUCCESS with ${result.length} industries" : "FAILED"}',
+      result != null && result.isNotEmpty
+          ? '✅ Wygenerowano nowe analizy rynku'
+          : '❌ Błąd generowania',
     );
   }
 
@@ -108,7 +214,29 @@ class _MarketAnalysisPageState extends State<MarketAnalysisPage>
     );
 
     if (confirmed == true) {
-      _generateNewAnalysis();
+      _generateNewAnalysis(); // 🆕 Używa nowej metody
+    }
+  }
+
+  // 🆕 Pomocnicza metoda dla tekstu przycisku
+  String _getButtonText() {
+    if (_hasData) {
+      // Ma już analizy - kolejna generacja zawsze kosztuje tokeny
+      return "Generate new analysis (3 tokens)";
+    } else {
+      // Nie ma analiz - inteligentne ładowanie
+      return "Generate market analysis";
+    }
+  }
+
+  // 🆕 Pomocnicza metoda dla akcji przycisku
+  VoidCallback _getButtonAction() {
+    if (_hasData) {
+      // Ma już analizy - pokaż modal tokenów dla kolejnej generacji
+      return _showTokenConfirmationModal;
+    } else {
+      // Nie ma analiz - użyj smart loading (sprawdzi istniejące lub wygeneruje)
+      return _loadExistingAnalysis;
     }
   }
 
@@ -153,6 +281,19 @@ class _MarketAnalysisPageState extends State<MarketAnalysisPage>
 
   @override
   Widget build(BuildContext context) {
+    // 🆕 IDENTYCZNA LOGIKA JAK W AI ASSISTANT
+
+    // Jeśli sprawdzamy profil, pokaż loading
+    if (_isCheckingProfile) {
+      return const Scaffold(body: Center(child: CircularProgressIndicator()));
+    }
+
+    // 🎯 KLUCZOWE: Jeśli użytkownik nie ma profilu, pokaż CreateFutureView
+    if (!_hasProfile) {
+      return const CreateFutureView();
+    }
+
+    // 📊 NORMALNY MARKET ANALYSIS CONTENT
     return Scaffold(
       backgroundColor: _showTerminalAnimation ? Colors.black : null,
       appBar:
@@ -251,7 +392,7 @@ class _MarketAnalysisPageState extends State<MarketAnalysisPage>
                 padding: const EdgeInsets.all(16),
                 child: Column(
                   children: [
-                    // 🆕 NAGŁÓWEK "Market Analysis"
+                    // Nagłówek "Market Analysis"
                     const Text(
                       'Market Analysis',
                       style: TextStyle(
@@ -263,7 +404,7 @@ class _MarketAnalysisPageState extends State<MarketAnalysisPage>
                     ),
                     const SizedBox(height: 20),
 
-                    // 🔧 UŻYWAMY ISTNIEJĄCEGO IndustrySectionCard - TYLKO 3 PIERWSZE
+                    // Używamy istniejącego IndustrySectionCard - TYLKO 3 PIERWSZE
                     ...(_sections.take(3).toList()).asMap().entries.map((
                       entry,
                     ) {
@@ -279,7 +420,7 @@ class _MarketAnalysisPageState extends State<MarketAnalysisPage>
                             child: Opacity(
                               opacity: value,
                               child: IndustrySectionCard(
-                                index: index, // 🔢 Indexy 0, 1, 2
+                                index: index, // Indexy 0, 1, 2
                                 industry: industrySection.industry,
                                 averageSalary: industrySection.averageSalary,
                                 employmentRate: industrySection.employmentRate,
@@ -356,20 +497,11 @@ class _MarketAnalysisPageState extends State<MarketAnalysisPage>
             ],
           ),
         )
-        : CustomButton(
-          text:
-              _hasData
-                  ? "Generate new analysis (3 tokens)" // Ma już analizy - generuj nowe za tokeny
-                  : "Generate market analysis (3 tokens)", // Nie ma analiz - pierwsza generacja za tokeny
-          onPressed:
-              _hasData
-                  ? _showTokenConfirmationModal // Ma analizy - pokaż modal tokenów
-                  : _generateNewAnalysis, // Nie ma analiz - generuj od razu (ale dalej za tokeny)
-        );
+        : CustomButton(text: _getButtonText(), onPressed: _getButtonAction());
   }
 }
 
-// Terminal Demo Component dla Market Analysis
+// Terminal Demo Component dla Market Analysis - BEZ ZMIAN
 class MarketAnalysisTerminal extends StatefulWidget {
   const MarketAnalysisTerminal({super.key});
 
