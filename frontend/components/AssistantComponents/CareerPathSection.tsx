@@ -5,6 +5,9 @@ import { gsap } from 'gsap';
 import CollapsibleButton from './CollapsibleButton';
 import { CareerPath } from '@/lib/types/recommendation';
 import Image from 'next/image';
+import ReusableCard from '../AssistantCards';
+import HorizontalCarousel from './HorizontalCarousel';
+import SwotAnalysis from '../SwotAnalysis'; 
 
 interface CareerPathSectionProps {
   path: CareerPath;
@@ -16,7 +19,6 @@ export default function CareerPathSection({ path, index }: CareerPathSectionProp
   const contentRef = useRef<HTMLDivElement>(null);
   const contentWrapperRef = useRef<HTMLDivElement>(null);
 
-  // Obrazki: (3,4) dla index=0, (5,6) dla index=1, itd.
   const leftImg = `/images/cone-${3 + 2 * index}.png`;
   const rightImg = `/images/cone-${4 + 2 * index}.png`;
 
@@ -72,9 +74,29 @@ export default function CareerPathSection({ path, index }: CareerPathSectionProp
     }
   }, [isCollapsed]);
 
+  const cards = [
+    {
+      title: 'Required Skills',
+      items: path.requiredSkills,
+      imageSrc: '/images/card-assistant-1.png',
+      badgeText: 'Required skills',
+    },
+    {
+      title: 'Recommended Courses',
+      items: path.recommendedCourses,
+      imageSrc: '/images/card-assistant-2.png',
+      badgeText: 'Recommended courses',
+    },
+    {
+      title: 'Market Analysis',
+      items: path.marketAnalysis,
+      imageSrc: '/images/card-assistant-3.png',
+      badgeText: 'Market analysis',
+    },
+  ];
+
   return (
     <div className="clip-corner-bevel mb-4 flex flex-col overflow-hidden rounded-[28px] border-t border-b border-l shadow-sm sm:border md:flex-row">
-      {/* Lewy panel — identyczny jak w „1”, ale z unikalnymi obrazkami */}
       <div className="relative flex items-center justify-center overflow-hidden p-4 md:w-1/6 md:border-r md:p-8">
         <Image
           src={leftImg}
@@ -95,14 +117,15 @@ export default function CareerPathSection({ path, index }: CareerPathSectionProp
         </span>
       </div>
 
-      {/* Prawy panel — jak w „1” */}
       <div className="p-4 max-md:border-t md:w-5/6 md:p-6">
         <div className="flex flex-row items-center justify-between">
           <h2 className="font-korbin mb-1 text-xl">Consider this</h2>
           <CollapsibleButton isCollapsed={isCollapsed} toggleCollapse={toggleCollapse} />
         </div>
 
-        <h3 className="text-md mb-2 font-medium text-[#915EFF] sm:text-lg">{path.careerName}</h3>
+        <h3 className="text-md ibm-plex-mono-regular mb-2 font-medium text-[#915EFF] sm:text-lg">
+          {path.careerName}
+        </h3>
         <p className="text-gray-500">{path.description}</p>
 
         <div
@@ -114,75 +137,27 @@ export default function CareerPathSection({ path, index }: CareerPathSectionProp
             visibility: isCollapsed ? 'hidden' : 'visible',
           }}
         >
-          <div ref={contentRef} className="space-y-3">
-            <p className="mt-2">
-              <strong>Prawdopodobieństwo sukcesu:</strong> {path.probability}%
+          <div ref={contentRef} className="space-y-5">
+            <p className="ibm-plex-mono-regular mt-2">
+              <strong>Success probability:</strong> {path.probability}%
             </p>
 
-            <div className="mt-4 grid grid-cols-1 gap-4 md:grid-cols-2">
-              <div>
-                <h4 className="font-korbin font-bold">Wymagane umiejętności:</h4>
-                <ul className="mt-2 list-disc space-y-1 pl-5">
-                  {path.requiredSkills.map((skill, i) => (
-                    <li key={i}>{skill}</li>
-                  ))}
-                </ul>
-              </div>
-              <div>
-                <h4 className="font-korbin font-bold">Rekomendowane kursy:</h4>
-                <ul className="mt-2 list-disc space-y-1 pl-5">
-                  {path.recommendedCourses.map((course, i) => (
-                    <li key={i}>{course}</li>
-                  ))}
-                </ul>
-              </div>
-            </div>
+            <HorizontalCarousel desktopCardsPerView={2.33}>
+              {cards.map((card, idx) => (
+                <div
+                  key={idx}
+                  className="/* mobile: 1 karta */ /* desktop: ~2.33 karty */ min-w-[calc(100%/var(--cards))] shrink-0 snap-start lg:min-w-[calc(87%/var(--cards-lg))]"
+                >
+                  <div className="h-full">
+                    <ReusableCard data={card} />
+                  </div>
+                </div>
+              ))}
+            </HorizontalCarousel>
 
             <div className="mt-4">
-              <h4 className="font-korbin font-bold">Analiza rynku:</h4>
-              <ul className="mt-2 list-disc space-y-1 pl-5">
-                {path.marketAnalysis.map((analysis, i) => (
-                  <li key={i}>{analysis}</li>
-                ))}
-              </ul>
-            </div>
-
-            <div className="mt-6">
-              <h4 className="font-korbin mb-3 font-bold">Analiza SWOT:</h4>
-              <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
-                <div className="rounded-xl border-t border-b-4 border-[#915EFF] p-3">
-                  <strong className="text-[#915EFF]">Mocne strony:</strong>
-                  <ul className="mt-1 list-disc space-y-1 pl-5">
-                    {path.swot.strengths.map((x, i) => (
-                      <li key={i}>{x}</li>
-                    ))}
-                  </ul>
-                </div>
-                <div className="rounded-xl border-t border-b-4 border-[#915EFF] p-3">
-                  <strong className="text-[#915EFF]">Słabe strony:</strong>
-                  <ul className="mt-1 list-disc space-y-1 pl-5">
-                    {path.swot.weaknesses.map((x, i) => (
-                      <li key={i}>{x}</li>
-                    ))}
-                  </ul>
-                </div>
-                <div className="rounded-xl border-t border-b-4 border-[#915EFF] p-3">
-                  <strong className="text-[#915EFF]">Szanse:</strong>
-                  <ul className="mt-1 list-disc space-y-1 pl-5">
-                    {path.swot.opportunities.map((x, i) => (
-                      <li key={i}>{x}</li>
-                    ))}
-                  </ul>
-                </div>
-                <div className="rounded-xl border-t border-b-4 border-[#915EFF] p-3">
-                  <strong className="text-[#915EFF]">Zagrożenia:</strong>
-                  <ul className="mt-1 list-disc space-y-1 pl-5">
-                    {path.swot.threats.map((x, i) => (
-                      <li key={i}>{x}</li>
-                    ))}
-                  </ul>
-                </div>
-              </div>
+              <h4 className="mb-3 font-bold">SWOT Analysis:</h4>
+              <SwotAnalysis data={path.swot} className="ibm-plex-mono-regular" />
             </div>
           </div>
         </div>

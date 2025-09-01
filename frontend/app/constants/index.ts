@@ -428,3 +428,7 @@ export const timeline_icon_1 = '/svg/info-circle.svg';
 export const timeline_icon_3 = '/svg/timeline_icon_2.svg';
 export const timeline_icon_2 = '/svg/timeline_icon_3.svg';
 export const timeline_icon_4 = '/svg/timeline_icon_4.svg';
+
+// Card Assistant
+
+export const card_assistant_1 = '/images/card-assistant-1.png';

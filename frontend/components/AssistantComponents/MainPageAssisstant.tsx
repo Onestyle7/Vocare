@@ -346,7 +346,7 @@ export default function AssistantPage() {
                   <CollapsibleButton isCollapsed={isCollapsed} toggleCollapse={toggleCollapse} />
                 </div>
 
-                <h3 className="text-md mb-2 w-fit rounded-lg border-gray-600/40 font-medium text-[#915EFF] sm:text-lg">
+                <h3 className="text-md ibm-plex-mono-regular mb-2 w-fit rounded-lg border-gray-600/40 font-medium text-[#915EFF] sm:text-lg">
                   {recommendations.recommendation.primaryPath}
                 </h3>
 
@@ -363,7 +363,7 @@ export default function AssistantPage() {
                 >
                   <div ref={contentRef} className="space-y-3">
                     <h4 className="font-korbin mt-4 font-bold">Next steps:</h4>
-                    <div className="mt-4 rounded-xl border p-2">
+                    <div className="ibm-plex-mono-regular mt-4 rounded-xl border p-2">
                       <Timeline items={timelineItems} maxDescriptionLength={80} className="mx-0" />
                     </div>
                     {/* <Separator /> */}

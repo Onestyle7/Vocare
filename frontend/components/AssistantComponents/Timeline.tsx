@@ -15,16 +15,7 @@ interface TimelineProps {
   maxDescriptionLength?: number;
 }
 
-const Timeline: React.FC<TimelineProps> = ({
-  items,
-  className = '',
-  maxDescriptionLength = 100,
-}) => {
-  const truncateText = (text: string, maxLength: number) => {
-    if (text.length <= maxLength) return text;
-    return text.substring(0, maxLength).trim() + '...';
-  };
-
+const Timeline: React.FC<TimelineProps> = ({ items, className = '' }) => {
   return (
     <section className={`my-4 w-full sm:mx-auto sm:max-w-5xl ${className}`}>
       {/* Desktop Layout - Horizontal */}
@@ -58,9 +49,7 @@ const Timeline: React.FC<TimelineProps> = ({
 
             <div className="flex w-full flex-col items-center justify-start px-2 text-center">
               <h2 className="text-md font-bold text-[#dde0ce]">{item.title}</h2>
-              <h3 className="mt-2 text-sm text-[#dde0ce]">
-                {truncateText(item.description, maxDescriptionLength)}
-              </h3>
+              <h3 className="mt-2 text-sm text-[#dde0ce]">{item.description}</h3>
             </div>
           </div>
         ))}
@@ -88,16 +77,14 @@ const Timeline: React.FC<TimelineProps> = ({
               {index < items.length - 1 ? (
                 <div className="mt-4 h-[80px] w-[2px] bg-[#dde0ce]" />
               ) : (
-                <div className="mt-4 h-[80px] w-[2px] bg-gradient-to-b from-[#dde0ce] to-transparent" />
+                <div className="mt-4 h-[80px] w-[2px] bg-gradient-to-b from-[#dde0ce] via-[#dde0ce]/50 to-transparent" />
               )}
             </div>
 
             {/* Right side - Content */}
             <div className="flex flex-1 flex-col items-start justify-start pt-2">
               <h2 className="text-lg font-bold text-[#dde0ce]">{item.title}</h2>
-              <h3 className="mt-2 text-sm leading-relaxed text-[#dde0ce]">
-                {truncateText(item.description, maxDescriptionLength)}
-              </h3>
+              <h3 className="mt-2 text-sm leading-relaxed text-[#dde0ce]">{item.description}</h3>
             </div>
           </div>
         ))}
