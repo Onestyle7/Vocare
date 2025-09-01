@@ -23,7 +23,7 @@ class ExpandableCareerPathCard extends StatelessWidget {
     );
   }
 
-  // 🆕 Karta z numerem - PRZEPISANA BEZ OVERFLOW - OSTATECZNA WERSJA
+  // 🆕 Karta z numerem - fioletowy pasek na całą wysokość
   Widget _buildNumberedCard() {
     return Container(
       margin: const EdgeInsets.symmetric(vertical: 4),
@@ -31,77 +31,71 @@ class ExpandableCareerPathCard extends StatelessWidget {
         color: const Color(0xFF1C1C1E),
         borderRadius: BorderRadius.circular(12),
       ),
-      child: Row(
-        children: [
-          // 🔢 Pasek z numerem z lewej strony - STAŁA WYSOKOŚĆ
-          Container(
-            width: 50,
-            height: 80, // 🔧 STAŁA WYSOKOŚĆ - zapobiega overflow
-            decoration: const BoxDecoration(
-              color: Color(0xFF915EFF),
-              borderRadius: BorderRadius.only(
-                topLeft: Radius.circular(12),
-                bottomLeft: Radius.circular(12),
-              ),
-            ),
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Text(
-                  '$number',
-                  style: const TextStyle(
-                    fontSize: 24, // 🔧 Zmniejszona czcionka
-                    fontWeight: FontWeight.bold,
-                    color: Colors.white,
-                  ),
+      child: IntrinsicHeight(
+        child: Row(
+          children: [
+            // 🔢 Pasek z numerem z lewej strony - pełna wysokość
+            Container(
+              width: 50,
+              decoration: const BoxDecoration(
+                color: Color(0xFF915EFF),
+                borderRadius: BorderRadius.only(
+                  topLeft: Radius.circular(12),
+                  bottomLeft: Radius.circular(12),
                 ),
-                if (isMainRecommendation) ...[
-                  const SizedBox(height: 2),
-                  const Icon(
-                    Icons.star,
-                    color: Colors.amber,
-                    size: 16,
-                  ), // 🔧 Mniejsza gwiazdka
-                ],
-              ],
-            ),
-          ),
-
-          // Zawartość karty - ZABEZPIECZONA przed overflow
-          Expanded(
-            child: ExpansionTile(
-              tilePadding: const EdgeInsets.symmetric(
-                horizontal: 12, // 🔧 Zmniejszony padding
-                vertical: 8,
               ),
-              childrenPadding: EdgeInsets.zero,
-              iconColor: Colors.purpleAccent,
-              collapsedIconColor: Colors.purpleAccent,
-              title: _buildTitle(),
-              subtitle: _buildSubtitle(),
-              children: [
-                // 🔧 KLUCZ: Maksymalna wysokość z przewijaniem
-                Container(
-                  constraints: const BoxConstraints(
-                    maxHeight: 300, // 🔧 Maksymalna wysokość
-                  ),
-                  child: SingleChildScrollView(
-                    padding: const EdgeInsets.all(12), // 🔧 Zmniejszony padding
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: _buildContentWidgets(),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Text(
+                    '$number',
+                    style: const TextStyle(
+                      fontSize: 24,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.white,
                     ),
                   ),
-                ),
-              ],
+                  if (isMainRecommendation) ...[
+                    const SizedBox(height: 2),
+                    const Icon(Icons.star, color: Colors.amber, size: 16),
+                  ],
+                ],
+              ),
             ),
-          ),
-        ],
+
+            // Zawartość karty
+            Expanded(
+              child: ExpansionTile(
+                tilePadding: const EdgeInsets.symmetric(
+                  horizontal: 12,
+                  vertical: 8,
+                ),
+                childrenPadding: EdgeInsets.zero,
+                iconColor: Colors.purpleAccent,
+                collapsedIconColor: Colors.purpleAccent,
+                title: _buildTitle(),
+                subtitle: _buildSubtitle(),
+                children: [
+                  Container(
+                    constraints: const BoxConstraints(maxHeight: 300),
+                    child: SingleChildScrollView(
+                      padding: const EdgeInsets.all(12),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: _buildContentWidgets(),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }
 
-  // 🔄 Klasyczna karta - TEŻ PRZEPISANA
+  // 🔄 Klasyczna karta - fioletowy pasek na całą wysokość
   Widget _buildClassicCard() {
     return Container(
       margin: const EdgeInsets.symmetric(vertical: 8),
@@ -123,51 +117,52 @@ class ExpandableCareerPathCard extends StatelessWidget {
                 ]
                 : null,
       ),
-      child: Row(
-        children: [
-          Container(
-            width: 40,
-            height: 80, // 🔧 STAŁA WYSOKOŚĆ
-            decoration: const BoxDecoration(
-              color: Color(0xFF915EFF),
-              borderRadius: BorderRadius.only(
-                topLeft: Radius.circular(12),
-                bottomLeft: Radius.circular(12),
+      child: IntrinsicHeight(
+        child: Row(
+          children: [
+            Container(
+              width: 40,
+              decoration: const BoxDecoration(
+                color: Color(0xFF915EFF),
+                borderRadius: BorderRadius.only(
+                  topLeft: Radius.circular(12),
+                  bottomLeft: Radius.circular(12),
+                ),
               ),
+              child:
+                  isMainRecommendation
+                      ? const Center(
+                        child: Icon(Icons.star, color: Colors.amber, size: 24),
+                      )
+                      : null,
             ),
-            child:
-                isMainRecommendation
-                    ? const Center(
-                      child: Icon(Icons.star, color: Colors.amber, size: 24),
-                    )
-                    : null,
-          ),
-          Expanded(
-            child: ExpansionTile(
-              tilePadding: const EdgeInsets.symmetric(
-                horizontal: 16,
-                vertical: 8,
-              ),
-              childrenPadding: EdgeInsets.zero,
-              iconColor: Colors.purpleAccent,
-              collapsedIconColor: Colors.purpleAccent,
-              title: _buildTitle(),
-              subtitle: _buildSubtitle(),
-              children: [
-                Container(
-                  constraints: const BoxConstraints(maxHeight: 300),
-                  child: SingleChildScrollView(
-                    padding: const EdgeInsets.all(16),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: _buildContentWidgets(),
+            Expanded(
+              child: ExpansionTile(
+                tilePadding: const EdgeInsets.symmetric(
+                  horizontal: 16,
+                  vertical: 8,
+                ),
+                childrenPadding: EdgeInsets.zero,
+                iconColor: Colors.purpleAccent,
+                collapsedIconColor: Colors.purpleAccent,
+                title: _buildTitle(),
+                subtitle: _buildSubtitle(),
+                children: [
+                  Container(
+                    constraints: const BoxConstraints(maxHeight: 300),
+                    child: SingleChildScrollView(
+                      padding: const EdgeInsets.all(16),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: _buildContentWidgets(),
+                      ),
                     ),
                   ),
-                ),
-              ],
+                ],
+              ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }
@@ -192,7 +187,7 @@ class ExpandableCareerPathCard extends StatelessWidget {
               color: Colors.white,
               fontSize: 16,
             ),
-            overflow: TextOverflow.ellipsis, // 🔧 Zapobiega overflow tekstu
+            overflow: TextOverflow.ellipsis,
           ),
         ),
       ],
@@ -238,7 +233,7 @@ class ExpandableCareerPathCard extends StatelessWidget {
     );
   }
 
-  // 🎯 Zawartość jako lista widgetów - PRZEPISANA
+  // 🎯 Zawartość jako lista widgetów
   List<Widget> _buildContentWidgets() {
     List<Widget> widgets = [];
 
@@ -287,7 +282,7 @@ class ExpandableCareerPathCard extends StatelessWidget {
     return Padding(
       padding: const EdgeInsets.only(bottom: 12),
       child: Column(
-        mainAxisSize: MainAxisSize.min, // 🔧 KLUCZ: mainAxisSize.min
+        mainAxisSize: MainAxisSize.min,
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
@@ -310,7 +305,7 @@ class ExpandableCareerPathCard extends StatelessWidget {
     return Padding(
       padding: const EdgeInsets.only(bottom: 12),
       child: Column(
-        mainAxisSize: MainAxisSize.min, // 🔧 KLUCZ: mainAxisSize.min
+        mainAxisSize: MainAxisSize.min,
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
@@ -327,7 +322,7 @@ class ExpandableCareerPathCard extends StatelessWidget {
               child: Text(
                 "• $item",
                 style: const TextStyle(color: Colors.white70),
-                overflow: TextOverflow.clip, // 🔧 Zapobiega overflow
+                overflow: TextOverflow.clip,
               ),
             ),
           ),
