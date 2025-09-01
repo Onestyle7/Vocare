@@ -71,35 +71,76 @@ class _AIAsistentPageScreenState extends State<AIAsistentPageScreen>
       const Duration(seconds: 8),
     );
 
-    // 🔧 UŻYWAMY DZIAŁAJĄCEGO ENDPOINTU
-    final Future<AiCareerResponse?> apiCall = AiApi.fetchFullRecommendation();
+    // 🆕 NOWA LOGIKA: Najpierw sprawdź czy są ostatnie dane
+    print('🔍 Sprawdzanie czy istnieją ostatnie rekomendacje...');
 
-    // Czekaj na oba - animację i API
-    final results = await Future.wait([animationDelay, apiCall]);
-    final AiCareerResponse? result = results[1] as AiCareerResponse?;
+    // Sprawdź ostatnie rekomendacje
+    final Future<AiCareerResponse?> lastRecommendationCheck =
+        AiApi.fetchLastRecommendation();
+
+    // Czekaj na sprawdzenie ostatnich danych (bez animacji)
+    final AiCareerResponse? existingRecommendation =
+        await lastRecommendationCheck;
+
+    AiCareerResponse? finalResult;
+
+    if (existingRecommendation != null) {
+      // 🟢 ZNALEZIONO OSTATNIE DANE - użyj ich
+      print('✅ Znaleziono istniejące rekomendacje - wyświetlam');
+      finalResult = existingRecommendation;
+
+      // Czekaj na zakończenie animacji
+      await animationDelay;
+    } else {
+      // 🔴 BRAK DANYCH - wygeneruj nowe
+      print('❌ Brak istniejących rekomendacji - generuję nowe');
+
+      // Generuj nowe dane równolegle z animacją
+      final Future<AiCareerResponse?> newRecommendationCall =
+          AiApi.generateNewRecommendation();
+
+      // Czekaj na oba - animację i API
+      final results = await Future.wait([
+        animationDelay,
+        newRecommendationCall,
+      ]);
+      finalResult = results[1] as AiCareerResponse?;
+
+      if (finalResult != null) {
+        print('✅ Wygenerowano nowe rekomendacje');
+      } else {
+        print('❌ Błąd generowania nowych rekomendacji');
+      }
+    }
 
     setState(() {
       _isLoading = false;
       _showTerminalAnimation = false;
-      _recommendation = result;
+      _recommendation = finalResult;
     });
 
-    // Odśwież stan tokenów po generowaniu (jeśli używamy tokenów)
-    final newBalance = await BillingApi.getTokenBalance() ?? 0;
-    setState(() {
-      _tokenBalance = newBalance;
-    });
+    // Odśwież stan tokenów po generowaniu (tylko jeśli generowano nowe)
+    if (existingRecommendation == null) {
+      final newBalance = await BillingApi.getTokenBalance() ?? 0;
+      setState(() {
+        _tokenBalance = newBalance;
+      });
+      print('🔄 Odświeżono stan tokenów: $newBalance');
+    }
 
     // Debug info
-    if (result != null) {
-      print('🔍 DEBUG API Response:');
+    if (finalResult != null) {
+      print('🔍 DEBUG Final Result:');
       print(
-        '   - mainCareerPath: ${result.mainCareerPath?.careerName ?? "NULL"}',
+        '   - Source: ${existingRecommendation != null ? "EXISTING" : "NEW"}',
       );
-      print('   - careerPaths.length: ${result.careerPaths.length}');
+      print(
+        '   - mainCareerPath: ${finalResult.mainCareerPath?.careerName ?? "NULL"}',
+      );
+      print('   - careerPaths.length: ${finalResult.careerPaths.length}');
       print('   - careerPaths names:');
-      for (int i = 0; i < result.careerPaths.length; i++) {
-        print('     ${i + 1}. ${result.careerPaths[i].careerName}');
+      for (int i = 0; i < finalResult.careerPaths.length; i++) {
+        print('     ${i + 1}. ${finalResult.careerPaths[i].careerName}');
       }
     }
   }
