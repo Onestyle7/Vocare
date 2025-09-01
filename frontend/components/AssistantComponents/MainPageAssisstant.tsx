@@ -5,13 +5,13 @@ import axios from 'axios';
 import { UserProfile } from '@/lib/types/profile';
 import { toast } from 'sonner';
 import GenerateRecommendation from './GenerateRecommendationFail';
-import { Separator } from '../ui/separator';
 import { gsap } from 'gsap';
 import CollapsibleButton from './CollapsibleButton';
 import CareerPathSection from './CareerPathSection';
 import CustomButton from '../ui/CustomButton';
 import { GridBackgroundDemo } from '../MarketComponents/GridBackgroundDemo';
 import { TerminalDemo } from '../MarketComponents/LoadingTerminal';
+import Timeline from './Timeline'; // Import nowego komponentu
 import {
   AlertDialog,
   AlertDialogAction,
@@ -23,7 +23,13 @@ import {
   AlertDialogTitle,
 } from '../ui/alert-dialog';
 import Image from 'next/image';
-import { star_generate } from '@/app/constants';
+import {
+  star_generate,
+  timeline_icon_1,
+  timeline_icon_2,
+  timeline_icon_3,
+  timeline_icon_4,
+} from '@/app/constants';
 import { useTokenBalanceContext } from '@/lib/contexts/TokenBalanceContext';
 import Link from 'next/link';
 import { AxiosError } from 'axios';
@@ -263,6 +269,17 @@ export default function AssistantPage() {
       setLoading(false);
     }
   };
+
+  const icons = [timeline_icon_1, timeline_icon_2, timeline_icon_3, timeline_icon_4];
+
+  const timelineItems =
+    recommendations?.recommendation.nextSteps.map((step: string, index: number) => ({
+      title: `Step ${index + 1}`,
+      description: step,
+      icon: icons[index], // przypisuje ikonę zgodnie z indeksem
+      status: index === 0 ? ('current' as const) : ('upcoming' as const),
+    })) || [];
+
   if (!profile) {
     return <GenerateRecommendation />;
   }
@@ -303,7 +320,6 @@ export default function AssistantPage() {
           </h2>
           <div>
             {/* Main recommendation section */}
-            {/* odstepy  */}
             <div className="clip-corner-bevel mb-4 flex flex-col overflow-hidden rounded-[28px] border-t border-b border-l shadow-sm sm:border md:flex-row">
               <div className="relative flex items-center justify-center overflow-hidden p-4 md:w-1/6 md:border-r md:p-8">
                 <Image
@@ -346,17 +362,11 @@ export default function AssistantPage() {
                   }}
                 >
                   <div ref={contentRef} className="space-y-3">
+                    <h4 className="font-korbin mt-4 font-bold">Next steps:</h4>
                     <div className="mt-4 rounded-xl border p-2">
-                      <h4 className="font-korbin font-bold">Next steps:</h4>
-                      <ul className="mt-2 list-decimal space-y-1 pl-5 text-gray-400">
-                        {recommendations.recommendation.nextSteps.map(
-                          (step: string, index: number) => (
-                            <li key={index}>{step}</li>
-                          )
-                        )}
-                      </ul>
+                      <Timeline items={timelineItems} maxDescriptionLength={80} className="mx-0" />
                     </div>
-                    <Separator />
+                    {/* <Separator /> */}
                     <div className="mt-4 rounded-xl p-2">
                       <h4 className="font-korbin font-bold"> Long-term goal:</h4>
                       <p className="mt-1 text-gray-400">

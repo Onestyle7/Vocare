@@ -424,4 +424,7 @@ export const facebook = '/svg/facebook.svg';
 
 // Timeline
 
-export const info_circle = '/svg/info-circle.svg';
+export const timeline_icon_1 = '/svg/info-circle.svg';
+export const timeline_icon_3 = '/svg/timeline_icon_2.svg';
+export const timeline_icon_2 = '/svg/timeline_icon_3.svg';
+export const timeline_icon_4 = '/svg/timeline_icon_4.svg';
