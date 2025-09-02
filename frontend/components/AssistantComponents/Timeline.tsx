@@ -1,6 +1,7 @@
 import { timeline_icon_1 } from '@/app/constants';
 import Image from 'next/image';
 import React from 'react';
+import { HoverCard, HoverCardContent, HoverCardTrigger } from '../ui/hover-card';
 
 interface TimelineItem {
   title: string;
@@ -15,7 +16,13 @@ interface TimelineProps {
   maxDescriptionLength?: number;
 }
 
-const Timeline: React.FC<TimelineProps> = ({ items, className = '' }) => {
+function truncateWithEllipsis(text: string, max: number): string {
+  if (!text) return '';
+  if (text.length <= max) return text;
+  return text.slice(0, Math.max(0, max - 3)).trimEnd() + '...';
+}
+
+const Timeline: React.FC<TimelineProps> = ({ items, className = '', maxDescriptionLength = 80 }) => {
   return (
     <section className={`my-4 w-full sm:mx-auto sm:max-w-5xl ${className}`}>
       {/* Desktop Layout - Horizontal */}
@@ -49,7 +56,20 @@ const Timeline: React.FC<TimelineProps> = ({ items, className = '' }) => {
 
             <div className="flex w-full flex-col items-center justify-start px-2 text-center">
               <h2 className="text-md font-bold text-[#dde0ce]">{item.title}</h2>
-              <h3 className="mt-2 text-sm text-[#dde0ce]">{item.description}</h3>
+              {item.description.length > maxDescriptionLength ? (
+                <HoverCard>
+                  <HoverCardTrigger asChild>
+                    <p className="mt-2 cursor-help text-sm text-[#dde0ce]">
+                      {truncateWithEllipsis(item.description, maxDescriptionLength)}
+                    </p>
+                  </HoverCardTrigger>
+                  <HoverCardContent className="w-80 text-left">
+                    <p className="text-sm leading-relaxed ibm-plex-mono-regular">{item.description}</p>
+                  </HoverCardContent>
+                </HoverCard>
+              ) : (
+                <h3 className="mt-2 text-sm text-[#dde0ce]">{item.description}</h3>
+              )}
             </div>
           </div>
         ))}
@@ -84,7 +104,20 @@ const Timeline: React.FC<TimelineProps> = ({ items, className = '' }) => {
             {/* Right side - Content */}
             <div className="flex flex-1 flex-col items-start justify-start pt-2">
               <h2 className="text-lg font-bold text-[#dde0ce]">{item.title}</h2>
-              <h3 className="mt-2 text-sm leading-relaxed text-[#dde0ce]">{item.description}</h3>
+              {item.description.length > maxDescriptionLength ? (
+                <HoverCard>
+                  <HoverCardTrigger asChild>
+                    <p className="mt-2 cursor-help text-sm leading-relaxed text-[#dde0ce]">
+                      {truncateWithEllipsis(item.description, maxDescriptionLength)}
+                    </p>
+                  </HoverCardTrigger>
+                  <HoverCardContent className="w-80">
+                    <p className="text-sm leading-relaxed ibm-plex-mono-regular">{item.description}</p>
+                  </HoverCardContent>
+                </HoverCard>
+              ) : (
+                <h3 className="mt-2 text-sm leading-relaxed text-[#dde0ce]">{item.description}</h3>
+              )}
             </div>
           </div>
         ))}
