@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react';
 import {
   User,
   Mail,
@@ -124,8 +124,20 @@ const CVCreator: React.FC<CVCreatorProps> = ({ initialCv }) => {
   const [cvId, setCvId] = useState<string | null>(initialCv?.id ?? null);
   const [resumeName] = useState<string>(initialCv?.name ?? 'New Resume');
 
+  // Pagination (computed from measured pages)
   const [currentPage, setCurrentPage] = useState(1);
-  const [totalPages, setTotalPages] = useState(1);
+  const [pages, setPages] = useState<string[][]>([]);
+
+  // Page spec in mm to match print/PDF exactly
+  const PAGE_WIDTH_MM = 210;
+  const PAGE_HEIGHT_MM = 297;
+  const PAGE_PADDING_MM = 15;
+
+  // Measurement/preview refs
+  const mmRatioRef = useRef<number | null>(null); // px per 1mm
+  const measureContainerRef = useRef<HTMLDivElement | null>(null);
+  const pagesViewportRef = useRef<HTMLDivElement | null>(null);
+  const zoomWrapperRef = useRef<HTMLDivElement | null>(null);
 
   const [experiences, setExperiences] = useState<Experience[]>(() => {
     const saved = localStorage.getItem('experiences');
@@ -231,59 +243,18 @@ const CVCreator: React.FC<CVCreatorProps> = ({ initialCv }) => {
     localStorage.setItem('sectionOrder', JSON.stringify(sectionOrder));
   }, [sectionOrder]);
 
-  useEffect(() => {
-    checkContentOverflow();
-    setTimeout(() => {
-      checkSectionBreaks();
-      forcePageBreakForLongSections();
-    }, 150); // Zwiększ opóźnienie
-  }, [
-    experiences,
-    education,
-    skills,
-    languages,
-    certificates,
-    hobbies,
-    personalInfo,
-    privacyStatement,
-  ]);
+  // Measured pagination will re-compute via dedicated effect below
 
   useEffect(() => {
     const style = document.createElement('style');
     style.textContent = `
-    .cv-content [data-section] {
-      break-inside: avoid;
-      page-break-inside: avoid;
-      -webkit-column-break-inside: avoid;
-      
-      display: block;
-      
-      min-height: 60px;
-    }
-    
-    .cv-content [data-section="experience"],
-    .cv-content [data-section="education"] {
-      orphans: 3;
-      widows: 3;
-    }
-    
-    .cv-content [data-section="skills"],
-    .cv-content [data-section="languages"],
-    .cv-content [data-section="hobbies"] {
-      break-inside: avoid !important;
-      page-break-inside: avoid !important;
-    }
-    
-    .cv-content [data-section] > div:last-child {
-      margin-bottom: 0;
-    }
-    
-    .cv-content [data-section] h3 {
-      break-after: avoid;
-      page-break-after: avoid;
-      margin-bottom: 8px;
-    }
-  `;
+      .cv-section { break-inside: avoid; page-break-inside: avoid; }
+      .cv-page { background: #fff; }
+      @media print {
+        body { background: #fff !important; }
+        .cv-page { width: 210mm; height: 297mm; page-break-after: always; box-shadow: none !important; }
+      }
+    `;
     document.head.appendChild(style);
 
     return () => {
@@ -487,121 +458,42 @@ const CVCreator: React.FC<CVCreatorProps> = ({ initialCv }) => {
     setCvPosition({ x: 0, y: 0 });
   };
 
-  const checkSectionBreaks = () => {
-    const cvContent = document.querySelector('.cv-content');
-    if (!cvContent) return;
+  // px-per-mm calibration (once)
+  useLayoutEffect(() => {
+    if (mmRatioRef.current) return;
+    const probe = document.createElement('div');
+    probe.style.position = 'absolute';
+    probe.style.visibility = 'hidden';
+    probe.style.width = '100mm';
+    probe.style.height = '10mm';
+    document.body.appendChild(probe);
+    const rect = probe.getBoundingClientRect();
+    const ratioW = rect.width / 100;
+    mmRatioRef.current = ratioW || 3.78; // ~96dpi fallback
+    document.body.removeChild(probe);
+  }, []);
 
-    const pageHeight = 1123; // wysokość strony A4 w pikselach
-    const sections = cvContent.querySelectorAll('[data-section]') as NodeListOf<HTMLElement>;
+  const pageContentHeightPx = useMemo(() => {
+    const mm = mmRatioRef.current ?? 3.78;
+    const innerHeightMm = PAGE_HEIGHT_MM - 2 * PAGE_PADDING_MM;
+    return innerHeightMm * mm;
+  }, []);
 
-    sections.forEach((section) => {
-      // Resetuj wcześniejsze style
-      section.style.marginTop = '';
-      section.style.pageBreakBefore = '';
+  const goToNextPage = () => scrollToPage(Math.min(currentPage + 1, pages.length));
+  const goToPrevPage = () => scrollToPage(Math.max(currentPage - 1, 1));
+  const goToPage = (page: number) => scrollToPage(page);
 
-      // Pobierz rzeczywistą wysokość sekcji
-      const sectionHeight = section.scrollHeight;
-      const rect = section.getBoundingClientRect();
-      const cvRect = cvContent.getBoundingClientRect();
-
-      // Oblicz pozycję sekcji względem początku CV
-      const sectionTop = rect.top - cvRect.top + cvContent.scrollTop;
-      const sectionBottom = sectionTop + sectionHeight;
-
-      // Określ na której stronie zaczyna się sekcja
-      const startPage = Math.floor(sectionTop / pageHeight) + 1;
-      const endPage = Math.floor(sectionBottom / pageHeight) + 1;
-
-      // Jeśli sekcja przekracza na następną stronę
-      if (startPage !== endPage) {
-        const spaceFromTop = sectionTop - (startPage - 1) * pageHeight;
-        const remainingSpaceOnPage = pageHeight - spaceFromTop;
-
-        // KLUCZ: Zmniejszamy próg z 80% na 50% lub sprawdzamy czy sekcja się nie mieści
-        const shouldMoveToNextPage =
-          spaceFromTop > pageHeight * 0.5 || // Jeśli zaczyna się w drugiej połowie strony
-          remainingSpaceOnPage < sectionHeight * 0.3; // Albo jeśli mniej niż 30% sekcji mieści się na stronie
-
-        if (shouldMoveToNextPage) {
-          const pushToNextPage = pageHeight - spaceFromTop;
-          section.style.marginTop = `${pushToNextPage}px`;
-
-          // Dodatkowe CSS dla lepszego łamania stron
-          section.style.pageBreakBefore = 'always';
-        }
-      }
-
-      // Dodatkowe zabezpieczenie: jeśli sekcja jest bardzo długa i nie mieści się na jednej stronie
-      if (sectionHeight > pageHeight * 0.8) {
-        section.style.pageBreakInside = 'avoid';
-      }
-    });
-
-    // Wywołaj ponownie po krótkim opóźnieniu dla stabilności
-    setTimeout(() => {
-      // Sprawdź czy wszystkie sekcje są prawidłowo pozycjonowane
-      sections.forEach((section) => {
-        // Jeśli sekcja nadal źle się łamie, spróbuj alternatywnego podejścia
-        if (section.scrollHeight > pageHeight * 0.8) {
-          section.style.breakInside = 'avoid';
-          section.style.pageBreakInside = 'avoid';
-        }
-      });
-    }, 50);
+  const scrollToPage = (page: number) => {
+    const container = pagesViewportRef.current;
+    if (!container) return;
+    const pagesEls = container.querySelectorAll<HTMLElement>('.cv-page');
+    const el = pagesEls[page - 1];
+    if (!el) return;
+    setCurrentPage(page);
+    el.scrollIntoView({ behavior: 'smooth', block: 'center' });
   };
 
-  const forcePageBreakForLongSections = () => {
-    const cvContent = document.querySelector('.cv-content');
-    if (!cvContent) return;
-
-    const pageHeight = 1123;
-    const sections = cvContent.querySelectorAll('[data-section]') as NodeListOf<HTMLElement>;
-
-    sections.forEach((section) => {
-      const sectionHeight = section.scrollHeight;
-
-      // Jeśli sekcja jest bardzo długa, podziel ją lub przenieś całkowicie
-      if (sectionHeight > pageHeight * 0.6) {
-        const rect = section.getBoundingClientRect();
-        const cvRect = cvContent.getBoundingClientRect();
-        const sectionTop = rect.top - cvRect.top + cvContent.scrollTop;
-        const spaceFromTop = sectionTop % pageHeight;
-
-        // Jeśli długa sekcja zaczyna się w drugiej połowie strony, przenieś ją
-        if (spaceFromTop > pageHeight * 0.4) {
-          const pushToNextPage = pageHeight - spaceFromTop;
-          section.style.marginTop = `${pushToNextPage}px`;
-        }
-      }
-    });
-  };
-
-  const checkContentOverflow = () => {
-    const cvElement = document.querySelector<HTMLElement>('.cv-content');
-    if (!cvElement) return;
-    const contentHeight = cvElement.scrollHeight;
-    const pageHeight = 1123; // A4 height in pixels at 96 DPI (approx. 1123px)
-    const newTotalPages = Math.ceil(contentHeight / pageHeight);
-    setTotalPages(newTotalPages);
-  };
-
-  const goToNextPage = () => {
-    if (currentPage < totalPages) {
-      setCurrentPage(currentPage + 1);
-    }
-  };
-
-  const goToPrevPage = () => {
-    if (currentPage > 1) {
-      setCurrentPage(currentPage - 1);
-    }
-  };
-
-  const goToPage = (page: number) => {
-    if (page >= 1 && page <= totalPages) {
-      setCurrentPage(page);
-    }
-  };
+  // old pagination helpers removed (replaced by scrollToPage)
 
   const populateFromCv = (cv: CvDto, position?: string) => {
     if (cv.basics) {
@@ -787,54 +679,152 @@ const CVCreator: React.FC<CVCreatorProps> = ({ initialCv }) => {
   }, [initialCv]);
 
   const downloadPDF = async () => {
-    const frame = document.querySelector<HTMLElement>('.cv-frame');
-    if (!frame) return;
+    const container = pagesViewportRef.current;
+    const zoomWrapper = zoomWrapperRef.current;
+    if (!container || !zoomWrapper) return;
 
-    // zapamiętaj oryginalne wartości
-    const origScale = cvScale;
-    const origPage = currentPage;
-    const origTransform = frame.style.transform;
-
-    // przywróć 100% skalę
-    setCvScale(1);
-    // usuń transformację z ramki
-    frame.style.transform = 'none';
-    await new Promise((r) => setTimeout(r, 100));
+    const origTransform = zoomWrapper.style.transform;
+    // Temporarily disable transform for crisp rendering
+    zoomWrapper.style.transform = 'none';
+    await new Promise((r) => setTimeout(r, 50));
 
     const pdf = new jsPDF('portrait', 'mm', 'a4');
-    const pdfWidth = 210;
-
-    for (let page = 1; page <= totalPages; page++) {
-      setCurrentPage(page);
-      await new Promise((r) => setTimeout(r, 100));
-
-      const canvas = await html2canvas(frame, {
+    const pagesNodes = container.querySelectorAll<HTMLElement>('.cv-page');
+    for (let i = 0; i < pagesNodes.length; i++) {
+      const pageEl = pagesNodes[i];
+      const canvas = await html2canvas(pageEl, {
         scale: 2,
         useCORS: true,
         allowTaint: true,
         backgroundColor: '#ffffff',
-        // bez width/height/scrollY — html2canvas złapie całą ramkę
       });
-
       const imgData = canvas.toDataURL('image/png');
-      const imgH = (canvas.height * pdfWidth) / canvas.width;
-
-      if (page > 1) pdf.addPage();
-      pdf.addImage(imgData, 'PNG', 0, 0, pdfWidth, imgH);
+      if (i > 0) pdf.addPage('a4', 'portrait');
+      pdf.addImage(imgData, 'PNG', 0, 0, 210, 297);
     }
 
-    // przywróć wszystko do stanu pierwotnego
-    setCvScale(origScale);
-    setCurrentPage(origPage);
-    frame.style.transform = origTransform;
+    // Restore zoom transform
+    zoomWrapper.style.transform = origTransform;
 
-    const fileName =
-      personalInfo.firstName && personalInfo.lastName
-        ? `${personalInfo.firstName}_${personalInfo.lastName}_CV.pdf`
-        : 'My_CV.pdf';
-
+    const fileName = personalInfo.firstName && personalInfo.lastName
+      ? `${personalInfo.firstName}_${personalInfo.lastName}_CV.pdf`
+      : 'My_CV.pdf';
     pdf.save(fileName);
   };
+
+  // Section visibility helper (must match preview rendering conditions)
+  const isSectionVisible = (sectionId: string) => {
+    switch (sectionId) {
+      case 'profile':
+        return Boolean(
+          personalInfo.firstName ||
+            personalInfo.lastName ||
+            personalInfo.email ||
+            personalInfo.phone ||
+            personalInfo.address ||
+            personalInfo.profession ||
+            personalInfo.summary
+        );
+      case 'experience':
+        return experiences.length > 0;
+      case 'education':
+        return education.length > 0;
+      case 'certificates':
+        return certificates.length > 0;
+      case 'skills':
+        return skills.length > 0;
+      case 'languages':
+        return languages.length > 0;
+      case 'hobbies':
+        return hobbies.length > 0;
+      case 'privacy':
+        return Boolean(privacyStatement.content && privacyStatement.content.trim().length > 0);
+      default:
+        return false;
+    }
+  };
+
+  // Build measured pages: render invisible blocks, measure, then pack
+  useLayoutEffect(() => {
+    // Wait for mm calibration
+    if (!mmRatioRef.current) return;
+    const container = measureContainerRef.current;
+    if (!container) return;
+
+    const headerEl = container.querySelector<HTMLElement>('.cv-section[data-block-id="header"]');
+    const headerHeight = headerEl ? headerEl.offsetHeight : 0;
+
+    const blocks = Array.from(
+      container.querySelectorAll<HTMLElement>('.cv-section[data-block-id]')
+    );
+    const heights = new Map<string, number>();
+    blocks.forEach((el) => {
+      const id = el.getAttribute('data-block-id');
+      if (!id) return;
+      // Skip header from generic blocks map (handled separately)
+      if (id === 'header') return;
+      heights.set(id, el.offsetHeight);
+    });
+
+    const visible = sectionOrder.filter((id) => isSectionVisible(id));
+    const pagesAcc: string[][] = [];
+    let current: string[] = [];
+    // First page starts with header space allocated
+    let used = headerHeight;
+    const limit = pageContentHeightPx; // px
+
+    visible.forEach((id) => {
+      const h = heights.get(id) ?? 0;
+      // If it doesn't fit in current page, wrap to next page
+      if (used > 0 && used + h > limit) {
+        pagesAcc.push(current);
+        current = [id];
+        used = h; // new page, header not repeated
+      } else {
+        current.push(id);
+        used += h;
+      }
+    });
+    if (current.length) pagesAcc.push(current);
+
+    setPages(pagesAcc);
+    setCurrentPage((prev) => Math.min(Math.max(prev, 1), Math.max(pagesAcc.length, 1)));
+  }, [
+    personalInfo,
+    experiences,
+    education,
+    skills,
+    languages,
+    certificates,
+    hobbies,
+    privacyStatement,
+    sectionOrder,
+    pageContentHeightPx,
+  ]);
+
+  // Keep currentPage in sync with scroll position
+  useEffect(() => {
+    const viewport = pagesViewportRef.current;
+    if (!viewport) return;
+    const pagesEls = viewport.querySelectorAll<HTMLElement>('.cv-page');
+    if (!pagesEls.length) return;
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        const visible = entries
+          .filter((e) => e.isIntersecting)
+          .sort((a, b) => b.intersectionRatio - a.intersectionRatio);
+        if (visible[0]) {
+          const idx = Array.from(pagesEls).indexOf(visible[0].target as HTMLElement);
+          if (idx >= 0) setCurrentPage(idx + 1);
+        }
+      },
+      { root: viewport, threshold: [0.5] }
+    );
+
+    pagesEls.forEach((el) => observer.observe(el));
+    return () => observer.disconnect();
+  }, [pages.length]);
 
   const renderSectionInForm = (sectionId: string) => {
     switch (sectionId) {
@@ -1425,7 +1415,7 @@ const CVCreator: React.FC<CVCreatorProps> = ({ initialCv }) => {
           personalInfo.address ||
           personalInfo.profession ||
           personalInfo.summary ? (
-          <div className="mb-5" key="profile">
+          <div className="cv-section mb-5" key="profile" data-block-id="profile" data-section="profile">
             <h3 className="mb-2 border-b border-gray-300 pb-1 text-lg font-semibold text-gray-800">
               Personal Profile
             </h3>
@@ -1437,7 +1427,7 @@ const CVCreator: React.FC<CVCreatorProps> = ({ initialCv }) => {
 
       case 'experience':
         return experiences.length > 0 ? (
-          <div className="mb-5" key="experience" data-section="experience">
+          <div className="cv-section mb-5" key="experience" data-block-id="experience" data-section="experience">
             <h3 className="mb-2 flex items-center border-b border-gray-300 pb-1 text-lg font-semibold text-gray-800">
               <Briefcase size={16} className="mr-2" />
               Work Exeperience
@@ -1473,7 +1463,7 @@ const CVCreator: React.FC<CVCreatorProps> = ({ initialCv }) => {
 
       case 'education':
         return education.length > 0 ? (
-          <div className="mb-5" key="education" data-section="education">
+          <div className="cv-section mb-5" key="education" data-block-id="education" data-section="education">
             <h3 className="mb-2 flex items-center border-b border-gray-300 pb-1 text-lg font-semibold text-gray-800">
               <GraduationCap size={16} className="mr-2" />
               Education
@@ -1501,7 +1491,7 @@ const CVCreator: React.FC<CVCreatorProps> = ({ initialCv }) => {
 
       case 'certificates':
         return certificates.length > 0 ? (
-          <div className="mb-5" key="certificates" data-section="certificates">
+          <div className="cv-section mb-5" key="certificates" data-block-id="certificates" data-section="certificates">
             <h3 className="mb-2 flex items-center border-b border-gray-300 pb-1 text-lg font-semibold text-gray-800">
               <Award size={16} className="mr-2" />
               Certificates
@@ -1519,7 +1509,7 @@ const CVCreator: React.FC<CVCreatorProps> = ({ initialCv }) => {
 
       case 'skills':
         return skills.length > 0 ? (
-          <div className="mb-5" key="skills" data-section="skills">
+          <div className="cv-section mb-5" key="skills" data-block-id="skills" data-section="skills">
             <h3 className="mb-2 flex items-center border-b border-gray-300 pb-1 text-lg font-semibold text-gray-800">
               <Award size={16} className="mr-2" />
               Skills
@@ -1539,7 +1529,7 @@ const CVCreator: React.FC<CVCreatorProps> = ({ initialCv }) => {
 
       case 'languages':
         return languages.length > 0 ? (
-          <div className="mb-5" key="languages" data-section="languages">
+          <div className="cv-section mb-5" key="languages" data-block-id="languages" data-section="languages">
             <h3 className="mb-2 flex items-center border-b border-gray-300 pb-1 text-lg font-semibold text-gray-800">
               <Languages size={16} className="mr-2" />
               Languages
@@ -1559,7 +1549,7 @@ const CVCreator: React.FC<CVCreatorProps> = ({ initialCv }) => {
 
       case 'hobbies':
         return hobbies.length > 0 ? (
-          <div className="mb-5" key="hobbies" data-section="hobbies">
+          <div className="cv-section mb-5" key="hobbies" data-block-id="hobbies" data-section="hobbies">
             <h3 className="mb-2 flex items-center border-b border-gray-300 pb-1 text-lg font-semibold text-gray-800">
               <Tag size={16} className="mr-2" />
               Hobby
@@ -1579,7 +1569,7 @@ const CVCreator: React.FC<CVCreatorProps> = ({ initialCv }) => {
 
       case 'privacy':
         return privacyStatement.content ? (
-          <div className="mb-5" key="privacy" data-section="privacy">
+          <div className="cv-section mb-5" key="privacy" data-block-id="privacy" data-section="privacy">
             <h3 className="mb-2 border-b border-gray-300 pb-1 text-lg font-semibold text-gray-800">
               Privacy Statement
             </h3>
@@ -1593,6 +1583,39 @@ const CVCreator: React.FC<CVCreatorProps> = ({ initialCv }) => {
         return null;
     }
   };
+
+  const renderHeader = () => (
+    <div className="mb-6 cv-section" data-block-id="header">
+      <h1 className="mb-2 text-3xl leading-tight font-bold text-gray-900">
+        {personalInfo.firstName || personalInfo.lastName
+          ? `${personalInfo.firstName} ${personalInfo.lastName}`.trim()
+          : 'Joe Doe'}
+      </h1>
+      {personalInfo.profession && (
+        <h2 className="mb-4 text-xl text-gray-600">{personalInfo.profession}</h2>
+      )}
+      <div className="flex flex-wrap gap-4 text-sm text-gray-600">
+        {personalInfo.email && (
+          <div className="flex items-center">
+            <Mail size={14} className="mr-2 flex-shrink-0" />
+            <span className="break-all">{personalInfo.email}</span>
+          </div>
+        )}
+        {personalInfo.phone && (
+          <div className="flex items-center">
+            <Phone size={14} className="mr-2 flex-shrink-0" />
+            {personalInfo.phone}
+          </div>
+        )}
+        {personalInfo.address && (
+          <div className="flex items-center">
+            <MapPin size={14} className="mr-2 flex-shrink-0" />
+            {personalInfo.address}
+          </div>
+        )}
+      </div>
+    </div>
+  );
 
   return (
     <div className="font-poppins flex h-screen flex-col overflow-hidden bg-gray-50 lg:flex-row lg:pt-6 dark:text-black">
@@ -1876,7 +1899,7 @@ const CVCreator: React.FC<CVCreatorProps> = ({ initialCv }) => {
 
           {/* CV Preview Container */}
           <div
-            className="relative flex-1 overflow-hidden border border-blue-500 bg-gray-100/20"
+            className="relative flex-1 overflow-hidden bg-gray-100/20"
             onMouseMove={handleMouseMove}
             onMouseUp={handleMouseUp}
             onMouseLeave={() => {
@@ -1885,96 +1908,61 @@ const CVCreator: React.FC<CVCreatorProps> = ({ initialCv }) => {
             }}
             onMouseEnter={() => setIsHovered(true)}
           >
+            {/* Hidden measurement container to compute heights */}
             <div
-              className={`absolute inset-0 flex items-center justify-center border border-red-500 ${isDragging ? 'cursor-grabbing' : 'cursor-grab'}`}
-              style={{
-                transform: `translate(${cvPosition.x}px, ${cvPosition.y}px)`,
-              }}
-              onMouseDown={handleMouseDown}
+              ref={measureContainerRef}
+              style={{ position: 'absolute', left: '-10000px', top: '-10000px', width: `${PAGE_WIDTH_MM}mm`, background: '#fff' }}
             >
-              {/* A4 Paper with exact dimensions */}
-              <div
-                className="cv-frame overflow-hidden rounded-sm border border-green-500"
-                style={{
-                  width: '210mm',
-                  height: '257mm',
-                  padding: '32px', // ← tutaj widoczny margines
-                  boxSizing: 'border-box',
-                  backgroundColor: '#fff',
-                  boxShadow: '0 4px 6px rgba(0,0,0,0.1)',
-                  transform: `scale(${cvScale})`,
-                  transformOrigin: 'center center',
-                }}
-              >
-                <div
-                  className="cv-content border border-purple-500"
-                  style={{
-                    width: '100%', // 210mm
-                    height: '100%', // dokładnie obszar "przelamywania"
-                    overflow: 'hidden',
-                  }}
-                >
-                  <div
-                    className="box-border h-full"
-                    style={{
-                      transform: `translateY(-${(currentPage - 1) * 100}%)`,
-                    }}
-                  >
-                    <div className="mb-6">
-                      <h1 className="mb-2 text-3xl leading-tight font-bold text-gray-900">
-                        {personalInfo.firstName || personalInfo.lastName
-                          ? `${personalInfo.firstName} ${personalInfo.lastName}`.trim()
-                          : 'Joe Doe'}
-                      </h1>
-                      {personalInfo.profession && (
-                        <h2 className="mb-4 text-xl text-gray-600">{personalInfo.profession}</h2>
-                      )}
-
-                      {/* Contact Information */}
-                      <div className="flex flex-wrap gap-4 text-sm text-gray-600">
-                        {personalInfo.email && (
-                          <div className="flex items-center">
-                            <Mail size={14} className="mr-2 flex-shrink-0" />
-                            <span className="break-all">{personalInfo.email}</span>
-                          </div>
-                        )}
-                        {personalInfo.phone && (
-                          <div className="flex items-center">
-                            <Phone size={14} className="mr-2 flex-shrink-0" />
-                            {personalInfo.phone}
-                          </div>
-                        )}
-                        {personalInfo.address && (
-                          <div className="flex items-center">
-                            <MapPin size={14} className="mr-2 flex-shrink-0" />
-                            {personalInfo.address}
-                          </div>
-                        )}
-                      </div>
-                    </div>
-
-                    {sectionOrder.map((sectionId) => renderSectionInPreview(sectionId))}
-
-                    {/* Empty state message */}
-                    {!personalInfo.firstName &&
-                      !personalInfo.lastName &&
-                      !personalInfo.email &&
-                      experiences.length === 0 &&
-                      skills.length === 0 &&
-                      education.length === 0 &&
-                      currentPage === 1 && (
-                        <div className="mt-20 text-center text-gray-500">
-                          <p className="text-lg">
-                            Start filling the form on the left to create your CV.
-                          </p>
-                        </div>
-                      )}
-                  </div>
-                </div>
+              <div style={{ padding: `${PAGE_PADDING_MM}mm` }}>
+                {renderHeader()}
+                {sectionOrder.filter(isSectionVisible).map((id) => (
+                  <React.Fragment key={`m-${id}`}>{renderSectionInPreview(id)}</React.Fragment>
+                ))}
               </div>
             </div>
 
-            {/* Pagination Controls - dodaj na dole kontenera */}
+            {/* Pages viewport */}
+            <div ref={pagesViewportRef} className="absolute inset-0 overflow-auto">
+              <div
+                ref={zoomWrapperRef}
+                className={`${isDragging ? 'cursor-grabbing' : 'cursor-grab'} flex flex-col items-center`}
+                style={{
+                  transform: `translate(${cvPosition.x}px, ${cvPosition.y}px) scale(${cvScale})`,
+                  transformOrigin: 'top center',
+                  padding: '40px 0',
+                }}
+                onMouseDown={handleMouseDown}
+              >
+                {(pages.length ? pages : [[]]).map((page, idx) => (
+                  <div
+                    key={`page-${idx}`}
+                    className="cv-page mb-6 overflow-hidden rounded-sm border border-gray-200 shadow"
+                    style={{ width: `${PAGE_WIDTH_MM}mm`, height: `${PAGE_HEIGHT_MM}mm`, background: '#fff' }}
+                  >
+                    <div className="h-full box-border" style={{ padding: `${PAGE_PADDING_MM}mm` }}>
+                      {idx === 0 && renderHeader()}
+                      {page.map((id) => (
+                        <React.Fragment key={`p${idx}-${id}`}>{renderSectionInPreview(id)}</React.Fragment>
+                      ))}
+                      {/* Empty state message on first page */}
+                      {idx === 0 &&
+                        !personalInfo.firstName &&
+                        !personalInfo.lastName &&
+                        !personalInfo.email &&
+                        experiences.length === 0 &&
+                        skills.length === 0 &&
+                        education.length === 0 && (
+                          <div className="mt-20 text-center text-gray-500">
+                            <p className="text-lg">Start filling the form on the left to create your CV.</p>
+                          </div>
+                        )}
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            {/* Pagination Controls */}
             {true && (
               <div
                 className={`absolute bottom-5 left-1/2 -translate-x-1/2 transform transition-all duration-500 ${
@@ -1996,7 +1984,7 @@ const CVCreator: React.FC<CVCreatorProps> = ({ initialCv }) => {
                 </button>
 
                 <div className="flex space-x-1">
-                  {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (
+                  {Array.from({ length: pages.length || 1 }, (_, i) => i + 1).map((page) => (
                     <button
                       key={page}
                       onClick={() => goToPage(page)}
@@ -2013,9 +2001,9 @@ const CVCreator: React.FC<CVCreatorProps> = ({ initialCv }) => {
 
                 <button
                   onClick={goToNextPage}
-                  disabled={currentPage === totalPages}
+                  disabled={currentPage === (pages.length || 1)}
                   className={`rounded p-2 ${
-                    currentPage === totalPages
+                    currentPage === (pages.length || 1)
                       ? 'cursor-not-allowed text-gray-400'
                       : 'cursor-pointer text-gray-700 hover:bg-gray-100'
                   }`}
@@ -2024,7 +2012,7 @@ const CVCreator: React.FC<CVCreatorProps> = ({ initialCv }) => {
                 </button>
 
                 <span className="ml-2 text-sm text-gray-600">
-                  {currentPage} / {totalPages}
+                  {currentPage} / {pages.length || 1}
                 </span>
               </div>
             )}
