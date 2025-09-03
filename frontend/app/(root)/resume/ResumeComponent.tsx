@@ -1655,7 +1655,7 @@ const CVCreator: React.FC<CVCreatorProps> = ({ initialCv }) => {
         <HoverCard>
           <HoverCardTrigger asChild>
             <button className="flex h-12 w-12 cursor-pointer items-center justify-center rounded-sm bg-gray-100">
-              v0.1.3
+              v1.0.0
             </button>
           </HoverCardTrigger>
           <HoverCardContent className="font-poppins w-80">
