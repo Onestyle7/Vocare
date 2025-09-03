@@ -126,7 +126,8 @@ const CVCreator: React.FC<CVCreatorProps> = ({ initialCv }) => {
 
   // Pagination (computed from measured pages)
   const [currentPage, setCurrentPage] = useState(1);
-  const [pages, setPages] = useState<string[][]>([]);
+  type SectionChunk = { sectionId: string; items?: string[]; includeTitle?: boolean };
+  const [pages, setPages] = useState<SectionChunk[][]>([]);
 
   // Page spec in mm to match print/PDF exactly
   const PAGE_WIDTH_MM = 210;
@@ -135,6 +136,7 @@ const CVCreator: React.FC<CVCreatorProps> = ({ initialCv }) => {
 
   // Measurement/preview refs
   const mmRatioRef = useRef<number | null>(null); // px per 1mm
+  const [mmRatio, setMmRatio] = useState<number | null>(null); // state to trigger recompute
   const measureContainerRef = useRef<HTMLDivElement | null>(null);
   const pagesViewportRef = useRef<HTMLDivElement | null>(null);
   const zoomWrapperRef = useRef<HTMLDivElement | null>(null);
@@ -470,14 +472,15 @@ const CVCreator: React.FC<CVCreatorProps> = ({ initialCv }) => {
     const rect = probe.getBoundingClientRect();
     const ratioW = rect.width / 100;
     mmRatioRef.current = ratioW || 3.78; // ~96dpi fallback
+    setMmRatio(mmRatioRef.current);
     document.body.removeChild(probe);
   }, []);
 
   const pageContentHeightPx = useMemo(() => {
-    const mm = mmRatioRef.current ?? 3.78;
+    const mm = mmRatio ?? mmRatioRef.current ?? 3.78;
     const innerHeightMm = PAGE_HEIGHT_MM - 2 * PAGE_PADDING_MM;
     return innerHeightMm * mm;
-  }, []);
+  }, [mmRatio, PAGE_HEIGHT_MM, PAGE_PADDING_MM]);
 
   const goToNextPage = () => scrollToPage(Math.min(currentPage + 1, pages.length));
   const goToPrevPage = () => scrollToPage(Math.max(currentPage - 1, 1));
@@ -686,10 +689,20 @@ const CVCreator: React.FC<CVCreatorProps> = ({ initialCv }) => {
     const origTransform = zoomWrapper.style.transform;
     // Temporarily disable transform for crisp rendering
     zoomWrapper.style.transform = 'none';
+    // Temporarily remove shadows/borders from pages to avoid capture discrepancies
+    const pagesNodes = container.querySelectorAll<HTMLElement>('.cv-page');
+    const restoreStyles: Array<{ el: HTMLElement; boxShadow: string; border: string }> = [];
+    pagesNodes.forEach((el) => {
+      const cs = getComputedStyle(el);
+      restoreStyles.push({ el, boxShadow: el.style.boxShadow || '', border: el.style.border || '' });
+      el.style.boxShadow = 'none';
+      el.style.border = 'none';
+    });
     await new Promise((r) => setTimeout(r, 50));
 
     const pdf = new jsPDF('portrait', 'mm', 'a4');
-    const pagesNodes = container.querySelectorAll<HTMLElement>('.cv-page');
+    const pdfW = pdf.internal.pageSize.getWidth();
+    const pdfH = pdf.internal.pageSize.getHeight();
     for (let i = 0; i < pagesNodes.length; i++) {
       const pageEl = pagesNodes[i];
       const canvas = await html2canvas(pageEl, {
@@ -699,12 +712,17 @@ const CVCreator: React.FC<CVCreatorProps> = ({ initialCv }) => {
         backgroundColor: '#ffffff',
       });
       const imgData = canvas.toDataURL('image/png');
-      if (i > 0) pdf.addPage('a4', 'portrait');
-      pdf.addImage(imgData, 'PNG', 0, 0, 210, 297);
+      if (i > 0) pdf.addPage();
+      pdf.addImage(imgData, 'PNG', 0, 0, pdfW, pdfH);
     }
 
     // Restore zoom transform
     zoomWrapper.style.transform = origTransform;
+    // Restore styles
+    restoreStyles.forEach(({ el, boxShadow, border }) => {
+      el.style.boxShadow = boxShadow;
+      el.style.border = border;
+    });
 
     const fileName = personalInfo.firstName && personalInfo.lastName
       ? `${personalInfo.firstName}_${personalInfo.lastName}_CV.pdf`
@@ -744,7 +762,7 @@ const CVCreator: React.FC<CVCreatorProps> = ({ initialCv }) => {
     }
   };
 
-  // Build measured pages: render invisible blocks, measure, then pack
+  // Build measured pages: render invisible blocks, measure (including margins), then pack
   useLayoutEffect(() => {
     // Wait for mm calibration
     if (!mmRatioRef.current) return;
@@ -752,39 +770,164 @@ const CVCreator: React.FC<CVCreatorProps> = ({ initialCv }) => {
     if (!container) return;
 
     const headerEl = container.querySelector<HTMLElement>('.cv-section[data-block-id="header"]');
-    const headerHeight = headerEl ? headerEl.offsetHeight : 0;
+    let headerHeight = 0;
+    if (headerEl) {
+      const cs = getComputedStyle(headerEl);
+      const mt = parseFloat(cs.marginTop || '0') || 0;
+      const mb = parseFloat(cs.marginBottom || '0') || 0;
+      headerHeight = headerEl.offsetHeight + mt + mb; // include margins
+    }
 
-    const blocks = Array.from(
-      container.querySelectorAll<HTMLElement>('.cv-section[data-block-id]')
-    );
+    const blocks = Array.from(container.querySelectorAll<HTMLElement>('.cv-section[data-block-id]'));
     const heights = new Map<string, number>();
+    const sectionHeaderHeights = new Map<string, number>();
+    const sectionItemHeights = new Map<string, Array<{ id: string; h: number }>>();
     blocks.forEach((el) => {
       const id = el.getAttribute('data-block-id');
       if (!id) return;
-      // Skip header from generic blocks map (handled separately)
-      if (id === 'header') return;
-      heights.set(id, el.offsetHeight);
+      if (id === 'header') return; // handled above
+
+      // Total section height including margins
+      const cs = getComputedStyle(el);
+      const mt = parseFloat(cs.marginTop || '0') || 0;
+      const mb = parseFloat(cs.marginBottom || '0') || 0;
+      heights.set(id, el.offsetHeight + mt + mb);
+
+      // Section header height (h3)
+      const h3 = el.querySelector('h3');
+      if (h3) {
+        const csH = getComputedStyle(h3 as HTMLElement);
+        const mth = parseFloat(csH.marginTop || '0') || 0;
+        const mbh = parseFloat(csH.marginBottom || '0') || 0;
+        sectionHeaderHeights.set(id, (h3 as HTMLElement).offsetHeight + mth + mbh);
+      }
+
+      // Items by section
+      let items: Array<{ id: string; h: number }> = [];
+      if (id === 'experience') {
+        const nodes = el.querySelectorAll<HTMLElement>('.exp-item[data-item-id]');
+        nodes.forEach((n) => {
+          const csI = getComputedStyle(n);
+          const mti = parseFloat(csI.marginTop || '0') || 0;
+          const mbi = parseFloat(csI.marginBottom || '0') || 0;
+          const itemId = n.getAttribute('data-item-id') || '';
+          items.push({ id: itemId, h: n.offsetHeight + mti + mbi });
+        });
+      } else if (id === 'education') {
+        const nodes = el.querySelectorAll<HTMLElement>('.edu-item[data-item-id]');
+        nodes.forEach((n) => {
+          const csI = getComputedStyle(n);
+          const mti = parseFloat(csI.marginTop || '0') || 0;
+          const mbi = parseFloat(csI.marginBottom || '0') || 0;
+          const itemId = n.getAttribute('data-item-id') || '';
+          items.push({ id: itemId, h: n.offsetHeight + mti + mbi });
+        });
+      } else if (id === 'certificates') {
+        const nodes = el.querySelectorAll<HTMLElement>('.cert-item[data-item-id]');
+        nodes.forEach((n) => {
+          const csI = getComputedStyle(n);
+          const mti = parseFloat(csI.marginTop || '0') || 0;
+          const mbi = parseFloat(csI.marginBottom || '0') || 0;
+          const itemId = n.getAttribute('data-item-id') || '';
+          items.push({ id: itemId, h: n.offsetHeight + mti + mbi });
+        });
+      } else if (id === 'profile' || id === 'privacy') {
+        const nodes = el.querySelectorAll<HTMLElement>('.para-item[data-item-id]');
+        nodes.forEach((n) => {
+          const csI = getComputedStyle(n);
+          const mti = parseFloat(csI.marginTop || '0') || 0;
+          const mbi = parseFloat(csI.marginBottom || '0') || 0;
+          const itemId = n.getAttribute('data-item-id') || '';
+          items.push({ id: itemId, h: n.offsetHeight + mti + mbi });
+        });
+      }
+      if (items.length) sectionItemHeights.set(id, items);
     });
 
     const visible = sectionOrder.filter((id) => isSectionVisible(id));
-    const pagesAcc: string[][] = [];
-    let current: string[] = [];
+    const pagesAcc: SectionChunk[][] = [];
+    let current: SectionChunk[] = [];
     // First page starts with header space allocated
     let used = headerHeight;
-    const limit = pageContentHeightPx; // px
+    const SAFETY_PX = 4; // guard for rounding/borders
+    const limit = pageContentHeightPx - SAFETY_PX; // px
 
-    visible.forEach((id) => {
-      const h = heights.get(id) ?? 0;
-      // If it doesn't fit in current page, wrap to next page
-      if (used > 0 && used + h > limit) {
-        pagesAcc.push(current);
-        current = [id];
-        used = h; // new page, header not repeated
-      } else {
-        current.push(id);
-        used += h;
+    const pushPage = () => {
+      pagesAcc.push(current);
+      current = [];
+      used = 0; // next page without header
+    };
+
+    for (const id of visible) {
+      const wholeH = heights.get(id) ?? 0;
+      if (wholeH <= 0) continue;
+
+      // If whole section fits on current page
+      if ((used > 0 && used + wholeH <= limit) || (used === 0 && wholeH <= limit)) {
+        current.push({ sectionId: id, includeTitle: true });
+        used += wholeH;
+        continue;
       }
-    });
+
+      // If section doesn't fit fully, try to split by items when possible
+      const items = sectionItemHeights.get(id);
+      const secHeaderH = sectionHeaderHeights.get(id) || 0;
+
+      if (!items || !items.length) {
+        // No way to split; move to next page if not empty, then place it (may overflow)
+        if (used > 0) {
+          pushPage();
+        }
+        current.push({ sectionId: id, includeTitle: true });
+        used = wholeH; // may exceed limit; last resort
+        continue;
+      }
+
+      // Split list items across pages
+      let idx = 0;
+      while (idx < items.length) {
+        // Ensure at least header fits, otherwise new page
+        if (used > 0 && used + secHeaderH >= limit) {
+          pushPage();
+        }
+        let chunkIds: string[] = [];
+        let chunkH = secHeaderH;
+        const pageRemaining = limit - used;
+
+        // If even header alone exceeds page, force new page
+        if (chunkH > pageRemaining && used > 0) {
+          pushPage();
+        }
+
+        // Fit as many items as possible on this page
+        while (idx < items.length) {
+          const it = items[idx];
+          if (chunkH + it.h <= (limit - used)) {
+            chunkIds.push(it.id);
+            chunkH += it.h;
+            idx++;
+          } else {
+            break;
+          }
+        }
+
+        // If nothing fits (single item larger than page), force place one to avoid infinite loop
+        if (chunkIds.length === 0 && idx < items.length) {
+          chunkIds.push(items[idx].id);
+          chunkH += items[idx].h;
+          idx++;
+        }
+
+        current.push({ sectionId: id, includeTitle: true, items: chunkIds });
+        used += chunkH;
+
+        // If next item remains, start a new page for continuation
+        if (idx < items.length) {
+          pushPage();
+        }
+      }
+    }
+
     if (current.length) pagesAcc.push(current);
 
     setPages(pagesAcc);
@@ -1416,12 +1559,14 @@ const CVCreator: React.FC<CVCreatorProps> = ({ initialCv }) => {
           personalInfo.profession ||
           personalInfo.summary ? (
           <div className="cv-section mb-5" key="profile" data-block-id="profile" data-section="profile">
-            <h3 className="mb-2 border-b border-gray-300 pb-1 text-lg font-semibold text-gray-800">
-              Personal Profile
-            </h3>
-            <p className="text-sm leading-relaxed break-words text-gray-700">
-              {personalInfo.summary}
-            </p>
+            <h3 className="mb-2 border-b border-gray-300 pb-1 text-lg font-semibold text-gray-800">Personal Profile</h3>
+            <div className="text-sm leading-relaxed break-words text-gray-700">
+              {(personalInfo.summary || '').split(/\n+/).filter(Boolean).map((para, i) => (
+                <p key={`sum-${i}`} className="para-item mb-2 last:mb-0" data-item-id={`p${i}`}>
+                  {para}
+                </p>
+              ))}
+            </div>
           </div>
         ) : null;
 
@@ -1433,7 +1578,7 @@ const CVCreator: React.FC<CVCreatorProps> = ({ initialCv }) => {
               Work Exeperience
             </h3>
             {experiences.map((exp) => (
-              <div key={exp.id} className="exp-item mb-4">
+              <div key={exp.id} className="exp-item mb-4" data-item-id={exp.id}>
                 {/* Nagłówek stanowisko + firma */}
                 <div className="exp-header mb-1 flex items-start justify-between">
                   <div className="min-w-0 flex-1">
@@ -1469,7 +1614,7 @@ const CVCreator: React.FC<CVCreatorProps> = ({ initialCv }) => {
               Education
             </h3>
             {education.map((edu) => (
-              <div key={edu.id} className="mb-3">
+              <div key={edu.id} className="edu-item mb-3" data-item-id={edu.id}>
                 <div className="mb-1 flex items-start justify-between">
                   <div className="min-w-0 flex-1">
                     <h4 className="truncate font-semibold text-gray-900">
@@ -1498,10 +1643,12 @@ const CVCreator: React.FC<CVCreatorProps> = ({ initialCv }) => {
             </h3>
             <div className="space-y-1">
               {certificates.map((cert) => (
-                <p key={cert.id} className="text-sm text-gray-700">
-                  {cert.name}
-                  {cert.date ? ` (${formatDate(cert.date)})` : ''}
-                </p>
+                <div key={cert.id} className="cert-item" data-item-id={cert.id}>
+                  <p className="text-sm text-gray-700">
+                    {cert.name}
+                    {cert.date ? ` (${formatDate(cert.date)})` : ''}
+                  </p>
+                </div>
               ))}
             </div>
           </div>
@@ -1570,12 +1717,14 @@ const CVCreator: React.FC<CVCreatorProps> = ({ initialCv }) => {
       case 'privacy':
         return privacyStatement.content ? (
           <div className="cv-section mb-5" key="privacy" data-block-id="privacy" data-section="privacy">
-            <h3 className="mb-2 border-b border-gray-300 pb-1 text-lg font-semibold text-gray-800">
-              Privacy Statement
-            </h3>
-            <p className="text-xs leading-relaxed break-words text-gray-700">
-              {privacyStatement.content}
-            </p>
+            <h3 className="mb-2 border-b border-gray-300 pb-1 text-lg font-semibold text-gray-800">Privacy Statement</h3>
+            <div className="text-xs leading-relaxed break-words text-gray-700">
+              {(privacyStatement.content || '').split(/\n+/).filter(Boolean).map((para, i) => (
+                <p key={`priv-${i}`} className="para-item mb-2 last:mb-0" data-item-id={`p${i}`}>
+                  {para}
+                </p>
+              ))}
+            </div>
           </div>
         ) : null;
 
@@ -1616,6 +1765,178 @@ const CVCreator: React.FC<CVCreatorProps> = ({ initialCv }) => {
       </div>
     </div>
   );
+
+  const renderSectionTitle = (sectionId: string) => {
+    switch (sectionId) {
+      case 'profile':
+        return (
+          <h3 className="mb-2 border-b border-gray-300 pb-1 text-lg font-semibold text-gray-800">
+            Personal Profile
+          </h3>
+        );
+      case 'experience':
+        return (
+          <h3 className="mb-2 flex items-center border-b border-gray-300 pb-1 text-lg font-semibold text-gray-800">
+            <Briefcase size={16} className="mr-2" />
+            Work Exeperience
+          </h3>
+        );
+      case 'education':
+        return (
+          <h3 className="mb-2 flex items-center border-b border-gray-300 pb-1 text-lg font-semibold text-gray-800">
+            <GraduationCap size={16} className="mr-2" />
+            Education
+          </h3>
+        );
+      case 'certificates':
+        return (
+          <h3 className="mb-2 flex items-center border-b border-gray-300 pb-1 text-lg font-semibold text-gray-800">
+            <Award size={16} className="mr-2" />
+            Certificates
+          </h3>
+        );
+      case 'privacy':
+        return (
+          <h3 className="mb-2 border-b border-gray-300 pb-1 text-lg font-semibold text-gray-800">
+            Privacy Statement
+          </h3>
+        );
+      default:
+        return null;
+    }
+  };
+
+  const renderExperienceItems = (ids?: string[]) => {
+    const list = ids ? experiences.filter((e) => ids.includes(e.id)) : experiences;
+    return (
+      <>
+        {list.map((exp) => (
+          <div key={exp.id} className="exp-item mb-4" data-item-id={exp.id}>
+            <div className="exp-header mb-1 flex items-start justify-between">
+              <div className="min-w-0 flex-1">
+                <div className="truncate font-semibold text-gray-900">{exp.position || 'Position'}</div>
+                <div className="truncate font-medium text-gray-700">{exp.company || 'Company name'}</div>
+              </div>
+              <div className="ml-2 flex-shrink-0 text-xs text-gray-600">
+                {formatDate(exp.startDate)} - {exp.isCurrent || !exp.endDate ? 'present' : formatDate(exp.endDate)}
+              </div>
+            </div>
+            {exp.description && (
+              <div className="exp-desc text-sm leading-relaxed text-gray-700">{exp.description}</div>
+            )}
+          </div>
+        ))}
+      </>
+    );
+  };
+
+  const renderEducationItems = (ids?: string[]) => {
+    const list = ids ? education.filter((e) => ids.includes(e.id)) : education;
+    return (
+      <>
+        {list.map((edu) => (
+          <div key={edu.id} className="edu-item mb-3" data-item-id={edu.id}>
+            <div className="mb-1 flex items-start justify-between">
+              <div className="min-w-0 flex-1">
+                <h4 className="truncate font-semibold text-gray-900">
+                  {edu.field || 'Field of study'} - {edu.degree || 'Degree'}
+                </h4>
+                <p className="truncate font-medium text-gray-700">{edu.school || 'School/University'}</p>
+              </div>
+              <div className="ml-2 flex-shrink-0 text-xs text-gray-600">
+                {formatDate(edu.startDate)} - {edu.isCurrent || !edu.endDate ? 'present' : formatDate(edu.endDate)}
+              </div>
+            </div>
+          </div>
+        ))}
+      </>
+    );
+  };
+
+  const renderCertificatesItems = (ids?: string[]) => {
+    const list = ids ? certificates.filter((c) => ids.includes(c.id)) : certificates;
+    return (
+      <div className="space-y-1">
+        {list.map((cert) => (
+          <div key={cert.id} className="cert-item" data-item-id={cert.id}>
+            <p className="text-sm text-gray-700">
+              {cert.name}
+              {cert.date ? ` (${formatDate(cert.date)})` : ''}
+            </p>
+          </div>
+        ))}
+      </div>
+    );
+  };
+
+  const renderChunk = (chunk: SectionChunk) => {
+    const { sectionId, items, includeTitle } = chunk;
+    // For simple sections without item splitting, render full section
+    if (!items || items.length === 0) {
+      return <React.Fragment key={`chunk-${sectionId}-${Math.random()}`}>{renderSectionInPreview(sectionId)}</React.Fragment>;
+    }
+
+    // Split-capable sections
+    switch (sectionId) {
+      case 'profile':
+        return (
+          <div className="cv-section mb-5" data-block-id="profile" data-section="profile" key={`chunk-prof-${items.join('-')}`}>
+            {includeTitle && renderSectionTitle('profile')}
+            <div className="text-sm leading-relaxed break-words text-gray-700">
+              {(personalInfo.summary || '').split(/\n+/).filter(Boolean).map((para, i) => {
+                const id = `p${i}`;
+                if (!items.includes(id)) return null;
+                return (
+                  <p key={`sum-${i}`} className="para-item mb-2 last:mb-0" data-item-id={id}>
+                    {para}
+                  </p>
+                );
+              })}
+            </div>
+          </div>
+        );
+      case 'experience':
+        return (
+          <div className="cv-section mb-5" data-block-id="experience" data-section="experience" key={`chunk-exp-${items.join('-')}`}>
+            {includeTitle && renderSectionTitle('experience')}
+            {renderExperienceItems(items)}
+          </div>
+        );
+      case 'education':
+        return (
+          <div className="cv-section mb-5" data-block-id="education" data-section="education" key={`chunk-edu-${items.join('-')}`}>
+            {includeTitle && renderSectionTitle('education')}
+            {renderEducationItems(items)}
+          </div>
+        );
+      case 'certificates':
+        return (
+          <div className="cv-section mb-5" data-block-id="certificates" data-section="certificates" key={`chunk-cert-${items.join('-')}`}>
+            {includeTitle && renderSectionTitle('certificates')}
+            {renderCertificatesItems(items)}
+          </div>
+        );
+      case 'privacy':
+        return (
+          <div className="cv-section mb-5" data-block-id="privacy" data-section="privacy" key={`chunk-priv-${items.join('-')}`}>
+            {includeTitle && renderSectionTitle('privacy')}
+            <div className="text-xs leading-relaxed break-words text-gray-700">
+              {(privacyStatement.content || '').split(/\n+/).filter(Boolean).map((para, i) => {
+                const id = `p${i}`;
+                if (!items.includes(id)) return null;
+                return (
+                  <p key={`priv-${i}`} className="para-item mb-2 last:mb-0" data-item-id={id}>
+                    {para}
+                  </p>
+                );
+              })}
+            </div>
+          </div>
+        );
+      default:
+        return <React.Fragment key={`chunk-default-${sectionId}`}>{renderSectionInPreview(sectionId)}</React.Fragment>;
+    }
+  };
 
   return (
     <div className="font-poppins flex h-screen flex-col overflow-hidden bg-gray-50 lg:flex-row lg:pt-6 dark:text-black">
@@ -1936,13 +2257,13 @@ const CVCreator: React.FC<CVCreatorProps> = ({ initialCv }) => {
                 {(pages.length ? pages : [[]]).map((page, idx) => (
                   <div
                     key={`page-${idx}`}
-                    className="cv-page mb-6 overflow-hidden rounded-sm border border-gray-200 shadow"
+                    className="cv-page mb-6 overflow-hidden rounded-sm shadow"
                     style={{ width: `${PAGE_WIDTH_MM}mm`, height: `${PAGE_HEIGHT_MM}mm`, background: '#fff' }}
                   >
                     <div className="h-full box-border" style={{ padding: `${PAGE_PADDING_MM}mm` }}>
                       {idx === 0 && renderHeader()}
-                      {page.map((id) => (
-                        <React.Fragment key={`p${idx}-${id}`}>{renderSectionInPreview(id)}</React.Fragment>
+                      {page.map((chunk, cidx) => (
+                        <React.Fragment key={`p${idx}-c${cidx}`}>{renderChunk(chunk)}</React.Fragment>
                       ))}
                       {/* Empty state message on first page */}
                       {idx === 0 &&
