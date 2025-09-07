@@ -242,12 +242,19 @@ namespace VocareWebAPI.JobRecommendationService.Services.Implementations
         private string BuildJobSearchPrompt(List<string> careerPaths, string country)
         {
             return $@"
-Znajdź aktualne oferty pracy w {country} dla następujących stanowisk:
-{string.Join("\n- ", careerPaths.Select(path => $"- {path}"))}
+Wyszukaj WYŁĄCZNIE na polskich portalach pracy:
+- pracuj.pl 
+- justjoin.it
+- rocketjobs.pl
+- linkedin.com/jobs (sekcja Polska)
 
-Wyszukaj najnowsze oferty (ostatnie 7 dni) z portalów: pracuj.pl, justjoin.it, rocketjobs.pl, linkedin
+NIE używaj: jooble.org, indeed.com, glassdoor
 
-Zwróć maksymalnie 8 najlepszych ofert w formacie JSON:
+Znajdź dokładnie 8 najnowszych ofert dla: {string.Join(", ", careerPaths)}
+
+Każdy link musi prowadzić bezpośrednio do polskiego portalu pracy.
+
+Format JSON z dokładnie 8 ofertami:
 {{
     ""jobOffers"": [
         {{
@@ -262,7 +269,7 @@ Zwróć maksymalnie 8 najlepszych ofert w formacie JSON:
         }}
     ]
 }}
-
+KRYTYCZNE: ApplicationLink musi prowadzić do istniejącej oferty. Używaj TYLKO pracuj.pl, justjoin.it, rocketjobs.pl, linkedin.com/jobs
 WAŻNE:
 - Używaj DOKŁADNYCH nazw stanowisk z listy powyżej
 - ApplicationLink musi być prawdziwy, działający link

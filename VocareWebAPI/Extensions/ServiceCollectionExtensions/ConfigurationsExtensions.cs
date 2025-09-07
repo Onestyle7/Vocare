@@ -14,8 +14,8 @@ namespace VocareWebAPI.Extensions.ServiceCollectionExtensions
             IConfiguration configuration
         )
         {
-            services.Configure<AiConfig>(configuration.GetSection("PerplexityAI"));
             services.Configure<AiConfig>(configuration.GetSection("OpenAI"));
+            services.Configure<AiConfig>(configuration.GetSection("PerplexityAI"));
             services.Configure<UserRegistrationConfig>(
                 configuration.GetSection("UserRegistration")
             );

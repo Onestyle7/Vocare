@@ -267,6 +267,12 @@ namespace VocareWebAPI.Data
                         Id = 4,
                         ServiceName = "GenerateCv",
                         TokenCost = 1,
+                    },
+                    new ServiceCost
+                    {
+                        Id = 5,
+                        ServiceName = "JobRecommendations",
+                        TokenCost = 3,
                     }
                 );
         }
