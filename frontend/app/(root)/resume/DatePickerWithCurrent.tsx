@@ -1,8 +1,17 @@
-import { Button } from '@/components/ui/button';
-import { Calendar } from '@/components/ui/calendar';
-import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
-import { CalendarIcon } from 'lucide-react';
-import { useState } from 'react';
+"use client";
+
+import * as React from "react";
+import { Button } from "@/components/ui/button";
+import { Calendar } from "@/components/ui/calendar";
+import { Label } from "@/components/ui/label";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
+import { CalendarIcon } from "lucide-react";
+
+type CaptionLayout = React.ComponentProps<typeof Calendar>["captionLayout"];
 
 interface DatePickerWithCurrentProps {
   value: string;
@@ -18,77 +27,105 @@ export const DatePickerWithCurrent: React.FC<DatePickerWithCurrentProps> = ({
   onChange,
   isCurrent,
   onCurrentChange,
-  placeholder = 'Wybierz datę',
+  placeholder = "Wybierz datę",
   disabled = false,
 }) => {
-  const [isOpen, setIsOpen] = useState(false);
+  const [isOpen, setIsOpen] = React.useState(false);
+  const [captionLayout] =
+    React.useState<CaptionLayout>("dropdown");
+  const checkboxId = React.useId();
+
+  // Bezpieczny parser YYYY-MM-DD -> Date (lokalnie, bez przesunięć strefy)
+  const parseISODate = (v?: string) => {
+    if (!v) return undefined;
+    if (/^\d{4}-\d{2}-\d{2}T/.test(v)) v = v.slice(0, 10);
+    const [y, m, d] = v.split("-").map(Number);
+    if (!y || !m || !d) return undefined;
+    return new Date(y, m - 1, d);
+  };
+
+  const selectedDate = React.useMemo(() => parseISODate(value), [value]);
+  const defaultMonth = selectedDate ?? new Date();
 
   const formatDisplayDate = (dateString: string) => {
-    if (!dateString) return '';
-    const date = new Date(dateString);
-    return date.toLocaleDateString('pl-PL', { year: 'numeric', month: 'long' });
+    if (!dateString) return "";
+    const date = parseISODate(dateString);
+    if (!date) return "";
+    return date.toLocaleDateString("pl-PL", {
+      year: "numeric",
+      month: "long",
+    });
   };
 
   const handleDateSelect = (date: Date | undefined) => {
     if (date) {
-      const year = date.getFullYear();
-      const month = (date.getMonth() + 1).toString().padStart(2, '0');
-      const day = date.getDate().toString().padStart(2, '0');
-      onChange(`${year}-${month}-${day}`);
+      const y = date.getFullYear();
+      const m = String(date.getMonth() + 1).padStart(2, "0");
+      const d = String(date.getDate()).padStart(2, "0");
+      onChange(`${y}-${m}-${d}`);
       setIsOpen(false);
     }
   };
 
   const handleCurrentToggle = () => {
-    const newCurrentState = !isCurrent;
-    onCurrentChange(newCurrentState);
-    if (newCurrentState) {
-      onChange('');
-    }
+    const next = !isCurrent;
+    onCurrentChange(next);
+    if (next) onChange("");
   };
 
   return (
+    <div className="force-light-theme">
     <Popover open={isOpen} onOpenChange={setIsOpen}>
       <PopoverTrigger asChild>
         <Button
           variant="outline"
-          className={`h-12 w-full justify-start rounded-sm text-left font-normal hover:text-gray-600 dark:border dark:border-gray-400/50 ${
-            disabled ? 'cursor-not-allowed opacity-50' : ''
-          } ${!value && !isCurrent ? 'text-gray-500' : ''}`}
+          className={`h-12 w-full justify-start rounded-sm text-left font-normal ${disabled ? "cursor-not-allowed opacity-50" : ""} ${
+            !value && !isCurrent ? "text-muted-foreground" : ""
+          }`}
           disabled={disabled}
         >
           <CalendarIcon className="mr-2 h-4 w-4" />
-          {isCurrent ? 'Obecnie' : value ? formatDisplayDate(value) : placeholder}
+          {isCurrent ? "Obecnie" : value ? formatDisplayDate(value) : placeholder}
         </Button>
       </PopoverTrigger>
+
       <PopoverContent
-        className="font-poppins w-auto rounded-sm border border-gray-300 p-0 px-3 py-3 focus:ring-2 focus:ring-blue-500 focus:outline-none"
         align="start"
+        className="force-light-theme w-auto p-0 rounded-lg border shadow-sm bg-white"
       >
-        <div className="border-b p-3">
-          <div className="flex items-center space-x-2">
+        <div className="flex items-center justify-between gap-3 border-b px-3 py-2">
+          <div className="flex items-center gap-2">
             <input
               type="checkbox"
-              id="current-checkbox"
+              id={checkboxId}
               checked={isCurrent}
               onChange={handleCurrentToggle}
-              className="h-4 w-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500"
+              className="h-4 w-4 rounded border-muted-foreground/30"
             />
-            <label htmlFor="current-checkbox" className="text-sm font-medium text-gray-700">
+            <Label htmlFor={checkboxId} className="text-sm font-korbin">
               Present
-            </label>
+            </Label>
           </div>
         </div>
+
         {!isCurrent && (
-          <Calendar
-            mode="single"
-            selected={value ? new Date(value) : undefined}
-            onSelect={handleDateSelect}
-            disabled={(date) => date > new Date() || date < new Date('1900-01-01')}
-            initialFocus
-          />
+          <div className="p-3">
+            <Calendar
+              mode="single"
+              defaultMonth={defaultMonth}
+              selected={selectedDate}
+              onSelect={handleDateSelect}
+              captionLayout={captionLayout} // <- jeśli chcesz na stałe: "dropdown"
+              disabled={(date) =>
+                date > new Date() || date < new Date(1900, 0, 1)
+              }
+              className="rounded-lg border shadow-sm font-poppins"
+              initialFocus
+            />
+          </div>
         )}
       </PopoverContent>
     </Popover>
+    </div>
   );
 };
