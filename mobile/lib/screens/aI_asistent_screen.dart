@@ -330,7 +330,7 @@ class _AIAsistentPageScreenState extends State<AIAsistentPageScreen>
                     ),
                     const SizedBox(height: 20),
 
-                    // GŁÓWNA REKOMENDACJA - fioletowa z numerem 1
+                    // 🔧 NAPRAWIONA GŁÓWNA REKOMENDACJA - pasek rozciągnięty od góry do dołu
                     TweenAnimationBuilder<double>(
                       duration: const Duration(milliseconds: 600),
                       tween: Tween(begin: 0.0, end: 1.0),
@@ -358,164 +358,173 @@ class _AIAsistentPageScreenState extends State<AIAsistentPageScreen>
                                   ),
                                 ],
                               ),
-                              child: Row(
-                                children: [
-                                  // Pełny fioletowy pasek z numerem 1
-                                  Container(
-                                    width: 60,
-                                    height: 100, // Zwiększona wysokość
-                                    decoration: const BoxDecoration(
-                                      color: Color(0xFF915EFF),
-                                      borderRadius: BorderRadius.only(
-                                        topLeft: Radius.circular(12),
-                                        bottomLeft: Radius.circular(12),
-                                      ),
-                                    ),
-                                    child: const Column(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.center,
-                                      children: [
-                                        Text(
-                                          '1',
-                                          style: TextStyle(
-                                            fontSize: 28,
-                                            fontWeight: FontWeight.bold,
-                                            color: Colors.white,
-                                          ),
-                                        ),
-                                        SizedBox(height: 4),
-                                        Icon(
-                                          Icons.star,
-                                          color: Colors.amber,
-                                          size: 20,
-                                        ),
-                                      ],
-                                    ),
-                                  ),
-                                  // Treść
-                                  Expanded(
-                                    child: ExpansionTile(
-                                      tilePadding: const EdgeInsets.symmetric(
-                                        horizontal: 16,
-                                        vertical: 8,
-                                      ),
-                                      childrenPadding: const EdgeInsets.all(16),
-                                      iconColor: const Color(0xFF915EFF),
-                                      collapsedIconColor: const Color(
-                                        0xFF915EFF,
-                                      ),
-                                      title: const Text(
-                                        'Main Recommendation',
-                                        style: TextStyle(
-                                          fontWeight: FontWeight.bold,
-                                          color: Colors.white,
-                                          fontSize: 16,
+                              // 🔧 DODANE: IntrinsicHeight dla automatycznej wysokości
+                              child: IntrinsicHeight(
+                                child: Row(
+                                  children: [
+                                    // Pełny fioletowy pasek z numerem 1 - BEZ STAŁEJ WYSOKOŚCI
+                                    Container(
+                                      width: 60,
+                                      // 🔧 USUNIĘTE: height: 100 - teraz automatycznie dopasowuje się
+                                      decoration: const BoxDecoration(
+                                        color: Color(0xFF915EFF),
+                                        borderRadius: BorderRadius.only(
+                                          topLeft: Radius.circular(12),
+                                          bottomLeft: Radius.circular(12),
                                         ),
                                       ),
-                                      subtitle: Column(
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.start,
+                                      child: const Column(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.center,
                                         children: [
-                                          const SizedBox(height: 8),
                                           Text(
-                                            _recommendation!
-                                                .recommendation
-                                                .careerName,
-                                            style: const TextStyle(
-                                              color: Color(0xFF915EFF),
-                                              fontSize: 16,
-                                              fontWeight: FontWeight.w600,
+                                            '1',
+                                            style: TextStyle(
+                                              fontSize: 28,
+                                              fontWeight: FontWeight.bold,
+                                              color: Colors.white,
                                             ),
                                           ),
-                                          const SizedBox(height: 4),
-                                          const Text(
-                                            "🏆 GŁÓWNA REKOMENDACJA",
-                                            style: TextStyle(
-                                              color: Color(0xFF915EFF),
-                                              fontWeight: FontWeight.bold,
-                                              fontSize: 12,
+                                          SizedBox(height: 4),
+                                          Icon(
+                                            Icons.star,
+                                            color: Colors.amber,
+                                            size: 20,
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                    // Treść
+                                    Expanded(
+                                      child: ExpansionTile(
+                                        tilePadding: const EdgeInsets.symmetric(
+                                          horizontal: 16,
+                                          vertical: 8,
+                                        ),
+                                        childrenPadding: const EdgeInsets.all(
+                                          16,
+                                        ),
+                                        iconColor: const Color(0xFF915EFF),
+                                        collapsedIconColor: const Color(
+                                          0xFF915EFF,
+                                        ),
+                                        title: const Text(
+                                          'Main Recommendation',
+                                          style: TextStyle(
+                                            fontWeight: FontWeight.bold,
+                                            color: Colors.white,
+                                            fontSize: 16,
+                                          ),
+                                        ),
+                                        subtitle: Column(
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.start,
+                                          children: [
+                                            const SizedBox(height: 8),
+                                            Text(
+                                              _recommendation!
+                                                  .recommendation
+                                                  .careerName,
+                                              style: const TextStyle(
+                                                color: Color(0xFF915EFF),
+                                                fontSize: 16,
+                                                fontWeight: FontWeight.w600,
+                                              ),
+                                            ),
+                                            const SizedBox(height: 4),
+                                            const Text(
+                                              "🏆 GŁÓWNA REKOMENDACJA",
+                                              style: TextStyle(
+                                                color: Color(0xFF915EFF),
+                                                fontWeight: FontWeight.bold,
+                                                fontSize: 12,
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                        children: [
+                                          Container(
+                                            constraints: const BoxConstraints(
+                                              maxHeight: 300,
+                                            ),
+                                            child: SingleChildScrollView(
+                                              child: Column(
+                                                crossAxisAlignment:
+                                                    CrossAxisAlignment.start,
+                                                children: [
+                                                  const Text(
+                                                    "🎯 Uzasadnienie",
+                                                    style: TextStyle(
+                                                      color: Colors.white,
+                                                      fontWeight:
+                                                          FontWeight.bold,
+                                                    ),
+                                                  ),
+                                                  const SizedBox(height: 4),
+                                                  Text(
+                                                    _recommendation!
+                                                        .recommendation
+                                                        .justification,
+                                                    style: const TextStyle(
+                                                      color: Colors.white70,
+                                                    ),
+                                                  ),
+                                                  const SizedBox(height: 12),
+                                                  const Text(
+                                                    "🪜 Następne kroki",
+                                                    style: TextStyle(
+                                                      color: Colors.white,
+                                                      fontWeight:
+                                                          FontWeight.bold,
+                                                    ),
+                                                  ),
+                                                  const SizedBox(height: 4),
+                                                  ..._recommendation!
+                                                      .recommendation
+                                                      .nextSteps
+                                                      .map(
+                                                        (step) => Padding(
+                                                          padding:
+                                                              const EdgeInsets.only(
+                                                                bottom: 2,
+                                                              ),
+                                                          child: Text(
+                                                            "• $step",
+                                                            style: const TextStyle(
+                                                              color:
+                                                                  Colors
+                                                                      .white70,
+                                                            ),
+                                                          ),
+                                                        ),
+                                                      ),
+                                                  const SizedBox(height: 12),
+                                                  const Text(
+                                                    "🚀 Cel długoterminowy",
+                                                    style: TextStyle(
+                                                      color: Colors.white,
+                                                      fontWeight:
+                                                          FontWeight.bold,
+                                                    ),
+                                                  ),
+                                                  const SizedBox(height: 4),
+                                                  Text(
+                                                    _recommendation!
+                                                        .recommendation
+                                                        .longTermGoal,
+                                                    style: const TextStyle(
+                                                      color: Colors.white70,
+                                                    ),
+                                                  ),
+                                                ],
+                                              ),
                                             ),
                                           ),
                                         ],
                                       ),
-                                      children: [
-                                        Container(
-                                          constraints: const BoxConstraints(
-                                            maxHeight: 300,
-                                          ),
-                                          child: SingleChildScrollView(
-                                            child: Column(
-                                              crossAxisAlignment:
-                                                  CrossAxisAlignment.start,
-                                              children: [
-                                                const Text(
-                                                  "🎯 Uzasadnienie",
-                                                  style: TextStyle(
-                                                    color: Colors.white,
-                                                    fontWeight: FontWeight.bold,
-                                                  ),
-                                                ),
-                                                const SizedBox(height: 4),
-                                                Text(
-                                                  _recommendation!
-                                                      .recommendation
-                                                      .justification,
-                                                  style: const TextStyle(
-                                                    color: Colors.white70,
-                                                  ),
-                                                ),
-                                                const SizedBox(height: 12),
-                                                const Text(
-                                                  "🪜 Następne kroki",
-                                                  style: TextStyle(
-                                                    color: Colors.white,
-                                                    fontWeight: FontWeight.bold,
-                                                  ),
-                                                ),
-                                                const SizedBox(height: 4),
-                                                ..._recommendation!
-                                                    .recommendation
-                                                    .nextSteps
-                                                    .map(
-                                                      (step) => Padding(
-                                                        padding:
-                                                            const EdgeInsets.only(
-                                                              bottom: 2,
-                                                            ),
-                                                        child: Text(
-                                                          "• $step",
-                                                          style: const TextStyle(
-                                                            color:
-                                                                Colors.white70,
-                                                          ),
-                                                        ),
-                                                      ),
-                                                    ),
-                                                const SizedBox(height: 12),
-                                                const Text(
-                                                  "🚀 Cel długoterminowy",
-                                                  style: TextStyle(
-                                                    color: Colors.white,
-                                                    fontWeight: FontWeight.bold,
-                                                  ),
-                                                ),
-                                                const SizedBox(height: 4),
-                                                Text(
-                                                  _recommendation!
-                                                      .recommendation
-                                                      .longTermGoal,
-                                                  style: const TextStyle(
-                                                    color: Colors.white70,
-                                                  ),
-                                                ),
-                                              ],
-                                            ),
-                                          ),
-                                        ),
-                                      ],
                                     ),
-                                  ),
-                                ],
+                                  ],
+                                ),
                               ),
                             ),
                           ),
