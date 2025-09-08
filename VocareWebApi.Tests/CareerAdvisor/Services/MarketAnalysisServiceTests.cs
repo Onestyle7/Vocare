@@ -54,7 +54,7 @@ namespace VocareWebApi.Tests.CareerAdvisor.Services
 
             // Setup konfiguracji
             var config = Options.Create(
-                new AiConfig
+                new OpenAiConfig
                 {
                     BaseUrl = "https://api.test.com",
                     ApiKey = "test-key",

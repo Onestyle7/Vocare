@@ -21,7 +21,7 @@ namespace VocareWebAPI.Services.Implementations
     public class MarketAnalysisService : IMarketAnalysisService
     {
         private readonly HttpClient _httpClient;
-        private readonly AiConfig _config;
+        private readonly OpenAiConfig _config;
         private readonly IUserProfileRepository _userProfileRepository;
         private readonly ICareerStatisticsRepository _careerStatisticsRepository;
         private readonly ISkillDemandRepository _skillDemandRepository;
@@ -42,7 +42,7 @@ namespace VocareWebAPI.Services.Implementations
         /// <param name="logger">Logger do rejestracji zdarzeń</param>
         public MarketAnalysisService(
             HttpClient httpClient,
-            IOptions<AiConfig> config,
+            IOptions<OpenAiConfig> config,
             IUserProfileRepository userProfileRepository,
             ICareerStatisticsRepository marketAnalysisRepository,
             ISkillDemandRepository skillDemandRepository,

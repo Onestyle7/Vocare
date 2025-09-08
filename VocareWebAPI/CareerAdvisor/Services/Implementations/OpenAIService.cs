@@ -14,14 +14,14 @@ namespace VocareWebAPI.CareerAdvisor.Services.Implementations
     public class OpenAIService : IAiService
     {
         private readonly HttpClient _httpClient;
-        private readonly AiConfig _config;
+        private readonly OpenAiConfig _config;
         private readonly IAiRecommendationRepository _aiRecommendationRepository;
         private readonly IMapper _mapper;
         private readonly ILogger<OpenAIService> _logger;
 
         public OpenAIService(
             HttpClient httpClient,
-            IOptions<AiConfig> aiConfig,
+            IOptions<OpenAiConfig> aiConfig,
             IAiRecommendationRepository aiRecommendationRepository,
             IMapper mapper,
             ILogger<OpenAIService> logger

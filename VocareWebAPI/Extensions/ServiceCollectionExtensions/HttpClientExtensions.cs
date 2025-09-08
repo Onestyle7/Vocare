@@ -4,7 +4,9 @@ using System.Linq;
 using System.Threading.Tasks;
 using Polly;
 using Polly.Extensions.Http;
+using VocareWebAPI.CareerAdvisor.Models.Config;
 using VocareWebAPI.CareerAdvisor.Services.Implementations;
+using VocareWebAPI.JobRecommendationService.Services.Interfaces;
 using VocareWebAPI.Models.Config;
 using VocareWebAPI.Repositories.Interfaces;
 using VocareWebAPI.Services;
@@ -53,7 +55,33 @@ namespace VocareWebAPI.Extensions.ServiceCollectionExtensions
                 })
                 .AddPolicyHandler(retryPolicy);
 
+            // Job Recommendation Service
+            services
+                .AddHttpClient<
+                    IJobRecommendationService,
+                    JobRecommendationService.Services.Implementations.JobRecommendationService
+                >(client =>
+                {
+                    ConfigurePerplexityClient(client, configuration);
+                })
+                .AddPolicyHandler(retryPolicy);
+
             return services;
+        }
+
+        private static void ConfigurePerplexityClient(
+            HttpClient client,
+            IConfiguration configuration
+        )
+        {
+            var config = configuration.GetSection("PerplexityAI").Get<PerplexityConfig>();
+            if (config == null)
+            {
+                throw new InvalidOperationException("PerplexityAI configuration is missing");
+            }
+            client.BaseAddress = new Uri(config.BaseUrl);
+            client.DefaultRequestHeaders.Add("Authorization", $"Bearer {config.ApiKey}");
+            client.DefaultRequestHeaders.Add("Accept", "application/json");
         }
 
         private static void ConfigureAiClient(
@@ -62,7 +90,7 @@ namespace VocareWebAPI.Extensions.ServiceCollectionExtensions
             string configSection
         )
         {
-            var config = configuration.GetSection(configSection).Get<AiConfig>();
+            var config = configuration.GetSection(configSection).Get<OpenAiConfig>();
             if (config == null)
             {
                 throw new InvalidOperationException(

@@ -18,7 +18,7 @@ namespace VocareWebAPI.CareerAdvisor.Services.Implementations
     public class OpenAiMarketAnalysisService : IMarketAnalysisService
     {
         private readonly HttpClient _httpClient;
-        private readonly AiConfig _config;
+        private readonly OpenAiConfig _config;
         private readonly ICareerStatisticsRepository _careerStatisticsRepository;
         private readonly ISkillDemandRepository _skillDemandRepository;
         private readonly IMarketTrendsRepository _marketTrendsRepository;
@@ -27,7 +27,7 @@ namespace VocareWebAPI.CareerAdvisor.Services.Implementations
 
         public OpenAiMarketAnalysisService(
             HttpClient httpClient,
-            IOptions<AiConfig> config,
+            IOptions<OpenAiConfig> config,
             ICareerStatisticsRepository careerStatisticsRepository,
             ISkillDemandRepository skillDemandRepository,
             IMarketTrendsRepository marketTrendsRepository,

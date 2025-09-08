@@ -12,10 +12,12 @@ namespace VocareWebAPI.JobRecommendationService.Repositories.Implementations
     public class JobOfferRepository : IJobOfferRepository
     {
         private readonly AppDbContext _context;
+        private readonly ILogger<JobOfferRepository> _logger;
 
-        public JobOfferRepository(AppDbContext context)
+        public JobOfferRepository(AppDbContext context, ILogger<JobOfferRepository> logger)
         {
             _context = context;
+            _logger = logger;
         }
 
         public async Task AddJobOffersAsync(List<JobOffer> offers)
@@ -23,14 +25,23 @@ namespace VocareWebAPI.JobRecommendationService.Repositories.Implementations
             if (offers.Any())
             {
                 var userId = offers.First().UserId;
-                var currentRecommendationId = offers.First().AiRecommendationId;
 
-                // usuwamy najpierw stare oferty pracy (potencjalnie nieaktualne)
-                await DeleteOldJobOffersForUserAsync(userId, currentRecommendationId);
+                _logger.LogInformation(
+                    "Adding {Count} job offers for user {UserId}",
+                    offers.Count,
+                    userId
+                );
 
-                // Następnie dodajemy nowo wygenerowane oferty pracy
+                await DeleteAllJobOffersForUserAsync(userId);
+
                 await _context.JobOffers.AddRangeAsync(offers);
                 await _context.SaveChangesAsync();
+
+                _logger.LogInformation(
+                    "Successfully replaced all offers with {Count} new offers for user {UserId}",
+                    offers.Count,
+                    userId
+                );
             }
         }
 
@@ -42,19 +53,28 @@ namespace VocareWebAPI.JobRecommendationService.Repositories.Implementations
                 .ToListAsync();
         }
 
-        public async Task DeleteOldJobOffersForUserAsync(
-            string userId,
-            Guid currentRecommendationId
-        )
+        public async Task DeleteAllJobOffersForUserAsync(string userId)
         {
-            var oldOffers = await _context
-                .JobOffers.Where(jo =>
-                    jo.UserId == userId && jo.AiRecommendationId != currentRecommendationId
-                )
+            _logger.LogInformation("Deleting ALL offers for user {UserId}", userId);
+
+            var userOffers = await _context
+                .JobOffers.Where(jo => jo.UserId == userId)
                 .ToListAsync();
 
-            _context.JobOffers.RemoveRange(oldOffers);
+            _logger.LogInformation(
+                "Found {Count} offers to delete for user {UserId}",
+                userOffers.Count,
+                userId
+            );
+
+            _context.JobOffers.RemoveRange(userOffers);
             await _context.SaveChangesAsync();
+
+            _logger.LogInformation(
+                "Deleted {Count} offers for user {UserId}",
+                userOffers.Count,
+                userId
+            );
         }
 
         public async Task<List<JobOffer>> GetJobOffersByUserIdAsync(string userId)

@@ -3,12 +3,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace VocareWebAPI.Models.Config
+namespace VocareWebAPI.CareerAdvisor.Models.Config
 {
-    /// <summary>
-    /// Klasa konfiguracyjna dla AI.
-    /// </summary>
-    public class OpenAiConfig
+    public class PerplexityConfig
     {
         public string BaseUrl { get; set; } = string.Empty;
         public string ApiKey { get; set; } = string.Empty;
