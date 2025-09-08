@@ -411,7 +411,7 @@ export default function AssistantPage() {
           </div>
 
           <AlertDialog open={isConfirmDialogOpen} onOpenChange={setIsConfirmDialogOpen}>
-            <AlertDialogContent className="font-poppins mx-auto max-w-md">
+            <AlertDialogContent className="font-poppins mx-auto max-w-md font-korbin">
               <AlertDialogHeader>
                 <AlertDialogTitle className="text-center text-xl font-bold">
                   Generate new recommendation?
@@ -420,14 +420,14 @@ export default function AssistantPage() {
                   This will take <b className="text-[#915EFF]">50 credits</b> from Your account.
                 </AlertDialogDescription>
 
-                <div className="mt-2 text-center text-sm font-extralight">
+                <div className="mt-2 text-center text-sm">
                   Current balance:{' '}
                   <span className="font-bold">{isBalanceLoading ? '...' : tokenBalance}</span>
                 </div>
               </AlertDialogHeader>
 
               <AlertDialogFooter className="flex justify-center gap-4 sm:justify-center">
-                <AlertDialogCancel className="border-gray-200">Cancel</AlertDialogCancel>
+                <AlertDialogCancel className="border-muted-foreground/20">Cancel</AlertDialogCancel>
 
                 {!isBalanceLoading && typeof tokenBalance === 'number' && tokenBalance < 5 ? (
                   <Link href="/pricing">

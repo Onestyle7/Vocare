@@ -498,18 +498,19 @@ const CVCreator: React.FC<CVCreatorProps> = ({ initialCv }) => {
 
   // old pagination helpers removed (replaced by scrollToPage)
 
-  const populateFromCv = (cv: CvDto, position?: string) => {
-    if (cv.basics) {
-      setPersonalInfo({
-        firstName: cv.basics.firstName,
-        lastName: cv.basics.lastName,
-        email: cv.basics.email,
-        phone: cv.basics.phoneNumber,
-        address: cv.basics.location?.city || '',
-        country: cv.basics.location?.country || '',
-        profession: position || personalInfo.profession,
-        summary: cv.basics.summary,
-      });
+  const populateFromCv = React.useCallback((cv: CvDto, position?: string) => {
+    const basics = cv.basics;
+    if (basics) {
+      setPersonalInfo((prev) => ({
+        firstName: basics.firstName,
+        lastName: basics.lastName,
+        email: basics.email,
+        phone: basics.phoneNumber,
+        address: basics.location?.city || '',
+        country: basics.location?.country || '',
+        profession: position ?? prev.profession,
+        summary: basics.summary,
+      }));
     }
 
     setExperiences(
@@ -553,7 +554,7 @@ const CVCreator: React.FC<CVCreatorProps> = ({ initialCv }) => {
         level: l.fluency,
       })) || []
     );
-  };
+  }, []);
 
   const buildCvDto = (): CvDto => {
     return {
@@ -679,7 +680,7 @@ const CVCreator: React.FC<CVCreatorProps> = ({ initialCv }) => {
       populateFromCv(initialCv.cvData, initialCv.targetPosition || undefined);
       setCvId(initialCv.id);
     }
-  }, [initialCv]);
+  }, [initialCv, populateFromCv]);
 
   const downloadPDF = async () => {
     const container = pagesViewportRef.current;
@@ -693,7 +694,6 @@ const CVCreator: React.FC<CVCreatorProps> = ({ initialCv }) => {
     const pagesNodes = container.querySelectorAll<HTMLElement>('.cv-page');
     const restoreStyles: Array<{ el: HTMLElement; boxShadow: string; border: string }> = [];
     pagesNodes.forEach((el) => {
-      const cs = getComputedStyle(el);
       restoreStyles.push({ el, boxShadow: el.style.boxShadow || '', border: el.style.border || '' });
       el.style.boxShadow = 'none';
       el.style.border = 'none';
@@ -731,7 +731,7 @@ const CVCreator: React.FC<CVCreatorProps> = ({ initialCv }) => {
   };
 
   // Section visibility helper (must match preview rendering conditions)
-  const isSectionVisible = (sectionId: string) => {
+  const isSectionVisible = React.useCallback((sectionId: string) => {
     switch (sectionId) {
       case 'profile':
         return Boolean(
@@ -760,7 +760,16 @@ const CVCreator: React.FC<CVCreatorProps> = ({ initialCv }) => {
       default:
         return false;
     }
-  };
+  }, [
+    personalInfo,
+    experiences,
+    education,
+    certificates,
+    skills,
+    languages,
+    hobbies,
+    privacyStatement,
+  ]);
 
   // Build measured pages: render invisible blocks, measure (including margins), then pack
   useLayoutEffect(() => {
@@ -803,7 +812,7 @@ const CVCreator: React.FC<CVCreatorProps> = ({ initialCv }) => {
       }
 
       // Items by section
-      let items: Array<{ id: string; h: number }> = [];
+      const items: Array<{ id: string; h: number }> = [];
       if (id === 'experience') {
         const nodes = el.querySelectorAll<HTMLElement>('.exp-item[data-item-id]');
         nodes.forEach((n) => {
@@ -890,7 +899,7 @@ const CVCreator: React.FC<CVCreatorProps> = ({ initialCv }) => {
         if (used > 0 && used + secHeaderH >= limit) {
           pushPage();
         }
-        let chunkIds: string[] = [];
+        const chunkIds: string[] = [];
         let chunkH = secHeaderH;
         const pageRemaining = limit - used;
 
@@ -943,6 +952,7 @@ const CVCreator: React.FC<CVCreatorProps> = ({ initialCv }) => {
     privacyStatement,
     sectionOrder,
     pageContentHeightPx,
+    isSectionVisible,
   ]);
 
   // Keep currentPage in sync with scroll position
@@ -1089,6 +1099,7 @@ const CVCreator: React.FC<CVCreatorProps> = ({ initialCv }) => {
                           onChange={(date) => updateExperience(exp.id, 'startDate', date)}
                           isCurrent={false}
                           onCurrentChange={() => {}}
+                          showCurrentToggle={false}
                           placeholder="Select start date"
                         />
                       </div>
@@ -1225,6 +1236,7 @@ const CVCreator: React.FC<CVCreatorProps> = ({ initialCv }) => {
                           onChange={(date) => updateEducation(edu.id, 'startDate', date)}
                           isCurrent={false}
                           onCurrentChange={() => {}}
+                          showCurrentToggle={false}
                           placeholder="Select start date"
                         />
                       </div>
@@ -2254,7 +2266,7 @@ const CVCreator: React.FC<CVCreatorProps> = ({ initialCv }) => {
                 }}
                 onMouseDown={handleMouseDown}
               >
-                {(pages.length ? pages : [[]]).map((page, idx) => (
+                {(pages.length ? pages : [[/* empty page */] as SectionChunk[]]).map((page, idx) => (
                   <div
                     key={`page-${idx}`}
                     className="cv-page mb-6 overflow-hidden rounded-sm shadow"

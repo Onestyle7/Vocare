@@ -157,7 +157,7 @@ export default function EmptyStateComponent({
       </div>
 
       <AlertDialog open={isConfirmDialogOpen} onOpenChange={setIsConfirmDialogOpen}>
-        <AlertDialogContent className="font-poppins mx-auto max-w-md">
+        <AlertDialogContent className="font-poppins mx-auto max-w-md font-korbin">
           <AlertDialogHeader>
             <AlertDialogTitle className="text-center text-xl font-bold">
               Generate market analysis?

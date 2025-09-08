@@ -9,6 +9,7 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover";
+import { Switch } from "@/components/ui/switch";
 import { CalendarIcon } from "lucide-react";
 
 type CaptionLayout = React.ComponentProps<typeof Calendar>["captionLayout"];
@@ -20,6 +21,7 @@ interface DatePickerWithCurrentProps {
   onCurrentChange: (current: boolean) => void;
   placeholder?: string;
   disabled?: boolean;
+  showCurrentToggle?: boolean; // show/hide Present switch (default true)
 }
 
 export const DatePickerWithCurrent: React.FC<DatePickerWithCurrentProps> = ({
@@ -29,11 +31,17 @@ export const DatePickerWithCurrent: React.FC<DatePickerWithCurrentProps> = ({
   onCurrentChange,
   placeholder = "Wybierz datę",
   disabled = false,
+  showCurrentToggle = true,
 }) => {
   const [isOpen, setIsOpen] = React.useState(false);
   const [captionLayout] =
     React.useState<CaptionLayout>("dropdown");
   const checkboxId = React.useId();
+  // Local mirror to ensure immediate visual feedback on Switch
+  const [currentChecked, setCurrentChecked] = React.useState<boolean>(isCurrent);
+  React.useEffect(() => {
+    setCurrentChecked(isCurrent);
+  }, [isCurrent]);
 
   // Bezpieczny parser YYYY-MM-DD -> Date (lokalnie, bez przesunięć strefy)
   const parseISODate = (v?: string) => {
@@ -67,10 +75,11 @@ export const DatePickerWithCurrent: React.FC<DatePickerWithCurrentProps> = ({
     }
   };
 
-  const handleCurrentToggle = () => {
-    const next = !isCurrent;
-    onCurrentChange(next);
-    if (next) onChange("");
+  const handleCurrentToggle = (next?: boolean) => {
+    const newState = typeof next === "boolean" ? next : !currentChecked;
+    setCurrentChecked(newState);
+    onCurrentChange(newState);
+    if (newState) onChange("");
   };
 
   return (
@@ -85,7 +94,7 @@ export const DatePickerWithCurrent: React.FC<DatePickerWithCurrentProps> = ({
           disabled={disabled}
         >
           <CalendarIcon className="mr-2 h-4 w-4" />
-          {isCurrent ? "Obecnie" : value ? formatDisplayDate(value) : placeholder}
+          {currentChecked ? "Obecnie" : value ? formatDisplayDate(value) : placeholder}
         </Button>
       </PopoverTrigger>
 
@@ -93,37 +102,34 @@ export const DatePickerWithCurrent: React.FC<DatePickerWithCurrentProps> = ({
         align="start"
         className="force-light-theme w-auto p-0 rounded-lg border shadow-sm bg-white"
       >
-        <div className="flex items-center justify-between gap-3 border-b px-3 py-2">
-          <div className="flex items-center gap-2">
-            <input
-              type="checkbox"
-              id={checkboxId}
-              checked={isCurrent}
-              onChange={handleCurrentToggle}
-              className="h-4 w-4 rounded border-muted-foreground/30"
-            />
-            <Label htmlFor={checkboxId} className="text-sm font-korbin">
-              Present
-            </Label>
-          </div>
-        </div>
-
-        {!isCurrent && (
-          <div className="p-3">
-            <Calendar
-              mode="single"
-              defaultMonth={defaultMonth}
-              selected={selectedDate}
-              onSelect={handleDateSelect}
-              captionLayout={captionLayout} // <- jeśli chcesz na stałe: "dropdown"
-              disabled={(date) =>
-                date > new Date() || date < new Date(1900, 0, 1)
-              }
-              className="rounded-lg border shadow-sm font-poppins"
-              initialFocus
-            />
+        {showCurrentToggle && (
+          <div className="flex items-center justify-between gap-3 border-b px-3 py-2">
+            <div className="flex items-center gap-3">
+              <Label htmlFor={checkboxId} className="text-sm font-korbin">
+                Present
+              </Label>
+              <Switch id={checkboxId} checked={currentChecked} onCheckedChange={(checked) => handleCurrentToggle(checked)} />
+            </div>
           </div>
         )}
+
+        <div
+          className={`p-3 ${currentChecked ? 'pointer-events-none opacity-60 select-none' : ''}`}
+          aria-disabled={currentChecked}
+        >
+          <Calendar
+            mode="single"
+            defaultMonth={defaultMonth}
+            selected={selectedDate}
+            onSelect={handleDateSelect}
+            captionLayout={captionLayout}
+            disabled={(date) =>
+              date > new Date() || date < new Date(1900, 0, 1)
+            }
+            className="rounded-lg border shadow-sm font-poppins"
+            initialFocus
+          />
+        </div>
       </PopoverContent>
     </Popover>
     </div>

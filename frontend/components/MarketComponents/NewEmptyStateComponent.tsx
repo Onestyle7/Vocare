@@ -232,7 +232,7 @@ const NewEmptyStateComponent = ({
         {/* Dialog potwierdzenia */}
         {hasRecommendations && (
           <AlertDialog open={isConfirmDialogOpen} onOpenChange={setIsConfirmDialogOpen}>
-            <AlertDialogContent className="font-poppins mx-auto max-w-md">
+            <AlertDialogContent className="font-poppins mx-auto max-w-md font-korbin">
               <AlertDialogHeader>
                 <AlertDialogTitle className="text-center text-xl font-bold">
                   Generate market analysis?
@@ -241,7 +241,7 @@ const NewEmptyStateComponent = ({
                   This will take <b className="text-[#915EFF]">5 credits</b> from your account.
                 </AlertDialogDescription>
 
-                <div className="mt-2 text-center text-sm font-extralight">
+                <div className="mt-2 text-center text-sm">
                   Current balance:{' '}
                   <span className="font-bold">{isBalanceLoading ? '...' : tokenBalance}</span>
                 </div>
@@ -249,7 +249,7 @@ const NewEmptyStateComponent = ({
 
               <AlertDialogFooter className="flex justify-center gap-4 sm:justify-center">
                 <AlertDialogCancel
-                  className="border-gray-200"
+                  className="border-muted-foreground/20"
                   onClick={() => setIsConfirmDialogOpen(false)}
                 >
                   Cancel
