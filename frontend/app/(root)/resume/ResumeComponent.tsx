@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react';
 import {
   User,
   Mail,
@@ -124,8 +124,22 @@ const CVCreator: React.FC<CVCreatorProps> = ({ initialCv }) => {
   const [cvId, setCvId] = useState<string | null>(initialCv?.id ?? null);
   const [resumeName] = useState<string>(initialCv?.name ?? 'New Resume');
 
+  // Pagination (computed from measured pages)
   const [currentPage, setCurrentPage] = useState(1);
-  const [totalPages, setTotalPages] = useState(1);
+  type SectionChunk = { sectionId: string; items?: string[]; includeTitle?: boolean };
+  const [pages, setPages] = useState<SectionChunk[][]>([]);
+
+  // Page spec in mm to match print/PDF exactly
+  const PAGE_WIDTH_MM = 210;
+  const PAGE_HEIGHT_MM = 297;
+  const PAGE_PADDING_MM = 15;
+
+  // Measurement/preview refs
+  const mmRatioRef = useRef<number | null>(null); // px per 1mm
+  const [mmRatio, setMmRatio] = useState<number | null>(null); // state to trigger recompute
+  const measureContainerRef = useRef<HTMLDivElement | null>(null);
+  const pagesViewportRef = useRef<HTMLDivElement | null>(null);
+  const zoomWrapperRef = useRef<HTMLDivElement | null>(null);
 
   const [experiences, setExperiences] = useState<Experience[]>(() => {
     const saved = localStorage.getItem('experiences');
@@ -231,59 +245,18 @@ const CVCreator: React.FC<CVCreatorProps> = ({ initialCv }) => {
     localStorage.setItem('sectionOrder', JSON.stringify(sectionOrder));
   }, [sectionOrder]);
 
-  useEffect(() => {
-    checkContentOverflow();
-    setTimeout(() => {
-      checkSectionBreaks();
-      forcePageBreakForLongSections();
-    }, 150); // Zwiększ opóźnienie
-  }, [
-    experiences,
-    education,
-    skills,
-    languages,
-    certificates,
-    hobbies,
-    personalInfo,
-    privacyStatement,
-  ]);
+  // Measured pagination will re-compute via dedicated effect below
 
   useEffect(() => {
     const style = document.createElement('style');
     style.textContent = `
-    .cv-content [data-section] {
-      break-inside: avoid;
-      page-break-inside: avoid;
-      -webkit-column-break-inside: avoid;
-      
-      display: block;
-      
-      min-height: 60px;
-    }
-    
-    .cv-content [data-section="experience"],
-    .cv-content [data-section="education"] {
-      orphans: 3;
-      widows: 3;
-    }
-    
-    .cv-content [data-section="skills"],
-    .cv-content [data-section="languages"],
-    .cv-content [data-section="hobbies"] {
-      break-inside: avoid !important;
-      page-break-inside: avoid !important;
-    }
-    
-    .cv-content [data-section] > div:last-child {
-      margin-bottom: 0;
-    }
-    
-    .cv-content [data-section] h3 {
-      break-after: avoid;
-      page-break-after: avoid;
-      margin-bottom: 8px;
-    }
-  `;
+      .cv-section { break-inside: avoid; page-break-inside: avoid; }
+      .cv-page { background: #fff; }
+      @media print {
+        body { background: #fff !important; }
+        .cv-page { width: 210mm; height: 297mm; page-break-after: always; box-shadow: none !important; }
+      }
+    `;
     document.head.appendChild(style);
 
     return () => {
@@ -487,134 +460,57 @@ const CVCreator: React.FC<CVCreatorProps> = ({ initialCv }) => {
     setCvPosition({ x: 0, y: 0 });
   };
 
-  const checkSectionBreaks = () => {
-    const cvContent = document.querySelector('.cv-content');
-    if (!cvContent) return;
+  // px-per-mm calibration (once)
+  useLayoutEffect(() => {
+    if (mmRatioRef.current) return;
+    const probe = document.createElement('div');
+    probe.style.position = 'absolute';
+    probe.style.visibility = 'hidden';
+    probe.style.width = '100mm';
+    probe.style.height = '10mm';
+    document.body.appendChild(probe);
+    const rect = probe.getBoundingClientRect();
+    const ratioW = rect.width / 100;
+    mmRatioRef.current = ratioW || 3.78; // ~96dpi fallback
+    setMmRatio(mmRatioRef.current);
+    document.body.removeChild(probe);
+  }, []);
 
-    const pageHeight = 1123; // wysokość strony A4 w pikselach
-    const sections = cvContent.querySelectorAll('[data-section]') as NodeListOf<HTMLElement>;
+  const pageContentHeightPx = useMemo(() => {
+    const mm = mmRatio ?? mmRatioRef.current ?? 3.78;
+    const innerHeightMm = PAGE_HEIGHT_MM - 2 * PAGE_PADDING_MM;
+    return innerHeightMm * mm;
+  }, [mmRatio, PAGE_HEIGHT_MM, PAGE_PADDING_MM]);
 
-    sections.forEach((section) => {
-      // Resetuj wcześniejsze style
-      section.style.marginTop = '';
-      section.style.pageBreakBefore = '';
+  const goToNextPage = () => scrollToPage(Math.min(currentPage + 1, pages.length));
+  const goToPrevPage = () => scrollToPage(Math.max(currentPage - 1, 1));
+  const goToPage = (page: number) => scrollToPage(page);
 
-      // Pobierz rzeczywistą wysokość sekcji
-      const sectionHeight = section.scrollHeight;
-      const rect = section.getBoundingClientRect();
-      const cvRect = cvContent.getBoundingClientRect();
-
-      // Oblicz pozycję sekcji względem początku CV
-      const sectionTop = rect.top - cvRect.top + cvContent.scrollTop;
-      const sectionBottom = sectionTop + sectionHeight;
-
-      // Określ na której stronie zaczyna się sekcja
-      const startPage = Math.floor(sectionTop / pageHeight) + 1;
-      const endPage = Math.floor(sectionBottom / pageHeight) + 1;
-
-      // Jeśli sekcja przekracza na następną stronę
-      if (startPage !== endPage) {
-        const spaceFromTop = sectionTop - (startPage - 1) * pageHeight;
-        const remainingSpaceOnPage = pageHeight - spaceFromTop;
-
-        // KLUCZ: Zmniejszamy próg z 80% na 50% lub sprawdzamy czy sekcja się nie mieści
-        const shouldMoveToNextPage =
-          spaceFromTop > pageHeight * 0.5 || // Jeśli zaczyna się w drugiej połowie strony
-          remainingSpaceOnPage < sectionHeight * 0.3; // Albo jeśli mniej niż 30% sekcji mieści się na stronie
-
-        if (shouldMoveToNextPage) {
-          const pushToNextPage = pageHeight - spaceFromTop;
-          section.style.marginTop = `${pushToNextPage}px`;
-
-          // Dodatkowe CSS dla lepszego łamania stron
-          section.style.pageBreakBefore = 'always';
-        }
-      }
-
-      // Dodatkowe zabezpieczenie: jeśli sekcja jest bardzo długa i nie mieści się na jednej stronie
-      if (sectionHeight > pageHeight * 0.8) {
-        section.style.pageBreakInside = 'avoid';
-      }
-    });
-
-    // Wywołaj ponownie po krótkim opóźnieniu dla stabilności
-    setTimeout(() => {
-      // Sprawdź czy wszystkie sekcje są prawidłowo pozycjonowane
-      sections.forEach((section) => {
-        // Jeśli sekcja nadal źle się łamie, spróbuj alternatywnego podejścia
-        if (section.scrollHeight > pageHeight * 0.8) {
-          section.style.breakInside = 'avoid';
-          section.style.pageBreakInside = 'avoid';
-        }
-      });
-    }, 50);
+  const scrollToPage = (page: number) => {
+    const container = pagesViewportRef.current;
+    if (!container) return;
+    const pagesEls = container.querySelectorAll<HTMLElement>('.cv-page');
+    const el = pagesEls[page - 1];
+    if (!el) return;
+    setCurrentPage(page);
+    el.scrollIntoView({ behavior: 'smooth', block: 'center' });
   };
 
-  const forcePageBreakForLongSections = () => {
-    const cvContent = document.querySelector('.cv-content');
-    if (!cvContent) return;
+  // old pagination helpers removed (replaced by scrollToPage)
 
-    const pageHeight = 1123;
-    const sections = cvContent.querySelectorAll('[data-section]') as NodeListOf<HTMLElement>;
-
-    sections.forEach((section) => {
-      const sectionHeight = section.scrollHeight;
-
-      // Jeśli sekcja jest bardzo długa, podziel ją lub przenieś całkowicie
-      if (sectionHeight > pageHeight * 0.6) {
-        const rect = section.getBoundingClientRect();
-        const cvRect = cvContent.getBoundingClientRect();
-        const sectionTop = rect.top - cvRect.top + cvContent.scrollTop;
-        const spaceFromTop = sectionTop % pageHeight;
-
-        // Jeśli długa sekcja zaczyna się w drugiej połowie strony, przenieś ją
-        if (spaceFromTop > pageHeight * 0.4) {
-          const pushToNextPage = pageHeight - spaceFromTop;
-          section.style.marginTop = `${pushToNextPage}px`;
-        }
-      }
-    });
-  };
-
-  const checkContentOverflow = () => {
-    const cvElement = document.querySelector<HTMLElement>('.cv-content');
-    if (!cvElement) return;
-    const contentHeight = cvElement.scrollHeight;
-    const pageHeight = 1123; // A4 height in pixels at 96 DPI (approx. 1123px)
-    const newTotalPages = Math.ceil(contentHeight / pageHeight);
-    setTotalPages(newTotalPages);
-  };
-
-  const goToNextPage = () => {
-    if (currentPage < totalPages) {
-      setCurrentPage(currentPage + 1);
-    }
-  };
-
-  const goToPrevPage = () => {
-    if (currentPage > 1) {
-      setCurrentPage(currentPage - 1);
-    }
-  };
-
-  const goToPage = (page: number) => {
-    if (page >= 1 && page <= totalPages) {
-      setCurrentPage(page);
-    }
-  };
-
-  const populateFromCv = (cv: CvDto, position?: string) => {
-    if (cv.basics) {
-      setPersonalInfo({
-        firstName: cv.basics.firstName,
-        lastName: cv.basics.lastName,
-        email: cv.basics.email,
-        phone: cv.basics.phoneNumber,
-        address: cv.basics.location?.city || '',
-        country: cv.basics.location?.country || '',
-        profession: position || personalInfo.profession,
-        summary: cv.basics.summary,
-      });
+  const populateFromCv = React.useCallback((cv: CvDto, position?: string) => {
+    const basics = cv.basics;
+    if (basics) {
+      setPersonalInfo((prev) => ({
+        firstName: basics.firstName,
+        lastName: basics.lastName,
+        email: basics.email,
+        phone: basics.phoneNumber,
+        address: basics.location?.city || '',
+        country: basics.location?.country || '',
+        profession: position ?? prev.profession,
+        summary: basics.summary,
+      }));
     }
 
     setExperiences(
@@ -658,7 +554,7 @@ const CVCreator: React.FC<CVCreatorProps> = ({ initialCv }) => {
         level: l.fluency,
       })) || []
     );
-  };
+  }, []);
 
   const buildCvDto = (): CvDto => {
     return {
@@ -784,58 +680,304 @@ const CVCreator: React.FC<CVCreatorProps> = ({ initialCv }) => {
       populateFromCv(initialCv.cvData, initialCv.targetPosition || undefined);
       setCvId(initialCv.id);
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [initialCv]);
+  }, [initialCv, populateFromCv]);
 
   const downloadPDF = async () => {
-    const frame = document.querySelector<HTMLElement>('.cv-frame');
-    if (!frame) return;
+    const container = pagesViewportRef.current;
+    const zoomWrapper = zoomWrapperRef.current;
+    if (!container || !zoomWrapper) return;
 
-    // zapamiętaj oryginalne wartości
-    const origScale = cvScale;
-    const origPage = currentPage;
-    const origTransform = frame.style.transform;
-
-    // przywróć 100% skalę
-    setCvScale(1);
-    // usuń transformację z ramki
-    frame.style.transform = 'none';
-    await new Promise((r) => setTimeout(r, 100));
+    const origTransform = zoomWrapper.style.transform;
+    // Temporarily disable transform for crisp rendering
+    zoomWrapper.style.transform = 'none';
+    // Temporarily remove shadows/borders from pages to avoid capture discrepancies
+    const pagesNodes = container.querySelectorAll<HTMLElement>('.cv-page');
+    const restoreStyles: Array<{ el: HTMLElement; boxShadow: string; border: string }> = [];
+    pagesNodes.forEach((el) => {
+      restoreStyles.push({ el, boxShadow: el.style.boxShadow || '', border: el.style.border || '' });
+      el.style.boxShadow = 'none';
+      el.style.border = 'none';
+    });
+    await new Promise((r) => setTimeout(r, 50));
 
     const pdf = new jsPDF('portrait', 'mm', 'a4');
-    const pdfWidth = 210;
-
-    for (let page = 1; page <= totalPages; page++) {
-      setCurrentPage(page);
-      await new Promise((r) => setTimeout(r, 100));
-
-      const canvas = await html2canvas(frame, {
+    const pdfW = pdf.internal.pageSize.getWidth();
+    const pdfH = pdf.internal.pageSize.getHeight();
+    for (let i = 0; i < pagesNodes.length; i++) {
+      const pageEl = pagesNodes[i];
+      const canvas = await html2canvas(pageEl, {
         scale: 2,
         useCORS: true,
         allowTaint: true,
         backgroundColor: '#ffffff',
-        // bez width/height/scrollY — html2canvas złapie całą ramkę
       });
-
       const imgData = canvas.toDataURL('image/png');
-      const imgH = (canvas.height * pdfWidth) / canvas.width;
-
-      if (page > 1) pdf.addPage();
-      pdf.addImage(imgData, 'PNG', 0, 0, pdfWidth, imgH);
+      if (i > 0) pdf.addPage();
+      pdf.addImage(imgData, 'PNG', 0, 0, pdfW, pdfH);
     }
 
-    // przywróć wszystko do stanu pierwotnego
-    setCvScale(origScale);
-    setCurrentPage(origPage);
-    frame.style.transform = origTransform;
+    // Restore zoom transform
+    zoomWrapper.style.transform = origTransform;
+    // Restore styles
+    restoreStyles.forEach(({ el, boxShadow, border }) => {
+      el.style.boxShadow = boxShadow;
+      el.style.border = border;
+    });
 
-    const fileName =
-      personalInfo.firstName && personalInfo.lastName
-        ? `${personalInfo.firstName}_${personalInfo.lastName}_CV.pdf`
-        : 'My_CV.pdf';
-
+    const fileName = personalInfo.firstName && personalInfo.lastName
+      ? `${personalInfo.firstName}_${personalInfo.lastName}_CV.pdf`
+      : 'My_CV.pdf';
     pdf.save(fileName);
   };
+
+  // Section visibility helper (must match preview rendering conditions)
+  const isSectionVisible = React.useCallback((sectionId: string) => {
+    switch (sectionId) {
+      case 'profile':
+        return Boolean(
+          personalInfo.firstName ||
+            personalInfo.lastName ||
+            personalInfo.email ||
+            personalInfo.phone ||
+            personalInfo.address ||
+            personalInfo.profession ||
+            personalInfo.summary
+        );
+      case 'experience':
+        return experiences.length > 0;
+      case 'education':
+        return education.length > 0;
+      case 'certificates':
+        return certificates.length > 0;
+      case 'skills':
+        return skills.length > 0;
+      case 'languages':
+        return languages.length > 0;
+      case 'hobbies':
+        return hobbies.length > 0;
+      case 'privacy':
+        return Boolean(privacyStatement.content && privacyStatement.content.trim().length > 0);
+      default:
+        return false;
+    }
+  }, [
+    personalInfo,
+    experiences,
+    education,
+    certificates,
+    skills,
+    languages,
+    hobbies,
+    privacyStatement,
+  ]);
+
+  // Build measured pages: render invisible blocks, measure (including margins), then pack
+  useLayoutEffect(() => {
+    // Wait for mm calibration
+    if (!mmRatioRef.current) return;
+    const container = measureContainerRef.current;
+    if (!container) return;
+
+    const headerEl = container.querySelector<HTMLElement>('.cv-section[data-block-id="header"]');
+    let headerHeight = 0;
+    if (headerEl) {
+      const cs = getComputedStyle(headerEl);
+      const mt = parseFloat(cs.marginTop || '0') || 0;
+      const mb = parseFloat(cs.marginBottom || '0') || 0;
+      headerHeight = headerEl.offsetHeight + mt + mb; // include margins
+    }
+
+    const blocks = Array.from(container.querySelectorAll<HTMLElement>('.cv-section[data-block-id]'));
+    const heights = new Map<string, number>();
+    const sectionHeaderHeights = new Map<string, number>();
+    const sectionItemHeights = new Map<string, Array<{ id: string; h: number }>>();
+    blocks.forEach((el) => {
+      const id = el.getAttribute('data-block-id');
+      if (!id) return;
+      if (id === 'header') return; // handled above
+
+      // Total section height including margins
+      const cs = getComputedStyle(el);
+      const mt = parseFloat(cs.marginTop || '0') || 0;
+      const mb = parseFloat(cs.marginBottom || '0') || 0;
+      heights.set(id, el.offsetHeight + mt + mb);
+
+      // Section header height (h3)
+      const h3 = el.querySelector('h3');
+      if (h3) {
+        const csH = getComputedStyle(h3 as HTMLElement);
+        const mth = parseFloat(csH.marginTop || '0') || 0;
+        const mbh = parseFloat(csH.marginBottom || '0') || 0;
+        sectionHeaderHeights.set(id, (h3 as HTMLElement).offsetHeight + mth + mbh);
+      }
+
+      // Items by section
+      const items: Array<{ id: string; h: number }> = [];
+      if (id === 'experience') {
+        const nodes = el.querySelectorAll<HTMLElement>('.exp-item[data-item-id]');
+        nodes.forEach((n) => {
+          const csI = getComputedStyle(n);
+          const mti = parseFloat(csI.marginTop || '0') || 0;
+          const mbi = parseFloat(csI.marginBottom || '0') || 0;
+          const itemId = n.getAttribute('data-item-id') || '';
+          items.push({ id: itemId, h: n.offsetHeight + mti + mbi });
+        });
+      } else if (id === 'education') {
+        const nodes = el.querySelectorAll<HTMLElement>('.edu-item[data-item-id]');
+        nodes.forEach((n) => {
+          const csI = getComputedStyle(n);
+          const mti = parseFloat(csI.marginTop || '0') || 0;
+          const mbi = parseFloat(csI.marginBottom || '0') || 0;
+          const itemId = n.getAttribute('data-item-id') || '';
+          items.push({ id: itemId, h: n.offsetHeight + mti + mbi });
+        });
+      } else if (id === 'certificates') {
+        const nodes = el.querySelectorAll<HTMLElement>('.cert-item[data-item-id]');
+        nodes.forEach((n) => {
+          const csI = getComputedStyle(n);
+          const mti = parseFloat(csI.marginTop || '0') || 0;
+          const mbi = parseFloat(csI.marginBottom || '0') || 0;
+          const itemId = n.getAttribute('data-item-id') || '';
+          items.push({ id: itemId, h: n.offsetHeight + mti + mbi });
+        });
+      } else if (id === 'profile' || id === 'privacy') {
+        const nodes = el.querySelectorAll<HTMLElement>('.para-item[data-item-id]');
+        nodes.forEach((n) => {
+          const csI = getComputedStyle(n);
+          const mti = parseFloat(csI.marginTop || '0') || 0;
+          const mbi = parseFloat(csI.marginBottom || '0') || 0;
+          const itemId = n.getAttribute('data-item-id') || '';
+          items.push({ id: itemId, h: n.offsetHeight + mti + mbi });
+        });
+      }
+      if (items.length) sectionItemHeights.set(id, items);
+    });
+
+    const visible = sectionOrder.filter((id) => isSectionVisible(id));
+    const pagesAcc: SectionChunk[][] = [];
+    let current: SectionChunk[] = [];
+    // First page starts with header space allocated
+    let used = headerHeight;
+    const SAFETY_PX = 4; // guard for rounding/borders
+    const limit = pageContentHeightPx - SAFETY_PX; // px
+
+    const pushPage = () => {
+      pagesAcc.push(current);
+      current = [];
+      used = 0; // next page without header
+    };
+
+    for (const id of visible) {
+      const wholeH = heights.get(id) ?? 0;
+      if (wholeH <= 0) continue;
+
+      // If whole section fits on current page
+      if ((used > 0 && used + wholeH <= limit) || (used === 0 && wholeH <= limit)) {
+        current.push({ sectionId: id, includeTitle: true });
+        used += wholeH;
+        continue;
+      }
+
+      // If section doesn't fit fully, try to split by items when possible
+      const items = sectionItemHeights.get(id);
+      const secHeaderH = sectionHeaderHeights.get(id) || 0;
+
+      if (!items || !items.length) {
+        // No way to split; move to next page if not empty, then place it (may overflow)
+        if (used > 0) {
+          pushPage();
+        }
+        current.push({ sectionId: id, includeTitle: true });
+        used = wholeH; // may exceed limit; last resort
+        continue;
+      }
+
+      // Split list items across pages
+      let idx = 0;
+      while (idx < items.length) {
+        // Ensure at least header fits, otherwise new page
+        if (used > 0 && used + secHeaderH >= limit) {
+          pushPage();
+        }
+        const chunkIds: string[] = [];
+        let chunkH = secHeaderH;
+        const pageRemaining = limit - used;
+
+        // If even header alone exceeds page, force new page
+        if (chunkH > pageRemaining && used > 0) {
+          pushPage();
+        }
+
+        // Fit as many items as possible on this page
+        while (idx < items.length) {
+          const it = items[idx];
+          if (chunkH + it.h <= (limit - used)) {
+            chunkIds.push(it.id);
+            chunkH += it.h;
+            idx++;
+          } else {
+            break;
+          }
+        }
+
+        // If nothing fits (single item larger than page), force place one to avoid infinite loop
+        if (chunkIds.length === 0 && idx < items.length) {
+          chunkIds.push(items[idx].id);
+          chunkH += items[idx].h;
+          idx++;
+        }
+
+        current.push({ sectionId: id, includeTitle: true, items: chunkIds });
+        used += chunkH;
+
+        // If next item remains, start a new page for continuation
+        if (idx < items.length) {
+          pushPage();
+        }
+      }
+    }
+
+    if (current.length) pagesAcc.push(current);
+
+    setPages(pagesAcc);
+    setCurrentPage((prev) => Math.min(Math.max(prev, 1), Math.max(pagesAcc.length, 1)));
+  }, [
+    personalInfo,
+    experiences,
+    education,
+    skills,
+    languages,
+    certificates,
+    hobbies,
+    privacyStatement,
+    sectionOrder,
+    pageContentHeightPx,
+    isSectionVisible,
+  ]);
+
+  // Keep currentPage in sync with scroll position
+  useEffect(() => {
+    const viewport = pagesViewportRef.current;
+    if (!viewport) return;
+    const pagesEls = viewport.querySelectorAll<HTMLElement>('.cv-page');
+    if (!pagesEls.length) return;
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        const visible = entries
+          .filter((e) => e.isIntersecting)
+          .sort((a, b) => b.intersectionRatio - a.intersectionRatio);
+        if (visible[0]) {
+          const idx = Array.from(pagesEls).indexOf(visible[0].target as HTMLElement);
+          if (idx >= 0) setCurrentPage(idx + 1);
+        }
+      },
+      { root: viewport, threshold: [0.5] }
+    );
+
+    pagesEls.forEach((el) => observer.observe(el));
+    return () => observer.disconnect();
+  }, [pages.length]);
 
   const renderSectionInForm = (sectionId: string) => {
     switch (sectionId) {
@@ -957,6 +1099,7 @@ const CVCreator: React.FC<CVCreatorProps> = ({ initialCv }) => {
                           onChange={(date) => updateExperience(exp.id, 'startDate', date)}
                           isCurrent={false}
                           onCurrentChange={() => {}}
+                          showCurrentToggle={false}
                           placeholder="Select start date"
                         />
                       </div>
@@ -1093,6 +1236,7 @@ const CVCreator: React.FC<CVCreatorProps> = ({ initialCv }) => {
                           onChange={(date) => updateEducation(edu.id, 'startDate', date)}
                           isCurrent={false}
                           onCurrentChange={() => {}}
+                          showCurrentToggle={false}
                           placeholder="Select start date"
                         />
                       </div>
@@ -1426,43 +1570,48 @@ const CVCreator: React.FC<CVCreatorProps> = ({ initialCv }) => {
           personalInfo.address ||
           personalInfo.profession ||
           personalInfo.summary ? (
-          <div className="mb-5" key="profile">
-            <h3 className="mb-2 border-b border-gray-300 pb-1 text-lg font-semibold text-gray-800">
-              Personal Profile
-            </h3>
-            <p className="text-sm leading-relaxed break-words text-gray-700">
-              {personalInfo.summary}
-            </p>
+          <div className="cv-section mb-5" key="profile" data-block-id="profile" data-section="profile">
+            <h3 className="mb-2 border-b border-gray-300 pb-1 text-lg font-semibold text-gray-800">Personal Profile</h3>
+            <div className="text-sm leading-relaxed break-words text-gray-700">
+              {(personalInfo.summary || '').split(/\n+/).filter(Boolean).map((para, i) => (
+                <p key={`sum-${i}`} className="para-item mb-2 last:mb-0" data-item-id={`p${i}`}>
+                  {para}
+                </p>
+              ))}
+            </div>
           </div>
         ) : null;
 
       case 'experience':
         return experiences.length > 0 ? (
-          <div className="mb-5" key="experience" data-section="experience">
+          <div className="cv-section mb-5" key="experience" data-block-id="experience" data-section="experience">
             <h3 className="mb-2 flex items-center border-b border-gray-300 pb-1 text-lg font-semibold text-gray-800">
               <Briefcase size={16} className="mr-2" />
               Work Exeperience
             </h3>
             {experiences.map((exp) => (
-              <div key={exp.id} className="mb-3">
-                <div className="mb-1 flex items-start justify-between">
+              <div key={exp.id} className="exp-item mb-4" data-item-id={exp.id}>
+                {/* Nagłówek stanowisko + firma */}
+                <div className="exp-header mb-1 flex items-start justify-between">
                   <div className="min-w-0 flex-1">
-                    <h4 className="truncate font-semibold text-gray-900">
+                    <div className="truncate font-semibold text-gray-900">
                       {exp.position || 'Position'}
-                    </h4>
-                    <p className="truncate font-medium text-gray-700">
+                    </div>
+                    <div className="truncate font-medium text-gray-700">
                       {exp.company || 'Company name'}
-                    </p>
+                    </div>
                   </div>
                   <div className="ml-2 flex-shrink-0 text-xs text-gray-600">
                     {formatDate(exp.startDate)} -{' '}
                     {exp.isCurrent || !exp.endDate ? 'present' : formatDate(exp.endDate)}
                   </div>
                 </div>
+
+                {/* Opis */}
                 {exp.description && (
-                  <p className="text-sm leading-relaxed break-words text-gray-700">
+                  <div className="exp-desc text-sm leading-relaxed text-gray-700">
                     {exp.description}
-                  </p>
+                  </div>
                 )}
               </div>
             ))}
@@ -1471,13 +1620,13 @@ const CVCreator: React.FC<CVCreatorProps> = ({ initialCv }) => {
 
       case 'education':
         return education.length > 0 ? (
-          <div className="mb-5" key="education" data-section="education">
+          <div className="cv-section mb-5" key="education" data-block-id="education" data-section="education">
             <h3 className="mb-2 flex items-center border-b border-gray-300 pb-1 text-lg font-semibold text-gray-800">
               <GraduationCap size={16} className="mr-2" />
               Education
             </h3>
             {education.map((edu) => (
-              <div key={edu.id} className="mb-3">
+              <div key={edu.id} className="edu-item mb-3" data-item-id={edu.id}>
                 <div className="mb-1 flex items-start justify-between">
                   <div className="min-w-0 flex-1">
                     <h4 className="truncate font-semibold text-gray-900">
@@ -1499,17 +1648,19 @@ const CVCreator: React.FC<CVCreatorProps> = ({ initialCv }) => {
 
       case 'certificates':
         return certificates.length > 0 ? (
-          <div className="mb-5" key="certificates" data-section="certificates">
+          <div className="cv-section mb-5" key="certificates" data-block-id="certificates" data-section="certificates">
             <h3 className="mb-2 flex items-center border-b border-gray-300 pb-1 text-lg font-semibold text-gray-800">
               <Award size={16} className="mr-2" />
               Certificates
             </h3>
             <div className="space-y-1">
               {certificates.map((cert) => (
-                <p key={cert.id} className="text-sm text-gray-700">
-                  {cert.name}
-                  {cert.date ? ` (${formatDate(cert.date)})` : ''}
-                </p>
+                <div key={cert.id} className="cert-item" data-item-id={cert.id}>
+                  <p className="text-sm text-gray-700">
+                    {cert.name}
+                    {cert.date ? ` (${formatDate(cert.date)})` : ''}
+                  </p>
+                </div>
               ))}
             </div>
           </div>
@@ -1517,7 +1668,7 @@ const CVCreator: React.FC<CVCreatorProps> = ({ initialCv }) => {
 
       case 'skills':
         return skills.length > 0 ? (
-          <div className="mb-5" key="skills" data-section="skills">
+          <div className="cv-section mb-5" key="skills" data-block-id="skills" data-section="skills">
             <h3 className="mb-2 flex items-center border-b border-gray-300 pb-1 text-lg font-semibold text-gray-800">
               <Award size={16} className="mr-2" />
               Skills
@@ -1537,7 +1688,7 @@ const CVCreator: React.FC<CVCreatorProps> = ({ initialCv }) => {
 
       case 'languages':
         return languages.length > 0 ? (
-          <div className="mb-5" key="languages" data-section="languages">
+          <div className="cv-section mb-5" key="languages" data-block-id="languages" data-section="languages">
             <h3 className="mb-2 flex items-center border-b border-gray-300 pb-1 text-lg font-semibold text-gray-800">
               <Languages size={16} className="mr-2" />
               Languages
@@ -1557,7 +1708,7 @@ const CVCreator: React.FC<CVCreatorProps> = ({ initialCv }) => {
 
       case 'hobbies':
         return hobbies.length > 0 ? (
-          <div className="mb-5" key="hobbies" data-section="hobbies">
+          <div className="cv-section mb-5" key="hobbies" data-block-id="hobbies" data-section="hobbies">
             <h3 className="mb-2 flex items-center border-b border-gray-300 pb-1 text-lg font-semibold text-gray-800">
               <Tag size={16} className="mr-2" />
               Hobby
@@ -1577,18 +1728,225 @@ const CVCreator: React.FC<CVCreatorProps> = ({ initialCv }) => {
 
       case 'privacy':
         return privacyStatement.content ? (
-          <div className="mb-5" key="privacy" data-section="privacy">
-            <h3 className="mb-2 border-b border-gray-300 pb-1 text-lg font-semibold text-gray-800">
-              Privacy Statement
-            </h3>
-            <p className="text-xs leading-relaxed break-words text-gray-700">
-              {privacyStatement.content}
-            </p>
+          <div className="cv-section mb-5" key="privacy" data-block-id="privacy" data-section="privacy">
+            <h3 className="mb-2 border-b border-gray-300 pb-1 text-lg font-semibold text-gray-800">Privacy Statement</h3>
+            <div className="text-xs leading-relaxed break-words text-gray-700">
+              {(privacyStatement.content || '').split(/\n+/).filter(Boolean).map((para, i) => (
+                <p key={`priv-${i}`} className="para-item mb-2 last:mb-0" data-item-id={`p${i}`}>
+                  {para}
+                </p>
+              ))}
+            </div>
           </div>
         ) : null;
 
       default:
         return null;
+    }
+  };
+
+  const renderHeader = () => (
+    <div className="mb-6 cv-section" data-block-id="header">
+      <h1 className="mb-2 text-3xl leading-tight font-bold text-gray-900">
+        {personalInfo.firstName || personalInfo.lastName
+          ? `${personalInfo.firstName} ${personalInfo.lastName}`.trim()
+          : 'Joe Doe'}
+      </h1>
+      {personalInfo.profession && (
+        <h2 className="mb-4 text-xl text-gray-600">{personalInfo.profession}</h2>
+      )}
+      <div className="flex flex-wrap gap-4 text-sm text-gray-600">
+        {personalInfo.email && (
+          <div className="flex items-center">
+            <Mail size={14} className="mr-2 flex-shrink-0" />
+            <span className="break-all">{personalInfo.email}</span>
+          </div>
+        )}
+        {personalInfo.phone && (
+          <div className="flex items-center">
+            <Phone size={14} className="mr-2 flex-shrink-0" />
+            {personalInfo.phone}
+          </div>
+        )}
+        {personalInfo.address && (
+          <div className="flex items-center">
+            <MapPin size={14} className="mr-2 flex-shrink-0" />
+            {personalInfo.address}
+          </div>
+        )}
+      </div>
+    </div>
+  );
+
+  const renderSectionTitle = (sectionId: string) => {
+    switch (sectionId) {
+      case 'profile':
+        return (
+          <h3 className="mb-2 border-b border-gray-300 pb-1 text-lg font-semibold text-gray-800">
+            Personal Profile
+          </h3>
+        );
+      case 'experience':
+        return (
+          <h3 className="mb-2 flex items-center border-b border-gray-300 pb-1 text-lg font-semibold text-gray-800">
+            <Briefcase size={16} className="mr-2" />
+            Work Exeperience
+          </h3>
+        );
+      case 'education':
+        return (
+          <h3 className="mb-2 flex items-center border-b border-gray-300 pb-1 text-lg font-semibold text-gray-800">
+            <GraduationCap size={16} className="mr-2" />
+            Education
+          </h3>
+        );
+      case 'certificates':
+        return (
+          <h3 className="mb-2 flex items-center border-b border-gray-300 pb-1 text-lg font-semibold text-gray-800">
+            <Award size={16} className="mr-2" />
+            Certificates
+          </h3>
+        );
+      case 'privacy':
+        return (
+          <h3 className="mb-2 border-b border-gray-300 pb-1 text-lg font-semibold text-gray-800">
+            Privacy Statement
+          </h3>
+        );
+      default:
+        return null;
+    }
+  };
+
+  const renderExperienceItems = (ids?: string[]) => {
+    const list = ids ? experiences.filter((e) => ids.includes(e.id)) : experiences;
+    return (
+      <>
+        {list.map((exp) => (
+          <div key={exp.id} className="exp-item mb-4" data-item-id={exp.id}>
+            <div className="exp-header mb-1 flex items-start justify-between">
+              <div className="min-w-0 flex-1">
+                <div className="truncate font-semibold text-gray-900">{exp.position || 'Position'}</div>
+                <div className="truncate font-medium text-gray-700">{exp.company || 'Company name'}</div>
+              </div>
+              <div className="ml-2 flex-shrink-0 text-xs text-gray-600">
+                {formatDate(exp.startDate)} - {exp.isCurrent || !exp.endDate ? 'present' : formatDate(exp.endDate)}
+              </div>
+            </div>
+            {exp.description && (
+              <div className="exp-desc text-sm leading-relaxed text-gray-700">{exp.description}</div>
+            )}
+          </div>
+        ))}
+      </>
+    );
+  };
+
+  const renderEducationItems = (ids?: string[]) => {
+    const list = ids ? education.filter((e) => ids.includes(e.id)) : education;
+    return (
+      <>
+        {list.map((edu) => (
+          <div key={edu.id} className="edu-item mb-3" data-item-id={edu.id}>
+            <div className="mb-1 flex items-start justify-between">
+              <div className="min-w-0 flex-1">
+                <h4 className="truncate font-semibold text-gray-900">
+                  {edu.field || 'Field of study'} - {edu.degree || 'Degree'}
+                </h4>
+                <p className="truncate font-medium text-gray-700">{edu.school || 'School/University'}</p>
+              </div>
+              <div className="ml-2 flex-shrink-0 text-xs text-gray-600">
+                {formatDate(edu.startDate)} - {edu.isCurrent || !edu.endDate ? 'present' : formatDate(edu.endDate)}
+              </div>
+            </div>
+          </div>
+        ))}
+      </>
+    );
+  };
+
+  const renderCertificatesItems = (ids?: string[]) => {
+    const list = ids ? certificates.filter((c) => ids.includes(c.id)) : certificates;
+    return (
+      <div className="space-y-1">
+        {list.map((cert) => (
+          <div key={cert.id} className="cert-item" data-item-id={cert.id}>
+            <p className="text-sm text-gray-700">
+              {cert.name}
+              {cert.date ? ` (${formatDate(cert.date)})` : ''}
+            </p>
+          </div>
+        ))}
+      </div>
+    );
+  };
+
+  const renderChunk = (chunk: SectionChunk) => {
+    const { sectionId, items, includeTitle } = chunk;
+    // For simple sections without item splitting, render full section
+    if (!items || items.length === 0) {
+      return <React.Fragment key={`chunk-${sectionId}-${Math.random()}`}>{renderSectionInPreview(sectionId)}</React.Fragment>;
+    }
+
+    // Split-capable sections
+    switch (sectionId) {
+      case 'profile':
+        return (
+          <div className="cv-section mb-5" data-block-id="profile" data-section="profile" key={`chunk-prof-${items.join('-')}`}>
+            {includeTitle && renderSectionTitle('profile')}
+            <div className="text-sm leading-relaxed break-words text-gray-700">
+              {(personalInfo.summary || '').split(/\n+/).filter(Boolean).map((para, i) => {
+                const id = `p${i}`;
+                if (!items.includes(id)) return null;
+                return (
+                  <p key={`sum-${i}`} className="para-item mb-2 last:mb-0" data-item-id={id}>
+                    {para}
+                  </p>
+                );
+              })}
+            </div>
+          </div>
+        );
+      case 'experience':
+        return (
+          <div className="cv-section mb-5" data-block-id="experience" data-section="experience" key={`chunk-exp-${items.join('-')}`}>
+            {includeTitle && renderSectionTitle('experience')}
+            {renderExperienceItems(items)}
+          </div>
+        );
+      case 'education':
+        return (
+          <div className="cv-section mb-5" data-block-id="education" data-section="education" key={`chunk-edu-${items.join('-')}`}>
+            {includeTitle && renderSectionTitle('education')}
+            {renderEducationItems(items)}
+          </div>
+        );
+      case 'certificates':
+        return (
+          <div className="cv-section mb-5" data-block-id="certificates" data-section="certificates" key={`chunk-cert-${items.join('-')}`}>
+            {includeTitle && renderSectionTitle('certificates')}
+            {renderCertificatesItems(items)}
+          </div>
+        );
+      case 'privacy':
+        return (
+          <div className="cv-section mb-5" data-block-id="privacy" data-section="privacy" key={`chunk-priv-${items.join('-')}`}>
+            {includeTitle && renderSectionTitle('privacy')}
+            <div className="text-xs leading-relaxed break-words text-gray-700">
+              {(privacyStatement.content || '').split(/\n+/).filter(Boolean).map((para, i) => {
+                const id = `p${i}`;
+                if (!items.includes(id)) return null;
+                return (
+                  <p key={`priv-${i}`} className="para-item mb-2 last:mb-0" data-item-id={id}>
+                    {para}
+                  </p>
+                );
+              })}
+            </div>
+          </div>
+        );
+      default:
+        return <React.Fragment key={`chunk-default-${sectionId}`}>{renderSectionInPreview(sectionId)}</React.Fragment>;
     }
   };
 
@@ -1630,7 +1988,7 @@ const CVCreator: React.FC<CVCreatorProps> = ({ initialCv }) => {
         <HoverCard>
           <HoverCardTrigger asChild>
             <button className="flex h-12 w-12 cursor-pointer items-center justify-center rounded-sm bg-gray-100">
-              v0.1.3
+              v1.0.0
             </button>
           </HoverCardTrigger>
           <HoverCardContent className="font-poppins w-80">
@@ -1883,95 +2241,61 @@ const CVCreator: React.FC<CVCreatorProps> = ({ initialCv }) => {
             }}
             onMouseEnter={() => setIsHovered(true)}
           >
+            {/* Hidden measurement container to compute heights */}
             <div
-              className={`absolute inset-0 flex items-center justify-center ${isDragging ? 'cursor-grabbing' : 'cursor-grab'}`}
-              style={{
-                transform: `translate(${cvPosition.x}px, ${cvPosition.y}px)`,
-              }}
-              onMouseDown={handleMouseDown}
+              ref={measureContainerRef}
+              style={{ position: 'absolute', left: '-10000px', top: '-10000px', width: `${PAGE_WIDTH_MM}mm`, background: '#fff' }}
             >
-              {/* A4 Paper with exact dimensions */}
-              <div
-                className="cv-frame overflow-hidden rounded-sm"
-                style={{
-                  width: '210mm',
-                  padding: '32px', // ← tutaj widoczny margines
-                  boxSizing: 'border-box',
-                  backgroundColor: '#fff',
-                  boxShadow: '0 4px 6px rgba(0,0,0,0.1)',
-                  transform: `scale(${cvScale})`,
-                  transformOrigin: 'center center',
-                }}
-              >
-                <div
-                  className="cv-content"
-                  style={{
-                    width: '100%', // 210mm
-                    height: '238.5mm', // dokładnie obszar "przelamywania"
-                    overflow: 'hidden',
-                  }}
-                >
-                  <div
-                    className="box-border h-full"
-                    style={{
-                      transform: `translateY(-${(currentPage - 1) * 100}%)`,
-                    }}
-                  >
-                    <div className="mb-6">
-                      <h1 className="mb-2 text-3xl leading-tight font-bold text-gray-900">
-                        {personalInfo.firstName || personalInfo.lastName
-                          ? `${personalInfo.firstName} ${personalInfo.lastName}`.trim()
-                          : 'Joe Doe'}
-                      </h1>
-                      {personalInfo.profession && (
-                        <h2 className="mb-4 text-xl text-gray-600">{personalInfo.profession}</h2>
-                      )}
-
-                      {/* Contact Information */}
-                      <div className="flex flex-wrap gap-4 text-sm text-gray-600">
-                        {personalInfo.email && (
-                          <div className="flex items-center">
-                            <Mail size={14} className="mr-2 flex-shrink-0" />
-                            <span className="break-all">{personalInfo.email}</span>
-                          </div>
-                        )}
-                        {personalInfo.phone && (
-                          <div className="flex items-center">
-                            <Phone size={14} className="mr-2 flex-shrink-0" />
-                            {personalInfo.phone}
-                          </div>
-                        )}
-                        {personalInfo.address && (
-                          <div className="flex items-center">
-                            <MapPin size={14} className="mr-2 flex-shrink-0" />
-                            {personalInfo.address}
-                          </div>
-                        )}
-                      </div>
-                    </div>
-
-                    {sectionOrder.map((sectionId) => renderSectionInPreview(sectionId))}
-
-                    {/* Empty state message */}
-                    {!personalInfo.firstName &&
-                      !personalInfo.lastName &&
-                      !personalInfo.email &&
-                      experiences.length === 0 &&
-                      skills.length === 0 &&
-                      education.length === 0 &&
-                      currentPage === 1 && (
-                        <div className="mt-20 text-center text-gray-500">
-                          <p className="text-lg">
-                            Start filling the form on the left to create your CV.
-                          </p>
-                        </div>
-                      )}
-                  </div>
-                </div>
+              <div style={{ padding: `${PAGE_PADDING_MM}mm` }}>
+                {renderHeader()}
+                {sectionOrder.filter(isSectionVisible).map((id) => (
+                  <React.Fragment key={`m-${id}`}>{renderSectionInPreview(id)}</React.Fragment>
+                ))}
               </div>
             </div>
 
-            {/* Pagination Controls - dodaj na dole kontenera */}
+            {/* Pages viewport */}
+            <div ref={pagesViewportRef} className="absolute inset-0 overflow-auto">
+              <div
+                ref={zoomWrapperRef}
+                className={`${isDragging ? 'cursor-grabbing' : 'cursor-grab'} flex flex-col items-center`}
+                style={{
+                  transform: `translate(${cvPosition.x}px, ${cvPosition.y}px) scale(${cvScale})`,
+                  transformOrigin: 'top center',
+                  padding: '40px 0',
+                }}
+                onMouseDown={handleMouseDown}
+              >
+                {(pages.length ? pages : [[/* empty page */] as SectionChunk[]]).map((page, idx) => (
+                  <div
+                    key={`page-${idx}`}
+                    className="cv-page mb-6 overflow-hidden rounded-sm shadow"
+                    style={{ width: `${PAGE_WIDTH_MM}mm`, height: `${PAGE_HEIGHT_MM}mm`, background: '#fff' }}
+                  >
+                    <div className="h-full box-border" style={{ padding: `${PAGE_PADDING_MM}mm` }}>
+                      {idx === 0 && renderHeader()}
+                      {page.map((chunk, cidx) => (
+                        <React.Fragment key={`p${idx}-c${cidx}`}>{renderChunk(chunk)}</React.Fragment>
+                      ))}
+                      {/* Empty state message on first page */}
+                      {idx === 0 &&
+                        !personalInfo.firstName &&
+                        !personalInfo.lastName &&
+                        !personalInfo.email &&
+                        experiences.length === 0 &&
+                        skills.length === 0 &&
+                        education.length === 0 && (
+                          <div className="mt-20 text-center text-gray-500">
+                            <p className="text-lg">Start filling the form on the left to create your CV.</p>
+                          </div>
+                        )}
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            {/* Pagination Controls */}
             {true && (
               <div
                 className={`absolute bottom-5 left-1/2 -translate-x-1/2 transform transition-all duration-500 ${
@@ -1993,7 +2317,7 @@ const CVCreator: React.FC<CVCreatorProps> = ({ initialCv }) => {
                 </button>
 
                 <div className="flex space-x-1">
-                  {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (
+                  {Array.from({ length: pages.length || 1 }, (_, i) => i + 1).map((page) => (
                     <button
                       key={page}
                       onClick={() => goToPage(page)}
@@ -2010,9 +2334,9 @@ const CVCreator: React.FC<CVCreatorProps> = ({ initialCv }) => {
 
                 <button
                   onClick={goToNextPage}
-                  disabled={currentPage === totalPages}
+                  disabled={currentPage === (pages.length || 1)}
                   className={`rounded p-2 ${
-                    currentPage === totalPages
+                    currentPage === (pages.length || 1)
                       ? 'cursor-not-allowed text-gray-400'
                       : 'cursor-pointer text-gray-700 hover:bg-gray-100'
                   }`}
@@ -2021,7 +2345,7 @@ const CVCreator: React.FC<CVCreatorProps> = ({ initialCv }) => {
                 </button>
 
                 <span className="ml-2 text-sm text-gray-600">
-                  {currentPage} / {totalPages}
+                  {currentPage} / {pages.length || 1}
                 </span>
               </div>
             )}
