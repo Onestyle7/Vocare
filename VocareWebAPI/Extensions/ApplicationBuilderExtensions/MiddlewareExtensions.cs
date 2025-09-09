@@ -1,0 +1,193 @@
+using System.Text.Json;
+using Microsoft.AspNetCore.DataProtection;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
+using VocareWebAPI.Models.Entities;
+using VocareWebAPI.UserManagement.Models.Entities;
+
+namespace VocareWebAPI.Extensions.ApplicationBuilderExtensions
+{
+    public static class MiddlewareExtensions
+    {
+        /// <summary>
+        /// Dodaje custom CORS middleware z obsługą błędów
+        /// </summary>
+        public static WebApplication UseCustomCorsMiddleware(this WebApplication app)
+        {
+            app.Use(
+                async (context, next) =>
+                {
+                    try
+                    {
+                        // Ustaw CORS dla WSZYSTKICH requestów od razu
+                        var origin = context.Request.Headers["Origin"].ToString();
+                        if (!string.IsNullOrEmpty(origin))
+                        {
+                            context.Response.Headers.Add("Access-Control-Allow-Origin", origin);
+                            context.Response.Headers.Add(
+                                "Access-Control-Allow-Credentials",
+                                "true"
+                            );
+                            context.Response.Headers.Add(
+                                "Access-Control-Allow-Methods",
+                                "GET, POST, PUT, DELETE, OPTIONS"
+                            );
+                            context.Response.Headers.Add(
+                                "Access-Control-Allow-Headers",
+                                "Content-Type, Authorization"
+                            );
+                        }
+
+                        // Handle preflight OPTIONS requests
+                        if (context.Request.Method == "OPTIONS")
+                        {
+                            context.Response.StatusCode = 204;
+                            return;
+                        }
+
+                        await next();
+                    }
+                    catch (Exception ex)
+                    {
+                        // Loguj błąd
+                        var logger = context.RequestServices.GetRequiredService<ILogger<Program>>();
+                        logger.LogError(
+                            ex,
+                            "Unhandled exception for {Method} {Path}",
+                            context.Request.Method,
+                            context.Request.Path
+                        );
+
+                        // WAŻNE: Ustaw CORS nawet przy błędzie!
+                        var origin = context.Request.Headers["Origin"].ToString();
+                        if (!string.IsNullOrEmpty(origin) && !context.Response.HasStarted)
+                        {
+                            context.Response.Headers.TryAdd("Access-Control-Allow-Origin", origin);
+                            context.Response.Headers.TryAdd(
+                                "Access-Control-Allow-Credentials",
+                                "true"
+                            );
+                        }
+
+                        // Zwróć błąd
+                        if (!context.Response.HasStarted)
+                        {
+                            context.Response.StatusCode = 500;
+                            context.Response.ContentType = "application/json";
+
+                            var error = new
+                            {
+                                error = "Internal server error",
+                                message = ex.Message,
+                                path = context.Request.Path.ToString(),
+                            };
+
+                            await context.Response.WriteAsync(JsonSerializer.Serialize(error));
+                        }
+                    }
+                }
+            );
+
+            return app; // ✅ WAŻNE: Zawsze zwracaj app!
+        }
+
+        /// <summary>
+        /// Dodaje specjalne nagłówki dla środowiska Staging
+        /// </summary>
+        public static WebApplication UseStagingHeaders(this WebApplication app)
+        {
+            if (app.Environment.IsStaging())
+            {
+                app.Use(
+                    async (context, next) =>
+                    {
+                        context.Response.Headers.Add("X-Environment", "Staging");
+                        context.Response.Headers.Add("X-Warning", "This is staging environment");
+                        await next();
+                    }
+                );
+            }
+
+            return app;
+        }
+
+        /// <summary>
+        /// Dodaje middleware do walidacji custom tokenów
+        /// </summary>
+        public static WebApplication UseCustomTokenValidation(this WebApplication app)
+        {
+            app.Use(
+                async (context, next) =>
+                {
+                    var token = context
+                        .Request.Headers["Authorization"]
+                        .FirstOrDefault()
+                        ?.Split(" ")
+                        .LastOrDefault();
+
+                    if (
+                        !string.IsNullOrEmpty(token)
+                        && context.User?.Identity?.IsAuthenticated != true
+                    )
+                    {
+                        try
+                        {
+                            var protector = context
+                                .RequestServices.GetRequiredService<IDataProtectionProvider>()
+                                .CreateProtector("VocareAuth");
+
+                            var json = protector.Unprotect(token);
+                            var tokenData = JsonSerializer.Deserialize<JsonElement>(json);
+
+                            // Sprawdź expiration
+                            if (tokenData.TryGetProperty("exp", out var expElement))
+                            {
+                                var exp = expElement.GetInt64();
+                                if (
+                                    DateTimeOffset.FromUnixTimeSeconds(exp) <= DateTimeOffset.UtcNow
+                                )
+                                {
+                                    await next();
+                                    return;
+                                }
+                            }
+
+                            // Ustaw użytkownika
+                            if (tokenData.TryGetProperty("sub", out var sub))
+                            {
+                                var userId = sub.GetString();
+                                var userManager = context.RequestServices.GetRequiredService<
+                                    UserManager<User>
+                                >();
+                                var user = await userManager.FindByIdAsync(userId);
+
+                                if (user != null)
+                                {
+                                    var principal = await context
+                                        .RequestServices.GetRequiredService<
+                                            IUserClaimsPrincipalFactory<User>
+                                        >()
+                                        .CreateAsync(user);
+                                    context.User = principal;
+                                }
+                            }
+                        }
+                        catch (Exception ex)
+                        {
+                            var logger = context.RequestServices.GetRequiredService<
+                                ILogger<Program>
+                            >();
+                            logger.LogWarning(ex, "Failed to validate custom token");
+                        }
+                    }
+
+                    await next();
+                }
+            );
+
+            return app;
+        }
+    }
+}

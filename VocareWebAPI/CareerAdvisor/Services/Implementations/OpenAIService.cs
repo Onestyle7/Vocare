@@ -33,6 +33,8 @@ namespace VocareWebAPI.CareerAdvisor.Services.Implementations
             _mapper = mapper;
             _logger = logger;
 
+            // Increase timeout to accommodate slower model responses
+            _httpClient.Timeout = TimeSpan.FromSeconds(180);
             _httpClient.DefaultRequestHeaders.Add("Authorization", $"Bearer {_config.ApiKey}");
             _httpClient.DefaultRequestHeaders.Add("Accept", "application/json");
         }

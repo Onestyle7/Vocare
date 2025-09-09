@@ -75,7 +75,7 @@ const HeroTweak = () => {
             >
               <CustomButton
                 variant="primary"
-                className="group mt-4 flex cursor-none items-center justify-center overflow-hidden max-md:mt-10"
+                className="group font-korbin mt-4 flex cursor-none items-center justify-center overflow-hidden max-md:mt-10"
               >
                 <span className="flex flex-row">
                   Try it out
@@ -89,16 +89,16 @@ const HeroTweak = () => {
           </div>
         </div>
         {!isMobile && (
-          <Suspense fallback={<Image src={Spinner} alt="spinner" width={60} height={60} />}>
-            {showSpline && (
-              <div className="inset-0 flex w-2/5 items-center lg:border-t lg:border-b lg:border-l">
+          <div className="inset-0 flex w-2/5 items-center lg:border-t lg:border-b lg:border-l">
+            <Suspense fallback={<Image src={Spinner} alt="spinner" width={60} height={60} />}>
+              {showSpline && (
                 <LazySpline
                   scene="https://prod.spline.design/mZBrYNcnoESGlTUG/scene.splinecode"
                   className="flex items-center justify-center"
                 />
-              </div>
-            )}
-          </Suspense>
+              )}
+            </Suspense>
+          </div>
         )}
       </div>
 

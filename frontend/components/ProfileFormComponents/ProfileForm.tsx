@@ -67,10 +67,21 @@ export default function ProfileForm({
     },
   });
 
+  // Normalizuje daty do formatu YYYY-MM-DD, bez strefy czasowej/ czasu
   const formatDateIfNeeded = (date?: string) => {
     if (!date) return undefined;
+    // Jeśli już YYYY-MM-DD
+    if (/^\d{4}-\d{2}-\d{2}$/.test(date)) return date;
+    // Jeśli ISO z czasem: utnij do 10 znaków
+    if (/^\d{4}-\d{2}-\d{2}T/.test(date)) return date.slice(0, 10);
+    // W innym przypadku spróbuj sparsować i złożyć Y-M-D lokalnie
     try {
-      return new Date(date).toISOString();
+      const d = new Date(date);
+      if (isNaN(d.getTime())) return undefined;
+      const y = d.getFullYear();
+      const m = String(d.getMonth() + 1).padStart(2, '0');
+      const day = String(d.getDate()).padStart(2, '0');
+      return `${y}-${m}-${day}`;
     } catch {
       return undefined;
     }
