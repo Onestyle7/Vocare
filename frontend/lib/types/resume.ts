@@ -50,7 +50,7 @@ export interface CvDto {
 
 import axios from 'axios';
 
-const API_URL = 'http://localhost:8080';
+const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8080';
 
 export async function fetchGeneratedCv(position?: string): Promise<CvDto> {
   try {

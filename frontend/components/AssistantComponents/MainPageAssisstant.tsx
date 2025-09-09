@@ -37,6 +37,7 @@ import { AiCareerResponse, CareerPath } from '@/lib/types/recommendation';
 import Section from '../SupportComponents/Section';
 
 export default function AssistantPage() {
+  const API_URL = process.env.NEXT_PUBLIC_API_URL;
   const [profile, setProfile] = useState<UserProfile | null>(null);
   const [recommendations, setRecommendations] = useState<AiCareerResponse | null>(null);
   const [isLoading, setLoading] = useState(false);
@@ -157,7 +158,7 @@ export default function AssistantPage() {
         // Najpierw spróbuj pobrać ostatnie rekomendacje
         try {
           const lastRecommendationResponse = await axios.get<AiCareerResponse>(
-            'http://localhost:8080/api/Ai/last-recommendation',
+            `${API_URL}/api/Ai/last-recommendation`,
             {
               headers: {
                 Authorization: `Bearer ${token}`,
@@ -188,7 +189,7 @@ export default function AssistantPage() {
 
         // Jeśli brak ostatnich rekomendacji, wygeneruj nowe
         const response = await axios.get<AiCareerResponse>(
-          'http://localhost:8080/api/Ai/recommendations',
+          `${API_URL}/api/Ai/recommendations`,
           {
             headers: {
               Authorization: `Bearer ${token}`,
@@ -240,7 +241,7 @@ export default function AssistantPage() {
     }
     try {
       const response = await axios.get<AiCareerResponse>(
-        'http://localhost:8080/api/Ai/recommendations',
+        `${API_URL}/api/Ai/recommendations`,
         {
           headers: {
             Authorization: `Bearer ${token}`,

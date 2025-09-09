@@ -1,7 +1,7 @@
 import axios, { AxiosError } from 'axios';
 import { AiCareerResponse } from '@/lib/types/recommendation';
 
-const API_BASE_URL = 'http://localhost:8080/api/Ai';
+const API_BASE_URL = `${process.env.NEXT_PUBLIC_API_URL}/api/Ai`;
 
 export class RecommendationsApiService {
   private getAuthHeaders() {
