@@ -70,7 +70,7 @@ export default function AssistantPage() {
     window.addEventListener('scroll', handleScroll);
 
     return () => window.removeEventListener('scroll', handleScroll);
-  }, []);
+  }, [API_URL]);
 
   useEffect(() => {
     if (contentRef.current && contentWrapperRef.current && recommendations) {
