@@ -19,6 +19,18 @@ import { ButtonForm } from '@/components/ui/button-form';
 import { ArrowRight, Eye, EyeOff, Check, X, ClockAlert } from 'lucide-react';
 import { resetPassword, validateResetToken } from '@/lib/auth';
 import { toast } from 'sonner';
+import { spinner_terminal } from '@/app/constants';
+
+// Typy dla błędów API
+interface ApiError {
+  response?: {
+    data?: {
+      message?: string;
+      errors?: string[];
+    };
+  };
+  message?: string;
+}
 
 // Schema walidacji
 const resetPasswordSchema = z
@@ -78,10 +90,17 @@ const ResetPasswordContent = () => {
         if (!response.isValid) {
           setError(response.message || 'Reset token has expired or is invalid.');
         }
-      } catch (error: any) {
-        console.error('Token validation error:', error);
+      } catch (err: unknown) {
+        console.error('Token validation error:', err);
         setTokenValid(false);
-        setError('Failed to validate reset token. Please try again.');
+
+        // Type guard dla błędów
+        const error = err as ApiError;
+        const errorMessage =
+          error.response?.data?.message ||
+          error.message ||
+          'Failed to validate reset token. Please try again.';
+        setError(errorMessage);
       } finally {
         setIsValidating(false);
       }
@@ -115,12 +134,15 @@ const ResetPasswordContent = () => {
       setTimeout(() => {
         router.push('/sign-in');
       }, 3000);
-    } catch (error: any) {
-      console.error('Error resetting password:', error);
+    } catch (err: unknown) {
+      console.error('Error resetting password:', err);
 
+      // Type guard dla błędów
+      const error = err as ApiError;
       const errorMessage =
         error.response?.data?.message ||
         error.response?.data?.errors?.[0] ||
+        error.message ||
         'Failed to reset password. Please try again.';
 
       setError(errorMessage);
@@ -136,6 +158,10 @@ const ResetPasswordContent = () => {
       { test: /[a-z]/.test(password), label: 'One lowercase letter' },
       { test: /[A-Z]/.test(password), label: 'One uppercase letter' },
       { test: /\d/.test(password), label: 'One number' },
+      {
+        test: /[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]/.test(password),
+        label: 'One special character',
+      },
     ];
 
     return checks;
@@ -149,7 +175,7 @@ const ResetPasswordContent = () => {
     return (
       <div className="auth-form flex flex-col items-center justify-center">
         <Image
-          src="/assets/icons/loader.svg"
+          src={spinner_terminal}
           alt="Validating..."
           width={48}
           height={48}
@@ -321,7 +347,7 @@ const ResetPasswordContent = () => {
           </span>
           {isLoading && (
             <Image
-              src="/assets/icons/loader.svg"
+              src={spinner_terminal}
               alt="loader"
               width={24}
               height={24}
@@ -349,7 +375,7 @@ const ResetPasswordPage = () => {
       fallback={
         <div className="auth-form flex items-center justify-center">
           <Image
-            src="/assets/icons/loader.svg"
+            src={spinner_terminal}
             alt="Loading..."
             width={48}
             height={48}

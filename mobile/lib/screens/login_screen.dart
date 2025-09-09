@@ -81,6 +81,7 @@ class _LoginScreenState extends State<LoginScreen> {
               hintText: "Type your passsword",
               controller: _passwordController,
               prefixIcon: Icon(Icons.password),
+              obscureText: true,
             ),
 
             const SizedBox(height: 16),

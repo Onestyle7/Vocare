@@ -38,7 +38,8 @@ export const Card = forwardRef<HTMLDivElement, CardProps>(({ customClass, ...res
 ));
 Card.displayName = 'Card';
 
-type CardRef = RefObject<HTMLDivElement>;
+type CardRef = RefObject<HTMLDivElement | null>;
+
 interface Slot {
   x: number;
   y: number;
@@ -78,51 +79,63 @@ const CardSwap: React.FC<CardSwapProps> = ({
   easing = 'elastic',
   children,
 }) => {
-  const config =
-    easing === 'elastic'
-      ? {
-          ease: 'elastic.out(0.6,0.9)',
-          durDrop: 2,
-          durMove: 2,
-          durReturn: 2,
-          promoteOverlap: 0.9,
-          returnDelay: 0.05,
-        }
-      : {
-          ease: 'power1.inOut',
-          durDrop: 0.8,
-          durMove: 0.8,
-          durReturn: 0.8,
-          promoteOverlap: 0.45,
-          returnDelay: 0.2,
-        };
+  const config = useMemo(
+    () =>
+      easing === 'elastic'
+        ? {
+            ease: 'elastic.out(0.6,0.9)',
+            durDrop: 2,
+            durMove: 2,
+            durReturn: 2,
+            promoteOverlap: 0.9,
+            returnDelay: 0.05,
+          }
+        : {
+            ease: 'power1.inOut',
+            durDrop: 0.8,
+            durMove: 0.8,
+            durReturn: 0.8,
+            promoteOverlap: 0.45,
+            returnDelay: 0.2,
+          },
+    [easing]
+  );
 
   const childArr = useMemo(
     () => Children.toArray(children) as ReactElement<CardProps>[],
     [children]
   );
+  const childCount = childArr.length;
+
+  // ✅ nie używamy childArr w środku, więc linter nie wymaga childArr w depsach
   const refs = useMemo<CardRef[]>(
-    () => childArr.map(() => React.createRef<HTMLDivElement>()),
-    [childArr.length]
+    () => Array.from({ length: childCount }, () => React.createRef<HTMLDivElement | null>()),
+    [childCount]
   );
 
-  const order = useRef<number[]>(Array.from({ length: childArr.length }, (_, i) => i));
-
+  const order = useRef<number[]>(Array.from({ length: childCount }, (_, i) => i));
   const tlRef = useRef<gsap.core.Timeline | null>(null);
-  const intervalRef = useRef<number>();
-  const container = useRef<HTMLDivElement>(null);
+
+  // ✅ browser-safe: number | null (bez konfliktu z NodeJS.Timeout)
+  const intervalRef = useRef<number | null>(null);
+  const container = useRef<HTMLDivElement | null>(null);
 
   useEffect(() => {
     const total = refs.length;
-    refs.forEach((r, i) =>
-      placeNow(r.current!, makeSlot(i, cardDistance, verticalDistance, total), skewAmount)
-    );
+    refs.forEach((r, i) => {
+      const node = r.current!;
+      if (node) {
+        placeNow(node, makeSlot(i, cardDistance, verticalDistance, total), skewAmount);
+      }
+    });
 
     const swap = () => {
       if (order.current.length < 2) return;
 
       const [front, ...rest] = order.current;
       const elFront = refs[front].current!;
+      if (!elFront) return;
+
       const tl = gsap.timeline();
       tlRef.current = tl;
 
@@ -133,8 +146,10 @@ const CardSwap: React.FC<CardSwapProps> = ({
       });
 
       tl.addLabel('promote', `-=${config.durDrop * config.promoteOverlap}`);
+
       rest.forEach((idx, i) => {
         const el = refs[idx].current!;
+        if (!el) return;
         const slot = makeSlot(i, cardDistance, verticalDistance, refs.length);
         tl.set(el, { zIndex: slot.zIndex }, 'promote');
         tl.to(
@@ -160,44 +175,59 @@ const CardSwap: React.FC<CardSwapProps> = ({
         'return'
       );
       tl.set(elFront, { x: backSlot.x, z: backSlot.z }, 'return');
-      tl.to(
-        elFront,
-        {
-          y: backSlot.y,
-          duration: config.durReturn,
-          ease: config.ease,
-        },
-        'return'
-      );
+      tl.to(elFront, { y: backSlot.y, duration: config.durReturn, ease: config.ease }, 'return');
 
       tl.call(() => {
         order.current = [...rest, front];
       });
     };
 
-    swap();
-    intervalRef.current = window.setInterval(swap, delay);
+    const clearTick = () => {
+      if (intervalRef.current !== null) {
+        window.clearInterval(intervalRef.current);
+        intervalRef.current = null;
+      }
+    };
 
-    if (pauseOnHover) {
-      const node = container.current!;
+    const startTick = () => {
+      clearTick();
+      intervalRef.current = window.setInterval(swap, delay);
+    };
+
+    swap();
+    startTick();
+
+    if (pauseOnHover && container.current) {
+      const node = container.current;
+
       const pause = () => {
         tlRef.current?.pause();
-        clearInterval(intervalRef.current);
+        clearTick();
       };
       const resume = () => {
         tlRef.current?.play();
-        intervalRef.current = window.setInterval(swap, delay);
+        startTick();
       };
+
       node.addEventListener('mouseenter', pause);
       node.addEventListener('mouseleave', resume);
+
       return () => {
         node.removeEventListener('mouseenter', pause);
         node.removeEventListener('mouseleave', resume);
-        clearInterval(intervalRef.current);
+        clearTick();
+        tlRef.current?.kill();
       };
     }
-    return () => clearInterval(intervalRef.current);
-  }, [cardDistance, verticalDistance, delay, pauseOnHover, skewAmount, easing]);
+
+    return () => {
+      if (tlRef.current) tlRef.current.kill();
+      if (intervalRef.current !== null) {
+        window.clearInterval(intervalRef.current);
+        intervalRef.current = null;
+      }
+    };
+  }, [refs, config, cardDistance, verticalDistance, delay, pauseOnHover, skewAmount, easing]);
 
   const rendered = childArr.map((child, i) =>
     isValidElement<CardProps>(child)
