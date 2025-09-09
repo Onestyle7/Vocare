@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useRef, useEffect } from 'react';
+import Image from 'next/image';
 import { gsap } from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 
@@ -84,7 +85,16 @@ const ScrollMask: React.FC<ScrollMaskProps> = ({ imageUrl, alt = 'Masked image' 
               WebkitMaskSize: 'contain',
             }}
           >
-            <img src={imageUrl} alt={alt} className="h-full w-full object-cover" />
+            <div className="relative h-full w-full">
+              <Image
+                src={imageUrl}
+                alt={alt}
+                fill
+                sizes="100vw"
+                className="object-cover"
+                priority={false}
+              />
+            </div>
           </div>
         </div>
       </div>

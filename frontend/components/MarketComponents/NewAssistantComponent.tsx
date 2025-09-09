@@ -3,7 +3,7 @@
 import { RecommendationApiError, useRecommendationsApi } from '@/lib/api/RecommendationApiServiice';
 import { AiCareerResponse } from '@/lib/types/recommendation';
 import Image from 'next/image';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { ChartLineLabel } from '../charts/LineCharts.tsx/LineChartAI-2';
 
 const NewAssistantComponent = () => {
@@ -13,12 +13,7 @@ const NewAssistantComponent = () => {
 
   const api = useRecommendationsApi();
 
-  // Automatyczne ładowanie rekomendacji przy montowaniu komponentu
-  useEffect(() => {
-    loadRecommendations();
-  }, []);
-
-  const loadRecommendations = async () => {
+  const loadRecommendations = useCallback(async () => {
     setIsLoading(true);
     setError(null);
 
@@ -38,25 +33,14 @@ const NewAssistantComponent = () => {
     } finally {
       setIsLoading(false);
     }
-  };
+  }, [api]);
 
-  const generateNew = async () => {
-    setIsLoading(true);
-    setError(null);
+  // Automatyczne ładowanie rekomendacji przy montowaniu komponentu
+  useEffect(() => {
+    loadRecommendations();
+  }, [loadRecommendations]);
 
-    try {
-      const data = await api.generateNewRecommendation();
-      setRecommendations(data);
-    } catch (err) {
-      if (err instanceof RecommendationApiError) {
-        setError(err.message);
-      } else {
-        setError('Unexpected error occurred');
-      }
-    } finally {
-      setIsLoading(false);
-    }
-  };
+  // generateNew removed (unused)
 
   // Loading state
   if (isLoading) {
