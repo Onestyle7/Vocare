@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:vocare/models/industry_section.dart';
+import 'package:vocare/models/market_trend.dart';
+import 'package:vocare/models/skill_demand.dart';
 import 'package:vocare/services/market_AnalysisAPI.dart';
 import 'package:vocare/services/biling_api.dart';
 import 'package:vocare/services/profile_api.dart';
@@ -69,7 +71,6 @@ class _MarketAnalysisPageState extends State<MarketAnalysisPage>
 
     print('🔍 Sprawdzanie czy istnieją ostatnie analizy rynku...');
 
-    // Tylko sprawdź ostatnie analizy - bez dodatkowych API calls
     final Future<List<IndustrySection>?> lastAnalysisCheck =
         MarketAnalysisApi.fetchLastAnalysis();
 
@@ -214,15 +215,20 @@ class _MarketAnalysisPageState extends State<MarketAnalysisPage>
     }
 
     return Scaffold(
-      backgroundColor: _showTerminalAnimation ? Colors.black : null,
+      backgroundColor:
+          _showTerminalAnimation ? Colors.black : const Color(0xFF0e0e0e),
       appBar:
           _showTerminalAnimation
               ? null
               : AppBar(
-                title: const Text("Market Analysis"),
-                backgroundColor: Colors.black87,
+                title: const Text(
+                  "Market Analysis",
+                  style: TextStyle(color: Colors.white, fontSize: 18),
+                ),
+                backgroundColor: const Color(0xFF0e0e0e),
+                elevation: 0,
                 leading: IconButton(
-                  icon: const Icon(Icons.arrow_back),
+                  icon: const Icon(Icons.arrow_back, color: Colors.white),
                   onPressed:
                       () => Navigator.pushReplacement(
                         context,
@@ -249,11 +255,8 @@ class _MarketAnalysisPageState extends State<MarketAnalysisPage>
           color: Colors.white,
         ),
         const SizedBox(height: 40),
-
         const MarketAnalysisTerminal(),
-
         const SizedBox(height: 40),
-
         Text(
           'Generating your personalized market analysis...',
           style: TextStyle(color: Colors.grey.shade400, fontSize: 16),
@@ -264,14 +267,13 @@ class _MarketAnalysisPageState extends State<MarketAnalysisPage>
   }
 
   Widget _buildMainContent() {
-    return LayoutBuilder(
-      builder: (context, constraints) {
-        return Column(
-          children: [
-            Expanded(
-              child: Container(
-                width: constraints.maxWidth,
-                height: constraints.maxHeight - 100,
+    return Container(
+      color: const Color(0xFF0e0e0e),
+      child: LayoutBuilder(
+        builder: (context, constraints) {
+          return Column(
+            children: [
+              Expanded(
                 child:
                     _isLoading
                         ? const Center(child: CircularProgressIndicator())
@@ -279,17 +281,17 @@ class _MarketAnalysisPageState extends State<MarketAnalysisPage>
                         ? _buildAnalysisContent()
                         : _buildEmptyState(),
               ),
-            ),
-            Container(
-              width: constraints.maxWidth,
-              height: 100,
-              padding: const EdgeInsets.all(16),
-              color: Theme.of(context).scaffoldBackgroundColor,
-              child: Center(child: _buildGenerateButton()),
-            ),
-          ],
-        );
-      },
+              Container(
+                width: constraints.maxWidth,
+                height: 100,
+                padding: const EdgeInsets.all(16),
+                color: const Color(0xFF0e0e0e),
+                child: Center(child: _buildGenerateButton()),
+              ),
+            ],
+          );
+        },
+      ),
     );
   }
 
@@ -301,27 +303,26 @@ class _MarketAnalysisPageState extends State<MarketAnalysisPage>
           duration: const Duration(milliseconds: 500),
           child: SingleChildScrollView(
             physics: const ClampingScrollPhysics(),
-            child: ConstrainedBox(
-              constraints: BoxConstraints(
-                minHeight: constraints.maxHeight,
-                maxWidth: constraints.maxWidth,
-              ),
+            child: Container(
+              color: const Color(0xFF0e0e0e),
               child: Padding(
-                padding: const EdgeInsets.all(16),
+                padding: const EdgeInsets.all(20),
                 child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
+                    // Header - identyczny jak webówka
                     const Text(
                       'Market Analysis',
                       style: TextStyle(
-                        fontSize: 24,
+                        fontSize: 28,
                         fontWeight: FontWeight.bold,
                         color: Color(0xFF915EFF),
                       ),
                       textAlign: TextAlign.center,
                     ),
-                    const SizedBox(height: 20),
+                    const SizedBox(height: 32),
 
-                    // WSZYSTKIE KARTY ANALIZ - bez .take(3)
+                    // Industry Cards - identyczne jak webówka (już gotowe)
                     ...(_industryData).asMap().entries.map((entry) {
                       final index = entry.key;
                       final industrySection = entry.value;
@@ -334,12 +335,17 @@ class _MarketAnalysisPageState extends State<MarketAnalysisPage>
                             offset: Offset(0, 20 * (1 - value)),
                             child: Opacity(
                               opacity: value,
-                              child: IndustrySectionCard(
-                                index: index,
-                                industry: industrySection.industry,
-                                averageSalary: industrySection.averageSalary,
-                                employmentRate: industrySection.employmentRate,
-                                growthForecast: industrySection.growthForecast,
+                              child: Container(
+                                margin: const EdgeInsets.only(bottom: 16),
+                                child: IndustrySectionCard(
+                                  index: index,
+                                  industry: industrySection.industry,
+                                  averageSalary: industrySection.averageSalary,
+                                  employmentRate:
+                                      industrySection.employmentRate,
+                                  growthForecast:
+                                      industrySection.growthForecast,
+                                ),
                               ),
                             ),
                           );
@@ -347,7 +353,17 @@ class _MarketAnalysisPageState extends State<MarketAnalysisPage>
                       );
                     }).toList(),
 
-                    const SizedBox(height: 20),
+                    const SizedBox(height: 40),
+
+                    // Current Market Trends - DOKŁADNIE jak webówka
+                    _buildCurrentMarketTrends(),
+
+                    const SizedBox(height: 40),
+
+                    // In-Demand Skills - DOKŁADNIE jak webówka
+                    _buildInDemandSkills(),
+
+                    const SizedBox(height: 40),
                   ],
                 ),
               ),
@@ -358,29 +374,567 @@ class _MarketAnalysisPageState extends State<MarketAnalysisPage>
     );
   }
 
-  Widget _buildEmptyState() {
-    return Center(
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Icon(Icons.analytics, size: 80, color: Colors.grey.shade400),
-          const SizedBox(height: 20),
-          Text(
-            'Ready to analyze the job market?',
-            style: TextStyle(
-              fontSize: 18,
-              color: Colors.grey.shade600,
-              fontWeight: FontWeight.w500,
-            ),
-            textAlign: TextAlign.center,
+  // 🎯 Current Market Trends - DOKŁADNIE jak na webówce
+  Widget _buildCurrentMarketTrends() {
+    return FutureBuilder<List<MarketTrend>?>(
+      future: _getMarketTrends(),
+      builder: (context, snapshot) {
+        if (!snapshot.hasData || snapshot.data!.isEmpty) {
+          return const SizedBox.shrink();
+        }
+
+        final trends = snapshot.data!;
+
+        return TweenAnimationBuilder<double>(
+          duration: const Duration(milliseconds: 1000),
+          tween: Tween(begin: 0.0, end: 1.0),
+          builder: (context, value, child) {
+            return Transform.translate(
+              offset: Offset(0, 20 * (1 - value)),
+              child: Opacity(
+                opacity: value,
+                child: Container(
+                  width: double.infinity,
+                  constraints: const BoxConstraints(maxWidth: 1200),
+                  decoration: BoxDecoration(
+                    color: const Color(0xFF1a1a1a),
+                    borderRadius: BorderRadius.circular(8),
+                    border: Border.all(color: const Color(0xFF2a2a2a)),
+                  ),
+                  padding: const EdgeInsets.all(20),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      // Header sekcji
+                      const Text(
+                        'Current Market Trends',
+                        style: TextStyle(
+                          fontSize: 18,
+                          fontWeight: FontWeight.w600,
+                          color: Colors.white,
+                        ),
+                      ),
+                      const SizedBox(height: 20),
+
+                      // Grid trendów - DOKŁADNIE jak webówka
+                      LayoutBuilder(
+                        builder: (context, constraints) {
+                          return _buildTrendsWebGrid(trends, constraints);
+                        },
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            );
+          },
+        );
+      },
+    );
+  }
+
+  // 🎯 Grid identyczny z webówką
+  Widget _buildTrendsWebGrid(
+    List<MarketTrend> trends,
+    BoxConstraints constraints,
+  ) {
+    if (constraints.maxWidth > 600) {
+      // Desktop/tablet - 2 kolumny jak webówka
+      List<Widget> rows = [];
+      for (int i = 0; i < trends.length; i += 2) {
+        rows.add(
+          Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Expanded(child: _buildWebTrendCard(trends[i])),
+              const SizedBox(width: 16),
+              if (i + 1 < trends.length)
+                Expanded(child: _buildWebTrendCard(trends[i + 1]))
+              else
+                const Expanded(child: SizedBox()),
+            ],
           ),
-          const SizedBox(height: 10),
+        );
+        if (i + 2 < trends.length) {
+          rows.add(const SizedBox(height: 16));
+        }
+      }
+      return Column(children: rows);
+    } else {
+      // Mobile - jedna kolumna
+      return Column(
+        children:
+            trends
+                .map(
+                  (trend) => Container(
+                    margin: const EdgeInsets.only(bottom: 16),
+                    child: _buildWebTrendCard(trend),
+                  ),
+                )
+                .toList(),
+      );
+    }
+  }
+
+  // 🎯 Karta trendu - DOKŁADNIE jak webówka
+  Widget _buildWebTrendCard(MarketTrend trend) {
+    return Container(
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: const Color(0xFF2a2a2a),
+        borderRadius: BorderRadius.circular(6),
+        border: Border.all(color: const Color(0xFF3a3a3a)),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          // Nagłówek z emoji - identyczny jak webówka
+          Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Container(
+                width: 20,
+                height: 20,
+                alignment: Alignment.center,
+                child: Text(
+                  _getTrendEmoji(trend.trendName),
+                  style: const TextStyle(fontSize: 14),
+                ),
+              ),
+              const SizedBox(width: 8),
+              Expanded(
+                child: Text(
+                  trend.trendName,
+                  style: const TextStyle(
+                    fontSize: 14,
+                    fontWeight: FontWeight.w600,
+                    color: Colors.white,
+                    height: 1.3,
+                  ),
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 12),
+
+          // Opis trendu
           Text(
-            'Click the button below to generate personalized market insights based on current trends.',
-            style: TextStyle(fontSize: 14, color: Colors.grey.shade500),
-            textAlign: TextAlign.center,
+            trend.description,
+            style: const TextStyle(
+              fontSize: 13,
+              color: Color(0xFFa0a0a0),
+              height: 1.4,
+            ),
+          ),
+          const SizedBox(height: 12),
+
+          // Impact box - DOKŁADNIE jak webówka
+          Container(
+            width: double.infinity,
+            padding: const EdgeInsets.all(12),
+            decoration: BoxDecoration(
+              color: const Color(0xFF915EFF).withOpacity(0.15),
+              borderRadius: BorderRadius.circular(4),
+              border: Border.all(
+                color: const Color(0xFF915EFF).withOpacity(0.3),
+              ),
+            ),
+            child: Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Container(
+                  margin: const EdgeInsets.only(top: 1),
+                  child: const Icon(
+                    Icons.trending_up,
+                    color: Color(0xFF915EFF),
+                    size: 14,
+                  ),
+                ),
+                const SizedBox(width: 8),
+                Expanded(
+                  child: Text(
+                    trend.impact,
+                    style: const TextStyle(
+                      fontSize: 12,
+                      color: Color(0xFF915EFF),
+                      fontWeight: FontWeight.w500,
+                      height: 1.4,
+                    ),
+                  ),
+                ),
+              ],
+            ),
           ),
         ],
+      ),
+    );
+  }
+
+  // 🎯 In-Demand Skills - DOKŁADNIE jak webówka
+  Widget _buildInDemandSkills() {
+    return FutureBuilder<List<SkillDemand>?>(
+      future: _getSkillDemands(),
+      builder: (context, snapshot) {
+        if (!snapshot.hasData || snapshot.data!.isEmpty) {
+          return const SizedBox.shrink();
+        }
+
+        final skills = snapshot.data!;
+
+        return TweenAnimationBuilder<double>(
+          duration: const Duration(milliseconds: 1200),
+          tween: Tween(begin: 0.0, end: 1.0),
+          builder: (context, value, child) {
+            return Transform.translate(
+              offset: Offset(0, 20 * (1 - value)),
+              child: Opacity(
+                opacity: value,
+                child: Container(
+                  width: double.infinity,
+                  constraints: const BoxConstraints(maxWidth: 1200),
+                  decoration: BoxDecoration(
+                    color: const Color(0xFF1a1a1a),
+                    borderRadius: BorderRadius.circular(8),
+                    border: Border.all(color: const Color(0xFF2a2a2a)),
+                  ),
+                  padding: const EdgeInsets.all(20),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      // Header sekcji
+                      const Text(
+                        'In-Demand Skills',
+                        style: TextStyle(
+                          fontSize: 18,
+                          fontWeight: FontWeight.w600,
+                          color: Colors.white,
+                        ),
+                      ),
+                      const SizedBox(height: 20),
+
+                      // Grid umiejętności - DOKŁADNIE jak webówka
+                      LayoutBuilder(
+                        builder: (context, constraints) {
+                          return _buildSkillsWebGrid(skills, constraints);
+                        },
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            );
+          },
+        );
+      },
+    );
+  }
+
+  // 🎯 Skills grid identyczny z webówką
+  Widget _buildSkillsWebGrid(
+    List<SkillDemand> skills,
+    BoxConstraints constraints,
+  ) {
+    if (constraints.maxWidth > 800) {
+      // Desktop - 4 kolumny jak webówka
+      List<Widget> rows = [];
+      for (int i = 0; i < skills.length; i += 4) {
+        List<Widget> rowChildren = [];
+        for (int j = 0; j < 4; j++) {
+          if (i + j < skills.length) {
+            rowChildren.add(Expanded(child: _buildWebSkillCard(skills[i + j])));
+            if (j < 3 && i + j + 1 < skills.length) {
+              rowChildren.add(const SizedBox(width: 16));
+            }
+          } else {
+            rowChildren.add(const Expanded(child: SizedBox()));
+          }
+        }
+        rows.add(
+          Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: rowChildren,
+          ),
+        );
+        if (i + 4 < skills.length) {
+          rows.add(const SizedBox(height: 16));
+        }
+      }
+      return Column(children: rows);
+    } else if (constraints.maxWidth > 400) {
+      // Tablet - 2 kolumny
+      List<Widget> rows = [];
+      for (int i = 0; i < skills.length; i += 2) {
+        rows.add(
+          Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Expanded(child: _buildWebSkillCard(skills[i])),
+              const SizedBox(width: 16),
+              if (i + 1 < skills.length)
+                Expanded(child: _buildWebSkillCard(skills[i + 1]))
+              else
+                const Expanded(child: SizedBox()),
+            ],
+          ),
+        );
+        if (i + 2 < skills.length) {
+          rows.add(const SizedBox(height: 16));
+        }
+      }
+      return Column(children: rows);
+    } else {
+      // Mobile - jedna kolumna
+      return Column(
+        children:
+            skills
+                .map(
+                  (skill) => Container(
+                    margin: const EdgeInsets.only(bottom: 16),
+                    child: _buildWebSkillCard(skill),
+                  ),
+                )
+                .toList(),
+      );
+    }
+  }
+
+  // 🎯 Skill card - DOKŁADNIE jak webówka
+  Widget _buildWebSkillCard(SkillDemand skill) {
+    final color = _getDemandColor(skill.demandLevel);
+
+    return Container(
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: const Color(0xFF2a2a2a),
+        borderRadius: BorderRadius.circular(6),
+        border: Border.all(color: const Color(0xFF3a3a3a)),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          // Nazwa umiejętności z API + emoji
+          Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Container(
+                width: 20,
+                height: 20,
+                alignment: Alignment.center,
+                child: Text(
+                  _getSkillEmoji(skill.skill),
+                  style: const TextStyle(fontSize: 14),
+                ),
+              ),
+              const SizedBox(width: 8),
+              Expanded(
+                child: Text(
+                  skill.skill, // Bezpośrednio z API
+                  style: const TextStyle(
+                    fontSize: 14,
+                    fontWeight: FontWeight.w600,
+                    color: Colors.white,
+                    height: 1.3,
+                  ),
+                  maxLines: 2,
+                  overflow: TextOverflow.ellipsis,
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 12),
+
+          // Poziom popytu z API
+          Container(
+            padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+            decoration: BoxDecoration(
+              color: color,
+              borderRadius: BorderRadius.circular(12),
+            ),
+            child: Text(
+              'Demand level: ${skill.demandLevel}', // Z API
+              style: const TextStyle(
+                fontSize: 11,
+                color: Colors.white,
+                fontWeight: FontWeight.w600,
+              ),
+            ),
+          ),
+          const SizedBox(height: 8),
+
+          // Branża z API
+          Text(
+            skill.industry, // Bezpośrednio z API
+            style: const TextStyle(
+              fontSize: 12,
+              color: Color(0xFFa0a0a0),
+              fontStyle: FontStyle.italic,
+            ),
+            maxLines: 1,
+            overflow: TextOverflow.ellipsis,
+          ),
+        ],
+      ),
+    );
+  }
+
+  // HELPER: Emoji dla trendów na podstawie danych z API
+  String _getTrendEmoji(String trendName) {
+    final title = trendName.toLowerCase();
+
+    if (title.contains('hybrid') ||
+        title.contains('hybrydowy') ||
+        title.contains('zdalne') ||
+        title.contains('remote') ||
+        title.contains('praca')) {
+      return '🏠';
+    } else if (title.contains('ci/cd') ||
+        title.contains('pipeline') ||
+        title.contains('quality') ||
+        title.contains('standaryzacja')) {
+      return '🚀';
+    } else if (title.contains('api') ||
+        title.contains('microservices') ||
+        title.contains('mikroserw') ||
+        title.contains('kontraktów')) {
+      return '🔗';
+    } else if (title.contains('playwright') ||
+        title.contains('cypress') ||
+        title.contains('dominacja') ||
+        title.contains('typescript')) {
+      return '🎭';
+    } else if (title.contains('sdet') || title.contains('shift')) {
+      return '⚡';
+    } else {
+      return '📈';
+    }
+  }
+
+  // HELPER: Emoji dla umiejętności na podstawie danych z API
+  String _getSkillEmoji(String skillName) {
+    final skill = skillName.toLowerCase();
+
+    if (skill.contains('typescript') || skill.contains('javascript')) {
+      return '💻';
+    } else if (skill.contains('docker') || skill.contains('kubernetes')) {
+      return '🐳';
+    } else if (skill.contains('ci/cd') ||
+        skill.contains('jenkins') ||
+        skill.contains('github')) {
+      return '🚀';
+    } else if (skill.contains('cypress') || skill.contains('playwright')) {
+      return '🎭';
+    } else if (skill.contains('api') ||
+        skill.contains('rest') ||
+        skill.contains('graphql') ||
+        skill.contains('postman')) {
+      return '🔗';
+    } else if (skill.contains('observability') ||
+        skill.contains('monitoring') ||
+        skill.contains('grafana')) {
+      return '📊';
+    } else if (skill.contains('pact') || skill.contains('kontraktowe')) {
+      return '🤝';
+    } else if (skill.contains('continuous') || skill.contains('integration')) {
+      return '🔄';
+    } else if (skill.contains('java') && !skill.contains('javascript')) {
+      return '☕';
+    } else if (skill.contains('automation') ||
+        skill.contains('automatyzacja')) {
+      return '🤖';
+    } else {
+      return '🛠️';
+    }
+  }
+
+  // HELPER: Kolory dla poziomów popytu - DOKŁADNIE jak webówka
+  Color _getDemandColor(String demandLevel) {
+    switch (demandLevel.toLowerCase()) {
+      case 'bardzo wysoki':
+        return const Color(0xFFDC2626); // Czerwony jak webówka
+      case 'wysoki':
+        return const Color(0xFFEA580C); // Pomarańczowy jak webówka
+      case 'średni/wysoki':
+        return const Color(0xFFEA580C); // Pomarańczowy jak webówka
+      case 'średni':
+        return const Color(0xFF2563EB); // Niebieski jak webówka
+      case 'niski':
+        return const Color(0xFF6B7280); // Szary jak webówka
+      default:
+        return const Color(0xFF2563EB); // Niebieski domyślny
+    }
+  }
+
+  // HELPER: Pobierz trendy z API
+  Future<List<MarketTrend>?> _getMarketTrends() async {
+    try {
+      return await MarketAnalysisApi.fetchMarketTrends();
+    } catch (e) {
+      print('Error fetching market trends: $e');
+      return null;
+    }
+  }
+
+  // HELPER: Pobierz umiejętności z API z sortowaniem
+  Future<List<SkillDemand>?> _getSkillDemands() async {
+    try {
+      final skills = await MarketAnalysisApi.fetchSkillDemand();
+
+      if (skills != null && skills.isNotEmpty) {
+        return _sortSkillsByDemand(skills);
+      }
+
+      return skills;
+    } catch (e) {
+      print('Error fetching skill demands: $e');
+      return null;
+    }
+  }
+
+  // HELPER: Sortowanie umiejętności według poziomu popytu
+  List<SkillDemand> _sortSkillsByDemand(List<SkillDemand> skills) {
+    final demandOrder = {
+      'bardzo wysoki': 5,
+      'wysoki': 4,
+      'średni/wysoki': 3,
+      'średni': 2,
+      'niski': 1,
+    };
+
+    skills.sort((a, b) {
+      final aValue = demandOrder[a.demandLevel.toLowerCase()] ?? 0;
+      final bValue = demandOrder[b.demandLevel.toLowerCase()] ?? 0;
+      return bValue.compareTo(aValue);
+    });
+
+    return skills;
+  }
+
+  Widget _buildEmptyState() {
+    return Container(
+      color: const Color(0xFF0e0e0e),
+      child: Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Icon(Icons.analytics, size: 80, color: Colors.grey.shade400),
+            const SizedBox(height: 20),
+            Text(
+              'Ready to analyze the job market?',
+              style: TextStyle(
+                fontSize: 18,
+                color: Colors.grey.shade300,
+                fontWeight: FontWeight.w500,
+              ),
+              textAlign: TextAlign.center,
+            ),
+            const SizedBox(height: 10),
+            Text(
+              'Click the button below to generate personalized market insights based on current trends.',
+              style: TextStyle(fontSize: 14, color: Colors.grey.shade400),
+              textAlign: TextAlign.center,
+            ),
+          ],
+        ),
       ),
     );
   }
@@ -403,7 +957,10 @@ class _MarketAnalysisPageState extends State<MarketAnalysisPage>
                 ),
               ),
               const SizedBox(width: 12),
-              const Text('Generating market analysis...'),
+              const Text(
+                'Generating market analysis...',
+                style: TextStyle(color: Colors.white),
+              ),
             ],
           ),
         )
@@ -420,7 +977,7 @@ class _MarketAnalysisPageState extends State<MarketAnalysisPage>
   }
 }
 
-// Terminal Demo Component - identyczny jak wcześniej
+// Terminal Animation - bez zmian
 class MarketAnalysisTerminal extends StatefulWidget {
   const MarketAnalysisTerminal({super.key});
 

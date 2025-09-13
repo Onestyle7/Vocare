@@ -185,34 +185,87 @@ class MarketAnalysisApi {
     return await fetchLastAnalysis();
   }
 
-  /// Stare metody dla skill demand i market trends - aktualizowane
-  static Future<List<SkillDemand>?> fetchSkillDemand() async {
-    final data = await _getMarketAnalysisDataFromLatest();
-    if (data == null) return null;
-
-    try {
-      final List<dynamic> skills = data['skillDemand'];
-      return skills.map((e) => SkillDemand.fromJson(e)).toList();
-    } catch (e) {
-      print('fetchSkillDemand parse error: $e');
-      return null;
-    }
-  }
-
+  /// 🔧 POPRAWIONA metoda fetchMarketTrends
   static Future<List<MarketTrend>?> fetchMarketTrends() async {
     final data = await _getMarketAnalysisDataFromLatest();
-    if (data == null) return null;
+    if (data == null) {
+      print('❌ No market analysis data available for trends');
+      return null;
+    }
 
     try {
-      final List<dynamic> trends = data['marketTrends'];
-      return trends.map((e) => MarketTrend.fromJson(e)).toList();
+      print('🔍 Looking for marketTrends in data...');
+      print('🔍 Available keys: ${data.keys}');
+
+      List<dynamic>? trendsData;
+
+      // Sprawdź różne możliwe struktury
+      if (data.containsKey('marketTrends')) {
+        trendsData = data['marketTrends'] as List<dynamic>?;
+        print('✅ Found marketTrends directly');
+      } else if (data.containsKey('marketAnalysis')) {
+        final marketAnalysis = data['marketAnalysis'] as Map<String, dynamic>?;
+        if (marketAnalysis?.containsKey('marketTrends') == true) {
+          trendsData = marketAnalysis!['marketTrends'] as List<dynamic>?;
+          print('✅ Found marketTrends in marketAnalysis');
+        }
+      }
+
+      if (trendsData != null && trendsData.isNotEmpty) {
+        final trends = trendsData.map((e) => MarketTrend.fromJson(e)).toList();
+        print('✅ Successfully parsed ${trends.length} market trends');
+        return trends;
+      } else {
+        print('⚠️ No marketTrends found in response');
+        return null;
+      }
     } catch (e) {
-      print('fetchMarketTrends parse error: $e');
+      print('❌ fetchMarketTrends parse error: $e');
       return null;
     }
   }
 
-  /// 🆕 Helper method - najpierw próbuj z /latest, potem z głównego endpoint
+  /// 🔧 POPRAWIONA metoda fetchSkillDemand
+  static Future<List<SkillDemand>?> fetchSkillDemand() async {
+    final data = await _getMarketAnalysisDataFromLatest();
+    if (data == null) {
+      print('❌ No market analysis data available for skills');
+      return null;
+    }
+
+    try {
+      print('🔍 Looking for skillDemand in data...');
+      print('🔍 Available keys: ${data.keys}');
+
+      List<dynamic>? skillsData;
+
+      // Sprawdź różne możliwe struktury
+      if (data.containsKey('skillDemand')) {
+        skillsData = data['skillDemand'] as List<dynamic>?;
+        print('✅ Found skillDemand directly');
+      } else if (data.containsKey('marketAnalysis')) {
+        final marketAnalysis = data['marketAnalysis'] as Map<String, dynamic>?;
+        if (marketAnalysis?.containsKey('skillDemand') == true) {
+          skillsData = marketAnalysis!['skillDemand'] as List<dynamic>?;
+          print('✅ Found skillDemand in marketAnalysis');
+        }
+      }
+
+      if (skillsData != null && skillsData.isNotEmpty) {
+        final skills = skillsData.map((e) => SkillDemand.fromJson(e)).toList();
+        print('✅ Successfully parsed ${skills.length} skill demands');
+        return skills;
+      } else {
+        print('⚠️ No skillDemand found in response');
+        return null;
+      }
+    } catch (e) {
+      print('❌ fetchSkillDemand parse error: $e');
+      return null;
+    }
+  }
+
+  /// 🔧 POPRAWIONA metoda _getMarketAnalysisDataFromLatest
   static Future<Map<String, dynamic>?>
   _getMarketAnalysisDataFromLatest() async {
     try {
@@ -220,7 +273,7 @@ class MarketAnalysisApi {
       final token = prefs.getString('accessToken');
 
       if (token == null) {
-        print('Brak tokenu dostępu');
+        print('❌ Brak tokenu dostępu');
         return null;
       }
 
@@ -241,11 +294,29 @@ class MarketAnalysisApi {
 
         if (latestResp.statusCode == 200) {
           final latestData = jsonDecode(latestResp.body);
-          if (latestData is Map<String, dynamic> &&
-              latestData.containsKey('marketAnalysis')) {
-            print('✅ Found latest market analysis data');
-            return latestData['marketAnalysis'];
+          print('✅ Latest response received');
+          print('🔍 Response structure: ${latestData.runtimeType}');
+          print(
+            '🔍 Top-level keys: ${latestData is Map ? latestData.keys : 'Not a Map'}',
+          );
+
+          // Jeśli mamy marketAnalysis w odpowiedzi, zwróć to
+          if (latestData is Map<String, dynamic>) {
+            if (latestData.containsKey('marketAnalysis')) {
+              print('✅ Found marketAnalysis in latest response');
+              return latestData; // Zwróć całą strukturę
+            } else {
+              // Może całe latestData to już marketAnalysis?
+              if (latestData.containsKey('industryStatistics') ||
+                  latestData.containsKey('marketTrends') ||
+                  latestData.containsKey('skillDemand')) {
+                print('✅ Latest data looks like direct marketAnalysis');
+                return {'marketAnalysis': latestData};
+              }
+            }
           }
+        } else {
+          print('⚠️ Latest endpoint returned: ${latestResp.statusCode}');
         }
       } catch (e) {
         print('⚠️ Latest endpoint failed: $e');
@@ -266,16 +337,29 @@ class MarketAnalysisApi {
 
       if (resp.statusCode == 200) {
         final body = jsonDecode(resp.body);
-        if (body is Map<String, dynamic> &&
-            body.containsKey('marketAnalysis')) {
-          return body['marketAnalysis'];
+        print('✅ Main endpoint response received');
+        print('🔍 Response structure: ${body.runtimeType}');
+        print('🔍 Top-level keys: ${body is Map ? body.keys : 'Not a Map'}');
+
+        if (body is Map<String, dynamic>) {
+          if (body.containsKey('marketAnalysis')) {
+            return body; // Zwróć całą strukturę
+          } else {
+            // Może całe body to już marketAnalysis?
+            if (body.containsKey('industryStatistics') ||
+                body.containsKey('marketTrends') ||
+                body.containsKey('skillDemand')) {
+              return {'marketAnalysis': body};
+            }
+          }
         }
-        return body;
+
+        return body; // Zwróć co mamy
       } else {
-        print('_getMarketAnalysisDataFromLatest error: ${resp.statusCode}');
+        print('❌ Main endpoint error: ${resp.statusCode}');
       }
     } catch (e) {
-      print('_getMarketAnalysisDataFromLatest exception: $e');
+      print('💥 _getMarketAnalysisDataFromLatest exception: $e');
     }
 
     return null;

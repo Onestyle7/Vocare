@@ -12,7 +12,7 @@ class IndustrySection {
   });
 
   factory IndustrySection.fromJson(Map<String, dynamic> json) {
-    // 🔧 PROSTA OBSŁUGA minSalary/maxSalary
+    // 🔧 POPRAWIONA OBSŁUGA minSalary/maxSalary z nowego JSON-a
     String formattedSalary;
 
     if (json.containsKey('minSalary') && json.containsKey('maxSalary')) {
@@ -20,8 +20,9 @@ class IndustrySection {
       final int maxSal = json['maxSalary'] ?? 0;
 
       if (minSal > 0 && maxSal > 0) {
-        // Prosty format bez formatowania liczb
-        formattedSalary = '\$${minSal.toString()} - \$${maxSal.toString()}';
+        // 🔧 LEPSZE FORMATOWANIE z przecinkami i PLN
+        formattedSalary =
+            '${_formatNumber(minSal)} - ${_formatNumber(maxSal)} PLN';
       } else {
         formattedSalary = json['averageSalary']?.toString() ?? 'Brak danych';
       }
@@ -34,6 +35,14 @@ class IndustrySection {
       averageSalary: formattedSalary,
       employmentRate: json['employmentRate'] ?? 0,
       growthForecast: json['growthForecast']?.toString() ?? '',
+    );
+  }
+
+  // 🔧 HELPER: Formatowanie liczb z separatorami
+  static String _formatNumber(int number) {
+    return number.toString().replaceAllMapped(
+      RegExp(r'(\d{1,3})(?=(\d{3})+(?!\d))'),
+      (Match match) => '${match[1]} ',
     );
   }
 }
