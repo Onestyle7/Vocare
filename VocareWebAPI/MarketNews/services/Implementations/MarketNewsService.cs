@@ -1,11 +1,10 @@
-using System.Runtime.CompilerServices;
 using System.Text.Json;
 using AutoMapper;
 using Microsoft.Extensions.Options;
 using VocareWebAPI.MarketNewsService.Models.Dtos;
 using VocareWebAPI.MarketNewsService.Models.Entities;
 using VocareWebAPI.MarketNewsService.Models.repositories.Implementations;
-using VocareWebAPI.MarketNewsService.Models.services.interfaces;
+using VocareWebAPI.MarketNewsService.services.interfaces;
 using VocareWebAPI.Models.Config;
 
 namespace VocareWebAPI.MarketNewsService.services.Implementations

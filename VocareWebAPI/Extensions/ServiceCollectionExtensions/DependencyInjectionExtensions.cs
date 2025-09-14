@@ -1,9 +1,3 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Authentication;
-using Npgsql.Replication;
 using VocareWebAPI.Billing.Repositories.Implementations;
 using VocareWebAPI.Billing.Repositories.Interfaces;
 using VocareWebAPI.Billing.Services.Implementations;
@@ -14,11 +8,14 @@ using VocareWebAPI.CvGenerator.Repositories.Interfaces;
 using VocareWebAPI.CvGenerator.Services.Implementation;
 using VocareWebAPI.CvGenerator.Services.Implementations;
 using VocareWebAPI.CvGenerator.Services.Interfaces;
+using VocareWebAPI.MarketNewsService.Models.repositories.Implementations;
+using VocareWebAPI.MarketNewsService.services.Implementations;
+using VocareWebAPI.MarketNewsService.services.interfaces;
 using VocareWebAPI.Repositories;
+using VocareWebAPI.repositories.Implementations;
 using VocareWebAPI.Repositories.Implementations;
 using VocareWebAPI.Repositories.Interfaces;
 using VocareWebAPI.Services;
-using VocareWebAPI.Services.Implementations;
 using VocareWebAPI.UserManagement;
 using VocareWebAPI.UserManagement.Interfaces;
 using VocareWebAPI.UserManagement.Services;
@@ -52,6 +49,7 @@ namespace VocareWebAPI.Extensions.ServiceCollectionExtensions
 
             // Other services
             services.AddScoped<IEmailService, EmailService>();
+            services.AddScoped<IMarketNewsService, MarketNewsService>();
 
             return services;
         }
@@ -75,6 +73,7 @@ namespace VocareWebAPI.Extensions.ServiceCollectionExtensions
             // Cv Repositories;
             services.AddScoped<IGeneratedCvRepository, GeneratedCvrepository>();
 
+            services.AddScoped<IMarketNewsRepository, MarketNewsRepository>();
             return services;
         }
     }
