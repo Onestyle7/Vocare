@@ -4,18 +4,14 @@ import 'package:provider/provider.dart';
 import 'package:vocare/screens/fill_profile_screen.dart';
 import 'package:vocare/screens/login_screen.dart';
 import 'package:vocare/services/them_service.dart';
-import 'package:vocare/utils/error_handler.dart'; // 🆕 DODAJ IMPORT
+import 'package:vocare/utils/error_handler.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
-  // 🔧 INIT ERROR HANDLER - UKRYJ OVERFLOW ERRORS
   OverflowErrorHandler.init();
-
-  // 🔧 WYŁĄCZ WSZYSTKIE DEBUG OVERFLOW INDICATORS
   debugPaintSizeEnabled = false;
 
-  // 🔧 DODATKOWE WYŁĄCZENIE DEBUG INFO
   WidgetsBinding.instance.addPostFrameCallback((_) {
     debugPaintSizeEnabled = false;
   });
@@ -38,16 +34,13 @@ class MyApp extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       title: 'Vocare',
 
-      // 🔧 SILNIEJSZY BUILDER - zapobiega WSZYSTKIM overflow
       builder: (BuildContext context, Widget? child) {
         return MediaQuery(
-          data: MediaQuery.of(context).copyWith(
-            textScaleFactor: 1.0, // Zapobiega skalowaniu tekstu
-          ),
+          data: MediaQuery.of(context).copyWith(textScaleFactor: 1.0),
           child: Directionality(
             textDirection: TextDirection.ltr,
             child: Banner(
-              message: '', // 🔧 Usuwa debug banner
+              message: '',
               location: BannerLocation.topStart,
               color: Colors.transparent,
               child: child!,
@@ -56,8 +49,16 @@ class MyApp extends StatelessWidget {
         );
       },
 
-      theme: ThemeData.light(),
-      darkTheme: ThemeData(
+      // LIGHT THEME z domyślnym Poppins
+      theme: ThemeData(
+        brightness: Brightness.light,
+        fontFamily: 'Poppins',
+        textTheme: ThemeData.light().textTheme,
+        primaryTextTheme: ThemeData.light().primaryTextTheme,
+      ),
+
+      // DARK THEME z domyślnym Poppins
+      darkTheme: ThemeData.dark().copyWith(
         brightness: Brightness.dark,
         scaffoldBackgroundColor: const Color(0xFF0e100f),
         primaryColor: Colors.deepPurple,
@@ -65,15 +66,17 @@ class MyApp extends StatelessWidget {
           backgroundColor: Colors.black,
           iconTheme: IconThemeData(color: Colors.white),
         ),
-        textTheme: const TextTheme(bodyMedium: TextStyle(color: Colors.white)),
+        textTheme: ThemeData.dark().textTheme.copyWith(
+          bodyLarge: const TextStyle(color: Colors.white),
+          bodyMedium: const TextStyle(color: Colors.white70),
+        ),
+        primaryTextTheme: ThemeData.dark().primaryTextTheme,
         iconTheme: const IconThemeData(color: Colors.white),
         colorScheme: const ColorScheme.dark(
           primary: Color(0xFF915EFF),
           surface: Color(0xFF1E1E1E),
           background: Colors.black,
         ),
-
-        // 🔧 Dekoracje dla TextField w dark mode
         inputDecorationTheme: const InputDecorationTheme(
           filled: true,
           fillColor: Colors.black,
@@ -95,7 +98,7 @@ class MyApp extends StatelessWidget {
       ),
 
       themeMode: themeService.isDarkMode ? ThemeMode.dark : ThemeMode.light,
-      home: const LoginScreen(), // 🔧 DODANE const
+      home: const LoginScreen(),
     );
   }
 }
