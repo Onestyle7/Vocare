@@ -4,7 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using VocareWebAPI.MarketNewsService.Models.Entities;
 
-namespace VocareWebAPI.MarketNewsService.Models.repositories.Implementations
+namespace VocareWebAPI.MarketNewsService.Repositories.Interfaces
 {
     public interface IMarketNewsRepository
     {

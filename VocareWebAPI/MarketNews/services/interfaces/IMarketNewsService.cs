@@ -1,10 +1,6 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 using VocareWebAPI.MarketNewsService.Models.Dtos;
 
-namespace VocareWebAPI.MarketNewsService.services.interfaces
+namespace VocareWebAPI.MarketNewsService.Services.interfaces
 {
     public interface IMarketNewsService
     {

@@ -3,11 +3,11 @@ using AutoMapper;
 using Microsoft.Extensions.Options;
 using VocareWebAPI.MarketNewsService.Models.Dtos;
 using VocareWebAPI.MarketNewsService.Models.Entities;
-using VocareWebAPI.MarketNewsService.Models.repositories.Implementations;
-using VocareWebAPI.MarketNewsService.services.interfaces;
+using VocareWebAPI.MarketNewsService.Repositories.Interfaces;
+using VocareWebAPI.MarketNewsService.Services.interfaces;
 using VocareWebAPI.Models.Config;
 
-namespace VocareWebAPI.MarketNewsService.services.Implementations
+namespace VocareWebAPI.MarketNewsService.Services.Implementations
 {
     public class MarketNewsService : IMarketNewsService
     {

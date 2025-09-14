@@ -1,9 +1,9 @@
 using Microsoft.EntityFrameworkCore;
 using VocareWebAPI.Data;
 using VocareWebAPI.MarketNewsService.Models.Entities;
-using VocareWebAPI.MarketNewsService.Models.repositories.Implementations;
+using VocareWebAPI.MarketNewsService.Repositories.Interfaces;
 
-namespace VocareWebAPI.repositories.Implementations
+namespace VocareWebAPI.Repositories.Implementations
 {
     public class MarketNewsRepository : IMarketNewsRepository
     {
