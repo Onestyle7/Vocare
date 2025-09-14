@@ -5,7 +5,8 @@ using System.Threading.Tasks;
 using Polly;
 using Polly.Extensions.Http;
 using VocareWebAPI.CareerAdvisor.Services.Implementations;
-using VocareWebAPI.Models.Config;
+using VocareWebAPI.MarketNews.Services.Implementations;
+using VocareWebAPI.MarketNews.Services.Interfaces;
 using VocareWebAPI.Repositories.Interfaces;
 using VocareWebAPI.Services;
 using VocareWebAPI.Services.Implementations;
@@ -53,22 +54,38 @@ namespace VocareWebAPI.Extensions.ServiceCollectionExtensions
                 })
                 .AddPolicyHandler(retryPolicy);
 
+            // Market News Service - POPRAWKA: używa PerplexityAI config jak w oryginale
+            services
+                .AddHttpClient<IMarketNewsService, MarketNewsService>(client =>
+                {
+                    ConfigureAiClient(client, configuration, "PerplexityAI");
+                    client.Timeout = TimeSpan.FromMinutes(3);
+                })
+                .AddPolicyHandler(retryPolicy);
             return services;
         }
 
-        private static void ConfigureAiClient(
+        private static void ConfigureOpenAIClient(HttpClient client, IConfiguration configuration)
+        {
+            var config = configuration.GetSection("OpenAI").Get<OpenAIConfig>();
+            if (config == null)
+                throw new InvalidOperationException("OpenAI configuration section is missing");
+
+            client.BaseAddress = new Uri(config.BaseUrl);
+            client.DefaultRequestHeaders.Add("Authorization", $"Bearer {config.ApiKey}");
+            client.DefaultRequestHeaders.Add("Accept", "application/json");
+        }
+
+        private static void ConfigurePerplexityClient(
             HttpClient client,
-            IConfiguration configuration,
-            string configSection
+            IConfiguration configuration
         )
         {
-            var config = configuration.GetSection(configSection).Get<AiConfig>();
+            var config = configuration.GetSection("PerplexityAI").Get<PerplexityConfig>();
             if (config == null)
-            {
                 throw new InvalidOperationException(
-                    $"Configuration section '{configSection}' is missing"
+                    "PerplexityAI configuration section is missing"
                 );
-            }
 
             client.BaseAddress = new Uri(config.BaseUrl);
             client.DefaultRequestHeaders.Add("Authorization", $"Bearer {config.ApiKey}");

@@ -1,9 +1,9 @@
 using Microsoft.EntityFrameworkCore;
 using VocareWebAPI.Data;
-using VocareWebAPI.MarketNewsService.Models.Entities;
-using VocareWebAPI.MarketNewsService.Repositories.Interfaces;
+using VocareWebAPI.MarketNews.Models.Entities;
+using VocareWebAPI.MarketNews.Repositories.Interfaces;
 
-namespace VocareWebAPI.MarketNewsService.Repositories.Implementations
+namespace VocareWebAPI.MarketNews.Repositories.Implementations
 {
     public class MarketNewsRepository : IMarketNewsRepository
     {
@@ -14,7 +14,7 @@ namespace VocareWebAPI.MarketNewsService.Repositories.Implementations
             _context = context;
         }
 
-        public async Task<MarketNews> AddAsync(MarketNews marketNews)
+        public async Task<MarketNewsEntity> AddAsync(MarketNewsEntity marketNews)
         {
             var news = _context.MarketNews.Add(marketNews);
             await _context.SaveChangesAsync();
@@ -27,7 +27,7 @@ namespace VocareWebAPI.MarketNewsService.Repositories.Implementations
             return isExist;
         }
 
-        public async Task<(List<MarketNews> news, int totalCount)> GetAllPagedAsync(
+        public async Task<(List<MarketNewsEntity> news, int totalCount)> GetAllPagedAsync(
             int page,
             int pageSize
         )
@@ -42,12 +42,12 @@ namespace VocareWebAPI.MarketNewsService.Repositories.Implementations
             return (news, totalCount);
         }
 
-        public async Task<MarketNews?> GetByIdAsync(Guid id)
+        public async Task<MarketNewsEntity?> GetByIdAsync(Guid id)
         {
             return await _context.MarketNews.Where(n => n.Id == id).FirstOrDefaultAsync();
         }
 
-        public async Task<List<MarketNews>> GetLatest3Async()
+        public async Task<List<MarketNewsEntity>> GetLatest3Async()
         {
             var latest3News = await _context
                 .MarketNews.OrderByDescending(n => n.CreatedAt)
@@ -57,7 +57,7 @@ namespace VocareWebAPI.MarketNewsService.Repositories.Implementations
             return latest3News;
         }
 
-        public async Task<MarketNews?> GetLatestAsync()
+        public async Task<MarketNewsEntity?> GetLatestAsync()
         {
             var latestNews = await _context
                 .MarketNews.OrderByDescending(n => n.CreatedAt)

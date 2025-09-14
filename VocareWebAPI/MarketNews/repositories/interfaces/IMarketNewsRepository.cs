@@ -1,10 +1,6 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using VocareWebAPI.MarketNewsService.Models.Entities;
+using VocareWebAPI.MarketNews.Models.Entities;
 
-namespace VocareWebAPI.MarketNewsService.Repositories.Interfaces
+namespace VocareWebAPI.MarketNews.Repositories.Interfaces
 {
     public interface IMarketNewsRepository
     {
@@ -12,13 +8,13 @@ namespace VocareWebAPI.MarketNewsService.Repositories.Interfaces
         /// pobiera 3 najnowsze newsy (dla mobile home page)
         /// </summary>
         /// <returns>Lista 3 ostatnich newsów</returns>
-        Task<List<MarketNews>> GetLatest3Async();
+        Task<List<MarketNewsEntity>> GetLatest3Async();
 
         /// <summary>
         /// Pobiera najnowszy news(dla powiadomień)
         /// </summary>
         /// <returns>Najnowszy news lub null</returns>
-        Task<MarketNews?> GetLatestAsync();
+        Task<MarketNewsEntity?> GetLatestAsync();
 
         /// <summary>
         /// Pobiera wszystkie newsy z paginacją
@@ -26,21 +22,24 @@ namespace VocareWebAPI.MarketNewsService.Repositories.Interfaces
         /// <param name="page"></param>
         /// <param name="pageSize"></param>
         /// <returns>Lista newsów + total count</returns>
-        Task<(List<MarketNews> news, int totalCount)> GetAllPagedAsync(int page, int pageSize);
+        Task<(List<MarketNewsEntity> news, int totalCount)> GetAllPagedAsync(
+            int page,
+            int pageSize
+        );
 
         /// <summary>
         /// Pobiera news po ID (Dla szczegółów)
         /// </summary>
         /// <param name="id">ID newsa</param>
         /// <returns>Najnowszy news lub null</returns>
-        Task<MarketNews?> GetByIdAsync(Guid id);
+        Task<MarketNewsEntity?> GetByIdAsync(Guid id);
 
         /// <summary>
         /// Dodaje nowy news do bazy (po wygenerowaniu przez AI)
         /// </summary>
         /// <param name="marketNews">News do dodania</param>
         /// <returns>Dodany news</returns>
-        Task<MarketNews> AddAsync(MarketNews marketNews);
+        Task<MarketNewsEntity> AddAsync(MarketNewsEntity marketNews);
 
         /// <summary>
         /// Sprawdza czy istnieje już news z danego dnia (zabezpieczenie przed duplikatami)

@@ -1,14 +1,10 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.RateLimiting;
-using VocareWebAPI.MarketNewsService.Models.Dtos;
-using VocareWebAPI.MarketNewsService.Services.Interfaces;
+using VocareWebAPI.MarketNews.Models.Dtos;
+using VocareWebAPI.MarketNews.Services.Interfaces;
 
-namespace VocareWebAPI.MarketNewsService.Controllers
+namespace VocareWebAPI.MarketNews.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]

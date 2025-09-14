@@ -1,13 +1,13 @@
 using System.Text.Json;
 using AutoMapper;
 using Microsoft.Extensions.Options;
-using VocareWebAPI.MarketNewsService.Models.Dtos;
-using VocareWebAPI.MarketNewsService.Models.Entities;
-using VocareWebAPI.MarketNewsService.Repositories.Interfaces;
-using VocareWebAPI.MarketNewsService.Services.Interfaces;
-using VocareWebAPI.Models.Config;
+using VocareWebAPI.CareerAdvisor.Models.Config;
+using VocareWebAPI.MarketNews.Models.Dtos;
+using VocareWebAPI.MarketNews.Models.Entities;
+using VocareWebAPI.MarketNews.Repositories.Interfaces;
+using VocareWebAPI.MarketNews.Services.Interfaces;
 
-namespace VocareWebAPI.MarketNewsService.Services.Implementations
+namespace VocareWebAPI.MarketNews.Services.Implementations
 {
     public class MarketNewsService : IMarketNewsService
     {
@@ -15,14 +15,14 @@ namespace VocareWebAPI.MarketNewsService.Services.Implementations
         private readonly ILogger<MarketNewsService> _logger;
         private readonly HttpClient _httpClient;
         private readonly IMapper _mapper;
-        private readonly AiConfig _config;
+        private readonly PerplexityAIConfig _config;
 
         public MarketNewsService(
             IMarketNewsRepository marketNewsRepository,
             ILogger<MarketNewsService> logger,
             HttpClient httpClient,
             IMapper mapper,
-            IOptions<AiConfig> config
+            IOptions<PerplexityAIConfig> config
         )
         {
             _marketNewsRepository = marketNewsRepository;
@@ -148,7 +148,7 @@ namespace VocareWebAPI.MarketNewsService.Services.Implementations
                 content = content.Length > 3000 ? content.Substring(0, 2997) + "..." : content;
 
                 // 🏗️ KROK 4: Tworzenie obiektu MarketNews
-                var marketNews = new MarketNews
+                var marketNews = new MarketNewsEntity
                 {
                     Id = Guid.NewGuid(),
                     Title = title,

@@ -1,16 +1,11 @@
-using System;
-using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Mvc;
 
-namespace VocareWebAPI.MarketNewsService.Models.Entities
+namespace VocareWebAPI.MarketNews.Models.Entities
 {
     /// <summary>
     /// Encja reprezentująca newsy rynkowe.
     /// </summary>
-    public class MarketNews
+    public class MarketNewsEntity
     {
         [Key]
         public Guid Id { get; set; }

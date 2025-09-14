@@ -1,9 +1,4 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-
-namespace VocareWebAPI.MarketNewsService.Models.Dtos
+namespace VocareWebAPI.MarketNews.Models.Dtos
 {
     /// <summary>
     /// Dto dla szczegółów newsa

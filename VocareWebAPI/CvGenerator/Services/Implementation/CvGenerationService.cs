@@ -1,15 +1,7 @@
-using System.Text.Json;
-using Microsoft.Extensions.Options;
-using Stripe;
-using VocareWebAPI.CvGenerator.Models;
 using VocareWebAPI.CvGenerator.Models.Dtos;
-using VocareWebAPI.CvGenerator.Repositories.Interfaces;
 using VocareWebAPI.CvGenerator.Services.Interfaces;
-using VocareWebAPI.Models.Config;
-using VocareWebAPI.Models.Dtos;
 using VocareWebAPI.Models.Entities;
 using VocareWebAPI.Repositories;
-using VocareWebAPI.Repositories.Interfaces;
 using VocareWebAPI.UserManagement.Models.Entities;
 
 namespace VocareWebAPI.CvGenerator.Services.Implementations

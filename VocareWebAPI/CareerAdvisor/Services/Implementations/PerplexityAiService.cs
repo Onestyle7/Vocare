@@ -1,8 +1,8 @@
 using System.Text.Json;
 using AutoMapper;
 using Microsoft.Extensions.Options;
+using VocareWebAPI.CareerAdvisor.Models.Config;
 using VocareWebAPI.Models;
-using VocareWebAPI.Models.Config;
 using VocareWebAPI.Models.Dtos;
 using VocareWebAPI.Models.Entities;
 using VocareWebAPI.Repositories;
@@ -15,7 +15,7 @@ namespace VocareWebAPI.Services
     public class PerplexityAiService : IAiService
     {
         private readonly HttpClient _httpClient;
-        private readonly AiConfig _config;
+        private readonly PerplexityAIConfig _config;
         private readonly IAiRecommendationRepository _recommendationRepository;
         private readonly IMapper _mapper;
 
@@ -28,7 +28,7 @@ namespace VocareWebAPI.Services
         /// <param name="recommendationRepository">Repozytorium rekomendacji AI</param>
         /// <param name="mapper">Mapper do mapowania obiektów</param>
         public PerplexityAiService(
-            IOptions<AiConfig> config,
+            IOptions<PerplexityAIConfig> config,
             HttpClient httpClient,
             IAiRecommendationRepository recommendationRepository,
             IMapper mapper

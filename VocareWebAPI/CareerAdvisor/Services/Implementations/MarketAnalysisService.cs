@@ -1,15 +1,11 @@
-using System.Globalization;
-using System.Security.Claims;
 using System.Text.Json;
-using System.Text.RegularExpressions;
-using AutoMapper;
 using Microsoft.Extensions.Options;
+using VocareWebAPI.CareerAdvisor.Models.Config;
 using VocareWebAPI.Models;
-using VocareWebAPI.Models.Config;
 using VocareWebAPI.Models.Dtos;
 using VocareWebAPI.Models.Dtos.MarketAnalysis;
-using VocareWebAPI.Models.Entities;
 using VocareWebAPI.Models.Entities.MarketAnalysis;
+using VocareWebAPI.Models.OpenAIConfig;
 using VocareWebAPI.Repositories;
 using VocareWebAPI.Repositories.Interfaces;
 
@@ -21,7 +17,7 @@ namespace VocareWebAPI.Services.Implementations
     public class MarketAnalysisService : IMarketAnalysisService
     {
         private readonly HttpClient _httpClient;
-        private readonly AiConfig _config;
+        private readonly PerplexityAIConfig _config;
         private readonly IUserProfileRepository _userProfileRepository;
         private readonly ICareerStatisticsRepository _careerStatisticsRepository;
         private readonly ISkillDemandRepository _skillDemandRepository;
@@ -42,7 +38,7 @@ namespace VocareWebAPI.Services.Implementations
         /// <param name="logger">Logger do rejestracji zdarzeń</param>
         public MarketAnalysisService(
             HttpClient httpClient,
-            IOptions<AiConfig> config,
+            IOptions<OpenAIConfig> config,
             IUserProfileRepository userProfileRepository,
             ICareerStatisticsRepository marketAnalysisRepository,
             ISkillDemandRepository skillDemandRepository,
