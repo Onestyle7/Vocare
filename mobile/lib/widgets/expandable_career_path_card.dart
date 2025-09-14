@@ -23,7 +23,7 @@ class ExpandableCareerPathCard extends StatelessWidget {
     );
   }
 
-  // 🆕 Karta z numerem - fioletowy pasek na całą wysokość
+  // Karta z numerem - naprawiona
   Widget _buildNumberedCard() {
     return Container(
       margin: const EdgeInsets.symmetric(vertical: 4),
@@ -33,8 +33,9 @@ class ExpandableCareerPathCard extends StatelessWidget {
       ),
       child: IntrinsicHeight(
         child: Row(
+          crossAxisAlignment: CrossAxisAlignment.stretch, // 🆕 DODANE
           children: [
-            // 🔢 Pasek z numerem z lewej strony - pełna wysokość
+            // Pasek z numerem - pełna wysokość
             Container(
               width: 50,
               decoration: const BoxDecoration(
@@ -44,49 +45,61 @@ class ExpandableCareerPathCard extends StatelessWidget {
                   bottomLeft: Radius.circular(12),
                 ),
               ),
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Text(
-                    '$number',
-                    style: const TextStyle(
-                      fontSize: 24,
-                      fontWeight: FontWeight.bold,
-                      color: Colors.white,
+              child: Center(
+                // 🔧 ZMIENIONE z Column na Center
+                child: Column(
+                  mainAxisSize: MainAxisSize.min, // 🆕 DODANE
+                  children: [
+                    Text(
+                      '$number',
+                      style: const TextStyle(
+                        fontSize: 24,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.white,
+                      ),
                     ),
-                  ),
-                  if (isMainRecommendation) ...[
-                    const SizedBox(height: 2),
-                    const Icon(Icons.star, color: Colors.amber, size: 16),
+                    if (isMainRecommendation) ...[
+                      const SizedBox(height: 2),
+                      const Icon(Icons.star, color: Colors.amber, size: 16),
+                    ],
                   ],
-                ],
+                ),
               ),
             ),
 
-            // Zawartość karty
+            // Zawartość karty - bez ExpansionTile
             Expanded(
-              child: ExpansionTile(
-                tilePadding: const EdgeInsets.symmetric(
-                  horizontal: 12,
-                  vertical: 8,
-                ),
-                childrenPadding: EdgeInsets.zero,
-                iconColor: Colors.purpleAccent,
-                collapsedIconColor: Colors.purpleAccent,
-                title: _buildTitle(),
-                subtitle: _buildSubtitle(),
-                children: [
-                  Container(
-                    constraints: const BoxConstraints(maxHeight: 300),
-                    child: SingleChildScrollView(
-                      padding: const EdgeInsets.all(12),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: _buildContentWidgets(),
+              child: Container(
+                // 🔧 ZMIENIONE z ExpansionTile na Container
+                padding: const EdgeInsets.all(12),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisSize: MainAxisSize.min, // 🆕 DODANE
+                  children: [
+                    // Title
+                    _buildTitle(),
+                    const SizedBox(height: 8),
+
+                    // Subtitle
+                    _buildSubtitle(),
+                    const SizedBox(height: 12),
+
+                    // Content w ScrollView
+                    ConstrainedBox(
+                      constraints: const BoxConstraints(
+                        maxHeight: 200,
+                      ), // 🆕 Ograniczona wysokość
+                      child: SingleChildScrollView(
+                        physics: const BouncingScrollPhysics(),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          mainAxisSize: MainAxisSize.min,
+                          children: _buildContentWidgets(),
+                        ),
                       ),
                     ),
-                  ),
-                ],
+                  ],
+                ),
               ),
             ),
           ],
@@ -95,7 +108,7 @@ class ExpandableCareerPathCard extends StatelessWidget {
     );
   }
 
-  // 🔄 Klasyczna karta - fioletowy pasek na całą wysokość
+  // Klasyczna karta - naprawiona
   Widget _buildClassicCard() {
     return Container(
       margin: const EdgeInsets.symmetric(vertical: 8),
@@ -119,6 +132,7 @@ class ExpandableCareerPathCard extends StatelessWidget {
       ),
       child: IntrinsicHeight(
         child: Row(
+          crossAxisAlignment: CrossAxisAlignment.stretch, // 🆕 DODANE
           children: [
             Container(
               width: 40,
@@ -137,28 +151,37 @@ class ExpandableCareerPathCard extends StatelessWidget {
                       : null,
             ),
             Expanded(
-              child: ExpansionTile(
-                tilePadding: const EdgeInsets.symmetric(
-                  horizontal: 16,
-                  vertical: 8,
-                ),
-                childrenPadding: EdgeInsets.zero,
-                iconColor: Colors.purpleAccent,
-                collapsedIconColor: Colors.purpleAccent,
-                title: _buildTitle(),
-                subtitle: _buildSubtitle(),
-                children: [
-                  Container(
-                    constraints: const BoxConstraints(maxHeight: 300),
-                    child: SingleChildScrollView(
-                      padding: const EdgeInsets.all(16),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: _buildContentWidgets(),
+              child: Container(
+                // 🔧 ZMIENIONE z ExpansionTile na Container
+                padding: const EdgeInsets.all(16),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisSize: MainAxisSize.min, // 🆕 DODANE
+                  children: [
+                    // Title
+                    _buildTitle(),
+                    const SizedBox(height: 8),
+
+                    // Subtitle
+                    _buildSubtitle(),
+                    const SizedBox(height: 12),
+
+                    // Content w ScrollView
+                    ConstrainedBox(
+                      constraints: const BoxConstraints(
+                        maxHeight: 200,
+                      ), // 🆕 Ograniczona wysokość
+                      child: SingleChildScrollView(
+                        physics: const BouncingScrollPhysics(),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          mainAxisSize: MainAxisSize.min,
+                          children: _buildContentWidgets(),
+                        ),
                       ),
                     ),
-                  ),
-                ],
+                  ],
+                ),
               ),
             ),
           ],
@@ -167,73 +190,66 @@ class ExpandableCareerPathCard extends StatelessWidget {
     );
   }
 
-  // 🎯 Wspólny tytuł
+  // Uproszczony title - bez Row
   Widget _buildTitle() {
-    return Row(
+    return Text(
+      number != null && isMainRecommendation
+          ? "Main Recommendation"
+          : number != null && !isMainRecommendation
+          ? "Proponowana ścieżka kariery"
+          : careerPath.careerName,
+      style: const TextStyle(
+        fontWeight: FontWeight.bold,
+        color: Colors.white,
+        fontSize: 16,
+      ),
+      maxLines: 2, // 🆕 Ograniczone linie
+      overflow: TextOverflow.ellipsis,
+    );
+  }
+
+  // Uproszczony subtitle
+  Widget _buildSubtitle() {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      mainAxisSize: MainAxisSize.min, // 🆕 DODANE
       children: [
-        if (isMainRecommendation) ...[
-          const Icon(Icons.star, color: Colors.amber, size: 20),
-          const SizedBox(width: 8),
-        ],
-        Expanded(
-          child: Text(
-            number != null && isMainRecommendation
-                ? "Main Recommendation"
-                : number != null && !isMainRecommendation
-                ? "Proponowana ścieżka kariery"
-                : careerPath.careerName,
+        if (number != null) ...[
+          Text(
+            careerPath.careerName,
             style: const TextStyle(
-              fontWeight: FontWeight.bold,
-              color: Colors.white,
-              fontSize: 16,
+              color: Colors.purpleAccent,
+              fontSize: 14, // 🔧 Zmniejszone z 16
+              fontWeight: FontWeight.w600,
             ),
+            maxLines: 1, // 🆕 Ograniczone linie
             overflow: TextOverflow.ellipsis,
+          ),
+          const SizedBox(height: 4),
+        ],
+        if (isMainRecommendation) ...[
+          const Text(
+            "🏆 GŁÓWNA REKOMENDACJA",
+            style: TextStyle(
+              color: Colors.amber,
+              fontWeight: FontWeight.bold,
+              fontSize: 12,
+            ),
+          ),
+          const SizedBox(height: 4),
+        ],
+        Text(
+          "Prawdopodobieństwo: ${careerPath.probability.toStringAsFixed(1)}%",
+          style: const TextStyle(
+            color: Colors.purpleAccent,
+            fontSize: 12, // 🔧 Zmniejszone
           ),
         ),
       ],
     );
   }
 
-  // 🎯 Wspólny subtitle
-  Widget _buildSubtitle() {
-    return Padding(
-      padding: const EdgeInsets.only(top: 8),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          if (number != null) ...[
-            Text(
-              careerPath.careerName,
-              style: const TextStyle(
-                color: Colors.purpleAccent,
-                fontSize: 16,
-                fontWeight: FontWeight.w600,
-              ),
-              overflow: TextOverflow.ellipsis,
-            ),
-            const SizedBox(height: 4),
-          ],
-          if (isMainRecommendation) ...[
-            const Text(
-              "🏆 GŁÓWNA REKOMENDACJA",
-              style: TextStyle(
-                color: Colors.amber,
-                fontWeight: FontWeight.bold,
-                fontSize: 12,
-              ),
-            ),
-            const SizedBox(height: 4),
-          ],
-          Text(
-            "Prawdopodobieństwo: ${careerPath.probability.toStringAsFixed(1)}%",
-            style: const TextStyle(color: Colors.purpleAccent),
-          ),
-        ],
-      ),
-    );
-  }
-
-  // 🎯 Zawartość jako lista widgetów
+  // Zawartość - skrócona
   List<Widget> _buildContentWidgets() {
     List<Widget> widgets = [];
 
@@ -243,34 +259,27 @@ class ExpandableCareerPathCard extends StatelessWidget {
           "🎯 Uzasadnienie",
           mainRecommendation!.justification,
         ),
-        _buildListWidget("🪜 Następne kroki", mainRecommendation!.nextSteps),
+        _buildListWidget(
+          "🪜 Następne kroki",
+          mainRecommendation!.nextSteps.take(3).toList(),
+        ), // 🔧 Ograniczone do 3
         _buildSectionWidget(
           "🚀 Cel długoterminowy",
           mainRecommendation!.longTermGoal,
         ),
-        const Divider(color: Colors.grey),
       ]);
     }
 
     widgets.addAll([
       _buildSectionWidget("📝 Opis", careerPath.description),
-      _buildListWidget("🔧 Wymagane umiejętności", careerPath.requiredSkills),
-      _buildListWidget("🎓 Rekomendowane kursy", careerPath.recommendedCourses),
-      _buildListWidget("📊 Analiza rynku", careerPath.marketAnalysis),
-      const Divider(color: Colors.grey),
-      const Text(
-        "📈 Analiza SWOT",
-        style: TextStyle(
-          color: Colors.white,
-          fontWeight: FontWeight.bold,
-          fontSize: 16,
-        ),
-      ),
-      const SizedBox(height: 8),
-      _buildListWidget("💪 Mocne strony", careerPath.swot.strengths),
-      _buildListWidget("📉 Słabości", careerPath.swot.weaknesses),
-      _buildListWidget("🚀 Szanse", careerPath.swot.opportunities),
-      _buildListWidget("⚠️ Zagrożenia", careerPath.swot.threats),
+      _buildListWidget(
+        "🔧 Wymagane umiejętności",
+        careerPath.requiredSkills.take(5).toList(),
+      ), // 🔧 Ograniczone do 5
+      _buildListWidget(
+        "🎓 Rekomendowane kursy",
+        careerPath.recommendedCourses.take(3).toList(),
+      ), // 🔧 Ograniczone do 3
     ]);
 
     return widgets;
@@ -280,7 +289,7 @@ class ExpandableCareerPathCard extends StatelessWidget {
     if (content.isEmpty) return const SizedBox.shrink();
 
     return Padding(
-      padding: const EdgeInsets.only(bottom: 12),
+      padding: const EdgeInsets.only(bottom: 8), // 🔧 Zmniejszone z 12
       child: Column(
         mainAxisSize: MainAxisSize.min,
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -290,10 +299,19 @@ class ExpandableCareerPathCard extends StatelessWidget {
             style: const TextStyle(
               color: Colors.white,
               fontWeight: FontWeight.bold,
+              fontSize: 14, // 🔧 Zmniejszone
             ),
           ),
           const SizedBox(height: 4),
-          Text(content, style: const TextStyle(color: Colors.white70)),
+          Text(
+            content,
+            style: const TextStyle(
+              color: Colors.white70,
+              fontSize: 12, // 🔧 Zmniejszone
+            ),
+            maxLines: 3,
+            overflow: TextOverflow.ellipsis,
+          ),
         ],
       ),
     );
@@ -303,7 +321,7 @@ class ExpandableCareerPathCard extends StatelessWidget {
     if (items.isEmpty) return const SizedBox.shrink();
 
     return Padding(
-      padding: const EdgeInsets.only(bottom: 12),
+      padding: const EdgeInsets.only(bottom: 8), // 🔧 Zmniejszone z 12
       child: Column(
         mainAxisSize: MainAxisSize.min,
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -313,6 +331,7 @@ class ExpandableCareerPathCard extends StatelessWidget {
             style: const TextStyle(
               color: Colors.white,
               fontWeight: FontWeight.bold,
+              fontSize: 14, // 🔧 Zmniejszone
             ),
           ),
           const SizedBox(height: 4),
@@ -321,8 +340,12 @@ class ExpandableCareerPathCard extends StatelessWidget {
               padding: const EdgeInsets.only(bottom: 2),
               child: Text(
                 "• $item",
-                style: const TextStyle(color: Colors.white70),
-                overflow: TextOverflow.clip,
+                style: const TextStyle(
+                  color: Colors.white70,
+                  fontSize: 12, // 🔧 Zmniejszone
+                ),
+                maxLines: 2, //
+                overflow: TextOverflow.ellipsis,
               ),
             ),
           ),
