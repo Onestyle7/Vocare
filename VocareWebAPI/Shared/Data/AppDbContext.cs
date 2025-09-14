@@ -4,6 +4,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using VocareWebAPI.Billing.Models.Entities;
 using VocareWebAPI.CvGenerator.Models; // Poprawiony namespace
+using VocareWebAPI.MarketNewsService.Models.Entities;
 using VocareWebAPI.Models;
 using VocareWebAPI.Models.Entities;
 using VocareWebAPI.Models.Entities.MarketAnalysis;
@@ -68,6 +69,7 @@ namespace VocareWebAPI.Data
         /// </summary>
         public DbSet<GeneratedCv> GeneratedCvs { get; set; }
         public DbSet<FinancialSurvey> FinancialSurveys { get; set; }
+        public DbSet<MarketNews> MarketNews { get; set; }
 
         /// <summary>
         /// Konfiguruje model bazy danych, definiując schemat i relacje między encjami.
@@ -263,6 +265,15 @@ namespace VocareWebAPI.Data
                         TokenCost = 1,
                     }
                 );
+            builder.Entity<MarketNews>(entity =>
+            {
+                entity.HasKey(e => e.Id);
+                entity.Property(e => e.Title).IsRequired().HasMaxLength(100);
+                entity.Property(e => e.Content).IsRequired().HasMaxLength(3000);
+                entity.Property(e => e.Summary).IsRequired().HasMaxLength(150);
+                entity.Property(e => e.CreatedAt).IsRequired();
+                entity.HasIndex(e => e.CreatedAt);
+            });
         }
     }
 }
