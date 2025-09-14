@@ -1,6 +1,6 @@
 using VocareWebAPI.MarketNewsService.Models.Dtos;
 
-namespace VocareWebAPI.MarketNewsService.Services.interfaces
+namespace VocareWebAPI.MarketNewsService.Services.Interfaces
 {
     public interface IMarketNewsService
     {

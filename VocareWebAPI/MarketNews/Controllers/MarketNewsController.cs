@@ -6,7 +6,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.RateLimiting;
 using VocareWebAPI.MarketNewsService.Models.Dtos;
-using VocareWebAPI.MarketNewsService.Services.interfaces;
+using VocareWebAPI.MarketNewsService.Services.Interfaces;
 
 namespace VocareWebAPI.MarketNewsService.Controllers
 {

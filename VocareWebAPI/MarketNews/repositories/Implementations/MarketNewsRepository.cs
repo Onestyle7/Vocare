@@ -3,7 +3,7 @@ using VocareWebAPI.Data;
 using VocareWebAPI.MarketNewsService.Models.Entities;
 using VocareWebAPI.MarketNewsService.Repositories.Interfaces;
 
-namespace VocareWebAPI.Repositories.Implementations
+namespace VocareWebAPI.MarketNewsService.Repositories.Implementations
 {
     public class MarketNewsRepository : IMarketNewsRepository
     {

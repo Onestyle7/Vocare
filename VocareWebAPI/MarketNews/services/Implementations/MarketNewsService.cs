@@ -4,7 +4,7 @@ using Microsoft.Extensions.Options;
 using VocareWebAPI.MarketNewsService.Models.Dtos;
 using VocareWebAPI.MarketNewsService.Models.Entities;
 using VocareWebAPI.MarketNewsService.Repositories.Interfaces;
-using VocareWebAPI.MarketNewsService.Services.interfaces;
+using VocareWebAPI.MarketNewsService.Services.Interfaces;
 using VocareWebAPI.Models.Config;
 
 namespace VocareWebAPI.MarketNewsService.Services.Implementations
