@@ -17,8 +17,7 @@ namespace VocareWebAPI.Services.Implementations
     public class MarketAnalysisService : IMarketAnalysisService
     {
         private readonly HttpClient _httpClient;
-        private readonly PerplexityAIConfig _config;
-        private readonly IUserProfileRepository _userProfileRepository;
+        private readonly OpenAIConfig _config;
         private readonly ICareerStatisticsRepository _careerStatisticsRepository;
         private readonly ISkillDemandRepository _skillDemandRepository;
         private readonly IMarketTrendsRepository _marketTrendsRepository;
@@ -49,7 +48,6 @@ namespace VocareWebAPI.Services.Implementations
         {
             _httpClient = httpClient;
             _config = config.Value;
-            _userProfileRepository = userProfileRepository;
             _marketTrendsRepository = marketTrendsRepository;
             _skillDemandRepository = skillDemandRepository;
             _careerStatisticsRepository = marketAnalysisRepository;

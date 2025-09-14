@@ -81,27 +81,30 @@ namespace VocareWebAPI.MarketNews.Services.Implementations
                     type = "json_schema",
                     json_schema = new
                     {
-                        title = "MarketNews",
-                        type = "object",
-                        properties = new
+                        schema = new // <-- Add this nesting for the schema
                         {
-                            title = new
+                            type = "object",
+                            properties = new
                             {
-                                type = "string",
-                                description = "Tytuł newsa w formacie markdown",
+                                title = new
+                                {
+                                    type = "string",
+                                    description = "Tytuł newsa w formacie markdown",
+                                },
+                                content = new
+                                {
+                                    type = "string",
+                                    description = "Treść newsa w formacie markdown",
+                                },
+                                summary = new
+                                {
+                                    type = "string",
+                                    description = "Podsumowanie newsa w formacie markdown",
+                                },
                             },
-                            content = new
-                            {
-                                type = "string",
-                                description = "Treść newsa w formacie markdown",
-                            },
-                            summary = new
-                            {
-                                type = "string",
-                                description = "Treść newsa w formacie markdown",
-                            },
+                            required = new[] { "title", "content", "summary" },
+                            additionalProperties = false,
                         },
-                        required = new[] { "title", "content", "summary" },
                     },
                 },
             };

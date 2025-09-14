@@ -4,9 +4,11 @@ using System.Linq;
 using System.Threading.Tasks;
 using Polly;
 using Polly.Extensions.Http;
+using VocareWebAPI.CareerAdvisor.Models.Config;
 using VocareWebAPI.CareerAdvisor.Services.Implementations;
 using VocareWebAPI.MarketNews.Services.Implementations;
 using VocareWebAPI.MarketNews.Services.Interfaces;
+using VocareWebAPI.Models.OpenAIConfig;
 using VocareWebAPI.Repositories.Interfaces;
 using VocareWebAPI.Services;
 using VocareWebAPI.Services.Implementations;
@@ -33,7 +35,7 @@ namespace VocareWebAPI.Extensions.ServiceCollectionExtensions
             services
                 .AddHttpClient<IAiService, PerplexityAiService>(client =>
                 {
-                    ConfigureAiClient(client, configuration, "PerplexityAI");
+                    ConfigurePerplexityClient(client, configuration);
                 })
                 .AddPolicyHandler(retryPolicy);
 
@@ -41,7 +43,7 @@ namespace VocareWebAPI.Extensions.ServiceCollectionExtensions
             services
                 .AddHttpClient<IMarketAnalysisService, MarketAnalysisService>(client =>
                 {
-                    ConfigureAiClient(client, configuration, "OpenAI");
+                    ConfigureOpenAIClient(client, configuration);
                 })
                 .AddPolicyHandler(retryPolicy);
 
@@ -49,7 +51,7 @@ namespace VocareWebAPI.Extensions.ServiceCollectionExtensions
             services
                 .AddHttpClient<IAiService, OpenAIService>(client =>
                 {
-                    ConfigureAiClient(client, configuration, "OpenAI");
+                    ConfigureOpenAIClient(client, configuration);
                     client.Timeout = TimeSpan.FromMinutes(3);
                 })
                 .AddPolicyHandler(retryPolicy);
@@ -58,7 +60,7 @@ namespace VocareWebAPI.Extensions.ServiceCollectionExtensions
             services
                 .AddHttpClient<IMarketNewsService, MarketNewsService>(client =>
                 {
-                    ConfigureAiClient(client, configuration, "PerplexityAI");
+                    ConfigurePerplexityClient(client, configuration);
                     client.Timeout = TimeSpan.FromMinutes(3);
                 })
                 .AddPolicyHandler(retryPolicy);
@@ -81,7 +83,7 @@ namespace VocareWebAPI.Extensions.ServiceCollectionExtensions
             IConfiguration configuration
         )
         {
-            var config = configuration.GetSection("PerplexityAI").Get<PerplexityConfig>();
+            var config = configuration.GetSection("PerplexityAI").Get<PerplexityAIConfig>();
             if (config == null)
                 throw new InvalidOperationException(
                     "PerplexityAI configuration section is missing"
