@@ -314,6 +314,7 @@ export const links_pages = [
   { name: 'COLLECTION', url: '/' },
   { name: 'FAQ', url: '/' },
   { name: 'PRICING', url: '/' },
+  { name: 'BLOG', url: '/blog' },
 ];
 
 export const contact_pages = [{ name: 'REACH US', url: '/' }];

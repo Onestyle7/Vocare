@@ -259,7 +259,7 @@ const PricingMain = () => {
                       <p>Save 65%</p>
                     </div>
                   </div>
-                  <h3 className="mb-2 text-2xl font-semibold text-gray-900 dark:text-gray-100">
+                  <h3 className="mb-2 text-xl font-semibold text-gray-900 dark:text-gray-100">
                     Extras
                   </h3>
                   <p className="mb-4 text-gray-700 dark:text-gray-300">

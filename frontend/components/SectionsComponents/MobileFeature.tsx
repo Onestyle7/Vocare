@@ -143,12 +143,12 @@ const MobileFeature = () => {
         </div>
       </ScrollParallax>
       <div className="mt-4 min-h-screen xl:border-t xl:border-b">
-        <div className="relative mx-[10%] mb-8 flex flex-col items-center gap-5">
-          <h2 className="font-poppins mt-[36px] font-normal text-gray-400">
+        <div className="relative mx-[10%] mb-8 flex flex-col items-center gap-5 font-korbin">
+          <h2 className="mt-[36px] font-bold text-gray-400">
             Always in Your pocket
           </h2>
           <Copy>
-            <h1 className="font-poppins text-color mt-4 text-center text-4xl font-bold md:text-6xl xl:leading-[0.8]">
+            <h1 className="text-color mt-4 text-center text-4xl font-bold md:text-6xl xl:leading-[0.8]">
               Your advisor <br /> always with you
             </h1>
           </Copy>
