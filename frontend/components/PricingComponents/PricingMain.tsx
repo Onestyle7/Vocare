@@ -122,7 +122,7 @@ const PricingMain = () => {
                   <h3 className="mb-2 text-xl font-semibold text-gray-900 dark:text-gray-100">
                     Personal
                   </h3>
-                  <p className="mb-4 text-gray-700 dark:text-gray-500">
+                  <p className="mb-4 text-gray-700 dark:text-gray-300">
                     Perfect for getting started with our platform.
                   </p>
                   <div className="font-poppins mb-6 text-4xl font-bold text-gray-900 dark:text-white">
@@ -189,7 +189,7 @@ const PricingMain = () => {
                     <h3 className="mb-2 text-xl font-semibold text-gray-900 dark:text-gray-100">
                       Growth
                     </h3>
-                    <p className="mb-4 text-gray-700 dark:text-gray-500">
+                    <p className="mb-4 text-gray-700 dark:text-gray-300">
                       The best choice for scaling your projects.
                     </p>
                     <div className="font-poppins mb-6 text-4xl font-bold text-gray-900 dark:text-white">
