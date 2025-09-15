@@ -7,14 +7,13 @@ import {
   square_pricing,
   trapez_pricing,
 } from '@/app/constants';
-import { GridBackgroundDemo } from '@/components/MarketComponents/GridBackgroundDemo';
 import Section from '@/components/SupportComponents/Section';
 import { Button } from '@/components/ui/button';
 import Image from 'next/image';
 import React from 'react';
 import { ScrollParallax } from 'react-just-parallax';
 import Copy from '../SupportComponents/Copy';
-import { Code, Code2, EyeClosed, EyeOffIcon, PhoneIcon, Undo2 } from 'lucide-react';
+import { Code2, EyeOffIcon, PhoneIcon, Undo2 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
 const PricingMain = () => {
