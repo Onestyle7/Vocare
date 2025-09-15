@@ -57,18 +57,27 @@ namespace VocareWebAPI.MarketNews.Services.Implementations
                 Kluczowe wymagania:
                 - **Szeroki zakres, ale skoncentrowany na rynku pracy**: Omów globalne i regionalne (np. USA, UE, Polska jeśli istotne) nowinki z rynku pracy, w tym trendy zatrudnienia, zwolnienia, zmiany w pracy zdalnej, braki umiejętności, zmiany płac, stopy bezrobocia, wpływ technologii/AI na pracę, finansowanie startupów wpływające na zatrudnienie oraz aktualizacje regulacyjne. Dodaj "fajne fakty" lub zaskakujące szczegóły, aby było angażująco (np. "Czy wiesz, że firma X zatrudniła 500 osób w jeden dzień dzięki viralowemu trendowi?").
                 - **Struktura jak wpis blogowy**: 
-                  - Tytuł: Atrakcyjny i relewantny, np. "Cotygodniowy Buzz na Rynku Pracy: Najważniejsze Wydarzenia od {{previousWeekStartStr}} do {{previousWeekEndStr}}".
+                  - Tytuł: Atrakcyjny i relewantny, np. "Cotygodniowy Buzz na Rynku Pracy:" Tytuł ma być chwytliwy i trochę clickbaitowy podający istotę treści.
                   - Wstęp: Krótki haczyk (1-2 zdania) podsumowujący klimat tygodnia.
                   - Główne sekcje: 4-6 punktów lub krótkich akapitów, każdy skupiony na głównym wydarzeniu lub trendzie. Włącz:
                     - Co się wydarzyło (fakty).
                     - Dlaczego to ważne (wpływ na szukających pracy/pracodawców).
                     - Ciekawy szczegół (anegdota lub statystyka).
                   - Zakończenie: 1-2 zdania z prognozami lub poradami.
-                - **Długość**: Zwięzła dla czytania na mobile – 400-600 słów łącznie.
-                - **Ton**: Profesjonalny, ale przystępny, optymistyczny i informacyjny. Unikaj żargonu; wyjaśniaj terminy jeśli potrzeba.
-                - **Optymalizacja SEO**: Upewnij się, że treść jest zgodna z najlepszymi praktykami SEO na 2025 rok. Włącz naturalnie słowa kluczowe związane z rynkiem pracy (np. "trendy zatrudnienia 2025", "nowinki na rynku pracy"). Używaj nagłówków H2/H3 dla sekcji (np. ## Sekcja 1), list wypunktowanych dla czytelności, krótkich akapitów. Dodaj sekcję FAQ na końcu, jeśli pasuje, i cytuj źródła z linkami. Pisz dla użytkowników, nie dla wyszukiwarek, ale buduj topical authority wokół tematu rynku pracy. Zoptymalizuj tytuł i wstęp pod kątem klikalności.
-                - **Źródła**: Podaj 3-5 kluczowych źródeł na końcu (np. URL-e z Bloomberg, LinkedIn News lub stron statystycznych), z anchor textami dla linków.
+                - **Ton**: Pisz tak, jakbyś prowadził blog ekspercki – profesjonalnie, ale przystępnie, z elementem narracyjnym.
+                - **Optymalizacja SEO**: Upewnij się, że treść jest zgodna z najlepszymi praktykami SEO na 2025 rok. Włącz naturalnie słowa kluczowe związane z rynkiem pracy (np. "trendy zatrudnienia 2025", "nowinki na rynku pracy"). Używaj nagłówków H2/H3 dla sekcji (np. ## Sekcja 1), list wypunktowanych dla czytelności, krótkich akapitów. Dodaj sekcję FAQ na końcu, jeśli pasuje. Pisz dla użytkowników, nie dla wyszukiwarek, ale buduj topical authority wokół tematu rynku pracy. Zoptymalizuj tytuł i wstęp pod kątem klikalności.
                 - **Format wyjścia**: Zwykły tekst z markdown dla czytelności (pogrubienie nagłówków, punkty dla list, ## dla H2).
+
+                WYMAGANIA DOTYCZĄCE DŁUGOŚCI:
+                - Title: krótki i chwytliwy (około 50-100 znaków)
+                - Summary: zwięzłe podsumowanie głównych punktów (około 100-150 znaków)
+                - Content: ROZBUDOWANY artykuł blogowy z minimum 2500 znaków, idealnie 3000-3500 znaków
+                Pamiętaj: Content to PEŁNY ARTYKUŁ, nie streszczenie!
+
+                WAŻNE UWAGI:
+                - Nie wymyślaj danych ani statystyk. Jeśli nie masz pewności, podaj orientacyjny trend i zaznacz brak dokładnych liczb.
+                - Wplataj słowa kluczowe naturalnie w tekst. Użyj frazy głównej ("rynek pracy 2025") co najmniej raz w tytule, we wstępie i w jednej z sekcji.
+                - Dodaj 1 pytanie retoryczne lub ciekawostkę w każdej sekcji, aby zwiększyć zaangażowanie.
 
                 Upewnij się, że treść jest oryginalna, nie skopiowana, i dostosowana do użytkowników aplikacji zainteresowanych rozwojem kariery.
                 """;
@@ -81,7 +90,9 @@ namespace VocareWebAPI.MarketNews.Services.Implementations
                     type = "json_schema",
                     json_schema = new
                     {
-                        schema = new // <-- Add this nesting for the schema
+                        name = "market_news", // ⚠️ DODAJ name - wymagane!
+                        strict = true, // ⚠️ DODAJ strict - wymagane!
+                        schema = new
                         {
                             type = "object",
                             properties = new
@@ -116,6 +127,17 @@ namespace VocareWebAPI.MarketNews.Services.Implementations
 
             var responseContent = await response.Content.ReadAsStringAsync();
 
+            _logger.LogInformation(
+                "Response status: {StatusCode}, Content length: {Length}",
+                response.StatusCode,
+                responseContent.Length
+            );
+            var preview =
+                responseContent.Length > 500
+                    ? responseContent.Substring(0, 500) + "..."
+                    : responseContent;
+            _logger.LogInformation("Response preview: {Preview}", preview);
+
             if (!response.IsSuccessStatusCode)
             {
                 _logger.LogError(
@@ -128,7 +150,12 @@ namespace VocareWebAPI.MarketNews.Services.Implementations
                 );
             }
             try
-            {
+            { // 🔍 Sprawdź czy odpowiedź to JSON
+                if (responseContent.TrimStart().StartsWith("<"))
+                {
+                    _logger.LogError("Response is HTML/XML, not JSON: {Content}", responseContent);
+                    throw new Exception("API returned HTML/XML instead of JSON");
+                }
                 // 🔍 KROK 1: Parsowanie structured JSON response
                 using var json = JsonDocument.Parse(responseContent);
                 var aiContent = json
@@ -137,7 +164,9 @@ namespace VocareWebAPI.MarketNews.Services.Implementations
                     .GetProperty("content")
                     .GetString();
 
-                // 🎯 KROK 2: Parsowanie structured response (JSON w JSON)
+                // Dodaj pełne logowanie aiContent
+                _logger.LogInformation("AI Content full: {Content}", aiContent);
+
                 using var contentJson = JsonDocument.Parse(aiContent);
                 var title =
                     contentJson.RootElement.GetProperty("title").GetString()
@@ -146,9 +175,33 @@ namespace VocareWebAPI.MarketNews.Services.Implementations
                 var content = contentJson.RootElement.GetProperty("content").GetString() ?? "";
 
                 // 🛡️ KROK 3: Validation (database constraints)
-                title = title.Length > 100 ? title.Substring(0, 97) + "..." : title;
-                summary = summary.Length > 150 ? summary.Substring(0, 147) + "..." : summary;
-                content = content.Length > 3000 ? content.Substring(0, 2997) + "..." : content;
+                if (title.Length > 100)
+                {
+                    _logger.LogWarning("Title exceeds limit: {Length} chars", title.Length);
+                    title = title.Substring(0, 97) + "...";
+                }
+
+                if (summary.Length > 150)
+                {
+                    _logger.LogWarning("Summary exceeds limit: {Length} chars", summary.Length);
+                    summary = summary.Substring(0, 147) + "...";
+                }
+
+                if (content.Length > 10000)
+                {
+                    _logger.LogWarning(
+                        "Content exceeds database limit: {Length} chars",
+                        content.Length
+                    );
+                    content = content.Substring(0, 9997) + "...";
+                }
+
+                _logger.LogInformation(
+                    "Generated content lengths - Title: {TitleLen}, Summary: {SummaryLen}, Content: {ContentLen}",
+                    title.Length,
+                    summary.Length,
+                    content.Length
+                );
 
                 // 🏗️ KROK 4: Tworzenie obiektu MarketNews
                 var marketNews = new MarketNewsEntity

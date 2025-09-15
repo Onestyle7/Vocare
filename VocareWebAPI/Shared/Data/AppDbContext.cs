@@ -269,7 +269,7 @@ namespace VocareWebAPI.Data
             {
                 entity.HasKey(e => e.Id);
                 entity.Property(e => e.Title).IsRequired().HasMaxLength(100);
-                entity.Property(e => e.Content).IsRequired().HasMaxLength(3000);
+                entity.Property(e => e.Content).IsRequired().HasMaxLength(10000);
                 entity.Property(e => e.Summary).IsRequired().HasMaxLength(150);
                 entity.Property(e => e.CreatedAt).IsRequired();
                 entity.HasIndex(e => e.CreatedAt);

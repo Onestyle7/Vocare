@@ -15,7 +15,7 @@ namespace VocareWebAPI.MarketNews.Models.Entities
         public string Title { get; set; } = String.Empty;
 
         [Required]
-        [MaxLength(3000)]
+        [MaxLength(10000)]
         public string Content { get; set; } = String.Empty;
 
         [Required]
