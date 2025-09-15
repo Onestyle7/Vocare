@@ -694,7 +694,11 @@ const CVCreator: React.FC<CVCreatorProps> = ({ initialCv }) => {
     const pagesNodes = container.querySelectorAll<HTMLElement>('.cv-page');
     const restoreStyles: Array<{ el: HTMLElement; boxShadow: string; border: string }> = [];
     pagesNodes.forEach((el) => {
-      restoreStyles.push({ el, boxShadow: el.style.boxShadow || '', border: el.style.border || '' });
+      restoreStyles.push({
+        el,
+        boxShadow: el.style.boxShadow || '',
+        border: el.style.border || '',
+      });
       el.style.boxShadow = 'none';
       el.style.border = 'none';
     });
@@ -724,52 +728,56 @@ const CVCreator: React.FC<CVCreatorProps> = ({ initialCv }) => {
       el.style.border = border;
     });
 
-    const fileName = personalInfo.firstName && personalInfo.lastName
-      ? `${personalInfo.firstName}_${personalInfo.lastName}_CV.pdf`
-      : 'My_CV.pdf';
+    const fileName =
+      personalInfo.firstName && personalInfo.lastName
+        ? `${personalInfo.firstName}_${personalInfo.lastName}_CV.pdf`
+        : 'My_CV.pdf';
     pdf.save(fileName);
   };
 
   // Section visibility helper (must match preview rendering conditions)
-  const isSectionVisible = React.useCallback((sectionId: string) => {
-    switch (sectionId) {
-      case 'profile':
-        return Boolean(
-          personalInfo.firstName ||
-            personalInfo.lastName ||
-            personalInfo.email ||
-            personalInfo.phone ||
-            personalInfo.address ||
-            personalInfo.profession ||
-            personalInfo.summary
-        );
-      case 'experience':
-        return experiences.length > 0;
-      case 'education':
-        return education.length > 0;
-      case 'certificates':
-        return certificates.length > 0;
-      case 'skills':
-        return skills.length > 0;
-      case 'languages':
-        return languages.length > 0;
-      case 'hobbies':
-        return hobbies.length > 0;
-      case 'privacy':
-        return Boolean(privacyStatement.content && privacyStatement.content.trim().length > 0);
-      default:
-        return false;
-    }
-  }, [
-    personalInfo,
-    experiences,
-    education,
-    certificates,
-    skills,
-    languages,
-    hobbies,
-    privacyStatement,
-  ]);
+  const isSectionVisible = React.useCallback(
+    (sectionId: string) => {
+      switch (sectionId) {
+        case 'profile':
+          return Boolean(
+            personalInfo.firstName ||
+              personalInfo.lastName ||
+              personalInfo.email ||
+              personalInfo.phone ||
+              personalInfo.address ||
+              personalInfo.profession ||
+              personalInfo.summary
+          );
+        case 'experience':
+          return experiences.length > 0;
+        case 'education':
+          return education.length > 0;
+        case 'certificates':
+          return certificates.length > 0;
+        case 'skills':
+          return skills.length > 0;
+        case 'languages':
+          return languages.length > 0;
+        case 'hobbies':
+          return hobbies.length > 0;
+        case 'privacy':
+          return Boolean(privacyStatement.content && privacyStatement.content.trim().length > 0);
+        default:
+          return false;
+      }
+    },
+    [
+      personalInfo,
+      experiences,
+      education,
+      certificates,
+      skills,
+      languages,
+      hobbies,
+      privacyStatement,
+    ]
+  );
 
   // Build measured pages: render invisible blocks, measure (including margins), then pack
   useLayoutEffect(() => {
@@ -787,7 +795,9 @@ const CVCreator: React.FC<CVCreatorProps> = ({ initialCv }) => {
       headerHeight = headerEl.offsetHeight + mt + mb; // include margins
     }
 
-    const blocks = Array.from(container.querySelectorAll<HTMLElement>('.cv-section[data-block-id]'));
+    const blocks = Array.from(
+      container.querySelectorAll<HTMLElement>('.cv-section[data-block-id]')
+    );
     const heights = new Map<string, number>();
     const sectionHeaderHeights = new Map<string, number>();
     const sectionItemHeights = new Map<string, Array<{ id: string; h: number }>>();
@@ -911,7 +921,7 @@ const CVCreator: React.FC<CVCreatorProps> = ({ initialCv }) => {
         // Fit as many items as possible on this page
         while (idx < items.length) {
           const it = items[idx];
-          if (chunkH + it.h <= (limit - used)) {
+          if (chunkH + it.h <= limit - used) {
             chunkIds.push(it.id);
             chunkH += it.h;
             idx++;
@@ -1570,21 +1580,36 @@ const CVCreator: React.FC<CVCreatorProps> = ({ initialCv }) => {
           personalInfo.address ||
           personalInfo.profession ||
           personalInfo.summary ? (
-          <div className="cv-section mb-5" key="profile" data-block-id="profile" data-section="profile">
-            <h3 className="mb-2 border-b border-gray-300 pb-1 text-lg font-semibold text-gray-800">Personal Profile</h3>
+          <div
+            className="cv-section mb-5"
+            key="profile"
+            data-block-id="profile"
+            data-section="profile"
+          >
+            <h3 className="mb-2 border-b border-gray-300 pb-1 text-lg font-semibold text-gray-800">
+              Personal Profile
+            </h3>
             <div className="text-sm leading-relaxed break-words text-gray-700">
-              {(personalInfo.summary || '').split(/\n+/).filter(Boolean).map((para, i) => (
-                <p key={`sum-${i}`} className="para-item mb-2 last:mb-0" data-item-id={`p${i}`}>
-                  {para}
-                </p>
-              ))}
+              {(personalInfo.summary || '')
+                .split(/\n+/)
+                .filter(Boolean)
+                .map((para, i) => (
+                  <p key={`sum-${i}`} className="para-item mb-2 last:mb-0" data-item-id={`p${i}`}>
+                    {para}
+                  </p>
+                ))}
             </div>
           </div>
         ) : null;
 
       case 'experience':
         return experiences.length > 0 ? (
-          <div className="cv-section mb-5" key="experience" data-block-id="experience" data-section="experience">
+          <div
+            className="cv-section mb-5"
+            key="experience"
+            data-block-id="experience"
+            data-section="experience"
+          >
             <h3 className="mb-2 flex items-center border-b border-gray-300 pb-1 text-lg font-semibold text-gray-800">
               <Briefcase size={16} className="mr-2" />
               Work Exeperience
@@ -1620,7 +1645,12 @@ const CVCreator: React.FC<CVCreatorProps> = ({ initialCv }) => {
 
       case 'education':
         return education.length > 0 ? (
-          <div className="cv-section mb-5" key="education" data-block-id="education" data-section="education">
+          <div
+            className="cv-section mb-5"
+            key="education"
+            data-block-id="education"
+            data-section="education"
+          >
             <h3 className="mb-2 flex items-center border-b border-gray-300 pb-1 text-lg font-semibold text-gray-800">
               <GraduationCap size={16} className="mr-2" />
               Education
@@ -1648,7 +1678,12 @@ const CVCreator: React.FC<CVCreatorProps> = ({ initialCv }) => {
 
       case 'certificates':
         return certificates.length > 0 ? (
-          <div className="cv-section mb-5" key="certificates" data-block-id="certificates" data-section="certificates">
+          <div
+            className="cv-section mb-5"
+            key="certificates"
+            data-block-id="certificates"
+            data-section="certificates"
+          >
             <h3 className="mb-2 flex items-center border-b border-gray-300 pb-1 text-lg font-semibold text-gray-800">
               <Award size={16} className="mr-2" />
               Certificates
@@ -1668,7 +1703,12 @@ const CVCreator: React.FC<CVCreatorProps> = ({ initialCv }) => {
 
       case 'skills':
         return skills.length > 0 ? (
-          <div className="cv-section mb-5" key="skills" data-block-id="skills" data-section="skills">
+          <div
+            className="cv-section mb-5"
+            key="skills"
+            data-block-id="skills"
+            data-section="skills"
+          >
             <h3 className="mb-2 flex items-center border-b border-gray-300 pb-1 text-lg font-semibold text-gray-800">
               <Award size={16} className="mr-2" />
               Skills
@@ -1688,7 +1728,12 @@ const CVCreator: React.FC<CVCreatorProps> = ({ initialCv }) => {
 
       case 'languages':
         return languages.length > 0 ? (
-          <div className="cv-section mb-5" key="languages" data-block-id="languages" data-section="languages">
+          <div
+            className="cv-section mb-5"
+            key="languages"
+            data-block-id="languages"
+            data-section="languages"
+          >
             <h3 className="mb-2 flex items-center border-b border-gray-300 pb-1 text-lg font-semibold text-gray-800">
               <Languages size={16} className="mr-2" />
               Languages
@@ -1708,7 +1753,12 @@ const CVCreator: React.FC<CVCreatorProps> = ({ initialCv }) => {
 
       case 'hobbies':
         return hobbies.length > 0 ? (
-          <div className="cv-section mb-5" key="hobbies" data-block-id="hobbies" data-section="hobbies">
+          <div
+            className="cv-section mb-5"
+            key="hobbies"
+            data-block-id="hobbies"
+            data-section="hobbies"
+          >
             <h3 className="mb-2 flex items-center border-b border-gray-300 pb-1 text-lg font-semibold text-gray-800">
               <Tag size={16} className="mr-2" />
               Hobby
@@ -1728,14 +1778,24 @@ const CVCreator: React.FC<CVCreatorProps> = ({ initialCv }) => {
 
       case 'privacy':
         return privacyStatement.content ? (
-          <div className="cv-section mb-5" key="privacy" data-block-id="privacy" data-section="privacy">
-            <h3 className="mb-2 border-b border-gray-300 pb-1 text-lg font-semibold text-gray-800">Privacy Statement</h3>
+          <div
+            className="cv-section mb-5"
+            key="privacy"
+            data-block-id="privacy"
+            data-section="privacy"
+          >
+            <h3 className="mb-2 border-b border-gray-300 pb-1 text-lg font-semibold text-gray-800">
+              Privacy Statement
+            </h3>
             <div className="text-xs leading-relaxed break-words text-gray-700">
-              {(privacyStatement.content || '').split(/\n+/).filter(Boolean).map((para, i) => (
-                <p key={`priv-${i}`} className="para-item mb-2 last:mb-0" data-item-id={`p${i}`}>
-                  {para}
-                </p>
-              ))}
+              {(privacyStatement.content || '')
+                .split(/\n+/)
+                .filter(Boolean)
+                .map((para, i) => (
+                  <p key={`priv-${i}`} className="para-item mb-2 last:mb-0" data-item-id={`p${i}`}>
+                    {para}
+                  </p>
+                ))}
             </div>
           </div>
         ) : null;
@@ -1746,7 +1806,7 @@ const CVCreator: React.FC<CVCreatorProps> = ({ initialCv }) => {
   };
 
   const renderHeader = () => (
-    <div className="mb-6 cv-section" data-block-id="header">
+    <div className="cv-section mb-6" data-block-id="header">
       <h1 className="mb-2 text-3xl leading-tight font-bold text-gray-900">
         {personalInfo.firstName || personalInfo.lastName
           ? `${personalInfo.firstName} ${personalInfo.lastName}`.trim()
@@ -1826,15 +1886,22 @@ const CVCreator: React.FC<CVCreatorProps> = ({ initialCv }) => {
           <div key={exp.id} className="exp-item mb-4" data-item-id={exp.id}>
             <div className="exp-header mb-1 flex items-start justify-between">
               <div className="min-w-0 flex-1">
-                <div className="truncate font-semibold text-gray-900">{exp.position || 'Position'}</div>
-                <div className="truncate font-medium text-gray-700">{exp.company || 'Company name'}</div>
+                <div className="truncate font-semibold text-gray-900">
+                  {exp.position || 'Position'}
+                </div>
+                <div className="truncate font-medium text-gray-700">
+                  {exp.company || 'Company name'}
+                </div>
               </div>
               <div className="ml-2 flex-shrink-0 text-xs text-gray-600">
-                {formatDate(exp.startDate)} - {exp.isCurrent || !exp.endDate ? 'present' : formatDate(exp.endDate)}
+                {formatDate(exp.startDate)} -{' '}
+                {exp.isCurrent || !exp.endDate ? 'present' : formatDate(exp.endDate)}
               </div>
             </div>
             {exp.description && (
-              <div className="exp-desc text-sm leading-relaxed text-gray-700">{exp.description}</div>
+              <div className="exp-desc text-sm leading-relaxed text-gray-700">
+                {exp.description}
+              </div>
             )}
           </div>
         ))}
@@ -1853,10 +1920,13 @@ const CVCreator: React.FC<CVCreatorProps> = ({ initialCv }) => {
                 <h4 className="truncate font-semibold text-gray-900">
                   {edu.field || 'Field of study'} - {edu.degree || 'Degree'}
                 </h4>
-                <p className="truncate font-medium text-gray-700">{edu.school || 'School/University'}</p>
+                <p className="truncate font-medium text-gray-700">
+                  {edu.school || 'School/University'}
+                </p>
               </div>
               <div className="ml-2 flex-shrink-0 text-xs text-gray-600">
-                {formatDate(edu.startDate)} - {edu.isCurrent || !edu.endDate ? 'present' : formatDate(edu.endDate)}
+                {formatDate(edu.startDate)} -{' '}
+                {edu.isCurrent || !edu.endDate ? 'present' : formatDate(edu.endDate)}
               </div>
             </div>
           </div>
@@ -1885,68 +1955,107 @@ const CVCreator: React.FC<CVCreatorProps> = ({ initialCv }) => {
     const { sectionId, items, includeTitle } = chunk;
     // For simple sections without item splitting, render full section
     if (!items || items.length === 0) {
-      return <React.Fragment key={`chunk-${sectionId}-${Math.random()}`}>{renderSectionInPreview(sectionId)}</React.Fragment>;
+      return (
+        <React.Fragment key={`chunk-${sectionId}-${Math.random()}`}>
+          {renderSectionInPreview(sectionId)}
+        </React.Fragment>
+      );
     }
 
     // Split-capable sections
     switch (sectionId) {
       case 'profile':
         return (
-          <div className="cv-section mb-5" data-block-id="profile" data-section="profile" key={`chunk-prof-${items.join('-')}`}>
+          <div
+            className="cv-section mb-5"
+            data-block-id="profile"
+            data-section="profile"
+            key={`chunk-prof-${items.join('-')}`}
+          >
             {includeTitle && renderSectionTitle('profile')}
             <div className="text-sm leading-relaxed break-words text-gray-700">
-              {(personalInfo.summary || '').split(/\n+/).filter(Boolean).map((para, i) => {
-                const id = `p${i}`;
-                if (!items.includes(id)) return null;
-                return (
-                  <p key={`sum-${i}`} className="para-item mb-2 last:mb-0" data-item-id={id}>
-                    {para}
-                  </p>
-                );
-              })}
+              {(personalInfo.summary || '')
+                .split(/\n+/)
+                .filter(Boolean)
+                .map((para, i) => {
+                  const id = `p${i}`;
+                  if (!items.includes(id)) return null;
+                  return (
+                    <p key={`sum-${i}`} className="para-item mb-2 last:mb-0" data-item-id={id}>
+                      {para}
+                    </p>
+                  );
+                })}
             </div>
           </div>
         );
       case 'experience':
         return (
-          <div className="cv-section mb-5" data-block-id="experience" data-section="experience" key={`chunk-exp-${items.join('-')}`}>
+          <div
+            className="cv-section mb-5"
+            data-block-id="experience"
+            data-section="experience"
+            key={`chunk-exp-${items.join('-')}`}
+          >
             {includeTitle && renderSectionTitle('experience')}
             {renderExperienceItems(items)}
           </div>
         );
       case 'education':
         return (
-          <div className="cv-section mb-5" data-block-id="education" data-section="education" key={`chunk-edu-${items.join('-')}`}>
+          <div
+            className="cv-section mb-5"
+            data-block-id="education"
+            data-section="education"
+            key={`chunk-edu-${items.join('-')}`}
+          >
             {includeTitle && renderSectionTitle('education')}
             {renderEducationItems(items)}
           </div>
         );
       case 'certificates':
         return (
-          <div className="cv-section mb-5" data-block-id="certificates" data-section="certificates" key={`chunk-cert-${items.join('-')}`}>
+          <div
+            className="cv-section mb-5"
+            data-block-id="certificates"
+            data-section="certificates"
+            key={`chunk-cert-${items.join('-')}`}
+          >
             {includeTitle && renderSectionTitle('certificates')}
             {renderCertificatesItems(items)}
           </div>
         );
       case 'privacy':
         return (
-          <div className="cv-section mb-5" data-block-id="privacy" data-section="privacy" key={`chunk-priv-${items.join('-')}`}>
+          <div
+            className="cv-section mb-5"
+            data-block-id="privacy"
+            data-section="privacy"
+            key={`chunk-priv-${items.join('-')}`}
+          >
             {includeTitle && renderSectionTitle('privacy')}
             <div className="text-xs leading-relaxed break-words text-gray-700">
-              {(privacyStatement.content || '').split(/\n+/).filter(Boolean).map((para, i) => {
-                const id = `p${i}`;
-                if (!items.includes(id)) return null;
-                return (
-                  <p key={`priv-${i}`} className="para-item mb-2 last:mb-0" data-item-id={id}>
-                    {para}
-                  </p>
-                );
-              })}
+              {(privacyStatement.content || '')
+                .split(/\n+/)
+                .filter(Boolean)
+                .map((para, i) => {
+                  const id = `p${i}`;
+                  if (!items.includes(id)) return null;
+                  return (
+                    <p key={`priv-${i}`} className="para-item mb-2 last:mb-0" data-item-id={id}>
+                      {para}
+                    </p>
+                  );
+                })}
             </div>
           </div>
         );
       default:
-        return <React.Fragment key={`chunk-default-${sectionId}`}>{renderSectionInPreview(sectionId)}</React.Fragment>;
+        return (
+          <React.Fragment key={`chunk-default-${sectionId}`}>
+            {renderSectionInPreview(sectionId)}
+          </React.Fragment>
+        );
     }
   };
 
@@ -2244,7 +2353,13 @@ const CVCreator: React.FC<CVCreatorProps> = ({ initialCv }) => {
             {/* Hidden measurement container to compute heights */}
             <div
               ref={measureContainerRef}
-              style={{ position: 'absolute', left: '-10000px', top: '-10000px', width: `${PAGE_WIDTH_MM}mm`, background: '#fff' }}
+              style={{
+                position: 'absolute',
+                left: '-10000px',
+                top: '-10000px',
+                width: `${PAGE_WIDTH_MM}mm`,
+                background: '#fff',
+              }}
             >
               <div style={{ padding: `${PAGE_PADDING_MM}mm` }}>
                 {renderHeader()}
@@ -2266,16 +2381,29 @@ const CVCreator: React.FC<CVCreatorProps> = ({ initialCv }) => {
                 }}
                 onMouseDown={handleMouseDown}
               >
-                {(pages.length ? pages : [[/* empty page */] as SectionChunk[]]).map((page, idx) => (
+                {(pages.length
+                  ? pages
+                  : [
+                      [
+                        /* empty page */
+                      ] as SectionChunk[],
+                    ]
+                ).map((page, idx) => (
                   <div
                     key={`page-${idx}`}
                     className="cv-page mb-6 overflow-hidden rounded-sm shadow"
-                    style={{ width: `${PAGE_WIDTH_MM}mm`, height: `${PAGE_HEIGHT_MM}mm`, background: '#fff' }}
+                    style={{
+                      width: `${PAGE_WIDTH_MM}mm`,
+                      height: `${PAGE_HEIGHT_MM}mm`,
+                      background: '#fff',
+                    }}
                   >
-                    <div className="h-full box-border" style={{ padding: `${PAGE_PADDING_MM}mm` }}>
+                    <div className="box-border h-full" style={{ padding: `${PAGE_PADDING_MM}mm` }}>
                       {idx === 0 && renderHeader()}
                       {page.map((chunk, cidx) => (
-                        <React.Fragment key={`p${idx}-c${cidx}`}>{renderChunk(chunk)}</React.Fragment>
+                        <React.Fragment key={`p${idx}-c${cidx}`}>
+                          {renderChunk(chunk)}
+                        </React.Fragment>
                       ))}
                       {/* Empty state message on first page */}
                       {idx === 0 &&
@@ -2286,7 +2414,9 @@ const CVCreator: React.FC<CVCreatorProps> = ({ initialCv }) => {
                         skills.length === 0 &&
                         education.length === 0 && (
                           <div className="mt-20 text-center text-gray-500">
-                            <p className="text-lg">Start filling the form on the left to create your CV.</p>
+                            <p className="text-lg">
+                              Start filling the form on the left to create your CV.
+                            </p>
                           </div>
                         )}
                     </div>

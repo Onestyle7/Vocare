@@ -188,15 +188,12 @@ export default function AssistantPage() {
         }
 
         // Jeśli brak ostatnich rekomendacji, wygeneruj nowe
-        const response = await axios.get<AiCareerResponse>(
-          `${API_URL}/api/Ai/recommendations`,
-          {
-            headers: {
-              Authorization: `Bearer ${token}`,
-              'Content-Type': 'application/json',
-            },
-          }
-        );
+        const response = await axios.get<AiCareerResponse>(`${API_URL}/api/Ai/recommendations`, {
+          headers: {
+            Authorization: `Bearer ${token}`,
+            'Content-Type': 'application/json',
+          },
+        });
         console.log('New recommendations:', response.data);
         setRecommendations(response.data);
       } catch (err: unknown) {
@@ -240,15 +237,12 @@ export default function AssistantPage() {
       return;
     }
     try {
-      const response = await axios.get<AiCareerResponse>(
-        `${API_URL}/api/Ai/recommendations`,
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-            'Content-Type': 'application/json',
-          },
-        }
-      );
+      const response = await axios.get<AiCareerResponse>(`${API_URL}/api/Ai/recommendations`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+          'Content-Type': 'application/json',
+        },
+      });
       setRecommendations(response.data);
       toast.success('New recommendations have been generated');
     } catch (err: unknown) {
@@ -412,7 +406,7 @@ export default function AssistantPage() {
           </div>
 
           <AlertDialog open={isConfirmDialogOpen} onOpenChange={setIsConfirmDialogOpen}>
-            <AlertDialogContent className="font-poppins mx-auto max-w-md font-korbin">
+            <AlertDialogContent className="font-poppins font-korbin mx-auto max-w-md">
               <AlertDialogHeader>
                 <AlertDialogTitle className="text-center text-xl font-bold">
                   Generate new recommendation?

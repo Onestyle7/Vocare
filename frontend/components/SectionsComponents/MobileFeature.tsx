@@ -6,11 +6,11 @@ import { SplitText, ScrollTrigger } from 'gsap/all';
 
 import { gsap } from 'gsap';
 import { avatars, mobileView, shape1 } from '@/app/constants';
-import Section from '../Section';
 import Iphone15Pro from '@/components/magicui/iphone-15-pro';
 import { AvatarCircles } from '@/components/magicui/avatar-circles';
 import Image from 'next/image';
-import Copy from '../Copy';
+import Copy from '../SupportComponents/Copy';
+import Section from '../SupportComponents/Section';
 
 gsap.registerPlugin(SplitText, ScrollTrigger);
 

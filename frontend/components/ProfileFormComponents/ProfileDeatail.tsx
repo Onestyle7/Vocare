@@ -15,6 +15,8 @@ import { Button } from '../ui/button';
 import Section from '../SupportComponents/Section';
 import { Risk, riskLabels } from '@/lib/enums/risk';
 import { PersonalityType, personalityTypeLabels } from '@/lib/enums/personalityTypes';
+import Image from 'next/image';
+import { spinner_terminal } from '@/app/constants';
 
 const getPersonalityLabel = (value: PersonalityType | string | undefined): string => {
   if (value === undefined || value === null || value === '') {
@@ -98,7 +100,17 @@ export default function ProfileDetails() {
   const isProfileEmpty = !profile;
 
   if (loading) {
-    return <div className="flex h-screen items-center justify-center">Loading profile...</div>;
+    return (
+      <div className="flex h-screen items-center justify-center">
+        <Image
+          src={spinner_terminal}
+          alt="Loading profile"
+          width={48}
+          height={48}
+          className="animate-spin"
+        />
+      </div>
+    );
   }
 
   if (isEditing) {

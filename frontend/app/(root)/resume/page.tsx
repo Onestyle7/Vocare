@@ -1,5 +1,5 @@
-import Header from '@/components/SupportComponents/SectionsComponents/Header';
-import ResumeDashboard from '@/app/(root)/resume/resumeDashboard';
+import ResumeDashboard from '@/components/ResumeComponents/resumeDashboard';
+import Header from '@/components/SectionsComponents/Header';
 import React from 'react';
 
 const page = () => {

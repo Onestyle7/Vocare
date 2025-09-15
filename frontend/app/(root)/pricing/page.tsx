@@ -1,5 +1,5 @@
 import PricingMain from '@/components/PricingComponents/PricingMain';
-import Header from '@/components/SupportComponents/SectionsComponents/Header';
+import Header from '@/components/SectionsComponents/Header';
 import React from 'react';
 
 const page = () => {

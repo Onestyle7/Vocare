@@ -7,9 +7,9 @@ import { shape1 } from '@/app/constants';
 import { SplitText, ScrollTrigger } from 'gsap/all';
 import SectionGsap from '@/components/ui/SectionGsap';
 import { ScrollParallax } from 'react-just-parallax';
-import Copy from '../Copy';
 import { Safari } from '@/components/magicui/safari';
 import Link from 'next/link';
+import Copy from '../SupportComponents/Copy';
 
 gsap.registerPlugin(SplitText, ScrollTrigger);
 

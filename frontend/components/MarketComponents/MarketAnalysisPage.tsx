@@ -330,7 +330,7 @@ export default function MarketAnalysis() {
             </div>
 
             <AlertDialog open={isConfirmDialogOpen} onOpenChange={setIsConfirmDialogOpen}>
-              <AlertDialogContent className="font-poppins mx-auto max-w-md font-korbin">
+              <AlertDialogContent className="font-poppins font-korbin mx-auto max-w-md">
                 <AlertDialogHeader>
                   <AlertDialogTitle className="text-center text-xl font-bold">
                     Generate new recommendation?
@@ -346,7 +346,9 @@ export default function MarketAnalysis() {
                 </AlertDialogHeader>
 
                 <AlertDialogFooter className="flex justify-center gap-4 sm:justify-center">
-                  <AlertDialogCancel className="border-muted-foreground/20">Cancel</AlertDialogCancel>
+                  <AlertDialogCancel className="border-muted-foreground/20">
+                    Cancel
+                  </AlertDialogCancel>
 
                   {!isBalanceLoading && typeof tokenBalance === 'number' && tokenBalance < 5 ? (
                     <Link href="/pricing">
