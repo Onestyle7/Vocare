@@ -10,6 +10,7 @@ using VocareWebAPI.CvGenerator.Services.Implementations;
 using VocareWebAPI.CvGenerator.Services.Interfaces;
 using VocareWebAPI.MarketNews.Repositories.Implementations;
 using VocareWebAPI.MarketNews.Repositories.Interfaces;
+using VocareWebAPI.MarketNews.services.Implementations;
 using VocareWebAPI.MarketNews.Services.Implementations;
 using VocareWebAPI.MarketNews.Services.Interfaces;
 using VocareWebAPI.Repositories;
@@ -50,6 +51,8 @@ namespace VocareWebAPI.Extensions.ServiceCollectionExtensions
             // Other services
             services.AddScoped<IEmailService, EmailService>();
             services.AddScoped<IMarketNewsService, MarketNewsService>();
+
+            services.AddHostedService<MarketNewsBackgroundService>();
 
             return services;
         }
