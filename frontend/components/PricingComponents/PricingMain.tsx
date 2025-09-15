@@ -227,7 +227,7 @@ const PricingMain = () => {
                     </ul>
                   </div>
                   <Button
-                    className="relative mt-auto h-12 w-full rounded-full font-bold"
+                    className="relative mt-auto h-12 w-full rounded-full font-bold bg-[linear-gradient(90deg,rgba(146,150,253,1)_0%,rgba(132,145,254,1)_50%,rgba(199,169,254,1)_100%,rgba(157,155,255,1)_77%)] text-white"
                     variant="default"
                   >
                     Buy plan
