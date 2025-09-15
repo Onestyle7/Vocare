@@ -53,6 +53,8 @@ app.UseSwaggerConfiguration(app.Environment);
 
 // ===== MIDDLEWARE PIPELINE =====
 app.UseRouting();
+app.UseCors("AllowAll");
+
 app.UseCustomCorsMiddleware();
 app.UseStagingHeaders();
 app.UseSecurityHeaders();

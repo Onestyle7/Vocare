@@ -21,26 +21,22 @@ namespace VocareWebAPI.Extensions.ApplicationBuilderExtensions
                 {
                     try
                     {
-                        // Ustaw CORS dla WSZYSTKICH requestów od razu
+                        // Ustaw CORS dla WSZYSTKICH requestów
                         var origin = context.Request.Headers["Origin"].ToString();
+
+                        // Na stagingu akceptuj wszystkie originy
                         if (!string.IsNullOrEmpty(origin))
                         {
-                            context.Response.Headers.Add("Access-Control-Allow-Origin", origin);
-                            context.Response.Headers.Add(
-                                "Access-Control-Allow-Credentials",
-                                "true"
-                            );
-                            context.Response.Headers.Add(
-                                "Access-Control-Allow-Methods",
-                                "GET, POST, PUT, DELETE, OPTIONS"
-                            );
-                            context.Response.Headers.Add(
-                                "Access-Control-Allow-Headers",
-                                "Content-Type, Authorization"
-                            );
+                            context.Response.Headers["Access-Control-Allow-Origin"] = origin;
+                            context.Response.Headers["Access-Control-Allow-Credentials"] = "true";
+                            context.Response.Headers["Access-Control-Allow-Methods"] =
+                                "GET, POST, PUT, DELETE, OPTIONS, PATCH";
+                            context.Response.Headers["Access-Control-Allow-Headers"] =
+                                "Content-Type, Authorization, X-Requested-With";
+                            context.Response.Headers["Access-Control-Max-Age"] = "86400"; // Cache preflight na 24h
                         }
 
-                        // Handle preflight OPTIONS requests
+                        // Handle preflight
                         if (context.Request.Method == "OPTIONS")
                         {
                             context.Response.StatusCode = 204;
@@ -51,40 +47,40 @@ namespace VocareWebAPI.Extensions.ApplicationBuilderExtensions
                     }
                     catch (Exception ex)
                     {
-                        // Loguj błąd
                         var logger = context.RequestServices.GetRequiredService<ILogger<Program>>();
                         logger.LogError(
                             ex,
-                            "Unhandled exception for {Method} {Path}",
+                            "Error in CORS middleware for {Method} {Path}",
                             context.Request.Method,
                             context.Request.Path
                         );
 
-                        // WAŻNE: Ustaw CORS nawet przy błędzie!
-                        var origin = context.Request.Headers["Origin"].ToString();
-                        if (!string.IsNullOrEmpty(origin) && !context.Response.HasStarted)
-                        {
-                            context.Response.Headers.TryAdd("Access-Control-Allow-Origin", origin);
-                            context.Response.Headers.TryAdd(
-                                "Access-Control-Allow-Credentials",
-                                "true"
-                            );
-                        }
-
-                        // Zwróć błąd
+                        // CORS nawet przy błędzie
                         if (!context.Response.HasStarted)
                         {
+                            var origin = context.Request.Headers["Origin"].ToString();
+                            if (!string.IsNullOrEmpty(origin))
+                            {
+                                context.Response.Headers["Access-Control-Allow-Origin"] = origin;
+                                context.Response.Headers["Access-Control-Allow-Credentials"] =
+                                    "true";
+                            }
+
                             context.Response.StatusCode = 500;
                             context.Response.ContentType = "application/json";
 
-                            var error = new
-                            {
-                                error = "Internal server error",
-                                message = ex.Message,
-                                path = context.Request.Path.ToString(),
-                            };
-
-                            await context.Response.WriteAsync(JsonSerializer.Serialize(error));
+                            await context.Response.WriteAsync(
+                                JsonSerializer.Serialize(
+                                    new
+                                    {
+                                        error = "Internal server error",
+                                        message = app.Environment.IsDevelopment()
+                                            ? ex.Message
+                                            : "An error occurred",
+                                        path = context.Request.Path.ToString(),
+                                    }
+                                )
+                            );
                         }
                     }
                 }
