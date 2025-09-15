@@ -1,11 +1,7 @@
 using System.Text.Json;
 using Microsoft.AspNetCore.DataProtection;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
-using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Logging;
 using VocareWebAPI.Models.Entities;
-using VocareWebAPI.UserManagement.Models.Entities;
 
 namespace VocareWebAPI.Extensions.ApplicationBuilderExtensions
 {
@@ -19,74 +15,102 @@ namespace VocareWebAPI.Extensions.ApplicationBuilderExtensions
             app.Use(
                 async (context, next) =>
                 {
-                    try
-                    {
-                        // Ustaw CORS dla WSZYSTKICH requestów
-                        var origin = context.Request.Headers["Origin"].ToString();
+                    var logger = context.RequestServices.GetRequiredService<ILogger<Program>>();
 
-                        // Na stagingu akceptuj wszystkie originy
-                        if (!string.IsNullOrEmpty(origin))
+                    // Ustaw CORS headers NATYCHMIAST (nie w OnStarting!)
+                    var origin = context.Request.Headers["Origin"].ToString();
+                    if (!string.IsNullOrEmpty(origin))
+                    {
+                        // Na staging/dev akceptuj wszystkie origins
+                        if (app.Environment.IsStaging() || app.Environment.IsDevelopment())
                         {
                             context.Response.Headers["Access-Control-Allow-Origin"] = origin;
+                        }
+                        // Na produkcji tylko dozwolone domeny
+                        else if (app.Environment.IsProduction())
+                        {
+                            var allowedOrigins = new[]
+                            {
+                                "https://vocare.pl",
+                                "https://www.vocare.pl",
+                                "https://app.vocare.pl",
+                            };
+
+                            if (allowedOrigins.Any(o => origin.StartsWith(o)))
+                            {
+                                context.Response.Headers["Access-Control-Allow-Origin"] = origin;
+                            }
+                        }
+
+                        // Zawsze ustaw te headers jeśli origin jest ustawiony
+                        if (context.Response.Headers.ContainsKey("Access-Control-Allow-Origin"))
+                        {
                             context.Response.Headers["Access-Control-Allow-Credentials"] = "true";
                             context.Response.Headers["Access-Control-Allow-Methods"] =
                                 "GET, POST, PUT, DELETE, OPTIONS, PATCH";
                             context.Response.Headers["Access-Control-Allow-Headers"] =
                                 "Content-Type, Authorization, X-Requested-With";
-                            context.Response.Headers["Access-Control-Max-Age"] = "86400"; // Cache preflight na 24h
+                            context.Response.Headers["Access-Control-Max-Age"] = "86400";
                         }
+                    }
 
-                        // Handle preflight
-                        if (context.Request.Method == "OPTIONS")
-                        {
-                            context.Response.StatusCode = 204;
-                            return;
-                        }
+                    // Handle OPTIONS preflight request - WAŻNE: return natychmiast!
+                    if (context.Request.Method == "OPTIONS")
+                    {
+                        logger.LogDebug(
+                            "Handling OPTIONS preflight request for {Path}",
+                            context.Request.Path
+                        );
+                        context.Response.StatusCode = 204;
+                        return; // NIE WYWOŁUJ next()!
+                    }
 
+                    try
+                    {
                         await next();
                     }
                     catch (Exception ex)
                     {
-                        var logger = context.RequestServices.GetRequiredService<ILogger<Program>>();
                         logger.LogError(
                             ex,
-                            "Error in CORS middleware for {Method} {Path}",
+                            "Unhandled exception for {Method} {Path}",
                             context.Request.Method,
                             context.Request.Path
                         );
 
-                        // CORS nawet przy błędzie
+                        // Upewnij się że CORS headers są ustawione nawet przy błędzie
+                        if (!context.Response.HasStarted && !string.IsNullOrEmpty(origin))
+                        {
+                            context.Response.Headers.TryAdd("Access-Control-Allow-Origin", origin);
+                            context.Response.Headers.TryAdd(
+                                "Access-Control-Allow-Credentials",
+                                "true"
+                            );
+                        }
+
+                        // Zwróć błąd JSON
                         if (!context.Response.HasStarted)
                         {
-                            var origin = context.Request.Headers["Origin"].ToString();
-                            if (!string.IsNullOrEmpty(origin))
-                            {
-                                context.Response.Headers["Access-Control-Allow-Origin"] = origin;
-                                context.Response.Headers["Access-Control-Allow-Credentials"] =
-                                    "true";
-                            }
-
                             context.Response.StatusCode = 500;
                             context.Response.ContentType = "application/json";
 
-                            await context.Response.WriteAsync(
-                                JsonSerializer.Serialize(
-                                    new
-                                    {
-                                        error = "Internal server error",
-                                        message = app.Environment.IsDevelopment()
-                                            ? ex.Message
-                                            : "An error occurred",
-                                        path = context.Request.Path.ToString(),
-                                    }
-                                )
-                            );
+                            var error = new
+                            {
+                                error = "Internal server error",
+                                message = app.Environment.IsDevelopment()
+                                    ? ex.Message
+                                    : "An error occurred",
+                                path = context.Request.Path.ToString(),
+                                timestamp = DateTime.UtcNow,
+                            };
+
+                            await context.Response.WriteAsync(JsonSerializer.Serialize(error));
                         }
                     }
                 }
             );
 
-            return app; // ✅ WAŻNE: Zawsze zwracaj app!
+            return app;
         }
 
         /// <summary>
@@ -175,7 +199,7 @@ namespace VocareWebAPI.Extensions.ApplicationBuilderExtensions
                             var logger = context.RequestServices.GetRequiredService<
                                 ILogger<Program>
                             >();
-                            logger.LogWarning(ex, "Failed to validate custom token");
+                            logger.LogDebug(ex, "Failed to validate custom token");
                         }
                     }
 
