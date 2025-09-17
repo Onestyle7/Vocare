@@ -8,62 +8,71 @@ namespace VocareWebAPI.Extensions.ApplicationBuilderExtensions
     public static class MiddlewareExtensions
     {
         /// <summary>
-        /// Dodaje custom CORS middleware z obsługą błędów
+        /// Dodaje middleware do logowania CORS requests (tylko dla debugowania)
         /// </summary>
-        public static WebApplication UseCustomCorsMiddleware(this WebApplication app)
+        public static WebApplication UseCorsLoggingMiddleware(this WebApplication app)
+        {
+            if (app.Environment.IsDevelopment() || app.Environment.IsStaging())
+            {
+                app.Use(
+                    async (context, next) =>
+                    {
+                        var logger = context.RequestServices.GetRequiredService<ILogger<Program>>();
+                        var origin = context.Request.Headers["Origin"].ToString();
+
+                        if (!string.IsNullOrEmpty(origin))
+                        {
+                            logger.LogDebug(
+                                "CORS Request: Method={Method}, Path={Path}, Origin={Origin}",
+                                context.Request.Method,
+                                context.Request.Path,
+                                origin
+                            );
+                        }
+
+                        // Log preflight requests
+                        if (context.Request.Method == "OPTIONS")
+                        {
+                            logger.LogDebug(
+                                "Preflight request received for {Path} from {Origin}",
+                                context.Request.Path,
+                                origin
+                            );
+                        }
+
+                        await next();
+
+                        // Log response headers dla debugowania
+                        if (!string.IsNullOrEmpty(origin))
+                        {
+                            var corsHeader = context
+                                .Response.Headers["Access-Control-Allow-Origin"]
+                                .ToString();
+                            if (!string.IsNullOrEmpty(corsHeader))
+                            {
+                                logger.LogDebug(
+                                    "CORS Response: Allow-Origin={AllowOrigin}, Status={Status}",
+                                    corsHeader,
+                                    context.Response.StatusCode
+                                );
+                            }
+                        }
+                    }
+                );
+            }
+
+            return app;
+        }
+
+        /// <summary>
+        /// Dodaje globalne error handling z obsługą CORS
+        /// </summary>
+        public static WebApplication UseGlobalExceptionHandling(this WebApplication app)
         {
             app.Use(
                 async (context, next) =>
                 {
                     var logger = context.RequestServices.GetRequiredService<ILogger<Program>>();
-
-                    // Ustaw CORS headers NATYCHMIAST (nie w OnStarting!)
-                    var origin = context.Request.Headers["Origin"].ToString();
-                    if (!string.IsNullOrEmpty(origin))
-                    {
-                        // Na staging/dev akceptuj wszystkie origins
-                        if (app.Environment.IsStaging() || app.Environment.IsDevelopment())
-                        {
-                            context.Response.Headers["Access-Control-Allow-Origin"] = origin;
-                        }
-                        // Na produkcji tylko dozwolone domeny
-                        else if (app.Environment.IsProduction())
-                        {
-                            var allowedOrigins = new[]
-                            {
-                                "https://vocare.pl",
-                                "https://www.vocare.pl",
-                                "https://app.vocare.pl",
-                            };
-
-                            if (allowedOrigins.Any(o => origin.StartsWith(o)))
-                            {
-                                context.Response.Headers["Access-Control-Allow-Origin"] = origin;
-                            }
-                        }
-
-                        // Zawsze ustaw te headers jeśli origin jest ustawiony
-                        if (context.Response.Headers.ContainsKey("Access-Control-Allow-Origin"))
-                        {
-                            context.Response.Headers["Access-Control-Allow-Credentials"] = "true";
-                            context.Response.Headers["Access-Control-Allow-Methods"] =
-                                "GET, POST, PUT, DELETE, OPTIONS, PATCH";
-                            context.Response.Headers["Access-Control-Allow-Headers"] =
-                                "Content-Type, Authorization, X-Requested-With";
-                            context.Response.Headers["Access-Control-Max-Age"] = "86400";
-                        }
-                    }
-
-                    // Handle OPTIONS preflight request - WAŻNE: return natychmiast!
-                    if (context.Request.Method == "OPTIONS")
-                    {
-                        logger.LogDebug(
-                            "Handling OPTIONS preflight request for {Path}",
-                            context.Request.Path
-                        );
-                        context.Response.StatusCode = 204;
-                        return; // NIE WYWOŁUJ next()!
-                    }
 
                     try
                     {
@@ -78,17 +87,7 @@ namespace VocareWebAPI.Extensions.ApplicationBuilderExtensions
                             context.Request.Path
                         );
 
-                        // Upewnij się że CORS headers są ustawione nawet przy błędzie
-                        if (!context.Response.HasStarted && !string.IsNullOrEmpty(origin))
-                        {
-                            context.Response.Headers.TryAdd("Access-Control-Allow-Origin", origin);
-                            context.Response.Headers.TryAdd(
-                                "Access-Control-Allow-Credentials",
-                                "true"
-                            );
-                        }
-
-                        // Zwróć błąd JSON
+                        // Upewnij się że response nie został jeszcze wysłany
                         if (!context.Response.HasStarted)
                         {
                             context.Response.StatusCode = 500;
@@ -99,9 +98,10 @@ namespace VocareWebAPI.Extensions.ApplicationBuilderExtensions
                                 error = "Internal server error",
                                 message = app.Environment.IsDevelopment()
                                     ? ex.Message
-                                    : "An error occurred",
+                                    : "An error occurred processing your request",
                                 path = context.Request.Path.ToString(),
                                 timestamp = DateTime.UtcNow,
+                                traceId = context.TraceIdentifier,
                             };
 
                             await context.Response.WriteAsync(JsonSerializer.Serialize(error));
@@ -124,7 +124,11 @@ namespace VocareWebAPI.Extensions.ApplicationBuilderExtensions
                     async (context, next) =>
                     {
                         context.Response.Headers.Add("X-Environment", "Staging");
-                        context.Response.Headers.Add("X-Warning", "This is staging environment");
+                        context.Response.Headers.Add("X-Robots-Tag", "noindex, nofollow");
+                        context.Response.Headers.Add(
+                            "X-Warning",
+                            "This is staging environment - Do not use production data!"
+                        );
                         await next();
                     }
                 );
@@ -206,6 +210,42 @@ namespace VocareWebAPI.Extensions.ApplicationBuilderExtensions
                     await next();
                 }
             );
+
+            return app;
+        }
+
+        /// <summary>
+        /// Dodaje middleware do logowania requestów (dla debugowania)
+        /// </summary>
+        public static WebApplication UseRequestLogging(this WebApplication app)
+        {
+            if (app.Environment.IsDevelopment() || app.Environment.IsStaging())
+            {
+                app.Use(
+                    async (context, next) =>
+                    {
+                        var logger = context.RequestServices.GetRequiredService<ILogger<Program>>();
+
+                        logger.LogInformation(
+                            "Request: {Method} {Path} from {IP}",
+                            context.Request.Method,
+                            context.Request.Path,
+                            context.Connection.RemoteIpAddress
+                        );
+
+                        var stopwatch = System.Diagnostics.Stopwatch.StartNew();
+                        await next();
+                        stopwatch.Stop();
+
+                        logger.LogInformation(
+                            "Response: {StatusCode} for {Path} in {ElapsedMs}ms",
+                            context.Response.StatusCode,
+                            context.Request.Path,
+                            stopwatch.ElapsedMilliseconds
+                        );
+                    }
+                );
+            }
 
             return app;
         }

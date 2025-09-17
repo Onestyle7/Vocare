@@ -32,6 +32,9 @@ builder
         options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter());
     });
 
+// ===== CORS - PRAWIDŁOWA KONFIGURACJA =====
+builder.Services.AddCorsConfiguration(builder.Configuration, builder.Environment);
+
 // ===== RATE LIMITING =====
 builder.Services.AddRateLimiting(builder.Environment);
 
@@ -44,6 +47,7 @@ builder
     .AddRepositories()
     .AddAutoMapper(typeof(UserProfileService).Assembly);
 
+// ===== AUTHENTICATION & AUTHORIZATION =====
 builder.Services.AddAuthenticationConfiguration(builder.Configuration);
 
 // ===== DATA PROTECTION CONFIGURATION =====
@@ -54,9 +58,6 @@ builder.Services.Configure<DataProtectionTokenProviderOptions>(options =>
 
 // ===== SWAGGER =====
 builder.Services.AddSwaggerConfiguration();
-
-// ===== CORS =====
-builder.Services.AddCorsConfiguration(builder.Environment);
 
 // ===== STRIPE =====
 if (!string.IsNullOrEmpty(builder.Configuration["Stripe:SecretKey"]))
@@ -86,31 +87,64 @@ app.MapGet(
 app.UseSwaggerConfiguration(app.Environment);
 
 // ===== MIDDLEWARE PIPELINE - PRAWIDŁOWA KOLEJNOŚĆ =====
-app.UseRouting();
 
-// Użyj CORS z Extensions - NIE duplikuj!
-app.UseCustomCorsMiddleware();
-
-// Opcjonalne middleware dla staging
-if (app.Environment.IsStaging())
+// 1. Exception handling i request logging
+if (app.Environment.IsDevelopment() || app.Environment.IsStaging())
 {
-    app.UseStagingHeaders();
+    app.UseRequestLogging(); // Logowanie requestów
+    app.UseCorsLoggingMiddleware(); // Debugowanie CORS
+}
+else
+{
+    app.UseExceptionHandler("/error");
 }
 
-// Security headers - może powodować problemy, więc opcjonalnie
+// Global exception handling dla wszystkich środowisk
+app.UseGlobalExceptionHandling();
+
+// 2. HTTPS Redirection (tylko produkcja)
+if (app.Environment.IsProduction())
+{
+    app.UseHttpsRedirection();
+}
+
+// 3. Security Headers - PRZED CORS
 if (!app.Environment.IsDevelopment())
 {
     app.UseSecurityHeaders();
 }
 
-// Rate limiting
+// 4. Routing musi być przed CORS
+app.UseRouting();
+
+// 5. CORS - UŻYWAMY STANDARDOWEGO MIDDLEWARE!
+var policyName = CorsExtensions.GetCorsPolicyName(app.Environment);
+if (!string.IsNullOrEmpty(policyName))
+{
+    app.UseCors(policyName);
+    app.Logger.LogInformation(
+        $"Using CORS policy: {policyName} for environment: {app.Environment.EnvironmentName}"
+    );
+}
+else
+{
+    app.UseCors(); // Użyj domyślnej polityki
+    app.Logger.LogWarning("Using default CORS policy");
+}
+
+// 6. Rate limiting
 app.UseRateLimiter();
 
-// Cookie i Auth
-app.UseCookiePolicy();
+// 7. Authentication & Authorization (w tej kolejności!)
 app.UseAuthentication();
-app.UseCustomTokenValidation();
+app.UseCustomTokenValidation(); // Twój custom token validation
 app.UseAuthorization();
+
+// 8. Opcjonalne middleware dla staging
+if (app.Environment.IsStaging())
+{
+    app.UseStagingHeaders();
+}
 
 // ===== ENDPOINTS =====
 app.MapControllers();
