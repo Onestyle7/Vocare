@@ -12,44 +12,50 @@ import { toast } from 'sonner';
 import { useRouter } from 'next/navigation';
 import { ArrowRight } from 'lucide-react';
 
-// Konfiguracja planów z Price ID z Stripe Dashboard
+// WAŻNE: Podmień te Price ID na prawdziwe ze Stripe Dashboard!
+// Test Mode Price IDs - przykłady (MUSISZ ZMIENIĆ NA SWOJE!)
 const pricingPlans = [
   {
     name: 'Starter',
-    description: 'Perfect for trying out Vocare',
-    price: 10,
-    tokens: 50,
-    priceId: 'price_XXXXX', // TODO: Podmień na rzeczywisty Price ID ze Stripe
-    features: ['50 AI tokens', 'Basic support', 'Access to all features', 'No expiration date'],
+    description: 'Perfect for getting started with our platform',
+    price: 9,
+    tokens: 1000 as number | string,
+    priceId: 'price_1S8kOELs2ndSVWb2t6bhwwwC', // <- PODMIEŃ NA SWÓJ PRICE ID!
+    features: [
+      '1,000 tokens included',
+      'Basic access to AI models',
+      'Up to 5 requests per day',
+      'Standard response time',
+    ],
     popular: false,
   },
   {
-    name: 'Professional',
-    description: 'Most popular choice for professionals',
-    price: 25,
-    tokens: 150,
-    priceId: 'price_YYYYY', // TODO: Podmień na rzeczywisty Price ID ze Stripe
+    name: 'Growth',
+    description: 'The best choice for scaling your projects',
+    price: 32,
+    tokens: 5000 as number | string,
+    priceId: 'price_1S8kP9Ls2ndSVWb27z6i7v5v', // <- PODMIEŃ NA SWÓJ PRICE ID!
     features: [
-      '150 AI tokens',
-      'Priority support',
-      'Access to all features',
-      'No expiration date',
-      'Bonus 20% extra tokens',
+      '5,000 tokens included',
+      'Full access to all AI models',
+      'Unlimited daily requests',
+      'Priority response time',
+      'Export results in multiple formats',
     ],
     popular: true,
   },
   {
-    name: 'Business',
-    description: 'Best value for heavy users',
-    price: 50,
-    tokens: 350,
-    priceId: 'price_ZZZZZ', // TODO: Podmień na rzeczywisty Price ID ze Stripe
+    name: 'Unlimited',
+    description: 'Unlimited tokens and premium experience for personal use',
+    price: 48,
+    tokens: 'Unlimited' as number | string,
+    priceId: 'price_1S8kPQLs2ndSVWb2LnWNxBjo', // <- PODMIEŃ NA SWÓJ PRICE ID!
     features: [
-      '350 AI tokens',
-      'Premium support',
-      'Access to all features',
-      'No expiration date',
-      'Bonus 40% extra tokens',
+      'Unlimited tokens for one user',
+      'Access to all advanced AI models',
+      'Dedicated premium support',
+      'Fastest response time',
+      'Personalized onboarding assistance',
     ],
     popular: false,
   },
@@ -69,6 +75,17 @@ const PricingMain = () => {
 
   // Funkcja do obsługi zakupu
   const handlePurchase = async (priceId: string, planName: string) => {
+    console.log('🛒 Purchase initiated:', { priceId, planName });
+
+    // Sprawdź czy Price ID nie jest placeholder
+    if (priceId.includes('xxx') || priceId.includes('yyy') || priceId.includes('zzz')) {
+      toast.error('Configuration needed', {
+        description: 'Price IDs need to be configured in Stripe Dashboard first!',
+      });
+      console.error('❌ Price ID is still a placeholder! Replace it with real Stripe Price ID');
+      return;
+    }
+
     // Sprawdź czy użytkownik jest zalogowany
     if (!isAuthenticated) {
       toast.error('Please sign in first', {
@@ -262,7 +279,7 @@ const PricingMain = () => {
                   <div className="mb-6 text-4xl font-bold">
                     ${plan.price}
                     <span className="text-xl font-normal text-gray-600 dark:text-gray-400">
-                      /{plan.tokens} tokens
+                      /{typeof plan.tokens === 'number' ? `${plan.tokens} tokens` : plan.tokens}
                     </span>
                   </div>
                   <ul className="mb-6 space-y-3">
