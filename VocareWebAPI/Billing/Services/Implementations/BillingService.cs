@@ -149,6 +149,9 @@ namespace VocareWebAPI.Billing.Services.Implementations
 
         public async Task HandleWebhookAsync(string json, string stripeSignature)
         {
+            _logger.LogInformation($"=== WEBHOOK RECEIVED ===");
+            _logger.LogInformation($"Signature: {stripeSignature?.Substring(0, 20)}...");
+
             if (string.IsNullOrEmpty(json) || string.IsNullOrEmpty(stripeSignature))
                 throw new ArgumentException("Invalid webhook payload or missing signature.");
 
@@ -158,6 +161,8 @@ namespace VocareWebAPI.Billing.Services.Implementations
                 _webhookSecret,
                 throwOnApiVersionMismatch: false
             );
+            _logger.LogInformation($"Event type: {stripeEvent.Type}");
+            _logger.LogInformation($"Event ID: {stripeEvent.Id}");
 
             if (stripeEvent.Type == "checkout.session.completed")
             {
