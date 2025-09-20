@@ -169,24 +169,64 @@ namespace VocareWebAPI.Billing.Services.Implementations
                 var session = stripeEvent.Data.Object as Stripe.Checkout.Session;
                 if (session?.Mode == "payment")
                 {
+                    // ---------- Pobieranie danych z metadanych ----------
                     var userId =
                         session.Metadata?["userId"]
                         ?? throw new InvalidOperationException("userId missing in metadata");
 
+                    // KLUCZOWA ZMIANA: Pobieramy ilość tokenów z metadanych
+                    if (!session.Metadata.TryGetValue("tokenAmount", out var tokenAmountStr))
+                    {
+                        _logger.LogError(
+                            "tokenAmount missing in metadata for session {SessionId}, userId {UserId}",
+                            session.Id,
+                            userId
+                        );
+                        throw new InvalidOperationException("tokenAmount missing in metadata");
+                    }
+
+                    if (!int.TryParse(tokenAmountStr, out var tokensToAdd))
+                    {
+                        _logger.LogError(
+                            "Invalid tokenAmount value '{TokenAmountStr}' for session {SessionId}, userId {UserId}",
+                            tokenAmountStr,
+                            session.Id,
+                            userId
+                        );
+                        throw new InvalidOperationException(
+                            $"Invalid tokenAmount value: {tokenAmountStr}"
+                        );
+                    }
+
+                    var packageName = session.Metadata?.GetValueOrDefault(
+                        "packageName",
+                        "Unknown Package"
+                    );
+
+                    _logger.LogInformation(
+                        "Processing payment for userId={UserId}, package={PackageName}, tokens={TokenAmount}",
+                        userId,
+                        packageName,
+                        tokensToAdd
+                    );
+
+                    // ---------- Sprawdzenie użytkownika ----------
                     var ub = await _userBillingRepository.GetByUserIdAsync(userId);
                     if (ub == null)
                         throw new KeyNotFoundException($"No billing for {userId}");
 
+                    // ---------- Transakcja dodania tokenów ----------
                     await using var tx = await _dbContext.Database.BeginTransactionAsync();
                     try
                     {
-                        const int tokensToAdd = 50;
+                        // Dodanie tokenów do salda
                         await _userBillingRepository.AddTokensAsync(userId, tokensToAdd);
 
+                        // Zapis transakcji
                         var tt = new TokenTransaction
                         {
                             UserId = userId,
-                            ServiceName = "TokenPurchase",
+                            ServiceName = $"TokenPurchase-{packageName}", // Bardziej opisowa nazwa
                             Type = TransactionType.Purchase,
                             Amount = tokensToAdd,
                             CreatedAt = DateTime.UtcNow,
@@ -194,13 +234,40 @@ namespace VocareWebAPI.Billing.Services.Implementations
                         await _tokenTransactionRepository.AddTransactionAsync(tt);
 
                         await tx.CommitAsync();
+
+                        _logger.LogInformation(
+                            "Successfully added {TokenAmount} tokens to userId={UserId} for package={PackageName}",
+                            tokensToAdd,
+                            userId,
+                            packageName
+                        );
                     }
-                    catch
+                    catch (Exception ex)
                     {
                         await tx.RollbackAsync();
+                        _logger.LogError(
+                            ex,
+                            "Failed to process token purchase for userId={UserId}, session={SessionId}",
+                            userId,
+                            session.Id
+                        );
                         throw;
                     }
                 }
+            }
+            // Tutaj można dodać obsługę innych typów eventów, np. subscription.created, invoice.payment_failed itp.
+            else if (
+                stripeEvent.Type == "customer.subscription.created"
+                || stripeEvent.Type == "customer.subscription.updated"
+            )
+            {
+                // TODO: Obsługa subskrypcji
+                _logger.LogInformation($"Subscription event received: {stripeEvent.Type}");
+            }
+            else if (stripeEvent.Type == "invoice.payment_failed")
+            {
+                // TODO: Obsługa nieudanych płatności
+                _logger.LogWarning($"Payment failed event received: {stripeEvent.Type}");
             }
         }
 

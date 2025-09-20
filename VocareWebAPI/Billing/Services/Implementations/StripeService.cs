@@ -1,6 +1,7 @@
 using Microsoft.EntityFrameworkCore;
 using Stripe;
 using Stripe.Checkout;
+using VocareWebAPI.Billing.Configuration;
 using VocareWebAPI.Billing.Models.Entities;
 using VocareWebAPI.Billing.Models.Enums;
 using VocareWebAPI.Billing.Repositories.Interfaces;
@@ -150,6 +151,25 @@ namespace VocareWebAPI.Billing.Services.Implementations
                 throw new ArgumentException("User ID and price ID cannot be null or empty.");
             }
 
+            // ---------- sprawdzenie pakietu tokenów ----------
+            var tokenPackage = TokenPackagesConfiguration.GetPackageByPriceId(priceId);
+            if (tokenPackage == null)
+            {
+                _logger.LogError(
+                    "Unknown priceId={PriceId} for userId={UserId}. Not found in TokenPackagesConfiguration.",
+                    priceId,
+                    userId
+                );
+                throw new InvalidOperationException($"Unknown price ID: {priceId}");
+            }
+
+            _logger.LogInformation(
+                "Creating checkout session for userId={UserId}, priceId={PriceId}, tokens={TokenAmount}",
+                userId,
+                priceId,
+                tokenPackage.TokenAmount
+            );
+
             // ---------- pobranie / przygotowanie UserBilling ----------
             bool isNew = false;
             UserBilling userBilling;
@@ -179,7 +199,7 @@ namespace VocareWebAPI.Billing.Services.Implementations
 
             if (string.IsNullOrEmpty(userBilling.StripeCustomerId))
             {
-                // pobranie e‑maila zalogowanego użytkownika z ASP Identity
+                // pobranie e‑maila zalogowanego użytkownika z ASP Identity
                 string? email = await _dbContext
                     .Users.Where(u => u.Id == userId)
                     .Select(u => u.Email)
@@ -253,7 +273,12 @@ namespace VocareWebAPI.Billing.Services.Implementations
                 Mode = "payment",
                 SuccessUrl = successUrl,
                 CancelUrl = cancelUrl,
-                Metadata = new Dictionary<string, string> { { "userId", userId } },
+                Metadata = new Dictionary<string, string>
+                {
+                    { "userId", userId },
+                    { "tokenAmount", tokenPackage.TokenAmount.ToString() }, // KLUCZOWA ZMIANA
+                    { "packageName", tokenPackage.Name },
+                },
             };
 
             try
@@ -262,9 +287,10 @@ namespace VocareWebAPI.Billing.Services.Implementations
                 var session = await sessionService.CreateAsync(sessionOptions);
 
                 _logger.LogInformation(
-                    "Created checkout session for userId={UserId} with url={SessionUrl}.",
+                    "Created checkout session for userId={UserId} with url={SessionUrl}, tokens={TokenAmount}.",
                     userId,
-                    session.Url
+                    session.Url,
+                    tokenPackage.TokenAmount
                 );
 
                 return session.Url;
