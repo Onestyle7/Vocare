@@ -64,7 +64,7 @@ if (!string.IsNullOrEmpty(builder.Configuration["Stripe:SecretKey"]))
 {
     StripeConfiguration.ApiKey = builder.Configuration["Stripe:SecretKey"];
 }
-
+VocareWebAPI.Billing.Configuration.TokenPackagesConfiguration.Initialize(builder.Configuration);
 var app = builder.Build();
 
 // ===== HEALTH CHECK - PIERWSZY ENDPOINT =====

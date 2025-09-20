@@ -18,7 +18,7 @@ const pricingPlans = [
   {
     name: 'Starter',
     description: 'Perfect for getting started with our platform',
-    price: 9,
+    price: 29,
     tokens: 1000 as number | string,
     priceId: 'price_1S8kOELs2ndSVWb2t6bhwwwC', // <- PODMIEŃ NA SWÓJ PRICE ID!
     features: [
