@@ -309,5 +309,205 @@ namespace VocareWebAPI.Billing.Services.Implementations
                 );
             }
         }
+
+        public async Task<string> CreateCheckoutSessionForSubscriptionAsync(
+            string userId,
+            string priceId
+        )
+        {
+            // Walidacja parametrów
+            if (string.IsNullOrEmpty(userId) || string.IsNullOrEmpty(priceId))
+            {
+                _logger.LogWarning(
+                    "Attempted to create subscription checkout with invalid arguments: userId={UserId}, priceId={PriceId}",
+                    userId,
+                    priceId
+                );
+                throw new ArgumentException("User ID and price ID cannot be null or empty.");
+            }
+            // Sprawdzenie pakietu subskrypcji
+            var subscriptionPackage = SubscriptionPackagesConfiguration.GetPackageByPriceId(
+                priceId
+            );
+            if (subscriptionPackage == null)
+            {
+                _logger.LogError(
+                    "Unknown subscription priceId={PriceId} for userId={UserId}",
+                    priceId,
+                    userId
+                );
+                throw new InvalidOperationException($"Unknown subscription price ID: {priceId}");
+            }
+            if (!subscriptionPackage.IsActive)
+            {
+                _logger.LogError(
+                    "Inactive subscription package priceId={PriceId} for userId={UserId}",
+                    priceId,
+                    userId
+                );
+                throw new InvalidOperationException(
+                    $"Subscription package {priceId} is not active"
+                );
+            }
+            _logger.LogInformation(
+                "Creating subscrription checkout for userId={UserId}, priceId={PriceId}, package={PackageName}",
+                userId,
+                priceId,
+                subscriptionPackage.Name
+            );
+
+            // Pobranie / przygotowanie UserBilling
+            // Kod identyczny jak w tokenach - TODO: Wydzielić metodę pomocniczą
+            bool isNew = false;
+            UserBilling userBilling;
+
+            try
+            {
+                userBilling = await _userBillingRepository.GetByUserIdAsync(userId);
+            }
+            catch (KeyNotFoundException)
+            {
+                isNew = true;
+                userBilling = new UserBilling
+                {
+                    UserId = userId,
+                    TokenBalance = 0,
+                    SubscriptionStatus = SubscriptionStatus.None,
+                    SubscriptionLevel = SubscriptionLevel.None,
+                };
+
+                _logger.LogInformation(
+                    "UserBilling not found for userId={UserId}. Will create a new one.",
+                    userId
+                );
+            }
+            // Sprawdzamy czy ma już aktywną subskrypcję
+            if (userBilling.SubscriptionStatus == SubscriptionStatus.Active)
+            {
+                _logger.LogWarning(
+                    "User {UserId} already has active subscription.",
+                    userId,
+                    userBilling.StripeSubscriptionId
+                );
+                throw new InvalidOperationException("User already has an active subscription.");
+            }
+
+            // Utworzenie/aktualizacja Stripe Customer
+            if (string.IsNullOrEmpty(userBilling.StripeCustomerId))
+            {
+                string? email = await _dbContext
+                    .Users.Where(u => u.Id == userId)
+                    .Select(u => u.Email)
+                    .FirstOrDefaultAsync();
+
+                if (string.IsNullOrEmpty(email))
+                {
+                    throw new InvalidOperationException(
+                        "Email is required to create a Stripe customer."
+                    );
+                }
+
+                var customerService = new CustomerService();
+                var customer = await customerService.CreateAsync(
+                    new CustomerCreateOptions
+                    {
+                        Email = email,
+                        Metadata = new Dictionary<string, string> { { "UserId", userId } },
+                    }
+                );
+                userBilling.StripeCustomerId = customer.Id;
+
+                using var trx = await _dbContext.Database.BeginTransactionAsync();
+                try
+                {
+                    if (isNew)
+                        await _userBillingRepository.CreateAsync(userBilling);
+                    else
+                        await _userBillingRepository.UpdateAsync(userBilling);
+
+                    await trx.CommitAsync();
+                    _logger.LogInformation(
+                        "Stripe customer created (id={CustomerId}) for subscription userId={UserId}.",
+                        customer.Id,
+                        userId
+                    );
+                }
+                catch (Exception ex)
+                {
+                    await trx.RollbackAsync();
+                    _logger.LogError(
+                        ex,
+                        "Failed to save userBilling for subscription userId={UserId}",
+                        userId
+                    );
+                    throw new InvalidOperationException(
+                        $"Failed to save UserBilling for user {userId}.",
+                        ex
+                    );
+                }
+            }
+
+            // Budowanie sesji Checkout dla subskrypcji
+            var successUrl =
+                _configuration["Stripe:SuccessUrl"]
+                ?? throw new InvalidOperationException("Success URL not configured.");
+            var cancelUrl =
+                _configuration["Stripe:CancelUrl"]
+                ?? throw new InvalidOperationException("Cancel URL not configured.");
+
+            var sessionOptions = new SessionCreateOptions
+            {
+                Customer = userBilling.StripeCustomerId,
+                PaymentMethodTypes = new List<string> { "card" },
+                LineItems = new List<SessionLineItemOptions>
+                {
+                    new SessionLineItemOptions { Price = priceId, Quantity = 1 },
+                },
+                Mode = "subscription",
+                SuccessUrl = successUrl,
+                CancelUrl = cancelUrl,
+                Metadata = new Dictionary<string, string>
+                {
+                    { "userId", userId },
+                    { "subscriptionLevel", subscriptionPackage.Level.ToString() },
+                    { "packageName", subscriptionPackage.Name },
+                },
+                // Opcjonalne: trial period
+                SubscriptionData = new SessionSubscriptionDataOptions
+                {
+                    Metadata = new Dictionary<string, string>
+                    {
+                        { "userId", userId },
+                        { "subscriptionLevel", subscriptionPackage.Level.ToString() },
+                    },
+                },
+            };
+            try
+            {
+                var sessionService = new SessionService();
+                var session = await sessionService.CreateAsync(sessionOptions);
+
+                _logger.LogInformation(
+                    "Created subscription checkout session for userId={UserId}, with url={SessionUrl}, package={PackageName}.",
+                    userId,
+                    session.Url,
+                    subscriptionPackage.Name
+                );
+                return session.Url;
+            }
+            catch (StripeException ex)
+            {
+                _logger.LogError(
+                    ex,
+                    "Failed to create subscription checkout session for userId={UserId}: {StripeError}",
+                    userId,
+                    ex.StripeError?.Message
+                );
+                throw new InvalidOperationException(
+                    $"Failed to create subscription checkout session: {ex.StripeError?.Message}",
+                    ex
+                );
+            }
+        }
     }
 }
