@@ -68,13 +68,15 @@ namespace VocareWebAPI.Billing.Configuration
         {
             return Packages.Values.Where(p => p.IsActive).ToList();
         }
+
         private static Dictionary<string, SubscriptionPackage> GetDefaultPackages()
         {
             return new Dictionary<string, SubscriptionPackage>
             {
                 {
                     "price_1S9q33Ls2ndSVWb2KeB4Y3AD",
-                    new SubscriptionPackage{
+                    new SubscriptionPackage
+                    {
                         PriceId = "price_1S9q33Ls2ndSVWb2KeB4Y3AD",
                         Name = "Miesięczny",
                         Price = 39.99m,
@@ -82,10 +84,10 @@ namespace VocareWebAPI.Billing.Configuration
                         Interval = "month",
                         IntervalCount = 1,
                         Level = Models.Enums.SubscriptionLevel.Monthly,
-                        IsActive = true
+                        IsActive = true,
                     }
-                }
-            }
+                },
+            };
         }
     }
 }

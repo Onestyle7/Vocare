@@ -1,4 +1,6 @@
 using Microsoft.EntityFrameworkCore;
+using Stripe;
+using Stripe.Checkout;
 using VocareWebAPI.Billing.Configuration;
 using VocareWebAPI.Billing.Models.Entities;
 using VocareWebAPI.Billing.Models.Enums;
@@ -256,20 +258,6 @@ namespace VocareWebAPI.Billing.Services.Implementations
                     }
                 }
             }
-            // Tutaj można dodać obsługę innych typów eventów, np. subscription.created, invoice.payment_failed itp.
-            else if (
-                stripeEvent.Type == "customer.subscription.created"
-                || stripeEvent.Type == "customer.subscription.updated"
-            )
-            {
-                // TODO: Obsługa subskrypcji
-                _logger.LogInformation($"Subscription event received: {stripeEvent.Type}");
-            }
-            else if (stripeEvent.Type == "invoice.payment_failed")
-            {
-                // TODO: Obsługa nieudanych płatności
-                _logger.LogWarning($"Payment failed event received: {stripeEvent.Type}");
-            }
             else if (stripeEvent.Type == "customer.subscription.created")
             {
                 await HandleSubscriptionCreatedAsync(stripeEvent);
@@ -289,6 +277,10 @@ namespace VocareWebAPI.Billing.Services.Implementations
             else if (stripeEvent.Type == "invoice.payment_failed")
             {
                 await HandleInvoicePaymentFailedAsync(stripeEvent);
+            }
+            else
+            {
+                _logger.LogInformation($"Unhandled webhook event type: {stripeEvent.Type}");
             }
         }
 
@@ -334,7 +326,6 @@ namespace VocareWebAPI.Billing.Services.Implementations
                 subscription.CustomerId
             );
 
-            // szukamy userId na podstawie customerId
             var userId = await _userBillingRepository.GetUserIdByCustomerIdAsync(
                 subscription.CustomerId
             );
@@ -347,29 +338,34 @@ namespace VocareWebAPI.Billing.Services.Implementations
                 return;
             }
 
-            // Określ poziom subksrypcji na podstawie metadanych lub Price ID
             var subscriptionLevel = DetermineSubscriptionLevel(subscription);
+
+            // ✅ POPRAWKA v48.0.0: Pobierz CurrentPeriodEnd z pierwszego SubscriptionItem
+            DateTime? subscriptionEndDate = null;
+            if (subscription.Items?.Data?.Any() == true)
+            {
+                // W v48.0.0 CurrentPeriodEnd jest w SubscriptionItem
+                subscriptionEndDate = subscription.Items.Data.First().CurrentPeriodEnd;
+            }
 
             await using var tx = await _dbContext.Database.BeginTransactionAsync();
             try
             {
                 var userBilling = await _userBillingRepository.GetByUserIdAsync(userId);
 
-                // Aktualizuj dane subskrypcji
                 userBilling.StripeSubscriptionId = subscription.Id;
                 userBilling.SubscriptionStatus = SubscriptionStatus.Active;
                 userBilling.SubscriptionLevel = subscriptionLevel;
-                userBilling.SubscriptionEndDate = subscription.CurrentPeriodEnd;
+                userBilling.SubscriptionEndDate = subscriptionEndDate;
 
                 await _userBillingRepository.UpdateAsync(userBilling);
 
-                // Zapisz transakcję rozpoczęcia subskrypcji
                 var transaction = new TokenTransaction
                 {
                     UserId = userId,
                     ServiceName = $"SubscriptionActivated-{subscriptionLevel}",
                     Type = TransactionType.Purchase,
-                    Amount = 0, // Subskrypcja nie dodaje tokenów, tylko daje unlimited access
+                    Amount = 0,
                     CreatedAt = DateTime.UtcNow,
                 };
                 await _tokenTransactionRepository.AddTransactionAsync(transaction);
@@ -380,7 +376,7 @@ namespace VocareWebAPI.Billing.Services.Implementations
                     "Successfully activated subscription for userId={UserId}, level={SubscriptionLevel}, endDate={EndDate}",
                     userId,
                     subscriptionLevel,
-                    subscription.CurrentPeriodEnd
+                    subscriptionEndDate
                 );
             }
             catch (Exception ex)
@@ -412,13 +408,16 @@ namespace VocareWebAPI.Billing.Services.Implementations
                 );
                 return;
             }
+
             _logger.LogInformation(
                 "Processing subscription.updated for subscriptionId={SubscriptionId}, status={Status}",
                 subscription.Id,
                 subscription.Status
             );
 
-            var userId = await GetUserIdByCustomerIdAsync(subscription.CustomerId);
+            var userId = await _userBillingRepository.GetUserIdByCustomerIdAsync(
+                subscription.CustomerId
+            );
             if (string.IsNullOrEmpty(userId))
             {
                 _logger.LogError(
@@ -427,19 +426,24 @@ namespace VocareWebAPI.Billing.Services.Implementations
                 );
                 return;
             }
+
             try
             {
                 var userBilling = await _userBillingRepository.GetByUserIdAsync(userId);
 
-                // Mapujemy status Stripe na nasz enum
-                userBilling.SubscriptionStatus = MapStripeStatusToSubscriptionStatus(
-                    subscription.Status
-                );
-                userBilling.SubscriptionEndDate = subscription.CurrentPeriodEnd;
+                userBilling.SubscriptionStatus = MapStripeStatusToOurStatus(subscription.Status);
 
-                // Jesli subskrypcja została anulowana, ale jeszcze jest aktywna do końca okresu
+                // ✅ POPRAWKA v48.0.0: CurrentPeriodEnd z SubscriptionItem
+                if (subscription.Items?.Data?.Any() == true)
+                {
+                    userBilling.SubscriptionEndDate = subscription
+                        .Items.Data.First()
+                        .CurrentPeriodEnd;
+                }
+
+                // ✅ POPRAWKA v48.0.0: CancelAtPeriodEnd może być nullable
                 if (
-                    subscription.CancelAtPeriodEnd
+                    subscription.CancelAtPeriodEnd == true
                     && userBilling.SubscriptionStatus == SubscriptionStatus.Active
                 )
                 {
@@ -447,10 +451,12 @@ namespace VocareWebAPI.Billing.Services.Implementations
                         "Subscription {SubscriptionId} for userId={UserId} will be canceled at period end: {EndDate}",
                         subscription.Id,
                         userId,
-                        subscription.CurrentPeriodEnd
+                        userBilling.SubscriptionEndDate
                     );
                 }
+
                 await _userBillingRepository.UpdateAsync(userBilling);
+
                 _logger.LogInformation(
                     "Successfully updated subscription for userId={UserId}, newStatus={NewStatus}",
                     userId,
@@ -479,6 +485,7 @@ namespace VocareWebAPI.Billing.Services.Implementations
             var subscription = stripeEvent.Data.Object as Stripe.Subscription;
             if (subscription == null)
                 return;
+
             _logger.LogInformation(
                 "Processing subscription.deleted for subscriptionId={SubscriptionId}",
                 subscription.Id
@@ -496,7 +503,7 @@ namespace VocareWebAPI.Billing.Services.Implementations
 
                 userBilling.SubscriptionStatus = SubscriptionStatus.Canceled;
                 userBilling.SubscriptionLevel = SubscriptionLevel.None;
-                userBilling.SubscriptionEndDate = DateTime.UtcNow; // Już nieaktywna
+                userBilling.SubscriptionEndDate = DateTime.UtcNow;
 
                 await _userBillingRepository.UpdateAsync(userBilling);
 
@@ -517,100 +524,74 @@ namespace VocareWebAPI.Billing.Services.Implementations
         }
 
         /// <summary>
-        /// Obsługuje udaną płatność faktury (odnowienie subskrypcji)
+        /// Obsługuje nieudaną płatność faktury
         /// </summary>
         private async Task HandleInvoicePaymentSucceededAsync(Stripe.Event stripeEvent)
         {
             var invoice = stripeEvent.Data.Object as Stripe.Invoice;
-            if (invoice?.SubscriptionId == null)
+            if (invoice == null)
+            {
+                _logger.LogError("Invalid invoice object in webhook {EventId}", stripeEvent.Id);
                 return;
+            }
+
+            // In Stripe .NET v48, use `invoice.Subscription` (string) instead of `SubscriptionId`
+            // W wersji Stripe.NET v48 nie polegamy na Subscription/SubscriptionId z Invoice –
+            // użyjemy CustomerId do odnalezienia użytkownika oraz linii faktury do wyznaczenia końca okresu
+
+            var customerId = invoice.CustomerId;
+            if (string.IsNullOrEmpty(customerId))
+            {
+                _logger.LogWarning("Invoice {InvoiceId} has no customerId. Skipping.", invoice.Id);
+                return;
+            }
 
             _logger.LogInformation(
-                "Processing invoice.payment_succeeded for subscriptionId={SubscriptionId}",
-                invoice.SubscriptionId
+                "Processing invoice.payment_succeeded for customerId={CustomerId}",
+                customerId
             );
-
-            // Pobierz szczegóły subskrypcji
-            var subscriptionService = new Stripe.SubscriptionService();
-            var subscription = await subscriptionService.GetAsync(invoice.SubscriptionId);
-
-            var userId = await _userBillingRepository.GetUserIdByCustomerIdAsync(
-                subscription.CustomerId
-            );
-            if (string.IsNullOrEmpty(userId))
-                return;
 
             try
             {
+                var userId = await _userBillingRepository.GetUserIdByCustomerIdAsync(customerId);
+                if (string.IsNullOrEmpty(userId))
+                {
+                    _logger.LogError("No userId found for customerId={CustomerId}", customerId);
+                    return;
+                }
+
                 var userBilling = await _userBillingRepository.GetByUserIdAsync(userId);
 
-                // Odnów subskrypcję - upewnij się że jest aktywna
+                // Oznacz subskrypcję jako aktywną
                 userBilling.SubscriptionStatus = SubscriptionStatus.Active;
-                userBilling.SubscriptionEndDate = subscription.CurrentPeriodEnd;
+
+                // Spróbuj wyznaczyć koniec okresu z linii faktury (subscription line)
+                DateTime? periodEnd = null;
+                if (invoice.Lines?.Data?.Any() == true)
+                {
+                    var line = invoice.Lines.Data.FirstOrDefault();
+                    periodEnd = line?.Period?.End;
+                }
+
+                if (periodEnd.HasValue)
+                {
+                    userBilling.SubscriptionEndDate = periodEnd;
+                }
 
                 await _userBillingRepository.UpdateAsync(userBilling);
 
                 _logger.LogInformation(
-                    "Successfully renewed subscription for userId={UserId}, newEndDate={EndDate}",
+                    "Successfully processed invoice.payment_succeeded for userId={UserId}, newEndDate={EndDate}",
                     userId,
-                    subscription.CurrentPeriodEnd
+                    userBilling.SubscriptionEndDate
                 );
             }
             catch (Exception ex)
             {
                 _logger.LogError(
                     ex,
-                    "Failed to process invoice.payment_succeeded for userId={UserId}",
-                    userId
-                );
-                throw;
-            }
-        }
-
-        /// <summary>
-        /// Obsługuje nieudaną płatność faktury
-        /// </summary>
-        private async Task HandleInvoicePaymentFailedAsync(Stripe.Event stripeEvent)
-        {
-            var invoice = stripeEvent.Data.Object as Stripe.Invoice;
-            if (invoice?.SubscriptionId == null)
-                return;
-
-            _logger.LogWarning(
-                "Processing invoice.payment_failed for subscriptionId={SubscriptionId}",
-                invoice.SubscriptionId
-            );
-
-            var subscriptionService = new Stripe.SubscriptionService();
-            var subscription = await subscriptionService.GetAsync(invoice.SubscriptionId);
-
-            var userId = await _userBillingRepository.GetUserIdByCustomerIdAsync(
-                subscription.CustomerId
-            );
-            if (string.IsNullOrEmpty(userId))
-                return;
-
-            try
-            {
-                var userBilling = await _userBillingRepository.GetByUserIdAsync(userId);
-
-                // Oznacz jako Past Due - użytkownik może jeszcze mieć dostęp przez grace period
-                userBilling.SubscriptionStatus = SubscriptionStatus.PastDue;
-
-                await _userBillingRepository.UpdateAsync(userBilling);
-
-                _logger.LogWarning(
-                    "Marked subscription as past due for userId={UserId}, subscriptionId={SubscriptionId}",
-                    userId,
-                    subscription.Id
-                );
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(
-                    ex,
-                    "Failed to process invoice.payment_failed for userId={UserId}",
-                    userId
+                    "Failed to process invoice.payment_succeeded for customerId={CustomerId}",
+                    customerId
                 );
                 throw;
             }
@@ -640,14 +621,14 @@ namespace VocareWebAPI.Billing.Services.Implementations
         private SubscriptionLevel DetermineSubscriptionLevel(Stripe.Subscription subscription)
         {
             // Sprawdź metadane subskrypcji
-            if (subscription.Metadata.TryGetValue("subscriptionLevel", out var levelStr))
+            if (subscription.Metadata?.TryGetValue("subscriptionLevel", out var levelStr) == true)
             {
                 if (Enum.TryParse<SubscriptionLevel>(levelStr, out var level))
                     return level;
             }
 
             // Fallback - sprawdź konfigurację pakietów na podstawie price ID
-            if (subscription.Items.Data.Any())
+            if (subscription.Items?.Data?.Any() == true)
             {
                 var priceId = subscription.Items.Data.First().Price.Id;
                 var package = SubscriptionPackagesConfiguration.GetPackageByPriceId(priceId);
@@ -655,8 +636,66 @@ namespace VocareWebAPI.Billing.Services.Implementations
                     return package.Level;
             }
 
-            // Domyślnie Monthly jeśli nie można określić
             return SubscriptionLevel.Monthly;
+        }
+
+        private async Task HandleInvoicePaymentFailedAsync(Stripe.Event stripeEvent)
+        {
+            var invoice = stripeEvent.Data.Object as Stripe.Invoice;
+            if (invoice == null)
+            {
+                _logger.LogError("Invalid invoice object in webhook {EventId}", stripeEvent.Id);
+                return;
+            }
+
+            // KISS: Invoice.Customer jest już stringiem, nie obiektem
+            var customerId = invoice.CustomerId;
+
+            if (string.IsNullOrEmpty(customerId))
+            {
+                _logger.LogWarning(
+                    "No customer found in failed invoice for webhook {EventId}",
+                    stripeEvent.Id
+                );
+                return;
+            }
+
+            _logger.LogWarning(
+                "Processing invoice.payment_failed for customerId={CustomerId}",
+                customerId
+            );
+
+            try
+            {
+                var userId = await _userBillingRepository.GetUserIdByCustomerIdAsync(customerId);
+                if (string.IsNullOrEmpty(userId))
+                {
+                    _logger.LogError("No userId found for customerId={CustomerId}", customerId);
+                    return;
+                }
+
+                var userBilling = await _userBillingRepository.GetByUserIdAsync(userId);
+
+                // Oznacz jako Past Due (grace period)
+                userBilling.SubscriptionStatus = SubscriptionStatus.PastDue;
+
+                await _userBillingRepository.UpdateAsync(userBilling);
+
+                _logger.LogWarning(
+                    "Marked subscription as past due for userId={UserId}, customerId={CustomerId}",
+                    userId,
+                    customerId
+                );
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(
+                    ex,
+                    "Failed to process invoice.payment_failed for customerId={CustomerId}",
+                    customerId
+                );
+                throw;
+            }
         }
     }
 }
