@@ -307,30 +307,30 @@ export default function MarketAnalysis() {
                 showFixedButton
                   ? 'fixed bottom-6 left-1/2 z-50 -translate-x-1/2 translate-y-0 opacity-100'
                   : 'fixed bottom-0 left-1/2 z-50 -translate-x-1/2 translate-y-full opacity-0'
-              } flex w-1/2 items-center justify-center transition-all duration-500 ease-in-out`}
+              } flex w-1/2 items-center justify-center transition-all duration-500 ease-in-out font-bold`}
             >
               <ButtonGenerate
                 onClick={() => setIsConfirmDialogOpen(true)}
                 disabled={isLoading}
-                className="cursor-pointer px-6 py-2"
+                className="font-korbin cursor-pointer px-6 py-2"
               >
                 {isLoading ? 'Generating...' : 'Generate new market analysis'}
               </ButtonGenerate>
             </div>
 
             {/* STATIC button always under content */}
-            <div className="mt-16 flex w-full justify-center">
+            <div className="mt-16 flex w-full justify-center font-bold">
               <ButtonGenerate
                 onClick={() => setIsConfirmDialogOpen(true)}
                 disabled={isLoading}
-                className="cursor-pointer px-6 py-2"
+                className="font-korbin cursor-pointer px-6 py-2"
               >
                 {isLoading ? 'Generating...' : 'Generate new market analysis'}
               </ButtonGenerate>
             </div>
 
             <AlertDialog open={isConfirmDialogOpen} onOpenChange={setIsConfirmDialogOpen}>
-              <AlertDialogContent className="font-poppins font-korbin mx-auto max-w-md">
+              <AlertDialogContent className="font-bold font-korbin mx-auto max-w-md">
                 <AlertDialogHeader>
                   <AlertDialogTitle className="text-center text-xl font-bold">
                     Generate new recommendation?
