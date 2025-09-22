@@ -174,7 +174,7 @@ const AuthForm = ({ type }: AuthFormProps) => {
 
   return (
     <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)} className="auth-form font-poppins">
+      <form onSubmit={form.handleSubmit(onSubmit)} className="auth-form font-korbin">
         <h1 className="form-title">{isSignUp ? 'Sign Up' : 'Sign In'}</h1>
 
         {isSignUp && (

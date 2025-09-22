@@ -9,7 +9,7 @@ import { GridBackgroundDemo } from './GridBackgroundDemo';
 import Image from 'next/image';
 import { star_generate } from '@/app/constants';
 import { toast } from 'sonner';
-import CustomButton from '../ui/CustomButton';
+import ButtonGenerate from '../ui/ButtonGenerate';
 import {
   AlertDialog,
   AlertDialogAction,
@@ -309,24 +309,24 @@ export default function MarketAnalysis() {
                   : 'fixed bottom-0 left-1/2 z-50 -translate-x-1/2 translate-y-full opacity-0'
               } flex w-1/2 items-center justify-center transition-all duration-500 ease-in-out`}
             >
-              <CustomButton
+              <ButtonGenerate
                 onClick={() => setIsConfirmDialogOpen(true)}
                 disabled={isLoading}
                 className="cursor-pointer px-6 py-2"
               >
                 {isLoading ? 'Generating...' : 'Generate new market analysis'}
-              </CustomButton>
+              </ButtonGenerate>
             </div>
 
             {/* STATIC button always under content */}
             <div className="mt-16 flex w-full justify-center">
-              <CustomButton
+              <ButtonGenerate
                 onClick={() => setIsConfirmDialogOpen(true)}
                 disabled={isLoading}
                 className="cursor-pointer px-6 py-2"
               >
                 {isLoading ? 'Generating...' : 'Generate new market analysis'}
-              </CustomButton>
+              </ButtonGenerate>
             </div>
 
             <AlertDialog open={isConfirmDialogOpen} onOpenChange={setIsConfirmDialogOpen}>
