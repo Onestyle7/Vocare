@@ -514,7 +514,7 @@ export default function MarketAnalysis() {
                       <>
                         <h4 className="font-korbin mt-4 font-bold">Key trends:</h4>
                         <div className="ibm-plex-mono-regular mt-4 rounded-xl border p-2">
-                          <Timeline items={timelineItems} maxDescriptionLength={80} className="mx-0" />
+                          <Timeline items={timelineItems} maxDescriptionLength={8} className="mx-0" />
                         </div>
                       </>
                     )}
@@ -769,7 +769,7 @@ function IndustryInsightSection({ industry, index, skillDemand }: IndustryInsigh
           }}
         >
           <div ref={contentRef} className="space-y-5">
-            <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
+            <div className="grid grid-cols-1 gap-4 md:grid-cols-3 mt-4">
               <div className="rounded-xl border border-[#915EFF]/40 p-3">
                 <p className="text-sm text-gray-500">Salary range</p>
                 <p className="text-lg font-medium text-black dark:text-white">{salaryRange}</p>
