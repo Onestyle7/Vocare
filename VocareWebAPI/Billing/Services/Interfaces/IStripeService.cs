@@ -10,6 +10,6 @@ namespace VocareWebAPI.Billing.Services.Interfaces
         Task<string> CreateCustomerAsync(string userId, string email);
         Task<string> CreateCheckoutSessionForTokenAsync(string userId, string priceId);
         Task<string> CreateCheckoutSessionForSubscriptionAsync(string userId, string priceId);
-        Task<string> CancelSubscriptionAsync(string subscriptionId);
+        Task<string> CreateCustomerPortalSessionAsync(string userId, string returnUrl);
     }
 }

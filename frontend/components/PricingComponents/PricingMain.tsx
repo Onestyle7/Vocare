@@ -65,6 +65,8 @@ const PricingMain = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [selectedPriceId, setSelectedPriceId] = useState<string | null>(null);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [subscriptionStatus, setSubscriptionStatus] = useState<string | null>(null);
+  const [isPortalLoading, setIsPortalLoading] = useState(false);
   const router = useRouter();
 
   // Sprawdź czy użytkownik jest zalogowany
@@ -72,6 +74,133 @@ const PricingMain = () => {
     const token = localStorage.getItem('token');
     setIsAuthenticated(!!token);
   }, []);
+
+  // Funkcja pomocnicza do sprawdzenia statusu tokenów
+  const checkTokenBalance = async () => {
+    if (!isAuthenticated) return;
+
+    try {
+      const token = localStorage.getItem('token');
+      const response = await fetch(
+        `${process.env.NEXT_PUBLIC_API_URL || 'https://vocare-staging-e568.up.railway.app'}/api/Billing/get-token-balance`,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+
+      if (response.ok) {
+        const data = await response.json();
+        console.log('Current token balance:', data.tokenBalance);
+        // Możesz wyświetlić to gdzieś w UI
+      }
+    } catch (error) {
+      console.error('Failed to fetch token balance:', error);
+    }
+  };
+
+  // Funkcja do sprawdzania statusu subskrypcji
+  const checkSubscriptionStatus = async () => {
+    if (!isAuthenticated) return;
+
+    try {
+      const token = localStorage.getItem('token');
+      const response = await fetch(
+        `${process.env.NEXT_PUBLIC_API_URL || 'https://vocare-staging-e568.up.railway.app'}/api/Billing/subscription-status`,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+
+      if (response.ok) {
+        const data = await response.json();
+        setSubscriptionStatus(data.subscriptionStatus);
+        console.log('Subscription status:', data);
+      } else if (response.status === 404) {
+        // User nie ma jeszcze billing info - to OK
+        setSubscriptionStatus('None');
+      }
+    } catch (error) {
+      console.error('Failed to fetch subscription status:', error);
+      setSubscriptionStatus('None');
+    }
+  };
+
+  // Funkcja do otwierania Customer Portal
+  const openCustomerPortal = async () => {
+    if (!isAuthenticated) {
+      toast.error('Please sign in first');
+      return;
+    }
+
+    setIsPortalLoading(true);
+
+    try {
+      const token = localStorage.getItem('token');
+
+      const response = await fetch(
+        `${process.env.NEXT_PUBLIC_API_URL || 'https://vocare-staging-e568.up.railway.app'}/api/Billing/customer-portal`,
+        {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        if (response.status === 404) {
+          toast.error('No subscription found', {
+            description: 'You need to purchase a plan first before managing it.',
+          });
+        } else {
+          throw new Error(errorData.error || 'Failed to open customer portal');
+        }
+        return;
+      }
+
+      const data = await response.json();
+
+      if (!data.url) {
+        throw new Error('No portal URL received');
+      }
+
+      toast.success('Opening subscription manager...');
+
+      // Przekieruj do Stripe Customer Portal
+      setTimeout(() => {
+        window.location.href = data.url;
+      }, 500);
+    } catch (error) {
+      console.error('Portal error:', error);
+
+      if (error instanceof Error) {
+        if (error.message.includes('unauthorized') || error.message.includes('401')) {
+          toast.error('Session expired', {
+            description: 'Please sign in again.',
+            action: {
+              label: 'Sign In',
+              onClick: () => {
+                localStorage.removeItem('token');
+                router.push('/sign-in');
+              },
+            },
+          });
+        } else {
+          toast.error('Failed to open subscription manager', {
+            description: error.message || 'Please try again.',
+          });
+        }
+      }
+    } finally {
+      setIsPortalLoading(false);
+    }
+  };
 
   // Funkcja do obsługi zakupu
   const handlePurchase = async (priceId: string, planName: string) => {
@@ -183,33 +312,12 @@ const PricingMain = () => {
     }
   };
 
-  // Funkcja pomocnicza do sprawdzenia statusu tokenów (opcjonalne)
-  const checkTokenBalance = async () => {
-    if (!isAuthenticated) return;
-
-    try {
-      const token = localStorage.getItem('token');
-      const response = await fetch(
-        `${process.env.NEXT_PUBLIC_API_URL || 'https://vocare-staging-e568.up.railway.app'}/api/Billing/get-token-balance`,
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      );
-
-      if (response.ok) {
-        const data = await response.json();
-        console.log('Current token balance:', data.tokenBalance);
-        // Możesz wyświetlić to gdzieś w UI
-      }
-    } catch (error) {
-      console.error('Failed to fetch token balance:', error);
-    }
-  };
-
+  // Wywołaj funkcje po zalogowaniu
   useEffect(() => {
-    checkTokenBalance();
+    if (isAuthenticated) {
+      checkTokenBalance();
+      checkSubscriptionStatus();
+    }
   }, [isAuthenticated]);
 
   return (
@@ -232,8 +340,8 @@ const PricingMain = () => {
             </h1>
           </Copy>
 
-          {/* Opcjonalnie: Pokaż status logowania */}
-          {!isAuthenticated && (
+          {/* Sekcja statusu użytkownika */}
+          {!isAuthenticated ? (
             <div className="mt-4 mb-6 rounded-lg bg-yellow-50 p-4 text-center dark:bg-yellow-900/20">
               <p className="text-sm text-yellow-800 dark:text-yellow-200">
                 Please{' '}
@@ -245,6 +353,73 @@ const PricingMain = () => {
                 </button>{' '}
                 to purchase tokens
               </p>
+            </div>
+          ) : (
+            <div className="mt-4 mb-6 flex flex-col items-center gap-4">
+              {/* Info o statusie subskrypcji */}
+              {subscriptionStatus && subscriptionStatus !== 'None' && (
+                <div className="rounded-lg bg-green-50 p-4 text-center dark:bg-green-900/20">
+                  <p className="text-sm text-green-800 dark:text-green-200">
+                    Current subscription:{' '}
+                    <span className="font-semibold">{subscriptionStatus}</span>
+                  </p>
+                </div>
+              )}
+
+              {/* Przycisk zarządzania subskrypcją */}
+              {subscriptionStatus && subscriptionStatus !== 'None' && (
+                <Button
+                  onClick={openCustomerPortal}
+                  disabled={isPortalLoading}
+                  className="flex items-center gap-2"
+                  variant="outline"
+                >
+                  {isPortalLoading ? (
+                    <>
+                      <Image
+                        src="/svg/loader.svg"
+                        alt="loader"
+                        width={16}
+                        height={16}
+                        className="animate-spin"
+                      />
+                      Opening...
+                    </>
+                  ) : (
+                    <>
+                      <svg
+                        className="h-4 w-4"
+                        fill="none"
+                        stroke="currentColor"
+                        viewBox="0 0 24 24"
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth={2}
+                          d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"
+                        />
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth={2}
+                          d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"
+                        />
+                      </svg>
+                      Manage Subscription
+                    </>
+                  )}
+                </Button>
+              )}
+
+              {/* Info o braku subskrypcji */}
+              {subscriptionStatus === 'None' && (
+                <div className="rounded-lg bg-blue-50 p-3 text-center dark:bg-blue-900/20">
+                  <p className="text-xs text-blue-800 dark:text-blue-200">
+                    Purchase any plan to manage your subscription later
+                  </p>
+                </div>
+              )}
             </div>
           )}
 
