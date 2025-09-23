@@ -265,5 +265,16 @@ namespace VocareWebAPI.Billing.Repositories.Implementations
             // pojedyncze SaveChanges – jeśli zewnętrzna transakcja istnieje, EF w niej zapisze
             await _context.SaveChangesAsync();
         }
+
+        /// <summary>
+        /// Pomocnicza metoda do znalezienia userId na podstawie Stripe customerId
+        /// </summary>
+        public async Task<string?> GetUserIdByCustomerIdAsync(string customerId)
+        {
+            return await _context
+                .UserBillings.Where(ub => ub.StripeCustomerId == customerId)
+                .Select(ub => ub.UserId)
+                .FirstOrDefaultAsync();
+        }
     }
 }

@@ -68,6 +68,7 @@ namespace VocareWebAPI.Data
         /// </summary>
         public DbSet<GeneratedCv> GeneratedCvs { get; set; }
         public DbSet<FinancialSurvey> FinancialSurveys { get; set; }
+        public DbSet<SubscriptionPackage> SubscriptionPackages { get; set; }
 
         /// <summary>
         /// Konfiguruje model bazy danych, definiując schemat i relacje między encjami.
