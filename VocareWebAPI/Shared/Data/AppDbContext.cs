@@ -233,6 +233,8 @@ namespace VocareWebAPI.Data
 
                 // Indeks dla szybszego wyszukiwania
                 entity.HasIndex(e => new { e.UserId, e.IsActive });
+
+                builder.Entity<SubscriptionPackage>().HasKey(sp => sp.PriceId);
             });
 
             // Seedowanie kosztów usług

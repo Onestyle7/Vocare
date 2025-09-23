@@ -174,15 +174,65 @@ if (!app.Environment.IsProduction())
 }
 
 // ===== MIGRACJA BAZY DANYCH - Z TIMEOUT =====
-try
+using var scope = app.Services.CreateScope();
+var db = scope.ServiceProvider.GetRequiredService<AppDbContext>();
+var logger = scope.ServiceProvider.GetRequiredService<ILogger<Program>>();
+
+var retries = 0;
+const int maxRetries = 10;
+
+while (retries < maxRetries)
 {
-    using var cts = new CancellationTokenSource(TimeSpan.FromSeconds(30));
-    await app.MigrateDatabaseAsync();
-}
-catch (Exception ex)
-{
-    app.Logger.LogError(ex, "Database migration failed, but continuing...");
-    // NIE PRZERYWAJ STARTU APLIKACJI!
+    try
+    {
+        logger.LogInformation($"Attempting database migration... ({retries + 1}/{maxRetries})");
+
+        if (await db.Database.CanConnectAsync())
+        {
+            logger.LogInformation("Database connection successful");
+
+            // Ta logika jest KRYTYCZNA dla Railway!
+            var tableCount = await db.Database.ExecuteSqlRawAsync(
+                "SELECT COUNT(*) FROM information_schema.tables WHERE table_schema = 'public' AND table_type = 'BASE TABLE'"
+            );
+
+            try
+            {
+                var migrationHistory = await db.Database.GetAppliedMigrationsAsync();
+                if (migrationHistory.Any() && tableCount == 0)
+                {
+                    logger.LogWarning(
+                        "Migration history exists but no tables found. Clearing migration history."
+                    );
+                    await db.Database.ExecuteSqlRawAsync("DELETE FROM \"__EFMigrationsHistory\"");
+                }
+            }
+            catch { }
+
+            await db.Database.MigrateAsync();
+            logger.LogInformation("Database migration completed successfully.");
+            break;
+        }
+    }
+    catch (Exception ex)
+    {
+        retries++;
+        if (retries >= maxRetries)
+        {
+            logger.LogError(
+                ex,
+                "Database migration failed after {MaxRetries} attempts.",
+                maxRetries
+            );
+            throw;
+        }
+
+        var delay = 10000; // 10 sekund
+        logger.LogWarning(
+            $"DB migration attempt failed, retrying in {delay}ms... ({retries}/{maxRetries}). Error: {ex.Message}"
+        );
+        await Task.Delay(delay);
+    }
 }
 
 app.Run();

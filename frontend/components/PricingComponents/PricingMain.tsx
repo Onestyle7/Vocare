@@ -13,14 +13,14 @@ import { useRouter } from 'next/navigation';
 import { ArrowRight } from 'lucide-react';
 
 // WAŻNE: Podmień te Price ID na prawdziwe ze Stripe Dashboard!
-// Test Mode Price IDs - przykłady (MUSISZ ZMIENIĆ NA SWOJE!)
 const pricingPlans = [
   {
     name: 'Starter',
     description: 'Perfect for getting started with our platform',
     price: 29,
     tokens: 1000 as number | string,
-    priceId: 'price_1S8kOELs2ndSVWb2t6bhwwwC', // <- PODMIEŃ NA SWÓJ PRICE ID!
+    priceId: 'price_1S8kOELs2ndSVWb2t6bhwwwC', // <- Token pack price ID
+    type: 'tokens' as 'tokens' | 'subscription',
     features: [
       '1,000 tokens included',
       'Basic access to AI models',
@@ -34,7 +34,8 @@ const pricingPlans = [
     description: 'The best choice for scaling your projects',
     price: 32,
     tokens: 5000 as number | string,
-    priceId: 'price_1S8kP9Ls2ndSVWb27z6i7v5v', // <- PODMIEŃ NA SWÓJ PRICE ID!
+    priceId: 'price_1S8kP9Ls2ndSVWb27z6i7v5v', // <- Token pack price ID
+    type: 'tokens' as 'tokens' | 'subscription',
     features: [
       '5,000 tokens included',
       'Full access to all AI models',
@@ -45,17 +46,19 @@ const pricingPlans = [
     popular: true,
   },
   {
-    name: 'Unlimited',
-    description: 'Unlimited tokens and premium experience for personal use',
-    price: 48,
+    name: 'Unlimited subscription',
+    description: 'Monthly subscription with unlimited access',
+    price: 39,
     tokens: 'Unlimited' as number | string,
-    priceId: 'price_1S8kPQLs2ndSVWb2LnWNxBjo', // <- PODMIEŃ NA SWÓJ PRICE ID!
+    priceId: 'price_1S8kPQLs2ndSVWb2LnWNxBjo', // <- Subscription price ID (UTWÓRZ NOWY!)
+    type: 'subscription' as 'tokens' | 'subscription',
     features: [
-      'Unlimited tokens for one user',
+      'Unlimited tokens every month',
       'Access to all advanced AI models',
       'Dedicated premium support',
       'Fastest response time',
       'Personalized onboarding assistance',
+      'Cancel anytime',
     ],
     popular: false,
   },
@@ -93,7 +96,6 @@ const PricingMain = () => {
       if (response.ok) {
         const data = await response.json();
         console.log('Current token balance:', data.tokenBalance);
-        // Możesz wyświetlić to gdzieś w UI
       }
     } catch (error) {
       console.error('Failed to fetch token balance:', error);
@@ -120,7 +122,6 @@ const PricingMain = () => {
         setSubscriptionStatus(data.subscriptionStatus);
         console.log('Subscription status:', data);
       } else if (response.status === 404) {
-        // User nie ma jeszcze billing info - to OK
         setSubscriptionStatus('None');
       }
     } catch (error) {
@@ -155,8 +156,12 @@ const PricingMain = () => {
       if (!response.ok) {
         const errorData = await response.json();
         if (response.status === 404) {
-          toast.error('No subscription found', {
-            description: 'You need to purchase a plan first before managing it.',
+          toast.error('No billing information found', {
+            description: 'You need to make a purchase first to access billing portal.',
+          });
+        } else if (response.status === 400 && errorData.error?.includes('customer')) {
+          toast.error('Billing setup needed', {
+            description: 'Please make a purchase first to set up your billing account.',
           });
         } else {
           throw new Error(errorData.error || 'Failed to open customer portal');
@@ -170,9 +175,8 @@ const PricingMain = () => {
         throw new Error('No portal URL received');
       }
 
-      toast.success('Opening subscription manager...');
+      toast.success('Opening billing portal...');
 
-      // Przekieruj do Stripe Customer Portal
       setTimeout(() => {
         window.location.href = data.url;
       }, 500);
@@ -192,7 +196,7 @@ const PricingMain = () => {
             },
           });
         } else {
-          toast.error('Failed to open subscription manager', {
+          toast.error('Failed to open billing portal', {
             description: error.message || 'Please try again.',
           });
         }
@@ -202,9 +206,13 @@ const PricingMain = () => {
     }
   };
 
-  // Funkcja do obsługi zakupu
-  const handlePurchase = async (priceId: string, planName: string) => {
-    console.log('🛒 Purchase initiated:', { priceId, planName });
+  // Funkcja do obsługi zakupu - NOWA LOGIKA!
+  const handlePurchase = async (
+    priceId: string,
+    planName: string,
+    planType: 'tokens' | 'subscription'
+  ) => {
+    console.log('🛒 Purchase initiated:', { priceId, planName, planType });
 
     // Sprawdź czy Price ID nie jest placeholder
     if (priceId.includes('xxx') || priceId.includes('yyy') || priceId.includes('zzz')) {
@@ -218,10 +226,23 @@ const PricingMain = () => {
     // Sprawdź czy użytkownik jest zalogowany
     if (!isAuthenticated) {
       toast.error('Please sign in first', {
-        description: 'You need to be logged in to purchase tokens.',
+        description: `You need to be logged in to purchase ${planType === 'subscription' ? 'a subscription' : 'tokens'}.`,
         action: {
           label: 'Sign In',
           onClick: () => router.push('/sign-in'),
+        },
+      });
+      return;
+    }
+
+    // Sprawdź czy ma już aktywną subskrypcję
+    if (planType === 'subscription' && subscriptionStatus === 'Active') {
+      toast.error('Already subscribed', {
+        description:
+          'You already have an active subscription. Use "Manage Billing" to change plans.',
+        action: {
+          label: 'Manage Billing',
+          onClick: () => openCustomerPortal(),
         },
       });
       return;
@@ -233,9 +254,14 @@ const PricingMain = () => {
     try {
       const token = localStorage.getItem('token');
 
-      // Wywołanie do backendu aby utworzyć sesję Stripe Checkout
+      // ✅ WYBIERZ WŁAŚCIWY ENDPOINT w zależności od typu
+      const endpoint =
+        planType === 'subscription'
+          ? '/api/Billing/create-subscription-checkout'
+          : '/api/Billing/create-token-checkout';
+
       const response = await fetch(
-        `${process.env.NEXT_PUBLIC_API_URL || 'https://vocare-staging-e568.up.railway.app'}/api/Billing/create-checkout-session`,
+        `${process.env.NEXT_PUBLIC_API_URL || 'https://vocare-staging-e568.up.railway.app'}${endpoint}`,
         {
           method: 'POST',
           headers: {
@@ -257,29 +283,31 @@ const PricingMain = () => {
         throw new Error('No checkout URL received');
       }
 
-      // Zapisz informację o rozpoczętej płatności (opcjonalne)
+      // Zapisz informację o rozpoczętej płatności
       sessionStorage.setItem(
         'pendingPurchase',
         JSON.stringify({
           priceId,
           planName,
+          planType,
           timestamp: new Date().toISOString(),
         })
       );
 
-      // Przekieruj do Stripe Checkout
+      // Różne komunikaty dla tokenów vs subskrypcji
       toast.success('Redirecting to payment...', {
-        description: `You're purchasing the ${planName} plan`,
+        description:
+          planType === 'subscription'
+            ? `Setting up ${planName} subscription`
+            : `Purchasing ${planName} tokens`,
       });
 
-      // Małe opóźnienie dla lepszego UX
       setTimeout(() => {
         window.location.href = data.url;
       }, 500);
     } catch (error) {
       console.error('Payment error:', error);
 
-      // Obsługa różnych typów błędów
       if (error instanceof Error) {
         if (error.message.includes('unauthorized') || error.message.includes('401')) {
           toast.error('Session expired', {
@@ -351,7 +379,7 @@ const PricingMain = () => {
                 >
                   sign in
                 </button>{' '}
-                to purchase tokens
+                to purchase tokens or subscribe
               </p>
             </div>
           ) : (
@@ -366,60 +394,51 @@ const PricingMain = () => {
                 </div>
               )}
 
-              {/* Przycisk zarządzania subskrypcją */}
-              {subscriptionStatus && subscriptionStatus !== 'None' && (
-                <Button
-                  onClick={openCustomerPortal}
-                  disabled={isPortalLoading}
-                  className="flex items-center gap-2"
-                  variant="outline"
-                >
-                  {isPortalLoading ? (
-                    <>
-                      <Image
-                        src="/svg/loader.svg"
-                        alt="loader"
-                        width={16}
-                        height={16}
-                        className="animate-spin"
+              {/* Przycisk Customer Portal */}
+              <Button
+                onClick={openCustomerPortal}
+                disabled={isPortalLoading}
+                className="flex items-center gap-2"
+                variant="outline"
+              >
+                {isPortalLoading ? (
+                  <>
+                    <Image
+                      src="/svg/loader.svg"
+                      alt="loader"
+                      width={16}
+                      height={16}
+                      className="animate-spin"
+                    />
+                    Opening...
+                  </>
+                ) : (
+                  <>
+                    <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={2}
+                        d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"
                       />
-                      Opening...
-                    </>
-                  ) : (
-                    <>
-                      <svg
-                        className="h-4 w-4"
-                        fill="none"
-                        stroke="currentColor"
-                        viewBox="0 0 24 24"
-                      >
-                        <path
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                          strokeWidth={2}
-                          d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"
-                        />
-                        <path
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                          strokeWidth={2}
-                          d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"
-                        />
-                      </svg>
-                      Manage Subscription
-                    </>
-                  )}
-                </Button>
-              )}
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={2}
+                        d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"
+                      />
+                    </svg>
+                    Manage Billing
+                  </>
+                )}
+              </Button>
 
-              {/* Info o braku subskrypcji */}
-              {subscriptionStatus === 'None' && (
-                <div className="rounded-lg bg-blue-50 p-3 text-center dark:bg-blue-900/20">
-                  <p className="text-xs text-blue-800 dark:text-blue-200">
-                    Purchase any plan to manage your subscription later
-                  </p>
-                </div>
-              )}
+              {/* Info pomocnicza */}
+              <div className="rounded-lg bg-blue-50 p-3 text-center dark:bg-blue-900/20">
+                <p className="text-xs text-blue-800 dark:text-blue-200">
+                  Manage your payment methods, view invoices, and billing history
+                </p>
+              </div>
             </div>
           )}
 
@@ -449,12 +468,22 @@ const PricingMain = () => {
                       Most popular
                     </div>
                   )}
+
+                  {/* Badge dla subskrypcji */}
+                  {plan.type === 'subscription' && (
+                    <div className="mb-4 inline-block rounded-full bg-purple-100 px-3 py-1 text-xs font-semibold text-purple-800 dark:bg-purple-900 dark:text-purple-200">
+                      Monthly Subscription
+                    </div>
+                  )}
+
                   <h3 className="mb-2 text-2xl font-semibold">{plan.name}</h3>
                   <p className="mb-4 text-gray-600 dark:text-gray-400">{plan.description}</p>
                   <div className="mb-6 text-4xl font-bold">
                     ${plan.price}
                     <span className="text-xl font-normal text-gray-600 dark:text-gray-400">
-                      /{typeof plan.tokens === 'number' ? `${plan.tokens} tokens` : plan.tokens}
+                      {plan.type === 'subscription'
+                        ? '/month'
+                        : `/${typeof plan.tokens === 'number' ? `${plan.tokens} tokens` : plan.tokens}`}
                     </span>
                   </div>
                   <ul className="mb-6 space-y-3">
@@ -482,7 +511,7 @@ const PricingMain = () => {
                 <Button
                   className="group mt-auto h-10 w-full rounded-full"
                   variant={plan.popular ? 'default' : 'outline'}
-                  onClick={() => handlePurchase(plan.priceId, plan.name)}
+                  onClick={() => handlePurchase(plan.priceId, plan.name, plan.type)}
                   disabled={isLoading && selectedPriceId === plan.priceId}
                 >
                   {isLoading && selectedPriceId === plan.priceId ? (
@@ -498,7 +527,7 @@ const PricingMain = () => {
                     </>
                   ) : (
                     <>
-                      Buy {plan.name}
+                      {plan.type === 'subscription' ? 'Subscribe to' : 'Buy'} {plan.name}
                       <ArrowRight className="ml-2 h-4 w-4 transition-transform group-hover:translate-x-1" />
                     </>
                   )}

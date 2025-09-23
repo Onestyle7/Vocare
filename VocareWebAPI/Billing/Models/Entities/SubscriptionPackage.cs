@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Threading.Tasks;
 using VocareWebAPI.Billing.Models.Enums;
@@ -8,6 +9,7 @@ namespace VocareWebAPI.Billing.Models.Entities
 {
     public class SubscriptionPackage
     {
+        [Key]
         public string PriceId { get; set; } = string.Empty;
         public string Name { get; set; } = string.Empty;
         public decimal Price { get; set; }
