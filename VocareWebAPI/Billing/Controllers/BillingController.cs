@@ -198,5 +198,120 @@ namespace VocareWebAPI.Controllers
                 return StatusCode(500, "Wystąpił błąd podczas przetwarzania żądania.");
             }
         }
+
+        [HttpPost("create-subscription-checkout")]
+        [Authorize]
+        public async Task<IActionResult> CreateSubscriptionCheckout(
+            [FromBody] CreateCheckoutSessionRequestDto request
+        )
+        {
+            if (request == null || string.IsNullOrEmpty(request.PriceId))
+            {
+                return BadRequest(new { Error = "PriceId is required." });
+            }
+
+            var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            if (string.IsNullOrEmpty(userId))
+            {
+                return Unauthorized(new { Error = "User must be authenticated." });
+            }
+
+            try
+            {
+                var sessionUrl = await _stripeService.CreateCheckoutSessionForSubscriptionAsync(
+                    userId,
+                    request.PriceId
+                );
+                return Ok(new { Url = sessionUrl });
+            }
+            catch (InvalidOperationException ex)
+            {
+                return BadRequest(new { Error = ex.Message });
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(
+                    ex,
+                    "Error creating subscription checkout for userId={UserId}",
+                    userId
+                );
+                return StatusCode(500, new { Error = "An unexpected error occurred." });
+            }
+        }
+
+        [HttpPost("cancel-subscription")]
+        [Authorize]
+        public async Task<IActionResult> CancelSubscription(
+            [FromBody] CancelSubscriptionRequestDto request
+        )
+        {
+            if (request == null || string.IsNullOrEmpty(request.SubscriptionId))
+            {
+                return BadRequest(new { Error = "SubscriptionId is required." });
+            }
+
+            var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            if (string.IsNullOrEmpty(userId))
+            {
+                return Unauthorized(new { Error = "User must be authenticated." });
+            }
+
+            try
+            {
+                // Sprawdź czy użytkownik jest właścicielem subskrypcji
+                var userBilling = await _billingService.GetUserBillingAsync(userId);
+                if (userBilling.StripeSubscriptionId != request.SubscriptionId)
+                {
+                    return Forbid("You can only cancel your own subscription.");
+                }
+
+                await _stripeService.CancelSubscriptionAsync(request.SubscriptionId);
+                return Ok(new { Message = "Subscription canceled successfully." });
+            }
+            catch (KeyNotFoundException)
+            {
+                return NotFound(new { Error = "User billing information not found." });
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error canceling subscription for userId={UserId}", userId);
+                return StatusCode(500, new { Error = "An unexpected error occurred." });
+            }
+        }
+
+        [HttpGet("subscription-status")]
+        [Authorize]
+        public async Task<IActionResult> GetSubscriptionStatus()
+        {
+            try
+            {
+                var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+                if (string.IsNullOrEmpty(userId))
+                {
+                    return Unauthorized(new { Error = "User must be authenticated." });
+                }
+
+                var userBilling = await _billingService.GetUserBillingAsync(userId);
+
+                return Ok(
+                    new
+                    {
+                        subscriptionStatus = userBilling.SubscriptionStatus.ToString(),
+                        subscriptionLevel = userBilling.SubscriptionLevel.ToString(),
+                        subscriptionEndDate = userBilling.SubscriptionEndDate,
+                        subscriptionId = userBilling.StripeSubscriptionId,
+                    }
+                );
+            }
+            catch (KeyNotFoundException)
+            {
+                return NotFound(new { Error = "User billing information not found." });
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error getting subscription status");
+                return StatusCode(500, new { Error = "An unexpected error occurred." });
+            }
+        }
     }
 }
