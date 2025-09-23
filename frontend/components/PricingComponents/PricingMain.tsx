@@ -50,7 +50,7 @@ const pricingPlans = [
     description: 'Monthly subscription with unlimited access',
     price: 39,
     tokens: 'Unlimited' as number | string,
-    priceId: 'price_1S8kPQLs2ndSVWb2LnWNxBjo', // <- Subscription price ID (UTWÓRZ NOWY!)
+    priceId: 'price_1S9q33Ls2ndSVWb2KeB4Y3AD', // <- Subscription price ID (UTWÓRZ NOWY!)
     type: 'subscription' as 'tokens' | 'subscription',
     features: [
       'Unlimited tokens every month',
