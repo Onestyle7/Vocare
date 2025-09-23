@@ -509,5 +509,29 @@ namespace VocareWebAPI.Billing.Services.Implementations
                 );
             }
         }
+
+        public async Task<string> CreateCustomerPortalSessionAsync(string userId, string returnUrl)
+        {
+            if (string.IsNullOrEmpty(userId))
+                throw new ArgumentException("User ID cannot be null or empty.");
+
+            var userBilling = await _userBillingRepository.GetByUserIdAsync(userId);
+
+            if (string.IsNullOrEmpty(userBilling.StripeCustomerId))
+                throw new InvalidOperationException("User does not have a Stripe customer record.");
+
+            var options = new Stripe.BillingPortal.SessionCreateOptions
+            {
+                Customer = userBilling.StripeCustomerId,
+                ReturnUrl = returnUrl,
+            };
+
+            var service = new Stripe.BillingPortal.SessionService();
+            var session = await service.CreateAsync(options);
+
+            _logger.LogInformation("Created customer portal session for userId={UserId}", userId);
+
+            return session.Url;
+        }
     }
 }
