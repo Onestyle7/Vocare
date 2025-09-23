@@ -28,6 +28,9 @@ namespace VocareWebAPI.Billing.Services.Implementations
             _configuration = configuration;
             _logger = logger;
             _dbContext = dbContext;
+
+            TokenPackagesConfiguration.Initialize(configuration);
+            SubscriptionPackagesConfiguration.Initialize(configuration);
         }
 
         public async Task<string> CreateCustomerAsync(string userId, string email)
