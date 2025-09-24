@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 using VocareWebAPI.Data;
@@ -12,9 +13,11 @@ using VocareWebAPI.Data;
 namespace VocareWebAPI.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250915171218_ChangeContentLength3")]
+    partial class ChangeContentLength3
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -200,40 +203,6 @@ namespace VocareWebAPI.Migrations
                             ServiceName = "GenerateCv",
                             TokenCost = 1
                         });
-                });
-
-            modelBuilder.Entity("VocareWebAPI.Billing.Models.Entities.SubscriptionPackage", b =>
-                {
-                    b.Property<string>("PriceId")
-                        .HasColumnType("text");
-
-                    b.Property<string>("Currency")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.Property<string>("Interval")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.Property<int>("IntervalCount")
-                        .HasColumnType("integer");
-
-                    b.Property<bool>("IsActive")
-                        .HasColumnType("boolean");
-
-                    b.Property<int>("Level")
-                        .HasColumnType("integer");
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.Property<decimal>("Price")
-                        .HasColumnType("numeric");
-
-                    b.HasKey("PriceId");
-
-                    b.ToTable("SubscriptionPackages", "public");
                 });
 
             modelBuilder.Entity("VocareWebAPI.Billing.Models.Entities.TokenTransaction", b =>

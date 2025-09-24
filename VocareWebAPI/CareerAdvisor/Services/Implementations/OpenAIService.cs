@@ -3,9 +3,9 @@ using System.Text.Json.Serialization;
 using AutoMapper;
 using Microsoft.Extensions.Options;
 using VocareWebAPI.Models;
-using VocareWebAPI.Models.Config;
 using VocareWebAPI.Models.Dtos;
 using VocareWebAPI.Models.Entities;
+using VocareWebAPI.Models.OpenAIConfig;
 using VocareWebAPI.Repositories;
 using VocareWebAPI.Services;
 
@@ -14,14 +14,14 @@ namespace VocareWebAPI.CareerAdvisor.Services.Implementations
     public class OpenAIService : IAiService
     {
         private readonly HttpClient _httpClient;
-        private readonly AiConfig _config;
+        private readonly OpenAIConfig _config;
         private readonly IAiRecommendationRepository _aiRecommendationRepository;
         private readonly IMapper _mapper;
         private readonly ILogger<OpenAIService> _logger;
 
         public OpenAIService(
             HttpClient httpClient,
-            IOptions<AiConfig> aiConfig,
+            IOptions<OpenAIConfig> aiConfig,
             IAiRecommendationRepository aiRecommendationRepository,
             IMapper mapper,
             ILogger<OpenAIService> logger

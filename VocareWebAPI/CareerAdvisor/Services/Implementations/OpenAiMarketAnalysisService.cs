@@ -7,9 +7,9 @@ using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Options;
 using VocareWebAPI.Models;
-using VocareWebAPI.Models.Config;
 using VocareWebAPI.Models.Dtos.MarketAnalysis;
 using VocareWebAPI.Models.Entities.MarketAnalysis;
+using VocareWebAPI.Models.OpenAIConfig;
 using VocareWebAPI.Repositories;
 using VocareWebAPI.Repositories.Interfaces;
 
@@ -18,7 +18,7 @@ namespace VocareWebAPI.CareerAdvisor.Services.Implementations
     public class OpenAiMarketAnalysisService : IMarketAnalysisService
     {
         private readonly HttpClient _httpClient;
-        private readonly AiConfig _config;
+        private readonly OpenAIConfig _config;
         private readonly ICareerStatisticsRepository _careerStatisticsRepository;
         private readonly ISkillDemandRepository _skillDemandRepository;
         private readonly IMarketTrendsRepository _marketTrendsRepository;
@@ -27,7 +27,7 @@ namespace VocareWebAPI.CareerAdvisor.Services.Implementations
 
         public OpenAiMarketAnalysisService(
             HttpClient httpClient,
-            IOptions<AiConfig> config,
+            IOptions<OpenAIConfig> config,
             ICareerStatisticsRepository careerStatisticsRepository,
             ISkillDemandRepository skillDemandRepository,
             IMarketTrendsRepository marketTrendsRepository,
