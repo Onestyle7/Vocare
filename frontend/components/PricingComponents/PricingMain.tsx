@@ -96,10 +96,10 @@ const PricingMain = () => {
     try {
       const token = localStorage.getItem('token');
 
-      console.log('🚀 Calling generate-now endpoint...');
+      console.log('🚀 Calling generate-weekly endpoint with force=true...');
 
       const response = await fetch(
-        `${process.env.NEXT_PUBLIC_API_URL || 'https://vocare-staging-e568.up.railway.app'}/api/MarketNews/generate-now`,
+        `${process.env.NEXT_PUBLIC_API_URL || 'https://vocare-staging-e568.up.railway.app'}/api/MarketNews/generate-weekly?force=true`,
         {
           method: 'POST',
           headers: {
