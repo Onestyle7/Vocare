@@ -70,6 +70,8 @@ namespace VocareWebAPI.Data
         public DbSet<GeneratedCv> GeneratedCvs { get; set; }
         public DbSet<FinancialSurvey> FinancialSurveys { get; set; }
         public DbSet<MarketNewsEntity> MarketNews { get; set; }
+        public DbSet<SubscriptionPackage> SubscriptionPackages { get; set; }
+
 
         /// <summary>
         /// Konfiguruje model bazy danych, definiując schemat i relacje między encjami.
@@ -234,6 +236,8 @@ namespace VocareWebAPI.Data
 
                 // Indeks dla szybszego wyszukiwania
                 entity.HasIndex(e => new { e.UserId, e.IsActive });
+
+                builder.Entity<SubscriptionPackage>().HasKey(sp => sp.PriceId);
             });
 
             // Seedowanie kosztów usług
