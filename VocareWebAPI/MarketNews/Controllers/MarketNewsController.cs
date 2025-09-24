@@ -96,18 +96,24 @@ namespace VocareWebAPI.MarketNews.Controllers
         [HttpPost("generate-weekly")]
         [Authorize]
         [EnableRateLimiting("AiPolicy")]
-        public async Task<ActionResult> GenerateNewsManually()
+        public async Task<ActionResult> GenerateNewsManually([FromQuery] bool force = false)
         {
             try
             {
-                bool isGenerated = await _marketNewsService.GenerateNewsManuallyAsync();
-                if (isGenerated)
+                Guid newsId;
+                if (force)
                 {
-                    return Ok("News generated successfully.");
+                    newsId = await _marketNewsService.GenerateNewsForcedAsync();
+                    return Ok(new { Message = "News generated successfully.", NewsId = newsId });
                 }
                 else
                 {
-                    return Conflict("A news article for this week already exists.");
+                    bool isGenerated = await _marketNewsService.GenerateNewsManuallyAsync();
+
+                    if (isGenerated)
+                        return Ok("News generated successfully.");
+                    else
+                        return Conflict("A news article for this week already exists.");
                 }
             }
             catch (Exception ex)

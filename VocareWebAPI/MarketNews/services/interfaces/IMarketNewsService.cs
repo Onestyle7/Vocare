@@ -42,5 +42,6 @@ namespace VocareWebAPI.MarketNews.Services.Interfaces
         /// </summary>
         /// <returns>True jeśli newsa udało się wygenerować, False jeśli już istnieje</returns>
         Task<bool> GenerateNewsManuallyAsync();
+        Task<Guid> GenerateNewsForcedAsync();
     }
 }

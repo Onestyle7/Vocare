@@ -10,7 +10,7 @@ import { ScrollParallax } from 'react-just-parallax';
 import Copy from '../SupportComponents/Copy';
 import { toast } from 'sonner';
 import { useRouter } from 'next/navigation';
-import { ArrowRight } from 'lucide-react';
+import { ArrowRight, Zap, Newspaper } from 'lucide-react';
 
 // WAŻNE: Podmień te Price ID na prawdziwe ze Stripe Dashboard!
 const pricingPlans = [
@@ -70,6 +70,10 @@ const PricingMain = () => {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [subscriptionStatus, setSubscriptionStatus] = useState<string | null>(null);
   const [isPortalLoading, setIsPortalLoading] = useState(false);
+
+  // 🐛 DEBUG: Stan dla button generowania newsów
+  const [isGeneratingNews, setIsGeneratingNews] = useState(false);
+
   const router = useRouter();
 
   // Sprawdź czy użytkownik jest zalogowany
@@ -77,6 +81,94 @@ const PricingMain = () => {
     const token = localStorage.getItem('token');
     setIsAuthenticated(!!token);
   }, []);
+
+  // 🐛 DEBUG: Funkcja do generowania newsów
+  const handleGenerateNews = async () => {
+    if (!isAuthenticated) {
+      toast.error('Please sign in first', {
+        description: 'You need to be logged in to generate news.',
+      });
+      return;
+    }
+
+    setIsGeneratingNews(true);
+
+    try {
+      const token = localStorage.getItem('token');
+
+      console.log('🚀 Calling generate-weekly endpoint with force=true...');
+
+      const response = await fetch(
+        `${process.env.NEXT_PUBLIC_API_URL || 'https://vocare-staging-e568.up.railway.app'}/api/MarketNews/generate-weekly?force=true`,
+        {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+
+      console.log('📡 Response status:', response.status);
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        console.error('❌ Error response:', errorData);
+        throw new Error(errorData.error || `HTTP ${response.status}: Failed to generate news`);
+      }
+
+      const data = await response.json();
+      console.log('✅ Success response:', data);
+
+      toast.success('News generated successfully! 🎉', {
+        description: `New article created with ID: ${data.newsId?.substring(0, 8)}...`,
+        duration: 5000,
+        action: {
+          label: 'View News',
+          onClick: () => {
+            // Możesz dodać redirect do strony newsów jeśli masz
+            console.log('Redirecting to news page...');
+            // router.push('/news');
+          },
+        },
+      });
+    } catch (error) {
+      console.error('💥 Generate news error:', error);
+
+      if (error instanceof Error) {
+        if (error.message.includes('unauthorized') || error.message.includes('401')) {
+          toast.error('Session expired', {
+            description: 'Please sign in again to continue.',
+            action: {
+              label: 'Sign In',
+              onClick: () => {
+                localStorage.removeItem('token');
+                router.push('/sign-in');
+              },
+            },
+          });
+        } else if (error.message.includes('429')) {
+          toast.error('Rate limit exceeded', {
+            description: 'Please wait a moment before generating another news.',
+          });
+        } else if (error.message.includes('network') || error.message.includes('fetch')) {
+          toast.error('Connection error', {
+            description: 'Unable to connect to the server. Please try again.',
+          });
+        } else {
+          toast.error('Failed to generate news', {
+            description: error.message || 'Something went wrong. Check console for details.',
+          });
+        }
+      } else {
+        toast.error('Unexpected error', {
+          description: 'Please try again or contact support.',
+        });
+      }
+    } finally {
+      setIsGeneratingNews(false);
+    }
+  };
 
   // Funkcja pomocnicza do sprawdzenia statusu tokenów
   const checkTokenBalance = async () => {
@@ -358,6 +450,34 @@ const PricingMain = () => {
     >
       <div className="main-font-color relative flex flex-col items-center justify-center max-lg:overflow-x-hidden xl:mx-10 xl:border">
         <GridBackgroundDemo />
+
+        {/* 🐛 DEBUG: Button do generowania newsów - w prawym górnym rogu */}
+        <div className="absolute top-4 right-4 z-50">
+          <Button
+            onClick={handleGenerateNews}
+            disabled={isGeneratingNews}
+            className="border-2 border-orange-400 bg-gradient-to-r from-orange-500 to-red-600 px-3 py-2 text-sm text-white shadow-lg hover:from-orange-600 hover:to-red-700"
+            size="sm"
+          >
+            {isGeneratingNews ? (
+              <>
+                <Image
+                  src="/svg/loader.svg"
+                  alt="loader"
+                  width={14}
+                  height={14}
+                  className="mr-2 animate-spin"
+                />
+                Generating...
+              </>
+            ) : (
+              <>
+                <Zap className="mr-2 h-4 w-4" />
+                🐛 Generate News
+              </>
+            )}
+          </Button>
+        </div>
 
         <div className="relative mx-auto flex max-w-7xl flex-col items-center justify-center">
           <Copy>
