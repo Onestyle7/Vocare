@@ -10,7 +10,7 @@ import { ScrollParallax } from 'react-just-parallax';
 import Copy from '../SupportComponents/Copy';
 import { toast } from 'sonner';
 import { useRouter } from 'next/navigation';
-import { ArrowRight, Zap, Newspaper } from 'lucide-react';
+import { ArrowRight, Zap } from 'lucide-react';
 
 // WAŻNE: Podmień te Price ID na prawdziwe ze Stripe Dashboard!
 const pricingPlans = [
