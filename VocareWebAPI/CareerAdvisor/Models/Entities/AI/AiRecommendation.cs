@@ -19,14 +19,14 @@ namespace VocareWebAPI.Models
         public Guid Id { get; set; }
 
         [Required]
-        public string UserId { get; set; } = default!; // Identyfikator użytkownika, dla którego została wygenerowana rekomendacja
+        public string UserId { get; set; } = default!;
 
-        [ForeignKey("UserId")] // Relacaj 1;1
-        public UserProfile UserProfile { get; set; } = default!; // Profil użytkownika, dla którego została wygenerowana rekomendacja
+        [ForeignKey("UserId")]
+        public UserProfile UserProfile { get; set; } = default!;
         public DateTime RecommendationDate { get; set; }
-        public string PrimaryPath { get; set; } = String.Empty; // Główna ścieżka zawodowa, np. "Programista Python"
-        public string Justification { get; set; } = String.Empty; // Uzasadnienie rekomendacji, np. "Wysokie zapotrzebowanie na rynku pracy"
-        public string LongTermGoal { get; set; } = String.Empty; // Długoterminowy cel zawodowy, np. "Zostać ekspertem w dziedzinie AI"
+        public string PrimaryPath { get; set; } = String.Empty;
+        public string Justification { get; set; } = String.Empty;
+        public string LongTermGoal { get; set; } = String.Empty;
         public List<CareerPath> CareerPaths { get; set; } = new();
         public List<NextStep> NextSteps { get; set; } = new();
         public List<CareerStatistics> CareerStatistics { get; set; } = new();

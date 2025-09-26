@@ -52,11 +52,11 @@ namespace VocareWebAPI.Profiles
                     opt => opt.MapFrom(src => src.RecommendedCourses)
                 )
                 .ForMember(dest => dest.SwotAnalysis, opt => opt.MapFrom(src => src.SwotAnalysis))
-                .ReverseMap(); // Dodaj reverse map
+                .ReverseMap();
 
             // Mapowanie dla SWOT w obie strony
             CreateMap<SwotAnalysisDto, SwotAnalysis>()
-                .ReverseMap(); // Dodaj reverse map
+                .ReverseMap();
 
             // Mapowanie NextStep <-> string
             CreateMap<NextStep, string>()
