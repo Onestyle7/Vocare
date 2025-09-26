@@ -350,7 +350,7 @@ const PricingMain = () => {
       const endpoint =
         planType === 'subscription'
           ? '/api/Billing/create-subscription-checkout'
-          : '/api/Billing/create-token-checkout';
+          : '/api/Billing/create-checkout-session';
 
       const response = await fetch(
         `${process.env.NEXT_PUBLIC_API_URL || 'https://vocare-staging-e568.up.railway.app'}${endpoint}`,
