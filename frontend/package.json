@@ -30,7 +30,7 @@
     "@react-three/drei": "^10.0.0",
     "@react-three/fiber": "^9.1.2",
     "@react-three/rapier": "^2.1.0",
-    "@splinetool/react-spline": "^4.0.0",
+    "@splinetool/react-spline": "^4.1.0",
     "@studio-freight/lenis": "^1.0.42",
     "@types/canvas-confetti": "^1.9.0",
     "@types/three": "^0.175.0",
