@@ -47,7 +47,7 @@ namespace VocareWebAPI.Repositories
                 throw new ArgumentException("User ID cannot be null or empty.", nameof(userId));
             }
 
-            // Pobierz najnowszą rekomendację AI dla danego użytkownika
+            // Pobieramy najnowszą rekomendację AI dla danego użytkownika
             return await _context
                 .AiRecommendations.Include(r => r.UserProfile)
                 .Include(r => r.CareerPaths)

@@ -136,7 +136,7 @@ namespace VocareWebAPI.Services.Implementations
                             cleanJson,
                             ex
                         );
-                        throw; // Opcjonalnie: zgłoś błąd dalej
+                        throw;
                     }
                 }
                 else
@@ -146,7 +146,6 @@ namespace VocareWebAPI.Services.Implementations
                         rawContent
                     );
 
-                    // Próba deserializacji całej odpowiedzi jako JSON
                     try
                     {
                         result = JsonSerializer.Deserialize<MarketAnalysisResponseDto>(
@@ -169,7 +168,6 @@ namespace VocareWebAPI.Services.Implementations
                     throw new Exception("Failed to parse market analysis JSON.");
                 }
 
-                // Inicjalizujemy null properties
                 InitializeNullProperties(result);
 
                 await SaveMarketAnalysisToDatabase(result, recommendation.Id);
@@ -193,7 +191,6 @@ namespace VocareWebAPI.Services.Implementations
             Guid aiRecommendationId
         )
         {
-            // Usuń stare dane
             await _careerStatisticsRepository.DeleteByAiRecommendationIdAsync(aiRecommendationId);
             await _skillDemandRepository.DeleteByAiRecommendationIdAsync(aiRecommendationId);
             await _marketTrendsRepository.DeleteByAiRecommendationIdAsync(aiRecommendationId);
@@ -216,7 +213,6 @@ namespace VocareWebAPI.Services.Implementations
                     await _careerStatisticsRepository.AddAsync(careerStat);
                 }
 
-                // Skill demand i market trends bez zmian
                 foreach (var skill in analysis.MarketAnalysis.SkillDemand)
                 {
                     var skillDemand = new SkillDemand
@@ -362,7 +358,6 @@ namespace VocareWebAPI.Services.Implementations
                 throw new Exception($"AI recommendation for user with ID:{userId} not found.");
             }
 
-            // Pobierz dane powiązane z najnowszą rekomendacją
             var careerStats = await _careerStatisticsRepository.GetByAiRecommendationIdAsync(
                 recommendation.Id
             );
@@ -373,7 +368,6 @@ namespace VocareWebAPI.Services.Implementations
                 recommendation.Id
             );
 
-            // Mapuj dane na DTO
             var result = new MarketAnalysisResponseDto
             {
                 MarketAnalysis = new MarketAnalysisDetailsDto
