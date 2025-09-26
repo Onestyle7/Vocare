@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState, useRef } from 'react';
+import { useEffect, useState, useRef, useMemo } from 'react';
 import axios from 'axios';
 import { UserProfile } from '@/lib/types/profile';
 import { toast } from 'sonner';
@@ -31,10 +31,10 @@ import {
   timeline_icon_4,
 } from '@/app/constants';
 import { useTokenBalanceContext } from '@/lib/contexts/TokenBalanceContext';
-import Link from 'next/link';
 import { AxiosError } from 'axios';
 import { AiCareerResponse, CareerPath } from '@/lib/types/recommendation';
 import Section from '../SupportComponents/Section';
+import { useRouter } from 'next/navigation';
 
 export default function AssistantPage() {
   const API_URL = process.env.NEXT_PUBLIC_API_URL;
@@ -43,7 +43,31 @@ export default function AssistantPage() {
   const [isLoading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [isConfirmDialogOpen, setIsConfirmDialogOpen] = useState(false);
-  const { tokenBalance, isLoading: isBalanceLoading, refresh } = useTokenBalanceContext();
+  const {
+    tokenBalance,
+    subscriptionStatus,
+    hasActiveSubscription,
+    isLoading: isBalanceLoading,
+    refresh,
+  } = useTokenBalanceContext();
+  const router = useRouter();
+
+  const requiredTokens = 50;
+  const numericTokenBalance = useMemo(
+    () => (typeof tokenBalance === 'number' ? tokenBalance : null),
+    [tokenBalance]
+  );
+  const canGenerateWithTokens = useMemo(() => {
+    if (numericTokenBalance === null) return false;
+    return numericTokenBalance >= requiredTokens;
+  }, [numericTokenBalance]);
+  const shouldShowPricingCta =
+    !hasActiveSubscription &&
+    !isBalanceLoading &&
+    numericTokenBalance !== null &&
+    numericTokenBalance < requiredTokens;
+  const disableGenerateAction =
+    isLoading || (!hasActiveSubscription && (isBalanceLoading || !canGenerateWithTokens));
 
   const [isCollapsed, setIsCollapsed] = useState(true);
   const contentRef = useRef<HTMLDivElement>(null);
@@ -125,6 +149,47 @@ export default function AssistantPage() {
     }
 
     setIsCollapsed(!isCollapsed);
+  };
+
+  const handleOpenGenerateDialog = () => {
+    if (hasActiveSubscription) {
+      toast.success('Subscription access active', {
+        description: 'Unlimited AI Career Advisor generations are included in your plan.',
+        id: 'subscription-access',
+      });
+      setIsConfirmDialogOpen(true);
+      return;
+    }
+
+    if (isBalanceLoading) {
+      toast.info('Checking your credits...', {
+        id: 'balance-check',
+        duration: 2000,
+      });
+      setIsConfirmDialogOpen(true);
+      return;
+    }
+
+    if (numericTokenBalance === null) {
+      toast.error('Unable to verify credits', {
+        description: 'Please refresh the balance and try again.',
+      });
+      refresh();
+      return;
+    }
+
+    if (!canGenerateWithTokens) {
+      toast.warning('Not enough credits', {
+        description: `You need ${requiredTokens} credits to generate a new recommendation.`,
+        action: {
+          label: 'View plans',
+          onClick: () => router.push('/pricing'),
+        },
+      });
+      return;
+    }
+
+    setIsConfirmDialogOpen(true);
   };
 
   useEffect(() => {
@@ -227,7 +292,7 @@ export default function AssistantPage() {
     };
 
     loadProfileAndRecommendations();
-  }, []);
+  }, [API_URL]);
 
   const handleGenerateNewRecommendations = async () => {
     setLoading(true);
@@ -268,6 +333,7 @@ export default function AssistantPage() {
       }
     } finally {
       setLoading(false);
+      setIsConfirmDialogOpen(false);
     }
   };
 
@@ -393,7 +459,7 @@ export default function AssistantPage() {
             } flex w-1/2 items-center justify-center transition-all duration-500 ease-in-out`}
           >
             <CustomButton
-              onClick={() => setIsConfirmDialogOpen(true)}
+              onClick={handleOpenGenerateDialog}
               disabled={isLoading}
               className="cursor-pointer px-6 py-2"
             >
@@ -403,7 +469,7 @@ export default function AssistantPage() {
 
           <div className="mt-16 flex w-full justify-center">
             <CustomButton
-              onClick={() => setIsConfirmDialogOpen(true)}
+              onClick={handleOpenGenerateDialog}
               disabled={isLoading}
               className="cursor-pointer px-6 py-2"
             >
@@ -418,28 +484,56 @@ export default function AssistantPage() {
                   Generate new recommendation?
                 </AlertDialogTitle>
                 <AlertDialogDescription className="text-center">
-                  This will take <b className="text-[#915EFF]">50 credits</b> from Your account.
+                  {hasActiveSubscription ? (
+                    <span>
+                      Included in your{' '}
+                      <span className="text-[#915EFF] font-semibold">
+                        {subscriptionStatus ?? 'Active'}
+                      </span>{' '}
+                      subscription. Tokens stay untouched.
+                    </span>
+                  ) : (
+                    <span>
+                      This will take{' '}
+                      <b className="text-[#915EFF]">{requiredTokens} credits</b> from your
+                      account.
+                    </span>
+                  )}
                 </AlertDialogDescription>
 
-                <div className="mt-2 text-center text-sm">
-                  Current balance:{' '}
-                  <span className="font-bold">{isBalanceLoading ? '...' : tokenBalance}</span>
+                <div className="mt-2 space-y-1 text-center text-sm">
+                  <div>
+                    Subscription status:{' '}
+                    <span
+                      className={`font-semibold ${
+                        hasActiveSubscription ? 'text-emerald-400' : 'text-[#915EFF]'
+                      }`}
+                    >
+                      {subscriptionStatus ? subscriptionStatus : 'None'}
+                    </span>
+                  </div>
+                  <div>
+                    Current balance:{' '}
+                    <span className="font-bold">{isBalanceLoading ? '...' : tokenBalance}</span>
+                  </div>
                 </div>
               </AlertDialogHeader>
 
               <AlertDialogFooter className="flex justify-center gap-4 sm:justify-center">
                 <AlertDialogCancel className="border-muted-foreground/20">Cancel</AlertDialogCancel>
 
-                {!isBalanceLoading && typeof tokenBalance === 'number' && tokenBalance < 5 ? (
-                  <Link href="/pricing">
-                    <AlertDialogAction
-                      className="bg-[#915EFF] text-white hover:bg-[#7b4ee0]"
-                      onClick={() => setIsConfirmDialogOpen(false)}
-                    >
-                      Get tokens
-                      <Image src={star_generate} alt="star" width={16} height={16} />
-                    </AlertDialogAction>
-                  </Link>
+                {shouldShowPricingCta ? (
+                  <AlertDialogAction
+                    className="bg-[#915EFF] text-white hover:bg-[#7b4ee0]"
+                    onClick={() => {
+                      toast.info("Let's pick a plan tailored to you.");
+                      setIsConfirmDialogOpen(false);
+                      router.push('/pricing');
+                    }}
+                  >
+                    Get tokens
+                    <Image src={star_generate} alt="star" width={16} height={16} />
+                  </AlertDialogAction>
                 ) : (
                   <AlertDialogAction
                     onClick={async () => {
@@ -447,8 +541,9 @@ export default function AssistantPage() {
                       refresh();
                     }}
                     className="bg-[#915EFF] text-white hover:bg-[#7b4ee0]"
+                    disabled={disableGenerateAction}
                   >
-                    Generate
+                    {isLoading ? 'Generating...' : 'Generate'}
                     <Image src={star_generate} alt="star" width={16} height={16} />
                   </AlertDialogAction>
                 )}

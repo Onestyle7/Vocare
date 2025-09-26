@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState, useRef, useCallback } from 'react';
+import { useEffect, useState, useRef, useCallback, useMemo } from 'react';
 import axios, { AxiosError } from 'axios';
 import { gsap } from 'gsap';
 import CollapsibleButton from '../AssistantComponents/CollapsibleButton';
@@ -21,10 +21,10 @@ import {
   AlertDialogTitle,
 } from '../ui/alert-dialog';
 import { useTokenBalanceContext } from '@/lib/contexts/TokenBalanceContext';
-import Link from 'next/link';
 import GenerateMarketFail from './GenerateMarketFail';
 import Section from '../SupportComponents/Section';
 import NewEmptyStateComponent from './NewEmptyStateComponent';
+import { useRouter } from 'next/navigation';
 
 // Type definitions
 interface MarketTrend {
@@ -62,11 +62,35 @@ export default function MarketAnalysis() {
   const [error, setError] = useState<string | null>(null);
   const [isLoading, setLoading] = useState(true);
   const [isConfirmDialogOpen, setIsConfirmDialogOpen] = useState(false);
-  const { tokenBalance, isLoading: isBalanceLoading, refresh } = useTokenBalanceContext();
+  const {
+    tokenBalance,
+    subscriptionStatus,
+    hasActiveSubscription,
+    isLoading: isBalanceLoading,
+    refresh,
+  } = useTokenBalanceContext();
 
   const [showFixedButton, setShowFixedButton] = useState(false);
   const lastScrollY = useRef(0);
   const API_URL = process.env.NEXT_PUBLIC_API_URL;
+  const router = useRouter();
+  const requiredTokens = 5;
+
+  const numericTokenBalance = useMemo(
+    () => (typeof tokenBalance === 'number' ? tokenBalance : null),
+    [tokenBalance]
+  );
+  const canGenerateWithTokens = useMemo(() => {
+    if (numericTokenBalance === null) return false;
+    return numericTokenBalance >= requiredTokens;
+  }, [numericTokenBalance]);
+  const shouldShowPricingCta =
+    !hasActiveSubscription &&
+    !isBalanceLoading &&
+    numericTokenBalance !== null &&
+    numericTokenBalance < requiredTokens;
+  const disableGenerateAction =
+    isLoading || (!hasActiveSubscription && (isBalanceLoading || !canGenerateWithTokens));
 
   useEffect(() => {
     const handleScroll = () => {
@@ -89,6 +113,47 @@ export default function MarketAnalysis() {
 
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
+
+  const handleOpenGenerateDialog = () => {
+    if (hasActiveSubscription) {
+      toast.success('Subscription access active', {
+        description: 'Unlimited market analyses are included in your plan.',
+        id: 'subscription-access-market',
+      });
+      setIsConfirmDialogOpen(true);
+      return;
+    }
+
+    if (isBalanceLoading) {
+      toast.info('Checking your credits...', {
+        id: 'balance-check',
+        duration: 2000,
+      });
+      setIsConfirmDialogOpen(true);
+      return;
+    }
+
+    if (numericTokenBalance === null) {
+      toast.error('Unable to verify credits', {
+        description: 'Please refresh the balance and try again.',
+      });
+      refresh();
+      return;
+    }
+
+    if (!canGenerateWithTokens) {
+      toast.warning('Not enough credits', {
+        description: `You need ${requiredTokens} credits to generate a new analysis.`,
+        action: {
+          label: 'View plans',
+          onClick: () => router.push('/pricing'),
+        },
+      });
+      return;
+    }
+
+    setIsConfirmDialogOpen(true);
+  };
 
   const handleResponseData = (responseData: unknown) => {
     if (
@@ -186,6 +251,8 @@ export default function MarketAnalysis() {
 
   const handleGenerateNewAnalysis = async () => {
     await loadData(true);
+    setIsConfirmDialogOpen(false);
+    refresh();
   };
 
   if (error) {
@@ -234,6 +301,8 @@ export default function MarketAnalysis() {
         isLoading={isLoading}
         tokenBalance={tokenBalance}
         isBalanceLoading={isBalanceLoading}
+        subscriptionStatus={subscriptionStatus}
+        hasActiveSubscription={hasActiveSubscription}
         refresh={refresh}
       />
     );
@@ -310,7 +379,7 @@ export default function MarketAnalysis() {
               } flex w-1/2 items-center justify-center transition-all duration-500 ease-in-out`}
             >
               <CustomButton
-                onClick={() => setIsConfirmDialogOpen(true)}
+                onClick={handleOpenGenerateDialog}
                 disabled={isLoading}
                 className="cursor-pointer px-6 py-2"
               >
@@ -321,7 +390,7 @@ export default function MarketAnalysis() {
             {/* STATIC button always under content */}
             <div className="mt-16 flex w-full justify-center">
               <CustomButton
-                onClick={() => setIsConfirmDialogOpen(true)}
+                onClick={handleOpenGenerateDialog}
                 disabled={isLoading}
                 className="cursor-pointer px-6 py-2"
               >
@@ -336,37 +405,62 @@ export default function MarketAnalysis() {
                     Generate new recommendation?
                   </AlertDialogTitle>
                   <AlertDialogDescription className="text-center">
-                    This will take <b className="text-[#915EFF]">5 credits</b> from Your account.
+                    {hasActiveSubscription ? (
+                      <span>
+                        Included in your{' '}
+                        <span className="text-[#915EFF] font-semibold">
+                          {subscriptionStatus ?? 'Active'}
+                        </span>{' '}
+                        subscription. Tokens stay untouched.
+                      </span>
+                    ) : (
+                      <span>
+                        This will take <b className="text-[#915EFF]">{requiredTokens} credits</b> from your
+                        account.
+                      </span>
+                    )}
                   </AlertDialogDescription>
 
-                  <div className="mt-2 text-center text-sm font-extralight">
-                    Current balance:{' '}
-                    <span className="font-bold">{isBalanceLoading ? '...' : tokenBalance}</span>
+                  <div className="mt-2 space-y-1 text-center text-sm">
+                    <div>
+                      Subscription status:{' '}
+                      <span
+                        className={`font-semibold ${
+                          hasActiveSubscription ? 'text-emerald-400' : 'text-[#915EFF]'
+                        }`}
+                      >
+                        {subscriptionStatus ? subscriptionStatus : 'None'}
+                      </span>
+                    </div>
+                    <div>
+                      Current balance:{' '}
+                      <span className="font-bold">{isBalanceLoading ? '...' : tokenBalance}</span>
+                    </div>
                   </div>
                 </AlertDialogHeader>
 
                 <AlertDialogFooter className="flex justify-center gap-4 sm:justify-center">
                   <AlertDialogCancel className="border-muted-foreground/20">Cancel</AlertDialogCancel>
 
-                  {!isBalanceLoading && typeof tokenBalance === 'number' && tokenBalance < 5 ? (
-                    <Link href="/pricing">
-                      <AlertDialogAction
-                        className="bg-[#915EFF] text-white hover:bg-[#7b4ee0]"
-                        onClick={() => setIsConfirmDialogOpen(false)}
-                      >
-                        Get tokens
-                        <Image src={star_generate} alt="star" width={16} height={16} />
-                      </AlertDialogAction>
-                    </Link>
+                  {shouldShowPricingCta ? (
+                    <AlertDialogAction
+                      className="bg-[#915EFF] text-white hover:bg-[#7b4ee0]"
+                      onClick={() => {
+                        toast.info("Let's pick a plan tailored to you.");
+                        setIsConfirmDialogOpen(false);
+                        router.push('/pricing');
+                      }}
+                    >
+                      Get tokens
+                      <Image src={star_generate} alt="star" width={16} height={16} />
+                    </AlertDialogAction>
                   ) : (
                     <AlertDialogAction
-                      onClick={async () => {
-                        await handleGenerateNewAnalysis();
-                        refresh();
-                      }}
+                      onClick={handleGenerateNewAnalysis}
                       className="bg-[#915EFF] text-white hover:bg-[#7b4ee0]"
+                      disabled={disableGenerateAction}
                     >
-                      Generate
+                      {isLoading ? 'Generating...' : 'Generate'}
                       <Image src={star_generate} alt="star" width={16} height={16} />
                     </AlertDialogAction>
                   )}

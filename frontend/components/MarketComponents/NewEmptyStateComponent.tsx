@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import axios, { AxiosError } from 'axios';
 import Image from 'next/image';
 import { ArrowRight } from 'lucide-react';
@@ -8,6 +8,7 @@ import CustomButton from '../ui/CustomButton';
 import SpotlightCard from '../SpotlightCard/SpotlightCard';
 import AnimatedContent from '../AnimatedContent/AnimatedContent';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 import {
   AlertDialog,
   AlertDialogAction,
@@ -20,12 +21,15 @@ import {
 } from '../ui/alert-dialog';
 import { upper_arrow, star_generate } from '@/app/constants';
 import Section from '../SupportComponents/Section';
+import { toast } from 'sonner';
 
 interface EmptyStateProps {
   onGenerateAnalysis: () => Promise<void>;
   isLoading: boolean;
   tokenBalance: number | null | string;
   isBalanceLoading: boolean;
+  subscriptionStatus: string | null;
+  hasActiveSubscription: boolean;
   refresh: () => void;
 }
 
@@ -34,11 +38,31 @@ const NewEmptyStateComponent = ({
   isLoading,
   tokenBalance,
   isBalanceLoading,
+  subscriptionStatus,
+  hasActiveSubscription,
   refresh,
 }: EmptyStateProps) => {
   const [isConfirmDialogOpen, setIsConfirmDialogOpen] = useState(false);
   const [hasRecommendations, setHasRecommendations] = useState(false);
   const API_URL = process.env.NEXT_PUBLIC_API_URL;
+  const router = useRouter();
+  const requiredTokens = 5;
+
+  const numericTokenBalance = useMemo(
+    () => (typeof tokenBalance === 'number' ? tokenBalance : null),
+    [tokenBalance]
+  );
+  const canGenerateWithTokens = useMemo(() => {
+    if (numericTokenBalance === null) return false;
+    return numericTokenBalance >= requiredTokens;
+  }, [numericTokenBalance]);
+  const shouldShowPricingCta =
+    !hasActiveSubscription &&
+    !isBalanceLoading &&
+    numericTokenBalance !== null &&
+    numericTokenBalance < requiredTokens;
+  const disableGenerateAction =
+    isLoading || (!hasActiveSubscription && (isBalanceLoading || !canGenerateWithTokens));
 
   useEffect(() => {
     const checkRecommendations = async () => {
@@ -63,9 +87,50 @@ const NewEmptyStateComponent = ({
     checkRecommendations();
   }, [API_URL]);
 
+  const handleOpenGenerateDialog = () => {
+    if (hasActiveSubscription) {
+      toast.success('Subscription access active', {
+        description: 'Unlimited market analyses are included in your plan.',
+        id: 'subscription-access-market',
+      });
+      setIsConfirmDialogOpen(true);
+      return;
+    }
+
+    if (isBalanceLoading) {
+      toast.info('Checking your credits...', {
+        id: 'balance-check',
+        duration: 2000,
+      });
+      setIsConfirmDialogOpen(true);
+      return;
+    }
+
+    if (numericTokenBalance === null) {
+      toast.error('Unable to verify credits', {
+        description: 'Please refresh the balance and try again.',
+      });
+      refresh();
+      return;
+    }
+
+    if (!canGenerateWithTokens) {
+      toast.warning('Not enough credits', {
+        description: `You need ${requiredTokens} credits to generate a new analysis.`,
+        action: {
+          label: 'View plans',
+          onClick: () => router.push('/pricing'),
+        },
+      });
+      return;
+    }
+
+    setIsConfirmDialogOpen(true);
+  };
+
   const buttonContent = hasRecommendations ? (
     <CustomButton
-      onClick={() => setIsConfirmDialogOpen(true)}
+      onClick={handleOpenGenerateDialog}
       disabled={isLoading}
       className="group font-poppins flex h-[56px] cursor-pointer items-center justify-center rounded-full bg-[#915EFF] px-6 text-[clamp(1rem,1vw,1.5rem)] font-medium text-white hover:bg-[#7b4ee0] xl:w-[280px]"
     >
@@ -238,12 +303,37 @@ const NewEmptyStateComponent = ({
                   Generate market analysis?
                 </AlertDialogTitle>
                 <AlertDialogDescription className="text-center">
-                  This will take <b className="text-[#915EFF]">5 credits</b> from your account.
+                  {hasActiveSubscription ? (
+                    <span>
+                      Included in your{' '}
+                      <span className="text-[#915EFF] font-semibold">
+                        {subscriptionStatus ?? 'Active'}
+                      </span>{' '}
+                      subscription. Tokens stay untouched.
+                    </span>
+                  ) : (
+                    <span>
+                      This will take <b className="text-[#915EFF]">{requiredTokens} credits</b> from your
+                      account.
+                    </span>
+                  )}
                 </AlertDialogDescription>
 
-                <div className="mt-2 text-center text-sm">
-                  Current balance:{' '}
-                  <span className="font-bold">{isBalanceLoading ? '...' : tokenBalance}</span>
+                <div className="mt-2 space-y-1 text-center text-sm">
+                  <div>
+                    Subscription status:{' '}
+                    <span
+                      className={`font-semibold ${
+                        hasActiveSubscription ? 'text-emerald-400' : 'text-[#915EFF]'
+                      }`}
+                    >
+                      {subscriptionStatus ? subscriptionStatus : 'None'}
+                    </span>
+                  </div>
+                  <div>
+                    Current balance:{' '}
+                    <span className="font-bold">{isBalanceLoading ? '...' : tokenBalance}</span>
+                  </div>
                 </div>
               </AlertDialogHeader>
 
@@ -255,16 +345,18 @@ const NewEmptyStateComponent = ({
                   Cancel
                 </AlertDialogCancel>
 
-                {!isBalanceLoading && typeof tokenBalance === 'number' && tokenBalance < 5 ? (
-                  <Link href="/pricing">
-                    <AlertDialogAction
-                      className="bg-[#915EFF] text-white hover:bg-[#7b4ee0]"
-                      onClick={() => setIsConfirmDialogOpen(false)}
-                    >
-                      Get tokens
-                      <Image src={star_generate} alt="star" width={16} height={16} />
-                    </AlertDialogAction>
-                  </Link>
+                {shouldShowPricingCta ? (
+                  <AlertDialogAction
+                    className="bg-[#915EFF] text-white hover:bg-[#7b4ee0]"
+                    onClick={() => {
+                      toast.info("Let's pick a plan tailored to you.");
+                      setIsConfirmDialogOpen(false);
+                      router.push('/pricing');
+                    }}
+                  >
+                    Get tokens
+                    <Image src={star_generate} alt="star" width={16} height={16} />
+                  </AlertDialogAction>
                 ) : (
                   <AlertDialogAction
                     onClick={async () => {
@@ -273,8 +365,9 @@ const NewEmptyStateComponent = ({
                       setIsConfirmDialogOpen(false);
                     }}
                     className="bg-[#915EFF] text-white hover:bg-[#7b4ee0]"
+                    disabled={disableGenerateAction}
                   >
-                    Generate
+                    {isLoading ? 'Generating...' : 'Generate'}
                     <Image src={star_generate} alt="star" width={16} height={16} />
                   </AlertDialogAction>
                 )}
