@@ -16,10 +16,8 @@ namespace VocareWebAPI.Extensions.ApplicationBuilderExtensions
                             "strict-origin-when-cross-origin"
                         );
 
-                        // CSP różne dla środowisk
                         if (app.Environment.IsDevelopment())
                         {
-                            // Luźniejsze dla developmentu - React/Angular potrzebują 'unsafe-eval'
                             context.Response.Headers.TryAdd(
                                 "Content-Security-Policy",
                                 "default-src 'self'; "
