@@ -16,10 +16,10 @@ namespace VocareWebAPI.Extensions.ServiceCollectionExtensions
                     "AiPolicy",
                     limiterOptions =>
                     {
-                        limiterOptions.PermitLimit = 5; // Maksymalna liczba żądań w oknie
-                        limiterOptions.Window = TimeSpan.FromMinutes(1); // Okno czasowe
+                        limiterOptions.PermitLimit = 5;
+                        limiterOptions.Window = TimeSpan.FromMinutes(1);
                         limiterOptions.QueueProcessingOrder = QueueProcessingOrder.OldestFirst;
-                        limiterOptions.QueueLimit = 2; // Maksymalna liczba żądań w kolejce
+                        limiterOptions.QueueLimit = 2;
                     }
                 );
 

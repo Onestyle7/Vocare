@@ -166,9 +166,9 @@ namespace VocareWebAPI.Controllers
             return Ok(new { Message = "Payment canceled." });
         }
 
-        [HttpGet("get-token-balance")]
+        [HttpGet("access-status")]
         [Authorize]
-        public async Task<IActionResult> GetTokenBalance()
+        public async Task<IActionResult> GetAccessStatus()
         {
             try
             {
@@ -184,7 +184,13 @@ namespace VocareWebAPI.Controllers
                     return NotFound("Nie znaleziono informacji o płatności dla tego użytkownika.");
                 }
 
-                return Ok(new { tokenBalance = userBilling.TokenBalance });
+                return Ok(
+                    new
+                    {
+                        tokenBalance = userBilling.TokenBalance,
+                        subscriptionStatus = userBilling.SubscriptionStatus.ToString(),
+                    }
+                );
             }
             catch (KeyNotFoundException)
             {

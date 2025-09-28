@@ -6,6 +6,6 @@ namespace VocareWebAPI.UserManagement.Models.Enums
         Medium = 2, // Średni
         High = 3, // Wysoki
         Critical = 4, // Krytyczny
-        Unknown = 5, // This value is used when the risk level is not specified or cannot be determined
+        Unknown = 5, // Nieznany
     }
 }

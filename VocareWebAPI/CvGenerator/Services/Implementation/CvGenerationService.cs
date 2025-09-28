@@ -34,7 +34,6 @@ namespace VocareWebAPI.CvGenerator.Services.Implementations
                 var userProfile = await _userProfileRepository.GetUserProfileByIdAsync(userId);
                 if (userProfile == null)
                 {
-                    // Używamy KeyNotFoundException zamiast Exception - to nie będzie łapane przez catch
                     throw new KeyNotFoundException($"User profile not found for userId: {userId}");
                 }
 
@@ -44,17 +43,14 @@ namespace VocareWebAPI.CvGenerator.Services.Implementations
             }
             catch (KeyNotFoundException)
             {
-                // Przepuszczamy KeyNotFoundException bez opakowywania
                 throw;
             }
             catch (ArgumentException)
             {
-                // Przepuszczamy ArgumentException bez opakowywania
                 throw;
             }
             catch (Exception ex)
             {
-                // Tylko nieznane błędy opakowujemy w generyczną wiadomość
                 _logger.LogError(ex, "Error generating CV for user {UserId}", userId);
                 throw new Exception("An error occurred while generating the CV.");
             }

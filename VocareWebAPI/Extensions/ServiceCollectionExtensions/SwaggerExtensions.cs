@@ -33,8 +33,7 @@ namespace VocareWebAPI.Extensions.ServiceCollectionExtensions
                         },
                     }
                 );
-                // CustomSchemasIds - jak Swagger ma nazywać modele w dokumentacji
-                // Full name daje name + namespace, co zapobiega konfliktom
+
                 c.CustomSchemaIds(type => type.FullName);
 
                 c.AddSecurityDefinition(
@@ -50,7 +49,6 @@ namespace VocareWebAPI.Extensions.ServiceCollectionExtensions
                     }
                 );
 
-                // Wymaga Autoryzacji dla wszystkich endpoint, chyba że mają [AllowAnonymous]
                 c.AddSecurityRequirement(
                     new OpenApiSecurityRequirement
                     {
@@ -95,7 +93,6 @@ namespace VocareWebAPI.Extensions.ServiceCollectionExtensions
                     else if (env.IsStaging())
                     {
                         c.DocumentTitle = "Vocare API - STAGING ENVIRONMENT";
-                        // Pomarańczowy top bar dla staging - wizualne ostrzeżenie
                         c.HeadContent =
                             @"
                             <style>

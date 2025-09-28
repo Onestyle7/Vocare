@@ -50,7 +50,6 @@ namespace VocareWebAPI.Controllers
                     return Unauthorized("Brak identyfikatora użytkownika w tokenie.");
                 }
 
-                // 1. Sprawdź dostęp (subskrypcja lub tokeny)
                 bool hasAccess = await _billingService.CanAccessServiceAsync(
                     userId,
                     "MarketAnalysis"
@@ -62,10 +61,8 @@ namespace VocareWebAPI.Controllers
 
                 _logger.LogInformation("Getting market analysis for user {UserId}", userId);
 
-                // 2. Wygeneruj analizę rynku
                 var result = await _marketAnalysisService.GetMarketAnalysisAsync(userId);
 
-                // 3. Odejmij tokeny, jeśli nie ma aktywnej subskrypcji
                 await _billingService.DeductTokensForServiceAsync(userId, "MarketAnalysis");
 
                 return Ok(result);

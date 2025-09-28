@@ -30,7 +30,6 @@ namespace VocareWebAPI.Extensions.ApplicationBuilderExtensions
                             );
                         }
 
-                        // Log preflight requests
                         if (context.Request.Method == "OPTIONS")
                         {
                             logger.LogDebug(
@@ -87,7 +86,7 @@ namespace VocareWebAPI.Extensions.ApplicationBuilderExtensions
                             context.Request.Path
                         );
 
-                        // Upewnij się że response nie został jeszcze wysłany
+                        // Upewniamy się że response nie został jeszcze wysłany
                         if (!context.Response.HasStarted)
                         {
                             context.Response.StatusCode = 500;
@@ -165,7 +164,6 @@ namespace VocareWebAPI.Extensions.ApplicationBuilderExtensions
                             var json = protector.Unprotect(token);
                             var tokenData = JsonSerializer.Deserialize<JsonElement>(json);
 
-                            // Sprawdź expiration
                             if (tokenData.TryGetProperty("exp", out var expElement))
                             {
                                 var exp = expElement.GetInt64();
@@ -178,7 +176,6 @@ namespace VocareWebAPI.Extensions.ApplicationBuilderExtensions
                                 }
                             }
 
-                            // Ustaw użytkownika
                             if (tokenData.TryGetProperty("sub", out var sub))
                             {
                                 var userId = sub.GetString();

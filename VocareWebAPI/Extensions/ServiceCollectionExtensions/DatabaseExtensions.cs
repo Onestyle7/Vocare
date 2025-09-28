@@ -22,12 +22,6 @@ namespace VocareWebAPI.Extensions.ServiceCollectionExtensions
                 var connectionString = GetConnectionString(configuration);
 
                 options.UseNpgsql(connectionString);
-
-                // Tylko jeśli masz problemy z połączeniem:
-                // options.UseNpgsql(connectionString, npgsqlOptions =>
-                // {
-                //     npgsqlOptions.EnableRetryOnFailure(3);
-                // });
             });
 
             return services;
@@ -35,12 +29,10 @@ namespace VocareWebAPI.Extensions.ServiceCollectionExtensions
 
         private static string GetConnectionString(IConfiguration configuration)
         {
-            // Railway używa DATABASE_URL
             var databaseUrl = Environment.GetEnvironmentVariable("DATABASE_URL");
 
             if (!string.IsNullOrEmpty(databaseUrl))
             {
-                // Konwertuj DATABASE_URL na connection string
                 var databaseUri = new Uri(databaseUrl);
                 var userInfo = databaseUri.UserInfo.Split(':');
 
@@ -52,7 +44,6 @@ namespace VocareWebAPI.Extensions.ServiceCollectionExtensions
                     + $"SSL Mode=Require;Trust Server Certificate=true";
             }
 
-            // Fallback na appsettings.json
             return configuration.GetConnectionString("DefaultConnection")
                 ?? throw new InvalidOperationException("No database connection configured");
         }

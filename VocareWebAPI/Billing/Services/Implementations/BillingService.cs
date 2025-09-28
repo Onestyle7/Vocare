@@ -68,18 +68,15 @@ namespace VocareWebAPI.Billing.Services.Implementations
 
         public async Task DeductTokensForServiceAsync(string userId, string serviceName)
         {
-            // 1️⃣ Walidacja argumentów
             if (string.IsNullOrWhiteSpace(userId) || string.IsNullOrWhiteSpace(serviceName))
                 throw new ArgumentException("User ID and service name cannot be null or empty.");
 
-            // 2️⃣ Pobranie ceny usługi
             var serviceCost = await _serviceCostRepository.GetServiceCostAsync(serviceName);
             if (serviceCost <= 0)
                 throw new InvalidOperationException(
                     $"Service cost for {serviceName} is not valid."
                 );
 
-            // 3️⃣ Pobranie danych billingowych użytkownika
             var userBilling = await _dbContext.UserBillings.FirstOrDefaultAsync(ub =>
                 ub.UserId == userId
             );
@@ -88,28 +85,23 @@ namespace VocareWebAPI.Billing.Services.Implementations
                     $"User billing information for user ID {userId} not found."
                 );
 
-            // 4️⃣ Jeśli ma aktywną subskrypcję, nic nie robimy
             if (userBilling.SubscriptionStatus == SubscriptionStatus.Active)
                 return;
 
-            // 5️⃣ Sprawdzenie salda tokenów
             if (userBilling.TokenBalance < serviceCost)
                 throw new InvalidOperationException(
                     $"User {userId} does not have enough tokens to access {serviceName}."
                 );
 
-            // 6️⃣ Sprawdzamy czy provider obsługuje transakcje
             var isInMemory =
                 _dbContext.Database.ProviderName == "Microsoft.EntityFrameworkCore.InMemory";
 
             if (isInMemory)
             {
-                // Dla InMemory - bez transakcji (operacje są atomowe z natury)
                 await ProcessTokenDeductionAsync(userBilling, userId, serviceName, serviceCost);
             }
             else
             {
-                // Dla prawdziwych baz danych - z transakcją
                 await using var trx = await _dbContext.Database.BeginTransactionAsync();
                 try
                 {
@@ -131,11 +123,9 @@ namespace VocareWebAPI.Billing.Services.Implementations
             int serviceCost
         )
         {
-            // 7️⃣ Aktualizacja salda
             userBilling.TokenBalance -= serviceCost;
             userBilling.LastTokenPurchaseDate = DateTime.UtcNow;
 
-            // 8️⃣ Dodanie zapisu transakcji
             var tokenTransaction = new TokenTransaction
             {
                 UserId = userId,
@@ -146,7 +136,6 @@ namespace VocareWebAPI.Billing.Services.Implementations
             };
             await _dbContext.TokenTransactions.AddAsync(tokenTransaction);
 
-            // 9️⃣ Zapis wszystkich zmian
             await _dbContext.SaveChangesAsync();
         }
 
@@ -177,7 +166,6 @@ namespace VocareWebAPI.Billing.Services.Implementations
                         session.Metadata?["userId"]
                         ?? throw new InvalidOperationException("userId missing in metadata");
 
-                    // KLUCZOWA ZMIANA: Pobieramy ilość tokenów z metadanych
                     if (!session.Metadata.TryGetValue("tokenAmount", out var tokenAmountStr))
                     {
                         _logger.LogError(
@@ -213,23 +201,19 @@ namespace VocareWebAPI.Billing.Services.Implementations
                         tokensToAdd
                     );
 
-                    // ---------- Sprawdzenie użytkownika ----------
                     var ub = await _userBillingRepository.GetByUserIdAsync(userId);
                     if (ub == null)
                         throw new KeyNotFoundException($"No billing for {userId}");
 
-                    // ---------- Transakcja dodania tokenów ----------
                     await using var tx = await _dbContext.Database.BeginTransactionAsync();
                     try
                     {
-                        // Dodanie tokenów do salda
                         await _userBillingRepository.AddTokensAsync(userId, tokensToAdd);
 
-                        // Zapis transakcji
                         var tt = new TokenTransaction
                         {
                             UserId = userId,
-                            ServiceName = $"TokenPurchase-{packageName}", // Bardziej opisowa nazwa
+                            ServiceName = $"TokenPurchase-{packageName}",
                             Type = TransactionType.Purchase,
                             Amount = tokensToAdd,
                             CreatedAt = DateTime.UtcNow,
@@ -340,11 +324,9 @@ namespace VocareWebAPI.Billing.Services.Implementations
 
             var subscriptionLevel = DetermineSubscriptionLevel(subscription);
 
-            // ✅ POPRAWKA v48.0.0: Pobierz CurrentPeriodEnd z pierwszego SubscriptionItem
             DateTime? subscriptionEndDate = null;
             if (subscription.Items?.Data?.Any() == true)
             {
-                // W v48.0.0 CurrentPeriodEnd jest w SubscriptionItem
                 subscriptionEndDate = subscription.Items.Data.First().CurrentPeriodEnd;
             }
 
@@ -433,7 +415,6 @@ namespace VocareWebAPI.Billing.Services.Implementations
 
                 userBilling.SubscriptionStatus = MapStripeStatusToOurStatus(subscription.Status);
 
-                // ✅ POPRAWKA v48.0.0: CurrentPeriodEnd z SubscriptionItem
                 if (subscription.Items?.Data?.Any() == true)
                 {
                     userBilling.SubscriptionEndDate = subscription
@@ -441,7 +422,6 @@ namespace VocareWebAPI.Billing.Services.Implementations
                         .CurrentPeriodEnd;
                 }
 
-                // ✅ POPRAWKA v48.0.0: CancelAtPeriodEnd może być nullable
                 if (
                     subscription.CancelAtPeriodEnd == true
                     && userBilling.SubscriptionStatus == SubscriptionStatus.Active
@@ -535,10 +515,6 @@ namespace VocareWebAPI.Billing.Services.Implementations
                 return;
             }
 
-            // In Stripe .NET v48, use `invoice.Subscription` (string) instead of `SubscriptionId`
-            // W wersji Stripe.NET v48 nie polegamy na Subscription/SubscriptionId z Invoice –
-            // użyjemy CustomerId do odnalezienia użytkownika oraz linii faktury do wyznaczenia końca okresu
-
             var customerId = invoice.CustomerId;
             if (string.IsNullOrEmpty(customerId))
             {
@@ -562,10 +538,8 @@ namespace VocareWebAPI.Billing.Services.Implementations
 
                 var userBilling = await _userBillingRepository.GetByUserIdAsync(userId);
 
-                // Oznacz subskrypcję jako aktywną
                 userBilling.SubscriptionStatus = SubscriptionStatus.Active;
 
-                // Spróbuj wyznaczyć koniec okresu z linii faktury (subscription line)
                 DateTime? periodEnd = null;
                 if (invoice.Lines?.Data?.Any() == true)
                 {
@@ -620,14 +594,12 @@ namespace VocareWebAPI.Billing.Services.Implementations
         /// </summary>
         private SubscriptionLevel DetermineSubscriptionLevel(Stripe.Subscription subscription)
         {
-            // Sprawdź metadane subskrypcji
             if (subscription.Metadata?.TryGetValue("subscriptionLevel", out var levelStr) == true)
             {
                 if (Enum.TryParse<SubscriptionLevel>(levelStr, out var level))
                     return level;
             }
 
-            // Fallback - sprawdź konfigurację pakietów na podstawie price ID
             if (subscription.Items?.Data?.Any() == true)
             {
                 var priceId = subscription.Items.Data.First().Price.Id;
@@ -648,7 +620,6 @@ namespace VocareWebAPI.Billing.Services.Implementations
                 return;
             }
 
-            // KISS: Invoice.Customer jest już stringiem, nie obiektem
             var customerId = invoice.CustomerId;
 
             if (string.IsNullOrEmpty(customerId))
@@ -676,7 +647,6 @@ namespace VocareWebAPI.Billing.Services.Implementations
 
                 var userBilling = await _userBillingRepository.GetByUserIdAsync(userId);
 
-                // Oznacz jako Past Due (grace period)
                 userBilling.SubscriptionStatus = SubscriptionStatus.PastDue;
 
                 await _userBillingRepository.UpdateAsync(userBilling);

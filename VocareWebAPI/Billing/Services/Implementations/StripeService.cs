@@ -230,7 +230,6 @@ namespace VocareWebAPI.Billing.Services.Implementations
 
                 userBilling.StripeCustomerId = customer.Id;
 
-                // zapis / aktualizacja w transakcji
                 using var trx = await _dbContext.Database.BeginTransactionAsync();
                 try
                 {
@@ -257,7 +256,7 @@ namespace VocareWebAPI.Billing.Services.Implementations
                 }
             }
 
-            // ---------- budowanie sesji Checkout ----------
+            // budowanie sesji Checkout
             var successUrl =
                 _configuration["Stripe:SuccessUrl"]
                 ?? throw new InvalidOperationException("Success URL not configured.");
@@ -359,8 +358,6 @@ namespace VocareWebAPI.Billing.Services.Implementations
                 subscriptionPackage.Name
             );
 
-            // Pobranie / przygotowanie UserBilling
-            // Kod identyczny jak w tokenach - TODO: Wydzielić metodę pomocniczą
             bool isNew = false;
             UserBilling userBilling;
 

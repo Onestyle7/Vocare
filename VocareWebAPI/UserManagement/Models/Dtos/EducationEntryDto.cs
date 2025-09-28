@@ -15,8 +15,8 @@ namespace VocareWebAPI.UserManagement.Models.Dtos
 
         public string Field { get; set; } = string.Empty;
 
-        public string StartDate { get; set; } = string.Empty; // Format: yyyy-MM-dd
+        public string StartDate { get; set; } = string.Empty;
 
-        public string EndDate { get; set; } = string.Empty; // Format: yyyy-MM-dd
+        public string EndDate { get; set; } = string.Empty;
     }
 }
