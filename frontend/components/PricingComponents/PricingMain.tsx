@@ -10,13 +10,265 @@ import {
 import Section from '@/components/SupportComponents/Section';
 import { Button } from '@/components/ui/button';
 import Image from 'next/image';
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { ScrollParallax } from 'react-just-parallax';
 import Copy from '../SupportComponents/Copy';
 import { Code2, EyeOffIcon, PhoneIcon, Undo2 } from 'lucide-react';
 import { cn } from '@/lib/utils';
+import { useRouter } from 'next/navigation';
+import { toast } from 'sonner';
+
+type PlanType = 'tokens' | 'subscription';
+
+const pricingPlans = [
+  {
+    name: 'Personal',
+    description: 'Perfect for getting started with our platform.',
+    price: 9,
+    tokens: 1000 as number | string,
+    priceId: 'price_1S8kOELs2ndSVWb2t6bhwwwC', 
+    type: 'tokens' as PlanType,
+    features: [
+      '1,000 tokens included',
+      'Basic access to AI models',
+      'Up to 5 requests per day',
+      'Standard response time',
+    ],
+    popular: false,
+  },
+  {
+    name: 'Growth',
+    description: 'The best choice for scaling your projects.',
+    price: 32,
+    tokens: 5000 as number | string,
+    priceId: 'price_1S8kP9Ls2ndSVWb27z6i7v5v', 
+    type: 'tokens' as PlanType,
+    features: [
+      '5,000 tokens included',
+      'Full access to all AI models',
+      'Unlimited daily requests',
+      'Priority response time',
+      'Export results in multiple formats',
+    ],
+    popular: true,
+  },
+  {
+    name: 'Extras',
+    description: 'Unlimited tokens and premium experience for personal use.',
+    price: 48,
+    tokens: 'Unlimited' as number | string,
+    priceId: 'price_1S9q33Ls2ndSVWb2KeB4Y3AD', 
+    type: 'subscription' as PlanType,
+    features: [
+      'Unlimited tokens for one user',
+      'Access to all advanced AI models',
+      'Dedicated premium support',
+    ],
+    popular: false,
+  },
+] as const;
 
 const PricingMain = () => {
+  const [isLoading, setIsLoading] = useState(false);
+  const [selectedPriceId, setSelectedPriceId] = useState<string | null>(null);
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [subscriptionStatus, setSubscriptionStatus] = useState<string | null>(null);
+  const [isPortalLoading, setIsPortalLoading] = useState(false);
+
+  const router = useRouter();
+  const API_BASE =process.env.NEXT_PUBLIC_API_URL || 'https://vocare-staging-e568.up.railway.app';
+
+  useEffect(() => {
+    const token = typeof window !== 'undefined' ? localStorage.getItem('token') : null;
+    setIsAuthenticated(!!token);
+  }, []);
+
+  // Helpers
+  const checkTokenBalance = async () => {
+    if (!isAuthenticated) return;
+    try {
+      const token = localStorage.getItem('token');
+      const res = await fetch(`${API_BASE}/api/Billing/get-token-balance`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      if (res.ok) {
+        const data = await res.json();
+        console.log('Current token balance:', data.tokenBalance);
+      }
+    } catch (e) {
+      console.error('Failed to fetch token balance:', e);
+    }
+  };
+
+  const checkSubscriptionStatus = async () => {
+    if (!isAuthenticated) return;
+    try {
+      const token = localStorage.getItem('token');
+      const res = await fetch(`${API_BASE}/api/Billing/subscription-status`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+
+      if (res.ok) {
+        const data = await res.json();
+        setSubscriptionStatus(data.subscriptionStatus);
+      } else if (res.status === 404) {
+        setSubscriptionStatus('None');
+      }
+    } catch (e) {
+      console.error('Failed to fetch subscription status:', e);
+      setSubscriptionStatus('None');
+    }
+  };
+
+  useEffect(() => {
+    if (isAuthenticated) {
+      checkTokenBalance();
+      checkSubscriptionStatus();
+    }
+  }, [isAuthenticated]);
+
+  const openCustomerPortal = async () => {
+    if (!isAuthenticated) {
+      toast.error('Please sign in first');
+      return;
+    }
+
+    setIsPortalLoading(true);
+    try {
+      const token = localStorage.getItem('token');
+      const res = await fetch(`${API_BASE}/api/Billing/customer-portal`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
+      });
+
+      if (!res.ok) {
+        const errorData = await res.json();
+        if (res.status === 404) {
+          toast.error('No billing information found', {
+            description: 'Make a purchase first to access billing portal.',
+          });
+        } else if (res.status === 400 && errorData.error?.includes('customer')) {
+          toast.error('Billing setup needed', {
+            description: 'Please make a purchase first to set up your billing account.',
+          });
+        } else {
+          throw new Error(errorData.error || 'Failed to open customer portal');
+        }
+        return;
+      }
+
+      const data = await res.json();
+      if (!data.url) throw new Error('No portal URL received');
+
+      toast.success('Opening billing portal...');
+      window.location.href = data.url;
+    } catch (e: any) {
+      if (e?.message?.includes('401')) {
+        toast.error('Session expired', {
+          description: 'Please sign in again.',
+          action: { label: 'Sign In', onClick: () => router.push('/sign-in') },
+        });
+      } else {
+        toast.error('Failed to open billing portal', {
+          description: e?.message || 'Please try again.',
+        });
+      }
+    } finally {
+      setIsPortalLoading(false);
+    }
+  };
+
+  const handlePurchase = async (
+    priceId: string,
+    planName: string,
+    planType: PlanType
+  ) => {
+    // Walidacje
+    if (priceId.includes('xxx') || priceId.includes('yyy') || priceId.includes('zzz')) {
+      toast.error('Configuration needed', {
+        description: 'Replace Price IDs with real Stripe Price IDs!',
+      });
+      return;
+    }
+
+    if (!isAuthenticated) {
+      toast.error('Please sign in first', {
+        description: `You need to be logged in to purchase ${
+          planType === 'subscription' ? 'a subscription' : 'tokens'
+        }.`,
+        action: { label: 'Sign In', onClick: () => router.push('/sign-in') },
+      });
+      return;
+    }
+
+    if (planType === 'subscription' && subscriptionStatus === 'Active') {
+      toast.error('Already subscribed', {
+        description: 'You already have an active subscription. Use "Manage Billing" to change plans.',
+        action: { label: 'Manage Billing', onClick: () => openCustomerPortal() },
+      });
+      return;
+    }
+
+    setIsLoading(true);
+    setSelectedPriceId(priceId);
+
+    try {
+      const token = localStorage.getItem('token');
+      const endpoint =
+        planType === 'subscription'
+          ? '/api/Billing/create-subscription-checkout'
+          : '/api/Billing/create-checkout-session';
+
+      const res = await fetch(`${API_BASE}${endpoint}`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
+        body: JSON.stringify({ priceId }),
+      });
+
+      if (!res.ok) {
+        const errorData = await res.json();
+        throw new Error(errorData.error || 'Failed to create checkout session');
+      }
+
+      const data = await res.json();
+      if (!data.url) throw new Error('No checkout URL received');
+
+      // zapamiętaj pending
+      sessionStorage.setItem(
+        'pendingPurchase',
+        JSON.stringify({
+          priceId,
+          planName,
+          planType,
+          timestamp: new Date().toISOString(),
+        })
+      );
+
+      toast.success('Redirecting to payment...', {
+        description:
+          planType === 'subscription'
+            ? `Setting up ${planName} subscription`
+            : `Purchasing ${planName} tokens`,
+      });
+
+      window.location.href = data.url;
+    } catch (e: any) {
+      if (e?.message?.includes('401')) {
+        toast.error('Session expired', {
+          description: 'Please sign in again to continue.',
+          action: { label: 'Sign In', onClick: () => router.push('/sign-in') },
+        });
+      } else {
+        toast.error('Payment initialization failed', {
+          description: e?.message || 'Something went wrong. Please try again.',
+        });
+      }
+    } finally {
+      setIsLoading(false);
+      setSelectedPriceId(null);
+    }
+  };
+
   return (
     <Section
       className="relative -mt-[5.25rem] pt-[7.5rem]"
@@ -32,7 +284,6 @@ const PricingMain = () => {
             '[background-size:90px_90px]',
             '[background-image:linear-gradient(to_right,#e4e4e7_1px,transparent_1px),linear-gradient(to_bottom,#e4e4e7_1px,transparent_1px)]',
             'dark:[background-image:linear-gradient(to_right,#262626_1px,transparent_1px),linear-gradient(to_bottom,#262626_1px,transparent_1px)]',
-            // mask grid to be visible only within the central gradient
             '[mask-image:radial-gradient(ellipse_at_center,white_0%,transparent_60%)]',
             '[-webkit-mask-image:radial-gradient(ellipse_at_center,white_0%,transparent_60%)]',
             '[mask-size:200%_200%]',
@@ -83,8 +334,36 @@ const PricingMain = () => {
                 Contact Us
               </p>
             </div>
+
+            {/* STATUS / BILLING ACTIONS */}
+            {!isAuthenticated ? (
+              <div className="mt-4 mb-6 rounded-lg bg-yellow-50 p-4 text-center dark:bg-yellow-900/20">
+                <p className="text-sm text-yellow-800 dark:text-yellow-200">
+                  Please{' '}
+                  <button
+                    onClick={() => router.push('/sign-in')}
+                    className="font-semibold underline hover:no-underline"
+                  >
+                    sign in
+                  </button>{' '}
+                  to purchase tokens or subscribe
+                </p>
+              </div>
+            ) : (
+              <div className="mt-4 mb-6 flex flex-col items-center gap-4">
+                {subscriptionStatus && subscriptionStatus !== 'None' && (
+                  <div className="rounded-lg bg-green-50 p-4 text-center dark:bg-green-900/20">
+                    <p className="text-sm text-green-800 dark:text-green-200">
+                      Current subscription:{' '}
+                      <span className="font-semibold">{subscriptionStatus}</span>
+                    </p>
+                  </div>
+                )}
+              </div>
+            )}
           </div>
-          <div className="relative mt-10 mb-10 w-full px-4 md:px-6 xl:mt-18">
+
+          <div className="relative mb-10 w-full px-4 md:px-6 xl:mt-18">
             {/* Subtle purple circular glow under the cards */}
             <div
               aria-hidden
@@ -106,11 +385,9 @@ const PricingMain = () => {
                   <Image src={shape1} alt="shape" width={78} height={78} className="-rotate-20" />
                 </div>
               </ScrollParallax>
+
               {/* Personal */}
-              <div
-                className={`font-korbin relative z-30 flex h-full flex-col justify-between rounded-[24px] border bg-[linear-gradient(to_top_right,rgba(9,13,22,1)_20%,rgba(9,13,22,0.2)_100%)] p-6 backdrop-blur-md sm:h-[87%] dark:border-gray-500/40`}
-              >
-                {/* subtle glass gradient overlay */}
+              <div className="font-korbin relative z-30 flex h-full flex-col justify-between rounded-[24px] border bg-[linear-gradient(to_top_right,rgba(9,13,22,1)_20%,rgba(9,13,22,0.2)_100%)] p-6 backdrop-blur-md sm:h-[87%] dark:border-gray-500/40">
                 <div
                   aria-hidden
                   className="pointer-events-none absolute inset-0 rounded-[24px] bg-gradient-to-br from-white/25 via-white/10 to-transparent dark:from-white/10 dark:via-white/5"
@@ -158,21 +435,31 @@ const PricingMain = () => {
                     ))}
                   </ul>
                 </div>
-                <Button className="mt-auto h-12 w-full rounded-full font-bold" variant="outline">
-                  Buy plan
+                <Button
+                  className="mt-auto h-12 w-full rounded-full font-bold"
+                  variant="outline"
+                  onClick={() =>
+                    handlePurchase(
+                      pricingPlans[0].priceId,
+                      pricingPlans[0].name,
+                      pricingPlans[0].type
+                    )
+                  }
+                  disabled={isLoading && selectedPriceId === pricingPlans[0].priceId}
+                >
+                  {isLoading && selectedPriceId === pricingPlans[0].priceId
+                    ? 'Processing...'
+                    : `Buy ${pricingPlans[0].name}`}
                 </Button>
               </div>
 
-              {/* Growth (Most popular) — glassmorphism */}
+              {/* Growth (Most popular) */}
               <div className="relative rounded-[28px] bg-[linear-gradient(90deg,rgba(146,150,253,1)_0%,rgba(132,145,254,1)_50%,rgba(199,169,254,1)_100%,rgba(157,155,255,1)_77%)] px-1 pt-16 pb-1">
                 <div className="absolute top-4 left-1/2 flex -translate-x-1/2 items-center gap-2">
                   <Undo2 className="h-5 w-5 -rotate-90 text-white" />
                   <span className="text-lg font-semibold text-white">Best Deal</span>
                 </div>
-                <div
-                  className={`font-korbin relative z-30 flex flex-col justify-between rounded-[24px] border p-6 backdrop-blur-md dark:border-gray-500/40 dark:bg-[#090d16]`}
-                >
-                  {/* subtle glass gradient overlay */}
+                <div className="font-korbin relative z-30 flex flex-col justify-between rounded-[24px] border p-6 backdrop-blur-md dark:border-gray-500/40 dark:bg-[#090d16]">
                   <div
                     aria-hidden
                     className="pointer-events-none absolute inset-0 rounded-[24px] bg-gradient-to-br from-white/25 via-white/10 to-transparent dark:from-white/10 dark:via-white/5"
@@ -229,17 +516,24 @@ const PricingMain = () => {
                   <Button
                     className="relative mt-auto h-12 w-full rounded-full font-bold bg-[linear-gradient(90deg,rgba(146,150,253,1)_0%,rgba(132,145,254,1)_50%,rgba(199,169,254,1)_100%,rgba(157,155,255,1)_77%)] text-white"
                     variant="default"
+                    onClick={() =>
+                      handlePurchase(
+                        pricingPlans[1].priceId,
+                        pricingPlans[1].name,
+                        pricingPlans[1].type
+                      )
+                    }
+                    disabled={isLoading && selectedPriceId === pricingPlans[1].priceId}
                   >
-                    Buy plan
+                    {isLoading && selectedPriceId === pricingPlans[1].priceId
+                      ? 'Processing...'
+                      : `Buy ${pricingPlans[1].name}`}
                   </Button>
                 </div>
               </div>
 
-              {/* Extras (glassmorphism) */}
-              <div
-                className={`font-korbin relative z-30 flex h-full flex-col justify-between rounded-[24px] border bg-[linear-gradient(to_top_right,rgba(9,13,22,1)_20%,rgba(9,13,22,0.2)_100%)] p-6 backdrop-blur-md sm:h-[87%] dark:border-gray-500/40`}
-              >
-                {/* subtle glass gradient overlay */}
+              {/* Extras (subscription) */}
+              <div className="font-korbin relative z-30 flex h-full flex-col justify-between rounded-[24px] border bg-[linear-gradient(to_top_right,rgba(9,13,22,1)_20%,rgba(9,13,22,0.2)_100%)] p-6 backdrop-blur-md sm:h-[87%] dark:border-gray-500/40">
                 <div
                   aria-hidden
                   className="pointer-events-none absolute inset-0 rounded-[24px] bg-gradient-to-br from-white/25 via-white/10 to-transparent dark:from-white/10 dark:via-white/5"
@@ -300,8 +594,18 @@ const PricingMain = () => {
                 <Button
                   className="relative mt-auto h-12 w-full rounded-full font-bold"
                   variant="outline"
+                  onClick={() =>
+                    handlePurchase(
+                      pricingPlans[2].priceId,
+                      pricingPlans[2].name,
+                      pricingPlans[2].type
+                    )
+                  }
+                  disabled={isLoading && selectedPriceId === pricingPlans[2].priceId}
                 >
-                  Buy plan
+                  {isLoading && selectedPriceId === pricingPlans[2].priceId
+                    ? 'Processing...'
+                    : `Subscribe to ${pricingPlans[2].name}`}
                 </Button>
               </div>
             </div>
