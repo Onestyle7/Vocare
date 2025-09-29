@@ -6,11 +6,11 @@ import { SplitText, ScrollTrigger } from 'gsap/all';
 
 import { gsap } from 'gsap';
 import { avatars, mobileView, shape1 } from '@/app/constants';
-import Section from '../Section';
 import Iphone15Pro from '@/components/magicui/iphone-15-pro';
 import { AvatarCircles } from '@/components/magicui/avatar-circles';
 import Image from 'next/image';
-import Copy from '../Copy';
+import Copy from '../SupportComponents/Copy';
+import Section from '../SupportComponents/Section';
 
 gsap.registerPlugin(SplitText, ScrollTrigger);
 
@@ -143,12 +143,10 @@ const MobileFeature = () => {
         </div>
       </ScrollParallax>
       <div className="mt-4 min-h-screen xl:border-t xl:border-b">
-        <div className="relative mx-[10%] mb-8 flex flex-col items-center gap-5">
-          <h2 className="font-poppins mt-[36px] font-normal text-gray-400">
-            Always in Your pocket
-          </h2>
+        <div className="font-korbin relative mx-[10%] mb-8 flex flex-col items-center gap-5">
+          <h2 className="mt-[36px] font-bold text-gray-400">Always in Your pocket</h2>
           <Copy>
-            <h1 className="font-poppins text-color mt-4 text-center text-4xl font-bold md:text-6xl xl:leading-[0.8]">
+            <h1 className="text-color mt-4 text-center text-4xl font-bold md:text-6xl xl:leading-[0.8]">
               Your advisor <br /> always with you
             </h1>
           </Copy>

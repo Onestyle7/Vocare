@@ -1,15 +1,12 @@
 'use client';
 
-import { useEffect, useState, useRef, useCallback } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import axios, { AxiosError } from 'axios';
-import { gsap } from 'gsap';
-import CollapsibleButton from '../AssistantComponents/CollapsibleButton';
-import { TerminalDemo } from './LoadingTerminal';
-import { GridBackgroundDemo } from './GridBackgroundDemo';
-import Image from 'next/image';
-import { star_generate } from '@/app/constants';
 import { toast } from 'sonner';
-import CustomButton from '../ui/CustomButton';
+import Image from 'next/image';
+import Link from 'next/link';
+import { gsap } from 'gsap';
+
 import {
   AlertDialog,
   AlertDialogAction,
@@ -20,64 +17,184 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from '../ui/alert-dialog';
-import { useTokenBalanceContext } from '@/lib/contexts/TokenBalanceContext';
-import Link from 'next/link';
+import ButtonGenerate from '../ui/ButtonGenerate';
+import CollapsibleButton from '../AssistantComponents/CollapsibleButton';
+import Timeline from '../AssistantComponents/Timeline';
+import { GridBackgroundDemo } from './GridBackgroundDemo';
+import { TerminalDemo } from './LoadingTerminal';
 import GenerateMarketFail from './GenerateMarketFail';
 import Section from '../SupportComponents/Section';
 import NewEmptyStateComponent from './NewEmptyStateComponent';
+import { useTokenBalanceContext } from '@/lib/contexts/TokenBalanceContext';
+import {
+  IndustryStatisticsDto,
+  MarketAnalysisDetailsDto,
+  MarketAnalysisResponseDto,
+  MarketTrendsDto,
+  SkillDemandDto,
+} from '@/lib/types/marketAnalysis';
+import {
+  star_generate,
+  timeline_icon_1,
+  timeline_icon_2,
+  timeline_icon_3,
+  timeline_icon_4,
+} from '@/app/constants';
 
-// Type definitions
-interface MarketTrend {
-  trendName: string;
-  description: string;
-  impact: string;
-}
+const TIMELINE_ICONS = [timeline_icon_1, timeline_icon_2, timeline_icon_3, timeline_icon_4];
 
-interface SkillDemand {
-  skill: string;
-  industry: string;
-  demandLevel: string;
-}
+const formatSalaryRange = (min?: number, max?: number) => {
+  const formatter = new Intl.NumberFormat('pl-PL');
+  const hasMin = typeof min === 'number' && Number.isFinite(min) && min > 0;
+  const hasMax = typeof max === 'number' && Number.isFinite(max) && max > 0;
 
-interface IndustryStatistic {
-  industry: string;
-  minSalary: number;
-  maxSalary: number;
-  employmentRate: number;
-  growthForecast: string;
-}
+  if (!hasMin && !hasMax) {
+    return '';
+  }
 
-interface MarketAnalysisDto {
-  industryStatistics: IndustryStatistic[];
-  marketTrends: MarketTrend[];
-  skillDemand: SkillDemand[];
-}
+  if (hasMin && hasMax) {
+    return `${formatter.format(min)} - ${formatter.format(max)} PLN`;
+  }
 
-interface ApiResponse {
-  marketAnalysis: MarketAnalysisDto;
-}
+  if (hasMin) {
+    return `${formatter.format(min)} PLN`;
+  }
+
+  return `${formatter.format(max as number)} PLN`;
+};
+
+const formatEmploymentRate = (rate?: number) => {
+  if (typeof rate !== 'number' || Number.isNaN(rate)) {
+    return '';
+  }
+
+  return `${rate}%`;
+};
+
+const getGrowthBadgeClass = (forecast?: string) => {
+  if (!forecast) {
+    return 'bg-slate-200 text-slate-800';
+  }
+
+  const normalized = forecast.toLowerCase();
+
+  if (normalized === 'high') {
+    return 'bg-green-100 text-green-800';
+  }
+
+  if (normalized === 'medium') {
+    return 'bg-yellow-100 text-yellow-800';
+  }
+
+  if (normalized === 'low') {
+    return 'bg-red-100 text-red-800';
+  }
+
+  return 'bg-slate-200 text-slate-800';
+};
+
+const getDemandBadgeClass = (level?: string) => {
+  if (!level) {
+    return 'bg-slate-200 text-slate-800';
+  }
+
+  const normalized = level.toLowerCase();
+
+  if (normalized === 'high') {
+    return 'bg-green-100 text-green-800';
+  }
+
+  if (normalized === 'medium') {
+    return 'bg-yellow-100 text-yellow-800';
+  }
+
+  if (normalized === 'low') {
+    return 'bg-red-100 text-red-800';
+  }
+
+  return 'bg-slate-200 text-slate-800';
+};
+
+const extractMarketAnalysis = (data: unknown): MarketAnalysisDetailsDto | null => {
+  if (!data || typeof data !== 'object') {
+    return null;
+  }
+
+  if ('marketAnalysis' in data && data.marketAnalysis) {
+    const { marketAnalysis } = data as MarketAnalysisResponseDto;
+    return marketAnalysis;
+  }
+
+  if ('industryStatistics' in data) {
+    const details = data as MarketAnalysisDetailsDto;
+    return {
+      industryStatistics: details.industryStatistics ?? [],
+      marketTrends: details.marketTrends ?? [],
+      skillDemand: details.skillDemand ?? [],
+    };
+  }
+
+  return null;
+};
+
+const buildIndustrySummary = (
+  industry?: IndustryStatisticsDto,
+  relatedSkills: SkillDemandDto[] = []
+) => {
+  if (!industry) {
+    return '';
+  }
+
+  const summaryParts: string[] = [];
+  const salaryRange = formatSalaryRange(industry.minSalary, industry.maxSalary);
+  const employmentRate = formatEmploymentRate(industry.employmentRate);
+
+  if (salaryRange) {
+    summaryParts.push(`Salary range: ${salaryRange}`);
+  }
+
+  if (employmentRate) {
+    summaryParts.push(`Employment rate: ${employmentRate}`);
+  }
+
+  if (industry.growthForecast) {
+    summaryParts.push(`Growth forecast: ${industry.growthForecast}`);
+  }
+
+  if (relatedSkills.length > 0) {
+    summaryParts.push(
+      `Key skills: ${relatedSkills
+        .map((skill) => `${skill.skill}${skill.demandLevel ? ` (${skill.demandLevel})` : ''}`)
+        .join(', ')}`
+    );
+  }
+
+  return summaryParts.join(' • ');
+};
 
 export default function MarketAnalysis() {
-  const [data, setData] = useState<ApiResponse | MarketAnalysisDto | null>(null);
+  const API_URL = process.env.NEXT_PUBLIC_API_URL;
+  const [analysis, setAnalysis] = useState<MarketAnalysisDetailsDto | null>(null);
   const [error, setError] = useState<string | null>(null);
-  const [isLoading, setLoading] = useState(true);
+  const [isLoading, setLoading] = useState(false);
   const [isConfirmDialogOpen, setIsConfirmDialogOpen] = useState(false);
   const { tokenBalance, isLoading: isBalanceLoading, refresh } = useTokenBalanceContext();
 
+  const [isCollapsed, setIsCollapsed] = useState(true);
+  const contentRef = useRef<HTMLDivElement>(null);
+  const contentWrapperRef = useRef<HTMLDivElement>(null);
+
   const [showFixedButton, setShowFixedButton] = useState(false);
   const lastScrollY = useRef(0);
-  const API_URL = process.env.NEXT_PUBLIC_API_URL;
 
   useEffect(() => {
     const handleScroll = () => {
       const currentScrollY = window.scrollY;
 
-      // Scroll up
       if (currentScrollY < lastScrollY.current) {
         setShowFixedButton(true);
       }
 
-      // Scroll down
       if (currentScrollY > lastScrollY.current) {
         setShowFixedButton(false);
       }
@@ -90,29 +207,10 @@ export default function MarketAnalysis() {
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
-  const handleResponseData = (responseData: unknown) => {
-    if (
-      typeof responseData === 'object' &&
-      responseData !== null &&
-      'marketAnalysis' in responseData
-    ) {
-      setData(responseData as ApiResponse);
-    } else if (
-      typeof responseData === 'object' &&
-      responseData !== null &&
-      'industryStatistics' in responseData
-    ) {
-      setData({ marketAnalysis: responseData as MarketAnalysisDto });
-    } else {
-      setData(responseData as ApiResponse | MarketAnalysisDto | null);
-    }
-  };
-
-  const loadData = useCallback(
-    async (useNewData = false) => {
+  const fetchMarketAnalysis = useCallback(
+    async (forceNew = false) => {
       setLoading(true);
       setError(null);
-      setData(null);
 
       const token = localStorage.getItem('token');
       if (!token) {
@@ -124,54 +222,85 @@ export default function MarketAnalysis() {
       }
 
       try {
-        if (useNewData) {
-          const response = await axios.get(`${API_URL}/api/MarketAnalysis`, {
-            headers: {
-              Authorization: `Bearer ${token}`,
-              'Content-Type': 'application/json',
-            },
-          });
-
-          console.log('New market analysis raw data:', response.data);
-          handleResponseData(response.data);
-          toast.success('Generated new market analysis');
-        } else {
+        if (!forceNew) {
           try {
-            const latestResponse = await axios.get(`${API_URL}/api/MarketAnalysis/latest`, {
+            const latestResponse = await axios.get<
+              MarketAnalysisResponseDto | MarketAnalysisDetailsDto
+            >(`${API_URL}/api/MarketAnalysis/latest`, {
               headers: {
                 Authorization: `Bearer ${token}`,
                 'Content-Type': 'application/json',
               },
             });
 
-            console.log('Latest market analysis raw data:', latestResponse.data);
-            handleResponseData(latestResponse.data);
-          } catch (latestError) {
-            const axiosError = latestError as AxiosError;
-            if (axiosError.response?.status === 404) {
-              console.log('No existing analysis found, setting data to null');
-              setData(null);
+            const latestAnalysis = extractMarketAnalysis(latestResponse.data);
+            if (latestAnalysis) {
+              setAnalysis(latestAnalysis);
             } else {
-              console.error('Error fetching latest market analysis:', latestError);
-              setError(
-                (axiosError.response?.data as { detail?: string })?.detail ||
-                  'Error fetching latest market analysis.'
-              );
+              setAnalysis(null);
             }
+            return;
+          } catch (latestError) {
+            if (latestError instanceof AxiosError) {
+              if (latestError.response?.status === 404) {
+                setAnalysis(null);
+                return;
+              }
+
+              const detail = (latestError.response?.data as { detail?: string })?.detail;
+              setError(detail || 'Error fetching latest market analysis.');
+              return;
+            }
+
+            setError('Error fetching latest market analysis.');
+            return;
           }
         }
-      } catch (err) {
-        const axiosError = err as AxiosError;
-        console.error('Error fetching market analysis:', err);
-        setError(
-          (axiosError.response?.data as { detail?: string })?.detail ||
-            'Error generating market analysis'
+
+        const response = await axios.get<MarketAnalysisResponseDto | MarketAnalysisDetailsDto>(
+          `${API_URL}/api/MarketAnalysis`,
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+              'Content-Type': 'application/json',
+            },
+          }
         );
 
-        if (useNewData) {
-          toast.error('Error', {
-            description: 'Failed to generate new market analysis.',
-          });
+        const newAnalysis = extractMarketAnalysis(response.data);
+
+        if (!newAnalysis) {
+          const message = 'No market analysis data returned.';
+          setAnalysis(null);
+          setError(message);
+          if (forceNew) {
+            toast.error('Error', {
+              description: message,
+            });
+          }
+          return;
+        }
+
+        setAnalysis(newAnalysis);
+        if (forceNew) {
+          toast.success('Generated new market analysis');
+        }
+      } catch (err) {
+        if (err instanceof AxiosError) {
+          const detail = (err.response?.data as { detail?: string })?.detail;
+          setError(detail || 'Error generating market analysis');
+          if (forceNew) {
+            toast.error('Error', {
+              description: detail || 'Failed to generate new market analysis.',
+            });
+          }
+        } else {
+          setError('Unexpected error occurred');
+          if (forceNew) {
+            toast.error('Error', {
+              description: 'Unexpected error occurred.',
+            });
+          }
         }
       } finally {
         setLoading(false);
@@ -181,356 +310,8 @@ export default function MarketAnalysis() {
   );
 
   useEffect(() => {
-    loadData();
-  }, [loadData]);
-
-  const handleGenerateNewAnalysis = async () => {
-    await loadData(true);
-  };
-
-  if (error) {
-    return <GenerateMarketFail />;
-  }
-
-  if (isLoading) {
-    return (
-      <div className="mx-auto -mt-20 mb-1 flex h-screen max-w-7xl flex-col items-center justify-center overflow-hidden rounded-[28px] max-xl:mx-4">
-        <GridBackgroundDemo />
-        <TerminalDemo />
-      </div>
-    );
-  }
-
-  // For debugging
-  console.log('Rendering with data structure:', data);
-
-  const getMarketAnalysis = (): MarketAnalysisDto | null => {
-    if (!data) return null;
-
-    // Check if data is an ApiResponse with marketAnalysis property
-    if ('marketAnalysis' in data && data.marketAnalysis) {
-      return data.marketAnalysis;
-    }
-
-    // Check if data is directly a MarketAnalysisDto
-    if ('industryStatistics' in data) {
-      return data as MarketAnalysisDto;
-    }
-
-    return null;
-  };
-
-  const marketAnalysis = getMarketAnalysis();
-
-  // If there's no market analysis data, show the EmptyStateComponent
-  if (
-    !marketAnalysis ||
-    !marketAnalysis.industryStatistics ||
-    marketAnalysis.industryStatistics.length === 0
-  ) {
-    return (
-      <NewEmptyStateComponent
-        onGenerateAnalysis={handleGenerateNewAnalysis}
-        isLoading={isLoading}
-        tokenBalance={tokenBalance}
-        isBalanceLoading={isBalanceLoading}
-        refresh={refresh}
-      />
-    );
-  }
-
-  // Otherwise, show the full market analysis UI
-  return (
-    <Section
-      className="relative -mt-[5.25rem] pt-[3.5rem]"
-      crosses
-      crossesOffset="lg:translate-y-[7.5rem]"
-      customPaddings
-      id="profile"
-    >
-      <div className="mt-8 xl:mx-10 xl:mt-16 xl:border-t xl:border-r xl:border-l">
-        <div className="font-poppins mx-auto mt-8 mb-4 flex max-w-7xl flex-col items-center justify-center">
-          <h2 className="mb-4 ml-4 text-2xl font-bold text-[#915EFF]">Job Market Analysis</h2>
-          <div>
-            {marketAnalysis.industryStatistics.map((stat, index) => (
-              <IndustrySection key={index} data={stat} index={index} />
-            ))}
-
-            {marketAnalysis.marketTrends && marketAnalysis.marketTrends.length > 0 && (
-              <div className="mx-4 mt-8 rounded-[28px] border p-6 shadow-sm">
-                <h3 className="mb-4 text-xl font-semibold">Current Market Trends</h3>
-                <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
-                  {marketAnalysis.marketTrends.map((trend, index) => (
-                    <div key={index} className="rounded-lg border p-4 shadow-sm">
-                      <h4 className="mb-2 font-medium text-[#915EFF]">{trend.trendName}</h4>
-                      <p className="mb-2 text-gray-700">{trend.description}</p>
-                      <p className="text-sm font-medium">
-                        <span className="text-gray-500">Impact: </span>
-                        {trend.impact}
-                      </p>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            )}
-
-            {marketAnalysis.skillDemand && marketAnalysis.skillDemand.length > 0 && (
-              <div className="mx-4 mt-8 rounded-[28px] border p-6 shadow-sm">
-                <h3 className="mb-4 text-xl font-semibold">In-Demand Skills</h3>
-                <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
-                  {marketAnalysis.skillDemand.map((skill, index) => (
-                    <div key={index} className="rounded-lg border p-4 shadow-sm">
-                      <h4 className="mb-1 font-medium">{skill.skill}</h4>
-                      <p className="text-sm text-gray-500">{skill.industry}</p>
-                      <div className="mt-2 flex items-center">
-                        <span className="mr-2 text-sm">Demand level:</span>
-                        <span
-                          className={`rounded-full px-2 py-1 text-xs font-medium ${
-                            skill.demandLevel === 'High'
-                              ? 'bg-green-100 text-green-800'
-                              : skill.demandLevel === 'Medium'
-                                ? 'bg-yellow-100 text-yellow-800'
-                                : 'bg-red-100 text-red-800'
-                          }`}
-                        >
-                          {skill.demandLevel}
-                        </span>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            )}
-
-            <div
-              className={`${
-                showFixedButton
-                  ? 'fixed bottom-6 left-1/2 z-50 -translate-x-1/2 translate-y-0 opacity-100'
-                  : 'fixed bottom-0 left-1/2 z-50 -translate-x-1/2 translate-y-full opacity-0'
-              } flex w-1/2 items-center justify-center transition-all duration-500 ease-in-out`}
-            >
-              <CustomButton
-                onClick={() => setIsConfirmDialogOpen(true)}
-                disabled={isLoading}
-                className="cursor-pointer px-6 py-2"
-              >
-                {isLoading ? 'Generating...' : 'Generate new market analysis'}
-              </CustomButton>
-            </div>
-
-            {/* STATIC button always under content */}
-            <div className="mt-16 flex w-full justify-center">
-              <CustomButton
-                onClick={() => setIsConfirmDialogOpen(true)}
-                disabled={isLoading}
-                className="cursor-pointer px-6 py-2"
-              >
-                {isLoading ? 'Generating...' : 'Generate new market analysis'}
-              </CustomButton>
-            </div>
-
-            <AlertDialog open={isConfirmDialogOpen} onOpenChange={setIsConfirmDialogOpen}>
-              <AlertDialogContent className="font-poppins mx-auto max-w-md font-korbin">
-                <AlertDialogHeader>
-                  <AlertDialogTitle className="text-center text-xl font-bold">
-                    Generate new recommendation?
-                  </AlertDialogTitle>
-                  <AlertDialogDescription className="text-center">
-                    This will take <b className="text-[#915EFF]">5 credits</b> from Your account.
-                  </AlertDialogDescription>
-
-                  <div className="mt-2 text-center text-sm font-extralight">
-                    Current balance:{' '}
-                    <span className="font-bold">{isBalanceLoading ? '...' : tokenBalance}</span>
-                  </div>
-                </AlertDialogHeader>
-
-                <AlertDialogFooter className="flex justify-center gap-4 sm:justify-center">
-                  <AlertDialogCancel className="border-muted-foreground/20">Cancel</AlertDialogCancel>
-
-                  {!isBalanceLoading && typeof tokenBalance === 'number' && tokenBalance < 5 ? (
-                    <Link href="/pricing">
-                      <AlertDialogAction
-                        className="bg-[#915EFF] text-white hover:bg-[#7b4ee0]"
-                        onClick={() => setIsConfirmDialogOpen(false)}
-                      >
-                        Get tokens
-                        <Image src={star_generate} alt="star" width={16} height={16} />
-                      </AlertDialogAction>
-                    </Link>
-                  ) : (
-                    <AlertDialogAction
-                      onClick={async () => {
-                        await handleGenerateNewAnalysis();
-                        refresh();
-                      }}
-                      className="bg-[#915EFF] text-white hover:bg-[#7b4ee0]"
-                    >
-                      Generate
-                      <Image src={star_generate} alt="star" width={16} height={16} />
-                    </AlertDialogAction>
-                  )}
-                </AlertDialogFooter>
-              </AlertDialogContent>
-            </AlertDialog>
-          </div>
-        </div>
-      </div>
-    </Section>
-  );
-}
-
-interface IndustrySectionProps {
-  data: IndustryStatistic;
-  index: number;
-}
-
-function IndustrySection({ data, index }: IndustrySectionProps) {
-  const [isCollapsed, setIsCollapsed] = useState(true);
-  const contentRef = useRef<HTMLDivElement>(null);
-  const contentWrapperRef = useRef<HTMLDivElement>(null);
-  const imageRef = useRef<HTMLImageElement | null>(null);
-  const salaryBoxRef = useRef<HTMLDivElement | null>(null);
-
-  const imageRef1 = useRef<HTMLImageElement | null>(null);
-  const chartBoxRef = useRef<HTMLDivElement | null>(null);
-
-  const imageRef2 = useRef<HTMLImageElement | null>(null);
-  const fireBoxRef = useRef<HTMLDivElement | null>(null);
-
-  const colors = ['bg-[#A985FF]', 'bg-[#BD9EFF]', 'bg-[#D1B7FF]', 'bg-[#E5D8FF]'];
-
-  const getColorClass = (idx: number) => {
-    return colors[idx % colors.length];
-  };
-
-  const formatSalaryRange = (min: number, max: number) => {
-    if (min === 0 && max === 0) return '—';
-    const formatter = new Intl.NumberFormat('pl-PL');
-    return `${formatter.format(min)} - ${formatter.format(max)} PLN`;
-  };
-
-  const formatEmploymentRate = (rate: number) => (rate !== undefined ? `${rate}%` : '—');
-
-  useEffect(() => {
-    if (typeof window !== 'undefined' && window.innerWidth >= 1024) {
-      const ctx = gsap.context(() => {
-        if (!salaryBoxRef.current || !imageRef.current) return;
-
-        gsap.set(imageRef.current, { opacity: 0, x: 50, y: 50 });
-
-        const onEnter = () => {
-          gsap.to(imageRef.current, {
-            opacity: 1,
-            x: 0,
-            y: 0,
-            duration: 0.5,
-            ease: 'power3.out',
-          });
-        };
-
-        const onLeave = () => {
-          gsap.to(imageRef.current, {
-            opacity: 0,
-            x: 50,
-            y: 50,
-            duration: 0.4,
-            ease: 'power3.in',
-          });
-        };
-
-        salaryBoxRef.current.addEventListener('mouseenter', onEnter);
-        salaryBoxRef.current.addEventListener('mouseleave', onLeave);
-
-        return () => {
-          salaryBoxRef.current?.removeEventListener('mouseenter', onEnter);
-          salaryBoxRef.current?.removeEventListener('mouseleave', onLeave);
-        };
-      }, salaryBoxRef);
-
-      return () => ctx.revert();
-    }
-  }, []);
-
-  useEffect(() => {
-    if (typeof window !== 'undefined' && window.innerWidth >= 1024) {
-      const ctx = gsap.context(() => {
-        if (!chartBoxRef.current || !imageRef1.current) return;
-
-        gsap.set(imageRef1.current, { opacity: 0, x: 50, y: 50 });
-
-        const onEnter = () => {
-          gsap.to(imageRef1.current, {
-            opacity: 1,
-            x: 0,
-            y: 0,
-            duration: 0.5,
-            ease: 'power3.out',
-          });
-        };
-
-        const onLeave = () => {
-          gsap.to(imageRef1.current, {
-            opacity: 0,
-            x: 50,
-            y: 50,
-            duration: 0.4,
-            ease: 'power3.in',
-          });
-        };
-
-        chartBoxRef.current.addEventListener('mouseenter', onEnter);
-        chartBoxRef.current.addEventListener('mouseleave', onLeave);
-
-        return () => {
-          chartBoxRef.current?.removeEventListener('mouseenter', onEnter);
-          chartBoxRef.current?.removeEventListener('mouseleave', onLeave);
-        };
-      }, chartBoxRef);
-
-      return () => ctx.revert();
-    }
-  }, []);
-
-  useEffect(() => {
-    if (typeof window !== 'undefined' && window.innerWidth >= 1024) {
-      const ctx = gsap.context(() => {
-        if (!fireBoxRef.current || !imageRef2.current) return;
-
-        gsap.set(imageRef2.current, { opacity: 0, x: 50, y: 50 });
-
-        const onEnter = () => {
-          gsap.to(imageRef2.current, {
-            opacity: 1,
-            x: 0,
-            y: 0,
-            duration: 0.5,
-            ease: 'power3.out',
-          });
-        };
-
-        const onLeave = () => {
-          gsap.to(imageRef2.current, {
-            opacity: 0,
-            x: 50,
-            y: 50,
-            duration: 0.4,
-            ease: 'power3.in',
-          });
-        };
-
-        fireBoxRef.current.addEventListener('mouseenter', onEnter);
-        fireBoxRef.current.addEventListener('mouseleave', onLeave);
-
-        return () => {
-          fireBoxRef.current?.removeEventListener('mouseenter', onEnter);
-          fireBoxRef.current?.removeEventListener('mouseleave', onLeave);
-        };
-      }, fireBoxRef);
-
-      return () => ctx.revert();
-    }
-  }, []);
+    fetchMarketAnalysis();
+  }, [fetchMarketAnalysis]);
 
   const toggleCollapse = () => {
     if (!contentRef.current || !contentWrapperRef.current) return;
@@ -542,7 +323,7 @@ function IndustrySection({ data, index }: IndustrySectionProps) {
         contentWrapperRef.current,
         { height: 0, opacity: 0 },
         {
-          height: height,
+          height,
           opacity: 1,
           duration: 0.5,
           ease: 'power4.out',
@@ -557,7 +338,372 @@ function IndustrySection({ data, index }: IndustrySectionProps) {
       const height = contentWrapperRef.current.offsetHeight;
       gsap.fromTo(
         contentWrapperRef.current,
-        { height: height, opacity: 1 },
+        { height, opacity: 1 },
+        {
+          height: 0,
+          opacity: 0,
+          duration: 0.5,
+          ease: 'power4.in',
+          onComplete: () => {
+            if (contentWrapperRef.current) {
+              gsap.set(contentWrapperRef.current, { visibility: 'hidden' });
+            }
+          },
+        }
+      );
+    }
+
+    setIsCollapsed(!isCollapsed);
+  };
+
+  const primaryIndustry = analysis?.industryStatistics?.[0];
+  const primarySkills = useMemo(() => {
+    if (!analysis?.skillDemand || !primaryIndustry) {
+      return [] as SkillDemandDto[];
+    }
+
+    const related = analysis.skillDemand.filter((skill) => {
+      if (!skill.industry || !primaryIndustry.industry) {
+        return false;
+      }
+
+      return skill.industry.toLowerCase().includes(primaryIndustry.industry.toLowerCase());
+    });
+
+    if (related.length > 0) {
+      return related;
+    }
+
+    return analysis.skillDemand.slice(0, 3);
+  }, [analysis?.skillDemand, primaryIndustry]);
+
+  const timelineItems = useMemo(() => {
+    if (!analysis?.marketTrends) {
+      return [] as {
+        title: string;
+        description: string;
+        icon: string;
+        status: 'current' | 'upcoming';
+      }[];
+    }
+
+    return analysis.marketTrends.map((trend: MarketTrendsDto, index: number) => ({
+      title: trend.trendName || `Trend ${index + 1}`,
+      description: trend.impact
+        ? `${trend.description} (Impact: ${trend.impact})`
+        : trend.description || 'No description provided.',
+      icon: TIMELINE_ICONS[index % TIMELINE_ICONS.length],
+      status: index === 0 ? ('current' as const) : ('upcoming' as const),
+    }));
+  }, [analysis?.marketTrends]);
+
+  const longTermInsight = useMemo(() => {
+    if (primaryIndustry?.growthForecast) {
+      return `Growth forecast: ${primaryIndustry.growthForecast}`;
+    }
+
+    if (primarySkills.length > 0) {
+      return `Key skills to monitor: ${primarySkills
+        .map((skill) => `${skill.skill}${skill.demandLevel ? ` (${skill.demandLevel})` : ''}`)
+        .join(', ')}`;
+    }
+
+    return '';
+  }, [primaryIndustry?.growthForecast, primarySkills]);
+
+  useEffect(() => {
+    if (contentRef.current && contentWrapperRef.current && primaryIndustry) {
+      if (!isCollapsed) {
+        gsap.set(contentWrapperRef.current, { height: 'auto' });
+        const height = contentWrapperRef.current.offsetHeight;
+        gsap.set(contentWrapperRef.current, { height });
+      } else {
+        gsap.set(contentWrapperRef.current, { height: 0 });
+      }
+    }
+  }, [analysis, isCollapsed, primaryIndustry]);
+
+  const handleGenerateNewAnalysis = async () => {
+    await fetchMarketAnalysis(true);
+  };
+
+  if (error && (!analysis || analysis.industryStatistics.length === 0)) {
+    return <GenerateMarketFail />;
+  }
+
+  if (isLoading && !analysis) {
+    return (
+      <div className="mx-auto -mt-20 mb-1 flex h-screen max-w-7xl flex-col items-center justify-center overflow-hidden rounded-[28px] max-xl:mx-4">
+        <GridBackgroundDemo />
+        <TerminalDemo />
+      </div>
+    );
+  }
+
+  if (!analysis || !analysis.industryStatistics || analysis.industryStatistics.length === 0) {
+    return (
+      <NewEmptyStateComponent
+        onGenerateAnalysis={handleGenerateNewAnalysis}
+        isLoading={isLoading}
+        tokenBalance={tokenBalance}
+        isBalanceLoading={isBalanceLoading}
+        refresh={refresh}
+      />
+    );
+  }
+
+  const summary = buildIndustrySummary(primaryIndustry, primarySkills);
+
+  return (
+    <Section
+      className="relative -mt-[5.25rem] pt-[3.5rem]"
+      crosses
+      crossesOffset="lg:translate-y-[7.5rem]"
+      customPaddings
+      id="profile"
+    >
+      <div className="mt-8 xl:mx-10 xl:mt-16 xl:border-t xl:border-r xl:border-l">
+        <div className="font-korbin mx-auto flex max-w-7xl flex-col items-center justify-center p-4 md:p-8">
+          <h2 className="font-korbin mt-1 mb-6 flex h-[38px] w-[220px] items-center justify-center rounded-full border-[0.5px] border-white/60 text-sm">
+            AI Market Analysis
+          </h2>
+          <div>
+            <div className="clip-corner-bevel mb-4 flex flex-col overflow-hidden rounded-[28px] border-t border-b border-l shadow-sm sm:border md:flex-row">
+              <div className="relative flex items-center justify-center overflow-hidden p-4 md:w-1/6 md:border-r md:p-8">
+                <Image
+                  src="/images/cone.png"
+                  alt="decor"
+                  width={148}
+                  height={148}
+                  className="pointer-events-none absolute -top-2 -left-14 z-10"
+                />
+                <Image
+                  src="/images/cone-2.png"
+                  alt="decor"
+                  width={148}
+                  height={148}
+                  className="pointer-events-none absolute -right-8 bottom-2 z-10 -rotate-12 sm:-right-14 sm:-bottom-8"
+                />
+                <span className="font-korbin relative z-20 rounded-xl border border-r-6 border-b-6 px-6 py-2 text-4xl font-bold text-white md:text-6xl">
+                  1
+                </span>
+              </div>
+              <div className="p-4 max-md:border-t md:w-5/6 md:p-6">
+                <div className="flex flex-row items-center justify-between">
+                  <h2 className="font-korbin mb-1 text-xl">Main market insight</h2>
+                  <CollapsibleButton isCollapsed={isCollapsed} toggleCollapse={toggleCollapse} />
+                </div>
+
+                <h3 className="text-md ibm-plex-mono-regular mb-2 w-fit rounded-lg border-gray-600/40 font-medium text-[#915EFF] sm:text-lg">
+                  {primaryIndustry?.industry || 'No industry data'}
+                </h3>
+
+                <p className="text-gray-400">
+                  {summary || 'No market metrics available for this industry.'}
+                </p>
+
+                <div
+                  ref={contentWrapperRef}
+                  className="overflow-hidden"
+                  style={{
+                    height: isCollapsed ? 0 : 'auto',
+                    opacity: isCollapsed ? 0 : 1,
+                    visibility: isCollapsed ? 'hidden' : 'visible',
+                  }}
+                >
+                  <div ref={contentRef} className="space-y-3">
+                    {timelineItems.length > 0 && (
+                      <>
+                        <h4 className="font-korbin mt-4 font-bold">Key trends:</h4>
+                        <div className="ibm-plex-mono-regular mt-4 rounded-xl border p-2">
+                          <Timeline
+                            items={timelineItems}
+                            maxDescriptionLength={8}
+                            className="mx-0"
+                          />
+                        </div>
+                      </>
+                    )}
+                    {primarySkills.length > 0 && (
+                      <div className="mt-4 rounded-xl p-2">
+                        <h4 className="font-korbin font-bold">In-demand skills:</h4>
+                        <ul className="mt-1 list-disc space-y-1 pl-5 text-gray-400">
+                          {primarySkills.map((skill) => (
+                            <li key={`${skill.skill}-${skill.industry}`}>
+                              {skill.skill}
+                              {skill.demandLevel ? (
+                                <span
+                                  className={`ml-2 rounded-full px-2 py-0.5 text-xs font-medium ${getDemandBadgeClass(skill.demandLevel)}`}
+                                >
+                                  {skill.demandLevel}
+                                </span>
+                              ) : null}
+                              {skill.industry ? (
+                                <span className="ml-2 text-xs text-gray-500">{skill.industry}</span>
+                              ) : null}
+                            </li>
+                          ))}
+                        </ul>
+                      </div>
+                    )}
+                    {longTermInsight && (
+                      <div className="mt-4 rounded-xl p-2">
+                        <h4 className="font-korbin font-bold">Growth outlook:</h4>
+                        <p className="mt-1 text-gray-400">{longTermInsight}</p>
+                      </div>
+                    )}
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {analysis.industryStatistics.slice(1).map((industry, index) => (
+            <IndustryInsightSection
+              key={`${industry.industry}-${index}`}
+              industry={industry}
+              index={index}
+              skillDemand={analysis.skillDemand || []}
+            />
+          ))}
+
+          <div
+            className={`${
+              showFixedButton
+                ? 'fixed bottom-6 left-1/2 z-50 -translate-x-1/2 translate-y-0 opacity-100'
+                : 'fixed bottom-0 left-1/2 z-50 -translate-x-1/2 translate-y-full opacity-0'
+            } flex w-1/2 items-center justify-center transition-all duration-500 ease-in-out`}
+          >
+            <ButtonGenerate
+              onClick={() => setIsConfirmDialogOpen(true)}
+              disabled={isLoading}
+              className="cursor-pointer px-6 py-2"
+            >
+              {isLoading ? 'Generating...' : 'Generate new market analysis'}
+            </ButtonGenerate>
+          </div>
+
+          <div className="mt-16 flex w-full justify-center">
+            <ButtonGenerate
+              onClick={() => setIsConfirmDialogOpen(true)}
+              disabled={isLoading}
+              className="cursor-pointer px-6 py-2"
+            >
+              {isLoading ? 'Generating...' : 'Generate new market analysis'}
+            </ButtonGenerate>
+          </div>
+
+          <AlertDialog open={isConfirmDialogOpen} onOpenChange={setIsConfirmDialogOpen}>
+            <AlertDialogContent className="font-poppins font-korbin mx-auto max-w-md">
+              <AlertDialogHeader>
+                <AlertDialogTitle className="text-center text-xl font-bold">
+                  Generate new market analysis?
+                </AlertDialogTitle>
+                <AlertDialogDescription className="text-center">
+                  This will take <b className="text-[#915EFF]">5 credits</b> from Your account.
+                </AlertDialogDescription>
+
+                <div className="mt-2 text-center text-sm">
+                  Current balance:{' '}
+                  <span className="font-bold">{isBalanceLoading ? '...' : tokenBalance}</span>
+                </div>
+              </AlertDialogHeader>
+
+              <AlertDialogFooter className="flex justify-center gap-4 sm:justify-center">
+                <AlertDialogCancel className="border-muted-foreground/20">Cancel</AlertDialogCancel>
+
+                {!isBalanceLoading && typeof tokenBalance === 'number' && tokenBalance < 5 ? (
+                  <Link href="/pricing">
+                    <AlertDialogAction
+                      className="bg-[#915EFF] text-white hover:bg-[#7b4ee0]"
+                      onClick={() => setIsConfirmDialogOpen(false)}
+                    >
+                      Get tokens
+                      <Image src={star_generate} alt="star" width={16} height={16} />
+                    </AlertDialogAction>
+                  </Link>
+                ) : (
+                  <AlertDialogAction
+                    onClick={async () => {
+                      await handleGenerateNewAnalysis();
+                      refresh();
+                      setIsConfirmDialogOpen(false);
+                    }}
+                    className="bg-[#915EFF] text-white hover:bg-[#7b4ee0]"
+                  >
+                    Generate
+                    <Image src={star_generate} alt="star" width={16} height={16} />
+                  </AlertDialogAction>
+                )}
+              </AlertDialogFooter>
+            </AlertDialogContent>
+          </AlertDialog>
+        </div>
+      </div>
+    </Section>
+  );
+}
+
+interface IndustryInsightSectionProps {
+  industry: IndustryStatisticsDto;
+  index: number;
+  skillDemand: SkillDemandDto[];
+}
+
+function IndustryInsightSection({ industry, index, skillDemand }: IndustryInsightSectionProps) {
+  const [isCollapsed, setIsCollapsed] = useState(true);
+  const contentRef = useRef<HTMLDivElement>(null);
+  const contentWrapperRef = useRef<HTMLDivElement>(null);
+
+  const leftImg = `/images/cone-${3 + 2 * index}.png`;
+  const rightImg = `/images/cone-${4 + 2 * index}.png`;
+
+  const relatedSkills = useMemo(() => {
+    if (!skillDemand) {
+      return [] as SkillDemandDto[];
+    }
+
+    const matches = skillDemand.filter((skill) => {
+      if (!industry.industry || !skill.industry) {
+        return false;
+      }
+
+      return skill.industry.toLowerCase().includes(industry.industry.toLowerCase());
+    });
+
+    if (matches.length > 0) {
+      return matches;
+    }
+
+    return skillDemand.slice(0, 3);
+  }, [industry.industry, skillDemand]);
+
+  const toggleCollapse = () => {
+    if (!contentRef.current || !contentWrapperRef.current) return;
+
+    if (isCollapsed) {
+      gsap.set(contentWrapperRef.current, { height: 'auto', visibility: 'visible' });
+      const height = contentWrapperRef.current.offsetHeight;
+      gsap.fromTo(
+        contentWrapperRef.current,
+        { height: 0, opacity: 0 },
+        {
+          height,
+          opacity: 1,
+          duration: 0.5,
+          ease: 'power4.out',
+          onComplete: () => {
+            if (contentWrapperRef.current) {
+              gsap.set(contentWrapperRef.current, { height: 'auto' });
+            }
+          },
+        }
+      );
+    } else {
+      const height = contentWrapperRef.current.offsetHeight;
+      gsap.fromTo(
+        contentWrapperRef.current,
+        { height, opacity: 1 },
         {
           height: 0,
           opacity: 0,
@@ -580,71 +726,49 @@ function IndustrySection({ data, index }: IndustrySectionProps) {
       if (!isCollapsed) {
         gsap.set(contentWrapperRef.current, { height: 'auto' });
         const height = contentWrapperRef.current.offsetHeight;
-        gsap.set(contentWrapperRef.current, { height: height });
+        gsap.set(contentWrapperRef.current, { height });
       } else {
         gsap.set(contentWrapperRef.current, { height: 0 });
       }
     }
   }, [isCollapsed]);
 
-  const getGrowthBadgeClass = (forecast: string) => {
-    if (forecast.toLowerCase() === 'high') {
-      return 'bg-green-100 text-green-800';
-    } else if (forecast.toLowerCase() === 'medium') {
-      return 'bg-yellow-100 text-yellow-800';
-    } else {
-      return 'bg-red-100 text-red-800';
-    }
-  };
+  const summary = buildIndustrySummary(industry, relatedSkills);
+  const salaryRange = formatSalaryRange(industry.minSalary, industry.maxSalary) || 'No data';
+  const employmentRate = formatEmploymentRate(industry.employmentRate) || 'No data';
 
   return (
-    <div className="mx-4 mb-1 flex flex-col overflow-hidden rounded-[28px] border shadow-sm md:flex-row">
-      <div
-        className={`flex items-center justify-center p-4 md:w-1/6 md:p-8 ${getColorClass(index)}`}
-      >
-        <span className="text-4xl font-bold text-white md:text-6xl">{index + 1}</span>
+    <div className="clip-corner-bevel mb-4 flex flex-col overflow-hidden rounded-[28px] border-t border-b border-l shadow-sm sm:border md:flex-row">
+      <div className="relative flex items-center justify-center overflow-hidden p-4 md:w-1/6 md:border-r md:p-8">
+        <Image
+          src={leftImg}
+          alt="decor"
+          width={148}
+          height={148}
+          className="pointer-events-none absolute -top-2 -left-14 z-10"
+        />
+        <Image
+          src={rightImg}
+          alt="decor"
+          width={148}
+          height={148}
+          className="pointer-events-none absolute -right-8 bottom-2 z-10 -rotate-12 sm:-right-14 sm:-bottom-8"
+        />
+        <span className="font-korbin relative z-20 rounded-xl border border-r-6 border-b-6 px-5 py-3 text-4xl font-bold text-white md:text-6xl">
+          {index + 2}
+        </span>
       </div>
-      <div className="p-4 md:w-5/6 md:p-6">
+
+      <div className="p-4 max-md:border-t md:w-5/6 md:p-6">
         <div className="flex flex-row items-center justify-between">
-          <h2 className="mb-3 text-xl font-semibold">Industry</h2>
+          <h2 className="font-korbin mb-1 text-xl">Consider this industry</h2>
           <CollapsibleButton isCollapsed={isCollapsed} toggleCollapse={toggleCollapse} />
         </div>
 
-        <h3 className="text-lg font-medium text-[#915EFF]">{data.industry}</h3>
-
-        <div className="mt-2 grid grid-cols-1 gap-2 md:grid-cols-3">
-          <div
-            className="relative overflow-hidden rounded-lg border border-dashed border-gray-700/20 bg-gray-50 p-3 dark:border-gray-700 dark:bg-[#101014]/40"
-            ref={salaryBoxRef}
-          >
-            <p className="text-sm text-gray-500">Average Salary</p>
-            <p className="text-lg font-medium text-black dark:text-white">
-              {formatSalaryRange(data.minSalary, data.maxSalary)}
-            </p>
-          </div>
-          <div
-            className="relative overflow-hidden rounded-lg border border-dashed border-gray-700/20 bg-gray-50 p-3 dark:border-gray-700 dark:bg-[#101014]/40"
-            ref={chartBoxRef}
-          >
-            <p className="text-sm text-gray-500">Employment Rate</p>
-            <p className="text-lg font-medium text-black dark:text-white">
-              {formatEmploymentRate(data.employmentRate)}
-            </p>
-          </div>
-          <div
-            className="relative overflow-hidden rounded-lg border border-dashed border-gray-700/20 bg-gray-50 p-3 dark:border-gray-700 dark:bg-[#101014]/40"
-            ref={fireBoxRef}
-          >
-            <p className="text-sm text-gray-500">Growth Forecast</p>
-            <div className="flex items-center">
-              <span
-                className={`mt-1 rounded-lg px-2 py-1 text-xs font-medium ${getGrowthBadgeClass(data.growthForecast)}`}
-              >
-                {data.growthForecast}
-              </span>
-            </div>
-          </div>
-        </div>
+        <h3 className="text-md ibm-plex-mono-regular mb-2 font-medium text-[#915EFF] sm:text-lg">
+          {industry.industry}
+        </h3>
+        <p className="text-gray-400">{summary || 'No detailed information available.'}</p>
 
         <div
           ref={contentWrapperRef}
@@ -655,35 +779,48 @@ function IndustrySection({ data, index }: IndustrySectionProps) {
             visibility: isCollapsed ? 'hidden' : 'visible',
           }}
         >
-          <div ref={contentRef} className="mt-4 space-y-3">
-            <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
-              <div className="rounded-xl border-b-4 border-[#915EFF] p-3">
-                <strong className="text-[#915EFF]">Industry Strengths:</strong>
-                <ul className="mt-1 list-disc space-y-1 pl-5 text-black dark:text-[#F3F3F3]">
-                  <li>High demand for professionals</li>
-                  <li>Flexible employment options</li>
-                  <li>Remote work opportunities</li>
-                </ul>
+          <div ref={contentRef} className="space-y-5">
+            <div className="mt-4 grid grid-cols-1 gap-4 md:grid-cols-3">
+              <div className="rounded-xl border border-[#915EFF]/40 p-3">
+                <p className="text-sm text-gray-500">Salary range</p>
+                <p className="text-lg font-medium text-black dark:text-white">{salaryRange}</p>
               </div>
-              <div className="rounded-xl border-b-4 border-[#915EFF] p-3">
-                <strong className="text-[#915EFF]">Development Prospects:</strong>
-                <ul className="mt-1 list-disc space-y-1 pl-5 text-black dark:text-[#F3F3F3]">
-                  <li>Innovative technologies</li>
-                  <li>Global job opportunities</li>
-                  <li>Increasing investments in the sector</li>
-                </ul>
+              <div className="rounded-xl border border-[#915EFF]/40 p-3">
+                <p className="text-sm text-gray-500">Employment rate</p>
+                <p className="text-lg font-medium text-black dark:text-white">{employmentRate}</p>
+              </div>
+              <div className="rounded-xl border border-[#915EFF]/40 p-3">
+                <p className="text-sm text-gray-500">Growth forecast</p>
+                <span
+                  className={`mt-1 inline-block rounded-lg px-2 py-1 text-xs font-medium ${getGrowthBadgeClass(industry.growthForecast)}`}
+                >
+                  {industry.growthForecast || 'No data'}
+                </span>
               </div>
             </div>
 
-            <div className="mt-4">
-              <h4 className="font-medium">Required Qualifications:</h4>
-              <ul className="mt-2 list-disc space-y-1 pl-5">
-                <li>Relevant education</li>
-                <li>Knowledge of current technologies</li>
-                <li>Teamwork skills</li>
-                <li>English language proficiency</li>
-              </ul>
-            </div>
+            {relatedSkills.length > 0 && (
+              <div className="rounded-xl border border-dashed border-[#915EFF]/40 p-3">
+                <h4 className="font-korbin mb-2 font-bold">In-demand skills</h4>
+                <ul className="list-disc space-y-1 pl-5 text-gray-400">
+                  {relatedSkills.map((skill) => (
+                    <li key={`${skill.skill}-${skill.industry}`}>
+                      {skill.skill}
+                      {skill.demandLevel ? (
+                        <span
+                          className={`ml-2 rounded-full px-2 py-0.5 text-xs font-medium ${getDemandBadgeClass(skill.demandLevel)}`}
+                        >
+                          {skill.demandLevel}
+                        </span>
+                      ) : null}
+                      {skill.industry ? (
+                        <span className="ml-2 text-xs text-gray-500">{skill.industry}</span>
+                      ) : null}
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            )}
           </div>
         </div>
       </div>

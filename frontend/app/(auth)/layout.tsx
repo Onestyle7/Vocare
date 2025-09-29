@@ -7,9 +7,9 @@ const LazySpline = lazy(() => import('@splinetool/react-spline'));
 
 const Layout = ({ children }: { children: React.ReactNode }) => {
   return (
-    <div className="font-poppins flex min-h-screen flex-col">
-      <div className="flex flex-1 flex-row">
-        <section className="hidden w-1/2 items-center justify-center bg-[#0f1014] p-10 lg:flex xl:w-2/5 dark:bg-neutral-300">
+    <div className="font-korbin flex min-h-screen flex-col">
+      <div className="flex flex-1 flex-row p-2">
+        <section className="hidden w-1/2 items-center justify-center rounded-[24px] bg-[#0f1014] p-10 lg:flex xl:w-2/5 dark:bg-neutral-300">
           <div className="flex max-h-[800px] max-w-[430px] flex-col justify-center space-y-12">
             <Image src={logo} alt="vocare" width={256} height={256} className="dark:invert" />
 

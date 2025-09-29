@@ -2,7 +2,7 @@
 
 import React, { useEffect, useState } from 'react';
 import { useParams } from 'next/navigation';
-import CVCreator from '../ResumeComponent';
+import CVCreator from '../../../../components/ResumeComponents/ResumeComponent';
 import { getCvDetails } from '@/lib/api/cv';
 import { CvDetailsDto } from '@/lib/types/cv';
 

@@ -2,8 +2,8 @@
 
 import React, { useEffect, useRef } from 'react';
 import { gsap } from 'gsap';
-import Section from '../Section';
 import { SplitText } from 'gsap/all';
+import Section from '../SupportComponents/Section';
 
 gsap.registerPlugin(SplitText);
 

@@ -232,7 +232,7 @@ const NewEmptyStateComponent = ({
         {/* Dialog potwierdzenia */}
         {hasRecommendations && (
           <AlertDialog open={isConfirmDialogOpen} onOpenChange={setIsConfirmDialogOpen}>
-            <AlertDialogContent className="font-poppins mx-auto max-w-md font-korbin">
+            <AlertDialogContent className="font-poppins font-korbin mx-auto max-w-md">
               <AlertDialogHeader>
                 <AlertDialogTitle className="text-center text-xl font-bold">
                   Generate market analysis?

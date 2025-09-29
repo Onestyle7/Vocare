@@ -268,6 +268,8 @@ export const curved2 = '/svg/curve-2.svg';
 
 export const upper_arrow = '/images/upper-arrow.png';
 
+export const curve_pricing = '/images/curve-pricing.png';
+
 // grid
 
 export const gridTiles = [
@@ -312,6 +314,7 @@ export const links_pages = [
   { name: 'COLLECTION', url: '/' },
   { name: 'FAQ', url: '/' },
   { name: 'PRICING', url: '/' },
+  { name: 'BLOG', url: '/blog' },
 ];
 
 export const contact_pages = [{ name: 'REACH US', url: '/' }];
@@ -327,6 +330,10 @@ export const letterImg = '/images/as1.png';
 export const check = '/svg/check.svg';
 
 // PRICING
+
+export const square_pricing = '/svg/square_pricing.svg';
+export const circle_pricing = '/svg/circle_pricing.svg';
+export const trapez_pricing = '/svg/trapez_pricing.svg';
 
 export const pricingPlans = [
   {

@@ -8,7 +8,7 @@ import GenerateRecommendation from './GenerateRecommendationFail';
 import { gsap } from 'gsap';
 import CollapsibleButton from './CollapsibleButton';
 import CareerPathSection from './CareerPathSection';
-import CustomButton from '../ui/CustomButton';
+import ButtonGenerate from '../ui/ButtonGenerate';
 import { GridBackgroundDemo } from '../MarketComponents/GridBackgroundDemo';
 import { TerminalDemo } from '../MarketComponents/LoadingTerminal';
 import Timeline from './Timeline'; // Import nowego komponentu
@@ -36,8 +36,9 @@ import { AxiosError } from 'axios';
 import { AiCareerResponse, CareerPath } from '@/lib/types/recommendation';
 import Section from '../SupportComponents/Section';
 
+const API_URL = process.env.NEXT_PUBLIC_API_URL;
+
 export default function AssistantPage() {
-  const API_URL = process.env.NEXT_PUBLIC_API_URL;
   const [profile, setProfile] = useState<UserProfile | null>(null);
   const [recommendations, setRecommendations] = useState<AiCareerResponse | null>(null);
   const [isLoading, setLoading] = useState(false);
@@ -70,7 +71,7 @@ export default function AssistantPage() {
     window.addEventListener('scroll', handleScroll);
 
     return () => window.removeEventListener('scroll', handleScroll);
-  }, [API_URL]);
+  }, []);
 
   useEffect(() => {
     if (contentRef.current && contentWrapperRef.current && recommendations) {
@@ -188,15 +189,12 @@ export default function AssistantPage() {
         }
 
         // Jeśli brak ostatnich rekomendacji, wygeneruj nowe
-        const response = await axios.get<AiCareerResponse>(
-          `${API_URL}/api/Ai/recommendations`,
-          {
-            headers: {
-              Authorization: `Bearer ${token}`,
-              'Content-Type': 'application/json',
-            },
-          }
-        );
+        const response = await axios.get<AiCareerResponse>(`${API_URL}/api/Ai/recommendations`, {
+          headers: {
+            Authorization: `Bearer ${token}`,
+            'Content-Type': 'application/json',
+          },
+        });
         console.log('New recommendations:', response.data);
         setRecommendations(response.data);
       } catch (err: unknown) {
@@ -240,15 +238,12 @@ export default function AssistantPage() {
       return;
     }
     try {
-      const response = await axios.get<AiCareerResponse>(
-        `${API_URL}/api/Ai/recommendations`,
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-            'Content-Type': 'application/json',
-          },
-        }
-      );
+      const response = await axios.get<AiCareerResponse>(`${API_URL}/api/Ai/recommendations`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+          'Content-Type': 'application/json',
+        },
+      });
       setRecommendations(response.data);
       toast.success('New recommendations have been generated');
     } catch (err: unknown) {
@@ -392,27 +387,27 @@ export default function AssistantPage() {
                 : 'fixed bottom-0 left-1/2 z-50 -translate-x-1/2 translate-y-full opacity-0'
             } flex w-1/2 items-center justify-center transition-all duration-500 ease-in-out`}
           >
-            <CustomButton
+            <ButtonGenerate
               onClick={() => setIsConfirmDialogOpen(true)}
               disabled={isLoading}
               className="cursor-pointer px-6 py-2"
             >
               {isLoading ? 'Generating...' : 'Generate new recommendation'}
-            </CustomButton>
+            </ButtonGenerate>
           </div>
 
           <div className="mt-16 flex w-full justify-center">
-            <CustomButton
+            <ButtonGenerate
               onClick={() => setIsConfirmDialogOpen(true)}
               disabled={isLoading}
               className="cursor-pointer px-6 py-2"
             >
               {isLoading ? 'Generating...' : 'Generate new recommendation'}
-            </CustomButton>
+            </ButtonGenerate>
           </div>
 
           <AlertDialog open={isConfirmDialogOpen} onOpenChange={setIsConfirmDialogOpen}>
-            <AlertDialogContent className="font-poppins mx-auto max-w-md font-korbin">
+            <AlertDialogContent className="font-poppins font-korbin mx-auto max-w-md">
               <AlertDialogHeader>
                 <AlertDialogTitle className="text-center text-xl font-bold">
                   Generate new recommendation?

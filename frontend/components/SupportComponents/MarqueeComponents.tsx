@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect, useRef } from 'react';
-import { setupMarqueeAnimation } from './marquee';
+import { setupMarqueeAnimation } from '../../lib/types/marquee';
 
 interface MarqueeProps {
   texts: string[];

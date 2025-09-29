@@ -5,9 +5,9 @@ import { gsap } from 'gsap';
 import CollapsibleButton from './CollapsibleButton';
 import { CareerPath } from '@/lib/types/recommendation';
 import Image from 'next/image';
-import ReusableCard from '../AssistantCards';
+import ReusableCard from '../MarketComponents/AssistantCards';
 import HorizontalCarousel from './HorizontalCarousel';
-import SwotAnalysis from '../SwotAnalysis'; 
+import SwotAnalysis from '../MarketComponents/SwotAnalysis';
 
 interface CareerPathSectionProps {
   path: CareerPath;

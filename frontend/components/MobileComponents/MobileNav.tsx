@@ -89,7 +89,7 @@ const MobileNav: React.FC<MobileNavProps> = ({ isAuthenticated }) => {
           />
         </button>
       </SheetTrigger>
-      <SheetContent side="top" className="h-full">
+      <SheetContent side="top" className="font-korbin h-full">
         <SheetTitle className="hidden">Vocare</SheetTitle>
 
         <ul className="mt-10 flex h-full flex-col items-center justify-center space-y-4">

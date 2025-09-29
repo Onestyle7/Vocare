@@ -22,7 +22,11 @@ function truncateWithEllipsis(text: string, max: number): string {
   return text.slice(0, Math.max(0, max - 3)).trimEnd() + '...';
 }
 
-const Timeline: React.FC<TimelineProps> = ({ items, className = '', maxDescriptionLength = 80 }) => {
+const Timeline: React.FC<TimelineProps> = ({
+  items,
+  className = '',
+  maxDescriptionLength = 80,
+}) => {
   return (
     <section className={`my-4 w-full sm:mx-auto sm:max-w-5xl ${className}`}>
       {/* Desktop Layout - Horizontal */}
@@ -64,7 +68,9 @@ const Timeline: React.FC<TimelineProps> = ({ items, className = '', maxDescripti
                     </p>
                   </HoverCardTrigger>
                   <HoverCardContent className="w-80 text-left">
-                    <p className="text-sm leading-relaxed ibm-plex-mono-regular">{item.description}</p>
+                    <p className="ibm-plex-mono-regular text-sm leading-relaxed">
+                      {item.description}
+                    </p>
                   </HoverCardContent>
                 </HoverCard>
               ) : (
@@ -112,7 +118,9 @@ const Timeline: React.FC<TimelineProps> = ({ items, className = '', maxDescripti
                     </p>
                   </HoverCardTrigger>
                   <HoverCardContent className="w-80">
-                    <p className="text-sm leading-relaxed ibm-plex-mono-regular">{item.description}</p>
+                    <p className="ibm-plex-mono-regular text-sm leading-relaxed">
+                      {item.description}
+                    </p>
                   </HoverCardContent>
                 </HoverCard>
               ) : (

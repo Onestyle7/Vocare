@@ -6,11 +6,11 @@ import { usePathname } from 'next/navigation';
 import { cn } from '@/lib/utils';
 import Image from 'next/image';
 import { useAuth } from '@/lib/hooks/useAuth';
-import MobileNav from '@/components/MobileUI/MobileNav';
+import MobileNav from '@/components/MobileComponents/MobileNav';
 import { TokenCounter } from '@/components/PricingComponents/TokenCounter';
-import ThemeSwitch from '../ThemeSwitch';
 import { Badge } from '@/components/ui/badge';
 import { motion } from 'motion/react';
+import ThemeSwitch from '../SupportComponents/ThemeSwitch';
 
 const Header = () => {
   const pathname = usePathname();

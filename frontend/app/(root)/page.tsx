@@ -1,13 +1,12 @@
 'use client';
 
-import AboutCards from '@/components/SupportComponents/SectionsComponents/AboutCards';
-import CardFeature from '@/components/SupportComponents/SectionsComponents/CardSwapper';
-import Faq from '@/components/SupportComponents/SectionsComponents/Faq';
-// import Features from '@/components/SupportComponents/SectionsComponents/Features';
-import Footer from '@/components/SupportComponents/SectionsComponents/Footer';
-import Header from '@/components/SupportComponents/SectionsComponents/Header';
-import HeroTweak from '@/components/SupportComponents/SectionsComponents/HeroTweak';
-import MobileFeature from '@/components/SupportComponents/SectionsComponents/MobileFeature';
+import AboutCards from '@/components/SectionsComponents/AboutCards';
+import CardFeature from '@/components/SectionsComponents/CardSwapper';
+import Faq from '@/components/SectionsComponents/Faq';
+import Footer from '@/components/SectionsComponents/Footer';
+import Header from '@/components/SectionsComponents/Header';
+import HeroTweak from '@/components/SectionsComponents/HeroTweak';
+import MobileFeatureImprovements from '@/components/SectionsComponents/MobileFeatureImprovements';
 
 const page = () => {
   return (
@@ -17,7 +16,8 @@ const page = () => {
         <HeroTweak />
         <AboutCards />
         {/* <Features /> */}
-        <MobileFeature />
+        {/* <MobileFeature /> */}
+        <MobileFeatureImprovements />
         <CardFeature />
         <Faq />
         <Footer />
