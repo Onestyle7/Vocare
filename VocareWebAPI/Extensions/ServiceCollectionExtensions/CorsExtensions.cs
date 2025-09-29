@@ -22,7 +22,7 @@ namespace VocareWebAPI.Extensions.ServiceCollectionExtensions
         {
             services.AddCors(options =>
             {
-                // Polityka dla Development - najbardziej liberalna
+                // Polityka dla Development
                 if (env.IsDevelopment())
                 {
                     options.AddPolicy(
@@ -45,7 +45,7 @@ namespace VocareWebAPI.Extensions.ServiceCollectionExtensions
                         }
                     );
                 }
-                // Polityka dla Staging - kontrolowana ale elastyczna
+                // Polityka dla Staging
                 else if (env.IsStaging())
                 {
                     options.AddPolicy(
@@ -104,7 +104,7 @@ namespace VocareWebAPI.Extensions.ServiceCollectionExtensions
                     );
                 }
 
-                // Domyślna polityka fallback - bardzo restrykcyjna
+                // Domyślna polityka fallback
                 options.AddDefaultPolicy(policy =>
                 {
                     policy
@@ -130,7 +130,7 @@ namespace VocareWebAPI.Extensions.ServiceCollectionExtensions
             if (env.IsProduction())
                 return PRODUCTION_POLICY;
 
-            // Fallback - użyj domyślnej polityki
+            // Fallback - używamy domyślnej polityki
             return string.Empty;
         }
     }

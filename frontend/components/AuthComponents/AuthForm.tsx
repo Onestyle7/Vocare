@@ -174,7 +174,7 @@ const AuthForm = ({ type }: AuthFormProps) => {
 
   return (
     <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)} className="auth-form font-poppins">
+      <form onSubmit={form.handleSubmit(onSubmit)} className="auth-form font-korbin">
         <h1 className="form-title">{isSignUp ? 'Sign Up' : 'Sign In'}</h1>
 
         {isSignUp && (
@@ -265,7 +265,7 @@ const AuthForm = ({ type }: AuthFormProps) => {
 
         <div className="mt-4 flex items-center justify-between">
           <div className="flex items-center">
-            <p>{isSignUp ? 'Already have an account?' : "Don't have an account?"}</p>
+            <p>{isSignUp ? 'Already have an account?' : 'Need account?'}</p>
             <Link
               href={isSignUp ? '/sign-in' : '/sign-up'}
               className="relative ml-2 font-semibold text-[#915EFF] transition duration-300 after:absolute after:bottom-0 after:left-0 after:h-[2px] after:w-0 after:bg-[#915EFF] after:transition-all after:duration-300 after:content-[''] hover:after:w-full"

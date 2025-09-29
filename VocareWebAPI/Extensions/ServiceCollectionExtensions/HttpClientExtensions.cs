@@ -39,7 +39,7 @@ namespace VocareWebAPI.Extensions.ServiceCollectionExtensions
                 })
                 .AddPolicyHandler(retryPolicy);
 
-            // Market Analysis Service - POPRAWKA: używa PerplexityAI config jak w oryginale
+            // Market Analysis Service
             services
                 .AddHttpClient<IMarketAnalysisService, MarketAnalysisService>(client =>
                 {
@@ -56,7 +56,7 @@ namespace VocareWebAPI.Extensions.ServiceCollectionExtensions
                 })
                 .AddPolicyHandler(retryPolicy);
 
-            // Market News Service - POPRAWKA: używa PerplexityAI config jak w oryginale
+            // Market News Service
             services
                 .AddHttpClient<IMarketNewsService, MarketNewsService>(client =>
                 {

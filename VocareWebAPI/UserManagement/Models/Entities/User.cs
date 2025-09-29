@@ -12,7 +12,7 @@ namespace VocareWebAPI.Models.Entities
     /// </summary>
     public class User : IdentityUser
     {
-        public UserProfile UserProfile { get; set; } = default!; // Profil użytkownika, rel
-        public UserBilling Billing { get; set; } = default!; // Informacje o płatności użytkownika, relacja 1:1
+        public UserProfile UserProfile { get; set; } = default!;
+        public UserBilling Billing { get; set; } = default!;
     }
 }

@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect, useState, useRef } from 'react';
-import CVCreator from '../ResumeComponent';
+import CVCreator from '../../../../components/ResumeComponents/ResumeComponent';
 import { createCv } from '@/lib/api/cv';
 import { CvDetailsDto } from '@/lib/types/cv';
 

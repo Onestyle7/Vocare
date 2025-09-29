@@ -52,7 +52,7 @@ namespace VocareWebAPI.UserManagement.Controllers
                     userId = login.UserId,
                     email = login.Email,
                     token = login.Token,
-                    accessToken = login.Token, // kluczowe dla frontu!
+                    /*accessToken = login.Token, */
                     tokenType = "Bearer",
                     expiresIn = login.ExpiresIn,
                 }

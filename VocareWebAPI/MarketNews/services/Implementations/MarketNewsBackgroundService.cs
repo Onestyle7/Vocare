@@ -22,7 +22,6 @@ namespace VocareWebAPI.MarketNews.services.Implementations
 
         protected override async Task ExecuteAsync(CancellationToken stoppingToken)
         {
-            // Oblicz kiedy ma być następne generowanie (np. każdy poniedziałek o 6:00)
             var nextRun = GetNextSunday6AM();
 
             while (!stoppingToken.IsCancellationRequested)
@@ -59,7 +58,6 @@ namespace VocareWebAPI.MarketNews.services.Implementations
                     _logger.LogError(ex, "Error generating weekly news");
                 }
 
-                // Ustaw następne wykonanie
                 nextRun = GetNextSunday6AM();
             }
         }

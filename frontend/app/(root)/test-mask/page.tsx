@@ -1,4 +1,4 @@
-import ScrollMask from '@/components/MaskedScrollImage';
+import ScrollMask from '@/components/MarketComponents/MaskedScrollImage';
 
 export default function Home() {
   return (

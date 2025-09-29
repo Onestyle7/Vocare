@@ -1,6 +1,6 @@
+import { ChartAreaStacked } from '@/components/SectionsComponents/AreaChart';
 import { ChartBarLabel } from '@/components/SupportComponents/ChartBarLabel';
 import { ChartPieInteractive } from '@/components/SupportComponents/PieChart';
-import { ChartAreaStacked } from '@/components/SupportComponents/SectionsComponents/AreaChart';
 import React from 'react';
 
 const DashboardGrid: React.FC = () => {

@@ -1,9 +1,9 @@
 import React from 'react';
 import { contact_pages, down_links, links_pages, links_social } from '@/app/constants';
 import Link from 'next/link';
-import Section from '../Section';
 import CustomButton from '@/components/ui/CustomButton';
 import { Input } from '@/components/ui/input';
+import Section from '../SupportComponents/Section';
 
 const Footer = () => {
   return (
@@ -79,11 +79,11 @@ const Footer = () => {
           </div>
         </div>
         <div className="flex h-1/2 w-full flex-col items-center justify-center border-t max-lg:mt-4 xl:flex-row">
-          <div className="mx-10 flex w-full items-center justify-center space-x-8 max-xl:flex-col xl:justify-between">
-            <div className="flex space-x-4 text-sm text-gray-400/90">
-              {down_links.map((link, index) => (
+          <div className="mx-10 flex w-full flex-col items-center gap-6 xl:flex-row xl:justify-between">
+            <div className="flex flex-wrap items-center justify-center gap-4 text-sm text-gray-400/90">
+              {down_links.map((link, i) => (
                 <Link
-                  key={index}
+                  key={i}
                   href={link.url}
                   className="hover:text-gray-700 dark:hover:text-gray-200"
                 >
@@ -91,7 +91,8 @@ const Footer = () => {
                 </Link>
               ))}
             </div>
-            <div className="text-4xl font-semibold max-xl:mt-4 sm:text-6xl xl:text-[80px] dark:text-[#F3F3F3]">
+
+            <div className="text-center text-4xl font-semibold sm:text-6xl xl:text-left xl:text-[80px] dark:text-[#F3F3F3]">
               Find Your Path
             </div>
           </div>

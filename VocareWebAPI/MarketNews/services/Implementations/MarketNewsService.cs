@@ -90,8 +90,8 @@ namespace VocareWebAPI.MarketNews.Services.Implementations
                     type = "json_schema",
                     json_schema = new
                     {
-                        name = "market_news", // ⚠️ DODAJ name - wymagane!
-                        strict = true, // ⚠️ DODAJ strict - wymagane!
+                        name = "market_news",
+                        strict = true,
                         schema = new
                         {
                             type = "object",
@@ -150,13 +150,12 @@ namespace VocareWebAPI.MarketNews.Services.Implementations
                 );
             }
             try
-            { // 🔍 Sprawdź czy odpowiedź to JSON
+            {
                 if (responseContent.TrimStart().StartsWith("<"))
                 {
                     _logger.LogError("Response is HTML/XML, not JSON: {Content}", responseContent);
                     throw new Exception("API returned HTML/XML instead of JSON");
                 }
-                // 🔍 KROK 1: Parsowanie structured JSON response
                 using var json = JsonDocument.Parse(responseContent);
                 var aiContent = json
                     .RootElement.GetProperty("choices")[0]
@@ -164,7 +163,6 @@ namespace VocareWebAPI.MarketNews.Services.Implementations
                     .GetProperty("content")
                     .GetString();
 
-                // Dodaj pełne logowanie aiContent
                 _logger.LogInformation("AI Content full: {Content}", aiContent);
 
                 using var contentJson = JsonDocument.Parse(aiContent);
@@ -174,7 +172,6 @@ namespace VocareWebAPI.MarketNews.Services.Implementations
                 var summary = contentJson.RootElement.GetProperty("summary").GetString() ?? "";
                 var content = contentJson.RootElement.GetProperty("content").GetString() ?? "";
 
-                // 🛡️ KROK 3: Validation (database constraints)
                 if (title.Length > 100)
                 {
                     _logger.LogWarning("Title exceeds limit: {Length} chars", title.Length);
@@ -203,7 +200,6 @@ namespace VocareWebAPI.MarketNews.Services.Implementations
                     content.Length
                 );
 
-                // 🏗️ KROK 4: Tworzenie obiektu MarketNews
                 var marketNews = new MarketNewsEntity
                 {
                     Id = Guid.NewGuid(),
@@ -213,7 +209,6 @@ namespace VocareWebAPI.MarketNews.Services.Implementations
                     CreatedAt = DateTime.UtcNow,
                 };
 
-                // 💾 KROK 5: Zapis do bazy
                 await _marketNewsRepository.AddAsync(marketNews);
 
                 _logger.LogInformation(
