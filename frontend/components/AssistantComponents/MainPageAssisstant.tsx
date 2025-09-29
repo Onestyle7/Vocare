@@ -36,8 +36,9 @@ import { AxiosError } from 'axios';
 import { AiCareerResponse, CareerPath } from '@/lib/types/recommendation';
 import Section from '../SupportComponents/Section';
 
+const API_URL = process.env.NEXT_PUBLIC_API_URL;
+
 export default function AssistantPage() {
-  const API_URL = process.env.NEXT_PUBLIC_API_URL;
   const [profile, setProfile] = useState<UserProfile | null>(null);
   const [recommendations, setRecommendations] = useState<AiCareerResponse | null>(null);
   const [isLoading, setLoading] = useState(false);
@@ -70,7 +71,7 @@ export default function AssistantPage() {
     window.addEventListener('scroll', handleScroll);
 
     return () => window.removeEventListener('scroll', handleScroll);
-  }, [API_URL]);
+  }, []);
 
   useEffect(() => {
     if (contentRef.current && contentWrapperRef.current && recommendations) {

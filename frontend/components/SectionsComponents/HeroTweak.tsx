@@ -56,7 +56,7 @@ const HeroTweak = () => {
       <CustomCursor />
       <div className="main-font-color relative z-30 flex h-[390px] flex-row px-[40px] lg:w-full">
         <div className="inset-0 flex w-full flex-col items-center justify-center md:flex-row md:justify-start md:pl-[40px] lg:w-3/5 lg:border-t lg:border-b">
-          <div className="flex w-full flex-col items-center justify-center max-md:mt-10 max-md:mb-8 lg:w-1/2 lg:items-start font-korbin">
+          <div className="font-korbin flex w-full flex-col items-center justify-center max-md:mt-10 max-md:mb-8 lg:w-1/2 lg:items-start">
             <Copy>
               <h1 className="overflow-hidden text-4xl leading-tight font-bold whitespace-nowrap text-neutral-800 max-md:text-center sm:text-4xl md:text-5xl lg:text-4xl xl:text-5xl 2xl:text-7xl dark:text-neutral-300">
                 Unlock Your <br /> Growth
@@ -124,7 +124,7 @@ const HeroTweak = () => {
       </div>
 
       <div className="relative mt-14 flex flex-col items-center justify-center border-gray-300 px-[40px] max-md:mt-40 dark:border-gray-600/30">
-        <div className="mb-2 flex h-full flex-col items-center justify-center font-korbin">
+        <div className="font-korbin mb-2 flex h-full flex-col items-center justify-center">
           <h3 className="font-bold text-gray-400">Meet Us</h3>
           <Copy>
             <h1 className="text-color mt-8 text-center text-4xl font-bold md:text-[4rem] xl:leading-[0.8]">

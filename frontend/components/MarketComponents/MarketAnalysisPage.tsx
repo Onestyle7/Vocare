@@ -137,7 +137,10 @@ const extractMarketAnalysis = (data: unknown): MarketAnalysisDetailsDto | null =
   return null;
 };
 
-const buildIndustrySummary = (industry?: IndustryStatisticsDto, relatedSkills: SkillDemandDto[] = []) => {
+const buildIndustrySummary = (
+  industry?: IndustryStatisticsDto,
+  relatedSkills: SkillDemandDto[] = []
+) => {
   if (!industry) {
     return '';
   }
@@ -221,15 +224,14 @@ export default function MarketAnalysis() {
       try {
         if (!forceNew) {
           try {
-            const latestResponse = await axios.get<MarketAnalysisResponseDto | MarketAnalysisDetailsDto>(
-              `${API_URL}/api/MarketAnalysis/latest`,
-              {
-                headers: {
-                  Authorization: `Bearer ${token}`,
-                  'Content-Type': 'application/json',
-                },
-              }
-            );
+            const latestResponse = await axios.get<
+              MarketAnalysisResponseDto | MarketAnalysisDetailsDto
+            >(`${API_URL}/api/MarketAnalysis/latest`, {
+              headers: {
+                Authorization: `Bearer ${token}`,
+                'Content-Type': 'application/json',
+              },
+            });
 
             const latestAnalysis = extractMarketAnalysis(latestResponse.data);
             if (latestAnalysis) {
@@ -514,7 +516,11 @@ export default function MarketAnalysis() {
                       <>
                         <h4 className="font-korbin mt-4 font-bold">Key trends:</h4>
                         <div className="ibm-plex-mono-regular mt-4 rounded-xl border p-2">
-                          <Timeline items={timelineItems} maxDescriptionLength={8} className="mx-0" />
+                          <Timeline
+                            items={timelineItems}
+                            maxDescriptionLength={8}
+                            className="mx-0"
+                          />
                         </div>
                       </>
                     )}
@@ -526,11 +532,15 @@ export default function MarketAnalysis() {
                             <li key={`${skill.skill}-${skill.industry}`}>
                               {skill.skill}
                               {skill.demandLevel ? (
-                                <span className={`ml-2 rounded-full px-2 py-0.5 text-xs font-medium ${getDemandBadgeClass(skill.demandLevel)}`}>
+                                <span
+                                  className={`ml-2 rounded-full px-2 py-0.5 text-xs font-medium ${getDemandBadgeClass(skill.demandLevel)}`}
+                                >
                                   {skill.demandLevel}
                                 </span>
                               ) : null}
-                              {skill.industry ? <span className="ml-2 text-xs text-gray-500">{skill.industry}</span> : null}
+                              {skill.industry ? (
+                                <span className="ml-2 text-xs text-gray-500">{skill.industry}</span>
+                              ) : null}
                             </li>
                           ))}
                         </ul>
@@ -594,7 +604,8 @@ export default function MarketAnalysis() {
                 </AlertDialogDescription>
 
                 <div className="mt-2 text-center text-sm">
-                  Current balance: <span className="font-bold">{isBalanceLoading ? '...' : tokenBalance}</span>
+                  Current balance:{' '}
+                  <span className="font-bold">{isBalanceLoading ? '...' : tokenBalance}</span>
                 </div>
               </AlertDialogHeader>
 
@@ -769,7 +780,7 @@ function IndustryInsightSection({ industry, index, skillDemand }: IndustryInsigh
           }}
         >
           <div ref={contentRef} className="space-y-5">
-            <div className="grid grid-cols-1 gap-4 md:grid-cols-3 mt-4">
+            <div className="mt-4 grid grid-cols-1 gap-4 md:grid-cols-3">
               <div className="rounded-xl border border-[#915EFF]/40 p-3">
                 <p className="text-sm text-gray-500">Salary range</p>
                 <p className="text-lg font-medium text-black dark:text-white">{salaryRange}</p>
@@ -780,7 +791,9 @@ function IndustryInsightSection({ industry, index, skillDemand }: IndustryInsigh
               </div>
               <div className="rounded-xl border border-[#915EFF]/40 p-3">
                 <p className="text-sm text-gray-500">Growth forecast</p>
-                <span className={`mt-1 inline-block rounded-lg px-2 py-1 text-xs font-medium ${getGrowthBadgeClass(industry.growthForecast)}`}>
+                <span
+                  className={`mt-1 inline-block rounded-lg px-2 py-1 text-xs font-medium ${getGrowthBadgeClass(industry.growthForecast)}`}
+                >
                   {industry.growthForecast || 'No data'}
                 </span>
               </div>
@@ -794,11 +807,15 @@ function IndustryInsightSection({ industry, index, skillDemand }: IndustryInsigh
                     <li key={`${skill.skill}-${skill.industry}`}>
                       {skill.skill}
                       {skill.demandLevel ? (
-                        <span className={`ml-2 rounded-full px-2 py-0.5 text-xs font-medium ${getDemandBadgeClass(skill.demandLevel)}`}>
+                        <span
+                          className={`ml-2 rounded-full px-2 py-0.5 text-xs font-medium ${getDemandBadgeClass(skill.demandLevel)}`}
+                        >
                           {skill.demandLevel}
                         </span>
                       ) : null}
-                      {skill.industry ? <span className="ml-2 text-xs text-gray-500">{skill.industry}</span> : null}
+                      {skill.industry ? (
+                        <span className="ml-2 text-xs text-gray-500">{skill.industry}</span>
+                      ) : null}
                     </li>
                   ))}
                 </ul>

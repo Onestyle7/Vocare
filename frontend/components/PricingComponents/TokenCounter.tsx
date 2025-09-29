@@ -10,7 +10,7 @@ export const TokenCounter = () => {
       <div className="group text-md relative flex flex-row items-center gap-4 rounded-full border px-4 py-2 transition hover:cursor-pointer xl:mr-8">
         <div className="flex items-center">
           Tokens:
-          <span className="ml-2 font-semibold font-poppins text-[#915EFF]">
+          <span className="font-poppins ml-2 font-semibold text-[#915EFF]">
             {isLoading ? '...' : error ? '0' : String(tokenBalance)}
           </span>
         </div>

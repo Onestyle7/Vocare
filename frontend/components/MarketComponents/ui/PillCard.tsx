@@ -1,6 +1,6 @@
-"use client";
+'use client';
 
-import React from "react";
+import React from 'react';
 
 interface PillCardProps {
   icon?: React.ReactNode;
@@ -10,7 +10,7 @@ interface PillCardProps {
   className?: string;
 }
 
-const PillCard: React.FC<PillCardProps> = ({ icon, title, subtitle, trailing, className = "" }) => {
+const PillCard: React.FC<PillCardProps> = ({ icon, title, subtitle, trailing, className = '' }) => {
   return (
     <div
       className={`rounded-[18px] border bg-white/80 shadow-sm backdrop-blur-md dark:bg-[#0f0f12] ${className}`}
@@ -21,7 +21,7 @@ const PillCard: React.FC<PillCardProps> = ({ icon, title, subtitle, trailing, cl
         </div>
         <div className="flex min-w-0 flex-1 flex-col">
           <p className="truncate text-sm font-medium">{title}</p>
-          {subtitle && <p className="truncate text-xs text-muted-foreground">{subtitle}</p>}
+          {subtitle && <p className="text-muted-foreground truncate text-xs">{subtitle}</p>}
         </div>
         {trailing && <div className="shrink-0">{trailing}</div>}
       </div>
@@ -30,4 +30,3 @@ const PillCard: React.FC<PillCardProps> = ({ icon, title, subtitle, trailing, cl
 };
 
 export default PillCard;
-

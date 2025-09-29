@@ -80,19 +80,22 @@ const Footer = () => {
         </div>
         <div className="flex h-1/2 w-full flex-col items-center justify-center border-t max-lg:mt-4 xl:flex-row">
           <div className="mx-10 flex w-full flex-col items-center gap-6 xl:flex-row xl:justify-between">
-  <div className="flex flex-wrap items-center justify-center gap-4 text-sm text-gray-400/90">
-    {down_links.map((link, i) => (
-      <Link key={i} href={link.url} className="hover:text-gray-700 dark:hover:text-gray-200">
-        {link.name}
-      </Link>
-    ))}
-  </div>
+            <div className="flex flex-wrap items-center justify-center gap-4 text-sm text-gray-400/90">
+              {down_links.map((link, i) => (
+                <Link
+                  key={i}
+                  href={link.url}
+                  className="hover:text-gray-700 dark:hover:text-gray-200"
+                >
+                  {link.name}
+                </Link>
+              ))}
+            </div>
 
-  <div className="text-4xl font-semibold sm:text-6xl xl:text-[80px] dark:text-[#F3F3F3] text-center xl:text-left">
-    Find Your Path
-  </div>
-</div>
-
+            <div className="text-center text-4xl font-semibold sm:text-6xl xl:text-left xl:text-[80px] dark:text-[#F3F3F3]">
+              Find Your Path
+            </div>
+          </div>
         </div>
       </footer>
     </Section>

@@ -1,15 +1,15 @@
-'use client'
-import * as THREE from 'three'
-import { Canvas, useFrame } from '@react-three/fiber'
-import { Environment, OrbitControls, RoundedBox, Text, shaderMaterial } from '@react-three/drei'
-import { useRef } from 'react'
+'use client';
+import * as THREE from 'three';
+import { Canvas, useFrame } from '@react-three/fiber';
+import { Environment, OrbitControls, RoundedBox, Text, shaderMaterial } from '@react-three/drei';
+import { useRef } from 'react';
 
 // --- prosty "shard" shader: łamie UV w komórki i przesuwa fragmenty
 const ShardTextMaterial = shaderMaterial(
   // uniforms
   { uTime: 0, uIntensity: 0.35, uCells: 6.0, uTextColor: new THREE.Color('#ffffff') },
   // vertex shader
-  /* glsl */`
+  /* glsl */ `
   varying vec2 vUv;
   void main() {
     vUv = uv;
@@ -17,7 +17,7 @@ const ShardTextMaterial = shaderMaterial(
     gl_Position = projectionMatrix * modelViewMatrix * vec4(transformed, 1.0);
   }`,
   // fragment shader
-  /* glsl */`
+  /* glsl */ `
   varying vec2 vUv;
   uniform float uTime;
   uniform float uIntensity;
@@ -47,20 +47,20 @@ const ShardTextMaterial = shaderMaterial(
 
     gl_FragColor = vec4(col, 1.0);
   }`
-)
+);
 
 // rejestracja materiału jako JSX tagu <shardTextMaterial />
-import { extend } from '@react-three/fiber'
-extend({ ShardTextMaterial })
+import { extend } from '@react-three/fiber';
+extend({ ShardTextMaterial });
 
 function Card() {
-  const card = useRef()
+  const card = useRef();
   // delikatny „tilt” karty
   useFrame((state) => {
-    const t = state.clock.getElapsedTime()
-    card.current.rotation.x = -0.15 + Math.sin(t * 0.5) * 0.02
-    card.current.rotation.y =  Math.sin(t * 0.3) * 0.08
-  })
+    const t = state.clock.getElapsedTime();
+    card.current.rotation.x = -0.15 + Math.sin(t * 0.5) * 0.02;
+    card.current.rotation.y = Math.sin(t * 0.3) * 0.08;
+  });
 
   return (
     <group ref={card}>
@@ -82,7 +82,7 @@ function Card() {
         letterSpacing={0.02}
         anchorX="center"
         anchorY="middle"
-        >
+      >
         {/* Tekst to czysta geometria; materiał shaderowy nakładamy jako child */}
         Kacper Jan
         <shardTextMaterial attach="material" uIntensity={0.35} uCells={7.0} />
@@ -100,22 +100,22 @@ function Card() {
         Guest • 2025
       </Text>
     </group>
-  )
+  );
 }
 
 function Scene() {
-  const matRef = useRef()
+  const matRef = useRef();
   // Animuj uniform czasu w shaderze tekstu (globalnie po scenie)
   useFrame((state) => {
-    const t = state.clock.getElapsedTime()
+    const t = state.clock.getElapsedTime();
     // znajdź wszystkie materiały ShardTextMaterial i podbij uTime
     state.scene.traverse((obj) => {
-      const m = obj.material
+      const m = obj.material;
       if (m && m.type === 'ShardTextMaterial') {
-        m.uTime = t
+        m.uTime = t;
       }
-    })
-  })
+    });
+  });
 
   return (
     <>
@@ -131,7 +131,7 @@ function Scene() {
       {/* sterowanie kamerą (z limitem zoomu) */}
       <OrbitControls enablePan={false} minDistance={4} maxDistance={8} />
     </>
-  )
+  );
 }
 
 export default function Badge3D() {
@@ -140,5 +140,5 @@ export default function Badge3D() {
       <color attach="background" args={['#0b0d12']} />
       <Scene />
     </Canvas>
-  )
+  );
 }

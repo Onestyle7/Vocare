@@ -28,7 +28,7 @@ const pricingPlans = [
     description: 'Perfect for getting started with our platform.',
     price: 9,
     tokens: 1000 as number | string,
-    priceId: 'price_1S8kOELs2ndSVWb2t6bhwwwC', 
+    priceId: 'price_1S8kOELs2ndSVWb2t6bhwwwC',
     type: 'tokens' as PlanType,
     features: [
       '1,000 tokens included',
@@ -43,7 +43,7 @@ const pricingPlans = [
     description: 'The best choice for scaling your projects.',
     price: 32,
     tokens: 5000 as number | string,
-    priceId: 'price_1S8kP9Ls2ndSVWb27z6i7v5v', 
+    priceId: 'price_1S8kP9Ls2ndSVWb27z6i7v5v',
     type: 'tokens' as PlanType,
     features: [
       '5,000 tokens included',
@@ -59,7 +59,7 @@ const pricingPlans = [
     description: 'Unlimited tokens and premium experience for personal use.',
     price: 48,
     tokens: 'Unlimited' as number | string,
-    priceId: 'price_1S9q33Ls2ndSVWb2KeB4Y3AD', 
+    priceId: 'price_1S9q33Ls2ndSVWb2KeB4Y3AD',
     type: 'subscription' as PlanType,
     features: [
       'Unlimited tokens for one user',
@@ -180,11 +180,7 @@ const PricingMain = () => {
     }
   };
 
-  const handlePurchase = async (
-    priceId: string,
-    planName: string,
-    planType: PlanType
-  ) => {
+  const handlePurchase = async (priceId: string, planName: string, planType: PlanType) => {
     // Walidacje
     if (priceId.includes('xxx') || priceId.includes('yyy') || priceId.includes('zzz')) {
       toast.error('Configuration needed', {
@@ -205,7 +201,8 @@ const PricingMain = () => {
 
     if (planType === 'subscription' && subscriptionStatus === 'Active') {
       toast.error('Already subscribed', {
-        description: 'You already have an active subscription. Use "Manage Billing" to change plans.',
+        description:
+          'You already have an active subscription. Use "Manage Billing" to change plans.',
         action: { label: 'Manage Billing', onClick: () => openCustomerPortal() },
       });
       return;
@@ -367,7 +364,7 @@ const PricingMain = () => {
                   onClick={openCustomerPortal}
                   disabled={isPortalLoading}
                   variant="outline"
-                  className="items-center gap-2 hidden"
+                  className="hidden items-center gap-2"
                 >
                   {isPortalLoading ? 'Opening...' : 'Manage Billing'}
                 </Button>
@@ -526,7 +523,7 @@ const PricingMain = () => {
                     </ul>
                   </div>
                   <Button
-                    className="relative mt-auto h-12 w-full rounded-full font-bold bg-[linear-gradient(90deg,rgba(146,150,253,1)_0%,rgba(132,145,254,1)_50%,rgba(199,169,254,1)_100%,rgba(157,155,255,1)_77%)] text-white"
+                    className="relative mt-auto h-12 w-full rounded-full bg-[linear-gradient(90deg,rgba(146,150,253,1)_0%,rgba(132,145,254,1)_50%,rgba(199,169,254,1)_100%,rgba(157,155,255,1)_77%)] font-bold text-white"
                     variant="default"
                     onClick={() =>
                       handlePurchase(
