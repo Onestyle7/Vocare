@@ -1,15 +1,7 @@
-using System.Text.Json;
-using Microsoft.Extensions.Options;
-using Stripe;
-using VocareWebAPI.CvGenerator.Models;
 using VocareWebAPI.CvGenerator.Models.Dtos;
-using VocareWebAPI.CvGenerator.Repositories.Interfaces;
 using VocareWebAPI.CvGenerator.Services.Interfaces;
-using VocareWebAPI.Models.Config;
-using VocareWebAPI.Models.Dtos;
 using VocareWebAPI.Models.Entities;
 using VocareWebAPI.Repositories;
-using VocareWebAPI.Repositories.Interfaces;
 using VocareWebAPI.UserManagement.Models.Entities;
 
 namespace VocareWebAPI.CvGenerator.Services.Implementations
@@ -42,7 +34,6 @@ namespace VocareWebAPI.CvGenerator.Services.Implementations
                 var userProfile = await _userProfileRepository.GetUserProfileByIdAsync(userId);
                 if (userProfile == null)
                 {
-                    // Używamy KeyNotFoundException zamiast Exception - to nie będzie łapane przez catch
                     throw new KeyNotFoundException($"User profile not found for userId: {userId}");
                 }
 
@@ -52,17 +43,14 @@ namespace VocareWebAPI.CvGenerator.Services.Implementations
             }
             catch (KeyNotFoundException)
             {
-                // Przepuszczamy KeyNotFoundException bez opakowywania
                 throw;
             }
             catch (ArgumentException)
             {
-                // Przepuszczamy ArgumentException bez opakowywania
                 throw;
             }
             catch (Exception ex)
             {
-                // Tylko nieznane błędy opakowujemy w generyczną wiadomość
                 _logger.LogError(ex, "Error generating CV for user {UserId}", userId);
                 throw new Exception("An error occurred while generating the CV.");
             }

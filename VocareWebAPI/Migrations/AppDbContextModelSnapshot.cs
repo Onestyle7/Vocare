@@ -202,6 +202,40 @@ namespace VocareWebAPI.Migrations
                         });
                 });
 
+            modelBuilder.Entity("VocareWebAPI.Billing.Models.Entities.SubscriptionPackage", b =>
+                {
+                    b.Property<string>("PriceId")
+                        .HasColumnType("text");
+
+                    b.Property<string>("Currency")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("Interval")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<int>("IntervalCount")
+                        .HasColumnType("integer");
+
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("boolean");
+
+                    b.Property<int>("Level")
+                        .HasColumnType("integer");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<decimal>("Price")
+                        .HasColumnType("numeric");
+
+                    b.HasKey("PriceId");
+
+                    b.ToTable("SubscriptionPackages", "public");
+                });
+
             modelBuilder.Entity("VocareWebAPI.Billing.Models.Entities.TokenTransaction", b =>
                 {
                     b.Property<int>("Id")
@@ -316,6 +350,37 @@ namespace VocareWebAPI.Migrations
                     b.HasIndex("UserId", "IsActive");
 
                     b.ToTable("GeneratedCvs", "public");
+                });
+
+            modelBuilder.Entity("VocareWebAPI.MarketNews.Models.Entities.MarketNewsEntity", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("Content")
+                        .IsRequired()
+                        .HasMaxLength(10000)
+                        .HasColumnType("character varying(10000)");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("Summary")
+                        .IsRequired()
+                        .HasMaxLength(150)
+                        .HasColumnType("character varying(150)");
+
+                    b.Property<string>("Title")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("character varying(100)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CreatedAt");
+
+                    b.ToTable("MarketNews", "public");
                 });
 
             modelBuilder.Entity("VocareWebAPI.Models.AiRecommendation", b =>

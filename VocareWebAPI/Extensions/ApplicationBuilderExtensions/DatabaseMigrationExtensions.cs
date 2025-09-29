@@ -37,7 +37,7 @@ namespace VocareWebAPI.Extensions.ApplicationBuilderExtensions
                     {
                         logger.LogInformation("Database connection successful");
 
-                        // Wykonaj migracje
+                        // Wykonujemy migrację
                         await db.Database.MigrateAsync();
 
                         logger.LogInformation("Database migration completed successfully");

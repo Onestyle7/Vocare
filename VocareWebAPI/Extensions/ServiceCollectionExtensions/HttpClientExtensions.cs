@@ -4,8 +4,11 @@ using System.Linq;
 using System.Threading.Tasks;
 using Polly;
 using Polly.Extensions.Http;
+using VocareWebAPI.CareerAdvisor.Models.Config;
 using VocareWebAPI.CareerAdvisor.Services.Implementations;
-using VocareWebAPI.Models.Config;
+using VocareWebAPI.MarketNews.Services.Implementations;
+using VocareWebAPI.MarketNews.Services.Interfaces;
+using VocareWebAPI.Models.OpenAIConfig;
 using VocareWebAPI.Repositories.Interfaces;
 using VocareWebAPI.Services;
 using VocareWebAPI.Services.Implementations;
@@ -32,15 +35,15 @@ namespace VocareWebAPI.Extensions.ServiceCollectionExtensions
             services
                 .AddHttpClient<IAiService, PerplexityAiService>(client =>
                 {
-                    ConfigureAiClient(client, configuration, "PerplexityAI");
+                    ConfigurePerplexityClient(client, configuration);
                 })
                 .AddPolicyHandler(retryPolicy);
 
-            // Market Analysis Service - POPRAWKA: używa PerplexityAI config jak w oryginale
+            // Market Analysis Service
             services
                 .AddHttpClient<IMarketAnalysisService, MarketAnalysisService>(client =>
                 {
-                    ConfigureAiClient(client, configuration, "OpenAI");
+                    ConfigureOpenAIClient(client, configuration);
                 })
                 .AddPolicyHandler(retryPolicy);
 
@@ -48,27 +51,43 @@ namespace VocareWebAPI.Extensions.ServiceCollectionExtensions
             services
                 .AddHttpClient<IAiService, OpenAIService>(client =>
                 {
-                    ConfigureAiClient(client, configuration, "OpenAI");
+                    ConfigureOpenAIClient(client, configuration);
                     client.Timeout = TimeSpan.FromMinutes(3);
                 })
                 .AddPolicyHandler(retryPolicy);
 
+            // Market News Service
+            services
+                .AddHttpClient<IMarketNewsService, MarketNewsService>(client =>
+                {
+                    ConfigurePerplexityClient(client, configuration);
+                    client.Timeout = TimeSpan.FromMinutes(3);
+                })
+                .AddPolicyHandler(retryPolicy);
             return services;
         }
 
-        private static void ConfigureAiClient(
+        private static void ConfigureOpenAIClient(HttpClient client, IConfiguration configuration)
+        {
+            var config = configuration.GetSection("OpenAI").Get<OpenAIConfig>();
+            if (config == null)
+                throw new InvalidOperationException("OpenAI configuration section is missing");
+
+            client.BaseAddress = new Uri(config.BaseUrl);
+            client.DefaultRequestHeaders.Add("Authorization", $"Bearer {config.ApiKey}");
+            client.DefaultRequestHeaders.Add("Accept", "application/json");
+        }
+
+        private static void ConfigurePerplexityClient(
             HttpClient client,
-            IConfiguration configuration,
-            string configSection
+            IConfiguration configuration
         )
         {
-            var config = configuration.GetSection(configSection).Get<AiConfig>();
+            var config = configuration.GetSection("PerplexityAI").Get<PerplexityAIConfig>();
             if (config == null)
-            {
                 throw new InvalidOperationException(
-                    $"Configuration section '{configSection}' is missing"
+                    "PerplexityAI configuration section is missing"
                 );
-            }
 
             client.BaseAddress = new Uri(config.BaseUrl);
             client.DefaultRequestHeaders.Add("Authorization", $"Bearer {config.ApiKey}");

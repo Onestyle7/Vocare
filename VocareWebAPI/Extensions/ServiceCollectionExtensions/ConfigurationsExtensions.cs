@@ -2,7 +2,8 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using VocareWebAPI.Models.Config;
+using VocareWebAPI.CareerAdvisor.Models.Config;
+using VocareWebAPI.Models.OpenAIConfig;
 using VocareWebAPI.UserManagement.Models.Entities;
 
 namespace VocareWebAPI.Extensions.ServiceCollectionExtensions
@@ -14,8 +15,8 @@ namespace VocareWebAPI.Extensions.ServiceCollectionExtensions
             IConfiguration configuration
         )
         {
-            services.Configure<AiConfig>(configuration.GetSection("PerplexityAI"));
-            services.Configure<AiConfig>(configuration.GetSection("OpenAI"));
+            services.Configure<PerplexityAIConfig>(configuration.GetSection("PerplexityAI"));
+            services.Configure<OpenAIConfig>(configuration.GetSection("OpenAI"));
             services.Configure<UserRegistrationConfig>(
                 configuration.GetSection("UserRegistration")
             );

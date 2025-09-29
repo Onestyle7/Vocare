@@ -1,15 +1,11 @@
-using System.Globalization;
-using System.Security.Claims;
 using System.Text.Json;
-using System.Text.RegularExpressions;
-using AutoMapper;
 using Microsoft.Extensions.Options;
+using VocareWebAPI.CareerAdvisor.Models.Config;
 using VocareWebAPI.Models;
-using VocareWebAPI.Models.Config;
 using VocareWebAPI.Models.Dtos;
 using VocareWebAPI.Models.Dtos.MarketAnalysis;
-using VocareWebAPI.Models.Entities;
 using VocareWebAPI.Models.Entities.MarketAnalysis;
+using VocareWebAPI.Models.OpenAIConfig;
 using VocareWebAPI.Repositories;
 using VocareWebAPI.Repositories.Interfaces;
 
@@ -21,8 +17,7 @@ namespace VocareWebAPI.Services.Implementations
     public class MarketAnalysisService : IMarketAnalysisService
     {
         private readonly HttpClient _httpClient;
-        private readonly AiConfig _config;
-        private readonly IUserProfileRepository _userProfileRepository;
+        private readonly OpenAIConfig _config;
         private readonly ICareerStatisticsRepository _careerStatisticsRepository;
         private readonly ISkillDemandRepository _skillDemandRepository;
         private readonly IMarketTrendsRepository _marketTrendsRepository;
@@ -42,7 +37,7 @@ namespace VocareWebAPI.Services.Implementations
         /// <param name="logger">Logger do rejestracji zdarzeń</param>
         public MarketAnalysisService(
             HttpClient httpClient,
-            IOptions<AiConfig> config,
+            IOptions<OpenAIConfig> config,
             IUserProfileRepository userProfileRepository,
             ICareerStatisticsRepository marketAnalysisRepository,
             ISkillDemandRepository skillDemandRepository,
@@ -53,7 +48,6 @@ namespace VocareWebAPI.Services.Implementations
         {
             _httpClient = httpClient;
             _config = config.Value;
-            _userProfileRepository = userProfileRepository;
             _marketTrendsRepository = marketTrendsRepository;
             _skillDemandRepository = skillDemandRepository;
             _careerStatisticsRepository = marketAnalysisRepository;
@@ -142,7 +136,7 @@ namespace VocareWebAPI.Services.Implementations
                             cleanJson,
                             ex
                         );
-                        throw; // Opcjonalnie: zgłoś błąd dalej
+                        throw;
                     }
                 }
                 else
@@ -152,7 +146,6 @@ namespace VocareWebAPI.Services.Implementations
                         rawContent
                     );
 
-                    // Próba deserializacji całej odpowiedzi jako JSON
                     try
                     {
                         result = JsonSerializer.Deserialize<MarketAnalysisResponseDto>(
@@ -175,7 +168,6 @@ namespace VocareWebAPI.Services.Implementations
                     throw new Exception("Failed to parse market analysis JSON.");
                 }
 
-                // Inicjalizujemy null properties
                 InitializeNullProperties(result);
 
                 await SaveMarketAnalysisToDatabase(result, recommendation.Id);
@@ -199,7 +191,6 @@ namespace VocareWebAPI.Services.Implementations
             Guid aiRecommendationId
         )
         {
-            // Usuń stare dane
             await _careerStatisticsRepository.DeleteByAiRecommendationIdAsync(aiRecommendationId);
             await _skillDemandRepository.DeleteByAiRecommendationIdAsync(aiRecommendationId);
             await _marketTrendsRepository.DeleteByAiRecommendationIdAsync(aiRecommendationId);
@@ -222,7 +213,6 @@ namespace VocareWebAPI.Services.Implementations
                     await _careerStatisticsRepository.AddAsync(careerStat);
                 }
 
-                // Skill demand i market trends bez zmian
                 foreach (var skill in analysis.MarketAnalysis.SkillDemand)
                 {
                     var skillDemand = new SkillDemand
@@ -368,7 +358,6 @@ namespace VocareWebAPI.Services.Implementations
                 throw new Exception($"AI recommendation for user with ID:{userId} not found.");
             }
 
-            // Pobierz dane powiązane z najnowszą rekomendacją
             var careerStats = await _careerStatisticsRepository.GetByAiRecommendationIdAsync(
                 recommendation.Id
             );
@@ -379,7 +368,6 @@ namespace VocareWebAPI.Services.Implementations
                 recommendation.Id
             );
 
-            // Mapuj dane na DTO
             var result = new MarketAnalysisResponseDto
             {
                 MarketAnalysis = new MarketAnalysisDetailsDto

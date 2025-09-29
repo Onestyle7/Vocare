@@ -3,9 +3,9 @@ using System.Text.Json.Serialization;
 using AutoMapper;
 using Microsoft.Extensions.Options;
 using VocareWebAPI.Models;
-using VocareWebAPI.Models.Config;
 using VocareWebAPI.Models.Dtos;
 using VocareWebAPI.Models.Entities;
+using VocareWebAPI.Models.OpenAIConfig;
 using VocareWebAPI.Repositories;
 using VocareWebAPI.Services;
 
@@ -14,14 +14,14 @@ namespace VocareWebAPI.CareerAdvisor.Services.Implementations
     public class OpenAIService : IAiService
     {
         private readonly HttpClient _httpClient;
-        private readonly AiConfig _config;
+        private readonly OpenAIConfig _config;
         private readonly IAiRecommendationRepository _aiRecommendationRepository;
         private readonly IMapper _mapper;
         private readonly ILogger<OpenAIService> _logger;
 
         public OpenAIService(
             HttpClient httpClient,
-            IOptions<AiConfig> aiConfig,
+            IOptions<OpenAIConfig> aiConfig,
             IAiRecommendationRepository aiRecommendationRepository,
             IMapper mapper,
             ILogger<OpenAIService> logger
@@ -33,7 +33,6 @@ namespace VocareWebAPI.CareerAdvisor.Services.Implementations
             _mapper = mapper;
             _logger = logger;
 
-            // Increase timeout to accommodate slower model responses
             _httpClient.Timeout = TimeSpan.FromSeconds(180);
             _httpClient.DefaultRequestHeaders.Add("Authorization", $"Bearer {_config.ApiKey}");
             _httpClient.DefaultRequestHeaders.Add("Accept", "application/json");
@@ -56,7 +55,7 @@ namespace VocareWebAPI.CareerAdvisor.Services.Implementations
                     },
                     new { role = "user", content = prompt },
                 },
-                response_format = new { type = "json_object" }, // Wymusza odpowiedź JSON
+                response_format = new { type = "json_object" },
             };
             try
             {
