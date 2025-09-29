@@ -10,7 +10,7 @@ import {
 import Section from '@/components/SupportComponents/Section';
 import { Button } from '@/components/ui/button';
 import Image from 'next/image';
-import React, { useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import { ScrollParallax } from 'react-just-parallax';
 import Copy from '../SupportComponents/Copy';
 import { Code2, EyeOffIcon, PhoneIcon, Undo2 } from 'lucide-react';
@@ -19,6 +19,8 @@ import { useRouter } from 'next/navigation';
 import { toast } from 'sonner';
 
 type PlanType = 'tokens' | 'subscription';
+
+const API_BASE = process.env.NEXT_PUBLIC_API_URL || 'https://vocare-staging-e568.up.railway.app';
 
 const pricingPlans = [
   {
@@ -76,15 +78,13 @@ const PricingMain = () => {
   const [isPortalLoading, setIsPortalLoading] = useState(false);
 
   const router = useRouter();
-  const API_BASE =process.env.NEXT_PUBLIC_API_URL || 'https://vocare-staging-e568.up.railway.app';
-
   useEffect(() => {
     const token = typeof window !== 'undefined' ? localStorage.getItem('token') : null;
     setIsAuthenticated(!!token);
   }, []);
 
   // Helpers
-  const checkTokenBalance = async () => {
+  const checkTokenBalance = useCallback(async () => {
     if (!isAuthenticated) return;
     try {
       const token = localStorage.getItem('token');
@@ -95,12 +95,12 @@ const PricingMain = () => {
         const data = await res.json();
         console.log('Current token balance:', data.tokenBalance);
       }
-    } catch (e) {
-      console.error('Failed to fetch token balance:', e);
+    } catch (error: unknown) {
+      console.error('Failed to fetch token balance:', error);
     }
-  };
+  }, [isAuthenticated]);
 
-  const checkSubscriptionStatus = async () => {
+  const checkSubscriptionStatus = useCallback(async () => {
     if (!isAuthenticated) return;
     try {
       const token = localStorage.getItem('token');
@@ -114,18 +114,18 @@ const PricingMain = () => {
       } else if (res.status === 404) {
         setSubscriptionStatus('None');
       }
-    } catch (e) {
-      console.error('Failed to fetch subscription status:', e);
+    } catch (error: unknown) {
+      console.error('Failed to fetch subscription status:', error);
       setSubscriptionStatus('None');
     }
-  };
+  }, [isAuthenticated]);
 
   useEffect(() => {
     if (isAuthenticated) {
-      checkTokenBalance();
-      checkSubscriptionStatus();
+      void checkTokenBalance();
+      void checkSubscriptionStatus();
     }
-  }, [isAuthenticated]);
+  }, [isAuthenticated, checkSubscriptionStatus, checkTokenBalance]);
 
   const openCustomerPortal = async () => {
     if (!isAuthenticated) {
@@ -162,15 +162,17 @@ const PricingMain = () => {
 
       toast.success('Opening billing portal...');
       window.location.href = data.url;
-    } catch (e: any) {
-      if (e?.message?.includes('401')) {
+    } catch (error: unknown) {
+      const message = error instanceof Error ? error.message : '';
+
+      if (message.includes('401')) {
         toast.error('Session expired', {
           description: 'Please sign in again.',
           action: { label: 'Sign In', onClick: () => router.push('/sign-in') },
         });
       } else {
         toast.error('Failed to open billing portal', {
-          description: e?.message || 'Please try again.',
+          description: message || 'Please try again.',
         });
       }
     } finally {
@@ -252,15 +254,17 @@ const PricingMain = () => {
       });
 
       window.location.href = data.url;
-    } catch (e: any) {
-      if (e?.message?.includes('401')) {
+    } catch (error: unknown) {
+      const message = error instanceof Error ? error.message : '';
+
+      if (message.includes('401')) {
         toast.error('Session expired', {
           description: 'Please sign in again to continue.',
           action: { label: 'Sign In', onClick: () => router.push('/sign-in') },
         });
       } else {
         toast.error('Payment initialization failed', {
-          description: e?.message || 'Something went wrong. Please try again.',
+          description: message || 'Something went wrong. Please try again.',
         });
       }
     } finally {
@@ -359,6 +363,14 @@ const PricingMain = () => {
                     </p>
                   </div>
                 )}
+                <Button
+                  onClick={openCustomerPortal}
+                  disabled={isPortalLoading}
+                  variant="outline"
+                  className="items-center gap-2 hidden"
+                >
+                  {isPortalLoading ? 'Opening...' : 'Manage Billing'}
+                </Button>
               </div>
             )}
           </div>
