@@ -144,7 +144,7 @@ const Header = () => {
                 <p className="text-[18px] font-normal uppercase">Sign In</p>
               </Link>
             )}
-            <ThemeSwitch />
+            {/* <ThemeSwitch /> */}
           </div>
         </nav>
       )}
