@@ -577,7 +577,7 @@ export default function MarketAnalysis() {
             <ButtonGenerate
               onClick={() => setIsConfirmDialogOpen(true)}
               disabled={isLoading}
-              className="cursor-pointer px-6 py-2"
+              className="cursor-pointer px-6 py-2 max-md:w-full! max-md:text-sm"
             >
               {isLoading ? 'Generating...' : 'Generate new market analysis'}
             </ButtonGenerate>
@@ -587,7 +587,7 @@ export default function MarketAnalysis() {
             <ButtonGenerate
               onClick={() => setIsConfirmDialogOpen(true)}
               disabled={isLoading}
-              className="cursor-pointer px-6 py-2"
+              className="cursor-pointer px-6 py-2 max-md:text-sm"
             >
               {isLoading ? 'Generating...' : 'Generate new market analysis'}
             </ButtonGenerate>
