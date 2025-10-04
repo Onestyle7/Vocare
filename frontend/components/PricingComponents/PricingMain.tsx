@@ -13,7 +13,7 @@ import Image from 'next/image';
 import React, { useCallback, useEffect, useState } from 'react';
 import { ScrollParallax } from 'react-just-parallax';
 import Copy from '../SupportComponents/Copy';
-import { Code2, EyeOffIcon, PhoneIcon, Undo2 } from 'lucide-react';
+import { Undo2 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { useRouter } from 'next/navigation';
 import { toast } from 'sonner';
@@ -315,26 +315,6 @@ const PricingMain = () => {
               Select plan plan that fits You the most to unlock full potential and rocket Your
               career.
             </p>
-            <div className="mt-6 flex w-4/5 flex-row items-center justify-between text-gray-100 sm:w-3/5">
-              <p className="flex flex-row gap-2 text-xs sm:text-[16px]">
-                <span>
-                  <Code2 className="scale-80" />
-                </span>
-                Open source
-              </p>
-              <p className="flex flex-row gap-2 text-xs sm:text-[16px]">
-                <span>
-                  <EyeOffIcon className="scale-80" />
-                </span>
-                No logs policy
-              </p>
-              <p className="flex flex-row gap-2 text-xs sm:text-[16px]">
-                <span>
-                  <PhoneIcon className="scale-80" />
-                </span>
-                Contact Us
-              </p>
-            </div>
 
             {/* STATUS / BILLING ACTIONS */}
             {!isAuthenticated ? (
@@ -372,7 +352,7 @@ const PricingMain = () => {
             )}
           </div>
 
-          <div className="relative mb-10 w-full px-4 md:px-6 xl:mt-18">
+          <div className="relative mb-10 w-full px-4 md:px-6">
             {/* Subtle purple circular glow under the cards */}
             <div
               aria-hidden
