@@ -13,6 +13,6 @@ namespace VocareWebAPI.Models.Entities
     {
         [Key]
         public Guid Id { get; set; }
-        public string Step { get; set; } = String.Empty; // Opis kolejnego kroku, np. "Zapisz się na kurs programowania w Pythonie"
+        public string Step { get; set; } = String.Empty;
     }
 }

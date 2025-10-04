@@ -166,9 +166,9 @@ namespace VocareWebAPI.Controllers
             return Ok(new { Message = "Payment canceled." });
         }
 
-        [HttpGet("get-token-balance")]
+        [HttpGet("access-status")]
         [Authorize]
-        public async Task<IActionResult> GetTokenBalance()
+        public async Task<IActionResult> GetAccessStatus()
         {
             try
             {
@@ -184,7 +184,13 @@ namespace VocareWebAPI.Controllers
                     return NotFound("Nie znaleziono informacji o płatności dla tego użytkownika.");
                 }
 
-                return Ok(new { tokenBalance = userBilling.TokenBalance });
+                return Ok(
+                    new
+                    {
+                        tokenBalance = userBilling.TokenBalance,
+                        subscriptionStatus = userBilling.SubscriptionStatus.ToString(),
+                    }
+                );
             }
             catch (KeyNotFoundException)
             {
@@ -196,6 +202,116 @@ namespace VocareWebAPI.Controllers
                 // Ogólny catch dla innych błędów - zwraca 500
                 _logger.LogError(ex, "Błąd podczas pobierania salda tokenów.");
                 return StatusCode(500, "Wystąpił błąd podczas przetwarzania żądania.");
+            }
+        }
+
+        [HttpPost("create-subscription-checkout")]
+        [Authorize]
+        public async Task<IActionResult> CreateSubscriptionCheckout(
+            [FromBody] CreateCheckoutSessionRequestDto request
+        )
+        {
+            if (request == null || string.IsNullOrEmpty(request.PriceId))
+            {
+                return BadRequest(new { Error = "PriceId is required." });
+            }
+
+            var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            if (string.IsNullOrEmpty(userId))
+            {
+                return Unauthorized(new { Error = "User must be authenticated." });
+            }
+
+            try
+            {
+                var sessionUrl = await _stripeService.CreateCheckoutSessionForSubscriptionAsync(
+                    userId,
+                    request.PriceId
+                );
+                return Ok(new { Url = sessionUrl });
+            }
+            catch (InvalidOperationException ex)
+            {
+                return BadRequest(new { Error = ex.Message });
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(
+                    ex,
+                    "Error creating subscription checkout for userId={UserId}",
+                    userId
+                );
+                return StatusCode(500, new { Error = "An unexpected error occurred." });
+            }
+        }
+
+        [HttpGet("subscription-status")]
+        [Authorize]
+        public async Task<IActionResult> GetSubscriptionStatus()
+        {
+            try
+            {
+                var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+                if (string.IsNullOrEmpty(userId))
+                {
+                    return Unauthorized(new { Error = "User must be authenticated." });
+                }
+
+                var userBilling = await _billingService.GetUserBillingAsync(userId);
+
+                return Ok(
+                    new
+                    {
+                        subscriptionStatus = userBilling.SubscriptionStatus.ToString(),
+                        subscriptionLevel = userBilling.SubscriptionLevel.ToString(),
+                        subscriptionEndDate = userBilling.SubscriptionEndDate,
+                        subscriptionId = userBilling.StripeSubscriptionId,
+                    }
+                );
+            }
+            catch (KeyNotFoundException)
+            {
+                return NotFound(new { Error = "User billing information not found." });
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error getting subscription status");
+                return StatusCode(500, new { Error = "An unexpected error occurred." });
+            }
+        }
+
+        [HttpPost("customer-portal")]
+        [Authorize]
+        public async Task<IActionResult> CreateCustomerPortalSession()
+        {
+            var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            if (string.IsNullOrEmpty(userId))
+                return Unauthorized(new { Error = "User must be authenticated." });
+
+            try
+            {
+                // URL powrotu do Twojej aplikacji
+                var returnUrl = $"{Request.Scheme}://{Request.Host}/dashboard";
+
+                var portalUrl = await _stripeService.CreateCustomerPortalSessionAsync(
+                    userId,
+                    returnUrl
+                );
+
+                return Ok(new { Url = portalUrl });
+            }
+            catch (InvalidOperationException ex)
+            {
+                return BadRequest(new { Error = ex.Message });
+            }
+            catch (KeyNotFoundException)
+            {
+                return NotFound(new { Error = "User billing information not found." });
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error creating customer portal for userId={UserId}", userId);
+                return StatusCode(500, new { Error = "An unexpected error occurred." });
             }
         }
     }

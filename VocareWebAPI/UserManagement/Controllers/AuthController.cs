@@ -51,8 +51,8 @@ namespace VocareWebAPI.UserManagement.Controllers
                     message = "Login successful",
                     userId = login.UserId,
                     email = login.Email,
-                    token = login.Token,
-                    accessToken = login.Token, // kluczowe dla frontu!
+                    /*token = login.Token, */
+                    accessToken = login.Token,
                     tokenType = "Bearer",
                     expiresIn = login.ExpiresIn,
                 }

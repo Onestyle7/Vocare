@@ -1,11 +1,12 @@
 'use client';
-
+import React from 'react';
+import Header from '@/components/SectionsComponents/Header';
 import { GridBackgroundDemo } from '@/components/MarketComponents/GridBackgroundDemo';
 import ProfileDetails from '@/components/ProfileFormComponents/ProfileDeatail';
-import Header from '@/components/SupportComponents/SectionsComponents/Header';
-import React from 'react';
+import { useLockScrollOnLg } from '@/lib/hooks/useLockScrollOnLg';
 
-const page = () => {
+export default function Page() {
+  useLockScrollOnLg();
   return (
     <div>
       <Header />
@@ -13,6 +14,4 @@ const page = () => {
       <ProfileDetails />
     </div>
   );
-};
-
-export default page;
+}

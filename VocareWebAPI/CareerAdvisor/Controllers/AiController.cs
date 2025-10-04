@@ -53,22 +53,18 @@ namespace VocareWebAPI.Controllers
             if (string.IsNullOrEmpty(userId))
                 return Unauthorized("Brak identyfikatora użytkownika w tokenie.");
 
-            // 1. sprawdź saldo / subskrypcję
             var hasAccess = await _billingService.CanAccessServiceAsync(userId, "AnalyzeProfile");
             if (!hasAccess)
                 return Forbid("Brak tokenów lub subskrypcja nieaktywna.");
 
-            // 2. pobierz dane profilu
             var profile = await _userProfileRepository.GetUserProfileByIdAsync(userId);
             if (profile is null)
                 return NotFound("Profil użytkownika nie został znaleziony.");
 
             try
             {
-                // 3. generuj rekomendację
                 var result = await _aiService.GetCareerRecommendationsAsync(profile);
 
-                // 4. odejmij tokeny (jeśli user nie ma aktywnej subskrypcji)
                 await _billingService.DeductTokensForServiceAsync(userId, "AnalyzeProfile");
 
                 return Ok(result);

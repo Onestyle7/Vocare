@@ -14,5 +14,6 @@ namespace VocareWebAPI.Billing.Repositories.Interfaces
         Task<bool> HasEnoughTokensAsync(string userId, int requiredTokens);
         Task DeductTokensAsync(string userId, int amount);
         Task AddTokensAsync(string userId, int amount);
+        Task<string?> GetUserIdByCustomerIdAsync(string customerId);
     }
 }

@@ -199,7 +199,7 @@ export const countries = [
 
 export const NavLinks = [
   { label: 'Profile', url: '/profile' },
-  { label: 'Assistant', url: '/assistant' },
+  { label: 'Advisor', url: '/assistant' },
   { label: 'Analysis', url: '/market-analysis' },
   { label: 'Pricing', url: '/pricing' },
   { label: 'Resume', url: '/resume', disabled: false },
@@ -266,6 +266,10 @@ export const logo = '/icons/vocare.png';
 export const curved1 = '/svg/curve-1.svg';
 export const curved2 = '/svg/curve-2.svg';
 
+export const upper_arrow = '/images/upper-arrow.png';
+
+export const curve_pricing = '/images/curve-pricing.png';
+
 // grid
 
 export const gridTiles = [
@@ -299,7 +303,7 @@ export const mobileView = '/images/mobileView.jpeg';
 // footer
 
 export const links_social = [
-  { name: 'X(TWITTER)', url: '/' },
+  { name: 'X', url: '/' },
   { name: 'INSTAGRAM', url: '/' },
   { name: 'BLUESKY', url: '/' },
   { name: 'LINKEDIN', url: '/' },
@@ -310,13 +314,14 @@ export const links_pages = [
   { name: 'COLLECTION', url: '/' },
   { name: 'FAQ', url: '/' },
   { name: 'PRICING', url: '/' },
+  { name: 'BLOG', url: '/blog' },
 ];
 
 export const contact_pages = [{ name: 'REACH US', url: '/' }];
 
 export const down_links = [
   { name: '2025©', url: '/' },
-  { name: 'PERMISSIONS & TERMS', url: '/' },
+  { name: 'PERMISSIONS AND TERMS', url: '/' },
   { name: 'PRIVACY POLICY', url: '/' },
 ];
 
@@ -325,6 +330,10 @@ export const letterImg = '/images/as1.png';
 export const check = '/svg/check.svg';
 
 // PRICING
+
+export const square_pricing = '/svg/square_pricing.svg';
+export const circle_pricing = '/svg/circle_pricing.svg';
+export const trapez_pricing = '/svg/trapez_pricing.svg';
 
 export const pricingPlans = [
   {
@@ -419,3 +428,14 @@ export const slide = [
 
 export const google = '/svg/google.svg';
 export const facebook = '/svg/facebook.svg';
+
+// Timeline
+
+export const timeline_icon_1 = '/svg/info-circle.svg';
+export const timeline_icon_3 = '/svg/timeline_icon_2.svg';
+export const timeline_icon_2 = '/svg/timeline_icon_3.svg';
+export const timeline_icon_4 = '/svg/timeline_icon_4.svg';
+
+// Card Assistant
+
+export const card_assistant_1 = '/images/card-assistant-1.png';

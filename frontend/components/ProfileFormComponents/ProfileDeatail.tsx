@@ -15,6 +15,8 @@ import { Button } from '../ui/button';
 import Section from '../SupportComponents/Section';
 import { Risk, riskLabels } from '@/lib/enums/risk';
 import { PersonalityType, personalityTypeLabels } from '@/lib/enums/personalityTypes';
+import Image from 'next/image';
+import { spinner_terminal } from '@/app/constants';
 
 const getPersonalityLabel = (value: PersonalityType | string | undefined): string => {
   if (value === undefined || value === null || value === '') {
@@ -98,7 +100,17 @@ export default function ProfileDetails() {
   const isProfileEmpty = !profile;
 
   if (loading) {
-    return <div className="flex h-screen items-center justify-center">Loading profile...</div>;
+    return (
+      <div className="flex h-screen items-center justify-center">
+        <Image
+          src={spinner_terminal}
+          alt="Loading profile"
+          width={48}
+          height={48}
+          className="animate-spin"
+        />
+      </div>
+    );
   }
 
   if (isEditing) {
@@ -303,7 +315,7 @@ export default function ProfileDetails() {
                 </span>
               </div>
               {profile.workExperience && index !== profile.workExperience.length - 1 && (
-                <Separator className="mt-4" />
+                <Separator className="mt-4 mb-10" />
               )}
             </div>
           ))
@@ -412,7 +424,7 @@ export default function ProfileDetails() {
       id="profile"
     >
       <div className="font-poppins mt-10 lg:px-4 xl:mx-10 xl:mt-16 xl:border-t">
-        <div className="font-poppins mx-4 mt-8 max-w-7xl max-sm:mx-4 xl:mx-auto 2xl:max-w-[1480px]">
+        <div className="font-poppins mt-8 max-w-7xl max-md:px-4 xl:mx-auto 2xl:max-w-[1480px]">
           <div className="mt-2 flex h-screen flex-col xl:flex-row">
             <div className="hidden xl:block xl:w-1/2 xl:pr-8">
               <div className="-mt-8 flex h-3/4 items-center justify-center">
@@ -420,7 +432,7 @@ export default function ProfileDetails() {
               </div>
             </div>
 
-            <div className="bg-background relative z-10 w-full rounded-xl border p-4 xl:h-3/4 xl:w-1/2 dark:bg-[#0e100f]">
+            <div className="bg-background dark:bg-background relative z-20 w-full rounded-xl border p-4 xl:h-3/4 xl:w-1/2">
               <div className="flex h-full flex-col">
                 <div className="flex flex-row items-start justify-between border-b">
                   <h1 className="mb-4 text-2xl font-bold text-gray-800 xl:text-3xl dark:text-gray-200">
@@ -429,11 +441,11 @@ export default function ProfileDetails() {
                   <div className="flex gap-2">
                     <Button
                       onClick={handleEdit}
-                      className="rounded-full bg-[#915EFF] hover:bg-[#b594fd]"
+                      className="rounded-md bg-[#915EFF] hover:bg-[#b594fd]"
                     >
                       Edit
                     </Button>
-                    <Button onClick={handleLogout} variant="outline" className="rounded-full">
+                    <Button onClick={handleLogout} variant="outline" className="rounded-md">
                       <LogOut />
                     </Button>
                   </div>

@@ -138,7 +138,6 @@ namespace VocareWebAPI.Billing.Repositories.Implementations
 
         public async Task UpdateAsync(UserBilling userBilling)
         {
-            // Sprawdzamy czy userBilling nie jest null i czy UserId nie jest pusty
             if (userBilling == null)
             {
                 throw new ArgumentNullException(
@@ -164,10 +163,8 @@ namespace VocareWebAPI.Billing.Repositories.Implementations
                 );
             }
 
-            // Aktualizujemy istniejący obiekt UserBilling w kontekście
             _context.Entry(existingUserBilling).CurrentValues.SetValues(userBilling);
 
-            // Zapisujemy zmiany w bazie danych
             await _context.SaveChangesAsync();
         }
 
@@ -216,7 +213,10 @@ namespace VocareWebAPI.Billing.Repositories.Implementations
             try
             {
                 var userBilling = await _context
-                    .UserBillings.Where(ub => ub.UserId == userId)
+                    .UserBillings.FromSqlRaw(
+                        @"SELECT * FROM ""UserBillings"" WHERE ""UserId"" = {0} FOR UPDATE",
+                        userId
+                    )
                     .FirstOrDefaultAsync();
 
                 if (userBilling == null)
@@ -229,9 +229,19 @@ namespace VocareWebAPI.Billing.Repositories.Implementations
                 {
                     throw new InvalidOperationException($"Not enough tokens for user ID {userId}.");
                 }
+
                 userBilling.TokenBalance -= amount;
                 _context.UserBillings.Update(userBilling);
+
                 await _context.SaveChangesAsync();
+                await transaction.CommitAsync();
+
+                _logger.LogInformation(
+                    "Deducted {Amount} tokens from {UserId}. New balance: {Balance}",
+                    amount,
+                    userId,
+                    userBilling.TokenBalance
+                );
             }
             catch (Exception ex)
             {
@@ -248,7 +258,6 @@ namespace VocareWebAPI.Billing.Repositories.Implementations
             if (amount <= 0)
                 throw new ArgumentException("Amount must be greater than zero.", nameof(amount));
 
-            // pobierz rekord
             var userBilling = await _context.UserBillings.FirstOrDefaultAsync(ub =>
                 ub.UserId == userId
             );
@@ -258,12 +267,21 @@ namespace VocareWebAPI.Billing.Repositories.Implementations
                     $"User billing information for user ID {userId} not found."
                 );
 
-            // aktualizuj saldo
             userBilling.TokenBalance += amount;
             userBilling.LastTokenPurchaseDate = DateTime.UtcNow;
 
-            // pojedyncze SaveChanges – jeśli zewnętrzna transakcja istnieje, EF w niej zapisze
             await _context.SaveChangesAsync();
+        }
+
+        /// <summary>
+        /// Pomocnicza metoda do znalezienia userId na podstawie Stripe customerId
+        /// </summary>
+        public async Task<string?> GetUserIdByCustomerIdAsync(string customerId)
+        {
+            return await _context
+                .UserBillings.Where(ub => ub.StripeCustomerId == customerId)
+                .Select(ub => ub.UserId)
+                .FirstOrDefaultAsync();
         }
     }
 }

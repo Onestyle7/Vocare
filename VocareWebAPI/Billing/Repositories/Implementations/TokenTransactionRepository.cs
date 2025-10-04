@@ -19,7 +19,6 @@ namespace VocareWebAPI.Billing.Repositories.Implementations
 
         public async Task AddTransactionAsync(TokenTransaction transaction)
         {
-            // --- walidacja wejścia ---------------------------------------------------
             if (transaction is null)
                 throw new ArgumentNullException(nameof(transaction), "Transaction cannot be null.");
 
@@ -29,12 +28,9 @@ namespace VocareWebAPI.Billing.Repositories.Implementations
                     nameof(transaction.UserId)
                 );
 
-            // ustaw znacznik czasu, jeśli nie został podany
             if (transaction.CreatedAt == default)
                 transaction.CreatedAt = DateTime.UtcNow;
 
-            // --- zapis (bez lokalnej transakcji) ------------------------------------
-            // Zakładamy, że ewentualną transakcją wyższego poziomu zarządza serwis domenowy.
             await _context.TokenTransactions.AddAsync(transaction);
             await _context.SaveChangesAsync();
         }
