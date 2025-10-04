@@ -13,7 +13,7 @@ import Image from 'next/image';
 import React, { useCallback, useEffect, useState } from 'react';
 import { ScrollParallax } from 'react-just-parallax';
 import Copy from '../SupportComponents/Copy';
-import { Undo2 } from 'lucide-react';
+import { Code2, EyeOffIcon, PhoneIcon, Undo2 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { useRouter } from 'next/navigation';
 import { toast } from 'sonner';
@@ -75,6 +75,7 @@ const PricingMain = () => {
   const [selectedPriceId, setSelectedPriceId] = useState<string | null>(null);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [subscriptionStatus, setSubscriptionStatus] = useState<string | null>(null);
+  const [isPortalLoading, setIsPortalLoading] = useState(false);
 
   const router = useRouter();
   useEffect(() => {
@@ -132,6 +133,7 @@ const PricingMain = () => {
       return;
     }
 
+    setIsPortalLoading(true);
     try {
       const token = localStorage.getItem('token');
       const res = await fetch(`${API_BASE}/api/Billing/customer-portal`, {
@@ -173,6 +175,8 @@ const PricingMain = () => {
           description: message || 'Please try again.',
         });
       }
+    } finally {
+      setIsPortalLoading(false);
     }
   };
 
@@ -311,6 +315,61 @@ const PricingMain = () => {
               Select plan plan that fits You the most to unlock full potential and rocket Your
               career.
             </p>
+            <div className="mt-6 flex w-4/5 flex-row items-center justify-between text-gray-100 sm:w-3/5">
+              <p className="flex flex-row gap-2 text-xs sm:text-[16px]">
+                <span>
+                  <Code2 className="scale-80" />
+                </span>
+                Open source
+              </p>
+              <p className="flex flex-row gap-2 text-xs sm:text-[16px]">
+                <span>
+                  <EyeOffIcon className="scale-80" />
+                </span>
+                No logs policy
+              </p>
+              <p className="flex flex-row gap-2 text-xs sm:text-[16px]">
+                <span>
+                  <PhoneIcon className="scale-80" />
+                </span>
+                Contact Us
+              </p>
+            </div>
+
+            {/* STATUS / BILLING ACTIONS */}
+            {!isAuthenticated ? (
+              <div className="mt-4 mb-6 rounded-lg bg-yellow-50 p-4 text-center dark:bg-yellow-900/20">
+                <p className="text-sm text-yellow-800 dark:text-yellow-200">
+                  Please{' '}
+                  <button
+                    onClick={() => router.push('/sign-in')}
+                    className="font-semibold underline hover:no-underline"
+                  >
+                    sign in
+                  </button>{' '}
+                  to purchase tokens or subscribe
+                </p>
+              </div>
+            ) : (
+              <div className="mt-4 mb-6 flex flex-col items-center gap-4">
+                {subscriptionStatus && subscriptionStatus !== 'None' && (
+                  <div className="rounded-lg bg-green-50 p-4 text-center dark:bg-green-900/20">
+                    <p className="text-sm text-green-800 dark:text-green-200">
+                      Current subscription:{' '}
+                      <span className="font-semibold">{subscriptionStatus}</span>
+                    </p>
+                  </div>
+                )}
+                <Button
+                  onClick={openCustomerPortal}
+                  disabled={isPortalLoading}
+                  variant="outline"
+                  className="hidden items-center gap-2"
+                >
+                  {isPortalLoading ? 'Opening...' : 'Manage Billing'}
+                </Button>
+              </div>
+            )}
           </div>
 
           <div className="relative mb-10 w-full px-4 md:px-6 xl:mt-18">
