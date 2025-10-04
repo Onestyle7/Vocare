@@ -27,6 +27,7 @@ interface EmptyStateProps {
   tokenBalance: number | null | string;
   isBalanceLoading: boolean;
   refresh: () => void;
+  hasActiveSubscription: boolean;
 }
 
 const NewEmptyStateComponent = ({
@@ -35,6 +36,7 @@ const NewEmptyStateComponent = ({
   tokenBalance,
   isBalanceLoading,
   refresh,
+  hasActiveSubscription,
 }: EmptyStateProps) => {
   const [isConfirmDialogOpen, setIsConfirmDialogOpen] = useState(false);
   const [hasRecommendations, setHasRecommendations] = useState(false);
@@ -232,37 +234,41 @@ const NewEmptyStateComponent = ({
         {/* Dialog potwierdzenia */}
         {hasRecommendations && (
           <AlertDialog open={isConfirmDialogOpen} onOpenChange={setIsConfirmDialogOpen}>
-            <AlertDialogContent className="font-poppins font-korbin mx-auto max-w-md">
+            <AlertDialogContent className="font-poppins font-korbin mx-auto max-w-sm">
               <AlertDialogHeader>
                 <AlertDialogTitle className="text-center text-xl font-bold">
                   Generate market analysis?
                 </AlertDialogTitle>
-                <AlertDialogDescription className="text-center">
-                  This will take <b className="text-[#915EFF]">5 credits</b> from your account.
+                <AlertDialogDescription className="text-foreground text-center">
+                  {!hasActiveSubscription ? (
+                    <>
+                      This will take <b className="text-[#915EFF]">5 credits</b> from your account.
+                    </>
+                  ) : (
+                    <p className="mx-auto max-w-xs">
+                      You&apos;re on an active subscription, so this action won&apos;t use any
+                      tokens.
+                    </p>
+                  )}
                 </AlertDialogDescription>
-
-                <div className="mt-2 text-center text-sm">
-                  Current balance:{' '}
-                  <span className="font-bold">{isBalanceLoading ? '...' : tokenBalance}</span>
-                </div>
               </AlertDialogHeader>
 
-              <AlertDialogFooter className="flex justify-center gap-4 sm:justify-center">
-                <AlertDialogCancel
-                  className="border-muted-foreground/20"
-                  onClick={() => setIsConfirmDialogOpen(false)}
-                >
+              <AlertDialogFooter className="mt-8 flex flex-row justify-center gap-4 sm:justify-center">
+                <AlertDialogCancel className="border-muted-foreground/20 w-[130px]">
                   Cancel
                 </AlertDialogCancel>
 
-                {!isBalanceLoading && typeof tokenBalance === 'number' && tokenBalance < 5 ? (
+                {!isBalanceLoading &&
+                !hasActiveSubscription &&
+                typeof tokenBalance === 'number' &&
+                tokenBalance < 5 ? (
                   <Link href="/pricing">
                     <AlertDialogAction
-                      className="bg-[#915EFF] text-white hover:bg-[#7b4ee0]"
+                      className="group bg-[#915EFF] text-white hover:bg-[#7b4ee0]"
                       onClick={() => setIsConfirmDialogOpen(false)}
                     >
                       Get tokens
-                      <Image src={star_generate} alt="star" width={16} height={16} />
+                      <ArrowRight className="scale-90 transition-all ease-in-out group-hover:translate-x-2" />
                     </AlertDialogAction>
                   </Link>
                 ) : (

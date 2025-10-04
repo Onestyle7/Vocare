@@ -10,7 +10,7 @@ import MobileNav from '@/components/MobileComponents/MobileNav';
 import { TokenCounter } from '@/components/PricingComponents/TokenCounter';
 import { Badge } from '@/components/ui/badge';
 import { motion } from 'motion/react';
-import ThemeSwitch from '../SupportComponents/ThemeSwitch';
+// import ThemeSwitch from '../SupportComponents/ThemeSwitch';
 
 const Header = () => {
   const pathname = usePathname();
@@ -144,7 +144,7 @@ const Header = () => {
                 <p className="text-[18px] font-normal uppercase">Sign In</p>
               </Link>
             )}
-            <ThemeSwitch />
+            {/* <ThemeSwitch /> */}
           </div>
         </nav>
       )}
