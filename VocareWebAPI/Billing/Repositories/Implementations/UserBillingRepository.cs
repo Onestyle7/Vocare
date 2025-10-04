@@ -213,7 +213,10 @@ namespace VocareWebAPI.Billing.Repositories.Implementations
             try
             {
                 var userBilling = await _context
-                    .UserBillings.Where(ub => ub.UserId == userId)
+                    .UserBillings.FromSqlRaw(
+                        @"SELECT * FROM ""UserBillings"" WHERE ""UserId"" = {0} FOR UPDATE",
+                        userId
+                    )
                     .FirstOrDefaultAsync();
 
                 if (userBilling == null)
@@ -226,9 +229,19 @@ namespace VocareWebAPI.Billing.Repositories.Implementations
                 {
                     throw new InvalidOperationException($"Not enough tokens for user ID {userId}.");
                 }
+
                 userBilling.TokenBalance -= amount;
                 _context.UserBillings.Update(userBilling);
+
                 await _context.SaveChangesAsync();
+                await transaction.CommitAsync();
+
+                _logger.LogInformation(
+                    "Deducted {Amount} tokens from {UserId}. New balance: {Balance}",
+                    amount,
+                    userId,
+                    userBilling.TokenBalance
+                );
             }
             catch (Exception ex)
             {
