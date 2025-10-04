@@ -35,6 +35,7 @@ import Link from 'next/link';
 import { AxiosError } from 'axios';
 import { AiCareerResponse, CareerPath } from '@/lib/types/recommendation';
 import Section from '../SupportComponents/Section';
+import { ArrowRight } from 'lucide-react';
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL;
 
@@ -44,7 +45,8 @@ export default function AssistantPage() {
   const [isLoading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [isConfirmDialogOpen, setIsConfirmDialogOpen] = useState(false);
-  const { tokenBalance, isLoading: isBalanceLoading, refresh } = useTokenBalanceContext();
+  const { tokenBalance, isLoading: isBalanceLoading, hasActiveSubscription, refresh } =
+    useTokenBalanceContext();
 
   const [isCollapsed, setIsCollapsed] = useState(true);
   const contentRef = useRef<HTMLDivElement>(null);
@@ -407,32 +409,40 @@ export default function AssistantPage() {
           </div>
 
           <AlertDialog open={isConfirmDialogOpen} onOpenChange={setIsConfirmDialogOpen}>
-            <AlertDialogContent className="font-poppins font-korbin mx-auto max-w-md">
+            <AlertDialogContent className="font-poppins font-korbin mx-auto max-w-sm">
               <AlertDialogHeader>
                 <AlertDialogTitle className="text-center text-xl font-bold">
                   Generate new recommendation?
                 </AlertDialogTitle>
-                <AlertDialogDescription className="text-center">
-                  This will take <b className="text-[#915EFF]">50 credits</b> from Your account.
+                <AlertDialogDescription className="text-center text-foreground">
+                  {!hasActiveSubscription ? (
+                    <>
+                      This will take <b className="text-[#915EFF]">50 credits</b> from your account.
+                    </>
+                  ) : (
+                    <p className="mx-auto max-w-xs">
+                      You&apos;re on an active subscription, so this action won&apos;t use any tokens.
+                    </p>
+                  )}
                 </AlertDialogDescription>
-
-                <div className="mt-2 text-center text-sm">
-                  Current balance:{' '}
-                  <span className="font-bold">{isBalanceLoading ? '...' : tokenBalance}</span>
-                </div>
               </AlertDialogHeader>
 
-              <AlertDialogFooter className="flex justify-center gap-4 sm:justify-center">
-                <AlertDialogCancel className="border-muted-foreground/20">Cancel</AlertDialogCancel>
+              <AlertDialogFooter className="mt-8 flex flex-row justify-center gap-4 sm:justify-center">
+                <AlertDialogCancel className="border-muted-foreground/20 w-[130px]">
+                  Cancel
+                </AlertDialogCancel>
 
-                {!isBalanceLoading && typeof tokenBalance === 'number' && tokenBalance < 5 ? (
+                {!isBalanceLoading &&
+                !hasActiveSubscription &&
+                typeof tokenBalance === 'number' &&
+                tokenBalance < 5 ? (
                   <Link href="/pricing">
                     <AlertDialogAction
-                      className="bg-[#915EFF] text-white hover:bg-[#7b4ee0]"
+                      className="bg-[#915EFF] text-white hover:bg-[#7b4ee0] group"
                       onClick={() => setIsConfirmDialogOpen(false)}
                     >
                       Get tokens
-                      <Image src={star_generate} alt="star" width={16} height={16} />
+                      <ArrowRight className='scale-90 group-hover:translate-x-2 transition-all ease-in-out'/>
                     </AlertDialogAction>
                   </Link>
                 ) : (
