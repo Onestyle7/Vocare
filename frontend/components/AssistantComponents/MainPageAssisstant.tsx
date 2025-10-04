@@ -45,8 +45,12 @@ export default function AssistantPage() {
   const [isLoading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [isConfirmDialogOpen, setIsConfirmDialogOpen] = useState(false);
-  const { tokenBalance, isLoading: isBalanceLoading, hasActiveSubscription, refresh } =
-    useTokenBalanceContext();
+  const {
+    tokenBalance,
+    isLoading: isBalanceLoading,
+    hasActiveSubscription,
+    refresh,
+  } = useTokenBalanceContext();
 
   const [isCollapsed, setIsCollapsed] = useState(true);
   const contentRef = useRef<HTMLDivElement>(null);
@@ -414,14 +418,15 @@ export default function AssistantPage() {
                 <AlertDialogTitle className="text-center text-xl font-bold">
                   Generate new recommendation?
                 </AlertDialogTitle>
-                <AlertDialogDescription className="text-center text-foreground">
+                <AlertDialogDescription className="text-foreground text-center">
                   {!hasActiveSubscription ? (
                     <>
                       This will take <b className="text-[#915EFF]">50 credits</b> from your account.
                     </>
                   ) : (
                     <p className="mx-auto max-w-xs">
-                      You&apos;re on an active subscription, so this action won&apos;t use any tokens.
+                      You&apos;re on an active subscription, so this action won&apos;t use any
+                      tokens.
                     </p>
                   )}
                 </AlertDialogDescription>
@@ -438,11 +443,11 @@ export default function AssistantPage() {
                 tokenBalance < 5 ? (
                   <Link href="/pricing">
                     <AlertDialogAction
-                      className="bg-[#915EFF] text-white hover:bg-[#7b4ee0] group"
+                      className="group bg-[#915EFF] text-white hover:bg-[#7b4ee0]"
                       onClick={() => setIsConfirmDialogOpen(false)}
                     >
                       Get tokens
-                      <ArrowRight className='scale-90 group-hover:translate-x-2 transition-all ease-in-out'/>
+                      <ArrowRight className="scale-90 transition-all ease-in-out group-hover:translate-x-2" />
                     </AlertDialogAction>
                   </Link>
                 ) : (

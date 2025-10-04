@@ -239,14 +239,15 @@ const NewEmptyStateComponent = ({
                 <AlertDialogTitle className="text-center text-xl font-bold">
                   Generate market analysis?
                 </AlertDialogTitle>
-                <AlertDialogDescription className="text-center text-foreground">
+                <AlertDialogDescription className="text-foreground text-center">
                   {!hasActiveSubscription ? (
                     <>
                       This will take <b className="text-[#915EFF]">5 credits</b> from your account.
                     </>
                   ) : (
                     <p className="mx-auto max-w-xs">
-                      You&apos;re on an active subscription, so this action won&apos;t use any tokens.
+                      You&apos;re on an active subscription, so this action won&apos;t use any
+                      tokens.
                     </p>
                   )}
                 </AlertDialogDescription>

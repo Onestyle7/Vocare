@@ -64,13 +64,14 @@ export const useTokenBalance = () => {
       let parsedStatus: string | null = null;
 
       if (typeof data === 'object' && data !== null) {
-        const rawBalance = 'tokenBalance' in data
-          ? (data as Record<string, unknown>).tokenBalance
-          : 'balance' in data
-            ? (data as Record<string, unknown>).balance
-            : 'tokens' in data
-              ? (data as Record<string, unknown>).tokens
-              : null;
+        const rawBalance =
+          'tokenBalance' in data
+            ? (data as Record<string, unknown>).tokenBalance
+            : 'balance' in data
+              ? (data as Record<string, unknown>).balance
+              : 'tokens' in data
+                ? (data as Record<string, unknown>).tokens
+                : null;
 
         if (typeof rawBalance === 'number') parsedBalance = rawBalance;
         else if (typeof rawBalance === 'string' && rawBalance.trim() !== '') {

@@ -86,13 +86,10 @@ const SubscriptionStatusIndicator = ({
   const tooltipText = !isAuthenticated
     ? 'Sign in to view subscription'
     : isSubscribed
-    ? 'Subscription active'
-    : 'No active subscription';
+      ? 'Subscription active'
+      : 'No active subscription';
 
-  const tooltipPlacementClasses =
-    tooltipPosition === 'top'
-      ? '-top-10'
-      : '-bottom-10';
+  const tooltipPlacementClasses = tooltipPosition === 'top' ? '-top-10' : '-bottom-10';
 
   return (
     <div className={cn('relative inline-flex', className)}>
@@ -103,7 +100,7 @@ const SubscriptionStatusIndicator = ({
           aria-label={tooltipText}
           title={tooltipText}
           className={cn(
-            'flex h-10 w-10 items-center justify-center rounded-full border transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-[#915EFF]/50',
+            'flex h-10 w-10 items-center justify-center rounded-full border transition-all duration-300 focus:ring-2 focus:ring-[#915EFF]/50 focus:outline-none',
             isSubscribed
               ? 'border-[#915EFF] bg-[#915EFF]/10 text-[#915EFF] hover:bg-[#915EFF]/20'
               : 'border-gray-400 bg-gray-300/30 text-gray-400 hover:bg-gray-400/30 dark:border-gray-600 dark:bg-gray-700/30 dark:text-gray-500',
@@ -119,7 +116,7 @@ const SubscriptionStatusIndicator = ({
         </button>
         <span
           className={cn(
-            'pointer-events-none absolute left-1/2 z-50 -translate-x-1/2 whitespace-nowrap rounded-md bg-black px-2 py-1 text-xs text-white opacity-0 shadow transition-opacity duration-200 group-hover:opacity-100 dark:bg-white dark:text-black',
+            'pointer-events-none absolute left-1/2 z-50 -translate-x-1/2 rounded-md bg-black px-2 py-1 text-xs whitespace-nowrap text-white opacity-0 shadow transition-opacity duration-200 group-hover:opacity-100 dark:bg-white dark:text-black',
             tooltipPlacementClasses
           )}
         >
