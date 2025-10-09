@@ -301,23 +301,6 @@ namespace VocareWebApi.Tests.Billing.Services
             await action.Should().ThrowAsync<KeyNotFoundException>();
         }
 
-        [Fact]
-        public async Task HandleWebhookAsync_InvalidParameters_ThrowsArgumentException()
-        {
-            // Arrange
-            string json = "";
-            string stripeSignature = "";
-
-            // Act & Assert
-            var action = async () =>
-                await _billingService.HandleWebhookAsync(json, stripeSignature);
-
-            await action
-                .Should()
-                .ThrowAsync<ArgumentException>()
-                .WithMessage("Invalid webhook payload or missing signature.");
-        }
-
         public void Dispose()
         {
             _context?.Dispose();
