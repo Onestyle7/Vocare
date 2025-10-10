@@ -71,7 +71,7 @@ const NewEmptyStateComponent = ({
       disabled={isLoading}
       className="group font-poppins flex h-[56px] cursor-pointer items-center justify-center rounded-full bg-[#915EFF] px-6 text-[clamp(1rem,1vw,1.5rem)] font-medium text-white hover:bg-[#7b4ee0] xl:w-[280px]"
     >
-      <span>{isLoading ? 'Generating...' : 'Generate analysis'}</span>
+      <span className='2xl:text-sm'>{isLoading ? 'Generating...' : 'Generate analysis'}</span>
       <ArrowRight className="ml-4 scale-90 transition-transform duration-300 group-hover:translate-x-2" />
     </CustomButton>
   ) : (
