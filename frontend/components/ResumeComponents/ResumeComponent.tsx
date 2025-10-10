@@ -1341,17 +1341,19 @@ const CVCreator: React.FC<CVCreatorProps> = ({ initialCv }) => {
     const pdf = new jsPDF('portrait', 'mm', 'a4');
     const pdfW = pdf.internal.pageSize.getWidth();
     const pdfH = pdf.internal.pageSize.getHeight();
+    const CANVAS_SCALE = 1.6; // balance between clarity and size (~1.6 ≈ 150dpi)
+    const JPEG_QUALITY = 0.92; // slightly higher quality for sharper text
     for (let i = 0; i < pagesNodes.length; i++) {
       const pageEl = pagesNodes[i];
       const canvas = await html2canvas(pageEl, {
-        scale: 2,
+        scale: CANVAS_SCALE,
         useCORS: true,
         allowTaint: true,
         backgroundColor: '#ffffff',
       });
-      const imgData = canvas.toDataURL('image/png');
+      const imgData = canvas.toDataURL('image/jpeg', JPEG_QUALITY);
       if (i > 0) pdf.addPage();
-      pdf.addImage(imgData, 'PNG', 0, 0, pdfW, pdfH);
+      pdf.addImage(imgData, 'JPEG', 0, 0, pdfW, pdfH, undefined, 'FAST');
     }
 
     // Restore zoom transform
