@@ -305,6 +305,7 @@ const CVCreator: React.FC<CVCreatorProps> = ({ initialCv }) => {
   const [educationFormattingState, setEducationFormattingState] = useState<
     Record<string, FormattingState>
   >({});
+  const dragIntentSectionRef = useRef<string | null>(null);
 
   // CV Preview controls
   const [cvScale, setCvScale] = useState(0.8);
@@ -460,6 +461,13 @@ const CVCreator: React.FC<CVCreatorProps> = ({ initialCv }) => {
 
   // Section drag & drop handlers
   const handleSectionDragStart = (e: React.DragEvent, sectionId: string) => {
+    if (dragIntentSectionRef.current !== sectionId) {
+      e.preventDefault();
+      e.stopPropagation();
+      return;
+    }
+
+    dragIntentSectionRef.current = null;
     setDraggedSection(sectionId);
     e.dataTransfer.effectAllowed = 'move';
   };
@@ -499,6 +507,7 @@ const CVCreator: React.FC<CVCreatorProps> = ({ initialCv }) => {
   const handleSectionDragEnd = () => {
     setDraggedSection(null);
     setDragOverSection(null);
+    dragIntentSectionRef.current = null;
   };
 
   const addExperience = () => {
@@ -1226,7 +1235,7 @@ const CVCreator: React.FC<CVCreatorProps> = ({ initialCv }) => {
   const { status: autosaveStatus, trigger } = useAutosave({
     value: autosavePayload,
     enabled: canAutosave,
-    delay: 3000, // 3s od ostatniej zmiany
+    delay: 60000, // 60s od ostatniej zmiany
     skipOnce: skipAutosaveOnce, // flaga ustawiana po "Load profile"
     onSkipConsumed: () => setSkipAutosaveOnce(false),
   });
@@ -1632,7 +1641,29 @@ const CVCreator: React.FC<CVCreatorProps> = ({ initialCv }) => {
           >
             <div className="mb-4 flex items-center justify-between">
               <h2 className="flex items-center text-lg font-semibold text-gray-700">
-                <GripVertical className="mr-2 cursor-grab text-gray-400" size={20} />
+                <span
+                  className="mr-2 cursor-grab text-gray-400"
+                  data-drag-handle="true"
+                  role="button"
+                  tabIndex={0}
+                  aria-label="Drag section"
+                  onMouseDown={() => {
+                    dragIntentSectionRef.current = 'profile';
+                  }}
+                  onMouseUp={() => {
+                    dragIntentSectionRef.current = null;
+                  }}
+                  onKeyDown={(event) => {
+                    if (event.key === 'Enter' || event.key === ' ') {
+                      dragIntentSectionRef.current = 'profile';
+                    }
+                  }}
+                  onKeyUp={() => {
+                    dragIntentSectionRef.current = null;
+                  }}
+                >
+                  <GripVertical size={20} />
+                </span>
                 <User className="mr-2" size={20} />
                 Personal profile
               </h2>
@@ -1712,7 +1743,29 @@ const CVCreator: React.FC<CVCreatorProps> = ({ initialCv }) => {
           >
             <div className="mb-4 flex items-center justify-between">
               <h2 className="flex items-center text-lg font-semibold text-gray-700">
-                <GripVertical className="mr-2 cursor-grab text-gray-400" size={20} />
+                <span
+                  className="mr-2 cursor-grab text-gray-400"
+                  data-drag-handle="true"
+                  role="button"
+                  tabIndex={0}
+                  aria-label="Drag section"
+                  onMouseDown={() => {
+                    dragIntentSectionRef.current = 'experience';
+                  }}
+                  onMouseUp={() => {
+                    dragIntentSectionRef.current = null;
+                  }}
+                  onKeyDown={(event) => {
+                    if (event.key === 'Enter' || event.key === ' ') {
+                      dragIntentSectionRef.current = 'experience';
+                    }
+                  }}
+                  onKeyUp={() => {
+                    dragIntentSectionRef.current = null;
+                  }}
+                >
+                  <GripVertical size={20} />
+                </span>
                 <Briefcase className="mr-2" size={20} />
                 Work experience
               </h2>
@@ -1878,7 +1931,29 @@ const CVCreator: React.FC<CVCreatorProps> = ({ initialCv }) => {
           >
             <div className="mb-4 flex items-center justify-between">
               <h2 className="flex items-center text-lg font-semibold text-gray-700">
-                <GripVertical className="mr-2 cursor-grab text-gray-400" size={20} />
+                <span
+                  className="mr-2 cursor-grab text-gray-400"
+                  data-drag-handle="true"
+                  role="button"
+                  tabIndex={0}
+                  aria-label="Drag section"
+                  onMouseDown={() => {
+                    dragIntentSectionRef.current = 'education';
+                  }}
+                  onMouseUp={() => {
+                    dragIntentSectionRef.current = null;
+                  }}
+                  onKeyDown={(event) => {
+                    if (event.key === 'Enter' || event.key === ' ') {
+                      dragIntentSectionRef.current = 'education';
+                    }
+                  }}
+                  onKeyUp={() => {
+                    dragIntentSectionRef.current = null;
+                  }}
+                >
+                  <GripVertical size={20} />
+                </span>
                 <GraduationCap className="mr-2" size={20} />
                 Education
               </h2>
@@ -2022,7 +2097,29 @@ const CVCreator: React.FC<CVCreatorProps> = ({ initialCv }) => {
           >
             <div className="mb-4 flex items-center justify-between">
               <h2 className="flex items-center text-lg font-semibold text-gray-700">
-                <GripVertical className="mr-2 cursor-grab text-gray-400" size={20} />
+                <span
+                  className="mr-2 cursor-grab text-gray-400"
+                  data-drag-handle="true"
+                  role="button"
+                  tabIndex={0}
+                  aria-label="Drag section"
+                  onMouseDown={() => {
+                    dragIntentSectionRef.current = 'certificates';
+                  }}
+                  onMouseUp={() => {
+                    dragIntentSectionRef.current = null;
+                  }}
+                  onKeyDown={(event) => {
+                    if (event.key === 'Enter' || event.key === ' ') {
+                      dragIntentSectionRef.current = 'certificates';
+                    }
+                  }}
+                  onKeyUp={() => {
+                    dragIntentSectionRef.current = null;
+                  }}
+                >
+                  <GripVertical size={20} />
+                </span>
                 <Award className="mr-2" size={20} />
                 Certificates
               </h2>
@@ -2083,7 +2180,29 @@ const CVCreator: React.FC<CVCreatorProps> = ({ initialCv }) => {
           >
             <div className="mb-4 flex items-center justify-between">
               <h2 className="flex items-center text-lg font-semibold text-gray-700">
-                <GripVertical className="mr-2 cursor-grab text-gray-400" size={20} />
+                <span
+                  className="mr-2 cursor-grab text-gray-400"
+                  data-drag-handle="true"
+                  role="button"
+                  tabIndex={0}
+                  aria-label="Drag section"
+                  onMouseDown={() => {
+                    dragIntentSectionRef.current = 'skills';
+                  }}
+                  onMouseUp={() => {
+                    dragIntentSectionRef.current = null;
+                  }}
+                  onKeyDown={(event) => {
+                    if (event.key === 'Enter' || event.key === ' ') {
+                      dragIntentSectionRef.current = 'skills';
+                    }
+                  }}
+                  onKeyUp={() => {
+                    dragIntentSectionRef.current = null;
+                  }}
+                >
+                  <GripVertical size={20} />
+                </span>
                 <Award className="mr-2" size={20} />
                 Skills
               </h2>
@@ -2140,7 +2259,29 @@ const CVCreator: React.FC<CVCreatorProps> = ({ initialCv }) => {
           >
             <div className="mb-4 flex items-center justify-between">
               <h2 className="flex items-center text-lg font-semibold text-gray-700">
-                <GripVertical className="mr-2 cursor-grab text-gray-400" size={20} />
+                <span
+                  className="mr-2 cursor-grab text-gray-400"
+                  data-drag-handle="true"
+                  role="button"
+                  tabIndex={0}
+                  aria-label="Drag section"
+                  onMouseDown={() => {
+                    dragIntentSectionRef.current = 'languages';
+                  }}
+                  onMouseUp={() => {
+                    dragIntentSectionRef.current = null;
+                  }}
+                  onKeyDown={(event) => {
+                    if (event.key === 'Enter' || event.key === ' ') {
+                      dragIntentSectionRef.current = 'languages';
+                    }
+                  }}
+                  onKeyUp={() => {
+                    dragIntentSectionRef.current = null;
+                  }}
+                >
+                  <GripVertical size={20} />
+                </span>
                 <Languages className="mr-2" size={20} />
                 Languages
               </h2>
@@ -2214,7 +2355,29 @@ const CVCreator: React.FC<CVCreatorProps> = ({ initialCv }) => {
           >
             <div className="mb-4 flex items-center justify-between">
               <h2 className="flex items-center text-lg font-semibold text-gray-700">
-                <GripVertical className="mr-2 cursor-grab text-gray-400" size={20} />
+                <span
+                  className="mr-2 cursor-grab text-gray-400"
+                  data-drag-handle="true"
+                  role="button"
+                  tabIndex={0}
+                  aria-label="Drag section"
+                  onMouseDown={() => {
+                    dragIntentSectionRef.current = 'hobbies';
+                  }}
+                  onMouseUp={() => {
+                    dragIntentSectionRef.current = null;
+                  }}
+                  onKeyDown={(event) => {
+                    if (event.key === 'Enter' || event.key === ' ') {
+                      dragIntentSectionRef.current = 'hobbies';
+                    }
+                  }}
+                  onKeyUp={() => {
+                    dragIntentSectionRef.current = null;
+                  }}
+                >
+                  <GripVertical size={20} />
+                </span>
                 <Tag className="mr-2" size={20} />
                 Hobby
               </h2>
@@ -2264,7 +2427,29 @@ const CVCreator: React.FC<CVCreatorProps> = ({ initialCv }) => {
           >
             <div className="mb-4 flex items-center justify-between">
               <h2 className="flex items-center text-lg font-semibold text-gray-700">
-                <GripVertical className="mr-2 cursor-grab text-gray-400" size={20} />
+                <span
+                  className="mr-2 cursor-grab text-gray-400"
+                  data-drag-handle="true"
+                  role="button"
+                  tabIndex={0}
+                  aria-label="Drag section"
+                  onMouseDown={() => {
+                    dragIntentSectionRef.current = 'privacy';
+                  }}
+                  onMouseUp={() => {
+                    dragIntentSectionRef.current = null;
+                  }}
+                  onKeyDown={(event) => {
+                    if (event.key === 'Enter' || event.key === ' ') {
+                      dragIntentSectionRef.current = 'privacy';
+                    }
+                  }}
+                  onKeyUp={() => {
+                    dragIntentSectionRef.current = null;
+                  }}
+                >
+                  <GripVertical size={20} />
+                </span>
                 <PencilLine className="mr-2" size={20} />
                 Privacy Statement
               </h2>
