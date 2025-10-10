@@ -17,25 +17,6 @@ namespace VocareWebApi.Tests.CvGenerator.Services
         private readonly Mock<ILogger<CvManagementService>> _mockLogger;
         private readonly CvManagementService _service;
 
-        private CvManagementService CreateService(
-            Mock<IGeneratedCvRepository>? cvRepo = null,
-            Mock<IUserProfileRepository>? profileRepo = null,
-            Mock<ICvGenerationService>? cvGenService = null
-        )
-        {
-            cvRepo ??= new Mock<IGeneratedCvRepository>();
-            profileRepo ??= new Mock<IUserProfileRepository>();
-            cvGenService ??= new Mock<ICvGenerationService>();
-            var logger = new Mock<ILogger<CvManagementService>>();
-
-            return new CvManagementService(
-                cvRepo.Object,
-                profileRepo.Object,
-                cvGenService.Object,
-                logger.Object
-            );
-        }
-
         public CvManagementServiceTests()
         {
             // Inicjalizacja RAZ dla wszystkich testów
@@ -56,14 +37,11 @@ namespace VocareWebApi.Tests.CvGenerator.Services
         public async Task CanCreateNewCvAsync_UserHas2Cvs_LimitIs3_ShouldReturnTrue()
         {
             // ARRANGE
-            var mockCvRepo = new Mock<IGeneratedCvRepository>();
 
-            mockCvRepo.Setup(r => r.GetUserCvCountAsync("user-123")).ReturnsAsync(2);
-
-            var service = CreateService(cvRepo: mockCvRepo);
+            _mockCvRepo.Setup(r => r.GetUserCvCountAsync("user-123")).ReturnsAsync(2);
 
             // ACT
-            var result = await service.CanCreateNewCvAsync("user-123");
+            var result = await _service.CanCreateNewCvAsync("user-123");
 
             // ASSERT
             Assert.True(result);
@@ -73,14 +51,10 @@ namespace VocareWebApi.Tests.CvGenerator.Services
         public async Task CanCreateNewCvAsync_UserHas3Cvs_LimitIs3_ShouldReturnFalse()
         {
             // ARRANGE
-            var mockCvRepo = new Mock<IGeneratedCvRepository>();
-
-            mockCvRepo.Setup(r => r.GetUserCvCountAsync("user-123")).ReturnsAsync(3);
-
-            var service = CreateService(cvRepo: mockCvRepo);
+            _mockCvRepo.Setup(r => r.GetUserCvCountAsync("user-123")).ReturnsAsync(3);
 
             // ACT
-            var result = await service.CanCreateNewCvAsync("user-123");
+            var result = await _service.CanCreateNewCvAsync("user-123");
 
             // ASSERT
             Assert.False(result);
@@ -90,14 +64,11 @@ namespace VocareWebApi.Tests.CvGenerator.Services
         public async Task CanCreateNewCvAsync_UserHas0Cvs_LimitIs3_ShouldReturnTrue()
         {
             // ARRANGE
-            var mockCvRepo = new Mock<IGeneratedCvRepository>();
 
-            mockCvRepo.Setup(r => r.GetUserCvCountAsync("user-123")).ReturnsAsync(0);
-
-            var service = CreateService(cvRepo: mockCvRepo);
+            _mockCvRepo.Setup(r => r.GetUserCvCountAsync("user-123")).ReturnsAsync(0);
 
             // ACT
-            var result = await service.CanCreateNewCvAsync("user-123");
+            var result = await _service.CanCreateNewCvAsync("user-123");
 
             // ASSERT
             Assert.True(result);
@@ -134,6 +105,49 @@ namespace VocareWebApi.Tests.CvGenerator.Services
                 r => r.SetDefaultAsync(It.IsAny<Guid>(), It.IsAny<string>()),
                 Times.Never
             );
+        }
+
+        [Fact]
+        public async Task DeleteCvAsync_DefaultCv_DeletesAndSetsNewDefault()
+        {
+            // ARRANGE
+            var userId = "user-123";
+            var cvId = Guid.NewGuid();
+            var otherCvId = Guid.NewGuid();
+
+            // Tworzymy CV, które jest domyślne
+            var defaultCv = new GeneratedCv
+            {
+                Id = cvId,
+                UserId = userId,
+                Name = "Default CV",
+                IsDefault = true,
+            };
+            var otherCv = new GeneratedCv
+            {
+                Id = otherCvId,
+                UserId = userId,
+                Name = "Other CV",
+                IsDefault = false,
+            };
+
+            _mockCvRepo.Setup(r => r.BelongsToUserAsync(cvId, userId)).ReturnsAsync(true);
+            _mockCvRepo.Setup(r => r.GetByIdAsync(cvId)).ReturnsAsync(defaultCv);
+            _mockCvRepo
+                .Setup(r => r.GetUserCvsAsync(userId))
+                .ReturnsAsync(new List<GeneratedCv> { defaultCv, otherCv });
+            _mockCvRepo.Setup(r => r.DeactivateAsync(cvId)).ReturnsAsync(true);
+
+            // ACT
+            await _service.DeleteCvAsync(cvId, userId);
+
+            // ASSERT
+            _mockCvRepo.Verify(r => r.DeactivateAsync(cvId), Times.Once);
+            _mockCvRepo.Verify(
+                r => r.SetDefaultAsync(It.IsAny<Guid>(), It.IsAny<string>()),
+                Times.Once
+            );
+            _mockCvRepo.Verify(r => r.SetDefaultAsync(otherCvId, userId), Times.Once);
         }
     }
 }
