@@ -24,6 +24,9 @@ import {
   ChevronLeft,
   Upload,
   Save,
+  Bold,
+  Italic,
+  Underline,
 } from 'lucide-react';
 import { createCv, deleteCv, updateCv } from '@/lib/api/cv';
 import { CvDto, CvDetailsDto, UpdateCvDto } from '@/lib/types/cv';
@@ -59,6 +62,7 @@ interface Experience {
   endDate: string;
   description: string;
   isCurrent: boolean;
+  useBulletList: boolean;
 }
 
 interface Education {
@@ -69,6 +73,7 @@ interface Education {
   startDate: string;
   endDate: string;
   isCurrent: boolean;
+  description: string;
 }
 
 interface Skill {
@@ -102,6 +107,103 @@ interface CVCreatorProps {
   initialCv?: CvDetailsDto;
 }
 
+type FormattingType = 'bold' | 'italic' | 'underline';
+
+type FormattingState = Record<FormattingType, boolean>;
+
+const createDefaultFormattingState = (): FormattingState => ({
+  bold: false,
+  italic: false,
+  underline: false,
+});
+
+const EMPTY_FORMATTING_STATE: FormattingState = Object.freeze({
+  bold: false,
+  italic: false,
+  underline: false,
+}) as FormattingState;
+
+const RichTextToolbar = ({
+  onFormat,
+  className = '',
+  formattingState,
+}: {
+  onFormat: (type: FormattingType) => void;
+  className?: string;
+  formattingState: FormattingState;
+}) => {
+  const baseButtonClass =
+    'flex h-8 w-8 items-center justify-center rounded border text-sm transition';
+  const activeClass = 'border-[#915EFF] bg-[#915EFF]/10 text-[#915EFF]';
+  const inactiveClass = 'border-gray-200 bg-white text-gray-600 hover:bg-gray-100';
+
+  return (
+    <div className={`flex items-center gap-2 ${className}`}>
+      <button
+        type="button"
+        className={`${baseButtonClass} ${
+          formattingState.bold ? activeClass : inactiveClass
+        }`}
+        aria-label="Bold"
+        aria-pressed={formattingState.bold}
+        onClick={() => onFormat('bold')}
+      >
+        <Bold className="h-4 w-4" />
+      </button>
+      <button
+        type="button"
+        className={`${baseButtonClass} ${
+          formattingState.italic ? activeClass : inactiveClass
+        }`}
+        aria-label="Italic"
+        aria-pressed={formattingState.italic}
+        onClick={() => onFormat('italic')}
+      >
+        <Italic className="h-4 w-4" />
+      </button>
+      <button
+        type="button"
+        className={`${baseButtonClass} ${
+          formattingState.underline ? activeClass : inactiveClass
+        }`}
+        aria-label="Underline"
+        aria-pressed={formattingState.underline}
+        onClick={() => onFormat('underline')}
+      >
+        <Underline className="h-4 w-4" />
+      </button>
+    </div>
+  );
+};
+
+const makeExperienceId = () =>
+  `${Date.now()}-${Math.random().toString(36).slice(2, 8)}`;
+
+const ensureExperienceDefaults = (exp: Partial<Experience>): Experience => ({
+  id: typeof exp.id === 'string' && exp.id.length > 0 ? exp.id : makeExperienceId(),
+  company: exp.company ?? '',
+  position: exp.position ?? '',
+  startDate: exp.startDate ?? '',
+  endDate: exp.endDate ?? '',
+  description: exp.description ?? '',
+  isCurrent: Boolean(exp.isCurrent),
+  useBulletList: Boolean(exp.useBulletList),
+});
+
+const makeEducationId = () =>
+  `${Date.now()}-${Math.random().toString(36).slice(2, 8)}-edu`;
+
+const ensureEducationDefaults = (edu: Partial<Education>): Education => ({
+  id: typeof edu.id === 'string' && edu.id.length > 0 ? edu.id : makeEducationId(),
+  school: edu.school ?? '',
+  degree: edu.degree ?? '',
+  field: edu.field ?? '',
+  startDate: edu.startDate ?? '',
+  endDate: edu.endDate ?? '',
+  isCurrent: Boolean(edu.isCurrent),
+  description: edu.description ?? '',
+});
+
 const CVCreator: React.FC<CVCreatorProps> = ({ initialCv }) => {
   const [personalInfo, setPersonalInfo] = useState<PersonalInfo>(() => {
     const saved = localStorage.getItem('personalInfo');
@@ -129,6 +231,10 @@ const CVCreator: React.FC<CVCreatorProps> = ({ initialCv }) => {
   type SectionChunk = { sectionId: string; items?: string[]; includeTitle?: boolean };
   const [pages, setPages] = useState<SectionChunk[][]>([]);
 
+  const summaryTextareaRef = useRef<HTMLTextAreaElement | null>(null);
+  const experienceTextareaRefs = useRef<Record<string, HTMLTextAreaElement | null>>({});
+  const educationTextareaRefs = useRef<Record<string, HTMLTextAreaElement | null>>({});
+
   // Page spec in mm to match print/PDF exactly
   const PAGE_WIDTH_MM = 210;
   const PAGE_HEIGHT_MM = 297;
@@ -143,11 +249,27 @@ const CVCreator: React.FC<CVCreatorProps> = ({ initialCv }) => {
 
   const [experiences, setExperiences] = useState<Experience[]>(() => {
     const saved = localStorage.getItem('experiences');
-    return saved ? JSON.parse(saved) : [];
+    if (!saved) return [];
+    try {
+      const parsed = JSON.parse(saved);
+      if (!Array.isArray(parsed)) return [];
+      return parsed.map((item) => ensureExperienceDefaults(item));
+    } catch (err) {
+      console.warn('Failed to parse stored experiences', err);
+      return [];
+    }
   });
   const [education, setEducation] = useState<Education[]>(() => {
     const saved = localStorage.getItem('education');
-    return saved ? JSON.parse(saved) : [];
+    if (!saved) return [];
+    try {
+      const parsed = JSON.parse(saved);
+      if (!Array.isArray(parsed)) return [];
+      return parsed.map((item) => ensureEducationDefaults(item));
+    } catch (err) {
+      console.warn('Failed to parse stored education entries', err);
+      return [];
+    }
   });
 
   const [skills, setSkills] = useState<Skill[]>(() => {
@@ -173,6 +295,16 @@ const CVCreator: React.FC<CVCreatorProps> = ({ initialCv }) => {
     const saved = localStorage.getItem('privacyStatement');
     return saved ? JSON.parse(saved) : { id: 'privacy', content: '' };
   });
+
+  const [summaryFormatting, setSummaryFormatting] = useState<FormattingState>(
+    createDefaultFormattingState()
+  );
+  const [experienceFormattingState, setExperienceFormattingState] = useState<
+    Record<string, FormattingState>
+  >({});
+  const [educationFormattingState, setEducationFormattingState] = useState<
+    Record<string, FormattingState>
+  >({});
 
   // CV Preview controls
   const [cvScale, setCvScale] = useState(0.8);
@@ -244,6 +376,30 @@ const CVCreator: React.FC<CVCreatorProps> = ({ initialCv }) => {
   useEffect(() => {
     localStorage.setItem('sectionOrder', JSON.stringify(sectionOrder));
   }, [sectionOrder]);
+
+  useEffect(() => {
+    requestAnimationFrame(() => updateSummaryFormattingFromSelection());
+  }, [personalInfo.summary]);
+
+  useEffect(() => {
+    setExperienceFormattingState((prev) => {
+      const next: Record<string, FormattingState> = {};
+      experiences.forEach((exp) => {
+        next[exp.id] = prev[exp.id] ?? createDefaultFormattingState();
+      });
+      return next;
+    });
+  }, [experiences]);
+
+  useEffect(() => {
+    setEducationFormattingState((prev) => {
+      const next: Record<string, FormattingState> = {};
+      education.forEach((edu) => {
+        next[edu.id] = prev[edu.id] ?? createDefaultFormattingState();
+      });
+      return next;
+    });
+  }, [education]);
 
   // Measured pagination will re-compute via dedicated effect below
 
@@ -347,44 +503,104 @@ const CVCreator: React.FC<CVCreatorProps> = ({ initialCv }) => {
 
   const addExperience = () => {
     const newExp: Experience = {
-      id: Date.now().toString(),
+      id: makeExperienceId(),
       company: '',
       position: '',
       startDate: '',
       endDate: '',
       description: '',
       isCurrent: false,
+      useBulletList: false,
     };
-    setExperiences([...experiences, newExp]);
+    setExperiences((prev) => [...prev, newExp]);
   };
 
   const updateExperience = (id: string, field: keyof Experience, value: string | boolean) => {
-    setExperiences(experiences.map((exp) => (exp.id === id ? { ...exp, [field]: value } : exp)));
+    setExperiences((prev) =>
+      prev.map((exp) => {
+        if (exp.id !== id) return exp;
+
+        if (field === 'description' && typeof value === 'string') {
+          return {
+            ...exp,
+            description: mergePlainWithTokens(exp.description, value),
+          };
+        }
+
+        if (field === 'isCurrent' && typeof value === 'boolean') {
+          return { ...exp, isCurrent: value };
+        }
+
+        return { ...exp, [field]: value };
+      })
+    );
+  };
+
+  const setExperienceDescriptionTokens = (id: string, tokens: string) => {
+    setExperiences((prev) =>
+      prev.map((exp) => (exp.id === id ? { ...exp, description: tokens } : exp))
+    );
   };
 
   const removeExperience = (id: string) => {
-    setExperiences(experiences.filter((exp) => exp.id !== id));
+    delete experienceTextareaRefs.current[id];
+    setExperiences((prev) => prev.filter((exp) => exp.id !== id));
+    setExperienceFormattingState((prev) => {
+      const next = { ...prev };
+      delete next[id];
+      return next;
+    });
   };
 
   const addEducation = () => {
     const newEdu: Education = {
-      id: Date.now().toString(),
+      id: makeEducationId(),
       school: '',
       degree: '',
       field: '',
       startDate: '',
       endDate: '',
       isCurrent: false,
+      description: '',
     };
-    setEducation([...education, newEdu]);
+    setEducation((prev) => [...prev, newEdu]);
   };
 
   const updateEducation = (id: string, field: keyof Education, value: string | boolean) => {
-    setEducation(education.map((edu) => (edu.id === id ? { ...edu, [field]: value } : edu)));
+    setEducation((prev) =>
+      prev.map((edu) => {
+        if (edu.id !== id) return edu;
+
+        if (field === 'description' && typeof value === 'string') {
+          return {
+            ...edu,
+            description: mergePlainWithTokens(edu.description, value),
+          };
+        }
+
+        if (field === 'isCurrent' && typeof value === 'boolean') {
+          return { ...edu, isCurrent: value };
+        }
+
+        return { ...edu, [field]: value };
+      })
+    );
+  };
+
+  const setEducationDescriptionTokens = (id: string, tokens: string) => {
+    setEducation((prev) =>
+      prev.map((edu) => (edu.id === id ? { ...edu, description: tokens } : edu))
+    );
   };
 
   const removeEducation = (id: string) => {
-    setEducation(education.filter((edu) => edu.id !== id));
+    delete educationTextareaRefs.current[id];
+    setEducation((prev) => prev.filter((edu) => edu.id !== id));
+    setEducationFormattingState((prev) => {
+      const next = { ...prev };
+      delete next[id];
+      return next;
+    });
   };
 
   const addSkill = () => {
@@ -498,6 +714,408 @@ const CVCreator: React.FC<CVCreatorProps> = ({ initialCv }) => {
 
   // old pagination helpers removed (replaced by scrollToPage)
 
+  const formattingTokens: Record<FormattingType, { prefix: string; suffix: string }> = {
+    bold: { prefix: '**', suffix: '**' },
+    italic: { prefix: '_', suffix: '_' },
+    underline: { prefix: '__', suffix: '__' },
+  };
+
+  const TOKEN_MARKERS = ['**', '__', '_'] as const;
+
+  const getTokenLengthAt = (value: string, index: number) => {
+    for (const marker of TOKEN_MARKERS) {
+      if (value.startsWith(marker, index)) {
+        return marker.length;
+      }
+    }
+    return 0;
+  };
+
+  const stripFormattingTokens = (value: string) => {
+    if (!value) return '';
+    let result = '';
+    for (let i = 0; i < value.length; ) {
+      const tokenLength = getTokenLengthAt(value, i);
+      if (tokenLength) {
+        i += tokenLength;
+        continue;
+      }
+      result += value[i];
+      i += 1;
+    }
+    return result;
+  };
+
+  const plainToTokenIndex = (value: string, plainIndex: number) => {
+    let tokenIndex = 0;
+    let plainCounter = 0;
+
+    while (tokenIndex < value.length && plainCounter < plainIndex) {
+      const tokenLength = getTokenLengthAt(value, tokenIndex);
+      if (tokenLength) {
+        tokenIndex += tokenLength;
+        continue;
+      }
+      tokenIndex += 1;
+      plainCounter += 1;
+    }
+
+    return tokenIndex;
+  };
+
+  const tokenToPlainIndex = (value: string, tokenIndex: number) => {
+    let idx = 0;
+    let plainCounter = 0;
+
+    while (idx < value.length && idx < tokenIndex) {
+      const tokenLength = getTokenLengthAt(value, idx);
+      if (tokenLength) {
+        idx += tokenLength;
+        continue;
+      }
+      idx += 1;
+      plainCounter += 1;
+    }
+
+    return plainCounter;
+  };
+
+  const mergePlainWithTokens = (tokenValue: string, plainValue: string) => {
+    let result = '';
+    let tokenIndex = 0;
+    let plainIndex = 0;
+
+    while (tokenIndex < tokenValue.length && plainIndex < plainValue.length) {
+      const tokenLength = getTokenLengthAt(tokenValue, tokenIndex);
+      if (tokenLength) {
+        result += tokenValue.slice(tokenIndex, tokenIndex + tokenLength);
+        tokenIndex += tokenLength;
+        continue;
+      }
+
+      result += plainValue[plainIndex];
+      tokenIndex += 1;
+      plainIndex += 1;
+    }
+
+    if (plainIndex < plainValue.length) {
+      result += plainValue.slice(plainIndex);
+    }
+
+    while (tokenIndex < tokenValue.length) {
+      const tokenLength = getTokenLengthAt(tokenValue, tokenIndex);
+      if (tokenLength) {
+        result += tokenValue.slice(tokenIndex, tokenIndex + tokenLength);
+        tokenIndex += tokenLength;
+      } else {
+        tokenIndex += 1;
+      }
+    }
+
+    return result;
+  };
+
+  const wrapSelectionWithTokens = (
+    value: string,
+    selectionStart: number,
+    selectionEnd: number,
+    type: FormattingType
+  ) => {
+    if (selectionEnd <= selectionStart) {
+      return {
+        text: value,
+        selectionStart,
+        selectionEnd,
+      };
+    }
+
+    const token = formattingTokens[type];
+    const before = value.slice(0, selectionStart);
+    const selectedText = value.slice(selectionStart, selectionEnd);
+    const after = value.slice(selectionEnd);
+    const formatted = `${before}${token.prefix}${selectedText}${token.suffix}${after}`;
+    const newSelectionStart = selectionStart + token.prefix.length;
+    const newSelectionEnd = newSelectionStart + selectedText.length;
+    return {
+      text: formatted,
+      selectionStart: newSelectionStart,
+      selectionEnd: newSelectionEnd,
+    };
+  };
+
+  const detectTokenAt = (
+    value: string,
+    index: number
+  ): { type: FormattingType; length: number } | null => {
+    if (value.startsWith('**', index)) {
+      return { type: 'bold', length: 2 };
+    }
+    if (value.startsWith('__', index)) {
+      return { type: 'underline', length: 2 };
+    }
+    if (value.startsWith('_', index)) {
+      return { type: 'italic', length: 1 };
+    }
+    return null;
+  };
+
+  const parseFormattingRanges = (
+    value: string
+  ): Record<FormattingType, Array<{ plainStart: number; plainEnd: number; tokenStart: number; suffixIndex: number }>> => {
+    const stack: Record<FormattingType, Array<{ tokenIndex: number; plainIndex: number }>> = {
+      bold: [],
+      italic: [],
+      underline: [],
+    };
+    const ranges: Record<FormattingType, Array<{ plainStart: number; plainEnd: number; tokenStart: number; suffixIndex: number }>> = {
+      bold: [],
+      italic: [],
+      underline: [],
+    };
+
+    let tokenIndex = 0;
+    let plainIndex = 0;
+
+    while (tokenIndex < value.length) {
+      const token = detectTokenAt(value, tokenIndex);
+      if (token) {
+        const { type, length } = token;
+        if (stack[type].length > 0) {
+          const start = stack[type].pop()!;
+          ranges[type].push({
+            plainStart: start.plainIndex,
+            plainEnd: plainIndex,
+            tokenStart: start.tokenIndex,
+            suffixIndex: tokenIndex,
+          });
+        } else {
+          stack[type].push({ tokenIndex, plainIndex });
+        }
+        tokenIndex += length;
+        continue;
+      }
+
+      tokenIndex += 1;
+      plainIndex += 1;
+    }
+
+    return ranges;
+  };
+
+  const isStyleActiveInRange = (
+    ranges: Array<{ plainStart: number; plainEnd: number }>,
+    start: number,
+    end: number,
+    plainLength: number
+  ) => {
+    if (!ranges.length) return false;
+
+    if (start === end) {
+      if (plainLength === 0) return false;
+      const pos = Math.max(0, Math.min(start, plainLength - 1));
+      return ranges.some((range) => pos >= range.plainStart && pos < range.plainEnd);
+    }
+
+    return ranges.some((range) => start >= range.plainStart && end <= range.plainEnd);
+  };
+
+  const computeFormattingState = (
+    value: string,
+    selectionStartPlain: number,
+    selectionEndPlain: number
+  ): FormattingState => {
+    const plainLength = stripFormattingTokens(value).length;
+    const start = Math.max(0, Math.min(selectionStartPlain, plainLength));
+    const end = Math.max(0, Math.min(selectionEndPlain, plainLength));
+    const normalizedEnd = Math.max(start, end);
+    const ranges = parseFormattingRanges(value);
+
+    return {
+      bold: isStyleActiveInRange(ranges.bold, start, normalizedEnd, plainLength),
+      italic: isStyleActiveInRange(ranges.italic, start, normalizedEnd, plainLength),
+      underline: isStyleActiveInRange(ranges.underline, start, normalizedEnd, plainLength),
+    };
+  };
+
+  const toggleFormatting = (
+    type: FormattingType,
+    value: string,
+    selectionStartPlain: number,
+    selectionEndPlain: number
+  ) => {
+    const plainLength = stripFormattingTokens(value).length;
+    const start = Math.max(0, Math.min(selectionStartPlain, plainLength));
+    const end = Math.max(0, Math.min(selectionEndPlain, plainLength));
+    const normalizedEnd = Math.max(start, end);
+
+    if (start === normalizedEnd) {
+      return null;
+    }
+
+    const ranges = parseFormattingRanges(value);
+    const rangeToToggle = ranges[type].find(
+      (range) => start >= range.plainStart && normalizedEnd <= range.plainEnd
+    );
+
+    if (rangeToToggle) {
+      const token = formattingTokens[type];
+      const content = value.slice(
+        rangeToToggle.tokenStart + token.prefix.length,
+        rangeToToggle.suffixIndex
+      );
+      const newValue =
+        value.slice(0, rangeToToggle.tokenStart) +
+        content +
+        value.slice(rangeToToggle.suffixIndex + token.suffix.length);
+
+      return {
+        value: newValue,
+        selectionStart: start,
+        selectionEnd: start + (normalizedEnd - start),
+      };
+    }
+
+    const tokenSelectionStart = plainToTokenIndex(value, start);
+    const tokenSelectionEnd = plainToTokenIndex(value, normalizedEnd);
+    const wrapped = wrapSelectionWithTokens(value, tokenSelectionStart, tokenSelectionEnd, type);
+    if (wrapped.text === value) {
+      return null;
+    }
+
+    const newPlainStart = tokenToPlainIndex(wrapped.text, wrapped.selectionStart);
+    const newPlainEnd = tokenToPlainIndex(wrapped.text, wrapped.selectionEnd);
+
+    return {
+      value: wrapped.text,
+      selectionStart: newPlainStart,
+      selectionEnd: newPlainEnd,
+    };
+  };
+
+  const escapeHtml = (input: string) =>
+    input
+      .replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;')
+      .replace(/"/g, '&quot;')
+      .replace(/'/g, '&#39;');
+
+  const formatRichTextToHtml = (input: string) => {
+    if (!input) return '';
+    let html = escapeHtml(input);
+    html = html.replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>');
+    html = html.replace(/__(.+?)__/g, '<span style="text-decoration: underline;">$1</span>');
+    html = html.replace(/_(.+?)_/g, '<em>$1</em>');
+    html = html.replace(/\n/g, '<br />');
+    return html;
+  };
+
+  const applyFormattingToTextarea = (
+    type: FormattingType,
+    textarea: HTMLTextAreaElement | null,
+    currentValue: string,
+    onValueChange: (value: string) => void,
+    refLookup?: () => HTMLTextAreaElement | null,
+    afterUpdate?: (params: { value: string; selectionStart: number; selectionEnd: number }) => void
+  ) => {
+    if (!textarea) return;
+    const selectionStart = textarea.selectionStart ?? 0;
+    const selectionEnd = textarea.selectionEnd ?? selectionStart;
+
+    const toggleResult = toggleFormatting(type, currentValue, selectionStart, selectionEnd);
+    if (!toggleResult) return;
+
+    onValueChange(toggleResult.value);
+
+    const updateSelection = () => {
+      const target = refLookup ? refLookup() : textarea;
+      if (!target) return;
+      target.focus();
+      target.setSelectionRange(toggleResult.selectionStart, toggleResult.selectionEnd);
+      afterUpdate?.(toggleResult);
+    };
+
+    requestAnimationFrame(updateSelection);
+  };
+
+  const handleSummaryFormatting = (type: FormattingType) => {
+    applyFormattingToTextarea(
+      type,
+      summaryTextareaRef.current,
+      personalInfo.summary || '',
+      (value) => setPersonalInfo((prev) => ({ ...prev, summary: value })),
+      () => summaryTextareaRef.current,
+      ({ value, selectionStart, selectionEnd }) =>
+        setSummaryFormatting(computeFormattingState(value, selectionStart, selectionEnd))
+    );
+  };
+
+  const handleExperienceFormatting = (expId: string, currentValue: string, type: FormattingType) => {
+    const textarea = experienceTextareaRefs.current[expId];
+    applyFormattingToTextarea(
+      type,
+      textarea,
+      currentValue || '',
+      (value) => setExperienceDescriptionTokens(expId, value),
+      () => experienceTextareaRefs.current[expId],
+      ({ value, selectionStart, selectionEnd }) =>
+        setExperienceFormattingState((prev) => ({
+          ...prev,
+          [expId]: computeFormattingState(value, selectionStart, selectionEnd),
+        }))
+    );
+  };
+
+  const handleEducationFormatting = (eduId: string, currentValue: string, type: FormattingType) => {
+    const textarea = educationTextareaRefs.current[eduId];
+    applyFormattingToTextarea(
+      type,
+      textarea,
+      currentValue || '',
+      (value) => setEducationDescriptionTokens(eduId, value),
+      () => educationTextareaRefs.current[eduId],
+      ({ value, selectionStart, selectionEnd }) =>
+        setEducationFormattingState((prev) => ({
+          ...prev,
+          [eduId]: computeFormattingState(value, selectionStart, selectionEnd),
+        }))
+    );
+  };
+
+  const updateSummaryFormattingFromSelection = () => {
+    const textarea = summaryTextareaRef.current;
+    if (!textarea) return;
+    const selectionStart = textarea.selectionStart ?? 0;
+    const selectionEnd = textarea.selectionEnd ?? selectionStart;
+    setSummaryFormatting(computeFormattingState(personalInfo.summary || '', selectionStart, selectionEnd));
+  };
+
+  const updateExperienceFormattingFromSelection = (id: string) => {
+    const textarea = experienceTextareaRefs.current[id];
+    if (!textarea) return;
+    const exp = experiences.find((experience) => experience.id === id);
+    if (!exp) return;
+    const selectionStart = textarea.selectionStart ?? 0;
+    const selectionEnd = textarea.selectionEnd ?? selectionStart;
+    setExperienceFormattingState((prev) => ({
+      ...prev,
+      [id]: computeFormattingState(exp.description, selectionStart, selectionEnd),
+    }));
+  };
+
+  const updateEducationFormattingFromSelection = (id: string) => {
+    const textarea = educationTextareaRefs.current[id];
+    if (!textarea) return;
+    const edu = education.find((entry) => entry.id === id);
+    if (!edu) return;
+    const selectionStart = textarea.selectionStart ?? 0;
+    const selectionEnd = textarea.selectionEnd ?? selectionStart;
+    setEducationFormattingState((prev) => ({
+      ...prev,
+      [id]: computeFormattingState(edu.description, selectionStart, selectionEnd),
+    }));
+  };
+
   const populateFromCv = React.useCallback((cv: CvDto, position?: string) => {
     const basics = cv.basics;
     if (basics) {
@@ -514,27 +1132,33 @@ const CVCreator: React.FC<CVCreatorProps> = ({ initialCv }) => {
     }
 
     setExperiences(
-      cv.work?.map((w, idx) => ({
-        id: `${Date.now()}${idx}`,
-        company: w.company || '',
-        position: w.position || '',
-        startDate: w.startDate || '',
-        endDate: w.endDate && w.endDate !== 'Present' ? w.endDate : '',
-        description: w.description || '',
-        isCurrent: w.endDate === 'Present',
-      })) || []
+      cv.work?.map((w) =>
+        ensureExperienceDefaults({
+          id: makeExperienceId(),
+          company: w.company || '',
+          position: w.position || '',
+          startDate: w.startDate || '',
+          endDate: w.endDate && w.endDate !== 'Present' ? w.endDate : '',
+          description: w.description || '',
+          isCurrent: w.endDate === 'Present',
+          useBulletList: false,
+        })
+      ) || []
     );
 
     setEducation(
-      cv.education?.map((e, idx) => ({
-        id: `${Date.now()}${idx}`,
-        school: e.institution || '',
-        degree: e.degree || '',
-        field: e.field || '',
-        startDate: e.startDate || '',
-        endDate: e.endDate && e.endDate !== 'Present' ? e.endDate : '',
-        isCurrent: e.endDate === 'Present',
-      })) || []
+      cv.education?.map((e) =>
+        ensureEducationDefaults({
+          id: makeEducationId(),
+          school: e.institution || '',
+          degree: e.degree || '',
+          field: e.field || '',
+          startDate: e.startDate || '',
+          endDate: e.endDate && e.endDate !== 'Present' ? e.endDate : '',
+          isCurrent: e.endDate === 'Present',
+          description: (e as { description?: string })?.description || '',
+        })
+      ) || []
     );
 
     setCertificates(
@@ -577,12 +1201,13 @@ const CVCreator: React.FC<CVCreatorProps> = ({ initialCv }) => {
         description: w.description,
       })),
       education: education.map((e) => ({
-        institution: e.school,
-        degree: e.degree,
-        field: e.field,
-        startDate: e.startDate,
-        endDate: e.isCurrent ? 'Present' : e.endDate,
-      })),
+      institution: e.school,
+      degree: e.degree,
+      field: e.field,
+      startDate: e.startDate,
+      endDate: e.isCurrent ? 'Present' : e.endDate,
+      description: e.description,
+    })),
       certificates: certificates.map((c) => ({ name: c.name, date: c.date })),
       skills: skills.map((s) => s.name),
       languages: languages.map((l) => ({ language: l.name, fluency: l.level })),
@@ -1016,10 +1641,28 @@ const CVCreator: React.FC<CVCreatorProps> = ({ initialCv }) => {
               A short summary at the top of your CV that highlights relevant experience and
               qualifications in 4–6 sentences.
             </p>
+            <RichTextToolbar
+              className="mb-2"
+              onFormat={handleSummaryFormatting}
+              formattingState={summaryFormatting}
+            />
             <textarea
+              ref={summaryTextareaRef}
               placeholder="Project Manager with over 5 years of experience, seeking new opportunities."
-              value={personalInfo.summary}
-              onChange={(e) => setPersonalInfo({ ...personalInfo, summary: e.target.value })}
+              value={stripFormattingTokens(personalInfo.summary || '')}
+              onChange={(e) => {
+                const plainValue = e.target.value;
+                const selectionStart = e.target.selectionStart ?? 0;
+                const selectionEnd = e.target.selectionEnd ?? selectionStart;
+                const nextTokens = mergePlainWithTokens(personalInfo.summary || '', plainValue);
+                setPersonalInfo((prev) => ({ ...prev, summary: nextTokens }));
+                setSummaryFormatting(
+                  computeFormattingState(nextTokens, selectionStart, selectionEnd)
+                );
+              }}
+              onSelect={updateSummaryFormattingFromSelection}
+              onKeyUp={updateSummaryFormattingFromSelection}
+              onMouseUp={updateSummaryFormattingFromSelection}
               rows={4}
               className="w-full resize-none rounded-lg border border-gray-300 px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:outline-none"
             />
@@ -1078,15 +1721,18 @@ const CVCreator: React.FC<CVCreatorProps> = ({ initialCv }) => {
               Showcase your achievements by describing your daily responsibilities in 3–6 sentences,
               then list at least two key accomplishments.
             </p>
-            {experiences.map((exp) => (
-              <div
-                key={exp.id}
-                className="group mb-4 rounded-lg border border-gray-200 bg-white p-4"
-              >
-                <div className="mb-2 flex items-start justify-between">
-                  <div className="flex-1">
-                    <div className="mb-2 grid grid-cols-1 gap-4 sm:grid-cols-2">
-                      <input
+            {experiences.map((exp) => {
+              const formattingState = experienceFormattingState[exp.id] ?? EMPTY_FORMATTING_STATE;
+
+              return (
+                <div
+                  key={exp.id}
+                  className="group mb-4 rounded-lg border border-gray-200 bg-white p-4"
+                >
+                  <div className="mb-2 flex items-start justify-between">
+                    <div className="flex-1">
+                      <div className="mb-2 grid grid-cols-1 gap-4 sm:grid-cols-2">
+                        <input
                         type="text"
                         placeholder="Company"
                         value={exp.company}
@@ -1126,13 +1772,45 @@ const CVCreator: React.FC<CVCreatorProps> = ({ initialCv }) => {
                         />
                       </div>
                     </div>
+                    <RichTextToolbar
+                      className="mt-2 mb-2"
+                      onFormat={(type) => handleExperienceFormatting(exp.id, exp.description, type)}
+                      formattingState={formattingState}
+                    />
                     <textarea
+                      ref={(el) => {
+                        if (el) {
+                          experienceTextareaRefs.current[exp.id] = el;
+                        } else {
+                          delete experienceTextareaRefs.current[exp.id];
+                        }
+                      }}
                       placeholder="Job description / Responsibilities"
-                      value={exp.description}
-                      onChange={(e) => updateExperience(exp.id, 'description', e.target.value)}
+                      value={stripFormattingTokens(exp.description)}
+                      onChange={(e) => {
+                        const plainValue = e.target.value;
+                        const selectionStart = e.target.selectionStart ?? 0;
+                        const selectionEnd = e.target.selectionEnd ?? selectionStart;
+                        const nextTokens = mergePlainWithTokens(exp.description, plainValue);
+                        setExperiences((prev) =>
+                          prev.map((experience) =>
+                            experience.id === exp.id
+                              ? { ...experience, description: nextTokens }
+                              : experience
+                          )
+                        );
+                        setExperienceFormattingState((prev) => ({
+                          ...prev,
+                          [exp.id]: computeFormattingState(nextTokens, selectionStart, selectionEnd),
+                        }));
+                      }}
+                      onSelect={() => updateExperienceFormattingFromSelection(exp.id)}
+                      onKeyUp={() => updateExperienceFormattingFromSelection(exp.id)}
+                      onMouseUp={() => updateExperienceFormattingFromSelection(exp.id)}
                       rows={2}
                       className="w-full rounded-sm border border-gray-300 px-3 py-3 focus:ring-2 focus:ring-blue-500 focus:outline-none"
                     />
+                    
                     <div className="flex w-full items-center justify-end space-x-2">
                       <button
                         onClick={() => removeExperience(exp.id)}
@@ -1169,10 +1847,11 @@ const CVCreator: React.FC<CVCreatorProps> = ({ initialCv }) => {
                         <StarsIcon className="ml-2 scale-70" />
                       </button>
                     </div>
+                    </div>
                   </div>
                 </div>
-              </div>
-            ))}
+              );
+            })}
             <button
               onClick={addExperience}
               className="flex cursor-pointer items-center font-medium text-[#915EFF]"
@@ -1208,14 +1887,17 @@ const CVCreator: React.FC<CVCreatorProps> = ({ initialCv }) => {
               Add your education, whether it&apos;s secondary or higher. If needed, include relevant
               courses, projects, or achievements (e.g., grades).
             </p>
-            {education.map((edu) => (
-              <div
-                key={edu.id}
-                className="group mb-4 rounded-lg border border-gray-200 bg-white p-4"
-              >
-                <div className="flex items-start justify-between">
-                  <div className="flex-1">
-                    <div className="mb-2 grid grid-cols-1 gap-4 sm:grid-cols-2">
+            {education.map((edu) => {
+              const formattingState = educationFormattingState[edu.id] ?? EMPTY_FORMATTING_STATE;
+
+              return (
+                <div
+                  key={edu.id}
+                  className="group mb-4 rounded-lg border border-gray-200 bg-white p-4"
+                >
+                  <div className="flex items-start justify-between">
+                    <div className="flex-1">
+                      <div className="mb-2 grid grid-cols-1 gap-4 sm:grid-cols-2">
                       <input
                         type="text"
                         placeholder="School/University"
@@ -1266,6 +1948,42 @@ const CVCreator: React.FC<CVCreatorProps> = ({ initialCv }) => {
                         />
                       </div>
                     </div>
+                    <RichTextToolbar
+                      className="mt-2 mb-2"
+                      onFormat={(type) => handleEducationFormatting(edu.id, edu.description, type)}
+                      formattingState={formattingState}
+                    />
+                    <textarea
+                      ref={(el) => {
+                        if (el) {
+                          educationTextareaRefs.current[edu.id] = el;
+                        } else {
+                          delete educationTextareaRefs.current[edu.id];
+                        }
+                      }}
+                      placeholder="Achievements, coursework, GPA, notable projects"
+                      value={stripFormattingTokens(edu.description)}
+                      onChange={(e) => {
+                        const plainValue = e.target.value;
+                        const selectionStart = e.target.selectionStart ?? 0;
+                        const selectionEnd = e.target.selectionEnd ?? selectionStart;
+                        const nextTokens = mergePlainWithTokens(edu.description, plainValue);
+                        setEducation((prev) =>
+                          prev.map((entry) =>
+                            entry.id === edu.id ? { ...entry, description: nextTokens } : entry
+                          )
+                        );
+                        setEducationFormattingState((prev) => ({
+                          ...prev,
+                          [edu.id]: computeFormattingState(nextTokens, selectionStart, selectionEnd),
+                        }));
+                      }}
+                      onSelect={() => updateEducationFormattingFromSelection(edu.id)}
+                      onKeyUp={() => updateEducationFormattingFromSelection(edu.id)}
+                      onMouseUp={() => updateEducationFormattingFromSelection(edu.id)}
+                      rows={2}
+                      className="w-full rounded-sm border border-gray-300 px-3 py-3 focus:ring-2 focus:ring-blue-500 focus:outline-none"
+                    />
                   </div>
                   <button
                     onClick={() => removeEducation(edu.id)}
@@ -1276,7 +1994,8 @@ const CVCreator: React.FC<CVCreatorProps> = ({ initialCv }) => {
                   </button>
                 </div>
               </div>
-            ))}
+              );
+            })}
             <button
               onClick={addEducation}
               className="flex cursor-pointer items-center font-medium text-[#915EFF]"
@@ -1594,9 +2313,12 @@ const CVCreator: React.FC<CVCreatorProps> = ({ initialCv }) => {
                 .split(/\n+/)
                 .filter(Boolean)
                 .map((para, i) => (
-                  <p key={`sum-${i}`} className="para-item mb-2 last:mb-0" data-item-id={`p${i}`}>
-                    {para}
-                  </p>
+                  <p
+                    key={`sum-${i}`}
+                    className="para-item mb-2 last:mb-0"
+                    data-item-id={`p${i}`}
+                    dangerouslySetInnerHTML={{ __html: formatRichTextToHtml(para) }}
+                  />
                 ))}
             </div>
           </div>
@@ -1633,11 +2355,7 @@ const CVCreator: React.FC<CVCreatorProps> = ({ initialCv }) => {
                 </div>
 
                 {/* Opis */}
-                {exp.description && (
-                  <div className="exp-desc text-sm leading-relaxed text-gray-700">
-                    {exp.description}
-                  </div>
-                )}
+                {renderExperienceDescription(exp)}
               </div>
             ))}
           </div>
@@ -1671,6 +2389,12 @@ const CVCreator: React.FC<CVCreatorProps> = ({ initialCv }) => {
                     {edu.isCurrent || !edu.endDate ? 'present' : formatDate(edu.endDate)}
                   </div>
                 </div>
+                {edu.description && (
+                  <div
+                    className="edu-desc mt-1 text-sm leading-relaxed text-gray-700"
+                    dangerouslySetInnerHTML={{ __html: formatRichTextToHtml(edu.description) }}
+                  />
+                )}
               </div>
             ))}
           </div>
@@ -1878,6 +2602,96 @@ const CVCreator: React.FC<CVCreatorProps> = ({ initialCv }) => {
     }
   };
 
+  const renderExperienceDescription = (exp: Experience) => {
+    if (!exp.description) {
+      return null;
+    }
+
+    const rawLines = exp.description.split(/\r?\n/);
+
+    if (exp.useBulletList) {
+      const blocks: Array<
+        | { type: 'bullet'; items: string[] }
+        | { type: 'text'; content: string }
+      > = [];
+
+      rawLines.forEach((line) => {
+        const trimmed = line.trim();
+        if (!trimmed) {
+          return;
+        }
+
+        const bulletPrefixes = ['- ', '• '];
+        const prefix = bulletPrefixes.find((p) => trimmed.startsWith(p));
+
+        if (prefix) {
+          const content = trimmed.slice(prefix.length).trim();
+          if (!content) {
+            return;
+          }
+          const lastBlock = blocks[blocks.length - 1];
+          if (lastBlock && lastBlock.type === 'bullet') {
+            lastBlock.items.push(content);
+          } else {
+            blocks.push({ type: 'bullet', items: [content] });
+          }
+        } else {
+          const lastBlock = blocks[blocks.length - 1];
+          if (lastBlock && lastBlock.type === 'text') {
+            lastBlock.content = `${lastBlock.content}\n${trimmed}`;
+          } else {
+            blocks.push({ type: 'text', content: trimmed });
+          }
+        }
+      });
+
+      if (blocks.length > 0) {
+        return (
+          <div className="space-y-2 text-sm leading-relaxed text-gray-700">
+            {blocks.map((block, idx) => {
+              if (block.type === 'bullet') {
+                return (
+                  <ul
+                    key={`${exp.id}-bullets-${idx}`}
+                    className="ml-5 space-y-1 text-sm leading-relaxed text-gray-700"
+                  >
+                    {block.items.map((item, itemIdx) => (
+                      <li
+                        key={`${exp.id}-bullet-${idx}-${itemIdx}`}
+                        className="flex items-start gap-2"
+                      >
+                        <span className="mt-[2px] text-gray-500">-</span>
+                        <span
+                          className="flex-1"
+                          dangerouslySetInnerHTML={{ __html: formatRichTextToHtml(item) }}
+                        />
+                      </li>
+                    ))}
+                  </ul>
+                );
+              }
+
+              return (
+                <p
+                  key={`${exp.id}-text-${idx}`}
+                  className="text-sm leading-relaxed text-gray-700"
+                  dangerouslySetInnerHTML={{ __html: formatRichTextToHtml(block.content) }}
+                />
+              );
+            })}
+          </div>
+        );
+      }
+    }
+
+    return (
+      <div
+        className="exp-desc text-sm leading-relaxed text-gray-700"
+        dangerouslySetInnerHTML={{ __html: formatRichTextToHtml(exp.description) }}
+      />
+    );
+  };
+
   const renderExperienceItems = (ids?: string[]) => {
     const list = ids ? experiences.filter((e) => ids.includes(e.id)) : experiences;
     return (
@@ -1898,11 +2712,7 @@ const CVCreator: React.FC<CVCreatorProps> = ({ initialCv }) => {
                 {exp.isCurrent || !exp.endDate ? 'present' : formatDate(exp.endDate)}
               </div>
             </div>
-            {exp.description && (
-              <div className="exp-desc text-sm leading-relaxed text-gray-700">
-                {exp.description}
-              </div>
-            )}
+            {renderExperienceDescription(exp)}
           </div>
         ))}
       </>
@@ -1929,6 +2739,12 @@ const CVCreator: React.FC<CVCreatorProps> = ({ initialCv }) => {
                 {edu.isCurrent || !edu.endDate ? 'present' : formatDate(edu.endDate)}
               </div>
             </div>
+            {edu.description && (
+              <div
+                className="edu-desc mt-1 text-sm leading-relaxed text-gray-700"
+                dangerouslySetInnerHTML={{ __html: formatRichTextToHtml(edu.description) }}
+              />
+            )}
           </div>
         ))}
       </>
@@ -1981,9 +2797,12 @@ const CVCreator: React.FC<CVCreatorProps> = ({ initialCv }) => {
                   const id = `p${i}`;
                   if (!items.includes(id)) return null;
                   return (
-                    <p key={`sum-${i}`} className="para-item mb-2 last:mb-0" data-item-id={id}>
-                      {para}
-                    </p>
+                    <p
+                      key={`sum-${i}`}
+                      className="para-item mb-2 last:mb-0"
+                      data-item-id={id}
+                      dangerouslySetInnerHTML={{ __html: formatRichTextToHtml(para) }}
+                    />
                   );
                 })}
             </div>
