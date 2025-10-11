@@ -20,6 +20,15 @@ You can start editing the page by modifying `app/page.tsx`. The page auto-update
 
 This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
 
+## Testy end-to-end (Cypress)
+
+```bash
+npm run cypress:open   # interaktywne uruchamianie testów
+npm run cypress:run    # tryb headless (np. CI)
+```
+
+Konfiguracja środowiskowa testów znajduje się w `cypress.env.example`. Więcej informacji o strategii testowania: [`TESTING_PLAN.md`](./TESTING_PLAN.md).
+
 ## Learn More
 
 To learn more about Next.js, take a look at the following resources:

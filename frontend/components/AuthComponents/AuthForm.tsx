@@ -174,7 +174,11 @@ const AuthForm = ({ type }: AuthFormProps) => {
 
   return (
     <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)} className="auth-form font-korbin">
+      <form
+        onSubmit={form.handleSubmit(onSubmit)}
+        className="auth-form font-korbin"
+        data-cy="auth-form"
+      >
         <h1 className="form-title">{isSignUp ? 'Sign Up' : 'Sign In'}</h1>
 
         {isSignUp && (
@@ -200,7 +204,12 @@ const AuthForm = ({ type }: AuthFormProps) => {
             <FormItem>
               <FormLabel>Email</FormLabel>
               <FormControl>
-                <Input placeholder="joedoe@gmail.com.." {...field} className="input-profile" />
+                <Input
+                  placeholder="joedoe@gmail.com.."
+                  {...field}
+                  className="input-profile"
+                  data-cy={isSignUp ? 'sign-up-email' : 'auth-email'}
+                />
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -219,6 +228,7 @@ const AuthForm = ({ type }: AuthFormProps) => {
                   placeholder="Password"
                   {...field}
                   className="input-profile"
+                  data-cy={isSignUp ? 'sign-up-password' : 'auth-password'}
                 />
               </FormControl>
               <FormMessage />
@@ -235,11 +245,12 @@ const AuthForm = ({ type }: AuthFormProps) => {
                 <FormLabel>Confirm Password</FormLabel>
                 <FormControl>
                   <Input
-                    type="password"
-                    placeholder="Confirm Password"
-                    {...field}
-                    className="input-profile"
-                  />
+                  type="password"
+                  placeholder="Confirm Password"
+                  {...field}
+                  className="input-profile"
+                  data-cy="sign-up-confirm-password"
+                />
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -247,7 +258,12 @@ const AuthForm = ({ type }: AuthFormProps) => {
           />
         )}
 
-        <ButtonForm type="submit" disabled={isLoading} className="group form-button">
+        <ButtonForm
+          type="submit"
+          disabled={isLoading}
+          className="group form-button"
+          data-cy={isSignUp ? 'sign-up-submit' : 'auth-submit'}
+        >
           {isSignUp ? 'Join Vocare' : 'Sign In'}
           <span className="arrow-animation">
             <ArrowRight />

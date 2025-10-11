@@ -1,0 +1,9 @@
+{
+  "token": "test-token-123",
+  "accessToken": "test-token-123",
+  "user": {
+    "id": "user-1",
+    "email": "test.user@example.com",
+    "fullName": "Test User"
+  }
+}
