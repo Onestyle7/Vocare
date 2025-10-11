@@ -96,6 +96,7 @@ interface Certificate {
   id: string;
   name: string;
   date: string;
+  displayDate: boolean;
 }
 
 interface PrivacyStatement {
@@ -204,6 +205,16 @@ const ensureEducationDefaults = (edu: Partial<Education>): Education => ({
   description: edu.description ?? '',
 });
 
+const makeCertificateId = () =>
+  `${Date.now()}-${Math.random().toString(36).slice(2, 8)}-cert`;
+
+const ensureCertificateDefaults = (cert: Partial<Certificate>): Certificate => ({
+  id: typeof cert.id === 'string' && cert.id.length > 0 ? cert.id : makeCertificateId(),
+  name: cert.name ?? '',
+  date: cert.date ?? '',
+  displayDate: cert.displayDate ?? Boolean(cert.date),
+});
+
 const CVCreator: React.FC<CVCreatorProps> = ({ initialCv }) => {
   const [personalInfo, setPersonalInfo] = useState<PersonalInfo>(() => {
     const saved = localStorage.getItem('personalInfo');
@@ -288,7 +299,15 @@ const CVCreator: React.FC<CVCreatorProps> = ({ initialCv }) => {
 
   const [certificates, setCertificates] = useState<Certificate[]>(() => {
     const saved = localStorage.getItem('certificates');
-    return saved ? JSON.parse(saved) : [];
+    if (!saved) return [];
+    try {
+      const parsed = JSON.parse(saved);
+      if (!Array.isArray(parsed)) return [];
+      return parsed.map((item) => ensureCertificateDefaults(item));
+    } catch (err) {
+      console.warn('Failed to parse stored certificates', err);
+      return [];
+    }
   });
 
   const [privacyStatement, setPrivacyStatement] = useState<PrivacyStatement>(() => {
@@ -442,16 +461,23 @@ const CVCreator: React.FC<CVCreatorProps> = ({ initialCv }) => {
 
   const addCertificate = () => {
     const newCert: Certificate = {
-      id: Date.now().toString(),
+      id: makeCertificateId(),
       name: '',
       date: '',
+      displayDate: true,
     };
     setCertificates([...certificates, newCert]);
   };
 
-  const updateCertificate = (id: string, field: keyof Certificate, value: string) => {
-    setCertificates(
-      certificates.map((cert) => (cert.id === id ? { ...cert, [field]: value } : cert))
+  const updateCertificate = (id: string, field: keyof Certificate, value: string | boolean) => {
+    setCertificates((prev) =>
+      prev.map((cert) => {
+        if (cert.id !== id) return cert;
+        if (field === 'displayDate' && typeof value === 'boolean') {
+          return { ...cert, displayDate: value };
+        }
+        return { ...cert, [field]: value } as Certificate;
+      })
     );
   };
 
@@ -1171,11 +1197,14 @@ const CVCreator: React.FC<CVCreatorProps> = ({ initialCv }) => {
     );
 
     setCertificates(
-      cv.certificates?.map((c, idx) => ({
-        id: `${Date.now()}${idx}`,
-        name: c.name,
-        date: c.date || '',
-      })) || []
+      cv.certificates?.map((c) =>
+        ensureCertificateDefaults({
+          id: makeCertificateId(),
+          name: c.name,
+          date: c.date || '',
+          displayDate: Boolean(c.date),
+        })
+      ) || []
     );
 
     setSkills(cv.skills?.map((s, idx) => ({ id: `${Date.now()}${idx}`, name: s })) || []);
@@ -1217,7 +1246,10 @@ const CVCreator: React.FC<CVCreatorProps> = ({ initialCv }) => {
       endDate: e.isCurrent ? 'Present' : e.endDate,
       description: e.description,
     })),
-      certificates: certificates.map((c) => ({ name: c.name, date: c.date })),
+      certificates: certificates.map((c) => ({
+        name: c.name,
+        date: c.displayDate && c.date ? c.date : undefined,
+      })),
       skills: skills.map((s) => s.name),
       languages: languages.map((l) => ({ language: l.name, fluency: l.level })),
     };
@@ -2132,7 +2164,7 @@ const CVCreator: React.FC<CVCreatorProps> = ({ initialCv }) => {
                 key={cert.id}
                 className="group mb-3 rounded-lg border border-gray-200 bg-white p-3"
               >
-                <div className="flex items-center justify-between gap-2">
+                <div className="flex flex-col gap-3 sm:flex-row sm:items-center">
                   <input
                     type="text"
                     placeholder="Certificate name"
@@ -2140,15 +2172,26 @@ const CVCreator: React.FC<CVCreatorProps> = ({ initialCv }) => {
                     onChange={(e) => updateCertificate(cert.id, 'name', e.target.value)}
                     className="flex-1 focus:outline-none"
                   />
-                  <input
-                    type="date"
-                    value={cert.date}
-                    onChange={(e) => updateCertificate(cert.id, 'date', e.target.value)}
-                    className="rounded-sm border px-3 py-2 focus:outline-none"
-                  />
+                  <div className="flex flex-1 justify-end">
+                    <DatePickerWithCurrent
+                      value={cert.date}
+                      onChange={(date) => updateCertificate(cert.id, 'date', date)}
+                      isCurrent={!cert.displayDate}
+                      onCurrentChange={(checked) => {
+                        const display = !checked;
+                        updateCertificate(cert.id, 'displayDate', display);
+                        if (checked) {
+                          updateCertificate(cert.id, 'date', '');
+                        }
+                      }}
+                      toggleLabel="Display date"
+                      toggledButtonText="No date"
+                      placeholder="Select date"
+                    />
+                  </div>
                   <button
                     onClick={() => removeCertificate(cert.id)}
-                    className="ml-2 rounded p-2 text-red-500 opacity-0 transition-all group-hover:opacity-100 hover:bg-red-50 hover:text-red-700"
+                    className="ml-0 rounded p-2 text-red-500 opacity-0 transition-all sm:ml-2 group-hover:opacity-100 hover:bg-red-50 hover:text-red-700"
                     title="Remove certificate"
                   >
                     <Trash2 size={16} />
@@ -2946,7 +2989,7 @@ const CVCreator: React.FC<CVCreatorProps> = ({ initialCv }) => {
           <div key={cert.id} className="cert-item" data-item-id={cert.id}>
             <p className="text-sm text-gray-700">
               {cert.name}
-              {cert.date ? ` (${formatDate(cert.date)})` : ''}
+              {cert.displayDate && cert.date ? ` (${formatDate(cert.date)})` : ''}
             </p>
           </div>
         ))}
