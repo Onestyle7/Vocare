@@ -26,6 +26,7 @@ export interface CvEducationEntryDto {
   field?: string;
   startDate?: string;
   endDate?: string;
+  description?: string;
 }
 
 export interface CvCertificateEntryDto {

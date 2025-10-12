@@ -12,8 +12,8 @@ const MobileFeatureImprovements = () => {
       className="font-korbin relative overflow-hidden px-10 max-md:-mb-70"
       id="brain"
     >
-      <div className="relative flex h-[100vh] w-full flex-col items-center justify-center lg:border-t">
-        <div className="mt-6 mb-10 flex h-full w-full flex-col items-center justify-start py-8 sm:px-4 md:py-0">
+      <div className="relative flex h-[100vh] 2xl:h-[50vh] w-full flex-col items-center justify-center lg:border-t">
+        <div className="mt-6 mb-10 flex h-full 2xl:h-full w-full flex-col items-center justify-start 2xl:justify-center py-8 sm:px-4 md:py-0">
           <div className="mb-4 text-center">
             <p className="mb-6 font-bold text-gray-400">Always in Your pocket.</p>
             <h2 className="text-4xl font-bold">Your advisor always with you.</h2>

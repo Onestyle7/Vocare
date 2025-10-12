@@ -18,6 +18,8 @@ interface DatePickerWithCurrentProps {
   placeholder?: string;
   disabled?: boolean;
   showCurrentToggle?: boolean; // show/hide Present switch (default true)
+  toggleLabel?: string;
+  toggledButtonText?: string;
 }
 
 export const DatePickerWithCurrent: React.FC<DatePickerWithCurrentProps> = ({
@@ -28,6 +30,8 @@ export const DatePickerWithCurrent: React.FC<DatePickerWithCurrentProps> = ({
   placeholder = 'Wybierz datę',
   disabled = false,
   showCurrentToggle = true,
+  toggleLabel = 'Present',
+  toggledButtonText = 'Obecnie',
 }) => {
   const [isOpen, setIsOpen] = React.useState(false);
   const [captionLayout] = React.useState<CaptionLayout>('dropdown');
@@ -89,7 +93,7 @@ export const DatePickerWithCurrent: React.FC<DatePickerWithCurrentProps> = ({
             disabled={disabled}
           >
             <CalendarIcon className="mr-2 h-4 w-4" />
-            {currentChecked ? 'Obecnie' : value ? formatDisplayDate(value) : placeholder}
+            {currentChecked ? toggledButtonText : value ? formatDisplayDate(value) : placeholder}
           </Button>
         </PopoverTrigger>
 
@@ -101,7 +105,7 @@ export const DatePickerWithCurrent: React.FC<DatePickerWithCurrentProps> = ({
             <div className="flex items-center justify-between gap-3 border-b px-3 py-2">
               <div className="flex items-center gap-3">
                 <Label htmlFor={checkboxId} className="font-korbin text-sm">
-                  Present
+                  {toggleLabel}
                 </Label>
                 <Switch
                   id={checkboxId}
