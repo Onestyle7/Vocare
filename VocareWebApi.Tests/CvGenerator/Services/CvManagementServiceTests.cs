@@ -149,5 +149,71 @@ namespace VocareWebApi.Tests.CvGenerator.Services
             );
             _mockCvRepo.Verify(r => r.SetDefaultAsync(otherCvId, userId), Times.Once);
         }
+
+        [Fact]
+        public async Task DeleteCvAsync_CvDoesNotBelongToUser_ThrowsException()
+        {
+            // Arrange
+            var userId = "user-123";
+            var cvId = Guid.NewGuid();
+
+            _mockCvRepo.Setup(r => r.BelongsToUserAsync(cvId, userId)).ReturnsAsync(false);
+
+            // Act & Assert
+            var exception = await Assert.ThrowsAsync<UnauthorizedAccessException>(
+                async () => await _service.DeleteCvAsync(cvId, userId)
+            );
+            Assert.Equal("CV nie należy do tego użytkownika", exception.Message);
+        }
+
+        [Fact]
+        public async Task DeleteCvAsync_CvNotFound_ThrowsException()
+        {
+            // Arrange
+            var userId = "user-123";
+            var cvId = Guid.NewGuid();
+
+            _mockCvRepo.Setup(r => r.BelongsToUserAsync(cvId, userId)).ReturnsAsync(true);
+            _mockCvRepo.Setup(r => r.GetByIdAsync(cvId)).ReturnsAsync((GeneratedCv?)null);
+
+            var exception = await Assert.ThrowsAsync<KeyNotFoundException>(
+                async () => await _service.DeleteCvAsync(cvId, userId)
+            );
+
+            Assert.Equal($"CV o ID {cvId} nie zostało znalezione", exception.Message);
+        }
+
+        [Fact]
+        public async Task DeleteCvAsync_OnlyOneCv_DeletesWithoutSettingNewDefault()
+        {
+            // Arrange
+            var userId = "user-123";
+            var cvId = Guid.NewGuid();
+
+            var cv = new GeneratedCv
+            {
+                Id = cvId,
+                UserId = userId,
+                Name = "Only CV",
+                IsDefault = true,
+            };
+
+            _mockCvRepo.Setup(r => r.BelongsToUserAsync(cvId, userId)).ReturnsAsync(true);
+            _mockCvRepo.Setup(r => r.GetByIdAsync(cvId)).ReturnsAsync(cv);
+            _mockCvRepo
+                .Setup(r => r.GetUserCvsAsync(userId))
+                .ReturnsAsync(new List<GeneratedCv> { cv });
+            _mockCvRepo.Setup(r => r.DeactivateAsync(cvId)).ReturnsAsync(true);
+
+            // ACT
+            await _service.DeleteCvAsync(cvId, userId);
+            // ASSERT
+            _mockCvRepo.Verify(r => r.DeactivateAsync(cvId), Times.Once);
+            _mockCvRepo.Verify(
+                r => r.SetDefaultAsync(It.IsAny<Guid>(), It.IsAny<string>()),
+                Times.Never
+            );
+            _mockCvRepo.Verify(r => r.SetDefaultAsync(cvId, userId), Times.Never);
+        }
     }
 }
