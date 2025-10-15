@@ -1,6 +1,9 @@
+using System.Text.Json;
 using Microsoft.Extensions.Logging;
+using Microsoft.VisualBasic;
 using Moq;
 using VocareWebAPI.CvGenerator.Models;
+using VocareWebAPI.CvGenerator.Models.Dtos;
 using VocareWebAPI.CvGenerator.Repositories.Interfaces;
 using VocareWebAPI.CvGenerator.Services.Implementation;
 using VocareWebAPI.CvGenerator.Services.Interfaces;
@@ -214,6 +217,231 @@ namespace VocareWebApi.Tests.CvGenerator.Services
                 Times.Never
             );
             _mockCvRepo.Verify(r => r.SetDefaultAsync(cvId, userId), Times.Never);
+        }
+
+        [Fact]
+        public async Task GetUserCvsAsync_UserHas2Cvs_ReturnsCvs()
+        {
+            //Arrange
+            var userId = "user-123";
+            var cvId1 = Guid.NewGuid();
+            var cvId2 = Guid.NewGuid();
+            var createdDate = DateTime.UtcNow.AddDays(-5);
+            var modifiedDate = DateTime.UtcNow.AddDays(-1);
+            var cvs = new List<GeneratedCv>
+            {
+                new GeneratedCv
+                {
+                    Id = cvId1,
+                    UserId = userId,
+                    Name = "CV 1",
+                    IsDefault = true,
+                    Version = 1,
+                    CreatedAt = createdDate,
+                    LastModifiedAt = modifiedDate,
+                },
+                new GeneratedCv
+                {
+                    Id = cvId2,
+                    UserId = userId,
+                    Name = "CV 2",
+                    IsDefault = false,
+                    Version = 2,
+                    CreatedAt = createdDate,
+                    LastModifiedAt = modifiedDate,
+                },
+            };
+
+            _mockCvRepo.Setup(r => r.GetUserCvsAsync(userId)).ReturnsAsync(cvs);
+
+            //Act
+            var result = await _service.GetUserCvsAsync(userId);
+
+            //Assert
+            Assert.Equal(2, result.Count);
+            var cv1 = result.First(cv => cv.Id == cvId1);
+            Assert.Equal(cvId1, cv1.Id);
+            Assert.Equal("CV 1", cv1.Name);
+            Assert.True(cv1.IsDefault);
+            Assert.Equal(1, cv1.Version);
+            Assert.Equal(createdDate, cv1.CreatedAt);
+            Assert.Equal(modifiedDate, cv1.LastModifiedAt);
+            var cv2 = result.First(cv => cv.Id == cvId2);
+            Assert.Equal(cvId2, cv2.Id);
+            Assert.Equal("CV 2", cv2.Name);
+            Assert.False(cv2.IsDefault);
+            Assert.Equal(2, cv2.Version);
+            Assert.Equal(createdDate, cv2.CreatedAt);
+            Assert.Equal(modifiedDate, cv2.LastModifiedAt);
+
+            _mockCvRepo.Verify(r => r.GetUserCvsAsync(userId), Times.Once);
+        }
+
+        [Fact]
+        public async Task GetUserCvsAsync_UserHas0Cvs_ReturnsEmptyList()
+        {
+            //Arrange
+            var userId = "user-123";
+
+            _mockCvRepo.Setup(r => r.GetUserCvsAsync(userId)).ReturnsAsync(new List<GeneratedCv>());
+
+            //Act
+            var result = await _service.GetUserCvsAsync(userId);
+
+            //Assert
+            Assert.Empty(result);
+            _mockCvRepo.Verify(r => r.GetUserCvsAsync(userId), Times.Once);
+        }
+
+        [Fact]
+        public async Task GetUserCvsAsync_UserHas1Cv_ReturnsSingleCv()
+        {
+            //Arrange
+            var userId = "user-123";
+            var cvId = Guid.NewGuid();
+            var createdDate = DateTime.UtcNow.AddDays(-5);
+            var modifiedDate = DateTime.UtcNow.AddDays(-1);
+
+            var cvs = new List<GeneratedCv>
+            {
+                new GeneratedCv
+                {
+                    Id = cvId,
+                    UserId = userId,
+                    Name = "CV 1",
+                    IsDefault = true,
+                    Version = 1,
+                    CreatedAt = createdDate,
+                    LastModifiedAt = modifiedDate,
+                },
+            };
+
+            _mockCvRepo.Setup(r => r.GetUserCvsAsync(userId)).ReturnsAsync(cvs);
+
+            //Act
+            var result = await _service.GetUserCvsAsync(userId);
+            //Assert
+            Assert.Equal(1, result.Count);
+            var cv1 = result.First(cv => cv.Id == cvId);
+            Assert.Equal(cvId, cv1.Id);
+            Assert.Equal("CV 1", cv1.Name);
+            Assert.True(cv1.IsDefault);
+            Assert.Equal(1, cv1.Version);
+            Assert.Equal(createdDate, cv1.CreatedAt);
+            Assert.Equal(modifiedDate, cv1.LastModifiedAt);
+
+            _mockCvRepo.Verify(r => r.GetUserCvsAsync(userId), Times.Once);
+        }
+
+        [Fact]
+        public async Task GetCvDetailsAsync_ValidCvAndUser_ReturnsCvDetails()
+        {
+            // Arrange
+            var userId = "user-123";
+            var cvId = Guid.NewGuid();
+            var createdDate = DateTime.UtcNow.AddDays(-10);
+            var modifiedDate = DateTime.UtcNow.AddDays(-2);
+
+            var cvData = new CvDto
+            {
+                Basics = new CvBasicsDto
+                {
+                    FirstName = "John",
+                    LastName = "Doe",
+                    PhoneNumber = "123456789",
+                    Email = "johon@example.com",
+                    Summary = "Experienced software developer.",
+                    Location = new CvLocationDto { City = "New York", Country = "USA" },
+                },
+                Work = new List<CvWorkEntryDto>
+                {
+                    new CvWorkEntryDto
+                    {
+                        Company = "Tech Corp",
+                        Position = "Senior Developer",
+                        StartDate = "2020-01-01",
+                        EndDate = "Present",
+                        Description = "Leading a team of developers.",
+                    },
+                },
+                Education = new List<CvEducationEntryDto>
+                {
+                    new CvEducationEntryDto
+                    {
+                        Institution = "State University",
+                        Field = "Computer Science",
+                        Degree = "Bachelor's",
+                        StartDate = "2015-09-01",
+                        EndDate = "2019-06-30",
+                    },
+                },
+                Certificates = new List<CvCertificateEntryDto>(),
+                Skills = new List<string> { "C#", ".NET", "SQL" },
+                Languages = new List<CvLanguageEntryDto>(),
+            };
+            var cvJson = JsonSerializer.Serialize(
+                cvData,
+                new JsonSerializerOptions { PropertyNamingPolicy = JsonNamingPolicy.CamelCase }
+            );
+
+            var cv = new GeneratedCv
+            {
+                Id = cvId,
+                UserId = userId,
+                Name = "My CV",
+                TargetPosition = "Software Engineer",
+                IsDefault = true,
+                CvJson = cvJson, // ← Tu jest nasz JSON!
+                CreatedAt = createdDate,
+                LastModifiedAt = modifiedDate,
+                Version = 3,
+                Notes = "Important CV",
+            };
+
+            _mockCvRepo.Setup(r => r.BelongsToUserAsync(cvId, userId)).ReturnsAsync(true);
+            _mockCvRepo.Setup(r => r.GetByIdAsync(cvId)).ReturnsAsync(cv);
+
+            // Act
+            var result = await _service.GetCvDetailsAsync(cvId, userId);
+
+            // Assert
+            Assert.NotNull(result);
+
+            Assert.Equal(cvId, result.Id);
+            Assert.Equal("My CV", result.Name);
+            Assert.Equal("Software Engineer", result.TargetPosition);
+            Assert.True(result.IsDefault);
+            Assert.Equal(createdDate, result.CreatedAt);
+            Assert.Equal(modifiedDate, result.LastModifiedAt);
+            Assert.Equal(3, result.Version);
+            Assert.Equal("Important CV", result.Notes);
+
+            Assert.NotNull(result.CvData);
+            Assert.Equal("John", result.CvData.Basics.FirstName);
+            Assert.Equal("Doe", result.CvData.Basics.LastName);
+            Assert.Equal("123456789", result.CvData.Basics.PhoneNumber);
+            Assert.Equal("johon@example.com", result.CvData.Basics.Email);
+            Assert.Equal("Experienced software developer.", result.CvData.Basics.Summary);
+            Assert.Equal("New York", result.CvData.Basics.Location.City);
+            Assert.Equal("USA", result.CvData.Basics.Location.Country);
+            Assert.Single(result.CvData.Work);
+            Assert.Equal("Tech Corp", result.CvData.Work[0].Company);
+            Assert.Equal("Senior Developer", result.CvData.Work[0].Position);
+            Assert.Equal("2020-01-01", result.CvData.Work[0].StartDate);
+            Assert.Equal("Present", result.CvData.Work[0].EndDate);
+            Assert.Equal("Leading a team of developers.", result.CvData.Work[0].Description);
+            Assert.Single(result.CvData.Education);
+            Assert.Equal("State University", result.CvData.Education[0].Institution);
+            Assert.Equal("Computer Science", result.CvData.Education[0].Field);
+            Assert.Equal("Bachelor's", result.CvData.Education[0].Degree);
+            Assert.Equal("2015-09-01", result.CvData.Education[0].StartDate);
+            Assert.Equal("2019-06-30", result.CvData.Education[0].EndDate);
+            Assert.Empty(result.CvData.Certificates);
+            Assert.Equal(3, result.CvData.Skills.Count);
+            Assert.Empty(result.CvData.Languages);
+
+            _mockCvRepo.Verify(r => r.BelongsToUserAsync(cvId, userId), Times.Once);
+            _mockCvRepo.Verify(r => r.GetByIdAsync(cvId), Times.Once);
         }
     }
 }
