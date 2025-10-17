@@ -3,6 +3,7 @@
 import { useEffect, useState } from 'react';
 import { getUserProfile } from '@/lib/profile';
 import { useRouter } from 'next/navigation';
+import Link from 'next/link';
 import { UserProfile } from '@/lib/types/profile';
 import { toast } from 'sonner';
 import { ArrowLeft, ArrowRight, LogOut } from 'lucide-react';
@@ -439,6 +440,9 @@ export default function ProfileDetails() {
                     {isProfileEmpty ? 'Your Profile' : `${profile.firstName} ${profile.lastName}`}
                   </h1>
                   <div className="flex gap-2">
+                    <Button asChild variant="outline" className="rounded-md">
+                      <Link href="/payments">Subscription</Link>
+                    </Button>
                     <Button
                       onClick={handleEdit}
                       className="rounded-md bg-[#915EFF] hover:bg-[#b594fd]"
