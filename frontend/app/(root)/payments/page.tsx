@@ -67,15 +67,33 @@ interface SubscriptionStatusResponse {
   subscriptionId?: string | null;
 }
 
-const statusConfig: Record<SubscriptionStatusKey, { label: string; variant: 'default' | 'secondary' | 'destructive' | 'outline'; badgeClassName?: string }> = {
+const statusConfig: Record<
+  SubscriptionStatusKey,
+  {
+    label: string;
+    variant: 'default' | 'secondary' | 'destructive' | 'outline';
+    badgeClassName?: string;
+  }
+> = {
   active: { label: 'Active', variant: 'default' },
   trialing: { label: 'Trialing', variant: 'secondary' },
   canceled: { label: 'Canceled', variant: 'destructive' },
-  past_due: { label: 'Past due', variant: 'destructive', badgeClassName: 'bg-destructive/10 text-destructive border-destructive/40' },
-  expired: { label: 'Expired', variant: 'outline', badgeClassName: 'text-destructive border-destructive/60' },
+  past_due: {
+    label: 'Past due',
+    variant: 'destructive',
+    badgeClassName: 'bg-destructive/10 text-destructive border-destructive/40',
+  },
+  expired: {
+    label: 'Expired',
+    variant: 'outline',
+    badgeClassName: 'text-destructive border-destructive/60',
+  },
 };
 
-const historyStatusVariant: Record<HistoryStatus, 'default' | 'secondary' | 'destructive' | 'outline'> = {
+const historyStatusVariant: Record<
+  HistoryStatus,
+  'default' | 'secondary' | 'destructive' | 'outline'
+> = {
   completed: 'secondary',
   canceled: 'destructive',
   pending: 'outline',
@@ -176,86 +194,86 @@ const PaymentsPage: React.FC = () => {
   const [error, setError] = React.useState<string | null>(null);
   const [statusInfo, setStatusInfo] = React.useState<SubscriptionStatusResponse | null>(null);
 
-  const loadDashboard = React.useCallback(
-    async (options?: { signal?: AbortSignal }) => {
-      const { signal } = options ?? {};
-      setIsLoading(true);
-      setError(null);
+  const loadDashboard = React.useCallback(async (options?: { signal?: AbortSignal }) => {
+    const { signal } = options ?? {};
+    setIsLoading(true);
+    setError(null);
+
+    try {
+      const token = typeof window !== 'undefined' ? localStorage.getItem('token') : undefined;
+      const headers = {
+        'Content-Type': 'application/json',
+        ...(token ? { Authorization: `Bearer ${token}` } : {}),
+      };
+
+      const dashboardResponse = await fetch(new URL(DASHBOARD_ENDPOINT, API_BASE_URL).toString(), {
+        signal,
+        headers,
+      });
+
+      if (!dashboardResponse.ok) {
+        throw new Error(`Dashboard fetch failed: ${dashboardResponse.status}`);
+      }
+
+      const payload = (await dashboardResponse.json()) as SubscriptionDashboardResponse;
+      let nextSummary = payload.subscription ? { ...payload.subscription } : null;
+      setHistory(Array.isArray(payload.history) ? payload.history : []);
 
       try {
-        const token = typeof window !== 'undefined' ? localStorage.getItem('token') : undefined;
-        const headers = {
-          'Content-Type': 'application/json',
-          ...(token ? { Authorization: `Bearer ${token}` } : {}),
-        };
-
-        const dashboardResponse = await fetch(new URL(DASHBOARD_ENDPOINT, API_BASE_URL).toString(), {
-          signal,
-          headers,
-        });
-
-        if (!dashboardResponse.ok) {
-          throw new Error(`Dashboard fetch failed: ${dashboardResponse.status}`);
-        }
-
-        const payload = (await dashboardResponse.json()) as SubscriptionDashboardResponse;
-        let nextSummary = payload.subscription ? { ...payload.subscription } : null;
-        setHistory(Array.isArray(payload.history) ? payload.history : []);
-
-        try {
-          const statusResponse = await fetch(new URL(SUBSCRIPTION_STATUS_ENDPOINT, API_BASE_URL).toString(), {
+        const statusResponse = await fetch(
+          new URL(SUBSCRIPTION_STATUS_ENDPOINT, API_BASE_URL).toString(),
+          {
             signal,
             headers,
-          });
-
-          if (statusResponse.ok) {
-            const statusPayload = (await statusResponse.json()) as SubscriptionStatusResponse;
-            if (!signal?.aborted) {
-              setStatusInfo(statusPayload);
-              if (nextSummary) {
-                nextSummary = {
-                  ...nextSummary,
-                  status: statusPayload.subscriptionStatus ?? nextSummary.status,
-                  level: statusPayload.subscriptionLevel ?? nextSummary.level,
-                  currentPeriodEnd: statusPayload.subscriptionEndDate ?? nextSummary.currentPeriodEnd,
-                  subscriptionId: statusPayload.subscriptionId ?? nextSummary.subscriptionId,
-                };
-              }
-            }
-          } else if (statusResponse.status === 404) {
-            if (!signal?.aborted) {
-              setStatusInfo(null);
-            }
-          } else {
-            const message = await statusResponse.text();
-            throw new Error(message || `Status fetch failed: ${statusResponse.status}`);
           }
-        } catch (statusError) {
-          if ((statusError as DOMException).name === 'AbortError') return;
-          console.error('Failed to load subscription status', statusError);
+        );
+
+        if (statusResponse.ok) {
+          const statusPayload = (await statusResponse.json()) as SubscriptionStatusResponse;
+          if (!signal?.aborted) {
+            setStatusInfo(statusPayload);
+            if (nextSummary) {
+              nextSummary = {
+                ...nextSummary,
+                status: statusPayload.subscriptionStatus ?? nextSummary.status,
+                level: statusPayload.subscriptionLevel ?? nextSummary.level,
+                currentPeriodEnd: statusPayload.subscriptionEndDate ?? nextSummary.currentPeriodEnd,
+                subscriptionId: statusPayload.subscriptionId ?? nextSummary.subscriptionId,
+              };
+            }
+          }
+        } else if (statusResponse.status === 404) {
           if (!signal?.aborted) {
             setStatusInfo(null);
           }
+        } else {
+          const message = await statusResponse.text();
+          throw new Error(message || `Status fetch failed: ${statusResponse.status}`);
         }
-
+      } catch (statusError) {
+        if ((statusError as DOMException).name === 'AbortError') return;
+        console.error('Failed to load subscription status', statusError);
         if (!signal?.aborted) {
-          setSummary(nextSummary);
-        }
-      } catch (err) {
-        if ((err as DOMException).name === 'AbortError') return;
-        console.error('Failed to load subscription dashboard', err);
-        setError('Unable to load subscription details.');
-        setSummary(null);
-        setHistory([]);
-        setStatusInfo(null);
-      } finally {
-        if (!options?.signal?.aborted) {
-          setIsLoading(false);
+          setStatusInfo(null);
         }
       }
-    },
-    []
-  );
+
+      if (!signal?.aborted) {
+        setSummary(nextSummary);
+      }
+    } catch (err) {
+      if ((err as DOMException).name === 'AbortError') return;
+      console.error('Failed to load subscription dashboard', err);
+      setError('Unable to load subscription details.');
+      setSummary(null);
+      setHistory([]);
+      setStatusInfo(null);
+    } finally {
+      if (!options?.signal?.aborted) {
+        setIsLoading(false);
+      }
+    }
+  }, []);
 
   React.useEffect(() => {
     const controller = new AbortController();
@@ -289,6 +307,7 @@ const PaymentsPage: React.FC = () => {
 
     try {
       const token = typeof window !== 'undefined' ? localStorage.getItem('token') : undefined;
+
       const response = await fetch(new URL(CANCEL_SUBSCRIPTION_ENDPOINT, API_BASE_URL).toString(), {
         method: 'POST',
         headers: {
@@ -299,25 +318,59 @@ const PaymentsPage: React.FC = () => {
 
       if (!response.ok) {
         const message = await response.text();
-        throw new Error(message || 'Cancel request failed');
+        throw new Error(message || 'Failed to open billing portal');
       }
 
-      await loadDashboard();
+      // 🎯 KLUCZOWA ZMIANA: Odbierz URL z response
+      const data = await response.json();
+
+      // Backend może zwrócić "url" lub "Url" (C# używa PascalCase)
+      const portalUrl = data.url || data.Url;
+
+      if (!portalUrl) {
+        throw new Error('No portal URL received from server');
+      }
+
+      // 🚀 Otwórz Customer Portal w NOWEJ KARCIE
+      // Dlaczego nowa karta? User nie traci kontekstu gdzie był
+      const portalWindow = window.open(portalUrl, '_blank');
+
+      if (!portalWindow) {
+        // Popup został zablokowany przez przeglądarkę
+        throw new Error('Please allow popups to open the billing portal');
+      }
+
+      // ✅ Opcjonalnie: Pokaż message że portal się otworzył
+      // (możesz to usunąć jeśli nie potrzebujesz)
+      console.log('Customer Portal opened successfully');
+
+      // 🔄 Reload dashboard po 3 sekundach
+      // Czemu? Bo user może szybko zamknąć portal i wrócić
+      setTimeout(() => {
+        loadDashboard();
+      }, 3000);
     } catch (err) {
       console.error('Cancel subscription failed', err);
-      setError("We couldn't cancel the subscription. Please try again.");
+
+      // Lepszy error message w zależności od typu błędu
+      const errorMessage =
+        err instanceof Error
+          ? err.message
+          : "We couldn't open the billing portal. Please try again.";
+
+      setError(errorMessage);
     } finally {
       setIsCancelling(false);
     }
   }, [canCancel, loadDashboard]);
 
   return (
-    <main className="mx-auto flex w-full max-w-5xl flex-col gap-6 px-4 py-8 font-korbin lg:px-0">
+    <main className="font-korbin mx-auto flex w-full max-w-5xl flex-col gap-6 px-4 py-8 lg:px-0">
       <section className="space-y-2">
         <div className="flex items-center gap-3">
           <Link
             href="/"
-            className="inline-flex items-center gap-1 rounded-md border border-border/60 bg-background/80 px-2.5 py-1 text-sm font-medium text-muted-foreground transition hover:bg-accent hover:text-accent-foreground"
+            className="border-border/60 bg-background/80 text-muted-foreground hover:bg-accent hover:text-accent-foreground inline-flex items-center gap-1 rounded-md border px-2.5 py-1 text-sm font-medium transition"
           >
             <ArrowLeft className="h-4 w-4" />
             Home
@@ -330,16 +383,17 @@ const PaymentsPage: React.FC = () => {
       </section>
 
       {error && (
-        <div className="rounded-lg border border-destructive/40 bg-destructive/10 px-4 py-3 text-sm text-destructive">
+        <div className="border-destructive/40 bg-destructive/10 text-destructive rounded-lg border px-4 py-3 text-sm">
           {error}
         </div>
       )}
 
-      <Card className="border border-border/60 bg-background/60 shadow-sm backdrop-blur">
+      <Card className="border-border/60 bg-background/60 border shadow-sm backdrop-blur">
         <CardHeader>
           <CardTitle>Current plan</CardTitle>
           <CardDescription>
-            See the current status, plan details, renewal information, and token balance for your account.
+            See the current status, plan details, renewal information, and token balance for your
+            account.
           </CardDescription>
           <CardAction>
             {isLoading ? (
@@ -362,22 +416,27 @@ const PaymentsPage: React.FC = () => {
           {isLoading ? (
             <SubscriptionSummarySkeleton />
           ) : !summary ? (
-            <div className="rounded-lg border border-dashed border-border/70 bg-muted/10 p-4 text-sm text-muted-foreground">
-              You do not have an active subscription yet. Once a plan is activated, the details will appear here.
+            <div className="border-border/70 bg-muted/10 text-muted-foreground rounded-lg border border-dashed p-4 text-sm">
+              You do not have an active subscription yet. Once a plan is activated, the details will
+              appear here.
             </div>
           ) : (
             <>
               <div className="grid gap-6 sm:grid-cols-2">
                 <div>
-                  <p className="text-sm text-muted-foreground">Plan</p>
-                  <p className="mt-1 text-base font-medium">{summary.planName ?? 'Vocare subscription'}</p>
+                  <p className="text-muted-foreground text-sm">Plan</p>
+                  <p className="mt-1 text-base font-medium">
+                    {summary.planName ?? 'Vocare subscription'}
+                  </p>
                 </div>
                 <div>
-                  <p className="text-sm text-muted-foreground">Billing cycle</p>
-                  <p className="mt-1 text-base font-medium">{summary.billingCycle ?? 'Not specified'}</p>
+                  <p className="text-muted-foreground text-sm">Billing cycle</p>
+                  <p className="mt-1 text-base font-medium">
+                    {summary.billingCycle ?? 'Not specified'}
+                  </p>
                 </div>
                 <div>
-                  <p className="text-sm text-muted-foreground">Price</p>
+                  <p className="text-muted-foreground text-sm">Price</p>
                   <p className="mt-1 text-base font-medium">
                     {summary.price != null && summary.currency
                       ? currencyFormatter(summary.price, summary.currency)
@@ -385,13 +444,13 @@ const PaymentsPage: React.FC = () => {
                   </p>
                 </div>
                 <div>
-                  <p className="text-sm text-muted-foreground">Next renewal</p>
+                  <p className="text-muted-foreground text-sm">Next renewal</p>
                   <p className="mt-1 text-base font-medium">
                     {nextRenewalDate ? formatDate(nextRenewalDate) : 'No renewal scheduled'}
                   </p>
                 </div>
                 <div>
-                  <p className="text-sm text-muted-foreground">Auto-renewal</p>
+                  <p className="text-muted-foreground text-sm">Auto-renewal</p>
                   <p className="mt-1 text-base font-medium">
                     {summary.autoRenew === true
                       ? 'Enabled'
@@ -401,11 +460,11 @@ const PaymentsPage: React.FC = () => {
                   </p>
                 </div>
                 <div>
-                  <p className="text-sm text-muted-foreground">Token balance</p>
+                  <p className="text-muted-foreground text-sm">Token balance</p>
                   <p className="mt-1 text-base font-medium">{summary.tokenBalance}</p>
                 </div>
                 <div>
-                  <p className="text-sm text-muted-foreground">Last update</p>
+                  <p className="text-muted-foreground text-sm">Last update</p>
                   <p className="mt-1 text-base font-medium">{formatDate(summary.lastUpdated)}</p>
                 </div>
               </div>
@@ -427,7 +486,7 @@ const PaymentsPage: React.FC = () => {
               'Cancel subscription with one click'
             )}
           </Button>
-          <p className="text-sm text-muted-foreground">
+          <p className="text-muted-foreground text-sm">
             {canCancel
               ? 'Once confirmed, the subscription will be stopped immediately on the server side.'
               : 'Cancel will be available once you activate a subscription plan.'}
@@ -435,7 +494,7 @@ const PaymentsPage: React.FC = () => {
         </CardFooter>
       </Card>
 
-      <Card className="border border-border/60 bg-background/60 shadow-sm backdrop-blur">
+      <Card className="border-border/60 bg-background/60 border shadow-sm backdrop-blur">
         <CardHeader>
           <CardTitle>Payment history</CardTitle>
           <CardDescription>
@@ -446,31 +505,37 @@ const PaymentsPage: React.FC = () => {
           {isLoading ? (
             <HistorySkeleton />
           ) : history.length === 0 ? (
-            <p className="text-sm text-muted-foreground">No billing activity recorded yet.</p>
+            <p className="text-muted-foreground text-sm">No billing activity recorded yet.</p>
           ) : (
             <div className="space-y-4">
               {history.map((entry, index) => {
                 const normalizedStatus = normalizeHistoryStatus(entry.status);
                 const badgeVariant = historyStatusVariant[normalizedStatus] ?? 'outline';
-                const currencyLabel = entry.amount != null && entry.currency
-                  ? currencyFormatter(entry.amount, entry.currency)
-                  : null;
-                const tokenLabel = entry.tokenAmount !== 0
-                  ? `${entry.tokenAmount > 0 ? '+' : ''}${entry.tokenAmount} tokens`
-                  : null;
+                const currencyLabel =
+                  entry.amount != null && entry.currency
+                    ? currencyFormatter(entry.amount, entry.currency)
+                    : null;
+                const tokenLabel =
+                  entry.tokenAmount !== 0
+                    ? `${entry.tokenAmount > 0 ? '+' : ''}${entry.tokenAmount} tokens`
+                    : null;
 
                 return (
                   <React.Fragment key={entry.id}>
                     <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
                       <div className="space-y-1">
-                        <p className="text-sm font-medium text-foreground">{entry.title}</p>
+                        <p className="text-foreground text-sm font-medium">{entry.title}</p>
                         {entry.description && (
-                          <p className="text-sm text-muted-foreground">{entry.description}</p>
+                          <p className="text-muted-foreground text-sm">{entry.description}</p>
                         )}
-                        <p className="text-xs text-muted-foreground">{formatDateTime(entry.occurredAt)}</p>
+                        <p className="text-muted-foreground text-xs">
+                          {formatDateTime(entry.occurredAt)}
+                        </p>
                       </div>
                       <div className="flex flex-col items-start gap-2 text-sm sm:items-end">
-                        {currencyLabel && <span className="font-semibold text-foreground">{currencyLabel}</span>}
+                        {currencyLabel && (
+                          <span className="text-foreground font-semibold">{currencyLabel}</span>
+                        )}
                         {tokenLabel && <span className="text-muted-foreground">{tokenLabel}</span>}
                         <Badge variant={badgeVariant}>{entry.status}</Badge>
                       </div>
