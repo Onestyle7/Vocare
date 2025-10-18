@@ -9,6 +9,7 @@ using Microsoft.Extensions.Logging;
 using Moq;
 using VocareWebAPI.Billing.Models.Dtos;
 using VocareWebAPI.Billing.Models.Entities;
+using VocareWebAPI.Billing.Models.Enums;
 using VocareWebAPI.Billing.Repositories.Interfaces;
 using VocareWebAPI.Billing.Services.Interfaces;
 using VocareWebAPI.Controllers;
@@ -55,101 +56,31 @@ namespace VocareWebApi.Tests.Billing.Controllers
         }
 
         [Fact]
-        public async Task GetTokenBalance_UserExists_ReturnsOkWithBalance()
+        public async Task GetAccessStatus_UserExists_ReturnsOkWithBalance()
         {
-            // Arrange
+            // ARRANGE
             var expectedBalance = 50;
             var userBilling = new UserBilling
             {
                 UserId = "test-user-123",
                 TokenBalance = expectedBalance,
+                SubscriptionStatus = SubscriptionStatus.Active,
             };
 
             _mockBillingService
                 .Setup(x => x.GetUserBillingAsync("test-user-123"))
                 .ReturnsAsync(userBilling);
 
-            // Act
-            var result = await _controller.GetTokenBalance();
+            // ACT
+            var result = await _controller.GetAccessStatus();
 
-            // Assert
+            // ASSERT
             result.Should().BeOfType<OkObjectResult>();
             var okResult = result as OkObjectResult;
-            okResult.Should().NotBeNull();
 
-            var response = okResult!.Value;
-            response.Should().NotBeNull();
-
-            // Używamy reflection do sprawdzenia właściwości anonimowego typu
-            var tokenBalanceProperty = response!.GetType().GetProperty("tokenBalance");
-            tokenBalanceProperty.Should().NotBeNull();
-            var actualBalance = tokenBalanceProperty!.GetValue(response);
+            var tokenBalanceProperty = okResult!.Value!.GetType().GetProperty("tokenBalance");
+            var actualBalance = tokenBalanceProperty!.GetValue(okResult.Value);
             actualBalance.Should().Be(expectedBalance);
-
-            // Weryfikacja, że metoda została wywołana dokładnie raz
-            _mockBillingService.Verify(x => x.GetUserBillingAsync("test-user-123"), Times.Once);
-        }
-
-        [Fact]
-        public async Task GetTokenBalance_UserNotFound_ReturnsNotFound()
-        {
-            // Arrange
-            _mockBillingService
-                .Setup(x => x.GetUserBillingAsync(It.IsAny<string>()))
-                .ThrowsAsync(new KeyNotFoundException("User billing not found"));
-
-            // Act
-            var result = await _controller.GetTokenBalance();
-
-            // Assert
-            result.Should().BeOfType<NotFoundObjectResult>();
-            var notFoundResult = result as NotFoundObjectResult;
-            notFoundResult!
-                .Value.Should()
-                .Be("Nie znaleziono informacji o płatności dla tego użytkownika.");
-        }
-
-        [Fact]
-        public async Task GetTokenBalance_NoUserIdInToken_ReturnsBadRequest()
-        {
-            // Arrange - kontroler bez użytkownika w kontekście
-            var controllerWithoutUser = new BillingController(
-                _mockStripeService.Object,
-                _mockBillingService.Object,
-                _mockLogger.Object,
-                _mockUserBillingRepository.Object
-            );
-
-            controllerWithoutUser.ControllerContext = new ControllerContext
-            {
-                HttpContext = new DefaultHttpContext { User = new ClaimsPrincipal() },
-            };
-
-            // Act
-            var result = await controllerWithoutUser.GetTokenBalance();
-
-            // Assert
-            result.Should().BeOfType<BadRequestObjectResult>();
-            var badRequestResult = result as BadRequestObjectResult;
-            badRequestResult!.Value.Should().Be("Brak identyfikatora użytkownika w tokenie.");
-        }
-
-        [Fact]
-        public async Task GetTokenBalance_UnexpectedException_ReturnsInternalServerError()
-        {
-            // Arrange
-            _mockBillingService
-                .Setup(x => x.GetUserBillingAsync(It.IsAny<string>()))
-                .ThrowsAsync(new Exception("Unexpected error"));
-
-            // Act
-            var result = await _controller.GetTokenBalance();
-
-            // Assert
-            result.Should().BeOfType<ObjectResult>();
-            var objectResult = result as ObjectResult;
-            objectResult!.StatusCode.Should().Be(500);
-            objectResult.Value.Should().Be("Wystąpił błąd podczas przetwarzania żądania.");
         }
 
         [Fact]

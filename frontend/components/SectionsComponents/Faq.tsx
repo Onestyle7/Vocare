@@ -58,11 +58,11 @@ const Faq: React.FC = () => {
 
   return (
     <Section crosses customPaddings className="relative" crossesOffset id="faq">
-      <section className="relative flex h-[100vh] overflow-hidden max-xl:mt-[320px] xl:px-10">
-        <div className="my-10 flex w-full items-center justify-center bg-[#101014] dark:bg-[#F3F3F3]">
+      <section className="relative flex h-[100vh] 2xl:h-[50vh] overflow-hidden max-xl:mt-[320px] xl:px-10">
+        <div className="font-bold xl:mt-20 my-10 flex w-full items-center justify-center bg-[#101014] dark:bg-[#F3F3F3]">
           <div
             ref={textRef}
-            className="font-poppins flex w-full items-center justify-center text-3xl font-bold text-[#F3F3F3] xl:text-[180px] dark:text-[#101014]"
+            className="font-korbin flex w-full items-center justify-center text-3xl text-[#F3F3F3] xl:text-[180px] dark:text-[#101014]"
           >
             Ready to change your life?
           </div>

@@ -1,22 +1,15 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Net;
-using System.Net.Http;
 using System.Text;
 using System.Text.Json;
-using System.Threading;
-using System.Threading.Tasks;
 using FluentAssertions;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Moq;
 using Moq.Protected;
 using VocareWebAPI.Models;
-using VocareWebAPI.Models.Config;
-using VocareWebAPI.Models.Dtos.MarketAnalysis;
 using VocareWebAPI.Models.Entities;
 using VocareWebAPI.Models.Entities.MarketAnalysis;
+using VocareWebAPI.Models.OpenAIConfig;
 using VocareWebAPI.Repositories;
 using VocareWebAPI.Repositories.Interfaces;
 using VocareWebAPI.Services.Implementations;
@@ -54,7 +47,7 @@ namespace VocareWebApi.Tests.CareerAdvisor.Services
 
             // Setup konfiguracji
             var config = Options.Create(
-                new AiConfig
+                new OpenAIConfig
                 {
                     BaseUrl = "https://api.test.com",
                     ApiKey = "test-key",
