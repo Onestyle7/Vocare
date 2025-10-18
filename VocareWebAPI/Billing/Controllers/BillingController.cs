@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.RateLimiting;
 using Microsoft.Extensions.Logging;
 using Stripe;
 using VocareWebAPI.Billing.Models.Dtos;
+using VocareWebAPI.Billing.Models.Enums;
 using VocareWebAPI.Billing.Repositories.Interfaces;
 using VocareWebAPI.Billing.Services.Interfaces;
 
@@ -290,7 +291,7 @@ namespace VocareWebAPI.Controllers
 
             try
             {
-                // URL powrotu do Twojej aplikacji
+                // URL powrotu do aplikacji
                 var returnUrl = $"{Request.Scheme}://{Request.Host}/dashboard";
 
                 var portalUrl = await _stripeService.CreateCustomerPortalSessionAsync(
@@ -311,6 +312,97 @@ namespace VocareWebAPI.Controllers
             catch (Exception ex)
             {
                 _logger.LogError(ex, "Error creating customer portal for userId={UserId}", userId);
+                return StatusCode(500, new { Error = "An unexpected error occurred." });
+            }
+        }
+
+        [HttpPost("cancel-subsription")]
+        [Authorize]
+        public async Task<IActionResult> CancelSubscription()
+        {
+            try
+            {
+                var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+
+                if (string.IsNullOrEmpty(userId))
+                {
+                    _logger.LogWarning(
+                        "Unauthenticated user attempted to access cancel subscription."
+                    );
+                    return Unauthorized(new { Error = "User must be authenticated." });
+                }
+
+                var userBilling = await _billingService.GetUserBillingAsync(userId);
+
+                if (string.IsNullOrEmpty(userBilling.StripeSubscriptionId))
+                {
+                    _logger.LogWarning(
+                        "User {UserId} has no active subscription to cancel.",
+                        userId
+                    );
+                    return BadRequest(new { Error = "No active subscription to cancel." });
+                }
+
+                if (userBilling.SubscriptionStatus == SubscriptionStatus.Canceled)
+                {
+                    _logger.LogWarning(
+                        "User {UserId} attempted to cancel already canceled subscription",
+                        userId
+                    );
+                    return BadRequest(
+                        new
+                        {
+                            Error = "Subscription is already canceled.",
+                            SubscriptionEndDate = userBilling.SubscriptionEndDate,
+                        }
+                    );
+                }
+
+                var returnUrl = $"{Request.Scheme}://{Request.Host}/dashboard";
+
+                _logger.LogInformation(
+                    "Creating Customer Portal sesstion for userId={UserId} to cancel subscription.",
+                    userId
+                );
+                var portalUrl = await _stripeService.CreateCustomerPortalSessionAsync(
+                    userId,
+                    returnUrl
+                );
+
+                _logger.LogInformation(
+                    "Customer Portal URL created for userId={UserId}.",
+                    userId,
+                    portalUrl
+                );
+
+                return Ok(
+                    new
+                    {
+                        Url = portalUrl,
+                        Message = "Redirecting to customer portal where you can manage your subscription.",
+                    }
+                );
+            }
+            catch (KeyNotFoundException)
+            {
+                _logger.LogWarning(
+                    "User billing information not found during cancel subscription attempt."
+                );
+                return NotFound(new { Error = "User billing information not found." });
+            }
+            catch (InvalidOperationException ex)
+            {
+                _logger.LogError(ex, "User has no Stripe customer record.");
+                return BadRequest(new { Error = "User has no Stripe customer record." });
+            }
+            catch (StripeException ex)
+            {
+                _logger.LogError(ex, "Stripe error during cancel subscription process.");
+                return StatusCode(500, new { Error = "Error communicating with payment gateway." });
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Unexpected error during cancel subscription process.");
                 return StatusCode(500, new { Error = "An unexpected error occurred." });
             }
         }
