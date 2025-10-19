@@ -177,6 +177,336 @@ const RichTextToolbar = ({
   );
 };
 
+const formattingTokens: Record<FormattingType, { prefix: string; suffix: string }> = {
+  bold: { prefix: '**', suffix: '**' },
+  italic: { prefix: '_', suffix: '_' },
+  underline: { prefix: '__', suffix: '__' },
+};
+
+const TOKEN_MARKERS = ['**', '__', '_'] as const;
+
+const getTokenLengthAt = (value: string, index: number) => {
+  for (const marker of TOKEN_MARKERS) {
+    if (value.startsWith(marker, index)) {
+      return marker.length;
+    }
+  }
+  return 0;
+};
+
+const stripFormattingTokens = (value: string) => {
+  if (!value) return '';
+  let result = '';
+  for (let i = 0; i < value.length; ) {
+    const tokenLength = getTokenLengthAt(value, i);
+    if (tokenLength) {
+      i += tokenLength;
+      continue;
+    }
+    result += value[i];
+    i += 1;
+  }
+  return result;
+};
+
+const plainToTokenIndex = (value: string, plainIndex: number) => {
+  let tokenIndex = 0;
+  let plainCounter = 0;
+
+  while (tokenIndex < value.length && plainCounter < plainIndex) {
+    const tokenLength = getTokenLengthAt(value, tokenIndex);
+    if (tokenLength) {
+      tokenIndex += tokenLength;
+      continue;
+    }
+    tokenIndex += 1;
+    plainCounter += 1;
+  }
+
+  return tokenIndex;
+};
+
+const tokenToPlainIndex = (value: string, tokenIndex: number) => {
+  let idx = 0;
+  let plainCounter = 0;
+
+  while (idx < value.length && idx < tokenIndex) {
+    const tokenLength = getTokenLengthAt(value, idx);
+    if (tokenLength) {
+      idx += tokenLength;
+      continue;
+    }
+    idx += 1;
+    plainCounter += 1;
+  }
+
+  return plainCounter;
+};
+
+const wrapSelectionWithTokens = (
+  value: string,
+  selectionStart: number,
+  selectionEnd: number,
+  type: FormattingType
+) => {
+  if (selectionEnd <= selectionStart) {
+    return {
+      text: value,
+      selectionStart,
+      selectionEnd,
+    };
+  }
+
+  const token = formattingTokens[type];
+  const before = value.slice(0, selectionStart);
+  const selectedText = value.slice(selectionStart, selectionEnd);
+  const after = value.slice(selectionEnd);
+  const formatted = `${before}${token.prefix}${selectedText}${token.suffix}${after}`;
+  const newSelectionStart = selectionStart + token.prefix.length;
+  const newSelectionEnd = newSelectionStart + selectedText.length;
+  return {
+    text: formatted,
+    selectionStart: newSelectionStart,
+    selectionEnd: newSelectionEnd,
+  };
+};
+
+const detectTokenAt = (
+  value: string,
+  index: number
+): { type: FormattingType; length: number } | null => {
+  if (value.startsWith('**', index)) {
+    return { type: 'bold', length: 2 };
+  }
+  if (value.startsWith('__', index)) {
+    return { type: 'underline', length: 2 };
+  }
+  if (value.startsWith('_', index)) {
+    return { type: 'italic', length: 1 };
+  }
+  return null;
+};
+
+const parseFormattingRanges = (
+  value: string
+): Record<
+  FormattingType,
+  Array<{ plainStart: number; plainEnd: number; tokenStart: number; suffixIndex: number }>
+> => {
+  const stack: Record<FormattingType, Array<{ tokenIndex: number; plainIndex: number }>> = {
+    bold: [],
+    italic: [],
+    underline: [],
+  };
+  const ranges: Record<
+    FormattingType,
+    Array<{ plainStart: number; plainEnd: number; tokenStart: number; suffixIndex: number }>
+  > = {
+    bold: [],
+    italic: [],
+    underline: [],
+  };
+
+  let tokenIndex = 0;
+  let plainIndex = 0;
+
+  while (tokenIndex < value.length) {
+    const token = detectTokenAt(value, tokenIndex);
+    if (token) {
+      const { type, length } = token;
+      if (stack[type].length > 0) {
+        const start = stack[type].pop()!;
+        ranges[type].push({
+          plainStart: start.plainIndex,
+          plainEnd: plainIndex,
+          tokenStart: start.tokenIndex,
+          suffixIndex: tokenIndex,
+        });
+      } else {
+        stack[type].push({ tokenIndex, plainIndex });
+      }
+      tokenIndex += length;
+      continue;
+    }
+
+    tokenIndex += 1;
+    plainIndex += 1;
+  }
+
+  return ranges;
+};
+
+const isStyleActiveInRange = (
+  ranges: Array<{ plainStart: number; plainEnd: number }>,
+  start: number,
+  end: number,
+  plainLength: number
+) => {
+  if (!ranges.length) return false;
+
+  if (start === end) {
+    if (plainLength === 0) return false;
+    const pos = Math.max(0, Math.min(start, plainLength - 1));
+    return ranges.some((range) => pos >= range.plainStart && pos < range.plainEnd);
+  }
+
+  return ranges.some((range) => start >= range.plainStart && end <= range.plainEnd);
+};
+
+const computeFormattingState = (
+  value: string,
+  selectionStartPlain: number,
+  selectionEndPlain: number
+): FormattingState => {
+  const plainLength = stripFormattingTokens(value).length;
+  const start = Math.max(0, Math.min(selectionStartPlain, plainLength));
+  const end = Math.max(0, Math.min(selectionEndPlain, plainLength));
+  const normalizedEnd = Math.max(start, end);
+  const ranges = parseFormattingRanges(value);
+
+  return {
+    bold: isStyleActiveInRange(ranges.bold, start, normalizedEnd, plainLength),
+    italic: isStyleActiveInRange(ranges.italic, start, normalizedEnd, plainLength),
+    underline: isStyleActiveInRange(ranges.underline, start, normalizedEnd, plainLength),
+  };
+};
+
+const mergePlainWithTokens = (tokenValue: string, plainValue: string) => {
+  let result = '';
+  let tokenIndex = 0;
+  let plainIndex = 0;
+
+  while (tokenIndex < tokenValue.length && plainIndex < plainValue.length) {
+    const tokenLength = getTokenLengthAt(tokenValue, tokenIndex);
+    if (tokenLength) {
+      result += tokenValue.slice(tokenIndex, tokenIndex + tokenLength);
+      tokenIndex += tokenLength;
+      continue;
+    }
+
+    result += plainValue[plainIndex];
+    tokenIndex += 1;
+    plainIndex += 1;
+  }
+
+  if (plainIndex < plainValue.length) {
+    result += plainValue.slice(plainIndex);
+  }
+
+  while (tokenIndex < tokenValue.length) {
+    const tokenLength = getTokenLengthAt(tokenValue, tokenIndex);
+    if (tokenLength) {
+      result += tokenValue.slice(tokenIndex, tokenIndex + tokenLength);
+      tokenIndex += tokenLength;
+    } else {
+      tokenIndex += 1;
+    }
+  }
+
+  return result;
+};
+
+const toggleFormatting = (
+  type: FormattingType,
+  value: string,
+  selectionStartPlain: number,
+  selectionEndPlain: number
+) => {
+  const plainLength = stripFormattingTokens(value).length;
+  const start = Math.max(0, Math.min(selectionStartPlain, plainLength));
+  const end = Math.max(0, Math.min(selectionEndPlain, plainLength));
+  const normalizedEnd = Math.max(start, end);
+
+  if (start === normalizedEnd) {
+    return null;
+  }
+
+  const ranges = parseFormattingRanges(value);
+  const rangeToToggle = ranges[type].find(
+    (range) => start >= range.plainStart && normalizedEnd <= range.plainEnd
+  );
+
+  if (rangeToToggle) {
+    const token = formattingTokens[type];
+    const content = value.slice(
+      rangeToToggle.tokenStart + token.prefix.length,
+      rangeToToggle.suffixIndex
+    );
+    const newValue =
+      value.slice(0, rangeToToggle.tokenStart) +
+      content +
+      value.slice(rangeToToggle.suffixIndex + token.suffix.length);
+
+    return {
+      value: newValue,
+      selectionStart: start,
+      selectionEnd: start + (normalizedEnd - start),
+    };
+  }
+
+  const tokenSelectionStart = plainToTokenIndex(value, start);
+  const tokenSelectionEnd = plainToTokenIndex(value, normalizedEnd);
+  const wrapped = wrapSelectionWithTokens(value, tokenSelectionStart, tokenSelectionEnd, type);
+  if (wrapped.text === value) {
+    return null;
+  }
+
+  const newPlainStart = tokenToPlainIndex(wrapped.text, wrapped.selectionStart);
+  const newPlainEnd = tokenToPlainIndex(wrapped.text, wrapped.selectionEnd);
+
+  return {
+    value: wrapped.text,
+    selectionStart: newPlainStart,
+    selectionEnd: newPlainEnd,
+  };
+};
+
+const escapeHtml = (input: string) =>
+  input
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#39;');
+
+const formatRichTextToHtml = (input: string) => {
+  if (!input) return '';
+  let html = escapeHtml(input);
+  html = html.replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>');
+  html = html.replace(/__(.+?)__/g, '<span style="text-decoration: underline;">$1</span>');
+  html = html.replace(/_(.+?)_/g, '<em>$1</em>');
+  html = html.replace(/\n/g, '<br />');
+  return html;
+};
+
+const applyFormattingToTextarea = (
+  type: FormattingType,
+  textarea: HTMLTextAreaElement | null,
+  currentValue: string,
+  onValueChange: (value: string) => void,
+  refLookup?: () => HTMLTextAreaElement | null,
+  afterUpdate?: (params: { value: string; selectionStart: number; selectionEnd: number }) => void
+) => {
+  if (!textarea) return;
+  const selectionStart = textarea.selectionStart ?? 0;
+  const selectionEnd = textarea.selectionEnd ?? selectionStart;
+
+  const toggleResult = toggleFormatting(type, currentValue, selectionStart, selectionEnd);
+  if (!toggleResult) return;
+
+  onValueChange(toggleResult.value);
+
+  const updateSelection = () => {
+    const target = refLookup ? refLookup() : textarea;
+    if (!target) return;
+    target.focus();
+    target.setSelectionRange(toggleResult.selectionStart, toggleResult.selectionEnd);
+    afterUpdate?.(toggleResult);
+  };
+
+  requestAnimationFrame(updateSelection);
+};
+
 const makeExperienceId = () =>
   `${Date.now()}-${Math.random().toString(36).slice(2, 8)}`;
 
@@ -397,9 +727,32 @@ const CVCreator: React.FC<CVCreatorProps> = ({ initialCv }) => {
     localStorage.setItem('sectionOrder', JSON.stringify(sectionOrder));
   }, [sectionOrder]);
 
-  useEffect(() => {
-    requestAnimationFrame(() => updateSummaryFormattingFromSelection());
+  const updateSummaryFormattingFromSelection = React.useCallback(() => {
+    const textarea = summaryTextareaRef.current;
+    if (!textarea) return;
+    const selectionStart = textarea.selectionStart ?? 0;
+    const selectionEnd = textarea.selectionEnd ?? selectionStart;
+    const nextFormatting = computeFormattingState(
+      personalInfo.summary || '',
+      selectionStart,
+      selectionEnd
+    );
+
+    setSummaryFormatting((prev) => {
+      if (
+        prev.bold === nextFormatting.bold &&
+        prev.italic === nextFormatting.italic &&
+        prev.underline === nextFormatting.underline
+      ) {
+        return prev;
+      }
+      return nextFormatting;
+    });
   }, [personalInfo.summary]);
+
+  useEffect(() => {
+    requestAnimationFrame(updateSummaryFormattingFromSelection);
+  }, [updateSummaryFormattingFromSelection]);
 
   useEffect(() => {
     setExperienceFormattingState((prev) => {
@@ -747,331 +1100,6 @@ const CVCreator: React.FC<CVCreatorProps> = ({ initialCv }) => {
     el.scrollIntoView({ behavior: 'smooth', block: 'center' });
   };
 
-  // old pagination helpers removed (replaced by scrollToPage)
-
-  const formattingTokens: Record<FormattingType, { prefix: string; suffix: string }> = {
-    bold: { prefix: '**', suffix: '**' },
-    italic: { prefix: '_', suffix: '_' },
-    underline: { prefix: '__', suffix: '__' },
-  };
-
-  const TOKEN_MARKERS = ['**', '__', '_'] as const;
-
-  const getTokenLengthAt = (value: string, index: number) => {
-    for (const marker of TOKEN_MARKERS) {
-      if (value.startsWith(marker, index)) {
-        return marker.length;
-      }
-    }
-    return 0;
-  };
-
-  const stripFormattingTokens = (value: string) => {
-    if (!value) return '';
-    let result = '';
-    for (let i = 0; i < value.length; ) {
-      const tokenLength = getTokenLengthAt(value, i);
-      if (tokenLength) {
-        i += tokenLength;
-        continue;
-      }
-      result += value[i];
-      i += 1;
-    }
-    return result;
-  };
-
-  const plainToTokenIndex = (value: string, plainIndex: number) => {
-    let tokenIndex = 0;
-    let plainCounter = 0;
-
-    while (tokenIndex < value.length && plainCounter < plainIndex) {
-      const tokenLength = getTokenLengthAt(value, tokenIndex);
-      if (tokenLength) {
-        tokenIndex += tokenLength;
-        continue;
-      }
-      tokenIndex += 1;
-      plainCounter += 1;
-    }
-
-    return tokenIndex;
-  };
-
-  const tokenToPlainIndex = (value: string, tokenIndex: number) => {
-    let idx = 0;
-    let plainCounter = 0;
-
-    while (idx < value.length && idx < tokenIndex) {
-      const tokenLength = getTokenLengthAt(value, idx);
-      if (tokenLength) {
-        idx += tokenLength;
-        continue;
-      }
-      idx += 1;
-      plainCounter += 1;
-    }
-
-    return plainCounter;
-  };
-
-  const mergePlainWithTokens = (tokenValue: string, plainValue: string) => {
-    let result = '';
-    let tokenIndex = 0;
-    let plainIndex = 0;
-
-    while (tokenIndex < tokenValue.length && plainIndex < plainValue.length) {
-      const tokenLength = getTokenLengthAt(tokenValue, tokenIndex);
-      if (tokenLength) {
-        result += tokenValue.slice(tokenIndex, tokenIndex + tokenLength);
-        tokenIndex += tokenLength;
-        continue;
-      }
-
-      result += plainValue[plainIndex];
-      tokenIndex += 1;
-      plainIndex += 1;
-    }
-
-    if (plainIndex < plainValue.length) {
-      result += plainValue.slice(plainIndex);
-    }
-
-    while (tokenIndex < tokenValue.length) {
-      const tokenLength = getTokenLengthAt(tokenValue, tokenIndex);
-      if (tokenLength) {
-        result += tokenValue.slice(tokenIndex, tokenIndex + tokenLength);
-        tokenIndex += tokenLength;
-      } else {
-        tokenIndex += 1;
-      }
-    }
-
-    return result;
-  };
-
-  const wrapSelectionWithTokens = (
-    value: string,
-    selectionStart: number,
-    selectionEnd: number,
-    type: FormattingType
-  ) => {
-    if (selectionEnd <= selectionStart) {
-      return {
-        text: value,
-        selectionStart,
-        selectionEnd,
-      };
-    }
-
-    const token = formattingTokens[type];
-    const before = value.slice(0, selectionStart);
-    const selectedText = value.slice(selectionStart, selectionEnd);
-    const after = value.slice(selectionEnd);
-    const formatted = `${before}${token.prefix}${selectedText}${token.suffix}${after}`;
-    const newSelectionStart = selectionStart + token.prefix.length;
-    const newSelectionEnd = newSelectionStart + selectedText.length;
-    return {
-      text: formatted,
-      selectionStart: newSelectionStart,
-      selectionEnd: newSelectionEnd,
-    };
-  };
-
-  const detectTokenAt = (
-    value: string,
-    index: number
-  ): { type: FormattingType; length: number } | null => {
-    if (value.startsWith('**', index)) {
-      return { type: 'bold', length: 2 };
-    }
-    if (value.startsWith('__', index)) {
-      return { type: 'underline', length: 2 };
-    }
-    if (value.startsWith('_', index)) {
-      return { type: 'italic', length: 1 };
-    }
-    return null;
-  };
-
-  const parseFormattingRanges = (
-    value: string
-  ): Record<FormattingType, Array<{ plainStart: number; plainEnd: number; tokenStart: number; suffixIndex: number }>> => {
-    const stack: Record<FormattingType, Array<{ tokenIndex: number; plainIndex: number }>> = {
-      bold: [],
-      italic: [],
-      underline: [],
-    };
-    const ranges: Record<FormattingType, Array<{ plainStart: number; plainEnd: number; tokenStart: number; suffixIndex: number }>> = {
-      bold: [],
-      italic: [],
-      underline: [],
-    };
-
-    let tokenIndex = 0;
-    let plainIndex = 0;
-
-    while (tokenIndex < value.length) {
-      const token = detectTokenAt(value, tokenIndex);
-      if (token) {
-        const { type, length } = token;
-        if (stack[type].length > 0) {
-          const start = stack[type].pop()!;
-          ranges[type].push({
-            plainStart: start.plainIndex,
-            plainEnd: plainIndex,
-            tokenStart: start.tokenIndex,
-            suffixIndex: tokenIndex,
-          });
-        } else {
-          stack[type].push({ tokenIndex, plainIndex });
-        }
-        tokenIndex += length;
-        continue;
-      }
-
-      tokenIndex += 1;
-      plainIndex += 1;
-    }
-
-    return ranges;
-  };
-
-  const isStyleActiveInRange = (
-    ranges: Array<{ plainStart: number; plainEnd: number }>,
-    start: number,
-    end: number,
-    plainLength: number
-  ) => {
-    if (!ranges.length) return false;
-
-    if (start === end) {
-      if (plainLength === 0) return false;
-      const pos = Math.max(0, Math.min(start, plainLength - 1));
-      return ranges.some((range) => pos >= range.plainStart && pos < range.plainEnd);
-    }
-
-    return ranges.some((range) => start >= range.plainStart && end <= range.plainEnd);
-  };
-
-  const computeFormattingState = (
-    value: string,
-    selectionStartPlain: number,
-    selectionEndPlain: number
-  ): FormattingState => {
-    const plainLength = stripFormattingTokens(value).length;
-    const start = Math.max(0, Math.min(selectionStartPlain, plainLength));
-    const end = Math.max(0, Math.min(selectionEndPlain, plainLength));
-    const normalizedEnd = Math.max(start, end);
-    const ranges = parseFormattingRanges(value);
-
-    return {
-      bold: isStyleActiveInRange(ranges.bold, start, normalizedEnd, plainLength),
-      italic: isStyleActiveInRange(ranges.italic, start, normalizedEnd, plainLength),
-      underline: isStyleActiveInRange(ranges.underline, start, normalizedEnd, plainLength),
-    };
-  };
-
-  const toggleFormatting = (
-    type: FormattingType,
-    value: string,
-    selectionStartPlain: number,
-    selectionEndPlain: number
-  ) => {
-    const plainLength = stripFormattingTokens(value).length;
-    const start = Math.max(0, Math.min(selectionStartPlain, plainLength));
-    const end = Math.max(0, Math.min(selectionEndPlain, plainLength));
-    const normalizedEnd = Math.max(start, end);
-
-    if (start === normalizedEnd) {
-      return null;
-    }
-
-    const ranges = parseFormattingRanges(value);
-    const rangeToToggle = ranges[type].find(
-      (range) => start >= range.plainStart && normalizedEnd <= range.plainEnd
-    );
-
-    if (rangeToToggle) {
-      const token = formattingTokens[type];
-      const content = value.slice(
-        rangeToToggle.tokenStart + token.prefix.length,
-        rangeToToggle.suffixIndex
-      );
-      const newValue =
-        value.slice(0, rangeToToggle.tokenStart) +
-        content +
-        value.slice(rangeToToggle.suffixIndex + token.suffix.length);
-
-      return {
-        value: newValue,
-        selectionStart: start,
-        selectionEnd: start + (normalizedEnd - start),
-      };
-    }
-
-    const tokenSelectionStart = plainToTokenIndex(value, start);
-    const tokenSelectionEnd = plainToTokenIndex(value, normalizedEnd);
-    const wrapped = wrapSelectionWithTokens(value, tokenSelectionStart, tokenSelectionEnd, type);
-    if (wrapped.text === value) {
-      return null;
-    }
-
-    const newPlainStart = tokenToPlainIndex(wrapped.text, wrapped.selectionStart);
-    const newPlainEnd = tokenToPlainIndex(wrapped.text, wrapped.selectionEnd);
-
-    return {
-      value: wrapped.text,
-      selectionStart: newPlainStart,
-      selectionEnd: newPlainEnd,
-    };
-  };
-
-  const escapeHtml = (input: string) =>
-    input
-      .replace(/&/g, '&amp;')
-      .replace(/</g, '&lt;')
-      .replace(/>/g, '&gt;')
-      .replace(/"/g, '&quot;')
-      .replace(/'/g, '&#39;');
-
-  const formatRichTextToHtml = (input: string) => {
-    if (!input) return '';
-    let html = escapeHtml(input);
-    html = html.replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>');
-    html = html.replace(/__(.+?)__/g, '<span style="text-decoration: underline;">$1</span>');
-    html = html.replace(/_(.+?)_/g, '<em>$1</em>');
-    html = html.replace(/\n/g, '<br />');
-    return html;
-  };
-
-  const applyFormattingToTextarea = (
-    type: FormattingType,
-    textarea: HTMLTextAreaElement | null,
-    currentValue: string,
-    onValueChange: (value: string) => void,
-    refLookup?: () => HTMLTextAreaElement | null,
-    afterUpdate?: (params: { value: string; selectionStart: number; selectionEnd: number }) => void
-  ) => {
-    if (!textarea) return;
-    const selectionStart = textarea.selectionStart ?? 0;
-    const selectionEnd = textarea.selectionEnd ?? selectionStart;
-
-    const toggleResult = toggleFormatting(type, currentValue, selectionStart, selectionEnd);
-    if (!toggleResult) return;
-
-    onValueChange(toggleResult.value);
-
-    const updateSelection = () => {
-      const target = refLookup ? refLookup() : textarea;
-      if (!target) return;
-      target.focus();
-      target.setSelectionRange(toggleResult.selectionStart, toggleResult.selectionEnd);
-      afterUpdate?.(toggleResult);
-    };
-
-    requestAnimationFrame(updateSelection);
-  };
 
   const handleSummaryFormatting = (type: FormattingType) => {
     applyFormattingToTextarea(
@@ -1115,14 +1143,6 @@ const CVCreator: React.FC<CVCreatorProps> = ({ initialCv }) => {
           [eduId]: computeFormattingState(value, selectionStart, selectionEnd),
         }))
     );
-  };
-
-  const updateSummaryFormattingFromSelection = () => {
-    const textarea = summaryTextareaRef.current;
-    if (!textarea) return;
-    const selectionStart = textarea.selectionStart ?? 0;
-    const selectionEnd = textarea.selectionEnd ?? selectionStart;
-    setSummaryFormatting(computeFormattingState(personalInfo.summary || '', selectionStart, selectionEnd));
   };
 
   const updateExperienceFormattingFromSelection = (id: string) => {
