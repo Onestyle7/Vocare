@@ -316,7 +316,7 @@ namespace VocareWebAPI.Controllers
             }
         }
 
-        [HttpPost("cancel-subsription")]
+        [HttpPost("cancel-subscription")]
         [Authorize]
         public async Task<IActionResult> CancelSubscription()
         {
