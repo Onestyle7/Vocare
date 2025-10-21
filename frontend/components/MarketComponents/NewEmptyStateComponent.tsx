@@ -95,7 +95,7 @@ const NewEmptyStateComponent = ({
       <div className="mx-10 flex flex-col items-center space-y-10 lg:border-t">
         {/* Header */}
         <div className="mt-10 flex flex-col items-center justify-center">
-          <h1 className="font-poppins text-3xl font-bold max-md:text-center">
+          <h1 className="font-poppins text-3xl font-bold max-md:text-center font-korbin">
             How to use AI Market analiser?
           </h1>
           <p className="font-poppins text-md mt-4 text-gray-500">It&apos;s that simple.</p>
@@ -121,7 +121,7 @@ const NewEmptyStateComponent = ({
                 </div>
                 <div className="mt-4 h-full w-full items-center justify-start">
                   <p className="text-muted-foreground text-lg">
-                    Start by updating <b>Your profile</b>. Simply use the <i>profile</i> button
+                    Add skills, experience, location, and salary goals. The more context you share, the sharper the market signals.
                   </p>
                 </div>
                 <div className="w-full">
@@ -161,8 +161,7 @@ const NewEmptyStateComponent = ({
                 </div>
                 <div className="mt-4 h-full w-full items-center justify-start">
                   <p className="text-muted-foreground text-lg">
-                    After updating Your profile, you&apos;ll gain access to every <br />{' '}
-                    <b>AI tool</b> that Vocare offers.
+                    We’ll rank your top career bets. These become seeds for market analysis (trends, skills, salaries, growth).
                   </p>
                 </div>
                 <div className="w-full">
@@ -202,8 +201,7 @@ const NewEmptyStateComponent = ({
                 </div>
                 <div className="mt-4 h-full w-full items-center justify-start">
                   <p className="text-muted-foreground text-lg">
-                    Use <b>AI Career Advisor</b> and generate market analysis based on the
-                    recommended career paths.
+                    Explore key trends, in-demand skills, salary ranges, employment rates, and growth forecasts for your target role and region.
                   </p>
                 </div>
                 <div className="w-full">
@@ -211,14 +209,14 @@ const NewEmptyStateComponent = ({
                     href="/profile"
                     className="text-md text-muted-foreground group flex flex-row items-center transition-all duration-300"
                   >
-                    Navigate to AI Career Advisor
+                    {/* Navigate to AI Career Advisor
                     <Image
                       src={upper_arrow}
                       alt="arrow"
                       width={24}
                       height={24}
                       className="ml-1 scale-90 opacity-50 transition-transform duration-300 group-hover:translate-x-2 dark:invert"
-                    />
+                    /> */}
                   </Link>
                 </div>
               </div>

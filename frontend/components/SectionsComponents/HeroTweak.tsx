@@ -64,8 +64,7 @@ const HeroTweak = () => {
             </Copy>
             <Copy>
               <h2 className="text-muted-foreground ibm-plex-mono-regular mt-8 max-w-xl px-4 text-center text-sm max-md:block sm:mt-4 sm:text-base md:px-0 md:text-left md:text-lg lg:text-base xl:text-sm">
-                An intelligent AI-powered career advisor that analyzes your skills, goals, and
-                market trends to guide you toward the best professional path.
+                Vocare is an AI career advisor that turns your profile into clear career bets, live market signals, and an ATS-ready resume-so you know what to do next, today.
               </h2>
             </Copy>
 
@@ -78,11 +77,12 @@ const HeroTweak = () => {
                 className="group font-korbin mt-4 flex cursor-none items-center justify-center overflow-hidden max-md:mt-10"
               >
                 <span className="flex flex-row">
-                  Try it out
+                  Get my plan
                   <ArrowRight className="ml-2 scale-75 transition-transform duration-300 group-hover:translate-x-2" />
                 </span>
               </CustomButton>
             </Link>
+            {/* <p className='mt-2 text-xs text-gray-500'>Private by default. You control your data.</p> */}
           </div>
           <div className="flex h-full flex-col items-center justify-center max-md:mt-20 sm:w-full lg:w-1/2 2xl:w-1/4 2xl:items-end">
             <SpinningText>learn more • earn more • grow more •</SpinningText>
@@ -125,12 +125,15 @@ const HeroTweak = () => {
 
       <div className="relative mt-14 flex flex-col items-center justify-center border-gray-300 px-[40px] max-md:mt-40 dark:border-gray-600/30">
         <div className="font-korbin mb-2 flex h-full flex-col items-center justify-center">
-          <h3 className="font-bold text-gray-400">Meet Us</h3>
+          <p className="font-bold text-gray-400">Meet Us</p>
           <Copy>
-            <h1 className="text-color mt-8 text-center text-4xl font-bold md:text-[4rem] xl:leading-[0.8]">
-              Our Vision
-            </h1>
+            <p className="text-color mt-8 text-center text-4xl font-bold md:text-[4rem] xl:leading-[0.8]">
+              What You get?
+            </p>
           </Copy>
+          <h2 className='text-gray-400 mt-4 font-poppins max-md:text-center'>
+            Career Outcomes, Market Insight & ATS-Ready Resume
+          </h2>
         </div>
       </div>
       <ScrollParallax isAbsolutelyPositioned zIndex={20}>

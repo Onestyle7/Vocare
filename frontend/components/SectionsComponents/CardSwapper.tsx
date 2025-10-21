@@ -1,6 +1,7 @@
 import CardSwap, { Card } from '@/components/CardSwap/CardSwap';
-import { ArrowUp, FileQuestion, PencilLine } from 'lucide-react';
+import { ArrowRight, ArrowUp, FileQuestion, PencilLine } from 'lucide-react';
 import React from 'react';
+import CustomButton from '../ui/CustomButton';
 
 const CardFeature = () => {
   return (
@@ -9,6 +10,17 @@ const CardFeature = () => {
         <div className="text-center sm:text-left">
           <p className="mb-6 font-bold text-gray-400">All Your Tools Together.</p>
           <h2 className="text-4xl font-bold">Compact Powerhouse.</h2>
+          <div className='w-full flex items-center justify-center sm:justify-start'>
+            <CustomButton
+                  variant="primary"
+                  className="group font-korbin mt-8 flex cursor-none items-center justify-center overflow-hidden"
+                >
+                  <span className="flex flex-row">
+                    Get my plan
+                    <ArrowRight className="ml-2 scale-75 transition-transform duration-300 group-hover:translate-x-2" />
+                  </span>
+                </CustomButton>
+          </div>
         </div>
       </div>
 

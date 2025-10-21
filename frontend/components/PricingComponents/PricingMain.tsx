@@ -308,8 +308,7 @@ const PricingMain = () => {
               </h1>
             </Copy>
             <p className="text-md mt-4 w-3/4 text-center font-light text-gray-300 sm:mt-2 sm:text-lg">
-              Select plan plan that fits You the most to unlock full potential and rocket Your
-              career.
+               Start free. Choose a token plan when you’re ready. No longterm contracts. No credit card to try.
             </p>
           </div>
 
