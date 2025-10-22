@@ -7,7 +7,7 @@ import { companies, shape1, Spinner } from '@/app/constants';
 import { ArrowRight } from 'lucide-react';
 import Link from 'next/link';
 import { ScrollParallax } from 'react-just-parallax';
-import CustomButton from '@/components/ui/CustomButton';
+// import CustomButton from '@/components/ui/CustomButton';
 import { SpinningText } from '@/components/magicui/spinning-text';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { SplitText } from 'gsap/SplitText';

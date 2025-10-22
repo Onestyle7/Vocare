@@ -1,11 +1,28 @@
+'use client';
+
 import React from 'react';
 import { contact_pages, down_links, links_pages, links_social } from '@/app/constants';
 import Link from 'next/link';
 import { Input } from '@/components/ui/input';
 import Section from '../SupportComponents/Section';
 import ButtonGenerate from '../ui/ButtonGenerate';
+import { toast } from 'sonner';
 
 const Footer = () => {
+  const reachUsEmail = 'vocare@testmail.com';
+
+  const handleReachUsClick = React.useCallback(() => {
+    void navigator.clipboard
+      .writeText(reachUsEmail)
+      .then(() => {
+        toast.success('Email copied to clipboard');
+      })
+      .catch((error) => {
+        console.error('Failed to copy email address', error);
+        toast.error('Could not copy email');
+      });
+  }, []);
+
   return (
     <Section
       className="font-korbin relative -mt-[2.25rem] pt-[7.5rem] xl:px-10"
@@ -20,7 +37,7 @@ const Footer = () => {
             <ButtonGenerate
               as="a"
               href="/profile"
-              className="mb-12 uppercase max-md:w-full sm:my-20"
+              className="mb-4 uppercase max-md:w-full sm:my-20"
             >
               Try Vocare
             </ButtonGenerate>
@@ -75,7 +92,17 @@ const Footer = () => {
                   {contact_pages.map((link, index) => (
                     <ul className="flex text-sm" key={index}>
                       <li>
-                        <Link href={link.url}>{link.name}</Link>
+                        {link.name.toLowerCase() === 'reach us' ? (
+                          <button
+                            type="button"
+                            onClick={handleReachUsClick}
+                            className="cursor-pointer text-left text-current"
+                          >
+                            {link.name}
+                          </button>
+                        ) : (
+                          <Link href={link.url}>{link.name}</Link>
+                        )}
                       </li>
                     </ul>
                   ))}

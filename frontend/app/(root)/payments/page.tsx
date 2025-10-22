@@ -45,65 +45,71 @@ const PaymentsPage: React.FC = () => {
     return key === 'active' || key === 'trialing';
   }, []);
 
-  const fetchSubscriptionState = React.useCallback(async (options?: { signal?: AbortSignal }) => {
-    const { signal } = options ?? {};
-    setIsLoading(true);
-    setError(null);
+  const fetchSubscriptionState = React.useCallback(
+    async (options?: { signal?: AbortSignal }) => {
+      const { signal } = options ?? {};
+      setIsLoading(true);
+      setError(null);
 
-    try {
-      const token = typeof window !== 'undefined' ? localStorage.getItem('token') : undefined;
-      const headers = {
-        'Content-Type': 'application/json',
-        ...(token ? { Authorization: `Bearer ${token}` } : {}),
-      };
+      try {
+        const token = typeof window !== 'undefined' ? localStorage.getItem('token') : undefined;
+        const headers = {
+          'Content-Type': 'application/json',
+          ...(token ? { Authorization: `Bearer ${token}` } : {}),
+        };
 
-      const dashboardResponse = await fetch(new URL(DASHBOARD_ENDPOINT, API_BASE_URL).toString(), {
-        signal,
-        headers,
-      });
-
-      let nextHasSubscription = false;
-
-      if (dashboardResponse.ok) {
-        const payload = (await dashboardResponse.json()) as SubscriptionDashboardResponse;
-        nextHasSubscription = evaluateStatus(payload.subscription?.status);
-      } else if (dashboardResponse.status !== 404) {
-        const message = await dashboardResponse.text();
-        throw new Error(message || `Dashboard fetch failed: ${dashboardResponse.status}`);
-      }
-
-      if (!nextHasSubscription) {
-        const statusResponse = await fetch(
-          new URL(SUBSCRIPTION_STATUS_ENDPOINT, API_BASE_URL).toString(),
+        const dashboardResponse = await fetch(
+          new URL(DASHBOARD_ENDPOINT, API_BASE_URL).toString(),
           {
             signal,
             headers,
           }
         );
 
-        if (statusResponse.ok) {
-          const statusPayload = (await statusResponse.json()) as SubscriptionStatusResponse;
-          nextHasSubscription = evaluateStatus(statusPayload.subscriptionStatus);
-        } else if (statusResponse.status !== 404) {
-          const message = await statusResponse.text();
-          throw new Error(message || `Status fetch failed: ${statusResponse.status}`);
+        let nextHasSubscription = false;
+
+        if (dashboardResponse.ok) {
+          const payload = (await dashboardResponse.json()) as SubscriptionDashboardResponse;
+          nextHasSubscription = evaluateStatus(payload.subscription?.status);
+        } else if (dashboardResponse.status !== 404) {
+          const message = await dashboardResponse.text();
+          throw new Error(message || `Dashboard fetch failed: ${dashboardResponse.status}`);
+        }
+
+        if (!nextHasSubscription) {
+          const statusResponse = await fetch(
+            new URL(SUBSCRIPTION_STATUS_ENDPOINT, API_BASE_URL).toString(),
+            {
+              signal,
+              headers,
+            }
+          );
+
+          if (statusResponse.ok) {
+            const statusPayload = (await statusResponse.json()) as SubscriptionStatusResponse;
+            nextHasSubscription = evaluateStatus(statusPayload.subscriptionStatus);
+          } else if (statusResponse.status !== 404) {
+            const message = await statusResponse.text();
+            throw new Error(message || `Status fetch failed: ${statusResponse.status}`);
+          }
+        }
+
+        if (!signal?.aborted) {
+          setHasSubscription(nextHasSubscription);
+        }
+      } catch (err) {
+        if ((err as DOMException).name === 'AbortError') return;
+        console.error('Failed to load subscription state', err);
+        setError('Unable to determine subscription status.');
+        setHasSubscription(false);
+      } finally {
+        if (!signal?.aborted) {
+          setIsLoading(false);
         }
       }
-
-      if (!signal?.aborted) {
-        setHasSubscription(nextHasSubscription);
-      }
-    } catch (err) {
-      if ((err as DOMException).name === 'AbortError') return;
-      console.error('Failed to load subscription state', err);
-      setError('Unable to determine subscription status.');
-      setHasSubscription(false);
-    } finally {
-      if (!signal?.aborted) {
-        setIsLoading(false);
-      }
-    }
-  }, [evaluateStatus]);
+    },
+    [evaluateStatus]
+  );
 
   React.useEffect(() => {
     const controller = new AbortController();
@@ -182,6 +188,9 @@ const PaymentsPage: React.FC = () => {
           ) : (
             'Cancel subscription with one click'
           )}
+        </Button>
+        <Button type="button" variant="outline" disabled={isLoading} className="min-w-64">
+          Unsubscribe from newsletter and marketing consents
         </Button>
         {isLoading && (
           <span className="text-muted-foreground text-sm">Checking subscription status...</span>
