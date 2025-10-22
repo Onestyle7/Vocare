@@ -247,8 +247,7 @@ const NewEmptyStateComponent = ({
                     </>
                   ) : (
                     <p className="mx-auto max-w-xs">
-                      You&apos;re on an active subscription, so this action won&apos;t use any
-                      tokens.
+                      You are on an active subscription, so this action will not use any tokens.
                     </p>
                   )}
                 </AlertDialogDescription>

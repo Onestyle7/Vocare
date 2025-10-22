@@ -15,6 +15,7 @@ import gsap from 'gsap';
 import Section from '../SupportComponents/Section';
 import CustomCursor from '../SupportComponents/CustomCursor';
 import Copy from '../SupportComponents/Copy';
+import { Button } from '../ui/button';
 
 gsap.registerPlugin(ScrollTrigger, SplitText);
 
@@ -70,18 +71,16 @@ const HeroTweak = () => {
             </Copy>
 
             <Link
-              href="/assistant"
+              href="/profile"
               className="mt-3 flex cursor-none max-md:items-center max-md:justify-center sm:mt-4 lg:w-full"
             >
-              <CustomButton
-                variant="primary"
-                className="group font-korbin mt-4 flex cursor-none items-center justify-center overflow-hidden max-md:mt-10"
+              <Button
+                className="group relative z-20 mt-4 h-12 w-full rounded-full bg-[linear-gradient(90deg,rgba(146,150,253,1)_0%,rgba(132,145,254,1)_50%,rgba(199,169,254,1)_100%,rgba(157,155,255,1)_77%)] font-bold text-white md:mt-2 md:w-2/3"
+                variant="default"
               >
-                <span className="flex flex-row">
-                  Get my plan
-                  <ArrowRight className="ml-2 scale-75 transition-transform duration-300 group-hover:translate-x-2" />
-                </span>
-              </CustomButton>
+                Get my plan
+                <ArrowRight className="ml-2 transition-all ease-in-out group-hover:translate-x-2" />
+              </Button>
             </Link>
             {/* <p className='mt-2 text-xs text-gray-500'>Private by default. You control your data.</p> */}
           </div>

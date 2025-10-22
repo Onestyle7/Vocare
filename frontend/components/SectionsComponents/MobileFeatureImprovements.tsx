@@ -2,7 +2,7 @@ import React from 'react';
 import Section from '../SupportComponents/Section';
 import Image from 'next/image';
 import { Button } from '../ui/button';
-import { ArrowRight } from 'lucide-react';
+// import { ArrowRight } from 'lucide-react';
 
 const MobileFeatureImprovements = () => {
   return (
@@ -40,9 +40,10 @@ const MobileFeatureImprovements = () => {
                     <Button
                       className="group relative z-20 mt-10 h-12 w-5/6 rounded-full bg-[linear-gradient(90deg,rgba(146,150,253,1)_0%,rgba(132,145,254,1)_50%,rgba(199,169,254,1)_100%,rgba(157,155,255,1)_77%)] font-bold text-white md:mt-16 md:w-2/3"
                       variant="default"
+                      disabled
                     >
-                      Download Now
-                      <ArrowRight className="ml-2 transition-all ease-in-out group-hover:translate-x-2" />
+                      Available soon
+                      {/* <ArrowRight className="ml-2 transition-all ease-in-out group-hover:translate-x-2" /> */}
                     </Button>
                   </div>
                 </div>

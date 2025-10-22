@@ -1,7 +1,8 @@
 import CardSwap, { Card } from '@/components/CardSwap/CardSwap';
 import { ArrowRight, ArrowUp, FileQuestion, PencilLine } from 'lucide-react';
+import Link from 'next/link';
 import React from 'react';
-import CustomButton from '../ui/CustomButton';
+import { Button } from '../ui/button';
 
 const CardFeature = () => {
   return (
@@ -11,15 +12,16 @@ const CardFeature = () => {
           <p className="mb-6 font-bold text-gray-400">All Your Tools Together.</p>
           <h2 className="text-4xl font-bold">Compact Powerhouse.</h2>
           <div className="flex w-full items-center justify-center sm:justify-start">
-            <CustomButton
-              variant="primary"
-              className="group font-korbin mt-8 flex cursor-none items-center justify-center overflow-hidden"
+            <Button
+              asChild
+              className="group relative z-20 mt-8 h-12 w-2/3 rounded-full bg-[linear-gradient(90deg,rgba(146,150,253,1)_0%,rgba(132,145,254,1)_50%,rgba(199,169,254,1)_100%,rgba(157,155,255,1)_77%)] font-bold text-white md:mt-8 md:w-2/3"
+              variant="default"
             >
-              <span className="flex flex-row">
+              <Link href="/profile">
                 Get my plan
-                <ArrowRight className="ml-2 scale-75 transition-transform duration-300 group-hover:translate-x-2" />
-              </span>
-            </CustomButton>
+                <ArrowRight className="ml-2 transition-all ease-in-out group-hover:translate-x-2" />
+              </Link>
+            </Button>
           </div>
         </div>
       </div>
