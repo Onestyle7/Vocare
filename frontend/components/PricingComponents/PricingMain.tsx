@@ -308,11 +308,12 @@ const PricingMain = () => {
               </h1>
             </Copy>
             <p className="text-md mt-4 w-3/4 text-center font-light text-gray-300 sm:mt-2 sm:text-lg">
-               Start free. Choose a token plan when you’re ready. No longterm contracts. No credit card to try.
+              Start free. Choose a token plan when you’re ready. No longterm contracts. No credit
+              card to try.
             </p>
           </div>
 
-          <div className="relative mb-10 w-full px-4 md:px-6 mt-6">
+          <div className="relative mt-6 mb-10 w-full px-4 md:px-6">
             {/* Subtle purple circular glow under the cards */}
             <div
               aria-hidden

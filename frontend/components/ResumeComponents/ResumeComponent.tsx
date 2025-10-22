@@ -142,9 +142,7 @@ const RichTextToolbar = ({
     <div className={`flex items-center gap-2 ${className}`}>
       <button
         type="button"
-        className={`${baseButtonClass} ${
-          formattingState.bold ? activeClass : inactiveClass
-        }`}
+        className={`${baseButtonClass} ${formattingState.bold ? activeClass : inactiveClass}`}
         aria-label="Bold"
         aria-pressed={formattingState.bold}
         onClick={() => onFormat('bold')}
@@ -153,9 +151,7 @@ const RichTextToolbar = ({
       </button>
       <button
         type="button"
-        className={`${baseButtonClass} ${
-          formattingState.italic ? activeClass : inactiveClass
-        }`}
+        className={`${baseButtonClass} ${formattingState.italic ? activeClass : inactiveClass}`}
         aria-label="Italic"
         aria-pressed={formattingState.italic}
         onClick={() => onFormat('italic')}
@@ -164,9 +160,7 @@ const RichTextToolbar = ({
       </button>
       <button
         type="button"
-        className={`${baseButtonClass} ${
-          formattingState.underline ? activeClass : inactiveClass
-        }`}
+        className={`${baseButtonClass} ${formattingState.underline ? activeClass : inactiveClass}`}
         aria-label="Underline"
         aria-pressed={formattingState.underline}
         onClick={() => onFormat('underline')}
@@ -177,8 +171,7 @@ const RichTextToolbar = ({
   );
 };
 
-const makeExperienceId = () =>
-  `${Date.now()}-${Math.random().toString(36).slice(2, 8)}`;
+const makeExperienceId = () => `${Date.now()}-${Math.random().toString(36).slice(2, 8)}`;
 
 const ensureExperienceDefaults = (exp: Partial<Experience>): Experience => ({
   id: typeof exp.id === 'string' && exp.id.length > 0 ? exp.id : makeExperienceId(),
@@ -191,8 +184,7 @@ const ensureExperienceDefaults = (exp: Partial<Experience>): Experience => ({
   useBulletList: Boolean(exp.useBulletList),
 });
 
-const makeEducationId = () =>
-  `${Date.now()}-${Math.random().toString(36).slice(2, 8)}-edu`;
+const makeEducationId = () => `${Date.now()}-${Math.random().toString(36).slice(2, 8)}-edu`;
 
 const ensureEducationDefaults = (edu: Partial<Education>): Education => ({
   id: typeof edu.id === 'string' && edu.id.length > 0 ? edu.id : makeEducationId(),
@@ -205,8 +197,7 @@ const ensureEducationDefaults = (edu: Partial<Education>): Education => ({
   description: edu.description ?? '',
 });
 
-const makeCertificateId = () =>
-  `${Date.now()}-${Math.random().toString(36).slice(2, 8)}-cert`;
+const makeCertificateId = () => `${Date.now()}-${Math.random().toString(36).slice(2, 8)}-cert`;
 
 const ensureCertificateDefaults = (cert: Partial<Certificate>): Certificate => ({
   id: typeof cert.id === 'string' && cert.id.length > 0 ? cert.id : makeCertificateId(),
@@ -896,13 +887,19 @@ const CVCreator: React.FC<CVCreatorProps> = ({ initialCv }) => {
 
   const parseFormattingRanges = (
     value: string
-  ): Record<FormattingType, Array<{ plainStart: number; plainEnd: number; tokenStart: number; suffixIndex: number }>> => {
+  ): Record<
+    FormattingType,
+    Array<{ plainStart: number; plainEnd: number; tokenStart: number; suffixIndex: number }>
+  > => {
     const stack: Record<FormattingType, Array<{ tokenIndex: number; plainIndex: number }>> = {
       bold: [],
       italic: [],
       underline: [],
     };
-    const ranges: Record<FormattingType, Array<{ plainStart: number; plainEnd: number; tokenStart: number; suffixIndex: number }>> = {
+    const ranges: Record<
+      FormattingType,
+      Array<{ plainStart: number; plainEnd: number; tokenStart: number; suffixIndex: number }>
+    > = {
       bold: [],
       italic: [],
       underline: [],
@@ -1085,7 +1082,11 @@ const CVCreator: React.FC<CVCreatorProps> = ({ initialCv }) => {
     );
   };
 
-  const handleExperienceFormatting = (expId: string, currentValue: string, type: FormattingType) => {
+  const handleExperienceFormatting = (
+    expId: string,
+    currentValue: string,
+    type: FormattingType
+  ) => {
     const textarea = experienceTextareaRefs.current[expId];
     applyFormattingToTextarea(
       type,
@@ -1122,7 +1123,9 @@ const CVCreator: React.FC<CVCreatorProps> = ({ initialCv }) => {
     if (!textarea) return;
     const selectionStart = textarea.selectionStart ?? 0;
     const selectionEnd = textarea.selectionEnd ?? selectionStart;
-    setSummaryFormatting(computeFormattingState(personalInfo.summary || '', selectionStart, selectionEnd));
+    setSummaryFormatting(
+      computeFormattingState(personalInfo.summary || '', selectionStart, selectionEnd)
+    );
   };
 
   const updateExperienceFormattingFromSelection = (id: string) => {
@@ -1239,13 +1242,13 @@ const CVCreator: React.FC<CVCreatorProps> = ({ initialCv }) => {
         description: w.description,
       })),
       education: education.map((e) => ({
-      institution: e.school,
-      degree: e.degree,
-      field: e.field,
-      startDate: e.startDate,
-      endDate: e.isCurrent ? 'Present' : e.endDate,
-      description: e.description,
-    })),
+        institution: e.school,
+        degree: e.degree,
+        field: e.field,
+        startDate: e.startDate,
+        endDate: e.isCurrent ? 'Present' : e.endDate,
+        description: e.description,
+      })),
       certificates: certificates.map((c) => ({
         name: c.name,
         date: c.displayDate && c.date ? c.date : undefined,
@@ -1820,120 +1823,126 @@ const CVCreator: React.FC<CVCreatorProps> = ({ initialCv }) => {
                     <div className="flex-1">
                       <div className="mb-2 grid grid-cols-1 gap-4 sm:grid-cols-2">
                         <input
-                        type="text"
-                        placeholder="Company"
-                        value={exp.company}
-                        onChange={(e) => updateExperience(exp.id, 'company', e.target.value)}
-                        className="w-full rounded-sm border border-gray-300 px-3 py-3 focus:ring-2 focus:ring-blue-500 focus:outline-none"
-                      />
-                      <input
-                        type="text"
-                        placeholder="Position"
-                        value={exp.position}
-                        onChange={(e) => updateExperience(exp.id, 'position', e.target.value)}
-                        className="w-full rounded-sm border border-gray-300 px-3 py-3 focus:ring-2 focus:ring-blue-500 focus:outline-none"
-                      />
-                    </div>
-                    <div className="mb-2 grid grid-cols-1 gap-4 sm:grid-cols-2">
-                      <div>
-                        <label className="mb-1 block text-sm text-gray-600">Start date</label>
-                        <DatePickerWithCurrent
-                          value={exp.startDate}
-                          onChange={(date) => updateExperience(exp.id, 'startDate', date)}
-                          isCurrent={false}
-                          onCurrentChange={() => {}}
-                          showCurrentToggle={false}
-                          placeholder="Select start date"
+                          type="text"
+                          placeholder="Company"
+                          value={exp.company}
+                          onChange={(e) => updateExperience(exp.id, 'company', e.target.value)}
+                          className="w-full rounded-sm border border-gray-300 px-3 py-3 focus:ring-2 focus:ring-blue-500 focus:outline-none"
+                        />
+                        <input
+                          type="text"
+                          placeholder="Position"
+                          value={exp.position}
+                          onChange={(e) => updateExperience(exp.id, 'position', e.target.value)}
+                          className="w-full rounded-sm border border-gray-300 px-3 py-3 focus:ring-2 focus:ring-blue-500 focus:outline-none"
                         />
                       </div>
-                      <div>
-                        <label className="mb-1 block text-sm text-gray-600">End date</label>
-                        <DatePickerWithCurrent
-                          value={exp.endDate}
-                          onChange={(date) => updateExperience(exp.id, 'endDate', date)}
-                          isCurrent={exp.isCurrent}
-                          onCurrentChange={(current) =>
-                            updateExperience(exp.id, 'isCurrent', current)
-                          }
-                          placeholder="Select end date"
-                        />
+                      <div className="mb-2 grid grid-cols-1 gap-4 sm:grid-cols-2">
+                        <div>
+                          <label className="mb-1 block text-sm text-gray-600">Start date</label>
+                          <DatePickerWithCurrent
+                            value={exp.startDate}
+                            onChange={(date) => updateExperience(exp.id, 'startDate', date)}
+                            isCurrent={false}
+                            onCurrentChange={() => {}}
+                            showCurrentToggle={false}
+                            placeholder="Select start date"
+                          />
+                        </div>
+                        <div>
+                          <label className="mb-1 block text-sm text-gray-600">End date</label>
+                          <DatePickerWithCurrent
+                            value={exp.endDate}
+                            onChange={(date) => updateExperience(exp.id, 'endDate', date)}
+                            isCurrent={exp.isCurrent}
+                            onCurrentChange={(current) =>
+                              updateExperience(exp.id, 'isCurrent', current)
+                            }
+                            placeholder="Select end date"
+                          />
+                        </div>
                       </div>
-                    </div>
-                    <RichTextToolbar
-                      className="mt-2 mb-2"
-                      onFormat={(type) => handleExperienceFormatting(exp.id, exp.description, type)}
-                      formattingState={formattingState}
-                    />
-                    <textarea
-                      ref={(el) => {
-                        if (el) {
-                          experienceTextareaRefs.current[exp.id] = el;
-                        } else {
-                          delete experienceTextareaRefs.current[exp.id];
+                      <RichTextToolbar
+                        className="mt-2 mb-2"
+                        onFormat={(type) =>
+                          handleExperienceFormatting(exp.id, exp.description, type)
                         }
-                      }}
-                      placeholder="Job description / Responsibilities"
-                      value={stripFormattingTokens(exp.description)}
-                      onChange={(e) => {
-                        const plainValue = e.target.value;
-                        const selectionStart = e.target.selectionStart ?? 0;
-                        const selectionEnd = e.target.selectionEnd ?? selectionStart;
-                        const nextTokens = mergePlainWithTokens(exp.description, plainValue);
-                        setExperiences((prev) =>
-                          prev.map((experience) =>
-                            experience.id === exp.id
-                              ? { ...experience, description: nextTokens }
-                              : experience
-                          )
-                        );
-                        setExperienceFormattingState((prev) => ({
-                          ...prev,
-                          [exp.id]: computeFormattingState(nextTokens, selectionStart, selectionEnd),
-                        }));
-                      }}
-                      onSelect={() => updateExperienceFormattingFromSelection(exp.id)}
-                      onKeyUp={() => updateExperienceFormattingFromSelection(exp.id)}
-                      onMouseUp={() => updateExperienceFormattingFromSelection(exp.id)}
-                      rows={2}
-                      className="w-full rounded-sm border border-gray-300 px-3 py-3 focus:ring-2 focus:ring-blue-500 focus:outline-none"
-                    />
-                    
-                    <div className="flex w-full items-center justify-end space-x-2">
-                      <button
-                        onClick={() => removeExperience(exp.id)}
-                        className="ml-2 flex h-10 w-10 cursor-pointer items-center justify-center rounded p-2 text-red-500 opacity-0 transition-all group-hover:opacity-100 hover:bg-red-50 hover:text-red-700"
-                        title="remove Work experience"
-                      >
-                        <Trash2 size={16} />
-                      </button>
-                      <HoverCard>
-                        <HoverCardTrigger asChild>
-                          <button className="flex h-10 w-10 cursor-pointer items-center justify-center rounded-sm bg-gray-100">
-                            <MessageCircleQuestion className="text-gray-400" size={20} />
-                          </button>
-                        </HoverCardTrigger>
-                        <HoverCardContent className="font-poppins w-80">
-                          <div className="flex justify-between gap-4">
-                            <div className="space-y-1">
-                              <h4 className="text-sm font-semibold">Will it acutally help me?</h4>
-                              <p className="text-sm">
-                                It&apos;ll surely do. Our AI models are trained specifically to
-                                match requirements of the algorithms used by recruiters.
-                              </p>
-                              <div className="text-muted-foreground text-xs">
-                                Confirmed by 1000+ users.
+                        formattingState={formattingState}
+                      />
+                      <textarea
+                        ref={(el) => {
+                          if (el) {
+                            experienceTextareaRefs.current[exp.id] = el;
+                          } else {
+                            delete experienceTextareaRefs.current[exp.id];
+                          }
+                        }}
+                        placeholder="Job description / Responsibilities"
+                        value={stripFormattingTokens(exp.description)}
+                        onChange={(e) => {
+                          const plainValue = e.target.value;
+                          const selectionStart = e.target.selectionStart ?? 0;
+                          const selectionEnd = e.target.selectionEnd ?? selectionStart;
+                          const nextTokens = mergePlainWithTokens(exp.description, plainValue);
+                          setExperiences((prev) =>
+                            prev.map((experience) =>
+                              experience.id === exp.id
+                                ? { ...experience, description: nextTokens }
+                                : experience
+                            )
+                          );
+                          setExperienceFormattingState((prev) => ({
+                            ...prev,
+                            [exp.id]: computeFormattingState(
+                              nextTokens,
+                              selectionStart,
+                              selectionEnd
+                            ),
+                          }));
+                        }}
+                        onSelect={() => updateExperienceFormattingFromSelection(exp.id)}
+                        onKeyUp={() => updateExperienceFormattingFromSelection(exp.id)}
+                        onMouseUp={() => updateExperienceFormattingFromSelection(exp.id)}
+                        rows={2}
+                        className="w-full rounded-sm border border-gray-300 px-3 py-3 focus:ring-2 focus:ring-blue-500 focus:outline-none"
+                      />
+
+                      <div className="flex w-full items-center justify-end space-x-2">
+                        <button
+                          onClick={() => removeExperience(exp.id)}
+                          className="ml-2 flex h-10 w-10 cursor-pointer items-center justify-center rounded p-2 text-red-500 opacity-0 transition-all group-hover:opacity-100 hover:bg-red-50 hover:text-red-700"
+                          title="remove Work experience"
+                        >
+                          <Trash2 size={16} />
+                        </button>
+                        <HoverCard>
+                          <HoverCardTrigger asChild>
+                            <button className="flex h-10 w-10 cursor-pointer items-center justify-center rounded-sm bg-gray-100">
+                              <MessageCircleQuestion className="text-gray-400" size={20} />
+                            </button>
+                          </HoverCardTrigger>
+                          <HoverCardContent className="font-poppins w-80">
+                            <div className="flex justify-between gap-4">
+                              <div className="space-y-1">
+                                <h4 className="text-sm font-semibold">Will it acutally help me?</h4>
+                                <p className="text-sm">
+                                  It&apos;ll surely do. Our AI models are trained specifically to
+                                  match requirements of the algorithms used by recruiters.
+                                </p>
+                                <div className="text-muted-foreground text-xs">
+                                  Confirmed by 1000+ users.
+                                </div>
                               </div>
                             </div>
-                          </div>
-                        </HoverCardContent>
-                      </HoverCard>
-                      <button
-                        className={`flex flex-row items-center justify-center rounded-sm border bg-[#915EFF] px-3 py-2 text-sm text-white transition-all hover:bg-[#713ae8] focus:outline-none ${isPremium ? 'cursor-pointer' : 'cursor-not-allowed opacity-50'}`}
-                      >
-                        <span className="text-sm text-white">Achieve more with AI</span>
-                        <StarsIcon className="ml-2 scale-70" />
-                      </button>
-                    </div>
+                          </HoverCardContent>
+                        </HoverCard>
+                        <button
+                          className={`flex flex-row items-center justify-center rounded-sm border bg-[#915EFF] px-3 py-2 text-sm text-white transition-all hover:bg-[#713ae8] focus:outline-none ${isPremium ? 'cursor-pointer' : 'cursor-not-allowed opacity-50'}`}
+                        >
+                          <span className="text-sm text-white">Achieve more with AI</span>
+                          <StarsIcon className="ml-2 scale-70" />
+                        </button>
+                      </div>
                     </div>
                   </div>
                 </div>
@@ -1994,7 +2003,7 @@ const CVCreator: React.FC<CVCreatorProps> = ({ initialCv }) => {
             </div>
             <p className="mb-4 text-sm text-gray-600">
               Add your education, whether it&apos;s secondary or higher. If needed, include relevant
-              courses, projects, or achievements (e.g., grades).
+              courses, projects, or achievements (e.g. grades).
             </p>
             {education.map((edu) => {
               const formattingState = educationFormattingState[edu.id] ?? EMPTY_FORMATTING_STATE;
@@ -2007,102 +2016,108 @@ const CVCreator: React.FC<CVCreatorProps> = ({ initialCv }) => {
                   <div className="flex items-start justify-between">
                     <div className="flex-1">
                       <div className="mb-2 grid grid-cols-1 gap-4 sm:grid-cols-2">
-                      <input
-                        type="text"
-                        placeholder="School/University"
-                        value={edu.school}
-                        onChange={(e) => updateEducation(edu.id, 'school', e.target.value)}
-                        className="w-full rounded-sm border border-gray-300 px-3 py-3 focus:ring-2 focus:ring-blue-500 focus:outline-none"
-                      />
-                      <input
-                        type="text"
-                        placeholder="Degree"
-                        value={edu.degree}
-                        onChange={(e) => updateEducation(edu.id, 'degree', e.target.value)}
-                        className="w-full rounded-sm border border-gray-300 px-3 py-3 focus:ring-2 focus:ring-blue-500 focus:outline-none"
-                      />
-                      <input
-                        type="text"
-                        placeholder="Field of study"
-                        value={edu.field}
-                        onChange={(e) => updateEducation(edu.id, 'field', e.target.value)}
-                        className="w-full rounded-sm border border-gray-300 px-3 py-3 focus:ring-2 focus:ring-blue-500 focus:outline-none"
-                      />
-                    </div>
-                    <div className="mb-2 grid grid-cols-1 gap-4 sm:grid-cols-2">
-                      <div>
-                        <label className="mb-1 block text-sm text-gray-600">Start date</label>
-                        <DatePickerWithCurrent
-                          value={edu.startDate}
-                          onChange={(date) => updateEducation(edu.id, 'startDate', date)}
-                          isCurrent={false}
-                          onCurrentChange={() => {}}
-                          showCurrentToggle={false}
-                          placeholder="Select start date"
+                        <input
+                          type="text"
+                          placeholder="School/University"
+                          value={edu.school}
+                          onChange={(e) => updateEducation(edu.id, 'school', e.target.value)}
+                          className="w-full rounded-sm border border-gray-300 px-3 py-3 focus:ring-2 focus:ring-blue-500 focus:outline-none"
+                        />
+                        <input
+                          type="text"
+                          placeholder="Degree"
+                          value={edu.degree}
+                          onChange={(e) => updateEducation(edu.id, 'degree', e.target.value)}
+                          className="w-full rounded-sm border border-gray-300 px-3 py-3 focus:ring-2 focus:ring-blue-500 focus:outline-none"
+                        />
+                        <input
+                          type="text"
+                          placeholder="Field of study"
+                          value={edu.field}
+                          onChange={(e) => updateEducation(edu.id, 'field', e.target.value)}
+                          className="w-full rounded-sm border border-gray-300 px-3 py-3 focus:ring-2 focus:ring-blue-500 focus:outline-none"
                         />
                       </div>
-                      <div>
-                        <label className="mb-1 block text-sm text-gray-600">End date</label>
-                        <DatePickerWithCurrent
-                          value={edu.endDate}
-                          onChange={(date) => updateEducation(edu.id, 'endDate', date)}
-                          isCurrent={edu.isCurrent}
-                          onCurrentChange={(current) => {
-                            updateEducation(edu.id, 'isCurrent', current);
-                            if (current) {
-                              updateEducation(edu.id, 'endDate', '');
-                            }
-                          }}
-                          placeholder="Select end date"
-                        />
+                      <div className="mb-2 grid grid-cols-1 gap-4 sm:grid-cols-2">
+                        <div>
+                          <label className="mb-1 block text-sm text-gray-600">Start date</label>
+                          <DatePickerWithCurrent
+                            value={edu.startDate}
+                            onChange={(date) => updateEducation(edu.id, 'startDate', date)}
+                            isCurrent={false}
+                            onCurrentChange={() => {}}
+                            showCurrentToggle={false}
+                            placeholder="Select start date"
+                          />
+                        </div>
+                        <div>
+                          <label className="mb-1 block text-sm text-gray-600">End date</label>
+                          <DatePickerWithCurrent
+                            value={edu.endDate}
+                            onChange={(date) => updateEducation(edu.id, 'endDate', date)}
+                            isCurrent={edu.isCurrent}
+                            onCurrentChange={(current) => {
+                              updateEducation(edu.id, 'isCurrent', current);
+                              if (current) {
+                                updateEducation(edu.id, 'endDate', '');
+                              }
+                            }}
+                            placeholder="Select end date"
+                          />
+                        </div>
                       </div>
-                    </div>
-                    <RichTextToolbar
-                      className="mt-2 mb-2"
-                      onFormat={(type) => handleEducationFormatting(edu.id, edu.description, type)}
-                      formattingState={formattingState}
-                    />
-                    <textarea
-                      ref={(el) => {
-                        if (el) {
-                          educationTextareaRefs.current[edu.id] = el;
-                        } else {
-                          delete educationTextareaRefs.current[edu.id];
+                      <RichTextToolbar
+                        className="mt-2 mb-2"
+                        onFormat={(type) =>
+                          handleEducationFormatting(edu.id, edu.description, type)
                         }
-                      }}
-                      placeholder="Achievements, coursework, GPA, notable projects"
-                      value={stripFormattingTokens(edu.description)}
-                      onChange={(e) => {
-                        const plainValue = e.target.value;
-                        const selectionStart = e.target.selectionStart ?? 0;
-                        const selectionEnd = e.target.selectionEnd ?? selectionStart;
-                        const nextTokens = mergePlainWithTokens(edu.description, plainValue);
-                        setEducation((prev) =>
-                          prev.map((entry) =>
-                            entry.id === edu.id ? { ...entry, description: nextTokens } : entry
-                          )
-                        );
-                        setEducationFormattingState((prev) => ({
-                          ...prev,
-                          [edu.id]: computeFormattingState(nextTokens, selectionStart, selectionEnd),
-                        }));
-                      }}
-                      onSelect={() => updateEducationFormattingFromSelection(edu.id)}
-                      onKeyUp={() => updateEducationFormattingFromSelection(edu.id)}
-                      onMouseUp={() => updateEducationFormattingFromSelection(edu.id)}
-                      rows={2}
-                      className="w-full rounded-sm border border-gray-300 px-3 py-3 focus:ring-2 focus:ring-blue-500 focus:outline-none"
-                    />
+                        formattingState={formattingState}
+                      />
+                      <textarea
+                        ref={(el) => {
+                          if (el) {
+                            educationTextareaRefs.current[edu.id] = el;
+                          } else {
+                            delete educationTextareaRefs.current[edu.id];
+                          }
+                        }}
+                        placeholder="Achievements, coursework, GPA, notable projects"
+                        value={stripFormattingTokens(edu.description)}
+                        onChange={(e) => {
+                          const plainValue = e.target.value;
+                          const selectionStart = e.target.selectionStart ?? 0;
+                          const selectionEnd = e.target.selectionEnd ?? selectionStart;
+                          const nextTokens = mergePlainWithTokens(edu.description, plainValue);
+                          setEducation((prev) =>
+                            prev.map((entry) =>
+                              entry.id === edu.id ? { ...entry, description: nextTokens } : entry
+                            )
+                          );
+                          setEducationFormattingState((prev) => ({
+                            ...prev,
+                            [edu.id]: computeFormattingState(
+                              nextTokens,
+                              selectionStart,
+                              selectionEnd
+                            ),
+                          }));
+                        }}
+                        onSelect={() => updateEducationFormattingFromSelection(edu.id)}
+                        onKeyUp={() => updateEducationFormattingFromSelection(edu.id)}
+                        onMouseUp={() => updateEducationFormattingFromSelection(edu.id)}
+                        rows={2}
+                        className="w-full rounded-sm border border-gray-300 px-3 py-3 focus:ring-2 focus:ring-blue-500 focus:outline-none"
+                      />
+                    </div>
+                    <button
+                      onClick={() => removeEducation(edu.id)}
+                      className="ml-2 flex h-10 w-10 cursor-pointer items-center justify-center rounded p-2 text-red-500 opacity-0 transition-all group-hover:opacity-100 hover:bg-red-50 hover:text-red-700"
+                      title="Remove education"
+                    >
+                      <Trash2 size={16} />
+                    </button>
                   </div>
-                  <button
-                    onClick={() => removeEducation(edu.id)}
-                    className="ml-2 flex h-10 w-10 cursor-pointer items-center justify-center rounded p-2 text-red-500 opacity-0 transition-all group-hover:opacity-100 hover:bg-red-50 hover:text-red-700"
-                    title="Remove education"
-                  >
-                    <Trash2 size={16} />
-                  </button>
                 </div>
-              </div>
               );
             })}
             <button
@@ -2191,7 +2206,7 @@ const CVCreator: React.FC<CVCreatorProps> = ({ initialCv }) => {
                   </div>
                   <button
                     onClick={() => removeCertificate(cert.id)}
-                    className="ml-0 rounded p-2 text-red-500 opacity-0 transition-all sm:ml-2 group-hover:opacity-100 hover:bg-red-50 hover:text-red-700"
+                    className="ml-0 rounded p-2 text-red-500 opacity-0 transition-all group-hover:opacity-100 hover:bg-red-50 hover:text-red-700 sm:ml-2"
                     title="Remove certificate"
                   >
                     <Trash2 size={16} />
@@ -2437,7 +2452,7 @@ const CVCreator: React.FC<CVCreatorProps> = ({ initialCv }) => {
               >
                 <input
                   type="text"
-                  placeholder="e.g., Reading, Traveling, Cooking"
+                  placeholder="e.g. Reading, Traveling, Cooking"
                   value={hobby.name}
                   onChange={(e) => updateHobby(hobby.id, 'name', e.target.value)}
                   className="flex-1 focus:outline-none"
@@ -2840,10 +2855,8 @@ const CVCreator: React.FC<CVCreatorProps> = ({ initialCv }) => {
     const rawLines = exp.description.split(/\r?\n/);
 
     if (exp.useBulletList) {
-      const blocks: Array<
-        | { type: 'bullet'; items: string[] }
-        | { type: 'text'; content: string }
-      > = [];
+      const blocks: Array<{ type: 'bullet'; items: string[] } | { type: 'text'; content: string }> =
+        [];
 
       rawLines.forEach((line) => {
         const trimmed = line.trim();
@@ -3249,7 +3262,7 @@ const CVCreator: React.FC<CVCreatorProps> = ({ initialCv }) => {
                   <label className="mb-1 block text-sm text-gray-600">Position</label>
                   <input
                     type="text"
-                    placeholder="e.g., Project Manager"
+                    placeholder="e.g. Project Manager"
                     value={personalInfo.profession}
                     onChange={(e) =>
                       setPersonalInfo({ ...personalInfo, profession: e.target.value })
@@ -3269,7 +3282,7 @@ const CVCreator: React.FC<CVCreatorProps> = ({ initialCv }) => {
                         <label className="mb-1 block text-sm text-gray-600">Phone number</label>
                         <input
                           type="tel"
-                          placeholder="e.g., +48 22 263 98 31"
+                          placeholder="e.g. +48 22 263 98 31"
                           value={personalInfo.phone}
                           onChange={(e) =>
                             setPersonalInfo({ ...personalInfo, phone: e.target.value })
@@ -3281,7 +3294,7 @@ const CVCreator: React.FC<CVCreatorProps> = ({ initialCv }) => {
                         <label className="mb-1 block text-sm text-gray-600">Adress</label>
                         <input
                           type="text"
-                          placeholder="e.g., 221B Baker Street, London"
+                          placeholder="e.g. 221B Baker Street, London"
                           value={personalInfo.address}
                           onChange={(e) =>
                             setPersonalInfo({ ...personalInfo, address: e.target.value })
@@ -3293,7 +3306,7 @@ const CVCreator: React.FC<CVCreatorProps> = ({ initialCv }) => {
                         <label className="mb-1 block text-sm text-gray-600">Country</label>
                         <input
                           type="text"
-                          placeholder="e.g., Poland"
+                          placeholder="e.g. Poland"
                           value={personalInfo.country}
                           onChange={(e) =>
                             setPersonalInfo({ ...personalInfo, country: e.target.value })

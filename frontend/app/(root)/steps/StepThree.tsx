@@ -127,7 +127,7 @@ const LanguagePopover = ({ value = [], onChange }: LanguagePopoverProps) => {
               <Input
                 value={language}
                 onChange={(e) => setLanguage(e.target.value)}
-                placeholder="e.g., English"
+                placeholder="e.g. English"
                 className="input-profile"
               />
             </div>
@@ -396,7 +396,7 @@ const EducationPopover = ({ value = [], onChange }: EducationPopoverProps) => {
               <Input
                 value={education.field}
                 onChange={(e) => setEducation({ ...education, field: e.target.value })}
-                placeholder="e.g., Computer Science"
+                placeholder="e.g. Computer Science"
                 className="input-profile"
               />
             </div>
@@ -516,7 +516,7 @@ const CertificatePopover = ({ value = [], onChange }: CertificatePopoverProps) =
               <Input
                 value={certificate.name}
                 onChange={(e) => setCertificate({ ...certificate, name: e.target.value })}
-                placeholder="e.g., AWS Certified Solutions Architect"
+                placeholder="e.g. AWS Certified Solutions Architect"
                 className="input-profile"
               />
             </div>
@@ -526,7 +526,7 @@ const CertificatePopover = ({ value = [], onChange }: CertificatePopoverProps) =
               <Input
                 value={certificate.issuer}
                 onChange={(e) => setCertificate({ ...certificate, issuer: e.target.value })}
-                placeholder="e.g., Amazon Web Services"
+                placeholder="e.g. Amazon Web Services"
                 className="input-profile"
               />
             </div>
@@ -603,7 +603,7 @@ export default function StepThree({ form, onNext, onBack }: StepThreeProps) {
               <TagInput
                 value={field.value || []}
                 onChange={field.onChange}
-                placeholder="Add a skill (e.g., JavaScript)"
+                placeholder="Add a skill (e.g. JavaScript)"
               />
             </FormControl>
             <FormMessage />
@@ -622,7 +622,7 @@ export default function StepThree({ form, onNext, onBack }: StepThreeProps) {
               <TagInput
                 value={field.value || []}
                 onChange={field.onChange}
-                placeholder="Add a soft skill (e.g., Teamwork)"
+                placeholder="Add a soft skill (e.g. Teamwork)"
               />
             </FormControl>
             <FormMessage />

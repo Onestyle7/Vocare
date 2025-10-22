@@ -17,7 +17,7 @@ const GenerateRecommendationFail = () => {
     >
       <div className="mx-10 flex flex-col items-center space-y-10 lg:border-t">
         <div className="mt-10 flex flex-col items-center justify-center">
-          <h1 className="font-poppins text-3xl font-bold max-md:text-center font-korbin">
+          <h1 className="font-poppins font-korbin text-3xl font-bold max-md:text-center">
             Get your career plan in 60 seconds.
           </h1>
           <p className="font-poppins text-md mt-4 text-gray-500">It&apos;s that simple.</p>
@@ -121,7 +121,8 @@ const GenerateRecommendationFail = () => {
                 </div>
                 <div className="mt-4 h-full w-full items-center justify-start">
                   <p className="text-muted-foreground text-lg">
-                    Turn your plan into a clean, <b>ATS-friendly</b> resume. Save versions, tailor to roles, and export instantly.
+                    Turn your plan into a clean, <b>ATS-friendly</b> resume. Save versions, tailor
+                    to roles, and export instantly.
                   </p>
                 </div>
                 <div className="w-full">

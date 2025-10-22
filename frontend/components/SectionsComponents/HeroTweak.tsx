@@ -64,7 +64,8 @@ const HeroTweak = () => {
             </Copy>
             <Copy>
               <h2 className="text-muted-foreground ibm-plex-mono-regular mt-8 max-w-xl px-4 text-center text-sm max-md:block sm:mt-4 sm:text-base md:px-0 md:text-left md:text-lg lg:text-base xl:text-sm">
-                Vocare is an AI career advisor that turns your profile into clear career bets, live market signals, and an ATS-ready resume-so you know what to do next, today.
+                Vocare is an AI career advisor that turns your profile into clear career bets, live
+                market signals, and an ATS-ready resume-so you know what to do next today.
               </h2>
             </Copy>
 
@@ -128,10 +129,10 @@ const HeroTweak = () => {
           <p className="font-bold text-gray-400">Meet Us</p>
           <Copy>
             <p className="text-color mt-8 text-center text-4xl font-bold md:text-[4rem] xl:leading-[0.8]">
-              What You get?
+              What will You get?
             </p>
           </Copy>
-          <h2 className='text-gray-400 mt-4 font-poppins max-md:text-center'>
+          <h2 className="font-poppins mt-4 text-gray-400 max-md:text-center">
             Career Outcomes, Market Insight & ATS-Ready Resume
           </h2>
         </div>

@@ -71,7 +71,7 @@ const NewEmptyStateComponent = ({
       disabled={isLoading}
       className="group font-poppins flex h-[56px] cursor-pointer items-center justify-center rounded-full bg-[#915EFF] px-6 text-[clamp(1rem,1vw,1.5rem)] font-medium text-white hover:bg-[#7b4ee0] xl:w-[280px]"
     >
-      <span className='2xl:text-sm'>{isLoading ? 'Generating...' : 'Generate analysis'}</span>
+      <span className="2xl:text-sm">{isLoading ? 'Generating...' : 'Generate analysis'}</span>
       <ArrowRight className="ml-4 scale-90 transition-transform duration-300 group-hover:translate-x-2" />
     </CustomButton>
   ) : (
@@ -95,7 +95,7 @@ const NewEmptyStateComponent = ({
       <div className="mx-10 flex flex-col items-center space-y-10 lg:border-t">
         {/* Header */}
         <div className="mt-10 flex flex-col items-center justify-center">
-          <h1 className="font-poppins text-3xl font-bold max-md:text-center font-korbin">
+          <h1 className="font-poppins font-korbin text-3xl font-bold max-md:text-center">
             How to use AI Market analiser?
           </h1>
           <p className="font-poppins text-md mt-4 text-gray-500">It&apos;s that simple.</p>
@@ -121,7 +121,8 @@ const NewEmptyStateComponent = ({
                 </div>
                 <div className="mt-4 h-full w-full items-center justify-start">
                   <p className="text-muted-foreground text-lg">
-                    Add skills, experience, location, and salary goals. The more context you share, the sharper the market signals.
+                    Add skills, experience, location, and salary goals. The more context you share,
+                    the sharper the market signals.
                   </p>
                 </div>
                 <div className="w-full">
@@ -161,7 +162,8 @@ const NewEmptyStateComponent = ({
                 </div>
                 <div className="mt-4 h-full w-full items-center justify-start">
                   <p className="text-muted-foreground text-lg">
-                    We’ll rank your top career bets. These become seeds for market analysis (trends, skills, salaries, growth).
+                    We’ll rank your top career bets. These become seeds for market analysis (trends,
+                    skills, salaries, growth).
                   </p>
                 </div>
                 <div className="w-full">
@@ -201,7 +203,8 @@ const NewEmptyStateComponent = ({
                 </div>
                 <div className="mt-4 h-full w-full items-center justify-start">
                   <p className="text-muted-foreground text-lg">
-                    Explore key trends, in-demand skills, salary ranges, employment rates, and growth forecasts for your target role and region.
+                    Explore key trends, in-demand skills, salary ranges, employment rates, and
+                    growth forecasts for your target role and region.
                   </p>
                 </div>
                 <div className="w-full">

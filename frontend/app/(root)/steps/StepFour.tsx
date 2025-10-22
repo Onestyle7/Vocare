@@ -43,7 +43,7 @@ export default function StepFour({ form, onBack, onNext }: StepFourProps) {
             <FormLabel>Additional Information</FormLabel>
             <FormControl>
               <Textarea
-                placeholder="Additional informations that you want to share..."
+                placeholder="Additional information that you want to share..."
                 className="min-h-[120px]"
                 {...field}
               />

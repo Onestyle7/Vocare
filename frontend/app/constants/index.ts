@@ -384,7 +384,7 @@ export const aboutCardsData = [
     img: '/images/plus.png',
     title: 'Career outcomes',
     description:
-      'Your top career bets ranked by fit, effort, and salary outlook-so you know what to do next, today.',
+      'Your best career matches ranked by compatibility, effort, and salary outlook-so you know what to do next today.',
   },
   {
     img: '/images/plus.png',
@@ -395,8 +395,7 @@ export const aboutCardsData = [
   {
     img: '/images/plus.png',
     title: 'ATS resume',
-    description:
-      'Export a clean, ATS-ready resume tailored to your chosen path.',
+    description: 'Export a clean, ATS-ready resume tailored to your chosen path.',
   },
 ];
 
