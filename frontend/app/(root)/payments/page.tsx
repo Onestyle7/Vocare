@@ -1,7 +1,8 @@
 'use client';
 
 import React from 'react';
-import { Loader2 } from 'lucide-react';
+import Link from 'next/link';
+import { ArrowLeft, Loader2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL ?? 'http://localhost:8080';
@@ -172,7 +173,14 @@ const PaymentsPage: React.FC = () => {
   }, [fetchSubscriptionState, hasSubscription]);
 
   return (
-    <main className="font-korbin flex min-h-screen w-full items-center justify-center px-4">
+    <main className="font-korbin relative flex min-h-screen w-full items-center justify-center px-4">
+      <Link
+        href="/"
+        className="absolute left-4 top-4 inline-flex items-center gap-2 rounded-md border border-border/60 bg-background/80 px-3 py-1 text-sm text-muted-foreground transition hover:bg-accent hover:text-accent-foreground"
+      >
+        <ArrowLeft className="h-4 w-4" />
+        Home
+      </Link>
       <div className="flex flex-col items-center gap-3">
         <Button
           variant="destructive"
