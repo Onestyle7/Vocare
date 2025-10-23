@@ -1,10 +1,14 @@
+using System.Linq.Expressions;
 using System.Text.Json;
 using System.Web;
+using AutoMapper;
 using Microsoft.AspNetCore.DataProtection;
 using Microsoft.AspNetCore.Identity;
+using VocareWebAPI.Billing.Models.Entities;
 using VocareWebAPI.Models.Entities;
 using VocareWebAPI.Shared.Models;
 using VocareWebAPI.UserManagement.Models.Results;
+using VocareWebAPI.UserManagement.Repositories.Interfaces;
 using VocareWebAPI.UserManagement.Services.Interfaces;
 
 namespace VocareWebAPI.UserManagement.Services.Implementations
@@ -19,6 +23,7 @@ namespace VocareWebAPI.UserManagement.Services.Implementations
         private readonly IHttpContextAccessor _httpContextAccessor;
         private readonly IEmailService _emailService;
         private readonly UserRegistrationHandler _registrationHandler;
+        private readonly IMarketingConsentRepository _marketingConsentRepository;
 
         public AuthenticationService(
             UserManager<User> userManager,
@@ -28,7 +33,8 @@ namespace VocareWebAPI.UserManagement.Services.Implementations
             IHttpClientFactory httpClientFactory,
             IHttpContextAccessor httpContextAccessor,
             IEmailService emailService,
-            UserRegistrationHandler registrationHandler
+            UserRegistrationHandler registrationHandler,
+            IMarketingConsentRepository marketingConsentRepository
         )
         {
             _userManager = userManager;
@@ -39,6 +45,7 @@ namespace VocareWebAPI.UserManagement.Services.Implementations
             _httpContextAccessor = httpContextAccessor;
             _emailService = emailService;
             _registrationHandler = registrationHandler;
+            _marketingConsentRepository = marketingConsentRepository;
         }
 
         public async Task<Result<LoginResult>> LoginAsync(string email, string password)
@@ -96,7 +103,12 @@ namespace VocareWebAPI.UserManagement.Services.Implementations
             return protector.Protect(json);
         }
 
-        public async Task<Result<RegisterResult>> RegisterAsync(string email, string password)
+        public async Task<Result<RegisterResult>> RegisterAsync(
+            string email,
+            string password,
+            bool acceptMarketingConsent,
+            string? ipAddress
+        )
         {
             _logger.LogInformation("=== REGISTER START === Email: {Email}", email);
 
@@ -129,6 +141,36 @@ namespace VocareWebAPI.UserManagement.Services.Implementations
                     string.Join(", ", result.Errors.Select(e => e.Description))
                 );
                 return Result<RegisterResult>.Failure("Registration failed");
+            }
+            if (acceptMarketingConsent)
+            {
+                try
+                {
+                    var consent = new MarketingConsent
+                    {
+                        UserId = user.Id,
+                        IsConsentGiven = true,
+                        ConsentDate = DateTime.UtcNow,
+                        ConsentSource = "registration_form",
+                        IpAddress = ipAddress,
+
+                        ConsentText =
+                            "Wyrażam zgodę na otrzymywanie informacji marketingowych od Vocare.",
+                    };
+                    await _marketingConsentRepository.CreateAsync(consent);
+                    _logger.LogInformation(
+                        "Marketing consent recorded for user: {UserId}",
+                        user.Id
+                    );
+                }
+                catch (Exception ex)
+                {
+                    _logger.LogError(
+                        ex,
+                        "Failed to record marketing consent for user: {UserId}",
+                        user.Id
+                    );
+                }
             }
 
             _logger.LogInformation(

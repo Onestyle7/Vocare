@@ -19,6 +19,8 @@ using VocareWebAPI.Repositories.Interfaces;
 using VocareWebAPI.Services;
 using VocareWebAPI.UserManagement;
 using VocareWebAPI.UserManagement.Interfaces;
+using VocareWebAPI.UserManagement.Repositories.Implementations;
+using VocareWebAPI.UserManagement.Repositories.Interfaces;
 using VocareWebAPI.UserManagement.Services;
 using VocareWebAPI.UserManagement.Services.Implementations;
 using VocareWebAPI.UserManagement.Services.Interfaces;
@@ -62,6 +64,7 @@ namespace VocareWebAPI.Extensions.ServiceCollectionExtensions
             // User Repositories
             services.AddScoped<IUserProfileRepository, UserProfileRepository>();
             services.AddScoped<IUserBillingRepository, UserBillingRepository>();
+            services.AddScoped<IMarketingConsentRepository, MarketingConsentRepository>();
 
             // Transaction repositories
             services.AddScoped<ITokenTransactionRepository, TokenTransactionRepository>();
