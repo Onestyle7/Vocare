@@ -16,7 +16,12 @@ namespace VocareWebAPI.UserManagement.Services.Interfaces
 
         Task<Result<ValidateResetTokenResult>> ValidateResetTokenAsync(string token, string email);
 
-        Task<Result<RegisterResult>> RegisterAsync(string email, string password);
+        Task<Result<RegisterResult>> RegisterAsync(
+            string email,
+            string password,
+            bool acceptMarketingConsent,
+            string? ipAddress
+        );
 
         Task<Result<LoginResult>> LoginAsync(string email, string password);
 
