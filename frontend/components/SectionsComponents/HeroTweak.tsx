@@ -125,10 +125,10 @@ const HeroTweak = () => {
 
       <div className="relative mt-14 flex flex-col items-center justify-center border-gray-300 px-[40px] max-md:mt-40 dark:border-gray-600/30">
         <div className="font-korbin mb-2 flex h-full flex-col items-center justify-center">
-          <p className="font-bold text-gray-400">Meet Us</p>
+          <p className="font-bold text-gray-400">Meet us</p>
           <Copy>
             <p className="text-color mt-8 text-center text-4xl font-bold md:text-[4rem] xl:leading-[0.8]">
-              What will You get?
+              What will you get?
             </p>
           </Copy>
           <h2 className="font-poppins mt-4 text-gray-400 max-md:text-center">

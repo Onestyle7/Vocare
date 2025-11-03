@@ -15,7 +15,7 @@ const MobileFeatureImprovements = () => {
       <div className="relative flex h-[100vh] w-full flex-col items-center justify-center lg:border-t 2xl:h-[50vh]">
         <div className="mt-6 mb-10 flex h-full w-full flex-col items-center justify-start py-8 sm:px-4 md:py-0 2xl:h-full 2xl:justify-center">
           <div className="mb-4 text-center">
-            <p className="mb-6 font-bold text-gray-400">Always in Your pocket.</p>
+            <p className="mb-6 font-bold text-gray-400">Always in your pocket.</p>
             <h2 className="text-4xl font-bold">Your advisor always with you.</h2>
           </div>
           <div className="mt-4 flex h-full w-full flex-col items-center justify-center gap-4 sm:flex-row sm:px-8">

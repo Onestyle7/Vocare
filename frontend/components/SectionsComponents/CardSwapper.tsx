@@ -9,8 +9,8 @@ const CardFeature = () => {
     <div className="font-korbin mx-4 flex h-auto flex-col overflow-hidden border max-md:mt-[300px] max-md:-mb-[200px] max-md:rounded-lg sm:mx-10 sm:border-r sm:border-b sm:border-l md:h-[600px] md:flex-row">
       <div className="flex w-full flex-col items-center justify-center px-4 py-8 md:w-1/2 md:py-0">
         <div className="text-center sm:text-left">
-          <p className="mb-6 font-bold text-gray-400">All Your Tools Together.</p>
-          <h2 className="text-4xl font-bold">Compact Powerhouse.</h2>
+          <p className="mb-6 font-bold text-gray-400">All your tools together.</p>
+          <h2 className="text-4xl font-bold">Compact powerhouse.</h2>
           <div className="flex w-full items-center justify-center sm:justify-start">
             <Button
               asChild
