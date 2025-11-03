@@ -78,11 +78,12 @@ const AuthForm = ({ type }: AuthFormProps) => {
     setIsLoading(true);
     try {
       if (isSignUp) {
-        const { email, password, confirmPassword } = values as SignUpFormType;
+        const { email, password, confirmPassword, marketingConsent } = values as SignUpFormType;
         await registerUser({
           email,
           password,
           confirmPassword,
+          marketingConsent: Boolean(marketingConsent),
         });
         toast.success('Registration successful!', {
           description: 'You have successfully created an account. Please sign in.',
