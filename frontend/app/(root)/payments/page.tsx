@@ -22,7 +22,7 @@ const DASHBOARD_ENDPOINT = '/api/Billing/subscription-dashboard';
 const SUBSCRIPTION_STATUS_ENDPOINT = '/api/Billing/subscription-status';
 const CANCEL_SUBSCRIPTION_ENDPOINT = '/api/Billing/cancel-subscription';
 const MARKETING_CONSENT_ENDPOINT = '/api/Marketing/consent';
-const TOKEN_TRANSACTIONS_ENDPOINT = '/api/Billing/token-transactions';
+const PAYMENT_HISTORY_ENDPOINT = '/api/Billing/payment-history';
 
 type SubscriptionStatusKey = 'active' | 'trialing' | 'canceled' | 'past_due' | 'expired';
 
@@ -38,13 +38,38 @@ interface SubscriptionStatusResponse {
   subscriptionStatus?: string | null;
 }
 
-interface TokenTransaction {
+interface PaymentHistoryItem {
   id?: number | string;
-  serviceName: string;
-  amount: number;
   type: string;
+  amount: number;
+  currency: string;
+  status: string;
   createdAt: string;
+  description?: string | null;
+  tokenAmount?: number | null;
 }
+
+type PaymentHistoryRawItem = {
+  id?: number | string;
+  Id?: number | string;
+  paymentId?: number | string;
+  type?: string;
+  Type?: string;
+  amount?: number | string;
+  Amount?: number | string;
+  currency?: string;
+  Currency?: string;
+  status?: string;
+  Status?: string;
+  createdAt?: string;
+  CreatedAt?: string;
+  created_at?: string;
+  timestamp?: string;
+  description?: string;
+  Description?: string;
+  tokenAmount?: number | string;
+  TokenAmount?: number | string;
+};
 
 const normalizeStatusKey = (value?: string | null): SubscriptionStatusKey | null => {
   if (!value) return null;
@@ -66,9 +91,9 @@ const PaymentsPage: React.FC = () => {
   const [isConsentLoading, setIsConsentLoading] = React.useState(true);
   const [isUpdatingConsent, setIsUpdatingConsent] = React.useState(false);
   const [consentError, setConsentError] = React.useState<string | null>(null);
-  const [transactions, setTransactions] = React.useState<TokenTransaction[]>([]);
-  const [isTransactionsLoading, setIsTransactionsLoading] = React.useState(true);
-  const [transactionsError, setTransactionsError] = React.useState<string | null>(null);
+  const [payments, setPayments] = React.useState<PaymentHistoryItem[]>([]);
+  const [isPaymentsLoading, setIsPaymentsLoading] = React.useState(true);
+  const [paymentsError, setPaymentsError] = React.useState<string | null>(null);
 
   const evaluateStatus = React.useCallback((status?: string | null) => {
     const key = normalizeStatusKey(status);
@@ -207,33 +232,32 @@ const PaymentsPage: React.FC = () => {
     return () => controller.abort();
   }, [fetchMarketingConsent]);
 
-  const fetchTransactions = React.useCallback(
+  const fetchPaymentHistory = React.useCallback(
     async (options?: { signal?: AbortSignal }) => {
       const { signal } = options ?? {};
-      setIsTransactionsLoading(true);
-      setTransactionsError(null);
+      setIsPaymentsLoading(true);
+      setPaymentsError(null);
 
       try {
         const token = typeof window !== 'undefined' ? localStorage.getItem('token') : undefined;
-        const response = await fetch(
-          new URL(TOKEN_TRANSACTIONS_ENDPOINT, API_BASE_URL).toString(),
-          {
-            signal,
-            headers: {
-              'Content-Type': 'application/json',
-              ...(token ? { Authorization: `Bearer ${token}` } : {}),
-            },
-          }
-        );
+        const url = new URL(PAYMENT_HISTORY_ENDPOINT, API_BASE_URL);
+        url.searchParams.set('limit', '50');
+        const response = await fetch(url.toString(), {
+          signal,
+          headers: {
+            'Content-Type': 'application/json',
+            ...(token ? { Authorization: `Bearer ${token}` } : {}),
+          },
+        });
 
         if (response.status === 401) {
-          setTransactions([]);
-          setTransactionsError('You need to sign in to view your transaction history.');
+          setPayments([]);
+          setPaymentsError('You need to sign in to view your payment history.');
           return;
         }
 
         if (response.status === 404) {
-          setTransactions([]);
+          setPayments([]);
           return;
         }
 
@@ -250,46 +274,59 @@ const PaymentsPage: React.FC = () => {
           } else {
             message = await response.text();
           }
-          throw new Error(message || 'Failed to load transaction history.');
+          throw new Error(message || 'Failed to load payment history.');
         }
 
         const payload = await response.json();
-        const rawList = Array.isArray(payload)
-          ? payload
-          : Array.isArray(payload?.transactions)
-            ? payload.transactions
+        const rawList = (Array.isArray(payload?.payments)
+          ? payload.payments
+          : Array.isArray(payload)
+            ? payload
             : Array.isArray(payload?.data)
               ? payload.data
-              : [];
+              : []) as PaymentHistoryRawItem[];
 
         const normalized = rawList
-          .map((item) => ({
-            id: item.id ?? item.Id ?? item.transactionId ?? undefined,
-            serviceName:
-              item.serviceName ?? item.ServiceName ?? item.service_name ?? 'Unknown service',
+          .map((item: PaymentHistoryRawItem): PaymentHistoryItem => ({
+            id: item.id ?? item.Id ?? item.paymentId ?? undefined,
+            type: item.type ?? item.Type ?? 'unknown',
             amount: Number(item.amount ?? item.Amount ?? 0),
-            type: item.type ?? item.Type ?? item.transactionType ?? 'Unknown',
-            createdAt:
-              item.createdAt ??
-              item.CreatedAt ??
-              item.created_at ??
-              item.timestamp ??
-              new Date().toISOString(),
+            currency: (item.currency ?? item.Currency ?? 'USD') as string,
+            status: item.status ?? item.Status ?? 'unknown',
+            createdAt: (() => {
+              const fallback = new Date().toISOString();
+              const value =
+                item.createdAt ??
+                item.CreatedAt ??
+                item.created_at ??
+                item.timestamp ??
+                fallback;
+              const parsed = new Date(value);
+              return Number.isNaN(parsed.getTime()) ? value : parsed.toISOString();
+            })(),
+            description: item.description ?? item.Description ?? null,
+            tokenAmount: (() => {
+              const raw = item.tokenAmount ?? item.TokenAmount ?? null;
+              if (raw === null || raw === undefined || raw === '') return null;
+              if (typeof raw === 'number') return raw;
+              const parsed = Number(raw);
+              return Number.isFinite(parsed) ? parsed : null;
+            })(),
           }))
           .sort(
-            (a, b) =>
+            (a: PaymentHistoryItem, b: PaymentHistoryItem) =>
               new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
           );
 
-        setTransactions(normalized);
+        setPayments(normalized);
       } catch (err) {
         if ((err as DOMException).name === 'AbortError') return;
-        console.error('Failed to load transaction history', err);
-        setTransactionsError('Unable to load transaction history right now.');
-        setTransactions([]);
+        console.error('Failed to load payment history', err);
+        setPaymentsError('Unable to load payment history right now.');
+        setPayments([]);
       } finally {
         if (!signal?.aborted) {
-          setIsTransactionsLoading(false);
+          setIsPaymentsLoading(false);
         }
       }
     },
@@ -298,13 +335,13 @@ const PaymentsPage: React.FC = () => {
 
   React.useEffect(() => {
     const controller = new AbortController();
-    fetchTransactions({ signal: controller.signal }).catch((err) => {
+    fetchPaymentHistory({ signal: controller.signal }).catch((err) => {
       if ((err as DOMException).name === 'AbortError') return;
-      console.error('Failed to load transaction history', err);
+      console.error('Failed to load payment history', err);
     });
 
     return () => controller.abort();
-  }, [fetchTransactions]);
+  }, [fetchPaymentHistory]);
 
   const handleCancelSubscription = React.useCallback(async () => {
     if (!hasSubscription) return;
@@ -443,10 +480,34 @@ const PaymentsPage: React.FC = () => {
     []
   );
 
-  const formatAmount = React.useCallback((amount: number, type: string) => {
-    if (Number.isNaN(amount)) return '0';
-    const prefix = type?.toLowerCase() === 'usage' ? '-' : '+';
-    return `${prefix}${Math.abs(amount)}`;
+  const formatPaymentAmount = React.useCallback((amount: number, currency?: string) => {
+    if (!Number.isFinite(amount)) return '—';
+    const normalizedCurrency = (currency ?? 'USD').toUpperCase();
+    const value = amount / 100;
+    try {
+      return new Intl.NumberFormat(undefined, {
+        style: 'currency',
+        currency: normalizedCurrency,
+      }).format(value);
+    } catch {
+      return `${value.toFixed(2)} ${normalizedCurrency}`;
+    }
+  }, []);
+
+  const getStatusBadgeVariant = React.useCallback((status?: string) => {
+    const normalized = status?.toLowerCase();
+    if (normalized === 'succeeded' || normalized === 'paid') return 'secondary';
+    if (normalized === 'pending' || normalized === 'processing' || normalized === 'open')
+      return 'outline';
+    if (normalized === 'failed' || normalized === 'canceled') return 'destructive';
+    return 'default';
+  }, []);
+
+  const formatTypeLabel = React.useCallback((type?: string) => {
+    const normalized = type?.toLowerCase();
+    if (normalized === 'subscription') return 'Subscription payment';
+    if (normalized === 'token_purchase') return 'Token purchase';
+    return type ?? 'Payment';
   }, []);
 
   return (
@@ -584,33 +645,28 @@ const PaymentsPage: React.FC = () => {
               </CardDescription>
             </CardHeader>
             <CardContent className="space-y-4">
-              {isTransactionsLoading ? (
+              {isPaymentsLoading ? (
                 <div className="space-y-3">
                   <Skeleton className="h-14 w-full rounded-lg" />
                   <Skeleton className="h-14 w-full rounded-lg" />
                   <Skeleton className="h-14 w-full rounded-lg" />
                 </div>
-              ) : transactionsError ? (
+              ) : paymentsError ? (
                 <div className="rounded-md border border-destructive/40 bg-destructive/10 px-3 py-2 text-sm text-destructive">
-                  {transactionsError}
+                  {paymentsError}
                 </div>
-              ) : transactions.length === 0 ? (
+              ) : payments.length === 0 ? (
                 <div className="flex flex-col items-center justify-center gap-2 rounded-lg border border-dashed border-border/60 bg-muted/20 px-6 py-12 text-center">
-                  <span className="text-sm font-medium text-foreground">No transactions yet</span>
+                  <span className="text-sm font-medium text-foreground">No payments yet</span>
                   <span className="text-xs text-muted-foreground">
-                    Purchases and token usage will appear here once available.
+                    Card charges and subscriptions will appear here once available.
                   </span>
                 </div>
               ) : (
                 <div className="space-y-3">
-                  {transactions.map((transaction, index) => {
-                    const amountClass =
-                      transaction.type?.toLowerCase() === 'usage'
-                        ? 'text-destructive'
-                        : 'text-emerald-500';
-
+                  {payments.map((payment) => {
                     const formattedDate = (() => {
-                      const parsedDate = new Date(transaction.createdAt);
+                      const parsedDate = new Date(payment.createdAt);
                       if (Number.isNaN(parsedDate.getTime())) {
                         return '—';
                       }
@@ -618,7 +674,8 @@ const PaymentsPage: React.FC = () => {
                     })();
 
                     const key =
-                      transaction.id ?? `${transaction.createdAt}-${transaction.serviceName}-${index}`;
+                      payment.id ??
+                      `${payment.createdAt}-${payment.type}-${payment.amount}-${payment.status}`;
 
                     return (
                       <div
@@ -627,20 +684,23 @@ const PaymentsPage: React.FC = () => {
                       >
                         <div className="space-y-1">
                           <p className="text-sm font-medium text-foreground">
-                            {transaction.serviceName}
+                            {payment.description ?? formatTypeLabel(payment.type)}
                           </p>
                           <span className="text-xs text-muted-foreground">{formattedDate}</span>
+                          {typeof payment.tokenAmount === 'number' && (
+                            <span className="text-xs text-muted-foreground">
+                              {payment.tokenAmount} tokens
+                            </span>
+                          )}
                         </div>
-                        <div className="flex flex-col items-start gap-2 sm:flex-row sm:items-center sm:gap-3">
+                        <div className="flex flex-col items-start gap-2 sm:items-end">
                           <Badge
-                            variant={
-                              transaction.type?.toLowerCase() === 'usage' ? 'outline' : 'secondary'
-                            }
+                            variant={getStatusBadgeVariant(payment.status)}
                           >
-                            {transaction.type}
+                            {payment.status ?? 'Unknown'}
                           </Badge>
-                          <span className={`text-sm font-semibold ${amountClass}`}>
-                            {formatAmount(transaction.amount, transaction.type)} tokens
+                          <span className="text-sm font-semibold text-foreground">
+                            {formatPaymentAmount(payment.amount, payment.currency)}
                           </span>
                         </div>
                       </div>
