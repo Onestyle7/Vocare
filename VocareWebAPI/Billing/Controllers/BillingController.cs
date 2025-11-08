@@ -93,7 +93,7 @@ namespace VocareWebAPI.Controllers
 #if DEBUG
         [HttpGet("debug/user-billing/{userId}")]
 #endif
-        [Authorize] // Tylko dla zalogowanych użytkowników
+        [Authorize]
         public async Task<IActionResult> DebugUserBilling(string userId)
         {
             try
@@ -403,6 +403,49 @@ namespace VocareWebAPI.Controllers
             catch (Exception ex)
             {
                 _logger.LogError(ex, "Unexpected error during cancel subscription process.");
+                return StatusCode(500, new { Error = "An unexpected error occurred." });
+            }
+        }
+
+        [HttpGet("payment-history")]
+        [Authorize]
+        public async Task<IActionResult> GetPaymentHistory([FromQuery] int limit = 50)
+        {
+            try
+            {
+                var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+                if (string.IsNullOrEmpty(userId))
+                {
+                    _logger.LogWarning("User tried to access payment history unauthenticated.");
+                    return Unauthorized(new { Error = "User must be authenticated." });
+                }
+                if (limit <= 0 || limit > 100)
+                {
+                    _logger.LogWarning("Invalid limit parameter: {Limit}", limit, userId);
+                    return BadRequest(new { Error = "Limit must be between 1 and 100." });
+                }
+                _logger.LogInformation(
+                    "Fetching payment history for userId={UserId} with limit={Limit}.",
+                    userId,
+                    limit
+                );
+                var paymentHistory = await _stripeService.GetPaymentHistoryAsync(userId, limit);
+                _logger.LogInformation(
+                    "Successfully returned {Count} payment history items for userId={UserId}.",
+                    paymentHistory.Count,
+                    userId
+                );
+
+                return Ok(new { payments = paymentHistory, count = paymentHistory.Count });
+            }
+            catch (InvalidOperationException ex)
+            {
+                _logger.LogError(ex, "Stripe operation failed while getting payment history.");
+                return BadRequest(new { Error = ex.Message });
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Unexpected error fetching payment history.");
                 return StatusCode(500, new { Error = "An unexpected error occurred." });
             }
         }
