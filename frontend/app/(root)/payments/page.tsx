@@ -17,6 +17,7 @@ import {
 import { Badge } from '@/components/ui/badge';
 import { Skeleton } from '@/components/ui/skeleton';
 
+
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL ?? 'http://localhost:8080';
 const DASHBOARD_ENDPOINT = '/api/Billing/subscription-dashboard';
 const SUBSCRIPTION_STATUS_ENDPOINT = '/api/Billing/subscription-status';
@@ -94,6 +95,7 @@ const PaymentsPage: React.FC = () => {
   const [payments, setPayments] = React.useState<PaymentHistoryItem[]>([]);
   const [isPaymentsLoading, setIsPaymentsLoading] = React.useState(true);
   const [paymentsError, setPaymentsError] = React.useState<string | null>(null);
+
 
   const evaluateStatus = React.useCallback((status?: string | null) => {
     const key = normalizeStatusKey(status);

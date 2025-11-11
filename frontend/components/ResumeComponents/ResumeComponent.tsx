@@ -173,6 +173,7 @@ const RichTextToolbar = ({
 
 const makeExperienceId = () => `${Date.now()}-${Math.random().toString(36).slice(2, 8)}`;
 
+
 const ensureExperienceDefaults = (exp: Partial<Experience>): Experience => ({
   id: typeof exp.id === 'string' && exp.id.length > 0 ? exp.id : makeExperienceId(),
   company: exp.company ?? '',
@@ -388,9 +389,32 @@ const CVCreator: React.FC<CVCreatorProps> = ({ initialCv }) => {
     localStorage.setItem('sectionOrder', JSON.stringify(sectionOrder));
   }, [sectionOrder]);
 
-  useEffect(() => {
-    requestAnimationFrame(() => updateSummaryFormattingFromSelection());
+  const updateSummaryFormattingFromSelection = React.useCallback(() => {
+    const textarea = summaryTextareaRef.current;
+    if (!textarea) return;
+    const selectionStart = textarea.selectionStart ?? 0;
+    const selectionEnd = textarea.selectionEnd ?? selectionStart;
+    const nextFormatting = computeFormattingState(
+      personalInfo.summary || '',
+      selectionStart,
+      selectionEnd
+    );
+
+    setSummaryFormatting((prev) => {
+      if (
+        prev.bold === nextFormatting.bold &&
+        prev.italic === nextFormatting.italic &&
+        prev.underline === nextFormatting.underline
+      ) {
+        return prev;
+      }
+      return nextFormatting;
+    });
   }, [personalInfo.summary]);
+
+  useEffect(() => {
+    requestAnimationFrame(updateSummaryFormattingFromSelection);
+  }, [updateSummaryFormattingFromSelection]);
 
   useEffect(() => {
     setExperienceFormattingState((prev) => {
