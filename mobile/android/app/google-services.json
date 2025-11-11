@@ -1,0 +1,31 @@
+{
+    "project_info": {
+      "project_number": "242922286827",
+      "project_id": "vocare-477e12"
+    },
+    "client": [
+      {
+        "client_info": {
+          "mobilesdk_app_id": "1:242922286827:android:abc123",
+          "android_client_info": {
+            "package_name": "com.example.mobile_vocare"
+          }
+        },
+        "oauth_client": [
+          {
+            "client_id": "242922286827-q6na0gc5f567c2ieolajs2g0300soms9.apps.googleusercontent.com",
+            "client_type": 1,
+            "android_info": {
+              "package_name": "com.example.mobile_vocare",
+              "certificate_hash": "EC60D0C54E31B62F434F17CD87FD46136277"
+            }
+          },
+          {
+            "client_id": "474910159880-54sukfni3vBgvjs0mkjuio7elsspjcsn.apps.googleusercontent.com",
+            "client_type": 3
+          }
+        ]
+      }
+    ],
+    "configuration_version": "1"
+  }
