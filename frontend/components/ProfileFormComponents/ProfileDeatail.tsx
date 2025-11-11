@@ -342,7 +342,7 @@ export default function ProfileDetails() {
           <div className="ml-2 h-2 w-2 rounded-full bg-[#915EFF]" />
         </h2>
         <div className="rounded-lg bg-gray-50/60 p-4 dark:bg-black/20">
-          <p>{profile?.additionalInformation || 'No additional informations yet.'}</p>
+          <p>{profile?.additionalInformation || 'No additional information yet.'}</p>
         </div>
       </div>
     </div>

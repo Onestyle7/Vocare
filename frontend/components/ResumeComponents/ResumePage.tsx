@@ -106,7 +106,7 @@
 //           <div className="flex flex-col md:flex-row gap-4 mb-6">
 //             <input
 //               type="text"
-//               placeholder="Enter position (e.g., UI Designer, Web Developer)"
+//               placeholder="Enter position (e.g. UI Designer, Web Developer)"
 //               className="flex-1 border border-gray-300 rounded px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
 //               value={position}
 //               onChange={(e) => setPosition(e.target.value)}

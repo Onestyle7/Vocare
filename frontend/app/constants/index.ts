@@ -382,21 +382,20 @@ export const pricingPlans = [
 export const aboutCardsData = [
   {
     img: '/images/plus.png',
-    title: 'Beginners friendly',
+    title: 'Career outcomes',
     description:
-      'Jump right in! Our resources cater to all skill levels, ensuring a smooth learning curve for newcomers.',
+      'Your best career matches ranked by compatibility, effort, and salary outlook-so you know what to do next today.',
   },
   {
     img: '/images/plus.png',
-    title: 'Advanced features',
+    title: 'Market intelligence',
     description:
-      'Explore cutting-edge tools and techniques designed for experienced developers looking to push boundaries.',
+      'Trends, in-demand skills, employment rates, and salary ranges for your role and region.',
   },
   {
     img: '/images/plus.png',
-    title: 'Community driven',
-    description:
-      'Join thousands of developers sharing knowledge, best practices, and building amazing projects together.',
+    title: 'ATS resume',
+    description: 'Export a clean, ATS-ready resume tailored to your chosen path.',
   },
 ];
 

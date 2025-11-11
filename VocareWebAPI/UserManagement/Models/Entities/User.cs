@@ -14,5 +14,6 @@ namespace VocareWebAPI.Models.Entities
     {
         public UserProfile UserProfile { get; set; } = default!;
         public UserBilling Billing { get; set; } = default!;
+        public MarketingConsent? marketingConsent { get; set; }
     }
 }

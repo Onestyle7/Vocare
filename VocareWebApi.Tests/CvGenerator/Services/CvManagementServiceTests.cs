@@ -443,5 +443,44 @@ namespace VocareWebApi.Tests.CvGenerator.Services
             _mockCvRepo.Verify(r => r.BelongsToUserAsync(cvId, userId), Times.Once);
             _mockCvRepo.Verify(r => r.GetByIdAsync(cvId), Times.Once);
         }
+
+        [Fact]
+        public async Task GetCvDetailsAsync_CvDoesNotBelongToUser_ThrowsUnauthorizedAccessException()
+        {
+            // Arrange
+            var userId = "user-123";
+            var cvId = Guid.NewGuid();
+
+            _mockCvRepo.Setup(r => r.BelongsToUserAsync(cvId, userId)).ReturnsAsync(false);
+
+            // Act & Assert
+            var exception = await Assert.ThrowsAsync<UnauthorizedAccessException>(
+                async () => await _service.GetCvDetailsAsync(cvId, userId)
+            );
+
+            Assert.Equal("You do not have permission to access this CV.", exception.Message);
+            _mockCvRepo.Verify(r => r.BelongsToUserAsync(cvId, userId), Times.Once);
+            _mockCvRepo.Verify(r => r.GetByIdAsync(It.IsAny<Guid>()), Times.Never);
+        }
+
+        [Fact]
+        public async Task GetCvDetailsAsync_CvNotFound_ThrowsKeyNotFoundException()
+        {
+            // Arrange
+            var userId = "user-123";
+            var cvId = Guid.NewGuid();
+
+            _mockCvRepo.Setup(r => r.BelongsToUserAsync(cvId, userId)).ReturnsAsync(true);
+            _mockCvRepo.Setup(r => r.GetByIdAsync(cvId)).ReturnsAsync((GeneratedCv?)null);
+
+            // Act & Assert
+            var exception = await Assert.ThrowsAsync<KeyNotFoundException>(
+                async () => await _service.GetCvDetailsAsync(cvId, userId)
+            );
+
+            Assert.Equal($"CV not found. ID: {cvId}", exception.Message);
+            _mockCvRepo.Verify(r => r.BelongsToUserAsync(cvId, userId), Times.Once);
+            _mockCvRepo.Verify(r => r.GetByIdAsync(cvId), Times.Once);
+        }
     }
 }

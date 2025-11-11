@@ -2,7 +2,7 @@ import React from 'react';
 import Section from '../SupportComponents/Section';
 import Image from 'next/image';
 import { Button } from '../ui/button';
-import { ArrowRight } from 'lucide-react';
+// import { ArrowRight } from 'lucide-react';
 
 const MobileFeatureImprovements = () => {
   return (
@@ -12,10 +12,10 @@ const MobileFeatureImprovements = () => {
       className="font-korbin relative overflow-hidden px-10 max-md:-mb-70"
       id="brain"
     >
-      <div className="relative flex h-[100vh] 2xl:h-[50vh] w-full flex-col items-center justify-center lg:border-t">
-        <div className="mt-6 mb-10 flex h-full 2xl:h-full w-full flex-col items-center justify-start 2xl:justify-center py-8 sm:px-4 md:py-0">
+      <div className="relative flex h-[100vh] w-full flex-col items-center justify-center lg:border-t 2xl:h-[50vh]">
+        <div className="mt-6 mb-10 flex h-full w-full flex-col items-center justify-start py-8 sm:px-4 md:py-0 2xl:h-full 2xl:justify-center">
           <div className="mb-4 text-center">
-            <p className="mb-6 font-bold text-gray-400">Always in Your pocket.</p>
+            <p className="mb-6 font-bold text-gray-400">Always in your pocket.</p>
             <h2 className="text-4xl font-bold">Your advisor always with you.</h2>
           </div>
           <div className="mt-4 flex h-full w-full flex-col items-center justify-center gap-4 sm:flex-row sm:px-8">
@@ -40,9 +40,10 @@ const MobileFeatureImprovements = () => {
                     <Button
                       className="group relative z-20 mt-10 h-12 w-5/6 rounded-full bg-[linear-gradient(90deg,rgba(146,150,253,1)_0%,rgba(132,145,254,1)_50%,rgba(199,169,254,1)_100%,rgba(157,155,255,1)_77%)] font-bold text-white md:mt-16 md:w-2/3"
                       variant="default"
+                      disabled
                     >
-                      Download Now
-                      <ArrowRight className="ml-2 transition-all ease-in-out group-hover:translate-x-2" />
+                      Available soon
+                      {/* <ArrowRight className="ml-2 transition-all ease-in-out group-hover:translate-x-2" /> */}
                     </Button>
                   </div>
                 </div>

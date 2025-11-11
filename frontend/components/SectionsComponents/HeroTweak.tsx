@@ -7,7 +7,7 @@ import { companies, shape1, Spinner } from '@/app/constants';
 import { ArrowRight } from 'lucide-react';
 import Link from 'next/link';
 import { ScrollParallax } from 'react-just-parallax';
-import CustomButton from '@/components/ui/CustomButton';
+// import CustomButton from '@/components/ui/CustomButton';
 import { SpinningText } from '@/components/magicui/spinning-text';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { SplitText } from 'gsap/SplitText';
@@ -15,6 +15,7 @@ import gsap from 'gsap';
 import Section from '../SupportComponents/Section';
 import CustomCursor from '../SupportComponents/CustomCursor';
 import Copy from '../SupportComponents/Copy';
+import { Button } from '../ui/button';
 
 gsap.registerPlugin(ScrollTrigger, SplitText);
 
@@ -64,25 +65,24 @@ const HeroTweak = () => {
             </Copy>
             <Copy>
               <h2 className="text-muted-foreground ibm-plex-mono-regular mt-8 max-w-xl px-4 text-center text-sm max-md:block sm:mt-4 sm:text-base md:px-0 md:text-left md:text-lg lg:text-base xl:text-sm">
-                An intelligent AI-powered career advisor that analyzes your skills, goals, and
-                market trends to guide you toward the best professional path.
+                Vocare is an AI career advisor that turns your profile into clear career bets, live
+                market signals, and an ATS-ready resume-so you know what to do next today.
               </h2>
             </Copy>
 
             <Link
-              href="/assistant"
+              href="/profile"
               className="mt-3 flex cursor-none max-md:items-center max-md:justify-center sm:mt-4 lg:w-full"
             >
-              <CustomButton
-                variant="primary"
-                className="group font-korbin mt-4 flex cursor-none items-center justify-center overflow-hidden max-md:mt-10"
+              <Button
+                className="group relative z-20 mt-4 h-12 w-full rounded-full bg-[linear-gradient(90deg,rgba(146,150,253,1)_0%,rgba(132,145,254,1)_50%,rgba(199,169,254,1)_100%,rgba(157,155,255,1)_77%)] font-bold text-white md:mt-2 md:w-2/3"
+                variant="default"
               >
-                <span className="flex flex-row">
-                  Try it out
-                  <ArrowRight className="ml-2 scale-75 transition-transform duration-300 group-hover:translate-x-2" />
-                </span>
-              </CustomButton>
+                Get my plan
+                <ArrowRight className="ml-2 transition-all ease-in-out group-hover:translate-x-2" />
+              </Button>
             </Link>
+            {/* <p className='mt-2 text-xs text-gray-500'>Private by default. You control your data.</p> */}
           </div>
           <div className="flex h-full flex-col items-center justify-center max-md:mt-20 sm:w-full lg:w-1/2 2xl:w-1/4 2xl:items-end">
             <SpinningText>learn more • earn more • grow more •</SpinningText>
@@ -125,12 +125,15 @@ const HeroTweak = () => {
 
       <div className="relative mt-14 flex flex-col items-center justify-center border-gray-300 px-[40px] max-md:mt-40 dark:border-gray-600/30">
         <div className="font-korbin mb-2 flex h-full flex-col items-center justify-center">
-          <h3 className="font-bold text-gray-400">Meet Us</h3>
+          <p className="font-bold text-gray-400">Meet us</p>
           <Copy>
-            <h1 className="text-color mt-8 text-center text-4xl font-bold md:text-[4rem] xl:leading-[0.8]">
-              Our Vision
-            </h1>
+            <p className="text-color mt-8 text-center text-4xl font-bold md:text-[4rem] xl:leading-[0.8]">
+              What will you get?
+            </p>
           </Copy>
+          <h2 className="font-poppins mt-4 text-gray-400 max-md:text-center">
+            Career Outcomes, Market Insight & ATS-Ready Resume
+          </h2>
         </div>
       </div>
       <ScrollParallax isAbsolutelyPositioned zIndex={20}>

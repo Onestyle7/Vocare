@@ -142,9 +142,7 @@ const RichTextToolbar = ({
     <div className={`flex items-center gap-2 ${className}`}>
       <button
         type="button"
-        className={`${baseButtonClass} ${
-          formattingState.bold ? activeClass : inactiveClass
-        }`}
+        className={`${baseButtonClass} ${formattingState.bold ? activeClass : inactiveClass}`}
         aria-label="Bold"
         aria-pressed={formattingState.bold}
         onClick={() => onFormat('bold')}
@@ -153,9 +151,7 @@ const RichTextToolbar = ({
       </button>
       <button
         type="button"
-        className={`${baseButtonClass} ${
-          formattingState.italic ? activeClass : inactiveClass
-        }`}
+        className={`${baseButtonClass} ${formattingState.italic ? activeClass : inactiveClass}`}
         aria-label="Italic"
         aria-pressed={formattingState.italic}
         onClick={() => onFormat('italic')}
@@ -164,9 +160,7 @@ const RichTextToolbar = ({
       </button>
       <button
         type="button"
-        className={`${baseButtonClass} ${
-          formattingState.underline ? activeClass : inactiveClass
-        }`}
+        className={`${baseButtonClass} ${formattingState.underline ? activeClass : inactiveClass}`}
         aria-label="Underline"
         aria-pressed={formattingState.underline}
         onClick={() => onFormat('underline')}
@@ -177,338 +171,8 @@ const RichTextToolbar = ({
   );
 };
 
-const formattingTokens: Record<FormattingType, { prefix: string; suffix: string }> = {
-  bold: { prefix: '**', suffix: '**' },
-  italic: { prefix: '_', suffix: '_' },
-  underline: { prefix: '__', suffix: '__' },
-};
+const makeExperienceId = () => `${Date.now()}-${Math.random().toString(36).slice(2, 8)}`;
 
-const TOKEN_MARKERS = ['**', '__', '_'] as const;
-
-const getTokenLengthAt = (value: string, index: number) => {
-  for (const marker of TOKEN_MARKERS) {
-    if (value.startsWith(marker, index)) {
-      return marker.length;
-    }
-  }
-  return 0;
-};
-
-const stripFormattingTokens = (value: string) => {
-  if (!value) return '';
-  let result = '';
-  for (let i = 0; i < value.length; ) {
-    const tokenLength = getTokenLengthAt(value, i);
-    if (tokenLength) {
-      i += tokenLength;
-      continue;
-    }
-    result += value[i];
-    i += 1;
-  }
-  return result;
-};
-
-const plainToTokenIndex = (value: string, plainIndex: number) => {
-  let tokenIndex = 0;
-  let plainCounter = 0;
-
-  while (tokenIndex < value.length && plainCounter < plainIndex) {
-    const tokenLength = getTokenLengthAt(value, tokenIndex);
-    if (tokenLength) {
-      tokenIndex += tokenLength;
-      continue;
-    }
-    tokenIndex += 1;
-    plainCounter += 1;
-  }
-
-  return tokenIndex;
-};
-
-const tokenToPlainIndex = (value: string, tokenIndex: number) => {
-  let idx = 0;
-  let plainCounter = 0;
-
-  while (idx < value.length && idx < tokenIndex) {
-    const tokenLength = getTokenLengthAt(value, idx);
-    if (tokenLength) {
-      idx += tokenLength;
-      continue;
-    }
-    idx += 1;
-    plainCounter += 1;
-  }
-
-  return plainCounter;
-};
-
-const wrapSelectionWithTokens = (
-  value: string,
-  selectionStart: number,
-  selectionEnd: number,
-  type: FormattingType
-) => {
-  if (selectionEnd <= selectionStart) {
-    return {
-      text: value,
-      selectionStart,
-      selectionEnd,
-    };
-  }
-
-  const token = formattingTokens[type];
-  const before = value.slice(0, selectionStart);
-  const selectedText = value.slice(selectionStart, selectionEnd);
-  const after = value.slice(selectionEnd);
-  const formatted = `${before}${token.prefix}${selectedText}${token.suffix}${after}`;
-  const newSelectionStart = selectionStart + token.prefix.length;
-  const newSelectionEnd = newSelectionStart + selectedText.length;
-  return {
-    text: formatted,
-    selectionStart: newSelectionStart,
-    selectionEnd: newSelectionEnd,
-  };
-};
-
-const detectTokenAt = (
-  value: string,
-  index: number
-): { type: FormattingType; length: number } | null => {
-  if (value.startsWith('**', index)) {
-    return { type: 'bold', length: 2 };
-  }
-  if (value.startsWith('__', index)) {
-    return { type: 'underline', length: 2 };
-  }
-  if (value.startsWith('_', index)) {
-    return { type: 'italic', length: 1 };
-  }
-  return null;
-};
-
-const parseFormattingRanges = (
-  value: string
-): Record<
-  FormattingType,
-  Array<{ plainStart: number; plainEnd: number; tokenStart: number; suffixIndex: number }>
-> => {
-  const stack: Record<FormattingType, Array<{ tokenIndex: number; plainIndex: number }>> = {
-    bold: [],
-    italic: [],
-    underline: [],
-  };
-  const ranges: Record<
-    FormattingType,
-    Array<{ plainStart: number; plainEnd: number; tokenStart: number; suffixIndex: number }>
-  > = {
-    bold: [],
-    italic: [],
-    underline: [],
-  };
-
-  let tokenIndex = 0;
-  let plainIndex = 0;
-
-  while (tokenIndex < value.length) {
-    const token = detectTokenAt(value, tokenIndex);
-    if (token) {
-      const { type, length } = token;
-      if (stack[type].length > 0) {
-        const start = stack[type].pop()!;
-        ranges[type].push({
-          plainStart: start.plainIndex,
-          plainEnd: plainIndex,
-          tokenStart: start.tokenIndex,
-          suffixIndex: tokenIndex,
-        });
-      } else {
-        stack[type].push({ tokenIndex, plainIndex });
-      }
-      tokenIndex += length;
-      continue;
-    }
-
-    tokenIndex += 1;
-    plainIndex += 1;
-  }
-
-  return ranges;
-};
-
-const isStyleActiveInRange = (
-  ranges: Array<{ plainStart: number; plainEnd: number }>,
-  start: number,
-  end: number,
-  plainLength: number
-) => {
-  if (!ranges.length) return false;
-
-  if (start === end) {
-    if (plainLength === 0) return false;
-    const pos = Math.max(0, Math.min(start, plainLength - 1));
-    return ranges.some((range) => pos >= range.plainStart && pos < range.plainEnd);
-  }
-
-  return ranges.some((range) => start >= range.plainStart && end <= range.plainEnd);
-};
-
-const computeFormattingState = (
-  value: string,
-  selectionStartPlain: number,
-  selectionEndPlain: number
-): FormattingState => {
-  const plainLength = stripFormattingTokens(value).length;
-  const start = Math.max(0, Math.min(selectionStartPlain, plainLength));
-  const end = Math.max(0, Math.min(selectionEndPlain, plainLength));
-  const normalizedEnd = Math.max(start, end);
-  const ranges = parseFormattingRanges(value);
-
-  return {
-    bold: isStyleActiveInRange(ranges.bold, start, normalizedEnd, plainLength),
-    italic: isStyleActiveInRange(ranges.italic, start, normalizedEnd, plainLength),
-    underline: isStyleActiveInRange(ranges.underline, start, normalizedEnd, plainLength),
-  };
-};
-
-const mergePlainWithTokens = (tokenValue: string, plainValue: string) => {
-  let result = '';
-  let tokenIndex = 0;
-  let plainIndex = 0;
-
-  while (tokenIndex < tokenValue.length && plainIndex < plainValue.length) {
-    const tokenLength = getTokenLengthAt(tokenValue, tokenIndex);
-    if (tokenLength) {
-      result += tokenValue.slice(tokenIndex, tokenIndex + tokenLength);
-      tokenIndex += tokenLength;
-      continue;
-    }
-
-    result += plainValue[plainIndex];
-    tokenIndex += 1;
-    plainIndex += 1;
-  }
-
-  if (plainIndex < plainValue.length) {
-    result += plainValue.slice(plainIndex);
-  }
-
-  while (tokenIndex < tokenValue.length) {
-    const tokenLength = getTokenLengthAt(tokenValue, tokenIndex);
-    if (tokenLength) {
-      result += tokenValue.slice(tokenIndex, tokenIndex + tokenLength);
-      tokenIndex += tokenLength;
-    } else {
-      tokenIndex += 1;
-    }
-  }
-
-  return result;
-};
-
-const toggleFormatting = (
-  type: FormattingType,
-  value: string,
-  selectionStartPlain: number,
-  selectionEndPlain: number
-) => {
-  const plainLength = stripFormattingTokens(value).length;
-  const start = Math.max(0, Math.min(selectionStartPlain, plainLength));
-  const end = Math.max(0, Math.min(selectionEndPlain, plainLength));
-  const normalizedEnd = Math.max(start, end);
-
-  if (start === normalizedEnd) {
-    return null;
-  }
-
-  const ranges = parseFormattingRanges(value);
-  const rangeToToggle = ranges[type].find(
-    (range) => start >= range.plainStart && normalizedEnd <= range.plainEnd
-  );
-
-  if (rangeToToggle) {
-    const token = formattingTokens[type];
-    const content = value.slice(
-      rangeToToggle.tokenStart + token.prefix.length,
-      rangeToToggle.suffixIndex
-    );
-    const newValue =
-      value.slice(0, rangeToToggle.tokenStart) +
-      content +
-      value.slice(rangeToToggle.suffixIndex + token.suffix.length);
-
-    return {
-      value: newValue,
-      selectionStart: start,
-      selectionEnd: start + (normalizedEnd - start),
-    };
-  }
-
-  const tokenSelectionStart = plainToTokenIndex(value, start);
-  const tokenSelectionEnd = plainToTokenIndex(value, normalizedEnd);
-  const wrapped = wrapSelectionWithTokens(value, tokenSelectionStart, tokenSelectionEnd, type);
-  if (wrapped.text === value) {
-    return null;
-  }
-
-  const newPlainStart = tokenToPlainIndex(wrapped.text, wrapped.selectionStart);
-  const newPlainEnd = tokenToPlainIndex(wrapped.text, wrapped.selectionEnd);
-
-  return {
-    value: wrapped.text,
-    selectionStart: newPlainStart,
-    selectionEnd: newPlainEnd,
-  };
-};
-
-const escapeHtml = (input: string) =>
-  input
-    .replace(/&/g, '&amp;')
-    .replace(/</g, '&lt;')
-    .replace(/>/g, '&gt;')
-    .replace(/"/g, '&quot;')
-    .replace(/'/g, '&#39;');
-
-const formatRichTextToHtml = (input: string) => {
-  if (!input) return '';
-  let html = escapeHtml(input);
-  html = html.replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>');
-  html = html.replace(/__(.+?)__/g, '<span style="text-decoration: underline;">$1</span>');
-  html = html.replace(/_(.+?)_/g, '<em>$1</em>');
-  html = html.replace(/\n/g, '<br />');
-  return html;
-};
-
-const applyFormattingToTextarea = (
-  type: FormattingType,
-  textarea: HTMLTextAreaElement | null,
-  currentValue: string,
-  onValueChange: (value: string) => void,
-  refLookup?: () => HTMLTextAreaElement | null,
-  afterUpdate?: (params: { value: string; selectionStart: number; selectionEnd: number }) => void
-) => {
-  if (!textarea) return;
-  const selectionStart = textarea.selectionStart ?? 0;
-  const selectionEnd = textarea.selectionEnd ?? selectionStart;
-
-  const toggleResult = toggleFormatting(type, currentValue, selectionStart, selectionEnd);
-  if (!toggleResult) return;
-
-  onValueChange(toggleResult.value);
-
-  const updateSelection = () => {
-    const target = refLookup ? refLookup() : textarea;
-    if (!target) return;
-    target.focus();
-    target.setSelectionRange(toggleResult.selectionStart, toggleResult.selectionEnd);
-    afterUpdate?.(toggleResult);
-  };
-
-  requestAnimationFrame(updateSelection);
-};
-
-const makeExperienceId = () =>
-  `${Date.now()}-${Math.random().toString(36).slice(2, 8)}`;
 
 const ensureExperienceDefaults = (exp: Partial<Experience>): Experience => ({
   id: typeof exp.id === 'string' && exp.id.length > 0 ? exp.id : makeExperienceId(),
@@ -521,8 +185,7 @@ const ensureExperienceDefaults = (exp: Partial<Experience>): Experience => ({
   useBulletList: Boolean(exp.useBulletList),
 });
 
-const makeEducationId = () =>
-  `${Date.now()}-${Math.random().toString(36).slice(2, 8)}-edu`;
+const makeEducationId = () => `${Date.now()}-${Math.random().toString(36).slice(2, 8)}-edu`;
 
 const ensureEducationDefaults = (edu: Partial<Education>): Education => ({
   id: typeof edu.id === 'string' && edu.id.length > 0 ? edu.id : makeEducationId(),
@@ -535,8 +198,7 @@ const ensureEducationDefaults = (edu: Partial<Education>): Education => ({
   description: edu.description ?? '',
 });
 
-const makeCertificateId = () =>
-  `${Date.now()}-${Math.random().toString(36).slice(2, 8)}-cert`;
+const makeCertificateId = () => `${Date.now()}-${Math.random().toString(36).slice(2, 8)}-cert`;
 
 const ensureCertificateDefaults = (cert: Partial<Certificate>): Certificate => ({
   id: typeof cert.id === 'string' && cert.id.length > 0 ? cert.id : makeCertificateId(),
@@ -1100,6 +762,337 @@ const CVCreator: React.FC<CVCreatorProps> = ({ initialCv }) => {
     el.scrollIntoView({ behavior: 'smooth', block: 'center' });
   };
 
+  // old pagination helpers removed (replaced by scrollToPage)
+
+  const formattingTokens: Record<FormattingType, { prefix: string; suffix: string }> = {
+    bold: { prefix: '**', suffix: '**' },
+    italic: { prefix: '_', suffix: '_' },
+    underline: { prefix: '__', suffix: '__' },
+  };
+
+  const TOKEN_MARKERS = ['**', '__', '_'] as const;
+
+  const getTokenLengthAt = (value: string, index: number) => {
+    for (const marker of TOKEN_MARKERS) {
+      if (value.startsWith(marker, index)) {
+        return marker.length;
+      }
+    }
+    return 0;
+  };
+
+  const stripFormattingTokens = (value: string) => {
+    if (!value) return '';
+    let result = '';
+    for (let i = 0; i < value.length; ) {
+      const tokenLength = getTokenLengthAt(value, i);
+      if (tokenLength) {
+        i += tokenLength;
+        continue;
+      }
+      result += value[i];
+      i += 1;
+    }
+    return result;
+  };
+
+  const plainToTokenIndex = (value: string, plainIndex: number) => {
+    let tokenIndex = 0;
+    let plainCounter = 0;
+
+    while (tokenIndex < value.length && plainCounter < plainIndex) {
+      const tokenLength = getTokenLengthAt(value, tokenIndex);
+      if (tokenLength) {
+        tokenIndex += tokenLength;
+        continue;
+      }
+      tokenIndex += 1;
+      plainCounter += 1;
+    }
+
+    return tokenIndex;
+  };
+
+  const tokenToPlainIndex = (value: string, tokenIndex: number) => {
+    let idx = 0;
+    let plainCounter = 0;
+
+    while (idx < value.length && idx < tokenIndex) {
+      const tokenLength = getTokenLengthAt(value, idx);
+      if (tokenLength) {
+        idx += tokenLength;
+        continue;
+      }
+      idx += 1;
+      plainCounter += 1;
+    }
+
+    return plainCounter;
+  };
+
+  const mergePlainWithTokens = (tokenValue: string, plainValue: string) => {
+    let result = '';
+    let tokenIndex = 0;
+    let plainIndex = 0;
+
+    while (tokenIndex < tokenValue.length && plainIndex < plainValue.length) {
+      const tokenLength = getTokenLengthAt(tokenValue, tokenIndex);
+      if (tokenLength) {
+        result += tokenValue.slice(tokenIndex, tokenIndex + tokenLength);
+        tokenIndex += tokenLength;
+        continue;
+      }
+
+      result += plainValue[plainIndex];
+      tokenIndex += 1;
+      plainIndex += 1;
+    }
+
+    if (plainIndex < plainValue.length) {
+      result += plainValue.slice(plainIndex);
+    }
+
+    while (tokenIndex < tokenValue.length) {
+      const tokenLength = getTokenLengthAt(tokenValue, tokenIndex);
+      if (tokenLength) {
+        result += tokenValue.slice(tokenIndex, tokenIndex + tokenLength);
+        tokenIndex += tokenLength;
+      } else {
+        tokenIndex += 1;
+      }
+    }
+
+    return result;
+  };
+
+  const wrapSelectionWithTokens = (
+    value: string,
+    selectionStart: number,
+    selectionEnd: number,
+    type: FormattingType
+  ) => {
+    if (selectionEnd <= selectionStart) {
+      return {
+        text: value,
+        selectionStart,
+        selectionEnd,
+      };
+    }
+
+    const token = formattingTokens[type];
+    const before = value.slice(0, selectionStart);
+    const selectedText = value.slice(selectionStart, selectionEnd);
+    const after = value.slice(selectionEnd);
+    const formatted = `${before}${token.prefix}${selectedText}${token.suffix}${after}`;
+    const newSelectionStart = selectionStart + token.prefix.length;
+    const newSelectionEnd = newSelectionStart + selectedText.length;
+    return {
+      text: formatted,
+      selectionStart: newSelectionStart,
+      selectionEnd: newSelectionEnd,
+    };
+  };
+
+  const detectTokenAt = (
+    value: string,
+    index: number
+  ): { type: FormattingType; length: number } | null => {
+    if (value.startsWith('**', index)) {
+      return { type: 'bold', length: 2 };
+    }
+    if (value.startsWith('__', index)) {
+      return { type: 'underline', length: 2 };
+    }
+    if (value.startsWith('_', index)) {
+      return { type: 'italic', length: 1 };
+    }
+    return null;
+  };
+
+  const parseFormattingRanges = (
+    value: string
+  ): Record<
+    FormattingType,
+    Array<{ plainStart: number; plainEnd: number; tokenStart: number; suffixIndex: number }>
+  > => {
+    const stack: Record<FormattingType, Array<{ tokenIndex: number; plainIndex: number }>> = {
+      bold: [],
+      italic: [],
+      underline: [],
+    };
+    const ranges: Record<
+      FormattingType,
+      Array<{ plainStart: number; plainEnd: number; tokenStart: number; suffixIndex: number }>
+    > = {
+      bold: [],
+      italic: [],
+      underline: [],
+    };
+
+    let tokenIndex = 0;
+    let plainIndex = 0;
+
+    while (tokenIndex < value.length) {
+      const token = detectTokenAt(value, tokenIndex);
+      if (token) {
+        const { type, length } = token;
+        if (stack[type].length > 0) {
+          const start = stack[type].pop()!;
+          ranges[type].push({
+            plainStart: start.plainIndex,
+            plainEnd: plainIndex,
+            tokenStart: start.tokenIndex,
+            suffixIndex: tokenIndex,
+          });
+        } else {
+          stack[type].push({ tokenIndex, plainIndex });
+        }
+        tokenIndex += length;
+        continue;
+      }
+
+      tokenIndex += 1;
+      plainIndex += 1;
+    }
+
+    return ranges;
+  };
+
+  const isStyleActiveInRange = (
+    ranges: Array<{ plainStart: number; plainEnd: number }>,
+    start: number,
+    end: number,
+    plainLength: number
+  ) => {
+    if (!ranges.length) return false;
+
+    if (start === end) {
+      if (plainLength === 0) return false;
+      const pos = Math.max(0, Math.min(start, plainLength - 1));
+      return ranges.some((range) => pos >= range.plainStart && pos < range.plainEnd);
+    }
+
+    return ranges.some((range) => start >= range.plainStart && end <= range.plainEnd);
+  };
+
+  const computeFormattingState = (
+    value: string,
+    selectionStartPlain: number,
+    selectionEndPlain: number
+  ): FormattingState => {
+    const plainLength = stripFormattingTokens(value).length;
+    const start = Math.max(0, Math.min(selectionStartPlain, plainLength));
+    const end = Math.max(0, Math.min(selectionEndPlain, plainLength));
+    const normalizedEnd = Math.max(start, end);
+    const ranges = parseFormattingRanges(value);
+
+    return {
+      bold: isStyleActiveInRange(ranges.bold, start, normalizedEnd, plainLength),
+      italic: isStyleActiveInRange(ranges.italic, start, normalizedEnd, plainLength),
+      underline: isStyleActiveInRange(ranges.underline, start, normalizedEnd, plainLength),
+    };
+  };
+
+  const toggleFormatting = (
+    type: FormattingType,
+    value: string,
+    selectionStartPlain: number,
+    selectionEndPlain: number
+  ) => {
+    const plainLength = stripFormattingTokens(value).length;
+    const start = Math.max(0, Math.min(selectionStartPlain, plainLength));
+    const end = Math.max(0, Math.min(selectionEndPlain, plainLength));
+    const normalizedEnd = Math.max(start, end);
+
+    if (start === normalizedEnd) {
+      return null;
+    }
+
+    const ranges = parseFormattingRanges(value);
+    const rangeToToggle = ranges[type].find(
+      (range) => start >= range.plainStart && normalizedEnd <= range.plainEnd
+    );
+
+    if (rangeToToggle) {
+      const token = formattingTokens[type];
+      const content = value.slice(
+        rangeToToggle.tokenStart + token.prefix.length,
+        rangeToToggle.suffixIndex
+      );
+      const newValue =
+        value.slice(0, rangeToToggle.tokenStart) +
+        content +
+        value.slice(rangeToToggle.suffixIndex + token.suffix.length);
+
+      return {
+        value: newValue,
+        selectionStart: start,
+        selectionEnd: start + (normalizedEnd - start),
+      };
+    }
+
+    const tokenSelectionStart = plainToTokenIndex(value, start);
+    const tokenSelectionEnd = plainToTokenIndex(value, normalizedEnd);
+    const wrapped = wrapSelectionWithTokens(value, tokenSelectionStart, tokenSelectionEnd, type);
+    if (wrapped.text === value) {
+      return null;
+    }
+
+    const newPlainStart = tokenToPlainIndex(wrapped.text, wrapped.selectionStart);
+    const newPlainEnd = tokenToPlainIndex(wrapped.text, wrapped.selectionEnd);
+
+    return {
+      value: wrapped.text,
+      selectionStart: newPlainStart,
+      selectionEnd: newPlainEnd,
+    };
+  };
+
+  const escapeHtml = (input: string) =>
+    input
+      .replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;')
+      .replace(/"/g, '&quot;')
+      .replace(/'/g, '&#39;');
+
+  const formatRichTextToHtml = (input: string) => {
+    if (!input) return '';
+    let html = escapeHtml(input);
+    html = html.replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>');
+    html = html.replace(/__(.+?)__/g, '<span style="text-decoration: underline;">$1</span>');
+    html = html.replace(/_(.+?)_/g, '<em>$1</em>');
+    html = html.replace(/\n/g, '<br />');
+    return html;
+  };
+
+  const applyFormattingToTextarea = (
+    type: FormattingType,
+    textarea: HTMLTextAreaElement | null,
+    currentValue: string,
+    onValueChange: (value: string) => void,
+    refLookup?: () => HTMLTextAreaElement | null,
+    afterUpdate?: (params: { value: string; selectionStart: number; selectionEnd: number }) => void
+  ) => {
+    if (!textarea) return;
+    const selectionStart = textarea.selectionStart ?? 0;
+    const selectionEnd = textarea.selectionEnd ?? selectionStart;
+
+    const toggleResult = toggleFormatting(type, currentValue, selectionStart, selectionEnd);
+    if (!toggleResult) return;
+
+    onValueChange(toggleResult.value);
+
+    const updateSelection = () => {
+      const target = refLookup ? refLookup() : textarea;
+      if (!target) return;
+      target.focus();
+      target.setSelectionRange(toggleResult.selectionStart, toggleResult.selectionEnd);
+      afterUpdate?.(toggleResult);
+    };
+
+    requestAnimationFrame(updateSelection);
+  };
 
   const handleSummaryFormatting = (type: FormattingType) => {
     applyFormattingToTextarea(
@@ -1113,7 +1106,11 @@ const CVCreator: React.FC<CVCreatorProps> = ({ initialCv }) => {
     );
   };
 
-  const handleExperienceFormatting = (expId: string, currentValue: string, type: FormattingType) => {
+  const handleExperienceFormatting = (
+    expId: string,
+    currentValue: string,
+    type: FormattingType
+  ) => {
     const textarea = experienceTextareaRefs.current[expId];
     applyFormattingToTextarea(
       type,
@@ -1142,6 +1139,16 @@ const CVCreator: React.FC<CVCreatorProps> = ({ initialCv }) => {
           ...prev,
           [eduId]: computeFormattingState(value, selectionStart, selectionEnd),
         }))
+    );
+  };
+
+  const updateSummaryFormattingFromSelection = () => {
+    const textarea = summaryTextareaRef.current;
+    if (!textarea) return;
+    const selectionStart = textarea.selectionStart ?? 0;
+    const selectionEnd = textarea.selectionEnd ?? selectionStart;
+    setSummaryFormatting(
+      computeFormattingState(personalInfo.summary || '', selectionStart, selectionEnd)
     );
   };
 
@@ -1259,13 +1266,13 @@ const CVCreator: React.FC<CVCreatorProps> = ({ initialCv }) => {
         description: w.description,
       })),
       education: education.map((e) => ({
-      institution: e.school,
-      degree: e.degree,
-      field: e.field,
-      startDate: e.startDate,
-      endDate: e.isCurrent ? 'Present' : e.endDate,
-      description: e.description,
-    })),
+        institution: e.school,
+        degree: e.degree,
+        field: e.field,
+        startDate: e.startDate,
+        endDate: e.isCurrent ? 'Present' : e.endDate,
+        description: e.description,
+      })),
       certificates: certificates.map((c) => ({
         name: c.name,
         date: c.displayDate && c.date ? c.date : undefined,
@@ -1840,120 +1847,126 @@ const CVCreator: React.FC<CVCreatorProps> = ({ initialCv }) => {
                     <div className="flex-1">
                       <div className="mb-2 grid grid-cols-1 gap-4 sm:grid-cols-2">
                         <input
-                        type="text"
-                        placeholder="Company"
-                        value={exp.company}
-                        onChange={(e) => updateExperience(exp.id, 'company', e.target.value)}
-                        className="w-full rounded-sm border border-gray-300 px-3 py-3 focus:ring-2 focus:ring-blue-500 focus:outline-none"
-                      />
-                      <input
-                        type="text"
-                        placeholder="Position"
-                        value={exp.position}
-                        onChange={(e) => updateExperience(exp.id, 'position', e.target.value)}
-                        className="w-full rounded-sm border border-gray-300 px-3 py-3 focus:ring-2 focus:ring-blue-500 focus:outline-none"
-                      />
-                    </div>
-                    <div className="mb-2 grid grid-cols-1 gap-4 sm:grid-cols-2">
-                      <div>
-                        <label className="mb-1 block text-sm text-gray-600">Start date</label>
-                        <DatePickerWithCurrent
-                          value={exp.startDate}
-                          onChange={(date) => updateExperience(exp.id, 'startDate', date)}
-                          isCurrent={false}
-                          onCurrentChange={() => {}}
-                          showCurrentToggle={false}
-                          placeholder="Select start date"
+                          type="text"
+                          placeholder="Company"
+                          value={exp.company}
+                          onChange={(e) => updateExperience(exp.id, 'company', e.target.value)}
+                          className="w-full rounded-sm border border-gray-300 px-3 py-3 focus:ring-2 focus:ring-blue-500 focus:outline-none"
+                        />
+                        <input
+                          type="text"
+                          placeholder="Position"
+                          value={exp.position}
+                          onChange={(e) => updateExperience(exp.id, 'position', e.target.value)}
+                          className="w-full rounded-sm border border-gray-300 px-3 py-3 focus:ring-2 focus:ring-blue-500 focus:outline-none"
                         />
                       </div>
-                      <div>
-                        <label className="mb-1 block text-sm text-gray-600">End date</label>
-                        <DatePickerWithCurrent
-                          value={exp.endDate}
-                          onChange={(date) => updateExperience(exp.id, 'endDate', date)}
-                          isCurrent={exp.isCurrent}
-                          onCurrentChange={(current) =>
-                            updateExperience(exp.id, 'isCurrent', current)
-                          }
-                          placeholder="Select end date"
-                        />
+                      <div className="mb-2 grid grid-cols-1 gap-4 sm:grid-cols-2">
+                        <div>
+                          <label className="mb-1 block text-sm text-gray-600">Start date</label>
+                          <DatePickerWithCurrent
+                            value={exp.startDate}
+                            onChange={(date) => updateExperience(exp.id, 'startDate', date)}
+                            isCurrent={false}
+                            onCurrentChange={() => {}}
+                            showCurrentToggle={false}
+                            placeholder="Select start date"
+                          />
+                        </div>
+                        <div>
+                          <label className="mb-1 block text-sm text-gray-600">End date</label>
+                          <DatePickerWithCurrent
+                            value={exp.endDate}
+                            onChange={(date) => updateExperience(exp.id, 'endDate', date)}
+                            isCurrent={exp.isCurrent}
+                            onCurrentChange={(current) =>
+                              updateExperience(exp.id, 'isCurrent', current)
+                            }
+                            placeholder="Select end date"
+                          />
+                        </div>
                       </div>
-                    </div>
-                    <RichTextToolbar
-                      className="mt-2 mb-2"
-                      onFormat={(type) => handleExperienceFormatting(exp.id, exp.description, type)}
-                      formattingState={formattingState}
-                    />
-                    <textarea
-                      ref={(el) => {
-                        if (el) {
-                          experienceTextareaRefs.current[exp.id] = el;
-                        } else {
-                          delete experienceTextareaRefs.current[exp.id];
+                      <RichTextToolbar
+                        className="mt-2 mb-2"
+                        onFormat={(type) =>
+                          handleExperienceFormatting(exp.id, exp.description, type)
                         }
-                      }}
-                      placeholder="Job description / Responsibilities"
-                      value={stripFormattingTokens(exp.description)}
-                      onChange={(e) => {
-                        const plainValue = e.target.value;
-                        const selectionStart = e.target.selectionStart ?? 0;
-                        const selectionEnd = e.target.selectionEnd ?? selectionStart;
-                        const nextTokens = mergePlainWithTokens(exp.description, plainValue);
-                        setExperiences((prev) =>
-                          prev.map((experience) =>
-                            experience.id === exp.id
-                              ? { ...experience, description: nextTokens }
-                              : experience
-                          )
-                        );
-                        setExperienceFormattingState((prev) => ({
-                          ...prev,
-                          [exp.id]: computeFormattingState(nextTokens, selectionStart, selectionEnd),
-                        }));
-                      }}
-                      onSelect={() => updateExperienceFormattingFromSelection(exp.id)}
-                      onKeyUp={() => updateExperienceFormattingFromSelection(exp.id)}
-                      onMouseUp={() => updateExperienceFormattingFromSelection(exp.id)}
-                      rows={2}
-                      className="w-full rounded-sm border border-gray-300 px-3 py-3 focus:ring-2 focus:ring-blue-500 focus:outline-none"
-                    />
-                    
-                    <div className="flex w-full items-center justify-end space-x-2">
-                      <button
-                        onClick={() => removeExperience(exp.id)}
-                        className="ml-2 flex h-10 w-10 cursor-pointer items-center justify-center rounded p-2 text-red-500 opacity-0 transition-all group-hover:opacity-100 hover:bg-red-50 hover:text-red-700"
-                        title="remove Work experience"
-                      >
-                        <Trash2 size={16} />
-                      </button>
-                      <HoverCard>
-                        <HoverCardTrigger asChild>
-                          <button className="flex h-10 w-10 cursor-pointer items-center justify-center rounded-sm bg-gray-100">
-                            <MessageCircleQuestion className="text-gray-400" size={20} />
-                          </button>
-                        </HoverCardTrigger>
-                        <HoverCardContent className="font-poppins w-80">
-                          <div className="flex justify-between gap-4">
-                            <div className="space-y-1">
-                              <h4 className="text-sm font-semibold">Will it acutally help me?</h4>
-                              <p className="text-sm">
-                                It&apos;ll surely do. Our AI models are trained specifically to
-                                match requirements of the algorithms used by recruiters.
-                              </p>
-                              <div className="text-muted-foreground text-xs">
-                                Confirmed by 1000+ users.
+                        formattingState={formattingState}
+                      />
+                      <textarea
+                        ref={(el) => {
+                          if (el) {
+                            experienceTextareaRefs.current[exp.id] = el;
+                          } else {
+                            delete experienceTextareaRefs.current[exp.id];
+                          }
+                        }}
+                        placeholder="Job description / Responsibilities"
+                        value={stripFormattingTokens(exp.description)}
+                        onChange={(e) => {
+                          const plainValue = e.target.value;
+                          const selectionStart = e.target.selectionStart ?? 0;
+                          const selectionEnd = e.target.selectionEnd ?? selectionStart;
+                          const nextTokens = mergePlainWithTokens(exp.description, plainValue);
+                          setExperiences((prev) =>
+                            prev.map((experience) =>
+                              experience.id === exp.id
+                                ? { ...experience, description: nextTokens }
+                                : experience
+                            )
+                          );
+                          setExperienceFormattingState((prev) => ({
+                            ...prev,
+                            [exp.id]: computeFormattingState(
+                              nextTokens,
+                              selectionStart,
+                              selectionEnd
+                            ),
+                          }));
+                        }}
+                        onSelect={() => updateExperienceFormattingFromSelection(exp.id)}
+                        onKeyUp={() => updateExperienceFormattingFromSelection(exp.id)}
+                        onMouseUp={() => updateExperienceFormattingFromSelection(exp.id)}
+                        rows={2}
+                        className="w-full rounded-sm border border-gray-300 px-3 py-3 focus:ring-2 focus:ring-blue-500 focus:outline-none"
+                      />
+
+                      <div className="flex w-full items-center justify-end space-x-2">
+                        <button
+                          onClick={() => removeExperience(exp.id)}
+                          className="ml-2 flex h-10 w-10 cursor-pointer items-center justify-center rounded p-2 text-red-500 opacity-0 transition-all group-hover:opacity-100 hover:bg-red-50 hover:text-red-700"
+                          title="remove Work experience"
+                        >
+                          <Trash2 size={16} />
+                        </button>
+                        <HoverCard>
+                          <HoverCardTrigger asChild>
+                            <button className="flex h-10 w-10 cursor-pointer items-center justify-center rounded-sm bg-gray-100">
+                              <MessageCircleQuestion className="text-gray-400" size={20} />
+                            </button>
+                          </HoverCardTrigger>
+                          <HoverCardContent className="font-poppins w-80">
+                            <div className="flex justify-between gap-4">
+                              <div className="space-y-1">
+                                <h4 className="text-sm font-semibold">Will it acutally help me?</h4>
+                                <p className="text-sm">
+                                  It&apos;ll surely do. Our AI models are trained specifically to
+                                  match requirements of the algorithms used by recruiters.
+                                </p>
+                                <div className="text-muted-foreground text-xs">
+                                  Confirmed by 1000+ users.
+                                </div>
                               </div>
                             </div>
-                          </div>
-                        </HoverCardContent>
-                      </HoverCard>
-                      <button
-                        className={`flex flex-row items-center justify-center rounded-sm border bg-[#915EFF] px-3 py-2 text-sm text-white transition-all hover:bg-[#713ae8] focus:outline-none ${isPremium ? 'cursor-pointer' : 'cursor-not-allowed opacity-50'}`}
-                      >
-                        <span className="text-sm text-white">Achieve more with AI</span>
-                        <StarsIcon className="ml-2 scale-70" />
-                      </button>
-                    </div>
+                          </HoverCardContent>
+                        </HoverCard>
+                        <button
+                          className={`flex flex-row items-center justify-center rounded-sm border bg-[#915EFF] px-3 py-2 text-sm text-white transition-all hover:bg-[#713ae8] focus:outline-none ${isPremium ? 'cursor-pointer' : 'cursor-not-allowed opacity-50'}`}
+                        >
+                          <span className="text-sm text-white">Achieve more with AI</span>
+                          <StarsIcon className="ml-2 scale-70" />
+                        </button>
+                      </div>
                     </div>
                   </div>
                 </div>
@@ -2014,7 +2027,7 @@ const CVCreator: React.FC<CVCreatorProps> = ({ initialCv }) => {
             </div>
             <p className="mb-4 text-sm text-gray-600">
               Add your education, whether it&apos;s secondary or higher. If needed, include relevant
-              courses, projects, or achievements (e.g., grades).
+              courses, projects, or achievements (e.g. grades).
             </p>
             {education.map((edu) => {
               const formattingState = educationFormattingState[edu.id] ?? EMPTY_FORMATTING_STATE;
@@ -2027,102 +2040,108 @@ const CVCreator: React.FC<CVCreatorProps> = ({ initialCv }) => {
                   <div className="flex items-start justify-between">
                     <div className="flex-1">
                       <div className="mb-2 grid grid-cols-1 gap-4 sm:grid-cols-2">
-                      <input
-                        type="text"
-                        placeholder="School/University"
-                        value={edu.school}
-                        onChange={(e) => updateEducation(edu.id, 'school', e.target.value)}
-                        className="w-full rounded-sm border border-gray-300 px-3 py-3 focus:ring-2 focus:ring-blue-500 focus:outline-none"
-                      />
-                      <input
-                        type="text"
-                        placeholder="Degree"
-                        value={edu.degree}
-                        onChange={(e) => updateEducation(edu.id, 'degree', e.target.value)}
-                        className="w-full rounded-sm border border-gray-300 px-3 py-3 focus:ring-2 focus:ring-blue-500 focus:outline-none"
-                      />
-                      <input
-                        type="text"
-                        placeholder="Field of study"
-                        value={edu.field}
-                        onChange={(e) => updateEducation(edu.id, 'field', e.target.value)}
-                        className="w-full rounded-sm border border-gray-300 px-3 py-3 focus:ring-2 focus:ring-blue-500 focus:outline-none"
-                      />
-                    </div>
-                    <div className="mb-2 grid grid-cols-1 gap-4 sm:grid-cols-2">
-                      <div>
-                        <label className="mb-1 block text-sm text-gray-600">Start date</label>
-                        <DatePickerWithCurrent
-                          value={edu.startDate}
-                          onChange={(date) => updateEducation(edu.id, 'startDate', date)}
-                          isCurrent={false}
-                          onCurrentChange={() => {}}
-                          showCurrentToggle={false}
-                          placeholder="Select start date"
+                        <input
+                          type="text"
+                          placeholder="School/University"
+                          value={edu.school}
+                          onChange={(e) => updateEducation(edu.id, 'school', e.target.value)}
+                          className="w-full rounded-sm border border-gray-300 px-3 py-3 focus:ring-2 focus:ring-blue-500 focus:outline-none"
+                        />
+                        <input
+                          type="text"
+                          placeholder="Degree"
+                          value={edu.degree}
+                          onChange={(e) => updateEducation(edu.id, 'degree', e.target.value)}
+                          className="w-full rounded-sm border border-gray-300 px-3 py-3 focus:ring-2 focus:ring-blue-500 focus:outline-none"
+                        />
+                        <input
+                          type="text"
+                          placeholder="Field of study"
+                          value={edu.field}
+                          onChange={(e) => updateEducation(edu.id, 'field', e.target.value)}
+                          className="w-full rounded-sm border border-gray-300 px-3 py-3 focus:ring-2 focus:ring-blue-500 focus:outline-none"
                         />
                       </div>
-                      <div>
-                        <label className="mb-1 block text-sm text-gray-600">End date</label>
-                        <DatePickerWithCurrent
-                          value={edu.endDate}
-                          onChange={(date) => updateEducation(edu.id, 'endDate', date)}
-                          isCurrent={edu.isCurrent}
-                          onCurrentChange={(current) => {
-                            updateEducation(edu.id, 'isCurrent', current);
-                            if (current) {
-                              updateEducation(edu.id, 'endDate', '');
-                            }
-                          }}
-                          placeholder="Select end date"
-                        />
+                      <div className="mb-2 grid grid-cols-1 gap-4 sm:grid-cols-2">
+                        <div>
+                          <label className="mb-1 block text-sm text-gray-600">Start date</label>
+                          <DatePickerWithCurrent
+                            value={edu.startDate}
+                            onChange={(date) => updateEducation(edu.id, 'startDate', date)}
+                            isCurrent={false}
+                            onCurrentChange={() => {}}
+                            showCurrentToggle={false}
+                            placeholder="Select start date"
+                          />
+                        </div>
+                        <div>
+                          <label className="mb-1 block text-sm text-gray-600">End date</label>
+                          <DatePickerWithCurrent
+                            value={edu.endDate}
+                            onChange={(date) => updateEducation(edu.id, 'endDate', date)}
+                            isCurrent={edu.isCurrent}
+                            onCurrentChange={(current) => {
+                              updateEducation(edu.id, 'isCurrent', current);
+                              if (current) {
+                                updateEducation(edu.id, 'endDate', '');
+                              }
+                            }}
+                            placeholder="Select end date"
+                          />
+                        </div>
                       </div>
-                    </div>
-                    <RichTextToolbar
-                      className="mt-2 mb-2"
-                      onFormat={(type) => handleEducationFormatting(edu.id, edu.description, type)}
-                      formattingState={formattingState}
-                    />
-                    <textarea
-                      ref={(el) => {
-                        if (el) {
-                          educationTextareaRefs.current[edu.id] = el;
-                        } else {
-                          delete educationTextareaRefs.current[edu.id];
+                      <RichTextToolbar
+                        className="mt-2 mb-2"
+                        onFormat={(type) =>
+                          handleEducationFormatting(edu.id, edu.description, type)
                         }
-                      }}
-                      placeholder="Achievements, coursework, GPA, notable projects"
-                      value={stripFormattingTokens(edu.description)}
-                      onChange={(e) => {
-                        const plainValue = e.target.value;
-                        const selectionStart = e.target.selectionStart ?? 0;
-                        const selectionEnd = e.target.selectionEnd ?? selectionStart;
-                        const nextTokens = mergePlainWithTokens(edu.description, plainValue);
-                        setEducation((prev) =>
-                          prev.map((entry) =>
-                            entry.id === edu.id ? { ...entry, description: nextTokens } : entry
-                          )
-                        );
-                        setEducationFormattingState((prev) => ({
-                          ...prev,
-                          [edu.id]: computeFormattingState(nextTokens, selectionStart, selectionEnd),
-                        }));
-                      }}
-                      onSelect={() => updateEducationFormattingFromSelection(edu.id)}
-                      onKeyUp={() => updateEducationFormattingFromSelection(edu.id)}
-                      onMouseUp={() => updateEducationFormattingFromSelection(edu.id)}
-                      rows={2}
-                      className="w-full rounded-sm border border-gray-300 px-3 py-3 focus:ring-2 focus:ring-blue-500 focus:outline-none"
-                    />
+                        formattingState={formattingState}
+                      />
+                      <textarea
+                        ref={(el) => {
+                          if (el) {
+                            educationTextareaRefs.current[edu.id] = el;
+                          } else {
+                            delete educationTextareaRefs.current[edu.id];
+                          }
+                        }}
+                        placeholder="Achievements, coursework, GPA, notable projects"
+                        value={stripFormattingTokens(edu.description)}
+                        onChange={(e) => {
+                          const plainValue = e.target.value;
+                          const selectionStart = e.target.selectionStart ?? 0;
+                          const selectionEnd = e.target.selectionEnd ?? selectionStart;
+                          const nextTokens = mergePlainWithTokens(edu.description, plainValue);
+                          setEducation((prev) =>
+                            prev.map((entry) =>
+                              entry.id === edu.id ? { ...entry, description: nextTokens } : entry
+                            )
+                          );
+                          setEducationFormattingState((prev) => ({
+                            ...prev,
+                            [edu.id]: computeFormattingState(
+                              nextTokens,
+                              selectionStart,
+                              selectionEnd
+                            ),
+                          }));
+                        }}
+                        onSelect={() => updateEducationFormattingFromSelection(edu.id)}
+                        onKeyUp={() => updateEducationFormattingFromSelection(edu.id)}
+                        onMouseUp={() => updateEducationFormattingFromSelection(edu.id)}
+                        rows={2}
+                        className="w-full rounded-sm border border-gray-300 px-3 py-3 focus:ring-2 focus:ring-blue-500 focus:outline-none"
+                      />
+                    </div>
+                    <button
+                      onClick={() => removeEducation(edu.id)}
+                      className="ml-2 flex h-10 w-10 cursor-pointer items-center justify-center rounded p-2 text-red-500 opacity-0 transition-all group-hover:opacity-100 hover:bg-red-50 hover:text-red-700"
+                      title="Remove education"
+                    >
+                      <Trash2 size={16} />
+                    </button>
                   </div>
-                  <button
-                    onClick={() => removeEducation(edu.id)}
-                    className="ml-2 flex h-10 w-10 cursor-pointer items-center justify-center rounded p-2 text-red-500 opacity-0 transition-all group-hover:opacity-100 hover:bg-red-50 hover:text-red-700"
-                    title="Remove education"
-                  >
-                    <Trash2 size={16} />
-                  </button>
                 </div>
-              </div>
               );
             })}
             <button
@@ -2211,7 +2230,7 @@ const CVCreator: React.FC<CVCreatorProps> = ({ initialCv }) => {
                   </div>
                   <button
                     onClick={() => removeCertificate(cert.id)}
-                    className="ml-0 rounded p-2 text-red-500 opacity-0 transition-all sm:ml-2 group-hover:opacity-100 hover:bg-red-50 hover:text-red-700"
+                    className="ml-0 rounded p-2 text-red-500 opacity-0 transition-all group-hover:opacity-100 hover:bg-red-50 hover:text-red-700 sm:ml-2"
                     title="Remove certificate"
                   >
                     <Trash2 size={16} />
@@ -2457,7 +2476,7 @@ const CVCreator: React.FC<CVCreatorProps> = ({ initialCv }) => {
               >
                 <input
                   type="text"
-                  placeholder="e.g., Reading, Traveling, Cooking"
+                  placeholder="e.g. Reading, Traveling, Cooking"
                   value={hobby.name}
                   onChange={(e) => updateHobby(hobby.id, 'name', e.target.value)}
                   className="flex-1 focus:outline-none"
@@ -2860,10 +2879,8 @@ const CVCreator: React.FC<CVCreatorProps> = ({ initialCv }) => {
     const rawLines = exp.description.split(/\r?\n/);
 
     if (exp.useBulletList) {
-      const blocks: Array<
-        | { type: 'bullet'; items: string[] }
-        | { type: 'text'; content: string }
-      > = [];
+      const blocks: Array<{ type: 'bullet'; items: string[] } | { type: 'text'; content: string }> =
+        [];
 
       rawLines.forEach((line) => {
         const trimmed = line.trim();
@@ -3269,7 +3286,7 @@ const CVCreator: React.FC<CVCreatorProps> = ({ initialCv }) => {
                   <label className="mb-1 block text-sm text-gray-600">Position</label>
                   <input
                     type="text"
-                    placeholder="e.g., Project Manager"
+                    placeholder="e.g. Project Manager"
                     value={personalInfo.profession}
                     onChange={(e) =>
                       setPersonalInfo({ ...personalInfo, profession: e.target.value })
@@ -3289,7 +3306,7 @@ const CVCreator: React.FC<CVCreatorProps> = ({ initialCv }) => {
                         <label className="mb-1 block text-sm text-gray-600">Phone number</label>
                         <input
                           type="tel"
-                          placeholder="e.g., +48 22 263 98 31"
+                          placeholder="e.g. +48 22 263 98 31"
                           value={personalInfo.phone}
                           onChange={(e) =>
                             setPersonalInfo({ ...personalInfo, phone: e.target.value })
@@ -3301,7 +3318,7 @@ const CVCreator: React.FC<CVCreatorProps> = ({ initialCv }) => {
                         <label className="mb-1 block text-sm text-gray-600">Adress</label>
                         <input
                           type="text"
-                          placeholder="e.g., 221B Baker Street, London"
+                          placeholder="e.g. 221B Baker Street, London"
                           value={personalInfo.address}
                           onChange={(e) =>
                             setPersonalInfo({ ...personalInfo, address: e.target.value })
@@ -3313,7 +3330,7 @@ const CVCreator: React.FC<CVCreatorProps> = ({ initialCv }) => {
                         <label className="mb-1 block text-sm text-gray-600">Country</label>
                         <input
                           type="text"
-                          placeholder="e.g., Poland"
+                          placeholder="e.g. Poland"
                           value={personalInfo.country}
                           onChange={(e) =>
                             setPersonalInfo({ ...personalInfo, country: e.target.value })

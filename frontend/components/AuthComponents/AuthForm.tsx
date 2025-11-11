@@ -29,6 +29,7 @@ import { AxiosError } from 'axios';
 import OAuthButton from './OAuthButton';
 import { google } from '@/app/constants';
 import { WindowWithGoogle, GoogleTokenResponse, GoogleTokenClient } from '@/lib/types/google-oauth';
+import { Checkbox } from '../ui/checkbox';
 
 type FormType = 'sign-in' | 'sign-up';
 type FormDataMap = {
@@ -65,6 +66,7 @@ const AuthForm = ({ type }: AuthFormProps) => {
           email: '',
           password: '',
           confirmPassword: '',
+          marketingConsent: false,
         }
       : {
           email: '',
@@ -76,11 +78,12 @@ const AuthForm = ({ type }: AuthFormProps) => {
     setIsLoading(true);
     try {
       if (isSignUp) {
-        const { email, password, confirmPassword } = values as SignUpFormType;
+        const { email, password, confirmPassword, marketingConsent } = values as SignUpFormType;
         await registerUser({
           email,
           password,
           confirmPassword,
+          marketingConsent: Boolean(marketingConsent),
         });
         toast.success('Registration successful!', {
           description: 'You have successfully created an account. Please sign in.',
@@ -174,7 +177,7 @@ const AuthForm = ({ type }: AuthFormProps) => {
 
   return (
     <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)} className="auth-form font-korbin">
+      <form onSubmit={form.handleSubmit(onSubmit)} className="auth-form font-poppins">
         <h1 className="form-title">{isSignUp ? 'Sign Up' : 'Sign In'}</h1>
 
         {isSignUp && (
@@ -263,7 +266,9 @@ const AuthForm = ({ type }: AuthFormProps) => {
           )}
         </ButtonForm>
 
-        <div className="mt-4 flex items-center justify-between">
+        <div
+          className={`mt-4 flex ${isSignUp ? 'flex-col gap-4' : 'items-center justify-between'}`}
+        >
           <div className="flex items-center">
             <p>{isSignUp ? 'Already have an account?' : 'Need account?'}</p>
             <Link
@@ -281,6 +286,33 @@ const AuthForm = ({ type }: AuthFormProps) => {
             >
               Forgot Password?
             </Link>
+          )}
+
+          {isSignUp && (
+            <FormField
+              control={form.control}
+              name="marketingConsent"
+              render={({ field }) => (
+                <FormItem className="w-full space-y-2 rounded-lg border border-transparent transition-colors">
+                  <div className="flex items-start gap-3">
+                    <FormControl>
+                      <Checkbox
+                        id="marketingConsent"
+                        checked={field.value}
+                        onCheckedChange={(checked) => field.onChange(checked === true)}
+                      />
+                    </FormControl>
+                    <div className="space-y-2 text-sm leading-snug">
+                      <FormLabel htmlFor="marketingConsent" className="text-foreground font-medium">
+                        I agree to receive occasional product updates and marketing emails from
+                        Vocare.
+                      </FormLabel>
+                    </div>
+                  </div>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
           )}
         </div>
 

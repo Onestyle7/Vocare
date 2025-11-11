@@ -19,5 +19,6 @@ namespace VocareWebAPI.UserManagement.Models.Dtos
         [Required(ErrorMessage = "Password confirmation is required.")]
         [Compare("Password", ErrorMessage = "Password and confirmation password do not match.")]
         public required string ConfirmPassword { get; set; }
+        public bool AcceptMarketingConsent { get; set; } = false;
     }
 }

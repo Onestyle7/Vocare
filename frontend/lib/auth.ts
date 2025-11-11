@@ -6,6 +6,7 @@ interface RegisterInput {
   email: string;
   password: string;
   confirmPassword: string;
+  marketingConsent?: boolean;
 }
 
 interface LoginInput {
@@ -41,8 +42,18 @@ api.interceptors.response.use(
   }
 );
 
-export const registerUser = async ({ email, password, confirmPassword }: RegisterInput) => {
-  const response = await api.post(`${AUTH_PREFIX}/register`, { email, password, confirmPassword });
+export const registerUser = async ({
+  email,
+  password,
+  confirmPassword,
+  marketingConsent,
+}: RegisterInput) => {
+  const response = await api.post(`${AUTH_PREFIX}/register`, {
+    email,
+    password,
+    confirmPassword,
+    acceptMarketingConsent: marketingConsent ?? false,
+  });
   return response.data;
 };
 

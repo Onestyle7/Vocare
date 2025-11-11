@@ -1,11 +1,13 @@
 import React from 'react';
+import Link from 'next/link';
 
 interface CustomButtonProps {
   children: React.ReactNode;
-  onClick?: (event: React.MouseEvent<HTMLButtonElement, MouseEvent>) => void;
+  onClick?: (event: React.MouseEvent<HTMLButtonElement | HTMLAnchorElement, MouseEvent>) => void;
   variant?: 'primary' | 'secondary' | 'destructive' | 'outline';
   className?: string;
   url?: string;
+  href?: string;
   disabled?: boolean;
 }
 
@@ -23,6 +25,7 @@ const CustomButton: React.FC<CustomButtonProps> = ({
   variant = 'primary',
   className = '',
   url,
+  href,
   disabled = false,
 }) => {
   const baseStyles =
@@ -32,12 +35,32 @@ const CustomButton: React.FC<CustomButtonProps> = ({
     disabled ? 'opacity-50 cursor-not-allowed' : ''
   }`;
 
+  const linkHref = href ?? url;
+
+  if (linkHref) {
+    const handleLinkClick = (event: React.MouseEvent<HTMLAnchorElement, MouseEvent>) => {
+      if (disabled) {
+        event.preventDefault();
+        return;
+      }
+
+      onClick?.(event);
+    };
+
+    return (
+      <Link
+        href={linkHref}
+        onClick={handleLinkClick}
+        className={`${buttonStyles} ${disabled ? 'pointer-events-none' : ''}`.trim()}
+        aria-disabled={disabled || undefined}
+      >
+        {children}
+      </Link>
+    );
+  }
+
   return (
-    <button
-      onClick={url ? () => (window.location.href = url) : onClick}
-      className={buttonStyles}
-      disabled={disabled}
-    >
+    <button onClick={onClick} className={buttonStyles} disabled={disabled}>
       {children}
     </button>
   );

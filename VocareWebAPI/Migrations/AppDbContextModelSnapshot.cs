@@ -156,6 +156,44 @@ namespace VocareWebAPI.Migrations
                     b.ToTable("AspNetUserTokens", "public");
                 });
 
+            modelBuilder.Entity("VocareWebAPI.Billing.Models.Entities.MarketingConsent", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<DateTime?>("ConsentDate")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("ConsentSource")
+                        .HasColumnType("text");
+
+                    b.Property<string>("ConsentText")
+                        .HasColumnType("text");
+
+                    b.Property<DateTime?>("ConsentWithdrawnDate")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("IpAddress")
+                        .HasColumnType("text");
+
+                    b.Property<bool>("IsConsentGiven")
+                        .HasColumnType("boolean");
+
+                    b.Property<string>("UserId")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("UserId")
+                        .IsUnique();
+
+                    b.ToTable("MarketingConsents", "public");
+                });
+
             modelBuilder.Entity("VocareWebAPI.Billing.Models.Entities.ServiceCost", b =>
                 {
                     b.Property<int>("Id")
@@ -937,6 +975,17 @@ namespace VocareWebAPI.Migrations
                         .IsRequired();
                 });
 
+            modelBuilder.Entity("VocareWebAPI.Billing.Models.Entities.MarketingConsent", b =>
+                {
+                    b.HasOne("VocareWebAPI.Models.Entities.User", "User")
+                        .WithOne("marketingConsent")
+                        .HasForeignKey("VocareWebAPI.Billing.Models.Entities.MarketingConsent", "UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("User");
+                });
+
             modelBuilder.Entity("VocareWebAPI.Billing.Models.Entities.UserBilling", b =>
                 {
                     b.HasOne("VocareWebAPI.Models.Entities.User", null)
@@ -1105,6 +1154,8 @@ namespace VocareWebAPI.Migrations
 
                     b.Navigation("UserProfile")
                         .IsRequired();
+
+                    b.Navigation("marketingConsent");
                 });
 
             modelBuilder.Entity("VocareWebAPI.Models.Entities.UserProfile", b =>
