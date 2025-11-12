@@ -55,7 +55,7 @@ export const useTokenBalance = () => {
       setIsLoading(true);
       // Użycie aktualnego tokena ze stanu zamiast pobierać go ponownie
       const token = authToken || localStorage.getItem('token');
-      const response = await axios.get(`${API_URL}/api/Billing/access-status`, {
+      const response = await axios.get(`${API_URL}api/Billing/access-status`, {
         headers: token ? { Authorization: `Bearer ${token}` } : {},
       });
 
