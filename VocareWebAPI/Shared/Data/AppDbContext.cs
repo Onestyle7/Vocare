@@ -71,7 +71,7 @@ namespace VocareWebAPI.Data
         public DbSet<FinancialSurvey> FinancialSurveys { get; set; }
         public DbSet<MarketNewsEntity> MarketNews { get; set; }
         public DbSet<SubscriptionPackage> SubscriptionPackages { get; set; }
-
+        public DbSet<MarketingConsent> MarketingConsents { get; set; }
 
         /// <summary>
         /// Konfiguruje model bazy danych, definiując schemat i relacje między encjami.

@@ -1,11 +1,28 @@
+'use client';
+
 import React from 'react';
 import { contact_pages, down_links, links_pages, links_social } from '@/app/constants';
 import Link from 'next/link';
-import CustomButton from '@/components/ui/CustomButton';
 import { Input } from '@/components/ui/input';
 import Section from '../SupportComponents/Section';
+import ButtonGenerate from '../ui/ButtonGenerate';
+import { toast } from 'sonner';
 
 const Footer = () => {
+  const reachUsEmail = 'vocare@testmail.com';
+
+  const handleReachUsClick = React.useCallback(() => {
+    void navigator.clipboard
+      .writeText(reachUsEmail)
+      .then(() => {
+        toast.success('Email copied to clipboard');
+      })
+      .catch((error) => {
+        console.error('Failed to copy email address', error);
+        toast.error('Could not copy email');
+      });
+  }, []);
+
   return (
     <Section
       className="font-korbin relative -mt-[2.25rem] pt-[7.5rem] xl:px-10"
@@ -14,14 +31,20 @@ const Footer = () => {
       customPaddings
       id="footer"
     >
-      <footer className="flex h-[90vh] flex-col items-center justify-center xl:border">
+      <footer className="mb-5 flex h-[60vh] flex-col items-center justify-center border-t 2xl:h-[50vh] 2xl:border">
         <div className="flex h-1/2 w-full justify-center max-sm:items-center">
           <div className="flex w-1/2 items-center justify-center">
-            <CustomButton className="uppercase">Try Vocare</CustomButton>
+            <ButtonGenerate
+              as="a"
+              href="/profile"
+              className="mb-4 uppercase max-md:w-full sm:my-20"
+            >
+              Try Vocare
+            </ButtonGenerate>
           </div>
         </div>
-        <div className="flex h-full w-full flex-col xl:flex-row">
-          <div className="font-poppins m-4 flex flex-col items-start justify-start text-4xl xl:w-1/2">
+        <div className="flex w-full flex-col p-4 xl:flex-row">
+          <div className="font-poppins flex flex-col items-start justify-start text-4xl max-md:mb-20 xl:w-1/2">
             Never miss what&apos;s next
             <div className="mt-10 xl:w-1/2">
               <Input type="email" placeholder="Your email" className="border-b outline-none" />
@@ -69,7 +92,17 @@ const Footer = () => {
                   {contact_pages.map((link, index) => (
                     <ul className="flex text-sm" key={index}>
                       <li>
-                        <Link href={link.url}>{link.name}</Link>
+                        {link.name.toLowerCase() === 'reach us' ? (
+                          <button
+                            type="button"
+                            onClick={handleReachUsClick}
+                            className="cursor-pointer text-left text-current"
+                          >
+                            {link.name}
+                          </button>
+                        ) : (
+                          <Link href={link.url}>{link.name}</Link>
+                        )}
                       </li>
                     </ul>
                   ))}
@@ -78,8 +111,8 @@ const Footer = () => {
             </div>
           </div>
         </div>
-        <div className="flex h-1/2 w-full flex-col items-center justify-center border-t max-lg:mt-4 xl:flex-row">
-          <div className="mx-10 flex w-full flex-col items-center gap-6 xl:flex-row xl:justify-between">
+        <div className="flex h-[30%] w-full flex-col items-center justify-center max-lg:mt-4 lg:h-[60%] xl:flex-row 2xl:h-[30%]">
+          <div className="items- mx-10 flex w-full flex-col gap-6 xl:flex-row xl:justify-between 2xl:mt-0 2xl:mb-20">
             <div className="flex flex-wrap items-center justify-center gap-4 text-sm text-gray-400/90">
               {down_links.map((link, i) => (
                 <Link

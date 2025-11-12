@@ -165,7 +165,7 @@ export default function AssistantPage() {
         // Najpierw spróbuj pobrać ostatnie rekomendacje
         try {
           const lastRecommendationResponse = await axios.get<AiCareerResponse>(
-            'https://vocare-production-e568.up.railway.app/api/Ai/last-recommendation',
+            'https://vocare-staging-1f69.up.railway.app/api/Ai/last-recommendation',
             {
               headers: {
                 Authorization: `Bearer ${token}`,
@@ -196,7 +196,7 @@ export default function AssistantPage() {
 
         // Jeśli brak ostatnich rekomendacji, wygeneruj nowe
         const response = await axios.get<AiCareerResponse>(
-          'https://vocare-production-e568.up.railway.app/api/Ai/recommendations',
+          'https://vocare-staging-1f69.up.railway.app/api/Ai/recommendations',
           {
             headers: {
               Authorization: `Bearer ${token}`,
@@ -248,7 +248,7 @@ export default function AssistantPage() {
     }
     try {
       const response = await axios.get<AiCareerResponse>(
-        'https://vocare-production-e568.up.railway.app/api/Ai/recommendations',
+        'https://vocare-staging-1f69.up.railway.app/api/Ai/recommendations',
         {
           headers: {
             Authorization: `Bearer ${token}`,
@@ -350,7 +350,7 @@ export default function AssistantPage() {
               </div>
               <div className="p-4 max-md:border-t md:w-5/6 md:p-6">
                 <div className="flex flex-row items-center justify-between">
-                  <h2 className="font-korbin mb-1 text-xl">Main Recommendation</h2>
+                  <h2 className="font-poppins mb-1 text-xl">Main Recommendation</h2>
                   <CollapsibleButton isCollapsed={isCollapsed} toggleCollapse={toggleCollapse} />
                 </div>
 
@@ -358,7 +358,9 @@ export default function AssistantPage() {
                   {recommendations.recommendation.primaryPath}
                 </h3>
 
-                <p className="text-gray-400">{recommendations.recommendation.justification}</p>
+                <p className="font-poppins text-gray-400">
+                  {recommendations.recommendation.justification}
+                </p>
 
                 <div
                   ref={contentWrapperRef}
@@ -370,14 +372,14 @@ export default function AssistantPage() {
                   }}
                 >
                   <div ref={contentRef} className="space-y-3">
-                    <h4 className="font-korbin mt-4 font-bold">Next steps:</h4>
+                    <h4 className="font-poppins mt-4 font-bold">Next steps:</h4>
                     <div className="ibm-plex-mono-regular mt-4 rounded-xl border p-2">
                       <Timeline items={timelineItems} maxDescriptionLength={80} className="mx-0" />
                     </div>
                     {/* <Separator /> */}
                     <div className="mt-4 rounded-xl p-2">
-                      <h4 className="font-korbin font-bold"> Long-term goal:</h4>
-                      <p className="mt-1 text-gray-400">
+                      <h4 className="font-poppins font-bold"> Long-term goal:</h4>
+                      <p className="font-poppins mt-1 text-gray-400">
                         {recommendations.recommendation.longTermGoal}
                       </p>
                     </div>
@@ -431,8 +433,7 @@ export default function AssistantPage() {
                     </>
                   ) : (
                     <p className="mx-auto max-w-xs">
-                      You&apos;re on an active subscription, so this action won&apos;t use any
-                      tokens.
+                      You are on an active subscription, so this action will not use any tokens.
                     </p>
                   )}
                 </AlertDialogDescription>

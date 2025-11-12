@@ -17,8 +17,9 @@ const AboutCard = ({
       <div className="mb-10 flex w-full items-start justify-start lg:h-1/2">
         <Image src={img} alt="icon" width={90} height={90} className="transition hover:rotate-45" />
       </div>
+
       <div className="flex h-1/2 w-full flex-col items-start justify-between">
-        <div className="mb-4 flex w-full flex-col items-start justify-start text-4xl font-medium">
+        <h3 className="mb-4 flex w-full flex-col items-start justify-start text-4xl font-medium">
           {titleParts.length === 2 ? (
             <>
               <span className="flex">{titleParts[0]} </span>
@@ -29,7 +30,8 @@ const AboutCard = ({
           ) : (
             title
           )}
-        </div>
+        </h3>
+
         <div className="flex w-full items-center justify-start">{description}</div>
       </div>
     </div>

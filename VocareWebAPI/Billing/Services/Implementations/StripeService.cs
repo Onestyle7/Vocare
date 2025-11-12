@@ -1,7 +1,11 @@
+using Microsoft.AspNetCore.Mvc.ApplicationModels;
+using Microsoft.AspNetCore.Mvc.ModelBinding.Binders;
+using Microsoft.AspNetCore.Mvc.TagHelpers;
 using Microsoft.EntityFrameworkCore;
 using Stripe;
 using Stripe.Checkout;
 using VocareWebAPI.Billing.Configuration;
+using VocareWebAPI.Billing.Models.Dtos;
 using VocareWebAPI.Billing.Models.Entities;
 using VocareWebAPI.Billing.Models.Enums;
 using VocareWebAPI.Billing.Repositories.Interfaces;
@@ -532,6 +536,195 @@ namespace VocareWebAPI.Billing.Services.Implementations
             _logger.LogInformation("Created customer portal session for userId={UserId}", userId);
 
             return session.Url;
+        }
+
+        public async Task<List<PaymentHistoryDto>> GetPaymentHistoryAsync(
+            string userId,
+            int limit = 50
+        )
+        {
+            if (string.IsNullOrEmpty(userId))
+            {
+                _logger.LogWarning(
+                    "Attempted to get payment history with invalid argument: userId={UserId}",
+                    userId
+                );
+                throw new ArgumentException("User ID cannot be null or empty.");
+            }
+            if (limit <= 0 || limit > 100)
+            {
+                _logger.LogWarning(
+                    "Attempted to get payment history with invalid limit: {Limit} for userId={UserId}",
+                    limit,
+                    userId
+                );
+                throw new ArgumentException("Limit must be between 1 and 100.");
+            }
+
+            UserBilling userBilling;
+
+            try
+            {
+                userBilling = await _userBillingRepository.GetByUserIdAsync(userId);
+            }
+            catch (KeyNotFoundException)
+            {
+                _logger.LogInformation(
+                    "No UserBilling found for userId={UserId}. Returning empty payment history.",
+                    userId
+                );
+                return new List<PaymentHistoryDto>();
+            }
+
+            if (string.IsNullOrEmpty(userBilling.StripeCustomerId))
+            {
+                _logger.LogInformation(
+                    "UserBilling for userId={UserId} has no StripeCustomerId. Returning empty payment history.",
+                    userId
+                );
+                return new List<PaymentHistoryDto>();
+            }
+            var paymentHistory = new List<PaymentHistoryDto>();
+            try
+            {
+                var paymentIntentService = new PaymentIntentService();
+                var paymentIntentOptions = new Stripe.PaymentIntentListOptions
+                {
+                    Customer = userBilling.StripeCustomerId,
+                    Limit = limit,
+                };
+
+                var paymentIntents = await paymentIntentService.ListAsync(paymentIntentOptions);
+                foreach (var intent in paymentIntents)
+                {
+                    if (intent.Status != "succeeded" && intent.Status != "processing")
+                        continue;
+
+                    var paymentDto = new PaymentHistoryDto
+                    {
+                        Type = "token_purchase",
+                        Amount = intent.Amount,
+                        Currency = intent.Currency,
+                        Status = MapPaymentIntentStatus(intent.Status),
+                        CreatedAt = intent.Created,
+                        Description = intent.Description ?? "Zakup tokenów",
+                        TokenAmount = ExtractTokenAmountFromMetadata(intent.Metadata),
+                    };
+                    paymentHistory.Add(paymentDto);
+                }
+                var invoiceService = new Stripe.InvoiceService();
+                var invoiceOptions = new Stripe.InvoiceListOptions
+                {
+                    Customer = userBilling.StripeCustomerId,
+                    Limit = limit,
+                };
+
+                _logger.LogInformation(
+                    "Fetching invoices for customerId={CustomerId}",
+                    userBilling.StripeCustomerId
+                );
+
+                var invoices = await invoiceService.ListAsync(invoiceOptions);
+
+                foreach (var invoice in invoices)
+                {
+                    if (invoice.Status != "paid" && invoice.Status != "open")
+                        continue;
+
+                    var invoiceDto = new PaymentHistoryDto
+                    {
+                        Type = "subscription",
+                        Amount = invoice.AmountPaid,
+                        Currency = invoice.Currency,
+                        Status = MapInvoiceStatus(invoice.Status),
+                        CreatedAt = invoice.Created,
+                        Description =
+                            invoice.Lines?.Data?.FirstOrDefault()?.Description
+                            ?? "Płatność subskrypcyjna",
+                        TokenAmount = null,
+                    };
+                    paymentHistory.Add(invoiceDto);
+                }
+            }
+            catch (Stripe.StripeException ex)
+            {
+                _logger.LogError(
+                    ex,
+                    "Stripe error while fetching payment history for userId={}",
+                    userId,
+                    ex.StripeError?.Message
+                );
+                throw new InvalidOperationException(
+                    $"Failed to fetch payment history from Stripe: {ex.StripeError?.Message}",
+                    ex
+                );
+            }
+
+            var sortedHistory = paymentHistory
+                .OrderByDescending(p => p.CreatedAt)
+                .Take(limit)
+                .ToList();
+
+            _logger.LogInformation(
+                "Fetched {Count} payment history records for userId={UserId}",
+                sortedHistory.Count,
+                userId
+            );
+            return sortedHistory;
+        }
+
+        /// <summary>
+        /// Mapuje status payment intent ze stripe na nasz uproszczony
+        /// </summary>
+        /// <param name="stripeStatus">Status ze stripe</param>
+        /// <returns>nasz ujednolicony status</returns>
+        private string MapPaymentIntentStatus(string stripeStatus)
+        {
+            return stripeStatus switch
+            {
+                "succeeded" => "succeeded",
+                "processing" => "pending",
+                "requires_payment_method" => "failed",
+                "requires_confirmation" => "pending",
+                "requires_action" => "pending",
+                "canceled" => "failed",
+                _ => "unknown",
+            };
+        }
+
+        /// <summary>
+        /// Mapuje status invoce ze stripe na nasz uproszczony
+        /// </summary>
+        /// <param name="stripeStatus">Status ze stripe</param>
+        /// <returns>nasz ujednolicony status</returns>
+        private string MapInvoiceStatus(string stripeStatus)
+        {
+            return stripeStatus switch
+            {
+                "paid" => "succeeded",
+                "open" => "pending",
+                "void" => "failed",
+                "uncollectible" => "failed",
+                _ => "unknown",
+            };
+        }
+
+        private int? ExtractTokenAmountFromMetadata(IDictionary<string, string>? metadata)
+        {
+            if (metadata == null)
+                return null;
+
+            if (!metadata.ContainsKey("tokenAmount"))
+                return null;
+
+            string tokenAmountString = metadata["tokenAmount"];
+
+            if (int.TryParse(tokenAmountString, out var amount))
+            {
+                return amount;
+            }
+
+            return null;
         }
     }
 }

@@ -13,6 +13,19 @@ class AiCareerResponse {
               .toList(),
     );
   }
+
+  // 🆕 Getter dla głównej rekomendacji (pierwszy element z listy)
+  CareerPath? get mainCareerPath =>
+      careerPaths.isNotEmpty ? careerPaths.first : null;
+
+  // 🆕 Getter zwracający 3 dodatkowe rekomendacje (elementy 1, 2, 3)
+  List<CareerPath> get additionalCareerPaths =>
+      careerPaths.length > 1
+          ? careerPaths.skip(1).take(3).toList()
+          : <CareerPath>[];
+
+  // 🆕 Getter zwracający wszystkie 4 rekomendacje
+  List<CareerPath> get allCareerPaths => careerPaths.take(4).toList();
 }
 
 class MainRecommendation {

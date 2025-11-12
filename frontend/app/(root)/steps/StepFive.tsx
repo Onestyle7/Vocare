@@ -60,7 +60,7 @@ export default function StepFive({
             <FormControl>
               <Input
                 type="number"
-                placeholder="e.g., 3500"
+                placeholder="e.g. 3500"
                 value={field.value ?? ''}
                 onChange={field.onChange}
                 className="rounded-lg border"
@@ -80,7 +80,7 @@ export default function StepFive({
             <FormControl>
               <Input
                 type="number"
-                placeholder="e.g., 5000"
+                placeholder="e.g. 5000"
                 value={field.value ?? ''}
                 onChange={field.onChange}
                 className="rounded-lg border"

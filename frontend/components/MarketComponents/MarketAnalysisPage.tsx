@@ -497,7 +497,7 @@ export default function MarketAnalysis() {
               </div>
               <div className="p-4 max-md:border-t md:w-5/6 md:p-6">
                 <div className="flex flex-row items-center justify-between">
-                  <h2 className="font-korbin mb-1 text-xl">Main market insight</h2>
+                  <h2 className="font-poppins mb-1 text-xl">Main market insight</h2>
                   <CollapsibleButton isCollapsed={isCollapsed} toggleCollapse={toggleCollapse} />
                 </div>
 
@@ -505,7 +505,7 @@ export default function MarketAnalysis() {
                   {primaryIndustry?.industry || 'No industry data'}
                 </h3>
 
-                <p className="text-gray-400">
+                <p className="font-poppins text-gray-400">
                   {summary || 'No market metrics available for this industry.'}
                 </p>
 
@@ -533,8 +533,8 @@ export default function MarketAnalysis() {
                     )}
                     {primarySkills.length > 0 && (
                       <div className="mt-4 rounded-xl p-2">
-                        <h4 className="font-korbin font-bold">In-demand skills:</h4>
-                        <ul className="mt-1 list-disc space-y-1 pl-5 text-gray-400">
+                        <h4 className="font-poppins font-bold">In-demand skills:</h4>
+                        <ul className="font-poppins mt-1 list-disc space-y-1 pl-5 text-gray-400">
                           {primarySkills.map((skill) => (
                             <li key={`${skill.skill}-${skill.industry}`}>
                               {skill.skill}
@@ -555,8 +555,8 @@ export default function MarketAnalysis() {
                     )}
                     {longTermInsight && (
                       <div className="mt-4 rounded-xl p-2">
-                        <h4 className="font-korbin font-bold">Growth outlook:</h4>
-                        <p className="mt-1 text-gray-400">{longTermInsight}</p>
+                        <h4 className="font-korbin font-poppins font-bold">Growth outlook:</h4>
+                        <p className="font-poppins mt-1 text-gray-400">{longTermInsight}</p>
                       </div>
                     )}
                   </div>
@@ -613,8 +613,7 @@ export default function MarketAnalysis() {
                     </>
                   ) : (
                     <p className="mx-auto max-w-xs">
-                      You&apos;re on an active subscription, so this action won&apos;t use any
-                      tokens.
+                      You are on an active subscription, so this action will not use any tokens.
                     </p>
                   )}
                 </AlertDialogDescription>
@@ -777,14 +776,16 @@ function IndustryInsightSection({ industry, index, skillDemand }: IndustryInsigh
 
       <div className="p-4 max-md:border-t md:w-5/6 md:p-6">
         <div className="flex flex-row items-center justify-between">
-          <h2 className="font-korbin mb-1 text-xl">Consider this industry</h2>
+          <h2 className="font-poppins mb-1 text-xl">Consider this industry</h2>
           <CollapsibleButton isCollapsed={isCollapsed} toggleCollapse={toggleCollapse} />
         </div>
 
         <h3 className="text-md ibm-plex-mono-regular mb-2 font-medium text-[#915EFF] sm:text-lg">
           {industry.industry}
         </h3>
-        <p className="text-gray-400">{summary || 'No detailed information available.'}</p>
+        <p className="font-poppins text-gray-400">
+          {summary || 'No detailed information available.'}
+        </p>
 
         <div
           ref={contentWrapperRef}
@@ -799,16 +800,20 @@ function IndustryInsightSection({ industry, index, skillDemand }: IndustryInsigh
             <div className="mt-4 grid grid-cols-1 gap-4 md:grid-cols-3">
               <div className="rounded-xl border border-[#915EFF]/40 p-3">
                 <p className="text-sm text-gray-500">Salary range</p>
-                <p className="text-lg font-medium text-black dark:text-white">{salaryRange}</p>
+                <p className="font-poppins text-lg font-medium text-black dark:text-white">
+                  {salaryRange}
+                </p>
               </div>
               <div className="rounded-xl border border-[#915EFF]/40 p-3">
                 <p className="text-sm text-gray-500">Employment rate</p>
-                <p className="text-lg font-medium text-black dark:text-white">{employmentRate}</p>
+                <p className="font-poppins text-lg font-medium text-black dark:text-white">
+                  {employmentRate}
+                </p>
               </div>
               <div className="rounded-xl border border-[#915EFF]/40 p-3">
                 <p className="text-sm text-gray-500">Growth forecast</p>
                 <span
-                  className={`mt-1 inline-block rounded-lg px-2 py-1 text-xs font-medium ${getGrowthBadgeClass(industry.growthForecast)}`}
+                  className={`font-poppins mt-1 inline-block rounded-lg px-2 py-1 text-xs font-medium ${getGrowthBadgeClass(industry.growthForecast)}`}
                 >
                   {industry.growthForecast || 'No data'}
                 </span>
@@ -817,8 +822,8 @@ function IndustryInsightSection({ industry, index, skillDemand }: IndustryInsigh
 
             {relatedSkills.length > 0 && (
               <div className="rounded-xl border border-dashed border-[#915EFF]/40 p-3">
-                <h4 className="font-korbin mb-2 font-bold">In-demand skills</h4>
-                <ul className="list-disc space-y-1 pl-5 text-gray-400">
+                <h4 className="font-poppins mb-2 font-bold">In-demand skills</h4>
+                <ul className="font-poppins list-disc space-y-1 pl-5 text-gray-400">
                   {relatedSkills.map((skill) => (
                     <li key={`${skill.skill}-${skill.industry}`}>
                       {skill.skill}
