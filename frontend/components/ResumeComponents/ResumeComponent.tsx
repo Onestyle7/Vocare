@@ -1142,16 +1142,6 @@ const CVCreator: React.FC<CVCreatorProps> = ({ initialCv }) => {
     );
   };
 
-  const updateSummaryFormattingFromSelection = () => {
-    const textarea = summaryTextareaRef.current;
-    if (!textarea) return;
-    const selectionStart = textarea.selectionStart ?? 0;
-    const selectionEnd = textarea.selectionEnd ?? selectionStart;
-    setSummaryFormatting(
-      computeFormattingState(personalInfo.summary || '', selectionStart, selectionEnd)
-    );
-  };
-
   const updateExperienceFormattingFromSelection = (id: string) => {
     const textarea = experienceTextareaRefs.current[id];
     if (!textarea) return;
@@ -1768,7 +1758,7 @@ const CVCreator: React.FC<CVCreatorProps> = ({ initialCv }) => {
                 <HoverCardContent className="font-poppins w-80">
                   <div className="flex justify-between gap-4">
                     <div className="space-y-1">
-                      <h4 className="text-sm font-semibold">Will it acutally help me?</h4>
+                      <h4 className="text-sm font-semibold">Will it actually help me?</h4>
                       <p className="text-sm">
                         It&apos;ll surely do. Our AI models are trained specifically to match
                         requirements of the algorithms used by recruiters.
@@ -2603,7 +2593,7 @@ const CVCreator: React.FC<CVCreatorProps> = ({ initialCv }) => {
           >
             <h3 className="mb-2 flex items-center border-b border-gray-300 pb-1 text-lg font-semibold text-gray-800">
               <Briefcase size={16} className="mr-2" />
-              Work Exeperience
+              Work Experience
             </h3>
             {experiences.map((exp) => (
               <div key={exp.id} className="exp-item mb-4" data-item-id={exp.id}>
@@ -2843,7 +2833,7 @@ const CVCreator: React.FC<CVCreatorProps> = ({ initialCv }) => {
         return (
           <h3 className="mb-2 flex items-center border-b border-gray-300 pb-1 text-lg font-semibold text-gray-800">
             <Briefcase size={16} className="mr-2" />
-            Work Exeperience
+            Work Experience
           </h3>
         );
       case 'education':
@@ -3272,7 +3262,7 @@ const CVCreator: React.FC<CVCreatorProps> = ({ initialCv }) => {
                 </div>
 
                 <div>
-                  <label className="mb-1 block text-sm text-gray-600">E-mail addres</label>
+                  <label className="mb-1 block text-sm text-gray-600">E-mail address</label>
                   <input
                     type="email"
                     placeholder="joedoe@gmail.com"
@@ -3315,7 +3305,7 @@ const CVCreator: React.FC<CVCreatorProps> = ({ initialCv }) => {
                         />
                       </div>
                       <div>
-                        <label className="mb-1 block text-sm text-gray-600">Adress</label>
+                        <label className="mb-1 block text-sm text-gray-600">Address</label>
                         <input
                           type="text"
                           placeholder="e.g. 221B Baker Street, London"
