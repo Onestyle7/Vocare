@@ -7,7 +7,7 @@ import { Toaster } from '@/components/ui/sonner';
 import { TokenBalanceProvider } from '@/lib/contexts/TokenBalanceContext';
 // import SmoothScrollProvider from '@/components/SupportComponents/SmoothScrollProvider';
 
-const BASE_URL = process.env.NEXT_PUBLIC_SITE_URL || 'https://vocare.pl';
+const BASE_URL = 'sraka';
 const METADATA_BASE = (() => {
   try {
     return new URL(BASE_URL);
