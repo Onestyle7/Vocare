@@ -1,6 +1,6 @@
 import { api } from './api';
 
-const AUTH_PREFIX = 'vocare-production-e568.up.railway.app/api/Auth';
+const AUTH_PREFIX = '/api/Auth';
 
 interface RegisterInput {
   email: string;
