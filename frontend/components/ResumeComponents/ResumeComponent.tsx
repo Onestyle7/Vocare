@@ -174,7 +174,6 @@ const RichTextToolbar = ({
 
 const makeExperienceId = () => `${Date.now()}-${Math.random().toString(36).slice(2, 8)}`;
 
-
 const ensureExperienceDefaults = (exp: Partial<Experience>): Experience => ({
   id: typeof exp.id === 'string' && exp.id.length > 0 ? exp.id : makeExperienceId(),
   company: exp.company ?? '',

@@ -16,7 +16,6 @@ const METADATA_BASE = (() => {
   }
 })();
 
-
 const sizmoPro = localFont({
   src: [
     {
@@ -144,8 +143,7 @@ export const metadata: Metadata = {
   twitter: {
     card: 'summary_large_image',
     title: 'Vocare - AI Career Advisor, Market Insights & ATS Resume',
-    description:
-      'Personalized career recommendations, market insights, and an ATS-ready resume.',
+    description: 'Personalized career recommendations, market insights, and an ATS-ready resume.',
     images: [`${BASE_URL}/metadata/og-image.png`],
   },
   icons: {
@@ -182,7 +180,6 @@ export const viewport: Viewport = {
   userScalable: true,
   themeColor: '#0B0F19',
 };
-
 
 export default function RootLayout({
   children,

@@ -438,3 +438,7 @@ export const timeline_icon_4 = '/svg/timeline_icon_4.svg';
 // Card Assistant
 
 export const card_assistant_1 = '/images/card-assistant-1.png';
+
+// Roadmap icons
+
+export const react = '/svg/react.svg';
