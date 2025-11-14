@@ -165,7 +165,7 @@ export default function AssistantPage() {
         // Najpierw spróbuj pobrać ostatnie rekomendacje
         try {
           const lastRecommendationResponse = await axios.get<AiCareerResponse>(
-            'https://vocare-staging-1f69.up.railway.app/api/Ai/recommendations',
+            'https://vocare-staging-1f69.up.railway.app/api/Ai/last-recommendations',
             {
               headers: {
                 Authorization: `Bearer ${token}`,
