@@ -165,7 +165,7 @@ export default function AssistantPage() {
         // Najpierw spróbuj pobrać ostatnie rekomendacje
         try {
           const lastRecommendationResponse = await axios.get<AiCareerResponse>(
-            'https://vocare-staging-1f69.up.railway.app/api/Ai/last-recommendation',
+            'http://localhost:8080/api/Ai/last-recommendation',
             {
               headers: {
                 Authorization: `Bearer ${token}`,
@@ -196,7 +196,7 @@ export default function AssistantPage() {
 
         // Jeśli brak ostatnich rekomendacji, wygeneruj nowe
         const response = await axios.get<AiCareerResponse>(
-          'https://vocare-staging-1f69.up.railway.app/api/Ai/recommendations',
+          'http://localhost:8080/api/Ai/recommendation',
           {
             headers: {
               Authorization: `Bearer ${token}`,
@@ -248,7 +248,7 @@ export default function AssistantPage() {
     }
     try {
       const response = await axios.get<AiCareerResponse>(
-        'https://vocare-staging-1f69.up.railway.app/api/Ai/recommendations',
+        'http://localhost:8080/api/Ai/recommendation',
         {
           headers: {
             Authorization: `Bearer ${token}`,
