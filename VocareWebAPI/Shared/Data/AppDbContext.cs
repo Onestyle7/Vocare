@@ -248,7 +248,7 @@ namespace VocareWebAPI.Data
                     {
                         Id = 1,
                         ServiceName = "AnalyzeProfile",
-                        TokenCost = 5,
+                        TokenCost = 60,
                     },
                     new ServiceCost
                     {
@@ -260,7 +260,7 @@ namespace VocareWebAPI.Data
                     {
                         Id = 3,
                         ServiceName = "MarketAnalysis",
-                        TokenCost = 5,
+                        TokenCost = 50,
                     },
                     new ServiceCost
                     {
