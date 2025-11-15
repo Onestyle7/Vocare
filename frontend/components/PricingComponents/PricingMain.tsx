@@ -18,23 +18,23 @@ import { cn } from '@/lib/utils';
 import { useRouter } from 'next/navigation';
 import { toast } from 'sonner';
 
-type PlanType = 'tokens' | 'subscription';
+type PlanType = 'tokens' | 'subscription' | 'individual';
 
 const API_BASE = process.env.NEXT_PUBLIC_API_URL || 'https://vocare-staging-e568.up.railway.app';
 
 const pricingPlans = [
   {
     name: 'Personal',
-    description: 'Perfect for getting started with our platform.',
+    description: 'Perfect for getting started with following your career.',
     price: 9,
-    tokens: 1000 as number | string,
+    tokens: 500 as number | string,
     priceId: 'price_1S8kOELs2ndSVWb2t6bhwwwC',
     type: 'tokens' as PlanType,
     features: [
-      '1,000 tokens included',
-      'Basic access to AI models',
-      'Up to 5 requests per day',
-      'Standard response time',
+      '500 tokens included',
+      'Personal career guidance',
+      'Personalized career path proposals',
+      'Market insights for your careers',
     ],
     popular: false,
   },
@@ -46,11 +46,10 @@ const pricingPlans = [
     priceId: 'price_1S8kP9Ls2ndSVWb27z6i7v5v',
     type: 'tokens' as PlanType,
     features: [
-      '5,000 tokens included',
-      'Full access to all AI models',
-      'Unlimited daily requests',
-      'Priority response time',
-      'Export results in multiple formats',
+      'Unlimited access',
+      'Personal career guidance',
+      'Personalized career path proposals',
+      'Market insights for your careers',
     ],
     popular: true,
   },
@@ -60,11 +59,12 @@ const pricingPlans = [
     price: 48,
     tokens: 'Unlimited' as number | string,
     priceId: 'price_1S9q33Ls2ndSVWb2KeB4Y3AD',
-    type: 'subscription' as PlanType,
+    type: 'individual' as PlanType,
     features: [
-      'Unlimited tokens for one user',
-      'Access to all advanced AI models',
-      'Dedicated premium support',
+      'CV review by career expert',
+      'Optizimazation for resume',
+      '5 personalized career paths',
+      'Response within 48 hours',
     ],
     popular: false,
   },
@@ -337,10 +337,10 @@ const PricingMain = () => {
               </ScrollParallax>
 
               {/* Personal */}
-              <div className="font-korbin relative z-30 flex h-full flex-col justify-between rounded-[24px] border bg-[linear-gradient(to_top_right,rgba(9,13,22,1)_20%,rgba(9,13,22,0.2)_100%)] p-6 backdrop-blur-md sm:h-[87%] dark:border-gray-500/40">
+              <div className="relative z-30 flex h-full flex-col justify-between rounded-[24px] border bg-[linear-gradient(to_top_right,rgba(9,13,22,1)_20%,rgba(9,13,22,0.2)_100%)] p-6 backdrop-blur-md sm:h-[87%] dark:border-gray-500/40">
                 <div
                   aria-hidden
-                  className="pointer-events-none absolute inset-0 rounded-[24px] bg-gradient-to-br from-white/25 via-white/10 to-transparent dark:from-white/10 dark:via-white/5"
+                  className="pointer-events-none absolute inset-0 rounded-[24px] bg-gradient-to-br from-white/25 via-white/10 to-transpearent dark:from-white/10 dark:via-white/5"
                 />
                 <div className="relative">
                   <div className="mb-4 flex h-[40px] w-[40px] items-center justify-center rounded-full border bg-white/20 shadow-xl backdrop-blur-md dark:bg-white/10">
@@ -350,20 +350,21 @@ const PricingMain = () => {
                     Personal
                   </h3>
                   <p className="mb-4 text-gray-700 dark:text-gray-300">
-                    Perfect for getting started with our platform.
+                                        Perfect for finding your career.
+
                   </p>
                   <div className="font-poppins mb-6 text-4xl font-bold text-gray-900 dark:text-white">
-                    $9{' '}
+                    45<sup className="text-sm align-super">zł</sup>
                     <span className="text-xl font-normal text-gray-600 dark:text-gray-300">
-                      /1,000 tokens
+                      /500 tokens
                     </span>
                   </div>
                   <ul className="mb-6 space-y-3 text-gray-900 dark:text-gray-100">
                     {[
-                      '1,000 tokens included',
-                      'Basic access to AI models',
-                      'Up to 5 requests per day',
-                      'Standard response time',
+                      '500 tokens included',
+                      'Personal career guidance',
+                      'Personalized career path proposals',
+                      'Market insights for your careers',
                     ].map((feature, i) => (
                       <li key={i} className="flex items-center">
                         <svg
@@ -409,7 +410,7 @@ const PricingMain = () => {
                   <Undo2 className="h-5 w-5 -rotate-90 text-white" />
                   <span className="text-lg font-semibold text-white">Best Deal</span>
                 </div>
-                <div className="font-korbin relative z-30 flex flex-col justify-between rounded-[24px] border p-6 backdrop-blur-md dark:border-gray-500/40 dark:bg-[#090d16]">
+                <div className="relative z-30 flex flex-col justify-between rounded-[24px] border p-6 backdrop-blur-md dark:border-gray-500/40 dark:bg-[#090d16]">
                   <div
                     aria-hidden
                     className="pointer-events-none absolute inset-0 rounded-[24px] bg-gradient-to-br from-white/25 via-white/10 to-transparent dark:from-white/10 dark:via-white/5"
@@ -420,28 +421,27 @@ const PricingMain = () => {
                         <Image src={square_pricing} alt="square" width={32} height={32} />
                       </div>
                       <div className="font-poppins flex h-[32px] w-fit items-center justify-center rounded-full bg-[#818fff] px-4 py-2 text-xs font-semibold text-white">
-                        <p>Save 75%</p>
+                        <p>Save 35%</p>
                       </div>
                     </div>
                     <h3 className="mb-2 text-xl font-semibold text-gray-900 dark:text-gray-100">
                       Growth
                     </h3>
                     <p className="mb-4 text-gray-700 dark:text-gray-300">
-                      The best choice for scaling your projects.
+                      The best choice for scaling your career.
                     </p>
                     <div className="font-poppins mb-6 text-4xl font-bold text-gray-900 dark:text-white">
-                      $32{' '}
-                      <span className="text-xl font-normal text-gray-600 dark:text-gray-300">
-                        /5,000 tokens
-                      </span>
-                    </div>
+                    29<sup className="text-sm align-super">zł</sup>
+                    <span className="text-xl font-normal text-gray-600 dark:text-gray-300">
+                      /month
+                    </span>
+                  </div>
                     <ul className="mb-6 space-y-3 text-gray-900 dark:text-gray-100">
                       {[
-                        '5,000 tokens included',
-                        'Full access to all AI models',
-                        'Unlimited daily requests',
-                        'Priority response time',
-                        'Export results in multiple formats',
+                        'Unlimited access',
+                        'Personal career guidance',
+                        'Personalized career path proposals',
+                        'Market insights for your careers',
                       ].map((feature, i) => (
                         <li key={i} className="flex items-center">
                           <svg
@@ -477,13 +477,13 @@ const PricingMain = () => {
                   >
                     {isLoading && selectedPriceId === pricingPlans[1].priceId
                       ? 'Processing...'
-                      : `Buy ${pricingPlans[1].name}`}
+                      : `Subscribe ${pricingPlans[1].name}`}
                   </Button>
                 </div>
               </div>
 
-              {/* Extras (subscription) */}
-              <div className="font-korbin relative z-30 flex h-full flex-col justify-between rounded-[24px] border bg-[linear-gradient(to_top_right,rgba(9,13,22,1)_20%,rgba(9,13,22,0.2)_100%)] p-6 backdrop-blur-md sm:h-[87%] dark:border-gray-500/40">
+              {/* Extras */}
+              <div className="relative z-30 flex h-full flex-col justify-between rounded-[24px] border bg-[linear-gradient(to_top_right,rgba(9,13,22,1)_20%,rgba(9,13,22,0.2)_100%)] p-6 backdrop-blur-md sm:h-[87%] dark:border-gray-500/40">
                 <div
                   aria-hidden
                   className="pointer-events-none absolute inset-0 rounded-[24px] bg-gradient-to-br from-white/25 via-white/10 to-transparent dark:from-white/10 dark:via-white/5"
@@ -504,22 +504,23 @@ const PricingMain = () => {
                     </div>
                   </div>
                   <h3 className="mb-2 text-xl font-semibold text-gray-900 dark:text-gray-100">
-                    Extras
+                    Individual
                   </h3>
                   <p className="mb-4 text-gray-700 dark:text-gray-300">
-                    Unlimited tokens and premium experience for personal use.
+                    Your career advisored by our experts.
                   </p>
                   <div className="font-poppins mb-6 text-4xl font-bold text-gray-900 dark:text-white">
-                    $48{' '}
-                    <span className="text-xl font-normal text-gray-600 dark:text-gray-300">
-                      /Unlimited tokens
-                    </span>
+                    99<sup className="text-sm align-super">zł</sup>
+                    {/* <span className="text-xl font-normal text-gray-600 dark:text-gray-300">
+                      /once
+                    </span> */}
                   </div>
                   <ul className="mb-6 space-y-3 text-gray-900 dark:text-gray-100">
                     {[
-                      'Unlimited tokens for one user',
-                      'Access to all advanced AI models',
-                      'Dedicated premium support',
+                      'CV review by career expert',
+                      'Optizimazation for resume',
+                      '5 personalized career paths',
+                      'Response within 48 hours',
                     ].map((feature, i) => (
                       <li key={i} className="flex items-center">
                         <svg
@@ -555,7 +556,7 @@ const PricingMain = () => {
                 >
                   {isLoading && selectedPriceId === pricingPlans[2].priceId
                     ? 'Processing...'
-                    : `Subscribe to ${pricingPlans[2].name}`}
+                    : `Contact us`}
                 </Button>
               </div>
             </div>
