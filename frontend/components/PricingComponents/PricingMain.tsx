@@ -8,6 +8,16 @@ import {
   trapez_pricing,
 } from '@/app/constants';
 import Section from '@/components/SupportComponents/Section';
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from '@/components/ui/alert-dialog';
 import { Button } from '@/components/ui/button';
 import Image from 'next/image';
 import React, { useCallback, useEffect, useState } from 'react';
@@ -75,8 +85,10 @@ const PricingMain = () => {
   const [selectedPriceId, setSelectedPriceId] = useState<string | null>(null);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [subscriptionStatus, setSubscriptionStatus] = useState<string | null>(null);
+  const [individualDialogOpen, setIndividualDialogOpen] = useState(false);
 
   const router = useRouter();
+  const individualPlan = pricingPlans.find((plan) => plan.type === 'individual');
   useEffect(() => {
     const token = typeof window !== 'undefined' ? localStorage.getItem('token') : null;
     setIsAuthenticated(!!token);
@@ -266,8 +278,15 @@ const PricingMain = () => {
     }
   };
 
+  const handleIndividualProceed = () => {
+    if (!individualPlan) return;
+    setIndividualDialogOpen(false);
+    void handlePurchase(individualPlan.priceId, individualPlan.name, individualPlan.type);
+  };
+
   return (
-    <Section
+    <>
+      <Section
       className="relative -mt-[5.25rem] pt-[7.5rem]"
       crosses
       crossesOffset="lg:translate-y-[7.5rem]"
@@ -545,16 +564,16 @@ const PricingMain = () => {
                 <Button
                   className="relative mt-auto h-12 w-full rounded-full font-bold"
                   variant="outline"
-                  onClick={() =>
-                    handlePurchase(
-                      pricingPlans[2].priceId,
-                      pricingPlans[2].name,
-                      pricingPlans[2].type
-                    )
+                  onClick={() => {
+                    if (!individualPlan) return;
+                    setIndividualDialogOpen(true);
+                  }}
+                  disabled={
+                    !individualPlan ||
+                    (isLoading && selectedPriceId === individualPlan.priceId)
                   }
-                  disabled={isLoading && selectedPriceId === pricingPlans[2].priceId}
                 >
-                  {isLoading && selectedPriceId === pricingPlans[2].priceId
+                  {isLoading && individualPlan && selectedPriceId === individualPlan.priceId
                     ? 'Processing...'
                     : `Contact us`}
                 </Button>
@@ -564,6 +583,26 @@ const PricingMain = () => {
         </div>
       </div>
     </Section>
+    {individualPlan && (
+      <AlertDialog open={individualDialogOpen} onOpenChange={setIndividualDialogOpen}>
+        <AlertDialogContent className="font-poppins max-w-md rounded-2xl">
+          <AlertDialogHeader>
+            <AlertDialogTitle>Proceed with payment?</AlertDialogTitle>
+            <AlertDialogDescription>
+              We&apos;ll reach out via <span className='font-bold text-[#818fff]'>email</span> to the address associated with your payment once it
+              comes through. <br />Do you want to continue to the secure checkout now?
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter className="flex-row justify-end gap-3 sm:flex-row">
+            <AlertDialogCancel className="rounded-full px-6">Cancel</AlertDialogCancel>
+            <AlertDialogAction className="rounded-full px-6" onClick={handleIndividualProceed}>
+              Proceed
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
+    )}
+    </>
   );
 };
 
