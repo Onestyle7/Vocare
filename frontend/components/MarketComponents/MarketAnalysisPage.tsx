@@ -475,109 +475,110 @@ export default function MarketAnalysis() {
             AI Market Analysis
           </h2>
           <div>
-  {/* Frame jak w pricingu */}
-  <div className="relative mb-4 w-full rounded-[28px] bg-[linear-gradient(90deg,rgba(146,150,253,1)_0%,rgba(132,145,254,1)_50%,rgba(199,169,254,1)_100%,rgba(157,155,255,1)_77%)] px-1 pt-16 pb-1">
-    {/* Belka nad kafelkiem */}
-    <div className="absolute top-4 left-1/2 flex -translate-x-1/2 items-center gap-2">
-      <Undo2 className="h-5 w-5 -rotate-90 text-white" />
-      <span className="text-lg font-semibold text-white">Best path</span>
-    </div>
+            {/* Frame jak w pricingu */}
+            <div className="relative mb-4 w-full rounded-[28px] bg-[linear-gradient(90deg,rgba(146,150,253,1)_0%,rgba(132,145,254,1)_50%,rgba(199,169,254,1)_100%,rgba(157,155,255,1)_77%)] px-1 pt-16 pb-1">
+              {/* Belka nad kafelkiem */}
+              <div className="absolute top-4 left-1/2 flex -translate-x-1/2 items-center gap-2">
+                <Undo2 className="h-5 w-5 -rotate-90 text-white" />
+                <span className="text-lg font-semibold text-white">Best path</span>
+              </div>
 
-    {/* Właściwy kafelek z analizą rynku */}
-    <div className="clip-corner-bevel relative z-30 flex flex-col overflow-hidden rounded-[24px] border shadow-sm backdrop-blur-md dark:border-gray-500/40 dark:bg-[#090d16] md:flex-row">
-      <div className="relative flex items-center justify-center overflow-hidden p-4 md:w-1/6 md:border-r md:p-8">
-        <Image
-          src="/images/cone.png"
-          alt="decor"
-          width={148}
-          height={148}
-          className="pointer-events-none absolute -top-2 -left-14 z-10"
-        />
-        <Image
-          src="/images/cone-2.png"
-          alt="decor"
-          width={148}
-          height={148}
-          className="pointer-events-none absolute -right-8 bottom-2 z-10 -rotate-12 sm:-right-14 sm:-bottom-8"
-        />
-        <span className="font-korbin relative z-20 rounded-xl border border-r-6 border-b-6 px-6 py-2 text-4xl font-bold text-white md:text-6xl">
-          1
-        </span>
-      </div>
-
-      <div className="p-4 max-md:border-t md:w-5/6 md:p-6">
-        <div className="flex flex-row items-center justify-between">
-          <h2 className="font-poppins mb-1 text-xl">Main market insight</h2>
-          <CollapsibleButton isCollapsed={isCollapsed} toggleCollapse={toggleCollapse} />
-        </div>
-
-        <h3 className="text-md ibm-plex-mono-regular mb-2 w-fit rounded-lg border-gray-600/40 font-medium text-[#915EFF] sm:text-lg">
-          {primaryIndustry?.industry || 'No industry data'}
-        </h3>
-
-        <p className="font-poppins text-gray-400">
-          {summary || 'No market metrics available for this industry.'}
-        </p>
-
-        <div
-          ref={contentWrapperRef}
-          className="overflow-hidden"
-          style={{
-            height: isCollapsed ? 0 : 'auto',
-            opacity: isCollapsed ? 0 : 1,
-            visibility: isCollapsed ? 'hidden' : 'visible',
-          }}
-        >
-          <div ref={contentRef} className="space-y-3">
-            {timelineItems.length > 0 && (
-              <>
-                <h4 className="font-korbin mt-4 font-bold">Key trends:</h4>
-                <div className="ibm-plex-mono-regular mt-4 rounded-xl border p-2">
-                  <Timeline
-                    items={timelineItems}
-                    maxDescriptionLength={8}
-                    className="mx-0"
+              {/* Właściwy kafelek z analizą rynku */}
+              <div className="clip-corner-bevel relative z-30 flex flex-col overflow-hidden rounded-[24px] border shadow-sm backdrop-blur-md md:flex-row dark:border-gray-500/40 dark:bg-[#090d16]">
+                <div className="relative flex items-center justify-center overflow-hidden p-4 md:w-1/6 md:border-r md:p-8">
+                  <Image
+                    src="/images/cone.png"
+                    alt="decor"
+                    width={148}
+                    height={148}
+                    className="pointer-events-none absolute -top-2 -left-14 z-10"
                   />
+                  <Image
+                    src="/images/cone-2.png"
+                    alt="decor"
+                    width={148}
+                    height={148}
+                    className="pointer-events-none absolute -right-8 bottom-2 z-10 -rotate-12 sm:-right-14 sm:-bottom-8"
+                  />
+                  <span className="font-korbin relative z-20 rounded-xl border border-r-6 border-b-6 px-6 py-2 text-4xl font-bold text-white md:text-6xl">
+                    1
+                  </span>
                 </div>
-              </>
-            )}
 
-            {primarySkills.length > 0 && (
-              <div className="mt-4 rounded-xl p-2">
-                <h4 className="font-poppins font-bold">In-demand skills:</h4>
-                <ul className="font-poppins mt-1 list-disc space-y-1 pl-5 text-gray-400">
-                  {primarySkills.map((skill) => (
-                    <li key={`${skill.skill}-${skill.industry}`}>
-                      {skill.skill}
-                      {skill.demandLevel ? (
-                        <span
-                          className={`ml-2 rounded-full px-2 py-0.5 text-xs font-medium ${getDemandBadgeClass(skill.demandLevel)}`}
-                        >
-                          {skill.demandLevel}
-                        </span>
-                      ) : null}
-                      {skill.industry ? (
-                        <span className="ml-2 text-xs text-gray-500">{skill.industry}</span>
-                      ) : null}
-                    </li>
-                  ))}
-                </ul>
-              </div>
-            )}
+                <div className="p-4 max-md:border-t md:w-5/6 md:p-6">
+                  <div className="flex flex-row items-center justify-between">
+                    <h2 className="font-poppins mb-1 text-xl">Main market insight</h2>
+                    <CollapsibleButton isCollapsed={isCollapsed} toggleCollapse={toggleCollapse} />
+                  </div>
 
-            {longTermInsight && (
-              <div className="mt-4 rounded-xl p-2">
-                <h4 className="font-korbin font-poppins font-bold">Growth outlook:</h4>
-                <p className="font-poppins mt-1 text-gray-400">{longTermInsight}</p>
+                  <h3 className="text-md ibm-plex-mono-regular mb-2 w-fit rounded-lg border-gray-600/40 font-medium text-[#915EFF] sm:text-lg">
+                    {primaryIndustry?.industry || 'No industry data'}
+                  </h3>
+
+                  <p className="font-poppins text-gray-400">
+                    {summary || 'No market metrics available for this industry.'}
+                  </p>
+
+                  <div
+                    ref={contentWrapperRef}
+                    className="overflow-hidden"
+                    style={{
+                      height: isCollapsed ? 0 : 'auto',
+                      opacity: isCollapsed ? 0 : 1,
+                      visibility: isCollapsed ? 'hidden' : 'visible',
+                    }}
+                  >
+                    <div ref={contentRef} className="space-y-3">
+                      {timelineItems.length > 0 && (
+                        <>
+                          <h4 className="font-korbin mt-4 font-bold">Key trends:</h4>
+                          <div className="ibm-plex-mono-regular mt-4 rounded-xl border p-2">
+                            <Timeline
+                              items={timelineItems}
+                              maxDescriptionLength={8}
+                              className="mx-0"
+                            />
+                          </div>
+                        </>
+                      )}
+
+                      {primarySkills.length > 0 && (
+                        <div className="mt-4 rounded-xl p-2">
+                          <h4 className="font-poppins font-bold">In-demand skills:</h4>
+                          <ul className="font-poppins mt-1 list-disc space-y-1 pl-5 text-gray-400">
+                            {primarySkills.map((skill) => (
+                              <li key={`${skill.skill}-${skill.industry}`}>
+                                {skill.skill}
+                                {skill.demandLevel ? (
+                                  <span
+                                    className={`ml-2 rounded-full px-2 py-0.5 text-xs font-medium ${getDemandBadgeClass(skill.demandLevel)}`}
+                                  >
+                                    {skill.demandLevel}
+                                  </span>
+                                ) : null}
+                                {skill.industry ? (
+                                  <span className="ml-2 text-xs text-gray-500">
+                                    {skill.industry}
+                                  </span>
+                                ) : null}
+                              </li>
+                            ))}
+                          </ul>
+                        </div>
+                      )}
+
+                      {longTermInsight && (
+                        <div className="mt-4 rounded-xl p-2">
+                          <h4 className="font-korbin font-poppins font-bold">Growth outlook:</h4>
+                          <p className="font-poppins mt-1 text-gray-400">{longTermInsight}</p>
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                </div>
               </div>
-            )}
+            </div>
           </div>
-        </div>
-      </div>
-    </div>
-  </div>
-</div>
-
 
           {analysis.industryStatistics.slice(1).map((industry, index) => (
             <IndustryInsightSection
