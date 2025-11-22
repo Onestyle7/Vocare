@@ -113,7 +113,7 @@ export default function CareerPathSection({ path, index }: CareerPathSectionProp
           className="pointer-events-none absolute -right-8 bottom-2 z-10 -rotate-12 sm:-right-14 sm:-bottom-8"
         />
         <span className="font-korbin relative z-20 rounded-xl border border-r-6 border-b-6 px-5 py-3 text-4xl font-bold text-white md:text-6xl">
-          {index + 2}
+          {index + 1}
         </span>
       </div>
 
