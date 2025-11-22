@@ -196,7 +196,7 @@ export default function AssistantPage() {
 
         // Jeśli brak ostatnich rekomendacji, wygeneruj nowe
         const response = await axios.get<AiCareerResponse>(
-          'http://localhost:8080/api/Ai/recommendation',
+          'http://localhost:8080/api/Ai/recommendations',
           {
             headers: {
               Authorization: `Bearer ${token}`,
@@ -248,7 +248,7 @@ export default function AssistantPage() {
     }
     try {
       const response = await axios.get<AiCareerResponse>(
-        'http://localhost:8080/api/Ai/recommendation',
+        'http://localhost:8080/api/Ai/recommendations',
         {
           headers: {
             Authorization: `Bearer ${token}`,
