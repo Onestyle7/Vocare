@@ -1,7 +1,6 @@
 'use client';
 
-import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import axios, { AxiosError } from 'axios';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { toast } from 'sonner';
 import Image from 'next/image';
 import Link from 'next/link';
@@ -28,19 +27,14 @@ import Section from '../SupportComponents/Section';
 import NewEmptyStateComponent from './NewEmptyStateComponent';
 import { useTokenBalanceContext } from '@/lib/contexts/TokenBalanceContext';
 import {
-  IndustryStatisticsDto,
-  MarketAnalysisDetailsDto,
-  MarketAnalysisResponseDto,
-  MarketTrendsDto,
-  SkillDemandDto,
-} from '@/lib/types/marketAnalysis';
-import {
   star_generate,
   timeline_icon_1,
   timeline_icon_2,
   timeline_icon_3,
   timeline_icon_4,
 } from '@/app/constants';
+import { useMarketAnalysis } from '@/lib/hooks/useMarketAnalysis';
+import { IndustryStatisticsDto, SkillDemandDto } from '@/lib/types/marketAnalysis';
 
 const TIMELINE_ICONS = [timeline_icon_1, timeline_icon_2, timeline_icon_3, timeline_icon_4];
 
@@ -116,28 +110,6 @@ const getDemandBadgeClass = (level?: string) => {
   return 'bg-slate-200 text-slate-800';
 };
 
-const extractMarketAnalysis = (data: unknown): MarketAnalysisDetailsDto | null => {
-  if (!data || typeof data !== 'object') {
-    return null;
-  }
-
-  if ('marketAnalysis' in data && data.marketAnalysis) {
-    const { marketAnalysis } = data as MarketAnalysisResponseDto;
-    return marketAnalysis;
-  }
-
-  if ('industryStatistics' in data) {
-    const details = data as MarketAnalysisDetailsDto;
-    return {
-      industryStatistics: details.industryStatistics ?? [],
-      marketTrends: details.marketTrends ?? [],
-      skillDemand: details.skillDemand ?? [],
-    };
-  }
-
-  return null;
-};
-
 const buildIndustrySummary = (
   industry?: IndustryStatisticsDto,
   relatedSkills: SkillDemandDto[] = []
@@ -174,10 +146,16 @@ const buildIndustrySummary = (
 };
 
 export default function MarketAnalysis() {
-  const API_URL = process.env.NEXT_PUBLIC_API_URL;
-  const [analysis, setAnalysis] = useState<MarketAnalysisDetailsDto | null>(null);
-  const [error, setError] = useState<string | null>(null);
-  const [isLoading, setLoading] = useState(false);
+  const {
+    analysis,
+    error,
+    isLoading,
+    fetchAnalysis,
+    primaryIndustry,
+    relatedSkills,
+    timelineItems,
+    longTermInsight,
+  } = useMarketAnalysis();
   const [isConfirmDialogOpen, setIsConfirmDialogOpen] = useState(false);
   const {
     tokenBalance,
@@ -213,111 +191,15 @@ export default function MarketAnalysis() {
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
-  const fetchMarketAnalysis = useCallback(
-    async (forceNew = false) => {
-      setLoading(true);
-      setError(null);
-
-      const token = localStorage.getItem('token');
-      if (!token) {
-        toast.error('Authentication required', {
-          description: 'Please sign in to continue.',
-        });
-        setLoading(false);
-        return;
-      }
-
-      try {
-        if (!forceNew) {
-          try {
-            const latestResponse = await axios.get<
-              MarketAnalysisResponseDto | MarketAnalysisDetailsDto
-            >(`${API_URL}/api/MarketAnalysis/latest`, {
-              headers: {
-                Authorization: `Bearer ${token}`,
-                'Content-Type': 'application/json',
-              },
-            });
-
-            const latestAnalysis = extractMarketAnalysis(latestResponse.data);
-            if (latestAnalysis) {
-              setAnalysis(latestAnalysis);
-            } else {
-              setAnalysis(null);
-            }
-            return;
-          } catch (latestError) {
-            if (latestError instanceof AxiosError) {
-              if (latestError.response?.status === 404) {
-                setAnalysis(null);
-                return;
-              }
-
-              const detail = (latestError.response?.data as { detail?: string })?.detail;
-              setError(detail || 'Error fetching latest market analysis.');
-              return;
-            }
-
-            setError('Error fetching latest market analysis.');
-            return;
-          }
-        }
-
-        const response = await axios.get<MarketAnalysisResponseDto | MarketAnalysisDetailsDto>(
-          `${API_URL}/api/MarketAnalysis`,
-          {
-            headers: {
-              Authorization: `Bearer ${token}`,
-              'Content-Type': 'application/json',
-            },
-          }
-        );
-
-        const newAnalysis = extractMarketAnalysis(response.data);
-
-        if (!newAnalysis) {
-          const message = 'No market analysis data returned.';
-          setAnalysis(null);
-          setError(message);
-          if (forceNew) {
-            toast.error('Error', {
-              description: message,
-            });
-          }
-          return;
-        }
-
-        setAnalysis(newAnalysis);
-        if (forceNew) {
-          toast.success('Generated new market analysis');
-        }
-      } catch (err) {
-        if (err instanceof AxiosError) {
-          const detail = (err.response?.data as { detail?: string })?.detail;
-          setError(detail || 'Error generating market analysis');
-          if (forceNew) {
-            toast.error('Error', {
-              description: detail || 'Failed to generate new market analysis.',
-            });
-          }
-        } else {
-          setError('Unexpected error occurred');
-          if (forceNew) {
-            toast.error('Error', {
-              description: 'Unexpected error occurred.',
-            });
-          }
-        }
-      } finally {
-        setLoading(false);
-      }
-    },
-    [API_URL]
-  );
-
   useEffect(() => {
-    fetchMarketAnalysis();
-  }, [fetchMarketAnalysis]);
+    if (error === 'unauthorized') {
+      toast.error('Authentication required', {
+        description: 'Please sign in to continue.',
+      });
+    } else if (error) {
+      toast.error('Error', { description: error });
+    }
+  }, [error]);
 
   const toggleCollapse = () => {
     if (!contentRef.current || !contentWrapperRef.current) return;
@@ -362,60 +244,14 @@ export default function MarketAnalysis() {
     setIsCollapsed(!isCollapsed);
   };
 
-  const primaryIndustry = analysis?.industryStatistics?.[0];
-  const primarySkills = useMemo(() => {
-    if (!analysis?.skillDemand || !primaryIndustry) {
-      return [] as SkillDemandDto[];
-    }
-
-    const related = analysis.skillDemand.filter((skill) => {
-      if (!skill.industry || !primaryIndustry.industry) {
-        return false;
-      }
-
-      return skill.industry.toLowerCase().includes(primaryIndustry.industry.toLowerCase());
-    });
-
-    if (related.length > 0) {
-      return related;
-    }
-
-    return analysis.skillDemand.slice(0, 3);
-  }, [analysis?.skillDemand, primaryIndustry]);
-
-  const timelineItems = useMemo(() => {
-    if (!analysis?.marketTrends) {
-      return [] as {
-        title: string;
-        description: string;
-        icon: string;
-        status: 'current' | 'upcoming';
-      }[];
-    }
-
-    return analysis.marketTrends.map((trend: MarketTrendsDto, index: number) => ({
-      title: trend.trendName || `Trend ${index + 1}`,
-      description: trend.impact
-        ? `${trend.description} (Impact: ${trend.impact})`
-        : trend.description || 'No description provided.',
-      icon: TIMELINE_ICONS[index % TIMELINE_ICONS.length],
-      status: index === 0 ? ('current' as const) : ('upcoming' as const),
-    }));
-  }, [analysis?.marketTrends]);
-
-  const longTermInsight = useMemo(() => {
-    if (primaryIndustry?.growthForecast) {
-      return `Growth forecast: ${primaryIndustry.growthForecast}`;
-    }
-
-    if (primarySkills.length > 0) {
-      return `Key skills to monitor: ${primarySkills
-        .map((skill) => `${skill.skill}${skill.demandLevel ? ` (${skill.demandLevel})` : ''}`)
-        .join(', ')}`;
-    }
-
-    return '';
-  }, [primaryIndustry?.growthForecast, primarySkills]);
+  const timelineItemsWithIcons = useMemo(
+    () =>
+      timelineItems.map((item, index) => ({
+        ...item,
+        icon: TIMELINE_ICONS[index % TIMELINE_ICONS.length],
+      })),
+    [timelineItems]
+  );
 
   useEffect(() => {
     if (contentRef.current && contentWrapperRef.current && primaryIndustry) {
@@ -430,7 +266,7 @@ export default function MarketAnalysis() {
   }, [analysis, isCollapsed, primaryIndustry]);
 
   const handleGenerateNewAnalysis = async () => {
-    await fetchMarketAnalysis(true);
+    await fetchAnalysis(true);
   };
 
   if (error && (!analysis || analysis.industryStatistics.length === 0)) {
@@ -459,7 +295,7 @@ export default function MarketAnalysis() {
     );
   }
 
-  const summary = buildIndustrySummary(primaryIndustry, primarySkills);
+  const summary = buildIndustrySummary(primaryIndustry, relatedSkills);
 
   return (
     <Section
@@ -529,12 +365,12 @@ export default function MarketAnalysis() {
           }}
         >
           <div ref={contentRef} className="space-y-3">
-            {timelineItems.length > 0 && (
+            {timelineItemsWithIcons.length > 0 && (
               <>
                 <h4 className="font-korbin mt-4 font-bold">Key trends:</h4>
                 <div className="ibm-plex-mono-regular mt-4 rounded-xl border p-2">
                   <Timeline
-                    items={timelineItems}
+                    items={timelineItemsWithIcons}
                     maxDescriptionLength={8}
                     className="mx-0"
                   />
@@ -542,11 +378,11 @@ export default function MarketAnalysis() {
               </>
             )}
 
-            {primarySkills.length > 0 && (
+            {relatedSkills.length > 0 && (
               <div className="mt-4 rounded-xl p-2">
                 <h4 className="font-poppins font-bold">In-demand skills:</h4>
                 <ul className="font-poppins mt-1 list-disc space-y-1 pl-5 text-gray-400">
-                  {primarySkills.map((skill) => (
+                  {relatedSkills.map((skill) => (
                     <li key={`${skill.skill}-${skill.industry}`}>
                       {skill.skill}
                       {skill.demandLevel ? (

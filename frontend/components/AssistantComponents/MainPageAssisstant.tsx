@@ -1,7 +1,6 @@
 'use client';
 
 import { useEffect, useState, useRef } from 'react';
-import axios from 'axios';
 import { UserProfile } from '@/lib/types/profile';
 import { toast } from 'sonner';
 import GenerateRecommendation from './GenerateRecommendationFail';
@@ -32,18 +31,15 @@ import {
 } from '@/app/constants';
 import { useTokenBalanceContext } from '@/lib/contexts/TokenBalanceContext';
 import Link from 'next/link';
-import { AxiosError } from 'axios';
-import { AiCareerResponse, CareerPath } from '@/lib/types/recommendation';
+import { CareerPath } from '@/lib/types/recommendation';
 import Section from '../SupportComponents/Section';
 import { ArrowRight, Undo2 } from 'lucide-react';
+import { useRecommendations } from '@/lib/hooks/useRecommendations';
 
 // const API_URL = process.env.NEXT_PUBLIC_API_URL;
 
 export default function AssistantPage() {
   const [profile, setProfile] = useState<UserProfile | null>(null);
-  const [recommendations, setRecommendations] = useState<AiCareerResponse | null>(null);
-  const [isLoading, setLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
   const [isConfirmDialogOpen, setIsConfirmDialogOpen] = useState(false);
   const {
     tokenBalance,
@@ -51,6 +47,7 @@ export default function AssistantPage() {
     hasActiveSubscription,
     refresh,
   } = useTokenBalanceContext();
+  const { recommendations, isLoading, error, generateNewRecommendations } = useRecommendations();
 
   const [isCollapsed, setIsCollapsed] = useState(true);
   const contentRef = useRef<HTMLDivElement>(null);
@@ -135,147 +132,64 @@ export default function AssistantPage() {
   };
 
   useEffect(() => {
-    const loadProfileAndRecommendations = async () => {
-      setLoading(true);
-      setError(null);
+    const storedProfile = localStorage.getItem('userProfile');
+    if (!storedProfile) {
+      return;
+    }
 
-      // 1. Sprawdź profil
-      const storedProfile = localStorage.getItem('userProfile');
-      if (!storedProfile) {
-        setError('Brak danych profilu. Wróć do formularza.');
-        setLoading(false);
-        return;
-      }
-
+    try {
       const parsedProfile = JSON.parse(storedProfile);
       setProfile(parsedProfile);
-
-      // 2. Sprawdź token
-      const token = localStorage.getItem('token');
-      if (!token) {
-        toast.error('Authentication required', {
-          description: 'Please sign in to continue.',
-        });
-        setLoading(false);
-        return;
-      }
-
-      // 3. Pobierz rekomendacje
-      try {
-        // Najpierw spróbuj pobrać ostatnie rekomendacje
-        try {
-          const lastRecommendationResponse = await axios.get<AiCareerResponse>(
-            'http://localhost:8080/api/Ai/last-recommendation',
-            {
-              headers: {
-                Authorization: `Bearer ${token}`,
-                'Content-Type': 'application/json',
-              },
-            }
-          );
-          console.log('Last recommendations:', lastRecommendationResponse.data);
-          setRecommendations(lastRecommendationResponse.data);
-          setLoading(false);
-          return;
-        } catch (lastError: unknown) {
-          if (
-            lastError instanceof AxiosError &&
-            lastError.response?.status !== 404 &&
-            lastError.response?.status !== 500
-          ) {
-            console.error('Something went wrong while getting last recommendations:', lastError);
-            setError(
-              lastError.response?.data?.detail ||
-                'Something went wrong while getting last recommendations.'
-            );
-            setLoading(false);
-            return;
-          }
-          console.log('No last recommendations found or server error, generating new ones...');
-        }
-
-        // Jeśli brak ostatnich rekomendacji, wygeneruj nowe
-        const response = await axios.get<AiCareerResponse>(
-          'http://localhost:8080/api/Ai/recommendation',
-          {
-            headers: {
-              Authorization: `Bearer ${token}`,
-              'Content-Type': 'application/json',
-            },
-          }
-        );
-        console.log('New recommendations:', response.data);
-        setRecommendations(response.data);
-      } catch (err: unknown) {
-        if (err instanceof AxiosError) {
-          console.error('Detailed error:', err);
-          console.error('Response status:', err.response?.status);
-          console.error('Response data:', err.response?.data);
-
-          if (
-            err.response?.status === 500 &&
-            typeof err.response.data === 'string' &&
-            err.response.data.includes('User billing information')
-          ) {
-            setError('billing_info_missing');
-            toast.error('Brak informacji rozliczeniowych', {
-              description: 'Uzupełnij dane rozliczeniowe w ustawieniach konta.',
-            });
-          } else {
-            setError(err.response?.data?.detail || 'Błąd podczas generowania rekomendacji');
-          }
-        } else {
-          console.error('Unknown error:', err);
-          setError('Unexpected error occurred');
-        }
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    loadProfileAndRecommendations();
+    } catch {
+      toast.error('Could not read saved profile');
+    }
   }, []);
 
-  const handleGenerateNewRecommendations = async () => {
-    setLoading(true);
-    const token = localStorage.getItem('token');
-    if (!token) {
+  useEffect(() => {
+    if (error === 'unauthorized') {
       toast.error('Authentication required', {
         description: 'Please sign in to continue.',
       });
-      setLoading(false);
       return;
     }
-    try {
-      const response = await axios.get<AiCareerResponse>(
-        'http://localhost:8080/api/Ai/recommendation',
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-            'Content-Type': 'application/json',
-          },
-        }
-      );
-      setRecommendations(response.data);
-      toast.success('New recommendations have been generated');
-    } catch (err: unknown) {
-      if (err instanceof AxiosError) {
-        setError(
-          err.response?.data?.detail || 'Something went wrong while generating new recommendations'
-        );
-        toast.error('Błąd', {
-          description: 'Something went wrong while generating new recommendations',
-        });
-      } else {
-        setError('Unexpected error');
-        toast.error('Unexpected error', {
-          description: 'An unknown error occurred while generating recommendations',
-        });
-        console.error('Unexpected error:', err);
-      }
-    } finally {
-      setLoading(false);
+
+    if (error === 'billing_info_missing') {
+      toast.error('Brak informacji rozliczeniowych', {
+        description: 'Uzupełnij dane rozliczeniowe w ustawieniach konta.',
+      });
+      return;
     }
+
+    if (error) {
+      toast.error('Błąd', {
+        description: error,
+      });
+    }
+  }, [error]);
+
+  const handleGenerateNewRecommendations = async () => {
+    const generated = await generateNewRecommendations();
+
+    if (generated) {
+      toast.success('New recommendations have been generated');
+      refresh();
+      return;
+    }
+
+    if (error === 'unauthorized') {
+      toast.error('Authentication required', {
+        description: 'Please sign in to continue.',
+      });
+      return;
+    }
+
+    if (error === 'billing_info_missing') {
+      return;
+    }
+
+    toast.error('Błąd', {
+      description: error || 'Something went wrong while generating new recommendations',
+    });
   };
 
   const icons = [timeline_icon_1, timeline_icon_2, timeline_icon_3, timeline_icon_4];

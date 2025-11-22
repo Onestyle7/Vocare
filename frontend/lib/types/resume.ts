@@ -47,33 +47,3 @@ export interface CvDto {
   skills?: string[];
   languages?: CvLanguageEntryDto[];
 }
-
-import axios from 'axios';
-
-const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8080';
-
-export async function fetchGeneratedCv(position?: string): Promise<CvDto> {
-  try {
-    const token = getAuthToken();
-
-    const response = await axios.post(
-      `${API_URL}/api/Cv/generate`,
-      { position: position || '' },
-      {
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${token}`,
-        },
-      }
-    );
-
-    return response.data;
-  } catch (error) {
-    console.error('Error generating CV:', error);
-    throw error;
-  }
-}
-
-function getAuthToken(): string {
-  return localStorage.getItem('token') || '';
-}

@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import axios, { AxiosError } from 'axios';
+import { AxiosError } from 'axios';
 import Image from 'next/image';
 import { ArrowRight } from 'lucide-react';
 import CustomButton from '../ui/CustomButton';
@@ -20,6 +20,7 @@ import {
 } from '../ui/alert-dialog';
 import { upper_arrow, star_generate } from '@/app/constants';
 import Section from '../SupportComponents/Section';
+import { fetchLastRecommendation } from '@/lib/api/recommendations';
 
 interface EmptyStateProps {
   onGenerateAnalysis: () => Promise<void>;
@@ -40,19 +41,13 @@ const NewEmptyStateComponent = ({
 }: EmptyStateProps) => {
   const [isConfirmDialogOpen, setIsConfirmDialogOpen] = useState(false);
   const [hasRecommendations, setHasRecommendations] = useState(false);
-  const API_URL = process.env.NEXT_PUBLIC_API_URL;
 
   useEffect(() => {
     const checkRecommendations = async () => {
       const token = localStorage.getItem('token');
       if (!token) return;
       try {
-        await axios.get(`${API_URL}/api/AI/last-recommendation`, {
-          headers: {
-            Authorization: `Bearer ${token}`,
-            'Content-Type': 'application/json',
-          },
-        });
+        await fetchLastRecommendation();
         setHasRecommendations(true);
       } catch (err) {
         const axiosError = err as AxiosError;
@@ -63,7 +58,7 @@ const NewEmptyStateComponent = ({
     };
 
     checkRecommendations();
-  }, [API_URL]);
+  }, []);
 
   const buttonContent = hasRecommendations ? (
     <CustomButton
