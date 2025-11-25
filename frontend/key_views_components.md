@@ -137,3 +137,48 @@ if (isCollapsed) {
   });
 }
 ```
+
+## `components/SectionsComponents/AboutCards.tsx`
+
+- **Karty „About” z ruchem na scrollu** – na desktopie komponent chwyta wszystkie `.about-card` i dla każdej buduje oś czasu
+  GSAP/ScrollTrigger z lekkim offsetem startu (kolejne karty uruchamiają się niżej). Animacja wjeżdża kartę z dołu z fade-in i
+  delikatnym przechyleniem, następnie buja ją w pionie i w końcu wyjeżdża w górę, wygaszając przez `autoAlpha`.
+
+```tsx
+const cards = containerRef.current.querySelectorAll('.about-card');
+
+cards.forEach((card, index) => {
+  const offset = index * 60;
+
+  const tl = gsap.timeline({
+    scrollTrigger: {
+      trigger: card,
+      start: `top+=${offset} 80%`,
+      end: `+=400`,
+      scrub: true,
+    },
+  });
+
+  tl.fromTo(
+    card,
+    { autoAlpha: 0, y: 100, rotation: 0 },
+    {
+      autoAlpha: 1,
+      y: 0,
+      rotation: index % 2 === 0 ? -5 : 5,
+      duration: 1,
+      ease: 'power2.out',
+    }
+  )
+    .to(card, { y: -40, duration: 1.6, ease: 'sine.inOut' })
+    .to(card, { y: 40, duration: 1.6, ease: 'sine.inOut' })
+    .to(card, { y: 0, duration: 1.5, ease: 'sine.inOut' })
+    .to(card, {
+      y: -600,
+      autoAlpha: 0,
+      rotation: 0,
+      duration: 2,
+      ease: 'power1.in',
+    });
+});
+```
