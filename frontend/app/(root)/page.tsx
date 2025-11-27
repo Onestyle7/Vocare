@@ -15,8 +15,6 @@ const page = () => {
         <Header />
         <HeroTweak />
         <AboutCards />
-        {/* <Features /> */}
-        {/* <MobileFeature /> */}
         <MobileFeatureImprovements />
         <CardFeature />
         <Faq />
