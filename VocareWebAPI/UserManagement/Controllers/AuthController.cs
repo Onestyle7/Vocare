@@ -73,16 +73,28 @@ namespace VocareWebAPI.UserManagement.Controllers
                 request.AcceptMarketingConsent,
                 HttpContext.Connection.RemoteIpAddress?.ToString()
             );
+
             if (!result.IsSuccess)
             {
+                // Konto Google już istnieje
                 if (result.Error.Contains("Google"))
                 {
                     return BadRequest(
                         new { message = result.Error, errorCode = "GOOGLE_ACCOUNT_EXISTS" }
                     );
                 }
+
+                // Konto z hasłem już istnieje
+                if (result.Error.Contains("already exists"))
+                {
+                    return BadRequest(new { message = result.Error, errorCode = "ACCOUNT_EXISTS" });
+                }
+
+                // Inne błędy (walidacja hasła, błąd serwera)
+                return BadRequest(new { message = result.Error });
             }
-            return result.IsSuccess ? Ok(result.Value) : BadRequest(new { message = result.Error });
+
+            return Ok(result.Value);
         }
 
         [HttpPost("forgot-password")]

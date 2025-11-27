@@ -122,12 +122,12 @@ namespace VocareWebAPI.UserManagement.Services.Implementations
                 {
                     _logger.LogWarning("User with Google login already exists: {Email}", email);
                     return Result<RegisterResult>.Failure(
-                        "User with this email already exists with Google login."
+                        "Account already exists with Google login. Please sign in using Google."
                     );
                 }
-                return Result<RegisterResult>.Failure(
-                    "Account already exists. Please sign in using Google."
-                );
+
+                _logger.LogWarning("User with password login already exists: {Email}", email);
+                return Result<RegisterResult>.Failure("Account already exists.");
             }
 
             var user = new User { UserName = email, Email = email };
