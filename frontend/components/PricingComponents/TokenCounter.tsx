@@ -5,8 +5,8 @@ import Link from 'next/link';
 export const TokenCounter = () => {
   const {
     tokenBalance,
-    subscriptionStatus, // np. 'active' | 'canceled' | ...
-    hasActiveSubscription, // boolean
+    subscriptionStatus, 
+    hasActiveSubscription, 
     isLoading,
     error,
   } = useTokenBalanceContext();
@@ -18,7 +18,6 @@ export const TokenCounter = () => {
   return (
     <Link href="/pricing" className="block xl:mr-8">
       <div className="group relative mx-auto flex w-fit flex-col items-center">
-        {/* Górny „badge” z tokenami */}
         <div className="text-md flex items-center gap-4 rounded-full border border-[#1f2026] bg-[#0f1014] px-5 py-2 transition hover:cursor-pointer hover:border-[#2a2b33]">
           <div className="flex items-center">
             Tokens:
@@ -33,14 +32,12 @@ export const TokenCounter = () => {
           </div>
         </div>
 
-        {/* Pasek statusu subskrypcji – zawsze równy, bez nachodzenia */}
         <div
           className={`-z-10 -mt-[10px] flex h-9 w-[85%] items-center justify-center rounded-b-2xl border border-t-0 bg-[#12131a] text-xs font-semibold tracking-wider uppercase ${isSubscribed ? 'text-[#915EFF]' : 'text-gray-400'} `}
         >
           <p className="mt-2">{statusLabel}</p>
         </div>
 
-        {/* A11y: szczegółowy status dla screen readerów */}
         {subscriptionStatus && !isLoading && (
           <span className="sr-only">Subscription status: {subscriptionStatus}</span>
         )}

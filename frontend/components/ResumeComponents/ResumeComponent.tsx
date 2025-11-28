@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react';
+import { useRouter } from 'next/navigation';
 import {
   User,
   Mail,
@@ -96,7 +97,7 @@ interface Certificate {
   id: string;
   name: string;
   date: string;
-  displayDate: boolean;
+  hasDate: boolean;
 }
 
 interface PrivacyStatement {
@@ -173,7 +174,6 @@ const RichTextToolbar = ({
 
 const makeExperienceId = () => `${Date.now()}-${Math.random().toString(36).slice(2, 8)}`;
 
-
 const ensureExperienceDefaults = (exp: Partial<Experience>): Experience => ({
   id: typeof exp.id === 'string' && exp.id.length > 0 ? exp.id : makeExperienceId(),
   company: exp.company ?? '',
@@ -204,10 +204,11 @@ const ensureCertificateDefaults = (cert: Partial<Certificate>): Certificate => (
   id: typeof cert.id === 'string' && cert.id.length > 0 ? cert.id : makeCertificateId(),
   name: cert.name ?? '',
   date: cert.date ?? '',
-  displayDate: cert.displayDate ?? Boolean(cert.date),
+  hasDate: cert.hasDate ?? Boolean(cert.date),
 });
 
 const CVCreator: React.FC<CVCreatorProps> = ({ initialCv }) => {
+  const router = useRouter();
   const [personalInfo, setPersonalInfo] = useState<PersonalInfo>(() => {
     const saved = localStorage.getItem('personalInfo');
     return saved
@@ -479,7 +480,7 @@ const CVCreator: React.FC<CVCreatorProps> = ({ initialCv }) => {
       id: makeCertificateId(),
       name: '',
       date: '',
-      displayDate: true,
+      hasDate: true,
     };
     setCertificates([...certificates, newCert]);
   };
@@ -488,8 +489,8 @@ const CVCreator: React.FC<CVCreatorProps> = ({ initialCv }) => {
     setCertificates((prev) =>
       prev.map((cert) => {
         if (cert.id !== id) return cert;
-        if (field === 'displayDate' && typeof value === 'boolean') {
-          return { ...cert, displayDate: value };
+        if (field === 'hasDate' && typeof value === 'boolean') {
+          return { ...cert, hasDate: value };
         }
         return { ...cert, [field]: value } as Certificate;
       })
@@ -1219,7 +1220,7 @@ const CVCreator: React.FC<CVCreatorProps> = ({ initialCv }) => {
           id: makeCertificateId(),
           name: c.name,
           date: c.date || '',
-          displayDate: Boolean(c.date),
+          hasDate: Boolean(c.date),
         })
       ) || []
     );
@@ -1265,7 +1266,7 @@ const CVCreator: React.FC<CVCreatorProps> = ({ initialCv }) => {
       })),
       certificates: certificates.map((c) => ({
         name: c.name,
-        date: c.displayDate && c.date ? c.date : undefined,
+        date: c.hasDate && c.date ? c.date : undefined,
       })),
       skills: skills.map((s) => s.name),
       languages: languages.map((l) => ({ language: l.name, fluency: l.level })),
@@ -2205,15 +2206,15 @@ const CVCreator: React.FC<CVCreatorProps> = ({ initialCv }) => {
                     <DatePickerWithCurrent
                       value={cert.date}
                       onChange={(date) => updateCertificate(cert.id, 'date', date)}
-                      isCurrent={!cert.displayDate}
+                      isCurrent={!cert.hasDate}
                       onCurrentChange={(checked) => {
-                        const display = !checked;
-                        updateCertificate(cert.id, 'displayDate', display);
+                        const hasDate = !checked;
+                        updateCertificate(cert.id, 'hasDate', hasDate);
                         if (checked) {
                           updateCertificate(cert.id, 'date', '');
                         }
                       }}
-                      toggleLabel="Display date"
+                      toggleLabel="Has date"
                       toggledButtonText="No date"
                       placeholder="Select date"
                     />
@@ -3016,7 +3017,7 @@ const CVCreator: React.FC<CVCreatorProps> = ({ initialCv }) => {
           <div key={cert.id} className="cert-item" data-item-id={cert.id}>
             <p className="text-sm text-gray-700">
               {cert.name}
-              {cert.displayDate && cert.date ? ` (${formatDate(cert.date)})` : ''}
+              {cert.hasDate && cert.date ? ` (${formatDate(cert.date)})` : ''}
             </p>
           </div>
         ))}
@@ -3140,7 +3141,7 @@ const CVCreator: React.FC<CVCreatorProps> = ({ initialCv }) => {
       {/* Top Navigation for Mobile */}
       <div className="mb-4 flex items-center justify-center bg-white py-4 shadow-lg lg:hidden">
         <button
-          onClick={() => (window.location.href = '/resume')}
+          onClick={() => router.push('/resume')}
           className="cursor-pointer rounded-lg p-3 transition-colors hover:bg-gray-100"
           title="Dashboard"
         >
@@ -3151,7 +3152,7 @@ const CVCreator: React.FC<CVCreatorProps> = ({ initialCv }) => {
       {/* Sidebar for Desktop */}
       <div className="mx-3 hidden w-16 flex-col items-center justify-between rounded-lg bg-white py-6 shadow-lg lg:flex">
         <button
-          onClick={() => (window.location.href = '/resume')}
+          onClick={() => router.push('/resume')}
           className="cursor-pointer rounded-lg p-3 transition-colors hover:bg-gray-100"
           title="Dashboard"
         >

@@ -35,7 +35,7 @@ import Link from 'next/link';
 import { AxiosError } from 'axios';
 import { AiCareerResponse, CareerPath } from '@/lib/types/recommendation';
 import Section from '../SupportComponents/Section';
-import { ArrowRight } from 'lucide-react';
+import { ArrowRight, Undo2 } from 'lucide-react';
 
 // const API_URL = process.env.NEXT_PUBLIC_API_URL;
 
@@ -165,7 +165,8 @@ export default function AssistantPage() {
         // Najpierw spróbuj pobrać ostatnie rekomendacje
         try {
           const lastRecommendationResponse = await axios.get<AiCareerResponse>(
-            'https://vocare-staging-1f69.up.railway.app/api/Ai/last-recommendations',
+            'http://localhost:8080/api/Ai/last-recommendation',
+
             {
               headers: {
                 Authorization: `Bearer ${token}`,
@@ -196,7 +197,7 @@ export default function AssistantPage() {
 
         // Jeśli brak ostatnich rekomendacji, wygeneruj nowe
         const response = await axios.get<AiCareerResponse>(
-          'https://vocare-staging-1f69.up.railway.app/api/Ai/recommendations',
+          'http://localhost:8080/api/Ai/recommendations',
           {
             headers: {
               Authorization: `Bearer ${token}`,
@@ -248,7 +249,7 @@ export default function AssistantPage() {
     }
     try {
       const response = await axios.get<AiCareerResponse>(
-        'https://vocare-staging-1f69.up.railway.app/api/Ai/recommendations',
+        'http://localhost:8080/api/Ai/recommendations',
         {
           headers: {
             Authorization: `Bearer ${token}`,
@@ -326,10 +327,16 @@ export default function AssistantPage() {
           <h2 className="font-korbin mt-1 mb-6 flex h-[38px] w-[180px] items-center justify-center rounded-full border-[0.5px] border-white/60 text-sm">
             AI Career Advisor
           </h2>
-          <div>
-            {/* Main recommendation section */}
-            <div className="clip-corner-bevel mb-4 flex flex-col overflow-hidden rounded-[28px] border-t border-b border-l shadow-sm sm:border md:flex-row">
-              <div className="relative flex items-center justify-center overflow-hidden p-4 md:w-1/6 md:border-r md:p-8">
+          <div className="relative mb-4 w-full rounded-[28px] bg-[linear-gradient(90deg,rgba(146,150,253,1)_0%,rgba(132,145,254,1)_50%,rgba(199,169,254,1)_100%,rgba(157,155,255,1)_77%)] px-1 pt-16 pb-1">
+            {/* „Belka” nad kafelkiem – dokładnie jak Best Deal */}
+            <div className="absolute top-4 left-1/2 flex w-full -translate-x-1/2 items-center justify-center gap-2">
+              <Undo2 className="h-5 w-5 -rotate-90 text-white" />
+              <span className="text-lg font-semibold text-white">Main Recommendation</span>
+            </div>
+
+            {/* Właściwy kafelek z rekomendacją */}
+            <div className="clip-corner-bevel relative z-30 flex flex-col overflow-hidden rounded-[24px] border shadow-sm backdrop-blur-md md:flex-row dark:border-gray-500/40 dark:bg-[#090d16]">
+              <div className="relative flex items-center justify-center overflow-hidden p-4 md:w-1/6 md:border-r">
                 <Image
                   src="/images/cone.png"
                   alt="decor"
@@ -348,9 +355,10 @@ export default function AssistantPage() {
                   1
                 </span>
               </div>
+
               <div className="p-4 max-md:border-t md:w-5/6 md:p-6">
                 <div className="flex flex-row items-center justify-between">
-                  <h2 className="font-poppins mb-1 text-xl">Main Recommendation</h2>
+                  <h2 className="font-poppins mb-1 text-xl">Best path</h2>
                   <CollapsibleButton isCollapsed={isCollapsed} toggleCollapse={toggleCollapse} />
                 </div>
 
@@ -376,9 +384,9 @@ export default function AssistantPage() {
                     <div className="ibm-plex-mono-regular mt-4 rounded-xl border p-2">
                       <Timeline items={timelineItems} maxDescriptionLength={80} className="mx-0" />
                     </div>
-                    {/* <Separator /> */}
+
                     <div className="mt-4 rounded-xl p-2">
-                      <h4 className="font-poppins font-bold"> Long-term goal:</h4>
+                      <h4 className="font-poppins font-bold">Long-term goal:</h4>
                       <p className="font-poppins mt-1 text-gray-400">
                         {recommendations.recommendation.longTermGoal}
                       </p>
