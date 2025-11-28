@@ -41,7 +41,7 @@ namespace VocareWebAPI.Extensions.ServiceCollectionExtensions
 
             // Market Analysis Service
             services
-                .AddHttpClient<IMarketAnalysisService, MarketAnalysisService>(client =>
+                .AddHttpClient<IMarketAnalysisService, OpenAiMarketAnalysisService>(client =>
                 {
                     ConfigureOpenAIClient(client, configuration);
                     client.Timeout = TimeSpan.FromMinutes(3);

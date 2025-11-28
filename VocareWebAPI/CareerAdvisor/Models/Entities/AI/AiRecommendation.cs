@@ -4,6 +4,7 @@ using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using System.Threading.Tasks;
+using VocareWebAPI.CareerAdvisor.Models.Entities.MarketAnalysis;
 using VocareWebAPI.Models.Dtos;
 using VocareWebAPI.Models.Entities;
 using VocareWebAPI.Models.Entities.MarketAnalysis;
