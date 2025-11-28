@@ -141,8 +141,7 @@ namespace VocareWebAPI.CareerAdvisor.Services.Implementations
         private string BuildPrompt(AiRecommendation recommendation)
         {
             return $$"""
-                Jesteś ekspertem ds. analizy rynku pracy z aktualną wiedzą o trendach i statystykach zatrudnienia. 
-                Na podstawie poniższych danych z rekomendacji zawodowych użytkownika, przygotuj szczegółową analizę rynku:
+                Jesteś analitykiem rynku pracy, który przekłada surowe dane na zrozumiałe wnioski dla osoby szukającej pracy. Twoim priorytetem jest uczciwość: nie zawyżaj stawek (podawaj realne widełki dla poziomu stanowiska z rekomendacji) i nie koloryzuj szans na zatrudnienie. Twoje analizy mają pomóc użytkownikowi podjąć świadomą decyzję o ścieżce kariery.
 
                 Rekomendowane ścieżki kariery:
                 {{string.Join(", ", recommendation.CareerPaths.Select(cp => cp.CareerName))}}
@@ -201,17 +200,17 @@ namespace VocareWebAPI.CareerAdvisor.Services.Implementations
                    - Konkretne (używaj liczb, procentów, konkretnych prognoz)
 
                 3. Dla statystyk branżowych:
-                   - employmentRate: skala 0-100 (procent zatrudnienia w branży)
-                   - Wynagrodzenia w PLN (brutto miesięcznie)
-                   - growthForecast: opisowa prognoza z konkretnymi danymi
+                   - employmentRate: Traktuj to jako "Wskaźnik łatwości wejścia". 100 = biorą każdego chętnego, 20 = bardzo duża konkurencja, trudno o pierwszą pracę. Dostosuj tę liczbę do poziomu Junior/Mid/Senior wynikającego z rekomendacji.
+                   - Wynagrodzenia w PLN (brutto miesięcznie) minSalary/maxSalary: MUSZĄ dotyczyć poziomu stanowiska z rekomendacji. Jeśli rekomendacja to "Młodszy Specjalista", podaj stawki dla juniora, a nie średnią rynkową dla seniorów.
+                   - growthForecast: Unikaj korpo-bełkotu. Napisz prosto, np. "Stabilnie, ale mało nowych rekrutacji" zamiast "Saturacja rynku na poziomie ujemnym".
 
                 4. Dla umiejętności:
                    - Używaj dokładnie skali: niski/średni/wysoki/bardzo wysoki
                    - Przypisz do konkretnej branży
 
                 5. Dla trendów:
-                   - Opisz rzeczywiste trendy wpływające na rynek
-                   - Podaj konkretny, mierzalny wpływ
+                   - Skup się na trendach rekrutacyjnych, a nie tylko technologicznych (np. "Wydłużone procesy rekrutacyjne", "Wymagane portfolio", "Powrót do biur").
+                   - W polu impact napisz, co to oznacza dla kandydata (np. "Będziesz musiał wysłać 2x więcej CV niż rok temu" zamiast "Wzrost konkurencyjności o 15%").
 
                 WAŻNE: Zwróć TYLKO czysty JSON bez żadnych dodatkowych objaśnień, komentarzy czy tekstu.
                 Pamiętaj: odpowiedź musi być w języku polskim i zawierać realistyczne dane rynkowe(wszystkie teksty, nazwy, opisy po polsku).
