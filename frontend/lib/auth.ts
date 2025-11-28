@@ -2,6 +2,8 @@ import { api } from './api';
 
 const AUTH_PREFIX = 'http://localhost:8080/api/Auth';
 
+
+
 interface RegisterInput {
   email: string;
   password: string;

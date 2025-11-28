@@ -4,6 +4,8 @@ import './globals.css';
 import { ThemeProvider } from '@/components/ui/theme-provider';
 import { Toaster } from '@/components/ui/sonner';
 import { TokenBalanceProvider } from '@/lib/contexts/TokenBalanceContext';
+// import SmoothScrollProvider from '@/components/SupportComponents/SmoothScrollProvider';
+
 
 const sizmoPro = localFont({
   src: [

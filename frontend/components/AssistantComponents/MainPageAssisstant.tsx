@@ -166,6 +166,7 @@ export default function AssistantPage() {
         try {
           const lastRecommendationResponse = await axios.get<AiCareerResponse>(
             'http://localhost:8080/api/Ai/last-recommendation',
+
             {
               headers: {
                 Authorization: `Bearer ${token}`,
