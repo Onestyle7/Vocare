@@ -8,7 +8,6 @@ const page = () => {
     <main>
       <ScrollProgress />
       <Header />
-      {/* <NewAssistantComponent /> */}
       <AssistantPage />
     </main>
   );
