@@ -44,6 +44,7 @@ namespace VocareWebAPI.Extensions.ServiceCollectionExtensions
                 .AddHttpClient<IMarketAnalysisService, MarketAnalysisService>(client =>
                 {
                     ConfigureOpenAIClient(client, configuration);
+                    client.Timeout = TimeSpan.FromMinutes(3);
                 })
                 .AddPolicyHandler(retryPolicy);
 
