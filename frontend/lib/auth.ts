@@ -1,6 +1,6 @@
 import { api } from './api';
 
-const AUTH_PREFIX = 'http://localhost:8080/api/Auth';
+const AUTH_PREFIX = 'https://vocare-staging-1f69.up.railway.app/api/Auth';
 
 
 
