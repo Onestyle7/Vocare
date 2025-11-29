@@ -11,7 +11,7 @@ import {
   WorkAttributesDto,
 } from '@/lib/types/marketAnalysis';
 import { api } from '@/lib/api';
-import { Loader2, RefreshCw, Sparkles } from 'lucide-react';
+import { ArrowRight, Loader2, Sparkles } from 'lucide-react';
 import {
   Area,
   AreaChart,
@@ -28,8 +28,11 @@ import {
   YAxis,
 } from 'recharts';
 import { cn } from '@/lib/utils';
+import { Button } from '../ui/button';
 
 const numberFormatter = new Intl.NumberFormat('pl-PL');
+
+const isDev = 'API: http://localhost:8080';
 
 const API_BASE = process.env.NEXT_PUBLIC_API_URL?.replace(/\/$/, '') ?? '';
 
@@ -342,11 +345,11 @@ export default function DetailedMarketAnalysis() {
   }, [fetchLatest]);
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-950 via-slate-900 to-slate-950 px-4 py-10 text-slate-100">
+    <div className="font-poppins min-h-screen px-4 py-10 text-slate-100">
       <div className="mx-auto flex max-w-6xl flex-col gap-8">
         <header className="rounded-3xl border border-slate-800/70 bg-slate-900/60 p-8 shadow-2xl shadow-slate-950/40">
           <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
-            <div>
+            <div className='w-full md:w-2/3'>
               <p className="text-xs uppercase tracking-[0.3em] text-slate-400">AI Career Radar</p>
               <h1 className="mt-2 text-3xl font-semibold text-white">Szczegółowa analiza rynku pracy</h1>
               <p className="mt-2 max-w-2xl text-sm text-slate-300">
@@ -354,28 +357,31 @@ export default function DetailedMarketAnalysis() {
                 OpenAI. Wizualizacje są w pełni responsywne – działają na desktopie i mobile.
               </p>
             </div>
-            <div className="flex gap-3">
-              <button
+            <div className="flex gap-3 md:w-1/3 items-center justify-center w-full">
+              {/* <button
                 onClick={fetchLatest}
                 className="flex items-center gap-2 rounded-2xl border border-slate-700 bg-slate-800/60 px-4 py-2 text-sm text-slate-200 transition hover:border-slate-600 hover:bg-slate-800"
                 disabled={isLoading || isGenerating}
               >
                 <RefreshCw className={cn('h-4 w-4', isLoading && 'animate-spin')} />
                 Ostatnia analiza
-              </button>
-              <button
+              </button> */}
+              <Button
                 onClick={generateFreshAnalysis}
-                className="flex items-center gap-2 rounded-2xl bg-gradient-to-r from-cyan-500 via-indigo-500 to-purple-500 px-5 py-2 text-sm font-medium text-white shadow-lg shadow-indigo-900/40 transition hover:scale-[1.01] hover:shadow-indigo-900/60 disabled:opacity-70"
+                className="group relative z-20 mt-4 h-12 w-full rounded-full bg-[linear-gradient(90deg,rgba(146,150,253,1)_0%,rgba(132,145,254,1)_50%,rgba(199,169,254,1)_100%,rgba(157,155,255,1)_77%)] font-bold text-white md:mt-2 md:w-2/3"
+                variant="default"
                 disabled={isGenerating || isLoading}
               >
-                {isGenerating ? <Loader2 className="h-4 w-4 animate-spin" /> : <Sparkles className="h-4 w-4" />}
                 Generuj nową
-              </button>
+                {isGenerating ? <Loader2 className="h-4 w-4 animate-spin" /> : <ArrowRight className="h-4 w-4 group-hover:translate-x-2 ease-in-out transition-all" />}
+              </Button>
             </div>
           </div>
+          {isDev && (
           <div className="mt-4 text-xs text-slate-500">
             API: <span className="font-mono">{API_BASE || 'nie zdefiniowano NEXT_PUBLIC_API_URL'}</span>
           </div>
+          )}
         </header>
 
         {error && (
