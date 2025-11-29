@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect, useMemo, useState } from 'react';
-import axios, { AxiosError } from 'axios';
+import { AxiosError } from 'axios';
 import {
   IndustryStatisticsDto,
   MarketAnalysisDetailsDto,
@@ -10,6 +10,7 @@ import {
   SkillDemandDto,
   WorkAttributesDto,
 } from '@/lib/types/marketAnalysis';
+import { api } from '@/lib/api';
 import { Loader2, RefreshCw, Sparkles } from 'lucide-react';
 import {
   Area,
@@ -307,7 +308,7 @@ export default function DetailedMarketAnalysis() {
         setIsLoading(true);
         setError(null);
         try {
-          const response = await axios.get(`${API_BASE}/api/MarketAnalysis/latest`);
+          const response = await api.get('/api/MarketAnalysis/latest');
           setAnalysis(getAnalysisFromResponse(response.data));
         } catch (err) {
           const axiosErr = err as AxiosError;
@@ -327,7 +328,7 @@ export default function DetailedMarketAnalysis() {
     setIsGenerating(true);
     setError(null);
     try {
-      const response = await axios.get(`${API_BASE}/api/MarketAnalysis`);
+      const response = await api.get('/api/MarketAnalysis');
       setAnalysis(getAnalysisFromResponse(response.data));
     } catch {
       setError('Generowanie analizy nie powiodło się. Spróbuj ponownie.');

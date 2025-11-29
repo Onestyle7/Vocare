@@ -57,9 +57,6 @@ namespace VocareWebAPI.CareerAdvisor.Services.Implementations
             _entryDifficultyRepository = entryDifficultyRepository;
             _aiNarratorRepository = aiNarratorRepository;
             _logger = logger;
-
-            _httpClient.DefaultRequestHeaders.Add("Authorization", $"Bearer {_config.ApiKey}");
-            _httpClient.DefaultRequestHeaders.Add("Accept", "application/json");
         }
 
         public async Task<MarketAnalysisResponseDto> GetMarketAnalysisAsync(string userId)
