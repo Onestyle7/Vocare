@@ -60,6 +60,7 @@ namespace VocareWebAPI.CareerAdvisor.Services.Implementations
 
             _httpClient.DefaultRequestHeaders.Add("Authorization", $"Bearer {_config.ApiKey}");
             _httpClient.DefaultRequestHeaders.Add("Accept", "application/json");
+            _httpClient.Timeout = TimeSpan.FromMinutes(3);
         }
 
         public async Task<MarketAnalysisResponseDto> GetMarketAnalysisAsync(string userId)
