@@ -29,6 +29,7 @@ import {
 } from 'recharts';
 import { cn } from '@/lib/utils';
 import { Button } from '../ui/button';
+import { Separator } from '../ui/separator';
 
 const numberFormatter = new Intl.NumberFormat('pl-PL');
 
@@ -36,7 +37,8 @@ const isDev = 'API: http://localhost:8080';
 
 const API_BASE = process.env.NEXT_PUBLIC_API_URL?.replace(/\/$/, '') ?? '';
 
-const isValidNumber = (value?: number | null) => typeof value === 'number' && Number.isFinite(value);
+const isValidNumber = (value?: number | null) =>
+  typeof value === 'number' && Number.isFinite(value);
 
 const formatCurrency = (value?: number | null) => {
   if (!isValidNumber(value)) return '—';
@@ -114,7 +116,7 @@ const DifficultyGauge = ({ value }: { value?: number }) => {
       <div className="absolute inset-0 flex flex-col items-center justify-center">
         <span className="text-xs text-slate-400">Entry score</span>
         <span className="text-3xl font-semibold text-white">{Math.round(safeValue)}</span>
-        <span className="text-[11px] uppercase tracking-[0.2em] text-slate-500">/100</span>
+        <span className="text-[11px] tracking-[0.2em] text-slate-500 uppercase">/100</span>
       </div>
     </div>
   );
@@ -122,8 +124,10 @@ const DifficultyGauge = ({ value }: { value?: number }) => {
 
 const NarrationCard = ({ title, text }: { title: string; text?: string }) => (
   <div className="rounded-2xl border border-slate-800/70 bg-slate-900/60 p-4 shadow-sm shadow-slate-900">
-    <p className="text-xs uppercase tracking-[0.2em] text-slate-400">{title}</p>
-    <p className="mt-2 text-sm text-slate-100 leading-relaxed">{text || 'Brak danych od narratora AI.'}</p>
+    <p className="text-xs tracking-[0.2em] text-slate-400 uppercase">{title}</p>
+    <p className="mt-2 text-sm leading-relaxed text-slate-100">
+      {text || 'Brak danych od narratora AI.'}
+    </p>
   </div>
 );
 
@@ -195,11 +199,15 @@ const IndustryCard = ({
   <div className="rounded-3xl border border-slate-800/70 bg-gradient-to-br from-slate-950 via-slate-900 to-slate-950 p-6 shadow-xl shadow-slate-950/40">
     <div className="flex flex-col gap-4 md:flex-row md:items-start md:justify-between">
       <div>
-        <p className="text-xs uppercase tracking-[0.3em] text-slate-500">Ścieżka kariery</p>
+        <p className="text-xs tracking-[0.3em] text-slate-500 uppercase">Ścieżka kariery</p>
         <h3 className="text-2xl font-semibold text-white">{industry.industry}</h3>
         <div className="mt-3 flex flex-wrap gap-2 text-sm text-slate-300">
-          <span className="rounded-full bg-slate-800/80 px-3 py-1">{formatCurrency(industry.minSalary)}</span>
-          <span className="rounded-full bg-slate-800/80 px-3 py-1">{formatCurrency(industry.maxSalary)}</span>
+          <span className="rounded-full bg-slate-800/80 px-3 py-1">
+            {formatCurrency(industry.minSalary)}
+          </span>
+          <span className="rounded-full bg-slate-800/80 px-3 py-1">
+            {formatCurrency(industry.maxSalary)}
+          </span>
           {isValidNumber(industry.employmentRate) && (
             <span className="rounded-full bg-emerald-900/30 px-3 py-1 text-emerald-200">
               Zatrudnienie: {industry.employmentRate}%
@@ -214,7 +222,10 @@ const IndustryCard = ({
       </div>
       <div className="flex gap-2 text-xs text-slate-400">
         {relatedSkills.slice(0, 3).map((skill) => (
-          <span key={`${skill.skill}-${skill.industry}`} className="rounded-full bg-slate-800/80 px-3 py-1">
+          <span
+            key={`${skill.skill}-${skill.industry}`}
+            className="rounded-full bg-slate-800/80 px-3 py-1"
+          >
             {skill.skill}
           </span>
         ))}
@@ -225,7 +236,9 @@ const IndustryCard = ({
       <div className="rounded-2xl border border-slate-800/60 bg-slate-900/60 p-4">
         <div className="flex items-center justify-between">
           <div>
-            <p className="text-xs uppercase tracking-[0.25em] text-slate-400">Progresja wynagrodzeń</p>
+            <p className="text-xs tracking-[0.25em] text-slate-400 uppercase">
+              Progresja wynagrodzeń
+            </p>
             <p className="text-sm text-slate-300">Junior → Lead/Expert</p>
           </div>
           <span className="rounded-full bg-slate-800 px-3 py-1 text-xs text-slate-300">PLN</span>
@@ -238,7 +251,7 @@ const IndustryCard = ({
       <div className="grid gap-4 lg:grid-cols-2">
         <div className="rounded-2xl border border-slate-800/60 bg-slate-900/60 p-4">
           <div className="flex items-center justify-between">
-            <p className="text-xs uppercase tracking-[0.25em] text-slate-400">Atrybuty pracy</p>
+            <p className="text-xs tracking-[0.25em] text-slate-400 uppercase">Atrybuty pracy</p>
             <span className="text-xs text-slate-500">0-10</span>
           </div>
           <div className="h-[260px]">
@@ -248,7 +261,7 @@ const IndustryCard = ({
 
         <div className="rounded-2xl border border-slate-800/60 bg-slate-900/60 p-4">
           <div className="flex items-center justify-between">
-            <p className="text-xs uppercase tracking-[0.25em] text-slate-400">Trudność wejścia</p>
+            <p className="text-xs tracking-[0.25em] text-slate-400 uppercase">Trudność wejścia</p>
             {industry.entryDifficulty?.difficultyLevel && (
               <span
                 className={cn(
@@ -345,19 +358,23 @@ export default function DetailedMarketAnalysis() {
   }, [fetchLatest]);
 
   return (
-    <div className="font-poppins min-h-screen px-4 py-10 text-slate-100">
+    <div className="font-grotesk min-h-screen px-4 py-10 text-slate-100">
       <div className="mx-auto flex max-w-6xl flex-col gap-8">
-        <header className="rounded-3xl border border-slate-800/70 bg-slate-900/60 p-8 shadow-2xl shadow-slate-950/40">
+        <header className="rounded-3xl border border-b-5 p-8 shadow-2xl shadow-slate-950/40">
           <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
-            <div className='w-full md:w-2/3'>
-              <p className="text-xs uppercase tracking-[0.3em] text-slate-400">AI Career Radar</p>
-              <h1 className="mt-2 text-3xl font-semibold text-white">Szczegółowa analiza rynku pracy</h1>
+            <div className="w-full md:w-2/3">
+              <p className="w-fit rounded-[3px] px-1 text-sm text-[#ecedf0]">AI Career Radar</p>
+              <h1 className="mt-2 text-3xl font-semibold text-[#191A23]">
+                <span className="inline rounded-[7px] bg-[#F3F3F3] [box-decoration-break:clone] px-2 [-webkit-box-decoration-break:clone]">
+                  Szczegółowa analiza rynku pracy
+                </span>
+              </h1>
               <p className="mt-2 max-w-2xl text-sm text-slate-300">
-                Dane o wynagrodzeniach, atrybutach pracy oraz trudności wejścia na podstawie najnowszej analizy
-                OpenAI. Wizualizacje są w pełni responsywne – działają na desktopie i mobile.
+                Dane o wynagrodzeniach, atrybutach pracy oraz trudności wejścia na podstawie
+                najnowszej analizy.
               </p>
             </div>
-            <div className="flex gap-3 md:w-1/3 items-center justify-center w-full">
+            <div className="flex w-full items-center justify-center gap-3 md:w-1/3">
               {/* <button
                 onClick={fetchLatest}
                 className="flex items-center gap-2 rounded-2xl border border-slate-700 bg-slate-800/60 px-4 py-2 text-sm text-slate-200 transition hover:border-slate-600 hover:bg-slate-800"
@@ -368,20 +385,24 @@ export default function DetailedMarketAnalysis() {
               </button> */}
               <Button
                 onClick={generateFreshAnalysis}
-                className="group relative z-20 mt-4 h-12 w-full rounded-full bg-[linear-gradient(90deg,rgba(146,150,253,1)_0%,rgba(132,145,254,1)_50%,rgba(199,169,254,1)_100%,rgba(157,155,255,1)_77%)] font-bold text-white md:mt-2 md:w-2/3"
+                className="group relative z-20 mt-4 h-12 w-full rounded-[7px] bg-[#F3F3F3] font-bold text-[#191A23] md:mt-2 md:w-2/3"
                 variant="default"
                 disabled={isGenerating || isLoading}
               >
                 Generuj nową
-                {isGenerating ? <Loader2 className="h-4 w-4 animate-spin" /> : <ArrowRight className="h-4 w-4 group-hover:translate-x-2 ease-in-out transition-all" />}
+                {isGenerating ? (
+                  <Loader2 className="h-4 w-4 animate-spin" />
+                ) : (
+                  <ArrowRight className="h-4 w-4 transition-all ease-in-out group-hover:translate-x-2" />
+                )}
               </Button>
             </div>
           </div>
-          {isDev && (
+          {/* {isDev && (
           <div className="mt-4 text-xs text-slate-500">
             API: <span className="font-mono">{API_BASE || 'nie zdefiniowano NEXT_PUBLIC_API_URL'}</span>
           </div>
-          )}
+          )} */}
         </header>
 
         {error && (
@@ -400,24 +421,35 @@ export default function DetailedMarketAnalysis() {
         {analysis ? (
           <div className="space-y-6">
             <div className="grid gap-4 lg:grid-cols-2">
-              <div className="rounded-3xl border border-slate-800/70 bg-slate-900/60 p-5">
-                <p className="text-xs uppercase tracking-[0.25em] text-slate-400">Trendy rynkowe</p>
+              <div className="rounded-3xl border border-b-5 p-5">
+                <p className="w-fit rounded-[3px] px-1 text-sm text-[#ecedf0]">Trendy rynkowe</p>
                 <div className="mt-3 space-y-3">
                   {analysis.marketTrends?.map((trend) => (
-                    <div key={trend.trendName} className="rounded-2xl border border-slate-800/70 bg-slate-950/60 p-3">
-                      <div className="flex items-center justify-between text-sm text-white">
-                        <span>{trend.trendName}</span>
-                        <span className="rounded-full bg-slate-800 px-2 py-1 text-[11px] text-slate-300">Wpływ</span>
+                    <div key={trend.trendName} className="rounded-2xl border border-b-5 p-3">
+                      <div className="flex items-start justify-between text-sm text-white">
+                        <div className="w-fit">
+                          <span className="leading-none">{trend.trendName}</span>
+                          <Separator className="mt-4 mb-3 h-[1.5px]! w-full" />
+                        </div>
+
+                        {/* WPŁYW */}
+                        <span className="rounded-[5px] bg-[#F3F3F3] px-2 py-[2px] text-xs text-[#191A23]">
+                          Wpływ
+                        </span>
                       </div>
+
                       <p className="mt-2 text-sm text-slate-300">{trend.description}</p>
-                      {trend.impact && <p className="mt-1 text-xs text-slate-400">{trend.impact}</p>}
+
+                      {trend.impact && <p className="mt-1 text-xs text-gray-400">{trend.impact}</p>}
                     </div>
                   ))}
                 </div>
               </div>
 
               <div className="rounded-3xl border border-slate-800/70 bg-slate-900/60 p-5">
-                <p className="text-xs uppercase tracking-[0.25em] text-slate-400">Popyt na umiejętności</p>
+                <p className="text-xs tracking-[0.25em] text-slate-400 uppercase">
+                  Popyt na umiejętności
+                </p>
                 <div className="mt-3 grid gap-3 sm:grid-cols-2">
                   {analysis.skillDemand?.map((skill) => (
                     <div
@@ -442,7 +474,10 @@ export default function DetailedMarketAnalysis() {
                 <IndustryCard
                   key={industry.industry}
                   industry={industry}
-                  relatedSkills={analysis.skillDemand?.filter((skill) => skill.industry === industry.industry) ?? []}
+                  relatedSkills={
+                    analysis.skillDemand?.filter((skill) => skill.industry === industry.industry) ??
+                    []
+                  }
                 />
               ))}
             </div>
@@ -451,15 +486,19 @@ export default function DetailedMarketAnalysis() {
           <div className="flex flex-col items-center justify-center gap-3 rounded-2xl border border-slate-800/70 bg-slate-900/60 p-8 text-center">
             <p className="text-lg font-medium text-white">Brak danych analitycznych</p>
             <p className="max-w-lg text-sm text-slate-400">
-              Pobierz ostatnią analizę lub wygeneruj nową, aby zobaczyć prognozy wynagrodzeń, trudność wejścia i narrację
-              AI.
+              Pobierz ostatnią analizę lub wygeneruj nową, aby zobaczyć prognozy wynagrodzeń,
+              trudność wejścia i narrację AI.
             </p>
             <button
               onClick={generateFreshAnalysis}
               className="mt-2 flex items-center gap-2 rounded-2xl bg-gradient-to-r from-cyan-500 via-indigo-500 to-purple-500 px-5 py-2 text-sm font-medium text-white shadow-lg shadow-indigo-900/40 transition hover:scale-[1.01]"
               disabled={isGenerating}
             >
-              {isGenerating ? <Loader2 className="h-4 w-4 animate-spin" /> : <Sparkles className="h-4 w-4" />}
+              {isGenerating ? (
+                <Loader2 className="h-4 w-4 animate-spin" />
+              ) : (
+                <Sparkles className="h-4 w-4" />
+              )}
               Generuj nową analizę
             </button>
           </div>

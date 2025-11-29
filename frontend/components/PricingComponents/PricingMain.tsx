@@ -345,7 +345,7 @@ const PricingMain = () => {
                   filter: 'blur(32px)',
                 }}
               />
-              <div className="font-poppins grid items-end gap-8 md:grid-cols-3">
+              <div className="font-grotesk grid items-end gap-8 md:grid-cols-3">
                 <ScrollParallax isAbsolutelyPositioned zIndex={20}>
                   <div className="absolute top-1/5 -left-4 z-20 sm:top-1/7 xl:top-0">
                     <Image src={shape1} alt="shape" width={78} height={78} className="-rotate-20" />
@@ -371,7 +371,7 @@ const PricingMain = () => {
                     <p className="mb-4 text-gray-700 dark:text-gray-300">
                       Perfect for finding your career.
                     </p>
-                    <div className="font-poppins mb-6 text-4xl font-bold text-gray-900 dark:text-white">
+                    <div className="font-grotesk mb-6 text-4xl font-bold text-gray-900 dark:text-white">
                       45<sup className="align-super text-sm">zł</sup>
                       <span className="text-xl font-normal text-gray-600 dark:text-gray-300">
                         /500 tokens
@@ -438,7 +438,7 @@ const PricingMain = () => {
                         <div className="mb-4 flex h-[40px] w-[40px] items-center justify-center rounded-full border bg-white/20 shadow-xl backdrop-blur-md dark:bg-white/10">
                           <Image src={square_pricing} alt="square" width={32} height={32} />
                         </div>
-                        <div className="font-poppins flex h-[32px] w-fit items-center justify-center rounded-full bg-[#818fff] px-4 py-2 text-xs font-semibold text-white">
+                        <div className="font-grotesk flex h-[32px] w-fit items-center justify-center rounded-full bg-[#818fff] px-4 py-2 text-xs font-semibold text-white">
                           <p>Save 35%</p>
                         </div>
                       </div>
@@ -448,7 +448,7 @@ const PricingMain = () => {
                       <p className="mb-4 text-gray-700 dark:text-gray-300">
                         The best choice for scaling your career.
                       </p>
-                      <div className="font-poppins mb-6 text-4xl font-bold text-gray-900 dark:text-white">
+                      <div className="font-grotesk mb-6 text-4xl font-bold text-gray-900 dark:text-white">
                         29<sup className="align-super text-sm">zł</sup>
                         <span className="text-xl font-normal text-gray-600 dark:text-gray-300">
                           /month
@@ -517,7 +517,7 @@ const PricingMain = () => {
                           className="scale-80"
                         />
                       </div>
-                      <div className="font-poppins flex h-[32px] w-fit items-center justify-center rounded-full bg-[#818fff] px-4 py-2 text-xs font-semibold text-white">
+                      <div className="font-grotesk flex h-[32px] w-fit items-center justify-center rounded-full bg-[#818fff] px-4 py-2 text-xs font-semibold text-white">
                         <p>Save 65%</p>
                       </div>
                     </div>
@@ -527,7 +527,7 @@ const PricingMain = () => {
                     <p className="mb-4 text-gray-700 dark:text-gray-300">
                       Your career advisored by our experts.
                     </p>
-                    <div className="font-poppins mb-6 text-4xl font-bold text-gray-900 dark:text-white">
+                    <div className="font-grotesk mb-6 text-4xl font-bold text-gray-900 dark:text-white">
                       99<sup className="align-super text-sm">zł</sup>
                       {/* <span className="text-xl font-normal text-gray-600 dark:text-gray-300">
                       /once
@@ -583,7 +583,7 @@ const PricingMain = () => {
       </Section>
       {individualPlan && (
         <AlertDialog open={individualDialogOpen} onOpenChange={setIndividualDialogOpen}>
-          <AlertDialogContent className="font-poppins max-w-md rounded-2xl">
+          <AlertDialogContent className="font-grotesk max-w-md rounded-2xl">
             <AlertDialogHeader>
               <AlertDialogTitle>Proceed with payment?</AlertDialogTitle>
               <AlertDialogDescription>

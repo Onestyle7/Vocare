@@ -119,14 +119,14 @@ export default function CareerPathSection({ path, index }: CareerPathSectionProp
 
       <div className="p-4 max-md:border-t md:w-5/6 md:p-6">
         <div className="flex flex-row items-center justify-between">
-          <h2 className="font-poppins mb-1 text-xl">Consider this</h2>
+          <h2 className="font-grotesk mb-1 text-xl">Consider this</h2>
           <CollapsibleButton isCollapsed={isCollapsed} toggleCollapse={toggleCollapse} />
         </div>
 
         <h3 className="text-md ibm-plex-mono-regular mb-2 font-medium text-[#915EFF] sm:text-lg">
           {path.careerName}
         </h3>
-        <p className="font-poppins text-gray-500">{path.description}</p>
+        <p className="font-grotesk text-gray-500">{path.description}</p>
 
         <div
           ref={contentWrapperRef}

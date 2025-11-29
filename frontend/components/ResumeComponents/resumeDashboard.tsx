@@ -133,7 +133,7 @@ const ResumeDashboard = () => {
 
   return (
     <div className="min-h-screen">
-      <div className="font-poppins relative">
+      <div className="font-grotesk relative">
         <GridBackgroundDemo />
         <div className="relative z-10 w-full py-4 lg:py-40">
           <div className="container mx-auto">
@@ -219,7 +219,7 @@ const ResumeDashboard = () => {
                                       />
                                     </button>
                                   </AlertDialogTrigger>
-                                  <AlertDialogContent className="font-poppins">
+                                  <AlertDialogContent className="font-grotesk">
                                     <AlertDialogHeader>
                                       <AlertDialogTitle>Delete resume?</AlertDialogTitle>
                                       <AlertDialogDescription>
@@ -293,7 +293,7 @@ const ResumeDashboard = () => {
 
       {/* Limit Reached Alert Dialog */}
       <AlertDialog open={showLimitDialog} onOpenChange={setShowLimitDialog}>
-        <AlertDialogContent className="font-poppins">
+        <AlertDialogContent className="font-grotesk">
           <AlertDialogHeader>
             <AlertDialogTitle>You&apos;ve reached your resume limit</AlertDialogTitle>
             <AlertDialogDescription>
