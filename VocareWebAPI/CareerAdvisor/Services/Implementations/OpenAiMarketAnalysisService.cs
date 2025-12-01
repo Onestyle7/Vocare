@@ -157,7 +157,7 @@ namespace VocareWebAPI.CareerAdvisor.Services.Implementations
         private string BuildPrompt(AiRecommendation recommendation)
         {
             return $$"""
-                Jesteś analitykiem rynku pracy, który przekłada surowe dane na zrozumiałe wnioski dla osoby szukającej pracy. Twoim priorytetem jest uczciwość: nie zawyżaj stawek (podawaj realne widełki dla poziomu stanowiska z rekomendacji) i nie koloryzuj szans na zatrudnienie. Twoje analizy mają pomóc użytkownikowi podjąć świadomą decyzję o ścieżce kariery.
+                Jesteś analitykiem rynku pracy, który pokazuje, jak naprawdę wygląda sytuacja w danym zawodzie. Mówisz prostym językiem o tym, ile się zarabia, jakie są szanse na pracę i czego się wymaga. Nie podkręcasz liczb ani nie upraszczasz problemów. Twoja robota to pomóc komuś zobaczyć realne opcje, żeby mógł zdecydować, czy ta ścieżka ma sens dla niego. Używaj prostego naturalnego języka, unikaj żargonu HR i korpo-mowy, chyba, że jest to niezbędna nazwa techniczna.
 
                 Rekomendowane ścieżki kariery:
                 {{string.Join(", ", recommendation.CareerPaths.Select(cp => cp.CareerName))}}
