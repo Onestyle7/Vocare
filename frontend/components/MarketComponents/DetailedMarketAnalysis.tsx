@@ -32,6 +32,7 @@ import { Button } from '../ui/button';
 import { Separator } from '../ui/separator';
 import Image from 'next/image';
 import { market_star_big, market_star_small } from '@/app/constants';
+import CountUp from '@/components/CountUp';
 
 const numberFormatter = new Intl.NumberFormat('pl-PL');
 
@@ -158,7 +159,7 @@ const SalaryChart = ({ progression }: { progression?: SalaryProgressionDto[] }) 
         <XAxis dataKey="level" tick={{ fill: '#cbd5e1', fontSize: 12 }} />
         <YAxis tick={{ fill: '#cbd5e1', fontSize: 12 }} />
         <Tooltip
-          contentStyle={{ background: '#0f172a', border: '1px solid #1e293b', borderRadius: 12 }}
+          contentStyle={{ background: '#191A23', border: '1px solid #1e293b', borderRadius: 7 }}
           formatter={(value: number) => formatCurrency(value)}
         />
         <Legend wrapperStyle={{ color: '#e2e8f0' }} />
@@ -208,18 +209,43 @@ const IndustryCard = ({
                 </span>
               </h3>
         <div className="mt-3 flex flex-wrap gap-2 text-sm text-slate-300">
-          <span className="group rounded-[7px] bg-slate-800/80 px-3 py-1 flex overflow-hidden flex-row items-center justify-center">
-          <div className='flex flex-col items-center justify-center mr-2 w-4 h-4 group-hover:translate-y-5 transition-all'>
-              <ArrowDown className='mr-2 w-4 h-4 group-hover:translate-y-5 transition-all '/>
-              {/* <ArrowDown className='mr-2 w-4 h-4 group-hover:translate-y-5 transition-all '/> */}
-          </div>
-            {formatCurrency(industry.minSalary)}
+          <span className="group flex flex-row items-center justify-center overflow-hidden rounded-[7px] border border-slate-800/80 px-3 py-1">
+            <div className="mr-2 flex h-4 w-4 flex-col items-center justify-center transition-all group-hover:translate-y-5">
+              <ArrowDown className="mr-2 h-4 w-4 group-hover:translate-y-5 transition-all" />
+            </div>
+            {isValidNumber(industry.minSalary) ? (
+              <>
+                <CountUp
+                  from={0}
+                  to={industry.minSalary as number}
+                  duration={1.2}
+                  separator=" "
+                  className="font-semibold text-white"
+                />
+                <span className="ml-1 text-xs text-slate-300">PLN</span>
+              </>
+            ) : (
+              '—'
+            )}
           </span>
-          <span className="group rounded-[7px] bg-slate-800/80 px-3 py-1 flex overflow-hidden flex-row items-center justify-center">
-          <div className='flex flex-col items-center justify-center mr-2 w-4 h-4 group-hover:-translate-y-5 transition-all'>
-              <ArrowUp className='mr-2 w-4 h-4 group-hover:-translate-y-5 transition-all '/>
-          </div>
-            {formatCurrency(industry.maxSalary)}
+          <span className="group flex flex-row items-center justify-center overflow-hidden rounded-[7px] border border-slate-800/80 px-3 py-1">
+            <div className="mr-2 flex h-4 w-4 flex-col items-center justify-center transition-all group-hover:-translate-y-5">
+              <ArrowUp className="mr-2 h-4 w-4 group-hover:-translate-y-5 transition-all" />
+            </div>
+            {isValidNumber(industry.maxSalary) ? (
+              <>
+                <CountUp
+                  from={0}
+                  to={industry.maxSalary as number}
+                  duration={1.4}
+                  separator=" "
+                  className="font-semibold text-white"
+                />
+                <span className="ml-1 text-xs text-slate-300">PLN</span>
+              </>
+            ) : (
+              '—'
+            )}
           </span>
           {isValidNumber(industry.employmentRate) && (
             <span className="rounded-[7px] border border-emerald-900/30 px-3 py-1 text-emerald-200">
@@ -237,7 +263,7 @@ const IndustryCard = ({
         {relatedSkills.slice(0, 3).map((skill) => (
           <span
             key={`${skill.skill}-${skill.industry}`}
-            className="rounded-[7px] border px-3 py-1"
+            className="rounded-[7px] border px-3 py-1 border-b-5"
           >
             {skill.skill}
           </span>
@@ -246,25 +272,29 @@ const IndustryCard = ({
     </div>
 
     <div className="mt-6 grid gap-6 lg:grid-cols-2">
-      <div className="rounded-2xl border border-slate-800/60 bg-slate-900/60 p-4">
-        <div className="flex items-center justify-between">
+      <div className="rounded-2xl border p-4">
+        <div className="flex items-start justify-between">
           <div>
-            <p className="text-xs tracking-[0.25em] text-slate-400 uppercase">
+            <p className="w-fit px-2 mb-2 py-1 rounded-[7px] border text-sm text-[#ecedf0]">
               Progresja wynagrodzeń
             </p>
-            <p className="text-sm text-slate-300">Junior → Lead/Expert</p>
+            <p className="w-fit rounded-[3px] px-1 text-sm text-[#ecedf0]">Junior → Lead/Expert</p>
           </div>
-          <span className="rounded-full bg-slate-800 px-3 py-1 text-xs text-slate-300">PLN</span>
+          <span className="rounded-[5px] bg-[#F3F3F3] px-2 py-[2px] text-xs text-[#191A23] self-start">
+            PLN
+          </span>
         </div>
-        <div className="mt-2 h-[260px]">
+        <div className="mt-2 h-[360px] flex items-center justify-center">
           <SalaryChart progression={industry.salaryProgression} />
         </div>
       </div>
 
       <div className="grid gap-4 lg:grid-cols-2">
-        <div className="rounded-2xl border border-slate-800/60 bg-slate-900/60 p-4">
+        <div className="rounded-2xl border p-4">
           <div className="flex items-center justify-between">
-            <p className="text-xs tracking-[0.25em] text-slate-400 uppercase">Atrybuty pracy</p>
+            <p className="w-fit px-2 mb-2 py-1 rounded-[7px] border text-sm text-[#ecedf0]">
+              Atrybuty pracy
+            </p>
             <span className="text-xs text-slate-500">0-10</span>
           </div>
           <div className="h-[260px]">
