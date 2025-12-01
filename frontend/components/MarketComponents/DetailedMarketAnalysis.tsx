@@ -11,7 +11,7 @@ import {
   WorkAttributesDto,
 } from '@/lib/types/marketAnalysis';
 import { api } from '@/lib/api';
-import { ArrowRight, Loader2, Sparkles } from 'lucide-react';
+import { ArrowDown, ArrowRight, ArrowUp, Loader2, Sparkles } from 'lucide-react';
 import {
   Area,
   AreaChart,
@@ -30,6 +30,8 @@ import {
 import { cn } from '@/lib/utils';
 import { Button } from '../ui/button';
 import { Separator } from '../ui/separator';
+import Image from 'next/image';
+import { market_star_big, market_star_small } from '@/app/constants';
 
 const numberFormatter = new Intl.NumberFormat('pl-PL');
 
@@ -196,25 +198,36 @@ const IndustryCard = ({
   industry: IndustryStatisticsDto;
   relatedSkills: SkillDemandDto[];
 }) => (
-  <div className="rounded-3xl border border-slate-800/70 bg-gradient-to-br from-slate-950 via-slate-900 to-slate-950 p-6 shadow-xl shadow-slate-950/40">
+  <div className="rounded-3xl border border-b-5 p-6 shadow-xl shadow-slate-950/40">
     <div className="flex flex-col gap-4 md:flex-row md:items-start md:justify-between">
       <div>
-        <p className="text-xs tracking-[0.3em] text-slate-500 uppercase">Ścieżka kariery</p>
-        <h3 className="text-2xl font-semibold text-white">{industry.industry}</h3>
+        <p className="w-fit rounded-[3px] px-1 text-sm text-[#ecedf0]">Ścieżka kariery</p>
+        <h3 className="mt-2 text-2xl font-semibold text-[#191A23]">
+                <span className="inline rounded-[7px] bg-[#F3F3F3] [box-decoration-break:clone] px-2 [-webkit-box-decoration-break:clone]">
+                  {industry.industry}
+                </span>
+              </h3>
         <div className="mt-3 flex flex-wrap gap-2 text-sm text-slate-300">
-          <span className="rounded-full bg-slate-800/80 px-3 py-1">
+          <span className="group rounded-[7px] bg-slate-800/80 px-3 py-1 flex overflow-hidden flex-row items-center justify-center">
+          <div className='flex flex-col items-center justify-center mr-2 w-4 h-4 group-hover:translate-y-5 transition-all'>
+              <ArrowDown className='mr-2 w-4 h-4 group-hover:translate-y-5 transition-all '/>
+              {/* <ArrowDown className='mr-2 w-4 h-4 group-hover:translate-y-5 transition-all '/> */}
+          </div>
             {formatCurrency(industry.minSalary)}
           </span>
-          <span className="rounded-full bg-slate-800/80 px-3 py-1">
+          <span className="group rounded-[7px] bg-slate-800/80 px-3 py-1 flex overflow-hidden flex-row items-center justify-center">
+          <div className='flex flex-col items-center justify-center mr-2 w-4 h-4 group-hover:-translate-y-5 transition-all'>
+              <ArrowUp className='mr-2 w-4 h-4 group-hover:-translate-y-5 transition-all '/>
+          </div>
             {formatCurrency(industry.maxSalary)}
           </span>
           {isValidNumber(industry.employmentRate) && (
-            <span className="rounded-full bg-emerald-900/30 px-3 py-1 text-emerald-200">
+            <span className="rounded-[7px] border border-emerald-900/30 px-3 py-1 text-emerald-200">
               Zatrudnienie: {industry.employmentRate}%
             </span>
           )}
           {industry.growthForecast && (
-            <span className="rounded-full bg-indigo-900/30 px-3 py-1 text-indigo-100">
+            <span className="rounded-[7px] border px-3 py-1 text-indigo-100">
               Prognoza: {industry.growthForecast}
             </span>
           )}
@@ -224,7 +237,7 @@ const IndustryCard = ({
         {relatedSkills.slice(0, 3).map((skill) => (
           <span
             key={`${skill.skill}-${skill.industry}`}
-            className="rounded-full bg-slate-800/80 px-3 py-1"
+            className="rounded-[7px] border px-3 py-1"
           >
             {skill.skill}
           </span>
@@ -385,7 +398,7 @@ export default function DetailedMarketAnalysis() {
               </button> */}
               <Button
                 onClick={generateFreshAnalysis}
-                className="group relative z-20 mt-4 h-12 w-full rounded-[7px] bg-[#F3F3F3] font-bold text-[#191A23] md:mt-2 md:w-2/3"
+                className="group relative z-20 mt-4 h-12 w-full rounded-[7px] bg-[#F3F3F3] font-bold text-[#191A23] md:mt-2 md:w-2/3 hover:-translate-y-2 hover:border-b-3 border-b-[#F3F3F3] border-r-[#F3F3F3] hover:border-r-3"
                 variant="default"
                 disabled={isGenerating || isLoading}
               >
@@ -446,25 +459,40 @@ export default function DetailedMarketAnalysis() {
                 </div>
               </div>
 
-              <div className="rounded-3xl border border-slate-800/70 bg-slate-900/60 p-5">
-                <p className="text-xs tracking-[0.25em] text-slate-400 uppercase">
+              <div className="rounded-3xl border border-b-5 p-5">
+                <p className="w-fit rounded-[3px] px-1 text-sm text-[#ecedf0]">
                   Popyt na umiejętności
                 </p>
-                <div className="mt-3 grid gap-3 sm:grid-cols-2">
-                  {analysis.skillDemand?.map((skill) => (
-                    <div
-                      key={`${skill.skill}-${skill.industry}`}
-                      className="rounded-2xl border border-slate-800/70 bg-slate-950/60 p-3"
-                    >
-                      <div className="flex items-center justify-between text-sm text-white">
-                        <span>{skill.skill}</span>
-                        <span className="rounded-full bg-indigo-900/40 px-2 py-1 text-[11px] text-indigo-100">
-                          {skill.demandLevel}
-                        </span>
+                <div className="relative">
+                  <div className="absolute top-[50px] left-[36px] h-[90%] border-[0.5px] border-[#F3F3F3]/50" />
+                  <div className="flex w-full flex-row items-center space-x-6 px-6 py-6">
+                    <Image src={market_star_big} alt="shape" width={24} height={24} />
+                    <p className="text-lg font-semibold md:text-3xl">Ściągawka</p>
+                  </div>
+                  <div className="mt-3 grid gap-6 sm:grid-cols-1">
+                    {analysis.skillDemand?.map((skill) => (
+                      <div
+                        key={`${skill.skill}-${skill.industry}`}
+                        className="flex items-center gap-4 rounded-2xl border p-4"
+                      >
+                        {/* Lewa strona – miejsce na zdjęcie/ikonę */}
+                        <div className="flex h-10 w-10 shrink-0 items-start justify-center">
+                          <Image src={market_star_small} alt="shape" width={20} height={20} />
+                        </div>
+
+                        {/* Prawa strona – kontent */}
+                        <div className="w-full">
+                          <div className="flex items-center justify-between text-lg font-semibold text-white">
+                            <span>{skill.skill}</span>
+                            <span className="rounded-[5px] bg-[#F3F3F3] px-2 py-[2px] text-xs text-[#191A23]">
+                              {skill.demandLevel}
+                            </span>
+                          </div>
+                          <p className="mt-1 text-xs text-slate-400">{skill.industry}</p>
+                        </div>
                       </div>
-                      <p className="mt-1 text-xs text-slate-400">{skill.industry}</p>
-                    </div>
-                  ))}
+                    ))}
+                  </div>
                 </div>
               </div>
             </div>
