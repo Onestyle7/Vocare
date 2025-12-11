@@ -180,12 +180,12 @@ const WorkAttributesRadar = ({ attributes }: { attributes?: WorkAttributesDto })
       <Radar
         name="Dopasowanie"
         dataKey="score"
-        stroke="#22d3ee"
-        fill="#22d3ee"
+        stroke="#6366f1"
+        fill="#6366f1"
         fillOpacity={0.35}
       />
       <Tooltip
-        contentStyle={{ background: '#0f172a', border: '1px solid #1e293b', borderRadius: 12 }}
+        contentStyle={{ background: '#191A23', border: '1px solid #1e293b', borderRadius: 12 }}
         formatter={(value: number) => `${value}/10`}
       />
     </RadarChart>
@@ -271,52 +271,65 @@ const IndustryCard = ({
       </div>
     </div>
 
-    <div className="mt-6 grid gap-6 lg:grid-cols-2">
-      <div className="rounded-2xl border p-4">
-        <div className="flex items-start justify-between">
-          <div>
-            <p className="w-fit px-2 mb-2 py-1 rounded-[7px] border text-sm text-[#ecedf0]">
-              Progresja wynagrodzeń
-            </p>
-            <p className="w-fit rounded-[3px] px-1 text-sm text-[#ecedf0]">Junior → Lead/Expert</p>
+        <div className="mt-6 space-y-6">
+      {/* GÓRNY RZĄD: lewa – progresja, prawa – atrybuty pracy */}
+      <div className="grid gap-6 lg:grid-cols-2">
+        {/* Progresja wynagrodzeń (LEWA) */}
+        <div className="rounded-2xl border p-4">
+          <div className="flex items-start justify-between">
+            <div>
+              <p className="w-fit px-2 mb-2 py-1 rounded-[7px] border text-sm text-[#ecedf0]">
+                Progresja wynagrodzeń
+              </p>
+              <p className="w-fit rounded-[3px] px-1 text-sm text-[#ecedf0]">
+                Junior → Lead/Expert
+              </p>
+            </div>
+            <span className="rounded-[5px] bg-[#F3F3F3] px-2 py-[2px] text-xs text-[#191A23] self-start">
+              PLN
+            </span>
           </div>
-          <span className="rounded-[5px] bg-[#F3F3F3] px-2 py-[2px] text-xs text-[#191A23] self-start">
-            PLN
-          </span>
+          <div className="mt-2 h-[360px] flex items-center justify-center">
+            <SalaryChart progression={industry.salaryProgression} />
+          </div>
         </div>
-        <div className="mt-2 h-[360px] flex items-center justify-center">
-          <SalaryChart progression={industry.salaryProgression} />
-        </div>
-      </div>
 
-      <div className="grid gap-4 lg:grid-cols-2">
+        {/* Atrybuty pracy (PRAWA) */}
         <div className="rounded-2xl border p-4">
           <div className="flex items-center justify-between">
             <p className="w-fit px-2 mb-2 py-1 rounded-[7px] border text-sm text-[#ecedf0]">
               Atrybuty pracy
             </p>
-            <span className="text-xs text-slate-500">0-10</span>
+            <span className="rounded-[5px] bg-[#F3F3F3] px-2 py-[2px] text-xs text-[#191A23] self-start">
+              0-10
+            </span>
           </div>
-          <div className="h-[260px]">
+          <div className="mt-2 h-[360px] flex items-center justify-center">
             <WorkAttributesRadar attributes={industry.workAttributes} />
           </div>
         </div>
+      </div>
 
-        <div className="rounded-2xl border border-slate-800/60 bg-slate-900/60 p-4">
-          <div className="flex items-center justify-between">
-            <p className="text-xs tracking-[0.25em] text-slate-400 uppercase">Trudność wejścia</p>
-            {industry.entryDifficulty?.difficultyLevel && (
-              <span
-                className={cn(
-                  'rounded-full px-3 py-1 text-xs font-medium',
-                  difficultyBand(industry.entryDifficulty?.difficultyScore)
-                )}
-              >
-                {industry.entryDifficulty?.difficultyLevel}
-              </span>
-            )}
-          </div>
-          <div className="mt-4 flex flex-col items-center gap-4 sm:flex-row sm:items-start">
+            {/* DOLNY RZĄD: Trudność wejścia – lewa/prawa kolumna */}
+      <div className="rounded-2xl border p-4">
+        <div className="flex items-center justify-between">
+                        <p className="w-fit px-2 mb-2 py-1 rounded-[7px] border text-sm text-[#ecedf0]">Trudność wejścia</p>
+          {industry.entryDifficulty?.difficultyLevel && (
+            <span
+              className={cn(
+                "rounded-[5px] bg-[#F3F3F3]! px-2 py-[2px] text-xs text-[#191A23]! self-start",
+                difficultyBand(industry.entryDifficulty?.difficultyScore)
+              )}
+            >
+              {industry.entryDifficulty?.difficultyLevel}
+            </span>
+          )}
+        </div>
+
+        {/* grid: na małych 1 kolumna (opis pod spodem), od md – 2 kolumny */}
+        <div className="mt-4 grid gap-4 md:grid-cols-2">
+          {/* LEWA STRONA – to co było wcześniej (gauge + lista umiejętności) */}
+          <div className="flex flex-col items-center gap-4 sm:flex-row sm:items-start">
             <DifficultyGauge value={industry.entryDifficulty?.difficultyScore} />
             <div className="space-y-2 text-sm text-slate-200">
               <p className="text-slate-300">
@@ -336,12 +349,18 @@ const IndustryCard = ({
               )}
             </div>
           </div>
+
+          {/* PRAWA STRONA – explanation (na mobile pojawi się pod spodem) */}
           {industry.entryDifficulty?.explanation && (
-            <p className="mt-3 text-sm text-slate-300">{industry.entryDifficulty.explanation}</p>
+            <p className="text-sm text-slate-300">
+              {industry.entryDifficulty.explanation}
+            </p>
           )}
         </div>
       </div>
+
     </div>
+
 
     {industry.aiNarrator && (
       <div className="mt-6 grid gap-4 lg:grid-cols-3">
