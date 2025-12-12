@@ -5,6 +5,7 @@ import { useRouter, useSearchParams } from 'next/navigation';
 import { CheckCircle } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { toast } from 'sonner';
+import { buildApiUrl } from '@/lib/config';
 
 const PaymentSuccessPage = () => {
   const router = useRouter();
@@ -22,14 +23,11 @@ const PaymentSuccessPage = () => {
           return;
         }
 
-        const response = await fetch(
-          `${process.env.NEXT_PUBLIC_API_URL || 'https://vocare-staging-e568.up.railway.app'}/api/Billing/get-token-balance`,
-          {
-            headers: {
-              Authorization: `Bearer ${token}`,
-            },
-          }
-        );
+        const response = await fetch(buildApiUrl('/api/Billing/get-token-balance'), {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
 
         if (response.ok) {
           const data = await response.json();

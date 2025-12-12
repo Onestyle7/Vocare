@@ -16,8 +16,8 @@ import {
 } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Skeleton } from '@/components/ui/skeleton';
+import { API_BASE_URL } from '@/lib/config';
 
-const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL ?? 'http://localhost:8080';
 const DASHBOARD_ENDPOINT = '/api/Billing/subscription-dashboard';
 const SUBSCRIPTION_STATUS_ENDPOINT = '/api/Billing/subscription-status';
 const CANCEL_SUBSCRIPTION_ENDPOINT = '/api/Billing/cancel-subscription';

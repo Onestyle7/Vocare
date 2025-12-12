@@ -27,10 +27,11 @@ import { Undo2 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { useRouter } from 'next/navigation';
 import { toast } from 'sonner';
+import { API_BASE_URL } from '@/lib/config';
 
 type PlanType = 'tokens' | 'subscription' | 'individual';
 
-const API_BASE = process.env.NEXT_PUBLIC_API_URL || 'https://vocare-staging-e568.up.railway.app';
+const API_BASE = API_BASE_URL;
 
 const pricingPlans = [
   {

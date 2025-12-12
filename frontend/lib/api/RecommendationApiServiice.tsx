@@ -1,7 +1,8 @@
 import axios, { AxiosError } from 'axios';
 import { AiCareerResponse } from '@/lib/types/recommendation';
+import { buildApiUrl } from '../config';
 
-const API_BASE_URL = `${process.env.NEXT_PUBLIC_API_URL}/api/Ai`;
+const AI_API_BASE_URL = buildApiUrl('/api/Ai');
 
 export class RecommendationsApiService {
   private getAuthHeaders() {
@@ -21,7 +22,7 @@ export class RecommendationsApiService {
    */
   async getLastRecommendation(): Promise<AiCareerResponse> {
     try {
-      const response = await axios.get<AiCareerResponse>(`${API_BASE_URL}/last-recommendation`, {
+      const response = await axios.get<AiCareerResponse>(`${AI_API_BASE_URL}/last-recommendation`, {
         headers: this.getAuthHeaders(),
       });
       return response.data;
@@ -42,7 +43,7 @@ export class RecommendationsApiService {
    */
   async generateNewRecommendation(): Promise<AiCareerResponse> {
     try {
-      const response = await axios.get<AiCareerResponse>(`${API_BASE_URL}/recommendations`, {
+      const response = await axios.get<AiCareerResponse>(`${AI_API_BASE_URL}/recommendations`, {
         headers: this.getAuthHeaders(),
       });
       return response.data;

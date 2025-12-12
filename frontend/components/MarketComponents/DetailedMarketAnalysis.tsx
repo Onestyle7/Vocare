@@ -36,10 +36,6 @@ import CountUp from '@/components/CountUp';
 
 const numberFormatter = new Intl.NumberFormat('pl-PL');
 
-const isDev = 'API: http://localhost:8080';
-
-const API_BASE = process.env.NEXT_PUBLIC_API_URL?.replace(/\/$/, '') ?? '';
-
 const isValidNumber = (value?: number | null) =>
   typeof value === 'number' && Number.isFinite(value);
 
@@ -460,11 +456,6 @@ export default function DetailedMarketAnalysis() {
               </Button>
             </div>
           </div>
-          {/* {isDev && (
-          <div className="mt-4 text-xs text-slate-500">
-            API: <span className="font-mono">{API_BASE || 'nie zdefiniowano NEXT_PUBLIC_API_URL'}</span>
-          </div>
-          )} */}
         </header>
 
         {error && (

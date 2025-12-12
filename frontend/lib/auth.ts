@@ -1,6 +1,7 @@
 import { api } from './api';
+import { buildApiUrl } from './config';
 
-const AUTH_PREFIX = 'http://localhost:8080/api/Auth';
+const AUTH_PREFIX = buildApiUrl('/api/Auth');
 
 interface RegisterInput {
   email: string;

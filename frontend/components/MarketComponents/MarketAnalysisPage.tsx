@@ -27,6 +27,7 @@ import GenerateMarketFail from './GenerateMarketFail';
 import Section from '../SupportComponents/Section';
 import NewEmptyStateComponent from './NewEmptyStateComponent';
 import { useTokenBalanceContext } from '@/lib/contexts/TokenBalanceContext';
+import { API_BASE_URL } from '@/lib/config';
 import {
   IndustryStatisticsDto,
   MarketAnalysisDetailsDto,
@@ -174,7 +175,7 @@ const buildIndustrySummary = (
 };
 
 export default function MarketAnalysis() {
-  const API_URL = process.env.NEXT_PUBLIC_API_URL;
+  const API_URL = API_BASE_URL;
   const [analysis, setAnalysis] = useState<MarketAnalysisDetailsDto | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [isLoading, setLoading] = useState(false);

@@ -1,7 +1,9 @@
 import { useEffect, useState, useCallback, useMemo } from 'react';
 import axios from 'axios';
 
-const API_URL = process.env.NEXT_PUBLIC_API_URL;
+import { API_BASE_URL } from '@/lib/config';
+
+const API_URL = API_BASE_URL;
 
 const subscriptionStatusMap: Record<number, string> = {
   0: 'None',

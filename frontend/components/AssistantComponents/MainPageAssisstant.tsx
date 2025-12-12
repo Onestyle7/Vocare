@@ -36,6 +36,7 @@ import { AxiosError } from 'axios';
 import { AiCareerResponse, CareerPath } from '@/lib/types/recommendation';
 import Section from '../SupportComponents/Section';
 import { ArrowRight, Undo2 } from 'lucide-react';
+import { buildApiUrl } from '@/lib/config';
 
 // const API_URL = process.env.NEXT_PUBLIC_API_URL;
 
@@ -165,7 +166,7 @@ export default function AssistantPage() {
         // Najpierw spróbuj pobrać ostatnie rekomendacje
         try {
           const lastRecommendationResponse = await axios.get<AiCareerResponse>(
-            'http://localhost:8080/api/Ai/last-recommendation',
+            buildApiUrl('/api/Ai/last-recommendation'),
 
             {
               headers: {
@@ -196,15 +197,12 @@ export default function AssistantPage() {
         }
 
         // Jeśli brak ostatnich rekomendacji, wygeneruj nowe
-        const response = await axios.get<AiCareerResponse>(
-          'http://localhost:8080/api/Ai/recommendations',
-          {
-            headers: {
-              Authorization: `Bearer ${token}`,
-              'Content-Type': 'application/json',
-            },
-          }
-        );
+        const response = await axios.get<AiCareerResponse>(buildApiUrl('/api/Ai/recommendations'), {
+          headers: {
+            Authorization: `Bearer ${token}`,
+            'Content-Type': 'application/json',
+          },
+        });
         console.log('New recommendations:', response.data);
         setRecommendations(response.data);
       } catch (err: unknown) {
@@ -248,15 +246,12 @@ export default function AssistantPage() {
       return;
     }
     try {
-      const response = await axios.get<AiCareerResponse>(
-        'http://localhost:8080/api/Ai/recommendations',
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-            'Content-Type': 'application/json',
-          },
-        }
-      );
+      const response = await axios.get<AiCareerResponse>(buildApiUrl('/api/Ai/recommendations'), {
+        headers: {
+          Authorization: `Bearer ${token}`,
+          'Content-Type': 'application/json',
+        },
+      });
       setRecommendations(response.data);
       toast.success('New recommendations have been generated');
     } catch (err: unknown) {

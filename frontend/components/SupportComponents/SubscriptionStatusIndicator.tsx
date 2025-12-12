@@ -5,6 +5,7 @@ import { Star } from 'lucide-react';
 import { useTheme } from 'next-themes';
 import { cn } from '@/lib/utils';
 import { useAuth } from '@/lib/hooks/useAuth';
+import { API_BASE_URL } from '@/lib/config';
 
 interface SubscriptionStatusIndicatorProps {
   className?: string;
@@ -12,7 +13,7 @@ interface SubscriptionStatusIndicatorProps {
   tooltipPosition?: 'top' | 'bottom';
 }
 
-const API_BASE = process.env.NEXT_PUBLIC_API_URL || '';
+const API_BASE = API_BASE_URL;
 
 const SubscriptionStatusIndicator = ({
   className,

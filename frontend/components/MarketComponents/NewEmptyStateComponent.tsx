@@ -20,6 +20,7 @@ import {
 } from '../ui/alert-dialog';
 import { upper_arrow, star_generate } from '@/app/constants';
 import Section from '../SupportComponents/Section';
+import { API_BASE_URL } from '@/lib/config';
 
 interface EmptyStateProps {
   onGenerateAnalysis: () => Promise<void>;
@@ -40,7 +41,7 @@ const NewEmptyStateComponent = ({
 }: EmptyStateProps) => {
   const [isConfirmDialogOpen, setIsConfirmDialogOpen] = useState(false);
   const [hasRecommendations, setHasRecommendations] = useState(false);
-  const API_URL = process.env.NEXT_PUBLIC_API_URL;
+  const API_URL = API_BASE_URL;
 
   useEffect(() => {
     const checkRecommendations = async () => {
