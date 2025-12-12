@@ -447,3 +447,9 @@ export const construction = '/images/construction.png';
 export const line_market = '/images/market-line.png';
 export const market_star_big = '/images/market-star-big.png';
 export const market_star_small = '/images/market-star-small.png';
+
+export const market_motywacja = '/svg/market_motywacja.svg';
+export const market_wejscie = '/svg/market_wejscie.svg';
+export const market_styl_pracy = '/svg/market_styl_pracy.svg';
+export const market_rekomendacja = '/svg/market_rekomendacje.svg';
+export const market_wynagrodzenie = '/svg/market_wynagrodzenie.svg';

@@ -31,14 +31,22 @@ import { cn } from '@/lib/utils';
 import { Button } from '../ui/button';
 import { Separator } from '../ui/separator';
 import Image from 'next/image';
-import { market_star_big, market_star_small } from '@/app/constants';
+import {
+  market_motywacja,
+  market_rekomendacja,
+  market_star_big,
+  market_star_small,
+  market_styl_pracy,
+  market_wejscie,
+  market_wynagrodzenie,
+} from '@/app/constants';
 import CountUp from '@/components/CountUp';
 
 const numberFormatter = new Intl.NumberFormat('pl-PL');
 
-const isDev = 'API: http://localhost:8080';
+// const isDev = 'API: http://localhost:8080';
 
-const API_BASE = process.env.NEXT_PUBLIC_API_URL?.replace(/\/$/, '') ?? '';
+// const API_BASE = process.env.NEXT_PUBLIC_API_URL?.replace(/\/$/, '') ?? '';
 
 const isValidNumber = (value?: number | null) =>
   typeof value === 'number' && Number.isFinite(value);
@@ -98,36 +106,41 @@ const DifficultyGauge = ({ value }: { value?: number }) => {
       <svg className="h-full w-full" viewBox="0 0 120 120">
         <defs>
           <linearGradient id="gaugeGradient" x1="0%" y1="0%" x2="100%" y2="0%">
-            <stop offset="0%" stopColor="#22d3ee" />
-            <stop offset="50%" stopColor="#6366f1" />
-            <stop offset="100%" stopColor="#a855f7" />
+            <stop offset="0%" stopColor="#6366f1" />
           </linearGradient>
         </defs>
-        <circle cx="60" cy="60" r="52" fill="#0b1224" stroke="#1f2937" strokeWidth="6" />
+        <circle cx="60" cy="60" r="52" fill="#0f1014" stroke="#1f2937" strokeWidth="6" />
         <circle
           cx="60"
           cy="60"
           r="52"
           fill="transparent"
           stroke="url(#gaugeGradient)"
-          strokeWidth="8"
+          strokeWidth="12"
           strokeDasharray={`${(safeValue / 100) * 326} 326`}
-          strokeLinecap="round"
+          strokeLinecap="square"
           transform="rotate(-90 60 60)"
         />
       </svg>
       <div className="absolute inset-0 flex flex-col items-center justify-center">
         <span className="text-xs text-slate-400">Entry score</span>
         <span className="text-3xl font-semibold text-white">{Math.round(safeValue)}</span>
-        <span className="text-[11px] tracking-[0.2em] text-slate-500 uppercase">/100</span>
+        <span className="text-[11px] text-slate-500 uppercase">/100</span>
       </div>
     </div>
   );
 };
 
-const NarrationCard = ({ title, text }: { title: string; text?: string }) => (
-  <div className="rounded-2xl border border-slate-800/70 bg-slate-900/60 p-4 shadow-sm shadow-slate-900">
-    <p className="text-xs tracking-[0.2em] text-slate-400 uppercase">{title}</p>
+type NarrationCardProps = { title: string; text?: string; icon: string };
+
+const NarrationCard = ({ title, text, icon }: NarrationCardProps) => (
+  <div className="rounded-2xl border border-b-5 p-4 shadow-sm shadow-slate-900">
+    <div className="flex items-center gap-3">
+      <span className="flex h-8 w-8 items-center justify-center rounded-[7px] border">
+        <Image src={icon} alt={`${title} icon`} width={20} height={20} />
+      </span>
+      <p className="w-fit rounded-[7px] border px-2 py-1 text-sm text-[#ecedf0]">{title}</p>
+    </div>
     <p className="mt-2 text-sm leading-relaxed text-slate-100">
       {text || 'Brak danych od narratora AI.'}
     </p>
@@ -364,11 +377,31 @@ const IndustryCard = ({
 
     {industry.aiNarrator && (
       <div className="mt-6 grid gap-4 lg:grid-cols-3">
-        <NarrationCard title="Wynagrodzenia" text={industry.aiNarrator.salaryInsight} />
-        <NarrationCard title="Styl pracy" text={industry.aiNarrator.workStyleInsight} />
-        <NarrationCard title="Wejście" text={industry.aiNarrator.entryAdvice} />
-        <NarrationCard title="Motywacja" text={industry.aiNarrator.motivationalMessage} />
-        <NarrationCard title="Rekomendacja" text={industry.aiNarrator.personalizedRecommendation} />
+        {[
+          {
+            title: 'Wynagrodzenia',
+            text: industry.aiNarrator.salaryInsight,
+            icon: market_wynagrodzenie,
+          },
+          {
+            title: 'Styl pracy',
+            text: industry.aiNarrator.workStyleInsight,
+            icon: market_styl_pracy,
+          },
+          { title: 'Wejście', text: industry.aiNarrator.entryAdvice, icon: market_wejscie },
+          {
+            title: 'Motywacja',
+            text: industry.aiNarrator.motivationalMessage,
+            icon: market_motywacja,
+          },
+          {
+            title: 'Rekomendacja',
+            text: industry.aiNarrator.personalizedRecommendation,
+            icon: market_rekomendacja,
+          },
+        ].map((card) => (
+          <NarrationCard key={card.title} {...card} />
+        ))}
       </div>
     )}
   </div>
