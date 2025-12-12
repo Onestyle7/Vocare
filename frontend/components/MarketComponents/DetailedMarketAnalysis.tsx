@@ -285,9 +285,7 @@ const IndustryCard = ({
     </div>
 
         <div className="mt-6 space-y-6">
-      {/* GÓRNY RZĄD: lewa – progresja, prawa – atrybuty pracy */}
       <div className="grid gap-6 lg:grid-cols-2">
-        {/* Progresja wynagrodzeń (LEWA) */}
         <div className="rounded-2xl border p-4">
           <div className="flex items-start justify-between">
             <div>
@@ -307,7 +305,6 @@ const IndustryCard = ({
           </div>
         </div>
 
-        {/* Atrybuty pracy (PRAWA) */}
         <div className="rounded-2xl border p-4">
           <div className="flex items-center justify-between">
             <p className="w-fit px-2 mb-2 py-1 rounded-[7px] border text-sm text-[#ecedf0]">
@@ -323,7 +320,6 @@ const IndustryCard = ({
         </div>
       </div>
 
-            {/* DOLNY RZĄD: Trudność wejścia – lewa/prawa kolumna */}
       <div className="rounded-2xl border p-4">
         <div className="flex items-center justify-between">
                         <p className="w-fit px-2 mb-2 py-1 rounded-[7px] border text-sm text-[#ecedf0]">Trudność wejścia</p>
@@ -339,9 +335,7 @@ const IndustryCard = ({
           )}
         </div>
 
-        {/* grid: na małych 1 kolumna (opis pod spodem), od md – 2 kolumny */}
         <div className="mt-4 grid gap-4 md:grid-cols-2">
-          {/* LEWA STRONA – to co było wcześniej (gauge + lista umiejętności) */}
           <div className="flex flex-col items-center gap-4 sm:flex-row sm:items-start">
             <DifficultyGauge value={industry.entryDifficulty?.difficultyScore} />
             <div className="space-y-2 text-sm text-slate-200">
@@ -363,7 +357,6 @@ const IndustryCard = ({
             </div>
           </div>
 
-          {/* PRAWA STRONA – explanation (na mobile pojawi się pod spodem) */}
           {industry.entryDifficulty?.explanation && (
             <p className="text-sm text-slate-300">
               {industry.entryDifficulty.explanation}
@@ -470,14 +463,6 @@ export default function DetailedMarketAnalysis() {
               </p>
             </div>
             <div className="flex w-full items-center justify-center gap-3 md:w-1/3">
-              {/* <button
-                onClick={fetchLatest}
-                className="flex items-center gap-2 rounded-2xl border border-slate-700 bg-slate-800/60 px-4 py-2 text-sm text-slate-200 transition hover:border-slate-600 hover:bg-slate-800"
-                disabled={isLoading || isGenerating}
-              >
-                <RefreshCw className={cn('h-4 w-4', isLoading && 'animate-spin')} />
-                Ostatnia analiza
-              </button> */}
               <Button
                 onClick={generateFreshAnalysis}
                 className="group relative z-20 mt-4 h-12 w-full rounded-[7px] bg-[#F3F3F3] font-bold text-[#191A23] md:mt-2 md:w-2/3 hover:-translate-y-2 hover:border-b-3 border-b-[#F3F3F3] border-r-[#F3F3F3] hover:border-r-3"
