@@ -41,6 +41,8 @@ import {
   market_wynagrodzenie,
 } from '@/app/constants';
 import CountUp from '@/components/CountUp';
+import { toast } from 'sonner';
+import { useRouter } from 'next/navigation';
 
 const numberFormatter = new Intl.NumberFormat('pl-PL');
 
@@ -54,6 +56,12 @@ const isValidNumber = (value?: number | null) =>
 const formatCurrency = (value?: number | null) => {
   if (!isValidNumber(value)) return '—';
   return `${numberFormatter.format(value as number)} PLN`;
+};
+
+const isMissingCareerPathsError = (message?: string) => {
+  if (!message) return false;
+  const normalized = message.toLowerCase();
+  return normalized.includes('recommendation') || normalized.includes('ścieżek kariery');
 };
 
 const getAnalysisFromResponse = (data: unknown): MarketAnalysisDetailsDto | null => {
@@ -401,10 +409,35 @@ const IndustryCard = ({
 );
 
 export default function DetailedMarketAnalysis() {
+  const router = useRouter();
   const [analysis, setAnalysis] = useState<MarketAnalysisDetailsDto | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [isGenerating, setIsGenerating] = useState(false);
   const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    if (!error) return;
+
+    const normalized = error.toLowerCase();
+    const isMissingCareerPaths = isMissingCareerPathsError(error);
+    const isMissingPrevious = normalized.includes('brak zapisanej analizy');
+
+    const title = isMissingCareerPaths
+      ? 'Brak ścieżek kariery'
+      : isMissingPrevious
+        ? 'Nie masz poprzedniej analizy rynku'
+        : 'Brak ścieżek kariery';
+
+    toast.error(title, {
+      description: error,
+      action: isMissingCareerPaths
+        ? {
+            label: 'Advisor',
+            onClick: () => router.push('/assistant'),
+          }
+        : undefined,
+    });
+  }, [error, router]);
 
   const fetchLatest = useMemo(
     () =>
@@ -417,7 +450,7 @@ export default function DetailedMarketAnalysis() {
         } catch (err) {
           const axiosErr = err as AxiosError;
           if (axiosErr.response?.status === 404) {
-            setError('Brak zapisanej analizy – wygeneruj nową.');
+            setError('Brak zapisanej analizy - wygeneruj nową.');
           } else {
             setError('Nie udało się pobrać ostatniej analizy.');
           }
@@ -434,8 +467,16 @@ export default function DetailedMarketAnalysis() {
     try {
       const response = await api.get('/api/MarketAnalysis');
       setAnalysis(getAnalysisFromResponse(response.data));
-    } catch {
-      setError('Generowanie analizy nie powiodło się. Spróbuj ponownie.');
+    } catch (err) {
+      const axiosErr = err as AxiosError<{ detail?: string }>;
+      const detail = axiosErr.response?.data?.detail;
+      if (isMissingCareerPathsError(detail)) {
+        setError(
+          'Brak ścieżek kariery z asystenta AI. Wygeneruj rekomendacje na stronie głównej, aby móc stworzyć analizę rynku.'
+        );
+      } else {
+        setError(detail || 'Rozpocznij od wygenerowania ścieżek kariery.');
+      }
     } finally {
       setIsGenerating(false);
     }
@@ -484,12 +525,6 @@ export default function DetailedMarketAnalysis() {
           </div>
           )} */}
         </header>
-
-        {error && (
-          <div className="rounded-2xl border border-red-900/50 bg-red-950/40 p-4 text-sm text-red-100">
-            {error}
-          </div>
-        )}
 
         {(isLoading || isGenerating) && !analysis && (
           <div className="flex items-center justify-center gap-3 rounded-2xl border border-slate-800/70 bg-slate-900/60 p-6 text-slate-200">
@@ -578,24 +613,12 @@ export default function DetailedMarketAnalysis() {
             </div>
           </div>
         ) : (
-          <div className="flex flex-col items-center justify-center gap-3 rounded-2xl border border-slate-800/70 bg-slate-900/60 p-8 text-center">
+          <div className="flex flex-col items-center justify-center gap-3 rounded-2xl border p-8 text-center">
             <p className="text-lg font-medium text-white">Brak danych analitycznych</p>
             <p className="max-w-lg text-sm text-slate-400">
-              Pobierz ostatnią analizę lub wygeneruj nową, aby zobaczyć prognozy wynagrodzeń,
-              trudność wejścia i narrację AI.
+              Po wygenerowaniu rekomendacji ścieżek kariery, będziesz mógł wygenerować szczegółową
+              analizę rynku pracy dostosowaną do Twoich celów zawodowych.
             </p>
-            <button
-              onClick={generateFreshAnalysis}
-              className="mt-2 flex items-center gap-2 rounded-2xl bg-gradient-to-r from-cyan-500 via-indigo-500 to-purple-500 px-5 py-2 text-sm font-medium text-white shadow-lg shadow-indigo-900/40 transition hover:scale-[1.01]"
-              disabled={isGenerating}
-            >
-              {isGenerating ? (
-                <Loader2 className="h-4 w-4 animate-spin" />
-              ) : (
-                <Sparkles className="h-4 w-4" />
-              )}
-              Generuj nową analizę
-            </button>
           </div>
         )}
       </div>
