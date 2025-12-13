@@ -189,7 +189,7 @@ const WorkAttributesRadar = ({ attributes }: { attributes?: WorkAttributesDto })
     <RadarChart cx="50%" cy="50%" outerRadius="80%" data={getRadarData(attributes)}>
       <PolarGrid stroke="#1f2937" />
       <PolarAngleAxis dataKey="attribute" tick={{ fill: '#cbd5e1', fontSize: 11 }} />
-      <PolarRadiusAxis tick={{ fill: '#94a3b8', fontSize: 10 }} angle={30} domain={[0, 10]} />
+      <PolarRadiusAxis tick={{ fill: '#94a3b8', fontSize: 0 }} angle={30} domain={[0, 10]} opacity={0} />
       <Radar
         name="Dopasowanie"
         dataKey="score"
