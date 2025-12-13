@@ -11,7 +11,7 @@ import {
   WorkAttributesDto,
 } from '@/lib/types/marketAnalysis';
 import { api } from '@/lib/api';
-import { ArrowDown, ArrowRight, ArrowUp, Loader2, Sparkles } from 'lucide-react';
+import { ArrowDown, ArrowRight, ArrowUp, Loader2 } from 'lucide-react';
 import {
   Area,
   AreaChart,
