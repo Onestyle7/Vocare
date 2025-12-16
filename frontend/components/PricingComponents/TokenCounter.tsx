@@ -3,13 +3,8 @@ import { Plus } from 'lucide-react';
 import Link from 'next/link';
 
 export const TokenCounter = () => {
-  const {
-    tokenBalance,
-    subscriptionStatus, 
-    hasActiveSubscription, 
-    isLoading,
-    error,
-  } = useTokenBalanceContext();
+  const { tokenBalance, subscriptionStatus, hasActiveSubscription, isLoading, error } =
+    useTokenBalanceContext();
 
   const displayBalance = isLoading ? '...' : error ? '0' : String(tokenBalance ?? '0');
   const isSubscribed = !!hasActiveSubscription && !isLoading;

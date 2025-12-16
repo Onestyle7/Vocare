@@ -358,7 +358,7 @@ export default function AssistantPage() {
 
               <div className="p-4 max-md:border-t md:w-5/6 md:p-6">
                 <div className="flex flex-row items-center justify-between">
-                  <h2 className="font-poppins mb-1 text-xl">Best path</h2>
+                  <h2 className="font-grotesk mb-1 text-xl">Best path</h2>
                   <CollapsibleButton isCollapsed={isCollapsed} toggleCollapse={toggleCollapse} />
                 </div>
 
@@ -366,7 +366,7 @@ export default function AssistantPage() {
                   {recommendations.recommendation.primaryPath}
                 </h3>
 
-                <p className="font-poppins text-gray-400">
+                <p className="font-grotesk text-gray-400">
                   {recommendations.recommendation.justification}
                 </p>
 
@@ -380,14 +380,14 @@ export default function AssistantPage() {
                   }}
                 >
                   <div ref={contentRef} className="space-y-3">
-                    <h4 className="font-poppins mt-4 font-bold">Next steps:</h4>
+                    <h4 className="font-grotesk mt-4 font-bold">Next steps:</h4>
                     <div className="ibm-plex-mono-regular mt-4 rounded-xl border p-2">
                       <Timeline items={timelineItems} maxDescriptionLength={80} className="mx-0" />
                     </div>
 
                     <div className="mt-4 rounded-xl p-2">
-                      <h4 className="font-poppins font-bold">Long-term goal:</h4>
-                      <p className="font-poppins mt-1 text-gray-400">
+                      <h4 className="font-grotesk font-bold">Long-term goal:</h4>
+                      <p className="font-grotesk mt-1 text-gray-400">
                         {recommendations.recommendation.longTermGoal}
                       </p>
                     </div>
@@ -429,7 +429,7 @@ export default function AssistantPage() {
           </div>
 
           <AlertDialog open={isConfirmDialogOpen} onOpenChange={setIsConfirmDialogOpen}>
-            <AlertDialogContent className="font-poppins font-korbin mx-auto max-w-sm">
+            <AlertDialogContent className="font-grotesk font-korbin mx-auto max-w-sm">
               <AlertDialogHeader>
                 <AlertDialogTitle className="text-center text-xl font-bold">
                   Generate new recommendation?

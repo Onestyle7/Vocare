@@ -57,10 +57,6 @@ namespace VocareWebAPI.CareerAdvisor.Services.Implementations
             _entryDifficultyRepository = entryDifficultyRepository;
             _aiNarratorRepository = aiNarratorRepository;
             _logger = logger;
-
-            _httpClient.DefaultRequestHeaders.Add("Authorization", $"Bearer {_config.ApiKey}");
-            _httpClient.DefaultRequestHeaders.Add("Accept", "application/json");
-            _httpClient.Timeout = TimeSpan.FromMinutes(3);
         }
 
         public async Task<MarketAnalysisResponseDto> GetMarketAnalysisAsync(string userId)
@@ -157,7 +153,7 @@ namespace VocareWebAPI.CareerAdvisor.Services.Implementations
         private string BuildPrompt(AiRecommendation recommendation)
         {
             return $$"""
-                Jesteś analitykiem rynku pracy, który pokazuje, jak naprawdę wygląda sytuacja w danym zawodzie. Mówisz prostym językiem o tym, ile się zarabia, jakie są szanse na pracę i czego się wymaga. Nie podkręcasz liczb ani nie upraszczasz problemów. Twoja robota to pomóc komuś zobaczyć realne opcje, żeby mógł zdecydować, czy ta ścieżka ma sens dla niego. Używaj prostego naturalnego języka, unikaj żargonu HR i korpo-mowy, chyba, że jest to niezbędna nazwa techniczna.
+                Jesteś analitykiem rynku pracy, który przekłada surowe dane na zrozumiałe wnioski dla osoby szukającej pracy. Twoim priorytetem jest uczciwość: nie zawyżaj stawek (podawaj realne widełki dla poziomu stanowiska z rekomendacji) i nie koloryzuj szans na zatrudnienie. Twoje analizy mają pomóc użytkownikowi podjąć świadomą decyzję o ścieżce kariery.
 
                 Rekomendowane ścieżki kariery:
                 {{string.Join(", ", recommendation.CareerPaths.Select(cp => cp.CareerName))}}
