@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { AxiosError } from 'axios';
 import {
   IndustryStatisticsDto,
@@ -31,6 +31,9 @@ import { cn } from '@/lib/utils';
 import { Button } from '../ui/button';
 import { Separator } from '../ui/separator';
 import Image from 'next/image';
+// Use pro build for support of modern color spaces (e.g. oklch in Tailwind tokens)
+import html2canvas from 'html2canvas-pro';
+import jsPDF from 'jspdf';
 import {
   market_motywacja,
   market_rekomendacja,
@@ -56,6 +59,11 @@ const isValidNumber = (value?: number | null) =>
 const formatCurrency = (value?: number | null) => {
   if (!isValidNumber(value)) return '—';
   return `${numberFormatter.format(value as number)} PLN`;
+};
+
+const formatPercent = (value?: number | null) => {
+  if (!isValidNumber(value)) return '—';
+  return `${Math.round(value as number)}%`;
 };
 
 const isMissingCareerPathsError = (message?: string) => {
@@ -413,7 +421,27 @@ export default function DetailedMarketAnalysis() {
   const [analysis, setAnalysis] = useState<MarketAnalysisDetailsDto | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [isGenerating, setIsGenerating] = useState(false);
+  const [isDownloading, setIsDownloading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const reportRef = useRef<HTMLDivElement>(null);
+  const pdfReportRef = useRef<HTMLDivElement>(null);
+
+  const maxSalaryValue = useMemo(() => {
+    if (!analysis?.industryStatistics?.length) return 0;
+    let max = 0;
+    analysis.industryStatistics.forEach((industry) => {
+      industry.salaryProgression?.forEach((step) => {
+        [step.minSalary, step.averageSalary, step.maxSalary].forEach((value) => {
+          if (isValidNumber(value)) {
+            max = Math.max(max, value as number);
+          }
+        });
+      });
+    });
+    return max;
+  }, [analysis]);
+
+  const generationDate = useMemo(() => new Date().toLocaleDateString('pl-PL'), []);
 
   useEffect(() => {
     if (!error) return;
@@ -482,13 +510,64 @@ export default function DetailedMarketAnalysis() {
     }
   };
 
+  const downloadPdf = async () => {
+    if (!pdfReportRef.current || !analysis) return;
+
+    setIsDownloading(true);
+    try {
+      const pdf = new jsPDF('p', 'mm', 'a4');
+      const pageWidth = pdf.internal.pageSize.getWidth();
+      const pageHeight = pdf.internal.pageSize.getHeight();
+      const margin = 12; // mm
+      const sectionGap = 4; // mm
+      const usableWidth = pageWidth - margin * 2;
+      const usableHeight = pageHeight - margin * 2;
+
+      const sections = Array.from(pdfReportRef.current.children) as HTMLElement[];
+      let cursorY = margin;
+
+      for (const section of sections) {
+        const canvas = await html2canvas(section, {
+          scale: 1.9, // lower scale to shrink output size
+          useCORS: true,
+          backgroundColor: '#ffffff',
+        });
+
+        const imgData = canvas.toDataURL('image/jpeg', 0.82);
+        const imgWidthPx = canvas.width;
+        const imgHeightPx = canvas.height;
+
+        const ratio = Math.min(usableWidth / imgWidthPx, usableHeight / imgHeightPx);
+        const renderWidth = imgWidthPx * ratio;
+        const renderHeight = imgHeightPx * ratio;
+
+        if (cursorY + renderHeight > pageHeight - margin) {
+          pdf.addPage();
+          cursorY = margin;
+        }
+
+        pdf.addImage(imgData, 'JPEG', margin, cursorY, renderWidth, renderHeight, undefined, 'FAST');
+        cursorY += renderHeight + sectionGap;
+      }
+
+      pdf.save('vocare-market-analysis.pdf');
+      toast.success('Raport zapisany jako PDF');
+    } catch (err) {
+      const message =
+        err instanceof Error ? err.message : 'Nie udało się wygenerować raportu PDF.';
+      toast.error('Błąd PDF', { description: message });
+    } finally {
+      setIsDownloading(false);
+    }
+  };
+
   useEffect(() => {
     fetchLatest();
   }, [fetchLatest]);
 
   return (
-    <div className="font-grotesk min-h-screen px-4 py-10 text-slate-100">
-      <div className="mx-auto flex max-w-6xl flex-col gap-8">
+    <div className="font-grotesk relative min-h-screen px-4 py-10 text-slate-100">
+      <div ref={reportRef} className="mx-auto flex max-w-6xl flex-col gap-8">
         <header className="rounded-3xl border border-b-5 p-8 shadow-2xl shadow-slate-950/40">
           <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
             <div className="w-full md:w-2/3">
@@ -503,10 +582,10 @@ export default function DetailedMarketAnalysis() {
                 najnowszej analizy.
               </p>
             </div>
-            <div className="flex w-full items-center justify-center gap-3 md:w-1/3">
+            <div className="flex w-full items-center justify-center gap-3 md:w-1/3 md:flex-col">
               <Button
                 onClick={generateFreshAnalysis}
-                className="group relative z-20 mt-4 h-12 w-full rounded-[7px] bg-[#F3F3F3] font-bold text-[#191A23] md:mt-2 md:w-2/3 hover:-translate-y-2 hover:border-b-3 border-b-[#F3F3F3] border-r-[#F3F3F3] hover:border-r-3"
+                className="group relative z-20 mt-4 h-12 w-full rounded-[7px] bg-[#F3F3F3] font-bold text-[#191A23] md:mt-2 md:w-full hover:-translate-y-2 hover:border-b-3 border-b-[#F3F3F3] border-r-[#F3F3F3] hover:border-r-3"
                 variant="default"
                 disabled={isGenerating || isLoading}
               >
@@ -515,6 +594,21 @@ export default function DetailedMarketAnalysis() {
                   <Loader2 className="h-4 w-4 animate-spin" />
                 ) : (
                   <ArrowRight className="h-4 w-4 transition-all ease-in-out group-hover:translate-x-2" />
+                )}
+              </Button>
+              <Button
+                onClick={downloadPdf}
+                className="group relative z-20 h-12 w-full rounded-[7px] border border-slate-800 bg-transparent text-slate-100 md:w-full hover:border-slate-600"
+                variant="outline"
+                disabled={!analysis || isDownloading || isGenerating || isLoading}
+              >
+                {isDownloading ? (
+                  <>
+                    <Loader2 className="h-4 w-4 animate-spin" />
+                    <span className="ml-2">Tworzenie PDF...</span>
+                  </>
+                ) : (
+                  'Pobierz raport PDF'
                 )}
               </Button>
             </div>
@@ -622,6 +716,245 @@ export default function DetailedMarketAnalysis() {
           </div>
         )}
       </div>
+      {analysis && (
+        <div
+          ref={pdfReportRef}
+          aria-hidden
+          className="pointer-events-none absolute left-[-200vw] top-0 w-[794px] bg-white p-8 text-black"
+        >
+          <div className="border-b border-gray-200 pb-4">
+            <p className="text-[10px] uppercase tracking-[0.2em] text-gray-500">Vocare / Market Analysis</p>
+            <div className="mt-1 flex items-baseline justify-between">
+              <h1 className="text-2xl font-semibold text-gray-900">Raport PDF - analiza rynku pracy</h1>
+              <div className="text-right text-xs text-gray-600">
+                <p>Data: {generationDate}</p>
+                <p>Tryb: PDF (b/w)</p>
+              </div>
+            </div>
+            <p className="mt-2 max-w-3xl text-sm leading-relaxed text-gray-700">
+              Streszczenie wyników analizy: wynagrodzenia, popyt na umiejętności, atrybuty pracy oraz szacowana trudność wejścia na rynek.
+            </p>
+          </div>
+
+          <div className="mt-4 grid grid-cols-3 gap-3 text-sm text-gray-800">
+            <div className="rounded border border-gray-200 bg-gray-50 p-3">
+              <p className="text-[10px] uppercase text-gray-500">Branże</p>
+              <p className="text-lg font-semibold text-gray-900">
+                {analysis.industryStatistics?.length ?? 0}
+              </p>
+            </div>
+            <div className="rounded border border-gray-200 bg-gray-50 p-3">
+              <p className="text-[10px] uppercase text-gray-500">Trendy</p>
+              <p className="text-lg font-semibold text-gray-900">
+                {analysis.marketTrends?.length ?? 0}
+              </p>
+            </div>
+            <div className="rounded border border-gray-200 bg-gray-50 p-3">
+              <p className="text-[10px] uppercase text-gray-500">Umiejętności w popycie</p>
+              <p className="text-lg font-semibold text-gray-900">
+                {analysis.skillDemand?.length ?? 0}
+              </p>
+            </div>
+          </div>
+
+          {analysis.marketTrends?.length ? (
+            <div className="mt-6">
+              <p className="text-[11px] font-semibold uppercase tracking-wide text-gray-600">
+                Trendy rynkowe
+              </p>
+              <div className="mt-2 space-y-2">
+                {analysis.marketTrends.map((trend) => (
+                  <div
+                    key={trend.trendName}
+                    className="rounded border border-gray-200 bg-gray-50 p-3"
+                  >
+                    <div className="flex items-baseline justify-between text-sm text-gray-900">
+                      <span className="font-semibold">{trend.trendName}</span>
+                      <span className="text-[11px] uppercase tracking-wide text-gray-500">
+                        {trend.impact || 'Wpływ nieokreślony'}
+                      </span>
+                    </div>
+                    <p className="mt-1 text-xs leading-relaxed text-gray-700">
+                      {trend.description}
+                    </p>
+                  </div>
+                ))}
+              </div>
+            </div>
+          ) : null}
+
+          {analysis.industryStatistics?.map((industry) => {
+            const relatedSkills =
+              analysis.skillDemand?.filter((skill) => skill.industry === industry.industry) ?? [];
+
+            const salaryBars = industry.salaryProgression ?? [];
+
+            return (
+              <section
+                key={industry.industry}
+                className="mt-6 rounded-md border border-gray-200 p-4"
+              >
+                <div className="flex items-baseline justify-between border-b border-gray-200 pb-2">
+                  <div>
+                    <p className="text-[10px] uppercase tracking-wide text-gray-500">Branża</p>
+                    <h2 className="text-lg font-semibold text-gray-900">{industry.industry}</h2>
+                  </div>
+                  <div className="text-right text-xs text-gray-600">
+                    <p>Prognoza: {industry.growthForecast || '—'}</p>
+                    <p>Poziom wejścia: {industry.entryDifficulty?.difficultyLevel || '—'}</p>
+                  </div>
+                </div>
+
+                <div className="mt-3 grid grid-cols-2 gap-3 text-xs text-gray-800">
+                  <div className="rounded border border-gray-200 p-2">
+                    <p className="text-[10px] uppercase text-gray-500">Zakres wynagrodzeń</p>
+                    <p className="text-sm font-semibold text-gray-900">
+                      {formatCurrency(industry.minSalary)} - {formatCurrency(industry.maxSalary)}
+                    </p>
+                  </div>
+                  <div className="rounded border border-gray-200 p-2">
+                    <p className="text-[10px] uppercase text-gray-500">Zatrudnienie</p>
+                    <p className="text-sm font-semibold text-gray-900">
+                      {formatPercent(industry.employmentRate)}
+                    </p>
+                  </div>
+                  <div className="rounded border border-gray-200 p-2">
+                    <p className="text-[10px] uppercase text-gray-500">Brakujące umiejętności</p>
+                    <p className="text-sm font-semibold text-gray-900">
+                      {industry.entryDifficulty?.missingSkillsCount ?? 0}
+                    </p>
+                  </div>
+                  <div className="rounded border border-gray-200 p-2">
+                    <p className="text-[10px] uppercase text-gray-500">Czas do gotowości</p>
+                    <p className="text-sm font-semibold text-gray-900">
+                      {industry.entryDifficulty?.estimatedTimeToReady || '—'}
+                    </p>
+                  </div>
+                </div>
+
+                {salaryBars.length ? (
+                  <div className="mt-4">
+                    <p className="text-[11px] font-semibold uppercase tracking-wide text-gray-600">
+                      Progresja wynagrodzeń (średnia)
+                    </p>
+                    <div className="mt-2 space-y-2">
+                      {salaryBars.map((row, idx) => {
+                        const average =
+                          (isValidNumber(row.averageSalary) && (row.averageSalary as number)) ||
+                          (isValidNumber(row.maxSalary) && (row.maxSalary as number)) ||
+                          (isValidNumber(row.minSalary) && (row.minSalary as number)) ||
+                          0;
+                        const barWidth = maxSalaryValue
+                          ? Math.min(Math.round((average / maxSalaryValue) * 100), 100)
+                          : 0;
+                        return (
+                          <div
+                            key={`${row.careerLevel || row.yearsOfExperience || 'level'}-${idx}`}
+                            className="flex items-center gap-2"
+                          >
+                            <span className="w-28 text-[11px] text-gray-600">
+                              {row.careerLevel || row.yearsOfExperience || 'Poziom'}
+                            </span>
+                            <div className="relative h-3 flex-1 rounded bg-gray-100">
+                              <div
+                                className="h-3 rounded bg-gray-800"
+                                style={{ width: `${barWidth}%` }}
+                              />
+                            </div>
+                            <span className="w-24 text-right text-[11px] text-gray-700">
+                              {formatCurrency(average)}
+                            </span>
+                          </div>
+                        );
+                      })}
+                    </div>
+                  </div>
+                ) : null}
+
+                {industry.workAttributes ? (
+                  <div className="mt-4">
+                    <p className="text-[11px] font-semibold uppercase tracking-wide text-gray-600">
+                      Atrybuty pracy (0-10)
+                    </p>
+                    <div className="mt-2 grid grid-cols-2 gap-x-4 gap-y-2">
+                      {Object.entries(workAttributeLabels).map(([key, label]) => {
+                        const value =
+                          industry.workAttributes?.[key as keyof WorkAttributesDto] ?? 0;
+                        const width = Math.min(Math.max(value, 0), 10) * 10;
+                        return (
+                          <div key={key} className="flex items-center gap-2">
+                            <span className="w-28 text-[11px] text-gray-600">{label}</span>
+                            <div className="relative h-2 flex-1 rounded bg-gray-100">
+                              <div
+                                className="h-2 rounded bg-gray-800"
+                                style={{ width: `${width}%` }}
+                              />
+                            </div>
+                            <span className="w-10 text-right text-[11px] text-gray-700">
+                              {isValidNumber(value) ? value : 0}/10
+                            </span>
+                          </div>
+                        );
+                      })}
+                    </div>
+                  </div>
+                ) : null}
+
+                {industry.entryDifficulty?.explanation ? (
+                  <div className="mt-4 rounded border border-gray-200 bg-gray-50 p-3">
+                    <p className="text-[10px] uppercase text-gray-500">Wyjaśnienie trudności</p>
+                    <p className="mt-1 text-xs leading-relaxed text-gray-700">
+                      {industry.entryDifficulty.explanation}
+                    </p>
+                  </div>
+                ) : null}
+
+                {relatedSkills.length ? (
+                  <div className="mt-4">
+                    <p className="text-[11px] font-semibold uppercase tracking-wide text-gray-600">
+                      Kluczowe umiejętności ({Math.min(relatedSkills.length, 6)} z {relatedSkills.length})
+                    </p>
+                    <div className="mt-2 grid grid-cols-2 gap-2 text-xs text-gray-800">
+                      {relatedSkills.slice(0, 6).map((skill) => (
+                        <div
+                          key={`${skill.skill}-${skill.demandLevel}`}
+                          className="flex items-center justify-between rounded border border-gray-200 bg-gray-50 px-2 py-1"
+                        >
+                          <span className="font-medium text-gray-900">{skill.skill}</span>
+                          <span className="text-[11px] uppercase tracking-wide text-gray-600">
+                            {skill.demandLevel}
+                          </span>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                ) : null}
+
+                {industry.aiNarrator ? (
+                  <div className="mt-4 grid grid-cols-2 gap-2 text-xs text-gray-800">
+                    {[
+                      { title: 'Wynagrodzenia', text: industry.aiNarrator.salaryInsight },
+                      { title: 'Styl pracy', text: industry.aiNarrator.workStyleInsight },
+                      { title: 'Wejście', text: industry.aiNarrator.entryAdvice },
+                      { title: 'Motywacja', text: industry.aiNarrator.motivationalMessage },
+                      { title: 'Rekomendacja', text: industry.aiNarrator.personalizedRecommendation },
+                    ]
+                      .filter((item) => item.text)
+                      .map((item) => (
+                        <div key={item.title} className="rounded border border-gray-200 bg-gray-50 p-3">
+                          <p className="text-[10px] uppercase text-gray-500">{item.title}</p>
+                          <p className="mt-1 text-[12px] leading-relaxed text-gray-800">
+                            {item.text}
+                          </p>
+                        </div>
+                      ))}
+                  </div>
+                ) : null}
+              </section>
+            );
+          })}
+        </div>
+      )}
     </div>
   );
 }
