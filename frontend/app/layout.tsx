@@ -4,6 +4,7 @@ import './globals.css';
 import { ThemeProvider } from '@/components/ui/theme-provider';
 import { Toaster } from '@/components/ui/sonner';
 import { TokenBalanceProvider } from '@/lib/contexts/TokenBalanceContext';
+import { LanguageProvider } from '@/lib/contexts/LanguageContext';
 // import SmoothScrollProvider from '@/components/SupportComponents/SmoothScrollProvider';
 
 const sizmoPro = localFont({
@@ -86,16 +87,18 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" suppressHydrationWarning className="">
+    <html lang="pl" suppressHydrationWarning className="">
       <body
         className={`${sizmoPro.className} ${spaceGrotesk.variable} h-full antialiased selection:bg-[#915EFF]`}
       >
-        <TokenBalanceProvider>
-          <ThemeProvider attribute="class" defaultTheme="dark">
-            {children}
-            <Toaster />
-          </ThemeProvider>
-        </TokenBalanceProvider>
+        <LanguageProvider>
+          <TokenBalanceProvider>
+            <ThemeProvider attribute="class" defaultTheme="dark">
+              {children}
+              <Toaster />
+            </ThemeProvider>
+          </TokenBalanceProvider>
+        </LanguageProvider>
       </body>
     </html>
   );

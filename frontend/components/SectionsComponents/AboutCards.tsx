@@ -5,14 +5,18 @@ import { gsap } from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import AboutCard from '@/components/GhostComponents/AboutCard';
 import Section from '@/components/SupportComponents/Section';
-import { aboutCardsData, shape1 } from '@/app/constants';
+import { shape1 } from '@/app/constants';
 import { ScrollParallax } from 'react-just-parallax';
 import Image from 'next/image';
+import { useLanguage } from '@/lib/contexts/LanguageContext';
+import { landingCopy } from '@/app/constants/landingCopy';
 
 gsap.registerPlugin(ScrollTrigger);
 
 const AboutCards = () => {
   const containerRef = useRef<HTMLDivElement | null>(null);
+  const { language } = useLanguage();
+  const copy = landingCopy[language];
 
   useEffect(() => {
     if (!window.matchMedia('(min-width: 1280px)').matches) return;
@@ -71,7 +75,7 @@ const AboutCards = () => {
 
       <div ref={containerRef} className="main-font-color relative flex max-md:-top-10 lg:w-full">
         <div className="mx-8 flex w-full flex-col items-center justify-center max-lg:space-y-4 lg:flex-row lg:space-x-4">
-          {aboutCardsData.map((cardData, index) => (
+          {copy.aboutCards.map((cardData, index) => (
             <div className="about-card font-poppins z-30" key={index}>
               <AboutCard
                 img={cardData.img}
