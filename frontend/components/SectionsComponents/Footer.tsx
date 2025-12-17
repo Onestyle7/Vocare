@@ -7,9 +7,13 @@ import { Input } from '@/components/ui/input';
 import Section from '../SupportComponents/Section';
 import ButtonGenerate from '../ui/ButtonGenerate';
 import { toast } from 'sonner';
+import { useLanguage } from '@/lib/contexts/LanguageContext';
+import { landingCopy } from '@/app/constants/landingCopy';
 
 const Footer = () => {
   const reachUsEmail = 'vocare@testmail.com';
+  const { language } = useLanguage();
+  const copy = landingCopy[language];
 
   const handleReachUsClick = React.useCallback(() => {
     void navigator.clipboard
@@ -39,25 +43,28 @@ const Footer = () => {
               href="/profile"
               className="mb-4 uppercase max-md:w-full sm:my-20"
             >
-              Try Vocare
+              {copy.footer.primaryCta}
             </ButtonGenerate>
           </div>
         </div>
         <div className="flex w-full flex-col p-4 xl:flex-row">
           <div className="font-poppins flex flex-col items-start justify-start text-4xl max-md:mb-20 xl:w-1/2">
-            Never miss what&apos;s next
+            {copy.footer.newsletterTitle}
             <div className="mt-10 xl:w-1/2">
-              <Input type="email" placeholder="Your email" className="border-b outline-none" />
+              <Input
+                type="email"
+                placeholder={copy.footer.newsletterPlaceholder}
+                className="border-b outline-none"
+              />
             </div>
             <div className="mt-4 flex text-xs text-gray-400/90 xl:w-1/2">
-              By submitting your email, you’ll be the first to know about upcoming updates for
-              Vocare. You can unsubscribe at any time.
+              {copy.footer.newsletterCopy}
             </div>
           </div>
           <div className="flex w-full flex-row items-start justify-center xl:w-1/2">
             <div className="flex w-1/3 flex-col items-center justify-center">
               <div>
-                <span className="mb-2 text-sm text-gray-400/90">SOCIAL</span>
+                <span className="mb-2 text-sm text-gray-400/90">{copy.footer.socialLabel}</span>
                 <div className="items-left mt-4 flex flex-col justify-center">
                   {links_social.map((link, index) => (
                     <ul className="flex text-sm" key={index}>
@@ -73,7 +80,7 @@ const Footer = () => {
             </div>
             <div className="flex w-1/3 flex-col items-center justify-center">
               <div>
-                <span className="mb-2 text-sm text-gray-400/90">PAGES</span>
+                <span className="mb-2 text-sm text-gray-400/90">{copy.footer.pagesLabel}</span>
                 <div className="items-left mt-4 flex flex-col justify-center">
                   {links_pages.map((link, index) => (
                     <ul className="flex text-sm" key={index}>
@@ -87,7 +94,7 @@ const Footer = () => {
             </div>
             <div className="flex w-1/3 flex-col items-center justify-center">
               <div>
-                <span className="mb-2 text-sm text-gray-400/90">CONTACT</span>
+                <span className="mb-2 text-sm text-gray-400/90">{copy.footer.contactLabel}</span>
                 <div className="items-left mt-4 flex flex-col justify-center">
                   {contact_pages.map((link, index) => (
                     <ul className="flex text-sm" key={index}>
@@ -98,7 +105,7 @@ const Footer = () => {
                             onClick={handleReachUsClick}
                             className="cursor-pointer text-left text-current"
                           >
-                            {link.name}
+                            {copy.footer.reachUs}
                           </button>
                         ) : (
                           <Link href={link.url}>{link.name}</Link>
@@ -126,7 +133,7 @@ const Footer = () => {
             </div>
 
             <div className="text-center text-4xl font-semibold sm:text-6xl xl:text-left xl:text-[80px] dark:text-[#F3F3F3]">
-              Find Your Path
+              {copy.footer.bottomTagline}
             </div>
           </div>
         </div>

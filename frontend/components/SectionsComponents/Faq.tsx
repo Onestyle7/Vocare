@@ -4,11 +4,15 @@ import React, { useEffect, useRef } from 'react';
 import { gsap } from 'gsap';
 import { SplitText } from 'gsap/all';
 import Section from '../SupportComponents/Section';
+import { useLanguage } from '@/lib/contexts/LanguageContext';
+import { landingCopy } from '@/app/constants/landingCopy';
 
 gsap.registerPlugin(SplitText);
 
 const Faq: React.FC = () => {
   const textRef = useRef<HTMLDivElement>(null);
+  const { language } = useLanguage();
+  const copy = landingCopy[language];
 
   useEffect(() => {
     if (textRef.current) {
@@ -64,7 +68,7 @@ const Faq: React.FC = () => {
             ref={textRef}
             className="font-korbin flex w-full items-center justify-center text-3xl text-[#F3F3F3] xl:text-[180px] dark:text-[#101014]"
           >
-            Ready to change your life?
+            {copy.faq.marquee}
           </div>
         </div>
       </section>
