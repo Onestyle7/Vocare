@@ -232,7 +232,7 @@ const IndustryCard = ({
     <div className="flex flex-col gap-4 md:flex-row md:items-start md:justify-between">
       <div>
         <p className="w-fit rounded-[3px] px-1 text-sm text-[#ecedf0]">Ścieżka kariery</p>
-        <h3 className="mt-2 text-2xl font-semibold text-[#191A23]">
+        <h3 className="mt-2 sm:text-2xl text-lg font-semibold text-[#191A23]">
                 <span className="inline rounded-[7px] bg-[#F3F3F3] [box-decoration-break:clone] px-2 [-webkit-box-decoration-break:clone]">
                   {industry.industry}
                 </span>
@@ -566,7 +566,7 @@ export default function DetailedMarketAnalysis() {
   }, [fetchLatest]);
 
   return (
-    <div className="font-grotesk relative min-h-screen px-4 py-10 text-slate-100">
+    <div className="font-grotesk relative min-h-screen px-4 py-10 text-slate-100 mx-auto">
       <div ref={reportRef} className="mx-auto flex max-w-6xl flex-col gap-8">
         <header className="rounded-3xl border border-b-5 p-8 shadow-2xl shadow-slate-950/40">
           <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
@@ -582,7 +582,7 @@ export default function DetailedMarketAnalysis() {
                 najnowszej analizy.
               </p>
             </div>
-            <div className="flex w-full items-center justify-center gap-3 md:w-1/3 md:flex-col">
+            <div className="flex w-full items-center justify-center gap-3 md:w-1/3 flex-col">
               <Button
                 onClick={generateFreshAnalysis}
                 className="group relative z-20 mt-4 h-12 w-full rounded-[7px] bg-[#F3F3F3] font-bold text-[#191A23] md:mt-2 md:w-full hover:-translate-y-2 hover:border-b-3 border-b-[#F3F3F3] border-r-[#F3F3F3] hover:border-r-3"
