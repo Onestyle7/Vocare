@@ -321,8 +321,8 @@ export const contact_pages = [{ name: 'REACH US', url: '/' }];
 
 export const down_links = [
   { name: '2025©', url: '/' },
-  { name: 'PERMISSIONS AND TERMS', url: '/' },
-  { name: 'PRIVACY POLICY', url: '/' },
+  { name: 'PERMISSIONS AND TERMS', url: 'terms-of-service' },
+  { name: 'PRIVACY POLICY', url: 'privacy-policy' },
 ];
 
 export const letterImg = '/images/as1.png';
@@ -453,3 +453,223 @@ export const market_wejscie = '/svg/market_wejscie.svg';
 export const market_styl_pracy = '/svg/market_styl_pracy.svg';
 export const market_rekomendacja = '/svg/market_rekomendacje.svg';
 export const market_wynagrodzenie = '/svg/market_wynagrodzenie.svg';
+
+// REGULAMIN
+
+export const postanowienia_ogolne = {
+  title: 'Postanowienia ogólne',
+  points: [
+    'Niniejszy Regulamin określa zasady korzystania z aplikacji Vocare (dalej: „Aplikacja” lub „Vocare”) dostępnej pod adresem vocare.pl, która służy jako AI doradca zawodowy dla użytkowników. Regulamin stanowi regulamin świadczenia usług drogą elektroniczną w rozumieniu art. 8 ustawy z dnia 18 lipca 2002 r. o świadczeniu usług drogą elektroniczną.',
+    'Usługodawcą (operatorem Aplikacji) jest [TU WPISAĆ DANE], w szczególności nazwę firmy, adres siedziby, NIP/KRS/REGON oraz adres e-mail do kontaktu.',
+    'Użytkownikiem Aplikacji może być wyłącznie osoba fizyczna. Vocare nie jest przeznaczone dla firm ani podmiotów prowadzących działalność gospodarczą.',
+    'Aplikacja nie wprowadza ograniczeń wiekowych. Z Vocare mogą korzystać osoby w każdym wieku.',
+    'Korzystanie z Aplikacji oznacza akceptację niniejszego Regulaminu. W przypadku braku akceptacji któregokolwiek z postanowień Regulaminu, Użytkownik nie powinien korzystać z Aplikacji.',
+    'Aplikacja działa w modelu webowym (front-end: Next.js i TypeScript, back-end: C#/.NET, baza danych PostgreSQL) i jest hostowana na infrastrukturze Railway oraz Vercel.',
+    'Usługodawca zastrzega sobie prawo do czasowych przerw technicznych związanych z rozwojem, konserwacją lub aktualizacją Aplikacji.'
+  ]
+}
+
+export const definicje = {
+  title: 'Definicje',
+  points: [
+    'Aplikacja (Vocare) – serwis internetowy dostępny pod adresem vocare.pl, stanowiący AI doradcę zawodowego.',
+    'Usługodawca – podmiot prowadzący i administrujący Aplikacją Vocare.',
+    'Użytkownik – osoba fizyczna korzystająca z Aplikacji.',
+    'Konto – indywidualne konto Użytkownika umożliwiające korzystanie z funkcji Aplikacji.',
+    'Profil Użytkownika – zbiór danych wprowadzonych przez Użytkownika, obejmujący m.in. dane osobowe, wykształcenie, doświadczenie zawodowe, umiejętności, informacje finansowe i preferencje zawodowe.',
+    'Usługi – funkcjonalności oferowane przez Vocare, w szczególności doradztwo zawodowe AI, analiza rynku pracy oraz kreator CV.',
+    'Tokeny – wirtualne jednostki rozliczeniowe umożliwiające korzystanie z określonych funkcji Aplikacji.',
+    'Plan Personal – jednorazowy zakup tokenów.',
+    'Plan Growth – miesięczna subskrypcja odnawialna automatycznie.',
+    'Plan Individual – indywidualny pakiet doradczy premium.'
+  ]
+}
+
+export const zakres_uslug = {
+  title: 'Zakres i warunki korzystania z usług',
+  points: [
+    'Vocare świadczy usługi doradztwa zawodowego opartego o sztuczną inteligencję.',
+    'Na podstawie danych zawartych w Profilu Użytkownika Aplikacja generuje trzy propozycje ścieżek kariery.',
+    'Dla wygenerowanych ścieżek kariery Aplikacja udostępnia szczegółową analizę rynku pracy.',
+    'Aplikacja oferuje kreator CV umożliwiający tworzenie dokumentów aplikacyjnych.',
+    'Wszystkie rekomendacje generowane są automatycznie przez algorytmy AI.',
+    'Użytkownik zobowiązuje się do podawania danych prawdziwych, aktualnych i kompletnych.',
+    'Usługodawca nie ponosi odpowiedzialności za skutki podania nieprawdziwych danych.'
+  ]
+}
+
+export const platnosci = {
+  title: 'Warunki płatności',
+  points: [
+    'Korzystanie z Aplikacji jest odpłatne zgodnie z aktualnym cennikiem dostępnym na stronie vocare.pl.',
+    'Vocare nie oferuje darmowych okresów próbnych.',
+    'Po dokonaniu zakupu nie przysługuje zwrot środków.',
+    'Subskrypcje odnawiają się automatycznie do momentu ich anulowania przez Użytkownika.',
+    'Anulowanie subskrypcji nie powoduje zwrotu opłaty za bieżący okres rozliczeniowy.',
+    'Tokeny oraz subskrypcje nie podlegają wymianie na środki pieniężne.'
+  ]
+}
+
+export const odpowiedzialnosc = {
+  title: 'Odpowiedzialność i zastrzeżenia',
+  points: [
+    'Rekomendacje generowane przez Vocare mają charakter informacyjny i pomocniczy.',
+    'Vocare nie gwarantuje osiągnięcia przez Użytkownika konkretnych rezultatów zawodowych lub finansowych.',
+    'Usługodawca nie ponosi odpowiedzialności za decyzje podjęte przez Użytkownika na podstawie rekomendacji.',
+    'Aplikacja wykorzystuje sztuczną inteligencję, która może generować niepełne, uproszczone lub nieaktualne informacje.',
+    'Użytkownik korzysta z Aplikacji na własne ryzyko.'
+  ]
+}
+
+export const reklamacje = {
+  title: 'Reklamacje',
+  points: [
+    'Użytkownik ma prawo składać reklamacje dotyczące działania Aplikacji.',
+    'Reklamacje należy zgłaszać drogą elektroniczną na adres e-mail Usługodawcy.',
+    'Reklamacje rozpatrywane są w terminie do 14 dni.',
+    'Odpowiedź na reklamację przesyłana jest na adres e-mail Użytkownika.'
+  ]
+}
+
+export const wlasnosc_intelektualna = {
+  title: 'Prawa własności intelektualnej',
+  points: [
+    'Aplikacja Vocare oraz jej elementy są chronione prawem autorskim.',
+    'Użytkownik otrzymuje niewyłączną licencję na korzystanie z Aplikacji do użytku osobistego.',
+    'Zabronione jest kopiowanie, modyfikowanie lub dekompilowanie Aplikacji.',
+    'Dane wprowadzone przez Użytkownika pozostają jego własnością.'
+  ]
+}
+
+export const prywatnosc = {
+  title: 'Ochrona danych osobowych',
+  points: [
+    'Dane osobowe Użytkowników przetwarzane są zgodnie z RODO.',
+    'Szczegółowe zasady przetwarzania danych określa odrębna Polityka Prywatności.',
+    'Polityka Prywatności stanowi osobny dokument dostępny na stronie vocare.pl.'
+  ]
+}
+
+export const postanowienia_koncowe = {
+  title: 'Postanowienia końcowe',
+  points: [
+    'Regulamin podlega prawu polskiemu.',
+    'Usługodawca zastrzega sobie prawo do zmiany Regulaminu.',
+    'Zmiany Regulaminu wchodzą w życie po poinformowaniu Użytkowników.',
+    'W sprawach nieuregulowanych Regulaminem zastosowanie mają przepisy prawa polskiego.'
+  ]
+}
+
+export const privacy_policy = {
+  title: 'Polityka Prywatności',
+  sections: [
+    {
+      title: '1. Informacje ogólne',
+      points: [
+        'Niniejsza Polityka Prywatności opisuje zasady przetwarzania danych osobowych użytkowników serwisu vocare.pl oraz aplikacji Vocare (dalej: „Aplikacja”).',
+        'Administratorem danych osobowych jest: [TU WPISAĆ DANE: pełna nazwa podmiotu, adres, NIP/KRS] („Administrator”).',
+        'Kontakt w sprawach danych osobowych: [TU WPISAĆ: e-mail].',
+        'Aplikacja jest hostowana na infrastrukturze dostawców chmurowych, w tym Vercel (front-end) oraz Railway (backend i baza danych).'
+      ]
+    },
+    {
+      title: '2. Jakie dane przetwarzamy',
+      points: [
+        'Dane konta i identyfikacyjne: adres e-mail, identyfikator konta, podstawowe informacje o koncie (np. data rejestracji).',
+        'Dane profilu zawodowego podawane przez użytkownika: kraj, adres, telefon, typ osobowości, edukacja (instytucja, stopień, kierunek, czas trwania), języki, certyfikaty, umiejętności, soft skills, doświadczenie zawodowe (stanowisko, firma, opis, czas trwania), about me, additional informations.',
+        'Dane z ankiety finansowej podawane przez użytkownika: current salary, desired salary, has loans, willing to relocate, willing to rebrand, risk appetite.',
+        'Dane techniczne: adres IP, identyfikatory sesji, logi serwera (np. błędy, żądania API), podstawowe dane o przeglądarce/urządzeniu (w ograniczonym zakresie).',
+        'Dane płatności: nie przechowujemy pełnych danych kart; przetwarzamy informacje transakcyjne (np. status płatności, identyfikator płatności, plan, kwota) w celu realizacji umowy i rozliczeń.'
+      ]
+    },
+    {
+      title: '3. Cele przetwarzania danych',
+      points: [
+        'Założenie i prowadzenie konta: logowanie, zarządzanie profilem, dostęp do funkcji.',
+        'Świadczenie usług Vocare: generowanie rekomendacji ścieżek kariery, analiza rynku, tworzenie CV.',
+        'Personalizacja wyników: dopasowanie rekomendacji AI do danych z profilu.',
+        'Płatności i rozliczenia: obsługa planów, tokenów, subskrypcji, dokumentów księgowych.',
+        'Bezpieczeństwo: zapobieganie nadużyciom, diagnostyka, stabilność usług.',
+        'Rozwój i ulepszanie usług: analiza techniczna działania systemu (np. błędy, UX).',
+        'Kontakt i obsługa zgłoszeń: wsparcie, reklamacje, odpowiedzi na pytania.'
+      ]
+    },
+    {
+      title: '4. Podstawy prawne przetwarzania (RODO)',
+      points: [
+        'Art. 6 ust. 1 lit. b RODO – wykonanie umowy (świadczenie usług w Aplikacji).',
+        'Art. 6 ust. 1 lit. c RODO – obowiązki prawne (np. rozliczenia).',
+        'Art. 6 ust. 1 lit. f RODO – uzasadniony interes Administratora (bezpieczeństwo, analiza techniczna, obrona roszczeń).',
+        'Art. 6 ust. 1 lit. a RODO – zgoda (jeżeli będzie wymagana w konkretnych przypadkach).'
+      ]
+    },
+    {
+      title: '5. AI i zautomatyzowane przetwarzanie',
+      points: [
+        'Vocare wykorzystuje mechanizmy sztucznej inteligencji do generowania rekomendacji ścieżek kariery, analizy rynku oraz podpowiedzi do CV.',
+        'Wyniki mogą być generowane automatycznie na podstawie danych wprowadzonych przez Użytkownika.',
+        'Wyniki mają charakter doradczy i nie stanowią gwarancji zatrudnienia ani rezultatów finansowych.',
+        'Jeśli stosowane jest profilowanie (dopasowanie treści), odbywa się ono w celu świadczenia usługi i poprawy dopasowania rekomendacji.'
+      ]
+    },
+    {
+      title: '6. Odbiorcy danych',
+      points: [
+        'Dostawcy hostingu i infrastruktury (np. Vercel, Railway).',
+        'Operatorzy płatności (np. dostawca obsługi płatności wskazany w aplikacji).',
+        'Narzędzia analityczne i monitoringu błędów (jeśli wdrożone).',
+        'Podmioty uprawnione na podstawie przepisów prawa (np. organy publiczne).',
+        'Administrator nie sprzedaje danych osobowych.'
+      ]
+    },
+    {
+      title: '7. Przekazywanie danych poza EOG',
+      points: [
+        'Niektórzy dostawcy infrastruktury mogą przetwarzać dane poza EOG.',
+        'W takim przypadku przekazanie odbywa się zgodnie z RODO, na podstawie odpowiednich mechanizmów prawnych (np. standardowe klauzule umowne) – zależnie od dostawcy.'
+      ]
+    },
+    {
+      title: '8. Okres przechowywania danych',
+      points: [
+        'Dane konta i profilu przechowujemy tak długo, jak długo Użytkownik utrzymuje konto.',
+        'Po usunięciu konta dane profilu mogą zostać usunięte lub zanonimizowane w rozsądnym czasie.',
+        'Dane transakcyjne i księgowe przechowujemy przez okres wymagany prawem.',
+        'Logi techniczne przechowujemy przez czas potrzebny do zapewnienia bezpieczeństwa i diagnostyki.'
+      ]
+    },
+    {
+      title: '9. Prawa użytkownika',
+      points: [
+        'Masz prawo dostępu do danych.',
+        'Masz prawo do sprostowania danych.',
+        'Masz prawo do usunięcia danych.',
+        'Masz prawo do ograniczenia przetwarzania.',
+        'Masz prawo do przenoszenia danych.',
+        'Masz prawo do sprzeciwu wobec przetwarzania na podstawie uzasadnionego interesu.',
+        'Masz prawo do cofnięcia zgody, jeśli przetwarzanie odbywa się na podstawie zgody.',
+        'Masz prawo wniesienia skargi do Prezesa UODO.'
+      ]
+    },
+    {
+      title: '10. Bezpieczeństwo danych',
+      points: [
+        'Stosujemy środki techniczne i organizacyjne adekwatne do ryzyka, w tym m.in. szyfrowanie transmisji (HTTPS), kontrolę dostępu, zabezpieczenia serwerowe i bazodanowe oraz monitoring błędów.'
+      ]
+    },
+    {
+      title: '11. Cookies',
+      points: [
+        'Vocare może używać plików cookies i podobnych technologii w celu utrzymania sesji/logowania, zapewnienia poprawnego działania serwisu oraz statystyk/analityki (jeśli wdrożone).',
+        'Szczegóły dotyczące cookies mogą być opisane w osobnej Polityce Cookies lub w panelu zgód (jeśli wdrożony).'
+      ]
+    },
+    {
+      title: '12. Zmiany Polityki Prywatności',
+      points: [
+        'Administrator może aktualizować Politykę Prywatności w przypadku zmian w funkcjonalnościach, dostawcach lub przepisach prawa.',
+        'Aktualna wersja dokumentu jest publikowana na vocare.pl.'
+      ]
+    }
+  ]
+}

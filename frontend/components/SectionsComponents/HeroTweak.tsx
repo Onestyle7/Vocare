@@ -59,12 +59,12 @@ const HeroTweak = () => {
         <div className="inset-0 flex w-full flex-col items-center justify-center md:flex-row md:justify-start md:pl-[40px] lg:w-3/5 lg:border-t lg:border-b">
           <div className="font-korbin flex w-full flex-col items-center justify-center max-md:mt-10 max-md:mb-8 lg:w-1/2 lg:items-start">
             <Copy>
-              <h1 className="overflow-hidden text-4xl leading-tight font-bold whitespace-nowrap text-neutral-800 max-md:text-center sm:text-4xl md:text-5xl lg:text-4xl xl:text-5xl 2xl:text-7xl dark:text-neutral-300">
+              <h1 className="overflow-hidden text-4xl  font-bold whitespace-nowrap text-neutral-800 max-md:text-center sm:text-4xl md:text-5xl lg:text-4xl xl:text-5xl 2xl:text-7xl dark:text-neutral-300">
                 Unlock Your <br /> Growth
               </h1>
             </Copy>
             <Copy>
-              <h2 className="text-muted-foreground ibm-plex-mono-regular mt-8 max-w-xl px-4 text-center text-sm max-md:block sm:mt-4 sm:text-base md:px-0 md:text-left md:text-lg lg:text-base xl:text-sm">
+              <h2 className="text-muted-foreground font-grotesk mt-8 max-w-xl px-4 text-center text-sm max-md:block sm:mt-4 sm:text-base md:px-0 md:text-left md:text-lg lg:text-base xl:text-sm">
                 Vocare is an AI career advisor that turns your profile into clear career bets, live
                 market signals, and an ATS-ready resume-so you know what to do next today.
               </h2>
@@ -84,7 +84,7 @@ const HeroTweak = () => {
             </Link>
             {/* <p className='mt-2 text-xs text-gray-500'>Private by default. You control your data.</p> */}
           </div>
-          <div className="flex h-full flex-col items-center justify-center max-md:mt-20 sm:w-full lg:w-1/2 2xl:w-1/4 2xl:items-end">
+          <div className="font-grotesk flex h-full flex-col items-center justify-center max-md:mt-20 sm:w-full lg:w-1/2 2xl:w-1/4 2xl:items-end">
             <SpinningText>learn more • earn more • grow more •</SpinningText>
           </div>
         </div>
@@ -131,7 +131,7 @@ const HeroTweak = () => {
               What will you get?
             </p>
           </Copy>
-          <h2 className="font-poppins mt-4 text-gray-400 max-md:text-center">
+          <h2 className="font-grotesk mt-4 text-gray-400 max-md:text-center">
             Career Outcomes, Market Insight & ATS-Ready Resume
           </h2>
         </div>
