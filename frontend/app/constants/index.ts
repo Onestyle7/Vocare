@@ -198,11 +198,11 @@ export const countries = [
 // NavLinks
 
 export const NavLinks = [
-  { label: 'Profile', url: '/profile' },
-  { label: 'Advisor', url: '/assistant' },
-  { label: 'Analysis', url: '/market-analysis' },
+  { label: 'Profil', url: '/profile' },
+  { label: 'Doradca', url: '/assistant' },
+  { label: 'Analiza', url: '/market-analysis' },
   { label: 'Pricing', url: '/pricing' },
-  { label: 'Resume', url: '/resume', disabled: false },
+  { label: 'Kreator', url: '/resume', highlighted: true },
 ];
 
 export const companies = [
@@ -303,26 +303,27 @@ export const mobileView = '/images/mobileView.jpeg';
 // footer
 
 export const links_social = [
-  { name: 'X', url: '/' },
+  { name: 'TIKTOK', url: '/' },
   { name: 'INSTAGRAM', url: '/' },
-  { name: 'BLUESKY', url: '/' },
+  { name: 'FACEBOOK', url: '/' },
   { name: 'LINKEDIN', url: '/' },
 ];
 
 export const links_pages = [
   { name: 'HOME', url: '/' },
-  { name: 'COLLECTION', url: '/' },
-  { name: 'FAQ', url: '/' },
-  { name: 'PRICING', url: '/' },
+  { name: 'PROFIL', url: '/profile' },
+  { name: 'DORADCA', url: '/assistant' },
+  { name: 'ANALIZA', url: '/market-analysis' },
+  { name: 'KREATOR', url: '/resume' },
   { name: 'BLOG', url: '/blog' },
 ];
 
-export const contact_pages = [{ name: 'REACH US', url: '/' }];
+export const contact_pages = [{ name: 'EMAIL', url: '/' }];
 
 export const down_links = [
   { name: '2025©', url: '/' },
-  { name: 'PERMISSIONS AND TERMS', url: 'terms-of-service' },
-  { name: 'PRIVACY POLICY', url: 'privacy-policy' },
+  { name: 'ZGODY I WARUNKI', url: 'terms-of-service' },
+  { name: 'POLITYKA PRYWATNOŚCI', url: 'privacy-policy' },
 ];
 
 export const letterImg = '/images/as1.png';
@@ -382,20 +383,21 @@ export const pricingPlans = [
 export const aboutCardsData = [
   {
     img: '/images/plus.png',
-    title: 'Career outcomes',
+    title: 'Ścieżki kariery',
     description:
-      'Your best career matches ranked by compatibility, effort, and salary outlook-so you know what to do next today.',
+      'Najlepsze dopasowania kariery według kompetencji, wysiłku i zarobków - wiesz, co zrobić dalej już dziś.',
   },
   {
     img: '/images/plus.png',
-    title: 'Market intelligence',
+    title: 'Analiza rynku',
     description:
-      'Trends, in-demand skills, employment rates, and salary ranges for your role and region.',
+      'Trendy, poszukiwane umiejętności, zatrudnienie i zarobki dla Twojej roli i regionu.',
   },
   {
     img: '/images/plus.png',
-    title: 'ATS resume',
-    description: 'Export a clean, ATS-ready resume tailored to your chosen path.',
+    title: 'ATS Kreator',
+    description:
+      'Eksport nowoczesnego CV, gotowego pod ATS, dopasowanego do wybranej ścieżki kariery.',
   },
 ];
 
