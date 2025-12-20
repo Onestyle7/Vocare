@@ -205,7 +205,12 @@ const WorkAttributesRadar = ({ attributes }: { attributes?: WorkAttributesDto })
     <RadarChart cx="50%" cy="50%" outerRadius="80%" data={getRadarData(attributes)}>
       <PolarGrid stroke="#1f2937" />
       <PolarAngleAxis dataKey="attribute" tick={{ fill: '#cbd5e1', fontSize: 11 }} />
-      <PolarRadiusAxis tick={{ fill: '#94a3b8', fontSize: 0 }} angle={30} domain={[0, 10]} opacity={0} />
+      <PolarRadiusAxis
+        tick={{ fill: '#94a3b8', fontSize: 0 }}
+        angle={30}
+        domain={[0, 10]}
+        opacity={0}
+      />
       <Radar
         name="Dopasowanie"
         dataKey="score"
@@ -232,15 +237,15 @@ const IndustryCard = ({
     <div className="flex flex-col gap-4 md:flex-row md:items-start md:justify-between">
       <div>
         <p className="w-fit rounded-[3px] px-1 text-sm text-[#ecedf0]">Ścieżka kariery</p>
-        <h3 className="mt-2 sm:text-2xl text-lg font-semibold text-[#191A23]">
-                <span className="inline rounded-[7px] bg-[#F3F3F3] [box-decoration-break:clone] px-2 [-webkit-box-decoration-break:clone]">
-                  {industry.industry}
-                </span>
-              </h3>
+        <h3 className="mt-2 text-lg font-semibold text-[#191A23] sm:text-2xl">
+          <span className="inline rounded-[7px] bg-[#F3F3F3] [box-decoration-break:clone] px-2 [-webkit-box-decoration-break:clone]">
+            {industry.industry}
+          </span>
+        </h3>
         <div className="mt-3 flex flex-wrap gap-2 text-sm text-slate-300">
           <span className="group flex flex-row items-center justify-center overflow-hidden rounded-[7px] border border-slate-800/80 px-3 py-1">
             <div className="mr-2 flex h-4 w-4 flex-col items-center justify-center transition-all group-hover:translate-y-5">
-              <ArrowDown className="mr-2 h-4 w-4 group-hover:translate-y-5 transition-all" />
+              <ArrowDown className="mr-2 h-4 w-4 transition-all group-hover:translate-y-5" />
             </div>
             {isValidNumber(industry.minSalary) ? (
               <>
@@ -259,7 +264,7 @@ const IndustryCard = ({
           </span>
           <span className="group flex flex-row items-center justify-center overflow-hidden rounded-[7px] border border-slate-800/80 px-3 py-1">
             <div className="mr-2 flex h-4 w-4 flex-col items-center justify-center transition-all group-hover:-translate-y-5">
-              <ArrowUp className="mr-2 h-4 w-4 group-hover:-translate-y-5 transition-all" />
+              <ArrowUp className="mr-2 h-4 w-4 transition-all group-hover:-translate-y-5" />
             </div>
             {isValidNumber(industry.maxSalary) ? (
               <>
@@ -292,7 +297,7 @@ const IndustryCard = ({
         {relatedSkills.slice(0, 3).map((skill) => (
           <span
             key={`${skill.skill}-${skill.industry}`}
-            className="rounded-[7px] border px-3 py-1 border-b-5"
+            className="rounded-[7px] border border-b-5 px-3 py-1"
           >
             {skill.skill}
           </span>
@@ -300,37 +305,37 @@ const IndustryCard = ({
       </div>
     </div>
 
-        <div className="mt-6 space-y-6">
+    <div className="mt-6 space-y-6">
       <div className="grid gap-6 lg:grid-cols-2">
         <div className="rounded-2xl border p-4">
           <div className="flex items-start justify-between">
             <div>
-              <p className="w-fit px-2 mb-2 py-1 rounded-[7px] border text-sm text-[#ecedf0]">
+              <p className="mb-2 w-fit rounded-[7px] border px-2 py-1 text-sm text-[#ecedf0]">
                 Progresja wynagrodzeń
               </p>
               <p className="w-fit rounded-[3px] px-1 text-sm text-[#ecedf0]">
                 Junior → Lead/Expert
               </p>
             </div>
-            <span className="rounded-[5px] bg-[#F3F3F3] px-2 py-[2px] text-xs text-[#191A23] self-start">
+            <span className="self-start rounded-[5px] bg-[#F3F3F3] px-2 py-[2px] text-xs text-[#191A23]">
               PLN
             </span>
           </div>
-          <div className="mt-2 h-[360px] flex items-center justify-center">
+          <div className="mt-2 flex h-[360px] items-center justify-center">
             <SalaryChart progression={industry.salaryProgression} />
           </div>
         </div>
 
         <div className="rounded-2xl border p-4">
           <div className="flex items-center justify-between">
-            <p className="w-fit px-2 mb-2 py-1 rounded-[7px] border text-sm text-[#ecedf0]">
+            <p className="mb-2 w-fit rounded-[7px] border px-2 py-1 text-sm text-[#ecedf0]">
               Atrybuty pracy
             </p>
-            <span className="rounded-[5px] bg-[#F3F3F3] px-2 py-[2px] text-xs text-[#191A23] self-start">
+            <span className="self-start rounded-[5px] bg-[#F3F3F3] px-2 py-[2px] text-xs text-[#191A23]">
               0-10
             </span>
           </div>
-          <div className="mt-2 h-[360px] flex items-center justify-center">
+          <div className="mt-2 flex h-[360px] items-center justify-center">
             <WorkAttributesRadar attributes={industry.workAttributes} />
           </div>
         </div>
@@ -338,11 +343,13 @@ const IndustryCard = ({
 
       <div className="rounded-2xl border p-4">
         <div className="flex items-center justify-between">
-                        <p className="w-fit px-2 mb-2 py-1 rounded-[7px] border text-sm text-[#ecedf0]">Trudność wejścia</p>
+          <p className="mb-2 w-fit rounded-[7px] border px-2 py-1 text-sm text-[#ecedf0]">
+            Trudność wejścia
+          </p>
           {industry.entryDifficulty?.difficultyLevel && (
             <span
               className={cn(
-                "rounded-[5px] bg-[#F3F3F3]! px-2 py-[2px] text-xs text-[#191A23]! self-start",
+                'self-start rounded-[5px] bg-[#F3F3F3]! px-2 py-[2px] text-xs text-[#191A23]!',
                 difficultyBand(industry.entryDifficulty?.difficultyScore)
               )}
             >
@@ -374,15 +381,11 @@ const IndustryCard = ({
           </div>
 
           {industry.entryDifficulty?.explanation && (
-            <p className="text-sm text-slate-300">
-              {industry.entryDifficulty.explanation}
-            </p>
+            <p className="text-sm text-slate-300">{industry.entryDifficulty.explanation}</p>
           )}
         </div>
       </div>
-
     </div>
-
 
     {industry.aiNarrator && (
       <div className="mt-6 grid gap-4 lg:grid-cols-3">
@@ -546,15 +549,23 @@ export default function DetailedMarketAnalysis() {
           cursorY = margin;
         }
 
-        pdf.addImage(imgData, 'JPEG', margin, cursorY, renderWidth, renderHeight, undefined, 'FAST');
+        pdf.addImage(
+          imgData,
+          'JPEG',
+          margin,
+          cursorY,
+          renderWidth,
+          renderHeight,
+          undefined,
+          'FAST'
+        );
         cursorY += renderHeight + sectionGap;
       }
 
       pdf.save('vocare-market-analysis.pdf');
       toast.success('Raport zapisany jako PDF');
     } catch (err) {
-      const message =
-        err instanceof Error ? err.message : 'Nie udało się wygenerować raportu PDF.';
+      const message = err instanceof Error ? err.message : 'Nie udało się wygenerować raportu PDF.';
       toast.error('Błąd PDF', { description: message });
     } finally {
       setIsDownloading(false);
@@ -566,7 +577,7 @@ export default function DetailedMarketAnalysis() {
   }, [fetchLatest]);
 
   return (
-    <div className="font-grotesk relative min-h-screen px-4 py-10 text-slate-100 mx-auto">
+    <div className="font-grotesk relative mx-auto min-h-screen px-4 py-10 text-slate-100">
       <div ref={reportRef} className="mx-auto flex max-w-6xl flex-col gap-8">
         <header className="rounded-3xl border border-b-5 p-8 shadow-2xl shadow-slate-950/40">
           <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
@@ -582,10 +593,10 @@ export default function DetailedMarketAnalysis() {
                 najnowszej analizy.
               </p>
             </div>
-            <div className="flex w-full items-center justify-center gap-3 md:w-1/3 flex-col">
+            <div className="flex w-full flex-col items-center justify-center gap-3 md:w-1/3">
               <Button
                 onClick={generateFreshAnalysis}
-                className="group relative z-20 mt-4 h-12 w-full rounded-[7px] bg-[#F3F3F3] font-bold text-[#191A23] md:mt-2 md:w-full hover:-translate-y-2 hover:border-b-3 border-b-[#F3F3F3] border-r-[#F3F3F3] hover:border-r-3"
+                className="group relative z-20 mt-4 h-12 w-full rounded-[7px] border-r-[#F3F3F3] border-b-[#F3F3F3] bg-[#F3F3F3] font-bold text-[#191A23] hover:-translate-y-2 hover:border-r-3 hover:border-b-3 md:mt-2 md:w-full"
                 variant="default"
                 disabled={isGenerating || isLoading}
               >
@@ -598,7 +609,7 @@ export default function DetailedMarketAnalysis() {
               </Button>
               <Button
                 onClick={downloadPdf}
-                className="group relative z-20 h-12 w-full rounded-[7px] border border-slate-800 bg-transparent text-slate-100 md:w-full hover:border-slate-600"
+                className="group relative z-20 h-12 w-full rounded-[7px] border border-slate-800 bg-transparent text-slate-100 hover:border-slate-600 md:w-full"
                 variant="outline"
                 disabled={!analysis || isDownloading || isGenerating || isLoading}
               >
@@ -720,37 +731,42 @@ export default function DetailedMarketAnalysis() {
         <div
           ref={pdfReportRef}
           aria-hidden
-          className="pointer-events-none absolute left-[-200vw] top-0 w-[794px] bg-white p-8 text-black"
+          className="pointer-events-none absolute top-0 left-[-200vw] w-[794px] bg-white p-8 text-black"
         >
           <div className="border-b border-gray-200 pb-4">
-            <p className="text-[10px] uppercase tracking-[0.2em] text-gray-500">Vocare / Market Analysis</p>
+            <p className="text-[10px] tracking-[0.2em] text-gray-500 uppercase">
+              Vocare / Market Analysis
+            </p>
             <div className="mt-1 flex items-baseline justify-between">
-              <h1 className="text-2xl font-semibold text-gray-900">Raport PDF - analiza rynku pracy</h1>
+              <h1 className="text-2xl font-semibold text-gray-900">
+                Raport PDF - analiza rynku pracy
+              </h1>
               <div className="text-right text-xs text-gray-600">
                 <p>Data: {generationDate}</p>
                 <p>Tryb: PDF (b/w)</p>
               </div>
             </div>
             <p className="mt-2 max-w-3xl text-sm leading-relaxed text-gray-700">
-              Streszczenie wyników analizy: wynagrodzenia, popyt na umiejętności, atrybuty pracy oraz szacowana trudność wejścia na rynek.
+              Streszczenie wyników analizy: wynagrodzenia, popyt na umiejętności, atrybuty pracy
+              oraz szacowana trudność wejścia na rynek.
             </p>
           </div>
 
           <div className="mt-4 grid grid-cols-3 gap-3 text-sm text-gray-800">
             <div className="rounded border border-gray-200 bg-gray-50 p-3">
-              <p className="text-[10px] uppercase text-gray-500">Branże</p>
+              <p className="text-[10px] text-gray-500 uppercase">Branże</p>
               <p className="text-lg font-semibold text-gray-900">
                 {analysis.industryStatistics?.length ?? 0}
               </p>
             </div>
             <div className="rounded border border-gray-200 bg-gray-50 p-3">
-              <p className="text-[10px] uppercase text-gray-500">Trendy</p>
+              <p className="text-[10px] text-gray-500 uppercase">Trendy</p>
               <p className="text-lg font-semibold text-gray-900">
                 {analysis.marketTrends?.length ?? 0}
               </p>
             </div>
             <div className="rounded border border-gray-200 bg-gray-50 p-3">
-              <p className="text-[10px] uppercase text-gray-500">Umiejętności w popycie</p>
+              <p className="text-[10px] text-gray-500 uppercase">Umiejętności w popycie</p>
               <p className="text-lg font-semibold text-gray-900">
                 {analysis.skillDemand?.length ?? 0}
               </p>
@@ -759,7 +775,7 @@ export default function DetailedMarketAnalysis() {
 
           {analysis.marketTrends?.length ? (
             <div className="mt-6">
-              <p className="text-[11px] font-semibold uppercase tracking-wide text-gray-600">
+              <p className="text-[11px] font-semibold tracking-wide text-gray-600 uppercase">
                 Trendy rynkowe
               </p>
               <div className="mt-2 space-y-2">
@@ -770,7 +786,7 @@ export default function DetailedMarketAnalysis() {
                   >
                     <div className="flex items-baseline justify-between text-sm text-gray-900">
                       <span className="font-semibold">{trend.trendName}</span>
-                      <span className="text-[11px] uppercase tracking-wide text-gray-500">
+                      <span className="text-[11px] tracking-wide text-gray-500 uppercase">
                         {trend.impact || 'Wpływ nieokreślony'}
                       </span>
                     </div>
@@ -796,7 +812,7 @@ export default function DetailedMarketAnalysis() {
               >
                 <div className="flex items-baseline justify-between border-b border-gray-200 pb-2">
                   <div>
-                    <p className="text-[10px] uppercase tracking-wide text-gray-500">Branża</p>
+                    <p className="text-[10px] tracking-wide text-gray-500 uppercase">Branża</p>
                     <h2 className="text-lg font-semibold text-gray-900">{industry.industry}</h2>
                   </div>
                   <div className="text-right text-xs text-gray-600">
@@ -807,25 +823,25 @@ export default function DetailedMarketAnalysis() {
 
                 <div className="mt-3 grid grid-cols-2 gap-3 text-xs text-gray-800">
                   <div className="rounded border border-gray-200 p-2">
-                    <p className="text-[10px] uppercase text-gray-500">Zakres wynagrodzeń</p>
+                    <p className="text-[10px] text-gray-500 uppercase">Zakres wynagrodzeń</p>
                     <p className="text-sm font-semibold text-gray-900">
                       {formatCurrency(industry.minSalary)} - {formatCurrency(industry.maxSalary)}
                     </p>
                   </div>
                   <div className="rounded border border-gray-200 p-2">
-                    <p className="text-[10px] uppercase text-gray-500">Zatrudnienie</p>
+                    <p className="text-[10px] text-gray-500 uppercase">Zatrudnienie</p>
                     <p className="text-sm font-semibold text-gray-900">
                       {formatPercent(industry.employmentRate)}
                     </p>
                   </div>
                   <div className="rounded border border-gray-200 p-2">
-                    <p className="text-[10px] uppercase text-gray-500">Brakujące umiejętności</p>
+                    <p className="text-[10px] text-gray-500 uppercase">Brakujące umiejętności</p>
                     <p className="text-sm font-semibold text-gray-900">
                       {industry.entryDifficulty?.missingSkillsCount ?? 0}
                     </p>
                   </div>
                   <div className="rounded border border-gray-200 p-2">
-                    <p className="text-[10px] uppercase text-gray-500">Czas do gotowości</p>
+                    <p className="text-[10px] text-gray-500 uppercase">Czas do gotowości</p>
                     <p className="text-sm font-semibold text-gray-900">
                       {industry.entryDifficulty?.estimatedTimeToReady || '—'}
                     </p>
@@ -834,7 +850,7 @@ export default function DetailedMarketAnalysis() {
 
                 {salaryBars.length ? (
                   <div className="mt-4">
-                    <p className="text-[11px] font-semibold uppercase tracking-wide text-gray-600">
+                    <p className="text-[11px] font-semibold tracking-wide text-gray-600 uppercase">
                       Progresja wynagrodzeń (średnia)
                     </p>
                     <div className="mt-2 space-y-2">
@@ -873,7 +889,7 @@ export default function DetailedMarketAnalysis() {
 
                 {industry.workAttributes ? (
                   <div className="mt-4">
-                    <p className="text-[11px] font-semibold uppercase tracking-wide text-gray-600">
+                    <p className="text-[11px] font-semibold tracking-wide text-gray-600 uppercase">
                       Atrybuty pracy (0-10)
                     </p>
                     <div className="mt-2 grid grid-cols-2 gap-x-4 gap-y-2">
@@ -902,7 +918,7 @@ export default function DetailedMarketAnalysis() {
 
                 {industry.entryDifficulty?.explanation ? (
                   <div className="mt-4 rounded border border-gray-200 bg-gray-50 p-3">
-                    <p className="text-[10px] uppercase text-gray-500">Wyjaśnienie trudności</p>
+                    <p className="text-[10px] text-gray-500 uppercase">Wyjaśnienie trudności</p>
                     <p className="mt-1 text-xs leading-relaxed text-gray-700">
                       {industry.entryDifficulty.explanation}
                     </p>
@@ -911,8 +927,9 @@ export default function DetailedMarketAnalysis() {
 
                 {relatedSkills.length ? (
                   <div className="mt-4">
-                    <p className="text-[11px] font-semibold uppercase tracking-wide text-gray-600">
-                      Kluczowe umiejętności ({Math.min(relatedSkills.length, 6)} z {relatedSkills.length})
+                    <p className="text-[11px] font-semibold tracking-wide text-gray-600 uppercase">
+                      Kluczowe umiejętności ({Math.min(relatedSkills.length, 6)} z{' '}
+                      {relatedSkills.length})
                     </p>
                     <div className="mt-2 grid grid-cols-2 gap-2 text-xs text-gray-800">
                       {relatedSkills.slice(0, 6).map((skill) => (
@@ -921,7 +938,7 @@ export default function DetailedMarketAnalysis() {
                           className="flex items-center justify-between rounded border border-gray-200 bg-gray-50 px-2 py-1"
                         >
                           <span className="font-medium text-gray-900">{skill.skill}</span>
-                          <span className="text-[11px] uppercase tracking-wide text-gray-600">
+                          <span className="text-[11px] tracking-wide text-gray-600 uppercase">
                             {skill.demandLevel}
                           </span>
                         </div>
@@ -937,12 +954,18 @@ export default function DetailedMarketAnalysis() {
                       { title: 'Styl pracy', text: industry.aiNarrator.workStyleInsight },
                       { title: 'Wejście', text: industry.aiNarrator.entryAdvice },
                       { title: 'Motywacja', text: industry.aiNarrator.motivationalMessage },
-                      { title: 'Rekomendacja', text: industry.aiNarrator.personalizedRecommendation },
+                      {
+                        title: 'Rekomendacja',
+                        text: industry.aiNarrator.personalizedRecommendation,
+                      },
                     ]
                       .filter((item) => item.text)
                       .map((item) => (
-                        <div key={item.title} className="rounded border border-gray-200 bg-gray-50 p-3">
-                          <p className="text-[10px] uppercase text-gray-500">{item.title}</p>
+                        <div
+                          key={item.title}
+                          className="rounded border border-gray-200 bg-gray-50 p-3"
+                        >
+                          <p className="text-[10px] text-gray-500 uppercase">{item.title}</p>
                           <p className="mt-1 text-[12px] leading-relaxed text-gray-800">
                             {item.text}
                           </p>

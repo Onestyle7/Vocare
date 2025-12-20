@@ -1,4 +1,4 @@
-"use client"
+'use client';
 
 import {
   postanowienia_ogolne,
@@ -9,10 +9,10 @@ import {
   reklamacje,
   wlasnosc_intelektualna,
   prywatnosc,
-  postanowienia_koncowe
-} from "@/app/constants";
-import { ArrowLeft } from "lucide-react";
-import Link from "next/link";
+  postanowienia_koncowe,
+} from '@/app/constants';
+import { ArrowLeft } from 'lucide-react';
+import Link from 'next/link';
 
 type Section = {
   title: string;
@@ -36,10 +36,13 @@ const TermsOfService = () => {
     <div className="font-grotesk min-h-screen bg-neutral-950 text-neutral-200">
       <div className="mx-auto max-w-4xl px-4 py-10 sm:px-6 lg:px-8">
         <header className="mb-10">
-          <Link href="/" className="p-2 inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium transition-all disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg:not([class*='size-'])]:size-4 shrink-0 [&_svg]:shrink-0 outline-none focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px] aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive cursor-pointer border bg-background shadow-xs hover:bg-accent hover:text-accent-foreground dark:bg-input/30  dark:hover:bg-input/50 mb-4">
-                      <ArrowLeft className="h-4 w-4" />
-                      Powrót
-                    </Link>
+          <Link
+            href="/"
+            className="focus-visible:border-ring focus-visible:ring-ring/50 aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive bg-background hover:bg-accent hover:text-accent-foreground dark:bg-input/30 dark:hover:bg-input/50 mb-4 inline-flex shrink-0 cursor-pointer items-center justify-center gap-2 rounded-md border p-2 text-sm font-medium whitespace-nowrap shadow-xs transition-all outline-none focus-visible:ring-[3px] disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4"
+          >
+            <ArrowLeft className="h-4 w-4" />
+            Powrót
+          </Link>
 
           <h1 className="text-3xl font-semibold tracking-tight text-neutral-100 sm:text-4xl">
             Regulamin korzystania z Vocare
@@ -60,10 +63,7 @@ const TermsOfService = () => {
 
               <ol className="space-y-3 pl-5 text-sm leading-relaxed text-neutral-300">
                 {section.points.map((point, pointIndex) => (
-                  <li
-                    key={pointIndex}
-                    className="list-decimal pl-2 marker:text-neutral-500"
-                  >
+                  <li key={pointIndex} className="list-decimal pl-2 marker:text-neutral-500">
                     {point}
                   </li>
                 ))}

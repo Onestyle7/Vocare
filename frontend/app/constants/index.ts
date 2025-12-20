@@ -465,9 +465,9 @@ export const postanowienia_ogolne = {
     'Aplikacja nie wprowadza ograniczeń wiekowych. Z Vocare mogą korzystać osoby w każdym wieku.',
     'Korzystanie z Aplikacji oznacza akceptację niniejszego Regulaminu. W przypadku braku akceptacji któregokolwiek z postanowień Regulaminu, Użytkownik nie powinien korzystać z Aplikacji.',
     'Aplikacja działa w modelu webowym (front-end: Next.js i TypeScript, back-end: C#/.NET, baza danych PostgreSQL) i jest hostowana na infrastrukturze Railway oraz Vercel.',
-    'Usługodawca zastrzega sobie prawo do czasowych przerw technicznych związanych z rozwojem, konserwacją lub aktualizacją Aplikacji.'
-  ]
-}
+    'Usługodawca zastrzega sobie prawo do czasowych przerw technicznych związanych z rozwojem, konserwacją lub aktualizacją Aplikacji.',
+  ],
+};
 
 export const definicje = {
   title: 'Definicje',
@@ -481,9 +481,9 @@ export const definicje = {
     'Tokeny – wirtualne jednostki rozliczeniowe umożliwiające korzystanie z określonych funkcji Aplikacji.',
     'Plan Personal – jednorazowy zakup tokenów.',
     'Plan Growth – miesięczna subskrypcja odnawialna automatycznie.',
-    'Plan Individual – indywidualny pakiet doradczy premium.'
-  ]
-}
+    'Plan Individual – indywidualny pakiet doradczy premium.',
+  ],
+};
 
 export const zakres_uslug = {
   title: 'Zakres i warunki korzystania z usług',
@@ -494,9 +494,9 @@ export const zakres_uslug = {
     'Aplikacja oferuje kreator CV umożliwiający tworzenie dokumentów aplikacyjnych.',
     'Wszystkie rekomendacje generowane są automatycznie przez algorytmy AI.',
     'Użytkownik zobowiązuje się do podawania danych prawdziwych, aktualnych i kompletnych.',
-    'Usługodawca nie ponosi odpowiedzialności za skutki podania nieprawdziwych danych.'
-  ]
-}
+    'Usługodawca nie ponosi odpowiedzialności za skutki podania nieprawdziwych danych.',
+  ],
+};
 
 export const platnosci = {
   title: 'Warunki płatności',
@@ -506,9 +506,9 @@ export const platnosci = {
     'Po dokonaniu zakupu nie przysługuje zwrot środków.',
     'Subskrypcje odnawiają się automatycznie do momentu ich anulowania przez Użytkownika.',
     'Anulowanie subskrypcji nie powoduje zwrotu opłaty za bieżący okres rozliczeniowy.',
-    'Tokeny oraz subskrypcje nie podlegają wymianie na środki pieniężne.'
-  ]
-}
+    'Tokeny oraz subskrypcje nie podlegają wymianie na środki pieniężne.',
+  ],
+};
 
 export const odpowiedzialnosc = {
   title: 'Odpowiedzialność i zastrzeżenia',
@@ -517,9 +517,9 @@ export const odpowiedzialnosc = {
     'Vocare nie gwarantuje osiągnięcia przez Użytkownika konkretnych rezultatów zawodowych lub finansowych.',
     'Usługodawca nie ponosi odpowiedzialności za decyzje podjęte przez Użytkownika na podstawie rekomendacji.',
     'Aplikacja wykorzystuje sztuczną inteligencję, która może generować niepełne, uproszczone lub nieaktualne informacje.',
-    'Użytkownik korzysta z Aplikacji na własne ryzyko.'
-  ]
-}
+    'Użytkownik korzysta z Aplikacji na własne ryzyko.',
+  ],
+};
 
 export const reklamacje = {
   title: 'Reklamacje',
@@ -527,9 +527,9 @@ export const reklamacje = {
     'Użytkownik ma prawo składać reklamacje dotyczące działania Aplikacji.',
     'Reklamacje należy zgłaszać drogą elektroniczną na adres e-mail Usługodawcy.',
     'Reklamacje rozpatrywane są w terminie do 14 dni.',
-    'Odpowiedź na reklamację przesyłana jest na adres e-mail Użytkownika.'
-  ]
-}
+    'Odpowiedź na reklamację przesyłana jest na adres e-mail Użytkownika.',
+  ],
+};
 
 export const wlasnosc_intelektualna = {
   title: 'Prawa własności intelektualnej',
@@ -537,18 +537,18 @@ export const wlasnosc_intelektualna = {
     'Aplikacja Vocare oraz jej elementy są chronione prawem autorskim.',
     'Użytkownik otrzymuje niewyłączną licencję na korzystanie z Aplikacji do użytku osobistego.',
     'Zabronione jest kopiowanie, modyfikowanie lub dekompilowanie Aplikacji.',
-    'Dane wprowadzone przez Użytkownika pozostają jego własnością.'
-  ]
-}
+    'Dane wprowadzone przez Użytkownika pozostają jego własnością.',
+  ],
+};
 
 export const prywatnosc = {
   title: 'Ochrona danych osobowych',
   points: [
     'Dane osobowe Użytkowników przetwarzane są zgodnie z RODO.',
     'Szczegółowe zasady przetwarzania danych określa odrębna Polityka Prywatności.',
-    'Polityka Prywatności stanowi osobny dokument dostępny na stronie vocare.pl.'
-  ]
-}
+    'Polityka Prywatności stanowi osobny dokument dostępny na stronie vocare.pl.',
+  ],
+};
 
 export const postanowienia_koncowe = {
   title: 'Postanowienia końcowe',
@@ -556,9 +556,9 @@ export const postanowienia_koncowe = {
     'Regulamin podlega prawu polskiemu.',
     'Usługodawca zastrzega sobie prawo do zmiany Regulaminu.',
     'Zmiany Regulaminu wchodzą w życie po poinformowaniu Użytkowników.',
-    'W sprawach nieuregulowanych Regulaminem zastosowanie mają przepisy prawa polskiego.'
-  ]
-}
+    'W sprawach nieuregulowanych Regulaminem zastosowanie mają przepisy prawa polskiego.',
+  ],
+};
 
 export const privacy_policy = {
   title: 'Polityka Prywatności',
@@ -569,8 +569,8 @@ export const privacy_policy = {
         'Niniejsza Polityka Prywatności opisuje zasady przetwarzania danych osobowych użytkowników serwisu vocare.pl oraz aplikacji Vocare (dalej: „Aplikacja”).',
         'Administratorem danych osobowych jest: [TU WPISAĆ DANE: pełna nazwa podmiotu, adres, NIP/KRS] („Administrator”).',
         'Kontakt w sprawach danych osobowych: [TU WPISAĆ: e-mail].',
-        'Aplikacja jest hostowana na infrastrukturze dostawców chmurowych, w tym Vercel (front-end) oraz Railway (backend i baza danych).'
-      ]
+        'Aplikacja jest hostowana na infrastrukturze dostawców chmurowych, w tym Vercel (front-end) oraz Railway (backend i baza danych).',
+      ],
     },
     {
       title: '2. Jakie dane przetwarzamy',
@@ -579,8 +579,8 @@ export const privacy_policy = {
         'Dane profilu zawodowego podawane przez użytkownika: kraj, adres, telefon, typ osobowości, edukacja (instytucja, stopień, kierunek, czas trwania), języki, certyfikaty, umiejętności, soft skills, doświadczenie zawodowe (stanowisko, firma, opis, czas trwania), about me, additional informations.',
         'Dane z ankiety finansowej podawane przez użytkownika: current salary, desired salary, has loans, willing to relocate, willing to rebrand, risk appetite.',
         'Dane techniczne: adres IP, identyfikatory sesji, logi serwera (np. błędy, żądania API), podstawowe dane o przeglądarce/urządzeniu (w ograniczonym zakresie).',
-        'Dane płatności: nie przechowujemy pełnych danych kart; przetwarzamy informacje transakcyjne (np. status płatności, identyfikator płatności, plan, kwota) w celu realizacji umowy i rozliczeń.'
-      ]
+        'Dane płatności: nie przechowujemy pełnych danych kart; przetwarzamy informacje transakcyjne (np. status płatności, identyfikator płatności, plan, kwota) w celu realizacji umowy i rozliczeń.',
+      ],
     },
     {
       title: '3. Cele przetwarzania danych',
@@ -591,8 +591,8 @@ export const privacy_policy = {
         'Płatności i rozliczenia: obsługa planów, tokenów, subskrypcji, dokumentów księgowych.',
         'Bezpieczeństwo: zapobieganie nadużyciom, diagnostyka, stabilność usług.',
         'Rozwój i ulepszanie usług: analiza techniczna działania systemu (np. błędy, UX).',
-        'Kontakt i obsługa zgłoszeń: wsparcie, reklamacje, odpowiedzi na pytania.'
-      ]
+        'Kontakt i obsługa zgłoszeń: wsparcie, reklamacje, odpowiedzi na pytania.',
+      ],
     },
     {
       title: '4. Podstawy prawne przetwarzania (RODO)',
@@ -600,8 +600,8 @@ export const privacy_policy = {
         'Art. 6 ust. 1 lit. b RODO – wykonanie umowy (świadczenie usług w Aplikacji).',
         'Art. 6 ust. 1 lit. c RODO – obowiązki prawne (np. rozliczenia).',
         'Art. 6 ust. 1 lit. f RODO – uzasadniony interes Administratora (bezpieczeństwo, analiza techniczna, obrona roszczeń).',
-        'Art. 6 ust. 1 lit. a RODO – zgoda (jeżeli będzie wymagana w konkretnych przypadkach).'
-      ]
+        'Art. 6 ust. 1 lit. a RODO – zgoda (jeżeli będzie wymagana w konkretnych przypadkach).',
+      ],
     },
     {
       title: '5. AI i zautomatyzowane przetwarzanie',
@@ -609,8 +609,8 @@ export const privacy_policy = {
         'Vocare wykorzystuje mechanizmy sztucznej inteligencji do generowania rekomendacji ścieżek kariery, analizy rynku oraz podpowiedzi do CV.',
         'Wyniki mogą być generowane automatycznie na podstawie danych wprowadzonych przez Użytkownika.',
         'Wyniki mają charakter doradczy i nie stanowią gwarancji zatrudnienia ani rezultatów finansowych.',
-        'Jeśli stosowane jest profilowanie (dopasowanie treści), odbywa się ono w celu świadczenia usługi i poprawy dopasowania rekomendacji.'
-      ]
+        'Jeśli stosowane jest profilowanie (dopasowanie treści), odbywa się ono w celu świadczenia usługi i poprawy dopasowania rekomendacji.',
+      ],
     },
     {
       title: '6. Odbiorcy danych',
@@ -619,15 +619,15 @@ export const privacy_policy = {
         'Operatorzy płatności (np. dostawca obsługi płatności wskazany w aplikacji).',
         'Narzędzia analityczne i monitoringu błędów (jeśli wdrożone).',
         'Podmioty uprawnione na podstawie przepisów prawa (np. organy publiczne).',
-        'Administrator nie sprzedaje danych osobowych.'
-      ]
+        'Administrator nie sprzedaje danych osobowych.',
+      ],
     },
     {
       title: '7. Przekazywanie danych poza EOG',
       points: [
         'Niektórzy dostawcy infrastruktury mogą przetwarzać dane poza EOG.',
-        'W takim przypadku przekazanie odbywa się zgodnie z RODO, na podstawie odpowiednich mechanizmów prawnych (np. standardowe klauzule umowne) – zależnie od dostawcy.'
-      ]
+        'W takim przypadku przekazanie odbywa się zgodnie z RODO, na podstawie odpowiednich mechanizmów prawnych (np. standardowe klauzule umowne) – zależnie od dostawcy.',
+      ],
     },
     {
       title: '8. Okres przechowywania danych',
@@ -635,8 +635,8 @@ export const privacy_policy = {
         'Dane konta i profilu przechowujemy tak długo, jak długo Użytkownik utrzymuje konto.',
         'Po usunięciu konta dane profilu mogą zostać usunięte lub zanonimizowane w rozsądnym czasie.',
         'Dane transakcyjne i księgowe przechowujemy przez okres wymagany prawem.',
-        'Logi techniczne przechowujemy przez czas potrzebny do zapewnienia bezpieczeństwa i diagnostyki.'
-      ]
+        'Logi techniczne przechowujemy przez czas potrzebny do zapewnienia bezpieczeństwa i diagnostyki.',
+      ],
     },
     {
       title: '9. Prawa użytkownika',
@@ -648,28 +648,28 @@ export const privacy_policy = {
         'Masz prawo do przenoszenia danych.',
         'Masz prawo do sprzeciwu wobec przetwarzania na podstawie uzasadnionego interesu.',
         'Masz prawo do cofnięcia zgody, jeśli przetwarzanie odbywa się na podstawie zgody.',
-        'Masz prawo wniesienia skargi do Prezesa UODO.'
-      ]
+        'Masz prawo wniesienia skargi do Prezesa UODO.',
+      ],
     },
     {
       title: '10. Bezpieczeństwo danych',
       points: [
-        'Stosujemy środki techniczne i organizacyjne adekwatne do ryzyka, w tym m.in. szyfrowanie transmisji (HTTPS), kontrolę dostępu, zabezpieczenia serwerowe i bazodanowe oraz monitoring błędów.'
-      ]
+        'Stosujemy środki techniczne i organizacyjne adekwatne do ryzyka, w tym m.in. szyfrowanie transmisji (HTTPS), kontrolę dostępu, zabezpieczenia serwerowe i bazodanowe oraz monitoring błędów.',
+      ],
     },
     {
       title: '11. Cookies',
       points: [
         'Vocare może używać plików cookies i podobnych technologii w celu utrzymania sesji/logowania, zapewnienia poprawnego działania serwisu oraz statystyk/analityki (jeśli wdrożone).',
-        'Szczegóły dotyczące cookies mogą być opisane w osobnej Polityce Cookies lub w panelu zgód (jeśli wdrożony).'
-      ]
+        'Szczegóły dotyczące cookies mogą być opisane w osobnej Polityce Cookies lub w panelu zgód (jeśli wdrożony).',
+      ],
     },
     {
       title: '12. Zmiany Polityki Prywatności',
       points: [
         'Administrator może aktualizować Politykę Prywatności w przypadku zmian w funkcjonalnościach, dostawcach lub przepisach prawa.',
-        'Aktualna wersja dokumentu jest publikowana na vocare.pl.'
-      ]
-    }
-  ]
-}
+        'Aktualna wersja dokumentu jest publikowana na vocare.pl.',
+      ],
+    },
+  ],
+};

@@ -24,7 +24,7 @@ export default function CountUp({
   startWhen = true,
   separator = '',
   onStart,
-  onEnd
+  onEnd,
 }: CountUpProps) {
   const ref = useRef<HTMLSpanElement>(null);
   const motionValue = useMotionValue(direction === 'down' ? to : from);
@@ -34,7 +34,7 @@ export default function CountUp({
 
   const springValue = useSpring(motionValue, {
     damping,
-    stiffness
+    stiffness,
   });
 
   const isInView = useInView(ref, { once: true, margin: '0px' });
@@ -59,7 +59,7 @@ export default function CountUp({
       const options: Intl.NumberFormatOptions = {
         useGrouping: !!separator,
         minimumFractionDigits: hasDecimals ? maxDecimals : 0,
-        maximumFractionDigits: hasDecimals ? maxDecimals : 0
+        maximumFractionDigits: hasDecimals ? maxDecimals : 0,
       };
 
       const formattedNumber = Intl.NumberFormat('en-US', options).format(latest);
