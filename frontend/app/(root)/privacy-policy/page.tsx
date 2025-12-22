@@ -15,7 +15,6 @@ const PrivacyPolicy = () => {
   return (
     <div className="font-grotesk min-h-screen bg-neutral-950 text-neutral-200">
       <div className="mx-auto max-w-4xl px-4 py-10 sm:px-6 lg:px-8">
-        {/* Header */}
         <header className="mb-10">
           <Link
             href="/"
@@ -26,16 +25,16 @@ const PrivacyPolicy = () => {
           </Link>
 
           <h1 className="text-3xl font-semibold tracking-tight text-neutral-100 sm:text-4xl">
-            Polityka Prywatności Vocare
+            {privacy_policy.title}
           </h1>
 
           <p className="mt-3 max-w-2xl text-sm leading-relaxed text-neutral-400">
-            Dokument opisujący zasady przetwarzania danych osobowych oraz ochrony prywatności
-            użytkowników aplikacji Vocare.
+            {privacy_policy.lastUpdated
+              ? `Data ostatniej aktualizacji: ${privacy_policy.lastUpdated}`
+              : 'Dokument opisujący zasady przetwarzania danych osobowych oraz ochrony prywatności użytkowników serwisu vocare.pl.'}
           </p>
         </header>
 
-        {/* Content */}
         <main className="space-y-10">
           {sections.map((section, sectionIndex) => (
             <section key={section.title}>
@@ -54,7 +53,6 @@ const PrivacyPolicy = () => {
           ))}
         </main>
 
-        {/* Footer */}
         <footer className="mt-16 border-t border-neutral-800 pt-6 text-xs text-neutral-500">
           © {new Date().getFullYear()} Vocare. Wszelkie prawa zastrzeżone.
         </footer>
