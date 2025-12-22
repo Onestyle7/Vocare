@@ -18,9 +18,9 @@ const GenerateRecommendationFail = () => {
       <div className="mx-10 flex flex-col items-center space-y-10 lg:border-t">
         <div className="mt-10 flex flex-col items-center justify-center">
           <h1 className="font-poppins font-korbin text-3xl font-bold max-md:text-center">
-            Get your career plan in 60 seconds.
+            Znajdź idealny zawód dla siebie
           </h1>
-          <p className="font-poppins text-md mt-4 text-gray-500">It&apos;s that simple.</p>
+          <p className="font-poppins text-md mt-4 text-gray-500">w 60 sekund.</p>
         </div>
         <div className="flex flex-col max-lg:space-y-3 lg:flex-row lg:space-x-4">
           <AnimatedContent
@@ -41,7 +41,7 @@ const GenerateRecommendationFail = () => {
                 </div>
                 <div className="mt-4 h-full w-full items-center justify-start">
                   <p className="text-muted-foreground text-lg">
-                    Start by updating <b>Your profile</b>. Simply use the <i>profile</i> button
+                    <b>Rozpocznij od zaktualizowania swojego profilu</b>. Po prostu użyj przycisku <i>profil</i>
                   </p>
                 </div>
                 <div className="w-full">
@@ -49,7 +49,7 @@ const GenerateRecommendationFail = () => {
                     href="/profile"
                     className="text-md text-muted-foreground group flex flex-row items-center transition-all duration-300"
                   >
-                    Navigate to profile
+                    Przejdź do profilu
                     <Image
                       src={upper_arrow}
                       alt="arrow"
@@ -81,16 +81,16 @@ const GenerateRecommendationFail = () => {
                 </div>
                 <div className="mt-4 h-full w-full items-center justify-start">
                   <p className="text-muted-foreground text-lg">
-                    After updating Your profile, you&apos;ll gain access to every <br />{' '}
-                    <b>AI tool</b> that Vocare offers.
+                    Po zaktualizowaniu swojego profilu zyskasz dostęp do  <br />{' '}
+                    <b>narzędzi AI</b> oferowanych przez Vocare.
                   </p>
                 </div>
                 <div className="w-full">
                   <Link
-                    href="/profile"
+                    href="/privacy-policy"
                     className="text-md text-muted-foreground group flex flex-row items-center transition-all duration-300"
                   >
-                    Learn how we protect data
+                    Dowiedz się, jak chronimy dane
                     <Image
                       src={upper_arrow}
                       alt="arrow"
@@ -121,8 +121,7 @@ const GenerateRecommendationFail = () => {
                 </div>
                 <div className="mt-4 h-full w-full items-center justify-start">
                   <p className="text-muted-foreground text-lg">
-                    Turn your plan into a clean, <b>ATS-friendly</b> resume. Save versions, tailor
-                    to roles, and export instantly.
+                    Zmień swój plan w nowoczesne, <b>dostosowane pod ATS</b> CV, które zapewni ci wymarzoną pracę.
                   </p>
                 </div>
                 <div className="w-full">
@@ -130,7 +129,7 @@ const GenerateRecommendationFail = () => {
                     href="/resume"
                     className="text-md text-muted-foreground group flex flex-row items-center transition-all duration-300"
                   >
-                    Open Resume Builder
+                    Otwórz kreator CV
                     <Image
                       src={upper_arrow}
                       alt="arrow"

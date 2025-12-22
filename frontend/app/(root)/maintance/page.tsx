@@ -55,7 +55,7 @@ export default function Maintenance() {
             </div>
             
             {/* Tekst przycisku */}
-            <span className="text-lg md:text-xl font-bold uppercase tracking-wide">
+            <span className="text-lg md:text-xl font-bold uppercase tracking-wide font-grotesk">
               Powrót
             </span>
           </Link>
@@ -91,7 +91,7 @@ export default function Maintenance() {
 
         {/* 3. Stopka (Informacje techniczne) */}
         <footer className="flex-none w-full flex justify-between items-end border-t-2 border-black pt-4">
-          <div className={`text-xs md:text-sm font-bold font-mono uppercase tracking-widest transition-opacity duration-1000 delay-700 ${mounted ? 'opacity-100' : 'opacity-0'}`}>
+          <div className={`text-xs md:text-sm font-bold font-grotesk font-mono uppercase tracking-widest transition-opacity duration-1000 delay-700 ${mounted ? 'opacity-100' : 'opacity-0'}`}>
             System Status: <span className="animate-pulse">Offline</span>
           </div>
           <div className={`text-xs md:text-sm font-bold font-mono uppercase tracking-widest transition-opacity duration-1000 delay-700 ${mounted ? 'opacity-100' : 'opacity-0'}`}>
