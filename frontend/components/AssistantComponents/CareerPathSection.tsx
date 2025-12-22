@@ -76,22 +76,22 @@ export default function CareerPathSection({ path, index }: CareerPathSectionProp
 
   const cards = [
     {
-      title: 'Required Skills',
+      title: 'Wymagane umiejętności',
       items: path.requiredSkills,
       imageSrc: '/images/card-assistant-1.png',
-      badgeText: 'Required skills',
+      badgeText: 'Wymagane umiejętności',
     },
     {
-      title: 'Recommended Courses',
+      title: 'Zalecane kursy',
       items: path.recommendedCourses,
       imageSrc: '/images/card-assistant-2.png',
-      badgeText: 'Recommended courses',
+      badgeText: 'Zalecane kursy',
     },
     {
-      title: 'Market Analysis',
+      title: 'Analiza rynku',
       items: path.marketAnalysis,
       imageSrc: '/images/card-assistant-3.png',
-      badgeText: 'Market analysis',
+      badgeText: 'Analiza rynku',
     },
   ];
 
@@ -119,7 +119,7 @@ export default function CareerPathSection({ path, index }: CareerPathSectionProp
 
       <div className="p-4 max-md:border-t md:w-5/6 md:p-6">
         <div className="flex flex-row items-center justify-between">
-          <h2 className="font-grotesk mb-1 text-xl">Consider this</h2>
+          <h2 className="font-grotesk mb-1 text-xl">Alternatywna ścieżka</h2>
           <CollapsibleButton isCollapsed={isCollapsed} toggleCollapse={toggleCollapse} />
         </div>
 
@@ -139,7 +139,7 @@ export default function CareerPathSection({ path, index }: CareerPathSectionProp
         >
           <div ref={contentRef} className="space-y-5">
             <p className="ibm-plex-mono-regular mt-2">
-              <strong>Success probability:</strong> {path.probability}%
+              <strong>Prawdopodobieństwo sukcesu:</strong> {path.probability}%
             </p>
 
             <HorizontalCarousel desktopCardsPerView={2.33}>
@@ -156,7 +156,7 @@ export default function CareerPathSection({ path, index }: CareerPathSectionProp
             </HorizontalCarousel>
 
             <div className="mt-4">
-              <h4 className="mb-3 font-bold">SWOT Analysis:</h4>
+              <h4 className="mb-3 font-bold">Analiza SWOT:</h4>
               <SwotAnalysis data={path.swot} className="ibm-plex-mono-regular" />
             </div>
           </div>

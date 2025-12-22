@@ -1,12 +1,12 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { getUserProfile } from '@/lib/profile';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { UserProfile } from '@/lib/types/profile';
 import { toast } from 'sonner';
-import { ArrowLeft, ArrowRight, LogOut } from 'lucide-react';
+import { ArrowDown, ArrowLeft, ArrowRight, ArrowUp, LogOut } from 'lucide-react';
 import { logoutUser } from '@/lib/auth';
 import { formatDate } from '../SupportComponents/formatSimpleDate';
 import ProfileForm from './ProfileForm';
@@ -53,6 +53,10 @@ export default function ProfileDetails() {
   const [loading, setLoading] = useState(true);
   const [currentPage, setCurrentPage] = useState(0);
   const [isEditing, setIsEditing] = useState(false);
+
+  const scrollRef = useRef<HTMLDivElement | null>(null);
+  const [atBottom, setAtBottom] = useState(false);
+
   const router = useRouter();
 
   const handleLogout = () => {
@@ -84,6 +88,34 @@ export default function ProfileDetails() {
 
     fetchProfile();
   }, [router]);
+
+  // ✅ show button when NOT at bottom, hide with ease when at bottom
+  useEffect(() => {
+    const el = scrollRef.current;
+    if (!el) return;
+
+    const update = () => {
+      const isBottom = el.scrollTop + el.clientHeight >= el.scrollHeight - 8;
+      setAtBottom(isBottom);
+    };
+
+    update();
+    el.addEventListener('scroll', update, { passive: true });
+
+    return () => el.removeEventListener('scroll', update);
+  }, [loading, isEditing, currentPage]);
+
+  const scrollToBottom = () => {
+    const el = scrollRef.current;
+    if (!el) return;
+    el.scrollTo({ top: el.scrollHeight, behavior: 'smooth' });
+  };
+
+  const scrollToTop = () => {
+    const el = scrollRef.current;
+    if (!el) return;
+    el.scrollTo({ top: 0, behavior: 'smooth' });
+  };
 
   const totalPages = 4;
 
@@ -455,12 +487,34 @@ export default function ProfileDetails() {
                   </div>
                 </div>
 
-                <div className="flex-grow overflow-y-auto">{pages[currentPage]()}</div>
+                {/* ✅ scroll container + floating down button */}
+                <div ref={scrollRef} className="relative flex-grow overflow-y-auto">
+                  {pages[currentPage]()}
+                </div>
 
-                <div className="mt-6 flex items-center justify-between border-t pt-4">
+                <div className="relative mt-6 flex items-center justify-between border-t pt-4">
+                  {/* LEFT */}
                   <button onClick={goToPreviousPage} disabled={currentPage === 0}>
                     <ArrowLeft />
                   </button>
+
+                  {/* CENTER – scroll down */}
+                  <button
+                    type="button"
+                    onClick={atBottom ? scrollToTop : scrollToBottom}
+                    aria-label={atBottom ? 'Scroll to top' : 'Scroll to bottom'}
+                    className={[
+                      'absolute left-1/2 -translate-x-1/2',
+                      'bg-background/80 h-10 w-10 rounded-full border backdrop-blur',
+                      'flex items-center justify-center',
+                      'transition-all duration-300',
+                      'hover:scale-105',
+                    ].join(' ')}
+                  >
+                    {atBottom ? <ArrowUp className="h-5 w-5 cursor-pointer" /> : <ArrowDown className="h-5 w-5 cursor-pointer" />}
+                  </button>
+
+                  {/* RIGHT */}
                   <button onClick={goToNextPage} disabled={currentPage === totalPages - 1}>
                     <ArrowRight />
                   </button>

@@ -60,13 +60,14 @@ const HeroTweak = () => {
           <div className="font-korbin flex w-full flex-col items-center justify-center max-md:mt-10 max-md:mb-8 lg:w-1/2 lg:items-start">
             <Copy>
               <h1 className="overflow-hidden text-4xl font-bold whitespace-nowrap text-neutral-800 max-md:text-center sm:text-4xl md:text-5xl lg:text-4xl xl:text-5xl 2xl:text-7xl dark:text-neutral-300">
-                Unlock Your <br /> Growth
+                Odblokuj swój <br /> potencjał
               </h1>
             </Copy>
             <Copy>
               <h2 className="text-muted-foreground font-grotesk mt-8 max-w-xl px-4 text-center text-sm max-md:block sm:mt-4 sm:text-base md:px-0 md:text-left md:text-lg lg:text-base xl:text-sm">
-                Vocare is an AI career advisor that turns your profile into clear career bets, live
-                market signals, and an ATS-ready resume-so you know what to do next today.
+                Vocare to AI-owy doradca kariery, który zamienia Twój profil w konkretne ścieżki
+                kariery, aktualne sygnały rynkowe oraz CV gotowe pod ATS - dzięki czemu dokładnie
+                wiesz, co zrobić dalej, już dziś.
               </h2>
             </Copy>
 
@@ -78,7 +79,7 @@ const HeroTweak = () => {
                 className="group relative z-20 mt-4 h-12 w-full rounded-full bg-[linear-gradient(90deg,rgba(146,150,253,1)_0%,rgba(132,145,254,1)_50%,rgba(199,169,254,1)_100%,rgba(157,155,255,1)_77%)] font-bold text-white md:mt-2 md:w-2/3"
                 variant="default"
               >
-                Get my plan
+                Wypróbuj za darmo
                 <ArrowRight className="ml-2 transition-all ease-in-out group-hover:translate-x-2" />
               </Button>
             </Link>
@@ -125,14 +126,14 @@ const HeroTweak = () => {
 
       <div className="relative mt-14 flex flex-col items-center justify-center border-gray-300 px-[40px] max-md:mt-40 dark:border-gray-600/30">
         <div className="font-korbin mb-2 flex h-full flex-col items-center justify-center">
-          <p className="font-bold text-gray-400">Meet us</p>
+          <p className="font-bold text-gray-400">Poznaj nas</p>
           <Copy>
             <p className="text-color mt-8 text-center text-4xl font-bold md:text-[4rem] xl:leading-[0.8]">
-              What will you get?
+              Co otrzymasz?
             </p>
           </Copy>
           <h2 className="font-grotesk mt-4 text-gray-400 max-md:text-center">
-            Career Outcomes, Market Insight & ATS-Ready Resume
+            Ścieżki kariery dopasowane do ciebie, analize rynkową oraz ATS-Ready CV.
           </h2>
         </div>
       </div>

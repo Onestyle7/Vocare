@@ -34,30 +34,26 @@ const Footer = () => {
       <footer className="mb-5 flex h-[60vh] flex-col items-center justify-center border-t 2xl:h-[50vh] 2xl:border">
         <div className="flex h-1/2 w-full justify-center max-sm:items-center">
           <div className="flex w-1/2 items-center justify-center">
-            <ButtonGenerate
-              as="a"
-              href="/profile"
-              className="mb-4 uppercase max-md:w-full sm:my-20"
-            >
-              Try Vocare
+            <ButtonGenerate as="a" href="/profile" className="mb-4 max-md:w-full sm:my-20">
+              Sprawdź Vocare
             </ButtonGenerate>
           </div>
         </div>
         <div className="flex w-full flex-col p-4 xl:flex-row">
           <div className="font-poppins flex flex-col items-start justify-start text-4xl max-md:mb-20 xl:w-1/2">
-            Never miss what&apos;s next
+            Nie przegap tego.
             <div className="mt-10 xl:w-1/2">
-              <Input type="email" placeholder="Your email" className="border-b outline-none" />
+              <Input type="email" placeholder="Email" className="border-b outline-none" />
             </div>
             <div className="mt-4 flex text-xs text-gray-400/90 xl:w-1/2">
-              By submitting your email, you’ll be the first to know about upcoming updates for
-              Vocare. You can unsubscribe at any time.
+              Podając swój adres e-mail, jako pierwszy dowiesz się o nadchodzących aktualizacjach
+              Vocare. Możesz w każdej chwili zrezygnować z subskrypcji.
             </div>
           </div>
           <div className="flex w-full flex-row items-start justify-center xl:w-1/2">
             <div className="flex w-1/3 flex-col items-center justify-center">
               <div>
-                <span className="mb-2 text-sm text-gray-400/90">SOCIAL</span>
+                <span className="mb-2 text-sm text-gray-400/90">SOCIALE</span>
                 <div className="items-left mt-4 flex flex-col justify-center">
                   {links_social.map((link, index) => (
                     <ul className="flex text-sm" key={index}>
@@ -73,7 +69,7 @@ const Footer = () => {
             </div>
             <div className="flex w-1/3 flex-col items-center justify-center">
               <div>
-                <span className="mb-2 text-sm text-gray-400/90">PAGES</span>
+                <span className="mb-2 text-sm text-gray-400/90">LINKI</span>
                 <div className="items-left mt-4 flex flex-col justify-center">
                   {links_pages.map((link, index) => (
                     <ul className="flex text-sm" key={index}>
@@ -87,7 +83,7 @@ const Footer = () => {
             </div>
             <div className="flex w-1/3 flex-col items-center justify-center">
               <div>
-                <span className="mb-2 text-sm text-gray-400/90">CONTACT</span>
+                <span className="mb-2 text-sm text-gray-400/90">KONTAKT</span>
                 <div className="items-left mt-4 flex flex-col justify-center">
                   {contact_pages.map((link, index) => (
                     <ul className="flex text-sm" key={index}>
@@ -125,8 +121,8 @@ const Footer = () => {
               ))}
             </div>
 
-            <div className="text-center text-4xl font-semibold sm:text-6xl xl:text-left xl:text-[80px] dark:text-[#F3F3F3]">
-              Find Your Path
+            <div className="font-poppins text-center text-4xl sm:text-6xl xl:text-left xl:text-[40px] dark:text-[#F3F3F3]">
+              Twoja droga zaczyna się tutaj.
             </div>
           </div>
         </div>

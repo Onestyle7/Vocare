@@ -582,7 +582,7 @@ export default function DetailedMarketAnalysis() {
         <header className="rounded-3xl border border-b-5 p-8 shadow-2xl shadow-slate-950/40">
           <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
             <div className="w-full md:w-2/3">
-              <p className="w-fit rounded-[3px] px-1 text-sm text-[#ecedf0]">AI Career Radar</p>
+              <p className="w-fit rounded-[3px] px-1 text-sm text-[#ecedf0]">Analiza rynkowa AI</p>
               <h1 className="mt-2 text-3xl font-semibold text-[#191A23]">
                 <span className="inline rounded-[7px] bg-[#F3F3F3] [box-decoration-break:clone] px-2 [-webkit-box-decoration-break:clone]">
                   Szczegółowa analiza rynku pracy
@@ -609,7 +609,7 @@ export default function DetailedMarketAnalysis() {
               </Button>
               <Button
                 onClick={downloadPdf}
-                className="group relative z-20 h-12 w-full rounded-[7px] border border-slate-800 bg-transparent text-slate-100 hover:border-slate-600 md:w-full"
+                className="group relative z-20 h-12 w-full rounded-[7px] border bg-transparent text-slate-100 md:w-full"
                 variant="outline"
                 disabled={!analysis || isDownloading || isGenerating || isLoading}
               >

@@ -48,8 +48,6 @@ const ResumeDashboard = () => {
       day: '2-digit',
       month: '2-digit',
       year: 'numeric',
-      hour: '2-digit',
-      minute: '2-digit',
       hour12: false,
     });
   };
@@ -70,7 +68,7 @@ const ResumeDashboard = () => {
 
     // Zaktualizowane: modyfikowane w ciągu ostatnich 2 dni
     if (daysSinceModified <= 2 && timeBetweenCreatedAndModified >= 30) {
-      return { label: 'Updated', variant: 'updated' };
+      return { label: 'Zaktualizowano', variant: 'updated' };
     }
 
     return null;
@@ -147,18 +145,18 @@ const ResumeDashboard = () => {
                   {!loading && cvs.length > 0 && (
                     <Button variant="outline" className="gap-2" onClick={handleNewResumeClick}>
                       <Plus className="h-4 w-4" />
-                      New Resume
+                      Stwórz nowe
                     </Button>
                   )}
                 </div>
                 <div className="flex flex-col gap-2">
                   <h2 className="font-regular max-w-xl text-left text-3xl tracking-tighter md:text-5xl">
-                    Your resumes
+                    Twoje cv
                   </h2>
                   <p className="text-muted-foreground max-w-xl text-left text-lg leading-relaxed tracking-tight lg:max-w-lg">
                     {limits
-                      ? `You can save up to ${limits.maxLimit} resumes in your current plan.`
-                      : 'Manage your professional resumes and track your applications.'}
+                      ? `Możesz zapisać do ${limits.maxLimit} CV w swoim aktualnym planie.`
+                      : 'Zarządzaj swoimi profesjonalnymi CV i śledź swoje aplikacje.'}
                   </p>
                 </div>
               </div>
@@ -221,9 +219,9 @@ const ResumeDashboard = () => {
                                   </AlertDialogTrigger>
                                   <AlertDialogContent className="font-grotesk">
                                     <AlertDialogHeader>
-                                      <AlertDialogTitle>Delete resume?</AlertDialogTitle>
+                                      <AlertDialogTitle>Usunąć CV?</AlertDialogTitle>
                                       <AlertDialogDescription>
-                                        This action cannot be undone.
+                                        Ta akcja nie może być cofnięta.
                                       </AlertDialogDescription>
                                     </AlertDialogHeader>
                                     <AlertDialogFooter>
@@ -234,7 +232,7 @@ const ResumeDashboard = () => {
                                           setDeleteId(null);
                                         }}
                                       >
-                                        Keep the resume
+                                        Zachowaj CV
                                       </AlertDialogCancel>
                                       <AlertDialogAction
                                         className="bg-red-500 text-white hover:bg-red-400"
@@ -244,7 +242,7 @@ const ResumeDashboard = () => {
                                           handleDelete(cv.id);
                                         }}
                                       >
-                                        Yes, I want to delete
+                                        Tak, chcę usunąć
                                       </AlertDialogAction>
                                     </AlertDialogFooter>
                                   </AlertDialogContent>
@@ -261,7 +259,7 @@ const ResumeDashboard = () => {
                             <div className="flex-1 p-4">
                               <h3 className="line-clamp-1 text-xl tracking-tight">{cv.name}</h3>
                               <p className="text-muted-foreground line-clamp-2 text-base">
-                                {cv.targetPosition || 'No target position specified'}
+                                {cv.targetPosition || 'Nie określono stanowiska docelowego'}
                               </p>
                             </div>
 
@@ -269,13 +267,13 @@ const ResumeDashboard = () => {
 
                             {/* Card Actions */}
                             <div className="flex min-h-[72px] flex-row items-center justify-between p-4">
-                              <Button size="sm">Edit</Button>
+                              <Button size="sm">Edytuj</Button>
                               <div className="flex flex-row items-center justify-center gap-2">
                                 <Clock className="text-muted-foreground h-4 w-4" />
                                 <p className="text-muted-foreground text-sm font-semibold">
                                   {cv.lastModifiedAt
-                                    ? `Modified ${formatDateTime(cv.lastModifiedAt)}`
-                                    : 'Created recently'}
+                                    ? `Zmodyfikowano ${formatDateTime(cv.lastModifiedAt)}`
+                                    : 'Utworzono niedawno'}
                                 </p>
                               </div>
                             </div>
