@@ -6,7 +6,11 @@ const signUpPasswordSchema = z
   .min(6, 'Password must be at least 6 characters long')
   .regex(/[a-z]/, 'Password must contain at least one lowercase letter')
   .regex(/[A-Z]/, 'Password must contain at least one uppercase letter')
-  .regex(/\d/, 'Password must contain at least one digit');
+  .regex(/\d/, 'Password must contain at least one digit')
+  .regex(
+    /[!@#$%^&*()_+\-=[\]{};':"\\|,.<>/?]/,
+    'Password must contain at least one special character'
+  );
 
 // Sign-up schema
 export const signUpSchema = z

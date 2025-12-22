@@ -390,6 +390,10 @@
   font-family: 'Poppins', sans-serif;
 }
 
+.font-grotesk {
+  font-family: var(--font-grotesk), 'Space Grotesk', sans-serif;
+}
+
 .ibm-plex-mono-thin {
   font-family: 'IBM Plex Mono', monospace;
   font-weight: 100;

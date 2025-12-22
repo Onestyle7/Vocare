@@ -93,36 +93,31 @@ const MobileNav: React.FC<MobileNavProps> = ({ isAuthenticated }) => {
         <SheetTitle className="hidden">Vocare</SheetTitle>
 
         <ul className="mt-10 flex h-full flex-col items-center justify-center space-y-4">
-          {filteredLinks.map(({ label, url, disabled }) => (
-            <li key={label}>
-              {disabled ? (
-                <div
-                  className="relative cursor-not-allowed text-[18px] font-normal uppercase opacity-50"
-                  title="Coming soon"
-                >
-                  {label}
-                  <Badge
-                    variant="outline"
-                    className="absolute -top-2 -right-12 scale-75 sm:-right-10"
-                  >
-                    soon
-                  </Badge>
-                </div>
-              ) : (
+          {filteredLinks.map(({ label, url, highlighted }) => {
+            const isActive = pathname === url;
+
+            return (
+              <li key={label} className="relative">
                 <SheetClose asChild>
                   <Link
                     href={url}
-                    className={cn(
-                      'text-[18px] font-normal uppercase',
-                      pathname === url && 'underline'
-                    )}
+                    className={cn('relative text-[18px] font-normal uppercase', isActive && 'underline')}
                   >
-                    {label}
+                    <span>{label}</span>
+
+                    {highlighted && (
+                      <Badge
+                        variant="outline"
+                        className="pointer-events-none absolute -top-3 -right-10 scale-75 sm:-right-8"
+                      >
+                        stwórz cv
+                      </Badge>
+                    )}
                   </Link>
                 </SheetClose>
-              )}
-            </li>
-          ))}
+              </li>
+            );
+          })}
           {!isAuthenticated && (
             <SheetClose asChild>
               <Link href="/sign-in" className="text-[18px] font-normal uppercase">

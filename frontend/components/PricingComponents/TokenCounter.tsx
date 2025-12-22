@@ -3,13 +3,8 @@ import { Plus } from 'lucide-react';
 import Link from 'next/link';
 
 export const TokenCounter = () => {
-  const {
-    tokenBalance,
-    subscriptionStatus, 
-    hasActiveSubscription, 
-    isLoading,
-    error,
-  } = useTokenBalanceContext();
+  const { tokenBalance, subscriptionStatus, hasActiveSubscription, isLoading, error } =
+    useTokenBalanceContext();
 
   const displayBalance = isLoading ? '...' : error ? '0' : String(tokenBalance ?? '0');
   const isSubscribed = !!hasActiveSubscription && !isLoading;
@@ -20,7 +15,7 @@ export const TokenCounter = () => {
       <div className="group relative mx-auto flex w-fit flex-col items-center">
         <div className="text-md flex items-center gap-4 rounded-full border border-[#1f2026] bg-[#0f1014] px-5 py-2 transition hover:cursor-pointer hover:border-[#2a2b33]">
           <div className="flex items-center">
-            Tokens:
+            Tokeny:
             <span className="font-poppins ml-2 font-semibold text-[#915EFF]">{displayBalance}</span>
           </div>
 

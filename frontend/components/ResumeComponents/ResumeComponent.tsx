@@ -411,6 +411,7 @@ const CVCreator: React.FC<CVCreatorProps> = ({ initialCv }) => {
       }
       return nextFormatting;
     });
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [personalInfo.summary]);
 
   useEffect(() => {

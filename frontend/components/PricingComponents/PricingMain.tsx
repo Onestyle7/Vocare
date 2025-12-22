@@ -34,7 +34,7 @@ const API_BASE = process.env.NEXT_PUBLIC_API_URL || 'https://vocare-staging-e568
 
 const pricingPlans = [
   {
-    name: 'Personal',
+    name: 'Osobiste',
     description: 'Perfect for getting started with following your career.',
     price: 9,
     tokens: 500 as number | string,
@@ -49,7 +49,7 @@ const pricingPlans = [
     popular: false,
   },
   {
-    name: 'Growth',
+    name: 'Rozwój',
     description: 'The best choice for scaling your projects.',
     price: 29,
     tokens: 'Unlimited' as number | string,
@@ -313,9 +313,9 @@ const PricingMain = () => {
               <p className="mb-4 font-bold text-gray-400 sm:mb-6">Pricing</p>
               <Copy>
                 <h1 className="text-color text-center text-3xl font-bold md:text-[3rem] xl:leading-[0.8]">
-                  <span>Tailored to </span>
+                  <span>Dopasowany pod </span>
                   <span className="relative inline-block pb-4 md:pb-6">
-                    your needs
+                    Ciebie
                     <Image
                       src={curve_pricing}
                       alt="line"
@@ -327,8 +327,7 @@ const PricingMain = () => {
                 </h1>
               </Copy>
               <p className="text-md mt-4 w-3/4 text-center font-light text-gray-300 sm:mt-2 sm:text-lg">
-                Free start. Choose a token plan when you’re ready. No longterm contracts. No credit
-                card to try.
+                Darmowy start. Bez karty płatniczej.
               </p>
             </div>
 
@@ -345,7 +344,7 @@ const PricingMain = () => {
                   filter: 'blur(32px)',
                 }}
               />
-              <div className="font-poppins grid items-end gap-8 md:grid-cols-3">
+              <div className="font-grotesk grid items-end gap-8 md:grid-cols-3">
                 <ScrollParallax isAbsolutelyPositioned zIndex={20}>
                   <div className="absolute top-1/5 -left-4 z-20 sm:top-1/7 xl:top-0">
                     <Image src={shape1} alt="shape" width={78} height={78} className="-rotate-20" />
@@ -366,23 +365,23 @@ const PricingMain = () => {
                       <Image src={circle_pricing} alt="square" width={32} height={32} />
                     </div>
                     <h3 className="mb-2 text-xl font-semibold text-gray-900 dark:text-gray-100">
-                      Personal
+                      Osobiste
                     </h3>
-                    <p className="mb-4 text-gray-700 dark:text-gray-300">
-                      Perfect for finding your career.
+                    <p className="font-grotesk mb-4 text-gray-700 dark:text-gray-300">
+                      Idealne do znalezienia swojej ścieżki zawodowej.
                     </p>
-                    <div className="font-poppins mb-6 text-4xl font-bold text-gray-900 dark:text-white">
+                    <div className="font-grotesk mb-6 text-4xl font-bold text-gray-900 dark:text-white">
                       45<sup className="align-super text-sm">zł</sup>
                       <span className="text-xl font-normal text-gray-600 dark:text-gray-300">
-                        /500 tokens
+                        /500 tokenów
                       </span>
                     </div>
                     <ul className="mb-6 space-y-3 text-gray-900 dark:text-gray-100">
                       {[
-                        '500 tokens included',
-                        'Personal career guidance',
-                        'Personalized career path proposals',
-                        'Market insights for your careers',
+                        '500 tokenów w pakiecie',
+                        'Indywidualne doradztwo kariery',
+                        'Spersonalizowane propozycje ścieżek kariery',
+                        'Analizy rynku pracy',
                       ].map((feature, i) => (
                         <li key={i} className="flex items-center">
                           <svg
@@ -418,7 +417,7 @@ const PricingMain = () => {
                   >
                     {isLoading && selectedPriceId === pricingPlans[0].priceId
                       ? 'Processing...'
-                      : `Buy ${pricingPlans[0].name}`}
+                      : `Wybierz plan`}
                   </Button>
                 </div>
 
@@ -438,28 +437,28 @@ const PricingMain = () => {
                         <div className="mb-4 flex h-[40px] w-[40px] items-center justify-center rounded-full border bg-white/20 shadow-xl backdrop-blur-md dark:bg-white/10">
                           <Image src={square_pricing} alt="square" width={32} height={32} />
                         </div>
-                        <div className="font-poppins flex h-[32px] w-fit items-center justify-center rounded-full bg-[#818fff] px-4 py-2 text-xs font-semibold text-white">
-                          <p>Save 35%</p>
+                        <div className="font-grotesk flex h-[32px] w-fit items-center justify-center rounded-full bg-[#818fff] px-4 py-2 text-xs font-semibold text-white">
+                          <p>Oszczędź 35%</p>
                         </div>
                       </div>
                       <h3 className="mb-2 text-xl font-semibold text-gray-900 dark:text-gray-100">
-                        Growth
+                        Rozwój
                       </h3>
                       <p className="mb-4 text-gray-700 dark:text-gray-300">
-                        The best choice for scaling your career.
+                        Najlepszy wybór do rozwoju Twojej kariery.
                       </p>
-                      <div className="font-poppins mb-6 text-4xl font-bold text-gray-900 dark:text-white">
+                      <div className="font-grotesk mb-6 text-4xl font-bold text-gray-900 dark:text-white">
                         29<sup className="align-super text-sm">zł</sup>
                         <span className="text-xl font-normal text-gray-600 dark:text-gray-300">
-                          /month
+                          /miesiąc
                         </span>
                       </div>
                       <ul className="mb-6 space-y-3 text-gray-900 dark:text-gray-100">
                         {[
-                          'Unlimited access',
-                          'Personal career guidance',
-                          'Personalized career path proposals',
-                          'Market insights for your careers',
+                          'Nielimitowany dostęp',
+                          'Indywidualne doradztwo kariery',
+                          'Spersonalizowane propozycje ścieżek kariery',
+                          'Analizy rynku pracy dla Twoich kierunków kariery',
                         ].map((feature, i) => (
                           <li key={i} className="flex items-center">
                             <svg
@@ -495,7 +494,7 @@ const PricingMain = () => {
                     >
                       {isLoading && selectedPriceId === pricingPlans[1].priceId
                         ? 'Processing...'
-                        : `Subscribe ${pricingPlans[1].name}`}
+                        : `Zasubskrybuj`}
                     </Button>
                   </div>
                 </div>
@@ -517,17 +516,17 @@ const PricingMain = () => {
                           className="scale-80"
                         />
                       </div>
-                      <div className="font-poppins flex h-[32px] w-fit items-center justify-center rounded-full bg-[#818fff] px-4 py-2 text-xs font-semibold text-white">
-                        <p>Save 65%</p>
+                      <div className="font-grotesk flex h-[32px] w-fit items-center justify-center rounded-full bg-[#818fff] px-4 py-2 text-xs font-semibold text-white">
+                        <p>Oszczędź 65%</p>
                       </div>
                     </div>
                     <h3 className="mb-2 text-xl font-semibold text-gray-900 dark:text-gray-100">
-                      Individual
+                      Indywidualne
                     </h3>
                     <p className="mb-4 text-gray-700 dark:text-gray-300">
-                      Your career advisored by our experts.
+                      Twoja kariera prowadzona przez naszych ekspertów.
                     </p>
-                    <div className="font-poppins mb-6 text-4xl font-bold text-gray-900 dark:text-white">
+                    <div className="font-grotesk mb-6 text-4xl font-bold text-gray-900 dark:text-white">
                       99<sup className="align-super text-sm">zł</sup>
                       {/* <span className="text-xl font-normal text-gray-600 dark:text-gray-300">
                       /once
@@ -535,10 +534,10 @@ const PricingMain = () => {
                     </div>
                     <ul className="mb-6 space-y-3 text-gray-900 dark:text-gray-100">
                       {[
-                        'CV review by career expert',
-                        'Optizimazation for resume',
-                        '5 personalized career paths',
-                        'Response within 48 hours',
+                        'Analiza CV przez eksperta kariery',
+                        'Optymalizacja CV',
+                        '5 spersonalizowanych ścieżek kariery',
+                        'Wyniki w ciągu 48 godzin',
                       ].map((feature, i) => (
                         <li key={i} className="flex items-center">
                           <svg
@@ -573,7 +572,7 @@ const PricingMain = () => {
                   >
                     {isLoading && individualPlan && selectedPriceId === individualPlan.priceId
                       ? 'Processing...'
-                      : `Contact us`}
+                      : `Skontaktuj się`}
                   </Button>
                 </div>
               </div>
@@ -583,7 +582,7 @@ const PricingMain = () => {
       </Section>
       {individualPlan && (
         <AlertDialog open={individualDialogOpen} onOpenChange={setIndividualDialogOpen}>
-          <AlertDialogContent className="font-poppins max-w-md rounded-2xl">
+          <AlertDialogContent className="font-grotesk max-w-md rounded-2xl">
             <AlertDialogHeader>
               <AlertDialogTitle>Proceed with payment?</AlertDialogTitle>
               <AlertDialogDescription>
