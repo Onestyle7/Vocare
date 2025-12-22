@@ -59,7 +59,7 @@ const HeroTweak = () => {
         <div className="inset-0 flex w-full flex-col items-center justify-center md:flex-row md:justify-start md:pl-[40px] lg:w-3/5 lg:border-t lg:border-b">
           <div className="font-korbin flex w-full flex-col items-center justify-center max-md:mt-10 max-md:mb-8 lg:w-1/2 lg:items-start">
             <Copy>
-              <h1 className="overflow-hidden text-4xl font-bold whitespace-nowrap text-neutral-800 max-md:text-center sm:text-4xl md:text-5xl lg:text-4xl xl:text-5xl 2xl:text-7xl dark:text-neutral-300">
+              <h1 className="overflow-hidden text-4xl font-bold whitespace-nowrap text-neutral-800 max-md:text-center sm:text-4xl md:text-5xl lg:text-4xl xl:text-5xl dark:text-neutral-300">
                 Odblokuj swój <br /> potencjał
               </h1>
             </Copy>
