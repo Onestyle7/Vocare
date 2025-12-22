@@ -511,7 +511,7 @@ export default function ProfileDetails() {
                       'hover:scale-105',
                     ].join(' ')}
                   >
-                    {atBottom ? <ArrowUp className="h-5 w-5" /> : <ArrowDown className="h-5 w-5" />}
+                    {atBottom ? <ArrowUp className="h-5 w-5 cursor-pointer" /> : <ArrowDown className="h-5 w-5 cursor-pointer" />}
                   </button>
 
                   {/* RIGHT */}

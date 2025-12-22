@@ -609,7 +609,7 @@ export default function DetailedMarketAnalysis() {
               </Button>
               <Button
                 onClick={downloadPdf}
-                className="group relative z-20 h-12 w-full rounded-[7px] border border-slate-800 bg-transparent text-slate-100 hover:border-slate-600 md:w-full"
+                className="group relative z-20 h-12 w-full rounded-[7px] border bg-transparent text-slate-100 md:w-full"
                 variant="outline"
                 disabled={!analysis || isDownloading || isGenerating || isLoading}
               >

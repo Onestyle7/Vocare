@@ -3,12 +3,12 @@
 import {
   postanowienia_ogolne,
   definicje,
-  zakres_uslug,
-  platnosci,
-  odpowiedzialnosc,
+  wymagania_techniczne,
+  uslugi_i_wylaczenie_odpowiedzialnosci_ai,
+  platnosci_i_zawarcie_umowy,
+  prawo_odstapienia,
   reklamacje,
-  wlasnosc_intelektualna,
-  prywatnosc,
+  ochrona_danych_osobowych,
   postanowienia_koncowe,
 } from '@/app/constants';
 import { ArrowLeft } from 'lucide-react';
@@ -22,12 +22,12 @@ type Section = {
 const sections: Section[] = [
   postanowienia_ogolne,
   definicje,
-  zakres_uslug,
-  platnosci,
-  odpowiedzialnosc,
+  wymagania_techniczne,
+  uslugi_i_wylaczenie_odpowiedzialnosci_ai,
+  platnosci_i_zawarcie_umowy,
+  prawo_odstapienia,
   reklamacje,
-  wlasnosc_intelektualna,
-  prywatnosc,
+  ochrona_danych_osobowych,
   postanowienia_koncowe,
 ];
 
@@ -45,15 +45,15 @@ const TermsOfService = () => {
           </Link>
 
           <h1 className="text-3xl font-semibold tracking-tight text-neutral-100 sm:text-4xl">
-            Regulamin korzystania z Vocare
+            Regulamin świadczenia usług drogą elektroniczną
           </h1>
 
           <p className="mt-3 max-w-2xl text-sm leading-relaxed text-neutral-400">
-            Dokument określający zasady korzystania z aplikacji Vocare.
+            Dokument określający zasady korzystania z serwisu vocare.pl oraz warunki świadczenia usług
+            cyfrowych.
           </p>
         </header>
 
-        {/* Content */}
         <main className="space-y-10">
           {sections.map((section, sectionIndex) => (
             <section key={section.title}>
@@ -72,7 +72,6 @@ const TermsOfService = () => {
           ))}
         </main>
 
-        {/* Footer */}
         <footer className="mt-16 border-t border-neutral-800 pt-6 text-xs text-neutral-500">
           © {new Date().getFullYear()} Vocare. Wszelkie prawa zastrzeżone.
         </footer>
