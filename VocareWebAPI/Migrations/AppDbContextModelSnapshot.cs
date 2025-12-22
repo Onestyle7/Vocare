@@ -218,7 +218,7 @@ namespace VocareWebAPI.Migrations
                         {
                             Id = 1,
                             ServiceName = "AnalyzeProfile",
-                            TokenCost = 5
+                            TokenCost = 60
                         },
                         new
                         {
@@ -230,7 +230,7 @@ namespace VocareWebAPI.Migrations
                         {
                             Id = 3,
                             ServiceName = "MarketAnalysis",
-                            TokenCost = 5
+                            TokenCost = 50
                         },
                         new
                         {
@@ -333,6 +333,159 @@ namespace VocareWebAPI.Migrations
                     b.HasKey("UserId");
 
                     b.ToTable("UserBillings", "public");
+                });
+
+            modelBuilder.Entity("VocareWebAPI.CareerAdvisor.Models.Entities.MarketAnalysis.AiNarrator", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid>("CareerStatisticsId")
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("EntryAdvice")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("MotivationalMessage")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("PersonalizedRecommendation")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("SalaryInsight")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("WorkStyleInsight")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CareerStatisticsId")
+                        .IsUnique();
+
+                    b.ToTable("AiNarrators", "public");
+                });
+
+            modelBuilder.Entity("VocareWebAPI.CareerAdvisor.Models.Entities.MarketAnalysis.EntryDifficulty", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid>("CareerStatisticsId")
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("DifficultyLevel")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<int>("DifficultyScore")
+                        .HasColumnType("integer");
+
+                    b.Property<string>("EstimatedTimeToReady")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("Explanation")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<int>("MatchingSkillsCount")
+                        .HasColumnType("integer");
+
+                    b.Property<string>("MissingSkills")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<int>("MissingSkillsCount")
+                        .HasColumnType("integer");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CareerStatisticsId")
+                        .IsUnique();
+
+                    b.ToTable("EntryDifficulties", "public");
+                });
+
+            modelBuilder.Entity("VocareWebAPI.CareerAdvisor.Models.Entities.MarketAnalysis.SalaryProgression", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<int>("AverageSalary")
+                        .HasColumnType("integer");
+
+                    b.Property<string>("CareerLevel")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<Guid>("CareerStatisticsId")
+                        .HasColumnType("uuid");
+
+                    b.Property<int>("MaxSalary")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("MinSalary")
+                        .HasColumnType("integer");
+
+                    b.Property<string>("YearsOfExperience")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CareerStatisticsId");
+
+                    b.ToTable("SalaryProgressions", "public");
+                });
+
+            modelBuilder.Entity("VocareWebAPI.CareerAdvisor.Models.Entities.MarketAnalysis.WorkAttributes", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<int>("AnalyticalThinking")
+                        .HasColumnType("integer");
+
+                    b.Property<Guid>("CareerStatisticsId")
+                        .HasColumnType("uuid");
+
+                    b.Property<int>("Creativity")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("CustomerFacing")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("Independence")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("RoutineVsDynamic")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("StressLevel")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("Teamwork")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("TechnicalDepth")
+                        .HasColumnType("integer");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CareerStatisticsId")
+                        .IsUnique();
+
+                    b.ToTable("WorkAttributes", "public");
                 });
 
             modelBuilder.Entity("VocareWebAPI.CvGenerator.Models.GeneratedCv", b =>
@@ -995,6 +1148,50 @@ namespace VocareWebAPI.Migrations
                         .IsRequired();
                 });
 
+            modelBuilder.Entity("VocareWebAPI.CareerAdvisor.Models.Entities.MarketAnalysis.AiNarrator", b =>
+                {
+                    b.HasOne("VocareWebAPI.Models.Entities.MarketAnalysis.CareerStatistics", "CareerStatistics")
+                        .WithOne("AiNarrator")
+                        .HasForeignKey("VocareWebAPI.CareerAdvisor.Models.Entities.MarketAnalysis.AiNarrator", "CareerStatisticsId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("CareerStatistics");
+                });
+
+            modelBuilder.Entity("VocareWebAPI.CareerAdvisor.Models.Entities.MarketAnalysis.EntryDifficulty", b =>
+                {
+                    b.HasOne("VocareWebAPI.Models.Entities.MarketAnalysis.CareerStatistics", "CareerStatistics")
+                        .WithOne("EntryDifficulty")
+                        .HasForeignKey("VocareWebAPI.CareerAdvisor.Models.Entities.MarketAnalysis.EntryDifficulty", "CareerStatisticsId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("CareerStatistics");
+                });
+
+            modelBuilder.Entity("VocareWebAPI.CareerAdvisor.Models.Entities.MarketAnalysis.SalaryProgression", b =>
+                {
+                    b.HasOne("VocareWebAPI.Models.Entities.MarketAnalysis.CareerStatistics", "CareerStatistics")
+                        .WithMany("SalaryProgressions")
+                        .HasForeignKey("CareerStatisticsId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("CareerStatistics");
+                });
+
+            modelBuilder.Entity("VocareWebAPI.CareerAdvisor.Models.Entities.MarketAnalysis.WorkAttributes", b =>
+                {
+                    b.HasOne("VocareWebAPI.Models.Entities.MarketAnalysis.CareerStatistics", "CareerStatistics")
+                        .WithOne("workAttributes")
+                        .HasForeignKey("VocareWebAPI.CareerAdvisor.Models.Entities.MarketAnalysis.WorkAttributes", "CareerStatisticsId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("CareerStatistics");
+                });
+
             modelBuilder.Entity("VocareWebAPI.CvGenerator.Models.GeneratedCv", b =>
                 {
                     b.HasOne("VocareWebAPI.Models.Entities.User", "User")
@@ -1145,6 +1342,17 @@ namespace VocareWebAPI.Migrations
                     b.Navigation("Recommendations");
 
                     b.Navigation("SkillDemands");
+                });
+
+            modelBuilder.Entity("VocareWebAPI.Models.Entities.MarketAnalysis.CareerStatistics", b =>
+                {
+                    b.Navigation("AiNarrator");
+
+                    b.Navigation("EntryDifficulty");
+
+                    b.Navigation("SalaryProgressions");
+
+                    b.Navigation("workAttributes");
                 });
 
             modelBuilder.Entity("VocareWebAPI.Models.Entities.User", b =>

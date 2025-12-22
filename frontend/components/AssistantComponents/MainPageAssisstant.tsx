@@ -35,7 +35,7 @@ import Link from 'next/link';
 import { AxiosError } from 'axios';
 import { AiCareerResponse, CareerPath } from '@/lib/types/recommendation';
 import Section from '../SupportComponents/Section';
-import { ArrowRight } from 'lucide-react';
+import { ArrowRight, Undo2 } from 'lucide-react';
 
 // const API_URL = process.env.NEXT_PUBLIC_API_URL;
 
@@ -165,7 +165,8 @@ export default function AssistantPage() {
         // Najpierw spróbuj pobrać ostatnie rekomendacje
         try {
           const lastRecommendationResponse = await axios.get<AiCareerResponse>(
-            'https://vocare-production-e568.up.railway.app/api/Ai/last-recommendation',
+            'https://vocare-staging-1f69.up.railway.app/api/Ai/last-recommendation',
+
             {
               headers: {
                 Authorization: `Bearer ${token}`,
@@ -196,7 +197,7 @@ export default function AssistantPage() {
 
         // Jeśli brak ostatnich rekomendacji, wygeneruj nowe
         const response = await axios.get<AiCareerResponse>(
-          'https://vocare-production-e568.up.railway.app/api/Ai/recommendations',
+          'https://vocare-staging-1f69.up.railway.app/api/Ai/recommendations',
           {
             headers: {
               Authorization: `Bearer ${token}`,
@@ -248,7 +249,7 @@ export default function AssistantPage() {
     }
     try {
       const response = await axios.get<AiCareerResponse>(
-        'https://vocare-production-e568.up.railway.app/api/Ai/recommendations',
+        'https://vocare-staging-1f69.up.railway.app/api/Ai/recommendations',
         {
           headers: {
             Authorization: `Bearer ${token}`,
@@ -282,7 +283,7 @@ export default function AssistantPage() {
 
   const timelineItems =
     recommendations?.recommendation.nextSteps.map((step: string, index: number) => ({
-      title: `Step ${index + 1}`,
+      title: `Krok ${index + 1}`,
       description: step,
       icon: icons[index], // przypisuje ikonę zgodnie z indeksem
       status: index === 0 ? ('current' as const) : ('upcoming' as const),
@@ -324,12 +325,18 @@ export default function AssistantPage() {
       <div className="mt-8 xl:mx-10 xl:mt-16 xl:border-t xl:border-r xl:border-l">
         <div className="font-korbin mx-auto flex max-w-7xl flex-col items-center justify-center p-4 md:p-8">
           <h2 className="font-korbin mt-1 mb-6 flex h-[38px] w-[180px] items-center justify-center rounded-full border-[0.5px] border-white/60 text-sm">
-            AI Career Advisor
+            Doradca kariery AI
           </h2>
-          <div>
-            {/* Main recommendation section */}
-            <div className="clip-corner-bevel mb-4 flex flex-col overflow-hidden rounded-[28px] border-t border-b border-l shadow-sm sm:border md:flex-row">
-              <div className="relative flex items-center justify-center overflow-hidden p-4 md:w-1/6 md:border-r md:p-8">
+          <div className="relative mb-4 w-full rounded-[28px] bg-[linear-gradient(90deg,rgba(146,150,253,1)_0%,rgba(132,145,254,1)_50%,rgba(199,169,254,1)_100%,rgba(157,155,255,1)_77%)] px-1 pt-16 pb-1">
+            {/* „Belka” nad kafelkiem – dokładnie jak Best Deal */}
+            <div className="absolute top-4 left-1/2 flex w-full -translate-x-1/2 items-center justify-center gap-2">
+              <Undo2 className="h-5 w-5 -rotate-90 text-white" />
+              <span className="text-lg font-semibold text-white">Główna rekomendacja</span>
+            </div>
+
+            {/* Właściwy kafelek z rekomendacją */}
+            <div className="clip-corner-bevel relative z-30 flex flex-col overflow-hidden rounded-[24px] border shadow-sm backdrop-blur-md md:flex-row dark:border-gray-500/40 dark:bg-[#090d16]">
+              <div className="relative flex items-center justify-center overflow-hidden p-4 md:w-1/6 md:border-r">
                 <Image
                   src="/images/cone.png"
                   alt="decor"
@@ -348,9 +355,10 @@ export default function AssistantPage() {
                   1
                 </span>
               </div>
+
               <div className="p-4 max-md:border-t md:w-5/6 md:p-6">
                 <div className="flex flex-row items-center justify-between">
-                  <h2 className="font-poppins mb-1 text-xl">Main Recommendation</h2>
+                  <h2 className="font-grotesk mb-1 text-xl">Najlepsze dopasowanie</h2>
                   <CollapsibleButton isCollapsed={isCollapsed} toggleCollapse={toggleCollapse} />
                 </div>
 
@@ -358,7 +366,7 @@ export default function AssistantPage() {
                   {recommendations.recommendation.primaryPath}
                 </h3>
 
-                <p className="font-poppins text-gray-400">
+                <p className="font-grotesk text-gray-400">
                   {recommendations.recommendation.justification}
                 </p>
 
@@ -372,14 +380,14 @@ export default function AssistantPage() {
                   }}
                 >
                   <div ref={contentRef} className="space-y-3">
-                    <h4 className="font-poppins mt-4 font-bold">Next steps:</h4>
+                    <h4 className="font-grotesk mt-4 font-bold">Kolejne kroki:</h4>
                     <div className="ibm-plex-mono-regular mt-4 rounded-xl border p-2">
                       <Timeline items={timelineItems} maxDescriptionLength={80} className="mx-0" />
                     </div>
-                    {/* <Separator /> */}
+
                     <div className="mt-4 rounded-xl p-2">
-                      <h4 className="font-poppins font-bold"> Long-term goal:</h4>
-                      <p className="font-poppins mt-1 text-gray-400">
+                      <h4 className="font-grotesk font-bold">Cel długoterminowy:</h4>
+                      <p className="font-grotesk mt-1 text-gray-400">
                         {recommendations.recommendation.longTermGoal}
                       </p>
                     </div>
@@ -406,7 +414,7 @@ export default function AssistantPage() {
               disabled={isLoading}
               className="cursor-pointer px-6 py-2 max-md:w-full! max-md:text-sm"
             >
-              {isLoading ? 'Generating...' : 'Generate new recommendation'}
+              {isLoading ? 'Generating...' : 'Wygeneruj nową rekomendację'}
             </ButtonGenerate>
           </div>
 
@@ -416,12 +424,12 @@ export default function AssistantPage() {
               disabled={isLoading}
               className="cursor-pointer px-6 py-2 max-md:text-sm"
             >
-              {isLoading ? 'Generating...' : 'Generate new recommendation'}
+              {isLoading ? 'Generating...' : 'Wygeneruj nową rekomendację'}
             </ButtonGenerate>
           </div>
 
           <AlertDialog open={isConfirmDialogOpen} onOpenChange={setIsConfirmDialogOpen}>
-            <AlertDialogContent className="font-poppins font-korbin mx-auto max-w-sm">
+            <AlertDialogContent className="font-grotesk font-korbin mx-auto max-w-sm">
               <AlertDialogHeader>
                 <AlertDialogTitle className="text-center text-xl font-bold">
                   Generate new recommendation?

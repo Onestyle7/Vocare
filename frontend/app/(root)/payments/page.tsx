@@ -17,7 +17,6 @@ import {
 import { Badge } from '@/components/ui/badge';
 import { Skeleton } from '@/components/ui/skeleton';
 
-
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL ?? 'http://localhost:8080';
 const DASHBOARD_ENDPOINT = '/api/Billing/subscription-dashboard';
 const SUBSCRIPTION_STATUS_ENDPOINT = '/api/Billing/subscription-status';
@@ -95,7 +94,6 @@ const PaymentsPage: React.FC = () => {
   const [payments, setPayments] = React.useState<PaymentHistoryItem[]>([]);
   const [isPaymentsLoading, setIsPaymentsLoading] = React.useState(true);
   const [paymentsError, setPaymentsError] = React.useState<string | null>(null);
-
 
   const evaluateStatus = React.useCallback((status?: string | null) => {
     const key = normalizeStatusKey(status);
@@ -178,51 +176,45 @@ const PaymentsPage: React.FC = () => {
     return () => controller.abort();
   }, [fetchSubscriptionState]);
 
-  const fetchMarketingConsent = React.useCallback(
-    async (options?: { signal?: AbortSignal }) => {
-      const { signal } = options ?? {};
-      setIsConsentLoading(true);
-      setConsentError(null);
+  const fetchMarketingConsent = React.useCallback(async (options?: { signal?: AbortSignal }) => {
+    const { signal } = options ?? {};
+    setIsConsentLoading(true);
+    setConsentError(null);
 
-      try {
-        const token = typeof window !== 'undefined' ? localStorage.getItem('token') : undefined;
-        const response = await fetch(
-          new URL(MARKETING_CONSENT_ENDPOINT, API_BASE_URL).toString(),
-          {
-            signal,
-            headers: {
-              'Content-Type': 'application/json',
-              ...(token ? { Authorization: `Bearer ${token}` } : {}),
-            },
-          }
-        );
+    try {
+      const token = typeof window !== 'undefined' ? localStorage.getItem('token') : undefined;
+      const response = await fetch(new URL(MARKETING_CONSENT_ENDPOINT, API_BASE_URL).toString(), {
+        signal,
+        headers: {
+          'Content-Type': 'application/json',
+          ...(token ? { Authorization: `Bearer ${token}` } : {}),
+        },
+      });
 
-        if (response.status === 401) {
-          setMarketingConsent(false);
-          setConsentError('You need to sign in to manage marketing preferences.');
-          return;
-        }
-
-        if (!response.ok) {
-          const message = await response.text();
-          throw new Error(message || `Failed to load marketing consent (${response.status}).`);
-        }
-
-        const payload = await response.json();
-        setMarketingConsent(Boolean(payload?.hasConsent));
-      } catch (err) {
-        if ((err as DOMException).name === 'AbortError') return;
-        console.error('Failed to load marketing consent', err);
-        setConsentError("We couldn't load your marketing preference. Please try again.");
+      if (response.status === 401) {
         setMarketingConsent(false);
-      } finally {
-        if (!signal?.aborted) {
-          setIsConsentLoading(false);
-        }
+        setConsentError('You need to sign in to manage marketing preferences.');
+        return;
       }
-    },
-    []
-  );
+
+      if (!response.ok) {
+        const message = await response.text();
+        throw new Error(message || `Failed to load marketing consent (${response.status}).`);
+      }
+
+      const payload = await response.json();
+      setMarketingConsent(Boolean(payload?.hasConsent));
+    } catch (err) {
+      if ((err as DOMException).name === 'AbortError') return;
+      console.error('Failed to load marketing consent', err);
+      setConsentError("We couldn't load your marketing preference. Please try again.");
+      setMarketingConsent(false);
+    } finally {
+      if (!signal?.aborted) {
+        setIsConsentLoading(false);
+      }
+    }
+  }, []);
 
   React.useEffect(() => {
     const controller = new AbortController();
@@ -234,62 +226,64 @@ const PaymentsPage: React.FC = () => {
     return () => controller.abort();
   }, [fetchMarketingConsent]);
 
-  const fetchPaymentHistory = React.useCallback(
-    async (options?: { signal?: AbortSignal }) => {
-      const { signal } = options ?? {};
-      setIsPaymentsLoading(true);
-      setPaymentsError(null);
+  const fetchPaymentHistory = React.useCallback(async (options?: { signal?: AbortSignal }) => {
+    const { signal } = options ?? {};
+    setIsPaymentsLoading(true);
+    setPaymentsError(null);
 
-      try {
-        const token = typeof window !== 'undefined' ? localStorage.getItem('token') : undefined;
-        const url = new URL(PAYMENT_HISTORY_ENDPOINT, API_BASE_URL);
-        url.searchParams.set('limit', '50');
-        const response = await fetch(url.toString(), {
-          signal,
-          headers: {
-            'Content-Type': 'application/json',
-            ...(token ? { Authorization: `Bearer ${token}` } : {}),
-          },
-        });
+    try {
+      const token = typeof window !== 'undefined' ? localStorage.getItem('token') : undefined;
+      const url = new URL(PAYMENT_HISTORY_ENDPOINT, API_BASE_URL);
+      url.searchParams.set('limit', '50');
+      const response = await fetch(url.toString(), {
+        signal,
+        headers: {
+          'Content-Type': 'application/json',
+          ...(token ? { Authorization: `Bearer ${token}` } : {}),
+        },
+      });
 
-        if (response.status === 401) {
-          setPayments([]);
-          setPaymentsError('You need to sign in to view your payment history.');
-          return;
-        }
+      if (response.status === 401) {
+        setPayments([]);
+        setPaymentsError('You need to sign in to view your payment history.');
+        return;
+      }
 
-        if (response.status === 404) {
-          setPayments([]);
-          return;
-        }
+      if (response.status === 404) {
+        setPayments([]);
+        return;
+      }
 
-        if (!response.ok) {
-          const contentType = response.headers.get('content-type') ?? '';
-          let message = '';
-          if (contentType.includes('application/json')) {
-            try {
-              const data = await response.json();
-              message = data?.message ?? '';
-            } catch {
-              message = '';
-            }
-          } else {
-            message = await response.text();
+      if (!response.ok) {
+        const contentType = response.headers.get('content-type') ?? '';
+        let message = '';
+        if (contentType.includes('application/json')) {
+          try {
+            const data = await response.json();
+            message = data?.message ?? '';
+          } catch {
+            message = '';
           }
-          throw new Error(message || 'Failed to load payment history.');
+        } else {
+          message = await response.text();
         }
+        throw new Error(message || 'Failed to load payment history.');
+      }
 
-        const payload = await response.json();
-        const rawList = (Array.isArray(payload?.payments)
+      const payload = await response.json();
+      const rawList = (
+        Array.isArray(payload?.payments)
           ? payload.payments
           : Array.isArray(payload)
             ? payload
             : Array.isArray(payload?.data)
               ? payload.data
-              : []) as PaymentHistoryRawItem[];
+              : []
+      ) as PaymentHistoryRawItem[];
 
-        const normalized = rawList
-          .map((item: PaymentHistoryRawItem): PaymentHistoryItem => ({
+      const normalized = rawList
+        .map(
+          (item: PaymentHistoryRawItem): PaymentHistoryItem => ({
             id: item.id ?? item.Id ?? item.paymentId ?? undefined,
             type: item.type ?? item.Type ?? 'unknown',
             amount: Number(item.amount ?? item.Amount ?? 0),
@@ -298,11 +292,7 @@ const PaymentsPage: React.FC = () => {
             createdAt: (() => {
               const fallback = new Date().toISOString();
               const value =
-                item.createdAt ??
-                item.CreatedAt ??
-                item.created_at ??
-                item.timestamp ??
-                fallback;
+                item.createdAt ?? item.CreatedAt ?? item.created_at ?? item.timestamp ?? fallback;
               const parsed = new Date(value);
               return Number.isNaN(parsed.getTime()) ? value : parsed.toISOString();
             })(),
@@ -314,26 +304,25 @@ const PaymentsPage: React.FC = () => {
               const parsed = Number(raw);
               return Number.isFinite(parsed) ? parsed : null;
             })(),
-          }))
-          .sort(
-            (a: PaymentHistoryItem, b: PaymentHistoryItem) =>
-              new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
-          );
+          })
+        )
+        .sort(
+          (a: PaymentHistoryItem, b: PaymentHistoryItem) =>
+            new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
+        );
 
-        setPayments(normalized);
-      } catch (err) {
-        if ((err as DOMException).name === 'AbortError') return;
-        console.error('Failed to load payment history', err);
-        setPaymentsError('Unable to load payment history right now.');
-        setPayments([]);
-      } finally {
-        if (!signal?.aborted) {
-          setIsPaymentsLoading(false);
-        }
+      setPayments(normalized);
+    } catch (err) {
+      if ((err as DOMException).name === 'AbortError') return;
+      console.error('Failed to load payment history', err);
+      setPaymentsError('Unable to load payment history right now.');
+      setPayments([]);
+    } finally {
+      if (!signal?.aborted) {
+        setIsPaymentsLoading(false);
       }
-    },
-    []
-  );
+    }
+  }, []);
 
   React.useEffect(() => {
     const controller = new AbortController();
@@ -411,16 +400,13 @@ const PaymentsPage: React.FC = () => {
         }
 
         const method = nextValue ? 'POST' : 'DELETE';
-        const response = await fetch(
-          new URL(MARKETING_CONSENT_ENDPOINT, API_BASE_URL).toString(),
-          {
-            method,
-            headers: {
-              'Content-Type': 'application/json',
-              Authorization: `Bearer ${token}`,
-            },
-          }
-        );
+        const response = await fetch(new URL(MARKETING_CONSENT_ENDPOINT, API_BASE_URL).toString(), {
+          method,
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${token}`,
+          },
+        });
 
         if (!response.ok) {
           const contentType = response.headers.get('content-type') ?? '';
@@ -469,7 +455,9 @@ const PaymentsPage: React.FC = () => {
 
   const consentChecked = marketingConsent === true;
 
-  const subscriptionStatusLabel = hasSubscription ? 'Active subscription' : 'No active subscription';
+  const subscriptionStatusLabel = hasSubscription
+    ? 'Active subscription'
+    : 'No active subscription';
   const subscriptionBadgeVariant = hasSubscription ? 'default' : 'outline';
   const subscriptionBadgeText = hasSubscription ? 'Active' : 'Inactive';
 
@@ -513,11 +501,11 @@ const PaymentsPage: React.FC = () => {
   }, []);
 
   return (
-    <main className="font-korbin min-h-screen w-full bg-background">
-      <div className="mx-auto flex w-full max-w-5xl flex-col gap-8 px-4 pb-16 pt-20 sm:px-6 lg:px-8">
+    <main className="font-korbin bg-background min-h-screen w-full">
+      <div className="mx-auto flex w-full max-w-5xl flex-col gap-8 px-4 pt-20 pb-16 sm:px-6 lg:px-8">
         <div className="flex flex-wrap items-center justify-between gap-4">
           <div className="space-y-1">
-            <h1 className="text-3xl font-semibold tracking-tight text-foreground">Payments</h1>
+            <h1 className="text-foreground text-3xl font-semibold tracking-tight">Payments</h1>
             <p className="text-muted-foreground text-sm sm:text-base">
               Manage your subscription, marketing preferences, and review your recent activity.
             </p>
@@ -532,7 +520,7 @@ const PaymentsPage: React.FC = () => {
 
         <div className="grid gap-6 lg:grid-cols-[minmax(0,1.05fr)_minmax(0,0.95fr)]">
           <div className="flex flex-col gap-6">
-            <Card className="border border-border/60 bg-card/80 shadow-sm backdrop-blur">
+            <Card className="border-border/60 bg-card/80 border shadow-sm backdrop-blur">
               <CardHeader>
                 <CardTitle>Subscription</CardTitle>
                 <CardDescription>
@@ -546,14 +534,16 @@ const PaymentsPage: React.FC = () => {
                     <Skeleton className="h-4 w-1/2" />
                   </div>
                 ) : (
-                  <div className="flex flex-col gap-4 rounded-lg border border-border/60 bg-background/70 px-4 py-4 sm:flex-row sm:items-center sm:justify-between">
+                  <div className="border-border/60 bg-background/70 flex flex-col gap-4 rounded-lg border px-4 py-4 sm:flex-row sm:items-center sm:justify-between">
                     <div className="space-y-1">
-                      <span className="text-xs font-medium uppercase tracking-wide text-muted-foreground">
+                      <span className="text-muted-foreground text-xs font-medium tracking-wide uppercase">
                         Status
                       </span>
-                      <p className="text-lg font-semibold text-foreground">{subscriptionStatusLabel}</p>
+                      <p className="text-foreground text-lg font-semibold">
+                        {subscriptionStatusLabel}
+                      </p>
                       {!hasSubscription && (
-                        <span className="text-xs text-muted-foreground">
+                        <span className="text-muted-foreground text-xs">
                           Purchase a plan to unlock unlimited access.
                         </span>
                       )}
@@ -562,7 +552,7 @@ const PaymentsPage: React.FC = () => {
                   </div>
                 )}
                 {error && !isLoading && (
-                  <div className="rounded-md border border-destructive/40 bg-destructive/10 px-3 py-2 text-sm text-destructive">
+                  <div className="border-destructive/40 bg-destructive/10 text-destructive rounded-md border px-3 py-2 text-sm">
                     {error}
                   </div>
                 )}
@@ -584,14 +574,14 @@ const PaymentsPage: React.FC = () => {
                   )}
                 </Button>
                 {!isLoading && !hasSubscription && (
-                  <span className="text-xs text-muted-foreground">
+                  <span className="text-muted-foreground text-xs">
                     Cancellation becomes available after activating a subscription.
                   </span>
                 )}
               </CardFooter>
             </Card>
 
-            <Card className="border border-border/60 bg-card/80 shadow-sm backdrop-blur">
+            <Card className="border-border/60 bg-card/80 border shadow-sm backdrop-blur">
               <CardHeader>
                 <CardTitle>Marketing preferences</CardTitle>
                 <CardDescription>
@@ -599,15 +589,15 @@ const PaymentsPage: React.FC = () => {
                 </CardDescription>
               </CardHeader>
               <CardContent className="space-y-4">
-                <div className="flex flex-col gap-3 rounded-lg border border-border/60 bg-background/70 px-4 py-4 sm:flex-row sm:items-center sm:justify-between">
+                <div className="border-border/60 bg-background/70 flex flex-col gap-3 rounded-lg border px-4 py-4 sm:flex-row sm:items-center sm:justify-between">
                   <div className="space-y-1">
                     <label
                       htmlFor="marketing-consent-toggle"
-                      className="text-sm font-medium text-foreground"
+                      className="text-foreground text-sm font-medium"
                     >
                       Marketing updates
                     </label>
-                    <p className="text-xs text-muted-foreground">
+                    <p className="text-muted-foreground text-xs">
                       {isConsentLoading
                         ? 'Checking your preference...'
                         : consentChecked
@@ -626,12 +616,12 @@ const PaymentsPage: React.FC = () => {
                   />
                 </div>
                 {(isConsentLoading || isUpdatingConsent) && (
-                  <span className="text-xs text-muted-foreground">
+                  <span className="text-muted-foreground text-xs">
                     {isUpdatingConsent ? 'Saving your preference…' : 'Loading preference…'}
                   </span>
                 )}
                 {consentError && (
-                  <div className="rounded-md border border-destructive/40 bg-destructive/10 px-3 py-2 text-xs text-destructive">
+                  <div className="border-destructive/40 bg-destructive/10 text-destructive rounded-md border px-3 py-2 text-xs">
                     {consentError}
                   </div>
                 )}
@@ -639,7 +629,7 @@ const PaymentsPage: React.FC = () => {
             </Card>
           </div>
 
-          <Card className="border border-border/60 bg-card/80 shadow-sm backdrop-blur">
+          <Card className="border-border/60 bg-card/80 border shadow-sm backdrop-blur">
             <CardHeader>
               <CardTitle>Transaction history</CardTitle>
               <CardDescription>
@@ -654,13 +644,13 @@ const PaymentsPage: React.FC = () => {
                   <Skeleton className="h-14 w-full rounded-lg" />
                 </div>
               ) : paymentsError ? (
-                <div className="rounded-md border border-destructive/40 bg-destructive/10 px-3 py-2 text-sm text-destructive">
+                <div className="border-destructive/40 bg-destructive/10 text-destructive rounded-md border px-3 py-2 text-sm">
                   {paymentsError}
                 </div>
               ) : payments.length === 0 ? (
-                <div className="flex flex-col items-center justify-center gap-2 rounded-lg border border-dashed border-border/60 bg-muted/20 px-6 py-12 text-center">
-                  <span className="text-sm font-medium text-foreground">No payments yet</span>
-                  <span className="text-xs text-muted-foreground">
+                <div className="border-border/60 bg-muted/20 flex flex-col items-center justify-center gap-2 rounded-lg border border-dashed px-6 py-12 text-center">
+                  <span className="text-foreground text-sm font-medium">No payments yet</span>
+                  <span className="text-muted-foreground text-xs">
                     Card charges and subscriptions will appear here once available.
                   </span>
                 </div>
@@ -682,26 +672,24 @@ const PaymentsPage: React.FC = () => {
                     return (
                       <div
                         key={key}
-                        className="flex flex-col gap-3 rounded-lg border border-border/60 bg-background/70 px-4 py-4 sm:flex-row sm:items-center sm:justify-between"
+                        className="border-border/60 bg-background/70 flex flex-col gap-3 rounded-lg border px-4 py-4 sm:flex-row sm:items-center sm:justify-between"
                       >
                         <div className="space-y-1">
-                          <p className="text-sm font-medium text-foreground">
+                          <p className="text-foreground text-sm font-medium">
                             {payment.description ?? formatTypeLabel(payment.type)}
                           </p>
-                          <span className="text-xs text-muted-foreground">{formattedDate}</span>
+                          <span className="text-muted-foreground text-xs">{formattedDate}</span>
                           {typeof payment.tokenAmount === 'number' && (
-                            <span className="text-xs text-muted-foreground">
+                            <span className="text-muted-foreground text-xs">
                               {payment.tokenAmount} tokens
                             </span>
                           )}
                         </div>
                         <div className="flex flex-col items-start gap-2 sm:items-end">
-                          <Badge
-                            variant={getStatusBadgeVariant(payment.status)}
-                          >
+                          <Badge variant={getStatusBadgeVariant(payment.status)}>
                             {payment.status ?? 'Unknown'}
                           </Badge>
-                          <span className="text-sm font-semibold text-foreground">
+                          <span className="text-foreground text-sm font-semibold">
                             {formatPaymentAmount(payment.amount, payment.currency)}
                           </span>
                         </div>

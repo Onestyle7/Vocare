@@ -127,7 +127,7 @@ const GenerateRecommendationFail = () => {
                 </div>
                 <div className="w-full">
                   <Link
-                    href="/profile"
+                    href="/resume"
                     className="text-md text-muted-foreground group flex flex-row items-center transition-all duration-300"
                   >
                     Open Resume Builder

@@ -18,18 +18,17 @@ type SpinningTextProps = {
   };
 };
 
-const BASE_TRANSITION = {
+// linear easing jako funkcja (kompatybilne z typami Motion)
+const LINEAR_EASE = (t: number) => t;
+
+const BASE_TRANSITION: Transition = {
   repeat: Infinity,
-  ease: 'linear',
+  ease: LINEAR_EASE,
 };
 
-const BASE_ITEM_VARIANTS = {
-  hidden: {
-    opacity: 1,
-  },
-  visible: {
-    opacity: 1,
-  },
+const BASE_ITEM_VARIANTS: Variants = {
+  hidden: { opacity: 1 },
+  visible: { opacity: 1 },
 };
 
 export function SpinningText({
@@ -46,39 +45,35 @@ export function SpinningText({
     throw new Error('children must be a string or an array of strings');
   }
 
-  if (Array.isArray(children)) {
-    // Validate all elements are strings
-    if (!children.every((child) => typeof child === 'string')) {
-      throw new Error('all elements in children array must be strings');
-    }
-    children = children.join('');
+  const text = Array.isArray(children) ? children.join('') : children;
+
+  if (Array.isArray(children) && !children.every((c) => typeof c === 'string')) {
+    throw new Error('all elements in children array must be strings');
   }
 
-  const letters = children.split('');
+  const letters = text.split('');
   letters.push(' ');
 
-  const finalTransition = {
+  const finalTransition: Transition = {
     ...BASE_TRANSITION,
-    ...transition,
-    duration: (transition as { duration?: number })?.duration ?? duration,
+    ...(transition ?? {}),
+    duration: transition?.duration ?? duration,
   };
 
-  const containerVariants = {
+  const containerVariants: Variants = {
     visible: { rotate: reverse ? -360 : 360 },
-    ...variants?.container,
+    ...(variants?.container ?? {}),
   };
 
-  const itemVariants = {
+  const itemVariants: Variants = {
     ...BASE_ITEM_VARIANTS,
-    ...variants?.item,
+    ...(variants?.item ?? {}),
   };
 
   return (
     <motion.div
       className={cn('relative', className)}
-      style={{
-        ...style,
-      }}
+      style={{ ...style }}
       initial="hidden"
       animate="visible"
       variants={containerVariants}
@@ -96,10 +91,10 @@ export function SpinningText({
               '--total': letters.length,
               '--radius': radius,
               transform: `
-                  translate(-50%, -50%)
-                  rotate(calc(360deg / var(--total) * var(--index)))
-                  translateY(calc(var(--radius, 5) * -1ch))
-                `,
+                translate(-50%, -50%)
+                rotate(calc(360deg / var(--total) * var(--index)))
+                translateY(calc(var(--radius, 5) * -1ch))
+              `,
               transformOrigin: 'center',
             } as React.CSSProperties
           }
@@ -107,7 +102,7 @@ export function SpinningText({
           {letter}
         </motion.span>
       ))}
-      <span className="sr-only">{children}</span>
+      <span className="sr-only">{text}</span>
     </motion.div>
   );
 }

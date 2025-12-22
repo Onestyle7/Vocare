@@ -3,6 +3,8 @@ using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using VocareWebAPI.Billing.Models.Entities;
+using VocareWebAPI.CareerAdvisor.Models.Entities.MarketAnalysis;
+using VocareWebAPI.CareerAdvisor.Models.Entities.MarketAnalysis;
 using VocareWebAPI.CvGenerator.Models; // Poprawiony namespace
 using VocareWebAPI.MarketNews.Models.Entities;
 using VocareWebAPI.Models;
@@ -72,6 +74,10 @@ namespace VocareWebAPI.Data
         public DbSet<MarketNewsEntity> MarketNews { get; set; }
         public DbSet<SubscriptionPackage> SubscriptionPackages { get; set; }
         public DbSet<MarketingConsent> MarketingConsents { get; set; }
+        public DbSet<SalaryProgression> SalaryProgressions { get; set; }
+        public DbSet<WorkAttributes> WorkAttributes { get; set; }
+        public DbSet<EntryDifficulty> EntryDifficulties { get; set; }
+        public DbSet<AiNarrator> AiNarrators { get; set; }
 
         /// <summary>
         /// Konfiguruje model bazy danych, definiując schemat i relacje między encjami.
@@ -248,7 +254,7 @@ namespace VocareWebAPI.Data
                     {
                         Id = 1,
                         ServiceName = "AnalyzeProfile",
-                        TokenCost = 5,
+                        TokenCost = 60,
                     },
                     new ServiceCost
                     {
@@ -260,7 +266,7 @@ namespace VocareWebAPI.Data
                     {
                         Id = 3,
                         ServiceName = "MarketAnalysis",
-                        TokenCost = 5,
+                        TokenCost = 50,
                     },
                     new ServiceCost
                     {
@@ -277,6 +283,48 @@ namespace VocareWebAPI.Data
                 entity.Property(e => e.Summary).IsRequired().HasMaxLength(150);
                 entity.Property(e => e.CreatedAt).IsRequired();
                 entity.HasIndex(e => e.CreatedAt);
+            });
+            builder.Entity<SalaryProgression>(entity =>
+            {
+                entity.HasKey(e => e.Id);
+                entity
+                    .HasOne(e => e.CareerStatistics)
+                    .WithMany(cs => cs.SalaryProgressions)
+                    .HasForeignKey(e => e.CareerStatisticsId)
+                    .OnDelete(DeleteBehavior.Cascade);
+            });
+            builder.Entity<WorkAttributes>(entity =>
+            {
+                entity.HasKey(e => e.Id);
+                entity
+                    .HasOne(e => e.CareerStatistics)
+                    .WithOne(cs => cs.workAttributes)
+                    .HasForeignKey<WorkAttributes>(e => e.CareerStatisticsId)
+                    .OnDelete(DeleteBehavior.Cascade);
+            });
+            builder.Entity<EntryDifficulty>(entity =>
+            {
+                entity.HasKey(e => e.Id);
+                entity
+                    .HasOne(e => e.CareerStatistics)
+                    .WithOne(cs => cs.EntryDifficulty)
+                    .HasForeignKey<EntryDifficulty>(e => e.CareerStatisticsId)
+                    .OnDelete(DeleteBehavior.Cascade);
+                entity
+                    .Property(e => e.MissingSkills)
+                    .HasConversion(
+                        v => string.Join(";", v),
+                        v => v.Split(";", StringSplitOptions.RemoveEmptyEntries).ToList()
+                    );
+            });
+            builder.Entity<AiNarrator>(entity =>
+            {
+                entity.HasKey(e => e.Id);
+                entity
+                    .HasOne(e => e.CareerStatistics)
+                    .WithOne(cs => cs.AiNarrator)
+                    .HasForeignKey<AiNarrator>(e => e.CareerStatisticsId)
+                    .OnDelete(DeleteBehavior.Cascade);
             });
         }
     }

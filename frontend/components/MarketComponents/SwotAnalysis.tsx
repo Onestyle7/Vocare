@@ -35,7 +35,7 @@ const SwotAnalysis: React.FC<SwotAnalysisProps> = ({ data, className = '' }) => 
           <QuadrantItem className={`${GRAD_TL} max-lg:border-b`}>
             <div className="flex h-full flex-col">
               <div className="mb-4 flex w-full items-center justify-start">
-                <Badge>Strengths</Badge>
+                <Badge>Mocne strony</Badge>
               </div>
               <div className="flex-1 space-y-2 overflow-y-auto pr-2 text-xs text-gray-300 sm:text-sm lg:text-base">
                 {data.strengths.map((strength, i) => (
@@ -51,7 +51,7 @@ const SwotAnalysis: React.FC<SwotAnalysisProps> = ({ data, className = '' }) => 
           <QuadrantItem className={`lg:border-l ${GRAD_TR}`}>
             <div className="flex h-full flex-col">
               <div className="mb-4 flex w-full items-center justify-end">
-                <Badge>Weaknesses</Badge>
+                <Badge>Słabe strony</Badge>
               </div>
               <div className="flex-1 space-y-2 overflow-y-auto pr-2 text-xs text-gray-300 sm:text-sm lg:text-base">
                 {data.weaknesses.map((weakness, i) => (
@@ -67,7 +67,7 @@ const SwotAnalysis: React.FC<SwotAnalysisProps> = ({ data, className = '' }) => 
           <QuadrantItem className={`border-t ${GRAD_BL}`}>
             <div className="flex h-full flex-col">
               <div className="mb-4 flex w-full items-center justify-start">
-                <Badge>Opportunities</Badge>
+                <Badge>Możliwości</Badge>
               </div>
               <div className="flex-1 space-y-2 overflow-y-auto pr-2 text-xs text-gray-300 sm:text-sm lg:text-base">
                 {data.opportunities.map((opportunity, i) => (
@@ -83,7 +83,7 @@ const SwotAnalysis: React.FC<SwotAnalysisProps> = ({ data, className = '' }) => 
           <QuadrantItem className={`border-t lg:border-l ${GRAD_BR}`}>
             <div className="flex h-full flex-col">
               <div className="mb-4 flex w-full items-center justify-end">
-                <Badge>Threats</Badge>
+                <Badge>Zagrożenia</Badge>
               </div>
               <div className="flex-1 space-y-2 overflow-y-auto pr-2 text-xs text-gray-300 sm:text-sm lg:text-base">
                 {data.threats.map((threat, i) => (

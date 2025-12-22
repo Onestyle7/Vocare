@@ -6,6 +6,9 @@ using System.Text.Json;
 using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Options;
+using VocareWebAPI.CareerAdvisor.Models.Dtos.MarketAnalysis;
+using VocareWebAPI.CareerAdvisor.Models.Entities.MarketAnalysis;
+using VocareWebAPI.CareerAdvisor.Repositories.Interfaces;
 using VocareWebAPI.Models;
 using VocareWebAPI.Models.Dtos.MarketAnalysis;
 using VocareWebAPI.Models.Entities.MarketAnalysis;
@@ -23,6 +26,10 @@ namespace VocareWebAPI.CareerAdvisor.Services.Implementations
         private readonly ISkillDemandRepository _skillDemandRepository;
         private readonly IMarketTrendsRepository _marketTrendsRepository;
         private readonly IAiRecommendationRepository _aiRecommendationRepository;
+        private readonly ISalaryProgressionRepository _salaryProgressionRepository;
+        private readonly IWorkAttributesRepository _workAttributesRepository;
+        private readonly IEntryDifficultyRepository _entryDifficultyRepository;
+        private readonly IAiNarratorRepository _aiNarratorRepository;
         private readonly ILogger<OpenAiMarketAnalysisService> _logger;
 
         public OpenAiMarketAnalysisService(
@@ -32,7 +39,11 @@ namespace VocareWebAPI.CareerAdvisor.Services.Implementations
             ISkillDemandRepository skillDemandRepository,
             IMarketTrendsRepository marketTrendsRepository,
             IAiRecommendationRepository aiRecommendationRepository,
-            ILogger<OpenAiMarketAnalysisService> logger
+            ILogger<OpenAiMarketAnalysisService> logger,
+            ISalaryProgressionRepository salaryProgressionRepository,
+            IWorkAttributesRepository workAttributesRepository,
+            IEntryDifficultyRepository entryDifficultyRepository,
+            IAiNarratorRepository aiNarratorRepository
         )
         {
             _httpClient = httpClient;
@@ -41,10 +52,11 @@ namespace VocareWebAPI.CareerAdvisor.Services.Implementations
             _skillDemandRepository = skillDemandRepository;
             _marketTrendsRepository = marketTrendsRepository;
             _aiRecommendationRepository = aiRecommendationRepository;
+            _salaryProgressionRepository = salaryProgressionRepository;
+            _workAttributesRepository = workAttributesRepository;
+            _entryDifficultyRepository = entryDifficultyRepository;
+            _aiNarratorRepository = aiNarratorRepository;
             _logger = logger;
-
-            _httpClient.DefaultRequestHeaders.Add("Authorization", $"Bearer {_config.ApiKey}");
-            _httpClient.DefaultRequestHeaders.Add("Accept", "application/json");
         }
 
         public async Task<MarketAnalysisResponseDto> GetMarketAnalysisAsync(string userId)
@@ -141,8 +153,7 @@ namespace VocareWebAPI.CareerAdvisor.Services.Implementations
         private string BuildPrompt(AiRecommendation recommendation)
         {
             return $$"""
-                Jesteś ekspertem ds. analizy rynku pracy z aktualną wiedzą o trendach i statystykach zatrudnienia. 
-                Na podstawie poniższych danych z rekomendacji zawodowych użytkownika, przygotuj szczegółową analizę rynku:
+                Jesteś analitykiem rynku pracy, który przekłada surowe dane na zrozumiałe wnioski dla osoby szukającej pracy. Twoim priorytetem jest uczciwość: nie zawyżaj stawek (podawaj realne widełki dla poziomu stanowiska z rekomendacji) i nie koloryzuj szans na zatrudnienie. Twoje analizy mają pomóc użytkownikowi podjąć świadomą decyzję o ścieżce kariery.
 
                 Rekomendowane ścieżki kariery:
                 {{string.Join(", ", recommendation.CareerPaths.Select(cp => cp.CareerName))}}
@@ -159,34 +170,117 @@ namespace VocareWebAPI.CareerAdvisor.Services.Implementations
                 Lokalizacja użytkownika:
                 {{recommendation.UserProfile.Country}}, {{recommendation.UserProfile.Address}}
 
-                Struktura JSON MUSI być dokładnie taka:
+                Wygeneruj SZCZEGÓŁOWĄ analizę rynku pracy w formacie JSON (język polski):
+
                 {
-                  "marketAnalysis": {
+                "marketAnalysis": {
                     "industryStatistics": [
-                      {
+                    {
                         "industry": "Nazwa branży",
-                        "minSalary": 8000,
-                        "maxSalary": 12000,
+                        "minSalary": 6000,
+                        "maxSalary": 18000,
                         "employmentRate": 85,
-                        "growthForecast": "Prognoza wzrostu (np. Wysoki wzrost - 15% rocznie)"
-                      }
+                        "growthForecast": "Wysoki wzrost - 15% rocznie",
+                        
+                        "salaryProgression": [
+                        {
+                            "careerLevel": "Junior",
+                            "yearsOfExperience": "0-2",
+                            "minSalary": 5000,
+                            "maxSalary": 7000,
+                            "averageSalary": 6000
+                        },
+                        {
+                            "careerLevel": "Mid",
+                            "yearsOfExperience": "2-5",
+                            "minSalary": 8000,
+                            "maxSalary": 12000,
+                            "averageSalary": 10000
+                        },
+                        {
+                            "careerLevel": "Senior",
+                            "yearsOfExperience": "5-8",
+                            "minSalary": 12000,
+                            "maxSalary": 18000,
+                            "averageSalary": 15000
+                        },
+                        {
+                            "careerLevel": "Lead/Expert",
+                            "yearsOfExperience": "8+",
+                            "minSalary": 18000,
+                            "maxSalary": 30000,
+                            "averageSalary": 24000
+                        }
+                        ],
+                        
+                        "workAttributes": {
+                        "stressLevel": 7,
+                        "analyticalThinking": 9,
+                        "creativity": 6,
+                        "teamwork": 8,
+                        "independence": 7,
+                        "routineVsDynamic": 8,
+                        "customerFacing": 4,
+                        "technicalDepth": 9
+                        },
+                        
+                        "entryDifficulty": {
+                        "difficultyScore": 65,
+                        "difficultyLevel": "Średnie",
+                        "missingSkillsCount": 2,
+                        "missingSkills": ["React", "TypeScript"],
+                        "matchingSkillsCount": 5,
+                        "estimatedTimeToReady": "3-6 miesięcy",
+                        "explanation": "Masz solidne podstawy w programowaniu, ale brakuje Ci znajomości nowoczesnych frameworków frontendowych. Po 3-6 miesiącach intensywnej nauki będziesz gotowy na pierwsze aplikacje."
+                        },
+                        
+                        "aiNarrator": {
+                        "salaryInsight": "Widzę, że początkowe zarobki na poziomie Junior (5000-7000 PLN) mogą wydawać się skromne, ale ta ścieżka ma jedną z najszybszych progresji w branży IT. Już po 2-3 latach możesz zarabiać dwukrotnie więcej, a doświadczeni specjaliści osiągają 15000-18000 PLN. To inwestycja, która naprawdę się opłaca.",
+                        
+                        "workStyleInsight": "Ten zawód wymaga wysokiego poziomu myślenia analitycznego (9/10) i oferuje sporą dynamikę pracy (8/10). Będziesz mieć przestrzeń na samodzielną pracę (7/10), ale również wiele okazji do współpracy zespołowej (8/10). Poziom stresu jest umiarkowany (7/10), co oznacza challenging work, ale z możliwością zarządzania obciążeniem.",
+                        
+                        "entryAdvice": "Twój profil pasuje do tej ścieżki w 75%. Widzę, że masz {{recommendation.UserProfile.Skills.Count}} umiejętności z listy wymaganych, co jest bardzo dobrym startem. Aby zwiększyć swoje szanse w tej branży, skoncentruj się na zdobyciu 2-3 brakujących umiejętności w ciągu najbliższych 3-6 miesięcy. Polecam kursy online i projekty osobiste - to najszybsza droga do pierwszej pracy.",
+                        
+                        "motivationalMessage": "Pamiętaj - każdy ekspert w tej branży kiedyś był początkującym. Twoje obecne umiejętności w {{string.Join(
+                    ", ",
+                    recommendation.UserProfile.Skills.Take(3)
+                )}} to solidna podstawa. Rynek pracy w {{recommendation.UserProfile.Country}} jest bardzo przyjazny dla osób wchodzących do tej branży. Nie bój się aplikować nawet jeśli nie spełniasz 100%% wymagań - większość pracodawców stawia na potencjał i chęć rozwoju.",
+                        
+                        "personalizedRecommendation": "Na podstawie Twojego profilu, widzę że ta branża oferuje najlepsze perspektywy. {{(
+                    recommendation.UserProfile.WorkExperience?.Any() == true
+                        ? "Twoje doświadczenie w "
+                            + recommendation.UserProfile.WorkExperience.First().Position
+                            + " będzie dodatkowym atutem."
+                        : "Brak doświadczenia nie jest przeszkodą - wiele firm szuka właśnie osób z Twoim profilem."
+                )}} Ta ścieżka pozwoli Ci wykorzystać Twoje mocne strony."
+                        }
+                    }
                     ],
+                    
                     "skillDemand": [
-                      {
+                    {
                         "skill": "Nazwa umiejętności",
-                        "demandLevel": "niski/średni/wysoki/bardzo wysoki",
-                        "industry": "Branża"
-                      }
+                        "demandLevel": "bardzo wysoki",
+                        "industry": "IT"
+                    }
                     ],
+                    
                     "marketTrends": [
-                      {
+                    {
                         "trendName": "Nazwa trendu",
-                        "description": "Szczegółowy opis trendu i jak wpływa na rynek",
-                        "impact": "Konkretny wpływ na kandydatów (np. Zwiększone zapotrzebowanie na specjalistów o 30%)"
-                      }
+                        "description": "Szczegółowy opis trendu",
+                        "impact": "Konkretny wpływ na kandydatów"
+                    }
                     ]
-                  }
                 }
+                }
+                 KLUCZOWE WYMAGANIA:
+
+                1. SALARY PROGRESSION - Wygeneruj REALISTYCZNE zarobki dla 4 poziomów
+                2. WORK ATTRIBUTES - Oceń każdy atrybut w skali 0-10
+                3. ENTRY DIFFICULTY - Oblicz trudność na podstawie porównania umiejętności
+                4. AI NARRATOR - Spersonalizowane, empatyczne komentarze
+                5. Min 3 branże, 5 umiejętności, 3 trendy
 
                 WYMAGANIA:
                 1. Wygeneruj dokładnie taki format JSON z danymi dla:
@@ -201,17 +295,17 @@ namespace VocareWebAPI.CareerAdvisor.Services.Implementations
                    - Konkretne (używaj liczb, procentów, konkretnych prognoz)
 
                 3. Dla statystyk branżowych:
-                   - employmentRate: skala 0-100 (procent zatrudnienia w branży)
-                   - Wynagrodzenia w PLN (brutto miesięcznie)
-                   - growthForecast: opisowa prognoza z konkretnymi danymi
+                   - employmentRate: Traktuj to jako "Wskaźnik łatwości wejścia". 100 = biorą każdego chętnego, 20 = bardzo duża konkurencja, trudno o pierwszą pracę. Dostosuj tę liczbę do poziomu Junior/Mid/Senior wynikającego z rekomendacji.
+                   - Wynagrodzenia w PLN (brutto miesięcznie) minSalary/maxSalary: MUSZĄ dotyczyć poziomu stanowiska z rekomendacji. Jeśli rekomendacja to "Młodszy Specjalista", podaj stawki dla juniora, a nie średnią rynkową dla seniorów.
+                   - growthForecast: Unikaj korpo-bełkotu. Napisz prosto, np. "Stabilnie, ale mało nowych rekrutacji" zamiast "Saturacja rynku na poziomie ujemnym".
 
                 4. Dla umiejętności:
                    - Używaj dokładnie skali: niski/średni/wysoki/bardzo wysoki
                    - Przypisz do konkretnej branży
 
                 5. Dla trendów:
-                   - Opisz rzeczywiste trendy wpływające na rynek
-                   - Podaj konkretny, mierzalny wpływ
+                   - Skup się na trendach rekrutacyjnych, a nie tylko technologicznych (np. "Wydłużone procesy rekrutacyjne", "Wymagane portfolio", "Powrót do biur").
+                   - W polu impact napisz, co to oznacza dla kandydata (np. "Będziesz musiał wysłać 2x więcej CV niż rok temu" zamiast "Wzrost konkurencyjności o 15%").
 
                 WAŻNE: Zwróć TYLKO czysty JSON bez żadnych dodatkowych objaśnień, komentarzy czy tekstu.
                 Pamiętaj: odpowiedź musi być w języku polskim i zawierać realistyczne dane rynkowe(wszystkie teksty, nazwy, opisy po polsku).
@@ -225,6 +319,7 @@ namespace VocareWebAPI.CareerAdvisor.Services.Implementations
             {
                 throw new Exception($"AI recommendation for user with ID:{userId} not found.");
             }
+
             var careerStats = await _careerStatisticsRepository.GetByAiRecommendationIdAsync(
                 recommendation.Id
             );
@@ -239,16 +334,7 @@ namespace VocareWebAPI.CareerAdvisor.Services.Implementations
             {
                 MarketAnalysis = new MarketAnalysisDetailsDto
                 {
-                    IndustryStatistics = careerStats
-                        .Select(cs => new IndustryStatisticsDto
-                        {
-                            Industry = cs.CareerName,
-                            MinSalary = (int)cs.AverageSalaryMin,
-                            MaxSalary = (int)cs.AverageSalaryMax,
-                            EmploymentRate = cs.EmploymentRate,
-                            GrowthForecast = cs.GrowthForecast,
-                        })
-                        .ToList(),
+                    IndustryStatistics = new List<IndustryStatisticsDto>(),
                     SkillDemand = skillDemands
                         .Select(sd => new SkillDemandDto
                         {
@@ -257,7 +343,6 @@ namespace VocareWebAPI.CareerAdvisor.Services.Implementations
                             Industry = sd.Industry,
                         })
                         .ToList(),
-
                     MarketTrends = marketTrends
                         .Select(mt => new MarketTrendsDto
                         {
@@ -268,6 +353,85 @@ namespace VocareWebAPI.CareerAdvisor.Services.Implementations
                         .ToList(),
                 },
             };
+
+            foreach (var careerStat in careerStats)
+            {
+                var salaryProgressions =
+                    await _salaryProgressionRepository.GetByCareerStatisticsIdAsync(careerStat.Id);
+                var workAttributes = await _workAttributesRepository.GetByCareerStatisticsIdAsync(
+                    careerStat.Id
+                );
+                var entryDifficulty = await _entryDifficultyRepository.GetByCareerStatisticsIdAsync(
+                    careerStat.Id
+                );
+                var aiNarrator = await _aiNarratorRepository.GetByCareerStatisticsIdAsync(
+                    careerStat.Id
+                );
+
+                var industryStat = new IndustryStatisticsDto
+                {
+                    Industry = careerStat.CareerName,
+                    MinSalary = (int)careerStat.AverageSalaryMin,
+                    MaxSalary = (int)careerStat.AverageSalaryMax,
+                    EmploymentRate = careerStat.EmploymentRate,
+                    GrowthForecast = careerStat.GrowthForecast,
+
+                    // ✅ DODANE - Nowe dane
+                    SalaryProgression = salaryProgressions
+                        .Select(sp => new SalaryProgressionDto
+                        {
+                            CareerLevel = sp.CareerLevel,
+                            YearsOfExperience = sp.YearsOfExperience,
+                            MinSalary = sp.MinSalary,
+                            MaxSalary = sp.MaxSalary,
+                            AverageSalary = sp.AverageSalary,
+                        })
+                        .ToList(),
+
+                    WorkAttributes =
+                        workAttributes != null
+                            ? new WorkAttributesDto
+                            {
+                                StressLevel = workAttributes.StressLevel,
+                                AnalyticalThinking = workAttributes.AnalyticalThinking,
+                                Creativity = workAttributes.Creativity,
+                                Teamwork = workAttributes.Teamwork,
+                                Independence = workAttributes.Independence,
+                                RoutineVsDynamic = workAttributes.RoutineVsDynamic,
+                                CustomerFacing = workAttributes.CustomerFacing,
+                                TechnicalDepth = workAttributes.TechnicalDepth,
+                            }
+                            : new WorkAttributesDto(),
+
+                    EntryDifficulty =
+                        entryDifficulty != null
+                            ? new EntryDifficultyDto
+                            {
+                                DifficultyScore = entryDifficulty.DifficultyScore,
+                                DifficultyLevel = entryDifficulty.DifficultyLevel,
+                                MissingSkillsCount = entryDifficulty.MissingSkillsCount,
+                                MissingSkills = entryDifficulty.MissingSkills,
+                                MatchingSkillsCount = entryDifficulty.MatchingSkillsCount,
+                                EstimatedTimeToReady = entryDifficulty.EstimatedTimeToReady,
+                                Explanation = entryDifficulty.Explanation,
+                            }
+                            : new EntryDifficultyDto(),
+
+                    AiNarrator =
+                        aiNarrator != null
+                            ? new AiNarratorDto
+                            {
+                                SalaryInsight = aiNarrator.SalaryInsight,
+                                WorkStyleInsight = aiNarrator.WorkStyleInsight,
+                                EntryAdvice = aiNarrator.EntryAdvice,
+                                MotivationalMessage = aiNarrator.MotivationalMessage,
+                                PersonalizedRecommendation = aiNarrator.PersonalizedRecommendation,
+                            }
+                            : new AiNarratorDto(),
+                };
+
+                result.MarketAnalysis.IndustryStatistics.Add(industryStat);
+            }
 
             InitializeNullProperties(result);
             return result;
@@ -286,9 +450,11 @@ namespace VocareWebAPI.CareerAdvisor.Services.Implementations
             {
                 foreach (var industryStat in analysis.MarketAnalysis.IndustryStatistics)
                 {
+                    var careerStatId = Guid.NewGuid();
+
                     var careerStat = new CareerStatistics
                     {
-                        Id = Guid.NewGuid(),
+                        Id = careerStatId,
                         CareerName = industryStat.Industry,
                         AverageSalaryMin = industryStat.MinSalary,
                         AverageSalaryMax = industryStat.MaxSalary,
@@ -298,7 +464,78 @@ namespace VocareWebAPI.CareerAdvisor.Services.Implementations
                         AiRecommendationId = aiRecommendationId,
                     };
                     await _careerStatisticsRepository.AddAsync(careerStat);
+
+                    foreach (var progression in industryStat.SalaryProgression)
+                    {
+                        var salaryProg = new SalaryProgression
+                        {
+                            Id = Guid.NewGuid(),
+                            CareerLevel = progression.CareerLevel,
+                            YearsOfExperience = progression.YearsOfExperience,
+                            MinSalary = progression.MinSalary,
+                            MaxSalary = progression.MaxSalary,
+                            AverageSalary = progression.AverageSalary,
+                            CareerStatisticsId = careerStatId,
+                        };
+                        await _salaryProgressionRepository.AddAsync(salaryProg);
+                    }
+
+                    if (industryStat.WorkAttributes != null)
+                    {
+                        var workAttr = new WorkAttributes
+                        {
+                            Id = Guid.NewGuid(),
+                            StressLevel = industryStat.WorkAttributes.StressLevel,
+                            AnalyticalThinking = industryStat.WorkAttributes.AnalyticalThinking,
+                            Creativity = industryStat.WorkAttributes.Creativity,
+                            Teamwork = industryStat.WorkAttributes.Teamwork,
+                            Independence = industryStat.WorkAttributes.Independence,
+                            RoutineVsDynamic = industryStat.WorkAttributes.RoutineVsDynamic,
+                            CustomerFacing = industryStat.WorkAttributes.CustomerFacing,
+                            TechnicalDepth = industryStat.WorkAttributes.TechnicalDepth,
+                            CareerStatisticsId = careerStatId,
+                        };
+                        await _workAttributesRepository.AddAsync(workAttr);
+                    }
+
+                    if (industryStat.EntryDifficulty != null)
+                    {
+                        var entryDiff = new EntryDifficulty
+                        {
+                            Id = Guid.NewGuid(),
+                            DifficultyScore = industryStat.EntryDifficulty.DifficultyScore,
+                            DifficultyLevel = industryStat.EntryDifficulty.DifficultyLevel,
+                            MissingSkillsCount = industryStat.EntryDifficulty.MissingSkillsCount,
+                            MissingSkills = industryStat.EntryDifficulty.MissingSkills,
+                            MatchingSkillsCount = industryStat.EntryDifficulty.MatchingSkillsCount,
+                            EstimatedTimeToReady = industryStat
+                                .EntryDifficulty
+                                .EstimatedTimeToReady,
+                            Explanation = industryStat.EntryDifficulty.Explanation,
+                            CareerStatisticsId = careerStatId,
+                        };
+                        await _entryDifficultyRepository.AddAsync(entryDiff);
+                    }
+
+                    if (industryStat.AiNarrator != null)
+                    {
+                        var narrator = new AiNarrator
+                        {
+                            Id = Guid.NewGuid(),
+                            SalaryInsight = industryStat.AiNarrator.SalaryInsight,
+                            WorkStyleInsight = industryStat.AiNarrator.WorkStyleInsight,
+                            EntryAdvice = industryStat.AiNarrator.EntryAdvice,
+                            MotivationalMessage = industryStat.AiNarrator.MotivationalMessage,
+                            PersonalizedRecommendation = industryStat
+                                .AiNarrator
+                                .PersonalizedRecommendation,
+                            CareerStatisticsId = careerStatId,
+                        };
+                        await _aiNarratorRepository.AddAsync(narrator);
+                    }
                 }
+
+                // ✅ SkillDemand i MarketTrends pozostają BEZ ZMIAN
                 foreach (var skill in analysis.MarketAnalysis.SkillDemand)
                 {
                     var skillDemand = new SkillDemand
@@ -312,6 +549,7 @@ namespace VocareWebAPI.CareerAdvisor.Services.Implementations
                     };
                     await _skillDemandRepository.AddAsync(skillDemand);
                 }
+
                 foreach (var trend in analysis.MarketAnalysis.MarketTrends)
                 {
                     var marketTrend = new MarketTrends
@@ -324,7 +562,6 @@ namespace VocareWebAPI.CareerAdvisor.Services.Implementations
                         EndDate = null,
                         AiRecommendationId = aiRecommendationId,
                     };
-
                     await _marketTrendsRepository.AddAsync(marketTrend);
                 }
             }
@@ -337,14 +574,23 @@ namespace VocareWebAPI.CareerAdvisor.Services.Implementations
 
         private void InitializeNullProperties(MarketAnalysisResponseDto response)
         {
-            if (response.MarketAnalysis == null)
-            {
-                response.MarketAnalysis = new MarketAnalysisDetailsDto();
-            }
-
+            response.MarketAnalysis ??= new MarketAnalysisDetailsDto();
             response.MarketAnalysis.IndustryStatistics ??= new List<IndustryStatisticsDto>();
             response.MarketAnalysis.SkillDemand ??= new List<SkillDemandDto>();
             response.MarketAnalysis.MarketTrends ??= new List<MarketTrendsDto>();
+
+            foreach (var stat in response.MarketAnalysis.IndustryStatistics)
+            {
+                stat.SalaryProgression ??= new List<SalaryProgressionDto>();
+                stat.WorkAttributes ??= new WorkAttributesDto();
+                stat.EntryDifficulty ??= new EntryDifficultyDto();
+                stat.AiNarrator ??= new AiNarratorDto();
+
+                if (stat.EntryDifficulty.MissingSkills == null)
+                {
+                    stat.EntryDifficulty.MissingSkills = new List<string>();
+                }
+            }
         }
 
         public class MarketAnalysisException : Exception

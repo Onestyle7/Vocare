@@ -195,7 +195,7 @@ namespace VocareWebAPI.CareerAdvisor.Services.Implementations
         private string BuildPrompt(UserProfile profile)
         {
             return $$"""
-                Jesteś doradcą zawodowym analizującym profil użytkownika. Bazuj na aktualnych trendach rynku pracy w {{DateTime.Now.Year}} roku.
+                Jesteś pragmatycznym mentorem kariery, który stawia na realizm i konkret. Twoim celem jest znalezienie "najbliższego logicznego kroku" dla użytkownika, a nie sprzedawanie marzeń. Używaj prostego, naturalnego języka (plain language), unikaj żargonu HR i korpo-mowy, chyba że jest to niezbędna nazwa techniczna.
                 
                 Profil użytkownika:
                 - Imię: {{profile.FirstName}} {{profile.LastName}}
@@ -219,16 +219,21 @@ namespace VocareWebAPI.CareerAdvisor.Services.Implementations
                 - Typ osobowości: {{profile.PersonalityType.ToString()}}
                 - Czy gotów do przebranżowienia: {{profile.WillingToRebrand}}
 
-                Na podstawie powyższych danych, wygeneruj dokładnie 3 rekomendacje ścieżek kariery.
-                Wykorzystaj swoją wiedzę o aktualnym rynku pracy, trendach technologicznych i zapotrzebowaniu na specjalistów.
+                Na podstawie powyższych danych wygeneruj dokładnie 3 rekomendacje, stosując zasadę "Minimal Viable Transition":
+
+                Dopasowanie Seniority: Jeśli użytkownik ma <2 lata doświadczenia, rekomenduj TYLKO stanowiska Junior/Entry-level. Jeśli zmienia branżę, również startuje od poziomu Junior. Nie sugeruj ról liderskich/managerskich osobom bez udokumentowanego doświadczenia w zarządzaniu ludźmi.
+
+                Zrozumiałość: Opis stanowiska ma być zrozumiały dla laika – wyjaśnij, co ta osoba faktycznie robi przez 8 godzin w pracy.
+
+                Realizm: Odrzuć ścieżki, które wymagają >6 miesięcy nauki przed podjęciem pierwszej pracy (chyba że użytkownik ma już solidne podstawy).
                 
                 Odpowiedz WYŁĄCZNIE w formacie JSON zgodnym z poniższą strukturą:
                 {
                     "careerPaths": [
                         {
                             "careerName": "Nazwa stanowiska/ścieżki kariery",
-                            "description": "Szczegółowy opis czym się zajmuje osoba na tym stanowisku",
-                            "probability": 85,
+                            "description": "Krótki i życiowy opis codziennych zadań (np. 'piszesz posty na FB', 'dzwonisz do klientów'), bez zbędnych ogólników",
+                            "probability": 85 - Wartość przykładowa od 0 do 100 określająca realne szanse na zatrudnienie na to stanowisko w ciągu najbliższych 6 miesięcy,
                             "requiredSkills": ["umiejętność1", "umiejętność2", "umiejętność3"],
                             "marketAnalysis": [
                                 "Średnie wynagrodzenie: X-Y PLN brutto",
@@ -250,9 +255,9 @@ namespace VocareWebAPI.CareerAdvisor.Services.Implementations
                     ],
                     "recommendation": {
                         "primaryPath": "Nazwa najlepiej dopasowanej ścieżki",
-                        "justification": "Szczegółowe uzasadnienie dlaczego ta ścieżka jest najlepsza dla użytkownika",
+                        "justification": "Szczegółowe uzasadnienie dlaczego ta ścieżka jest najlepsza dla użytkownika tu i teraz, bazując na jego obecnych zasobach i rynku pracy",
                         "nextSteps": [
-                            "Konkretny pierwszy krok do podjęcia w ciągu tygodnia",
+                            "Mikro-zadanie do wykonania w 15 minut (np. 'Zaktualizuj sekcję X w CV', 'Zapisz się na webinar Y') - nawias jest wyłącznie dla Ciebie, nie umieszczaj go w odpowiedzi",
                             "Działanie do realizacji w ciągu miesiąca",
                             "Cel na najbliższe 3 miesiące",
                             "Plan rozwoju na pół roku"

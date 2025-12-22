@@ -2,6 +2,8 @@ using VocareWebAPI.Billing.Repositories.Implementations;
 using VocareWebAPI.Billing.Repositories.Interfaces;
 using VocareWebAPI.Billing.Services.Implementations;
 using VocareWebAPI.Billing.Services.Interfaces;
+using VocareWebAPI.CareerAdvisor.Repositories.Implementations;
+using VocareWebAPI.CareerAdvisor.Repositories.Interfaces;
 using VocareWebAPI.CareerAdvisor.Services.Implementations;
 using VocareWebAPI.CvGenerator.Repositories.Implementations;
 using VocareWebAPI.CvGenerator.Repositories.Interfaces;
@@ -40,7 +42,6 @@ namespace VocareWebAPI.Extensions.ServiceCollectionExtensions
 
             // AI services (Główną implementacją jest OpenAI)
             services.AddScoped<IAiService, OpenAIService>();
-            services.AddScoped<IMarketAnalysisService, OpenAiMarketAnalysisService>();
 
             // CV Services
             services.AddScoped<ICvManagementService, CvManagementService>();
@@ -75,6 +76,10 @@ namespace VocareWebAPI.Extensions.ServiceCollectionExtensions
             services.AddScoped<ICareerStatisticsRepository, CareerStatisticsRepository>();
             services.AddScoped<ISkillDemandRepository, SkillDemandRepository>();
             services.AddScoped<IMarketTrendsRepository, MarketTrendsRepository>();
+            services.AddScoped<ISalaryProgressionRepository, SalaryProgressionRepository>();
+            services.AddScoped<IWorkAttributesRepository, WorkAttributesRepository>();
+            services.AddScoped<IEntryDifficultyRepository, EntryDifficultyRepository>();
+            services.AddScoped<IAiNarratorRepository, AiNarratorRepository>();
 
             // Cv Repositories;
             services.AddScoped<IGeneratedCvRepository, GeneratedCvrepository>();
