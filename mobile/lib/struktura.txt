@@ -1,0 +1,50 @@
+.
+├── constants
+├── main.dart
+├── models
+│   ├── ai_career_response.dart
+│   ├── industry_section.dart
+│   ├── market_trend.dart
+│   ├── personality_type.dart
+│   ├── skill_demand.dart
+│   └── user.dart
+├── repositories
+│   └── auth_repository.dart
+├── screens
+│   ├── aI_asistent_screen.dart
+│   ├── fill_profile_screen.dart
+│   ├── home_screen.dart
+│   ├── login_screen.dart
+│   ├── market_analysis.dart
+│   ├── payment_screen.dart
+│   ├── pricing_screen.dart
+│   ├── profile_modals.dart
+│   └── register_screen.dart
+├── services
+│   ├── ai_api.dart
+│   ├── auth_api.dart
+│   ├── biling_api.dart
+│   ├── google_auth_service.dart
+│   ├── market_AnalysisAPI.dart
+│   ├── profile_api.dart
+│   └── them_service.dart
+├── struktura.txt
+├── utils
+│   └── error_handler.dart
+└── widgets
+    ├── create_future_view.dart
+    ├── custom_button.dart
+    ├── custom_date_input.dart
+    ├── custom_input.dart
+    ├── expandable_career_path_card.dart
+    ├── expandable_service_card.dart
+    ├── hanging_tag_animation.dart
+    ├── industry_section_card.dart
+    ├── main_recommendation_card.dart
+    ├── nav_bar_button.dart
+    ├── profile_status_indicator.dart
+    ├── theme_toggle_button.dart
+    ├── token_confirmation_modal.dart
+    └── vocare_hanging_tag.dart
+
+8 directories, 40 files

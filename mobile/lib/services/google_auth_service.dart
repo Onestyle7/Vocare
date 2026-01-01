@@ -4,8 +4,16 @@ import 'package:http/http.dart' as http;
 import 'dart:convert';
 
 class GoogleAuthService {
-  // 🔧 Konfiguracja Google Sign-In
-  final GoogleSignIn _googleSignIn = GoogleSignIn(scopes: ['email', 'profile']);
+  final GoogleSignIn _googleSignIn = GoogleSignIn(
+    scopes: [
+      'email',
+      'profile',
+      'https://www.googleapis.com/auth/userinfo.profile',
+      'https://www.googleapis.com/auth/userinfo.email',
+    ],
+  );
+  // 🔧 Konfiguracja Google Sign-In\
+  //final GoogleSignIn _googleSignIn = GoogleSignIn(scopes: ['email', 'profile']);
 
   // 🔧 Adres API backendu - ZMIENIONY NA TWÓJ ENDPOINT
   static const String _backendUrl = 'http://localhost:8080/api/Auth';

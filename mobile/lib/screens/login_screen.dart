@@ -6,8 +6,6 @@ import 'package:vocare/screens/register_screen.dart';
 import 'package:vocare/services/them_service.dart';
 import 'package:vocare/widgets/custom_button.dart';
 import 'package:vocare/widgets/custom_input.dart';
-import 'package:vocare/widgets/nav_bar_button.dart'
-    show NavBarButtons, NavDestination;
 import 'package:vocare/widgets/theme_toggle_button.dart';
 import '../repositories/auth_repository.dart';
 
@@ -115,7 +113,14 @@ class _LoginScreenState extends State<LoginScreen> {
           padding: const EdgeInsets.all(16),
           child: Column(
             children: [
-              const SizedBox(height: 60),
+              // 🆕 Theme toggle w prawym górnym rogu (opcjonalne)
+              Align(
+                alignment: Alignment.topRight,
+                child: const ThemeToggleButton(),
+              ),
+
+              const SizedBox(height: 40),
+
               // Logo
               Center(
                 child: Image.asset(
@@ -218,36 +223,7 @@ class _LoginScreenState extends State<LoginScreen> {
           ),
         ),
       ),
-      bottomNavigationBar: Container(
-        height: 60,
-        decoration: const BoxDecoration(
-          color: Color.fromARGB(222, 16, 14, 14),
-          borderRadius: BorderRadius.only(
-            topLeft: Radius.circular(16),
-            topRight: Radius.circular(16),
-          ),
-        ),
-        child: SafeArea(
-          child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 16),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: const [
-                ThemeToggleButton(),
-                NavBarButtons(
-                  destinations: [
-                    NavDestination.home,
-                    NavDestination.profile,
-                    NavDestination.logout,
-                    NavDestination.assistent,
-                    NavDestination.marketAnalysis,
-                  ],
-                ),
-              ],
-            ),
-          ),
-        ),
-      ),
+      // 🔥 USUNIĘTY bottomNavigationBar - nie potrzebny na stronie logowania!
     );
   }
 

@@ -8,7 +8,7 @@ import 'package:vocare/screens/aI_asistent_screen.dart';
 import 'package:vocare/widgets/nav_bar_button.dart';
 import 'package:vocare/widgets/theme_toggle_button.dart';
 import 'package:vocare/models/personality_type.dart';
-import 'profile_modals.dart'; // 🆕 IMPORT MODALI
+import 'profile_modals.dart';
 
 enum RiskAppetite {
   low('Low'),
@@ -109,13 +109,13 @@ class _FillProfileScreenState extends State<FillProfileScreen> {
   List<String> _skills = [];
   List<String> _softSkills = [];
 
-  // 🆕 NOWE LISTY dla danych z modali
+  // Dane z modali
   List<Map<String, String>> _addedLanguages = [];
   List<Map<String, dynamic>> _addedWorkExperience = [];
   List<Map<String, dynamic>> _addedEducation = [];
   List<Map<String, dynamic>> _addedCertificates = [];
 
-  // 🔧 DODANE dla przycisków +
+  // Dla przycisków +
   String _currentSkillInput = '';
   String _currentSoftSkillInput = '';
 
@@ -138,7 +138,6 @@ class _FillProfileScreenState extends State<FillProfileScreen> {
   @override
   void initState() {
     super.initState();
-    // 🔧 OPÓŹNIJ ŁADOWANIE PROFILU o frame żeby UI się zainicjalizowało
     WidgetsBinding.instance.addPostFrameCallback((_) {
       _loadUserProfile();
     });
@@ -149,11 +148,9 @@ class _FillProfileScreenState extends State<FillProfileScreen> {
     if (data == null) return;
 
     setState(() {
-      // Personal info
       _firstNameController.text = data['firstName'] ?? '';
       _lastNameController.text = data['lastName'] ?? '';
 
-      // 🔧 NAPRAW COUNTRY - mapuj backend value na frontend value
       final backendCountry = data['country'] ?? '';
       selectedCountry = _mapBackendCountryToFrontend(backendCountry);
 
@@ -163,7 +160,6 @@ class _FillProfileScreenState extends State<FillProfileScreen> {
       _additionalInfoController.text = data['additionalInformation'] ?? '';
       _willingToRebrand = data['willingToRebrand'] ?? false;
 
-      // 🔧 NAPRAW PERSONALITY - sprawdź czy value istnieje
       final personality =
           (data['personalityType'] ?? '').toString().toLowerCase();
       _selectedPersonalityType = PersonalityType.values.firstWhere(
@@ -174,7 +170,6 @@ class _FillProfileScreenState extends State<FillProfileScreen> {
       _skills = List<String>.from(data['skills'] ?? []);
       _softSkills = List<String>.from(data['softSkills'] ?? []);
 
-      // Financial Survey
       final financial = data['financialSurvey'] as Map<String, dynamic>?;
       if (financial != null) {
         _currentSalaryController.text =
@@ -194,7 +189,6 @@ class _FillProfileScreenState extends State<FillProfileScreen> {
     });
   }
 
-  // 🔧 HELPER do mapowania krajów z backend na frontend
   String _mapBackendCountryToFrontend(String backendCountry) {
     final mapping = {
       'polska': 'Poland',
@@ -243,7 +237,6 @@ class _FillProfileScreenState extends State<FillProfileScreen> {
   Future<void> _saveProfile() async {
     setState(() => _isLoading = true);
 
-    // 🔧 WALIDACJA PRZED ZAPISEM
     if (_firstNameController.text.trim().isEmpty) {
       _showError('Please enter your first name');
       setState(() => _isLoading = false);
@@ -265,7 +258,7 @@ class _FillProfileScreenState extends State<FillProfileScreen> {
     final profileData = {
       "firstName": _firstNameController.text.trim(),
       "lastName": _lastNameController.text.trim(),
-      "country": selectedCountry.trim(), // 🔧 Używaj frontend value
+      "country": selectedCountry.trim(),
       "address": _addressController.text.trim(),
       "phoneNumber": _phoneController.text.trim(),
       "personalityType": _selectedPersonalityType?.name ?? "unknown",
@@ -274,8 +267,6 @@ class _FillProfileScreenState extends State<FillProfileScreen> {
       "willingToRebrand": _willingToRebrand,
       "skills": _skills,
       "softSkills": _softSkills,
-
-      // Edukacja - z modali albo starych kontrolerów
       "education": [
         ..._addedEducation,
         ..._educationList
@@ -294,8 +285,6 @@ class _FillProfileScreenState extends State<FillProfileScreen> {
               },
             ),
       ],
-
-      // Doświadczenie zawodowe - z modali albo starych kontrolerów
       "workExperience": [
         ..._addedWorkExperience,
         ..._workExperienceList
@@ -320,8 +309,6 @@ class _FillProfileScreenState extends State<FillProfileScreen> {
               },
             ),
       ],
-
-      // Certyfikaty - z modali albo starych kontrolerów
       "certificates": [
         ..._addedCertificates,
         ..._certificatesList
@@ -334,8 +321,6 @@ class _FillProfileScreenState extends State<FillProfileScreen> {
               },
             ),
       ],
-
-      // Języki - z modali albo starych kontrolerów
       "languages": [
         ..._addedLanguages,
         ..._languagesList
@@ -359,7 +344,7 @@ class _FillProfileScreenState extends State<FillProfileScreen> {
       },
     };
 
-    print('🔍 SAVING PROFILE DATA: $profileData'); // Debug
+    print('🔍 SAVING PROFILE DATA: $profileData');
 
     final success = await ProfileApi.createUserProfile(profileData);
     setState(() => _isLoading = false);
@@ -380,7 +365,6 @@ class _FillProfileScreenState extends State<FillProfileScreen> {
     );
   }
 
-  // Funkcje obsługi modali
   void _showAddLanguageModal() {
     showDialog(
       context: context,
@@ -444,9 +428,7 @@ class _FillProfileScreenState extends State<FillProfileScreen> {
       body: SafeArea(
         child: Column(
           children: [
-            // Progress Header
             _buildProgressHeader(),
-
             Expanded(
               child: PageView(
                 controller: _pageController,
@@ -460,8 +442,6 @@ class _FillProfileScreenState extends State<FillProfileScreen> {
                 ],
               ),
             ),
-
-            // Bottom Navigation
             _buildBottomNavigation(),
           ],
         ),
@@ -471,14 +451,14 @@ class _FillProfileScreenState extends State<FillProfileScreen> {
 
   Widget _buildProgressHeader() {
     return Container(
-      padding: const EdgeInsets.all(20),
+      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
       child: Row(
+        mainAxisAlignment: MainAxisAlignment.center,
         children: [
           for (int i = 0; i < 5; i++) ...[
-            // Step Circle
             Container(
-              width: 40,
-              height: 40,
+              width: 44,
+              height: 44,
               decoration: BoxDecoration(
                 shape: BoxShape.circle,
                 color:
@@ -496,7 +476,7 @@ class _FillProfileScreenState extends State<FillProfileScreen> {
               child: Center(
                 child:
                     i < _currentPage
-                        ? const Icon(Icons.check, color: Colors.white, size: 20)
+                        ? const Icon(Icons.check, color: Colors.white, size: 22)
                         : Text(
                           '${i + 1}',
                           style: TextStyle(
@@ -505,44 +485,20 @@ class _FillProfileScreenState extends State<FillProfileScreen> {
                                     ? Colors.white
                                     : const Color(0xFF666666),
                             fontWeight: FontWeight.bold,
+                            fontSize: 16,
                           ),
                         ),
               ),
             ),
-
-            // Step Label
-            const SizedBox(width: 8),
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    _stepTitles[i],
-                    style: TextStyle(
-                      color:
-                          i <= _currentPage
-                              ? const Color(0xFF915EFF)
-                              : const Color(0xFF666666),
-                      fontSize: 12,
-                      fontWeight: FontWeight.w500,
-                    ),
-                  ),
-                ],
-              ),
-            ),
-
-            // Connector Line
             if (i < 4) ...[
-              const SizedBox(width: 8),
               Container(
                 height: 2,
-                width: 20,
+                width: 40,
                 color:
                     i < _currentPage
                         ? const Color(0xFF915EFF)
                         : const Color(0xFF2A2A2A),
               ),
-              const SizedBox(width: 8),
             ],
           ],
         ],
@@ -565,29 +521,24 @@ class _FillProfileScreenState extends State<FillProfileScreen> {
             ),
           ),
           const SizedBox(height: 30),
-
           _buildWebInput(
             label: 'Name',
             controller: _firstNameController,
             placeholder: 'Enter your first name',
           ),
-
           _buildWebInput(
             label: 'Surname',
             controller: _lastNameController,
             placeholder: 'Enter your surname',
           ),
-
           _buildDropdownField(
             label: 'Personality type',
             value: _selectedPersonalityType?.label,
             items:
                 PersonalityType.values
-                    .where(
-                      (type) => type != PersonalityType.unknown,
-                    ) // 🔧 Usuń "Unknown" z listy
+                    .where((type) => type != PersonalityType.unknown)
                     .map((e) => e.label)
-                    .toSet() // 🔧 Usuń duplikaty
+                    .toSet()
                     .toList(),
             onChanged: (value) {
               setState(() {
@@ -618,7 +569,6 @@ class _FillProfileScreenState extends State<FillProfileScreen> {
             ),
           ),
           const SizedBox(height: 30),
-
           _buildDropdownField(
             label: 'Country',
             value: selectedCountry.isEmpty ? null : selectedCountry,
@@ -631,16 +581,14 @@ class _FillProfileScreenState extends State<FillProfileScreen> {
               'Italy',
               'Spain',
               'Netherlands',
-            ], // 🔧 Unikalne wartości krajów
+            ],
             onChanged: (value) => setState(() => selectedCountry = value ?? ''),
           ),
-
           _buildWebInput(
             label: 'Address',
             controller: _addressController,
             placeholder: 'Enter your address',
           ),
-
           _buildPhoneInput(),
         ],
       ),
@@ -662,7 +610,6 @@ class _FillProfileScreenState extends State<FillProfileScreen> {
             ),
           ),
           const SizedBox(height: 30),
-
           _buildSkillsSection(),
           const SizedBox(height: 30),
           _buildSoftSkillsSection(),
@@ -690,18 +637,15 @@ class _FillProfileScreenState extends State<FillProfileScreen> {
             ),
           ),
           const SizedBox(height: 30),
-
           _buildEducationSection(),
           const SizedBox(height: 30),
           _buildCertificatesSection(),
           const SizedBox(height: 30),
-
           _buildWebTextArea(
             label: 'About me',
             controller: _aboutMeController,
             placeholder: 'Tell us about yourself...',
           ),
-
           _buildWebTextArea(
             label: 'Additional Information',
             controller: _additionalInfoController,
@@ -727,47 +671,37 @@ class _FillProfileScreenState extends State<FillProfileScreen> {
             ),
           ),
           const SizedBox(height: 30),
-
           _buildWebInput(
             label: 'Current salary',
             controller: _currentSalaryController,
             placeholder: 'Enter amount',
             keyboardType: TextInputType.number,
           ),
-
           _buildWebInput(
             label: 'Desired salary',
             controller: _desiredSalaryController,
             placeholder: 'Enter amount',
             keyboardType: TextInputType.number,
           ),
-
           _buildYesNoQuestion(
             'Do you have any loans?',
             _hasLoans,
             (value) => setState(() => _hasLoans = value),
           ),
-
           _buildYesNoQuestion(
             'Willing to relocate?',
             _willingToRelocate,
             (value) => setState(() => _willingToRelocate = value),
           ),
-
           _buildYesNoQuestion(
             'Willing to rebrand?',
             _willingToRebrand,
             (value) => setState(() => _willingToRebrand = value),
           ),
-
           _buildDropdownField(
             label: 'Risk appetite',
             value: _selectedRiskAppetite?.label,
-            items:
-                RiskAppetite.values
-                    .map((e) => e.label)
-                    .toSet() // 🔧 Usuń duplikaty
-                    .toList(),
+            items: RiskAppetite.values.map((e) => e.label).toSet().toList(),
             onChanged: (value) {
               setState(() {
                 _selectedRiskAppetite = RiskAppetite.values.firstWhere(
@@ -873,15 +807,7 @@ class _FillProfileScreenState extends State<FillProfileScreen> {
     required List<String> items,
     required Function(String?) onChanged,
   }) {
-    // 🔧 NAPRAW DROPDOWN - upewnij się że value istnieje w items
     final String? safeValue = items.contains(value) ? value : null;
-
-    // 🔍 DEBUG
-    if (value != null && !items.contains(value)) {
-      print(
-        '⚠️ DROPDOWN WARNING: "$label" value "$value" not found in items: $items',
-      );
-    }
 
     return Padding(
       padding: const EdgeInsets.only(bottom: 20),
@@ -904,7 +830,7 @@ class _FillProfileScreenState extends State<FillProfileScreen> {
               border: Border.all(color: const Color(0xFF333333)),
             ),
             child: DropdownButtonFormField<String>(
-              value: safeValue, // 🔧 Używaj bezpiecznej wartości
+              value: safeValue,
               dropdownColor: const Color(0xFF1A1A1A),
               style: const TextStyle(color: Colors.white),
               decoration: const InputDecoration(
@@ -917,8 +843,8 @@ class _FillProfileScreenState extends State<FillProfileScreen> {
               ),
               items:
                   items
-                      .where((item) => item.isNotEmpty) // 🔧 Usuń puste stringi
-                      .toSet() // 🔧 Usuń duplikaty
+                      .where((item) => item.isNotEmpty)
+                      .toSet()
                       .map(
                         (item) => DropdownMenuItem(
                           value: item,
@@ -1067,20 +993,17 @@ class _FillProfileScreenState extends State<FillProfileScreen> {
                     }
                   },
                   onChanged: (value) {
-                    // Store current input for the + button
                     _currentSkillInput = value;
                   },
                 ),
               ),
               GestureDetector(
-                // 🔧 DODANO GESTURE DETECTOR
                 onTap: () {
                   if (_currentSkillInput.trim().isNotEmpty) {
                     setState(() {
                       _skills.add(_currentSkillInput.trim());
                       _currentSkillInput = '';
                     });
-                    // Clear the text field
                     WidgetsBinding.instance.addPostFrameCallback((_) {
                       FocusScope.of(context).unfocus();
                     });
@@ -1161,7 +1084,6 @@ class _FillProfileScreenState extends State<FillProfileScreen> {
                 ),
               ),
               GestureDetector(
-                // 🔧 DODANO GESTURE DETECTOR
                 onTap: () {
                   if (_currentSoftSkillInput.trim().isNotEmpty) {
                     setState(() {
@@ -1234,6 +1156,7 @@ class _FillProfileScreenState extends State<FillProfileScreen> {
     );
   }
 
+  // 🔧 BEZ MOCKOWYCH DANYCH
   Widget _buildLanguagesSection() {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -1247,8 +1170,6 @@ class _FillProfileScreenState extends State<FillProfileScreen> {
           ),
         ),
         const SizedBox(height: 12),
-
-        // Wyświetl dodane języki z modala
         ...(_addedLanguages.asMap().entries.map((entry) {
           final index = entry.key;
           final language = entry.value;
@@ -1265,14 +1186,26 @@ class _FillProfileScreenState extends State<FillProfileScreen> {
             ),
           );
         }).toList()),
-
-        // Domyślne języki (jeśli są)
         if (_addedLanguages.isEmpty) ...[
-          _buildLanguageTag('Polish (Native)', false),
-          const SizedBox(height: 8),
-          _buildLanguageTag('English (Advanced)', false),
+          Container(
+            padding: const EdgeInsets.all(16),
+            decoration: BoxDecoration(
+              color: const Color(0xFF1A1A1A),
+              borderRadius: BorderRadius.circular(8),
+              border: Border.all(color: const Color(0xFF333333)),
+            ),
+            child: Row(
+              children: [
+                Icon(Icons.language, color: Colors.grey.shade600, size: 24),
+                const SizedBox(width: 12),
+                Text(
+                  'No languages added yet',
+                  style: TextStyle(color: Colors.grey.shade500, fontSize: 14),
+                ),
+              ],
+            ),
+          ),
         ],
-
         const SizedBox(height: 12),
         CustomButton(
           text: '+ Add language',
@@ -1322,6 +1255,7 @@ class _FillProfileScreenState extends State<FillProfileScreen> {
     );
   }
 
+  // 🔧 BEZ MOCKOWYCH DANYCH
   Widget _buildProfessionalExperienceSection() {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -1335,8 +1269,6 @@ class _FillProfileScreenState extends State<FillProfileScreen> {
           ),
         ),
         const SizedBox(height: 16),
-
-        // Wyświetl dodane doświadczenia z modala
         ...(_addedWorkExperience.asMap().entries.map((entry) {
           final index = entry.key;
           final work = entry.value;
@@ -1392,13 +1324,27 @@ class _FillProfileScreenState extends State<FillProfileScreen> {
             ),
           );
         }).toList()),
-
-        // Stare doświadczenia (z kontrolerów) - jeśli nie ma nowych
         if (_addedWorkExperience.isEmpty) ...[
-          for (int i = 0; i < _workExperienceList.length; i++)
-            _buildExperienceCard(_workExperienceList[i], i),
+          Container(
+            padding: const EdgeInsets.all(16),
+            decoration: BoxDecoration(
+              color: const Color(0xFF1A1A1A),
+              borderRadius: BorderRadius.circular(8),
+              border: Border.all(color: const Color(0xFF333333)),
+            ),
+            child: Row(
+              children: [
+                Icon(Icons.work, color: Colors.grey.shade600, size: 24),
+                const SizedBox(width: 12),
+                Text(
+                  'No work experience added yet',
+                  style: TextStyle(color: Colors.grey.shade500, fontSize: 14),
+                ),
+              ],
+            ),
+          ),
+          const SizedBox(height: 16),
         ],
-
         CustomButton(
           text: '+ Add Work Experience',
           onPressed: _showAddWorkExperienceModal,
@@ -1411,60 +1357,7 @@ class _FillProfileScreenState extends State<FillProfileScreen> {
     );
   }
 
-  Widget _buildExperienceCard(_WorkExperience exp, int index) {
-    return Container(
-      margin: const EdgeInsets.only(bottom: 16),
-      padding: const EdgeInsets.all(16),
-      decoration: BoxDecoration(
-        color: const Color(0xFF1A1A1A),
-        borderRadius: BorderRadius.circular(8),
-        border: Border.all(color: const Color(0xFF333333)),
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Row(
-            children: [
-              Expanded(
-                child: Text(
-                  exp.positionController.text.isEmpty
-                      ? 'E-mail marketing specialist'
-                      : exp.positionController.text,
-                  style: const TextStyle(
-                    color: Colors.white,
-                    fontSize: 16,
-                    fontWeight: FontWeight.w600,
-                  ),
-                ),
-              ),
-              if (index > 0)
-                GestureDetector(
-                  onTap:
-                      () => setState(() {
-                        exp.dispose();
-                        _workExperienceList.removeAt(index);
-                      }),
-                  child: const Icon(Icons.close, color: Color(0xFF666666)),
-                ),
-            ],
-          ),
-          const SizedBox(height: 4),
-          Text(
-            exp.companyController.text.isEmpty
-                ? 'Webimpact'
-                : exp.companyController.text,
-            style: const TextStyle(color: Color(0xFF915EFF), fontSize: 14),
-          ),
-          const SizedBox(height: 4),
-          Text(
-            '${exp.startDateController.text.isEmpty ? "2022-09-30" : exp.startDateController.text} - ${exp.isCurrentlyWorking ? "Present" : exp.endDateController.text}',
-            style: const TextStyle(color: Color(0xFF666666), fontSize: 12),
-          ),
-        ],
-      ),
-    );
-  }
-
+  // 🔧 BEZ MOCKOWYCH DANYCH
   Widget _buildEducationSection() {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -1478,8 +1371,6 @@ class _FillProfileScreenState extends State<FillProfileScreen> {
           ),
         ),
         const SizedBox(height: 16),
-
-        // Wyświetl dodane edukacje z modala
         ...(_addedEducation.asMap().entries.map((entry) {
           final index = entry.key;
           final education = entry.value;
@@ -1535,8 +1426,6 @@ class _FillProfileScreenState extends State<FillProfileScreen> {
             ),
           );
         }).toList()),
-
-        // Przykładowa edukacja - jeśli nie ma nowych
         if (_addedEducation.isEmpty) ...[
           Container(
             padding: const EdgeInsets.all(16),
@@ -1547,44 +1436,17 @@ class _FillProfileScreenState extends State<FillProfileScreen> {
             ),
             child: Row(
               children: [
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      const Text(
-                        'Master in Engineer\'s Degree in Computer Science',
-                        style: TextStyle(
-                          color: Colors.white,
-                          fontSize: 16,
-                          fontWeight: FontWeight.w600,
-                        ),
-                      ),
-                      const SizedBox(height: 4),
-                      const Text(
-                        'Wyższa Szkoła Ekonomii i Informatyki w Krakowie',
-                        style: TextStyle(
-                          color: Color(0xFF915EFF),
-                          fontSize: 14,
-                        ),
-                      ),
-                      const SizedBox(height: 4),
-                      const Text(
-                        '2022-09-30 - Present',
-                        style: TextStyle(
-                          color: Color(0xFF666666),
-                          fontSize: 12,
-                        ),
-                      ),
-                    ],
-                  ),
+                Icon(Icons.school, color: Colors.grey.shade600, size: 24),
+                const SizedBox(width: 12),
+                Text(
+                  'No education added yet',
+                  style: TextStyle(color: Colors.grey.shade500, fontSize: 14),
                 ),
-                const Icon(Icons.close, color: Color(0xFF666666)),
               ],
             ),
           ),
+          const SizedBox(height: 16),
         ],
-
-        const SizedBox(height: 12),
         CustomButton(
           text: '+ Add Education',
           onPressed: _showAddEducationModal,
@@ -1610,8 +1472,6 @@ class _FillProfileScreenState extends State<FillProfileScreen> {
           ),
         ),
         const SizedBox(height: 16),
-
-        // Wyświetl dodane certyfikaty z modala
         ...(_addedCertificates.asMap().entries.map((entry) {
           final index = entry.key;
           final certificate = entry.value;
@@ -1647,11 +1507,7 @@ class _FillProfileScreenState extends State<FillProfileScreen> {
                       ),
                       const SizedBox(height: 4),
                       Text(
-                        'Issued: ${certificate['issueDate'] ?? ''} ${certificate['noExpiration'] == true
-                            ? '(No expiration)'
-                            : certificate['expiryDate'] != null && certificate['expiryDate'].isNotEmpty
-                            ? '• Expires: ${certificate['expiryDate']}'
-                            : ''}',
+                        'Issued: ${certificate['issueDate'] ?? ''}',
                         style: const TextStyle(
                           color: Color(0xFF666666),
                           fontSize: 12,
@@ -1671,7 +1527,6 @@ class _FillProfileScreenState extends State<FillProfileScreen> {
             ),
           );
         }).toList()),
-
         if (_addedCertificates.isEmpty) ...[
           const Text(
             'No certificates added yet',
@@ -1679,7 +1534,6 @@ class _FillProfileScreenState extends State<FillProfileScreen> {
           ),
           const SizedBox(height: 16),
         ],
-
         CustomButton(
           text: '+ Add Certificate',
           onPressed: _showAddCertificateModal,
@@ -1702,7 +1556,6 @@ class _FillProfileScreenState extends State<FillProfileScreen> {
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
-          // Main navigation buttons
           Row(
             children: [
               if (_currentPage > 0) ...[
@@ -1717,7 +1570,6 @@ class _FillProfileScreenState extends State<FillProfileScreen> {
                 ),
                 const SizedBox(width: 16),
               ],
-
               Expanded(
                 child:
                     _isLoading
@@ -1731,14 +1583,11 @@ class _FillProfileScreenState extends State<FillProfileScreen> {
               ),
             ],
           ),
-
-          // Delete Profile button (only on last page)
           if (_currentPage == 4) ...[
             const SizedBox(height: 16),
             CustomButton(
               text: 'Delete Profile →',
               onPressed: () {
-                // Show confirmation dialog
                 showDialog(
                   context: context,
                   builder:
@@ -1769,7 +1618,6 @@ class _FillProfileScreenState extends State<FillProfileScreen> {
                                 child: CustomButton(
                                   text: 'Delete',
                                   onPressed: () {
-                                    // Delete profile logic
                                     Navigator.of(context).pop();
                                   },
                                   backgroundColor: Colors.red,

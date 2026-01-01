@@ -21,7 +21,12 @@ class HomeScreen extends StatefulWidget {
 class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
   bool _isCheckingProfile = true;
   bool _hasProfile = false;
+
+  // 🆕 DODANE - stan tokenów
   int _tokenBalance = 0;
+  String _subscriptionStatus = 'None';
+  bool _isLoadingTokens = true;
+
   late AnimationController _fadeController;
   late AnimationController _slideController;
   late Animation<double> _fadeAnimation;
@@ -32,7 +37,7 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
     super.initState();
     _initAnimations();
     _checkUserProfile();
-    _loadTokenBalance();
+    _loadTokenBalance(); // 🆕 DODANE - ładowanie tokenów
   }
 
   void _initAnimations() {
@@ -72,11 +77,45 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
     });
   }
 
+  // 🆕 DODANA METODA - ładowanie tokenów
   Future<void> _loadTokenBalance() async {
-    final balance = await BillingApi.getTokenBalance() ?? 0;
+    print('🔄 HomeScreen: Loading token balance...');
+
     setState(() {
-      _tokenBalance = balance;
+      _isLoadingTokens = true;
     });
+
+    try {
+      // Użyj nowego API z folderu api/
+      final accessStatus = await BillingApi.getAccessStatus();
+
+      if (accessStatus != null && mounted) {
+        setState(() {
+          _tokenBalance = accessStatus['tokenBalance'] ?? 0;
+          _subscriptionStatus = accessStatus['subscriptionStatus'] ?? 'None';
+          _isLoadingTokens = false;
+        });
+
+        print('✅ HomeScreen: Token balance loaded: $_tokenBalance');
+        print('📊 HomeScreen: Subscription: $_subscriptionStatus');
+      } else {
+        setState(() {
+          _isLoadingTokens = false;
+        });
+        print('⚠️ HomeScreen: No access status data');
+      }
+    } catch (e) {
+      print('💥 HomeScreen: Error loading tokens: $e');
+      setState(() {
+        _isLoadingTokens = false;
+      });
+    }
+  }
+
+  // 🆕 DODANA METODA - odświeżanie tokenów
+  Future<void> _refreshData() async {
+    print('🔄 HomeScreen: Refreshing data...');
+    await Future.wait([_checkUserProfile(), _loadTokenBalance()]);
   }
 
   void _handleTryItOut() async {
@@ -120,34 +159,38 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
               opacity: _fadeAnimation,
               child: SlideTransition(
                 position: _slideAnimation,
-                child: SingleChildScrollView(
-                  child: Column(
-                    children: [
-                      // Header z tokenami
-                      _buildHeader(),
+                child: RefreshIndicator(
+                  onRefresh: _refreshData,
+                  child: SingleChildScrollView(
+                    physics: const AlwaysScrollableScrollPhysics(),
+                    child: Column(
+                      children: [
+                        // Header z tokenami
+                        _buildHeader(),
 
-                      const SizedBox(height: 40),
+                        const SizedBox(height: 40),
 
-                      // Hero Section
-                      _buildHeroSection(isDark),
+                        // Hero Section
+                        _buildHeroSection(isDark),
 
-                      const SizedBox(height: 40),
+                        const SizedBox(height: 40),
 
-                      // Quick Actions
-                      _buildQuickActions(),
+                        // Quick Actions
+                        _buildQuickActions(),
 
-                      const SizedBox(height: 40),
+                        const SizedBox(height: 40),
 
-                      // Features Overview
-                      _buildFeaturesOverview(),
+                        // Features Overview
+                        _buildFeaturesOverview(),
 
-                      const SizedBox(height: 40),
+                        const SizedBox(height: 40),
 
-                      // Statistics
-                      if (_hasProfile) _buildUserStats(),
+                        // Statistics
+                        if (_hasProfile) _buildUserStats(),
 
-                      const SizedBox(height: 40),
-                    ],
+                        const SizedBox(height: 40),
+                      ],
+                    ),
                   ),
                 ),
               ),
@@ -175,7 +218,7 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
           ),
           const Spacer(),
 
-          // Token Balance
+          // Token Balance - 🆕 ROZBUDOWANY
           _buildTokenBalance(),
           const SizedBox(width: 16),
 
@@ -186,7 +229,41 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
     );
   }
 
+  // 🆕 ROZBUDOWANA METODA - token balance z większą ilością informacji
   Widget _buildTokenBalance() {
+    if (_isLoadingTokens) {
+      return Container(
+        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+        decoration: BoxDecoration(
+          color: const Color(0xFF915EFF).withOpacity(0.1),
+          borderRadius: BorderRadius.circular(20),
+          border: Border.all(color: const Color(0xFF915EFF), width: 1),
+        ),
+        child: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            SizedBox(
+              width: 14,
+              height: 14,
+              child: CircularProgressIndicator(
+                strokeWidth: 2,
+                valueColor: AlwaysStoppedAnimation<Color>(Color(0xFF915EFF)),
+              ),
+            ),
+            const SizedBox(width: 6),
+            Text(
+              'Loading...',
+              style: const TextStyle(
+                color: Color(0xFF915EFF),
+                fontSize: 12,
+                fontFamily: 'Poppins',
+              ),
+            ),
+          ],
+        ),
+      );
+    }
+
     return GestureDetector(
       onTap:
           () => Navigator.push(
@@ -244,15 +321,6 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
           ),
 
           const SizedBox(height: 20),
-
-          // Hanging Tag Animation
-          VocareHangingTag(
-            width: 240,
-            height: 280,
-            bandColor: const Color(0xFF915EFF),
-            cardColor:
-                isDark ? const Color(0xFF1E1E1E) : const Color(0xFFFFFFFF),
-          ),
 
           const SizedBox(height: 15),
 
@@ -510,6 +578,7 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
     );
   }
 
+  // 🆕 ROZBUDOWANA METODA - statystyki z tokenami
   Widget _buildUserStats() {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 20),
@@ -550,7 +619,11 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
                   ),
                 ),
                 Expanded(
-                  child: _buildStatItem('Analyses', '2', Icons.analytics),
+                  child: _buildStatItem(
+                    'Status',
+                    _subscriptionStatus,
+                    Icons.workspace_premium,
+                  ),
                 ),
               ],
             ),
@@ -601,11 +674,8 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: const [
-              ThemeToggleButton(),
               NavBarButtons(
                 destinations: [
-                  NavDestination.home,
-                  NavDestination.profile,
                   NavDestination.logout,
                   NavDestination.assistent,
                   NavDestination.marketAnalysis,

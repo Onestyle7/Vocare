@@ -36,14 +36,12 @@ class _AIAsistentPageScreenState extends State<AIAsistentPageScreen>
   }
 
   Future<void> _checkProfileAndTokens() async {
-    // Sprawdź czy użytkownik ma profil
     final profile = await ProfileApi.getUserProfile();
     final hasProfile =
         profile != null &&
         profile['firstName'] != null &&
         profile['firstName'].toString().trim().isNotEmpty;
 
-    // Pobierz stan tokenów
     final balance = await BillingApi.getTokenBalance() ?? 0;
 
     setState(() {
@@ -52,7 +50,6 @@ class _AIAsistentPageScreenState extends State<AIAsistentPageScreen>
       _isCheckingProfile = false;
     });
 
-    // Jeśli ma profil, automatycznie załaduj rekomendację
     if (hasProfile) {
       WidgetsBinding.instance.addPostFrameCallback((_) {
         _loadRecommendation();
@@ -67,40 +64,30 @@ class _AIAsistentPageScreenState extends State<AIAsistentPageScreen>
       _recommendation = null;
     });
 
-    // Minimum 8 sekund animacji + rzeczywisty czas API
     final Future<void> animationDelay = Future.delayed(
       const Duration(seconds: 8),
     );
 
-    // 🆕 NOWA LOGIKA: Najpierw sprawdź czy są ostatnie dane
     print('🔍 Sprawdzanie czy istnieją ostatnie rekomendacje...');
 
-    // Sprawdź ostatnie rekomendacje
     final Future<AiCareerResponse?> lastRecommendationCheck =
         AiApi.fetchLastRecommendation();
 
-    // Czekaj na sprawdzenie ostatnich danych (bez animacji)
     final AiCareerResponse? existingRecommendation =
         await lastRecommendationCheck;
 
     AiCareerResponse? finalResult;
 
     if (existingRecommendation != null) {
-      // 🟢 ZNALEZIONO OSTATNIE DANE - użyj ich
       print('✅ Znaleziono istniejące rekomendacje - wyświetlam');
       finalResult = existingRecommendation;
-
-      // Czekaj na zakończenie animacji
       await animationDelay;
     } else {
-      // 🔴 BRAK DANYCH - wygeneruj nowe
       print('❌ Brak istniejących rekomendacji - generuję nowe');
 
-      // Generuj nowe dane równolegle z animacją
       final Future<AiCareerResponse?> newRecommendationCall =
           AiApi.generateNewRecommendation();
 
-      // Czekaj na oba - animację i API
       final results = await Future.wait([
         animationDelay,
         newRecommendationCall,
@@ -120,7 +107,6 @@ class _AIAsistentPageScreenState extends State<AIAsistentPageScreen>
       _recommendation = finalResult;
     });
 
-    // Odśwież stan tokenów po generowaniu (tylko jeśli generowano nowe)
     if (existingRecommendation == null) {
       final newBalance = await BillingApi.getTokenBalance() ?? 0;
       setState(() {
@@ -129,7 +115,6 @@ class _AIAsistentPageScreenState extends State<AIAsistentPageScreen>
       print('🔄 Odświeżono stan tokenów: $newBalance');
     }
 
-    // Debug info
     if (finalResult != null) {
       print('🔍 DEBUG Final Result:');
       print(
@@ -146,7 +131,6 @@ class _AIAsistentPageScreenState extends State<AIAsistentPageScreen>
     }
   }
 
-  /// Modal tokenów - dla przyszłych wersji z płatnością
   Future<void> _showTokenConfirmationModal() async {
     const tokensRequired = 5;
 
@@ -163,12 +147,10 @@ class _AIAsistentPageScreenState extends State<AIAsistentPageScreen>
 
   @override
   Widget build(BuildContext context) {
-    // Jeśli sprawdzamy profil, pokaż loading
     if (_isCheckingProfile) {
       return const Scaffold(body: Center(child: CircularProgressIndicator()));
     }
 
-    // Jeśli użytkownik nie ma profilu, pokaż stronę "Create future"
     if (!_hasProfile) {
       return const CreateFutureView();
     }
@@ -185,16 +167,11 @@ class _AIAsistentPageScreenState extends State<AIAsistentPageScreen>
                   icon: const Icon(Icons.arrow_back),
                   onPressed:
                       () => Navigator.pushReplacement(
-                        // 🆕 NOWA WERSJA
                         context,
                         MaterialPageRoute(builder: (_) => const HomeScreen()),
                       ),
                 ),
-                actions: [
-                  // Token balance w app bar
-                  _buildTokenBalance(),
-                  const ThemeToggleButton(),
-                ],
+                actions: [_buildTokenBalance(), const ThemeToggleButton()],
               ),
       body:
           _showTerminalAnimation
@@ -246,7 +223,6 @@ class _AIAsistentPageScreenState extends State<AIAsistentPageScreen>
     return Column(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
-        // Logo Vocare
         Image.asset(
           'assets/img/vocare.png',
           height: 100,
@@ -254,13 +230,8 @@ class _AIAsistentPageScreenState extends State<AIAsistentPageScreen>
           color: Colors.white,
         ),
         const SizedBox(height: 40),
-
-        // Terminal Animation
         const TerminalDemo(),
-
         const SizedBox(height: 40),
-
-        // Status text
         Text(
           'Generating your personalized career recommendations...',
           style: TextStyle(color: Colors.grey.shade400, fontSize: 16),
@@ -287,7 +258,6 @@ class _AIAsistentPageScreenState extends State<AIAsistentPageScreen>
                         : _buildEmptyState(),
               ),
             ),
-            // Przycisk na dole
             Container(
               width: constraints.maxWidth,
               height: 100,
@@ -318,7 +288,6 @@ class _AIAsistentPageScreenState extends State<AIAsistentPageScreen>
                 padding: const EdgeInsets.all(16),
                 child: Column(
                   children: [
-                    // Nagłówek
                     const Text(
                       'Career Recommendation',
                       style: TextStyle(
@@ -330,7 +299,7 @@ class _AIAsistentPageScreenState extends State<AIAsistentPageScreen>
                     ),
                     const SizedBox(height: 20),
 
-                    // 🔧 NAPRAWIONA GŁÓWNA REKOMENDACJA - pasek rozciągnięty od góry do dołu
+                    // 🔧 NAPRAWIONA GŁÓWNA REKOMENDACJA - BEZ OVERFLOW
                     TweenAnimationBuilder<double>(
                       duration: const Duration(milliseconds: 600),
                       tween: Tween(begin: 0.0, end: 1.0),
@@ -358,25 +327,26 @@ class _AIAsistentPageScreenState extends State<AIAsistentPageScreen>
                                   ),
                                 ],
                               ),
-                              // 🔧 DODANE: IntrinsicHeight dla automatycznej wysokości
-                              child: IntrinsicHeight(
+                              // 🔧 POPRAWIONE: ClipRRect zapobiega overflow
+                              child: ClipRRect(
+                                borderRadius: BorderRadius.circular(10),
                                 child: Row(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
-                                    // Pełny fioletowy pasek z numerem 1 - BEZ STAŁEJ WYSOKOŚCI
+                                    // Fioletowy pasek z numerem 1
                                     Container(
                                       width: 60,
-                                      // 🔧 USUNIĘTE: height: 100 - teraz automatycznie dopasowuje się
+                                      constraints: const BoxConstraints(
+                                        minHeight: 100,
+                                      ),
                                       decoration: const BoxDecoration(
                                         color: Color(0xFF915EFF),
-                                        borderRadius: BorderRadius.only(
-                                          topLeft: Radius.circular(12),
-                                          bottomLeft: Radius.circular(12),
-                                        ),
                                       ),
                                       child: const Column(
                                         mainAxisAlignment:
                                             MainAxisAlignment.center,
                                         children: [
+                                          SizedBox(height: 20),
                                           Text(
                                             '1',
                                             style: TextStyle(
@@ -391,136 +361,152 @@ class _AIAsistentPageScreenState extends State<AIAsistentPageScreen>
                                             color: Colors.amber,
                                             size: 20,
                                           ),
+                                          SizedBox(height: 20),
                                         ],
                                       ),
                                     ),
-                                    // Treść
+                                    // Treść - ExpansionTile
                                     Expanded(
-                                      child: ExpansionTile(
-                                        tilePadding: const EdgeInsets.symmetric(
-                                          horizontal: 16,
-                                          vertical: 8,
+                                      child: Theme(
+                                        data: Theme.of(context).copyWith(
+                                          dividerColor: Colors.transparent,
                                         ),
-                                        childrenPadding: const EdgeInsets.all(
-                                          16,
-                                        ),
-                                        iconColor: const Color(0xFF915EFF),
-                                        collapsedIconColor: const Color(
-                                          0xFF915EFF,
-                                        ),
-                                        title: const Text(
-                                          'Main Recommendation',
-                                          style: TextStyle(
-                                            fontWeight: FontWeight.bold,
-                                            color: Colors.white,
-                                            fontSize: 16,
-                                          ),
-                                        ),
-                                        subtitle: Column(
-                                          crossAxisAlignment:
-                                              CrossAxisAlignment.start,
-                                          children: [
-                                            const SizedBox(height: 8),
-                                            Text(
-                                              _recommendation!
-                                                  .recommendation
-                                                  .careerName,
-                                              style: const TextStyle(
-                                                color: Color(0xFF915EFF),
-                                                fontSize: 16,
-                                                fontWeight: FontWeight.w600,
+                                        child: ExpansionTile(
+                                          tilePadding:
+                                              const EdgeInsets.symmetric(
+                                                horizontal: 16,
+                                                vertical: 8,
                                               ),
+                                          childrenPadding:
+                                              const EdgeInsets.only(
+                                                left: 16,
+                                                right: 16,
+                                                bottom: 16,
+                                              ),
+                                          iconColor: const Color(0xFF915EFF),
+                                          collapsedIconColor: const Color(
+                                            0xFF915EFF,
+                                          ),
+                                          title: const Text(
+                                            'Main Recommendation',
+                                            style: TextStyle(
+                                              fontWeight: FontWeight.bold,
+                                              color: Colors.white,
+                                              fontSize: 16,
                                             ),
-                                            const SizedBox(height: 4),
-                                            const Text(
-                                              "🏆 GŁÓWNA REKOMENDACJA",
-                                              style: TextStyle(
-                                                color: Color(0xFF915EFF),
-                                                fontWeight: FontWeight.bold,
-                                                fontSize: 12,
+                                          ),
+                                          subtitle: Column(
+                                            crossAxisAlignment:
+                                                CrossAxisAlignment.start,
+                                            children: [
+                                              const SizedBox(height: 8),
+                                              Text(
+                                                _recommendation!
+                                                    .recommendation
+                                                    .careerName,
+                                                style: const TextStyle(
+                                                  color: Color(0xFF915EFF),
+                                                  fontSize: 16,
+                                                  fontWeight: FontWeight.w600,
+                                                ),
+                                              ),
+                                              const SizedBox(height: 4),
+                                              const Text(
+                                                "🏆 GŁÓWNA REKOMENDACJA",
+                                                style: TextStyle(
+                                                  color: Color(0xFF915EFF),
+                                                  fontWeight: FontWeight.bold,
+                                                  fontSize: 12,
+                                                ),
+                                              ),
+                                            ],
+                                          ),
+                                          children: [
+                                            // 🔧 POPRAWIONE: Ograniczona wysokość z scrollem
+                                            ConstrainedBox(
+                                              constraints: const BoxConstraints(
+                                                maxHeight: 280,
+                                              ),
+                                              child: SingleChildScrollView(
+                                                physics:
+                                                    const ClampingScrollPhysics(),
+                                                child: Column(
+                                                  crossAxisAlignment:
+                                                      CrossAxisAlignment.start,
+                                                  mainAxisSize:
+                                                      MainAxisSize.min,
+                                                  children: [
+                                                    const Text(
+                                                      "🎯 Uzasadnienie",
+                                                      style: TextStyle(
+                                                        color: Colors.white,
+                                                        fontWeight:
+                                                            FontWeight.bold,
+                                                      ),
+                                                    ),
+                                                    const SizedBox(height: 4),
+                                                    Text(
+                                                      _recommendation!
+                                                          .recommendation
+                                                          .justification,
+                                                      style: const TextStyle(
+                                                        color: Colors.white70,
+                                                      ),
+                                                    ),
+                                                    const SizedBox(height: 12),
+                                                    const Text(
+                                                      "🪜 Następne kroki",
+                                                      style: TextStyle(
+                                                        color: Colors.white,
+                                                        fontWeight:
+                                                            FontWeight.bold,
+                                                      ),
+                                                    ),
+                                                    const SizedBox(height: 4),
+                                                    ..._recommendation!
+                                                        .recommendation
+                                                        .nextSteps
+                                                        .map(
+                                                          (step) => Padding(
+                                                            padding:
+                                                                const EdgeInsets.only(
+                                                                  bottom: 2,
+                                                                ),
+                                                            child: Text(
+                                                              "• $step",
+                                                              style: const TextStyle(
+                                                                color:
+                                                                    Colors
+                                                                        .white70,
+                                                              ),
+                                                            ),
+                                                          ),
+                                                        ),
+                                                    const SizedBox(height: 12),
+                                                    const Text(
+                                                      "🚀 Cel długoterminowy",
+                                                      style: TextStyle(
+                                                        color: Colors.white,
+                                                        fontWeight:
+                                                            FontWeight.bold,
+                                                      ),
+                                                    ),
+                                                    const SizedBox(height: 4),
+                                                    Text(
+                                                      _recommendation!
+                                                          .recommendation
+                                                          .longTermGoal,
+                                                      style: const TextStyle(
+                                                        color: Colors.white70,
+                                                      ),
+                                                    ),
+                                                    const SizedBox(height: 8),
+                                                  ],
+                                                ),
                                               ),
                                             ),
                                           ],
                                         ),
-                                        children: [
-                                          Container(
-                                            constraints: const BoxConstraints(
-                                              maxHeight: 300,
-                                            ),
-                                            child: SingleChildScrollView(
-                                              child: Column(
-                                                crossAxisAlignment:
-                                                    CrossAxisAlignment.start,
-                                                children: [
-                                                  const Text(
-                                                    "🎯 Uzasadnienie",
-                                                    style: TextStyle(
-                                                      color: Colors.white,
-                                                      fontWeight:
-                                                          FontWeight.bold,
-                                                    ),
-                                                  ),
-                                                  const SizedBox(height: 4),
-                                                  Text(
-                                                    _recommendation!
-                                                        .recommendation
-                                                        .justification,
-                                                    style: const TextStyle(
-                                                      color: Colors.white70,
-                                                    ),
-                                                  ),
-                                                  const SizedBox(height: 12),
-                                                  const Text(
-                                                    "🪜 Następne kroki",
-                                                    style: TextStyle(
-                                                      color: Colors.white,
-                                                      fontWeight:
-                                                          FontWeight.bold,
-                                                    ),
-                                                  ),
-                                                  const SizedBox(height: 4),
-                                                  ..._recommendation!
-                                                      .recommendation
-                                                      .nextSteps
-                                                      .map(
-                                                        (step) => Padding(
-                                                          padding:
-                                                              const EdgeInsets.only(
-                                                                bottom: 2,
-                                                              ),
-                                                          child: Text(
-                                                            "• $step",
-                                                            style: const TextStyle(
-                                                              color:
-                                                                  Colors
-                                                                      .white70,
-                                                            ),
-                                                          ),
-                                                        ),
-                                                      ),
-                                                  const SizedBox(height: 12),
-                                                  const Text(
-                                                    "🚀 Cel długoterminowy",
-                                                    style: TextStyle(
-                                                      color: Colors.white,
-                                                      fontWeight:
-                                                          FontWeight.bold,
-                                                    ),
-                                                  ),
-                                                  const SizedBox(height: 4),
-                                                  Text(
-                                                    _recommendation!
-                                                        .recommendation
-                                                        .longTermGoal,
-                                                    style: const TextStyle(
-                                                      color: Colors.white70,
-                                                    ),
-                                                  ),
-                                                ],
-                                              ),
-                                            ),
-                                          ),
-                                        ],
                                       ),
                                     ),
                                   ],
@@ -548,7 +534,7 @@ class _AIAsistentPageScreenState extends State<AIAsistentPageScreen>
                             child: Opacity(
                               opacity: value,
                               child: ExpandableCareerPathCard(
-                                number: index + 2, // Numery 2, 3, 4
+                                number: index + 2,
                                 careerPath: careerPath,
                                 isMainRecommendation: false,
                               ),
@@ -625,13 +611,13 @@ class _AIAsistentPageScreenState extends State<AIAsistentPageScreen>
                   : "Generate AI recommendation (5 tokens)",
           onPressed:
               _recommendation != null
-                  ? _showTokenConfirmationModal // Pokaż modal dla kolejnych generacji
-                  : _loadRecommendation, // Pierwsza generacja bez modala (lub z modalem jeśli chcesz)
+                  ? _showTokenConfirmationModal
+                  : _loadRecommendation,
         );
   }
 }
 
-// Terminal Demo Component - identyczny z działającej wersji
+// Terminal Demo Component
 class TerminalDemo extends StatefulWidget {
   const TerminalDemo({super.key});
 

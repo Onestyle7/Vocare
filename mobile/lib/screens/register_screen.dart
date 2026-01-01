@@ -4,7 +4,6 @@ import 'package:vocare/repositories/auth_repository.dart';
 import 'package:vocare/screens/home_screen.dart';
 import 'package:vocare/widgets/custom_button.dart';
 import 'package:vocare/widgets/custom_input.dart';
-import 'package:vocare/widgets/nav_bar_button.dart';
 import 'package:vocare/widgets/theme_toggle_button.dart';
 
 class RegisterScreen extends StatefulWidget {
@@ -25,26 +24,47 @@ class _RegisterScreenState extends State<RegisterScreen> {
   bool _isGoogleLoading = false;
 
   /// Rejestracja email/hasło
+  // 🔧 ZAMIEŃ TYLKO metodę _handleRegister() w register_screen.dart
+
   void _handleRegister() async {
-    final email = _emailController.text;
+    final email = _emailController.text.trim();
     final password = _passwordController.text;
     final confirmPassword = _confirmPasswordController.text;
 
+    // Walidacja
     if (email.isEmpty || password.isEmpty) {
-      ScaffoldMessenger.of(
-        context,
-      ).showSnackBar(const SnackBar(content: Text('Uzupełnij wszystkie pola')));
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Uzupełnij wszystkie pola'),
+          backgroundColor: Colors.orange,
+        ),
+      );
       return;
     }
 
     if (password != confirmPassword) {
-      ScaffoldMessenger.of(
-        context,
-      ).showSnackBar(const SnackBar(content: Text('Hasła nie są identyczne')));
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Hasła nie są identyczne'),
+          backgroundColor: Colors.red,
+        ),
+      );
+      return;
+    }
+
+    if (password.length < 6) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Hasło musi mieć minimum 6 znaków'),
+          backgroundColor: Colors.red,
+        ),
+      );
       return;
     }
 
     setState(() => _isLoading = true);
+
+    print('🔄 Attempting registration for: $email');
 
     final success = await _authRepository.register(
       email,
@@ -52,16 +72,54 @@ class _RegisterScreenState extends State<RegisterScreen> {
       confirmPassword,
     );
 
+    print('📥 Registration result: $success');
+
     setState(() => _isLoading = false);
 
     if (success && mounted) {
-      Navigator.pushReplacement(
-        context,
-        MaterialPageRoute(builder: (context) => const HomeScreen()),
-      );
-    } else if (mounted) {
+      // ✅ SUKCES - pokaż komunikat i WRÓĆ do ekranu logowania
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text("Rejestracja nie powiodła się")),
+        const SnackBar(
+          content: Row(
+            children: [
+              Icon(Icons.check_circle, color: Colors.white),
+              SizedBox(width: 12),
+              Expanded(
+                child: Text(
+                  'Konto utworzone pomyślnie! Możesz się teraz zalogować.',
+                ),
+              ),
+            ],
+          ),
+          backgroundColor: Colors.green,
+          duration: Duration(seconds: 3),
+        ),
+      );
+
+      // 🔧 WRÓĆ do ekranu logowania zamiast automatycznego logowania
+      await Future.delayed(const Duration(milliseconds: 1000));
+
+      if (mounted) {
+        Navigator.pop(context); // Wróć do LoginScreen
+      }
+    } else if (mounted) {
+      // ❌ BŁĄD
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Row(
+            children: [
+              Icon(Icons.error_outline, color: Colors.white),
+              SizedBox(width: 12),
+              Expanded(
+                child: Text(
+                  'Rejestracja nie powiodła się. Sprawdź dane i spróbuj ponownie.',
+                ),
+              ),
+            ],
+          ),
+          backgroundColor: Colors.red,
+          duration: Duration(seconds: 3),
+        ),
       );
     }
   }
@@ -77,6 +135,13 @@ class _RegisterScreenState extends State<RegisterScreen> {
         setState(() => _isGoogleLoading = false);
 
         if (success) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(
+              content: Text('Zalogowano przez Google!'),
+              backgroundColor: Colors.green,
+            ),
+          );
+
           Navigator.pushReplacement(
             context,
             MaterialPageRoute(builder: (_) => const HomeScreen()),
@@ -85,6 +150,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
           ScaffoldMessenger.of(context).showSnackBar(
             const SnackBar(
               content: Text('Logowanie przez Google nie powiodło się'),
+              backgroundColor: Colors.red,
             ),
           );
         }
@@ -107,7 +173,14 @@ class _RegisterScreenState extends State<RegisterScreen> {
           padding: const EdgeInsets.all(16.0),
           child: Column(
             children: [
-              const SizedBox(height: 60),
+              // 🆕 Theme toggle w prawym górnym rogu
+              Align(
+                alignment: Alignment.topRight,
+                child: const ThemeToggleButton(),
+              ),
+
+              const SizedBox(height: 40),
+
               // Logo
               Center(
                 child: Image.asset(
@@ -220,28 +293,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
           ),
         ),
       ),
-      bottomNavigationBar: Container(
-        height: 60,
-        decoration: const BoxDecoration(
-          color: Colors.black87,
-          borderRadius: BorderRadius.only(
-            topLeft: Radius.circular(16),
-            topRight: Radius.circular(16),
-          ),
-        ),
-        child: SafeArea(
-          child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 16),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: const [
-                ThemeToggleButton(),
-                NavBarButtons(destinations: [NavDestination.logout]),
-              ],
-            ),
-          ),
-        ),
-      ),
+      // 🔥 USUNIĘTY bottomNavigationBar - nie potrzebny na stronie rejestracji!
     );
   }
 
