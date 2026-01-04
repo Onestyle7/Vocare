@@ -7,7 +7,7 @@ import { usePathname } from 'next/navigation';
 import { cn } from '@/lib/utils';
 import { Sheet, SheetContent, SheetTrigger, SheetClose, SheetTitle } from '@/components/ui/sheet';
 import { gsap } from 'gsap';
-import ThemeSwitch from '../SupportComponents/ThemeSwitch';
+// import ThemeSwitch from '../SupportComponents/ThemeSwitch';
 import { TokenCounter } from '../PricingComponents/TokenCounter';
 import Image from 'next/image';
 import { Badge } from '../ui/badge';
@@ -108,7 +108,7 @@ const MobileNav: React.FC<MobileNavProps> = ({ isAuthenticated }) => {
                     {highlighted && (
                       <Badge
                         variant="outline"
-                        className="pointer-events-none absolute -top-3 -right-10 scale-75 sm:-right-8"
+                        className="pointer-events-none absolute -top-5 -right-10 scale-75 sm:-right-8"
                       >
                         stwórz cv
                       </Badge>
@@ -126,7 +126,7 @@ const MobileNav: React.FC<MobileNavProps> = ({ isAuthenticated }) => {
             </SheetClose>
           )}
           {isAuthenticated && <TokenCounter />}
-          <ThemeSwitch />
+          {/* <ThemeSwitch /> */}
         </ul>
       </SheetContent>
     </Sheet>
