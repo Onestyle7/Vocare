@@ -78,6 +78,7 @@ namespace VocareWebAPI.Data
         public DbSet<WorkAttributes> WorkAttributes { get; set; }
         public DbSet<EntryDifficulty> EntryDifficulties { get; set; }
         public DbSet<AiNarrator> AiNarrators { get; set; }
+        public DbSet<CvParseHistory> CvParseHistories { get; set; }
 
         /// <summary>
         /// Konfiguruje model bazy danych, definiując schemat i relacje między encjami.
