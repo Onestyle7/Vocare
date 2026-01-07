@@ -5,6 +5,7 @@ using VocareWebAPI.Billing.Services.Interfaces;
 using VocareWebAPI.CareerAdvisor.Repositories.Implementations;
 using VocareWebAPI.CareerAdvisor.Repositories.Interfaces;
 using VocareWebAPI.CareerAdvisor.Services.Implementations;
+using VocareWebAPI.CareerAdvisor.Services.Interfaces;
 using VocareWebAPI.CvGenerator.Repositories.Implementations;
 using VocareWebAPI.CvGenerator.Repositories.Interfaces;
 using VocareWebAPI.CvGenerator.Services.Implementation;
@@ -40,6 +41,7 @@ namespace VocareWebAPI.Extensions.ServiceCollectionExtensions
             services.AddScoped<UserRegistrationHandler>();
             services.AddScoped<IUserSetupService, UserSetupService>();
             services.AddScoped<IAuthenticationServiceOwn, AuthenticationService>();
+            services.AddScoped<ICvParserService, CvParserService>();
 
             // AI services (Główną implementacją jest OpenAI)
             services.AddScoped<IAiService, OpenAIService>();
