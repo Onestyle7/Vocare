@@ -3,6 +3,8 @@ using System.Text.Json;
 using System.Text.Json.Serialization;
 using Microsoft.Extensions.Options;
 using UglyToad.PdfPig;
+using VocareWebAPI.Billing.Models.Enums;
+using VocareWebAPI.Billing.Repositories.Interfaces;
 using VocareWebAPI.CareerAdvisor.Services.Interfaces;
 using VocareWebAPI.Models.Dtos;
 using VocareWebAPI.Models.OpenAIConfig;
@@ -21,13 +23,15 @@ namespace VocareWebAPI.CareerAdvisor.Services.Implementations
         private readonly UserProfileService _userProfileService;
         private readonly OpenAIConfig _config;
         private const long MaxFileSizeBytes = 2 * 1024 * 1024; // 2MB
+        private readonly IUserBillingRepository _userBillingRepository;
 
         public CvParserService(
             HttpClient httpClient,
             ILogger<CvParserService> logger,
             ICvParseHistoryRepository cvParseHistoryRepository,
             UserProfileService userProfileService,
-            IOptions<OpenAIConfig> config
+            IOptions<OpenAIConfig> config,
+            IUserBillingRepository userBillingRepository
         )
         {
             _config = config.Value;
@@ -35,6 +39,7 @@ namespace VocareWebAPI.CareerAdvisor.Services.Implementations
             _logger = logger;
             _cvParseHistoryRepository = cvParseHistoryRepository;
             _userProfileService = userProfileService;
+            _userBillingRepository = userBillingRepository;
 
             _httpClient.Timeout = TimeSpan.FromSeconds(180);
             _httpClient.DefaultRequestHeaders.Add("Authorization", $"Bearer {_config.ApiKey}");
@@ -59,11 +64,20 @@ namespace VocareWebAPI.CareerAdvisor.Services.Implementations
                 );
             }
 
+            var userBilling = await _userBillingRepository.GetByUserIdAsync(userId);
+            var hasActiveSubscription =
+                userBilling?.SubscriptionStatus == SubscriptionStatus.Active;
+
             // 2. Sprawdzenie czy user już używał parsera
-            var parseCount = await _cvParseHistoryRepository.CountByUserIdAsync(userId);
-            if (parseCount > 0)
+            if (!hasActiveSubscription)
             {
-                throw new InvalidOperationException("Funkcja importu CV została już wykorzystana.");
+                var parseCount = await _cvParseHistoryRepository.CountByUserIdAsync(userId);
+                if (parseCount > 0)
+                {
+                    throw new InvalidOperationException(
+                        "Funkcja importu CV została już wykorzystana. Wykup subskrypcję, aby korzystać bez limitu."
+                    );
+                }
             }
 
             // 3. Ekstrakcja tekstu z PDF
