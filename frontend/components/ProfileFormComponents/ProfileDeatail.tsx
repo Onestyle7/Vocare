@@ -159,34 +159,34 @@ export default function ProfileDetails() {
       <div className="mt-4 space-y-4">
         <div className="flex flex-row items-center">
           <h2 className="text-2xl font-medium text-gray-700 dark:text-gray-200">
-            Personal Information
+            Profil osobisty
           </h2>
           <div className="ml-2 h-2 w-2 rounded-full bg-[#915EFF]" />
         </div>
         <div className="grid grid-cols-1 gap-4">
           <div className="flex justify-between rounded-lg">
-            <span className="font-medium text-gray-600 dark:text-gray-200">Country:</span>
+            <span className="font-medium text-gray-600 dark:text-gray-200">Kraj:</span>
             <span className="ml-2">{profile?.country || '—'}</span>
           </div>
           <Separator />
           <div className="flex justify-between rounded-lg">
-            <span className="font-medium text-gray-600 dark:text-gray-200">Address:</span>
+            <span className="font-medium text-gray-600 dark:text-gray-200">Adres:</span>
             <span className="ml-2">{profile?.address || '—'}</span>
           </div>
           <Separator />
           <div className="flex justify-between rounded-lg">
-            <span className="font-medium text-gray-600 dark:text-gray-200">Phone:</span>
+            <span className="font-medium text-gray-600 dark:text-gray-200">Telefon:</span>
             <span className="ml-2">{profile?.phoneNumber || '—'}</span>
           </div>
           <Separator />
           <div className="flex justify-between rounded-lg">
-            <span className="font-medium text-gray-600 dark:text-gray-200">Personality Type:</span>
+            <span className="font-medium text-gray-600 dark:text-gray-200">Typ osobowości:</span>
             <span className="ml-2">{getPersonalityLabel(profile?.personalityType)}</span>
           </div>
           <Separator />
           <div className="flex flex-col space-y-2">
             <span className="flex items-center text-2xl font-medium text-gray-700 dark:text-gray-200">
-              Education <div className="ml-2 h-2 w-2 rounded-full bg-[#915EFF]" />
+              Wykształcenie <div className="ml-2 h-2 w-2 rounded-full bg-[#915EFF]" />
             </span>
 
             {profile?.education?.length ? (
@@ -194,29 +194,29 @@ export default function ProfileDetails() {
                 <div key={index} className="space-y-4 rounded-lg p-2">
                   <div className="flex justify-between">
                     <span className="font-medium text-gray-600 dark:text-gray-200">
-                      Institution:
+                      Instytucja:
                     </span>
                     <span className="ml-2 text-right">{edu.institution}</span>
                   </div>
                   <Separator />
 
                   <div className="flex justify-between">
-                    <span className="font-medium text-gray-600 dark:text-gray-200">Degree:</span>
+                    <span className="font-medium text-gray-600 dark:text-gray-200">Stopień:</span>
                     <span className="ml-2 text-right">{edu.degree}</span>
                   </div>
                   <Separator />
 
                   <div className="flex justify-between">
-                    <span className="font-medium text-gray-600 dark:text-gray-200">Field:</span>
+                    <span className="font-medium text-gray-600 dark:text-gray-200">Kierunek:</span>
                     <span className="ml-2 text-right">{edu.field}</span>
                   </div>
                   <Separator />
 
                   <div className="flex justify-between">
-                    <span className="font-medium text-gray-600 dark:text-gray-200">Duration:</span>
+                    <span className="font-medium text-gray-600 dark:text-gray-200">Czas trwania:</span>
                     <span className="ml-2 w-fit rounded-md border px-2 py-0.5 text-right">
                       {formatDate(edu.startDate)} –{' '}
-                      {edu.endDate ? formatDate(edu.endDate) : 'Present'}
+                      {edu.endDate ? formatDate(edu.endDate) : 'Obecnie'}
                     </span>
                   </div>
                   {profile.education && index !== profile.education.length - 1 && (
@@ -225,7 +225,7 @@ export default function ProfileDetails() {
                 </div>
               ))
             ) : (
-              <p className="text-gray-500 italic">No education data</p>
+              <p className="text-gray-500 italic">Brak danych o wykształceniu</p>
             )}
           </div>
         </div>
@@ -233,7 +233,7 @@ export default function ProfileDetails() {
 
       <div className="space-y-2">
         <div className="flex flex-row items-center">
-          <h2 className="text-2xl font-medium text-gray-700 dark:text-gray-200">Languages</h2>
+          <h2 className="text-2xl font-medium text-gray-700 dark:text-gray-200">Języki</h2>
           <div className="ml-2 h-2 w-2 rounded-full bg-[#915EFF]" />
         </div>
         <div className="flex flex-wrap gap-2">
@@ -247,14 +247,14 @@ export default function ProfileDetails() {
               </span>
             ))
           ) : (
-            <p className="text-gray-500 italic">No languages</p>
+            <p className="text-gray-500 italic">Brak danych o językach</p>
           )}
         </div>
       </div>
 
       <div className="space-y-2">
         <div className="flex flex-row items-center">
-          <h2 className="text-2xl font-medium text-gray-700 dark:text-gray-200">Certificates</h2>
+          <h2 className="text-2xl font-medium text-gray-700 dark:text-gray-200">Certyfikaty</h2>
           <div className="ml-2 h-2 w-2 rounded-full bg-[#915EFF]" />
         </div>
         <div className="flex flex-wrap gap-2">
@@ -268,7 +268,7 @@ export default function ProfileDetails() {
               </span>
             ))
           ) : (
-            <p className="text-gray-500 italic">No certificates</p>
+            <p className="text-gray-500 italic">Brak certyfikatów</p>
           )}
         </div>
       </div>
@@ -279,7 +279,7 @@ export default function ProfileDetails() {
     <div className="space-y-8">
       <div className="mt-4 space-y-2">
         <h2 className="flex items-center text-2xl font-medium text-gray-700 dark:text-gray-200">
-          Skills
+          Umiejętności
           <div className="ml-2 h-2 w-2 rounded-lg bg-[#915EFF]" />
         </h2>
         <div className="flex flex-wrap gap-2">
@@ -293,14 +293,14 @@ export default function ProfileDetails() {
               </span>
             ))
           ) : (
-            <p className="text-gray-500 italic">No skills</p>
+            <p className="text-gray-500 italic">Brak umiejętności</p>
           )}
         </div>
       </div>
 
       <div className="space-y-2">
         <h2 className="flex items-center text-2xl font-medium text-gray-700 dark:text-gray-200">
-          Soft Skills
+          Umiejętności miękkie  
           <div className="ml-2 h-2 w-2 rounded-full bg-[#915EFF]" />
         </h2>
         <div className="flex flex-wrap gap-2">
@@ -314,41 +314,42 @@ export default function ProfileDetails() {
               </span>
             ))
           ) : (
-            <p className="text-gray-500 italic">No soft skills</p>
+            <p className="text-gray-500 italic">Brak umiejętności miękkich</p>
           )}
         </div>
       </div>
 
       <div className="flex flex-col space-y-2">
         <span className="flex items-center text-2xl font-medium text-gray-700 dark:text-gray-200">
-          Work Experience <div className="ml-2 h-2 w-2 rounded-full bg-[#915EFF]" />
+          Doświadczenie zawodowe
+          <div className="ml-2 h-2 w-2 rounded-full bg-[#915EFF]" />
         </span>
 
         {profile?.workExperience?.length ? (
           profile.workExperience?.map((exp, index) => (
             <div key={index} className="space-y-4 rounded-lg p-2">
               <div className="flex justify-between">
-                <span className="font-medium text-gray-600 dark:text-gray-200">Position:</span>
+                <span className="font-medium text-gray-600 dark:text-gray-200">Stanowisko:</span>
                 <span className="ml-2 text-right text-[#915EFF]">{exp.position}</span>
               </div>
               <Separator />
 
               <div className="flex justify-between">
-                <span className="font-medium text-gray-600 dark:text-gray-200">Company:</span>
+                <span className="font-medium text-gray-600 dark:text-gray-200">Firma:</span>
                 <span className="ml-2 text-right">{exp.company}</span>
               </div>
               <Separator />
 
               <div className="flex items-start justify-between gap-4">
-                <span className="font-medium text-gray-600 dark:text-gray-200">Description:</span>
+                <span className="font-medium text-gray-600 dark:text-gray-200">Opis:</span>
                 <span className="ml-2 max-w-md text-left text-sm">{exp.description || '—'}</span>
               </div>
               <Separator />
 
               <div className="flex justify-between">
-                <span className="font-medium text-gray-600 dark:text-gray-200">Duration:</span>
+                <span className="font-medium text-gray-600 dark:text-gray-200">Czas trwania:</span>
                 <span className="ml-2 w-fit rounded-md border px-2 py-0.5 text-right">
-                  {formatDate(exp.startDate)} – {exp.endDate ? formatDate(exp.endDate) : 'Present'}
+                  {formatDate(exp.startDate)} – {exp.endDate ? formatDate(exp.endDate) : 'Obecnie'}
                 </span>
               </div>
               {profile.workExperience && index !== profile.workExperience.length - 1 && (
@@ -357,7 +358,7 @@ export default function ProfileDetails() {
             </div>
           ))
         ) : (
-          <p className="text-gray-500 italic">No work experience</p>
+          <p className="text-gray-500 italic">Brak doświadczenia zawodowego</p>
         )}
       </div>
     </div>
@@ -367,18 +368,18 @@ export default function ProfileDetails() {
     <div className="space-y-8">
       <div className="mt-4 space-y-2">
         <h2 className="flex items-center text-2xl font-medium text-gray-700 dark:text-gray-200">
-          About Me
+          O mnie
           <div className="ml-2 h-2 w-2 rounded-full bg-[#915EFF]" />
         </h2>
         <div className="rounded-lg bg-gray-50/60 p-4 dark:bg-black/20">
-          <p>{profile?.aboutMe || 'No description yet.'}</p>
+          <p>{profile?.aboutMe || 'Brak opisu.'}</p>
         </div>
         <h2 className="flex items-center text-2xl font-medium text-gray-700 dark:text-gray-200">
-          Addidtional Informations
+          Dodatkowe informacje
           <div className="ml-2 h-2 w-2 rounded-full bg-[#915EFF]" />
         </h2>
         <div className="rounded-lg bg-gray-50/60 p-4 dark:bg-black/20">
-          <p>{profile?.additionalInformation || 'No additional information yet.'}</p>
+          <p>{profile?.additionalInformation || 'Brak dodatkowych informacji.'}</p>
         </div>
       </div>
     </div>
@@ -388,31 +389,31 @@ export default function ProfileDetails() {
     <div className="space-y-8">
       <div className="mt-4 space-y-2">
         <h2 className="flex items-center text-2xl font-medium text-gray-700 dark:text-gray-200">
-          Financial Survey
+          Ankieta finansowa
           <div className="ml-2 h-2 w-2 rounded-full bg-[#915EFF]" />
         </h2>
         <div className="grid grid-cols-1 gap-4">
           <div className="flex justify-between rounded-lg">
-            <span className="font-medium text-gray-600 dark:text-gray-200">Current Salary:</span>
+            <span className="font-medium text-gray-600 dark:text-gray-200">Aktualne wynagrodzenie:</span>
             <span className="ml-2">{profile?.financialSurvey?.currentSalary ?? '—'}</span>
           </div>
           <Separator />
           <div className="flex justify-between rounded-lg">
-            <span className="font-medium text-gray-600 dark:text-gray-200">Desired Salary:</span>
+            <span className="font-medium text-gray-600 dark:text-gray-200">Oczekiwane wynagrodzenie:</span>
             <span className="ml-2">{profile?.financialSurvey?.desiredSalary ?? '—'}</span>
           </div>
           <Separator />
           <div className="flex items-center justify-between rounded-lg">
-            <span className="font-medium text-gray-600 dark:text-gray-200">Has Loans:</span>
+            <span className="font-medium text-gray-600 dark:text-gray-200">Zobowiązania finansowe (kredyt):</span>
             <span className="ml-2 rounded-lg border px-4 py-2 text-gray-600 dark:text-gray-200">
-              {profile?.financialSurvey?.hasLoans ? 'Yes' : 'No'}
+              {profile?.financialSurvey?.hasLoans ? 'Tak' : 'Nie'}
             </span>
           </div>
           {profile?.financialSurvey?.hasLoans && (
             <>
               <Separator />
               <div className="flex justify-between rounded-lg">
-                <span className="font-medium text-gray-600 dark:text-gray-200">Loan Details:</span>
+                <span className="font-medium text-gray-600 dark:text-gray-200">Szczegóły kredytu:</span>
                 <span className="ml-2">{profile?.financialSurvey?.loanDetails || '—'}</span>
               </div>
             </>
@@ -420,24 +421,24 @@ export default function ProfileDetails() {
           <Separator />
           <div className="flex items-center justify-between rounded-lg">
             <span className="font-medium text-gray-600 dark:text-gray-200">
-              Willing To Relocate:
+              Gotowość do relokacji:
             </span>
             <span className="ml-2 rounded-lg border px-4 py-2 text-gray-600 dark:text-gray-200">
-              {profile?.financialSurvey?.willingToRelocate ? 'Yes' : 'No'}
+              {profile?.financialSurvey?.willingToRelocate ? 'Tak' : 'Nie'}
             </span>
           </div>
           <Separator />
           <div className="flex items-center justify-between rounded-lg">
             <span className="font-medium text-gray-600 dark:text-gray-200">
-              Willing To Rebrand:
+              Gotowość do zmiany rodzaju zawodu:
             </span>
             <span className="ml-2 rounded-lg border px-4 py-2 text-gray-600 dark:text-gray-200">
-              {profile?.willingToRebrand ? 'Yes' : 'No'}
+              {profile?.willingToRebrand ? 'Tak' : 'Nie'}
             </span>
           </div>
           <Separator />
           <div className="flex justify-between rounded-lg">
-            <span className="font-medium text-gray-600 dark:text-gray-200">Risk Appetite:</span>
+            <span className="font-medium text-gray-600 dark:text-gray-200">Skłonność do ryzyka:</span>
             <span className="ml-2">{getRiskLabel(profile?.financialSurvey?.riskAppetite)}</span>
           </div>
         </div>

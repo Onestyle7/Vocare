@@ -456,10 +456,10 @@ const PaymentsPage: React.FC = () => {
   const consentChecked = marketingConsent === true;
 
   const subscriptionStatusLabel = hasSubscription
-    ? 'Active subscription'
-    : 'No active subscription';
+    ? 'Aktywna subskrypcja'
+    : 'Brak aktywnej subskrypcji';
   const subscriptionBadgeVariant = hasSubscription ? 'default' : 'outline';
-  const subscriptionBadgeText = hasSubscription ? 'Active' : 'Inactive';
+  const subscriptionBadgeText = hasSubscription ? 'Aktywna' : 'Nieaktywna';
 
   const dateFormatter = React.useMemo(
     () =>
@@ -505,15 +505,15 @@ const PaymentsPage: React.FC = () => {
       <div className="mx-auto flex w-full max-w-5xl flex-col gap-8 px-4 pt-20 pb-16 sm:px-6 lg:px-8">
         <div className="flex flex-wrap items-center justify-between gap-4">
           <div className="space-y-1">
-            <h1 className="text-foreground text-3xl font-semibold tracking-tight">Payments</h1>
+            <h1 className="text-foreground text-3xl font-semibold tracking-tight">Płatności</h1>
             <p className="text-muted-foreground text-sm sm:text-base">
-              Manage your subscription, marketing preferences, and review your recent activity.
+              Zarządzaj subskrypcją, preferencjami marketingowymi i przeglądaj swoją ostatnią aktywność.
             </p>
           </div>
           <Button asChild variant="outline">
             <Link href="/" className="inline-flex items-center gap-2">
               <ArrowLeft className="h-4 w-4" />
-              Back home
+              Wróć do strony głównej
             </Link>
           </Button>
         </div>
@@ -522,9 +522,9 @@ const PaymentsPage: React.FC = () => {
           <div className="flex flex-col gap-6">
             <Card className="border-border/60 bg-card/80 border shadow-sm backdrop-blur">
               <CardHeader>
-                <CardTitle>Subscription</CardTitle>
+                <CardTitle>Subskrypcja</CardTitle>
                 <CardDescription>
-                  Your current access plan and quick link to manage billing.
+                  Twój aktualny plan dostępu i szybki link do zarządzania płatnościami.
                 </CardDescription>
               </CardHeader>
               <CardContent className="space-y-4">
@@ -544,7 +544,7 @@ const PaymentsPage: React.FC = () => {
                       </p>
                       {!hasSubscription && (
                         <span className="text-muted-foreground text-xs">
-                          Purchase a plan to unlock unlimited access.
+                          Wykup plan, aby odblokować pełen dostęp.
                         </span>
                       )}
                     </div>
@@ -567,15 +567,15 @@ const PaymentsPage: React.FC = () => {
                   {isCancelling ? (
                     <span className="inline-flex items-center gap-2">
                       <Loader2 className="h-4 w-4 animate-spin" />
-                      Cancelling…
+                      Anulowanie...
                     </span>
                   ) : (
-                    'Cancel subscription'
+                    'Anuluj subskrypcję'
                   )}
                 </Button>
                 {!isLoading && !hasSubscription && (
                   <span className="text-muted-foreground text-xs">
-                    Cancellation becomes available after activating a subscription.
+                    Anulowanie jest dostępne tylko dla aktywnych subskrypcji.
                   </span>
                 )}
               </CardFooter>
@@ -583,9 +583,9 @@ const PaymentsPage: React.FC = () => {
 
             <Card className="border-border/60 bg-card/80 border shadow-sm backdrop-blur">
               <CardHeader>
-                <CardTitle>Marketing preferences</CardTitle>
+                <CardTitle>Preferencje marketingowe</CardTitle>
                 <CardDescription>
-                  Choose if you want to receive Vocare product updates and curated career tips.
+                  Wybierz, czy chcesz otrzymywać aktualizacje produktów Vocare i starannie dobrane porady dotyczące kariery.
                 </CardDescription>
               </CardHeader>
               <CardContent className="space-y-4">
@@ -595,14 +595,14 @@ const PaymentsPage: React.FC = () => {
                       htmlFor="marketing-consent-toggle"
                       className="text-foreground text-sm font-medium"
                     >
-                      Marketing updates
+                      Otrzymuj aktualizacje marketingowe
                     </label>
                     <p className="text-muted-foreground text-xs">
                       {isConsentLoading
-                        ? 'Checking your preference...'
+                        ? 'Sprawdzanie preferencji…'
                         : consentChecked
-                          ? 'You will receive occasional product news from Vocare.'
-                          : 'Stay informed about new features and career tips.'}
+                          ? 'Będziesz otrzymywać okazjonalne informacje o produktach Vocare.'
+                          : 'Bądź na bieżąco z nowymi funkcjami i poradami dotyczącymi kariery.'}
                     </p>
                   </div>
                   <Switch
@@ -631,9 +631,9 @@ const PaymentsPage: React.FC = () => {
 
           <Card className="border-border/60 bg-card/80 border shadow-sm backdrop-blur">
             <CardHeader>
-              <CardTitle>Transaction history</CardTitle>
+              <CardTitle>Historia transakcji</CardTitle>
               <CardDescription>
-                Track purchases and usage of tokens associated with your account.
+                Śledź zakupy i wykorzystanie tokenów powiązanych z Twoim kontem.
               </CardDescription>
             </CardHeader>
             <CardContent className="space-y-4">
@@ -649,9 +649,9 @@ const PaymentsPage: React.FC = () => {
                 </div>
               ) : payments.length === 0 ? (
                 <div className="border-border/60 bg-muted/20 flex flex-col items-center justify-center gap-2 rounded-lg border border-dashed px-6 py-12 text-center">
-                  <span className="text-foreground text-sm font-medium">No payments yet</span>
+                  <span className="text-foreground text-sm font-medium">Brak płatności</span>
                   <span className="text-muted-foreground text-xs">
-                    Card charges and subscriptions will appear here once available.
+                    Opłaty za tokeny i subskrypcje pojawią się tutaj, gdy będą dostępne.
                   </span>
                 </div>
               ) : (
