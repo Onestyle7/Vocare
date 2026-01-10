@@ -35,6 +35,37 @@ const getErrorMessage = (error: unknown): string | undefined => {
   return error.message;
 };
 
+const getUploadErrorDetails = (
+  error: unknown,
+): { title: string; description?: string } | null => {
+  const message = getErrorMessage(error);
+  if (!message) {
+    return null;
+  }
+
+  const normalizedMessage = message.toLowerCase();
+
+  if (normalizedMessage.includes('wyodrębnić') || normalizedMessage.includes('wyodrebnic')) {
+    return {
+      title: 'Nie udało się odczytać treści z CV.',
+      description:
+        'Upewnij się, że plik PDF zawiera zaznaczalny tekst (nie jest tylko skanem obrazu).',
+    };
+  }
+
+  if (normalizedMessage.includes('nie przesłano pliku')) {
+    return {
+      title: 'Nie przesłano pliku.',
+      description: 'Wybierz plik i spróbuj ponownie.',
+    };
+  }
+
+  return {
+    title: 'Nie udało się przetworzyć CV.',
+    description: message,
+  };
+};
+
 export default function UploadCvButton({ onUploaded, className }: UploadCvButtonProps) {
   const inputRef = useRef<HTMLInputElement | null>(null);
   const [isUploading, setIsUploading] = useState(false);
@@ -68,10 +99,14 @@ export default function UploadCvButton({ onUploaded, className }: UploadCvButton
       localStorage.setItem('userProfile', JSON.stringify(profile));
       onUploaded?.(profile);
     } catch (error) {
-      const message = getErrorMessage(error);
-      toast.error('Nie udało się przetworzyć CV.', {
-        description: message ?? 'Spróbuj ponownie za chwilę.',
-      });
+      const details = getUploadErrorDetails(error);
+      if (details) {
+        toast.error(details.title, { description: details.description });
+      } else {
+        toast.error('Nie udało się przetworzyć CV.', {
+          description: 'Spróbuj ponownie za chwilę.',
+        });
+      }
     } finally {
       setIsUploading(false);
       event.target.value = '';
