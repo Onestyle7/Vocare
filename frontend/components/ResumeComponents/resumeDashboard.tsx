@@ -101,13 +101,13 @@ const ResumeDashboard = () => {
       <p className="text-muted-foreground mb-4 max-w-sm text-center text-sm">
         {isMobile
           ? 'Tworzenie i edycja CV są dostępne na komputerze. Po utworzeniu zobaczysz podgląd w tym miejscu.'
-          : 'Create your first resume to get started with your career journey.'}
+          : 'Rozpocznij tworzenie swojego pierwszego CV, klikając przycisk poniżej.'}
       </p>
       {!isMobile && (
         <Link href="/resume/create">
           <Button className="gap-2">
             <Plus className="h-4 w-4" />
-            Create Resume
+            Stwórz CV
           </Button>
         </Link>
       )}

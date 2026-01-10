@@ -91,6 +91,14 @@ const getAnalysisFromResponse = (data: unknown): MarketAnalysisDetailsDto | null
   return null;
 };
 
+const hasAnalysisPayload = (details?: MarketAnalysisDetailsDto | null) =>
+  Boolean(
+    details &&
+      ((details.industryStatistics?.length ?? 0) > 0 ||
+        (details.marketTrends?.length ?? 0) > 0 ||
+        (details.skillDemand?.length ?? 0) > 0)
+  );
+
 const workAttributeLabels: Record<keyof WorkAttributesDto, string> = {
   stressLevel: 'Stres',
   analyticalThinking: 'Analityka',
@@ -160,6 +168,70 @@ const NarrationCard = ({ title, text, icon }: NarrationCardProps) => (
     <p className="mt-2 text-sm leading-relaxed text-slate-100">
       {text || 'Brak danych od narratora AI.'}
     </p>
+  </div>
+);
+
+type EmptyAnalysisStateProps = {
+  error?: string | null;
+  requiresCareerPaths?: boolean;
+  onOpenAdvisor: () => void;
+  onGenerateAnalysis: () => void;
+  isGenerating: boolean;
+  isLoading: boolean;
+};
+
+const EmptyAnalysisState = ({
+  error,
+  requiresCareerPaths,
+  onOpenAdvisor,
+}: EmptyAnalysisStateProps) => (
+  <div className="relative overflow-hidden rounded-3xl border p-10 shadow-2xl shadow-slate-950/40">
+    <div className="pointer-events-none absolute inset-0">
+    </div>
+
+    <div className="relative z-10 flex flex-col gap-8">
+      <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
+        <div className="space-y-3">
+          <div>
+            <h3 className="text-3xl font-semibold text-white">Zacznij od ścieżki zawodowej</h3>
+            <p className="mt-2 max-w-2xl text-sm text-slate-300">
+              {requiresCareerPaths
+                ? 'Aby stworzyć analizę rynku, wygeneruj rekomendacje kariery w Doradcy. Na ich podstawie dobierzemy branże, wynagrodzenia i popyt na umiejętności dopasowane pod Twój profil.'
+                : error ||
+                  'Najpierw wygeneruj rekomendacje zawodowe w Advisorze, a następnie uruchom tworzenie analizy rynku.'}
+            </p>
+          </div>
+        </div>
+
+        <div className="flex w-full flex-col gap-3 sm:w-auto sm:flex-row">
+          <Button
+            onClick={onOpenAdvisor}
+            className="group h-11 rounded-[10px] border border-slate-700/80 bg-white px-4 font-semibold text-[#0b0d14] transition hover:-translate-y-1 hover:shadow-[0_10px_40px_rgba(255,255,255,0.18)]"
+          >
+            Przejdź do Doradcy
+            <ArrowRight className="ml-2 h-4 w-4 transition group-hover:translate-x-1" />
+          </Button>
+        </div>
+      </div>
+
+      <div className="grid gap-3 md:grid-cols-2">
+        <div className="rounded-2xl border shadow-inner shadow-white/5 p-4">
+          <p className="text-xs text-slate-400">Krok 1</p>
+          <h4 className="text-lg font-semibold text-white">Rekomendacje zawodowe</h4>
+          <p className="mt-2 text-sm text-slate-300">
+            Uzupełnij profil i preferencje, aby asystent AI zapisał Twoje ścieżki kariery.
+          </p>
+        </div>
+       <div className="rounded-2xl border shadow-inner shadow-white/5 p-4">
+             <p className="text-xs text-slate-400">Krok 2</p>
+
+          <h4 className="text-lg font-semibold text-white">Analiza rynku</h4>
+          <p className="mt-2 text-sm text-slate-300">
+            Na bazie rekomendacji wygenerujemy trendy, popyt na umiejętności oraz prognozy płac.
+          </p>
+        </div>
+      </div>
+    </div>
   </div>
 );
 
@@ -425,6 +497,7 @@ export default function DetailedMarketAnalysis() {
   const [isLoading, setIsLoading] = useState(false);
   const [isGenerating, setIsGenerating] = useState(false);
   const [isDownloading, setIsDownloading] = useState(false);
+  const [requiresCareerPaths, setRequiresCareerPaths] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const reportRef = useRef<HTMLDivElement>(null);
   const pdfReportRef = useRef<HTMLDivElement>(null);
@@ -446,12 +519,20 @@ export default function DetailedMarketAnalysis() {
 
   const generationDate = useMemo(() => new Date().toLocaleDateString('pl-PL'), []);
 
+  const openAdvisor = () => router.push('/assistant');
+  const hasAnalysisContent = hasAnalysisPayload(analysis);
+  const showEmptyState = !isLoading && !isGenerating && (!analysis || !hasAnalysisContent);
+
   useEffect(() => {
     if (!error) return;
 
     const normalized = error.toLowerCase();
     const isMissingCareerPaths = isMissingCareerPathsError(error);
     const isMissingPrevious = normalized.includes('brak zapisanej analizy');
+
+    if (isMissingCareerPaths) {
+      setRequiresCareerPaths(true);
+    }
 
     const title = isMissingCareerPaths
       ? 'Brak ścieżek kariery'
@@ -475,13 +556,19 @@ export default function DetailedMarketAnalysis() {
       async function fetchLatestAnalysis() {
         setIsLoading(true);
         setError(null);
+        setRequiresCareerPaths(false);
         try {
           const response = await api.get('/api/MarketAnalysis/latest');
-          setAnalysis(getAnalysisFromResponse(response.data));
+          const latestAnalysis = getAnalysisFromResponse(response.data);
+          setAnalysis(latestAnalysis);
+          const hasContent = hasAnalysisPayload(latestAnalysis);
+          setRequiresCareerPaths(!hasContent);
         } catch (err) {
           const axiosErr = err as AxiosError;
           if (axiosErr.response?.status === 404) {
             setError('Brak zapisanej analizy - wygeneruj nową.');
+            setRequiresCareerPaths(true);
+            setAnalysis(null);
           } else {
             setError('Nie udało się pobrać ostatniej analizy.');
           }
@@ -495,18 +582,26 @@ export default function DetailedMarketAnalysis() {
   const generateFreshAnalysis = async () => {
     setIsGenerating(true);
     setError(null);
+    setRequiresCareerPaths(false);
     try {
       const response = await api.get('/api/MarketAnalysis');
-      setAnalysis(getAnalysisFromResponse(response.data));
+      const freshAnalysis = getAnalysisFromResponse(response.data);
+      setAnalysis(freshAnalysis);
+      const hasContent = hasAnalysisPayload(freshAnalysis);
+      setRequiresCareerPaths(!hasContent);
     } catch (err) {
       const axiosErr = err as AxiosError<{ detail?: string }>;
       const detail = axiosErr.response?.data?.detail;
-      if (isMissingCareerPathsError(detail)) {
+      const missingCareerPaths = isMissingCareerPathsError(detail);
+
+      if (missingCareerPaths) {
         setError(
           'Brak ścieżek kariery z asystenta AI. Wygeneruj rekomendacje na stronie głównej, aby móc stworzyć analizę rynku.'
         );
+        setRequiresCareerPaths(true);
       } else {
         setError(detail || 'Rozpocznij od wygenerowania ścieżek kariery.');
+        setRequiresCareerPaths(false);
       }
     } finally {
       setIsGenerating(false);
@@ -514,7 +609,7 @@ export default function DetailedMarketAnalysis() {
   };
 
   const downloadPdf = async () => {
-    if (!pdfReportRef.current || !analysis) return;
+    if (!pdfReportRef.current || !analysis || !hasAnalysisContent) return;
 
     setIsDownloading(true);
     try {
@@ -611,7 +706,9 @@ export default function DetailedMarketAnalysis() {
                 onClick={downloadPdf}
                 className="group relative z-20 h-12 w-full rounded-[7px] border bg-transparent text-slate-100 md:w-full"
                 variant="outline"
-                disabled={!analysis || isDownloading || isGenerating || isLoading}
+                disabled={
+                  !analysis || !hasAnalysisContent || isDownloading || isGenerating || isLoading
+                }
               >
                 {isDownloading ? (
                   <>
@@ -631,14 +728,14 @@ export default function DetailedMarketAnalysis() {
           )} */}
         </header>
 
-        {(isLoading || isGenerating) && !analysis && (
+        {(isLoading || isGenerating) && !hasAnalysisContent && (
           <div className="flex items-center justify-center gap-3 rounded-2xl border border-slate-800/70 bg-slate-900/60 p-6 text-slate-200">
             <Loader2 className="h-5 w-5 animate-spin" />
             <span>Ładowanie analizy rynku...</span>
           </div>
         )}
 
-        {analysis ? (
+        {analysis && hasAnalysisContent ? (
           <div className="space-y-6">
             <div className="grid gap-4 lg:grid-cols-2">
               <div className="rounded-3xl border border-b-5 p-5">
@@ -717,17 +814,18 @@ export default function DetailedMarketAnalysis() {
               ))}
             </div>
           </div>
-        ) : (
-          <div className="flex flex-col items-center justify-center gap-3 rounded-2xl border p-8 text-center">
-            <p className="text-lg font-medium text-white">Brak danych analitycznych</p>
-            <p className="max-w-lg text-sm text-slate-400">
-              Po wygenerowaniu rekomendacji ścieżek kariery, będziesz mógł wygenerować szczegółową
-              analizę rynku pracy dostosowaną do Twoich celów zawodowych.
-            </p>
-          </div>
-        )}
+        ) : showEmptyState ? (
+          <EmptyAnalysisState
+            error={error}
+            requiresCareerPaths={requiresCareerPaths}
+            onOpenAdvisor={openAdvisor}
+            onGenerateAnalysis={generateFreshAnalysis}
+            isGenerating={isGenerating}
+            isLoading={isLoading}
+          />
+        ) : null}
       </div>
-      {analysis && (
+      {analysis && hasAnalysisContent && (
         <div
           ref={pdfReportRef}
           aria-hidden
