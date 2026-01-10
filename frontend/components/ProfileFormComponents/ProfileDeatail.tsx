@@ -18,6 +18,7 @@ import { Risk, riskLabels } from '@/lib/enums/risk';
 import { PersonalityType, personalityTypeLabels } from '@/lib/enums/personalityTypes';
 import Image from 'next/image';
 import { spinner_terminal } from '@/app/constants';
+import UploadCvButton from './UploadCvButton';
 
 const getPersonalityLabel = (value: PersonalityType | string | undefined): string => {
   if (value === undefined || value === null || value === '') {
@@ -129,6 +130,9 @@ export default function ProfileDetails() {
 
   const handleEdit = () => setIsEditing(true);
   const handleCancelEdit = () => setIsEditing(false);
+  const handleProfileImport = (updatedProfile: UserProfile) => {
+    setProfile(updatedProfile);
+  };
 
   const isProfileEmpty = !profile;
 
@@ -467,14 +471,17 @@ export default function ProfileDetails() {
 
             <div className="bg-background dark:bg-background relative z-20 w-full rounded-xl border p-4 xl:h-3/4 xl:w-1/2">
               <div className="flex h-full flex-col">
-                <div className="flex flex-row items-start justify-between border-b">
-                  <h1 className="mb-4 text-2xl font-bold text-gray-800 xl:text-3xl dark:text-gray-200">
+                <div className="flex flex-col gap-4 border-b pb-4 sm:flex-row sm:items-start sm:justify-between">
+                  <h1 className="text-2xl font-bold text-gray-800 xl:text-3xl dark:text-gray-200">
                     {isProfileEmpty ? 'Your Profile' : `${profile.firstName} ${profile.lastName}`}
                   </h1>
-                  <div className="flex gap-2">
-                    <Button asChild variant="outline" className="rounded-md">
-                      <Link href="/payments">Subscription</Link>
-                    </Button>
+                  <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-end">
+                    <div className="flex flex-col gap-2 sm:flex-row">
+                      <Button asChild variant="outline" className="rounded-md">
+                        <Link href="/payments">Subscription</Link>
+                      </Button>
+                      <UploadCvButton onUploaded={handleProfileImport} />
+                    </div>
                     <Button
                       onClick={handleEdit}
                       className="rounded-md bg-[#915EFF] hover:bg-[#b594fd]"

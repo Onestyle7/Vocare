@@ -21,3 +21,16 @@ export const updateUserProfile = async (profile: UserProfile): Promise<UserProfi
 export const deleteUserProfile = async (): Promise<void> => {
   await api.delete(`${PREFIX}/DeleteCurrentUserProfile`);
 };
+
+export const importUserProfileFromCv = async (file: File): Promise<UserProfile> => {
+  const formData = new FormData();
+  formData.append('file', file);
+
+  const { data } = await api.post(`${PREFIX}/import-cv`, formData, {
+    headers: {
+      'Content-Type': 'multipart/form-data',
+    },
+  });
+
+  return data;
+};
