@@ -19,6 +19,7 @@ import {
 import { Badge } from '@/components/ui/badge';
 import { Separator } from '@/components/ui/separator';
 import { Button } from '@/components/ui/button';
+import { useIsMobile } from '@/lib/hooks/useIsMobile';
 
 const ResumeDashboard = () => {
   const [cvs, setCvs] = useState<CvListItemDto[]>([]);
@@ -26,6 +27,7 @@ const ResumeDashboard = () => {
   const [loading, setLoading] = useState(true);
   const [deleteId, setDeleteId] = useState<string | null>(null);
   const [showLimitDialog, setShowLimitDialog] = useState(false);
+  const isMobile = useIsMobile();
 
   useEffect(() => {
     const fetchData = async () => {
@@ -95,16 +97,20 @@ const ResumeDashboard = () => {
   const EmptyState = () => (
     <div className="col-span-full flex h-[400px] flex-col items-center justify-center rounded-xl border border-dashed">
       <FileText className="text-muted-foreground mb-4 h-12 w-12" />
-      <h3 className="mb-2 text-lg font-medium">No resumes yet</h3>
+      <h3 className="mb-2 text-lg font-medium">Brak CV</h3>
       <p className="text-muted-foreground mb-4 max-w-sm text-center text-sm">
-        Create your first resume to get started with your career journey.
+        {isMobile
+          ? 'Tworzenie i edycja CV są dostępne na komputerze. Po utworzeniu zobaczysz podgląd w tym miejscu.'
+          : 'Create your first resume to get started with your career journey.'}
       </p>
-      <Link href="/resume/create">
-        <Button className="gap-2">
-          <Plus className="h-4 w-4" />
-          Create Resume
-        </Button>
-      </Link>
+      {!isMobile && (
+        <Link href="/resume/create">
+          <Button className="gap-2">
+            <Plus className="h-4 w-4" />
+            Create Resume
+          </Button>
+        </Link>
+      )}
     </div>
   );
 
@@ -122,6 +128,7 @@ const ResumeDashboard = () => {
   };
 
   const handleNewResumeClick = () => {
+    if (isMobile) return;
     if (limits && limits.currentCount >= limits.maxLimit) {
       setShowLimitDialog(true);
     } else {
@@ -142,7 +149,7 @@ const ResumeDashboard = () => {
                   <Badge variant="secondary">
                     {limits ? `${limits.currentCount}/${limits.maxLimit}` : 'Basic'}
                   </Badge>
-                  {!loading && cvs.length > 0 && (
+                  {!loading && cvs.length > 0 && !isMobile && (
                     <Button variant="outline" className="gap-2" onClick={handleNewResumeClick}>
                       <Plus className="h-4 w-4" />
                       Stwórz nowe
@@ -158,6 +165,12 @@ const ResumeDashboard = () => {
                       ? `Możesz zapisać do ${limits.maxLimit} CV w swoim aktualnym planie.`
                       : 'Zarządzaj swoimi profesjonalnymi CV i śledź swoje aplikacje.'}
                   </p>
+                  {isMobile && (
+                    <p className="text-muted-foreground max-w-xl text-left text-sm leading-relaxed tracking-tight lg:max-w-lg">
+                      Na telefonie dostępny jest podgląd i pobieranie CV. Tworzenie i edycja są
+                      możliwe na komputerze.
+                    </p>
+                  )}
                 </div>
               </div>
 
@@ -267,7 +280,7 @@ const ResumeDashboard = () => {
 
                             {/* Card Actions */}
                             <div className="flex min-h-[72px] flex-row items-center justify-between p-4">
-                              <Button size="sm">Edytuj</Button>
+                              <Button size="sm">{isMobile ? 'Podgląd' : 'Edytuj'}</Button>
                               <div className="flex flex-row items-center justify-center gap-2">
                                 <Clock className="text-muted-foreground h-4 w-4" />
                                 <p className="text-muted-foreground text-sm font-semibold">
