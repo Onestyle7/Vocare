@@ -6,7 +6,7 @@ import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { UserProfile } from '@/lib/types/profile';
 import { toast } from 'sonner';
-import { ArrowDown, ArrowLeft, ArrowRight, ArrowUp, LogOut } from 'lucide-react';
+import { ArrowDown, ArrowLeft, ArrowRight, ArrowUp, LogOut, Settings } from 'lucide-react';
 import { logoutUser } from '@/lib/auth';
 import { formatDate } from '../SupportComponents/formatSimpleDate';
 import ProfileForm from './ProfileForm';
@@ -18,6 +18,7 @@ import { Risk, riskLabels } from '@/lib/enums/risk';
 import { PersonalityType, personalityTypeLabels } from '@/lib/enums/personalityTypes';
 import Image from 'next/image';
 import { spinner_terminal } from '@/app/constants';
+import UploadCvButton from './UploadCvButton';
 
 const getPersonalityLabel = (value: PersonalityType | string | undefined): string => {
   if (value === undefined || value === null || value === '') {
@@ -129,6 +130,9 @@ export default function ProfileDetails() {
 
   const handleEdit = () => setIsEditing(true);
   const handleCancelEdit = () => setIsEditing(false);
+  const handleProfileImport = (updatedProfile: UserProfile) => {
+    setProfile(updatedProfile);
+  };
 
   const isProfileEmpty = !profile;
 
@@ -467,23 +471,68 @@ export default function ProfileDetails() {
 
             <div className="bg-background dark:bg-background relative z-20 w-full rounded-xl border p-4 xl:h-3/4 xl:w-1/2">
               <div className="flex h-full flex-col">
-                <div className="flex flex-row items-start justify-between border-b">
-                  <h1 className="mb-4 text-2xl font-bold text-gray-800 xl:text-3xl dark:text-gray-200">
-                    {isProfileEmpty ? 'Your Profile' : `${profile.firstName} ${profile.lastName}`}
-                  </h1>
-                  <div className="flex gap-2">
-                    <Button asChild variant="outline" className="rounded-md">
-                      <Link href="/payments">Subscription</Link>
-                    </Button>
-                    <Button
-                      onClick={handleEdit}
-                      className="rounded-md bg-[#915EFF] hover:bg-[#b594fd]"
-                    >
-                      Edit
-                    </Button>
-                    <Button onClick={handleLogout} variant="outline" className="rounded-md">
-                      <LogOut />
-                    </Button>
+                <div className="flex flex-col gap-4 border-b pb-4 sm:flex-row sm:items-start sm:justify-between">
+                  <div className="flex items-start justify-between gap-3">
+                    <h1 className="text-2xl font-bold text-gray-800 xl:text-3xl dark:text-gray-200">
+                      {isProfileEmpty ? 'Your Profile' : `${profile.firstName} ${profile.lastName}`}
+                    </h1>
+                    <div className="flex items-center gap-2 sm:hidden">
+                      <Button
+                        asChild
+                        variant="outline"
+                        size="lg"
+                        className="h-10 w-10 justify-center rounded-[7px] p-0"
+                        aria-label="Subskrypcja"
+                      >
+                        <Link href="/payments">
+                          <Settings className="h-4 w-4" />
+                        </Link>
+                      </Button>
+                      <Button
+                        onClick={handleLogout}
+                        variant="outline"
+                        size="lg"
+                        className="h-10 w-10 justify-center rounded-[7px] p-0"
+                        aria-label="Wyloguj"
+                      >
+                        <LogOut className="h-4 w-4" />
+                      </Button>
+                    </div>
+                  </div>
+                  <div className="flex w-full flex-col gap-3 sm:w-auto sm:flex-row sm:items-center sm:justify-end sm:gap-2">
+                    <div className="grid w-full grid-cols-1 gap-2 sm:flex sm:w-auto sm:flex-row sm:flex-nowrap sm:justify-end">
+                      <UploadCvButton
+                        onUploaded={handleProfileImport}
+                        className="order-1 w-full sm:order-1 sm:w-auto"
+                      />
+                      <Button
+                        onClick={handleEdit}
+                        size="lg"
+                        className="order-2 w-full justify-center rounded-lg bg-[#915EFF] text-white shadow-[0_12px_30px_rgba(145,94,255,0.35)] transition-shadow hover:bg-[#a779ff] hover:shadow-[0_16px_38px_rgba(145,94,255,0.4)] sm:order-2 sm:w-auto sm:px-6"
+                      >
+                        Edytuj
+                      </Button>
+                      <Button
+                        asChild
+                        variant="outline"
+                        size="lg"
+                        className="order-3 hidden h-10 w-10 justify-center rounded-full p-0 sm:order-3 sm:inline-flex sm:w-10 sm:rounded-[7px]"
+                        aria-label="Subskrypcja"
+                      >
+                        <Link href="/payments">
+                          <Settings className="h-4 w-4" />
+                        </Link>
+                      </Button>
+                      <Button
+                        onClick={handleLogout}
+                        variant="outline"
+                        size="lg"
+                        className="order-4 hidden h-10 w-10 justify-center rounded-full p-0 sm:order-4 sm:inline-flex sm:w-10 sm:rounded-[7px]"
+                        aria-label="Wyloguj"
+                      >
+                        <LogOut className="h-4 w-4" />
+                      </Button>
+                    </div>
                   </div>
                 </div>
 
