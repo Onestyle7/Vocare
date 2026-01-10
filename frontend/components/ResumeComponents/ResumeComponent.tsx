@@ -1378,10 +1378,17 @@ const CVCreator: React.FC<CVCreatorProps> = ({ initialCv }) => {
     const zoomWrapper = zoomWrapperRef.current;
     if (!container || !zoomWrapper) return;
 
+    const printWindow = window.open('', '_blank', 'width=1200,height=800');
+    if (!printWindow) return;
+
     const origTransform = zoomWrapper.style.transform;
     zoomWrapper.style.transform = 'none';
 
     const pagesNodes = Array.from(container.querySelectorAll<HTMLElement>('.cv-page'));
+    if (pagesNodes.length === 0) {
+      printWindow.close();
+      return;
+    }
     const restoreStyles: Array<{ el: HTMLElement; boxShadow: string; border: string }> = [];
     pagesNodes.forEach((el) => {
       restoreStyles.push({
@@ -1394,16 +1401,6 @@ const CVCreator: React.FC<CVCreatorProps> = ({ initialCv }) => {
     });
 
     await new Promise((r) => setTimeout(r, 50));
-
-    const printWindow = window.open('', '_blank', 'width=1200,height=800');
-    if (!printWindow) {
-      zoomWrapper.style.transform = origTransform;
-      restoreStyles.forEach(({ el, boxShadow, border }) => {
-        el.style.boxShadow = boxShadow;
-        el.style.border = border;
-      });
-      return;
-    }
 
     const fileName =
       personalInfo.firstName && personalInfo.lastName
