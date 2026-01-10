@@ -7,6 +7,7 @@ import { toast } from 'sonner';
 import { importUserProfileFromCv } from '@/lib/profile';
 import { Button } from '../ui/button';
 import { UserProfile } from '@/lib/types/profile';
+import { cn } from '@/lib/utils';
 
 const ALLOWED_EXTENSIONS = ['pdf', 'doc', 'docx'];
 
@@ -114,7 +115,7 @@ export default function UploadCvButton({ onUploaded, className }: UploadCvButton
   };
 
   return (
-    <div className={className}>
+    <div className={cn('w-full sm:w-auto', className)}>
       <input
         ref={inputRef}
         type="file"
@@ -125,11 +126,12 @@ export default function UploadCvButton({ onUploaded, className }: UploadCvButton
       <Button
         type="button"
         variant="outline"
+        size="lg"
         onClick={handleClick}
         disabled={isUploading}
-        className="rounded-md"
+        className="w-full justify-center gap-2 rounded-lg sm:w-auto"
       >
-        <UploadCloud className="mr-2 h-4 w-4" />
+        <UploadCloud className="h-4 w-4" />
         {isUploading ? 'Wgrywanie CV...' : 'Uzupełnij profil z CV'}
       </Button>
     </div>
