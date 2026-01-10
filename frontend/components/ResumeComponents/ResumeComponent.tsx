@@ -33,8 +33,6 @@ import { createCv, deleteCv, updateCv } from '@/lib/api/cv';
 import { CvDto, CvDetailsDto, UpdateCvDto } from '@/lib/types/cv';
 import { DatePickerWithCurrent } from './DatePickerWithCurrent';
 import { HoverCard, HoverCardContent, HoverCardTrigger } from '@/components/ui/hover-card';
-import html2canvas from 'html2canvas-pro';
-import jsPDF from 'jspdf';
 import {
   Select,
   SelectContent,
@@ -1381,10 +1379,9 @@ const CVCreator: React.FC<CVCreatorProps> = ({ initialCv }) => {
     if (!container || !zoomWrapper) return;
 
     const origTransform = zoomWrapper.style.transform;
-    // Temporarily disable transform for crisp rendering
     zoomWrapper.style.transform = 'none';
-    // Temporarily remove shadows/borders from pages to avoid capture discrepancies
-    const pagesNodes = container.querySelectorAll<HTMLElement>('.cv-page');
+
+    const pagesNodes = Array.from(container.querySelectorAll<HTMLElement>('.cv-page'));
     const restoreStyles: Array<{ el: HTMLElement; boxShadow: string; border: string }> = [];
     pagesNodes.forEach((el) => {
       restoreStyles.push({
@@ -1395,39 +1392,84 @@ const CVCreator: React.FC<CVCreatorProps> = ({ initialCv }) => {
       el.style.boxShadow = 'none';
       el.style.border = 'none';
     });
+
     await new Promise((r) => setTimeout(r, 50));
 
-    const pdf = new jsPDF('portrait', 'mm', 'a4');
-    const pdfW = pdf.internal.pageSize.getWidth();
-    const pdfH = pdf.internal.pageSize.getHeight();
-    const CANVAS_SCALE = 1.6; // balance between clarity and size (~1.6 ≈ 150dpi)
-    const JPEG_QUALITY = 0.92; // slightly higher quality for sharper text
-    for (let i = 0; i < pagesNodes.length; i++) {
-      const pageEl = pagesNodes[i];
-      const canvas = await html2canvas(pageEl, {
-        scale: CANVAS_SCALE,
-        useCORS: true,
-        allowTaint: true,
-        backgroundColor: '#ffffff',
+    const printWindow = window.open('', '_blank', 'width=1200,height=800');
+    if (!printWindow) {
+      zoomWrapper.style.transform = origTransform;
+      restoreStyles.forEach(({ el, boxShadow, border }) => {
+        el.style.boxShadow = boxShadow;
+        el.style.border = border;
       });
-      const imgData = canvas.toDataURL('image/jpeg', JPEG_QUALITY);
-      if (i > 0) pdf.addPage();
-      pdf.addImage(imgData, 'JPEG', 0, 0, pdfW, pdfH, undefined, 'FAST');
+      return;
     }
 
-    // Restore zoom transform
-    zoomWrapper.style.transform = origTransform;
-    // Restore styles
-    restoreStyles.forEach(({ el, boxShadow, border }) => {
-      el.style.boxShadow = boxShadow;
-      el.style.border = border;
-    });
+    const styles = Array.from(document.querySelectorAll('link[rel="stylesheet"], style'))
+      .map((node) => node.outerHTML)
+      .join('\n');
 
     const fileName =
       personalInfo.firstName && personalInfo.lastName
         ? `${personalInfo.firstName}_${personalInfo.lastName}_CV.pdf`
         : 'My_CV.pdf';
-    pdf.save(fileName);
+
+    printWindow.document.open();
+    printWindow.document.write(`
+      <!doctype html>
+      <html>
+        <head>
+          <title>${fileName}</title>
+          ${styles}
+          <style>
+            @page {
+              size: A4;
+              margin: 0;
+            }
+            html, body {
+              margin: 0;
+              padding: 0;
+              background: #ffffff;
+              -webkit-print-color-adjust: exact;
+              print-color-adjust: exact;
+            }
+            .cv-page {
+              box-shadow: none !important;
+              border: none !important;
+              page-break-after: always;
+            }
+            .cv-page:last-child {
+              page-break-after: auto;
+            }
+          </style>
+        </head>
+        <body></body>
+      </html>
+    `);
+    printWindow.document.close();
+
+    const body = printWindow.document.body;
+    pagesNodes.forEach((page) => {
+      body.appendChild(page.cloneNode(true));
+    });
+
+    const finalize = () => {
+      printWindow.focus();
+      printWindow.print();
+      printWindow.close();
+    };
+
+    if (printWindow.document.readyState === 'complete') {
+      finalize();
+    } else {
+      printWindow.onload = finalize;
+    }
+
+    zoomWrapper.style.transform = origTransform;
+    restoreStyles.forEach(({ el, boxShadow, border }) => {
+      el.style.boxShadow = boxShadow;
+      el.style.border = border;
+    });
   };
 
   // Section visibility helper (must match preview rendering conditions)
