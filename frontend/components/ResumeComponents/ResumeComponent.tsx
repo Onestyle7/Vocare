@@ -1405,10 +1405,6 @@ const CVCreator: React.FC<CVCreatorProps> = ({ initialCv }) => {
       return;
     }
 
-    const styles = Array.from(document.querySelectorAll('link[rel="stylesheet"], style'))
-      .map((node) => node.outerHTML)
-      .join('\n');
-
     const fileName =
       personalInfo.firstName && personalInfo.lastName
         ? `${personalInfo.firstName}_${personalInfo.lastName}_CV.pdf`
@@ -1420,7 +1416,8 @@ const CVCreator: React.FC<CVCreatorProps> = ({ initialCv }) => {
       <html>
         <head>
           <title>${fileName}</title>
-          ${styles}
+          <base href="${document.baseURI}" />
+          ${document.head.innerHTML}
           <style>
             @page {
               size: A4;
@@ -1448,12 +1445,38 @@ const CVCreator: React.FC<CVCreatorProps> = ({ initialCv }) => {
     `);
     printWindow.document.close();
 
+    printWindow.document.documentElement.className = document.documentElement.className;
+    printWindow.document.body.className = document.body.className;
+
     const body = printWindow.document.body;
     pagesNodes.forEach((page) => {
       body.appendChild(page.cloneNode(true));
     });
 
-    const finalize = () => {
+    const waitForStyles = async () => {
+      const links = Array.from(
+        printWindow.document.querySelectorAll<HTMLLinkElement>('link[rel="stylesheet"]')
+      );
+      await Promise.all(
+        links.map(
+          (link) =>
+            new Promise<void>((resolve) => {
+              if (link.sheet) {
+                resolve();
+                return;
+              }
+              link.addEventListener('load', () => resolve(), { once: true });
+              link.addEventListener('error', () => resolve(), { once: true });
+            })
+        )
+      );
+      if (printWindow.document.fonts?.ready) {
+        await printWindow.document.fonts.ready;
+      }
+    };
+
+    const finalize = async () => {
+      await waitForStyles();
       printWindow.focus();
       printWindow.print();
       printWindow.close();
