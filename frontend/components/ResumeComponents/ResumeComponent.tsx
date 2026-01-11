@@ -1374,96 +1374,93 @@ const CVCreator: React.FC<CVCreatorProps> = ({ initialCv }) => {
   }, [initialCv, populateFromCv]);
 
   const downloadPDF = async () => {
-    const container = pagesViewportRef.current;
-    if (!container) return;
+  const container = pagesViewportRef.current;
+  if (!container) return;
 
-    const pagesNodes = Array.from(container.querySelectorAll<HTMLElement>('.cv-page'));
-    if (pagesNodes.length === 0) return;
+  const pagesNodes = Array.from(container.querySelectorAll<HTMLElement>('.cv-page'));
+  if (pagesNodes.length === 0) return;
 
-    const fileName =
-      personalInfo.firstName && personalInfo.lastName
-        ? `${personalInfo.firstName}_${personalInfo.lastName}_CV`
-        : 'My_CV';
+  const fileName = personalInfo.firstName && personalInfo.lastName
+    ? `${personalInfo.firstName}_${personalInfo.lastName}_CV`
+    : 'My_CV';
 
-    const styles = Array.from(document.querySelectorAll('style, link[rel="stylesheet"]'))
-      .map((node) => node.outerHTML)
-      .join('\n');
-    const baseHref = document.querySelector('base')?.href ?? window.location.origin;
+  // 1. Zbieramy wszystkie style (linki i tagi style)
+  const styles = Array.from(document.querySelectorAll('style, link[rel="stylesheet"]'))
+    .map((node) => node.outerHTML)
+    .join('\n');
 
-    const printStyles = `
+  const baseHref = document.querySelector('base')?.href ?? window.location.origin;
+
+  // 2. CSS naprawczy tylko dla wydruku
+  const printStyles = `
+    @media print {
       @page { size: A4; margin: 0; }
-      body { margin: 0; background: #fff; }
-      * { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
-      .cv-page {
-        width: 210mm;
-        height: 297mm;
-        page-break-after: always;
-        break-after: page;
-        box-shadow: none !important;
-        border: none !important;
-        border-radius: 0 !important;
-        overflow: hidden;
+      body { 
+        margin: 0 !important; 
+        background: #fff !important; 
+        -webkit-print-color-adjust: exact !important; 
+        print-color-adjust: exact !important; 
       }
-    `;
-
-    const pagesMarkup = pagesNodes.map((page) => page.outerHTML).join('');
-
-    const printFrame = document.createElement('iframe');
-    printFrame.style.position = 'fixed';
-    printFrame.style.right = '0';
-    printFrame.style.bottom = '0';
-    printFrame.style.width = '0';
-    printFrame.style.height = '0';
-    printFrame.style.border = '0';
-    printFrame.setAttribute('aria-hidden', 'true');
-    document.body.appendChild(printFrame);
-
-    const printDoc = printFrame.contentDocument;
-    if (!printDoc) {
-      printFrame.remove();
-      return;
+      /* Usuwamy transformacje skali z podglądu, by kartka była 1:1 */
+      .cv-page { 
+        margin: 0 !important; 
+        box-shadow: none !important; 
+        border: none !important; 
+        transform: none !important; 
+        width: 210mm !important;
+        height: 297mm !important;
+        page-break-after: always !important;
+        break-after: page !important;
+        display: block !important;
+      }
+      /* Upewniamy się, że czcionka Poppins i kolory Tailwind działają */
+      * { font-family: 'Poppins', sans-serif !important; }
     }
+  `;
 
-    printDoc.open();
-    printDoc.write(`
-      <!doctype html>
-      <html>
-        <head>
-          <title>${fileName}</title>
-          <base href="${baseHref}" />
-          ${styles}
-          <style>${printStyles}</style>
-        </head>
-        <body>
-          ${pagesMarkup}
-        </body>
-      </html>
-    `);
-    printDoc.close();
+  const printFrame = document.createElement('iframe');
+  Object.assign(printFrame.style, {
+    position: 'fixed', right: '0', bottom: '0', width: '0', height: '0', border: '0'
+  });
+  document.body.appendChild(printFrame);
 
-    const cleanup = () => {
-      if (printFrame.parentNode) {
-        printFrame.parentNode.removeChild(printFrame);
-      }
-    };
+  const printDoc = printFrame.contentDocument;
+  if (!printDoc) return;
 
-    const handlePrint = () => {
-      const printWindow = printFrame.contentWindow;
-      if (!printWindow) {
-        cleanup();
-        return;
-      }
-      printWindow.focus();
-      printWindow.print();
-      setTimeout(cleanup, 1000);
-    };
+  const pagesMarkup = pagesNodes.map((page) => page.outerHTML).join('');
 
-    if (printDoc.readyState === 'complete') {
-      handlePrint();
-    } else {
-      printFrame.onload = handlePrint;
-    }
+  printDoc.open();
+  printDoc.write(`
+    <!doctype html>
+    <html class="light"> <head>
+        <title>${fileName}</title>
+        <base href="${baseHref}" />
+        ${styles}
+        <style>${printStyles}</style>
+      </head>
+      <body class="bg-white">
+        ${pagesMarkup}
+      </body>
+    </html>
+  `);
+  printDoc.close();
+
+  // 3. Czekamy na załadowanie czcionek i stylów przed drukiem
+  printFrame.onload = () => {
+    // Dajemy przeglądarce 500ms na sparsowanie CSS v4
+    setTimeout(() => {
+      const win = printFrame.contentWindow;
+      if (!win) return;
+      
+      // Opcjonalnie: czekamy na załadowanie customowych fontów
+      (win as any).document.fonts.ready.then(() => {
+        win.focus();
+        win.print();
+        setTimeout(() => document.body.removeChild(printFrame), 1000);
+      });
+    }, 500);
   };
+};
 
   // Section visibility helper (must match preview rendering conditions)
   const isSectionVisible = React.useCallback(
