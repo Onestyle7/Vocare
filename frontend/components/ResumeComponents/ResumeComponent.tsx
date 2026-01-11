@@ -1388,10 +1388,12 @@ const CVCreator: React.FC<CVCreatorProps> = ({ initialCv }) => {
     const styles = Array.from(document.querySelectorAll('style, link[rel="stylesheet"]'))
       .map((node) => node.outerHTML)
       .join('\n');
+    const baseHref = document.querySelector('base')?.href ?? window.location.origin;
 
     const printStyles = `
       @page { size: A4; margin: 0; }
       body { margin: 0; background: #fff; }
+      * { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
       .cv-page {
         width: 210mm;
         height: 297mm;
@@ -1428,6 +1430,7 @@ const CVCreator: React.FC<CVCreatorProps> = ({ initialCv }) => {
       <html>
         <head>
           <title>${fileName}</title>
+          <base href="${baseHref}" />
           ${styles}
           <style>${printStyles}</style>
         </head>
