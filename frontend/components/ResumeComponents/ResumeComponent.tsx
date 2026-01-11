@@ -33,8 +33,6 @@ import { createCv, deleteCv, updateCv } from '@/lib/api/cv';
 import { CvDto, CvDetailsDto, UpdateCvDto } from '@/lib/types/cv';
 import { DatePickerWithCurrent } from './DatePickerWithCurrent';
 import { HoverCard, HoverCardContent, HoverCardTrigger } from '@/components/ui/hover-card';
-import html2canvas from 'html2canvas-pro';
-import jsPDF from 'jspdf';
 import {
   Select,
   SelectContent,
@@ -1376,59 +1374,94 @@ const CVCreator: React.FC<CVCreatorProps> = ({ initialCv }) => {
   }, [initialCv, populateFromCv]);
 
   const downloadPDF = async () => {
-    const container = pagesViewportRef.current;
-    const zoomWrapper = zoomWrapperRef.current;
-    if (!container || !zoomWrapper) return;
+  const container = pagesViewportRef.current;
+  if (!container) return;
 
-    const origTransform = zoomWrapper.style.transform;
-    // Temporarily disable transform for crisp rendering
-    zoomWrapper.style.transform = 'none';
-    // Temporarily remove shadows/borders from pages to avoid capture discrepancies
-    const pagesNodes = container.querySelectorAll<HTMLElement>('.cv-page');
-    const restoreStyles: Array<{ el: HTMLElement; boxShadow: string; border: string }> = [];
-    pagesNodes.forEach((el) => {
-      restoreStyles.push({
-        el,
-        boxShadow: el.style.boxShadow || '',
-        border: el.style.border || '',
-      });
-      el.style.boxShadow = 'none';
-      el.style.border = 'none';
-    });
-    await new Promise((r) => setTimeout(r, 50));
+  const pagesNodes = Array.from(container.querySelectorAll<HTMLElement>('.cv-page'));
+  if (pagesNodes.length === 0) return;
 
-    const pdf = new jsPDF('portrait', 'mm', 'a4');
-    const pdfW = pdf.internal.pageSize.getWidth();
-    const pdfH = pdf.internal.pageSize.getHeight();
-    const CANVAS_SCALE = 1.6; // balance between clarity and size (~1.6 ≈ 150dpi)
-    const JPEG_QUALITY = 0.92; // slightly higher quality for sharper text
-    for (let i = 0; i < pagesNodes.length; i++) {
-      const pageEl = pagesNodes[i];
-      const canvas = await html2canvas(pageEl, {
-        scale: CANVAS_SCALE,
-        useCORS: true,
-        allowTaint: true,
-        backgroundColor: '#ffffff',
-      });
-      const imgData = canvas.toDataURL('image/jpeg', JPEG_QUALITY);
-      if (i > 0) pdf.addPage();
-      pdf.addImage(imgData, 'JPEG', 0, 0, pdfW, pdfH, undefined, 'FAST');
+  const fileName = personalInfo.firstName && personalInfo.lastName
+    ? `${personalInfo.firstName}_${personalInfo.lastName}_CV`
+    : 'My_CV';
+
+  // 1. Zbieramy wszystkie style (linki i tagi style)
+  const styles = Array.from(document.querySelectorAll('style, link[rel="stylesheet"]'))
+    .map((node) => node.outerHTML)
+    .join('\n');
+
+  const baseHref = document.querySelector('base')?.href ?? window.location.origin;
+
+  // 2. CSS naprawczy tylko dla wydruku
+  const printStyles = `
+    @media print {
+      @page { size: A4; margin: 0; }
+      body { 
+        margin: 0 !important; 
+        background: #fff !important; 
+        -webkit-print-color-adjust: exact !important; 
+        print-color-adjust: exact !important; 
+      }
+      /* Usuwamy transformacje skali z podglądu, by kartka była 1:1 */
+      .cv-page { 
+        margin: 0 !important; 
+        box-shadow: none !important; 
+        border: none !important; 
+        transform: none !important; 
+        width: 210mm !important;
+        height: 297mm !important;
+        page-break-after: always !important;
+        break-after: page !important;
+        display: block !important;
+      }
+      /* Upewniamy się, że czcionka Poppins i kolory Tailwind działają */
+      * { font-family: 'Poppins', sans-serif !important; }
     }
+  `;
 
-    // Restore zoom transform
-    zoomWrapper.style.transform = origTransform;
-    // Restore styles
-    restoreStyles.forEach(({ el, boxShadow, border }) => {
-      el.style.boxShadow = boxShadow;
-      el.style.border = border;
-    });
+  const printFrame = document.createElement('iframe');
+  Object.assign(printFrame.style, {
+    position: 'fixed', right: '0', bottom: '0', width: '0', height: '0', border: '0'
+  });
+  document.body.appendChild(printFrame);
 
-    const fileName =
-      personalInfo.firstName && personalInfo.lastName
-        ? `${personalInfo.firstName}_${personalInfo.lastName}_CV.pdf`
-        : 'My_CV.pdf';
-    pdf.save(fileName);
+  const printDoc = printFrame.contentDocument;
+  if (!printDoc) return;
+
+  const pagesMarkup = pagesNodes.map((page) => page.outerHTML).join('');
+
+  printDoc.open();
+  printDoc.write(`
+    <!doctype html>
+    <html class="light"> <head>
+        <title>${fileName}</title>
+        <base href="${baseHref}" />
+        ${styles}
+        <style>${printStyles}</style>
+      </head>
+      <body class="bg-white">
+        ${pagesMarkup}
+      </body>
+    </html>
+  `);
+  printDoc.close();
+
+  // 3. Czekamy na załadowanie czcionek i stylów przed drukiem
+  printFrame.onload = () => {
+    // Dajemy przeglądarce 500ms na sparsowanie CSS v4
+    setTimeout(() => {
+      const win = printFrame.contentWindow;
+      if (!win) return;
+      
+      // Opcjonalnie: czekamy na załadowanie customowych fontów
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      (win as any).document.fonts.ready.then(() => {
+        win.focus();
+        win.print();
+        setTimeout(() => document.body.removeChild(printFrame), 1000);
+      });
+    }, 500);
   };
+};
 
   // Section visibility helper (must match preview rendering conditions)
   const isSectionVisible = React.useCallback(
