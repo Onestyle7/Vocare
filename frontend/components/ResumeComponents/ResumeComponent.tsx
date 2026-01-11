@@ -1453,6 +1453,7 @@ const CVCreator: React.FC<CVCreatorProps> = ({ initialCv }) => {
       if (!win) return;
       
       // Opcjonalnie: czekamy na załadowanie customowych fontów
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       (win as any).document.fonts.ready.then(() => {
         win.focus();
         win.print();
