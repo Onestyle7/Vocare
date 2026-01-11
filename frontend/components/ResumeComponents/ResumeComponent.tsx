@@ -33,8 +33,6 @@ import { createCv, deleteCv, updateCv } from '@/lib/api/cv';
 import { CvDto, CvDetailsDto, UpdateCvDto } from '@/lib/types/cv';
 import { DatePickerWithCurrent } from './DatePickerWithCurrent';
 import { HoverCard, HoverCardContent, HoverCardTrigger } from '@/components/ui/hover-card';
-import html2canvas from 'html2canvas-pro';
-import jsPDF from 'jspdf';
 import {
   Select,
   SelectContent,
@@ -1377,57 +1375,63 @@ const CVCreator: React.FC<CVCreatorProps> = ({ initialCv }) => {
 
   const downloadPDF = async () => {
     const container = pagesViewportRef.current;
-    const zoomWrapper = zoomWrapperRef.current;
-    if (!container || !zoomWrapper) return;
+    if (!container) return;
 
-    const origTransform = zoomWrapper.style.transform;
-    // Temporarily disable transform for crisp rendering
-    zoomWrapper.style.transform = 'none';
-    // Temporarily remove shadows/borders from pages to avoid capture discrepancies
-    const pagesNodes = container.querySelectorAll<HTMLElement>('.cv-page');
-    const restoreStyles: Array<{ el: HTMLElement; boxShadow: string; border: string }> = [];
-    pagesNodes.forEach((el) => {
-      restoreStyles.push({
-        el,
-        boxShadow: el.style.boxShadow || '',
-        border: el.style.border || '',
-      });
-      el.style.boxShadow = 'none';
-      el.style.border = 'none';
-    });
-    await new Promise((r) => setTimeout(r, 50));
-
-    const pdf = new jsPDF('portrait', 'mm', 'a4');
-    const pdfW = pdf.internal.pageSize.getWidth();
-    const pdfH = pdf.internal.pageSize.getHeight();
-    const CANVAS_SCALE = 1.6; // balance between clarity and size (~1.6 ≈ 150dpi)
-    const JPEG_QUALITY = 0.92; // slightly higher quality for sharper text
-    for (let i = 0; i < pagesNodes.length; i++) {
-      const pageEl = pagesNodes[i];
-      const canvas = await html2canvas(pageEl, {
-        scale: CANVAS_SCALE,
-        useCORS: true,
-        allowTaint: true,
-        backgroundColor: '#ffffff',
-      });
-      const imgData = canvas.toDataURL('image/jpeg', JPEG_QUALITY);
-      if (i > 0) pdf.addPage();
-      pdf.addImage(imgData, 'JPEG', 0, 0, pdfW, pdfH, undefined, 'FAST');
-    }
-
-    // Restore zoom transform
-    zoomWrapper.style.transform = origTransform;
-    // Restore styles
-    restoreStyles.forEach(({ el, boxShadow, border }) => {
-      el.style.boxShadow = boxShadow;
-      el.style.border = border;
-    });
+    const pagesNodes = Array.from(container.querySelectorAll<HTMLElement>('.cv-page'));
+    if (pagesNodes.length === 0) return;
 
     const fileName =
       personalInfo.firstName && personalInfo.lastName
-        ? `${personalInfo.firstName}_${personalInfo.lastName}_CV.pdf`
-        : 'My_CV.pdf';
-    pdf.save(fileName);
+        ? `${personalInfo.firstName}_${personalInfo.lastName}_CV`
+        : 'My_CV';
+
+    const printWindow = window.open('', '_blank', 'noopener,noreferrer');
+    if (!printWindow) {
+      console.warn('Unable to open print window.');
+      return;
+    }
+
+    const styles = Array.from(document.querySelectorAll('style, link[rel="stylesheet"]'))
+      .map((node) => node.outerHTML)
+      .join('\n');
+
+    const printStyles = `
+      @page { size: A4; margin: 0; }
+      body { margin: 0; background: #fff; }
+      .cv-page {
+        width: 210mm;
+        height: 297mm;
+        page-break-after: always;
+        break-after: page;
+        box-shadow: none !important;
+        border: none !important;
+        border-radius: 0 !important;
+        overflow: hidden;
+      }
+    `;
+
+    const pagesMarkup = pagesNodes.map((page) => page.outerHTML).join('');
+
+    printWindow.document.open();
+    printWindow.document.write(`
+      <!doctype html>
+      <html>
+        <head>
+          <title>${fileName}</title>
+          ${styles}
+          <style>${printStyles}</style>
+        </head>
+        <body>
+          ${pagesMarkup}
+        </body>
+      </html>
+    `);
+    printWindow.document.close();
+    printWindow.focus();
+    setTimeout(() => {
+      printWindow.print();
+      printWindow.close();
+    }, 300);
   };
 
   // Section visibility helper (must match preview rendering conditions)
