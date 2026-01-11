@@ -1385,12 +1385,6 @@ const CVCreator: React.FC<CVCreatorProps> = ({ initialCv }) => {
         ? `${personalInfo.firstName}_${personalInfo.lastName}_CV`
         : 'My_CV';
 
-    const printWindow = window.open('', '_blank', 'noopener,noreferrer');
-    if (!printWindow) {
-      console.warn('Unable to open print window.');
-      return;
-    }
-
     const styles = Array.from(document.querySelectorAll('style, link[rel="stylesheet"]'))
       .map((node) => node.outerHTML)
       .join('\n');
@@ -1412,8 +1406,24 @@ const CVCreator: React.FC<CVCreatorProps> = ({ initialCv }) => {
 
     const pagesMarkup = pagesNodes.map((page) => page.outerHTML).join('');
 
-    printWindow.document.open();
-    printWindow.document.write(`
+    const printFrame = document.createElement('iframe');
+    printFrame.style.position = 'fixed';
+    printFrame.style.right = '0';
+    printFrame.style.bottom = '0';
+    printFrame.style.width = '0';
+    printFrame.style.height = '0';
+    printFrame.style.border = '0';
+    printFrame.setAttribute('aria-hidden', 'true');
+    document.body.appendChild(printFrame);
+
+    const printDoc = printFrame.contentDocument;
+    if (!printDoc) {
+      printFrame.remove();
+      return;
+    }
+
+    printDoc.open();
+    printDoc.write(`
       <!doctype html>
       <html>
         <head>
@@ -1426,12 +1436,30 @@ const CVCreator: React.FC<CVCreatorProps> = ({ initialCv }) => {
         </body>
       </html>
     `);
-    printWindow.document.close();
-    printWindow.focus();
-    setTimeout(() => {
+    printDoc.close();
+
+    const cleanup = () => {
+      if (printFrame.parentNode) {
+        printFrame.parentNode.removeChild(printFrame);
+      }
+    };
+
+    const handlePrint = () => {
+      const printWindow = printFrame.contentWindow;
+      if (!printWindow) {
+        cleanup();
+        return;
+      }
+      printWindow.focus();
       printWindow.print();
-      printWindow.close();
-    }, 300);
+      setTimeout(cleanup, 1000);
+    };
+
+    if (printDoc.readyState === 'complete') {
+      handlePrint();
+    } else {
+      printFrame.onload = handlePrint;
+    }
   };
 
   // Section visibility helper (must match preview rendering conditions)
