@@ -12,6 +12,7 @@ import {
 } from '@/lib/types/marketAnalysis';
 import { api } from '@/lib/api';
 import { ArrowDown, ArrowRight, ArrowUp, Loader2 } from 'lucide-react';
+import Link from 'next/link';
 import {
   Area,
   AreaChart,
@@ -28,6 +29,16 @@ import {
   YAxis,
 } from 'recharts';
 import { cn } from '@/lib/utils';
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from '../ui/alert-dialog';
 import { Button } from '../ui/button';
 import { Separator } from '../ui/separator';
 import Image from 'next/image';
@@ -42,10 +53,12 @@ import {
   market_styl_pracy,
   market_wejscie,
   market_wynagrodzenie,
+  star_generate,
 } from '@/app/constants';
 import CountUp from '@/components/CountUp';
 import { toast } from 'sonner';
 import { useRouter } from 'next/navigation';
+import { useTokenBalanceContext } from '@/lib/contexts/TokenBalanceContext';
 
 const numberFormatter = new Intl.NumberFormat('pl-PL');
 
@@ -497,10 +510,18 @@ export default function DetailedMarketAnalysis() {
   const [isLoading, setIsLoading] = useState(false);
   const [isGenerating, setIsGenerating] = useState(false);
   const [isDownloading, setIsDownloading] = useState(false);
+  const [isConfirmDialogOpen, setIsConfirmDialogOpen] = useState(false);
   const [requiresCareerPaths, setRequiresCareerPaths] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const reportRef = useRef<HTMLDivElement>(null);
   const pdfReportRef = useRef<HTMLDivElement>(null);
+  const {
+    tokenBalance,
+    isLoading: isBalanceLoading,
+    hasActiveSubscription,
+    refresh,
+  } = useTokenBalanceContext();
+  const generatePricePerUse = 50;
 
   const maxSalaryValue = useMemo(() => {
     if (!analysis?.industryStatistics?.length) return 0;
@@ -690,7 +711,7 @@ export default function DetailedMarketAnalysis() {
             </div>
             <div className="flex w-full flex-col items-center justify-center gap-3 md:w-1/3">
               <Button
-                onClick={generateFreshAnalysis}
+                onClick={() => setIsConfirmDialogOpen(true)}
                 className="group relative z-20 mt-4 h-12 w-full rounded-[7px] border-r-[#F3F3F3] border-b-[#F3F3F3] bg-[#F3F3F3] font-bold text-[#191A23] hover:-translate-y-2 hover:border-r-3 hover:border-b-3 md:mt-2 md:w-full"
                 variant="default"
                 disabled={isGenerating || isLoading}
@@ -1076,6 +1097,59 @@ export default function DetailedMarketAnalysis() {
           })}
         </div>
       )}
+      <AlertDialog open={isConfirmDialogOpen} onOpenChange={setIsConfirmDialogOpen}>
+        <AlertDialogContent className="font-grotesk font-korbin mx-auto max-w-sm">
+          <AlertDialogHeader>
+            <AlertDialogTitle className="text-center text-xl font-bold">
+              Wygenerować nową analizę rynku?
+            </AlertDialogTitle>
+            <AlertDialogDescription className="text-foreground text-center">
+              {!hasActiveSubscription ? (
+                <>
+                  Zostanie pobrane{' '}
+                  <b className="text-[#915EFF]">{generatePricePerUse} tokenów</b> z Twojego konta.
+                </>
+              ) : (
+                <p className="mx-auto max-w-xs">
+                  Jesteś na aktywnej subskrypcji, więc ta akcja nie wykorzysta żadnych tokenów.
+                </p>
+              )}
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+
+          <AlertDialogFooter className="mt-8 flex flex-row justify-center gap-4 sm:justify-center">
+            <AlertDialogCancel className="border-muted-foreground/20 w-[130px]">
+              Anuluj
+            </AlertDialogCancel>
+
+            {!isBalanceLoading &&
+            !hasActiveSubscription &&
+            typeof tokenBalance === 'number' &&
+            tokenBalance < generatePricePerUse ? (
+              <Link href="/pricing">
+                <AlertDialogAction
+                  className="group bg-[#915EFF] text-white hover:bg-[#7b4ee0]"
+                  onClick={() => setIsConfirmDialogOpen(false)}
+                >
+                  Zdobądź tokeny
+                  <ArrowRight className="scale-90 transition-all ease-in-out group-hover:translate-x-2" />
+                </AlertDialogAction>
+              </Link>
+            ) : (
+              <AlertDialogAction
+                onClick={async () => {
+                  await generateFreshAnalysis();
+                  refresh();
+                }}
+                className="bg-[#915EFF] text-white hover:bg-[#7b4ee0] border "
+              >
+                Generuj
+                <Image src={star_generate} alt="star" width={16} height={16} />
+              </AlertDialogAction>
+            )}
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
   );
 }

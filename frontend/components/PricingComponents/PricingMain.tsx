@@ -36,9 +36,9 @@ const pricingPlans = [
   {
     name: 'Osobiste',
     description: 'Perfect for getting started with following your career.',
-    price: 9,
+    price: 45,
     tokens: 500 as number | string,
-    priceId: 'price_1S8kOELs2ndSVWb2t6bhwwwC',
+    priceId: 'price_1ShEeILs2ndSVWb2ImxHTYQ3',
     type: 'tokens' as PlanType,
     features: [
       '500 tokens included',
@@ -53,7 +53,7 @@ const pricingPlans = [
     description: 'The best choice for scaling your projects.',
     price: 32,
     tokens: 5000 as number | string,
-    priceId: 'price_1S8kP9Ls2ndSVWb27z6i7v5v',
+    priceId: 'price_1ShEeCLs2ndSVWb2MNv3RTBY',
     type: 'tokens' as PlanType,
     features: [
       'Unlimited access',
@@ -68,7 +68,7 @@ const pricingPlans = [
     description: 'Unlimited tokens and premium experience for personal use.',
     price: 48,
     tokens: 'Unlimited' as number | string,
-    priceId: 'price_1S9q33Ls2ndSVWb2KeB4Y3AD',
+    priceId: 'price_1ShEeGLs2ndSVWb29ieLO1TM',
     type: 'individual' as PlanType,
     features: [
       'CV review by career expert',
