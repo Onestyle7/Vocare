@@ -5,6 +5,7 @@ import { ThemeProvider } from '@/components/ui/theme-provider';
 import { Toaster } from '@/components/ui/sonner';
 import { TokenBalanceProvider } from '@/lib/contexts/TokenBalanceContext';
 // import SmoothScrollProvider from '@/components/SupportComponents/SmoothScrollProvider';
+import { GoogleAnalytics } from '@next/third-parties/google';
 
 const sizmoPro = localFont({
   src: [
@@ -85,6 +86,8 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const gaId = process.env.NEXT_PUBLIC_GA_ID;
+
   return (
     <html lang="en" suppressHydrationWarning className="">
       <body
@@ -97,6 +100,7 @@ export default function RootLayout({
           </ThemeProvider>
         </TokenBalanceProvider>
       </body>
+      {gaId ? <GoogleAnalytics gaId={gaId} /> : null}
     </html>
   );
 }
