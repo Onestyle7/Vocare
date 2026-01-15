@@ -509,7 +509,6 @@ export const platnosci_i_zawarcie_umowy = {
     'Umowa zostaje zawarta z chwilą skutecznego dokonania płatności przez Użytkownika za wybrany pakiet lub usługę.',
     'Płatności obsługiwane są przez zewnętrznego operatora płatności Stripe.',
     'Dostęp do Usługi Cyfrowej (np. wygenerowanie raportu) następuje niezwłocznie po zaksięgowaniu wpłaty, nie później niż w ciągu 24 godzin.',
-    'Na życzenie Użytkownika Usługodawca wystawia rachunek (fakturę bez VAT). Chęć otrzymania rachunku należy zgłosić mailowo na adres podany w § 1.',
   ],
 };
 
