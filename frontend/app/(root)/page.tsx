@@ -11,7 +11,7 @@ import MobileFeatureImprovements from '@/components/SectionsComponents/MobileFea
 const page = () => {
   return (
     <>
-      <main className="mx-auto max-w-7xl cursor-none">
+      <main className="mx-auto max-w-7xl">
         <Header />
         <HeroTweak />
         <AboutCards />

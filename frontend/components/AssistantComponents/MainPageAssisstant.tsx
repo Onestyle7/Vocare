@@ -59,6 +59,8 @@ export default function AssistantPage() {
   const [showFixedButton, setShowFixedButton] = useState(false);
   const lastScrollY = useRef(0);
 
+  const generatePricePerUse = 60; 
+
   useEffect(() => {
     const handleScroll = () => {
       const currentScrollY = window.scrollY;
@@ -165,7 +167,7 @@ export default function AssistantPage() {
         // Najpierw spróbuj pobrać ostatnie rekomendacje
         try {
           const lastRecommendationResponse = await axios.get<AiCareerResponse>(
-            'https://vocare-production-e568.up.railway.app/api/Ai/last-recommendation',
+            'https://vocare-staging-1f69.up.railway.app/api/Ai/last-recommendation',
 
             {
               headers: {
@@ -197,7 +199,7 @@ export default function AssistantPage() {
 
         // Jeśli brak ostatnich rekomendacji, wygeneruj nowe
         const response = await axios.get<AiCareerResponse>(
-          'https://vocare-production-e568.up.railway.app/api/Ai/recommendations',
+          'https://vocare-staging-1f69.up.railway.app/api/Ai/recommendations',
           {
             headers: {
               Authorization: `Bearer ${token}`,
@@ -249,7 +251,7 @@ export default function AssistantPage() {
     }
     try {
       const response = await axios.get<AiCareerResponse>(
-        'https://vocare-production-e568.up.railway.app/api/Ai/recommendations',
+        'https://vocare-staging-1f69.up.railway.app/api/Ai/recommendations',
         {
           headers: {
             Authorization: `Bearer ${token}`,
@@ -432,16 +434,16 @@ export default function AssistantPage() {
             <AlertDialogContent className="font-grotesk font-korbin mx-auto max-w-sm">
               <AlertDialogHeader>
                 <AlertDialogTitle className="text-center text-xl font-bold">
-                  Generate new recommendation?
+                  Wygenerować nowe rekomendacje?
                 </AlertDialogTitle>
                 <AlertDialogDescription className="text-foreground text-center">
                   {!hasActiveSubscription ? (
                     <>
-                      This will take <b className="text-[#915EFF]">50 credits</b> from your account.
+                      Zostanie pobrane <b className="text-[#915EFF]">{generatePricePerUse} tokenów</b> z Twojego konta.
                     </>
                   ) : (
                     <p className="mx-auto max-w-xs">
-                      You are on an active subscription, so this action will not use any tokens.
+                      Jesteś na aktywnej subskrypcji, więc ta akcja nie wykorzysta żadnych tokenów.
                     </p>
                   )}
                 </AlertDialogDescription>
@@ -449,19 +451,19 @@ export default function AssistantPage() {
 
               <AlertDialogFooter className="mt-8 flex flex-row justify-center gap-4 sm:justify-center">
                 <AlertDialogCancel className="border-muted-foreground/20 w-[130px]">
-                  Cancel
+                  Anuluj
                 </AlertDialogCancel>
 
                 {!isBalanceLoading &&
                 !hasActiveSubscription &&
                 typeof tokenBalance === 'number' &&
-                tokenBalance < 5 ? (
+                tokenBalance < generatePricePerUse ? (
                   <Link href="/pricing">
                     <AlertDialogAction
                       className="group bg-[#915EFF] text-white hover:bg-[#7b4ee0]"
                       onClick={() => setIsConfirmDialogOpen(false)}
                     >
-                      Get tokens
+                      Zdobądź tokeny
                       <ArrowRight className="scale-90 transition-all ease-in-out group-hover:translate-x-2" />
                     </AlertDialogAction>
                   </Link>
@@ -473,7 +475,7 @@ export default function AssistantPage() {
                     }}
                     className="bg-[#915EFF] text-white hover:bg-[#7b4ee0]"
                   >
-                    Generate
+                    Generuj
                     <Image src={star_generate} alt="star" width={16} height={16} />
                   </AlertDialogAction>
                 )}

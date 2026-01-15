@@ -6,7 +6,7 @@ import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { UserProfile } from '@/lib/types/profile';
 import { toast } from 'sonner';
-import { ArrowDown, ArrowLeft, ArrowRight, ArrowUp, LogOut } from 'lucide-react';
+import { ArrowDown, ArrowLeft, ArrowRight, ArrowUp, LogOut, Settings } from 'lucide-react';
 import { logoutUser } from '@/lib/auth';
 import { formatDate } from '../SupportComponents/formatSimpleDate';
 import ProfileForm from './ProfileForm';
@@ -18,6 +18,7 @@ import { Risk, riskLabels } from '@/lib/enums/risk';
 import { PersonalityType, personalityTypeLabels } from '@/lib/enums/personalityTypes';
 import Image from 'next/image';
 import { spinner_terminal } from '@/app/constants';
+import UploadCvButton from './UploadCvButton';
 
 const getPersonalityLabel = (value: PersonalityType | string | undefined): string => {
   if (value === undefined || value === null || value === '') {
@@ -129,6 +130,9 @@ export default function ProfileDetails() {
 
   const handleEdit = () => setIsEditing(true);
   const handleCancelEdit = () => setIsEditing(false);
+  const handleProfileImport = (updatedProfile: UserProfile) => {
+    setProfile(updatedProfile);
+  };
 
   const isProfileEmpty = !profile;
 
@@ -155,34 +159,34 @@ export default function ProfileDetails() {
       <div className="mt-4 space-y-4">
         <div className="flex flex-row items-center">
           <h2 className="text-2xl font-medium text-gray-700 dark:text-gray-200">
-            Personal Information
+            Profil osobisty
           </h2>
           <div className="ml-2 h-2 w-2 rounded-full bg-[#915EFF]" />
         </div>
         <div className="grid grid-cols-1 gap-4">
           <div className="flex justify-between rounded-lg">
-            <span className="font-medium text-gray-600 dark:text-gray-200">Country:</span>
+            <span className="font-medium text-gray-600 dark:text-gray-200">Kraj:</span>
             <span className="ml-2">{profile?.country || '—'}</span>
           </div>
           <Separator />
           <div className="flex justify-between rounded-lg">
-            <span className="font-medium text-gray-600 dark:text-gray-200">Address:</span>
+            <span className="font-medium text-gray-600 dark:text-gray-200">Adres:</span>
             <span className="ml-2">{profile?.address || '—'}</span>
           </div>
           <Separator />
           <div className="flex justify-between rounded-lg">
-            <span className="font-medium text-gray-600 dark:text-gray-200">Phone:</span>
+            <span className="font-medium text-gray-600 dark:text-gray-200">Telefon:</span>
             <span className="ml-2">{profile?.phoneNumber || '—'}</span>
           </div>
           <Separator />
           <div className="flex justify-between rounded-lg">
-            <span className="font-medium text-gray-600 dark:text-gray-200">Personality Type:</span>
+            <span className="font-medium text-gray-600 dark:text-gray-200">Typ osobowości:</span>
             <span className="ml-2">{getPersonalityLabel(profile?.personalityType)}</span>
           </div>
           <Separator />
           <div className="flex flex-col space-y-2">
             <span className="flex items-center text-2xl font-medium text-gray-700 dark:text-gray-200">
-              Education <div className="ml-2 h-2 w-2 rounded-full bg-[#915EFF]" />
+              Wykształcenie <div className="ml-2 h-2 w-2 rounded-full bg-[#915EFF]" />
             </span>
 
             {profile?.education?.length ? (
@@ -190,29 +194,29 @@ export default function ProfileDetails() {
                 <div key={index} className="space-y-4 rounded-lg p-2">
                   <div className="flex justify-between">
                     <span className="font-medium text-gray-600 dark:text-gray-200">
-                      Institution:
+                      Instytucja:
                     </span>
                     <span className="ml-2 text-right">{edu.institution}</span>
                   </div>
                   <Separator />
 
                   <div className="flex justify-between">
-                    <span className="font-medium text-gray-600 dark:text-gray-200">Degree:</span>
+                    <span className="font-medium text-gray-600 dark:text-gray-200">Stopień:</span>
                     <span className="ml-2 text-right">{edu.degree}</span>
                   </div>
                   <Separator />
 
                   <div className="flex justify-between">
-                    <span className="font-medium text-gray-600 dark:text-gray-200">Field:</span>
+                    <span className="font-medium text-gray-600 dark:text-gray-200">Kierunek:</span>
                     <span className="ml-2 text-right">{edu.field}</span>
                   </div>
                   <Separator />
 
                   <div className="flex justify-between">
-                    <span className="font-medium text-gray-600 dark:text-gray-200">Duration:</span>
+                    <span className="font-medium text-gray-600 dark:text-gray-200">Czas trwania:</span>
                     <span className="ml-2 w-fit rounded-md border px-2 py-0.5 text-right">
                       {formatDate(edu.startDate)} –{' '}
-                      {edu.endDate ? formatDate(edu.endDate) : 'Present'}
+                      {edu.endDate ? formatDate(edu.endDate) : 'Obecnie'}
                     </span>
                   </div>
                   {profile.education && index !== profile.education.length - 1 && (
@@ -221,7 +225,7 @@ export default function ProfileDetails() {
                 </div>
               ))
             ) : (
-              <p className="text-gray-500 italic">No education data</p>
+              <p className="text-gray-500 italic">Brak danych o wykształceniu</p>
             )}
           </div>
         </div>
@@ -229,7 +233,7 @@ export default function ProfileDetails() {
 
       <div className="space-y-2">
         <div className="flex flex-row items-center">
-          <h2 className="text-2xl font-medium text-gray-700 dark:text-gray-200">Languages</h2>
+          <h2 className="text-2xl font-medium text-gray-700 dark:text-gray-200">Języki</h2>
           <div className="ml-2 h-2 w-2 rounded-full bg-[#915EFF]" />
         </div>
         <div className="flex flex-wrap gap-2">
@@ -243,14 +247,14 @@ export default function ProfileDetails() {
               </span>
             ))
           ) : (
-            <p className="text-gray-500 italic">No languages</p>
+            <p className="text-gray-500 italic">Brak danych o językach</p>
           )}
         </div>
       </div>
 
       <div className="space-y-2">
         <div className="flex flex-row items-center">
-          <h2 className="text-2xl font-medium text-gray-700 dark:text-gray-200">Certificates</h2>
+          <h2 className="text-2xl font-medium text-gray-700 dark:text-gray-200">Certyfikaty</h2>
           <div className="ml-2 h-2 w-2 rounded-full bg-[#915EFF]" />
         </div>
         <div className="flex flex-wrap gap-2">
@@ -264,7 +268,7 @@ export default function ProfileDetails() {
               </span>
             ))
           ) : (
-            <p className="text-gray-500 italic">No certificates</p>
+            <p className="text-gray-500 italic">Brak certyfikatów</p>
           )}
         </div>
       </div>
@@ -275,7 +279,7 @@ export default function ProfileDetails() {
     <div className="space-y-8">
       <div className="mt-4 space-y-2">
         <h2 className="flex items-center text-2xl font-medium text-gray-700 dark:text-gray-200">
-          Skills
+          Umiejętności
           <div className="ml-2 h-2 w-2 rounded-lg bg-[#915EFF]" />
         </h2>
         <div className="flex flex-wrap gap-2">
@@ -289,14 +293,14 @@ export default function ProfileDetails() {
               </span>
             ))
           ) : (
-            <p className="text-gray-500 italic">No skills</p>
+            <p className="text-gray-500 italic">Brak umiejętności</p>
           )}
         </div>
       </div>
 
       <div className="space-y-2">
         <h2 className="flex items-center text-2xl font-medium text-gray-700 dark:text-gray-200">
-          Soft Skills
+          Umiejętności miękkie  
           <div className="ml-2 h-2 w-2 rounded-full bg-[#915EFF]" />
         </h2>
         <div className="flex flex-wrap gap-2">
@@ -310,41 +314,42 @@ export default function ProfileDetails() {
               </span>
             ))
           ) : (
-            <p className="text-gray-500 italic">No soft skills</p>
+            <p className="text-gray-500 italic">Brak umiejętności miękkich</p>
           )}
         </div>
       </div>
 
       <div className="flex flex-col space-y-2">
         <span className="flex items-center text-2xl font-medium text-gray-700 dark:text-gray-200">
-          Work Experience <div className="ml-2 h-2 w-2 rounded-full bg-[#915EFF]" />
+          Doświadczenie zawodowe
+          <div className="ml-2 h-2 w-2 rounded-full bg-[#915EFF]" />
         </span>
 
         {profile?.workExperience?.length ? (
           profile.workExperience?.map((exp, index) => (
             <div key={index} className="space-y-4 rounded-lg p-2">
               <div className="flex justify-between">
-                <span className="font-medium text-gray-600 dark:text-gray-200">Position:</span>
+                <span className="font-medium text-gray-600 dark:text-gray-200">Stanowisko:</span>
                 <span className="ml-2 text-right text-[#915EFF]">{exp.position}</span>
               </div>
               <Separator />
 
               <div className="flex justify-between">
-                <span className="font-medium text-gray-600 dark:text-gray-200">Company:</span>
+                <span className="font-medium text-gray-600 dark:text-gray-200">Firma:</span>
                 <span className="ml-2 text-right">{exp.company}</span>
               </div>
               <Separator />
 
               <div className="flex items-start justify-between gap-4">
-                <span className="font-medium text-gray-600 dark:text-gray-200">Description:</span>
+                <span className="font-medium text-gray-600 dark:text-gray-200">Opis:</span>
                 <span className="ml-2 max-w-md text-left text-sm">{exp.description || '—'}</span>
               </div>
               <Separator />
 
               <div className="flex justify-between">
-                <span className="font-medium text-gray-600 dark:text-gray-200">Duration:</span>
+                <span className="font-medium text-gray-600 dark:text-gray-200">Czas trwania:</span>
                 <span className="ml-2 w-fit rounded-md border px-2 py-0.5 text-right">
-                  {formatDate(exp.startDate)} – {exp.endDate ? formatDate(exp.endDate) : 'Present'}
+                  {formatDate(exp.startDate)} – {exp.endDate ? formatDate(exp.endDate) : 'Obecnie'}
                 </span>
               </div>
               {profile.workExperience && index !== profile.workExperience.length - 1 && (
@@ -353,7 +358,7 @@ export default function ProfileDetails() {
             </div>
           ))
         ) : (
-          <p className="text-gray-500 italic">No work experience</p>
+          <p className="text-gray-500 italic">Brak doświadczenia zawodowego</p>
         )}
       </div>
     </div>
@@ -363,18 +368,18 @@ export default function ProfileDetails() {
     <div className="space-y-8">
       <div className="mt-4 space-y-2">
         <h2 className="flex items-center text-2xl font-medium text-gray-700 dark:text-gray-200">
-          About Me
+          O mnie
           <div className="ml-2 h-2 w-2 rounded-full bg-[#915EFF]" />
         </h2>
         <div className="rounded-lg bg-gray-50/60 p-4 dark:bg-black/20">
-          <p>{profile?.aboutMe || 'No description yet.'}</p>
+          <p>{profile?.aboutMe || 'Brak opisu.'}</p>
         </div>
         <h2 className="flex items-center text-2xl font-medium text-gray-700 dark:text-gray-200">
-          Addidtional Informations
+          Dodatkowe informacje
           <div className="ml-2 h-2 w-2 rounded-full bg-[#915EFF]" />
         </h2>
         <div className="rounded-lg bg-gray-50/60 p-4 dark:bg-black/20">
-          <p>{profile?.additionalInformation || 'No additional information yet.'}</p>
+          <p>{profile?.additionalInformation || 'Brak dodatkowych informacji.'}</p>
         </div>
       </div>
     </div>
@@ -384,31 +389,31 @@ export default function ProfileDetails() {
     <div className="space-y-8">
       <div className="mt-4 space-y-2">
         <h2 className="flex items-center text-2xl font-medium text-gray-700 dark:text-gray-200">
-          Financial Survey
+          Ankieta finansowa
           <div className="ml-2 h-2 w-2 rounded-full bg-[#915EFF]" />
         </h2>
         <div className="grid grid-cols-1 gap-4">
           <div className="flex justify-between rounded-lg">
-            <span className="font-medium text-gray-600 dark:text-gray-200">Current Salary:</span>
+            <span className="font-medium text-gray-600 dark:text-gray-200">Aktualne wynagrodzenie:</span>
             <span className="ml-2">{profile?.financialSurvey?.currentSalary ?? '—'}</span>
           </div>
           <Separator />
           <div className="flex justify-between rounded-lg">
-            <span className="font-medium text-gray-600 dark:text-gray-200">Desired Salary:</span>
+            <span className="font-medium text-gray-600 dark:text-gray-200">Oczekiwane wynagrodzenie:</span>
             <span className="ml-2">{profile?.financialSurvey?.desiredSalary ?? '—'}</span>
           </div>
           <Separator />
           <div className="flex items-center justify-between rounded-lg">
-            <span className="font-medium text-gray-600 dark:text-gray-200">Has Loans:</span>
+            <span className="font-medium text-gray-600 dark:text-gray-200">Zobowiązania finansowe (kredyt):</span>
             <span className="ml-2 rounded-lg border px-4 py-2 text-gray-600 dark:text-gray-200">
-              {profile?.financialSurvey?.hasLoans ? 'Yes' : 'No'}
+              {profile?.financialSurvey?.hasLoans ? 'Tak' : 'Nie'}
             </span>
           </div>
           {profile?.financialSurvey?.hasLoans && (
             <>
               <Separator />
               <div className="flex justify-between rounded-lg">
-                <span className="font-medium text-gray-600 dark:text-gray-200">Loan Details:</span>
+                <span className="font-medium text-gray-600 dark:text-gray-200">Szczegóły kredytu:</span>
                 <span className="ml-2">{profile?.financialSurvey?.loanDetails || '—'}</span>
               </div>
             </>
@@ -416,24 +421,24 @@ export default function ProfileDetails() {
           <Separator />
           <div className="flex items-center justify-between rounded-lg">
             <span className="font-medium text-gray-600 dark:text-gray-200">
-              Willing To Relocate:
+              Gotowość do relokacji:
             </span>
             <span className="ml-2 rounded-lg border px-4 py-2 text-gray-600 dark:text-gray-200">
-              {profile?.financialSurvey?.willingToRelocate ? 'Yes' : 'No'}
+              {profile?.financialSurvey?.willingToRelocate ? 'Tak' : 'Nie'}
             </span>
           </div>
           <Separator />
           <div className="flex items-center justify-between rounded-lg">
             <span className="font-medium text-gray-600 dark:text-gray-200">
-              Willing To Rebrand:
+              Gotowość do zmiany rodzaju zawodu:
             </span>
             <span className="ml-2 rounded-lg border px-4 py-2 text-gray-600 dark:text-gray-200">
-              {profile?.willingToRebrand ? 'Yes' : 'No'}
+              {profile?.willingToRebrand ? 'Tak' : 'Nie'}
             </span>
           </div>
           <Separator />
           <div className="flex justify-between rounded-lg">
-            <span className="font-medium text-gray-600 dark:text-gray-200">Risk Appetite:</span>
+            <span className="font-medium text-gray-600 dark:text-gray-200">Skłonność do ryzyka:</span>
             <span className="ml-2">{getRiskLabel(profile?.financialSurvey?.riskAppetite)}</span>
           </div>
         </div>
@@ -467,23 +472,68 @@ export default function ProfileDetails() {
 
             <div className="bg-background dark:bg-background relative z-20 w-full rounded-xl border p-4 xl:h-3/4 xl:w-1/2">
               <div className="flex h-full flex-col">
-                <div className="flex flex-row items-start justify-between border-b">
-                  <h1 className="mb-4 text-2xl font-bold text-gray-800 xl:text-3xl dark:text-gray-200">
-                    {isProfileEmpty ? 'Your Profile' : `${profile.firstName} ${profile.lastName}`}
-                  </h1>
-                  <div className="flex gap-2">
-                    <Button asChild variant="outline" className="rounded-md">
-                      <Link href="/payments">Subscription</Link>
-                    </Button>
-                    <Button
-                      onClick={handleEdit}
-                      className="rounded-md bg-[#915EFF] hover:bg-[#b594fd]"
-                    >
-                      Edit
-                    </Button>
-                    <Button onClick={handleLogout} variant="outline" className="rounded-md">
-                      <LogOut />
-                    </Button>
+                <div className="flex flex-col gap-4 border-b pb-4 sm:flex-row sm:items-start sm:justify-between">
+                  <div className="flex items-start justify-between gap-3">
+                    <h1 className="text-2xl font-bold text-gray-800 xl:text-3xl dark:text-gray-200">
+                      {isProfileEmpty ? 'Your Profile' : `${profile.firstName} ${profile.lastName}`}
+                    </h1>
+                    <div className="flex items-center gap-2 sm:hidden">
+                      <Button
+                        asChild
+                        variant="outline"
+                        size="lg"
+                        className="h-10 w-10 justify-center rounded-[7px] p-0"
+                        aria-label="Subskrypcja"
+                      >
+                        <Link href="/payments">
+                          <Settings className="h-4 w-4" />
+                        </Link>
+                      </Button>
+                      <Button
+                        onClick={handleLogout}
+                        variant="outline"
+                        size="lg"
+                        className="h-10 w-10 justify-center rounded-[7px] p-0"
+                        aria-label="Wyloguj"
+                      >
+                        <LogOut className="h-4 w-4" />
+                      </Button>
+                    </div>
+                  </div>
+                  <div className="flex w-full flex-col gap-3 sm:w-auto sm:flex-row sm:items-center sm:justify-end sm:gap-2">
+                    <div className="grid w-full grid-cols-1 gap-2 sm:flex sm:w-auto sm:flex-row sm:flex-nowrap sm:justify-end">
+                      <UploadCvButton
+                        onUploaded={handleProfileImport}
+                        className="order-1 w-full sm:order-1 sm:w-auto"
+                      />
+                      <Button
+                        onClick={handleEdit}
+                        size="lg"
+                        className="order-2 w-full justify-center rounded-lg bg-[#915EFF] text-white shadow-[0_12px_30px_rgba(145,94,255,0.35)] transition-shadow hover:bg-[#a779ff] hover:shadow-[0_16px_38px_rgba(145,94,255,0.4)] sm:order-2 sm:w-auto sm:px-6"
+                      >
+                        Edytuj
+                      </Button>
+                      <Button
+                        asChild
+                        variant="outline"
+                        size="lg"
+                        className="order-3 hidden h-10 w-10 justify-center rounded-full p-0 sm:order-3 sm:inline-flex sm:w-10 sm:rounded-[7px]"
+                        aria-label="Subskrypcja"
+                      >
+                        <Link href="/payments">
+                          <Settings className="h-4 w-4" />
+                        </Link>
+                      </Button>
+                      <Button
+                        onClick={handleLogout}
+                        variant="outline"
+                        size="lg"
+                        className="order-4 hidden h-10 w-10 justify-center rounded-full p-0 sm:order-4 sm:inline-flex sm:w-10 sm:rounded-[7px]"
+                        aria-label="Wyloguj"
+                      >
+                        <LogOut className="h-4 w-4" />
+                      </Button>
+                    </div>
                   </div>
                 </div>
 

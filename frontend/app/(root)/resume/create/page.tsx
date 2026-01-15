@@ -1,14 +1,18 @@
 'use client';
 
 import { useEffect, useState, useRef } from 'react';
+import { useRouter } from 'next/navigation';
 import CVCreator from '../../../../components/ResumeComponents/ResumeComponent';
 import { createCv } from '@/lib/api/cv';
 import { CvDetailsDto } from '@/lib/types/cv';
+import { useIsMobile } from '@/lib/hooks/useIsMobile';
 
 const CreateResumePage = () => {
+  const router = useRouter();
   const [cv, setCv] = useState<CvDetailsDto | null>(null);
   const [loading, setLoading] = useState(true);
   const createdRef = useRef(false);
+  const isMobile = useIsMobile();
 
   useEffect(() => {
     const resetLocalStorage = () => {
@@ -26,6 +30,12 @@ const CreateResumePage = () => {
       keys.forEach((k) => localStorage.removeItem(k));
     };
 
+    if (isMobile) {
+      setLoading(false);
+      router.replace('/resume');
+      return;
+    }
+
     if (createdRef.current) return;
     createdRef.current = true;
 
@@ -42,7 +52,7 @@ const CreateResumePage = () => {
     };
 
     create();
-  }, []);
+  }, [isMobile, router]);
 
   return (
     <div className="font-poppins">

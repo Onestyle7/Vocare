@@ -13,7 +13,7 @@ import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { SplitText } from 'gsap/SplitText';
 import gsap from 'gsap';
 import Section from '../SupportComponents/Section';
-import CustomCursor from '../SupportComponents/CustomCursor';
+// import CustomCursor from '../SupportComponents/CustomCursor';
 import Copy from '../SupportComponents/Copy';
 import { Button } from '../ui/button';
 
@@ -48,13 +48,13 @@ const HeroTweak = () => {
 
   return (
     <Section
-      className="relative -mt-[5.25rem] cursor-none pt-[7.5rem]"
+      className="relative -mt-[5.25rem] pt-[7.5rem]"
       crosses
       crossesOffset="lg:translate-y-[7.5rem]"
       customPaddings
       id="hero"
     >
-      <CustomCursor />
+      {/* <CustomCursor /> */}
       <div className="main-font-color relative z-30 flex h-[390px] flex-row px-[40px] lg:w-full">
         <div className="inset-0 flex w-full flex-col items-center justify-center md:flex-row md:justify-start md:pl-[40px] lg:w-3/5 lg:border-t lg:border-b">
           <div className="font-korbin flex w-full flex-col items-center justify-center max-md:mt-10 max-md:mb-8 lg:w-1/2 lg:items-start">

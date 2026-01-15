@@ -11,7 +11,6 @@ import {
   GraduationCap,
   Award,
   Languages,
-  Home,
   Trash2,
   ZoomIn,
   ZoomOut,
@@ -28,13 +27,12 @@ import {
   Bold,
   Italic,
   Underline,
+  Home,
 } from 'lucide-react';
 import { createCv, deleteCv, updateCv } from '@/lib/api/cv';
 import { CvDto, CvDetailsDto, UpdateCvDto } from '@/lib/types/cv';
 import { DatePickerWithCurrent } from './DatePickerWithCurrent';
 import { HoverCard, HoverCardContent, HoverCardTrigger } from '@/components/ui/hover-card';
-import html2canvas from 'html2canvas-pro';
-import jsPDF from 'jspdf';
 import {
   Select,
   SelectContent,
@@ -43,6 +41,7 @@ import {
   SelectValue,
 } from '@/components/ui/select';
 import { useAutosave } from '@/lib/hooks/useAutosave';
+import { useIsMobile } from '@/lib/hooks/useIsMobile';
 
 interface PersonalInfo {
   firstName: string;
@@ -229,6 +228,7 @@ const CVCreator: React.FC<CVCreatorProps> = ({ initialCv }) => {
   const [isPremium] = useState(false);
   const [cvId, setCvId] = useState<string | null>(initialCv?.id ?? null);
   const [resumeName] = useState<string>(initialCv?.name ?? 'New Resume');
+  const isMobile = useIsMobile();
 
   // Pagination (computed from measured pages)
   const [currentPage, setCurrentPage] = useState(1);
@@ -320,7 +320,13 @@ const CVCreator: React.FC<CVCreatorProps> = ({ initialCv }) => {
   const dragIntentSectionRef = useRef<string | null>(null);
 
   // CV Preview controls
-  const [cvScale, setCvScale] = useState(0.8);
+  const getDefaultScale = () => {
+    if (typeof window !== 'undefined') {
+      return window.matchMedia('(max-width: 1024px)').matches ? 0.5 : 0.8;
+    }
+    return 0.8;
+  };
+  const [cvScale, setCvScale] = useState(getDefaultScale);
   const [cvPosition, setCvPosition] = useState({ x: 0, y: 0 });
   const [isDragging, setIsDragging] = useState(false);
   const [dragStart, setDragStart] = useState({ x: 0, y: 0 });
@@ -724,7 +730,7 @@ const CVCreator: React.FC<CVCreatorProps> = ({ initialCv }) => {
   };
 
   const resetView = () => {
-    setCvScale(0.8);
+    setCvScale(getDefaultScale());
     setCvPosition({ x: 0, y: 0 });
   };
 
@@ -1368,59 +1374,94 @@ const CVCreator: React.FC<CVCreatorProps> = ({ initialCv }) => {
   }, [initialCv, populateFromCv]);
 
   const downloadPDF = async () => {
-    const container = pagesViewportRef.current;
-    const zoomWrapper = zoomWrapperRef.current;
-    if (!container || !zoomWrapper) return;
+  const container = pagesViewportRef.current;
+  if (!container) return;
 
-    const origTransform = zoomWrapper.style.transform;
-    // Temporarily disable transform for crisp rendering
-    zoomWrapper.style.transform = 'none';
-    // Temporarily remove shadows/borders from pages to avoid capture discrepancies
-    const pagesNodes = container.querySelectorAll<HTMLElement>('.cv-page');
-    const restoreStyles: Array<{ el: HTMLElement; boxShadow: string; border: string }> = [];
-    pagesNodes.forEach((el) => {
-      restoreStyles.push({
-        el,
-        boxShadow: el.style.boxShadow || '',
-        border: el.style.border || '',
-      });
-      el.style.boxShadow = 'none';
-      el.style.border = 'none';
-    });
-    await new Promise((r) => setTimeout(r, 50));
+  const pagesNodes = Array.from(container.querySelectorAll<HTMLElement>('.cv-page'));
+  if (pagesNodes.length === 0) return;
 
-    const pdf = new jsPDF('portrait', 'mm', 'a4');
-    const pdfW = pdf.internal.pageSize.getWidth();
-    const pdfH = pdf.internal.pageSize.getHeight();
-    const CANVAS_SCALE = 1.6; // balance between clarity and size (~1.6 ≈ 150dpi)
-    const JPEG_QUALITY = 0.92; // slightly higher quality for sharper text
-    for (let i = 0; i < pagesNodes.length; i++) {
-      const pageEl = pagesNodes[i];
-      const canvas = await html2canvas(pageEl, {
-        scale: CANVAS_SCALE,
-        useCORS: true,
-        allowTaint: true,
-        backgroundColor: '#ffffff',
-      });
-      const imgData = canvas.toDataURL('image/jpeg', JPEG_QUALITY);
-      if (i > 0) pdf.addPage();
-      pdf.addImage(imgData, 'JPEG', 0, 0, pdfW, pdfH, undefined, 'FAST');
+  const fileName = personalInfo.firstName && personalInfo.lastName
+    ? `${personalInfo.firstName}_${personalInfo.lastName}_CV`
+    : 'My_CV';
+
+  // 1. Zbieramy wszystkie style (linki i tagi style)
+  const styles = Array.from(document.querySelectorAll('style, link[rel="stylesheet"]'))
+    .map((node) => node.outerHTML)
+    .join('\n');
+
+  const baseHref = document.querySelector('base')?.href ?? window.location.origin;
+
+  // 2. CSS naprawczy tylko dla wydruku
+  const printStyles = `
+    @media print {
+      @page { size: A4; margin: 0; }
+      body { 
+        margin: 0 !important; 
+        background: #fff !important; 
+        -webkit-print-color-adjust: exact !important; 
+        print-color-adjust: exact !important; 
+      }
+      /* Usuwamy transformacje skali z podglądu, by kartka była 1:1 */
+      .cv-page { 
+        margin: 0 !important; 
+        box-shadow: none !important; 
+        border: none !important; 
+        transform: none !important; 
+        width: 210mm !important;
+        height: 297mm !important;
+        page-break-after: always !important;
+        break-after: page !important;
+        display: block !important;
+      }
+      /* Upewniamy się, że czcionka Poppins i kolory Tailwind działają */
+      * { font-family: 'Poppins', sans-serif !important; }
     }
+  `;
 
-    // Restore zoom transform
-    zoomWrapper.style.transform = origTransform;
-    // Restore styles
-    restoreStyles.forEach(({ el, boxShadow, border }) => {
-      el.style.boxShadow = boxShadow;
-      el.style.border = border;
-    });
+  const printFrame = document.createElement('iframe');
+  Object.assign(printFrame.style, {
+    position: 'fixed', right: '0', bottom: '0', width: '0', height: '0', border: '0'
+  });
+  document.body.appendChild(printFrame);
 
-    const fileName =
-      personalInfo.firstName && personalInfo.lastName
-        ? `${personalInfo.firstName}_${personalInfo.lastName}_CV.pdf`
-        : 'My_CV.pdf';
-    pdf.save(fileName);
+  const printDoc = printFrame.contentDocument;
+  if (!printDoc) return;
+
+  const pagesMarkup = pagesNodes.map((page) => page.outerHTML).join('');
+
+  printDoc.open();
+  printDoc.write(`
+    <!doctype html>
+    <html class="light"> <head>
+        <title>${fileName}</title>
+        <base href="${baseHref}" />
+        ${styles}
+        <style>${printStyles}</style>
+      </head>
+      <body class="bg-white">
+        ${pagesMarkup}
+      </body>
+    </html>
+  `);
+  printDoc.close();
+
+  // 3. Czekamy na załadowanie czcionek i stylów przed drukiem
+  printFrame.onload = () => {
+    // Dajemy przeglądarce 500ms na sparsowanie CSS v4
+    setTimeout(() => {
+      const win = printFrame.contentWindow;
+      if (!win) return;
+      
+      // Opcjonalnie: czekamy na załadowanie customowych fontów
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      (win as any).document.fonts.ready.then(() => {
+        win.focus();
+        win.print();
+        setTimeout(() => document.body.removeChild(printFrame), 1000);
+      });
+    }, 500);
   };
+};
 
   // Section visibility helper (must match preview rendering conditions)
   const isSectionVisible = React.useCallback(
@@ -3140,13 +3181,20 @@ const CVCreator: React.FC<CVCreatorProps> = ({ initialCv }) => {
   return (
     <div className="font-poppins flex h-screen flex-col overflow-hidden bg-gray-50 lg:flex-row lg:pt-6 dark:text-black">
       {/* Top Navigation for Mobile */}
-      <div className="mb-4 flex items-center justify-center bg-white py-4 shadow-lg lg:hidden">
+      <div className="mb-4 flex items-center justify-start bg-white px-2 py-3 shadow-lg lg:hidden">
         <button
-          onClick={() => router.push('/resume')}
-          className="cursor-pointer rounded-lg p-3 transition-colors hover:bg-gray-100"
-          title="Dashboard"
+          onClick={() => {
+            if (typeof window !== 'undefined' && window.history.length > 1) {
+              router.back();
+            } else {
+              router.push('/resume');
+            }
+          }}
+          className="flex cursor-pointer items-center gap-2 rounded-lg px-3 py-2 text-sm transition-colors hover:bg-gray-100"
+          title="Powrót"
         >
-          <Home size={24} className="text-gray-600" />
+          <ChevronLeft size={20} className="text-gray-700" />
+          <span className="text-gray-700">Powrót</span>
         </button>
       </div>
 
@@ -3199,156 +3247,156 @@ const CVCreator: React.FC<CVCreatorProps> = ({ initialCv }) => {
 
       {/* Main Content */}
       <div className="flex h-full flex-1 flex-col gap-3 overflow-hidden px-3 lg:flex-row lg:px-0">
-        {/* Left Panel - Form Inputs */}
-        <div className="h-full overflow-y-auto rounded-lg bg-white shadow-lg lg:w-[48%]">
-          <div className="max-h-full overflow-y-auto p-4 lg:p-6">
-            <div className="mb-6 flex flex-col items-start justify-between gap-4 sm:flex-row sm:items-center">
-              <h1 className="text-xl font-bold text-gray-800 lg:text-xl">Resume creator</h1>
-              <div className="flex items-center space-x-3">
-                <label className="text-sm text-gray-600">Date format:</label>
-                <Select
-                  value={showFullDates ? 'full' : 'year'}
-                  onValueChange={(value) => setShowFullDates(value === 'full')}
-                >
-                  <SelectTrigger className="font-poppins h-10 w-40 rounded-sm border border-gray-300 px-2 text-sm focus:ring-2 focus:ring-blue-500 focus:outline-none">
-                    <SelectValue />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="full">Month & year</SelectItem>
-                    <SelectItem value="year">Just year</SelectItem>
-                  </SelectContent>
-                </Select>
-                <button
-                  onClick={loadFromProfile}
-                  className="flex cursor-pointer items-center space-x-2 rounded border border-[#915EFF] bg-[#915EFF] px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-[#713ae8]"
-                  title="Load data from profile and save time"
-                >
-                  <Upload size={16} className="mr-2 text-white" />
-                  Load profile
-                </button>
+        {!isMobile && (
+          <div className="h-full overflow-y-auto rounded-lg bg-white shadow-lg lg:w-[48%]">
+            <div className="max-h-full overflow-y-auto p-4 lg:p-6">
+              <div className="mb-6 flex flex-col items-start justify-between gap-4 sm:flex-row sm:items-center">
+                <h1 className="text-xl font-bold text-gray-800 lg:text-xl">Resume creator</h1>
+                <div className="flex items-center space-x-3">
+                  <label className="text-sm text-gray-600">Date format:</label>
+                  <Select
+                    value={showFullDates ? 'full' : 'year'}
+                    onValueChange={(value) => setShowFullDates(value === 'full')}
+                  >
+                    <SelectTrigger className="font-poppins h-10 w-40 rounded-sm border border-gray-300 px-2 text-sm focus:ring-2 focus:ring-blue-500 focus:outline-none">
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="full">Month & year</SelectItem>
+                      <SelectItem value="year">Just year</SelectItem>
+                    </SelectContent>
+                  </Select>
+                  <button
+                    onClick={loadFromProfile}
+                    className="flex cursor-pointer items-center space-x-2 rounded border border-[#915EFF] bg-[#915EFF] px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-[#713ae8]"
+                    title="Load data from profile and save time"
+                  >
+                    <Upload size={16} className="mr-2 text-white" />
+                    Load profile
+                  </button>
+                </div>
               </div>
-            </div>
 
-            {/* Personal Information Section */}
-            <div className="mb-6 rounded-lg bg-gray-50 p-4 lg:p-6">
-              <h2 className="mb-4 flex items-center text-lg font-semibold text-gray-700">
-                <User className="mr-2" size={20} />
-                Personal details
-              </h2>
-              <div className="space-y-4">
-                <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-                  <div>
-                    <label className="mb-1 block text-sm text-gray-600">Name</label>
-                    <input
-                      type="text"
-                      placeholder="Joe"
-                      value={personalInfo.firstName}
-                      onChange={(e) =>
-                        setPersonalInfo({ ...personalInfo, firstName: e.target.value })
-                      }
-                      className="w-full rounded-sm border border-gray-300 px-3 py-3 focus:ring-2 focus:ring-blue-500 focus:outline-none"
-                    />
-                  </div>
-                  <div>
-                    <label className="mb-1 block text-sm text-gray-600">Last Name</label>
-                    <input
-                      type="text"
-                      placeholder="Doe"
-                      value={personalInfo.lastName}
-                      onChange={(e) =>
-                        setPersonalInfo({ ...personalInfo, lastName: e.target.value })
-                      }
-                      className="w-full rounded-sm border border-gray-300 px-3 py-3 focus:ring-2 focus:ring-blue-500 focus:outline-none"
-                    />
-                  </div>
-                </div>
-
-                <div>
-                  <label className="mb-1 block text-sm text-gray-600">E-mail address</label>
-                  <input
-                    type="email"
-                    placeholder="joedoe@gmail.com"
-                    value={personalInfo.email}
-                    onChange={(e) => setPersonalInfo({ ...personalInfo, email: e.target.value })}
-                    className="w-full rounded-sm border border-gray-300 px-3 py-3 focus:ring-2 focus:ring-blue-500 focus:outline-none"
-                  />
-                </div>
-
-                <div>
-                  <label className="mb-1 block text-sm text-gray-600">Position</label>
-                  <input
-                    type="text"
-                    placeholder="e.g. Project Manager"
-                    value={personalInfo.profession}
-                    onChange={(e) =>
-                      setPersonalInfo({ ...personalInfo, profession: e.target.value })
-                    }
-                    className="w-full rounded-sm border border-gray-300 px-3 py-3 focus:ring-2 focus:ring-blue-500 focus:outline-none"
-                  />
-                </div>
-
-                {/* Collapsible Additional Fields */}
-                <details className="group">
-                  <summary className="cursor-pointer font-medium text-[#915EFF]">
-                    Show additional fields
-                  </summary>
-                  <div className="mt-4 space-y-4">
-                    <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-                      <div>
-                        <label className="mb-1 block text-sm text-gray-600">Phone number</label>
-                        <input
-                          type="tel"
-                          placeholder="e.g. +48 22 263 98 31"
-                          value={personalInfo.phone}
-                          onChange={(e) =>
-                            setPersonalInfo({ ...personalInfo, phone: e.target.value })
-                          }
-                          className="w-full rounded-sm border border-gray-300 px-3 py-3 focus:ring-2 focus:ring-blue-500 focus:outline-none"
-                        />
-                      </div>
-                      <div>
-                        <label className="mb-1 block text-sm text-gray-600">Address</label>
-                        <input
-                          type="text"
-                          placeholder="e.g. 221B Baker Street, London"
-                          value={personalInfo.address}
-                          onChange={(e) =>
-                            setPersonalInfo({ ...personalInfo, address: e.target.value })
-                          }
-                          className="w-full rounded-sm border border-gray-300 px-3 py-3 focus:ring-2 focus:ring-blue-500 focus:outline-none"
-                        />
-                      </div>
-                      <div>
-                        <label className="mb-1 block text-sm text-gray-600">Country</label>
-                        <input
-                          type="text"
-                          placeholder="e.g. Poland"
-                          value={personalInfo.country}
-                          onChange={(e) =>
-                            setPersonalInfo({ ...personalInfo, country: e.target.value })
-                          }
-                          className="w-full rounded-sm border border-gray-300 px-3 py-3 focus:ring-2 focus:ring-blue-500 focus:outline-none"
-                        />
-                      </div>
+              {/* Personal Information Section */}
+              <div className="mb-6 rounded-lg bg-gray-50 p-4 lg:p-6">
+                <h2 className="mb-4 flex items-center text-lg font-semibold text-gray-700">
+                  <User className="mr-2" size={20} />
+                  Personal details
+                </h2>
+                <div className="space-y-4">
+                  <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+                    <div>
+                      <label className="mb-1 block text-sm text-gray-600">Name</label>
+                      <input
+                        type="text"
+                        placeholder="Joe"
+                        value={personalInfo.firstName}
+                        onChange={(e) =>
+                          setPersonalInfo({ ...personalInfo, firstName: e.target.value })
+                        }
+                        className="w-full rounded-sm border border-gray-300 px-3 py-3 focus:ring-2 focus:ring-blue-500 focus:outline-none"
+                      />
+                    </div>
+                    <div>
+                      <label className="mb-1 block text-sm text-gray-600">Last Name</label>
+                      <input
+                        type="text"
+                        placeholder="Doe"
+                        value={personalInfo.lastName}
+                        onChange={(e) =>
+                          setPersonalInfo({ ...personalInfo, lastName: e.target.value })
+                        }
+                        className="w-full rounded-sm border border-gray-300 px-3 py-3 focus:ring-2 focus:ring-blue-500 focus:outline-none"
+                      />
                     </div>
                   </div>
-                </details>
-              </div>
-            </div>
 
-            {sectionOrder.map((sectionId) => renderSectionInForm(sectionId))}
+                  <div>
+                    <label className="mb-1 block text-sm text-gray-600">E-mail address</label>
+                    <input
+                      type="email"
+                      placeholder="joedoe@gmail.com"
+                      value={personalInfo.email}
+                      onChange={(e) => setPersonalInfo({ ...personalInfo, email: e.target.value })}
+                      className="w-full rounded-sm border border-gray-300 px-3 py-3 focus:ring-2 focus:ring-blue-500 focus:outline-none"
+                    />
+                  </div>
+
+                  <div>
+                    <label className="mb-1 block text-sm text-gray-600">Position</label>
+                    <input
+                      type="text"
+                      placeholder="e.g. Project Manager"
+                      value={personalInfo.profession}
+                      onChange={(e) =>
+                        setPersonalInfo({ ...personalInfo, profession: e.target.value })
+                      }
+                      className="w-full rounded-sm border border-gray-300 px-3 py-3 focus:ring-2 focus:ring-blue-500 focus:outline-none"
+                    />
+                  </div>
+
+                  {/* Collapsible Additional Fields */}
+                  <details className="group">
+                    <summary className="cursor-pointer font-medium text-[#915EFF]">
+                      Show additional fields
+                    </summary>
+                    <div className="mt-4 space-y-4">
+                      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+                        <div>
+                          <label className="mb-1 block text-sm text-gray-600">Phone number</label>
+                          <input
+                            type="tel"
+                            placeholder="e.g. +48 22 263 98 31"
+                            value={personalInfo.phone}
+                            onChange={(e) =>
+                              setPersonalInfo({ ...personalInfo, phone: e.target.value })
+                            }
+                            className="w-full rounded-sm border border-gray-300 px-3 py-3 focus:ring-2 focus:ring-blue-500 focus:outline-none"
+                          />
+                        </div>
+                        <div>
+                          <label className="mb-1 block text-sm text-gray-600">Address</label>
+                          <input
+                            type="text"
+                            placeholder="e.g. 221B Baker Street, London"
+                            value={personalInfo.address}
+                            onChange={(e) =>
+                              setPersonalInfo({ ...personalInfo, address: e.target.value })
+                            }
+                            className="w-full rounded-sm border border-gray-300 px-3 py-3 focus:ring-2 focus:ring-blue-500 focus:outline-none"
+                          />
+                        </div>
+                        <div>
+                          <label className="mb-1 block text-sm text-gray-600">Country</label>
+                          <input
+                            type="text"
+                            placeholder="e.g. Poland"
+                            value={personalInfo.country}
+                            onChange={(e) =>
+                              setPersonalInfo({ ...personalInfo, country: e.target.value })
+                            }
+                            className="w-full rounded-sm border border-gray-300 px-3 py-3 focus:ring-2 focus:ring-blue-500 focus:outline-none"
+                          />
+                        </div>
+                      </div>
+                    </div>
+                  </details>
+                </div>
+              </div>
+
+              {sectionOrder.map((sectionId) => renderSectionInForm(sectionId))}
+            </div>
           </div>
-        </div>
+        )}
 
         {/* Right Panel - CV Preview */}
-        <div className="flex flex-col overflow-hidden rounded-lg bg-gray-100 lg:w-[52%]">
-          {/* Preview Controls */}
-          <div className="flex items-center justify-between border-b border-gray-200 bg-white p-4">
-            <h2 className="text-lg font-semibold text-gray-700">Resume Preview</h2>
-            <div className="flex items-center space-x-2">
+        <div className="flex w-full flex-1 flex-col overflow-hidden rounded-lg bg-gray-100 lg:w-[52%]">
+          {isMobile ? (
+            <div className="flex items-center justify-between border-b border-gray-200 bg-white px-4 py-3 text-sm text-gray-700">
+              <span>Podgląd CV</span>
               <button
                 onClick={downloadPDF}
-                className="flex cursor-pointer items-center space-x-2 rounded border border-[#915EFF] bg-[#915EFF] px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-[#713ae8]"
+                className="flex cursor-pointer items-center gap-2 rounded border border-[#915EFF] bg-[#915EFF] px-3 py-2 text-sm font-medium text-white transition-colors hover:bg-[#713ae8]"
                 title="Pobierz CV jako PDF"
               >
                 <svg
@@ -3382,40 +3430,85 @@ const CVCreator: React.FC<CVCreatorProps> = ({ initialCv }) => {
                     strokeLinecap="round"
                   />
                 </svg>
-                <span>Download</span>
+                <span>Pobierz</span>
               </button>
+            </div>
+          ) : (
+            <div className="flex flex-wrap items-center gap-3 border-b border-gray-200 bg-white p-4">
+              <h2 className="text-lg font-semibold text-gray-700">Resume Preview</h2>
+              <div className="flex flex-wrap items-center gap-2 sm:ml-auto">
+                <button
+                  onClick={downloadPDF}
+                  className="flex cursor-pointer items-center gap-2 rounded border border-[#915EFF] bg-[#915EFF] px-3 py-2 text-sm font-medium text-white transition-colors hover:bg-[#713ae8]"
+                  title="Pobierz CV jako PDF"
+                >
+                  <svg
+                    width="16"
+                    height="16"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    xmlns="http://www.w3.org/2000/svg"
+                  >
+                    <path
+                      d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"
+                      stroke="currentColor"
+                      strokeWidth="2"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                    />
+                    <polyline
+                      points="7,10 12,15 17,10"
+                      stroke="currentColor"
+                      strokeWidth="2"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                    />
+                    <line
+                      x1="12"
+                      y1="15"
+                      x2="12"
+                      y2="3"
+                      stroke="currentColor"
+                      strokeWidth="2"
+                      strokeLinecap="round"
+                    />
+                  </svg>
+                  <span>Download</span>
+                </button>
 
-              {/* Istniejące przyciski zoom */}
-              <button
-                onClick={handleZoomOut}
-                className="cursor-pointer rounded p-2 transition-colors hover:bg-gray-100"
-                title="Pomniejsz"
-              >
-                <ZoomOut size={18} />
-              </button>
-              <span className="min-w-12 text-center text-sm text-gray-600">
-                {Math.round(cvScale * 100)}%
-              </span>
-              <button
-                onClick={handleZoomIn}
-                className="cursor-pointer rounded p-2 transition-colors hover:bg-gray-100"
-                title="Powiększ"
-              >
-                <ZoomIn size={18} />
-              </button>
-              <button
-                onClick={resetView}
-                className="cursor-pointer rounded p-2 text-sm transition-colors hover:bg-gray-100"
-                title="Resetuj widok"
-              >
-                Reset
-              </button>
-              <div className="flex items-center text-sm text-gray-500">
-                <Move size={16} className="mr-1" />
-                Drag and move
+                <div className="flex flex-wrap items-center gap-2 rounded bg-gray-50 px-2 py-1 sm:bg-transparent sm:px-0">
+                  <button
+                    onClick={handleZoomOut}
+                    className="cursor-pointer rounded p-2 transition-colors hover:bg-gray-100"
+                    title="Pomniejsz"
+                  >
+                    <ZoomOut size={18} />
+                  </button>
+                  <span className="min-w-12 text-center text-xs text-gray-600 sm:text-sm">
+                    {Math.round(cvScale * 100)}%
+                  </span>
+                  <button
+                    onClick={handleZoomIn}
+                    className="cursor-pointer rounded p-2 transition-colors hover:bg-gray-100"
+                    title="Powiększ"
+                  >
+                    <ZoomIn size={18} />
+                  </button>
+                  <button
+                    onClick={resetView}
+                    className="cursor-pointer rounded p-2 text-xs transition-colors hover:bg-gray-100 sm:text-sm"
+                    title="Resetuj widok"
+                  >
+                    Reset
+                  </button>
+                  <div className="flex items-center text-xs text-gray-500 sm:text-sm">
+                    <Move size={16} className="mr-1" />
+                    Drag and move
+                  </div>
+                </div>
               </div>
             </div>
-          </div>
+          )}
 
           {/* CV Preview Container */}
           <div

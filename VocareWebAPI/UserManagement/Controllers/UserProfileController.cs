@@ -1,6 +1,8 @@
 using System.Security.Claims;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Logging;
+using VocareWebAPI.CareerAdvisor.Services.Interfaces;
 using VocareWebAPI.Models.Dtos;
 using VocareWebAPI.Services;
 
@@ -14,15 +16,23 @@ namespace VocareWebAPI.Controllers
     [Authorize]
     public class UserProfileController : ControllerBase
     {
+        private readonly ICvParserService _cvParserService;
+        private readonly ILogger<UserProfileController> _logger;
         private readonly UserProfileService _userProfileService;
 
         /// <summary>
         /// Inicjalizuje instancję kontrolera
         /// </summary>
         /// <param name="userProfileService"></param>
-        public UserProfileController(UserProfileService userProfileService)
+        public UserProfileController(
+            UserProfileService userProfileService,
+            ILogger<UserProfileController> logger,
+            ICvParserService cvParserService
+        )
         {
             _userProfileService = userProfileService;
+            _logger = logger;
+            _cvParserService = cvParserService;
         }
 
         /// <summary>
@@ -108,6 +118,44 @@ namespace VocareWebAPI.Controllers
                 return NotFound("Profil użytkownika nie został znaleziony.");
             }
             return Ok(new { message = "Profil użytkownika został usunięty." });
+        }
+
+        [HttpPost("import-cv")]
+        public async Task<IActionResult> ImportCv(IFormFile file)
+        {
+            string userId = User.FindFirstValue(ClaimTypes.NameIdentifier)!;
+            if (string.IsNullOrEmpty(userId))
+            {
+                return BadRequest("Brak identyfikatora użytkownika w tokenie.");
+            }
+
+            if (file == null || file.Length == 0)
+            {
+                return BadRequest("Nie przesłano pliku");
+            }
+
+            try
+            {
+                var profile = await _cvParserService.ParseAndSaveAsync(file, userId);
+                return Ok(profile);
+            }
+            catch (NotSupportedException ex)
+            {
+                return BadRequest(new { message = ex.Message });
+            }
+            catch (InvalidOperationException ex)
+            {
+                return BadRequest(new { message = ex.Message });
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(
+                    ex,
+                    "Nieoczekiwany błąd podczas importu CV dla użytkownika {UserId}",
+                    userId
+                );
+                return StatusCode(500, new { message = "Wystąpił nieoczekiwany błąd." });
+            }
         }
     }
 }

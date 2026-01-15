@@ -1,6 +1,6 @@
 import { api } from './api';
 
-const AUTH_PREFIX = 'https://vocare-production-e568.up.railway.app/api/Auth';
+const AUTH_PREFIX = 'https://vocare-staging-1f69.up.railway.app/api/Auth';
 
 // const AUTH_PREFIX = '/api/Auth';
 
