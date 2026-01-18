@@ -1,3 +1,4 @@
+using System.Reflection.Metadata;
 using VocareWebAPI.Billing.Repositories.Implementations;
 using VocareWebAPI.Billing.Repositories.Interfaces;
 using VocareWebAPI.Billing.Services.Implementations;
@@ -11,6 +12,8 @@ using VocareWebAPI.CvGenerator.Repositories.Interfaces;
 using VocareWebAPI.CvGenerator.Services.Implementation;
 using VocareWebAPI.CvGenerator.Services.Implementations;
 using VocareWebAPI.CvGenerator.Services.Interfaces;
+using VocareWebAPI.JobOffers.Repositories.Implementations;
+using VocareWebAPI.JobOffers.Repositories.Interfaces;
 using VocareWebAPI.MarketNews.Repositories.Implementations;
 using VocareWebAPI.MarketNews.Repositories.Interfaces;
 using VocareWebAPI.MarketNews.services.Implementations;
@@ -85,9 +88,11 @@ namespace VocareWebAPI.Extensions.ServiceCollectionExtensions
             services.AddScoped<IEntryDifficultyRepository, EntryDifficultyRepository>();
             services.AddScoped<IAiNarratorRepository, AiNarratorRepository>();
 
-            // Cv Repositories;
+            // Cv Repositories
             services.AddScoped<IGeneratedCvRepository, GeneratedCvrepository>();
 
+            // Job Offer repositories
+            services.AddScoped<IJobOfferRepository, JobOfferRepository>();
             services.AddScoped<IMarketNewsRepository, MarketNewsRepository>();
             return services;
         }
