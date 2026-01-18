@@ -14,6 +14,8 @@ using VocareWebAPI.CvGenerator.Services.Implementations;
 using VocareWebAPI.CvGenerator.Services.Interfaces;
 using VocareWebAPI.JobOffers.Repositories.Implementations;
 using VocareWebAPI.JobOffers.Repositories.Interfaces;
+using VocareWebAPI.JobOffers.Services.Implementations;
+using VocareWebAPI.JobOffers.Services.Interfaces;
 using VocareWebAPI.MarketNews.Repositories.Implementations;
 using VocareWebAPI.MarketNews.Repositories.Interfaces;
 using VocareWebAPI.MarketNews.services.Implementations;
@@ -61,6 +63,9 @@ namespace VocareWebAPI.Extensions.ServiceCollectionExtensions
             services.AddScoped<IEmailService, EmailService>();
             services.AddScoped<IMarketNewsService, MarketNewsService>();
 
+            // Jobs services
+            services.AddScoped<IJobOfferSyncService, JobOfferSyncService>();
+
             services.AddHostedService<MarketNewsBackgroundService>();
 
             return services;
@@ -93,7 +98,9 @@ namespace VocareWebAPI.Extensions.ServiceCollectionExtensions
 
             // Job Offer repositories
             services.AddScoped<IJobOfferRepository, JobOfferRepository>();
+            services.AddScoped<INoFluffJobsParser, NoFluffJobsParser>();
             services.AddScoped<IMarketNewsRepository, MarketNewsRepository>();
+
             return services;
         }
     }
