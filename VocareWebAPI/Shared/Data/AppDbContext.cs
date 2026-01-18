@@ -6,6 +6,7 @@ using VocareWebAPI.Billing.Models.Entities;
 using VocareWebAPI.CareerAdvisor.Models.Entities.MarketAnalysis;
 using VocareWebAPI.CareerAdvisor.Models.Entities.MarketAnalysis;
 using VocareWebAPI.CvGenerator.Models; // Poprawiony namespace
+using VocareWebAPI.JobOffers.Models.Entities;
 using VocareWebAPI.MarketNews.Models.Entities;
 using VocareWebAPI.Models;
 using VocareWebAPI.Models.Entities;
@@ -79,6 +80,9 @@ namespace VocareWebAPI.Data
         public DbSet<EntryDifficulty> EntryDifficulties { get; set; }
         public DbSet<AiNarrator> AiNarrators { get; set; }
         public DbSet<CvParseHistory> CvParseHistories { get; set; }
+        public DbSet<JobOffer> JobOffers { get; set; }
+        public DbSet<JobOfferLocation> JobOfferLocations { get; set; }
+        public DbSet<JobOfferSkill> JobOffferSkills { get; set; }
 
         /// <summary>
         /// Konfiguruje model bazy danych, definiując schemat i relacje między encjami.
@@ -326,6 +330,39 @@ namespace VocareWebAPI.Data
                     .WithOne(cs => cs.AiNarrator)
                     .HasForeignKey<AiNarrator>(e => e.CareerStatisticsId)
                     .OnDelete(DeleteBehavior.Cascade);
+            });
+            builder.Entity<JobOffer>(entity =>
+            {
+                entity.HasKey(e => e.Id);
+
+                // Unikalny indeks na ReferenceNumber - kluczowe dla upsert
+                entity.HasIndex(e => e.ReferenceNumber).IsUnique();
+
+                // Relacja do kaskadowego usuwnia
+                entity
+                    .HasMany(e => e.Locations)
+                    .WithOne(l => l.JobOffer)
+                    .HasForeignKey(l => l.JobOfferId)
+                    .OnDelete(DeleteBehavior.Cascade);
+
+                entity
+                    .HasMany(e => e.Skills)
+                    .WithOne(s => s.JobOffer)
+                    .HasForeignKey(s => s.JobOfferId)
+                    .OnDelete(DeleteBehavior.Cascade);
+            });
+            builder.Entity<JobOfferLocation>(entity =>
+            {
+                entity.HasKey(e => e.Id);
+                // Indeks przyśpiesza filtrowanie po lokalizacji - city
+                entity.HasIndex(e => e.City);
+            });
+            builder.Entity<JobOfferSkill>(entity =>
+            {
+                entity.HasKey(e => e.Id);
+
+                //Indeks na nazwę umięjeność - przyśpieszy wyszukiwanie po umiejętności
+                entity.HasIndex(e => e.Name);
             });
         }
     }

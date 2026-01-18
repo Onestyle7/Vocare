@@ -543,6 +543,126 @@ namespace VocareWebAPI.Migrations
                     b.ToTable("GeneratedCvs", "public");
                 });
 
+            modelBuilder.Entity("VocareWebAPI.JobOffers.Models.Entities.JobOffer", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("BriefDescription")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("Category")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("CompanyName")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("Country")
+                        .HasColumnType("text");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("Description")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("JobType")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<DateTime>("PublishedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("ReferenceNumber")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("SalaryCurrency")
+                        .HasColumnType("text");
+
+                    b.Property<decimal?>("SalaryMax")
+                        .HasColumnType("numeric");
+
+                    b.Property<decimal?>("SalaryMin")
+                        .HasColumnType("numeric");
+
+                    b.Property<int?>("SalaryPeriod")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("SeniorityLevel")
+                        .HasColumnType("integer");
+
+                    b.Property<string>("Title")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<DateTime>("UpdatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("Url")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ReferenceNumber")
+                        .IsUnique();
+
+                    b.ToTable("JobOffers", "public");
+                });
+
+            modelBuilder.Entity("VocareWebAPI.JobOffers.Models.Entities.JobOfferLocation", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("City")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<bool>("IsRemote")
+                        .HasColumnType("boolean");
+
+                    b.Property<Guid>("JobOfferId")
+                        .HasColumnType("uuid");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("City");
+
+                    b.HasIndex("JobOfferId");
+
+                    b.ToTable("JobOfferLocations", "public");
+                });
+
+            modelBuilder.Entity("VocareWebAPI.JobOffers.Models.Entities.JobOfferSkill", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid>("JobOfferId")
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("JobOfferId");
+
+                    b.HasIndex("Name");
+
+                    b.ToTable("JobOffferSkills", "public");
+                });
+
             modelBuilder.Entity("VocareWebAPI.MarketNews.Models.Entities.MarketNewsEntity", b =>
                 {
                     b.Property<Guid>("Id")
@@ -1231,6 +1351,28 @@ namespace VocareWebAPI.Migrations
                     b.Navigation("User");
                 });
 
+            modelBuilder.Entity("VocareWebAPI.JobOffers.Models.Entities.JobOfferLocation", b =>
+                {
+                    b.HasOne("VocareWebAPI.JobOffers.Models.Entities.JobOffer", "JobOffer")
+                        .WithMany("Locations")
+                        .HasForeignKey("JobOfferId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("JobOffer");
+                });
+
+            modelBuilder.Entity("VocareWebAPI.JobOffers.Models.Entities.JobOfferSkill", b =>
+                {
+                    b.HasOne("VocareWebAPI.JobOffers.Models.Entities.JobOffer", "JobOffer")
+                        .WithMany("Skills")
+                        .HasForeignKey("JobOfferId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("JobOffer");
+                });
+
             modelBuilder.Entity("VocareWebAPI.Models.AiRecommendation", b =>
                 {
                     b.HasOne("VocareWebAPI.Models.AiRecommendation", null)
@@ -1366,6 +1508,13 @@ namespace VocareWebAPI.Migrations
                         .WithMany("WorkExperience")
                         .HasForeignKey("UserProfileUserId")
                         .OnDelete(DeleteBehavior.Cascade);
+                });
+
+            modelBuilder.Entity("VocareWebAPI.JobOffers.Models.Entities.JobOffer", b =>
+                {
+                    b.Navigation("Locations");
+
+                    b.Navigation("Skills");
                 });
 
             modelBuilder.Entity("VocareWebAPI.Models.AiRecommendation", b =>
