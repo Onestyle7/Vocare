@@ -756,6 +756,9 @@ namespace VocareWebAPI.Migrations
                         .IsRequired()
                         .HasColumnType("text");
 
+                    b.Property<Vector>("Embedding")
+                        .HasColumnType("vector(1536)");
+
                     b.PrimitiveCollection<List<string>>("MarketAnalysis")
                         .IsRequired()
                         .HasColumnType("text[]");

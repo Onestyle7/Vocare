@@ -322,6 +322,12 @@ namespace VocareWebAPI.Data
                         v => v.Split(";", StringSplitOptions.RemoveEmptyEntries).ToList()
                     );
             });
+            builder.Entity<CareerPath>(entity =>
+            {
+                entity.HasKey(e => e.Id);
+
+                entity.Property(e => e.Embedding).HasColumnType("vector(1536)");
+            });
             builder.Entity<AiNarrator>(entity =>
             {
                 entity.HasKey(e => e.Id);

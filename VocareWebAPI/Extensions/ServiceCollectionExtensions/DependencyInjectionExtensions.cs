@@ -26,6 +26,8 @@ using VocareWebAPI.Repositories;
 using VocareWebAPI.Repositories.Implementations;
 using VocareWebAPI.Repositories.Interfaces;
 using VocareWebAPI.Services;
+using VocareWebAPI.Shared.Services.Implementations;
+using VocareWebAPI.Shared.Services.Interfaces;
 using VocareWebAPI.UserManagement;
 using VocareWebAPI.UserManagement.Interfaces;
 using VocareWebAPI.UserManagement.Repositories;
@@ -51,6 +53,7 @@ namespace VocareWebAPI.Extensions.ServiceCollectionExtensions
 
             // AI services (Główną implementacją jest OpenAI)
             services.AddScoped<IAiService, OpenAIService>();
+            services.AddScoped<IEmbeddingService, OpenAIEmbeddingService>();
 
             // CV Services
             services.AddScoped<ICvManagementService, CvManagementService>();
