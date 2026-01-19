@@ -6,6 +6,8 @@ using Polly;
 using Polly.Extensions.Http;
 using VocareWebAPI.CareerAdvisor.Models.Config;
 using VocareWebAPI.CareerAdvisor.Services.Implementations;
+using VocareWebAPI.JobOffers.Services.Implementations;
+using VocareWebAPI.JobOffers.Services.Interfaces;
 using VocareWebAPI.MarketNews.Services.Implementations;
 using VocareWebAPI.MarketNews.Services.Interfaces;
 using VocareWebAPI.Models.OpenAIConfig;
@@ -65,6 +67,9 @@ namespace VocareWebAPI.Extensions.ServiceCollectionExtensions
                     client.Timeout = TimeSpan.FromMinutes(3);
                 })
                 .AddPolicyHandler(retryPolicy);
+
+            // Job services
+            services.AddHttpClient<INoFluffJobsParser, NoFluffJobsParser>();
             return services;
         }
 

@@ -1,3 +1,4 @@
+using System.Reflection.Metadata;
 using VocareWebAPI.Billing.Repositories.Implementations;
 using VocareWebAPI.Billing.Repositories.Interfaces;
 using VocareWebAPI.Billing.Services.Implementations;
@@ -11,6 +12,11 @@ using VocareWebAPI.CvGenerator.Repositories.Interfaces;
 using VocareWebAPI.CvGenerator.Services.Implementation;
 using VocareWebAPI.CvGenerator.Services.Implementations;
 using VocareWebAPI.CvGenerator.Services.Interfaces;
+using VocareWebAPI.JobOffers.BackgroundJobs;
+using VocareWebAPI.JobOffers.Repositories.Implementations;
+using VocareWebAPI.JobOffers.Repositories.Interfaces;
+using VocareWebAPI.JobOffers.Services.Implementations;
+using VocareWebAPI.JobOffers.Services.Interfaces;
 using VocareWebAPI.MarketNews.Repositories.Implementations;
 using VocareWebAPI.MarketNews.Repositories.Interfaces;
 using VocareWebAPI.MarketNews.services.Implementations;
@@ -58,6 +64,11 @@ namespace VocareWebAPI.Extensions.ServiceCollectionExtensions
             services.AddScoped<IEmailService, EmailService>();
             services.AddScoped<IMarketNewsService, MarketNewsService>();
 
+            // Jobs services
+            services.AddScoped<IJobOfferSyncService, JobOfferSyncService>();
+
+            // Background services
+            services.AddHostedService<JobOfferSyncBackgroundService>();
             services.AddHostedService<MarketNewsBackgroundService>();
 
             return services;
@@ -85,10 +96,14 @@ namespace VocareWebAPI.Extensions.ServiceCollectionExtensions
             services.AddScoped<IEntryDifficultyRepository, EntryDifficultyRepository>();
             services.AddScoped<IAiNarratorRepository, AiNarratorRepository>();
 
-            // Cv Repositories;
+            // Cv Repositories
             services.AddScoped<IGeneratedCvRepository, GeneratedCvrepository>();
 
+            // Job Offer repositories
+            services.AddScoped<IJobOfferRepository, JobOfferRepository>();
+            services.AddScoped<INoFluffJobsParser, NoFluffJobsParser>();
             services.AddScoped<IMarketNewsRepository, MarketNewsRepository>();
+
             return services;
         }
     }
