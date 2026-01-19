@@ -1,9 +1,8 @@
-using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
+using Pgvector.EntityFrameworkCore;
 using VocareWebAPI.Billing.Models.Entities;
-using VocareWebAPI.CareerAdvisor.Models.Entities.MarketAnalysis;
 using VocareWebAPI.CareerAdvisor.Models.Entities.MarketAnalysis;
 using VocareWebAPI.CvGenerator.Models; // Poprawiony namespace
 using VocareWebAPI.JobOffers.Models.Entities;
@@ -90,6 +89,7 @@ namespace VocareWebAPI.Data
         /// <param name="builder">Builder modelu.</param>
         protected override void OnModelCreating(ModelBuilder builder)
         {
+            builder.HasPostgresExtension("vector");
             base.OnModelCreating(builder);
 
             // Konwersja DateTime na UTC dla wszystkich właściwości DateTime i DateTime?
@@ -338,6 +338,7 @@ namespace VocareWebAPI.Data
                 // Unikalny indeks na ReferenceNumber - kluczowe dla upsert
                 entity.HasIndex(e => e.ReferenceNumber).IsUnique();
 
+                entity.Property(e => e.Embedding).HasColumnType("vector(1536)");
                 // Relacja do kaskadowego usuwnia
                 entity
                     .HasMany(e => e.Locations)
