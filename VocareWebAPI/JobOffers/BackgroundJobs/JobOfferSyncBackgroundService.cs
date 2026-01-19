@@ -30,6 +30,8 @@ namespace VocareWebAPI.JobOffers.BackgroundJobs
         {
             _logger.LogInformation("JobOfferSyncBackgroundService został uruchomiony.");
 
+            await Task.Delay(TimeSpan.FromSeconds(30), stoppingToken);
+
             while (!stoppingToken.IsCancellationRequested)
             {
                 try
@@ -39,7 +41,6 @@ namespace VocareWebAPI.JobOffers.BackgroundJobs
                         scope.ServiceProvider.GetRequiredService<IJobOfferSyncService>();
 
                     _logger.LogInformation("Rozpoczynam synchronizację ofert...");
-
                     var result = await syncService.SyncOffersAsync();
 
                     _logger.LogInformation(
@@ -52,11 +53,8 @@ namespace VocareWebAPI.JobOffers.BackgroundJobs
                     if (ShouldRunCleanup())
                     {
                         _logger.LogInformation("Rozpoczynam nocny cleanup nieaktualnych ofert...");
-
                         var removedCount = await syncService.CleanupStaleOffersAsync();
-
                         _lastCleanupDate = DateTime.UtcNow.Date;
-
                         _logger.LogInformation(
                             "Cleanup zakończony. Usunięto {Removed} ofert.",
                             removedCount
@@ -67,13 +65,16 @@ namespace VocareWebAPI.JobOffers.BackgroundJobs
                 {
                     _logger.LogError(ex, "Krytyczny błąd w pętli JobOfferSyncBackgroundService");
                 }
-
+                _logger.LogInformation(
+                    $"Czekam {_syncInterval.TotalHours} godziny do nastepnej synchronizacji..."
+                );
                 try
                 {
                     await Task.Delay(_syncInterval, stoppingToken);
                 }
                 catch (TaskCanceledException)
                 {
+                    _logger.LogInformation("Delay przerwany - aplikacja się zamyka.");
                     break;
                 }
             }

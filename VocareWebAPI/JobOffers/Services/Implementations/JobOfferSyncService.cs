@@ -62,10 +62,6 @@ namespace VocareWebAPI.JobOffers.Services.Implementations
                             existing.PublishedAt = offer.PublishedAt;
                             existing.UpdatedAt = DateTime.UtcNow;
 
-                            // Locations i Skills - zastępujemy całe kolekcje
-                            existing.Locations = offer.Locations;
-                            existing.Skills = offer.Skills;
-
                             await _repository.UpdateAsync(existing);
                             result.Updated++;
                         }
