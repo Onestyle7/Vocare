@@ -160,6 +160,14 @@ namespace VocareWebAPI.CareerAdvisor.Services.Implementations
                             "Generuję embedding dla ściezki: {CareerName}",
                             careerPath.CareerName
                         );
+                        careerPath.Embedding = await _embeddingService.GenerateEmbeddingAsync(
+                            textForEmbedding
+                        );
+
+                        _logger.LogDebug(
+                            "Wygenerowano embedding dla ścieżki: {CareerName}",
+                            careerPath.CareerName
+                        );
                     }
                     catch (Exception ex)
                     {

@@ -90,7 +90,8 @@ namespace VocareWebAPI.Extensions.ServiceCollectionExtensions
             if (config == null)
                 throw new InvalidOperationException("OpenAI configuration section is missing");
 
-            client.BaseAddress = new Uri(config.BaseUrl);
+            var baseUrl = config.BaseUrl.EndsWith("/") ? config.BaseUrl : config.BaseUrl + "/";
+            client.BaseAddress = new Uri(baseUrl);
             client.DefaultRequestHeaders.Add("Authorization", $"Bearer {config.ApiKey}");
             client.DefaultRequestHeaders.Add("Accept", "application/json");
         }
