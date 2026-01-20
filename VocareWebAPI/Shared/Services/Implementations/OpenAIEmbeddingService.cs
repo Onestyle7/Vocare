@@ -24,6 +24,11 @@ namespace VocareWebAPI.Shared.Services.Implementations
                 "Open Ai embeddingService zainicjalizowany z modelem {Model}",
                 EmbeddingModel
             );
+            _logger.LogWarning("=== OpenAIEmbeddingService Constructor ===");
+            _logger.LogWarning(
+                $"HttpClient.BaseAddress: {_httpClient.BaseAddress?.ToString() ?? "NULL"}"
+            );
+            _logger.LogWarning("=========================================");
         }
 
         public async Task<Vector> GenerateEmbeddingAsync(string text)

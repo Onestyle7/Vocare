@@ -53,7 +53,6 @@ namespace VocareWebAPI.Extensions.ServiceCollectionExtensions
 
             // AI services (Główną implementacją jest OpenAI)
             services.AddScoped<IAiService, OpenAIService>();
-            services.AddScoped<IEmbeddingService, OpenAIEmbeddingService>();
 
             // CV Services
             services.AddScoped<ICvManagementService, CvManagementService>();
