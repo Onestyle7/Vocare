@@ -58,5 +58,18 @@ namespace VocareWebAPI.JobOffers.Repositories.Implementations
         {
             return await _context.JobOffers.CountAsync();
         }
+
+        public async Task<List<JobOffer>> GetOffersWithoutEmbeddingAsync(int limit)
+        {
+            return await _context
+                .JobOffers.Where(j => j.Embedding == null)
+                .Take(limit)
+                .ToListAsync();
+        }
+
+        public async Task<int> CountOffersWithoutEmbeddingAsync()
+        {
+            return await _context.JobOffers.CountAsync(j => j.Embedding == null);
+        }
     }
 }

@@ -49,10 +49,7 @@ namespace VocareWebAPI.Shared.Services.Implementations
                     Input = truncatedText,
                 };
 
-                var response = await _httpClient.PostAsJsonAsync(
-                    "https://api.openai.com/v1/embeddings",
-                    request
-                );
+                var response = await _httpClient.PostAsJsonAsync("embeddings", request);
 
                 if (!response.IsSuccessStatusCode)
                 {
@@ -127,10 +124,7 @@ namespace VocareWebAPI.Shared.Services.Implementations
                     Input = processedTexts,
                 };
 
-                var response = await _httpClient.PostAsJsonAsync(
-                    "https://api.openai.com/v1/embeddings",
-                    request
-                );
+                var response = await _httpClient.PostAsJsonAsync("embeddings", request);
 
                 if (!response.IsSuccessStatusCode)
                 {

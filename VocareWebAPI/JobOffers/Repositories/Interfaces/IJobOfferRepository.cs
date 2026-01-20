@@ -14,5 +14,7 @@ namespace VocareWebAPI.JobOffers.Repositories.Interfaces
         Task UpdateAsync(JobOffer offer); // Aktualizacja istniejącej
         Task DeleteByReferenceNumberAsync(IEnumerable<string> refNumbers); // Usuwanie niaktualnych
         Task<int> GetCountAsync(); // Sprawdzenie statystyk - ile mamy ofert
+        Task<List<JobOffer>> GetOffersWithoutEmbeddingAsync(int limit);
+        Task<int> CountOffersWithoutEmbeddingAsync();
     }
 }

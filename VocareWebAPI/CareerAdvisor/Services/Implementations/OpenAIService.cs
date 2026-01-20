@@ -8,6 +8,7 @@ using VocareWebAPI.Models.Entities;
 using VocareWebAPI.Models.OpenAIConfig;
 using VocareWebAPI.Repositories;
 using VocareWebAPI.Services;
+using VocareWebAPI.Shared.Services.Interfaces;
 
 namespace VocareWebAPI.CareerAdvisor.Services.Implementations
 {
@@ -18,13 +19,15 @@ namespace VocareWebAPI.CareerAdvisor.Services.Implementations
         private readonly IAiRecommendationRepository _aiRecommendationRepository;
         private readonly IMapper _mapper;
         private readonly ILogger<OpenAIService> _logger;
+        private readonly IEmbeddingService _embeddingService;
 
         public OpenAIService(
             HttpClient httpClient,
             IOptions<OpenAIConfig> aiConfig,
             IAiRecommendationRepository aiRecommendationRepository,
             IMapper mapper,
-            ILogger<OpenAIService> logger
+            ILogger<OpenAIService> logger,
+            IEmbeddingService embeddingService
         )
         {
             _httpClient = httpClient;
@@ -32,6 +35,7 @@ namespace VocareWebAPI.CareerAdvisor.Services.Implementations
             _aiRecommendationRepository = aiRecommendationRepository;
             _mapper = mapper;
             _logger = logger;
+            _embeddingService = embeddingService;
 
             _httpClient.Timeout = TimeSpan.FromSeconds(180);
             _httpClient.DefaultRequestHeaders.Add("Authorization", $"Bearer {_config.ApiKey}");
@@ -145,6 +149,27 @@ namespace VocareWebAPI.CareerAdvisor.Services.Implementations
                 var recommendationEntity = _mapper.Map<AiRecommendation>(recommendation);
                 recommendationEntity.UserId = userId;
                 recommendationEntity.RecommendationDate = DateTime.UtcNow;
+
+                foreach (var careerPath in recommendationEntity.CareerPaths)
+                {
+                    try
+                    {
+                        var textForEmbedding = BuildCareerPathTextForEmbedding(careerPath);
+
+                        _logger.LogDebug(
+                            "Generuję embedding dla ściezki: {CareerName}",
+                            careerPath.CareerName
+                        );
+                    }
+                    catch (Exception ex)
+                    {
+                        _logger.LogWarning(
+                            ex,
+                            "Nie udało się wygenerować embeddingu dla ścieżki: {CareerName}. Kontynuuję bez embeddingu.",
+                            careerPath.CareerName
+                        ); // Nie blokujemy zapisu rekomendacji, kontynuujemy w razie błędu bez zpisu embeddingu
+                    }
+                }
 
                 await _aiRecommendationRepository.AddRecommendationAsync(recommendationEntity);
                 _logger.LogInformation($"Saved recommendation for user: {userId}");
@@ -277,6 +302,23 @@ namespace VocareWebAPI.CareerAdvisor.Services.Implementations
 
             public AiServiceException(string message, Exception inner)
                 : base(message, inner) { }
+        }
+
+        private string BuildCareerPathTextForEmbedding(CareerPath careerPath)
+        {
+            var skills =
+                careerPath.RequiredSkills != null && careerPath.RequiredSkills.Any()
+                    ? string.Join(", ", careerPath.RequiredSkills)
+                    : "";
+            // Format: "Nazwa stanowiska. Opis. Wymagane umiejętosci: skill1, skill2
+            var text = $"{careerPath.CareerName}. {careerPath.Description}";
+
+            if (!string.IsNullOrEmpty(skills))
+            {
+                text += $"Wymagane umiejętności: {skills}";
+            }
+
+            return text;
         }
     }
 
