@@ -1,5 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
+using Npgsql;
 using Pgvector;
 using Pgvector.EntityFrameworkCore;
 using VocareWebAPI.Data;
@@ -22,76 +23,87 @@ namespace VocareWebAPI.JobOffers.Repositories.Implementations
             _logger = logger;
         }
 
-        public async Task<List<JobOffer>> GetMatchingOffersAsync(Vector embedding, int limit = 5)
-        {
-            return await _context
-                .JobOffers.Include(j => j.Locations)
-                .Include(j => j.Skills)
-                .Where(j => j.Embedding != null)
-                .OrderBy(j => j.Embedding!.CosineDistance(embedding))
-                .Take(limit)
-                .ToListAsync();
-        }
-
         public async Task<List<JobOffer>> GetMatchingOffersAsync(
             Vector embedding,
             JobOfferFilterCriteria filters,
             int limit = 5
         )
         {
-            var query = _context
-                .JobOffers.Include(j => j.Locations)
-                .Include(j => j.Skills)
-                .Where(j => j.Embedding != null);
+            // Budujemy parametry
+            var parameters = new List<NpgsqlParameter>
+            {
+                new NpgsqlParameter("@embedding", embedding),
+                new NpgsqlParameter("@limit", limit),
+            };
+
+            var whereClauses = new List<string> { "j.\"Embedding\" IS NOT NULL" };
 
             // Filtr lokalizacji
             if (filters.Cities != null && filters.Cities.Any())
             {
+                parameters.Add(new NpgsqlParameter("@cities", filters.Cities.ToArray()));
+
                 if (filters.IncludeRemote)
                 {
-                    // Oferty w podanych miastach LUB remote
-                    query = query.Where(j =>
-                        j.Locations.Any(l => filters.Cities.Contains(l.City) || l.IsRemote)
+                    whereClauses.Add(
+                        """
+                        EXISTS (
+                            SELECT 1 FROM public."JobOfferLocations" loc 
+                            WHERE loc."JobOfferId" = j."Id" 
+                            AND (loc."City" = ANY(@cities) OR loc."IsRemote" = true)
+                        )
+                        """
                     );
                 }
                 else
                 {
-                    // Tylko oferty w podanych miastach (bez remote)
-                    query = query.Where(j =>
-                        j.Locations.Any(l => filters.Cities.Contains(l.City) && !l.IsRemote)
+                    whereClauses.Add(
+                        """
+                        EXISTS (
+                            SELECT 1 FROM public."JobOfferLocations" loc 
+                            WHERE loc."JobOfferId" = j."Id" 
+                            AND loc."City" = ANY(@cities) AND loc."IsRemote" = false
+                        )
+                        """
                     );
                 }
-            }
-            else if (filters.IncludeRemote)
-            {
-                // Jeśli nie podano miast, ale IncludeRemote = true, to nie filtrujemy
             }
 
             // Filtr seniority
             if (filters.SeniorityLevels != null && filters.SeniorityLevels.Any())
             {
-                query = query.Where(j => filters.SeniorityLevels.Contains(j.SeniorityLevel));
+                var seniorityInts = filters.SeniorityLevels.Select(s => (int)s).ToArray();
+                parameters.Add(new NpgsqlParameter("@seniority", seniorityInts));
+                whereClauses.Add("j.\"SeniorityLevel\" = ANY(@seniority)");
             }
 
             // Filtr kategorii
             if (filters.Categories != null && filters.Categories.Any())
             {
-                var lowerCategories = filters.Categories.Select(c => c.ToLower()).ToList();
-                query = query.Where(j => lowerCategories.Contains(j.Category.ToLower()));
+                var lowerCategories = filters.Categories.Select(c => c.ToLower()).ToArray();
+                parameters.Add(new NpgsqlParameter("@categories", lowerCategories));
+                whereClauses.Add("lower(j.\"Category\") = ANY(@categories)");
             }
 
-            // Logujemy ile ofert zostało po filtrach
-            var filteredCount = await query.CountAsync();
-            _logger.LogDebug(
-                "Po filtrach pozostało {Count} ofert do porównania semantycznego",
-                filteredCount
-            );
+            var whereClause = string.Join(" AND ", whereClauses);
 
-            // Sortowanie po podobieństwie i limit
-            return await query
-                .OrderBy(j => j.Embedding!.CosineDistance(embedding))
-                .Take(limit)
+            var sql = $"""
+                SELECT j.* 
+                FROM public."JobOffers" j
+                WHERE {whereClause}
+                ORDER BY j."Embedding" <=> @embedding
+                LIMIT @limit
+                """;
+
+            _logger.LogDebug("SQL Query: {Sql}", sql);
+
+            var jobOffers = await _context
+                .JobOffers.FromSqlRaw(sql, parameters.ToArray())
+                .Include(j => j.Locations)
+                .Include(j => j.Skills)
                 .ToListAsync();
+
+            return jobOffers;
         }
     }
 }

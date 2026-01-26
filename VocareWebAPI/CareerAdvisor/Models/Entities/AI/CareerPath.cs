@@ -25,5 +25,7 @@ namespace VocareWebAPI.Models.Entities
         [ForeignKey("CareerStatisticsId")]
         public CareerStatistics CareerStatistics { get; set; } = default!;
         public Vector? Embedding { get; set; }
+        public string SuggestedSeniority { get; set; } = "Mid";
+        public List<string> AllowedJobCategories { get; set; } = new();
     }
 }

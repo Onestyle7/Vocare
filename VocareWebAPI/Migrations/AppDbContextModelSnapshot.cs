@@ -745,6 +745,10 @@ namespace VocareWebAPI.Migrations
                     b.Property<Guid?>("AiRecommendationId")
                         .HasColumnType("uuid");
 
+                    b.Property<string>("AllowedJobCategories")
+                        .IsRequired()
+                        .HasColumnType("text");
+
                     b.Property<string>("CareerName")
                         .IsRequired()
                         .HasColumnType("text");
@@ -774,6 +778,10 @@ namespace VocareWebAPI.Migrations
                     b.PrimitiveCollection<List<string>>("RequiredSkills")
                         .IsRequired()
                         .HasColumnType("text[]");
+
+                    b.Property<string>("SuggestedSeniority")
+                        .IsRequired()
+                        .HasColumnType("text");
 
                     b.Property<Guid>("SwotAnalysisId")
                         .HasColumnType("uuid");

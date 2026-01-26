@@ -328,6 +328,17 @@ namespace VocareWebAPI.Data
 
                 entity.Property(e => e.Embedding).HasColumnType("vector(1536)");
             });
+            builder.Entity<CareerPath>(e =>
+            {
+                e.HasKey(e => e.Id);
+                e.Property(e => e.Embedding).HasColumnType("vector(1536)");
+
+                e.Property(e => e.AllowedJobCategories)
+                    .HasConversion(
+                        v => string.Join(";", v),
+                        v => v.Split(";", StringSplitOptions.RemoveEmptyEntries).ToList()
+                    );
+            });
             builder.Entity<AiNarrator>(entity =>
             {
                 entity.HasKey(e => e.Id);

@@ -4,6 +4,7 @@ using VocareWebAPI.JobOffers.Models.Dtos;
 using VocareWebAPI.JobOffers.Models.Enums;
 using VocareWebAPI.JobOffers.Repositories.Interfaces;
 using VocareWebAPI.JobOffers.Services.Interfaces;
+using VocareWebAPI.Models.Entities;
 using VocareWebAPI.Repositories;
 
 namespace VocareWebAPI.JobOffers.Services.Implementations
@@ -105,16 +106,6 @@ namespace VocareWebAPI.JobOffers.Services.Implementations
                 throw new InvalidOperationException($"Brak rekomendacji dla użytkownika: {userId}");
             }
 
-            // Pobieramy filtry z profilu użytkownika
-            var filters = await GetFiltersFromUserProfileAsync(userId);
-
-            _logger.LogInformation(
-                "Filtry dla użytkownika {UserId}: Miasta={Cities}, Remote={Remote}",
-                userId,
-                filters.Cities != null ? string.Join(", ", filters.Cities) : "brak",
-                filters.IncludeRemote
-            );
-
             var result = new Dictionary<Guid, List<JobOfferMatchDto>>();
 
             foreach (var careerPath in recommendation.CareerPaths)
@@ -128,6 +119,20 @@ namespace VocareWebAPI.JobOffers.Services.Implementations
                     result[careerPath.Id] = new List<JobOfferMatchDto>();
                     continue;
                 }
+
+                // POPRAWKA: Filtry PER ŚCIEŻKA (z kategorią i seniority)
+                var filters = await GetFiltersFromCareerPathAsync(careerPath.Id);
+
+                _logger.LogInformation(
+                    "Filtry dla ścieżki {CareerName}: Miasta={Cities}, Remote={Remote}, Seniority={Seniority}, Kategorie={Categories}",
+                    careerPath.CareerName,
+                    filters.Cities != null ? string.Join(", ", filters.Cities) : "brak",
+                    filters.IncludeRemote,
+                    filters.SeniorityLevels != null
+                        ? string.Join(", ", filters.SeniorityLevels)
+                        : "brak",
+                    filters.Categories != null ? string.Join(", ", filters.Categories) : "brak"
+                );
 
                 var matchingOffers = await _jobOfferRecommendationRepository.GetMatchingOffersAsync(
                     careerPath.Embedding,
@@ -155,6 +160,7 @@ namespace VocareWebAPI.JobOffers.Services.Implementations
             // Znajdujemy rekomendację zawierającą tę ścieżkę
             var recommendation = await _context
                 .AiRecommendations.Include(r => r.UserProfile)
+                .ThenInclude(u => u.WorkExperience)
                 .Include(r => r.CareerPaths)
                 .FirstOrDefaultAsync(r => r.CareerPaths.Any(cp => cp.Id == careerPathId));
 
@@ -163,7 +169,70 @@ namespace VocareWebAPI.JobOffers.Services.Implementations
                 return new JobOfferFilterCriteria { IncludeRemote = true };
             }
 
-            return BuildFiltersFromProfile(recommendation.UserProfile);
+            var careerPath = recommendation.CareerPaths.FirstOrDefault(cp => cp.Id == careerPathId);
+            var filters = BuildFiltersFromProfile(recommendation.UserProfile);
+
+            if (careerPath != null)
+            {
+                _logger.LogWarning(
+                    "DEBUG: CareerPath={Name}, SuggestedSeniority={Seniority}, Categories={Categories}",
+                    careerPath.CareerName,
+                    careerPath.SuggestedSeniority ?? "NULL",
+                    careerPath.AllowedJobCategories != null
+                        ? string.Join(", ", careerPath.AllowedJobCategories)
+                        : "NULL"
+                );
+
+                if (!string.IsNullOrEmpty(careerPath.SuggestedSeniority))
+                {
+                    filters.SeniorityLevels = MapSeniorityToAllowedLevels(
+                        careerPath.SuggestedSeniority
+                    );
+
+                    _logger.LogWarning(
+                        "DEBUG: Mapped seniority levels: {Levels}",
+                        string.Join(", ", filters.SeniorityLevels)
+                    );
+                }
+
+                if (
+                    careerPath.AllowedJobCategories != null
+                    && careerPath.AllowedJobCategories.Any()
+                )
+                {
+                    filters.Categories = careerPath.AllowedJobCategories;
+                }
+            }
+
+            return filters;
+        }
+
+        /// <summary>
+        /// Mapuje sugerowany poziom seniority na dozwolone poziomy w ofertach
+        /// </summary>
+        private List<SeniorityLevel> MapSeniorityToAllowedLevels(string suggestedSeniority)
+        {
+            return suggestedSeniority.ToLower() switch
+            {
+                "junior" => new List<SeniorityLevel>
+                {
+                    SeniorityLevel.Trainee,
+                    SeniorityLevel.Junior,
+                },
+                "mid" => new List<SeniorityLevel> { SeniorityLevel.Junior, SeniorityLevel.Mid },
+                "senior" => new List<SeniorityLevel>
+                {
+                    SeniorityLevel.Mid,
+                    SeniorityLevel.Senior,
+                    SeniorityLevel.Expert,
+                },
+                _ => new List<SeniorityLevel>
+                {
+                    SeniorityLevel.Junior,
+                    SeniorityLevel.Mid,
+                    SeniorityLevel.Senior,
+                },
+            };
         }
 
         /// <summary>

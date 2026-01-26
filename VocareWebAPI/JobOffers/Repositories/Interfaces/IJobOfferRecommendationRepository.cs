@@ -6,7 +6,6 @@ namespace VocareWebAPI.JobOffers.Repositories.Interfaces
 {
     public interface IJobOfferRecommendationRepository
     {
-        Task<List<JobOffer>> GetMatchingOffersAsync(Vector embedding, int limit = 5);
         Task<List<JobOffer>> GetMatchingOffersAsync(
             Vector embedding,
             JobOfferFilterCriteria filters,
