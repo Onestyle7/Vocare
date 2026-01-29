@@ -1,4 +1,3 @@
-using System.Reflection.Metadata;
 using VocareWebAPI.Billing.Repositories.Implementations;
 using VocareWebAPI.Billing.Repositories.Interfaces;
 using VocareWebAPI.Billing.Services.Implementations;
@@ -26,8 +25,6 @@ using VocareWebAPI.Repositories;
 using VocareWebAPI.Repositories.Implementations;
 using VocareWebAPI.Repositories.Interfaces;
 using VocareWebAPI.Services;
-using VocareWebAPI.Shared.Services.Implementations;
-using VocareWebAPI.Shared.Services.Interfaces;
 using VocareWebAPI.UserManagement;
 using VocareWebAPI.UserManagement.Interfaces;
 using VocareWebAPI.UserManagement.Repositories;
@@ -69,6 +66,7 @@ namespace VocareWebAPI.Extensions.ServiceCollectionExtensions
             // Jobs services
             services.AddScoped<IJobOfferSyncService, JobOfferSyncService>();
             services.AddScoped<IJobOfferMatchingService, JobOfferMatchingService>();
+            services.AddScoped<ISkillMatchingService, SkillMatchingService>();
 
             // Background services
             services.AddHostedService<JobOfferSyncBackgroundService>();

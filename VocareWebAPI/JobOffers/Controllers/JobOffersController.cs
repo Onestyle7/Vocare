@@ -17,16 +17,19 @@ namespace VocareWebAPI.JobOffers.Controllers
         private readonly IJobOfferSyncService _syncService;
         private readonly IJobOfferRepository _repository;
         private readonly IJobOfferMatchingService _matchingService;
+        private readonly ISkillMatchingService _skillMatchingService;
 
         public JobOffersController(
             IJobOfferSyncService syncService,
             IJobOfferRepository repository,
-            IJobOfferMatchingService matchingService
+            IJobOfferMatchingService matchingService,
+            ISkillMatchingService skillMatchingService
         )
         {
             _syncService = syncService;
             _repository = repository;
             _matchingService = matchingService;
+            _skillMatchingService = skillMatchingService;
         }
 
         [Authorize]
@@ -135,6 +138,20 @@ namespace VocareWebAPI.JobOffers.Controllers
             {
                 return Problem(detail: ex.Message, statusCode: 500);
             }
+        }
+
+        /// <summary>
+        /// TYMCZASOWY - test skill matching
+        /// </summary>
+        [HttpGet("test-skill-matching")]
+        public async Task<IActionResult> TestSkillMatching()
+        {
+            var required = new List<string> { "Figma", "UX Research", "Prototypowanie" };
+            var offered = new List<string> { "Figma", "User Research", "Wireframing", "Sketch" };
+
+            var result = await _skillMatchingService.CalculateSkillMatchAsync(required, offered);
+
+            return Ok(result);
         }
     }
 }
