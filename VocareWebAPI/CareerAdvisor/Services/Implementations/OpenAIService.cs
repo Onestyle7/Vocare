@@ -281,7 +281,7 @@ namespace VocareWebAPI.CareerAdvisor.Services.Implementations
                         "probability": 85,
                         "suggestedSeniority": "Junior",
                         "allowedJobCategories": ["customerService", "support"],
-                        "requiredSkills": ["umiejętność1", "umiejętność2", "umiejętność3"],
+                        "requiredSkills": ["Excel", "SQL", "Figma"],
                         "marketAnalysis": [
                             "Średnie wynagrodzenie: X-Y PLN brutto",
                             "Zapotrzebowanie na rynku: wysokie/średnie/niskie",
@@ -318,6 +318,12 @@ namespace VocareWebAPI.CareerAdvisor.Services.Implementations
             - "Mid" - jeśli użytkownik ma 2-5 lat doświadczenia w pokrewnej dziedzinie
             - "Senior" - TYLKO jeśli użytkownik ma >5 lat bezpośredniego doświadczenia w tej roli
 
+            Zasady dla requiredSkills:
+            - Używaj KRÓTKICH nazw narzędzi (1-2 słowa): "Excel", "SQL", "Figma", "Google Analytics"
+            - NIE dodawaj szczegółów w nawiasach: "Excel" zamiast "Excel (tabele przestawne, VLOOKUP)"
+            - NIE dodawaj poziomów: "Figma" zamiast "Figma (podstawy)"
+            - Nazwy mają pasować do tego jak firmy piszą w ogłoszeniach o pracę
+            
             Pamiętaj: odpowiedź musi być w języku polskim i zawierać realistyczne dane rynkowe.
             """;
         }

@@ -154,6 +154,37 @@ namespace VocareWebAPI.JobOffers.Controllers
             return Ok(result);
         }
 
+        /// <summary>
+        /// Pobiera oferty ze szczegółowym scoringiem dla wszystkich ścieżek zalogowanego użytkownika
+        /// </summary>
+        /// <param name="limitPerPath"></param>
+        /// <returns></returns>
+        [Authorize]
+        [HttpGet("matching/my-recommendations/detailed")]
+        public async Task<
+            ActionResult<List<CareerPathMatchResultDto>>
+        > GetDetailedMatchingOffersForUser([FromQuery] int limitPerPath = 5)
+        {
+            var userId = User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
+            if (string.IsNullOrEmpty(userId))
+            {
+                return Unauthorized("Brak identyfikatora użytkownika w tokenie.");
+            }
+
+            try
+            {
+                var result = await _matchingService.GetMatchingOffersWithScoresForUserAsync(
+                    userId,
+                    limitPerPath
+                );
+                return Ok(result);
+            }
+            catch (InvalidOperationException ex)
+            {
+                return NotFound(new { message = ex.Message });
+            }
+        }
+
         [Authorize]
         [HttpGet("matching/{careerPathId:guid}/detailed")]
         public async Task<ActionResult<CareerPathMatchResultDto>> GetDetailedMatchingOffers(

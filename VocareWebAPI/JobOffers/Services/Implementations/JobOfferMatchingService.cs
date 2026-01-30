@@ -312,6 +312,37 @@ namespace VocareWebAPI.JobOffers.Services.Implementations
             };
         }
 
+        public async Task<List<CareerPathMatchResultDto>> GetMatchingOffersWithScoresForUserAsync(
+            string userId,
+            int limitPerPath = 5
+        )
+        {
+            _logger.LogInformation(
+                "Szukam ofert dla wszystkich ścieżek użytkownika: {UserId}",
+                userId
+            );
+
+            var recommendation = await _aiRecommendationRepository.GetLatestByUserIdAsync(userId);
+
+            if (recommendation == null)
+            {
+                _logger.LogWarning("Brak rekomendacji dla użytkownika: {UserId}", userId);
+                throw new InvalidOperationException($"Brak rekomendacji dla użytkownika: {userId}");
+            }
+
+            var result = new List<CareerPathMatchResultDto>();
+
+            foreach (var careerPath in recommendation.CareerPaths)
+            {
+                var matchResult = await GetMatchingOffersWithScoreAsync(
+                    careerPath.Id,
+                    limitPerPath
+                );
+                result.Add(matchResult);
+            }
+            return result;
+        }
+
         /// <summary>
         /// Pobiera filtry na podstawie profilu użytkownika powiązanego ze ścieżką kariery
         /// </summary>
@@ -415,9 +446,7 @@ namespace VocareWebAPI.JobOffers.Services.Implementations
         /// <summary>
         /// Buduje kryteria filtrowania na podstawie profilu użytkownika
         /// </summary>
-        private JobOfferFilterCriteria BuildFiltersFromProfile(
-            VocareWebAPI.Models.Entities.UserProfile profile
-        )
+        private JobOfferFilterCriteria BuildFiltersFromProfile(UserProfile profile)
         {
             var filters = new JobOfferFilterCriteria
             {

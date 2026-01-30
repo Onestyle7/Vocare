@@ -11,7 +11,7 @@ namespace VocareWebAPI.JobOffers.Services.Implementations
     {
         private readonly IEmbeddingService _embeddingService;
         private readonly ILogger<SkillMatchingService> _logger;
-        private const double FullMatchThreshold = 0.8;
+        private const double FullMatchThreshold = 0.75;
         private const double PartialMatchThreshold = 0.6;
 
         public SkillMatchingService(
