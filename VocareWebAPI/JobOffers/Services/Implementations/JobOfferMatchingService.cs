@@ -1,6 +1,8 @@
 using Microsoft.EntityFrameworkCore;
+using Pgvector;
 using VocareWebAPI.Data;
 using VocareWebAPI.JobOffers.Models.Dtos;
+using VocareWebAPI.JobOffers.Models.Entities;
 using VocareWebAPI.JobOffers.Models.Enums;
 using VocareWebAPI.JobOffers.Repositories.Interfaces;
 using VocareWebAPI.JobOffers.Services.Interfaces;
@@ -15,18 +17,24 @@ namespace VocareWebAPI.JobOffers.Services.Implementations
         private readonly IJobOfferRecommendationRepository _jobOfferRecommendationRepository;
         private readonly IAiRecommendationRepository _aiRecommendationRepository;
         private readonly ILogger<JobOfferMatchingService> _logger;
+        private readonly ISkillMatchingService _skillMatchingService;
+        private readonly IScoringService _scoringService;
 
         public JobOfferMatchingService(
             AppDbContext context,
             IJobOfferRecommendationRepository jobOfferRecommendationRepository,
             IAiRecommendationRepository aiRecommendationRepository,
-            ILogger<JobOfferMatchingService> logger
+            ILogger<JobOfferMatchingService> logger,
+            ISkillMatchingService skillMatchingService,
+            IScoringService scoringService
         )
         {
             _context = context;
             _jobOfferRecommendationRepository = jobOfferRecommendationRepository;
             _aiRecommendationRepository = aiRecommendationRepository;
             _logger = logger;
+            _skillMatchingService = skillMatchingService;
+            _scoringService = scoringService;
         }
 
         public async Task<List<JobOfferMatchDto>> GetMatchingOffersForCareerPathAsync(
@@ -41,7 +49,7 @@ namespace VocareWebAPI.JobOffers.Services.Implementations
 
             // Pobieramy ścieżkę kariery z embeddingiem
             var careerPath = await _context
-                .Set<VocareWebAPI.Models.Entities.CareerPath>()
+                .Set<CareerPath>()
                 .FirstOrDefaultAsync(cp => cp.Id == careerPathId);
 
             if (careerPath == null)
@@ -150,6 +158,158 @@ namespace VocareWebAPI.JobOffers.Services.Implementations
             }
 
             return result;
+        }
+
+        public async Task<CareerPathMatchResultDto> GetMatchingOffersWithScoreAsync(
+            Guid careerPathId,
+            int limit = 5
+        )
+        {
+            _logger.LogInformation(
+                "Szukam ofert dla ścieżki kariery z oceną: {CareerPathId}",
+                careerPathId
+            );
+
+            var careerPath = await _context
+                .Set<CareerPath>()
+                .FirstOrDefaultAsync(cp => cp.Id == careerPathId);
+
+            if (careerPath == null)
+            {
+                _logger.LogWarning("Nie znaleziono ścieżki kariery: {CareerPathId}", careerPathId);
+                throw new ArgumentException($"Nie znaleziono ścieżki kariery o ID: {careerPathId}");
+            }
+
+            if (careerPath.Embedding == null)
+            {
+                _logger.LogWarning(
+                    "Ścieżka kariery {CareerPathId} nie ma embeddingu",
+                    careerPathId
+                );
+                return new CareerPathMatchResultDto
+                {
+                    CareerPathId = careerPathId,
+                    CareerPathName = careerPath.CareerName,
+                    RequiredSkills = careerPath.RequiredSkills ?? new List<string>(),
+                    DataQualityWarning =
+                        "Brak embeddingu dla ścieżki kariery - nie można dopasować ofert.",
+                };
+            }
+
+            var filters = await GetFiltersFromCareerPathAsync(careerPathId);
+
+            var candidateOffers = await _jobOfferRecommendationRepository.GetMatchingOffersAsync(
+                careerPath.Embedding,
+                filters,
+                limit * 4
+            );
+
+            var totalOffersInCategory = candidateOffers.Count;
+
+            var scoredOffers = new List<ScoredJobOfferDto>();
+
+            foreach (var offer in candidateOffers)
+            {
+                var semanticScore = CalculateSemanticScore(careerPath.Embedding, offer.Embedding);
+
+                var skillMatchResult = await _skillMatchingService.CalculateSkillMatchAsync(
+                    careerPath.RequiredSkills ?? new List<string>(),
+                    offer.Skills?.Select(s => s.Name).ToList() ?? new List<string>()
+                );
+
+                var categoryMatched =
+                    filters.Categories != null
+                    && filters.Categories.Contains(offer.Category.ToLower());
+                var seniorityMatched =
+                    filters.SeniorityLevels != null
+                    && filters.SeniorityLevels.Contains(offer.SeniorityLevel);
+
+                var finalScore = _scoringService.CalculateFinalScore(
+                    semanticScore,
+                    skillMatchResult.Score,
+                    categoryMatched,
+                    seniorityMatched
+                );
+
+                var confidenceLevel = _scoringService.DetermineConfidenceLevel(
+                    finalScore,
+                    totalOffersInCategory
+                );
+
+                var bonusFactors = new List<string>();
+                if (categoryMatched)
+                    bonusFactors.Add("categoryMatch");
+                if (seniorityMatched)
+                    bonusFactors.Add("seniorityMatch");
+
+                var matchedSkillsList = skillMatchResult
+                    .FullMatches.Select(m =>
+                        $"{m.Key} → {m.Value.MatchedSkill} ({m.Value.Similarity:P0})"
+                    )
+                    .ToList();
+
+                var partialMatchesList = skillMatchResult
+                    .PartialMatches.Select(m =>
+                        $"{m.Key} → {m.Value.MatchedSkill} ({m.Value.Similarity:P0})"
+                    )
+                    .ToList();
+
+                scoredOffers.Add(
+                    new ScoredJobOfferDto
+                    {
+                        Id = offer.Id,
+                        Title = offer.Title,
+                        CompanyName = offer.CompanyName,
+                        Url = offer.Url,
+                        Category = offer.Category,
+                        SeniorityLevel = offer.SeniorityLevel.ToString(),
+                        BriefDescription = offer.BriefDescription,
+                        SalaryMin = offer.SalaryMin,
+                        SalaryMax = offer.SalaryMax,
+                        SalaryCurrency = offer.SalaryCurrency,
+                        Locations =
+                            offer.Locations?.Select(l => l.IsRemote ? "Remote" : l.City).ToList()
+                            ?? new List<string>(),
+                        Skills = offer.Skills?.Select(s => s.Name).ToList() ?? new List<string>(),
+                        PublishedAt = offer.PublishedAt,
+
+                        MatchScore = finalScore,
+                        ConfidenceLevel = confidenceLevel,
+                        MatchDetails = new MatchDetailsDto
+                        {
+                            SemanticScore = (int)Math.Round(semanticScore),
+                            SkillScore = (int)Math.Round(skillMatchResult.Score),
+                            MatchedSkills = matchedSkillsList,
+                            PartialMatches = partialMatchesList,
+                            MissingSkills = skillMatchResult.MissingSkills,
+                            BonusFactors = bonusFactors,
+                        },
+                    }
+                );
+            }
+
+            var topOffers = scoredOffers.OrderByDescending(o => o.MatchScore).Take(limit).ToList();
+
+            var averageScore = topOffers.Any() ? topOffers.Average(o => o.MatchScore) : 0;
+
+            var highQualityCount = topOffers.Count(o => o.MatchScore >= 70);
+
+            var dataQualityWarning = _scoringService.GenerateDataQualityWarning(
+                (int)averageScore,
+                totalOffersInCategory
+            );
+
+            return new CareerPathMatchResultDto
+            {
+                CareerPathId = careerPathId,
+                CareerPathName = careerPath.CareerName,
+                RequiredSkills = careerPath.RequiredSkills ?? new List<string>(),
+                MatchedOffers = topOffers,
+                AverageMatchScore = averageScore,
+                HighQualityMatches = highQualityCount,
+                TotalOffersInCategory = totalOffersInCategory,
+                DataQualityWarning = dataQualityWarning,
+            };
         }
 
         /// <summary>
@@ -309,6 +469,48 @@ namespace VocareWebAPI.JobOffers.Services.Implementations
                 Skills = offer.Skills?.Select(s => s.Name).ToList() ?? new List<string>(),
                 PublishedAt = offer.PublishedAt,
             };
+        }
+
+        private double CalculateCosineSimilarity(float[] vectorA, float[] vectorB)
+        {
+            if (vectorA.Length != vectorB.Length)
+            {
+                throw new ArgumentException("Vectors must be of the same length");
+            }
+            double dotProduct = 0;
+            double magnitudeA = 0;
+            double magnitudeB = 0;
+
+            for (int i = 0; i < vectorA.Length; i++)
+            {
+                dotProduct += vectorA[i] * vectorB[i];
+                magnitudeA += vectorA[i] * vectorA[i];
+                magnitudeB += vectorB[i] * vectorB[i];
+            }
+            magnitudeA = Math.Sqrt(magnitudeA);
+            magnitudeB = Math.Sqrt(magnitudeB);
+
+            if (magnitudeA == 0 || magnitudeB == 0)
+            {
+                return 0;
+            }
+
+            return dotProduct / (magnitudeA * magnitudeB);
+        }
+
+        private double CalculateSemanticScore(
+            Vector? careerPathEmbedding,
+            Vector? jobOfferEmbedding
+        )
+        {
+            if (careerPathEmbedding == null || jobOfferEmbedding == null)
+            {
+                return 0;
+            }
+            return CalculateCosineSimilarity(
+                    careerPathEmbedding.ToArray(),
+                    jobOfferEmbedding.ToArray()
+                ) * 100;
         }
     }
 }

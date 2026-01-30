@@ -29,5 +29,13 @@ namespace VocareWebAPI.JobOffers.Services.Interfaces
             string userId,
             int limitPerPath = 5
         );
+        Task<CareerPathMatchResultDto> GetMatchingOffersWithScoreAsync(
+            Guid careerPathId,
+            int limit = 5
+        );
+        Task<List<CareerPathMatchResultDto>> GetMatchingOffersWithScoresForUserAsync(
+            string userId,
+            int limitPerPath = 5
+        );
     }
 }

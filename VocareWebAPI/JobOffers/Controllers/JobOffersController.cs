@@ -153,5 +153,26 @@ namespace VocareWebAPI.JobOffers.Controllers
 
             return Ok(result);
         }
+
+        [Authorize]
+        [HttpGet("matching/{careerPathId:guid}/detailed")]
+        public async Task<ActionResult<CareerPathMatchResultDto>> GetDetailedMatchingOffers(
+            Guid careerPathId,
+            [FromQuery] int limit = 5
+        )
+        {
+            try
+            {
+                var result = await _matchingService.GetMatchingOffersWithScoreAsync(
+                    careerPathId,
+                    limit
+                );
+                return Ok(result);
+            }
+            catch (ArgumentException ex)
+            {
+                return NotFound(new { message = ex.Message });
+            }
+        }
     }
 }
