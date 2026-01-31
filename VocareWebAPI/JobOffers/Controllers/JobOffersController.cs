@@ -18,18 +18,21 @@ namespace VocareWebAPI.JobOffers.Controllers
         private readonly IJobOfferRepository _repository;
         private readonly IJobOfferMatchingService _matchingService;
         private readonly ISkillMatchingService _skillMatchingService;
+        private readonly ISkillEmbeddingService _skillEmbeddingService;
 
         public JobOffersController(
             IJobOfferSyncService syncService,
             IJobOfferRepository repository,
             IJobOfferMatchingService matchingService,
-            ISkillMatchingService skillMatchingService
+            ISkillMatchingService skillMatchingService,
+            ISkillEmbeddingService skillEmbeddingService
         )
         {
             _syncService = syncService;
             _repository = repository;
             _matchingService = matchingService;
             _skillMatchingService = skillMatchingService;
+            _skillEmbeddingService = skillEmbeddingService;
         }
 
         [Authorize]
@@ -205,5 +208,25 @@ namespace VocareWebAPI.JobOffers.Controllers
                 return NotFound(new { message = ex.Message });
             }
         }
+
+        #region DO USUNIĘCIA PO PRZEROBIENIU BACKFILLA SKILL EMBEDDINGÓW
+        /// <summary>
+        /// Generuje embeddingi dla wszystkich skills z ofert pracy (jednorazowy backfill)
+        /// </summary>
+        [Authorize]
+        [HttpPost("backfill-skill-embeddings")]
+        public async Task<IActionResult> BackfillSkillEmbeddings()
+        {
+            try
+            {
+                var result = await _skillEmbeddingService.BackfillSkillEmbeddingsAsync();
+                return Ok(result);
+            }
+            catch (Exception ex)
+            {
+                return Problem(detail: ex.Message, statusCode: 500);
+            }
+        }
+        #endregion
     }
 }

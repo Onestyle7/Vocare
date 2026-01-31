@@ -81,7 +81,8 @@ namespace VocareWebAPI.Data
         public DbSet<CvParseHistory> CvParseHistories { get; set; }
         public DbSet<JobOffer> JobOffers { get; set; }
         public DbSet<JobOfferLocation> JobOfferLocations { get; set; }
-        public DbSet<JobOfferSkill> JobOffferSkills { get; set; }
+        public DbSet<JobOfferSkill> JobOfferSkills { get; set; }
+        public DbSet<SkillEmbedding> SkillEmbeddings { get; set; }
 
         /// <summary>
         /// Konfiguruje model bazy danych, definiując schemat i relacje między encjami.
@@ -381,6 +382,12 @@ namespace VocareWebAPI.Data
 
                 //Indeks na nazwę umięjeność - przyśpieszy wyszukiwanie po umiejętności
                 entity.HasIndex(e => e.Name);
+            });
+
+            builder.Entity<SkillEmbedding>(e =>
+            {
+                e.HasKey(e => e.Id);
+                e.HasIndex(e => e.NormalizedSkillName).IsUnique();
             });
         }
     }

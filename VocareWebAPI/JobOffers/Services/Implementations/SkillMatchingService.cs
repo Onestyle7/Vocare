@@ -1,25 +1,20 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 using VocareWebAPI.JobOffers.Services.Interfaces;
-using VocareWebAPI.Shared.Services.Interfaces;
 
 namespace VocareWebAPI.JobOffers.Services.Implementations
 {
     public class SkillMatchingService : ISkillMatchingService
     {
-        private readonly IEmbeddingService _embeddingService;
+        private readonly ISkillEmbeddingService _skillEmbeddingService;
         private readonly ILogger<SkillMatchingService> _logger;
         private const double FullMatchThreshold = 0.75;
         private const double PartialMatchThreshold = 0.6;
 
         public SkillMatchingService(
-            IEmbeddingService embeddingService,
+            ISkillEmbeddingService skillEmbeddingService,
             ILogger<SkillMatchingService> logger
         )
         {
-            _embeddingService = embeddingService;
+            _skillEmbeddingService = skillEmbeddingService;
             _logger = logger;
         }
 
@@ -48,8 +43,12 @@ namespace VocareWebAPI.JobOffers.Services.Implementations
                 };
             }
 
-            var requiredEmbeddings = await GenerateEmbeddingsForSkillsAsync(requiredSkills);
-            var offerEmbeddings = await GenerateEmbeddingsForSkillsAsync(offerSkills);
+            var requiredEmbeddings = await _skillEmbeddingService.GetEmbeddingsForSkillsAsync(
+                requiredSkills
+            );
+            var offerEmbeddings = await _skillEmbeddingService.GetEmbeddingsForSkillsAsync(
+                offerSkills
+            );
 
             var result = new SkillMatchResult { TotalRequired = requiredSkills.Count };
             double totalSimilarity = 0;
@@ -92,20 +91,6 @@ namespace VocareWebAPI.JobOffers.Services.Implementations
             result.MatchedCount = result.FullMatches.Count + result.PartialMatches.Count;
             result.Score = totalSimilarity / requiredSkills.Count * 100;
             return result;
-        }
-
-        private async Task<Dictionary<string, float[]>> GenerateEmbeddingsForSkillsAsync(
-            List<string> skills
-        )
-        {
-            var embeddings = new Dictionary<string, float[]>();
-            foreach (var skill in skills)
-            {
-                var embedding = await _embeddingService.GenerateEmbeddingAsync(skill);
-                float[] array = embedding.ToArray();
-                embeddings[skill] = array;
-            }
-            return embeddings;
         }
 
         private double CalculateCosineSimilarity(float[] vectorA, float[] vectorB)

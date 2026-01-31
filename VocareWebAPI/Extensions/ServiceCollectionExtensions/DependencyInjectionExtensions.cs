@@ -68,6 +68,7 @@ namespace VocareWebAPI.Extensions.ServiceCollectionExtensions
             services.AddScoped<IJobOfferMatchingService, JobOfferMatchingService>();
             services.AddScoped<ISkillMatchingService, SkillMatchingService>();
             services.AddScoped<IScoringService, ScoringService>();
+            services.AddScoped<ISkillEmbeddingService, SkillEmbeddingService>();
 
             // Background services
             services.AddHostedService<JobOfferSyncBackgroundService>();
@@ -109,6 +110,7 @@ namespace VocareWebAPI.Extensions.ServiceCollectionExtensions
                 IJobOfferRecommendationRepository,
                 JobOfferRecommendationRepository
             >();
+            services.AddScoped<ISkillEmbeddingRepository, SkillEmbeddingRepository>();
 
             return services;
         }

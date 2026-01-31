@@ -665,7 +665,36 @@ namespace VocareWebAPI.Migrations
 
                     b.HasIndex("Name");
 
-                    b.ToTable("JobOffferSkills", "public");
+                    b.ToTable("JobOfferSkills", "public");
+                });
+
+            modelBuilder.Entity("VocareWebAPI.JobOffers.Models.Entities.SkillEmbedding", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<Vector>("Embedding")
+                        .HasColumnType("vector");
+
+                    b.Property<string>("NormalizedSkillName")
+                        .IsRequired()
+                        .HasMaxLength(200)
+                        .HasColumnType("character varying(200)");
+
+                    b.Property<string>("OriginalName")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("NormalizedSkillName")
+                        .IsUnique();
+
+                    b.ToTable("SkillEmbeddings", "public");
                 });
 
             modelBuilder.Entity("VocareWebAPI.MarketNews.Models.Entities.MarketNewsEntity", b =>
