@@ -9,6 +9,14 @@ namespace VocareWebAPI.JobOffers.Services.Interfaces
     {
         Task<SyncResult> SyncOffersAsync();
         Task<int> CleanupStaleOffersAsync();
+        Task<BackfillResult> BackfillEmbeddingsAsync(int batchSize = 100);
+    }
+
+    public class BackfillResult
+    {
+        public int Processed { get; set; }
+        public int Failed { get; set; }
+        public int Remaining { get; set; }
     }
 
     public class SyncResult

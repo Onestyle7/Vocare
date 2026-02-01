@@ -1,4 +1,3 @@
-using System.Reflection.Metadata;
 using VocareWebAPI.Billing.Repositories.Implementations;
 using VocareWebAPI.Billing.Repositories.Interfaces;
 using VocareWebAPI.Billing.Services.Implementations;
@@ -66,6 +65,10 @@ namespace VocareWebAPI.Extensions.ServiceCollectionExtensions
 
             // Jobs services
             services.AddScoped<IJobOfferSyncService, JobOfferSyncService>();
+            services.AddScoped<IJobOfferMatchingService, JobOfferMatchingService>();
+            services.AddScoped<ISkillMatchingService, SkillMatchingService>();
+            services.AddScoped<IScoringService, ScoringService>();
+            services.AddScoped<ISkillEmbeddingService, SkillEmbeddingService>();
 
             // Background services
             services.AddHostedService<JobOfferSyncBackgroundService>();
@@ -103,6 +106,11 @@ namespace VocareWebAPI.Extensions.ServiceCollectionExtensions
             services.AddScoped<IJobOfferRepository, JobOfferRepository>();
             services.AddScoped<INoFluffJobsParser, NoFluffJobsParser>();
             services.AddScoped<IMarketNewsRepository, MarketNewsRepository>();
+            services.AddScoped<
+                IJobOfferRecommendationRepository,
+                JobOfferRecommendationRepository
+            >();
+            services.AddScoped<ISkillEmbeddingRepository, SkillEmbeddingRepository>();
 
             return services;
         }

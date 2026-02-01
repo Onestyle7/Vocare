@@ -14,6 +14,8 @@ using VocareWebAPI.Models.OpenAIConfig;
 using VocareWebAPI.Repositories.Interfaces;
 using VocareWebAPI.Services;
 using VocareWebAPI.Services.Implementations;
+using VocareWebAPI.Shared.Services.Implementations;
+using VocareWebAPI.Shared.Services.Interfaces;
 
 namespace VocareWebAPI.Extensions.ServiceCollectionExtensions
 {
@@ -70,6 +72,15 @@ namespace VocareWebAPI.Extensions.ServiceCollectionExtensions
 
             // Job services
             services.AddHttpClient<INoFluffJobsParser, NoFluffJobsParser>();
+
+            // Embedding Service
+            services
+                .AddHttpClient<IEmbeddingService, OpenAIEmbeddingService>(client =>
+                {
+                    ConfigureOpenAIClient(client, configuration);
+                })
+                .AddPolicyHandler(retryPolicy);
+
             return services;
         }
 
@@ -79,7 +90,8 @@ namespace VocareWebAPI.Extensions.ServiceCollectionExtensions
             if (config == null)
                 throw new InvalidOperationException("OpenAI configuration section is missing");
 
-            client.BaseAddress = new Uri(config.BaseUrl);
+            var baseUrl = config.BaseUrl.EndsWith("/") ? config.BaseUrl : config.BaseUrl + "/";
+            client.BaseAddress = new Uri(baseUrl);
             client.DefaultRequestHeaders.Add("Authorization", $"Bearer {config.ApiKey}");
             client.DefaultRequestHeaders.Add("Accept", "application/json");
         }

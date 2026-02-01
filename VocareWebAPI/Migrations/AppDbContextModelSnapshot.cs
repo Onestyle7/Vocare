@@ -5,6 +5,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
+using Pgvector;
 using VocareWebAPI.Data;
 
 #nullable disable
@@ -22,6 +23,7 @@ namespace VocareWebAPI.Migrations
                 .HasAnnotation("ProductVersion", "9.0.3")
                 .HasAnnotation("Relational:MaxIdentifierLength", 63);
 
+            NpgsqlModelBuilderExtensions.HasPostgresExtension(modelBuilder, "vector");
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRole", b =>
@@ -571,6 +573,9 @@ namespace VocareWebAPI.Migrations
                         .IsRequired()
                         .HasColumnType("text");
 
+                    b.Property<Vector>("Embedding")
+                        .HasColumnType("vector(1536)");
+
                     b.Property<string>("JobType")
                         .IsRequired()
                         .HasColumnType("text");
@@ -660,7 +665,36 @@ namespace VocareWebAPI.Migrations
 
                     b.HasIndex("Name");
 
-                    b.ToTable("JobOffferSkills", "public");
+                    b.ToTable("JobOfferSkills", "public");
+                });
+
+            modelBuilder.Entity("VocareWebAPI.JobOffers.Models.Entities.SkillEmbedding", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<Vector>("Embedding")
+                        .HasColumnType("vector");
+
+                    b.Property<string>("NormalizedSkillName")
+                        .IsRequired()
+                        .HasMaxLength(200)
+                        .HasColumnType("character varying(200)");
+
+                    b.Property<string>("OriginalName")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("NormalizedSkillName")
+                        .IsUnique();
+
+                    b.ToTable("SkillEmbeddings", "public");
                 });
 
             modelBuilder.Entity("VocareWebAPI.MarketNews.Models.Entities.MarketNewsEntity", b =>
@@ -740,6 +774,10 @@ namespace VocareWebAPI.Migrations
                     b.Property<Guid?>("AiRecommendationId")
                         .HasColumnType("uuid");
 
+                    b.Property<string>("AllowedJobCategories")
+                        .IsRequired()
+                        .HasColumnType("text");
+
                     b.Property<string>("CareerName")
                         .IsRequired()
                         .HasColumnType("text");
@@ -750,6 +788,9 @@ namespace VocareWebAPI.Migrations
                     b.Property<string>("Description")
                         .IsRequired()
                         .HasColumnType("text");
+
+                    b.Property<Vector>("Embedding")
+                        .HasColumnType("vector(1536)");
 
                     b.PrimitiveCollection<List<string>>("MarketAnalysis")
                         .IsRequired()
@@ -766,6 +807,10 @@ namespace VocareWebAPI.Migrations
                     b.PrimitiveCollection<List<string>>("RequiredSkills")
                         .IsRequired()
                         .HasColumnType("text[]");
+
+                    b.Property<string>("SuggestedSeniority")
+                        .IsRequired()
+                        .HasColumnType("text");
 
                     b.Property<Guid>("SwotAnalysisId")
                         .HasColumnType("uuid");

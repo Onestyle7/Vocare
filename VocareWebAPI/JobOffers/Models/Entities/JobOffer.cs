@@ -1,8 +1,5 @@
-using System;
-using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
-using System.Linq;
-using System.Threading.Tasks;
+using Pgvector;
 using VocareWebAPI.JobOffers.Models.Enums;
 
 namespace VocareWebAPI.JobOffers.Models.Entities
@@ -36,5 +33,6 @@ namespace VocareWebAPI.JobOffers.Models.Entities
         //Relacje
         public ICollection<JobOfferLocation> Locations { get; set; } = new List<JobOfferLocation>();
         public ICollection<JobOfferSkill> Skills { get; set; } = new List<JobOfferSkill>();
+        public Vector? Embedding { get; set; }
     }
 }

@@ -1,9 +1,6 @@
-using System;
-using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-using System.Linq;
-using System.Threading.Tasks;
+using Pgvector;
 using VocareWebAPI.Models.Entities.MarketAnalysis;
 
 namespace VocareWebAPI.Models.Entities
@@ -27,5 +24,8 @@ namespace VocareWebAPI.Models.Entities
 
         [ForeignKey("CareerStatisticsId")]
         public CareerStatistics CareerStatistics { get; set; } = default!;
+        public Vector? Embedding { get; set; }
+        public string SuggestedSeniority { get; set; } = "Mid";
+        public List<string> AllowedJobCategories { get; set; } = new();
     }
 }

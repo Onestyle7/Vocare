@@ -31,5 +31,11 @@ namespace VocareWebAPI.Models.Dtos
 
         [JsonPropertyName("swot")]
         public SwotAnalysisDto SwotAnalysis { get; set; } = new SwotAnalysisDto();
+
+        [JsonPropertyName("suggestedSeniority")]
+        public string SuggestedSeniority { get; set; } = "Mid";
+
+        [JsonPropertyName("allowedJobCategories")]
+        public List<string> AllowedJobCategories { get; set; } = new List<string>();
     }
 }
