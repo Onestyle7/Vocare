@@ -1,10 +1,4 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.OpenApi.Validations;
-using VocareWebAPI.Data;
 using VocareWebAPI.JobOffers.Models.Entities;
 using VocareWebAPI.JobOffers.Repositories.Interfaces;
 using VocareWebAPI.JobOffers.Services.Interfaces;
@@ -17,19 +11,19 @@ namespace VocareWebAPI.JobOffers.Services.Implementations
         private readonly ISkillEmbeddingRepository _skillEmbeddingRepository;
         private readonly ILogger<SkillEmbeddingService> _logger;
         private readonly IEmbeddingService _embeddingService;
-        private readonly AppDbContext _context;
+        private readonly IJobOfferRepository _jobOfferRepository;
 
         public SkillEmbeddingService(
             ISkillEmbeddingRepository skillEmbeddingRepository,
             ILogger<SkillEmbeddingService> logger,
             IEmbeddingService embeddingService,
-            AppDbContext context
+            IJobOfferRepository jobOfferRepository
         )
         {
             _skillEmbeddingRepository = skillEmbeddingRepository;
             _logger = logger;
             _embeddingService = embeddingService;
-            _context = context;
+            _jobOfferRepository = jobOfferRepository;
         }
 
         public string NormalizeSkillName(string skill)
@@ -111,14 +105,7 @@ namespace VocareWebAPI.JobOffers.Services.Implementations
         {
             _logger.LogInformation("Rozpoczynam backfill embeddingów dla skills...");
 
-            // ============================================
-            // KROK 1: Pobierz wszystkie skille z ofert pracy
-            // ============================================
-            var allSkillsFromOffers = await _context
-                .JobOffers.Where(j => j.Skills != null)
-                .SelectMany(j => j.Skills!)
-                .Select(s => s.Name)
-                .ToListAsync();
+            var allSkillsFromOffers = await _jobOfferRepository.GetAllUniqueSkillNamesAsync();
 
             var totalFound = allSkillsFromOffers.Count;
             _logger.LogInformation(
@@ -126,9 +113,6 @@ namespace VocareWebAPI.JobOffers.Services.Implementations
                 totalFound
             );
 
-            // ============================================
-            // KROK 2: Normalizuj i usuń duplikaty
-            // ============================================
             var uniqueNormalized = allSkillsFromOffers
                 .Where(s => !string.IsNullOrWhiteSpace(s))
                 .Select(s => NormalizeSkillName(s))
@@ -140,9 +124,6 @@ namespace VocareWebAPI.JobOffers.Services.Implementations
                 uniqueNormalized.Count
             );
 
-            // ============================================
-            // KROK 3: Sprawdź które już są w cache
-            // ============================================
             var existingNames = await _skillEmbeddingRepository.GetAllNormalizedNamesAsync();
             var existingSet = existingNames.ToHashSet();
 
@@ -155,9 +136,6 @@ namespace VocareWebAPI.JobOffers.Services.Implementations
                 missingSkills.Count
             );
 
-            // ============================================
-            // KROK 4: Wygeneruj embeddingi dla brakujących
-            // ============================================
             var newEmbeddings = new List<SkillEmbedding>();
             var generated = 0;
 
@@ -200,9 +178,6 @@ namespace VocareWebAPI.JobOffers.Services.Implementations
                 }
             }
 
-            // ============================================
-            // KROK 5: Zapisz do bazy
-            // ============================================
             if (newEmbeddings.Any())
             {
                 await _skillEmbeddingRepository.AddRangeAsync(newEmbeddings);
@@ -212,9 +187,6 @@ namespace VocareWebAPI.JobOffers.Services.Implementations
                 );
             }
 
-            // ============================================
-            // KROK 6: Zwróć raport
-            // ============================================
             return new SkillBackfillResult
             {
                 TotalSkillsFound = totalFound,
@@ -226,7 +198,7 @@ namespace VocareWebAPI.JobOffers.Services.Implementations
                     .Select(e => e.NormalizedSkillName)
                     .ToList(),
             };
+        #endregion
         }
     }
-        #endregion
 }

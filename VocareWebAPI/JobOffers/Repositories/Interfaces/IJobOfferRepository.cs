@@ -16,5 +16,6 @@ namespace VocareWebAPI.JobOffers.Repositories.Interfaces
         Task<int> GetCountAsync(); // Sprawdzenie statystyk - ile mamy ofert
         Task<List<JobOffer>> GetOffersWithoutEmbeddingAsync(int limit);
         Task<int> CountOffersWithoutEmbeddingAsync();
+        Task<List<string>> GetAllUniqueSkillNamesAsync();
     }
 }

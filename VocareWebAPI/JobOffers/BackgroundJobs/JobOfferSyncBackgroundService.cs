@@ -4,6 +4,8 @@ using System.Threading.Tasks;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
+using VocareWebAPI.JobOffers.Configuration;
 using VocareWebAPI.JobOffers.Services.Interfaces;
 
 namespace VocareWebAPI.JobOffers.BackgroundJobs
@@ -12,28 +14,37 @@ namespace VocareWebAPI.JobOffers.BackgroundJobs
     {
         private readonly IServiceProvider _serviceProvider;
         private readonly ILogger<JobOfferSyncBackgroundService> _logger;
-
-        private readonly TimeSpan _syncInterval = TimeSpan.FromHours(2);
-
+        private readonly JobOfferSyncSettings _settings;
         private DateTime _lastCleanupDate = DateTime.MinValue;
 
         public JobOfferSyncBackgroundService(
             IServiceProvider serviceProvider,
-            ILogger<JobOfferSyncBackgroundService> logger
+            ILogger<JobOfferSyncBackgroundService> logger,
+            IOptions<JobOfferSyncSettings> options
         )
         {
             _serviceProvider = serviceProvider;
             _logger = logger;
+            _settings = options.Value;
         }
 
         protected override async Task ExecuteAsync(CancellationToken stoppingToken)
         {
+            if (!_settings.EnableAutoSync)
+            {
+                _logger.LogInformation(
+                    "JobOfferSyncBackgroundService: Auto-sync wyłączony."
+                        + "Użyj endpointu aby zsynchronizować ręcznie."
+                );
+                return;
+            }
             _logger.LogInformation("JobOfferSyncBackgroundService został uruchomiony.");
 
             await Task.Delay(TimeSpan.FromSeconds(30), stoppingToken);
 
             while (!stoppingToken.IsCancellationRequested)
             {
+                var syncInterval = TimeSpan.FromHours(_settings.SyncIntervalHours);
                 try
                 {
                     using var scope = _serviceProvider.CreateScope();
@@ -66,11 +77,11 @@ namespace VocareWebAPI.JobOffers.BackgroundJobs
                     _logger.LogError(ex, "Krytyczny błąd w pętli JobOfferSyncBackgroundService");
                 }
                 _logger.LogInformation(
-                    $"Czekam {_syncInterval.TotalHours} godziny do nastepnej synchronizacji..."
+                    $"Czekam {syncInterval.TotalHours} godziny do nastepnej synchronizacji..."
                 );
                 try
                 {
-                    await Task.Delay(_syncInterval, stoppingToken);
+                    await Task.Delay(syncInterval, stoppingToken);
                 }
                 catch (TaskCanceledException)
                 {
