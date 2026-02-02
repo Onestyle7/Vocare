@@ -1,5 +1,3 @@
-version: "3.8"
-
 services:
   vocare-db:
     image: pgvector/pgvector:pg16
