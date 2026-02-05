@@ -224,8 +224,7 @@ export default function CareerPathSection({
   const renderOfferCard = (offer: ScoredJobOffer) => {
     const locations = offer.locations?.filter(Boolean) ?? [];
     const primaryLocation = locations.slice(0, 1).join(', ');
-    const locationSuffix =
-      locations.length > 1 ? ` +${locations.length - 1}` : locations.length === 0 ? 'Brak' : '';
+    const locationSuffix = locations.length > 1 ? ` +${locations.length - 1}` : '';
     const confidence = confidenceMeta[offer.confidenceLevel] ?? confidenceMeta.medium;
 
     const bonusLabels =
@@ -236,105 +235,91 @@ export default function CareerPathSection({
       }) ?? [];
 
     return (
-      <Card key={offer.id} className="font-grotesk! border-white/10 bg-white/[0.03]">
-        <CardHeader className="space-y-2 pb-3">
-          <div className="grid grid-cols-[1fr_auto] items-start gap-3">
-            <div className="min-w-0 space-y-1">
-              <p className="text-[11px] text-gray-500">{offer.companyName}</p>
-              <h5 className="font-grotesk line-clamp-2 text-[15px] leading-snug text-white">
+      <div
+        key={offer.id}
+        className="font-grotesk relative flex w-full flex-col rounded-[28px] border border-white/20 p-1 backdrop-blur-xl transition-all hover:shadow-2xl"
+      >
+        <div className="relative z-10 flex flex-1 flex-col overflow-hidden rounded-[24px] border border-white/20 bg-white/2 p-5 backdrop-blur-xl">
+          <div className="relative mb-2 flex min-h-[56px] justify-between gap-4">
+            <div className="min-w-0 flex-1">
+              <p className="mb-0.5 text-[10px] font-bold tracking-wider text-gray-400 uppercase">
+                {offer.companyName}
+              </p>
+              <h5 className="line-clamp-2 text-base leading-tight font-bold text-white sm:text-lg">
                 {offer.title}
               </h5>
             </div>
-            <div className="flex flex-wrap items-center justify-end gap-1">
-              <Badge className="inline-flex rounded-[7px]! px-2 py-0.5 text-[11px] whitespace-nowrap">
-                {offer.matchScore}%
-              </Badge>
-              <Badge
-                variant="secondary"
-                className={`${confidence.className} inline-flex rounded-[7px]! px-2 py-0.5 text-[11px] whitespace-nowrap`}
-              >
-                <span className="sm:hidden">Pewność: {confidence.shortLabel}</span>
-                <span className="hidden sm:inline">{confidence.label}</span>
-                <confidence.ArrowIcon className={`ml-1 h-3.5 w-3.5 ${confidence.arrowClassName}`} />
-              </Badge>
+            <div className="shrink-0 text-right">
+              <p className="text-[9px] font-bold text-gray-500">Widełki</p>
+              <p className="text-xs font-bold whitespace-nowrap text-[#915EFF]">
+                {formatSalary(offer)}
+              </p>
             </div>
           </div>
 
-          <div className="flex flex-wrap items-center gap-x-3 gap-y-1 text-[11px] text-gray-500">
-            <span className="font-grotesk inline-flex items-center gap-1">
-              <MapPin className="h-3 w-3" />
-              {primaryLocation}
+          <div className="relative mb-4 flex flex-wrap items-center gap-x-3 gap-y-1 text-[11px] text-gray-300/80">
+            <span className="flex items-center gap-1">
+              <MapPin className="h-3 w-3" /> {primaryLocation}
               {locationSuffix}
             </span>
-            <span className="font-grotesk inline-flex items-center gap-1">
-              <Briefcase className="h-3 w-3" />
-              {offer.category} · {offer.seniorityLevel}
-            </span>
-            <span className="font-grotesk inline-flex items-center gap-1">
-              {offer.publishedAt && <span>{formatDate(offer.publishedAt)}</span>}
+            <span className="flex items-center gap-1">
+              <Briefcase className="h-3 w-3" /> {offer.category}
             </span>
           </div>
 
-          <div className="h-1 w-full rounded-full bg-white/10">
-            <div
-              className="h-1 rounded-full bg-[#915EFF]"
-              style={{ width: `${offer.matchScore}%` }}
-            />
-          </div>
-        </CardHeader>
-
-        <CardContent className="space-y-3">
-          {offer.briefDescription && (
-            <p className="font-grotesk line-clamp-3 text-sm text-gray-400">
-              {stripHtml(offer.briefDescription)}
+          <div className="relative mb-6">
+            <p className="line-clamp-3 text-[12px] leading-relaxed text-gray-400">
+              {stripHtml(offer.briefDescription) ||
+                'Szczegóły oferty dostępne po przejściu do ogłoszenia.'}
             </p>
-          )}
+          </div>
 
-          <div className="flex flex-wrap gap-2 text-[11px]">
-            <Badge variant="secondary" className="bg-white/5 px-2 py-0.5 text-gray-200">
-              Semantyka {offer.matchDetails?.semanticScore ?? 0}
-            </Badge>
-            <Badge variant="secondary" className="bg-white/5 px-2 py-0.5 text-gray-200">
-              Skills {offer.matchDetails?.skillScore ?? 0}
-            </Badge>
-            {bonusLabels.map((label, idx) => (
-              <Badge
-                key={`${offer.id}-bonus-${idx}`}
-                variant="outline"
-                className="border-white/10 px-2 py-0.5 text-[11px] whitespace-nowrap"
-              >
-                {label}
+          <div className="relative mt-auto space-y-3">
+            <div className="flex items-center gap-2">
+              <Badge className="bg-primary/[0.85] rounded-full border-none px-2 py-0.5 text-[10px] text-black">
+                {offer.matchScore}% Match
               </Badge>
-            ))}
+              <Badge
+                variant="secondary"
+                className="bg-primary/[0.85] hover:bg-primary/[0.85]! rounded-full border-none px-2 py-0.5 text-[10px] text-black"
+              >
+                {confidence.shortLabel}
+              </Badge>
+            </div>
+
+            <div className="h-[4px] w-full rounded-full bg-white/10">
+              <div
+                className="bg-primary/[0.8] h-full rounded-full"
+                style={{ width: `${offer.matchScore}%` }}
+              />
+            </div>
+
+            <div className="flex flex-wrap items-center gap-1.5">
+              {renderSkillBadge('Dopas.', offer.matchDetails?.matchedSkills ?? [], 'text-white')}
+              {renderSkillBadge('Braki', offer.matchDetails?.missingSkills ?? [], 'text-white')}
+            </div>
+          </div>
+        </div>
+
+        <div className="relative z-10 flex shrink-0 items-center justify-between px-5 py-4">
+          <div className="flex flex-col space-y-0.5">
+            <p className="text-[10px] font-bold tracking-tight text-gray-500">Opublikowano</p>
+            <p className="text-sm font-semibold text-gray-200">
+              {formatDate(offer.publishedAt) || '—'}
+            </p>
           </div>
 
-          <div className="font-grotesk flex flex-wrap items-center gap-2">
-            {renderSkillBadge(
-              'Dopas.',
-              offer.matchDetails?.matchedSkills ?? [],
-              'text-emerald-200'
-            )}
-            {renderSkillBadge(
-              'Częściowe',
-              offer.matchDetails?.partialMatches ?? [],
-              'text-amber-200'
-            )}
-            {renderSkillBadge('Braki', offer.matchDetails?.missingSkills ?? [], 'text-rose-200')}
-          </div>
-
-          <div className="flex flex-col gap-2 text-xs text-gray-400 sm:flex-row sm:items-center sm:justify-between">
-            <span className="text-xs">{formatSalary(offer)}</span>
-            {offer.url && (
-              <Button variant="outline" size="sm" asChild className="font-grotesk">
-                <a href={offer.url} target="_blank" rel="noreferrer">
-                  Zobacz ofertę
-                  <ExternalLink className="h-4 w-4" />
-                </a>
-              </Button>
-            )}
-          </div>
-        </CardContent>
-      </Card>
+          {offer.url && (
+            <button
+              onClick={() => window.open(offer.url, '_blank')}
+              className="group flex items-center gap-2 rounded-full border border-white/20 bg-white/10 px-5 py-2.5 text-[13px] font-bold text-white shadow-lg transition-all hover:border-white/50 hover:bg-white/20 active:scale-95"
+            >
+              Zobacz ofertę
+              <ExternalLink className="h-3.5 w-3.5" />
+            </button>
+          )}
+        </div>
+      </div>
     );
   };
 
@@ -389,7 +374,7 @@ export default function CareerPathSection({
               {cards.map((card, idx) => (
                 <div
                   key={idx}
-                  className="/* mobile: 1 karta */ /* desktop: ~2.33 karty */ min-w-[calc(100%/var(--cards))] shrink-0 snap-start lg:min-w-[calc(87%/var(--cards-lg))]"
+                  className="min-w-[calc(100%/var(--cards))] shrink-0 snap-start lg:min-w-[calc(87%/var(--cards-lg))]"
                 >
                   <div className="h-full">
                     <ReusableCard data={card} />
