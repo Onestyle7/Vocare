@@ -137,6 +137,11 @@ export default function CareerPathSection({
     });
   };
 
+  const stripHtml = (value?: string) => {
+    if (!value) return '';
+    return value.replace(/<[^>]*>/g, ' ').replace(/\s+/g, ' ').trim();
+  };
+
   const confidenceMeta: Record<
     ConfidenceLevel,
     { label: string; shortLabel: string; className: string }
@@ -254,7 +259,7 @@ export default function CareerPathSection({
         <CardContent className="space-y-3">
           {offer.briefDescription && (
             <p className="font-grotesk line-clamp-3 text-sm text-gray-400">
-              {offer.briefDescription}
+              {stripHtml(offer.briefDescription)}
             </p>
           )}
 
