@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState, useRef } from 'react';
+import { useEffect, useMemo, useState, useRef } from 'react';
 import axios from 'axios';
 import { UserProfile } from '@/lib/types/profile';
 import { toast } from 'sonner';
@@ -36,14 +36,19 @@ import { AxiosError } from 'axios';
 import { AiCareerResponse, CareerPath } from '@/lib/types/recommendation';
 import Section from '../SupportComponents/Section';
 import { ArrowRight, Undo2 } from 'lucide-react';
+import { CareerPathMatchResult } from '@/lib/types/jobOffers';
 
 // const API_URL = process.env.NEXT_PUBLIC_API_URL;
 
 export default function AssistantPage() {
+  const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8080';
   const [profile, setProfile] = useState<UserProfile | null>(null);
   const [recommendations, setRecommendations] = useState<AiCareerResponse | null>(null);
   const [isLoading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [jobMatches, setJobMatches] = useState<CareerPathMatchResult[]>([]);
+  const [isOffersLoading, setOffersLoading] = useState(false);
+  const [offersError, setOffersError] = useState<string | null>(null);
   const [isConfirmDialogOpen, setIsConfirmDialogOpen] = useState(false);
   const {
     tokenBalance,
@@ -60,6 +65,37 @@ export default function AssistantPage() {
   const lastScrollY = useRef(0);
 
   const generatePricePerUse = 60;
+
+  const matchByName = useMemo(() => {
+    return new Map(
+      jobMatches.map((match) => [match.careerPathName.trim().toLowerCase(), match])
+    );
+  }, [jobMatches]);
+
+  const fetchJobMatches = async (token: string) => {
+    setOffersLoading(true);
+    setOffersError(null);
+    try {
+      const response = await axios.get<CareerPathMatchResult[]>(
+        `${API_URL}/api/JobOffers/matching/my-recommendations/detailed`,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+            'Content-Type': 'application/json',
+          },
+        }
+      );
+      setJobMatches(response.data);
+    } catch (err: unknown) {
+      if (err instanceof AxiosError) {
+        setOffersError(err.response?.data?.detail || 'Błąd podczas pobierania ofert pracy');
+      } else {
+        setOffersError('Nieoczekiwany błąd podczas pobierania ofert pracy');
+      }
+    } finally {
+      setOffersLoading(false);
+    }
+  };
 
   useEffect(() => {
     const handleScroll = () => {
@@ -167,7 +203,7 @@ export default function AssistantPage() {
         // Najpierw spróbuj pobrać ostatnie rekomendacje
         try {
           const lastRecommendationResponse = await axios.get<AiCareerResponse>(
-            'http://localhost:8080/api/Ai/last-recommendation',
+            `${API_URL}/api/Ai/last-recommendation`,
 
             {
               headers: {
@@ -179,6 +215,7 @@ export default function AssistantPage() {
           console.log('Last recommendations:', lastRecommendationResponse.data);
           setRecommendations(lastRecommendationResponse.data);
           setLoading(false);
+          void fetchJobMatches(token);
           return;
         } catch (lastError: unknown) {
           if (
@@ -199,7 +236,7 @@ export default function AssistantPage() {
 
         // Jeśli brak ostatnich rekomendacji, wygeneruj nowe
         const response = await axios.get<AiCareerResponse>(
-          'http://localhost:8080/api/Ai/recommendations',
+          `${API_URL}/api/Ai/recommendations`,
           {
             headers: {
               Authorization: `Bearer ${token}`,
@@ -209,6 +246,7 @@ export default function AssistantPage() {
         );
         console.log('New recommendations:', response.data);
         setRecommendations(response.data);
+        void fetchJobMatches(token);
       } catch (err: unknown) {
         if (err instanceof AxiosError) {
           console.error('Detailed error:', err);
@@ -251,7 +289,7 @@ export default function AssistantPage() {
     }
     try {
       const response = await axios.get<AiCareerResponse>(
-        'http://localhost:8080/api/Ai/recommendations',
+        `${API_URL}/api/Ai/recommendations`,
         {
           headers: {
             Authorization: `Bearer ${token}`,
@@ -260,6 +298,7 @@ export default function AssistantPage() {
         }
       );
       setRecommendations(response.data);
+      void fetchJobMatches(token);
       toast.success('New recommendations have been generated');
     } catch (err: unknown) {
       if (err instanceof AxiosError) {
@@ -401,7 +440,14 @@ export default function AssistantPage() {
 
           {/* Career paths sections */}
           {recommendations.careerPaths.map((path: CareerPath, index: number) => (
-            <CareerPathSection key={index} path={path} index={index} />
+            <CareerPathSection
+              key={`${path.careerName}-${index}`}
+              path={path}
+              index={index}
+              matchResult={matchByName.get(path.careerName.trim().toLowerCase())}
+              offersLoading={isOffersLoading}
+              offersError={offersError}
+            />
           ))}
 
           <div
