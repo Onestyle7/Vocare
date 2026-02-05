@@ -14,7 +14,16 @@ import { Card, CardContent, CardHeader } from '../ui/card';
 import { Skeleton } from '../ui/skeleton';
 import { Tooltip, TooltipContent, TooltipTrigger } from '../ui/tooltip';
 import { Button } from '../ui/button';
-import { Briefcase, ExternalLink, MapPin, Sparkles } from 'lucide-react';
+import {
+  ArrowDown,
+  ArrowDownRight,
+  ArrowRight,
+  ArrowUpRight,
+  Briefcase,
+  ExternalLink,
+  MapPin,
+  Sparkles,
+} from 'lucide-react';
 
 interface CareerPathSectionProps {
   path: CareerPath;
@@ -139,32 +148,49 @@ export default function CareerPathSection({
 
   const stripHtml = (value?: string) => {
     if (!value) return '';
-    return value.replace(/<[^>]*>/g, ' ').replace(/\s+/g, ' ').trim();
+    return value
+      .replace(/<[^>]*>/g, ' ')
+      .replace(/\s+/g, ' ')
+      .trim();
   };
 
   const confidenceMeta: Record<
     ConfidenceLevel,
-    { label: string; shortLabel: string; className: string }
+    {
+      label: string;
+      shortLabel: string;
+      className: string;
+      ArrowIcon: typeof ArrowUpRight;
+      arrowClassName: string;
+    }
   > = {
     high: {
       label: 'Wysoka pewność',
       shortLabel: 'Wysoka',
-      className: 'border-emerald-400/30 bg-emerald-500/10 text-emerald-200',
+      className: 'bg-primary text-black hover:bg-primary',
+      ArrowIcon: ArrowUpRight,
+      arrowClassName: 'text-emerald-500',
     },
     medium: {
       label: 'Średnia pewność',
       shortLabel: 'Średnia',
-      className: 'border-amber-400/30 bg-amber-500/10 text-amber-200',
+      className: 'bg-primary text-black hover:bg-primary',
+      ArrowIcon: ArrowRight,
+      arrowClassName: 'text-amber-500',
     },
     low: {
       label: 'Niska pewność',
       shortLabel: 'Niska',
-      className: 'border-orange-400/30 bg-orange-500/10 text-orange-200',
+      className: 'bg-primary text-black hover:bg-primary',
+      ArrowIcon: ArrowDownRight,
+      arrowClassName: 'text-orange-500',
     },
     very_low: {
       label: 'Bardzo niska',
       shortLabel: 'B. niska',
-      className: 'border-rose-400/30 bg-rose-500/10 text-rose-200',
+      className: 'bg-primary text-black hover:bg-primary',
+      ArrowIcon: ArrowDown,
+      arrowClassName: 'text-rose-500',
     },
   };
 
@@ -210,7 +236,7 @@ export default function CareerPathSection({
       }) ?? [];
 
     return (
-      <Card key={offer.id} className="border-white/10 bg-white/[0.03]">
+      <Card key={offer.id} className="font-grotesk! border-white/10 bg-white/[0.03]">
         <CardHeader className="space-y-2 pb-3">
           <div className="grid grid-cols-[1fr_auto] items-start gap-3">
             <div className="min-w-0 space-y-1">
@@ -220,15 +246,16 @@ export default function CareerPathSection({
               </h5>
             </div>
             <div className="flex flex-wrap items-center justify-end gap-1">
-              <Badge className="border-[#915EFF]/40 bg-[#915EFF]/15 px-2 py-0.5 text-[11px] whitespace-nowrap text-[#c7b6ff]">
+              <Badge className="inline-flex rounded-[7px]! px-2 py-0.5 text-[11px] whitespace-nowrap">
                 {offer.matchScore}%
               </Badge>
               <Badge
-                variant="outline"
-                className={`${confidence.className} px-2 py-0.5 text-[11px] whitespace-nowrap`}
+                variant="secondary"
+                className={`${confidence.className} inline-flex rounded-[7px]! px-2 py-0.5 text-[11px] whitespace-nowrap`}
               >
                 <span className="sm:hidden">Pewność: {confidence.shortLabel}</span>
                 <span className="hidden sm:inline">{confidence.label}</span>
+                <confidence.ArrowIcon className={`ml-1 h-3.5 w-3.5 ${confidence.arrowClassName}`} />
               </Badge>
             </div>
           </div>
