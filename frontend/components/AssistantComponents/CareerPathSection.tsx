@@ -166,28 +166,28 @@ export default function CareerPathSection({
   > = {
     high: {
       label: 'Wysoka pewność',
-      shortLabel: 'Wysoka',
+      shortLabel: 'Wysoka pewność',
       className: 'bg-primary text-black hover:bg-primary',
       ArrowIcon: ArrowUpRight,
       arrowClassName: 'text-emerald-500',
     },
     medium: {
       label: 'Średnia pewność',
-      shortLabel: 'Średnia',
+      shortLabel: 'Średnia pewność',
       className: 'bg-primary text-black hover:bg-primary',
       ArrowIcon: ArrowRight,
       arrowClassName: 'text-amber-500',
     },
     low: {
       label: 'Niska pewność',
-      shortLabel: 'Niska',
+      shortLabel: 'Niska pewność',
       className: 'bg-primary text-black hover:bg-primary',
       ArrowIcon: ArrowDownRight,
       arrowClassName: 'text-orange-500',
     },
     very_low: {
-      label: 'Bardzo niska',
-      shortLabel: 'B. niska',
+      label: 'Bardzo niska pewność',
+      shortLabel: 'B. niska pewność',
       className: 'bg-primary text-black hover:bg-primary',
       ArrowIcon: ArrowDown,
       arrowClassName: 'text-rose-500',
@@ -237,9 +237,9 @@ export default function CareerPathSection({
     return (
       <div
         key={offer.id}
-        className="font-grotesk relative flex w-full flex-col rounded-[28px] border border-white/20 p-1 backdrop-blur-xl transition-all hover:shadow-2xl"
+        className="font-grotesk relative flex w-full flex-col rounded-[18px] border p-1 backdrop-blur-xl transition-all hover:shadow-2xl"
       >
-        <div className="relative z-10 flex flex-1 flex-col overflow-hidden rounded-[24px] border border-white/20 bg-white/2 p-5 backdrop-blur-xl">
+        <div className="relative z-10 flex flex-1 flex-col overflow-hidden rounded-[14px] border bg-white/2 p-5 backdrop-blur-xl">
           <div className="relative mb-2 flex min-h-[56px] justify-between gap-4">
             <div className="min-w-0 flex-1">
               <p className="mb-0.5 text-[10px] font-bold tracking-wider text-gray-400 uppercase">
@@ -312,7 +312,7 @@ export default function CareerPathSection({
           {offer.url && (
             <button
               onClick={() => window.open(offer.url, '_blank')}
-              className="group flex items-center gap-2 rounded-full border border-white/20 bg-white/10 px-5 py-2.5 text-[13px] font-bold text-white shadow-lg transition-all hover:border-white/50 hover:bg-white/20 active:scale-95"
+              className="group flex cursor-pointer items-center gap-2 rounded-full border px-5 py-2.5 text-[13px] font-bold text-white shadow-lg transition-all"
             >
               Zobacz ofertę
               <ExternalLink className="h-3.5 w-3.5" />
