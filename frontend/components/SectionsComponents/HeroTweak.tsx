@@ -102,8 +102,7 @@ const HeroTweak = () => {
           </div>
         )}
       </div>
-
-      <div className="hidden h-[70px] w-full lg:flex">
+      <div className="hidden h-[70px] w-full items-center justify-center border-t border-b lg:flex">
         <div className="mx-10 flex h-full w-full">
           {companies.map((company) => (
             <div
@@ -123,7 +122,6 @@ const HeroTweak = () => {
           ))}
         </div>
       </div>
-
       <div className="relative mt-14 flex flex-col items-center justify-center border-gray-300 px-[40px] max-md:mt-40 dark:border-gray-600/30">
         <div className="font-korbin mb-2 flex h-full flex-col items-center justify-center">
           <p className="font-bold text-gray-400">Poznaj nas</p>
