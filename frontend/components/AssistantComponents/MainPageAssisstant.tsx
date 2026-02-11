@@ -24,6 +24,8 @@ import {
 } from '../ui/alert-dialog';
 import Image from 'next/image';
 import {
+  cone_1,
+  cone_2,
   star_generate,
   timeline_icon_1,
   timeline_icon_2,
@@ -67,9 +69,7 @@ export default function AssistantPage() {
   const generatePricePerUse = 60;
 
   const matchByName = useMemo(() => {
-    return new Map(
-      jobMatches.map((match) => [match.careerPathName.trim().toLowerCase(), match])
-    );
+    return new Map(jobMatches.map((match) => [match.careerPathName.trim().toLowerCase(), match]));
   }, [jobMatches]);
 
   const fetchJobMatches = async (token: string) => {
@@ -235,15 +235,12 @@ export default function AssistantPage() {
         }
 
         // Jeśli brak ostatnich rekomendacji, wygeneruj nowe
-        const response = await axios.get<AiCareerResponse>(
-          `${API_URL}/api/Ai/recommendations`,
-          {
-            headers: {
-              Authorization: `Bearer ${token}`,
-              'Content-Type': 'application/json',
-            },
-          }
-        );
+        const response = await axios.get<AiCareerResponse>(`${API_URL}/api/Ai/recommendations`, {
+          headers: {
+            Authorization: `Bearer ${token}`,
+            'Content-Type': 'application/json',
+          },
+        });
         console.log('New recommendations:', response.data);
         setRecommendations(response.data);
         void fetchJobMatches(token);
@@ -288,15 +285,12 @@ export default function AssistantPage() {
       return;
     }
     try {
-      const response = await axios.get<AiCareerResponse>(
-        `${API_URL}/api/Ai/recommendations`,
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-            'Content-Type': 'application/json',
-          },
-        }
-      );
+      const response = await axios.get<AiCareerResponse>(`${API_URL}/api/Ai/recommendations`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+          'Content-Type': 'application/json',
+        },
+      });
       setRecommendations(response.data);
       void fetchJobMatches(token);
       toast.success('New recommendations have been generated');
@@ -379,14 +373,14 @@ export default function AssistantPage() {
             <div className="clip-corner-bevel relative z-30 flex flex-col overflow-hidden rounded-[24px] border shadow-sm backdrop-blur-md md:flex-row dark:border-gray-500/40 dark:bg-[#090d16]">
               <div className="relative flex items-center justify-center overflow-hidden p-4 md:w-1/6 md:border-r">
                 <Image
-                  src="/images/cone.png"
+                  src={cone_1}
                   alt="decor"
                   width={148}
                   height={148}
                   className="pointer-events-none absolute -top-2 -left-14 z-10"
                 />
                 <Image
-                  src="/images/cone-2.png"
+                  src={cone_2}
                   alt="decor"
                   width={148}
                   height={148}

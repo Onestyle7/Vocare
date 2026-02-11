@@ -9,6 +9,7 @@ import ReusableCard from '../MarketComponents/AssistantCards';
 import HorizontalCarousel from './HorizontalCarousel';
 import SwotAnalysis from '../MarketComponents/SwotAnalysis';
 import { CareerPathMatchResult, ConfidenceLevel, ScoredJobOffer } from '@/lib/types/jobOffers';
+import { cone_3, cone_4, cone_5, cone_6, cone_7, cone_8 } from '@/app/constants';
 import { Badge } from '../ui/badge';
 import { Card, CardContent, CardHeader } from '../ui/card';
 import { Skeleton } from '../ui/skeleton';
@@ -24,6 +25,12 @@ import {
   MapPin,
   Sparkles,
 } from 'lucide-react';
+
+const conePairs = [
+  [cone_3, cone_4],
+  [cone_5, cone_6],
+  [cone_7, cone_8],
+] as const;
 
 interface CareerPathSectionProps {
   path: CareerPath;
@@ -44,8 +51,7 @@ export default function CareerPathSection({
   const contentRef = useRef<HTMLDivElement>(null);
   const contentWrapperRef = useRef<HTMLDivElement>(null);
 
-  const leftImg = `/images/cone-${3 + 2 * index}.png`;
-  const rightImg = `/images/cone-${4 + 2 * index}.png`;
+  const [leftImg, rightImg] = conePairs[index] ?? conePairs[conePairs.length - 1];
 
   const toggleCollapse = () => {
     if (!contentRef.current || !contentWrapperRef.current) return;
