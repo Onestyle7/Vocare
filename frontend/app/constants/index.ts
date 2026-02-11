@@ -550,8 +550,7 @@ export const postanowienia_koncowe = {
   ],
 };
 
-
-// POLITYKA PRYWATNOSCI 
+// POLITYKA PRYWATNOSCI
 
 // app/constants/index.ts (albo gdzie trzymasz stałe)
 
@@ -640,3 +639,14 @@ export const privacy_policy = {
     },
   ],
 };
+
+// assistant page assets
+
+export const cone_1 = '/images/cone.png';
+export const cone_2 = '/images/cone-2.png';
+export const cone_3 = '/images/cone-3.png';
+export const cone_4 = '/images/cone-4.png';
+export const cone_5 = '/images/cone-5.png';
+export const cone_6 = '/images/cone-6.png';
+export const cone_7 = '/images/cone-7.png';
+export const cone_8 = '/images/cone-8.png';

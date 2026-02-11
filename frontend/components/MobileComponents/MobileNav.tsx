@@ -101,7 +101,10 @@ const MobileNav: React.FC<MobileNavProps> = ({ isAuthenticated }) => {
                 <SheetClose asChild>
                   <Link
                     href={url}
-                    className={cn('relative text-[18px] font-normal uppercase', isActive && 'underline')}
+                    className={cn(
+                      'relative text-[18px] font-normal uppercase',
+                      isActive && 'underline'
+                    )}
                   >
                     <span>{label}</span>
 
@@ -120,9 +123,14 @@ const MobileNav: React.FC<MobileNavProps> = ({ isAuthenticated }) => {
           })}
           {!isAuthenticated && (
             <SheetClose asChild>
-              <Link href="/sign-in" className="text-[18px] font-normal uppercase">
-                Sign In
-              </Link>
+              <>
+                <Link href="/pricing">
+                  <p className="text-[18px] font-normal uppercase">Pricing</p>
+                </Link>
+                <Link href="/sign-in" className="text-[18px] font-normal uppercase">
+                  Sign In
+                </Link>
+              </>
             </SheetClose>
           )}
           {isAuthenticated && <TokenCounter />}

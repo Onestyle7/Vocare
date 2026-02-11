@@ -146,9 +146,14 @@ const Header = () => {
             {isAuthenticated && <TokenCounter />}
 
             {!isAuthenticated && (
-              <Link href="/sign-in">
-                <p className="text-[18px] font-normal uppercase">Sign In</p>
-              </Link>
+              <>
+                <Link href="/pricing">
+                  <p className="text-[18px] font-normal uppercase">Pricing</p>
+                </Link>
+                <Link href="/sign-in">
+                  <p className="text-[18px] font-normal uppercase">Sign In</p>
+                </Link>
+              </>
             )}
 
             {/* <ThemeSwitch /> */}
