@@ -14,7 +14,6 @@ import { Badge } from '../ui/badge';
 import { Card, CardContent, CardHeader } from '../ui/card';
 import { Skeleton } from '../ui/skeleton';
 import { Tooltip, TooltipContent, TooltipTrigger } from '../ui/tooltip';
-import { Button } from '../ui/button';
 import {
   ArrowDown,
   ArrowDownRight,
@@ -233,12 +232,12 @@ export default function CareerPathSection({
     const locationSuffix = locations.length > 1 ? ` +${locations.length - 1}` : '';
     const confidence = confidenceMeta[offer.confidenceLevel] ?? confidenceMeta.medium;
 
-    const bonusLabels =
-      offer.matchDetails?.bonusFactors?.map((bonus) => {
-        if (bonus === 'categoryMatch') return 'Kategoria';
-        if (bonus === 'seniorityMatch') return 'Seniority';
-        return bonus;
-      }) ?? [];
+    // const bonusLabels =
+    //   offer.matchDetails?.bonusFactors?.map((bonus) => {
+    //     if (bonus === 'categoryMatch') return 'Kategoria';
+    //     if (bonus === 'seniorityMatch') return 'Seniority';
+    //     return bonus;
+    //   }) ?? [];
 
     return (
       <div
