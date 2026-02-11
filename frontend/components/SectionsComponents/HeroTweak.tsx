@@ -16,6 +16,7 @@ import Section from '../SupportComponents/Section';
 // import CustomCursor from '../SupportComponents/CustomCursor';
 import Copy from '../SupportComponents/Copy';
 import { Button } from '../ui/button';
+import CopyHeader from '../SupportComponents/CopyHeaer';
 
 gsap.registerPlugin(ScrollTrigger, SplitText);
 
@@ -57,12 +58,12 @@ const HeroTweak = () => {
       {/* <CustomCursor /> */}
       <div className="main-font-color relative z-30 flex h-[390px] flex-row px-[40px] lg:w-full">
         <div className="inset-0 flex w-full flex-col items-center justify-center md:flex-row md:justify-start md:pl-[40px] lg:w-3/5 lg:border-t lg:border-b">
-          <div className="font-korbin flex w-full flex-col items-center justify-center max-md:mt-10 max-md:mb-8 lg:w-1/2 lg:items-start">
-            <Copy>
-              <h1 className="overflow-hidden text-4xl font-bold whitespace-nowrap text-neutral-800 max-md:text-center sm:text-4xl md:text-5xl lg:text-4xl xl:text-5xl 2xl:text-7xl dark:text-neutral-300">
+          <div className="font-poppins flex w-full flex-col items-center justify-center max-md:mt-10 max-md:mb-8 lg:w-1/2 lg:items-start">
+            <CopyHeader>
+              <h1 className="overflow-hidden text-4xl leading-[1.22] whitespace-nowrap text-neutral-800 max-md:text-center sm:text-4xl md:text-5xl lg:text-4xl xl:text-5xl 2xl:text-7xl dark:text-neutral-300">
                 Odblokuj swój <br /> potencjał
               </h1>
-            </Copy>
+            </CopyHeader>
             <Copy>
               <h2 className="text-muted-foreground font-grotesk mt-8 max-w-xl px-4 text-center text-sm max-md:block sm:mt-4 sm:text-base md:px-0 md:text-left md:text-lg lg:text-base xl:text-sm">
                 Vocare to AI-owy doradca kariery, który zamienia Twój profil w konkretne ścieżki
