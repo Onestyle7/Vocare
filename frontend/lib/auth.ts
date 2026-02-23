@@ -1,6 +1,7 @@
 import { api } from './api';
 
-const AUTH_PREFIX = 'http://localhost:8080/api/Auth';
+const API_URL = process.env.NEXT_PUBLIC_API_URL;
+const AUTH_PREFIX = `${API_URL}/api/Auth`;
 
 // const AUTH_PREFIX = '/api/Auth';
 

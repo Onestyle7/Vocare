@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect, useMemo, useState, useRef } from 'react';
-import axios from 'axios';
+import axios, { AxiosError, AxiosRequestConfig, AxiosResponse } from 'axios';
 import { UserProfile } from '@/lib/types/profile';
 import { toast } from 'sonner';
 import GenerateRecommendation from './GenerateRecommendationFail';
@@ -34,13 +34,95 @@ import {
 } from '@/app/constants';
 import { useTokenBalanceContext } from '@/lib/contexts/TokenBalanceContext';
 import Link from 'next/link';
-import { AxiosError } from 'axios';
 import { AiCareerResponse, CareerPath } from '@/lib/types/recommendation';
 import Section from '../SupportComponents/Section';
 import { ArrowRight, Undo2 } from 'lucide-react';
 import { CareerPathMatchResult } from '@/lib/types/jobOffers';
 
 // const API_URL = process.env.NEXT_PUBLIC_API_URL;
+
+type AssistantRequestMetric = {
+  step: string;
+  durationMs: number;
+  status: 'ok' | 'error' | 'fallback';
+  serverTiming?: string;
+};
+
+const shouldProfileAssistantRequests =
+  process.env.NODE_ENV === 'development' ||
+  process.env.NEXT_PUBLIC_ENABLE_ASSISTANT_PROFILING === 'true';
+
+const roundDuration = (value: number) => Math.round(value * 10) / 10;
+
+const getServerTimingHeader = (response: AxiosResponse<unknown>) => {
+  const serverTiming = response.headers?.['server-timing'];
+  if (typeof serverTiming === 'string') {
+    return serverTiming;
+  }
+  if (Array.isArray(serverTiming)) {
+    return serverTiming.join(', ');
+  }
+  return undefined;
+};
+
+const trackGetRequest = async <T,>(
+  step: string,
+  url: string,
+  config: AxiosRequestConfig,
+  metrics: AssistantRequestMetric[]
+): Promise<AxiosResponse<T>> => {
+  const requestStartedAt = performance.now();
+
+  try {
+    const response = await axios.get<T>(url, config);
+    metrics.push({
+      step,
+      durationMs: performance.now() - requestStartedAt,
+      status: 'ok',
+      serverTiming: getServerTimingHeader(response as AxiosResponse<unknown>),
+    });
+    return response;
+  } catch (error) {
+    metrics.push({
+      step,
+      durationMs: performance.now() - requestStartedAt,
+      status: 'error',
+    });
+    throw error;
+  }
+};
+
+const logAssistantMetrics = (
+  flow: string,
+  metrics: AssistantRequestMetric[],
+  flowStartedAt: number
+) => {
+  if (!shouldProfileAssistantRequests || metrics.length === 0) {
+    return;
+  }
+
+  const totalDurationMs = performance.now() - flowStartedAt;
+  const sortedMetrics = [...metrics].sort((a, b) => b.durationMs - a.durationMs);
+  const slowestStep = sortedMetrics[0];
+
+  console.groupCollapsed(
+    `[Assistant timing] ${flow}: ${roundDuration(totalDurationMs)} ms (total flow)`
+  );
+  console.table(
+    sortedMetrics.map((metric) => ({
+      step: metric.step,
+      status: metric.status,
+      durationMs: roundDuration(metric.durationMs),
+      serverTiming: metric.serverTiming ?? '-',
+    }))
+  );
+  if (slowestStep) {
+    console.log(
+      `[Assistant timing] Slowest step: ${slowestStep.step} (${roundDuration(slowestStep.durationMs)} ms)`
+    );
+  }
+  console.groupEnd();
+};
 
 export default function AssistantPage() {
   const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8080';
@@ -73,17 +155,22 @@ export default function AssistantPage() {
   }, [jobMatches]);
 
   const fetchJobMatches = async (token: string) => {
+    const flowStartedAt = performance.now();
+    const metrics: AssistantRequestMetric[] = [];
+
     setOffersLoading(true);
     setOffersError(null);
     try {
-      const response = await axios.get<CareerPathMatchResult[]>(
+      const response = await trackGetRequest<CareerPathMatchResult[]>(
+        'GET /api/JobOffers/matching/my-recommendations/detailed',
         `${API_URL}/api/JobOffers/matching/my-recommendations/detailed`,
         {
           headers: {
             Authorization: `Bearer ${token}`,
             'Content-Type': 'application/json',
           },
-        }
+        },
+        metrics
       );
       setJobMatches(response.data);
     } catch (err: unknown) {
@@ -93,6 +180,7 @@ export default function AssistantPage() {
         setOffersError('Nieoczekiwany błąd podczas pobierania ofert pracy');
       }
     } finally {
+      logAssistantMetrics('fetch job matches', metrics, flowStartedAt);
       setOffersLoading(false);
     }
   };
@@ -174,6 +262,9 @@ export default function AssistantPage() {
 
   useEffect(() => {
     const loadProfileAndRecommendations = async () => {
+      const flowStartedAt = performance.now();
+      const metrics: AssistantRequestMetric[] = [];
+
       setLoading(true);
       setError(null);
 
@@ -202,19 +293,19 @@ export default function AssistantPage() {
       try {
         // Najpierw spróbuj pobrać ostatnie rekomendacje
         try {
-          const lastRecommendationResponse = await axios.get<AiCareerResponse>(
+          const lastRecommendationResponse = await trackGetRequest<AiCareerResponse>(
+            'GET /api/Ai/last-recommendation',
             `${API_URL}/api/Ai/last-recommendation`,
-
             {
               headers: {
                 Authorization: `Bearer ${token}`,
                 'Content-Type': 'application/json',
               },
-            }
+            },
+            metrics
           );
           console.log('Last recommendations:', lastRecommendationResponse.data);
           setRecommendations(lastRecommendationResponse.data);
-          setLoading(false);
           void fetchJobMatches(token);
           return;
         } catch (lastError: unknown) {
@@ -228,19 +319,28 @@ export default function AssistantPage() {
               lastError.response?.data?.detail ||
                 'Something went wrong while getting last recommendations.'
             );
-            setLoading(false);
             return;
           }
+          metrics.push({
+            step: 'Fallback to GET /api/Ai/recommendations',
+            durationMs: 0,
+            status: 'fallback',
+          });
           console.log('No last recommendations found or server error, generating new ones...');
         }
 
         // Jeśli brak ostatnich rekomendacji, wygeneruj nowe
-        const response = await axios.get<AiCareerResponse>(`${API_URL}/api/Ai/recommendations`, {
-          headers: {
-            Authorization: `Bearer ${token}`,
-            'Content-Type': 'application/json',
+        const response = await trackGetRequest<AiCareerResponse>(
+          'GET /api/Ai/recommendations',
+          `${API_URL}/api/Ai/recommendations`,
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+              'Content-Type': 'application/json',
+            },
           },
-        });
+          metrics
+        );
         console.log('New recommendations:', response.data);
         setRecommendations(response.data);
         void fetchJobMatches(token);
@@ -267,6 +367,7 @@ export default function AssistantPage() {
           setError('Unexpected error occurred');
         }
       } finally {
+        logAssistantMetrics('load recommendations', metrics, flowStartedAt);
         setLoading(false);
       }
     };
@@ -275,6 +376,9 @@ export default function AssistantPage() {
   }, []);
 
   const handleGenerateNewRecommendations = async () => {
+    const flowStartedAt = performance.now();
+    const metrics: AssistantRequestMetric[] = [];
+
     setLoading(true);
     const token = localStorage.getItem('token');
     if (!token) {
@@ -285,12 +389,17 @@ export default function AssistantPage() {
       return;
     }
     try {
-      const response = await axios.get<AiCareerResponse>(`${API_URL}/api/Ai/recommendations`, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-          'Content-Type': 'application/json',
+      const response = await trackGetRequest<AiCareerResponse>(
+        'GET /api/Ai/recommendations (manual regenerate)',
+        `${API_URL}/api/Ai/recommendations`,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+            'Content-Type': 'application/json',
+          },
         },
-      });
+        metrics
+      );
       setRecommendations(response.data);
       void fetchJobMatches(token);
       toast.success('New recommendations have been generated');
@@ -310,6 +419,7 @@ export default function AssistantPage() {
         console.error('Unexpected error:', err);
       }
     } finally {
+      logAssistantMetrics('manual generate recommendations', metrics, flowStartedAt);
       setLoading(false);
     }
   };
