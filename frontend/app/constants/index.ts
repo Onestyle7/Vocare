@@ -652,3 +652,6 @@ export const cone_5 = '/images/cone-5.png';
 export const cone_6 = '/images/cone-6.png';
 export const cone_7 = '/images/cone-7.png';
 export const cone_8 = '/images/cone-8.png';
+
+// roadmmap icon
+export const gps_icon = '/svg/gps.png';
