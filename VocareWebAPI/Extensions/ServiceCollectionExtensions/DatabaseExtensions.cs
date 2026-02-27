@@ -21,7 +21,7 @@ namespace VocareWebAPI.Extensions.ServiceCollectionExtensions
             {
                 var connectionString = GetConnectionString(configuration);
 
-                options.UseNpgsql(connectionString);
+                options.UseNpgsql(connectionString, o => o.UseVector());
             });
 
             return services;

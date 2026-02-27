@@ -1,11 +1,11 @@
-using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
+using Pgvector.EntityFrameworkCore;
 using VocareWebAPI.Billing.Models.Entities;
 using VocareWebAPI.CareerAdvisor.Models.Entities.MarketAnalysis;
-using VocareWebAPI.CareerAdvisor.Models.Entities.MarketAnalysis;
 using VocareWebAPI.CvGenerator.Models; // Poprawiony namespace
+using VocareWebAPI.JobOffers.Models.Entities;
 using VocareWebAPI.MarketNews.Models.Entities;
 using VocareWebAPI.Models;
 using VocareWebAPI.Models.Entities;
@@ -79,6 +79,10 @@ namespace VocareWebAPI.Data
         public DbSet<EntryDifficulty> EntryDifficulties { get; set; }
         public DbSet<AiNarrator> AiNarrators { get; set; }
         public DbSet<CvParseHistory> CvParseHistories { get; set; }
+        public DbSet<JobOffer> JobOffers { get; set; }
+        public DbSet<JobOfferLocation> JobOfferLocations { get; set; }
+        public DbSet<JobOfferSkill> JobOfferSkills { get; set; }
+        public DbSet<SkillEmbedding> SkillEmbeddings { get; set; }
 
         /// <summary>
         /// Konfiguruje model bazy danych, definiując schemat i relacje między encjami.
@@ -86,6 +90,7 @@ namespace VocareWebAPI.Data
         /// <param name="builder">Builder modelu.</param>
         protected override void OnModelCreating(ModelBuilder builder)
         {
+            builder.HasPostgresExtension("vector");
             base.OnModelCreating(builder);
 
             // Konwersja DateTime na UTC dla wszystkich właściwości DateTime i DateTime?
@@ -318,6 +323,23 @@ namespace VocareWebAPI.Data
                         v => v.Split(";", StringSplitOptions.RemoveEmptyEntries).ToList()
                     );
             });
+            builder.Entity<CareerPath>(entity =>
+            {
+                entity.HasKey(e => e.Id);
+
+                entity.Property(e => e.Embedding).HasColumnType("vector(1536)");
+            });
+            builder.Entity<CareerPath>(e =>
+            {
+                e.HasKey(e => e.Id);
+                e.Property(e => e.Embedding).HasColumnType("vector(1536)");
+
+                e.Property(e => e.AllowedJobCategories)
+                    .HasConversion(
+                        v => string.Join(";", v),
+                        v => v.Split(";", StringSplitOptions.RemoveEmptyEntries).ToList()
+                    );
+            });
             builder.Entity<AiNarrator>(entity =>
             {
                 entity.HasKey(e => e.Id);
@@ -326,6 +348,46 @@ namespace VocareWebAPI.Data
                     .WithOne(cs => cs.AiNarrator)
                     .HasForeignKey<AiNarrator>(e => e.CareerStatisticsId)
                     .OnDelete(DeleteBehavior.Cascade);
+            });
+            builder.Entity<JobOffer>(entity =>
+            {
+                entity.HasKey(e => e.Id);
+
+                // Unikalny indeks na ReferenceNumber - kluczowe dla upsert
+                entity.HasIndex(e => e.ReferenceNumber).IsUnique();
+
+                entity.Property(e => e.Embedding).HasColumnType("vector(1536)");
+                // Relacja do kaskadowego usuwnia
+                entity
+                    .HasMany(e => e.Locations)
+                    .WithOne(l => l.JobOffer)
+                    .HasForeignKey(l => l.JobOfferId)
+                    .OnDelete(DeleteBehavior.Cascade);
+
+                entity
+                    .HasMany(e => e.Skills)
+                    .WithOne(s => s.JobOffer)
+                    .HasForeignKey(s => s.JobOfferId)
+                    .OnDelete(DeleteBehavior.Cascade);
+            });
+            builder.Entity<JobOfferLocation>(entity =>
+            {
+                entity.HasKey(e => e.Id);
+                // Indeks przyśpiesza filtrowanie po lokalizacji - city
+                entity.HasIndex(e => e.City);
+            });
+            builder.Entity<JobOfferSkill>(entity =>
+            {
+                entity.HasKey(e => e.Id);
+
+                //Indeks na nazwę umięjeność - przyśpieszy wyszukiwanie po umiejętności
+                entity.HasIndex(e => e.Name);
+            });
+
+            builder.Entity<SkillEmbedding>(e =>
+            {
+                e.HasKey(e => e.Id);
+                e.HasIndex(e => e.NormalizedSkillName).IsUnique();
             });
         }
     }

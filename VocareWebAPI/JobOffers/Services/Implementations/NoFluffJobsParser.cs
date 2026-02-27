@@ -1,0 +1,247 @@
+using System;
+using System.Collections.Generic;
+using System.Globalization;
+using System.Linq;
+using System.Text.RegularExpressions;
+using System.Threading.Tasks;
+using System.Xml;
+using System.Xml.Linq;
+using UglyToad.PdfPig.Logging;
+using VocareWebAPI.JobOffers.Models.Entities;
+using VocareWebAPI.JobOffers.Models.Enums;
+using VocareWebAPI.JobOffers.Services.Interfaces;
+
+namespace VocareWebAPI.JobOffers.Services.Implementations
+{
+    public class NoFluffJobsParser : INoFluffJobsParser
+    {
+        private readonly HttpClient _httpClient;
+        private readonly ILogger<NoFluffJobsParser> _logger;
+
+        public NoFluffJobsParser(HttpClient httpClient, ILogger<NoFluffJobsParser> logger)
+        {
+            _httpClient = httpClient;
+            _logger = logger;
+        }
+
+        public async Task<IEnumerable<JobOffer>> ParseFromUrlAsync(string url)
+        {
+            // Pobieramy XML
+            await using var stream = await _httpClient.GetStreamAsync(url);
+
+            // Wczytujemy do obiektu
+            using var reader = XmlReader.Create(stream, new XmlReaderSettings { Async = true });
+            var doc = await XDocument.LoadAsync(reader, LoadOptions.None, CancellationToken.None);
+
+            var jobElements = doc.Descendants("job");
+
+            var result = new List<JobOffer>();
+
+            foreach (var jobElement in jobElements)
+            {
+                var offer = new JobOffer
+                {
+                    Id = Guid.NewGuid(),
+                    ReferenceNumber = jobElement.Element("referencenumber")?.Value ?? "",
+                    Title = jobElement.Element("title")?.Value ?? "",
+                    CompanyName = jobElement.Element("company")?.Value ?? "",
+                    Url = jobElement.Element("url")?.Value ?? "",
+                    Country = jobElement.Element("country")?.Value,
+                    Category = jobElement.Element("category")?.Value ?? "",
+                    JobType = jobElement.Element("jobtype")?.Value ?? "",
+                    Description = jobElement.Element("description")?.Value ?? "",
+                    BriefDescription = jobElement.Element("brief_job_description")?.Value ?? "",
+                    PublishedAt = ParseDate(jobElement.Element("date")?.Value),
+                    CreatedAt = DateTime.UtcNow,
+                    UpdatedAt = DateTime.UtcNow,
+                    SeniorityLevel = ParseSeniority(jobElement.Element("seniority")?.Value),
+                };
+                var salary = ParseSalary(jobElement.Element("salary")?.Value);
+                offer.SalaryMin = salary.Min;
+                offer.SalaryMax = salary.Max;
+                offer.SalaryCurrency = salary.Currency;
+                offer.SalaryPeriod = salary.Period;
+                offer.Locations = ParseLocations(jobElement.Element("city")?.Value, offer.Id);
+                offer.Skills = ParseSkills(jobElement.Element("description")?.Value, offer.Id);
+
+                result.Add(offer);
+            }
+            return result;
+        }
+
+        private SeniorityLevel ParseSeniority(string? seniorityText)
+        {
+            if (string.IsNullOrWhiteSpace(seniorityText))
+                return SeniorityLevel.Unknown;
+
+            return seniorityText.ToLower().Trim() switch
+            {
+                "trainee" => SeniorityLevel.Trainee,
+                "junior" => SeniorityLevel.Junior,
+                "mid" => SeniorityLevel.Mid,
+                "senior" => SeniorityLevel.Senior,
+                "expert" => SeniorityLevel.Expert,
+                "lead" => SeniorityLevel.Expert, // Lead traktujemy jak Expert
+                _ => SeniorityLevel.Unknown, //  default
+            };
+        }
+
+        private DateTime ParseDate(string? dateText)
+        {
+            if (string.IsNullOrWhiteSpace(dateText))
+                return DateTime.UtcNow;
+
+            if (
+                DateTime.TryParse(
+                    dateText,
+                    CultureInfo.InvariantCulture,
+                    DateTimeStyles.None,
+                    out var date
+                )
+            )
+            {
+                return date.ToUniversalTime();
+            }
+
+            _logger.LogWarning("Nie udało się sparsować daty: {DateText}", dateText);
+            return DateTime.UtcNow;
+        }
+
+        private (decimal? Min, decimal? Max, string? Currency, SalaryPeriod? Period) ParseSalary(
+            string? salaryText
+        )
+        {
+            if (string.IsNullOrWhiteSpace(salaryText))
+                return (null, null, null, null);
+
+            try
+            {
+                // Wyciągamy liczby z tekstu
+                var numbers = Regex
+                    .Matches(salaryText, @"\d+")
+                    .Select(m => decimal.Parse(m.Value))
+                    .ToList();
+
+                decimal? min = numbers.Count > 0 ? numbers[0] : null;
+                decimal? max = numbers.Count > 1 ? numbers[1] : min; // Jeśli jedna liczba, min = max
+
+                // Wyciągamy walutę
+                string? currency = null;
+                if (salaryText.Contains("PLN"))
+                    currency = "PLN";
+                else if (salaryText.Contains("EUR"))
+                    currency = "EUR";
+                else if (salaryText.Contains("USD"))
+                    currency = "USD";
+
+                // Wyciągamy okres
+                SalaryPeriod? period = null;
+                var lowerText = salaryText.ToLower();
+                if (lowerText.Contains("hour"))
+                    period = SalaryPeriod.Hour;
+                else if (lowerText.Contains("day"))
+                    period = SalaryPeriod.Day;
+                else if (lowerText.Contains("month"))
+                    period = SalaryPeriod.Month;
+                else if (lowerText.Contains("year"))
+                    period = SalaryPeriod.Year;
+
+                return (min, max, currency, period);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogWarning(
+                    "Nie udało się sparsować salary: {SalaryText}, błąd: {Error}",
+                    salaryText,
+                    ex.Message
+                );
+                return (null, null, null, null);
+            }
+        }
+
+        private List<JobOfferLocation> ParseLocations(string? cityText, Guid jobOfferId)
+        {
+            var locations = new List<JobOfferLocation>();
+
+            if (string.IsNullOrWhiteSpace(cityText))
+                return locations;
+
+            // Rozbijamy po przecinku
+            var cities = cityText.Split(',', StringSplitOptions.RemoveEmptyEntries);
+
+            foreach (var city in cities)
+            {
+                var trimmedCity = city.Trim();
+                var isRemote = trimmedCity.ToLower().Contains("remote");
+
+                locations.Add(
+                    new JobOfferLocation
+                    {
+                        Id = Guid.NewGuid(),
+                        JobOfferId = jobOfferId,
+                        City = isRemote ? "" : trimmedCity,
+                        IsRemote = isRemote,
+                    }
+                );
+            }
+
+            if (locations.Count == 0 && !string.IsNullOrWhiteSpace(cityText))
+            {
+                locations.Add(
+                    new JobOfferLocation
+                    {
+                        Id = Guid.NewGuid(),
+                        JobOfferId = jobOfferId,
+                        City = cityText.Trim(),
+                        IsRemote = false,
+                    }
+                );
+            }
+
+            return locations;
+        }
+
+        private List<JobOfferSkill> ParseSkills(string? description, Guid jobOfferId)
+        {
+            var skills = new List<JobOfferSkill>();
+
+            if (string.IsNullOrWhiteSpace(description))
+                return skills;
+
+            // Szukamy sekcji "Requirements:" w description
+            var requirementsMatch = Regex.Match(
+                description,
+                @"Requirements:\s*(.+?)(?:Additionally:|$)",
+                RegexOptions.IgnoreCase
+            );
+
+            if (!requirementsMatch.Success)
+                return skills;
+
+            var requirementsText = requirementsMatch.Groups[1].Value;
+
+            // Rozbijamy po przecinku
+            var skillNames = requirementsText.Split(',', StringSplitOptions.RemoveEmptyEntries);
+
+            foreach (var skillName in skillNames)
+            {
+                var trimmed = skillName.Trim();
+
+                // Pomijamy puste lub bardzo krótkie
+                if (trimmed.Length < 2)
+                    continue;
+
+                skills.Add(
+                    new JobOfferSkill
+                    {
+                        Id = Guid.NewGuid(),
+                        JobOfferId = jobOfferId,
+                        Name = trimmed,
+                    }
+                );
+            }
+
+            return skills;
+        }
+    }
+}

@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using VocareWebAPI.CareerAdvisor.Models.Config;
+using VocareWebAPI.JobOffers.Configuration;
+using VocareWebAPI.JobOffers.Models.Entities;
 using VocareWebAPI.Models.OpenAIConfig;
 using VocareWebAPI.UserManagement.Models.Entities;
 
@@ -19,6 +21,9 @@ namespace VocareWebAPI.Extensions.ServiceCollectionExtensions
             services.Configure<OpenAIConfig>(configuration.GetSection("OpenAI"));
             services.Configure<UserRegistrationConfig>(
                 configuration.GetSection("UserRegistration")
+            );
+            services.Configure<JobOfferSyncSettings>(
+                configuration.GetSection(JobOfferSyncSettings.SectionName)
             );
 
             return services;

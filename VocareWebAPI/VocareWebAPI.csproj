@@ -24,6 +24,8 @@
     <PackageReference Include="NetEscapades.AspNetCore.SecurityHeaders" Version="1.1.0" />
     <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="9.0.4" />
     <PackageReference Include="PdfPig" Version="0.1.13" />
+    <PackageReference Include="Pgvector" Version="0.3.2" />
+    <PackageReference Include="Pgvector.EntityFrameworkCore" Version="0.3.0" />
     <PackageReference Include="Polly" Version="8.5.2" />
     <PackageReference Include="Resend" Version="0.1.4" />
     <PackageReference Include="Stripe.net" Version="48.0.0" />

@@ -8,6 +8,7 @@ using VocareWebAPI.Models.Entities;
 using VocareWebAPI.Models.OpenAIConfig;
 using VocareWebAPI.Repositories;
 using VocareWebAPI.Services;
+using VocareWebAPI.Shared.Services.Interfaces;
 
 namespace VocareWebAPI.CareerAdvisor.Services.Implementations
 {
@@ -18,13 +19,15 @@ namespace VocareWebAPI.CareerAdvisor.Services.Implementations
         private readonly IAiRecommendationRepository _aiRecommendationRepository;
         private readonly IMapper _mapper;
         private readonly ILogger<OpenAIService> _logger;
+        private readonly IEmbeddingService _embeddingService;
 
         public OpenAIService(
             HttpClient httpClient,
             IOptions<OpenAIConfig> aiConfig,
             IAiRecommendationRepository aiRecommendationRepository,
             IMapper mapper,
-            ILogger<OpenAIService> logger
+            ILogger<OpenAIService> logger,
+            IEmbeddingService embeddingService
         )
         {
             _httpClient = httpClient;
@@ -32,6 +35,7 @@ namespace VocareWebAPI.CareerAdvisor.Services.Implementations
             _aiRecommendationRepository = aiRecommendationRepository;
             _mapper = mapper;
             _logger = logger;
+            _embeddingService = embeddingService;
 
             _httpClient.Timeout = TimeSpan.FromSeconds(180);
             _httpClient.DefaultRequestHeaders.Add("Authorization", $"Bearer {_config.ApiKey}");
@@ -146,6 +150,35 @@ namespace VocareWebAPI.CareerAdvisor.Services.Implementations
                 recommendationEntity.UserId = userId;
                 recommendationEntity.RecommendationDate = DateTime.UtcNow;
 
+                foreach (var careerPath in recommendationEntity.CareerPaths)
+                {
+                    try
+                    {
+                        var textForEmbedding = BuildCareerPathTextForEmbedding(careerPath);
+
+                        _logger.LogDebug(
+                            "Generuję embedding dla ściezki: {CareerName}",
+                            careerPath.CareerName
+                        );
+                        careerPath.Embedding = await _embeddingService.GenerateEmbeddingAsync(
+                            textForEmbedding
+                        );
+
+                        _logger.LogDebug(
+                            "Wygenerowano embedding dla ścieżki: {CareerName}",
+                            careerPath.CareerName
+                        );
+                    }
+                    catch (Exception ex)
+                    {
+                        _logger.LogWarning(
+                            ex,
+                            "Nie udało się wygenerować embeddingu dla ścieżki: {CareerName}. Kontynuuję bez embeddingu.",
+                            careerPath.CareerName
+                        ); // Nie blokujemy zapisu rekomendacji, kontynuujemy w razie błędu bez zpisu embeddingu
+                    }
+                }
+
                 await _aiRecommendationRepository.AddRecommendationAsync(recommendationEntity);
                 _logger.LogInformation($"Saved recommendation for user: {userId}");
             }
@@ -171,6 +204,11 @@ namespace VocareWebAPI.CareerAdvisor.Services.Implementations
                 path.RequiredSkills ??= new List<string>();
                 path.MarketAnalysis ??= new List<string>();
                 path.RecommendedCourses ??= new List<string>();
+                path.AllowedJobCategories ??= new List<string>();
+                if (string.IsNullOrEmpty(path.SuggestedSeniority))
+                {
+                    path.SuggestedSeniority = "Mid";
+                }
                 if (path.SwotAnalysis == null)
                 {
                     path.SwotAnalysis = new SwotAnalysisDto
@@ -195,79 +233,99 @@ namespace VocareWebAPI.CareerAdvisor.Services.Implementations
         private string BuildPrompt(UserProfile profile)
         {
             return $$"""
-                Jesteś pragmatycznym mentorem kariery, który stawia na realizm i konkret. Twoim celem jest znalezienie "najbliższego logicznego kroku" dla użytkownika, a nie sprzedawanie marzeń. Używaj prostego, naturalnego języka (plain language), unikaj żargonu HR i korpo-mowy, chyba że jest to niezbędna nazwa techniczna.
-                
-                Profil użytkownika:
-                - Imię: {{profile.FirstName}} {{profile.LastName}}
-                - Umiejętności: {{string.Join(", ", profile.Skills)}},
-                - Umiejętności miękkie: {{string.Join(", ", profile.SoftSkills)}},
-                - Doświadczenie zawodowe:
-                {{(profile.WorkExperience != null ? string.Join("\n", profile.WorkExperience.Select(w =>
-                    $"- {w.Position} w {w.Company} (od {w.StartDate:yyyy-MM-dd} do {(w.EndDate.HasValue ? w.EndDate.Value.ToString("yyyy-MM-dd") : "obecnie")}): {w.Description}"))
-                    : "Brak doświadczenia zawodowego")}}
-                - Wymagania finansowe:
-                {{(profile.FinancialSurvey != null
-                    ? $"Aktualne zarobki {profile.FinancialSurvey.CurrentSalary} PLN, oczekiwane {profile.FinancialSurvey.DesiredSalary} PLN"
-                    : "Brak danych finansowych")}}
-                - Wykształcenie:
-                {{(profile.Education != null && profile.Education.Any()
-                    ? string.Join("\n", profile.Education.Select(e =>
-                        $"- {e.Degree} w {e.Field}, {e.Institution}"))
-                    : "Brak wykształcenia")}}
-                - Lokalizacja: {{profile.Country}}, {{profile.Address}}
-                - Języki: {{string.Join(", ", profile.Languages.Select(l => $"{l.Language} ({l.Level})"))}}
-                - Typ osobowości: {{profile.PersonalityType.ToString()}}
-                - Czy gotów do przebranżowienia: {{profile.WillingToRebrand}}
+            Jesteś pragmatycznym mentorem kariery, który stawia na realizm i konkret. Twoim celem jest znalezienie "najbliższego logicznego kroku" dla użytkownika, a nie sprzedawanie marzeń. Używaj prostego, naturalnego języka (plain language), unikaj żargonu HR i korpo-mowy, chyba że jest to niezbędna nazwa techniczna.
+            
+            Profil użytkownika:
+            - Imię: {{profile.FirstName}} {{profile.LastName}}
+            - Umiejętności: {{string.Join(", ", profile.Skills)}},
+            - Umiejętności miękkie: {{string.Join(", ", profile.SoftSkills)}},
+            - Doświadczenie zawodowe:
+            {{(profile.WorkExperience != null ? string.Join("\n", profile.WorkExperience.Select(w =>
+                $"- {w.Position} w {w.Company} (od {w.StartDate:yyyy-MM-dd} do {(w.EndDate.HasValue ? w.EndDate.Value.ToString("yyyy-MM-dd") : "obecnie")}): {w.Description}"))
+                : "Brak doświadczenia zawodowego")}}
+            - Wymagania finansowe:
+            {{(profile.FinancialSurvey != null
+                ? $"Aktualne zarobki {profile.FinancialSurvey.CurrentSalary} PLN, oczekiwane {profile.FinancialSurvey.DesiredSalary} PLN"
+                : "Brak danych finansowych")}}
+            - Wykształcenie:
+            {{(profile.Education != null && profile.Education.Any()
+                ? string.Join("\n", profile.Education.Select(e =>
+                    $"- {e.Degree} w {e.Field}, {e.Institution}"))
+                : "Brak wykształcenia")}}
+            - Lokalizacja: {{profile.Country}}, {{profile.Address}}
+            - Języki: {{string.Join(", ", profile.Languages.Select(l => $"{l.Language} ({l.Level})"))}}
+            - Typ osobowości: {{profile.PersonalityType.ToString()}}
+            - Czy gotów do przebranżowienia: {{profile.WillingToRebrand}}
 
-                Na podstawie powyższych danych wygeneruj dokładnie 3 rekomendacje, stosując zasadę "Minimal Viable Transition":
+            Na podstawie powyższych danych wygeneruj dokładnie 3 rekomendacje, stosując zasadę "Minimal Viable Transition":
 
-                Dopasowanie Seniority: Jeśli użytkownik ma <2 lata doświadczenia, rekomenduj TYLKO stanowiska Junior/Entry-level. Jeśli zmienia branżę, również startuje od poziomu Junior. Nie sugeruj ról liderskich/managerskich osobom bez udokumentowanego doświadczenia w zarządzaniu ludźmi.
+            Dopasowanie Seniority: Jeśli użytkownik ma <2 lata doświadczenia, rekomenduj TYLKO stanowiska Junior/Entry-level. Jeśli zmienia branżę, również startuje od poziomu Junior. Nie sugeruj ról liderskich/managerskich osobom bez udokumentowanego doświadczenia w zarządzaniu ludźmi.
 
-                Zrozumiałość: Opis stanowiska ma być zrozumiały dla laika – wyjaśnij, co ta osoba faktycznie robi przez 8 godzin w pracy.
+            Zrozumiałość: Opis stanowiska ma być zrozumiały dla laika – wyjaśnij, co ta osoba faktycznie robi przez 8 godzin w pracy.
 
-                Realizm: Odrzuć ścieżki, które wymagają >6 miesięcy nauki przed podjęciem pierwszej pracy (chyba że użytkownik ma już solidne podstawy).
-                
-                Odpowiedz WYŁĄCZNIE w formacie JSON zgodnym z poniższą strukturą:
-                {
-                    "careerPaths": [
-                        {
-                            "careerName": "Nazwa stanowiska/ścieżki kariery",
-                            "description": "Krótki i życiowy opis codziennych zadań (np. 'piszesz posty na FB', 'dzwonisz do klientów'), bez zbędnych ogólników",
-                            "probability": 85 - Wartość przykładowa od 0 do 100 określająca realne szanse na zatrudnienie na to stanowisko w ciągu najbliższych 6 miesięcy,
-                            "requiredSkills": ["umiejętność1", "umiejętność2", "umiejętność3"],
-                            "marketAnalysis": [
-                                "Średnie wynagrodzenie: X-Y PLN brutto",
-                                "Zapotrzebowanie na rynku: wysokie/średnie/niskie",
-                                "Liczba ofert pracy: około X miesięcznie"
-                            ],
-                            "recommendedCourses": [
-                                "Nazwa kursu lub certyfikatu z platformy (np. Coursera, Udemy)",
-                                "Kolejny przydatny kurs",
-                                "Certyfikat branżowy"
-                            ],
-                            "swot": {
-                                "strengths": ["Twoje mocne strony pasujące do tej ścieżki", "Kolejna mocna strona"],
-                                "weaknesses": ["Obszar do rozwoju", "Brakująca umiejętność"],
-                                "opportunities": ["Szansa rynkowa", "Trend wzrostowy"],
-                                "threats": ["Potencjalne zagrożenie", "Konkurencja lub automatyzacja"]
-                            }
-                        }
-                    ],
-                    "recommendation": {
-                        "primaryPath": "Nazwa najlepiej dopasowanej ścieżki",
-                        "justification": "Szczegółowe uzasadnienie dlaczego ta ścieżka jest najlepsza dla użytkownika tu i teraz, bazując na jego obecnych zasobach i rynku pracy",
-                        "nextSteps": [
-                            "Mikro-zadanie do wykonania w 15 minut (np. 'Zaktualizuj sekcję X w CV', 'Zapisz się na webinar Y') - nawias jest wyłącznie dla Ciebie, nie umieszczaj go w odpowiedzi",
-                            "Działanie do realizacji w ciągu miesiąca",
-                            "Cel na najbliższe 3 miesiące",
-                            "Plan rozwoju na pół roku"
+            Realizm: Odrzuć ścieżki, które wymagają >6 miesięcy nauki przed podjęciem pierwszej pracy (chyba że użytkownik ma już solidne podstawy).
+
+            WAŻNE - Kategorie ofert pracy:
+            Dla każdej ścieżki kariery musisz określić w jakich kategoriach szukać ofert pracy.
+            Dozwolone kategorie (wybierz 1-3 najlepiej pasujące):
+            agile, architecture, artificialIntelligence, automation, backend, businessAnalyst, businessIntelligence, consulting, customerService, data, devops, electricalEng, electronics, embedded, erp, finance, frontend, fullstack, gameDev, hr, law, logistics, marketing, mechanics, mobile, officeAdministration, other, productManagement, projectManager, sales, security, support, sysAdministrator, telecommunication, testing, ux
+
+            Używaj WYŁĄCZNIE kategorii z powyższej listy - bez modyfikacji, dokładnie tak jak są zapisane (camelCase).
+            
+            Odpowiedz WYŁĄCZNIE w formacie JSON zgodnym z poniższą strukturą:
+            {
+                "careerPaths": [
+                    {
+                        "careerName": "Nazwa stanowiska/ścieżki kariery",
+                        "description": "Krótki i życiowy opis codziennych zadań (np. 'piszesz posty na FB', 'dzwonisz do klientów'), bez zbędnych ogólników",
+                        "probability": 85,
+                        "suggestedSeniority": "Junior",
+                        "allowedJobCategories": ["customerService", "support"],
+                        "requiredSkills": ["Excel", "SQL", "Figma"],
+                        "marketAnalysis": [
+                            "Średnie wynagrodzenie: X-Y PLN brutto",
+                            "Zapotrzebowanie na rynku: wysokie/średnie/niskie",
+                            "Liczba ofert pracy: około X miesięcznie"
                         ],
-                        "longTermGoal": "Wizja kariery za 3-5 lat"
+                        "recommendedCourses": [
+                            "Nazwa kursu lub certyfikatu z platformy (np. Coursera, Udemy)",
+                            "Kolejny przydatny kurs",
+                            "Certyfikat branżowy"
+                        ],
+                        "swot": {
+                            "strengths": ["Twoje mocne strony pasujące do tej ścieżki", "Kolejna mocna strona"],
+                            "weaknesses": ["Obszar do rozwoju", "Brakująca umiejętność"],
+                            "opportunities": ["Szansa rynkowa", "Trend wzrostowy"],
+                            "threats": ["Potencjalne zagrożenie", "Konkurencja lub automatyzacja"]
+                        }
                     }
+                ],
+                "recommendation": {
+                    "primaryPath": "Nazwa najlepiej dopasowanej ścieżki",
+                    "justification": "Szczegółowe uzasadnienie dlaczego ta ścieżka jest najlepsza dla użytkownika tu i teraz, bazując na jego obecnych zasobach i rynku pracy",
+                    "nextSteps": [
+                        "Mikro-zadanie do wykonania w 15 minut (np. 'Zaktualizuj sekcję X w CV', 'Zapisz się na webinar Y') - nawias jest wyłącznie dla Ciebie, nie umieszczaj go w odpowiedzi",
+                        "Działanie do realizacji w ciągu miesiąca",
+                        "Cel na najbliższe 3 miesiące",
+                        "Plan rozwoju na pół roku"
+                    ],
+                    "longTermGoal": "Wizja kariery za 3-5 lat"
                 }
+            }
 
-                Pamiętaj: odpowiedź musi być w języku polskim i zawierać realistyczne dane rynkowe.
-                """;
+            Zasady dla suggestedSeniority:
+            - "Junior" - jeśli to przebranżowienie LUB użytkownik ma <2 lata doświadczenia w tej dziedzinie
+            - "Mid" - jeśli użytkownik ma 2-5 lat doświadczenia w pokrewnej dziedzinie
+            - "Senior" - TYLKO jeśli użytkownik ma >5 lat bezpośredniego doświadczenia w tej roli
+
+            Zasady dla requiredSkills:
+            - Używaj KRÓTKICH nazw narzędzi (1-2 słowa): "Excel", "SQL", "Figma", "Google Analytics"
+            - NIE dodawaj szczegółów w nawiasach: "Excel" zamiast "Excel (tabele przestawne, VLOOKUP)"
+            - NIE dodawaj poziomów: "Figma" zamiast "Figma (podstawy)"
+            - Nazwy mają pasować do tego jak firmy piszą w ogłoszeniach o pracę
+            
+            Pamiętaj: odpowiedź musi być w języku polskim i zawierać realistyczne dane rynkowe.
+            """;
         }
 
         public class AiServiceException : Exception
@@ -277,6 +335,23 @@ namespace VocareWebAPI.CareerAdvisor.Services.Implementations
 
             public AiServiceException(string message, Exception inner)
                 : base(message, inner) { }
+        }
+
+        private string BuildCareerPathTextForEmbedding(CareerPath careerPath)
+        {
+            var skills =
+                careerPath.RequiredSkills != null && careerPath.RequiredSkills.Any()
+                    ? string.Join(", ", careerPath.RequiredSkills)
+                    : "";
+            // Format: "Nazwa stanowiska. Opis. Wymagane umiejętosci: skill1, skill2
+            var text = $"{careerPath.CareerName}. {careerPath.Description}";
+
+            if (!string.IsNullOrEmpty(skills))
+            {
+                text += $"Wymagane umiejętności: {skills}";
+            }
+
+            return text;
         }
     }
 
