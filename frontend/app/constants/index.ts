@@ -303,10 +303,10 @@ export const mobileView = '/images/mobileView.jpeg';
 // footer
 
 export const links_social = [
-  { name: 'TIKTOK', url: '/' },
-  { name: 'INSTAGRAM', url: '/' },
-  { name: 'FACEBOOK', url: '/' },
-  { name: 'LINKEDIN', url: '/' },
+  { name: 'TIKTOK', url: 'https://www.tiktok.com/@vocare.pl?is_from_webapp=1&sender_device=pc' },
+  { name: 'INSTAGRAM', url: 'https://www.instagram.com/vocare.pl/' },
+  { name: 'FACEBOOK', url: 'https://www.facebook.com/profile.php?id=61583477355189' },
+  { name: 'LINKEDIN', url: 'https://www.linkedin.com/company/110046691' },
 ];
 
 export const links_pages = [
@@ -318,7 +318,9 @@ export const links_pages = [
   { name: 'BLOG', url: '/blog' },
 ];
 
-export const contact_pages = [{ name: 'EMAIL', url: '/' }];
+export const contact_pages = [
+  { name: 'EMAIL', url: 'mailto:vocarecontact@gmail.com' }
+];
 
 export const down_links = [
   { name: '2025©', url: '/' },

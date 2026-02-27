@@ -1,14 +1,25 @@
 import PricingMain from '@/components/PricingComponents/PricingMain';
 import Header from '@/components/SectionsComponents/Header';
 import React from 'react';
+import Maintenance from '../maintance/page';
 
-const page = () => {
+const Page = () => {
+  const isMaintenance = true;
+
   return (
     <main>
-      <Header />
-      <PricingMain />
+      {isMaintenance ? (
+        <Maintenance />
+      ) : (
+        <>
+              <Header />
+
+        <PricingMain />
+                </>
+
+      )}
     </main>
   );
 };
 
-export default page;
+export default Page;
