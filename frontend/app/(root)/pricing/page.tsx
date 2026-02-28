@@ -4,7 +4,7 @@ import React from 'react';
 import Maintenance from '../maintance/page';
 
 const Page = () => {
-  const isMaintenance = true;
+  const isMaintenance = false;
 
   return (
     <main>
@@ -12,11 +12,10 @@ const Page = () => {
         <Maintenance />
       ) : (
         <>
-              <Header />
+          <Header />
 
-        <PricingMain />
-                </>
-
+          <PricingMain />
+        </>
       )}
     </main>
   );
