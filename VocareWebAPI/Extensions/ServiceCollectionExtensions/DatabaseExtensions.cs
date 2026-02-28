@@ -41,7 +41,7 @@ namespace VocareWebAPI.Extensions.ServiceCollectionExtensions
                     + $"Database={databaseUri.LocalPath.TrimStart('/')};"
                     + $"Username={userInfo[0]};"
                     + $"Password={userInfo[1]};"
-                    + $"SSL Mode=Require;Trust Server Certificate=true";
+                    + $"SSL Mode=Prefer;Trust Server Certificate=true";
             }
 
             return configuration.GetConnectionString("DefaultConnection")
