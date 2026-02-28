@@ -27,7 +27,7 @@ import Link from 'next/link';
 import { forgotPassword } from '@/lib/auth';
 import { toast } from 'sonner';
 import { spinner_terminal } from '@/app/constants';
-// Init staging
+// Init stage
 // Typy dla błędów API
 interface ApiError {
   response?: {
