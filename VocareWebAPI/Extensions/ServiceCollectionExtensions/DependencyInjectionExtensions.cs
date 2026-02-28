@@ -11,6 +11,11 @@ using VocareWebAPI.CvGenerator.Repositories.Interfaces;
 using VocareWebAPI.CvGenerator.Services.Implementation;
 using VocareWebAPI.CvGenerator.Services.Implementations;
 using VocareWebAPI.CvGenerator.Services.Interfaces;
+using VocareWebAPI.JobOffers.BackgroundJobs;
+using VocareWebAPI.JobOffers.Repositories.Implementations;
+using VocareWebAPI.JobOffers.Repositories.Interfaces;
+using VocareWebAPI.JobOffers.Services.Implementations;
+using VocareWebAPI.JobOffers.Services.Interfaces;
 using VocareWebAPI.MarketNews.Repositories.Implementations;
 using VocareWebAPI.MarketNews.Repositories.Interfaces;
 using VocareWebAPI.MarketNews.services.Implementations;
@@ -58,6 +63,15 @@ namespace VocareWebAPI.Extensions.ServiceCollectionExtensions
             services.AddScoped<IEmailService, EmailService>();
             services.AddScoped<IMarketNewsService, MarketNewsService>();
 
+            // Jobs services
+            services.AddScoped<IJobOfferSyncService, JobOfferSyncService>();
+            services.AddScoped<IJobOfferMatchingService, JobOfferMatchingService>();
+            services.AddScoped<ISkillMatchingService, SkillMatchingService>();
+            services.AddScoped<IScoringService, ScoringService>();
+            services.AddScoped<ISkillEmbeddingService, SkillEmbeddingService>();
+
+            // Background services
+            services.AddHostedService<JobOfferSyncBackgroundService>();
             services.AddHostedService<MarketNewsBackgroundService>();
 
             return services;
@@ -85,10 +99,19 @@ namespace VocareWebAPI.Extensions.ServiceCollectionExtensions
             services.AddScoped<IEntryDifficultyRepository, EntryDifficultyRepository>();
             services.AddScoped<IAiNarratorRepository, AiNarratorRepository>();
 
-            // Cv Repositories;
+            // Cv Repositories
             services.AddScoped<IGeneratedCvRepository, GeneratedCvrepository>();
 
+            // Job Offer repositories
+            services.AddScoped<IJobOfferRepository, JobOfferRepository>();
+            services.AddScoped<INoFluffJobsParser, NoFluffJobsParser>();
             services.AddScoped<IMarketNewsRepository, MarketNewsRepository>();
+            services.AddScoped<
+                IJobOfferRecommendationRepository,
+                JobOfferRecommendationRepository
+            >();
+            services.AddScoped<ISkillEmbeddingRepository, SkillEmbeddingRepository>();
+
             return services;
         }
     }

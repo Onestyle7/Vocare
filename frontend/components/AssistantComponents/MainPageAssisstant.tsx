@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState, useRef } from 'react';
+import { useEffect, useMemo, useState, useRef } from 'react';
 import axios from 'axios';
 import { UserProfile } from '@/lib/types/profile';
 import { toast } from 'sonner';
@@ -24,6 +24,8 @@ import {
 } from '../ui/alert-dialog';
 import Image from 'next/image';
 import {
+  cone_1,
+  cone_2,
   star_generate,
   timeline_icon_1,
   timeline_icon_2,
@@ -36,14 +38,19 @@ import { AxiosError } from 'axios';
 import { AiCareerResponse, CareerPath } from '@/lib/types/recommendation';
 import Section from '../SupportComponents/Section';
 import { ArrowRight, Undo2 } from 'lucide-react';
+import { CareerPathMatchResult } from '@/lib/types/jobOffers';
 
 // const API_URL = process.env.NEXT_PUBLIC_API_URL;
 
 export default function AssistantPage() {
+  const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8080';
   const [profile, setProfile] = useState<UserProfile | null>(null);
   const [recommendations, setRecommendations] = useState<AiCareerResponse | null>(null);
   const [isLoading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [jobMatches, setJobMatches] = useState<CareerPathMatchResult[]>([]);
+  const [isOffersLoading, setOffersLoading] = useState(false);
+  const [offersError, setOffersError] = useState<string | null>(null);
   const [isConfirmDialogOpen, setIsConfirmDialogOpen] = useState(false);
   const {
     tokenBalance,
@@ -59,7 +66,36 @@ export default function AssistantPage() {
   const [showFixedButton, setShowFixedButton] = useState(false);
   const lastScrollY = useRef(0);
 
-  const generatePricePerUse = 60; 
+  const generatePricePerUse = 60;
+
+  const matchByName = useMemo(() => {
+    return new Map(jobMatches.map((match) => [match.careerPathName.trim().toLowerCase(), match]));
+  }, [jobMatches]);
+
+  const fetchJobMatches = async (token: string) => {
+    setOffersLoading(true);
+    setOffersError(null);
+    try {
+      const response = await axios.get<CareerPathMatchResult[]>(
+        `${API_URL}/api/JobOffers/matching/my-recommendations/detailed`,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+            'Content-Type': 'application/json',
+          },
+        }
+      );
+      setJobMatches(response.data);
+    } catch (err: unknown) {
+      if (err instanceof AxiosError) {
+        setOffersError(err.response?.data?.detail || 'Błąd podczas pobierania ofert pracy');
+      } else {
+        setOffersError('Nieoczekiwany błąd podczas pobierania ofert pracy');
+      }
+    } finally {
+      setOffersLoading(false);
+    }
+  };
 
   useEffect(() => {
     const handleScroll = () => {
@@ -167,7 +203,7 @@ export default function AssistantPage() {
         // Najpierw spróbuj pobrać ostatnie rekomendacje
         try {
           const lastRecommendationResponse = await axios.get<AiCareerResponse>(
-            'https://vocare-production-e568.up.railway.app/api/Ai/last-recommendation',
+            `${API_URL}/api/Ai/last-recommendation`,
 
             {
               headers: {
@@ -179,6 +215,7 @@ export default function AssistantPage() {
           console.log('Last recommendations:', lastRecommendationResponse.data);
           setRecommendations(lastRecommendationResponse.data);
           setLoading(false);
+          void fetchJobMatches(token);
           return;
         } catch (lastError: unknown) {
           if (
@@ -198,17 +235,15 @@ export default function AssistantPage() {
         }
 
         // Jeśli brak ostatnich rekomendacji, wygeneruj nowe
-        const response = await axios.get<AiCareerResponse>(
-          'https://vocare-production-e568.up.railway.app/api/Ai/recommendations',
-          {
-            headers: {
-              Authorization: `Bearer ${token}`,
-              'Content-Type': 'application/json',
-            },
-          }
-        );
+        const response = await axios.get<AiCareerResponse>(`${API_URL}/api/Ai/recommendations`, {
+          headers: {
+            Authorization: `Bearer ${token}`,
+            'Content-Type': 'application/json',
+          },
+        });
         console.log('New recommendations:', response.data);
         setRecommendations(response.data);
+        void fetchJobMatches(token);
       } catch (err: unknown) {
         if (err instanceof AxiosError) {
           console.error('Detailed error:', err);
@@ -250,16 +285,14 @@ export default function AssistantPage() {
       return;
     }
     try {
-      const response = await axios.get<AiCareerResponse>(
-        'https://vocare-production-e568.up.railway.app/api/Ai/recommendations',
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-            'Content-Type': 'application/json',
-          },
-        }
-      );
+      const response = await axios.get<AiCareerResponse>(`${API_URL}/api/Ai/recommendations`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+          'Content-Type': 'application/json',
+        },
+      });
       setRecommendations(response.data);
+      void fetchJobMatches(token);
       toast.success('New recommendations have been generated');
     } catch (err: unknown) {
       if (err instanceof AxiosError) {
@@ -340,14 +373,14 @@ export default function AssistantPage() {
             <div className="clip-corner-bevel relative z-30 flex flex-col overflow-hidden rounded-[24px] border shadow-sm backdrop-blur-md md:flex-row dark:border-gray-500/40 dark:bg-[#090d16]">
               <div className="relative flex items-center justify-center overflow-hidden p-4 md:w-1/6 md:border-r">
                 <Image
-                  src="/images/cone.png"
+                  src={cone_1}
                   alt="decor"
                   width={148}
                   height={148}
                   className="pointer-events-none absolute -top-2 -left-14 z-10"
                 />
                 <Image
-                  src="/images/cone-2.png"
+                  src={cone_2}
                   alt="decor"
                   width={148}
                   height={148}
@@ -401,7 +434,14 @@ export default function AssistantPage() {
 
           {/* Career paths sections */}
           {recommendations.careerPaths.map((path: CareerPath, index: number) => (
-            <CareerPathSection key={index} path={path} index={index} />
+            <CareerPathSection
+              key={`${path.careerName}-${index}`}
+              path={path}
+              index={index}
+              matchResult={matchByName.get(path.careerName.trim().toLowerCase())}
+              offersLoading={isOffersLoading}
+              offersError={offersError}
+            />
           ))}
 
           <div
@@ -439,7 +479,9 @@ export default function AssistantPage() {
                 <AlertDialogDescription className="text-foreground text-center">
                   {!hasActiveSubscription ? (
                     <>
-                      Zostanie pobrane <b className="text-[#915EFF]">{generatePricePerUse} tokenów</b> z Twojego konta.
+                      Zostanie pobrane{' '}
+                      <b className="text-[#915EFF]">{generatePricePerUse} tokenów</b> z Twojego
+                      konta.
                     </>
                   ) : (
                     <p className="mx-auto max-w-xs">
