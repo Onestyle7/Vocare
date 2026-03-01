@@ -70,6 +70,8 @@ namespace VocareWebAPI.JobOffers.Services.Implementations
             // Pobieramy filtry z profilu użytkownika (przez rekomendację)
             var filters = await GetFiltersFromCareerPathAsync(careerPathId);
 
+            var userSkills = await GetUserSkillsFromCareerPathAsync(careerPathId);
+
             _logger.LogInformation(
                 "Filtry dla ścieżki {CareerPathId}: Miasta={Cities}, Remote={Remote}, Seniority={Seniority}",
                 careerPathId,
@@ -197,6 +199,7 @@ namespace VocareWebAPI.JobOffers.Services.Implementations
             }
 
             var filters = await GetFiltersFromCareerPathAsync(careerPathId);
+            var userSkills = await GetUserSkillsFromCareerPathAsync(careerPathId);
 
             var candidateOffers = await _jobOfferRecommendationRepository.GetMatchingOffersAsync(
                 careerPath.Embedding,
@@ -216,6 +219,17 @@ namespace VocareWebAPI.JobOffers.Services.Implementations
                     careerPath.RequiredSkills ?? new List<string>(),
                     offer.Skills?.Select(s => s.Name).ToList() ?? new List<string>()
                 );
+
+                var offerSkillNames =
+                    offer.Skills?.Select(s => s.Name).ToList() ?? new List<string>();
+                SkillMatchResult? userSkillMatch = null;
+                if (userSkills.Any())
+                {
+                    userSkillMatch = await _skillMatchingService.CalculateSkillMatchAsync(
+                        offerSkillNames,
+                        userSkills
+                    );
+                }
 
                 var categoryMatched =
                     filters.Categories != null
@@ -281,7 +295,23 @@ namespace VocareWebAPI.JobOffers.Services.Implementations
                             SkillScore = (int)Math.Round(skillMatchResult.Score),
                             MatchedSkills = matchedSkillsList,
                             PartialMatches = partialMatchesList,
-                            MissingSkills = skillMatchResult.MissingSkills,
+                            MissingSkills =
+                                userSkillMatch != null
+                                    ? userSkillMatch.MissingSkills
+                                    : offerSkillNames,
+                            UserMatchedSkills =
+                                userSkillMatch != null
+                                    ? userSkillMatch
+                                        .FullMatches.Select(m =>
+                                            $"{m.Key} → {m.Value.MatchedSkill} ({m.Value.Similarity:P0})"
+                                        )
+                                        .Concat(
+                                            userSkillMatch.PartialMatches.Select(m =>
+                                                $"{m.Key} → {m.Value.MatchedSkill} ({m.Value.Similarity:P0})"
+                                            )
+                                        )
+                                        .ToList()
+                                    : new List<string>(),
                             BonusFactors = bonusFactors,
                         },
                     }
@@ -540,6 +570,31 @@ namespace VocareWebAPI.JobOffers.Services.Implementations
                     careerPathEmbedding.ToArray(),
                     jobOfferEmbedding.ToArray()
                 ) * 100;
+        }
+
+        /// <summary>
+        /// Pobiera połączone umiejętności użytkownika (Skills + SoftSkills) na podstawie ścieżki kariery
+        /// </summary>
+        private async Task<List<string>> GetUserSkillsFromCareerPathAsync(Guid careerPathId)
+        {
+            var recommendation = await _context
+                .AiRecommendations.Include(r => r.UserProfile)
+                .FirstOrDefaultAsync(r => r.CareerPaths.Any(cp => cp.Id == careerPathId));
+
+            if (recommendation?.UserProfile == null)
+            {
+                return new List<string>();
+            }
+
+            var allSkills = new List<string>();
+
+            if (recommendation.UserProfile.Skills != null)
+                allSkills.AddRange(recommendation.UserProfile.Skills);
+
+            if (recommendation.UserProfile.SoftSkills != null)
+                allSkills.AddRange(recommendation.UserProfile.SoftSkills);
+
+            return allSkills;
         }
     }
 }

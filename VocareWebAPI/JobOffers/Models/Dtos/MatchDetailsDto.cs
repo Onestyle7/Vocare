@@ -29,6 +29,11 @@ namespace VocareWebAPI.JobOffers.Models.Dtos
         public List<string> MissingSkills { get; set; } = new();
 
         /// <summary>
+        /// Umiejętności z oferty, które użytkownik już posiada
+        /// </summary>
+        public List<string> UserMatchedSkills { get; set; } = new();
+
+        /// <summary>
         /// Dodatkowe cenych które zostały potwierdzone w dopasowaniu, np. poziom doświadczenia
         /// </summary>
         public List<string> BonusFactors { get; set; } = new();
