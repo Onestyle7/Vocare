@@ -1,13 +1,9 @@
-using System;
-using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-using System.Linq;
-using System.Threading.Tasks;
 using VocareWebAPI.Models.Entities;
-using VocareWebAPI.Roadmap.Models.Enums;
+using VocareWebAPI.RoadmapService.Models.Enums;
 
-namespace VocareWebAPI.Roadmap.Models.Entities
+namespace VocareWebAPI.RoadmapService.Models.Entities
 {
     public class Roadmap
     {
@@ -15,7 +11,7 @@ namespace VocareWebAPI.Roadmap.Models.Entities
         public Guid Id { get; set; }
 
         [Required]
-        public string userId { get; set; } = default!;
+        public string UserId { get; set; } = default!;
 
         [ForeignKey("UserId")]
         public User User { get; set; } = default!;

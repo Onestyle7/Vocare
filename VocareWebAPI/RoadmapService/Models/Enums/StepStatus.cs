@@ -1,4 +1,4 @@
-namespace VocareWebAPI.Roadmap.Models.Enums
+namespace VocareWebAPI.RoadmapService.Models.Enums
 {
     public enum StepStatus
     {
