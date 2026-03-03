@@ -323,7 +323,7 @@ export const contact_pages = [
 ];
 
 export const down_links = [
-  { name: '2025©', url: '/' },
+  { name: '2026©', url: '/' },
   { name: 'ZGODY I WARUNKI', url: 'terms-of-service' },
   { name: 'POLITYKA PRYWATNOŚCI', url: 'privacy-policy' },
 ];
@@ -644,14 +644,14 @@ export const privacy_policy = {
 
 // assistant page assets
 
-export const cone_1 = '/images/cone.png';
-export const cone_2 = '/images/cone-2.png';
-export const cone_3 = '/images/cone-3.png';
-export const cone_4 = '/images/cone-4.png';
-export const cone_5 = '/images/cone-5.png';
-export const cone_6 = '/images/cone-6.png';
-export const cone_7 = '/images/cone-7.png';
-export const cone_8 = '/images/cone-8.png';
+export const cone_1 = '/images/cone.avif';
+export const cone_2 = '/images/cone-2.avif';
+export const cone_3 = '/images/cone-3.avif';
+export const cone_4 = '/images/cone-4.avif';
+export const cone_5 = '/images/cone-5.avif';
+export const cone_6 = '/images/cone-6.avif';
+export const cone_7 = '/images/cone-7.avif';
+export const cone_8 = '/images/cone-8.avif';
 
-// roadmmap icon
+// roadmap icon
 export const gps_icon = '/svg/gps.png';

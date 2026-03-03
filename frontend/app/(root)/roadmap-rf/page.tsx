@@ -32,6 +32,7 @@ import {
   DialogTitle,
 } from '@/components/ui/dialog';
 import '@xyflow/react/dist/style.css';
+import { ArrowRight, Lock, MoreVertical, RefreshCw, Sparkles, Type, Wand2 } from 'lucide-react';
 
 import { RoadmapTileNode } from '@/components/roadmap/RoadmapTileNode';
 import type { RoadmapNodeData as TileNodeData } from '@/components/roadmap/RoadmapTileNode';
@@ -89,8 +90,16 @@ const NODE_HEIGHT = 78;
 const SOLID_EDGE_COLOR = '#2f6fd6';
 const DOTTED_EDGE_COLOR = '#2f6fd6';
 const DASHED_EDGE_COLOR = '#11162f';
-const EDGE_INSPECTOR_WIDTH = 360;
-const EDGE_INSPECTOR_HEIGHT = 84;
+const EDGE_INSPECTOR_SCALE = 0.54;
+const EDGE_INSPECTOR_BASE_WIDTH = 760;
+const EDGE_INSPECTOR_BASE_HEIGHT = 72;
+const EDGE_INSPECTOR_WIDTH = EDGE_INSPECTOR_BASE_WIDTH * EDGE_INSPECTOR_SCALE;
+const EDGE_INSPECTOR_HEIGHT = EDGE_INSPECTOR_BASE_HEIGHT * EDGE_INSPECTOR_SCALE;
+const EDGE_TYPE_BUTTON_CENTER_RATIO = 4 / 10.4;
+const EDGE_TYPE_TOOLTIP_TOP = -36;
+const EDGE_TYPE_PANEL_TOP = EDGE_INSPECTOR_HEIGHT + 6;
+const EDGE_TYPE_PANEL_WIDTH = 208;
+const EDGE_TYPE_PANEL_HEIGHT = 156;
 const EDGE_INSPECTOR_MARGIN = 16;
 const TILE_TEXT_FONT =
   '600 15px ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial';
@@ -142,18 +151,22 @@ const toEdgeVariant = (edge: Edge): EdgeVariant => {
   return 'solid';
 };
 
-const getEdgeInspectorPosition = (clientX: number, clientY: number) => {
+const getEdgeInspectorPosition = (
+  clientX: number,
+  clientY: number,
+  bounds: { width: number; height: number }
+) => {
   if (typeof window === 'undefined') {
     return { left: clientX, top: clientY };
   }
 
   const boundedWidth = Math.max(
     180,
-    Math.min(EDGE_INSPECTOR_WIDTH, window.innerWidth - EDGE_INSPECTOR_MARGIN * 2)
+    Math.min(bounds.width, window.innerWidth - EDGE_INSPECTOR_MARGIN * 2)
   );
   const boundedHeight = Math.max(
     44,
-    Math.min(EDGE_INSPECTOR_HEIGHT, window.innerHeight - EDGE_INSPECTOR_MARGIN * 2)
+    Math.min(bounds.height, window.innerHeight - EDGE_INSPECTOR_MARGIN * 2)
   );
 
   return {
@@ -168,6 +181,65 @@ const getEdgeInspectorPosition = (clientX: number, clientY: number) => {
       window.innerHeight - boundedHeight - EDGE_INSPECTOR_MARGIN
     ),
   };
+};
+
+const renderEdgeTypeIcon = (type: EdgeLineType, isActive = false) => {
+  const stroke = isActive ? '#2f6fd6' : '#11162f';
+
+  return (
+    <svg viewBox="0 0 72 24" className="h-5 w-14">
+      {type === 'straight' ? (
+        <line
+          x1="8"
+          y1="16"
+          x2="64"
+          y2="8"
+          stroke={stroke}
+          strokeWidth="3.2"
+          strokeLinecap="round"
+        />
+      ) : null}
+      {type === 'step' ? (
+        <polyline
+          points="16,16 36,16 36,8 56,8"
+          fill="none"
+          stroke={stroke}
+          strokeWidth="3.2"
+          strokeLinejoin="round"
+          strokeLinecap="round"
+        />
+      ) : null}
+      {type === 'bezier' ? (
+        <path
+          d="M 8 16 C 20 4, 44 20, 64 8"
+          fill="none"
+          stroke={stroke}
+          strokeWidth="3.2"
+          strokeLinecap="round"
+        />
+      ) : null}
+    </svg>
+  );
+};
+
+const renderEdgeVariantIcon = (variant: EdgeVariant, isActive = false) => {
+  const stroke = isActive ? '#2f6fd6' : '#11162f';
+  const strokeDasharray = variant === 'dashed' ? '11 8' : variant === 'dotted' ? '1 10' : undefined;
+
+  return (
+    <svg viewBox="0 0 72 24" className="h-5 w-14">
+      <line
+        x1="8"
+        y1="12"
+        x2="64"
+        y2="12"
+        stroke={stroke}
+        strokeWidth="3.2"
+        strokeLinecap="round"
+        strokeDasharray={strokeDasharray}
+      />
+    </svg>
+  );
 };
 
 const EDGE_TYPE_OPTIONS: Array<{ value: EdgeLineType; label: string }> = [
@@ -478,11 +550,16 @@ const createInitialNodes = (): RoadmapNode[] => {
     const step: RoadmapDraft = { phase: '', title: cfg.title, timeline: '', summary: '' };
     const autoSize = getTileSizeFromText(step);
 
-    return createRoadmapNode(cfg.id, step, { x: cfg.x, y: cfg.y }, {
-      tone: cfg.tone ?? 'cream',
-      width: cfg.width ?? autoSize.width,
-      height: cfg.height ?? autoSize.height,
-    });
+    return createRoadmapNode(
+      cfg.id,
+      step,
+      { x: cfg.x, y: cfg.y },
+      {
+        tone: cfg.tone ?? 'cream',
+        width: cfg.width ?? autoSize.width,
+        height: cfg.height ?? autoSize.height,
+      }
+    );
   });
 };
 
@@ -566,6 +643,7 @@ const RoadmapReactFlowPage = () => {
 
   const [contextTarget, setContextTarget] = useState<ContextTarget | null>(null);
   const [edgeInspector, setEdgeInspector] = useState<EdgeInspectorState | null>(null);
+  const [isLineTooltipOpen, setIsLineTooltipOpen] = useState(false);
 
   const [reactFlowInstance, setReactFlowInstance] = useState<ReactFlowInstance<
     RoadmapNode,
@@ -582,8 +660,13 @@ const RoadmapReactFlowPage = () => {
 
   const edgeInspectorPosition = useMemo(() => {
     if (!edgeInspector) return null;
-    return getEdgeInspectorPosition(edgeInspector.clientX, edgeInspector.clientY);
-  }, [edgeInspector]);
+    return getEdgeInspectorPosition(edgeInspector.clientX, edgeInspector.clientY, {
+      width: EDGE_INSPECTOR_WIDTH,
+      height: isLineTooltipOpen
+        ? EDGE_INSPECTOR_HEIGHT + EDGE_TYPE_PANEL_TOP + EDGE_TYPE_PANEL_HEIGHT
+        : EDGE_INSPECTOR_HEIGHT,
+    });
+  }, [edgeInspector, isLineTooltipOpen]);
 
   const activeInspectorEdgeType = useMemo(() => {
     if (!activeInspectorEdge) return null;
@@ -597,23 +680,24 @@ const RoadmapReactFlowPage = () => {
 
   const closeEdgeInspector = useCallback(() => {
     setEdgeInspector(null);
+    setIsLineTooltipOpen(false);
   }, []);
 
   useEffect(() => {
     if (!edgeInspector || activeInspectorEdge) return;
-    setEdgeInspector(null);
-  }, [activeInspectorEdge, edgeInspector]);
+    closeEdgeInspector();
+  }, [activeInspectorEdge, closeEdgeInspector, edgeInspector]);
 
   useEffect(() => {
     if (!edgeInspector) return;
 
     const onKeyDown = (event: KeyboardEvent) => {
-      if (event.key === 'Escape') setEdgeInspector(null);
+      if (event.key === 'Escape') closeEdgeInspector();
     };
 
     window.addEventListener('keydown', onKeyDown);
     return () => window.removeEventListener('keydown', onKeyDown);
-  }, [edgeInspector]);
+  }, [closeEdgeInspector, edgeInspector]);
 
   const updateEdgeAppearance = useCallback(
     (edgeId: string, updates: { type?: EdgeLineType; variant?: EdgeVariant }) => {
@@ -646,6 +730,7 @@ const RoadmapReactFlowPage = () => {
       setContextTarget(null);
       setSelectedNodeId('');
       setSelectedEdgeId(edge.id);
+      setIsLineTooltipOpen(false);
       setEdgeInspector({
         edgeId: edge.id,
         clientX: event.clientX,
@@ -670,6 +755,22 @@ const RoadmapReactFlowPage = () => {
     },
     [edgeInspector, updateEdgeAppearance]
   );
+
+  const cycleInspectorEdgeVariant = useCallback(() => {
+    if (!activeInspectorEdgeVariant) return;
+
+    const variants: EdgeVariant[] = ['solid', 'dashed', 'dotted'];
+    const currentIndex = variants.indexOf(activeInspectorEdgeVariant);
+    const nextVariant = variants[(currentIndex + 1) % variants.length] ?? 'solid';
+    setInspectorEdgeVariant(nextVariant);
+    setIsLineTooltipOpen(false);
+  }, [activeInspectorEdgeVariant, setInspectorEdgeVariant]);
+
+  const onMockToolbarAction = useCallback((event: ReactMouseEvent<HTMLButtonElement>) => {
+    event.preventDefault();
+    event.stopPropagation();
+    setIsLineTooltipOpen(false);
+  }, []);
 
   const onConnect = useCallback(
     (connection: Connection) => {
@@ -1125,125 +1226,214 @@ const RoadmapReactFlowPage = () => {
       </div>
 
       {edgeInspector && activeInspectorEdge && edgeInspectorPosition && (
-        <div className="pointer-events-none fixed inset-0 z-50">
+        <div className="fixed inset-0 z-50">
+          <button
+            type="button"
+            aria-label="Zamknij panel krawedzi"
+            className="absolute inset-0 h-full w-full bg-transparent"
+            onClick={closeEdgeInspector}
+          />
+
           <div
-            className="pointer-events-auto absolute flex w-[360px] max-w-[calc(100vw-32px)] flex-col overflow-hidden rounded-lg border border-slate-300/85 bg-[#f3f3f4] shadow-[0_8px_18px_rgba(15,23,42,0.14)]"
+            className="pointer-events-auto absolute"
             style={{ left: edgeInspectorPosition.left, top: edgeInspectorPosition.top }}
+            onClick={(event) => event.stopPropagation()}
           >
-            <div className="flex h-11 items-stretch">
-              {EDGE_VARIANT_OPTIONS.map((option, index) => {
-                const isActive = activeInspectorEdgeVariant === option.value;
-                const stroke = option.value === 'solid' ? '#2f6fd6' : '#11162f';
-                const strokeDasharray =
-                  option.value === 'dashed' ? '11 8' : option.value === 'dotted' ? '1 10' : undefined;
-
-                return (
-                  <button
-                    key={option.value}
-                    type="button"
-                    onClick={() => setInspectorEdgeVariant(option.value)}
-                    className={[
-                      'flex min-w-[44px] flex-1 items-center justify-center border-slate-300/85 px-1.5 transition',
-                      index < EDGE_VARIANT_OPTIONS.length - 1 ? 'border-r' : '',
-                      isActive ? 'bg-blue-50' : 'hover:bg-slate-200/75',
-                    ].join(' ')}
-                    title={`Styl: ${option.label}`}
-                  >
-                    <svg viewBox="0 0 72 24" className="h-3.5 w-8">
-                      <line
-                        x1="8"
-                        y1="12"
-                        x2="64"
-                        y2="12"
-                        stroke={stroke}
-                        strokeWidth="3"
-                        strokeLinecap="round"
-                        strokeDasharray={strokeDasharray}
-                      />
-                    </svg>
-                  </button>
-                );
-              })}
-
-              <button
-                type="button"
-                onClick={() => deleteEdgeById(activeInspectorEdge.id)}
-                className="flex w-11 shrink-0 items-center justify-center border-l border-slate-300/85 text-rose-600 transition hover:bg-rose-50"
-                title="Usuń połączenie"
-              >
-                <svg
-                  viewBox="0 0 24 24"
-                  className="h-4 w-4"
-                  fill="none"
-                  stroke="currentColor"
-                  strokeWidth="2"
+            <div
+              className="relative"
+              style={{ width: EDGE_INSPECTOR_WIDTH, height: EDGE_INSPECTOR_HEIGHT }}
+            >
+              {isLineTooltipOpen && (
+                <div
+                  className="pointer-events-none absolute z-40 -translate-x-1/2"
+                  style={{
+                    left: EDGE_INSPECTOR_WIDTH * EDGE_TYPE_BUTTON_CENTER_RATIO,
+                    top: EDGE_TYPE_TOOLTIP_TOP,
+                  }}
                 >
-                  <path d="M3 6h18" />
-                  <path d="M8 6V4h8v2" />
-                  <path d="M19 6l-1 14H6L5 6" />
-                  <path d="M10 11v6" />
-                  <path d="M14 11v6" />
-                </svg>
-              </button>
+                  <div className="rounded-xl bg-[#1f232d] px-2.5 py-1 text-[10px] font-medium text-white shadow-[0_8px_18px_rgba(15,23,42,0.38)]">
+                    Line type
+                  </div>
+                  <div className="mx-auto h-0 w-0 border-x-[5px] border-t-[5px] border-x-transparent border-t-[#1f232d]" />
+                </div>
+              )}
 
-              <button
-                type="button"
-                onClick={closeEdgeInspector}
-                className="flex w-10 shrink-0 items-center justify-center border-l border-slate-300/85 text-slate-700 transition hover:bg-slate-200/75"
-                title="Zamknij"
-              >
-                <svg viewBox="0 0 24 24" className="h-4 w-4" fill="currentColor">
-                  <circle cx="12" cy="5" r="1.8" />
-                  <circle cx="12" cy="12" r="1.8" />
-                  <circle cx="12" cy="19" r="1.8" />
-                </svg>
-              </button>
-            </div>
-
-            <div className="h-px bg-slate-300/85" />
-
-            <div className="flex h-10 items-stretch">
-              {EDGE_TYPE_OPTIONS.map((option, index) => {
-                const isActive = activeInspectorEdgeType === option.value;
-                const stroke = isActive ? '#2f6fd6' : '#11162f';
-
-                return (
-                  <button
-                    key={option.value}
-                    type="button"
-                    onClick={() => setInspectorEdgeType(option.value)}
-                    className={[
-                      'flex flex-1 items-center justify-center border-slate-300/85 px-1.5 transition',
-                      index < EDGE_TYPE_OPTIONS.length - 1 ? 'border-r' : '',
-                      isActive ? 'bg-blue-50 text-blue-600' : 'text-slate-900 hover:bg-slate-200/75',
-                    ].join(' ')}
-                    title={`Typ: ${option.label}`}
+              {isLineTooltipOpen && (
+                <div
+                  className="absolute z-40 -translate-x-1/2"
+                  style={{
+                    left: EDGE_INSPECTOR_WIDTH * EDGE_TYPE_BUTTON_CENTER_RATIO,
+                    top: EDGE_TYPE_PANEL_TOP,
+                  }}
+                >
+                  <div
+                    className="rounded-[12px] border border-[#d7d8dd] bg-[#f3f3f4]/98 p-2.5 shadow-[0_12px_24px_rgba(15,23,42,0.2)]"
+                    style={{ width: EDGE_TYPE_PANEL_WIDTH }}
                   >
-                    <svg viewBox="0 0 72 24" className="h-3.5 w-8">
-                      {option.value === 'straight' ? (
-                        <line x1="8" y1="16" x2="64" y2="8" stroke={stroke} strokeWidth="3" />
-                      ) : null}
-                      {option.value === 'step' ? (
-                        <polyline
-                          points="16,16 36,16 36,8 56,8"
-                          fill="none"
-                          stroke={stroke}
-                          strokeWidth="3"
-                          strokeLinejoin="round"
-                        />
-                      ) : null}
-                      {option.value === 'bezier' ? (
-                        <path
-                          d="M 8 16 C 20 4, 44 20, 64 8"
-                          fill="none"
-                          stroke={stroke}
-                          strokeWidth="3"
-                        />
-                      ) : null}
-                    </svg>
+                    <div className="mb-2 grid grid-cols-3 gap-1">
+                      {EDGE_TYPE_OPTIONS.map((option) => {
+                        const isActive = activeInspectorEdgeType === option.value;
+
+                        return (
+                          <button
+                            key={option.value}
+                            type="button"
+                            onClick={() => setInspectorEdgeType(option.value)}
+                            className={[
+                              'flex h-8 items-center justify-center rounded-[10px] transition',
+                              isActive ? 'bg-[#e6ebfa]' : 'hover:bg-white/70',
+                            ].join(' ')}
+                            title={`Typ: ${option.label}`}
+                          >
+                            <span className="scale-[0.82]">
+                              {renderEdgeTypeIcon(option.value, isActive)}
+                            </span>
+                          </button>
+                        );
+                      })}
+                    </div>
+
+                    <div className="grid grid-cols-3 gap-1">
+                      {EDGE_VARIANT_OPTIONS.map((option) => {
+                        const isActive = activeInspectorEdgeVariant === option.value;
+
+                        return (
+                          <button
+                            key={option.value}
+                            type="button"
+                            onClick={() => setInspectorEdgeVariant(option.value)}
+                            className={[
+                              'flex h-8 items-center justify-center rounded-[10px] transition',
+                              isActive ? 'bg-[#e6ebfa]' : 'hover:bg-white/70',
+                            ].join(' ')}
+                            title={`Styl: ${option.label}`}
+                          >
+                            <span className="scale-[0.82]">
+                              {renderEdgeVariantIcon(option.value, isActive)}
+                            </span>
+                          </button>
+                        );
+                      })}
+                    </div>
+                  </div>
+                </div>
+              )}
+
+              <div
+                className="origin-top-left"
+                style={{
+                  width: EDGE_INSPECTOR_BASE_WIDTH,
+                  height: EDGE_INSPECTOR_BASE_HEIGHT,
+                  transform: `scale(${EDGE_INSPECTOR_SCALE})`,
+                }}
+              >
+                <div className="grid h-full w-full grid-cols-[1.45fr_1fr_1fr_1.1fr_1fr_1fr_1fr_1fr_1fr_0.85fr] overflow-visible rounded-[14px] border border-[#d7d8dd] bg-[#efeff1]/95 shadow-[0_10px_22px_rgba(15,23,42,0.16)] backdrop-blur-xl">
+                  <div className="flex items-center border-r border-[#d7d8dd] px-3.5 text-[24px] font-normal text-slate-900">
+                    None
+                  </div>
+
+                  <button
+                    type="button"
+                    onClick={onMockToolbarAction}
+                    className="flex items-center justify-center border-r border-[#d7d8dd] text-slate-900 transition hover:bg-white/55"
+                    aria-label="Mock: odswiezanie"
+                  >
+                    <RefreshCw className="h-7 w-7 stroke-[2.1]" />
                   </button>
-                );
-              })}
+
+                  <button
+                    type="button"
+                    onClick={onMockToolbarAction}
+                    className="flex items-center justify-center border-r border-[#d7d8dd] text-slate-900 transition hover:bg-white/55"
+                    aria-label="Mock: kierunek"
+                  >
+                    <ArrowRight className="h-8 w-8 stroke-[2.3]" />
+                  </button>
+
+                  <button
+                    type="button"
+                    onClick={() => setIsLineTooltipOpen((current) => !current)}
+                    className={[
+                      'flex h-full w-full flex-col items-center justify-center gap-0.5 border-r border-[#d7d8dd] text-slate-900 transition hover:bg-white/55',
+                      isLineTooltipOpen ? 'bg-[#dfe2e9]' : '',
+                    ].join(' ')}
+                    aria-label="Typ linii"
+                  >
+                    {renderEdgeTypeIcon(activeInspectorEdgeType ?? 'bezier', true)}
+                    <span className="text-[22px] leading-none font-medium tracking-tight text-slate-900">
+                      Type
+                    </span>
+                  </button>
+
+                  <button
+                    type="button"
+                    onClick={cycleInspectorEdgeVariant}
+                    className="flex items-center justify-center border-r border-[#d7d8dd] transition hover:bg-white/55"
+                    aria-label={`Styl linii: ${activeInspectorEdgeVariant ?? 'solid'}`}
+                  >
+                    <span
+                      className={[
+                        'h-7 w-7 rounded-full',
+                        activeInspectorEdgeVariant === 'solid'
+                          ? 'bg-slate-900'
+                          : 'border-[3px] border-slate-900 bg-transparent',
+                        activeInspectorEdgeVariant === 'dashed' ? 'border-dashed' : '',
+                        activeInspectorEdgeVariant === 'dotted' ? 'border-dotted' : '',
+                      ].join(' ')}
+                    />
+                  </button>
+
+                  <button
+                    type="button"
+                    onClick={onMockToolbarAction}
+                    className="flex items-center justify-center border-r border-[#d7d8dd] text-slate-900 transition hover:bg-white/55"
+                    aria-label="Mock: narzedzie"
+                  >
+                    <Wand2 className="h-7 w-7 stroke-[2.1]" />
+                  </button>
+
+                  <button
+                    type="button"
+                    onClick={onMockToolbarAction}
+                    className="relative flex items-center justify-center border-r border-[#d7d8dd] text-slate-900 transition hover:bg-white/55"
+                    aria-label="Mock: etykieta"
+                  >
+                    <Type className="h-7 w-7 stroke-[2.2]" />
+                    <span className="absolute top-[30%] right-[25%] text-sm font-semibold text-slate-900">
+                      +
+                    </span>
+                  </button>
+
+                  <button
+                    type="button"
+                    onClick={onMockToolbarAction}
+                    className="flex items-center justify-center border-r border-[#d7d8dd] text-slate-900 transition hover:bg-white/55"
+                    aria-label="Mock: blokada"
+                  >
+                    <Lock className="h-7 w-7 stroke-[2.2]" />
+                  </button>
+
+                  <button
+                    type="button"
+                    onClick={onMockToolbarAction}
+                    className="flex items-center justify-center border-r border-[#d7d8dd] text-slate-900 transition hover:bg-white/55"
+                    aria-label="Mock: podpowiedzi"
+                  >
+                    <span className="rounded-[8px] bg-[#cdd2dd] p-1.5 text-slate-700">
+                      <Sparkles className="h-5 w-5 stroke-[2]" />
+                    </span>
+                  </button>
+
+                  <button
+                    type="button"
+                    onClick={onMockToolbarAction}
+                    className="flex items-center justify-center text-slate-900 transition hover:bg-white/55"
+                    aria-label="Mock: wiecej"
+                  >
+                    <MoreVertical className="h-7 w-7 stroke-[2.4]" />
+                  </button>
+                </div>
+              </div>
             </div>
           </div>
         </div>
