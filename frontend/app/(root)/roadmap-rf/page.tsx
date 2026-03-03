@@ -38,7 +38,7 @@ import {
   DialogTitle,
 } from '@/components/ui/dialog';
 import '@xyflow/react/dist/style.css';
-import { Lock, MoreVertical, RefreshCw, Sparkles, Type, Wand2 } from 'lucide-react';
+import { Lock, MoreVertical, RefreshCw, Type } from 'lucide-react';
 
 import { RoadmapTileNode } from '@/components/roadmap/RoadmapTileNode';
 import type { RoadmapNodeData as TileNodeData } from '@/components/roadmap/RoadmapTileNode';
@@ -79,14 +79,14 @@ const SOLID_EDGE_COLOR = '#2f6fd6';
 const DOTTED_EDGE_COLOR = '#2f6fd6';
 const DASHED_EDGE_COLOR = '#11162f';
 const EDGE_INSPECTOR_SCALE = 0.54;
-const EDGE_INSPECTOR_BASE_WIDTH = 760;
+const EDGE_INSPECTOR_BASE_WIDTH = 560;
 const EDGE_INSPECTOR_BASE_HEIGHT = 72;
 const EDGE_INSPECTOR_WIDTH = EDGE_INSPECTOR_BASE_WIDTH * EDGE_INSPECTOR_SCALE;
 const EDGE_INSPECTOR_HEIGHT = EDGE_INSPECTOR_BASE_HEIGHT * EDGE_INSPECTOR_SCALE;
-const EDGE_ENDING_BUTTON_CENTER_RATIO = 1.95 / 10.4;
-const EDGE_TYPE_BUTTON_CENTER_RATIO = 4 / 10.4;
-const EDGE_COLOR_BUTTON_CENTER_RATIO = 5.05 / 10.4;
-const EDGE_TEXT_BUTTON_CENTER_RATIO = 6.05 / 10.4;
+const EDGE_ENDING_BUTTON_CENTER_RATIO = 1.5 / 7.1;
+const EDGE_TYPE_BUTTON_CENTER_RATIO = 2.55 / 7.1;
+const EDGE_COLOR_BUTTON_CENTER_RATIO = 3.6 / 7.1;
+const EDGE_TEXT_BUTTON_CENTER_RATIO = 4.6 / 7.1;
 const EDGE_ENDING_PANEL_TOP = EDGE_INSPECTOR_HEIGHT + 6;
 const EDGE_ENDING_PANEL_WIDTH = 124;
 const EDGE_ENDING_PANEL_HEIGHT = 226;
@@ -1714,7 +1714,7 @@ const RoadmapReactFlowPage = () => {
                   transform: `scale(${EDGE_INSPECTOR_SCALE})`,
                 }}
               >
-                <div className="grid h-full w-full grid-cols-[1.45fr_1fr_1fr_1.1fr_1fr_1fr_1fr_1fr_1fr_0.85fr] overflow-visible rounded-[14px] border border-[#d7d8dd] bg-[#efeff1]/95 shadow-[0_10px_22px_rgba(15,23,42,0.16)] backdrop-blur-xl">
+                <div className="grid h-full w-full grid-cols-[1fr_1fr_1.1fr_1fr_1fr_1fr_1fr] overflow-visible rounded-[14px] border border-[#d7d8dd] bg-[#efeff1]/95 shadow-[0_10px_22px_rgba(15,23,42,0.16)] backdrop-blur-xl">
                   <button
                     type="button"
                     onClick={onMockToolbarAction}
@@ -1788,15 +1788,6 @@ const RoadmapReactFlowPage = () => {
 
                   <button
                     type="button"
-                    onClick={onMockToolbarAction}
-                    className="flex items-center justify-center border-r border-[#d7d8dd] text-slate-900 transition hover:bg-white/55"
-                    aria-label="Mock: narzedzie"
-                  >
-                    <Wand2 className="h-7 w-7 stroke-[2.1]" />
-                  </button>
-
-                  <button
-                    type="button"
                     onClick={() => {
                       setIsTextTooltipOpen((current) => !current);
                       setIsEndingTooltipOpen(false);
@@ -1806,9 +1797,14 @@ const RoadmapReactFlowPage = () => {
                     className="relative flex items-center justify-center border-r border-[#d7d8dd] text-slate-900 transition hover:bg-white/55"
                     aria-label="Tekst linii"
                   >
-                    <Type className="h-7 w-7 stroke-[2.2]" />
-                    <span className="absolute top-[30%] right-[25%] text-sm font-semibold text-slate-900">
-                      +
+                    <span className="relative inline-flex h-7 w-7 items-center justify-center">
+                      <Type className="h-[32px] w-[32px] stroke-[2.3]" />
+                      <span
+                        aria-hidden="true"
+                        className="pointer-events-none absolute top-[66%] left-[94%] -translate-x-1/2 -translate-y-1/2 scale-150 text-[13px] leading-none font-black text-slate-900"
+                      >
+                        +
+                      </span>
                     </span>
                   </button>
 
@@ -1819,17 +1815,6 @@ const RoadmapReactFlowPage = () => {
                     aria-label="Mock: blokada"
                   >
                     <Lock className="h-7 w-7 stroke-[2.2]" />
-                  </button>
-
-                  <button
-                    type="button"
-                    onClick={onMockToolbarAction}
-                    className="flex items-center justify-center border-r border-[#d7d8dd] text-slate-900 transition hover:bg-white/55"
-                    aria-label="Mock: podpowiedzi"
-                  >
-                    <span className="rounded-[8px] bg-[#cdd2dd] p-1.5 text-slate-700">
-                      <Sparkles className="h-5 w-5 stroke-[2]" />
-                    </span>
                   </button>
 
                   <button
