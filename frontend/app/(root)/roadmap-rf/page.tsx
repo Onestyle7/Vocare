@@ -38,7 +38,7 @@ import {
   DialogTitle,
 } from '@/components/ui/dialog';
 import '@xyflow/react/dist/style.css';
-import { Lock, MoreVertical, RefreshCw, Type } from 'lucide-react';
+import { Lock, MoreVertical, Type } from 'lucide-react';
 
 import { RoadmapTileNode } from '@/components/roadmap/RoadmapTileNode';
 import type { RoadmapNodeData as TileNodeData } from '@/components/roadmap/RoadmapTileNode';
@@ -83,10 +83,13 @@ const EDGE_INSPECTOR_BASE_WIDTH = 560;
 const EDGE_INSPECTOR_BASE_HEIGHT = 72;
 const EDGE_INSPECTOR_WIDTH = EDGE_INSPECTOR_BASE_WIDTH * EDGE_INSPECTOR_SCALE;
 const EDGE_INSPECTOR_HEIGHT = EDGE_INSPECTOR_BASE_HEIGHT * EDGE_INSPECTOR_SCALE;
-const EDGE_ENDING_BUTTON_CENTER_RATIO = 1.5 / 7.1;
-const EDGE_TYPE_BUTTON_CENTER_RATIO = 2.55 / 7.1;
-const EDGE_COLOR_BUTTON_CENTER_RATIO = 3.6 / 7.1;
-const EDGE_TEXT_BUTTON_CENTER_RATIO = 4.6 / 7.1;
+const EDGE_LOCKED_INSPECTOR_BASE_WIDTH = 356;
+const EDGE_LOCKED_INSPECTOR_WIDTH = EDGE_LOCKED_INSPECTOR_BASE_WIDTH * EDGE_INSPECTOR_SCALE;
+const EDGE_UNLOCK_HOLD_DURATION_MS = 900;
+const EDGE_ENDING_BUTTON_CENTER_RATIO = 0.5 / 6.1;
+const EDGE_TYPE_BUTTON_CENTER_RATIO = 1.55 / 6.1;
+const EDGE_COLOR_BUTTON_CENTER_RATIO = 2.6 / 6.1;
+const EDGE_TEXT_BUTTON_CENTER_RATIO = 3.6 / 6.1;
 const EDGE_ENDING_PANEL_TOP = EDGE_INSPECTOR_HEIGHT + 6;
 const EDGE_ENDING_PANEL_WIDTH = 124;
 const EDGE_ENDING_PANEL_HEIGHT = 226;
@@ -210,6 +213,9 @@ const toEdgeLabelSize = (edge: Edge): number => {
 
   return DEFAULT_EDGE_LABEL_SIZE;
 };
+
+const toEdgeLocked = (edge: Edge): boolean =>
+  (edge.data as { locked?: boolean } | undefined)?.locked === true;
 
 const getEdgeLabelStyle = (color: string, size: number): Edge['labelStyle'] => ({
   fill: color,
@@ -564,6 +570,7 @@ const createStyledEdge = ({
   type = 'bezier',
   color,
   ending = 'none',
+  locked = false,
   labelText = '',
   labelColor = DEFAULT_EDGE_LABEL_COLOR,
   labelSize = DEFAULT_EDGE_LABEL_SIZE,
@@ -575,6 +582,7 @@ const createStyledEdge = ({
   type?: Edge['type'];
   color?: string;
   ending?: EdgeEnding;
+  locked?: boolean;
   labelText?: string;
   labelColor?: string;
   labelSize?: number;
@@ -590,6 +598,7 @@ const createStyledEdge = ({
     variant,
     color: color ?? getDefaultEdgeColor(variant),
     ending,
+    locked,
     labelText,
     labelColor,
     labelSize,
@@ -771,6 +780,7 @@ const RoadmapReactFlowPage = () => {
   const [isLineTooltipOpen, setIsLineTooltipOpen] = useState(false);
   const [isColorTooltipOpen, setIsColorTooltipOpen] = useState(false);
   const [isTextTooltipOpen, setIsTextTooltipOpen] = useState(false);
+  const [unlockHoldProgress, setUnlockHoldProgress] = useState(0);
 
   const [reactFlowInstance, setReactFlowInstance] = useState<ReactFlowInstance<
     RoadmapNode,
@@ -779,14 +789,29 @@ const RoadmapReactFlowPage = () => {
 
   const nodeCounterRef = useRef(presetNodes.length + 1);
   const edgeCounterRef = useRef(presetEdges.length + 1);
+  const unlockHoldRafRef = useRef<number | null>(null);
+  const unlockHoldStartedAtRef = useRef<number | null>(null);
+  const unlockHoldEdgeIdRef = useRef<string | null>(null);
 
   const activeInspectorEdge = useMemo(() => {
     if (!edgeInspector) return null;
     return edges.find((edge) => edge.id === edgeInspector.edgeId) ?? null;
   }, [edgeInspector, edges]);
 
+  const activeInspectorEdgeLocked = useMemo(() => {
+    if (!activeInspectorEdge) return false;
+    return toEdgeLocked(activeInspectorEdge);
+  }, [activeInspectorEdge]);
+
   const edgeInspectorPosition = useMemo(() => {
     if (!edgeInspector) return null;
+
+    if (activeInspectorEdgeLocked) {
+      return getEdgeInspectorPosition(edgeInspector.clientX, edgeInspector.clientY, {
+        width: EDGE_LOCKED_INSPECTOR_WIDTH,
+        height: EDGE_INSPECTOR_HEIGHT,
+      });
+    }
 
     const endingPanelHeight = isEndingTooltipOpen
       ? EDGE_INSPECTOR_HEIGHT + EDGE_ENDING_PANEL_TOP + EDGE_ENDING_PANEL_HEIGHT
@@ -806,6 +831,7 @@ const RoadmapReactFlowPage = () => {
       height: Math.max(endingPanelHeight, linePanelHeight, colorPanelHeight, textPanelHeight),
     });
   }, [
+    activeInspectorEdgeLocked,
     edgeInspector,
     isColorTooltipOpen,
     isEndingTooltipOpen,
@@ -848,13 +874,29 @@ const RoadmapReactFlowPage = () => {
     return toEdgeLabelSize(activeInspectorEdge);
   }, [activeInspectorEdge]);
 
-  const closeEdgeInspector = useCallback(() => {
-    setEdgeInspector(null);
+  const closeInspectorTooltips = useCallback(() => {
     setIsEndingTooltipOpen(false);
     setIsLineTooltipOpen(false);
     setIsColorTooltipOpen(false);
     setIsTextTooltipOpen(false);
   }, []);
+
+  const cancelUnlockHold = useCallback(() => {
+    if (unlockHoldRafRef.current !== null) {
+      window.cancelAnimationFrame(unlockHoldRafRef.current);
+      unlockHoldRafRef.current = null;
+    }
+
+    unlockHoldStartedAtRef.current = null;
+    unlockHoldEdgeIdRef.current = null;
+    setUnlockHoldProgress(0);
+  }, []);
+
+  const closeEdgeInspector = useCallback(() => {
+    setEdgeInspector(null);
+    closeInspectorTooltips();
+    cancelUnlockHold();
+  }, [cancelUnlockHold, closeInspectorTooltips]);
 
   useEffect(() => {
     if (!edgeInspector || activeInspectorEdge) return;
@@ -872,6 +914,28 @@ const RoadmapReactFlowPage = () => {
     return () => window.removeEventListener('keydown', onKeyDown);
   }, [closeEdgeInspector, edgeInspector]);
 
+  useEffect(() => {
+    if (!activeInspectorEdgeLocked) return;
+    closeInspectorTooltips();
+  }, [activeInspectorEdgeLocked, closeInspectorTooltips]);
+
+  useEffect(() => {
+    if (activeInspectorEdgeLocked) return;
+    cancelUnlockHold();
+  }, [activeInspectorEdgeLocked, cancelUnlockHold]);
+
+  useEffect(() => {
+    cancelUnlockHold();
+  }, [cancelUnlockHold, edgeInspector?.edgeId]);
+
+  useEffect(() => {
+    return () => {
+      if (unlockHoldRafRef.current !== null) {
+        window.cancelAnimationFrame(unlockHoldRafRef.current);
+      }
+    };
+  }, []);
+
   const updateEdgeAppearance = useCallback(
     (
       edgeId: string,
@@ -880,6 +944,7 @@ const RoadmapReactFlowPage = () => {
         variant?: EdgeVariant;
         color?: string;
         ending?: EdgeEnding;
+        locked?: boolean;
         labelText?: string;
         labelColor?: string;
         labelSize?: number;
@@ -893,6 +958,7 @@ const RoadmapReactFlowPage = () => {
           const nextVariant = updates.variant ?? toEdgeVariant(edge);
           const nextColor = updates.color ?? toEdgeColor(edge);
           const nextEnding = updates.ending ?? toEdgeEnding(edge);
+          const nextLocked = updates.locked ?? toEdgeLocked(edge);
           const nextLabelText = updates.labelText ?? toEdgeLabelText(edge);
           const nextLabelColor = updates.labelColor ?? toEdgeLabelColor(edge);
           const nextLabelSize = updates.labelSize ?? toEdgeLabelSize(edge);
@@ -910,6 +976,7 @@ const RoadmapReactFlowPage = () => {
               variant: nextVariant,
               color: nextColor,
               ending: nextEnding,
+              locked: nextLocked,
               labelText: nextLabelText,
               labelColor: nextLabelColor,
               labelSize: nextLabelSize,
@@ -928,17 +995,15 @@ const RoadmapReactFlowPage = () => {
       setContextTarget(null);
       setSelectedNodeId('');
       setSelectedEdgeId(edge.id);
-      setIsEndingTooltipOpen(false);
-      setIsLineTooltipOpen(false);
-      setIsColorTooltipOpen(false);
-      setIsTextTooltipOpen(false);
+      closeInspectorTooltips();
+      cancelUnlockHold();
       setEdgeInspector({
         edgeId: edge.id,
         clientX: event.clientX,
         clientY: event.clientY,
       });
     },
-    [setSelectedEdgeId, setSelectedNodeId]
+    [cancelUnlockHold, closeInspectorTooltips, setSelectedEdgeId, setSelectedNodeId]
   );
 
   const setInspectorEdgeType = useCallback(
@@ -997,14 +1062,55 @@ const RoadmapReactFlowPage = () => {
     [edgeInspector, updateEdgeAppearance]
   );
 
-  const onMockToolbarAction = useCallback((event: ReactMouseEvent<HTMLButtonElement>) => {
-    event.preventDefault();
-    event.stopPropagation();
-    setIsEndingTooltipOpen(false);
-    setIsLineTooltipOpen(false);
-    setIsColorTooltipOpen(false);
-    setIsTextTooltipOpen(false);
-  }, []);
+  const setInspectorEdgeLocked = useCallback(
+    (locked: boolean) => {
+      if (!edgeInspector) return;
+      updateEdgeAppearance(edgeInspector.edgeId, { locked });
+    },
+    [edgeInspector, updateEdgeAppearance]
+  );
+
+  const startUnlockHold = useCallback(() => {
+    if (!edgeInspector || !activeInspectorEdgeLocked) return;
+
+    const currentEdgeId = edgeInspector.edgeId;
+    if (unlockHoldEdgeIdRef.current === currentEdgeId && unlockHoldRafRef.current !== null) return;
+
+    cancelUnlockHold();
+    unlockHoldEdgeIdRef.current = currentEdgeId;
+    unlockHoldStartedAtRef.current = null;
+
+    const tick = (frameTime: number) => {
+      if (unlockHoldEdgeIdRef.current !== currentEdgeId) return;
+
+      if (unlockHoldStartedAtRef.current === null) {
+        unlockHoldStartedAtRef.current = frameTime;
+      }
+
+      const elapsed = frameTime - unlockHoldStartedAtRef.current;
+      const progress = Math.min(1, elapsed / EDGE_UNLOCK_HOLD_DURATION_MS);
+      setUnlockHoldProgress(progress);
+
+      if (progress >= 1) {
+        setInspectorEdgeLocked(false);
+        cancelUnlockHold();
+        return;
+      }
+
+      unlockHoldRafRef.current = window.requestAnimationFrame(tick);
+    };
+
+    unlockHoldRafRef.current = window.requestAnimationFrame(tick);
+  }, [activeInspectorEdgeLocked, cancelUnlockHold, edgeInspector, setInspectorEdgeLocked]);
+
+  const onMockToolbarAction = useCallback(
+    (event: ReactMouseEvent<HTMLButtonElement>) => {
+      event.preventDefault();
+      event.stopPropagation();
+      closeInspectorTooltips();
+    },
+    [closeInspectorTooltips]
+  );
 
   const onConnect = useCallback(
     (connection: Connection) => {
@@ -1476,9 +1582,14 @@ const RoadmapReactFlowPage = () => {
           >
             <div
               className="relative"
-              style={{ width: EDGE_INSPECTOR_WIDTH, height: EDGE_INSPECTOR_HEIGHT }}
+              style={{
+                width: activeInspectorEdgeLocked
+                  ? EDGE_LOCKED_INSPECTOR_WIDTH
+                  : EDGE_INSPECTOR_WIDTH,
+                height: EDGE_INSPECTOR_HEIGHT,
+              }}
             >
-              {isLineTooltipOpen && (
+              {!activeInspectorEdgeLocked && isLineTooltipOpen && (
                 <div
                   className="pointer-events-none absolute z-40 -translate-x-1/2"
                   style={{
@@ -1493,7 +1604,7 @@ const RoadmapReactFlowPage = () => {
                 </div>
               )}
 
-              {isEndingTooltipOpen && (
+              {!activeInspectorEdgeLocked && isEndingTooltipOpen && (
                 <div
                   className="absolute z-40 -translate-x-1/2"
                   style={{
@@ -1530,7 +1641,7 @@ const RoadmapReactFlowPage = () => {
                 </div>
               )}
 
-              {isLineTooltipOpen && (
+              {!activeInspectorEdgeLocked && isLineTooltipOpen && (
                 <div
                   className="absolute z-40 -translate-x-1/2"
                   style={{
@@ -1591,7 +1702,7 @@ const RoadmapReactFlowPage = () => {
                 </div>
               )}
 
-              {isColorTooltipOpen && (
+              {!activeInspectorEdgeLocked && isColorTooltipOpen && (
                 <div
                   className="absolute z-40 -translate-x-1/2"
                   style={{
@@ -1631,7 +1742,7 @@ const RoadmapReactFlowPage = () => {
                 </div>
               )}
 
-              {isTextTooltipOpen && (
+              {!activeInspectorEdgeLocked && isTextTooltipOpen && (
                 <div
                   className="absolute z-40 -translate-x-1/2"
                   style={{
@@ -1706,127 +1817,165 @@ const RoadmapReactFlowPage = () => {
                 </div>
               )}
 
-              <div
-                className="origin-top-left"
-                style={{
-                  width: EDGE_INSPECTOR_BASE_WIDTH,
-                  height: EDGE_INSPECTOR_BASE_HEIGHT,
-                  transform: `scale(${EDGE_INSPECTOR_SCALE})`,
-                }}
-              >
-                <div className="grid h-full w-full grid-cols-[1fr_1fr_1.1fr_1fr_1fr_1fr_1fr] overflow-visible rounded-[14px] border border-[#d7d8dd] bg-[#efeff1]/95 shadow-[0_10px_22px_rgba(15,23,42,0.16)] backdrop-blur-xl">
-                  <button
-                    type="button"
-                    onClick={onMockToolbarAction}
-                    className="flex items-center justify-center border-r border-[#d7d8dd] text-slate-900 transition hover:bg-white/55"
-                    aria-label="Mock: odswiezanie"
-                  >
-                    <RefreshCw className="h-7 w-7 stroke-[2.1]" />
-                  </button>
-
-                  <button
-                    type="button"
-                    onClick={() => {
-                      setIsEndingTooltipOpen((current) => !current);
-                      setIsLineTooltipOpen(false);
-                      setIsColorTooltipOpen(false);
-                      setIsTextTooltipOpen(false);
-                    }}
-                    className={[
-                      'flex items-center justify-center border-r border-[#d7d8dd] text-slate-900 transition hover:bg-white/55',
-                      isEndingTooltipOpen ? 'bg-[#dfe2e9]' : '',
-                    ].join(' ')}
-                    aria-label="Zakonczenie linii"
-                  >
-                    <span className="scale-[0.9]">
-                      {renderEdgeEndingIcon(
-                        activeInspectorEdgeEnding ?? 'none',
-                        activeInspectorEdgeColor ?? '#11162f'
-                      )}
-                    </span>
-                  </button>
-
-                  <button
-                    type="button"
-                    onClick={() => {
-                      setIsLineTooltipOpen((current) => !current);
-                      setIsEndingTooltipOpen(false);
-                      setIsColorTooltipOpen(false);
-                      setIsTextTooltipOpen(false);
-                    }}
-                    className={[
-                      'flex h-full w-full flex-col items-center justify-center gap-0.5 border-r border-[#d7d8dd] text-slate-900 transition hover:bg-white/55',
-                      isLineTooltipOpen ? 'bg-[#dfe2e9]' : '',
-                    ].join(' ')}
-                    aria-label="Typ linii"
-                  >
-                    {renderEdgeTypeIcon(activeInspectorEdgeType ?? 'bezier', true)}
-                    <span className="text-[22px] leading-none font-medium tracking-tight text-slate-900">
-                      Type
-                    </span>
-                  </button>
-
-                  <button
-                    type="button"
-                    onClick={() => {
-                      setIsColorTooltipOpen((current) => !current);
-                      setIsEndingTooltipOpen(false);
-                      setIsLineTooltipOpen(false);
-                      setIsTextTooltipOpen(false);
-                    }}
-                    className={[
-                      'flex items-center justify-center border-r border-[#d7d8dd] transition hover:bg-white/55',
-                      isColorTooltipOpen ? 'bg-[#dfe2e9]' : '',
-                    ].join(' ')}
-                    aria-label="Kolor linii"
-                  >
-                    <span
-                      className="h-7 w-7 rounded-full border border-slate-400/65"
-                      style={{ backgroundColor: activeInspectorEdgeColor ?? SOLID_EDGE_COLOR }}
-                    />
-                  </button>
-
-                  <button
-                    type="button"
-                    onClick={() => {
-                      setIsTextTooltipOpen((current) => !current);
-                      setIsEndingTooltipOpen(false);
-                      setIsLineTooltipOpen(false);
-                      setIsColorTooltipOpen(false);
-                    }}
-                    className="relative flex items-center justify-center border-r border-[#d7d8dd] text-slate-900 transition hover:bg-white/55"
-                    aria-label="Tekst linii"
-                  >
-                    <span className="relative inline-flex h-7 w-7 items-center justify-center">
-                      <Type className="h-[32px] w-[32px] stroke-[2.3]" />
+              {activeInspectorEdgeLocked ? (
+                <div
+                  className="origin-top-left"
+                  style={{
+                    width: EDGE_LOCKED_INSPECTOR_BASE_WIDTH,
+                    height: EDGE_INSPECTOR_BASE_HEIGHT,
+                    transform: `scale(${EDGE_INSPECTOR_SCALE})`,
+                  }}
+                >
+                  <div className="grid h-full w-full grid-cols-[1fr_2.5fr] overflow-hidden rounded-[14px] border border-[#d7d8dd] bg-[#efeff1]/95 shadow-[0_10px_22px_rgba(15,23,42,0.16)] backdrop-blur-xl">
+                    <button
+                      type="button"
+                      onPointerDown={(event) => {
+                        event.preventDefault();
+                        event.stopPropagation();
+                        startUnlockHold();
+                      }}
+                      onPointerUp={cancelUnlockHold}
+                      onPointerLeave={cancelUnlockHold}
+                      onPointerCancel={cancelUnlockHold}
+                      className="relative isolate flex items-center justify-center border-r border-[#d7d8dd] text-slate-900"
+                      aria-label="Przytrzymaj, aby odblokować linie"
+                    >
                       <span
-                        aria-hidden="true"
-                        className="pointer-events-none absolute top-[66%] left-[94%] -translate-x-1/2 -translate-y-1/2 scale-150 text-[13px] leading-none font-black text-slate-900"
-                      >
-                        +
-                      </span>
-                    </span>
-                  </button>
+                        className="pointer-events-none absolute inset-0 origin-left bg-[#dde4f6]"
+                        style={{
+                          transform: `scaleX(${unlockHoldProgress})`,
+                          opacity: unlockHoldProgress > 0 ? 1 : 0.46,
+                          transition:
+                            unlockHoldProgress > 0
+                              ? 'none'
+                              : 'transform 180ms ease-out, opacity 180ms ease-out',
+                        }}
+                      />
+                      <Lock className="relative z-10 h-7 w-7 stroke-[2.2]" />
+                    </button>
 
-                  <button
-                    type="button"
-                    onClick={onMockToolbarAction}
-                    className="flex items-center justify-center border-r border-[#d7d8dd] text-slate-900 transition hover:bg-white/55"
-                    aria-label="Mock: blokada"
-                  >
-                    <Lock className="h-7 w-7 stroke-[2.2]" />
-                  </button>
-
-                  <button
-                    type="button"
-                    onClick={onMockToolbarAction}
-                    className="flex items-center justify-center text-slate-900 transition hover:bg-white/55"
-                    aria-label="Mock: wiecej"
-                  >
-                    <MoreVertical className="h-7 w-7 stroke-[2.4]" />
-                  </button>
+                    <div className="flex items-center justify-center px-3 text-center text-[13px] font-semibold tracking-[0.01em] text-slate-600 select-none">
+                      Przytrzymaj, aby odblokować
+                    </div>
+                  </div>
                 </div>
-              </div>
+              ) : (
+                <div
+                  className="origin-top-left"
+                  style={{
+                    width: EDGE_INSPECTOR_BASE_WIDTH,
+                    height: EDGE_INSPECTOR_BASE_HEIGHT,
+                    transform: `scale(${EDGE_INSPECTOR_SCALE})`,
+                  }}
+                >
+                  <div className="grid h-full w-full grid-cols-[1fr_1.1fr_1fr_1fr_1fr_1fr] overflow-visible rounded-[14px] border border-[#d7d8dd] bg-[#efeff1]/95 shadow-[0_10px_22px_rgba(15,23,42,0.16)] backdrop-blur-xl">
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setIsEndingTooltipOpen((current) => !current);
+                        setIsLineTooltipOpen(false);
+                        setIsColorTooltipOpen(false);
+                        setIsTextTooltipOpen(false);
+                      }}
+                      className={[
+                        'flex items-center justify-center border-r border-[#d7d8dd] text-slate-900 transition hover:bg-white/55',
+                        isEndingTooltipOpen ? 'bg-[#dfe2e9]' : '',
+                      ].join(' ')}
+                      aria-label="Zakonczenie linii"
+                    >
+                      <span className="scale-[0.9]">
+                        {renderEdgeEndingIcon(
+                          activeInspectorEdgeEnding ?? 'none',
+                          activeInspectorEdgeColor ?? '#11162f'
+                        )}
+                      </span>
+                    </button>
+
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setIsLineTooltipOpen((current) => !current);
+                        setIsEndingTooltipOpen(false);
+                        setIsColorTooltipOpen(false);
+                        setIsTextTooltipOpen(false);
+                      }}
+                      className={[
+                        'flex h-full w-full flex-col items-center justify-center gap-0.5 border-r border-[#d7d8dd] text-slate-900 transition hover:bg-white/55',
+                        isLineTooltipOpen ? 'bg-[#dfe2e9]' : '',
+                      ].join(' ')}
+                      aria-label="Typ linii"
+                    >
+                      {renderEdgeTypeIcon(activeInspectorEdgeType ?? 'bezier', true)}
+                      <span className="text-[22px] leading-none font-medium tracking-tight text-slate-900">
+                        Type
+                      </span>
+                    </button>
+
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setIsColorTooltipOpen((current) => !current);
+                        setIsEndingTooltipOpen(false);
+                        setIsLineTooltipOpen(false);
+                        setIsTextTooltipOpen(false);
+                      }}
+                      className={[
+                        'flex items-center justify-center border-r border-[#d7d8dd] transition hover:bg-white/55',
+                        isColorTooltipOpen ? 'bg-[#dfe2e9]' : '',
+                      ].join(' ')}
+                      aria-label="Kolor linii"
+                    >
+                      <span
+                        className="h-7 w-7 rounded-full border border-slate-400/65"
+                        style={{ backgroundColor: activeInspectorEdgeColor ?? SOLID_EDGE_COLOR }}
+                      />
+                    </button>
+
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setIsTextTooltipOpen((current) => !current);
+                        setIsEndingTooltipOpen(false);
+                        setIsLineTooltipOpen(false);
+                        setIsColorTooltipOpen(false);
+                      }}
+                      className="relative flex items-center justify-center border-r border-[#d7d8dd] text-slate-900 transition hover:bg-white/55"
+                      aria-label="Tekst linii"
+                    >
+                      <span className="relative inline-flex h-7 w-7 items-center justify-center">
+                        <Type className="h-[32px] w-[32px] stroke-[2.3]" />
+                        <span
+                          aria-hidden="true"
+                          className="pointer-events-none absolute top-[66%] left-[94%] -translate-x-1/2 -translate-y-1/2 scale-150 text-[13px] leading-none font-black text-slate-900"
+                        >
+                          +
+                        </span>
+                      </span>
+                    </button>
+
+                    <button
+                      type="button"
+                      onClick={() => {
+                        closeInspectorTooltips();
+                        setInspectorEdgeLocked(true);
+                      }}
+                      className="flex items-center justify-center border-r border-[#d7d8dd] text-slate-900 transition hover:bg-white/55"
+                      aria-label="Zablokuj linie"
+                    >
+                      <Lock className="h-7 w-7 stroke-[2.2]" />
+                    </button>
+
+                    <button
+                      type="button"
+                      onClick={onMockToolbarAction}
+                      className="flex items-center justify-center text-slate-900 transition hover:bg-white/55"
+                      aria-label="Mock: wiecej"
+                    >
+                      <MoreVertical className="h-7 w-7 stroke-[2.4]" />
+                    </button>
+                  </div>
+                </div>
+              )}
             </div>
           </div>
         </div>
