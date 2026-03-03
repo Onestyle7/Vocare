@@ -6,15 +6,21 @@ import dagre from 'dagre';
 import {
   addEdge,
   Background,
+  BaseEdge,
   Controls,
+  EdgeLabelRenderer,
+  MarkerType,
   MiniMap,
   ReactFlow,
   ReactFlowProvider,
+  getBezierPath,
+  getSmoothStepPath,
+  getStraightPath,
   useEdgesState,
   useNodesState,
   Position,
 } from '@xyflow/react';
-import type { Connection, Edge, Node, ReactFlowInstance } from '@xyflow/react';
+import type { Connection, Edge, EdgeProps, Node, ReactFlowInstance } from '@xyflow/react';
 import {
   ContextMenu,
   ContextMenuContent,
@@ -32,7 +38,14 @@ import {
   DialogTitle,
 } from '@/components/ui/dialog';
 import '@xyflow/react/dist/style.css';
-import { ArrowRight, Lock, MoreVertical, RefreshCw, Sparkles, Type, Wand2 } from 'lucide-react';
+import {
+  Lock,
+  MoreVertical,
+  RefreshCw,
+  Sparkles,
+  Type,
+  Wand2,
+} from 'lucide-react';
 
 import { RoadmapTileNode } from '@/components/roadmap/RoadmapTileNode';
 import type { RoadmapNodeData as TileNodeData } from '@/components/roadmap/RoadmapTileNode';
@@ -49,6 +62,7 @@ type RoadmapDraft = Omit<RoadmapStep, 'id'>;
 
 type EdgeVariant = 'solid' | 'dashed' | 'dotted';
 type EdgeLineType = 'straight' | 'step' | 'bezier';
+type EdgeEnding = 'none' | 'arrow-filled' | 'arrow-filled-thin' | 'arrow-open' | 'arrow-open-thin';
 type NodeTone = 'main' | 'cream' | 'neutral';
 
 type RoadmapNode = Node<TileNodeData>;
@@ -80,6 +94,8 @@ type PresetEdgeConfig = {
   target: string;
   variant?: EdgeVariant;
   type?: Edge['type'];
+  color?: string;
+  ending?: EdgeEnding;
   sourceHandle?: string;
   targetHandle?: string;
 };
@@ -95,11 +111,35 @@ const EDGE_INSPECTOR_BASE_WIDTH = 760;
 const EDGE_INSPECTOR_BASE_HEIGHT = 72;
 const EDGE_INSPECTOR_WIDTH = EDGE_INSPECTOR_BASE_WIDTH * EDGE_INSPECTOR_SCALE;
 const EDGE_INSPECTOR_HEIGHT = EDGE_INSPECTOR_BASE_HEIGHT * EDGE_INSPECTOR_SCALE;
+const EDGE_ENDING_BUTTON_CENTER_RATIO = 1.95 / 10.4;
 const EDGE_TYPE_BUTTON_CENTER_RATIO = 4 / 10.4;
+const EDGE_COLOR_BUTTON_CENTER_RATIO = 5.05 / 10.4;
+const EDGE_TEXT_BUTTON_CENTER_RATIO = 6.05 / 10.4;
+const EDGE_ENDING_PANEL_TOP = EDGE_INSPECTOR_HEIGHT + 6;
+const EDGE_ENDING_PANEL_WIDTH = 124;
+const EDGE_ENDING_PANEL_HEIGHT = 226;
 const EDGE_TYPE_TOOLTIP_TOP = -36;
 const EDGE_TYPE_PANEL_TOP = EDGE_INSPECTOR_HEIGHT + 6;
 const EDGE_TYPE_PANEL_WIDTH = 208;
 const EDGE_TYPE_PANEL_HEIGHT = 156;
+const EDGE_COLOR_PANEL_TOP = EDGE_INSPECTOR_HEIGHT + 6;
+const EDGE_COLOR_PANEL_WIDTH = 252;
+const EDGE_COLOR_PANEL_HEIGHT = 336;
+const EDGE_TEXT_PANEL_TOP = EDGE_INSPECTOR_HEIGHT + 6;
+const EDGE_TEXT_PANEL_WIDTH = 220;
+const EDGE_TEXT_PANEL_HEIGHT = 176;
+const DEFAULT_EDGE_LABEL_COLOR = '#9f1d2b';
+const DEFAULT_EDGE_LABEL_SIZE = 14;
+const EDGE_LABEL_SIZE_OPTIONS = [12, 14, 16, 18];
+const EDGE_LABEL_COLOR_OPTIONS = ['#111827', '#9f1d2b', '#2563eb', '#059669', '#d97706', '#7c3aed'];
+const EDGE_COLOR_SWATCHES: string[][] = [
+  ['#ece4a8', '#f8df53', '#bf8900', '#ffffff'],
+  ['#efc9ab', '#ffa34d', '#b8610a', '#e6e6e6'],
+  ['#f0c2ca', '#ff646a', '#d6030c', '#bfbfbf'],
+  ['#9ad9b3', '#34c765', '#0f8b34', '#666666'],
+  ['#aebfdf', '#6496e4', '#355faf', '#17181b'],
+  ['#c7c1e2', '#8b78dd', '#5f34d6'],
+];
 const EDGE_INSPECTOR_MARGIN = 16;
 const TILE_TEXT_FONT =
   '600 15px ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial';
@@ -113,14 +153,20 @@ let tileMeasureCanvas: HTMLCanvasElement | null = null;
 
 const clamp = (value: number, min: number, max: number) => Math.min(Math.max(value, min), max);
 
-const getEdgeStyle = (variant: EdgeVariant): Edge['style'] => {
+const getDefaultEdgeColor = (variant: EdgeVariant): string => {
+  if (variant === 'dashed') return DASHED_EDGE_COLOR;
+  if (variant === 'dotted') return DOTTED_EDGE_COLOR;
+  return SOLID_EDGE_COLOR;
+};
+
+const getEdgeStyle = (variant: EdgeVariant, color: string): Edge['style'] => {
   if (variant === 'solid') {
-    return { stroke: SOLID_EDGE_COLOR, strokeWidth: 3.2 };
+    return { stroke: color, strokeWidth: 3.2 };
   }
 
   if (variant === 'dashed') {
     return {
-      stroke: DASHED_EDGE_COLOR,
+      stroke: color,
       strokeWidth: 3,
       strokeDasharray: '11 8',
       strokeLinecap: 'round',
@@ -128,7 +174,7 @@ const getEdgeStyle = (variant: EdgeVariant): Edge['style'] => {
   }
 
   return {
-    stroke: DOTTED_EDGE_COLOR,
+    stroke: color,
     strokeWidth: 3,
     strokeDasharray: '1 10',
     strokeLinecap: 'round',
@@ -149,6 +195,224 @@ const toEdgeVariant = (edge: Edge): EdgeVariant => {
   if (dash === '1 10' || dash === '1 12') return 'dotted';
 
   return 'solid';
+};
+
+const toEdgeColor = (edge: Edge): string => {
+  const color = (edge.data as { color?: string } | undefined)?.color;
+  if (typeof color === 'string' && color.length > 0) return color;
+
+  const styleColor = edge.style?.stroke;
+  if (typeof styleColor === 'string' && styleColor.length > 0) return styleColor;
+
+  return getDefaultEdgeColor(toEdgeVariant(edge));
+};
+
+const toEdgeLabelText = (edge: Edge): string => {
+  const text = (edge.data as { labelText?: string } | undefined)?.labelText;
+  if (typeof text === 'string') return text;
+
+  if (typeof edge.label === 'string') return edge.label;
+  return '';
+};
+
+const toEdgeLabelColor = (edge: Edge): string => {
+  const color = (edge.data as { labelColor?: string } | undefined)?.labelColor;
+  if (typeof color === 'string' && color.length > 0) return color;
+
+  const fill = edge.labelStyle?.fill;
+  if (typeof fill === 'string' && fill.length > 0) return fill;
+
+  return DEFAULT_EDGE_LABEL_COLOR;
+};
+
+const toEdgeLabelSize = (edge: Edge): number => {
+  const size = (edge.data as { labelSize?: number } | undefined)?.labelSize;
+  if (typeof size === 'number' && Number.isFinite(size)) return size;
+
+  const labelStyleSize = edge.labelStyle?.fontSize;
+  if (typeof labelStyleSize === 'number' && Number.isFinite(labelStyleSize)) return labelStyleSize;
+  if (typeof labelStyleSize === 'string') {
+    const parsed = Number.parseFloat(labelStyleSize);
+    if (Number.isFinite(parsed)) return parsed;
+  }
+
+  return DEFAULT_EDGE_LABEL_SIZE;
+};
+
+const getEdgeLabelStyle = (color: string, size: number): Edge['labelStyle'] => ({
+  fill: color,
+  fontSize: size,
+  fontWeight: 600,
+});
+
+const getPathDirection = (path: string, fallbackDx: number, fallbackDy: number) => {
+  const fallbackLength = Math.hypot(fallbackDx, fallbackDy) || 1;
+  const fallback = {
+    tangentX: fallbackDx / fallbackLength,
+    tangentY: fallbackDy / fallbackLength,
+  };
+
+  if (typeof document === 'undefined') return fallback;
+
+  try {
+    const svgPath = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+    svgPath.setAttribute('d', path);
+
+    const totalLength = svgPath.getTotalLength();
+    if (!Number.isFinite(totalLength) || totalLength <= 0) return fallback;
+
+    const center = totalLength / 2;
+    const sampleLength = Math.min(10, Math.max(2, totalLength / 8));
+    const prevPoint = svgPath.getPointAtLength(Math.max(0, center - sampleLength));
+    const nextPoint = svgPath.getPointAtLength(Math.min(totalLength, center + sampleLength));
+
+    const dx = nextPoint.x - prevPoint.x;
+    const dy = nextPoint.y - prevPoint.y;
+    const length = Math.hypot(dx, dy);
+    if (!Number.isFinite(length) || length <= 0.001) return fallback;
+
+    return {
+      tangentX: dx / length,
+      tangentY: dy / length,
+    };
+  } catch {
+    return fallback;
+  }
+};
+
+const RoadmapConnectionEdge = ({
+  id,
+  type,
+  sourceX,
+  sourceY,
+  targetX,
+  targetY,
+  sourcePosition,
+  targetPosition,
+  style,
+  markerEnd,
+  label,
+  labelStyle,
+}: EdgeProps<Edge>) => {
+  const [edgePath, labelX, labelY] =
+    type === 'straight'
+      ? getStraightPath({
+          sourceX,
+          sourceY,
+          targetX,
+          targetY,
+        })
+      : type === 'step'
+        ? getSmoothStepPath({
+            sourceX,
+            sourceY,
+            sourcePosition,
+            targetX,
+            targetY,
+            targetPosition,
+            borderRadius: 0,
+          })
+        : getBezierPath({
+            sourceX,
+            sourceY,
+            sourcePosition,
+            targetX,
+            targetY,
+            targetPosition,
+          });
+
+  const labelText = typeof label === 'string' ? label.trim() : '';
+  if (!labelText) {
+    return <BaseEdge id={id} path={edgePath} style={style} markerEnd={markerEnd} />;
+  }
+
+  const fill = typeof labelStyle?.fill === 'string' ? labelStyle.fill : DEFAULT_EDGE_LABEL_COLOR;
+  const fontSizeValue = labelStyle?.fontSize;
+  const fontSize =
+    typeof fontSizeValue === 'number'
+      ? fontSizeValue
+      : typeof fontSizeValue === 'string'
+        ? Number.parseFloat(fontSizeValue) || DEFAULT_EDGE_LABEL_SIZE
+        : DEFAULT_EDGE_LABEL_SIZE;
+  const fontWeight = labelStyle?.fontWeight ?? 600;
+
+  const pathDirection = getPathDirection(edgePath, targetX - sourceX, targetY - sourceY);
+  const normalX = -pathDirection.tangentY;
+  const normalY = pathDirection.tangentX;
+  const labelOffset = Math.max(12, fontSize * 0.95 + 2);
+  const positionedLabelX = labelX + normalX * labelOffset;
+  const positionedLabelY = labelY + normalY * labelOffset;
+
+  let angle = (Math.atan2(pathDirection.tangentY, pathDirection.tangentX) * 180) / Math.PI;
+  if (angle > 90 || angle < -90) angle += 180;
+
+  return (
+    <>
+      <BaseEdge id={id} path={edgePath} style={style} markerEnd={markerEnd} />
+      <EdgeLabelRenderer>
+        <div
+          className="pointer-events-none absolute select-none"
+          style={{
+            transform: `translate(-50%, -50%) translate(${positionedLabelX}px, ${positionedLabelY}px) rotate(${angle}deg)`,
+            transformOrigin: 'center',
+            color: fill,
+            fontSize,
+            fontWeight,
+            lineHeight: 1,
+            whiteSpace: 'nowrap',
+          }}
+        >
+          {labelText}
+        </div>
+      </EdgeLabelRenderer>
+    </>
+  );
+};
+
+const getEdgeMarkerEnd = (ending: EdgeEnding, color: string): Edge['markerEnd'] => {
+  if (ending === 'none') return undefined;
+
+  if (ending === 'arrow-filled') {
+    return { type: MarkerType.ArrowClosed, color, width: 20, height: 20 };
+  }
+
+  if (ending === 'arrow-filled-thin') {
+    return { type: MarkerType.ArrowClosed, color, width: 14, height: 14 };
+  }
+
+  if (ending === 'arrow-open') {
+    return { type: MarkerType.Arrow, color, width: 20, height: 20 };
+  }
+
+  return { type: MarkerType.Arrow, color, width: 14, height: 14 };
+};
+
+const toEdgeEnding = (edge: Edge): EdgeEnding => {
+  const ending = (edge.data as { ending?: EdgeEnding } | undefined)?.ending;
+  if (
+    ending === 'none' ||
+    ending === 'arrow-filled' ||
+    ending === 'arrow-filled-thin' ||
+    ending === 'arrow-open' ||
+    ending === 'arrow-open-thin'
+  ) {
+    return ending;
+  }
+
+  const marker = edge.markerEnd;
+  if (!marker) return 'none';
+
+  if (marker.type === MarkerType.ArrowClosed) {
+    const width = marker.width ?? 20;
+    return width <= 14 ? 'arrow-filled-thin' : 'arrow-filled';
+  }
+
+  if (marker.type === MarkerType.Arrow) {
+    const width = marker.width ?? 20;
+    return width <= 14 ? 'arrow-open-thin' : 'arrow-open';
+  }
+
+  return 'none';
 };
 
 const getEdgeInspectorPosition = (
@@ -241,6 +505,44 @@ const renderEdgeVariantIcon = (variant: EdgeVariant, isActive = false) => {
     </svg>
   );
 };
+
+const renderEdgeEndingIcon = (ending: EdgeEnding, color = '#11162f') => {
+  return (
+    <svg viewBox="0 0 72 24" className="h-5 w-14">
+      <line x1="8" y1="12" x2="56" y2="12" stroke={color} strokeWidth="3.2" strokeLinecap="round" />
+
+      {ending === 'arrow-filled' ? (
+        <polygon points="63,12 50,5 50,19" fill={color} />
+      ) : null}
+
+      {ending === 'arrow-filled-thin' ? (
+        <polygon points="62,12 53,8 53,16" fill={color} />
+      ) : null}
+
+      {ending === 'arrow-open' ? (
+        <>
+          <line x1="62" y1="12" x2="50" y2="5" stroke={color} strokeWidth="3" strokeLinecap="round" />
+          <line x1="62" y1="12" x2="50" y2="19" stroke={color} strokeWidth="3" strokeLinecap="round" />
+        </>
+      ) : null}
+
+      {ending === 'arrow-open-thin' ? (
+        <>
+          <line x1="61" y1="12" x2="53" y2="8" stroke={color} strokeWidth="2.4" strokeLinecap="round" />
+          <line x1="61" y1="12" x2="53" y2="16" stroke={color} strokeWidth="2.4" strokeLinecap="round" />
+        </>
+      ) : null}
+    </svg>
+  );
+};
+
+const EDGE_ENDING_OPTIONS: Array<{ value: EdgeEnding; label: string }> = [
+  { value: 'none', label: 'Bez koncowki' },
+  { value: 'arrow-filled', label: 'Pelna' },
+  { value: 'arrow-filled-thin', label: 'Pelna cienka' },
+  { value: 'arrow-open', label: 'Kontur' },
+  { value: 'arrow-open-thin', label: 'Kontur cienki' },
+];
 
 const EDGE_TYPE_OPTIONS: Array<{ value: EdgeLineType; label: string }> = [
   { value: 'straight', label: 'Linia' },
@@ -469,19 +771,40 @@ const createStyledEdge = ({
   target,
   variant = 'solid',
   type = 'bezier',
+  color,
+  ending = 'none',
+  labelText = '',
+  labelColor = DEFAULT_EDGE_LABEL_COLOR,
+  labelSize = DEFAULT_EDGE_LABEL_SIZE,
 }: {
   id: string;
   source: string;
   target: string;
   variant?: EdgeVariant;
   type?: Edge['type'];
+  color?: string;
+  ending?: EdgeEnding;
+  labelText?: string;
+  labelColor?: string;
+  labelSize?: number;
 }): Edge => ({
   id,
   source,
   target,
   type,
-  data: { variant },
-  style: getEdgeStyle(variant),
+  label: labelText.trim() ? labelText : undefined,
+  labelStyle: getEdgeLabelStyle(labelColor, labelSize),
+  labelShowBg: false,
+  data: {
+    variant,
+    color: color ?? getDefaultEdgeColor(variant),
+    ending,
+    labelText,
+    labelColor,
+    labelSize,
+  },
+  style: getEdgeStyle(variant, color ?? getDefaultEdgeColor(variant)),
+  markerEnd: getEdgeMarkerEnd(ending, color ?? getDefaultEdgeColor(variant)),
 });
 
 const initialDraft: RoadmapDraft = {
@@ -571,6 +894,8 @@ const createInitialEdges = (): Edge[] => {
       target: edge.target,
       variant: edge.variant,
       type: edge.type,
+      color: edge.color,
+      ending: edge.ending,
     }),
     sourceHandle: edge.sourceHandle,
     targetHandle: edge.targetHandle,
@@ -622,6 +947,14 @@ const layoutWithDagre = (nodes: RoadmapNode[], edges: Edge[]): RoadmapNode[] => 
 
 const RoadmapReactFlowPage = () => {
   const nodeTypes = useMemo(() => ({ roadmapTile: RoadmapTileNode }), []);
+  const edgeTypes = useMemo(
+    () => ({
+      straight: RoadmapConnectionEdge,
+      step: RoadmapConnectionEdge,
+      bezier: RoadmapConnectionEdge,
+    }),
+    []
+  );
 
   const initialGraph = useMemo(() => {
     const initialEdges = createInitialEdges();
@@ -643,7 +976,10 @@ const RoadmapReactFlowPage = () => {
 
   const [contextTarget, setContextTarget] = useState<ContextTarget | null>(null);
   const [edgeInspector, setEdgeInspector] = useState<EdgeInspectorState | null>(null);
+  const [isEndingTooltipOpen, setIsEndingTooltipOpen] = useState(false);
   const [isLineTooltipOpen, setIsLineTooltipOpen] = useState(false);
+  const [isColorTooltipOpen, setIsColorTooltipOpen] = useState(false);
+  const [isTextTooltipOpen, setIsTextTooltipOpen] = useState(false);
 
   const [reactFlowInstance, setReactFlowInstance] = useState<ReactFlowInstance<
     RoadmapNode,
@@ -660,13 +996,25 @@ const RoadmapReactFlowPage = () => {
 
   const edgeInspectorPosition = useMemo(() => {
     if (!edgeInspector) return null;
+
+    const endingPanelHeight = isEndingTooltipOpen
+      ? EDGE_INSPECTOR_HEIGHT + EDGE_ENDING_PANEL_TOP + EDGE_ENDING_PANEL_HEIGHT
+      : EDGE_INSPECTOR_HEIGHT;
+    const linePanelHeight = isLineTooltipOpen
+      ? EDGE_INSPECTOR_HEIGHT + EDGE_TYPE_PANEL_TOP + EDGE_TYPE_PANEL_HEIGHT
+      : EDGE_INSPECTOR_HEIGHT;
+    const colorPanelHeight = isColorTooltipOpen
+      ? EDGE_INSPECTOR_HEIGHT + EDGE_COLOR_PANEL_TOP + EDGE_COLOR_PANEL_HEIGHT
+      : EDGE_INSPECTOR_HEIGHT;
+    const textPanelHeight = isTextTooltipOpen
+      ? EDGE_INSPECTOR_HEIGHT + EDGE_TEXT_PANEL_TOP + EDGE_TEXT_PANEL_HEIGHT
+      : EDGE_INSPECTOR_HEIGHT;
+
     return getEdgeInspectorPosition(edgeInspector.clientX, edgeInspector.clientY, {
       width: EDGE_INSPECTOR_WIDTH,
-      height: isLineTooltipOpen
-        ? EDGE_INSPECTOR_HEIGHT + EDGE_TYPE_PANEL_TOP + EDGE_TYPE_PANEL_HEIGHT
-        : EDGE_INSPECTOR_HEIGHT,
+      height: Math.max(endingPanelHeight, linePanelHeight, colorPanelHeight, textPanelHeight),
     });
-  }, [edgeInspector, isLineTooltipOpen]);
+  }, [edgeInspector, isColorTooltipOpen, isEndingTooltipOpen, isLineTooltipOpen, isTextTooltipOpen]);
 
   const activeInspectorEdgeType = useMemo(() => {
     if (!activeInspectorEdge) return null;
@@ -678,9 +1026,37 @@ const RoadmapReactFlowPage = () => {
     return toEdgeVariant(activeInspectorEdge);
   }, [activeInspectorEdge]);
 
+  const activeInspectorEdgeEnding = useMemo(() => {
+    if (!activeInspectorEdge) return null;
+    return toEdgeEnding(activeInspectorEdge);
+  }, [activeInspectorEdge]);
+
+  const activeInspectorEdgeColor = useMemo(() => {
+    if (!activeInspectorEdge) return null;
+    return toEdgeColor(activeInspectorEdge);
+  }, [activeInspectorEdge]);
+
+  const activeInspectorEdgeLabelText = useMemo(() => {
+    if (!activeInspectorEdge) return '';
+    return toEdgeLabelText(activeInspectorEdge);
+  }, [activeInspectorEdge]);
+
+  const activeInspectorEdgeLabelColor = useMemo(() => {
+    if (!activeInspectorEdge) return DEFAULT_EDGE_LABEL_COLOR;
+    return toEdgeLabelColor(activeInspectorEdge);
+  }, [activeInspectorEdge]);
+
+  const activeInspectorEdgeLabelSize = useMemo(() => {
+    if (!activeInspectorEdge) return DEFAULT_EDGE_LABEL_SIZE;
+    return toEdgeLabelSize(activeInspectorEdge);
+  }, [activeInspectorEdge]);
+
   const closeEdgeInspector = useCallback(() => {
     setEdgeInspector(null);
+    setIsEndingTooltipOpen(false);
     setIsLineTooltipOpen(false);
+    setIsColorTooltipOpen(false);
+    setIsTextTooltipOpen(false);
   }, []);
 
   useEffect(() => {
@@ -700,21 +1076,46 @@ const RoadmapReactFlowPage = () => {
   }, [closeEdgeInspector, edgeInspector]);
 
   const updateEdgeAppearance = useCallback(
-    (edgeId: string, updates: { type?: EdgeLineType; variant?: EdgeVariant }) => {
+    (
+      edgeId: string,
+      updates: {
+        type?: EdgeLineType;
+        variant?: EdgeVariant;
+        color?: string;
+        ending?: EdgeEnding;
+        labelText?: string;
+        labelColor?: string;
+        labelSize?: number;
+      }
+    ) => {
       setEdges((currentEdges) =>
         currentEdges.map((edge) => {
           if (edge.id !== edgeId) return edge;
 
           const nextType = updates.type ?? toEdgeType(edge.type);
           const nextVariant = updates.variant ?? toEdgeVariant(edge);
+          const nextColor = updates.color ?? toEdgeColor(edge);
+          const nextEnding = updates.ending ?? toEdgeEnding(edge);
+          const nextLabelText = updates.labelText ?? toEdgeLabelText(edge);
+          const nextLabelColor = updates.labelColor ?? toEdgeLabelColor(edge);
+          const nextLabelSize = updates.labelSize ?? toEdgeLabelSize(edge);
 
           return {
             ...edge,
             type: nextType,
-            style: getEdgeStyle(nextVariant),
+            label: nextLabelText.trim() ? nextLabelText : undefined,
+            labelStyle: getEdgeLabelStyle(nextLabelColor, nextLabelSize),
+            labelShowBg: false,
+            style: getEdgeStyle(nextVariant, nextColor),
+            markerEnd: getEdgeMarkerEnd(nextEnding, nextColor),
             data: {
               ...((edge.data ?? {}) as Record<string, unknown>),
               variant: nextVariant,
+              color: nextColor,
+              ending: nextEnding,
+              labelText: nextLabelText,
+              labelColor: nextLabelColor,
+              labelSize: nextLabelSize,
             },
           };
         })
@@ -730,7 +1131,10 @@ const RoadmapReactFlowPage = () => {
       setContextTarget(null);
       setSelectedNodeId('');
       setSelectedEdgeId(edge.id);
+      setIsEndingTooltipOpen(false);
       setIsLineTooltipOpen(false);
+      setIsColorTooltipOpen(false);
+      setIsTextTooltipOpen(false);
       setEdgeInspector({
         edgeId: edge.id,
         clientX: event.clientX,
@@ -756,20 +1160,53 @@ const RoadmapReactFlowPage = () => {
     [edgeInspector, updateEdgeAppearance]
   );
 
-  const cycleInspectorEdgeVariant = useCallback(() => {
-    if (!activeInspectorEdgeVariant) return;
+  const setInspectorEdgeEnding = useCallback(
+    (ending: EdgeEnding) => {
+      if (!edgeInspector) return;
+      updateEdgeAppearance(edgeInspector.edgeId, { ending });
+    },
+    [edgeInspector, updateEdgeAppearance]
+  );
 
-    const variants: EdgeVariant[] = ['solid', 'dashed', 'dotted'];
-    const currentIndex = variants.indexOf(activeInspectorEdgeVariant);
-    const nextVariant = variants[(currentIndex + 1) % variants.length] ?? 'solid';
-    setInspectorEdgeVariant(nextVariant);
-    setIsLineTooltipOpen(false);
-  }, [activeInspectorEdgeVariant, setInspectorEdgeVariant]);
+  const setInspectorEdgeColor = useCallback(
+    (color: string) => {
+      if (!edgeInspector) return;
+      updateEdgeAppearance(edgeInspector.edgeId, { color });
+    },
+    [edgeInspector, updateEdgeAppearance]
+  );
+
+  const setInspectorEdgeLabelText = useCallback(
+    (text: string) => {
+      if (!edgeInspector) return;
+      updateEdgeAppearance(edgeInspector.edgeId, { labelText: text });
+    },
+    [edgeInspector, updateEdgeAppearance]
+  );
+
+  const setInspectorEdgeLabelColor = useCallback(
+    (color: string) => {
+      if (!edgeInspector) return;
+      updateEdgeAppearance(edgeInspector.edgeId, { labelColor: color });
+    },
+    [edgeInspector, updateEdgeAppearance]
+  );
+
+  const setInspectorEdgeLabelSize = useCallback(
+    (size: number) => {
+      if (!edgeInspector) return;
+      updateEdgeAppearance(edgeInspector.edgeId, { labelSize: size });
+    },
+    [edgeInspector, updateEdgeAppearance]
+  );
 
   const onMockToolbarAction = useCallback((event: ReactMouseEvent<HTMLButtonElement>) => {
     event.preventDefault();
     event.stopPropagation();
+    setIsEndingTooltipOpen(false);
     setIsLineTooltipOpen(false);
+    setIsColorTooltipOpen(false);
+    setIsTextTooltipOpen(false);
   }, []);
 
   const onConnect = useCallback(
@@ -1129,6 +1566,7 @@ const RoadmapReactFlowPage = () => {
               <div className="h-full w-full">
                 <ReactFlow
                   nodeTypes={nodeTypes}
+                  edgeTypes={edgeTypes}
                   nodes={nodes}
                   edges={edges}
                   onNodesChange={onNodesChange}
@@ -1258,6 +1696,43 @@ const RoadmapReactFlowPage = () => {
                 </div>
               )}
 
+              {isEndingTooltipOpen && (
+                <div
+                  className="absolute z-40 -translate-x-1/2"
+                  style={{
+                    left: EDGE_INSPECTOR_WIDTH * EDGE_ENDING_BUTTON_CENTER_RATIO,
+                    top: EDGE_ENDING_PANEL_TOP,
+                  }}
+                >
+                  <div
+                    className="rounded-[14px] border border-[#d7d8dd] bg-[#f3f3f4]/98 p-2 shadow-[0_12px_24px_rgba(15,23,42,0.2)]"
+                    style={{ width: EDGE_ENDING_PANEL_WIDTH }}
+                  >
+                    {EDGE_ENDING_OPTIONS.map((option) => {
+                      const isActive = activeInspectorEdgeEnding === option.value;
+
+                      return (
+                        <button
+                          key={option.value}
+                          type="button"
+                          onClick={() => {
+                            setInspectorEdgeEnding(option.value);
+                            setIsEndingTooltipOpen(false);
+                          }}
+                          className={[
+                            'flex h-10 w-full items-center justify-center rounded-[10px] transition',
+                            isActive ? 'bg-[#e6ebfa]' : 'hover:bg-white/70',
+                          ].join(' ')}
+                          title={option.label}
+                        >
+                          {renderEdgeEndingIcon(option.value)}
+                        </button>
+                      );
+                    })}
+                  </div>
+                </div>
+              )}
+
               {isLineTooltipOpen && (
                 <div
                   className="absolute z-40 -translate-x-1/2"
@@ -1319,6 +1794,115 @@ const RoadmapReactFlowPage = () => {
                 </div>
               )}
 
+              {isColorTooltipOpen && (
+                <div
+                  className="absolute z-40 -translate-x-1/2"
+                  style={{
+                    left: EDGE_INSPECTOR_WIDTH * EDGE_COLOR_BUTTON_CENTER_RATIO,
+                    top: EDGE_COLOR_PANEL_TOP,
+                  }}
+                >
+                  <div
+                    className="rounded-[16px] border border-[#d7d8dd] bg-[#f3f3f4]/98 p-4 shadow-[0_16px_32px_rgba(15,23,42,0.22)]"
+                    style={{ width: EDGE_COLOR_PANEL_WIDTH }}
+                  >
+                    <p className="mb-2 text-[12px] font-medium text-slate-500">All colors</p>
+
+                    <div className="grid grid-cols-4 gap-2.5">
+                      {EDGE_COLOR_SWATCHES.flat().map((color) => {
+                        const isActive = activeInspectorEdgeColor === color;
+                        const isLight =
+                          color === '#ffffff' || color === '#e6e6e6' || color === '#ece4a8';
+
+                        return (
+                          <button
+                            key={color}
+                            type="button"
+                            onClick={() => setInspectorEdgeColor(color)}
+                            className={[
+                              'h-9 w-9 rounded-full border transition hover:scale-105',
+                              isActive ? 'ring-2 ring-[#94a3ff] ring-offset-1' : '',
+                              isLight ? 'border-slate-300' : 'border-black/22',
+                            ].join(' ')}
+                            style={{ backgroundColor: color }}
+                            aria-label={`Kolor linii ${color}`}
+                          />
+                        );
+                      })}
+                    </div>
+                  </div>
+                </div>
+              )}
+
+              {isTextTooltipOpen && (
+                <div
+                  className="absolute z-40 -translate-x-1/2"
+                  style={{
+                    left: EDGE_INSPECTOR_WIDTH * EDGE_TEXT_BUTTON_CENTER_RATIO,
+                    top: EDGE_TEXT_PANEL_TOP,
+                  }}
+                >
+                  <div
+                    className="rounded-[14px] border border-[#d7d8dd] bg-[#f3f3f4]/98 p-3 shadow-[0_14px_28px_rgba(15,23,42,0.22)]"
+                    style={{ width: EDGE_TEXT_PANEL_WIDTH }}
+                  >
+                    <p className="mb-2 text-[12px] font-medium text-slate-600">Tekst na linii</p>
+
+                    <input
+                      value={activeInspectorEdgeLabelText}
+                      onChange={(event) => setInspectorEdgeLabelText(event.target.value)}
+                      className="mb-3 w-full rounded-md border border-slate-300 bg-white px-2 py-1.5 text-[12px] text-slate-800 outline-none focus:border-sky-500"
+                      placeholder="Wpisz tekst..."
+                    />
+
+                    <p className="mb-1 text-[11px] font-medium text-slate-500">Rozmiar</p>
+                    <div className="mb-3 grid grid-cols-4 gap-1">
+                      {EDGE_LABEL_SIZE_OPTIONS.map((size) => {
+                        const isActive = activeInspectorEdgeLabelSize === size;
+
+                        return (
+                          <button
+                            key={size}
+                            type="button"
+                            onClick={() => setInspectorEdgeLabelSize(size)}
+                            className={[
+                              'flex h-7 items-center justify-center rounded-md text-[11px] font-semibold transition',
+                              isActive
+                                ? 'bg-[#e6ebfa] text-[#2f47bf]'
+                                : 'bg-white text-slate-600 hover:bg-slate-100/80',
+                            ].join(' ')}
+                          >
+                            {size}
+                          </button>
+                        );
+                      })}
+                    </div>
+
+                    <p className="mb-1 text-[11px] font-medium text-slate-500">Kolor tekstu</p>
+                    <div className="grid grid-cols-6 gap-1.5">
+                      {EDGE_LABEL_COLOR_OPTIONS.map((color) => {
+                        const isActive = activeInspectorEdgeLabelColor === color;
+
+                        return (
+                          <button
+                            key={color}
+                            type="button"
+                            onClick={() => setInspectorEdgeLabelColor(color)}
+                            className={[
+                              'h-6 w-6 rounded-full border transition',
+                              isActive ? 'ring-2 ring-[#94a3ff] ring-offset-1' : '',
+                              color === '#ffffff' ? 'border-slate-300' : 'border-black/25',
+                            ].join(' ')}
+                            style={{ backgroundColor: color }}
+                            aria-label={`Kolor tekstu ${color}`}
+                          />
+                        );
+                      })}
+                    </div>
+                  </div>
+                </div>
+              )}
+
               <div
                 className="origin-top-left"
                 style={{
@@ -1328,10 +1912,6 @@ const RoadmapReactFlowPage = () => {
                 }}
               >
                 <div className="grid h-full w-full grid-cols-[1.45fr_1fr_1fr_1.1fr_1fr_1fr_1fr_1fr_1fr_0.85fr] overflow-visible rounded-[14px] border border-[#d7d8dd] bg-[#efeff1]/95 shadow-[0_10px_22px_rgba(15,23,42,0.16)] backdrop-blur-xl">
-                  <div className="flex items-center border-r border-[#d7d8dd] px-3.5 text-[24px] font-normal text-slate-900">
-                    None
-                  </div>
-
                   <button
                     type="button"
                     onClick={onMockToolbarAction}
@@ -1343,16 +1923,34 @@ const RoadmapReactFlowPage = () => {
 
                   <button
                     type="button"
-                    onClick={onMockToolbarAction}
-                    className="flex items-center justify-center border-r border-[#d7d8dd] text-slate-900 transition hover:bg-white/55"
-                    aria-label="Mock: kierunek"
+                    onClick={() => {
+                      setIsEndingTooltipOpen((current) => !current);
+                      setIsLineTooltipOpen(false);
+                      setIsColorTooltipOpen(false);
+                      setIsTextTooltipOpen(false);
+                    }}
+                    className={[
+                      'flex items-center justify-center border-r border-[#d7d8dd] text-slate-900 transition hover:bg-white/55',
+                      isEndingTooltipOpen ? 'bg-[#dfe2e9]' : '',
+                    ].join(' ')}
+                    aria-label="Zakonczenie linii"
                   >
-                    <ArrowRight className="h-8 w-8 stroke-[2.3]" />
+                    <span className="scale-[0.9]">
+                      {renderEdgeEndingIcon(
+                        activeInspectorEdgeEnding ?? 'none',
+                        activeInspectorEdgeColor ?? '#11162f'
+                      )}
+                    </span>
                   </button>
 
                   <button
                     type="button"
-                    onClick={() => setIsLineTooltipOpen((current) => !current)}
+                    onClick={() => {
+                      setIsLineTooltipOpen((current) => !current);
+                      setIsEndingTooltipOpen(false);
+                      setIsColorTooltipOpen(false);
+                      setIsTextTooltipOpen(false);
+                    }}
                     className={[
                       'flex h-full w-full flex-col items-center justify-center gap-0.5 border-r border-[#d7d8dd] text-slate-900 transition hover:bg-white/55',
                       isLineTooltipOpen ? 'bg-[#dfe2e9]' : '',
@@ -1367,19 +1965,21 @@ const RoadmapReactFlowPage = () => {
 
                   <button
                     type="button"
-                    onClick={cycleInspectorEdgeVariant}
-                    className="flex items-center justify-center border-r border-[#d7d8dd] transition hover:bg-white/55"
-                    aria-label={`Styl linii: ${activeInspectorEdgeVariant ?? 'solid'}`}
+                    onClick={() => {
+                      setIsColorTooltipOpen((current) => !current);
+                      setIsEndingTooltipOpen(false);
+                      setIsLineTooltipOpen(false);
+                      setIsTextTooltipOpen(false);
+                    }}
+                    className={[
+                      'flex items-center justify-center border-r border-[#d7d8dd] transition hover:bg-white/55',
+                      isColorTooltipOpen ? 'bg-[#dfe2e9]' : '',
+                    ].join(' ')}
+                    aria-label="Kolor linii"
                   >
                     <span
-                      className={[
-                        'h-7 w-7 rounded-full',
-                        activeInspectorEdgeVariant === 'solid'
-                          ? 'bg-slate-900'
-                          : 'border-[3px] border-slate-900 bg-transparent',
-                        activeInspectorEdgeVariant === 'dashed' ? 'border-dashed' : '',
-                        activeInspectorEdgeVariant === 'dotted' ? 'border-dotted' : '',
-                      ].join(' ')}
+                      className="h-7 w-7 rounded-full border border-slate-400/65"
+                      style={{ backgroundColor: activeInspectorEdgeColor ?? SOLID_EDGE_COLOR }}
                     />
                   </button>
 
@@ -1394,9 +1994,14 @@ const RoadmapReactFlowPage = () => {
 
                   <button
                     type="button"
-                    onClick={onMockToolbarAction}
+                    onClick={() => {
+                      setIsTextTooltipOpen((current) => !current);
+                      setIsEndingTooltipOpen(false);
+                      setIsLineTooltipOpen(false);
+                      setIsColorTooltipOpen(false);
+                    }}
                     className="relative flex items-center justify-center border-r border-[#d7d8dd] text-slate-900 transition hover:bg-white/55"
-                    aria-label="Mock: etykieta"
+                    aria-label="Tekst linii"
                   >
                     <Type className="h-7 w-7 stroke-[2.2]" />
                     <span className="absolute top-[30%] right-[25%] text-sm font-semibold text-slate-900">
