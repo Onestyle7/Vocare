@@ -38,17 +38,11 @@ import {
   DialogTitle,
 } from '@/components/ui/dialog';
 import '@xyflow/react/dist/style.css';
-import {
-  Lock,
-  MoreVertical,
-  RefreshCw,
-  Sparkles,
-  Type,
-  Wand2,
-} from 'lucide-react';
+import { Lock, MoreVertical, RefreshCw, Sparkles, Type, Wand2 } from 'lucide-react';
 
 import { RoadmapTileNode } from '@/components/roadmap/RoadmapTileNode';
 import type { RoadmapNodeData as TileNodeData } from '@/components/roadmap/RoadmapTileNode';
+import { presetEdges, presetNodes } from '@/roadmap/configs/presets';
 
 type RoadmapStep = {
   id: string;
@@ -77,28 +71,6 @@ type ContextTarget =
   | { kind: 'pane'; flowPosition: { x: number; y: number } }
   | { kind: 'node'; nodeId: string; flowPosition: { x: number; y: number } }
   | { kind: 'edge'; edgeId: string };
-
-type PresetNodeConfig = {
-  id: string;
-  title: string;
-  x: number;
-  y: number;
-  width?: number;
-  height?: number;
-  tone?: NodeTone;
-};
-
-type PresetEdgeConfig = {
-  id: string;
-  source: string;
-  target: string;
-  variant?: EdgeVariant;
-  type?: Edge['type'];
-  color?: string;
-  ending?: EdgeEnding;
-  sourceHandle?: string;
-  targetHandle?: string;
-};
 
 const NODE_WIDTH = 280;
 const NODE_HEIGHT = 78;
@@ -511,25 +483,53 @@ const renderEdgeEndingIcon = (ending: EdgeEnding, color = '#11162f') => {
     <svg viewBox="0 0 72 24" className="h-5 w-14">
       <line x1="8" y1="12" x2="56" y2="12" stroke={color} strokeWidth="3.2" strokeLinecap="round" />
 
-      {ending === 'arrow-filled' ? (
-        <polygon points="63,12 50,5 50,19" fill={color} />
-      ) : null}
+      {ending === 'arrow-filled' ? <polygon points="63,12 50,5 50,19" fill={color} /> : null}
 
-      {ending === 'arrow-filled-thin' ? (
-        <polygon points="62,12 53,8 53,16" fill={color} />
-      ) : null}
+      {ending === 'arrow-filled-thin' ? <polygon points="62,12 53,8 53,16" fill={color} /> : null}
 
       {ending === 'arrow-open' ? (
         <>
-          <line x1="62" y1="12" x2="50" y2="5" stroke={color} strokeWidth="3" strokeLinecap="round" />
-          <line x1="62" y1="12" x2="50" y2="19" stroke={color} strokeWidth="3" strokeLinecap="round" />
+          <line
+            x1="62"
+            y1="12"
+            x2="50"
+            y2="5"
+            stroke={color}
+            strokeWidth="3"
+            strokeLinecap="round"
+          />
+          <line
+            x1="62"
+            y1="12"
+            x2="50"
+            y2="19"
+            stroke={color}
+            strokeWidth="3"
+            strokeLinecap="round"
+          />
         </>
       ) : null}
 
       {ending === 'arrow-open-thin' ? (
         <>
-          <line x1="61" y1="12" x2="53" y2="8" stroke={color} strokeWidth="2.4" strokeLinecap="round" />
-          <line x1="61" y1="12" x2="53" y2="16" stroke={color} strokeWidth="2.4" strokeLinecap="round" />
+          <line
+            x1="61"
+            y1="12"
+            x2="53"
+            y2="8"
+            stroke={color}
+            strokeWidth="2.4"
+            strokeLinecap="round"
+          />
+          <line
+            x1="61"
+            y1="12"
+            x2="53"
+            y2="16"
+            stroke={color}
+            strokeWidth="2.4"
+            strokeLinecap="round"
+          />
         </>
       ) : null}
     </svg>
@@ -554,215 +554,6 @@ const EDGE_VARIANT_OPTIONS: Array<{ value: EdgeVariant; label: string }> = [
   { value: 'solid', label: 'Ciągła' },
   { value: 'dashed', label: 'Przerywana' },
   { value: 'dotted', label: 'Kropkowana' },
-];
-
-const presetNodes: PresetNodeConfig[] = [
-  { id: 'client_side', title: 'Client Side Development', x: 760, y: 14, tone: 'main' },
-  { id: 'server_side', title: 'Server Side', x: 1140, y: 14, tone: 'neutral' },
-  { id: 'game_math', title: 'Game Mathematics', x: 760, y: 352, tone: 'main' },
-  { id: 'curve', title: 'Curve', x: 760, y: 520, tone: 'neutral' },
-  { id: 'spline', title: 'Spline', x: 760, y: 602 },
-  { id: 'hermite', title: 'Hermite', x: 936, y: 602 },
-  { id: 'bezier', title: 'Bezier', x: 760, y: 682 },
-  { id: 'catmull_rom', title: 'Catmull-Rom', x: 936, y: 682 },
-  { id: 'linear_algebra', title: 'Linear Algebra', x: 138, y: 126 },
-  { id: 'vector', title: 'Vector', x: 138, y: 204 },
-  { id: 'matrix', title: 'Matrix', x: 334, y: 204 },
-  { id: 'linear_transformation', title: 'Linear Transformation', x: 138, y: 282 },
-  { id: 'geometry', title: 'Geometry', x: 138, y: 360 },
-  { id: 'affine_space', title: 'Affine Space', x: 334, y: 360 },
-  { id: 'affine_transformation', title: 'Affine Transformation', x: 138, y: 438 },
-  { id: 'projection', title: 'Projection', x: 138, y: 516, tone: 'neutral' },
-  { id: 'orientation', title: 'Orientation', x: 334, y: 516, tone: 'neutral' },
-  { id: 'perspective', title: 'Perspective', x: 138, y: 594 },
-  { id: 'quaternion', title: 'Quaternion', x: 334, y: 594 },
-  { id: 'orthogonal', title: 'Orthogonal', x: 138, y: 672 },
-  { id: 'euler_angle', title: 'Euler Angle', x: 334, y: 672 },
-  { id: 'unity3d', title: 'Unity 3D', x: 138, y: 810 },
-  { id: 'unreal_engine', title: 'Unreal Engine', x: 138, y: 888 },
-  { id: 'native', title: 'Native', x: 138, y: 966 },
-  { id: 'game_engine', title: 'Game Engine', x: 500, y: 888, tone: 'main' },
-  { id: 'center_of_mass', title: 'Center of Mass', x: 1204, y: 190 },
-  { id: 'moment_of_inertia', title: 'Moment of Inertia', x: 1204, y: 268 },
-  { id: 'acceleration', title: 'Acceleration', x: 1204, y: 346 },
-  { id: 'joints', title: 'Joints', x: 1360, y: 346 },
-  { id: 'restitution', title: 'Restitution', x: 1204, y: 424 },
-  { id: 'force', title: 'Force', x: 1360, y: 424 },
-  { id: 'angular_velocity', title: 'Angular Velocity', x: 1204, y: 502 },
-  { id: 'buoyancy', title: 'Buoyancy', x: 1204, y: 580 },
-  { id: 'friction', title: 'Friction', x: 1360, y: 580 },
-  { id: 'linear_velocity', title: 'Linear Velocity', x: 1204, y: 658 },
-  { id: 'dynamics', title: 'Dynamics', x: 1204, y: 736, tone: 'neutral' },
-  { id: 'game_physics', title: 'Game Physics', x: 1228, y: 888, tone: 'main' },
-];
-
-const presetEdges: PresetEdgeConfig[] = [
-  {
-    id: 'e-client-server',
-    source: 'client_side',
-    target: 'server_side',
-    variant: 'solid',
-    sourceHandle: 's-right',
-    targetHandle: 't-left',
-  },
-
-  {
-    id: 'e-client-math',
-    source: 'client_side',
-    target: 'game_math',
-    variant: 'solid',
-    type: 'step',
-    sourceHandle: 's-right',
-    targetHandle: 't-left',
-  },
-  {
-    id: 'e-math-physics',
-    source: 'game_math',
-    target: 'game_physics',
-    variant: 'solid',
-    type: 'bezier',
-    sourceHandle: 's-right',
-    targetHandle: 't-left',
-  },
-  {
-    id: 'e-engine-physics',
-    source: 'game_engine',
-    target: 'game_physics',
-    variant: 'solid',
-    sourceHandle: 's-right',
-    targetHandle: 't-left',
-  },
-
-  {
-    id: 'e-curve-core',
-    source: 'game_math',
-    target: 'curve',
-    variant: 'dotted',
-    type: 'step',
-    sourceHandle: 's-right',
-    targetHandle: 't-left',
-  },
-
-  // --- TO jest kluczowe: wszystkie te idą w t-left game_math ---
-  {
-    id: 'e-la-core',
-    source: 'linear_algebra',
-    target: 'game_math',
-    variant: 'dotted',
-    type: 'bezier',
-    sourceHandle: 's-right',
-    targetHandle: 't-left',
-  },
-  {
-    id: 'e-vector-core',
-    source: 'vector',
-    target: 'game_math',
-    variant: 'dotted',
-    type: 'bezier',
-    sourceHandle: 's-right',
-    targetHandle: 't-left',
-  },
-  {
-    id: 'e-matrix-core',
-    source: 'matrix',
-    target: 'game_math',
-    variant: 'dotted',
-    type: 'bezier',
-    sourceHandle: 's-right',
-    targetHandle: 't-left',
-  },
-  {
-    id: 'e-lt-core',
-    source: 'linear_transformation',
-    target: 'game_math',
-    variant: 'dotted',
-    type: 'bezier',
-    sourceHandle: 's-right',
-    targetHandle: 't-left',
-  },
-  {
-    id: 'e-geometry-core',
-    source: 'geometry',
-    target: 'game_math',
-    variant: 'dotted',
-    type: 'bezier',
-    sourceHandle: 's-right',
-    targetHandle: 't-left',
-  },
-  {
-    id: 'e-affine-core',
-    source: 'affine_space',
-    target: 'game_math',
-    variant: 'dotted',
-    type: 'bezier',
-    sourceHandle: 's-right',
-    targetHandle: 't-left',
-  },
-  {
-    id: 'e-at-core',
-    source: 'affine_transformation',
-    target: 'game_math',
-    variant: 'dotted',
-    type: 'bezier',
-    sourceHandle: 's-right',
-    targetHandle: 't-left',
-  },
-  {
-    id: 'e-proj-core',
-    source: 'projection',
-    target: 'game_math',
-    variant: 'dotted',
-    type: 'bezier',
-    sourceHandle: 's-right',
-    targetHandle: 't-left',
-  },
-  {
-    id: 'e-orient-core',
-    source: 'orientation',
-    target: 'game_math',
-    variant: 'dotted',
-    type: 'bezier',
-    sourceHandle: 's-right',
-    targetHandle: 't-left',
-  },
-
-  {
-    id: 'e-unity-engine',
-    source: 'unity3d',
-    target: 'game_engine',
-    variant: 'dotted',
-    type: 'bezier',
-    sourceHandle: 's-right',
-    targetHandle: 't-left',
-  },
-  {
-    id: 'e-unreal-engine',
-    source: 'unreal_engine',
-    target: 'game_engine',
-    variant: 'dotted',
-    type: 'bezier',
-    sourceHandle: 's-right',
-    targetHandle: 't-left',
-  },
-  {
-    id: 'e-native-engine',
-    source: 'native',
-    target: 'game_engine',
-    variant: 'dotted',
-    type: 'bezier',
-    sourceHandle: 's-right',
-    targetHandle: 't-left',
-  },
-
-  {
-    id: 'e-dynamics-physics',
-    source: 'dynamics',
-    target: 'game_physics',
-    variant: 'dotted',
-    type: 'step',
-    sourceHandle: 's-right',
-    targetHandle: 't-left',
-  },
 ];
 
 const createStyledEdge = ({
@@ -1014,7 +805,13 @@ const RoadmapReactFlowPage = () => {
       width: EDGE_INSPECTOR_WIDTH,
       height: Math.max(endingPanelHeight, linePanelHeight, colorPanelHeight, textPanelHeight),
     });
-  }, [edgeInspector, isColorTooltipOpen, isEndingTooltipOpen, isLineTooltipOpen, isTextTooltipOpen]);
+  }, [
+    edgeInspector,
+    isColorTooltipOpen,
+    isEndingTooltipOpen,
+    isLineTooltipOpen,
+    isTextTooltipOpen,
+  ]);
 
   const activeInspectorEdgeType = useMemo(() => {
     if (!activeInspectorEdge) return null;
@@ -1846,7 +1643,9 @@ const RoadmapReactFlowPage = () => {
                     className="rounded-[14px] border border-[#d7d8dd] bg-[#f3f3f4]/98 p-3 shadow-[0_14px_28px_rgba(15,23,42,0.22)]"
                     style={{ width: EDGE_TEXT_PANEL_WIDTH }}
                   >
-                    <p className="mb-2 text-[12px] font-medium text-slate-600">Tekst na linii</p>
+                    <p className="font-grotesk mb-2 text-[12px] font-medium text-slate-600">
+                      Tekst na linii
+                    </p>
 
                     <input
                       value={activeInspectorEdgeLabelText}
@@ -1855,7 +1654,9 @@ const RoadmapReactFlowPage = () => {
                       placeholder="Wpisz tekst..."
                     />
 
-                    <p className="mb-1 text-[11px] font-medium text-slate-500">Rozmiar</p>
+                    <p className="font-grotesk mb-1 text-[11px] font-medium text-slate-500">
+                      Rozmiar
+                    </p>
                     <div className="mb-3 grid grid-cols-4 gap-1">
                       {EDGE_LABEL_SIZE_OPTIONS.map((size) => {
                         const isActive = activeInspectorEdgeLabelSize === size;
@@ -1878,7 +1679,9 @@ const RoadmapReactFlowPage = () => {
                       })}
                     </div>
 
-                    <p className="mb-1 text-[11px] font-medium text-slate-500">Kolor tekstu</p>
+                    <p className="font-grotesk mb-1 text-[11px] font-medium text-slate-500">
+                      Kolor tekstu
+                    </p>
                     <div className="grid grid-cols-6 gap-1.5">
                       {EDGE_LABEL_COLOR_OPTIONS.map((color) => {
                         const isActive = activeInspectorEdgeLabelColor === color;
