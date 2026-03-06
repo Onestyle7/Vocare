@@ -1906,9 +1906,6 @@ const RoadmapReactFlowPage = () => {
                       aria-label="Typ linii"
                     >
                       {renderEdgeTypeIcon(activeInspectorEdgeType ?? 'bezier', true)}
-                      <span className="text-[22px] leading-none font-medium tracking-tight text-slate-900">
-                        Type
-                      </span>
                     </button>
 
                     <button

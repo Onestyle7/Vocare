@@ -28,9 +28,9 @@ type Props = {
 };
 
 const toneClasses: Record<NodeTone, string> = {
-  main: 'bg-[#f6f804]',
-  cream: 'bg-[#f3df9f]',
-  neutral: 'bg-[#ececef]',
+  main: 'bg-white',
+  cream: 'bg-white',
+  neutral: 'bg-white',
 };
 
 const handleBase = '!h-3 !w-3 !border-2 !border-[#11162f] !bg-white';
@@ -83,7 +83,7 @@ export const RoadmapTileNode: FC<Props> = ({ id, data, selected }) => {
   return (
     <div
       className={[
-        'relative rounded-xl border-4 border-[#11162f] px-4 py-3',
+        'relative rounded-xl border border-l-6 border-[#11162f] px-4 py-3',
         'text-[#11162f] shadow-none',
         'flex items-center gap-3',
         toneClasses[tone],
@@ -157,7 +157,7 @@ export const RoadmapTileNode: FC<Props> = ({ id, data, selected }) => {
       />
 
       <div className="min-w-0 flex-1 text-center">
-        <div className="overflow-hidden text-[18px] leading-tight font-semibold text-ellipsis whitespace-nowrap">
+        <div className="font-poppins overflow-hidden text-[18px] leading-tight font-semibold text-ellipsis whitespace-nowrap">
           {data.title}
         </div>
 
