@@ -24,7 +24,7 @@ namespace VocareWebAPI.RoadmapService.Models.Entities
 
         // Metadane
         public string Title { get; set; } = String.Empty;
-        public int TimeHorizontMonths { get; set; } // 3-24
+        public int TimeHorizonMonths { get; set; } // 3-24
         public RoadmapStatus Status { get; set; } = RoadmapStatus.Draft;
         public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
         public DateTime UpdatedAt { get; set; } = DateTime.UtcNow;

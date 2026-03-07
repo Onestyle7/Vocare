@@ -823,7 +823,7 @@ namespace VocareWebAPI.Migrations
 
                     b.HasIndex("SwotAnalysisId");
 
-                    b.ToTable("CareerPath", "public");
+                    b.ToTable("CareerPaths", "public");
                 });
 
             modelBuilder.Entity("VocareWebAPI.Models.Entities.MarketAnalysis.CareerStatistics", b =>
@@ -1101,7 +1101,7 @@ namespace VocareWebAPI.Migrations
                     b.Property<int>("Status")
                         .HasColumnType("integer");
 
-                    b.Property<int>("TimeHorizontMonths")
+                    b.Property<int>("TimeHorizonMonths")
                         .HasColumnType("integer");
 
                     b.Property<string>("Title")

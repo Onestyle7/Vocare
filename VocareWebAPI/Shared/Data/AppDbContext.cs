@@ -86,6 +86,7 @@ namespace VocareWebAPI.Data
         public DbSet<Roadmap> Roadmaps { get; set; }
         public DbSet<RoadmapPhase> RoadmapPhases { get; set; }
         public DbSet<RoadmapStep> RoadmapSteps { get; set; }
+        public DbSet<CareerPath> CareerPaths { get; set; }
 
         /// <summary>
         /// Konfiguruje model bazy danych, definiując schemat i relacje między encjami.
