@@ -1,8 +1,10 @@
 'use client';
 
+import Link from 'next/link';
 import type { ChangeEvent, FormEvent, MouseEvent as ReactMouseEvent } from 'react';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import dagre from 'dagre';
+import { motion } from 'motion/react';
 import {
   addEdge,
   Background,
@@ -13,6 +15,7 @@ import {
   MiniMap,
   ReactFlow,
   ReactFlowProvider,
+  getBezierEdgeCenter,
   getBezierPath,
   getSmoothStepPath,
   getStraightPath,
@@ -37,9 +40,17 @@ import {
   DialogHeader,
   DialogTitle,
 } from '@/components/ui/dialog';
+import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { Textarea } from '@/components/ui/textarea';
+import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
 import '@xyflow/react/dist/style.css';
-import { Lock, MoreVertical, Type } from 'lucide-react';
+import { ArrowLeft, FileText, Lock, MoreVertical, Redo2, Type, Undo2 } from 'lucide-react';
 
+import { RoadmapFreeTextNode } from '@/components/roadmap/RoadmapFreeTextNode';
+import { RoadmapNoteNode } from '@/components/roadmap/RoadmapNoteNode';
 import { RoadmapTileNode } from '@/components/roadmap/RoadmapTileNode';
 import type { RoadmapNodeData as TileNodeData } from '@/components/roadmap/RoadmapTileNode';
 import { presetEdges, presetNodes } from '@/roadmap/configs/presets';
@@ -60,6 +71,11 @@ type EdgeEnding = 'none' | 'arrow-filled' | 'arrow-filled-thin' | 'arrow-open' |
 type NodeTone = 'main' | 'cream' | 'neutral';
 
 type RoadmapNode = Node<TileNodeData>;
+type RoadmapNodeType = RoadmapNode['type'];
+type HistorySnapshot = {
+  nodes: RoadmapNode[];
+  edges: Edge[];
+};
 
 type EdgeInspectorState = {
   edgeId: string;
@@ -107,6 +123,11 @@ const DEFAULT_EDGE_LABEL_COLOR = '#9f1d2b';
 const DEFAULT_EDGE_LABEL_SIZE = 14;
 const EDGE_LABEL_SIZE_OPTIONS = [12, 14, 16, 18];
 const EDGE_LABEL_COLOR_OPTIONS = ['#111827', '#9f1d2b', '#2563eb', '#059669', '#d97706', '#7c3aed'];
+const HISTORY_LIMIT = 80;
+const FLAT_BEZIER_AXIS_THRESHOLD = 18;
+const OUTWARD_BEZIER_LIFT_RATIO = 0.18;
+const OUTWARD_BEZIER_MIN_LIFT = 24;
+const OUTWARD_BEZIER_MAX_LIFT = 72;
 const EDGE_COLOR_SWATCHES: string[][] = [
   ['#ece4a8', '#f8df53', '#bf8900', '#ffffff'],
   ['#efc9ab', '#ffa34d', '#b8610a', '#e6e6e6'],
@@ -123,8 +144,18 @@ const TILE_MIN_WIDTH = 120;
 const TILE_MAX_WIDTH = 560;
 const TILE_HEIGHT_SINGLE_LINE = 62;
 const TILE_HEIGHT_WITH_META = 80;
+const FREE_TEXT_NODE_MIN_WIDTH = 120;
+const FREE_TEXT_NODE_MAX_WIDTH = 420;
+const FREE_TEXT_NODE_MIN_HEIGHT = 48;
+const FREE_TEXT_NODE_MAX_HEIGHT = 220;
+const NOTE_NODE_MIN_WIDTH = 220;
+const NOTE_NODE_MAX_WIDTH = 320;
+const NOTE_NODE_MIN_HEIGHT = 120;
+const NOTE_NODE_MAX_HEIGHT = 220;
+const TOOLBAR_CENTER_OFFSET_X = 18;
 
 let tileMeasureCanvas: HTMLCanvasElement | null = null;
+let freeTextMeasureCanvas: HTMLCanvasElement | null = null;
 
 const clamp = (value: number, min: number, max: number) => Math.min(Math.max(value, min), max);
 
@@ -258,6 +289,50 @@ const getPathDirection = (path: string, fallbackDx: number, fallbackDy: number) 
   }
 };
 
+const getOutwardBezierPath = ({
+  sourceX,
+  sourceY,
+  targetX,
+  targetY,
+  position,
+}: {
+  sourceX: number;
+  sourceY: number;
+  targetX: number;
+  targetY: number;
+  position: Position.Top | Position.Bottom;
+}) => {
+  const horizontalDistance = Math.abs(targetX - sourceX);
+  const lift = clamp(
+    horizontalDistance * OUTWARD_BEZIER_LIFT_RATIO,
+    OUTWARD_BEZIER_MIN_LIFT,
+    OUTWARD_BEZIER_MAX_LIFT
+  );
+  const controlY =
+    position === Position.Top
+      ? Math.min(sourceY, targetY) - lift
+      : Math.max(sourceY, targetY) + lift;
+
+  const sourceControlX = sourceX;
+  const sourceControlY = controlY;
+  const targetControlX = targetX;
+  const targetControlY = controlY;
+
+  const path = `M ${sourceX},${sourceY} C ${sourceControlX},${sourceControlY} ${targetControlX},${targetControlY} ${targetX},${targetY}`;
+  const [labelX, labelY] = getBezierEdgeCenter({
+    sourceX,
+    sourceY,
+    targetX,
+    targetY,
+    sourceControlX,
+    sourceControlY,
+    targetControlX,
+    targetControlY,
+  });
+
+  return [path, labelX, labelY] as const;
+};
+
 const RoadmapConnectionEdge = ({
   id,
   type,
@@ -272,8 +347,21 @@ const RoadmapConnectionEdge = ({
   label,
   labelStyle,
 }: EdgeProps<Edge>) => {
-  const [edgePath, labelX, labelY] =
-    type === 'straight'
+  const shouldUseOutwardBezier =
+    type === 'bezier' &&
+    sourcePosition === targetPosition &&
+    (sourcePosition === Position.Top || sourcePosition === Position.Bottom) &&
+    Math.abs(sourceY - targetY) <= FLAT_BEZIER_AXIS_THRESHOLD;
+
+  const [edgePath, labelX, labelY] = shouldUseOutwardBezier
+    ? getOutwardBezierPath({
+        sourceX,
+        sourceY,
+        targetX,
+        targetY,
+        position: sourcePosition,
+      })
+    : type === 'straight'
       ? getStraightPath({
           sourceX,
           sourceY,
@@ -379,6 +467,7 @@ const toEdgeEnding = (edge: Edge): EdgeEnding => {
 
   const marker = edge.markerEnd;
   if (!marker) return 'none';
+  if (typeof marker === 'string') return 'none';
 
   if (marker.type === MarkerType.ArrowClosed) {
     const width = marker.width ?? 20;
@@ -642,6 +731,75 @@ const getTileSizeFromText = (step: Pick<RoadmapDraft, 'title' | 'phase' | 'timel
   };
 };
 
+const getFreeTextNodeSize = (text: string) => {
+  const normalizedText = text.trim() || 'Nowy tekst';
+  const lines = normalizedText.split(/\r?\n/).filter(Boolean);
+  const longestLine = lines.reduce(
+    (current, line) => (line.length > current.length ? line : current),
+    lines[0] ?? normalizedText
+  );
+
+  let textWidth = Math.max(80, longestLine.length * 13);
+
+  if (typeof document !== 'undefined') {
+    freeTextMeasureCanvas ??= document.createElement('canvas');
+    const context = freeTextMeasureCanvas.getContext('2d');
+    if (context) {
+      context.font = '600 24px Poppins, ui-sans-serif, system-ui, sans-serif';
+      textWidth = Math.max(80, context.measureText(longestLine).width);
+    }
+  }
+
+  const width = clamp(Math.ceil(textWidth + 18), FREE_TEXT_NODE_MIN_WIDTH, FREE_TEXT_NODE_MAX_WIDTH);
+  const height = clamp(lines.length * 30 + 18, FREE_TEXT_NODE_MIN_HEIGHT, FREE_TEXT_NODE_MAX_HEIGHT);
+
+  return { width, height };
+};
+
+const getNoteNodeSize = (draft: Pick<RoadmapDraft, 'title' | 'summary'>) => {
+  const title = draft.title.trim() || 'Nowa notatka';
+  const summary = draft.summary.trim();
+  const summaryLines = summary ? Math.max(2, Math.ceil(summary.length / 34)) : 2;
+  const titleWidth = Math.max(title.length * 9, 160);
+  const width = clamp(Math.ceil(titleWidth + 54), NOTE_NODE_MIN_WIDTH, NOTE_NODE_MAX_WIDTH);
+  const height = clamp(76 + summaryLines * 18, NOTE_NODE_MIN_HEIGHT, NOTE_NODE_MAX_HEIGHT);
+
+  return { width, height };
+};
+
+const cloneHistorySnapshot = (nodes: RoadmapNode[], edges: Edge[]): HistorySnapshot =>
+  structuredClone({
+    nodes: nodes.map((node) => ({
+      ...node,
+      selected: false,
+      dragging: false,
+    })),
+    edges: edges.map((edge) => ({
+      ...edge,
+      selected: false,
+    })),
+  });
+
+const getHistorySnapshotKey = (nodes: RoadmapNode[], edges: Edge[]) =>
+  JSON.stringify({
+    nodes: nodes.map(({ selected, dragging, resizing, zIndex, ...node }) => ({
+      ...node,
+      data: node.data,
+      position: {
+        x: Number(node.position.x.toFixed(2)),
+        y: Number(node.position.y.toFixed(2)),
+      },
+    })),
+    edges: edges.map(({ selected, zIndex, ...edge }) => ({
+      ...edge,
+      data: edge.data,
+      style: edge.style,
+      markerEnd: edge.markerEnd,
+      markerStart: edge.markerStart,
+      labelStyle: edge.labelStyle,
+    })),
+  });
+
 const createRoadmapNode = (
   id: string,
   step: RoadmapDraft,
@@ -665,6 +823,56 @@ const createRoadmapNode = (
     position,
     sourcePosition: Position.Right,
     targetPosition: Position.Left,
+  };
+};
+
+const createFreeTextNode = (
+  id: string,
+  text: string,
+  position: { x: number; y: number }
+): RoadmapNode => {
+  const size = getFreeTextNodeSize(text);
+
+  return {
+    id,
+    type: 'roadmapText',
+    data: {
+      phase: '',
+      title: text,
+      timeline: '',
+      summary: '',
+      tone: 'neutral',
+      width: size.width,
+      height: size.height,
+    },
+    position,
+    draggable: true,
+    selectable: true,
+  };
+};
+
+const createNoteNode = (
+  id: string,
+  draft: Pick<RoadmapDraft, 'title' | 'summary'>,
+  position: { x: number; y: number }
+): RoadmapNode => {
+  const size = getNoteNodeSize(draft);
+
+  return {
+    id,
+    type: 'roadmapNote',
+    data: {
+      phase: '',
+      title: draft.title,
+      timeline: '',
+      summary: draft.summary,
+      tone: 'neutral',
+      width: size.width,
+      height: size.height,
+    },
+    position,
+    draggable: true,
+    selectable: true,
   };
 };
 
@@ -746,7 +954,14 @@ const layoutWithDagre = (nodes: RoadmapNode[], edges: Edge[]): RoadmapNode[] => 
 };
 
 const RoadmapReactFlowPage = () => {
-  const nodeTypes = useMemo(() => ({ roadmapTile: RoadmapTileNode }), []);
+  const nodeTypes = useMemo(
+    () => ({
+      roadmapTile: RoadmapTileNode,
+      roadmapText: RoadmapFreeTextNode,
+      roadmapNote: RoadmapNoteNode,
+    }),
+    []
+  );
   const edgeTypes = useMemo(
     () => ({
       straight: RoadmapConnectionEdge,
@@ -773,6 +988,8 @@ const RoadmapReactFlowPage = () => {
   const [selectedEdgeId, setSelectedEdgeId] = useState<string>('');
   const [editingNodeId, setEditingNodeId] = useState<string | null>(null);
   const [editDraft, setEditDraft] = useState<RoadmapDraft>(initialDraft);
+  const [canUndo, setCanUndo] = useState(false);
+  const [canRedo, setCanRedo] = useState(false);
 
   const [contextTarget, setContextTarget] = useState<ContextTarget | null>(null);
   const [edgeInspector, setEdgeInspector] = useState<EdgeInspectorState | null>(null);
@@ -792,11 +1009,29 @@ const RoadmapReactFlowPage = () => {
   const unlockHoldRafRef = useRef<number | null>(null);
   const unlockHoldStartedAtRef = useRef<number | null>(null);
   const unlockHoldEdgeIdRef = useRef<string | null>(null);
+  const flowCanvasRef = useRef<HTMLDivElement | null>(null);
+  const undoStackRef = useRef<HistorySnapshot[]>([]);
+  const redoStackRef = useRef<HistorySnapshot[]>([]);
+  const isRestoringHistoryRef = useRef(false);
+  const lastCommittedSnapshotRef = useRef<HistorySnapshot>(
+    cloneHistorySnapshot(initialGraph.nodes, initialGraph.edges)
+  );
+  const lastCommittedKeyRef = useRef(getHistorySnapshotKey(initialGraph.nodes, initialGraph.edges));
 
   const activeInspectorEdge = useMemo(() => {
     if (!edgeInspector) return null;
     return edges.find((edge) => edge.id === edgeInspector.edgeId) ?? null;
   }, [edgeInspector, edges]);
+
+  const editingNode = useMemo(
+    () => (editingNodeId ? nodes.find((node) => node.id === editingNodeId) ?? null : null),
+    [editingNodeId, nodes]
+  );
+  const editingNodeType: RoadmapNodeType = editingNode?.type ?? 'roadmapTile';
+  const selectedNode = useMemo(
+    () => (selectedNodeId ? nodes.find((node) => node.id === selectedNodeId) ?? null : null),
+    [nodes, selectedNodeId]
+  );
 
   const activeInspectorEdgeLocked = useMemo(() => {
     if (!activeInspectorEdge) return false;
@@ -874,6 +1109,11 @@ const RoadmapReactFlowPage = () => {
     return toEdgeLabelSize(activeInspectorEdge);
   }, [activeInspectorEdge]);
 
+  const syncHistoryAvailability = useCallback(() => {
+    setCanUndo(undoStackRef.current.length > 0);
+    setCanRedo(redoStackRef.current.length > 0);
+  }, []);
+
   const closeInspectorTooltips = useCallback(() => {
     setIsEndingTooltipOpen(false);
     setIsLineTooltipOpen(false);
@@ -936,6 +1176,32 @@ const RoadmapReactFlowPage = () => {
     };
   }, []);
 
+  useEffect(() => {
+    if (!isRestoringHistoryRef.current && nodes.some((node) => node.dragging || node.resizing)) {
+      return;
+    }
+
+    const nextKey = getHistorySnapshotKey(nodes, edges);
+    if (nextKey === lastCommittedKeyRef.current) return;
+
+    if (isRestoringHistoryRef.current) {
+      isRestoringHistoryRef.current = false;
+      lastCommittedKeyRef.current = nextKey;
+      lastCommittedSnapshotRef.current = cloneHistorySnapshot(nodes, edges);
+      syncHistoryAvailability();
+      return;
+    }
+
+    undoStackRef.current.push(lastCommittedSnapshotRef.current);
+    if (undoStackRef.current.length > HISTORY_LIMIT) {
+      undoStackRef.current.shift();
+    }
+    redoStackRef.current = [];
+    lastCommittedKeyRef.current = nextKey;
+    lastCommittedSnapshotRef.current = cloneHistorySnapshot(nodes, edges);
+    syncHistoryAvailability();
+  }, [edges, nodes, syncHistoryAvailability]);
+
   const updateEdgeAppearance = useCallback(
     (
       edgeId: string,
@@ -987,6 +1253,43 @@ const RoadmapReactFlowPage = () => {
     },
     [setEdges]
   );
+
+  const getCanvasViewportCenter = useCallback(
+    (offset?: { x?: number; y?: number }) => {
+      if (!reactFlowInstance || !flowCanvasRef.current) {
+        return {
+          x: 360 + (offset?.x ?? 0),
+          y: 220 + (offset?.y ?? 0),
+        };
+      }
+
+      const bounds = flowCanvasRef.current.getBoundingClientRect();
+      return reactFlowInstance.screenToFlowPosition({
+        x: bounds.left + bounds.width / 2 + TOOLBAR_CENTER_OFFSET_X + (offset?.x ?? 0),
+        y: bounds.top + bounds.height / 2 + (offset?.y ?? 0),
+      });
+    },
+    [reactFlowInstance]
+  );
+
+  const getNextNodeId = useCallback(
+    (prefix: 'node' | 'text' | 'note') => {
+      let candidate = `${prefix}-${nodeCounterRef.current++}`;
+      while (nodes.some((node) => node.id === candidate)) {
+        candidate = `${prefix}-${nodeCounterRef.current++}`;
+      }
+      return candidate;
+    },
+    [nodes]
+  );
+
+  const getNextEdgeId = useCallback(() => {
+    let candidate = `e-${edgeCounterRef.current++}`;
+    while (edges.some((edge) => edge.id === candidate)) {
+      candidate = `e-${edgeCounterRef.current++}`;
+    }
+    return candidate;
+  }, [edges]);
 
   const onEdgeClick = useCallback(
     (event: ReactMouseEvent, edge: Edge) => {
@@ -1129,7 +1432,7 @@ const RoadmapReactFlowPage = () => {
 
         const nextEdge: Edge = {
           ...createStyledEdge({
-            id: `e-${edgeCounterRef.current++}`,
+            id: getNextEdgeId(),
             source,
             target,
             variant: 'solid',
@@ -1142,15 +1445,13 @@ const RoadmapReactFlowPage = () => {
         return addEdge(nextEdge, currentEdges);
       });
     },
-    [setEdges]
+    [getNextEdgeId, setEdges]
   );
 
   const createNodeAtPosition = useCallback(
     (position: { x: number; y: number }) => {
       const nextNumber = nodeCounterRef.current;
-      nodeCounterRef.current += 1;
-
-      const id = `node-${nextNumber}`;
+      const id = getNextNodeId('node');
       const defaultDraft: RoadmapDraft = {
         phase: `Phase ${String(nextNumber).padStart(2, '0')}`,
         title: `New roadmap step ${nextNumber}`,
@@ -1167,9 +1468,110 @@ const RoadmapReactFlowPage = () => {
 
       setNodes((currentNodes) => [...currentNodes, newNode]);
       setSelectedNodeId(id);
+      setSelectedEdgeId('');
     },
-    [setNodes]
+    [getNextNodeId, setNodes]
   );
+
+  const createFreeTextAtPosition = useCallback(
+    (position: { x: number; y: number }, openEditor = true) => {
+      const id = getNextNodeId('text');
+      const draft: RoadmapDraft = {
+        phase: '',
+        title: 'Nowy tekst',
+        timeline: '',
+        summary: '',
+      };
+
+      const newNode = createFreeTextNode(
+        id,
+        draft.title,
+        { x: Math.round(position.x), y: Math.round(position.y) }
+      );
+
+      setNodes((currentNodes) => [...currentNodes, newNode]);
+      setSelectedNodeId(id);
+      setSelectedEdgeId('');
+
+      if (openEditor) {
+        setEditingNodeId(id);
+        setEditDraft(draft);
+      }
+    },
+    [getNextNodeId, setNodes]
+  );
+
+  const createNoteAtPosition = useCallback(
+    (position: { x: number; y: number }, openEditor = true) => {
+      const id = getNextNodeId('note');
+      const draft: RoadmapDraft = {
+        phase: '',
+        title: 'Nowa notatka',
+        timeline: '',
+        summary: 'Dodaj krótką notatkę do tego miejsca na roadmapie.',
+      };
+
+      const newNode = createNoteNode(
+        id,
+        draft,
+        { x: Math.round(position.x), y: Math.round(position.y) }
+      );
+
+      setNodes((currentNodes) => [...currentNodes, newNode]);
+      setSelectedNodeId(id);
+      setSelectedEdgeId('');
+
+      if (openEditor) {
+        setEditingNodeId(id);
+        setEditDraft(draft);
+      }
+    },
+    [getNextNodeId, setNodes]
+  );
+
+  const restoreHistorySnapshot = useCallback(
+    (snapshot: HistorySnapshot) => {
+      isRestoringHistoryRef.current = true;
+      closeEdgeInspector();
+      setContextTarget(null);
+      setEditingNodeId(null);
+      setSelectedNodeId('');
+      setSelectedEdgeId('');
+      setNodes(snapshot.nodes);
+      setEdges(snapshot.edges);
+    },
+    [closeEdgeInspector, setEdges, setNodes]
+  );
+
+  const onUndo = useCallback(() => {
+    const previousSnapshot = undoStackRef.current.pop();
+    if (!previousSnapshot) return;
+
+    redoStackRef.current.push(cloneHistorySnapshot(nodes, edges));
+    syncHistoryAvailability();
+    restoreHistorySnapshot(previousSnapshot);
+  }, [edges, nodes, restoreHistorySnapshot, syncHistoryAvailability]);
+
+  const onRedo = useCallback(() => {
+    const nextSnapshot = redoStackRef.current.pop();
+    if (!nextSnapshot) return;
+
+    undoStackRef.current.push(cloneHistorySnapshot(nodes, edges));
+    syncHistoryAvailability();
+    restoreHistorySnapshot(nextSnapshot);
+  }, [edges, nodes, restoreHistorySnapshot, syncHistoryAvailability]);
+
+  const addFreeTextFromToolbar = useCallback(() => {
+    closeEdgeInspector();
+    setContextTarget(null);
+    createFreeTextAtPosition(getCanvasViewportCenter({ x: -30, y: -58 }));
+  }, [closeEdgeInspector, createFreeTextAtPosition, getCanvasViewportCenter]);
+
+  const addNoteFromToolbar = useCallback(() => {
+    closeEdgeInspector();
+    setContextTarget(null);
+    createNoteAtPosition(getCanvasViewportCenter({ x: -10, y: 24 }));
+  }, [closeEdgeInspector, createNoteAtPosition, getCanvasViewportCenter]);
 
   const getFlowPositionFromClient = useCallback(
     (clientX: number, clientY: number) => {
@@ -1316,12 +1718,27 @@ const RoadmapReactFlowPage = () => {
 
   const deleteLabel = useMemo(() => {
     if (!contextTarget) return 'Usuń zaznaczony element';
-    if (contextTarget.kind === 'node') return 'Usuń kafelek (node)';
+    if (contextTarget.kind === 'node') {
+      if (contextNode?.type === 'roadmapText') return 'Usuń tekst';
+      if (contextNode?.type === 'roadmapNote') return 'Usuń notatkę';
+      return 'Usuń kafelek';
+    }
     if (contextTarget.kind === 'edge') return 'Usuń połączenie';
-    if (selectedNodeId) return 'Usuń zaznaczony kafelek';
+    if (selectedNodeId) {
+      if (selectedNode?.type === 'roadmapText') return 'Usuń zaznaczony tekst';
+      if (selectedNode?.type === 'roadmapNote') return 'Usuń zaznaczoną notatkę';
+      return 'Usuń zaznaczony kafelek';
+    }
     if (selectedEdgeId) return 'Usuń zaznaczone połączenie';
     return 'Usuń zaznaczony element';
-  }, [contextTarget, selectedEdgeId, selectedNodeId]);
+  }, [contextNode?.type, contextTarget, selectedEdgeId, selectedNode?.type, selectedNodeId]);
+
+  const editLabel =
+    contextNode?.type === 'roadmapText'
+      ? 'Edytuj tekst'
+      : contextNode?.type === 'roadmapNote'
+        ? 'Edytuj notatkę'
+        : 'Edytuj kafelek';
 
   const hasAnySelection = Boolean(selectedNodeId) || Boolean(selectedEdgeId);
 
@@ -1389,13 +1806,33 @@ const RoadmapReactFlowPage = () => {
       event.preventDefault();
       if (!editingNodeId) return;
 
-      const normalized: RoadmapDraft = {
-        phase: editDraft.phase.trim() || 'Custom phase',
-        title: editDraft.title.trim() || 'Untitled node',
-        timeline: editDraft.timeline.trim() || 'Custom timeline',
-        summary: editDraft.summary.trim() || 'Custom roadmap step.',
-      };
-      const nextSize = getTileSizeFromText(normalized);
+      const normalized =
+        editingNodeType === 'roadmapText'
+          ? {
+              phase: '',
+              title: editDraft.title.trim() || 'Nowy tekst',
+              timeline: '',
+              summary: '',
+            }
+          : editingNodeType === 'roadmapNote'
+            ? {
+                phase: '',
+                title: editDraft.title.trim() || 'Nowa notatka',
+                timeline: '',
+                summary: editDraft.summary.trim() || 'Dodaj krótką notatkę do tego miejsca.',
+              }
+            : {
+                phase: editDraft.phase.trim() || 'Custom phase',
+                title: editDraft.title.trim() || 'Untitled node',
+                timeline: editDraft.timeline.trim() || 'Custom timeline',
+                summary: editDraft.summary.trim() || 'Custom roadmap step.',
+              };
+      const nextSize =
+        editingNodeType === 'roadmapText'
+          ? getFreeTextNodeSize(normalized.title)
+          : editingNodeType === 'roadmapNote'
+            ? getNoteNodeSize(normalized)
+            : getTileSizeFromText(normalized);
 
       setNodes((currentNodes) =>
         currentNodes.map((node) => {
@@ -1414,7 +1851,7 @@ const RoadmapReactFlowPage = () => {
 
       setEditingNodeId(null);
     },
-    [editDraft, editingNodeId, setNodes]
+    [editDraft, editingNodeId, editingNodeType, setNodes]
   );
 
   const closeEditDialog = useCallback(() => {
@@ -1431,6 +1868,18 @@ const RoadmapReactFlowPage = () => {
 
   const isDeleteDisabled = !canDeleteFromContext;
   const isEditDisabled = contextTarget?.kind !== 'node';
+  const editDialogTitle =
+    editingNodeType === 'roadmapText'
+      ? 'Edytuj tekst'
+      : editingNodeType === 'roadmapNote'
+        ? 'Edytuj notatkę'
+        : 'Edytuj kafelek';
+  const editDialogDescription =
+    editingNodeType === 'roadmapText'
+      ? 'Wpisz swobodny tekst, który ma działać jako adnotacja na roadmapie.'
+      : editingNodeType === 'roadmapNote'
+        ? 'Uzupełnij nagłówek i treść notatki przypiętej do canvasu.'
+        : 'Prosty edytor treści kafelka. Zmień nazwę, metadane i krótki opis etapu.';
 
   const addNodeLabel = contextTarget?.kind === 'node' ? 'Dodaj kafelek obok noda' : 'Dodaj kafelek';
 
@@ -1456,17 +1905,45 @@ const RoadmapReactFlowPage = () => {
   return (
     <section className="font-grotesk h-screen w-full bg-white text-slate-950">
       <header className="border-b border-slate-200 px-6 py-4">
-        <p className="font-grotesk w-fit rounded-[3px] bg-gray-200 px-2 text-xs font-semibold">
-          Roadmap
-        </p>
-        <h1 className="mt-1 text-2xl font-semibold">Career Path for Gamedeveloper</h1>
+        <motion.div
+          className="flex items-start gap-3"
+          initial={{ opacity: 0, y: -14 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.42, ease: [0.22, 1, 0.36, 1] }}
+        >
+          <motion.div whileHover={{ x: -3 }} transition={{ type: 'spring', stiffness: 320, damping: 22 }}>
+            <Button
+              asChild
+              variant="outline"
+              size="icon"
+              className="mt-0.5 h-11 w-11 rounded-2xl border-slate-200 bg-white text-slate-700 shadow-none transition-colors hover:border-slate-300 hover:bg-slate-50 hover:text-slate-950"
+            >
+              <Link href="/" aria-label="Wróć do strony głównej">
+                <ArrowLeft className="h-5 w-5" />
+              </Link>
+            </Button>
+          </motion.div>
+
+          <motion.div
+            initial={{ opacity: 0, x: 10 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ delay: 0.08, duration: 0.36, ease: [0.22, 1, 0.36, 1] }}
+          >
+            <p className="font-grotesk w-fit rounded-[3px] bg-gray-200 px-2 text-xs font-semibold">
+              Roadmap
+            </p>
+            <h1 className="font-poppins mt-1 text-2xl font-semibold">
+              Career Path for Gamedeveloper
+            </h1>
+          </motion.div>
+        </motion.div>
       </header>
 
-      <div className="h-[calc(100vh-89px)] w-full">
+      <div className="relative h-[calc(100vh-89px)] w-full">
         <ReactFlowProvider>
           <ContextMenu onOpenChange={onContextMenuOpenChange}>
             <ContextMenuTrigger asChild>
-              <div className="h-full w-full">
+              <div ref={flowCanvasRef} className="h-full w-full">
                 <ReactFlow
                   nodeTypes={nodeTypes}
                   edgeTypes={edgeTypes}
@@ -1533,7 +2010,7 @@ const RoadmapReactFlowPage = () => {
                 disabled={isEditDisabled}
                 onSelect={withClose(editNodeFromContextMenu)}
               >
-                Edytuj kafelek
+                {editLabel}
               </ContextMenuItem>
 
               <ContextMenuItem
@@ -1564,6 +2041,83 @@ const RoadmapReactFlowPage = () => {
             </ContextMenuContent>
           </ContextMenu>
         </ReactFlowProvider>
+
+        <motion.aside
+          className="pointer-events-none absolute top-1/2 left-4 z-20 -translate-y-1/2"
+          initial={{ opacity: 0, x: -20 }}
+          animate={{ opacity: 1, x: 0 }}
+          transition={{ delay: 0.18, duration: 0.36, ease: [0.22, 1, 0.36, 1] }}
+        >
+          <div className="pointer-events-auto flex flex-col items-center gap-2 rounded-[22px] border border-slate-200/90 bg-white/92 px-2 py-2 shadow-[0_18px_40px_-26px_rgba(15,23,42,0.32)] backdrop-blur-md">
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <button
+                  type="button"
+                  onClick={addFreeTextFromToolbar}
+                  className="flex h-10 w-10 items-center justify-center rounded-2xl text-slate-700 transition hover:bg-slate-100 hover:text-slate-950"
+                  aria-label="Dodaj wolny tekst"
+                >
+                  <Type className="h-[18px] w-[18px]" />
+                </button>
+              </TooltipTrigger>
+              <TooltipContent side="right" sideOffset={10}>
+                Dodaj wolny tekst
+              </TooltipContent>
+            </Tooltip>
+
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <button
+                  type="button"
+                  onClick={addNoteFromToolbar}
+                  className="flex h-10 w-10 items-center justify-center rounded-2xl text-slate-700 transition hover:bg-slate-100 hover:text-slate-950"
+                  aria-label="Dodaj notatkę"
+                >
+                  <FileText className="h-[18px] w-[18px]" />
+                </button>
+              </TooltipTrigger>
+              <TooltipContent side="right" sideOffset={10}>
+                Dodaj notatkę
+              </TooltipContent>
+            </Tooltip>
+
+            <div className="h-px w-6 bg-slate-200" />
+
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <button
+                  type="button"
+                  onClick={onUndo}
+                  disabled={!canUndo}
+                  className="flex h-10 w-10 items-center justify-center rounded-2xl text-slate-700 transition hover:bg-slate-100 hover:text-slate-950 disabled:cursor-not-allowed disabled:opacity-35 disabled:hover:bg-transparent disabled:hover:text-slate-700"
+                  aria-label="Cofnij"
+                >
+                  <Undo2 className="h-[18px] w-[18px]" />
+                </button>
+              </TooltipTrigger>
+              <TooltipContent side="right" sideOffset={10}>
+                Cofnij
+              </TooltipContent>
+            </Tooltip>
+
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <button
+                  type="button"
+                  onClick={onRedo}
+                  disabled={!canRedo}
+                  className="flex h-10 w-10 items-center justify-center rounded-2xl text-slate-700 transition hover:bg-slate-100 hover:text-slate-950 disabled:cursor-not-allowed disabled:opacity-35 disabled:hover:bg-transparent disabled:hover:text-slate-700"
+                  aria-label="Ponów"
+                >
+                  <Redo2 className="h-[18px] w-[18px]" />
+                </button>
+              </TooltipTrigger>
+              <TooltipContent side="right" sideOffset={10}>
+                Ponów
+              </TooltipContent>
+            </Tooltip>
+          </div>
+        </motion.aside>
       </div>
 
       {edgeInspector && activeInspectorEdge && edgeInspectorPosition && (
@@ -1984,56 +2538,151 @@ const RoadmapReactFlowPage = () => {
           if (!open) closeEditDialog();
         }}
       >
-        <DialogContent className="font-grotesk sm:max-w-lg">
-          <DialogHeader>
-            <DialogTitle>Edytuj kafelek</DialogTitle>
-            <DialogDescription>
-              Zmien dane noda. Otwarcie: podwójne kliknięcie na kafelku.
-            </DialogDescription>
-          </DialogHeader>
+        <DialogContent className="font-poppins flex max-h-[calc(100vh-1rem)] w-[min(680px,calc(100vw-1rem))] max-w-none flex-col gap-0 overflow-hidden border-slate-200 bg-white p-0 shadow-[0_28px_90px_-36px_rgba(15,23,42,0.35)]">
+          <form onSubmit={saveEditedNode} className="flex min-h-0 flex-1 flex-col">
+            <div className="relative min-h-0 flex-1 overflow-y-auto px-5 py-5 sm:px-8 sm:py-7">
+              <DialogHeader className="relative items-start gap-3 pr-10 text-left">
+                <div>
+                  <DialogTitle className="text-2xl font-semibold tracking-tight text-slate-950">
+                    {editDialogTitle}
+                  </DialogTitle>
+                  <DialogDescription className="mt-2 max-w-[44ch] text-sm leading-6 text-slate-600">
+                    {editDialogDescription}
+                  </DialogDescription>
+                </div>
+              </DialogHeader>
 
-          <form onSubmit={saveEditedNode} className="space-y-3">
-            <input
-              value={editDraft.phase}
-              onChange={onEditDraftChange('phase')}
-              className="w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm text-slate-800 outline-none placeholder:text-slate-400 focus:border-sky-500"
-              placeholder="Phase"
-            />
-            <input
-              value={editDraft.title}
-              onChange={onEditDraftChange('title')}
-              className="w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm text-slate-800 outline-none placeholder:text-slate-400 focus:border-sky-500"
-              placeholder="Title"
-              required
-            />
-            <input
-              value={editDraft.timeline}
-              onChange={onEditDraftChange('timeline')}
-              className="w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm text-slate-800 outline-none placeholder:text-slate-400 focus:border-sky-500"
-              placeholder="Timeline"
-            />
-            <textarea
-              value={editDraft.summary}
-              onChange={onEditDraftChange('summary')}
-              className="min-h-24 w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm text-slate-800 outline-none placeholder:text-slate-400 focus:border-sky-500"
-              placeholder="Summary"
-            />
+              <div className="relative mt-6 space-y-5">
+                {editingNodeType === 'roadmapTile' ? (
+                  <>
+                    <div className="grid gap-4 sm:grid-cols-2">
+                      <div className="space-y-2">
+                        <Label htmlFor="roadmap-node-phase" className="text-xs text-black/70">
+                          Faza
+                        </Label>
+                        <Input
+                          id="roadmap-node-phase"
+                          value={editDraft.phase}
+                          onChange={onEditDraftChange('phase')}
+                          className="rounded-xl border border-slate-200 bg-white! text-black! shadow-none focus-visible:border-gray-500 focus-visible:ring-sky-100"
+                          placeholder="Phase 07"
+                        />
+                      </div>
 
-            <DialogFooter>
-              <button
-                type="button"
-                onClick={closeEditDialog}
-                className="rounded-lg border border-slate-300 bg-white px-4 py-2 text-sm font-semibold text-slate-700 transition hover:border-sky-400 hover:text-sky-700"
-              >
-                Anuluj
-              </button>
-              <button
-                type="submit"
-                className="rounded-lg border border-sky-500 bg-sky-600 px-4 py-2 text-sm font-semibold text-white transition hover:bg-sky-700"
-              >
-                Zapisz
-              </button>
-            </DialogFooter>
+                      <div className="space-y-2">
+                        <Label htmlFor="roadmap-node-timeline" className="text-xs text-black/70">
+                          Czas
+                        </Label>
+                        <Input
+                          id="roadmap-node-timeline"
+                          value={editDraft.timeline}
+                          onChange={onEditDraftChange('timeline')}
+                          className="rounded-xl border border-slate-200 bg-white! text-black! shadow-none focus-visible:border-gray-500 focus-visible:ring-sky-100"
+                          placeholder="Weeks 24-28"
+                        />
+                      </div>
+                    </div>
+
+                    <div className="space-y-2">
+                      <Label htmlFor="roadmap-node-title" className="text-xs text-black/70">
+                        Tytuł
+                      </Label>
+                      <Input
+                        id="roadmap-node-title"
+                        value={editDraft.title}
+                        onChange={onEditDraftChange('title')}
+                        className="rounded-xl border border-slate-200 bg-white! text-black! shadow-none focus-visible:border-gray-500 focus-visible:ring-sky-100"
+                        placeholder="Server Side"
+                        autoFocus
+                        required
+                      />
+                    </div>
+
+                    <div className="space-y-2">
+                      <Label htmlFor="roadmap-node-summary" className="text-xs text-black/70">
+                        Opis
+                      </Label>
+                      <Textarea
+                        id="roadmap-node-summary"
+                        value={editDraft.summary}
+                        onChange={onEditDraftChange('summary')}
+                        className="min-h-28 rounded-xl border border-slate-200 bg-white! text-black! shadow-none focus-visible:border-slate-200 focus-visible:ring-0 sm:min-h-32"
+                        placeholder="Opisz co ten fragment powinien pokryć"
+                      />
+                    </div>
+                  </>
+                ) : null}
+
+                {editingNodeType === 'roadmapNote' ? (
+                  <>
+                    <div className="space-y-2">
+                      <Label htmlFor="roadmap-note-title" className="text-xs text-black/70">
+                        Nagłówek notatki
+                      </Label>
+                      <Input
+                        id="roadmap-note-title"
+                        value={editDraft.title}
+                        onChange={onEditDraftChange('title')}
+                        className="rounded-xl border border-slate-200 bg-white! text-black! shadow-none focus-visible:border-gray-500 focus-visible:ring-sky-100"
+                        placeholder="Nowa notatka"
+                        autoFocus
+                        required
+                      />
+                    </div>
+
+                    <div className="space-y-2">
+                      <Label htmlFor="roadmap-note-summary" className="text-xs text-black/70">
+                        Treść
+                      </Label>
+                      <Textarea
+                        id="roadmap-note-summary"
+                        value={editDraft.summary}
+                        onChange={onEditDraftChange('summary')}
+                        className="min-h-32 rounded-xl border border-slate-200 bg-white! text-black! shadow-none focus-visible:border-slate-200 focus-visible:ring-0"
+                        placeholder="Zapisz ważną notatkę do tego miejsca."
+                      />
+                    </div>
+                  </>
+                ) : null}
+
+                {editingNodeType === 'roadmapText' ? (
+                  <div className="space-y-2">
+                    <Label htmlFor="roadmap-free-text" className="text-xs text-black/70">
+                      Treść tekstu
+                    </Label>
+                    <Textarea
+                      id="roadmap-free-text"
+                      value={editDraft.title}
+                      onChange={onEditDraftChange('title')}
+                      className="min-h-40 rounded-xl border border-slate-200 bg-white! text-black! shadow-none focus-visible:border-slate-200 focus-visible:ring-0"
+                      placeholder="Wpisz swobodny tekst..."
+                      autoFocus
+                    />
+                  </div>
+                ) : null}
+              </div>
+            </div>
+
+            <div className="shrink-0 border-t border-slate-200 bg-slate-50/70 px-5 py-4 sm:px-8">
+              <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+                <DialogFooter className="sm:justify-end">
+                  <Button
+                    type="button"
+                    variant="outline"
+                    onClick={closeEditDialog}
+                    className="h-11 rounded-xl border-slate-200 px-5 text-slate-700"
+                  >
+                    Anuluj
+                  </Button>
+                  <Button
+                    type="submit"
+                    className="h-11 rounded-xl bg-slate-950 px-5 text-white hover:bg-slate-800"
+                  >
+                    Zapisz zmiany
+                  </Button>
+                </DialogFooter>
+              </div>
+            </div>
           </form>
         </DialogContent>
       </Dialog>
