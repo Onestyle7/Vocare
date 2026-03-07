@@ -33,19 +33,33 @@ const toneClasses: Record<NodeTone, string> = {
   neutral: 'bg-white',
 };
 
-const handleBase = '!h-3 !w-3 !border-2 !border-[#11162f] !bg-white';
+const handleBase = 'overflow-visible !h-3 !w-3 !border-0 !bg-transparent';
 
-const handleHidden = 'opacity-0 scale-75 pointer-events-none';
+const handleHidden = 'pointer-events-none';
 
-const handleVisible = 'opacity-100 scale-100 pointer-events-auto';
+const handleVisible = 'pointer-events-auto';
 
 const handleAnim = 'transition-all duration-150 ease-out';
 
+const handleIndicatorBase =
+  'absolute block h-3 w-3 rounded-full border-2 border-[#11162f] bg-white';
+
+const handleIndicatorPos = {
+  left: 'right-[calc(100%+12px)] top-1/2 -translate-y-1/2',
+  right: 'left-[calc(100%+8px)] top-1/2 -translate-y-1/2',
+  top: 'bottom-[calc(100%+8px)] left-1/2 -translate-x-1/2',
+  bottom: 'top-[calc(100%+8px)] left-1/2 -translate-x-1/2',
+} as const;
+
+const handleIndicatorHidden = 'opacity-0 scale-75';
+
+const handleIndicatorVisible = 'opacity-100 scale-100';
+
 const handlePos = {
-  left: { left: -7, top: '50%', transform: 'translateY(-50%)' },
-  right: { right: -7, top: '50%', transform: 'translateY(-50%)' },
-  top: { top: -7, left: '50%', transform: 'translateX(-50%)' },
-  bottom: { bottom: -7, left: '50%', transform: 'translateX(-50%)' },
+  left: { left: 0, top: '50%', transform: 'translate(0, -50%)' },
+  right: { right: 0, top: '50%', transform: 'translate(0, -50%)' },
+  top: { top: 0, left: '50%', transform: 'translate(-50%, 0)' },
+  bottom: { bottom: 0, left: '50%', transform: 'translate(-50%, 0)' },
 } as const;
 
 export const RoadmapTileNode: FC<Props> = ({ id, data, selected }) => {
@@ -80,6 +94,10 @@ export const RoadmapTileNode: FC<Props> = ({ id, data, selected }) => {
     shouldShowHandles ? handleVisible : handleHidden
   }`;
 
+  const handleIndicatorClassName = `${handleIndicatorBase} ${handleAnim} ${
+    shouldShowHandles ? handleIndicatorVisible : handleIndicatorHidden
+  }`;
+
   return (
     <div
       className={[
@@ -103,28 +121,36 @@ export const RoadmapTileNode: FC<Props> = ({ id, data, selected }) => {
         position={Position.Left}
         className={handleClassName}
         style={handlePos.left}
-      />
+      >
+        <span aria-hidden className={`${handleIndicatorClassName} ${handleIndicatorPos.left}`} />
+      </Handle>
       <Handle
         id="t-right"
         type="target"
         position={Position.Right}
         className={handleClassName}
         style={handlePos.right}
-      />
+      >
+        <span aria-hidden className={`${handleIndicatorClassName} ${handleIndicatorPos.right}`} />
+      </Handle>
       <Handle
         id="t-top"
         type="target"
         position={Position.Top}
         className={handleClassName}
         style={handlePos.top}
-      />
+      >
+        <span aria-hidden className={`${handleIndicatorClassName} ${handleIndicatorPos.top}`} />
+      </Handle>
       <Handle
         id="t-bottom"
         type="target"
         position={Position.Bottom}
         className={handleClassName}
         style={handlePos.bottom}
-      />
+      >
+        <span aria-hidden className={`${handleIndicatorClassName} ${handleIndicatorPos.bottom}`} />
+      </Handle>
 
       {/* SOURCES (wyjścia) */}
       <Handle
@@ -133,28 +159,36 @@ export const RoadmapTileNode: FC<Props> = ({ id, data, selected }) => {
         position={Position.Left}
         className={handleClassName}
         style={handlePos.left}
-      />
+      >
+        <span aria-hidden className={`${handleIndicatorClassName} ${handleIndicatorPos.left}`} />
+      </Handle>
       <Handle
         id="s-right"
         type="source"
         position={Position.Right}
         className={handleClassName}
         style={handlePos.right}
-      />
+      >
+        <span aria-hidden className={`${handleIndicatorClassName} ${handleIndicatorPos.right}`} />
+      </Handle>
       <Handle
         id="s-top"
         type="source"
         position={Position.Top}
         className={handleClassName}
         style={handlePos.top}
-      />
+      >
+        <span aria-hidden className={`${handleIndicatorClassName} ${handleIndicatorPos.top}`} />
+      </Handle>
       <Handle
         id="s-bottom"
         type="source"
         position={Position.Bottom}
         className={handleClassName}
         style={handlePos.bottom}
-      />
+      >
+        <span aria-hidden className={`${handleIndicatorClassName} ${handleIndicatorPos.bottom}`} />
+      </Handle>
 
       <div className="min-w-0 flex-1 text-center">
         <div className="font-poppins overflow-hidden text-[18px] leading-tight font-semibold text-ellipsis whitespace-nowrap">
