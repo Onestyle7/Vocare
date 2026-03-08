@@ -1,11 +1,7 @@
-using System;
-using System.IO;
 using System.Security.Claims;
-using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.RateLimiting;
-using Microsoft.Extensions.Logging;
 using Stripe;
 using VocareWebAPI.Billing.Models.Dtos;
 using VocareWebAPI.Billing.Models.Enums;
@@ -21,19 +17,16 @@ namespace VocareWebAPI.Controllers
         private readonly IStripeService _stripeService;
         private readonly IBillingService _billingService;
         private readonly ILogger<BillingController> _logger;
-        private readonly IUserBillingRepository _userBillingRepository;
 
         public BillingController(
             IStripeService stripeService,
             IBillingService billingService,
-            ILogger<BillingController> logger,
-            IUserBillingRepository userBillingRepository
+            ILogger<BillingController> logger
         )
         {
             _stripeService = stripeService;
             _billingService = billingService;
             _logger = logger;
-            _userBillingRepository = userBillingRepository;
         }
 
         [HttpPost("create-checkout-session")]
