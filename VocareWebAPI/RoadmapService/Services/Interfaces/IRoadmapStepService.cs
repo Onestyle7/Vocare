@@ -28,8 +28,7 @@ namespace VocareWebAPI.RoadmapService.Services.Interfaces
             StepType? stepType
         );
         Task DeleteStepAsync(Guid stepId, string userId);
-        Task<RoadmapStep> UpdateStepPositionAsync(
-            Guid stepId,
+        Task UpdateStepPositionAsync(
             string userId,
             Dictionary<Guid, (double x, double y)> positions
         );
