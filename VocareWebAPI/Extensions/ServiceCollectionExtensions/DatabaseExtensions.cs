@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
+using Npgsql;
 using VocareWebAPI.Data;
 
 namespace VocareWebAPI.Extensions.ServiceCollectionExtensions
@@ -21,7 +22,12 @@ namespace VocareWebAPI.Extensions.ServiceCollectionExtensions
             {
                 var connectionString = GetConnectionString(configuration);
 
-                options.UseNpgsql(connectionString, o => o.UseVector());
+                var dataSourceBuilder = new NpgsqlDataSourceBuilder(connectionString);
+                dataSourceBuilder.EnableDynamicJson();
+                dataSourceBuilder.UseVector();
+                var dataSource = dataSourceBuilder.Build();
+
+                options.UseNpgsql(dataSource, o => o.UseVector());
             });
 
             return services;

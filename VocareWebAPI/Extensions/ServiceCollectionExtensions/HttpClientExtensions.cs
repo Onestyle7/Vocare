@@ -12,6 +12,8 @@ using VocareWebAPI.MarketNews.Services.Implementations;
 using VocareWebAPI.MarketNews.Services.Interfaces;
 using VocareWebAPI.Models.OpenAIConfig;
 using VocareWebAPI.Repositories.Interfaces;
+using VocareWebAPI.RoadmapService.Services.Implementations;
+using VocareWebAPI.RoadmapService.Services.Interfaces;
 using VocareWebAPI.Services;
 using VocareWebAPI.Services.Implementations;
 using VocareWebAPI.Shared.Services.Implementations;
@@ -78,6 +80,15 @@ namespace VocareWebAPI.Extensions.ServiceCollectionExtensions
                 .AddHttpClient<IEmbeddingService, OpenAIEmbeddingService>(client =>
                 {
                     ConfigureOpenAIClient(client, configuration);
+                })
+                .AddPolicyHandler(retryPolicy);
+
+            // Roadmap services
+            services
+                .AddHttpClient<IRoadmapGeneratorService, RoadmapGeneratorService>(client =>
+                {
+                    ConfigureOpenAIClient(client, configuration);
+                    client.Timeout = TimeSpan.FromMinutes(3);
                 })
                 .AddPolicyHandler(retryPolicy);
 

@@ -823,7 +823,7 @@ namespace VocareWebAPI.Migrations
 
                     b.HasIndex("SwotAnalysisId");
 
-                    b.ToTable("CareerPath", "public");
+                    b.ToTable("CareerPaths", "public");
                 });
 
             modelBuilder.Entity("VocareWebAPI.Models.Entities.MarketAnalysis.CareerStatistics", b =>
@@ -1084,6 +1084,114 @@ namespace VocareWebAPI.Migrations
                     b.HasKey("UserId");
 
                     b.ToTable("UserProfiles", "public");
+                });
+
+            modelBuilder.Entity("VocareWebAPI.RoadmapService.Models.Entities.Roadmap", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid>("CareerPathId")
+                        .HasColumnType("uuid");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<int>("Status")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("TimeHorizonMonths")
+                        .HasColumnType("integer");
+
+                    b.Property<string>("Title")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<DateTime>("UpdatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("UserId")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CareerPathId");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("Roadmaps", "public");
+                });
+
+            modelBuilder.Entity("VocareWebAPI.RoadmapService.Models.Entities.RoadmapPhase", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<int>("OrderIndex")
+                        .HasColumnType("integer");
+
+                    b.Property<Guid>("RoadmapId")
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("Title")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("RoadmapId");
+
+                    b.ToTable("RoadmapPhases", "public");
+                });
+
+            modelBuilder.Entity("VocareWebAPI.RoadmapService.Models.Entities.RoadmapStep", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("Description")
+                        .HasColumnType("text");
+
+                    b.Property<int>("OrderIndex")
+                        .HasColumnType("integer");
+
+                    b.Property<Guid?>("ParentStepId")
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid>("PhaseId")
+                        .HasColumnType("uuid");
+
+                    b.Property<double?>("PositionX")
+                        .HasColumnType("double precision");
+
+                    b.Property<double?>("PositionY")
+                        .HasColumnType("double precision");
+
+                    b.Property<int>("Status")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("StepType")
+                        .HasColumnType("integer");
+
+                    b.Property<string>("Title")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.PrimitiveCollection<List<string>>("Topics")
+                        .IsRequired()
+                        .HasColumnType("jsonb");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ParentStepId");
+
+                    b.HasIndex("PhaseId");
+
+                    b.ToTable("RoadmapSteps", "public");
                 });
 
             modelBuilder.Entity("VocareWebAPI.UserManagement.Models.Entities.CertificateEntry", b =>
@@ -1501,6 +1609,54 @@ namespace VocareWebAPI.Migrations
                     b.Navigation("User");
                 });
 
+            modelBuilder.Entity("VocareWebAPI.RoadmapService.Models.Entities.Roadmap", b =>
+                {
+                    b.HasOne("VocareWebAPI.Models.Entities.CareerPath", "CareerPath")
+                        .WithMany()
+                        .HasForeignKey("CareerPathId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("VocareWebAPI.Models.Entities.User", "User")
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("CareerPath");
+
+                    b.Navigation("User");
+                });
+
+            modelBuilder.Entity("VocareWebAPI.RoadmapService.Models.Entities.RoadmapPhase", b =>
+                {
+                    b.HasOne("VocareWebAPI.RoadmapService.Models.Entities.Roadmap", "Roadmap")
+                        .WithMany("Phases")
+                        .HasForeignKey("RoadmapId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Roadmap");
+                });
+
+            modelBuilder.Entity("VocareWebAPI.RoadmapService.Models.Entities.RoadmapStep", b =>
+                {
+                    b.HasOne("VocareWebAPI.RoadmapService.Models.Entities.RoadmapStep", "ParentStep")
+                        .WithMany("ChildSteps")
+                        .HasForeignKey("ParentStepId")
+                        .OnDelete(DeleteBehavior.Restrict);
+
+                    b.HasOne("VocareWebAPI.RoadmapService.Models.Entities.RoadmapPhase", "Phase")
+                        .WithMany("Steps")
+                        .HasForeignKey("PhaseId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("ParentStep");
+
+                    b.Navigation("Phase");
+                });
+
             modelBuilder.Entity("VocareWebAPI.UserManagement.Models.Entities.CertificateEntry", b =>
                 {
                     b.HasOne("VocareWebAPI.Models.Entities.UserProfile", null)
@@ -1612,6 +1768,21 @@ namespace VocareWebAPI.Migrations
                     b.Navigation("Recommendations");
 
                     b.Navigation("WorkExperience");
+                });
+
+            modelBuilder.Entity("VocareWebAPI.RoadmapService.Models.Entities.Roadmap", b =>
+                {
+                    b.Navigation("Phases");
+                });
+
+            modelBuilder.Entity("VocareWebAPI.RoadmapService.Models.Entities.RoadmapPhase", b =>
+                {
+                    b.Navigation("Steps");
+                });
+
+            modelBuilder.Entity("VocareWebAPI.RoadmapService.Models.Entities.RoadmapStep", b =>
+                {
+                    b.Navigation("ChildSteps");
                 });
 #pragma warning restore 612, 618
         }
