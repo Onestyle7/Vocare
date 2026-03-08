@@ -1,12 +1,8 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Configuration.UserSecrets;
 using VocareWebAPI.Data;
 using VocareWebAPI.RoadmapService.Models.Entities;
 using VocareWebAPI.RoadmapService.Models.Enums;
+using VocareWebAPI.RoadmapService.Services.Interfaces;
 
 namespace VocareWebAPI.RoadmapService.Services.Implementations
 {
