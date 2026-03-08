@@ -5,6 +5,7 @@ import { useState } from 'react';
 import { Handle, Position, useStore } from '@xyflow/react';
 
 type NodeTone = 'main' | 'cream' | 'neutral';
+export type NoteThemeId = 'rose' | 'amber' | 'mint' | 'sky';
 
 type StoreConnection = {
   from?: { nodeId?: string | null } | null;
@@ -19,6 +20,8 @@ export type RoadmapNodeData = {
   tone?: NodeTone;
   width?: number;
   height?: number;
+  noteTheme?: NoteThemeId;
+  noteRotation?: number;
 };
 
 type Props = {

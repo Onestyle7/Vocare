@@ -52,7 +52,10 @@ import { ArrowLeft, FileText, Lock, MoreVertical, Redo2, Type, Undo2 } from 'luc
 import { RoadmapFreeTextNode } from '@/components/roadmap/RoadmapFreeTextNode';
 import { RoadmapNoteNode } from '@/components/roadmap/RoadmapNoteNode';
 import { RoadmapTileNode } from '@/components/roadmap/RoadmapTileNode';
-import type { RoadmapNodeData as TileNodeData } from '@/components/roadmap/RoadmapTileNode';
+import type {
+  NoteThemeId,
+  RoadmapNodeData as TileNodeData,
+} from '@/components/roadmap/RoadmapTileNode';
 import { presetEdges, presetNodes } from '@/roadmap/configs/presets';
 
 type RoadmapStep = {
@@ -148,11 +151,13 @@ const FREE_TEXT_NODE_MIN_WIDTH = 120;
 const FREE_TEXT_NODE_MAX_WIDTH = 420;
 const FREE_TEXT_NODE_MIN_HEIGHT = 48;
 const FREE_TEXT_NODE_MAX_HEIGHT = 220;
-const NOTE_NODE_MIN_WIDTH = 220;
-const NOTE_NODE_MAX_WIDTH = 320;
+const NOTE_NODE_MIN_WIDTH = 240;
+const NOTE_NODE_MAX_WIDTH = 360;
 const NOTE_NODE_MIN_HEIGHT = 120;
 const NOTE_NODE_MAX_HEIGHT = 220;
 const TOOLBAR_CENTER_OFFSET_X = 18;
+const NOTE_THEME_IDS: NoteThemeId[] = ['rose', 'amber', 'mint', 'sky'];
+const NOTE_ROTATIONS = [-3.1, -2.4, -1.8, 1.4, 2.1, 2.7] as const;
 
 let tileMeasureCanvas: HTMLCanvasElement | null = null;
 let freeTextMeasureCanvas: HTMLCanvasElement | null = null;
@@ -767,6 +772,17 @@ const getNoteNodeSize = (draft: Pick<RoadmapDraft, 'title' | 'summary'>) => {
   return { width, height };
 };
 
+const pickRandomDifferent = <T,>(items: readonly T[], previous: T | null) => {
+  if (items.length === 0) {
+    throw new Error('pickRandomDifferent requires at least one item');
+  }
+
+  const availableItems = previous === null ? items : items.filter((item) => item !== previous);
+  const source = availableItems.length > 0 ? availableItems : items;
+
+  return source[Math.floor(Math.random() * source.length)];
+};
+
 const cloneHistorySnapshot = (nodes: RoadmapNode[], edges: Edge[]): HistorySnapshot =>
   structuredClone({
     nodes: nodes.map((node) => ({
@@ -854,7 +870,11 @@ const createFreeTextNode = (
 const createNoteNode = (
   id: string,
   draft: Pick<RoadmapDraft, 'title' | 'summary'>,
-  position: { x: number; y: number }
+  position: { x: number; y: number },
+  options?: {
+    noteTheme?: NoteThemeId;
+    noteRotation?: number;
+  }
 ): RoadmapNode => {
   const size = getNoteNodeSize(draft);
 
@@ -869,6 +889,8 @@ const createNoteNode = (
       tone: 'neutral',
       width: size.width,
       height: size.height,
+      noteTheme: options?.noteTheme,
+      noteRotation: options?.noteRotation,
     },
     position,
     draggable: true,
@@ -1013,6 +1035,8 @@ const RoadmapReactFlowPage = () => {
   const undoStackRef = useRef<HistorySnapshot[]>([]);
   const redoStackRef = useRef<HistorySnapshot[]>([]);
   const isRestoringHistoryRef = useRef(false);
+  const lastNoteThemeRef = useRef<NoteThemeId | null>(null);
+  const lastNoteRotationRef = useRef<number | null>(null);
   const lastCommittedSnapshotRef = useRef<HistorySnapshot>(
     cloneHistorySnapshot(initialGraph.nodes, initialGraph.edges)
   );
@@ -1032,6 +1056,18 @@ const RoadmapReactFlowPage = () => {
     () => (selectedNodeId ? nodes.find((node) => node.id === selectedNodeId) ?? null : null),
     [nodes, selectedNodeId]
   );
+
+  useEffect(() => {
+    if (!editingNodeId) return;
+    if (nodes.some((node) => node.id === editingNodeId)) return;
+    setEditingNodeId(null);
+  }, [editingNodeId, nodes]);
+
+  useEffect(() => {
+    if (!selectedNodeId) return;
+    if (nodes.some((node) => node.id === selectedNodeId)) return;
+    setSelectedNodeId('');
+  }, [nodes, selectedNodeId]);
 
   const activeInspectorEdgeLocked = useMemo(() => {
     if (!activeInspectorEdge) return false;
@@ -1291,6 +1327,19 @@ const RoadmapReactFlowPage = () => {
     return candidate;
   }, [edges]);
 
+  const getNextNoteStyle = useCallback(() => {
+    const noteTheme = pickRandomDifferent(NOTE_THEME_IDS, lastNoteThemeRef.current);
+    const noteRotation = pickRandomDifferent(NOTE_ROTATIONS, lastNoteRotationRef.current);
+
+    lastNoteThemeRef.current = noteTheme;
+    lastNoteRotationRef.current = noteRotation;
+
+    return {
+      noteTheme,
+      noteRotation,
+    };
+  }, []);
+
   const onEdgeClick = useCallback(
     (event: ReactMouseEvent, edge: Edge) => {
       event.preventDefault();
@@ -1510,11 +1559,13 @@ const RoadmapReactFlowPage = () => {
         timeline: '',
         summary: 'Dodaj krótką notatkę do tego miejsca na roadmapie.',
       };
+      const noteStyle = getNextNoteStyle();
 
       const newNode = createNoteNode(
         id,
         draft,
-        { x: Math.round(position.x), y: Math.round(position.y) }
+        { x: Math.round(position.x), y: Math.round(position.y) },
+        noteStyle
       );
 
       setNodes((currentNodes) => [...currentNodes, newNode]);
@@ -1526,7 +1577,7 @@ const RoadmapReactFlowPage = () => {
         setEditDraft(draft);
       }
     },
-    [getNextNodeId, setNodes]
+    [getNextNodeId, getNextNoteStyle, setNodes]
   );
 
   const restoreHistorySnapshot = useCallback(
