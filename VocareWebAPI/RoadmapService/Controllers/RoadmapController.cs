@@ -5,6 +5,7 @@ using System.Security.Claims;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using VocareWebAPI.RoadmapService.Models.Dtos;
+using VocareWebAPI.RoadmapService.Models.Entities;
 using VocareWebAPI.RoadmapService.Models.Enums;
 using VocareWebAPI.RoadmapService.Services.Interfaces;
 
@@ -14,11 +15,11 @@ namespace VocareWebAPI.RoadmapService.Controllers
     [Route("api/[controller]")]
     public class RoadmapController : ControllerBase
     {
-        private readonly IRoadmapService _roadmapService;
+        private readonly ICareerRoadmapService _careerRoadmapService;
 
-        public RoadmapController(IRoadmapService roadmapService)
+        public RoadmapController(ICareerRoadmapService careerRoadmapService)
         {
-            _roadmapService = roadmapService;
+            _careerRoadmapService = careerRoadmapService;
         }
 
         [HttpPost("generate")]
@@ -34,13 +35,18 @@ namespace VocareWebAPI.RoadmapService.Controllers
 
             try
             {
-                var roadmap = await _roadmapService.GenerateRoadmapAsync(
+                var roadmap = await _careerRoadmapService.GenerateRoadmapAsync(
                     userId,
                     request.CareerPathId,
                     request.TimeHorizonMonths
                 );
 
-                return Ok(roadmap);
+                var progress = await _careerRoadmapService.CalculateProgressAsync(
+                    roadmap.Id,
+                    userId
+                );
+
+                return Ok(MapToDto(roadmap, progress));
             }
             catch (InvalidOperationException ex)
             {
@@ -62,12 +68,18 @@ namespace VocareWebAPI.RoadmapService.Controllers
             }
             try
             {
-                var roadmap = await _roadmapService.GetByIdAsync(roadmapId, userId);
+                var roadmap = await _careerRoadmapService.GetByIdAsync(roadmapId, userId);
                 if (roadmap == null)
                 {
                     return NotFound(new { Error = "Nie znaleziono roadmapy." });
                 }
-                return Ok(roadmap);
+
+                var progress = await _careerRoadmapService.CalculateProgressAsync(
+                    roadmap.Id,
+                    userId
+                );
+
+                return Ok(MapToDto(roadmap, progress));
             }
             catch (Exception ex)
             {
@@ -85,8 +97,10 @@ namespace VocareWebAPI.RoadmapService.Controllers
             }
             try
             {
-                var roadmaps = await _roadmapService.GetUserRoadmapsAsync(userId);
-                return Ok(roadmaps);
+                var roadmaps = await _careerRoadmapService.GetUserRoadmapsAsync(userId);
+
+                var dtos = roadmaps.Select(r => MapToListItemDto(r)).ToList();
+                return Ok(dtos);
             }
             catch (Exception ex)
             {
@@ -107,7 +121,7 @@ namespace VocareWebAPI.RoadmapService.Controllers
             }
             try
             {
-                await _roadmapService.UpdateStatusAsync(roadmapId, userId, newStatus);
+                await _careerRoadmapService.UpdateStatusAsync(roadmapId, userId, newStatus);
                 return NoContent();
             }
             catch (InvalidOperationException ex)
@@ -130,7 +144,7 @@ namespace VocareWebAPI.RoadmapService.Controllers
             }
             try
             {
-                await _roadmapService.ArchiveAsync(roadmapId, userId);
+                await _careerRoadmapService.ArchiveAsync(roadmapId, userId);
                 return NoContent();
             }
             catch (InvalidOperationException ex)
@@ -154,7 +168,10 @@ namespace VocareWebAPI.RoadmapService.Controllers
 
             try
             {
-                var progress = await _roadmapService.CalculateProgressAsync(roadmapId, userId);
+                var progress = await _careerRoadmapService.CalculateProgressAsync(
+                    roadmapId,
+                    userId
+                );
                 return Ok(new { Progress = progress });
             }
             catch (InvalidOperationException ex)
@@ -166,5 +183,66 @@ namespace VocareWebAPI.RoadmapService.Controllers
                 return StatusCode(500, new { Error = "Wystąpił nieoczekiwany błąd." });
             }
         }
+
+        #region  Metody pomocnicze - mapowanie encji na DTO
+        private RoadmapResponseDto MapToDto(Roadmap roadmap, double progress)
+        {
+            return new RoadmapResponseDto
+            {
+                Id = roadmap.Id,
+                Title = roadmap.Title,
+                TimeHorizonMonths = roadmap.TimeHorizonMonths,
+                Status = roadmap.Status.ToString(),
+                CreatedAt = roadmap.CreatedAt,
+                UpdatedAt = roadmap.UpdatedAt,
+                CareerPathName = roadmap.CareerPath?.CareerName ?? "",
+                Progress = progress,
+                Phases = roadmap
+                    .Phases.Select(p => new RoadmapPhaseResponseDto
+                    {
+                        Id = p.Id,
+                        Title = p.Title,
+                        OrderIndex = p.OrderIndex,
+                        Steps = p
+                            .Steps.Select(s => new RoadmapStepResponseDto
+                            {
+                                Id = s.Id,
+                                Title = s.Title,
+                                Description = s.Description,
+                                Topics = s.Topics,
+                                StepType = s.StepType.ToString(),
+                                Status = s.Status.ToString(),
+                                OrderIndex = s.OrderIndex,
+                                ParentStepId = s.ParentStepId,
+                                PositionX = s.PositionX,
+                                PositionY = s.PositionY,
+                            })
+                            .ToList(),
+                    })
+                    .ToList(),
+            };
+        }
+
+        private RoadmapListItemDto MapToListItemDto(Roadmap roadmap)
+        {
+            var requiredSteps = roadmap
+                .Phases.SelectMany(p => p.Steps)
+                .Where(s => s.StepType == StepType.Required)
+                .ToList();
+            var total = requiredSteps.Count;
+            var completed = requiredSteps.Count(s => s.Status == StepStatus.Completed);
+
+            return new RoadmapListItemDto
+            {
+                Id = roadmap.Id,
+                Title = roadmap.Title,
+                TimeHorizonMonths = roadmap.TimeHorizonMonths,
+                Status = roadmap.Status.ToString(),
+                CreatedAt = roadmap.CreatedAt,
+                CareerPathName = roadmap.CareerPath?.CareerName ?? "",
+                Progress = 0,
+            };
+        }
+        #endregion
     }
 }

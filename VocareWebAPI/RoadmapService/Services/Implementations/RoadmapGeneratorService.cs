@@ -1,4 +1,5 @@
 using System.Text.Json;
+using Microsoft.Extensions.Options;
 using VocareWebAPI.Models.OpenAIConfig;
 using VocareWebAPI.RoadmapService.Models.Dtos;
 using VocareWebAPI.RoadmapService.Services.Interfaces;
@@ -15,13 +16,17 @@ namespace VocareWebAPI.RoadmapService.Services.Implementations
 
         public RoadmapGeneratorService(
             HttpClient httpClient,
-            OpenAIConfig config,
+            IOptions<OpenAIConfig> config,
             ILogger<RoadmapGeneratorService> logger
         )
         {
             _httpClient = httpClient;
-            _config = config;
+            _config = config.Value;
             _logger = logger;
+
+            _httpClient.Timeout = TimeSpan.FromSeconds(180);
+            _httpClient.DefaultRequestHeaders.Add("Authorization", $"Bearer {_config.ApiKey}");
+            _httpClient.DefaultRequestHeaders.Add("Accept", "application/json");
         }
 
         public async Task<GeneratedRoadmapDto> GenerateAsync(RoadmapGenerationRequest request)

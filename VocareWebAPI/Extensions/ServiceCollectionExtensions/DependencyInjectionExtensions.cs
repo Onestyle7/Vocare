@@ -24,6 +24,10 @@ using VocareWebAPI.MarketNews.Services.Interfaces;
 using VocareWebAPI.Repositories;
 using VocareWebAPI.Repositories.Implementations;
 using VocareWebAPI.Repositories.Interfaces;
+using VocareWebAPI.RoadmapService.Repositories.Implementations;
+using VocareWebAPI.RoadmapService.Repositories.Interfaces;
+using VocareWebAPI.RoadmapService.Services.Implementations;
+using VocareWebAPI.RoadmapService.Services.Interfaces;
 using VocareWebAPI.Services;
 using VocareWebAPI.UserManagement;
 using VocareWebAPI.UserManagement.Interfaces;
@@ -63,6 +67,12 @@ namespace VocareWebAPI.Extensions.ServiceCollectionExtensions
             services.AddScoped<IEmailService, EmailService>();
             services.AddScoped<IMarketNewsService, MarketNewsService>();
 
+            // Roadmap services
+            services.AddScoped<ICareerRoadmapService, CareerRoadmapService>();
+            services.AddScoped<IRoadmapPhaseService, RoadmapPhaseService>();
+            services.AddScoped<IRoadmapStepService, RoadmapStepService>();
+            services.AddScoped<IRoadmapGeneratorService, RoadmapGeneratorService>();
+
             // Jobs services
             services.AddScoped<IJobOfferSyncService, JobOfferSyncService>();
             services.AddScoped<IJobOfferMatchingService, JobOfferMatchingService>();
@@ -98,6 +108,9 @@ namespace VocareWebAPI.Extensions.ServiceCollectionExtensions
             services.AddScoped<IWorkAttributesRepository, WorkAttributesRepository>();
             services.AddScoped<IEntryDifficultyRepository, EntryDifficultyRepository>();
             services.AddScoped<IAiNarratorRepository, AiNarratorRepository>();
+
+            // RoadmapRepositories
+            services.AddScoped<IRoadmapRepository, RoadmapRepository>();
 
             // Cv Repositories
             services.AddScoped<IGeneratedCvRepository, GeneratedCvrepository>();

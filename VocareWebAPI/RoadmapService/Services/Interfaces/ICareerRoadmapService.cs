@@ -3,7 +3,7 @@ using VocareWebAPI.RoadmapService.Models.Enums;
 
 namespace VocareWebAPI.RoadmapService.Services.Interfaces
 {
-    public interface IRoadmapService
+    public interface ICareerRoadmapService
     {
         Task<Roadmap> GenerateRoadmapAsync(string userId, Guid careerPathId, int timeHorizonMonths);
         Task<Roadmap?> GetByIdAsync(Guid roadmapId, string userId);

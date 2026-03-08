@@ -10,17 +10,17 @@ using VocareWebAPI.RoadmapService.Services.Interfaces;
 
 namespace VocareWebAPI.RoadmapService.Services.Implementations
 {
-    public class RoadmapService : IRoadmapService
+    public class CareerRoadmapService : ICareerRoadmapService
     {
         private readonly IRoadmapGeneratorService _roadmapGeneratorService;
         private readonly IRoadmapRepository _roadmapRepository;
-        private readonly ILogger<RoadmapService> _logger;
+        private readonly ILogger<CareerRoadmapService> _logger;
         private readonly AppDbContext _context;
 
-        public RoadmapService(
+        public CareerRoadmapService(
             IRoadmapGeneratorService roadmapGeneratorService,
             IRoadmapRepository roadmapRepository,
-            ILogger<RoadmapService> logger,
+            ILogger<CareerRoadmapService> logger,
             AppDbContext context
         )
         {
