@@ -1,5 +1,7 @@
 using System.Security.Claims;
 using Microsoft.AspNetCore.Mvc;
+using VocareWebAPI.RoadmapService.Models.Dtos;
+using VocareWebAPI.RoadmapService.Models.Entities;
 using VocareWebAPI.RoadmapService.Services.Interfaces;
 
 namespace VocareWebAPI.RoadmapService.Controllers
@@ -31,7 +33,7 @@ namespace VocareWebAPI.RoadmapService.Controllers
                     userId,
                     newName
                 );
-                return Ok(updatedPhase);
+                return Ok(MapPhaseToDto(updatedPhase));
             }
             catch (InvalidOperationException ex)
             {
@@ -66,5 +68,33 @@ namespace VocareWebAPI.RoadmapService.Controllers
                 return StatusCode(500, new { Error = "Wystąpił nieoczekiwany błąd." });
             }
         }
+
+        #region Mapowanie
+        private RoadmapPhaseResponseDto MapPhaseToDto(RoadmapPhase phase)
+        {
+            return new RoadmapPhaseResponseDto
+            {
+                Id = phase.Id,
+                Title = phase.Title,
+                OrderIndex = phase.OrderIndex,
+                Steps =
+                    phase
+                        .Steps?.Select(s => new RoadmapStepResponseDto
+                        {
+                            Id = s.Id,
+                            Title = s.Title,
+                            Description = s.Description,
+                            Topics = s.Topics,
+                            StepType = s.StepType.ToString(),
+                            Status = s.Status.ToString(),
+                            OrderIndex = s.OrderIndex,
+                            ParentStepId = s.ParentStepId,
+                            PositionX = s.PositionX,
+                            PositionY = s.PositionY,
+                        })
+                        .ToList() ?? new List<RoadmapStepResponseDto>(),
+            };
+        }
+        #endregion
     }
 }

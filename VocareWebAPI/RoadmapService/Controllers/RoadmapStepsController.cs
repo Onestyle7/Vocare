@@ -38,7 +38,7 @@ namespace VocareWebAPI.RoadmapService.Controllers
                     userId,
                     newStatus
                 );
-                return Ok(updatedStep);
+                return Ok(MapStepToDto(updatedStep));
             }
             catch (InvalidOperationException ex)
             {
@@ -70,7 +70,7 @@ namespace VocareWebAPI.RoadmapService.Controllers
                     newStep.Topics,
                     newStep.StepType
                 );
-                return Ok(createdStep);
+                return Ok(MapStepToDto(createdStep));
             }
             catch (InvalidOperationException ex)
             {
@@ -104,7 +104,7 @@ namespace VocareWebAPI.RoadmapService.Controllers
                     step.Topics,
                     step.StepType
                 );
-                return Ok(updatedStep);
+                return Ok(MapStepToDto(updatedStep));
             }
             catch (InvalidOperationException ex)
             {
@@ -141,7 +141,7 @@ namespace VocareWebAPI.RoadmapService.Controllers
 
         [HttpPatch("positions")]
         public async Task<IActionResult> UpdateStepPositions(
-            [FromBody] Dictionary<Guid, (double x, double y)> positions
+            [FromBody] UpdatePositionsRequestDto request
         )
         {
             var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
@@ -152,6 +152,8 @@ namespace VocareWebAPI.RoadmapService.Controllers
 
             try
             {
+                var positions = request.Positions.ToDictionary(p => p.StepId, p => (p.X, p.Y));
+
                 await _roadmapStepService.UpdateStepPositionAsync(userId, positions);
                 return NoContent();
             }
@@ -164,5 +166,24 @@ namespace VocareWebAPI.RoadmapService.Controllers
                 return StatusCode(500, new { Error = "Wystąpił nieoczekiwany błąd." });
             }
         }
+
+        #region Mapowanie
+        private RoadmapStepResponseDto MapStepToDto(RoadmapStep step)
+        {
+            return new RoadmapStepResponseDto
+            {
+                Id = step.Id,
+                Title = step.Title,
+                Description = step.Description,
+                Topics = step.Topics,
+                StepType = step.StepType.ToString(),
+                Status = step.Status.ToString(),
+                OrderIndex = step.OrderIndex,
+                ParentStepId = step.ParentStepId,
+                PositionX = step.PositionX,
+                PositionY = step.PositionY,
+            };
+        }
+        #endregion
     }
 }
