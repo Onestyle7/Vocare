@@ -12,7 +12,6 @@ import {
   Controls,
   EdgeLabelRenderer,
   MarkerType,
-  MiniMap,
   ReactFlow,
   ReactFlowProvider,
   getBezierEdgeCenter,
@@ -2018,13 +2017,6 @@ const RoadmapReactFlowPage = () => {
                   proOptions={{ hideAttribution: true }}
                   className="bg-[#e6e7ea]"
                 >
-                  <MiniMap
-                    pannable
-                    zoomable
-                    nodeStrokeWidth={2}
-                    nodeColor={() => '#f3df9f'}
-                    maskColor="rgba(17, 22, 47, 0.18)"
-                  />
                   <Controls position="bottom-right" showInteractive={false} />
                   <Background color="#949cb4" gap={36} size={1.4} />
                 </ReactFlow>
