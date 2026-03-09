@@ -2,8 +2,9 @@
 
 import Link from 'next/link';
 import type { ChangeEvent, FormEvent, MouseEvent as ReactMouseEvent } from 'react';
-import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { useCallback, useEffect, useId, useMemo, useRef, useState } from 'react';
 import dagre from 'dagre';
+import gsap from 'gsap';
 import { motion } from 'motion/react';
 import {
   addEdge,
@@ -77,6 +78,18 @@ type HistorySnapshot = {
   edges: Edge[];
 };
 
+type RoadmapEdgeData = {
+  variant?: EdgeVariant;
+  color?: string;
+  ending?: EdgeEnding;
+  locked?: boolean;
+  labelText?: string;
+  labelColor?: string;
+  labelSize?: number;
+  animateIntro?: boolean;
+  introDelayMs?: number;
+};
+
 type EdgeInspectorState = {
   edgeId: string;
   clientX: number;
@@ -123,6 +136,9 @@ const DEFAULT_EDGE_LABEL_COLOR = '#9f1d2b';
 const DEFAULT_EDGE_LABEL_SIZE = 14;
 const EDGE_LABEL_SIZE_OPTIONS = [12, 14, 16, 18];
 const EDGE_LABEL_COLOR_OPTIONS = ['#111827', '#9f1d2b', '#2563eb', '#059669', '#d97706', '#7c3aed'];
+const EDGE_INTRO_STAGGER_MS = 52;
+const EDGE_INTRO_DURATION_MS = 940;
+const EDGE_INTRO_CLEANUP_BUFFER_MS = 220;
 const HISTORY_LIMIT = 80;
 const FLAT_BEZIER_AXIS_THRESHOLD = 18;
 const OUTWARD_BEZIER_LIFT_RATIO = 0.18;
@@ -348,6 +364,7 @@ const RoadmapConnectionEdge = ({
   markerEnd,
   label,
   labelStyle,
+  data,
 }: EdgeProps<Edge>) => {
   const shouldUseOutwardBezier =
     type === 'bezier' &&
@@ -389,9 +406,189 @@ const RoadmapConnectionEdge = ({
             targetPosition,
           });
 
+  const edgeData = (data ?? {}) as RoadmapEdgeData;
+  const shouldAnimateIntro = edgeData.animateIntro === true;
+  const [isIntroComplete, setIsIntroComplete] = useState(!shouldAnimateIntro);
+  const introPathRef = useRef<SVGPathElement | null>(null);
+  const hasPlayedIntroRef = useRef(false);
+  const introMaskId = useId().replace(/:/g, '-');
+
+  const introDelayMs =
+    typeof edgeData.introDelayMs === 'number' && Number.isFinite(edgeData.introDelayMs)
+      ? Math.max(0, edgeData.introDelayMs)
+      : 0;
+  const introColor =
+    typeof edgeData.color === 'string' && edgeData.color.length > 0
+      ? edgeData.color
+      : typeof style?.stroke === 'string' && style.stroke.length > 0
+        ? style.stroke
+        : SOLID_EDGE_COLOR;
+  const strokeWidthValue = style?.strokeWidth;
+  const introStrokeWidth =
+    (typeof strokeWidthValue === 'number'
+      ? strokeWidthValue
+      : typeof strokeWidthValue === 'string'
+        ? Number.parseFloat(strokeWidthValue)
+        : 3.2) + 0.4;
+  const introRevealStrokeWidth = Math.max(introStrokeWidth + 10, introStrokeWidth * 2.8);
+  const introStrokeLinecap =
+    typeof style?.strokeLinecap === 'string' &&
+    (style.strokeLinecap === 'inherit' ||
+      style.strokeLinecap === 'butt' ||
+      style.strokeLinecap === 'round' ||
+      style.strokeLinecap === 'square')
+      ? style.strokeLinecap
+      : 'round';
+  const isIntroActive = shouldAnimateIntro && !isIntroComplete;
+  const introMaskBounds = {
+    x: Math.min(sourceX, targetX) - 220,
+    y: Math.min(sourceY, targetY) - 220,
+    width: Math.abs(targetX - sourceX) + 440,
+    height: Math.abs(targetY - sourceY) + 440,
+  };
+
+  useEffect(() => {
+    if (!shouldAnimateIntro) {
+      setIsIntroComplete(true);
+      return;
+    }
+
+    if (hasPlayedIntroRef.current) return;
+
+    if (
+      typeof window !== 'undefined' &&
+      window.matchMedia('(prefers-reduced-motion: reduce)').matches
+    ) {
+      hasPlayedIntroRef.current = true;
+      setIsIntroComplete(true);
+      return;
+    }
+    let frameId = 0;
+    let attempts = 0;
+    let timeline: gsap.core.Timeline | null = null;
+
+    const startIntro = () => {
+      const introPath = introPathRef.current;
+
+      if (!introPath || edgePath.includes('NaN')) {
+        attempts += 1;
+        if (attempts <= 24) {
+          frameId = window.requestAnimationFrame(startIntro);
+          return;
+        }
+
+        setIsIntroComplete(true);
+        return;
+      }
+
+      const totalLength = introPath.getTotalLength();
+      if (!Number.isFinite(totalLength) || totalLength <= 0) {
+        attempts += 1;
+        if (attempts <= 24) {
+          frameId = window.requestAnimationFrame(startIntro);
+          return;
+        }
+
+        setIsIntroComplete(true);
+        return;
+      }
+
+      hasPlayedIntroRef.current = true;
+      setIsIntroComplete(false);
+
+      gsap.set(introPath, {
+        strokeDasharray: totalLength,
+        strokeDashoffset: totalLength,
+      });
+      const introDurationSeconds = EDGE_INTRO_DURATION_MS / 1000;
+      timeline = gsap.timeline({
+        delay: introDelayMs / 1000,
+        onComplete: () => {
+          setIsIntroComplete(true);
+        },
+      });
+
+      timeline.to(
+        introPath,
+        {
+          strokeDashoffset: 0,
+          duration: introDurationSeconds,
+          ease: 'power3.out',
+        },
+        0
+      );
+    };
+
+    frameId = window.requestAnimationFrame(startIntro);
+
+    return () => {
+      window.cancelAnimationFrame(frameId);
+      timeline?.kill();
+    };
+  }, [edgePath, introDelayMs, shouldAnimateIntro]);
+
   const labelText = typeof label === 'string' ? label.trim() : '';
+  const edgeStyleDuringIntro = isIntroActive
+    ? {
+        ...style,
+        stroke: 'rgba(17, 22, 47, 0.001)',
+        strokeOpacity: 0.001,
+      }
+    : style;
+
   if (!labelText) {
-    return <BaseEdge id={id} path={edgePath} style={style} markerEnd={markerEnd} />;
+    return (
+      <>
+        <BaseEdge
+          id={id}
+          path={edgePath}
+          style={edgeStyleDuringIntro}
+          markerEnd={isIntroActive ? undefined : markerEnd}
+        />
+        {isIntroActive ? (
+          <>
+            <mask
+              id={introMaskId}
+              maskUnits="userSpaceOnUse"
+              maskContentUnits="userSpaceOnUse"
+              x={introMaskBounds.x}
+              y={introMaskBounds.y}
+              width={introMaskBounds.width}
+              height={introMaskBounds.height}
+            >
+              <rect
+                x={introMaskBounds.x}
+                y={introMaskBounds.y}
+                width={introMaskBounds.width}
+                height={introMaskBounds.height}
+                fill="black"
+              />
+              <path
+                ref={introPathRef}
+                d={edgePath}
+                fill="none"
+                stroke="white"
+                strokeWidth={introRevealStrokeWidth}
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                style={{ pointerEvents: 'none' }}
+              />
+            </mask>
+            <path
+              d={edgePath}
+              fill="none"
+              stroke={introColor}
+              strokeWidth={style?.strokeWidth}
+              strokeDasharray={style?.strokeDasharray}
+              strokeLinecap={introStrokeLinecap}
+              strokeLinejoin="round"
+              style={{ pointerEvents: 'none' }}
+              mask={`url(#${introMaskId})`}
+            />
+          </>
+        ) : null}
+      </>
+    );
   }
 
   const fill = typeof labelStyle?.fill === 'string' ? labelStyle.fill : DEFAULT_EDGE_LABEL_COLOR;
@@ -416,23 +613,71 @@ const RoadmapConnectionEdge = ({
 
   return (
     <>
-      <BaseEdge id={id} path={edgePath} style={style} markerEnd={markerEnd} />
-      <EdgeLabelRenderer>
-        <div
-          className="pointer-events-none absolute select-none"
-          style={{
-            transform: `translate(-50%, -50%) translate(${positionedLabelX}px, ${positionedLabelY}px) rotate(${angle}deg)`,
-            transformOrigin: 'center',
-            color: fill,
-            fontSize,
-            fontWeight,
-            lineHeight: 1,
-            whiteSpace: 'nowrap',
-          }}
-        >
-          {labelText}
-        </div>
-      </EdgeLabelRenderer>
+      <BaseEdge
+        id={id}
+        path={edgePath}
+        style={edgeStyleDuringIntro}
+        markerEnd={isIntroActive ? undefined : markerEnd}
+      />
+      {isIntroActive ? (
+        <>
+          <mask
+            id={introMaskId}
+            maskUnits="userSpaceOnUse"
+            maskContentUnits="userSpaceOnUse"
+            x={introMaskBounds.x}
+            y={introMaskBounds.y}
+            width={introMaskBounds.width}
+            height={introMaskBounds.height}
+          >
+            <rect
+              x={introMaskBounds.x}
+              y={introMaskBounds.y}
+              width={introMaskBounds.width}
+              height={introMaskBounds.height}
+              fill="black"
+            />
+            <path
+              ref={introPathRef}
+              d={edgePath}
+              fill="none"
+              stroke="white"
+              strokeWidth={introRevealStrokeWidth}
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              style={{ pointerEvents: 'none' }}
+            />
+          </mask>
+          <path
+            d={edgePath}
+            fill="none"
+            stroke={introColor}
+            strokeWidth={style?.strokeWidth}
+            strokeDasharray={style?.strokeDasharray}
+            strokeLinecap={introStrokeLinecap}
+            strokeLinejoin="round"
+            style={{ pointerEvents: 'none' }}
+            mask={`url(#${introMaskId})`}
+          />
+        </>
+      ) : (
+        <EdgeLabelRenderer>
+          <div
+            className="pointer-events-none absolute select-none"
+            style={{
+              transform: `translate(-50%, -50%) translate(${positionedLabelX}px, ${positionedLabelY}px) rotate(${angle}deg)`,
+              transformOrigin: 'center',
+              color: fill,
+              fontSize,
+              fontWeight,
+              lineHeight: 1,
+              whiteSpace: 'nowrap',
+            }}
+          >
+            {labelText}
+          </div>
+        </EdgeLabelRenderer>
+      )}
     </>
   );
 };
@@ -665,6 +910,8 @@ const createStyledEdge = ({
   labelText = '',
   labelColor = DEFAULT_EDGE_LABEL_COLOR,
   labelSize = DEFAULT_EDGE_LABEL_SIZE,
+  animateIntro = false,
+  introDelayMs = 0,
 }: {
   id: string;
   source: string;
@@ -677,6 +924,8 @@ const createStyledEdge = ({
   labelText?: string;
   labelColor?: string;
   labelSize?: number;
+  animateIntro?: boolean;
+  introDelayMs?: number;
 }): Edge => ({
   id,
   source,
@@ -693,6 +942,8 @@ const createStyledEdge = ({
     labelText,
     labelColor,
     labelSize,
+    animateIntro,
+    introDelayMs,
   },
   style: getEdgeStyle(variant, color ?? getDefaultEdgeColor(variant)),
   markerEnd: getEdgeMarkerEnd(ending, color ?? getDefaultEdgeColor(variant)),
@@ -803,22 +1054,36 @@ const cloneHistorySnapshot = (nodes: RoadmapNode[], edges: Edge[]): HistorySnaps
 
 const getHistorySnapshotKey = (nodes: RoadmapNode[], edges: Edge[]) =>
   JSON.stringify({
-    nodes: nodes.map(({ selected, dragging, resizing, zIndex, ...node }) => ({
-      ...node,
-      data: node.data,
-      position: {
-        x: Number(node.position.x.toFixed(2)),
-        y: Number(node.position.y.toFixed(2)),
-      },
-    })),
-    edges: edges.map(({ selected, zIndex, ...edge }) => ({
-      ...edge,
-      data: edge.data,
-      style: edge.style,
-      markerEnd: edge.markerEnd,
-      markerStart: edge.markerStart,
-      labelStyle: edge.labelStyle,
-    })),
+    nodes: nodes.map((node) => {
+      const snapshotNode = { ...node };
+      delete snapshotNode.selected;
+      delete snapshotNode.dragging;
+      delete snapshotNode.resizing;
+      delete snapshotNode.zIndex;
+
+      return {
+        ...snapshotNode,
+        data: snapshotNode.data,
+        position: {
+          x: Number(snapshotNode.position.x.toFixed(2)),
+          y: Number(snapshotNode.position.y.toFixed(2)),
+        },
+      };
+    }),
+    edges: edges.map((edge) => {
+      const snapshotEdge = { ...edge };
+      delete snapshotEdge.selected;
+      delete snapshotEdge.zIndex;
+
+      return {
+        ...snapshotEdge,
+        data: snapshotEdge.data,
+        style: snapshotEdge.style,
+        markerEnd: snapshotEdge.markerEnd,
+        markerStart: snapshotEdge.markerStart,
+        labelStyle: snapshotEdge.labelStyle,
+      };
+    }),
   });
 
 const createRoadmapNode = (
@@ -922,7 +1187,7 @@ const createInitialNodes = (): RoadmapNode[] => {
 };
 
 const createInitialEdges = (): Edge[] => {
-  return presetEdges.map((edge) => ({
+  return presetEdges.map((edge, index) => ({
     ...createStyledEdge({
       id: edge.id,
       source: edge.source,
@@ -931,6 +1196,8 @@ const createInitialEdges = (): Edge[] => {
       type: edge.type,
       color: edge.color,
       ending: edge.ending,
+      animateIntro: true,
+      introDelayMs: index * EDGE_INTRO_STAGGER_MS,
     }),
     sourceHandle: edge.sourceHandle,
     targetHandle: edge.targetHandle,
@@ -1046,6 +1313,35 @@ const RoadmapReactFlowPage = () => {
     cloneHistorySnapshot(initialGraph.nodes, initialGraph.edges)
   );
   const lastCommittedKeyRef = useRef(getHistorySnapshotKey(initialGraph.nodes, initialGraph.edges));
+
+  useEffect(() => {
+    const introCleanupDelayMs =
+      Math.max(0, (presetEdges.length - 1) * EDGE_INTRO_STAGGER_MS) +
+      EDGE_INTRO_DURATION_MS +
+      EDGE_INTRO_CLEANUP_BUFFER_MS;
+
+    const timeoutId = window.setTimeout(() => {
+      setEdges((currentEdges) =>
+        currentEdges.map((edge) => {
+          const edgeData = (edge.data ?? {}) as RoadmapEdgeData;
+          if (edgeData.animateIntro !== true && !edgeData.introDelayMs) return edge;
+
+          return {
+            ...edge,
+            data: {
+              ...edgeData,
+              animateIntro: false,
+              introDelayMs: 0,
+            },
+          };
+        })
+      );
+    }, introCleanupDelayMs);
+
+    return () => {
+      window.clearTimeout(timeoutId);
+    };
+  }, [setEdges]);
 
   const activeInspectorEdge = useMemo(() => {
     if (!edgeInspector) return null;
