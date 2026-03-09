@@ -199,8 +199,8 @@ export const RoadmapTileNode: FC<Props> = ({ id, data, selected }) => {
         </div>
 
         {(data.phase || data.timeline) && (
-          <div className="mt-1 flex flex-wrap justify-center gap-x-2 text-[13px] font-semibold text-slate-800/75">
-            {data.phase ? <span className="tracking-[0.14em] uppercase">{data.phase}</span> : null}
+          <div className="font-poppins mt-1 flex flex-wrap justify-center gap-x-2 text-[13px] font-semibold text-slate-800/75">
+            {data.phase ? <span className="uppercase">{data.phase}</span> : null}
             {data.timeline ? <span>{data.timeline}</span> : null}
           </div>
         )}

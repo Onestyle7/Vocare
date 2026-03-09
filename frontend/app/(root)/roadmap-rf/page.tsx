@@ -28,7 +28,6 @@ import {
   ContextMenu,
   ContextMenuContent,
   ContextMenuItem,
-  ContextMenuLabel,
   ContextMenuSeparator,
   ContextMenuTrigger,
 } from '@/components/ui/context-menu';
@@ -40,14 +39,13 @@ import {
   DialogHeader,
   DialogTitle,
 } from '@/components/ui/dialog';
-import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
 import '@xyflow/react/dist/style.css';
-import { ArrowLeft, FileText, Lock, MoreVertical, Redo2, Type, Undo2 } from 'lucide-react';
+import { ArrowLeft, FileText, Lock, MoreVertical, Redo2, Square, Type, Undo2 } from 'lucide-react';
 
 import { RoadmapFreeTextNode } from '@/components/roadmap/RoadmapFreeTextNode';
 import { RoadmapNoteNode } from '@/components/roadmap/RoadmapNoteNode';
@@ -755,8 +753,16 @@ const getFreeTextNodeSize = (text: string) => {
     }
   }
 
-  const width = clamp(Math.ceil(textWidth + 18), FREE_TEXT_NODE_MIN_WIDTH, FREE_TEXT_NODE_MAX_WIDTH);
-  const height = clamp(lines.length * 30 + 18, FREE_TEXT_NODE_MIN_HEIGHT, FREE_TEXT_NODE_MAX_HEIGHT);
+  const width = clamp(
+    Math.ceil(textWidth + 18),
+    FREE_TEXT_NODE_MIN_WIDTH,
+    FREE_TEXT_NODE_MAX_WIDTH
+  );
+  const height = clamp(
+    lines.length * 30 + 18,
+    FREE_TEXT_NODE_MIN_HEIGHT,
+    FREE_TEXT_NODE_MAX_HEIGHT
+  );
 
   return { width, height };
 };
@@ -1048,12 +1054,12 @@ const RoadmapReactFlowPage = () => {
   }, [edgeInspector, edges]);
 
   const editingNode = useMemo(
-    () => (editingNodeId ? nodes.find((node) => node.id === editingNodeId) ?? null : null),
+    () => (editingNodeId ? (nodes.find((node) => node.id === editingNodeId) ?? null) : null),
     [editingNodeId, nodes]
   );
   const editingNodeType: RoadmapNodeType = editingNode?.type ?? 'roadmapTile';
   const selectedNode = useMemo(
-    () => (selectedNodeId ? nodes.find((node) => node.id === selectedNodeId) ?? null : null),
+    () => (selectedNodeId ? (nodes.find((node) => node.id === selectedNodeId) ?? null) : null),
     [nodes, selectedNodeId]
   );
 
@@ -1532,11 +1538,10 @@ const RoadmapReactFlowPage = () => {
         summary: '',
       };
 
-      const newNode = createFreeTextNode(
-        id,
-        draft.title,
-        { x: Math.round(position.x), y: Math.round(position.y) }
-      );
+      const newNode = createFreeTextNode(id, draft.title, {
+        x: Math.round(position.x),
+        y: Math.round(position.y),
+      });
 
       setNodes((currentNodes) => [...currentNodes, newNode]);
       setSelectedNodeId(id);
@@ -1618,6 +1623,17 @@ const RoadmapReactFlowPage = () => {
     createFreeTextAtPosition(getCanvasViewportCenter({ x: -30, y: -58 }));
   }, [closeEdgeInspector, createFreeTextAtPosition, getCanvasViewportCenter]);
 
+  const addNodeFromToolbar = useCallback(() => {
+    closeEdgeInspector();
+    setContextTarget(null);
+    createNodeAtPosition(
+      getCanvasViewportCenter({
+        x: -(NODE_WIDTH / 2),
+        y: -(NODE_HEIGHT / 2),
+      })
+    );
+  }, [closeEdgeInspector, createNodeAtPosition, getCanvasViewportCenter]);
+
   const addNoteFromToolbar = useCallback(() => {
     closeEdgeInspector();
     setContextTarget(null);
@@ -1638,16 +1654,12 @@ const RoadmapReactFlowPage = () => {
 
   const onPaneContextMenu = useCallback(
     (event: ReactMouseEvent | MouseEvent) => {
+      event.preventDefault();
+      event.stopPropagation();
       closeEdgeInspector();
-      const flowPosition = getFlowPositionFromClient(event.clientX, event.clientY);
-      if (!flowPosition) return;
-
-      setContextTarget({
-        kind: 'pane',
-        flowPosition,
-      });
+      setContextTarget(null);
     },
-    [closeEdgeInspector, getFlowPositionFromClient]
+    [closeEdgeInspector]
   );
 
   const onNodeContextMenu = useCallback(
@@ -1710,13 +1722,6 @@ const RoadmapReactFlowPage = () => {
     [setEdges, setNodes]
   );
 
-  const addNodeFromContextMenu = useCallback(() => {
-    if (!contextTarget) return;
-    if (contextTarget.kind === 'edge') return;
-
-    createNodeAtPosition(contextTarget.flowPosition);
-  }, [contextTarget, createNodeAtPosition]);
-
   const deleteFromContextMenu = useCallback(() => {
     if (!contextTarget) return;
 
@@ -1745,27 +1750,8 @@ const RoadmapReactFlowPage = () => {
     (contextTarget?.kind === 'edge' && Boolean(contextTarget.edgeId)) ||
     (contextTarget?.kind === 'pane' && (Boolean(selectedNodeId) || Boolean(selectedEdgeId)));
 
-  const canAddNodeFromContext = contextTarget?.kind === 'pane' || contextTarget?.kind === 'node';
-
-  const contextLabel = useMemo(() => {
-    if (!contextTarget) return 'Canvas menu';
-    if (contextTarget.kind === 'pane') return 'Canvas';
-    if (contextTarget.kind === 'node') return 'Node';
-    return 'Połączenie';
-  }, [contextTarget]);
-
   const contextNode =
     contextTarget?.kind === 'node' ? nodes.find((node) => node.id === contextTarget.nodeId) : null;
-
-  const contextEdge =
-    contextTarget?.kind === 'edge' ? edges.find((edge) => edge.id === contextTarget.edgeId) : null;
-
-  const contextDescription =
-    contextTarget?.kind === 'node'
-      ? (contextNode?.data.title ?? contextTarget.nodeId)
-      : contextTarget?.kind === 'edge'
-        ? `${contextEdge?.source ?? ''} -> ${contextEdge?.target ?? ''}`.trim()
-        : 'Kliknij PPM na canvasie lub elemencie';
 
   const deleteLabel = useMemo(() => {
     if (!contextTarget) return 'Usuń zaznaczony element';
@@ -1932,8 +1918,6 @@ const RoadmapReactFlowPage = () => {
         ? 'Uzupełnij nagłówek i treść notatki przypiętej do canvasu.'
         : 'Prosty edytor treści kafelka. Zmień nazwę, metadane i krótki opis etapu.';
 
-  const addNodeLabel = contextTarget?.kind === 'node' ? 'Dodaj kafelek obok noda' : 'Dodaj kafelek';
-
   const onContextMenuOpenChange = (open: boolean) => {
     if (!open) closeContextMenu();
     if (open) closeEdgeInspector();
@@ -1962,7 +1946,10 @@ const RoadmapReactFlowPage = () => {
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.42, ease: [0.22, 1, 0.36, 1] }}
         >
-          <motion.div whileHover={{ x: -3 }} transition={{ type: 'spring', stiffness: 320, damping: 22 }}>
+          <motion.div
+            whileHover={{ x: -3 }}
+            transition={{ type: 'spring', stiffness: 320, damping: 22 }}
+          >
             <Button
               asChild
               variant="outline"
@@ -2044,52 +2031,42 @@ const RoadmapReactFlowPage = () => {
               </div>
             </ContextMenuTrigger>
 
-            <ContextMenuContent className="font-grotesk w-64">
-              <ContextMenuLabel>{contextLabel}</ContextMenuLabel>
-              <ContextMenuLabel className="text-muted-foreground text-xs font-normal">
-                {contextDescription}
-              </ContextMenuLabel>
-              <ContextMenuSeparator />
-
-              {canAddNodeFromContext && (
-                <ContextMenuItem onSelect={withClose(addNodeFromContextMenu)}>
-                  {addNodeLabel}
+            {contextTarget?.kind && contextTarget.kind !== 'pane' ? (
+              <ContextMenuContent className="font-grotesk w-64">
+                <ContextMenuItem
+                  disabled={isEditDisabled}
+                  onSelect={withClose(editNodeFromContextMenu)}
+                >
+                  {editLabel}
                 </ContextMenuItem>
-              )}
 
-              <ContextMenuItem
-                disabled={isEditDisabled}
-                onSelect={withClose(editNodeFromContextMenu)}
-              >
-                {editLabel}
-              </ContextMenuItem>
+                <ContextMenuItem
+                  disabled={isDeleteDisabled}
+                  variant="destructive"
+                  onSelect={withClose(deleteFromContextMenu)}
+                >
+                  {deleteLabel}
+                </ContextMenuItem>
 
-              <ContextMenuItem
-                disabled={isDeleteDisabled}
-                variant="destructive"
-                onSelect={withClose(deleteFromContextMenu)}
-              >
-                {deleteLabel}
-              </ContextMenuItem>
+                <ContextMenuSeparator />
 
-              <ContextMenuSeparator />
+                <ContextMenuItem onSelect={withClose(onRestorePresetLayout)}>
+                  Odtworz layout z obrazka
+                </ContextMenuItem>
+                <ContextMenuItem onSelect={withClose(onAutoLayout)}>
+                  Auto layout (dagre)
+                </ContextMenuItem>
 
-              <ContextMenuItem onSelect={withClose(onRestorePresetLayout)}>
-                Odtworz layout z obrazka
-              </ContextMenuItem>
-              <ContextMenuItem onSelect={withClose(onAutoLayout)}>
-                Auto layout (dagre)
-              </ContextMenuItem>
+                <ContextMenuSeparator />
 
-              <ContextMenuSeparator />
-
-              <ContextMenuItem
-                disabled={isClearSelectionDisabled}
-                onSelect={withClose(clearSelection)}
-              >
-                Wyczysc zaznaczenie
-              </ContextMenuItem>
-            </ContextMenuContent>
+                <ContextMenuItem
+                  disabled={isClearSelectionDisabled}
+                  onSelect={withClose(clearSelection)}
+                >
+                  Wyczysc zaznaczenie
+                </ContextMenuItem>
+              </ContextMenuContent>
+            ) : null}
           </ContextMenu>
         </ReactFlowProvider>
 
@@ -2100,6 +2077,22 @@ const RoadmapReactFlowPage = () => {
           transition={{ delay: 0.18, duration: 0.36, ease: [0.22, 1, 0.36, 1] }}
         >
           <div className="pointer-events-auto flex flex-col items-center gap-2 rounded-[22px] border border-slate-200/90 bg-white/92 px-2 py-2 shadow-[0_18px_40px_-26px_rgba(15,23,42,0.32)] backdrop-blur-md">
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <button
+                  type="button"
+                  onClick={addNodeFromToolbar}
+                  className="flex h-10 w-10 items-center justify-center rounded-2xl text-slate-700 transition hover:bg-slate-100 hover:text-slate-950"
+                  aria-label="Dodaj kafelek"
+                >
+                  <Square className="h-[18px] w-[18px]" />
+                </button>
+              </TooltipTrigger>
+              <TooltipContent side="right" sideOffset={10}>
+                Dodaj kafelek
+              </TooltipContent>
+            </Tooltip>
+
             <Tooltip>
               <TooltipTrigger asChild>
                 <button
