@@ -2,7 +2,6 @@
 @import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;1,100;1,200;1,300;1,400;1,500;1,600;1,700&display=swap');
 @import url('https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap');
 
-
 @import 'tailwindcss';
 @import 'tw-animate-css';
 
@@ -556,6 +555,37 @@
     100% {
       backgroundposition: 0% 50%;
       transform: rotate(-5deg) scale(0.9);
+    }
+  }
+  --animate-badge-shine: badge-shine 7s ease-out infinite;
+  @keyframes badge-shine {
+    0%,
+    74%,
+    100% {
+      transform: translateX(-180%);
+      opacity: 0;
+    }
+    12% {
+      opacity: 0.12;
+    }
+    18% {
+      opacity: 0.5;
+    }
+    24% {
+      transform: translateX(320%);
+      opacity: 0;
+    }
+  }
+  --animate-shiny-text: shiny-text 8s infinite;
+  @keyframes shiny-text {
+    0%,
+    90%,
+    100% {
+      background-position: calc(-100% - var(--shiny-width)) 0;
+    }
+    30%,
+    60% {
+      background-position: calc(100% + var(--shiny-width)) 0;
     }
   }
 }

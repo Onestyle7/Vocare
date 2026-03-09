@@ -24,6 +24,7 @@ import {
   MapPin,
   Sparkles,
 } from 'lucide-react';
+import { Button } from '../ui/button';
 
 const conePairs = [
   [cone_3, cone_4],
@@ -359,6 +360,7 @@ export default function CareerPathSection({
         <h3 className="text-md ibm-plex-mono-regular mb-2 font-medium text-[#915EFF] sm:text-lg">
           {path.careerName}
         </h3>
+
         <p className="font-grotesk text-gray-500">{path.description}</p>
 
         <div
@@ -396,7 +398,16 @@ export default function CareerPathSection({
             <div className="mt-6 rounded-2xl border border-white/10 bg-white/[0.02] p-4">
               <div className="flex flex-col gap-3 md:flex-row md:items-start md:justify-between">
                 <div className="space-y-1">
-                  <h4 className="font-grotesk text-lg font-semibold">Dopasowane oferty pracy</h4>
+                  <div className="flex w-full items-center justify-center gap-2">
+                    <h4 className="font-grotesk text-lg font-semibold">Dopasowane oferty pracy</h4>
+                    <Badge className="relative isolate overflow-hidden border border-gray-800 bg-transparent text-white hover:bg-transparent">
+                      <span className="relative z-10">Powered by NoFluffJobs</span>
+                      <span
+                        aria-hidden="true"
+                        className="pointer-events-none absolute inset-y-[-120%] left-[-30%] w-10 bg-linear-to-r from-transparent via-white/70 to-transparent opacity-0 blur-md motion-safe:animate-badge-shine motion-reduce:hidden"
+                      />
+                    </Badge>
+                  </div>
                   <p className="font-grotesk text-xs text-gray-500">
                     Scoring: embeddingi, umiejętności, kategoria i seniority
                   </p>
