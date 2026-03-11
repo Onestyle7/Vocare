@@ -77,6 +77,16 @@ namespace VocareWebAPI.RoadmapService.Services.Implementations
                 );
             }
 
+            var ownsCareerPath = await _context.AiRecommendations.AnyAsync(r =>
+                r.UserId == userId && r.CareerPaths.Any(cp => cp.Id == careerPathId)
+            );
+
+            if (!ownsCareerPath)
+            {
+                throw new UnauthorizedAccessException(
+                    "Ta ścieżka kariery nie należy do Twojego profilu."
+                );
+            }
             var careerPath = await _context.CareerPaths.FindAsync(careerPathId);
             var userProfile = await _context.UserProfiles.FindAsync(userId);
 
