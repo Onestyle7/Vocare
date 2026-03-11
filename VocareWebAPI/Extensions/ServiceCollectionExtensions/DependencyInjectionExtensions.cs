@@ -81,7 +81,6 @@ namespace VocareWebAPI.Extensions.ServiceCollectionExtensions
             services.AddScoped<ISkillEmbeddingService, SkillEmbeddingService>();
 
             // Background services
-            services.AddHostedService<JobOfferSyncBackgroundService>();
             services.AddHostedService<MarketNewsBackgroundService>();
 
             return services;
