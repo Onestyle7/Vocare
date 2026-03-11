@@ -318,9 +318,7 @@ export const links_pages = [
   { name: 'BLOG', url: '/blog' },
 ];
 
-export const contact_pages = [
-  { name: 'EMAIL', url: 'mailto:vocarecontact@gmail.com' }
-];
+export const contact_pages = [{ name: 'EMAIL', url: 'mailto:vocarecontact@gmail.com' }];
 
 export const down_links = [
   { name: '2026©', url: '/' },
@@ -441,7 +439,7 @@ export const timeline_icon_4 = '/svg/timeline_icon_4.svg';
 
 // Card Assistant
 
-export const card_assistant_1 = '/images/card-assistant-1.png';
+export const card_assistant_1 = '/images/card-assistant-1.avif';
 
 // construction
 export const construction = '/images/construction.png';
