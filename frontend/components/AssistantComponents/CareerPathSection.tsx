@@ -110,19 +110,19 @@ export default function CareerPathSection({
     {
       title: 'Wymagane umiejętności',
       items: path.requiredSkills,
-      imageSrc: '/images/card-assistant-1.png',
+      imageSrc: '/images/card-assistant-1.avif',
       badgeText: 'Wymagane umiejętności',
     },
     {
       title: 'Zalecane kursy',
       items: path.recommendedCourses,
-      imageSrc: '/images/card-assistant-2.png',
+      imageSrc: '/images/card-assistant-2.avif',
       badgeText: 'Zalecane kursy',
     },
     {
       title: 'Analiza rynku',
       items: path.marketAnalysis,
-      imageSrc: '/images/card-assistant-3.png',
+      imageSrc: '/images/card-assistant-3.avif',
       badgeText: 'Analiza rynku',
     },
   ];
