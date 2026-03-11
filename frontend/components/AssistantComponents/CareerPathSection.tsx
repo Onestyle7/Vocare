@@ -1,5 +1,6 @@
 'use client';
 
+import Link from 'next/link';
 import { useEffect, useState, useRef } from 'react';
 import { gsap } from 'gsap';
 import CollapsibleButton from './CollapsibleButton';
@@ -352,9 +353,20 @@ export default function CareerPathSection({
       </div>
 
       <div className="p-4 max-md:border-t md:w-5/6 md:p-6">
-        <div className="flex flex-row items-center justify-between">
+        <div className="mb-3 flex flex-wrap items-start justify-between gap-3 sm:mb-0">
           <h2 className="font-grotesk mb-1 text-xl">Alternatywna ścieżka</h2>
-          <CollapsibleButton isCollapsed={isCollapsed} toggleCollapse={toggleCollapse} />
+          <div className="relative flex items-center gap-2">
+            <Button
+              asChild
+              variant="ghost"
+              className="hover-shine-fill group h-9 rounded-[14px] border border-white/10 bg-white/[0.02] px-3.5 text-[12px] font-medium text-white/80 shadow-none backdrop-blur-sm transition-[background-color,color] hover:bg-white/[0.05] hover:text-white"
+            >
+              <Link href="/roadmap-rf" className="font-poppins" aria-label="Przejdź do roadmapy">
+                <span>Roadmapa</span>
+              </Link>
+            </Button>
+            <CollapsibleButton isCollapsed={isCollapsed} toggleCollapse={toggleCollapse} />
+          </div>
         </div>
 
         <h3 className="text-md ibm-plex-mono-regular mb-2 font-medium text-[#915EFF] sm:text-lg">
@@ -398,13 +410,13 @@ export default function CareerPathSection({
             <div className="mt-6 rounded-2xl border border-white/10 bg-white/[0.02] p-4">
               <div className="flex flex-col gap-3 md:flex-row md:items-start md:justify-between">
                 <div className="space-y-1">
-                  <div className="flex w-full items-center justify-center gap-2">
+                  <div className="flex w-full flex-col items-start gap-2 sm:flex-row sm:items-center">
                     <h4 className="font-grotesk text-lg font-semibold">Dopasowane oferty pracy</h4>
                     <Badge className="relative isolate overflow-hidden border border-gray-800 bg-transparent text-white hover:bg-transparent">
                       <span className="relative z-10">Powered by NoFluffJobs</span>
                       <span
                         aria-hidden="true"
-                        className="pointer-events-none absolute inset-y-[-120%] left-[-30%] w-10 bg-linear-to-r from-transparent via-white/70 to-transparent opacity-0 blur-md motion-safe:animate-badge-shine motion-reduce:hidden"
+                        className="motion-safe:animate-badge-shine pointer-events-none absolute inset-y-[-120%] left-[-30%] w-10 bg-linear-to-r from-transparent via-white/70 to-transparent opacity-0 blur-md motion-reduce:hidden"
                       />
                     </Badge>
                   </div>

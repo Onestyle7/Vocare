@@ -47,11 +47,13 @@ export default function CollapsibleButton({ isCollapsed, toggleCollapse }: Colla
 
   return (
     <Button
-      variant="outline"
-      className="flex h-9 w-9 items-center justify-center overflow-hidden rounded-md border border-[#915EFF]/50 p-0"
+      type="button"
+      variant="ghost"
+      aria-label={isCollapsed ? 'Rozwiń sekcję' : 'Zwiń sekcję'}
+      className="border-light-sweep flex h-9 w-9 items-center justify-center overflow-hidden rounded-xl border border-white/10 bg-white/[0.02] p-0 text-white/80 shadow-none backdrop-blur-sm transition-[background-color,color,transform] hover:bg-white/[0.05] hover:text-white"
       onClick={toggleCollapse}
     >
-      <div className="relative h-6 w-6">
+      <div className="relative h-5 w-5">
         <div
           ref={arrowDownRef}
           className="absolute inset-0 flex items-center justify-center"
@@ -60,7 +62,7 @@ export default function CollapsibleButton({ isCollapsed, toggleCollapse }: Colla
             transform: isCollapsed ? 'translateY(0)' : 'translateY(20px)',
           }}
         >
-          <ArrowDown size={24} />
+          <ArrowDown size={18} />
         </div>
         <div
           ref={arrowUpRef}
@@ -70,7 +72,7 @@ export default function CollapsibleButton({ isCollapsed, toggleCollapse }: Colla
             transform: isCollapsed ? 'translateY(-20px)' : 'translateY(0)',
           }}
         >
-          <ArrowUp size={24} />
+          <ArrowUp size={18} />
         </div>
       </div>
     </Button>
