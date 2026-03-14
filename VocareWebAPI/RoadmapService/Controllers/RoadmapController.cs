@@ -208,6 +208,7 @@ namespace VocareWebAPI.RoadmapService.Controllers
                             {
                                 Id = s.Id,
                                 Title = s.Title,
+                                SubTitle = s.Subtitle,
                                 Description = s.Description,
                                 Topics = s.Topics,
                                 StepType = s.StepType.ToString(),

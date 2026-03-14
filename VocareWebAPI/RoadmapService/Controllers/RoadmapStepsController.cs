@@ -66,6 +66,7 @@ namespace VocareWebAPI.RoadmapService.Controllers
                     userId,
                     newStep.ParentStepId,
                     newStep.Title,
+                    newStep.Subtitle,
                     newStep.Description,
                     newStep.Topics,
                     newStep.StepType
@@ -100,6 +101,7 @@ namespace VocareWebAPI.RoadmapService.Controllers
                     stepId,
                     userId,
                     step.Title,
+                    step.Subtitle,
                     step.Description,
                     step.Topics,
                     step.StepType
@@ -174,6 +176,7 @@ namespace VocareWebAPI.RoadmapService.Controllers
             {
                 Id = step.Id,
                 Title = step.Title,
+                SubTitle = step.Subtitle,
                 Description = step.Description,
                 Topics = step.Topics,
                 StepType = step.StepType.ToString(),

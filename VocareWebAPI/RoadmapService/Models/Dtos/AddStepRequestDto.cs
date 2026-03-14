@@ -11,6 +11,7 @@ namespace VocareWebAPI.RoadmapService.Models.Dtos
         public Guid PhaseId { get; set; }
         public Guid? ParentStepId { get; set; }
         public string Title { get; set; }
+        public string Subtitle { get; set; }
         public string? Description { get; set; }
         public List<string>? Topics { get; set; }
         public StepType StepType { get; set; }

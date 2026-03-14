@@ -24,6 +24,7 @@ namespace VocareWebAPI.RoadmapService.Models.Entities
 
         // Treść
         public string Title { get; set; } = String.Empty;
+        public string Subtitle { get; set; } = String.Empty;
         public string? Description { get; set; }
         public List<string> Topics { get; set; } = new(); // zagadnienia do zrealizowania
 

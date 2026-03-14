@@ -60,6 +60,7 @@ namespace VocareWebAPI.RoadmapService.Services.Implementations
             string userId,
             Guid? parentStep,
             string title,
+            string subtitle,
             string? description,
             List<string>? Topics,
             StepType stepType
@@ -96,6 +97,7 @@ namespace VocareWebAPI.RoadmapService.Services.Implementations
                 PhaseId = phaseId,
                 ParentStepId = parentStep,
                 Title = title,
+                Subtitle = subtitle,
                 Description = description,
                 Topics = Topics ?? new List<string>(),
                 StepType = stepType,
@@ -111,6 +113,7 @@ namespace VocareWebAPI.RoadmapService.Services.Implementations
             Guid stepId,
             string userId,
             string? title,
+            string? subtitle,
             string? description,
             List<string>? topics,
             StepType? stepType
