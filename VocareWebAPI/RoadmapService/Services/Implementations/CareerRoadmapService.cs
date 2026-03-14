@@ -149,6 +149,7 @@ namespace VocareWebAPI.RoadmapService.Services.Implementations
                         Id = stepId,
                         PhaseId = phase.Id,
                         Title = stepDto.Title,
+                        Subtitle = stepDto.Subtitle,
                         Description = stepDto.Description,
                         Topics = stepDto.Topics ?? new List<string>(),
                         StepType =

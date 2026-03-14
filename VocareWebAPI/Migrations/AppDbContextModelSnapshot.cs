@@ -1183,6 +1183,10 @@ namespace VocareWebAPI.Migrations
                     b.Property<int>("StepType")
                         .HasColumnType("integer");
 
+                    b.Property<string>("Subtitle")
+                        .IsRequired()
+                        .HasColumnType("text");
+
                     b.Property<string>("Title")
                         .IsRequired()
                         .HasColumnType("text");

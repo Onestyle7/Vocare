@@ -9,6 +9,7 @@ namespace VocareWebAPI.RoadmapService.Models.Dtos
     public class UpdateStepRequestDto
     {
         public string? Title { get; set; }
+        public string? Subtitle { get; set; }
         public string? Description { get; set; }
         public List<string>? Topics { get; set; }
         public StepType? StepType { get; set; }
