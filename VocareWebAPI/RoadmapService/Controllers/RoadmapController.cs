@@ -218,6 +218,8 @@ namespace VocareWebAPI.RoadmapService.Controllers
                                 PositionY = s.PositionY,
                             })
                             .ToList(),
+                        StartMonth = p.StartMonth,
+                        EndMonth = p.EndMonth,
                     })
                     .ToList(),
             };

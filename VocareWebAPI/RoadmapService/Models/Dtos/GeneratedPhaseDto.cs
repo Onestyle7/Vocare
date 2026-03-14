@@ -10,5 +10,7 @@ namespace VocareWebAPI.RoadmapService.Models.Dtos
         public string Title { get; set; }
         public int OrderIndex { get; set; }
         public List<GeneratedStepDto> Steps { get; set; }
+        public int StartMonth { get; set; }
+        public int EndMonth { get; set; }
     }
 }

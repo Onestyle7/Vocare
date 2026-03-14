@@ -135,6 +135,8 @@ namespace VocareWebAPI.RoadmapService.Services.Implementations
                     Title = phaseDto.Title,
                     OrderIndex = phaseDto.OrderIndex,
                     Steps = new List<RoadmapStep>(),
+                    StartMonth = phaseDto.StartMonth,
+                    EndMonth = phaseDto.EndMonth,
                 };
 
                 foreach (var stepDto in phaseDto.Steps)

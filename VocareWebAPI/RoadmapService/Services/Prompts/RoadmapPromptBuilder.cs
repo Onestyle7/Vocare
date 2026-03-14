@@ -26,6 +26,7 @@ namespace VocareWebAPI.RoadmapService.Services.Prompts
             8. Oceń realistycznie czy cel jest osiągalny w podanym horyzoncie czasowym. Jeśli nie — ustaw isAchievable na false i wyjaśnij w feasibilityNote.
             9. Topics to konkretne zagadnienia do zrealizowania w ramach kroku — minimum 2, maksimum 5 na krok.
             10. Opisy kroków powinny być konkretne i praktyczne — nie ogólnikowe.
+            11. Każda faza MUSI mieć startMonth i endMonth (int) — numer miesiąca w ramach horyzontu czasowego (zaczynając od 1). Fazy muszą pokrywać cały horyzont bez luk i bez nakładania się. Przykład dla 12 miesięcy: faza 1 (1-3), faza 2 (4-8), faza 3 (9-12).
 
             WYMAGANY FORMAT JSON:
             {
@@ -36,6 +37,8 @@ namespace VocareWebAPI.RoadmapService.Services.Prompts
                 {
                 ""title"": ""string — nazwa fazy"",
                 ""orderIndex"": 0,
+                ""startMonth"": 1,
+                ""endMonth"": 3,
                 ""steps"": [
                     {
                     ""tempId"": ""phase1_step1"",
@@ -91,6 +94,7 @@ namespace VocareWebAPI.RoadmapService.Services.Prompts
             - Maksymalna liczba faz: {maxPhases}
             - Maksymalna liczba kroków na fazę: {maxStepsPerPhase}
             - Granularność planowania: {granularity}
+            - Horyzont czasowy do rozłożenia na fazy: {request.TimeHorizonMonths} miesięcy (startMonth zaczyna się od 1, ostatnia faza musi mieć endMonth = {request.TimeHorizonMonths})
 
             INSTRUKCJE:
             1. Skup się na LUCE KOMPETENCYJNEJ — różnicy między tym co user umie a tym czego wymaga ścieżka.

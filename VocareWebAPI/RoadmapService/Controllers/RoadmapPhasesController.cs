@@ -93,6 +93,8 @@ namespace VocareWebAPI.RoadmapService.Controllers
                             PositionY = s.PositionY,
                         })
                         .ToList() ?? new List<RoadmapStepResponseDto>(),
+                StartMonth = phase.StartMonth,
+                EndMonth = phase.EndMonth,
             };
         }
         #endregion
