@@ -14,5 +14,7 @@ namespace VocareWebAPI.RoadmapService.Models.Entities
         public string Title { get; set; } = String.Empty;
         public int OrderIndex { get; set; } // Określa kolejność fazy w ramach roadmapy
         public List<RoadmapStep> Steps { get; set; } = new();
+        public int StartMonth { get; set; }
+        public int EndMonth { get; set; }
     }
 }

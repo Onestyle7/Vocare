@@ -1130,11 +1130,17 @@ namespace VocareWebAPI.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uuid");
 
+                    b.Property<int>("EndMonth")
+                        .HasColumnType("integer");
+
                     b.Property<int>("OrderIndex")
                         .HasColumnType("integer");
 
                     b.Property<Guid>("RoadmapId")
                         .HasColumnType("uuid");
+
+                    b.Property<int>("StartMonth")
+                        .HasColumnType("integer");
 
                     b.Property<string>("Title")
                         .IsRequired()
