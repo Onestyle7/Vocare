@@ -27,10 +27,11 @@ namespace VocareWebAPI.RoadmapService.Services.Prompts
             9. Topics to konkretne zagadnienia do zrealizowania w ramach kroku — minimum 2, maksimum 5 na krok.
             10. Opisy kroków powinny być konkretne i praktyczne — nie ogólnikowe.
             11. Każda faza MUSI mieć startMonth i endMonth (int) — numer miesiąca w ramach horyzontu czasowego (zaczynając od 1). Fazy muszą pokrywać cały horyzont bez luk i bez nakładania się. Przykład dla 12 miesięcy: faza 1 (1-3), faza 2 (4-8), faza 3 (9-12).
+            12. Tytuł fazy NIE MOŻE zawierać zakresu czasowego (np. ""M1–M4"", ""miesiąc 1-3"") — informacja o czasie jest przekazywana wyłącznie przez pola startMonth i endMonth.
 
             WYMAGANY FORMAT JSON:
             {
-            ""title"": ""string — tytuł roadmapy"",
+            ""title"": ""string — tytuł roadmapy bez zakresu czasowego"",
             ""isAchievable"": true/false,
             ""feasibilityNote"": ""string lub null — wyjaśnienie jeśli cel nieosiągalny w zadanym czasie"",
             ""phases"": [
