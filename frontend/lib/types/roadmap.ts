@@ -44,6 +44,8 @@ export interface RoadmapPhaseDto {
   id: string;
   title: string;
   orderIndex: number;
+  startMonth: number;
+  endMonth: number;
   steps: RoadmapStepDto[];
 }
 

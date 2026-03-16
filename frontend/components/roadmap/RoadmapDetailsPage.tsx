@@ -24,40 +24,20 @@ import { archiveRoadmap, getRoadmapById, updateRoadmapStepPositions } from '@/li
 import type { RoadmapDetailsDto } from '@/lib/types/roadmap';
 import type { PresetEdgeConfig, PresetNodeConfig } from '@/roadmap/configs/presets';
 
-const NODE_WIDTH = 280;
-const NODE_HEIGHT = 80;
-const TILE_TEXT_FONT =
-  '600 15px ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial';
-const TILE_TEXT_HORIZONTAL_MARGIN = 82;
-const TILE_MIN_WIDTH = 120;
-const TILE_MAX_WIDTH = 560;
-const TILE_HEIGHT_SINGLE_LINE = 62;
-const TILE_HEIGHT_WITH_META = 80;
+const NODE_WIDTH = 420;
+const NODE_HEIGHT = 88;
 const PHASE_OFFSET_Y = 140;
-const PHASE_HORIZONTAL_GAP = 56;
-
-let tileMeasureCanvas: HTMLCanvasElement | null = null;
-
-const clamp = (value: number, min: number, max: number) => Math.min(Math.max(value, min), max);
+const PHASE_HORIZONTAL_GAP = 72;
+const DAGRE_NODE_SEP = 120;
+const DAGRE_RANK_SEP = 156;
+const NODE_COLLISION_GAP = 24;
 
 const estimateTileSize = (node: Pick<PresetNodeConfig, 'title' | 'phase' | 'timeline'>) => {
-  const normalizedTitle = node.title.trim() || 'Untitled node';
-  const hasMeta = Boolean(node.phase?.trim() || node.timeline?.trim());
-
-  let textWidth = normalizedTitle.length * 8;
-
-  if (typeof document !== 'undefined') {
-    tileMeasureCanvas ??= document.createElement('canvas');
-    const context = tileMeasureCanvas.getContext('2d');
-    if (context) {
-      context.font = TILE_TEXT_FONT;
-      textWidth = context.measureText(normalizedTitle).width;
-    }
-  }
+  void node;
 
   return {
-    width: clamp(Math.ceil(textWidth + TILE_TEXT_HORIZONTAL_MARGIN), TILE_MIN_WIDTH, TILE_MAX_WIDTH),
-    height: hasMeta ? TILE_HEIGHT_WITH_META : TILE_HEIGHT_SINGLE_LINE,
+    width: NODE_WIDTH,
+    height: NODE_HEIGHT,
   };
 };
 
@@ -69,6 +49,35 @@ const withMeasuredSize = (node: PresetNodeConfig): PresetNodeConfig & { width: n
     width: node.width ?? size.width ?? NODE_WIDTH,
     height: node.height ?? size.height ?? NODE_HEIGHT,
   };
+};
+
+const hasOverlappingNodes = (
+  nodeConfigs: Array<PresetNodeConfig & { width: number; height: number }>
+): boolean => {
+  for (let index = 0; index < nodeConfigs.length; index += 1) {
+    const currentNode = nodeConfigs[index];
+    const currentLeft = currentNode.x - NODE_COLLISION_GAP / 2;
+    const currentTop = currentNode.y - NODE_COLLISION_GAP / 2;
+    const currentRight = currentNode.x + currentNode.width + NODE_COLLISION_GAP / 2;
+    const currentBottom = currentNode.y + currentNode.height + NODE_COLLISION_GAP / 2;
+
+    for (let otherIndex = index + 1; otherIndex < nodeConfigs.length; otherIndex += 1) {
+      const otherNode = nodeConfigs[otherIndex];
+      const otherLeft = otherNode.x - NODE_COLLISION_GAP / 2;
+      const otherTop = otherNode.y - NODE_COLLISION_GAP / 2;
+      const otherRight = otherNode.x + otherNode.width + NODE_COLLISION_GAP / 2;
+      const otherBottom = otherNode.y + otherNode.height + NODE_COLLISION_GAP / 2;
+
+      const overlapsHorizontally = currentLeft < otherRight && currentRight > otherLeft;
+      const overlapsVertically = currentTop < otherBottom && currentBottom > otherTop;
+
+      if (overlapsHorizontally && overlapsVertically) {
+        return true;
+      }
+    }
+  }
+
+  return false;
 };
 
 const positionPhaseNodes = (
@@ -132,7 +141,28 @@ const positionPhaseNodes = (
 
 const formatPhaseBadge = (index: number) => `Phase ${String(index + 1).padStart(2, '0')}`;
 
-const getPhaseTimelineMeta = (phaseIndex: number, totalPhases: number, totalMonths: number) => {
+const getPhaseTimelineMeta = (
+  phase: Pick<RoadmapDetailsDto['phases'][number], 'startMonth' | 'endMonth'>,
+  phaseIndex: number,
+  totalPhases: number,
+  totalMonths: number
+) => {
+  const startMonth = phase.startMonth;
+  const endMonth = phase.endMonth;
+
+  if (
+    Number.isFinite(startMonth) &&
+    Number.isFinite(endMonth) &&
+    startMonth > 0 &&
+    endMonth >= startMonth
+  ) {
+    return {
+      label: startMonth === endMonth ? `M${startMonth}` : `M${startMonth}-${endMonth}`,
+      startMonth,
+      endMonth,
+    };
+  }
+
   if (totalPhases <= 0 || totalMonths <= 0) {
     return {
       label: '',
@@ -141,16 +171,19 @@ const getPhaseTimelineMeta = (phaseIndex: number, totalPhases: number, totalMont
     };
   }
 
-  const startMonth = Math.floor((phaseIndex * totalMonths) / totalPhases) + 1;
-  const endMonth = Math.max(
-    startMonth,
+  const fallbackStartMonth = Math.floor((phaseIndex * totalMonths) / totalPhases) + 1;
+  const fallbackEndMonth = Math.max(
+    fallbackStartMonth,
     Math.ceil(((phaseIndex + 1) * totalMonths) / totalPhases)
   );
 
   return {
-    label: startMonth === endMonth ? `M${startMonth}` : `M${startMonth}-${endMonth}`,
-    startMonth,
-    endMonth,
+    label:
+      fallbackStartMonth === fallbackEndMonth
+        ? `M${fallbackStartMonth}`
+        : `M${fallbackStartMonth}-${fallbackEndMonth}`,
+    startMonth: fallbackStartMonth,
+    endMonth: fallbackEndMonth,
   };
 };
 
@@ -162,8 +195,8 @@ const layoutNodeConfigs = (
   graph.setDefaultEdgeLabel(() => ({}));
   graph.setGraph({
     rankdir: 'TB',
-    nodesep: 72,
-    ranksep: 120,
+    nodesep: DAGRE_NODE_SEP,
+    ranksep: DAGRE_RANK_SEP,
     marginx: 24,
     marginy: 24,
   });
@@ -203,10 +236,28 @@ const layoutNodeConfigs = (
 const applyStoredLayout = (
   nodeConfigs: PresetNodeConfig[],
   edgeConfigs: PresetEdgeConfig[]
-): PresetNodeConfig[] => {
+): Array<PresetNodeConfig & { width: number; height: number }> => {
   const measuredNodes = nodeConfigs.map(withMeasuredSize);
 
   return positionPhaseNodes(measuredNodes, edgeConfigs);
+};
+
+const getInitialLayout = (
+  nodeConfigs: PresetNodeConfig[],
+  edgeConfigs: PresetEdgeConfig[],
+  hasStoredPositions: boolean
+): PresetNodeConfig[] => {
+  if (!hasStoredPositions) {
+    return layoutNodeConfigs(nodeConfigs, edgeConfigs);
+  }
+
+  const storedLayout = applyStoredLayout(nodeConfigs, edgeConfigs);
+
+  if (hasOverlappingNodes(storedLayout)) {
+    return layoutNodeConfigs(nodeConfigs, edgeConfigs);
+  }
+
+  return storedLayout;
 };
 
 const buildCanvasGraph = (
@@ -241,17 +292,19 @@ const buildCanvasGraph = (
     const orderedSteps = [...phase.steps].sort((left, right) => left.orderIndex - right.orderIndex);
     const requiredCount = orderedSteps.filter((step) => step.stepType === 'Required').length;
     const optionalCount = orderedSteps.length - requiredCount;
-    const phaseTimeline = getPhaseTimelineMeta(phaseIndex, phases.length, roadmap.timeHorizonMonths);
+    const phaseTimeline = getPhaseTimelineMeta(
+      phase,
+      phaseIndex,
+      phases.length,
+      roadmap.timeHorizonMonths
+    );
 
     nodeConfigs.push({
       id: `phase-${phase.id}`,
       title: phase.title,
       phase: formatPhaseBadge(phaseIndex),
       timeline: phaseTimeline.label,
-      summary:
-        orderedSteps.length === 0
-          ? 'Ta faza nie ma jeszcze zadnych krokow.'
-          : `${orderedSteps.length} krokow, ${requiredCount} required, ${optionalCount} optional.`,
+      summary: '',
       x: 0,
       y: 0,
       tone: 'main',
@@ -261,6 +314,9 @@ const buildCanvasGraph = (
       timeStartMonth: phaseTimeline.startMonth ?? undefined,
       timeEndMonth: phaseTimeline.endMonth ?? undefined,
       totalMonths: roadmap.timeHorizonMonths,
+      phaseStepCount: orderedSteps.length,
+      phaseRequiredCount: requiredCount,
+      phaseOptionalCount: optionalCount,
     });
 
     orderedSteps.forEach((step) => {
@@ -283,6 +339,7 @@ const buildCanvasGraph = (
         title: step.title,
         phase: formatPhaseBadge(phaseIndex),
         timeline: `${typeLabel} • ${statusLabel}`,
+        description: step.description?.trim() || '',
         summary:
           step.description?.trim() ||
           `Step ${step.orderIndex + 1}.${topicsSummary}${childCount > 0 ? ` ${childCount} follow-up.` : ''}`,
@@ -357,9 +414,7 @@ const buildCanvasGraph = (
   });
 
   return {
-    nodeConfigs: hasStoredPositions
-      ? applyStoredLayout(nodeConfigs, edgeConfigs)
-      : layoutNodeConfigs(nodeConfigs, edgeConfigs),
+    nodeConfigs: getInitialLayout(nodeConfigs, edgeConfigs, hasStoredPositions),
     edgeConfigs,
   };
 };

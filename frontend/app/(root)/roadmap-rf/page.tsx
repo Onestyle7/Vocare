@@ -86,6 +86,7 @@ type RoadmapNodeCreationOptions = {
   tone?: NodeTone;
   width?: number;
   height?: number;
+  description?: RoadmapCanvasNodeData['description'];
   persistenceId?: string;
   nodeKind?: RoadmapCanvasNodeData['nodeKind'];
   phaseTitle?: RoadmapCanvasNodeData['phaseTitle'];
@@ -95,6 +96,9 @@ type RoadmapNodeCreationOptions = {
   totalMonths?: RoadmapCanvasNodeData['totalMonths'];
   stepType?: RoadmapCanvasNodeData['stepType'];
   stepStatus?: RoadmapCanvasNodeData['stepStatus'];
+  phaseStepCount?: RoadmapCanvasNodeData['phaseStepCount'];
+  phaseRequiredCount?: RoadmapCanvasNodeData['phaseRequiredCount'];
+  phaseOptionalCount?: RoadmapCanvasNodeData['phaseOptionalCount'];
 };
 
 type RoadmapNode = Node<RoadmapCanvasNodeData>;
@@ -127,8 +131,10 @@ type ContextTarget =
   | { kind: 'node'; nodeId: string; flowPosition: { x: number; y: number } }
   | { kind: 'edge'; edgeId: string };
 
-const NODE_WIDTH = 280;
-const NODE_HEIGHT = 78;
+const NODE_WIDTH = 420;
+const NODE_HEIGHT = 88;
+const DAGRE_NODE_SEP = 120;
+const DAGRE_RANK_SEP = 156;
 
 const SOLID_EDGE_COLOR = '#2f6fd6';
 const DOTTED_EDGE_COLOR = '#2f6fd6';
@@ -179,13 +185,6 @@ const EDGE_COLOR_SWATCHES: string[][] = [
   ['#c7c1e2', '#8b78dd', '#5f34d6'],
 ];
 const EDGE_INSPECTOR_MARGIN = 16;
-const TILE_TEXT_FONT =
-  '600 15px ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial';
-const TILE_TEXT_HORIZONTAL_MARGIN = 82;
-const TILE_MIN_WIDTH = 120;
-const TILE_MAX_WIDTH = 560;
-const TILE_HEIGHT_SINGLE_LINE = 62;
-const TILE_HEIGHT_WITH_META = 80;
 const FREE_TEXT_NODE_MIN_WIDTH = 120;
 const FREE_TEXT_NODE_MAX_WIDTH = 420;
 const FREE_TEXT_NODE_MIN_HEIGHT = 48;
@@ -198,7 +197,6 @@ const TOOLBAR_CENTER_OFFSET_X = 18;
 const NOTE_THEME_IDS: NoteThemeId[] = ['rose', 'amber', 'mint', 'sky'];
 const NOTE_ROTATIONS = [-3.1, -2.4, -1.8, 1.4, 2.1, 2.7] as const;
 
-let tileMeasureCanvas: HTMLCanvasElement | null = null;
 let freeTextMeasureCanvas: HTMLCanvasElement | null = null;
 
 const clamp = (value: number, min: number, max: number) => Math.min(Math.max(value, min), max);
@@ -983,30 +981,11 @@ const initialDraft: RoadmapDraft = {
 };
 
 const getTileSizeFromText = (step: Pick<RoadmapDraft, 'title' | 'phase' | 'timeline'>) => {
-  const normalizedTitle = step.title.trim() || 'Untitled node';
-  const hasMeta = Boolean(step.phase.trim() || step.timeline.trim());
-
-  let textWidth = normalizedTitle.length * 8;
-
-  if (typeof document !== 'undefined') {
-    tileMeasureCanvas ??= document.createElement('canvas');
-    const context = tileMeasureCanvas.getContext('2d');
-    if (context) {
-      context.font = TILE_TEXT_FONT;
-      textWidth = context.measureText(normalizedTitle).width;
-    }
-  }
-
-  const width = clamp(
-    Math.ceil(textWidth + TILE_TEXT_HORIZONTAL_MARGIN),
-    TILE_MIN_WIDTH,
-    TILE_MAX_WIDTH
-  );
-  const height = hasMeta ? TILE_HEIGHT_WITH_META : TILE_HEIGHT_SINGLE_LINE;
+  void step;
 
   return {
-    width,
-    height,
+    width: NODE_WIDTH,
+    height: NODE_HEIGHT,
   };
 };
 
@@ -1128,6 +1107,7 @@ const createRoadmapNode = (
       title: step.title,
       timeline: step.timeline,
       summary: step.summary,
+      description: options?.description ?? step.summary,
       tone: options?.tone ?? 'cream',
       width: options?.width ?? autoSize.width,
       height: options?.height ?? autoSize.height,
@@ -1140,6 +1120,9 @@ const createRoadmapNode = (
       totalMonths: options?.totalMonths,
       stepType: options?.stepType,
       stepStatus: options?.stepStatus,
+      phaseStepCount: options?.phaseStepCount,
+      phaseRequiredCount: options?.phaseRequiredCount,
+      phaseOptionalCount: options?.phaseOptionalCount,
     },
     position,
     sourcePosition: Position.Right,
@@ -1223,6 +1206,7 @@ const createInitialNodes = (nodeConfigs: PresetNodeConfig[] = presetNodes): Road
         tone: cfg.tone ?? 'cream',
         width: cfg.width ?? autoSize.width,
         height: cfg.height ?? autoSize.height,
+        description: cfg.description,
         persistenceId: cfg.persistenceId,
         nodeKind: cfg.nodeKind ?? 'step',
         phaseTitle: cfg.phaseTitle,
@@ -1232,6 +1216,9 @@ const createInitialNodes = (nodeConfigs: PresetNodeConfig[] = presetNodes): Road
         totalMonths: cfg.totalMonths,
         stepType: cfg.stepType,
         stepStatus: cfg.stepStatus,
+        phaseStepCount: cfg.phaseStepCount,
+        phaseRequiredCount: cfg.phaseRequiredCount,
+        phaseOptionalCount: cfg.phaseOptionalCount,
       }
     );
   });
@@ -1264,8 +1251,8 @@ const layoutWithDagre = (
   graph.setDefaultEdgeLabel(() => ({}));
   graph.setGraph({
     rankdir: direction,
-    nodesep: 62,
-    ranksep: 96,
+    nodesep: DAGRE_NODE_SEP,
+    ranksep: DAGRE_RANK_SEP,
     marginx: 24,
     marginy: 24,
   });

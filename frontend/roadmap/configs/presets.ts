@@ -9,6 +9,7 @@ export type PresetNodeConfig = {
   phase?: string;
   timeline?: string;
   summary?: string;
+  description?: string;
   width?: number;
   height?: number;
   tone?: 'main' | 'cream' | 'neutral';
@@ -20,6 +21,9 @@ export type PresetNodeConfig = {
   totalMonths?: number;
   stepType?: StepType;
   stepStatus?: StepStatus;
+  phaseStepCount?: number;
+  phaseRequiredCount?: number;
+  phaseOptionalCount?: number;
 };
 
 export type PresetEdgeConfig = {

@@ -2,6 +2,7 @@ import { timeline_icon_1 } from '@/app/constants';
 import Image from 'next/image';
 import React from 'react';
 import { HoverCard, HoverCardContent, HoverCardTrigger } from '../ui/hover-card';
+import { cn } from '@/lib/utils';
 
 interface TimelineItem {
   title: string;
@@ -14,6 +15,7 @@ interface TimelineProps {
   items: TimelineItem[];
   className?: string;
   maxDescriptionLength?: number;
+  variant?: 'default' | 'phase-progress';
 }
 
 function truncateWithEllipsis(text: string, max: number): string {
@@ -26,7 +28,36 @@ const Timeline: React.FC<TimelineProps> = ({
   items,
   className = '',
   maxDescriptionLength = 80,
+  variant = 'default',
 }) => {
+  if (variant === 'phase-progress') {
+    return (
+      <section className={cn('my-4 w-full', className)}>
+        <div className="flex flex-wrap items-center gap-2">
+          {items.map((item, index) => {
+            const isFilled = item.status === 'completed' || item.status === 'current';
+
+            return (
+              <React.Fragment key={`${item.title}-${index}`}>
+                <div
+                  title={item.title}
+                  aria-label={item.title}
+                  className={cn(
+                    'h-3.5 w-3.5 shrink-0 rounded-full border-2 transition-colors',
+                    isFilled ? 'border-slate-950 bg-slate-950' : 'border-slate-400 bg-white'
+                  )}
+                />
+                {index < items.length - 1 ? (
+                  <div className="h-px min-w-4 flex-1 bg-slate-200" aria-hidden />
+                ) : null}
+              </React.Fragment>
+            );
+          })}
+        </div>
+      </section>
+    );
+  }
+
   return (
     <section className={`my-4 w-full sm:mx-auto sm:max-w-5xl ${className}`}>
       {/* Desktop Layout - Horizontal */}

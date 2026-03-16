@@ -3,6 +3,7 @@
 import { useEffect, useState, type ReactNode } from 'react';
 import { CalendarRange, CircleDot, Layers3, Sparkles, X } from 'lucide-react';
 
+import Timeline from '@/components/AssistantComponents/Timeline';
 import type { RoadmapNodeData } from '@/components/roadmap/RoadmapTileNode';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
@@ -90,19 +91,33 @@ export function RoadmapNodeDetailsSheet({ data, open, onOpenChange }: Props) {
   }, [data]);
 
   const displayData = data ?? cachedData;
+  const isPhaseNode = displayData?.nodeKind === 'phase';
   const timelineMeta = displayData ? getTimelineMeta(displayData) : null;
-  const phaseTitle =
-    displayData?.nodeKind === 'phase'
-      ? displayData.title
-      : displayData?.phaseTitle?.trim() || displayData?.phase?.trim() || 'Nie przypisano';
-  const phaseLabel =
-    displayData?.phase?.trim() || (displayData?.nodeKind === 'phase' ? 'Phase' : 'Roadmap');
+  const phaseTitle = isPhaseNode
+    ? displayData.title
+    : displayData?.phaseTitle?.trim() || displayData?.phase?.trim() || 'Nie przypisano';
+  const phaseLabel = displayData?.phase?.trim() || (isPhaseNode ? 'Phase' : 'Roadmap');
   const description =
+    displayData?.description?.trim() ||
     displayData?.summary?.trim() ||
-    (displayData?.nodeKind === 'phase'
+    (isPhaseNode
       ? 'Ta faza nie ma jeszcze dodatkowego opisu.'
       : 'Ten krok nie ma jeszcze dodatkowego opisu.');
   const statusLabel = displayData?.stepStatus ? stepStatusLabels[displayData.stepStatus] : null;
+  const phaseStepCount = displayData?.phaseStepCount ?? 0;
+  const phaseRequiredCount = Math.min(displayData?.phaseRequiredCount ?? 0, phaseStepCount);
+  const phaseOptionalCount = Math.max(
+    0,
+    displayData?.phaseOptionalCount ?? phaseStepCount - phaseRequiredCount
+  );
+  const phaseTimelineItems = Array.from({ length: phaseStepCount }, (_, index) => ({
+    title: `Krok ${index + 1}`,
+    description:
+      index < phaseRequiredCount
+        ? `Krok ${index + 1} jest wymagany.`
+        : `Krok ${index + 1} jest opcjonalny.`,
+    status: index < phaseRequiredCount ? ('completed' as const) : ('upcoming' as const),
+  }));
   const visibleMonths = timelineMeta
     ? Array.from({ length: timelineMeta.totalMonths }, (_, index) => index + 1)
     : [];
@@ -161,7 +176,7 @@ export function RoadmapNodeDetailsSheet({ data, open, onOpenChange }: Props) {
                   {displayData.title}
                 </SheetTitle>
                 <SheetDescription className="text-sm leading-6 text-slate-500">
-                  {displayData.nodeKind === 'phase'
+                  {isPhaseNode
                     ? 'Szczegoly fazy roadmapy.'
                     : `Element przypisany do: ${phaseTitle}.`}
                 </SheetDescription>
@@ -178,13 +193,48 @@ export function RoadmapNodeDetailsSheet({ data, open, onOpenChange }: Props) {
                 />
               </div>
 
-              <div className="rounded-[12px] border border-slate-200 bg-white p-5 shadow-[0_24px_60px_-48px_rgba(15,23,42,0.22)]">
-                <div className="flex items-center gap-2 text-slate-500">
-                  <CircleDot className="h-4 w-4" />
-                  <span className="text-[11px] font-semibold uppercase">Opis</span>
+              {isPhaseNode ? (
+                <div className="rounded-[12px] border border-slate-200 bg-white p-5 shadow-[0_24px_60px_-48px_rgba(15,23,42,0.22)]">
+                  <div className="flex items-center gap-2 text-slate-500">
+                    <CircleDot className="h-4 w-4" />
+                    <span className="text-[11px] font-semibold uppercase">Kroki</span>
+                  </div>
+
+                  {phaseStepCount > 0 ? (
+                    <>
+                      <Timeline
+                        items={phaseTimelineItems}
+                        variant="phase-progress"
+                        className="mt-4"
+                      />
+
+                      <div className="mt-4 flex flex-wrap gap-3 text-sm text-slate-600">
+                        <div className="font-medium text-slate-900">{phaseStepCount} kroków</div>
+                        <div className="flex items-center gap-2">
+                          <span className="h-3 w-3 rounded-full border-2 border-slate-950 bg-slate-950" />
+                          <span>{phaseRequiredCount} wymagane</span>
+                        </div>
+                        <div className="flex items-center gap-2">
+                          <span className="h-3 w-3 rounded-full border-2 border-slate-400 bg-white" />
+                          <span>{phaseOptionalCount} opcjonalny</span>
+                        </div>
+                      </div>
+                    </>
+                  ) : (
+                    <p className="mt-4 text-[15px] leading-7 text-slate-700">
+                      Ta faza nie ma jeszcze zadnych krokow.
+                    </p>
+                  )}
                 </div>
-                <p className="mt-4 text-[15px] leading-7 text-slate-700">{description}</p>
-              </div>
+              ) : (
+                <div className="rounded-[12px] border border-slate-200 bg-white p-5 shadow-[0_24px_60px_-48px_rgba(15,23,42,0.22)]">
+                  <div className="flex items-center gap-2 text-slate-500">
+                    <CircleDot className="h-4 w-4" />
+                    <span className="text-[11px] font-semibold uppercase">Opis</span>
+                  </div>
+                  <p className="mt-4 text-[15px] leading-7 text-slate-700">{description}</p>
+                </div>
+              )}
 
               <div className="rounded-[28px] border border-slate-200 bg-slate-50/80 p-5">
                 <div className="flex items-start justify-between gap-4">
@@ -192,7 +242,7 @@ export function RoadmapNodeDetailsSheet({ data, open, onOpenChange }: Props) {
                     <div className="flex items-center gap-2 text-slate-500">
                       <Sparkles className="h-4 w-4" />
                       <span className="text-[11px] font-semibold tracking-[0.22em] uppercase">
-                        Mock timeline
+                        Timeline
                       </span>
                     </div>
                     <p className="mt-3 text-lg font-semibold text-slate-950">
@@ -203,13 +253,12 @@ export function RoadmapNodeDetailsSheet({ data, open, onOpenChange }: Props) {
                     variant="outline"
                     className="rounded-full border-slate-200 bg-white px-3 py-1 text-[11px] tracking-[0.14em] text-slate-500 uppercase"
                   >
-                    Roadmap span
+                    Zakres fazy
                   </Badge>
                 </div>
 
                 <p className="mt-3 text-sm leading-6 text-slate-500">
-                  Na ten moment zakres jest mockowany w perspektywie calej roadmapy i bazuje na
-                  aktualnym przedziale fazy.
+                  Zakres miesiecy pochodzi bezposrednio z danych roadmapy zwroconych przez API.
                 </p>
 
                 {timelineMeta ? (
@@ -249,16 +298,6 @@ export function RoadmapNodeDetailsSheet({ data, open, onOpenChange }: Props) {
               </div>
 
               <Separator className="bg-slate-200" />
-
-              <div className="space-y-2 pb-4">
-                <p className="text-[11px] font-semibold tracking-[0.22em] text-slate-500 uppercase">
-                  Podglad
-                </p>
-                <p className="text-sm leading-6 text-slate-500">
-                  Drawer korzysta z aktualnych danych roadmapy. Timeline jest tymczasowo mockowany,
-                  dopoki fazy nie dostana osobnych pol czasu w API.
-                </p>
-              </div>
             </div>
           </div>
         </SheetContent>

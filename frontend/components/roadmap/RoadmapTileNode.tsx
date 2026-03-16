@@ -19,6 +19,7 @@ export type RoadmapNodeData = {
   title: string;
   timeline: string;
   summary: string;
+  description?: string;
   tone?: NodeTone;
   width?: number;
   height?: number;
@@ -32,6 +33,9 @@ export type RoadmapNodeData = {
   totalMonths?: number;
   stepType?: StepType;
   stepStatus?: StepStatus;
+  phaseStepCount?: number;
+  phaseRequiredCount?: number;
+  phaseOptionalCount?: number;
 };
 
 type Props = {
@@ -204,16 +208,9 @@ export const RoadmapTileNode: FC<Props> = ({ id, data, selected }) => {
       </Handle>
 
       <div className="min-w-0 flex-1 text-center">
-        <div className="font-poppins overflow-hidden text-[18px] leading-tight font-semibold text-ellipsis whitespace-nowrap">
+        <div className="font-poppins overflow-hidden text-[18px] leading-[1.25] font-semibold [display:-webkit-box] [-webkit-box-orient:vertical] [-webkit-line-clamp:2]">
           {data.title}
         </div>
-
-        {(data.phase || data.timeline) && (
-          <div className="font-poppins mt-1 flex flex-wrap justify-center gap-x-2 text-[13px] font-semibold text-slate-800/75">
-            {data.phase ? <span className="uppercase">{data.phase}</span> : null}
-            {data.timeline ? <span>{data.timeline}</span> : null}
-          </div>
-        )}
       </div>
     </div>
   );
