@@ -11,6 +11,7 @@ import { gsap } from 'gsap';
 import { TokenCounter } from '../PricingComponents/TokenCounter';
 import Image from 'next/image';
 import { Badge } from '../ui/badge';
+import { useIsMobile } from '@/lib/hooks/useIsMobile';
 
 interface MobileNavProps {
   isAuthenticated: boolean;
@@ -18,10 +19,15 @@ interface MobileNavProps {
 
 const MobileNav: React.FC<MobileNavProps> = ({ isAuthenticated }) => {
   const pathname = usePathname();
+  const isMobile = useIsMobile('(max-width: 767px)');
   const line1Ref = useRef(null);
   const line2Ref = useRef(null);
   const line3Ref = useRef(null);
   const [isOpen, setIsOpen] = React.useState(false);
+
+  useEffect(() => {
+    if (!isMobile) setIsOpen(false);
+  }, [isMobile]);
 
   useEffect(() => {
     if (isOpen) {
@@ -121,8 +127,13 @@ const MobileNav: React.FC<MobileNavProps> = ({ isAuthenticated }) => {
               </li>
             );
           })}
-          {!isAuthenticated && (
-            <SheetClose asChild>
+          <SheetClose>
+            {!pathname.includes('blog') && (
+              <Link href="/blog">
+                <p className="text-[18px] font-normal uppercase">Blog</p>
+              </Link>
+            )}
+            {!isAuthenticated && (
               <>
                 <Link href="/pricing">
                   <p className="text-[18px] font-normal uppercase">Pricing</p>
@@ -131,8 +142,8 @@ const MobileNav: React.FC<MobileNavProps> = ({ isAuthenticated }) => {
                   Sign In
                 </Link>
               </>
-            </SheetClose>
-          )}
+            )}
+          </SheetClose>
           {isAuthenticated && <TokenCounter />}
           {/* <ThemeSwitch /> */}
         </ul>

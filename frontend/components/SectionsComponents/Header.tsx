@@ -231,6 +231,9 @@ const Header = () => {
             )}
 
             <div className="flex items-center space-x-4">
+              <Link href="/blog">
+                <p className="text-[18px] font-normal uppercase">Blog</p>
+              </Link>
               {isAuthenticated && <TokenCounter />}
 
               {!isAuthenticated && (
