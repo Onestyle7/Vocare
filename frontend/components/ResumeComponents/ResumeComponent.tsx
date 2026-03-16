@@ -28,6 +28,7 @@ import {
   Italic,
   Underline,
   Home,
+  Link2,
 } from 'lucide-react';
 import { createCv, deleteCv, updateCv } from '@/lib/api/cv';
 import { CvDto, CvDetailsDto, UpdateCvDto } from '@/lib/types/cv';
@@ -50,6 +51,7 @@ interface PersonalInfo {
   phone: string;
   address: string;
   country: string;
+  github: string;
   profession: string;
   summary: string;
 }
@@ -97,6 +99,13 @@ interface Certificate {
   name: string;
   date: string;
   hasDate: boolean;
+}
+
+interface ResumeLink {
+  id: string;
+  name: string;
+  url: string;
+  description: string;
 }
 
 interface PrivacyStatement {
@@ -206,22 +215,110 @@ const ensureCertificateDefaults = (cert: Partial<Certificate>): Certificate => (
   hasDate: cert.hasDate ?? Boolean(cert.date),
 });
 
+const makeLinkId = () => `${Date.now()}-${Math.random().toString(36).slice(2, 8)}-link`;
+
+const ensureLinkDefaults = (link: Partial<ResumeLink>): ResumeLink => ({
+  id: typeof link.id === 'string' && link.id.length > 0 ? link.id : makeLinkId(),
+  name: link.name ?? '',
+  url: link.url ?? '',
+  description: link.description ?? '',
+});
+
+const DEFAULT_SECTION_ORDER = [
+  'profile',
+  'links',
+  'experience',
+  'education',
+  'certificates',
+  'skills',
+  'languages',
+  'hobbies',
+  'privacy',
+] as const;
+
+const normalizeSectionOrder = (value: unknown): string[] => {
+  if (!Array.isArray(value)) {
+    return [...DEFAULT_SECTION_ORDER];
+  }
+
+  const validSectionIds = new Set<string>(DEFAULT_SECTION_ORDER);
+  const savedOrder: string[] = [];
+
+  value.forEach((item) => {
+    if (typeof item !== 'string' || !validSectionIds.has(item) || savedOrder.includes(item)) {
+      return;
+    }
+    savedOrder.push(item);
+  });
+
+  if (savedOrder.length === 0) {
+    return [...DEFAULT_SECTION_ORDER];
+  }
+
+  const mergedOrder = [...savedOrder];
+
+  DEFAULT_SECTION_ORDER.forEach((sectionId, index) => {
+    if (mergedOrder.includes(sectionId)) {
+      return;
+    }
+
+    const nextKnownSection = DEFAULT_SECTION_ORDER.slice(index + 1).find((candidate) =>
+      mergedOrder.includes(candidate)
+    );
+
+    if (!nextKnownSection) {
+      mergedOrder.push(sectionId);
+      return;
+    }
+
+    mergedOrder.splice(mergedOrder.indexOf(nextKnownSection), 0, sectionId);
+  });
+
+  return mergedOrder;
+};
+
+const normalizeExternalUrl = (value: string) => {
+  const trimmed = value.trim();
+  if (!trimmed) return '';
+  if (/^(https?:\/\/|mailto:|tel:)/i.test(trimmed)) {
+    return trimmed;
+  }
+  return `https://${trimmed}`;
+};
+
+const isGithubLink = (link?: Partial<ResumeLink> | null) => {
+  if (!link) return false;
+  const name = link.name?.trim().toLowerCase() || '';
+  const url = link.url?.trim().toLowerCase() || '';
+  return name === 'github' || url.includes('github.com');
+};
+
+const ensurePersonalInfoDefaults = (value?: Partial<PersonalInfo> | null): PersonalInfo => ({
+  firstName: value?.firstName ?? '',
+  lastName: value?.lastName ?? '',
+  email: value?.email ?? '',
+  phone: value?.phone ?? '',
+  address: value?.address ?? '',
+  country: value?.country ?? '',
+  github: value?.github ?? '',
+  profession: value?.profession ?? '',
+  summary: value?.summary ?? '',
+});
+
 const CVCreator: React.FC<CVCreatorProps> = ({ initialCv }) => {
   const router = useRouter();
   const [personalInfo, setPersonalInfo] = useState<PersonalInfo>(() => {
     const saved = localStorage.getItem('personalInfo');
-    return saved
-      ? JSON.parse(saved)
-      : {
-          firstName: '',
-          lastName: '',
-          email: '',
-          phone: '',
-          address: '',
-          country: '',
-          profession: '',
-          summary: '',
-        };
+    if (!saved) {
+      return ensurePersonalInfoDefaults();
+    }
+
+    try {
+      return ensurePersonalInfoDefaults(JSON.parse(saved));
+    } catch (err) {
+      console.warn('Failed to parse stored personal info', err);
+      return ensurePersonalInfoDefaults();
+    }
   });
 
   const [skipAutosaveOnce, setSkipAutosaveOnce] = useState(false);
@@ -302,6 +399,18 @@ const CVCreator: React.FC<CVCreatorProps> = ({ initialCv }) => {
       return [];
     }
   });
+  const [links, setLinks] = useState<ResumeLink[]>(() => {
+    const saved = localStorage.getItem('links');
+    if (!saved) return [];
+    try {
+      const parsed = JSON.parse(saved);
+      if (!Array.isArray(parsed)) return [];
+      return parsed.map((item) => ensureLinkDefaults(item));
+    } catch (err) {
+      console.warn('Failed to parse stored links', err);
+      return [];
+    }
+  });
 
   const [privacyStatement, setPrivacyStatement] = useState<PrivacyStatement>(() => {
     const saved = localStorage.getItem('privacyStatement');
@@ -333,18 +442,13 @@ const CVCreator: React.FC<CVCreatorProps> = ({ initialCv }) => {
 
   const [sectionOrder, setSectionOrder] = useState<string[]>(() => {
     const saved = localStorage.getItem('sectionOrder');
-    return saved
-      ? JSON.parse(saved)
-      : [
-          'profile',
-          'experience',
-          'education',
-          'certificates',
-          'skills',
-          'languages',
-          'hobbies',
-          'privacy',
-        ];
+    if (!saved) return [...DEFAULT_SECTION_ORDER];
+    try {
+      return normalizeSectionOrder(JSON.parse(saved));
+    } catch (err) {
+      console.warn('Failed to parse stored section order', err);
+      return [...DEFAULT_SECTION_ORDER];
+    }
   });
   const [draggedSection, setDraggedSection] = useState<string | null>(null);
   const [dragOverSection, setDragOverSection] = useState<string | null>(null);
@@ -380,6 +484,11 @@ const CVCreator: React.FC<CVCreatorProps> = ({ initialCv }) => {
   useEffect(() => {
     localStorage.setItem('certificates', JSON.stringify(certificates));
   }, [certificates]);
+
+  // Save links to localStorage
+  useEffect(() => {
+    localStorage.setItem('links', JSON.stringify(links));
+  }, [links]);
 
   // Save hobbies to localStorage
   useEffect(() => {
@@ -506,6 +615,24 @@ const CVCreator: React.FC<CVCreatorProps> = ({ initialCv }) => {
 
   const removeCertificate = (id: string) => {
     setCertificates(certificates.filter((cert) => cert.id !== id));
+  };
+
+  const addLink = () => {
+    const newLink: ResumeLink = {
+      id: makeLinkId(),
+      name: '',
+      url: '',
+      description: '',
+    };
+    setLinks((prev) => [...prev, newLink]);
+  };
+
+  const updateLink = (id: string, field: keyof ResumeLink, value: string) => {
+    setLinks((prev) => prev.map((link) => (link.id === id ? { ...link, [field]: value } : link)));
+  };
+
+  const removeLink = (id: string) => {
+    setLinks((prev) => prev.filter((link) => link.id !== id));
   };
 
   // Section drag & drop handlers
@@ -1074,6 +1201,13 @@ const CVCreator: React.FC<CVCreatorProps> = ({ initialCv }) => {
     return html;
   };
 
+  const splitIntoParagraphs = (input: string) =>
+    (input || '')
+      .replace(/\r\n?/g, '\n')
+      .split(/\n\s*\n+/)
+      .map((part) => part.trim())
+      .filter(Boolean);
+
   const applyFormattingToTextarea = (
     type: FormattingType,
     textarea: HTMLTextAreaElement | null,
@@ -1178,17 +1312,29 @@ const CVCreator: React.FC<CVCreatorProps> = ({ initialCv }) => {
 
   const populateFromCv = React.useCallback((cv: CvDto, position?: string) => {
     const basics = cv.basics;
+    const githubLink = cv.links?.find((link) => isGithubLink(link));
     if (basics) {
-      setPersonalInfo((prev) => ({
-        firstName: basics.firstName,
-        lastName: basics.lastName,
-        email: basics.email,
-        phone: basics.phoneNumber,
-        address: basics.location?.city || '',
-        country: basics.location?.country || '',
-        profession: position ?? prev.profession,
-        summary: basics.summary,
-      }));
+      setPersonalInfo((prev) =>
+        ensurePersonalInfoDefaults({
+          ...prev,
+          firstName: basics.firstName,
+          lastName: basics.lastName,
+          email: basics.email,
+          phone: basics.phoneNumber,
+          address: basics.location?.city || '',
+          country: basics.location?.country || '',
+          github: githubLink?.url || '',
+          profession: position ?? prev.profession,
+          summary: basics.summary,
+        })
+      );
+    } else if (githubLink) {
+      setPersonalInfo((prev) =>
+        ensurePersonalInfoDefaults({
+          ...prev,
+          github: githubLink.url || '',
+        })
+      );
     }
 
     setExperiences(
@@ -1232,6 +1378,19 @@ const CVCreator: React.FC<CVCreatorProps> = ({ initialCv }) => {
       ) || []
     );
 
+    setLinks(
+      cv.links
+        ?.filter((link) => !isGithubLink(link))
+        .map((link) =>
+          ensureLinkDefaults({
+            id: makeLinkId(),
+            name: link.name,
+            url: link.url,
+            description: link.description || '',
+          })
+        ) || []
+    );
+
     setSkills(cv.skills?.map((s, idx) => ({ id: `${Date.now()}${idx}`, name: s })) || []);
 
     setLanguages(
@@ -1244,6 +1403,22 @@ const CVCreator: React.FC<CVCreatorProps> = ({ initialCv }) => {
   }, []);
 
   const buildCvDto = (): CvDto => {
+    const cvLinks = links
+      .filter((link) => !personalInfo.github || !isGithubLink(link))
+      .map((link) => ({
+        name: link.name,
+        url: normalizeExternalUrl(link.url),
+        description: link.description || undefined,
+      }));
+
+    if (personalInfo.github.trim()) {
+      cvLinks.unshift({
+        name: 'GitHub',
+        url: normalizeExternalUrl(personalInfo.github),
+        description: undefined,
+      });
+    }
+
     return {
       basics: {
         firstName: personalInfo.firstName,
@@ -1275,6 +1450,7 @@ const CVCreator: React.FC<CVCreatorProps> = ({ initialCv }) => {
         name: c.name,
         date: c.hasDate && c.date ? c.date : undefined,
       })),
+      links: cvLinks,
       skills: skills.map((s) => s.name),
       languages: languages.map((l) => ({ language: l.name, fluency: l.level })),
     };
@@ -1309,6 +1485,7 @@ const CVCreator: React.FC<CVCreatorProps> = ({ initialCv }) => {
     personalInfo,
     experiences,
     education,
+    links,
     skills,
     languages,
     certificates,
@@ -1483,6 +1660,8 @@ const CVCreator: React.FC<CVCreatorProps> = ({ initialCv }) => {
           return education.length > 0;
         case 'certificates':
           return certificates.length > 0;
+        case 'links':
+          return links.length > 0;
         case 'skills':
           return skills.length > 0;
         case 'languages':
@@ -1500,6 +1679,7 @@ const CVCreator: React.FC<CVCreatorProps> = ({ initialCv }) => {
       experiences,
       education,
       certificates,
+      links,
       skills,
       languages,
       hobbies,
@@ -1571,6 +1751,15 @@ const CVCreator: React.FC<CVCreatorProps> = ({ initialCv }) => {
         });
       } else if (id === 'certificates') {
         const nodes = el.querySelectorAll<HTMLElement>('.cert-item[data-item-id]');
+        nodes.forEach((n) => {
+          const csI = getComputedStyle(n);
+          const mti = parseFloat(csI.marginTop || '0') || 0;
+          const mbi = parseFloat(csI.marginBottom || '0') || 0;
+          const itemId = n.getAttribute('data-item-id') || '';
+          items.push({ id: itemId, h: n.offsetHeight + mti + mbi });
+        });
+      } else if (id === 'links') {
+        const nodes = el.querySelectorAll<HTMLElement>('.link-item[data-item-id]');
         nodes.forEach((n) => {
           const csI = getComputedStyle(n);
           const mti = parseFloat(csI.marginTop || '0') || 0;
@@ -1686,6 +1875,7 @@ const CVCreator: React.FC<CVCreatorProps> = ({ initialCv }) => {
     skills,
     languages,
     certificates,
+    links,
     hobbies,
     privacyStatement,
     sectionOrder,
@@ -2281,6 +2471,101 @@ const CVCreator: React.FC<CVCreatorProps> = ({ initialCv }) => {
           </div>
         );
 
+      case 'links':
+        return (
+          <div
+            key="links"
+            className={`mb-6 rounded-lg bg-gray-50 p-4 transition-all lg:p-6 ${
+              dragOverSection === 'links' ? 'bg-blue-50 ring-2 ring-blue-400' : ''
+            } ${draggedSection === 'links' ? 'opacity-50' : ''}`}
+            draggable
+            onDragStart={(e) => handleSectionDragStart(e, 'links')}
+            onDragOver={(e) => handleSectionDragOver(e, 'links')}
+            onDragLeave={handleSectionDragLeave}
+            onDrop={(e) => handleSectionDrop(e, 'links')}
+            onDragEnd={handleSectionDragEnd}
+          >
+            <div className="mb-4 flex items-center justify-between">
+              <h2 className="flex items-center text-lg font-semibold text-gray-700">
+                <span
+                  className="mr-2 cursor-grab text-gray-400"
+                  data-drag-handle="true"
+                  role="button"
+                  tabIndex={0}
+                  aria-label="Drag section"
+                  onMouseDown={() => {
+                    dragIntentSectionRef.current = 'links';
+                  }}
+                  onMouseUp={() => {
+                    dragIntentSectionRef.current = null;
+                  }}
+                  onKeyDown={(event) => {
+                    if (event.key === 'Enter' || event.key === ' ') {
+                      dragIntentSectionRef.current = 'links';
+                    }
+                  }}
+                  onKeyUp={() => {
+                    dragIntentSectionRef.current = null;
+                  }}
+                >
+                  <GripVertical size={20} />
+                </span>
+                <Link2 className="mr-2" size={20} />
+                Links
+              </h2>
+            </div>
+            <p className="mb-4 text-sm text-gray-600">
+              Add your portfolio, LinkedIn, GitHub or other relevant links with a short context.
+            </p>
+            {links.map((link) => (
+              <div
+                key={link.id}
+                className="group mb-4 rounded-lg border border-gray-200 bg-white p-4"
+              >
+                <div className="mb-3 grid grid-cols-1 gap-3 sm:grid-cols-2">
+                  <input
+                    type="text"
+                    placeholder="Link name"
+                    value={link.name}
+                    onChange={(e) => updateLink(link.id, 'name', e.target.value)}
+                    className="w-full rounded-sm border border-gray-300 px-3 py-3 focus:ring-2 focus:ring-blue-500 focus:outline-none"
+                  />
+                  <div className="flex items-start gap-2">
+                    <input
+                      type="url"
+                      placeholder="https://example.com"
+                      value={link.url}
+                      onChange={(e) => updateLink(link.id, 'url', e.target.value)}
+                      className="w-full rounded-sm border border-gray-300 px-3 py-3 focus:ring-2 focus:ring-blue-500 focus:outline-none"
+                    />
+                    <button
+                      onClick={() => removeLink(link.id)}
+                      className="rounded p-2 text-red-500 opacity-0 transition-all group-hover:opacity-100 hover:bg-red-50 hover:text-red-700"
+                      title="Remove link"
+                    >
+                      <Trash2 size={16} />
+                    </button>
+                  </div>
+                </div>
+                <textarea
+                  placeholder="Short description, e.g. Portfolio with case studies and shipped product work."
+                  value={link.description}
+                  onChange={(e) => updateLink(link.id, 'description', e.target.value)}
+                  rows={2}
+                  className="w-full resize-none rounded-sm border border-gray-300 px-3 py-3 focus:ring-2 focus:ring-blue-500 focus:outline-none"
+                />
+              </div>
+            ))}
+            <button
+              onClick={addLink}
+              className="flex cursor-pointer items-center font-medium text-[#915EFF]"
+            >
+              <span className="mr-2 text-xl">+</span>
+              Add link
+            </button>
+          </div>
+        );
+
       case 'skills':
         return (
           <div
@@ -2611,8 +2896,7 @@ const CVCreator: React.FC<CVCreatorProps> = ({ initialCv }) => {
               Personal Profile
             </h3>
             <div className="text-sm leading-relaxed break-words text-gray-700">
-              {(personalInfo.summary || '')
-                .split(/\n+/)
+              {splitIntoParagraphs(personalInfo.summary)
                 .filter(Boolean)
                 .map((para, i) => (
                   <p
@@ -2727,6 +3011,49 @@ const CVCreator: React.FC<CVCreatorProps> = ({ initialCv }) => {
           </div>
         ) : null;
 
+      case 'links':
+        return links.length > 0 ? (
+          <div className="cv-section mb-5" key="links" data-block-id="links" data-section="links">
+            <h3 className="mb-2 flex items-center border-b border-gray-300 pb-1 text-lg font-semibold text-gray-800">
+              <Link2 size={16} className="mr-2" />
+              Links
+            </h3>
+            <div className="space-y-3">
+              {links.map((link) => {
+                const normalizedUrl = normalizeExternalUrl(link.url);
+                const displayUrl = normalizedUrl || 'https://example.com';
+                const name = link.name || 'Link name';
+                const description = link.description || '';
+
+                return (
+                  <div key={link.id} className="link-item" data-item-id={link.id}>
+                    <div className="flex flex-col gap-1">
+                      {normalizedUrl ? (
+                        <a
+                          href={normalizedUrl}
+                          target="_blank"
+                          rel="noreferrer"
+                          className="w-fit text-sm font-semibold text-[#915EFF] underline underline-offset-2"
+                        >
+                          {name}
+                        </a>
+                      ) : (
+                        <span className="text-sm font-semibold text-gray-900">{name}</span>
+                      )}
+                      <span className="break-all text-xs text-gray-600">{displayUrl}</span>
+                      {description && (
+                        <p className="text-sm leading-relaxed whitespace-pre-line text-gray-700">
+                          {description}
+                        </p>
+                      )}
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+          </div>
+        ) : null;
+
       case 'skills':
         return skills.length > 0 ? (
           <div
@@ -2814,8 +3141,7 @@ const CVCreator: React.FC<CVCreatorProps> = ({ initialCv }) => {
               Privacy Statement
             </h3>
             <div className="text-xs leading-relaxed break-words text-gray-700">
-              {(privacyStatement.content || '')
-                .split(/\n+/)
+              {splitIntoParagraphs(privacyStatement.content)
                 .filter(Boolean)
                 .map((para, i) => (
                   <p key={`priv-${i}`} className="para-item mb-2 last:mb-0" data-item-id={`p${i}`}>
@@ -2860,6 +3186,20 @@ const CVCreator: React.FC<CVCreatorProps> = ({ initialCv }) => {
             {personalInfo.address}
           </div>
         )}
+        {personalInfo.github && (
+          <div className="flex items-center">
+            <Link2 size={14} className="mr-2 flex-shrink-0" />
+            <a
+              href={normalizeExternalUrl(personalInfo.github)}
+              target="_blank"
+              rel="noreferrer"
+              className="font-medium text-[#915EFF] underline underline-offset-2"
+              title={personalInfo.github}
+            >
+              GitHub
+            </a>
+          </div>
+        )}
       </div>
     </div>
   );
@@ -2891,6 +3231,13 @@ const CVCreator: React.FC<CVCreatorProps> = ({ initialCv }) => {
           <h3 className="mb-2 flex items-center border-b border-gray-300 pb-1 text-lg font-semibold text-gray-800">
             <Award size={16} className="mr-2" />
             Certificates
+          </h3>
+        );
+      case 'links':
+        return (
+          <h3 className="mb-2 flex items-center border-b border-gray-300 pb-1 text-lg font-semibold text-gray-800">
+            <Link2 size={16} className="mr-2" />
+            Links
           </h3>
         );
       case 'privacy':
@@ -3067,6 +3414,45 @@ const CVCreator: React.FC<CVCreatorProps> = ({ initialCv }) => {
     );
   };
 
+  const renderLinkItems = (ids?: string[]) => {
+    const list = ids ? links.filter((link) => ids.includes(link.id)) : links;
+    return (
+      <div className="space-y-3">
+        {list.map((link) => {
+          const normalizedUrl = normalizeExternalUrl(link.url);
+          const displayUrl = normalizedUrl || 'https://example.com';
+          const name = link.name || 'Link name';
+          const description = link.description || '';
+
+          return (
+            <div key={link.id} className="link-item" data-item-id={link.id}>
+              <div className="flex flex-col gap-1">
+                {normalizedUrl ? (
+                  <a
+                    href={normalizedUrl}
+                    target="_blank"
+                    rel="noreferrer"
+                    className="w-fit text-sm font-semibold text-[#915EFF] underline underline-offset-2"
+                  >
+                    {name}
+                  </a>
+                ) : (
+                  <span className="text-sm font-semibold text-gray-900">{name}</span>
+                )}
+                <span className="break-all text-xs text-gray-600">{displayUrl}</span>
+                {description && (
+                  <p className="text-sm leading-relaxed whitespace-pre-line text-gray-700">
+                    {description}
+                  </p>
+                )}
+              </div>
+            </div>
+          );
+        })}
+      </div>
+    );
+  };
+
   const renderChunk = (chunk: SectionChunk) => {
     const { sectionId, items, includeTitle } = chunk;
     // For simple sections without item splitting, render full section
@@ -3090,8 +3476,7 @@ const CVCreator: React.FC<CVCreatorProps> = ({ initialCv }) => {
           >
             {includeTitle && renderSectionTitle('profile')}
             <div className="text-sm leading-relaxed break-words text-gray-700">
-              {(personalInfo.summary || '')
-                .split(/\n+/)
+              {splitIntoParagraphs(personalInfo.summary)
                 .filter(Boolean)
                 .map((para, i) => {
                   const id = `p${i}`;
@@ -3144,6 +3529,18 @@ const CVCreator: React.FC<CVCreatorProps> = ({ initialCv }) => {
             {renderCertificatesItems(items)}
           </div>
         );
+      case 'links':
+        return (
+          <div
+            className="cv-section mb-5"
+            data-block-id="links"
+            data-section="links"
+            key={`chunk-link-${items.join('-')}`}
+          >
+            {includeTitle && renderSectionTitle('links')}
+            {renderLinkItems(items)}
+          </div>
+        );
       case 'privacy':
         return (
           <div
@@ -3154,8 +3551,7 @@ const CVCreator: React.FC<CVCreatorProps> = ({ initialCv }) => {
           >
             {includeTitle && renderSectionTitle('privacy')}
             <div className="text-xs leading-relaxed break-words text-gray-700">
-              {(privacyStatement.content || '')
-                .split(/\n+/)
+              {splitIntoParagraphs(privacyStatement.content)
                 .filter(Boolean)
                 .map((para, i) => {
                   const id = `p${i}`;
@@ -3378,6 +3774,18 @@ const CVCreator: React.FC<CVCreatorProps> = ({ initialCv }) => {
                             className="w-full rounded-sm border border-gray-300 px-3 py-3 focus:ring-2 focus:ring-blue-500 focus:outline-none"
                           />
                         </div>
+                        <div>
+                          <label className="mb-1 block text-sm text-gray-600">GitHub</label>
+                          <input
+                            type="url"
+                            placeholder="github.com/twoj-login"
+                            value={personalInfo.github}
+                            onChange={(e) =>
+                              setPersonalInfo({ ...personalInfo, github: e.target.value })
+                            }
+                            className="w-full rounded-sm border border-gray-300 px-3 py-3 focus:ring-2 focus:ring-blue-500 focus:outline-none"
+                          />
+                        </div>
                       </div>
                     </div>
                   </details>
@@ -3581,8 +3989,10 @@ const CVCreator: React.FC<CVCreatorProps> = ({ initialCv }) => {
                         !personalInfo.firstName &&
                         !personalInfo.lastName &&
                         !personalInfo.email &&
+                        !personalInfo.github &&
                         experiences.length === 0 &&
                         skills.length === 0 &&
+                        links.length === 0 &&
                         education.length === 0 && (
                           <div className="mt-20 text-center text-gray-500">
                             <p className="text-lg">

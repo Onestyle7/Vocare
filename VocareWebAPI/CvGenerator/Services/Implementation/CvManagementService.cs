@@ -276,6 +276,7 @@ namespace VocareWebAPI.CvGenerator.Services.Implementation
                 Work = new List<CvWorkEntryDto>(),
                 Education = new List<CvEducationEntryDto>(),
                 Certificates = new List<CvCertificateEntryDto>(),
+                Links = new List<CvLinkEntryDto>(),
                 Skills = new List<string>(),
                 Languages = new List<CvLanguageEntryDto>(),
             };

@@ -77,6 +77,7 @@ namespace VocareWebAPI.CvGenerator.Services.Implementations
                 Work = MapWorkExperience(userProfile.WorkExperience),
                 Education = MapEducation(userProfile.Education),
                 Certificates = MapCertificates(userProfile.Certificates),
+                Links = new List<CvLinkEntryDto>(),
                 Skills = userProfile.Skills ?? new List<string>(),
                 Languages = MapLanguages(userProfile.Languages),
             };
