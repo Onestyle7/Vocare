@@ -1,7 +1,7 @@
 'use client';
 
 import Link from 'next/link';
-import type { ChangeEvent, FormEvent, MouseEvent as ReactMouseEvent } from 'react';
+import type { ChangeEvent, FormEvent, MouseEvent as ReactMouseEvent, ReactNode } from 'react';
 import { useCallback, useEffect, useId, useMemo, useRef, useState } from 'react';
 import dagre from 'dagre';
 import gsap from 'gsap';
@@ -48,13 +48,19 @@ import '@xyflow/react/dist/style.css';
 import { ArrowLeft, FileText, Lock, MoreVertical, Redo2, Square, Type, Undo2 } from 'lucide-react';
 
 import { RoadmapFreeTextNode } from '@/components/roadmap/RoadmapFreeTextNode';
+import { RoadmapNodeDetailsSheet } from '@/components/roadmap/RoadmapNodeDetailsSheet';
 import { RoadmapNoteNode } from '@/components/roadmap/RoadmapNoteNode';
 import { RoadmapTileNode } from '@/components/roadmap/RoadmapTileNode';
 import type {
   NoteThemeId,
   RoadmapNodeData as TileNodeData,
 } from '@/components/roadmap/RoadmapTileNode';
-import { presetEdges, presetNodes } from '@/roadmap/configs/presets';
+import {
+  presetEdges,
+  presetNodes,
+  type PresetEdgeConfig,
+  type PresetNodeConfig,
+} from '@/roadmap/configs/presets';
 
 type RoadmapStep = {
   id: string;
@@ -70,8 +76,28 @@ type EdgeVariant = 'solid' | 'dashed' | 'dotted';
 type EdgeLineType = 'straight' | 'step' | 'bezier';
 type EdgeEnding = 'none' | 'arrow-filled' | 'arrow-filled-thin' | 'arrow-open' | 'arrow-open-thin';
 type NodeTone = 'main' | 'cream' | 'neutral';
+type LayoutDirection = 'LR' | 'TB';
 
-type RoadmapNode = Node<TileNodeData>;
+type RoadmapCanvasNodeData = TileNodeData & {
+  persistenceId?: string;
+};
+
+type RoadmapNodeCreationOptions = {
+  tone?: NodeTone;
+  width?: number;
+  height?: number;
+  persistenceId?: string;
+  nodeKind?: RoadmapCanvasNodeData['nodeKind'];
+  phaseTitle?: RoadmapCanvasNodeData['phaseTitle'];
+  timeLabel?: RoadmapCanvasNodeData['timeLabel'];
+  timeStartMonth?: RoadmapCanvasNodeData['timeStartMonth'];
+  timeEndMonth?: RoadmapCanvasNodeData['timeEndMonth'];
+  totalMonths?: RoadmapCanvasNodeData['totalMonths'];
+  stepType?: RoadmapCanvasNodeData['stepType'];
+  stepStatus?: RoadmapCanvasNodeData['stepStatus'];
+};
+
+type RoadmapNode = Node<RoadmapCanvasNodeData>;
 type RoadmapNodeType = RoadmapNode['type'];
 type HistorySnapshot = {
   nodes: RoadmapNode[];
@@ -1090,7 +1116,7 @@ const createRoadmapNode = (
   id: string,
   step: RoadmapDraft,
   position: { x: number; y: number },
-  options?: { tone?: NodeTone; width?: number; height?: number }
+  options?: RoadmapNodeCreationOptions
 ): RoadmapNode => {
   const autoSize = getTileSizeFromText(step);
 
@@ -1105,6 +1131,15 @@ const createRoadmapNode = (
       tone: options?.tone ?? 'cream',
       width: options?.width ?? autoSize.width,
       height: options?.height ?? autoSize.height,
+      persistenceId: options?.persistenceId,
+      nodeKind: options?.nodeKind ?? 'step',
+      phaseTitle: options?.phaseTitle,
+      timeLabel: options?.timeLabel,
+      timeStartMonth: options?.timeStartMonth,
+      timeEndMonth: options?.timeEndMonth,
+      totalMonths: options?.totalMonths,
+      stepType: options?.stepType,
+      stepStatus: options?.stepStatus,
     },
     position,
     sourcePosition: Position.Right,
@@ -1130,6 +1165,7 @@ const createFreeTextNode = (
       tone: 'neutral',
       width: size.width,
       height: size.height,
+      nodeKind: 'text',
     },
     position,
     draggable: true,
@@ -1161,6 +1197,7 @@ const createNoteNode = (
       height: size.height,
       noteTheme: options?.noteTheme,
       noteRotation: options?.noteRotation,
+      nodeKind: 'note',
     },
     position,
     draggable: true,
@@ -1168,9 +1205,14 @@ const createNoteNode = (
   };
 };
 
-const createInitialNodes = (): RoadmapNode[] => {
-  return presetNodes.map((cfg) => {
-    const step: RoadmapDraft = { phase: '', title: cfg.title, timeline: '', summary: '' };
+const createInitialNodes = (nodeConfigs: PresetNodeConfig[] = presetNodes): RoadmapNode[] => {
+  return nodeConfigs.map((cfg) => {
+    const step: RoadmapDraft = {
+      phase: cfg.phase ?? '',
+      title: cfg.title,
+      timeline: cfg.timeline ?? '',
+      summary: cfg.summary ?? '',
+    };
     const autoSize = getTileSizeFromText(step);
 
     return createRoadmapNode(
@@ -1181,13 +1223,22 @@ const createInitialNodes = (): RoadmapNode[] => {
         tone: cfg.tone ?? 'cream',
         width: cfg.width ?? autoSize.width,
         height: cfg.height ?? autoSize.height,
+        persistenceId: cfg.persistenceId,
+        nodeKind: cfg.nodeKind ?? 'step',
+        phaseTitle: cfg.phaseTitle,
+        timeLabel: cfg.timeLabel,
+        timeStartMonth: cfg.timeStartMonth,
+        timeEndMonth: cfg.timeEndMonth,
+        totalMonths: cfg.totalMonths,
+        stepType: cfg.stepType,
+        stepStatus: cfg.stepStatus,
       }
     );
   });
 };
 
-const createInitialEdges = (): Edge[] => {
-  return presetEdges.map((edge, index) => ({
+const createInitialEdges = (edgeConfigs: PresetEdgeConfig[] = presetEdges): Edge[] => {
+  return edgeConfigs.map((edge, index) => ({
     ...createStyledEdge({
       id: edge.id,
       source: edge.source,
@@ -1204,11 +1255,15 @@ const createInitialEdges = (): Edge[] => {
   }));
 };
 
-const layoutWithDagre = (nodes: RoadmapNode[], edges: Edge[]): RoadmapNode[] => {
+const layoutWithDagre = (
+  nodes: RoadmapNode[],
+  edges: Edge[],
+  direction: LayoutDirection = 'LR'
+): RoadmapNode[] => {
   const graph = new dagre.graphlib.Graph();
   graph.setDefaultEdgeLabel(() => ({}));
   graph.setGraph({
-    rankdir: 'LR',
+    rankdir: direction,
     nodesep: 62,
     ranksep: 96,
     marginx: 24,
@@ -1237,8 +1292,8 @@ const layoutWithDagre = (nodes: RoadmapNode[], edges: Edge[]): RoadmapNode[] => 
 
     return {
       ...node,
-      sourcePosition: Position.Right,
-      targetPosition: Position.Left,
+      sourcePosition: direction === 'TB' ? Position.Bottom : Position.Right,
+      targetPosition: direction === 'TB' ? Position.Top : Position.Left,
       position: {
         x: x - width / 2,
         y: y - height / 2,
@@ -1247,7 +1302,27 @@ const layoutWithDagre = (nodes: RoadmapNode[], edges: Edge[]): RoadmapNode[] => 
   });
 };
 
-const RoadmapReactFlowPage = () => {
+type RoadmapReactFlowPageProps = {
+  title?: string;
+  backHref?: string;
+  initialNodeConfigs?: PresetNodeConfig[];
+  initialEdgeConfigs?: PresetEdgeConfig[];
+  layoutDirection?: LayoutDirection;
+  headerActions?: ReactNode;
+  onPersistNodePositions?: (
+    positions: Array<{ persistenceId: string; x: number; y: number }>
+  ) => void | Promise<void>;
+};
+
+export const RoadmapReactFlowPage = ({
+  title = 'Career Path for Gamedeveloper',
+  backHref = '/',
+  initialNodeConfigs = presetNodes,
+  initialEdgeConfigs = presetEdges,
+  layoutDirection = 'LR',
+  headerActions,
+  onPersistNodePositions,
+}: RoadmapReactFlowPageProps) => {
   const nodeTypes = useMemo(
     () => ({
       roadmapTile: RoadmapTileNode,
@@ -1266,20 +1341,21 @@ const RoadmapReactFlowPage = () => {
   );
 
   const initialGraph = useMemo(() => {
-    const initialEdges = createInitialEdges();
-    const initialNodes = createInitialNodes();
+    const initialEdges = createInitialEdges(initialEdgeConfigs);
+    const initialNodes = createInitialNodes(initialNodeConfigs);
 
     return {
       nodes: initialNodes,
       edges: initialEdges,
     };
-  }, []);
+  }, [initialEdgeConfigs, initialNodeConfigs]);
 
   const [nodes, setNodes, onNodesChange] = useNodesState<RoadmapNode>(initialGraph.nodes);
   const [edges, setEdges, onEdgesChange] = useEdgesState<Edge>(initialGraph.edges);
 
   const [selectedNodeId, setSelectedNodeId] = useState<string>('');
   const [selectedEdgeId, setSelectedEdgeId] = useState<string>('');
+  const [isNodeDetailsOpen, setIsNodeDetailsOpen] = useState(false);
   const [editingNodeId, setEditingNodeId] = useState<string | null>(null);
   const [editDraft, setEditDraft] = useState<RoadmapDraft>(initialDraft);
   const [canUndo, setCanUndo] = useState(false);
@@ -1298,8 +1374,8 @@ const RoadmapReactFlowPage = () => {
     Edge
   > | null>(null);
 
-  const nodeCounterRef = useRef(presetNodes.length + 1);
-  const edgeCounterRef = useRef(presetEdges.length + 1);
+  const nodeCounterRef = useRef(initialNodeConfigs.length + 1);
+  const edgeCounterRef = useRef(initialEdgeConfigs.length + 1);
   const unlockHoldRafRef = useRef<number | null>(null);
   const unlockHoldStartedAtRef = useRef<number | null>(null);
   const unlockHoldEdgeIdRef = useRef<string | null>(null);
@@ -1316,7 +1392,7 @@ const RoadmapReactFlowPage = () => {
 
   useEffect(() => {
     const introCleanupDelayMs =
-      Math.max(0, (presetEdges.length - 1) * EDGE_INTRO_STAGGER_MS) +
+      Math.max(0, (initialEdgeConfigs.length - 1) * EDGE_INTRO_STAGGER_MS) +
       EDGE_INTRO_DURATION_MS +
       EDGE_INTRO_CLEANUP_BUFFER_MS;
 
@@ -1341,7 +1417,7 @@ const RoadmapReactFlowPage = () => {
     return () => {
       window.clearTimeout(timeoutId);
     };
-  }, [setEdges]);
+  }, [initialEdgeConfigs.length, setEdges]);
 
   const activeInspectorEdge = useMemo(() => {
     if (!edgeInspector) return null;
@@ -1357,6 +1433,10 @@ const RoadmapReactFlowPage = () => {
     () => (selectedNodeId ? (nodes.find((node) => node.id === selectedNodeId) ?? null) : null),
     [nodes, selectedNodeId]
   );
+  const activeNodeDetailsData = useMemo(() => {
+    if (!isNodeDetailsOpen || selectedNode?.type !== 'roadmapTile') return null;
+    return selectedNode.data;
+  }, [isNodeDetailsOpen, selectedNode]);
 
   useEffect(() => {
     if (!editingNodeId) return;
@@ -1369,6 +1449,11 @@ const RoadmapReactFlowPage = () => {
     if (nodes.some((node) => node.id === selectedNodeId)) return;
     setSelectedNodeId('');
   }, [nodes, selectedNodeId]);
+
+  useEffect(() => {
+    if (selectedNodeId) return;
+    setIsNodeDetailsOpen(false);
+  }, [selectedNodeId]);
 
   const activeInspectorEdgeLocked = useMemo(() => {
     if (!activeInspectorEdge) return false;
@@ -1646,6 +1731,7 @@ const RoadmapReactFlowPage = () => {
       event.preventDefault();
       event.stopPropagation();
       setContextTarget(null);
+      setIsNodeDetailsOpen(false);
       setSelectedNodeId('');
       setSelectedEdgeId(edge.id);
       closeInspectorTooltips();
@@ -1656,7 +1742,13 @@ const RoadmapReactFlowPage = () => {
         clientY: event.clientY,
       });
     },
-    [cancelUnlockHold, closeInspectorTooltips, setSelectedEdgeId, setSelectedNodeId]
+    [
+      cancelUnlockHold,
+      closeInspectorTooltips,
+      setSelectedEdgeId,
+      setSelectedNodeId,
+      setIsNodeDetailsOpen,
+    ]
   );
 
   const setInspectorEdgeType = useCallback(
@@ -1819,6 +1911,7 @@ const RoadmapReactFlowPage = () => {
       setNodes((currentNodes) => [...currentNodes, newNode]);
       setSelectedNodeId(id);
       setSelectedEdgeId('');
+      setIsNodeDetailsOpen(false);
     },
     [getNextNodeId, setNodes]
   );
@@ -1841,6 +1934,7 @@ const RoadmapReactFlowPage = () => {
       setNodes((currentNodes) => [...currentNodes, newNode]);
       setSelectedNodeId(id);
       setSelectedEdgeId('');
+      setIsNodeDetailsOpen(false);
 
       if (openEditor) {
         setEditingNodeId(id);
@@ -1871,6 +1965,7 @@ const RoadmapReactFlowPage = () => {
       setNodes((currentNodes) => [...currentNodes, newNode]);
       setSelectedNodeId(id);
       setSelectedEdgeId('');
+      setIsNodeDetailsOpen(false);
 
       if (openEditor) {
         setEditingNodeId(id);
@@ -1952,6 +2047,7 @@ const RoadmapReactFlowPage = () => {
       event.preventDefault();
       event.stopPropagation();
       closeEdgeInspector();
+      setIsNodeDetailsOpen(false);
       setContextTarget(null);
     },
     [closeEdgeInspector]
@@ -1975,6 +2071,7 @@ const RoadmapReactFlowPage = () => {
   const onEdgeContextMenu = useCallback(
     (_: ReactMouseEvent, edge: Edge) => {
       closeEdgeInspector();
+      setIsNodeDetailsOpen(false);
       setContextTarget({
         kind: 'edge',
         edgeId: edge.id,
@@ -1985,11 +2082,61 @@ const RoadmapReactFlowPage = () => {
 
   const onPaneClick = useCallback(() => {
     closeEdgeInspector();
+    setIsNodeDetailsOpen(false);
   }, [closeEdgeInspector]);
 
-  const onNodeClick = useCallback(() => {
+  const onNodeClick = useCallback((_: ReactMouseEvent, node: RoadmapNode) => {
     closeEdgeInspector();
-  }, [closeEdgeInspector]);
+    setSelectedNodeId(node.id);
+    setSelectedEdgeId('');
+    setIsNodeDetailsOpen(node.type === 'roadmapTile');
+  }, [closeEdgeInspector, setSelectedEdgeId, setSelectedNodeId]);
+
+  const persistCurrentNodePositions = useCallback(
+    async (currentNodes: RoadmapNode[]) => {
+      if (!onPersistNodePositions) return;
+
+      const positions = currentNodes.flatMap((node) => {
+        const persistenceId = node.data.persistenceId;
+        if (!persistenceId) return [];
+
+        return [
+          {
+            persistenceId,
+            x: Math.round(node.position.x),
+            y: Math.round(node.position.y),
+          },
+        ];
+      });
+
+      if (positions.length === 0) return;
+
+      try {
+        await onPersistNodePositions(positions);
+      } catch (error) {
+        console.error('Failed to persist node positions', error);
+      }
+    },
+    [onPersistNodePositions]
+  );
+
+  const onNodeDragStop = useCallback(
+    (_event: ReactMouseEvent | MouseEvent, node: RoadmapNode) => {
+      const persistenceId = node.data.persistenceId;
+      if (!persistenceId) return;
+
+      setNodes((currentNodes) => {
+        const nextNodes = currentNodes.map((currentNode) =>
+          currentNode.id === node.id ? { ...currentNode, position: node.position } : currentNode
+        );
+
+        void persistCurrentNodePositions(nextNodes);
+
+        return nextNodes;
+      });
+    },
+    [persistCurrentNodePositions, setNodes]
+  );
 
   const deleteEdgeById = useCallback(
     (edgeId: string) => {
@@ -2089,6 +2236,7 @@ const RoadmapReactFlowPage = () => {
     );
     setSelectedNodeId('');
     setSelectedEdgeId('');
+    setIsNodeDetailsOpen(false);
     closeEdgeInspector();
   }, [closeEdgeInspector, setEdges, setNodes]);
 
@@ -2219,56 +2367,61 @@ const RoadmapReactFlowPage = () => {
   };
 
   const onAutoLayout = useCallback(() => {
-    setNodes((currentNodes) => layoutWithDagre(currentNodes, edges));
-  }, [edges, setNodes]);
+    setNodes((currentNodes) => layoutWithDagre(currentNodes, edges, layoutDirection));
+  }, [edges, layoutDirection, setNodes]);
 
   const onRestorePresetLayout = useCallback(() => {
-    setNodes(createInitialNodes());
-    setEdges(createInitialEdges());
+    setNodes(createInitialNodes(initialNodeConfigs));
+    setEdges(createInitialEdges(initialEdgeConfigs));
     setSelectedNodeId('');
     setSelectedEdgeId('');
+    setIsNodeDetailsOpen(false);
     closeEdgeInspector();
-    nodeCounterRef.current = presetNodes.length + 1;
-    edgeCounterRef.current = presetEdges.length + 1;
-  }, [closeEdgeInspector, setEdges, setNodes]);
+    nodeCounterRef.current = initialNodeConfigs.length + 1;
+    edgeCounterRef.current = initialEdgeConfigs.length + 1;
+  }, [closeEdgeInspector, initialEdgeConfigs, initialNodeConfigs, setEdges, setNodes]);
 
   return (
     <section className="font-grotesk h-screen w-full bg-white text-slate-950">
       <header className="border-b border-slate-200 px-6 py-4">
         <motion.div
-          className="flex items-start gap-3"
+          className="flex flex-wrap items-start justify-between gap-4"
           initial={{ opacity: 0, y: -14 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.42, ease: [0.22, 1, 0.36, 1] }}
         >
-          <motion.div
-            whileHover={{ x: -3 }}
-            transition={{ type: 'spring', stiffness: 320, damping: 22 }}
-          >
-            <Button
-              asChild
-              variant="outline"
-              size="icon"
-              className="mt-0.5 h-11 w-11 rounded-2xl border-slate-200 bg-white text-slate-700 shadow-none transition-colors hover:border-slate-300 hover:bg-slate-50 hover:text-slate-950"
+          <div className="flex items-start gap-3">
+            <motion.div
+              whileHover={{ x: -3 }}
+              transition={{ type: 'spring', stiffness: 320, damping: 22 }}
             >
-              <Link href="/" aria-label="Wróć do strony głównej">
-                <ArrowLeft className="h-5 w-5" />
-              </Link>
-            </Button>
-          </motion.div>
+              <Button
+                asChild
+                variant="outline"
+                size="icon"
+                className="mt-0.5 h-11 w-11 rounded-2xl border-slate-200 bg-white text-slate-700 shadow-none transition-colors hover:border-slate-300 hover:bg-slate-50 hover:text-slate-950"
+              >
+                <Link href={backHref} aria-label="Wróć do strony głównej">
+                  <ArrowLeft className="h-5 w-5" />
+                </Link>
+              </Button>
+            </motion.div>
 
-          <motion.div
-            initial={{ opacity: 0, x: 10 }}
-            animate={{ opacity: 1, x: 0 }}
-            transition={{ delay: 0.08, duration: 0.36, ease: [0.22, 1, 0.36, 1] }}
-          >
-            <p className="font-grotesk w-fit rounded-[3px] bg-gray-200 px-2 text-xs font-semibold">
-              Roadmap
-            </p>
-            <h1 className="font-poppins mt-1 text-2xl font-semibold">
-              Career Path for Gamedeveloper
-            </h1>
-          </motion.div>
+            <motion.div
+              initial={{ opacity: 0, x: 10 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ delay: 0.08, duration: 0.36, ease: [0.22, 1, 0.36, 1] }}
+            >
+              <p className="font-grotesk w-fit rounded-[3px] bg-gray-200 px-2 text-xs font-semibold">
+                Roadmap
+              </p>
+              <h1 className="font-poppins mt-1 text-2xl font-semibold">
+                {title}
+              </h1>
+            </motion.div>
+          </div>
+
+          {headerActions ? <div className="flex items-center gap-2">{headerActions}</div> : null}
         </motion.div>
       </header>
 
@@ -2289,6 +2442,7 @@ const RoadmapReactFlowPage = () => {
                   onPaneClick={onPaneClick}
                   onPaneContextMenu={onPaneContextMenu}
                   onNodeClick={onNodeClick}
+                  onNodeDragStop={onNodeDragStop}
                   onNodeContextMenu={onNodeContextMenu}
                   onNodeDoubleClick={onNodeDoubleClick}
                   onEdgeClick={onEdgeClick}
@@ -2450,6 +2604,12 @@ const RoadmapReactFlowPage = () => {
             </Tooltip>
           </div>
         </motion.aside>
+
+        <RoadmapNodeDetailsSheet
+          data={activeNodeDetailsData}
+          open={Boolean(activeNodeDetailsData) && isNodeDetailsOpen}
+          onOpenChange={setIsNodeDetailsOpen}
+        />
       </div>
 
       {edgeInspector && activeInspectorEdge && edgeInspectorPosition && (

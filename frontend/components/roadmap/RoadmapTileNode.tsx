@@ -3,9 +3,11 @@
 import type { FC } from 'react';
 import { useState } from 'react';
 import { Handle, Position, useStore } from '@xyflow/react';
+import type { StepStatus, StepType } from '@/lib/types/roadmap';
 
 type NodeTone = 'main' | 'cream' | 'neutral';
 export type NoteThemeId = 'rose' | 'amber' | 'mint' | 'sky';
+export type RoadmapNodeKind = 'phase' | 'step' | 'text' | 'note';
 
 type StoreConnection = {
   from?: { nodeId?: string | null } | null;
@@ -22,6 +24,14 @@ export type RoadmapNodeData = {
   height?: number;
   noteTheme?: NoteThemeId;
   noteRotation?: number;
+  nodeKind?: RoadmapNodeKind;
+  phaseTitle?: string;
+  timeLabel?: string;
+  timeStartMonth?: number;
+  timeEndMonth?: number;
+  totalMonths?: number;
+  stepType?: StepType;
+  stepStatus?: StepStatus;
 };
 
 type Props = {
@@ -104,9 +114,9 @@ export const RoadmapTileNode: FC<Props> = ({ id, data, selected }) => {
   return (
     <div
       className={[
-        'relative rounded-xl border border-l-6 border-[#11162f] px-4 py-3',
+        'relative cursor-pointer rounded-xl border border-l-6 border-[#11162f] px-4 py-3',
         'text-[#11162f] shadow-none',
-        'flex items-center gap-3',
+        'flex items-center gap-3 transition-shadow hover:shadow-[0_18px_40px_-32px_rgba(17,22,47,0.42)]',
         toneClasses[tone],
         selected ? 'ring-4 ring-sky-500/40' : '',
       ].join(' ')}

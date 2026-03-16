@@ -1,11 +1,25 @@
+import type { StepStatus, StepType } from '@/lib/types/roadmap';
+
 export type PresetNodeConfig = {
   id: string;
   title: string;
   x: number;
   y: number;
+  persistenceId?: string;
+  phase?: string;
+  timeline?: string;
+  summary?: string;
   width?: number;
   height?: number;
   tone?: 'main' | 'cream' | 'neutral';
+  nodeKind?: 'phase' | 'step' | 'text' | 'note';
+  phaseTitle?: string;
+  timeLabel?: string;
+  timeStartMonth?: number;
+  timeEndMonth?: number;
+  totalMonths?: number;
+  stepType?: StepType;
+  stepStatus?: StepStatus;
 };
 
 export type PresetEdgeConfig = {

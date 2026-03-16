@@ -361,7 +361,19 @@ export default function CareerPathSection({
               variant="ghost"
               className="hover-shine-fill group h-9 rounded-[14px] border border-white/10 bg-white/[0.02] px-3.5 text-[12px] font-medium text-white/80 shadow-none backdrop-blur-sm transition-[background-color,color] hover:bg-white/[0.05] hover:text-white"
             >
-              <Link href="/roadmap-rf" className="font-poppins" aria-label="Przejdź do roadmapy">
+              <Link
+                href={{
+                  pathname: '/dashboard',
+                  query: {
+                    source: 'assistant',
+                    careerPathId: path.id,
+                    careerPathName: path.careerName,
+                    pathIndex: String(index),
+                  },
+                }}
+                className="font-poppins"
+                aria-label="Przejdz do dashboardu roadmapy"
+              >
                 <span>Roadmapa</span>
               </Link>
             </Button>

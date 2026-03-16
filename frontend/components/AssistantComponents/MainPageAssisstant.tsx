@@ -545,7 +545,7 @@ export default function AssistantPage() {
           {/* Career paths sections */}
           {recommendations.careerPaths.map((path: CareerPath, index: number) => (
             <CareerPathSection
-              key={`${path.careerName}-${index}`}
+              key={path.id}
               path={path}
               index={index}
               matchResult={matchByName.get(path.careerName.trim().toLowerCase())}
