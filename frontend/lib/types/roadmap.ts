@@ -2,6 +2,13 @@ export type RoadmapStatus = 'Draft' | 'Active' | 'Completed' | 'Archived';
 export type StepStatus = 'NotStarted' | 'InProgress' | 'Completed';
 export type StepType = 'Required' | 'Optional';
 
+export interface RoadmapPhaseStepMeta {
+  id: string;
+  title: string;
+  stepType: StepType;
+  status: StepStatus;
+}
+
 export interface GenerateRoadmapPayload {
   careerPathId: string;
   timeHorizonMonths: number;

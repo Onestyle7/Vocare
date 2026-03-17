@@ -20,7 +20,12 @@ import {
   AlertDialogTrigger,
 } from '@/components/ui/alert-dialog';
 import { Button } from '@/components/ui/button';
-import { archiveRoadmap, getRoadmapById, updateRoadmapStepPositions } from '@/lib/api/roadmap';
+import {
+  archiveRoadmap,
+  getRoadmapById,
+  updateRoadmapStepPositions,
+  updateRoadmapStepStatus,
+} from '@/lib/api/roadmap';
 import type { RoadmapDetailsDto } from '@/lib/types/roadmap';
 import type { PresetEdgeConfig, PresetNodeConfig } from '@/roadmap/configs/presets';
 
@@ -317,6 +322,12 @@ const buildCanvasGraph = (
       phaseStepCount: orderedSteps.length,
       phaseRequiredCount: requiredCount,
       phaseOptionalCount: optionalCount,
+      phaseSteps: orderedSteps.map((step) => ({
+        id: step.id,
+        title: step.title,
+        stepType: step.stepType,
+        status: step.status,
+      })),
     });
 
     orderedSteps.forEach((step) => {
@@ -619,6 +630,7 @@ export default function RoadmapDetailsPage({ roadmapId }: { roadmapId: string })
           })),
         });
       }}
+      onUpdateStepStatus={async ({ stepId, status }) => updateRoadmapStepStatus(stepId, status)}
     />
   );
 }

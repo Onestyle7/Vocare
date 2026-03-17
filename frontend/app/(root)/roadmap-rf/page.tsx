@@ -6,6 +6,7 @@ import { useCallback, useEffect, useId, useMemo, useRef, useState } from 'react'
 import dagre from 'dagre';
 import gsap from 'gsap';
 import { motion } from 'motion/react';
+import { toast } from 'sonner';
 import {
   addEdge,
   Background,
@@ -55,6 +56,7 @@ import type {
   NoteThemeId,
   RoadmapNodeData as TileNodeData,
 } from '@/components/roadmap/RoadmapTileNode';
+import type { RoadmapStepDto, StepStatus, StepType } from '@/lib/types/roadmap';
 import {
   presetEdges,
   presetNodes,
@@ -101,6 +103,7 @@ type RoadmapNodeCreationOptions = {
   phaseStepCount?: RoadmapCanvasNodeData['phaseStepCount'];
   phaseRequiredCount?: RoadmapCanvasNodeData['phaseRequiredCount'];
   phaseOptionalCount?: RoadmapCanvasNodeData['phaseOptionalCount'];
+  phaseSteps?: RoadmapCanvasNodeData['phaseSteps'];
 };
 
 type RoadmapNode = Node<RoadmapCanvasNodeData>;
@@ -1093,6 +1096,56 @@ const getHistorySnapshotKey = (nodes: RoadmapNode[], edges: Edge[]) =>
     }),
   });
 
+const formatStatusTimelineLabel = (stepType?: StepType, stepStatus?: StepStatus) => {
+  const typeLabel = stepType === 'Optional' ? 'Optional' : 'Required';
+  const statusLabel =
+    stepStatus === 'Completed'
+      ? 'Completed'
+      : stepStatus === 'InProgress'
+        ? 'In progress'
+        : 'Not started';
+
+  return `${typeLabel} • ${statusLabel}`;
+};
+
+const applyStepStatusToNodes = (
+  currentNodes: RoadmapNode[],
+  targetStepId: string,
+  nextStatus: StepStatus
+) =>
+  currentNodes.map((node) => {
+    if (node.type !== 'roadmapTile') return node;
+
+    if (node.data.persistenceId === targetStepId) {
+      return {
+        ...node,
+        data: {
+          ...node.data,
+          stepStatus: nextStatus,
+          timeline: formatStatusTimelineLabel(node.data.stepType, nextStatus),
+        },
+      };
+    }
+
+    if (node.data.nodeKind !== 'phase' || !node.data.phaseSteps?.length) {
+      return node;
+    }
+
+    if (!node.data.phaseSteps.some((phaseStep) => phaseStep.id === targetStepId)) {
+      return node;
+    }
+
+    return {
+      ...node,
+      data: {
+        ...node.data,
+        phaseSteps: node.data.phaseSteps.map((phaseStep) =>
+          phaseStep.id === targetStepId ? { ...phaseStep, status: nextStatus } : phaseStep
+        ),
+      },
+    };
+  });
+
 const createRoadmapNode = (
   id: string,
   step: RoadmapDraft,
@@ -1127,6 +1180,7 @@ const createRoadmapNode = (
       phaseStepCount: options?.phaseStepCount,
       phaseRequiredCount: options?.phaseRequiredCount,
       phaseOptionalCount: options?.phaseOptionalCount,
+      phaseSteps: options?.phaseSteps,
     },
     position,
     sourcePosition: Position.Right,
@@ -1225,6 +1279,7 @@ const createInitialNodes = (nodeConfigs: PresetNodeConfig[] = presetNodes): Road
         phaseStepCount: cfg.phaseStepCount,
         phaseRequiredCount: cfg.phaseRequiredCount,
         phaseOptionalCount: cfg.phaseOptionalCount,
+        phaseSteps: cfg.phaseSteps,
       }
     );
   });
@@ -1305,6 +1360,10 @@ type RoadmapReactFlowPageProps = {
   onPersistNodePositions?: (
     positions: Array<{ persistenceId: string; x: number; y: number }>
   ) => void | Promise<void>;
+  onUpdateStepStatus?: (input: {
+    stepId: string;
+    status: StepStatus;
+  }) => Promise<RoadmapStepDto | void> | RoadmapStepDto | void;
 };
 
 export const RoadmapReactFlowPage = ({
@@ -1315,6 +1374,7 @@ export const RoadmapReactFlowPage = ({
   layoutDirection = 'LR',
   headerActions,
   onPersistNodePositions,
+  onUpdateStepStatus,
 }: RoadmapReactFlowPageProps) => {
   const nodeTypes = useMemo(
     () => ({
@@ -1361,6 +1421,7 @@ export const RoadmapReactFlowPage = ({
   const [isColorTooltipOpen, setIsColorTooltipOpen] = useState(false);
   const [isTextTooltipOpen, setIsTextTooltipOpen] = useState(false);
   const [unlockHoldProgress, setUnlockHoldProgress] = useState(0);
+  const [statusUpdateStepId, setStatusUpdateStepId] = useState<string | null>(null);
 
   const [reactFlowInstance, setReactFlowInstance] = useState<ReactFlowInstance<
     RoadmapNode,
@@ -1430,6 +1491,48 @@ export const RoadmapReactFlowPage = ({
     if (!isNodeDetailsOpen || selectedNode?.type !== 'roadmapTile') return null;
     return selectedNode.data;
   }, [isNodeDetailsOpen, selectedNode]);
+
+  const handleStepStatusChange = useCallback(
+    async (nextStatus: StepStatus) => {
+      if (selectedNode?.type !== 'roadmapTile') return;
+      if (selectedNode.data.nodeKind !== 'step') return;
+      if (selectedNode.data.stepStatus === nextStatus) return;
+
+      const stepId = selectedNode.data.persistenceId ?? selectedNode.id;
+      const previousStatus = selectedNode.data.stepStatus ?? 'NotStarted';
+
+      setStatusUpdateStepId(selectedNode.id);
+      setNodes((currentNodes) => applyStepStatusToNodes(currentNodes, stepId, nextStatus));
+
+      if (!selectedNode.data.persistenceId || !onUpdateStepStatus) {
+        setStatusUpdateStepId((currentStepId) =>
+          currentStepId === selectedNode.id ? null : currentStepId
+        );
+        return;
+      }
+
+      try {
+        const updatedStep = await onUpdateStepStatus({
+          stepId: selectedNode.data.persistenceId,
+          status: nextStatus,
+        });
+
+        if (updatedStep) {
+          setNodes((currentNodes) =>
+            applyStepStatusToNodes(currentNodes, updatedStep.id, updatedStep.status)
+          );
+        }
+      } catch {
+        setNodes((currentNodes) => applyStepStatusToNodes(currentNodes, stepId, previousStatus));
+        toast.error('Nie udalo sie zapisac statusu kroku');
+      } finally {
+        setStatusUpdateStepId((currentStepId) =>
+          currentStepId === selectedNode.id ? null : currentStepId
+        );
+      }
+    },
+    [onUpdateStepStatus, selectedNode, setNodes]
+  );
 
   useEffect(() => {
     if (!editingNodeId) return;
@@ -2602,6 +2705,10 @@ export const RoadmapReactFlowPage = ({
           data={activeNodeDetailsData}
           open={Boolean(activeNodeDetailsData) && isNodeDetailsOpen}
           onOpenChange={setIsNodeDetailsOpen}
+          onStepStatusChange={handleStepStatusChange}
+          isStepStatusUpdating={
+            activeNodeDetailsData?.nodeKind === 'step' && statusUpdateStepId === selectedNodeId
+          }
         />
       </div>
 

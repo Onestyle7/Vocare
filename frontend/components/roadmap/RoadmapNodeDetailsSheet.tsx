@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect, useState, type ReactNode } from 'react';
-import { CalendarRange, CircleDot, X } from 'lucide-react';
+import { ArrowRight, CalendarRange, CircleDot, LoaderCircle, X } from 'lucide-react';
 
 import Timeline from '@/components/AssistantComponents/Timeline';
 import type { RoadmapNodeData } from '@/components/roadmap/RoadmapTileNode';
@@ -17,12 +17,15 @@ import {
   SheetHeader,
   SheetTitle,
 } from '@/components/ui/sheet';
+import type { StepStatus } from '@/lib/types/roadmap';
 import { cn } from '@/lib/utils';
 
 type Props = {
   data: RoadmapNodeData | null;
   open: boolean;
   onOpenChange: (open: boolean) => void;
+  onStepStatusChange?: (status: StepStatus) => void | Promise<void>;
+  isStepStatusUpdating?: boolean;
 };
 
 const stepStatusLabels = {
@@ -35,6 +38,8 @@ const stepTypeLabels = {
   Required: 'Wymagany',
   Optional: 'Opcjonalny',
 } as const;
+
+const stepStatusOrder: StepStatus[] = ['NotStarted', 'InProgress', 'Completed'];
 
 const headerBadgeBaseClassName =
   'font-poppins inline-flex items-center gap-2 border border-r-4 border-b-4 px-3 py-1 text-[11px] shadow-[0_12px_24px_-24px_rgba(15,23,42,0.55)]';
@@ -99,6 +104,15 @@ const formatRequiredCountLabel = (count: number) =>
 const formatOptionalCountLabel = (count: number) =>
   formatCountLabel(count, 'opcjonalny', 'opcjonalne', 'opcjonalnych');
 
+const formatCompletedCountLabel = (count: number) =>
+  formatCountLabel(count, 'ukończony', 'ukończone', 'ukończonych');
+
+const formatActiveCountLabel = (count: number) =>
+  formatCountLabel(count, 'aktywny', 'aktywne', 'aktywnych');
+
+const formatNotStartedCountLabel = (count: number) =>
+  formatCountLabel(count, 'nie rozpoczęty', 'nie rozpoczęte', 'nie rozpoczętych');
+
 const parseTimelineRange = (value?: string | null) => {
   if (!value) return null;
 
@@ -128,7 +142,20 @@ const formatTimelineSummary = (startMonth: number, endMonth: number) =>
     : `Zaplanowane od miesiaca ${startMonth} do ${endMonth}.`;
 
 const detailCardSurfaceClassName =
-  'relative overflow-hidden rounded-[12px] border border-r-4 border-b-4 border-slate-200 bg-[linear-gradient(135deg,rgba(248,250,252,0.98),rgba(255,255,255,0.94)_52%,rgba(241,245,249,0.88))] shadow-xs';
+  'relative overflow-hidden rounded-[12px] border border-b-4 border-r-4 border-slate-200 bg-[linear-gradient(135deg,rgba(248,250,252,0.98),rgba(255,255,255,0.94)_52%,rgba(241,245,249,0.88))] shadow-xs';
+
+const getNextStepStatus = (status: StepStatus) => {
+  const currentIndex = stepStatusOrder.indexOf(status);
+  const nextIndex = currentIndex === -1 ? 0 : (currentIndex + 1) % stepStatusOrder.length;
+
+  return stepStatusOrder[nextIndex];
+};
+
+const toTimelineStatus = (status: StepStatus) => {
+  if (status === 'Completed') return 'completed' as const;
+  if (status === 'InProgress') return 'current' as const;
+  return 'upcoming' as const;
+};
 
 const getTimelineMeta = (data: RoadmapNodeData) => {
   const parsedRange = parseTimelineRange(data.timeLabel || data.timeline);
@@ -172,6 +199,41 @@ const HeaderBadge = ({
   </Badge>
 );
 
+const StatusHeaderButton = ({
+  status,
+  onClick,
+  disabled,
+}: {
+  status: StepStatus;
+  onClick?: (status: StepStatus) => void | Promise<void>;
+  disabled?: boolean;
+}) => (
+  <Button
+    type="button"
+    variant="outline"
+    disabled={disabled}
+    onClick={() => void onClick?.(getNextStepStatus(status))}
+    className={cn(
+      headerBadgeBaseClassName,
+      'hover:text-none h-auto rounded-[7px] pr-2 pl-3 transition-transform hover:-translate-y-0.5',
+      stepStatusBadgeClassNames[status]
+    )}
+  >
+    <span
+      aria-hidden
+      className={cn('h-2.5 w-2.5 rounded-full', stepStatusIndicatorClassNames[status])}
+    />
+    <span>{stepStatusLabels[status]}</span>
+    <span className="ml-1 flex h-5 w-5 items-center justify-center rounded-full border border-current/15 bg-white/75">
+      {disabled ? (
+        <LoaderCircle className="h-3.5 w-3.5 animate-spin" />
+      ) : (
+        <ArrowRight className="h-3.5 w-3.5" />
+      )}
+    </span>
+  </Button>
+);
+
 const TimelineMetaCard = ({
   timelineMeta,
 }: {
@@ -184,7 +246,7 @@ const TimelineMetaCard = ({
       <div className="flex items-center justify-between gap-3 text-slate-500">
         <div className="flex items-center gap-2">
           <CalendarRange className="h-4 w-4" />
-          <span className="text-[11px] font-semibold uppercase">Cel osiągniesz za</span>
+          <span className="text-[11px] font-semibold uppercase">Cel osiągniesz w ciągu</span>
         </div>
       </div>
 
@@ -208,7 +270,13 @@ const TimelineMetaCard = ({
   </div>
 );
 
-export function RoadmapNodeDetailsSheet({ data, open, onOpenChange }: Props) {
+export function RoadmapNodeDetailsSheet({
+  data,
+  open,
+  onOpenChange,
+  onStepStatusChange,
+  isStepStatusUpdating = false,
+}: Props) {
   const [cachedData, setCachedData] = useState<RoadmapNodeData | null>(data);
 
   useEffect(() => {
@@ -234,21 +302,35 @@ export function RoadmapNodeDetailsSheet({ data, open, onOpenChange }: Props) {
   const topics = Array.from(
     new Set((displayData?.topics ?? []).map((topic) => topic.trim()).filter(Boolean))
   );
-  const statusLabel = displayData?.stepStatus ? stepStatusLabels[displayData.stepStatus] : null;
-  const phaseStepCount = displayData?.phaseStepCount ?? 0;
-  const phaseRequiredCount = Math.min(displayData?.phaseRequiredCount ?? 0, phaseStepCount);
-  const phaseOptionalCount = Math.max(
-    0,
-    displayData?.phaseOptionalCount ?? phaseStepCount - phaseRequiredCount
-  );
-  const phaseTimelineItems = Array.from({ length: phaseStepCount }, (_, index) => ({
-    title: `Krok ${index + 1}`,
-    description:
-      index < phaseRequiredCount
-        ? `Krok ${index + 1} jest wymagany.`
-        : `Krok ${index + 1} jest opcjonalny.`,
-    status: index < phaseRequiredCount ? ('completed' as const) : ('upcoming' as const),
-  }));
+  const currentStepStatus = displayData?.stepStatus ?? 'NotStarted';
+  const statusLabel = isPhaseNode ? null : stepStatusLabels[currentStepStatus];
+  const phaseSteps = displayData?.phaseSteps ?? [];
+  const phaseStepCount = phaseSteps.length || displayData?.phaseStepCount || 0;
+  const phaseRequiredCount = phaseSteps.length
+    ? phaseSteps.filter((step) => step.stepType === 'Required').length
+    : Math.min(displayData?.phaseRequiredCount ?? 0, phaseStepCount);
+  const phaseOptionalCount = phaseSteps.length
+    ? phaseSteps.filter((step) => step.stepType === 'Optional').length
+    : Math.max(0, displayData?.phaseOptionalCount ?? phaseStepCount - phaseRequiredCount);
+  const phaseCompletedCount = phaseSteps.filter((step) => step.status === 'Completed').length;
+  const phaseActiveCount = phaseSteps.filter((step) => step.status === 'InProgress').length;
+  const phaseNotStartedCount = Math.max(0, phaseStepCount - phaseCompletedCount - phaseActiveCount);
+  const phaseTimelineItems = phaseSteps.length
+    ? phaseSteps.map((step) => ({
+        title: step.title,
+        description: `${stepTypeLabels[step.stepType]} • ${stepStatusLabels[step.status]}`,
+        status: toTimelineStatus(step.status),
+        isOptional: step.stepType === 'Optional',
+      }))
+    : Array.from({ length: phaseStepCount }, (_, index) => ({
+        title: `Krok ${index + 1}`,
+        description:
+          index < phaseRequiredCount
+            ? `Krok ${index + 1} jest wymagany.`
+            : `Krok ${index + 1} jest opcjonalny.`,
+        status: index < phaseRequiredCount ? ('completed' as const) : ('upcoming' as const),
+        isOptional: index >= phaseRequiredCount,
+      }));
   return (
     <Sheet open={open} onOpenChange={onOpenChange}>
       {displayData ? (
@@ -281,13 +363,21 @@ export function RoadmapNodeDetailsSheet({ data, open, onOpenChange }: Props) {
                     {stepTypeLabels[displayData.stepType]}
                   </HeaderBadge>
                 ) : null}
-                {statusLabel && displayData.stepStatus ? (
-                  <HeaderBadge
-                    className={stepStatusBadgeClassNames[displayData.stepStatus]}
-                    indicatorClassName={stepStatusIndicatorClassNames[displayData.stepStatus]}
-                  >
-                    {statusLabel}
-                  </HeaderBadge>
+                {statusLabel ? (
+                  onStepStatusChange ? (
+                    <StatusHeaderButton
+                      status={currentStepStatus}
+                      disabled={isStepStatusUpdating}
+                      onClick={onStepStatusChange}
+                    />
+                  ) : (
+                    <HeaderBadge
+                      className={stepStatusBadgeClassNames[currentStepStatus]}
+                      indicatorClassName={stepStatusIndicatorClassNames[currentStepStatus]}
+                    >
+                      {statusLabel}
+                    </HeaderBadge>
+                  )
                 ) : null}
               </div>
 
@@ -311,7 +401,7 @@ export function RoadmapNodeDetailsSheet({ data, open, onOpenChange }: Props) {
               </div>
             </SheetHeader>
 
-            <div className="flex-1 space-y-6 overflow-y-auto px-6 pt-4 pb-6">
+            <div className="flex-1 space-y-4 overflow-y-auto px-6 pt-4 pb-6">
               <TimelineMetaCard timelineMeta={timelineMeta} />
 
               {isPhaseNode ? (
@@ -342,6 +432,29 @@ export function RoadmapNodeDetailsSheet({ data, open, onOpenChange }: Props) {
                           <span>{formatOptionalCountLabel(phaseOptionalCount)}</span>
                         </div>
                       </div>
+
+                      {phaseSteps.length > 0 ? (
+                        <div className="mt-4 flex flex-wrap gap-2">
+                          <HeaderBadge
+                            className={stepStatusBadgeClassNames.Completed}
+                            indicatorClassName={stepStatusIndicatorClassNames.Completed}
+                          >
+                            {formatCompletedCountLabel(phaseCompletedCount)}
+                          </HeaderBadge>
+                          <HeaderBadge
+                            className={stepStatusBadgeClassNames.InProgress}
+                            indicatorClassName={stepStatusIndicatorClassNames.InProgress}
+                          >
+                            {formatActiveCountLabel(phaseActiveCount)}
+                          </HeaderBadge>
+                          <HeaderBadge
+                            className={stepStatusBadgeClassNames.NotStarted}
+                            indicatorClassName={stepStatusIndicatorClassNames.NotStarted}
+                          >
+                            {formatNotStartedCountLabel(phaseNotStartedCount)}
+                          </HeaderBadge>
+                        </div>
+                      ) : null}
                     </>
                   ) : (
                     <p className="mt-4 text-[15px] leading-7 text-slate-700">

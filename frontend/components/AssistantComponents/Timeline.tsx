@@ -9,6 +9,7 @@ interface TimelineItem {
   description: string;
   icon?: string;
   status?: 'current' | 'upcoming' | 'completed';
+  isOptional?: boolean;
 }
 
 interface TimelineProps {
@@ -35,7 +36,9 @@ const Timeline: React.FC<TimelineProps> = ({
       <section className={cn('my-4 w-full', className)}>
         <div className="flex flex-wrap items-center gap-2">
           {items.map((item, index) => {
-            const isFilled = item.status === 'completed' || item.status === 'current';
+            const isCompleted = item.status === 'completed';
+            const isCurrent = item.status === 'current';
+            const nextItem = items[index + 1];
 
             return (
               <React.Fragment key={`${item.title}-${index}`}>
@@ -43,12 +46,26 @@ const Timeline: React.FC<TimelineProps> = ({
                   title={item.title}
                   aria-label={item.title}
                   className={cn(
-                    'h-3.5 w-3.5 shrink-0 rounded-full border-2 transition-colors',
-                    isFilled ? 'border-slate-950 bg-slate-950' : 'border-slate-400 bg-white'
+                    'flex h-3.5 w-3.5 shrink-0 items-center justify-center rounded-full border-2 transition-colors',
+                    isCompleted
+                      ? 'border-slate-950 bg-slate-950'
+                      : isCurrent
+                        ? 'border-slate-950 bg-white shadow-[0_0_0_4px_rgba(15,23,42,0.08)]'
+                        : 'border-slate-400 bg-white'
                   )}
-                />
+                >
+                  {isCurrent ? <span className="h-1.5 w-1.5 rounded-full bg-slate-950" /> : null}
+                </div>
                 {index < items.length - 1 ? (
-                  <div className="h-px min-w-4 flex-1 bg-slate-200" aria-hidden />
+                  <div
+                    className={cn(
+                      'min-w-4 flex-1 border-t',
+                      nextItem?.isOptional
+                        ? 'border-dashed border-slate-300'
+                        : 'border-solid border-slate-200'
+                    )}
+                    aria-hidden
+                  />
                 ) : null}
               </React.Fragment>
             );

@@ -3,7 +3,7 @@
 import type { FC } from 'react';
 import { useState } from 'react';
 import { Handle, Position, useStore } from '@xyflow/react';
-import type { StepStatus, StepType } from '@/lib/types/roadmap';
+import type { RoadmapPhaseStepMeta, StepStatus, StepType } from '@/lib/types/roadmap';
 
 type NodeTone = 'main' | 'cream' | 'neutral';
 export type NoteThemeId = 'rose' | 'amber' | 'mint' | 'sky';
@@ -38,6 +38,7 @@ export type RoadmapNodeData = {
   phaseStepCount?: number;
   phaseRequiredCount?: number;
   phaseOptionalCount?: number;
+  phaseSteps?: RoadmapPhaseStepMeta[];
 };
 
 type Props = {
@@ -50,6 +51,21 @@ const toneClasses: Record<NodeTone, string> = {
   main: 'bg-white',
   cream: 'bg-white',
   neutral: 'bg-white',
+};
+
+const stepStatusBorderClassNames = {
+  NotStarted: 'border-slate-300 border-l-slate-500',
+  InProgress: 'border-amber-300 border-l-amber-500',
+  Completed: 'border-emerald-300 border-l-emerald-500',
+} as const;
+
+const isPhaseComplete = (phaseSteps?: RoadmapPhaseStepMeta[]) => {
+  if (!phaseSteps?.length) return false;
+
+  const requiredSteps = phaseSteps.filter((step) => step.stepType === 'Required');
+  if (!requiredSteps.length) return false;
+
+  return requiredSteps.every((step) => step.status === 'Completed');
 };
 
 const handleBase = 'overflow-visible !h-3 !w-3 !border-0 !bg-transparent';
@@ -83,6 +99,10 @@ const handlePos = {
 
 export const RoadmapTileNode: FC<Props> = ({ id, data, selected }) => {
   const tone = data.tone ?? 'cream';
+  const resolvedStepStatus =
+    data.nodeKind === 'step' ? (data.stepStatus ?? 'NotStarted') : null;
+  const resolvedPhaseStatus =
+    data.nodeKind === 'phase' && isPhaseComplete(data.phaseSteps) ? 'Completed' : null;
   const [isHovered, setIsHovered] = useState(false);
 
   const storeConnection = useStore((s) => s.connection as StoreConnection | null);
@@ -116,14 +136,19 @@ export const RoadmapTileNode: FC<Props> = ({ id, data, selected }) => {
   const handleIndicatorClassName = `${handleIndicatorBase} ${handleAnim} ${
     shouldShowHandles ? handleIndicatorVisible : handleIndicatorHidden
   }`;
+  const statusBorderClassName =
+    resolvedStepStatus || resolvedPhaseStatus
+      ? stepStatusBorderClassNames[resolvedStepStatus ?? resolvedPhaseStatus]
+      : 'border-[#11162f]';
 
   return (
     <div
       className={[
-        'relative cursor-pointer rounded-xl border border-l-6 border-[#11162f] px-4 py-3',
+        'relative cursor-pointer rounded-xl border border-l-6 px-4 py-3',
         'text-[#11162f] shadow-none',
         'flex items-center gap-3 transition-shadow hover:shadow-[0_18px_40px_-32px_rgba(17,22,47,0.42)]',
         toneClasses[tone],
+        statusBorderClassName,
         selected ? 'ring-4 ring-sky-500/40' : '',
       ].join(' ')}
       style={{

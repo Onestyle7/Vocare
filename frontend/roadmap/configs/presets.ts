@@ -1,4 +1,4 @@
-import type { StepStatus, StepType } from '@/lib/types/roadmap';
+import type { RoadmapPhaseStepMeta, StepStatus, StepType } from '@/lib/types/roadmap';
 
 export type PresetNodeConfig = {
   id: string;
@@ -26,6 +26,7 @@ export type PresetNodeConfig = {
   phaseStepCount?: number;
   phaseRequiredCount?: number;
   phaseOptionalCount?: number;
+  phaseSteps?: RoadmapPhaseStepMeta[];
 };
 
 export type PresetEdgeConfig = {
