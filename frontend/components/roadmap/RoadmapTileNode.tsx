@@ -19,7 +19,9 @@ export type RoadmapNodeData = {
   title: string;
   timeline: string;
   summary: string;
+  subtitle?: string;
   description?: string;
+  topics?: string[];
   tone?: NodeTone;
   width?: number;
   height?: number;

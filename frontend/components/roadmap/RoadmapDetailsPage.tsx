@@ -339,10 +339,12 @@ const buildCanvasGraph = (
         title: step.title,
         phase: formatPhaseBadge(phaseIndex),
         timeline: `${typeLabel} • ${statusLabel}`,
+        subtitle: step.subTitle?.trim() || '',
         description: step.description?.trim() || '',
         summary:
           step.description?.trim() ||
           `Step ${step.orderIndex + 1}.${topicsSummary}${childCount > 0 ? ` ${childCount} follow-up.` : ''}`,
+        topics: step.topics,
         x: step.positionX ?? 0,
         y: step.positionY ?? 0,
         tone: step.stepType === 'Optional' ? 'neutral' : 'cream',

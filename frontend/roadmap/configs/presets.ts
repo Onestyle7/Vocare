@@ -9,7 +9,9 @@ export type PresetNodeConfig = {
   phase?: string;
   timeline?: string;
   summary?: string;
+  subtitle?: string;
   description?: string;
+  topics?: string[];
   width?: number;
   height?: number;
   tone?: 'main' | 'cream' | 'neutral';

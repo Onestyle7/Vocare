@@ -86,7 +86,9 @@ type RoadmapNodeCreationOptions = {
   tone?: NodeTone;
   width?: number;
   height?: number;
+  subtitle?: RoadmapCanvasNodeData['subtitle'];
   description?: RoadmapCanvasNodeData['description'];
+  topics?: RoadmapCanvasNodeData['topics'];
   persistenceId?: string;
   nodeKind?: RoadmapCanvasNodeData['nodeKind'];
   phaseTitle?: RoadmapCanvasNodeData['phaseTitle'];
@@ -1107,7 +1109,9 @@ const createRoadmapNode = (
       title: step.title,
       timeline: step.timeline,
       summary: step.summary,
+      subtitle: options?.subtitle,
       description: options?.description ?? step.summary,
+      topics: options?.topics,
       tone: options?.tone ?? 'cream',
       width: options?.width ?? autoSize.width,
       height: options?.height ?? autoSize.height,
@@ -1206,7 +1210,9 @@ const createInitialNodes = (nodeConfigs: PresetNodeConfig[] = presetNodes): Road
         tone: cfg.tone ?? 'cream',
         width: cfg.width ?? autoSize.width,
         height: cfg.height ?? autoSize.height,
+        subtitle: cfg.subtitle,
         description: cfg.description,
+        topics: cfg.topics,
         persistenceId: cfg.persistenceId,
         nodeKind: cfg.nodeKind ?? 'step',
         phaseTitle: cfg.phaseTitle,

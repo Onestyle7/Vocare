@@ -30,6 +30,7 @@ export interface RoadmapListItemDto {
 export interface RoadmapStepDto {
   id: string;
   title: string;
+  subTitle: string | null;
   description: string | null;
   topics: string[];
   stepType: StepType;
