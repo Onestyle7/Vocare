@@ -2,20 +2,13 @@
 
 import Link from 'next/link';
 import { useCallback, useEffect, useMemo, useState } from 'react';
-import { useRouter, useSearchParams } from 'next/navigation';
+import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 import { AxiosError } from 'axios';
 import { toast } from 'sonner';
-import {
-  ArrowLeft,
-  ArrowRight,
-  CalendarRange,
-  Layers3,
-  RefreshCcw,
-  Sparkles,
-  Target,
-  Trash2,
-} from 'lucide-react';
+import { ArrowRight, Clock, Layers3, Plus, Trash2 } from 'lucide-react';
 
+import { GridBackgroundDemo } from '@/components/MarketComponents/GridBackgroundDemo';
+import { RecommendationsApiService } from '@/lib/api/RecommendationApiServiice';
 import {
   AlertDialog,
   AlertDialogAction,
@@ -29,29 +22,36 @@ import {
 } from '@/components/ui/alert-dialog';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from '@/components/ui/dialog';
+import { Separator } from '@/components/ui/separator';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
 import { archiveRoadmap, generateRoadmap, getUserRoadmaps } from '@/lib/api/roadmap';
-import type {
-  GenerateRoadmapPayload,
-  RoadmapListItemDto,
-  RoadmapStatus,
-} from '@/lib/types/roadmap';
+import type { GenerateRoadmapPayload, RoadmapListItemDto } from '@/lib/types/roadmap';
+import type { CareerPath } from '@/lib/types/recommendation';
 import { cn } from '@/lib/utils';
 
 const timeHorizonOptions = [3, 6, 9, 12, 18, 24] as const;
-
-const statusClassNames: Record<RoadmapStatus, string> = {
-  Active: 'border-sky-400/25 bg-sky-300/10 text-sky-100',
-  Draft: 'border-amber-400/25 bg-amber-300/10 text-amber-100',
-  Completed: 'border-emerald-400/25 bg-emerald-300/10 text-emerald-100',
-  Archived: 'border-white/10 bg-white/5 text-white/60',
-};
+type CareerPathOption = Pick<CareerPath, 'id' | 'careerName' | 'description'>;
 
 const formatDate = (value: string) =>
-  new Date(value).toLocaleDateString('pl-PL', {
+  new Date(value).toLocaleString('pl-GB', {
     day: '2-digit',
-    month: 'short',
+    month: '2-digit',
     year: 'numeric',
+    hour12: false,
   });
 
 const normalizeErrorMessage = (error: unknown) => {
@@ -76,39 +76,81 @@ const normalizeErrorMessage = (error: unknown) => {
   return 'Wystapil nieoczekiwany blad.';
 };
 
+const formatRoadmapCount = (count: number) => {
+  if (count === 1) return '1 roadmapa';
+  if (count >= 2 && count <= 4) return `${count} roadmapy`;
+  return `${count} roadmap`;
+};
+
 export default function RoadmapDashboardPage() {
+  const pathname = usePathname();
   const router = useRouter();
   const searchParams = useSearchParams();
+  const recommendationsApi = useMemo(() => new RecommendationsApiService(), []);
 
   const [timeHorizonMonths, setTimeHorizonMonths] = useState<number>(9);
   const [roadmaps, setRoadmaps] = useState<RoadmapListItemDto[]>([]);
   const [isLoadingRoadmaps, setIsLoadingRoadmaps] = useState(true);
   const [isCreatingRoadmap, setIsCreatingRoadmap] = useState(false);
+  const [isCreateDialogOpen, setIsCreateDialogOpen] = useState(false);
+  const [careerPathOptions, setCareerPathOptions] = useState<CareerPathOption[]>([]);
+  const [isLoadingCareerPaths, setIsLoadingCareerPaths] = useState(false);
+  const [careerPathsError, setCareerPathsError] = useState<string | null>(null);
+  const [selectedCareerPathId, setSelectedCareerPathId] = useState('');
+  const [selectedCareerPathName, setSelectedCareerPathName] = useState('');
   const [deletingRoadmapId, setDeletingRoadmapId] = useState<string | null>(null);
   const [deleteDialogRoadmapId, setDeleteDialogRoadmapId] = useState<string | null>(null);
   const [roadmapsError, setRoadmapsError] = useState<string | null>(null);
 
-  const source = searchParams.get('source') ?? 'unknown';
-  const careerPathId = searchParams.get('careerPathId') ?? '';
-  const careerPathName = searchParams.get('careerPathName') ?? 'Brak wybranej sciezki';
-  const pathIndex = searchParams.get('pathIndex');
+  const intentCareerPathId = searchParams.get('careerPathId') ?? '';
+  const intentCareerPathName = searchParams.get('careerPathName') ?? '';
 
   const createPayload = useMemo<GenerateRoadmapPayload>(
     () => ({
-      careerPathId,
+      careerPathId: selectedCareerPathId,
       timeHorizonMonths,
     }),
-    [careerPathId, timeHorizonMonths]
+    [selectedCareerPathId, timeHorizonMonths]
   );
 
-  const relatedRoadmaps = useMemo(() => {
-    const normalizedCareerPathName = careerPathName.trim().toLowerCase();
-    return roadmaps.filter(
-      (roadmap) => roadmap.careerPathName.trim().toLowerCase() === normalizedCareerPathName
-    );
-  }, [careerPathName, roadmaps]);
+  const activeRoadmaps = useMemo(
+    () => roadmaps.filter((roadmap) => roadmap.status === 'Active'),
+    [roadmaps]
+  );
 
-  const canCreateRoadmap = careerPathId.length > 0 && !isCreatingRoadmap;
+  const availableCareerPaths = useMemo(() => {
+    if (
+      !selectedCareerPathId ||
+      careerPathOptions.some((path) => path.id === selectedCareerPathId)
+    ) {
+      return careerPathOptions;
+    }
+
+    return [
+      {
+        id: selectedCareerPathId,
+        careerName: selectedCareerPathName || 'Wybrana sciezka kariery',
+        description: '',
+      },
+      ...careerPathOptions,
+    ];
+  }, [careerPathOptions, selectedCareerPathId, selectedCareerPathName]);
+
+  const selectedPathActiveRoadmap = useMemo(() => {
+    const normalizedCareerPathName = selectedCareerPathName.trim().toLowerCase();
+    if (!normalizedCareerPathName) {
+      return null;
+    }
+
+    return (
+      activeRoadmaps.find(
+        (roadmap) => roadmap.careerPathName.trim().toLowerCase() === normalizedCareerPathName
+      ) ?? null
+    );
+  }, [activeRoadmaps, selectedCareerPathName]);
+
+  const canCreateRoadmap =
+    selectedCareerPathId.length > 0 && !isCreatingRoadmap && !selectedPathActiveRoadmap;
 
   const fetchRoadmaps = useCallback(async (signal?: AbortSignal) => {
     setIsLoadingRoadmaps(true);
@@ -136,6 +178,52 @@ export default function RoadmapDashboardPage() {
     void fetchRoadmaps(controller.signal);
     return () => controller.abort();
   }, [fetchRoadmaps]);
+
+  const loadCareerPaths = useCallback(async () => {
+    setIsLoadingCareerPaths(true);
+    setCareerPathsError(null);
+
+    try {
+      const data = await recommendationsApi.getLastRecommendation();
+      const nextCareerPaths = data.careerPaths.map((path) => ({
+        id: path.id,
+        careerName: path.careerName,
+        description: path.description,
+      }));
+
+      setCareerPathOptions(nextCareerPaths);
+    } catch (error) {
+      setCareerPathsError(normalizeErrorMessage(error));
+    } finally {
+      setIsLoadingCareerPaths(false);
+    }
+  }, [recommendationsApi]);
+
+  useEffect(() => {
+    if (!intentCareerPathId) {
+      return;
+    }
+
+    setSelectedCareerPathId(intentCareerPathId);
+    setSelectedCareerPathName(intentCareerPathName || 'Wybrana sciezka kariery');
+    setIsCreateDialogOpen(true);
+    router.replace(pathname, { scroll: false });
+  }, [intentCareerPathId, intentCareerPathName, pathname, router]);
+
+  useEffect(() => {
+    if (!isCreateDialogOpen || isLoadingCareerPaths || careerPathOptions.length > 0) {
+      return;
+    }
+
+    void loadCareerPaths();
+  }, [careerPathOptions.length, isCreateDialogOpen, isLoadingCareerPaths, loadCareerPaths]);
+
+  const handleSelectCareerPath = (careerPathId: string) => {
+    const nextCareerPath = availableCareerPaths.find((path) => path.id === careerPathId);
+
+    setSelectedCareerPathId(careerPathId);
+    setSelectedCareerPathName(nextCareerPath?.careerName ?? '');
+  };
 
   const handleCreateRoadmap = async () => {
     if (!canCreateRoadmap) return;
@@ -177,339 +265,384 @@ export default function RoadmapDashboardPage() {
   };
 
   return (
-    <section className="relative min-h-screen overflow-hidden bg-[#05070b] px-4 pb-16 sm:px-6 lg:px-10">
-      <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_top_left,rgba(87,153,255,0.16),transparent_30%),radial-gradient(circle_at_bottom_right,rgba(57,211,176,0.10),transparent_24%),linear-gradient(180deg,#05070b_0%,#090c12_42%,#05070b_100%)]" />
-      <div className="relative mx-auto flex max-w-7xl flex-col gap-6 pt-28">
-        <div className="flex flex-wrap items-center justify-between gap-3">
-          <div className="space-y-3">
-            <Badge className="w-fit rounded-full border border-sky-400/20 bg-sky-300/10 px-3 py-1 text-[11px] tracking-[0.18em] text-sky-100 uppercase">
-              Roadmap Dashboard
-            </Badge>
-            <div className="space-y-2">
-              <h1 className="font-grotesk text-4xl leading-tight font-semibold text-white sm:text-5xl">
-                Dashboard tworzenia roadmapy
-              </h1>
-              <p className="max-w-3xl text-sm leading-7 text-white/60 sm:text-base">
-                Klik z assistanta juz przekazuje prawdziwy `careerPathId`, a ten widok jest
-                podlaczony do endpointow roadmapy.
-              </p>
-            </div>
-          </div>
+    <div className="min-h-screen">
+      <div className="font-poppins relative">
+        <GridBackgroundDemo />
 
-          <Button
-            asChild
-            variant="ghost"
-            className="rounded-full border border-white/10 bg-white/[0.03] text-white/70 hover:bg-white/[0.05] hover:text-white"
-          >
-            <Link href="/assistant">
-              <ArrowLeft className="h-4 w-4" />
-              Wroc do assistanta
-            </Link>
-          </Button>
-        </div>
+        <div className="relative z-10 w-full py-6 lg:py-36">
+          <div className="container mx-auto px-0 sm:px-4">
+            <div className="flex flex-col gap-8 md:gap-10">
+              <CreateRoadmapDialog
+                open={isCreateDialogOpen}
+                onOpenChange={setIsCreateDialogOpen}
+                careerPathOptions={availableCareerPaths}
+                selectedCareerPathId={selectedCareerPathId}
+                selectedCareerPathName={selectedCareerPathName}
+                onCareerPathChange={handleSelectCareerPath}
+                timeHorizonMonths={timeHorizonMonths}
+                onTimeHorizonChange={setTimeHorizonMonths}
+                onCreate={handleCreateRoadmap}
+                onReloadCareerPaths={loadCareerPaths}
+                isCreatingRoadmap={isCreatingRoadmap}
+                isLoadingCareerPaths={isLoadingCareerPaths}
+                careerPathsError={careerPathsError}
+                existingRoadmap={selectedPathActiveRoadmap}
+              />
 
-        <div className="grid gap-6 xl:grid-cols-[minmax(0,1.2fr)_380px]">
-          <Card className="rounded-[28px] border border-white/10 bg-white/[0.03] py-0 text-white shadow-[0_20px_70px_rgba(0,0,0,0.3)] backdrop-blur-xl">
-            <CardHeader className="gap-4 border-b border-white/10">
-              <div className="flex flex-wrap items-center gap-2">
-                <Badge className="rounded-full border border-sky-400/20 bg-sky-300/10 text-sky-100">
-                  source: {source}
-                </Badge>
-                {pathIndex ? (
-                  <Badge className="rounded-full border border-white/10 bg-white/5 text-white/65">
-                    path index: {pathIndex}
+              <div className="flex flex-col items-start gap-4">
+                <div className="flex flex-wrap items-center gap-2 md:gap-4">
+                  <Button
+                    type="button"
+                    className="font-poppins gap-2"
+                    onClick={() => setIsCreateDialogOpen(true)}
+                  >
+                    <Plus className="h-4 w-4" />
+                    Utwórz roadmapę
+                  </Button>
+
+                  <Badge variant="secondary" className="font-poppins">
+                    {formatRoadmapCount(activeRoadmaps.length)}
                   </Badge>
-                ) : null}
-                {relatedRoadmaps.length > 0 ? (
-                  <Badge className="rounded-full border border-amber-400/25 bg-amber-300/10 text-amber-100">
-                    Istnieje juz {relatedRoadmaps.length} roadmap(a) dla podobnej sciezki
-                  </Badge>
-                ) : null}
-              </div>
-              <div className="space-y-2">
-                <CardTitle className="font-grotesk text-2xl leading-tight">
-                  {careerPathName}
-                </CardTitle>
-                <CardDescription className="text-white/55">
-                  To jest wybrana sciezka kariery, dla ktorej backend bedzie generowal roadmape.
-                </CardDescription>
-              </div>
-            </CardHeader>
+                </div>
 
-            <CardContent className="space-y-6 pt-6">
-              <div className="grid gap-4 md:grid-cols-2">
-                <InfoTile
-                  icon={Target}
-                  label="careerPathId"
-                  value={careerPathId || 'Brak careerPathId w query'}
-                  mono
-                />
-                <InfoTile
-                  icon={CalendarRange}
-                  label="Wybrany horyzont"
-                  value={`${timeHorizonMonths} miesiecy`}
-                />
-              </div>
-
-              <div className="rounded-[24px] border border-white/10 bg-black/20 p-4">
-                <div className="flex items-center gap-2">
-                  <Sparkles className="h-4 w-4 text-sky-100" />
-                  <p className="text-sm text-white/70">
-                    Create button odpala teraz `POST /api/Roadmap/generate`.
+                <div className="flex flex-col gap-2">
+                  <h2 className="font-regular max-w-xl text-left text-3xl tracking-tighter md:text-5xl">
+                    Aktywne roadmapy
+                  </h2>
+                  <p className="text-muted-foreground font-regular max-w-xl text-left text-base leading-relaxed tracking-tight md:text-lg lg:max-w-lg">
+                    Zostawiamy tutaj tylko aktualne roadmapy. Nowe tworzysz z poziomu popupu,
+                    ręcznie albo od razu po wejściu z wybranej ścieżki kariery.
                   </p>
                 </div>
-
-                <div className="mt-4 flex flex-wrap gap-2">
-                  {timeHorizonOptions.map((option) => (
-                    <button
-                      key={option}
-                      type="button"
-                      onClick={() => setTimeHorizonMonths(option)}
-                      className={cn(
-                        'rounded-full border px-3 py-1.5 text-xs transition-colors',
-                        option === timeHorizonMonths
-                          ? 'border-sky-300/25 bg-sky-300/10 text-sky-100'
-                          : 'border-white/10 bg-white/[0.03] text-white/60 hover:text-white'
-                      )}
-                    >
-                      {option} mies.
-                    </button>
-                  ))}
-                </div>
-
-                <div className="mt-4 overflow-hidden rounded-[18px] border border-white/10 bg-[#04060a]">
-                  <div className="border-b border-white/10 px-4 py-3 text-xs text-white/45">
-                    Payload do create roadmapy
-                  </div>
-                  <pre className="overflow-auto px-4 py-4 text-xs leading-6 text-white/75">
-                    {JSON.stringify(createPayload, null, 2)}
-                  </pre>
-                </div>
-
-                <div className="mt-4 flex flex-wrap gap-2">
-                  <Button
-                    type="button"
-                    disabled={!canCreateRoadmap}
-                    onClick={handleCreateRoadmap}
-                    className="rounded-full bg-[linear-gradient(90deg,rgba(86,163,255,0.95),rgba(47,214,168,0.95))] text-black hover:opacity-90"
-                  >
-                    {isCreatingRoadmap ? 'Tworzenie...' : 'Utworz roadmape'}
-                    <ArrowRight className="h-4 w-4" />
-                  </Button>
-                  <Button
-                    type="button"
-                    variant="ghost"
-                    onClick={() => void fetchRoadmaps()}
-                    className="rounded-full border border-white/10 bg-white/[0.03] text-white/70 hover:bg-white/[0.05] hover:text-white"
-                  >
-                    Odswiez liste
-                    <RefreshCcw className="h-4 w-4" />
-                  </Button>
-                </div>
               </div>
-            </CardContent>
-          </Card>
 
-          <Card className="rounded-[28px] border border-white/10 bg-white/[0.03] py-0 text-white backdrop-blur-xl">
-            <CardHeader className="gap-2 border-b border-white/10">
-              <CardTitle className="font-grotesk text-lg">Twoje roadmapy</CardTitle>
-              <CardDescription className="text-white/55">
-                Dane pochodza z `GET /api/Roadmap/user-roadmaps`.
-              </CardDescription>
-            </CardHeader>
-
-            <CardContent className="space-y-3 pt-6">
-              {isLoadingRoadmaps ? (
-                <div className="space-y-3">
-                  {[0, 1, 2].map((item) => (
-                    <div
-                      key={`roadmap-skeleton-${item}`}
-                      className="animate-pulse rounded-[20px] border border-white/10 bg-black/20 p-4"
+              <div className="grid grid-cols-1 gap-6 md:grid-cols-2 md:gap-8 lg:grid-cols-3">
+                {isLoadingRoadmaps ? (
+                  <>
+                    {Array.from({ length: 6 }).map((_, index) => (
+                      <SkeletonCard key={`roadmap-skeleton-${index}`} />
+                    ))}
+                  </>
+                ) : roadmapsError ? (
+                  <div className="col-span-full rounded-xl border border-rose-200 bg-rose-50 p-6">
+                    <p className="text-sm text-rose-700">{roadmapsError}</p>
+                    <Button
+                      type="button"
+                      variant="outline"
+                      onClick={() => void fetchRoadmaps()}
+                      className="font-poppins mt-4"
                     >
-                      <div className="h-4 w-2/3 rounded bg-white/10" />
-                      <div className="mt-3 h-3 w-1/2 rounded bg-white/8" />
-                      <div className="mt-4 h-2 rounded-full bg-white/8" />
-                    </div>
-                  ))}
-                </div>
-              ) : roadmapsError ? (
-                <div className="rounded-[20px] border border-rose-400/20 bg-rose-300/10 p-4 text-sm text-rose-100">
-                  <p>{roadmapsError}</p>
-                  <Button
-                    type="button"
-                    variant="ghost"
-                    onClick={() => void fetchRoadmaps()}
-                    className="mt-3 rounded-full border border-white/10 bg-white/[0.04] text-white"
-                  >
-                    Sprobuj ponownie
-                  </Button>
-                </div>
-              ) : roadmaps.length === 0 ? (
-                <div className="rounded-[20px] border border-dashed border-white/10 bg-black/20 p-4 text-sm text-white/60">
-                  Nie masz jeszcze zadnej roadmapy. Mozesz utworzyc pierwsza z wybranej sciezki po
-                  lewej.
-                </div>
-              ) : (
-                roadmaps.map((roadmap) => (
-                  <div
-                    key={roadmap.id}
-                    className="rounded-[20px] border border-white/10 bg-black/20 p-4 transition-colors hover:bg-black/30"
-                  >
-                    <div className="flex items-start justify-between gap-3">
-                      <div className="space-y-1">
-                        <p className="text-sm font-medium text-white">{roadmap.title}</p>
-                        <p className="text-xs text-white/45">{roadmap.careerPathName}</p>
-                        <p className="font-mono text-[11px] text-white/35">{roadmap.id}</p>
-                      </div>
-                      <Badge
-                        className={cn('rounded-full border', statusClassNames[roadmap.status])}
-                      >
-                        {roadmap.status}
-                      </Badge>
-                    </div>
-
-                    <div className="mt-4 flex items-center justify-between text-xs text-white/45">
-                      <span>{roadmap.timeHorizonMonths} mies.</span>
-                      <span>{formatDate(roadmap.createdAt)}</span>
-                    </div>
-
-                    <div className="mt-4 h-2 rounded-full bg-white/8">
-                      <div
-                        className="h-full rounded-full bg-[linear-gradient(90deg,rgba(86,163,255,0.9),rgba(47,214,168,0.9))]"
-                        style={{ width: `${roadmap.progress}%` }}
-                      />
-                    </div>
-
-                    <div className="mt-4 flex items-center justify-between gap-2">
-                      <Button
-                        asChild
-                        type="button"
-                        variant="ghost"
-                        className="rounded-full border border-white/10 bg-white/[0.03] text-white/75 hover:bg-white/[0.06] hover:text-white"
-                      >
-                        <Link href={`/roadmap/${roadmap.id}`}>Otworz</Link>
-                      </Button>
-
-                      <AlertDialog
-                        open={deleteDialogRoadmapId === roadmap.id}
-                        onOpenChange={(open) => setDeleteDialogRoadmapId(open ? roadmap.id : null)}
-                      >
-                        <AlertDialogTrigger asChild>
-                          <Button
-                            type="button"
-                            variant="ghost"
-                            disabled={deletingRoadmapId === roadmap.id}
-                            className="rounded-full border border-rose-400/20 bg-rose-300/10 text-rose-100 hover:bg-rose-300/15 hover:text-rose-50"
-                          >
-                            <Trash2 className="h-4 w-4" />
-                            {deletingRoadmapId === roadmap.id ? 'Usuwanie...' : 'Usuń'}
-                          </Button>
-                        </AlertDialogTrigger>
-                        <AlertDialogContent className="font-grotesk border-white/10 bg-[#0b1016] text-white shadow-[0_24px_80px_-32px_rgba(0,0,0,0.65)]">
-                          <AlertDialogHeader>
-                            <AlertDialogTitle className="text-white">
-                              Usunąć roadmapę?
-                            </AlertDialogTitle>
-                            <AlertDialogDescription className="text-white/60">
-                              Ta akcja nie może być cofnięta.
-                            </AlertDialogDescription>
-                          </AlertDialogHeader>
-                          <AlertDialogFooter>
-                            <AlertDialogCancel
-                              disabled={deletingRoadmapId === roadmap.id}
-                              onClick={() => setDeleteDialogRoadmapId(null)}
-                              className="border-white/10 bg-white/[0.03] text-white/75 hover:bg-white/[0.06] hover:text-white"
-                            >
-                              Zachowaj roadmapę
-                            </AlertDialogCancel>
-                            <AlertDialogAction
-                              disabled={deletingRoadmapId === roadmap.id}
-                              className="bg-red-500 text-white hover:bg-red-400"
-                              onClick={() => void handleDeleteRoadmap(roadmap.id)}
-                            >
-                              Tak, chcę usunąć
-                            </AlertDialogAction>
-                          </AlertDialogFooter>
-                        </AlertDialogContent>
-                      </AlertDialog>
-                    </div>
+                      Sprobuj ponownie
+                    </Button>
                   </div>
-                ))
-              )}
-            </CardContent>
-          </Card>
+                ) : activeRoadmaps.length === 0 ? (
+                  <EmptyState onCreate={() => setIsCreateDialogOpen(true)} />
+                ) : (
+                  <>
+                    {activeRoadmaps.map((roadmap) => (
+                      <Link
+                        key={roadmap.id}
+                        href={`/roadmap/${roadmap.id}`}
+                        className="block min-w-0"
+                      >
+                        <div className="group bg-background flex min-h-[360px] min-w-0 flex-col gap-2 overflow-hidden rounded-xl border p-3 transition-shadow hover:shadow-lg md:h-[400px] md:p-4">
+                          <div className="flex h-full min-w-0 flex-col rounded-md border">
+                            <div className="bg-muted group relative mb-2 h-1/2 rounded-tl-md rounded-tr-md">
+                              <div className="absolute top-0 right-0 p-2">
+                                <Badge className="font-poppins rounded-[7px] border border-white/60 bg-white/90 px-2.5 py-1 text-slate-800 shadow-none backdrop-blur-sm">
+                                  {roadmap.timeHorizonMonths} mies.
+                                </Badge>
+                              </div>
+
+                              <div className="absolute top-0 left-0 p-2">
+                                <AlertDialog
+                                  open={deleteDialogRoadmapId === roadmap.id}
+                                  onOpenChange={(open) =>
+                                    setDeleteDialogRoadmapId(open ? roadmap.id : null)
+                                  }
+                                >
+                                  <AlertDialogTrigger asChild>
+                                    <button
+                                      type="button"
+                                      onClick={(event) => {
+                                        event.preventDefault();
+                                        event.stopPropagation();
+                                        setDeleteDialogRoadmapId(roadmap.id);
+                                      }}
+                                      disabled={deletingRoadmapId === roadmap.id}
+                                      className="flex h-9 w-9 cursor-pointer items-center justify-center rounded border border-white/20 bg-white/30 p-2 text-white opacity-100 shadow-md backdrop-blur-md transition-all hover:bg-red-500/80 disabled:cursor-not-allowed disabled:opacity-100 md:h-10 md:w-10 md:opacity-0 md:group-hover:opacity-100"
+                                    >
+                                      <Trash2
+                                        size={16}
+                                        className="transition-all hover:scale-110"
+                                      />
+                                    </button>
+                                  </AlertDialogTrigger>
+
+                                  <AlertDialogContent className="font-grotesk border-white/10 bg-[#0b1016] text-white shadow-[0_24px_80px_-32px_rgba(0,0,0,0.65)]">
+                                    <AlertDialogHeader>
+                                      <AlertDialogTitle className="text-white">
+                                        Usunąć roadmapę?
+                                      </AlertDialogTitle>
+                                      <AlertDialogDescription className="text-white/60">
+                                        Ta akcja nie może być cofnięta.
+                                      </AlertDialogDescription>
+                                    </AlertDialogHeader>
+                                    <AlertDialogFooter>
+                                      <AlertDialogCancel
+                                        onClick={(event) => {
+                                          event.preventDefault();
+                                          event.stopPropagation();
+                                          setDeleteDialogRoadmapId(null);
+                                        }}
+                                        className="border-white/10 bg-white/[0.03] text-white/75 hover:bg-white/[0.06] hover:text-white"
+                                      >
+                                        Zachowaj roadmapę
+                                      </AlertDialogCancel>
+                                      <AlertDialogAction
+                                        className="bg-red-500 text-white hover:bg-red-400"
+                                        onClick={(event) => {
+                                          event.preventDefault();
+                                          event.stopPropagation();
+                                          void handleDeleteRoadmap(roadmap.id);
+                                        }}
+                                      >
+                                        Tak, chcę usunąć
+                                      </AlertDialogAction>
+                                    </AlertDialogFooter>
+                                  </AlertDialogContent>
+                                </AlertDialog>
+                              </div>
+
+                              <div className="flex h-full min-w-0 flex-col items-center justify-center overflow-hidden px-4 md:px-5">
+                                <Layers3 className="text-muted-foreground/50 h-72 w-72 translate-y-[65%] transition-all group-hover:translate-y-[50%]" />
+
+                                <div className="mt-5 w-full">
+                                  <div className="bg-muted mt-3 h-2 rounded-full">
+                                    <div
+                                      className="bg-foreground h-full rounded-full"
+                                      style={{ width: `${roadmap.progress}%` }}
+                                    />
+                                  </div>
+                                </div>
+                              </div>
+                            </div>
+
+                            <div className="min-w-0 flex-1 p-3 md:p-4">
+                              <h3 className="line-clamp-2 text-lg font-semibold break-words md:text-xl">
+                                {roadmap.title}
+                              </h3>
+                              <p className="text-muted-foreground mt-1 line-clamp-2 text-sm break-words md:text-base">
+                                {roadmap.careerPathName}
+                              </p>
+                            </div>
+
+                            <Separator className="w-full" />
+
+                            <div className="flex min-h-[72px] min-w-0 flex-col items-start gap-3 p-3 md:flex-row md:items-center md:justify-between md:p-4">
+                              <Button size="sm" className="w-full md:w-auto">
+                                Otwórz
+                              </Button>
+
+                              <div className="text-muted-foreground flex min-w-0 flex-wrap items-center gap-2 self-stretch md:flex-nowrap md:self-auto">
+                                <Clock className="h-4 w-4 shrink-0" />
+                                <p className="min-w-0 text-sm font-semibold break-words">
+                                  Utworzono {formatDate(roadmap.createdAt)}
+                                </p>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      </Link>
+                    ))}
+                  </>
+                )}
+              </div>
+            </div>
+          </div>
         </div>
-
-        <Card className="rounded-[28px] border border-dashed border-white/10 bg-white/[0.02] py-0 text-white backdrop-blur-xl">
-          <CardHeader className="gap-2 border-b border-white/10">
-            <CardTitle className="font-grotesk text-lg">Co zostalo po tym kroku</CardTitle>
-            <CardDescription className="text-white/55">
-              Flow tworzenia i przejscia do detalu roadmapy juz dziala. Pozostaja rozszerzenia.
-            </CardDescription>
-          </CardHeader>
-          <CardContent className="grid gap-3 pt-6 md:grid-cols-3">
-            <ChecklistTile
-              icon={Layers3}
-              title="1. Create flow"
-              description="Zrobione: dashboard wysyla request generate i przechodzi do konkretnej roadmapy."
-            />
-            <ChecklistTile
-              icon={CalendarRange}
-              title="2. Lista roadmap"
-              description="Zrobione: dashboard pobiera roadmaps z backendu i pozwala otwierac detale."
-            />
-            <ChecklistTile
-              icon={ArrowRight}
-              title="3. Rozszerzenia"
-              description="Status update zostal na pozniej, ale usuwanie i archiwizacja roadmap sa juz dostepne."
-            />
-          </CardContent>
-        </Card>
       </div>
-    </section>
-  );
-}
-
-function InfoTile({
-  icon: Icon,
-  label,
-  value,
-  mono = false,
-}: {
-  icon: typeof Target;
-  label: string;
-  value: string;
-  mono?: boolean;
-}) {
-  return (
-    <div className="rounded-[20px] border border-white/10 bg-white/[0.03] p-4">
-      <div className="flex items-center gap-2 text-white/45">
-        <Icon className="h-4 w-4" />
-        <p className="text-[11px] tracking-[0.18em] uppercase">{label}</p>
-      </div>
-      <p className={cn('mt-2 text-sm text-white', mono && 'font-mono text-[12px] leading-6')}>
-        {value}
-      </p>
     </div>
   );
 }
 
-function ChecklistTile({
-  icon: Icon,
-  title,
-  description,
+function CreateRoadmapDialog({
+  open,
+  onOpenChange,
+  careerPathOptions,
+  selectedCareerPathId,
+  selectedCareerPathName,
+  onCareerPathChange,
+  timeHorizonMonths,
+  onTimeHorizonChange,
+  onCreate,
+  onReloadCareerPaths,
+  isCreatingRoadmap,
+  isLoadingCareerPaths,
+  careerPathsError,
+  existingRoadmap,
 }: {
-  icon: typeof Target;
-  title: string;
-  description: string;
+  open: boolean;
+  onOpenChange: (open: boolean) => void;
+  careerPathOptions: CareerPathOption[];
+  selectedCareerPathId: string;
+  selectedCareerPathName: string;
+  onCareerPathChange: (careerPathId: string) => void;
+  timeHorizonMonths: number;
+  onTimeHorizonChange: (months: number) => void;
+  onCreate: () => Promise<void>;
+  onReloadCareerPaths: () => Promise<void>;
+  isCreatingRoadmap: boolean;
+  isLoadingCareerPaths: boolean;
+  careerPathsError: string | null;
+  existingRoadmap: RoadmapListItemDto | null;
 }) {
+  const canSubmit = selectedCareerPathId.length > 0 && !isCreatingRoadmap && !existingRoadmap;
+
   return (
-    <div className="rounded-[20px] border border-white/10 bg-black/20 p-4">
-      <div className="flex items-center gap-2 text-white">
-        <Icon className="h-4 w-4 text-sky-100" />
-        <p className="font-medium">{title}</p>
+    <Dialog open={open} onOpenChange={onOpenChange}>
+      <DialogContent className="font-poppins max-w-xl rounded-[24px] border p-0 shadow-[0_24px_80px_-32px_rgba(15,23,42,0.25)]">
+        <DialogHeader className="px-6 pt-6">
+          <DialogTitle className="text-2xl font-semibold tracking-tight">
+            Utwórz roadmapę
+          </DialogTitle>
+          <DialogDescription className="text-sm leading-relaxed">
+            Wybierz ścieżkę kariery i horyzont czasowy.
+          </DialogDescription>
+        </DialogHeader>
+
+        <Separator />
+        <div className="flex flex-col gap-6 px-6 py-6">
+          <div className="flex flex-col gap-2">
+            <p className="text-sm font-medium">Sciezka kariery</p>
+
+            {isLoadingCareerPaths && careerPathOptions.length === 0 ? (
+              <div className="bg-muted/40 text-muted-foreground rounded-xl border px-4 py-3 text-sm">
+                Ladowanie sciezek kariery...
+              </div>
+            ) : careerPathOptions.length > 0 || selectedCareerPathId ? (
+              <Select value={selectedCareerPathId} onValueChange={onCareerPathChange}>
+                <SelectTrigger className="w-full">
+                  <SelectValue placeholder="Wybierz sciezke kariery" />
+                </SelectTrigger>
+                <SelectContent>
+                  {careerPathOptions.map((careerPath) => (
+                    <SelectItem key={careerPath.id} value={careerPath.id}>
+                      {careerPath.careerName}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            ) : (
+              <div className="rounded-xl border border-dashed p-4">
+                <p className="text-sm font-medium">Brak sciezek kariery do wyboru.</p>
+                <p className="text-muted-foreground mt-1 text-sm leading-relaxed">
+                  Najpierw wygeneruj lub odswiez rekomendacje w asystencie, zeby miec z czego
+                  utworzyc roadmapę.
+                </p>
+                <div className="mt-4 flex flex-col gap-2 sm:flex-row">
+                  <Button
+                    type="button"
+                    variant="outline"
+                    onClick={() => void onReloadCareerPaths()}
+                  >
+                    Odswiez sciezki
+                  </Button>
+                  <Button asChild>
+                    <Link href="/assistant">Przejdz do asystenta</Link>
+                  </Button>
+                </div>
+              </div>
+            )}
+
+            {careerPathsError ? <p className="text-sm text-rose-600">{careerPathsError}</p> : null}
+          </div>
+
+          <div className="flex flex-col gap-3">
+            <p className="text-sm font-medium">Horyzont czasowy</p>
+            <div className="flex flex-wrap gap-2">
+              {timeHorizonOptions.map((option) => (
+                <button
+                  key={option}
+                  type="button"
+                  onClick={() => onTimeHorizonChange(option)}
+                  className={cn(
+                    'font-poppins min-w-0 flex-1 basis-[calc(50%-0.25rem)] cursor-pointer rounded-[7px] border px-3 py-2 text-center text-sm transition-colors md:flex-none md:basis-auto',
+                    option === timeHorizonMonths
+                      ? 'bg-primary text-primary-foreground border-primary'
+                      : 'bg-background text-muted-foreground hover:text-foreground'
+                  )}
+                >
+                  {option} mies.
+                </button>
+              ))}
+            </div>
+          </div>
+
+          {existingRoadmap ? (
+            <div className="rounded-xl border border-amber-200 bg-amber-50 p-4">
+              <p className="text-sm font-medium text-amber-800">
+                Masz juz aktywna roadmape dla tej sciezki.
+              </p>
+              <p className="mt-1 text-sm leading-relaxed text-amber-700">
+                Zamiast tworzyc duplikat, przejdz od razu do istniejacego planu.
+              </p>
+              <div className="mt-4">
+                <Button asChild className="w-full sm:w-auto">
+                  <Link href={`/roadmap/${existingRoadmap.id}`}>Otworz istniejaca roadmapę</Link>
+                </Button>
+              </div>
+            </div>
+          ) : null}
+        </div>
+
+        <DialogFooter className="border-t px-6 pt-5 pb-6 sm:justify-between">
+          <Button type="button" variant="outline" onClick={() => onOpenChange(false)}>
+            Anuluj
+          </Button>
+          <Button type="button" onClick={() => void onCreate()} disabled={!canSubmit}>
+            {isCreatingRoadmap ? 'Tworzenie...' : 'Utwórz roadmapę'}
+            <ArrowRight className="h-4 w-4" />
+          </Button>
+        </DialogFooter>
+      </DialogContent>
+    </Dialog>
+  );
+}
+
+function SkeletonCard() {
+  return (
+    <div className="flex min-h-[360px] min-w-0 flex-col gap-2 rounded-xl border p-3 md:h-[400px] md:p-4">
+      <div className="h-full rounded-md border">
+        <div className="bg-muted group relative mb-2 h-1/2 animate-pulse rounded-tl-md rounded-tr-md" />
+        <div className="space-y-3 p-3 md:p-4">
+          <div className="bg-muted h-6 w-3/4 animate-pulse rounded-md" />
+          <div className="bg-muted h-4 w-full animate-pulse rounded-md" />
+          <div className="bg-muted h-4 w-2/3 animate-pulse rounded-md" />
+        </div>
+        <Separator className="w-full" />
+        <div className="flex min-h-[72px] flex-col gap-3 p-3 md:flex-row md:items-center md:justify-between md:p-4">
+          <div className="bg-muted h-9 w-20 animate-pulse rounded-md" />
+          <div className="bg-muted h-4 w-32 animate-pulse rounded-md" />
+        </div>
       </div>
-      <p className="mt-3 text-sm leading-6 text-white/60">{description}</p>
+    </div>
+  );
+}
+
+function EmptyState({ onCreate }: { onCreate: () => void }) {
+  return (
+    <div className="col-span-full flex min-h-[360px] flex-col items-center justify-center rounded-xl border border-dashed p-6 text-center md:h-[400px] md:p-8">
+      <Layers3 className="text-muted-foreground mb-4 h-12 w-12" />
+      <h3 className="mb-2 text-lg font-medium">Brak aktywnych roadmap</h3>
+      <p className="text-muted-foreground mb-4 max-w-sm text-sm leading-relaxed">
+        Nie masz jeszcze żadnej aktywnej roadmapy. Otwórz popup i utwórz pierwszy plan dla wybranej
+        ścieżki kariery.
+      </p>
+      <Button className="font-poppins w-full gap-2 md:w-auto" onClick={onCreate}>
+        <Plus className="h-4 w-4" />
+        Utwórz roadmapę
+      </Button>
     </div>
   );
 }
