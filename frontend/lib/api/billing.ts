@@ -9,9 +9,7 @@ export interface SubscriptionStatusDto {
   subscriptionId: string | null;
 }
 
-export const getSubscriptionStatus = async (
-  opts?: ReqOpts
-): Promise<SubscriptionStatusDto> => {
+export const getSubscriptionStatus = async (opts?: ReqOpts): Promise<SubscriptionStatusDto> => {
   const { data } = await api.get('/api/Billing/subscription-status', {
     signal: opts?.signal,
   });
