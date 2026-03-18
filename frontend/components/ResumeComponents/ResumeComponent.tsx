@@ -819,9 +819,17 @@ const CVCreator: React.FC<CVCreatorProps> = ({ initialCv }) => {
 
   const formatDate = (dateString: string) => {
     if (!dateString) return '';
-    const date = new Date(dateString);
+    const normalizedDate = /^\d{4}-\d{2}-\d{2}T/.test(dateString) ? dateString.slice(0, 10) : dateString;
+    const [year, month, day] = normalizedDate.split('-').map(Number);
+    const date =
+      year && month && day ? new Date(year, month - 1, day) : new Date(normalizedDate);
+
+    if (Number.isNaN(date.getTime())) {
+      return '';
+    }
+
     if (showFullDates) {
-      return date.toLocaleDateString('pl-PL', { year: 'numeric', month: 'long' });
+      return date.toLocaleDateString('en-US', { year: 'numeric', month: 'long' });
     } else {
       return date.getFullYear().toString();
     }

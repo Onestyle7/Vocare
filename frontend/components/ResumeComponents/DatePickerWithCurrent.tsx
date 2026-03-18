@@ -27,11 +27,11 @@ export const DatePickerWithCurrent: React.FC<DatePickerWithCurrentProps> = ({
   onChange,
   isCurrent,
   onCurrentChange,
-  placeholder = 'Wybierz datę',
+  placeholder = 'Select date',
   disabled = false,
   showCurrentToggle = true,
   toggleLabel = 'Present',
-  toggledButtonText = 'Obecnie',
+  toggledButtonText = 'Present',
 }) => {
   const [isOpen, setIsOpen] = React.useState(false);
   const [captionLayout] = React.useState<CaptionLayout>('dropdown');
@@ -58,7 +58,7 @@ export const DatePickerWithCurrent: React.FC<DatePickerWithCurrentProps> = ({
     if (!dateString) return '';
     const date = parseISODate(dateString);
     if (!date) return '';
-    return date.toLocaleDateString('pl-PL', {
+    return date.toLocaleDateString('en-US', {
       year: 'numeric',
       month: 'long',
     });
