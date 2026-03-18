@@ -88,6 +88,19 @@ const formatRoadmapLimitNoun = (count: number) => {
   return 'roadmap';
 };
 
+const formatRoadmapStatusLabel = (status: RoadmapListItemDto['status']) => {
+  switch (status) {
+    case 'Draft':
+      return 'Szkic';
+    case 'Completed':
+      return 'Ukończona';
+    case 'Archived':
+      return 'Archiwum';
+    default:
+      return 'Aktywna';
+  }
+};
+
 export default function RoadmapDashboardPage() {
   const pathname = usePathname();
   const router = useRouter();
@@ -121,8 +134,8 @@ export default function RoadmapDashboardPage() {
     [selectedCareerPathId, timeHorizonMonths]
   );
 
-  const activeRoadmaps = useMemo(
-    () => roadmaps.filter((roadmap) => roadmap.status === 'Active'),
+  const visibleRoadmaps = useMemo(
+    () => roadmaps.filter((roadmap) => roadmap.status !== 'Archived'),
     [roadmaps]
   );
   const currentRoadmapCount = roadmaps.length;
@@ -148,23 +161,23 @@ export default function RoadmapDashboardPage() {
     ];
   }, [careerPathOptions, selectedCareerPathId, selectedCareerPathName]);
 
-  const selectedPathActiveRoadmap = useMemo(() => {
+  const selectedPathExistingRoadmap = useMemo(() => {
     const normalizedCareerPathName = selectedCareerPathName.trim().toLowerCase();
     if (!normalizedCareerPathName) {
       return null;
     }
 
     return (
-      activeRoadmaps.find(
+      visibleRoadmaps.find(
         (roadmap) => roadmap.careerPathName.trim().toLowerCase() === normalizedCareerPathName
       ) ?? null
     );
-  }, [activeRoadmaps, selectedCareerPathName]);
+  }, [selectedCareerPathName, visibleRoadmaps]);
 
   const canCreateRoadmap =
     selectedCareerPathId.length > 0 &&
     !isCreatingRoadmap &&
-    !selectedPathActiveRoadmap &&
+    !selectedPathExistingRoadmap &&
     !isRoadmapLimitReached;
 
   const roadmapUsageLabel = useMemo(() => {
@@ -413,7 +426,7 @@ export default function RoadmapDashboardPage() {
                 isCreatingRoadmap={isCreatingRoadmap}
                 isLoadingCareerPaths={isLoadingCareerPaths}
                 careerPathsError={careerPathsError}
-                existingRoadmap={selectedPathActiveRoadmap}
+                existingRoadmap={selectedPathExistingRoadmap}
                 isRoadmapLimitReached={isRoadmapLimitReached}
                 roadmapLimitReachedDescription={roadmapLimitHoverMessage}
                 onManageRoadmaps={handleManageRoadmaps}
@@ -435,7 +448,7 @@ export default function RoadmapDashboardPage() {
 
                 <div className="flex flex-col gap-2">
                   <h2 className="font-regular max-w-xl text-left text-3xl tracking-tighter md:text-5xl">
-                    Aktywne roadmapy
+                    Twoje roadmapy
                   </h2>
                   <p className="text-muted-foreground font-grotesk max-w-xl text-left text-lg leading-relaxed tracking-tight lg:max-w-lg">
                     {roadmapLimitDescription}
@@ -465,7 +478,7 @@ export default function RoadmapDashboardPage() {
                       Sprobuj ponownie
                     </Button>
                   </div>
-                ) : activeRoadmaps.length === 0 ? (
+                ) : visibleRoadmaps.length === 0 ? (
                   <EmptyState
                     onCreate={handleOpenCreateDialog}
                     isCreateDisabled={isRoadmapLimitReached}
@@ -473,19 +486,27 @@ export default function RoadmapDashboardPage() {
                   />
                 ) : (
                   <>
-                    {activeRoadmaps.map((roadmap) => (
+                    {visibleRoadmaps.map((roadmap) => (
                       <Link
                         key={roadmap.id}
                         href={`/roadmap/${roadmap.id}`}
                         className="block min-w-0"
                       >
-                        <div className="group bg-background flex min-h-[360px] min-w-0 flex-col gap-2 overflow-hidden rounded-xl border p-3 transition-shadow hover:shadow-lg md:h-[400px] md:p-4">
+                        <div className="group bg-background flex h-[400px] min-w-0 flex-col gap-2 overflow-hidden rounded-xl border p-3 transition-shadow hover:shadow-lg md:p-4">
                           <div className="flex h-full min-w-0 flex-col rounded-md border">
                             <div className="bg-muted group relative mb-2 h-1/2 rounded-tl-md rounded-tr-md">
                               <div className="absolute top-0 right-0 p-2">
-                                <Badge className="font-poppins rounded-[7px] border border-white/60 bg-white/90 px-2.5 py-1 text-slate-800 shadow-none backdrop-blur-sm">
-                                  {roadmap.timeHorizonMonths} mies.
-                                </Badge>
+                                <div className="flex flex-col items-end gap-2">
+                                  <Badge className="font-poppins rounded-[7px] border border-white/60 bg-white/90 px-2.5 py-1 text-slate-800 shadow-none backdrop-blur-sm hover:bg-white">
+                                    {roadmap.timeHorizonMonths} mies.
+                                  </Badge>
+                                  <Badge
+                                    variant="secondary"
+                                    className="font-poppins rounded-[7px] border border-white/60 bg-white/85 px-2.5 py-1 text-slate-700 shadow-none backdrop-blur-sm hover:bg-white"
+                                  >
+                                    {formatRoadmapStatusLabel(roadmap.status)}
+                                  </Badge>
+                                </div>
                               </div>
 
                               <div className="absolute top-0 left-0 p-2">
@@ -549,7 +570,7 @@ export default function RoadmapDashboardPage() {
                               </div>
 
                               <div className="flex h-full min-w-0 flex-col items-center justify-center overflow-hidden px-4 md:px-5">
-                                <Layers3 className="text-muted-foreground/50 h-72 w-72 translate-y-[65%] transition-all group-hover:translate-y-[50%]" />
+                                <Layers3 className="text-muted-foreground/50 h-56 w-56 translate-y-[65%] transition-all group-hover:translate-y-[50%] md:h-72 md:w-72" />
 
                                 <div className="mt-5 w-full">
                                   <div className="bg-muted mt-3 h-2 rounded-full">
@@ -563,22 +584,22 @@ export default function RoadmapDashboardPage() {
                             </div>
 
                             <div className="min-w-0 flex-1 p-3 md:p-4">
-                              <h3 className="line-clamp-2 text-lg font-semibold break-words md:text-xl">
+                              <h3 className="line-clamp-2 text-base font-semibold break-words md:text-xl">
                                 {roadmap.title}
                               </h3>
-                              <p className="text-muted-foreground mt-1 line-clamp-2 text-sm break-words md:text-base">
+                              <p className="text-muted-foreground mt-1 line-clamp-2 text-sm break-words">
                                 {roadmap.careerPathName}
                               </p>
                             </div>
 
                             <Separator className="w-full" />
 
-                            <div className="flex min-h-[72px] min-w-0 flex-col items-start gap-3 p-3 md:flex-row md:items-center md:justify-between md:p-4">
-                              <Button size="sm" className="w-full md:w-auto">
+                            <div className="flex min-h-[72px] min-w-0 items-center justify-between gap-3 p-3 md:p-4">
+                              <Button size="sm" className="shrink-0">
                                 Otwórz
                               </Button>
 
-                              <div className="text-muted-foreground flex min-w-0 flex-wrap items-center gap-2 self-stretch md:flex-nowrap md:self-auto">
+                              <div className="text-muted-foreground flex min-w-0 items-center gap-2">
                                 <Clock className="h-4 w-4 shrink-0" />
                                 <p className="min-w-0 text-sm font-semibold break-words">
                                   Utworzono {formatDate(roadmap.createdAt)}
@@ -748,7 +769,7 @@ function CreateRoadmapDialog({
           ) : existingRoadmap ? (
             <div className="rounded-xl border border-amber-200 bg-amber-50 p-4">
               <p className="text-sm font-medium text-amber-800">
-                Masz juz aktywna roadmape dla tej sciezki.
+                Masz juz roadmapę dla tej sciezki.
               </p>
               <p className="mt-1 text-sm leading-relaxed text-amber-700">
                 Zamiast tworzyc duplikat, przejdz od razu do istniejacego planu.
@@ -822,7 +843,7 @@ function CreateRoadmapButton({
 
 function SkeletonCard() {
   return (
-    <div className="flex min-h-[360px] min-w-0 flex-col gap-2 rounded-xl border p-3 md:h-[400px] md:p-4">
+    <div className="flex h-[400px] min-w-0 flex-col gap-2 rounded-xl border p-3 md:p-4">
       <div className="h-full rounded-md border">
         <div className="bg-muted group relative mb-2 h-1/2 animate-pulse rounded-tl-md rounded-tr-md" />
         <div className="space-y-3 p-3 md:p-4">
@@ -831,7 +852,7 @@ function SkeletonCard() {
           <div className="bg-muted h-4 w-2/3 animate-pulse rounded-md" />
         </div>
         <Separator className="w-full" />
-        <div className="flex min-h-[72px] flex-col gap-3 p-3 md:flex-row md:items-center md:justify-between md:p-4">
+        <div className="flex min-h-[72px] items-center justify-between gap-3 p-3 md:p-4">
           <div className="bg-muted h-9 w-20 animate-pulse rounded-md" />
           <div className="bg-muted h-4 w-32 animate-pulse rounded-md" />
         </div>
@@ -850,7 +871,7 @@ function EmptyState({
   createTooltipContent: string;
 }) {
   return (
-    <div className="col-span-full flex min-h-[360px] flex-col items-center justify-center rounded-xl border border-dashed p-6 text-center md:h-[400px] md:p-8">
+    <div className="col-span-full flex h-[400px] flex-col items-center justify-center rounded-xl border border-dashed p-6 text-center md:p-8">
       <Layers3 className="text-muted-foreground mb-4 h-12 w-12" />
       <h3 className="mb-2 text-lg font-medium">Brak aktywnych roadmap</h3>
       <p className="text-muted-foreground mb-4 max-w-sm text-sm leading-relaxed">
