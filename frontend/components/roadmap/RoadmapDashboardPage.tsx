@@ -9,6 +9,7 @@ import { ArrowRight, Clock, Layers3, Plus, Trash2 } from 'lucide-react';
 
 import { GridBackgroundDemo } from '@/components/MarketComponents/GridBackgroundDemo';
 import { RecommendationsApiService } from '@/lib/api/RecommendationApiServiice';
+import { getSubscriptionStatus } from '@/lib/api/billing';
 import {
   AlertDialog,
   AlertDialogAction,
@@ -38,12 +39,17 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
+import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
 import { archiveRoadmap, generateRoadmap, getUserRoadmaps } from '@/lib/api/roadmap';
 import type { GenerateRoadmapPayload, RoadmapListItemDto } from '@/lib/types/roadmap';
 import type { CareerPath } from '@/lib/types/recommendation';
 import { cn } from '@/lib/utils';
 
 const timeHorizonOptions = [3, 6, 9, 12, 18, 24] as const;
+const DEFAULT_ROADMAP_LIMIT = 1;
+const PREMIUM_ROADMAP_LIMIT = 10;
+const ROADMAPS_SECTION_ID = 'active-roadmaps-section';
+
 type CareerPathOption = Pick<CareerPath, 'id' | 'careerName' | 'description'>;
 
 const formatDate = (value: string) =>
@@ -76,10 +82,10 @@ const normalizeErrorMessage = (error: unknown) => {
   return 'Wystapil nieoczekiwany blad.';
 };
 
-const formatRoadmapCount = (count: number) => {
-  if (count === 1) return '1 roadmapa';
-  if (count >= 2 && count <= 4) return `${count} roadmapy`;
-  return `${count} roadmap`;
+const formatRoadmapLimitNoun = (count: number) => {
+  if (count === 1) return 'roadmapę';
+  if (count >= 2 && count <= 4) return 'roadmapy';
+  return 'roadmap';
 };
 
 export default function RoadmapDashboardPage() {
@@ -101,6 +107,8 @@ export default function RoadmapDashboardPage() {
   const [deletingRoadmapId, setDeletingRoadmapId] = useState<string | null>(null);
   const [deleteDialogRoadmapId, setDeleteDialogRoadmapId] = useState<string | null>(null);
   const [roadmapsError, setRoadmapsError] = useState<string | null>(null);
+  const [roadmapLimit, setRoadmapLimit] = useState<number | null>(null);
+  const [isLoadingRoadmapLimit, setIsLoadingRoadmapLimit] = useState(true);
 
   const intentCareerPathId = searchParams.get('careerPathId') ?? '';
   const intentCareerPathName = searchParams.get('careerPathName') ?? '';
@@ -117,6 +125,10 @@ export default function RoadmapDashboardPage() {
     () => roadmaps.filter((roadmap) => roadmap.status === 'Active'),
     [roadmaps]
   );
+  const currentRoadmapCount = roadmaps.length;
+  const isLoadingCreateAccess = isLoadingRoadmaps || isLoadingRoadmapLimit;
+  const isRoadmapLimitReached =
+    roadmapLimit !== null && currentRoadmapCount >= roadmapLimit && !isLoadingCreateAccess;
 
   const availableCareerPaths = useMemo(() => {
     if (
@@ -150,7 +162,65 @@ export default function RoadmapDashboardPage() {
   }, [activeRoadmaps, selectedCareerPathName]);
 
   const canCreateRoadmap =
-    selectedCareerPathId.length > 0 && !isCreatingRoadmap && !selectedPathActiveRoadmap;
+    selectedCareerPathId.length > 0 &&
+    !isCreatingRoadmap &&
+    !selectedPathActiveRoadmap &&
+    !isRoadmapLimitReached;
+
+  const roadmapUsageLabel = useMemo(() => {
+    if (isLoadingCreateAccess) {
+      return '...';
+    }
+
+    return `${currentRoadmapCount}/${roadmapLimit ?? '?'}`;
+  }, [currentRoadmapCount, isLoadingCreateAccess, roadmapLimit]);
+
+  const roadmapLimitDescription = useMemo(() => {
+    if (roadmapLimit === null) {
+      return 'Zarządzaj aktualnymi roadmapami i twórz kolejne z poziomu popupu.';
+    }
+
+    return `Możesz mieć maksymalnie ${roadmapLimit} ${formatRoadmapLimitNoun(roadmapLimit)} w swoim aktualnym planie.`;
+  }, [roadmapLimit]);
+
+  const roadmapLimitHoverMessage = useMemo(() => {
+    if (roadmapLimit === null) {
+      return 'Osiągnięto limit roadmap dla obecnego planu. Usuń roadmapę albo przejdź na Pro.';
+    }
+
+    return `Osiągnięto limit roadmap dla obecnego planu (${currentRoadmapCount}/${roadmapLimit}). Usuń roadmapę albo przejdź na Pro.`;
+  }, [currentRoadmapCount, roadmapLimit]);
+
+  const showRoadmapLimitReachedToast = useCallback(() => {
+    toast.error('Osiągnięto limit roadmap dla obecnego planu.', {
+      action: {
+        label: 'Ulepsz',
+        onClick: () => router.push('/pricing'),
+      },
+      cancel: {
+        label: 'Usuń roadmapę',
+        onClick: () =>
+          document
+            .getElementById(ROADMAPS_SECTION_ID)
+            ?.scrollIntoView({ behavior: 'smooth', block: 'start' }),
+      },
+    });
+  }, [router]);
+
+  const handleManageRoadmaps = useCallback(() => {
+    document
+      .getElementById(ROADMAPS_SECTION_ID)
+      ?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  }, []);
+
+  const handleOpenCreateDialog = useCallback(() => {
+    if (isRoadmapLimitReached) {
+      showRoadmapLimitReachedToast();
+      return;
+    }
+
+    setIsCreateDialogOpen(true);
+  }, [isRoadmapLimitReached, showRoadmapLimitReachedToast]);
 
   const fetchRoadmaps = useCallback(async (signal?: AbortSignal) => {
     setIsLoadingRoadmaps(true);
@@ -179,6 +249,41 @@ export default function RoadmapDashboardPage() {
     return () => controller.abort();
   }, [fetchRoadmaps]);
 
+  const fetchRoadmapLimit = useCallback(async (signal?: AbortSignal) => {
+    setIsLoadingRoadmapLimit(true);
+
+    try {
+      const data = await getSubscriptionStatus({ signal });
+      const nextLimit =
+        data.subscriptionStatus?.trim().toLowerCase() === 'active'
+          ? PREMIUM_ROADMAP_LIMIT
+          : DEFAULT_ROADMAP_LIMIT;
+
+      setRoadmapLimit(nextLimit);
+    } catch (error) {
+      if ((error as DOMException)?.name === 'CanceledError' || signal?.aborted) {
+        return;
+      }
+
+      if (error instanceof AxiosError && error.response?.status === 404) {
+        setRoadmapLimit(DEFAULT_ROADMAP_LIMIT);
+        return;
+      }
+
+      setRoadmapLimit(null);
+    } finally {
+      if (!signal?.aborted) {
+        setIsLoadingRoadmapLimit(false);
+      }
+    }
+  }, []);
+
+  useEffect(() => {
+    const controller = new AbortController();
+    void fetchRoadmapLimit(controller.signal);
+    return () => controller.abort();
+  }, [fetchRoadmapLimit]);
+
   const loadCareerPaths = useCallback(async () => {
     setIsLoadingCareerPaths(true);
     setCareerPathsError(null);
@@ -204,11 +309,29 @@ export default function RoadmapDashboardPage() {
       return;
     }
 
+    if (isLoadingCreateAccess) {
+      return;
+    }
+
     setSelectedCareerPathId(intentCareerPathId);
-    setSelectedCareerPathName(intentCareerPathName || 'Wybrana sciezka kariery');
-    setIsCreateDialogOpen(true);
+    setSelectedCareerPathName(intentCareerPathName || 'Wybrana ścieżka kariery');
+
+    if (isRoadmapLimitReached) {
+      showRoadmapLimitReachedToast();
+    } else {
+      setIsCreateDialogOpen(true);
+    }
+
     router.replace(pathname, { scroll: false });
-  }, [intentCareerPathId, intentCareerPathName, pathname, router]);
+  }, [
+    intentCareerPathId,
+    intentCareerPathName,
+    isLoadingCreateAccess,
+    isRoadmapLimitReached,
+    pathname,
+    router,
+    showRoadmapLimitReachedToast,
+  ]);
 
   useEffect(() => {
     if (!isCreateDialogOpen || isLoadingCareerPaths || careerPathOptions.length > 0) {
@@ -226,6 +349,11 @@ export default function RoadmapDashboardPage() {
   };
 
   const handleCreateRoadmap = async () => {
+    if (isRoadmapLimitReached) {
+      showRoadmapLimitReachedToast();
+      return;
+    }
+
     if (!canCreateRoadmap) return;
 
     setIsCreatingRoadmap(true);
@@ -277,7 +405,6 @@ export default function RoadmapDashboardPage() {
                 onOpenChange={setIsCreateDialogOpen}
                 careerPathOptions={availableCareerPaths}
                 selectedCareerPathId={selectedCareerPathId}
-                selectedCareerPathName={selectedCareerPathName}
                 onCareerPathChange={handleSelectCareerPath}
                 timeHorizonMonths={timeHorizonMonths}
                 onTimeHorizonChange={setTimeHorizonMonths}
@@ -287,36 +414,39 @@ export default function RoadmapDashboardPage() {
                 isLoadingCareerPaths={isLoadingCareerPaths}
                 careerPathsError={careerPathsError}
                 existingRoadmap={selectedPathActiveRoadmap}
+                isRoadmapLimitReached={isRoadmapLimitReached}
+                roadmapLimitReachedDescription={roadmapLimitHoverMessage}
+                onManageRoadmaps={handleManageRoadmaps}
               />
 
               <div className="flex flex-col items-start gap-4">
-                <div className="flex flex-wrap items-center gap-2 md:gap-4">
-                  <Button
-                    type="button"
-                    className="font-poppins gap-2"
-                    onClick={() => setIsCreateDialogOpen(true)}
-                  >
-                    <Plus className="h-4 w-4" />
-                    Utwórz roadmapę
-                  </Button>
-
+                <div className="flex flex-wrap items-center gap-3 md:gap-4">
                   <Badge variant="secondary" className="font-poppins">
-                    {formatRoadmapCount(activeRoadmaps.length)}
+                    {roadmapUsageLabel}
                   </Badge>
+
+                  <CreateRoadmapButton
+                    onClick={handleOpenCreateDialog}
+                    disabled={isRoadmapLimitReached}
+                    tooltipContent={roadmapLimitHoverMessage}
+                    className="font-poppins gap-2"
+                  />
                 </div>
 
                 <div className="flex flex-col gap-2">
                   <h2 className="font-regular max-w-xl text-left text-3xl tracking-tighter md:text-5xl">
                     Aktywne roadmapy
                   </h2>
-                  <p className="text-muted-foreground font-regular max-w-xl text-left text-base leading-relaxed tracking-tight md:text-lg lg:max-w-lg">
-                    Zostawiamy tutaj tylko aktualne roadmapy. Nowe tworzysz z poziomu popupu,
-                    ręcznie albo od razu po wejściu z wybranej ścieżki kariery.
+                  <p className="text-muted-foreground font-grotesk max-w-xl text-left text-lg leading-relaxed tracking-tight lg:max-w-lg">
+                    {roadmapLimitDescription}
                   </p>
                 </div>
               </div>
 
-              <div className="grid grid-cols-1 gap-6 md:grid-cols-2 md:gap-8 lg:grid-cols-3">
+              <div
+                id={ROADMAPS_SECTION_ID}
+                className="grid grid-cols-1 gap-6 md:grid-cols-2 md:gap-8 lg:grid-cols-3"
+              >
                 {isLoadingRoadmaps ? (
                   <>
                     {Array.from({ length: 6 }).map((_, index) => (
@@ -336,7 +466,11 @@ export default function RoadmapDashboardPage() {
                     </Button>
                   </div>
                 ) : activeRoadmaps.length === 0 ? (
-                  <EmptyState onCreate={() => setIsCreateDialogOpen(true)} />
+                  <EmptyState
+                    onCreate={handleOpenCreateDialog}
+                    isCreateDisabled={isRoadmapLimitReached}
+                    createTooltipContent={roadmapLimitHoverMessage}
+                  />
                 ) : (
                   <>
                     {activeRoadmaps.map((roadmap) => (
@@ -471,7 +605,6 @@ function CreateRoadmapDialog({
   onOpenChange,
   careerPathOptions,
   selectedCareerPathId,
-  selectedCareerPathName,
   onCareerPathChange,
   timeHorizonMonths,
   onTimeHorizonChange,
@@ -481,12 +614,14 @@ function CreateRoadmapDialog({
   isLoadingCareerPaths,
   careerPathsError,
   existingRoadmap,
+  isRoadmapLimitReached,
+  roadmapLimitReachedDescription,
+  onManageRoadmaps,
 }: {
   open: boolean;
   onOpenChange: (open: boolean) => void;
   careerPathOptions: CareerPathOption[];
   selectedCareerPathId: string;
-  selectedCareerPathName: string;
   onCareerPathChange: (careerPathId: string) => void;
   timeHorizonMonths: number;
   onTimeHorizonChange: (months: number) => void;
@@ -496,8 +631,15 @@ function CreateRoadmapDialog({
   isLoadingCareerPaths: boolean;
   careerPathsError: string | null;
   existingRoadmap: RoadmapListItemDto | null;
+  isRoadmapLimitReached: boolean;
+  roadmapLimitReachedDescription: string;
+  onManageRoadmaps: () => void;
 }) {
-  const canSubmit = selectedCareerPathId.length > 0 && !isCreatingRoadmap && !existingRoadmap;
+  const canSubmit =
+    selectedCareerPathId.length > 0 &&
+    !isCreatingRoadmap &&
+    !existingRoadmap &&
+    !isRoadmapLimitReached;
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
@@ -579,7 +721,31 @@ function CreateRoadmapDialog({
             </div>
           </div>
 
-          {existingRoadmap ? (
+          {isRoadmapLimitReached ? (
+            <div className="rounded-xl border border-rose-200 bg-rose-50 p-4">
+              <p className="text-sm font-medium text-rose-800">
+                Osiągnięto limit roadmap dla obecnego planu.
+              </p>
+              <p className="mt-1 text-sm leading-relaxed text-rose-700">
+                {roadmapLimitReachedDescription}
+              </p>
+              <div className="mt-4 flex flex-col gap-2 sm:flex-row">
+                <Button
+                  type="button"
+                  variant="outline"
+                  onClick={() => {
+                    onOpenChange(false);
+                    onManageRoadmaps();
+                  }}
+                >
+                  Usuń roadmapę
+                </Button>
+                <Button asChild>
+                  <Link href="/pricing">Idź Pro</Link>
+                </Button>
+              </div>
+            </div>
+          ) : existingRoadmap ? (
             <div className="rounded-xl border border-amber-200 bg-amber-50 p-4">
               <p className="text-sm font-medium text-amber-800">
                 Masz juz aktywna roadmape dla tej sciezki.
@@ -610,6 +776,50 @@ function CreateRoadmapDialog({
   );
 }
 
+function CreateRoadmapButton({
+  onClick,
+  disabled,
+  tooltipContent,
+  className,
+  wrapperClassName,
+}: {
+  onClick: () => void;
+  disabled: boolean;
+  tooltipContent: string;
+  className?: string;
+  wrapperClassName?: string;
+}) {
+  const button = (
+    <Button
+      type="button"
+      variant="outline"
+      className={cn('font-poppins gap-2', disabled && 'cursor-not-allowed', className)}
+      onClick={onClick}
+      disabled={disabled}
+    >
+      <Plus className="h-4 w-4" />
+      Stwórz roadmapę
+    </Button>
+  );
+
+  if (!disabled) {
+    return button;
+  }
+
+  return (
+    <Tooltip>
+      <TooltipTrigger asChild>
+        <span className={cn('inline-flex', wrapperClassName)} tabIndex={0}>
+          {button}
+        </span>
+      </TooltipTrigger>
+      <TooltipContent side="bottom" sideOffset={8} className="font-poppins max-w-xs">
+        {tooltipContent}
+      </TooltipContent>
+    </Tooltip>
+  );
+}
+
 function SkeletonCard() {
   return (
     <div className="flex min-h-[360px] min-w-0 flex-col gap-2 rounded-xl border p-3 md:h-[400px] md:p-4">
@@ -630,19 +840,29 @@ function SkeletonCard() {
   );
 }
 
-function EmptyState({ onCreate }: { onCreate: () => void }) {
+function EmptyState({
+  onCreate,
+  isCreateDisabled,
+  createTooltipContent,
+}: {
+  onCreate: () => void;
+  isCreateDisabled: boolean;
+  createTooltipContent: string;
+}) {
   return (
     <div className="col-span-full flex min-h-[360px] flex-col items-center justify-center rounded-xl border border-dashed p-6 text-center md:h-[400px] md:p-8">
       <Layers3 className="text-muted-foreground mb-4 h-12 w-12" />
       <h3 className="mb-2 text-lg font-medium">Brak aktywnych roadmap</h3>
       <p className="text-muted-foreground mb-4 max-w-sm text-sm leading-relaxed">
-        Nie masz jeszcze żadnej aktywnej roadmapy. Otwórz popup i utwórz pierwszy plan dla wybranej
-        ścieżki kariery.
+        Nie masz jeszcze żadnej aktywnej roadmapy.
       </p>
-      <Button className="font-poppins w-full gap-2 md:w-auto" onClick={onCreate}>
-        <Plus className="h-4 w-4" />
-        Utwórz roadmapę
-      </Button>
+      <CreateRoadmapButton
+        onClick={onCreate}
+        disabled={isCreateDisabled}
+        tooltipContent={createTooltipContent}
+        className="w-full md:w-auto"
+        wrapperClassName="w-full md:w-auto"
+      />
     </div>
   );
 }
