@@ -19,6 +19,8 @@ export type RoadmapNodeData = {
   title: string;
   timeline: string;
   summary: string;
+  parentStepId?: string | null;
+  stepOrderIndex?: number;
   subtitle?: string;
   description?: string;
   topics?: string[];
@@ -99,8 +101,7 @@ const handlePos = {
 
 export const RoadmapTileNode: FC<Props> = ({ id, data, selected }) => {
   const tone = data.tone ?? 'cream';
-  const resolvedStepStatus =
-    data.nodeKind === 'step' ? (data.stepStatus ?? 'NotStarted') : null;
+  const resolvedStepStatus = data.nodeKind === 'step' ? (data.stepStatus ?? 'NotStarted') : null;
   const resolvedPhaseStatus =
     data.nodeKind === 'phase' && isPhaseComplete(data.phaseSteps) ? 'Completed' : null;
   const [isHovered, setIsHovered] = useState(false);
@@ -235,7 +236,7 @@ export const RoadmapTileNode: FC<Props> = ({ id, data, selected }) => {
       </Handle>
 
       <div className="min-w-0 flex-1 text-center">
-        <div className="font-poppins overflow-hidden text-[18px] leading-[1.25] font-semibold [display:-webkit-box] [-webkit-box-orient:vertical] [-webkit-line-clamp:2]">
+        <div className="font-poppins [display:-webkit-box] overflow-hidden text-[18px] leading-[1.25] font-semibold [-webkit-box-orient:vertical] [-webkit-line-clamp:2]">
           {data.title}
         </div>
       </div>

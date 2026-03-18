@@ -31,7 +31,11 @@ import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { archiveRoadmap, generateRoadmap, getUserRoadmaps } from '@/lib/api/roadmap';
-import type { GenerateRoadmapPayload, RoadmapListItemDto, RoadmapStatus } from '@/lib/types/roadmap';
+import type {
+  GenerateRoadmapPayload,
+  RoadmapListItemDto,
+  RoadmapStatus,
+} from '@/lib/types/roadmap';
 import { cn } from '@/lib/utils';
 
 const timeHorizonOptions = [3, 6, 9, 12, 18, 24] as const;
@@ -176,7 +180,7 @@ export default function RoadmapDashboardPage() {
       <div className="relative mx-auto flex max-w-7xl flex-col gap-6 pt-28">
         <div className="flex flex-wrap items-center justify-between gap-3">
           <div className="space-y-3">
-            <Badge className="w-fit rounded-full border border-sky-400/20 bg-sky-300/10 px-3 py-1 text-[11px] tracking-[0.18em] uppercase text-sky-100">
+            <Badge className="w-fit rounded-full border border-sky-400/20 bg-sky-300/10 px-3 py-1 text-[11px] tracking-[0.18em] text-sky-100 uppercase">
               Roadmap Dashboard
             </Badge>
             <div className="space-y-2">
@@ -355,7 +359,9 @@ export default function RoadmapDashboardPage() {
                         <p className="text-xs text-white/45">{roadmap.careerPathName}</p>
                         <p className="font-mono text-[11px] text-white/35">{roadmap.id}</p>
                       </div>
-                      <Badge className={cn('rounded-full border', statusClassNames[roadmap.status])}>
+                      <Badge
+                        className={cn('rounded-full border', statusClassNames[roadmap.status])}
+                      >
                         {roadmap.status}
                       </Badge>
                     </div>
@@ -402,9 +408,7 @@ export default function RoadmapDashboardPage() {
                             </AlertDialogDescription>
                           </AlertDialogHeader>
                           <AlertDialogFooter className="flex-row justify-end gap-3 sm:flex-row">
-                            <AlertDialogCancel className="rounded-full">
-                              Anuluj
-                            </AlertDialogCancel>
+                            <AlertDialogCancel className="rounded-full">Anuluj</AlertDialogCancel>
                             <AlertDialogAction
                               className="rounded-full bg-rose-600 text-white hover:bg-rose-700"
                               onClick={() => void handleDeleteRoadmap(roadmap.id)}

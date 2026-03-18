@@ -46,7 +46,9 @@ const estimateTileSize = (node: Pick<PresetNodeConfig, 'title' | 'phase' | 'time
   };
 };
 
-const withMeasuredSize = (node: PresetNodeConfig): PresetNodeConfig & { width: number; height: number } => {
+const withMeasuredSize = (
+  node: PresetNodeConfig
+): PresetNodeConfig & { width: number; height: number } => {
   const size = estimateTileSize(node);
 
   return {
@@ -99,8 +101,9 @@ const positionPhaseNodes = (
     const anchorNodes = edgeConfigs
       .filter((edge) => edge.source === node.id)
       .map((edge) => nodesById.get(edge.target))
-      .filter((targetNode): targetNode is PresetNodeConfig & { width: number; height: number } =>
-        targetNode != null && targetNode.nodeKind === 'step'
+      .filter(
+        (targetNode): targetNode is PresetNodeConfig & { width: number; height: number } =>
+          targetNode != null && targetNode.nodeKind === 'step'
       );
 
     if (anchorNodes.length === 0) {
@@ -111,10 +114,8 @@ const positionPhaseNodes = (
 
     const minY = Math.min(...anchorNodes.map((anchorNode) => anchorNode.y));
     const averageCenterX =
-      anchorNodes.reduce(
-        (sum, anchorNode) => sum + anchorNode.x + anchorNode.width / 2,
-        0
-      ) / anchorNodes.length;
+      anchorNodes.reduce((sum, anchorNode) => sum + anchorNode.x + anchorNode.width / 2, 0) /
+      anchorNodes.length;
     const desiredX = averageCenterX - node.width / 2;
     const minX =
       previousPhaseRight === Number.NEGATIVE_INFINITY
@@ -269,6 +270,7 @@ const buildCanvasGraph = (
   roadmap: RoadmapDetailsDto
 ): {
   nodeConfigs: PresetNodeConfig[];
+  defaultNodeConfigs: PresetNodeConfig[];
   edgeConfigs: PresetEdgeConfig[];
 } => {
   const phases = [...roadmap.phases].sort((left, right) => left.orderIndex - right.orderIndex);
@@ -350,6 +352,8 @@ const buildCanvasGraph = (
         title: step.title,
         phase: formatPhaseBadge(phaseIndex),
         timeline: `${typeLabel} • ${statusLabel}`,
+        parentStepId: step.parentStepId,
+        stepOrderIndex: step.orderIndex,
         subtitle: step.subTitle?.trim() || '',
         description: step.description?.trim() || '',
         summary:
@@ -426,8 +430,11 @@ const buildCanvasGraph = (
     });
   });
 
+  const defaultNodeConfigs = layoutNodeConfigs(nodeConfigs, edgeConfigs);
+
   return {
     nodeConfigs: getInitialLayout(nodeConfigs, edgeConfigs, hasStoredPositions),
+    defaultNodeConfigs,
     edgeConfigs,
   };
 };
@@ -559,7 +566,7 @@ export default function RoadmapDetailsPage({ roadmapId }: { roadmapId: string })
     return (
       <section className="flex h-[100svh] w-full items-center justify-center bg-white px-4 text-slate-950">
         <div className="w-full max-w-xl rounded-[32px] border border-rose-200 bg-white p-8 shadow-[0_24px_90px_rgba(15,23,42,0.12)]">
-          <p className="text-sm font-medium uppercase tracking-[0.18em] text-rose-600">Blad</p>
+          <p className="text-sm font-medium tracking-[0.18em] text-rose-600 uppercase">Blad</p>
           <h2 className="mt-4 text-3xl font-semibold text-slate-950">
             Nie udalo sie pobrac roadmapy
           </h2>
@@ -619,6 +626,7 @@ export default function RoadmapDetailsPage({ roadmapId }: { roadmapId: string })
         </AlertDialog>
       }
       initialNodeConfigs={graph.nodeConfigs}
+      defaultNodeConfigs={graph.defaultNodeConfigs}
       initialEdgeConfigs={graph.edgeConfigs}
       layoutDirection="TB"
       onPersistNodePositions={async (positions) => {

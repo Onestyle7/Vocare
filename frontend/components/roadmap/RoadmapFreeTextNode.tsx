@@ -21,7 +21,7 @@ export const RoadmapFreeTextNode: FC<Props> = ({ data, selected }) => {
         minHeight: data.height,
       }}
     >
-      <div className="font-poppins whitespace-pre-wrap break-words text-[24px] leading-[1.15] font-semibold text-[#11162f]/88">
+      <div className="font-poppins text-[24px] leading-[1.15] font-semibold break-words whitespace-pre-wrap text-[#11162f]/88">
         {data.title || 'Nowy tekst'}
       </div>
     </div>

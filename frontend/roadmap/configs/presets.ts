@@ -9,6 +9,8 @@ export type PresetNodeConfig = {
   phase?: string;
   timeline?: string;
   summary?: string;
+  parentStepId?: string | null;
+  stepOrderIndex?: number;
   subtitle?: string;
   description?: string;
   topics?: string[];

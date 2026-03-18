@@ -158,9 +158,7 @@ export default function ProfileDetails() {
     <div className="relative space-y-8">
       <div className="mt-4 space-y-4">
         <div className="flex flex-row items-center">
-          <h2 className="text-2xl font-medium text-gray-700 dark:text-gray-200">
-            Profil osobisty
-          </h2>
+          <h2 className="text-2xl font-medium text-gray-700 dark:text-gray-200">Profil osobisty</h2>
           <div className="ml-2 h-2 w-2 rounded-full bg-[#915EFF]" />
         </div>
         <div className="grid grid-cols-1 gap-4">
@@ -213,7 +211,9 @@ export default function ProfileDetails() {
                   <Separator />
 
                   <div className="flex justify-between">
-                    <span className="font-medium text-gray-600 dark:text-gray-200">Czas trwania:</span>
+                    <span className="font-medium text-gray-600 dark:text-gray-200">
+                      Czas trwania:
+                    </span>
                     <span className="ml-2 w-fit rounded-md border px-2 py-0.5 text-right">
                       {formatDate(edu.startDate)} –{' '}
                       {edu.endDate ? formatDate(edu.endDate) : 'Obecnie'}
@@ -300,7 +300,7 @@ export default function ProfileDetails() {
 
       <div className="space-y-2">
         <h2 className="flex items-center text-2xl font-medium text-gray-700 dark:text-gray-200">
-          Umiejętności miękkie  
+          Umiejętności miękkie
           <div className="ml-2 h-2 w-2 rounded-full bg-[#915EFF]" />
         </h2>
         <div className="flex flex-wrap gap-2">
@@ -394,17 +394,23 @@ export default function ProfileDetails() {
         </h2>
         <div className="grid grid-cols-1 gap-4">
           <div className="flex justify-between rounded-lg">
-            <span className="font-medium text-gray-600 dark:text-gray-200">Aktualne wynagrodzenie:</span>
+            <span className="font-medium text-gray-600 dark:text-gray-200">
+              Aktualne wynagrodzenie:
+            </span>
             <span className="ml-2">{profile?.financialSurvey?.currentSalary ?? '—'}</span>
           </div>
           <Separator />
           <div className="flex justify-between rounded-lg">
-            <span className="font-medium text-gray-600 dark:text-gray-200">Oczekiwane wynagrodzenie:</span>
+            <span className="font-medium text-gray-600 dark:text-gray-200">
+              Oczekiwane wynagrodzenie:
+            </span>
             <span className="ml-2">{profile?.financialSurvey?.desiredSalary ?? '—'}</span>
           </div>
           <Separator />
           <div className="flex items-center justify-between rounded-lg">
-            <span className="font-medium text-gray-600 dark:text-gray-200">Zobowiązania finansowe (kredyt):</span>
+            <span className="font-medium text-gray-600 dark:text-gray-200">
+              Zobowiązania finansowe (kredyt):
+            </span>
             <span className="ml-2 rounded-lg border px-4 py-2 text-gray-600 dark:text-gray-200">
               {profile?.financialSurvey?.hasLoans ? 'Tak' : 'Nie'}
             </span>
@@ -413,7 +419,9 @@ export default function ProfileDetails() {
             <>
               <Separator />
               <div className="flex justify-between rounded-lg">
-                <span className="font-medium text-gray-600 dark:text-gray-200">Szczegóły kredytu:</span>
+                <span className="font-medium text-gray-600 dark:text-gray-200">
+                  Szczegóły kredytu:
+                </span>
                 <span className="ml-2">{profile?.financialSurvey?.loanDetails || '—'}</span>
               </div>
             </>
@@ -438,7 +446,9 @@ export default function ProfileDetails() {
           </div>
           <Separator />
           <div className="flex justify-between rounded-lg">
-            <span className="font-medium text-gray-600 dark:text-gray-200">Skłonność do ryzyka:</span>
+            <span className="font-medium text-gray-600 dark:text-gray-200">
+              Skłonność do ryzyka:
+            </span>
             <span className="ml-2">{getRiskLabel(profile?.financialSurvey?.riskAppetite)}</span>
           </div>
         </div>
@@ -561,7 +571,11 @@ export default function ProfileDetails() {
                       'hover:scale-105',
                     ].join(' ')}
                   >
-                    {atBottom ? <ArrowUp className="h-5 w-5 cursor-pointer" /> : <ArrowDown className="h-5 w-5 cursor-pointer" />}
+                    {atBottom ? (
+                      <ArrowUp className="h-5 w-5 cursor-pointer" />
+                    ) : (
+                      <ArrowDown className="h-5 w-5 cursor-pointer" />
+                    )}
                   </button>
 
                   {/* RIGHT */}

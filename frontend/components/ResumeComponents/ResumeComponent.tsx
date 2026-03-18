@@ -417,7 +417,7 @@ const CVCreator: React.FC<CVCreatorProps> = ({ initialCv }) => {
       }
       return nextFormatting;
     });
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [personalInfo.summary]);
 
   useEffect(() => {
@@ -1374,25 +1374,26 @@ const CVCreator: React.FC<CVCreatorProps> = ({ initialCv }) => {
   }, [initialCv, populateFromCv]);
 
   const downloadPDF = async () => {
-  const container = pagesViewportRef.current;
-  if (!container) return;
+    const container = pagesViewportRef.current;
+    if (!container) return;
 
-  const pagesNodes = Array.from(container.querySelectorAll<HTMLElement>('.cv-page'));
-  if (pagesNodes.length === 0) return;
+    const pagesNodes = Array.from(container.querySelectorAll<HTMLElement>('.cv-page'));
+    if (pagesNodes.length === 0) return;
 
-  const fileName = personalInfo.firstName && personalInfo.lastName
-    ? `${personalInfo.firstName}_${personalInfo.lastName}_CV`
-    : 'My_CV';
+    const fileName =
+      personalInfo.firstName && personalInfo.lastName
+        ? `${personalInfo.firstName}_${personalInfo.lastName}_CV`
+        : 'My_CV';
 
-  // 1. Zbieramy wszystkie style (linki i tagi style)
-  const styles = Array.from(document.querySelectorAll('style, link[rel="stylesheet"]'))
-    .map((node) => node.outerHTML)
-    .join('\n');
+    // 1. Zbieramy wszystkie style (linki i tagi style)
+    const styles = Array.from(document.querySelectorAll('style, link[rel="stylesheet"]'))
+      .map((node) => node.outerHTML)
+      .join('\n');
 
-  const baseHref = document.querySelector('base')?.href ?? window.location.origin;
+    const baseHref = document.querySelector('base')?.href ?? window.location.origin;
 
-  // 2. CSS naprawczy tylko dla wydruku
-  const printStyles = `
+    // 2. CSS naprawczy tylko dla wydruku
+    const printStyles = `
     @media print {
       @page { size: A4; margin: 0; }
       body { 
@@ -1418,19 +1419,24 @@ const CVCreator: React.FC<CVCreatorProps> = ({ initialCv }) => {
     }
   `;
 
-  const printFrame = document.createElement('iframe');
-  Object.assign(printFrame.style, {
-    position: 'fixed', right: '0', bottom: '0', width: '0', height: '0', border: '0'
-  });
-  document.body.appendChild(printFrame);
+    const printFrame = document.createElement('iframe');
+    Object.assign(printFrame.style, {
+      position: 'fixed',
+      right: '0',
+      bottom: '0',
+      width: '0',
+      height: '0',
+      border: '0',
+    });
+    document.body.appendChild(printFrame);
 
-  const printDoc = printFrame.contentDocument;
-  if (!printDoc) return;
+    const printDoc = printFrame.contentDocument;
+    if (!printDoc) return;
 
-  const pagesMarkup = pagesNodes.map((page) => page.outerHTML).join('');
+    const pagesMarkup = pagesNodes.map((page) => page.outerHTML).join('');
 
-  printDoc.open();
-  printDoc.write(`
+    printDoc.open();
+    printDoc.write(`
     <!doctype html>
     <html class="light"> <head>
         <title>${fileName}</title>
@@ -1443,25 +1449,25 @@ const CVCreator: React.FC<CVCreatorProps> = ({ initialCv }) => {
       </body>
     </html>
   `);
-  printDoc.close();
+    printDoc.close();
 
-  // 3. Czekamy na załadowanie czcionek i stylów przed drukiem
-  printFrame.onload = () => {
-    // Dajemy przeglądarce 500ms na sparsowanie CSS v4
-    setTimeout(() => {
-      const win = printFrame.contentWindow;
-      if (!win) return;
-      
-      // Opcjonalnie: czekamy na załadowanie customowych fontów
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      (win as any).document.fonts.ready.then(() => {
-        win.focus();
-        win.print();
-        setTimeout(() => document.body.removeChild(printFrame), 1000);
-      });
-    }, 500);
+    // 3. Czekamy na załadowanie czcionek i stylów przed drukiem
+    printFrame.onload = () => {
+      // Dajemy przeglądarce 500ms na sparsowanie CSS v4
+      setTimeout(() => {
+        const win = printFrame.contentWindow;
+        if (!win) return;
+
+        // Opcjonalnie: czekamy na załadowanie customowych fontów
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        (win as any).document.fonts.ready.then(() => {
+          win.focus();
+          win.print();
+          setTimeout(() => document.body.removeChild(printFrame), 1000);
+        });
+      }, 500);
+    };
   };
-};
 
   // Section visibility helper (must match preview rendering conditions)
   const isSectionVisible = React.useCallback(

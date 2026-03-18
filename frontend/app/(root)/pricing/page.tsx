@@ -12,11 +12,10 @@ const Page = () => {
         <Maintenance />
       ) : (
         <>
-              <Header />
+          <Header />
 
-        <PricingMain />
-                </>
-
+          <PricingMain />
+        </>
       )}
     </main>
   );

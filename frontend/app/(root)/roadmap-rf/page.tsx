@@ -46,7 +46,17 @@ import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
 import '@xyflow/react/dist/style.css';
-import { ArrowLeft, FileText, Lock, MoreVertical, Redo2, Square, Type, Undo2 } from 'lucide-react';
+import {
+  ArrowLeft,
+  FileText,
+  Lock,
+  MoreVertical,
+  Redo2,
+  RotateCcw,
+  Square,
+  Type,
+  Undo2,
+} from 'lucide-react';
 
 import { RoadmapFreeTextNode } from '@/components/roadmap/RoadmapFreeTextNode';
 import { RoadmapNodeDetailsSheet } from '@/components/roadmap/RoadmapNodeDetailsSheet';
@@ -88,6 +98,8 @@ type RoadmapNodeCreationOptions = {
   tone?: NodeTone;
   width?: number;
   height?: number;
+  parentStepId?: RoadmapCanvasNodeData['parentStepId'];
+  stepOrderIndex?: RoadmapCanvasNodeData['stepOrderIndex'];
   subtitle?: RoadmapCanvasNodeData['subtitle'];
   description?: RoadmapCanvasNodeData['description'];
   topics?: RoadmapCanvasNodeData['topics'];
@@ -1108,6 +1120,18 @@ const formatStatusTimelineLabel = (stepType?: StepType, stepStatus?: StepStatus)
   return `${typeLabel} • ${statusLabel}`;
 };
 
+const getStepTone = (stepType?: StepType): NodeTone =>
+  stepType === 'Optional' ? 'neutral' : 'cream';
+
+const getStepSummaryFromResponse = (step: RoadmapStepDto, fallbackSummary?: string) => {
+  const description = step.description?.trim();
+  if (description) return description;
+
+  const topicsSummary =
+    step.topics.length > 0 ? ` Topics: ${step.topics.slice(0, 4).join(', ')}.` : '';
+  return fallbackSummary || `Step ${step.orderIndex + 1}.${topicsSummary}`;
+};
+
 const applyStepStatusToNodes = (
   currentNodes: RoadmapNode[],
   targetStepId: string,
@@ -1146,6 +1170,60 @@ const applyStepStatusToNodes = (
     };
   });
 
+const applyStepResponseToNodes = (currentNodes: RoadmapNode[], updatedStep: RoadmapStepDto) =>
+  currentNodes.map((node) => {
+    if (node.type !== 'roadmapTile') return node;
+
+    if (node.data.persistenceId === updatedStep.id) {
+      return {
+        ...node,
+        position: {
+          x: updatedStep.positionX ?? node.position.x,
+          y: updatedStep.positionY ?? node.position.y,
+        },
+        data: {
+          ...node.data,
+          title: updatedStep.title,
+          timeline: formatStatusTimelineLabel(updatedStep.stepType, updatedStep.status),
+          summary: getStepSummaryFromResponse(updatedStep, node.data.summary),
+          parentStepId: updatedStep.parentStepId,
+          stepOrderIndex: updatedStep.orderIndex,
+          subtitle: updatedStep.subTitle?.trim() || '',
+          description: updatedStep.description?.trim() || '',
+          topics: updatedStep.topics,
+          tone: getStepTone(updatedStep.stepType),
+          stepType: updatedStep.stepType,
+          stepStatus: updatedStep.status,
+        },
+      };
+    }
+
+    if (node.data.nodeKind !== 'phase' || !node.data.phaseSteps?.length) {
+      return node;
+    }
+
+    if (!node.data.phaseSteps.some((phaseStep) => phaseStep.id === updatedStep.id)) {
+      return node;
+    }
+
+    return {
+      ...node,
+      data: {
+        ...node.data,
+        phaseSteps: node.data.phaseSteps.map((phaseStep) =>
+          phaseStep.id === updatedStep.id
+            ? {
+                ...phaseStep,
+                title: updatedStep.title,
+                stepType: updatedStep.stepType,
+                status: updatedStep.status,
+              }
+            : phaseStep
+        ),
+      },
+    };
+  });
+
 const createRoadmapNode = (
   id: string,
   step: RoadmapDraft,
@@ -1162,6 +1240,8 @@ const createRoadmapNode = (
       title: step.title,
       timeline: step.timeline,
       summary: step.summary,
+      parentStepId: options?.parentStepId,
+      stepOrderIndex: options?.stepOrderIndex,
       subtitle: options?.subtitle,
       description: options?.description ?? step.summary,
       topics: options?.topics,
@@ -1264,6 +1344,8 @@ const createInitialNodes = (nodeConfigs: PresetNodeConfig[] = presetNodes): Road
         tone: cfg.tone ?? 'cream',
         width: cfg.width ?? autoSize.width,
         height: cfg.height ?? autoSize.height,
+        parentStepId: cfg.parentStepId,
+        stepOrderIndex: cfg.stepOrderIndex,
         subtitle: cfg.subtitle,
         description: cfg.description,
         topics: cfg.topics,
@@ -1354,6 +1436,7 @@ type RoadmapReactFlowPageProps = {
   title?: string;
   backHref?: string;
   initialNodeConfigs?: PresetNodeConfig[];
+  defaultNodeConfigs?: PresetNodeConfig[];
   initialEdgeConfigs?: PresetEdgeConfig[];
   layoutDirection?: LayoutDirection;
   headerActions?: ReactNode;
@@ -1370,6 +1453,7 @@ export const RoadmapReactFlowPage = ({
   title = 'Career Path for Gamedeveloper',
   backHref = '/',
   initialNodeConfigs = presetNodes,
+  defaultNodeConfigs,
   initialEdgeConfigs = presetEdges,
   layoutDirection = 'LR',
   headerActions,
@@ -1402,6 +1486,10 @@ export const RoadmapReactFlowPage = ({
       edges: initialEdges,
     };
   }, [initialEdgeConfigs, initialNodeConfigs]);
+  const defaultLayoutNodes = useMemo(
+    () => createInitialNodes(defaultNodeConfigs ?? initialNodeConfigs),
+    [defaultNodeConfigs, initialNodeConfigs]
+  );
 
   const [nodes, setNodes, onNodesChange] = useNodesState<RoadmapNode>(initialGraph.nodes);
   const [edges, setEdges, onEdgesChange] = useEdgesState<Edge>(initialGraph.edges);
@@ -1518,9 +1606,7 @@ export const RoadmapReactFlowPage = ({
         });
 
         if (updatedStep) {
-          setNodes((currentNodes) =>
-            applyStepStatusToNodes(currentNodes, updatedStep.id, updatedStep.status)
-          );
+          setNodes((currentNodes) => applyStepResponseToNodes(currentNodes, updatedStep));
         }
       } catch {
         setNodes((currentNodes) => applyStepStatusToNodes(currentNodes, stepId, previousStatus));
@@ -2181,12 +2267,15 @@ export const RoadmapReactFlowPage = ({
     setIsNodeDetailsOpen(false);
   }, [closeEdgeInspector]);
 
-  const onNodeClick = useCallback((_: ReactMouseEvent, node: RoadmapNode) => {
-    closeEdgeInspector();
-    setSelectedNodeId(node.id);
-    setSelectedEdgeId('');
-    setIsNodeDetailsOpen(node.type === 'roadmapTile');
-  }, [closeEdgeInspector, setSelectedEdgeId, setSelectedNodeId]);
+  const onNodeClick = useCallback(
+    (_: ReactMouseEvent, node: RoadmapNode) => {
+      closeEdgeInspector();
+      setSelectedNodeId(node.id);
+      setSelectedEdgeId('');
+      setIsNodeDetailsOpen(node.type === 'roadmapTile');
+    },
+    [closeEdgeInspector, setSelectedEdgeId, setSelectedNodeId]
+  );
 
   const persistCurrentNodePositions = useCallback(
     async (currentNodes: RoadmapNode[]) => {
@@ -2215,6 +2304,23 @@ export const RoadmapReactFlowPage = ({
     },
     [onPersistNodePositions]
   );
+
+  const onRestorePresetLayout = useCallback(() => {
+    const defaultNodesById = new Map(defaultLayoutNodes.map((node) => [node.id, node]));
+    const nextNodes = nodes.map((node) => {
+      const defaultNode = defaultNodesById.get(node.id);
+      if (!defaultNode) return node;
+
+      return {
+        ...node,
+        position: defaultNode.position,
+      };
+    });
+
+    setNodes(nextNodes);
+    void persistCurrentNodePositions(nextNodes);
+    closeEdgeInspector();
+  }, [closeEdgeInspector, defaultLayoutNodes, nodes, persistCurrentNodePositions, setNodes]);
 
   const onNodeDragStop = useCallback(
     (_event: ReactMouseEvent | MouseEvent, node: RoadmapNode) => {
@@ -2466,17 +2572,6 @@ export const RoadmapReactFlowPage = ({
     setNodes((currentNodes) => layoutWithDagre(currentNodes, edges, layoutDirection));
   }, [edges, layoutDirection, setNodes]);
 
-  const onRestorePresetLayout = useCallback(() => {
-    setNodes(createInitialNodes(initialNodeConfigs));
-    setEdges(createInitialEdges(initialEdgeConfigs));
-    setSelectedNodeId('');
-    setSelectedEdgeId('');
-    setIsNodeDetailsOpen(false);
-    closeEdgeInspector();
-    nodeCounterRef.current = initialNodeConfigs.length + 1;
-    edgeCounterRef.current = initialEdgeConfigs.length + 1;
-  }, [closeEdgeInspector, initialEdgeConfigs, initialNodeConfigs, setEdges, setNodes]);
-
   return (
     <section className="font-grotesk h-screen w-full bg-white text-slate-950">
       <header className="border-b border-slate-200 px-6 py-4">
@@ -2511,9 +2606,7 @@ export const RoadmapReactFlowPage = ({
               <p className="font-grotesk w-fit rounded-[3px] bg-gray-200 px-2 text-xs font-semibold">
                 Roadmap
               </p>
-              <h1 className="font-poppins mt-1 text-2xl font-semibold">
-                {title}
-              </h1>
+              <h1 className="font-poppins mt-1 text-2xl font-semibold">{title}</h1>
             </motion.div>
           </div>
 
@@ -2589,7 +2682,7 @@ export const RoadmapReactFlowPage = ({
                 <ContextMenuSeparator />
 
                 <ContextMenuItem onSelect={withClose(onRestorePresetLayout)}>
-                  Odtworz layout z obrazka
+                  Uklad poczatkowy
                 </ContextMenuItem>
                 <ContextMenuItem onSelect={withClose(onAutoLayout)}>
                   Auto layout (dagre)
@@ -2660,6 +2753,24 @@ export const RoadmapReactFlowPage = ({
               </TooltipTrigger>
               <TooltipContent side="right" sideOffset={10}>
                 Dodaj notatkę
+              </TooltipContent>
+            </Tooltip>
+
+            <div className="h-px w-6 bg-slate-200" />
+
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <button
+                  type="button"
+                  onClick={onRestorePresetLayout}
+                  className="flex h-10 w-10 items-center justify-center rounded-2xl text-slate-700 transition hover:bg-slate-100 hover:text-slate-950"
+                  aria-label="Przywróć układ początkowy"
+                >
+                  <RotateCcw className="h-[18px] w-[18px]" />
+                </button>
+              </TooltipTrigger>
+              <TooltipContent side="right" sideOffset={10}>
+                Układ początkowy
               </TooltipContent>
             </Tooltip>
 
