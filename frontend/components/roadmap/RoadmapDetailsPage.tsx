@@ -467,6 +467,7 @@ export default function RoadmapDetailsPage({ roadmapId }: { roadmapId: string })
   const [roadmap, setRoadmap] = useState<RoadmapDetailsDto | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [isDeletingRoadmap, setIsDeletingRoadmap] = useState(false);
+  const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
@@ -547,6 +548,7 @@ export default function RoadmapDetailsPage({ roadmapId }: { roadmapId: string })
       });
     } finally {
       setIsDeletingRoadmap(false);
+      setIsDeleteDialogOpen(false);
     }
   };
 
@@ -593,7 +595,7 @@ export default function RoadmapDetailsPage({ roadmapId }: { roadmapId: string })
       title={roadmap.title}
       backHref="/dashboard"
       headerActions={
-        <AlertDialog>
+        <AlertDialog open={isDeleteDialogOpen} onOpenChange={setIsDeleteDialogOpen}>
           <AlertDialogTrigger asChild>
             <Button
               type="button"
@@ -602,24 +604,30 @@ export default function RoadmapDetailsPage({ roadmapId }: { roadmapId: string })
               className="rounded-full border-rose-200 bg-rose-50 text-rose-700 shadow-none hover:border-rose-300 hover:bg-rose-100 hover:text-rose-800"
             >
               <Trash2 className="h-4 w-4" />
-              {isDeletingRoadmap ? 'Usuwanie...' : 'Usun'}
+              {isDeletingRoadmap ? 'Usuwanie...' : 'Usuń'}
             </Button>
           </AlertDialogTrigger>
-          <AlertDialogContent className="font-grotesk max-w-md rounded-2xl border-slate-200">
+          <AlertDialogContent className="font-grotesk border-slate-200 bg-white text-slate-950 shadow-[0_24px_80px_-32px_rgba(15,23,42,0.45)]">
             <AlertDialogHeader>
-              <AlertDialogTitle>Usunac te roadmape?</AlertDialogTitle>
-              <AlertDialogDescription>
-                Roadmapa zostanie zarchiwizowana i po chwili przeniesiemy Cie z powrotem do
-                dashboardu.
+              <AlertDialogTitle className="text-slate-950">Usunąć roadmapę?</AlertDialogTitle>
+              <AlertDialogDescription className="text-slate-600">
+                Ta akcja nie może być cofnięta.
               </AlertDialogDescription>
             </AlertDialogHeader>
-            <AlertDialogFooter className="flex-row justify-end gap-3 sm:flex-row">
-              <AlertDialogCancel className="rounded-full">Anuluj</AlertDialogCancel>
+            <AlertDialogFooter>
+              <AlertDialogCancel
+                disabled={isDeletingRoadmap}
+                onClick={() => setIsDeleteDialogOpen(false)}
+                className="border-slate-200 bg-white text-slate-700 hover:bg-slate-50 hover:text-slate-950"
+              >
+                Zachowaj roadmapę
+              </AlertDialogCancel>
               <AlertDialogAction
-                className="rounded-full bg-rose-600 text-white hover:bg-rose-700"
+                disabled={isDeletingRoadmap}
+                className="bg-red-500 text-white hover:bg-red-400"
                 onClick={() => void handleDeleteRoadmap()}
               >
-                Usun
+                Tak, chcę usunąć
               </AlertDialogAction>
             </AlertDialogFooter>
           </AlertDialogContent>

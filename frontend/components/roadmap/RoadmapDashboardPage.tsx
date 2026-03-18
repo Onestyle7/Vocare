@@ -85,6 +85,7 @@ export default function RoadmapDashboardPage() {
   const [isLoadingRoadmaps, setIsLoadingRoadmaps] = useState(true);
   const [isCreatingRoadmap, setIsCreatingRoadmap] = useState(false);
   const [deletingRoadmapId, setDeletingRoadmapId] = useState<string | null>(null);
+  const [deleteDialogRoadmapId, setDeleteDialogRoadmapId] = useState<string | null>(null);
   const [roadmapsError, setRoadmapsError] = useState<string | null>(null);
 
   const source = searchParams.get('source') ?? 'unknown';
@@ -171,6 +172,7 @@ export default function RoadmapDashboardPage() {
       });
     } finally {
       setDeletingRoadmapId(null);
+      setDeleteDialogRoadmapId(null);
     }
   };
 
@@ -388,7 +390,10 @@ export default function RoadmapDashboardPage() {
                         <Link href={`/roadmap/${roadmap.id}`}>Otworz</Link>
                       </Button>
 
-                      <AlertDialog>
+                      <AlertDialog
+                        open={deleteDialogRoadmapId === roadmap.id}
+                        onOpenChange={(open) => setDeleteDialogRoadmapId(open ? roadmap.id : null)}
+                      >
                         <AlertDialogTrigger asChild>
                           <Button
                             type="button"
@@ -397,23 +402,32 @@ export default function RoadmapDashboardPage() {
                             className="rounded-full border border-rose-400/20 bg-rose-300/10 text-rose-100 hover:bg-rose-300/15 hover:text-rose-50"
                           >
                             <Trash2 className="h-4 w-4" />
-                            {deletingRoadmapId === roadmap.id ? 'Usuwanie...' : 'Usun'}
+                            {deletingRoadmapId === roadmap.id ? 'Usuwanie...' : 'Usuń'}
                           </Button>
                         </AlertDialogTrigger>
-                        <AlertDialogContent className="font-grotesk max-w-md rounded-2xl border-slate-200">
+                        <AlertDialogContent className="font-grotesk border-white/10 bg-[#0b1016] text-white shadow-[0_24px_80px_-32px_rgba(0,0,0,0.65)]">
                           <AlertDialogHeader>
-                            <AlertDialogTitle>Usunac te roadmape?</AlertDialogTitle>
-                            <AlertDialogDescription>
-                              Roadmapa zostanie zarchiwizowana i zniknie z aktywnej listy.
+                            <AlertDialogTitle className="text-white">
+                              Usunąć roadmapę?
+                            </AlertDialogTitle>
+                            <AlertDialogDescription className="text-white/60">
+                              Ta akcja nie może być cofnięta.
                             </AlertDialogDescription>
                           </AlertDialogHeader>
-                          <AlertDialogFooter className="flex-row justify-end gap-3 sm:flex-row">
-                            <AlertDialogCancel className="rounded-full">Anuluj</AlertDialogCancel>
+                          <AlertDialogFooter>
+                            <AlertDialogCancel
+                              disabled={deletingRoadmapId === roadmap.id}
+                              onClick={() => setDeleteDialogRoadmapId(null)}
+                              className="border-white/10 bg-white/[0.03] text-white/75 hover:bg-white/[0.06] hover:text-white"
+                            >
+                              Zachowaj roadmapę
+                            </AlertDialogCancel>
                             <AlertDialogAction
-                              className="rounded-full bg-rose-600 text-white hover:bg-rose-700"
+                              disabled={deletingRoadmapId === roadmap.id}
+                              className="bg-red-500 text-white hover:bg-red-400"
                               onClick={() => void handleDeleteRoadmap(roadmap.id)}
                             >
-                              Usun
+                              Tak, chcę usunąć
                             </AlertDialogAction>
                           </AlertDialogFooter>
                         </AlertDialogContent>
