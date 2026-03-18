@@ -16,6 +16,7 @@ namespace VocareWebAPI.Billing.Services.Implementations
         private readonly IServiceCostRepository _serviceCostRepository;
         private readonly IUserBillingRepository _userBillingRepository;
         private readonly ITokenTransactionRepository _tokenTransactionRepository;
+        private readonly IDeveloperAccessService _developerAccessService;
         private readonly string _webhookSecret;
         private readonly ILogger<BillingService> _logger;
 
@@ -24,6 +25,7 @@ namespace VocareWebAPI.Billing.Services.Implementations
             IServiceCostRepository serviceCostRepository,
             IUserBillingRepository userBillingRepository,
             ITokenTransactionRepository tokenTransactionRepository,
+            IDeveloperAccessService developerAccessService,
             IConfiguration configuration,
             ILogger<BillingService> logger
         )
@@ -32,6 +34,7 @@ namespace VocareWebAPI.Billing.Services.Implementations
             _serviceCostRepository = serviceCostRepository;
             _userBillingRepository = userBillingRepository;
             _tokenTransactionRepository = tokenTransactionRepository;
+            _developerAccessService = developerAccessService;
             _logger = logger;
             _webhookSecret =
                 configuration["Stripe:WebhookSecret"]
@@ -49,6 +52,11 @@ namespace VocareWebAPI.Billing.Services.Implementations
             }
 
             var serviceCost = await _serviceCostRepository.GetServiceCostAsync(serviceName);
+
+            if (await _developerAccessService.HasPremiumOverrideAsync(userId))
+            {
+                return true;
+            }
 
             var userBilling = await _userBillingRepository.GetByUserIdAsync(userId);
             if (userBilling == null)
@@ -76,6 +84,9 @@ namespace VocareWebAPI.Billing.Services.Implementations
                 throw new InvalidOperationException(
                     $"Service cost for {serviceName} is not valid."
                 );
+
+            if (await _developerAccessService.HasPremiumOverrideAsync(userId))
+                return;
 
             var userBilling = await _dbContext.UserBillings.FirstOrDefaultAsync(ub =>
                 ub.UserId == userId
@@ -283,6 +294,12 @@ namespace VocareWebAPI.Billing.Services.Implementations
                     $"User billing information for user ID {userId} not found."
                 );
             }
+
+            if (await _developerAccessService.HasPremiumOverrideAsync(userId))
+            {
+                return _developerAccessService.ApplyPremiumOverride(userBilling);
+            }
+
             return userBilling;
         }
 

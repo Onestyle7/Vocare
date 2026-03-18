@@ -5,6 +5,7 @@ using Microsoft.Extensions.Options;
 using UglyToad.PdfPig;
 using VocareWebAPI.Billing.Models.Enums;
 using VocareWebAPI.Billing.Repositories.Interfaces;
+using VocareWebAPI.Billing.Services.Interfaces;
 using VocareWebAPI.CareerAdvisor.Services.Interfaces;
 using VocareWebAPI.Models.Dtos;
 using VocareWebAPI.Models.OpenAIConfig;
@@ -24,6 +25,7 @@ namespace VocareWebAPI.CareerAdvisor.Services.Implementations
         private readonly OpenAIConfig _config;
         private const long MaxFileSizeBytes = 2 * 1024 * 1024; // 2MB
         private readonly IUserBillingRepository _userBillingRepository;
+        private readonly IDeveloperAccessService _developerAccessService;
 
         public CvParserService(
             HttpClient httpClient,
@@ -31,7 +33,8 @@ namespace VocareWebAPI.CareerAdvisor.Services.Implementations
             ICvParseHistoryRepository cvParseHistoryRepository,
             UserProfileService userProfileService,
             IOptions<OpenAIConfig> config,
-            IUserBillingRepository userBillingRepository
+            IUserBillingRepository userBillingRepository,
+            IDeveloperAccessService developerAccessService
         )
         {
             _config = config.Value;
@@ -40,6 +43,7 @@ namespace VocareWebAPI.CareerAdvisor.Services.Implementations
             _cvParseHistoryRepository = cvParseHistoryRepository;
             _userProfileService = userProfileService;
             _userBillingRepository = userBillingRepository;
+            _developerAccessService = developerAccessService;
 
             _httpClient.Timeout = TimeSpan.FromSeconds(180);
             _httpClient.DefaultRequestHeaders.Add("Authorization", $"Bearer {_config.ApiKey}");
@@ -64,9 +68,13 @@ namespace VocareWebAPI.CareerAdvisor.Services.Implementations
                 );
             }
 
-            var userBilling = await _userBillingRepository.GetByUserIdAsync(userId);
-            var hasActiveSubscription =
-                userBilling?.SubscriptionStatus == SubscriptionStatus.Active;
+            var hasActiveSubscription = await _developerAccessService.HasPremiumOverrideAsync(userId);
+
+            if (!hasActiveSubscription)
+            {
+                var userBilling = await _userBillingRepository.GetByUserIdAsync(userId);
+                hasActiveSubscription = userBilling?.SubscriptionStatus == SubscriptionStatus.Active;
+            }
 
             // 2. Sprawdzenie czy user już używał parsera
             if (!hasActiveSubscription)

@@ -1,6 +1,7 @@
 using Microsoft.EntityFrameworkCore;
 using Stripe;
 using VocareWebAPI.Billing.Models.Enums;
+using VocareWebAPI.Billing.Services.Interfaces;
 using VocareWebAPI.Data;
 using VocareWebAPI.RoadmapService.Models.Dtos;
 using VocareWebAPI.RoadmapService.Models.Entities;
@@ -16,18 +17,21 @@ namespace VocareWebAPI.RoadmapService.Services.Implementations
         private readonly IRoadmapRepository _roadmapRepository;
         private readonly ILogger<CareerRoadmapService> _logger;
         private readonly AppDbContext _context;
+        private readonly IDeveloperAccessService _developerAccessService;
 
         public CareerRoadmapService(
             IRoadmapGeneratorService roadmapGeneratorService,
             IRoadmapRepository roadmapRepository,
             ILogger<CareerRoadmapService> logger,
-            AppDbContext context
+            AppDbContext context,
+            IDeveloperAccessService developerAccessService
         )
         {
             _roadmapGeneratorService = roadmapGeneratorService;
             _roadmapRepository = roadmapRepository;
             _logger = logger;
             _context = context;
+            _developerAccessService = developerAccessService;
         }
 
         public async Task<Roadmap> GenerateRoadmapAsync(
@@ -36,8 +40,11 @@ namespace VocareWebAPI.RoadmapService.Services.Implementations
             int timeHorizonMonths
         )
         {
-            var billing = await _context.UserBillings.FirstOrDefaultAsync(b => b.UserId == userId);
-            var isPremium = billing?.SubscriptionStatus == SubscriptionStatus.Active;
+            var hasPremiumOverride = await _developerAccessService.HasPremiumOverrideAsync(userId);
+            var billing = hasPremiumOverride
+                ? null
+                : await _context.UserBillings.FirstOrDefaultAsync(b => b.UserId == userId);
+            var isPremium = hasPremiumOverride || billing?.SubscriptionStatus == SubscriptionStatus.Active;
             var maxRoadmaps = isPremium ? 10 : 1;
             var limit = await _roadmapRepository.CountActiveRoadmapsAsync(userId);
 
