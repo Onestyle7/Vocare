@@ -197,12 +197,20 @@ export const countries = [
 
 // NavLinks
 
-export const NavLinks = [
+export type NavLink = {
+  label: string;
+  url: string;
+  highlighted?: boolean;
+  badge?: string;
+};
+
+export const NavLinks: NavLink[] = [
   { label: 'Profil', url: '/profile' },
   { label: 'Doradca', url: '/assistant' },
   { label: 'Analiza', url: '/market-analysis' },
+  { label: 'Roadmap', url: '/dashboard', highlighted: true, badge: 'nowość' },
+  { label: 'Kreator', url: '/resume', highlighted: true, badge: 'stwórz cv' },
   { label: 'Pricing', url: '/pricing' },
-  { label: 'Kreator', url: '/resume', highlighted: true },
 ];
 
 export const companies = [

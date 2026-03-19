@@ -91,7 +91,7 @@ const Header = () => {
                 onMouseLeave={handleMouseLeave}
                 className="flex items-center justify-center space-x-4"
               >
-                {filteredLinks.map(({ label, url, highlighted }) => {
+                {filteredLinks.map(({ label, url, highlighted, badge }) => {
                   const isActive = pathname === url;
 
                   return (
@@ -110,12 +110,12 @@ const Header = () => {
                       >
                         <span>{label}</span>
 
-                        {highlighted && (
+                        {highlighted && badge && (
                           <Badge
                             variant="outline"
                             className="pointer-events-none absolute -top-4 -right-6 scale-75"
                           >
-                            stwórz cv
+                            {badge}
                           </Badge>
                         )}
                       </Link>
