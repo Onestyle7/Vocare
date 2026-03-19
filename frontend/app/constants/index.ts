@@ -197,12 +197,20 @@ export const countries = [
 
 // NavLinks
 
-export const NavLinks = [
+export type NavLink = {
+  label: string;
+  url: string;
+  highlighted?: boolean;
+  badge?: string;
+};
+
+export const NavLinks: NavLink[] = [
   { label: 'Profil', url: '/profile' },
   { label: 'Doradca', url: '/assistant' },
   { label: 'Analiza', url: '/market-analysis' },
+  { label: 'Roadmap', url: '/dashboard', highlighted: true, badge: 'nowość' },
+  { label: 'Kreator', url: '/resume', highlighted: true, badge: 'stwórz cv' },
   { label: 'Pricing', url: '/pricing' },
-  { label: 'Kreator', url: '/resume', highlighted: true },
 ];
 
 export const companies = [
@@ -318,12 +326,10 @@ export const links_pages = [
   { name: 'BLOG', url: '/blog' },
 ];
 
-export const contact_pages = [
-  { name: 'EMAIL', url: 'mailto:vocarecontact@gmail.com' }
-];
+export const contact_pages = [{ name: 'EMAIL', url: 'mailto:vocarecontact@gmail.com' }];
 
 export const down_links = [
-  { name: '2025©', url: '/' },
+  { name: '2026©', url: '/' },
   { name: 'ZGODY I WARUNKI', url: 'terms-of-service' },
   { name: 'POLITYKA PRYWATNOŚCI', url: 'privacy-policy' },
 ];
@@ -441,7 +447,7 @@ export const timeline_icon_4 = '/svg/timeline_icon_4.svg';
 
 // Card Assistant
 
-export const card_assistant_1 = '/images/card-assistant-1.png';
+export const card_assistant_1 = '/images/card-assistant-1.avif';
 
 // construction
 export const construction = '/images/construction.png';
@@ -644,11 +650,14 @@ export const privacy_policy = {
 
 // assistant page assets
 
-export const cone_1 = '/images/cone.png';
-export const cone_2 = '/images/cone-2.png';
-export const cone_3 = '/images/cone-3.png';
-export const cone_4 = '/images/cone-4.png';
-export const cone_5 = '/images/cone-5.png';
-export const cone_6 = '/images/cone-6.png';
-export const cone_7 = '/images/cone-7.png';
-export const cone_8 = '/images/cone-8.png';
+export const cone_1 = '/images/cone.avif';
+export const cone_2 = '/images/cone-2.avif';
+export const cone_3 = '/images/cone-3.avif';
+export const cone_4 = '/images/cone-4.avif';
+export const cone_5 = '/images/cone-5.avif';
+export const cone_6 = '/images/cone-6.avif';
+export const cone_7 = '/images/cone-7.avif';
+export const cone_8 = '/images/cone-8.avif';
+
+// roadmap icon
+export const gps_icon = '/svg/gps.png';

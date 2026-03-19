@@ -49,8 +49,8 @@ const TermsOfService = () => {
           </h1>
 
           <p className="mt-3 max-w-2xl text-sm leading-relaxed text-neutral-400">
-            Dokument określający zasady korzystania z serwisu vocare.pl oraz warunki świadczenia usług
-            cyfrowych.
+            Dokument określający zasady korzystania z serwisu vocare.pl oraz warunki świadczenia
+            usług cyfrowych.
           </p>
         </header>
 

@@ -93,7 +93,7 @@ const MobileNav: React.FC<MobileNavProps> = ({ isAuthenticated }) => {
         <SheetTitle className="hidden">Vocare</SheetTitle>
 
         <ul className="mt-10 flex h-full flex-col items-center justify-center space-y-4">
-          {filteredLinks.map(({ label, url, highlighted }) => {
+          {filteredLinks.map(({ label, url, highlighted, badge }) => {
             const isActive = pathname === url;
 
             return (
@@ -108,12 +108,12 @@ const MobileNav: React.FC<MobileNavProps> = ({ isAuthenticated }) => {
                   >
                     <span>{label}</span>
 
-                    {highlighted && (
+                    {highlighted && badge && (
                       <Badge
                         variant="outline"
                         className="pointer-events-none absolute -top-5 -right-10 scale-75 sm:-right-8"
                       >
-                        stwórz cv
+                        {badge}
                       </Badge>
                     )}
                   </Link>
