@@ -1,3 +1,5 @@
+import { Suspense } from 'react';
+
 import Header from '@/components/SectionsComponents/Header';
 import RoadmapDashboardPage from '@/components/roadmap/RoadmapDashboardPage';
 
@@ -8,7 +10,9 @@ export default function DashboardPage() {
         <Header />
         <div className="mt-8 w-full sm:border-[0.5px]" />
         <div className="font-poppins -mt-10 p-4 sm:-mt-30 sm:border">
-          <RoadmapDashboardPage />
+          <Suspense fallback={null}>
+            <RoadmapDashboardPage />
+          </Suspense>
         </div>
       </div>
     </main>

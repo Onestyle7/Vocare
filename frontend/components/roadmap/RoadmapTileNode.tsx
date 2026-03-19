@@ -137,10 +137,10 @@ export const RoadmapTileNode: FC<Props> = ({ id, data, selected }) => {
   const handleIndicatorClassName = `${handleIndicatorBase} ${handleAnim} ${
     shouldShowHandles ? handleIndicatorVisible : handleIndicatorHidden
   }`;
-  const statusBorderClassName =
-    resolvedStepStatus || resolvedPhaseStatus
-      ? stepStatusBorderClassNames[resolvedStepStatus ?? resolvedPhaseStatus]
-      : 'border-[#11162f]';
+  const resolvedStatus: StepStatus | null = resolvedStepStatus ?? resolvedPhaseStatus;
+  const statusBorderClassName = resolvedStatus
+    ? stepStatusBorderClassNames[resolvedStatus]
+    : 'border-[#11162f]';
 
   return (
     <div
