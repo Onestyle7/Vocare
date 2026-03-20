@@ -3,13 +3,16 @@
 import React from 'react';
 import { contact_pages, down_links, links_pages, links_social } from '@/app/constants';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 import { Input } from '@/components/ui/input';
 import Section from '../SupportComponents/Section';
 import ButtonGenerate from '../ui/ButtonGenerate';
 import { toast } from 'sonner';
+import { hasStoredToken, isProtectedRoute, SIGN_IN_PATH } from '@/lib/auth-redirect';
 
 const Footer = () => {
   const reachUsEmail = 'vocare@testmail.com';
+  const router = useRouter();
 
   const handleReachUsClick = React.useCallback(() => {
     void navigator.clipboard
@@ -23,6 +26,18 @@ const Footer = () => {
       });
   }, []);
 
+  const handleProtectedNavigation = React.useCallback(
+    (event: React.MouseEvent<HTMLAnchorElement>, href: string) => {
+      if (!isProtectedRoute(href) || hasStoredToken()) {
+        return;
+      }
+
+      event.preventDefault();
+      router.push(SIGN_IN_PATH);
+    },
+    [router]
+  );
+
   return (
     <Section
       className="font-korbin relative -mt-[2.25rem] pt-[7.5rem] xl:px-10"
@@ -34,7 +49,12 @@ const Footer = () => {
       <footer className="mb-5 flex h-[60vh] flex-col items-center justify-center border-t 2xl:h-[50vh] 2xl:border">
         <div className="flex h-1/2 w-full justify-center max-sm:items-center">
           <div className="flex w-1/2 items-center justify-center">
-            <ButtonGenerate as="a" href="/profile" className="mb-4 max-md:w-full sm:my-20">
+            <ButtonGenerate
+              as="a"
+              href="/profile"
+              className="mb-4 max-md:w-full sm:my-20"
+              onClick={(event) => handleProtectedNavigation(event, '/profile')}
+            >
               Sprawdź Vocare
             </ButtonGenerate>
           </div>
@@ -74,7 +94,12 @@ const Footer = () => {
                   {links_pages.map((link, index) => (
                     <ul className="flex text-sm" key={index}>
                       <li>
-                        <Link href={link.url}>{link.name}</Link>
+                        <Link
+                          href={link.url}
+                          onClick={(event) => handleProtectedNavigation(event, link.url)}
+                        >
+                          {link.name}
+                        </Link>
                       </li>
                     </ul>
                   ))}

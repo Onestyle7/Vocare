@@ -61,14 +61,13 @@ export default function ProfileDetails() {
   const router = useRouter();
 
   const handleLogout = () => {
-    logoutUser();
-    router.push('/sign-in');
+    void logoutUser();
   };
 
   useEffect(() => {
     const token = localStorage.getItem('token');
     if (!token) {
-      router.push('/sign-in');
+      router.replace('/sign-in');
       return;
     }
 

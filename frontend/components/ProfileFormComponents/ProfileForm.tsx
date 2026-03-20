@@ -154,7 +154,7 @@ export default function ProfileForm({
       setLoading(true);
       const token = localStorage.getItem('token');
       if (!token) {
-        router.push('/sign-in');
+        router.replace('/sign-in');
         return;
       }
       if (initialData) {
@@ -186,7 +186,7 @@ export default function ProfileForm({
     const token = localStorage.getItem('token');
     if (!token) {
       toast.error('Authentication required', { description: 'Please sign in to continue.' });
-      router.push('/sign-in');
+      router.replace('/sign-in');
       return;
     }
     const formattedData = formatProfileDates(data);
@@ -220,7 +220,7 @@ export default function ProfileForm({
     const token = localStorage.getItem('token');
     if (!token) {
       toast.error('Authentication required', { description: 'Please sign in to continue.' });
-      router.push('/sign-in');
+      router.replace('/sign-in');
       return;
     }
     setLoading(true);
