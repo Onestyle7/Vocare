@@ -91,7 +91,7 @@ const HeroTweak = () => {
           </div>
         </div>
         {!isMobile && (
-          <div className="inset-0 flex w-2/5 items-center lg:border-t lg:border-b lg:border-l">
+          <div className="inset-0 flex w-2/5 items-center justify-center lg:border-t lg:border-b lg:border-l">
             <Suspense fallback={<Image src={Spinner} alt="spinner" width={60} height={60} />}>
               {showSpline && (
                 <LazySpline

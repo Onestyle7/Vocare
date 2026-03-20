@@ -27,7 +27,7 @@ const MobileFeatureImprovements = () => {
                     alt="phone"
                     width={448}
                     height={448}
-                    className="rotate-45 opacity-35 md:rotate-45"
+                    className="pointer-events-none rotate-45 opacity-35 md:rotate-45"
                   />
                 </div>
                 <div className="flex h-full w-2/3 flex-col justify-end">
@@ -61,7 +61,13 @@ const MobileFeatureImprovements = () => {
                   }}
                 />
                 <div className="absolute right-0 -bottom-40 z-10 md:bottom-0">
-                  <Image src="/images/iphone-1.png" alt="phone" width={348} height={348} />
+                  <Image
+                    src="/images/iphone-1.avif"
+                    alt="phone"
+                    width={348}
+                    height={348}
+                    className="pointer-events-none"
+                  />
                 </div>
                 <div className="absolute -bottom-8 -left-10">
                   <Image
@@ -69,7 +75,7 @@ const MobileFeatureImprovements = () => {
                     alt="phone"
                     width={348}
                     height={348}
-                    className="opacity-80"
+                    className="pointer-events-none opacity-80"
                   />
                 </div>
                 <div className="absolute -top-4 translate-x-1/2 rotate-x-180">
@@ -78,7 +84,7 @@ const MobileFeatureImprovements = () => {
                     alt="phone"
                     width={348}
                     height={348}
-                    className="opacity-80"
+                    className="pointer-events-none opacity-80"
                   />
                 </div>
               </div>

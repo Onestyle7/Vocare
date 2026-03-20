@@ -227,7 +227,7 @@ export const companies = [
 
 export const user = '/svg/user.svg';
 
-export const shape2 = '/images/shape2.png';
+export const shape2 = '/images/shape2.avif';
 
 // Billing
 
@@ -259,7 +259,7 @@ export const loader = '/svg/loader.svg';
 
 // Feature section
 
-export const shape1 = '/images/shape1.png';
+export const shape1 = '/images/shape1.avif';
 
 // Generate button
 
@@ -274,7 +274,7 @@ export const logo = '/icons/vocare.png';
 export const curved1 = '/svg/curve-1.svg';
 export const curved2 = '/svg/curve-2.svg';
 
-export const upper_arrow = '/images/upper-arrow.png';
+export const upper_arrow = '/images/upper-arrow.avif';
 
 export const curve_pricing = '/images/curve-pricing.png';
 
@@ -450,13 +450,13 @@ export const timeline_icon_4 = '/svg/timeline_icon_4.svg';
 export const card_assistant_1 = '/images/card-assistant-1.avif';
 
 // construction
-export const construction = '/images/construction.png';
+export const construction = '/images/construction.avif';
 
 // market analysis
 
-export const line_market = '/images/market-line.png';
-export const market_star_big = '/images/market-star-big.png';
-export const market_star_small = '/images/market-star-small.png';
+export const line_market = '/images/market-line.avif';
+export const market_star_big = '/images/market-star-big.avif';
+export const market_star_small = '/images/market-star-small.avif';
 
 export const market_motywacja = '/svg/market_motywacja.svg';
 export const market_wejscie = '/svg/market_wejscie.svg';
