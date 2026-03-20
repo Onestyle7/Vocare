@@ -302,7 +302,11 @@ export default function CareerPathSection({
             </div>
 
             <div className="flex flex-wrap items-center gap-1.5">
-              {renderSkillBadge('Dopas.', offer.matchDetails?.matchedSkills ?? [], 'text-white')}
+              {renderSkillBadge(
+                'Dopas.',
+                offer.matchDetails?.userMatchedSkills ?? [],
+                'text-white'
+              )}
               {renderSkillBadge('Braki', offer.matchDetails?.missingSkills ?? [], 'text-white')}
             </div>
           </div>
