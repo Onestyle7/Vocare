@@ -162,22 +162,22 @@ export default function ProfileDetails() {
         </div>
         <div className="grid grid-cols-1 gap-4">
           <div className="flex justify-between rounded-lg">
-            <span className="font-medium text-gray-600 dark:text-gray-200">Kraj:</span>
+            <span className="font-medium text-gray-600 dark:text-white/80">Kraj:</span>
             <span className="ml-2">{profile?.country || '—'}</span>
           </div>
           <Separator />
           <div className="flex justify-between rounded-lg">
-            <span className="font-medium text-gray-600 dark:text-gray-200">Adres:</span>
+            <span className="font-medium text-gray-600 dark:text-white/80">Adres:</span>
             <span className="ml-2">{profile?.address || '—'}</span>
           </div>
           <Separator />
           <div className="flex justify-between rounded-lg">
-            <span className="font-medium text-gray-600 dark:text-gray-200">Telefon:</span>
+            <span className="font-medium text-gray-600 dark:text-white/80">Telefon:</span>
             <span className="ml-2">{profile?.phoneNumber || '—'}</span>
           </div>
           <Separator />
           <div className="flex justify-between rounded-lg">
-            <span className="font-medium text-gray-600 dark:text-gray-200">Typ osobowości:</span>
+            <span className="font-medium text-gray-600 dark:text-white/80">Typ osobowości:</span>
             <span className="ml-2">{getPersonalityLabel(profile?.personalityType)}</span>
           </div>
           <Separator />
@@ -190,7 +190,7 @@ export default function ProfileDetails() {
               profile.education?.map((edu, index) => (
                 <div key={index} className="space-y-4 rounded-lg p-2">
                   <div className="flex justify-between">
-                    <span className="font-medium text-gray-600 dark:text-gray-200">
+                    <span className="font-medium text-gray-600 dark:text-white/80">
                       Instytucja:
                     </span>
                     <span className="ml-2 text-right">{edu.institution}</span>
@@ -198,19 +198,19 @@ export default function ProfileDetails() {
                   <Separator />
 
                   <div className="flex justify-between">
-                    <span className="font-medium text-gray-600 dark:text-gray-200">Stopień:</span>
+                    <span className="font-medium text-gray-600 dark:text-white/80">Stopień:</span>
                     <span className="ml-2 text-right">{edu.degree}</span>
                   </div>
                   <Separator />
 
                   <div className="flex justify-between">
-                    <span className="font-medium text-gray-600 dark:text-gray-200">Kierunek:</span>
+                    <span className="font-medium text-gray-600 dark:text-white/80">Kierunek:</span>
                     <span className="ml-2 text-right">{edu.field}</span>
                   </div>
                   <Separator />
 
                   <div className="flex justify-between">
-                    <span className="font-medium text-gray-600 dark:text-gray-200">
+                    <span className="font-medium text-gray-600 dark:text-white/80">
                       Czas trwania:
                     </span>
                     <span className="ml-2 w-fit rounded-md border px-2 py-0.5 text-right">
@@ -232,7 +232,7 @@ export default function ProfileDetails() {
 
       <div className="space-y-2">
         <div className="flex flex-row items-center">
-          <h2 className="text-2xl font-medium text-gray-700 dark:text-gray-200">Języki</h2>
+          <h2 className="text-2xl font-medium text-gray-700 dark:text-white/80">Języki</h2>
           <div className="ml-2 h-2 w-2 rounded-full bg-[#915EFF]" />
         </div>
         <div className="flex flex-wrap gap-2">
@@ -253,7 +253,7 @@ export default function ProfileDetails() {
 
       <div className="space-y-2">
         <div className="flex flex-row items-center">
-          <h2 className="text-2xl font-medium text-gray-700 dark:text-gray-200">Certyfikaty</h2>
+          <h2 className="text-2xl font-medium text-gray-700 dark:text-white/80">Certyfikaty</h2>
           <div className="ml-2 h-2 w-2 rounded-full bg-[#915EFF]" />
         </div>
         <div className="flex flex-wrap gap-2">
@@ -277,7 +277,7 @@ export default function ProfileDetails() {
   const renderSkillsAndWorkPage = () => (
     <div className="space-y-8">
       <div className="mt-4 space-y-2">
-        <h2 className="flex items-center text-2xl font-medium text-gray-700 dark:text-gray-200">
+        <h2 className="flex items-center text-2xl font-medium text-gray-700 dark:text-white/80">
           Umiejętności
           <div className="ml-2 h-2 w-2 rounded-lg bg-[#915EFF]" />
         </h2>
@@ -298,7 +298,7 @@ export default function ProfileDetails() {
       </div>
 
       <div className="space-y-2">
-        <h2 className="flex items-center text-2xl font-medium text-gray-700 dark:text-gray-200">
+        <h2 className="flex items-center text-2xl font-medium text-gray-700 dark:text-white/80">
           Umiejętności miękkie
           <div className="ml-2 h-2 w-2 rounded-full bg-[#915EFF]" />
         </h2>
@@ -319,7 +319,7 @@ export default function ProfileDetails() {
       </div>
 
       <div className="flex flex-col space-y-2">
-        <span className="flex items-center text-2xl font-medium text-gray-700 dark:text-gray-200">
+        <span className="flex items-center text-2xl font-medium text-gray-700 dark:text-white/80">
           Doświadczenie zawodowe
           <div className="ml-2 h-2 w-2 rounded-full bg-[#915EFF]" />
         </span>
@@ -328,25 +328,25 @@ export default function ProfileDetails() {
           profile.workExperience?.map((exp, index) => (
             <div key={index} className="space-y-4 rounded-lg p-2">
               <div className="flex justify-between">
-                <span className="font-medium text-gray-600 dark:text-gray-200">Stanowisko:</span>
+                <span className="font-medium text-gray-600 dark:text-white/80">Stanowisko:</span>
                 <span className="ml-2 text-right text-[#915EFF]">{exp.position}</span>
               </div>
               <Separator />
 
               <div className="flex justify-between">
-                <span className="font-medium text-gray-600 dark:text-gray-200">Firma:</span>
+                <span className="font-medium text-gray-600 dark:text-white/80">Firma:</span>
                 <span className="ml-2 text-right">{exp.company}</span>
               </div>
               <Separator />
 
               <div className="flex items-start justify-between gap-4">
-                <span className="font-medium text-gray-600 dark:text-gray-200">Opis:</span>
+                <span className="font-medium text-gray-600 dark:text-white/80">Opis:</span>
                 <span className="ml-2 max-w-md text-left text-sm">{exp.description || '—'}</span>
               </div>
               <Separator />
 
               <div className="flex justify-between">
-                <span className="font-medium text-gray-600 dark:text-gray-200">Czas trwania:</span>
+                <span className="font-medium text-gray-600 dark:text-white/80">Czas trwania:</span>
                 <span className="ml-2 w-fit rounded-md border px-2 py-0.5 text-right">
                   {formatDate(exp.startDate)} – {exp.endDate ? formatDate(exp.endDate) : 'Obecnie'}
                 </span>
@@ -366,14 +366,14 @@ export default function ProfileDetails() {
   const renderAboutMePage = () => (
     <div className="space-y-8">
       <div className="mt-4 space-y-2">
-        <h2 className="flex items-center text-2xl font-medium text-gray-700 dark:text-gray-200">
+        <h2 className="flex items-center text-2xl font-medium text-gray-700 dark:text-white/80">
           O mnie
           <div className="ml-2 h-2 w-2 rounded-full bg-[#915EFF]" />
         </h2>
         <div className="rounded-lg bg-gray-50/60 p-4 dark:bg-black/20">
           <p>{profile?.aboutMe || 'Brak opisu.'}</p>
         </div>
-        <h2 className="flex items-center text-2xl font-medium text-gray-700 dark:text-gray-200">
+        <h2 className="flex items-center text-2xl font-medium text-gray-700 dark:text-white/80">
           Dodatkowe informacje
           <div className="ml-2 h-2 w-2 rounded-full bg-[#915EFF]" />
         </h2>
@@ -393,24 +393,24 @@ export default function ProfileDetails() {
         </h2>
         <div className="grid grid-cols-1 gap-4">
           <div className="flex justify-between rounded-lg">
-            <span className="font-medium text-gray-600 dark:text-gray-200">
+            <span className="font-medium text-gray-600 dark:text-white/80">
               Aktualne wynagrodzenie:
             </span>
             <span className="ml-2">{profile?.financialSurvey?.currentSalary ?? '—'}</span>
           </div>
           <Separator />
           <div className="flex justify-between rounded-lg">
-            <span className="font-medium text-gray-600 dark:text-gray-200">
+            <span className="font-medium text-gray-600 dark:text-white/80">
               Oczekiwane wynagrodzenie:
             </span>
             <span className="ml-2">{profile?.financialSurvey?.desiredSalary ?? '—'}</span>
           </div>
           <Separator />
           <div className="flex items-center justify-between rounded-lg">
-            <span className="font-medium text-gray-600 dark:text-gray-200">
+            <span className="font-medium text-gray-600 dark:text-white/80">
               Zobowiązania finansowe (kredyt):
             </span>
-            <span className="ml-2 rounded-lg border px-4 py-2 text-gray-600 dark:text-gray-200">
+            <span className="ml-2 rounded-lg border px-4 py-2 text-gray-600 dark:text-white/80">
               {profile?.financialSurvey?.hasLoans ? 'Tak' : 'Nie'}
             </span>
           </div>
@@ -418,7 +418,7 @@ export default function ProfileDetails() {
             <>
               <Separator />
               <div className="flex justify-between rounded-lg">
-                <span className="font-medium text-gray-600 dark:text-gray-200">
+                <span className="font-medium text-gray-600 dark:text-white/80">
                   Szczegóły kredytu:
                 </span>
                 <span className="ml-2">{profile?.financialSurvey?.loanDetails || '—'}</span>
@@ -427,25 +427,25 @@ export default function ProfileDetails() {
           )}
           <Separator />
           <div className="flex items-center justify-between rounded-lg">
-            <span className="font-medium text-gray-600 dark:text-gray-200">
+            <span className="font-medium text-gray-600 dark:text-white/80">
               Gotowość do relokacji:
             </span>
-            <span className="ml-2 rounded-lg border px-4 py-2 text-gray-600 dark:text-gray-200">
+            <span className="ml-2 rounded-lg border px-4 py-2 text-gray-600 dark:text-white/80">
               {profile?.financialSurvey?.willingToRelocate ? 'Tak' : 'Nie'}
             </span>
           </div>
           <Separator />
           <div className="flex items-center justify-between rounded-lg">
-            <span className="font-medium text-gray-600 dark:text-gray-200">
+            <span className="font-medium text-gray-600 dark:text-white/80">
               Gotowość do zmiany rodzaju zawodu:
             </span>
-            <span className="ml-2 rounded-lg border px-4 py-2 text-gray-600 dark:text-gray-200">
+            <span className="ml-2 rounded-lg border px-4 py-2 text-gray-600 dark:text-white/80">
               {profile?.willingToRebrand ? 'Tak' : 'Nie'}
             </span>
           </div>
           <Separator />
           <div className="flex justify-between rounded-lg">
-            <span className="font-medium text-gray-600 dark:text-gray-200">
+            <span className="font-medium text-gray-600 dark:text-white/80">
               Skłonność do ryzyka:
             </span>
             <span className="ml-2">{getRiskLabel(profile?.financialSurvey?.riskAppetite)}</span>
@@ -546,7 +546,6 @@ export default function ProfileDetails() {
                   </div>
                 </div>
 
-                {/* ✅ scroll container + floating down button */}
                 <div ref={scrollRef} className="relative flex-grow overflow-y-auto">
                   {pages[currentPage]()}
                 </div>
