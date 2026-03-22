@@ -1074,6 +1074,12 @@ const CVCreator: React.FC<CVCreatorProps> = ({ initialCv }) => {
     return html;
   };
 
+  const splitRichTextParagraphs = (input: string) =>
+    input
+      .split(/\r?\n\s*\r?\n+/)
+      .map((paragraph) => paragraph.trim())
+      .filter(Boolean);
+
   const applyFormattingToTextarea = (
     type: FormattingType,
     textarea: HTMLTextAreaElement | null,
@@ -2617,17 +2623,14 @@ const CVCreator: React.FC<CVCreatorProps> = ({ initialCv }) => {
               Personal Profile
             </h3>
             <div className="text-sm leading-relaxed break-words text-gray-700">
-              {(personalInfo.summary || '')
-                .split(/\n+/)
-                .filter(Boolean)
-                .map((para, i) => (
-                  <p
-                    key={`sum-${i}`}
-                    className="para-item mb-2 last:mb-0"
-                    data-item-id={`p${i}`}
-                    dangerouslySetInnerHTML={{ __html: formatRichTextToHtml(para) }}
-                  />
-                ))}
+              {splitRichTextParagraphs(personalInfo.summary || '').map((para, i) => (
+                <p
+                  key={`sum-${i}`}
+                  className="para-item mb-2 last:mb-0"
+                  data-item-id={`p${i}`}
+                  dangerouslySetInnerHTML={{ __html: formatRichTextToHtml(para) }}
+                />
+              ))}
             </div>
           </div>
         ) : null;
@@ -3096,21 +3099,18 @@ const CVCreator: React.FC<CVCreatorProps> = ({ initialCv }) => {
           >
             {includeTitle && renderSectionTitle('profile')}
             <div className="text-sm leading-relaxed break-words text-gray-700">
-              {(personalInfo.summary || '')
-                .split(/\n+/)
-                .filter(Boolean)
-                .map((para, i) => {
-                  const id = `p${i}`;
-                  if (!items.includes(id)) return null;
-                  return (
-                    <p
-                      key={`sum-${i}`}
-                      className="para-item mb-2 last:mb-0"
-                      data-item-id={id}
-                      dangerouslySetInnerHTML={{ __html: formatRichTextToHtml(para) }}
-                    />
-                  );
-                })}
+              {splitRichTextParagraphs(personalInfo.summary || '').map((para, i) => {
+                const id = `p${i}`;
+                if (!items.includes(id)) return null;
+                return (
+                  <p
+                    key={`sum-${i}`}
+                    className="para-item mb-2 last:mb-0"
+                    data-item-id={id}
+                    dangerouslySetInnerHTML={{ __html: formatRichTextToHtml(para) }}
+                  />
+                );
+              })}
             </div>
           </div>
         );
