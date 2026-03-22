@@ -46,7 +46,7 @@ const Footer = () => {
       customPaddings
       id="footer"
     >
-      <footer className="mb-5 flex h-[60vh] flex-col items-center justify-center border-t 2xl:h-[50vh] 2xl:border">
+      <footer className="flex h-[60vh] flex-col items-center justify-center max-sm:mt-60 max-sm:mb-5 sm:border-t 2xl:h-[50vh] 2xl:border">
         <div className="flex h-1/2 w-full justify-center max-sm:items-center">
           <div className="flex w-1/2 items-center justify-center">
             <ButtonGenerate
@@ -146,7 +146,7 @@ const Footer = () => {
               ))}
             </div>
 
-            <div className="font-poppins text-center text-4xl sm:text-6xl xl:text-left xl:text-[40px] dark:text-[#F3F3F3]">
+            <div className="font-poppins mb-4 text-center text-2xl sm:text-6xl xl:text-left xl:text-[40px] dark:text-[#F3F3F3]">
               Twoja droga zaczyna się tutaj.
             </div>
           </div>
