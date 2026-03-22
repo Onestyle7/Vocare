@@ -121,7 +121,7 @@ export default async function BlogPage(props: MetadataProps) {
         </p>
         <p className="text-muted-foreground text-xs"></p>
         <p className="text-muted-foreground text-xs">{metadata.estimatedReadTime} min. czytania</p>
-        <div className="relative mx-auto mt-8 aspect-[5/3] w-full max-w-3xl overflow-hidden rounded-3xl">
+        <div className="relative mx-auto mt-8 aspect-5/3 w-full max-w-3xl overflow-hidden rounded-3xl">
           <Image
             src={metadata.coverImage}
             alt={metadata.title}
@@ -131,7 +131,7 @@ export default async function BlogPage(props: MetadataProps) {
           />
         </div>
       </section>
-      <article className="mx-auto my-10 max-w-[1000px]">
+      <article className="mx-auto my-10 max-w-250">
         <Markdown
           remarkPlugins={[remarkGfm]}
           components={{

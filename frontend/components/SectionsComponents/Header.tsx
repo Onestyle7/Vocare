@@ -28,6 +28,7 @@ const Header = () => {
   const [activeDotLeft, setActiveDotLeft] = useState(0);
   const [activeDotOpacity, setActiveDotOpacity] = useState(0);
   const publicLinks = [
+    { label: 'Blog', url: '/blog' },
     { label: 'Pricing', url: '/pricing' },
     { label: 'Sign In', url: '/sign-in' },
   ];
@@ -231,21 +232,16 @@ const Header = () => {
             )}
 
             <div className="flex items-center space-x-4">
-              <Link href="/blog">
-                <p className="text-[18px] font-normal uppercase">Blog</p>
-              </Link>
               {isAuthenticated && <TokenCounter />}
 
-              {!isAuthenticated && (
-                <>
-                  <Link href="/pricing">
-                    <p className="text-[18px] font-normal uppercase">Pricing</p>
-                  </Link>
-                  <Link href="/sign-in">
-                    <p className="text-[18px] font-normal uppercase">Sign In</p>
-                  </Link>
-                </>
-              )}
+              <>
+                {!isAuthenticated &&
+                  publicLinks.map((link) => (
+                    <Link href={link.url} key={link.url}>
+                      <p className="text-[18px] font-normal uppercase">{link.label}</p>
+                    </Link>
+                  ))}
+              </>
 
               {/* <ThemeSwitch /> */}
             </div>

@@ -205,6 +205,7 @@ export type NavLink = {
 };
 
 export const NavLinks: NavLink[] = [
+  { label: 'Blog', url: '/blog' },
   { label: 'Profil', url: '/profile' },
   { label: 'Doradca', url: '/assistant' },
   { label: 'Analiza', url: '/market-analysis' },

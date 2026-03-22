@@ -74,7 +74,6 @@ jobs:
       - name: Test
         run: npm run test
         working-directory: frontend
-        continue-on-error: true
 
       - name: Upload frontend artifact
         uses: actions/upload-artifact@v4

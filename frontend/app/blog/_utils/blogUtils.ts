@@ -4,6 +4,7 @@ import { env } from 'process';
 import { articleSchema, ArticleMetadata } from './types';
 import fs from 'fs';
 import { ZodError } from 'zod';
+import { cache } from 'react';
 
 /** Getting absolute image url from relative 'public' folder image path */
 export function toAbsoluteUrl(path: string) {
@@ -12,7 +13,7 @@ export function toAbsoluteUrl(path: string) {
 }
 
 /** Get article content based on article slug and source folder name */
-export function getArticleContent(slug: string, baseFolder: string) {
+export const getArticleContent = cache((slug: string, baseFolder: string) => {
   try {
     const article_path = baseFolder + `${slug}.md`;
     const fileContent = fs.readFileSync(article_path, 'utf-8');
@@ -27,15 +28,19 @@ export function getArticleContent(slug: string, baseFolder: string) {
     console.log(`Error occured when getting content of: ${slug} article`);
     throw error;
   }
-}
+});
 
 /** Parse frontmatter article.md metadata */
 export function getArticlesMetadata(basePath: string): ArticleMetadata[] {
+  const regex = /^(_depreceated-)?([a-z0-9]+-)*[a-z0-9]+\.md$/;
   const files = fs.readdirSync(basePath);
-  const markdownFiles = files.filter((file) => file.endsWith('.md'));
+  const markdownFiles = files.filter((file) => file.endsWith('.md') && !file.startsWith('_'));
 
   const posts = markdownFiles.map((filename) => {
     try {
+      if (!regex.test(filename))
+        throw new Error(`${filename}: Invalid filename can't be parsed as slug`);
+
       const fileContent = fs.readFileSync(`${basePath}${filename}`, 'utf-8');
       const { data } = matter(fileContent);
       const matterResult = articleSchema.parse(data);
@@ -46,11 +51,11 @@ export function getArticlesMetadata(basePath: string): ArticleMetadata[] {
       };
     } catch (error) {
       console.log('\n');
-      console.log(`Ivalid article metadata in ${filename}:`);
       if (error instanceof ZodError) {
+        console.log(`Ivalid article metadata in ${filename}:`);
         console.log(error.errors);
-        console.log('\n');
       }
+      console.log('\n');
       throw error;
     }
   });

@@ -28,7 +28,9 @@ export default function SearchView({ articlesMetadata }: { articlesMetadata: Art
         </Link>
       ))
     ) : (
-      <p className="text-muted-foreground col-span-3 text-lg">Not found any matching articles</p>
+      <p className="text-muted-foreground col-span-3 text-lg">
+        Nie znaleziono pasujących artykułów
+      </p>
     );
   };
 

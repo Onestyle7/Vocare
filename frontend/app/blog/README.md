@@ -1,6 +1,8 @@
 # Blog Content Guide
 
 Articles are stored as `.md` files in `frontend/articles/`.
+File title is taken as a `slug` - so make sure the title is descriptive and not too long, also separated by hyphens.
+Files that starts with `_` will be ignored. So you can "hide" unused / test articles without deleting them.
 
 ## 1. Metadata Schema (Frontmatter)
 
