@@ -57,7 +57,7 @@ const Header = () => {
   }, [pathname, isAuthenticated, isMobile]);
 
   useEffect(() => {
-    if (!floatingNavSwitch) {
+    if (!floatingNavSwitch || isMobile) {
       setShowFloatingNav(false);
       return;
     }
@@ -102,7 +102,7 @@ const Header = () => {
   return (
     <>
       <AnimatePresence>
-        {floatingNavSwitch && showFloatingNav && (
+        {floatingNavSwitch && !isMobile && showFloatingNav && (
           <motion.div
             initial={{ opacity: 0, y: -20, scale: 0.96 }}
             animate={{ opacity: 1, y: 0, scale: 1 }}
