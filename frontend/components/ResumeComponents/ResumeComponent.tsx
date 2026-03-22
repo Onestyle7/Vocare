@@ -692,9 +692,18 @@ const CVCreator: React.FC<CVCreatorProps> = ({ initialCv }) => {
 
   const formatDate = (dateString: string) => {
     if (!dateString) return '';
-    const date = new Date(dateString);
+
+    const normalizedDate = /^\d{4}-\d{2}-\d{2}T/.test(dateString)
+      ? dateString.slice(0, 10)
+      : dateString;
+    const [year, month, day] = normalizedDate.split('-').map(Number);
+    const hasIsoParts = [year, month, day].every(Number.isFinite);
+    const date = hasIsoParts ? new Date(year, month - 1, day) : new Date(dateString);
+
+    if (Number.isNaN(date.getTime())) return '';
+
     if (showFullDates) {
-      return date.toLocaleDateString('pl-PL', { year: 'numeric', month: 'long' });
+      return date.toLocaleDateString('en-US', { year: 'numeric', month: 'long' });
     } else {
       return date.getFullYear().toString();
     }
@@ -1482,12 +1491,12 @@ const CVCreator: React.FC<CVCreatorProps> = ({ initialCv }) => {
         case 'profile':
           return Boolean(
             personalInfo.firstName ||
-              personalInfo.lastName ||
-              personalInfo.email ||
-              personalInfo.phone ||
-              personalInfo.address ||
-              personalInfo.profession ||
-              personalInfo.summary
+            personalInfo.lastName ||
+            personalInfo.email ||
+            personalInfo.phone ||
+            personalInfo.address ||
+            personalInfo.profession ||
+            personalInfo.summary
           );
         case 'experience':
           return experiences.length > 0;
@@ -3264,7 +3273,10 @@ const CVCreator: React.FC<CVCreatorProps> = ({ initialCv }) => {
                     value={showFullDates ? 'full' : 'year'}
                     onValueChange={(value) => setShowFullDates(value === 'full')}
                   >
-                    <SelectTrigger className="font-poppins h-10 w-40 rounded-sm border border-gray-300 px-2 text-sm focus:ring-2 focus:ring-blue-500 focus:outline-none">
+                    <SelectTrigger
+                      size="default"
+                      className="font-poppins w-40 rounded-sm border border-gray-300 px-2 text-sm focus:ring-2 focus:ring-blue-500 focus:outline-none"
+                    >
                       <SelectValue />
                     </SelectTrigger>
                     <SelectContent>

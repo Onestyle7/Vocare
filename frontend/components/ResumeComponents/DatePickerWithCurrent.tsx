@@ -58,7 +58,7 @@ export const DatePickerWithCurrent: React.FC<DatePickerWithCurrentProps> = ({
     if (!dateString) return '';
     const date = parseISODate(dateString);
     if (!date) return '';
-    return date.toLocaleDateString('pl-PL', {
+    return date.toLocaleDateString('en-US', {
       year: 'numeric',
       month: 'long',
     });
