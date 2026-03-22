@@ -1,3 +1,5 @@
+'use client';
+
 import CardSwap, { Card } from '@/components/CardSwap/CardSwap';
 import { ArrowRight, ArrowUp, FileQuestion, PencilLine } from 'lucide-react';
 import Link from 'next/link';

@@ -67,7 +67,7 @@ const HeroTweak = () => {
               </h1>
             </CopyHeader>
             <Copy>
-              <h2 className="text-muted-foreground font-grotesk mt-8 max-w-xl px-4 text-center text-sm max-md:block sm:mt-4 sm:text-base md:px-0 md:text-left md:text-lg lg:text-base xl:text-sm">
+              <h2 className="text-muted-foreground font-grotesk mt-8 max-w-xl px-4 text-center text-sm text-balance max-md:block sm:mt-4 sm:text-base md:px-0 md:text-left md:text-lg lg:text-base xl:text-sm">
                 AI analizuje Twój profil i tworzy ścieżki kariery, CV pod ATS i plan działania.
               </h2>
             </Copy>
