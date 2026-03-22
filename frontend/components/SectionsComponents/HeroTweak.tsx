@@ -112,16 +112,16 @@ const HeroTweak = () => {
           {companies.map((company) => (
             <div
               key={company.name}
-              className="flex h-full flex-1 items-center justify-center border-r border-b border-l"
+              className="flex h-full flex-1 items-center justify-center border-r border-b"
             >
               <div className="relative flex h-full w-full items-center justify-center">
-                <Image
-                  src={company.url}
-                  alt={company.name}
-                  width={84}
-                  height={10}
-                  className="object-contain opacity-30 grayscale transition-all duration-200 ease-out hover:opacity-100 hover:brightness-100 hover:grayscale-0 dark:brightness-0 dark:invert dark:hover:brightness-0 dark:hover:invert"
-                />
+                <p className="font-grotesk text-gray-500">
+                  <span className="bg-[linear-gradient(90deg,rgba(146,150,253,1)_0%,rgba(132,145,254,1)_50%,rgba(199,169,254,1)_100%,rgba(157,155,255,1)_77%)] bg-clip-text font-bold text-transparent">
+                    {' '}
+                    {company.specialText}
+                  </span>
+                  {company.name}
+                </p>
               </div>
             </div>
           ))}

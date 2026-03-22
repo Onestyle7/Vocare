@@ -213,16 +213,40 @@ export const NavLinks: NavLink[] = [
   { label: 'Pricing', url: '/pricing' },
 ];
 
+// export const companies = [
+//   { name: 'Google', url: 'https://cdn.magicui.design/companies/Google.svg' },
+//   { name: 'Microsoft', url: 'https://cdn.magicui.design/companies/Microsoft.svg' },
+//   { name: 'Amazon', url: 'https://cdn.magicui.design/companies/Amazon.svg' },
+//   { name: 'Netflix', url: 'https://cdn.magicui.design/companies/Netflix.svg' },
+//   { name: 'YouTube', url: 'https://cdn.magicui.design/companies/YouTube.svg' },
+//   // { name: 'Instagram', url: 'https://cdn.magicui.design/companies/Instagram.svg' },
+//   // { name: 'Uber', url: 'https://cdn.magicui.design/companies/Uber.svg' },
+//   { name: 'Spotify', url: 'https://cdn.magicui.design/companies/Spotify.svg' },
+// ];
+
 export const companies = [
-  { name: 'Google', url: 'https://cdn.magicui.design/companies/Google.svg' },
-  { name: 'Microsoft', url: 'https://cdn.magicui.design/companies/Microsoft.svg' },
-  { name: 'Amazon', url: 'https://cdn.magicui.design/companies/Amazon.svg' },
-  { name: 'Netflix', url: 'https://cdn.magicui.design/companies/Netflix.svg' },
-  { name: 'YouTube', url: 'https://cdn.magicui.design/companies/YouTube.svg' },
+  {
+    name: 'użytkowników',
+    specialText: '1200+ ',
+    url: 'https://cdn.magicui.design/companies/Google.svg',
+  },
+  {
+    name: 'wygenerowanych analiz',
+    specialText: '2000+ ',
+    url: 'https://cdn.magicui.design/companies/Microsoft.svg',
+  },
+  {
+    name: 'rozmów kwalifikacyjnych',
+    specialText: '46% więcej ',
+    url: 'https://cdn.magicui.design/companies/Amazon.svg',
+  },
+  // { name: 'Netflix', url: 'https://cdn.magicui.design/companies/Netflix.svg' },
+  // { name: 'YouTube', url: 'https://cdn.magicui.design/companies/YouTube.svg' },
   // { name: 'Instagram', url: 'https://cdn.magicui.design/companies/Instagram.svg' },
   // { name: 'Uber', url: 'https://cdn.magicui.design/companies/Uber.svg' },
-  { name: 'Spotify', url: 'https://cdn.magicui.design/companies/Spotify.svg' },
+  // { name: 'Spotify', url: 'https://cdn.magicui.design/companies/Spotify.svg' },
 ];
+
 // Form
 
 export const user = '/svg/user.svg';
