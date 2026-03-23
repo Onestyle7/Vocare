@@ -141,15 +141,7 @@ namespace VocareWebAPI.JobOffers.Services.Implementations
             {
                 var textForEmbedding = BuildJobOfferTextForEmbedding(offer);
 
-                _logger.LogDebug(
-                    "Generuję embedding dla oferty: {Title} ({RefNumber})",
-                    offer.Title,
-                    offer.ReferenceNumber
-                );
-
                 offer.Embedding = await _embeddingService.GenerateEmbeddingAsync(textForEmbedding);
-
-                _logger.LogDebug("Wygenerowano embedding dla oferty {Title}", offer.Title);
             }
             catch (Exception ex)
             {
@@ -212,8 +204,6 @@ namespace VocareWebAPI.JobOffers.Services.Implementations
                     await GenerateEmbeddingForOffer(offer);
                     await _repository.UpdateAsync(offer);
                     result.Processed++;
-
-                    _logger.LogDebug("Backfill: wygenerowano embedding dla {Title}", offer.Title);
                 }
                 catch (Exception ex)
                 {

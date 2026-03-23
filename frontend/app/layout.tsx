@@ -6,6 +6,8 @@ import { Toaster } from '@/components/ui/sonner';
 import { TokenBalanceProvider } from '@/lib/contexts/TokenBalanceContext';
 // import SmoothScrollProvider from '@/components/SupportComponents/SmoothScrollProvider';
 import { GoogleAnalytics } from '@next/third-parties/google';
+import { toAbsoluteUrl } from './blog/_utils/blogUtils';
+import env from '@/lib/env/client';
 
 const sizmoPro = localFont({
   src: [
@@ -76,9 +78,51 @@ const spaceGrotesk = localFont({
 });
 
 export const metadata: Metadata = {
-  title: 'Vocare',
+  metadataBase: new URL(env.NEXT_PUBLIC_APP_URL),
+  title: {
+    default: 'Vocare',
+    template: '%s | Vocare',
+  },
   description:
     'Vocare is your AI-powered career advisor that helps you discover personalized career paths, long-term goals, and next steps based on your unique skills and profile. Make smarter career decisions with AI-driven guidance.',
+  alternates: {
+    canonical: '/',
+  },
+  robots: {
+    index: true,
+    follow: true,
+    googleBot: {
+      index: true,
+      follow: true,
+      'max-image-preview': 'large',
+      'max-snippet': -1,
+      'max-video-preview': -1,
+    },
+  },
+  openGraph: {
+    type: 'website',
+    url: env.NEXT_PUBLIC_APP_URL,
+    title: 'Vocare',
+    description:
+      'Vocare is your AI-powered career advisor that helps you discover personalized career paths, long-term goals, and next steps based on your unique skills and profile. Make smarter career decisions with AI-driven guidance.',
+    siteName: 'Vocare',
+    locale: 'pl_PL',
+    images: [
+      {
+        url: toAbsoluteUrl('/metadata/og-image.png'),
+        width: 1200,
+        height: 630,
+        alt: 'Vocare',
+      },
+    ],
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: 'Vocare',
+    description:
+      'Vocare is your AI-powered career advisor that helps you discover personalized career paths, long-term goals, and next steps based on your unique skills and profile. Make smarter career decisions with AI-driven guidance.',
+    images: [toAbsoluteUrl('/metadata/og-image.png')],
+  },
 };
 
 export default function RootLayout({

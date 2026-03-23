@@ -2,18 +2,21 @@ import { timeline_icon_1 } from '@/app/constants';
 import Image from 'next/image';
 import React from 'react';
 import { HoverCard, HoverCardContent, HoverCardTrigger } from '../ui/hover-card';
+import { cn } from '@/lib/utils';
 
 interface TimelineItem {
   title: string;
   description: string;
   icon?: string;
   status?: 'current' | 'upcoming' | 'completed';
+  isOptional?: boolean;
 }
 
 interface TimelineProps {
   items: TimelineItem[];
   className?: string;
   maxDescriptionLength?: number;
+  variant?: 'default' | 'phase-progress';
 }
 
 function truncateWithEllipsis(text: string, max: number): string {
@@ -26,7 +29,52 @@ const Timeline: React.FC<TimelineProps> = ({
   items,
   className = '',
   maxDescriptionLength = 80,
+  variant = 'default',
 }) => {
+  if (variant === 'phase-progress') {
+    return (
+      <section className={cn('my-4 w-full', className)}>
+        <div className="flex flex-wrap items-center gap-2">
+          {items.map((item, index) => {
+            const isCompleted = item.status === 'completed';
+            const isCurrent = item.status === 'current';
+            const nextItem = items[index + 1];
+
+            return (
+              <React.Fragment key={`${item.title}-${index}`}>
+                <div
+                  title={item.title}
+                  aria-label={item.title}
+                  className={cn(
+                    'flex h-3.5 w-3.5 shrink-0 items-center justify-center rounded-full border-2 transition-colors',
+                    isCompleted
+                      ? 'border-slate-950 bg-slate-950'
+                      : isCurrent
+                        ? 'border-slate-950 bg-white shadow-[0_0_0_4px_rgba(15,23,42,0.08)]'
+                        : 'border-slate-400 bg-white'
+                  )}
+                >
+                  {isCurrent ? <span className="h-1.5 w-1.5 rounded-full bg-slate-950" /> : null}
+                </div>
+                {index < items.length - 1 ? (
+                  <div
+                    className={cn(
+                      'min-w-4 flex-1 border-t',
+                      nextItem?.isOptional
+                        ? 'border-dashed border-slate-300'
+                        : 'border-solid border-slate-200'
+                    )}
+                    aria-hidden
+                  />
+                ) : null}
+              </React.Fragment>
+            );
+          })}
+        </div>
+      </section>
+    );
+  }
+
   return (
     <section className={`my-4 w-full sm:mx-auto sm:max-w-5xl ${className}`}>
       {/* Desktop Layout - Horizontal */}

@@ -1,12 +1,7 @@
-using System;
-using System.Collections.Generic;
 using System.Globalization;
-using System.Linq;
 using System.Text.RegularExpressions;
-using System.Threading.Tasks;
 using System.Xml;
 using System.Xml.Linq;
-using UglyToad.PdfPig.Logging;
 using VocareWebAPI.JobOffers.Models.Entities;
 using VocareWebAPI.JobOffers.Models.Enums;
 using VocareWebAPI.JobOffers.Services.Interfaces;
@@ -91,19 +86,32 @@ namespace VocareWebAPI.JobOffers.Services.Implementations
             if (string.IsNullOrWhiteSpace(dateText))
                 return DateTime.UtcNow;
 
+            var normalized = dateText.Replace("CET", "+01:00").Replace("CEST", "+02:00");
+
             if (
-                DateTime.TryParse(
-                    dateText,
+                DateTimeOffset.TryParseExact(
+                    normalized,
+                    "ddd, dd MMM yyyy HH:mm:ss zzz",
                     CultureInfo.InvariantCulture,
                     DateTimeStyles.None,
-                    out var date
+                    out var dto
                 )
             )
             {
-                return date.ToUniversalTime();
+                return dto.UtcDateTime;
             }
-
-            _logger.LogWarning("Nie udało się sparsować daty: {DateText}", dateText);
+            if (
+                DateTimeOffset.TryParse(
+                    normalized,
+                    CultureInfo.InvariantCulture,
+                    DateTimeStyles.None,
+                    out var dtoFallback
+                )
+            )
+            {
+                return dtoFallback.UtcDateTime;
+            }
+            _logger.LogDebug("Nie udało się sparsować daty: {DateText}", dateText);
             return DateTime.UtcNow;
         }
 

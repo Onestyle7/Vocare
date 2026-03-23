@@ -9,6 +9,7 @@ export interface AiCareerResponse {
 }
 
 export interface CareerPath {
+  id: string;
   careerName: string;
   description: string;
   probability: number;

@@ -1,0 +1,17 @@
+{
+  "scripts": {
+    "prepare": "husky"
+  },
+  "devDependencies": {
+    "husky": "^9.1.7",
+    "lint-staged": "^16.4.0"
+  },
+  "lint-staged": {
+    "frontend/**/*.{ts,tsx}": [
+      "npm --prefix frontend run test:related"
+    ],
+    "frontend/**/*.md": [
+      "npm --prefix frontend run validate:md"
+    ]
+  }
+}

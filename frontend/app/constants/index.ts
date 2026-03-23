@@ -197,29 +197,62 @@ export const countries = [
 
 // NavLinks
 
-export const NavLinks = [
+export type NavLink = {
+  label: string;
+  url: string;
+  highlighted?: boolean;
+  badge?: string;
+};
+
+export const NavLinks: NavLink[] = [
+  { label: 'Blog', url: '/blog' },
   { label: 'Profil', url: '/profile' },
   { label: 'Doradca', url: '/assistant' },
   { label: 'Analiza', url: '/market-analysis' },
+  { label: 'Roadmap', url: '/dashboard', highlighted: true, badge: 'nowość' },
+  { label: 'Kreator', url: '/resume', highlighted: true, badge: 'stwórz cv' },
   { label: 'Pricing', url: '/pricing' },
-  { label: 'Kreator', url: '/resume', highlighted: true },
 ];
 
+// export const companies = [
+//   { name: 'Google', url: 'https://cdn.magicui.design/companies/Google.svg' },
+//   { name: 'Microsoft', url: 'https://cdn.magicui.design/companies/Microsoft.svg' },
+//   { name: 'Amazon', url: 'https://cdn.magicui.design/companies/Amazon.svg' },
+//   { name: 'Netflix', url: 'https://cdn.magicui.design/companies/Netflix.svg' },
+//   { name: 'YouTube', url: 'https://cdn.magicui.design/companies/YouTube.svg' },
+//   // { name: 'Instagram', url: 'https://cdn.magicui.design/companies/Instagram.svg' },
+//   // { name: 'Uber', url: 'https://cdn.magicui.design/companies/Uber.svg' },
+//   { name: 'Spotify', url: 'https://cdn.magicui.design/companies/Spotify.svg' },
+// ];
+
 export const companies = [
-  { name: 'Google', url: 'https://cdn.magicui.design/companies/Google.svg' },
-  { name: 'Microsoft', url: 'https://cdn.magicui.design/companies/Microsoft.svg' },
-  { name: 'Amazon', url: 'https://cdn.magicui.design/companies/Amazon.svg' },
-  { name: 'Netflix', url: 'https://cdn.magicui.design/companies/Netflix.svg' },
-  { name: 'YouTube', url: 'https://cdn.magicui.design/companies/YouTube.svg' },
+  {
+    name: 'użytkowników',
+    specialText: '1200+ ',
+    url: 'https://cdn.magicui.design/companies/Google.svg',
+  },
+  {
+    name: 'wygenerowanych analiz',
+    specialText: '2000+ ',
+    url: 'https://cdn.magicui.design/companies/Microsoft.svg',
+  },
+  {
+    name: 'rozmów kwalifikacyjnych',
+    specialText: '46% więcej ',
+    url: 'https://cdn.magicui.design/companies/Amazon.svg',
+  },
+  // { name: 'Netflix', url: 'https://cdn.magicui.design/companies/Netflix.svg' },
+  // { name: 'YouTube', url: 'https://cdn.magicui.design/companies/YouTube.svg' },
   // { name: 'Instagram', url: 'https://cdn.magicui.design/companies/Instagram.svg' },
   // { name: 'Uber', url: 'https://cdn.magicui.design/companies/Uber.svg' },
-  { name: 'Spotify', url: 'https://cdn.magicui.design/companies/Spotify.svg' },
+  // { name: 'Spotify', url: 'https://cdn.magicui.design/companies/Spotify.svg' },
 ];
+
 // Form
 
 export const user = '/svg/user.svg';
 
-export const shape2 = '/images/shape2.png';
+export const shape2 = '/images/shape2.avif';
 
 // Billing
 
@@ -251,7 +284,7 @@ export const loader = '/svg/loader.svg';
 
 // Feature section
 
-export const shape1 = '/images/shape1.png';
+export const shape1 = '/images/shape1.avif';
 
 // Generate button
 
@@ -266,7 +299,7 @@ export const logo = '/icons/vocare.png';
 export const curved1 = '/svg/curve-1.svg';
 export const curved2 = '/svg/curve-2.svg';
 
-export const upper_arrow = '/images/upper-arrow.png';
+export const upper_arrow = '/images/upper-arrow.avif';
 
 export const curve_pricing = '/images/curve-pricing.png';
 
@@ -318,12 +351,10 @@ export const links_pages = [
   { name: 'BLOG', url: '/blog' },
 ];
 
-export const contact_pages = [
-  { name: 'EMAIL', url: 'mailto:vocarecontact@gmail.com' }
-];
+export const contact_pages = [{ name: 'EMAIL', url: 'mailto:vocarecontact@gmail.com' }];
 
 export const down_links = [
-  { name: '2025©', url: '/' },
+  { name: '2026©', url: '/' },
   { name: 'ZGODY I WARUNKI', url: 'terms-of-service' },
   { name: 'POLITYKA PRYWATNOŚCI', url: 'privacy-policy' },
 ];
@@ -441,16 +472,16 @@ export const timeline_icon_4 = '/svg/timeline_icon_4.svg';
 
 // Card Assistant
 
-export const card_assistant_1 = '/images/card-assistant-1.png';
+export const card_assistant_1 = '/images/card-assistant-1.avif';
 
 // construction
-export const construction = '/images/construction.png';
+export const construction = '/images/construction.avif';
 
 // market analysis
 
-export const line_market = '/images/market-line.png';
-export const market_star_big = '/images/market-star-big.png';
-export const market_star_small = '/images/market-star-small.png';
+export const line_market = '/images/market-line.avif';
+export const market_star_big = '/images/market-star-big.avif';
+export const market_star_small = '/images/market-star-small.avif';
 
 export const market_motywacja = '/svg/market_motywacja.svg';
 export const market_wejscie = '/svg/market_wejscie.svg';
@@ -644,11 +675,14 @@ export const privacy_policy = {
 
 // assistant page assets
 
-export const cone_1 = '/images/cone.png';
-export const cone_2 = '/images/cone-2.png';
-export const cone_3 = '/images/cone-3.png';
-export const cone_4 = '/images/cone-4.png';
-export const cone_5 = '/images/cone-5.png';
-export const cone_6 = '/images/cone-6.png';
-export const cone_7 = '/images/cone-7.png';
-export const cone_8 = '/images/cone-8.png';
+export const cone_1 = '/images/cone.avif';
+export const cone_2 = '/images/cone-2.avif';
+export const cone_3 = '/images/cone-3.avif';
+export const cone_4 = '/images/cone-4.avif';
+export const cone_5 = '/images/cone-5.avif';
+export const cone_6 = '/images/cone-6.avif';
+export const cone_7 = '/images/cone-7.avif';
+export const cone_8 = '/images/cone-8.avif';
+
+// roadmap icon
+export const gps_icon = '/svg/gps.png';

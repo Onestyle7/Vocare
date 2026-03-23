@@ -11,6 +11,8 @@ namespace VocareWebAPI.Models.Dtos
     /// </summary>
     public class CareerPathDto
     {
+        public Guid Id { get; set; }
+
         [JsonPropertyName("careerName")]
         public string CareerName { get; set; } = string.Empty;
 

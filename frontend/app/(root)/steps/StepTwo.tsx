@@ -69,23 +69,17 @@ export default function StepTwo({ form, onNext, onBack }: StepTwoProps) {
                 maxLength={9}
                 value={field.value || ''}
                 onChange={(newValue) => field.onChange(newValue)}
-                className="max-lg:scale-50"
               >
-                <InputOTPGroup className="mr-1 sm:mr-2">
-                  <InputOTPSlot index={0} />
-                  <InputOTPSlot index={1} />
-                  <InputOTPSlot index={2} />
-                </InputOTPGroup>
-                <InputOTPGroup className="mr-1 sm:mr-2">
-                  <InputOTPSlot index={3} />
-                  <InputOTPSlot index={4} />
-                  <InputOTPSlot index={5} />
-                </InputOTPGroup>
-                <InputOTPGroup>
-                  <InputOTPSlot index={6} />
-                  <InputOTPSlot index={7} />
-                  <InputOTPSlot index={8} />
-                </InputOTPGroup>
+                {Array.from({ length: 3 }).map((_, groupIndex) => (
+                  <InputOTPGroup key={`otp-group-${groupIndex}`} className="max-w-27">
+                    {Array.from({ length: 3 }).map((__, slotIndex) => {
+                      const index = groupIndex * 3 + slotIndex;
+                      return (
+                        <InputOTPSlot key={`otp-slot-${index}`} index={index} className="max-w-9" />
+                      );
+                    })}
+                  </InputOTPGroup>
+                ))}
               </InputOTP>
             </FormControl>
             <FormMessage />
