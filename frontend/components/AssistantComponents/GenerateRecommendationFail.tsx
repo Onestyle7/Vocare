@@ -41,7 +41,8 @@ const GenerateRecommendationFail = () => {
                 </div>
                 <div className="mt-4 h-full w-full items-center justify-start">
                   <p className="text-muted-foreground text-lg">
-                    <b>Rozpocznij od zaktualizowania swojego profilu</b>. Po prostu użyj przycisku <i>profil</i>
+                    <b>Rozpocznij od zaktualizowania swojego profilu</b>. Po prostu użyj przycisku{' '}
+                    <i>profil</i>
                   </p>
                 </div>
                 <div className="w-full">
@@ -81,8 +82,8 @@ const GenerateRecommendationFail = () => {
                 </div>
                 <div className="mt-4 h-full w-full items-center justify-start">
                   <p className="text-muted-foreground text-lg">
-                    Po zaktualizowaniu swojego profilu zyskasz dostęp do  <br />{' '}
-                    <b>narzędzi AI</b> oferowanych przez Vocare.
+                    Po zaktualizowaniu swojego profilu zyskasz dostęp do <br /> <b>narzędzi AI</b>{' '}
+                    oferowanych przez Vocare.
                   </p>
                 </div>
                 <div className="w-full">
@@ -121,7 +122,8 @@ const GenerateRecommendationFail = () => {
                 </div>
                 <div className="mt-4 h-full w-full items-center justify-start">
                   <p className="text-muted-foreground text-lg">
-                    Zmień swój plan w nowoczesne, <b>dostosowane pod ATS</b> CV, które zapewni ci wymarzoną pracę.
+                    Zmień swój plan w nowoczesne, <b>dostosowane pod ATS</b> CV, które zapewni ci
+                    wymarzoną pracę.
                   </p>
                 </div>
                 <div className="w-full">

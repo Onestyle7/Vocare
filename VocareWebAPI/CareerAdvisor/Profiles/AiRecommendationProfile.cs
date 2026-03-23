@@ -51,9 +51,9 @@ namespace VocareWebAPI.Profiles
                     dest => dest.RecommendedCourses,
                     opt => opt.MapFrom(src => src.RecommendedCourses)
                 )
-                .ForMember(dest => dest.SwotAnalysis, opt => opt.MapFrom(src => src.SwotAnalysis))
-                .ReverseMap();
+                .ForMember(dest => dest.SwotAnalysis, opt => opt.MapFrom(src => src.SwotAnalysis));
 
+            CreateMap<CareerPath, CareerPathDto>();
             // Mapowanie dla SWOT w obie strony
             CreateMap<SwotAnalysisDto, SwotAnalysis>()
                 .ReverseMap();

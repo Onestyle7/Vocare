@@ -1,6 +1,8 @@
 import { api } from './api';
+import { clearStoredToken, redirectToSignIn } from './auth-redirect';
 
-const AUTH_PREFIX = '/api/Auth';
+const API_URL = process.env.NEXT_PUBLIC_API_URL;
+const AUTH_PREFIX = `${API_URL}/api/Auth`;
 
 interface RegisterInput {
   email: string;
@@ -35,8 +37,8 @@ api.interceptors.response.use(
   (error) => {
     const isLoginRoute = error.config?.url?.includes(`${AUTH_PREFIX}/login`);
     if (error.response?.status === 401 && !isLoginRoute) {
-      localStorage.removeItem('token');
-      window.location.href = '/sign-in';
+      clearStoredToken();
+      redirectToSignIn();
     }
     return Promise.reject(error);
   }
@@ -72,8 +74,8 @@ export const logoutUser = async () => {
   } catch {
     // Ignore any errors
   } finally {
-    localStorage.removeItem('token');
-    window.location.href = '/sign-in';
+    clearStoredToken();
+    redirectToSignIn();
   }
 };
 

@@ -1,3 +1,5 @@
+'use client';
+
 import CardSwap, { Card } from '@/components/CardSwap/CardSwap';
 import { ArrowRight, ArrowUp, FileQuestion, PencilLine } from 'lucide-react';
 import Link from 'next/link';
@@ -47,7 +49,7 @@ const CardFeature = () => {
                     loop
                     muted
                     playsInline
-                    src="/videos/one.mp4"
+                    src="/videos/one.webm"
                     className="h-full w-full rounded-xl object-cover"
                   ></video>
                 </div>
@@ -65,7 +67,7 @@ const CardFeature = () => {
                     loop
                     muted
                     playsInline
-                    src="/videos/two.mp4"
+                    src="/videos/two.webm"
                     className="h-full w-full rounded-xl object-cover"
                   ></video>
                 </div>
@@ -83,7 +85,7 @@ const CardFeature = () => {
                     loop
                     muted
                     playsInline
-                    src="/videos/three.mp4"
+                    src="/videos/three.webm"
                     className="h-full w-full rounded-xl object-cover"
                   ></video>
                 </div>

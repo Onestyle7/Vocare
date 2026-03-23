@@ -507,7 +507,8 @@ const PaymentsPage: React.FC = () => {
           <div className="space-y-1">
             <h1 className="text-foreground text-3xl font-semibold tracking-tight">Płatności</h1>
             <p className="text-muted-foreground text-sm sm:text-base">
-              Zarządzaj subskrypcją, preferencjami marketingowymi i przeglądaj swoją ostatnią aktywność.
+              Zarządzaj subskrypcją, preferencjami marketingowymi i przeglądaj swoją ostatnią
+              aktywność.
             </p>
           </div>
           <Button asChild variant="outline">
@@ -585,7 +586,8 @@ const PaymentsPage: React.FC = () => {
               <CardHeader>
                 <CardTitle>Preferencje marketingowe</CardTitle>
                 <CardDescription>
-                  Wybierz, czy chcesz otrzymywać aktualizacje produktów Vocare i starannie dobrane porady dotyczące kariery.
+                  Wybierz, czy chcesz otrzymywać aktualizacje produktów Vocare i starannie dobrane
+                  porady dotyczące kariery.
                 </CardDescription>
               </CardHeader>
               <CardContent className="space-y-4">

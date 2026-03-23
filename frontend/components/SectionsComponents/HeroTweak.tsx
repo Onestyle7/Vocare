@@ -8,7 +8,7 @@ import { ArrowRight } from 'lucide-react';
 import Link from 'next/link';
 import { ScrollParallax } from 'react-just-parallax';
 // import CustomButton from '@/components/ui/CustomButton';
-import { SpinningText } from '@/components/magicui/spinning-text';
+// import { SpinningText } from '@/components/magicui/spinning-text';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { SplitText } from 'gsap/SplitText';
 import gsap from 'gsap';
@@ -56,19 +56,19 @@ const HeroTweak = () => {
       id="hero"
     >
       {/* <CustomCursor /> */}
-      <div className="main-font-color relative z-30 flex h-[390px] flex-row px-[40px] lg:w-full">
+      <div className="main-font-color relative z-30 flex h-[390px] flex-row px-[40px] max-md:h-auto lg:w-full">
         <div className="inset-0 flex w-full flex-col items-center justify-center md:flex-row md:justify-start md:pl-[40px] lg:w-3/5 lg:border-t lg:border-b">
           <div className="font-poppins flex w-full flex-col items-center justify-center max-md:mt-10 max-md:mb-8 lg:w-1/2 lg:items-start">
             <CopyHeader>
-              <h1 className="overflow-hidden text-4xl leading-[1.22] whitespace-nowrap text-neutral-800 max-md:text-center sm:text-4xl md:text-5xl lg:text-4xl xl:text-5xl 2xl:text-7xl dark:text-neutral-300">
-                Odblokuj swój <br /> potencjał
+              <h1 className="text-2xl whitespace-nowrap text-neutral-800 max-md:text-center sm:text-4xl md:text-4xl lg:text-4xl xl:text-4xl dark:text-neutral-300">
+                Znajdź najlepszą ścieżkę
+                <br />
+                kariery dzięki AI.
               </h1>
             </CopyHeader>
             <Copy>
-              <h2 className="text-muted-foreground font-grotesk mt-8 max-w-xl px-4 text-center text-sm max-md:block sm:mt-4 sm:text-base md:px-0 md:text-left md:text-lg lg:text-base xl:text-sm">
-                Vocare to AI-owy doradca kariery, który zamienia Twój profil w konkretne ścieżki
-                kariery, aktualne sygnały rynkowe oraz CV gotowe pod ATS - dzięki czemu dokładnie
-                wiesz, co zrobić dalej, już dziś.
+              <h2 className="text-muted-foreground font-grotesk mt-8 max-w-xl px-4 text-center text-sm text-balance max-md:block sm:mt-4 sm:text-base md:px-0 md:text-left md:text-lg lg:text-base xl:text-sm">
+                AI analizuje Twój profil i tworzy ścieżki kariery, CV pod ATS i plan działania.
               </h2>
             </Copy>
 
@@ -80,18 +80,18 @@ const HeroTweak = () => {
                 className="group relative z-20 mt-4 h-12 w-full rounded-full bg-[linear-gradient(90deg,rgba(146,150,253,1)_0%,rgba(132,145,254,1)_50%,rgba(199,169,254,1)_100%,rgba(157,155,255,1)_77%)] font-bold text-white md:mt-2 md:w-2/3"
                 variant="default"
               >
-                Wypróbuj za darmo
+                Analiza w 60 sekund
                 <ArrowRight className="ml-2 transition-all ease-in-out group-hover:translate-x-2" />
               </Button>
             </Link>
             {/* <p className='mt-2 text-xs text-gray-500'>Private by default. You control your data.</p> */}
           </div>
-          <div className="font-grotesk flex h-full flex-col items-center justify-center max-md:mt-20 sm:w-full lg:w-1/2 2xl:w-1/4 2xl:items-end">
+          {/* <div className="font-grotesk flex h-full flex-col items-center justify-center max-md:mt-20 sm:w-full lg:w-1/2 2xl:w-1/4 2xl:items-end">
             <SpinningText>learn more • earn more • grow more •</SpinningText>
-          </div>
+          </div> */}
         </div>
         {!isMobile && (
-          <div className="inset-0 flex w-2/5 items-center lg:border-t lg:border-b lg:border-l">
+          <div className="inset-0 flex w-2/5 items-center justify-center lg:border-t lg:border-b lg:border-l">
             <Suspense fallback={<Image src={Spinner} alt="spinner" width={60} height={60} />}>
               {showSpline && (
                 <LazySpline
@@ -103,27 +103,31 @@ const HeroTweak = () => {
           </div>
         )}
       </div>
-      <div className="hidden h-[70px] w-full items-center justify-center border-t border-b lg:flex">
-        <div className="mx-10 flex h-full w-full">
+      <div className="relative hidden h-[70px] w-full items-center justify-center lg:flex">
+        {/* Soft halo rising from the divider above the company logos. */}
+        <div className="pointer-events-none absolute inset-x-0 top-px z-0 flex justify-center">
+          <div className="h-[170px] w-[82%] max-w-[980px] -translate-y-full rounded-t-full bg-[radial-gradient(ellipse_at_bottom,rgba(146,150,253,0.12)_0%,rgba(146,150,253,0.08)_28%,rgba(199,169,254,0.05)_46%,transparent_74%)] opacity-60 blur-3xl dark:bg-[radial-gradient(ellipse_at_bottom,rgba(146,150,253,0.16)_0%,rgba(146,150,253,0.1)_28%,rgba(199,169,254,0.06)_46%,transparent_74%)]" />
+        </div>
+        <div className="relative z-10 mx-10 flex h-full w-full">
           {companies.map((company) => (
             <div
               key={company.name}
-              className="flex h-full flex-1 items-center justify-center border-r border-b border-l"
+              className="flex h-full flex-1 items-center justify-center border-r border-b"
             >
               <div className="relative flex h-full w-full items-center justify-center">
-                <Image
-                  src={company.url}
-                  alt={company.name}
-                  width={84}
-                  height={10}
-                  className="object-contain opacity-30 grayscale transition-all duration-200 ease-out hover:opacity-100 hover:brightness-100 hover:grayscale-0 dark:brightness-0 dark:invert dark:hover:brightness-0 dark:hover:invert"
-                />
+                <p className="font-grotesk text-gray-500">
+                  <span className="bg-[linear-gradient(90deg,rgba(146,150,253,1)_0%,rgba(132,145,254,1)_50%,rgba(199,169,254,1)_100%,rgba(157,155,255,1)_77%)] bg-clip-text font-bold text-transparent">
+                    {' '}
+                    {company.specialText}
+                  </span>
+                  {company.name}
+                </p>
               </div>
             </div>
           ))}
         </div>
       </div>
-      <div className="relative mt-14 flex flex-col items-center justify-center border-gray-300 px-[40px] max-md:mt-40 dark:border-gray-600/30">
+      <div className="relative mt-14 flex flex-col items-center justify-center border-gray-300 px-[40px] max-md:mt-16 dark:border-gray-600/30">
         <div className="font-korbin mb-2 flex h-full flex-col items-center justify-center">
           <p className="font-bold text-gray-400">Poznaj nas</p>
           <Copy>

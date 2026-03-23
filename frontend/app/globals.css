@@ -2,7 +2,6 @@
 @import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;1,100;1,200;1,300;1,400;1,500;1,600;1,700&display=swap');
 @import url('https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap');
 
-
 @import 'tailwindcss';
 @import 'tw-animate-css';
 
@@ -38,6 +37,97 @@
     position: relative;
   }
 
+  .border-light-sweep {
+    position: relative;
+    isolation: isolate;
+    overflow: hidden;
+  }
+
+  .hover-shine-fill {
+    position: relative;
+    isolation: isolate;
+    overflow: hidden;
+  }
+
+  .hover-shine-fill::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    z-index: 0;
+    border-radius: inherit;
+    pointer-events: none;
+    background: linear-gradient(
+      45deg,
+      transparent 25%,
+      rgba(255, 255, 255, 0.7) 50%,
+      transparent 75%,
+      transparent 100%
+    );
+    background-size: 250% 250%;
+    background-position: 200% 0;
+    background-repeat: no-repeat;
+    transition: background-position 1s ease;
+  }
+
+  .hover-shine-fill:hover::before,
+  .hover-shine-fill:focus-visible::before {
+    background-position: -100% 0;
+  }
+
+  .hover-shine-fill > * {
+    position: relative;
+    z-index: 1;
+  }
+
+  .border-light-sweep::after {
+    content: '';
+    position: absolute;
+    inset: -1px;
+    padding: 1px;
+    border-radius: inherit;
+    pointer-events: none;
+    opacity: 0;
+    transform: translateX(-160%);
+    transition: opacity 0.2s ease;
+    background: linear-gradient(
+      115deg,
+      transparent 0%,
+      transparent 34%,
+      rgba(255, 255, 255, 0.06) 43%,
+      rgba(255, 255, 255, 0.85) 50%,
+      rgba(255, 255, 255, 0.12) 57%,
+      transparent 66%,
+      transparent 100%
+    );
+    -webkit-mask:
+      linear-gradient(#fff 0 0) content-box,
+      linear-gradient(#fff 0 0);
+    -webkit-mask-composite: xor;
+    mask:
+      linear-gradient(#fff 0 0) content-box,
+      linear-gradient(#fff 0 0);
+    mask-composite: exclude;
+  }
+
+  .border-light-sweep:hover::after,
+  .border-light-sweep:focus-visible::after {
+    opacity: 1;
+    animation: border-light-sweep 900ms cubic-bezier(0.22, 1, 0.36, 1) forwards;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .hover-shine-fill::before {
+      transition: none;
+    }
+
+    .border-light-sweep:hover::after,
+    .border-light-sweep:focus-visible::after {
+      animation: none;
+      opacity: 0.55;
+      transform: translateX(0);
+    }
+  }
+
   .clip-corner-bevel::before {
     content: '';
     position: absolute;
@@ -70,6 +160,15 @@
     .clip-corner-bevel::after {
       clip-path: polygon(0 0, calc(100% - var(--cut)) 0, 100% var(--cut), 100% 100%, 0 100%);
     }
+  }
+}
+
+@keyframes border-light-sweep {
+  0% {
+    transform: translateX(-160%);
+  }
+  100% {
+    transform: translateX(160%);
   }
 }
 
@@ -556,6 +655,37 @@
     100% {
       backgroundposition: 0% 50%;
       transform: rotate(-5deg) scale(0.9);
+    }
+  }
+  --animate-badge-shine: badge-shine 7s ease-out infinite;
+  @keyframes badge-shine {
+    0%,
+    74%,
+    100% {
+      transform: translateX(-180%);
+      opacity: 0;
+    }
+    12% {
+      opacity: 0.12;
+    }
+    18% {
+      opacity: 0.5;
+    }
+    24% {
+      transform: translateX(320%);
+      opacity: 0;
+    }
+  }
+  --animate-shiny-text: shiny-text 8s infinite;
+  @keyframes shiny-text {
+    0%,
+    90%,
+    100% {
+      background-position: calc(-100% - var(--shiny-width)) 0;
+    }
+    30%,
+    60% {
+      background-position: calc(100% + var(--shiny-width)) 0;
     }
   }
 }

@@ -57,8 +57,8 @@ const Faq: React.FC = () => {
   }, []);
 
   return (
-    <Section crosses customPaddings className="relative" crossesOffset id="faq">
-      <section className="relative flex h-[100vh] overflow-hidden max-xl:mt-[320px] xl:px-10 2xl:h-[50vh]">
+    <Section crosses customPaddings className="relative hidden sm:flex" crossesOffset id="faq">
+      <section className="relative flex h-[40vh] overflow-hidden max-xl:mt-[320px] sm:h-[100vh] xl:px-10 2xl:h-[50vh]">
         <div className="my-10 flex w-full items-center justify-center bg-[#101014] font-semibold xl:mt-20 dark:bg-[#F3F3F3]">
           <div
             ref={textRef}

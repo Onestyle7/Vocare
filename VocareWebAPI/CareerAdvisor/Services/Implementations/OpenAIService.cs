@@ -111,6 +111,17 @@ namespace VocareWebAPI.CareerAdvisor.Services.Implementations
                 InitializeNullProperties(result);
                 await SaveRecommendationToUserProfile(profile.UserId, result);
 
+                var savedEntity = await SaveRecommendationToUserProfile(profile.UserId, result);
+
+                for (
+                    int i = 0;
+                    i < result.CareerPaths.Count && i < savedEntity.CareerPaths.Count;
+                    i++
+                )
+                {
+                    result.CareerPaths[i].Id = savedEntity.CareerPaths[i].Id;
+                }
+
                 return result;
             }
             catch (HttpRequestException e)
@@ -128,18 +139,45 @@ namespace VocareWebAPI.CareerAdvisor.Services.Implementations
                 throw new AiServiceException("No recommendation found");
             }
 
-            var dto = _mapper.Map<AiCareerResponseDto>(recommendation);
-            dto.Recommendation = new FinalRecommendationDto
+            var dto = new AiCareerResponseDto
             {
-                PrimaryPath = recommendation.PrimaryPath,
-                Justification = recommendation.Justification,
-                LongTermGoal = recommendation.LongTermGoal,
-                NextSteps = recommendation.NextSteps.Select(ns => ns.Step).ToList(),
+                CareerPaths = recommendation
+                    .CareerPaths.Select(cp => new CareerPathDto
+                    {
+                        Id = cp.Id,
+                        CareerName = cp.CareerName,
+                        Description = cp.Description,
+                        Probability = double.TryParse(cp.Probability, out var p) ? p : 0,
+                        RequiredSkills = cp.RequiredSkills ?? new(),
+                        MarketAnalysis = cp.MarketAnalysis ?? new(),
+                        RecommendedCourses = cp.RecommendedCourses ?? new(),
+                        SuggestedSeniority = cp.SuggestedSeniority,
+                        AllowedJobCategories = cp.AllowedJobCategories ?? new(),
+                        SwotAnalysis =
+                            cp.SwotAnalysis != null
+                                ? new SwotAnalysisDto
+                                {
+                                    Strengths = cp.SwotAnalysis.Strengths ?? new(),
+                                    Weaknesses = cp.SwotAnalysis.Weaknesses ?? new(),
+                                    Opportunities = cp.SwotAnalysis.Opportunities ?? new(),
+                                    Threats = cp.SwotAnalysis.Threats ?? new(),
+                                }
+                                : new SwotAnalysisDto(),
+                    })
+                    .ToList(),
+                Recommendation = new FinalRecommendationDto
+                {
+                    PrimaryPath = recommendation.PrimaryPath,
+                    Justification = recommendation.Justification,
+                    LongTermGoal = recommendation.LongTermGoal,
+                    NextSteps = recommendation.NextSteps.Select(ns => ns.Step).ToList(),
+                },
             };
+
             return dto;
         }
 
-        private async Task SaveRecommendationToUserProfile(
+        private async Task<AiRecommendation> SaveRecommendationToUserProfile(
             string userId,
             AiCareerResponseDto recommendation
         )
@@ -181,6 +219,8 @@ namespace VocareWebAPI.CareerAdvisor.Services.Implementations
 
                 await _aiRecommendationRepository.AddRecommendationAsync(recommendationEntity);
                 _logger.LogInformation($"Saved recommendation for user: {userId}");
+
+                return recommendationEntity;
             }
             catch (Exception ex)
             {

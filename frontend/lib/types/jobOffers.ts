@@ -2,6 +2,7 @@ export interface MatchDetails {
   semanticScore: number;
   skillScore: number;
   matchedSkills: string[];
+  userMatchedSkills: string[];
   partialMatches: string[];
   missingSkills: string[];
   bonusFactors: string[];

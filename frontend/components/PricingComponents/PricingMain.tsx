@@ -30,7 +30,7 @@ import { toast } from 'sonner';
 
 type PlanType = 'tokens' | 'subscription' | 'individual';
 
-const API_BASE = process.env.NEXT_PUBLIC_API_URL || 'https://vocare-staging-e568.up.railway.app';
+const API_BASE = process.env.NEXT_PUBLIC_API_URL;
 
 const pricingPlans = [
   {

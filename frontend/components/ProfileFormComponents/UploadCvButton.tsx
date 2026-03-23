@@ -36,9 +36,7 @@ const getErrorMessage = (error: unknown): string | undefined => {
   return error.message;
 };
 
-const getUploadErrorDetails = (
-  error: unknown,
-): { title: string; description?: string } | null => {
+const getUploadErrorDetails = (error: unknown): { title: string; description?: string } | null => {
   const message = getErrorMessage(error);
   if (!message) {
     return null;

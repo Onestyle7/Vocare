@@ -1,15 +1,15 @@
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
-using Pgvector.EntityFrameworkCore;
 using VocareWebAPI.Billing.Models.Entities;
 using VocareWebAPI.CareerAdvisor.Models.Entities.MarketAnalysis;
-using VocareWebAPI.CvGenerator.Models; // Poprawiony namespace
+using VocareWebAPI.CvGenerator.Models;
 using VocareWebAPI.JobOffers.Models.Entities;
 using VocareWebAPI.MarketNews.Models.Entities;
 using VocareWebAPI.Models;
 using VocareWebAPI.Models.Entities;
 using VocareWebAPI.Models.Entities.MarketAnalysis;
+using VocareWebAPI.RoadmapService.Models.Entities;
 using VocareWebAPI.UserManagement.Models.Entities;
 
 namespace VocareWebAPI.Data
@@ -83,6 +83,10 @@ namespace VocareWebAPI.Data
         public DbSet<JobOfferLocation> JobOfferLocations { get; set; }
         public DbSet<JobOfferSkill> JobOfferSkills { get; set; }
         public DbSet<SkillEmbedding> SkillEmbeddings { get; set; }
+        public DbSet<Roadmap> Roadmaps { get; set; }
+        public DbSet<RoadmapPhase> RoadmapPhases { get; set; }
+        public DbSet<RoadmapStep> RoadmapSteps { get; set; }
+        public DbSet<CareerPath> CareerPaths { get; set; }
 
         /// <summary>
         /// Konfiguruje model bazy danych, definiując schemat i relacje między encjami.
@@ -388,6 +392,20 @@ namespace VocareWebAPI.Data
             {
                 e.HasKey(e => e.Id);
                 e.HasIndex(e => e.NormalizedSkillName).IsUnique();
+            });
+            builder.Entity<RoadmapStep>(e =>
+            {
+                e.HasOne(ps => ps.ParentStep)
+                    .WithMany(ps => ps.ChildSteps)
+                    .HasForeignKey(ps => ps.ParentStepId)
+                    .OnDelete(DeleteBehavior.Restrict);
+
+                e.Property(r => r.Topics).HasColumnType("jsonb");
+            });
+            builder.Entity<Roadmap>(e =>
+            {
+                e.HasIndex(r => r.UserId);
+                e.HasIndex(r => r.CareerPathId);
             });
         }
     }

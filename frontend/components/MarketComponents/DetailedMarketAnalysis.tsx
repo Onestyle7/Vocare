@@ -199,8 +199,7 @@ const EmptyAnalysisState = ({
   onOpenAdvisor,
 }: EmptyAnalysisStateProps) => (
   <div className="relative overflow-hidden rounded-3xl border p-10 shadow-2xl shadow-slate-950/40">
-    <div className="pointer-events-none absolute inset-0">
-    </div>
+    <div className="pointer-events-none absolute inset-0"></div>
 
     <div className="relative z-10 flex flex-col gap-8">
       <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
@@ -228,15 +227,15 @@ const EmptyAnalysisState = ({
       </div>
 
       <div className="grid gap-3 md:grid-cols-2">
-        <div className="rounded-2xl border shadow-inner shadow-white/5 p-4">
+        <div className="rounded-2xl border p-4 shadow-inner shadow-white/5">
           <p className="text-xs text-slate-400">Krok 1</p>
           <h4 className="text-lg font-semibold text-white">Rekomendacje zawodowe</h4>
           <p className="mt-2 text-sm text-slate-300">
             Uzupełnij profil i preferencje, aby asystent AI zapisał Twoje ścieżki kariery.
           </p>
         </div>
-       <div className="rounded-2xl border shadow-inner shadow-white/5 p-4">
-             <p className="text-xs text-slate-400">Krok 2</p>
+        <div className="rounded-2xl border p-4 shadow-inner shadow-white/5">
+          <p className="text-xs text-slate-400">Krok 2</p>
 
           <h4 className="text-lg font-semibold text-white">Analiza rynku</h4>
           <p className="mt-2 text-sm text-slate-300">
@@ -1106,8 +1105,8 @@ export default function DetailedMarketAnalysis() {
             <AlertDialogDescription className="text-foreground text-center">
               {!hasActiveSubscription ? (
                 <>
-                  Zostanie pobrane{' '}
-                  <b className="text-[#915EFF]">{generatePricePerUse} tokenów</b> z Twojego konta.
+                  Zostanie pobrane <b className="text-[#915EFF]">{generatePricePerUse} tokenów</b> z
+                  Twojego konta.
                 </>
               ) : (
                 <p className="mx-auto max-w-xs">
@@ -1141,7 +1140,7 @@ export default function DetailedMarketAnalysis() {
                   await generateFreshAnalysis();
                   refresh();
                 }}
-                className="bg-[#915EFF] text-white hover:bg-[#7b4ee0] border "
+                className="border bg-[#915EFF] text-white hover:bg-[#7b4ee0]"
               >
                 Generuj
                 <Image src={star_generate} alt="star" width={16} height={16} />
