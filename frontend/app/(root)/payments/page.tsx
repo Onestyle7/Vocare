@@ -501,7 +501,7 @@ const PaymentsPage: React.FC = () => {
   }, []);
 
   return (
-    <main className="font-korbin bg-background min-h-screen w-full">
+    <main className="font-poppins bg-background min-h-screen w-full">
       <div className="mx-auto flex w-full max-w-5xl flex-col gap-8 px-4 pt-20 pb-16 sm:px-6 lg:px-8">
         <div className="flex flex-wrap items-center justify-between gap-4">
           <div className="space-y-1">
