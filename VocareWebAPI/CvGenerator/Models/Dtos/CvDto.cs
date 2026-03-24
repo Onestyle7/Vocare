@@ -13,5 +13,7 @@ namespace VocareWebAPI.CvGenerator.Models.Dtos
         public List<CvCertificateEntryDto>? Certificates { get; set; }
         public List<string>? Skills { get; set; }
         public List<CvLanguageEntryDto>? Languages { get; set; }
+        public List<CvProjectDto>? Projects { get; set; }
+        public List<CvSocialDto>? Social { get; set; }
     }
 }

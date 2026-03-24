@@ -52,7 +52,7 @@ namespace VocareWebAPI.CvGenerator.Models
         public bool IsDefault { get; set; } = false;
 
         /// <summary>
-        /// Zawartość CV w formacie JSON.
+        /// Zawartość CV w formacie JSON. - dlatego nie robimy encji, Cała zawartość CV jest tu trzymana
         /// </summary>
         public string CvJson { get; set; } = string.Empty;
 
