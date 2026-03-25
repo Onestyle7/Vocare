@@ -417,11 +417,11 @@ Zespół Vocare
             }
         }
 
-        public async Task<Result<GoogleLoginResult>> GoogleLoginAsync(string accessToken)
+        public async Task<Result<OAuthLoginResult>> GoogleLoginAsync(string accessToken)
         {
             if (accessToken == null)
             {
-                return Result<GoogleLoginResult>.Failure("Access token is required");
+                return Result<OAuthLoginResult>.Failure("Access token is required");
             }
             try
             {
@@ -434,7 +434,7 @@ Zespół Vocare
                         "Failed to validate Google access token: {StatusCode}",
                         response.StatusCode
                     );
-                    return Result<GoogleLoginResult>.Failure("Invalid Google token");
+                    return Result<OAuthLoginResult>.Failure("Invalid Google token");
                 }
 
                 var tokenInfo = await response.Content.ReadAsStringAsync();
@@ -443,7 +443,7 @@ Zespół Vocare
 
                 if (string.IsNullOrEmpty(email))
                 {
-                    return Result<GoogleLoginResult>.Failure("No email in Google token");
+                    return Result<OAuthLoginResult>.Failure("No email in Google token");
                 }
 
                 var user = await _userManager.FindByEmailAsync(email);
@@ -467,7 +467,7 @@ Zespół Vocare
                             email,
                             string.Join(", ", createResult.Errors.Select(e => e.Description))
                         );
-                        return Result<GoogleLoginResult>.Failure("Failed to create user account");
+                        return Result<OAuthLoginResult>.Failure("Failed to create user account");
                     }
 
                     await _userManager.AddLoginAsync(
@@ -512,8 +512,8 @@ Zespół Vocare
                     refreshToken
                 );
 
-                return Result<GoogleLoginResult>.Success(
-                    GoogleLoginResult.Successful(
+                return Result<OAuthLoginResult>.Success(
+                    OAuthLoginResult.Successful(
                         accessTokenGenerated,
                         refreshToken,
                         user.Id,
@@ -526,7 +526,7 @@ Zespół Vocare
             catch (Exception ex)
             {
                 _logger.LogError(ex, "Error in GoogleVerify");
-                return Result<GoogleLoginResult>.Failure("Google verification failed");
+                return Result<OAuthLoginResult>.Failure("Google verification failed");
             }
         }
 
