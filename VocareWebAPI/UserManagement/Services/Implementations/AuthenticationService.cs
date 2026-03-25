@@ -1,4 +1,5 @@
 using System.Linq.Expressions;
+using System.Net.Http.Headers;
 using System.Text.Json;
 using System.Web;
 using AutoMapper;
@@ -526,6 +527,147 @@ Zespół Vocare
             {
                 _logger.LogError(ex, "Error in GoogleVerify");
                 return Result<GoogleLoginResult>.Failure("Google verification failed");
+            }
+        }
+
+        public async Task<Result<OAuthLoginResult>> LinkedInLoginAsync(
+            string code,
+            string redirectUri
+        )
+        {
+            if (string.IsNullOrEmpty(code) || string.IsNullOrEmpty(redirectUri))
+            {
+                return Result<OAuthLoginResult>.Failure("Code and redirect URI are required.");
+            }
+
+            var tokenRequest = new FormUrlEncodedContent(
+                new Dictionary<string, string>
+                {
+                    { "grant_type", "authorization_code" },
+                    { "code", code },
+                    { "redirect_uri", redirectUri },
+                    { "client_id", _configuration["Authentication:LinkedIn:ClientId"]! },
+                    { "client_secret", _configuration["Authentication:LinkedIn:ClientSecret"]! },
+                }
+            );
+
+            try
+            {
+                var tokenResponse = await _httpClient.PostAsync(
+                    $"https://www.linkedin.com/oauth/v2/accessToken",
+                    tokenRequest
+                );
+
+                if (!tokenResponse.IsSuccessStatusCode)
+                {
+                    _logger.LogWarning(
+                        "Failed to validate LinkedIn access token {StatusCode}",
+                        tokenResponse.StatusCode
+                    );
+                    return Result<OAuthLoginResult>.Failure("Invalid LinkedIn token");
+                }
+
+                var tokenJson = await tokenResponse.Content.ReadAsStringAsync();
+                using var tokenDocument = JsonDocument.Parse(tokenJson);
+                var accessToken = tokenDocument.RootElement.GetProperty("access_token").GetString();
+
+                // używamy HttpRequestMessage zamiast _httpClient.GetAsync, żeby móc umieścić Header per request
+                var profileRequest = new HttpRequestMessage(
+                    HttpMethod.Get,
+                    "https://api.linkedin.com/v2/userinfo"
+                );
+                profileRequest.Headers.Authorization = new AuthenticationHeaderValue(
+                    "Bearer",
+                    accessToken
+                );
+
+                var profileResponse = await _httpClient.SendAsync(profileRequest);
+
+                if (!profileResponse.IsSuccessStatusCode)
+                {
+                    return Result<OAuthLoginResult>.Failure(
+                        "Failed to fetch LinkedIn user profile"
+                    );
+                }
+
+                var profileJson = await profileResponse.Content.ReadAsStringAsync();
+                using var profileDocument = JsonDocument.Parse(profileJson);
+
+                var email = profileDocument.RootElement.GetProperty("email").GetString();
+                var linkedInUserId = profileDocument.RootElement.GetProperty("sub").GetString();
+
+                if (string.IsNullOrEmpty(email))
+                {
+                    return Result<OAuthLoginResult>.Failure("No email in LinkedIn token");
+                }
+
+                var user = await _userManager.FindByEmailAsync(email);
+                var isNewUser = false;
+
+                if (user == null)
+                {
+                    isNewUser = true;
+                    user = new User
+                    {
+                        UserName = email,
+                        Email = email,
+                        EmailConfirmed = true,
+                    };
+
+                    var createResult = await _userManager.CreateAsync(user);
+                    if (!createResult.Succeeded)
+                    {
+                        _logger.LogError(
+                            "Failed to create user for LinkedIn login: {Email}. Errors: {Errors}",
+                            email,
+                            string.Join(", ", createResult.Errors.Select(e => e.Description))
+                        );
+                        return Result<OAuthLoginResult>.Failure("Failed to create user account");
+                    }
+                    await _userManager.AddLoginAsync(
+                        user,
+                        new UserLoginInfo("LinkedIn", linkedInUserId ?? email, "LinkedIn")
+                    );
+                    await _registrationHandler.HandleUserRegistrationAsync(user.Id);
+                }
+                else
+                {
+                    var logins = await _userManager.GetLoginsAsync(user);
+                    var hasLinkedInLogin = logins.Any(l => l.LoginProvider == "LinkedIn");
+
+                    if (!hasLinkedInLogin)
+                    {
+                        await _userManager.AddLoginAsync(
+                            user,
+                            new UserLoginInfo("LinkedIn", linkedInUserId ?? email, "LinkedIn")
+                        );
+                    }
+                }
+                var accessTokenGenerated = GenerateIdentityCompatibleToken(user);
+                var refreshToken = Guid.NewGuid().ToString();
+
+                await _userManager.SetAuthenticationTokenAsync(
+                    user,
+                    IdentityConstants.BearerScheme,
+                    "refresh_token",
+                    refreshToken
+                );
+
+                return Result<OAuthLoginResult>.Success(
+                    OAuthLoginResult.Successful(
+                        accessTokenGenerated,
+                        refreshToken,
+                        user.Id,
+                        user.Email,
+                        isNewUser,
+                        3600
+                    )
+                );
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error in LinkedIn login");
+                return Result<OAuthLoginResult>.Failure("LinkedIn verification failed");
             }
         }
     }
