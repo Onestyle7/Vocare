@@ -5,9 +5,9 @@ import { gsap } from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import AboutCard from '@/components/GhostComponents/AboutCard';
 import Section from '@/components/SupportComponents/Section';
-import { aboutCardsData, shape1 } from '@/app/constants';
-import { ScrollParallax } from 'react-just-parallax';
-import Image from 'next/image';
+import { aboutCardsData } from '@/app/constants';
+// import { ScrollParallax } from 'react-just-parallax';
+// import Image from 'next/image';
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -18,56 +18,79 @@ const AboutCards = () => {
     if (!window.matchMedia('(min-width: 1280px)').matches) return;
     if (!containerRef.current) return;
 
-    const cards = containerRef.current.querySelectorAll('.about-card');
-
-    cards.forEach((card, index) => {
-      const offset = index * 60;
+    const ctx = gsap.context(() => {
+      const cards = gsap.utils.toArray('.about-card');
 
       const tl = gsap.timeline({
         scrollTrigger: {
-          trigger: card,
-          start: `top+=${offset} 80%`,
-          end: `+=400`,
-          scrub: true,
+          trigger: containerRef.current,
+          pin: true,
+          start: 'top 15%',
+          end: '+=2500',
+          scrub: 1,
         },
       });
 
-      tl.fromTo(
-        card,
-        { autoAlpha: 0, y: 100, rotation: 0 },
-        {
-          autoAlpha: 1,
-          y: 0,
-          rotation: index % 2 === 0 ? -5 : 5,
-          duration: 1,
-          ease: 'power2.out',
-        }
-      )
-        .to(card, { y: -40, duration: 1.6, ease: 'sine.inOut' })
-        .to(card, { y: 40, duration: 1.6, ease: 'sine.inOut' })
-        .to(card, { y: 0, duration: 1.5, ease: 'sine.inOut' })
-        .to(card, {
-          y: -600,
-          autoAlpha: 0,
-          rotation: 0,
-          duration: 2,
-          ease: 'power1.in',
-        });
-    });
+      cards.forEach((card, index) => {
+        const reverseIndex = cards.length - 1 - index;
+
+        const delay = reverseIndex * 0.6;
+
+        const enterDur = 1.2;
+        const dipDur = 1.4;
+        const exitDur = 1.5;
+
+        tl.fromTo(
+          card as Element,
+          { autoAlpha: 0, y: '100vh', rotation: 0 },
+          {
+            autoAlpha: 1,
+            y: 0,
+            rotation: index % 2 === 0 ? -5 : 5,
+            duration: enterDur,
+            ease: 'power2.out',
+          },
+          delay
+        )
+          .to(
+            card as Element,
+            {
+              y: 80,
+              rotation: index % 2 === 0 ? -8 : 8,
+              duration: dipDur,
+              ease: 'sine.inOut',
+            },
+            delay + enterDur
+          )
+          .to(
+            card as Element,
+            {
+              y: '-100vh',
+              autoAlpha: 0,
+              rotation: 0,
+              duration: exitDur,
+              ease: 'power2.in',
+            },
+            delay + enterDur + dipDur
+          );
+      });
+    }, containerRef);
+
+    return () => ctx.revert();
   }, []);
 
   return (
     <Section
-      className="relative -mt-[2.25rem] pt-[7.5rem] max-md:overflow-hidden"
+      className="relative -mt-9 pt-30 max-md:overflow-hidden"
       crossesOffset="lg:translate-y-[7.5rem]"
       customPaddings
       id="about"
     >
-      <ScrollParallax isAbsolutelyPositioned zIndex={20}>
+      {/* <ScrollParallax isAbsolutelyPositioned zIndex={20}>
         <div className="absolute top-1/2 right-2 z-20">
           <Image src={shape1} alt="shape" width={78} height={78} className="rotate-20" />
         </div>
-      </ScrollParallax>
+      </ScrollParallax> */}
 
       <div ref={containerRef} className="main-font-color relative flex max-md:-top-10 lg:w-full">
         <div className="mx-8 flex w-full flex-col items-center justify-center max-lg:space-y-4 lg:flex-row lg:space-x-4">
