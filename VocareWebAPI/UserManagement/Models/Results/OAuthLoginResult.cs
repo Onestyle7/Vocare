@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 
 namespace VocareWebAPI.UserManagement.Models.Results
 {
-    public class GoogleLoginResult
+    public class OAuthLoginResult
     {
         public bool Success { get; private set; }
         public string? Token { get; private set; }
@@ -17,9 +17,9 @@ namespace VocareWebAPI.UserManagement.Models.Results
         public string? ErrorMessage { get; private set; }
         public IEnumerable<string>? Errors { get; private set; }
 
-        private GoogleLoginResult() { }
+        private OAuthLoginResult() { }
 
-        public static GoogleLoginResult Successful(
+        public static OAuthLoginResult Successful(
             string token,
             string refreshToken,
             string userId,
@@ -28,7 +28,7 @@ namespace VocareWebAPI.UserManagement.Models.Results
             int expiresIn = 3600
         )
         {
-            return new GoogleLoginResult
+            return new OAuthLoginResult
             {
                 Success = true,
                 Token = token,
@@ -40,12 +40,12 @@ namespace VocareWebAPI.UserManagement.Models.Results
             };
         }
 
-        public static GoogleLoginResult Failed(
+        public static OAuthLoginResult Failed(
             string errorMessage,
             IEnumerable<string>? errors = null
         )
         {
-            return new GoogleLoginResult
+            return new OAuthLoginResult
             {
                 Success = false,
                 ErrorMessage = errorMessage,
