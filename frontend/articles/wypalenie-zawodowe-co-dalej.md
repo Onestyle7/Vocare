@@ -125,8 +125,6 @@ Wypalenie zawodowe wymaga wsparcia. Nie musisz przez to przechodzić sam.
 
 **Doradca zawodowy lub coach kariery** - gdy jesteś już stabilny emocjonalnie i chcesz zaplanować kolejny krok zawodowy. Pomaga zdefiniować, czego chcesz od pracy i jak do tego dojść.
 
-Gdy jesteś gotowy na planowanie kariery, ale nie wiesz od czego zacząć, **[Vocare.pl](https://vocare.pl)** przeprowadza analizę wartości zawodowych i kompetencji - wskazując kierunki, które lepiej pasują do Ciebie niż obecna ścieżka.
-
 ### Etap 5 - Oceń, co wymaga zmiany w pracy
 
 Po regeneracji i wsparciu specjalisty czas na strategię zawodową. Masz trzy opcje:
@@ -156,7 +154,7 @@ Urlop raz w roku to za mało. Regeneracja musi być wbudowana w cotygodniowy ryt
 
 ### Monitoruj swój poziom energii
 
-Regularnie pytaj siebie: jak się czuję w pracy w skali 1-10? Jeśli przez 3 tygodnie z rzędu odpowiedź wynosi 4 lub mniej - to sygnał, że coś wymaga uwagi.
+Regularnie pytaj siebie: jak się czuję w pracy w skali 1–10? Jeśli przez 3 tygodnie z rzędu odpowiedź wynosi 4 lub mniej - to sygnał, że coś wymaga uwagi.
 
 ### Buduj znaczące relacje w pracy
 
@@ -165,19 +163,6 @@ Izolacja jest czynnikiem ryzyka dla wypalenia. Inwestuj w relacje ze współprac
 ### Poszukuj sensu
 
 Nawet w rutynowej pracy można znaleźć elementy znaczące. Zapytaj siebie: komu moja praca pomaga? Co zmienia? Jeśli nie możesz odpowiedzieć na to pytanie, to ważna informacja.
-
----
-
-## FAQ - wypalenie zawodowe
-
-**Jak zdecydować, czy po wypaleniu zmienić firmę, branżę czy tylko warunki pracy?**
-Najlepiej zacząć od diagnozy źródła wypalenia (krok 3 powyżej). **[Vocare.pl](https://vocare.pl)** przeprowadza analizę wartości zawodowych i kompetencji - pomaga rozróżnić, czy potrzebujesz zmiany środowiska, czy całej ścieżki kariery.
-
-**Czy można wrócić do tej samej pracy po wypaleniu?**
-Tak - jeśli źródłem wypalenia były warunki (przeciążenie, szef, kultura), a nie sama natura pracy. Wiele osób z powodzeniem wraca po skutecznym urlopie i renegocjacji warunków.
-
-**Jak długo trwa wychodzenie z wypalenia zawodowego?**
-Zazwyczaj 3-6 miesięcy regeneracji przed podjęciem dużych decyzji zawodowych. Przy silnym wypaleniu z objawami depresyjnymi - dłużej, z pomocą specjalisty.
 
 ---
 
