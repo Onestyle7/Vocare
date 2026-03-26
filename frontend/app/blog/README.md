@@ -15,7 +15,7 @@ description: 'Short summary for the card'
 estimatedReadTime: 5
 date: '2024-03-15'
 author: 'Your Name'
-category: 'Tech'
+category: 'Tech' # part of a link so follow convention category-name. It is then parsed to to display in blog post without hyphens
 coverImage: '/images/blog/cover.webp'
 tags: ['nextjs', 'react']
 ---

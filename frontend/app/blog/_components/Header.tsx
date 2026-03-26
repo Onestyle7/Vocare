@@ -5,7 +5,7 @@ import MobileNav from '@/components/MobileComponents/MobileNav';
 
 export default function Header() {
   return (
-    <header className="font-korbin relative z-[100] border-b-2">
+    <header className="font-korbin relative z-100 border-b-2">
       <nav className="font-korbin mx-2 hidden items-center justify-between space-x-10 py-8 md:mx-0 md:flex">
         <Link href="/" aria-label="Go to homepage">
           <Image
@@ -26,7 +26,7 @@ export default function Header() {
           </Link>
         </div>
       </nav>
-      <nav className="relative z-[100] flex items-center md:hidden">
+      <nav className="relative z-100 flex items-center md:hidden">
         <MobileNav isAuthenticated={false} />
       </nav>
     </header>
