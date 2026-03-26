@@ -7,13 +7,13 @@ namespace VocareWebAPI.CvGenerator.Models.Dtos
 {
     public class CvDto
     {
-        public CvBasicsDto? Basics { get; set; }
-        public List<CvWorkEntryDto>? Work { get; set; }
-        public List<CvEducationEntryDto>? Education { get; set; }
-        public List<CvCertificateEntryDto>? Certificates { get; set; }
-        public List<string>? Skills { get; set; }
-        public List<CvLanguageEntryDto>? Languages { get; set; }
-        public List<CvProjectDto>? Projects { get; set; }
-        public List<CvSocialDto>? Social { get; set; }
+        public CvBasicsDto Basics { get; set; } = new();
+        public List<CvWorkEntryDto> Work { get; set; } = new();
+        public List<CvEducationEntryDto> Education { get; set; } = new();
+        public List<CvCertificateEntryDto> Certificates { get; set; } = new();
+        public List<string> Skills { get; set; } = new();
+        public List<CvLanguageEntryDto> Languages { get; set; } = new();
+        public List<CvProjectDto> Projects { get; set; } = new();
+        public List<CvSocialDto> Social { get; set; } = new();
     }
 }

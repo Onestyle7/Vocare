@@ -7,7 +7,7 @@ namespace VocareWebAPI.CvGenerator.Models.Dtos
 {
     public class CvSocialDto
     {
-        public string? Social { get; set; }
-        public string? Link { get; set; }
+        public string Social { get; set; } = string.Empty;
+        public string Link { get; set; } = string.Empty;
     }
 }
