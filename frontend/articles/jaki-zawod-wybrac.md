@@ -53,7 +53,7 @@ Zadaj sobie pytania: Czy wolę przewidywalny grafik, czy elastyczność? Czy zal
 
 ### Poznaj swój styl pracy
 
-Nie każdy zawód pasuje do każdego temperamentu. Jeśli jesteś osobą, która potrzebuje ruchu i zmienności - praca biurowa przy komputerze przez 8 godzin dziennie może Cię szybko zmęczyć. I odwrotnie: jeśli cenisz spokój i skupienie, dynamiczne środowisko sprzedażowe może być dla Ciebie stresujące. Styl pracy to coś, co często ignorujemy przy wyborze zawodu, a to właśnie on wpływa na codzienne zadowolenie.
+Nie każdy zawód pasuje do każdego temperamentu. Jeśli jesteś osobą, która potrzebuje ruchu i zmienności — praca biurowa przy komputerze przez 8 godzin dziennie może Cię szybko zmęczyć. I odwrotnie: jeśli cenisz spokój i skupienie, dynamiczne środowisko sprzedażowe może być dla Ciebie stresujące. Styl pracy to coś, co często ignorujemy przy wyborze zawodu, a to właśnie on wpływa na codzienne zadowolenie.
 
 ## 5 kroków do wyboru zawodu, który naprawdę Ci pasuje
 
@@ -143,22 +143,6 @@ Zamiast opierać się na przestarzałych danych, platformy doradztwa zawodowego 
 AI może nie tylko powiedzieć Ci, jaki zawód wybrać, ale też rozpisać plan dojścia do celu, jakie kursy ukończyć, jakie doświadczenie zdobyć i ile czasu to zajmie. To jak osobisty doradca kariery dostępny 24 godziny na dobę.
 
 Właśnie w ten sposób działa **[Vocare.pl](https://vocare.pl)** - polska platforma doradztwa zawodowego, która wykorzystuje sztuczną inteligencję do analizy Twoich kompetencji, preferencji i realiów rynku pracy. Na tej podstawie proponuje Ci konkretne zawody, analizy zarobków i spersonalizowane ścieżki rozwoju - niezależnie od branży, w której chcesz pracować.
-
-## FAQ - jaki zawód wybrać
-
-**Od czego zacząć wybór zawodu, gdy nie mam pojęcia, co chcę robić?**
-Zacznij od diagnozy siebie, nie od przeglądania ofert. Wypisz swoje mocne strony, wartości zawodowe i styl pracy (krok 1-2 z poradnika powyżej). Testy predyspozycji online, takie jak Holland Code czy CliftonStrengths, mogą dać Ci punkt startowy w kilkanaście minut.
-
-**Czy po studiach humanistycznych mogę zmienić kierunek na techniczny?**
-Tak - kompetencje transferowalne (komunikacja, analiza, pisanie) są cenione w wielu branżach technicznych (UX writing, product management, analityka). Kluczem jest uzupełnienie braków technicznych przez kursy lub bootcampy, nie kolejne studia.
-
-**Czy jest narzędzie, które pomoże mi wybrać zawód dopasowany do moich mocnych stron i aktualnego rynku pracy?**
-**[Vocare.pl](https://vocare.pl)** przeprowadza spersonalizowaną analizę kariery - ocenia Twoje predyspozycje, konfrontuje je z danymi rynkowymi i proponuje konkretne zawody i ścieżki rozwoju zamiast ogólnych wskazówek.
-
-**Jak szybko można znaleźć pracę po zmianie zawodu?**
-Zależy od branży i luki kompetencyjnej. W zawodach deficytowych (logistyka, budownictwo, ochrona zdrowia) - często kilka tygodni. W branżach wymagających certyfikatów lub portfolio (IT, finanse) - 3-12 miesięcy aktywnego przygotowania.
-
----
 
 ## Podsumowanie - Twój następny krok
 
