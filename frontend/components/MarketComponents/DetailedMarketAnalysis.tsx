@@ -107,9 +107,9 @@ const getAnalysisFromResponse = (data: unknown): MarketAnalysisDetailsDto | null
 const hasAnalysisPayload = (details?: MarketAnalysisDetailsDto | null) =>
   Boolean(
     details &&
-      ((details.industryStatistics?.length ?? 0) > 0 ||
-        (details.marketTrends?.length ?? 0) > 0 ||
-        (details.skillDemand?.length ?? 0) > 0)
+    ((details.industryStatistics?.length ?? 0) > 0 ||
+      (details.marketTrends?.length ?? 0) > 0 ||
+      (details.skillDemand?.length ?? 0) > 0)
   );
 
 const workAttributeLabels: Record<keyof WorkAttributesDto, string> = {

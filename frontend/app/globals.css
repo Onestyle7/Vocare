@@ -487,6 +487,117 @@
   @apply font-[var(--font-korbin)] font-black italic;
 }
 
+@font-face {
+  font-family: 'ZonaPro';
+  src: url('/fonts/fonnts.com-zonapro-light.otf') format('opentype');
+  font-weight: 300;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'ZonaPro';
+  src: url('/fonts/fonnts.com-zonapro-lightitalic.otf') format('opentype');
+  font-weight: 300;
+  font-style: italic;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'ZonaPro';
+  src: url('/fonts/fonnts.com-zonapro-regular.otf') format('opentype');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'ZonaPro';
+  src: url('/fonts/fonnts.com-zonapro-regularitalic.otf') format('opentype');
+  font-weight: 400;
+  font-style: italic;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'ZonaPro';
+  src: url('/fonts/fonnts.com-zonapro-semibold.otf') format('opentype');
+  font-weight: 600;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'ZonaPro';
+  src: url('/fonts/fonnts.com-zonapro-semibolditalic.otf') format('opentype');
+  font-weight: 600;
+  font-style: italic;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'ZonaPro';
+  src: url('/fonts/fonnts.com-zonapro-bold.otf') format('opentype');
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'ZonaPro';
+  src: url('/fonts/fonnts.com-zonapro-bolditalic.otf') format('opentype');
+  font-weight: 700;
+  font-style: italic;
+  font-display: swap;
+}
+
+@theme {
+  --font-zona:
+    'ZonaPro', ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial,
+    'Noto Sans';
+}
+
+.font-zona {
+  font-family: var(--font-zona);
+}
+
+.font-zona-light {
+  font-family: var(--font-zona);
+  font-weight: 300;
+}
+
+.font-zona-light-italic {
+  font-family: var(--font-zona);
+  font-weight: 300;
+  font-style: italic;
+}
+
+.font-zona-regular {
+  font-family: var(--font-zona);
+  font-weight: 400;
+}
+
+.font-zona-regular-italic {
+  font-family: var(--font-zona);
+  font-weight: 400;
+  font-style: italic;
+}
+
+.font-zona-semibold {
+  font-family: var(--font-zona);
+  font-weight: 600;
+}
+
+.font-zona-semibold-italic {
+  font-family: var(--font-zona);
+  font-weight: 600;
+  font-style: italic;
+}
+
+.font-zona-bold {
+  font-family: var(--font-zona);
+  font-weight: 700;
+}
+
+.font-zona-bold-italic {
+  font-family: var(--font-zona);
+  font-weight: 700;
+  font-style: italic;
+}
+
 .font-poppins {
   font-family: 'Poppins', sans-serif;
 }
