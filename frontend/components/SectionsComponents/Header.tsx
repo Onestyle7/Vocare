@@ -13,13 +13,26 @@ import { Badge } from '@/components/ui/badge';
 import { AnimatePresence, motion } from 'motion/react';
 // import ThemeSwitch from '../SupportComponents/ThemeSwitch';
 
+type FloatingNavVariant = 'default' | 'reveal-on-scroll-up';
+
+const floatingNavConfig = {
+  enabled: true,
+  variant: 'reveal-on-scroll-up' as FloatingNavVariant,
+};
+
+const FLOATING_NAV_TOP_OFFSET = 24;
+const FLOATING_NAV_REVEAL_THRESHOLD = 20;
+
 const Header = () => {
   const pathname = usePathname();
   const [isMobile, setIsMobile] = useState(false);
   const [showFloatingNav, setShowFloatingNav] = useState(false);
   const { isAuthenticated } = useAuth();
   const headerRef = useRef<HTMLElement>(null);
-  const floatingNavSwitch = true;
+  const floatingNavSwitch = floatingNavConfig.enabled;
+  const floatingNavVariant = floatingNavConfig.variant;
+  const lastScrollYRef = useRef(0);
+  const upwardScrollDistanceRef = useRef(0);
 
   // Magnetic hover states
   const navRef = useRef<HTMLUListElement>(null);
@@ -27,10 +40,12 @@ const Header = () => {
   const [dotOpacity, setDotOpacity] = useState(0);
   const [activeDotLeft, setActiveDotLeft] = useState(0);
   const [activeDotOpacity, setActiveDotOpacity] = useState(0);
+
   const publicLinks = [
-    { label: 'Blog', url: '/blog' },
-    { label: 'Pricing', url: '/pricing' },
-    { label: 'Sign In', url: '/sign-in' },
+    { label: 'Work', url: '/work' },
+    { label: 'About', url: '/about' },
+    { label: 'Playground', url: '/playground' },
+    { label: 'Resource', url: '/resource' },
   ];
 
   useEffect(() => {
@@ -66,20 +81,61 @@ const Header = () => {
     const headerNode = headerRef.current;
     if (!headerNode) return;
 
-    const observer = new IntersectionObserver(
-      ([entry]) => {
-        setShowFloatingNav(!entry.isIntersecting);
-      },
-      {
-        threshold: 0,
-        rootMargin: '-12px 0px 0px 0px',
+    if (floatingNavVariant === 'default') {
+      const observer = new IntersectionObserver(
+        ([entry]) => {
+          setShowFloatingNav(!entry.isIntersecting);
+        },
+        {
+          threshold: 0,
+          rootMargin: '-12px 0px 0px 0px',
+        }
+      );
+
+      observer.observe(headerNode);
+
+      return () => observer.disconnect();
+    }
+
+    lastScrollYRef.current = window.scrollY;
+    upwardScrollDistanceRef.current = 0;
+
+    const handleScroll = () => {
+      const currentScrollY = Math.max(window.scrollY, 0);
+      const scrollDelta = currentScrollY - lastScrollYRef.current;
+      const headerBottom = headerNode.getBoundingClientRect().bottom;
+      const headerIsClearOfFloatingNav = headerBottom <= FLOATING_NAV_TOP_OFFSET;
+
+      if (!headerIsClearOfFloatingNav) {
+        upwardScrollDistanceRef.current = 0;
+        setShowFloatingNav(false);
+        lastScrollYRef.current = currentScrollY;
+        return;
       }
-    );
 
-    observer.observe(headerNode);
+      if (scrollDelta > 0) {
+        upwardScrollDistanceRef.current = 0;
+        setShowFloatingNav(false);
+      } else if (scrollDelta < 0) {
+        upwardScrollDistanceRef.current += Math.abs(scrollDelta);
 
-    return () => observer.disconnect();
-  }, [isMobile, floatingNavSwitch]);
+        if (upwardScrollDistanceRef.current >= FLOATING_NAV_REVEAL_THRESHOLD) {
+          setShowFloatingNav(true);
+        }
+      }
+
+      lastScrollYRef.current = currentScrollY;
+    };
+
+    handleScroll();
+    window.addEventListener('scroll', handleScroll, { passive: true });
+    window.addEventListener('resize', handleScroll);
+
+    return () => {
+      window.removeEventListener('scroll', handleScroll);
+      window.removeEventListener('resize', handleScroll);
+    };
+  }, [isMobile, floatingNavSwitch, floatingNavVariant]);
 
   const handleMouseEnter = (e: React.MouseEvent<HTMLLIElement>) => {
     const node = e.currentTarget;
@@ -109,26 +165,26 @@ const Header = () => {
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={{ opacity: 0, y: -20, scale: 0.96 }}
             transition={{ type: 'spring', stiffness: 280, damping: 28 }}
-            className="pointer-events-none fixed inset-x-0 top-3 z-[140] flex justify-center px-3 sm:top-4 sm:px-0"
+            className="pointer-events-none fixed inset-x-0 top-6 z-140 flex justify-center px-3 sm:px-0"
           >
-            <nav className="font-poppins pointer-events-auto flex max-w-[calc(100vw-1.5rem)] items-center gap-1.5 overflow-x-auto rounded-full border border-black/10 bg-white/85 px-2 py-2 text-neutral-900 shadow-[0_18px_50px_rgba(15,23,42,0.16)] backdrop-blur-xl sm:max-w-[calc(100vw-2rem)] sm:gap-2 sm:px-3 dark:border-white/10 dark:bg-black/30 dark:text-white dark:shadow-[0_18px_60px_rgba(0,0,0,0.45)]">
+            <nav className="font-poppins pointer-events-auto flex items-center gap-4 rounded-full border border-white/10 bg-[#0c0c0c] p-1.5 shadow-[0_18px_50px_rgba(0,0,0,0.5)] sm:gap-6">
+              {/* Logo po lewej */}
               <Link
                 href="/"
                 aria-label="Go to homepage"
-                className="flex h-9 w-9 flex-none items-center justify-center rounded-full bg-black/5 transition-colors hover:bg-black/10 sm:h-10 sm:w-10"
+                className="flex h-10 w-10 flex-none items-center justify-center rounded-full bg-[#111111] transition-transform hover:scale-105"
               >
                 <Image
                   src="/metadata/favicon-32x32.png"
                   alt="vocare"
-                  width={24}
-                  height={24}
-                  className="pointer-events-none invert dark:invert-0"
+                  width={20}
+                  height={20}
+                  className="pointer-events-none"
                 />
               </Link>
 
-              <div className="h-6 w-px flex-none bg-black/10 dark:bg-white/10" />
-
-              <ul className="flex items-center gap-1">
+              {/* Linki po prawej */}
+              <ul className="flex items-center gap-1 pr-1.5">
                 {floatingLinks.map(({ label, url }) => {
                   const isActive = pathname === url;
 
@@ -137,13 +193,20 @@ const Header = () => {
                       <Link
                         href={url}
                         className={cn(
-                          'flex rounded-full px-3 py-2 text-[10px] font-medium whitespace-nowrap uppercase transition-all sm:text-xs lg:px-4',
+                          'group relative flex h-10 items-center justify-center rounded-full px-5 text-[13px] font-medium transition-colors',
                           isActive
-                            ? 'bg-[linear-gradient(90deg,rgba(146,150,253,0.96)_0%,rgba(199,169,254,0.96)_100%)] text-white shadow-[0_10px_30px_rgba(146,150,253,0.3)]'
-                            : 'text-neutral-600 hover:bg-black/5 hover:text-neutral-950 dark:text-neutral-300 dark:hover:bg-white/10 dark:hover:text-white'
+                            ? 'pointer-events-none bg-white text-black'
+                            : 'text-neutral-400 hover:bg-white/5 hover:text-white'
                         )}
                       >
-                        {label}
+                        <span className="relative block overflow-hidden">
+                          <span className="block transition-transform duration-300 ease-[cubic-bezier(0.76,0,0.24,1)] group-hover:-translate-y-[120%]">
+                            {label}
+                          </span>
+                          <span className="absolute inset-0 block translate-y-[120%] transition-transform duration-300 ease-[cubic-bezier(0.76,0,0.24,1)] group-hover:translate-y-0">
+                            {label}
+                          </span>
+                        </span>
                       </Link>
                     </li>
                   );
@@ -156,7 +219,7 @@ const Header = () => {
 
       <header
         ref={headerRef}
-        className="font-korbin relative z-[100] flex items-center justify-end border-gray-400 max-md:border-b-[1px] md:justify-center dark:border-gray-600/30"
+        className="font-korbin relative z-100 flex items-center justify-end border-gray-400 max-md:border-b md:justify-center dark:border-gray-600/30"
       >
         {isMobile ? (
           <MobileNav isAuthenticated={isAuthenticated} />
@@ -213,14 +276,12 @@ const Header = () => {
                   })}
                 </ul>
 
-                {/* Animowana kropka na hover */}
                 <motion.div
                   animate={{ left: dotLeft, opacity: dotOpacity }}
                   transition={{ type: 'spring', stiffness: 400, damping: 30 }}
                   className="absolute -bottom-2 h-1.5 w-1.5 rounded-full bg-current"
                 />
 
-                {/* Kropka aktywnego linku */}
                 <motion.div
                   animate={{ left: activeDotLeft, opacity: activeDotOpacity }}
                   transition={{ type: 'spring', stiffness: 300, damping: 25 }}
@@ -242,8 +303,6 @@ const Header = () => {
                     </Link>
                   ))}
               </>
-
-              {/* <ThemeSwitch /> */}
             </div>
           </nav>
         )}

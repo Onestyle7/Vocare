@@ -205,12 +205,12 @@ export type NavLink = {
 };
 
 export const NavLinks: NavLink[] = [
-  { label: 'Blog', url: '/blog' },
   { label: 'Profil', url: '/profile' },
   { label: 'Doradca', url: '/assistant' },
   { label: 'Analiza', url: '/market-analysis' },
   { label: 'Roadmap', url: '/dashboard', highlighted: true, badge: 'nowość' },
   { label: 'Kreator', url: '/resume', highlighted: true, badge: 'stwórz cv' },
+  { label: 'Blog', url: '/blog' },
   { label: 'Pricing', url: '/pricing' },
 ];
 
