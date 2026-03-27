@@ -490,6 +490,32 @@ namespace VocareWebAPI.Migrations
                     b.ToTable("WorkAttributes", "public");
                 });
 
+            modelBuilder.Entity("VocareWebAPI.CvGenerator.Models.Entities.CvAnalysis", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<DateTime>("AnalyzedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<Guid>("CvId")
+                        .HasColumnType("uuid");
+
+                    b.Property<int>("CvVersionAtAnalysis")
+                        .HasColumnType("integer");
+
+                    b.Property<string>("ResultJson")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CvId");
+
+                    b.ToTable("CvAnalyses", "public");
+                });
+
             modelBuilder.Entity("VocareWebAPI.CvGenerator.Models.GeneratedCv", b =>
                 {
                     b.Property<Guid>("Id")
@@ -1501,6 +1527,17 @@ namespace VocareWebAPI.Migrations
                         .IsRequired();
 
                     b.Navigation("CareerStatistics");
+                });
+
+            modelBuilder.Entity("VocareWebAPI.CvGenerator.Models.Entities.CvAnalysis", b =>
+                {
+                    b.HasOne("VocareWebAPI.CvGenerator.Models.GeneratedCv", "Cv")
+                        .WithMany()
+                        .HasForeignKey("CvId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Cv");
                 });
 
             modelBuilder.Entity("VocareWebAPI.CvGenerator.Models.GeneratedCv", b =>
