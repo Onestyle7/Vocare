@@ -84,8 +84,8 @@ const HeroTweak = () => {
         <div className="inset-0 flex w-full flex-col items-center justify-center md:flex-row md:justify-start md:pl-[40px] lg:w-3/5 lg:border-t lg:border-b">
           <div className="font-zona flex w-full flex-col items-center justify-center max-md:mt-4 max-md:mb-8 lg:w-1/2 lg:items-start">
             <CopyHeader>
-              <h1 className="font-zona-semibold text-3xl whitespace-nowrap text-neutral-800 max-md:text-center sm:text-4xl md:text-4xl lg:text-4xl xl:text-4xl dark:text-neutral-300">
-                Znajdź ścieżkę
+              <h1 className="font-zona-semibold xl:text-rxl text-3xl whitespace-nowrap text-neutral-800 max-md:text-center sm:text-4xl md:text-4xl lg:text-4xl dark:text-neutral-300">
+                Znajdź swoją ścieżkę
                 <br />
                 kariery dzięki AI
               </h1>
@@ -175,14 +175,14 @@ const HeroTweak = () => {
       </div>
       <div className="relative flex flex-col items-center justify-center border-gray-300 px-[40px] sm:mt-14 dark:border-gray-600/30">
         <div className="font-korbin mb-2 flex h-full flex-col items-center justify-center">
-          <p className="font-bold text-gray-400">Poznaj nas</p>
+          <p className="font-zona font-bold text-gray-400">Poznaj nas</p>
           <Copy>
-            <p className="text-color mt-8 text-center text-4xl font-bold md:text-[4rem] xl:leading-[0.8]">
+            <p className="text-color font-zona text-center text-4xl font-semibold max-md:mt-4 md:text-5xl xl:leading-[1.2]">
               Co otrzymasz?
             </p>
           </Copy>
           <h2 className="font-zona mt-4 text-gray-400 max-md:text-center">
-            Ścieżki kariery dopasowane do ciebie, analize rynkową oraz ATS-Ready CV.
+            Ścieżki kariery dopasowane do ciebie, analize rynkową oraz ATS Ready CV.
           </h2>
         </div>
       </div>

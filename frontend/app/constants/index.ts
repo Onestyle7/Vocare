@@ -418,7 +418,7 @@ export const aboutCardsData = [
     img: '/images/plus.png',
     title: 'Ścieżki kariery',
     description:
-      'Najlepsze dopasowania kariery według kompetencji, wysiłku i zarobków - wiesz, co zrobić dalej już dziś.',
+      'Najlepsze dopasowania kariery według kompetencji, wysiłku i zarobków. Wiesz, co zrobić dalej już dziś.',
   },
   {
     img: '/images/plus.png',

@@ -52,7 +52,7 @@ const Footer = () => {
             <ButtonGenerate
               as="a"
               href="/profile"
-              className="mb-4 max-md:w-full sm:my-20"
+              className="font-zona mb-4 max-md:w-full sm:my-20"
               onClick={(event) => handleProtectedNavigation(event, '/profile')}
             >
               Sprawdź Vocare
@@ -60,8 +60,8 @@ const Footer = () => {
           </div>
         </div>
         <div className="flex w-full flex-col p-4 xl:flex-row">
-          <div className="font-poppins flex flex-col items-start justify-start text-4xl max-md:mb-20 xl:w-1/2">
-            Nie przegap tego.
+          <div className="font-zona flex flex-col items-start justify-start text-4xl max-md:mb-20 xl:w-1/2">
+            Nie przegap tego
             <div className="mt-10 xl:w-1/2">
               <Input type="email" placeholder="Email" className="border-b outline-none" />
             </div>
@@ -146,7 +146,7 @@ const Footer = () => {
               ))}
             </div>
 
-            <div className="font-poppins mb-4 text-center text-2xl sm:text-6xl xl:text-left xl:text-[40px] dark:text-[#F3F3F3]">
+            <div className="font-zona mb-4 text-center text-2xl sm:text-6xl xl:text-left xl:text-[40px] dark:text-[#F3F3F3]">
               Twoja droga zaczyna się tutaj.
             </div>
           </div>

@@ -15,8 +15,8 @@ const MobileFeatureImprovements = () => {
       <div className="relative flex h-[100vh] w-full flex-col items-center justify-center lg:border-t 2xl:h-[50vh]">
         <div className="mt-6 mb-10 flex h-full w-full flex-col items-center justify-start py-8 sm:px-4 md:py-0 2xl:h-full 2xl:justify-center">
           <div className="mb-4 text-center">
-            <p className="mb-6 font-bold text-gray-400">Zawsze w twojej kieszeni</p>
-            <h2 className="text-4xl font-bold">Twój doradca zawsze z tobą.</h2>
+            <p className="font-zona mb-6 font-bold text-gray-400">Zawsze w twojej kieszeni</p>
+            <h2 className="font-zona text-4xl font-semibold">Twoj doradca zawsze z tobą</h2>
           </div>
           <div className="mt-4 flex h-full w-full flex-col items-center justify-center gap-4 sm:flex-row sm:px-8">
             <div className="h-1/2 w-full md:h-full md:w-1/2">
@@ -33,12 +33,12 @@ const MobileFeatureImprovements = () => {
                 <div className="flex h-full w-2/3 flex-col justify-end">
                   <div className="mb-4 flex h-2/3 w-full flex-col items-start justify-end px-4 md:mb-10 md:px-10">
                     <p className="mb-4 font-bold text-[#818fff]">Apps</p>
-                    <h2 className="z-20 text-2xl font-bold tracking-tight text-white/85 sm:text-4xl">
+                    <h2 className="font-zona z-20 text-2xl font-semibold tracking-tight text-white/85 sm:text-4xl">
                       Vocare. <br />
                       Za darmo.
                     </h2>
                     <Button
-                      className="group relative z-20 mt-10 h-12 w-5/6 rounded-full bg-[linear-gradient(90deg,rgba(146,150,253,1)_0%,rgba(132,145,254,1)_50%,rgba(199,169,254,1)_100%,rgba(157,155,255,1)_77%)] font-bold text-white md:mt-16 md:w-2/3"
+                      className="group font-zona relative z-20 mt-10 h-12 w-5/6 rounded-full bg-[linear-gradient(90deg,rgba(146,150,253,1)_0%,rgba(132,145,254,1)_50%,rgba(199,169,254,1)_100%,rgba(157,155,255,1)_77%)] font-bold text-white max-md:text-xs! md:mt-16 md:w-2/3"
                       variant="default"
                       disabled
                     >
