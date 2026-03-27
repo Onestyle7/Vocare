@@ -168,7 +168,8 @@ namespace VocareWebAPI.CvGenerator.Services.Implementation
                 ZASADY OCENY:
                 1. OverallScore (0-100) — ogólna jakość CV.
                 2. TargetPositionScore (0-100) — dopasowanie do stanowiska docelowego (jeśli podane w CV). Jeśli brak stanowiska, ustaw 0.
-                3. Oceń każdą sekcję osobno w SectionScores. Sekcje: Basics, Work, Education, Certificates, Skills, Languages, Projects, Social.                4. Dla każdej sekcji podaj konkretne, actionable insighty — co poprawić, czego brakuje.
+                3. Oceń każdą sekcję osobno w SectionScores. Sekcje: Basics, Work, Education, Certificates, Skills, Languages, Projects, Social.                
+                4. Dla każdej sekcji podaj konkretne, actionable insighty — co poprawić, czego brakuje.
                 5. TopImprovements — 3 najważniejsze zmiany, które najbardziej podniosą jakość CV.
 
                 KRYTERIA OCENY SEKCJI:
