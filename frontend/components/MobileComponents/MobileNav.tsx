@@ -73,7 +73,8 @@ const MobileNav: React.FC<MobileNavProps> = ({ isAuthenticated }) => {
 
   return (
     <Sheet open={isOpen} onOpenChange={setIsOpen}>
-      <div className="flex w-full items-center justify-between px-4 py-3">
+      {/* ZMIANA: Dodano fixed, top-0, left-0, z-50 oraz tło z efektem szkła */}
+      <div className="bg-background fixed top-0 left-0 z-50 flex w-full items-center justify-between border-b border-b-gray-600/20 px-4 py-3 transition-colors duration-300">
         {/* LEWA STRONA */}
         <Link href="/" className="flex items-center">
           <Image
@@ -88,7 +89,7 @@ const MobileNav: React.FC<MobileNavProps> = ({ isAuthenticated }) => {
         {/* PRAWA STRONA */}
         <div className="flex items-center gap-3">
           <Link href="/assistant" className="font-grotesk">
-            <Button size="sm" className="rounded-[10px]">
+            <Button size="sm" className="font-zona-semibold rounded-[10px] text-xs">
               Znajdź ścieżkę
             </Button>
           </Link>

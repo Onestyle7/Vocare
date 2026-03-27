@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { lazy, Suspense } from 'react';
 import Image from 'next/image';
 import { companies, shape1, Spinner } from '@/app/constants';
@@ -25,6 +25,7 @@ const LazySpline = lazy(() => import('@splinetool/react-spline'));
 const HeroTweak = () => {
   const [showSpline, setShowSpline] = useState(false);
   const [isMobile, setIsMobile] = useState(false);
+  const mobilePhoneRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     const checkMobile = () => {
@@ -47,6 +48,29 @@ const HeroTweak = () => {
     }
   }, [isMobile]);
 
+  useEffect(() => {
+    if (!isMobile || !mobilePhoneRef.current) {
+      return;
+    }
+
+    const animation = gsap.fromTo(
+      mobilePhoneRef.current,
+      { y: 140, autoAlpha: 0 },
+      {
+        y: 0,
+        autoAlpha: 1,
+        duration: 1.1,
+        delay: 0.15,
+        ease: 'power3.out',
+        clearProps: 'transform,opacity,visibility',
+      }
+    );
+
+    return () => {
+      animation.kill();
+    };
+  }, [isMobile]);
+
   return (
     <Section
       className="relative -mt-[5.25rem] pt-[7.5rem]"
@@ -56,9 +80,9 @@ const HeroTweak = () => {
       id="hero"
     >
       {/* <CustomCursor /> */}
-      <div className="main-font-color relative z-30 flex h-[390px] flex-row px-[40px] max-md:h-auto lg:w-full">
+      <div className="main-font-color relative z-30 flex h-[390px] flex-row px-[40px] max-md:mt-16 max-md:h-auto lg:w-full">
         <div className="inset-0 flex w-full flex-col items-center justify-center md:flex-row md:justify-start md:pl-[40px] lg:w-3/5 lg:border-t lg:border-b">
-          <div className="font-poppins flex w-full flex-col items-center justify-center max-md:mt-4 max-md:mb-8 lg:w-1/2 lg:items-start">
+          <div className="font-zona flex w-full flex-col items-center justify-center max-md:mt-4 max-md:mb-8 lg:w-1/2 lg:items-start">
             <CopyHeader>
               <h1 className="font-zona-semibold text-3xl whitespace-nowrap text-neutral-800 max-md:text-center sm:text-4xl md:text-4xl lg:text-4xl xl:text-4xl dark:text-neutral-300">
                 Znajdź ścieżkę
@@ -71,7 +95,10 @@ const HeroTweak = () => {
                 AI analizuje Twój profil i tworzy ścieżki kariery, CV pod ATS i plan działania.
               </h2>
             </Copy>
-            <div className="relative mt-10 flex w-full max-w-[28rem] justify-center lg:hidden">
+            <div
+              ref={mobilePhoneRef}
+              className="relative mt-10 flex w-full max-w-[28rem] justify-center lg:hidden"
+            >
               <div className="pointer-events-none absolute -top-10 left-1/2 h-56 w-[92%] max-w-[12rem] -translate-x-1/2 rounded-full bg-[radial-gradient(ellipse_at_center,rgba(146,150,253,0.44)_0%,rgba(168,85,247,0.28)_38%,rgba(199,169,254,0.14)_60%,transparent_82%)] blur-3xl" />
               <div
                 className="relative z-10 h-[550px] w-full overflow-hidden"
@@ -154,7 +181,7 @@ const HeroTweak = () => {
               Co otrzymasz?
             </p>
           </Copy>
-          <h2 className="font-grotesk mt-4 text-gray-400 max-md:text-center">
+          <h2 className="font-zona mt-4 text-gray-400 max-md:text-center">
             Ścieżki kariery dopasowane do ciebie, analize rynkową oraz ATS-Ready CV.
           </h2>
         </div>
