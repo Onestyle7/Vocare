@@ -108,8 +108,10 @@ export default async function BlogPage(props: MetadataProps) {
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
       />
-      <section className="space-y-2 text-center">
-        <Badge className="mb-5">{metadata.category.replace('-', ' ')}</Badge>
+      <section className="font-poppins space-y-2 text-center">
+        <Badge className="mb-5">
+          {metadata.category.charAt(0).toUpperCase() + metadata.category.replace('-', ' ').slice(1)}
+        </Badge>
         <h1 className="mb-5 text-4xl font-semibold">{metadata.title}</h1>
         <p className="text-muted-foreground text-sm">
           {metadata.author && `Autor: ${metadata.author} |`} Opublikowano:{' '}
@@ -131,7 +133,7 @@ export default async function BlogPage(props: MetadataProps) {
           />
         </div>
       </section>
-      <article className="mx-auto my-10 max-w-250">
+      <article className="font-poppins mx-auto my-10 max-w-250">
         <Markdown
           remarkPlugins={[remarkGfm]}
           components={{

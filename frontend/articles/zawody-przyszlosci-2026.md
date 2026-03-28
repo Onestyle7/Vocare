@@ -4,7 +4,7 @@ description: 'Sprawdź, które zawody przyszłości w 2026 roku gwarantują zatr
 estimatedReadTime: 8
 date: '2026-03-24'
 author: 'Vocare'
-category: 'Rynek-pracy'
+category: 'rynek-pracy'
 coverImage: '/images/blog/future-work.webp'
 tags: ['zawody przyszłości', 'rynek pracy 2026', 'kariera', 'trendy zawodowe', 'przyszłość pracy']
 ---
