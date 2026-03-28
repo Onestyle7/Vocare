@@ -4,6 +4,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using VocareWebAPI.Billing.Models.Entities;
 using VocareWebAPI.CareerAdvisor.Models.Entities.MarketAnalysis;
 using VocareWebAPI.CvGenerator.Models;
+using VocareWebAPI.CvGenerator.Models.Entities;
 using VocareWebAPI.JobOffers.Models.Entities;
 using VocareWebAPI.MarketNews.Models.Entities;
 using VocareWebAPI.Models;
@@ -87,6 +88,7 @@ namespace VocareWebAPI.Data
         public DbSet<RoadmapPhase> RoadmapPhases { get; set; }
         public DbSet<RoadmapStep> RoadmapSteps { get; set; }
         public DbSet<CareerPath> CareerPaths { get; set; }
+        public DbSet<CvAnalysis> CvAnalyses { get; set; }
 
         /// <summary>
         /// Konfiguruje model bazy danych, definiując schemat i relacje między encjami.

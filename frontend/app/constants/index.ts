@@ -675,14 +675,14 @@ export const privacy_policy = {
 
 // assistant page assets
 
-export const cone_1 = '/images/cone.avif';
-export const cone_2 = '/images/cone-2.avif';
-export const cone_3 = '/images/cone-3.avif';
-export const cone_4 = '/images/cone-4.avif';
-export const cone_5 = '/images/cone-5.avif';
-export const cone_6 = '/images/cone-6.avif';
-export const cone_7 = '/images/cone-7.avif';
-export const cone_8 = '/images/cone-8.avif';
+export const cone_1 = '/images/Cone.avif';
+export const cone_2 = '/images/Cone-2.avif';
+export const cone_3 = '/images/Cone-3.avif';
+export const cone_4 = '/images/Cone-4.avif';
+export const cone_5 = '/images/Cone-5.avif';
+export const cone_6 = '/images/Cone-6.avif';
+export const cone_7 = '/images/Cone-7.avif';
+export const cone_8 = '/images/Cone-8.avif';
 
 // roadmap icon
 export const gps_icon = '/svg/gps.png';

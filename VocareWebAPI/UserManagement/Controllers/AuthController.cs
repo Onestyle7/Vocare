@@ -166,5 +166,19 @@ namespace VocareWebAPI.UserManagement.Controllers
             var result = await _authenticationService.GoogleLoginAsync(request.AccessToken);
             return result.IsSuccess ? Ok(result.Value) : BadRequest(new { message = result.Error });
         }
+
+        [HttpPost("linkedin-verify")]
+        [AllowAnonymous]
+        public async Task<IActionResult> LinkedinVerify([FromBody] LinkedInVerifyRequest request)
+        {
+            if (!ModelState.IsValid)
+                return BadRequest(ModelState);
+
+            var result = await _authenticationService.LinkedInLoginAsync(
+                request.Code,
+                request.RedirectUri
+            );
+            return result.IsSuccess ? Ok(result.Value) : BadRequest(new { message = result.Error });
+        }
     }
 }
