@@ -5,7 +5,10 @@ export const articleSchema = z.object({
   title: z.string().min(1),
   description: z.string().min(1),
   estimatedReadTime: z.number().int().positive(),
-  category: z.string().min(1),
+  category: z
+    .string()
+    .min(1)
+    .refine((cat) => !cat.includes(' '), 'Category metadata cannot contain spaces.'),
   author: z.string().optional(),
   coverImage: z.string().startsWith('/'),
   date: z.coerce.date(),

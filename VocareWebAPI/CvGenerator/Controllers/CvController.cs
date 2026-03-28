@@ -17,11 +17,17 @@ namespace VocareWebAPI.CvGenerator.Controllers
     {
         private readonly ICvManagementService _cvManagementService;
         private readonly ILogger<CvController> _logger;
+        private readonly ICvAnalysisService _cvAnalysisService;
 
-        public CvController(ICvManagementService cvManagementService, ILogger<CvController> logger)
+        public CvController(
+            ICvManagementService cvManagementService,
+            ILogger<CvController> logger,
+            ICvAnalysisService cvAnalysisService
+        )
         {
             _cvManagementService = cvManagementService;
             _logger = logger;
+            _cvAnalysisService = cvAnalysisService;
         }
 
         /// <summary>
@@ -276,6 +282,63 @@ namespace VocareWebAPI.CvGenerator.Controllers
             {
                 _logger.LogError(ex, "Error getting CV limits for user {UserId}", userId);
                 return StatusCode(500, "Wystąpił błąd podczas sprawdzania limitów.");
+            }
+        }
+
+        [HttpPost("analyze/{cvId}")]
+        public async Task<ActionResult<CvAnalysisResultDto>> AnalyzeCvAsync(Guid cvId)
+        {
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier) ?? string.Empty;
+            if (string.IsNullOrEmpty(userId))
+            {
+                return BadRequest("Brak identyfikatora użytkownika w tokenie.");
+            }
+            try
+            {
+                var analysis = await _cvAnalysisService.AnalyzeCvAsync(cvId, userId);
+                return Ok(analysis);
+            }
+            catch (UnauthorizedAccessException)
+            {
+                return Forbid("Nie masz dostępu do tego CV.");
+            }
+            catch (KeyNotFoundException)
+            {
+                return NotFound("CV nie zostało znalezione.");
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error analyzing CV for user {UserId}", userId);
+                return StatusCode(500, "Wystąpił błąd podczas analizy CV.");
+            }
+        }
+
+        [HttpGet("analysis/{cvId}")]
+        public async Task<ActionResult<CvAnalysisResultDto>> GetAnalysisAsync(Guid cvId)
+        {
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier) ?? string.Empty;
+            if (string.IsNullOrEmpty(userId))
+            {
+                return BadRequest("Brak identyfikatora użytkownika w tokenie.");
+            }
+
+            try
+            {
+                var analysis = await _cvAnalysisService.GetAnalysisAsync(cvId, userId);
+                return Ok(analysis);
+            }
+            catch (UnauthorizedAccessException)
+            {
+                return Forbid("Nie masz dostępu do tego CV.");
+            }
+            catch (KeyNotFoundException)
+            {
+                return NotFound("CV nie zostało znalezione.");
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error getting CV analysis for user {UserId}", userId);
+                return StatusCode(500, "Wystąpił błąd podczas pobierania analizy CV.");
             }
         }
     }

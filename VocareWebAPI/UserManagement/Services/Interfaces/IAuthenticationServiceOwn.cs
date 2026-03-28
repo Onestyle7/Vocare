@@ -29,6 +29,7 @@ namespace VocareWebAPI.UserManagement.Services.Interfaces
 
         Task<Result<LogoutResult>> LogoutAsync();
 
-        Task<Result<GoogleLoginResult>> GoogleLoginAsync(string accessToken);
+        Task<Result<OAuthLoginResult>> GoogleLoginAsync(string accessToken);
+        Task<Result<OAuthLoginResult>> LinkedInLoginAsync(string code, string redirectUri);
     }
 }
