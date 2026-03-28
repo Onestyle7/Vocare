@@ -1,3 +1,4 @@
+using UglyToad.PdfPig.Graphics.Operations.TextState;
 using VocareWebAPI.Billing.Repositories.Implementations;
 using VocareWebAPI.Billing.Repositories.Interfaces;
 using VocareWebAPI.Billing.Services.Implementations;
@@ -58,6 +59,7 @@ namespace VocareWebAPI.Extensions.ServiceCollectionExtensions
             // CV Services
             services.AddScoped<ICvManagementService, CvManagementService>();
             services.AddScoped<ICvGenerationService, CvGenerationService>();
+            services.AddScoped<ICvAnalysisService, CvAnalysisService>();
 
             // Billing Services
             services.AddScoped<IBillingService, BillingService>();
@@ -113,6 +115,7 @@ namespace VocareWebAPI.Extensions.ServiceCollectionExtensions
 
             // Cv Repositories
             services.AddScoped<IGeneratedCvRepository, GeneratedCvrepository>();
+            services.AddScoped<ICvAnalysisRepository, CvAnalysisRepository>();
 
             // Job Offer repositories
             services.AddScoped<IJobOfferRepository, JobOfferRepository>();
