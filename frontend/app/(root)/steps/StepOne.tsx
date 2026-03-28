@@ -29,7 +29,7 @@ export default function StepOne({ form, onNext }: StepOneProps) {
 
   return (
     <div className="font-poppins space-y-6">
-      <h2 className="mb-6 text-2xl font-bold">Basic Information</h2>
+      <h2 className="mb-6 text-2xl font-bold">Podstawowe informacje</h2>
 
       {/* First Name */}
       <FormField
@@ -37,7 +37,7 @@ export default function StepOne({ form, onNext }: StepOneProps) {
         name="firstName"
         render={({ field }) => (
           <FormItem>
-            <FormLabel>Name</FormLabel>
+            <FormLabel>Imię</FormLabel>
             <FormControl>
               <Input placeholder="Joe" {...field} className="input-profile" />
             </FormControl>
@@ -52,7 +52,7 @@ export default function StepOne({ form, onNext }: StepOneProps) {
         name="lastName"
         render={({ field }) => (
           <FormItem>
-            <FormLabel>Surname</FormLabel>
+            <FormLabel>Nazwisko</FormLabel>
             <FormControl>
               <Input placeholder="Doe" {...field} className="input-profile font-poppins" />
             </FormControl>
@@ -67,14 +67,14 @@ export default function StepOne({ form, onNext }: StepOneProps) {
         name="personalityType"
         render={({ field }) => (
           <FormItem>
-            <FormLabel>Personality type</FormLabel>
+            <FormLabel>Typ osobowości</FormLabel>
             <Select
               onValueChange={(value) => field.onChange(Number(value))}
               value={field.value != null ? field.value.toString() : ''}
             >
               <FormControl>
                 <SelectTrigger>
-                  <SelectValue placeholder="Select your personality type" />
+                  <SelectValue placeholder="Wybierz swój typ osobowości" />
                 </SelectTrigger>
               </FormControl>
               <SelectContent>
@@ -98,7 +98,7 @@ export default function StepOne({ form, onNext }: StepOneProps) {
           className="font-poppins group h-[46px] w-full rounded-lg bg-[#915EFF] text-lg text-white shadow-[0_2px_4px_rgba(145,94,255,0.5)] hover:bg-[#713ae8]"
         >
           <span className="flex flex-row items-center justify-center">
-            Continue
+            Dalej
             <ArrowRight className="ml-2 transition-transform duration-300 group-hover:translate-x-2" />
           </span>
         </Button>

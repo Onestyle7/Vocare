@@ -100,24 +100,32 @@ export default function ProfileForm({
         })) ?? [],
 
       education:
-        data.education?.map((edu) => ({
-          ...edu,
-          degree: edu.degree ?? '',
-          field: edu.field ?? '',
-          startDate: formatDateIfNeeded(edu.startDate) ?? '',
-          endDate: formatDateIfNeeded(edu.endDate) ?? '',
-          current: edu.current ?? false,
-        })) ?? [],
+        data.education?.map((edu) => {
+          const normalizedEndDate = formatDateIfNeeded(edu.endDate) ?? '';
+
+          return {
+            ...edu,
+            degree: edu.degree ?? '',
+            field: edu.field ?? '',
+            startDate: formatDateIfNeeded(edu.startDate) ?? '',
+            endDate: normalizedEndDate,
+            current: edu.current === true || normalizedEndDate === '',
+          };
+        }) ?? [],
 
       workExperience:
-        data.workExperience?.map((work) => ({
-          ...work,
-          startDate: formatDateIfNeeded(work.startDate),
-          endDate: formatDateIfNeeded(work.endDate),
-          description: work.description ?? '',
-          responsibilities: work.responsibilities ?? [],
-          current: work.current ?? false,
-        })) ?? [],
+        data.workExperience?.map((work) => {
+          const normalizedEndDate = formatDateIfNeeded(work.endDate) ?? '';
+
+          return {
+            ...work,
+            startDate: formatDateIfNeeded(work.startDate),
+            endDate: normalizedEndDate,
+            description: work.description ?? '',
+            responsibilities: work.responsibilities ?? [],
+            current: work.current === true || normalizedEndDate === '',
+          };
+        }) ?? [],
       phoneNumber: data.phoneNumber ?? '',
       additionalInformation: data.additionalInformation ?? '',
       aboutMe: data.aboutMe ?? '',
@@ -247,17 +255,17 @@ export default function ProfileForm({
           <Popover open={open} onOpenChange={setOpen}>
             <PopoverTrigger asChild>
               <Button type="button" variant="outline" className="font-poppins rounded-sm">
-                Cancel
+                Anuluj
               </Button>
             </PopoverTrigger>
             <PopoverContent className="font-poppins w-80 space-y-6 p-6 text-center">
-              <p className="text-base">Are you sure you want to discard changes?</p>
+              <p className="text-base">Czy napewno chcesz porzucić zmiany?</p>
               <div className="flex justify-center gap-4">
                 <Button variant="destructive" onClick={onCancel} className="px-6">
-                  Yes, I&apos;m sure
+                  Tak, porzuć
                 </Button>
                 <Button variant="secondary" onClick={() => setOpen(false)} className="px-6">
-                  No
+                  Nie
                 </Button>
               </div>
             </PopoverContent>
@@ -269,7 +277,7 @@ export default function ProfileForm({
             className="font-poppins rounded-sm"
             onClick={onCancel}
           >
-            Cancel
+            Anuluj
           </Button>
         )}
       </>
