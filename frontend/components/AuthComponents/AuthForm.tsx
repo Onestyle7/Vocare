@@ -178,7 +178,7 @@ const AuthForm = ({ type }: AuthFormProps) => {
   return (
     <Form {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)} className="auth-form font-poppins">
-        <h1 className="form-title">{isSignUp ? 'Sign Up' : 'Sign In'}</h1>
+        <h1 className="form-title">{isSignUp ? 'Zarejestruj się' : 'Zaloguj się'}</h1>
 
         {isSignUp && (
           <FormField
@@ -186,7 +186,7 @@ const AuthForm = ({ type }: AuthFormProps) => {
             name="fullName"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Full Name</FormLabel>
+                <FormLabel>Imię i nazwisko</FormLabel>
                 <FormControl>
                   <Input placeholder="Joe Doe.." {...field} className="input-profile" />
                 </FormControl>
@@ -215,14 +215,9 @@ const AuthForm = ({ type }: AuthFormProps) => {
           name="password"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Password</FormLabel>
+              <FormLabel>Hasło</FormLabel>
               <FormControl>
-                <Input
-                  type="password"
-                  placeholder="Password"
-                  {...field}
-                  className="input-profile"
-                />
+                <Input type="password" placeholder="Hasło" {...field} className="input-profile" />
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -235,11 +230,11 @@ const AuthForm = ({ type }: AuthFormProps) => {
             name="confirmPassword"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Confirm Password</FormLabel>
+                <FormLabel>Powtórz hasło</FormLabel>
                 <FormControl>
                   <Input
                     type="password"
-                    placeholder="Confirm Password"
+                    placeholder="Powtórz hasło"
                     {...field}
                     className="input-profile"
                   />
@@ -250,8 +245,8 @@ const AuthForm = ({ type }: AuthFormProps) => {
           />
         )}
 
-        <ButtonForm type="submit" disabled={isLoading} className="group form-button">
-          {isSignUp ? 'Join Vocare' : 'Sign In'}
+        <ButtonForm type="submit" disabled={isLoading} className="group form-button text-[18px]!">
+          {isSignUp ? 'Dołącz do Vocare' : 'Zaloguj się'}
           <span className="arrow-animation">
             <ArrowRight />
           </span>
@@ -269,22 +264,26 @@ const AuthForm = ({ type }: AuthFormProps) => {
         <div
           className={`mt-4 flex ${isSignUp ? 'flex-col gap-4' : 'items-center justify-between'}`}
         >
-          <div className="flex items-center">
-            <p>{isSignUp ? 'Already have an account?' : 'Need account?'}</p>
+          <div
+            className={`text-sm ${
+              isSignUp ? 'flex items-center gap-1' : 'flex flex-col items-start'
+            }`}
+          >
+            <p>{isSignUp ? 'Masz już konto?' : 'Chcesz założyć konto?'}</p>
             <Link
               href={isSignUp ? '/sign-in' : '/sign-up'}
-              className="relative ml-2 font-semibold text-[#915EFF] transition duration-300 after:absolute after:bottom-0 after:left-0 after:h-[2px] after:w-0 after:bg-[#915EFF] after:transition-all after:duration-300 after:content-[''] hover:after:w-full"
+              className="relative font-semibold text-[#915EFF] transition duration-300 after:absolute after:bottom-0 after:left-0 after:h-[2px] after:w-0 after:bg-[#915EFF] after:transition-all after:duration-300 after:content-[''] hover:after:w-full"
             >
-              {isSignUp ? 'Sign In' : 'Sign Up'}
+              {isSignUp ? 'Zaloguj się' : 'Zarejestruj się'}
             </Link>
           </div>
 
           {!isSignUp && (
             <Link
               href="/forgot-password"
-              className="relative ml-2 font-medium text-gray-500 transition duration-300 after:absolute after:bottom-0 after:left-0 after:h-[2px] after:w-0 after:bg-gray-500 after:transition-all after:duration-300 after:content-[''] hover:after:w-full"
+              className="relative ml-2 text-sm font-medium text-gray-500 transition duration-300 after:absolute after:bottom-0 after:left-0 after:h-[2px] after:w-0 after:bg-gray-500 after:transition-all after:duration-300 after:content-[''] hover:after:w-full"
             >
-              Forgot Password?
+              Zapomniałeś hasła?
             </Link>
           )}
 
@@ -304,8 +303,8 @@ const AuthForm = ({ type }: AuthFormProps) => {
                     </FormControl>
                     <div className="space-y-2 text-sm leading-snug">
                       <FormLabel htmlFor="marketingConsent" className="text-foreground font-medium">
-                        I agree to receive occasional product updates and marketing emails from
-                        Vocare.
+                        Zgadzam się na otrzymywanie okazjonalnych aktualizacji produktów oraz
+                        wiadomości marketingowych od Vocare.
                       </FormLabel>
                     </div>
                   </div>
@@ -320,12 +319,16 @@ const AuthForm = ({ type }: AuthFormProps) => {
           <div className="flex w-full flex-col items-center justify-center gap-4 text-sm text-gray-400">
             <div className="flex w-full items-center">
               <div className="h-[0.5px] w-full bg-gray-500/80" />
-              <span className="mx-4 whitespace-nowrap text-gray-500">or login with</span>
+              <span className="mx-4 whitespace-nowrap text-gray-500">lub</span>
               <div className="h-[0.5px] w-full bg-gray-500/80" />
             </div>
 
             <div className="tems-center mt-4 flex w-full flex-row justify-center gap-2">
-              <OAuthButton icon={google} label="Login with Google" onClick={handleGoogleSignIn} />
+              <OAuthButton
+                icon={google}
+                label="Zaloguj się za pomocą Google"
+                onClick={handleGoogleSignIn}
+              />
             </div>
           </div>
         )}
