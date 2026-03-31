@@ -20,6 +20,7 @@ const CreateResumePage = () => {
         'personalInfo',
         'experiences',
         'education',
+        'projects',
         'skills',
         'languages',
         'certificates',

@@ -34,10 +34,15 @@ export interface CvCertificateEntryDto {
   date?: string; // Format: YYYY-MM-DD
 }
 
-export interface CvLinkEntryDto {
+export interface CvProjectDto {
   name: string;
-  url: string;
-  description?: string;
+  description: string;
+  link: string;
+}
+
+export interface CvSocialDto {
+  social: string;
+  link: string;
 }
 
 export interface CvLanguageEntryDto {
@@ -50,7 +55,8 @@ export interface CvDto {
   work?: CvWorkEntryDto[];
   education?: CvEducationEntryDto[];
   certificates?: CvCertificateEntryDto[];
-  links?: CvLinkEntryDto[];
+  projects?: CvProjectDto[];
+  social?: CvSocialDto[];
   skills?: string[];
   languages?: CvLanguageEntryDto[];
 }

@@ -34,6 +34,17 @@ export interface CvCertificateEntryDto {
   date?: string;
 }
 
+export interface CvProjectDto {
+  name: string;
+  description: string;
+  link: string;
+}
+
+export interface CvSocialDto {
+  social: string;
+  link: string;
+}
+
 export interface CvLanguageEntryDto {
   language: string;
   fluency: string;
@@ -44,6 +55,8 @@ export interface CvDto {
   work?: CvWorkEntryDto[];
   education?: CvEducationEntryDto[];
   certificates?: CvCertificateEntryDto[];
+  projects?: CvProjectDto[];
+  social?: CvSocialDto[];
   skills?: string[];
   languages?: CvLanguageEntryDto[];
 }
