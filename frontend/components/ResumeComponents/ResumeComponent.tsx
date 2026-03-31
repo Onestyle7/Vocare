@@ -29,9 +29,10 @@ import {
   Underline,
   Home,
   FolderOpen,
+  FolderOpen,
 } from 'lucide-react';
 import { createCv, deleteCv, updateCv } from '@/lib/api/cv';
-import { CvDto, CvDetailsDto, UpdateCvDto } from '@/lib/types/cv';
+import { CvDto, CvDetailsDto, CvSocialDto, UpdateCvDto } from '@/lib/types/cv';
 import { DatePickerWithCurrent } from './DatePickerWithCurrent';
 import { HoverCard, HoverCardContent, HoverCardTrigger } from '@/components/ui/hover-card';
 import {
@@ -53,7 +54,7 @@ interface PersonalInfo {
   phone: string;
   address: string;
   country: string;
-  socialLinks: SocialLink[];
+  githubUrl: string;
   profession: string;
   summary: string;
 }
@@ -77,6 +78,13 @@ interface Education {
   startDate: string;
   endDate: string;
   isCurrent: boolean;
+  description: string;
+}
+
+interface Project {
+  id: string;
+  title: string;
+  url: string;
   description: string;
 }
 
@@ -140,6 +148,7 @@ const EMPTY_FORMATTING_STATE: FormattingState = Object.freeze({
   underline: false,
 }) as FormattingState;
 
+const GITHUB_LINK_LABEL = 'GitHub';
 const DEFAULT_SECTION_ORDER = [
   'profile',
   'experience',
@@ -159,7 +168,7 @@ const DEFAULT_PERSONAL_INFO: PersonalInfo = {
   phone: '',
   address: '',
   country: '',
-  socialLinks: [],
+  githubUrl: '',
   profession: '',
   summary: '',
 };
@@ -209,6 +218,9 @@ const normalizeExternalUrl = (value: string) => {
 
   return `https://${trimmedValue}`;
 };
+
+const isGithubSocialEntry = (social: Pick<CvSocialDto, 'social'>) =>
+  social.social.trim().toLowerCase() === GITHUB_LINK_LABEL.toLowerCase();
 
 const RichTextToolbar = ({
   onFormat,
@@ -292,6 +304,15 @@ const ensureProjectDefaults = (project: Partial<Project>): Project => ({
   description: project.description ?? '',
 });
 
+const makeProjectId = () => `${Date.now()}-${Math.random().toString(36).slice(2, 8)}-proj`;
+
+const ensureProjectDefaults = (project: Partial<Project>): Project => ({
+  id: typeof project.id === 'string' && project.id.length > 0 ? project.id : makeProjectId(),
+  title: project.title ?? '',
+  url: project.url ?? '',
+  description: project.description ?? '',
+});
+
 const makeCertificateId = () => `${Date.now()}-${Math.random().toString(36).slice(2, 8)}-cert`;
 
 const ensureCertificateDefaults = (cert: Partial<Certificate>): Certificate => ({
@@ -310,19 +331,9 @@ const CVCreator: React.FC<CVCreatorProps> = ({ initialCv }) => {
     }
 
     try {
-      const parsed = JSON.parse(saved);
-
-      // Migracja: stare githubUrl → socialLinks
-      if ('githubUrl' in parsed && !('socialLinks' in parsed)) {
-        parsed.socialLinks = parsed.githubUrl?.trim()
-          ? [{ id: makeSocialLinkId(), label: 'GitHub', url: parsed.githubUrl }]
-          : [];
-        delete parsed.githubUrl;
-      }
-
       return {
         ...DEFAULT_PERSONAL_INFO,
-        ...parsed,
+        ...JSON.parse(saved),
       };
     } catch (err) {
       console.warn('Failed to parse stored personal info', err);
@@ -378,6 +389,18 @@ const CVCreator: React.FC<CVCreatorProps> = ({ initialCv }) => {
       return parsed.map((item) => ensureEducationDefaults(item));
     } catch (err) {
       console.warn('Failed to parse stored education entries', err);
+      return [];
+    }
+  });
+  const [projects, setProjects] = useState<Project[]>(() => {
+    const saved = localStorage.getItem('projects');
+    if (!saved) return [];
+    try {
+      const parsed = JSON.parse(saved);
+      if (!Array.isArray(parsed)) return [];
+      return parsed.map((item) => ensureProjectDefaults(item));
+    } catch (err) {
+      console.warn('Failed to parse stored projects', err);
       return [];
     }
   });
@@ -461,6 +484,16 @@ const CVCreator: React.FC<CVCreatorProps> = ({ initialCv }) => {
       console.warn('Failed to parse stored section order', err);
       return [...DEFAULT_SECTION_ORDER];
     }
+    if (!saved) {
+      return [...DEFAULT_SECTION_ORDER];
+    }
+
+    try {
+      return mergeSectionOrder(JSON.parse(saved));
+    } catch (err) {
+      console.warn('Failed to parse stored section order', err);
+      return [...DEFAULT_SECTION_ORDER];
+    }
   });
   const [draggedSection, setDraggedSection] = useState<string | null>(null);
   const [dragOverSection, setDragOverSection] = useState<string | null>(null);
@@ -481,6 +514,11 @@ const CVCreator: React.FC<CVCreatorProps> = ({ initialCv }) => {
   useEffect(() => {
     localStorage.setItem('education', JSON.stringify(education));
   }, [education]);
+
+  // Save projects to localStorage
+  useEffect(() => {
+    localStorage.setItem('projects', JSON.stringify(projects));
+  }, [projects]);
 
   // Save projects to localStorage
   useEffect(() => {
@@ -780,6 +818,26 @@ const CVCreator: React.FC<CVCreatorProps> = ({ initialCv }) => {
       delete next[id];
       return next;
     });
+  };
+
+  const addProject = () => {
+    const newProject: Project = {
+      id: makeProjectId(),
+      title: '',
+      url: '',
+      description: '',
+    };
+    setProjects((prev) => [...prev, newProject]);
+  };
+
+  const updateProject = (id: string, field: keyof Project, value: string) => {
+    setProjects((prev) =>
+      prev.map((project) => (project.id === id ? { ...project, [field]: value } : project))
+    );
+  };
+
+  const removeProject = (id: string) => {
+    setProjects((prev) => prev.filter((project) => project.id !== id));
   };
 
   const addProject = () => {
@@ -1325,15 +1383,8 @@ const CVCreator: React.FC<CVCreatorProps> = ({ initialCv }) => {
 
   const populateFromCv = React.useCallback((cv: CvDto, position?: string) => {
     const basics = cv.basics;
+    const githubLink = cv.social?.find(isGithubSocialEntry);
     const projectLinks = cv.projects ?? [];
-
-    const socialLinks: SocialLink[] = (cv.social ?? [])
-      .filter((s) => s.link.trim())
-      .map((s) => ({
-        id: makeSocialLinkId(),
-        label: s.social,
-        url: s.link,
-      }));
 
     if (basics) {
       setPersonalInfo((prev) => ({
@@ -1343,14 +1394,14 @@ const CVCreator: React.FC<CVCreatorProps> = ({ initialCv }) => {
         phone: basics.phoneNumber,
         address: basics.location?.city || '',
         country: basics.location?.country || '',
-        socialLinks,
+        githubUrl: githubLink?.link || '',
         profession: position ?? prev.profession,
         summary: basics.summary,
       }));
     } else {
       setPersonalInfo((prev) => ({
         ...prev,
-        socialLinks,
+        githubUrl: githubLink?.link || '',
       }));
     }
 
@@ -1382,6 +1433,17 @@ const CVCreator: React.FC<CVCreatorProps> = ({ initialCv }) => {
           description: (e as { description?: string })?.description || '',
         })
       ) || []
+    );
+
+    setProjects(
+      projectLinks.map((project) =>
+        ensureProjectDefaults({
+          id: makeProjectId(),
+          title: project.name || '',
+          url: project.link || '',
+          description: project.description || '',
+        })
+      )
     );
 
     setProjects(
@@ -1450,20 +1512,20 @@ const CVCreator: React.FC<CVCreatorProps> = ({ initialCv }) => {
         date: c.hasDate && c.date ? c.date : undefined,
       })),
       projects: projects
-        .filter(
-          (project) => project.title.trim() || project.url.trim() || project.description.trim()
-        )
+        .filter((project) => project.title.trim() || project.url.trim() || project.description.trim())
         .map((project) => ({
           name: project.title,
           link: normalizeExternalUrl(project.url),
           description: project.description,
         })),
-      social: personalInfo.socialLinks
-        .filter((s) => s.url.trim())
-        .map((s) => ({
-          social: s.label,
-          link: normalizeExternalUrl(s.url),
-        })),
+      social: personalInfo.githubUrl.trim()
+        ? [
+            {
+              social: GITHUB_LINK_LABEL,
+              link: normalizeExternalUrl(personalInfo.githubUrl),
+            },
+          ]
+        : [],
       skills: skills.map((s) => s.name),
       languages: languages.map((l) => ({ language: l.name, fluency: l.level })),
     };
@@ -1498,6 +1560,7 @@ const CVCreator: React.FC<CVCreatorProps> = ({ initialCv }) => {
     personalInfo,
     experiences,
     education,
+    projects,
     projects,
     skills,
     languages,
@@ -1672,9 +1735,17 @@ const CVCreator: React.FC<CVCreatorProps> = ({ initialCv }) => {
             personalInfo.address ||
             personalInfo.profession ||
             personalInfo.summary
+            personalInfo.lastName ||
+            personalInfo.email ||
+            personalInfo.phone ||
+            personalInfo.address ||
+            personalInfo.profession ||
+            personalInfo.summary
           );
         case 'experience':
           return experiences.length > 0;
+        case 'projects':
+          return projects.length > 0;
         case 'projects':
           return projects.length > 0;
         case 'education':
@@ -1696,6 +1767,7 @@ const CVCreator: React.FC<CVCreatorProps> = ({ initialCv }) => {
     [
       personalInfo,
       experiences,
+      projects,
       projects,
       education,
       certificates,
@@ -1761,6 +1833,15 @@ const CVCreator: React.FC<CVCreatorProps> = ({ initialCv }) => {
         });
       } else if (id === 'education') {
         const nodes = el.querySelectorAll<HTMLElement>('.edu-item[data-item-id]');
+        nodes.forEach((n) => {
+          const csI = getComputedStyle(n);
+          const mti = parseFloat(csI.marginTop || '0') || 0;
+          const mbi = parseFloat(csI.marginBottom || '0') || 0;
+          const itemId = n.getAttribute('data-item-id') || '';
+          items.push({ id: itemId, h: n.offsetHeight + mti + mbi });
+        });
+      } else if (id === 'projects') {
+        const nodes = el.querySelectorAll<HTMLElement>('.project-item[data-item-id]');
         nodes.forEach((n) => {
           const csI = getComputedStyle(n);
           const mti = parseFloat(csI.marginTop || '0') || 0;
@@ -1891,6 +1972,7 @@ const CVCreator: React.FC<CVCreatorProps> = ({ initialCv }) => {
     personalInfo,
     experiences,
     education,
+    projects,
     projects,
     skills,
     languages,
@@ -2220,6 +2302,104 @@ const CVCreator: React.FC<CVCreatorProps> = ({ initialCv }) => {
             >
               <span className="mr-2 text-xl">+</span>
               Add work experience
+            </button>
+          </div>
+        );
+
+      case 'projects':
+        return (
+          <div
+            key="projects"
+            className={`mb-6 rounded-lg bg-gray-50 p-4 transition-all lg:p-6 ${
+              dragOverSection === 'projects' ? 'bg-blue-50 ring-2 ring-blue-400' : ''
+            } ${draggedSection === 'projects' ? 'opacity-50' : ''}`}
+            draggable
+            onDragStart={(e) => handleSectionDragStart(e, 'projects')}
+            onDragOver={(e) => handleSectionDragOver(e, 'projects')}
+            onDragLeave={handleSectionDragLeave}
+            onDrop={(e) => handleSectionDrop(e, 'projects')}
+            onDragEnd={handleSectionDragEnd}
+          >
+            <div className="mb-4 flex items-center justify-between">
+              <h2 className="flex items-center text-lg font-semibold text-gray-700">
+                <span
+                  className="mr-2 cursor-grab text-gray-400"
+                  data-drag-handle="true"
+                  role="button"
+                  tabIndex={0}
+                  aria-label="Drag section"
+                  onMouseDown={() => {
+                    dragIntentSectionRef.current = 'projects';
+                  }}
+                  onMouseUp={() => {
+                    dragIntentSectionRef.current = null;
+                  }}
+                  onKeyDown={(event) => {
+                    if (event.key === 'Enter' || event.key === ' ') {
+                      dragIntentSectionRef.current = 'projects';
+                    }
+                  }}
+                  onKeyUp={() => {
+                    dragIntentSectionRef.current = null;
+                  }}
+                >
+                  <GripVertical size={20} />
+                </span>
+                <FolderOpen className="mr-2" size={20} />
+                Projects
+              </h2>
+            </div>
+            <p className="mb-4 text-sm text-gray-600">
+              Add your most relevant projects with a clickable title, repository or live link, and a
+              short description of what you built.
+            </p>
+            {projects.map((project) => (
+              <div
+                key={project.id}
+                className="group mb-4 rounded-lg border border-gray-200 bg-white p-4"
+              >
+                <div className="flex items-start justify-between">
+                  <div className="flex-1">
+                    <div className="mb-2 grid grid-cols-1 gap-4 sm:grid-cols-2">
+                      <input
+                        type="text"
+                        placeholder="Project title"
+                        value={project.title}
+                        onChange={(e) => updateProject(project.id, 'title', e.target.value)}
+                        className="w-full rounded-sm border border-gray-300 px-3 py-3 focus:ring-2 focus:ring-blue-500 focus:outline-none"
+                      />
+                      <input
+                        type="url"
+                        placeholder="https://your-project.com"
+                        value={project.url}
+                        onChange={(e) => updateProject(project.id, 'url', e.target.value)}
+                        className="w-full rounded-sm border border-gray-300 px-3 py-3 focus:ring-2 focus:ring-blue-500 focus:outline-none"
+                      />
+                    </div>
+                    <textarea
+                      placeholder="Short project description"
+                      value={project.description}
+                      onChange={(e) => updateProject(project.id, 'description', e.target.value)}
+                      rows={3}
+                      className="w-full resize-none rounded-sm border border-gray-300 px-3 py-3 focus:ring-2 focus:ring-blue-500 focus:outline-none"
+                    />
+                  </div>
+                  <button
+                    onClick={() => removeProject(project.id)}
+                    className="ml-2 flex h-10 w-10 cursor-pointer items-center justify-center rounded p-2 text-red-500 opacity-0 transition-all group-hover:opacity-100 hover:bg-red-50 hover:text-red-700"
+                    title="Remove project"
+                  >
+                    <Trash2 size={16} />
+                  </button>
+                </div>
+              </div>
+            ))}
+            <button
+              onClick={addProject}
+              className="flex cursor-pointer items-center font-medium text-[#915EFF]"
+            >
+              <span className="mr-2 text-xl">+</span>
+              Add project
             </button>
           </div>
         );
@@ -3009,6 +3189,48 @@ const CVCreator: React.FC<CVCreatorProps> = ({ initialCv }) => {
           </div>
         ) : null;
 
+      case 'projects':
+        return projects.length > 0 ? (
+          <div
+            className="cv-section mb-5"
+            key="projects"
+            data-block-id="projects"
+            data-section="projects"
+          >
+            <h3 className="mb-2 flex items-center border-b border-gray-300 pb-1 text-lg font-semibold text-gray-800">
+              <FolderOpen size={16} className="mr-2" />
+              Projects
+            </h3>
+            {projects.map((project) => {
+              const projectUrl = normalizeExternalUrl(project.url);
+
+              return (
+                <div key={project.id} className="project-item mb-3" data-item-id={project.id}>
+                  {projectUrl ? (
+                    <a
+                      href={projectUrl}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="font-semibold text-[#915EFF] underline underline-offset-2"
+                    >
+                      {project.title || 'Project title'}
+                    </a>
+                  ) : (
+                    <div className="font-semibold text-gray-900">
+                      {project.title || 'Project title'}
+                    </div>
+                  )}
+                  {project.description && (
+                    <p className="mt-1 text-sm leading-relaxed break-words text-gray-700">
+                      {project.description}
+                    </p>
+                  )}
+                </div>
+              );
+            })}
+          </div>
+        ) : null;
+
       case 'education':
         return education.length > 0 ? (
           <div
@@ -3206,20 +3428,18 @@ const CVCreator: React.FC<CVCreatorProps> = ({ initialCv }) => {
             {personalInfo.address}
           </div>
         )}
-        {personalInfo.socialLinks
-          .filter((s) => s.url.trim())
-          .map((s) => (
-            <div key={s.id} className="flex items-center">
-              <a
-                href={normalizeExternalUrl(s.url)}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="font-medium text-gray-700 underline underline-offset-2"
-              >
-                {s.label}
-              </a>
-            </div>
-          ))}
+        {personalInfo.githubUrl && (
+          <div className="flex items-center">
+            <a
+              href={normalizeExternalUrl(personalInfo.githubUrl)}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="font-medium text-gray-700 underline underline-offset-2"
+            >
+              {GITHUB_LINK_LABEL}
+            </a>
+          </div>
+        )}
       </div>
     </div>
   );
@@ -3237,6 +3457,13 @@ const CVCreator: React.FC<CVCreatorProps> = ({ initialCv }) => {
           <h3 className="mb-2 flex items-center border-b border-gray-300 pb-1 text-lg font-semibold text-gray-800">
             <Briefcase size={16} className="mr-2" />
             Work Experience
+          </h3>
+        );
+      case 'projects':
+        return (
+          <h3 className="mb-2 flex items-center border-b border-gray-300 pb-1 text-lg font-semibold text-gray-800">
+            <FolderOpen size={16} className="mr-2" />
+            Projects
           </h3>
         );
       case 'projects':
@@ -3422,6 +3649,42 @@ const CVCreator: React.FC<CVCreatorProps> = ({ initialCv }) => {
     );
   };
 
+  const renderProjectItems = (ids?: string[]) => {
+    const list = ids ? projects.filter((project) => ids.includes(project.id)) : projects;
+
+    return (
+      <>
+        {list.map((project) => {
+          const projectUrl = normalizeExternalUrl(project.url);
+
+          return (
+            <div key={project.id} className="project-item mb-3" data-item-id={project.id}>
+              {projectUrl ? (
+                <a
+                  href={projectUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="font-semibold text-[#915EFF] underline underline-offset-2"
+                >
+                  {project.title || 'Project title'}
+                </a>
+              ) : (
+                <div className="font-semibold text-gray-900">
+                  {project.title || 'Project title'}
+                </div>
+              )}
+              {project.description && (
+                <p className="mt-1 text-sm leading-relaxed break-words text-gray-700">
+                  {project.description}
+                </p>
+              )}
+            </div>
+          );
+        })}
+      </>
+    );
+  };
+
   const renderEducationItems = (ids?: string[]) => {
     const list = ids ? education.filter((e) => ids.includes(e.id)) : education;
     return (
@@ -3518,6 +3781,18 @@ const CVCreator: React.FC<CVCreatorProps> = ({ initialCv }) => {
           >
             {includeTitle && renderSectionTitle('experience')}
             {renderExperienceItems(items)}
+          </div>
+        );
+      case 'projects':
+        return (
+          <div
+            className="cv-section mb-5"
+            data-block-id="projects"
+            data-section="projects"
+            key={`chunk-projects-${items.join('-')}`}
+          >
+            {includeTitle && renderSectionTitle('projects')}
+            {renderProjectItems(items)}
           </div>
         );
       case 'projects':
@@ -3790,79 +4065,17 @@ const CVCreator: React.FC<CVCreatorProps> = ({ initialCv }) => {
                             className="w-full rounded-sm border border-gray-300 px-3 py-3 focus:ring-2 focus:ring-blue-500 focus:outline-none"
                           />
                         </div>
-                        <div className="col-span-full">
-                          <label className="mb-2 block text-sm font-medium text-gray-600">
-                            Links
-                          </label>
-                          {personalInfo.socialLinks.map((link) => (
-                            <div key={link.id} className="mb-2 flex items-center gap-2">
-                              <>
-                                <input
-                                  type="text"
-                                  list={`social-suggestions-${link.id}`}
-                                  placeholder="e.g. GitHub"
-                                  value={link.label}
-                                  onChange={(e) =>
-                                    setPersonalInfo((prev) => ({
-                                      ...prev,
-                                      socialLinks: prev.socialLinks.map((s) =>
-                                        s.id === link.id ? { ...s, label: e.target.value } : s
-                                      ),
-                                    }))
-                                  }
-                                  className="font-poppins h-[46px] w-36 rounded-sm border border-gray-300 px-3 text-sm focus:ring-2 focus:ring-blue-500 focus:outline-none"
-                                />
-                                <datalist id={`social-suggestions-${link.id}`}>
-                                  {SOCIAL_LINK_SUGGESTIONS.map((type) => (
-                                    <option key={type} value={type} />
-                                  ))}
-                                </datalist>
-                              </>
-                              <input
-                                type="url"
-                                placeholder="https://..."
-                                value={link.url}
-                                onChange={(e) =>
-                                  setPersonalInfo((prev) => ({
-                                    ...prev,
-                                    socialLinks: prev.socialLinks.map((s) =>
-                                      s.id === link.id ? { ...s, url: e.target.value } : s
-                                    ),
-                                  }))
-                                }
-                                className="flex-1 rounded-sm border border-gray-300 px-3 py-3 focus:ring-2 focus:ring-blue-500 focus:outline-none"
-                              />
-                              <button
-                                type="button"
-                                onClick={() =>
-                                  setPersonalInfo((prev) => ({
-                                    ...prev,
-                                    socialLinks: prev.socialLinks.filter((s) => s.id !== link.id),
-                                  }))
-                                }
-                                className="rounded p-2 text-red-500 hover:bg-red-50 hover:text-red-700"
-                                title="Remove link"
-                              >
-                                <Trash2 size={16} />
-                              </button>
-                            </div>
-                          ))}
-                          <button
-                            type="button"
-                            onClick={() =>
-                              setPersonalInfo((prev) => ({
-                                ...prev,
-                                socialLinks: [
-                                  ...prev.socialLinks,
-                                  { id: makeSocialLinkId(), label: 'GitHub', url: '' },
-                                ],
-                              }))
+                        <div>
+                          <label className="mb-1 block text-sm text-gray-600">GitHub link</label>
+                          <input
+                            type="url"
+                            placeholder="github.com/username"
+                            value={personalInfo.githubUrl}
+                            onChange={(e) =>
+                              setPersonalInfo({ ...personalInfo, githubUrl: e.target.value })
                             }
-                            className="flex cursor-pointer items-center font-medium text-[#915EFF]"
-                          >
-                            <span className="mr-2 text-xl">+</span>
-                            Add link
-                          </button>
+                            className="w-full rounded-sm border border-gray-300 px-3 py-3 focus:ring-2 focus:ring-blue-500 focus:outline-none"
+                          />
                         </div>
                       </div>
                     </div>
@@ -4069,9 +4282,10 @@ const CVCreator: React.FC<CVCreatorProps> = ({ initialCv }) => {
                         !personalInfo.email &&
                         !personalInfo.phone &&
                         !personalInfo.address &&
-                        personalInfo.socialLinks.length === 0 &&
+                        !personalInfo.githubUrl &&
                         !personalInfo.summary &&
                         experiences.length === 0 &&
+                        projects.length === 0 &&
                         projects.length === 0 &&
                         skills.length === 0 &&
                         education.length === 0 && (
