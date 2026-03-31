@@ -234,7 +234,7 @@ export default function StepFive({
             >
               <FormControl>
                 <SelectTrigger>
-                  <SelectValue placeholder="Select risk level" />
+                  <SelectValue placeholder="Wybierz poziom ryzyka" />
                 </SelectTrigger>
               </FormControl>
               <SelectContent>
