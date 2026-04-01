@@ -98,12 +98,12 @@ const LinkedInCallbackContent = () => {
         <span className="flex items-center justify-center">
           <ShieldAlert className="h-24 w-24" />
         </span>
-        <h1 className="text-3xl font-bold">LinkedIn Login Failed</h1>
+        <h1 className="text-3xl font-bold">Logowanie za pomocą Linkedin nie powiodło się</h1>
         <p className="mb-6 text-gray-600">{errorMessage}</p>
         <div className="flex flex-col items-center justify-center space-y-4">
           <Link href="/sign-in">
             <ButtonForm className="group form-button">
-              Back to Sign In
+              Powrót do logowania
               <span className="arrow-animation mx-2">
                 <ArrowRight />
               </span>
@@ -111,9 +111,9 @@ const LinkedInCallbackContent = () => {
           </Link>
           <Link
             href="/sign-in"
-            className="relative ml-2 font-semibold text-[#915EFF] transition duration-300 after:absolute after:bottom-0 after:left-0 after:h-[2px] after:w-0 after:bg-[#915EFF] after:transition-all after:duration-300 after:content-[''] hover:after:w-full"
+            className="font-poppins relative ml-2 font-semibold text-[#915EFF] transition duration-300 after:absolute after:bottom-0 after:left-0 after:h-[2px] after:w-0 after:bg-[#915EFF] after:transition-all after:duration-300 after:content-[''] hover:after:w-full"
           >
-            Return to login
+            Powrót do logowania
           </Link>
         </div>
       </div>
