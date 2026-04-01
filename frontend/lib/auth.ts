@@ -32,6 +32,28 @@ interface ValidateTokenInput {
   email: string;
 }
 
+const storeAuthToken = (response: {
+  data?: { token?: string; accessToken?: string };
+  headers?: unknown;
+}) => {
+  const authorizationHeader =
+    typeof response.headers === 'object' &&
+    response.headers !== null &&
+    'authorization' in response.headers &&
+    typeof response.headers.authorization === 'string'
+      ? response.headers.authorization
+      : undefined;
+
+  const token =
+    response.data?.token ||
+    response.data?.accessToken ||
+    authorizationHeader?.replace('Bearer ', '');
+
+  if (token) {
+    localStorage.setItem('token', token);
+  }
+};
+
 api.interceptors.response.use(
   (response) => response,
   (error) => {
@@ -61,10 +83,7 @@ export const registerUser = async ({
 
 export const loginUser = async ({ email, password }: LoginInput) => {
   const response = await api.post(`${AUTH_PREFIX}/login`, { email, password });
-  const token = response.data.token;
-  if (token) {
-    localStorage.setItem('token', token);
-  }
+  storeAuthToken(response);
   return response.data;
 };
 
@@ -81,13 +100,16 @@ export const logoutUser = async () => {
 
 export const googleVerify = async (accessToken: string) => {
   const response = await api.post(`${AUTH_PREFIX}/google-verify`, { accessToken });
-  const token =
-    response.data.token ||
-    response.data.accessToken ||
-    response.headers['authorization']?.replace('Bearer ', '');
-  if (token) {
-    localStorage.setItem('token', token);
-  }
+  storeAuthToken(response);
+  return response.data;
+};
+
+export const linkedinVerify = async (code: string, redirectUri: string) => {
+  const response = await api.post(`${AUTH_PREFIX}/linkedin-verify`, {
+    code,
+    redirectUri,
+  });
+  storeAuthToken(response);
   return response.data;
 };
 

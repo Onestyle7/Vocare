@@ -462,6 +462,7 @@ export const slide = [
 
 export const google = '/svg/google.svg';
 export const facebook = '/svg/facebook.svg';
+export const linkedin = '/svg/linkedin-svgrepo-com.svg';
 
 // Timeline
 

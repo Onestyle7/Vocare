@@ -27,9 +27,10 @@ import { ArrowRight } from 'lucide-react';
 import { ButtonForm } from '../ui/button-form';
 import { AxiosError } from 'axios';
 import OAuthButton from './OAuthButton';
-import { google } from '@/app/constants';
+import { google, linkedin } from '@/app/constants';
 import { WindowWithGoogle, GoogleTokenResponse, GoogleTokenClient } from '@/lib/types/google-oauth';
 import { Checkbox } from '../ui/checkbox';
+import { beginLinkedInOAuth } from '@/lib/linkedin-oauth';
 
 type FormType = 'sign-in' | 'sign-up';
 type FormDataMap = {
@@ -173,6 +174,20 @@ const AuthForm = ({ type }: AuthFormProps) => {
     });
 
     client.requestAccessToken();
+  };
+
+  const handleLinkedInSignIn = () => {
+    setIsLoading(true);
+
+    try {
+      beginLinkedInOAuth();
+    } catch (err) {
+      console.error(err);
+      toast.error('LinkedIn login is unavailable', {
+        description: 'Add LinkedIn OAuth client configuration and try again.',
+      });
+      setIsLoading(false);
+    }
   };
 
   return (
@@ -324,8 +339,13 @@ const AuthForm = ({ type }: AuthFormProps) => {
               <div className="h-[0.5px] w-full bg-gray-500/80" />
             </div>
 
-            <div className="tems-center mt-4 flex w-full flex-row justify-center gap-2">
+            <div className="tems-center mt-4 flex w-full flex-col justify-center gap-2">
               <OAuthButton icon={google} label="Login with Google" onClick={handleGoogleSignIn} />
+              <OAuthButton
+                icon={linkedin}
+                label="Login with Linkedin"
+                onClick={handleLinkedInSignIn}
+              />
             </div>
           </div>
         )}
