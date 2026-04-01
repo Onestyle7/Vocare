@@ -306,19 +306,19 @@ const ResumeDashboard = () => {
       <AlertDialog open={showLimitDialog} onOpenChange={setShowLimitDialog}>
         <AlertDialogContent className="font-grotesk">
           <AlertDialogHeader>
-            <AlertDialogTitle>You&apos;ve reached your resume limit</AlertDialogTitle>
+            <AlertDialogTitle>Osiągnąłeś limit CV dla swojego planu</AlertDialogTitle>
             <AlertDialogDescription>
-              Delete unused resumes or upgrade your plan to create more.
+              Usuń nieaktualne CV lub podnieś swój plan.
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
-            <AlertDialogCancel>Cancel</AlertDialogCancel>
+            <AlertDialogCancel>Anuluj</AlertDialogCancel>
             <AlertDialogAction
               onClick={() => {
                 window.location.href = '/pricing';
               }}
             >
-              Upgrade
+              Podnieś
             </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>
