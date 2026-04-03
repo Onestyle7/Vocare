@@ -3,6 +3,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text.Json;
 using System.Threading.Tasks;
+using Microsoft.Extensions.Options;
+using VocareWebAPI.Billing.Models.Enums;
+using VocareWebAPI.Billing.Repositories.Interfaces;
 using VocareWebAPI.CvGenerator.Models;
 using VocareWebAPI.CvGenerator.Models.Dtos;
 using VocareWebAPI.CvGenerator.Repositories.Interfaces;
@@ -17,6 +20,8 @@ namespace VocareWebAPI.CvGenerator.Services.Implementation
         private readonly IUserProfileRepository _userProfileRepository;
         private readonly ICvGenerationService _cvGenerationService;
         private readonly ILogger<CvManagementService> _logger;
+        private readonly IUserBillingRepository _userBillingRepository;
+        private readonly CvLimitsConfig _cvLimits;
 
         // Na razie hardcode dla developmentu, potem przeniesiemy do konfiguracji
         private const int FREE_TIER_CV_LIMIT = 3;
@@ -25,13 +30,17 @@ namespace VocareWebAPI.CvGenerator.Services.Implementation
             IGeneratedCvRepository cvRepository,
             IUserProfileRepository userProfileRepository,
             ICvGenerationService cvGenerationService,
-            ILogger<CvManagementService> logger
+            ILogger<CvManagementService> logger,
+            IUserBillingRepository userBillingRepository,
+            IOptions<CvLimitsConfig> cvLimits
         )
         {
             _cvRepository = cvRepository;
             _userProfileRepository = userProfileRepository;
             _cvGenerationService = cvGenerationService;
             _logger = logger;
+            _userBillingRepository = userBillingRepository;
+            _cvLimits = cvLimits.Value;
         }
 
         public async Task<List<CvListItemDto>> GetUserCvsAsync(string userId)
@@ -255,9 +264,14 @@ namespace VocareWebAPI.CvGenerator.Services.Implementation
 
         public async Task<int> GetMaxCvLimitAsync(string userId)
         {
-            // TODO: W przyszłości można tu sprawdzić poziom subskrypcji użytkownika
-            // Na razie zwracamy stały limit dla wersji darmowej
-            return FREE_TIER_CV_LIMIT;
+            var billing = await _userBillingRepository.GetByUserIdAsync(userId);
+
+            if (billing?.SubscriptionStatus == SubscriptionStatus.Active)
+            {
+                return _cvLimits.PremiumTierLimit;
+            }
+
+            return _cvLimits.FreeTierLimit;
         }
 
         private CvDto CreateEmptyCv()
