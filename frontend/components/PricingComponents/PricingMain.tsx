@@ -371,7 +371,8 @@ const PricingMain = () => {
                       Idealne do znalezienia swojej ścieżki zawodowej.
                     </p>
                     <div className="font-grotesk mb-6 text-4xl font-bold text-gray-900 dark:text-white">
-                      45<sup className="align-super text-sm">zł</sup>
+                      {pricingPlans[0].price}
+                      <sup className="align-super text-sm">zł</sup>
                       <span className="text-xl font-normal text-gray-600 dark:text-gray-300">
                         /500 tokenów
                       </span>
@@ -448,7 +449,8 @@ const PricingMain = () => {
                         Najlepszy wybór do rozwoju Twojej kariery.
                       </p>
                       <div className="font-grotesk mb-6 text-4xl font-bold text-gray-900 dark:text-white">
-                        29<sup className="align-super text-sm">zł</sup>
+                        {pricingPlans[1].price}
+                        <sup className="align-super text-sm">zł</sup>
                         <span className="text-xl font-normal text-gray-600 dark:text-gray-300">
                           /miesiąc
                         </span>
@@ -527,7 +529,8 @@ const PricingMain = () => {
                       Twoja kariera prowadzona przez naszych ekspertów.
                     </p>
                     <div className="font-grotesk mb-6 text-4xl font-bold text-gray-900 dark:text-white">
-                      99<sup className="align-super text-sm">zł</sup>
+                      {pricingPlans[2].price}
+                      <sup className="align-super text-sm">zł</sup>
                       {/* <span className="text-xl font-normal text-gray-600 dark:text-gray-300">
                       /once
                     </span> */}
