@@ -271,7 +271,6 @@ namespace VocareWebAPI.Billing.Services.Implementations
             var sessionOptions = new SessionCreateOptions
             {
                 Customer = userBilling.StripeCustomerId,
-                PaymentMethodTypes = new List<string> { "card" },
                 LineItems = new List<SessionLineItemOptions>
                 {
                     new SessionLineItemOptions { Price = priceId, Quantity = 1 },
@@ -462,7 +461,6 @@ namespace VocareWebAPI.Billing.Services.Implementations
             var sessionOptions = new SessionCreateOptions
             {
                 Customer = userBilling.StripeCustomerId,
-                PaymentMethodTypes = new List<string> { "card" },
                 LineItems = new List<SessionLineItemOptions>
                 {
                     new SessionLineItemOptions { Price = priceId, Quantity = 1 },

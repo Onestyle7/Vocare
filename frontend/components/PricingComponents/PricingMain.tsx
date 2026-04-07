@@ -36,9 +36,9 @@ const pricingPlans = [
   {
     name: 'Osobiste',
     description: 'Idealne do znalezienia swojej ścieżki zawodowej.',
-    price: 45,
+    price: 19,
     tokens: 500 as number | string,
-    priceId: 'price_1ShEeILs2ndSVWb2ImxHTYQ3',
+    priceId: 'price_1TJd11Ls2ndSVWb2D6fJnV78',
     type: 'tokens' as PlanType,
     features: [
       '500 tokenów w pakiecie',
