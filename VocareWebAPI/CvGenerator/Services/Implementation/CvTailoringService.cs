@@ -3,7 +3,6 @@ using Microsoft.Extensions.Options;
 using VocareWebAPI.CareerAdvisor.Services.Implementations;
 using VocareWebAPI.CvGenerator.Models;
 using VocareWebAPI.CvGenerator.Models.Dtos;
-using VocareWebAPI.CvGenerator.Models.Enums;
 using VocareWebAPI.CvGenerator.Repositories.Interfaces;
 using VocareWebAPI.CvGenerator.Services.Interfaces;
 using VocareWebAPI.Models.OpenAIConfig;
@@ -19,7 +18,7 @@ namespace VocareWebAPI.CvGenerator.Repositories.Implementations
         private readonly ILogger<CvTailoringService> _logger;
         private readonly OpenAIConfig _config;
         private readonly IUserProfileRepository _userProfileRepository;
-        private readonly ICvManagementService _CvManagementService;
+        private readonly ICvManagementService _cvManagementService;
         private readonly UserProfileService _userProfileService;
 
         public CvTailoringService(
@@ -27,7 +26,7 @@ namespace VocareWebAPI.CvGenerator.Repositories.Implementations
             IGeneratedCvRepository generatedCvRepository,
             ILogger<CvTailoringService> logger,
             IOptions<OpenAIConfig> aiConfig,
-            IUserProfileRepository userProfileRepositor,
+            IUserProfileRepository userProfileRepository,
             ICvManagementService cvManagementService,
             UserProfileService userProfileService
         )
@@ -36,8 +35,8 @@ namespace VocareWebAPI.CvGenerator.Repositories.Implementations
             _generatedCvRepository = generatedCvRepository;
             _logger = logger;
             _config = aiConfig.Value;
-            _userProfileRepository = userProfileRepositor;
-            _CvManagementService = cvManagementService;
+            _userProfileRepository = userProfileRepository;
+            _cvManagementService = cvManagementService;
             _userProfileService = userProfileService;
 
             _httpClient.Timeout = TimeSpan.FromSeconds(180);
@@ -45,114 +44,98 @@ namespace VocareWebAPI.CvGenerator.Repositories.Implementations
             _httpClient.DefaultRequestHeaders.Add("Accept", "application/json");
         }
 
-        public async Task<CvDetailsDto> GenerateTargetedCvAsync(
-            GenerateTargetCvDto generateTargetCvDto,
+        public async Task<CvDetailsDto> TailorCvAsync(TailorCvDto dto, string userId)
+        {
+            var cv = await _generatedCvRepository.GetByIdAsync(dto.CvId);
+            if (cv == null)
+            {
+                throw new KeyNotFoundException("Cv not exist");
+            }
+
+            var belongsToUser = await _generatedCvRepository.BelongsToUserAsync(dto.CvId, userId);
+            if (!belongsToUser)
+            {
+                throw new UnauthorizedAccessException("Cv not belong to user");
+            }
+
+            var prompt = BuildPrompt(cv.CvJson, dto.JobDescription);
+            var tailoredCv = await CallOpenAiAsync(prompt);
+            cv.CvJson = JsonSerializer.Serialize(
+                tailoredCv,
+                new JsonSerializerOptions { PropertyNamingPolicy = JsonNamingPolicy.CamelCase }
+            );
+
+            await _generatedCvRepository.UpdateAsync(cv);
+            return new CvDetailsDto
+            {
+                Id = cv.Id,
+                Name = cv.Name,
+                TargetPosition = cv.TargetPosition,
+                CvData = tailoredCv,
+                IsDefault = cv.IsDefault,
+                CreatedAt = cv.CreatedAt,
+                LastModifiedAt = cv.LastModifiedAt,
+                Version = cv.Version,
+                Notes = cv.Notes,
+            };
+        }
+
+        public async Task<CvDetailsDto> GenerateCvFromProfileAsync(
+            GenerateCvFromProfileDto dto,
             string userId
         )
         {
-            #region mode: Dostosowanie aktualnego CV do oferty pracy (Tailor)
-            if (generateTargetCvDto.Mode == Mode.Tailor)
+            var userProfile = await _userProfileRepository.GetUserProfileByIdAsync(userId);
+            if (userProfile == null)
             {
-                var cv = await _generatedCvRepository.GetByIdAsync(generateTargetCvDto.CvId.Value);
-                if (cv == null)
-                {
-                    throw new KeyNotFoundException("Cv not exist");
-                }
+                throw new KeyNotFoundException("User profile not found");
+            }
 
-                var belongsToUser = await _generatedCvRepository.BelongsToUserAsync(
-                    generateTargetCvDto.CvId.Value,
-                    userId
+            var canCreate = await _cvManagementService.CanCreateNewCvAsync(userId);
+            if (!canCreate)
+            {
+                throw new InvalidOperationException(
+                    "CV limit reached. Upgrade to premium or delete existing CV."
                 );
-                if (!belongsToUser)
-                {
-                    throw new UnauthorizedAccessException("Cv not belong to user");
-                }
+            }
 
-                var prompt = BuildPrompt(cv.CvJson, generateTargetCvDto);
-                var tailoredCv = await CallOpenAiAsync(prompt);
-                cv.CvJson = JsonSerializer.Serialize(
-                    tailoredCv,
+            var userProfileDto = await _userProfileService.GetUserProfileAsync(userId);
+            var sourceData = JsonSerializer.Serialize(
+                userProfileDto,
+                new JsonSerializerOptions { PropertyNamingPolicy = JsonNamingPolicy.CamelCase }
+            );
+
+            var prompt = BuildPrompt(sourceData, dto.JobDescription);
+            var generatedCv = await CallOpenAiAsync(prompt);
+
+            var newCv = new GeneratedCv
+            {
+                Id = Guid.NewGuid(),
+                UserId = userId,
+                Name = dto.Name ?? "Targeted CV",
+                TargetPosition = dto.Name ?? "Targeted CV",
+                CvJson = JsonSerializer.Serialize(
+                    generatedCv,
                     new JsonSerializerOptions { PropertyNamingPolicy = JsonNamingPolicy.CamelCase }
-                );
-
-                await _generatedCvRepository.UpdateAsync(cv);
-                return new CvDetailsDto
-                {
-                    Id = cv.Id,
-                    Name = cv.Name,
-                    TargetPosition = cv.TargetPosition,
-                    CvData = tailoredCv,
-                    IsDefault = cv.IsDefault,
-                    CreatedAt = cv.CreatedAt,
-                    LastModifiedAt = cv.LastModifiedAt,
-                    Version = cv.Version,
-                    Notes = cv.Notes,
-                };
-            }
-            #endregion
-            #region mode: Generowanie nowego Cv na podstawie profilu użytkownika i oferty pracy (Generate)
-            else if (generateTargetCvDto.Mode == Mode.Generate)
+                ),
+                IsDefault = false,
+                IsActive = true,
+                CreatedAt = DateTime.UtcNow,
+                LastModifiedAt = DateTime.UtcNow,
+                Version = 1,
+            };
+            await _generatedCvRepository.AddAsync(newCv);
+            return new CvDetailsDto
             {
-                var userProfile = await _userProfileRepository.GetUserProfileByIdAsync(userId);
-                if (userProfile == null)
-                {
-                    throw new KeyNotFoundException("User profile not found");
-                }
-
-                var canCreate = await _CvManagementService.CanCreateNewCvAsync(userId);
-                if (!canCreate)
-                {
-                    throw new InvalidOperationException(
-                        "CV limit reached. Upgrade to premium or delete existing CV."
-                    );
-                }
-
-                var userProfileDto = await _userProfileService.GetUserProfileAsync(userId);
-                var sourceData = JsonSerializer.Serialize(
-                    userProfileDto,
-                    new JsonSerializerOptions { PropertyNamingPolicy = JsonNamingPolicy.CamelCase }
-                );
-
-                var prompt = BuildPrompt(sourceData, generateTargetCvDto);
-                var generatedCv = await CallOpenAiAsync(prompt);
-
-                var newCv = new GeneratedCv
-                {
-                    Id = Guid.NewGuid(),
-                    UserId = userId,
-                    Name = generateTargetCvDto.Name ?? "Targeted CV",
-                    TargetPosition = generateTargetCvDto.Name ?? "Targeted CV",
-                    CvJson = JsonSerializer.Serialize(
-                        generatedCv,
-                        new JsonSerializerOptions
-                        {
-                            PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
-                        }
-                    ),
-                    IsDefault = false,
-                    IsActive = true,
-                    CreatedAt = DateTime.UtcNow,
-                    LastModifiedAt = DateTime.UtcNow,
-                    Version = 1,
-                };
-                await _generatedCvRepository.AddAsync(newCv);
-                return new CvDetailsDto
-                {
-                    Id = newCv.Id,
-                    Name = newCv.Name,
-                    TargetPosition = newCv.TargetPosition,
-                    CvData = generatedCv,
-                    IsDefault = newCv.IsDefault,
-                    CreatedAt = newCv.CreatedAt,
-                    LastModifiedAt = newCv.LastModifiedAt,
-                    Version = newCv.Version,
-                };
-            }
-            #endregion
-            else
-            {
-                throw new ArgumentException("Invalid mode. Use 'Tailor' or 'Generate'.");
-            }
+                Id = newCv.Id,
+                Name = newCv.Name,
+                TargetPosition = newCv.TargetPosition,
+                CvData = generatedCv,
+                IsDefault = newCv.IsDefault,
+                CreatedAt = newCv.CreatedAt,
+                LastModifiedAt = newCv.LastModifiedAt,
+                Version = newCv.Version,
+            };
         }
 
         private async Task<CvDto> CallOpenAiAsync(string prompt)
@@ -232,7 +215,7 @@ namespace VocareWebAPI.CvGenerator.Repositories.Implementations
                 : base(message, inner) { }
         }
 
-        private string BuildPrompt(string sourceData, GenerateTargetCvDto dto)
+        private string BuildPrompt(string sourceData, string jobDescription)
         {
             return $$"""
                 Na podstawie poniższych danych źródłowych wygeneruj CV zoptymalizowane pod podaną ofertę pracy.
@@ -248,7 +231,7 @@ namespace VocareWebAPI.CvGenerator.Repositories.Implementations
                 8. Jeśli w danych źródłowych brakuje sekcji Projects lub Social, zwróć puste listy.
 
                 OPIS OFERTY PRACY:
-                {{dto.JobDescription}}
+                {{jobDescription}}
 
                 DANE ŹRÓDŁOWE (profil użytkownika lub istniejące CV):
                 {{sourceData}}

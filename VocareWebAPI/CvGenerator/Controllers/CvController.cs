@@ -1,12 +1,8 @@
-using System;
-using System.ComponentModel.DataAnnotations;
 using System.Security.Claims;
-using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using VocareWebAPI.CvGenerator.Models.Dtos;
 using VocareWebAPI.CvGenerator.Repositories.Interfaces;
-using VocareWebAPI.CvGenerator.Services.Implementations;
 using VocareWebAPI.CvGenerator.Services.Interfaces;
 
 namespace VocareWebAPI.CvGenerator.Controllers
@@ -346,9 +342,45 @@ namespace VocareWebAPI.CvGenerator.Controllers
             }
         }
 
-        [HttpPost("generate-targeted")]
-        public async Task<ActionResult<CvDetailsDto>> GenerateTargetedCv(
-            [FromBody] GenerateTargetCvDto dto
+        [HttpPost("tailor")]
+        public async Task<ActionResult<CvDetailsDto>> TailorCvAsync([FromBody] TailorCvDto dto)
+        {
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier) ?? string.Empty;
+            if (string.IsNullOrEmpty(userId))
+            {
+                return BadRequest("Brak identyfikatora użytkownika w tokenie.");
+            }
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+            try
+            {
+                var cv = await _cvTailoringService.TailorCvAsync(dto, userId);
+                return Ok(cv);
+            }
+            catch (UnauthorizedAccessException)
+            {
+                return Forbid("Nie masz dostępu do tego CV.");
+            }
+            catch (InvalidOperationException ex)
+            {
+                return BadRequest(new { message = ex.Message });
+            }
+            catch (KeyNotFoundException)
+            {
+                return NotFound("CV nie zostało znalezione.");
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error generating targeted CV for user {UserId}", userId);
+                return StatusCode(500, "Wystąpił błąd podczas generowania CV.");
+            }
+        }
+
+        [HttpPost("generate-from-profile")]
+        public async Task<ActionResult<CvDetailsDto>> GenerateCvFromProfileAsync(
+            [FromBody] GenerateCvFromProfileDto dto
         )
         {
             var userId = User.FindFirstValue(ClaimTypes.NameIdentifier) ?? string.Empty;
@@ -362,7 +394,7 @@ namespace VocareWebAPI.CvGenerator.Controllers
             }
             try
             {
-                var cv = await _cvTailoringService.GenerateTargetedCvAsync(dto, userId);
+                var cv = await _cvTailoringService.GenerateCvFromProfileAsync(dto, userId);
                 return Ok(cv);
             }
             catch (UnauthorizedAccessException)
