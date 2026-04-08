@@ -23,9 +23,6 @@ namespace VocareWebAPI.CvGenerator.Services.Implementation
         private readonly IUserBillingRepository _userBillingRepository;
         private readonly CvLimitsConfig _cvLimits;
 
-        // Na razie hardcode dla developmentu, potem przeniesiemy do konfiguracji
-        private const int FREE_TIER_CV_LIMIT = 3;
-
         public CvManagementService(
             IGeneratedCvRepository cvRepository,
             IUserProfileRepository userProfileRepository,

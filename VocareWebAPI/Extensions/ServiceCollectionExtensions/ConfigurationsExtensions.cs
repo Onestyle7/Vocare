@@ -1,10 +1,6 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 using VocareWebAPI.CareerAdvisor.Models.Config;
+using VocareWebAPI.CvGenerator.Models.Dtos;
 using VocareWebAPI.JobOffers.Configuration;
-using VocareWebAPI.JobOffers.Models.Entities;
 using VocareWebAPI.Models.OpenAIConfig;
 using VocareWebAPI.UserManagement.Models.Entities;
 
@@ -25,6 +21,11 @@ namespace VocareWebAPI.Extensions.ServiceCollectionExtensions
             services.Configure<JobOfferSyncSettings>(
                 configuration.GetSection(JobOfferSyncSettings.SectionName)
             );
+            services
+                .AddOptions<CvLimitsConfig>()
+                .BindConfiguration(CvLimitsConfig.SectionName)
+                .ValidateDataAnnotations()
+                .ValidateOnStart();
 
             return services;
         }
