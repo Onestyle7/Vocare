@@ -63,13 +63,13 @@ export interface CvLanguageEntryDto {
 
 export interface CvDto {
   basics?: CvBasicsDto;
-  work?: CvWorkEntryDto[];
-  education?: CvEducationEntryDto[];
-  certificates?: CvCertificateEntryDto[];
-  projects?: CvProjectDto[];
-  social?: CvSocialDto[];
-  skills?: string[];
-  languages?: CvLanguageEntryDto[];
+  work: CvWorkEntryDto[];
+  education: CvEducationEntryDto[];
+  certificates: CvCertificateEntryDto[];
+  projects: CvProjectDto[];
+  social: CvSocialDto[];
+  skills: string[];
+  languages: CvLanguageEntryDto[];
 }
 
 export interface CvDetailsDto {
