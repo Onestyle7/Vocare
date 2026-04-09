@@ -31,7 +31,7 @@ import {
   FolderOpen,
 } from 'lucide-react';
 import { createCv, deleteCv, updateCv } from '@/lib/api/cv';
-import { CvDto, CvDetailsDto, CvSocialDto, UpdateCvDto } from '@/lib/types/cv';
+import { CvDto, CvDetailsDto, UpdateCvDto } from '@/lib/types/cv';
 import { DatePickerWithCurrent } from './DatePickerWithCurrent';
 import { HoverCard, HoverCardContent, HoverCardTrigger } from '@/components/ui/hover-card';
 import {
@@ -43,6 +43,8 @@ import {
 } from '@/components/ui/select';
 import { useAutosave } from '@/lib/hooks/useAutosave';
 import { useIsMobile } from '@/lib/hooks/useIsMobile';
+import { FLUENCY_OPTIONS, normalizeFluency } from '@/lib/utils/normalizeFluency';
+import { SOCIAL_LINK_TYPES, makeSocialLinkId } from '@/lib/utils/socialLinks';
 
 interface PersonalInfo {
   firstName: string;
@@ -51,7 +53,7 @@ interface PersonalInfo {
   phone: string;
   address: string;
   country: string;
-  githubUrl: string;
+  socialLinks: SocialLink[];
   profession: string;
   summary: string;
 }
@@ -116,6 +118,11 @@ interface PrivacyStatement {
 interface CVCreatorProps {
   initialCv?: CvDetailsDto;
 }
+interface SocialLink {
+  id: string;
+  label: string;
+  url: string;
+}
 
 type FormattingType = 'bold' | 'italic' | 'underline';
 
@@ -133,7 +140,6 @@ const EMPTY_FORMATTING_STATE: FormattingState = Object.freeze({
   underline: false,
 }) as FormattingState;
 
-const GITHUB_LINK_LABEL = 'GitHub';
 const DEFAULT_SECTION_ORDER = [
   'profile',
   'experience',
@@ -153,7 +159,7 @@ const DEFAULT_PERSONAL_INFO: PersonalInfo = {
   phone: '',
   address: '',
   country: '',
-  githubUrl: '',
+  socialLinks: [],
   profession: '',
   summary: '',
 };
@@ -203,9 +209,6 @@ const normalizeExternalUrl = (value: string) => {
 
   return `https://${trimmedValue}`;
 };
-
-const isGithubSocialEntry = (social: Pick<CvSocialDto, 'social'>) =>
-  social.social.trim().toLowerCase() === GITHUB_LINK_LABEL.toLowerCase();
 
 const RichTextToolbar = ({
   onFormat,
@@ -307,9 +310,19 @@ const CVCreator: React.FC<CVCreatorProps> = ({ initialCv }) => {
     }
 
     try {
+      const parsed = JSON.parse(saved);
+
+      // Migracja: stare githubUrl → socialLinks
+      if ('githubUrl' in parsed && !('socialLinks' in parsed)) {
+        parsed.socialLinks = parsed.githubUrl?.trim()
+          ? [{ id: makeSocialLinkId(), label: 'GitHub', url: parsed.githubUrl }]
+          : [];
+        delete parsed.githubUrl;
+      }
+
       return {
         ...DEFAULT_PERSONAL_INFO,
-        ...JSON.parse(saved),
+        ...parsed,
       };
     } catch (err) {
       console.warn('Failed to parse stored personal info', err);
@@ -1312,8 +1325,15 @@ const CVCreator: React.FC<CVCreatorProps> = ({ initialCv }) => {
 
   const populateFromCv = React.useCallback((cv: CvDto, position?: string) => {
     const basics = cv.basics;
-    const githubLink = cv.social?.find(isGithubSocialEntry);
     const projectLinks = cv.projects ?? [];
+
+    const socialLinks: SocialLink[] = (cv.social ?? [])
+      .filter((s) => s.link.trim())
+      .map((s) => ({
+        id: makeSocialLinkId(),
+        label: s.social,
+        url: s.link,
+      }));
 
     if (basics) {
       setPersonalInfo((prev) => ({
@@ -1323,14 +1343,14 @@ const CVCreator: React.FC<CVCreatorProps> = ({ initialCv }) => {
         phone: basics.phoneNumber,
         address: basics.location?.city || '',
         country: basics.location?.country || '',
-        githubUrl: githubLink?.link || '',
+        socialLinks,
         profession: position ?? prev.profession,
         summary: basics.summary,
       }));
     } else {
       setPersonalInfo((prev) => ({
         ...prev,
-        githubUrl: githubLink?.link || '',
+        socialLinks,
       }));
     }
 
@@ -1392,7 +1412,7 @@ const CVCreator: React.FC<CVCreatorProps> = ({ initialCv }) => {
       cv.languages?.map((l, idx) => ({
         id: `${Date.now()}${idx}`,
         name: l.language,
-        level: l.fluency,
+        level: normalizeFluency(l.fluency),
       })) || []
     );
   }, []);
@@ -1430,20 +1450,20 @@ const CVCreator: React.FC<CVCreatorProps> = ({ initialCv }) => {
         date: c.hasDate && c.date ? c.date : undefined,
       })),
       projects: projects
-        .filter((project) => project.title.trim() || project.url.trim() || project.description.trim())
+        .filter(
+          (project) => project.title.trim() || project.url.trim() || project.description.trim()
+        )
         .map((project) => ({
           name: project.title,
           link: normalizeExternalUrl(project.url),
           description: project.description,
         })),
-      social: personalInfo.githubUrl.trim()
-        ? [
-            {
-              social: GITHUB_LINK_LABEL,
-              link: normalizeExternalUrl(personalInfo.githubUrl),
-            },
-          ]
-        : [],
+      social: personalInfo.socialLinks
+        .filter((s) => s.url.trim())
+        .map((s) => ({
+          social: s.label,
+          link: normalizeExternalUrl(s.url),
+        })),
       skills: skills.map((s) => s.name),
       languages: languages.map((l) => ({ language: l.name, fluency: l.level })),
     };
@@ -2715,11 +2735,11 @@ const CVCreator: React.FC<CVCreatorProps> = ({ initialCv }) => {
                         <SelectValue />
                       </SelectTrigger>
                       <SelectContent>
-                        <SelectItem value="Beginner">Beginner</SelectItem>
-                        <SelectItem value="Conversational">Conversational</SelectItem>
-                        <SelectItem value="Advanced">Advanced</SelectItem>
-                        <SelectItem value="Proficient">Proficient</SelectItem>
-                        <SelectItem value="Native speaker">Native speaker</SelectItem>
+                        {FLUENCY_OPTIONS.map((option) => (
+                          <SelectItem key={option} value={option}>
+                            {option}
+                          </SelectItem>
+                        ))}
                       </SelectContent>
                     </Select>
                   </div>
@@ -3186,18 +3206,20 @@ const CVCreator: React.FC<CVCreatorProps> = ({ initialCv }) => {
             {personalInfo.address}
           </div>
         )}
-        {personalInfo.githubUrl && (
-          <div className="flex items-center">
-            <a
-              href={normalizeExternalUrl(personalInfo.githubUrl)}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="font-medium text-gray-700 underline underline-offset-2"
-            >
-              {GITHUB_LINK_LABEL}
-            </a>
-          </div>
-        )}
+        {personalInfo.socialLinks
+          .filter((s) => s.url.trim())
+          .map((s) => (
+            <div key={s.id} className="flex items-center">
+              <a
+                href={normalizeExternalUrl(s.url)}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="font-medium text-gray-700 underline underline-offset-2"
+              >
+                {s.label}
+              </a>
+            </div>
+          ))}
       </div>
     </div>
   );
@@ -3768,17 +3790,79 @@ const CVCreator: React.FC<CVCreatorProps> = ({ initialCv }) => {
                             className="w-full rounded-sm border border-gray-300 px-3 py-3 focus:ring-2 focus:ring-blue-500 focus:outline-none"
                           />
                         </div>
-                        <div>
-                          <label className="mb-1 block text-sm text-gray-600">GitHub link</label>
-                          <input
-                            type="url"
-                            placeholder="github.com/username"
-                            value={personalInfo.githubUrl}
-                            onChange={(e) =>
-                              setPersonalInfo({ ...personalInfo, githubUrl: e.target.value })
+                        <div className="col-span-full">
+                          <label className="mb-2 block text-sm font-medium text-gray-600">
+                            Links
+                          </label>
+                          {personalInfo.socialLinks.map((link) => (
+                            <div key={link.id} className="mb-2 flex items-center gap-2">
+                              <Select
+                                value={link.label}
+                                onValueChange={(value) =>
+                                  setPersonalInfo((prev) => ({
+                                    ...prev,
+                                    socialLinks: prev.socialLinks.map((s) =>
+                                      s.id === link.id ? { ...s, label: value } : s
+                                    ),
+                                  }))
+                                }
+                              >
+                                <SelectTrigger className="font-poppins h-[46px] w-36 rounded-sm border border-gray-300 px-2 text-sm focus:ring-2 focus:ring-blue-500 focus:outline-none">
+                                  <SelectValue placeholder="Type" />
+                                </SelectTrigger>
+                                <SelectContent>
+                                  {SOCIAL_LINK_TYPES.map((type) => (
+                                    <SelectItem key={type} value={type}>
+                                      {type}
+                                    </SelectItem>
+                                  ))}
+                                </SelectContent>
+                              </Select>
+                              <input
+                                type="url"
+                                placeholder="https://..."
+                                value={link.url}
+                                onChange={(e) =>
+                                  setPersonalInfo((prev) => ({
+                                    ...prev,
+                                    socialLinks: prev.socialLinks.map((s) =>
+                                      s.id === link.id ? { ...s, url: e.target.value } : s
+                                    ),
+                                  }))
+                                }
+                                className="flex-1 rounded-sm border border-gray-300 px-3 py-3 focus:ring-2 focus:ring-blue-500 focus:outline-none"
+                              />
+                              <button
+                                type="button"
+                                onClick={() =>
+                                  setPersonalInfo((prev) => ({
+                                    ...prev,
+                                    socialLinks: prev.socialLinks.filter((s) => s.id !== link.id),
+                                  }))
+                                }
+                                className="rounded p-2 text-red-500 hover:bg-red-50 hover:text-red-700"
+                                title="Remove link"
+                              >
+                                <Trash2 size={16} />
+                              </button>
+                            </div>
+                          ))}
+                          <button
+                            type="button"
+                            onClick={() =>
+                              setPersonalInfo((prev) => ({
+                                ...prev,
+                                socialLinks: [
+                                  ...prev.socialLinks,
+                                  { id: makeSocialLinkId(), label: 'GitHub', url: '' },
+                                ],
+                              }))
                             }
-                            className="w-full rounded-sm border border-gray-300 px-3 py-3 focus:ring-2 focus:ring-blue-500 focus:outline-none"
-                          />
+                            className="flex cursor-pointer items-center font-medium text-[#915EFF]"
+                          >
+                            <span className="mr-2 text-xl">+</span>
+                            Add link
+                          </button>
                         </div>
                       </div>
                     </div>
@@ -3985,7 +4069,7 @@ const CVCreator: React.FC<CVCreatorProps> = ({ initialCv }) => {
                         !personalInfo.email &&
                         !personalInfo.phone &&
                         !personalInfo.address &&
-                        !personalInfo.githubUrl &&
+                        personalInfo.socialLinks.length === 0 &&
                         !personalInfo.summary &&
                         experiences.length === 0 &&
                         projects.length === 0 &&
