@@ -60,6 +60,7 @@ namespace VocareWebAPI.Extensions.ServiceCollectionExtensions
             services.AddScoped<ICvManagementService, CvManagementService>();
             services.AddScoped<ICvGenerationService, CvGenerationService>();
             services.AddScoped<ICvAnalysisService, CvAnalysisService>();
+            services.AddScoped<ICvTailoringService, CvTailoringService>();
 
             // Billing Services
             services.AddScoped<IBillingService, BillingService>();
