@@ -44,7 +44,7 @@ import {
 import { useAutosave } from '@/lib/hooks/useAutosave';
 import { useIsMobile } from '@/lib/hooks/useIsMobile';
 import { FLUENCY_OPTIONS, normalizeFluency } from '@/lib/utils/normalizeFluency';
-import { SOCIAL_LINK_TYPES, makeSocialLinkId } from '@/lib/utils/socialLinks';
+import { SOCIAL_LINK_SUGGESTIONS, makeSocialLinkId } from '@/lib/utils/socialLinks';
 
 interface PersonalInfo {
   firstName: string;
@@ -3796,28 +3796,28 @@ const CVCreator: React.FC<CVCreatorProps> = ({ initialCv }) => {
                           </label>
                           {personalInfo.socialLinks.map((link) => (
                             <div key={link.id} className="mb-2 flex items-center gap-2">
-                              <Select
-                                value={link.label}
-                                onValueChange={(value) =>
-                                  setPersonalInfo((prev) => ({
-                                    ...prev,
-                                    socialLinks: prev.socialLinks.map((s) =>
-                                      s.id === link.id ? { ...s, label: value } : s
-                                    ),
-                                  }))
-                                }
-                              >
-                                <SelectTrigger className="font-poppins h-[46px] w-36 rounded-sm border border-gray-300 px-2 text-sm focus:ring-2 focus:ring-blue-500 focus:outline-none">
-                                  <SelectValue placeholder="Type" />
-                                </SelectTrigger>
-                                <SelectContent>
-                                  {SOCIAL_LINK_TYPES.map((type) => (
-                                    <SelectItem key={type} value={type}>
-                                      {type}
-                                    </SelectItem>
+                              <>
+                                <input
+                                  type="text"
+                                  list={`social-suggestions-${link.id}`}
+                                  placeholder="e.g. GitHub"
+                                  value={link.label}
+                                  onChange={(e) =>
+                                    setPersonalInfo((prev) => ({
+                                      ...prev,
+                                      socialLinks: prev.socialLinks.map((s) =>
+                                        s.id === link.id ? { ...s, label: e.target.value } : s
+                                      ),
+                                    }))
+                                  }
+                                  className="font-poppins h-[46px] w-36 rounded-sm border border-gray-300 px-3 text-sm focus:ring-2 focus:ring-blue-500 focus:outline-none"
+                                />
+                                <datalist id={`social-suggestions-${link.id}`}>
+                                  {SOCIAL_LINK_SUGGESTIONS.map((type) => (
+                                    <option key={type} value={type} />
                                   ))}
-                                </SelectContent>
-                              </Select>
+                                </datalist>
+                              </>
                               <input
                                 type="url"
                                 placeholder="https://..."
