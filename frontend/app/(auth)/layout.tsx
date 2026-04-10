@@ -32,11 +32,10 @@ const Layout = ({ children }: { children: React.ReactNode }) => {
           <div className="mb-16 lg:hidden">
             <Image
               src={logo}
-              neutral-300
               alt="vocare"
               width={256}
               height={256}
-              className="invert dark:invert-0"
+              className="neutral-300 invert dark:invert-0"
             />
           </div>
           {children}
