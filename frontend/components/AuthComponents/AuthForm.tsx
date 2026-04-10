@@ -31,6 +31,7 @@ import { google, linkedin } from '@/app/constants';
 import { WindowWithGoogle, GoogleTokenResponse, GoogleTokenClient } from '@/lib/types/google-oauth';
 import { Checkbox } from '../ui/checkbox';
 import { beginLinkedInOAuth } from '@/lib/linkedin-oauth';
+import env from '@/lib/env/client';
 
 type FormType = 'sign-in' | 'sign-up';
 type FormDataMap = {
@@ -151,7 +152,7 @@ const AuthForm = ({ type }: AuthFormProps) => {
     }
 
     const client: GoogleTokenClient = windowWithGoogle.google.accounts.oauth2.initTokenClient({
-      client_id: process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID!,
+      client_id: env.NEXT_PUBLIC_GOOGLE_CLIENT_ID ?? '',
       scope: 'openid profile email',
       callback: async (tokenResponse: GoogleTokenResponse) => {
         if (tokenResponse.error) {

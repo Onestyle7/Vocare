@@ -1,7 +1,8 @@
 import { api } from './api';
 import { clearStoredToken, redirectToSignIn } from './auth-redirect';
+import env from '@/lib/env/client';
 
-const API_URL = process.env.NEXT_PUBLIC_API_URL;
+const API_URL = env.NEXT_PUBLIC_API_URL;
 const AUTH_PREFIX = `${API_URL}/api/Auth`;
 
 interface RegisterInput {

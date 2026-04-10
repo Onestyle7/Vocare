@@ -1,3 +1,5 @@
+import env from '@/lib/env/client';
+
 const LINKEDIN_AUTHORIZE_URL = 'https://www.linkedin.com/oauth/v2/authorization';
 const LINKEDIN_OAUTH_SCOPE = 'openid profile email';
 const LINKEDIN_OAUTH_STATE_KEY = 'linkedin_oauth_state';
@@ -48,7 +50,7 @@ export const clearLinkedInOAuthState = () => {
 };
 
 export const beginLinkedInOAuth = () => {
-  const clientId = process.env.NEXT_PUBLIC_LINKEDIN_CLIENT_ID;
+  const clientId = env.NEXT_PUBLIC_LINKEDIN_CLIENT_ID;
 
   if (!clientId) {
     throw new Error('LinkedIn OAuth is not configured');
