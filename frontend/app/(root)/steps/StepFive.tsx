@@ -49,18 +49,18 @@ export default function StepFive({
 
   return (
     <div className="font-poppins space-y-6">
-      <h2 className="mb-6 text-2xl font-bold">Financial Survey</h2>
+      <h2 className="mb-6 text-2xl font-bold">Finanse</h2>
 
       <FormField
         control={form.control}
         name="financialSurvey.currentSalary"
         render={({ field }) => (
           <FormItem>
-            <FormLabel>Current salary</FormLabel>
+            <FormLabel>Obecne wynagrodzenie</FormLabel>
             <FormControl>
               <Input
                 type="number"
-                placeholder="e.g. 3500"
+                placeholder="np. 3500"
                 value={field.value ?? ''}
                 onChange={field.onChange}
                 className="rounded-lg border"
@@ -76,11 +76,11 @@ export default function StepFive({
         name="financialSurvey.desiredSalary"
         render={({ field }) => (
           <FormItem>
-            <FormLabel>Desired salary</FormLabel>
+            <FormLabel>Oczekiwane wynagrodzenie</FormLabel>
             <FormControl>
               <Input
                 type="number"
-                placeholder="e.g. 5000"
+                placeholder="np. 5000"
                 value={field.value ?? ''}
                 onChange={field.onChange}
                 className="rounded-lg border"
@@ -96,7 +96,7 @@ export default function StepFive({
         name="financialSurvey.hasLoans"
         render={({ field }) => (
           <FormItem>
-            <FormLabel>Do you have any loans?</FormLabel>
+            <FormLabel>Czy masz kredyt?</FormLabel>
             <FormControl>
               <div className="flex space-x-2">
                 <Button
@@ -108,7 +108,7 @@ export default function StepFive({
                       : 'border bg-gray-200 text-gray-700 hover:bg-gray-300 dark:bg-[#262626] dark:text-gray-300 dark:hover:bg-gray-400/30'
                   }`}
                 >
-                  Yes
+                  Tak
                 </Button>
                 <Button
                   type="button"
@@ -119,7 +119,7 @@ export default function StepFive({
                       : 'border bg-gray-200 text-gray-700 hover:bg-gray-300 dark:bg-[#262626] dark:text-gray-300 dark:hover:bg-gray-400/30'
                   }`}
                 >
-                  No
+                  Nie
                 </Button>
               </div>
             </FormControl>
@@ -134,10 +134,10 @@ export default function StepFive({
           name="financialSurvey.loanDetails"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Loan details</FormLabel>
+              <FormLabel>Szczegóły kredytu</FormLabel>
               <FormControl>
                 <Textarea
-                  placeholder="Describe your loans..."
+                  placeholder="Opisz szczegóły kredytu..."
                   className="min-h-[120px]"
                   {...field}
                 />
@@ -153,7 +153,7 @@ export default function StepFive({
         name="financialSurvey.willingToRelocate"
         render={({ field }) => (
           <FormItem>
-            <FormLabel>Willing to relocate?</FormLabel>
+            <FormLabel>Czy chcesz się przeprowadzić?</FormLabel>
             <FormControl>
               <div className="flex space-x-2">
                 <Button
@@ -165,7 +165,7 @@ export default function StepFive({
                       : 'border bg-gray-200 text-gray-700 hover:bg-gray-300 dark:bg-[#262626] dark:text-gray-300 dark:hover:bg-gray-400/30'
                   }`}
                 >
-                  Yes
+                  Tak
                 </Button>
                 <Button
                   type="button"
@@ -176,7 +176,7 @@ export default function StepFive({
                       : 'border bg-gray-200 text-gray-700 dark:bg-[#262626] dark:text-gray-300 dark:hover:bg-gray-400/30'
                   }`}
                 >
-                  No
+                  Nie
                 </Button>
               </div>
             </FormControl>
@@ -190,7 +190,7 @@ export default function StepFive({
         name="willingToRebrand"
         render={({ field }) => (
           <FormItem>
-            <FormLabel>Willing to rebrand?</FormLabel>
+            <FormLabel>Czy chcesz się przebranżowić?</FormLabel>
             <FormControl>
               <div className="flex space-x-2">
                 <Button
@@ -202,7 +202,7 @@ export default function StepFive({
                       : 'border bg-gray-200 text-gray-700 hover:bg-gray-300 dark:bg-[#262626] dark:text-gray-300 dark:hover:bg-gray-400/30'
                   }`}
                 >
-                  Yes
+                  Tak
                 </Button>
                 <Button
                   type="button"
@@ -213,7 +213,7 @@ export default function StepFive({
                       : 'border bg-gray-200 text-gray-700 dark:bg-[#262626] dark:text-gray-300 dark:hover:bg-gray-400/30'
                   }`}
                 >
-                  No
+                  Nie
                 </Button>
               </div>
             </FormControl>
@@ -227,14 +227,14 @@ export default function StepFive({
         name="financialSurvey.riskAppetite"
         render={({ field }) => (
           <FormItem>
-            <FormLabel>Risk appetite</FormLabel>
+            <FormLabel>Skłonność do ryzyka</FormLabel>
             <Select
               onValueChange={(value) => field.onChange(Number(value))}
               value={field.value != null ? field.value.toString() : ''}
             >
               <FormControl>
                 <SelectTrigger>
-                  <SelectValue placeholder="Select risk level" />
+                  <SelectValue placeholder="Wybierz poziom ryzyka" />
                 </SelectTrigger>
               </FormControl>
               <SelectContent>
@@ -259,7 +259,7 @@ export default function StepFive({
           >
             <span className="flex flex-row items-center justify-center">
               <ArrowLeft className="mr-2 transition-transform duration-300 group-hover:-translate-x-2" />
-              Back
+              Powrót
             </span>
           </Button>
           <Button
@@ -269,7 +269,7 @@ export default function StepFive({
             className="font-poppins group h-[46px] w-[45%] rounded-lg bg-[#915EFF] text-lg text-white shadow-[0_2px_4px_rgba(145,94,255,0.5)] hover:bg-[#713ae8]"
           >
             <span className="flex flex-row items-center justify-center">
-              Save
+              Zapisz
               <ArrowRight className="ml-2 transition-transform duration-300 group-hover:translate-x-2" />
             </span>
           </Button>
@@ -286,27 +286,26 @@ export default function StepFive({
                 className="font-poppins group h-[46px] w-[95%] rounded-lg border border-black bg-transparent text-lg text-black hover:bg-transparent sm:w-[93%] dark:border-[0.5px] dark:border-white dark:text-white"
               >
                 <span className="flex flex-row items-center justify-center">
-                  Delete Profile
+                  Usuń profil
                   <ArrowRight className="ml-2 transition-transform duration-300 group-hover:translate-x-2" />
                 </span>
               </Button>
             </AlertDialogTrigger>
             <AlertDialogContent className="font-poppins">
               <AlertDialogHeader>
-                <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
+                <AlertDialogTitle>Czy na pewno chcesz usunąć konto?</AlertDialogTitle>
                 <AlertDialogDescription>
-                  This action cannot be undone. This will permanently delete your profile and all
-                  related data.
+                  Tej akcji nie można cofnąć. Twoj profil i dane zostąną prenamentnie usunięte.
                 </AlertDialogDescription>
               </AlertDialogHeader>
               <AlertDialogFooter>
-                <AlertDialogCancel>Cancel</AlertDialogCancel>
+                <AlertDialogCancel>Anuluj</AlertDialogCancel>
                 <AlertDialogAction
                   onClick={handleDelete}
                   disabled={isLoading}
                   className="bg-destructive hover:bg-destructive/80 text-white"
                 >
-                  Yes, delete it
+                  Tak, usuń konto
                 </AlertDialogAction>
               </AlertDialogFooter>
             </AlertDialogContent>

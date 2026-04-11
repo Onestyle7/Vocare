@@ -19,6 +19,14 @@ import {
 import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 
+const getRangeEndLabel = (endDate?: string, current?: boolean) => {
+  if (current || !endDate) {
+    return 'Obecnie';
+  }
+
+  return endDate;
+};
+
 // Typy dla poszczególnych popoverów
 
 type Language = {
@@ -115,41 +123,41 @@ const LanguagePopover = ({ value = [], onChange }: LanguagePopoverProps) => {
       <Popover>
         <PopoverTrigger asChild>
           <Button variant="outline" className="flex items-center gap-2">
-            <Plus size={16} /> Add Language
+            <Plus size={16} /> Dodaj język
           </Button>
         </PopoverTrigger>
-        <PopoverContent className="font-poppins w-96 translate-x-[8.5%] p-4">
+        <PopoverContent className="font-poppins w-84 translate-x-[8.5%] p-4 xl:w-96">
           <div className="space-y-4">
-            <h4 className="font-medium">Add Language</h4>
+            <h4 className="font-medium">Dodaj język</h4>
 
             <div className="space-y-2">
-              <FormLabel>Language</FormLabel>
+              <FormLabel>Język</FormLabel>
               <Input
                 value={language}
                 onChange={(e) => setLanguage(e.target.value)}
-                placeholder="e.g. English"
+                placeholder="np. Angielski"
                 className="input-profile"
               />
             </div>
 
             <div className="space-y-2">
-              <FormLabel>Level</FormLabel>
+              <FormLabel>Poziom</FormLabel>
               <Select value={level} onValueChange={setLevel}>
                 <SelectTrigger>
-                  <SelectValue placeholder="Select level" />
+                  <SelectValue placeholder="Wybierz poziom" />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="Native">Native</SelectItem>
-                  <SelectItem value="Fluent">Fluent</SelectItem>
-                  <SelectItem value="Advanced">Advanced</SelectItem>
-                  <SelectItem value="Intermediate">Intermediate</SelectItem>
-                  <SelectItem value="Basic">Basic</SelectItem>
+                  <SelectItem value="Native">Ojczysty</SelectItem>
+                  <SelectItem value="Fluent">Biegły</SelectItem>
+                  <SelectItem value="Advanced">Zaawansowany</SelectItem>
+                  <SelectItem value="Intermediate">Średniozaawansowany</SelectItem>
+                  <SelectItem value="Basic">Podstawowy</SelectItem>
                 </SelectContent>
               </Select>
             </div>
 
             <Button onClick={handleAddLanguage} className="profile-button">
-              Add
+              Dodaj
             </Button>
           </div>
         </PopoverContent>
@@ -200,7 +208,7 @@ const WorkExperiencePopover = ({ value = [], onChange }: WorkExperiencePopoverPr
                   <h4 className="font-medium">{item.position}</h4>
                   <p className="text-sm text-gray-500">{item.company}</p>
                   <p className="text-xs">
-                    {item.startDate} - {item.current ? 'Present' : item.endDate}
+                    {item.startDate} - {getRangeEndLabel(item.endDate, item.current)}
                   </p>
                 </div>
                 <Button variant="ghost" size="sm" onClick={() => handleRemove(index)}>
@@ -215,52 +223,52 @@ const WorkExperiencePopover = ({ value = [], onChange }: WorkExperiencePopoverPr
       <Popover>
         <PopoverTrigger asChild>
           <Button variant="outline" className="flex items-center gap-2">
-            <Plus size={16} /> Add Work Experience
+            <Plus size={16} /> Dodaj doświadczenie zawodowe
           </Button>
         </PopoverTrigger>
-        <PopoverContent className="font-poppins w-96 translate-x-[8.5%] p-4">
+        <PopoverContent className="font-poppins w-84 translate-x-[8.5%] p-4 xl:w-96">
           <div className="space-y-4">
-            <h4 className="font-medium">Add Work Experience</h4>
+            <h4 className="font-medium">Dodaj doświadczenie zawodowe</h4>
 
             <div className="space-y-2">
-              <FormLabel>Company</FormLabel>
+              <FormLabel>Firma</FormLabel>
               <Input
                 value={workExp.company}
                 onChange={(e) => setWorkExp({ ...workExp, company: e.target.value })}
-                placeholder="Company name"
+                placeholder="Nazwa firmy"
                 className="input-profile"
               />
             </div>
 
             <div className="space-y-2">
-              <FormLabel>Position</FormLabel>
+              <FormLabel>Stanowisko</FormLabel>
               <Input
                 value={workExp.position}
                 onChange={(e) => setWorkExp({ ...workExp, position: e.target.value })}
-                placeholder="Your job title"
+                placeholder="Nazwa stanowiska"
                 className="input-profile"
               />
             </div>
 
             <div className="grid grid-cols-2 gap-2">
               <div className="space-y-2">
-                <FormLabel>Start Date</FormLabel>
+                <FormLabel>Data rozpoczęcia</FormLabel>
                 <Input
                   type="date"
                   value={workExp.startDate}
                   onChange={(e) => setWorkExp({ ...workExp, startDate: e.target.value })}
-                  className="input-profile"
+                  className="input-profile w-32.5!"
                 />
               </div>
 
               <div className="space-y-2">
-                <FormLabel>End Date</FormLabel>
+                <FormLabel>Data zakończenia</FormLabel>
                 <Input
                   type="date"
                   value={workExp.endDate}
                   onChange={(e) => setWorkExp({ ...workExp, endDate: e.target.value })}
                   disabled={workExp.current}
-                  className="input-profile"
+                  className="input-profile w-32.5!"
                 />
               </div>
             </div>
@@ -272,21 +280,21 @@ const WorkExperiencePopover = ({ value = [], onChange }: WorkExperiencePopoverPr
                 checked={workExp.current}
                 onChange={(e) => setWorkExp({ ...workExp, current: e.target.checked })}
               />
-              <label htmlFor="currentJob">I currently work here</label>
+              <label htmlFor="currentJob">Obecnie tu pracuję</label>
             </div>
 
             <div className="space-y-2">
-              <FormLabel>Description</FormLabel>
+              <FormLabel>Opis</FormLabel>
               <textarea
                 className="min-h-[100px] w-full rounded-md border p-2"
                 value={workExp.description}
                 onChange={(e) => setWorkExp({ ...workExp, description: e.target.value })}
-                placeholder="Describe your role and responsibilities"
+                placeholder="Opisz swoje stanowisko i obowiązki"
               />
             </div>
 
             <Button onClick={handleAddWorkExperience} className="profile-button">
-              Add
+              Dodaj
             </Button>
           </div>
         </PopoverContent>
@@ -339,7 +347,7 @@ const EducationPopover = ({ value = [], onChange }: EducationPopoverProps) => {
                   </h4>
                   <p className="text-sm text-gray-500">{item.institution}</p>
                   <p className="text-xs">
-                    {item.startDate} - {item.current ? 'Present' : item.endDate}
+                    {item.startDate} - {getRangeEndLabel(item.endDate, item.current)}
                   </p>
                 </div>
                 <Button variant="ghost" size="sm" onClick={() => handleRemove(index)}>
@@ -354,72 +362,72 @@ const EducationPopover = ({ value = [], onChange }: EducationPopoverProps) => {
       <Popover>
         <PopoverTrigger asChild>
           <Button variant="outline" className="flex items-center gap-2">
-            <Plus size={16} /> Add Education
+            <Plus size={16} /> Dodaj edukację
           </Button>
         </PopoverTrigger>
-        <PopoverContent className="font-poppins w-96 translate-x-[8.5%] p-4">
+        <PopoverContent className="font-poppins w-84 translate-x-[8.5%] p-4 xl:w-96">
           <div className="space-y-4">
-            <h4 className="font-medium">Add Education</h4>
+            <h4 className="font-medium">Dodaj edukację</h4>
 
             <div className="space-y-2">
-              <FormLabel>Institution</FormLabel>
+              <FormLabel>Instytut</FormLabel>
               <Input
                 value={education.institution}
                 onChange={(e) => setEducation({ ...education, institution: e.target.value })}
-                placeholder="School or university name"
+                placeholder="Nazwa szkoły lub uczelni"
                 className="input-profile"
               />
             </div>
 
             <div className="space-y-2">
-              <FormLabel>Degree</FormLabel>
+              <FormLabel>Wykształcenie</FormLabel>
               <Select
                 value={education.degree}
                 onValueChange={(value) => setEducation({ ...education, degree: value })}
               >
                 <SelectTrigger>
-                  <SelectValue placeholder="Select degree" />
+                  <SelectValue placeholder="Wykształcenie" />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="Bachelor">Bachelor</SelectItem>
-                  <SelectItem value="Master">Master</SelectItem>
-                  <SelectItem value="PhD">PhD</SelectItem>
-                  <SelectItem value="Associate">Associate</SelectItem>
-                  <SelectItem value="High School">High School</SelectItem>
-                  <SelectItem value="Other">Other</SelectItem>
+                  <SelectItem value="Bachelor">Inżynier/Licencjat</SelectItem>
+                  <SelectItem value="Master">Magister</SelectItem>
+                  <SelectItem value="PhD">Doktor</SelectItem>
+                  <SelectItem value="Associate">Podyplomowe</SelectItem>
+                  <SelectItem value="High School">Średnie</SelectItem>
+                  <SelectItem value="Other">Podstawowe</SelectItem>
                 </SelectContent>
               </Select>
             </div>
 
             <div className="space-y-2">
-              <FormLabel>Field of Study</FormLabel>
+              <FormLabel>Kierunek</FormLabel>
               <Input
                 value={education.field}
                 onChange={(e) => setEducation({ ...education, field: e.target.value })}
-                placeholder="e.g. Computer Science"
+                placeholder="np. Informatyka Stosowana"
                 className="input-profile"
               />
             </div>
 
             <div className="grid grid-cols-2 gap-2">
               <div className="space-y-2">
-                <FormLabel>Start Date</FormLabel>
+                <FormLabel>Data rozpoczęcia</FormLabel>
                 <Input
                   type="date"
                   value={education.startDate}
                   onChange={(e) => setEducation({ ...education, startDate: e.target.value })}
-                  className="input-profile"
+                  className="input-profile w-32.5!"
                 />
               </div>
 
               <div className="space-y-2">
-                <FormLabel>End Date</FormLabel>
+                <FormLabel>Data zakończenia</FormLabel>
                 <Input
                   type="date"
                   value={education.endDate}
                   onChange={(e) => setEducation({ ...education, endDate: e.target.value })}
                   disabled={education.current}
-                  className="input-profile"
+                  className="input-profile w-32.5!"
                 />
               </div>
             </div>
@@ -431,11 +439,11 @@ const EducationPopover = ({ value = [], onChange }: EducationPopoverProps) => {
                 checked={education.current}
                 onChange={(e) => setEducation({ ...education, current: e.target.checked })}
               />
-              <label htmlFor="currentEducation">I&apos;m currently studying here</label>
+              <label htmlFor="currentEducation">Obecnie tu studiuję</label>
             </div>
 
             <Button onClick={handleAddEducation} className="profile-button">
-              Add
+              Dodaj
             </Button>
           </div>
         </PopoverContent>
@@ -504,52 +512,52 @@ const CertificatePopover = ({ value = [], onChange }: CertificatePopoverProps) =
       <Popover>
         <PopoverTrigger asChild>
           <Button variant="outline" className="flex items-center gap-2">
-            <Plus size={16} /> Add Certificate
+            <Plus size={16} /> Dodaj certyfikat
           </Button>
         </PopoverTrigger>
-        <PopoverContent className="font-poppins w-96 translate-x-[8.5%] p-4">
+        <PopoverContent className="font-poppins w-84 translate-x-[8.5%] p-4 xl:w-96">
           <div className="space-y-4">
-            <h4 className="font-medium">Add Certificate</h4>
+            <h4 className="font-medium">Dodaj certyfikat</h4>
 
             <div className="space-y-2">
-              <FormLabel>Certificate Name</FormLabel>
+              <FormLabel>Nazwa certyfikatu</FormLabel>
               <Input
                 value={certificate.name}
                 onChange={(e) => setCertificate({ ...certificate, name: e.target.value })}
-                placeholder="e.g. AWS Certified Solutions Architect"
+                placeholder="np. AWS Certified Solutions Architect"
                 className="input-profile"
               />
             </div>
 
             <div className="space-y-2">
-              <FormLabel>Issuing Organization</FormLabel>
+              <FormLabel>Organ wydający</FormLabel>
               <Input
                 value={certificate.issuer}
                 onChange={(e) => setCertificate({ ...certificate, issuer: e.target.value })}
-                placeholder="e.g. Amazon Web Services"
+                placeholder="np. Amazon Web Services"
                 className="input-profile"
               />
             </div>
 
             <div className="grid grid-cols-2 gap-2">
               <div className="space-y-2">
-                <FormLabel>Issue Date</FormLabel>
+                <FormLabel>Data wydania</FormLabel>
                 <Input
                   type="date"
                   value={certificate.issueDate}
                   onChange={(e) => setCertificate({ ...certificate, issueDate: e.target.value })}
-                  className="input-profile"
+                  className="input-profile w-32.5!"
                 />
               </div>
 
               <div className="space-y-2">
-                <FormLabel>Expiry Date</FormLabel>
+                <FormLabel>Data wyagśnięcia</FormLabel>
                 <Input
                   type="date"
                   value={certificate.expiryDate}
                   onChange={(e) => setCertificate({ ...certificate, expiryDate: e.target.value })}
                   disabled={certificate.noExpiry}
-                  className="input-profile"
+                  className="input-profile w-32.5!"
                 />
               </div>
             </div>
@@ -561,11 +569,11 @@ const CertificatePopover = ({ value = [], onChange }: CertificatePopoverProps) =
                 checked={certificate.noExpiry}
                 onChange={(e) => setCertificate({ ...certificate, noExpiry: e.target.checked })}
               />
-              <label htmlFor="noExpiry">No expiration date</label>
+              <label htmlFor="noExpiry">Certyfikat bez daty waności</label>
             </div>
 
             <Button onClick={handleAddCertificate} className="profile-button">
-              Add
+              Dodaj
             </Button>
           </div>
         </PopoverContent>
@@ -590,7 +598,7 @@ export default function StepThree({ form, onNext, onBack }: StepThreeProps) {
 
   return (
     <div className="font-poppins space-y-6">
-      <h2 className="mb-6 text-2xl font-bold">Experience and Skills</h2>
+      <h2 className="mb-6 text-2xl font-bold">Doświadczenie zawodowe</h2>
 
       {/* Skills */}
       <FormField
@@ -598,12 +606,12 @@ export default function StepThree({ form, onNext, onBack }: StepThreeProps) {
         name="skills"
         render={({ field }) => (
           <FormItem>
-            <FormLabel>Skills</FormLabel>
+            <FormLabel>Umiejętności</FormLabel>
             <FormControl>
               <TagInput
                 value={field.value || []}
                 onChange={field.onChange}
-                placeholder="Add a skill (e.g. JavaScript)"
+                placeholder="Dodaj umiejętność (np. JavaScript)"
               />
             </FormControl>
             <FormMessage />
@@ -617,12 +625,12 @@ export default function StepThree({ form, onNext, onBack }: StepThreeProps) {
         name="softSkills"
         render={({ field }) => (
           <FormItem>
-            <FormLabel>Soft Skills</FormLabel>
+            <FormLabel>Umiejętności miękkie</FormLabel>
             <FormControl>
               <TagInput
                 value={field.value || []}
                 onChange={field.onChange}
-                placeholder="Add a soft skill (e.g. Teamwork)"
+                placeholder="Dodaj umiejętność miękką (np. Praca zespołowa)"
               />
             </FormControl>
             <FormMessage />
@@ -636,7 +644,7 @@ export default function StepThree({ form, onNext, onBack }: StepThreeProps) {
         name="languages"
         render={({ field }) => (
           <FormItem>
-            <FormLabel>Languages</FormLabel>
+            <FormLabel>Języki</FormLabel>
             <FormControl>
               <LanguagePopover value={field.value || []} onChange={field.onChange} />
             </FormControl>
@@ -651,7 +659,7 @@ export default function StepThree({ form, onNext, onBack }: StepThreeProps) {
         name="workExperience"
         render={({ field }) => (
           <FormItem>
-            <FormLabel>Professional Experience</FormLabel>
+            <FormLabel>Doświadczenie zawodowe</FormLabel>
             <FormControl>
               <WorkExperiencePopover
                 value={(field.value || []).map((item) => ({
@@ -673,7 +681,7 @@ export default function StepThree({ form, onNext, onBack }: StepThreeProps) {
         name="education"
         render={({ field }) => (
           <FormItem>
-            <FormLabel>Education</FormLabel>
+            <FormLabel>Edukacja</FormLabel>
             <FormControl>
               <EducationPopover
                 value={(field.value || []).map((item) => ({
@@ -697,7 +705,7 @@ export default function StepThree({ form, onNext, onBack }: StepThreeProps) {
         name="certificates"
         render={({ field }) => (
           <FormItem>
-            <FormLabel>Certificates</FormLabel>
+            <FormLabel>Certyfiakty</FormLabel>
             <FormControl>
               <CertificatePopover
                 value={(field.value || []).map((c) => ({
@@ -724,7 +732,7 @@ export default function StepThree({ form, onNext, onBack }: StepThreeProps) {
         >
           <span className="flex flex-row items-center justify-center">
             <ArrowLeft className="mr-2 transition-transform duration-300 group-hover:-translate-x-2" />
-            Back
+            Powrót
           </span>
         </Button>
         <Button
@@ -733,7 +741,7 @@ export default function StepThree({ form, onNext, onBack }: StepThreeProps) {
           className="font-poppins group h-[46px] w-[45%] rounded-lg bg-[#915EFF] text-lg text-white shadow-[0_2px_4px_rgba(145,94,255,0.5)] hover:bg-[#713ae8]"
         >
           <span className="flex flex-row items-center justify-center">
-            Continue
+            Dalej
             <ArrowRight className="ml-2 transition-transform duration-300 group-hover:translate-x-2" />
           </span>
         </Button>
