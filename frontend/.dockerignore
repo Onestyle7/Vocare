@@ -1,3 +1,9 @@
-node_modules
-.next
-.env.local
+bin/
+obj/
+.git/
+.vs/
+TestResults/
+*.db
+*.dump
+**/*.user
+**/*.suo
