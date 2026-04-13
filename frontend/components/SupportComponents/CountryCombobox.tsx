@@ -36,20 +36,21 @@ export function CountryCombobox<TFieldValues extends Record<string, unknown>>({
           aria-expanded={open}
           className="w-full justify-between"
         >
-          {value ? countries.find((c) => c.value === value)?.label : 'Select country...'}
+          {value ? countries.find((c) => c.value === value)?.label : 'Wybierz kraj...'}
           <ChevronsUpDown className="ml-2 opacity-50" size={18} />
         </Button>
       </PopoverTrigger>
       <PopoverContent className="w-[300px] p-0">
         <Command>
-          <CommandInput placeholder="Search country..." className="h-9" />
+          <CommandInput placeholder="Wyszukaj kraj..." className="h-9" />
           <CommandList>
-            <CommandEmpty>No country found.</CommandEmpty>
+            <CommandEmpty>Nie znaleziono kraju.</CommandEmpty>
             <CommandGroup>
               {countries.map((country) => (
                 <CommandItem
                   key={country.value}
                   value={country.value}
+                  keywords={[country.label]}
                   onSelect={(currentValue) => {
                     form.setValue(
                       name,

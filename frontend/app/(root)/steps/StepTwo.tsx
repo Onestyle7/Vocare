@@ -24,7 +24,7 @@ export default function StepTwo({ form, onNext, onBack }: StepTwoProps) {
 
   return (
     <div className="font-poppins flex flex-col justify-center space-y-6">
-      <h2 className="mb-6 text-2xl font-bold">Contact Information</h2>
+      <h2 className="mb-6 text-2xl font-bold">Informacje kontaktowe</h2>
 
       {/* Country */}
       <FormField
@@ -32,7 +32,7 @@ export default function StepTwo({ form, onNext, onBack }: StepTwoProps) {
         name="country"
         render={() => (
           <FormItem>
-            <FormLabel>Country</FormLabel>
+            <FormLabel>Kraj</FormLabel>
             <CountryCombobox form={form} name="country" />
             <FormMessage />
           </FormItem>
@@ -45,7 +45,7 @@ export default function StepTwo({ form, onNext, onBack }: StepTwoProps) {
         name="address"
         render={({ field }) => (
           <FormItem>
-            <FormLabel>Address</FormLabel> {/* poprawiona literówka */}
+            <FormLabel>Addres</FormLabel> {/* poprawiona literówka */}
             <FormControl>
               <Input
                 placeholder="ul. Marszałkowska 1, 00-001 Warszawa"
@@ -63,7 +63,7 @@ export default function StepTwo({ form, onNext, onBack }: StepTwoProps) {
         name="phoneNumber"
         render={({ field }) => (
           <FormItem>
-            <FormLabel>Phone number</FormLabel>
+            <FormLabel>Numer telefonu</FormLabel>
             <FormControl>
               <InputOTP
                 maxLength={9}
@@ -96,7 +96,7 @@ export default function StepTwo({ form, onNext, onBack }: StepTwoProps) {
         >
           <span className="flex flex-row items-center justify-center">
             <ArrowLeft className="mr-2 transition-transform duration-300 group-hover:-translate-x-2" />
-            Back
+            Powrót
           </span>
         </Button>
         <Button
@@ -105,7 +105,7 @@ export default function StepTwo({ form, onNext, onBack }: StepTwoProps) {
           className="font-poppins group h-[46px] w-[45%] rounded-lg bg-[#915EFF] text-lg text-white shadow-[0_2px_4px_rgba(145,94,255,0.5)] hover:bg-[#713ae8]"
         >
           <span className="flex flex-row items-center justify-center">
-            Continue
+            Dalej
             <ArrowRight className="ml-2 transition-transform duration-300 group-hover:translate-x-2" />
           </span>
         </Button>

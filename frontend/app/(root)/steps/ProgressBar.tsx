@@ -8,11 +8,11 @@ interface StepProgressProps {
 
 export default function StepProgress({ currentStep, totalSteps }: StepProgressProps) {
   const steps = [
-    { number: 1, name: 'Basic info' },
-    { number: 2, name: 'Contact' },
-    { number: 3, name: 'Experience' },
-    { number: 4, name: 'Additional' },
-    { number: 5, name: 'Financial' },
+    { number: 1, name: 'Ogólne' },
+    { number: 2, name: 'Kontakt' },
+    { number: 3, name: 'Praca' },
+    { number: 4, name: 'Dodatkowe' },
+    { number: 5, name: 'Finanse' },
   ];
 
   const visibleSteps = steps.slice(0, totalSteps);
