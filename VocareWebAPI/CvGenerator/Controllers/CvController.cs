@@ -1,11 +1,8 @@
-using System;
-using System.ComponentModel.DataAnnotations;
 using System.Security.Claims;
-using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using VocareWebAPI.CvGenerator.Models.Dtos;
-using VocareWebAPI.CvGenerator.Services.Implementations;
+using VocareWebAPI.CvGenerator.Repositories.Interfaces;
 using VocareWebAPI.CvGenerator.Services.Interfaces;
 
 namespace VocareWebAPI.CvGenerator.Controllers
@@ -18,16 +15,19 @@ namespace VocareWebAPI.CvGenerator.Controllers
         private readonly ICvManagementService _cvManagementService;
         private readonly ILogger<CvController> _logger;
         private readonly ICvAnalysisService _cvAnalysisService;
+        private readonly ICvTailoringService _cvTailoringService;
 
         public CvController(
             ICvManagementService cvManagementService,
             ILogger<CvController> logger,
-            ICvAnalysisService cvAnalysisService
+            ICvAnalysisService cvAnalysisService,
+            ICvTailoringService cvTailoringService
         )
         {
             _cvManagementService = cvManagementService;
             _logger = logger;
             _cvAnalysisService = cvAnalysisService;
+            _cvTailoringService = cvTailoringService;
         }
 
         /// <summary>
@@ -339,6 +339,80 @@ namespace VocareWebAPI.CvGenerator.Controllers
             {
                 _logger.LogError(ex, "Error getting CV analysis for user {UserId}", userId);
                 return StatusCode(500, "Wystąpił błąd podczas pobierania analizy CV.");
+            }
+        }
+
+        [HttpPost("tailor")]
+        public async Task<ActionResult<CvDetailsDto>> TailorCvAsync([FromBody] TailorCvDto dto)
+        {
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier) ?? string.Empty;
+            if (string.IsNullOrEmpty(userId))
+            {
+                return BadRequest("Brak identyfikatora użytkownika w tokenie.");
+            }
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+            try
+            {
+                var cv = await _cvTailoringService.TailorCvAsync(dto, userId);
+                return Ok(cv);
+            }
+            catch (UnauthorizedAccessException)
+            {
+                return Forbid("Nie masz dostępu do tego CV.");
+            }
+            catch (InvalidOperationException ex)
+            {
+                return BadRequest(new { message = ex.Message });
+            }
+            catch (KeyNotFoundException)
+            {
+                return NotFound("CV nie zostało znalezione.");
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error generating targeted CV for user {UserId}", userId);
+                return StatusCode(500, "Wystąpił błąd podczas generowania CV.");
+            }
+        }
+
+        [HttpPost("generate-from-profile")]
+        public async Task<ActionResult<CvDetailsDto>> GenerateCvFromProfileAsync(
+            [FromBody] GenerateCvFromProfileDto dto
+        )
+        {
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier) ?? string.Empty;
+            if (string.IsNullOrEmpty(userId))
+            {
+                return BadRequest("Brak identyfikatora użytkownika w tokenie.");
+            }
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+            try
+            {
+                var cv = await _cvTailoringService.GenerateCvFromProfileAsync(dto, userId);
+                return Ok(cv);
+            }
+            catch (UnauthorizedAccessException)
+            {
+                return Forbid("Nie masz dostępu do tego CV.");
+            }
+            catch (InvalidOperationException ex)
+            {
+                return BadRequest(new { message = ex.Message });
+            }
+            catch (KeyNotFoundException)
+            {
+                return NotFound("CV nie zostało znalezione.");
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error generating targeted CV for user {UserId}", userId);
+                return StatusCode(500, "Wystąpił błąd podczas generowania CV.");
             }
         }
     }

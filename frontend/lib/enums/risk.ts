@@ -7,9 +7,9 @@ export enum Risk {
 }
 
 export const riskLabels: Record<Risk, string> = {
-  [Risk.Low]: 'Low',
-  [Risk.Medium]: 'Medium',
-  [Risk.High]: 'High',
-  [Risk.Critical]: 'Critical',
-  [Risk.Unknown]: 'Unknown',
+  [Risk.Low]: 'Niska',
+  [Risk.Medium]: 'Średnia',
+  [Risk.High]: 'Wysoka',
+  [Risk.Critical]: 'Bardzo wysoka',
+  [Risk.Unknown]: 'Nie wiem',
 };

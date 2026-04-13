@@ -17,7 +17,7 @@ interface StepFourProps {
 export default function StepFour({ form, onBack, onNext }: StepFourProps) {
   return (
     <div className="font-poppins space-y-6">
-      <h2 className="mb-6 text-2xl font-bold">Additional Information</h2>
+      <h2 className="mb-6 text-2xl font-bold">Dodatkowe informacje</h2>
 
       {/* About Me */}
       <FormField
@@ -25,9 +25,9 @@ export default function StepFour({ form, onBack, onNext }: StepFourProps) {
         name="aboutMe"
         render={({ field }) => (
           <FormItem>
-            <FormLabel>About me</FormLabel>
+            <FormLabel>O mnie</FormLabel>
             <FormControl>
-              <Textarea placeholder="Tell about yourself..." className="min-h-[120px]" {...field} />
+              <Textarea placeholder="Powiedz coś o sobie..." className="min-h-30" {...field} />
             </FormControl>
             <FormMessage />
           </FormItem>
@@ -40,13 +40,9 @@ export default function StepFour({ form, onBack, onNext }: StepFourProps) {
         name="additionalInformation"
         render={({ field }) => (
           <FormItem>
-            <FormLabel>Additional Information</FormLabel>
+            <FormLabel>Dodatkowe informacje</FormLabel>
             <FormControl>
-              <Textarea
-                placeholder="Additional information that you want to share..."
-                className="min-h-[120px]"
-                {...field}
-              />
+              <Textarea placeholder="Dodatkowe informacje..." className="min-h-30" {...field} />
             </FormControl>
             <FormMessage />
           </FormItem>
@@ -62,7 +58,7 @@ export default function StepFour({ form, onBack, onNext }: StepFourProps) {
           >
             <span className="flex flex-row items-center justify-center">
               <ArrowLeft className="mr-2 transition-transform duration-300 group-hover:-translate-x-2" />
-              Back
+              Powrót
             </span>
           </Button>
           <Button
@@ -71,7 +67,7 @@ export default function StepFour({ form, onBack, onNext }: StepFourProps) {
             className="font-poppins group h-[46px] w-[45%] rounded-lg bg-[#915EFF] text-lg text-white shadow-[0_2px_4px_rgba(145,94,255,0.5)] hover:bg-[#713ae8]"
           >
             <span className="flex flex-row items-center justify-center">
-              Continue
+              Dalej
               <ArrowRight className="ml-2 transition-transform duration-300 group-hover:translate-x-2" />
             </span>
           </Button>
