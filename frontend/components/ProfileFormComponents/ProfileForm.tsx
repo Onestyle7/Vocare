@@ -11,12 +11,12 @@ import {
 import { useRouter } from 'next/navigation';
 import { toast } from 'sonner';
 import { Form } from '@/components/ui/form';
-import StepOne from '@/app/(root)/steps/StepOne';
-import StepTwo from '@/app/(root)/steps/StepTwo';
-import StepThree from '@/app/(root)/steps/StepThree';
-import StepFour from '@/app/(root)/steps/StepFour';
-import StepFive from '@/app/(root)/steps/StepFive';
-import StepProgress from '@/app/(root)/steps/ProgressBar';
+import StepOne from '@/app/(marketing)/steps/StepOne';
+import StepTwo from '@/app/(marketing)/steps/StepTwo';
+import StepThree from '@/app/(marketing)/steps/StepThree';
+import StepFour from '@/app/(marketing)/steps/StepFour';
+import StepFive from '@/app/(marketing)/steps/StepFive';
+import StepProgress from '@/app/(marketing)/steps/ProgressBar';
 import { Button } from '@/components/ui/button';
 import { Popover, PopoverTrigger, PopoverContent } from '@/components/ui/popover';
 import { CreateProfileFormType } from '@/lib/schemas/profileSchema';
