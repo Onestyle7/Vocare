@@ -1,7 +1,7 @@
 'use client';
 
 import { motion, useInView } from 'framer-motion';
-import { useMemo, useRef, useState, useEffect } from 'react';
+import { useEffect,useMemo, useRef, useState } from 'react';
 
 interface AnimatedTextProps {
   lines: string[];

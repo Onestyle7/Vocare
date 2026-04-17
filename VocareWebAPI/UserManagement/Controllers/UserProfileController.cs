@@ -50,12 +50,18 @@ namespace VocareWebAPI.Controllers
             {
                 return BadRequest("Brak identyfikatora użytkownika w tokenie.");
             }
-            var profile = await _userProfileService.GetUserProfileAsync(userId);
-            if (profile == null)
+            try
             {
-                return NotFound("Profil użytkownika nie został znaleziony.");
+              var profile = await _userProfileService.GetUserProfileAsync(userId);
+              if (profile == null)
+              {
+                  return NotFound("Profil użytkownika nie został znaleziony.");
+              }
+              return Ok(profile);
+            } catch (KeyNotFoundException)
+            {
+              return NotFound("Profil użytkownika nie został znaleziony");
             }
-            return Ok(profile);
         }
 
         /// <summary>

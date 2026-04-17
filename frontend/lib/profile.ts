@@ -1,4 +1,5 @@
 import { UserProfile } from '@/lib/types/profile';
+
 import { api } from './api';
 
 const PREFIX = '/api/UserProfile';
