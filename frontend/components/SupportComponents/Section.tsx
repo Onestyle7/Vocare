@@ -1,5 +1,6 @@
-import SectionSvg from '@/public/svg/SectionSvg';
 import { ReactNode } from 'react';
+
+import SectionSvg from '@/public/svg/SectionSvg';
 
 interface SectionProps {
   className?: string;
