@@ -11,7 +11,10 @@ import { getPaymentHistoryService, getSubscriptionTokenStatusService } from './s
 export async function getTokenSubscriptionStatus() {
   const userId = getUserFromCookie(await cookies());
   if (!userId) {
-    return actionErr({ type: 'Unauthorized', message: 'Sesja wygasła. Zaloguj się ponownie' } as const);
+    return actionErr({
+      type: 'Unauthorized',
+      message: 'Sesja wygasła. Zaloguj się ponownie',
+    } as const);
   }
 
   const result = await getSubscriptionTokenStatusService({
@@ -41,7 +44,10 @@ export async function getTokenSubscriptionStatus() {
 export async function getPaymentHistoryQuery(limit: number = 50) {
   const userId = getUserFromCookie(await cookies());
   if (!userId) {
-    return actionErr({ type: 'Unauthorized', message: 'Sesja wygasła. Zaloguj się ponownie' } as const);
+    return actionErr({
+      type: 'Unauthorized',
+      message: 'Sesja wygasła. Zaloguj się ponownie',
+    } as const);
   }
 
   // Ustawiamy odświeżanie tagu przy płatnościach, żeby historia się przeładowywała
