@@ -271,8 +271,8 @@ namespace VocareWebAPI.Data
                     new ServiceCost
                     {
                         Id = 2,
-                        ServiceName = "GenerateCV",
-                        TokenCost = 5,
+                        ServiceName = "GenerateCvFromProfile",
+                        TokenCost = 20,
                     },
                     new ServiceCost
                     {
@@ -283,8 +283,14 @@ namespace VocareWebAPI.Data
                     new ServiceCost
                     {
                         Id = 4,
-                        ServiceName = "GenerateCv",
-                        TokenCost = 1,
+                        ServiceName = "TailorCv",
+                        TokenCost = 20,
+                    },
+                    new ServiceCost
+                    {
+                        Id = 5,
+                        ServiceName = "AnalyzeCv",
+                        TokenCost = 10,
                     }
                 );
             builder.Entity<MarketNewsEntity>(entity =>
