@@ -1,6 +1,8 @@
 using System.Security.Claims;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.ModelBinding.Binders;
+using VocareWebAPI.Billing.Services.Interfaces;
 using VocareWebAPI.CvGenerator.Models.Dtos;
 using VocareWebAPI.CvGenerator.Repositories.Interfaces;
 using VocareWebAPI.CvGenerator.Services.Interfaces;
@@ -16,18 +18,21 @@ namespace VocareWebAPI.CvGenerator.Controllers
         private readonly ILogger<CvController> _logger;
         private readonly ICvAnalysisService _cvAnalysisService;
         private readonly ICvTailoringService _cvTailoringService;
+        private readonly IBillingService _billingService;
 
         public CvController(
             ICvManagementService cvManagementService,
             ILogger<CvController> logger,
             ICvAnalysisService cvAnalysisService,
-            ICvTailoringService cvTailoringService
+            ICvTailoringService cvTailoringService,
+            IBillingService billingService
         )
         {
             _cvManagementService = cvManagementService;
             _logger = logger;
             _cvAnalysisService = cvAnalysisService;
             _cvTailoringService = cvTailoringService;
+            _billingService = billingService;
         }
 
         /// <summary>
@@ -293,9 +298,16 @@ namespace VocareWebAPI.CvGenerator.Controllers
             {
                 return BadRequest("Brak identyfikatora użytkownika w tokenie.");
             }
+            var hasAccess = await _billingService.CanAccessServiceAsync(userId, "AnalyzeCv");
+            if (!hasAccess)
+            {
+                return Forbid("Zbyt mało tokenów lub nieaktywna subskrypcja");
+            }
+
             try
             {
                 var analysis = await _cvAnalysisService.AnalyzeCvAsync(cvId, userId);
+                await _billingService.DeductTokensForServiceAsync(userId, "AnalyzeCv");
                 return Ok(analysis);
             }
             catch (UnauthorizedAccessException)
@@ -325,6 +337,7 @@ namespace VocareWebAPI.CvGenerator.Controllers
             try
             {
                 var analysis = await _cvAnalysisService.GetAnalysisAsync(cvId, userId);
+
                 return Ok(analysis);
             }
             catch (UnauthorizedAccessException)
@@ -354,9 +367,18 @@ namespace VocareWebAPI.CvGenerator.Controllers
             {
                 return BadRequest(ModelState);
             }
+
+            var hasAccess = await _billingService.CanAccessServiceAsync(userId, "TailorCv");
+
+            if (!hasAccess)
+            {
+                return Forbid("Zbyt mało tokenów lub nieaktywna subskrypcja");
+            }
+
             try
             {
                 var cv = await _cvTailoringService.TailorCvAsync(dto, userId);
+                await _billingService.DeductTokensForServiceAsync(userId, "TailorCv");
                 return Ok(cv);
             }
             catch (UnauthorizedAccessException)
@@ -392,9 +414,21 @@ namespace VocareWebAPI.CvGenerator.Controllers
             {
                 return BadRequest(ModelState);
             }
+
+            var hasAccess = await _billingService.CanAccessServiceAsync(
+                userId,
+                "GenerateCvFromProfile"
+            );
+
+            if (!hasAccess)
+            {
+                return Forbid("Zbyt mało tokenów lub nieaktywna subskrypcja");
+            }
+
             try
             {
                 var cv = await _cvTailoringService.GenerateCvFromProfileAsync(dto, userId);
+                await _billingService.DeductTokensForServiceAsync(userId, "GenerateCvFromProfile");
                 return Ok(cv);
             }
             catch (UnauthorizedAccessException)
