@@ -14,7 +14,7 @@ interface ApiResponse<T> {
   headers: Headers;
 }
 
-class ApiError extends Error {
+export class ApiError extends Error {
   constructor(
     message: string,
     public status: number,
@@ -25,7 +25,7 @@ class ApiError extends Error {
   }
 }
 
-class ApiClient {
+export class ApiClient {
   private config: Required<ApiConfig>;
 
   constructor(config: ApiConfig = {}) {
