@@ -22,3 +22,21 @@ export type SignInResult = {
   userId: string;
   email: string;
 };
+
+export type SignInCommand = {
+  email: string;
+  password: string;
+};
+
+export type RegisterResult = {
+  success: boolean;
+  userId: string;
+  errorMessage: string;
+};
+
+export type RegisterCommand = {
+  email: string;
+  password: string;
+  confirmPassword: string;
+  marketingConsent: boolean;
+};

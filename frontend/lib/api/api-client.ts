@@ -79,20 +79,14 @@ export class ApiClient {
     const requestOptions = await this.buildRequestOptions(options);
 
     try {
+      console.log('REQUEST_LOGGER', requestOptions);
       const response = await fetch(url, {
         ...requestOptions,
       });
+      console.log('RESPONSE_LOGGER', response);
 
       if (!response.ok) {
-        let errorDetails = undefined;
-        try {
-          errorDetails = await response.json();
-        } catch {}
-        throw new ApiError(
-          `HTTP ${response.status}: ${response.statusText}`,
-          response.status,
-          errorDetails
-        );
+        this.handleFailedResponse(response);
       }
 
       const data = await this.parseResponse<T>(response);
@@ -145,6 +139,16 @@ export class ApiClient {
         ...options.headers,
       },
     };
+  }
+
+  private async handleFailedResponse(response: Response) {
+    const parsedDetails = await response.json();
+    console.log('API ERROR', parsedDetails);
+    throw new ApiError(
+      `HTTP ${response.status}: ${response.statusText}`,
+      response.status,
+      parsedDetails
+    );
   }
 }
 

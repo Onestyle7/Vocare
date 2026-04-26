@@ -1,3 +1,4 @@
+import { logOut } from '@/app/(auth)/actions';
 import { api } from './api';
 import { clearStoredToken, redirectToSignIn } from './auth-redirect';
 
@@ -69,14 +70,7 @@ export const loginUser = async ({ email, password }: LoginInput) => {
 };
 
 export const logoutUser = async () => {
-  try {
-    await api.post(`${AUTH_PREFIX}/logout`);
-  } catch {
-    // Ignore any errors
-  } finally {
-    clearStoredToken();
-    redirectToSignIn();
-  }
+  await logOut();
 };
 
 export const googleVerify = async (accessToken: string) => {

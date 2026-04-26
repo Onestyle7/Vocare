@@ -29,5 +29,5 @@ export async function GET(
     redirect(`/sign-in?oauthError=${encodeURIComponent('Failed to connect. Please try again.')}`);
   }
 
-  redirect('/');
+  redirect('/dashboard');
 }
