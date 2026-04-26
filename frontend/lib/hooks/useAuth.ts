@@ -10,5 +10,6 @@ export const useAuth = () => {
     setIsAuthenticated(!!token);
   }, []);
 
-  return { isAuthenticated };
+  // TODO: temporary
+  return { isAuthenticated: true };
 };

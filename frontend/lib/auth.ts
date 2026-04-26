@@ -35,11 +35,11 @@ interface ValidateTokenInput {
 api.interceptors.response.use(
   (response) => response,
   (error) => {
-    const isLoginRoute = error.config?.url?.includes(`${AUTH_PREFIX}/login`);
-    if (error.response?.status === 401 && !isLoginRoute) {
-      clearStoredToken();
-      redirectToSignIn();
-    }
+    // const isLoginRoute = error.config?.url?.includes(`${AUTH_PREFIX}/login`);
+    // if (error.response?.status === 401 && !isLoginRoute) {
+    //   clearStoredToken();
+    //   redirectToSignIn();
+    // }
     return Promise.reject(error);
   }
 );

@@ -65,11 +65,11 @@ export default function ProfileDetails() {
   };
 
   useEffect(() => {
-    const token = localStorage.getItem('token');
-    if (!token) {
-      router.replace('/sign-in');
-      return;
-    }
+    // const token = localStorage.getItem('token');
+    // if (!token) {
+    //   router.replace('/sign-in');
+    //   return;
+    // }
 
     const fetchProfile = async () => {
       setLoading(true);

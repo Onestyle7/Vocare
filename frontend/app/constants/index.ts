@@ -206,11 +206,11 @@ export type NavLink = {
 
 export const NavLinks: NavLink[] = [
   { label: 'Blog', url: '/blog' },
-  { label: 'Profil', url: '/profile' },
-  { label: 'Doradca', url: '/assistant' },
-  { label: 'Analiza', url: '/market-analysis' },
-  { label: 'Roadmap', url: '/dashboard', highlighted: true, badge: 'nowość' },
-  { label: 'Kreator', url: '/resume', highlighted: true, badge: 'stwórz cv' },
+  { label: 'Profil', url: '/dashboard/profile' },
+  { label: 'Doradca', url: '/dashboard/assistant' },
+  { label: 'Analiza', url: '/dashboard/market-analysis' },
+  { label: 'Roadmap', url: '/dashboard/roadmap', highlighted: true, badge: 'nowość' },
+  { label: 'Kreator', url: '/dashboard/resume', highlighted: true, badge: 'stwórz cv' },
   { label: 'Pricing', url: '/pricing' },
 ];
 

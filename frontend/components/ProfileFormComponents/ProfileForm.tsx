@@ -152,11 +152,11 @@ export default function ProfileForm({
   useEffect(() => {
     const loadProfile = async () => {
       setLoading(true);
-      const token = localStorage.getItem('token');
-      if (!token) {
-        router.replace('/sign-in');
-        return;
-      }
+      // const token = localStorage.getItem('token');
+      // if (!token) {
+      //   router.replace('/sign-in');
+      //   return;
+      // }
       if (initialData) {
         setEditMode(true);
         form.reset(formatProfileDates(initialData));
@@ -183,12 +183,12 @@ export default function ProfileForm({
 
   const onSubmit = async (data: CreateProfileFormType) => {
     setLoading(true);
-    const token = localStorage.getItem('token');
-    if (!token) {
-      toast.error('Authentication required', { description: 'Please sign in to continue.' });
-      router.replace('/sign-in');
-      return;
-    }
+    // const token = localStorage.getItem('token');
+    // if (!token) {
+    //   toast.error('Authentication required', { description: 'Please sign in to continue.' });
+    //   router.replace('/sign-in');
+    //   return;
+    // }
     const formattedData = formatProfileDates(data);
     console.log('Certificates:', formattedData.certificates);
     try {
@@ -217,12 +217,12 @@ export default function ProfileForm({
 
   const handleDelete = async () => {
     if (!confirm('Are you sure you want to delete your profile?')) return;
-    const token = localStorage.getItem('token');
-    if (!token) {
-      toast.error('Authentication required', { description: 'Please sign in to continue.' });
-      router.replace('/sign-in');
-      return;
-    }
+    // const token = localStorage.getItem('token');
+    // if (!token) {
+    //   toast.error('Authentication required', { description: 'Please sign in to continue.' });
+    //   router.replace('/sign-in');
+    //   return;
+    // }
     setLoading(true);
     try {
       await deleteUserProfile();

@@ -2,7 +2,7 @@
 
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useTransition } from 'react';
 import { useRouter } from 'next/navigation';
 import {
   signInSchema,
@@ -10,7 +10,7 @@ import {
   SignInFormType,
   SignUpFormType,
 } from '@/lib/schemas/authSchema';
-import { registerUser, loginUser, googleVerify } from '@/lib/auth';
+import { registerUser, loginUser } from '@/lib/auth';
 import {
   Form,
   FormControl,
@@ -28,8 +28,8 @@ import { ButtonForm } from '../ui/button-form';
 import { AxiosError } from 'axios';
 import OAuthButton from './OAuthButton';
 import { google } from '@/app/constants';
-import { WindowWithGoogle, GoogleTokenResponse, GoogleTokenClient } from '@/lib/types/google-oauth';
 import { Checkbox } from '../ui/checkbox';
+import { OAuthSignIn } from '@/app/(auth)/actions';
 
 type FormType = 'sign-in' | 'sign-up';
 type FormDataMap = {
@@ -43,6 +43,7 @@ interface AuthFormProps {
 
 const AuthForm = ({ type }: AuthFormProps) => {
   const [isLoading, setIsLoading] = useState(false);
+  const [isPending, startTransition] = useTransition();
   const router = useRouter();
 
   useEffect(() => {
@@ -141,38 +142,12 @@ const AuthForm = ({ type }: AuthFormProps) => {
     }
   }
 
-  const handleGoogleSignIn = () => {
-    const windowWithGoogle = window as WindowWithGoogle;
-
-    if (!windowWithGoogle.google?.accounts?.oauth2) {
-      toast.error('Google SDK not loaded');
-      return;
-    }
-
-    const client: GoogleTokenClient = windowWithGoogle.google.accounts.oauth2.initTokenClient({
-      client_id: process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID!,
-      scope: 'openid profile email',
-      callback: async (tokenResponse: GoogleTokenResponse) => {
-        if (tokenResponse.error) {
-          toast.error('Google authentication failed');
-          return;
-        }
-
-        setIsLoading(true);
-        try {
-          await googleVerify(tokenResponse.access_token);
-          toast.success('Login successful!', { description: 'Welcome back!' });
-          router.push('/');
-        } catch (err) {
-          console.error(err);
-          toast.error('Google login failed');
-        } finally {
-          setIsLoading(false);
-        }
-      },
+  const handleGoogleSignIn = async () => {
+    console.log('Initiated google sign-in');
+    startTransition(async () => {
+      await OAuthSignIn('google');
     });
-
-    client.requestAccessToken();
+    setIsLoading(isPending);
   };
 
   return (

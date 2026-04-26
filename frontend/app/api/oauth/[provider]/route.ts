@@ -20,9 +20,10 @@ export async function GET(
   const oAuthClient = getOauthClient(provider);
   try {
     const { accessToken } = await oAuthClient.fetchToken(code);
-    const { token } = await OAuthVerify(provider, accessToken);
+    const { token, email } = await OAuthVerify(provider, accessToken);
     const cookieStore = await cookies();
     cookieStore.set('token', token);
+    console.log('Token', { token, email });
   } catch (error) {
     console.error(error);
     redirect(`/sign-in?oauthError=${encodeURIComponent('Failed to connect. Please try again.')}`);

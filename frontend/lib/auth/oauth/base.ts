@@ -59,7 +59,9 @@ export class OAuthClient {
   }
 
   private get redirectUrl() {
-    return new URL(this.provider, env.OAUTH_REDIRECT_URL_BASE);
+    const url = new URL(this.provider, env.OAUTH_REDIRECT_URL_BASE);
+    console.log(url);
+    return url;
   }
 
   createAuthUrl() {

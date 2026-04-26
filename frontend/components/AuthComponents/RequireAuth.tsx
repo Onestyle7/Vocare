@@ -1,16 +1,15 @@
 'use client';
 
 import { PropsWithChildren, useEffect, useState } from 'react';
-import { hasStoredToken, redirectToSignIn } from '@/lib/auth-redirect';
 
 const RequireAuth = ({ children }: PropsWithChildren) => {
   const [isAuthorized, setIsAuthorized] = useState(false);
 
   useEffect(() => {
-    if (!hasStoredToken()) {
-      redirectToSignIn();
-      return;
-    }
+    // if (!hasStoredToken()) {
+    //   redirectToSignIn();
+    //   return;
+    // }
 
     setIsAuthorized(true);
   }, []);

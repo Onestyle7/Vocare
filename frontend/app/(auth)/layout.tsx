@@ -9,15 +9,15 @@ const Layout = ({ children }: { children: React.ReactNode }) => {
   return (
     <div className="font-korbin flex min-h-screen flex-col">
       <div className="flex flex-1 flex-row p-2">
-        <section className="hidden w-1/2 items-center justify-center rounded-[24px] bg-[#0f1014] p-10 lg:flex xl:w-2/5 dark:bg-neutral-300">
-          <div className="flex max-h-[800px] max-w-[430px] flex-col justify-center space-y-12">
+        <section className="hidden w-1/2 items-center justify-center rounded-3xl bg-[#0f1014] p-10 lg:flex xl:w-2/5 dark:bg-neutral-300">
+          <div className="flex max-h-200 max-w-107.5 flex-col justify-center space-y-12">
             <Image src={logo} alt="vocare" width={256} height={256} className="dark:invert" />
 
             <div className="space-y-5 text-[#F3F3F3] dark:text-[#101014]">
               <h1 className="h1">Rocket You career</h1>
               <p className="body-1">learn more • earn more • grow more</p>
             </div>
-            <div className="main-font-color relative flex h-[385px] flex-row px-[40px] lg:w-full">
+            <div className="main-font-color relative flex h-96.25 flex-row px-10 lg:w-full">
               <Suspense fallback={<Image src={Spinner} alt="spinner" width={60} height={60} />}>
                 <LazySpline
                   scene="https://prod.spline.design/mZBrYNcnoESGlTUG/scene.splinecode"
