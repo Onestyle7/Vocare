@@ -83,13 +83,21 @@ export class ApiClient {
       const response = await fetch(url, {
         ...requestOptions,
       });
-      console.log('RESPONSE_LOGGER', response);
 
       if (!response.ok) {
-        this.handleFailedResponse(response);
+        let errorDetails = undefined;
+        try {
+          errorDetails = await response.json();
+        } catch {}
+        throw new ApiError(
+          `HTTP ${response.status}: ${response.statusText}`,
+          response.status,
+          errorDetails
+        );
       }
 
       const data = await this.parseResponse<T>(response);
+      console.log('RESPONSE_LOGGER', data);
 
       return {
         data,
@@ -130,6 +138,7 @@ export class ApiClient {
   private async buildRequestOptions(options: RequestInit): Promise<RequestInit> {
     const cookieStore = await cookies();
     const token = cookieStore.get('token')?.value;
+    console.log('TOKEN', token);
 
     return {
       ...options,
@@ -139,16 +148,6 @@ export class ApiClient {
         ...options.headers,
       },
     };
-  }
-
-  private async handleFailedResponse(response: Response) {
-    const parsedDetails = await response.json();
-    console.log('API ERROR', parsedDetails);
-    throw new ApiError(
-      `HTTP ${response.status}: ${response.statusText}`,
-      response.status,
-      parsedDetails
-    );
   }
 }
 

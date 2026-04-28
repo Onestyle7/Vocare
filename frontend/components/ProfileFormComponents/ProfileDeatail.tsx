@@ -62,6 +62,7 @@ export default function ProfileDetails() {
 
   const handleLogout = () => {
     void logoutUser();
+    router.replace('/sign-in');
   };
 
   useEffect(() => {

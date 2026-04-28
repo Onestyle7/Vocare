@@ -4,7 +4,7 @@ import React from 'react';
 import { UseFormReturn } from 'react-hook-form';
 import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
-import { CreateProfileFormType } from '@/lib/schemas/profileSchema';
+import { CreateProfileFormType } from '@/app/(auth)/_schemas/profileSchema';
 import { FormField, FormItem, FormLabel, FormControl, FormMessage } from '@/components/ui/form';
 import { ArrowLeft, ArrowRight } from 'lucide-react';
 

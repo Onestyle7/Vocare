@@ -17,8 +17,14 @@ export function getOAuthEndpoint(provider: OAuthProvider) {
   }
 }
 
-export type SignInResult = {
+export type OAuthSignInResult = {
   token: string;
+  userId: string;
+  email: string;
+};
+
+export type SignInResult = {
+  accessToken: string;
   userId: string;
   email: string;
 };

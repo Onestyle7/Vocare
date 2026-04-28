@@ -1,6 +1,14 @@
-import AuthForm from '@/components/auth/AuthForm';
-import React from 'react';
+import { SignInFrom } from '../_components/SignInForm';
 
-const SignIn = () => <AuthForm type="sign-in" />;
-
-export default SignIn;
+export default async function SignIn({
+  searchParams,
+}: {
+  searchParams: Promise<{ oauthError?: string }>;
+}) {
+  const { oauthError } = await searchParams;
+  return (
+    <>
+      <SignInFrom oauthError={oauthError} />
+    </>
+  );
+}

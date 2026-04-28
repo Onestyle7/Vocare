@@ -7,15 +7,18 @@ export async function proxy(request: NextRequest) {
 }
 
 async function authProxy(request: NextRequest) {
-  if (!request.cookies.has('token')) {
-    const callbackUrl = request.nextUrl.pathname;
-    const signInUrl = new URL('/sign-in', request.url);
-    signInUrl.searchParams.set('returnTo', callbackUrl);
+  if (request.cookies.has('token') && authPages.includes(request.nextUrl.pathname)) {
+    return NextResponse.redirect(new URL('/dashboard', request.url));
+  }
 
+  if (!request.cookies.has('token') && request.nextUrl.pathname.startsWith('/dashboard')) {
+    const signInUrl = new URL('/sign-in', request.url);
     return NextResponse.redirect(signInUrl);
   }
 }
 
+const authPages = ['/sign-in', '/sign-up', '/forgot-password', '/reset-password'];
+
 export const config = {
-  matcher: ['/dashboard/:path*'],
+  matcher: ['/:path*'],
 };

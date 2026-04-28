@@ -6,7 +6,6 @@ import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { cn } from '@/lib/utils';
 import Image from 'next/image';
-import { useAuth } from '@/lib/hooks/useAuth';
 import MobileNav from '@/components/MobileComponents/MobileNav';
 import { TokenCounter } from '@/components/PricingComponents/TokenCounter';
 import { Badge } from '@/components/ui/badge';

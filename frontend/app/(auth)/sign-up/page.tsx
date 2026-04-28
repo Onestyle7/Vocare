@@ -1,6 +1,9 @@
-import AuthForm from '@/components/auth/AuthForm';
-import React from 'react';
+import { SignUpForm } from '../_components/SignUpForm';
 
-const SignUp = () => <AuthForm type="sign-up" />;
-
-export default SignUp;
+export default async function SignUp() {
+  return (
+    <>
+      <SignUpForm />
+    </>
+  );
+}

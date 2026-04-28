@@ -14,7 +14,9 @@ export async function GET(
   const provider = z.enum(oAuthProviders).parse(rawProvider);
 
   if (typeof code !== 'string') {
-    redirect(`/sign-in?oauthError=${encodeURIComponent('Failed to connect. Please try again.')}`);
+    redirect(
+      `/sign-in?oauthError=${encodeURIComponent('Nie udało się połączyć z serwerem. Spróbuj ponownie')}`
+    );
   }
 
   const oAuthClient = getOauthClient(provider);
@@ -26,7 +28,9 @@ export async function GET(
     console.log('Token', { token, email });
   } catch (error) {
     console.error(error);
-    redirect(`/sign-in?oauthError=${encodeURIComponent('Failed to connect. Please try again.')}`);
+    redirect(
+      `/sign-in?oauthError=${encodeURIComponent('Nie udało się połączyć z serwerem. Spróbuj ponownie')}`
+    );
   }
 
   redirect('/dashboard');

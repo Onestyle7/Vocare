@@ -19,7 +19,7 @@ import {
   AlertDialogAction,
 } from '@/components/ui/alert-dialog';
 import { riskLabels } from '@/lib/enums/risk';
-import { CreateProfileFormType } from '@/lib/schemas/profileSchema';
+import { CreateProfileFormType } from '@/app/(auth)/_schemas/profileSchema';
 import {
   Select,
   SelectTrigger,
