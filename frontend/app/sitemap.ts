@@ -1,8 +1,10 @@
 import type { MetadataRoute } from 'next';
-import { ArticleMetadata } from './blog/_utils/types';
+
 import env from '@/lib/env/client';
-import { ARTICLES_FOLDER } from './blog/_utils/constants';
+
 import { getArticlesMetadata } from './blog/_utils/blogUtils';
+import { ARTICLES_FOLDER } from './blog/_utils/constants';
+import { ArticleMetadata } from './blog/_utils/types';
 
 type RouteConfig = {
   path: string;

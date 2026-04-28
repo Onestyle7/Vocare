@@ -1,8 +1,8 @@
 // components/HorizontalCarousel.tsx
 'use client';
 
-import { useRef } from 'react';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
+import { useRef } from 'react';
 
 interface HorizontalCarouselProps {
   children: React.ReactNode;

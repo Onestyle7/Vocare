@@ -1,13 +1,15 @@
 'use client';
 
-import { useRef, useState, type ChangeEvent } from 'react';
 import axios from 'axios';
 import { UploadCloud } from 'lucide-react';
+import { type ChangeEvent,useRef, useState } from 'react';
 import { toast } from 'sonner';
+
 import { importUserProfileFromCv } from '@/lib/profile';
-import { Button } from '../ui/button';
 import { UserProfile } from '@/lib/types/profile';
 import { cn } from '@/lib/utils';
+
+import { Button } from '../ui/button';
 
 const ALLOWED_EXTENSIONS = ['pdf', 'doc', 'docx'];
 

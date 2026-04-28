@@ -1,4 +1,6 @@
 import Image from 'next/image';
+
+import { getImageSizeFromTitle } from '../_utils/blogUtils';
 import {
   BlockquoteProps,
   CodeProps,
@@ -7,6 +9,7 @@ import {
   HeadingThreeProps,
   HeadingTwoProps,
   HrProps,
+  ImageProps,
   LinkProps,
   ListItemProps,
   ListProps,
@@ -14,9 +17,7 @@ import {
   ParagraphProps,
   PreProps,
   StrongProps,
-  ImageProps,
 } from '../_utils/types';
-import { getImageSizeFromTitle } from '../_utils/blogUtils';
 
 export function H1(props: HeadingProps) {
   return <h1 className="mt-10 mb-8 text-center text-4xl font-bold md:text-5xl" {...props} />;

@@ -1,3 +1,5 @@
+import type { Metadata } from 'next';
+
 import AboutCards from '@/components/SectionsComponents/AboutCards';
 import CardFeature from '@/components/SectionsComponents/CardSwapper';
 import Faq from '@/components/SectionsComponents/Faq';
@@ -5,7 +7,7 @@ import Footer from '@/components/SectionsComponents/Footer';
 import Header from '@/components/SectionsComponents/Header';
 import HeroTweak from '@/components/SectionsComponents/HeroTweak';
 import MobileFeatureImprovements from '@/components/SectionsComponents/MobileFeatureImprovements';
-import type { Metadata } from 'next';
+
 import { toAbsoluteUrl } from '../blog/_utils/blogUtils';
 
 export const metadata: Metadata = {

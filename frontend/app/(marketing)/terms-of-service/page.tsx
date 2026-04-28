@@ -1,18 +1,19 @@
 'use client';
 
-import {
-  postanowienia_ogolne,
-  definicje,
-  wymagania_techniczne,
-  uslugi_i_wylaczenie_odpowiedzialnosci_ai,
-  platnosci_i_zawarcie_umowy,
-  prawo_odstapienia,
-  reklamacje,
-  ochrona_danych_osobowych,
-  postanowienia_koncowe,
-} from '@/app/constants';
 import { ArrowLeft } from 'lucide-react';
 import Link from 'next/link';
+
+import {
+  definicje,
+  ochrona_danych_osobowych,
+  platnosci_i_zawarcie_umowy,
+  postanowienia_koncowe,
+  postanowienia_ogolne,
+  prawo_odstapienia,
+  reklamacje,
+  uslugi_i_wylaczenie_odpowiedzialnosci_ai,
+  wymagania_techniczne,
+} from '@/app/constants';
 
 type Section = {
   title: string;

@@ -1,15 +1,13 @@
 'use client';
 
-import Link from 'next/link';
-import { useCallback, useEffect, useMemo, useState } from 'react';
-import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 import { AxiosError } from 'axios';
-import { toast } from 'sonner';
 import { ArrowRight, Clock, Layers3, Plus, Trash2 } from 'lucide-react';
+import Link from 'next/link';
+import { usePathname, useRouter, useSearchParams } from 'next/navigation';
+import { useCallback, useEffect, useMemo, useState } from 'react';
+import { toast } from 'sonner';
 
 import { GridBackgroundDemo } from '@/components/MarketComponents/GridBackgroundDemo';
-import { RecommendationsApiService } from '@/lib/api/RecommendationApiServiice';
-import { getSubscriptionStatus } from '@/lib/api/billing';
 import {
   AlertDialog,
   AlertDialogAction,
@@ -31,7 +29,6 @@ import {
   DialogHeader,
   DialogTitle,
 } from '@/components/ui/dialog';
-import { Separator } from '@/components/ui/separator';
 import {
   Select,
   SelectContent,
@@ -39,10 +36,13 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
+import { Separator } from '@/components/ui/separator';
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
+import { getSubscriptionStatus } from '@/lib/api/billing';
+import { RecommendationsApiService } from '@/lib/api/RecommendationApiServiice';
 import { archiveRoadmap, generateRoadmap, getUserRoadmaps } from '@/lib/api/roadmap';
-import type { GenerateRoadmapPayload, RoadmapListItemDto } from '@/lib/types/roadmap';
 import type { CareerPath } from '@/lib/types/recommendation';
+import type { GenerateRoadmapPayload, RoadmapListItemDto } from '@/lib/types/roadmap';
 import { cn } from '@/lib/utils';
 
 const timeHorizonOptions = [3, 6, 9, 12, 18, 24] as const;

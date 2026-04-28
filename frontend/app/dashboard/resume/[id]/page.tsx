@@ -1,10 +1,12 @@
 'use client';
 
-import React, { useEffect, useState } from 'react';
 import { useParams } from 'next/navigation';
-import CVCreator from '../../../../components/ResumeComponents/ResumeComponent';
+import React, { useEffect, useState } from 'react';
+
 import { getCvDetails } from '@/lib/api/cv';
 import { CvDetailsDto } from '@/lib/types/cv';
+
+import CVCreator from '../../../../components/ResumeComponents/ResumeComponent';
 
 const ResumeDetailPage = () => {
   const params = useParams();

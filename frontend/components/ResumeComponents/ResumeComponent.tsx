@@ -1,37 +1,35 @@
 'use client';
 
-import React, { useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react';
-import { useRouter } from 'next/navigation';
 import {
-  User,
-  Mail,
-  Phone,
-  MapPin,
-  Briefcase,
-  GraduationCap,
   Award,
+  Bold,
+  Briefcase,
+  ChevronLeft,
+  ChevronRight,
+  GraduationCap,
+  GripVertical,
+  Home,
+  Italic,
   Languages,
+  Mail,
+  MapPin,
+  MessageCircleQuestion,
+  Move,
+  PencilLine,
+  Phone,
+  Save,
+  StarsIcon,
+  Tag,
   Trash2,
+  Underline,
+  Upload,
+  User,
   ZoomIn,
   ZoomOut,
-  Move,
-  Tag,
-  GripVertical,
-  PencilLine,
-  StarsIcon,
-  MessageCircleQuestion,
-  ChevronRight,
-  ChevronLeft,
-  Upload,
-  Save,
-  Bold,
-  Italic,
-  Underline,
-  Home,
 } from 'lucide-react';
-import { createCv, deleteCv, updateCv } from '@/lib/api/cv';
-import { CvDto, CvDetailsDto, UpdateCvDto } from '@/lib/types/cv';
-import { DatePickerWithCurrent } from './DatePickerWithCurrent';
+import { useRouter } from 'next/navigation';
+import React, { useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react';
+
 import { HoverCard, HoverCardContent, HoverCardTrigger } from '@/components/ui/hover-card';
 import {
   Select,
@@ -40,8 +38,12 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
+import { createCv, deleteCv, updateCv } from '@/lib/api/cv';
 import { useAutosave } from '@/lib/hooks/useAutosave';
 import { useIsMobile } from '@/lib/hooks/useIsMobile';
+import { CvDetailsDto, CvDto, UpdateCvDto } from '@/lib/types/cv';
+
+import { DatePickerWithCurrent } from './DatePickerWithCurrent';
 
 interface PersonalInfo {
   firstName: string;

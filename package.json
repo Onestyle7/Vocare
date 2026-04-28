@@ -8,7 +8,8 @@
   },
   "lint-staged": {
     "frontend/**/*.{ts,tsx}": [
-      "npm --prefix frontend run test:related"
+      "npm --prefix frontend run test:related --",
+      "npm --prefix frontend run linter:fix --"
     ],
     "frontend/**/*.md": [
       "npm --prefix frontend run validate:md"

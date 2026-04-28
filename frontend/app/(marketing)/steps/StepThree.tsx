@@ -1,14 +1,16 @@
 'use client';
 
+import { ArrowLeft, ArrowRight, Plus } from 'lucide-react';
 import React, { useState } from 'react';
 import { UseFormReturn } from 'react-hook-form';
-import { CreateProfileFormType, UpdateProfileFormType } from '@/lib/schemas/profileSchema';
-import { Button } from '@/components/ui/button';
-import { FormField, FormItem, FormLabel, FormControl, FormMessage } from '@/components/ui/form';
+
 import { TagInput } from '@/components/ProfileFormComponents/TagInput';
-import { ArrowLeft, ArrowRight, Plus } from 'lucide-react';
-import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
+import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
+import { Card, CardContent } from '@/components/ui/card';
+import { FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
+import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import {
   Select,
   SelectContent,
@@ -16,8 +18,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
-import { Card, CardContent } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
+import { CreateProfileFormType, UpdateProfileFormType } from '@/lib/schemas/profileSchema';
 
 // Typy dla poszczególnych popoverów
 

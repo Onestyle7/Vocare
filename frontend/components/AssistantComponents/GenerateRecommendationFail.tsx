@@ -1,9 +1,11 @@
-import React from 'react';
-import SpotlightCard from '../SpotlightCard/SpotlightCard';
-import Link from 'next/link';
 import Image from 'next/image';
+import Link from 'next/link';
+import React from 'react';
+
 import { upper_arrow } from '@/app/constants';
+
 import AnimatedContent from '../AnimatedContent/AnimatedContent';
+import SpotlightCard from '../SpotlightCard/SpotlightCard';
 import Section from '../SupportComponents/Section';
 
 const GenerateRecommendationFail = () => {

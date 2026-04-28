@@ -1,16 +1,17 @@
 'use client';
 
 import { zodResolver } from '@hookform/resolvers/zod';
-import { useForm } from 'react-hook-form';
-import { useState, useEffect, useTransition } from 'react';
+import { AxiosError } from 'axios';
+import { ArrowRight } from 'lucide-react';
+import Image from 'next/image';
+import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-import {
-  signInSchema,
-  signUpSchema,
-  SignInFormType,
-  SignUpFormType,
-} from '@/lib/schemas/authSchema';
-import { registerUser, loginUser } from '@/lib/auth';
+import { useEffect, useState, useTransition } from 'react';
+import { useForm } from 'react-hook-form';
+import { toast } from 'sonner';
+
+import { OAuthSignIn } from '@/app/(auth)/actions';
+import { google } from '@/app/constants';
 import {
   Form,
   FormControl,
@@ -20,16 +21,17 @@ import {
   FormMessage,
 } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
-import Image from 'next/image';
-import Link from 'next/link';
-import { toast } from 'sonner';
-import { ArrowRight } from 'lucide-react';
+import { loginUser,registerUser } from '@/lib/auth';
+import {
+  SignInFormType,
+  signInSchema,
+  SignUpFormType,
+  signUpSchema,
+} from '@/lib/schemas/authSchema';
+
 import { ButtonForm } from '../ui/button-form';
-import { AxiosError } from 'axios';
-import OAuthButton from './OAuthButton';
-import { google } from '@/app/constants';
 import { Checkbox } from '../ui/checkbox';
-import { OAuthSignIn } from '@/app/(auth)/actions';
+import OAuthButton from './OAuthButton';
 
 type FormType = 'sign-in' | 'sign-up';
 type FormDataMap = {

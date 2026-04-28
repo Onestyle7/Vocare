@@ -1,9 +1,10 @@
-import { NextRequest } from 'next/server';
-import { getOauthClient, oAuthProviders } from '@/lib/auth/oauth/base';
-import z from 'zod';
-import { redirect } from 'next/navigation';
-import { OAuthVerify } from '@/app/(auth)/actions';
 import { cookies } from 'next/headers';
+import { redirect } from 'next/navigation';
+import { NextRequest } from 'next/server';
+import z from 'zod';
+
+import { OAuthVerify } from '@/app/(auth)/actions';
+import { getOauthClient, oAuthProviders } from '@/lib/auth/oauth/base';
 
 export async function GET(
   request: NextRequest,

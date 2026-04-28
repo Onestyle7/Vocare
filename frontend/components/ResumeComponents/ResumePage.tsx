@@ -141,8 +141,13 @@
 
 'use client';
 
+import Image from 'next/image';
+import Link from 'next/link';
 import React, { useState } from 'react';
-import ResumeDetails from './ResumeDetails';
+
+import { star_generate } from '@/app/constants';
+import { useTokenBalanceContext } from '@/lib/contexts/TokenBalanceContext';
+
 import Section from '../SupportComponents/Section';
 import {
   AlertDialog,
@@ -154,10 +159,7 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from '../ui/alert-dialog';
-import { useTokenBalanceContext } from '@/lib/contexts/TokenBalanceContext';
-import Image from 'next/image';
-import Link from 'next/link';
-import { star_generate } from '@/app/constants';
+import ResumeDetails from './ResumeDetails';
 
 const ResumePage = () => {
   const [isConfirmDialogOpen, setIsConfirmDialogOpen] = useState(false);

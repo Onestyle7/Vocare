@@ -1,26 +1,28 @@
 'use client';
 
-import { google } from '@/app/constants';
-import OAuthButton from '@/components/auth/OAuthButton';
-import {
-  Form,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormControl,
-  FormMessage,
-} from '@/components/ui/form';
-import { Input } from '@/components/ui/input';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { useForm } from 'react-hook-form';
-import { useTransition } from 'react';
-import { ButtonForm } from '@/components/ui/button-form';
 import { ArrowRight } from 'lucide-react';
-import { OAuthSignIn, signIn } from '../actions';
 import Image from 'next/image';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
+import { useTransition } from 'react';
+import { useForm } from 'react-hook-form';
 import z from 'zod';
+
+import { google } from '@/app/constants';
+import OAuthButton from '@/components/auth/OAuthButton';
+import { ButtonForm } from '@/components/ui/button-form';
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from '@/components/ui/form';
+import { Input } from '@/components/ui/input';
+
+import { OAuthSignIn, signIn } from '../actions';
 
 export const signInSchema = z.object({
   email: z.string().email('Invalid email address'),
@@ -62,6 +64,7 @@ export function SignInFrom({ oauthError }: { oauthError?: string }) {
     <Form {...form}>
       <form onSubmit={form.handleSubmit(handleSignIn)} className="auth-form font-poppins">
         <h1 className="form-title">Zaloguj się</h1>
+        <p>{oauthError}</p>
 
         <FormField
           control={form.control}

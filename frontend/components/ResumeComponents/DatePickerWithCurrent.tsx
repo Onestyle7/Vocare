@@ -1,12 +1,13 @@
 'use client';
 
+import { CalendarIcon } from 'lucide-react';
 import * as React from 'react';
+
 import { Button } from '@/components/ui/button';
 import { Calendar } from '@/components/ui/calendar';
 import { Label } from '@/components/ui/label';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { Switch } from '@/components/ui/switch';
-import { CalendarIcon } from 'lucide-react';
 
 type CaptionLayout = React.ComponentProps<typeof Calendar>['captionLayout'];
 

@@ -1,20 +1,6 @@
 'use client';
 
-import Link from 'next/link';
-import { useEffect, useState, useRef } from 'react';
 import { gsap } from 'gsap';
-import CollapsibleButton from './CollapsibleButton';
-import { CareerPath } from '@/lib/types/recommendation';
-import Image from 'next/image';
-import ReusableCard from '../MarketComponents/AssistantCards';
-import HorizontalCarousel from './HorizontalCarousel';
-import SwotAnalysis from '../MarketComponents/SwotAnalysis';
-import { CareerPathMatchResult, ConfidenceLevel, ScoredJobOffer } from '@/lib/types/jobOffers';
-import { cone_3, cone_4, cone_5, cone_6, cone_7, cone_8 } from '@/app/constants';
-import { Badge } from '../ui/badge';
-import { Card, CardContent, CardHeader } from '../ui/card';
-import { Skeleton } from '../ui/skeleton';
-import { Tooltip, TooltipContent, TooltipTrigger } from '../ui/tooltip';
 import {
   ArrowDown,
   ArrowDownRight,
@@ -25,7 +11,23 @@ import {
   MapPin,
   Sparkles,
 } from 'lucide-react';
+import Image from 'next/image';
+import Link from 'next/link';
+import { useEffect, useRef,useState } from 'react';
+
+import { cone_3, cone_4, cone_5, cone_6, cone_7, cone_8 } from '@/app/constants';
+import { CareerPathMatchResult, ConfidenceLevel, ScoredJobOffer } from '@/lib/types/jobOffers';
+import { CareerPath } from '@/lib/types/recommendation';
+
+import ReusableCard from '../MarketComponents/AssistantCards';
+import SwotAnalysis from '../MarketComponents/SwotAnalysis';
+import { Badge } from '../ui/badge';
 import { Button } from '../ui/button';
+import { Card, CardContent, CardHeader } from '../ui/card';
+import { Skeleton } from '../ui/skeleton';
+import { Tooltip, TooltipContent, TooltipTrigger } from '../ui/tooltip';
+import CollapsibleButton from './CollapsibleButton';
+import HorizontalCarousel from './HorizontalCarousel';
 
 const conePairs = [
   [cone_3, cone_4],

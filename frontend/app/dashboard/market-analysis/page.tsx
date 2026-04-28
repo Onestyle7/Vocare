@@ -1,9 +1,10 @@
 'use client';
 
+import React from 'react';
+
 import { ScrollProgress } from '@/components/magicui/scroll-progress';
 import DetailedMarketAnalysis from '@/components/MarketComponents/DetailedMarketAnalysis';
 import Header from '@/components/SectionsComponents/Header';
-import React from 'react';
 
 const page = () => {
   return (

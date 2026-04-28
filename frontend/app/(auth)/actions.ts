@@ -1,6 +1,10 @@
 'use server';
 
+import { cookies } from 'next/headers';
+import { redirect } from 'next/navigation';
+
 import { getOauthClient, OAuthProvider } from '@/lib/auth/oauth/base';
+
 import {
   authApiClient,
   getOAuthEndpoint,
@@ -10,8 +14,6 @@ import {
   SignInCommand,
   SignInResult,
 } from './api';
-import { redirect } from 'next/navigation';
-import { cookies } from 'next/headers';
 
 export async function OAuthSignIn(provider: OAuthProvider) {
   const oAuthClient = getOauthClient(provider);

@@ -1,32 +1,33 @@
 'use client';
 
+import { ArrowLeft, ArrowRight } from 'lucide-react';
 import React from 'react';
 import { UseFormReturn } from 'react-hook-form';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Textarea } from '@/components/ui/textarea';
-import { FormField, FormItem, FormLabel, FormControl, FormMessage } from '@/components/ui/form';
-import { ArrowLeft, ArrowRight } from 'lucide-react';
+
 import {
   AlertDialog,
-  AlertDialogTrigger,
+  AlertDialogAction,
+  AlertDialogCancel,
   AlertDialogContent,
-  AlertDialogHeader,
-  AlertDialogTitle,
   AlertDialogDescription,
   AlertDialogFooter,
-  AlertDialogCancel,
-  AlertDialogAction,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
 } from '@/components/ui/alert-dialog';
-import { riskLabels } from '@/lib/enums/risk';
-import { CreateProfileFormType } from '@/app/(auth)/_schemas/profileSchema';
+import { Button } from '@/components/ui/button';
+import { FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
+import { Input } from '@/components/ui/input';
 import {
   Select,
-  SelectTrigger,
-  SelectValue,
   SelectContent,
   SelectItem,
+  SelectTrigger,
+  SelectValue,
 } from '@/components/ui/select';
+import { Textarea } from '@/components/ui/textarea';
+import { riskLabels } from '@/lib/enums/risk';
+import { CreateProfileFormType } from '@/lib/schemas/profileSchema';
 
 interface StepFiveProps {
   form: UseFormReturn<CreateProfileFormType>;

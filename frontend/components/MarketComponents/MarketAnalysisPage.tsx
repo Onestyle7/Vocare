@@ -1,13 +1,32 @@
 'use client';
 
-import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import axios, { AxiosError } from 'axios';
-import { toast } from 'sonner';
-import Image from 'next/image';
-import Link from 'next/link';
 import { gsap } from 'gsap';
 import { ArrowRight, Undo2 } from 'lucide-react';
+import Image from 'next/image';
+import Link from 'next/link';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { toast } from 'sonner';
 
+import {
+  star_generate,
+  timeline_icon_1,
+  timeline_icon_2,
+  timeline_icon_3,
+  timeline_icon_4,
+} from '@/app/constants';
+import { useTokenBalanceContext } from '@/lib/contexts/TokenBalanceContext';
+import {
+  IndustryStatisticsDto,
+  MarketAnalysisDetailsDto,
+  MarketAnalysisResponseDto,
+  MarketTrendsDto,
+  SkillDemandDto,
+} from '@/lib/types/marketAnalysis';
+
+import CollapsibleButton from '../AssistantComponents/CollapsibleButton';
+import Timeline from '../AssistantComponents/Timeline';
+import Section from '../SupportComponents/Section';
 import {
   AlertDialog,
   AlertDialogAction,
@@ -19,28 +38,10 @@ import {
   AlertDialogTitle,
 } from '../ui/alert-dialog';
 import ButtonGenerate from '../ui/ButtonGenerate';
-import CollapsibleButton from '../AssistantComponents/CollapsibleButton';
-import Timeline from '../AssistantComponents/Timeline';
+import GenerateMarketFail from './GenerateMarketFail';
 import { GridBackgroundDemo } from './GridBackgroundDemo';
 import { TerminalDemo } from './LoadingTerminal';
-import GenerateMarketFail from './GenerateMarketFail';
-import Section from '../SupportComponents/Section';
 import NewEmptyStateComponent from './NewEmptyStateComponent';
-import { useTokenBalanceContext } from '@/lib/contexts/TokenBalanceContext';
-import {
-  IndustryStatisticsDto,
-  MarketAnalysisDetailsDto,
-  MarketAnalysisResponseDto,
-  MarketTrendsDto,
-  SkillDemandDto,
-} from '@/lib/types/marketAnalysis';
-import {
-  star_generate,
-  timeline_icon_1,
-  timeline_icon_2,
-  timeline_icon_3,
-  timeline_icon_4,
-} from '@/app/constants';
 
 const TIMELINE_ICONS = [timeline_icon_1, timeline_icon_2, timeline_icon_3, timeline_icon_4];
 

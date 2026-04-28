@@ -1,9 +1,11 @@
 'use client';
 
-import CardSwap, { Card } from '@/components/CardSwap/CardSwap';
 import { ArrowRight, ArrowUp, FileQuestion, PencilLine } from 'lucide-react';
 import Link from 'next/link';
 import React from 'react';
+
+import CardSwap, { Card } from '@/components/CardSwap/CardSwap';
+
 import { Button } from '../ui/button';
 
 const CardFeature = () => {

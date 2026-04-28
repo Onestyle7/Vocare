@@ -1,11 +1,12 @@
 'use client';
 
-import React from 'react';
-import Link from 'next/link';
 import { ArrowLeft, Loader2 } from 'lucide-react';
+import Link from 'next/link';
+import React from 'react';
 import { toast } from 'sonner';
+
+import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import { Switch } from '@/components/ui/switch';
 import {
   Card,
   CardContent,
@@ -14,8 +15,8 @@ import {
   CardHeader,
   CardTitle,
 } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
 import { Skeleton } from '@/components/ui/skeleton';
+import { Switch } from '@/components/ui/switch';
 
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL ?? 'http://localhost:8080';
 const DASHBOARD_ENDPOINT = '/api/Billing/subscription-dashboard';

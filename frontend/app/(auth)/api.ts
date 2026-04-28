@@ -1,6 +1,6 @@
-import env from '@/lib/env/server';
 import { ApiClient } from '@/lib/api/api-client';
 import { OAuthProvider } from '@/lib/auth/oauth/base';
+import env from '@/lib/env/server';
 
 export const authApiClient = new ApiClient({
   baseUrl: `${env.API_BASE_URL}/auth`,

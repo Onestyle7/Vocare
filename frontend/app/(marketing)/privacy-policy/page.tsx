@@ -1,8 +1,9 @@
 'use client';
 
-import { privacy_policy } from '@/app/constants';
 import { ArrowLeft } from 'lucide-react';
 import Link from 'next/link';
+
+import { privacy_policy } from '@/app/constants';
 
 type Section = {
   title: string;

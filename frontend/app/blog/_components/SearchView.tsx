@@ -1,12 +1,13 @@
 'use client';
 
-import { useMemo, useState } from 'react';
-import { ArticleMetadata } from '../_utils/types';
-import SearchBar from './SearchBar';
 import Fuse from 'fuse.js';
-import ArticleCard from './ArticleCard';
-import { FUSE_OPTIONS } from '../_utils/constants';
 import Link from 'next/link';
+import { useMemo, useState } from 'react';
+
+import { FUSE_OPTIONS } from '../_utils/constants';
+import { ArticleMetadata } from '../_utils/types';
+import ArticleCard from './ArticleCard';
+import SearchBar from './SearchBar';
 
 export default function SearchView({ articlesMetadata }: { articlesMetadata: ArticleMetadata[] }) {
   const [searchValue, setSearchValue] = useState('');

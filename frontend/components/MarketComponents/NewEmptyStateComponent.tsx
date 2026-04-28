@@ -1,13 +1,16 @@
 'use client';
 
-import { useEffect, useState } from 'react';
 import axios, { AxiosError } from 'axios';
-import Image from 'next/image';
 import { ArrowRight } from 'lucide-react';
-import CustomButton from '../ui/CustomButton';
-import SpotlightCard from '../SpotlightCard/SpotlightCard';
-import AnimatedContent from '../AnimatedContent/AnimatedContent';
+import Image from 'next/image';
 import Link from 'next/link';
+import { useEffect, useState } from 'react';
+
+import { star_generate,upper_arrow } from '@/app/constants';
+
+import AnimatedContent from '../AnimatedContent/AnimatedContent';
+import SpotlightCard from '../SpotlightCard/SpotlightCard';
+import Section from '../SupportComponents/Section';
 import {
   AlertDialog,
   AlertDialogAction,
@@ -18,8 +21,7 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from '../ui/alert-dialog';
-import { upper_arrow, star_generate } from '@/app/constants';
-import Section from '../SupportComponents/Section';
+import CustomButton from '../ui/CustomButton';
 
 interface EmptyStateProps {
   onGenerateAnalysis: () => Promise<void>;

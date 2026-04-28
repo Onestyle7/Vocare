@@ -1,4 +1,5 @@
 import axios, { AxiosError } from 'axios';
+
 import { AiCareerResponse } from '@/lib/types/recommendation';
 
 const API_BASE_URL = `${process.env.NEXT_PUBLIC_API_URL}/api/Ai`;

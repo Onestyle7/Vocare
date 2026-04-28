@@ -1,6 +1,7 @@
-import { useTokenBalanceContext } from '@/lib/contexts/TokenBalanceContext';
 import { Plus } from 'lucide-react';
 import Link from 'next/link';
+
+import { useTokenBalanceContext } from '@/lib/contexts/TokenBalanceContext';
 
 export const TokenCounter = () => {
   const { tokenBalance, subscriptionStatus, hasActiveSubscription, isLoading, error } =

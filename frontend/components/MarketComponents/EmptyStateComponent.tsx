@@ -1,12 +1,13 @@
 'use client';
 
-import { useEffect, useRef, useState } from 'react';
-import Image from 'next/image';
 import gsap from 'gsap';
-import Link from 'next/link';
 import { ArrowRight } from 'lucide-react';
-import CustomButton from '../ui/CustomButton';
+import Image from 'next/image';
+import Link from 'next/link';
+import { useEffect, useRef, useState } from 'react';
+
 import { letterImg, star_generate } from '@/app/constants';
+
 import {
   AlertDialog,
   AlertDialogAction,
@@ -17,6 +18,7 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from '../ui/alert-dialog';
+import CustomButton from '../ui/CustomButton';
 
 interface EmptyStateComponentProps {
   onGenerateAnalysis: () => Promise<void>;

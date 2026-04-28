@@ -1,13 +1,16 @@
-import type { Metadata } from 'next';
-import localFont from 'next/font/local';
 import './globals.css';
-import { ThemeProvider } from '@/components/ui/theme-provider';
-import { Toaster } from '@/components/ui/sonner';
-import { TokenBalanceProvider } from '@/lib/contexts/TokenBalanceContext';
+
 // import SmoothScrollProvider from '@/components/SupportComponents/SmoothScrollProvider';
 import { GoogleAnalytics } from '@next/third-parties/google';
-import { toAbsoluteUrl } from './blog/_utils/blogUtils';
+import type { Metadata } from 'next';
+import localFont from 'next/font/local';
+
+import { Toaster } from '@/components/ui/sonner';
+import { ThemeProvider } from '@/components/ui/theme-provider';
+import { TokenBalanceProvider } from '@/lib/contexts/TokenBalanceContext';
 import env from '@/lib/env/client';
+
+import { toAbsoluteUrl } from './blog/_utils/blogUtils';
 
 const sizmoPro = localFont({
   src: [

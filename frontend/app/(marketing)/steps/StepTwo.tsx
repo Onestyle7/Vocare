@@ -1,14 +1,15 @@
 'use client';
 
+import { ArrowLeft, ArrowRight } from 'lucide-react';
 import React from 'react';
 import { UseFormReturn } from 'react-hook-form';
-import { CreateProfileFormType, UpdateProfileFormType } from '@/lib/schemas/profileSchema';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { FormField, FormItem, FormLabel, FormControl, FormMessage } from '@/components/ui/form';
+
 import { CountryCombobox } from '@/components/SupportComponents/CountryCombobox';
+import { Button } from '@/components/ui/button';
+import { FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
+import { Input } from '@/components/ui/input';
 import { InputOTP, InputOTPGroup, InputOTPSlot } from '@/components/ui/input-otp';
-import { ArrowLeft, ArrowRight } from 'lucide-react';
+import { CreateProfileFormType, UpdateProfileFormType } from '@/lib/schemas/profileSchema';
 
 interface StepTwoProps {
   form: UseFormReturn<CreateProfileFormType | UpdateProfileFormType>;

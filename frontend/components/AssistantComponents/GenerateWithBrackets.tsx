@@ -1,7 +1,7 @@
 'use client';
 
-import { useEffect, useRef } from 'react';
 import gsap from 'gsap';
+import { useEffect, useRef } from 'react';
 
 const GenerateWithBrackets = () => {
   const leftBracketRef = useRef<SVGSVGElement | null>(null);

@@ -1,5 +1,5 @@
 import { api } from '../api';
-import { CreateCvDto, CvDetailsDto, CvListItemDto, CvLimits, UpdateCvDto } from '../types/cv';
+import { CreateCvDto, CvDetailsDto, CvLimits, CvListItemDto, UpdateCvDto } from '../types/cv';
 
 type ReqOpts = { signal?: AbortSignal };
 

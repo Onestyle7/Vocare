@@ -1,17 +1,19 @@
 'use client';
 
-import React, { useRef, useEffect } from 'react';
-import { logo, NavLinks } from '@/app/constants';
+import { gsap } from 'gsap';
+import Image from 'next/image';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
+import React, { useEffect,useRef } from 'react';
+
+import { logo, NavLinks } from '@/app/constants';
+import { Sheet, SheetClose, SheetContent, SheetTitle,SheetTrigger } from '@/components/ui/sheet';
+import { useIsMobile } from '@/lib/hooks/useIsMobile';
 import { cn } from '@/lib/utils';
-import { Sheet, SheetContent, SheetTrigger, SheetClose, SheetTitle } from '@/components/ui/sheet';
-import { gsap } from 'gsap';
+
 // import ThemeSwitch from '../SupportComponents/ThemeSwitch';
 import { TokenCounter } from '../PricingComponents/TokenCounter';
-import Image from 'next/image';
 import { Badge } from '../ui/badge';
-import { useIsMobile } from '@/lib/hooks/useIsMobile';
 
 interface MobileNavProps {
   isAuthenticated: boolean;

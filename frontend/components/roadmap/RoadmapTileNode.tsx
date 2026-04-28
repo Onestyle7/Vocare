@@ -1,8 +1,9 @@
 'use client';
 
+import { Handle, Position, useStore } from '@xyflow/react';
 import type { FC } from 'react';
 import { useState } from 'react';
-import { Handle, Position, useStore } from '@xyflow/react';
+
 import type { RoadmapPhaseStepMeta, StepStatus, StepType } from '@/lib/types/roadmap';
 
 type NodeTone = 'main' | 'cream' | 'neutral';

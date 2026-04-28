@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
+
 import { callPerplexityAPI } from '@/lib/server/perplexity';
 
 export async function POST(request: NextRequest) {

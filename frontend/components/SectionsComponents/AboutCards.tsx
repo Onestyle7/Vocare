@@ -1,13 +1,14 @@
 'use client';
 
-import { useEffect, useRef } from 'react';
 import { gsap } from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
+import Image from 'next/image';
+import { useEffect, useRef } from 'react';
+import { ScrollParallax } from 'react-just-parallax';
+
+import { aboutCardsData, shape1 } from '@/app/constants';
 import AboutCard from '@/components/GhostComponents/AboutCard';
 import Section from '@/components/SupportComponents/Section';
-import { aboutCardsData, shape1 } from '@/app/constants';
-import { ScrollParallax } from 'react-just-parallax';
-import Image from 'next/image';
 
 gsap.registerPlugin(ScrollTrigger);
 

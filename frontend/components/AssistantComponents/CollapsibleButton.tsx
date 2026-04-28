@@ -1,9 +1,10 @@
 'use client';
 
-import { useEffect, useRef } from 'react';
-import { Button } from '@/components/ui/button';
-import { ArrowDown, ArrowUp } from 'lucide-react';
 import { gsap } from 'gsap';
+import { ArrowDown, ArrowUp } from 'lucide-react';
+import { useEffect, useRef } from 'react';
+
+import { Button } from '@/components/ui/button';
 
 interface CollapsibleButtonProps {
   isCollapsed: boolean;

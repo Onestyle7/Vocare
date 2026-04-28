@@ -1,11 +1,13 @@
 'use client';
 
-import React, { useEffect, useRef } from 'react';
-import Image from 'next/image';
-import { plus } from '@/app/constants';
+import { AspectRatio } from '@radix-ui/react-aspect-ratio';
 import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
-import { AspectRatio } from '@radix-ui/react-aspect-ratio';
+import Image from 'next/image';
+import React, { useEffect, useRef } from 'react';
+
+import { plus } from '@/app/constants';
+
 import Section from '../SupportComponents/Section';
 
 gsap.registerPlugin(ScrollTrigger);

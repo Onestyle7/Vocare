@@ -1,8 +1,8 @@
 'use client';
 
-import type { FC, MouseEvent } from 'react';
 import { useReactFlow } from '@xyflow/react';
 import { X } from 'lucide-react';
+import type { FC, MouseEvent } from 'react';
 
 import type { NoteThemeId, RoadmapNodeData } from '@/components/roadmap/RoadmapTileNode';
 

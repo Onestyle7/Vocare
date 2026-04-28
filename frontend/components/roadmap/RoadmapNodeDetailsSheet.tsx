@@ -1,7 +1,7 @@
 'use client';
 
-import { useEffect, useState, type ReactNode } from 'react';
 import { ArrowRight, CalendarRange, CircleDot, LoaderCircle, X } from 'lucide-react';
+import { type ReactNode,useEffect, useState } from 'react';
 
 import Timeline from '@/components/AssistantComponents/Timeline';
 import type { RoadmapNodeData } from '@/components/roadmap/RoadmapTileNode';

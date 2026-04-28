@@ -1,11 +1,13 @@
 'use client';
 
-import { useEffect, useState, useRef } from 'react';
 import { useRouter } from 'next/navigation';
-import CVCreator from '../../../../components/ResumeComponents/ResumeComponent';
+import { useEffect, useRef,useState } from 'react';
+
 import { createCv } from '@/lib/api/cv';
-import { CvDetailsDto } from '@/lib/types/cv';
 import { useIsMobile } from '@/lib/hooks/useIsMobile';
+import { CvDetailsDto } from '@/lib/types/cv';
+
+import CVCreator from '../../../../components/ResumeComponents/ResumeComponent';
 
 const CreateResumePage = () => {
   const router = useRouter();

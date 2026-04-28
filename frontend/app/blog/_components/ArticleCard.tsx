@@ -1,8 +1,10 @@
-import { ArticleMetadata } from '../_utils/types';
-import { Card, CardContent, CardFooter } from '@/components/ui/card';
-import Image from 'next/image';
 import { Clock7 } from 'lucide-react';
+import Image from 'next/image';
+
 import { Badge } from '@/components/ui/badge';
+import { Card, CardContent, CardFooter } from '@/components/ui/card';
+
+import { ArticleMetadata } from '../_utils/types';
 
 export default function ArticleCard({ article }: { article: ArticleMetadata }) {
   return (

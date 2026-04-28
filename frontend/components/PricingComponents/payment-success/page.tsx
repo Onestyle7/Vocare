@@ -1,10 +1,11 @@
 'use client';
 
-import { useEffect, useState } from 'react';
-import { useRouter, useSearchParams } from 'next/navigation';
 import { CheckCircle } from 'lucide-react';
-import { Button } from '@/components/ui/button';
+import { useRouter, useSearchParams } from 'next/navigation';
+import { useEffect, useState } from 'react';
 import { toast } from 'sonner';
+
+import { Button } from '@/components/ui/button';
 
 const PaymentSuccessPage = () => {
   const router = useRouter();

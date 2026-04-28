@@ -1,6 +1,7 @@
-import React from 'react';
-import Section from '../SupportComponents/Section';
 import Image from 'next/image';
+import React from 'react';
+
+import Section from '../SupportComponents/Section';
 import { Button } from '../ui/button';
 // import { ArrowRight } from 'lucide-react';
 

@@ -1,29 +1,30 @@
 'use client';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { useRouter } from 'next/navigation';
 import { useCallback, useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
-import { zodResolver } from '@hookform/resolvers/zod';
+import { toast } from 'sonner';
+
+import StepProgress from '@/app/(marketing)/steps/ProgressBar';
+import StepFive from '@/app/(marketing)/steps/StepFive';
+import StepFour from '@/app/(marketing)/steps/StepFour';
+import StepOne from '@/app/(marketing)/steps/StepOne';
+import StepThree from '@/app/(marketing)/steps/StepThree';
+import StepTwo from '@/app/(marketing)/steps/StepTwo';
+import { Button } from '@/components/ui/button';
+import { Form } from '@/components/ui/form';
+import { Popover, PopoverContent,PopoverTrigger } from '@/components/ui/popover';
+import { PersonalityType } from '@/lib/enums/personalityTypes';
+import { Risk } from '@/lib/enums/risk';
 import {
   createUserProfile,
-  updateUserProfile,
   deleteUserProfile,
   getUserProfile,
+  updateUserProfile,
 } from '@/lib/profile';
-import { useRouter } from 'next/navigation';
-import { toast } from 'sonner';
-import { Form } from '@/components/ui/form';
-import StepOne from '@/app/(marketing)/steps/StepOne';
-import StepTwo from '@/app/(marketing)/steps/StepTwo';
-import StepThree from '@/app/(marketing)/steps/StepThree';
-import StepFour from '@/app/(marketing)/steps/StepFour';
-import StepFive from '@/app/(marketing)/steps/StepFive';
-import StepProgress from '@/app/(marketing)/steps/ProgressBar';
-import { Button } from '@/components/ui/button';
-import { Popover, PopoverTrigger, PopoverContent } from '@/components/ui/popover';
 import { CreateProfileFormType } from '@/lib/schemas/profileSchema';
 import { createProfileSchema } from '@/lib/schemas/profileSchema';
 import { UserProfile } from '@/lib/types/profile';
-import { Risk } from '@/lib/enums/risk';
-import { PersonalityType } from '@/lib/enums/personalityTypes';
 
 export default function ProfileForm({
   initialData,

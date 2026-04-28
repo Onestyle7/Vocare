@@ -1,6 +1,7 @@
-import React from 'react';
-import SearchView from './_components/SearchView';
 import type { Metadata } from 'next';
+import React from 'react';
+
+import SearchView from './_components/SearchView';
 import { getArticlesMetadata, toAbsoluteUrl } from './_utils/blogUtils';
 import { ARTICLES_FOLDER } from './_utils/constants';
 

@@ -1,15 +1,16 @@
 'use client';
 
-import React, { useState, useEffect, useRef } from 'react';
-import { logo, NavLinks } from '@/app/constants';
+import { AnimatePresence, motion } from 'motion/react';
+import Image from 'next/image';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { cn } from '@/lib/utils';
-import Image from 'next/image';
+import React, { useEffect, useRef,useState } from 'react';
+
+import { logo, NavLinks } from '@/app/constants';
 import MobileNav from '@/components/MobileComponents/MobileNav';
 import { TokenCounter } from '@/components/PricingComponents/TokenCounter';
 import { Badge } from '@/components/ui/badge';
-import { AnimatePresence, motion } from 'motion/react';
+import { cn } from '@/lib/utils';
 // import ThemeSwitch from '../SupportComponents/ThemeSwitch';
 
 const Header = () => {

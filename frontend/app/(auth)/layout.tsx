@@ -1,7 +1,9 @@
-import React, { lazy, Suspense } from 'react';
-import { VelocityScroll } from '@/components/magicui/scroll-based-velocity';
-import { logo, Spinner } from '../constants';
 import Image from 'next/image';
+import React, { lazy, Suspense } from 'react';
+
+import { VelocityScroll } from '@/components/magicui/scroll-based-velocity';
+
+import { logo, Spinner } from '../constants';
 
 const LazySpline = lazy(() => import('@splinetool/react-spline'));
 

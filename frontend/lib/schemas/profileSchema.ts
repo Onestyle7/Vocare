@@ -1,4 +1,5 @@
 import { z } from 'zod';
+
 import { PersonalityType } from '@/lib/enums/personalityTypes';
 import { Risk } from '@/lib/enums/risk';
 

@@ -1,6 +1,8 @@
 import Image from 'next/image';
-import { AnimatedSpan, Terminal, TypingAnimation } from '../magicui/terminal';
+
 import { spinner_terminal } from '@/app/constants';
+
+import { AnimatedSpan, Terminal, TypingAnimation } from '../magicui/terminal';
 
 export function TerminalDemo() {
   return (

@@ -1,6 +1,7 @@
 'use client';
 
 import React, { createContext, useContext } from 'react';
+
 import { useTokenBalance } from '../hooks/useTokenBalance';
 
 type TokenBalanceContextType = ReturnType<typeof useTokenBalance>;

@@ -1,25 +1,26 @@
 'use client';
-import React, { useEffect, useState } from 'react';
-import { GridBackgroundDemo } from '@/components/MarketComponents/GridBackgroundDemo';
-import { getUserCvs, getCvLimits, deleteCv } from '@/lib/api/cv';
-import { CvListItemDto, CvLimits } from '@/lib/types/cv';
+import { Clock, FileText, Plus, Trash2 } from 'lucide-react';
 import Link from 'next/link';
-import { Plus, FileText, Clock, Trash2 } from 'lucide-react';
+import React, { useEffect, useState } from 'react';
+
+import { GridBackgroundDemo } from '@/components/MarketComponents/GridBackgroundDemo';
 import {
   AlertDialog,
-  AlertDialogTrigger,
+  AlertDialogAction,
+  AlertDialogCancel,
   AlertDialogContent,
-  AlertDialogHeader,
-  AlertDialogTitle,
   AlertDialogDescription,
   AlertDialogFooter,
-  AlertDialogCancel,
-  AlertDialogAction,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
 } from '@/components/ui/alert-dialog';
 import { Badge } from '@/components/ui/badge';
-import { Separator } from '@/components/ui/separator';
 import { Button } from '@/components/ui/button';
+import { Separator } from '@/components/ui/separator';
+import { deleteCv,getCvLimits, getUserCvs } from '@/lib/api/cv';
 import { useIsMobile } from '@/lib/hooks/useIsMobile';
+import { CvLimits,CvListItemDto } from '@/lib/types/cv';
 
 const ResumeDashboard = () => {
   const [cvs, setCvs] = useState<CvListItemDto[]>([]);

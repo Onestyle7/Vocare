@@ -1,18 +1,14 @@
 'use client';
 
-import { useEffect, useMemo, useRef, useState } from 'react';
 import { AxiosError } from 'axios';
-import {
-  IndustryStatisticsDto,
-  MarketAnalysisDetailsDto,
-  MarketAnalysisResponseDto,
-  SalaryProgressionDto,
-  SkillDemandDto,
-  WorkAttributesDto,
-} from '@/lib/types/marketAnalysis';
-import { api } from '@/lib/api';
+// Use pro build for support of modern color spaces (e.g. oklch in Tailwind tokens)
+import html2canvas from 'html2canvas-pro';
+import jsPDF from 'jspdf';
 import { ArrowDown, ArrowRight, ArrowUp, Loader2 } from 'lucide-react';
+import Image from 'next/image';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import {
   Area,
   AreaChart,
@@ -28,7 +24,31 @@ import {
   XAxis,
   YAxis,
 } from 'recharts';
+import { toast } from 'sonner';
+
+import {
+  market_motywacja,
+  market_rekomendacja,
+  market_star_big,
+  market_star_small,
+  market_styl_pracy,
+  market_wejscie,
+  market_wynagrodzenie,
+  star_generate,
+} from '@/app/constants';
+import CountUp from '@/components/CountUp';
+import { api } from '@/lib/api';
+import { useTokenBalanceContext } from '@/lib/contexts/TokenBalanceContext';
+import {
+  IndustryStatisticsDto,
+  MarketAnalysisDetailsDto,
+  MarketAnalysisResponseDto,
+  SalaryProgressionDto,
+  SkillDemandDto,
+  WorkAttributesDto,
+} from '@/lib/types/marketAnalysis';
 import { cn } from '@/lib/utils';
+
 import {
   AlertDialog,
   AlertDialogAction,
@@ -41,24 +61,6 @@ import {
 } from '../ui/alert-dialog';
 import { Button } from '../ui/button';
 import { Separator } from '../ui/separator';
-import Image from 'next/image';
-// Use pro build for support of modern color spaces (e.g. oklch in Tailwind tokens)
-import html2canvas from 'html2canvas-pro';
-import jsPDF from 'jspdf';
-import {
-  market_motywacja,
-  market_rekomendacja,
-  market_star_big,
-  market_star_small,
-  market_styl_pracy,
-  market_wejscie,
-  market_wynagrodzenie,
-  star_generate,
-} from '@/app/constants';
-import CountUp from '@/components/CountUp';
-import { toast } from 'sonner';
-import { useRouter } from 'next/navigation';
-import { useTokenBalanceContext } from '@/lib/contexts/TokenBalanceContext';
 
 const numberFormatter = new Intl.NumberFormat('pl-PL');
 

@@ -1,8 +1,10 @@
-import { timeline_icon_1 } from '@/app/constants';
 import Image from 'next/image';
 import React from 'react';
-import { HoverCard, HoverCardContent, HoverCardTrigger } from '../ui/hover-card';
+
+import { timeline_icon_1 } from '@/app/constants';
 import { cn } from '@/lib/utils';
+
+import { HoverCard, HoverCardContent, HoverCardTrigger } from '../ui/hover-card';
 
 interface TimelineItem {
   title: string;

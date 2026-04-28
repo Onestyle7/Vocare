@@ -1,9 +1,10 @@
 'use client';
 
-import { useState, useEffect, useRef } from 'react';
-import { GridBackgroundDemo } from '../MarketComponents/GridBackgroundDemo';
 import html2canvas from 'html2canvas-pro';
 import jsPDF from 'jspdf';
+import { useEffect, useRef,useState } from 'react';
+
+import { GridBackgroundDemo } from '../MarketComponents/GridBackgroundDemo';
 
 // Types based on the provided JSON format
 interface Education {

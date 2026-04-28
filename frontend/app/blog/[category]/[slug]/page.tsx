@@ -1,5 +1,10 @@
+import type { Metadata } from 'next';
+import Image from 'next/image';
 import Markdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
+
+import { Badge } from '@/components/ui/badge';
+
 import {
   A,
   Blockquote,
@@ -17,10 +22,7 @@ import {
   UL,
 } from '../../_components/MarkdownComponents';
 import PageWithBackButton from '../../_components/PageWIthBackButton';
-import { Badge } from '@/components/ui/badge';
-import Image from 'next/image';
-import type { Metadata } from 'next';
-import { getArticleContent, toAbsoluteUrl, getArticlesMetadata } from '../../_utils/blogUtils';
+import { getArticleContent, getArticlesMetadata,toAbsoluteUrl } from '../../_utils/blogUtils';
 import { ARTICLES_FOLDER } from '../../_utils/constants';
 
 type MetadataProps = {

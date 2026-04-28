@@ -1,4 +1,5 @@
 import React from 'react';
+
 import { TextAnimateLight } from '../magicui/text-animate-light';
 
 const ContentPage2 = () => {

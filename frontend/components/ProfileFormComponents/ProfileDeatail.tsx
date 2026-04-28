@@ -1,23 +1,25 @@
 'use client';
 
-import { useEffect, useRef, useState } from 'react';
-import { getUserProfile } from '@/lib/profile';
-import { useRouter } from 'next/navigation';
-import Link from 'next/link';
-import { UserProfile } from '@/lib/types/profile';
-import { toast } from 'sonner';
 import { ArrowDown, ArrowLeft, ArrowRight, ArrowUp, LogOut, Settings } from 'lucide-react';
+import Image from 'next/image';
+import Link from 'next/link';
+import { useRouter } from 'next/navigation';
+import { useEffect, useRef, useState } from 'react';
+import { toast } from 'sonner';
+
+import { spinner_terminal } from '@/app/constants';
 import { logoutUser } from '@/lib/auth';
+import { PersonalityType, personalityTypeLabels } from '@/lib/enums/personalityTypes';
+import { Risk, riskLabels } from '@/lib/enums/risk';
+import { getUserProfile } from '@/lib/profile';
+import { UserProfile } from '@/lib/types/profile';
+
 import { formatDate } from '../SupportComponents/formatSimpleDate';
-import ProfileForm from './ProfileForm';
+import Section from '../SupportComponents/Section';
+import { Button } from '../ui/button';
 import { Separator } from '../ui/separator';
 import ProfileCard from './ProfileCard';
-import { Button } from '../ui/button';
-import Section from '../SupportComponents/Section';
-import { Risk, riskLabels } from '@/lib/enums/risk';
-import { PersonalityType, personalityTypeLabels } from '@/lib/enums/personalityTypes';
-import Image from 'next/image';
-import { spinner_terminal } from '@/app/constants';
+import ProfileForm from './ProfileForm';
 import UploadCvButton from './UploadCvButton';
 
 const getPersonalityLabel = (value: PersonalityType | string | undefined): string => {

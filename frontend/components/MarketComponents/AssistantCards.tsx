@@ -1,6 +1,8 @@
-import { Card, CardContent, CardHeader } from '@/components/ui/card';
-import { AspectRatio } from '../ui/aspect-ratio';
 import Image from 'next/image';
+
+import { Card, CardContent, CardHeader } from '@/components/ui/card';
+
+import { AspectRatio } from '../ui/aspect-ratio';
 import { Badge } from '../ui/badge';
 
 interface CardData {

@@ -1,6 +1,7 @@
 'use client';
 
-import { ExternalLink, Briefcase, MapPin } from 'lucide-react';
+import { Briefcase, ExternalLink, MapPin } from 'lucide-react';
+
 import { Badge } from '@/components/ui/badge';
 import { ScoredJobOffer } from '@/lib/types/jobOffers';
 

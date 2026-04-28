@@ -1,12 +1,13 @@
 'use client';
 
-import * as React from 'react';
-import { Input } from '@/components/ui/input';
-import { Button } from '@/components/ui/button';
 import { X } from 'lucide-react';
-import { cn } from '@/lib/utils';
 import Image from 'next/image';
+import * as React from 'react';
+
 import { plus } from '@/app/constants';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { cn } from '@/lib/utils';
 
 interface TagInputProps {
   value: string[];

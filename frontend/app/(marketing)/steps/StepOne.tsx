@@ -1,11 +1,12 @@
 'use client';
 
+import { ArrowRight } from 'lucide-react';
 import React from 'react';
 import { UseFormReturn } from 'react-hook-form';
-import { CreateProfileFormType, UpdateProfileFormType } from '@/lib/schemas/profileSchema';
+
 import { Button } from '@/components/ui/button';
+import { FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
-import { FormField, FormItem, FormLabel, FormControl, FormMessage } from '@/components/ui/form';
 import {
   Select,
   SelectContent,
@@ -13,8 +14,8 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
-import { ArrowRight } from 'lucide-react';
 import { personalityTypeLabels } from '@/lib/enums/personalityTypes';
+import { CreateProfileFormType, UpdateProfileFormType } from '@/lib/schemas/profileSchema';
 
 interface StepOneProps {
   form: UseFormReturn<CreateProfileFormType | UpdateProfileFormType>;

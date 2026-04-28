@@ -1,7 +1,23 @@
 'use client';
-import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
+import { ArrowRight } from 'lucide-react';
+import Image from 'next/image';
+import Link from 'next/link';
+import { useEffect, useState } from 'react';
+import { useForm } from 'react-hook-form';
+import { toast } from 'sonner';
 import { z } from 'zod';
+
+import { spinner_terminal } from '@/app/constants';
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from '@/components/ui/alert-dialog';
+import { ButtonForm } from '@/components/ui/button-form';
 import {
   Form,
   FormControl,
@@ -11,22 +27,7 @@ import {
   FormMessage,
 } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
-import { useEffect, useState } from 'react';
-import Image from 'next/image';
-import { ButtonForm } from '@/components/ui/button-form';
-import { ArrowRight } from 'lucide-react';
-import {
-  AlertDialog,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogHeader,
-  AlertDialogTitle,
-  AlertDialogAction,
-} from '@/components/ui/alert-dialog';
-import Link from 'next/link';
 import { forgotPassword } from '@/lib/auth';
-import { toast } from 'sonner';
-import { spinner_terminal } from '@/app/constants';
 // Init stage
 // Typy dla błędów API
 interface ApiError {

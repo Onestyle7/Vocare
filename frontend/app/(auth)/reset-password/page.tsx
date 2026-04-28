@@ -1,11 +1,16 @@
 'use client';
-import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { z } from 'zod';
-import { useEffect, useState, Suspense } from 'react';
-import { useSearchParams, useRouter } from 'next/navigation';
+import { ArrowRight, Check, ClockAlert,Eye, EyeOff, X } from 'lucide-react';
 import Image from 'next/image';
 import Link from 'next/link';
+import { useRouter,useSearchParams } from 'next/navigation';
+import { Suspense,useEffect, useState } from 'react';
+import { useForm } from 'react-hook-form';
+import { toast } from 'sonner';
+import { z } from 'zod';
+
+import { spinner_terminal } from '@/app/constants';
+import { ButtonForm } from '@/components/ui/button-form';
 import {
   Form,
   FormControl,
@@ -15,11 +20,7 @@ import {
   FormMessage,
 } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
-import { ButtonForm } from '@/components/ui/button-form';
-import { ArrowRight, Eye, EyeOff, Check, X, ClockAlert } from 'lucide-react';
 import { resetPassword, validateResetToken } from '@/lib/auth';
-import { toast } from 'sonner';
-import { spinner_terminal } from '@/app/constants';
 
 // Typy dla błędów API
 interface ApiError {

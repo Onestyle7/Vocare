@@ -1,28 +1,13 @@
 'use client';
 
-import { useEffect, useMemo, useState, useRef } from 'react';
 import axios, { AxiosError, AxiosRequestConfig, AxiosResponse } from 'axios';
-import { UserProfile } from '@/lib/types/profile';
-import { toast } from 'sonner';
-import GenerateRecommendation from './GenerateRecommendationFail';
 import { gsap } from 'gsap';
-import CollapsibleButton from './CollapsibleButton';
-import CareerPathSection from './CareerPathSection';
-import ButtonGenerate from '../ui/ButtonGenerate';
-import { GridBackgroundDemo } from '../MarketComponents/GridBackgroundDemo';
-import { TerminalDemo } from '../MarketComponents/LoadingTerminal';
-import Timeline from './Timeline'; // Import nowego komponentu
-import {
-  AlertDialog,
-  AlertDialogAction,
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle,
-} from '../ui/alert-dialog';
+import { ArrowRight, Undo2 } from 'lucide-react';
 import Image from 'next/image';
+import Link from 'next/link';
+import { useEffect, useMemo, useRef,useState } from 'react';
+import { toast } from 'sonner';
+
 import {
   cone_1,
   cone_2,
@@ -33,11 +18,28 @@ import {
   timeline_icon_4,
 } from '@/app/constants';
 import { useTokenBalanceContext } from '@/lib/contexts/TokenBalanceContext';
-import Link from 'next/link';
-import { AiCareerResponse, CareerPath } from '@/lib/types/recommendation';
-import Section from '../SupportComponents/Section';
-import { ArrowRight, Undo2 } from 'lucide-react';
 import { CareerPathMatchResult } from '@/lib/types/jobOffers';
+import { UserProfile } from '@/lib/types/profile';
+import { AiCareerResponse, CareerPath } from '@/lib/types/recommendation';
+
+import { GridBackgroundDemo } from '../MarketComponents/GridBackgroundDemo';
+import { TerminalDemo } from '../MarketComponents/LoadingTerminal';
+import Section from '../SupportComponents/Section';
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from '../ui/alert-dialog';
+import ButtonGenerate from '../ui/ButtonGenerate';
+import CareerPathSection from './CareerPathSection';
+import CollapsibleButton from './CollapsibleButton';
+import GenerateRecommendation from './GenerateRecommendationFail';
+import Timeline from './Timeline'; // Import nowego komponentu
 
 // const API_URL = process.env.NEXT_PUBLIC_API_URL;
 

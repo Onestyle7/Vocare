@@ -10,7 +10,8 @@
     "test": "vitest",
     "test:related": "vitest related --run",
     "format": "prettier --write",
-    "validate:md": "npx tsx lib/scripts/validate-md.ts"
+    "validate:md": "npx tsx lib/scripts/validate-md.ts",
+    "linter:fix": "npx eslint --fix"
   },
   "dependencies": {
     "@gsap/react": "^2.1.2",
@@ -95,6 +96,7 @@
     "@vitejs/plugin-react": "^6.0.1",
     "eslint": "^9",
     "eslint-config-next": "15.2.3",
+    "eslint-plugin-simple-import-sort": "^13.0.0",
     "jsdom": "^29.0.1",
     "prettier": "^3.5.3",
     "prettier-plugin-tailwindcss": "^0.6.11",

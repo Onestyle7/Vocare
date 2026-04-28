@@ -1,5 +1,12 @@
 'use client';
 
+import { Undo2 } from 'lucide-react';
+import Image from 'next/image';
+import { useRouter } from 'next/navigation';
+import React, { useCallback, useEffect, useState } from 'react';
+import { ScrollParallax } from 'react-just-parallax';
+import { toast } from 'sonner';
+
 import {
   circle_pricing,
   curve_pricing,
@@ -19,14 +26,9 @@ import {
   AlertDialogTitle,
 } from '@/components/ui/alert-dialog';
 import { Button } from '@/components/ui/button';
-import Image from 'next/image';
-import React, { useCallback, useEffect, useState } from 'react';
-import { ScrollParallax } from 'react-just-parallax';
-import Copy from '../SupportComponents/Copy';
-import { Undo2 } from 'lucide-react';
 import { cn } from '@/lib/utils';
-import { useRouter } from 'next/navigation';
-import { toast } from 'sonner';
+
+import Copy from '../SupportComponents/Copy';
 
 type PlanType = 'tokens' | 'subscription' | 'individual';
 

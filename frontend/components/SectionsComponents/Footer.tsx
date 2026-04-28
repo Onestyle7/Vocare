@@ -1,14 +1,16 @@
 'use client';
 
-import React from 'react';
-import { contact_pages, down_links, links_pages, links_social } from '@/app/constants';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
+import React from 'react';
+import { toast } from 'sonner';
+
+import { contact_pages, down_links, links_pages, links_social } from '@/app/constants';
 import { Input } from '@/components/ui/input';
+import { hasStoredToken, isProtectedRoute, SIGN_IN_PATH } from '@/lib/auth-redirect';
+
 import Section from '../SupportComponents/Section';
 import ButtonGenerate from '../ui/ButtonGenerate';
-import { toast } from 'sonner';
-import { hasStoredToken, isProtectedRoute, SIGN_IN_PATH } from '@/lib/auth-redirect';
 
 const Footer = () => {
   const reachUsEmail = 'vocare@testmail.com';

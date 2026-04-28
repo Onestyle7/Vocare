@@ -1,10 +1,11 @@
 'use client';
 
-import { useEffect, useState } from 'react';
 import { Star } from 'lucide-react';
 import { useTheme } from 'next-themes';
-import { cn } from '@/lib/utils';
+import { useEffect, useState } from 'react';
+
 import { useAuth } from '@/lib/hooks/useAuth';
+import { cn } from '@/lib/utils';
 
 interface SubscriptionStatusIndicatorProps {
   className?: string;

@@ -1,6 +1,6 @@
 import { logOut } from '@/app/(auth)/actions';
+
 import { api } from './api';
-import { clearStoredToken, redirectToSignIn } from './auth-redirect';
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL;
 const AUTH_PREFIX = `${API_URL}/api/Auth`;
