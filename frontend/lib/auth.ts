@@ -1,4 +1,4 @@
-import { logOut } from '@/app/(auth)/actions';
+import { logOut } from '@/app/(auth)/_dal/commands';
 
 import { api } from './api';
 

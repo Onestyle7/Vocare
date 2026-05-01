@@ -7,6 +7,7 @@ import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useTransition } from 'react';
 import { useForm } from 'react-hook-form';
+import { toast } from 'sonner';
 import { z } from 'zod';
 
 import { ButtonForm } from '@/components/ui/button-form';
@@ -21,22 +22,22 @@ import {
 } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
 
-import { register } from '../actions';
+import { register } from '../_dal/commands';
 
 const signUpPasswordSchema = z
   .string()
-  .min(6, 'Password must be at least 6 characters long')
-  .regex(/[a-z]/, 'Password must contain at least one lowercase letter')
-  .regex(/[A-Z]/, 'Password must contain at least one uppercase letter')
-  .regex(/\d/, 'Password must contain at least one digit')
+  .min(6, 'Hasło musi mieć co najmniej 6 znaków')
+  .regex(/[a-z]/, 'Hasło musi zawierać co najmniej jedną małą literę')
+  .regex(/[A-Z]/, 'Hasło musi zawierać co najmniej jedną wielką literę')
+  .regex(/\d/, 'Hasło musi zawierać co najmniej jedną cyfrę')
   .regex(
     /[!@#$%^&*()_+\-=[\]{};':"\\|,.<>/?]/,
-    'Password must contain at least one special character'
+    'Hasło musi zawierać przynajmniej jeden znak specjalny'
   );
 
 export const signUpSchema = z
   .object({
-    email: z.string().email('Invalid email address'),
+    email: z.string().email('Niepoprawny format adresu email'),
     password: signUpPasswordSchema,
     confirmPassword: z.string(),
     fullName: z.string().min(2).max(50),
@@ -46,7 +47,7 @@ export const signUpSchema = z
     if (data.password !== data.confirmPassword) {
       ctx.addIssue({
         code: z.ZodIssueCode.custom,
-        message: 'Passwords do not match',
+        message: 'Hasła nie są takie same',
         path: ['confirmPassword'],
       });
     }
@@ -69,10 +70,15 @@ export function SignUpForm() {
 
   const handleSignUp = async (formValues: SignUpFormType) => {
     startTransition(async () => {
-      const result = await register(formValues);
-      if (result.success) {
-        router.push('/sign-in');
+      const [error] = await register(formValues);
+
+      if (error) {
+        toast.error(error.message);
+        return;
       }
+
+      toast.success('Rejestracja ukończona');
+      router.push('/sign-in');
     });
   };
 

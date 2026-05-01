@@ -1,7 +1,8 @@
+import { err, ok, Result } from 'neverthrow';
 import z from 'zod';
 
-import { ApiError } from '@/lib/api/api-client';
 import env from '@/lib/env/server';
+import { BaseAppError } from '@/lib/types/result';
 
 import { createGoogleOAuthClient } from './google';
 
@@ -74,8 +75,10 @@ export class OAuthClient {
     return url.toString();
   }
 
-  async fetchToken(code: string) {
-    return fetch(this.urls.token, {
+  async fetchToken(
+    code: string
+  ): Promise<Result<{ accessToken: string; tokenType: string }, OAuthError>> {
+    return await fetch(this.urls.token, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/x-www-form-urlencoded',
@@ -93,16 +96,16 @@ export class OAuthClient {
       .then((rawData) => {
         const { data, success, error } = this.tokenSchema.safeParse(rawData);
         if (!success)
-          throw new InvalidTokenError({
-            provider: this.provider,
+          return err({
+            type: 'OAuthProviderError',
             message: error.message,
-            cause: error.cause,
+            details: error.flatten(),
           });
 
-        return {
+        return ok({
           accessToken: data.access_token,
           tokenType: data.token_type,
-        };
+        });
       });
   }
 }
@@ -118,8 +121,4 @@ export function getOauthClient(provider: OAuthProvider) {
   }
 }
 
-class InvalidTokenError extends ApiError {
-  constructor(details: Record<string, unknown>) {
-    super('Error occured when getting auth token from OAuth provider', 500, details);
-  }
-}
+export type OAuthError = BaseAppError & { type: 'OAuthProviderError' };

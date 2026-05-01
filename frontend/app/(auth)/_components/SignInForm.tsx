@@ -7,8 +7,10 @@ import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useTransition } from 'react';
 import { useForm } from 'react-hook-form';
+import { toast } from 'sonner';
 import z from 'zod';
 
+import { OAuthSignIn, signIn } from '@/app/(auth)/_dal/commands';
 import { google } from '@/app/constants';
 import OAuthButton from '@/components/auth/OAuthButton';
 import { ButtonForm } from '@/components/ui/button-form';
@@ -21,8 +23,6 @@ import {
   FormMessage,
 } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
-
-import { OAuthSignIn, signIn } from '../actions';
 
 export const signInSchema = z.object({
   email: z.string().email('Invalid email address'),
@@ -53,10 +53,21 @@ export function SignInFrom({ oauthError }: { oauthError?: string }) {
 
   const handleSignIn = async (formValues: SignInFormType) => {
     startTransition(async () => {
-      const result = await signIn(formValues);
-      if (result.success) {
-        router.push('/dashboard');
+      const [error] = await signIn(formValues);
+      if (error) {
+        switch (error.type) {
+          case 'InvalidCredentials':
+            {
+              form.setError('email', { type: 'manual' });
+              form.setError('password', { type: 'manual', message: error.message });
+            }
+
+            toast.error(error.message, { position: 'top-center' });
+            return;
+        }
       }
+
+      router.push('/dashboard');
     });
   };
 
@@ -64,7 +75,7 @@ export function SignInFrom({ oauthError }: { oauthError?: string }) {
     <Form {...form}>
       <form onSubmit={form.handleSubmit(handleSignIn)} className="auth-form font-poppins">
         <h1 className="form-title">Zaloguj się</h1>
-        <p>{oauthError}</p>
+        <p className="text-red-500">{oauthError}</p>
 
         <FormField
           control={form.control}
