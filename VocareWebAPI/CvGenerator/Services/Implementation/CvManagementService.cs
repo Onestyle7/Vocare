@@ -1,14 +1,16 @@
+using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Text.Json;
+using System.Threading.Tasks;
 using Microsoft.Extensions.Options;
 using VocareWebAPI.Billing.Models.Enums;
 using VocareWebAPI.Billing.Repositories.Interfaces;
-using VocareWebAPI.CvGenerator.Exceptions;
 using VocareWebAPI.CvGenerator.Models;
 using VocareWebAPI.CvGenerator.Models.Dtos;
 using VocareWebAPI.CvGenerator.Repositories.Interfaces;
 using VocareWebAPI.CvGenerator.Services.Interfaces;
 using VocareWebAPI.Repositories;
-using VocareWebAPI.Shared.Results;
 
 namespace VocareWebAPI.CvGenerator.Services.Implementation
 {
@@ -61,13 +63,20 @@ namespace VocareWebAPI.CvGenerator.Services.Implementation
         public async Task<CvDetailsDto> GetCvDetailsAsync(Guid cvId, string userId)
         {
             _logger.LogInformation($"Getting CV details: {cvId} for user: {userId}");
-            var cv = await _cvRepository.GetByIdAsync(cvId);
-            if (cv == null)
-                throw new CvNotFoundException(cvId);
 
             // Sprawdzamym, czy CV należy do użytkownika
             if (!await _cvRepository.BelongsToUserAsync(cvId, userId))
-                throw new CvAccessDeniedException(cvId);
+            {
+                throw new UnauthorizedAccessException(
+                    "You do not have permission to access this CV."
+                );
+            }
+
+            var cv = await _cvRepository.GetByIdAsync(cvId);
+            if (cv == null)
+            {
+                throw new KeyNotFoundException($"CV not found. ID: {cvId}");
+            }
 
             var cvData = JsonSerializer.Deserialize<CvDto>(
                 cv.CvJson,
@@ -88,16 +97,16 @@ namespace VocareWebAPI.CvGenerator.Services.Implementation
             };
         }
 
-        public async Task<Result<CvDetailsDto>> CreateCvAsync(string userId, CreateCvDto createDto)
+        public async Task<CvDetailsDto> CreateCvAsync(string userId, CreateCvDto createDto)
         {
             _logger.LogInformation("Creating new CV for user: {UserId}", userId);
 
-            var currentCount = await _cvRepository.GetUserCvCountAsync(userId);
-            var maxLimit = await GetMaxCvLimitAsync(userId);
-            if (currentCount >= maxLimit)
+            // Sprawdzamy limit CV
+            if (!await CanCreateNewCvAsync(userId))
             {
-                return Result<CvDetailsDto>.Fail(
-                    new Error("CV_LIMIT_REACHED", $"CV limit reached: {currentCount}/{maxLimit}.")
+                var limit = await GetMaxCvLimitAsync(userId);
+                throw new InvalidOperationException(
+                    $"Osiągnięto limit {limit} CV. Usuń istniejące CV lub ulepsz plan."
                 );
             }
 
@@ -147,32 +156,34 @@ namespace VocareWebAPI.CvGenerator.Services.Implementation
 
             var savedCv = await _cvRepository.AddAsync(generatedCv);
 
-            return Result<CvDetailsDto>.Ok(
-                new CvDetailsDto
-                {
-                    Id = savedCv.Id,
-                    Name = savedCv.Name,
-                    TargetPosition = savedCv.TargetPosition,
-                    CvData = cvData,
-                    IsDefault = savedCv.IsDefault,
-                    CreatedAt = savedCv.CreatedAt,
-                    LastModifiedAt = savedCv.LastModifiedAt,
-                    Version = savedCv.Version,
-                    Notes = savedCv.Notes,
-                }
-            );
+            return new CvDetailsDto
+            {
+                Id = savedCv.Id,
+                Name = savedCv.Name,
+                TargetPosition = savedCv.TargetPosition,
+                CvData = cvData,
+                IsDefault = savedCv.IsDefault,
+                CreatedAt = savedCv.CreatedAt,
+                LastModifiedAt = savedCv.LastModifiedAt,
+                Version = savedCv.Version,
+                Notes = savedCv.Notes,
+            };
         }
 
         public async Task<CvDetailsDto> UpdateCvAsync(string userId, UpdateCvDto updateDto)
         {
             _logger.LogInformation("Updating CV: {CvId} for user: {UserId}", updateDto.Id, userId);
 
+            if (!await _cvRepository.BelongsToUserAsync(updateDto.Id, userId))
+            {
+                throw new UnauthorizedAccessException("CV nie należy do tego użytkownika");
+            }
+
             var cv = await _cvRepository.GetByIdAsync(updateDto.Id);
             if (cv == null)
-                throw new CvNotFoundException(updateDto.Id);
-
-            if (!await _cvRepository.BelongsToUserAsync(updateDto.Id, userId))
-                throw new CvAccessDeniedException(updateDto.Id);
+            {
+                throw new KeyNotFoundException($"CV o ID {updateDto.Id} nie zostało znalezione");
+            }
 
             // Aktualizujemy dane
             cv.Name = updateDto.Name;
@@ -203,12 +214,16 @@ namespace VocareWebAPI.CvGenerator.Services.Implementation
         {
             _logger.LogInformation("Deleting CV: {CvId} for user: {UserId}", cvId, userId);
 
+            if (!await _cvRepository.BelongsToUserAsync(cvId, userId))
+            {
+                throw new UnauthorizedAccessException("CV nie należy do tego użytkownika");
+            }
+
             var cv = await _cvRepository.GetByIdAsync(cvId);
             if (cv == null)
-                throw new CvNotFoundException(cvId);
-
-            if (!await _cvRepository.BelongsToUserAsync(cvId, userId))
-                throw new CvAccessDeniedException(cvId);
+            {
+                throw new KeyNotFoundException($"CV o ID {cvId} nie zostało znalezione");
+            }
 
             // Jeśli usuwamy domyślne CV, musimy ustawić inne jako domyślne
             if (cv.IsDefault)
@@ -229,7 +244,9 @@ namespace VocareWebAPI.CvGenerator.Services.Implementation
             _logger.LogInformation("Setting default CV: {CvId} for user: {UserId}", cvId, userId);
 
             if (!await _cvRepository.BelongsToUserAsync(cvId, userId))
-                throw new CvAccessDeniedException(cvId);
+            {
+                throw new UnauthorizedAccessException("CV nie należy do tego użytkownika");
+            }
 
             await _cvRepository.SetDefaultAsync(cvId, userId);
         }
