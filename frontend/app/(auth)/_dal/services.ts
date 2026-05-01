@@ -1,19 +1,26 @@
 'use server';
 
-import { Result } from 'neverthrow';
+import { err, ok, Result } from 'neverthrow';
 
-import { authApiClient, OAuthSignInResult, RegisterCommand, SignInCommand } from './api';
+import { BaseAppError } from '@/lib/types/result';
 
-export type AuthDomainError =
-  | { type: 'OAuthError'; message: string; details?: Record<string, unknown> }
-  | { type: 'InvalidCredentials'; message: string; details?: Record<string, unknown> }
-  | { type: 'GenericApiError'; message: string; details?: Record<string, unknown> };
+import {
+  authApiClient,
+  ForgotPasswordCommand,
+  OAuthSignInResult,
+  RegisterCommand,
+  ResetPasswordCommand,
+  SignInCommand,
+  ValidateResetPasswordCommand,
+  ValidateResetPasswordResult,
+} from './api';
 
-export type RegisterDomainError = {
-  type: 'GenericApiError';
-  message: string;
-  details?: Record<string, unknown>;
-};
+export type AuthDomainError = BaseAppError<'OAuthError' | 'InvalidCredentials' | 'GenericApiError'>;
+export type RegisterDomainError = BaseAppError<'GenericApiError'>;
+export type ForgotPasswordDomainError = BaseAppError<'GenericApiError' | 'InvalidEmailError'>;
+export type ResetPasswordDomainError = BaseAppError<
+  'GenericApiError' | 'InvalidResetToken' | 'ExpiredResetToken'
+>;
 
 export async function verifyOauthTokenService(
   endpoint: string,
@@ -52,7 +59,7 @@ export async function signInService(
 
   return result
     .map((response) => response.data)
-    .mapErr((authError) => {
+    .mapErr((authError): AuthDomainError => {
       switch (authError.type) {
         case 'BadRequestError': {
           return {
@@ -79,7 +86,7 @@ export async function registerService(
 
   return result
     .map((response) => response.data)
-    .mapErr((authError) => {
+    .mapErr((authError): RegisterDomainError => {
       switch (authError.type) {
         default: {
           return {
@@ -106,5 +113,103 @@ export async function logoutService(): Promise<Result<OAuthSignInResult, AuthDom
           };
         }
       }
+    });
+}
+
+export async function forgotPasswordService(
+  command: ForgotPasswordCommand
+): Promise<Result<void, ForgotPasswordDomainError>> {
+  const result = await authApiClient.post('/forgot-password', command);
+
+  return result
+    .map(() => undefined)
+    .mapErr((authError): ForgotPasswordDomainError => {
+      switch (authError.type) {
+        case 'BadRequestError': {
+          return {
+            type: 'InvalidEmailError',
+            message: 'Wprowadzono niepoprawny adres email',
+            details: authError.details,
+          };
+        }
+        default: {
+          return {
+            type: 'GenericApiError',
+            message: 'Wystąpił nieoczekiwany błąd. Spróbuj ponownie później.',
+            details: authError.details,
+          };
+        }
+      }
+    });
+}
+
+export async function resetPasswordService(
+  command: ResetPasswordCommand
+): Promise<Result<void, ResetPasswordDomainError>> {
+  const result = await authApiClient.post('/reset-password', command);
+
+  return result
+    .map(() => undefined)
+    .mapErr((error): ResetPasswordDomainError => {
+      switch (error.type) {
+        case 'BadRequestError': {
+          return {
+            type: 'InvalidResetToken',
+            message: 'Hasło nie spełnia wymagań lub token wygasł',
+            details: error.details,
+          };
+        }
+        default: {
+          return {
+            type: 'GenericApiError',
+            message: 'Nie udało się zmienić hasła',
+            details: error.details,
+          };
+        }
+      }
+    });
+}
+
+export async function validateResetPasswordService({
+  token,
+  email,
+}: ValidateResetPasswordCommand): Promise<
+  Result<ValidateResetPasswordResult, ResetPasswordDomainError>
+> {
+  const queryParams = new URLSearchParams({
+    token,
+    email,
+  });
+  const result = await authApiClient.get<ValidateResetPasswordResult>(
+    `/validate-reset-token?${queryParams}`
+  );
+
+  return result
+    .map((response) => response.data)
+    .mapErr((error): ResetPasswordDomainError => {
+      switch (error.type) {
+        case 'BadRequestError': {
+          return {
+            type: 'InvalidResetToken',
+            message: 'Token zmiany jest nieprawidłowy',
+          };
+        }
+        default: {
+          return {
+            type: 'GenericApiError',
+            message: 'Nie udało się zweryfikować tokenu zmiany hasła',
+          };
+        }
+      }
+    })
+    .andThen((data): Result<ValidateResetPasswordResult, ResetPasswordDomainError> => {
+      if (!data.isValid) {
+        return err({
+          type: 'ExpiredResetToken',
+          message: 'Token zmiany hasła wygasł',
+        });
+      }
+
+      return ok(data);
     });
 }

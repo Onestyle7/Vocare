@@ -24,7 +24,7 @@ import { Input } from '@/components/ui/input';
 
 import { register } from '../_dal/commands';
 
-const signUpPasswordSchema = z
+export const signUpPasswordSchema = z
   .string()
   .min(6, 'Hasło musi mieć co najmniej 6 znaków')
   .regex(/[a-z]/, 'Hasło musi zawierać co najmniej jedną małą literę')
@@ -39,7 +39,7 @@ export const signUpSchema = z
   .object({
     email: z.string().email('Niepoprawny format adresu email'),
     password: signUpPasswordSchema,
-    confirmPassword: z.string(),
+    confirmPassword: signUpPasswordSchema,
     fullName: z.string().min(2).max(50),
     marketingConsent: z.boolean().default(false),
   })

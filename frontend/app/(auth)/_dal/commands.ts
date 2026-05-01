@@ -3,11 +3,24 @@
 import { cookies } from 'next/headers';
 import { redirect } from 'next/navigation';
 
-import { getOAuthEndpoint, RegisterCommand, SignInCommand } from '@/app/(auth)/_dal/api';
+import {
+  ForgotPasswordCommand,
+  getOAuthEndpoint,
+  RegisterCommand,
+  ResetPasswordCommand,
+  SignInCommand,
+} from '@/app/(auth)/_dal/api';
 import { getOauthClient, OAuthProvider } from '@/lib/auth/oauth/base';
 import { actionErr, actionOk } from '@/lib/types/result';
 
-import { logoutService, registerService, signInService, verifyOauthTokenService } from './services';
+import {
+  forgotPasswordService,
+  logoutService,
+  registerService,
+  resetPasswordService,
+  signInService,
+  verifyOauthTokenService,
+} from './services';
 
 export async function OAuthSignIn(provider: OAuthProvider) {
   const oAuthClient = getOauthClient(provider);
@@ -50,4 +63,22 @@ export async function logOut() {
   await logoutService();
   cookieStore.delete('token');
   return actionOk({ success: true });
+}
+
+export async function forgotPassword(command: ForgotPasswordCommand) {
+  const result = await forgotPasswordService(command);
+
+  return result.match(
+    () => actionOk({ success: true }),
+    (error) => actionErr(error)
+  );
+}
+
+export async function resetPassword(command: ResetPasswordCommand) {
+  const result = await resetPasswordService(command);
+
+  return result.match(
+    () => actionOk({ success: true }),
+    (error) => actionErr(error)
+  );
 }

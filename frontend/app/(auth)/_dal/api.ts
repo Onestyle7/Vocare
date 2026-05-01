@@ -46,3 +46,23 @@ export type RegisterCommand = {
   confirmPassword: string;
   marketingConsent: boolean;
 };
+
+export type ForgotPasswordCommand = {
+  email: string;
+};
+
+export type ResetPasswordCommand = {
+  email: string;
+  token: string;
+  newPassword: string;
+  confirmPassword: string;
+};
+
+export type ValidateResetPasswordCommand = {
+  email: string;
+  token: string;
+};
+
+export type ValidateResetPasswordResult = {
+  isValid: boolean;
+};

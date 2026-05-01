@@ -19,20 +19,22 @@ interface ApiResponse<T> {
 }
 
 export type ApiError =
-  | (BaseAppError & { type: 'BadRequestError' })
-  | (BaseAppError & { type: 'UnauthorizedError' })
-  | (BaseAppError & { type: 'ForbiddenError' })
-  | (BaseAppError & { type: 'NotFoundError' })
-  | (BaseAppError & { type: 'ConflictError' })
-  | (BaseAppError & { type: 'UnprocessableEntityError' })
-  | (BaseAppError & { type: 'TooManyRequestsError' })
-  | (BaseAppError & { type: 'InternalServerError' })
-  | (BaseAppError & { type: 'BadGatewayError' })
-  | (BaseAppError & { type: 'ServiceUnavailableError' })
-  | (BaseAppError & { type: 'GatewayTimeoutError' })
-  | (BaseAppError & { type: 'UnexpectedApiError' })
-  | (BaseAppError & { type: 'ParseResponseError' })
-  | (BaseAppError & { type: `HttpError${number}` });
+  BaseAppError<
+    | 'BadRequestError'
+    | 'UnauthorizedError'
+    | 'ForbiddenError'
+    | 'NotFoundError'
+    | 'ConflictError'
+    | 'UnprocessableEntityError'
+    | 'TooManyRequestsError'
+    | 'InternalServerError'
+    | 'BadGatewayError'
+    | 'ServiceUnavailableError'
+    | 'GatewayTimeoutError'
+    | 'UnexpectedApiError'
+    | 'ParseResponseError'
+    | `HttpError${number}`
+  >;
 
 export class ApiClient {
   private config: Required<ApiConfig>;
