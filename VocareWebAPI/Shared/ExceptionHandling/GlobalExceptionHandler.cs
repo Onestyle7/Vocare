@@ -55,6 +55,7 @@ namespace VocareWebAPI.Shared.ExceptionHandling
             );
 
             httpContext.Response.StatusCode = status;
+            httpContext.Response.ContentType = "application/problem+json";
 
             await httpContext.Response.WriteAsJsonAsync(problem, cancellationToken);
             return true;
