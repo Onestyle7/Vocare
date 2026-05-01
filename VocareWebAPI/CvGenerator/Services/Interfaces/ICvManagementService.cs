@@ -1,5 +1,8 @@
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
 using VocareWebAPI.CvGenerator.Models.Dtos;
-using VocareWebAPI.Shared.Results;
 
 namespace VocareWebAPI.CvGenerator.Services.Interfaces
 {
@@ -29,7 +32,7 @@ namespace VocareWebAPI.CvGenerator.Services.Interfaces
         /// <param name="userId"></param>
         /// <param name="createDto"></param>
         /// <returns></returns>
-        Task<Result<CvDetailsDto>> CreateCvAsync(string userId, CreateCvDto createDto);
+        Task<CvDetailsDto> CreateCvAsync(string userId, CreateCvDto createDto);
 
         /// <summary>
         /// Aktualizuje istniejące CV
