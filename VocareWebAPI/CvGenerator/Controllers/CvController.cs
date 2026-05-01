@@ -1,11 +1,11 @@
 using System.Security.Claims;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.ModelBinding.Binders;
 using VocareWebAPI.Billing.Services.Interfaces;
-using VocareWebAPI.CvGenerator.Interfaces;
 using VocareWebAPI.CvGenerator.Models.Dtos;
+using VocareWebAPI.CvGenerator.Repositories.Interfaces;
 using VocareWebAPI.CvGenerator.Services.Interfaces;
-using VocareWebAPI.Shared.Results;
 
 namespace VocareWebAPI.CvGenerator.Controllers
 {
@@ -15,18 +15,21 @@ namespace VocareWebAPI.CvGenerator.Controllers
     public class CvController : ControllerBase
     {
         private readonly ICvManagementService _cvManagementService;
+        private readonly ILogger<CvController> _logger;
         private readonly ICvAnalysisService _cvAnalysisService;
         private readonly ICvTailoringService _cvTailoringService;
         private readonly IBillingService _billingService;
 
         public CvController(
             ICvManagementService cvManagementService,
+            ILogger<CvController> logger,
             ICvAnalysisService cvAnalysisService,
             ICvTailoringService cvTailoringService,
             IBillingService billingService
         )
         {
             _cvManagementService = cvManagementService;
+            _logger = logger;
             _cvAnalysisService = cvAnalysisService;
             _cvTailoringService = cvTailoringService;
             _billingService = billingService;
@@ -41,10 +44,20 @@ namespace VocareWebAPI.CvGenerator.Controllers
         {
             var userId = User.FindFirstValue(ClaimTypes.NameIdentifier) ?? string.Empty;
             if (string.IsNullOrEmpty(userId))
+            {
                 return BadRequest("Brak identyfikatora użytkownika w tokenie.");
+            }
 
-            var cv = await _cvManagementService.GetUserCvsAsync(userId);
-            return Ok(cv);
+            try
+            {
+                var cv = await _cvManagementService.GetUserCvsAsync(userId);
+                return Ok(cv);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error generating CV for user {UserId}", userId);
+                return StatusCode(500, "Wystąpił błąd serwera podczas generowania CV.");
+            }
         }
 
         /// <summary>
@@ -57,10 +70,33 @@ namespace VocareWebAPI.CvGenerator.Controllers
         {
             var userId = User.FindFirstValue(ClaimTypes.NameIdentifier) ?? string.Empty;
             if (string.IsNullOrEmpty(userId))
+            {
                 return BadRequest("Brak identyfikatora użytkownika w tokenie.");
+            }
 
-            var cv = await _cvManagementService.GetCvDetailsAsync(id, userId);
-            return Ok(cv);
+            try
+            {
+                var cv = await _cvManagementService.GetCvDetailsAsync(id, userId);
+                return Ok(cv);
+            }
+            catch (UnauthorizedAccessException)
+            {
+                return Forbid("Nie masz dostępu do tego CV.");
+            }
+            catch (KeyNotFoundException)
+            {
+                return NotFound("CV nie zostało znalezione.");
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(
+                    ex,
+                    "Error getting CV details {CvId} for user {UserId}",
+                    id,
+                    userId
+                );
+                return StatusCode(500, "Wystąpił błąd podczas pobierania szczegółów CV.");
+            }
         }
 
         /// <summary>
@@ -73,21 +109,29 @@ namespace VocareWebAPI.CvGenerator.Controllers
         {
             var userId = User.FindFirstValue(ClaimTypes.NameIdentifier) ?? string.Empty;
             if (string.IsNullOrEmpty(userId))
+            {
                 return BadRequest("Brak identyfikatora użytkownika w tokenie.");
+            }
 
             if (!ModelState.IsValid)
             {
                 return BadRequest(ModelState);
             }
-            var result = await _cvManagementService.CreateCvAsync(userId, createDto);
-            if (!result.IsSuccess)
-                return result.ToActionResult();
 
-            return CreatedAtAction(
-                nameof(GetCvDetails),
-                new { id = result.Value!.Id },
-                result.Value
-            );
+            try
+            {
+                var cv = await _cvManagementService.CreateCvAsync(userId, createDto);
+                return CreatedAtAction(nameof(GetCvDetails), new { id = cv.Id }, cv);
+            }
+            catch (InvalidOperationException ex)
+            {
+                return BadRequest(ex.Message);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error creating CV for user {UserId}", userId);
+                return StatusCode(500, "Wystąpił błąd podczas tworzenia CV.");
+            }
         }
 
         /// <summary>
@@ -104,15 +148,38 @@ namespace VocareWebAPI.CvGenerator.Controllers
         {
             var userId = User.FindFirstValue(ClaimTypes.NameIdentifier) ?? string.Empty;
             if (string.IsNullOrEmpty(userId))
+            {
                 return BadRequest("Brak identyfikatora użytkownika w tokenie.");
+            }
+
+            if (id != updateDto.Id)
+            {
+                return BadRequest("ID w URL nie zgadza się z ID w body.");
+            }
 
             if (!ModelState.IsValid)
+            {
                 return BadRequest(ModelState);
-            if (id != updateDto.Id)
-                return BadRequest("Id CV w URL musi być zgodne z Id w ciele żądania.");
+            }
 
-            var cv = await _cvManagementService.UpdateCvAsync(userId, updateDto);
-            return Ok(cv);
+            try
+            {
+                var cv = await _cvManagementService.UpdateCvAsync(userId, updateDto);
+                return Ok(cv);
+            }
+            catch (UnauthorizedAccessException)
+            {
+                return Forbid("Nie masz dostępu do tego CV.");
+            }
+            catch (KeyNotFoundException)
+            {
+                return NotFound("CV nie zostało znalezione.");
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error updating CV {CvId} for user {UserId}", id, userId);
+                return StatusCode(500, "Wystąpił błąd podczas aktualizacji CV.");
+            }
         }
 
         /// <summary>
@@ -125,10 +192,28 @@ namespace VocareWebAPI.CvGenerator.Controllers
         {
             var userId = User.FindFirstValue(ClaimTypes.NameIdentifier) ?? string.Empty;
             if (string.IsNullOrEmpty(userId))
+            {
                 return BadRequest("Brak identyfikatora użytkownika w tokenie.");
+            }
 
-            await _cvManagementService.DeleteCvAsync(id, userId);
-            return NoContent();
+            try
+            {
+                await _cvManagementService.DeleteCvAsync(id, userId);
+                return NoContent();
+            }
+            catch (UnauthorizedAccessException)
+            {
+                return Forbid("Nie masz dostępu do tego CV.");
+            }
+            catch (KeyNotFoundException)
+            {
+                return NotFound("CV nie zostało znalezione.");
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error deleting CV {CvId} for user {UserId}", id, userId);
+                return StatusCode(500, "Wystąpił błąd podczas usuwania CV.");
+            }
         }
 
         /// <summary>
@@ -141,10 +226,33 @@ namespace VocareWebAPI.CvGenerator.Controllers
         {
             var userId = User.FindFirstValue(ClaimTypes.NameIdentifier) ?? string.Empty;
             if (string.IsNullOrEmpty(userId))
+            {
                 return BadRequest("Brak identyfikatora użytkownika w tokenie.");
+            }
 
-            await _cvManagementService.SetDefaultCvAsync(userId, id);
-            return NoContent();
+            try
+            {
+                await _cvManagementService.SetDefaultCvAsync(userId, id);
+                return NoContent();
+            }
+            catch (UnauthorizedAccessException)
+            {
+                return Forbid("Nie masz dostępu do tego CV.");
+            }
+            catch (KeyNotFoundException)
+            {
+                return NotFound("CV nie zostało znalezione.");
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(
+                    ex,
+                    "Error setting default CV {CvId} for user {UserId}",
+                    id,
+                    userId
+                );
+                return StatusCode(500, "Wystąpił błąd podczas ustawiania domyślnego CV.");
+            }
         }
 
         /// <summary>
@@ -156,20 +264,30 @@ namespace VocareWebAPI.CvGenerator.Controllers
         {
             var userId = User.FindFirstValue(ClaimTypes.NameIdentifier) ?? string.Empty;
             if (string.IsNullOrEmpty(userId))
+            {
                 return BadRequest("Brak identyfikatora użytkownika w tokenie.");
+            }
 
-            var canCreate = await _cvManagementService.CanCreateNewCvAsync(userId);
-            var maxLimit = await _cvManagementService.GetMaxCvLimitAsync(userId);
-            var currentCvs = await _cvManagementService.GetUserCvsAsync(userId);
+            try
+            {
+                var canCreate = await _cvManagementService.CanCreateNewCvAsync(userId);
+                var maxLimit = await _cvManagementService.GetMaxCvLimitAsync(userId);
+                var currentCvs = await _cvManagementService.GetUserCvsAsync(userId);
 
-            return Ok(
-                new
-                {
-                    canCreateNew = canCreate,
-                    currentCount = currentCvs.Count,
-                    maxLimit = maxLimit,
-                }
-            );
+                return Ok(
+                    new
+                    {
+                        canCreateNew = canCreate,
+                        currentCount = currentCvs.Count,
+                        maxLimit = maxLimit,
+                    }
+                );
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error getting CV limits for user {UserId}", userId);
+                return StatusCode(500, "Wystąpił błąd podczas sprawdzania limitów.");
+            }
         }
 
         [HttpPost("analyze/{cvId}")]
@@ -177,15 +295,34 @@ namespace VocareWebAPI.CvGenerator.Controllers
         {
             var userId = User.FindFirstValue(ClaimTypes.NameIdentifier) ?? string.Empty;
             if (string.IsNullOrEmpty(userId))
+            {
                 return BadRequest("Brak identyfikatora użytkownika w tokenie.");
-
+            }
             var hasAccess = await _billingService.CanAccessServiceAsync(userId, "AnalyzeCv");
             if (!hasAccess)
+            {
                 return Forbid("Zbyt mało tokenów lub nieaktywna subskrypcja");
+            }
 
-            var analysis = await _cvAnalysisService.AnalyzeCvAsync(cvId, userId);
-            await _billingService.DeductTokensForServiceAsync(userId, "AnalyzeCv");
-            return Ok(analysis);
+            try
+            {
+                var analysis = await _cvAnalysisService.AnalyzeCvAsync(cvId, userId);
+                await _billingService.DeductTokensForServiceAsync(userId, "AnalyzeCv");
+                return Ok(analysis);
+            }
+            catch (UnauthorizedAccessException)
+            {
+                return Forbid("Nie masz dostępu do tego CV.");
+            }
+            catch (KeyNotFoundException)
+            {
+                return NotFound("CV nie zostało znalezione.");
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error analyzing CV for user {UserId}", userId);
+                return StatusCode(500, "Wystąpił błąd podczas analizy CV.");
+            }
         }
 
         [HttpGet("analysis/{cvId}")]
@@ -193,11 +330,29 @@ namespace VocareWebAPI.CvGenerator.Controllers
         {
             var userId = User.FindFirstValue(ClaimTypes.NameIdentifier) ?? string.Empty;
             if (string.IsNullOrEmpty(userId))
+            {
                 return BadRequest("Brak identyfikatora użytkownika w tokenie.");
+            }
 
-            var analysis = await _cvAnalysisService.GetAnalysisAsync(cvId, userId);
+            try
+            {
+                var analysis = await _cvAnalysisService.GetAnalysisAsync(cvId, userId);
 
-            return Ok(analysis);
+                return Ok(analysis);
+            }
+            catch (UnauthorizedAccessException)
+            {
+                return Forbid("Nie masz dostępu do tego CV.");
+            }
+            catch (KeyNotFoundException)
+            {
+                return NotFound("CV nie zostało znalezione.");
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error getting CV analysis for user {UserId}", userId);
+                return StatusCode(500, "Wystąpił błąd podczas pobierania analizy CV.");
+            }
         }
 
         [HttpPost("tailor")]
@@ -205,18 +360,44 @@ namespace VocareWebAPI.CvGenerator.Controllers
         {
             var userId = User.FindFirstValue(ClaimTypes.NameIdentifier) ?? string.Empty;
             if (string.IsNullOrEmpty(userId))
+            {
                 return BadRequest("Brak identyfikatora użytkownika w tokenie.");
-
+            }
             if (!ModelState.IsValid)
+            {
                 return BadRequest(ModelState);
+            }
 
             var hasAccess = await _billingService.CanAccessServiceAsync(userId, "TailorCv");
-            if (!hasAccess)
-                return Forbid("Zbyt mało tokenów lub nieaktywna subskrypcja");
 
-            var cv = await _cvTailoringService.TailorCvAsync(dto, userId);
-            await _billingService.DeductTokensForServiceAsync(userId, "TailorCv");
-            return Ok(cv);
+            if (!hasAccess)
+            {
+                return Forbid("Zbyt mało tokenów lub nieaktywna subskrypcja");
+            }
+
+            try
+            {
+                var cv = await _cvTailoringService.TailorCvAsync(dto, userId);
+                await _billingService.DeductTokensForServiceAsync(userId, "TailorCv");
+                return Ok(cv);
+            }
+            catch (UnauthorizedAccessException)
+            {
+                return Forbid("Nie masz dostępu do tego CV.");
+            }
+            catch (InvalidOperationException ex)
+            {
+                return BadRequest(new { message = ex.Message });
+            }
+            catch (KeyNotFoundException)
+            {
+                return NotFound("CV nie zostało znalezione.");
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error generating targeted CV for user {UserId}", userId);
+                return StatusCode(500, "Wystąpił błąd podczas generowania CV.");
+            }
         }
 
         [HttpPost("generate-from-profile")]
@@ -226,10 +407,13 @@ namespace VocareWebAPI.CvGenerator.Controllers
         {
             var userId = User.FindFirstValue(ClaimTypes.NameIdentifier) ?? string.Empty;
             if (string.IsNullOrEmpty(userId))
+            {
                 return BadRequest("Brak identyfikatora użytkownika w tokenie.");
-
+            }
             if (!ModelState.IsValid)
+            {
                 return BadRequest(ModelState);
+            }
 
             var hasAccess = await _billingService.CanAccessServiceAsync(
                 userId,
@@ -237,14 +421,33 @@ namespace VocareWebAPI.CvGenerator.Controllers
             );
 
             if (!hasAccess)
+            {
                 return Forbid("Zbyt mało tokenów lub nieaktywna subskrypcja");
+            }
 
-            var result = await _cvTailoringService.GenerateCvFromProfileAsync(dto, userId);
-            if (!result.IsSuccess)
-                return result.ToActionResult();
-
-            await _billingService.DeductTokensForServiceAsync(userId, "GenerateCvFromProfile");
-            return Ok(result.Value);
+            try
+            {
+                var cv = await _cvTailoringService.GenerateCvFromProfileAsync(dto, userId);
+                await _billingService.DeductTokensForServiceAsync(userId, "GenerateCvFromProfile");
+                return Ok(cv);
+            }
+            catch (UnauthorizedAccessException)
+            {
+                return Forbid("Nie masz dostępu do tego CV.");
+            }
+            catch (InvalidOperationException ex)
+            {
+                return BadRequest(new { message = ex.Message });
+            }
+            catch (KeyNotFoundException)
+            {
+                return NotFound("CV nie zostało znalezione.");
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error generating targeted CV for user {UserId}", userId);
+                return StatusCode(500, "Wystąpił błąd podczas generowania CV.");
+            }
         }
     }
 }
