@@ -2,7 +2,6 @@ using System.Diagnostics;
 using System.Text.Json;
 using Microsoft.Extensions.Options;
 using VocareWebAPI.CareerAdvisor.Services.Implementations;
-using VocareWebAPI.CvGenerator.Exceptions;
 using VocareWebAPI.CvGenerator.Models.Dtos;
 using VocareWebAPI.CvGenerator.Models.Entities;
 using VocareWebAPI.CvGenerator.Repositories.Interfaces;
@@ -43,12 +42,12 @@ namespace VocareWebAPI.CvGenerator.Services.Implementation
             var cv = await _generatedCvRepository.GetByIdAsync(cvId);
             if (cv == null || string.IsNullOrEmpty(cv.CvJson))
             {
-                throw new CvNotFoundException(cvId);
+                throw new KeyNotFoundException("Cv not exist");
             }
             var cvBelongsTouser = await _generatedCvRepository.BelongsToUserAsync(cvId, userId);
             if (!cvBelongsTouser)
             {
-                throw new CvAccessDeniedException(cvId);
+                throw new UnauthorizedAccessException("Cv not belong to user");
             }
             var prompt = BuildPrompt(cv.CvJson, cv.TargetPosition);
             var requestBody = new
@@ -129,17 +128,16 @@ namespace VocareWebAPI.CvGenerator.Services.Implementation
 
         public async Task<CvAnalysisResultDto> GetAnalysisAsync(Guid cvId, string userId)
         {
-            var cv = await _generatedCvRepository.GetByIdAsync(cvId);
-            if (cv == null)
-                throw new CvNotFoundException(cvId);
-
             var cvBelongsToUser = await _generatedCvRepository.BelongsToUserAsync(cvId, userId);
             if (!cvBelongsToUser)
-                throw new CvAccessDeniedException(cvId);
-
+            {
+                throw new UnauthorizedAccessException("Cv not belong to user");
+            }
             var analysis = await _cvAnalysisRepository.GetByCvIdAsync(cvId);
             if (analysis == null)
-                throw new CvAnalysisNotFoundException(cvId);
+            {
+                throw new KeyNotFoundException("Cv analysis not exist");
+            }
 
             return JsonSerializer.Deserialize<CvAnalysisResultDto>(
                     analysis.ResultJson,
