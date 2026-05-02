@@ -2,7 +2,7 @@ import Image from 'next/image';
 import Link from 'next/link';
 import React from 'react';
 
-import { Button } from '../ui/button';
+import { Button } from '../../../components/ui/button';
 
 type OAuthButtonProps = {
   icon: string;
@@ -17,7 +17,7 @@ const OAuthButton = ({ icon, label, url, onClick, bgColor, className }: OAuthBut
   const buttonContent = (
     <Button
       style={bgColor ? { backgroundColor: bgColor } : { backgroundColor: 'transparent' }}
-      className={`group relative flex h-[50px] w-full items-center justify-center overflow-hidden border-2 transition-all duration-300 hover:pr-8 ${className || ''}`}
+      className={`group relative flex h-12.5 w-full items-center justify-center overflow-hidden border-2 transition-all duration-300 hover:pr-8 ${className || ''}`}
       onClick={onClick}
       type={onClick ? 'button' : undefined}
     >
@@ -26,7 +26,6 @@ const OAuthButton = ({ icon, label, url, onClick, bgColor, className }: OAuthBut
         {label}
       </span>
 
-      {/* Strzałka */}
       <svg
         className="absolute right-4 h-4 w-4 translate-x-8 transform text-gray-500 opacity-0 transition-all duration-300 ease-out group-hover:translate-x-0 group-hover:opacity-100"
         fill="none"

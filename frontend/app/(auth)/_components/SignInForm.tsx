@@ -10,9 +10,9 @@ import { useForm } from 'react-hook-form';
 import { toast } from 'sonner';
 import z from 'zod';
 
+import OAuthButton from '@/app/(auth)/_components/OAuthButton';
 import { OAuthSignIn, signIn } from '@/app/(auth)/_dal/commands';
 import { google } from '@/app/constants';
-import OAuthButton from '@/components/auth/OAuthButton';
 import { ButtonForm } from '@/components/ui/button-form';
 import {
   Form,

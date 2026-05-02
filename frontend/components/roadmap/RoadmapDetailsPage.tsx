@@ -7,7 +7,6 @@ import { useRouter } from 'next/navigation';
 import { useEffect, useMemo, useState } from 'react';
 import { toast } from 'sonner';
 
-import { RoadmapReactFlowPage } from '@/app/(root)/roadmap-rf/page';
 import {
   AlertDialog,
   AlertDialogAction,
@@ -28,6 +27,8 @@ import {
 } from '@/lib/api/roadmap';
 import type { RoadmapDetailsDto } from '@/lib/types/roadmap';
 import type { PresetEdgeConfig, PresetNodeConfig } from '@/roadmap/configs/presets';
+
+import RoadmapReactFlowPage from './RoadmapDashboardPage';
 
 const NODE_WIDTH = 420;
 const NODE_HEIGHT = 88;

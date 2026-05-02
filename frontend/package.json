@@ -11,7 +11,8 @@
     "test:related": "vitest related --run",
     "format": "prettier --write",
     "validate:md": "npx tsx lib/scripts/validate-md.ts",
-    "linter:fix": "npx eslint --fix"
+    "linter:fix": "npx eslint --fix",
+    "typecheck": "tsc --noEmit"
   },
   "dependencies": {
     "@gsap/react": "^2.1.2",

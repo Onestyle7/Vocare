@@ -121,4 +121,4 @@ export function getOauthClient(provider: OAuthProvider) {
   }
 }
 
-export type OAuthError = BaseAppError & { type: 'OAuthProviderError' };
+export type OAuthError = BaseAppError<'OAuthProviderError'>;
