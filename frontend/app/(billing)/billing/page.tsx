@@ -17,7 +17,7 @@ import {
 } from '@/components/ui/card';
 import { Confetti, ConfettiRef } from '@/components/ui/confetti';
 
-import { shape3, shape4 } from '../constants';
+import { shape3, shape4 } from '../../constants';
 
 const Page = () => {
   const isSuccess = true;
@@ -38,7 +38,7 @@ const Page = () => {
           }}
         />
       )}
-      <Card className="relative w-[350px] dark:bg-[#0e0f11]">
+      <Card className="relative w-87.5 dark:bg-[#0e0f11]">
         <CardHeader>
           <CardTitle>{isSuccess ? 'Billing succeed!' : 'Payment failed!'}</CardTitle>
           <CardDescription>

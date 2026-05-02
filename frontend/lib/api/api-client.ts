@@ -18,23 +18,22 @@ interface ApiResponse<T> {
   headers: Headers;
 }
 
-export type ApiError =
-  BaseAppError<
-    | 'BadRequestError'
-    | 'UnauthorizedError'
-    | 'ForbiddenError'
-    | 'NotFoundError'
-    | 'ConflictError'
-    | 'UnprocessableEntityError'
-    | 'TooManyRequestsError'
-    | 'InternalServerError'
-    | 'BadGatewayError'
-    | 'ServiceUnavailableError'
-    | 'GatewayTimeoutError'
-    | 'UnexpectedApiError'
-    | 'ParseResponseError'
-    | `HttpError${number}`
-  >;
+export type ApiError = BaseAppError<
+  | 'BadRequestError'
+  | 'UnauthorizedError'
+  | 'ForbiddenError'
+  | 'NotFoundError'
+  | 'ConflictError'
+  | 'UnprocessableEntityError'
+  | 'TooManyRequestsError'
+  | 'InternalServerError'
+  | 'BadGatewayError'
+  | 'ServiceUnavailableError'
+  | 'GatewayTimeoutError'
+  | 'UnexpectedApiError'
+  | 'ParseResponseError'
+  | `HttpError${number}`
+>;
 
 export class ApiClient {
   private config: Required<ApiConfig>;
@@ -107,7 +106,8 @@ export class ApiClient {
         status: response.status,
         headers: response.headers,
       });
-    } catch {
+    } catch (error: unknown) {
+      if (error instanceof Error) console.log('ERROR_LOGGER', error.cause);
       return err({
         type: 'UnexpectedApiError',
         message: 'Niespodziewany błąd po stronie servera',

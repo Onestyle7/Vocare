@@ -219,6 +219,19 @@ namespace VocareWebAPI.Controllers
 
             try
             {
+                // Prevent double subscription checkout on one user account
+                try
+                {
+                    var userBilling = await _billingService.GetUserBillingAsync(userId);
+                    
+                    if (userBilling != null && userBilling.SubscriptionStatus == SubscriptionStatus.Active)
+                    {
+                        _logger.LogWarning("User {UserId} attempted to create a subscription checkout but is already active.", userId);
+                        return Conflict(new { Error = "You already have an active subscription." });
+                    }
+                }
+                catch (KeyNotFoundException) {}
+
                 var sessionUrl = await _stripeService.CreateCheckoutSessionForSubscriptionAsync(
                     userId,
                     request.PriceId

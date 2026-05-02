@@ -1,5 +1,5 @@
-export type BaseAppError<T extends string> = {
-  type: T;
+export type BaseAppError<T extends string = ''> = {
+  type: 'GenericApiError' | T;
   message: string;
   details?: Record<string, unknown>;
 };

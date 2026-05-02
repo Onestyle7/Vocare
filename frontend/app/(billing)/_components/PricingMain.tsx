@@ -28,7 +28,7 @@ import {
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
 
-import Copy from '../SupportComponents/Copy';
+import Copy from '../../../components/SupportComponents/Copy';
 
 type PlanType = 'tokens' | 'subscription' | 'individual';
 
@@ -289,7 +289,7 @@ const PricingMain = () => {
   return (
     <>
       <Section
-        className="relative -mt-[5.25rem] pt-[7.5rem]"
+        className="relative -mt-21 pt-30"
         crosses
         crossesOffset="lg:translate-y-[7.5rem]"
         customPaddings
@@ -299,20 +299,19 @@ const PricingMain = () => {
           <div
             className={cn(
               'absolute inset-0',
-              '[background-size:90px_90px]',
-              '[background-image:linear-gradient(to_right,#e4e4e7_1px,transparent_1px),linear-gradient(to_bottom,#e4e4e7_1px,transparent_1px)]',
-              'dark:[background-image:linear-gradient(to_right,#262626_1px,transparent_1px),linear-gradient(to_bottom,#262626_1px,transparent_1px)]',
-              '[mask-image:radial-gradient(ellipse_at_center,white_0%,transparent_60%)]',
+              'bg-size-[90px_90px]',
+              'bg-[linear-gradient(to_right,#e4e4e7_1px,transparent_1px),linear-gradient(to_bottom,#e4e4e7_1px,transparent_1px)]',
+              'dark:bg-[linear-gradient(to_right,#262626_1px,transparent_1px),linear-gradient(to_bottom,#262626_1px,transparent_1px)]',
+              'mask-[radial-gradient(ellipse_at_center,white_0%,transparent_60%)]',
               '[-webkit-mask-image:radial-gradient(ellipse_at_center,white_0%,transparent_60%)]',
-              '[mask-size:200%_200%]',
-              '[mask-position:center]',
-              '[mask-repeat:no-repeat]'
+              'mask-size-[200%_200%]',
+              'mask-center',
+              'mask-no-repeat'
             )}
           />
-          <div className="pointer-events-none absolute inset-0 flex items-center justify-center bg-white [mask-image:radial-gradient(ellipse_at_bottom,transparent_40%,black_70%)] dark:bg-[#0f1014]"></div>
+          <div className="pointer-events-none absolute inset-0 flex items-center justify-center bg-white mask-[radial-gradient(ellipse_at_bottom,transparent_40%,black_70%)] dark:bg-[#0f1014]"></div>
           <div className="font-korbin relative mx-auto flex max-w-7xl flex-col items-center justify-center">
             <div className="relative flex flex-col items-center justify-center sm:mt-8">
-              <p className="mb-4 font-bold text-gray-400 sm:mb-6">Pricing</p>
               <Copy>
                 <h1 className="text-color text-center text-3xl font-bold md:text-[3rem] xl:leading-[0.8]">
                   <span>Dopasowany pod </span>
@@ -323,7 +322,7 @@ const PricingMain = () => {
                       alt="line"
                       width={224}
                       height={124}
-                      className="pointer-events-none absolute bottom-2 left-1/2 h-auto w-[85%] max-w-[320px] -translate-x-1/2 md:max-w-[360px]"
+                      className="pointer-events-none absolute bottom-2 left-1/2 h-auto w-[85%] max-w-[320px] -translate-x-1/2 md:max-w-90"
                     />
                   </span>
                 </h1>
@@ -357,13 +356,13 @@ const PricingMain = () => {
                 </ScrollParallax>
 
                 {/* Personal */}
-                <div className="relative z-30 flex h-full flex-col justify-between rounded-[24px] border bg-[linear-gradient(to_top_right,rgba(9,13,22,1)_20%,rgba(9,13,22,0.2)_100%)] p-6 backdrop-blur-md sm:h-[87%] dark:border-gray-500/40">
+                <div className="relative z-30 flex h-full flex-col justify-between rounded-3xl border bg-[linear-gradient(to_top_right,rgba(9,13,22,1)_20%,rgba(9,13,22,0.2)_100%)] p-6 backdrop-blur-md sm:h-[87%] dark:border-gray-500/40">
                   <div
                     aria-hidden
-                    className="to-transpearent pointer-events-none absolute inset-0 rounded-[24px] bg-gradient-to-br from-white/25 via-white/10 dark:from-white/10 dark:via-white/5"
+                    className="to-transpearent pointer-events-none absolute inset-0 rounded-3xl bg-linear-to-br from-white/25 via-white/10 dark:from-white/10 dark:via-white/5"
                   />
                   <div className="relative">
-                    <div className="mb-4 flex h-[40px] w-[40px] items-center justify-center rounded-full border bg-white/20 shadow-xl backdrop-blur-md dark:bg-white/10">
+                    <div className="mb-4 flex h-10 w-10 items-center justify-center rounded-full border bg-white/20 shadow-xl backdrop-blur-md dark:bg-white/10">
                       <Image src={circle_pricing} alt="square" width={32} height={32} />
                     </div>
                     <h3 className="mb-2 text-xl font-semibold text-gray-900 dark:text-gray-100">
@@ -430,17 +429,17 @@ const PricingMain = () => {
                     <Undo2 className="h-5 w-5 -rotate-90 text-white" />
                     <span className="text-lg font-semibold text-white">Best Deal</span>
                   </div>
-                  <div className="relative z-30 flex flex-col justify-between rounded-[24px] border p-6 backdrop-blur-md dark:border-gray-500/40 dark:bg-[#090d16]">
+                  <div className="relative z-30 flex flex-col justify-between rounded-3xl border p-6 backdrop-blur-md dark:border-gray-500/40 dark:bg-[#090d16]">
                     <div
                       aria-hidden
-                      className="pointer-events-none absolute inset-0 rounded-[24px] bg-gradient-to-br from-white/25 via-white/10 to-transparent dark:from-white/10 dark:via-white/5"
+                      className="pointer-events-none absolute inset-0 rounded-3xl bg-linear-to-br from-white/25 via-white/10 to-transparent dark:from-white/10 dark:via-white/5"
                     />
                     <div className="relative">
                       <div className="relative flex w-full flex-row items-start justify-between">
-                        <div className="mb-4 flex h-[40px] w-[40px] items-center justify-center rounded-full border bg-white/20 shadow-xl backdrop-blur-md dark:bg-white/10">
+                        <div className="mb-4 flex h-10 w-10 items-center justify-center rounded-full border bg-white/20 shadow-xl backdrop-blur-md dark:bg-white/10">
                           <Image src={square_pricing} alt="square" width={32} height={32} />
                         </div>
-                        <div className="font-grotesk flex h-[32px] w-fit items-center justify-center rounded-full bg-[#818fff] px-4 py-2 text-xs font-semibold text-white">
+                        <div className="font-grotesk flex h-8 w-fit items-center justify-center rounded-full bg-[#818fff] px-4 py-2 text-xs font-semibold text-white">
                           <p>Oszczędź 35%</p>
                         </div>
                       </div>

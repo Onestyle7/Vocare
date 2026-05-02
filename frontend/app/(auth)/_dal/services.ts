@@ -15,12 +15,10 @@ import {
   ValidateResetPasswordResult,
 } from './api';
 
-export type AuthDomainError = BaseAppError<'OAuthError' | 'InvalidCredentials' | 'GenericApiError'>;
-export type RegisterDomainError = BaseAppError<'GenericApiError'>;
-export type ForgotPasswordDomainError = BaseAppError<'GenericApiError' | 'InvalidEmailError'>;
-export type ResetPasswordDomainError = BaseAppError<
-  'GenericApiError' | 'InvalidResetToken' | 'ExpiredResetToken'
->;
+export type AuthDomainError = BaseAppError<'OAuthError' | 'InvalidCredentials'>;
+export type RegisterDomainError = BaseAppError;
+export type ForgotPasswordDomainError = BaseAppError<'InvalidEmailError'>;
+export type ResetPasswordDomainError = BaseAppError<'InvalidResetToken' | 'ExpiredResetToken'>;
 
 export async function verifyOauthTokenService(
   endpoint: string,
