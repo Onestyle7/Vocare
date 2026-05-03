@@ -8,7 +8,7 @@ import Header from '@/components/SectionsComponents/Header';
 import HeroTweak from '@/components/SectionsComponents/HeroTweak';
 import MobileFeatureImprovements from '@/components/SectionsComponents/MobileFeatureImprovements';
 
-import { toAbsoluteUrl } from '../blog/_utils/blogUtils';
+import { toAbsoluteUrl } from '../../features/blog/utils/blogUtils';
 
 export const metadata: Metadata = {
   description:

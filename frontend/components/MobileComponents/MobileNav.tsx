@@ -4,15 +4,15 @@ import { gsap } from 'gsap';
 import Image from 'next/image';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import React, { useEffect,useRef } from 'react';
+import React, { useEffect, useRef } from 'react';
 
 import { logo, NavLinks } from '@/app/constants';
-import { Sheet, SheetClose, SheetContent, SheetTitle,SheetTrigger } from '@/components/ui/sheet';
+import { Sheet, SheetClose, SheetContent, SheetTitle, SheetTrigger } from '@/components/ui/sheet';
 import { useIsMobile } from '@/lib/hooks/useIsMobile';
 import { cn } from '@/lib/utils';
 
 // import ThemeSwitch from '../SupportComponents/ThemeSwitch';
-import { TokenCounter } from '../PricingComponents/TokenCounter';
+import { TokenCounter } from '../../features/billing/components/TokenCounter';
 import { Badge } from '../ui/badge';
 
 interface MobileNavProps {

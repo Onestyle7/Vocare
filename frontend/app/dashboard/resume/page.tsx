@@ -1,6 +1,6 @@
 import React from 'react';
 
-import ResumeDashboard from '@/components/ResumeComponents/resumeDashboard';
+import ResumeDashboard from '@/features/resume/components/resumeDashboard';
 import Header from '@/components/SectionsComponents/Header';
 
 const page = () => {

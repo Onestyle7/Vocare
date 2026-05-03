@@ -7,6 +7,13 @@ export async function proxy(request: NextRequest) {
 }
 
 async function authProxy(request: NextRequest) {
+  if (
+    !request.cookies.has('pending_payment') &&
+    billingResultPages.includes(request.nextUrl.pathname)
+  ) {
+    return NextResponse.redirect(new URL('/dashboard', request.url));
+  }
+
   if (request.cookies.has('token') && authPages.includes(request.nextUrl.pathname)) {
     return NextResponse.redirect(new URL('/dashboard', request.url));
   }
@@ -18,6 +25,7 @@ async function authProxy(request: NextRequest) {
 }
 
 const authPages = ['/sign-in', '/sign-up', '/forgot-password', '/reset-password'];
+const billingResultPages = ['/billing/success', '/billing/failed'];
 
 export const config = {
   matcher: ['/:path*'],

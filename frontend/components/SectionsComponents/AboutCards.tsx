@@ -7,7 +7,7 @@ import { useEffect, useRef } from 'react';
 import { ScrollParallax } from 'react-just-parallax';
 
 import { aboutCardsData, shape1 } from '@/app/constants';
-import AboutCard from '@/components/GhostComponents/AboutCard';
+import AboutCard from '@/components/SupportComponents/AboutCard';
 import Section from '@/components/SupportComponents/Section';
 
 gsap.registerPlugin(ScrollTrigger);

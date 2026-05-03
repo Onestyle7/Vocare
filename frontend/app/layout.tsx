@@ -4,13 +4,15 @@ import './globals.css';
 import { GoogleAnalytics } from '@next/third-parties/google';
 import type { Metadata } from 'next';
 import localFont from 'next/font/local';
+import { cookies } from 'next/headers';
 
 import { Toaster } from '@/components/ui/sonner';
 import { ThemeProvider } from '@/components/ui/theme-provider';
-import { TokenBalanceProvider } from '@/lib/contexts/TokenBalanceContext';
+import { AuthProvider } from '@/features/auth/components/AuthProvider';
+import { TokenBalanceProvider } from '@/features/billing/components/SubscriptionTokenProvider';
 import env from '@/lib/env/client';
 
-import { toAbsoluteUrl } from './blog/_utils/blogUtils';
+import { toAbsoluteUrl } from '../features/blog/utils/blogUtils';
 
 const sizmoPro = localFont({
   src: [
@@ -128,24 +130,28 @@ export const metadata: Metadata = {
   },
 };
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
   const gaId = process.env.NEXT_PUBLIC_GA_ID;
+  const cookieStore = await cookies();
+  const isAuthenticated = cookieStore.has('token');
 
   return (
     <html lang="en" suppressHydrationWarning className="">
       <body
         className={`${sizmoPro.className} ${spaceGrotesk.variable} h-full antialiased selection:bg-[#915EFF]`}
       >
-        <TokenBalanceProvider>
-          <ThemeProvider attribute="class" defaultTheme="dark">
-            {children}
-            <Toaster />
-          </ThemeProvider>
-        </TokenBalanceProvider>
+        <AuthProvider isAuthenticated={isAuthenticated}>
+          <TokenBalanceProvider>
+            <ThemeProvider attribute="class" defaultTheme="dark">
+              {children}
+              <Toaster />
+            </ThemeProvider>
+          </TokenBalanceProvider>
+        </AuthProvider>
       </body>
       {gaId ? <GoogleAnalytics gaId={gaId} /> : null}
     </html>

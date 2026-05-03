@@ -1,6 +1,6 @@
 import { Suspense } from 'react';
 
-import RoadmapDashboardPage from '@/components/roadmap/RoadmapDashboardPage';
+import RoadmapDashboardPage from '@/features/roadmap/components/RoadmapDashboardPage';
 import Header from '@/components/SectionsComponents/Header';
 
 export default function DashboardPage() {

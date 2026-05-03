@@ -26,8 +26,8 @@ import {
   SelectValue,
 } from '@/components/ui/select';
 import { Textarea } from '@/components/ui/textarea';
-import { riskLabels } from '@/lib/enums/risk';
-import { CreateProfileFormType } from '@/lib/schemas/profileSchema';
+import { riskLabels } from '@/lib/types/risk';
+import { CreateProfileFormType } from '@/features/profile/profileSchema';
 
 interface StepFiveProps {
   form: UseFormReturn<CreateProfileFormType>;

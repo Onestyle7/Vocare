@@ -8,7 +8,7 @@ import React, { useEffect, useRef, useState } from 'react';
 
 import { logo, NavLinks } from '@/app/constants';
 import MobileNav from '@/components/MobileComponents/MobileNav';
-import { TokenCounter } from '@/components/PricingComponents/TokenCounter';
+import { TokenCounter } from '@/features/billing/components/TokenCounter';
 import { Badge } from '@/components/ui/badge';
 import { cn } from '@/lib/utils';
 // import ThemeSwitch from '../SupportComponents/ThemeSwitch';

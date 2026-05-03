@@ -1,7 +1,7 @@
 import React from 'react';
 
-import PricingMain from '@/app/(billing)/_components/PricingMain';
 import Header from '@/components/SectionsComponents/Header';
+import PricingMain from '@/features/billing/components/PricingMain';
 
 import Maintenance from '../../maintenance/page';
 

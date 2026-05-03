@@ -6,7 +6,7 @@ import React, { useEffect, useState } from 'react';
 import { getCvDetails } from '@/lib/api/cv';
 import { CvDetailsDto } from '@/lib/types/cv';
 
-import CVCreator from '../../../../components/ResumeComponents/ResumeComponent';
+import CVCreator from '../../../../features/resume/components/ResumeComponent';
 
 const ResumeDetailPage = () => {
   const params = useParams();

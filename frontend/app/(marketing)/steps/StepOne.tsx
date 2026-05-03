@@ -14,8 +14,8 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
-import { personalityTypeLabels } from '@/lib/enums/personalityTypes';
-import { CreateProfileFormType, UpdateProfileFormType } from '@/lib/schemas/profileSchema';
+import { personalityTypeLabels } from '@/lib/types/personalityTypes';
+import { CreateProfileFormType, UpdateProfileFormType } from '@/features/profile/profileSchema';
 
 interface StepOneProps {
   form: UseFormReturn<CreateProfileFormType | UpdateProfileFormType>;

@@ -1,8 +1,8 @@
 import { redirect } from 'next/navigation';
 
-import { validateResetPassword } from '@/app/(auth)/_dal/queries';
+import { validateResetPassword } from '@/features/auth/dal/queries';
 
-import { ResetPasswordForm } from '../_components/ResetPasswordForm';
+import { ResetPasswordForm } from '../../../features/auth/components/ResetPasswordForm';
 
 export default async function ResetPasswordPage({
   searchParams,

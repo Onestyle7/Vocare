@@ -9,7 +9,7 @@ import { Button } from '@/components/ui/button';
 import { FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
 import { InputOTP, InputOTPGroup, InputOTPSlot } from '@/components/ui/input-otp';
-import { CreateProfileFormType, UpdateProfileFormType } from '@/lib/schemas/profileSchema';
+import { CreateProfileFormType, UpdateProfileFormType } from '@/features/profile/profileSchema';
 
 interface StepTwoProps {
   form: UseFormReturn<CreateProfileFormType | UpdateProfileFormType>;

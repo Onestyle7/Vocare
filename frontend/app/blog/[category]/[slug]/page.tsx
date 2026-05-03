@@ -4,7 +4,6 @@ import Markdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 
 import { Badge } from '@/components/ui/badge';
-
 import {
   A,
   Blockquote,
@@ -20,10 +19,14 @@ import {
   Pre,
   Strong,
   UL,
-} from '../../_components/MarkdownComponents';
-import PageWithBackButton from '../../_components/PageWIthBackButton';
-import { getArticleContent, getArticlesMetadata,toAbsoluteUrl } from '../../_utils/blogUtils';
-import { ARTICLES_FOLDER } from '../../_utils/constants';
+} from '@/features/blog/components/MarkdownComponents';
+import PageWithBackButton from '@/features/blog/components/PageWIthBackButton';
+import {
+  getArticleContent,
+  getArticlesMetadata,
+  toAbsoluteUrl,
+} from '@/features/blog/utils/blogUtils';
+import { ARTICLES_FOLDER } from '@/features/blog/utils/constants';
 
 type MetadataProps = {
   params: Promise<{ category: string; slug: string }>;

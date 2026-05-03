@@ -5,7 +5,7 @@ import z from 'zod';
 
 import { getOAuthEndpoint } from '@/app/(auth)/_dal/api';
 import { verifyOauthTokenService } from '@/app/(auth)/_dal/services';
-import { getOauthClient, oAuthProviders } from '@/lib/auth/oauth/base';
+import { getOauthClient, oAuthProviders } from '@/features/auth/oauth/base';
 
 export async function GET(
   request: NextRequest,

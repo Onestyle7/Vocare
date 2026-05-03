@@ -2,7 +2,7 @@
 
 import { useParams } from 'next/navigation';
 
-import RoadmapDetailsPage from '@/components/roadmap/RoadmapDetailsPage';
+import RoadmapDetailsPage from '@/features/roadmap/components/RoadmapDetailsPage';
 
 export default function RoadmapDetailRoute() {
   const params = useParams();

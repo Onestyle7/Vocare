@@ -1,0 +1,643 @@
+'use client';
+
+import axios, { AxiosError, AxiosRequestConfig, AxiosResponse } from 'axios';
+import { gsap } from 'gsap';
+import { ArrowRight, Undo2 } from 'lucide-react';
+import Image from 'next/image';
+import Link from 'next/link';
+import { useEffect, useMemo, useRef, useState } from 'react';
+import { toast } from 'sonner';
+
+import {
+  cone_1,
+  cone_2,
+  star_generate,
+  timeline_icon_1,
+  timeline_icon_2,
+  timeline_icon_3,
+  timeline_icon_4,
+} from '@/app/constants';
+import Section from '@/components/SupportComponents/Section';
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from '@/components/ui/alert-dialog';
+import ButtonGenerate from '@/components/ui/ButtonGenerate';
+import { useTokenBalanceContext } from '@/features/billing/components/SubscriptionTokenProvider';
+import { GridBackgroundDemo } from '@/features/market-analysis/components/GridBackgroundDemo';
+import { TerminalDemo } from '@/features/market-analysis/components/LoadingTerminal';
+import { CareerPathMatchResult } from '@/lib/types/jobOffers';
+import { UserProfile } from '@/lib/types/profile';
+import { AiCareerResponse, CareerPath } from '@/lib/types/recommendation';
+
+import CareerPathSection from './CareerPathSection';
+import CollapsibleButton from './CollapsibleButton';
+import GenerateRecommendation from './GenerateRecommendationFail';
+import Timeline from './Timeline'; // Import nowego komponentu
+
+// const API_URL = process.env.NEXT_PUBLIC_API_URL;
+
+type AssistantRequestMetric = {
+  step: string;
+  durationMs: number;
+  status: 'ok' | 'error' | 'fallback';
+  serverTiming?: string;
+};
+
+const shouldProfileAssistantRequests =
+  process.env.NODE_ENV === 'development' ||
+  process.env.NEXT_PUBLIC_ENABLE_ASSISTANT_PROFILING === 'true';
+
+const roundDuration = (value: number) => Math.round(value * 10) / 10;
+
+const getServerTimingHeader = (response: AxiosResponse<unknown>) => {
+  const serverTiming = response.headers?.['server-timing'];
+  if (typeof serverTiming === 'string') {
+    return serverTiming;
+  }
+  if (Array.isArray(serverTiming)) {
+    return serverTiming.join(', ');
+  }
+  return undefined;
+};
+
+const trackGetRequest = async <T,>(
+  step: string,
+  url: string,
+  config: AxiosRequestConfig,
+  metrics: AssistantRequestMetric[]
+): Promise<AxiosResponse<T>> => {
+  const requestStartedAt = performance.now();
+
+  try {
+    const response = await axios.get<T>(url, config);
+    metrics.push({
+      step,
+      durationMs: performance.now() - requestStartedAt,
+      status: 'ok',
+      serverTiming: getServerTimingHeader(response as AxiosResponse<unknown>),
+    });
+    return response;
+  } catch (error) {
+    metrics.push({
+      step,
+      durationMs: performance.now() - requestStartedAt,
+      status: 'error',
+    });
+    throw error;
+  }
+};
+
+const logAssistantMetrics = (
+  flow: string,
+  metrics: AssistantRequestMetric[],
+  flowStartedAt: number
+) => {
+  if (!shouldProfileAssistantRequests || metrics.length === 0) {
+    return;
+  }
+
+  const totalDurationMs = performance.now() - flowStartedAt;
+  const sortedMetrics = [...metrics].sort((a, b) => b.durationMs - a.durationMs);
+  const slowestStep = sortedMetrics[0];
+
+  console.groupCollapsed(
+    `[Assistant timing] ${flow}: ${roundDuration(totalDurationMs)} ms (total flow)`
+  );
+  console.table(
+    sortedMetrics.map((metric) => ({
+      step: metric.step,
+      status: metric.status,
+      durationMs: roundDuration(metric.durationMs),
+      serverTiming: metric.serverTiming ?? '-',
+    }))
+  );
+  if (slowestStep) {
+    console.log(
+      `[Assistant timing] Slowest step: ${slowestStep.step} (${roundDuration(slowestStep.durationMs)} ms)`
+    );
+  }
+  console.groupEnd();
+};
+
+export default function AssistantPage() {
+  const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8080';
+  const [profile, setProfile] = useState<UserProfile | null>(null);
+  const [recommendations, setRecommendations] = useState<AiCareerResponse | null>(null);
+  const [isLoading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const [jobMatches, setJobMatches] = useState<CareerPathMatchResult[]>([]);
+  const [isOffersLoading, setOffersLoading] = useState(false);
+  const [offersError, setOffersError] = useState<string | null>(null);
+  const [isConfirmDialogOpen, setIsConfirmDialogOpen] = useState(false);
+  const {
+    tokenBalance,
+    isLoading: isBalanceLoading,
+    hasActiveSubscription,
+    refresh,
+  } = useTokenBalanceContext();
+
+  const [isCollapsed, setIsCollapsed] = useState(true);
+  const contentRef = useRef<HTMLDivElement>(null);
+  const contentWrapperRef = useRef<HTMLDivElement>(null);
+
+  const [showFixedButton, setShowFixedButton] = useState(false);
+  const lastScrollY = useRef(0);
+
+  const generatePricePerUse = 60;
+
+  const matchByName = useMemo(() => {
+    return new Map(jobMatches.map((match) => [match.careerPathName.trim().toLowerCase(), match]));
+  }, [jobMatches]);
+
+  const fetchJobMatches = async (token: string) => {
+    const flowStartedAt = performance.now();
+    const metrics: AssistantRequestMetric[] = [];
+
+    setOffersLoading(true);
+    setOffersError(null);
+    try {
+      const response = await trackGetRequest<CareerPathMatchResult[]>(
+        'GET /api/JobOffers/matching/my-recommendations/detailed',
+        `${API_URL}/api/JobOffers/matching/my-recommendations/detailed`,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+            'Content-Type': 'application/json',
+          },
+        },
+        metrics
+      );
+      setJobMatches(response.data);
+    } catch (err: unknown) {
+      if (err instanceof AxiosError) {
+        setOffersError(err.response?.data?.detail || 'Błąd podczas pobierania ofert pracy');
+      } else {
+        setOffersError('Nieoczekiwany błąd podczas pobierania ofert pracy');
+      }
+    } finally {
+      logAssistantMetrics('fetch job matches', metrics, flowStartedAt);
+      setOffersLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    const handleScroll = () => {
+      const currentScrollY = window.scrollY;
+
+      if (currentScrollY < lastScrollY.current) {
+        setShowFixedButton(true);
+      }
+
+      if (currentScrollY > lastScrollY.current) {
+        setShowFixedButton(false);
+      }
+
+      lastScrollY.current = currentScrollY;
+    };
+
+    window.addEventListener('scroll', handleScroll);
+
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
+
+  useEffect(() => {
+    if (contentRef.current && contentWrapperRef.current && recommendations) {
+      if (!isCollapsed) {
+        gsap.set(contentWrapperRef.current, { height: 'auto' });
+        const height = contentWrapperRef.current.offsetHeight;
+        gsap.set(contentWrapperRef.current, { height: height });
+      } else {
+        gsap.set(contentWrapperRef.current, { height: 0 });
+      }
+    }
+  }, [recommendations, isCollapsed]);
+
+  const toggleCollapse = () => {
+    if (!contentRef.current || !contentWrapperRef.current) return;
+
+    if (isCollapsed) {
+      gsap.set(contentWrapperRef.current, { height: 'auto', visibility: 'visible' });
+      const height = contentWrapperRef.current.offsetHeight;
+      gsap.fromTo(
+        contentWrapperRef.current,
+        { height: 0, opacity: 0 },
+        {
+          height: height,
+          opacity: 1,
+          duration: 0.5,
+          ease: 'power4.out',
+          onComplete: () => {
+            if (contentWrapperRef.current) {
+              gsap.set(contentWrapperRef.current, { height: 'auto' });
+            }
+          },
+        }
+      );
+    } else {
+      const height = contentWrapperRef.current.offsetHeight;
+      gsap.fromTo(
+        contentWrapperRef.current,
+        { height: height, opacity: 1 },
+        {
+          height: 0,
+          opacity: 0,
+          duration: 0.5,
+          ease: 'power4.in',
+          onComplete: () => {
+            if (contentWrapperRef.current) {
+              gsap.set(contentWrapperRef.current, { visibility: 'hidden' });
+            }
+          },
+        }
+      );
+    }
+
+    setIsCollapsed(!isCollapsed);
+  };
+
+  useEffect(() => {
+    const loadProfileAndRecommendations = async () => {
+      const flowStartedAt = performance.now();
+      const metrics: AssistantRequestMetric[] = [];
+
+      setLoading(true);
+      setError(null);
+
+      // 1. Sprawdź profil
+      const storedProfile = localStorage.getItem('userProfile');
+      if (!storedProfile) {
+        setError('Brak danych profilu. Wróć do formularza.');
+        setLoading(false);
+        return;
+      }
+
+      const parsedProfile = JSON.parse(storedProfile);
+      setProfile(parsedProfile);
+
+      // 2. Sprawdź token
+      const token = localStorage.getItem('token');
+      if (!token) {
+        toast.error('Authentication required', {
+          description: 'Please sign in to continue.',
+        });
+        setLoading(false);
+        return;
+      }
+
+      // 3. Pobierz rekomendacje
+      try {
+        // Najpierw spróbuj pobrać ostatnie rekomendacje
+        try {
+          const lastRecommendationResponse = await trackGetRequest<AiCareerResponse>(
+            'GET /api/Ai/last-recommendation',
+            `${API_URL}/api/Ai/last-recommendation`,
+            {
+              headers: {
+                Authorization: `Bearer ${token}`,
+                'Content-Type': 'application/json',
+              },
+            },
+            metrics
+          );
+          console.log('Last recommendations:', lastRecommendationResponse.data);
+          setRecommendations(lastRecommendationResponse.data);
+          void fetchJobMatches(token);
+          return;
+        } catch (lastError: unknown) {
+          if (
+            lastError instanceof AxiosError &&
+            lastError.response?.status !== 404 &&
+            lastError.response?.status !== 500
+          ) {
+            console.error('Something went wrong while getting last recommendations:', lastError);
+            setError(
+              lastError.response?.data?.detail ||
+                'Something went wrong while getting last recommendations.'
+            );
+            return;
+          }
+          metrics.push({
+            step: 'Fallback to GET /api/Ai/recommendations',
+            durationMs: 0,
+            status: 'fallback',
+          });
+          console.log('No last recommendations found or server error, generating new ones...');
+        }
+
+        // Jeśli brak ostatnich rekomendacji, wygeneruj nowe
+        const response = await trackGetRequest<AiCareerResponse>(
+          'GET /api/Ai/recommendations',
+          `${API_URL}/api/Ai/recommendations`,
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+              'Content-Type': 'application/json',
+            },
+          },
+          metrics
+        );
+        console.log('New recommendations:', response.data);
+        setRecommendations(response.data);
+        void fetchJobMatches(token);
+      } catch (err: unknown) {
+        if (err instanceof AxiosError) {
+          console.error('Detailed error:', err);
+          console.error('Response status:', err.response?.status);
+          console.error('Response data:', err.response?.data);
+
+          if (
+            err.response?.status === 500 &&
+            typeof err.response.data === 'string' &&
+            err.response.data.includes('User billing information')
+          ) {
+            setError('billing_info_missing');
+            toast.error('Brak informacji rozliczeniowych', {
+              description: 'Uzupełnij dane rozliczeniowe w ustawieniach konta.',
+            });
+          } else {
+            setError(err.response?.data?.detail || 'Błąd podczas generowania rekomendacji');
+          }
+        } else {
+          console.error('Unknown error:', err);
+          setError('Unexpected error occurred');
+        }
+      } finally {
+        logAssistantMetrics('load recommendations', metrics, flowStartedAt);
+        setLoading(false);
+      }
+    };
+
+    loadProfileAndRecommendations();
+  }, []);
+
+  const handleGenerateNewRecommendations = async () => {
+    const flowStartedAt = performance.now();
+    const metrics: AssistantRequestMetric[] = [];
+
+    setLoading(true);
+    const token = localStorage.getItem('token');
+    if (!token) {
+      toast.error('Authentication required', {
+        description: 'Please sign in to continue.',
+      });
+      setLoading(false);
+      return;
+    }
+    try {
+      const response = await trackGetRequest<AiCareerResponse>(
+        'GET /api/Ai/recommendations (manual regenerate)',
+        `${API_URL}/api/Ai/recommendations`,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+            'Content-Type': 'application/json',
+          },
+        },
+        metrics
+      );
+      setRecommendations(response.data);
+      void fetchJobMatches(token);
+      toast.success('New recommendations have been generated');
+    } catch (err: unknown) {
+      if (err instanceof AxiosError) {
+        setError(
+          err.response?.data?.detail || 'Something went wrong while generating new recommendations'
+        );
+        toast.error('Błąd', {
+          description: 'Something went wrong while generating new recommendations',
+        });
+      } else {
+        setError('Unexpected error');
+        toast.error('Unexpected error', {
+          description: 'An unknown error occurred while generating recommendations',
+        });
+        console.error('Unexpected error:', err);
+      }
+    } finally {
+      logAssistantMetrics('manual generate recommendations', metrics, flowStartedAt);
+      setLoading(false);
+    }
+  };
+
+  const icons = [timeline_icon_1, timeline_icon_2, timeline_icon_3, timeline_icon_4];
+
+  const timelineItems =
+    recommendations?.recommendation.nextSteps.map((step: string, index: number) => ({
+      title: `Krok ${index + 1}`,
+      description: step,
+      icon: icons[index], // przypisuje ikonę zgodnie z indeksem
+      status: index === 0 ? ('current' as const) : ('upcoming' as const),
+    })) || [];
+
+  if (!profile) {
+    return <GenerateRecommendation />;
+  }
+
+  if (error) {
+    return <GenerateRecommendation />;
+  }
+
+  if (isLoading) {
+    return (
+      <div className="mx-auto -mt-20 mb-1 flex h-screen max-w-7xl flex-col items-center justify-center overflow-hidden rounded-[28px] max-xl:mx-4">
+        <GridBackgroundDemo />
+        <TerminalDemo />
+      </div>
+    );
+  }
+
+  if (!recommendations) {
+    return (
+      <div className="flex min-h-screen items-center justify-center">
+        <GenerateRecommendation />;
+      </div>
+    );
+  }
+
+  return (
+    <Section
+      className="relative -mt-[5.25rem] pt-[3.5rem]"
+      crosses
+      crossesOffset="lg:translate-y-[7.5rem]"
+      customPaddings
+      id="profile"
+    >
+      <div className="mt-8 xl:mx-10 xl:mt-16 xl:border-t xl:border-r xl:border-l">
+        <div className="font-korbin mx-auto flex max-w-7xl flex-col items-center justify-center p-4 md:p-8">
+          <h2 className="font-korbin mt-1 mb-6 flex h-[38px] w-[180px] items-center justify-center rounded-full border-[0.5px] border-white/60 text-sm">
+            Doradca kariery AI
+          </h2>
+          <div className="relative mb-4 w-full rounded-[28px] bg-[linear-gradient(90deg,rgba(146,150,253,1)_0%,rgba(132,145,254,1)_50%,rgba(199,169,254,1)_100%,rgba(157,155,255,1)_77%)] px-1 pt-16 pb-1">
+            {/* „Belka” nad kafelkiem – dokładnie jak Best Deal */}
+            <div className="absolute top-4 left-1/2 flex w-full -translate-x-1/2 items-center justify-center gap-2">
+              <Undo2 className="h-5 w-5 -rotate-90 text-white" />
+              <span className="text-lg font-semibold text-white">Główna rekomendacja</span>
+            </div>
+
+            {/* Właściwy kafelek z rekomendacją */}
+            <div className="clip-corner-bevel relative z-30 flex flex-col overflow-hidden rounded-[24px] border shadow-sm backdrop-blur-md md:flex-row dark:border-gray-500/40 dark:bg-[#090d16]">
+              <div className="relative flex items-center justify-center overflow-hidden p-4 md:w-1/6 md:border-r">
+                <Image
+                  src={cone_1}
+                  alt="decor"
+                  width={148}
+                  height={148}
+                  className="pointer-events-none absolute -top-2 -left-14 z-10"
+                />
+                <Image
+                  src={cone_2}
+                  alt="decor"
+                  width={148}
+                  height={148}
+                  className="pointer-events-none absolute -right-8 bottom-2 z-10 -rotate-12 sm:-right-14 sm:-bottom-8"
+                />
+                <span className="font-korbin relative z-20 rounded-xl border border-r-6 border-b-6 px-6 py-2 text-4xl font-bold text-white md:text-6xl">
+                  1
+                </span>
+              </div>
+
+              <div className="p-4 max-md:border-t md:w-5/6 md:p-6">
+                <div className="flex flex-row items-center justify-between">
+                  <h2 className="font-grotesk mb-1 text-xl">Najlepsze dopasowanie</h2>
+                  <CollapsibleButton isCollapsed={isCollapsed} toggleCollapse={toggleCollapse} />
+                </div>
+
+                <h3 className="text-md ibm-plex-mono-regular mb-2 w-fit rounded-lg border-gray-600/40 font-medium text-[#915EFF] sm:text-lg">
+                  {recommendations.recommendation.primaryPath}
+                </h3>
+
+                <p className="font-grotesk text-gray-400">
+                  {recommendations.recommendation.justification}
+                </p>
+
+                <div
+                  ref={contentWrapperRef}
+                  className="overflow-hidden"
+                  style={{
+                    height: isCollapsed ? 0 : 'auto',
+                    opacity: isCollapsed ? 0 : 1,
+                    visibility: isCollapsed ? 'hidden' : 'visible',
+                  }}
+                >
+                  <div ref={contentRef} className="space-y-3">
+                    <h4 className="font-grotesk mt-4 font-bold">Kolejne kroki:</h4>
+                    <div className="ibm-plex-mono-regular mt-4 rounded-xl border p-2">
+                      <Timeline items={timelineItems} maxDescriptionLength={80} className="mx-0" />
+                    </div>
+
+                    <div className="mt-4 rounded-xl p-2">
+                      <h4 className="font-grotesk font-bold">Cel długoterminowy:</h4>
+                      <p className="font-grotesk mt-1 text-gray-400">
+                        {recommendations.recommendation.longTermGoal}
+                      </p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* Career paths sections */}
+          {recommendations.careerPaths.map((path: CareerPath, index: number) => (
+            <CareerPathSection
+              key={path.id}
+              path={path}
+              index={index}
+              matchResult={matchByName.get(path.careerName.trim().toLowerCase())}
+              offersLoading={isOffersLoading}
+              offersError={offersError}
+            />
+          ))}
+
+          <div
+            className={`${
+              showFixedButton
+                ? 'fixed bottom-6 left-1/2 z-50 -translate-x-1/2 translate-y-0 opacity-100'
+                : 'fixed bottom-0 left-1/2 z-50 -translate-x-1/2 translate-y-full opacity-0'
+            } flex w-1/2 items-center justify-center transition-all duration-500 ease-in-out`}
+          >
+            <ButtonGenerate
+              onClick={() => setIsConfirmDialogOpen(true)}
+              disabled={isLoading}
+              className="cursor-pointer px-6 py-2 max-md:w-full! max-md:text-sm"
+            >
+              {isLoading ? 'Generating...' : 'Wygeneruj nową rekomendację'}
+            </ButtonGenerate>
+          </div>
+
+          <div className="mt-16 flex w-full justify-center">
+            <ButtonGenerate
+              onClick={() => setIsConfirmDialogOpen(true)}
+              disabled={isLoading}
+              className="cursor-pointer px-6 py-2 max-md:text-sm"
+            >
+              {isLoading ? 'Generating...' : 'Wygeneruj nową rekomendację'}
+            </ButtonGenerate>
+          </div>
+
+          <AlertDialog open={isConfirmDialogOpen} onOpenChange={setIsConfirmDialogOpen}>
+            <AlertDialogContent className="font-grotesk font-korbin mx-auto max-w-sm">
+              <AlertDialogHeader>
+                <AlertDialogTitle className="text-center text-xl font-bold">
+                  Wygenerować nowe rekomendacje?
+                </AlertDialogTitle>
+                <AlertDialogDescription className="text-foreground text-center">
+                  {!hasActiveSubscription ? (
+                    <>
+                      Zostanie pobrane{' '}
+                      <b className="text-[#915EFF]">{generatePricePerUse} tokenów</b> z Twojego
+                      konta.
+                    </>
+                  ) : (
+                    <p className="mx-auto max-w-xs">
+                      Jesteś na aktywnej subskrypcji, więc ta akcja nie wykorzysta żadnych tokenów.
+                    </p>
+                  )}
+                </AlertDialogDescription>
+              </AlertDialogHeader>
+
+              <AlertDialogFooter className="mt-8 flex flex-row justify-center gap-4 sm:justify-center">
+                <AlertDialogCancel className="border-muted-foreground/20 w-[130px]">
+                  Anuluj
+                </AlertDialogCancel>
+
+                {!isBalanceLoading &&
+                !hasActiveSubscription &&
+                typeof tokenBalance === 'number' &&
+                tokenBalance < generatePricePerUse ? (
+                  <Link href="/pricing">
+                    <AlertDialogAction
+                      className="group bg-[#915EFF] text-white hover:bg-[#7b4ee0]"
+                      onClick={() => setIsConfirmDialogOpen(false)}
+                    >
+                      Zdobądź tokeny
+                      <ArrowRight className="scale-90 transition-all ease-in-out group-hover:translate-x-2" />
+                    </AlertDialogAction>
+                  </Link>
+                ) : (
+                  <AlertDialogAction
+                    onClick={async () => {
+                      await handleGenerateNewRecommendations();
+                      refresh();
+                    }}
+                    className="bg-[#915EFF] text-white hover:bg-[#7b4ee0]"
+                  >
+                    Generuj
+                    <Image src={star_generate} alt="star" width={16} height={16} />
+                  </AlertDialogAction>
+                )}
+              </AlertDialogFooter>
+            </AlertDialogContent>
+          </AlertDialog>
+        </div>
+      </div>
+    </Section>
+  );
+}

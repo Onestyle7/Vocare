@@ -1,0 +1,357 @@
+'use client';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { useRouter } from 'next/navigation';
+import { useCallback, useEffect, useState } from 'react';
+import { useForm } from 'react-hook-form';
+import { toast } from 'sonner';
+
+import StepProgress from '@/app/(marketing)/steps/ProgressBar';
+import StepFive from '@/app/(marketing)/steps/StepFive';
+import StepFour from '@/app/(marketing)/steps/StepFour';
+import StepOne from '@/app/(marketing)/steps/StepOne';
+import StepThree from '@/app/(marketing)/steps/StepThree';
+import StepTwo from '@/app/(marketing)/steps/StepTwo';
+import { Button } from '@/components/ui/button';
+import { Form } from '@/components/ui/form';
+import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
+import { CreateProfileFormType } from '@/features/profile/profileSchema';
+import { createProfileSchema } from '@/features/profile/profileSchema';
+import {
+  createUserProfile,
+  deleteUserProfile,
+  getUserProfile,
+  updateUserProfile,
+} from '@/lib/profile';
+import { PersonalityType } from '@/lib/types/personalityTypes';
+import { UserProfile } from '@/lib/types/profile';
+import { Risk } from '@/lib/types/risk';
+
+export default function ProfileForm({
+  initialData,
+  onCancel,
+}: {
+  initialData?: UserProfile;
+  onCancel?: () => void;
+}) {
+  const [isLoading, setLoading] = useState(false);
+  const [isEditMode, setEditMode] = useState(false);
+  const [currentStep, setCurrentStep] = useState(1);
+  const totalSteps = 5;
+  const router = useRouter();
+
+  const form = useForm<CreateProfileFormType>({
+    resolver: zodResolver(createProfileSchema),
+    defaultValues: {
+      firstName: '',
+      lastName: '',
+      country: '',
+      address: '',
+      phoneNumber: '',
+      education: [],
+      workExperience: [],
+      skills: [],
+      softSkills: [],
+      certificates: [],
+      languages: [],
+      additionalInformation: '',
+      aboutMe: '',
+      willingToRebrand: false,
+      personalityType: undefined,
+      financialSurvey: {
+        currentSalary: undefined,
+        desiredSalary: undefined,
+        hasLoans: false,
+        loanDetails: '',
+        riskAppetite: 5,
+        willingToRelocate: false,
+      },
+    },
+  });
+
+  // Normalizuje daty do formatu YYYY-MM-DD, bez strefy czasowej/ czasu
+  const formatDateIfNeeded = (date?: string) => {
+    if (!date) return undefined;
+    // Jeśli już YYYY-MM-DD
+    if (/^\d{4}-\d{2}-\d{2}$/.test(date)) return date;
+    // Jeśli ISO z czasem: utnij do 10 znaków
+    if (/^\d{4}-\d{2}-\d{2}T/.test(date)) return date.slice(0, 10);
+    // W innym przypadku spróbuj sparsować i złożyć Y-M-D lokalnie
+    try {
+      const d = new Date(date);
+      if (isNaN(d.getTime())) return undefined;
+      const y = d.getFullYear();
+      const m = String(d.getMonth() + 1).padStart(2, '0');
+      const day = String(d.getDate()).padStart(2, '0');
+      return `${y}-${m}-${day}`;
+    } catch {
+      return undefined;
+    }
+  };
+
+  const formatProfileDates = useCallback(
+    (data: UserProfile): UserProfile => ({
+      ...data,
+      certificates:
+        data.certificates?.map((cert) => ({
+          name: cert.name,
+          issuer: cert.issuer ?? '',
+          issueDate: formatDateIfNeeded(cert.issueDate) ?? '',
+          expiryDate: formatDateIfNeeded(cert.expiryDate) ?? '',
+          noExpiry: cert.noExpiry ?? false,
+        })) ?? [],
+
+      education:
+        data.education?.map((edu) => ({
+          ...edu,
+          degree: edu.degree ?? '',
+          field: edu.field ?? '',
+          startDate: formatDateIfNeeded(edu.startDate) ?? '',
+          endDate: formatDateIfNeeded(edu.endDate) ?? '',
+          current: edu.current ?? false,
+        })) ?? [],
+
+      workExperience:
+        data.workExperience?.map((work) => ({
+          ...work,
+          startDate: formatDateIfNeeded(work.startDate),
+          endDate: formatDateIfNeeded(work.endDate),
+          description: work.description ?? '',
+          responsibilities: work.responsibilities ?? [],
+          current: work.current ?? false,
+        })) ?? [],
+      phoneNumber: data.phoneNumber ?? '',
+      additionalInformation: data.additionalInformation ?? '',
+      aboutMe: data.aboutMe ?? '',
+      willingToRebrand: data.willingToRebrand ?? false,
+      skills: data.skills ?? [],
+      softSkills: data.softSkills ?? [],
+      languages: data.languages ?? [],
+      personalityType:
+        typeof data.personalityType === 'string'
+          ? isNaN(Number(data.personalityType))
+            ? (PersonalityType[data.personalityType as keyof typeof PersonalityType] ??
+              PersonalityType.Unknown)
+            : Number(data.personalityType)
+          : (data.personalityType ?? PersonalityType.Unknown),
+      financialSurvey: {
+        currentSalary: data.financialSurvey?.currentSalary,
+        desiredSalary: data.financialSurvey?.desiredSalary,
+        hasLoans: data.financialSurvey?.hasLoans ?? false,
+        loanDetails: data.financialSurvey?.loanDetails ?? '',
+        riskAppetite:
+          typeof data.financialSurvey?.riskAppetite === 'string'
+            ? isNaN(Number(data.financialSurvey?.riskAppetite))
+              ? (Risk[data.financialSurvey?.riskAppetite as keyof typeof Risk] ?? Risk.Unknown)
+              : Number(data.financialSurvey?.riskAppetite)
+            : (data.financialSurvey?.riskAppetite ?? Risk.Unknown),
+        willingToRelocate: data.financialSurvey?.willingToRelocate ?? false,
+      },
+    }),
+    []
+  );
+
+  useEffect(() => {
+    const loadProfile = async () => {
+      setLoading(true);
+      // const token = localStorage.getItem('token');
+      // if (!token) {
+      //   router.replace('/sign-in');
+      //   return;
+      // }
+      if (initialData) {
+        setEditMode(true);
+        form.reset(formatProfileDates(initialData));
+        setLoading(false);
+        return;
+      }
+      try {
+        const profileData = await getUserProfile();
+        if (profileData) {
+          setEditMode(true);
+          form.reset(formatProfileDates(profileData));
+        }
+      } catch (err) {
+        console.error('No existing profile found or error fetching data', err);
+      } finally {
+        setLoading(false);
+      }
+    };
+    loadProfile();
+  }, [form, initialData, router, formatProfileDates]);
+
+  const nextStep = () => setCurrentStep((prev) => Math.min(prev + 1, totalSteps));
+  const prevStep = () => setCurrentStep((prev) => Math.max(prev - 1, 1));
+
+  const onSubmit = async (data: CreateProfileFormType) => {
+    setLoading(true);
+    // const token = localStorage.getItem('token');
+    // if (!token) {
+    //   toast.error('Authentication required', { description: 'Please sign in to continue.' });
+    //   router.replace('/sign-in');
+    //   return;
+    // }
+    const formattedData = formatProfileDates(data);
+    console.log('Certificates:', formattedData.certificates);
+    try {
+      let profileData;
+      if (isEditMode) {
+        profileData = await updateUserProfile(formattedData);
+        toast.success('Profile updated successfully!');
+      } else {
+        console.log('DATA SENT TO BACKEND:', formattedData);
+        profileData = await createUserProfile(formattedData);
+        toast.success('Profile created successfully!');
+        setEditMode(true);
+      }
+      localStorage.setItem('userProfile', JSON.stringify(profileData));
+      router.push('/assistant');
+    } catch (err: unknown) {
+      console.error(err);
+      const errorMessage = err instanceof Error ? err.message : 'Please try again.';
+      toast.error('An error occurred', {
+        description: errorMessage,
+      });
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleDelete = async () => {
+    if (!confirm('Are you sure you want to delete your profile?')) return;
+    // const token = localStorage.getItem('token');
+    // if (!token) {
+    //   toast.error('Authentication required', { description: 'Please sign in to continue.' });
+    //   router.replace('/sign-in');
+    //   return;
+    // }
+    setLoading(true);
+    try {
+      await deleteUserProfile();
+      toast.success('Profile deleted successfully!');
+      router.push('/');
+    } catch (err) {
+      console.error(err);
+      toast.error('An error occurred', {
+        description: 'Failed to delete profile. Please try again.',
+      });
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const CancelButton = () => {
+    const [open, setOpen] = useState(false);
+    if (!onCancel) return null;
+    return (
+      <>
+        {form.formState.isDirty ? (
+          <Popover open={open} onOpenChange={setOpen}>
+            <PopoverTrigger asChild>
+              <Button type="button" variant="outline" className="font-poppins rounded-sm">
+                Cancel
+              </Button>
+            </PopoverTrigger>
+            <PopoverContent className="font-poppins w-80 space-y-6 p-6 text-center">
+              <p className="text-base">Are you sure you want to discard changes?</p>
+              <div className="flex justify-center gap-4">
+                <Button variant="destructive" onClick={onCancel} className="px-6">
+                  Yes, I&apos;m sure
+                </Button>
+                <Button variant="secondary" onClick={() => setOpen(false)} className="px-6">
+                  No
+                </Button>
+              </div>
+            </PopoverContent>
+          </Popover>
+        ) : (
+          <Button
+            type="button"
+            variant="outline"
+            className="font-poppins rounded-sm"
+            onClick={onCancel}
+          >
+            Cancel
+          </Button>
+        )}
+      </>
+    );
+  };
+
+  const renderStep = () => {
+    const sharedProps = { form, onNext: nextStep, onBack: prevStep };
+    switch (currentStep) {
+      case 1:
+        return (
+          <>
+            <StepOne {...sharedProps} />
+            <div className="mt-6 flex justify-center">
+              <CancelButton />
+            </div>
+          </>
+        );
+      case 2:
+        return (
+          <>
+            <StepTwo {...sharedProps} />
+            <div className="mt-6 flex justify-end">
+              <CancelButton />
+            </div>
+          </>
+        );
+      case 3:
+        return (
+          <>
+            <StepThree {...sharedProps} />
+            <div className="mt-6 flex justify-end">
+              <CancelButton />
+            </div>
+          </>
+        );
+      case 4:
+        return (
+          <>
+            <StepFour form={form} onBack={prevStep} onNext={nextStep} />
+            <div className="mt-6 flex justify-end">
+              <CancelButton />
+            </div>
+          </>
+        );
+      case 5:
+        return (
+          <>
+            <StepFive
+              form={form}
+              onBack={prevStep}
+              onSubmit={onSubmit}
+              isLoading={isLoading}
+              isEditMode={isEditMode}
+              handleDelete={handleDelete}
+            />
+            <div className="mt-6 flex justify-end">
+              <CancelButton />
+            </div>
+          </>
+        );
+      default:
+        return <StepOne form={form} onNext={nextStep} />;
+    }
+  };
+
+  return (
+    <div className="relative mx-2 h-[620px] max-w-2xl overflow-y-auto rounded-xl border bg-[#f3f3f3] p-0 max-sm:mt-2 sm:mx-auto lg:mt-10 dark:bg-[#0e100f]">
+      <div className="relative z-30">
+        {/* Sticky StepProgress */}
+        <div className="sticky top-0 z-40">
+          <div className="bg-[#f3f3f3] px-6 pt-6 pb-2 dark:bg-[#0e100f]">
+            <StepProgress currentStep={currentStep} totalSteps={totalSteps} />
+          </div>
+        </div>
+
+        {/* Form content */}
+        <div className="px-6 pb-6">
+          <Form {...form}>{renderStep()}</Form>
+        </div>
+      </div>
+    </div>
+  );
+}

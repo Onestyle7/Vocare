@@ -1,4 +1,4 @@
-import { Risk } from '@/lib/enums/risk';
+import { Risk } from '@/lib/types/risk';
 
 export type CertificateEntry = {
   name: string;

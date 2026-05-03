@@ -256,9 +256,9 @@ export const shape2 = '/images/shape2.avif';
 
 // Billing
 
-export const shape3 = '/images/shape3.png';
+export const successShape = '/images/shape3.png';
 
-export const shape4 = '/images/shape4.png';
+export const failureShape = '/images/shape4.png';
 
 // Market analysis
 

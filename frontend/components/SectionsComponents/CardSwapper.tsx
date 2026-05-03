@@ -4,7 +4,7 @@ import { ArrowRight, ArrowUp, FileQuestion, PencilLine } from 'lucide-react';
 import Link from 'next/link';
 import React from 'react';
 
-import CardSwap, { Card } from '@/components/CardSwap/CardSwap';
+import CardSwap, { Card } from '@/components/SupportComponents/CardSwap';
 
 import { Button } from '../ui/button';
 

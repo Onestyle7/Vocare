@@ -7,7 +7,7 @@ import { UseFormReturn } from 'react-hook-form';
 import { Button } from '@/components/ui/button';
 import { FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 import { Textarea } from '@/components/ui/textarea';
-import { CreateProfileFormType } from '@/lib/schemas/profileSchema';
+import { CreateProfileFormType } from '@/features/profile/profileSchema';
 
 interface StepFourProps {
   form: UseFormReturn<CreateProfileFormType>;

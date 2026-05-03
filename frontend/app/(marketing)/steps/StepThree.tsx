@@ -4,7 +4,7 @@ import { ArrowLeft, ArrowRight, Plus } from 'lucide-react';
 import React, { useState } from 'react';
 import { UseFormReturn } from 'react-hook-form';
 
-import { TagInput } from '@/components/ProfileFormComponents/TagInput';
+import { TagInput } from '@/features/profile/components/TagInput';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
@@ -18,7 +18,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
-import { CreateProfileFormType, UpdateProfileFormType } from '@/lib/schemas/profileSchema';
+import { CreateProfileFormType, UpdateProfileFormType } from '@/features/profile/profileSchema';
 
 // Typy dla poszczególnych popoverów
 
