@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using VocareWebAPI.Data;
 using VocareWebAPI.Models.Entities;
+using VocareWebAPI.UserManagement.Exceptions;
 
 namespace VocareWebAPI.Repositories
 {
@@ -40,11 +41,8 @@ namespace VocareWebAPI.Repositories
                 .Include(p => p.Languages)
                 .FirstOrDefaultAsync(p => p.UserId == userId);
             if (profile == null)
-            {
-                throw new KeyNotFoundException(
-                    $"Profil użytkownika o ID {userId} nie został znaleziony."
-                );
-            }
+                throw new UserProfileNotFoundException(userId);
+
             return profile;
         }
 

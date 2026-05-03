@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.RateLimiting;
+using VocareWebAPI.Shared.Results;
 using VocareWebAPI.UserManagement.Models.Dtos;
 using VocareWebAPI.UserManagement.Models.Results;
 using VocareWebAPI.UserManagement.Services.Interfaces;
@@ -12,15 +13,10 @@ namespace VocareWebAPI.UserManagement.Controllers
     public class AuthController : ControllerBase
     {
         private readonly IAuthenticationServiceOwn _authenticationService;
-        private readonly ILogger<AuthController> _logger;
 
-        public AuthController(
-            IAuthenticationServiceOwn authenticationService,
-            ILogger<AuthController> logger
-        )
+        public AuthController(IAuthenticationServiceOwn authenticationService)
         {
             _authenticationService = authenticationService;
-            _logger = logger;
         }
 
         [HttpPost("login")]
@@ -34,16 +30,8 @@ namespace VocareWebAPI.UserManagement.Controllers
             var result = await _authenticationService.LoginAsync(request.Email, request.Password);
 
             if (!result.IsSuccess)
-            {
-                if (result.Error.Contains("locked"))
-                {
-                    return BadRequest(new { message = result.Error, errorCode = "ACCOUNT_LOCKED" });
-                }
+                return result.ToActionResult().Result;
 
-                return BadRequest(
-                    new { message = result.Error, errorCode = "INVALID_CREDENTIALS" }
-                );
-            }
             var login = result.Value;
             return Ok(
                 new
@@ -62,7 +50,7 @@ namespace VocareWebAPI.UserManagement.Controllers
         [HttpPost("register")]
         [AllowAnonymous]
         [EnableRateLimiting("LoginPolicy")]
-        public async Task<IActionResult> Register([FromBody] RegisterDto request)
+        public async Task<ActionResult<RegisterResult>> Register([FromBody] RegisterDto request)
         {
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
@@ -75,24 +63,7 @@ namespace VocareWebAPI.UserManagement.Controllers
             );
 
             if (!result.IsSuccess)
-            {
-                // Konto Google już istnieje
-                if (result.Error.Contains("Google"))
-                {
-                    return BadRequest(
-                        new { message = result.Error, errorCode = "GOOGLE_ACCOUNT_EXISTS" }
-                    );
-                }
-
-                // Konto z hasłem już istnieje
-                if (result.Error.Contains("already exists"))
-                {
-                    return BadRequest(new { message = result.Error, errorCode = "ACCOUNT_EXISTS" });
-                }
-
-                // Inne błędy (walidacja hasła, błąd serwera)
-                return BadRequest(new { message = result.Error });
-            }
+                return result.ToActionResult();
 
             return Ok(result.Value);
         }
@@ -100,19 +71,27 @@ namespace VocareWebAPI.UserManagement.Controllers
         [HttpPost("forgot-password")]
         [AllowAnonymous]
         [EnableRateLimiting("LoginPolicy")]
-        public async Task<IActionResult> ForgotPassword([FromBody] ForgotPasswordDto dto)
+        public async Task<ActionResult<ForgotPasswordResult>> ForgotPassword(
+            [FromBody] ForgotPasswordDto dto
+        )
         {
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
 
             var result = await _authenticationService.ForgotPasswordAsync(dto.Email);
-            return result.IsSuccess ? Ok(result.Value) : BadRequest(new { message = result.Error });
+
+            if (!result.IsSuccess)
+                return result.ToActionResult();
+
+            return Ok(result.Value);
         }
 
         [HttpPost("reset-password")]
         [AllowAnonymous]
         [EnableRateLimiting("LoginPolicy")]
-        public async Task<IActionResult> ResetPassword([FromBody] ResetPasswordDto dto)
+        public async Task<ActionResult<ResetPasswordResult>> ResetPassword(
+            [FromBody] ResetPasswordDto dto
+        )
         {
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
@@ -122,54 +101,84 @@ namespace VocareWebAPI.UserManagement.Controllers
                 dto.Token,
                 dto.NewPassword
             );
-            return result.IsSuccess ? Ok(result.Value) : BadRequest(new { message = result.Error });
+
+            if (!result.IsSuccess)
+                return result.ToActionResult();
+
+            return Ok(result.Value);
         }
 
         [HttpGet("validate-reset-token")]
         [AllowAnonymous]
         [EnableRateLimiting("LoginPolicy")]
-        public async Task<IActionResult> ValidateResetToken(
+        public async Task<ActionResult<ValidateResetTokenResult>> ValidateResetToken(
             [FromQuery] string token,
             [FromQuery] string email
         )
         {
+            if (!ModelState.IsValid)
+                return BadRequest(ModelState);
+
             var result = await _authenticationService.ValidateResetTokenAsync(token, email);
-            return result.IsSuccess ? Ok(result.Value) : BadRequest(new { message = result.Error });
+
+            if (!result.IsSuccess)
+                return result.ToActionResult();
+
+            return Ok(result.Value);
         }
 
         [HttpPost("refresh")]
         [AllowAnonymous]
-        public async Task<IActionResult> Refresh([FromBody] RefreshRequest request)
+        public async Task<ActionResult<RefreshResult>> Refresh([FromBody] RefreshRequest request)
         {
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
 
             var result = await _authenticationService.RefreshAsync(request.RefreshToken);
-            return result.IsSuccess ? Ok(result.Value) : BadRequest(new { message = result.Error });
+
+            if (!result.IsSuccess)
+                return result.ToActionResult();
+
+            return Ok(result.Value);
         }
 
         [HttpPost("logout")]
         [Authorize]
-        public async Task<IActionResult> Logout()
+        public async Task<ActionResult<LogoutResult>> Logout()
         {
+            if (!ModelState.IsValid)
+                return BadRequest(ModelState);
+
             var result = await _authenticationService.LogoutAsync();
-            return result.IsSuccess ? Ok(result.Value) : BadRequest(new { message = result.Error });
+
+            if (!result.IsSuccess)
+                return result.ToActionResult();
+
+            return Ok(result.Value);
         }
 
         [HttpPost("google-verify")]
         [AllowAnonymous]
-        public async Task<IActionResult> GoogleVerify([FromBody] GoogleVerifyRequest request)
+        public async Task<ActionResult<OAuthLoginResult>> GoogleVerify(
+            [FromBody] GoogleVerifyRequest request
+        )
         {
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
 
             var result = await _authenticationService.GoogleLoginAsync(request.AccessToken);
-            return result.IsSuccess ? Ok(result.Value) : BadRequest(new { message = result.Error });
+
+            if (!result.IsSuccess)
+                return result.ToActionResult();
+
+            return Ok(result.Value);
         }
 
         [HttpPost("linkedin-verify")]
         [AllowAnonymous]
-        public async Task<IActionResult> LinkedinVerify([FromBody] LinkedInVerifyRequest request)
+        public async Task<ActionResult<OAuthLoginResult>> LinkedinVerify(
+            [FromBody] LinkedInVerifyRequest request
+        )
         {
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
@@ -178,7 +187,11 @@ namespace VocareWebAPI.UserManagement.Controllers
                 request.Code,
                 request.RedirectUri
             );
-            return result.IsSuccess ? Ok(result.Value) : BadRequest(new { message = result.Error });
+
+            if (!result.IsSuccess)
+                return result.ToActionResult();
+
+            return Ok(result.Value);
         }
     }
 }
