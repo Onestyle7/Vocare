@@ -7,10 +7,10 @@ import { BaseAppError } from '@/lib/types/result';
 import {
   authApiClient,
   ForgotPasswordCommand,
-  OAuthSignInResult,
   RegisterCommand,
   ResetPasswordCommand,
   SignInCommand,
+  SignInResult,
   ValidateResetPasswordCommand,
   ValidateResetPasswordResult,
 } from './api';
@@ -23,8 +23,8 @@ export type ResetPasswordDomainError = BaseAppError<'InvalidResetToken' | 'Expir
 export async function verifyOauthTokenService(
   endpoint: string,
   providerToken: string
-): Promise<Result<OAuthSignInResult, AuthDomainError>> {
-  const result = await authApiClient.post<OAuthSignInResult>(endpoint, {
+): Promise<Result<SignInResult, AuthDomainError>> {
+  const result = await authApiClient.post<SignInResult>(endpoint, {
     AccessToken: providerToken,
   });
 
@@ -52,8 +52,8 @@ export async function verifyOauthTokenService(
 
 export async function signInService(
   command: SignInCommand
-): Promise<Result<OAuthSignInResult, AuthDomainError>> {
-  const result = await authApiClient.post<OAuthSignInResult>('/login', command);
+): Promise<Result<SignInResult, AuthDomainError>> {
+  const result = await authApiClient.post<SignInResult>('/login', command);
 
   return result
     .map((response) => response.data)
@@ -79,8 +79,8 @@ export async function signInService(
 
 export async function registerService(
   command: RegisterCommand
-): Promise<Result<OAuthSignInResult, RegisterDomainError>> {
-  const result = await authApiClient.post<OAuthSignInResult>('/register', command);
+): Promise<Result<SignInResult, RegisterDomainError>> {
+  const result = await authApiClient.post<SignInResult>('/register', command);
 
   return result
     .map((response) => response.data)
@@ -97,8 +97,8 @@ export async function registerService(
     });
 }
 
-export async function logoutService(): Promise<Result<OAuthSignInResult, AuthDomainError>> {
-  const result = await authApiClient.post<OAuthSignInResult>('/logout');
+export async function logoutService(): Promise<Result<SignInResult, AuthDomainError>> {
+  const result = await authApiClient.post<SignInResult>('/logout');
 
   return result
     .map((response) => response.data)

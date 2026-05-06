@@ -3,12 +3,12 @@ import { SignInFrom } from '../../../features/auth/components/SignInForm';
 export default async function SignIn({
   searchParams,
 }: {
-  searchParams: Promise<{ oauthError?: string }>;
+  searchParams: Promise<{ reason?: string; callbackUrl?: string }>;
 }) {
-  const { oauthError } = await searchParams;
+  const { reason } = await searchParams;
   return (
     <>
-      <SignInFrom oauthError={oauthError} />
+      <SignInFrom reason={reason} callbackUrl={callbackUrl} />
     </>
   );
 }

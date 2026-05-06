@@ -5,12 +5,12 @@ import { useCallback, useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { toast } from 'sonner';
 
-import StepProgress from '@/app/(marketing)/steps/ProgressBar';
-import StepFive from '@/app/(marketing)/steps/StepFive';
-import StepFour from '@/app/(marketing)/steps/StepFour';
-import StepOne from '@/app/(marketing)/steps/StepOne';
-import StepThree from '@/app/(marketing)/steps/StepThree';
-import StepTwo from '@/app/(marketing)/steps/StepTwo';
+import StepProgress from '@/components/SupportComponents/steps/ProgressBar';
+import StepFive from '@/components/SupportComponents/steps/StepFive';
+import StepFour from '@/components/SupportComponents/steps/StepFour';
+import StepOne from '@/components/SupportComponents/steps/StepOne';
+import StepThree from '@/components/SupportComponents/steps/StepThree';
+import StepTwo from '@/components/SupportComponents/steps/StepTwo';
 import { Button } from '@/components/ui/button';
 import { Form } from '@/components/ui/form';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';

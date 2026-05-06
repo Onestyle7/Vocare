@@ -42,7 +42,16 @@ export async function signIn(command: SignInCommand) {
 
   return result.match(
     (signInResult) => {
-      cookieStore.set('token', signInResult.token, { httpOnly: true, sameSite: 'lax', path: '/' });
+      cookieStore.set('token', signInResult.accessToken, {
+        httpOnly: true,
+        sameSite: 'lax',
+        path: '/',
+      });
+      cookieStore.set('userId', signInResult.userId, {
+        httpOnly: true,
+        sameSite: 'lax',
+        path: '/',
+      });
       return actionOk({ success: true });
     },
     (error) => actionErr(error)
@@ -62,6 +71,7 @@ export async function logOut() {
   const cookieStore = await cookies();
   await logoutService();
   cookieStore.delete('token');
+  cookieStore.delete('userId');
   return actionOk({ success: true });
 }
 

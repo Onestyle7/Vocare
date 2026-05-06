@@ -6,7 +6,7 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { useEffect, useRef } from 'react';
 
-import { letterImg } from '@/app/constants';
+import { letterImg } from '@/features/marketing/constants/countries';
 import { Button } from '@/components/ui/button';
 
 const Mockup = () => {

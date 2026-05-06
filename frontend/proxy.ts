@@ -7,11 +7,20 @@ export async function proxy(request: NextRequest) {
 }
 
 async function authProxy(request: NextRequest) {
-  if (
-    !request.cookies.has('pending_payment') &&
-    billingResultPages.includes(request.nextUrl.pathname)
-  ) {
-    return NextResponse.redirect(new URL('/dashboard', request.url));
+  const searchParams = request.nextUrl.searchParams;
+  const requestHeaders = new Headers(request.headers);
+  requestHeaders.set('x-current-path', request.nextUrl.pathname + request.nextUrl.search);
+
+  const response = NextResponse.next({
+    request: {
+      headers: requestHeaders,
+    },
+  });
+
+  if (searchParams.has('reason')) {
+    response.cookies.delete('token');
+    response.cookies.delete('userId');
+    return response;
   }
 
   if (request.cookies.has('token') && authPages.includes(request.nextUrl.pathname)) {
@@ -22,10 +31,11 @@ async function authProxy(request: NextRequest) {
     const signInUrl = new URL('/sign-in', request.url);
     return NextResponse.redirect(signInUrl);
   }
+
+  return response;
 }
 
 const authPages = ['/sign-in', '/sign-up', '/forgot-password', '/reset-password'];
-const billingResultPages = ['/billing/success', '/billing/failed'];
 
 export const config = {
   matcher: ['/:path*'],

@@ -4,7 +4,7 @@ import { X } from 'lucide-react';
 import Image from 'next/image';
 import * as React from 'react';
 
-import { plus } from '@/app/constants';
+import { plus } from '@/features/marketing/constants/countries';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { cn } from '@/lib/utils';

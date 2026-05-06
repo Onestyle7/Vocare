@@ -1,5 +1,5 @@
-import { ApiClient } from '@/lib/api/api-client';
 import { OAuthProvider } from '@/features/auth/oauth/base';
+import { ApiClient } from '@/lib/api/api-client';
 import env from '@/lib/env/server';
 
 export const authApiClient = new ApiClient({
@@ -16,12 +16,6 @@ export function getOAuthEndpoint(provider: OAuthProvider) {
     }
   }
 }
-
-export type OAuthSignInResult = {
-  token: string;
-  userId: string;
-  email: string;
-};
 
 export type SignInResult = {
   accessToken: string;

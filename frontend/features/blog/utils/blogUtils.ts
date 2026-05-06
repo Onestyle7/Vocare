@@ -4,8 +4,7 @@ import { env } from 'process';
 import { cache } from 'react';
 import { ZodError } from 'zod';
 
-import { ImageProps } from '../../../app/blog/_utils/types';
-import { ArticleMetadata, articleSchema } from '../../../app/blog/_utils/types';
+import { ArticleMetadata, articleSchema, ImageProps } from '../types';
 
 /** Getting absolute image url from relative 'public' folder image path */
 export function toAbsoluteUrl(path: string) {

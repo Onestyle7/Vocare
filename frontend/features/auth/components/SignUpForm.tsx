@@ -8,7 +8,6 @@ import { useRouter } from 'next/navigation';
 import { useTransition } from 'react';
 import { useForm } from 'react-hook-form';
 import { toast } from 'sonner';
-import { z } from 'zod';
 
 import { ButtonForm } from '@/components/ui/button-form';
 import { Checkbox } from '@/components/ui/checkbox';
@@ -23,36 +22,7 @@ import {
 import { Input } from '@/components/ui/input';
 import { register } from '@/features/auth/dal/commands';
 
-export const signUpPasswordSchema = z
-  .string()
-  .min(6, 'Hasło musi mieć co najmniej 6 znaków')
-  .regex(/[a-z]/, 'Hasło musi zawierać co najmniej jedną małą literę')
-  .regex(/[A-Z]/, 'Hasło musi zawierać co najmniej jedną wielką literę')
-  .regex(/\d/, 'Hasło musi zawierać co najmniej jedną cyfrę')
-  .regex(
-    /[!@#$%^&*()_+\-=[\]{};':"\\|,.<>/?]/,
-    'Hasło musi zawierać przynajmniej jeden znak specjalny'
-  );
-
-export const signUpSchema = z
-  .object({
-    email: z.string().email('Niepoprawny format adresu email'),
-    password: signUpPasswordSchema,
-    confirmPassword: signUpPasswordSchema,
-    fullName: z.string().min(2).max(50),
-    marketingConsent: z.boolean().default(false),
-  })
-  .superRefine((data, ctx) => {
-    if (data.password !== data.confirmPassword) {
-      ctx.addIssue({
-        code: z.ZodIssueCode.custom,
-        message: 'Hasła nie są takie same',
-        path: ['confirmPassword'],
-      });
-    }
-  });
-
-export type SignUpFormType = z.infer<typeof signUpSchema>;
+import { SignUpFormType, signUpSchema } from '../dal/schemas';
 
 export function SignUpForm() {
   const [isRegisterPending, startTransition] = useTransition();

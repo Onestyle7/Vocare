@@ -31,7 +31,3 @@ export type HrProps = ComponentPropsWithoutRef<'hr'>;
 export type StrongProps = ComponentPropsWithoutRef<'strong'>;
 export type EmProps = ComponentPropsWithoutRef<'em'>;
 export type HeadingTwoProps = ComponentPropsWithoutRef<'h2'>;
-export type HeadingThreeProps = ComponentPropsWithoutRef<'h3'>;
-
-// TODO:
-// - husky + lint-staged to verify articles schema on commit

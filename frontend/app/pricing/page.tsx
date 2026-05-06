@@ -1,9 +1,7 @@
-import React from 'react';
-
 import Header from '@/components/SectionsComponents/Header';
 import PricingMain from '@/features/billing/components/PricingMain';
 
-import Maintenance from '../../maintenance/page';
+import Maintenance from '../maintenance/page';
 
 const Page = () => {
   const isMaintenance = false;

@@ -8,9 +8,7 @@ import { useRouter } from 'next/navigation';
 import { useTransition } from 'react';
 import { useForm } from 'react-hook-form';
 import { toast } from 'sonner';
-import z from 'zod';
 
-import { google } from '@/app/constants';
 import { ButtonForm } from '@/components/ui/button-form';
 import {
   Form,
@@ -23,15 +21,11 @@ import {
 import { Input } from '@/components/ui/input';
 import OAuthButton from '@/features/auth/components/OAuthButton';
 import { OAuthSignIn, signIn } from '@/features/auth/dal/commands';
+import { google } from '@/features/marketing/constants/countries';
 
-export const signInSchema = z.object({
-  email: z.string().email('Invalid email address'),
-  password: z.string().min(1, 'Password is required'),
-});
+import { SignInFormType, signInSchema } from '../dal/schemas';
 
-export type SignInFormType = z.infer<typeof signInSchema>;
-
-export function SignInFrom({ oauthError }: { oauthError?: string }) {
+export function SignInFrom({ reason, callbackUrl }: { reason?: string; callbackUrl?: string }) {
   const [isLoginPending, startTransition] = useTransition();
   const router = useRouter();
 
@@ -67,7 +61,7 @@ export function SignInFrom({ oauthError }: { oauthError?: string }) {
         }
       }
 
-      router.push('/dashboard');
+      router.push(callbackUrl ? callbackUrl : '/dashboard');
     });
   };
 
@@ -75,7 +69,7 @@ export function SignInFrom({ oauthError }: { oauthError?: string }) {
     <Form {...form}>
       <form onSubmit={form.handleSubmit(handleSignIn)} className="auth-form font-poppins">
         <h1 className="form-title">Zaloguj się</h1>
-        <p className="text-red-500">{oauthError}</p>
+        <p className="text-red-500">{reason}</p>
 
         <FormField
           control={form.control}

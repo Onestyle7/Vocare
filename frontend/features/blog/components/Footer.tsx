@@ -1,6 +1,11 @@
 import Link from 'next/link';
 
-import { contact_pages, down_links, links_pages, links_social } from '@/app/constants';
+import {
+  contact_pages,
+  down_links,
+  links_pages,
+  links_social,
+} from '@/features/marketing/constants/countries';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { cn } from '@/lib/utils';

@@ -2,14 +2,19 @@
 
 import React, { createContext, useContext } from 'react';
 
-interface TokenBalanceContextType {
+import { ACTIVE_SUBSCRIPTION_STATUSES } from '../constants';
+import { SubscriptionStatuses } from '../types';
+
+export interface TokenBalanceContextType {
   tokenBalance: number;
-  subscriptionStatus: 'None' | 'Active' | 'Trialing' | 'Cancelled' | 'PastDue';
+  subscriptionStatus: SubscriptionStatuses;
+  hasActiveSubscription: boolean;
 }
 
 const TokenBalanceContext = createContext<TokenBalanceContextType>({
   tokenBalance: 0,
   subscriptionStatus: 'None',
+  hasActiveSubscription: false,
 });
 
 export const TokenBalanceProvider = ({
@@ -18,9 +23,15 @@ export const TokenBalanceProvider = ({
   subscriptionStatus,
 }: {
   children: React.ReactNode;
-} & TokenBalanceContextType) => {
+  tokenBalance: number;
+  subscriptionStatus: SubscriptionStatuses;
+}) => {
+  const hasActiveSubscription = ACTIVE_SUBSCRIPTION_STATUSES.includes(subscriptionStatus);
+
   return (
-    <TokenBalanceContext.Provider value={{ tokenBalance, subscriptionStatus }}>
+    <TokenBalanceContext.Provider
+      value={{ tokenBalance, subscriptionStatus, hasActiveSubscription }}
+    >
       {children}
     </TokenBalanceContext.Provider>
   );

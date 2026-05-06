@@ -6,6 +6,7 @@ export const billingApiClient = new ApiClient({
 });
 
 export type BillingType = 'tokens' | 'subscription' | 'individual';
+export type SubscriptionStatus = 'None' | 'Active' | 'Trialing' | 'Cancelled' | 'PastDue';
 
 export type CreateSubscriptionCommand = {
   priceId: string;
@@ -13,4 +14,9 @@ export type CreateSubscriptionCommand = {
 
 export type CreateSubscriptionResult = {
   Url: string;
+};
+
+export type SubscriptionTokenStatusResult = {
+  tokenBalance: number;
+  subscriptionStatus: SubscriptionStatus;
 };

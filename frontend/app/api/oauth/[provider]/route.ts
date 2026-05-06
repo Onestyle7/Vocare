@@ -3,8 +3,8 @@ import { redirect } from 'next/navigation';
 import { NextRequest, NextResponse } from 'next/server';
 import z from 'zod';
 
-import { getOAuthEndpoint } from '@/app/(auth)/_dal/api';
-import { verifyOauthTokenService } from '@/app/(auth)/_dal/services';
+import { getOAuthEndpoint } from '@/features/auth/dal/api';
+import { verifyOauthTokenService } from '@/features/auth/dal/services';
 import { getOauthClient, oAuthProviders } from '@/features/auth/oauth/base';
 
 export async function GET(
@@ -39,11 +39,16 @@ export async function GET(
   const result = await verifyOauthTokenService(endpoint, tokenResult.value.accessToken);
   if (result.isErr()) {
     console.error(`OAuth token validation error: ${result.error.message}`);
-    redirectUrl.searchParams.set('oauthError', result.error.message);
+    redirectUrl.searchParams.set('reason', result.error.message);
     return NextResponse.redirect(redirectUrl);
   }
 
   const cookieStore = await cookies();
-  cookieStore.set('token', result.value.token);
+  cookieStore.set('token', result.value.accessToken, {
+    httpOnly: true,
+    sameSite: 'lax',
+    path: '/',
+  });
+  cookieStore.set('userId', result.value.userId, { httpOnly: true, sameSite: 'lax', path: '/' });
   redirect('/dashboard');
 }

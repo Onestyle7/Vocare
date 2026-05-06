@@ -39,7 +39,6 @@ import { Separator } from '@/components/ui/separator';
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
 import { GridBackgroundDemo } from '@/features/market-analysis/components/GridBackgroundDemo';
 import { RecommendationsApiService } from '@/features/roadmap/RecommendationApiServiice';
-import { getSubscriptionStatus } from '@/features/roadmap/RecommendationApiServiice';
 import { archiveRoadmap, generateRoadmap, getUserRoadmaps } from '@/features/roadmap/roadmap';
 import type { CareerPath } from '@/lib/types/recommendation';
 import type { GenerateRoadmapPayload, RoadmapListItemDto } from '@/lib/types/roadmap';

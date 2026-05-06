@@ -16,7 +16,7 @@ import {
   timeline_icon_2,
   timeline_icon_3,
   timeline_icon_4,
-} from '@/app/constants';
+} from '@/features/marketing/constants/countries';
 import Section from '@/components/SupportComponents/Section';
 import {
   AlertDialog,
@@ -136,12 +136,7 @@ export default function AssistantPage() {
   const [isOffersLoading, setOffersLoading] = useState(false);
   const [offersError, setOffersError] = useState<string | null>(null);
   const [isConfirmDialogOpen, setIsConfirmDialogOpen] = useState(false);
-  const {
-    tokenBalance,
-    isLoading: isBalanceLoading,
-    hasActiveSubscription,
-    refresh,
-  } = useTokenBalanceContext();
+  const { tokenBalance, hasActiveSubscription } = useTokenBalanceContext();
 
   const [isCollapsed, setIsCollapsed] = useState(true);
   const contentRef = useRef<HTMLDivElement>(null);
@@ -608,8 +603,7 @@ export default function AssistantPage() {
                   Anuluj
                 </AlertDialogCancel>
 
-                {!isBalanceLoading &&
-                !hasActiveSubscription &&
+                {!hasActiveSubscription &&
                 typeof tokenBalance === 'number' &&
                 tokenBalance < generatePricePerUse ? (
                   <Link href="/pricing">
@@ -625,7 +619,6 @@ export default function AssistantPage() {
                   <AlertDialogAction
                     onClick={async () => {
                       await handleGenerateNewRecommendations();
-                      refresh();
                     }}
                     className="bg-[#915EFF] text-white hover:bg-[#7b4ee0]"
                   >

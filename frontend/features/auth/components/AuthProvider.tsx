@@ -18,4 +18,4 @@ export function AuthProvider({
   return <AuthContext.Provider value={{ isAuthenticated }}>{children}</AuthContext.Provider>;
 }
 
-export const useAuth = () => useContext(AuthContext);
+export const useAuthContext = () => useContext(AuthContext);

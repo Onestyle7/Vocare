@@ -1,12 +1,10 @@
 import Image from 'next/image';
 
-import { getImageSizeFromTitle } from '../_utils/blogUtils';
 import {
   BlockquoteProps,
   CodeProps,
   EmProps,
   HeadingProps,
-  HeadingThreeProps,
   HeadingTwoProps,
   HrProps,
   ImageProps,
@@ -17,7 +15,8 @@ import {
   ParagraphProps,
   PreProps,
   StrongProps,
-} from '../_utils/types';
+} from '../types';
+import { getImageSizeFromTitle } from '../utils/blogUtils';
 
 export function H1(props: HeadingProps) {
   return <h1 className="mt-10 mb-8 text-center text-4xl font-bold md:text-5xl" {...props} />;
@@ -27,7 +26,7 @@ export function H2(props: HeadingTwoProps) {
   return <h2 className="mt-10 mb-4 text-left text-2xl font-semibold md:text-3xl" {...props} />;
 }
 
-export function H3(props: HeadingThreeProps) {
+export function H3(props: HeadingProps) {
   return <h3 className="mt-8 mb-3 text-left text-xl font-semibold md:text-2xl" {...props} />;
 }
 

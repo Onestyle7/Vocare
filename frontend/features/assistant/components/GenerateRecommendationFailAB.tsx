@@ -2,7 +2,7 @@ import Image from 'next/image';
 import Link from 'next/link';
 import React from 'react';
 
-import { upper_arrow } from '@/app/constants';
+import { upper_arrow } from '@/features/marketing/constants/countries';
 import SpotlightCard from '@/components/SpotlightCard/SpotlightCard';
 import AnimatedContent from '@/components/SupportComponents/AnimatedContent';
 import Section from '@/components/SupportComponents/Section';

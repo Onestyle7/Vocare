@@ -1,4 +1,4 @@
-export const ARTICLES_FOLDER = 'articles/';
+export const ARTICLES_FOLDER = 'features/blog/articles/';
 
 export const FUSE_OPTIONS = {
   // isCaseSensitive: false,

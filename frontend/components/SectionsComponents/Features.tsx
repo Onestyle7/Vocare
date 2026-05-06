@@ -1,13 +1,13 @@
 'use client';
 import { useGSAP } from '@gsap/react';
 import gsap from 'gsap';
-import { ScrollTrigger,SplitText } from 'gsap/all';
+import { ScrollTrigger, SplitText } from 'gsap/all';
 import Image from 'next/image';
 import Link from 'next/link';
 import React, { useRef } from 'react';
 import { ScrollParallax } from 'react-just-parallax';
 
-import { shape1 } from '@/app/constants';
+import { shape1 } from '@/features/marketing/constants/countries';
 import { Safari } from '@/components/magicui/safari';
 import SectionGsap from '@/components/ui/SectionGsap';
 

@@ -4,8 +4,8 @@ import Fuse from 'fuse.js';
 import Link from 'next/link';
 import { useMemo, useState } from 'react';
 
-import { FUSE_OPTIONS } from '../_utils/constants';
-import { ArticleMetadata } from '../_utils/types';
+import { ArticleMetadata } from '../types';
+import { FUSE_OPTIONS } from '../utils/constants';
 import ArticleCard from './ArticleCard';
 import SearchBar from './SearchBar';
 

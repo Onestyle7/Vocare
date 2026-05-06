@@ -26,6 +26,9 @@ import {
 } from 'recharts';
 import { toast } from 'sonner';
 
+import CountUp from '@/components/CountUp';
+import { useTokenBalanceContext } from '@/features/billing/components/SubscriptionTokenProvider';
+import { api } from '@/lib/api';
 import {
   market_motywacja,
   market_rekomendacja,
@@ -35,10 +38,7 @@ import {
   market_wejscie,
   market_wynagrodzenie,
   star_generate,
-} from '@/app/constants';
-import CountUp from '@/components/CountUp';
-import { useTokenBalanceContext } from '@/features/billing/components/SubscriptionTokenProvider';
-import { api } from '@/lib/api';
+} from '@/features/marketing/constants/countries';
 import {
   IndustryStatisticsDto,
   MarketAnalysisDetailsDto,
@@ -516,12 +516,7 @@ export default function DetailedMarketAnalysis() {
   const [error, setError] = useState<string | null>(null);
   const reportRef = useRef<HTMLDivElement>(null);
   const pdfReportRef = useRef<HTMLDivElement>(null);
-  const {
-    tokenBalance,
-    isLoading: isBalanceLoading,
-    hasActiveSubscription,
-    refresh,
-  } = useTokenBalanceContext();
+  const { tokenBalance, hasActiveSubscription } = useTokenBalanceContext();
   const generatePricePerUse = 50;
 
   const maxSalaryValue = useMemo(() => {
@@ -1123,8 +1118,7 @@ export default function DetailedMarketAnalysis() {
               Anuluj
             </AlertDialogCancel>
 
-            {!isBalanceLoading &&
-            !hasActiveSubscription &&
+            {!hasActiveSubscription &&
             typeof tokenBalance === 'number' &&
             tokenBalance < generatePricePerUse ? (
               <Link href="/pricing">
@@ -1140,7 +1134,6 @@ export default function DetailedMarketAnalysis() {
               <AlertDialogAction
                 onClick={async () => {
                   await generateFreshAnalysis();
-                  refresh();
                 }}
                 className="border bg-[#915EFF] text-white hover:bg-[#7b4ee0]"
               >

@@ -8,9 +8,8 @@ import { useRouter } from 'next/navigation';
 import { useState, useTransition } from 'react';
 import { useForm } from 'react-hook-form';
 import { toast } from 'sonner';
-import { z } from 'zod';
 
-import { spinner_terminal } from '@/app/constants';
+import { spinner_terminal } from '@/features/marketing/constants/countries';
 import { ButtonForm } from '@/components/ui/button-form';
 import {
   Form,
@@ -23,19 +22,7 @@ import {
 import { Input } from '@/components/ui/input';
 import { resetPassword } from '@/features/auth/dal/commands';
 
-import { signUpPasswordSchema } from './SignUpForm';
-
-const resetPasswordSchema = z
-  .object({
-    newPassword: signUpPasswordSchema,
-    confirmPassword: signUpPasswordSchema,
-  })
-  .refine((data) => data.newPassword === data.confirmPassword, {
-    message: 'Hasła nie są takie same',
-    path: ['confirmPassword'],
-  });
-
-type ResetPasswordFormType = z.infer<typeof resetPasswordSchema>;
+import { ResetPasswordFormType, resetPasswordSchema } from '../dal/schemas';
 
 interface ResetPasswordFormProps {
   email: string;

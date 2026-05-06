@@ -8,7 +8,7 @@ namespace VocareWebAPI.UserManagement.Models.Results
     public class OAuthLoginResult
     {
         public bool Success { get; private set; }
-        public string? Token { get; private set; }
+        public string? AccessToken { get; private set; }
         public string? RefreshToken { get; private set; }
         public string? UserId { get; private set; }
         public string? Email { get; private set; }
@@ -31,7 +31,7 @@ namespace VocareWebAPI.UserManagement.Models.Results
             return new OAuthLoginResult
             {
                 Success = true,
-                Token = token,
+                AccessToken = token,
                 RefreshToken = refreshToken,
                 UserId = userId,
                 Email = email,

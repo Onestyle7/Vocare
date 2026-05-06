@@ -6,7 +6,7 @@ import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import React, { useEffect, useRef, useState } from 'react';
 
-import { logo, NavLinks } from '@/app/constants';
+import { logo, NavLinks } from '@/features/marketing/constants/countries';
 import MobileNav from '@/components/MobileComponents/MobileNav';
 import { TokenCounter } from '@/features/billing/components/TokenCounter';
 import { Badge } from '@/components/ui/badge';

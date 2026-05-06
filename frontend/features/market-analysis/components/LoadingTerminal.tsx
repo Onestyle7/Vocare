@@ -1,6 +1,6 @@
 import Image from 'next/image';
 
-import { spinner_terminal } from '@/app/constants';
+import { spinner_terminal } from '@/features/marketing/constants/countries';
 
 import { AnimatedSpan, Terminal, TypingAnimation } from '../../../components/magicui/terminal';
 

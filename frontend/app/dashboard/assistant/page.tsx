@@ -1,8 +1,8 @@
 import React from 'react';
 
-import AssistantPage from '@/components/AssistantComponents/MainPageAssisstant';
 import { ScrollProgress } from '@/components/magicui/scroll-progress';
 import Header from '@/components/SectionsComponents/Header';
+import AssistantPage from '@/features/assistant/components/MainPageAssisstant';
 
 const page = () => {
   return (

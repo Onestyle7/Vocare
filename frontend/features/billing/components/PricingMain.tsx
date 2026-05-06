@@ -3,17 +3,10 @@
 import { Undo2 } from 'lucide-react';
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
-import React, { useCallback, useEffect, useState } from 'react';
+import { useCallback, useState } from 'react';
 import { ScrollParallax } from 'react-just-parallax';
 import { toast } from 'sonner';
 
-import {
-  circle_pricing,
-  curve_pricing,
-  shape1,
-  square_pricing,
-  trapez_pricing,
-} from '@/app/constants';
 import Section from '@/components/SupportComponents/Section';
 import {
   AlertDialog,
@@ -26,117 +19,30 @@ import {
   AlertDialogTitle,
 } from '@/components/ui/alert-dialog';
 import { Button } from '@/components/ui/button';
-import { useAuth } from '@/features/auth/components/AuthProvider';
+import { useAuthContext } from '@/features/auth/components/AuthProvider';
+import {
+  circle_pricing,
+  curve_pricing,
+  shape1,
+  square_pricing,
+  trapez_pricing,
+} from '@/features/marketing/constants/countries';
 import { cn } from '@/lib/utils';
 
 import Copy from '../../../components/SupportComponents/Copy';
-
-type PlanType = 'tokens' | 'subscription' | 'individual';
-
-const API_BASE = process.env.NEXT_PUBLIC_API_URL;
-
-const pricingPlans = [
-  {
-    name: 'Osobiste',
-    description: 'Idealne do znalezienia swojej ścieżki zawodowej.',
-    price: 19,
-    tokens: 500 as number | string,
-    priceId: 'price_1TJd11Ls2ndSVWb2D6fJnV78',
-    type: 'tokens' as PlanType,
-    features: [
-      '500 tokenów w pakiecie',
-      'Indywidualne doradztwo kariery',
-      'Spersonalizowane propozycje ścieżek kariery',
-      'Analizy rynku pracy',
-    ],
-    popular: false,
-  },
-  {
-    name: 'Rozwój',
-    description: 'Najlepszy wybór do rozwoju Twojej kariery.',
-    price: 29,
-    tokens: 'Nielimitowany' as number | string,
-    priceId: 'price_1ShEeGLs2ndSVWb29ieLO1TM',
-    type: 'subscription' as PlanType,
-    features: [
-      'Nielimitowany dostęp',
-      'Indywidualne doradztwo kariery',
-      'Spersonalizowane propozycje ścieżek kariery',
-      'Analizy rynku pracy dla Twoich kierunków kariery',
-    ],
-    popular: true,
-  },
-  {
-    name: 'Indywidualne',
-    description: 'Twoja kariera prowadzona przez naszych ekspertów.',
-    price: 99,
-    tokens: '—' as number | string,
-    priceId: 'price_1ShEeCLs2ndSVWb2MNv3RTBY',
-    type: 'individual' as PlanType,
-    features: [
-      'Analiza CV przez eksperta kariery',
-      'Optymalizacja CV',
-      '5 spersonalizowanych ścieżek kariery',
-      'Wyniki w ciągu 48 godzin',
-    ],
-    popular: false,
-  },
-] as const;
+import { pricingPlans } from '../constants';
+import { BillingType } from '../dal/api';
+import { useTokenBalanceContext } from './SubscriptionTokenProvider';
 
 const PricingMain = () => {
-  const [isLoading, setIsLoading] = useState(false);
   const [selectedPriceId, setSelectedPriceId] = useState<string | null>(null);
-  const [subscriptionStatus, setSubscriptionStatus] = useState<string | null>(null);
   const [individualDialogOpen, setIndividualDialogOpen] = useState(false);
+
+  const { isAuthenticated } = useAuthContext();
+  const { hasActiveSubscription, tokenBalance } = useTokenBalanceContext();
 
   const router = useRouter();
   const individualPlan = pricingPlans.find((plan) => plan.type === 'individual');
-
-  const { isAuthenticated } = useAuth();
-
-  // Helpers
-  const checkTokenBalance = useCallback(async () => {
-    if (!isAuthenticated) return;
-    try {
-      const token = localStorage.getItem('token');
-      const res = await fetch(`${API_BASE}/api/Billing/get-token-balance`, {
-        headers: { Authorization: `Bearer ${token}` },
-      });
-      if (res.ok) {
-        const data = await res.json();
-        console.log('Current token balance:', data.tokenBalance);
-      }
-    } catch (error: unknown) {
-      console.error('Failed to fetch token balance:', error);
-    }
-  }, [isAuthenticated]);
-
-  const checkSubscriptionStatus = useCallback(async () => {
-    if (!isAuthenticated) return;
-    try {
-      const token = localStorage.getItem('token');
-      const res = await fetch(`${API_BASE}/api/Billing/subscription-status`, {
-        headers: { Authorization: `Bearer ${token}` },
-      });
-
-      if (res.ok) {
-        const data = await res.json();
-        setSubscriptionStatus(data.subscriptionStatus);
-      } else if (res.status === 404) {
-        setSubscriptionStatus('None');
-      }
-    } catch (error: unknown) {
-      console.error('Failed to fetch subscription status:', error);
-      setSubscriptionStatus('None');
-    }
-  }, [isAuthenticated]);
-
-  useEffect(() => {
-    if (isAuthenticated) {
-      void checkTokenBalance();
-      void checkSubscriptionStatus();
-    }
-  }, [isAuthenticated, checkSubscriptionStatus, checkTokenBalance]);
 
   const openCustomerPortal = async () => {
     if (!isAuthenticated) {
@@ -188,16 +94,9 @@ const PricingMain = () => {
     }
   };
 
-  const handlePurchase = async (priceId: string, planName: string, planType: PlanType) => {
+  const handlePurchase = async (priceId: string, BillingType: BillingType) => {
     // Walidacje
-    if (priceId.includes('xxx') || priceId.includes('yyy') || priceId.includes('zzz')) {
-      toast.error('Configuration needed', {
-        description: 'Replace Price IDs with real Stripe Price IDs!',
-      });
-      return;
-    }
-
-    if (planType === 'subscription' && subscriptionStatus === 'Active') {
+    if (BillingType === 'subscription' && subscriptionStatus === 'Active') {
       toast.error('Already subscribed', {
         description:
           'You already have an active subscription. Use "Manage Billing" to change plans.',
@@ -206,13 +105,12 @@ const PricingMain = () => {
       return;
     }
 
-    setIsLoading(true);
     setSelectedPriceId(priceId);
 
     try {
       const token = localStorage.getItem('token');
       const endpoint =
-        planType === 'subscription'
+        BillingType === 'subscription'
           ? '/api/Billing/create-subscription-checkout'
           : '/api/Billing/create-checkout-session';
 
@@ -240,7 +138,6 @@ const PricingMain = () => {
         });
       }
     } finally {
-      setIsLoading(false);
       setSelectedPriceId(null);
     }
   };
@@ -380,11 +277,9 @@ const PricingMain = () => {
                         pricingPlans[0].type
                       )
                     }
-                    disabled={isLoading && selectedPriceId === pricingPlans[0].priceId}
+                    disabled={selectedPriceId === pricingPlans[0].priceId}
                   >
-                    {isLoading && selectedPriceId === pricingPlans[0].priceId
-                      ? 'Processing...'
-                      : `Wybierz plan`}
+                    {selectedPriceId === pricingPlans[0].priceId ? 'Processing...' : `Wybierz plan`}
                   </Button>
                 </div>
 
@@ -458,9 +353,9 @@ const PricingMain = () => {
                           pricingPlans[1].type
                         )
                       }
-                      disabled={isLoading && selectedPriceId === pricingPlans[1].priceId}
+                      disabled={selectedPriceId === pricingPlans[1].priceId}
                     >
-                      {isLoading && selectedPriceId === pricingPlans[1].priceId
+                      {selectedPriceId === pricingPlans[1].priceId
                         ? 'Processing...'
                         : `Zasubskrybuj`}
                     </Button>
@@ -535,11 +430,9 @@ const PricingMain = () => {
                       if (!individualPlan) return;
                       setIndividualDialogOpen(true);
                     }}
-                    disabled={
-                      !individualPlan || (isLoading && selectedPriceId === individualPlan.priceId)
-                    }
+                    disabled={!individualPlan || selectedPriceId === individualPlan.priceId}
                   >
-                    {isLoading && individualPlan && selectedPriceId === individualPlan.priceId
+                    {individualPlan && selectedPriceId === individualPlan.priceId
                       ? 'Processing...'
                       : `Skontaktuj się`}
                   </Button>

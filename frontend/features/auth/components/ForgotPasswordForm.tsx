@@ -7,9 +7,8 @@ import Link from 'next/link';
 import { useEffect, useState, useTransition } from 'react';
 import { useForm } from 'react-hook-form';
 import { toast } from 'sonner';
-import { z } from 'zod';
 
-import { spinner_terminal } from '@/app/constants';
+import { spinner_terminal } from '@/features/marketing/constants/countries';
 import {
   AlertDialog,
   AlertDialogAction,
@@ -30,11 +29,7 @@ import {
 import { Input } from '@/components/ui/input';
 import { forgotPassword } from '@/features/auth/dal/commands';
 
-const forgotPasswordSchema = z.object({
-  email: z.string().min(1, 'Email is required').email('Invalid email address'),
-});
-
-type ForgotPasswordFormType = z.infer<typeof forgotPasswordSchema>;
+import { ForgotPasswordFormType, forgotPasswordSchema } from '../dal/schemas';
 
 export function ForgotPasswordForm() {
   const [isPending, startTransition] = useTransition();

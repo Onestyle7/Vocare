@@ -1,9 +1,9 @@
 'use client';
 import { Check, ChevronsUpDown } from 'lucide-react';
 import * as React from 'react';
-import { Path, PathValue,UseFormReturn } from 'react-hook-form';
+import { Path, PathValue, UseFormReturn } from 'react-hook-form';
 
-import { countries } from '@/app/constants';
+import { countries } from '@/features/marketing/constants/countries';
 import { Button } from '@/components/ui/button';
 import {
   Command,
