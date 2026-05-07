@@ -2,11 +2,13 @@ using Microsoft.EntityFrameworkCore;
 using Stripe;
 using Stripe.Checkout;
 using VocareWebAPI.Billing.Configuration;
+using VocareWebAPI.Billing.Exceptions;
 using VocareWebAPI.Billing.Models.Entities;
 using VocareWebAPI.Billing.Models.Enums;
 using VocareWebAPI.Billing.Repositories.Interfaces;
 using VocareWebAPI.Billing.Services.Interfaces;
 using VocareWebAPI.Data;
+using VocareWebAPI.Shared.Exceptions;
 
 namespace VocareWebAPI.Billing.Services.Implementations
 {
@@ -51,12 +53,6 @@ namespace VocareWebAPI.Billing.Services.Implementations
             var serviceCost = await _serviceCostRepository.GetServiceCostAsync(serviceName);
 
             var userBilling = await _userBillingRepository.GetByUserIdAsync(userId);
-            if (userBilling == null)
-            {
-                throw new KeyNotFoundException(
-                    $"User billing information for user ID {userId} not found."
-                );
-            }
 
             if (userBilling.SubscriptionStatus == SubscriptionStatus.Active)
             {
@@ -73,24 +69,18 @@ namespace VocareWebAPI.Billing.Services.Implementations
 
             var serviceCost = await _serviceCostRepository.GetServiceCostAsync(serviceName);
             if (serviceCost <= 0)
-                throw new InvalidOperationException(
-                    $"Service cost for {serviceName} is not valid."
-                );
+                throw new InvalidServiceCostException(serviceName, serviceCost);
 
-            var userBilling = await _dbContext.UserBillings.FirstOrDefaultAsync(ub =>
-                ub.UserId == userId
-            );
-            if (userBilling is null)
-                throw new KeyNotFoundException(
-                    $"User billing information for user ID {userId} not found."
-                );
+            var userBilling = await _userBillingRepository.GetByUserIdAsync(userId);
 
             if (userBilling.SubscriptionStatus == SubscriptionStatus.Active)
                 return;
 
             if (userBilling.TokenBalance < serviceCost)
-                throw new InvalidOperationException(
-                    $"User {userId} does not have enough tokens to access {serviceName}."
+                throw new InsufficientTokensException(
+                    userId,
+                    userBilling.TokenBalance,
+                    serviceCost
                 );
 
             var isInMemory =
@@ -108,10 +98,10 @@ namespace VocareWebAPI.Billing.Services.Implementations
                     await ProcessTokenDeductionAsync(userBilling, userId, serviceName, serviceCost);
                     await trx.CommitAsync();
                 }
-                catch (Exception ex)
+                catch (Exception ex) when (ex is not DomainException)
                 {
                     await trx.RollbackAsync();
-                    throw new InvalidOperationException("Failed to deduct tokens for service.", ex);
+                    throw;
                 }
             }
         }
@@ -202,8 +192,6 @@ namespace VocareWebAPI.Billing.Services.Implementations
                     );
 
                     var ub = await _userBillingRepository.GetByUserIdAsync(userId);
-                    if (ub == null)
-                        throw new KeyNotFoundException($"No billing for {userId}");
 
                     await using var tx = await _dbContext.Database.BeginTransactionAsync();
                     try
@@ -229,7 +217,7 @@ namespace VocareWebAPI.Billing.Services.Implementations
                             packageName
                         );
                     }
-                    catch (Exception ex)
+                    catch (Exception ex) when (ex is not DomainException)
                     {
                         await tx.RollbackAsync();
                         _logger.LogError(
@@ -271,19 +259,11 @@ namespace VocareWebAPI.Billing.Services.Implementations
         public async Task<UserBilling> GetUserBillingAsync(string userId)
         {
             if (string.IsNullOrEmpty(userId))
-            {
                 throw new ArgumentException("User ID cannot be null or empty.", nameof(userId));
-            }
+
             var userBilling = await _userBillingRepository.GetByUserIdAsync(userId);
-            _logger.LogInformation($"GetUserBillingAsync for userId: {userId}");
-            _logger.LogInformation($"Found billing: {userBilling != null}");
-            if (userBilling == null)
-            {
-                throw new KeyNotFoundException(
-                    $"User billing information for user ID {userId} not found."
-                );
-            }
-            return userBilling;
+
+            return userBilling!; // sprawdzamy w repozytorium
         }
 
         /// <summary>
@@ -361,7 +341,7 @@ namespace VocareWebAPI.Billing.Services.Implementations
                     subscriptionEndDate
                 );
             }
-            catch (Exception ex)
+            catch (Exception ex) when (ex is not DomainException)
             {
                 await tx.RollbackAsync();
                 _logger.LogError(
@@ -443,7 +423,7 @@ namespace VocareWebAPI.Billing.Services.Implementations
                     userBilling.SubscriptionStatus
                 );
             }
-            catch (Exception ex)
+            catch (Exception ex) when (ex is not DomainException)
             {
                 _logger.LogError(
                     ex,
@@ -492,7 +472,7 @@ namespace VocareWebAPI.Billing.Services.Implementations
                     userId
                 );
             }
-            catch (Exception ex)
+            catch (Exception ex) when (ex is not DomainException)
             {
                 _logger.LogError(
                     ex,
@@ -560,7 +540,7 @@ namespace VocareWebAPI.Billing.Services.Implementations
                     userBilling.SubscriptionEndDate
                 );
             }
-            catch (Exception ex)
+            catch (Exception ex) when (ex is not DomainException)
             {
                 _logger.LogError(
                     ex,
@@ -657,7 +637,7 @@ namespace VocareWebAPI.Billing.Services.Implementations
                     customerId
                 );
             }
-            catch (Exception ex)
+            catch (Exception ex) when (ex is not DomainException)
             {
                 _logger.LogError(
                     ex,

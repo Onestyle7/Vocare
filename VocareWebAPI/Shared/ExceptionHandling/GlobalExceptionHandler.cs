@@ -1,6 +1,6 @@
 using Microsoft.AspNetCore.Diagnostics;
 using Microsoft.AspNetCore.Mvc;
-using Resend;
+using Stripe;
 using VocareWebAPI.Shared.Exceptions;
 
 namespace VocareWebAPI.Shared.ExceptionHandling
@@ -26,16 +26,25 @@ namespace VocareWebAPI.Shared.ExceptionHandling
                 ForbiddenException => (403, "Forbidden"),
                 ConflictException => (409, "Conflict"),
                 BusinessRuleException => (422, "Unprocessable Entity"),
+                StripeException => (502, "Payment Provider Error"),
                 _ => (500, "Internal Server Error"),
             };
 
-            string errorCode = exception is DomainException domainException
-                ? domainException.ErrorCode
-                : "INTERNAL_ERROR";
+            string errorCode = exception switch
+            {
+                DomainException de => de.ErrorCode,
+                StripeException => "PAYMENT_PROVIDER_ERROR",
+                _ => "INTERNAL_ERROR",
+            };
 
             string traceId = httpContext.TraceIdentifier;
-            string detail =
-                exception is DomainException ? exception.Message : "An unexpected error occurred.";
+            string detail = exception switch
+            {
+                DomainException de => de.Message,
+                StripeException =>
+                    "An error occurred with payment provider. Please try again later",
+                _ => "An unexpected error occurred. Please try again later.",
+            };
 
             var problem = new ProblemDetails
             {

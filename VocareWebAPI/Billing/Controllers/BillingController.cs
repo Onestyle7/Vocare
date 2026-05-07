@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.RateLimiting;
 using Stripe;
+using VocareWebAPI.Billing.Exceptions;
 using VocareWebAPI.Billing.Models.Dtos;
 using VocareWebAPI.Billing.Models.Enums;
 using VocareWebAPI.Billing.Repositories.Interfaces;
@@ -37,51 +38,18 @@ namespace VocareWebAPI.Controllers
         )
         {
             if (request == null || string.IsNullOrEmpty(request.PriceId))
-            {
-                _logger.LogWarning("Invalid request: {@Request}", request);
                 return BadRequest(new { Error = "PriceId is required." });
-            }
 
             var userId = User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
-
             if (string.IsNullOrEmpty(userId))
-            {
-                _logger.LogWarning("Authenticated userId is missing from claims.");
-                return Unauthorized(new { Error = "User must be authenticated." });
-            }
+                return BadRequest("Brak identyfikatora użytkownika w tokenie.");
 
-            try
-            {
-                var sessionUrl = await _stripeService.CreateCheckoutSessionForTokenAsync(
-                    userId,
-                    request.PriceId
-                );
-                _logger.LogInformation(
-                    "Created checkout session for userId={UserId}, url={SessionUrl}.",
-                    userId,
-                    sessionUrl
-                );
+            var sessionUrl = await _stripeService.CreateCheckoutSessionForTokenAsync(
+                userId,
+                request.PriceId
+            );
 
-                return Ok(new { Url = sessionUrl });
-            }
-            catch (InvalidOperationException ex)
-            {
-                _logger.LogError(
-                    ex,
-                    "Failed to create checkout session for userId={UserId}.",
-                    userId
-                );
-                return BadRequest(new { Error = ex.Message });
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(
-                    ex,
-                    "Unexpected error during create-checkout-session for userId={UserId}.",
-                    userId
-                );
-                return StatusCode(500, new { Error = "An unexpected error occurred." });
-            }
+            return Ok(new { Url = sessionUrl });
         }
 
 #if DEBUG
@@ -90,41 +58,25 @@ namespace VocareWebAPI.Controllers
         [Authorize]
         public async Task<IActionResult> DebugUserBilling(string userId)
         {
-            try
-            {
-                // Sprawdź czy wywołujący użytkownik to admin lub sam użytkownik
-                var currentUserId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-                if (currentUserId != userId && !User.IsInRole("Admin"))
+            // Sprawdź czy wywołujący użytkownik to admin lub sam użytkownik
+            var currentUserId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            if (currentUserId != userId && !User.IsInRole("Admin"))
+                return Forbid("You can only view your own billing information.");
+
+            var userBilling = await _billingService.GetUserBillingAsync(userId);
+
+            return Ok(
+                new
                 {
-                    return Forbid("You can only view your own billing information.");
+                    userId = userBilling.UserId,
+                    tokenBalance = userBilling.TokenBalance,
+                    stripeCustomerId = userBilling.StripeCustomerId,
+                    subscriptionStatus = userBilling.SubscriptionStatus.ToString(),
+                    subscriptionLevel = userBilling.SubscriptionLevel.ToString(),
+                    lastTokenPurchaseDate = userBilling.LastTokenPurchaseDate,
+                    subscriptionEndDate = userBilling.SubscriptionEndDate,
                 }
-
-                var userBilling = await _billingService.GetUserBillingAsync(userId);
-
-                return Ok(
-                    new
-                    {
-                        userId = userBilling.UserId,
-                        tokenBalance = userBilling.TokenBalance,
-                        stripeCustomerId = userBilling.StripeCustomerId,
-                        subscriptionStatus = userBilling.SubscriptionStatus.ToString(),
-                        subscriptionLevel = userBilling.SubscriptionLevel.ToString(),
-                        lastTokenPurchaseDate = userBilling.LastTokenPurchaseDate,
-                        subscriptionEndDate = userBilling.SubscriptionEndDate,
-                    }
-                );
-            }
-            catch (KeyNotFoundException)
-            {
-                return NotFound(
-                    new { message = $"No billing information found for user {userId}" }
-                );
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, "Error getting billing info for user {UserId}", userId);
-                return StatusCode(500, new { message = "Error retrieving billing information" });
-            }
+            );
         }
 
         [HttpPost("webhook")]
@@ -136,13 +88,9 @@ namespace VocareWebAPI.Controllers
             var stripeSignature = Request.Headers["Stripe-Signature"];
 
             if (string.IsNullOrEmpty(json) || string.IsNullOrEmpty(stripeSignature))
-            {
-                _logger.LogWarning("Invalid webhook request: missing JSON or Stripe-Signature.");
                 return BadRequest(new { Error = "Invalid webhook request." });
-            }
 
             await _billingService.HandleWebhookAsync(json, stripeSignature!);
-            _logger.LogInformation("Successfully processed webhook.");
 
             return Ok();
         }
@@ -165,39 +113,19 @@ namespace VocareWebAPI.Controllers
         [Authorize]
         public async Task<IActionResult> GetAccessStatus()
         {
-            try
-            {
-                string userId = User.FindFirstValue(ClaimTypes.NameIdentifier)!;
-                if (string.IsNullOrEmpty(userId))
-                {
-                    return BadRequest("Brak identyfikatora użytkownika w tokenie.");
-                }
+            string userId = User.FindFirstValue(ClaimTypes.NameIdentifier)!;
+            if (string.IsNullOrEmpty(userId))
+                return BadRequest("Brak identyfikatora użytkownika w tokenie.");
 
-                var userBilling = await _billingService.GetUserBillingAsync(userId);
-                if (userBilling == null)
-                {
-                    return NotFound("Nie znaleziono informacji o płatności dla tego użytkownika.");
-                }
+            var userBilling = await _billingService.GetUserBillingAsync(userId);
 
-                return Ok(
-                    new
-                    {
-                        tokenBalance = userBilling.TokenBalance,
-                        subscriptionStatus = userBilling.SubscriptionStatus.ToString(),
-                    }
-                );
-            }
-            catch (KeyNotFoundException)
-            {
-                // Specyficzny catch dla KeyNotFoundException - zwraca 404
-                return NotFound("Nie znaleziono informacji o płatności dla tego użytkownika.");
-            }
-            catch (Exception ex)
-            {
-                // Ogólny catch dla innych błędów - zwraca 500
-                _logger.LogError(ex, "Błąd podczas pobierania salda tokenów.");
-                return StatusCode(500, "Wystąpił błąd podczas przetwarzania żądania.");
-            }
+            return Ok(
+                new
+                {
+                    tokenBalance = userBilling.TokenBalance,
+                    subscriptionStatus = userBilling.SubscriptionStatus.ToString(),
+                }
+            );
         }
 
         [HttpPost("create-subscription-checkout")]
@@ -207,72 +135,39 @@ namespace VocareWebAPI.Controllers
         )
         {
             if (request == null || string.IsNullOrEmpty(request.PriceId))
-            {
                 return BadRequest(new { Error = "PriceId is required." });
-            }
 
             var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
             if (string.IsNullOrEmpty(userId))
-            {
-                return Unauthorized(new { Error = "User must be authenticated." });
-            }
+                return BadRequest("Brak identyfikatora użytkownika w tokenie.");
 
-            try
-            {
-                var sessionUrl = await _stripeService.CreateCheckoutSessionForSubscriptionAsync(
-                    userId,
-                    request.PriceId
-                );
-                return Ok(new { Url = sessionUrl });
-            }
-            catch (InvalidOperationException ex)
-            {
-                return BadRequest(new { Error = ex.Message });
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(
-                    ex,
-                    "Error creating subscription checkout for userId={UserId}",
-                    userId
-                );
-                return StatusCode(500, new { Error = "An unexpected error occurred." });
-            }
+            var sessionUrl = await _stripeService.CreateCheckoutSessionForSubscriptionAsync(
+                userId,
+                request.PriceId
+            );
+
+            return Ok(new { Url = sessionUrl });
         }
 
         [HttpGet("subscription-status")]
         [Authorize]
         public async Task<IActionResult> GetSubscriptionStatus()
         {
-            try
-            {
-                var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
-                if (string.IsNullOrEmpty(userId))
+            var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            if (string.IsNullOrEmpty(userId))
+                return BadRequest("Brak identyfikatora użytkownika w tokenie.");
+
+            var userBilling = await _billingService.GetUserBillingAsync(userId);
+
+            return Ok(
+                new
                 {
-                    return Unauthorized(new { Error = "User must be authenticated." });
+                    subscriptionStatus = userBilling.SubscriptionStatus.ToString(),
+                    subscriptionLevel = userBilling.SubscriptionLevel.ToString(),
+                    subscriptionEndDate = userBilling.SubscriptionEndDate,
+                    subscriptionId = userBilling.StripeSubscriptionId,
                 }
-
-                var userBilling = await _billingService.GetUserBillingAsync(userId);
-
-                return Ok(
-                    new
-                    {
-                        subscriptionStatus = userBilling.SubscriptionStatus.ToString(),
-                        subscriptionLevel = userBilling.SubscriptionLevel.ToString(),
-                        subscriptionEndDate = userBilling.SubscriptionEndDate,
-                        subscriptionId = userBilling.StripeSubscriptionId,
-                    }
-                );
-            }
-            catch (KeyNotFoundException)
-            {
-                return NotFound(new { Error = "User billing information not found." });
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, "Error getting subscription status");
-                return StatusCode(500, new { Error = "An unexpected error occurred." });
-            }
+            );
         }
 
         [HttpPost("customer-portal")]
@@ -281,167 +176,95 @@ namespace VocareWebAPI.Controllers
         {
             var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
             if (string.IsNullOrEmpty(userId))
-                return Unauthorized(new { Error = "User must be authenticated." });
+                return BadRequest("Brak identyfikatora użytkownika w tokenie.");
 
-            try
-            {
-                // URL powrotu do aplikacji
-                var returnUrl = $"{Request.Scheme}://{Request.Host}/dashboard";
+            // URL powrotu do aplikacji
+            var returnUrl = $"{Request.Scheme}://{Request.Host}/dashboard";
 
-                var portalUrl = await _stripeService.CreateCustomerPortalSessionAsync(
-                    userId,
-                    returnUrl
-                );
+            var portalUrl = await _stripeService.CreateCustomerPortalSessionAsync(
+                userId,
+                returnUrl
+            );
 
-                return Ok(new { Url = portalUrl });
-            }
-            catch (InvalidOperationException ex)
-            {
-                return BadRequest(new { Error = ex.Message });
-            }
-            catch (KeyNotFoundException)
-            {
-                return NotFound(new { Error = "User billing information not found." });
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, "Error creating customer portal for userId={UserId}", userId);
-                return StatusCode(500, new { Error = "An unexpected error occurred." });
-            }
+            return Ok(new { Url = portalUrl });
         }
 
         [HttpPost("cancel-subscription")]
         [Authorize]
         public async Task<IActionResult> CancelSubscription()
         {
-            try
+            var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+
+            if (string.IsNullOrEmpty(userId))
+                return BadRequest("Brak identyfikatora użytkownika w tokenie.");
+
+            var userBilling = await _billingService.GetUserBillingAsync(userId);
+
+            // Wydaje mi się, że ta część powinna zostać przeniesiona do serwisy, ale zostawiam ją tutaj, żeby nic nie wysypać na płatnościach
+            if (string.IsNullOrEmpty(userBilling.StripeSubscriptionId))
             {
-                var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
-
-                if (string.IsNullOrEmpty(userId))
-                {
-                    _logger.LogWarning(
-                        "Unauthenticated user attempted to access cancel subscription."
-                    );
-                    return Unauthorized(new { Error = "User must be authenticated." });
-                }
-
-                var userBilling = await _billingService.GetUserBillingAsync(userId);
-
-                if (string.IsNullOrEmpty(userBilling.StripeSubscriptionId))
-                {
-                    _logger.LogWarning(
-                        "User {UserId} has no active subscription to cancel.",
-                        userId
-                    );
-                    return BadRequest(new { Error = "No active subscription to cancel." });
-                }
-
-                if (userBilling.SubscriptionStatus == SubscriptionStatus.Canceled)
-                {
-                    _logger.LogWarning(
-                        "User {UserId} attempted to cancel already canceled subscription",
-                        userId
-                    );
-                    return BadRequest(
-                        new
-                        {
-                            Error = "Subscription is already canceled.",
-                            SubscriptionEndDate = userBilling.SubscriptionEndDate,
-                        }
-                    );
-                }
-
-                var returnUrl = $"{Request.Scheme}://{Request.Host}/dashboard";
-
-                _logger.LogInformation(
-                    "Creating Customer Portal sesstion for userId={UserId} to cancel subscription.",
-                    userId
-                );
-                var portalUrl = await _stripeService.CreateCustomerPortalSessionAsync(
-                    userId,
-                    returnUrl
-                );
-
-                _logger.LogInformation(
-                    "Customer Portal URL created for userId={UserId}.",
-                    userId,
-                    portalUrl
-                );
-
-                return Ok(
-                    new
-                    {
-                        Url = portalUrl,
-                        Message = "Redirecting to customer portal where you can manage your subscription.",
-                    }
-                );
+                _logger.LogWarning("User {UserId} has no active subscription to cancel.", userId);
+                throw new NoActiveSubscriptionException(userId);
             }
-            catch (KeyNotFoundException)
+
+            if (userBilling.SubscriptionStatus == SubscriptionStatus.Canceled)
             {
                 _logger.LogWarning(
-                    "User billing information not found during cancel subscription attempt."
+                    "User {UserId} attempted to cancel already canceled subscription",
+                    userId
                 );
-                return NotFound(new { Error = "User billing information not found." });
+                throw new SubscriptionAlreadyCanceledException(
+                    userId,
+                    userBilling.SubscriptionEndDate
+                );
             }
-            catch (InvalidOperationException ex)
-            {
-                _logger.LogError(ex, "User has no Stripe customer record.");
-                return BadRequest(new { Error = "User has no Stripe customer record." });
-            }
-            catch (StripeException ex)
-            {
-                _logger.LogError(ex, "Stripe error during cancel subscription process.");
-                return StatusCode(500, new { Error = "Error communicating with payment gateway." });
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, "Unexpected error during cancel subscription process.");
-                return StatusCode(500, new { Error = "An unexpected error occurred." });
-            }
+
+            var returnUrl = $"{Request.Scheme}://{Request.Host}/dashboard";
+
+            _logger.LogInformation(
+                "Creating Customer Portal session for userId={UserId} to cancel subscription.",
+                userId
+            );
+            var portalUrl = await _stripeService.CreateCustomerPortalSessionAsync(
+                userId,
+                returnUrl
+            );
+
+            return Ok(
+                new
+                {
+                    Url = portalUrl,
+                    Message = "Redirecting to customer portal where you can manage your subscription.",
+                }
+            );
         }
 
         [HttpGet("payment-history")]
         [Authorize]
         public async Task<IActionResult> GetPaymentHistory([FromQuery] int limit = 50)
         {
-            try
-            {
-                var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
-                if (string.IsNullOrEmpty(userId))
-                {
-                    _logger.LogWarning("User tried to access payment history unauthenticated.");
-                    return Unauthorized(new { Error = "User must be authenticated." });
-                }
-                if (limit <= 0 || limit > 100)
-                {
-                    _logger.LogWarning("Invalid limit parameter: {Limit}", limit, userId);
-                    return BadRequest(new { Error = "Limit must be between 1 and 100." });
-                }
-                _logger.LogInformation(
-                    "Fetching payment history for userId={UserId} with limit={Limit}.",
-                    userId,
-                    limit
-                );
-                var paymentHistory = await _stripeService.GetPaymentHistoryAsync(userId, limit);
-                _logger.LogInformation(
-                    "Successfully returned {Count} payment history items for userId={UserId}.",
-                    paymentHistory.Count,
-                    userId
-                );
+            var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            if (string.IsNullOrEmpty(userId))
+                return BadRequest("Brak identyfikatora użytkownika w tokenie.");
 
-                return Ok(new { payments = paymentHistory, count = paymentHistory.Count });
-            }
-            catch (InvalidOperationException ex)
-            {
-                _logger.LogError(ex, "Stripe operation failed while getting payment history.");
-                return BadRequest(new { Error = ex.Message });
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, "Unexpected error fetching payment history.");
-                return StatusCode(500, new { Error = "An unexpected error occurred." });
-            }
+            if (limit <= 0 || limit > 100)
+                return BadRequest(new { Error = "Limit must be between 1 and 100." });
+
+            _logger.LogInformation(
+                "Fetching payment history for userId={UserId} with limit={Limit}.",
+                userId,
+                limit
+            );
+
+            var paymentHistory = await _stripeService.GetPaymentHistoryAsync(userId, limit);
+
+            _logger.LogInformation(
+                "Successfully returned {Count} payment history items for userId={UserId}.",
+                paymentHistory.Count,
+                userId
+            );
+
+            return Ok(new { payments = paymentHistory, count = paymentHistory.Count });
         }
     }
 }
