@@ -43,7 +43,7 @@ namespace VocareWebAPI.Billing.Services.Implementations
                 );
         }
 
-        public async Task<bool> CanAccessServiceAsync(string userId, string serviceName)
+        public async Task CanAccessServiceAsync(string userId, string serviceName)
         {
             if (string.IsNullOrEmpty(userId) || string.IsNullOrEmpty(serviceName))
             {
@@ -51,15 +51,14 @@ namespace VocareWebAPI.Billing.Services.Implementations
             }
 
             var serviceCost = await _serviceCostRepository.GetServiceCostAsync(serviceName);
-
             var userBilling = await _userBillingRepository.GetByUserIdAsync(userId);
 
             if (userBilling.SubscriptionStatus == SubscriptionStatus.Active)
-            {
-                return true;
-            }
+                return;
+            if (userBilling.TokenBalance >= serviceCost)
+                return;
 
-            return userBilling.TokenBalance >= serviceCost;
+            throw new InsufficientTokensException(userId, userBilling.TokenBalance, serviceCost);
         }
 
         public async Task DeductTokensForServiceAsync(string userId, string serviceName)

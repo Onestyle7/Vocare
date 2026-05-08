@@ -8,7 +8,7 @@ namespace VocareWebAPI.Billing.Services.Interfaces
 {
     public interface IBillingService
     {
-        Task<bool> CanAccessServiceAsync(string userId, string serviceName);
+        Task CanAccessServiceAsync(string userId, string serviceName);
         Task DeductTokensForServiceAsync(string userId, string serviceName);
         Task HandleWebhookAsync(string json, string stripeSignature);
         Task<UserBilling> GetUserBillingAsync(string userId);

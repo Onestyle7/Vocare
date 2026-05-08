@@ -179,9 +179,7 @@ namespace VocareWebAPI.CvGenerator.Controllers
             if (string.IsNullOrEmpty(userId))
                 return BadRequest("Brak identyfikatora użytkownika w tokenie.");
 
-            var hasAccess = await _billingService.CanAccessServiceAsync(userId, "AnalyzeCv");
-            if (!hasAccess)
-                return Forbid("Zbyt mało tokenów lub nieaktywna subskrypcja");
+            await _billingService.CanAccessServiceAsync(userId, "AnalyzeCv");
 
             var analysis = await _cvAnalysisService.AnalyzeCvAsync(cvId, userId);
             await _billingService.DeductTokensForServiceAsync(userId, "AnalyzeCv");
@@ -210,9 +208,7 @@ namespace VocareWebAPI.CvGenerator.Controllers
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
 
-            var hasAccess = await _billingService.CanAccessServiceAsync(userId, "TailorCv");
-            if (!hasAccess)
-                return Forbid("Zbyt mało tokenów lub nieaktywna subskrypcja");
+            await _billingService.CanAccessServiceAsync(userId, "TailorCv");
 
             var cv = await _cvTailoringService.TailorCvAsync(dto, userId);
             await _billingService.DeductTokensForServiceAsync(userId, "TailorCv");
@@ -231,13 +227,7 @@ namespace VocareWebAPI.CvGenerator.Controllers
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
 
-            var hasAccess = await _billingService.CanAccessServiceAsync(
-                userId,
-                "GenerateCvFromProfile"
-            );
-
-            if (!hasAccess)
-                return Forbid("Zbyt mało tokenów lub nieaktywna subskrypcja");
+            await _billingService.CanAccessServiceAsync(userId, "GenerateCvFromProfile");
 
             var result = await _cvTailoringService.GenerateCvFromProfileAsync(dto, userId);
             if (!result.IsSuccess)

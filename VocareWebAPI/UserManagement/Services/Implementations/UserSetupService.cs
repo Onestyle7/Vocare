@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Options;
+using VocareWebAPI.Billing.Exceptions;
 using VocareWebAPI.Billing.Models.Entities;
 using VocareWebAPI.Billing.Models.Enums;
 using VocareWebAPI.Billing.Repositories.Interfaces;
@@ -46,7 +47,7 @@ namespace VocareWebAPI.UserManagement.Services
                     existingBilling = await _userBillingRepository.GetByUserIdAsync(userId);
                     _logger.LogInformation("found existing UserBilling for user: {UserId}", userId);
                 }
-                catch (KeyNotFoundException)
+                catch (UserBillingNotFoundException)
                 {
                     _logger.LogInformation("UserBilling not found for user: {UserId}", userId);
                 }
