@@ -1,6 +1,7 @@
 using Microsoft.EntityFrameworkCore;
 using Pgvector;
 using VocareWebAPI.Data;
+using VocareWebAPI.JobOffers.Exceptions;
 using VocareWebAPI.JobOffers.Models.Dtos;
 using VocareWebAPI.JobOffers.Models.Entities;
 using VocareWebAPI.JobOffers.Models.Enums;
@@ -42,21 +43,13 @@ namespace VocareWebAPI.JobOffers.Services.Implementations
             int limit = 5
         )
         {
-            _logger.LogInformation(
-                "Szukam ofert dla ścieżki kariery: {CareerPathId}",
-                careerPathId
-            );
-
             // Pobieramy ścieżkę kariery z embeddingiem
             var careerPath = await _context
                 .Set<CareerPath>()
                 .FirstOrDefaultAsync(cp => cp.Id == careerPathId);
 
             if (careerPath == null)
-            {
-                _logger.LogWarning("Nie znaleziono ścieżki kariery: {CareerPathId}", careerPathId);
-                throw new ArgumentException($"Nie znaleziono ścieżki kariery o ID: {careerPathId}");
-            }
+                throw new CareerPathNotFoundException(careerPathId);
 
             if (careerPath.Embedding == null)
             {
@@ -103,18 +96,10 @@ namespace VocareWebAPI.JobOffers.Services.Implementations
             int limitPerPath = 5
         )
         {
-            _logger.LogInformation(
-                "Szukam ofert dla wszystkich ścieżek użytkownika: {UserId}",
-                userId
-            );
-
             var recommendation = await _aiRecommendationRepository.GetLatestByUserIdAsync(userId);
 
             if (recommendation == null)
-            {
-                _logger.LogWarning("Brak rekomendacji dla użytkownika: {UserId}", userId);
-                throw new InvalidOperationException($"Brak rekomendacji dla użytkownika: {userId}");
-            }
+                return new Dictionary<Guid, List<JobOfferMatchDto>>();
 
             var result = new Dictionary<Guid, List<JobOfferMatchDto>>();
 
@@ -130,7 +115,6 @@ namespace VocareWebAPI.JobOffers.Services.Implementations
                     continue;
                 }
 
-                // POPRAWKA: Filtry PER ŚCIEŻKA (z kategorią i seniority)
                 var filters = await GetFiltersFromCareerPathAsync(careerPath.Id);
 
                 _logger.LogInformation(
@@ -177,10 +161,7 @@ namespace VocareWebAPI.JobOffers.Services.Implementations
                 .FirstOrDefaultAsync(cp => cp.Id == careerPathId);
 
             if (careerPath == null)
-            {
-                _logger.LogWarning("Nie znaleziono ścieżki kariery: {CareerPathId}", careerPathId);
-                throw new ArgumentException($"Nie znaleziono ścieżki kariery o ID: {careerPathId}");
-            }
+                throw new CareerPathNotFoundException(careerPathId);
 
             if (careerPath.Embedding == null)
             {
@@ -347,18 +328,10 @@ namespace VocareWebAPI.JobOffers.Services.Implementations
             int limitPerPath = 5
         )
         {
-            _logger.LogInformation(
-                "Szukam ofert dla wszystkich ścieżek użytkownika: {UserId}",
-                userId
-            );
-
             var recommendation = await _aiRecommendationRepository.GetLatestByUserIdAsync(userId);
 
             if (recommendation == null)
-            {
-                _logger.LogWarning("Brak rekomendacji dla użytkownika: {UserId}", userId);
-                throw new InvalidOperationException($"Brak rekomendacji dla użytkownika: {userId}");
-            }
+                return new List<CareerPathMatchResultDto>();
 
             var result = new List<CareerPathMatchResultDto>();
 
@@ -395,24 +368,10 @@ namespace VocareWebAPI.JobOffers.Services.Implementations
 
             if (careerPath != null)
             {
-                _logger.LogWarning(
-                    "DEBUG: CareerPath={Name}, SuggestedSeniority={Seniority}, Categories={Categories}",
-                    careerPath.CareerName,
-                    careerPath.SuggestedSeniority ?? "NULL",
-                    careerPath.AllowedJobCategories != null
-                        ? string.Join(", ", careerPath.AllowedJobCategories)
-                        : "NULL"
-                );
-
                 if (!string.IsNullOrEmpty(careerPath.SuggestedSeniority))
                 {
                     filters.SeniorityLevels = MapSeniorityToAllowedLevels(
                         careerPath.SuggestedSeniority
-                    );
-
-                    _logger.LogWarning(
-                        "DEBUG: Mapped seniority levels: {Levels}",
-                        string.Join(", ", filters.SeniorityLevels)
                     );
                 }
 
@@ -466,9 +425,7 @@ namespace VocareWebAPI.JobOffers.Services.Implementations
             );
 
             if (userProfile == null)
-            {
                 return new JobOfferFilterCriteria { IncludeRemote = true };
-            }
 
             return BuildFiltersFromProfile(userProfile);
         }
@@ -508,7 +465,7 @@ namespace VocareWebAPI.JobOffers.Services.Implementations
             return filters;
         }
 
-        private JobOfferMatchDto MapToDto(VocareWebAPI.JobOffers.Models.Entities.JobOffer offer)
+        private JobOfferMatchDto MapToDto(JobOffer offer)
         {
             return new JobOfferMatchDto
             {
@@ -533,9 +490,8 @@ namespace VocareWebAPI.JobOffers.Services.Implementations
         private double CalculateCosineSimilarity(float[] vectorA, float[] vectorB)
         {
             if (vectorA.Length != vectorB.Length)
-            {
                 throw new ArgumentException("Vectors must be of the same length");
-            }
+
             double dotProduct = 0;
             double magnitudeA = 0;
             double magnitudeB = 0;
