@@ -109,9 +109,8 @@ namespace VocareWebAPI.JobOffers.Services.Implementations
         private double CalculateCosineSimilarity(float[] vectorA, float[] vectorB)
         {
             if (vectorA.Length != vectorB.Length)
-            {
                 throw new ArgumentException("Vectors must be of the same length");
-            }
+
             double dotProduct = 0;
             double magnitudeA = 0;
             double magnitudeB = 0;
