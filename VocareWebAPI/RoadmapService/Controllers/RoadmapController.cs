@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using VocareWebAPI.RoadmapService.Models.Dtos;
 using VocareWebAPI.RoadmapService.Models.Entities;
@@ -11,6 +12,7 @@ using VocareWebAPI.RoadmapService.Services.Interfaces;
 
 namespace VocareWebAPI.RoadmapService.Controllers
 {
+    [Authorize]
     [ApiController]
     [Route("api/[controller]")]
     public class RoadmapController : ControllerBase
@@ -22,6 +24,7 @@ namespace VocareWebAPI.RoadmapService.Controllers
             _careerRoadmapService = careerRoadmapService;
         }
 
+        [Authorize]
         [HttpPost("generate")]
         public async Task<IActionResult> GenerateRoadmap(
             [FromBody] GenerateRoadmapRequestDto request
@@ -29,85 +32,49 @@ namespace VocareWebAPI.RoadmapService.Controllers
         {
             var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
             if (string.IsNullOrEmpty(userId))
-            {
-                return Unauthorized("User ID not found in token.");
-            }
+                return BadRequest("User ID not found in token.");
 
-            try
-            {
-                var roadmap = await _careerRoadmapService.GenerateRoadmapAsync(
-                    userId,
-                    request.CareerPathId,
-                    request.TimeHorizonMonths
-                );
+            var roadmap = await _careerRoadmapService.GenerateRoadmapAsync(
+                userId,
+                request.CareerPathId,
+                request.TimeHorizonMonths
+            );
 
-                var progress = await _careerRoadmapService.CalculateProgressAsync(
-                    roadmap.Id,
-                    userId
-                );
+            var progress = await _careerRoadmapService.CalculateProgressAsync(roadmap.Id, userId);
 
-                return Ok(MapToDto(roadmap, progress));
-            }
-            catch (InvalidOperationException ex)
-            {
-                return BadRequest(new { Error = ex.Message });
-            }
-            catch (Exception ex)
-            {
-                return StatusCode(500, new { Error = "Wystąpił nieoczekiwany błąd." });
-            }
+            return Ok(MapToDto(roadmap, progress));
         }
 
+        [Authorize]
         [HttpGet("{roadmapId}")]
         public async Task<IActionResult> GetRoadmapById(Guid roadmapId)
         {
             var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
             if (string.IsNullOrEmpty(userId))
-            {
-                return Unauthorized("User ID not found in token.");
-            }
-            try
-            {
-                var roadmap = await _careerRoadmapService.GetByIdAsync(roadmapId, userId);
-                if (roadmap == null)
-                {
-                    return NotFound(new { Error = "Nie znaleziono roadmapy." });
-                }
+                return BadRequest("User ID not found in token.");
 
-                var progress = await _careerRoadmapService.CalculateProgressAsync(
-                    roadmap.Id,
-                    userId
-                );
+            var roadmap = await _careerRoadmapService.GetByIdAsync(roadmapId, userId);
 
-                return Ok(MapToDto(roadmap, progress));
-            }
-            catch (Exception ex)
-            {
-                return StatusCode(500, new { Error = "Wystąpił nieoczekiwany błąd." });
-            }
+            var progress = await _careerRoadmapService.CalculateProgressAsync(roadmap.Id, userId);
+
+            return Ok(MapToDto(roadmap, progress));
         }
 
+        [Authorize]
         [HttpGet("user-roadmaps")]
         public async Task<IActionResult> GetUserRoadmaps()
         {
             var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
             if (string.IsNullOrEmpty(userId))
-            {
-                return Unauthorized("User ID not found in token.");
-            }
-            try
-            {
-                var roadmaps = await _careerRoadmapService.GetUserRoadmapsAsync(userId);
+                return BadRequest("User ID not found in token.");
 
-                var dtos = roadmaps.Select(r => MapToListItemDto(r)).ToList();
-                return Ok(dtos);
-            }
-            catch (Exception ex)
-            {
-                return StatusCode(500, new { Error = "Wystąpił nieoczekiwany błąd." });
-            }
+            var roadmaps = await _careerRoadmapService.GetUserRoadmapsAsync(userId);
+
+            var dtos = roadmaps.Select(r => MapToListItemDto(r)).ToList();
+            return Ok(dtos);
         }
 
+        [Authorize]
         [HttpPatch("{roadmapId}/status")]
         public async Task<IActionResult> UpdateRoadmapStatus(
             Guid roadmapId,
@@ -116,72 +83,34 @@ namespace VocareWebAPI.RoadmapService.Controllers
         {
             var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
             if (string.IsNullOrEmpty(userId))
-            {
-                return Unauthorized("User ID not found in token.");
-            }
-            try
-            {
-                await _careerRoadmapService.UpdateStatusAsync(roadmapId, userId, newStatus);
-                return NoContent();
-            }
-            catch (InvalidOperationException ex)
-            {
-                return BadRequest(new { Error = ex.Message });
-            }
-            catch (Exception ex)
-            {
-                return StatusCode(500, new { Error = "Wystąpił nieoczekiwany błąd." });
-            }
+                return BadRequest("User ID not found in token.");
+
+            await _careerRoadmapService.UpdateStatusAsync(roadmapId, userId, newStatus);
+            return NoContent();
         }
 
+        [Authorize]
         [HttpDelete("{roadmapId}")]
         public async Task<IActionResult> ArchiveRoadmap(Guid roadmapId)
         {
             var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
             if (string.IsNullOrEmpty(userId))
-            {
-                return Unauthorized("User ID not found in token.");
-            }
-            try
-            {
-                await _careerRoadmapService.ArchiveAsync(roadmapId, userId);
-                return NoContent();
-            }
-            catch (InvalidOperationException ex)
-            {
-                return BadRequest(new { Error = ex.Message });
-            }
-            catch (Exception ex)
-            {
-                return StatusCode(500, new { Error = "Wystąpił nieoczekiwany błąd." });
-            }
+                return BadRequest("User ID not found in token.");
+
+            await _careerRoadmapService.ArchiveAsync(roadmapId, userId);
+            return NoContent();
         }
 
+        [Authorize]
         [HttpGet("{roadmapId}/progress")]
         public async Task<IActionResult> GetRoadmapProgress(Guid roadmapId)
         {
             var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
             if (string.IsNullOrEmpty(userId))
-            {
-                return Unauthorized("User ID not found in token.");
-            }
+                return BadRequest("User ID not found in token.");
 
-            try
-            {
-                var progress = await _careerRoadmapService.CalculateProgressAsync(
-                    roadmapId,
-                    userId
-                );
-                return Ok(new { Progress = progress });
-            }
-            catch (InvalidOperationException ex)
-            {
-                return BadRequest(new { Error = ex.Message });
-            }
-            catch (Exception ex)
-            {
-                return StatusCode(500, new { Error = "Wystąpił nieoczekiwany błąd." });
-            }
+            var progress = await _careerRoadmapService.CalculateProgressAsync(roadmapId, userId);
+            return Ok(new { Progress = progress });
         }
 
         #region  Metody pomocnicze - mapowanie encji na DTO
