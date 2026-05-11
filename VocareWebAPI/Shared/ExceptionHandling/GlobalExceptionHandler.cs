@@ -27,6 +27,9 @@ namespace VocareWebAPI.Shared.ExceptionHandling
                 ConflictException => (409, "Conflict"),
                 BusinessRuleException => (422, "Unprocessable Entity"),
                 StripeException => (502, "Payment Provider Error"),
+                UnauthorizedAccessException => (403, "Forbidden"),
+                KeyNotFoundException => (404, "Not Found"),
+                ArgumentException => (400, "Bad Request"),
                 _ => (500, "Internal Server Error"),
             };
 
