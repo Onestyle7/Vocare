@@ -64,55 +64,6 @@ namespace VocareWebAPI.Extensions.ApplicationBuilderExtensions
         }
 
         /// <summary>
-        /// Dodaje globalne error handling z obsługą CORS
-        /// </summary>
-        public static WebApplication UseGlobalExceptionHandling(this WebApplication app)
-        {
-            app.Use(
-                async (context, next) =>
-                {
-                    var logger = context.RequestServices.GetRequiredService<ILogger<Program>>();
-
-                    try
-                    {
-                        await next();
-                    }
-                    catch (Exception ex)
-                    {
-                        logger.LogError(
-                            ex,
-                            "Unhandled exception for {Method} {Path}",
-                            context.Request.Method,
-                            context.Request.Path
-                        );
-
-                        // Upewniamy się że response nie został jeszcze wysłany
-                        if (!context.Response.HasStarted)
-                        {
-                            context.Response.StatusCode = 500;
-                            context.Response.ContentType = "application/json";
-
-                            var error = new
-                            {
-                                error = "Internal server error",
-                                message = app.Environment.IsDevelopment()
-                                    ? ex.Message
-                                    : "An error occurred processing your request",
-                                path = context.Request.Path.ToString(),
-                                timestamp = DateTime.UtcNow,
-                                traceId = context.TraceIdentifier,
-                            };
-
-                            await context.Response.WriteAsync(JsonSerializer.Serialize(error));
-                        }
-                    }
-                }
-            );
-
-            return app;
-        }
-
-        /// <summary>
         /// Dodaje specjalne nagłówki dla środowiska Staging
         /// </summary>
         public static WebApplication UseStagingHeaders(this WebApplication app)
