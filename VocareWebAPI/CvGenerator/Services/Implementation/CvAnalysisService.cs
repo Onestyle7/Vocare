@@ -7,6 +7,7 @@ using VocareWebAPI.CvGenerator.Models.Entities;
 using VocareWebAPI.CvGenerator.Repositories.Interfaces;
 using VocareWebAPI.CvGenerator.Services.Interfaces;
 using VocareWebAPI.Models.OpenAIConfig;
+using VocareWebAPI.Shared.Exceptions;
 using static VocareWebAPI.Services.PerplexityAiService;
 
 namespace VocareWebAPI.CvGenerator.Services.Implementation
@@ -143,7 +144,7 @@ namespace VocareWebAPI.CvGenerator.Services.Implementation
             return JsonSerializer.Deserialize<CvAnalysisResultDto>(
                     analysis.ResultJson,
                     new JsonSerializerOptions { PropertyNameCaseInsensitive = true }
-                ) ?? throw new Exception("Failed to deserialize reulst");
+                ) ?? throw new AiServiceException("Failed to deserialize reulst");
         }
 
         private string BuildPrompt(string cvJson, string? targetPosition)

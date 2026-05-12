@@ -396,17 +396,5 @@ namespace VocareWebAPI.Services
         {
             throw new NotImplementedException();
         }
-
-        /// <summary>
-        /// Wyjątek rzucany w przupadku błędów w serwisie AI
-        /// </summary>
-        public class AiServiceException : Exception
-        {
-            public AiServiceException(string message)
-                : base(message) { }
-
-            public AiServiceException(string message, Exception inner)
-                : base(message, inner) { }
-        }
     }
 }

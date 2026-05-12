@@ -54,22 +54,11 @@ namespace VocareWebAPI.Controllers
 
             var profile = await _userProfileRepository.GetUserProfileByIdAsync(userId);
 
-            try
-            {
-                var result = await _aiService.GetCareerRecommendationsAsync(profile);
+            var result = await _aiService.GetCareerRecommendationsAsync(profile);
 
-                await _billingService.DeductTokensForServiceAsync(userId, "AnalyzeProfile");
+            await _billingService.DeductTokensForServiceAsync(userId, "AnalyzeProfile");
 
-                return Ok(result);
-            }
-            catch (AiServiceException e)
-            {
-                return Problem(
-                    title: "Błąd usługi AI",
-                    detail: e.Message,
-                    statusCode: StatusCodes.Status503ServiceUnavailable
-                );
-            }
+            return Ok(result);
         }
 
         /// <summary>

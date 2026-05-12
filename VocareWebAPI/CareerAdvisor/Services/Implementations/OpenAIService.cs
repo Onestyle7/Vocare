@@ -200,7 +200,7 @@ namespace VocareWebAPI.CareerAdvisor.Services.Implementations
                         careerPath.CareerName
                     );
                 }
-                catch (AiServiceException ex)
+                catch (Exception ex)
                 {
                     _logger.LogWarning(
                         ex,
