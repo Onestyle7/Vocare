@@ -9,6 +9,7 @@ using VocareWebAPI.CareerAdvisor.Services.Interfaces;
 using VocareWebAPI.Models.Dtos;
 using VocareWebAPI.Models.OpenAIConfig;
 using VocareWebAPI.Services;
+using VocareWebAPI.Shared.Exceptions;
 using VocareWebAPI.UserManagement.Exceptions;
 using VocareWebAPI.UserManagement.Models.Entities;
 using VocareWebAPI.UserManagement.Models.Enums;
@@ -154,7 +155,7 @@ namespace VocareWebAPI.CareerAdvisor.Services.Implementations
             catch (HttpRequestException ex)
             {
                 _logger.LogError(ex, "Error communicating with OpenAI API.");
-                throw new CvParsingFailedException("Error communicating with OpenAI API.");
+                throw new AiServiceException("Error communicating with OpenAI API.");
             }
         }
 

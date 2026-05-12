@@ -12,6 +12,7 @@ using VocareWebAPI.Repositories;
 using VocareWebAPI.Services;
 using VocareWebAPI.Shared.Results;
 using VocareWebAPI.UserManagement.Exceptions;
+using static VocareWebAPI.Services.PerplexityAiService;
 
 namespace VocareWebAPI.CvGenerator.Implementations
 {
@@ -172,7 +173,7 @@ namespace VocareWebAPI.CvGenerator.Implementations
                     _logger.LogError(
                         $"OpenAI API error: {response.StatusCode} - {responseContent}"
                     );
-                    throw new Exception(
+                    throw new AiServiceException(
                         $"OpenAi API error: {response.StatusCode} - {responseContent}"
                     );
                 }
@@ -207,15 +208,6 @@ namespace VocareWebAPI.CvGenerator.Implementations
                 _logger.LogError(ex, "Error comunicating with OpenAI API");
                 throw new AiServiceException("Błąd komunikacji z API", ex);
             }
-        }
-
-        private class AiServiceException : Exception // TODO: przenieść do osobnego pliku, ta sama klasa używana w CvAnalysisService i innych AI services
-        {
-            public AiServiceException(string message)
-                : base(message) { }
-
-            public AiServiceException(string message, Exception inner)
-                : base(message, inner) { }
         }
 
         private string BuildPrompt(string sourceData, string jobDescription)

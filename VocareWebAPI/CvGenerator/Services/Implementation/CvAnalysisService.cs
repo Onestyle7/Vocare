@@ -1,4 +1,3 @@
-using System.Diagnostics;
 using System.Text.Json;
 using Microsoft.Extensions.Options;
 using VocareWebAPI.CareerAdvisor.Services.Implementations;
@@ -8,6 +7,7 @@ using VocareWebAPI.CvGenerator.Models.Entities;
 using VocareWebAPI.CvGenerator.Repositories.Interfaces;
 using VocareWebAPI.CvGenerator.Services.Interfaces;
 using VocareWebAPI.Models.OpenAIConfig;
+using static VocareWebAPI.Services.PerplexityAiService;
 
 namespace VocareWebAPI.CvGenerator.Services.Implementation
 {
@@ -81,7 +81,7 @@ namespace VocareWebAPI.CvGenerator.Services.Implementation
                     _logger.LogError(
                         $"OpenAI API error: {response.StatusCode} - {responseContent}"
                     );
-                    throw new Exception(
+                    throw new AiServiceException(
                         $"OpenAi API error: {response.StatusCode} - {responseContent}"
                     );
                 }
@@ -89,15 +89,14 @@ namespace VocareWebAPI.CvGenerator.Services.Implementation
                     responseContent,
                     new JsonSerializerOptions { PropertyNameCaseInsensitive = true }
                 );
+
                 if (apiResponse?.Choices == null || apiResponse.Choices.Count == 0)
-                {
                     throw new AiServiceException("Invalid API reponse: missing choices");
-                }
+
                 var content = apiResponse.Choices[0].Message?.Content;
+
                 if (string.IsNullOrWhiteSpace(content))
-                {
                     throw new AiServiceException("Invalid API reponse: empty content");
-                }
 
                 var result = JsonSerializer.Deserialize<CvAnalysisResultDto>(
                     content,
@@ -145,15 +144,6 @@ namespace VocareWebAPI.CvGenerator.Services.Implementation
                     analysis.ResultJson,
                     new JsonSerializerOptions { PropertyNameCaseInsensitive = true }
                 ) ?? throw new Exception("Failed to deserialize reulst");
-        }
-
-        private class AiServiceException : Exception
-        {
-            public AiServiceException(string message)
-                : base(message) { }
-
-            public AiServiceException(string message, Exception inner)
-                : base(message, inner) { }
         }
 
         private string BuildPrompt(string cvJson, string? targetPosition)

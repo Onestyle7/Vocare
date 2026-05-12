@@ -26,6 +26,7 @@ namespace VocareWebAPI.Shared.ExceptionHandling
                 ForbiddenException => (403, "Forbidden"),
                 ConflictException => (409, "Conflict"),
                 BusinessRuleException => (422, "Unprocessable Entity"),
+                AiServiceException => (502, "AI service Error"),
                 StripeException => (502, "Payment Provider Error"),
                 UnauthorizedAccessException => (403, "Forbidden"),
                 KeyNotFoundException => (404, "Not Found"),

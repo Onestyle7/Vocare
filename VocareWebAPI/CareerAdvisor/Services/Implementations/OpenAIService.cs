@@ -10,6 +10,7 @@ using VocareWebAPI.Models.OpenAIConfig;
 using VocareWebAPI.Repositories;
 using VocareWebAPI.Services;
 using VocareWebAPI.Shared.Services.Interfaces;
+using static VocareWebAPI.Services.PerplexityAiService;
 
 namespace VocareWebAPI.CareerAdvisor.Services.Implementations
 {
@@ -76,7 +77,7 @@ namespace VocareWebAPI.CareerAdvisor.Services.Implementations
                     _logger.LogError(
                         $"OpenAI API error: {response.StatusCode} - {responseContent}"
                     );
-                    throw new Exception(
+                    throw new AiServiceException(
                         $"OpenAI API error: {response.StatusCode} - {responseContent}"
                     );
                 }
@@ -199,7 +200,7 @@ namespace VocareWebAPI.CareerAdvisor.Services.Implementations
                         careerPath.CareerName
                     );
                 }
-                catch (Exception ex)
+                catch (AiServiceException ex)
                 {
                     _logger.LogWarning(
                         ex,
@@ -352,15 +353,6 @@ namespace VocareWebAPI.CareerAdvisor.Services.Implementations
             
             Pamiętaj: odpowiedź musi być w języku polskim i zawierać realistyczne dane rynkowe.
             """;
-        }
-
-        public class AiServiceException : Exception
-        {
-            public AiServiceException(string message)
-                : base(message) { }
-
-            public AiServiceException(string message, Exception inner)
-                : base(message, inner) { }
         }
 
         private string BuildCareerPathTextForEmbedding(CareerPath careerPath)
