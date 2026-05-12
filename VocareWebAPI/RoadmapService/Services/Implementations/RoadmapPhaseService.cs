@@ -20,7 +20,7 @@ namespace VocareWebAPI.RoadmapService.Services.Implementations
         public async Task<RoadmapPhase> UpdateNameAsync(Guid phaseId, string userId, string newName)
         {
             if (string.IsNullOrEmpty(userId))
-                throw new ArgumentException("Użytkownik nie może być pusty");
+                throw new ArgumentException("User cannot be null or empty");
 
             var phase = await _context
                 .RoadmapPhases.Include(p => p.Roadmap)
@@ -40,7 +40,7 @@ namespace VocareWebAPI.RoadmapService.Services.Implementations
         public async Task DeletePhaseAsync(Guid phaseId, string userId)
         {
             if (string.IsNullOrEmpty(userId))
-                throw new ArgumentException("Użytkownik nie może być pusty");
+                throw new ArgumentException("User cannot be null or empty");
 
             var phase = await _context
                 .RoadmapPhases.Include(p => p.Roadmap)
