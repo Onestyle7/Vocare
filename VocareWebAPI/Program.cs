@@ -45,7 +45,8 @@ builder
     .AddHttpClients(builder.Configuration)
     .AddApplicationServices()
     .AddRepositories()
-    .AddAutoMapper(typeof(UserProfileService).Assembly);
+    .AddAutoMapper(typeof(UserProfileService).Assembly)
+    .AddGlobalExceptionHandling();
 
 // ===== AUTHENTICATION & AUTHORIZATION =====
 builder.Services.AddAuthenticationConfiguration(builder.Configuration);
@@ -93,18 +94,13 @@ app.UseSwaggerConfiguration(app.Environment);
 // ===== MIDDLEWARE PIPELINE - PRAWIDŁOWA KOLEJNOŚĆ =====
 
 // 1. Exception handling i request logging
+app.UseGlobalExceptionHandling();
+
 if (app.Environment.IsDevelopment() || app.Environment.IsStaging())
 {
     app.UseRequestLogging(); // Logowanie requestów
     app.UseCorsLoggingMiddleware(); // Debugowanie CORS
 }
-else
-{
-    app.UseExceptionHandler("/error");
-}
-
-// Global exception handling dla wszystkich środowisk
-app.UseGlobalExceptionHandling();
 
 // 2. HTTPS Redirection (tylko produkcja)
 if (app.Environment.IsProduction())
