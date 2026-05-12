@@ -10,6 +10,7 @@ using VocareWebAPI.CvGenerator.Services.Interfaces;
 using VocareWebAPI.Models.OpenAIConfig;
 using VocareWebAPI.Repositories;
 using VocareWebAPI.Services;
+using VocareWebAPI.Shared.Exceptions;
 using VocareWebAPI.Shared.Results;
 using VocareWebAPI.UserManagement.Exceptions;
 using static VocareWebAPI.Services.PerplexityAiService;
