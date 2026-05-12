@@ -100,12 +100,12 @@ namespace VocareWebAPI.CareerAdvisor.Services.Implementations
                     {
                         if (responseContent.Contains("insufficient_quota"))
                         {
-                            throw new Exception(
+                            throw new AiServiceException(
                                 "Not enough money on OpenAI account to perform this operation."
                             );
                         }
                     }
-                    throw new Exception(
+                    throw new AiServiceException(
                         $"API returner error: {response.StatusCode} - {responseContent}"
                     );
                 }
@@ -119,7 +119,7 @@ namespace VocareWebAPI.CareerAdvisor.Services.Implementations
                     || apiResponse.Choices[0].Message?.Content == null
                 )
                 {
-                    throw new Exception("Invalid AI API response: missing content.");
+                    throw new AiServiceException("Invalid AI API response: missing content.");
                 }
 
                 var jsonContent = apiResponse.Choices[0].Message.Content;
@@ -130,17 +130,17 @@ namespace VocareWebAPI.CareerAdvisor.Services.Implementations
                 );
 
                 if (result == null)
-                    throw new Exception("Failed to parse market analysis JSON.");
+                    throw new AiServiceException("Failed to parse market analysis JSON.");
 
                 InitializeNullProperties(result);
                 await SaveMarketAnalysisToDatabase(result, recommendation.Id);
 
                 return result;
             }
-            catch (Exception ex)
+            catch (Exception ex) when (ex is not DomainException)
             {
                 _logger.LogError(ex, "Error while calling OpenAI API for market analysis.");
-                throw new Exception("Error while generating market analysis.", ex);
+                throw new AiServiceException("Error while generating market analysis.", ex);
             }
         }
 
@@ -573,12 +573,6 @@ namespace VocareWebAPI.CareerAdvisor.Services.Implementations
                     stat.EntryDifficulty.MissingSkills = new List<string>();
                 }
             }
-        }
-
-        public class MarketAnalysisException : Exception
-        {
-            public MarketAnalysisException(string message, Exception inner)
-                : base(message, inner) { }
         }
     }
 }
