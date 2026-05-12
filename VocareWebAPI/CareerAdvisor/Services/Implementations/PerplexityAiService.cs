@@ -6,6 +6,7 @@ using VocareWebAPI.Models;
 using VocareWebAPI.Models.Dtos;
 using VocareWebAPI.Models.Entities;
 using VocareWebAPI.Repositories;
+using VocareWebAPI.Shared.Exceptions;
 
 namespace VocareWebAPI.Services
 {

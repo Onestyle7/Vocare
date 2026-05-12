@@ -9,8 +9,8 @@ using VocareWebAPI.Models.Entities;
 using VocareWebAPI.Models.OpenAIConfig;
 using VocareWebAPI.Repositories;
 using VocareWebAPI.Services;
+using VocareWebAPI.Shared.Exceptions;
 using VocareWebAPI.Shared.Services.Interfaces;
-using static VocareWebAPI.Services.PerplexityAiService;
 
 namespace VocareWebAPI.CareerAdvisor.Services.Implementations
 {
