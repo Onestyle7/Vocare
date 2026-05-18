@@ -1,9 +1,11 @@
+using Hangfire;
 using Microsoft.EntityFrameworkCore;
 using Stripe;
 using VocareWebAPI.Billing.Models.Enums;
 using VocareWebAPI.Data;
 using VocareWebAPI.JobOffers.Exceptions;
 using VocareWebAPI.RoadmapService.Exceptions;
+using VocareWebAPI.RoadmapService.Jobs.Implementations;
 using VocareWebAPI.RoadmapService.Models.Dtos;
 using VocareWebAPI.RoadmapService.Models.Entities;
 using VocareWebAPI.RoadmapService.Models.Enums;
@@ -15,22 +17,19 @@ namespace VocareWebAPI.RoadmapService.Services.Implementations
 {
     public class CareerRoadmapService : ICareerRoadmapService
     {
-        private readonly IRoadmapGeneratorService _roadmapGeneratorService;
         private readonly IRoadmapRepository _roadmapRepository;
-        private readonly ILogger<CareerRoadmapService> _logger;
         private readonly AppDbContext _context;
+        private readonly IBackgroundJobClient _backgroundJobClient;
 
         public CareerRoadmapService(
-            IRoadmapGeneratorService roadmapGeneratorService,
             IRoadmapRepository roadmapRepository,
-            ILogger<CareerRoadmapService> logger,
-            AppDbContext context
+            AppDbContext context,
+            IBackgroundJobClient backgroundJobClient
         )
         {
-            _roadmapGeneratorService = roadmapGeneratorService;
             _roadmapRepository = roadmapRepository;
-            _logger = logger;
             _context = context;
+            _backgroundJobClient = backgroundJobClient;
         }
 
         public async Task<Roadmap> GenerateRoadmapAsync(
@@ -71,6 +70,21 @@ namespace VocareWebAPI.RoadmapService.Services.Implementations
             if (userProfile == null)
                 throw new UserProfileNotFoundException(userId);
 
+            var roadmap = new Roadmap
+            {
+                GenerationStatus = GenerationStatus.Pending,
+                LifecycleStatus = LifecycleStatus.Draft,
+                Title = "Generowananie...",
+                Phases = [],
+                UserId = userId,
+                CareerPathId = careerPathId,
+                CreatedAt = DateTime.UtcNow,
+                UpdatedAt = DateTime.UtcNow,
+                TimeHorizonMonths = timeHorizonMonths,
+            };
+
+            await _roadmapRepository.AddAsync(roadmap);
+
             var roadmapRequest = new RoadmapGenerationRequest
             {
                 CareerPathName = careerPath.CareerName,
@@ -80,78 +94,12 @@ namespace VocareWebAPI.RoadmapService.Services.Implementations
                 TimeHorizonMonths = timeHorizonMonths,
             };
 
-            var generateRoadmap = await _roadmapGeneratorService.GenerateAsync(roadmapRequest);
+            var jobId = _backgroundJobClient.Enqueue<IRoadmapGenerationJob>(job =>
+                job.GenerateAsync(roadmap.Id, roadmapRequest)
+            );
 
-            var roadmap = new Roadmap
-            {
-                Id = Guid.NewGuid(),
-                UserId = userId,
-                CareerPathId = careerPathId,
-                Title = generateRoadmap.Title,
-                TimeHorizonMonths = timeHorizonMonths,
-                Status = RoadmapStatus.Draft,
-                CreatedAt = DateTime.UtcNow,
-                UpdatedAt = DateTime.UtcNow,
-                Phases = new List<RoadmapPhase>(),
-            };
-
-            var tempIdToGuid = new Dictionary<string, Guid>();
-
-            foreach (var phaseDto in generateRoadmap.Phases)
-            {
-                var phase = new RoadmapPhase
-                {
-                    Id = Guid.NewGuid(),
-                    RoadmapId = roadmap.Id,
-                    Title = phaseDto.Title,
-                    OrderIndex = phaseDto.OrderIndex,
-                    Steps = new List<RoadmapStep>(),
-                    StartMonth = phaseDto.StartMonth,
-                    EndMonth = phaseDto.EndMonth,
-                };
-
-                foreach (var stepDto in phaseDto.Steps)
-                {
-                    var stepId = Guid.NewGuid();
-                    tempIdToGuid[stepDto.TempId] = stepId;
-
-                    var step = new RoadmapStep
-                    {
-                        Id = stepId,
-                        PhaseId = phase.Id,
-                        Title = stepDto.Title,
-                        Subtitle = stepDto.Subtitle,
-                        Description = stepDto.Description,
-                        Topics = stepDto.Topics ?? new List<string>(),
-                        StepType =
-                            stepDto.StepType == "optional" ? StepType.Optional : StepType.Required,
-                        Status = StepStatus.NotStarted,
-                        OrderIndex = stepDto.OrderIndex,
-                        ParentStepId = null, // ustawimy w przebiegu 2
-                    };
-
-                    phase.Steps.Add(step);
-                }
-
-                roadmap.Phases.Add(phase);
-            }
-
-            foreach (var phase in roadmap.Phases)
-            {
-                foreach (var step in phase.Steps)
-                {
-                    var stepDto = generateRoadmap
-                        .Phases.SelectMany(p => p.Steps)
-                        .FirstOrDefault(s => tempIdToGuid[s.TempId] == step.Id);
-
-                    if (stepDto?.ParentRef != null && tempIdToGuid.ContainsKey(stepDto.ParentRef))
-                    {
-                        step.ParentStepId = tempIdToGuid[stepDto.ParentRef];
-                    }
-                }
-            }
-
-            await _roadmapRepository.AddAsync(roadmap);
+            roadmap.HangfireJobId = jobId;
+            await _roadmapRepository.UpdateAsync(roadmap);
 
             return roadmap;
         }
@@ -180,7 +128,7 @@ namespace VocareWebAPI.RoadmapService.Services.Implementations
             return await _roadmapRepository.GetByUserIdAsync(userId);
         }
 
-        public async Task UpdateStatusAsync(Guid roadmapId, string userId, RoadmapStatus status)
+        public async Task UpdateStatusAsync(Guid roadmapId, string userId, LifecycleStatus status)
         {
             if (string.IsNullOrEmpty(userId))
                 throw new ArgumentException("User ID cannot be null or empty.");
@@ -193,7 +141,7 @@ namespace VocareWebAPI.RoadmapService.Services.Implementations
             if (roadmap.UserId != userId)
                 throw new RoadmapAccessDeniedException(roadmapId, userId);
 
-            roadmap.Status = status;
+            roadmap.LifecycleStatus = status;
             roadmap.UpdatedAt = DateTime.UtcNow;
 
             await _roadmapRepository.UpdateAsync(roadmap);
