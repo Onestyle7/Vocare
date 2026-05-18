@@ -38,7 +38,7 @@ import {
   market_wejscie,
   market_wynagrodzenie,
   star_generate,
-} from '@/features/marketing/constants/countries';
+} from '@/features/marketing/constants';
 import {
   IndustryStatisticsDto,
   MarketAnalysisDetailsDto,

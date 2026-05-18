@@ -3,7 +3,7 @@ import { Check, ChevronsUpDown } from 'lucide-react';
 import * as React from 'react';
 import { Path, PathValue, UseFormReturn } from 'react-hook-form';
 
-import { countries } from '@/features/marketing/constants/countries';
+import { countries } from '@/features/marketing/constants';
 import { Button } from '@/components/ui/button';
 import {
   Command,

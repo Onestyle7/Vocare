@@ -26,7 +26,7 @@ import {
   shape1,
   square_pricing,
   trapez_pricing,
-} from '@/features/marketing/constants/countries';
+} from '@/features/marketing/constants';
 import { cn } from '@/lib/utils';
 
 import Copy from '../../../components/SupportComponents/Copy';

@@ -1,3 +1,5 @@
+import 'server-only';
+
 import { Result } from 'neverthrow';
 import { RequestInit } from 'next/dist/server/web/spec-extension/request';
 

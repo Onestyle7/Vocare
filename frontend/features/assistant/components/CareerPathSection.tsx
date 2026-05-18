@@ -15,14 +15,7 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { useEffect, useRef, useState } from 'react';
 
-import {
-  cone_3,
-  cone_4,
-  cone_5,
-  cone_6,
-  cone_7,
-  cone_8,
-} from '@/features/marketing/constants/countries';
+import { cone_3, cone_4, cone_5, cone_6, cone_7, cone_8 } from '@/features/marketing/constants';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader } from '@/components/ui/card';

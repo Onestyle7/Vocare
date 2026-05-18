@@ -6,7 +6,7 @@ import Image from 'next/image';
 import React, { useEffect, useRef } from 'react';
 import { ScrollParallax } from 'react-just-parallax';
 
-import { avatars, mobileView, shape1 } from '@/features/marketing/constants/countries';
+import { avatars, mobileView, shape1 } from '@/features/marketing/constants';
 import { AvatarCircles } from '@/components/magicui/avatar-circles';
 import Iphone15Pro from '@/components/magicui/iphone-15-pro';
 

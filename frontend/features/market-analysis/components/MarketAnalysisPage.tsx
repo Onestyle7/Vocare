@@ -14,7 +14,7 @@ import {
   timeline_icon_2,
   timeline_icon_3,
   timeline_icon_4,
-} from '@/features/marketing/constants/countries';
+} from '@/features/marketing/constants';
 import CollapsibleButton from '@/features/assistant/components/CollapsibleButton';
 import Timeline from '@/features/assistant/components/Timeline';
 import { useTokenBalanceContext } from '@/features/billing/components/SubscriptionTokenProvider';

@@ -7,7 +7,7 @@ import { useRouter } from 'next/navigation';
 import { useEffect, useRef, useState } from 'react';
 import { toast } from 'sonner';
 
-import { spinner_terminal } from '@/features/marketing/constants/countries';
+import { spinner_terminal } from '@/features/marketing/constants';
 import { logOut } from '@/features/auth/dal/commands';
 import { getUserProfile } from '@/lib/profile';
 import { PersonalityType, personalityTypeLabels } from '@/lib/types/personalityTypes';
