@@ -78,7 +78,7 @@ namespace VocareWebAPI.RoadmapService.Controllers
         [HttpPatch("{roadmapId}/status")]
         public async Task<IActionResult> UpdateRoadmapStatus(
             Guid roadmapId,
-            [FromBody] RoadmapStatus newStatus
+            [FromBody] LifecycleStatus newStatus
         )
         {
             var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
@@ -121,7 +121,7 @@ namespace VocareWebAPI.RoadmapService.Controllers
                 Id = roadmap.Id,
                 Title = roadmap.Title,
                 TimeHorizonMonths = roadmap.TimeHorizonMonths,
-                Status = roadmap.Status.ToString(),
+                Status = roadmap.LifecycleStatus.ToString(),
                 CreatedAt = roadmap.CreatedAt,
                 UpdatedAt = roadmap.UpdatedAt,
                 CareerPathName = roadmap.CareerPath?.CareerName ?? "",
@@ -169,7 +169,7 @@ namespace VocareWebAPI.RoadmapService.Controllers
                 Id = roadmap.Id,
                 Title = roadmap.Title,
                 TimeHorizonMonths = roadmap.TimeHorizonMonths,
-                Status = roadmap.Status.ToString(),
+                Status = roadmap.LifecycleStatus.ToString(),
                 CreatedAt = roadmap.CreatedAt,
                 CareerPathName = roadmap.CareerPath?.CareerName ?? "",
                 Progress = 0,
