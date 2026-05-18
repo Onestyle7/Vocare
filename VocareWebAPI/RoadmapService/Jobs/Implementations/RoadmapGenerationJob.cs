@@ -1,0 +1,125 @@
+using Hangfire;
+using VocareWebAPI.RoadmapService.Exceptions;
+using VocareWebAPI.RoadmapService.Jobs.Implementations;
+using VocareWebAPI.RoadmapService.Models.Dtos;
+using VocareWebAPI.RoadmapService.Models.Entities;
+using VocareWebAPI.RoadmapService.Models.Enums;
+using VocareWebAPI.RoadmapService.Repositories.Interfaces;
+using VocareWebAPI.RoadmapService.Services.Interfaces;
+using VocareWebAPI.Shared.Exceptions;
+
+namespace VocareWebAPI.RoadmapService.Jobs
+{
+    public class RoadmapGenerationJob : IRoadmapGenerationJob
+    {
+        private readonly IRoadmapRepository _roadmapRepository;
+        private readonly IRoadmapGeneratorService _roadmapGeneratorService;
+
+        public RoadmapGenerationJob(
+            IRoadmapRepository roadmapRepository,
+            IRoadmapGeneratorService roadmapGeneratorService
+        )
+        {
+            _roadmapRepository = roadmapRepository;
+            _roadmapGeneratorService = roadmapGeneratorService;
+        }
+
+        [AutomaticRetry(Attempts = 1)]
+        public async Task GenerateAsync(Guid roadmapId, RoadmapGenerationRequest request)
+        {
+            var roadmap = await _roadmapRepository.GetByIdAsync(roadmapId);
+            if (roadmap == null)
+                throw new RoadmapNotFoundException(roadmapId);
+
+            // Idempotency check
+            if (
+                roadmap.GenerationStatus == GenerationStatus.Ready
+                || roadmap.GenerationStatus == GenerationStatus.Failed
+            )
+                return;
+
+            var userId = roadmap.UserId;
+            var careerPathId = roadmap.CareerPathId;
+
+            roadmap.GenerationStatus = GenerationStatus.Generating;
+            await _roadmapRepository.UpdateAsync(roadmap);
+
+            try
+            {
+                var generateRoadmap = await _roadmapGeneratorService.GenerateAsync(request);
+
+                roadmap.Title = generateRoadmap.Title;
+                roadmap.UpdatedAt = DateTime.UtcNow;
+                roadmap.GenerationStatus = GenerationStatus.Ready;
+
+                var tempIdToStep = new Dictionary<string, RoadmapStep>();
+
+                foreach (var phaseDto in generateRoadmap.Phases)
+                {
+                    var phase = new RoadmapPhase
+                    {
+                        Title = phaseDto.Title,
+                        OrderIndex = phaseDto.OrderIndex,
+                        Steps = new List<RoadmapStep>(),
+                        StartMonth = phaseDto.StartMonth,
+                        EndMonth = phaseDto.EndMonth,
+                    };
+
+                    foreach (var stepDto in phaseDto.Steps)
+                    {
+                        var step = new RoadmapStep
+                        {
+                            Title = stepDto.Title,
+                            Subtitle = stepDto.Subtitle,
+                            Description = stepDto.Description,
+                            Topics = stepDto.Topics ?? new List<string>(),
+                            StepType =
+                                stepDto.StepType == "optional"
+                                    ? StepType.Optional
+                                    : StepType.Required,
+                            Status = StepStatus.NotStarted,
+                            OrderIndex = stepDto.OrderIndex,
+                        };
+
+                        tempIdToStep[stepDto.TempId] = step;
+                        phase.Steps.Add(step);
+                    }
+
+                    roadmap.Phases.Add(phase);
+                }
+
+                foreach (var phaseDto in generateRoadmap.Phases)
+                {
+                    foreach (var stepDto in phaseDto.Steps)
+                    {
+                        if (
+                            stepDto.ParentRef != null
+                            && tempIdToStep.ContainsKey(stepDto.ParentRef)
+                        )
+                        {
+                            tempIdToStep[stepDto.TempId].ParentStep = tempIdToStep[
+                                stepDto.ParentRef
+                            ];
+                        }
+                    }
+                }
+
+                await _roadmapRepository.UpdateAsync(roadmap);
+            }
+            catch (Exception ex)
+            {
+                roadmap.GenerationStatus = GenerationStatus.Failed;
+                roadmap.FailureReason = "Generowanie nie powiodło się. Spróbuj ponownie.";
+                roadmap.UpdatedAt = DateTime.UtcNow;
+                await _roadmapRepository.UpdateAsync(roadmap);
+
+                if (ex is DomainException)
+                    throw; // domain exceptions poleca dalej bez opakowywania
+
+                throw new AiServiceException("Błąd podczas generowania roadmapy.", ex);
+            }
+
+            return;
+        }
+    }
+}

@@ -1,6 +1,6 @@
 namespace VocareWebAPI.RoadmapService.Models.Enums
 {
-    public enum RoadmapStatus
+    public enum LifecycleStatus
     {
         Draft = 0,
         Active = 1,

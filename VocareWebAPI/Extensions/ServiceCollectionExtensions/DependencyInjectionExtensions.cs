@@ -25,6 +25,8 @@ using VocareWebAPI.MarketNews.Services.Interfaces;
 using VocareWebAPI.Repositories;
 using VocareWebAPI.Repositories.Implementations;
 using VocareWebAPI.Repositories.Interfaces;
+using VocareWebAPI.RoadmapService.Jobs;
+using VocareWebAPI.RoadmapService.Jobs.Implementations;
 using VocareWebAPI.RoadmapService.Repositories.Implementations;
 using VocareWebAPI.RoadmapService.Repositories.Interfaces;
 using VocareWebAPI.RoadmapService.Services.Implementations;
@@ -83,8 +85,9 @@ namespace VocareWebAPI.Extensions.ServiceCollectionExtensions
             services.AddScoped<IScoringService, ScoringService>();
             services.AddScoped<ISkillEmbeddingService, SkillEmbeddingService>();
 
-            // Background services
+            // Background services/jobs
             services.AddHostedService<MarketNewsBackgroundService>();
+            services.AddScoped<IRoadmapGenerationJob, RoadmapGenerationJob>();
 
             return services;
         }

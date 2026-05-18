@@ -41,9 +41,9 @@ namespace VocareWebAPI.RoadmapService.Services.Implementations
 
             var roadmap = step.Phase.Roadmap;
 
-            if (roadmap.Status == RoadmapStatus.Draft)
+            if (roadmap.LifecycleStatus == LifecycleStatus.Draft)
             {
-                roadmap.Status = RoadmapStatus.Active;
+                roadmap.LifecycleStatus = LifecycleStatus.Active;
                 roadmap.UpdatedAt = DateTime.UtcNow;
             }
             await _context.SaveChangesAsync();
