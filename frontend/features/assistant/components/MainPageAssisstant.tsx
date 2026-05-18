@@ -20,15 +20,7 @@ import ButtonGenerate from '@/components/ui/ButtonGenerate';
 import { useTokenBalanceContext } from '@/features/billing/components/SubscriptionTokenProvider';
 import { GridBackgroundDemo } from '@/features/market-analysis/components/GridBackgroundDemo';
 import { TerminalDemo } from '@/features/market-analysis/components/LoadingTerminal';
-import {
-  cone_1,
-  cone_2,
-  star_generate,
-  timeline_icon_1,
-  timeline_icon_2,
-  timeline_icon_3,
-  timeline_icon_4,
-} from '@/features/marketing/constants/countries';
+
 import { useProfileContext } from '@/features/profile/components/ProfileProvider';
 import { useCollapse } from '@/lib/hooks/useCollapse';
 import { CareerPathMatchResult } from '@/lib/types/jobOffers';
@@ -39,6 +31,15 @@ import CareerPathSection from './CareerPathSection';
 import CollapsibleButton from './CollapsibleButton';
 import GenerateRecommendation from './GenerateRecommendationFail';
 import Timeline from './Timeline';
+import {
+  timeline_icon_1,
+  timeline_icon_2,
+  timeline_icon_3,
+  timeline_icon_4,
+  cone_1,
+  cone_2,
+  star_generate,
+} from '@/features/marketing/constants';
 
 interface AssistantPageProps {
   initialRecommendation: AiCareerResponse | null;

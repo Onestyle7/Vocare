@@ -21,20 +21,14 @@ import { Skeleton } from '@/components/ui/skeleton';
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
 import ReusableCard from '@/features/market-analysis/components/AssistantCards';
 import SwotAnalysis from '@/features/market-analysis/components/SwotAnalysis';
-import {
-  cone_3,
-  cone_4,
-  cone_5,
-  cone_6,
-  cone_7,
-  cone_8,
-} from '@/features/marketing/constants/countries';
+
 import { useCollapse } from '@/lib/hooks/useCollapse';
 import { CareerPathMatchResult, ConfidenceLevel, ScoredJobOffer } from '@/lib/types/jobOffers';
 import { CareerPath } from '@/lib/types/recommendation';
 
 import CollapsibleButton from './CollapsibleButton';
 import HorizontalCarousel from './HorizontalCarousel';
+import { cone_3, cone_4, cone_5, cone_6, cone_7, cone_8 } from '@/features/marketing/constants';
 
 const conePairs = [
   [cone_3, cone_4],

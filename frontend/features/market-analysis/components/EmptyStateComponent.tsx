@@ -6,7 +6,7 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { useEffect, useRef, useState } from 'react';
 
-import { letterImg, star_generate } from '@/features/marketing/constants/countries';
+import { letterImg, star_generate } from '@/features/marketing/constants';
 
 import {
   AlertDialog,
