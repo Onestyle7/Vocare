@@ -6,10 +6,10 @@ import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import React, { useEffect, useRef, useState } from 'react';
 
-import { logo, NavLinks } from '@/features/marketing/constants/countries';
 import MobileNav from '@/components/MobileComponents/MobileNav';
-import { TokenCounter } from '@/features/billing/components/TokenCounter';
 import { Badge } from '@/components/ui/badge';
+import { TokenCounter } from '@/features/billing/components/TokenCounter';
+import { logo, NavLinks } from '@/features/marketing/constants';
 import { cn } from '@/lib/utils';
 // import ThemeSwitch from '../SupportComponents/ThemeSwitch';
 
@@ -136,7 +136,7 @@ const Header = () => {
                       <Link
                         href={url}
                         className={cn(
-                          'flex rounded-full px-3 py-2 text-[10px] font-medium whitespace-nowrap uppercase transition-all sm:text-xs lg:px-4',
+                          'flex rounded-full px-3 py-2 text-[10px] font-light whitespace-nowrap transition-all sm:text-xs lg:px-4',
                           isActive
                             ? 'bg-[linear-gradient(90deg,rgba(146,150,253,0.96)_0%,rgba(199,169,254,0.96)_100%)] text-white shadow-[0_10px_30px_rgba(146,150,253,0.3)]'
                             : 'text-neutral-600 hover:bg-black/5 hover:text-neutral-950 dark:text-neutral-300 dark:hover:bg-white/10 dark:hover:text-white'
@@ -155,96 +155,99 @@ const Header = () => {
 
       <header
         ref={headerRef}
-        className="font-korbin relative z-[100] flex items-center justify-end border-gray-400 max-md:border-b-[1px] md:justify-center dark:border-gray-600/30"
+        className="font-poppins relative z-[100] flex items-center justify-end border-gray-400 max-md:border-b-[1px] md:justify-center dark:border-gray-600/30"
       >
         {isMobile ? (
           <MobileNav isAuthenticated={true} />
         ) : (
-          <nav className="mx-20 mt-10 flex w-full items-center justify-between space-x-10">
-            <Link href="/" aria-label="Go to homepage">
-              <Image
-                src={logo}
-                alt="vocare"
-                width={184}
-                height={184}
-                className="pointer-events-none invert dark:invert-0"
-                priority
-              />
-            </Link>
+          // Wrapper z max-w 1280px wycentrowany — taki sam jak na stronie, więc header i content są wyrównane
+          <div className="mx-auto mt-10 w-full max-w-[1280px] px-4 sm:px-8 md:px-12 lg:px-16">
+            <nav className="flex w-full items-center justify-between space-x-10">
+              <Link href="/" aria-label="Go to homepage">
+                <Image
+                  src={logo}
+                  alt="vocare"
+                  width={164}
+                  height={164}
+                  className="pointer-events-none invert dark:invert-0"
+                  priority
+                />
+              </Link>
 
-            {true ? (
-              <div className="relative">
-                <ul
-                  ref={navRef}
-                  onMouseLeave={handleMouseLeave}
-                  className="flex items-center justify-center space-x-4"
-                >
-                  {filteredLinks.map(({ label, url, highlighted, badge }) => {
-                    const isActive = pathname === url;
+              {true ? (
+                <div className="relative">
+                  <ul
+                    ref={navRef}
+                    onMouseLeave={handleMouseLeave}
+                    className="flex items-center justify-center space-x-5 opacity-[75%]"
+                  >
+                    {filteredLinks.map(({ label, url, highlighted, badge }) => {
+                      const isActive = pathname === url;
 
-                    return (
-                      <li
-                        key={label}
-                        onMouseEnter={handleMouseEnter}
-                        data-active={isActive}
-                        className="relative w-full"
-                      >
-                        <Link
-                          href={url}
-                          className={cn(
-                            'relative flex items-center text-[18px] font-normal uppercase',
-                            highlighted && 'cursor-pointer'
-                          )}
+                      return (
+                        <li
+                          key={label}
+                          onMouseEnter={handleMouseEnter}
+                          data-active={isActive}
+                          className="relative w-full"
                         >
-                          <span>{label}</span>
+                          <Link
+                            href={url}
+                            className={cn(
+                              'relative flex items-center text-[18px] font-light',
+                              highlighted && 'cursor-pointer'
+                            )}
+                          >
+                            <span>{label}</span>
 
-                          {highlighted && badge && (
-                            <Badge
-                              variant="outline"
-                              className="pointer-events-none absolute -top-4 -right-6 scale-75"
-                            >
-                              {badge}
-                            </Badge>
-                          )}
-                        </Link>
-                      </li>
-                    );
-                  })}
-                </ul>
+                            {highlighted && badge && (
+                              <Badge
+                                variant="outline"
+                                className="pointer-events-none absolute -top-4 -right-6 scale-75"
+                              >
+                                {badge}
+                              </Badge>
+                            )}
+                          </Link>
+                        </li>
+                      );
+                    })}
+                  </ul>
 
-                {/* Animowana kropka na hover */}
-                <motion.div
-                  animate={{ left: dotLeft, opacity: dotOpacity }}
-                  transition={{ type: 'spring', stiffness: 400, damping: 30 }}
-                  className="absolute -bottom-2 h-1.5 w-1.5 rounded-full bg-current"
-                />
+                  {/* Animowana kropka na hover */}
+                  <motion.div
+                    animate={{ left: dotLeft, opacity: dotOpacity }}
+                    transition={{ type: 'spring', stiffness: 400, damping: 30 }}
+                    className="absolute -bottom-2 h-1.5 w-1.5 rounded-full bg-current"
+                  />
 
-                {/* Kropka aktywnego linku */}
-                <motion.div
-                  animate={{ left: activeDotLeft, opacity: activeDotOpacity }}
-                  transition={{ type: 'spring', stiffness: 300, damping: 25 }}
-                  className="absolute -bottom-2 h-1.5 w-1.5 rounded-full bg-gray-400/70"
-                />
+                  {/* Kropka aktywnego linku */}
+                  <motion.div
+                    animate={{ left: activeDotLeft, opacity: activeDotOpacity }}
+                    transition={{ type: 'spring', stiffness: 300, damping: 25 }}
+                    className="absolute -bottom-2 h-1.5 w-1.5 rounded-full bg-gray-400/70"
+                  />
+                </div>
+              ) : (
+                <div />
+              )}
+
+              <div className="flex items-center space-x-4">
+                {true && <TokenCounter />}
+
+                <>
+                  {!true &&
+                    publicLinks.map((link) => (
+                      <Link href={link.url} key={link.url}>
+                        <p className="text-[18px] font-normal uppercase">{link.label}</p>
+                      </Link>
+                    ))}
+                </>
+
+                {/* <ThemeSwitch /> */}
               </div>
-            ) : (
-              <div />
-            )}
-
-            <div className="flex items-center space-x-4">
-              {true && <TokenCounter />}
-
-              <>
-                {!true &&
-                  publicLinks.map((link) => (
-                    <Link href={link.url} key={link.url}>
-                      <p className="text-[18px] font-normal uppercase">{link.label}</p>
-                    </Link>
-                  ))}
-              </>
-
-              {/* <ThemeSwitch /> */}
-            </div>
-          </nav>
+            </nav>
+          </div>
         )}
       </header>
     </>

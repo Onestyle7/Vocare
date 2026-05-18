@@ -5,7 +5,7 @@ import React from 'react';
 import SpotlightCard from '@/components/SpotlightCard/SpotlightCard';
 import AnimatedContent from '@/components/SupportComponents/AnimatedContent';
 import Section from '@/components/SupportComponents/Section';
-import { upper_arrow } from '@/features/marketing/constants/countries';
+import { upper_arrow } from '@/features/marketing/constants';
 
 const GenerateRecommendationFail = () => {
   return (

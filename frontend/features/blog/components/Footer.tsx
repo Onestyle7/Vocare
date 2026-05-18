@@ -5,7 +5,7 @@ import {
   down_links,
   links_pages,
   links_social,
-} from '@/features/marketing/constants/countries';
+} from '@/features/marketing/constants';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { cn } from '@/lib/utils';
