@@ -3,7 +3,7 @@ import React, { lazy, Suspense } from 'react';
 
 import { VelocityScroll } from '@/components/magicui/scroll-based-velocity';
 
-import { logo, Spinner } from '../../features/marketing/constants/countries';
+import { logo, Spinner } from '../../features/marketing/constants';
 
 const LazySpline = lazy(() => import('@splinetool/react-spline'));
 

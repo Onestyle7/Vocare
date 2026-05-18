@@ -6,7 +6,7 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { useEffect, useRef, useState } from 'react';
 
-import { letterImg } from '@/features/marketing/constants/countries';
+import { letterImg } from '@/features/marketing/constants';
 
 import { Button } from '../../../components/ui/button';
 

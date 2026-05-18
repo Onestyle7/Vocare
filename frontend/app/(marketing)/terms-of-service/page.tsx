@@ -13,7 +13,7 @@ import {
   reklamacje,
   uslugi_i_wylaczenie_odpowiedzialnosci_ai,
   wymagania_techniczne,
-} from '@/features/marketing/constants/countries';
+} from '@/features/marketing/constants';
 
 type Section = {
   title: string;

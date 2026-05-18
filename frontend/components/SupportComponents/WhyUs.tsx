@@ -6,7 +6,7 @@ import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import Image from 'next/image';
 import React, { useEffect, useRef } from 'react';
 
-import { plus } from '@/features/marketing/constants/countries';
+import { plus } from '@/features/marketing/constants';
 
 import Section from './Section';
 

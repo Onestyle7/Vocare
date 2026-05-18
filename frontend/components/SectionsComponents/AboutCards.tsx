@@ -6,7 +6,7 @@ import Image from 'next/image';
 import { useEffect, useRef } from 'react';
 import { ScrollParallax } from 'react-just-parallax';
 
-import { aboutCardsData, shape1 } from '@/features/marketing/constants/countries';
+import { aboutCardsData, shape1 } from '@/features/marketing/constants';
 import AboutCard from '@/components/SupportComponents/AboutCard';
 import Section from '@/components/SupportComponents/Section';
 
