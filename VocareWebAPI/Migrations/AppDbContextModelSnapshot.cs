@@ -1130,7 +1130,16 @@ namespace VocareWebAPI.Migrations
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("timestamp with time zone");
 
-                    b.Property<int>("Status")
+                    b.Property<string>("FailureReason")
+                        .HasColumnType("text");
+
+                    b.Property<int>("GenerationStatus")
+                        .HasColumnType("integer");
+
+                    b.Property<string>("HangfireJobId")
+                        .HasColumnType("text");
+
+                    b.Property<int>("LifecycleStatus")
                         .HasColumnType("integer");
 
                     b.Property<int>("TimeHorizonMonths")

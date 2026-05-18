@@ -40,7 +40,9 @@ namespace VocareWebAPI.RoadmapService.Repositories.Implementations
         public async Task<List<Roadmap>> GetByUserIdAsync(string userId)
         {
             return await _context
-                .Roadmaps.Where(r => r.UserId == userId && r.Status != RoadmapStatus.Archived)
+                .Roadmaps.Where(r =>
+                    r.UserId == userId && r.LifecycleStatus != LifecycleStatus.Archived
+                )
                 .OrderByDescending(r => r.CreatedAt)
                 .ToListAsync();
         }
@@ -48,14 +50,18 @@ namespace VocareWebAPI.RoadmapService.Repositories.Implementations
         public async Task<Roadmap?> GetByCareerPathIdAsync(Guid careerPathId)
         {
             return await _context.Roadmaps.FirstOrDefaultAsync(r =>
-                r.CareerPathId == careerPathId && r.Status != RoadmapStatus.Archived
+                r.CareerPathId == careerPathId
+                && r.LifecycleStatus != LifecycleStatus.Archived
+                && r.GenerationStatus != GenerationStatus.Failed
             );
         }
 
         public async Task<int> CountActiveRoadmapsAsync(string userId)
         {
             return await _context.Roadmaps.CountAsync(r =>
-                r.UserId == userId && r.Status != RoadmapStatus.Archived
+                r.UserId == userId
+                && r.LifecycleStatus != LifecycleStatus.Archived
+                && r.GenerationStatus != GenerationStatus.Failed
             );
         }
 
@@ -67,7 +73,8 @@ namespace VocareWebAPI.RoadmapService.Repositories.Implementations
 
         public async Task UpdateAsync(Roadmap roadmap)
         {
-            _context.Roadmaps.Update(roadmap);
+            _context.ChangeTracker.DetectChanges();
+
             await _context.SaveChangesAsync();
         }
 
@@ -76,7 +83,7 @@ namespace VocareWebAPI.RoadmapService.Repositories.Implementations
             var roadmap = await _context.Roadmaps.FindAsync(roadmapId);
             if (roadmap != null)
             {
-                roadmap.Status = RoadmapStatus.Archived; // soft delete
+                roadmap.LifecycleStatus = LifecycleStatus.Archived; // soft delete
                 await _context.SaveChangesAsync();
             }
         }

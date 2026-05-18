@@ -42,6 +42,7 @@ builder.Services.AddRateLimiting(builder.Environment);
 builder
     .Services.AddConfiguration(builder.Configuration)
     .AddDatabase(builder.Configuration)
+    .AddHangfireExtension(builder.Configuration)
     .AddHttpClients(builder.Configuration)
     .AddApplicationServices()
     .AddRepositories()
@@ -139,6 +140,8 @@ app.UseRateLimiter();
 app.UseAuthentication();
 app.UseCustomTokenValidation(); // Twój custom token validation
 app.UseAuthorization();
+
+app.UseHangfireDashboardWithAuth(builder.Configuration);
 
 // 8. Opcjonalne middleware dla staging
 if (app.Environment.IsStaging())
