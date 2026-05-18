@@ -16,7 +16,7 @@ import {
   timeline_icon_2,
   timeline_icon_3,
   timeline_icon_4,
-} from '@/features/marketing/constants/countries';
+} from '@/features/marketing/constants';
 import Section from '@/components/SupportComponents/Section';
 import {
   AlertDialog,

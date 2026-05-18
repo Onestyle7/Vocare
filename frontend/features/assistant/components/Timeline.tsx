@@ -1,7 +1,7 @@
 import Image from 'next/image';
 import React from 'react';
 
-import { timeline_icon_1 } from '@/features/marketing/constants/countries';
+import { timeline_icon_1 } from '@/features/marketing/constants';
 import { HoverCard, HoverCardContent, HoverCardTrigger } from '@/components/ui/hover-card';
 import { cn } from '@/lib/utils';
 

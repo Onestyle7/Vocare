@@ -1,7 +1,7 @@
 import Image from 'next/image';
 import Link from 'next/link';
 
-import { logo } from '@/features/marketing/constants/countries';
+import { logo } from '@/features/marketing/constants';
 import MobileNav from '@/components/MobileComponents/MobileNav';
 
 export default function Header() {

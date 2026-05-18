@@ -8,7 +8,7 @@ import { useEffect, useState, useTransition } from 'react';
 import { useForm } from 'react-hook-form';
 import { toast } from 'sonner';
 
-import { spinner_terminal } from '@/features/marketing/constants/countries';
+import { spinner_terminal } from '@/features/marketing/constants';
 import {
   AlertDialog,
   AlertDialogAction,

@@ -205,12 +205,14 @@ export type NavLink = {
 };
 
 export const NavLinks: NavLink[] = [
-  { label: 'Blog', url: '/blog' },
   { label: 'Profil', url: '/dashboard/profile' },
   { label: 'Doradca', url: '/dashboard/assistant' },
   { label: 'Analiza', url: '/dashboard/market-analysis' },
-  { label: 'Roadmap', url: '/dashboard/roadmap', highlighted: true, badge: 'nowość' },
-  { label: 'Kreator', url: '/dashboard/resume', highlighted: true, badge: 'stwórz cv' },
+  // { label: 'Roadmap', url: '/dashboard/roadmap', highlighted: true, badge: 'nowość' },
+  // { label: 'Kreator', url: '/dashboard/resume', highlighted: true, badge: 'stwórz cv' },
+  { label: 'Roadmap', url: '/dashboard/roadmap' },
+  { label: 'Kreator', url: '/dashboard/resume' },
+
   { label: 'Pricing', url: '/pricing' },
 ];
 
@@ -460,3 +462,34 @@ export const cone_8 = '/images/Cone-8.avif';
 
 // roadmap icon
 export const gps_icon = '/svg/gps.png';
+
+// Assistant landing page feature
+export const hero_image = '/asisstant/hero_img.avif';
+export const expand_icon = '/asisstant/expand_icon.svg';
+export const arrow_icon = '/asisstant/arrow_icon.svg';
+export const grid_img_1 = '/asisstant/grid-1-img.png';
+export const grid_img_2 = '/asisstant/grid-2-img.png';
+export const grid_img_3 = '/asisstant/grid-3-img.png';
+export const grid_img_4 = '/asisstant/grid-4-img.png';
+export const approach_img_1 = '/asisstant/aproach-img-1.avif';
+export const approach_img_2 = '/asisstant/aproach-img-2.avif';
+export const approach_img_3 = '/asisstant/aproach-img-3.avif';
+export const approach_line_1 = '/asisstant/Line-approach-1.svg';
+export const approach_line_2 = '/asisstant/Line-approach-2.svg';
+export const approach_elipse_1 = '/asisstant/Ellipse-1.svg';
+export const approach_elipse_2 = '/asisstant/Ellipse-2.svg';
+export const approach_elipse_3 = '/asisstant/Ellipse-3.svg';
+export const shield_icon = '/asisstant/Shield.svg';
+export const user_icon = '/asisstant/User_02.svg';
+export const arrow_grid_icon = '/asisstant/Arrow.svg';
+export const ai_grid = '/asisstant/ai_grid.png';
+export const brain_grid = '/asisstant/brain_grid.png';
+export const avatar_1 = '/asisstant/avatar-1.png';
+export const avatar_2 = '/asisstant/avatar-2.png';
+export const avatar_3 = '/asisstant/avatar-3.png';
+export const avatar_4 = '/asisstant/avatar-4.png';
+export const avatar_5 = '/asisstant/avatar-5.png';
+export const avatar_6 = '/asisstant/avatar-6.png';
+export const social_fb = '/asisstant/social-fb.svg';
+export const social_x = '/asisstant/social-x.svg';
+export const social_linkedin = '/asisstant/social-linkedin.svg';
