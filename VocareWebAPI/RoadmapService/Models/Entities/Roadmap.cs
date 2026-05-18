@@ -25,11 +25,16 @@ namespace VocareWebAPI.RoadmapService.Models.Entities
         // Metadane
         public string Title { get; set; } = String.Empty;
         public int TimeHorizonMonths { get; set; } // 3-24
-        public RoadmapStatus Status { get; set; } = RoadmapStatus.Draft;
+        public GenerationStatus GenerationStatus { get; set; } = GenerationStatus.Pending;
+        public LifecycleStatus LifecycleStatus { get; set; } = LifecycleStatus.Draft;
         public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
         public DateTime UpdatedAt { get; set; } = DateTime.UtcNow;
 
         //Fazy
         public List<RoadmapPhase> Phases { get; set; } = new();
+
+        // METEDATA
+        public string? HangfireJobId { get; set; }
+        public string? FailureReason { get; set; }
     }
 }

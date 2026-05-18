@@ -33,7 +33,7 @@ namespace VocareWebAPI.Extensions.ServiceCollectionExtensions
             return services;
         }
 
-        private static string GetConnectionString(IConfiguration configuration)
+        internal static string GetConnectionString(IConfiguration configuration)
         {
             var databaseUrl = Environment.GetEnvironmentVariable("DATABASE_URL");
 
