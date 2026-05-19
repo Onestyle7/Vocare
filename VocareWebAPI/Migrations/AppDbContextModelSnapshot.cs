@@ -1118,6 +1118,47 @@ namespace VocareWebAPI.Migrations
                     b.ToTable("UserProfiles", "public");
                 });
 
+            modelBuilder.Entity("VocareWebAPI.Notifications.Models.Entities.Notification", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<bool>("IsRead")
+                        .HasColumnType("boolean");
+
+                    b.Property<string>("Message")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<DateTime?>("ReadAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<Guid?>("RelatedEntityId")
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("Title")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<int>("Type")
+                        .HasColumnType("integer");
+
+                    b.Property<string>("UserId")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("UserId", "IsRead", "CreatedAt")
+                        .IsDescending(false, false, true);
+
+                    b.ToTable("Notifications", "public");
+                });
+
             modelBuilder.Entity("VocareWebAPI.RoadmapService.Models.Entities.Roadmap", b =>
                 {
                     b.Property<Guid>("Id")
