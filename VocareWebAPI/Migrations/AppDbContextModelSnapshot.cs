@@ -1712,6 +1712,17 @@ namespace VocareWebAPI.Migrations
                     b.Navigation("User");
                 });
 
+            modelBuilder.Entity("VocareWebAPI.Notifications.Models.Entities.Notification", b =>
+                {
+                    b.HasOne("VocareWebAPI.Models.Entities.User", "User")
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("User");
+                });
+
             modelBuilder.Entity("VocareWebAPI.RoadmapService.Models.Entities.Roadmap", b =>
                 {
                     b.HasOne("VocareWebAPI.Models.Entities.CareerPath", "CareerPath")
