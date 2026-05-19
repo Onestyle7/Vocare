@@ -7,6 +7,9 @@ namespace VocareWebAPI.Notifications.Exceptions
         public Guid NotificationId { get; set; }
 
         public NotificationNotFoundException(Guid notificationId)
-            : base($"Notification with ID {notificationId} not found", "NOTIFICATION_NOT_FOUND") { }
+            : base($"Notification with ID {notificationId} not found", "NOTIFICATION_NOT_FOUND")
+        {
+            NotificationId = notificationId;
+        }
     }
 }
