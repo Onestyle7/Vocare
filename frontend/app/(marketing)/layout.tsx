@@ -1,5 +1,3 @@
-import Footer from '@/components/SectionsComponents/Footer';
-import Header from '@/components/SectionsComponents/Header';
 import React from 'react';
 
 const Layout = async ({ children }: { children: React.ReactNode }) => {
