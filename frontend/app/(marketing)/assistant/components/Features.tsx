@@ -1,5 +1,7 @@
+'use client';
+
 import Image from 'next/image';
-import React from 'react';
+import { useRef } from 'react';
 
 import Button from '@/components/ui/assistant-button';
 import { arrow_icon } from '@/features/marketing/constants';
@@ -7,6 +9,12 @@ import { arrow_icon } from '@/features/marketing/constants';
 import BentoGrid from './ui/bento-grid';
 
 const Features = () => {
+  const bentoRef = useRef<HTMLDivElement>(null);
+
+  const scrollToBento = () => {
+    bentoRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  };
+
   return (
     <div className="font-poppins flex flex-col bg-[#0F1013] p-3 sm:p-5">
       <div className="relative mx-auto flex w-full max-w-none flex-col overflow-hidden rounded-3xl 2xl:max-w-7xl">
@@ -28,20 +36,20 @@ const Features = () => {
             </p>
 
             <Button
-              href="/explore"
+              onClick={scrollToBento}
               variant="secondary"
               size="sm"
               icon={<Image src={arrow_icon} alt="expand" width={20} height={20} />}
               iconPosition="right"
               className="lg:h-13 lg:px-6 lg:text-[15px]"
             >
-              <span className="bg-[linear-gradient(180deg,#9296FD_0%,#8491FE_50%,#9D9BFF_77%,#C7A9FE_100%)] bg-clip-text text-transparent">
+              <span className="cursor-pointer bg-[linear-gradient(180deg,#9296FD_0%,#8491FE_50%,#9D9BFF_77%,#C7A9FE_100%)] bg-clip-text text-transparent">
                 Poznaj funckcjonalności
               </span>
             </Button>
           </div>
 
-          <div className="mt-12 w-full sm:mt-16 lg:mt-20">
+          <div ref={bentoRef} className="mt-12 w-full sm:mt-16 lg:mt-20">
             <BentoGrid />
           </div>
         </div>

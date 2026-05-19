@@ -1,5 +1,6 @@
 import { ChevronRight } from 'lucide-react';
 import Image from 'next/image';
+import Link from 'next/link';
 import React from 'react';
 
 import {
@@ -205,7 +206,7 @@ const Approach = () => {
                     naszym priorytetem
                   </h3>
 
-                  <button className="mt-6 flex items-center gap-2 rounded-full bg-[#1F2025] px-5 py-3 text-[14px] text-[#9296FD]">
+                  <Link href="/privacy-policy" className="mt-6 flex cursor-pointer items-center gap-2 rounded-full bg-[#1F2025] px-5 py-3 text-[14px] text-[#9296FD] transition-colors hover:bg-[#26272D]">
                     <svg
                       width="14"
                       height="14"
@@ -220,7 +221,7 @@ const Approach = () => {
                       <path d="M7 11V7a5 5 0 0 1 10 0v4" />
                     </svg>
                     Jak chronimy dane
-                  </button>
+                  </Link>
                 </div>
               </div>
 
@@ -247,7 +248,7 @@ const Approach = () => {
                     dane
                   </h3>
 
-                  <button className="mt-6 flex items-center gap-2 rounded-full bg-[#1F2025] px-5 py-3 text-[14px]">
+                  <Link href="/dashboard/market-analysis" className="mt-6 flex cursor-pointer items-center gap-2 rounded-full bg-[#1F2025] px-5 py-3 text-[14px] transition-colors hover:bg-[#26272D]">
                     <Image src={expand_icon} alt="" width={14} height={14} className="opacity-60" />
                     <span>
                       <span className="text-[#9296FD]">Sprawdź </span>
@@ -255,7 +256,7 @@ const Approach = () => {
                         analize rynkową
                       </span>
                     </span>
-                  </button>
+                  </Link>
                 </div>
               </div>
 
@@ -295,10 +296,10 @@ const Approach = () => {
                     <br />w doborze kariery
                   </h3>
 
-                  <button className="mt-6 flex cursor-pointer items-center gap-2 rounded-full bg-[#7B7DF5] px-6 py-3 text-[14px] font-medium text-white transition-colors hover:bg-[#6B6DE8]">
+                  <Link href="/profile" className="mt-6 flex cursor-pointer items-center gap-2 rounded-full bg-[#7B7DF5] px-6 py-3 text-[14px] font-medium text-white transition-colors hover:bg-[#6B6DE8]">
                     Sprawdź za darmo
                     <ChevronRight size={18} />
-                  </button>
+                  </Link>
                 </div>
               </div>
             </div>
