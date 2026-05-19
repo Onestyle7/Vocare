@@ -1,7 +1,6 @@
 using VocareWebAPI.RoadmapService.Models.Dtos;
-using VocareWebAPI.RoadmapService.Models.Entities;
 
-namespace VocareWebAPI.RoadmapService.Jobs.Implementations
+namespace VocareWebAPI.RoadmapService.Jobs.Interfaces
 {
     public interface IRoadmapGenerationJob
     {
