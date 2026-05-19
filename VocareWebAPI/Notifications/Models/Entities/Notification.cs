@@ -1,5 +1,6 @@
 using System.ComponentModel.DataAnnotations.Schema;
 using Microsoft.EntityFrameworkCore;
+using VocareWebAPI.Models.Entities;
 using VocareWebAPI.Notifications.Models.Enums;
 
 namespace VocareWebAPI.Notifications.Models.Entities
@@ -10,6 +11,7 @@ namespace VocareWebAPI.Notifications.Models.Entities
 
         [ForeignKey("UserId")]
         public string UserId { get; set; } = default!;
+        public User User { get; set; } = default!;
         public string Title { get; set; } = String.Empty;
         public string Message { get; set; } = String.Empty;
         public NotificationType Type { get; set; } = default!;

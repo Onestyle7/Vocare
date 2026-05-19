@@ -1,6 +1,7 @@
 using System.Data;
 using Microsoft.EntityFrameworkCore;
 using VocareWebAPI.Data;
+using VocareWebAPI.Notifications.Exceptions;
 using VocareWebAPI.Notifications.Models.Entities;
 using VocareWebAPI.Notifications.Repositories.Interfaces;
 
@@ -53,7 +54,7 @@ namespace VocareWebAPI.Notifications.Repositories.Implementations
             );
 
             if (notification == null)
-                throw new InvalidOperationException("Notification not found");
+                throw new NotificationNotFoundException(notificationId);
 
             notification.IsRead = true;
             notification.ReadAt = DateTime.UtcNow;

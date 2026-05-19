@@ -2,7 +2,7 @@ using Hangfire;
 using VocareWebAPI.Notifications.Models.Enums;
 using VocareWebAPI.Notifications.Services.Interfaces;
 using VocareWebAPI.RoadmapService.Exceptions;
-using VocareWebAPI.RoadmapService.Jobs.Implementations;
+using VocareWebAPI.RoadmapService.Jobs.Interfaces;
 using VocareWebAPI.RoadmapService.Models.Dtos;
 using VocareWebAPI.RoadmapService.Models.Entities;
 using VocareWebAPI.RoadmapService.Models.Enums;
@@ -10,7 +10,7 @@ using VocareWebAPI.RoadmapService.Repositories.Interfaces;
 using VocareWebAPI.RoadmapService.Services.Interfaces;
 using VocareWebAPI.Shared.Exceptions;
 
-namespace VocareWebAPI.RoadmapService.Jobs
+namespace VocareWebAPI.RoadmapService.Jobs.Implementations
 {
     public class RoadmapGenerationJob : IRoadmapGenerationJob
     {
