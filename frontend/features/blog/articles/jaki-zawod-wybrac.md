@@ -6,7 +6,15 @@ date: '2026-03-24'
 author: 'Vocare'
 category: 'Kariera'
 coverImage: '/images/blog/career-path.webp'
-tags: ['wybór zawodu', 'kariera', 'ścieżka kariery', 'zmiana branży', 'zawody przyszłości', 'rozwój zawodowy']
+tags:
+  [
+    'wybór zawodu',
+    'kariera',
+    'ścieżka kariery',
+    'zmiana branży',
+    'zawody przyszłości',
+    'rozwój zawodowy',
+  ]
 ---
 
 Jaki zawód wybrać - to pytanie, które spędza sen z powiek tysiącom Polaków niezależnie od wieku. Stoisz przed maturą i nie wiesz, jaki kierunek studiów wybrać? A może po kilku latach pracy czujesz, że to nie jest Twoja droga? Bez względu na to, w którym miejscu jesteś, wybór zawodu nie musi być loterią. W tym poradniku pokażemy Ci konkretne kroki, dzięki którym podejmiesz świadomą decyzję - opartą na Twoich mocnych stronach, realiach rynku pracy i długoterminowych perspektywach.
@@ -61,7 +69,7 @@ Sam audyt nie wystarczy, musisz go skonfrontować z realiami. Sprawdź, jakie za
 
 ### Krok 3: Porozmawiaj z ludźmi z branży
 
-Żaden raport nie zastąpi rozmowy z osobą, która wykonuje dany zawód na co dzień. Poszukaj na LinkedInie specjalistów z interesującej Cię branży i poproś o 15-20 minut rozmowy. Pytaj nie tylko o zarobki, ale o codzienne wyzwania, perspektywy rozwoju i to, co ich w pracy frustruje. Takie „wywiady informacyjne" (ang. *informational interviews*) są popularną praktyką na Zachodzie i doskonale sprawdzają się również w Polsce.
+Żaden raport nie zastąpi rozmowy z osobą, która wykonuje dany zawód na co dzień. Poszukaj na LinkedInie specjalistów z interesującej Cię branży i poproś o 15-20 minut rozmowy. Pytaj nie tylko o zarobki, ale o codzienne wyzwania, perspektywy rozwoju i to, co ich w pracy frustruje. Takie „wywiady informacyjne" (ang. _informational interviews_) są popularną praktyką na Zachodzie i doskonale sprawdzają się również w Polsce.
 
 ### Krok 4: Przetestuj zanim zdecydujesz
 

@@ -108,7 +108,7 @@ const heroLines = [
 const Hero = () => {
   return (
     <div className="font-poppins flex flex-col bg-[#0F1013] p-3 sm:p-5">
-      <div className="relative mx-auto flex min-h-[calc(100dvh-1.5rem)] w-full max-w-none flex-col overflow-hidden rounded-3xl bg-[#16161A] sm:min-h-[calc(100dvh-2.5rem)] 2xl:min-h-0 2xl:max-w-7xl">
+      <div className="relative mx-auto flex min-h-[calc(100dvh-1.5rem)] w-full max-w-none flex-col overflow-hidden rounded-3xl bg-[#16161A] sm:min-h-[calc(100dvh-2.5rem)] lg:min-h-0 2xl:max-w-7xl">
         <div
           aria-hidden
           className="pointer-events-none absolute top-0 right-0 hidden h-198.5 w-238.75 overflow-hidden lg:block xl:-right-20.5 2xl:hidden"

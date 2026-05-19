@@ -6,14 +6,22 @@ date: '2026-03-24'
 author: 'Vocare'
 category: 'Kariera'
 coverImage: '/images/blog/burnout.webp'
-tags: ['wypalenie zawodowe', 'burnout', 'zmiana pracy', 'zdrowie psychiczne', 'kariera', 'równowaga praca-życie']
+tags:
+  [
+    'wypalenie zawodowe',
+    'burnout',
+    'zmiana pracy',
+    'zdrowie psychiczne',
+    'kariera',
+    'równowaga praca-życie',
+  ]
 ---
 
 Wstajesz rano i już czujesz ciężar nadchodzącego dnia. Praca, która kiedyś dawała Ci energię i satysfakcję, teraz wydaje się bezsensowna i wyczerpująca. Przestałeś się angażować, robisz minimum, czujesz się oderwany od zadań, od współpracowników, od siebie. Jeśli to brzmi znajomo, możliwe, że doświadczasz wypalenia zawodowego. Ale nie jesteś bez wyjścia. Ten artykuł pokaże Ci, co dalej, krok po kroku.
 
 ## Czym jest wypalenie zawodowe i dlaczego dotyczy coraz więcej osób?
 
-Wypalenie zawodowe (ang. *burnout*) zostało oficjalnie uznane przez Światową Organizację Zdrowia (WHO) za syndrom wynikający z chronicznego stresu w miejscu pracy, który nie został skutecznie opanowany. Nie jest to choroba psychiczna, ale może prowadzić do poważnych problemów zdrowotnych, jeśli pozostanie nierozpoznane.
+Wypalenie zawodowe (ang. _burnout_) zostało oficjalnie uznane przez Światową Organizację Zdrowia (WHO) za syndrom wynikający z chronicznego stresu w miejscu pracy, który nie został skutecznie opanowany. Nie jest to choroba psychiczna, ale może prowadzić do poważnych problemów zdrowotnych, jeśli pozostanie nierozpoznane.
 
 WHO definiuje burnout przez trzy wymiary:
 

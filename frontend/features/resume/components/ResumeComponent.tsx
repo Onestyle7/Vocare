@@ -1484,12 +1484,12 @@ const CVCreator: React.FC<CVCreatorProps> = ({ initialCv }) => {
         case 'profile':
           return Boolean(
             personalInfo.firstName ||
-              personalInfo.lastName ||
-              personalInfo.email ||
-              personalInfo.phone ||
-              personalInfo.address ||
-              personalInfo.profession ||
-              personalInfo.summary
+            personalInfo.lastName ||
+            personalInfo.email ||
+            personalInfo.phone ||
+            personalInfo.address ||
+            personalInfo.profession ||
+            personalInfo.summary
           );
         case 'experience':
           return experiences.length > 0;
