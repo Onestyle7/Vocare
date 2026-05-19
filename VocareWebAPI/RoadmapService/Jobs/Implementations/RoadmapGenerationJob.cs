@@ -1,4 +1,6 @@
 using Hangfire;
+using VocareWebAPI.Notifications.Models.Enums;
+using VocareWebAPI.Notifications.Services.Interfaces;
 using VocareWebAPI.RoadmapService.Exceptions;
 using VocareWebAPI.RoadmapService.Jobs.Implementations;
 using VocareWebAPI.RoadmapService.Models.Dtos;
@@ -14,14 +16,17 @@ namespace VocareWebAPI.RoadmapService.Jobs
     {
         private readonly IRoadmapRepository _roadmapRepository;
         private readonly IRoadmapGeneratorService _roadmapGeneratorService;
+        private readonly INotificationService _notificationService;
 
         public RoadmapGenerationJob(
             IRoadmapRepository roadmapRepository,
-            IRoadmapGeneratorService roadmapGeneratorService
+            IRoadmapGeneratorService roadmapGeneratorService,
+            INotificationService notificationService
         )
         {
             _roadmapRepository = roadmapRepository;
             _roadmapGeneratorService = roadmapGeneratorService;
+            _notificationService = notificationService;
         }
 
         [AutomaticRetry(Attempts = 1)]
@@ -37,9 +42,6 @@ namespace VocareWebAPI.RoadmapService.Jobs
                 || roadmap.GenerationStatus == GenerationStatus.Failed
             )
                 return;
-
-            var userId = roadmap.UserId;
-            var careerPathId = roadmap.CareerPathId;
 
             roadmap.GenerationStatus = GenerationStatus.Generating;
             await _roadmapRepository.UpdateAsync(roadmap);
@@ -105,6 +107,14 @@ namespace VocareWebAPI.RoadmapService.Jobs
                 }
 
                 await _roadmapRepository.UpdateAsync(roadmap);
+
+                await _notificationService.CreateAsync(
+                    userId: roadmap.UserId,
+                    title: "Roadmapa gotowa",
+                    message: $"Twoja roadmapa '{roadmap.Title}' jest gotowa do przeglądania",
+                    type: NotificationType.RoadmapGenerationCompleted,
+                    relatedEntityId: roadmap.Id
+                );
             }
             catch (Exception ex)
             {
@@ -112,6 +122,14 @@ namespace VocareWebAPI.RoadmapService.Jobs
                 roadmap.FailureReason = "Generowanie nie powiodło się. Spróbuj ponownie.";
                 roadmap.UpdatedAt = DateTime.UtcNow;
                 await _roadmapRepository.UpdateAsync(roadmap);
+
+                await _notificationService.CreateAsync(
+                    userId: roadmap.UserId,
+                    title: "Generowanie nie powiodło się",
+                    message: "Generowanie roadmapy nie powiodło się. Możesz spróbować ponownie.",
+                    type: NotificationType.RoadmapGenerationFailed,
+                    relatedEntityId: roadmap.Id
+                );
 
                 if (ex is DomainException)
                     throw; // domain exceptions poleca dalej bez opakowywania

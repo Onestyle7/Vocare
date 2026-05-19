@@ -10,6 +10,7 @@ using VocareWebAPI.MarketNews.Models.Entities;
 using VocareWebAPI.Models;
 using VocareWebAPI.Models.Entities;
 using VocareWebAPI.Models.Entities.MarketAnalysis;
+using VocareWebAPI.Notifications.Models.Entities;
 using VocareWebAPI.RoadmapService.Models.Entities;
 using VocareWebAPI.UserManagement.Models.Entities;
 
@@ -89,6 +90,7 @@ namespace VocareWebAPI.Data
         public DbSet<RoadmapStep> RoadmapSteps { get; set; }
         public DbSet<CareerPath> CareerPaths { get; set; }
         public DbSet<CvAnalysis> CvAnalyses { get; set; }
+        public DbSet<Notification> Notifications { get; set; }
 
         /// <summary>
         /// Konfiguruje model bazy danych, definiując schemat i relacje między encjami.
@@ -414,6 +416,17 @@ namespace VocareWebAPI.Data
             {
                 e.HasIndex(r => r.UserId);
                 e.HasIndex(r => r.CareerPathId);
+            });
+
+            builder.Entity<Notification>(e =>
+            {
+                e.HasIndex(n => new
+                    {
+                        n.UserId,
+                        n.IsRead,
+                        n.CreatedAt,
+                    })
+                    .IsDescending(false, false, true);
             });
         }
     }
