@@ -9,7 +9,7 @@
     "lint": "next lint",
     "test": "vitest",
     "test:related": "vitest related --run",
-    "format": "prettier --write",
+    "format": "prettier --write .",
     "validate:md": "npx tsx lib/scripts/validate-md.ts",
     "linter:fix": "npx eslint --fix",
     "typecheck": "tsc --noEmit"

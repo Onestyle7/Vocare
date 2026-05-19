@@ -1,7 +1,7 @@
 'use client';
 
 import { ArrowRight } from 'lucide-react';
-import { useRef,useState } from 'react';
+import { useRef, useState } from 'react';
 
 interface BentoTiltProps {
   children: React.ReactNode;
