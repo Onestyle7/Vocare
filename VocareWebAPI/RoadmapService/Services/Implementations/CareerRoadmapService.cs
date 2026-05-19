@@ -1,4 +1,6 @@
+using System.Data;
 using Hangfire;
+using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.EntityFrameworkCore;
 using Stripe;
 using VocareWebAPI.Billing.Models.Enums;
@@ -61,6 +63,7 @@ namespace VocareWebAPI.RoadmapService.Services.Implementations
             if (!ownsCareerPath)
                 throw new RoadmapAccessDeniedException(careerPathId, userId);
 
+            // Przenieść do repository
             var careerPath = await _context.CareerPaths.FindAsync(careerPathId);
             var userProfile = await _context.UserProfiles.FindAsync(userId);
 
@@ -187,6 +190,48 @@ namespace VocareWebAPI.RoadmapService.Services.Implementations
 
             var completedSteps = requiredSteps.Count(s => s.Status == StepStatus.Completed);
             return (double)completedSteps / totalSteps * 100.0;
+        }
+
+        public async Task<Roadmap> RetryGenerationAsync(Guid roadmapId, string userId)
+        {
+            var roadmap = await _roadmapRepository.GetByIdAsync(roadmapId);
+            if (roadmap == null)
+                throw new RoadmapNotFoundException(roadmapId);
+
+            if (userId != roadmap.UserId)
+                throw new RoadmapAccessDeniedException(roadmapId, userId);
+
+            if (roadmap.GenerationStatus != GenerationStatus.Failed)
+                throw new InvalidRoadmapStateException(
+                    roadmapId,
+                    roadmap.GenerationStatus.ToString()
+                );
+
+            roadmap.GenerationStatus = GenerationStatus.Pending;
+            roadmap.FailureReason = null;
+            roadmap.UpdatedAt = DateTime.UtcNow;
+
+            // Przenieść do repository
+            var careerPath = await _context.CareerPaths.FindAsync(roadmap.CareerPathId);
+            var userProfile = await _context.UserProfiles.FindAsync(userId);
+
+            var roadmapRequest = new RoadmapGenerationRequest
+            {
+                CareerPathName = careerPath.CareerName,
+                RequiredSkills = userProfile.Skills,
+                UserSkills = userProfile.Skills.Concat(userProfile.SoftSkills).ToList(),
+                SuggestedSeniority = careerPath.SuggestedSeniority,
+                TimeHorizonMonths = roadmap.TimeHorizonMonths,
+            };
+
+            var jobId = _backgroundJobClient.Enqueue<IRoadmapGenerationJob>(job =>
+                job.GenerateAsync(roadmap.Id, roadmapRequest)
+            );
+
+            roadmap.HangfireJobId = jobId;
+            await _roadmapRepository.UpdateAsync(roadmap);
+
+            return roadmap;
         }
     }
 }

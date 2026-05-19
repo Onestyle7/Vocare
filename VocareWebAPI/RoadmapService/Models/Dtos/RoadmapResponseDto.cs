@@ -17,5 +17,7 @@ namespace VocareWebAPI.RoadmapService.Models.Dtos
         public string CareerPathName { get; set; }
         public double Progress { get; set; }
         public List<RoadmapPhaseResponseDto> Phases { get; set; }
+        public string GenerationStatus { get; set; }
+        public string FailureReason { get; set; }
     }
 }
