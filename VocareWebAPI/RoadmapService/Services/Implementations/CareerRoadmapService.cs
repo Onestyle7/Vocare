@@ -1,13 +1,11 @@
 using System.Data;
 using Hangfire;
-using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.EntityFrameworkCore;
-using Stripe;
 using VocareWebAPI.Billing.Models.Enums;
 using VocareWebAPI.Data;
 using VocareWebAPI.JobOffers.Exceptions;
 using VocareWebAPI.RoadmapService.Exceptions;
-using VocareWebAPI.RoadmapService.Jobs.Implementations;
+using VocareWebAPI.RoadmapService.Jobs.Interfaces;
 using VocareWebAPI.RoadmapService.Models.Dtos;
 using VocareWebAPI.RoadmapService.Models.Entities;
 using VocareWebAPI.RoadmapService.Models.Enums;
