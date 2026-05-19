@@ -1,7 +1,6 @@
 import { ChevronRight } from 'lucide-react';
 import Image from 'next/image';
 import Link from 'next/link';
-import React from 'react';
 
 import {
   ai_grid,
@@ -11,7 +10,6 @@ import {
   approach_img_1,
   approach_img_2,
   approach_img_3,
-  approach_line_1,
   approach_line_2,
   arrow_grid_icon,
   brain_grid,
@@ -22,7 +20,7 @@ import {
 
 const Approach = () => {
   return (
-    <div className="font-poppins flex min-h-screen flex-col bg-[#0F1013] p-3 sm:p-5">
+    <div className="font-poppins flex flex-col bg-[#0F1013] p-3 sm:p-5 lg:min-h-0">
       <div className="relative mx-auto flex w-full max-w-none flex-col overflow-hidden rounded-3xl 2xl:max-w-7xl">
         <div className="relative mx-auto flex w-full max-w-7xl flex-1 flex-col px-4 py-12 sm:px-8 sm:py-0">
           <div className="flex flex-col items-center space-y-6 sm:space-y-7 lg:space-y-8">
@@ -109,41 +107,44 @@ const Approach = () => {
                 />
 
                 <div className="relative z-10 flex h-full w-full items-center justify-center">
-                  <Image
-                    src={approach_img_1}
-                    alt="aproach-img-1"
-                    width={143}
-                    height={144}
-                    className="pointer-events-none absolute top-0 left-0 w-30 min-[480px]:w-40 sm:w-50 lg:w-[143px]"
-                  />
-                  <Image
-                    src={approach_img_2}
-                    alt="aproach-img-2"
-                    width={256}
-                    height={258}
-                    className="pointer-events-none absolute right-0 w-30 min-[480px]:w-40 sm:w-50 lg:w-[256px]"
-                  />
-                  <Image
-                    src={approach_img_3}
-                    alt="aproach-img-3"
-                    width={143}
-                    height={144}
-                    className="pointer-events-none absolute bottom-0 left-0 w-30 min-[480px]:w-40 sm:w-50 lg:w-[143px]"
-                  />
-                  <Image
-                    src={approach_line_1}
-                    alt=""
-                    width={265.83}
-                    height={46.47}
-                    className="pointer-events-none absolute bottom-[18%] left-[36%] -z-1 w-[44%] min-[480px]:bottom-[15%] min-[480px]:left-[32%] min-[480px]:w-[50%] sm:bottom-[12%] sm:left-[28%] sm:w-[60%] lg:bottom-10 lg:left-30 lg:w-[265px]"
-                  />
-                  <Image
-                    src={approach_line_2}
-                    alt=""
-                    width={279.83}
-                    height={46.47}
-                    className="pointer-events-none absolute top-[18%] left-[28%] w-[52%] min-[480px]:top-[15%] min-[480px]:left-[27%] min-[480px]:w-[55%] sm:top-[12%] sm:left-[28%] sm:w-[60%] lg:top-10 lg:left-24 lg:w-[280px]"
-                  />
+                  <div className="relative aspect-square w-full max-w-105">
+                    <Image
+                      src={approach_line_2}
+                      alt=""
+                      width={265.83}
+                      height={46.47}
+                      className="pointer-events-none absolute bottom-[7%] left-[27%] z-0 w-[52%] scale-y-[-1]"
+                    />
+                    <Image
+                      src={approach_line_2}
+                      alt=""
+                      width={279.83}
+                      height={46.47}
+                      className="pointer-events-none absolute top-[12%] left-[22%] z-0 w-[54%]"
+                    />
+
+                    <Image
+                      src={approach_img_1}
+                      alt="aproach-img-1"
+                      width={143}
+                      height={144}
+                      className="pointer-events-none absolute top-0 left-0 z-10 w-[34%]"
+                    />
+                    <Image
+                      src={approach_img_2}
+                      alt="aproach-img-2"
+                      width={256}
+                      height={258}
+                      className="pointer-events-none absolute top-1/2 right-0 z-10 w-[60%] translate-x-[17%] -translate-y-1/2"
+                    />
+                    <Image
+                      src={approach_img_3}
+                      alt="aproach-img-3"
+                      width={143}
+                      height={144}
+                      className="pointer-events-none absolute bottom-0 left-0 z-10 w-[34%]"
+                    />
+                  </div>
                 </div>
               </div>
             </div>
@@ -206,7 +207,10 @@ const Approach = () => {
                     naszym priorytetem
                   </h3>
 
-                  <Link href="/privacy-policy" className="mt-6 flex cursor-pointer items-center gap-2 rounded-full bg-[#1F2025] px-5 py-3 text-[14px] text-[#9296FD] transition-colors hover:bg-[#26272D]">
+                  <Link
+                    href="/privacy-policy"
+                    className="mt-6 flex cursor-pointer items-center gap-2 rounded-full bg-[#1F2025] px-5 py-3 text-[14px] text-[#9296FD] transition-colors hover:bg-[#26272D]"
+                  >
                     <svg
                       width="14"
                       height="14"
@@ -248,12 +252,14 @@ const Approach = () => {
                     dane
                   </h3>
 
-                  <Link href="/dashboard/market-analysis" className="mt-6 flex cursor-pointer items-center gap-2 rounded-full bg-[#1F2025] px-5 py-3 text-[14px] transition-colors hover:bg-[#26272D]">
+                  <Link
+                    href="/dashboard/market-analysis"
+                    className="mt-6 flex cursor-pointer items-center gap-2 rounded-full bg-[#1F2025] px-5 py-3 text-[14px] transition-colors hover:bg-[#26272D]"
+                  >
                     <Image src={expand_icon} alt="" width={14} height={14} className="opacity-60" />
                     <span>
-                      <span className="text-[#9296FD]">Sprawdź </span>
                       <span className="bg-[linear-gradient(90deg,#9296FD,#C7A9FE)] bg-clip-text font-medium text-transparent">
-                        analize rynkową
+                        Analiza rynkowa
                       </span>
                     </span>
                   </Link>
@@ -296,7 +302,10 @@ const Approach = () => {
                     <br />w doborze kariery
                   </h3>
 
-                  <Link href="/profile" className="mt-6 flex cursor-pointer items-center gap-2 rounded-full bg-[#7B7DF5] px-6 py-3 text-[14px] font-medium text-white transition-colors hover:bg-[#6B6DE8]">
+                  <Link
+                    href="/profile"
+                    className="mt-6 flex cursor-pointer items-center gap-2 rounded-full bg-[#7B7DF5] px-6 py-3 text-[14px] font-medium text-white transition-colors hover:bg-[#6B6DE8]"
+                  >
                     Sprawdź za darmo
                     <ChevronRight size={18} />
                   </Link>
