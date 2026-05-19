@@ -40,9 +40,9 @@ namespace VocareWebAPI.RoadmapService.Controllers
                 request.TimeHorizonMonths
             );
 
-            var progress = await _careerRoadmapService.CalculateProgressAsync(roadmap.Id, userId);
-
-            return Ok(MapToDto(roadmap, progress));
+            return Accepted(
+                new { roadmapId = roadmap.Id, generationStatus = roadmap.GenerationStatus }
+            );
         }
 
         [Authorize]
@@ -113,6 +113,18 @@ namespace VocareWebAPI.RoadmapService.Controllers
             return Ok(new { Progress = progress });
         }
 
+        [Authorize]
+        [HttpPost("{roadmapId}/retry")]
+        public async Task<IActionResult> RetryGeneration(Guid roadmapId)
+        {
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            if (string.IsNullOrEmpty(userId))
+                return BadRequest("User ID not found in token.");
+
+            var roadmap = await _careerRoadmapService.RetryGenerationAsync(roadmapId, userId);
+            return Accepted(new { roadmapId, roadmap.GenerationStatus });
+        }
+
         #region  Metody pomocnicze - mapowanie encji na DTO
         private RoadmapResponseDto MapToDto(Roadmap roadmap, double progress)
         {
@@ -126,6 +138,8 @@ namespace VocareWebAPI.RoadmapService.Controllers
                 UpdatedAt = roadmap.UpdatedAt,
                 CareerPathName = roadmap.CareerPath?.CareerName ?? "",
                 Progress = progress,
+                GenerationStatus = roadmap.GenerationStatus.ToString(),
+                FailureReason = roadmap.FailureReason ?? "",
                 Phases = roadmap
                     .Phases.Select(p => new RoadmapPhaseResponseDto
                     {
@@ -173,6 +187,8 @@ namespace VocareWebAPI.RoadmapService.Controllers
                 CreatedAt = roadmap.CreatedAt,
                 CareerPathName = roadmap.CareerPath?.CareerName ?? "",
                 Progress = 0,
+                GenerationStatus = roadmap.GenerationStatus.ToString(),
+                FailureReason = roadmap.FailureReason ?? "",
             };
         }
         #endregion

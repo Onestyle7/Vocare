@@ -11,5 +11,7 @@ namespace VocareWebAPI.RoadmapService.Services.Interfaces
         Task UpdateStatusAsync(Guid roadmapId, string userId, LifecycleStatus status);
         Task ArchiveAsync(Guid roadmapId, string userId);
         Task<double> CalculateProgressAsync(Guid roadmapId, string userId);
+
+        Task<Roadmap> RetryGenerationAsync(Guid roadmapId, string userId);
     }
 }
