@@ -493,3 +493,4 @@ export const avatar_6 = '/asisstant/avatar-6.png';
 export const social_fb = '/asisstant/social-fb.svg';
 export const social_x = '/asisstant/social-x.svg';
 export const social_linkedin = '/asisstant/social-linkedin.svg';
+export const social_instagram = '/asisstant/social-instagram.svg';
