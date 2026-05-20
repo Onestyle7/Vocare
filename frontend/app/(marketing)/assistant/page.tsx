@@ -7,6 +7,7 @@ import Hero from './components/Hero';
 import TrustScore from './components/TrustScore';
 
 const page = () => {
+  // Assistant LP
   return (
     <div>
       <Hero />
