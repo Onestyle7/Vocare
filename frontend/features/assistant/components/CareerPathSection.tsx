@@ -1,6 +1,5 @@
 'use client';
 
-import { gsap } from 'gsap';
 import {
   ArrowDown,
   ArrowDownRight,
@@ -13,8 +12,15 @@ import {
 } from 'lucide-react';
 import Image from 'next/image';
 import Link from 'next/link';
-import { useEffect, useRef, useState } from 'react';
+import { useRef } from 'react';
 
+import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardHeader } from '@/components/ui/card';
+import { Skeleton } from '@/components/ui/skeleton';
+import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
+import ReusableCard from '@/features/market-analysis/components/AssistantCards';
+import SwotAnalysis from '@/features/market-analysis/components/SwotAnalysis';
 import {
   cone_3,
   cone_4,
@@ -23,13 +29,7 @@ import {
   cone_7,
   cone_8,
 } from '@/features/marketing/constants/countries';
-import { Badge } from '@/components/ui/badge';
-import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardHeader } from '@/components/ui/card';
-import { Skeleton } from '@/components/ui/skeleton';
-import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
-import ReusableCard from '@/features/market-analysis/components/AssistantCards';
-import SwotAnalysis from '@/features/market-analysis/components/SwotAnalysis';
+import { useCollapse } from '@/lib/hooks/useCollapse';
 import { CareerPathMatchResult, ConfidenceLevel, ScoredJobOffer } from '@/lib/types/jobOffers';
 import { CareerPath } from '@/lib/types/recommendation';
 
@@ -57,63 +57,11 @@ export default function CareerPathSection({
   offersLoading = false,
   offersError,
 }: CareerPathSectionProps) {
-  const [isCollapsed, setIsCollapsed] = useState(true);
   const contentRef = useRef<HTMLDivElement>(null);
   const contentWrapperRef = useRef<HTMLDivElement>(null);
+  const { isCollapsed, toggleCollapse } = useCollapse(contentWrapperRef, contentRef);
 
   const [leftImg, rightImg] = conePairs[index] ?? conePairs[conePairs.length - 1];
-
-  const toggleCollapse = () => {
-    if (!contentRef.current || !contentWrapperRef.current) return;
-
-    if (isCollapsed) {
-      gsap.set(contentWrapperRef.current, { height: 'auto', visibility: 'visible' });
-      const height = contentWrapperRef.current.offsetHeight;
-      gsap.fromTo(
-        contentWrapperRef.current,
-        { height: 0, opacity: 0 },
-        {
-          height,
-          opacity: 1,
-          duration: 0.5,
-          ease: 'power4.out',
-          onComplete: () => {
-            if (contentWrapperRef.current) gsap.set(contentWrapperRef.current, { height: 'auto' });
-          },
-        }
-      );
-    } else {
-      const height = contentWrapperRef.current.offsetHeight;
-      gsap.fromTo(
-        contentWrapperRef.current,
-        { height, opacity: 1 },
-        {
-          height: 0,
-          opacity: 0,
-          duration: 0.5,
-          ease: 'power4.in',
-          onComplete: () => {
-            if (contentWrapperRef.current)
-              gsap.set(contentWrapperRef.current, { visibility: 'hidden' });
-          },
-        }
-      );
-    }
-
-    setIsCollapsed(!isCollapsed);
-  };
-
-  useEffect(() => {
-    if (contentRef.current && contentWrapperRef.current) {
-      if (!isCollapsed) {
-        gsap.set(contentWrapperRef.current, { height: 'auto' });
-        const height = contentWrapperRef.current.offsetHeight;
-        gsap.set(contentWrapperRef.current, { height });
-      } else {
-        gsap.set(contentWrapperRef.current, { height: 0 });
-      }
-    }
-  }, [isCollapsed]);
 
   const cards = [
     {
@@ -242,13 +190,6 @@ export default function CareerPathSection({
     const primaryLocation = locations.slice(0, 1).join(', ');
     const locationSuffix = locations.length > 1 ? ` +${locations.length - 1}` : '';
     const confidence = confidenceMeta[offer.confidenceLevel] ?? confidenceMeta.medium;
-
-    // const bonusLabels =
-    //   offer.matchDetails?.bonusFactors?.map((bonus) => {
-    //     if (bonus === 'categoryMatch') return 'Kategoria';
-    //     if (bonus === 'seniorityMatch') return 'Seniority';
-    //     return bonus;
-    //   }) ?? [];
 
     return (
       <div
@@ -476,7 +417,7 @@ export default function CareerPathSection({
               {!offersError && matchResult?.dataQualityWarning && (
                 <div className="font-grotesk mt-3 inline-flex items-center gap-2 text-xs text-amber-200">
                   <Sparkles className="h-3 w-3" />
-                  {matchResult.dataQualityWarning}
+                  Zebrano zbyt mało danych o ofertach pracy żeby wygenerować dodatkowe statystyki
                 </div>
               )}
 

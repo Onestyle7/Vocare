@@ -1,3 +1,5 @@
+import Link from 'next/link';
+
 export default function MainPage() {
   return (
     <>
@@ -10,6 +12,8 @@ export default function MainPage() {
         <Faq />
         <Footer /> */}
         Marketing LP placeholder
+        <br></br>
+        <Link href="/dashboard">Dashboard</Link>
       </main>
     </>
   );

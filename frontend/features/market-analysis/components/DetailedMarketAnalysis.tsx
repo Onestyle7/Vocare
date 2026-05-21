@@ -28,7 +28,6 @@ import { toast } from 'sonner';
 
 import CountUp from '@/components/CountUp';
 import { useTokenBalanceContext } from '@/features/billing/components/SubscriptionTokenProvider';
-import { api } from '@/lib/api';
 import {
   market_motywacja,
   market_rekomendacja,
@@ -39,6 +38,7 @@ import {
   market_wynagrodzenie,
   star_generate,
 } from '@/features/marketing/constants/countries';
+import { api } from '@/lib/api';
 import {
   IndustryStatisticsDto,
   MarketAnalysisDetailsDto,
@@ -63,10 +63,6 @@ import { Button } from '../../../components/ui/button';
 import { Separator } from '../../../components/ui/separator';
 
 const numberFormatter = new Intl.NumberFormat('pl-PL');
-
-// const isDev = 'API: http://localhost:8080';
-
-// const API_BASE = process.env.NEXT_PUBLIC_API_URL?.replace(/\/$/, '') ?? '';
 
 const isValidNumber = (value?: number | null) =>
   typeof value === 'number' && Number.isFinite(value);
