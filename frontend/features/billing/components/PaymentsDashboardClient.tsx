@@ -2,8 +2,7 @@
 
 import { ArrowLeft, Loader2 } from 'lucide-react';
 import Link from 'next/link';
-import React from 'react';
-import { toast } from 'sonner';
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
 
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
@@ -18,127 +17,32 @@ import {
 import { Switch } from '@/components/ui/switch';
 import { useTokenBalanceContext } from '@/features/billing/components/SubscriptionTokenProvider';
 import { useBillingActions } from '@/features/billing/hooks/useBillingActions';
+import { useMarketingActions } from '@/features/marketing/hooks/useMarketingActions';
 
 import { PaymentHistoryItem } from '../dal/api';
 
-const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL ?? 'http://localhost:8080';
-const MARKETING_CONSENT_ENDPOINT = '/api/Marketing/consent';
-
 export interface PaymentsDashboardClientProps {
   initialPayments: PaymentHistoryItem[];
+  initialMarketingConsent: boolean;
 }
 
-export default function PaymentsDashboardClient({ initialPayments }: PaymentsDashboardClientProps) {
+export default function PaymentsDashboardClient({
+  initialPayments,
+  initialMarketingConsent,
+}: PaymentsDashboardClientProps) {
   const { hasActiveSubscription } = useTokenBalanceContext();
   const { handleCancelSubscription, isPending: isCancelling } = useBillingActions();
+  const { handleMarketingToggle, isPending: isUpdatingConsent } = useMarketingActions();
 
-  const [marketingConsent, setMarketingConsent] = React.useState<boolean | null>(null);
-  const [isConsentLoading, setIsConsentLoading] = React.useState(true);
-  const [isUpdatingConsent, setIsUpdatingConsent] = React.useState(false);
-  const [consentError, setConsentError] = React.useState<string | null>(null);
+  const [marketingConsent, setMarketingConsent] = useState<boolean>(initialMarketingConsent);
 
-  const fetchMarketingConsent = React.useCallback(async (options?: { signal?: AbortSignal }) => {
-    const { signal } = options ?? {};
-    setIsConsentLoading(true);
-    setConsentError(null);
+  useEffect(() => {
+    setMarketingConsent(initialMarketingConsent);
+  }, [initialMarketingConsent]);
 
-    try {
-      const token = typeof window !== 'undefined' ? localStorage.getItem('token') : undefined;
-      const response = await fetch(new URL(MARKETING_CONSENT_ENDPOINT, API_BASE_URL).toString(), {
-        signal,
-        headers: {
-          'Content-Type': 'application/json',
-          ...(token ? { Authorization: `Bearer ${token}` } : {}),
-        },
-      });
-
-      if (response.status === 401) {
-        setMarketingConsent(false);
-        setConsentError('You need to sign in to manage marketing preferences.');
-        return;
-      }
-
-      if (!response.ok) {
-        const message = await response.text();
-        throw new Error(message || `Failed to load marketing consent (${response.status}).`);
-      }
-
-      const payload = await response.json();
-      setMarketingConsent(Boolean(payload?.hasConsent));
-    } catch (err) {
-      if ((err as DOMException).name === 'AbortError') return;
-      console.error('Failed to load marketing consent', err);
-      setConsentError("We couldn't load your marketing preference. Please try again.");
-      setMarketingConsent(false);
-    } finally {
-      if (!signal?.aborted) {
-        setIsConsentLoading(false);
-      }
-    }
-  }, []);
-
-  React.useEffect(() => {
-    const controller = new AbortController();
-    fetchMarketingConsent({ signal: controller.signal }).catch((err) => {
-      if ((err as DOMException).name === 'AbortError') return;
-      console.error('Failed to load marketing consent', err);
-    });
-
-    return () => controller.abort();
-  }, [fetchMarketingConsent]);
-
-  const handleMarketingToggle = React.useCallback(
-    async (nextValue: boolean) => {
-      if (isConsentLoading || isUpdatingConsent) return;
-      const previousValue = marketingConsent === true;
-      setIsUpdatingConsent(true);
-      setConsentError(null);
-
-      try {
-        const token = typeof window !== 'undefined' ? localStorage.getItem('token') : undefined;
-        if (!token) {
-          setConsentError('You need to sign in to manage marketing preferences.');
-          setMarketingConsent(false);
-          return;
-        }
-
-        const method = nextValue ? 'POST' : 'DELETE';
-        const response = await fetch(new URL(MARKETING_CONSENT_ENDPOINT, API_BASE_URL).toString(), {
-          method,
-          headers: {
-            'Content-Type': 'application/json',
-            Authorization: `Bearer ${token}`,
-          },
-        });
-
-        if (!response.ok) {
-          throw new Error(
-            nextValue
-              ? 'Failed to grant marketing consent.'
-              : 'Failed to withdraw marketing consent.'
-          );
-        }
-
-        setMarketingConsent(nextValue);
-        toast.success(
-          nextValue
-            ? 'Marketing updates enabled. Thanks for staying in the loop!'
-            : 'You will no longer receive marketing emails.'
-        );
-      } catch (err) {
-        console.error('Failed to update marketing consent', err);
-        setMarketingConsent(previousValue);
-        const message = err instanceof Error ? err.message : 'Error updating marketing preferences';
-        setConsentError(message);
-        toast.error(message);
-      } finally {
-        setIsUpdatingConsent(false);
-      }
-    },
-    [isConsentLoading, isUpdatingConsent, marketingConsent]
-  );
-
-  const consentChecked = marketingConsent === true;
+  const onToggleConsent = (nextValue: boolean) => {
+    handleMarketingToggle(nextValue, setMarketingConsent);
+  };
 
   const subscriptionStatusLabel = hasActiveSubscription
     ? 'Aktywna subskrypcja'
@@ -146,7 +50,7 @@ export default function PaymentsDashboardClient({ initialPayments }: PaymentsDas
   const subscriptionBadgeVariant = hasActiveSubscription ? 'default' : 'outline';
   const subscriptionBadgeText = hasActiveSubscription ? 'Aktywna' : 'Nieaktywna';
 
-  const dateFormatter = React.useMemo(
+  const dateFormatter = useMemo(
     () =>
       new Intl.DateTimeFormat(undefined, {
         dateStyle: 'medium',
@@ -155,7 +59,7 @@ export default function PaymentsDashboardClient({ initialPayments }: PaymentsDas
     []
   );
 
-  const formatPaymentAmount = React.useCallback((amount: number, currency?: string) => {
+  const formatPaymentAmount = useCallback((amount: number, currency?: string) => {
     if (!Number.isFinite(amount)) return '—';
     const normalizedCurrency = (currency ?? 'USD').toUpperCase();
     const value = amount / 100;
@@ -169,7 +73,7 @@ export default function PaymentsDashboardClient({ initialPayments }: PaymentsDas
     }
   }, []);
 
-  const getStatusBadgeVariant = React.useCallback((status?: string) => {
+  const getStatusBadgeVariant = useCallback((status?: string) => {
     const normalized = status?.toLowerCase();
     if (normalized === 'succeeded' || normalized === 'paid') return 'secondary';
     if (normalized === 'pending' || normalized === 'processing' || normalized === 'open')
@@ -178,14 +82,14 @@ export default function PaymentsDashboardClient({ initialPayments }: PaymentsDas
     return 'default';
   }, []);
 
-  const formatTypeLabel = React.useCallback((type?: string) => {
+  const formatTypeLabel = useCallback((type?: string) => {
     const normalized = type?.toLowerCase();
     if (normalized === 'subscription') return 'Subscription payment';
     if (normalized === 'token_purchase') return 'Token purchase';
     return type ?? 'Payment';
   }, []);
 
-  const payments = React.useMemo(() => {
+  const payments = useMemo(() => {
     if (!initialPayments) return [];
     return initialPayments
       .map((item) => ({
@@ -212,9 +116,9 @@ export default function PaymentsDashboardClient({ initialPayments }: PaymentsDas
             </p>
           </div>
           <Button asChild variant="outline">
-            <Link href="/" className="inline-flex items-center gap-2">
+            <Link href="/dashboard/profile" className="inline-flex items-center gap-2">
               <ArrowLeft className="h-4 w-4" />
-              Wróć do strony głównej
+              Wróć do swojego profilu
             </Link>
           </Button>
         </div>
@@ -288,32 +192,21 @@ export default function PaymentsDashboardClient({ initialPayments }: PaymentsDas
                       Otrzymuj aktualizacje marketingowe
                     </label>
                     <p className="text-muted-foreground text-xs">
-                      {isConsentLoading
-                        ? 'Sprawdzanie preferencji…'
-                        : consentChecked
-                          ? 'Będziesz otrzymywać okazjonalne informacje o produktach Vocare.'
-                          : 'Bądź na bieżąco z nowymi funkcjami i poradami dotyczącymi kariery.'}
+                      {marketingConsent
+                        ? 'Będziesz otrzymywać okazjonalne informacje o produktach Vocare.'
+                        : 'Bądź na bieżąco z nowymi funkcjami i poradami dotyczącymi kariery.'}
                     </p>
                   </div>
                   <Switch
                     id="marketing-consent-toggle"
-                    checked={consentChecked}
-                    disabled={isConsentLoading || isUpdatingConsent}
-                    onCheckedChange={(checked) => {
-                      void handleMarketingToggle(checked);
-                    }}
+                    checked={marketingConsent}
+                    disabled={isUpdatingConsent}
+                    onCheckedChange={onToggleConsent}
                     aria-label="Toggle marketing updates"
                   />
                 </div>
-                {(isConsentLoading || isUpdatingConsent) && (
-                  <span className="text-muted-foreground text-xs">
-                    {isUpdatingConsent ? 'Saving your preference…' : 'Loading preference…'}
-                  </span>
-                )}
-                {consentError && (
-                  <div className="border-destructive/40 bg-destructive/10 text-destructive rounded-md border px-3 py-2 text-xs">
-                    {consentError}
-                  </div>
+                {isUpdatingConsent && (
+                  <span className="text-muted-foreground text-xs">Zapisywanie preferencji…</span>
                 )}
               </CardContent>
             </Card>

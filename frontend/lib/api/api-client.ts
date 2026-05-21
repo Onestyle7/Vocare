@@ -83,7 +83,7 @@ export class ApiClient {
     const requestOptions = await this.buildRequestOptions(options);
 
     try {
-      console.log('REQUEST_LOGGER', requestOptions);
+      console.log('REQUEST_LOGGER', { url, ...requestOptions });
       const response = await fetch(url, {
         ...requestOptions,
       });

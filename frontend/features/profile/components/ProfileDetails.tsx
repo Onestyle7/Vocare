@@ -99,7 +99,7 @@ export default function ProfileDetails() {
   const handleEdit = () => setIsEditing(true);
   const handleCancelEdit = () => setIsEditing(false);
 
-  if (isEditing || isProfileEmpty) {
+  if (isEditing) {
     return <ProfileForm initialData={profile ?? undefined} onCancel={handleCancelEdit} />;
   }
 
