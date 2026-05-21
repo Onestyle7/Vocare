@@ -1,17 +1,32 @@
 import { forceLoginRedirect } from '@/features/auth/utils/login-redirect';
 import PaymentsDashboardClient from '@/features/billing/components/PaymentsDashboardClient';
 import { getPaymentHistoryQuery } from '@/features/billing/dal/queries';
+import { getMarketingConsentQuery } from '@/features/marketing/dal/queries';
 
 export default async function PaymentsPage() {
-  const [error, paymentsData] = await getPaymentHistoryQuery(50);
+  const [paymentError, paymentsData] = await getPaymentHistoryQuery(50);
+  const [consentError, consentData] = await getMarketingConsentQuery();
 
-  if (error) {
-    if (error.type === 'Unauthorized') {
+  if (paymentError) {
+    if (paymentError.type === 'Unauthorized') {
       await forceLoginRedirect();
     }
     // Pozostałe błędy zostaną przechwycone przez najbliższe error.tsx
-    throw new Error(error.message);
+    throw new Error(paymentError.message);
   }
 
-  return <PaymentsDashboardClient initialPayments={paymentsData.payments} />;
+  if (consentError) {
+    if (consentError.type === 'Unauthorized') {
+      await forceLoginRedirect();
+    }
+  }
+
+  const initialMarketingConsent = consentData?.hasConsent ?? false;
+
+  return (
+    <PaymentsDashboardClient 
+      initialPayments={paymentsData.payments} 
+      initialMarketingConsent={initialMarketingConsent} 
+    />
+  );
 }
