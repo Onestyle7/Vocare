@@ -1,8 +1,8 @@
 import Image from 'next/image';
 import React from 'react';
 
-import { timeline_icon_1 } from '@/features/marketing/constants/countries';
 import { HoverCard, HoverCardContent, HoverCardTrigger } from '@/components/ui/hover-card';
+import { timeline_icon_1 } from '@/features/marketing/constants/countries';
 import { cn } from '@/lib/utils';
 
 interface TimelineItem {
