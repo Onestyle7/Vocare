@@ -494,3 +494,8 @@ export const social_fb = '/asisstant/social-fb.svg';
 export const social_x = '/asisstant/social-x.svg';
 export const social_linkedin = '/asisstant/social-linkedin.svg';
 export const social_instagram = '/asisstant/social-instagram.svg';
+
+// Resume creator landing page feature
+export const resume_hero_img_1 = '/resume/resume-hero-img-1.avif';
+export const resume_hero_img_2 = '/resume/resume-hero-img-2.avif';
+export const resume_hero_img_3 = '/resume/resume-hero-img-3.avif';
