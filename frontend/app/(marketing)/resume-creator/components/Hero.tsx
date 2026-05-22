@@ -25,7 +25,7 @@ const heroCards = [
   {
     src: resume_hero_img_1,
     alt: 'Pokrycie z ofertą',
-    className: 'top-[2%] left-[4%] lg:top-[8%] lg:left-0',
+    className: 'top-[2%] left-[10%] lg:top-[8%] lg:left-0',
     priority: true,
     z: 'z-10',
   },
@@ -136,7 +136,7 @@ const Hero = () => {
             {heroCards.map((card) => (
               <div
                 key={card.alt}
-                className={`absolute aspect-[414/214] w-[56%] max-w-[280px] lg:w-[58%] lg:max-w-[290px] ${card.z} ${card.className}`}
+                className={`absolute aspect-[414/214] w-[46%] max-w-[280px] lg:w-[58%] lg:max-w-[290px] ${card.z} ${card.className}`}
               >
                 <Image
                   src={card.src}
