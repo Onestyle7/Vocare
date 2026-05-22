@@ -499,3 +499,7 @@ export const social_instagram = '/asisstant/social-instagram.svg';
 export const resume_hero_img_1 = '/resume/resume-hero-img-1.avif';
 export const resume_hero_img_2 = '/resume/resume-hero-img-2.avif';
 export const resume_hero_img_3 = '/resume/resume-hero-img-3.avif';
+
+export const upper_puzzle = '/resume/upper-puzzle.avif';
+export const bottom_puzzle = '/resume/bottom-puzzle.avif';
+export const glass_img = '/resume/glass_img.avif';
