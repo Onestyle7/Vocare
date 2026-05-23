@@ -1,7 +1,6 @@
 'use client';
 
 import { useGSAP } from '@gsap/react';
-// Importy GSAP
 import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { ArrowUpRight, MoreVertical } from 'lucide-react';
@@ -22,7 +21,6 @@ import {
   upper_puzzle,
 } from '@/features/marketing/constants';
 
-// Rejestracja pluginu ScrollTrigger
 if (typeof window !== 'undefined') {
   gsap.registerPlugin(ScrollTrigger);
 }
@@ -82,26 +80,22 @@ const Features = () => {
     setActiveSlide(activeIndex);
   };
 
-  // GSAP Animacja kart - zmiana na fromTo rozwiązuje problem z "flick"
   useGSAP(
     () => {
       const cards = gsap.utils.toArray('.desktop-card');
 
-      // Twarde przypisanie finalnych wartości Y i rotacji (odpowiedniki usuniętych klas Tailwinda)
-      const finalY = [112, 28, 0, 28, 112]; // odpowiada: translate-y-28, translate-y-7, 0, translate-y-7, translate-y-28
-      const finalRotations = [-24, -12, 0, 12, 24]; // odpowiada: -rotate-24, -rotate-12, 0, rotate-12, rotate-24
+      const finalY = [112, 28, 0, 28, 112];
+      const finalRotations = [-24, -12, 0, 12, 24];
 
       gsap.fromTo(
         cards,
         {
-          // STAN POCZĄTKOWY
           opacity: 0,
-          y: 300, // Zaczynają z dużo niższej pozycji
-          x: (i) => (i - 2) * 150, // Większe rozsunięcie na start
-          rotation: (i) => (i - 2) * 45, // Mocniejsza rotacja na start
+          y: 300,
+          x: (i) => (i - 2) * 150,
+          rotation: (i) => (i - 2) * 45,
         },
         {
-          // STAN KOŃCOWY
           opacity: 1,
           x: 0,
           y: (i) => finalY[i],
@@ -475,6 +469,21 @@ const Features = () => {
             ))}
           </div>
         </div>
+      </div>
+
+      <div className="mx-auto mt-4 w-full 2xl:max-w-7xl">
+        <div className="mb-3 flex w-full items-center justify-between px-1">
+          <span className="text-[11px] font-light text-[#F1F4FF] opacity-50 sm:text-[14px] lg:text-[16px]">
+            Wydaje się fajne, ale
+          </span>
+          <span className="text-[11px] font-light text-[#F1F4FF] opacity-50 sm:text-[14px] lg:text-[16px]">
+            co tak naprawdę
+          </span>
+          <span className="text-[11px] font-light text-[#F1F4FF] opacity-50 sm:text-[14px] lg:text-[16px]">
+            możesz zyskać?
+          </span>
+        </div>
+        <div className="h-px w-full bg-white opacity-10" />
       </div>
     </div>
   );

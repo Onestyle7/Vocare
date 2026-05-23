@@ -508,3 +508,6 @@ export const grid_sort = '/resume/grid-sort-descending.svg';
 export const grid_user = '/resume/grid_user.svg';
 export const grid_timer = '/resume/grid-timer.svg';
 export const grid_docs = '/resume/grid-docs.svg';
+
+export const generowanie_cv = '/resume/generowanie-cv.mp4';
+export const analiza_brakow = '/resume/analiza-brakow.mp4';
