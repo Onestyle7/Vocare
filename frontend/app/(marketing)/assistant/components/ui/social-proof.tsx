@@ -13,7 +13,7 @@ import SocialProofCard from './social-proof-card';
 
 const SocialProof = () => {
   return (
-    <div className="relative grid w-full grid-cols-1 items-start gap-5 lg:grid-cols-2">
+    <div className="relative grid w-full grid-cols-1 items-start gap-5 overflow-hidden lg:grid-cols-2">
       <div className="flex flex-col gap-5">
         <SocialProofCard
           compact
