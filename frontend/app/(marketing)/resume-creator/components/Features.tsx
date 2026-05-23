@@ -1,11 +1,61 @@
 'use client';
 
+import { ArrowUpRight, MoreVertical } from 'lucide-react';
 import Image from 'next/image';
+import Link from 'next/link';
 import { useRef } from 'react';
 
 import Button from '@/components/ui/assistant-button';
 import { Separator } from '@/components/ui/separator';
-import { arrow_icon, bottom_puzzle, glass_img, upper_puzzle } from '@/features/marketing/constants';
+import {
+  arrow_icon,
+  bottom_puzzle,
+  glass_img,
+  grid_docs,
+  grid_sort,
+  grid_timer,
+  grid_user,
+  upper_puzzle,
+} from '@/features/marketing/constants';
+
+const featuresList = [
+  {
+    icon: grid_sort,
+    label: 'Layout',
+    number: 1,
+    title: 'Layout stworzony pod ATS',
+    description:
+      'Twoje CV wygląda profesjonalnie i jednocześnie przechodzi każdy system rekrutacyjny. Format zoptymalizowany pod ATS oznacza, że Twoja aplikacja dotrze do rekrutera - nie do kosza.',
+    href: '#',
+  },
+  {
+    icon: grid_user,
+    label: 'Personalizacja',
+    number: 2,
+    title: 'Dopasowane sekcje',
+    description:
+      'AI sam decyduje, które Twoje doświadczenia i umiejętności wyciągnąć na pierwszy plan w zależności od tego, na jakie stanowisko aplikujesz.',
+    href: '#',
+  },
+  {
+    icon: grid_timer,
+    label: 'Czas',
+    number: 3,
+    title: 'Automatyczne uzupełnianie',
+    description:
+      'Nie musisz wpisywać wszystkiego od nowa. Kreator pobiera Twoje doświadczenie, wykształcenie i umiejętności prosto z profilu w aplikacji.',
+    href: '#',
+  },
+  {
+    icon: grid_docs,
+    label: 'Eksport i gotowość',
+    number: 4,
+    title: 'Gotowe CV w PDF',
+    description:
+      'Jedno kliknięcie - pobierasz czyste, profesjonalne CV gotowe do wysłania. Bez walki z formatowaniem w Wordzie.',
+    href: '#',
+  },
+];
 
 const Features = () => {
   const bentoRef = useRef<HTMLDivElement>(null);
@@ -48,6 +98,7 @@ const Features = () => {
             </Button>
           </div>
         </div>
+
         <div className="flex w-full flex-row items-center justify-center gap-8">
           {/* Card 1 */}
           <div className="z-0 h-[318px] w-[216px] translate-y-28 -rotate-24 rounded-[24px] bg-gradient-to-br from-white/20 via-white/10 via-[50%] to-transparent to-[55%] p-[1px]">
@@ -174,6 +225,46 @@ const Features = () => {
                 konkretnymi sugestiami co uzupełnić.
               </p>
             </div>
+          </div>
+        </div>
+
+        {/* Bento grid */}
+        <div
+          ref={bentoRef}
+          className="relative mx-auto flex w-full max-w-5xl flex-col px-4 pt-40 pb-12 sm:px-8 sm:pt-48 sm:pb-16 md:px-12 lg:px-16 lg:pt-56 lg:pb-20"
+        >
+          <div className="grid grid-cols-1 gap-x-32 gap-y-14 md:grid-cols-2 lg:gap-x-48">
+            {featuresList.map((item) => (
+              <div key={item.number} className="flex flex-col">
+                <div className="mb-5 flex items-center justify-between">
+                  <div className="flex items-center gap-2.5">
+                    <Image src={item.icon} alt="" width={20} height={20} />
+                    <span className="text-[15px] font-light text-[#F1F4FF] opacity-90">
+                      {item.label}
+                    </span>
+                  </div>
+                  <MoreVertical size={18} className="text-[#F1F4FF] opacity-40" />
+                </div>
+
+                <Separator className="mb-8 h-[1px]! bg-[#FFFFFF]/10!" />
+
+                <h3 className="mb-4 text-[20px] leading-[1.3] font-light text-[#F1F4FF] opacity-90 lg:text-[22px]">
+                  {item.number}. {item.title}
+                </h3>
+
+                <p className="mb-8 text-[14px] leading-6 font-light text-[#F1F4FF] opacity-50">
+                  {item.description}
+                </p>
+
+                <Link
+                  href={item.href}
+                  className="inline-flex items-center gap-1.5 text-[14px] text-[#F1F4FF] opacity-70 transition-opacity hover:opacity-100"
+                >
+                  Dowiedz się więcej
+                  <ArrowUpRight size={14} />
+                </Link>
+              </div>
+            ))}
           </div>
         </div>
       </div>
