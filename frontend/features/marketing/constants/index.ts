@@ -503,3 +503,8 @@ export const resume_hero_img_3 = '/resume/resume-hero-img-3.avif';
 export const upper_puzzle = '/resume/upper-puzzle.avif';
 export const bottom_puzzle = '/resume/bottom-puzzle.avif';
 export const glass_img = '/resume/glass_img.avif';
+
+export const grid_sort = '/resume/grid-sort-descending.svg';
+export const grid_user = '/resume/grid_user.svg';
+export const grid_timer = '/resume/grid-timer.svg';
+export const grid_docs = '/resume/grid-docs.svg';
