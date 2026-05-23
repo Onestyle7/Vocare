@@ -1,5 +1,9 @@
 'use client';
 
+import { useGSAP } from '@gsap/react';
+// Importy GSAP
+import gsap from 'gsap';
+import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { ArrowUpRight, MoreVertical } from 'lucide-react';
 import Image from 'next/image';
 import Link from 'next/link';
@@ -17,6 +21,11 @@ import {
   grid_user,
   upper_puzzle,
 } from '@/features/marketing/constants';
+
+// Rejestracja pluginu ScrollTrigger
+if (typeof window !== 'undefined') {
+  gsap.registerPlugin(ScrollTrigger);
+}
 
 const featuresList = [
   {
@@ -59,20 +68,57 @@ const featuresList = [
 
 const Features = () => {
   const bentoRef = useRef<HTMLDivElement>(null);
+  const cardsContainerRef = useRef<HTMLDivElement>(null);
   const [activeSlide, setActiveSlide] = useState(0);
 
   const scrollToBento = () => {
     bentoRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
   };
 
-  // Funkcja obsługująca przewijanie i aktualizująca aktywną kropkę
   const handleScroll = (e: React.UIEvent<HTMLDivElement>) => {
     const scrollLeft = e.currentTarget.scrollLeft;
     const clientWidth = e.currentTarget.clientWidth;
-    // Obliczanie indeksu aktywnej karty (zaokrąglanie do najbliższej)
     const activeIndex = Math.round(scrollLeft / clientWidth);
     setActiveSlide(activeIndex);
   };
+
+  // GSAP Animacja kart - zmiana na fromTo rozwiązuje problem z "flick"
+  useGSAP(
+    () => {
+      const cards = gsap.utils.toArray('.desktop-card');
+
+      // Twarde przypisanie finalnych wartości Y i rotacji (odpowiedniki usuniętych klas Tailwinda)
+      const finalY = [112, 28, 0, 28, 112]; // odpowiada: translate-y-28, translate-y-7, 0, translate-y-7, translate-y-28
+      const finalRotations = [-24, -12, 0, 12, 24]; // odpowiada: -rotate-24, -rotate-12, 0, rotate-12, rotate-24
+
+      gsap.fromTo(
+        cards,
+        {
+          // STAN POCZĄTKOWY
+          opacity: 0,
+          y: 300, // Zaczynają z dużo niższej pozycji
+          x: (i) => (i - 2) * 150, // Większe rozsunięcie na start
+          rotation: (i) => (i - 2) * 45, // Mocniejsza rotacja na start
+        },
+        {
+          // STAN KOŃCOWY
+          opacity: 1,
+          x: 0,
+          y: (i) => finalY[i],
+          rotation: (i) => finalRotations[i],
+          transformOrigin: 'bottom center',
+          ease: 'power2.out',
+          scrollTrigger: {
+            trigger: cardsContainerRef.current,
+            start: 'top 85%',
+            end: 'top 35%',
+            scrub: 1.5,
+          },
+        }
+      );
+    },
+    { scope: cardsContainerRef }
+  );
 
   return (
     <div className="font-poppins flex flex-col bg-[#0F1013] p-3 sm:p-5">
@@ -259,10 +305,11 @@ const Features = () => {
           </div>
         </div>
 
-        {/* Desktop view */}
-        <div className="hidden w-full items-center justify-center gap-8 px-0 lg:flex">
-          {/* Card 1 */}
-          <div className="z-0 h-[318px] w-[216px] rounded-[24px] bg-gradient-to-br from-white/20 via-white/10 via-[50%] to-transparent to-[55%] p-[1px] lg:translate-y-28 lg:-rotate-24">
+        <div
+          ref={cardsContainerRef}
+          className="hidden w-full items-center justify-center gap-0 px-0 lg:flex"
+        >
+          <div className="desktop-card z-0 h-[318px] w-[216px] rounded-[24px] bg-gradient-to-br from-white/20 via-white/10 via-[50%] to-transparent to-[55%] p-[1px]">
             <div className="flex h-full w-full flex-col space-y-[21px] rounded-[23px] bg-[#202125] p-5">
               <p className="text-[22px] opacity-[75%]">Analiza ATS</p>
               <Separator className="h-[1px]! bg-[#FFFFFF]/50!" />
@@ -273,8 +320,7 @@ const Features = () => {
             </div>
           </div>
 
-          {/* Card 2 */}
-          <div className="z-10 h-[318px] w-[216px] rounded-[24px] bg-gradient-to-br from-white/20 via-white/10 via-[50%] to-transparent to-[55%] p-[1px] lg:translate-y-7 lg:-rotate-12">
+          <div className="desktop-card z-10 h-[318px] w-[216px] rounded-[24px] bg-gradient-to-br from-white/20 via-white/10 via-[50%] to-transparent to-[55%] p-[1px]">
             <div className="relative h-full w-full overflow-hidden rounded-[23px] bg-[#202125]">
               <div className="pointer-events-none absolute inset-0 z-0">
                 {[
@@ -327,8 +373,7 @@ const Features = () => {
             </div>
           </div>
 
-          {/* Card 3 */}
-          <div className="z-20 h-[318px] w-[216px] rounded-[24px] bg-gradient-to-br from-white/20 via-white/10 via-[50%] to-transparent to-[55%] p-[1px]">
+          <div className="desktop-card z-20 h-[318px] w-[216px] rounded-[24px] bg-gradient-to-br from-white/20 via-white/10 via-[50%] to-transparent to-[55%] p-[1px]">
             <div className="flex h-full w-full flex-col space-y-[21px] rounded-[23px] bg-[#202125] p-5">
               <p className="text-[22px] opacity-[75%]">Dopasowanie do oferty</p>
               <Separator className="h-[1px]! bg-[#FFFFFF]/50!" />
@@ -339,8 +384,7 @@ const Features = () => {
             </div>
           </div>
 
-          {/* Card 4 */}
-          <div className="z-10 h-[318px] w-[216px] rounded-[24px] bg-gradient-to-br from-white/20 via-white/10 via-[50%] to-transparent to-[55%] p-[1px] lg:translate-y-7 lg:rotate-12">
+          <div className="desktop-card z-10 h-[318px] w-[216px] rounded-[24px] bg-gradient-to-br from-white/20 via-white/10 via-[50%] to-transparent to-[55%] p-[1px]">
             <div className="relative h-full w-full overflow-hidden rounded-[23px] bg-[#202125]">
               <div className="pointer-events-none absolute inset-0 z-0">
                 {[
@@ -380,8 +424,7 @@ const Features = () => {
             </div>
           </div>
 
-          {/* Card 5 */}
-          <div className="z-0 h-[318px] w-[216px] rounded-[24px] bg-gradient-to-br from-white/20 via-white/10 via-[50%] to-transparent to-[55%] p-[1px] lg:translate-y-28 lg:rotate-24">
+          <div className="desktop-card z-0 h-[318px] w-[216px] rounded-[24px] bg-gradient-to-br from-white/20 via-white/10 via-[50%] to-transparent to-[55%] p-[1px]">
             <div className="flex h-full w-full flex-col space-y-[21px] rounded-[23px] bg-[#202125] p-5">
               <p className="text-[22px] opacity-[75%]">Brakujące umiejętności</p>
               <Separator className="h-[1px]! bg-[#FFFFFF]/50!" />
