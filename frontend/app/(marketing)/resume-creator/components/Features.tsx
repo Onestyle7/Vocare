@@ -99,9 +99,9 @@ const Features = () => {
           </div>
         </div>
 
-        <div className="flex w-full flex-row items-center justify-center gap-8">
+        <div className="flex w-full flex-col items-center justify-center gap-6 px-4 lg:flex-row lg:gap-8 lg:px-0">
           {/* Card 1 */}
-          <div className="z-0 h-[318px] w-[216px] translate-y-28 -rotate-24 rounded-[24px] bg-gradient-to-br from-white/20 via-white/10 via-[50%] to-transparent to-[55%] p-[1px]">
+          <div className="z-0 h-[318px] w-[216px] rounded-[24px] bg-gradient-to-br from-white/20 via-white/10 via-[50%] to-transparent to-[55%] p-[1px] lg:translate-y-28 lg:-rotate-24">
             <div className="flex h-full w-full flex-col space-y-[21px] rounded-[23px] bg-[#202125] p-5">
               <p className="text-[22px] opacity-[75%]">Analiza ATS</p>
               <Separator className="h-[1px]! bg-[#FFFFFF]/50!" />
@@ -113,7 +113,7 @@ const Features = () => {
           </div>
 
           {/* Card 2 */}
-          <div className="z-10 h-[318px] w-[216px] translate-y-7 -rotate-12 rounded-[24px] bg-gradient-to-br from-white/20 via-white/10 via-[50%] to-transparent to-[55%] p-[1px]">
+          <div className="z-10 h-[318px] w-[216px] rounded-[24px] bg-gradient-to-br from-white/20 via-white/10 via-[50%] to-transparent to-[55%] p-[1px] lg:translate-y-7 lg:-rotate-12">
             <div className="relative h-full w-full overflow-hidden rounded-[23px] bg-[#202125]">
               <div className="pointer-events-none absolute inset-0 z-0">
                 {[
@@ -177,7 +177,7 @@ const Features = () => {
           </div>
 
           {/* Card 4 */}
-          <div className="z-10 h-[318px] w-[216px] translate-y-7 rotate-12 rounded-[24px] bg-gradient-to-br from-white/20 via-white/10 via-[50%] to-transparent to-[55%] p-[1px]">
+          <div className="z-10 h-[318px] w-[216px] rounded-[24px] bg-gradient-to-br from-white/20 via-white/10 via-[50%] to-transparent to-[55%] p-[1px] lg:translate-y-7 lg:rotate-12">
             <div className="relative h-full w-full overflow-hidden rounded-[23px] bg-[#202125]">
               <div className="pointer-events-none absolute inset-0 z-0">
                 {[
@@ -216,7 +216,7 @@ const Features = () => {
           </div>
 
           {/* Card 5 */}
-          <div className="z-0 h-[318px] w-[216px] translate-y-28 rotate-24 rounded-[24px] bg-gradient-to-br from-white/20 via-white/10 via-[50%] to-transparent to-[55%] p-[1px]">
+          <div className="z-0 h-[318px] w-[216px] rounded-[24px] bg-gradient-to-br from-white/20 via-white/10 via-[50%] to-transparent to-[55%] p-[1px] lg:translate-y-28 lg:rotate-24">
             <div className="flex h-full w-full flex-col space-y-[21px] rounded-[23px] bg-[#202125] p-5">
               <p className="text-[22px] opacity-[75%]">Brakujące umiejętności</p>
               <Separator className="h-[1px]! bg-[#FFFFFF]/50!" />
@@ -231,7 +231,7 @@ const Features = () => {
         {/* Bento grid */}
         <div
           ref={bentoRef}
-          className="relative mx-auto flex w-full max-w-5xl flex-col px-4 pt-40 pb-12 sm:px-8 sm:pt-48 sm:pb-16 md:px-12 lg:px-16 lg:pt-56 lg:pb-20"
+          className="relative mx-auto flex w-full max-w-5xl flex-col px-4 pt-16 pb-12 sm:px-8 sm:pt-20 sm:pb-16 md:px-12 lg:px-16 lg:pt-56 lg:pb-20"
         >
           <div className="grid grid-cols-1 gap-x-32 gap-y-14 md:grid-cols-2 lg:gap-x-48">
             {featuresList.map((item) => (
