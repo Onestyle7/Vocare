@@ -3,7 +3,7 @@
 import { ArrowUpRight, MoreVertical } from 'lucide-react';
 import Image from 'next/image';
 import Link from 'next/link';
-import { useRef } from 'react';
+import { useRef, useState } from 'react';
 
 import Button from '@/components/ui/assistant-button';
 import { Separator } from '@/components/ui/separator';
@@ -59,9 +59,19 @@ const featuresList = [
 
 const Features = () => {
   const bentoRef = useRef<HTMLDivElement>(null);
+  const [activeSlide, setActiveSlide] = useState(0);
 
   const scrollToBento = () => {
     bentoRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  };
+
+  // Funkcja obsługująca przewijanie i aktualizująca aktywną kropkę
+  const handleScroll = (e: React.UIEvent<HTMLDivElement>) => {
+    const scrollLeft = e.currentTarget.scrollLeft;
+    const clientWidth = e.currentTarget.clientWidth;
+    // Obliczanie indeksu aktywnej karty (zaokrąglanie do najbliższej)
+    const activeIndex = Math.round(scrollLeft / clientWidth);
+    setActiveSlide(activeIndex);
   };
 
   return (
@@ -99,7 +109,158 @@ const Features = () => {
           </div>
         </div>
 
-        <div className="flex w-full flex-col items-center justify-center gap-6 px-4 lg:flex-row lg:gap-8 lg:px-0">
+        <div className="mx-auto flex w-full max-w-[360px] flex-col items-center pt-10 pb-4 lg:hidden">
+          <div
+            className="flex w-full snap-x snap-mandatory gap-4 overflow-x-auto px-4 pb-6 [&::-webkit-scrollbar]:hidden"
+            onScroll={handleScroll}
+          >
+            {/* Mobile Card 1 */}
+            <div className="z-0 h-[250px] w-full shrink-0 snap-center rounded-[24px] bg-gradient-to-br from-white/20 via-white/10 via-[50%] to-transparent to-[55%] p-[1px]">
+              <div className="flex h-full w-full flex-col space-y-[21px] rounded-[23px] bg-[#202125] p-5">
+                <p className="text-[22px] opacity-[75%]">Analiza ATS</p>
+                <Separator className="h-[1px]! bg-[#FFFFFF]/50!" />
+                <p className="text-[16px] font-light opacity-[50%]">
+                  Twoje CV jest automatycznie sprawdzane pod kątem zgodności z systemami ATS. Koniec
+                  z odrzuceniem przez robota.
+                </p>
+              </div>
+            </div>
+
+            {/* Mobile Card 2 */}
+            <div className="z-10 h-[250px] w-full shrink-0 snap-center rounded-[24px] bg-gradient-to-br from-white/20 via-white/10 via-[50%] to-transparent to-[55%] p-[1px]">
+              <div className="relative h-full w-full overflow-hidden rounded-[23px] bg-[#202125]">
+                <div className="pointer-events-none absolute inset-0 z-0">
+                  {[
+                    { row: 1, col: 1, opacity: 0.05 },
+                    { row: 3, col: 3, opacity: 0.04 },
+                    { row: 5, col: 0, opacity: 0.05 },
+                    { row: 6, col: 3, opacity: 0.03 },
+                  ].map((cell, i) => (
+                    <div
+                      key={i}
+                      className="absolute"
+                      style={{
+                        top: cell.row * 43,
+                        left: cell.col * 43,
+                        width: 43,
+                        height: 43,
+                        backgroundColor: `rgba(255, 255, 255, ${cell.opacity})`,
+                      }}
+                    />
+                  ))}
+                </div>
+
+                <div
+                  className="pointer-events-none absolute inset-0 z-0 opacity-30"
+                  style={{
+                    backgroundImage: `
+                      linear-gradient(to right, rgba(255, 255, 255, 0.1) 1px, transparent 1px),
+                      linear-gradient(to bottom, rgba(255, 255, 255, 0.1) 1px, transparent 1px)
+                    `,
+                    backgroundSize: '43px 43px',
+                  }}
+                />
+
+                <div className="pointer-events-none absolute inset-0 z-10 flex flex-col items-center justify-center">
+                  <Image
+                    src={upper_puzzle}
+                    alt="puzzle top"
+                    width={140}
+                    height={140}
+                    className="-mb-3 rotate-12"
+                  />
+                  <Image
+                    src={bottom_puzzle}
+                    alt="puzzle bottom"
+                    width={90}
+                    height={90}
+                    className="-mt-8 -ml-2 rotate-12"
+                  />
+                </div>
+              </div>
+            </div>
+
+            {/* Mobile Card 3 */}
+            <div className="z-20 h-[250px] w-full shrink-0 snap-center rounded-[24px] bg-gradient-to-br from-white/20 via-white/10 via-[50%] to-transparent to-[55%] p-[1px]">
+              <div className="flex h-full w-full flex-col space-y-[21px] rounded-[23px] bg-[#202125] p-5">
+                <p className="text-[22px] opacity-[75%]">Dopasowanie do oferty</p>
+                <Separator className="h-[1px]! bg-[#FFFFFF]/50!" />
+                <p className="text-[16px] font-light opacity-[50%]">
+                  Twoje CV jest automatycznie sprawdzane pod kątem zgodności z systemami ATS. Koniec
+                  z odrzuceniem przez robota.
+                </p>
+              </div>
+            </div>
+
+            {/* Mobile Card 4 */}
+            <div className="z-10 h-[250px] w-full shrink-0 snap-center rounded-[24px] bg-gradient-to-br from-white/20 via-white/10 via-[50%] to-transparent to-[55%] p-[1px]">
+              <div className="relative h-full w-full overflow-hidden rounded-[23px] bg-[#202125]">
+                <div className="pointer-events-none absolute inset-0 z-0">
+                  {[
+                    { row: 0, col: 2, opacity: 0.04 },
+                    { row: 2, col: 0, opacity: 0.05 },
+                    { row: 4, col: 3, opacity: 0.03 },
+                    { row: 6, col: 1, opacity: 0.05 },
+                  ].map((cell, i) => (
+                    <div
+                      key={i}
+                      className="absolute"
+                      style={{
+                        top: cell.row * 43,
+                        left: cell.col * 43,
+                        width: 43,
+                        height: 43,
+                        backgroundColor: `rgba(255, 255, 255, ${cell.opacity})`,
+                      }}
+                    />
+                  ))}
+                </div>
+
+                <div
+                  className="pointer-events-none absolute inset-0 z-0 opacity-30"
+                  style={{
+                    backgroundImage: `
+                      linear-gradient(to right, rgba(255, 255, 255, 0.1) 1px, transparent 1px),
+                      linear-gradient(to bottom, rgba(255, 255, 255, 0.1) 1px, transparent 1px)
+                    `,
+                    backgroundSize: '43px 43px',
+                  }}
+                />
+
+                <div className="pointer-events-none absolute inset-0 z-10 flex items-center justify-center">
+                  <Image src={glass_img} alt="magnifying glass" width={240} height={240} />
+                </div>
+              </div>
+            </div>
+
+            {/* Mobile Card 5 */}
+            <div className="z-0 h-[250px] w-full shrink-0 snap-center rounded-[24px] bg-gradient-to-br from-white/20 via-white/10 via-[50%] to-transparent to-[55%] p-[1px]">
+              <div className="flex h-full w-full flex-col space-y-[21px] rounded-[23px] bg-[#202125] p-5">
+                <p className="text-[22px] opacity-[75%]">Brakujące umiejętności</p>
+                <Separator className="h-[1px]! bg-[#FFFFFF]/50!" />
+                <p className="text-[16px] font-light opacity-[50%]">
+                  Otrzymujesz listę skilli, których brakuje Ci do idealnego dopasowania wraz z
+                  konkretnymi sugestiami co uzupełnić.
+                </p>
+              </div>
+            </div>
+          </div>
+
+          {/* Kropki paginacji mobilnej */}
+          <div className="flex gap-2">
+            {[0, 1, 2, 3, 4].map((index) => (
+              <div
+                key={index}
+                className={`h-2 w-2 rounded-full transition-colors duration-300 ${
+                  activeSlide === index ? 'bg-[#C7A9FE]' : 'bg-white/20'
+                }`}
+              />
+            ))}
+          </div>
+        </div>
+
+        {/* Desktop view */}
+        <div className="hidden w-full items-center justify-center gap-8 px-0 lg:flex">
           {/* Card 1 */}
           <div className="z-0 h-[318px] w-[216px] rounded-[24px] bg-gradient-to-br from-white/20 via-white/10 via-[50%] to-transparent to-[55%] p-[1px] lg:translate-y-28 lg:-rotate-24">
             <div className="flex h-full w-full flex-col space-y-[21px] rounded-[23px] bg-[#202125] p-5">
@@ -135,16 +296,18 @@ const Features = () => {
                   />
                 ))}
               </div>
+
               <div
                 className="pointer-events-none absolute inset-0 z-0 opacity-30"
                 style={{
                   backgroundImage: `
-      linear-gradient(to right, rgba(255, 255, 255, 0.1) 1px, transparent 1px),
-      linear-gradient(to bottom, rgba(255, 255, 255, 0.1) 1px, transparent 1px)
-    `,
+                    linear-gradient(to right, rgba(255, 255, 255, 0.1) 1px, transparent 1px),
+                    linear-gradient(to bottom, rgba(255, 255, 255, 0.1) 1px, transparent 1px)
+                  `,
                   backgroundSize: '43px 43px',
                 }}
               />
+
               <div className="pointer-events-none absolute inset-0 z-10 flex flex-col items-center justify-center">
                 <Image
                   src={upper_puzzle}
@@ -199,16 +362,18 @@ const Features = () => {
                   />
                 ))}
               </div>
+
               <div
                 className="pointer-events-none absolute inset-0 z-0 opacity-30"
                 style={{
                   backgroundImage: `
-      linear-gradient(to right, rgba(255, 255, 255, 0.1) 1px, transparent 1px),
-      linear-gradient(to bottom, rgba(255, 255, 255, 0.1) 1px, transparent 1px)
-    `,
+                    linear-gradient(to right, rgba(255, 255, 255, 0.1) 1px, transparent 1px),
+                    linear-gradient(to bottom, rgba(255, 255, 255, 0.1) 1px, transparent 1px)
+                  `,
                   backgroundSize: '43px 43px',
                 }}
               />
+
               <div className="pointer-events-none absolute inset-0 z-10 flex items-center justify-center">
                 <Image src={glass_img} alt="magnifying glass" width={320} height={320} />
               </div>
