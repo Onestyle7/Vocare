@@ -1,6 +1,5 @@
 'use client';
 
-import { AxiosError } from 'axios';
 import { ArrowRight, Clock, Layers3, Plus, Trash2 } from 'lucide-react';
 import Link from 'next/link';
 import { usePathname, useRouter, useSearchParams } from 'next/navigation';
@@ -37,12 +36,13 @@ import {
 } from '@/components/ui/select';
 import { Separator } from '@/components/ui/separator';
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
+import { useTokenBalanceContext } from '@/features/billing/components/SubscriptionTokenProvider';
 import { GridBackgroundDemo } from '@/features/market-analysis/components/GridBackgroundDemo';
-import { RecommendationsApiService } from '@/features/roadmap/RecommendationApiServiice';
-import { archiveRoadmap, generateRoadmap, getUserRoadmaps } from '@/features/roadmap/roadmap';
 import type { CareerPath } from '@/lib/types/recommendation';
 import type { GenerateRoadmapPayload, RoadmapListItemDto } from '@/lib/types/roadmap';
 import { cn } from '@/lib/utils';
+
+import { useRoadmapDashboardActions } from '../hooks/useRoadmapDashboardActions';
 
 const timeHorizonOptions = [3, 6, 9, 12, 18, 24] as const;
 const DEFAULT_ROADMAP_LIMIT = 1;
@@ -59,27 +59,7 @@ const formatDate = (value: string) =>
     hour12: false,
   });
 
-const normalizeErrorMessage = (error: unknown) => {
-  if (error instanceof AxiosError) {
-    const payload = error.response?.data as
-      | { Error?: string; error?: string; detail?: string }
-      | string
-      | undefined;
-
-    if (typeof payload === 'string' && payload.trim()) {
-      return payload;
-    }
-    if (payload && typeof payload === 'object') {
-      return payload.Error || payload.error || payload.detail || 'Request failed.';
-    }
-  }
-
-  if (error instanceof Error && error.message) {
-    return error.message;
-  }
-
-  return 'Wystapil nieoczekiwany blad.';
-};
+// removed normalizeErrorMessage
 
 const formatRoadmapLimitNoun = (count: number) => {
   if (count === 1) return 'roadmapę';
@@ -100,27 +80,36 @@ const formatRoadmapStatusLabel = (status: RoadmapListItemDto['status']) => {
   }
 };
 
-export default function RoadmapDashboardPage() {
+interface RoadmapDashboardPageProps {
+  initialRoadmaps: RoadmapListItemDto[];
+  initialError: string | null;
+  availableCareerPaths: CareerPathOption[];
+}
+
+export default function RoadmapDashboardPage({
+  initialRoadmaps,
+  initialError,
+  availableCareerPaths: serverCareerPaths,
+}: RoadmapDashboardPageProps) {
   const pathname = usePathname();
   const router = useRouter();
   const searchParams = useSearchParams();
-  const recommendationsApi = useMemo(() => new RecommendationsApiService(), []);
+  const { subscriptionStatus } = useTokenBalanceContext();
+  const { handleGenerateRoadmap, handleArchiveRoadmap, isPending, deletingId } =
+    useRoadmapDashboardActions();
 
   const [timeHorizonMonths, setTimeHorizonMonths] = useState<number>(9);
-  const [roadmaps, setRoadmaps] = useState<RoadmapListItemDto[]>([]);
-  const [isLoadingRoadmaps, setIsLoadingRoadmaps] = useState(true);
-  const [isCreatingRoadmap, setIsCreatingRoadmap] = useState(false);
   const [isCreateDialogOpen, setIsCreateDialogOpen] = useState(false);
-  const [careerPathOptions, setCareerPathOptions] = useState<CareerPathOption[]>([]);
-  const [isLoadingCareerPaths, setIsLoadingCareerPaths] = useState(false);
-  const [careerPathsError, setCareerPathsError] = useState<string | null>(null);
   const [selectedCareerPathId, setSelectedCareerPathId] = useState('');
   const [selectedCareerPathName, setSelectedCareerPathName] = useState('');
-  const [deletingRoadmapId, setDeletingRoadmapId] = useState<string | null>(null);
   const [deleteDialogRoadmapId, setDeleteDialogRoadmapId] = useState<string | null>(null);
-  const [roadmapsError, setRoadmapsError] = useState<string | null>(null);
-  const [roadmapLimit, setRoadmapLimit] = useState<number | null>(null);
-  const [isLoadingRoadmapLimit, setIsLoadingRoadmapLimit] = useState(true);
+
+  const roadmaps = initialRoadmaps;
+  const roadmapsError = initialError;
+  const isCreatingRoadmap = isPending;
+  const deletingRoadmapId = deletingId;
+  const roadmapLimit =
+    subscriptionStatus === 'Active' ? PREMIUM_ROADMAP_LIMIT : DEFAULT_ROADMAP_LIMIT;
 
   const intentCareerPathId = searchParams.get('careerPathId') ?? '';
   const intentCareerPathName = searchParams.get('careerPathName') ?? '';
@@ -138,16 +127,14 @@ export default function RoadmapDashboardPage() {
     [roadmaps]
   );
   const currentRoadmapCount = roadmaps.length;
-  const isLoadingCreateAccess = isLoadingRoadmaps || isLoadingRoadmapLimit;
-  const isRoadmapLimitReached =
-    roadmapLimit !== null && currentRoadmapCount >= roadmapLimit && !isLoadingCreateAccess;
+  const isRoadmapLimitReached = currentRoadmapCount >= roadmapLimit;
 
   const availableCareerPaths = useMemo(() => {
     if (
       !selectedCareerPathId ||
-      careerPathOptions.some((path) => path.id === selectedCareerPathId)
+      serverCareerPaths.some((path) => path.id === selectedCareerPathId)
     ) {
-      return careerPathOptions;
+      return serverCareerPaths;
     }
 
     return [
@@ -156,9 +143,9 @@ export default function RoadmapDashboardPage() {
         careerName: selectedCareerPathName || 'Wybrana sciezka kariery',
         description: '',
       },
-      ...careerPathOptions,
+      ...serverCareerPaths,
     ];
-  }, [careerPathOptions, selectedCareerPathId, selectedCareerPathName]);
+  }, [serverCareerPaths, selectedCareerPathId, selectedCareerPathName]);
 
   const selectedPathExistingRoadmap = useMemo(() => {
     const normalizedCareerPathName = selectedCareerPathName.trim().toLowerCase();
@@ -180,26 +167,14 @@ export default function RoadmapDashboardPage() {
     !isRoadmapLimitReached;
 
   const roadmapUsageLabel = useMemo(() => {
-    if (isLoadingCreateAccess) {
-      return '...';
-    }
-
-    return `${currentRoadmapCount}/${roadmapLimit ?? '?'}`;
-  }, [currentRoadmapCount, isLoadingCreateAccess, roadmapLimit]);
+    return `${currentRoadmapCount}/${roadmapLimit}`;
+  }, [currentRoadmapCount, roadmapLimit]);
 
   const roadmapLimitDescription = useMemo(() => {
-    if (roadmapLimit === null) {
-      return 'Zarządzaj aktualnymi roadmapami i twórz kolejne z poziomu popupu.';
-    }
-
     return `Możesz mieć maksymalnie ${roadmapLimit} ${formatRoadmapLimitNoun(roadmapLimit)} w swoim aktualnym planie.`;
   }, [roadmapLimit]);
 
   const roadmapLimitHoverMessage = useMemo(() => {
-    if (roadmapLimit === null) {
-      return 'Osiągnięto limit roadmap dla obecnego planu. Usuń roadmapę albo przejdź na Pro.';
-    }
-
     return `Osiągnięto limit roadmap dla obecnego planu (${currentRoadmapCount}/${roadmapLimit}). Usuń roadmapę albo przejdź na Pro.`;
   }, [currentRoadmapCount, roadmapLimit]);
 
@@ -234,94 +209,8 @@ export default function RoadmapDashboardPage() {
     setIsCreateDialogOpen(true);
   }, [isRoadmapLimitReached, showRoadmapLimitReachedToast]);
 
-  const fetchRoadmaps = useCallback(async (signal?: AbortSignal) => {
-    setIsLoadingRoadmaps(true);
-    setRoadmapsError(null);
-
-    try {
-      const data = await getUserRoadmaps({ signal });
-      setRoadmaps(data);
-    } catch (error) {
-      if ((error as DOMException)?.name === 'CanceledError' || signal?.aborted) {
-        return;
-      }
-
-      const message = normalizeErrorMessage(error);
-      setRoadmapsError(message);
-    } finally {
-      if (!signal?.aborted) {
-        setIsLoadingRoadmaps(false);
-      }
-    }
-  }, []);
-
-  useEffect(() => {
-    const controller = new AbortController();
-    void fetchRoadmaps(controller.signal);
-    return () => controller.abort();
-  }, [fetchRoadmaps]);
-
-  const fetchRoadmapLimit = useCallback(async (signal?: AbortSignal) => {
-    setIsLoadingRoadmapLimit(true);
-
-    try {
-      const data = await getSubscriptionStatus({ signal });
-      const nextLimit =
-        data.subscriptionStatus?.trim().toLowerCase() === 'active'
-          ? PREMIUM_ROADMAP_LIMIT
-          : DEFAULT_ROADMAP_LIMIT;
-
-      setRoadmapLimit(nextLimit);
-    } catch (error) {
-      if ((error as DOMException)?.name === 'CanceledError' || signal?.aborted) {
-        return;
-      }
-
-      if (error instanceof AxiosError && error.response?.status === 404) {
-        setRoadmapLimit(DEFAULT_ROADMAP_LIMIT);
-        return;
-      }
-
-      setRoadmapLimit(null);
-    } finally {
-      if (!signal?.aborted) {
-        setIsLoadingRoadmapLimit(false);
-      }
-    }
-  }, []);
-
-  useEffect(() => {
-    const controller = new AbortController();
-    void fetchRoadmapLimit(controller.signal);
-    return () => controller.abort();
-  }, [fetchRoadmapLimit]);
-
-  const loadCareerPaths = useCallback(async () => {
-    setIsLoadingCareerPaths(true);
-    setCareerPathsError(null);
-
-    try {
-      const data = await recommendationsApi.getLastRecommendation();
-      const nextCareerPaths = data.careerPaths.map((path) => ({
-        id: path.id,
-        careerName: path.careerName,
-        description: path.description,
-      }));
-
-      setCareerPathOptions(nextCareerPaths);
-    } catch (error) {
-      setCareerPathsError(normalizeErrorMessage(error));
-    } finally {
-      setIsLoadingCareerPaths(false);
-    }
-  }, [recommendationsApi]);
-
   useEffect(() => {
     if (!intentCareerPathId) {
-      return;
-    }
-
-    if (isLoadingCreateAccess) {
       return;
     }
 
@@ -338,20 +227,13 @@ export default function RoadmapDashboardPage() {
   }, [
     intentCareerPathId,
     intentCareerPathName,
-    isLoadingCreateAccess,
     isRoadmapLimitReached,
     pathname,
     router,
     showRoadmapLimitReachedToast,
   ]);
 
-  useEffect(() => {
-    if (!isCreateDialogOpen || isLoadingCareerPaths || careerPathOptions.length > 0) {
-      return;
-    }
-
-    void loadCareerPaths();
-  }, [careerPathOptions.length, isCreateDialogOpen, isLoadingCareerPaths, loadCareerPaths]);
+  // removed loadCareerPaths useEffect
 
   const handleSelectCareerPath = (careerPathId: string) => {
     const nextCareerPath = availableCareerPaths.find((path) => path.id === careerPathId);
@@ -360,7 +242,7 @@ export default function RoadmapDashboardPage() {
     setSelectedCareerPathName(nextCareerPath?.careerName ?? '');
   };
 
-  const handleCreateRoadmap = async () => {
+  const handleCreateRoadmap = () => {
     if (isRoadmapLimitReached) {
       showRoadmapLimitReachedToast();
       return;
@@ -368,40 +250,13 @@ export default function RoadmapDashboardPage() {
 
     if (!canCreateRoadmap) return;
 
-    setIsCreatingRoadmap(true);
-
-    try {
-      const createdRoadmap = await generateRoadmap(createPayload);
-      toast.success('Roadmapa zostala utworzona');
-      router.push(`/roadmap/${createdRoadmap.id}`);
-    } catch (error) {
-      const message = normalizeErrorMessage(error);
-      toast.error('Nie udalo sie utworzyc roadmapy', {
-        description: message,
-      });
-    } finally {
-      setIsCreatingRoadmap(false);
-    }
+    handleGenerateRoadmap(createPayload);
   };
 
-  const handleDeleteRoadmap = async (roadmapId: string) => {
-    setDeletingRoadmapId(roadmapId);
-
-    try {
-      await archiveRoadmap(roadmapId);
-      setRoadmaps((currentRoadmaps) =>
-        currentRoadmaps.filter((roadmap) => roadmap.id !== roadmapId)
-      );
-      toast.success('Roadmapa zostala usunieta');
-    } catch (error) {
-      const message = normalizeErrorMessage(error);
-      toast.error('Nie udalo sie usunac roadmapy', {
-        description: message,
-      });
-    } finally {
-      setDeletingRoadmapId(null);
+  const handleDeleteRoadmap = (roadmapId: string) => {
+    handleArchiveRoadmap(roadmapId, () => {
       setDeleteDialogRoadmapId(null);
-    }
+    });
   };
 
   return (
@@ -421,10 +276,10 @@ export default function RoadmapDashboardPage() {
                 timeHorizonMonths={timeHorizonMonths}
                 onTimeHorizonChange={setTimeHorizonMonths}
                 onCreate={handleCreateRoadmap}
-                onReloadCareerPaths={loadCareerPaths}
+                onReloadCareerPaths={() => Promise.resolve()} // obsolete
                 isCreatingRoadmap={isCreatingRoadmap}
-                isLoadingCareerPaths={isLoadingCareerPaths}
-                careerPathsError={careerPathsError}
+                isLoadingCareerPaths={false}
+                careerPathsError={null}
                 existingRoadmap={selectedPathExistingRoadmap}
                 isRoadmapLimitReached={isRoadmapLimitReached}
                 roadmapLimitReachedDescription={roadmapLimitHoverMessage}
@@ -459,22 +314,16 @@ export default function RoadmapDashboardPage() {
                 id={ROADMAPS_SECTION_ID}
                 className="grid grid-cols-1 gap-6 md:grid-cols-2 md:gap-8 lg:grid-cols-3"
               >
-                {isLoadingRoadmaps ? (
-                  <>
-                    {Array.from({ length: 6 }).map((_, index) => (
-                      <SkeletonCard key={`roadmap-skeleton-${index}`} />
-                    ))}
-                  </>
-                ) : roadmapsError ? (
+                {roadmapsError ? (
                   <div className="col-span-full rounded-xl border border-rose-200 bg-rose-50 p-6">
                     <p className="text-sm text-rose-700">{roadmapsError}</p>
                     <Button
                       type="button"
                       variant="outline"
-                      onClick={() => void fetchRoadmaps()}
+                      onClick={() => router.refresh()}
                       className="font-poppins mt-4"
                     >
-                      Sprobuj ponownie
+                      Odśwież
                     </Button>
                   </div>
                 ) : visibleRoadmaps.length === 0 ? (
@@ -645,7 +494,7 @@ function CreateRoadmapDialog({
   onCareerPathChange: (careerPathId: string) => void;
   timeHorizonMonths: number;
   onTimeHorizonChange: (months: number) => void;
-  onCreate: () => Promise<void>;
+  onCreate: () => void;
   onReloadCareerPaths: () => Promise<void>;
   isCreatingRoadmap: boolean;
   isLoadingCareerPaths: boolean;
@@ -837,26 +686,6 @@ function CreateRoadmapButton({
         {tooltipContent}
       </TooltipContent>
     </Tooltip>
-  );
-}
-
-function SkeletonCard() {
-  return (
-    <div className="flex h-[400px] min-w-0 flex-col gap-2 rounded-xl border p-3 md:p-4">
-      <div className="h-full rounded-md border">
-        <div className="bg-muted group relative mb-2 h-1/2 animate-pulse rounded-tl-md rounded-tr-md" />
-        <div className="space-y-3 p-3 md:p-4">
-          <div className="bg-muted h-6 w-3/4 animate-pulse rounded-md" />
-          <div className="bg-muted h-4 w-full animate-pulse rounded-md" />
-          <div className="bg-muted h-4 w-2/3 animate-pulse rounded-md" />
-        </div>
-        <Separator className="w-full" />
-        <div className="flex min-h-[72px] items-center justify-between gap-3 p-3 md:p-4">
-          <div className="bg-muted h-9 w-20 animate-pulse rounded-md" />
-          <div className="bg-muted h-4 w-32 animate-pulse rounded-md" />
-        </div>
-      </div>
-    </div>
   );
 }
 
