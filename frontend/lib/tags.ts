@@ -10,6 +10,7 @@ export const CACHE_TAGS = {
   lastRecommendation: (id: string) => `last-recommendation-${id}`,
   jobMatches: (id: string) => `job-matches-${id}`,
   marketAnalysis: (id: string) => `market-analysis-${id}`,
+  userRoadmaps: (id: string) => `user-roadmaps-${id}`,
 } as const;
 
 export async function invalidateUserTag(tag: keyof typeof CACHE_TAGS) {

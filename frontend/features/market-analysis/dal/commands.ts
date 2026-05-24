@@ -11,6 +11,7 @@ export async function generateMarketAnalysisCommand() {
   return result.match(
     async (response) => {
       await invalidateUserTag('marketAnalysis');
+      await invalidateUserTag('subscriptionStatus');
       return actionOk(response);
     },
     (error) => actionErr(error)
