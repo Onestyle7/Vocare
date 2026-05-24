@@ -33,39 +33,39 @@ export interface SkillDemandDto {
 
 export interface SalaryProgressionDto {
   careerLevel: string;
-  yearsOfExperience?: string;
-  minSalary?: number;
-  maxSalary?: number;
-  averageSalary?: number;
+  yearsOfExperience: string;
+  minSalary: number;
+  maxSalary: number;
+  averageSalary: number;
 }
 
 export interface WorkAttributesDto {
-  stressLevel?: number;
-  analyticalThinking?: number;
-  creativity?: number;
-  teamwork?: number;
-  independence?: number;
-  routineVsDynamic?: number;
-  customerFacing?: number;
-  technicalDepth?: number;
+  stressLevel: number;
+  analyticalThinking: number;
+  creativity: number;
+  teamwork: number;
+  independence: number;
+  routineVsDynamic: number;
+  customerFacing: number;
+  technicalDepth: number;
 }
 
 export interface EntryDifficultyDto {
-  difficultyScore?: number;
-  difficultyLevel?: string;
-  missingSkillsCount?: number;
-  missingSkills?: string[];
-  matchingSkillsCount?: number;
-  estimatedTimeToReady?: string;
-  explanation?: string;
+  difficultyScore: number;
+  difficultyLevel: string;
+  missingSkillsCount: number;
+  missingSkills: string[];
+  matchingSkillsCount: number;
+  estimatedTimeToReady: string;
+  explanation: string;
 }
 
 export interface AiNarratorDto {
-  salaryInsight?: string;
-  workStyleInsight?: string;
-  entryAdvice?: string;
-  motivationalMessage?: string;
-  personalizedRecommendation?: string;
+  salaryInsight: string;
+  workStyleInsight: string;
+  entryAdvice: string;
+  motivationalMessage: string;
+  personalizedRecommendation: string;
 }
 
 export interface MarketAnalysisDetailsDto {

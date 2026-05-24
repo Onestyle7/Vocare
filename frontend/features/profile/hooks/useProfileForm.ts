@@ -6,6 +6,7 @@ import { useCallback, useEffect, useState, useTransition } from 'react';
 import { UseFormReturn } from 'react-hook-form';
 import { toast } from 'sonner';
 
+import { useUnauthorizedToast } from '@/lib/hooks/useUnauthorizedToast';
 import { PersonalityType } from '@/lib/types/personalityTypes';
 import { UserProfile } from '@/lib/types/profile';
 import { Risk } from '@/lib/types/risk';
@@ -37,6 +38,7 @@ export function useProfileForm(
   const [isPending, startTransition] = useTransition();
   const [isEditMode, setEditMode] = useState(false);
   const [currentStep, setCurrentStep] = useState(1);
+  const { unauthorizedToast } = useUnauthorizedToast();
   const totalSteps = 5;
   const router = useRouter();
 
@@ -131,8 +133,7 @@ export function useProfileForm(
 
       if (error) {
         if (error.type === 'Unauthorized') {
-          toast.error('Sesja wygasła', { description: 'Zaloguj się ponownie.' });
-          router.push('/sign-in');
+          unauthorizedToast();
         } else {
           toast.error('Wystąpił błąd', { description: error.message });
         }
@@ -152,15 +153,12 @@ export function useProfileForm(
   };
 
   const handleDelete = () => {
-    if (!confirm('Czy na pewno chcesz usunąć swój profil?')) return;
-
     startTransition(async () => {
       const [error] = await deleteProfileCommand();
 
       if (error) {
         if (error.type === 'Unauthorized') {
-          toast.error('Sesja wygasła', { description: 'Zaloguj się ponownie.' });
-          router.push('/sign-in');
+          unauthorizedToast();
         } else {
           toast.error('Błąd usuwania profilu', { description: error.message });
         }
