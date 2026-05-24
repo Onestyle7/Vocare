@@ -1,6 +1,5 @@
 'use client';
 
-import { AxiosError } from 'axios';
 // Use pro build for support of modern color spaces (e.g. oklch in Tailwind tokens)
 import html2canvas from 'html2canvas-pro';
 import jsPDF from 'jspdf';
@@ -8,7 +7,7 @@ import { ArrowDown, ArrowRight, ArrowUp, Loader2 } from 'lucide-react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-import { useEffect, useMemo, useRef, useState } from 'react';
+import { useMemo, useRef, useState } from 'react';
 import {
   Area,
   AreaChart,
@@ -38,11 +37,9 @@ import {
   market_wynagrodzenie,
   star_generate,
 } from '@/features/marketing/constants/countries';
-import { api } from '@/lib/api';
 import {
   IndustryStatisticsDto,
   MarketAnalysisDetailsDto,
-  MarketAnalysisResponseDto,
   SalaryProgressionDto,
   SkillDemandDto,
   WorkAttributesDto,
@@ -61,6 +58,8 @@ import {
 } from '../../../components/ui/alert-dialog';
 import { Button } from '../../../components/ui/button';
 import { Separator } from '../../../components/ui/separator';
+import { MarketAnalysisDomainError } from '../dal/services';
+import { useMarketAnalysisActions } from '../hooks/useMarketAnalysisActions';
 
 const numberFormatter = new Intl.NumberFormat('pl-PL');
 
@@ -75,31 +74,6 @@ const formatCurrency = (value?: number | null) => {
 const formatPercent = (value?: number | null) => {
   if (!isValidNumber(value)) return '—';
   return `${Math.round(value as number)}%`;
-};
-
-const isMissingCareerPathsError = (message?: string) => {
-  if (!message) return false;
-  const normalized = message.toLowerCase();
-  return normalized.includes('recommendation') || normalized.includes('ścieżek kariery');
-};
-
-const getAnalysisFromResponse = (data: unknown): MarketAnalysisDetailsDto | null => {
-  if (!data || typeof data !== 'object') return null;
-
-  if ('marketAnalysis' in data && (data as MarketAnalysisResponseDto).marketAnalysis) {
-    return (data as MarketAnalysisResponseDto).marketAnalysis;
-  }
-
-  if ('industryStatistics' in data) {
-    const details = data as MarketAnalysisDetailsDto;
-    return {
-      industryStatistics: details.industryStatistics ?? [],
-      marketTrends: details.marketTrends ?? [],
-      skillDemand: details.skillDemand ?? [],
-    };
-  }
-
-  return null;
 };
 
 const hasAnalysisPayload = (details?: MarketAnalysisDetailsDto | null) =>
@@ -208,7 +182,7 @@ const EmptyAnalysisState = ({
               {requiresCareerPaths
                 ? 'Aby stworzyć analizę rynku, wygeneruj rekomendacje kariery w Doradcy. Na ich podstawie dobierzemy branże, wynagrodzenia i popyt na umiejętności dopasowane pod Twój profil.'
                 : error ||
-                  'Najpierw wygeneruj rekomendacje zawodowe w Advisorze, a następnie uruchom tworzenie analizy rynku.'}
+                  'Najpierw wygeneruj rekomendacje zawodowe w "Doradcy", a następnie uruchom tworzenie analizy rynku.'}
             </p>
           </div>
         </div>
@@ -501,19 +475,33 @@ const IndustryCard = ({
   </div>
 );
 
-export default function DetailedMarketAnalysis() {
+interface DetailedMarketAnalysisProps {
+  initialAnalysis: MarketAnalysisDetailsDto | null;
+  initialError: MarketAnalysisDomainError | null;
+}
+
+export default function DetailedMarketAnalysis({
+  initialAnalysis,
+  initialError,
+}: DetailedMarketAnalysisProps) {
   const router = useRouter();
-  const [analysis, setAnalysis] = useState<MarketAnalysisDetailsDto | null>(null);
-  const [isLoading, setIsLoading] = useState(false);
-  const [isGenerating, setIsGenerating] = useState(false);
+  const { handleGenerateNewAnalysis, isPending, generateError } = useMarketAnalysisActions();
   const [isDownloading, setIsDownloading] = useState(false);
   const [isConfirmDialogOpen, setIsConfirmDialogOpen] = useState(false);
-  const [requiresCareerPaths, setRequiresCareerPaths] = useState(false);
-  const [error, setError] = useState<string | null>(null);
   const reportRef = useRef<HTMLDivElement>(null);
   const pdfReportRef = useRef<HTMLDivElement>(null);
   const { tokenBalance, hasActiveSubscription } = useTokenBalanceContext();
   const generatePricePerUse = 50;
+
+  const analysis = initialAnalysis;
+  const errorObj = generateError || initialError;
+  const isGenerating = isPending;
+  const isLoading = false;
+
+  const hasAnalysisContent = hasAnalysisPayload(analysis);
+  const requiresCareerPaths = errorObj?.type === 'MissingCareerPaths';
+  const showEmptyState = !isGenerating && (!analysis || !hasAnalysisContent);
+  const errorMsg = errorObj?.message || null;
 
   const maxSalaryValue = useMemo(() => {
     if (!analysis?.industryStatistics?.length) return 0;
@@ -532,94 +520,7 @@ export default function DetailedMarketAnalysis() {
 
   const generationDate = useMemo(() => new Date().toLocaleDateString('pl-PL'), []);
 
-  const openAdvisor = () => router.push('/assistant');
-  const hasAnalysisContent = hasAnalysisPayload(analysis);
-  const showEmptyState = !isLoading && !isGenerating && (!analysis || !hasAnalysisContent);
-
-  useEffect(() => {
-    if (!error) return;
-
-    const normalized = error.toLowerCase();
-    const isMissingCareerPaths = isMissingCareerPathsError(error);
-    const isMissingPrevious = normalized.includes('brak zapisanej analizy');
-
-    if (isMissingCareerPaths) {
-      setRequiresCareerPaths(true);
-    }
-
-    const title = isMissingCareerPaths
-      ? 'Brak ścieżek kariery'
-      : isMissingPrevious
-        ? 'Nie masz poprzedniej analizy rynku'
-        : 'Brak ścieżek kariery';
-
-    toast.error(title, {
-      description: error,
-      action: isMissingCareerPaths
-        ? {
-            label: 'Advisor',
-            onClick: () => router.push('/assistant'),
-          }
-        : undefined,
-    });
-  }, [error, router]);
-
-  const fetchLatest = useMemo(
-    () =>
-      async function fetchLatestAnalysis() {
-        setIsLoading(true);
-        setError(null);
-        setRequiresCareerPaths(false);
-        try {
-          const response = await api.get('/api/MarketAnalysis/latest');
-          const latestAnalysis = getAnalysisFromResponse(response.data);
-          setAnalysis(latestAnalysis);
-          const hasContent = hasAnalysisPayload(latestAnalysis);
-          setRequiresCareerPaths(!hasContent);
-        } catch (err) {
-          const axiosErr = err as AxiosError;
-          if (axiosErr.response?.status === 404) {
-            setError('Brak zapisanej analizy - wygeneruj nową.');
-            setRequiresCareerPaths(true);
-            setAnalysis(null);
-          } else {
-            setError('Nie udało się pobrać ostatniej analizy.');
-          }
-        } finally {
-          setIsLoading(false);
-        }
-      },
-    []
-  );
-
-  const generateFreshAnalysis = async () => {
-    setIsGenerating(true);
-    setError(null);
-    setRequiresCareerPaths(false);
-    try {
-      const response = await api.get('/api/MarketAnalysis');
-      const freshAnalysis = getAnalysisFromResponse(response.data);
-      setAnalysis(freshAnalysis);
-      const hasContent = hasAnalysisPayload(freshAnalysis);
-      setRequiresCareerPaths(!hasContent);
-    } catch (err) {
-      const axiosErr = err as AxiosError<{ detail?: string }>;
-      const detail = axiosErr.response?.data?.detail;
-      const missingCareerPaths = isMissingCareerPathsError(detail);
-
-      if (missingCareerPaths) {
-        setError(
-          'Brak ścieżek kariery z asystenta AI. Wygeneruj rekomendacje na stronie głównej, aby móc stworzyć analizę rynku.'
-        );
-        setRequiresCareerPaths(true);
-      } else {
-        setError(detail || 'Rozpocznij od wygenerowania ścieżek kariery.');
-        setRequiresCareerPaths(false);
-      }
-    } finally {
-      setIsGenerating(false);
-    }
-  };
+  const openAdvisor = () => router.push('/dashboard/assistant');
 
   const downloadPdf = async () => {
     if (!pdfReportRef.current || !analysis || !hasAnalysisContent) return;
@@ -675,14 +576,11 @@ export default function DetailedMarketAnalysis() {
     } catch (err) {
       const message = err instanceof Error ? err.message : 'Nie udało się wygenerować raportu PDF.';
       toast.error('Błąd PDF', { description: message });
+      toast.error('Błąd PDF', { description: message });
     } finally {
       setIsDownloading(false);
     }
   };
-
-  useEffect(() => {
-    fetchLatest();
-  }, [fetchLatest]);
 
   return (
     <div className="font-grotesk relative mx-auto min-h-screen px-4 py-10 text-slate-100">
@@ -734,11 +632,6 @@ export default function DetailedMarketAnalysis() {
               </Button>
             </div>
           </div>
-          {/* {isDev && (
-          <div className="mt-4 text-xs text-slate-500">
-            API: <span className="font-mono">{API_BASE || 'nie zdefiniowano NEXT_PUBLIC_API_URL'}</span>
-          </div>
-          )} */}
         </header>
 
         {(isLoading || isGenerating) && !hasAnalysisContent && (
@@ -829,10 +722,10 @@ export default function DetailedMarketAnalysis() {
           </div>
         ) : showEmptyState ? (
           <EmptyAnalysisState
-            error={error}
+            error={errorMsg}
             requiresCareerPaths={requiresCareerPaths}
             onOpenAdvisor={openAdvisor}
-            onGenerateAnalysis={generateFreshAnalysis}
+            onGenerateAnalysis={handleGenerateNewAnalysis}
             isGenerating={isGenerating}
             isLoading={isLoading}
           />
@@ -1128,8 +1021,9 @@ export default function DetailedMarketAnalysis() {
               </Link>
             ) : (
               <AlertDialogAction
-                onClick={async () => {
-                  await generateFreshAnalysis();
+                onClick={() => {
+                  handleGenerateNewAnalysis();
+                  setIsConfirmDialogOpen(false);
                 }}
                 className="border bg-[#915EFF] text-white hover:bg-[#7b4ee0]"
               >
