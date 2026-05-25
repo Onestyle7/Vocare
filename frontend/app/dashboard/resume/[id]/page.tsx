@@ -1,41 +1,36 @@
-'use client';
+import { notFound } from 'next/navigation';
 
-import { useParams } from 'next/navigation';
-import React, { useEffect, useState } from 'react';
-
-import { getCvDetails } from '@/lib/api/cv';
-import { CvDetailsDto } from '@/lib/types/cv';
+import { forceLoginRedirect } from '@/features/auth/utils/login-redirect';
+import { getCvDetailsQuery } from '@/features/resume/dal/queries';
 
 import CVCreator from '../../../../features/resume/components/ResumeComponent';
 
-const ResumeDetailPage = () => {
-  const params = useParams();
-  const id = typeof params.id === 'string' ? params.id : '';
-  const [cv, setCv] = useState<CvDetailsDto | null>(null);
-  const [loading, setLoading] = useState(true);
+interface ResumeDetailPageProps {
+  params: Promise<{ id: string }>;
+}
 
-  useEffect(() => {
-    const fetchCv = async () => {
-      if (!id) return;
-      try {
-        const data = await getCvDetails(id);
-        setCv(data);
-      } catch (err) {
-        console.error('Failed to load CV details', err);
-      } finally {
-        setLoading(false);
-      }
-    };
-    fetchCv();
-  }, [id]);
+export default async function ResumeDetailPage({ params }: ResumeDetailPageProps) {
+  const { id } = await params;
+
+  if (!id) {
+    notFound();
+  }
+
+  const [error, cv] = await getCvDetailsQuery(id);
+
+  if (error && error.type === 'Unauthorized') {
+    await forceLoginRedirect();
+  }
+
+  if (!cv) {
+    notFound();
+  }
 
   return (
     <div className="font-poppins">
       <div className="relative z-10">
-        {loading ? <p>Loading...</p> : cv && <CVCreator initialCv={cv} />}
+        <CVCreator initialCv={cv} />
       </div>
     </div>
   );
-};
-
-export default ResumeDetailPage;
+}

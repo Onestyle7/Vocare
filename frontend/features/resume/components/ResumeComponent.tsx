@@ -6,6 +6,7 @@ import {
   Briefcase,
   ChevronLeft,
   ChevronRight,
+  FolderOpen,
   GraduationCap,
   GripVertical,
   Home,
@@ -38,11 +39,13 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
-import { createCv, deleteCv, updateCv } from '@/lib/api/cv';
 import { useAutosave } from '@/lib/hooks/useAutosave';
 import { useIsMobile } from '@/lib/hooks/useIsMobile';
 import { CvDetailsDto, CvDto, UpdateCvDto } from '@/lib/types/cv';
+import { FLUENCY_OPTIONS, normalizeFluency } from '@/lib/utils/normalizeFluency';
+import { makeSocialLinkId, SOCIAL_LINK_SUGGESTIONS } from '@/lib/utils/socialLinks';
 
+import { useResumeDetailsActions } from '../hooks/useResumeDetailsActions';
 import { DatePickerWithCurrent } from './DatePickerWithCurrent';
 
 interface PersonalInfo {
@@ -302,6 +305,7 @@ const ensureCertificateDefaults = (cert: Partial<Certificate>): Certificate => (
 
 const CVCreator: React.FC<CVCreatorProps> = ({ initialCv }) => {
   const router = useRouter();
+  const { handleAutosave, handleManualSave, handleLoadFromProfile } = useResumeDetailsActions();
   const [personalInfo, setPersonalInfo] = useState<PersonalInfo>(() => {
     const saved = localStorage.getItem('personalInfo');
     if (!saved) {
@@ -1477,6 +1481,10 @@ const CVCreator: React.FC<CVCreatorProps> = ({ initialCv }) => {
     cvData: buildCvDto(), // zakładam, że masz taką funkcję generującą aktualne dane CV
   };
 
+  const autosaveFn = async (payload: typeof autosavePayload) => {
+    handleAutosave(payload);
+  };
+
   const { status: autosaveStatus, trigger } = useAutosave({
     value: autosavePayload,
     enabled: canAutosave,
@@ -1484,10 +1492,6 @@ const CVCreator: React.FC<CVCreatorProps> = ({ initialCv }) => {
     skipOnce: skipAutosaveOnce, // flaga ustawiana po "Load profile"
     onSkipConsumed: () => setSkipAutosaveOnce(false),
   });
-
-  const autosaveFn = async (payload: typeof autosavePayload, signal: AbortSignal) => {
-    await updateCv(payload, { signal });
-  };
 
   useEffect(() => {
     if (!canAutosave) return;
@@ -1518,9 +1522,9 @@ const CVCreator: React.FC<CVCreatorProps> = ({ initialCv }) => {
     };
 
     try {
-      await updateCv(payload);
+      await handleManualSave(payload);
     } catch (err) {
-      console.error('Failed to save CV', err);
+      console.error('Manual save failed', err);
     }
   };
 
@@ -1528,30 +1532,15 @@ const CVCreator: React.FC<CVCreatorProps> = ({ initialCv }) => {
     try {
       if (!cvId) return;
 
-      const generated = await createCv({
-        name: 'Generated CV',
-        targetPosition: personalInfo.profession,
-        createFromProfile: true,
-      });
+      const generated = await handleLoadFromProfile(cvId, resumeName, personalInfo.profession);
 
-      // 1) Zapisz dane do bieżącego CV
-      await updateCv({
-        id: cvId,
-        name: resumeName,
-        targetPosition: generated.targetPosition,
-        cvData: generated.cvData,
-      });
-
-      // 2) Wypełnij formularz danymi
+      // Wypełnij formularz danymi
       populateFromCv(generated.cvData, generated.targetPosition || undefined);
 
-      // 3) Usuń tymczasowy rekord
-      await deleteCv(generated.id);
-
-      // 4) Pomiń JEDEN autosave (żeby nie zapisywać od razu po wczytaniu profilu)
+      // Pomiń JEDEN autosave (żeby nie zapisywać od razu po wczytaniu profilu)
       setSkipAutosaveOnce(true);
     } catch (err) {
-      console.error('Failed to generate CV from profile', err);
+      console.error('Failed to load from profile', err);
     }
   };
 
@@ -3598,7 +3587,7 @@ const CVCreator: React.FC<CVCreatorProps> = ({ initialCv }) => {
             if (typeof window !== 'undefined' && window.history.length > 1) {
               router.back();
             } else {
-              router.push('/resume');
+              router.push('/dashboard/resume');
             }
           }}
           className="flex cursor-pointer items-center gap-2 rounded-lg px-3 py-2 text-sm transition-colors hover:bg-gray-100"
@@ -3612,7 +3601,7 @@ const CVCreator: React.FC<CVCreatorProps> = ({ initialCv }) => {
       {/* Sidebar for Desktop */}
       <div className="mx-3 hidden w-16 flex-col items-center justify-between rounded-lg bg-white py-6 shadow-lg lg:flex">
         <button
-          onClick={() => router.push('/resume')}
+          onClick={() => router.push('/dashboard/resume')}
           className="cursor-pointer rounded-lg p-3 transition-colors hover:bg-gray-100"
           title="Dashboard"
         >
