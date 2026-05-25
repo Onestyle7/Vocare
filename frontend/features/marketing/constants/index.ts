@@ -511,3 +511,17 @@ export const grid_docs = '/resume/grid-docs.svg';
 
 export const generowanie_cv = '/resume/generowanie-cv.mp4';
 export const analiza_brakow = '/resume/analiza-brakow.mp4';
+
+// Roadmap landing page feature
+
+export const roadmap_cylinder = '/roadmap/roadmap_cylinder.svg';
+export const roadmap_flag = '/roadmap/roadmap_flag.svg';
+export const roadmap_layers = '/roadmap/roadmap_layers.svg';
+export const roadmap_map_pin = '/roadmap/roadmap_map_pin.svg';
+export const roadmap_path = '/roadmap/roadmap_path.svg';
+export const roadmap_terminal = '/roadmap/roadmap_terminal.svg';
+export const roadmap_user = '/roadmap/roadmap_user.svg';
+
+export const roadmap_sun = '/roadmap/Sun.svg';
+export const roadmap_puzzle = '/roadmap/Puzzle.svg';
+export const roadmap_path_1 = '/roadmap/Path.svg';
