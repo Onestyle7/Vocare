@@ -114,22 +114,15 @@ export const RoadmapTileNode: FC<Props> = ({ id, data, selected }) => {
 
   const isConnecting = Boolean(storeConnection) || Boolean(connectionNodeId);
 
-  // kto jest “source” podczas łączenia
   const fromNodeId =
     storeConnection?.from?.nodeId ?? storeConnection?.source ?? connectionNodeId ?? null;
 
   const isSourceNode = isConnecting && fromNodeId === id;
 
-  /**
-   * Wymagania:
-   * - domyślnie ukryte
-   * - pokazuj na klikniętym nodzie
-   * - podczas connect: pokazuj na "drugim" dopiero gdy dojedziesz (hover)
-   */
   const shouldShowHandles =
-    Boolean(selected) || // kliknięty node
-    Boolean(isSourceNode) || // node, z którego ciągniesz połączenie
-    (Boolean(isConnecting) && Boolean(isHovered) && !isSourceNode); // docelowy node dopiero po najechaniu
+    Boolean(selected) ||
+    Boolean(isSourceNode) ||
+    (Boolean(isConnecting) && Boolean(isHovered) && !isSourceNode);
 
   const handleClassName = `${handleBase} ${handleAnim} ${
     shouldShowHandles ? handleVisible : handleHidden
@@ -160,7 +153,6 @@ export const RoadmapTileNode: FC<Props> = ({ id, data, selected }) => {
       onPointerEnter={() => setIsHovered(true)}
       onPointerLeave={() => setIsHovered(false)}
     >
-      {/* TARGETS (wejścia) */}
       <Handle
         id="t-left"
         type="target"
@@ -198,7 +190,6 @@ export const RoadmapTileNode: FC<Props> = ({ id, data, selected }) => {
         <span aria-hidden className={`${handleIndicatorClassName} ${handleIndicatorPos.bottom}`} />
       </Handle>
 
-      {/* SOURCES (wyjścia) */}
       <Handle
         id="s-left"
         type="source"
