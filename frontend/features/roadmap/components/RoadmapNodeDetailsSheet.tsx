@@ -3,8 +3,6 @@
 import { ArrowRight, CalendarRange, CircleDot, LoaderCircle, X } from 'lucide-react';
 import { type ReactNode, useEffect, useState } from 'react';
 
-import Timeline from '@/components/AssistantComponents/Timeline';
-import type { RoadmapNodeData } from '@/features/roadmap/components/RoadmapTileNode';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader } from '@/components/ui/card';
@@ -17,6 +15,8 @@ import {
   SheetHeader,
   SheetTitle,
 } from '@/components/ui/sheet';
+import Timeline from '@/features/assistant/components/Timeline';
+import type { RoadmapNodeData } from '@/features/roadmap/components/RoadmapTileNode';
 import type { StepStatus } from '@/lib/types/roadmap';
 import { cn } from '@/lib/utils';
 

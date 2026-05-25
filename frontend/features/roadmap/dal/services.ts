@@ -9,6 +9,10 @@ import {
   roadmapApiClient,
   RoadmapDetailsDto,
   RoadmapListItemDto,
+  RoadmapStepDto,
+  StepStatus,
+  UpdateStepPositionsPayload,
+  UpdateStepRequestDto,
 } from './api';
 
 export type RoadmapDomainError = BaseAppError<
@@ -80,5 +84,83 @@ export async function archiveRoadmapService(
   requestOptions?: RequestInit
 ): Promise<Result<void, RoadmapDomainError>> {
   const result = await roadmapApiClient.delete<void>(`/${roadmapId}`, requestOptions);
+  return result.map((response) => response.data).mapErr(mapRoadmapError);
+}
+
+export async function getRoadmapByIdService(
+  roadmapId: string,
+  requestOptions?: RequestInit
+): Promise<Result<RoadmapDetailsDto, RoadmapDomainError>> {
+  const result = await roadmapApiClient.get<RoadmapDetailsDto>(`/${roadmapId}`, requestOptions);
+  return result.map((response) => response.data).mapErr(mapRoadmapError);
+}
+
+export async function updateRoadmapStepPositionsService(
+  payload: UpdateStepPositionsPayload,
+  requestOptions?: RequestInit
+): Promise<Result<void, RoadmapDomainError>> {
+  const result = await roadmapApiClient.patch<void>(
+    '../RoadmapSteps/positions',
+    payload,
+    requestOptions
+  );
+  return result.map((response) => response.data).mapErr(mapRoadmapError);
+}
+
+export async function updateRoadmapStepStatusService(
+  stepId: string,
+  status: StepStatus,
+  requestOptions?: RequestInit
+): Promise<Result<RoadmapStepDto, RoadmapDomainError>> {
+  const result = await roadmapApiClient.patch<RoadmapStepDto, StepStatus>(
+    `../RoadmapSteps/${stepId}/status`,
+    status,
+    requestOptions
+  );
+  return result.map((response) => response.data).mapErr(mapRoadmapError);
+}
+
+export async function deleteRoadmapStepService(
+  stepId: string,
+  requestOptions?: RequestInit
+): Promise<Result<void, RoadmapDomainError>> {
+  const result = await roadmapApiClient.delete<void>(`../RoadmapSteps/${stepId}`, requestOptions);
+  return result.map((response) => response.data).mapErr(mapRoadmapError);
+}
+
+export async function updateRoadmapPhaseNameService(
+  phaseId: string,
+  newName: string,
+  requestOptions?: RequestInit
+): Promise<Result<void, RoadmapDomainError>> {
+  const result = await roadmapApiClient.patch<void, string>(
+    `../RoadmapPhases/${phaseId}/name`,
+    `"${newName}"`,
+    { ...requestOptions, headers: { 'Content-Type': 'application/json', ...requestOptions?.headers } }
+  );
+  return result.map((response) => response.data).mapErr(mapRoadmapError);
+}
+
+export async function deleteRoadmapPhaseService(
+  phaseId: string,
+  requestOptions?: RequestInit
+): Promise<Result<void, RoadmapDomainError>> {
+  const result = await roadmapApiClient.delete<void>(
+    `../RoadmapPhases/${phaseId}`,
+    requestOptions
+  );
+  return result.map((response) => response.data).mapErr(mapRoadmapError);
+}
+
+export async function updateRoadmapStepService(
+  stepId: string,
+  payload: UpdateStepRequestDto,
+  requestOptions?: RequestInit
+): Promise<Result<RoadmapStepDto, RoadmapDomainError>> {
+  const result = await roadmapApiClient.put<RoadmapStepDto, UpdateStepRequestDto>(
+    `../RoadmapSteps/${stepId}`,
+    payload,
+    requestOptions
+  );
   return result.map((response) => response.data).mapErr(mapRoadmapError);
 }

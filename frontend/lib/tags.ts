@@ -11,6 +11,7 @@ export const CACHE_TAGS = {
   jobMatches: (id: string) => `job-matches-${id}`,
   marketAnalysis: (id: string) => `market-analysis-${id}`,
   userRoadmaps: (id: string) => `user-roadmaps-${id}`,
+  roadmap: (id: string) => `roadmap-${id}`,
 } as const;
 
 export async function invalidateUserTag(tag: keyof typeof CACHE_TAGS) {

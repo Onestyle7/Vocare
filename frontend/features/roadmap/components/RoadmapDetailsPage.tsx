@@ -1,11 +1,9 @@
 'use client';
 
-import { AxiosError } from 'axios';
 import dagre from 'dagre';
 import { Trash2 } from 'lucide-react';
 import { useRouter } from 'next/navigation';
-import { useEffect, useMemo, useState } from 'react';
-import { toast } from 'sonner';
+import { useMemo, useState } from 'react';
 
 import {
   AlertDialog,
@@ -19,16 +17,12 @@ import {
   AlertDialogTrigger,
 } from '@/components/ui/alert-dialog';
 import { Button } from '@/components/ui/button';
-import {
-  archiveRoadmap,
-  getRoadmapById,
-  updateRoadmapStepPositions,
-  updateRoadmapStepStatus,
-} from '@/features/roadmap/roadmap';
-import type { RoadmapDetailsDto } from '@/lib/types/roadmap';
 import type { PresetEdgeConfig, PresetNodeConfig } from '@/features/roadmap/presets';
+import type { RoadmapDetailsDto } from '@/lib/types/roadmap';
 
-import RoadmapReactFlowPage from './RoadmapDashboardPage';
+import { useRoadmapDashboardActions } from '../hooks/useRoadmapDashboardActions';
+import { useRoadmapDetailsActions } from '../hooks/useRoadmapDetailsActions';
+import RoadmapReactFlowPage from './RoadmapReactFlowPage';
 
 const NODE_WIDTH = 420;
 const NODE_HEIGHT = 88;
@@ -309,6 +303,7 @@ const buildCanvasGraph = (
 
     nodeConfigs.push({
       id: `phase-${phase.id}`,
+      persistenceId: phase.id,
       title: phase.title,
       phase: formatPhaseBadge(phaseIndex),
       timeline: phaseTimeline.label,
@@ -440,126 +435,57 @@ const buildCanvasGraph = (
   };
 };
 
-const normalizeErrorMessage = (error: unknown) => {
-  if (error instanceof AxiosError) {
-    const payload = error.response?.data as
-      | { Error?: string; error?: string; detail?: string }
-      | string
-      | undefined;
+// removed normalizeErrorMessage
 
-    if (typeof payload === 'string' && payload.trim()) {
-      return payload;
-    }
-
-    if (payload && typeof payload === 'object') {
-      return payload.Error || payload.error || payload.detail || 'Request failed.';
-    }
-  }
-
-  if (error instanceof Error && error.message) {
-    return error.message;
-  }
-
-  return 'Wystapil nieoczekiwany blad.';
-};
-
-export default function RoadmapDetailsPage({ roadmapId }: { roadmapId: string }) {
+export default function RoadmapDetailsPage({
+  roadmapId,
+  initialRoadmap,
+  initialError,
+}: {
+  roadmapId: string;
+  initialRoadmap: RoadmapDetailsDto | null;
+  initialError: string | null;
+}) {
   const router = useRouter();
-  const [roadmap, setRoadmap] = useState<RoadmapDetailsDto | null>(null);
-  const [isLoading, setIsLoading] = useState(true);
-  const [isDeletingRoadmap, setIsDeletingRoadmap] = useState(false);
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
-  const [error, setError] = useState<string | null>(null);
+  
+  const { handleArchiveRoadmap, deletingId } = useRoadmapDashboardActions();
+  const { 
+    handleUpdatePositions, 
+    handleUpdateStatus, 
+    handleDeleteStep, 
+    handleUpdatePhaseName, 
+    handleDeletePhase, 
+    handleUpdateStep 
+  } = useRoadmapDetailsActions(roadmapId);
 
-  useEffect(() => {
-    if (!roadmapId) {
-      setRoadmap(null);
-      setError('Brakuje identyfikatora roadmapy.');
-      setIsLoading(false);
-      return;
-    }
-
-    const controller = new AbortController();
-
-    const fetchRoadmap = async () => {
-      setIsLoading(true);
-      setError(null);
-
-      try {
-        const data = await getRoadmapById(roadmapId, { signal: controller.signal });
-        if (controller.signal.aborted) return;
-        setRoadmap(data);
-      } catch (fetchError) {
-        if ((fetchError as DOMException)?.name === 'CanceledError' || controller.signal.aborted) {
-          return;
-        }
-
-        setRoadmap(null);
-        setError(normalizeErrorMessage(fetchError));
-      } finally {
-        if (!controller.signal.aborted) {
-          setIsLoading(false);
-        }
-      }
-    };
-
-    void fetchRoadmap();
-
-    return () => controller.abort();
-  }, [roadmapId]);
+  const roadmap = initialRoadmap;
+  const error = initialError;
+  const isDeletingRoadmap = deletingId === roadmapId;
 
   const graph = useMemo(() => {
     if (!roadmap) return null;
     return buildCanvasGraph(roadmap);
   }, [roadmap]);
 
-  const handleRetry = async () => {
-    if (!roadmapId) {
-      setRoadmap(null);
-      setError('Brakuje identyfikatora roadmapy.');
-      setIsLoading(false);
-      return;
-    }
-
-    setIsLoading(true);
-    setError(null);
-
-    try {
-      const data = await getRoadmapById(roadmapId);
-      setRoadmap(data);
-    } catch (fetchError) {
-      setRoadmap(null);
-      setError(normalizeErrorMessage(fetchError));
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
-  const handleDeleteRoadmap = async () => {
-    setIsDeletingRoadmap(true);
-
-    try {
-      await archiveRoadmap(roadmapId);
-      toast.success('Roadmapa zostala usunieta');
-      router.push('/dashboard');
-      router.refresh();
-    } catch (deleteError) {
-      toast.error('Nie udalo sie usunac roadmapy', {
-        description: normalizeErrorMessage(deleteError),
-      });
-    } finally {
-      setIsDeletingRoadmap(false);
+  const handleDeleteRoadmap = () => {
+    handleArchiveRoadmap(roadmapId, () => {
       setIsDeleteDialogOpen(false);
-    }
+      router.push('/dashboard');
+    });
   };
 
-  if (isLoading) {
+  if (!roadmapId) {
     return (
       <section className="flex h-[100svh] w-full items-center justify-center bg-white px-4 text-slate-950">
-        <div className="w-full max-w-xl rounded-[32px] border border-slate-200 bg-white/90 p-8 shadow-[0_24px_90px_rgba(15,23,42,0.12)]">
-          <div className="h-4 w-28 animate-pulse rounded bg-slate-200" />
-          <div className="mt-5 h-10 w-2/3 animate-pulse rounded bg-slate-200" />
-          <div className="mt-4 h-4 w-full animate-pulse rounded bg-slate-100" />
+        <div className="w-full max-w-xl rounded-[32px] border border-rose-200 bg-white p-8 shadow-[0_24px_90px_rgba(15,23,42,0.12)]">
+          <p className="text-sm font-medium tracking-[0.18em] text-rose-600 uppercase">Blad</p>
+          <h2 className="mt-4 text-3xl font-semibold text-slate-950">
+            Nie udalo sie pobrac roadmapy
+          </h2>
+          <p className="mt-3 text-[15px] leading-7 text-slate-600">
+            Brakuje identyfikatora roadmapy.
+          </p>
         </div>
       </section>
     );
@@ -579,10 +505,10 @@ export default function RoadmapDetailsPage({ roadmapId }: { roadmapId: string })
           <div className="mt-6">
             <Button
               type="button"
-              onClick={() => void handleRetry()}
+              onClick={() => router.refresh()}
               className="rounded-full bg-slate-950 text-white hover:bg-slate-800"
             >
-              Sprobuj ponownie
+              Odśwież
             </Button>
           </div>
         </div>
@@ -639,7 +565,7 @@ export default function RoadmapDetailsPage({ roadmapId }: { roadmapId: string })
       initialEdgeConfigs={graph.edgeConfigs}
       layoutDirection="TB"
       onPersistNodePositions={async (positions) => {
-        await updateRoadmapStepPositions({
+        handleUpdatePositions({
           positions: positions.map((position) => ({
             stepId: position.persistenceId,
             x: position.x,
@@ -647,7 +573,11 @@ export default function RoadmapDetailsPage({ roadmapId }: { roadmapId: string })
           })),
         });
       }}
-      onUpdateStepStatus={async ({ stepId, status }) => updateRoadmapStepStatus(stepId, status)}
+      onUpdateStepStatus={async ({ stepId, status }) => handleUpdateStatus(stepId, status)}
+      onDeleteStep={async (stepId) => handleDeleteStep(stepId)}
+      onUpdatePhaseName={async (phaseId, newName) => handleUpdatePhaseName(phaseId, newName)}
+      onDeletePhase={async (phaseId) => handleDeletePhase(phaseId)}
+      onUpdateStep={async (stepId, payload) => handleUpdateStep(stepId, payload)}
     />
   );
 }

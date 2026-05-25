@@ -337,7 +337,7 @@ export default function RoadmapDashboardPage({
                     {visibleRoadmaps.map((roadmap) => (
                       <Link
                         key={roadmap.id}
-                        href={`/roadmap/${roadmap.id}`}
+                        href={`/dashboard/roadmap/${roadmap.id}`}
                         className="block min-w-0"
                       >
                         <div className="group bg-background flex h-[400px] min-w-0 flex-col gap-2 overflow-hidden rounded-xl border p-3 transition-shadow hover:shadow-lg md:p-4">
