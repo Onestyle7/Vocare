@@ -71,6 +71,15 @@ export class ApiClient {
     });
   }
 
+  async patch<T, D = unknown>(endpoint: string, data?: D, options?: RequestInit) {
+    const isFormData = data instanceof FormData;
+    return this.makeRequest<T>(endpoint, {
+      ...options,
+      method: 'PATCH',
+      body: isFormData ? data : data ? JSON.stringify(data) : undefined,
+    });
+  }
+
   async delete<T>(endpoint: string, options?: RequestInit) {
     return this.makeRequest<T>(endpoint, { ...options, method: 'DELETE' });
   }

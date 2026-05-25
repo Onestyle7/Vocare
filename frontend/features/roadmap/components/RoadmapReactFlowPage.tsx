@@ -1444,10 +1444,11 @@ type RoadmapReactFlowPageProps = {
   onPersistNodePositions?: (
     positions: Array<{ persistenceId: string; x: number; y: number }>
   ) => void | Promise<void>;
-  onUpdateStepStatus?: (input: {
-    stepId: string;
-    status: StepStatus;
-  }) => Promise<RoadmapStepDto | void> | RoadmapStepDto | void;
+  onUpdateStepStatus?: (params: { stepId: string; status: StepStatus }) => Promise<RoadmapStepDto>;
+  onDeleteStep?: (stepId: string) => Promise<void>;
+  onUpdatePhaseName?: (phaseId: string, newName: string) => Promise<void>;
+  onDeletePhase?: (phaseId: string) => Promise<void>;
+  onUpdateStep?: (stepId: string, payload: any) => Promise<void>;
 };
 
 export const RoadmapReactFlowPage = ({
@@ -1460,6 +1461,10 @@ export const RoadmapReactFlowPage = ({
   headerActions,
   onPersistNodePositions,
   onUpdateStepStatus,
+  onDeleteStep,
+  onUpdatePhaseName,
+  onDeletePhase,
+  onUpdateStep,
 }: RoadmapReactFlowPageProps) => {
   const nodeTypes = useMemo(
     () => ({
@@ -2328,17 +2333,14 @@ export const RoadmapReactFlowPage = ({
       const persistenceId = node.data.persistenceId;
       if (!persistenceId) return;
 
-      setNodes((currentNodes) => {
-        const nextNodes = currentNodes.map((currentNode) =>
-          currentNode.id === node.id ? { ...currentNode, position: node.position } : currentNode
-        );
+      const nextNodes = nodes.map((currentNode) =>
+        currentNode.id === node.id ? { ...currentNode, position: node.position } : currentNode
+      );
 
-        void persistCurrentNodePositions(nextNodes);
-
-        return nextNodes;
-      });
+      setNodes(nextNodes);
+      void persistCurrentNodePositions(nextNodes);
     },
-    [persistCurrentNodePositions, setNodes]
+    [nodes, persistCurrentNodePositions, setNodes]
   );
 
   const deleteEdgeById = useCallback(
@@ -2352,19 +2354,56 @@ export const RoadmapReactFlowPage = ({
 
   const deleteNodeById = useCallback(
     (nodeId: string) => {
+      const nodeToDelete = nodes.find((node) => node.id === nodeId);
+      
       setEdges((currentEdges) => {
         const updatedEdges = currentEdges.filter(
           (edge) => edge.source !== nodeId && edge.target !== nodeId
         );
-
-        setNodes((currentNodes) => currentNodes.filter((node) => node.id !== nodeId));
-
         return updatedEdges;
       });
 
+      setNodes((currentNodes) => {
+        const nextNodes = currentNodes.filter((node) => node.id !== nodeId);
+
+        if (nodeToDelete?.data.nodeKind === 'step' && nodeToDelete.data.phaseTitle) {
+          const phaseTitle = nodeToDelete.data.phaseTitle;
+          const isRequired = nodeToDelete.data.stepType !== 'Optional';
+          
+          return nextNodes.map((node) => {
+            if (node.data.nodeKind === 'phase' && node.data.phaseTitle === phaseTitle) {
+              const currentPhaseSteps = node.data.phaseSteps || [];
+              return {
+                ...node,
+                data: {
+                  ...node.data,
+                  phaseStepCount: Math.max(0, (node.data.phaseStepCount ?? 1) - 1),
+                  phaseRequiredCount: isRequired
+                    ? Math.max(0, (node.data.phaseRequiredCount ?? 1) - 1)
+                    : node.data.phaseRequiredCount,
+                  phaseOptionalCount: !isRequired
+                    ? Math.max(0, (node.data.phaseOptionalCount ?? 1) - 1)
+                    : node.data.phaseOptionalCount,
+                  phaseSteps: currentPhaseSteps.filter((step) => step.id !== nodeToDelete.data.persistenceId),
+                },
+              };
+            }
+            return node;
+          });
+        }
+
+        return nextNodes;
+      });
+
+      if (nodeToDelete?.data.nodeKind === 'phase' && onDeletePhase && nodeToDelete.data.persistenceId) {
+        void onDeletePhase(nodeToDelete.data.persistenceId);
+      } else if (nodeToDelete?.data.persistenceId && onDeleteStep && nodeToDelete?.data.nodeKind === 'step') {
+        void onDeleteStep(nodeToDelete.data.persistenceId);
+      }
+
       setSelectedNodeId((current) => (current === nodeId ? '' : current));
     },
-    [setEdges, setNodes]
+    [nodes, setEdges, setNodes, onDeleteStep, onDeletePhase]
   );
 
   const deleteFromContextMenu = useCallback(() => {
@@ -2532,9 +2571,22 @@ export const RoadmapReactFlowPage = ({
         })
       );
 
+      const editingNode = nodes.find((n) => n.id === editingNodeId);
+      if (editingNode?.data.nodeKind === 'phase' && onUpdatePhaseName && editingNode.data.persistenceId) {
+        void onUpdatePhaseName(editingNode.data.persistenceId, normalized.title);
+      } else if (editingNode?.data.nodeKind === 'step' && onUpdateStep && editingNode.data.persistenceId) {
+        void onUpdateStep(editingNode.data.persistenceId, {
+          title: normalized.title,
+          subtitle: '',
+          description: normalized.summary,
+          topics: editingNode.data.topics || [],
+          stepType: editingNode.data.stepType || 'Required',
+        });
+      }
+
       setEditingNodeId(null);
     },
-    [editDraft, editingNodeId, editingNodeType, setNodes]
+    [editDraft, editingNodeId, editingNodeType, nodes, onUpdatePhaseName, onUpdateStep, setNodes]
   );
 
   const closeEditDialog = useCallback(() => {
