@@ -12,11 +12,22 @@ export const CACHE_TAGS = {
   marketAnalysis: (id: string) => `market-analysis-${id}`,
   userRoadmaps: (id: string) => `user-roadmaps-${id}`,
   roadmap: (id: string) => `roadmap-${id}`,
+  userCvs: (id: string) => `user-cvs-${id}`,
+  cvLimits: (id: string) => `cv-limits-${id}`,
+  cvDetails: (id: string) => `cv-details-${id}`,
 } as const;
 
-export async function invalidateUserTag(tag: keyof typeof CACHE_TAGS) {
+type CacheTag = keyof typeof CACHE_TAGS;
+
+export async function invalidateUserTag(tag: CacheTag): Promise<void>;
+export async function invalidateUserTag(tags: CacheTag[]): Promise<void>;
+export async function invalidateUserTag(target: CacheTag | CacheTag[]) {
   const userId = getUserFromCookie(await cookies());
-  if (userId) {
+  if (!userId) return;
+
+  const tags = [target].flat();
+
+  tags.forEach((tag) => {
     revalidateTag(CACHE_TAGS[tag](userId), { expire: 0 });
-  }
+  });
 }

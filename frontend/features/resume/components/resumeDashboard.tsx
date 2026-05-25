@@ -1,7 +1,7 @@
 'use client';
 import { Clock, FileText, Plus, Trash2 } from 'lucide-react';
-import Link from 'next/link';
-import React, { useEffect, useState } from 'react';
+import { useRouter } from 'next/navigation';
+import { useState } from 'react';
 
 import {
   AlertDialog,
@@ -21,30 +21,21 @@ import { GridBackgroundDemo } from '@/features/market-analysis/components/GridBa
 import { useIsMobile } from '@/lib/hooks/useIsMobile';
 import { CvLimits, CvListItemDto } from '@/lib/types/cv';
 
-import { deleteCv, getCvLimits, getUserCvs } from '../cv';
+import { useResumeDashboardActions } from '../hooks/useResumeDashboardActions';
 
-const ResumeDashboard = () => {
-  const [cvs, setCvs] = useState<CvListItemDto[]>([]);
-  const [limits, setLimits] = useState<CvLimits | null>(null);
-  const [loading, setLoading] = useState(true);
-  const [deleteId, setDeleteId] = useState<string | null>(null);
+interface ResumeDashboardProps {
+  initialCvs: CvListItemDto[];
+  initialLimits: CvLimits | null;
+}
+
+const ResumeDashboard = ({ initialCvs, initialLimits }: ResumeDashboardProps) => {
+  const router = useRouter();
   const [showLimitDialog, setShowLimitDialog] = useState(false);
   const isMobile = useIsMobile();
-
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const [cvData, limitData] = await Promise.all([getUserCvs(), getCvLimits()]);
-        setCvs(cvData);
-        setLimits(limitData);
-      } catch (err) {
-        console.error('Failed to load CV data', err);
-      } finally {
-        setLoading(false);
-      }
-    };
-    fetchData();
-  }, []);
+  const { handleDeleteResume, handleCreateResume, deletingId, isCreating } =
+    useResumeDashboardActions();
+  const cvs = initialCvs;
+  const limits = initialLimits;
 
   const formatDateTime = (dateString: string) => {
     const date = new Date(dateString);
@@ -78,24 +69,6 @@ const ResumeDashboard = () => {
     return null;
   };
 
-  const SkeletonCard = () => (
-    <div className="flex h-[400px] flex-col gap-2 rounded-xl border p-4">
-      <div className="h-full rounded-md border">
-        <div className="bg-muted group relative mb-2 h-1/2 animate-pulse rounded-tl-md rounded-tr-md"></div>
-        <div className="space-y-3 p-4">
-          <div className="bg-muted h-6 w-3/4 animate-pulse rounded-md" />
-          <div className="bg-muted h-4 w-full animate-pulse rounded-md" />
-          <div className="bg-muted h-4 w-2/3 animate-pulse rounded-md" />
-        </div>
-        <Separator className="w-full" />
-        <div className="flex flex-row items-center justify-between p-4">
-          <div className="bg-muted h-9 w-16 animate-pulse rounded-md" />
-          <div className="bg-muted h-4 w-32 animate-pulse rounded-md" />
-        </div>
-      </div>
-    </div>
-  );
-
   const EmptyState = () => (
     <div className="col-span-full flex h-[400px] flex-col items-center justify-center rounded-xl border border-dashed">
       <FileText className="text-muted-foreground mb-4 h-12 w-12" />
@@ -106,35 +79,20 @@ const ResumeDashboard = () => {
           : 'Rozpocznij tworzenie swojego pierwszego CV, klikając przycisk poniżej.'}
       </p>
       {!isMobile && (
-        <Link href="/resume/create">
-          <Button className="gap-2">
-            <Plus className="h-4 w-4" />
-            Stwórz CV
-          </Button>
-        </Link>
+        <Button className="gap-2" onClick={handleCreateResume} disabled={isCreating}>
+          <Plus className="h-4 w-4" />
+          {isCreating ? 'Tworzenie...' : 'Stwórz CV'}
+        </Button>
       )}
     </div>
   );
-
-  const handleDelete = async (cvId: string) => {
-    try {
-      await deleteCv(cvId);
-      setCvs((prev) => prev.filter((cv) => cv.id !== cvId));
-      const updatedLimits = await getCvLimits();
-      setLimits(updatedLimits);
-    } catch (err) {
-      console.error('Failed to delete CV', err);
-    } finally {
-      setDeleteId(null);
-    }
-  };
 
   const handleNewResumeClick = () => {
     if (isMobile) return;
     if (limits && limits.currentCount >= limits.maxLimit) {
       setShowLimitDialog(true);
     } else {
-      window.location.href = '/resume/create';
+      handleCreateResume();
     }
   };
 
@@ -142,7 +100,7 @@ const ResumeDashboard = () => {
     <div className="min-h-screen">
       <div className="font-grotesk relative">
         <GridBackgroundDemo />
-        <div className="relative z-10 w-full py-4 lg:py-40">
+        <div className="relative z-10 w-full py-4">
           <div className="container mx-auto">
             <div className="flex flex-col gap-10">
               {/* Header Section */}
@@ -151,10 +109,15 @@ const ResumeDashboard = () => {
                   <Badge variant="secondary">
                     {limits ? `${limits.currentCount}/${limits.maxLimit}` : 'Basic'}
                   </Badge>
-                  {!loading && cvs.length > 0 && !isMobile && (
-                    <Button variant="outline" className="gap-2" onClick={handleNewResumeClick}>
+                  {cvs.length > 0 && !isMobile && (
+                    <Button
+                      variant="outline"
+                      className="gap-2"
+                      onClick={handleNewResumeClick}
+                      disabled={isCreating}
+                    >
                       <Plus className="h-4 w-4" />
-                      Stwórz nowe
+                      {isCreating ? 'Tworzenie...' : 'Stwórz nowe'}
                     </Button>
                   )}
                 </div>
@@ -178,18 +141,16 @@ const ResumeDashboard = () => {
 
               {/* Content Section */}
               <div className="grid grid-cols-1 gap-8 sm:grid-cols-2 lg:grid-cols-3">
-                {loading ? (
-                  <>
-                    {Array.from({ length: 6 }).map((_, i) => (
-                      <SkeletonCard key={i} />
-                    ))}
-                  </>
-                ) : cvs.length === 0 ? (
+                {cvs.length === 0 ? (
                   <EmptyState />
                 ) : (
                   <>
                     {cvs.map((cv) => (
-                      <Link key={cv.id} href={`/resume/${cv.id}`} className="block">
+                      <div
+                        key={cv.id}
+                        // onClick={() => router.push(`/dashboard/resume/${cv.id}`)}
+                        className="block cursor-pointer"
+                      >
                         <div className="group bg-background flex h-[400px] flex-col gap-2 rounded-xl border p-4 transition-shadow hover:shadow-lg">
                           <div className="flex h-full flex-col rounded-md border">
                             <div className="bg-muted group relative mb-2 h-1/2 rounded-tl-md rounded-tr-md">
@@ -213,18 +174,11 @@ const ResumeDashboard = () => {
 
                               {/* Delete Button */}
                               <div className="absolute top-0 left-0 p-2">
-                                <AlertDialog
-                                  open={deleteId === cv.id}
-                                  onOpenChange={(open) => setDeleteId(open ? cv.id : null)}
-                                >
+                                <AlertDialog>
                                   <AlertDialogTrigger asChild>
                                     <button
-                                      onClick={(e) => {
-                                        e.preventDefault();
-                                        e.stopPropagation();
-                                        setDeleteId(cv.id);
-                                      }}
                                       className="flex h-10 w-10 cursor-pointer items-center justify-center rounded border border-white/20 bg-white/30 p-2 text-white opacity-0 shadow-md backdrop-blur-md transition-all group-hover:opacity-100 hover:bg-red-500/80"
+                                      onClick={(e) => e.stopPropagation()}
                                     >
                                       <Trash2
                                         size={16}
@@ -240,21 +194,13 @@ const ResumeDashboard = () => {
                                       </AlertDialogDescription>
                                     </AlertDialogHeader>
                                     <AlertDialogFooter>
-                                      <AlertDialogCancel
-                                        onClick={(e) => {
-                                          e.preventDefault();
-                                          e.stopPropagation();
-                                          setDeleteId(null);
-                                        }}
-                                      >
-                                        Zachowaj CV
-                                      </AlertDialogCancel>
+                                      <AlertDialogCancel>Zachowaj CV</AlertDialogCancel>
                                       <AlertDialogAction
                                         className="bg-red-500 text-white hover:bg-red-400"
                                         onClick={(e) => {
                                           e.preventDefault();
                                           e.stopPropagation();
-                                          handleDelete(cv.id);
+                                          handleDeleteResume(cv.id);
                                         }}
                                       >
                                         Tak, chcę usunąć
@@ -294,7 +240,7 @@ const ResumeDashboard = () => {
                             </div>
                           </div>
                         </div>
-                      </Link>
+                      </div>
                     ))}
                   </>
                 )}
