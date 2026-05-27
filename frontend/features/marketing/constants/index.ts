@@ -526,3 +526,4 @@ export const roadmap_sun = '/roadmap/Sun.svg';
 export const roadmap_puzzle = '/roadmap/Puzzle.svg';
 export const roadmap_path_1 = '/roadmap/Path.svg';
 export const roadmap_checkmark = '/roadmap/checkmark.svg';
+export const roadmap_bell = '/roadmap/roadmap_bell.svg';
