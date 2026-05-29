@@ -29,7 +29,7 @@ const heroStats = [
 const tileOuter =
   'relative z-10 rounded-2xl bg-gradient-to-br from-white/20 via-white/10 via-[50%] to-white/[0.04] p-[1px]';
 const tileInner =
-  'flex h-[72px] items-center justify-center rounded-[15px] bg-[#1A1B1F] px-5 text-center text-[15px] font-light leading-tight text-[#F1F4FF]/90';
+  'flex h-[58px] items-center justify-center rounded-[14px] bg-[#1A1B1F] px-2 text-center text-[11px] font-light leading-tight text-[#F1F4FF]/90 [overflow-wrap:anywhere] sm:h-[72px] sm:rounded-[15px] sm:px-5 sm:text-[15px]';
 
 const VLine = ({ animClass }: { animClass?: string }) => (
   <div className="pointer-events-none absolute top-full left-1/2 h-10 w-px -translate-x-1/2 overflow-hidden bg-[#FFFFFF]/15">
@@ -42,6 +42,7 @@ const VLine = ({ animClass }: { animClass?: string }) => (
 );
 
 const Hero = () => {
+  const containerRef = useRef<HTMLDivElement>(null);
   const roadmapRef = useRef<HTMLDivElement>(null);
 
   useGSAP(
@@ -49,7 +50,7 @@ const Hero = () => {
       const tl = gsap.timeline({
         scrollTrigger: {
           trigger: roadmapRef.current,
-          start: 'top 70%',
+          start: 'top 80%',
         },
         defaults: { ease: 'none' },
       });
@@ -65,12 +66,13 @@ const Hero = () => {
 
       tl.to('.draw-vr-2', { scaleY: 1, duration: 0.4 }, 0.85);
       tl.to('.draw-vr-3', { scaleY: 0.5, duration: 0.2 }, 1.25);
+      tl.to('.draw-vr-4', { scaleY: 1, duration: 0.4 }, 1.1);
     },
-    { scope: roadmapRef }
+    { scope: containerRef }
   );
 
   return (
-    <div className="font-poppins flex flex-col bg-[#0F1013] p-3 sm:p-5">
+    <div ref={containerRef} className="font-poppins flex flex-col bg-[#0F1013] p-3 sm:p-5">
       <div className="relative mx-auto flex min-h-[calc(100dvh-1.5rem)] w-full max-w-none flex-col overflow-hidden rounded-3xl bg-[#16161A] sm:min-h-[calc(100dvh-2.5rem)] 2xl:min-h-0 2xl:max-w-7xl">
         <Header />
 
@@ -145,13 +147,13 @@ const Hero = () => {
               </div>
             </div>
 
-            <div ref={roadmapRef} className="relative hidden flex-1 self-stretch lg:block">
+            {/* --- Roadmapa: rozgałęzione drzewko (desktop + mobile) --- */}
+            <div ref={roadmapRef} className="relative w-full self-stretch lg:flex-1">
               <div className="relative mx-auto w-full max-w-[520px] pt-4">
                 <div className="pointer-events-none absolute inset-x-0 top-4 z-0">
                   <div
-                    className="absolute h-px overflow-hidden bg-[#FFFFFF]/15"
+                    className="absolute top-[4.875rem] h-px overflow-hidden bg-[#FFFFFF]/15 sm:top-[5.75rem]"
                     style={{
-                      top: 'calc(4.5rem + 1.25rem)',
                       left: 'calc(25% - 12px)',
                       width: 'calc(50% + 24px)',
                     }}
@@ -159,9 +161,8 @@ const Hero = () => {
                     <div className="draw-h-fork h-full w-full origin-left scale-x-0 bg-[linear-gradient(90deg,#9296FD_0%,#8491FE_50%,#9D9BFF_100%)] shadow-[0_0_12px_rgba(132,145,254,0.8)]" />
                   </div>
                   <div
-                    className="absolute w-px overflow-hidden bg-[#FFFFFF]/15"
+                    className="absolute top-[4.875rem] w-px overflow-hidden bg-[#FFFFFF]/15 sm:top-[5.75rem]"
                     style={{
-                      top: 'calc(4.5rem + 1.25rem)',
                       left: 'calc(75% + 12px)',
                       height: '1.25rem',
                     }}
