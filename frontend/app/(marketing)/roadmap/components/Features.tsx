@@ -84,6 +84,8 @@ const Features = () => {
       path.style.strokeDashoffset = `${length}`;
     });
 
+    // Opcjonalnie można tu dodać gsap.matchMedia(), jeśli na mobile GSAP rzucałby błędy
+    // z powodu braku widoczności elementu, ale w większości przypadków zwykły ctx wystarczy.
     const ctx = gsap.context(() => {
       const tl = gsap.timeline({
         scrollTrigger: {
@@ -161,153 +163,156 @@ const Features = () => {
             </Button>
           </div>
 
-          <div
-            ref={diagramRef}
-            className="mt-16 w-full overflow-x-auto pb-8 sm:mt-24"
-            style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}
-          >
-            <div className="relative mx-auto aspect-[2.2/1] max-w-5xl min-w-[800px]">
-              <svg
-                ref={svgRef}
-                viewBox="0 0 1000 500"
-                className="pointer-events-none absolute inset-0 z-0 h-full w-full"
-              >
-                <defs>
-                  <linearGradient
-                    id="roadmapLineGradient"
-                    gradientUnits="userSpaceOnUse"
-                    x1="150"
-                    y1="250"
-                    x2="850"
-                    y2="250"
-                  >
-                    <stop offset="0%" stopColor="#9296FD" />
-                    <stop offset="50%" stopColor="#8491FE" />
-                    <stop offset="77%" stopColor="#9D9BFF" />
-                    <stop offset="100%" stopColor="#C7A9FE" />
-                  </linearGradient>
-                </defs>
+          {/* Zmiana: Owinięto diagramRef w dodatkowy div ukrywający element na małych ekranach */}
+          <div className="hidden md:block">
+            <div
+              ref={diagramRef}
+              className="mt-16 w-full overflow-x-auto pb-8 sm:mt-24"
+              style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}
+            >
+              <div className="relative mx-auto aspect-[2.2/1] max-w-5xl min-w-[800px]">
+                <svg
+                  ref={svgRef}
+                  viewBox="0 0 1000 500"
+                  className="pointer-events-none absolute inset-0 z-0 h-full w-full"
+                >
+                  <defs>
+                    <linearGradient
+                      id="roadmapLineGradient"
+                      gradientUnits="userSpaceOnUse"
+                      x1="150"
+                      y1="250"
+                      x2="850"
+                      y2="250"
+                    >
+                      <stop offset="0%" stopColor="#9296FD" />
+                      <stop offset="50%" stopColor="#8491FE" />
+                      <stop offset="77%" stopColor="#9D9BFF" />
+                      <stop offset="100%" stopColor="#C7A9FE" />
+                    </linearGradient>
+                  </defs>
 
-                <path
-                  d={MAIN_BG_PATH}
-                  stroke="rgba(255, 255, 255, 0.15)"
-                  strokeWidth="2"
-                  fill="none"
-                />
-
-                {[...LEFT_BRANCHES, ...RIGHT_BRANCHES].map((d, i) => (
                   <path
-                    key={`bg-${i}`}
-                    d={d}
+                    d={MAIN_BG_PATH}
                     stroke="rgba(255, 255, 255, 0.15)"
                     strokeWidth="2"
                     fill="none"
                   />
-                ))}
 
-                <path
-                  className="animated-path main-line"
-                  d={MAIN_ANIMATED_PATH}
-                  stroke="url(#roadmapLineGradient)"
-                  strokeWidth="2"
-                  fill="none"
-                  strokeLinecap="round"
-                />
+                  {[...LEFT_BRANCHES, ...RIGHT_BRANCHES].map((d, i) => (
+                    <path
+                      key={`bg-${i}`}
+                      d={d}
+                      stroke="rgba(255, 255, 255, 0.15)"
+                      strokeWidth="2"
+                      fill="none"
+                    />
+                  ))}
 
-                {LEFT_BRANCHES.map((d, i) => (
                   <path
-                    key={`left-${i}`}
-                    className="animated-path left-branch"
-                    d={d}
+                    className="animated-path main-line"
+                    d={MAIN_ANIMATED_PATH}
                     stroke="url(#roadmapLineGradient)"
                     strokeWidth="2"
                     fill="none"
                     strokeLinecap="round"
                   />
-                ))}
 
-                <path
-                  className="animated-path right-branch-bottom"
-                  d={RIGHT_BRANCHES[1]}
-                  stroke="url(#roadmapLineGradient)"
-                  strokeWidth="2"
-                  fill="none"
-                  strokeLinecap="round"
+                  {LEFT_BRANCHES.map((d, i) => (
+                    <path
+                      key={`left-${i}`}
+                      className="animated-path left-branch"
+                      d={d}
+                      stroke="url(#roadmapLineGradient)"
+                      strokeWidth="2"
+                      fill="none"
+                      strokeLinecap="round"
+                    />
+                  ))}
+
+                  <path
+                    className="animated-path right-branch-bottom"
+                    d={RIGHT_BRANCHES[1]}
+                    stroke="url(#roadmapLineGradient)"
+                    strokeWidth="2"
+                    fill="none"
+                    strokeLinecap="round"
+                  />
+                </svg>
+
+                <div
+                  className="absolute z-0 h-[200px] w-[200px] -translate-x-1/2 -translate-y-1/2 rounded-full blur-[100px]"
+                  style={{
+                    left: '48%',
+                    top: '50%',
+                    backgroundColor: '#8491FE',
+                    opacity: 0.1,
+                  }}
                 />
-              </svg>
 
-              <div
-                className="absolute z-0 h-[200px] w-[200px] -translate-x-1/2 -translate-y-1/2 rounded-full blur-[100px]"
-                style={{
-                  left: '48%',
-                  top: '50%',
-                  backgroundColor: '#8491FE',
-                  opacity: 0.1,
-                }}
-              />
+                <RoadmapNode
+                  icon={roadmap_map_pin}
+                  left="48%"
+                  top="50%"
+                  sizeClass="h-24 w-24 rounded-[32px]"
+                  innerRoundedClass="rounded-[31px]"
+                  imgSize={32}
+                />
 
-              <RoadmapNode
-                icon={roadmap_map_pin}
-                left="48%"
-                top="50%"
-                sizeClass="h-24 w-24 rounded-[32px]"
-                innerRoundedClass="rounded-[31px]"
-                imgSize={32}
-              />
+                <RoadmapNode
+                  icon={roadmap_user}
+                  left="15%"
+                  top="50%"
+                  sizeClass="h-24 w-24 rounded-[32px]"
+                  innerRoundedClass="rounded-[31px]"
+                  imgSize={32}
+                />
 
-              <RoadmapNode
-                icon={roadmap_user}
-                left="15%"
-                top="50%"
-                sizeClass="h-24 w-24 rounded-[32px]"
-                innerRoundedClass="rounded-[31px]"
-                imgSize={32}
-              />
+                <RoadmapNode
+                  icon={roadmap_terminal}
+                  left="25%"
+                  top="25%"
+                  sizeClass="h-16 w-16 rounded-[20px]"
+                  innerRoundedClass="rounded-[19px]"
+                  imgSize={24}
+                />
 
-              <RoadmapNode
-                icon={roadmap_terminal}
-                left="25%"
-                top="25%"
-                sizeClass="h-16 w-16 rounded-[20px]"
-                innerRoundedClass="rounded-[19px]"
-                imgSize={24}
-              />
+                <RoadmapNode
+                  icon={roadmap_layers}
+                  left="25%"
+                  top="75%"
+                  sizeClass="h-16 w-16 rounded-[20px]"
+                  innerRoundedClass="rounded-[19px]"
+                  imgSize={24}
+                />
 
-              <RoadmapNode
-                icon={roadmap_layers}
-                left="25%"
-                top="75%"
-                sizeClass="h-16 w-16 rounded-[20px]"
-                innerRoundedClass="rounded-[19px]"
-                imgSize={24}
-              />
+                <RoadmapNode
+                  icon={roadmap_flag}
+                  left="85%"
+                  top="50%"
+                  sizeClass="h-24 w-24 rounded-[32px]"
+                  innerRoundedClass="rounded-[31px]"
+                  imgSize={32}
+                />
 
-              <RoadmapNode
-                icon={roadmap_flag}
-                left="85%"
-                top="50%"
-                sizeClass="h-24 w-24 rounded-[32px]"
-                innerRoundedClass="rounded-[31px]"
-                imgSize={32}
-              />
+                <RoadmapNode
+                  icon={roadmap_path}
+                  left="75%"
+                  top="25%"
+                  sizeClass="h-16 w-16 rounded-[20px]"
+                  innerRoundedClass="rounded-[19px]"
+                  imgSize={24}
+                />
 
-              <RoadmapNode
-                icon={roadmap_path}
-                left="75%"
-                top="25%"
-                sizeClass="h-16 w-16 rounded-[20px]"
-                innerRoundedClass="rounded-[19px]"
-                imgSize={24}
-              />
-
-              <RoadmapNode
-                icon={roadmap_cylinder}
-                left="75%"
-                top="75%"
-                sizeClass="h-16 w-16 rounded-[20px]"
-                innerRoundedClass="rounded-[19px]"
-                imgSize={24}
-              />
+                <RoadmapNode
+                  icon={roadmap_cylinder}
+                  left="75%"
+                  top="75%"
+                  sizeClass="h-16 w-16 rounded-[20px]"
+                  innerRoundedClass="rounded-[19px]"
+                  imgSize={24}
+                />
+              </div>
             </div>
           </div>
 
