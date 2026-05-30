@@ -209,68 +209,71 @@ const BentoGrid = () => {
                 </>
               }
               visual={
-                <div className="relative mx-auto h-[168px] w-full max-w-[390px] -translate-y-4 mask-[linear-gradient(180deg,black_72%,transparent_100%)]">
-                  <svg
-                    className="pointer-events-none absolute inset-0 z-0 h-full w-full"
-                    viewBox="0 0 390 168"
-                    fill="none"
-                    xmlns="http://www.w3.org/2000/svg"
-                  >
-                    <line
-                      x1="66"
-                      y1="80"
-                      x2="66"
-                      y2="110"
-                      stroke="rgba(255,255,255,0.3)"
-                      strokeWidth="1"
-                    />
+                <div className="flex -translate-y-4 items-center justify-center max-md:w-50">
+                  <div className="0 relative h-[168px] w-[390px] shrink-0 origin-top scale-[0.65] mask-[linear-gradient(180deg,black_72%,transparent_100%)] min-[380px]:scale-[0.75] sm:scale-100">
+                    <svg
+                      className="pointer-events-none absolute inset-0 z-0 h-full w-full"
+                      viewBox="0 0 390 168"
+                      fill="none"
+                      xmlns="http://www.w3.org/2000/svg"
+                    >
+                      <line
+                        x1="66"
+                        y1="80"
+                        x2="66"
+                        y2="110"
+                        stroke="rgba(255,255,255,0.3)"
+                        strokeWidth="1"
+                      />
 
-                    <path
-                      d="M 132 63 L 195 63 M 195 38 L 195 96 M 195 38 L 258 38 M 195 96 L 258 96"
-                      stroke="rgba(255,255,255,0.22)"
-                      strokeWidth="1"
-                      strokeDasharray="3 3"
-                    />
+                      <path
+                        d="M 132 63 L 195 63 M 195 38 L 195 96 M 195 38 L 258 38 M 195 96 L 258 96"
+                        stroke="rgba(255,255,255,0.22)"
+                        strokeWidth="1"
+                        strokeDasharray="3 3"
+                      />
 
-                    <path
-                      d="M 132 129 L 195 129 L 195 154 L 258 154"
-                      stroke="rgba(255,255,255,0.22)"
-                      strokeWidth="1"
-                      strokeDasharray="3 3"
-                    />
-                  </svg>
+                      <path
+                        d="M 132 129 L 195 129 L 195 154 L 258 154"
+                        stroke="rgba(255,255,255,0.22)"
+                        strokeWidth="1"
+                        strokeDasharray="3 3"
+                      />
+                    </svg>
 
-                  <div className="absolute top-[46px] left-0 w-[132px] sm:w-[142px]">
-                    <div className={customTileOuter}>
-                      <div className={customTileInner}>
-                        Podstawy
-                        <br />
-                        programowania
+                    {/* Kafelki mają teraz sztywno ustawione w-[132px], żeby zawsze trafiały w początek wektorów */}
+                    <div className="absolute top-[46px] left-0 w-[132px]">
+                      <div className={customTileOuter}>
+                        <div className={customTileInner}>
+                          Podstawy
+                          <br />
+                          programowania
+                        </div>
                       </div>
                     </div>
-                  </div>
 
-                  <div className="absolute top-[110px] left-0 w-[132px] sm:w-[142px]">
-                    <div className={customTileOuter}>
-                      <div className={customTileInner}>Kontrola wersji</div>
+                    <div className="absolute top-[110px] left-0 w-[132px]">
+                      <div className={customTileOuter}>
+                        <div className={customTileInner}>Kontrola wersji</div>
+                      </div>
                     </div>
-                  </div>
 
-                  <div className="absolute top-[21px] right-0 w-[132px] sm:w-[142px]">
-                    <div className={customTileOuter}>
-                      <div className={customTileInner}>Konteneryzacja</div>
+                    <div className="absolute top-[21px] right-0 w-[132px]">
+                      <div className={customTileOuter}>
+                        <div className={customTileInner}>Konteneryzacja</div>
+                      </div>
                     </div>
-                  </div>
 
-                  <div className="absolute top-[78px] right-0 w-[132px] sm:w-[142px]">
-                    <div className={customTileOuter}>
-                      <div className={customTileInner}>Orkiestracja</div>
+                    <div className="absolute top-[78px] right-0 w-[132px]">
+                      <div className={customTileOuter}>
+                        <div className={customTileInner}>Orkiestracja</div>
+                      </div>
                     </div>
-                  </div>
 
-                  <div className="absolute top-[135px] right-0 w-[132px] sm:w-[142px]">
-                    <div className={customTileOuter}>
-                      <div className={customTileInner}>Automatyzacja CI/CD</div>
+                    <div className="absolute top-[135px] right-0 w-[132px]">
+                      <div className={customTileOuter}>
+                        <div className={customTileInner}>Automatyzacja CI/CD</div>
+                      </div>
                     </div>
                   </div>
                 </div>
