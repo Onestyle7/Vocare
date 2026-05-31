@@ -527,3 +527,50 @@ export const roadmap_puzzle = '/roadmap/Puzzle.svg';
 export const roadmap_path_1 = '/roadmap/Path.svg';
 export const roadmap_checkmark = '/roadmap/checkmark.svg';
 export const roadmap_bell = '/roadmap/roadmap_bell.svg';
+
+// resume creator
+
+export const featuresList = [
+  {
+    icon: grid_sort,
+    label: 'Layout',
+    number: 1,
+    title: 'Layout stworzony pod ATS',
+    description:
+      'Twoje CV wygląda profesjonalnie i jednocześnie przechodzi każdy system rekrutacyjny. Format zoptymalizowany pod ATS oznacza, że Twoja aplikacja dotrze do rekrutera - nie do kosza.',
+    href: '#',
+  },
+  {
+    icon: grid_user,
+    label: 'Personalizacja',
+    number: 2,
+    title: 'Dopasowane sekcje',
+    description:
+      'AI sam decyduje, które Twoje doświadczenia i umiejętności wyciągnąć na pierwszy plan w zależności od tego, na jakie stanowisko aplikujesz.',
+    href: '#',
+  },
+  {
+    icon: grid_timer,
+    label: 'Czas',
+    number: 3,
+    title: 'Automatyczne uzupełnianie',
+    description:
+      'Nie musisz wpisywać wszystkiego od nowa. Kreator pobiera Twoje doświadczenie, wykształcenie i umiejętności prosto z profilu w aplikacji.',
+    href: '#',
+  },
+  {
+    icon: grid_docs,
+    label: 'Eksport i gotowość',
+    number: 4,
+    title: 'Gotowe CV w PDF',
+    description:
+      'Jedno kliknięcie - pobierasz czyste, profesjonalne CV gotowe do wysłania. Bez walki z formatowaniem w Wordzie.',
+    href: '#',
+  },
+];
+
+// market analysis landing page
+
+export const ai_icon = '/market-analysis/ai-icon.svg';
+export const path_icon = '/market-analysis/path-icon.svg';
+export const user_icon_1 = '/market-analysis/user-icon.svg';
