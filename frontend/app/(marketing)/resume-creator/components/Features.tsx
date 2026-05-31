@@ -1,6 +1,5 @@
 'use client';
 
-import { useGSAP } from '@gsap/react';
 import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { ArrowUpRight, MoreVertical } from 'lucide-react';
@@ -13,56 +12,15 @@ import { Separator } from '@/components/ui/separator';
 import {
   arrow_icon,
   bottom_puzzle,
+  featuresList,
   glass_img,
-  grid_docs,
-  grid_sort,
-  grid_timer,
-  grid_user,
   upper_puzzle,
 } from '@/features/marketing/constants';
+import { useCardsAnimation } from '@/features/marketing/constants/animations';
 
 if (typeof window !== 'undefined') {
   gsap.registerPlugin(ScrollTrigger);
 }
-
-const featuresList = [
-  {
-    icon: grid_sort,
-    label: 'Layout',
-    number: 1,
-    title: 'Layout stworzony pod ATS',
-    description:
-      'Twoje CV wygląda profesjonalnie i jednocześnie przechodzi każdy system rekrutacyjny. Format zoptymalizowany pod ATS oznacza, że Twoja aplikacja dotrze do rekrutera - nie do kosza.',
-    href: '#',
-  },
-  {
-    icon: grid_user,
-    label: 'Personalizacja',
-    number: 2,
-    title: 'Dopasowane sekcje',
-    description:
-      'AI sam decyduje, które Twoje doświadczenia i umiejętności wyciągnąć na pierwszy plan w zależności od tego, na jakie stanowisko aplikujesz.',
-    href: '#',
-  },
-  {
-    icon: grid_timer,
-    label: 'Czas',
-    number: 3,
-    title: 'Automatyczne uzupełnianie',
-    description:
-      'Nie musisz wpisywać wszystkiego od nowa. Kreator pobiera Twoje doświadczenie, wykształcenie i umiejętności prosto z profilu w aplikacji.',
-    href: '#',
-  },
-  {
-    icon: grid_docs,
-    label: 'Eksport i gotowość',
-    number: 4,
-    title: 'Gotowe CV w PDF',
-    description:
-      'Jedno kliknięcie - pobierasz czyste, profesjonalne CV gotowe do wysłania. Bez walki z formatowaniem w Wordzie.',
-    href: '#',
-  },
-];
 
 const Features = () => {
   const bentoRef = useRef<HTMLDivElement>(null);
@@ -80,39 +38,7 @@ const Features = () => {
     setActiveSlide(activeIndex);
   };
 
-  useGSAP(
-    () => {
-      const cards = gsap.utils.toArray('.desktop-card');
-
-      const finalY = [112, 28, 0, 28, 112];
-      const finalRotations = [-24, -12, 0, 12, 24];
-
-      gsap.fromTo(
-        cards,
-        {
-          opacity: 0,
-          y: 300,
-          x: (i) => (i - 2) * 150,
-          rotation: (i) => (i - 2) * 45,
-        },
-        {
-          opacity: 1,
-          x: 0,
-          y: (i) => finalY[i],
-          rotation: (i) => finalRotations[i],
-          transformOrigin: 'bottom center',
-          ease: 'power2.out',
-          scrollTrigger: {
-            trigger: cardsContainerRef.current,
-            start: 'top 85%',
-            end: 'top 35%',
-            scrub: 1.5,
-          },
-        }
-      );
-    },
-    { scope: cardsContainerRef }
-  );
+  useCardsAnimation(cardsContainerRef);
 
   return (
     <div className="font-poppins flex flex-col bg-[#0F1013] p-3 sm:p-5">
