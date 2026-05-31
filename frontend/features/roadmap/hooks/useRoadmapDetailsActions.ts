@@ -1,7 +1,7 @@
 import { useTransition } from 'react';
 import { toast } from 'sonner';
 
-import { StepStatus, UpdateStepPositionsPayload } from '../dal/api';
+import { StepStatus, UpdateStepPositionsPayload, UpdateStepRequestDto } from '../dal/api';
 import {
   deleteRoadmapPhaseCommand,
   deleteRoadmapStepCommand,

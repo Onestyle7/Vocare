@@ -48,7 +48,7 @@ const GenerateRecommendationFail = () => {
                 </div>
                 <div className="w-full">
                   <Link
-                    href="/profile"
+                    href="/dashboard/profile"
                     className="text-md text-muted-foreground group flex flex-row items-center transition-all duration-300"
                   >
                     Przejdź do profilu

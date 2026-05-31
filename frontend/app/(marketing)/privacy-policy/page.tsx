@@ -3,7 +3,7 @@
 import { ArrowLeft } from 'lucide-react';
 import Link from 'next/link';
 
-import { privacy_policy } from '@/features/marketing/constants/countries';
+import { privacy_policy } from '@/features/marketing/constants/privacy-policy';
 
 type Section = {
   title: string;

@@ -32,8 +32,7 @@ const ResumeDashboard = ({ initialCvs, initialLimits }: ResumeDashboardProps) =>
   const router = useRouter();
   const [showLimitDialog, setShowLimitDialog] = useState(false);
   const isMobile = useIsMobile();
-  const { handleDeleteResume, handleCreateResume, deletingId, isCreating } =
-    useResumeDashboardActions();
+  const { handleDeleteResume, handleCreateResume, isCreating } = useResumeDashboardActions();
   const cvs = initialCvs;
   const limits = initialLimits;
 
@@ -148,7 +147,7 @@ const ResumeDashboard = ({ initialCvs, initialLimits }: ResumeDashboardProps) =>
                     {cvs.map((cv) => (
                       <div
                         key={cv.id}
-                        // onClick={() => router.push(`/dashboard/resume/${cv.id}`)}
+                        onClick={() => router.push(`/dashboard/resume/${cv.id}`)}
                         className="block cursor-pointer"
                       >
                         <div className="group bg-background flex h-[400px] flex-col gap-2 rounded-xl border p-4 transition-shadow hover:shadow-lg">
@@ -178,7 +177,9 @@ const ResumeDashboard = ({ initialCvs, initialLimits }: ResumeDashboardProps) =>
                                   <AlertDialogTrigger asChild>
                                     <button
                                       className="flex h-10 w-10 cursor-pointer items-center justify-center rounded border border-white/20 bg-white/30 p-2 text-white opacity-0 shadow-md backdrop-blur-md transition-all group-hover:opacity-100 hover:bg-red-500/80"
-                                      onClick={(e) => e.stopPropagation()}
+                                      onClick={(e) => {
+                                        e.stopPropagation();
+                                      }}
                                     >
                                       <Trash2
                                         size={16}
@@ -194,7 +195,9 @@ const ResumeDashboard = ({ initialCvs, initialLimits }: ResumeDashboardProps) =>
                                       </AlertDialogDescription>
                                     </AlertDialogHeader>
                                     <AlertDialogFooter>
-                                      <AlertDialogCancel>Zachowaj CV</AlertDialogCancel>
+                                      <AlertDialogCancel onClick={(e) => e.stopPropagation()}>
+                                        Zachowaj CV
+                                      </AlertDialogCancel>
                                       <AlertDialogAction
                                         className="bg-red-500 text-white hover:bg-red-400"
                                         onClick={(e) => {

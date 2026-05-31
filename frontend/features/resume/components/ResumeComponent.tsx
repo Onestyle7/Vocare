@@ -3600,25 +3600,27 @@ const CVCreator: React.FC<CVCreatorProps> = ({ initialCv }) => {
 
       {/* Sidebar for Desktop */}
       <div className="mx-3 hidden w-16 flex-col items-center justify-between rounded-lg bg-white py-6 shadow-lg lg:flex">
-        <button
-          onClick={() => router.push('/dashboard/resume')}
-          className="cursor-pointer rounded-lg p-3 transition-colors hover:bg-gray-100"
-          title="Dashboard"
-        >
-          <Home size={24} className="text-gray-600" />
-        </button>
-        <button
-          onClick={handleSave}
-          className="flex cursor-pointer flex-col items-center justify-center rounded-lg p-3 transition-colors hover:bg-gray-100"
-          title="Save resume"
-        >
-          <Save size={16} className="h-6 w-6 text-black" />
-          <div className="mt-2 flex flex-row items-center justify-center text-[9px]">
-            {autosaveStatus === 'saving' && <span className="text-gray-500">Saving…</span>}
-            {autosaveStatus === 'saved' && <span className="text-green-600">Saved ✓</span>}
-            {autosaveStatus === 'error' && <span className="text-red-500">Save failed</span>}
-          </div>
-        </button>
+        <div>
+          <button
+            onClick={() => router.push('/dashboard/resume')}
+            className="cursor-pointer rounded-lg p-3 transition-colors hover:bg-gray-100"
+            title="Dashboard"
+          >
+            <Home size={24} className="text-gray-600" />
+          </button>
+          <button
+            onClick={handleSave}
+            className="flex cursor-pointer flex-col items-center justify-center rounded-lg p-3 transition-colors hover:bg-gray-100"
+            title="Save resume"
+          >
+            <Save size={16} className="h-6 w-6 text-gray-600" />
+            <div className="mt-2 flex flex-row items-center justify-center text-[9px]">
+              {autosaveStatus === 'saving' && <span className="text-gray-500">Saving…</span>}
+              {autosaveStatus === 'saved' && <span className="text-green-600">Saved ✓</span>}
+              {autosaveStatus === 'error' && <span className="text-red-500">Save failed</span>}
+            </div>
+          </button>
+        </div>
 
         <HoverCard>
           <HoverCardTrigger asChild>

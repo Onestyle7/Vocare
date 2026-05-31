@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 'use client';
 
 import '@xyflow/react/dist/style.css';
@@ -73,7 +74,7 @@ import {
   type PresetNodeConfig,
   presetNodes,
 } from '@/features/roadmap/presets';
-import type { RoadmapStepDto, StepStatus, StepType } from '@/lib/types/roadmap';
+import type { StepStatus, StepType, UpdateStepRequestDto } from '@/lib/types/roadmap';
 
 type RoadmapStep = {
   id: string;
@@ -1121,18 +1122,6 @@ const formatStatusTimelineLabel = (stepType?: StepType, stepStatus?: StepStatus)
   return `${typeLabel} • ${statusLabel}`;
 };
 
-const getStepTone = (stepType?: StepType): NodeTone =>
-  stepType === 'Optional' ? 'neutral' : 'cream';
-
-const getStepSummaryFromResponse = (step: RoadmapStepDto, fallbackSummary?: string) => {
-  const description = step.description?.trim();
-  if (description) return description;
-
-  const topicsSummary =
-    step.topics.length > 0 ? ` Topics: ${step.topics.slice(0, 4).join(', ')}.` : '';
-  return fallbackSummary || `Step ${step.orderIndex + 1}.${topicsSummary}`;
-};
-
 const applyStepStatusToNodes = (
   currentNodes: RoadmapNode[],
   targetStepId: string,
@@ -1166,60 +1155,6 @@ const applyStepStatusToNodes = (
         ...node.data,
         phaseSteps: node.data.phaseSteps.map((phaseStep) =>
           phaseStep.id === targetStepId ? { ...phaseStep, status: nextStatus } : phaseStep
-        ),
-      },
-    };
-  });
-
-const applyStepResponseToNodes = (currentNodes: RoadmapNode[], updatedStep: RoadmapStepDto) =>
-  currentNodes.map((node) => {
-    if (node.type !== 'roadmapTile') return node;
-
-    if (node.data.persistenceId === updatedStep.id) {
-      return {
-        ...node,
-        position: {
-          x: updatedStep.positionX ?? node.position.x,
-          y: updatedStep.positionY ?? node.position.y,
-        },
-        data: {
-          ...node.data,
-          title: updatedStep.title,
-          timeline: formatStatusTimelineLabel(updatedStep.stepType, updatedStep.status),
-          summary: getStepSummaryFromResponse(updatedStep, node.data.summary),
-          parentStepId: updatedStep.parentStepId,
-          stepOrderIndex: updatedStep.orderIndex,
-          subtitle: updatedStep.subTitle?.trim() || '',
-          description: updatedStep.description?.trim() || '',
-          topics: updatedStep.topics,
-          tone: getStepTone(updatedStep.stepType),
-          stepType: updatedStep.stepType,
-          stepStatus: updatedStep.status,
-        },
-      };
-    }
-
-    if (node.data.nodeKind !== 'phase' || !node.data.phaseSteps?.length) {
-      return node;
-    }
-
-    if (!node.data.phaseSteps.some((phaseStep) => phaseStep.id === updatedStep.id)) {
-      return node;
-    }
-
-    return {
-      ...node,
-      data: {
-        ...node.data,
-        phaseSteps: node.data.phaseSteps.map((phaseStep) =>
-          phaseStep.id === updatedStep.id
-            ? {
-                ...phaseStep,
-                title: updatedStep.title,
-                stepType: updatedStep.stepType,
-                status: updatedStep.status,
-              }
-            : phaseStep
         ),
       },
     };
@@ -1444,11 +1379,11 @@ type RoadmapReactFlowPageProps = {
   onPersistNodePositions?: (
     positions: Array<{ persistenceId: string; x: number; y: number }>
   ) => void | Promise<void>;
-  onUpdateStepStatus?: (params: { stepId: string; status: StepStatus }) => Promise<RoadmapStepDto>;
+  onUpdateStepStatus?: (params: { stepId: string; status: StepStatus }) => Promise<void>;
   onDeleteStep?: (stepId: string) => Promise<void>;
   onUpdatePhaseName?: (phaseId: string, newName: string) => Promise<void>;
   onDeletePhase?: (phaseId: string) => Promise<void>;
-  onUpdateStep?: (stepId: string, payload: any) => Promise<void>;
+  onUpdateStep?: (stepId: string, payload: UpdateStepRequestDto) => Promise<void>;
 };
 
 export const RoadmapReactFlowPage = ({
@@ -1606,14 +1541,11 @@ export const RoadmapReactFlowPage = ({
       }
 
       try {
-        const updatedStep = await onUpdateStepStatus({
+        await onUpdateStepStatus({
           stepId: selectedNode.data.persistenceId,
           status: nextStatus,
         });
-
-        if (updatedStep) {
-          setNodes((currentNodes) => applyStepResponseToNodes(currentNodes, updatedStep));
-        }
+        onRestorePresetLayout();
       } catch {
         setNodes((currentNodes) => applyStepStatusToNodes(currentNodes, stepId, previousStatus));
         toast.error('Nie udalo sie zapisac statusu kroku');
@@ -2355,7 +2287,7 @@ export const RoadmapReactFlowPage = ({
   const deleteNodeById = useCallback(
     (nodeId: string) => {
       const nodeToDelete = nodes.find((node) => node.id === nodeId);
-      
+
       setEdges((currentEdges) => {
         const updatedEdges = currentEdges.filter(
           (edge) => edge.source !== nodeId && edge.target !== nodeId
@@ -2369,7 +2301,7 @@ export const RoadmapReactFlowPage = ({
         if (nodeToDelete?.data.nodeKind === 'step' && nodeToDelete.data.phaseTitle) {
           const phaseTitle = nodeToDelete.data.phaseTitle;
           const isRequired = nodeToDelete.data.stepType !== 'Optional';
-          
+
           return nextNodes.map((node) => {
             if (node.data.nodeKind === 'phase' && node.data.phaseTitle === phaseTitle) {
               const currentPhaseSteps = node.data.phaseSteps || [];
@@ -2384,7 +2316,9 @@ export const RoadmapReactFlowPage = ({
                   phaseOptionalCount: !isRequired
                     ? Math.max(0, (node.data.phaseOptionalCount ?? 1) - 1)
                     : node.data.phaseOptionalCount,
-                  phaseSteps: currentPhaseSteps.filter((step) => step.id !== nodeToDelete.data.persistenceId),
+                  phaseSteps: currentPhaseSteps.filter(
+                    (step) => step.id !== nodeToDelete.data.persistenceId
+                  ),
                 },
               };
             }
@@ -2395,9 +2329,17 @@ export const RoadmapReactFlowPage = ({
         return nextNodes;
       });
 
-      if (nodeToDelete?.data.nodeKind === 'phase' && onDeletePhase && nodeToDelete.data.persistenceId) {
+      if (
+        nodeToDelete?.data.nodeKind === 'phase' &&
+        onDeletePhase &&
+        nodeToDelete.data.persistenceId
+      ) {
         void onDeletePhase(nodeToDelete.data.persistenceId);
-      } else if (nodeToDelete?.data.persistenceId && onDeleteStep && nodeToDelete?.data.nodeKind === 'step') {
+      } else if (
+        nodeToDelete?.data.persistenceId &&
+        onDeleteStep &&
+        nodeToDelete?.data.nodeKind === 'step'
+      ) {
         void onDeleteStep(nodeToDelete.data.persistenceId);
       }
 
@@ -2572,9 +2514,17 @@ export const RoadmapReactFlowPage = ({
       );
 
       const editingNode = nodes.find((n) => n.id === editingNodeId);
-      if (editingNode?.data.nodeKind === 'phase' && onUpdatePhaseName && editingNode.data.persistenceId) {
+      if (
+        editingNode?.data.nodeKind === 'phase' &&
+        onUpdatePhaseName &&
+        editingNode.data.persistenceId
+      ) {
         void onUpdatePhaseName(editingNode.data.persistenceId, normalized.title);
-      } else if (editingNode?.data.nodeKind === 'step' && onUpdateStep && editingNode.data.persistenceId) {
+      } else if (
+        editingNode?.data.nodeKind === 'step' &&
+        onUpdateStep &&
+        editingNode.data.persistenceId
+      ) {
         void onUpdateStep(editingNode.data.persistenceId, {
           title: normalized.title,
           subtitle: '',
@@ -2827,9 +2777,11 @@ export const RoadmapReactFlowPage = ({
               </TooltipContent>
             </Tooltip>
 
-            <div className="h-px w-6 bg-slate-200" />
+            {/* TODO: */}
+            {/* Temp disabled - on prod it doesn't work also. We need to rethink and re-implement this */}
+            {/* <div className="h-px w-6 bg-slate-200" /> */}
 
-            <Tooltip>
+            {/* <Tooltip>
               <TooltipTrigger asChild>
                 <button
                   type="button"
@@ -2861,7 +2813,7 @@ export const RoadmapReactFlowPage = ({
               <TooltipContent side="right" sideOffset={10}>
                 Ponów
               </TooltipContent>
-            </Tooltip>
+            </Tooltip> */}
           </div>
         </motion.aside>
 

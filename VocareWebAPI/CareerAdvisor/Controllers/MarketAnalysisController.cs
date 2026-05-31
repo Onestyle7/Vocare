@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using VocareWebAPI.Billing.Services.Interfaces;
 using VocareWebAPI.Repositories.Interfaces;
+using VocareWebAPI.Shared.Results;
 
 namespace VocareWebAPI.Controllers
 {
@@ -66,6 +67,10 @@ namespace VocareWebAPI.Controllers
                 await _billingService.DeductTokensForServiceAsync(userId, "MarketAnalysis");
 
                 return Ok(result);
+            }
+            catch (KeyNotFoundException)
+            {
+                return NotFound();
             }
             catch (Exception ex)
             {

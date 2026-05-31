@@ -63,10 +63,10 @@ namespace VocareWebAPI.CareerAdvisor.Services.Implementations
         {
             var recommendation = await _aiRecommendationRepository.GetLatestByUserIdAsync(userId);
             if (recommendation == null)
-                throw new Exception($"AI recommendation for user with ID {userId} not found.");
+                throw new KeyNotFoundException($"AI recommendation for user with ID {userId} not found.");
 
             if (recommendation.UserProfile == null)
-                throw new Exception(
+                throw new KeyNotFoundException(
                     $"User profile for recommendation {recommendation.Id} not found."
                 );
 
@@ -317,7 +317,7 @@ namespace VocareWebAPI.CareerAdvisor.Services.Implementations
             var recommendation = await _aiRecommendationRepository.GetLatestByUserIdAsync(userId);
             if (recommendation == null)
             {
-                throw new Exception($"AI recommendation for user with ID:{userId} not found.");
+                throw new KeyNotFoundException($"AI recommendation for user with ID:{userId} not found.");
             }
 
             var careerStats = await _careerStatisticsRepository.GetByAiRecommendationIdAsync(

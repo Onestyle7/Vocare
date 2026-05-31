@@ -1,3 +1,4 @@
+import { useRouter } from 'next/navigation';
 import { useState, useTransition } from 'react';
 import { toast } from 'sonner';
 
@@ -10,6 +11,7 @@ export function useMarketAnalysisActions() {
   const [isPending, startTransition] = useTransition();
   const [generateError, setGenerateError] = useState<MarketAnalysisDomainError | null>(null);
   const { unauthorizedToast } = useUnauthorizedToast();
+  const router = useRouter();
 
   const handleGenerateNewAnalysis = () => {
     startTransition(async () => {
@@ -26,6 +28,10 @@ export function useMarketAnalysisActions() {
         } else if (actionError.type === 'MissingCareerPaths') {
           toast.error('Brak ścieżek kariery', {
             description: actionError.message,
+            action: {
+              label: 'Generuj',
+              onClick: async () => router.push('/dashboard/assistant'),
+            },
           });
         } else {
           toast.error('Błąd', {
