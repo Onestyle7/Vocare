@@ -15,7 +15,6 @@ namespace VocareWebAPI.CvGenerator.Services.Implementation
     public class CvManagementService : ICvManagementService
     {
         private readonly IGeneratedCvRepository _cvRepository;
-        private readonly IUserProfileRepository _userProfileRepository;
         private readonly ICvGenerationService _cvGenerationService;
         private readonly ILogger<CvManagementService> _logger;
         private readonly IUserBillingRepository _userBillingRepository;
@@ -23,7 +22,6 @@ namespace VocareWebAPI.CvGenerator.Services.Implementation
 
         public CvManagementService(
             IGeneratedCvRepository cvRepository,
-            IUserProfileRepository userProfileRepository,
             ICvGenerationService cvGenerationService,
             ILogger<CvManagementService> logger,
             IUserBillingRepository userBillingRepository,
@@ -31,7 +29,6 @@ namespace VocareWebAPI.CvGenerator.Services.Implementation
         )
         {
             _cvRepository = cvRepository;
-            _userProfileRepository = userProfileRepository;
             _cvGenerationService = cvGenerationService;
             _logger = logger;
             _userBillingRepository = userBillingRepository;
@@ -60,13 +57,12 @@ namespace VocareWebAPI.CvGenerator.Services.Implementation
 
         public async Task<CvDetailsDto> GetCvDetailsAsync(Guid cvId, string userId)
         {
-            _logger.LogInformation($"Getting CV details: {cvId} for user: {userId}");
             var cv = await _cvRepository.GetByIdAsync(cvId);
             if (cv == null)
                 throw new CvNotFoundException(cvId);
 
             // Sprawdzamym, czy CV należy do użytkownika
-            if (!await _cvRepository.BelongsToUserAsync(cvId, userId))
+            if (cv.UserId != userId)
                 throw new CvAccessDeniedException(cvId);
 
             var cvData = JsonSerializer.Deserialize<CvDto>(
@@ -171,7 +167,7 @@ namespace VocareWebAPI.CvGenerator.Services.Implementation
             if (cv == null)
                 throw new CvNotFoundException(updateDto.Id);
 
-            if (!await _cvRepository.BelongsToUserAsync(updateDto.Id, userId))
+            if (cv.UserId != userId)
                 throw new CvAccessDeniedException(updateDto.Id);
 
             // Aktualizujemy dane
@@ -207,7 +203,7 @@ namespace VocareWebAPI.CvGenerator.Services.Implementation
             if (cv == null)
                 throw new CvNotFoundException(cvId);
 
-            if (!await _cvRepository.BelongsToUserAsync(cvId, userId))
+            if (cv.UserId != userId)
                 throw new CvAccessDeniedException(cvId);
 
             // Jeśli usuwamy domyślne CV, musimy ustawić inne jako domyślne
