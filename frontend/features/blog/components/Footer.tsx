@@ -18,7 +18,7 @@ export default function Footer() {
           asChild
           className="mt-10 self-center rounded-full bg-[linear-gradient(90deg,rgba(146,150,253,1)_0%,rgba(132,145,254,1)_50%,rgba(199,169,254,1)_100%,rgba(157,155,255,1)_77%)] px-20 py-6 font-bold text-white focus:ring-2 focus:ring-[#915EFF]/50 focus:outline-none md:my-10"
         >
-          <Link href="/profile">Sprawdź Vocare</Link>
+          <Link href="/dashboard/profile">Sprawdź Vocare</Link>
         </Button>
       </section>
       <section className="font-poppins md:max-w-[20rem]">

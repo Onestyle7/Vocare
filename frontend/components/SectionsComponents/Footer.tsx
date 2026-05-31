@@ -41,7 +41,11 @@ const Footer = () => {
       <footer className="flex h-[60vh] flex-col items-center justify-center max-sm:mt-60 max-sm:mb-5 sm:border-t 2xl:h-[50vh] 2xl:border">
         <div className="flex h-1/2 w-full justify-center max-sm:items-center">
           <div className="flex w-1/2 items-center justify-center">
-            <ButtonGenerate as="a" href="/profile" className="mb-4 max-md:w-full sm:my-20">
+            <ButtonGenerate
+              as="a"
+              href="/dashboard/profile"
+              className="mb-4 max-md:w-full sm:my-20"
+            >
               Sprawdź Vocare
             </ButtonGenerate>
           </div>

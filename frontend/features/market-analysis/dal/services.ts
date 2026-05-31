@@ -36,14 +36,6 @@ const mapMarketAnalysisError = (error: ApiError): MarketAnalysisDomainError => {
 
   if (error.type === 'NotFoundError') {
     return {
-      type: 'NoAnalysis',
-      message: 'Brak zapisanej analizy rynku - wygeneruj nową.',
-      details: error.details,
-    };
-  }
-
-  if (detail.includes('recommendation') || detail.includes('ścieżek kariery')) {
-    return {
       type: 'MissingCareerPaths',
       message: 'Brak ścieżek kariery z asystenta AI. Wygeneruj rekomendacje w Doradcy kariery.',
       details: error.details,

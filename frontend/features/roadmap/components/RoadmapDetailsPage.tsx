@@ -448,15 +448,15 @@ export default function RoadmapDetailsPage({
 }) {
   const router = useRouter();
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
-  
+
   const { handleArchiveRoadmap, deletingId } = useRoadmapDashboardActions();
-  const { 
-    handleUpdatePositions, 
-    handleUpdateStatus, 
-    handleDeleteStep, 
-    handleUpdatePhaseName, 
-    handleDeletePhase, 
-    handleUpdateStep 
+  const {
+    handleUpdatePositions,
+    handleUpdateStatus,
+    handleDeleteStep,
+    handleUpdatePhaseName,
+    handleDeletePhase,
+    handleUpdateStep,
   } = useRoadmapDetailsActions(roadmapId);
 
   const roadmap = initialRoadmap;
@@ -471,7 +471,7 @@ export default function RoadmapDetailsPage({
   const handleDeleteRoadmap = () => {
     handleArchiveRoadmap(roadmapId, () => {
       setIsDeleteDialogOpen(false);
-      router.push('/dashboard');
+      router.push('/dashboard/roadmap');
     });
   };
 
@@ -520,7 +520,7 @@ export default function RoadmapDetailsPage({
     <RoadmapReactFlowPage
       key={roadmap.id}
       title={roadmap.title}
-      backHref="/dashboard"
+      backHref="/dashboard/roadmap"
       headerActions={
         <AlertDialog open={isDeleteDialogOpen} onOpenChange={setIsDeleteDialogOpen}>
           <AlertDialogTrigger asChild>

@@ -75,7 +75,7 @@ const HeroTweak = () => {
             </Copy>
 
             <Link
-              href="/profile"
+              href="/dashboard/profile"
               className="mt-3 flex cursor-none max-md:items-center max-md:justify-center sm:mt-4 lg:w-full"
             >
               <Button

@@ -47,7 +47,7 @@ const GenerateRecommendationFail = () => {
                 </div>
                 <div className="w-full">
                   <Link
-                    href="/profile"
+                    href="/dashboard/profile"
                     className="text-md text-muted-foreground group flex flex-row items-center transition-all duration-300"
                   >
                     Navigate to profile
@@ -88,7 +88,7 @@ const GenerateRecommendationFail = () => {
                 </div>
                 <div className="w-full">
                   <Link
-                    href="/profile"
+                    href="/dashboard/profile"
                     className="text-md text-muted-foreground group flex flex-row items-center transition-all duration-300"
                   >
                     Learn how we protect data
@@ -127,7 +127,7 @@ const GenerateRecommendationFail = () => {
                 </div>
                 <div className="w-full">
                   <Link
-                    href="/profile"
+                    href="/dashboard/profile"
                     className="text-md text-muted-foreground group flex flex-row items-center transition-all duration-300"
                   >
                     Visit the FAQ section

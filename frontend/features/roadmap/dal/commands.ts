@@ -5,7 +5,12 @@ import { revalidateTag } from 'next/cache';
 import { CACHE_TAGS, invalidateUserTag } from '@/lib/tags';
 import { actionErr, actionOk } from '@/lib/types/result';
 
-import { GenerateRoadmapPayload, StepStatus, UpdateStepPositionsPayload } from './api';
+import {
+  GenerateRoadmapPayload,
+  StepStatus,
+  UpdateStepPositionsPayload,
+  UpdateStepRequestDto,
+} from './api';
 import {
   archiveRoadmapService,
   deleteRoadmapPhaseService,

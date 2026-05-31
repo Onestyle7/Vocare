@@ -99,7 +99,7 @@ export class ApiClient {
 
       if (!response.ok) {
         const error = await this.handleErrorResponse(response);
-        console.log('ERROR_LOGGER', error);
+        console.log('ERROR_LOGGER', response);
         return error;
       }
 

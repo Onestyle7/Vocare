@@ -405,7 +405,6 @@ export default function RoadmapDashboardPage({
                                       <AlertDialogAction
                                         className="bg-red-500 text-white hover:bg-red-400"
                                         onClick={(event) => {
-                                          event.preventDefault();
                                           event.stopPropagation();
                                           void handleDeleteRoadmap(roadmap.id);
                                         }}
