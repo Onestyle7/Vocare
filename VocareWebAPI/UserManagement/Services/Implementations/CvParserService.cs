@@ -2,6 +2,7 @@ using System.Text;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 using Microsoft.Extensions.Options;
+using Pgvector.EntityFrameworkCore;
 using UglyToad.PdfPig;
 using VocareWebAPI.Billing.Models.Enums;
 using VocareWebAPI.Billing.Repositories.Interfaces;
@@ -114,7 +115,10 @@ namespace VocareWebAPI.CareerAdvisor.Services.Implementations
                     new JsonSerializerOptions { PropertyNameCaseInsensitive = true }
                 );
 
-                var content = apiResponse?.Choices[0].Message?.Content;
+                if (apiResponse?.Choices == null || apiResponse.Choices.Count == 0)
+                    throw new CvParsingFailedException("OpenAI API returned no choices.");
+
+                var content = apiResponse.Choices[0].Message?.Content;
 
                 if (string.IsNullOrWhiteSpace(content))
                     throw new CvParsingFailedException("OpenAI API returned empty content.");
