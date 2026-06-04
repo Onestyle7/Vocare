@@ -12,6 +12,7 @@
 @import 'tailwindcss';
 
 @import '../features/dashboard/sidebar/sidebar.css';
+@import '../features/dashboard/header/header.css';
 
 @utility remove-scrollbar {
   &::-webkit-scrollbar {

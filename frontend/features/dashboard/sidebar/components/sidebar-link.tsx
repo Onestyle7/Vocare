@@ -3,7 +3,7 @@ import Link from 'next/link';
 import { SidebarMenuButton, SidebarMenuItem } from '@/components/ui/sidebar';
 import { cn } from '@/lib/utils';
 
-import type { NavLink } from './app-sidebar';
+import type { NavLink } from './dashboard-sidebar';
 
 export default function SidebarLink({ link, isActive }: { link: NavLink; isActive: boolean }) {
   return (

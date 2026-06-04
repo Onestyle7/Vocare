@@ -2,7 +2,7 @@ import { usePathname } from 'next/navigation';
 
 import { SidebarGroup, SidebarGroupLabel, SidebarMenu } from '@/components/ui/sidebar';
 
-import { NavLink } from './app-sidebar';
+import { NavLink } from './dashboard-sidebar';
 import SidebarLink from './sidebar-link';
 
 export default function NavSection({ links, title }: { links: NavLink[]; title?: string }) {

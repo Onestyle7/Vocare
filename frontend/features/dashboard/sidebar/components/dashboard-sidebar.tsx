@@ -83,10 +83,10 @@ export const SIDEBAR_DATA = {
   ],
 };
 
-export function AppSidebar() {
+export default function DashboardSidebar() {
   return (
-    <Sidebar collapsible="icon" className="font-poppins">
-      <SidebarHeader className="flex h-18.25 justify-center border-b-2 px-3">
+    <Sidebar collapsible="icon" className="font-poppins z-99">
+      <SidebarHeader className="flex h-18.25 justify-center border-b-2 px-3 lg:h-22">
         <SidebarMenu>
           <SidebarMenuItem className="flex flex-row items-center justify-between">
             {/* Animowany kontener logo za pomocą max-w-X i opacity */}
