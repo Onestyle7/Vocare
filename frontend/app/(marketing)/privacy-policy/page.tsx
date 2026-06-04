@@ -1,5 +1,3 @@
-'use client';
-
 import { ArrowLeft } from 'lucide-react';
 import Link from 'next/link';
 
@@ -18,7 +16,7 @@ const PrivacyPolicy = () => {
       <div className="mx-auto max-w-4xl px-4 py-10 sm:px-6 lg:px-8">
         <header className="mb-10">
           <Link
-            href="/"
+            href="/dashboard"
             className="bg-background hover:bg-accent hover:text-accent-foreground dark:bg-input/30 dark:hover:bg-input/50 mb-4 inline-flex items-center justify-center gap-2 rounded-md border p-2 text-sm font-medium shadow-xs transition-all"
           >
             <ArrowLeft className="h-4 w-4" />

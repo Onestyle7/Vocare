@@ -153,7 +153,7 @@ export default function AssistantPage({
 
   if (isLoading) {
     return (
-      <div className="mx-auto -mt-20 mb-1 flex h-screen max-w-7xl flex-col items-center justify-center overflow-hidden rounded-[28px] max-xl:mx-4">
+      <div className="mx-auto mt-20 mb-1 flex h-screen max-w-7xl flex-col items-center justify-center overflow-hidden rounded-[28px] max-xl:mx-4">
         <GridBackgroundDemo />
         <TerminalDemo />
       </div>

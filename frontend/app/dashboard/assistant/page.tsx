@@ -1,7 +1,4 @@
-import React from 'react';
-
 import { ScrollProgress } from '@/components/magicui/scroll-progress';
-import Header from '@/components/SectionsComponents/Header';
 import AssistantPage from '@/features/assistant/components/MainPageAssisstant';
 import {
   getDetailedJobMatchesQuery,
@@ -25,7 +22,6 @@ export default async function Page() {
   return (
     <main>
       <ScrollProgress />
-      <Header />
       <AssistantPage
         initialRecommendation={recommendation}
         recommendationError={recommendationError?.message}

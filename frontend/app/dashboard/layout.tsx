@@ -1,6 +1,8 @@
+import { SidebarProvider, SidebarTrigger } from '@/components/ui/sidebar';
 import { forceLoginRedirect } from '@/features/auth/utils/login-redirect';
 import { TokenBalanceProvider } from '@/features/billing/components/SubscriptionTokenProvider';
 import { getTokenSubscriptionStatus } from '@/features/billing/dal/queries';
+import { AppSidebar } from '@/features/dashboard/sidebar/components/app-sidebar';
 import { ProfileProvider } from '@/features/profile/components/ProfileProvider';
 import { getUserProfileQuery } from '@/features/profile/dal/queries';
 
@@ -36,7 +38,11 @@ export default async function DashboardLayoutPage({ children }: { children: Reac
           tokenBalance={tokenBalanceData.tokenBalance}
           subscriptionStatus={tokenBalanceData.subscriptionStatus}
         >
-          {children}
+          <SidebarProvider>
+            <AppSidebar />
+            <SidebarTrigger className="flex size-12 lg:hidden [&_svg]:size-5!" />
+            <main>{children}</main>
+          </SidebarProvider>
         </TokenBalanceProvider>
       </ProfileProvider>
     </main>
