@@ -34,5 +34,20 @@ namespace VocareWebAPI.JobOffers.Controllers
             var result = await _syncService.SyncOffersAsync();
             return Ok(result);
         }
+
+        [HttpPost("cleanup")]
+        public async Task<IActionResult> CleanupStaleOffers()
+        {
+            if (
+                string.IsNullOrEmpty(_configuration["CronJobsKey"])
+                || Request.Headers["X-Api-Key"].ToString() != _configuration["CronJobsKey"]
+            )
+            {
+                return Unauthorized();
+            }
+
+            var result = await _syncService.CleanupStaleOffersAsync();
+            return Ok(result);
+        }
     }
 }

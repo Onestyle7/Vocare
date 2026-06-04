@@ -1,9 +1,3 @@
-using System;
-using System.Threading;
-using System.Threading.Tasks;
-using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Hosting;
-using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using VocareWebAPI.JobOffers.Configuration;
 using VocareWebAPI.JobOffers.Services.Interfaces;
@@ -64,11 +58,11 @@ namespace VocareWebAPI.JobOffers.BackgroundJobs
                     if (ShouldRunCleanup())
                     {
                         _logger.LogInformation("Rozpoczynam nocny cleanup nieaktualnych ofert...");
-                        var removedCount = await syncService.CleanupStaleOffersAsync();
+                        var cleanupResult = await syncService.CleanupStaleOffersAsync();
                         _lastCleanupDate = DateTime.UtcNow.Date;
                         _logger.LogInformation(
                             "Cleanup zakończony. Usunięto {Removed} ofert.",
-                            removedCount
+                            cleanupResult.RemovedCount
                         );
                     }
                 }
