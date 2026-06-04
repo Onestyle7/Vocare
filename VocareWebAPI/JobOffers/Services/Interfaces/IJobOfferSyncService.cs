@@ -1,14 +1,11 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+using VocareWebAPI.JobOffers.Models.Dtos;
 
 namespace VocareWebAPI.JobOffers.Services.Interfaces
 {
     public interface IJobOfferSyncService
     {
         Task<SyncResult> SyncOffersAsync();
-        Task<int> CleanupStaleOffersAsync();
+        Task<CleanupResult> CleanupStaleOffersAsync();
         Task<BackfillResult> BackfillEmbeddingsAsync(int batchSize = 100);
     }
 
