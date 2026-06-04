@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Mvc.ModelBinding.Binders;
 using Microsoft.AspNetCore.Mvc.RazorPages.Infrastructure;
+using VocareWebAPI.JobOffers.Models.Dtos;
 using VocareWebAPI.JobOffers.Models.Entities;
 using VocareWebAPI.JobOffers.Repositories.Interfaces;
 using VocareWebAPI.JobOffers.Services.Interfaces;
@@ -107,15 +108,36 @@ namespace VocareWebAPI.JobOffers.Services.Implementations
             return result;
         }
 
-        public async Task<int> CleanupStaleOffersAsync()
+        public async Task<CleanupResult> CleanupStaleOffersAsync()
         {
             var dbReferenceNumbers = await _repository.GetAllReferenceNumbersAsync();
 
             var feedOffers = await _parser.ParseFromUrlAsync(FeedUrl);
             var feedReferenceNumbers = feedOffers.Select(o => o.ReferenceNumber).ToHashSet();
 
+            if (feedReferenceNumbers.Count() == 0)
+            {
+                _logger.LogWarning(
+                    "Nie udało się pobrać ofert z feedu podczas czyszczenia. Brak usuwania ofert."
+                );
+                return new CleanupResult
+                {
+                    Skipped = true,
+                    SkipReason = "EMPTY_FEED",
+                    RemovedCount = 0,
+                    FeedSize = 0,
+                    DbSize = dbReferenceNumbers.Count(),
+                };
+            }
+
+            var cutoffDate = DateTime.UtcNow.AddDays(-31);
+
             var staleReferenceNumbers = dbReferenceNumbers
-                .Where(refNum => !feedReferenceNumbers.Contains(refNum))
+                .Where(info =>
+                    !feedReferenceNumbers.Contains(info.ReferenceNumber)
+                    && info.UpdatedAt < cutoffDate
+                )
+                .Select(info => info.ReferenceNumber)
                 .ToList();
 
             if (staleReferenceNumbers.Any())
@@ -127,7 +149,13 @@ namespace VocareWebAPI.JobOffers.Services.Implementations
                 );
             }
 
-            return staleReferenceNumbers.Count;
+            return new CleanupResult
+            {
+                Skipped = false,
+                RemovedCount = staleReferenceNumbers.Count,
+                FeedSize = feedReferenceNumbers.Count,
+                DbSize = dbReferenceNumbers.Count(),
+            };
         }
 
         /// <summary>

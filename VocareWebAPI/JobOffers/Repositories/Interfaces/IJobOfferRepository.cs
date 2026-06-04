@@ -1,15 +1,12 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 using VocareWebAPI.JobOffers.Models.Entities;
+using VocareWebAPI.JobOffers.Models.Records;
 
 namespace VocareWebAPI.JobOffers.Repositories.Interfaces
 {
     public interface IJobOfferRepository
     {
         Task<JobOffer?> GetByReferenceNumberAsync(string refNumber); // do sprawdzenia czy oferta już istnieje
-        Task<IEnumerable<string>> GetAllReferenceNumbersAsync(); // Do porównania z feedem(sprawdzamy, które usunąć)
+        Task<IEnumerable<JobStaleInfo>> GetAllReferenceNumbersAsync(); // Do porównania z feedem(sprawdzamy, które usunąć)
         Task AddAsync(JobOffer offer); // Dodanie nowej
         Task UpdateAsync(JobOffer offer); // Aktualizacja istniejącej
         Task DeleteByReferenceNumberAsync(IEnumerable<string> refNumbers); // Usuwanie niaktualnych
