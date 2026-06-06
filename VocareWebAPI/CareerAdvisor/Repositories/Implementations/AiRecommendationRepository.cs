@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
+using VocareWebAPI.CareerAdvisor.Exceptions;
 using VocareWebAPI.Data;
 using VocareWebAPI.Models;
 
@@ -43,9 +44,7 @@ namespace VocareWebAPI.Repositories
         public async Task<AiRecommendation?> GetLatestByUserIdAsync(string userId)
         {
             if (string.IsNullOrEmpty(userId))
-            {
                 throw new ArgumentException("User ID cannot be null or empty.", nameof(userId));
-            }
 
             // Pobieramy najnowszą rekomendację AI dla danego użytkownika
             return await _context
@@ -56,6 +55,24 @@ namespace VocareWebAPI.Repositories
                 .AsNoTracking()
                 .OrderByDescending(r => r.RecommendationDate)
                 .FirstOrDefaultAsync(r => r.UserId == userId);
+        }
+
+        public async Task IncrementMarketAnalysisCountAsync(Guid recommendationId)
+        {
+            if (recommendationId == Guid.Empty)
+                throw new ArgumentException(
+                    "Recommendation ID cannot be empty.",
+                    nameof(recommendationId)
+                );
+
+            var recommendation = await _context.AiRecommendations.FirstOrDefaultAsync(r =>
+                r.Id == recommendationId
+            );
+            if (recommendation == null)
+                throw new RecommendationNotFoundException(recommendationId);
+
+            recommendation.MarketAnalysisCount++;
+            await _context.SaveChangesAsync();
         }
     }
 }
