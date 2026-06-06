@@ -27,5 +27,16 @@ namespace VocareWebAPI.UserManagement.Controllers
             var summary = await _dashboardService.GetDashboardSummaryAsync(userId);
             return Ok(summary);
         }
+
+        [HttpGet("profile-attributes")]
+        public async Task<IActionResult> GetProfileAttributes()
+        {
+            var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            if (string.IsNullOrEmpty(userId))
+                return BadRequest("Brak identyfikatora użytkowniak w tokenie.");
+
+            var attributes = await _dashboardService.GetProfileAttributesAsync(userId);
+            return Ok(attributes);
+        }
     }
 }
