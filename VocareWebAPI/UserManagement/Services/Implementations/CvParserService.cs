@@ -211,7 +211,7 @@ namespace VocareWebAPI.CareerAdvisor.Services.Implementations
                     "lastName": "string lub null",
                     "country": "string lub null",
                     "address": "string lub null",
-                    "phoneNumber": "string lub null",
+                    "phoneNumber": "string zawierający dokładnie 9 cyfr ciągiem (np. '123456789') lub null", 
                     "education": [
                         {
                             "institution": "nazwa uczelni/szkoły",
@@ -254,6 +254,7 @@ namespace VocareWebAPI.CareerAdvisor.Services.Implementations
                 - Daty w formacie YYYY-MM-DD. Jeśli znany tylko rok, użyj YYYY-01-01
                 - Rozróżniaj skills (techniczne: języki programowania, narzędzia) od softSkills (komunikacja, praca zespołowa)
                 - Nie wymyślaj danych których nie ma w CV
+                - Pole 'phoneNumber': Zidentyfikuj numer telefonu. Najpierw usuń z niego numer kierunkowy kraju (np. +48, 0048, 48) oraz absolutnie wszystkie spacje, myślniki i nawiasy. Wynik końcowy MUSI być ciągiem tekstowym składającym się z dokładnie 9 cyfr (np. "123456789"). Jeśli po oczyszczeniu numer nie ma 9 cyfr, zwróć null.
 
                 CV:
                 {{cvText}}
