@@ -1434,6 +1434,51 @@ namespace VocareWebAPI.Migrations
                     b.ToTable("LanguageEntry", "public");
                 });
 
+            modelBuilder.Entity("VocareWebAPI.UserManagement.Models.Entities.ProfileAttributes", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<int>("Certification")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("Creativity")
+                        .HasColumnType("integer");
+
+                    b.Property<DateTime>("GeneratedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<int>("HardCompetencies")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("Independence")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("PracticalExperience")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("SoftCompetencies")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("Teamwork")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("TechnicalSkills")
+                        .HasColumnType("integer");
+
+                    b.Property<string>("UserId")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("UserId")
+                        .IsUnique();
+
+                    b.ToTable("ProfileAttributes", "public");
+                });
+
             modelBuilder.Entity("VocareWebAPI.UserManagement.Models.Entities.WorkExperienceEntry", b =>
                 {
                     b.Property<int>("Id")
@@ -1818,6 +1863,17 @@ namespace VocareWebAPI.Migrations
                         .WithMany("Languages")
                         .HasForeignKey("UserProfileUserId")
                         .OnDelete(DeleteBehavior.Cascade);
+                });
+
+            modelBuilder.Entity("VocareWebAPI.UserManagement.Models.Entities.ProfileAttributes", b =>
+                {
+                    b.HasOne("VocareWebAPI.Models.Entities.UserProfile", "UserProfile")
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("UserProfile");
                 });
 
             modelBuilder.Entity("VocareWebAPI.UserManagement.Models.Entities.WorkExperienceEntry", b =>
