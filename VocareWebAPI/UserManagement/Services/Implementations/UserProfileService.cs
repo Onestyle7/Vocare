@@ -3,6 +3,7 @@ using Microsoft.EntityFrameworkCore;
 using VocareWebAPI.Data;
 using VocareWebAPI.Models.Dtos;
 using VocareWebAPI.Models.Entities;
+using VocareWebAPI.Repositories;
 using VocareWebAPI.UserManagement.Exceptions;
 using VocareWebAPI.UserManagement.Models.Entities;
 
@@ -16,6 +17,7 @@ namespace VocareWebAPI.Services
         private readonly AppDbContext _context;
         private readonly IMapper _mapper;
         private readonly ILogger<UserProfileService> _logger;
+        private readonly IUserProfileRepository _userProfileRepository;
 
         /// <summary>
         /// Inicjalizuje nową instację serwisu UserProfileService
@@ -25,12 +27,14 @@ namespace VocareWebAPI.Services
         public UserProfileService(
             AppDbContext context,
             IMapper mapper,
-            ILogger<UserProfileService> logger
+            ILogger<UserProfileService> logger,
+            IUserProfileRepository userProfileRepository
         )
         {
             _context = context;
             _mapper = mapper;
             _logger = logger;
+            _userProfileRepository = userProfileRepository;
         }
 
         /// <summary>
@@ -42,19 +46,7 @@ namespace VocareWebAPI.Services
         {
             _logger.LogInformation("Fetching profile for UserId: {UserId}", UserId);
 
-            var profile = await _context
-                .UserProfiles.Include(u => u.Education)
-                .Include(u => u.WorkExperience)
-                .Include(u => u.Certificates)
-                .Include(u => u.Languages)
-                .Include(u => u.FinancialSurvey)
-                .FirstOrDefaultAsync(u => u.UserId == UserId);
-
-            if (profile == null)
-            {
-                _logger.LogWarning("Profile not found for UserId: {UserId}", UserId);
-                throw new UserProfileNotFoundException(UserId);
-            }
+            var profile = await _userProfileRepository.GetUserProfileByIdAsync(UserId);
 
             _logger.LogInformation("Profile found for UserId: {UserId}", UserId);
             return _mapper.Map<UserProfileDto>(profile);
