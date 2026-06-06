@@ -86,11 +86,10 @@ export const SIDEBAR_DATA = {
 export default function DashboardSidebar() {
   return (
     <Sidebar collapsible="icon" className="font-poppins z-99">
-      <SidebarHeader className="flex h-18.25 justify-center border-b-2 px-3 lg:h-22">
+      <SidebarHeader className="flex h-(--header-h-sm) justify-center border-b-2 px-3 lg:h-(--header-h-lg)">
         <SidebarMenu>
           <SidebarMenuItem className="flex flex-row items-center justify-between">
-            {/* Animowany kontener logo za pomocą max-w-X i opacity */}
-            <div className="flex max-w-35 flex-col overflow-hidden whitespace-nowrap opacity-100 transition-all duration-300 ease-in-out group-data-[collapsible=icon]:max-w-0 group-data-[collapsible=icon]:opacity-0">
+            <div className="flex max-w-36 flex-col overflow-hidden whitespace-nowrap opacity-100 transition-all duration-300 ease-in-out group-data-[collapsible=icon]:max-w-0 group-data-[collapsible=icon]:opacity-0">
               <Image
                 src={logo}
                 alt="vocare"
@@ -102,7 +101,6 @@ export default function DashboardSidebar() {
               <p className="text-muted-foreground mt-0.5 text-[12px]">Odblokuj swój potencjał</p>
             </div>
 
-            {/* Przycisk triggera */}
             <SidebarTrigger className="size-10 shrink-0 transition-all duration-300 group-data-[collapsible=icon]:w-full [&_svg]:size-5!" />
           </SidebarMenuItem>
         </SidebarMenu>

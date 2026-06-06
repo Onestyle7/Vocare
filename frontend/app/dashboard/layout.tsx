@@ -33,7 +33,7 @@ export default async function DashboardLayoutPage({ children }: { children: Reac
     }
   }
   return (
-    <main>
+    <main className="h-screen w-screen overflow-auto">
       <ProfileProvider profile={userProfileData}>
         <TokenBalanceProvider
           tokenBalance={tokenBalanceData.tokenBalance}
@@ -41,7 +41,7 @@ export default async function DashboardLayoutPage({ children }: { children: Reac
         >
           <SidebarProvider>
             <DashboardSidebar />
-            <div className="flex h-full w-full flex-col">
+            <div className="w-full">
               <DashboardHeader
                 fullName={`${userProfileData?.firstName} ${userProfileData?.lastName}`}
               />

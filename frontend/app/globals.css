@@ -12,7 +12,7 @@
 @import 'tailwindcss';
 
 @import '../features/dashboard/sidebar/sidebar.css';
-@import '../features/dashboard/header/header.css';
+@import '../features/dashboard/dashboard.css';
 
 @utility remove-scrollbar {
   &::-webkit-scrollbar {
@@ -32,6 +32,13 @@
   }
   -ms-overflow-style: none; /* IE i Edge */
   scrollbar-width: none; /* Firefox */
+}
+
+@utility show-scrollbar {
+  scrollbar-width: thin;
+  -ms-overflow-style: auto;
+  scrollbar-width: thin !important;
+  scrollbar-color: var(--dashboard-accent-foreground) transparent !important;
 }
 
 @layer utilities {
