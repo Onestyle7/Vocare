@@ -11,5 +11,11 @@ namespace VocareWebAPI.CareerAdvisor.Exceptions
         {
             UserId = userId;
         }
+
+        public RecommendationNotFoundException(Guid recommendationId)
+            : base(
+                $"Recommendation with ID {recommendationId} not found.",
+                "RECOMMENDATION_NOT_FOUND"
+            ) { }
     }
 }

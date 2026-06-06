@@ -552,6 +552,7 @@ namespace VocareWebAPI.CareerAdvisor.Services.Implementations
                 };
                 await _marketTrendsRepository.AddAsync(marketTrend);
             }
+            await _aiRecommendationRepository.IncrementMarketAnalysisCountAsync(aiRecommendationId);
         }
 
         private void InitializeNullProperties(MarketAnalysisResponseDto response)

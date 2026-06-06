@@ -777,6 +777,9 @@ namespace VocareWebAPI.Migrations
                         .IsRequired()
                         .HasColumnType("text");
 
+                    b.Property<int>("MarketAnalysisCount")
+                        .HasColumnType("integer");
+
                     b.Property<string>("PrimaryPath")
                         .IsRequired()
                         .HasColumnType("text");
