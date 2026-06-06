@@ -1,11 +1,5 @@
-using System;
-using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-using System.Linq;
-using System.Threading.Tasks;
-using VocareWebAPI.CareerAdvisor.Models.Entities.MarketAnalysis;
-using VocareWebAPI.Models.Dtos;
 using VocareWebAPI.Models.Entities;
 using VocareWebAPI.Models.Entities.MarketAnalysis;
 
@@ -34,5 +28,6 @@ namespace VocareWebAPI.Models
         public List<SkillDemand> SkillDemands { get; set; } = new();
         public List<MarketTrends> MarketTrends { get; set; } = new();
         public List<AiRecommendation> Recommendations { get; set; } = new();
+        public int MarketAnalysisCount { get; set; } = 0; // Liczba analiz rynku pracy powiązanych z tą rekomendacją
     }
 }
