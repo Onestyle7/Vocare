@@ -91,6 +91,7 @@ namespace VocareWebAPI.Data
         public DbSet<CareerPath> CareerPaths { get; set; }
         public DbSet<CvAnalysis> CvAnalyses { get; set; }
         public DbSet<Notification> Notifications { get; set; }
+        public DbSet<ProfileAttributes> ProfileAttributes { get; set; }
 
         /// <summary>
         /// Konfiguruje model bazy danych, definiując schemat i relacje między encjami.
@@ -428,6 +429,8 @@ namespace VocareWebAPI.Data
                     })
                     .IsDescending(false, false, true);
             });
+
+            builder.Entity<ProfileAttributes>().HasIndex(p => p.UserId).IsUnique();
         }
     }
 }
