@@ -39,6 +39,7 @@ namespace VocareWebAPI.Repositories
                 .Include(p => p.Education)
                 .Include(p => p.Certificates)
                 .Include(p => p.Languages)
+                .Include(p => p.FinancialSurvey)
                 .FirstOrDefaultAsync(p => p.UserId == userId);
             if (profile == null)
                 throw new UserProfileNotFoundException(userId);
