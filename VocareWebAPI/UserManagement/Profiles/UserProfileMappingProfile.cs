@@ -91,7 +91,11 @@ namespace VocareWebAPI.Profiles
 
             CreateMap<LanguageEntry, LanguageEntryDto>().ReverseMap();
 
-            CreateMap<UserProfile, UserProfileDto>().ReverseMap();
+            CreateMap<UserProfile, UserProfileDto>()
+                .ForMember(dest => dest.Email, opt => opt.MapFrom(src => src.User.Email));
+            CreateMap<UserProfileDto, UserProfile>()
+                .ForMember(dest => dest.User, opt => opt.Ignore())
+                .ForMember(dest => dest.UserId, opt => opt.Ignore());
         }
     }
 }
