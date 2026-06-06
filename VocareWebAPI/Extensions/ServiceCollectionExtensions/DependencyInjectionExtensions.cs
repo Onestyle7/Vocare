@@ -108,6 +108,7 @@ namespace VocareWebAPI.Extensions.ServiceCollectionExtensions
             services.AddScoped<IMarketingConsentRepository, MarketingConsentRepository>();
             services.AddScoped<ICvParseHistoryRepository, CvParseHistoryRepository>();
             services.AddScoped<IDashboardRepository, DashboardRepository>();
+            services.AddScoped<IProfileAttributesRepository, ProfileAttributesRepository>();
 
             // Transaction repositories
             services.AddScoped<ITokenTransactionRepository, TokenTransactionRepository>();
