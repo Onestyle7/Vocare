@@ -1,6 +1,5 @@
-using System.Threading.Tasks;
-using VocareWebAPI.Shared.Models; // Dla Result<T>
-using VocareWebAPI.UserManagement.Models.Results; // Dla custom Result models jak LoginResult
+using VocareWebAPI.Shared.Results;
+using VocareWebAPI.UserManagement.Models.Results;
 
 namespace VocareWebAPI.UserManagement.Services.Interfaces
 {

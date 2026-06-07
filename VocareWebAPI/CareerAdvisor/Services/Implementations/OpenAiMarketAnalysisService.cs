@@ -1,11 +1,6 @@
-using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.Linq;
 using System.Text.Json;
-using System.Text.Json.Serialization;
-using System.Threading.Tasks;
 using Microsoft.Extensions.Options;
+using VocareWebAPI.CareerAdvisor.Exceptions;
 using VocareWebAPI.CareerAdvisor.Models.Dtos.MarketAnalysis;
 using VocareWebAPI.CareerAdvisor.Models.Entities.MarketAnalysis;
 using VocareWebAPI.CareerAdvisor.Repositories.Interfaces;
@@ -15,6 +10,7 @@ using VocareWebAPI.Models.Entities.MarketAnalysis;
 using VocareWebAPI.Models.OpenAIConfig;
 using VocareWebAPI.Repositories;
 using VocareWebAPI.Repositories.Interfaces;
+using VocareWebAPI.Shared.Exceptions;
 
 namespace VocareWebAPI.CareerAdvisor.Services.Implementations
 {
@@ -63,12 +59,12 @@ namespace VocareWebAPI.CareerAdvisor.Services.Implementations
         {
             var recommendation = await _aiRecommendationRepository.GetLatestByUserIdAsync(userId);
             if (recommendation == null)
-                throw new Exception($"AI recommendation for user with ID {userId} not found.");
+                throw new RecommendationNotFoundException(userId);
 
             if (recommendation.UserProfile == null)
-                throw new Exception(
-                    $"User profile for recommendation {recommendation.Id} not found."
-                );
+                throw new InvalidOperationException(
+                    $"Recommendation {recommendation.Id} has no userprofile loaded"
+                ); // Nie obsługujemy customowo bo nigdy nie powinnien się wydarzyć, ale dobrze to zostawić na przyszłość, jeśli zmienimy sposób pobierania rekomendacji
 
             var prompt = BuildPrompt(recommendation);
 
@@ -104,12 +100,12 @@ namespace VocareWebAPI.CareerAdvisor.Services.Implementations
                     {
                         if (responseContent.Contains("insufficient_quota"))
                         {
-                            throw new Exception(
+                            throw new AiServiceException(
                                 "Not enough money on OpenAI account to perform this operation."
                             );
                         }
                     }
-                    throw new Exception(
+                    throw new AiServiceException(
                         $"API returner error: {response.StatusCode} - {responseContent}"
                     );
                 }
@@ -123,7 +119,7 @@ namespace VocareWebAPI.CareerAdvisor.Services.Implementations
                     || apiResponse.Choices[0].Message?.Content == null
                 )
                 {
-                    throw new Exception("Invalid AI API response: missing content.");
+                    throw new AiServiceException("Invalid AI API response: missing content.");
                 }
 
                 var jsonContent = apiResponse.Choices[0].Message.Content;
@@ -134,19 +130,17 @@ namespace VocareWebAPI.CareerAdvisor.Services.Implementations
                 );
 
                 if (result == null)
-                {
-                    throw new Exception("Failed to parse market analysis JSON.");
-                }
+                    throw new AiServiceException("Failed to parse market analysis JSON.");
 
                 InitializeNullProperties(result);
                 await SaveMarketAnalysisToDatabase(result, recommendation.Id);
 
                 return result;
             }
-            catch (Exception ex)
+            catch (Exception ex) when (ex is not DomainException)
             {
                 _logger.LogError(ex, "Error while calling OpenAI API for market analysis.");
-                throw new Exception("Error while generating market analysis.", ex);
+                throw new AiServiceException("Error while generating market analysis.", ex);
             }
         }
 
@@ -316,9 +310,7 @@ namespace VocareWebAPI.CareerAdvisor.Services.Implementations
         {
             var recommendation = await _aiRecommendationRepository.GetLatestByUserIdAsync(userId);
             if (recommendation == null)
-            {
-                throw new Exception($"AI recommendation for user with ID:{userId} not found.");
-            }
+                throw new MarketAnalysisNotFoundException(userId);
 
             var careerStats = await _careerStatisticsRepository.GetByAiRecommendationIdAsync(
                 recommendation.Id
@@ -446,129 +438,119 @@ namespace VocareWebAPI.CareerAdvisor.Services.Implementations
             await _skillDemandRepository.DeleteByAiRecommendationIdAsync(aiRecommendationId);
             await _marketTrendsRepository.DeleteByAiRecommendationIdAsync(aiRecommendationId);
 
-            try
+            foreach (var industryStat in analysis.MarketAnalysis.IndustryStatistics)
             {
-                foreach (var industryStat in analysis.MarketAnalysis.IndustryStatistics)
+                var careerStatId = Guid.NewGuid();
+
+                var careerStat = new CareerStatistics
                 {
-                    var careerStatId = Guid.NewGuid();
+                    Id = careerStatId,
+                    CareerName = industryStat.Industry,
+                    AverageSalaryMin = industryStat.MinSalary,
+                    AverageSalaryMax = industryStat.MaxSalary,
+                    EmploymentRate = industryStat.EmploymentRate,
+                    GrowthForecast = industryStat.GrowthForecast,
+                    LastUpdated = DateTime.UtcNow,
+                    AiRecommendationId = aiRecommendationId,
+                };
+                await _careerStatisticsRepository.AddAsync(careerStat);
 
-                    var careerStat = new CareerStatistics
-                    {
-                        Id = careerStatId,
-                        CareerName = industryStat.Industry,
-                        AverageSalaryMin = industryStat.MinSalary,
-                        AverageSalaryMax = industryStat.MaxSalary,
-                        EmploymentRate = industryStat.EmploymentRate,
-                        GrowthForecast = industryStat.GrowthForecast,
-                        LastUpdated = DateTime.UtcNow,
-                        AiRecommendationId = aiRecommendationId,
-                    };
-                    await _careerStatisticsRepository.AddAsync(careerStat);
-
-                    foreach (var progression in industryStat.SalaryProgression)
-                    {
-                        var salaryProg = new SalaryProgression
-                        {
-                            Id = Guid.NewGuid(),
-                            CareerLevel = progression.CareerLevel,
-                            YearsOfExperience = progression.YearsOfExperience,
-                            MinSalary = progression.MinSalary,
-                            MaxSalary = progression.MaxSalary,
-                            AverageSalary = progression.AverageSalary,
-                            CareerStatisticsId = careerStatId,
-                        };
-                        await _salaryProgressionRepository.AddAsync(salaryProg);
-                    }
-
-                    if (industryStat.WorkAttributes != null)
-                    {
-                        var workAttr = new WorkAttributes
-                        {
-                            Id = Guid.NewGuid(),
-                            StressLevel = industryStat.WorkAttributes.StressLevel,
-                            AnalyticalThinking = industryStat.WorkAttributes.AnalyticalThinking,
-                            Creativity = industryStat.WorkAttributes.Creativity,
-                            Teamwork = industryStat.WorkAttributes.Teamwork,
-                            Independence = industryStat.WorkAttributes.Independence,
-                            RoutineVsDynamic = industryStat.WorkAttributes.RoutineVsDynamic,
-                            CustomerFacing = industryStat.WorkAttributes.CustomerFacing,
-                            TechnicalDepth = industryStat.WorkAttributes.TechnicalDepth,
-                            CareerStatisticsId = careerStatId,
-                        };
-                        await _workAttributesRepository.AddAsync(workAttr);
-                    }
-
-                    if (industryStat.EntryDifficulty != null)
-                    {
-                        var entryDiff = new EntryDifficulty
-                        {
-                            Id = Guid.NewGuid(),
-                            DifficultyScore = industryStat.EntryDifficulty.DifficultyScore,
-                            DifficultyLevel = industryStat.EntryDifficulty.DifficultyLevel,
-                            MissingSkillsCount = industryStat.EntryDifficulty.MissingSkillsCount,
-                            MissingSkills = industryStat.EntryDifficulty.MissingSkills,
-                            MatchingSkillsCount = industryStat.EntryDifficulty.MatchingSkillsCount,
-                            EstimatedTimeToReady = industryStat
-                                .EntryDifficulty
-                                .EstimatedTimeToReady,
-                            Explanation = industryStat.EntryDifficulty.Explanation,
-                            CareerStatisticsId = careerStatId,
-                        };
-                        await _entryDifficultyRepository.AddAsync(entryDiff);
-                    }
-
-                    if (industryStat.AiNarrator != null)
-                    {
-                        var narrator = new AiNarrator
-                        {
-                            Id = Guid.NewGuid(),
-                            SalaryInsight = industryStat.AiNarrator.SalaryInsight,
-                            WorkStyleInsight = industryStat.AiNarrator.WorkStyleInsight,
-                            EntryAdvice = industryStat.AiNarrator.EntryAdvice,
-                            MotivationalMessage = industryStat.AiNarrator.MotivationalMessage,
-                            PersonalizedRecommendation = industryStat
-                                .AiNarrator
-                                .PersonalizedRecommendation,
-                            CareerStatisticsId = careerStatId,
-                        };
-                        await _aiNarratorRepository.AddAsync(narrator);
-                    }
-                }
-
-                // ✅ SkillDemand i MarketTrends pozostają BEZ ZMIAN
-                foreach (var skill in analysis.MarketAnalysis.SkillDemand)
+                foreach (var progression in industryStat.SalaryProgression)
                 {
-                    var skillDemand = new SkillDemand
+                    var salaryProg = new SalaryProgression
                     {
                         Id = Guid.NewGuid(),
-                        SkillName = skill.Skill,
-                        Industry = skill.Industry,
-                        DemandLevel = skill.DemandLevel,
-                        LastUpdated = DateTime.UtcNow,
-                        AiRecommendationId = aiRecommendationId,
+                        CareerLevel = progression.CareerLevel,
+                        YearsOfExperience = progression.YearsOfExperience,
+                        MinSalary = progression.MinSalary,
+                        MaxSalary = progression.MaxSalary,
+                        AverageSalary = progression.AverageSalary,
+                        CareerStatisticsId = careerStatId,
                     };
-                    await _skillDemandRepository.AddAsync(skillDemand);
+                    await _salaryProgressionRepository.AddAsync(salaryProg);
                 }
 
-                foreach (var trend in analysis.MarketAnalysis.MarketTrends)
+                if (industryStat.WorkAttributes != null)
                 {
-                    var marketTrend = new MarketTrends
+                    var workAttr = new WorkAttributes
                     {
                         Id = Guid.NewGuid(),
-                        TrendName = trend.TrendName,
-                        Description = trend.Description,
-                        Impact = trend.Impact,
-                        StartDate = DateTime.UtcNow,
-                        EndDate = null,
-                        AiRecommendationId = aiRecommendationId,
+                        StressLevel = industryStat.WorkAttributes.StressLevel,
+                        AnalyticalThinking = industryStat.WorkAttributes.AnalyticalThinking,
+                        Creativity = industryStat.WorkAttributes.Creativity,
+                        Teamwork = industryStat.WorkAttributes.Teamwork,
+                        Independence = industryStat.WorkAttributes.Independence,
+                        RoutineVsDynamic = industryStat.WorkAttributes.RoutineVsDynamic,
+                        CustomerFacing = industryStat.WorkAttributes.CustomerFacing,
+                        TechnicalDepth = industryStat.WorkAttributes.TechnicalDepth,
+                        CareerStatisticsId = careerStatId,
                     };
-                    await _marketTrendsRepository.AddAsync(marketTrend);
+                    await _workAttributesRepository.AddAsync(workAttr);
+                }
+
+                if (industryStat.EntryDifficulty != null)
+                {
+                    var entryDiff = new EntryDifficulty
+                    {
+                        Id = Guid.NewGuid(),
+                        DifficultyScore = industryStat.EntryDifficulty.DifficultyScore,
+                        DifficultyLevel = industryStat.EntryDifficulty.DifficultyLevel,
+                        MissingSkillsCount = industryStat.EntryDifficulty.MissingSkillsCount,
+                        MissingSkills = industryStat.EntryDifficulty.MissingSkills,
+                        MatchingSkillsCount = industryStat.EntryDifficulty.MatchingSkillsCount,
+                        EstimatedTimeToReady = industryStat.EntryDifficulty.EstimatedTimeToReady,
+                        Explanation = industryStat.EntryDifficulty.Explanation,
+                        CareerStatisticsId = careerStatId,
+                    };
+                    await _entryDifficultyRepository.AddAsync(entryDiff);
+                }
+
+                if (industryStat.AiNarrator != null)
+                {
+                    var narrator = new AiNarrator
+                    {
+                        Id = Guid.NewGuid(),
+                        SalaryInsight = industryStat.AiNarrator.SalaryInsight,
+                        WorkStyleInsight = industryStat.AiNarrator.WorkStyleInsight,
+                        EntryAdvice = industryStat.AiNarrator.EntryAdvice,
+                        MotivationalMessage = industryStat.AiNarrator.MotivationalMessage,
+                        PersonalizedRecommendation = industryStat
+                            .AiNarrator
+                            .PersonalizedRecommendation,
+                        CareerStatisticsId = careerStatId,
+                    };
+                    await _aiNarratorRepository.AddAsync(narrator);
                 }
             }
-            catch (Exception ex)
+
+            // ✅ SkillDemand i MarketTrends pozostają BEZ ZMIAN
+            foreach (var skill in analysis.MarketAnalysis.SkillDemand)
             {
-                _logger.LogError(ex, "Error while saving market analysis to database");
-                throw;
+                var skillDemand = new SkillDemand
+                {
+                    Id = Guid.NewGuid(),
+                    SkillName = skill.Skill,
+                    Industry = skill.Industry,
+                    DemandLevel = skill.DemandLevel,
+                    LastUpdated = DateTime.UtcNow,
+                    AiRecommendationId = aiRecommendationId,
+                };
+                await _skillDemandRepository.AddAsync(skillDemand);
+            }
+
+            foreach (var trend in analysis.MarketAnalysis.MarketTrends)
+            {
+                var marketTrend = new MarketTrends
+                {
+                    Id = Guid.NewGuid(),
+                    TrendName = trend.TrendName,
+                    Description = trend.Description,
+                    Impact = trend.Impact,
+                    StartDate = DateTime.UtcNow,
+                    EndDate = null,
+                    AiRecommendationId = aiRecommendationId,
+                };
+                await _marketTrendsRepository.AddAsync(marketTrend);
             }
         }
 
@@ -591,12 +573,6 @@ namespace VocareWebAPI.CareerAdvisor.Services.Implementations
                     stat.EntryDifficulty.MissingSkills = new List<string>();
                 }
             }
-        }
-
-        public class MarketAnalysisException : Exception
-        {
-            public MarketAnalysisException(string message, Exception inner)
-                : base(message, inner) { }
         }
     }
 }

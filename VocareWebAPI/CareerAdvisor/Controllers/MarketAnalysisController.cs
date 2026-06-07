@@ -16,7 +16,6 @@ namespace VocareWebAPI.Controllers
     {
         private readonly IMarketAnalysisService _marketAnalysisService;
         private readonly IBillingService _billingService;
-        private readonly ILogger<MarketAnalysisController> _logger;
 
         /// <summary>
         /// Inicjalizuje nową instancję kontrolera
@@ -26,13 +25,11 @@ namespace VocareWebAPI.Controllers
         /// <param name="logger">Logger do rejestrowania zdarzeń kontrolera</param>
         public MarketAnalysisController(
             IMarketAnalysisService marketAnalysisService,
-            IBillingService billingService,
-            ILogger<MarketAnalysisController> logger
+            IBillingService billingService
         )
         {
             _marketAnalysisService = marketAnalysisService;
             _billingService = billingService;
-            _logger = logger;
         }
 
         /// <summary>
@@ -42,57 +39,26 @@ namespace VocareWebAPI.Controllers
         [HttpGet]
         public async Task<IActionResult> GetMarketAnalysis()
         {
-            try
-            {
-                var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
-                if (string.IsNullOrEmpty(userId))
-                {
-                    return Unauthorized("Brak identyfikatora użytkownika w tokenie.");
-                }
+            var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            if (string.IsNullOrEmpty(userId))
+                return BadRequest("Brak identyfikatora użytkownika w tokenie.");
 
-                bool hasAccess = await _billingService.CanAccessServiceAsync(
-                    userId,
-                    "MarketAnalysis"
-                );
-                if (!hasAccess)
-                {
-                    return Forbid("Brak tokenów lub subskrypcja nieaktywna.");
-                }
+            await _billingService.CanAccessServiceAsync(userId, "MarketAnalysis");
 
-                _logger.LogInformation("Getting market analysis for user {UserId}", userId);
-
-                var result = await _marketAnalysisService.GetMarketAnalysisAsync(userId);
-
-                await _billingService.DeductTokensForServiceAsync(userId, "MarketAnalysis");
-
-                return Ok(result);
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, "Error in GetMarketAnalysis");
-                return Problem(detail: ex.Message, statusCode: 500);
-            }
+            var result = await _marketAnalysisService.GetMarketAnalysisAsync(userId);
+            await _billingService.DeductTokensForServiceAsync(userId, "MarketAnalysis");
+            return Ok(result);
         }
 
         [HttpGet("latest")]
         public async Task<IActionResult> GetLatestMarketAnalysis()
         {
-            try
-            {
-                var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
-                if (string.IsNullOrEmpty(userId))
-                {
-                    return Unauthorized("Brak identyfikatora użytkownika w tokenie.");
-                }
+            var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            if (string.IsNullOrEmpty(userId))
+                return BadRequest("Brak identyfikatora użytkownika w tokenie.");
 
-                var result = await _marketAnalysisService.GetLatestMarketAnalysisAsync(userId);
-                return Ok(result);
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, "Error in GetLatestMarketAnalysis");
-                return Problem(detail: ex.Message, statusCode: 404);
-            }
+            var result = await _marketAnalysisService.GetLatestMarketAnalysisAsync(userId);
+            return Ok(result);
         }
     }
 }
