@@ -3,9 +3,11 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
+using VocareWebAPI.Billing.Exceptions;
 using VocareWebAPI.Billing.Models.Entities;
 using VocareWebAPI.Billing.Repositories.Interfaces;
 using VocareWebAPI.Data;
+using VocareWebAPI.Shared.Exceptions;
 
 namespace VocareWebAPI.Billing.Repositories.Implementations
 {
@@ -23,19 +25,15 @@ namespace VocareWebAPI.Billing.Repositories.Implementations
         public async Task<UserBilling> GetByUserIdAsync(string userId)
         {
             if (string.IsNullOrEmpty(userId))
-            {
                 throw new ArgumentException("User ID cannot be null or empty.", nameof(userId));
-            }
+
             var userBilling = await _context
                 .UserBillings.Where(ub => ub.UserId == userId)
                 .FirstOrDefaultAsync();
 
             if (userBilling == null)
-            {
-                throw new KeyNotFoundException(
-                    $"User billing information for user ID {userId} not found."
-                );
-            }
+                throw new UserBillingNotFoundException(userId);
+
             return userBilling;
         }
 
@@ -76,9 +74,7 @@ namespace VocareWebAPI.Billing.Repositories.Implementations
                     existingUserBilling.TokenBalance
                 );
 
-                throw new InvalidOperationException(
-                    $"User billing information for user ID {userBilling.UserId} already exists."
-                );
+                throw new UserBillingAlreadyExistsException(userBilling.UserId);
             }
 
             // Logowanie przed dodaniem
@@ -158,9 +154,7 @@ namespace VocareWebAPI.Billing.Repositories.Implementations
                 .FirstOrDefaultAsync();
             if (existingUserBilling == null)
             {
-                throw new InvalidOperationException(
-                    $"User billing information for user ID {userBilling.UserId} does not exist."
-                );
+                throw new UserBillingNotFoundException(userBilling.UserId);
             }
 
             _context.Entry(existingUserBilling).CurrentValues.SetValues(userBilling);
@@ -189,9 +183,7 @@ namespace VocareWebAPI.Billing.Repositories.Implementations
 
             if (userBilling == null)
             {
-                throw new KeyNotFoundException(
-                    $"User billing information for user ID {userId} not found."
-                );
+                throw new UserBillingNotFoundException(userId);
             }
 
             var hasEnoughTokens = userBilling.TokenBalance >= requiredTokens;
@@ -221,13 +213,11 @@ namespace VocareWebAPI.Billing.Repositories.Implementations
 
                 if (userBilling == null)
                 {
-                    throw new KeyNotFoundException(
-                        $"User billing information for user ID {userId} not found."
-                    );
+                    throw new UserBillingNotFoundException(userId);
                 }
                 if (userBilling.TokenBalance < amount)
                 {
-                    throw new InvalidOperationException($"Not enough tokens for user ID {userId}.");
+                    throw new InsufficientTokensException(userId, userBilling.TokenBalance, amount);
                 }
 
                 userBilling.TokenBalance -= amount;
@@ -243,10 +233,10 @@ namespace VocareWebAPI.Billing.Repositories.Implementations
                     userBilling.TokenBalance
                 );
             }
-            catch (Exception ex)
+            catch (Exception ex) when (ex is not DomainException)
             {
                 await transaction.RollbackAsync();
-                throw new Exception("Error while deducting tokens.", ex);
+                throw;
             }
         }
 
@@ -262,10 +252,8 @@ namespace VocareWebAPI.Billing.Repositories.Implementations
                 ub.UserId == userId
             );
 
-            if (userBilling is null)
-                throw new KeyNotFoundException(
-                    $"User billing information for user ID {userId} not found."
-                );
+            if (userBilling == null)
+                throw new UserBillingNotFoundException(userId);
 
             userBilling.TokenBalance += amount;
             userBilling.LastTokenPurchaseDate = DateTime.UtcNow;

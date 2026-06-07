@@ -6,6 +6,7 @@ using VocareWebAPI.Models;
 using VocareWebAPI.Models.Dtos;
 using VocareWebAPI.Models.Entities;
 using VocareWebAPI.Repositories;
+using VocareWebAPI.Shared.Exceptions;
 
 namespace VocareWebAPI.Services
 {
@@ -395,18 +396,6 @@ namespace VocareWebAPI.Services
         public List<string> GetAvailableProviders()
         {
             throw new NotImplementedException();
-        }
-
-        /// <summary>
-        /// Wyjątek rzucany w przupadku błędów w serwisie AI
-        /// </summary>
-        public class AiServiceException : Exception
-        {
-            public AiServiceException(string message)
-                : base(message) { }
-
-            public AiServiceException(string message, Exception inner)
-                : base(message, inner) { }
         }
     }
 }

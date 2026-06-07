@@ -4,7 +4,7 @@ using VocareWebAPI.Models.OpenAIConfig;
 using VocareWebAPI.RoadmapService.Models.Dtos;
 using VocareWebAPI.RoadmapService.Services.Interfaces;
 using VocareWebAPI.RoadmapService.Services.Prompts;
-using static VocareWebAPI.CareerAdvisor.Services.Implementations.OpenAIService;
+using VocareWebAPI.Shared.Exceptions;
 
 namespace VocareWebAPI.RoadmapService.Services.Implementations
 {
@@ -61,7 +61,9 @@ namespace VocareWebAPI.RoadmapService.Services.Implementations
                         response.StatusCode,
                         responseContent
                     );
-                    throw new Exception("Failed to generate roadmap. Please try again later.");
+                    throw new AiServiceException(
+                        "Failed to generate roadmap. Please try again later."
+                    );
                 }
 
                 using var document = JsonDocument.Parse(responseContent);
@@ -86,7 +88,9 @@ namespace VocareWebAPI.RoadmapService.Services.Implementations
                     _logger.LogError(
                         $"OpenAI API returned invalid roadmap format: {responseContent}"
                     );
-                    throw new Exception("Received invalid roadmap format. Please try again.");
+                    throw new AiServiceException(
+                        "Received invalid roadmap format. Please try again."
+                    );
                 }
 
                 return roadmapDto;

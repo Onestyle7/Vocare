@@ -9,5 +9,11 @@ namespace VocareWebAPI.Shared.Exceptions
         {
             ErrorCode = errorCode;
         }
+
+        protected DomainException(string message, string errorCode, Exception innerException)
+            : base(message, innerException)
+        {
+            ErrorCode = errorCode;
+        }
     }
 }

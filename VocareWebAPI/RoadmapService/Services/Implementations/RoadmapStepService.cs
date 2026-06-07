@@ -1,5 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 using VocareWebAPI.Data;
+using VocareWebAPI.RoadmapService.Exceptions;
 using VocareWebAPI.RoadmapService.Models.Entities;
 using VocareWebAPI.RoadmapService.Models.Enums;
 using VocareWebAPI.RoadmapService.Services.Interfaces;
@@ -24,23 +25,17 @@ namespace VocareWebAPI.RoadmapService.Services.Implementations
         )
         {
             if (string.IsNullOrEmpty(userId))
-            {
                 throw new ArgumentException("User ID cannot be null or empty.", nameof(userId));
-            }
 
             var step = await _context
                 .RoadmapSteps.Include(s => s.Phase)
                 .ThenInclude(p => p.Roadmap)
                 .FirstOrDefaultAsync(s => s.Id == stepId);
             if (step == null)
-            {
-                throw new KeyNotFoundException($"Roadmap step with ID {stepId} not found.");
-            }
+                throw new RoadmapStepNotFoundException(stepId);
 
             if (step.Phase.Roadmap.UserId != userId)
-            {
-                throw new UnauthorizedAccessException("Brak dostępu do tej roadmapy.");
-            }
+                throw new RoadmapAccessDeniedException(stepId, userId);
 
             step.Status = newStatus;
 
@@ -67,9 +62,7 @@ namespace VocareWebAPI.RoadmapService.Services.Implementations
         )
         {
             if (string.IsNullOrEmpty(userId))
-            {
                 throw new ArgumentException("User ID cannot be null or empty.", nameof(userId));
-            }
 
             var phase = await _context
                 .RoadmapPhases.Include(p => p.Roadmap)
@@ -77,19 +70,13 @@ namespace VocareWebAPI.RoadmapService.Services.Implementations
                 .FirstOrDefaultAsync(p => p.Id == phaseId);
 
             if (phase == null)
-            {
-                throw new KeyNotFoundException($"Roadmap phase with ID {phaseId} not found.");
-            }
+                throw new RoadmapPhaseNotFoundException(phaseId);
 
             if (phase.Steps.Count >= 20)
-            {
-                throw new InvalidOperationException("Faza osiągnęła limit 20 kroków.");
-            }
+                throw new PhaseStepLimitReachedException(phaseId, 20);
 
             if (phase.Roadmap.UserId != userId)
-            {
-                throw new UnauthorizedAccessException("Brak dostępu do tej roadmapy.");
-            }
+                throw new RoadmapAccessDeniedException(phaseId, userId);
 
             var newstep = new RoadmapStep
             {
@@ -120,9 +107,7 @@ namespace VocareWebAPI.RoadmapService.Services.Implementations
         )
         {
             if (string.IsNullOrEmpty(userId))
-            {
                 throw new ArgumentException("User ID cannot be null or empty.", nameof(userId));
-            }
 
             var step = await _context
                 .RoadmapSteps.Include(s => s.Phase)
@@ -130,14 +115,10 @@ namespace VocareWebAPI.RoadmapService.Services.Implementations
                 .FirstOrDefaultAsync(s => s.Id == stepId);
 
             if (step == null)
-            {
-                throw new KeyNotFoundException($"Roadmap step with ID {stepId} not found.");
-            }
+                throw new RoadmapStepNotFoundException(stepId);
 
             if (step.Phase.Roadmap.UserId != userId)
-            {
-                throw new UnauthorizedAccessException("Brak dostępu do tej roadmapy.");
-            }
+                throw new RoadmapAccessDeniedException(stepId, userId);
 
             if (title != null)
                 step.Title = title;
@@ -156,9 +137,7 @@ namespace VocareWebAPI.RoadmapService.Services.Implementations
         public async Task DeleteStepAsync(Guid stepId, string userId)
         {
             if (string.IsNullOrEmpty(userId))
-            {
                 throw new ArgumentException("User ID cannot be null or empty.", nameof(userId));
-            }
 
             var step = await _context
                 .RoadmapSteps.Include(s => s.Phase)
@@ -169,13 +148,11 @@ namespace VocareWebAPI.RoadmapService.Services.Implementations
                 .FirstOrDefaultAsync(s => s.Id == stepId);
 
             if (step == null)
-            {
-                throw new KeyNotFoundException($"Roadmap step with ID {stepId} not found.");
-            }
+                throw new RoadmapStepNotFoundException(stepId);
+
             if (step.Phase.Roadmap.UserId != userId)
-            {
-                throw new UnauthorizedAccessException("Brak dostępu do tej roadmapy.");
-            }
+                throw new RoadmapAccessDeniedException(stepId, userId);
+
             foreach (var child in step.ChildSteps)
             {
                 child.ParentStepId = step.ParentStepId; // przeniesienie dzieci do rodzica usuwanego kroku
@@ -196,9 +173,7 @@ namespace VocareWebAPI.RoadmapService.Services.Implementations
         )
         {
             if (string.IsNullOrEmpty(userId))
-            {
                 throw new ArgumentException("User ID cannot be null or empty.", nameof(userId));
-            }
 
             var stepsId = positions.Keys.ToList();
 
@@ -210,11 +185,12 @@ namespace VocareWebAPI.RoadmapService.Services.Implementations
 
             if (!steps.Any())
             {
-                throw new KeyNotFoundException("Nie znaleziono kroków o podanych idetyfikatorach");
+                throw new ArgumentException("Steps not found");
             }
-            if (steps.Any(s => s.Phase.Roadmap.UserId != userId))
+            var unauthorizedStep = steps.FirstOrDefault(s => s.Phase.Roadmap.UserId != userId);
+            if (unauthorizedStep != null)
             {
-                throw new UnauthorizedAccessException("Brak dostępu do tej roadmapy.");
+                throw new RoadmapAccessDeniedException(unauthorizedStep.Phase.Roadmap.Id, userId);
             }
 
             foreach (var step in steps)
