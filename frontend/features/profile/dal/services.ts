@@ -13,10 +13,7 @@ export type ProfileDomainError = BaseAppError<
 export async function getUserProfileService(
   requestOptions?: RequestInit
 ): Promise<Result<UserProfile, ProfileDomainError>> {
-  const result = await profileApiClient.get<UserProfile>(
-    '/GetCurrentUserProfile',
-    requestOptions
-  );
+  const result = await profileApiClient.get<UserProfile>('/GetCurrentUserProfile', requestOptions);
 
   return result
     .map((response) => response.data)
@@ -50,10 +47,7 @@ export async function getUserProfileService(
 export async function createUserProfileService(
   command: CreateProfileCommand
 ): Promise<Result<UserProfile, ProfileDomainError>> {
-  const result = await profileApiClient.post<UserProfile>(
-    '/CreateCurrentUserProfile',
-    command
-  );
+  const result = await profileApiClient.post<UserProfile>('/CreateCurrentUserProfile', command);
 
   return result
     .map((response) => response.data)
@@ -117,9 +111,7 @@ export async function updateUserProfileService(
 export async function deleteUserProfileService(): Promise<
   Result<{ message: string }, ProfileDomainError>
 > {
-  const result = await profileApiClient.delete<{ message: string }>(
-    '/DeleteCurrentUserProfile'
-  );
+  const result = await profileApiClient.delete<{ message: string }>('/DeleteCurrentUserProfile');
 
   return result
     .map((response) => response.data)

@@ -241,7 +241,6 @@ const BentoGrid = () => {
                       />
                     </svg>
 
-                    {/* Kafelki mają teraz sztywno ustawione w-[132px], żeby zawsze trafiały w początek wektorów */}
                     <div className="absolute top-[46px] left-0 w-[132px]">
                       <div className={customTileOuter}>
                         <div className={customTileInner}>

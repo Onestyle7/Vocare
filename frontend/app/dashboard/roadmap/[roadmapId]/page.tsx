@@ -4,7 +4,11 @@ import { forceLoginRedirect } from '@/features/auth/utils/login-redirect';
 import RoadmapDetailsPage from '@/features/roadmap/components/RoadmapDetailsPage';
 import { getRoadmapByIdQuery } from '@/features/roadmap/dal/queries';
 
-export default async function RoadmapDetailRoute({ params }: { params: Promise<{ roadmapId: string }> }) {
+export default async function RoadmapDetailRoute({
+  params,
+}: {
+  params: Promise<{ roadmapId: string }>;
+}) {
   const { roadmapId } = await params;
   const [error, roadmap] = await getRoadmapByIdQuery(roadmapId);
 
@@ -18,8 +22,8 @@ export default async function RoadmapDetailRoute({ params }: { params: Promise<{
 
   return (
     <main className="h-[100svh] overflow-hidden bg-white text-slate-950">
-      <RoadmapDetailsPage 
-        roadmapId={roadmapId} 
+      <RoadmapDetailsPage
+        roadmapId={roadmapId}
         initialRoadmap={roadmap ?? null}
         initialError={error?.message || null}
       />

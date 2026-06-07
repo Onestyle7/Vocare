@@ -136,7 +136,10 @@ export async function updateRoadmapPhaseNameService(
   const result = await roadmapApiClient.patch<void, string>(
     `../RoadmapPhases/${phaseId}/name`,
     `"${newName}"`,
-    { ...requestOptions, headers: { 'Content-Type': 'application/json', ...requestOptions?.headers } }
+    {
+      ...requestOptions,
+      headers: { 'Content-Type': 'application/json', ...requestOptions?.headers },
+    }
   );
   return result.map((response) => response.data).mapErr(mapRoadmapError);
 }
@@ -145,10 +148,7 @@ export async function deleteRoadmapPhaseService(
   phaseId: string,
   requestOptions?: RequestInit
 ): Promise<Result<void, RoadmapDomainError>> {
-  const result = await roadmapApiClient.delete<void>(
-    `../RoadmapPhases/${phaseId}`,
-    requestOptions
-  );
+  const result = await roadmapApiClient.delete<void>(`../RoadmapPhases/${phaseId}`, requestOptions);
   return result.map((response) => response.data).mapErr(mapRoadmapError);
 }
 

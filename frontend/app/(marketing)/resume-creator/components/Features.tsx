@@ -41,7 +41,8 @@ const Features = () => {
   useCardsAnimation(cardsContainerRef);
 
   return (
-    <div className="font-poppins flex flex-col bg-[#0F1013] p-3 sm:p-5">
+    <div className="font-poppins flex w-full max-w-[100vw] flex-col overflow-x-hidden bg-[#0F1013] p-3 sm:p-5">
+      {' '}
       <div className="relative mx-auto flex w-full max-w-none flex-col overflow-hidden rounded-3xl 2xl:max-w-7xl">
         <div className="relative mx-auto flex w-full max-w-7xl flex-1 flex-col px-4 py-12 sm:px-8 sm:py-16 md:px-12 lg:px-16 lg:py-20 2xl:py-24">
           <div className="flex flex-col items-center space-y-6 sm:space-y-7 lg:space-y-8">
@@ -75,12 +76,11 @@ const Features = () => {
           </div>
         </div>
 
-        <div className="mx-auto flex w-full max-w-[360px] flex-col items-center pt-10 pb-4 lg:hidden">
+        <div className="mx-auto flex w-full max-w-[360px] flex-col items-center pt-10 pb-4 xl:hidden">
           <div
             className="flex w-full snap-x snap-mandatory gap-4 overflow-x-auto px-4 pb-6 [&::-webkit-scrollbar]:hidden"
             onScroll={handleScroll}
           >
-            {/* Mobile Card 1 */}
             <div className="z-0 h-[250px] w-full shrink-0 snap-center rounded-[24px] bg-gradient-to-br from-white/20 via-white/10 via-[50%] to-transparent to-[55%] p-[1px]">
               <div className="flex h-full w-full flex-col space-y-[21px] rounded-[23px] bg-[#202125] p-5">
                 <p className="text-[22px] opacity-[75%]">Analiza ATS</p>
@@ -92,7 +92,6 @@ const Features = () => {
               </div>
             </div>
 
-            {/* Mobile Card 2 */}
             <div className="z-10 h-[250px] w-full shrink-0 snap-center rounded-[24px] bg-gradient-to-br from-white/20 via-white/10 via-[50%] to-transparent to-[55%] p-[1px]">
               <div className="relative h-full w-full overflow-hidden rounded-[23px] bg-[#202125]">
                 <div className="pointer-events-none absolute inset-0 z-0">
@@ -146,7 +145,6 @@ const Features = () => {
               </div>
             </div>
 
-            {/* Mobile Card 3 */}
             <div className="z-20 h-[250px] w-full shrink-0 snap-center rounded-[24px] bg-gradient-to-br from-white/20 via-white/10 via-[50%] to-transparent to-[55%] p-[1px]">
               <div className="flex h-full w-full flex-col space-y-[21px] rounded-[23px] bg-[#202125] p-5">
                 <p className="text-[22px] opacity-[75%]">Dopasowanie do oferty</p>
@@ -158,7 +156,6 @@ const Features = () => {
               </div>
             </div>
 
-            {/* Mobile Card 4 */}
             <div className="z-10 h-[250px] w-full shrink-0 snap-center rounded-[24px] bg-gradient-to-br from-white/20 via-white/10 via-[50%] to-transparent to-[55%] p-[1px]">
               <div className="relative h-full w-full overflow-hidden rounded-[23px] bg-[#202125]">
                 <div className="pointer-events-none absolute inset-0 z-0">
@@ -199,7 +196,6 @@ const Features = () => {
               </div>
             </div>
 
-            {/* Mobile Card 5 */}
             <div className="z-0 h-[250px] w-full shrink-0 snap-center rounded-[24px] bg-gradient-to-br from-white/20 via-white/10 via-[50%] to-transparent to-[55%] p-[1px]">
               <div className="flex h-full w-full flex-col space-y-[21px] rounded-[23px] bg-[#202125] p-5">
                 <p className="text-[22px] opacity-[75%]">Brakujące umiejętności</p>
@@ -212,7 +208,6 @@ const Features = () => {
             </div>
           </div>
 
-          {/* Kropki paginacji mobilnej */}
           <div className="flex gap-2">
             {[0, 1, 2, 3, 4].map((index) => (
               <div
@@ -227,7 +222,7 @@ const Features = () => {
 
         <div
           ref={cardsContainerRef}
-          className="hidden w-full items-center justify-center gap-0 px-0 lg:flex"
+          className="hidden w-full items-center justify-center gap-0 px-0 xl:flex"
         >
           <div className="desktop-card z-0 h-[318px] w-[216px] rounded-[24px] bg-gradient-to-br from-white/20 via-white/10 via-[50%] to-transparent to-[55%] p-[1px]">
             <div className="flex h-full w-full flex-col space-y-[21px] rounded-[23px] bg-[#202125] p-5">
@@ -356,10 +351,9 @@ const Features = () => {
           </div>
         </div>
 
-        {/* Bento grid */}
         <div
           ref={bentoRef}
-          className="relative mx-auto flex w-full max-w-5xl flex-col px-4 pt-16 pb-12 sm:px-8 sm:pt-20 sm:pb-16 md:px-12 lg:px-16 lg:pt-56 lg:pb-20"
+          className="relative mx-auto flex w-full max-w-5xl flex-col px-4 pt-16 pb-12 sm:px-8 sm:pt-20 sm:pb-16 md:px-12 lg:px-16 lg:pb-20 xl:pt-56"
         >
           <div className="grid grid-cols-1 gap-x-32 gap-y-14 md:grid-cols-2 lg:gap-x-48">
             {featuresList.map((item) => (
@@ -396,7 +390,6 @@ const Features = () => {
           </div>
         </div>
       </div>
-
       <div className="mx-auto mt-4 w-full 2xl:max-w-7xl">
         <div className="mb-3 flex w-full items-center justify-between px-1">
           <span className="text-[11px] font-light text-[#F1F4FF] opacity-50 sm:text-[14px] lg:text-[16px]">
