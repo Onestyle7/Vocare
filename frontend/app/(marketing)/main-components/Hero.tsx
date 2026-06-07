@@ -28,13 +28,13 @@ const Hero = () => {
 
   return (
     <div className="font-poppins flex flex-col bg-[#0F1013] p-3 sm:p-5">
-      <div className="relative mx-auto flex min-h-[calc(100svh-1.5rem)] w-full max-w-none flex-col overflow-hidden rounded-3xl bg-[#16161A] sm:min-h-[calc(100svh-2.5rem)] lg:min-h-0 xl:min-h-[calc(100svh-2.5rem)] 2xl:min-h-[calc(55svh-2.5rem)] 2xl:max-w-7xl">
+      <div className="relative mx-auto flex min-h-[calc(100svh-1.5rem)] w-full max-w-none flex-col overflow-hidden rounded-3xl bg-[#16161A] sm:min-h-[calc(100svh-2.5rem)] 2xl:min-h-[calc(55svh-2.5rem)] 2xl:max-w-7xl">
         <LightBeam />
 
         <Header />
 
-        <div className="relative flex w-full flex-1 flex-col px-4 py-6 sm:px-8 sm:py-8 md:px-12 lg:py-10 lg:pr-0 lg:pl-24 xl:pl-[130px] 2xl:pl-[70px]">
-          <div className="relative z-10 grid w-full flex-1 items-center gap-8 sm:gap-10 lg:grid-cols-[minmax(0,460px)_minmax(0,1fr)] lg:items-center lg:gap-8 xl:grid-cols-[minmax(0,575px)_minmax(0,1fr)]">
+        <div className="relative flex w-full flex-1 flex-col justify-center px-4 py-6 sm:px-8 sm:py-8 md:px-12 lg:py-10 lg:pr-0 lg:pl-24 xl:pl-[130px] 2xl:pl-[70px]">
+          <div className="relative z-10 grid w-full items-center gap-8 sm:gap-10 lg:grid-cols-[minmax(0,460px)_minmax(0,1fr)] lg:items-center lg:gap-8 xl:grid-cols-[minmax(0,575px)_minmax(0,1fr)]">
             <div className="flex w-full max-w-142.75 flex-col items-center justify-center text-center lg:items-start lg:text-left">
               <h1 className="w-full text-[28px] leading-[1.15] font-light text-[#F1F4FF] sm:text-[36px] lg:text-[38px] lg:leading-[1.1] xl:text-[48px]">
                 <span className="opacity-[0.79]">Zaplanuj całą</span> <br />
