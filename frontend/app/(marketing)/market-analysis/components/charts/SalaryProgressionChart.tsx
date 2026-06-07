@@ -9,7 +9,6 @@ import {
   ChartTooltipContent,
 } from '@/components/ui/chart';
 
-// Dane: trzy scenariusze progresji Junior -> Lead/Expert
 const chartData = [
   { stage: 'Junior', optymistyczny: 7500, realistyczny: 6800, ostrozny: 6000 },
   { stage: 'Mid', optymistyczny: 13200, realistyczny: 12000, ostrozny: 10200 },

@@ -48,18 +48,16 @@ const heroCards = [
 const Hero = () => {
   return (
     <div className="font-poppins flex flex-col bg-[#0F1013] p-3 sm:p-5">
-      <div className="relative mx-auto flex min-h-[calc(100dvh-1.5rem)] w-full max-w-none flex-col overflow-hidden rounded-3xl bg-[#16161A] sm:min-h-[calc(100dvh-2.5rem)] 2xl:min-h-0 2xl:max-w-7xl">
+      <div className="relative mx-auto flex min-h-[calc(100svh-1.5rem)] w-full max-w-none flex-col overflow-hidden rounded-3xl bg-[#16161A] sm:min-h-[calc(100svh-2.5rem)] lg:min-h-0 xl:min-h-[calc(100svh-2.5rem)] 2xl:min-h-[calc(55svh-2.5rem)] 2xl:max-w-7xl">
         <Header />
 
         <div className="relative mx-auto flex w-full max-w-7xl flex-1 flex-col px-4 py-6 sm:px-8 sm:py-8 md:px-12 lg:px-16 lg:pt-8 lg:pb-12 2xl:pt-20">
           <div className="relative z-10 flex flex-col items-center gap-6 sm:gap-10 lg:flex-1 lg:flex-row lg:items-start lg:gap-10">
             <div className="flex w-full max-w-142.75 flex-col items-center text-center lg:flex-1 lg:items-start lg:self-stretch lg:text-left">
-              <h1 className="w-full text-[28px] leading-[1.15] text-[#F1F4FF] sm:text-[36px] lg:text-[48px] lg:leading-[1.1]">
-                <span className="bg-[linear-gradient(180deg,#9296FD_0%,#8491FE_50%,#9D9BFF_77%,#C7A9FE_100%)] bg-clip-text font-medium text-transparent">
-                  Stwórz CV
-                </span>
-                <span className="opacity-[0.79]">
-                  , które <br /> trafia do rekruterów
+              <h1 className="w-full text-[28px] leading-[1.15] font-light text-[#F1F4FF] sm:text-[36px] lg:text-[38px] lg:leading-[1.1] xl:text-[48px]">
+                <span className="opacity-[0.79]">Stwórz CV, które </span> <br />
+                <span className="bg-[linear-gradient(180deg,#9296FD_0%,#8491FE_50%,#9D9BFF_77%,#C7A9FE_100%)] bg-clip-text font-normal text-transparent">
+                  trafia do rekruterów
                 </span>
               </h1>
 
@@ -113,7 +111,7 @@ const Hero = () => {
                     key={stat.value}
                     className="flex flex-col items-center space-y-1.5 text-[#686A71] lg:items-start lg:space-y-2"
                   >
-                    <span className="bg-[linear-gradient(180deg,#8FBCFE_0%,#91A3FE_60%,#B09FFE_100%)] bg-clip-text text-[28px] leading-none text-transparent sm:text-[36px] lg:text-[46px]">
+                    <span className="bg-[linear-gradient(180deg,#8FBCFE_0%,#91A3FE_60%,#B09FFE_100%)] bg-clip-text text-[28px] leading-none text-transparent sm:text-[36px] lg:text-[36px] xl:text-[46px]">
                       {stat.value}
                     </span>
                     <span className="text-[10px] leading-tight sm:text-[11px] lg:text-[14px]">
@@ -136,7 +134,7 @@ const Hero = () => {
             {heroCards.map((card) => (
               <div
                 key={card.alt}
-                className={`absolute aspect-[414/214] w-[46%] max-w-[280px] lg:w-[58%] lg:max-w-[290px] ${card.z} ${card.className}`}
+                className={`absolute aspect-[414/214] w-[46%] max-w-[280px] lg:w-[58%] lg:max-w-[290px] lg:max-xl:w-[48%] lg:max-xl:max-w-[225px] xl:w-[58%] xl:max-w-[290px] ${card.z} ${card.className} `}
               >
                 <Image
                   src={card.src}

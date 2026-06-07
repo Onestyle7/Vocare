@@ -24,9 +24,9 @@ export default async function PaymentsPage() {
   const initialMarketingConsent = consentData?.hasConsent ?? false;
 
   return (
-    <PaymentsDashboardClient 
-      initialPayments={paymentsData.payments} 
-      initialMarketingConsent={initialMarketingConsent} 
+    <PaymentsDashboardClient
+      initialPayments={paymentsData.payments}
+      initialMarketingConsent={initialMarketingConsent}
     />
   );
 }

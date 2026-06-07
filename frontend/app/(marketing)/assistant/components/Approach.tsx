@@ -49,7 +49,7 @@ const Approach = () => {
                   </p>
                 </div>
 
-                <div className="relative flex min-h-40 w-full rounded-2xl bg-gradient-to-br from-white/20 via-white/10 via-[50%] to-transparent to-[55%] p-[1px]">
+                <div className="relative flex min-h-40 w-full rounded-2xl bg-linear-to-br from-white/20 via-white/10 via-50% to-transparent to-55% p-px">
                   <div className="flex h-full w-full flex-col items-start justify-center space-y-2.5 rounded-[15px] bg-[#191B1F] p-6">
                     <p className="text-[22px] text-[#F1F4FF] opacity-75">2. Analiza AI</p>
                     <p className="text-[14px] leading-6 font-light opacity-50">
@@ -191,7 +191,7 @@ const Approach = () => {
 
                   <div className="flex-1" />
 
-                  <div className="absolute top-[48%] mb-6 flex h-11 w-11 items-center justify-center rounded-full bg-[#1F2025] before:absolute before:inset-[-8px] before:rounded-full before:bg-[#9296FD]/10 before:blur-md sm:top-[49%]">
+                  <div className="absolute top-[48%] mb-6 flex h-11 w-11 items-center justify-center rounded-full bg-[#1F2025] before:absolute before:inset-[-8px] before:rounded-full before:bg-[#9296FD]/10 before:blur-md sm:top-[49%] lg:top-[43%] xl:top-[49%]">
                     <Image
                       src={shield_icon}
                       alt=""
@@ -209,7 +209,7 @@ const Approach = () => {
 
                   <Link
                     href="/privacy-policy"
-                    className="mt-6 flex cursor-pointer items-center gap-2 rounded-full bg-[#1F2025] px-5 py-3 text-[14px] text-[#9296FD] transition-colors hover:bg-[#26272D]"
+                    className="mt-6 flex cursor-pointer items-center gap-2 rounded-full bg-[#1F2025] px-5 py-3 text-[14px] font-medium text-[#9296FD] transition-colors hover:bg-[#26272D]"
                   >
                     <svg
                       width="14"

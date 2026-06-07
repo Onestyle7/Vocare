@@ -84,8 +84,6 @@ const Features = () => {
       path.style.strokeDashoffset = `${length}`;
     });
 
-    // Opcjonalnie można tu dodać gsap.matchMedia(), jeśli na mobile GSAP rzucałby błędy
-    // z powodu braku widoczności elementu, ale w większości przypadków zwykły ctx wystarczy.
     const ctx = gsap.context(() => {
       const tl = gsap.timeline({
         scrollTrigger: {
@@ -163,7 +161,6 @@ const Features = () => {
             </Button>
           </div>
 
-          {/* Zmiana: Owinięto diagramRef w dodatkowy div ukrywający element na małych ekranach */}
           <div className="hidden md:block">
             <div
               ref={diagramRef}
