@@ -1,7 +1,4 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+using System.ComponentModel.DataAnnotations;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using VocareWebAPI.JobOffers.Models.Dtos;
@@ -60,25 +57,14 @@ namespace VocareWebAPI.JobOffers.Controllers
         [HttpGet("matching/{careerPathId:guid}")]
         public async Task<ActionResult<List<JobOfferMatchDto>>> GetMatchingOffers(
             Guid careerPathId,
-            [FromQuery] int limit = 5
+            [FromQuery] [Range(1, 10)] int limit = 5
         )
         {
-            try
-            {
-                var offers = await _matchingService.GetMatchingOffersForCareerPathAsync(
-                    careerPathId,
-                    limit
-                );
-                return Ok(offers);
-            }
-            catch (ArgumentException ex)
-            {
-                return NotFound(new { message = ex.Message });
-            }
-            catch (Exception ex)
-            {
-                return Problem(detail: ex.Message, statusCode: 500);
-            }
+            var offers = await _matchingService.GetMatchingOffersForCareerPathAsync(
+                careerPathId,
+                limit
+            );
+            return Ok(offers);
         }
 
         /// <summary>
@@ -89,30 +75,14 @@ namespace VocareWebAPI.JobOffers.Controllers
         [HttpGet("matching/my-recommendations")]
         public async Task<
             ActionResult<Dictionary<Guid, List<JobOfferMatchDto>>>
-        > GetMatchingOffersForMyRecommendations([FromQuery] int limitPerPath = 5)
+        > GetMatchingOffersForMyRecommendations([FromQuery] [Range(1, 10)] int limitPerPath = 5)
         {
             var userId = User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
             if (string.IsNullOrEmpty(userId))
-            {
-                return Unauthorized("Brak identyfikatora użytkownika w tokenie.");
-            }
+                return BadRequest("Brak identyfikatora użytkownika w tokenie.");
 
-            try
-            {
-                var offers = await _matchingService.GetMatchingOffersForUserAsync(
-                    userId,
-                    limitPerPath
-                );
-                return Ok(offers);
-            }
-            catch (InvalidOperationException ex)
-            {
-                return NotFound(new { message = ex.Message });
-            }
-            catch (Exception ex)
-            {
-                return Problem(detail: ex.Message, statusCode: 500);
-            }
+            var offers = await _matchingService.GetMatchingOffersForUserAsync(userId, limitPerPath);
+            return Ok(offers);
         }
 
         /// <summary>
@@ -122,25 +92,20 @@ namespace VocareWebAPI.JobOffers.Controllers
         /// <param name="batchSize">Ile ofert przetworzyć (domyślnie 100)</param>
         [Authorize]
         [HttpPost("backfill-embeddings")]
-        public async Task<IActionResult> BackfillEmbeddings([FromQuery] int batchSize = 100)
+        public async Task<IActionResult> BackfillEmbeddings(
+            [FromQuery] [Range(1, 100)] int batchSize = 100
+        )
         {
-            try
-            {
-                var result = await _syncService.BackfillEmbeddingsAsync(batchSize);
-                return Ok(
-                    new
-                    {
-                        message = "Backfill zakończony",
-                        processed = result.Processed,
-                        failed = result.Failed,
-                        remaining = result.Remaining,
-                    }
-                );
-            }
-            catch (Exception ex)
-            {
-                return Problem(detail: ex.Message, statusCode: 500);
-            }
+            var result = await _syncService.BackfillEmbeddingsAsync(batchSize);
+            return Ok(
+                new
+                {
+                    message = "Backfill zakończony",
+                    processed = result.Processed,
+                    failed = result.Failed,
+                    remaining = result.Remaining,
+                }
+            );
         }
 
         /// <summary>
@@ -166,47 +131,31 @@ namespace VocareWebAPI.JobOffers.Controllers
         [HttpGet("matching/my-recommendations/detailed")]
         public async Task<
             ActionResult<List<CareerPathMatchResultDto>>
-        > GetDetailedMatchingOffersForUser([FromQuery] int limitPerPath = 5)
+        > GetDetailedMatchingOffersForUser([FromQuery] [Range(1, 10)] int limitPerPath = 5)
         {
             var userId = User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
             if (string.IsNullOrEmpty(userId))
-            {
-                return Unauthorized("Brak identyfikatora użytkownika w tokenie.");
-            }
+                return BadRequest("Brak identyfikatora użytkownika w tokenie.");
 
-            try
-            {
-                var result = await _matchingService.GetMatchingOffersWithScoresForUserAsync(
-                    userId,
-                    limitPerPath
-                );
-                return Ok(result);
-            }
-            catch (InvalidOperationException ex)
-            {
-                return NotFound(new { message = ex.Message });
-            }
+            var result = await _matchingService.GetMatchingOffersWithScoresForUserAsync(
+                userId,
+                limitPerPath
+            );
+            return Ok(result);
         }
 
         [Authorize]
         [HttpGet("matching/{careerPathId:guid}/detailed")]
         public async Task<ActionResult<CareerPathMatchResultDto>> GetDetailedMatchingOffers(
             Guid careerPathId,
-            [FromQuery] int limit = 5
+            [FromQuery] [Range(1, 10)] int limit = 5
         )
         {
-            try
-            {
-                var result = await _matchingService.GetMatchingOffersWithScoreAsync(
-                    careerPathId,
-                    limit
-                );
-                return Ok(result);
-            }
-            catch (ArgumentException ex)
-            {
-                return NotFound(new { message = ex.Message });
-            }
+            var result = await _matchingService.GetMatchingOffersWithScoreAsync(
+                careerPathId,
+                limit
+            );
+            return Ok(result);
         }
 
         #region DO USUNIĘCIA PO PRZEROBIENIU BACKFILLA SKILL EMBEDDINGÓW
@@ -217,15 +166,8 @@ namespace VocareWebAPI.JobOffers.Controllers
         [HttpPost("backfill-skill-embeddings")]
         public async Task<IActionResult> BackfillSkillEmbeddings()
         {
-            try
-            {
-                var result = await _skillEmbeddingService.BackfillSkillEmbeddingsAsync();
-                return Ok(result);
-            }
-            catch (Exception ex)
-            {
-                return Problem(detail: ex.Message, statusCode: 500);
-            }
+            var result = await _skillEmbeddingService.BackfillSkillEmbeddingsAsync();
+            return Ok(result);
         }
         #endregion
     }

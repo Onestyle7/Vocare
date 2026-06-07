@@ -1,4 +1,5 @@
 using Microsoft.EntityFrameworkCore;
+using VocareWebAPI.Billing.Exceptions;
 using VocareWebAPI.Billing.Models.Entities;
 using VocareWebAPI.Billing.Repositories.Interfaces;
 using VocareWebAPI.Data;
@@ -15,6 +16,7 @@ public class ServiceCostRepository : IServiceCostRepository
     public async Task<int> GetServiceCostAsync(string serviceName)
     {
         if (string.IsNullOrWhiteSpace(serviceName))
+            // exception walidacji a nie błąd domenowy, dlatego ArgumentException zasmiast NotFoundException
             throw new ArgumentException(
                 "Service name cannot be null or empty.",
                 nameof(serviceName)
@@ -41,7 +43,7 @@ public class ServiceCostRepository : IServiceCostRepository
         }
 
         if (costEntry is null)
-            throw new KeyNotFoundException($"Service cost for \"{serviceName}\" not found.");
+            throw new ServiceCostNotFoundException(serviceName);
 
         return costEntry.TokenCost;
     }

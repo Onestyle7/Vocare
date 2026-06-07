@@ -3,6 +3,7 @@ using Microsoft.EntityFrameworkCore;
 using VocareWebAPI.Data;
 using VocareWebAPI.Models.Dtos;
 using VocareWebAPI.Models.Entities;
+using VocareWebAPI.UserManagement.Exceptions;
 using VocareWebAPI.UserManagement.Models.Entities;
 
 namespace VocareWebAPI.Services
@@ -52,7 +53,7 @@ namespace VocareWebAPI.Services
             if (profile == null)
             {
                 _logger.LogWarning("Profile not found for UserId: {UserId}", UserId);
-                throw new KeyNotFoundException($"Profile not found for UserId: {UserId}");
+                throw new UserProfileNotFoundException(UserId);
             }
 
             _logger.LogInformation("Profile found for UserId: {UserId}", UserId);
@@ -144,9 +145,7 @@ namespace VocareWebAPI.Services
                 .FirstOrDefaultAsync(u => u.UserId == UserId);
 
             if (profile == null)
-            {
-                throw new KeyNotFoundException($"Profile not found for UserId: {UserId}");
-            }
+                throw new UserProfileNotFoundException(UserId);
 
             // Czyszczenie kolekcji
             profile.Education.Clear();
@@ -217,9 +216,7 @@ namespace VocareWebAPI.Services
             var profile = await _context.UserProfiles.FirstOrDefaultAsync(u => u.UserId == UserId);
 
             if (profile == null)
-            {
-                throw new KeyNotFoundException($"Profile not found for UserId: {UserId}");
-            }
+                throw new UserProfileNotFoundException(UserId);
 
             _logger.LogInformation("Removing UserProfile for UserId {UserId}", UserId);
             _context.UserProfiles.Remove(profile);

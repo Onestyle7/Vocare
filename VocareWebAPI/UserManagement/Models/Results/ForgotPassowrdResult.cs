@@ -1,5 +1,3 @@
-using System.Collections.Generic;
-
 namespace VocareWebAPI.UserManagement.Models.Results
 {
     public class ForgotPasswordResult
