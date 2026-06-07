@@ -574,3 +574,14 @@ export const featuresList = [
 export const ai_icon = '/market-analysis/ai-icon.svg';
 export const path_icon = '/market-analysis/path-icon.svg';
 export const user_icon_1 = '/market-analysis/user-icon.svg';
+
+// main page landing page
+
+export const dashboard_img_2 = '/main-page/dashboard-img-2.avif';
+export const tile_1 = '/main-page/tile-1.png';
+export const tile_2 = '/main-page/tile-2.png';
+export const tile_3 = '/main-page/tile-3.png';
+export const tile_4 = '/main-page/tile-4.png';
+export const arrow_01 = '/main-page/arrow-1.svg';
+export const arrow_02 = '/main-page/arrow-2.svg';
+export const arrow_03 = '/main-page/arrow-3.svg';

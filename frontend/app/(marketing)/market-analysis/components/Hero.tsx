@@ -225,7 +225,7 @@ const Hero = () => {
 
   return (
     <div className="font-poppins flex flex-col bg-[#0F1013] p-3 sm:p-5">
-      <div className="relative mx-auto flex min-h-[calc(100dvh-1.5rem)] w-full max-w-none flex-col overflow-hidden rounded-3xl bg-[#16161A] sm:min-h-[calc(100dvh-2.5rem)] 2xl:min-h-0 2xl:max-w-7xl">
+      <div className="relative mx-auto flex min-h-[calc(100svh-1.5rem)] w-full max-w-none flex-col overflow-hidden rounded-3xl bg-[#16161A] sm:min-h-[calc(100svh-2.5rem)] lg:min-h-0 xl:min-h-[calc(100svh-2.5rem)] 2xl:min-h-[calc(55svh-2.5rem)] 2xl:max-w-7xl">
         <Header />
         <div className="relative mx-auto flex w-full max-w-7xl flex-1 flex-col px-4 py-6 sm:px-8 sm:py-8 md:px-12 lg:px-16 lg:pt-8 lg:pb-12 2xl:pt-20">
           <div className="relative z-10 flex flex-1 flex-col items-center gap-10 sm:gap-14 lg:flex-row lg:items-start lg:gap-10">
@@ -284,7 +284,7 @@ const Hero = () => {
                     key={stat.value}
                     className="flex flex-col items-center space-y-1.5 text-[#686A71] lg:items-start lg:space-y-2"
                   >
-                    <span className="bg-[linear-gradient(180deg,#8FBCFE_0%,#91A3FE_60%,#B09FFE_100%)] bg-clip-text text-[28px] leading-none text-transparent sm:text-[36px] lg:text-[46px]">
+                    <span className="bg-[linear-gradient(180deg,#8FBCFE_0%,#91A3FE_60%,#B09FFE_100%)] bg-clip-text text-[28px] leading-none text-transparent sm:text-[36px] lg:text-[36px] xl:text-[46px]">
                       {stat.value}
                     </span>
                     <span className="text-[10px] leading-tight sm:text-[11px] lg:text-[14px]">
@@ -315,7 +315,7 @@ const Hero = () => {
                 </ScrollParallax>
               </div>
 
-              <div className="absolute top-[85px] left-6 z-10 origin-top-left scale-[0.70] sm:top-28 sm:left-12 sm:scale-90 lg:top-1/4 lg:left-1/4 lg:scale-100">
+              <div className="absolute top-[85px] left-6 z-10 origin-top-left scale-[0.70] sm:top-28 sm:left-12 sm:scale-90 lg:top-[185px] lg:left-1/4 lg:scale-100 xl:top-1/4">
                 <ScrollParallax strength={0.06}>
                   <div className="h-[56px] w-[136px] rounded-[16px] bg-gradient-to-br from-white/20 via-white/10 via-[50%] to-white/[0.04] p-[1px]">
                     <div className="flex h-full w-full flex-row items-center justify-center gap-2 rounded-[15px] bg-[#202125]">

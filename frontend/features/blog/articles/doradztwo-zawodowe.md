@@ -112,6 +112,7 @@ Kompleksowy proces doradztwa zawodowego zazwyczaj obejmuje 3-6 sesji.
 **Alternatywa cyfrowa:**
 
 **[Vocare.pl](https://vocare.pl)** oferuje funkcje, które normalnie wymagają kilku sesji z doradcą - bezpłatnie i bez umawiania się:
+
 - Analiza kompetencji i wartości zawodowych
 - Rekomendacje ścieżek kariery z danymi rynkowymi (wynagrodzenia, deficyty kadrowe, wymagane umiejętności)
 - Roadmapa kompetencyjna do wybranej ścieżki - konkretne kroki, kursy, certyfikaty
@@ -122,12 +123,14 @@ Kompleksowy proces doradztwa zawodowego zazwyczaj obejmuje 3-6 sesji.
 ## Czym różni się doradca zawodowy od coacha kariery?
 
 **Doradca zawodowy**
+
 - **Podejście:** Diagnoza i rekomendacje - aktywnie radzi i sugeruje kierunki
 - **Cel:** Konkretna decyzja lub plan zawodowy
 - **Certyfikaty:** Zawód regulowany w Polsce (kod GUS 242304)
 - **Koszt:** Często bezpłatny w ramach PUP/WUP
 
 **Coach kariery**
+
 - **Podejście:** Facylitatywne - pyta i pomaga odkrywać własne odpowiedzi
 - **Cel:** Rozwój samoświadomości i praca nad mindsetem
 - **Certyfikaty:** Brak regulacji, różne certyfikaty (ICF, EMCC i inne)

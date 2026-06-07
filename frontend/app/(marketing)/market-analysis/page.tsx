@@ -1,5 +1,3 @@
-// Market-analysis LP
-
 import Footer from '../assistant/components/Footer';
 import TrustScore from '../assistant/components/TrustScore';
 import Features from './components/Features';

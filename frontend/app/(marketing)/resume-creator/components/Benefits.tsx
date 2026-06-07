@@ -62,9 +62,7 @@ const Benefits = () => {
             </h1>
           </div>
 
-          {/* Benefits grid (zigzag) */}
           <div className="mt-16 grid grid-cols-1 gap-8 sm:mt-20 md:grid-cols-2 md:gap-x-12 md:gap-y-20 lg:mt-28 lg:gap-x-16 lg:gap-y-24">
-            {/* Step 1 — Text (mobile: 1 / desktop: 1) */}
             <div className="order-1 flex flex-col justify-center">
               <div className="mb-6 flex items-center gap-10 lg:gap-12">
                 <span className="text-[20px] font-light text-[#F1F4FF]/90 lg:text-[22px]">01</span>
@@ -84,7 +82,6 @@ const Benefits = () => {
               </p>
             </div>
 
-            {/* Step 1 — Visual (mobile: 2 / desktop: 2) */}
             <div className="order-2 aspect-[10/9] w-full rounded-[24px] bg-gradient-to-br from-white/10 via-white/5 to-transparent p-[1px]">
               <div className="relative h-full w-full overflow-hidden rounded-[23px] bg-[#1A1B1F]">
                 <video
@@ -99,7 +96,6 @@ const Benefits = () => {
               </div>
             </div>
 
-            {/* Step 2 — Text (mobile: 3 / desktop: 4) */}
             <div className="order-3 flex flex-col justify-center md:order-4">
               <div className="mb-6 flex items-center gap-10 lg:gap-12">
                 <span className="text-[20px] font-light text-[#F1F4FF]/90 lg:text-[22px]">02</span>
@@ -117,7 +113,6 @@ const Benefits = () => {
               </p>
             </div>
 
-            {/* Step 2 — Visual (mobile: 4 / desktop: 3 — zigzag) */}
             <div className="order-4 aspect-[10/9] w-full rounded-[24px] bg-gradient-to-br from-white/10 via-white/5 to-transparent p-[1px] md:order-3">
               <div className="relative h-full w-full overflow-hidden rounded-[23px] bg-[#1A1B1F]">
                 <video
