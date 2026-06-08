@@ -21,7 +21,7 @@ const steps: Step[] = [
     number: '01',
     prefix: 'Uzupełnij dokładnie',
     link: 'swój profil',
-    href: '/profile',
+    href: '/dashboard/profile',
     description:
       'To Twój punkt startowy. Algorytm analizuje każdy szczegół profilu - od kompetencji po cele zawodowe - żeby plan, który dostaniesz, był dopasowany wyłącznie do Ciebie, a nie do średniej z internetu.',
     position: 'lg:col-start-1 lg:row-start-1',
@@ -30,7 +30,7 @@ const steps: Step[] = [
     number: '02',
     prefix: 'Przejdź do',
     link: 'Doradcy Zawodowego',
-    href: '/advisor',
+    href: '/assistant',
     description:
       'Mając Twój profil, algorytm analizuje tysiące scenariuszy i tworzy 3 realistyczne ścieżki kariery - każda z analizą SWOT, prawdopodobieństwem sukcesu i dopasowanymi ofertami od NoFluffJobs. Do każdej z wygenerowanych ścieżek otrzymasz również Roadmapę, aby jasno widzieć co musisz zrobić, aby zrealizować swój cel. To moment, w którym dane zamieniają się w konkretne kierunki.',
     position: 'lg:col-start-2 lg:row-start-2',
@@ -39,7 +39,7 @@ const steps: Step[] = [
     number: '03',
     prefix: 'Przejdź do',
     link: 'Analizy Rynkowej',
-    href: '/analysis',
+    href: '/market-analysis',
     description:
       'Dla każdej rekomendowanej ścieżki dostajesz osobny raport rynkowy - widełki na czterech poziomach kariery, trudność wejścia i brakujące kompetencje. Wiesz nie tylko dokąd iść, ale i ile to realnie kosztuje.',
     position: 'lg:col-start-1 lg:row-start-3',
@@ -48,7 +48,7 @@ const steps: Step[] = [
     number: '04',
     prefix: 'Przejdź do',
     link: 'Kreatora CV',
-    href: '/cv-creator',
+    href: '/resume-creator',
     description:
       'Ostatni krok to zmiana planu w aplikację. Wklej link do ogłoszenia, a kreator porówna je z Twoim profilem, uzupełni słowa kluczowe i wygeneruje CV w 100% odporne na ATS. Od pustego profilu do gotowego PDF - w jednym miejscu. Pamiętaj, że z Kreatora możesz skorzystać w dowolnym momencie.',
     position: 'lg:col-start-2 lg:row-start-4',
