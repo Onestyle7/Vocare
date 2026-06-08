@@ -2,8 +2,11 @@ using System.Data;
 using Hangfire;
 using Microsoft.EntityFrameworkCore;
 using VocareWebAPI.Billing.Models.Enums;
+using VocareWebAPI.Billing.Repositories.Interfaces;
+using VocareWebAPI.CareerAdvisor.Repositories.Interfaces;
 using VocareWebAPI.Data;
 using VocareWebAPI.JobOffers.Exceptions;
+using VocareWebAPI.Repositories;
 using VocareWebAPI.RoadmapService.Exceptions;
 using VocareWebAPI.RoadmapService.Jobs.Interfaces;
 using VocareWebAPI.RoadmapService.Models.Dtos;
@@ -20,16 +23,25 @@ namespace VocareWebAPI.RoadmapService.Services.Implementations
         private readonly IRoadmapRepository _roadmapRepository;
         private readonly AppDbContext _context;
         private readonly IBackgroundJobClient _backgroundJobClient;
+        private readonly IUserProfileRepository _userProfileRepository;
+        private readonly ICareerPathRepository _careerPathRepository;
+        private readonly IUserBillingRepository _userBillingsRepository;
 
         public CareerRoadmapService(
             IRoadmapRepository roadmapRepository,
             AppDbContext context,
-            IBackgroundJobClient backgroundJobClient
+            IBackgroundJobClient backgroundJobClient,
+            IUserProfileRepository userProfileRepository,
+            ICareerPathRepository careerPathRepository,
+            IUserBillingRepository userBillingsRepository
         )
         {
             _roadmapRepository = roadmapRepository;
             _context = context;
             _backgroundJobClient = backgroundJobClient;
+            _userProfileRepository = userProfileRepository;
+            _careerPathRepository = careerPathRepository;
+            _userBillingsRepository = userBillingsRepository;
         }
 
         public async Task<Roadmap> GenerateRoadmapAsync(
@@ -38,7 +50,7 @@ namespace VocareWebAPI.RoadmapService.Services.Implementations
             int timeHorizonMonths
         )
         {
-            var billing = await _context.UserBillings.FirstOrDefaultAsync(b => b.UserId == userId);
+            var billing = await _userBillingsRepository.GetByUserIdAsync(userId);
             var isPremium = billing?.SubscriptionStatus == SubscriptionStatus.Active;
             var maxRoadmaps = isPremium ? 10 : 1;
             var limit = await _roadmapRepository.CountActiveRoadmapsAsync(userId);
@@ -62,8 +74,8 @@ namespace VocareWebAPI.RoadmapService.Services.Implementations
                 throw new RoadmapAccessDeniedException(careerPathId, userId);
 
             // Przenieść do repository
-            var careerPath = await _context.CareerPaths.FindAsync(careerPathId);
-            var userProfile = await _context.UserProfiles.FindAsync(userId);
+            var careerPath = await _careerPathRepository.GetByIdAsync(careerPathId);
+            var userProfile = await _userProfileRepository.GetUserProfileByIdAsync(userId);
 
             if (careerPath == null)
                 throw new CareerPathNotFoundException(careerPathId);
@@ -96,7 +108,7 @@ namespace VocareWebAPI.RoadmapService.Services.Implementations
             };
 
             var jobId = _backgroundJobClient.Enqueue<IRoadmapGenerationJob>(job =>
-                job.GenerateAsync(roadmap.Id, roadmapRequest)
+                job.GenerateAsync(roadmap.Id, roadmapRequest, null!) // Ustawiam null bo Hangfire go napisze kolejkując joba
             );
 
             roadmap.HangfireJobId = jobId;
@@ -210,8 +222,8 @@ namespace VocareWebAPI.RoadmapService.Services.Implementations
             roadmap.UpdatedAt = DateTime.UtcNow;
 
             // Przenieść do repository
-            var careerPath = await _context.CareerPaths.FindAsync(roadmap.CareerPathId);
-            var userProfile = await _context.UserProfiles.FindAsync(userId);
+            var careerPath = await _careerPathRepository.GetByIdAsync(roadmap.CareerPathId);
+            var userProfile = await _userProfileRepository.GetUserProfileByIdAsync(userId);
 
             var roadmapRequest = new RoadmapGenerationRequest
             {
@@ -223,7 +235,7 @@ namespace VocareWebAPI.RoadmapService.Services.Implementations
             };
 
             var jobId = _backgroundJobClient.Enqueue<IRoadmapGenerationJob>(job =>
-                job.GenerateAsync(roadmap.Id, roadmapRequest)
+                job.GenerateAsync(roadmap.Id, roadmapRequest, null!)
             );
 
             roadmap.HangfireJobId = jobId;

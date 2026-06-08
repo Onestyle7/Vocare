@@ -120,7 +120,7 @@ namespace VocareWebAPI.Extensions.ServiceCollectionExtensions
             services.AddScoped<IWorkAttributesRepository, WorkAttributesRepository>();
             services.AddScoped<IEntryDifficultyRepository, EntryDifficultyRepository>();
             services.AddScoped<IAiNarratorRepository, AiNarratorRepository>();
-
+            services.AddScoped<ICareerPathRepository, CareerPathRepository>();
             // RoadmapRepositories
             services.AddScoped<IRoadmapRepository, RoadmapRepository>();
 

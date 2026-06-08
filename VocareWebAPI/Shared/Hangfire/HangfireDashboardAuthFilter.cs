@@ -31,7 +31,7 @@ namespace VocareWebAPI.Shared.Hangfire
                   return true; */
 
             // Tymczasowo - nie korzystamy z cookie auth, więc nie mamy jak przekazać wygodnie tokenu dostępu - dashboard i tak służy tylko do debugowania
-            if (env.IsDevelopment() || env.IsStaging())
+            if (env.IsDevelopment())
                 return true; // dev/staging = otwarty
 
             return false; // produkcja = zamknięty
