@@ -29,7 +29,7 @@ export default function AttributesCard({
       <DashboardCardHeader>
         <DashboardCardTitle>Atrybuty Profilu</DashboardCardTitle>
       </DashboardCardHeader>
-      <DashboardCardContent className="p-0">
+      <DashboardCardContent className="min-w-0 p-0">
         <ResponsiveContainer width="100%" height={325}>
           <RadarChart cx="50%" cy="50%" outerRadius="80%" data={data}>
             <PolarGrid stroke="var(--dashboard-accent-foreground)" />

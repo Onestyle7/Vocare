@@ -2,6 +2,7 @@ import { BriefcaseBusinessIcon, FileCheck, Map, TrendingUp } from 'lucide-react'
 
 import { PaymentHistoryItem } from '@/features/billing/dal/api';
 import AttributesCard from '@/features/dashboard/components/attributes-card';
+import ProgressDoubleCard from '@/features/dashboard/components/progress-double-card';
 import SummaryCard from '@/features/dashboard/components/summary-card';
 import TransactionCard from '@/features/dashboard/components/transaction-card';
 
@@ -72,10 +73,10 @@ export const PROFILE_ATTRIBUTES_MOCK = [
 export default function DashboardPage() {
   return (
     <div className="grid grid-cols-1 gap-4 p-4 lg:grid-cols-5 lg:grid-rows-[minmax(0,390px)_minmax(0,390px)] lg:overflow-hidden">
-      <SummaryCard data={PROFILE_SUMMARY_MOCK} className="col-span-2" />
-      <AttributesCard data={PROFILE_ATTRIBUTES_MOCK} className="col-span-3" />
-      <AttributesCard data={PROFILE_ATTRIBUTES_MOCK} className="col-span-3" />
-      <TransactionCard data={PAYMENT_HISTORY_MOCK} className="col-span-2" />
+      <SummaryCard data={PROFILE_SUMMARY_MOCK} className="lg:col-span-2" />
+      <AttributesCard data={PROFILE_ATTRIBUTES_MOCK} className="lg:col-span-3" />
+      <ProgressDoubleCard className="lg:col-span-3" />
+      <TransactionCard data={PAYMENT_HISTORY_MOCK} className="lg:col-span-2" />
     </div>
   );
 }
