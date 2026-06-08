@@ -9,7 +9,6 @@ import { useState, useTransition } from 'react';
 import { useForm } from 'react-hook-form';
 import { toast } from 'sonner';
 
-import { spinner_terminal } from '@/features/marketing/constants';
 import { ButtonForm } from '@/components/ui/button-form';
 import {
   Form,
@@ -21,7 +20,7 @@ import {
 } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
 import { resetPassword } from '@/features/auth/dal/commands';
-import { spinner_terminal } from '@/features/marketing/constants/countries';
+import { spinner_terminal } from '@/features/marketing/constants';
 
 import { ResetPasswordFormType, resetPasswordSchema } from '../dal/schemas';
 
