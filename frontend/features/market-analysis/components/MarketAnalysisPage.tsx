@@ -8,6 +8,9 @@ import Link from 'next/link';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { toast } from 'sonner';
 
+import CollapsibleButton from '@/features/assistant/components/CollapsibleButton';
+import Timeline from '@/features/assistant/components/Timeline';
+import { useTokenBalanceContext } from '@/features/billing/components/SubscriptionTokenProvider';
 import {
   star_generate,
   timeline_icon_1,
@@ -15,9 +18,6 @@ import {
   timeline_icon_3,
   timeline_icon_4,
 } from '@/features/marketing/constants';
-import CollapsibleButton from '@/features/assistant/components/CollapsibleButton';
-import Timeline from '@/features/assistant/components/Timeline';
-import { useTokenBalanceContext } from '@/features/billing/components/SubscriptionTokenProvider';
 import {
   IndustryStatisticsDto,
   MarketAnalysisDetailsDto,
