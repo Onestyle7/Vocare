@@ -69,10 +69,6 @@ const Features = () => {
   const diagramRef = useRef<HTMLDivElement>(null);
   const svgRef = useRef<SVGSVGElement>(null);
 
-  const scrollToBento = () => {
-    bentoRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
-  };
-
   useEffect(() => {
     if (!svgRef.current || !diagramRef.current) return;
 
@@ -148,7 +144,7 @@ const Features = () => {
             </p>
 
             <Button
-              onClick={scrollToBento}
+              href="/dashboard"
               variant="secondary"
               size="sm"
               icon={<Image src={arrow_icon} alt="expand" width={20} height={20} />}

@@ -253,7 +253,7 @@ const Approach = () => {
                   </h3>
 
                   <Link
-                    href="/dashboard/market-analysis"
+                    href="/market-analysis"
                     className="mt-6 flex cursor-pointer items-center gap-2 rounded-full bg-[#1F2025] px-5 py-3 text-[14px] transition-colors hover:bg-[#26272D]"
                   >
                     <Image src={expand_icon} alt="" width={14} height={14} className="opacity-60" />
@@ -303,7 +303,7 @@ const Approach = () => {
                   </h3>
 
                   <Link
-                    href="/profile"
+                    href="/dashboard"
                     className="mt-6 flex cursor-pointer items-center gap-2 rounded-full bg-[#7B7DF5] px-6 py-3 text-[14px] font-medium text-white transition-colors hover:bg-[#6B6DE8]"
                   >
                     Sprawdź za darmo

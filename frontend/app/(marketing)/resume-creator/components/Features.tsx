@@ -27,10 +27,6 @@ const Features = () => {
   const cardsContainerRef = useRef<HTMLDivElement>(null);
   const [activeSlide, setActiveSlide] = useState(0);
 
-  const scrollToBento = () => {
-    bentoRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
-  };
-
   const handleScroll = (e: React.UIEvent<HTMLDivElement>) => {
     const scrollLeft = e.currentTarget.scrollLeft;
     const clientWidth = e.currentTarget.clientWidth;
@@ -62,7 +58,7 @@ const Features = () => {
             </p>
 
             <Button
-              onClick={scrollToBento}
+              href="/dashboard"
               variant="secondary"
               size="sm"
               icon={<Image src={arrow_icon} alt="expand" width={20} height={20} />}

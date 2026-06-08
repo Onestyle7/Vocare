@@ -10,7 +10,6 @@ import {
   social_fb,
   social_instagram,
   social_linkedin,
-  social_x,
 } from '@/features/marketing/constants';
 
 const Footer = () => {
@@ -112,7 +111,7 @@ const Footer = () => {
             />
             <button
               type="submit"
-              className="w-full shrink-0 cursor-pointer rounded-[14px] bg-[linear-gradient(90deg,#9296FD_0%,#8491FE_50%,#9D9BFF_77%,#C7A9FE_100%)] px-6 py-3.5 text-[14px] font-medium text-black transition-opacity hover:opacity-90 sm:w-auto sm:px-8 sm:py-4 sm:text-[15px]"
+              className="w-full shrink-0 cursor-not-allowed rounded-[14px] bg-[linear-gradient(90deg,#9296FD_0%,#8491FE_50%,#9D9BFF_77%,#C7A9FE_100%)] px-6 py-3.5 text-[14px] font-medium text-black transition-opacity hover:opacity-90 sm:w-auto sm:px-8 sm:py-4 sm:text-[15px]"
             >
               Subskrybuj newsletter
             </button>
@@ -126,7 +125,7 @@ const Footer = () => {
         <p className="font-regular text-[14px] sm:text-[16px]">
           © 2026 Vocare. Wszelkie prawa zastrzeżone.
         </p>
-        <Link href="#" className="font-regular text-[14px] underline sm:text-[16px]">
+        <Link href="privacy-policy" className="font-regular text-[14px] underline sm:text-[16px]">
           Polityka Prywatności
         </Link>
       </div>

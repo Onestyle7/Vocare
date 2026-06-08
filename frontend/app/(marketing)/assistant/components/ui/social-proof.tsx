@@ -27,14 +27,14 @@ const SocialProof = () => {
           <SocialProofCard
             description="„Zrobiłem analizę SWOT na Vocare i pierwszy raz mam czarno na białym, gdzie mam luki w CV, a co jest moim asem w rękawie. Cała roadmapa kariery wygenerowana pod moje cele to totalny gamechanger. To nie jest portal do nauki, to jest narzędzie do robienia awansu. Bardzo polecam każdemu, kto chce wejść na wyższy level.”"
             avatarImg={avatar_3}
-            name="Twój stary"
-            occupation="Pijany"
+            name="Franek"
+            occupation="IT Support"
           />
           <SocialProofCard
             description="„Zawsze miałem problem z tym, co robić 'dalej'. Vocare ogarnęło mi spersonalizowaną ścieżkę kariery, która nie jest generycznym PDF-em, tylko żywym planem. Analiza moich mocnych i słabych stron (SWOT) była tak trafna, że aż trochę creepy. Ale dzięki temu w końcu wiem, na czym się skupić, żeby podbić stawkę.”"
             avatarImg={avatar_2}
-            name="Lampucera"
-            occupation="co ją w taczkach woził"
+            name="Aleksandra"
+            occupation="Fizjoterapetka"
           />
         </div>
       </div>
