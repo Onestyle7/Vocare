@@ -1,7 +1,12 @@
 import { PAYMENT_HISTORY_MOCK } from '@/app/dashboard/page';
 import { cn } from '@/lib/utils';
 
-import DashboardCard from './dashboard-card';
+import {
+  DashboardCard,
+  DashboardCardContent,
+  DashboardCardHeader,
+  DashboardCardTitle,
+} from './dashboard-card';
 
 export default function TransactionCard({
   data,
@@ -13,7 +18,10 @@ export default function TransactionCard({
 
   return (
     <DashboardCard className={cn('', className)} title="Historia transakcji">
-      <div className="space-y-3">
+      <DashboardCardHeader>
+        <DashboardCardTitle>Historia transakcji</DashboardCardTitle>
+      </DashboardCardHeader>
+      <DashboardCardContent className="space-y-3">
         {data.map((payment) => (
           <div
             key={`${payment.type}-${payment.amount}-${payment.createdAt}`}
@@ -30,7 +38,7 @@ export default function TransactionCard({
             </div>
           </div>
         ))}
-      </div>
+      </DashboardCardContent>
     </DashboardCard>
   );
 }

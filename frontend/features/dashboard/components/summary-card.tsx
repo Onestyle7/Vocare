@@ -1,7 +1,12 @@
 import { PROFILE_SUMMARY_MOCK } from '@/app/dashboard/page';
 import { cn } from '@/lib/utils';
 
-import DashboardCard from './dashboard-card';
+import {
+  DashboardCard,
+  DashboardCardContent,
+  DashboardCardHeader,
+  DashboardCardTitle,
+} from './dashboard-card';
 
 export default function SummaryCard({
   data,
@@ -9,7 +14,10 @@ export default function SummaryCard({
 }: { data: typeof PROFILE_SUMMARY_MOCK } & React.ComponentProps<'div'>) {
   return (
     <DashboardCard className={cn('', className)} title="Podsumowanie">
-      <div className="space-y-3">
+      <DashboardCardHeader>
+        <DashboardCardTitle>Podsumowanie</DashboardCardTitle>
+      </DashboardCardHeader>
+      <DashboardCardContent className="space-y-3">
         {data.map((stat) => (
           <div
             key={stat.name}
@@ -22,7 +30,7 @@ export default function SummaryCard({
             </div>
           </div>
         ))}
-      </div>
+      </DashboardCardContent>
     </DashboardCard>
   );
 }
