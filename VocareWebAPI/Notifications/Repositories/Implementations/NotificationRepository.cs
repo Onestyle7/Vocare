@@ -41,7 +41,7 @@ namespace VocareWebAPI.Notifications.Repositories.Implementations
         public async Task<int> GetUnreadCountAsync(string userId)
         {
             var unreadNotification = await _context.Notifications.CountAsync(x =>
-                x.UserId == userId && x.IsRead == false
+                x.UserId == userId && !x.IsRead
             );
 
             return unreadNotification;
