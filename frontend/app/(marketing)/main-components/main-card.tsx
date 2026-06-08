@@ -1,9 +1,11 @@
 import { ArrowUpRight } from 'lucide-react';
+import Link from 'next/link';
 import React from 'react';
 
 interface MainCardProps {
   title: string;
   description: string;
+  href: string;
 }
 
 const maskStyle: React.CSSProperties = {
@@ -17,9 +19,12 @@ const maskStyle: React.CSSProperties = {
 
 const borderGradient = 'bg-gradient-to-br from-white/15 via-white/15 via-[70%] to-white/[0.03]';
 
-const MainCard = ({ title, description }: MainCardProps) => {
+const MainCard = ({ title, description, href }: MainCardProps) => {
   return (
-    <div className="group font-poppins relative aspect-[300/380] w-full max-w-[300px] cursor-pointer justify-self-center lg:max-w-none xl:max-w-[300px]">
+    <Link
+      href={href}
+      className="group font-poppins relative aspect-[300/380] w-full max-w-[300px] cursor-pointer justify-self-center lg:max-w-none xl:max-w-[300px]"
+    >
       <div className={`absolute inset-0 p-px ${borderGradient}`} style={maskStyle}>
         <div
           className="h-full w-full bg-[#1a1c21] px-6 py-7 sm:px-7 sm:py-8 lg:px-6 lg:py-7 xl:p-8"
@@ -48,7 +53,7 @@ const MainCard = ({ title, description }: MainCardProps) => {
           />
         </div>
       </div>
-    </div>
+    </Link>
   );
 };
 

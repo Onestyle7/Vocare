@@ -94,7 +94,7 @@ const Hero = () => {
 
               <div className="mt-7 flex w-full flex-wrap items-center justify-center gap-3 sm:mt-8 lg:mt-10 lg:justify-start lg:gap-4">
                 <Button
-                  href="/sign-up"
+                  href="/dashboard"
                   variant="primary"
                   size="sm"
                   icon={<ChevronRight size={18} />}
@@ -105,7 +105,7 @@ const Hero = () => {
                 </Button>
 
                 <Button
-                  href="/explore"
+                  href="/"
                   variant="secondary"
                   size="sm"
                   icon={

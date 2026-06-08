@@ -76,10 +76,6 @@ const Features = () => {
     };
   }, []);
 
-  const scrollToBento = () => {
-    bentoRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
-  };
-
   useGSAP(
     () => {
       const paths = gsap.utils.toArray<SVGPathElement>('.connection-path');
@@ -135,7 +131,7 @@ const Features = () => {
             </p>
 
             <Button
-              onClick={scrollToBento}
+              href="/dashboard"
               variant="secondary"
               size="sm"
               icon={<Image src={arrow_icon} alt="expand" width={20} height={20} />}

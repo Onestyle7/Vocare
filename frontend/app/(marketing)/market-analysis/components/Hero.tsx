@@ -11,6 +11,7 @@ import { ScrollParallax } from 'react-just-parallax';
 import Header from '@/components/SectionsComponents/Header';
 import Button from '@/components/ui/assistant-button';
 import { expand_icon } from '@/features/marketing/constants';
+import Link from 'next/link';
 
 if (typeof window !== 'undefined') {
   gsap.registerPlugin(ScrollTrigger);
@@ -244,7 +245,7 @@ const Hero = () => {
               </p>
               <div className="mt-7 flex w-full flex-wrap items-center justify-center gap-3 sm:mt-8 lg:mt-10 lg:justify-start lg:gap-4">
                 <Button
-                  href="/sign-up"
+                  href="/dashboard"
                   variant="primary"
                   size="sm"
                   icon={<ChevronRight size={18} />}
@@ -254,7 +255,7 @@ const Hero = () => {
                   Sprawdź za darmo
                 </Button>
                 <Button
-                  href="/explore"
+                  href="/"
                   variant="secondary"
                   size="sm"
                   icon={
@@ -293,10 +294,13 @@ const Hero = () => {
                   </div>
                 ))}
               </div>
-              <button className="mt-6 flex h-10 w-full max-w-85 items-center justify-center space-x-2 rounded-full bg-[#191B1F] px-4 text-[11px] text-[#7B7D84] sm:mt-7 sm:h-11 sm:max-w-95 sm:text-[12px] lg:mt-8 lg:h-13 lg:max-w-97.75 lg:text-[14px]">
+              <Link
+                href="/privacy-policy"
+                className="mt-6 flex h-10 w-full max-w-85 cursor-pointer items-center justify-center space-x-2 rounded-full bg-[#191B1F] px-4 text-[11px] text-[#7B7D84] sm:mt-7 sm:h-11 sm:max-w-95 sm:text-[12px] lg:mt-8 lg:h-13 lg:max-w-97.75 lg:text-[14px]"
+              >
                 <span className="h-1.5 w-1.5 flex-none rounded-full bg-[#8491FD] sm:h-2 sm:w-2"></span>
                 <p className="truncate">Sprawdź w jaki sposób wykorzystujemy dane</p>
-              </button>
+              </Link>
             </div>
 
             <div className="relative flex min-h-[380px] w-full overflow-hidden rounded-3xl sm:min-h-[440px] lg:min-h-100 lg:flex-1 lg:self-stretch">

@@ -1,5 +1,6 @@
 'use client';
 
+import { ChevronRight } from 'lucide-react';
 import { AnimatePresence, motion } from 'motion/react';
 import Image from 'next/image';
 import Link from 'next/link';
@@ -7,14 +8,16 @@ import { usePathname } from 'next/navigation';
 import React, { useEffect, useRef, useState } from 'react';
 
 import MobileNav from '@/components/MobileComponents/MobileNav';
+import Button from '@/components/ui/assistant-button';
 import { Badge } from '@/components/ui/badge';
-import { TokenCounter } from '@/features/billing/components/TokenCounter';
+import { useAuthContext } from '@/features/auth/components/AuthProvider';
 import { logo, NavLinks } from '@/features/marketing/constants';
 import { cn } from '@/lib/utils';
 // import ThemeSwitch from '../SupportComponents/ThemeSwitch';
 
 const Header = () => {
   const pathname = usePathname();
+  const { isAuthenticated } = useAuthContext();
   const [isMobile, setIsMobile] = useState(false);
   const [showFloatingNav, setShowFloatingNav] = useState(false);
   const headerRef = useRef<HTMLElement>(null);
@@ -26,11 +29,6 @@ const Header = () => {
   const [dotOpacity, setDotOpacity] = useState(0);
   const [activeDotLeft, setActiveDotLeft] = useState(0);
   const [activeDotOpacity, setActiveDotOpacity] = useState(0);
-  const publicLinks = [
-    { label: 'Blog', url: '/blog' },
-    { label: 'Pricing', url: '/pricing' },
-    { label: 'Sign In', url: '/sign-in' },
-  ];
 
   useEffect(() => {
     const handleResize = () => setIsMobile(window.innerWidth < 768);
@@ -158,9 +156,8 @@ const Header = () => {
         className="font-poppins relative z-[100] flex items-center justify-end border-gray-400 max-md:border-b-[1px] md:justify-center dark:border-gray-600/30"
       >
         {isMobile ? (
-          <MobileNav isAuthenticated={true} />
+          <MobileNav isAuthenticated={isAuthenticated} />
         ) : (
-          // Wrapper z max-w 1280px wycentrowany — taki sam jak na stronie, więc header i content są wyrównane
           <div className="mx-auto mt-10 w-full max-w-[1280px] px-4 sm:px-8 md:px-12 lg:px-16">
             <nav className="flex w-full items-center justify-between space-x-10">
               <Link href="/" aria-label="Go to homepage">
@@ -174,76 +171,94 @@ const Header = () => {
                 />
               </Link>
 
-              {true ? (
-                <div className="relative">
-                  <ul
-                    ref={navRef}
-                    onMouseLeave={handleMouseLeave}
-                    className="flex items-center justify-center space-x-5 opacity-[75%]"
-                  >
-                    {filteredLinks.map(({ label, url, highlighted, badge }) => {
-                      const isActive = pathname === url;
+              <div className="relative">
+                <ul
+                  ref={navRef}
+                  onMouseLeave={handleMouseLeave}
+                  className="flex items-center justify-center space-x-5 opacity-[75%]"
+                >
+                  {filteredLinks.map(({ label, url, highlighted, badge }) => {
+                    const isActive = pathname === url;
 
-                      return (
-                        <li
-                          key={label}
-                          onMouseEnter={handleMouseEnter}
-                          data-active={isActive}
-                          className="relative w-full"
+                    return (
+                      <li
+                        key={label}
+                        onMouseEnter={handleMouseEnter}
+                        data-active={isActive}
+                        className="relative w-full"
+                      >
+                        <Link
+                          href={url}
+                          className={cn(
+                            'relative flex items-center text-[18px] font-light',
+                            highlighted && 'cursor-pointer'
+                          )}
                         >
-                          <Link
-                            href={url}
-                            className={cn(
-                              'relative flex items-center text-[18px] font-light',
-                              highlighted && 'cursor-pointer'
-                            )}
-                          >
-                            <span>{label}</span>
+                          <span>{label}</span>
 
-                            {highlighted && badge && (
-                              <Badge
-                                variant="outline"
-                                className="pointer-events-none absolute -top-4 -right-6 scale-75"
-                              >
-                                {badge}
-                              </Badge>
-                            )}
-                          </Link>
-                        </li>
-                      );
-                    })}
-                  </ul>
+                          {highlighted && badge && (
+                            <Badge
+                              variant="outline"
+                              className="pointer-events-none absolute -top-4 -right-6 scale-75"
+                            >
+                              {badge}
+                            </Badge>
+                          )}
+                        </Link>
+                      </li>
+                    );
+                  })}
+                </ul>
 
-                  {/* Animowana kropka na hover */}
-                  <motion.div
-                    animate={{ left: dotLeft, opacity: dotOpacity }}
-                    transition={{ type: 'spring', stiffness: 400, damping: 30 }}
-                    className="absolute -bottom-2 h-1.5 w-1.5 rounded-full bg-current"
-                  />
+                <motion.div
+                  animate={{ left: dotLeft, opacity: dotOpacity }}
+                  transition={{ type: 'spring', stiffness: 400, damping: 30 }}
+                  className="absolute -bottom-2 h-1.5 w-1.5 rounded-full bg-current"
+                />
 
-                  {/* Kropka aktywnego linku */}
-                  <motion.div
-                    animate={{ left: activeDotLeft, opacity: activeDotOpacity }}
-                    transition={{ type: 'spring', stiffness: 300, damping: 25 }}
-                    className="absolute -bottom-2 h-1.5 w-1.5 rounded-full bg-gray-400/70"
-                  />
-                </div>
-              ) : (
-                <div />
-              )}
+                <motion.div
+                  animate={{ left: activeDotLeft, opacity: activeDotOpacity }}
+                  transition={{ type: 'spring', stiffness: 300, damping: 25 }}
+                  className="absolute -bottom-2 h-1.5 w-1.5 rounded-full bg-gray-400/70"
+                />
+              </div>
 
               <div className="flex items-center space-x-4">
-                {true && <TokenCounter />}
-
-                <>
-                  {!true &&
-                    publicLinks.map((link) => (
-                      <Link href={link.url} key={link.url}>
-                        <p className="text-[18px] font-normal uppercase">{link.label}</p>
-                      </Link>
-                    ))}
-                </>
-
+                {isAuthenticated ? (
+                  <Button
+                    href="/dashboard"
+                    variant="ghost"
+                    size="sm"
+                    icon={
+                      <ChevronRight
+                        size={18}
+                        strokeWidth={2}
+                        className="transition-transform duration-300 ease-out group-hover:translate-x-1"
+                      />
+                    }
+                    iconPosition="right"
+                    className="group h-10 bg-[#191B1F] px-5 text-[15px] font-medium text-[#9296FD] hover:text-[#8491FE] sm:px-6"
+                  >
+                    Pulpit
+                  </Button>
+                ) : (
+                  <Button
+                    href="/sign-in"
+                    variant="ghost"
+                    size="sm"
+                    icon={
+                      <ChevronRight
+                        size={18}
+                        strokeWidth={2}
+                        className="transition-transform duration-300 ease-out group-hover:translate-x-1"
+                      />
+                    }
+                    iconPosition="right"
+                    className="group h-10 bg-[#191B1F] px-5 text-[15px] font-medium text-[#9296FD] hover:text-[#8491FE] sm:px-6"
+                  >
+                    Zaloguj się
+                  </Button>
+                )}
                 {/* <ThemeSwitch /> */}
               </div>
             </nav>

@@ -18,7 +18,7 @@ const Features = () => {
   };
 
   return (
-    <div className="font-poppins flex flex-col bg-[#0F1013] p-3 sm:p-5">
+    <div id="explore" className="font-poppins flex flex-col bg-[#0F1013] p-3 sm:p-5">
       <div className="relative mx-auto flex w-full max-w-none flex-col overflow-hidden rounded-3xl 2xl:max-w-7xl">
         <LightBeam />
 
@@ -82,19 +82,23 @@ const Features = () => {
             title="Doradca 
 Zawodowy"
             description="3 dopasowane ścieżki kariery zamiast jednej losowej sugestii."
+            href="/assistant"
           />
           <MainCard
             title="Analiza
 Rynkowa"
             description="Widełki, trudność wejścia i braki kompetencji dla każdej ścieżki."
+            href="/market-analysis"
           />
           <MainCard
             title="Roadmapa"
             description="Spersonalizowany plan krok po kroku pod Twój horyzont czasowy."
+            href="/roadmap"
           />
           <MainCard
             title="Kreator CV"
             description="CV dopasowane do oferty i odporne na ATS - gotowe w 3 minuty."
+            href="/resume-creator"
           />
         </div>
       </div>
