@@ -18,7 +18,6 @@ namespace VocareWebAPI.Notifications.Controllers
             _notificationService = notificationService;
         }
 
-        [Authorize]
         [HttpGet("unread-count")]
         public async Task<IActionResult> GetUnreadCount()
         {
@@ -33,8 +32,8 @@ namespace VocareWebAPI.Notifications.Controllers
         [Authorize]
         [HttpGet("user-notifications")]
         public async Task<IActionResult> GetUserNotifications(
-            [FromQuery] [Range(1, 100)] int page,
-            [FromQuery] [Range(1, 100)] int pageSize
+            [FromQuery] [Range(1, 100)] int page = 1,
+            [FromQuery] [Range(1, 100)] int pageSize = 20
         )
         {
             var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
