@@ -1,4 +1,5 @@
 using Hangfire;
+using Hangfire.Server;
 using VocareWebAPI.Notifications.Models.Enums;
 using VocareWebAPI.Notifications.Services.Interfaces;
 using VocareWebAPI.RoadmapService.Exceptions;
@@ -30,17 +31,18 @@ namespace VocareWebAPI.RoadmapService.Jobs.Implementations
         }
 
         [AutomaticRetry(Attempts = 1)]
-        public async Task GenerateAsync(Guid roadmapId, RoadmapGenerationRequest request)
+        public async Task GenerateAsync(
+            Guid roadmapId,
+            RoadmapGenerationRequest request,
+            PerformContext context
+        )
         {
             var roadmap = await _roadmapRepository.GetByIdAsync(roadmapId);
             if (roadmap == null)
                 throw new RoadmapNotFoundException(roadmapId);
 
-            // Idempotency check
-            if (
-                roadmap.GenerationStatus == GenerationStatus.Ready
-                || roadmap.GenerationStatus == GenerationStatus.Failed
-            )
+            // Idempotency check, sprawdzamy czy wygenerowana, lub w trakcie generowania
+            if (roadmap.GenerationStatus is GenerationStatus.Ready or GenerationStatus.Generating)
                 return;
 
             roadmap.GenerationStatus = GenerationStatus.Generating;
@@ -118,21 +120,26 @@ namespace VocareWebAPI.RoadmapService.Jobs.Implementations
             }
             catch (Exception ex)
             {
-                roadmap.GenerationStatus = GenerationStatus.Failed;
-                roadmap.FailureReason = "Generowanie nie powiodło się. Spróbuj ponownie.";
-                roadmap.UpdatedAt = DateTime.UtcNow;
-                await _roadmapRepository.UpdateAsync(roadmap);
+                var retryCount = context.GetJobParameter<int>("RetryCount");
+                bool isFinalAttempt = retryCount >= 1;
 
-                await _notificationService.CreateAsync(
-                    userId: roadmap.UserId,
-                    title: "Generowanie nie powiodło się",
-                    message: "Generowanie roadmapy nie powiodło się. Możesz spróbować ponownie.",
-                    type: NotificationType.RoadmapGenerationFailed,
-                    relatedEntityId: roadmap.Id
-                );
+                if (isFinalAttempt)
+                {
+                    roadmap.GenerationStatus = GenerationStatus.Failed;
+                    roadmap.FailureReason = "Generowanie nie powiodło się. Spróbuj ponownie.";
+                    roadmap.UpdatedAt = DateTime.UtcNow;
+                    await _roadmapRepository.UpdateAsync(roadmap);
 
+                    await _notificationService.CreateAsync(
+                        userId: roadmap.UserId,
+                        title: "Generowanie nie powiodło się",
+                        message: "Generowanie roadmapy nie powiodło się. Możesz spróbować ponownie.",
+                        type: NotificationType.RoadmapGenerationFailed,
+                        relatedEntityId: roadmap.Id
+                    );
+                }
                 if (ex is DomainException)
-                    throw; // domain exceptions poleca dalej bez opakowywania
+                    throw;
 
                 throw new AiServiceException("Błąd podczas generowania roadmapy.", ex);
             }
