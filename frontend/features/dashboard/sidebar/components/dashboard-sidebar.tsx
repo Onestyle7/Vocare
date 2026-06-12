@@ -107,6 +107,7 @@ export default function DashboardSidebar() {
       </SidebarHeader>
       <SidebarContent className="flex justify-between">
         <NavSection links={SIDEBAR_DATA.nav} title="Nawigacja" />
+        {/* TODO: Dodać licznik counterów i status subskrybcji */}
         <NavSection links={SIDEBAR_DATA.info} title="Informacje" />
       </SidebarContent>
       <SidebarFooter />

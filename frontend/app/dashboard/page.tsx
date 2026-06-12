@@ -1,10 +1,12 @@
 import { BriefcaseBusinessIcon, FileCheck, Map, TrendingUp } from 'lucide-react';
 
+import { forceLoginRedirect } from '@/features/auth/utils/login-redirect';
 import { PaymentHistoryItem } from '@/features/billing/dal/api';
 import AttributesCard from '@/features/dashboard/components/attributes-card';
 import ProgressDoubleCard from '@/features/dashboard/components/progress-double-card';
 import SummaryCard from '@/features/dashboard/components/summary-card';
 import TransactionCard from '@/features/dashboard/components/transaction-card';
+import { getUserProfileSummaryQuery } from '@/features/dashboard/dal/queries';
 
 export const PROFILE_SUMMARY_MOCK = [
   {
@@ -70,7 +72,22 @@ export const PROFILE_ATTRIBUTES_MOCK = [
   { attribute: 'Umiejętności techniczne', score: 80 },
 ];
 
-export default function DashboardPage() {
+export default async function DashboardPage() {
+  const [userProfileSummaryError, userProfileSummaryData] = await getUserProfileSummaryQuery();
+
+  if (userProfileSummaryError) {
+    switch (userProfileSummaryError.type) {
+      case 'Unauthorized': {
+        await forceLoginRedirect();
+      }
+      default: {
+        throw new Error(userProfileSummaryError.message);
+      }
+    }
+  }
+
+  console.log(userProfileSummaryData);
+
   return (
     <div className="grid grid-cols-1 gap-4 p-4 lg:grid-cols-5 lg:grid-rows-[minmax(0,390px)_minmax(0,390px)] lg:overflow-hidden">
       <SummaryCard data={PROFILE_SUMMARY_MOCK} className="lg:col-span-2" />

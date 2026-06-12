@@ -7,6 +7,7 @@ import { cn } from '@/lib/utils';
 
 import { DashboardCard, DashboardCardContent, DashboardCardTitle } from './dashboard-card';
 
+// TODO: wyliczać procent z current / expected - formatowanie waluty i liczby dodać przez Intl.numberFormat
 interface ProgressDoubleCardProps extends React.ComponentProps<typeof DashboardCard> {
   profilePercentage?: number;
   salaryPercentage?: number;

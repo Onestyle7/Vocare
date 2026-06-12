@@ -18,6 +18,7 @@ export default function DashboardHeader({ fullName }: { fullName: string }) {
         {pageName && <p>{pageName}</p>}
       </div>
       <div className="text-dashboard-primary-foreground">{fullName}</div>
+      {/* TODO: Dodać email po poprawkach z backendu */}
     </header>
   );
 }
