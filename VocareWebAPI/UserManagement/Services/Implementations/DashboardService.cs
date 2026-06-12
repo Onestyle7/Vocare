@@ -234,10 +234,15 @@ namespace VocareWebAPI.UserManagement.Services.Implementations
             return (int)((double)completedField / totalFields * 100);
         }
 
-        private SalaryProgressDto? CalculateSalaryProgress(FinancialSurvey survey)
+        private SalaryProgressDto CalculateSalaryProgress(FinancialSurvey? survey)
         {
             if (survey == null)
-                return null;
+            return new SalaryProgressDto
+            {
+                CurrentSalary = 0,
+                ExpectedSalary = 0,
+                GoalCompletionPercentage = 0,
+            };
 
             var currentSalary = survey.CurrentSalary ?? 0;
             var targetSalary = survey.DesiredSalary ?? 0;

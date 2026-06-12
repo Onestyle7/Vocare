@@ -264,8 +264,8 @@ export default function RoadmapDashboardPage({
       <div className="font-poppins relative">
         <GridBackgroundDemo />
 
-        <div className="relative z-10 w-full py-6 lg:py-36">
-          <div className="container mx-auto px-0 sm:px-4">
+        <div className="relative z-10 w-full">
+          <div className="container mx-auto">
             <div className="flex flex-col gap-8 md:gap-10">
               <CreateRoadmapDialog
                 open={isCreateDialogOpen}
@@ -337,7 +337,7 @@ export default function RoadmapDashboardPage({
                     {visibleRoadmaps.map((roadmap) => (
                       <Link
                         key={roadmap.id}
-                        href={`/dashboard/roadmap/${roadmap.id}`}
+                        href={`/roadmap/${roadmap.id}`}
                         className="block min-w-0"
                       >
                         <div className="group bg-background flex h-[400px] min-w-0 flex-col gap-2 overflow-hidden rounded-xl border p-3 transition-shadow hover:shadow-lg md:p-4">

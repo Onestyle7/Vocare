@@ -4,34 +4,36 @@ import * as React from 'react';
 import { Cell, Pie, PieChart, ResponsiveContainer } from 'recharts';
 
 import { cn } from '@/lib/utils';
+import { salaryFormatter } from '@/lib/utils/number-utils';
 
+import { SalaryProgressResult } from '../dal/api';
 import { DashboardCard, DashboardCardContent, DashboardCardTitle } from './dashboard-card';
 
-// TODO: wyliczać procent z current / expected - formatowanie waluty i liczby dodać przez Intl.numberFormat
-interface ProgressDoubleCardProps extends React.ComponentProps<typeof DashboardCard> {
-  profilePercentage?: number;
-  salaryPercentage?: number;
-  currentSalary?: string;
-  expectedSalary?: string;
-}
-
 export default function ProgressDoubleCard({
-  profilePercentage = 82,
-  salaryPercentage = 75,
-  currentSalary = '7.5 tyś. PLN/m',
-  expectedSalary = '10 tyś. PLN/m',
+  profileCompletionPercentage = 82,
+  salaryStats,
   className,
   ...props
-}: ProgressDoubleCardProps) {
+}: {
+  profileCompletionPercentage: number;
+  salaryStats?: SalaryProgressResult | null;
+} & React.ComponentProps<typeof DashboardCard>) {
   const profileData = [
-    { value: profilePercentage, color: 'var(--dashboard-primary, #8b5cf6)' },
-    { value: 100 - profilePercentage, color: '#1f1f2e' },
+    { value: profileCompletionPercentage, color: 'var(--dashboard-primary, #8b5cf6)' },
+    { value: 100 - profileCompletionPercentage, color: '#1f1f2e' },
   ];
 
-  const salaryData = [
-    { value: salaryPercentage, color: 'var(--dashboard-primary, #8b5cf6)' },
-    { value: 100 - salaryPercentage, color: '#1f1f2e' },
+  let salaryData = [
+    { value: 0, color: 'var(--dashboard-primary, #8b5cf6)' },
+    { value: 100, color: '#1f1f2e' },
   ];
+
+  if (salaryStats) {
+    salaryData = [
+      { value: salaryStats.goalCompletionPercentage, color: 'var(--dashboard-primary, #8b5cf6)' },
+      { value: 100 - salaryStats.goalCompletionPercentage, color: '#1f1f2e' },
+    ];
+  }
 
   return (
     <DashboardCard className={cn('px-6 lg:px-0', className)} {...props}>
@@ -41,7 +43,7 @@ export default function ProgressDoubleCard({
           <div className="relative flex flex-1 items-center justify-center">
             <div className="absolute inset-0 flex items-center justify-center">
               <span className="text-3xl font-semibold tracking-tight text-white">
-                {profilePercentage}%
+                {profileCompletionPercentage}%
               </span>
             </div>
 
@@ -67,12 +69,14 @@ export default function ProgressDoubleCard({
           </div>
         </div>
 
-        <div className="flex flex-1 flex-col gap-4 px-0 lg:px-6">
-          <DashboardCardTitle className="pt-6 lg:pt-0">Postęp w Wynagrodzeniu</DashboardCardTitle>
+        <div className="flex flex-1 flex-col gap-4 md:pl-6 lg:px-6">
+          <DashboardCardTitle className="pt-6 md:pt-0">Postęp w Wynagrodzeniu</DashboardCardTitle>
 
           <div className="relative mt-4 flex flex-col items-center justify-center">
             <div className="absolute inset-0 flex flex-col items-center justify-center pt-8">
-              <span className="text-3xl font-semibold tracking-tight">{salaryPercentage}%</span>
+              <span className="text-3xl font-semibold tracking-tight">
+                {salaryStats?.goalCompletionPercentage ?? 0}%
+              </span>
               <span className="text-dashboard-secondary-foreground mt-1 text-xs font-light">
                 Realizacja celu
               </span>
@@ -101,14 +105,22 @@ export default function ProgressDoubleCard({
 
           <div className="mt-4 grid grid-cols-2 gap-3">
             <div className="bg-dashboard-accent rounded-xl p-3 text-center">
-              <span className="text-dashboard- block text-sm font-medium">{currentSalary}</span>
+              <span className="text-dashboard- block text-sm font-medium">
+                {salaryStats?.currentSalary
+                  ? salaryFormatter(salaryStats.currentSalary)
+                  : 'Brak danych'}
+              </span>
               <span className="text-dashboard-secondary-foreground mt-0.5 block text-[11px]">
                 Twoje zarobki
               </span>
             </div>
 
             <div className="bg-dashboard-accent rounded-xl p-3 text-center">
-              <span className="block text-sm font-medium">{expectedSalary}</span>
+              <span className="block text-sm font-medium">
+                {salaryStats?.expectedSalary
+                  ? salaryFormatter(salaryStats.expectedSalary)
+                  : 'Brak danych'}
+              </span>
               <span className="text-dashboard-secondary-foreground mt-0.5 block text-[11px]">
                 Oczekiwane
               </span>

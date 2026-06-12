@@ -4,7 +4,7 @@ import { err, ok, Result } from 'neverthrow';
 import { cookies } from 'next/headers';
 
 import env from '../env/server';
-import { BaseAppError } from '../types/result';
+import { BaseAppError, BaseAppErrorDetails } from '../types/result';
 
 interface ApiConfig {
   baseUrl?: string;
@@ -128,7 +128,7 @@ export class ApiClient {
   }
 
   private async handleErrorResponse(response: Response): Promise<Result<never, ApiError>> {
-    let errorDetails: Record<string, unknown> | undefined = undefined;
+    let errorDetails: BaseAppErrorDetails | undefined = undefined;
 
     try {
       const contentType = response.headers.get('content-type');

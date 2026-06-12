@@ -311,7 +311,7 @@ export default function CareerPathSection({
             >
               <Link
                 href={{
-                  pathname: '/dashboard',
+                  pathname: '/dashboard/roadmap',
                   query: {
                     source: 'assistant',
                     careerPathId: path.id,

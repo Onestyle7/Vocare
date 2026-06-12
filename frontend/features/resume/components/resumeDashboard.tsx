@@ -99,8 +99,8 @@ const ResumeDashboard = ({ initialCvs, initialLimits }: ResumeDashboardProps) =>
     <div className="min-h-screen">
       <div className="font-grotesk relative">
         <GridBackgroundDemo />
-        <div className="relative z-10 w-full py-6 lg:py-36">
-          <div className="container mx-auto px-0 sm:px-4">
+        <div className="relative z-10 w-full">
+          <div className="container mx-auto">
             <div className="flex flex-col gap-10">
               {/* Header Section */}
               <div className="flex flex-col items-start gap-4">
@@ -147,7 +147,7 @@ const ResumeDashboard = ({ initialCvs, initialLimits }: ResumeDashboardProps) =>
                     {cvs.map((cv) => (
                       <div
                         key={cv.id}
-                        onClick={() => router.push(`/dashboard/resume/${cv.id}`)}
+                        onClick={() => router.push(`/resume/${cv.id}`)}
                         className="block cursor-pointer"
                       >
                         <div className="group bg-background flex h-[400px] flex-col gap-2 rounded-xl border p-4 transition-shadow hover:shadow-lg">

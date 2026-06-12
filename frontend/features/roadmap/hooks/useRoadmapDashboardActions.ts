@@ -37,7 +37,7 @@ export function useRoadmapDashboardActions() {
       } else {
         toast.success('Roadmapa została utworzona');
         if (onSuccess) onSuccess();
-        if (response) router.push(`/dashboard/roadmap/${response.id}`);
+        if (response) router.push(`/roadmap/${response.id}`);
       }
     });
   };

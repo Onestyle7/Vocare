@@ -12,8 +12,8 @@ const page = async () => {
 
   return (
     <div className="w-full">
-      <div className="w-full sm:border-[0.5px]" />
-      <div className="font-poppins p-4 sm:border">
+      <div className="w-full" />
+      <div className="font-poppins p-4">
         <ResumeDashboard initialCvs={cvs} initialLimits={limits} />
       </div>
     </div>

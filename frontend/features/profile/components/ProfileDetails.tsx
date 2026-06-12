@@ -100,7 +100,13 @@ export default function ProfileDetails() {
   const handleCancelEdit = () => setIsEditing(false);
 
   if (isEditing) {
-    return <ProfileForm initialData={profile ?? undefined} onCancel={handleCancelEdit} />;
+    return (
+      <ProfileForm
+        initialData={profile ?? undefined}
+        onCancel={handleCancelEdit}
+        setIsEditing={setIsEditing}
+      />
+    );
   }
 
   const renderPersonalInfoPage = () => (

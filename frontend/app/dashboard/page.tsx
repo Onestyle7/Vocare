@@ -1,84 +1,46 @@
-import { BriefcaseBusinessIcon, FileCheck, Map, TrendingUp } from 'lucide-react';
-
 import { forceLoginRedirect } from '@/features/auth/utils/login-redirect';
-import { PaymentHistoryItem } from '@/features/billing/dal/api';
+import { getPaymentHistoryQuery } from '@/features/billing/dal/queries';
 import AttributesCard from '@/features/dashboard/components/attributes-card';
 import ProgressDoubleCard from '@/features/dashboard/components/progress-double-card';
 import SummaryCard from '@/features/dashboard/components/summary-card';
 import TransactionCard from '@/features/dashboard/components/transaction-card';
-import { getUserProfileSummaryQuery } from '@/features/dashboard/dal/queries';
-
-export const PROFILE_SUMMARY_MOCK = [
-  {
-    icon: BriefcaseBusinessIcon,
-    name: 'Rekomendacje',
-    value: 67,
-  },
-  {
-    icon: TrendingUp,
-    name: 'Analizy',
-    value: 123,
-  },
-  {
-    icon: Map,
-    name: 'Roadmapy',
-    value: 67,
-  },
-  {
-    icon: FileCheck,
-    name: 'CV',
-    value: 67,
-  },
-];
-
-export const PAYMENT_HISTORY_MOCK: PaymentHistoryItem[] = [
-  {
-    type: 'Zakup pro',
-    amount: 26,
-    currency: 'zł',
-    status: 'succesful',
-    createdAt: new Date().toISOString(),
-    description: null,
-    tokenAmount: null,
-  },
-  {
-    type: 'Zakup tokenów',
-    amount: 10,
-    currency: 'zł',
-    status: 'succesful',
-    createdAt: new Date().toISOString(),
-    description: null,
-    tokenAmount: null,
-  },
-  {
-    type: 'Zakup tokenów',
-    amount: 15,
-    currency: 'zł',
-    status: 'succesful',
-    createdAt: new Date().toISOString(),
-    description: null,
-    tokenAmount: null,
-  },
-];
-
-export const PROFILE_ATTRIBUTES_MOCK = [
-  { attribute: 'Doświadczenie praktyczne', score: 85 },
-  { attribute: 'Kompetencje twarde', score: 90 },
-  { attribute: 'Kreatywność', score: 65 },
-  { attribute: 'Zespół', score: 70 },
-  { attribute: 'Samodzielność', score: 95 },
-  { attribute: 'Kompetencje miękkie', score: 75 },
-  { attribute: 'Certyfikacja', score: 50 },
-  { attribute: 'Umiejętności techniczne', score: 80 },
-];
+import {
+  getUserAttributesQuery,
+  getUserProfileSummaryQuery,
+} from '@/features/dashboard/dal/queries';
+import {
+  parsePaymentHistory,
+  parseProfileAttributesForChart,
+  parseProfileSummary,
+} from '@/features/dashboard/dashboard-utils';
 
 export default async function DashboardPage() {
   const [userProfileSummaryError, userProfileSummaryData] = await getUserProfileSummaryQuery();
+  const [userAttibutesError, userAttributesData] = await getUserAttributesQuery();
+  const [paymentError, paymentsData] = await getPaymentHistoryQuery(50);
+
+  let isProfileEmpty = false;
+
+  if (paymentError) {
+    switch (paymentError.type) {
+      case 'Unauthorized': {
+        await forceLoginRedirect();
+      }
+      default: {
+        throw new Error(paymentError.message);
+      }
+    }
+  }
 
   if (userProfileSummaryError) {
     switch (userProfileSummaryError.type) {
       case 'Unauthorized': {
         await forceLoginRedirect();
+        break;
+      }
+      case 'EmptyProfile': {
+        isProfileEmpty = true;
+        break;
       }
       default: {
         throw new Error(userProfileSummaryError.message);
@@ -86,14 +48,41 @@ export default async function DashboardPage() {
     }
   }
 
-  console.log(userProfileSummaryData);
+  if (userAttibutesError) {
+    switch (userAttibutesError.type) {
+      case 'Unauthorized': {
+        await forceLoginRedirect();
+        break;
+      }
+      case 'EmptyProfile': {
+        isProfileEmpty = true;
+        break;
+      }
+      default: {
+        throw new Error(userAttibutesError.message);
+      }
+    }
+  }
 
   return (
     <div className="grid grid-cols-1 gap-4 p-4 lg:grid-cols-5 lg:grid-rows-[minmax(0,390px)_minmax(0,390px)] lg:overflow-hidden">
-      <SummaryCard data={PROFILE_SUMMARY_MOCK} className="lg:col-span-2" />
-      <AttributesCard data={PROFILE_ATTRIBUTES_MOCK} className="lg:col-span-3" />
-      <ProgressDoubleCard className="lg:col-span-3" />
-      <TransactionCard data={PAYMENT_HISTORY_MOCK} className="lg:col-span-2" />
+      <SummaryCard
+        isProfileEmpty={isProfileEmpty}
+        data={parseProfileSummary(userProfileSummaryData)}
+        className="lg:col-span-2"
+      />
+      {/* TODO: To zajmuje długo - dodać loading.tsx albo rozbić na serverowy + kliencki i użyć suspense */}
+      <AttributesCard
+        isProfileEmpty={isProfileEmpty}
+        data={parseProfileAttributesForChart(userAttributesData)}
+        className="lg:col-span-3"
+      />
+      <ProgressDoubleCard
+        profileCompletionPercentage={userProfileSummaryData?.profileCompletionPercentage || 0}
+        salaryStats={userProfileSummaryData?.salaryProgressDto}
+        className="lg:col-span-3"
+      />
+      <TransactionCard data={parsePaymentHistory(paymentsData)} className="lg:col-span-2" />
     </div>
   );
 }

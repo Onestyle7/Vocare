@@ -8,14 +8,25 @@ export const dashboardApiClient = new ApiClient({
 export type UserProfileSummaryResult = {
   recommendationsCount: number;
   analysisCount: number;
-  roadmapCount: number;
+  roadmapsCount: number;
   cvsCount: number;
   profileCompletionPercentage: number;
-  salaryProgress: SalaryProgressResult;
+  salaryProgressDto: SalaryProgressResult;
 };
 
 export type SalaryProgressResult = {
   currentSalary: number;
   expectedSalary: number;
   goalCompletionPercentage: number;
+};
+
+export type UserAttributesResult = {
+  practicalExperience: number;
+  hardCompetencies: number;
+  creativity: number;
+  teamwork: number;
+  independence: number;
+  softCompetencies: number;
+  certification: number;
+  technicalSkills: number;
 };

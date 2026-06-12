@@ -19,7 +19,7 @@ export function useResumeDashboardActions() {
         setIsCreating(false);
       } else if (data) {
         toast.success('Utworzono nowe CV');
-        router.push(`/dashboard/resume/${data.id}`);
+        router.push(`/resume/${data.id}`);
       }
     });
   };

@@ -20,9 +20,11 @@ import { CreateProfileFormType, createProfileSchema } from '../profileSchema';
 export default function ProfileForm({
   initialData,
   onCancel,
+  setIsEditing,
 }: {
   initialData?: UserProfile;
   onCancel?: () => void;
+  setIsEditing: (isEditing: boolean) => void;
 }) {
   const form = useForm<CreateProfileFormType>({
     resolver: zodResolver(createProfileSchema),
@@ -62,7 +64,7 @@ export default function ProfileForm({
     prevStep,
     onSubmit,
     handleDelete,
-  } = useProfileForm(form, initialData);
+  } = useProfileForm(form, setIsEditing, initialData);
 
   const CancelButton = () => {
     const [open, setOpen] = useState(false);

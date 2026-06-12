@@ -11,7 +11,7 @@ export async function createCvCommand(payload: CreateCvDto) {
 
   return result.match(
     async (response) => {
-      await invalidateUserTag(['userCvs', 'cvLimits', 'subscriptionStatus']);
+      await invalidateUserTag(['userCvs', 'cvLimits', 'subscriptionStatus', 'profileStats']);
       return actionOk(response);
     },
     (error) => actionErr(error)
@@ -20,6 +20,7 @@ export async function createCvCommand(payload: CreateCvDto) {
 
 export async function deleteCvCommand(cvId: string) {
   const result = await deleteCvService(cvId);
+  await invalidateUserTag(['userCvs', 'cvLimits', 'profileStats']);
 
   return result.match(
     async (response) => {
@@ -32,6 +33,7 @@ export async function deleteCvCommand(cvId: string) {
 
 export async function updateCvCommand(payload: UpdateCvDto) {
   const result = await updateCvService(payload);
+  await invalidateUserTag(['userCvs']);
 
   return result.match(
     async (response) => {

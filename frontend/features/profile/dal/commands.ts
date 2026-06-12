@@ -28,7 +28,7 @@ export async function updateProfileCommand(command: UpdateProfileCommand) {
 
   return result.match(
     async (response) => {
-      await invalidateUserTag('userProfile');
+      await invalidateUserTag(['userProfile', 'profileStats']);
       return actionOk(response);
     },
     (error) => actionErr(error)
@@ -40,7 +40,7 @@ export async function deleteProfileCommand() {
 
   return result.match(
     async (response) => {
-      await invalidateUserTag('userProfile');
+      await invalidateUserTag(['userProfile', 'profileStats']);
       return actionOk(response);
     },
     (error) => actionErr(error)
@@ -52,7 +52,7 @@ export async function importProfileFromCvCommand(formData: FormData) {
 
   return result.match(
     async (profile) => {
-      await invalidateUserTag('userProfile');
+      await invalidateUserTag(['userProfile', 'profileStats']);
       return actionOk(profile);
     },
     (error) => actionErr(error)

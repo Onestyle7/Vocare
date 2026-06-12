@@ -15,6 +15,8 @@ export const CACHE_TAGS = {
   userCvs: (id: string) => `user-cvs-${id}`,
   cvLimits: (id: string) => `cv-limits-${id}`,
   cvDetails: (id: string) => `cv-details-${id}`,
+  profileStats: (id: string) => `profile-stats-${id}`,
+  profileAttributes: (id: string) => `profile-attributes-${id}`,
 } as const;
 
 type CacheTag = keyof typeof CACHE_TAGS;

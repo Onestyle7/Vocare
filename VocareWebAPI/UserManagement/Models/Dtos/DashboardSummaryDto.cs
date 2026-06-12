@@ -7,6 +7,6 @@ namespace VocareWebAPI.UserManagement.Models.Dtos
         public int RoadmapsCount { get; set; }
         public int CvsCount { get; set; }
         public int ProfileCompletionPercentage { get; set; }
-        public SalaryProgressDto? salaryProgressDto { get; set; }
+        public SalaryProgressDto salaryProgressDto { get; set; }
     }
 }
