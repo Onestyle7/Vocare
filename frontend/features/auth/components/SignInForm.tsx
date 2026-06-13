@@ -50,15 +50,13 @@ export function SignInFrom({ reason, callbackUrl }: { reason?: string; callbackU
       const [error] = await signIn(formValues);
       if (error) {
         switch (error.type) {
-          case 'InvalidCredentials':
-            {
-              form.setError('email', { type: 'manual' });
-              form.setError('password', { type: 'manual', message: error.message });
-            }
-
-            toast.error(error.message, { position: 'top-center' });
-            return;
+          case 'InvalidCredentials': {
+            form.setError('email', { type: 'manual' });
+            form.setError('password', { type: 'manual', message: error.message });
+          }
         }
+        toast.error(error.message, { position: 'top-center' });
+        return;
       }
 
       router.push(callbackUrl ? callbackUrl : '/dashboard');

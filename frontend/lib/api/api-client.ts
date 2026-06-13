@@ -98,8 +98,9 @@ export class ApiClient {
       });
 
       if (!response.ok) {
+        console.log('RAW_ERROR', response);
         const error = await this.handleErrorResponse(response);
-        console.log('ERROR_LOGGER', response);
+        console.log('ERROR_LOGGER', error);
         return error;
       }
 

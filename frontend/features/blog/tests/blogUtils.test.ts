@@ -1,7 +1,7 @@
 import fs, { Dirent } from 'fs';
-import { afterEach,beforeEach, describe, expect, it, vi } from 'vitest';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
-import * as blogUtils from '../_utils/blogUtils';
+import * as blogUtils from '../utils/blogUtils';
 
 describe('toAbsoluteUrl', () => {
   const baseUrl = 'https://example.com';
