@@ -1,4 +1,5 @@
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.WebUtilities;
 
 namespace VocareWebAPI.Shared.Results
 {
@@ -10,17 +11,20 @@ namespace VocareWebAPI.Shared.Results
             {
                 return new OkObjectResult(result.Value);
             }
-            else
+
+            var statusCode = result.Error?.StatusCode ?? 422;
+
+            var problemDetails = new ProblemDetails
             {
-                var problemDetails = new ProblemDetails
-                {
-                    Title = "Business rule violation",
-                    Detail = result.Error?.Message,
-                    Status = 422,
-                    Extensions = { ["errorCode"] = result.Error?.Code },
-                };
-                return new ObjectResult(problemDetails) { StatusCode = 422 };
-            }
+                Title =
+                    statusCode == 422
+                        ? "Busines rule violation"
+                        : ReasonPhrases.GetReasonPhrase(statusCode),
+                Detail = result.Error?.Message,
+                Status = statusCode,
+                Extensions = { ["errorCode"] = result.Error?.Code },
+            };
+            return new ObjectResult(problemDetails) { StatusCode = statusCode };
         }
     }
 }
