@@ -76,13 +76,14 @@ namespace VocareWebAPI.UserManagement.Services.Implementations
                     return Result<LoginResult>.Fail(
                         new Error(
                             "ACCOUNT_LOCKED",
-                            "Account is locked due to multiple failed login attempts. Please try again later."
+                            "Account is locked due to multiple failed login attempts. Please try again later.",
+                            429
                         )
                     );
                 }
                 _logger.LogWarning("Failed login attempt for: {Email}", email);
                 return Result<LoginResult>.Fail(
-                    new Error("INVALID_CREDENTIALS", "Invalid email or password.")
+                    new Error("INVALID_CREDENTIALS", "Invalid email or password.", 401)
                 );
             }
 
