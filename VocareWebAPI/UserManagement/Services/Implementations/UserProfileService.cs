@@ -6,6 +6,7 @@ using VocareWebAPI.Models.Entities;
 using VocareWebAPI.Repositories;
 using VocareWebAPI.UserManagement.Exceptions;
 using VocareWebAPI.UserManagement.Models.Entities;
+using VocareWebAPI.UserManagement.Models.Enums;
 
 namespace VocareWebAPI.Services
 {
@@ -215,6 +216,51 @@ namespace VocareWebAPI.Services
 
             await _context.SaveChangesAsync();
             return _mapper.Map<UserProfileDto>(profile);
+        }
+
+        /// <summary>
+        /// Czyści dane profilu użytkownika (zeruje pola i wpisy CV)
+        /// ZACHOWUJE sam profil
+        /// </summary>
+        /// <param name="userId"></param>
+        /// <returns></returns>
+        public async Task ClearUserProfileAsync(string userId)
+        {
+            var profile = await _userProfileRepository.GetTrackedProfileWithCollectionsAsync(
+                userId
+            );
+
+            profile.FirstName = string.Empty;
+            profile.LastName = string.Empty;
+            profile.Country = string.Empty;
+            profile.Address = null;
+            profile.PhoneNumber = null;
+            profile.AboutMe = null;
+            profile.AdditionalInformation = null;
+            profile.WillingToRebrand = false;
+            profile.PersonalityType = PersonalityType.Unknown;
+
+            profile.Skills = new();
+            profile.SoftSkills = new();
+
+            profile.Education.Clear();
+            profile.WorkExperience.Clear();
+            profile.Certificates.Clear();
+            profile.Languages.Clear();
+
+            if (profile.FinancialSurvey != null)
+            {
+                profile.FinancialSurvey.CurrentSalary = null;
+                profile.FinancialSurvey.DesiredSalary = null;
+                profile.FinancialSurvey.HasLoans = false;
+                profile.FinancialSurvey.LoanDetails = null;
+                profile.FinancialSurvey.RiskAppetite = Risk.Unknown;
+                profile.FinancialSurvey.WillingToRelocate = false;
+            }
+
+            await _userProfileRepository.SaveChangesAsync();
+
+            _logger.LogInformation("Cleared profile data for UserId: {UserId}", userId);
         }
     }
 }
