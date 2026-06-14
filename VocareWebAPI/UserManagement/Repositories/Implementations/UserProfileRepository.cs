@@ -57,5 +57,26 @@ namespace VocareWebAPI.Repositories
             _context.Entry(profile).State = EntityState.Modified;
             await _context.SaveChangesAsync();
         }
+
+        public async Task<UserProfile> GetTrackedProfileWithCollectionsAsync(string userId)
+        {
+            var profile = await _context
+                .UserProfiles.Include(p => p.Education)
+                .Include(p => p.WorkExperience)
+                .Include(p => p.Certificates)
+                .Include(p => p.Languages)
+                .Include(p => p.FinancialSurvey)
+                .FirstOrDefaultAsync(p => p.UserId == userId);
+
+            if (profile == null)
+                throw new UserProfileNotFoundException(userId);
+
+            return profile;
+        }
+
+        public async Task SaveChangesAsync()
+        {
+            await _context.SaveChangesAsync();
+        }
     }
 }
