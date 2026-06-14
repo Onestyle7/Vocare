@@ -20,5 +20,8 @@ namespace VocareWebAPI.Repositories
         /// <param name="profile">Profil użytkownika do zaktualizowania</param>
         /// <returns>Task reprezentujący operację asynchroniczną</returns>
         Task UpdateUserProfileAsync(UserProfile profile);
+        Task<UserProfile> GetTrackedProfileWithCollectionsAsync(string userId);
+
+        Task SaveChangesAsync();
     }
 }
