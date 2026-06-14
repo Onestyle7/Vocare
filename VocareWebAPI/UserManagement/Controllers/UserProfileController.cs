@@ -122,5 +122,17 @@ namespace VocareWebAPI.Controllers
             var profile = await _cvParserService.ParseAndSaveAsync(file, userId);
             return Ok(profile);
         }
+
+        [HttpPut("ClearCurrentUserProfile")]
+        public async Task<IActionResult> ClearCurrentUserProfile()
+        {
+            string userId = User.FindFirstValue(ClaimTypes.NameIdentifier)!;
+            if (string.IsNullOrEmpty(userId))
+                return BadRequest("Brak identyfikatora użytkownika w tokenie.");
+
+            await _userProfileService.ClearUserProfileAsync(userId);
+
+            return Ok(new { message = "Dane profilu zostały wyzerowane" });
+        }
     }
 }
