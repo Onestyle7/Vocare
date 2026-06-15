@@ -16,6 +16,7 @@ import {
   deleteRoadmapPhaseService,
   deleteRoadmapStepService,
   generateRoadmapService,
+  getUserRoadmapsService,
   updateRoadmapPhaseNameService,
   updateRoadmapStepPositionsService,
   updateRoadmapStepService,
@@ -130,6 +131,22 @@ export async function updateRoadmapStepCommand(
     async (response) => {
       revalidateTag(CACHE_TAGS.roadmap(roadmapId), { expire: 0 });
       return actionOk(response);
+    },
+    (error) => actionErr(error)
+  );
+}
+
+export async function checkGeneratingRoadmapsCommand() {
+  const result = await getUserRoadmapsService({ cache: 'no-store' });
+
+  return result.match(
+    async (roadmaps) => {
+      const isGenerating = roadmaps.some((r) => r.status === 'Generating');
+      if (!isGenerating) {
+        roadmaps.forEach((r) => revalidateTag(CACHE_TAGS.roadmap(r.id), { expire: 0 }));
+        await invalidateUserTag('userRoadmaps');
+      }
+      return actionOk(isGenerating);
     },
     (error) => actionErr(error)
   );

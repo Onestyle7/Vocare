@@ -1,15 +1,17 @@
-import { useRouter } from 'next/navigation';
-import { useState, useTransition } from 'react';
+import { useCallback, useState, useTransition } from 'react';
 import { toast } from 'sonner';
 
 import { useUnauthorizedToast } from '@/lib/hooks/useUnauthorizedToast';
 import { GenerateRoadmapPayload } from '@/lib/types/roadmap';
 
-import { archiveRoadmapCommand, generateRoadmapCommand } from '../dal/commands';
+import {
+  archiveRoadmapCommand,
+  checkGeneratingRoadmapsCommand,
+  generateRoadmapCommand,
+} from '../dal/commands';
 import { RoadmapDomainError } from '../dal/services';
 
 export function useRoadmapDashboardActions() {
-  const router = useRouter();
   const [isPending, startTransition] = useTransition();
   const [actionError, setActionError] = useState<RoadmapDomainError | null>(null);
   const [deletingId, setDeletingId] = useState<string | null>(null);
@@ -30,14 +32,13 @@ export function useRoadmapDashboardActions() {
   const handleGenerateRoadmap = (payload: GenerateRoadmapPayload, onSuccess?: () => void) => {
     startTransition(async () => {
       setActionError(null);
-      const [error, response] = await generateRoadmapCommand(payload);
+      const [error] = await generateRoadmapCommand(payload);
 
       if (error) {
         handleError(error);
       } else {
-        toast.success('Roadmapa została utworzona');
+        toast.success('Rozpoczęto generowanie roadmapy w tle');
         if (onSuccess) onSuccess();
-        if (response) router.push(`/roadmap/${response.id}`);
       }
     });
   };
@@ -58,9 +59,18 @@ export function useRoadmapDashboardActions() {
     });
   };
 
+  const handleCheckGeneratingRoadmaps = useCallback(async () => {
+    const [error, isGenerating] = await checkGeneratingRoadmapsCommand();
+    if (!error) {
+      return isGenerating;
+    }
+    return false;
+  }, []);
+
   return {
     handleGenerateRoadmap,
     handleArchiveRoadmap,
+    handleCheckGeneratingRoadmaps,
     isPending,
     actionError,
     deletingId,

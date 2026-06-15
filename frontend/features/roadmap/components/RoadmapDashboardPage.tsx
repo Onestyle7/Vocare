@@ -69,6 +69,8 @@ const formatRoadmapLimitNoun = (count: number) => {
 
 const formatRoadmapStatusLabel = (status: RoadmapListItemDto['status']) => {
   switch (status) {
+    case 'Generating':
+      return 'Generowanie...';
     case 'Draft':
       return 'Szkic';
     case 'Completed':
@@ -95,8 +97,13 @@ export default function RoadmapDashboardPage({
   const router = useRouter();
   const searchParams = useSearchParams();
   const { subscriptionStatus } = useTokenBalanceContext();
-  const { handleGenerateRoadmap, handleArchiveRoadmap, isPending, deletingId } =
-    useRoadmapDashboardActions();
+  const {
+    handleGenerateRoadmap,
+    handleArchiveRoadmap,
+    handleCheckGeneratingRoadmaps,
+    isPending,
+    deletingId,
+  } = useRoadmapDashboardActions();
 
   const [timeHorizonMonths, setTimeHorizonMonths] = useState<number>(9);
   const [isCreateDialogOpen, setIsCreateDialogOpen] = useState(false);
@@ -233,6 +240,22 @@ export default function RoadmapDashboardPage({
     showRoadmapLimitReachedToast,
   ]);
 
+  const isAnyRoadmapGenerating = useMemo(() => {
+    return visibleRoadmaps.some((r) => r.generationStatus === 'Generating');
+  }, [visibleRoadmaps]);
+
+  useEffect(() => {
+    // TODO: Po wejściu na stronę i tak musimy odczekać 4 sekundy przed odświeżeniem
+    // TODO: Zobaczyć czy insufficient tokens są obsłużone wszędzie
+    // TODO: Zobaczyć jakie kody błędów mają insufficient tokens -> INSUFFICIENT_TOKENS
+    if (isAnyRoadmapGenerating) {
+      const interval = setInterval(async () => {
+        await handleCheckGeneratingRoadmaps();
+      }, 3000);
+      return () => clearInterval(interval);
+    }
+  }, [isAnyRoadmapGenerating, router, handleCheckGeneratingRoadmaps]);
+
   // removed loadCareerPaths useEffect
 
   const handleSelectCareerPath = (careerPathId: string) => {
@@ -250,6 +273,7 @@ export default function RoadmapDashboardPage({
 
     if (!canCreateRoadmap) return;
 
+    setIsCreateDialogOpen(false);
     handleGenerateRoadmap(createPayload);
   };
 
@@ -337,8 +361,11 @@ export default function RoadmapDashboardPage({
                     {visibleRoadmaps.map((roadmap) => (
                       <Link
                         key={roadmap.id}
-                        href={`/roadmap/${roadmap.id}`}
-                        className="block min-w-0"
+                        href={roadmap.status === 'Generating' ? '#' : `/roadmap/${roadmap.id}`}
+                        className={cn(
+                          'block min-w-0',
+                          roadmap.status === 'Generating' && 'pointer-events-none opacity-60'
+                        )}
                       >
                         <div className="group bg-background flex h-[400px] min-w-0 flex-col gap-2 overflow-hidden rounded-xl border p-3 transition-shadow hover:shadow-lg md:p-4">
                           <div className="flex h-full min-w-0 flex-col rounded-md border">

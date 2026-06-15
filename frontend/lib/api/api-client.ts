@@ -92,15 +92,15 @@ export class ApiClient {
     const requestOptions = await this.buildRequestOptions(options);
 
     try {
-      console.log('REQUEST_LOGGER', { url, ...requestOptions });
+      // console.log('REQUEST_LOGGER', { url, ...requestOptions });
       const response = await fetch(url, {
         ...requestOptions,
       });
 
       if (!response.ok) {
-        console.log('RAW_ERROR', response);
+        // console.log('RAW_ERROR', response);
         const error = await this.handleErrorResponse(response);
-        console.log('ERROR_LOGGER', error);
+        // console.log('ERROR_LOGGER', error);
         return error;
       }
 
@@ -110,7 +110,7 @@ export class ApiClient {
         return err(parseResult.error);
       }
 
-      console.log('RESPONSE_LOGGER', parseResult);
+      // console.log('RESPONSE_LOGGER', parseResult);
 
       return ok({
         success: true,
