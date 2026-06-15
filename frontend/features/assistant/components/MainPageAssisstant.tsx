@@ -170,14 +170,14 @@ export default function AssistantPage({
 
   return (
     <Section
-      className="relative -mt-[5.25rem] pt-[3.5rem]"
+      className="relative -mt-[5.25rem] flex items-center justify-center pt-[3.5rem]"
       crosses
       crossesOffset="lg:translate-y-[7.5rem]"
       customPaddings
       id="profile"
     >
-      <div className="mt-8 xl:mx-10 xl:mt-16 xl:border-t xl:border-r xl:border-l">
-        <div className="font-korbin mx-auto flex max-w-7xl flex-col items-center justify-center p-4 md:p-8">
+      <div className="mt-8 xl:mx-10 xl:mt-16 xl:border-t xl:border-r xl:border-l 2xl:mx-100">
+        <div className="font-korbin mx-auto flex flex-col items-center justify-center p-4 md:p-8">
           <h2 className="font-korbin mt-1 mb-6 flex h-[38px] w-[180px] items-center justify-center rounded-full border-[0.5px] border-white/60 text-sm">
             Doradca kariery AI
           </h2>
@@ -236,7 +236,7 @@ export default function AssistantPage({
                   <div ref={contentRef} className="space-y-3">
                     <h4 className="font-grotesk mt-4 font-bold">Kolejne kroki:</h4>
                     <div className="ibm-plex-mono-regular mt-4 rounded-xl border p-2">
-                      <Timeline items={timelineItems} maxDescriptionLength={80} className="mx-0" />
+                      <Timeline items={timelineItems} maxDescriptionLength={60} className="mx-0" />
                     </div>
 
                     <div className="mt-4 rounded-xl p-2">
