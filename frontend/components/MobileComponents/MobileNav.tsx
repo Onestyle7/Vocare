@@ -6,11 +6,12 @@ import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import React, { useEffect, useRef } from 'react';
 
-import { Badge } from '@/components/ui/badge';
 import { Sheet, SheetClose, SheetContent, SheetTitle, SheetTrigger } from '@/components/ui/sheet';
 import { logo, NavLinks } from '@/features/marketing/constants';
 import { useIsMobile } from '@/lib/hooks/useIsMobile';
 import { cn } from '@/lib/utils';
+
+import { Badge } from '../ui/badge';
 
 // import ThemeSwitch from '../SupportComponents/ThemeSwitch';
 

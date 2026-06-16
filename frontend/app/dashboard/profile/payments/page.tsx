@@ -11,7 +11,6 @@ export default async function PaymentsPage() {
     if (paymentError.type === 'Unauthorized') {
       await forceLoginRedirect();
     }
-    // Pozostałe błędy zostaną przechwycone przez najbliższe error.tsx
     throw new Error(paymentError.message);
   }
 

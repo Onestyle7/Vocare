@@ -27,7 +27,10 @@ async function authProxy(request: NextRequest) {
     return NextResponse.redirect(new URL('/dashboard', request.url));
   }
 
-  if (!request.cookies.has('token') && request.nextUrl.pathname.startsWith('/dashboard')) {
+  if (
+    !request.cookies.has('token') &&
+    restrictedPages.some((page) => request.nextUrl.pathname.startsWith(page))
+  ) {
     const signInUrl = new URL('/sign-in', request.url);
     return NextResponse.redirect(signInUrl);
   }
@@ -36,6 +39,7 @@ async function authProxy(request: NextRequest) {
 }
 
 const authPages = ['/sign-in', '/sign-up', '/forgot-password', '/reset-password'];
+const restrictedPages = ['/dashboard', '/resume', '/roadmap'];
 
 export const config = {
   matcher: ['/:path*'],

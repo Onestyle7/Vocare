@@ -84,7 +84,13 @@ export class OAuthClient {
           return err({
             type: 'OAuthProviderError',
             message: error.message,
-            details: error.flatten(),
+            details: {
+              title: 'Oauth Error',
+              status: 500,
+              detail: error.flatten(),
+              errorCode: 'OAUTH_ERROR',
+              traceId: '',
+            },
           });
 
         return ok({

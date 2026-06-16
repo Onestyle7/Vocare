@@ -78,7 +78,7 @@ const Timeline: React.FC<TimelineProps> = ({
   }
 
   return (
-    <section className={`my-4 w-full sm:mx-auto sm:max-w-5xl ${className}`}>
+    <section className={`my-4 w-full sm:mx-auto sm:max-w-3xl ${className}`}>
       {/* Desktop Layout - Horizontal */}
       <div className="hidden w-full flex-row items-center justify-center px-4 sm:flex">
         {items.map((item, index) => (
@@ -86,7 +86,7 @@ const Timeline: React.FC<TimelineProps> = ({
             key={index}
             className="flex h-[180px] w-1/4 flex-col items-center justify-start space-y-2"
           >
-            <div className="flex flex-row items-center justify-center space-x-2">
+            <div className="ml-10 flex flex-row items-center justify-center space-x-2">
               {/* ikona */}
               <div className="flex h-[44px] w-[44px] items-center justify-center rounded-xl border border-gray-800 bg-[#09090b] p-[6px]">
                 <div className="flex h-full w-full items-center justify-center rounded-md border bg-[#27272a] text-black">

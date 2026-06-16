@@ -1,4 +1,3 @@
-import { useRouter } from 'next/navigation';
 import { useState, useTransition } from 'react';
 import { toast } from 'sonner';
 
@@ -9,7 +8,6 @@ import { archiveRoadmapCommand, generateRoadmapCommand } from '../dal/commands';
 import { RoadmapDomainError } from '../dal/services';
 
 export function useRoadmapDashboardActions() {
-  const router = useRouter();
   const [isPending, startTransition] = useTransition();
   const [actionError, setActionError] = useState<RoadmapDomainError | null>(null);
   const [deletingId, setDeletingId] = useState<string | null>(null);
@@ -30,14 +28,13 @@ export function useRoadmapDashboardActions() {
   const handleGenerateRoadmap = (payload: GenerateRoadmapPayload, onSuccess?: () => void) => {
     startTransition(async () => {
       setActionError(null);
-      const [error, response] = await generateRoadmapCommand(payload);
+      const [error] = await generateRoadmapCommand(payload);
 
       if (error) {
         handleError(error);
       } else {
-        toast.success('Roadmapa została utworzona');
+        toast.success('Rozpoczęto generowanie roadmapy w tle');
         if (onSuccess) onSuccess();
-        if (response) router.push(`/dashboard/roadmap/${response.id}`);
       }
     });
   };

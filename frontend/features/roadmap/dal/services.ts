@@ -20,15 +20,6 @@ export type RoadmapDomainError = BaseAppError<
 >;
 
 const mapRoadmapError = (error: ApiError): RoadmapDomainError => {
-  const detail =
-    typeof error.details?.Error === 'string'
-      ? error.details.Error
-      : typeof error.details?.error === 'string'
-        ? error.details.error
-        : typeof error.details?.detail === 'string'
-          ? error.details.detail
-          : '';
-
   if (error.type === 'UnauthorizedError') {
     return {
       type: 'Unauthorized',
@@ -40,7 +31,7 @@ const mapRoadmapError = (error: ApiError): RoadmapDomainError => {
   if (error.type === 'NotFoundError') {
     return {
       type: 'NotFound',
-      message: detail || 'Nie znaleziono roadmapy.',
+      message: 'Nie znaleziono roadmapy.',
       details: error.details,
     };
   }
@@ -48,14 +39,14 @@ const mapRoadmapError = (error: ApiError): RoadmapDomainError => {
   if (error.type === 'BadRequestError') {
     return {
       type: 'InvalidOperation',
-      message: detail || 'Nieprawidłowa operacja na roadmapie.',
+      message: 'Nieprawidłowa operacja na roadmapie.',
       details: error.details,
     };
   }
 
   return {
     type: 'GenericApiError',
-    message: detail || 'Wystąpił nieoczekiwany błąd serwera.',
+    message: 'Wystąpił nieoczekiwany błąd serwera.',
     details: error.details,
   };
 };

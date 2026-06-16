@@ -100,7 +100,13 @@ export default function ProfileDetails() {
   const handleCancelEdit = () => setIsEditing(false);
 
   if (isEditing) {
-    return <ProfileForm initialData={profile ?? undefined} onCancel={handleCancelEdit} />;
+    return (
+      <ProfileForm
+        initialData={profile ?? undefined}
+        onCancel={handleCancelEdit}
+        setIsEditing={setIsEditing}
+      />
+    );
   }
 
   const renderPersonalInfoPage = () => (
@@ -421,15 +427,15 @@ export default function ProfileDetails() {
       id="profile"
     >
       <div className="font-grotesk mt-10 lg:px-4 xl:mx-10 xl:mt-16 xl:border-t">
-        <div className="font-grotesk mt-8 max-w-7xl max-md:px-4 xl:mx-auto 2xl:max-w-[1480px]">
+        <div className="font-grotesk mt-8 max-w-5xl max-md:px-4 xl:mx-auto 2xl:max-w-[1600px]">
           <div className="mt-2 flex h-screen flex-col xl:flex-row">
-            <div className="hidden xl:block xl:w-1/2 xl:pr-8">
+            <div className="hidden w-2/5 xl:block xl:pr-8 2xl:w-1/2">
               <div className="-mt-8 flex h-3/4 items-center justify-center">
                 <ProfileCard />
               </div>
             </div>
 
-            <div className="bg-background dark:bg-background relative z-20 w-full rounded-xl border p-4 xl:h-3/4 xl:w-1/2">
+            <div className="bg-background dark:bg-background relative z-20 w-full rounded-xl border p-4 xl:h-3/4 xl:w-3/5 2xl:w-1/2">
               <div className="flex h-full flex-col">
                 <div className="flex flex-col gap-4 border-b pb-4 sm:flex-row sm:items-start sm:justify-between">
                   <div className="flex items-start justify-between gap-3">

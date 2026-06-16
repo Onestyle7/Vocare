@@ -33,6 +33,7 @@ export const formatDateIfNeeded = (date?: string) => {
 
 export function useProfileForm(
   form: UseFormReturn<CreateProfileFormType>,
+  setIsEditing: (isEditing: boolean) => void,
   initialData?: UserProfile
 ) {
   const [isPending, startTransition] = useTransition();
@@ -148,7 +149,7 @@ export function useProfileForm(
         setEditMode(true);
       }
 
-      router.push('/dashboard/profile');
+      setIsEditing(false);
     });
   };
 
