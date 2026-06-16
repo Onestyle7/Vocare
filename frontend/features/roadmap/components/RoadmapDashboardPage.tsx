@@ -97,13 +97,8 @@ export default function RoadmapDashboardPage({
   const router = useRouter();
   const searchParams = useSearchParams();
   const { subscriptionStatus } = useTokenBalanceContext();
-  const {
-    handleGenerateRoadmap,
-    handleArchiveRoadmap,
-    handleCheckGeneratingRoadmaps,
-    isPending,
-    deletingId,
-  } = useRoadmapDashboardActions();
+  const { handleGenerateRoadmap, handleArchiveRoadmap, isPending, deletingId } =
+    useRoadmapDashboardActions();
 
   const [timeHorizonMonths, setTimeHorizonMonths] = useState<number>(9);
   const [isCreateDialogOpen, setIsCreateDialogOpen] = useState(false);
@@ -250,11 +245,11 @@ export default function RoadmapDashboardPage({
     // TODO: Zobaczyć jakie kody błędów mają insufficient tokens -> INSUFFICIENT_TOKENS
     if (isAnyRoadmapGenerating) {
       const interval = setInterval(async () => {
-        await handleCheckGeneratingRoadmaps();
+        router.refresh();
       }, 3000);
       return () => clearInterval(interval);
     }
-  }, [isAnyRoadmapGenerating, router, handleCheckGeneratingRoadmaps]);
+  }, [isAnyRoadmapGenerating, router]);
 
   // removed loadCareerPaths useEffect
 
@@ -361,10 +356,13 @@ export default function RoadmapDashboardPage({
                     {visibleRoadmaps.map((roadmap) => (
                       <Link
                         key={roadmap.id}
-                        href={roadmap.status === 'Generating' ? '#' : `/roadmap/${roadmap.id}`}
+                        href={
+                          roadmap.generationStatus === 'Generating' ? '#' : `/roadmap/${roadmap.id}`
+                        }
                         className={cn(
                           'block min-w-0',
-                          roadmap.status === 'Generating' && 'pointer-events-none opacity-60'
+                          roadmap.generationStatus === 'Generating' &&
+                            'pointer-events-none opacity-60'
                         )}
                       >
                         <div className="group bg-background flex h-[400px] min-w-0 flex-col gap-2 overflow-hidden rounded-xl border p-3 transition-shadow hover:shadow-lg md:p-4">

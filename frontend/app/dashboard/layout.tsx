@@ -44,6 +44,7 @@ export default async function DashboardLayoutPage({ children }: { children: Reac
             <div className="w-full">
               <DashboardHeader
                 fullName={`${userProfileData?.firstName} ${userProfileData?.lastName}`}
+                email={userProfileData?.email ?? ''}
               />
               <main>{children}</main>
             </div>

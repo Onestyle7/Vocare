@@ -21,7 +21,7 @@ import {
   SidebarMenuItem,
   SidebarTrigger,
 } from '@/components/ui/sidebar';
-import { logo } from '@/features/marketing/constants/countries';
+import { logo } from '@/features/marketing/constants';
 
 import NavSection from './nav-section';
 

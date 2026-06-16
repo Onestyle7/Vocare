@@ -1,7 +1,6 @@
 import { ArrowLeft } from 'lucide-react';
 import Link from 'next/link';
 
-import {} from '@/features/marketing/constants/countries';
 import {
   definicje,
   ochrona_danych_osobowych,

@@ -20,7 +20,15 @@ import ButtonGenerate from '@/components/ui/ButtonGenerate';
 import { useTokenBalanceContext } from '@/features/billing/components/SubscriptionTokenProvider';
 import { GridBackgroundDemo } from '@/features/market-analysis/components/GridBackgroundDemo';
 import { TerminalDemo } from '@/features/market-analysis/components/LoadingTerminal';
-
+import {
+  cone_1,
+  cone_2,
+  star_generate,
+  timeline_icon_1,
+  timeline_icon_2,
+  timeline_icon_3,
+  timeline_icon_4,
+} from '@/features/marketing/constants';
 import { useProfileContext } from '@/features/profile/components/ProfileProvider';
 import { useCollapse } from '@/lib/hooks/useCollapse';
 import { CareerPathMatchResult } from '@/lib/types/jobOffers';
@@ -31,15 +39,6 @@ import CareerPathSection from './CareerPathSection';
 import CollapsibleButton from './CollapsibleButton';
 import GenerateRecommendation from './GenerateRecommendationFail';
 import Timeline from './Timeline';
-import {
-  timeline_icon_1,
-  timeline_icon_2,
-  timeline_icon_3,
-  timeline_icon_4,
-  cone_1,
-  cone_2,
-  star_generate,
-} from '@/features/marketing/constants';
 
 interface AssistantPageProps {
   initialRecommendation: AiCareerResponse | null;
@@ -176,7 +175,7 @@ export default function AssistantPage({
       customPaddings
       id="profile"
     >
-      <div className="mt-8 xl:mx-10 xl:mt-16 xl:border-t xl:border-r xl:border-l 2xl:mx-100">
+      <div className="mt-8 xl:mx-10 xl:mt-12 2xl:mx-30">
         <div className="font-korbin mx-auto flex flex-col items-center justify-center p-4 md:p-8">
           <h2 className="font-korbin mt-1 mb-6 flex h-[38px] w-[180px] items-center justify-center rounded-full border-[0.5px] border-white/60 text-sm">
             Doradca kariery AI

@@ -63,7 +63,7 @@ namespace VocareWebAPI.UserManagement.Services.Implementations
             return new DashboardSummaryDto
             {
                 RecommendationsCount = recommendationsTask,
-                AnalysesCount = analysesTask,
+                AnalysisCount = analysesTask,
                 RoadmapsCount = roadmapsTask,
                 CvsCount = cvsTask,
                 ProfileCompletionPercentage = completion,

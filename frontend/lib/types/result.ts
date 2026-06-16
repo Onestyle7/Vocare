@@ -7,7 +7,7 @@ export type BaseAppError<T extends string = ''> = {
 export type BaseAppErrorDetails = {
   title: string;
   status: number;
-  detail: string;
+  detail: string | Record<string, unknown>;
   errorCode: string;
   traceId: string;
 };

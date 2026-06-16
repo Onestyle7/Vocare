@@ -1,14 +1,10 @@
-import { useCallback, useState, useTransition } from 'react';
+import { useState, useTransition } from 'react';
 import { toast } from 'sonner';
 
 import { useUnauthorizedToast } from '@/lib/hooks/useUnauthorizedToast';
 import { GenerateRoadmapPayload } from '@/lib/types/roadmap';
 
-import {
-  archiveRoadmapCommand,
-  checkGeneratingRoadmapsCommand,
-  generateRoadmapCommand,
-} from '../dal/commands';
+import { archiveRoadmapCommand, generateRoadmapCommand } from '../dal/commands';
 import { RoadmapDomainError } from '../dal/services';
 
 export function useRoadmapDashboardActions() {
@@ -59,18 +55,9 @@ export function useRoadmapDashboardActions() {
     });
   };
 
-  const handleCheckGeneratingRoadmaps = useCallback(async () => {
-    const [error, isGenerating] = await checkGeneratingRoadmapsCommand();
-    if (!error) {
-      return isGenerating;
-    }
-    return false;
-  }, []);
-
   return {
     handleGenerateRoadmap,
     handleArchiveRoadmap,
-    handleCheckGeneratingRoadmaps,
     isPending,
     actionError,
     deletingId,
