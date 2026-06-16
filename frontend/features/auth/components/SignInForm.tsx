@@ -21,7 +21,7 @@ import {
 import { Input } from '@/components/ui/input';
 import OAuthButton from '@/features/auth/components/OAuthButton';
 import { OAuthSignIn, signIn } from '@/features/auth/dal/commands';
-import { google } from '@/features/marketing/constants/countries';
+import { google } from '@/features/marketing/constants';
 
 import { SignInFormType, signInSchema } from '../dal/schemas';
 

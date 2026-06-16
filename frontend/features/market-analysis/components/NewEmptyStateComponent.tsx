@@ -6,7 +6,7 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { useEffect, useState } from 'react';
 
-import { star_generate, upper_arrow } from '@/features/marketing/constants/countries';
+import { star_generate, upper_arrow } from '@/features/marketing/constants';
 
 import SpotlightCard from '../../../components/SpotlightCard/SpotlightCard';
 import AnimatedContent from '../../../components/SupportComponents/AnimatedContent';

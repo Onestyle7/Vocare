@@ -152,30 +152,35 @@ Testy mówią o preferencjach i tendencjach - nie o realnych kompetencjach. "Lub
 ## Zestawienie testów kompetencji
 
 **Holland Code (RIASEC)**
+
 - Co mierzy: zainteresowania zawodowe
 - Koszt: bezpłatny
 - Rzetelność naukowa: wysoka
 - Dla kogo: każdy
 
 **Gallup StrengthsFinder**
+
 - Co mierzy: mocne strony
 - Koszt: ~25 USD
 - Rzetelność naukowa: wysoka
 - Dla kogo: pracujący
 
 **MBTI**
+
 - Co mierzy: osobowość
 - Koszt: bezpłatna wersja online
 - Rzetelność naukowa: umiarkowana
 - Dla kogo: każdy
 
 **Big Five**
+
 - Co mierzy: osobowość
 - Koszt: bezpłatny
 - Rzetelność naukowa: bardzo wysoka
 - Dla kogo: każdy
 
 **Wartości zawodowe**
+
 - Co mierzy: priorytety w pracy
 - Koszt: bezpłatny w PUP
 - Rzetelność naukowa: wysoka

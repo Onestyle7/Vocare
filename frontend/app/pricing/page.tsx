@@ -3,7 +3,7 @@ import Image from 'next/image';
 import Header from '@/components/SectionsComponents/Header';
 import Section from '@/components/SupportComponents/Section';
 import { PricingInteractive } from '@/features/billing/components/PricingInteractive';
-import { curve_pricing } from '@/features/marketing/constants/countries';
+import { curve_pricing } from '@/features/marketing/constants';
 
 import Copy from '../../components/SupportComponents/Copy';
 import Maintenance from '../maintenance/page';
