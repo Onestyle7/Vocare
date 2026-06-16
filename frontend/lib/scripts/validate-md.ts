@@ -1,5 +1,5 @@
-import { getArticlesMetadata } from '@/app/blog/_utils/blogUtils';
-import { ARTICLES_FOLDER } from '@/app/blog/_utils/constants';
+import { getArticlesMetadata } from '@/features/blog/utils/blogUtils';
+import { ARTICLES_FOLDER } from '@/features/blog/utils/constants';
 
 try {
   console.log('Checking markdown articles...');
