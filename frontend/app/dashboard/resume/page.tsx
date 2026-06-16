@@ -1,4 +1,3 @@
-import Header from '@/components/SectionsComponents/Header';
 import ResumeDashboard from '@/features/resume/components/resumeDashboard';
 import { getCvLimitsQuery, getUserCvsQuery } from '@/features/resume/dal/queries';
 
@@ -12,15 +11,12 @@ const page = async () => {
   const limits = limitsError ? null : limitsData;
 
   return (
-    <main className="min-h-screen bg-[#05070b] text-white">
-      <div className="mx-auto max-w-7xl">
-        <Header />
-        <div className="mt-8 w-full sm:border-[0.5px]" />
-        <div className="font-poppins -mt-10 p-4 sm:-mt-30 sm:border">
-          <ResumeDashboard initialCvs={cvs} initialLimits={limits} />
-        </div>
+    <div className="w-full">
+      <div className="w-full" />
+      <div className="font-poppins p-4">
+        <ResumeDashboard initialCvs={cvs} initialLimits={limits} />
       </div>
-    </main>
+    </div>
   );
 };
 

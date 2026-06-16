@@ -1,6 +1,9 @@
+import { SidebarProvider } from '@/components/ui/sidebar';
 import { forceLoginRedirect } from '@/features/auth/utils/login-redirect';
 import { TokenBalanceProvider } from '@/features/billing/components/SubscriptionTokenProvider';
 import { getTokenSubscriptionStatus } from '@/features/billing/dal/queries';
+import DashboardHeader from '@/features/dashboard/header/components/dashboard-header';
+import DashboardSidebar from '@/features/dashboard/sidebar/components/dashboard-sidebar';
 import { ProfileProvider } from '@/features/profile/components/ProfileProvider';
 import { getUserProfileQuery } from '@/features/profile/dal/queries';
 
@@ -30,13 +33,22 @@ export default async function DashboardLayoutPage({ children }: { children: Reac
     }
   }
   return (
-    <main>
+    <main className="h-screen w-screen overflow-auto">
       <ProfileProvider profile={userProfileData}>
         <TokenBalanceProvider
           tokenBalance={tokenBalanceData.tokenBalance}
           subscriptionStatus={tokenBalanceData.subscriptionStatus}
         >
-          {children}
+          <SidebarProvider>
+            <DashboardSidebar />
+            <div className="w-full">
+              <DashboardHeader
+                fullName={`${userProfileData?.firstName} ${userProfileData?.lastName}`}
+                email={userProfileData?.email ?? ''}
+              />
+              <main>{children}</main>
+            </div>
+          </SidebarProvider>
         </TokenBalanceProvider>
       </ProfileProvider>
     </main>

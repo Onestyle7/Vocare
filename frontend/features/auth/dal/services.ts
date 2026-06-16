@@ -59,7 +59,7 @@ export async function signInService(
     .map((response) => response.data)
     .mapErr((authError): AuthDomainError => {
       switch (authError.type) {
-        case 'BadRequestError': {
+        case 'UnauthorizedError': {
           return {
             type: 'InvalidCredentials',
             message: 'Nieprawidłowe dane logowania',

@@ -64,6 +64,7 @@ export type FinancialSurvey = {
 export type UserProfile = {
   firstName: string;
   lastName: string;
+  email: string;
   country: string;
   address?: string;
   phoneNumber?: string;

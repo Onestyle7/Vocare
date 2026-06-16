@@ -69,6 +69,8 @@ const formatRoadmapLimitNoun = (count: number) => {
 
 const formatRoadmapStatusLabel = (status: RoadmapListItemDto['status']) => {
   switch (status) {
+    case 'Generating':
+      return 'Generowanie...';
     case 'Draft':
       return 'Szkic';
     case 'Completed':
@@ -233,6 +235,22 @@ export default function RoadmapDashboardPage({
     showRoadmapLimitReachedToast,
   ]);
 
+  const isAnyRoadmapGenerating = useMemo(() => {
+    return visibleRoadmaps.some((r) => r.generationStatus === 'Generating');
+  }, [visibleRoadmaps]);
+
+  useEffect(() => {
+    // TODO: Po wejściu na stronę i tak musimy odczekać 4 sekundy przed odświeżeniem
+    // TODO: Zobaczyć czy insufficient tokens są obsłużone wszędzie
+    // TODO: Zobaczyć jakie kody błędów mają insufficient tokens -> INSUFFICIENT_TOKENS
+    if (isAnyRoadmapGenerating) {
+      const interval = setInterval(async () => {
+        router.refresh();
+      }, 3000);
+      return () => clearInterval(interval);
+    }
+  }, [isAnyRoadmapGenerating, router]);
+
   // removed loadCareerPaths useEffect
 
   const handleSelectCareerPath = (careerPathId: string) => {
@@ -250,6 +268,7 @@ export default function RoadmapDashboardPage({
 
     if (!canCreateRoadmap) return;
 
+    setIsCreateDialogOpen(false);
     handleGenerateRoadmap(createPayload);
   };
 
@@ -264,8 +283,8 @@ export default function RoadmapDashboardPage({
       <div className="font-poppins relative">
         <GridBackgroundDemo />
 
-        <div className="relative z-10 w-full py-6 lg:py-36">
-          <div className="container mx-auto px-0 sm:px-4">
+        <div className="relative z-10 w-full">
+          <div className="container mx-auto">
             <div className="flex flex-col gap-8 md:gap-10">
               <CreateRoadmapDialog
                 open={isCreateDialogOpen}
@@ -337,8 +356,14 @@ export default function RoadmapDashboardPage({
                     {visibleRoadmaps.map((roadmap) => (
                       <Link
                         key={roadmap.id}
-                        href={`/dashboard/roadmap/${roadmap.id}`}
-                        className="block min-w-0"
+                        href={
+                          roadmap.generationStatus === 'Generating' ? '#' : `/roadmap/${roadmap.id}`
+                        }
+                        className={cn(
+                          'block min-w-0',
+                          roadmap.generationStatus === 'Generating' &&
+                            'pointer-events-none opacity-60'
+                        )}
                       >
                         <div className="group bg-background flex h-[400px] min-w-0 flex-col gap-2 overflow-hidden rounded-xl border p-3 transition-shadow hover:shadow-lg md:p-4">
                           <div className="flex h-full min-w-0 flex-col rounded-md border">

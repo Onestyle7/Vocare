@@ -18,8 +18,7 @@ export async function getUserRoadmapsQuery() {
   }
 
   const result = await getUserRoadmapsService({
-    cache: 'force-cache',
-    next: { tags: [CACHE_TAGS.userRoadmaps(userId)], revalidate: 3600 },
+    cache: 'no-store',
   });
 
   return result.match(

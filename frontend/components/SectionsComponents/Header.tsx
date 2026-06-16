@@ -8,11 +8,13 @@ import { usePathname } from 'next/navigation';
 import React, { useEffect, useRef, useState } from 'react';
 
 import MobileNav from '@/components/MobileComponents/MobileNav';
-import Button from '@/components/ui/assistant-button';
 import { Badge } from '@/components/ui/badge';
 import { useAuthContext } from '@/features/auth/components/AuthProvider';
 import { logo, NavLinks } from '@/features/marketing/constants';
 import { cn } from '@/lib/utils';
+
+import Button from '../ui/assistant-button';
+
 // import ThemeSwitch from '../SupportComponents/ThemeSwitch';
 
 const Header = () => {
