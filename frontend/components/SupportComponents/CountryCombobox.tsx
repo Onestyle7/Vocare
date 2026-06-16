@@ -1,7 +1,9 @@
 'use client';
-import * as React from 'react';
 import { Check, ChevronsUpDown } from 'lucide-react';
-import { cn } from '@/lib/utils';
+import * as React from 'react';
+import { Path, PathValue, UseFormReturn } from 'react-hook-form';
+
+import { countries } from '@/features/marketing/constants/countries';
 import { Button } from '@/components/ui/button';
 import {
   Command,
@@ -12,8 +14,7 @@ import {
   CommandList,
 } from '@/components/ui/command';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
-import { UseFormReturn, Path, PathValue } from 'react-hook-form';
-import { countries } from '@/app/constants';
+import { cn } from '@/lib/utils';
 
 interface CountryComboboxProps<TFieldValues extends Record<string, unknown>> {
   form: UseFormReturn<TFieldValues>;

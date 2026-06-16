@@ -1,8 +1,9 @@
-import React from 'react';
-import SearchView from './_components/SearchView';
 import type { Metadata } from 'next';
-import { getArticlesMetadata, toAbsoluteUrl } from './_utils/blogUtils';
-import { ARTICLES_FOLDER } from './_utils/constants';
+
+import SearchView from '@/features/blog/components/SearchView';
+
+import { getArticlesMetadata, toAbsoluteUrl } from '../../features/blog/utils/blogUtils';
+import { ARTICLES_FOLDER } from '../../features/blog/utils/constants';
 
 export const metadata: Metadata = {
   title: 'Blog',

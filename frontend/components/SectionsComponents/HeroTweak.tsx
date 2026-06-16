@@ -1,22 +1,24 @@
 'use client';
 
-import { useEffect, useState } from 'react';
-import { lazy, Suspense } from 'react';
-import Image from 'next/image';
-import { companies, shape1, Spinner } from '@/app/constants';
-import { ArrowRight } from 'lucide-react';
-import Link from 'next/link';
-import { ScrollParallax } from 'react-just-parallax';
+import gsap from 'gsap';
 // import CustomButton from '@/components/ui/CustomButton';
 // import { SpinningText } from '@/components/magicui/spinning-text';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { SplitText } from 'gsap/SplitText';
-import gsap from 'gsap';
-import Section from '../SupportComponents/Section';
+import { ArrowRight } from 'lucide-react';
+import Image from 'next/image';
+import Link from 'next/link';
+import { useEffect, useState } from 'react';
+import { lazy, Suspense } from 'react';
+import { ScrollParallax } from 'react-just-parallax';
+
+import { companies, shape1, Spinner } from '@/features/marketing/constants/countries';
+
 // import CustomCursor from '../SupportComponents/CustomCursor';
 import Copy from '../SupportComponents/Copy';
-import { Button } from '../ui/button';
 import CopyHeader from '../SupportComponents/CopyHeaer';
+import Section from '../SupportComponents/Section';
+import { Button } from '../ui/button';
 
 gsap.registerPlugin(ScrollTrigger, SplitText);
 
@@ -73,7 +75,7 @@ const HeroTweak = () => {
             </Copy>
 
             <Link
-              href="/profile"
+              href="/dashboard/profile"
               className="mt-3 flex cursor-none max-md:items-center max-md:justify-center sm:mt-4 lg:w-full"
             >
               <Button
