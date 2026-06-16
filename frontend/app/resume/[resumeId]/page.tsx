@@ -1,22 +1,21 @@
 import { notFound } from 'next/navigation';
 
 import { forceLoginRedirect } from '@/features/auth/utils/login-redirect';
+import CVCreator from '@/features/resume/components/ResumeComponent';
 import { getCvDetailsQuery } from '@/features/resume/dal/queries';
 
-import CVCreator from '../../../../features/resume/components/ResumeComponent';
-
 interface ResumeDetailPageProps {
-  params: Promise<{ id: string }>;
+  params: Promise<{ resumeId: string }>;
 }
 
 export default async function ResumeDetailPage({ params }: ResumeDetailPageProps) {
-  const { id } = await params;
+  const { resumeId } = await params;
 
-  if (!id) {
+  if (!resumeId) {
     notFound();
   }
 
-  const [error, cv] = await getCvDetailsQuery(id);
+  const [error, cv] = await getCvDetailsQuery(resumeId);
 
   if (error && error.type === 'Unauthorized') {
     await forceLoginRedirect();
