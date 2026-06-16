@@ -1,1 +1,5 @@
+echo ""
+echo "Checking changed files"
+echo "==============================="
+echo ""
 npx lint-staged

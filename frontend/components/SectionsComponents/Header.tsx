@@ -1,23 +1,22 @@
 'use client';
 
-import React, { useState, useEffect, useRef } from 'react';
-import { logo, NavLinks } from '@/app/constants';
+import { AnimatePresence, motion } from 'motion/react';
+import Image from 'next/image';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { cn } from '@/lib/utils';
-import Image from 'next/image';
-import { useAuth } from '@/lib/hooks/useAuth';
+import React, { useEffect, useRef, useState } from 'react';
+
+import { logo, NavLinks } from '@/features/marketing/constants/countries';
 import MobileNav from '@/components/MobileComponents/MobileNav';
-import { TokenCounter } from '@/components/PricingComponents/TokenCounter';
+import { TokenCounter } from '@/features/billing/components/TokenCounter';
 import { Badge } from '@/components/ui/badge';
-import { AnimatePresence, motion } from 'motion/react';
+import { cn } from '@/lib/utils';
 // import ThemeSwitch from '../SupportComponents/ThemeSwitch';
 
 const Header = () => {
   const pathname = usePathname();
   const [isMobile, setIsMobile] = useState(false);
   const [showFloatingNav, setShowFloatingNav] = useState(false);
-  const { isAuthenticated } = useAuth();
   const headerRef = useRef<HTMLElement>(null);
   const floatingNavSwitch = true;
 
@@ -41,7 +40,7 @@ const Header = () => {
   }, []);
 
   useEffect(() => {
-    if (!isAuthenticated || !navRef.current) return;
+    if (!navRef.current) return;
 
     const activeLink = navRef.current.querySelector(`[data-active="true"]`) as HTMLElement | null;
     if (!activeLink) {
@@ -55,7 +54,7 @@ const Header = () => {
 
     setActiveDotLeft(relativeLeft);
     setActiveDotOpacity(1);
-  }, [pathname, isAuthenticated, isMobile]);
+  }, [pathname, isMobile]);
 
   useEffect(() => {
     if (!floatingNavSwitch || isMobile) {
@@ -97,8 +96,8 @@ const Header = () => {
     setDotOpacity(0);
   };
 
-  const filteredLinks = isAuthenticated ? NavLinks : [];
-  const floatingLinks = isAuthenticated ? filteredLinks : publicLinks;
+  const filteredLinks = NavLinks;
+  const floatingLinks = filteredLinks;
 
   return (
     <>
@@ -159,7 +158,7 @@ const Header = () => {
         className="font-korbin relative z-[100] flex items-center justify-end border-gray-400 max-md:border-b-[1px] md:justify-center dark:border-gray-600/30"
       >
         {isMobile ? (
-          <MobileNav isAuthenticated={isAuthenticated} />
+          <MobileNav isAuthenticated={true} />
         ) : (
           <nav className="mx-20 mt-10 flex w-full items-center justify-between space-x-10">
             <Link href="/" aria-label="Go to homepage">
@@ -173,7 +172,7 @@ const Header = () => {
               />
             </Link>
 
-            {isAuthenticated ? (
+            {true ? (
               <div className="relative">
                 <ul
                   ref={navRef}
@@ -232,10 +231,10 @@ const Header = () => {
             )}
 
             <div className="flex items-center space-x-4">
-              {isAuthenticated && <TokenCounter />}
+              {true && <TokenCounter />}
 
               <>
-                {!isAuthenticated &&
+                {!true &&
                   publicLinks.map((link) => (
                     <Link href={link.url} key={link.url}>
                       <p className="text-[18px] font-normal uppercase">{link.label}</p>

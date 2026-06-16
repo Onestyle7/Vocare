@@ -1,6 +1,14 @@
-import AuthForm from '@/components/AuthComponents/AuthForm';
-import React from 'react';
+import { SignInFrom } from '../../../features/auth/components/SignInForm';
 
-const SignIn = () => <AuthForm type="sign-in" />;
-
-export default SignIn;
+export default async function SignIn({
+  searchParams,
+}: {
+  searchParams: Promise<{ reason?: string; callbackUrl?: string }>;
+}) {
+  const { reason, callbackUrl } = await searchParams;
+  return (
+    <>
+      <SignInFrom reason={reason} callbackUrl={callbackUrl} />
+    </>
+  );
+}

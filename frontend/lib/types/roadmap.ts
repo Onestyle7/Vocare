@@ -68,3 +68,21 @@ export interface RoadmapDetailsDto {
   progress: number;
   phases: RoadmapPhaseDto[];
 }
+
+export interface UpdateStepRequestDto {
+  title?: string;
+  subtitle?: string;
+  description?: string;
+  topics?: string[];
+  stepType?: StepType;
+}
+
+export interface AddStepRequestDto {
+  phaseId: string;
+  parentStepId?: string;
+  title: string;
+  subtitle: string;
+  description?: string;
+  topics?: string[];
+  stepType: StepType;
+}

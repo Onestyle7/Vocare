@@ -1,5 +1,6 @@
-import React from 'react';
 import { ArrowRight } from 'lucide-react';
+import React from 'react';
+
 import { cn } from '@/lib/utils';
 
 // eslint-disable-next-line @typescript-eslint/no-empty-object-type

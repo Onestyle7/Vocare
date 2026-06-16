@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using VocareWebAPI.Billing.Services.Interfaces;
 using VocareWebAPI.Repositories.Interfaces;
+using VocareWebAPI.Shared.Results;
 
 namespace VocareWebAPI.Controllers
 {
