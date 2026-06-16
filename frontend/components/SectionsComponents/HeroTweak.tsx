@@ -12,7 +12,7 @@ import { useEffect, useState } from 'react';
 import { lazy, Suspense } from 'react';
 import { ScrollParallax } from 'react-just-parallax';
 
-import { companies, shape1, Spinner } from '@/features/marketing/constants/countries';
+import { companies, shape1, Spinner } from '@/features/marketing/constants';
 
 // import CustomCursor from '../SupportComponents/CustomCursor';
 import Copy from '../SupportComponents/Copy';

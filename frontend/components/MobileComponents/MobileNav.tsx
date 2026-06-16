@@ -6,14 +6,13 @@ import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import React, { useEffect, useRef } from 'react';
 
-import { logo, NavLinks } from '@/features/marketing/constants/countries';
+import { Badge } from '@/components/ui/badge';
 import { Sheet, SheetClose, SheetContent, SheetTitle, SheetTrigger } from '@/components/ui/sheet';
+import { logo, NavLinks } from '@/features/marketing/constants';
 import { useIsMobile } from '@/lib/hooks/useIsMobile';
 import { cn } from '@/lib/utils';
 
 // import ThemeSwitch from '../SupportComponents/ThemeSwitch';
-import { TokenCounter } from '../../features/billing/components/TokenCounter';
-import { Badge } from '../ui/badge';
 
 interface MobileNavProps {
   isAuthenticated: boolean;
@@ -71,7 +70,9 @@ const MobileNav: React.FC<MobileNavProps> = ({ isAuthenticated }) => {
     }
   }, [isOpen]);
 
-  const filteredLinks = isAuthenticated ? NavLinks : [];
+  const filteredLinks = NavLinks;
+  const ctaHref = isAuthenticated ? '/dashboard' : '/sign-in';
+  const ctaLabel = isAuthenticated ? 'Pulpit' : 'Zaloguj się';
 
   return (
     <Sheet open={isOpen} onOpenChange={setIsOpen}>
@@ -129,24 +130,11 @@ const MobileNav: React.FC<MobileNavProps> = ({ isAuthenticated }) => {
               </li>
             );
           })}
-          <SheetClose>
-            {!pathname.includes('blog') && (
-              <Link href="/blog">
-                <p className="text-[18px] font-normal uppercase">Blog</p>
-              </Link>
-            )}
-            {!isAuthenticated && (
-              <>
-                <Link href="/pricing">
-                  <p className="text-[18px] font-normal uppercase">Pricing</p>
-                </Link>
-                <Link href="/sign-in" className="text-[18px] font-normal uppercase">
-                  Sign In
-                </Link>
-              </>
-            )}
+          <SheetClose asChild>
+            <Link href={ctaHref} className="text-[18px] font-normal uppercase">
+              {ctaLabel}
+            </Link>
           </SheetClose>
-          {isAuthenticated && <TokenCounter />}
           {/* <ThemeSwitch /> */}
         </ul>
       </SheetContent>

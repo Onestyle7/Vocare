@@ -99,8 +99,8 @@ const ResumeDashboard = ({ initialCvs, initialLimits }: ResumeDashboardProps) =>
     <div className="min-h-screen">
       <div className="font-grotesk relative">
         <GridBackgroundDemo />
-        <div className="relative z-10 w-full py-4">
-          <div className="container mx-auto">
+        <div className="relative z-10 w-full py-6 lg:py-36">
+          <div className="container mx-auto px-0 sm:px-4">
             <div className="flex flex-col gap-10">
               {/* Header Section */}
               <div className="flex flex-col items-start gap-4">

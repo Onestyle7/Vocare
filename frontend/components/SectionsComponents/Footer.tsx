@@ -9,7 +9,7 @@ import {
   down_links,
   links_pages,
   links_social,
-} from '@/features/marketing/constants/countries';
+} from '@/features/marketing/constants';
 import { Input } from '@/components/ui/input';
 
 import Section from '../SupportComponents/Section';

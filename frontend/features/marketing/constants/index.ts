@@ -205,12 +205,14 @@ export type NavLink = {
 };
 
 export const NavLinks: NavLink[] = [
-  { label: 'Blog', url: '/blog' },
   { label: 'Profil', url: '/dashboard/profile' },
   { label: 'Doradca', url: '/dashboard/assistant' },
   { label: 'Analiza', url: '/dashboard/market-analysis' },
-  { label: 'Roadmap', url: '/dashboard/roadmap', highlighted: true, badge: 'nowość' },
-  { label: 'Kreator', url: '/dashboard/resume', highlighted: true, badge: 'stwórz cv' },
+  // { label: 'Roadmap', url: '/dashboard/roadmap', highlighted: true, badge: 'nowość' },
+  // { label: 'Kreator', url: '/dashboard/resume', highlighted: true, badge: 'stwórz cv' },
+  { label: 'Roadmap', url: '/dashboard/roadmap' },
+  { label: 'Kreator', url: '/dashboard/resume' },
+
   { label: 'Pricing', url: '/pricing' },
 ];
 
@@ -460,3 +462,126 @@ export const cone_8 = '/images/Cone-8.avif';
 
 // roadmap icon
 export const gps_icon = '/svg/gps.png';
+
+// Assistant landing page feature
+export const hero_image = '/asisstant/hero_img.avif';
+export const expand_icon = '/asisstant/expand_icon.svg';
+export const arrow_icon = '/asisstant/arrow_icon.svg';
+export const grid_img_1 = '/asisstant/grid-1-img.png';
+export const grid_img_2 = '/asisstant/grid-2-img.png';
+export const grid_img_3 = '/asisstant/grid-3-img.png';
+export const grid_img_4 = '/asisstant/grid-4-img.png';
+export const approach_img_1 = '/asisstant/aproach-img-1.avif';
+export const approach_img_2 = '/asisstant/aproach-img-2.avif';
+export const approach_img_3 = '/asisstant/aproach-img-3.avif';
+export const approach_line_1 = '/asisstant/Line-approach-1.svg';
+export const approach_line_2 = '/asisstant/Line-approach-2.svg';
+export const approach_elipse_1 = '/asisstant/Ellipse-1.svg';
+export const approach_elipse_2 = '/asisstant/Ellipse-2.svg';
+export const approach_elipse_3 = '/asisstant/Ellipse-3.svg';
+export const shield_icon = '/asisstant/Shield.svg';
+export const user_icon = '/asisstant/User_02.svg';
+export const arrow_grid_icon = '/asisstant/Arrow.svg';
+export const ai_grid = '/asisstant/ai_grid.png';
+export const brain_grid = '/asisstant/brain_grid.png';
+export const avatar_1 = '/asisstant/avatar-5.svg';
+export const avatar_2 = '/asisstant/avatar-4.svg';
+export const avatar_3 = '/asisstant/avatar-6.svg';
+export const avatar_4 = '/asisstant/avatar-2.svg';
+export const avatar_5 = '/asisstant/avatar-1.svg';
+export const avatar_6 = '/asisstant/avatar-3.svg';
+export const social_fb = '/asisstant/social-fb.svg';
+export const social_x = '/asisstant/social-x.svg';
+export const social_linkedin = '/asisstant/social-linkedin.svg';
+export const social_instagram = '/asisstant/social-instagram.svg';
+
+// Resume creator landing page feature
+export const resume_hero_img_1 = '/resume/resume-hero-img-1.avif';
+export const resume_hero_img_2 = '/resume/resume-hero-img-2.avif';
+export const resume_hero_img_3 = '/resume/resume-hero-img-3.avif';
+
+export const upper_puzzle = '/resume/upper-puzzle.avif';
+export const bottom_puzzle = '/resume/bottom-puzzle.avif';
+export const glass_img = '/resume/glass_img.avif';
+
+export const grid_sort = '/resume/grid-sort-descending.svg';
+export const grid_user = '/resume/grid_user.svg';
+export const grid_timer = '/resume/grid-timer.svg';
+export const grid_docs = '/resume/grid-docs.svg';
+
+export const generowanie_cv = '/resume/generowanie-cv.mp4';
+export const analiza_brakow = '/resume/analiza-brakow.mp4';
+
+// Roadmap landing page feature
+
+export const roadmap_cylinder = '/roadmap/roadmap_cylinder.svg';
+export const roadmap_flag = '/roadmap/roadmap_flag.svg';
+export const roadmap_layers = '/roadmap/roadmap_layers.svg';
+export const roadmap_map_pin = '/roadmap/roadmap_map_pin.svg';
+export const roadmap_path = '/roadmap/roadmap_path.svg';
+export const roadmap_terminal = '/roadmap/roadmap_terminal.svg';
+export const roadmap_user = '/roadmap/roadmap_user.svg';
+
+export const roadmap_sun = '/roadmap/Sun.svg';
+export const roadmap_puzzle = '/roadmap/Puzzle.svg';
+export const roadmap_path_1 = '/roadmap/Path.svg';
+export const roadmap_checkmark = '/roadmap/checkmark.svg';
+export const roadmap_bell = '/roadmap/roadmap_bell.svg';
+
+// resume creator
+
+export const featuresList = [
+  {
+    icon: grid_sort,
+    label: 'Layout',
+    number: 1,
+    title: 'Layout stworzony pod ATS',
+    description:
+      'Twoje CV wygląda profesjonalnie i jednocześnie przechodzi każdy system rekrutacyjny. Format zoptymalizowany pod ATS oznacza, że Twoja aplikacja dotrze do rekrutera - nie do kosza.',
+    href: '#',
+  },
+  {
+    icon: grid_user,
+    label: 'Personalizacja',
+    number: 2,
+    title: 'Dopasowane sekcje',
+    description:
+      'AI sam decyduje, które Twoje doświadczenia i umiejętności wyciągnąć na pierwszy plan w zależności od tego, na jakie stanowisko aplikujesz.',
+    href: '#',
+  },
+  {
+    icon: grid_timer,
+    label: 'Czas',
+    number: 3,
+    title: 'Automatyczne uzupełnianie',
+    description:
+      'Nie musisz wpisywać wszystkiego od nowa. Kreator pobiera Twoje doświadczenie, wykształcenie i umiejętności prosto z profilu w aplikacji.',
+    href: '#',
+  },
+  {
+    icon: grid_docs,
+    label: 'Eksport i gotowość',
+    number: 4,
+    title: 'Gotowe CV w PDF',
+    description:
+      'Jedno kliknięcie - pobierasz czyste, profesjonalne CV gotowe do wysłania. Bez walki z formatowaniem w Wordzie.',
+    href: '#',
+  },
+];
+
+// market analysis landing page
+
+export const ai_icon = '/market-analysis/ai-icon.svg';
+export const path_icon = '/market-analysis/path-icon.svg';
+export const user_icon_1 = '/market-analysis/user-icon.svg';
+
+// main page landing page
+
+export const dashboard_img_2 = '/main-page/dashboard-img-2.avif';
+export const tile_1 = '/main-page/tile-1.png';
+export const tile_2 = '/main-page/tile-2.png';
+export const tile_3 = '/main-page/tile-3.png';
+export const tile_4 = '/main-page/tile-4.png';
+export const arrow_01 = '/main-page/arrow-1.svg';
+export const arrow_02 = '/main-page/arrow-2.svg';
+export const arrow_03 = '/main-page/arrow-3.svg';
