@@ -929,3 +929,33 @@ input:-webkit-autofill {
     transform: translate(-50%, -40%) scale(1);
   }
 }
+
+@layer components {
+  .glass-card {
+    position: relative;
+  }
+
+  .glass-card::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border-radius: inherit; /* dziedziczy zaokrąglenie hosta */
+    padding: 1px; /* grubość obramowania */
+    background: linear-gradient(
+      to bottom,
+      rgba(255, 255, 255, 0.15) 0%,
+      rgba(255, 255, 255, 0.06) 40%,
+      rgba(255, 255, 255, 0.02) 100%
+    );
+    /* maska zostawia widoczny tylko 1px ring (sam border) */
+    -webkit-mask:
+      linear-gradient(#fff 0 0) content-box,
+      linear-gradient(#fff 0 0);
+    -webkit-mask-composite: xor;
+    mask:
+      linear-gradient(#fff 0 0) content-box,
+      linear-gradient(#fff 0 0);
+    mask-composite: exclude;
+    pointer-events: none;
+  }
+}

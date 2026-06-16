@@ -126,31 +126,37 @@ Dobra wiadomość: większość zawodów z perspektywami nie wymaga 5-letnich st
 ## Zawody przyszłości - kompetencje i widełki
 
 **Analityk danych**
+
 - Kluczowe kompetencje: SQL, Excel/Power BI, Python podstawy
 - Ścieżka wejścia: kurs 3-6 mies. + praktyka
 - Widełki (Polska 2026): 7-15k PLN/mies.
 
 **Fizjoterapeuta**
+
 - Kluczowe kompetencje: studia licencjackie/magisterskie
 - Ścieżka wejścia: 3-5 lat nauki
 - Widełki (Polska 2026): 5-10k PLN/mies.
 
 **Specjalista ESG**
+
 - Kluczowe kompetencje: prawo, finanse, raportowanie
 - Ścieżka wejścia: studia/kurs + certyfikat
 - Widełki (Polska 2026): 8-16k PLN/mies.
 
 **Technik PV**
+
 - Kluczowe kompetencje: wiedza elektryczna + instalacje
 - Ścieżka wejścia: kurs 2-4 mies.
 - Widełki (Polska 2026): 5-9k PLN/mies.
 
 **Prompt engineer**
+
 - Kluczowe kompetencje: AI tools, pisanie, logika
 - Ścieżka wejścia: samokształcenie
 - Widełki (Polska 2026): 8-18k PLN/mies.
 
 **Specjalista cybersec**
+
 - Kluczowe kompetencje: sieci, Linux, narzędzia sec
 - Ścieżka wejścia: kurs/bootcamp + certyfikat
 - Widełki (Polska 2026): 10-20k PLN/mies.

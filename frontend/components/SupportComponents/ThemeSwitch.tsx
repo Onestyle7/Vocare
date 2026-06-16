@@ -1,7 +1,7 @@
 'use client';
 import gsap from 'gsap';
 import { useTheme } from 'next-themes';
-import { useEffect,useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 
 const ThemeSwitch = () => {
   const { theme, setTheme } = useTheme();

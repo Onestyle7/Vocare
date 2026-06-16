@@ -5,7 +5,7 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { useEffect, useRef, useState } from 'react';
 
-import { spinner_terminal } from '@/features/marketing/constants/countries';
+import { spinner_terminal } from '@/features/marketing/constants/index';
 import { PersonalityType, personalityTypeLabels } from '@/lib/types/personalityTypes';
 import { Risk, riskLabels } from '@/lib/types/risk';
 

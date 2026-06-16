@@ -20,7 +20,7 @@ import {
 } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
 import { resetPassword } from '@/features/auth/dal/commands';
-import { spinner_terminal } from '@/features/marketing/constants/countries';
+import { spinner_terminal } from '@/features/marketing/constants';
 
 import { ResetPasswordFormType, resetPasswordSchema } from '../dal/schemas';
 

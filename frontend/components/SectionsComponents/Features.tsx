@@ -7,7 +7,7 @@ import Link from 'next/link';
 import React, { useRef } from 'react';
 import { ScrollParallax } from 'react-just-parallax';
 
-import { shape1 } from '@/features/marketing/constants/countries';
+import { shape1 } from '@/features/marketing/constants';
 import { Safari } from '@/components/magicui/safari';
 import SectionGsap from '@/components/ui/SectionGsap';
 

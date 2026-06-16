@@ -1,19 +1,18 @@
-import Link from 'next/link';
+import Footer from './assistant/components/Footer';
+import TrustScore from './assistant/components/TrustScore';
+import Features from './main-components/Features';
+import Hero from './main-components/Hero';
+import HowItWorks from './main-components/HowItWorks';
 
 export default function MainPage() {
   return (
     <>
-      <main className="mx-auto max-w-7xl">
-        {/* <Header />
-        <HeroTweak />
-        <AboutCards />
-        <MobileFeatureImprovements />
-        <CardFeature />
-        <Faq />
-        <Footer /> */}
-        Marketing LP placeholder
-        <br></br>
-        <Link href="/dashboard">Dashboard</Link>
+      <main className="font-poppins w-full overflow-x-hidden">
+        <Hero />
+        <Features />
+        <HowItWorks />
+        <TrustScore />
+        <Footer />
       </main>
     </>
   );
