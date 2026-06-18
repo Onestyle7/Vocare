@@ -1,7 +1,6 @@
 'use client';
 
 import Image from 'next/image';
-import { useRef } from 'react';
 import { ScrollParallax } from 'react-just-parallax';
 
 import Button from '@/components/ui/assistant-button';
@@ -11,10 +10,11 @@ import { LightBeam } from './light-beam';
 import MainCard from './main-card';
 
 const Features = () => {
-  const bentoRef = useRef<HTMLDivElement>(null);
-
-  const scrollToBento = () => {
-    bentoRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  const scrollToHowItWorks = () => {
+    const howItWorksSection = document.getElementById('how-it-works');
+    if (howItWorksSection) {
+      howItWorksSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
   };
 
   return (
@@ -64,7 +64,7 @@ const Features = () => {
             </p>
 
             <Button
-              onClick={scrollToBento}
+              onClick={scrollToHowItWorks}
               variant="secondary"
               size="sm"
               icon={<Image src={arrow_icon} alt="expand" width={20} height={20} />}
