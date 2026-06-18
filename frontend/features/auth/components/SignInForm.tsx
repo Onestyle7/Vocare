@@ -113,12 +113,12 @@ export function SignInFrom({ reason, callbackUrl }: { reason?: string; callbackU
         </ButtonForm>
         <div className="mt-4 flex items-center justify-between">
           <div className="flex items-center">
-            <p>Need account?</p>
+            <p>Nie masz konta?</p>
             <Link
               href="/sign-up"
               className="relative ml-2 font-semibold text-[#915EFF] transition duration-300 after:absolute after:bottom-0 after:left-0 after:h-0.5 after:w-0 after:bg-[#915EFF] after:transition-all after:duration-300 after:content-[''] hover:after:w-full"
             >
-              Sign Up
+              Utwórz konto
             </Link>
           </div>
 
@@ -126,7 +126,7 @@ export function SignInFrom({ reason, callbackUrl }: { reason?: string; callbackU
             href="/forgot-password"
             className="relative ml-2 font-medium text-gray-500 transition duration-300 after:absolute after:bottom-0 after:left-0 after:h-0.5 after:w-0 after:bg-gray-500 after:transition-all after:duration-300 after:content-[''] hover:after:w-full"
           >
-            Forgot Password?
+            Nie pamiętasz hasła?
           </Link>
         </div>
         <div className="flex w-full flex-col items-center justify-center gap-4 text-sm text-gray-400">
@@ -137,7 +137,7 @@ export function SignInFrom({ reason, callbackUrl }: { reason?: string; callbackU
           </div>
 
           <div className="tems-center mt-4 flex w-full flex-row justify-center gap-2">
-            <OAuthButton icon={google} label="Login with Google" onClick={handleGoogleSignIn} />
+            <OAuthButton icon={google} label="Zaloguj się Google" onClick={handleGoogleSignIn} />
           </div>
         </div>
       </form>

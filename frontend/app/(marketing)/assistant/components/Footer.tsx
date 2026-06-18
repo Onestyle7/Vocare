@@ -128,6 +128,9 @@ const Footer = () => {
         <Link href="privacy-policy" className="font-regular text-[14px] underline sm:text-[16px]">
           Polityka Prywatności
         </Link>
+        <Link href="terms-of-service" className="font-regular text-[14px] underline sm:text-[16px]">
+          Regulamin
+        </Link>
       </div>
 
       <div

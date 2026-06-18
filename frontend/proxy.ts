@@ -39,7 +39,7 @@ async function authProxy(request: NextRequest) {
 }
 
 const authPages = ['/sign-in', '/sign-up', '/forgot-password', '/reset-password'];
-const restrictedPages = ['/dashboard', '/resume', '/roadmap'];
+const restrictedPages = ['/dashboard', '/dashboard/resume', '/dashboard/roadmap'];
 
 export const config = {
   matcher: ['/:path*'],

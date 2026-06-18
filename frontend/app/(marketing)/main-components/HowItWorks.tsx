@@ -57,7 +57,7 @@ const steps: Step[] = [
 
 const HowItWorks = () => {
   return (
-    <div className="font-poppins flex flex-col bg-[#0F1013] p-3 sm:p-5">
+    <div id="how-it-works" className="font-poppins flex flex-col bg-[#0F1013] p-3 sm:p-5">
       <div className="relative mx-auto flex w-full max-w-none flex-col overflow-hidden rounded-3xl 2xl:max-w-7xl">
         <LightBeam />
 

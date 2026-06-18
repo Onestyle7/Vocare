@@ -375,7 +375,7 @@ const Features = () => {
                 </p>
 
                 <Link
-                  href={item.href}
+                  href="/dashboard/resume"
                   className="inline-flex items-center gap-1.5 text-[14px] text-[#F1F4FF] opacity-70 transition-opacity hover:opacity-100"
                 >
                   Dowiedz się więcej
