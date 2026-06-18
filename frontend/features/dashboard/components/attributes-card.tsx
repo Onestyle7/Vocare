@@ -28,10 +28,8 @@ export interface AttributesCardDataItem {
 export default function AttributesCard({
   data,
   className,
-  isProfileEmpty,
 }: {
   data?: AttributesCardDataItem[] | null;
-  isProfileEmpty: boolean;
 } & React.ComponentProps<'div'>) {
   return (
     <DashboardCard className={cn('gap-0 pb-1', className)}>
@@ -72,7 +70,7 @@ export default function AttributesCard({
           </ResponsiveContainer>
         </DashboardCardContent>
       )}
-      {isProfileEmpty && (
+      {!data && (
         <div className="flex h-full justify-center">
           <p className="text-dashboard-secondary-foreground flex items-center gap-2 py-8 text-center">
             <Info />

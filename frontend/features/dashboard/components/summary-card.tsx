@@ -20,8 +20,7 @@ export interface SummaryCardDataItem {
 export default function SummaryCard({
   data,
   className,
-  isProfileEmpty,
-}: { data: SummaryCardDataItem[] | null; isProfileEmpty: boolean } & React.ComponentProps<'div'>) {
+}: { data: SummaryCardDataItem[] | null } & React.ComponentProps<'div'>) {
   return (
     <DashboardCard className={cn('', className)} title="Podsumowanie">
       <DashboardCardHeader>
@@ -41,7 +40,7 @@ export default function SummaryCard({
               </div>
             </div>
           ))}
-        {isProfileEmpty && (
+        {!data && (
           <div className="flex h-full justify-center">
             <p className="text-dashboard-secondary-foreground flex items-center gap-2 py-8 text-center">
               <Info />

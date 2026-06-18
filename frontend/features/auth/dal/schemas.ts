@@ -42,7 +42,7 @@ export const signUpSchema = z
     password: signUpPasswordSchema,
     confirmPassword: signUpPasswordSchema,
     fullName: z.string().min(2).max(50),
-    marketingConsent: z.boolean().default(false),
+    acceptMarketingConsent: z.boolean().default(false),
   })
   .superRefine((data, ctx) => {
     if (data.password !== data.confirmPassword) {

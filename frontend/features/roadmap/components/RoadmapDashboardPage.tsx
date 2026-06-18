@@ -584,7 +584,7 @@ function CreateRoadmapDialog({
                     Odswiez sciezki
                   </Button>
                   <Button asChild>
-                    <Link href="/assistant">Przejdz do asystenta</Link>
+                    <Link href="/dashboard/assistant">Przejdź do asystenta</Link>
                   </Button>
                 </div>
               </div>
