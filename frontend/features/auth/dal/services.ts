@@ -81,12 +81,7 @@ export async function signInService(
 export async function registerService(
   command: RegisterCommand
 ): Promise<Result<RegisterResult, RegisterDomainError>> {
-  const result = await authApiClient.post<RegisterResult>('/register', {
-    email: command.email,
-    password: command.password,
-    confirmPassword: command.confirmPassword,
-    acceptMarketingConsent: command.marketingConsent,
-  });
+  const result = await authApiClient.post<RegisterResult>('/register', command);
 
   return result
     .map((response) => response.data)
