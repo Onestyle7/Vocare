@@ -10,7 +10,7 @@ import React, { useEffect, useRef, useState } from 'react';
 import MobileNav from '@/components/MobileComponents/MobileNav';
 import { Badge } from '@/components/ui/badge';
 import { useAuthContext } from '@/features/auth/components/AuthProvider';
-import { logo, NavLinks } from '@/features/marketing/constants';
+import { getHeaderNavLinks, logo } from '@/features/marketing/constants';
 import { cn } from '@/lib/utils';
 
 import Button from '../ui/assistant-button';
@@ -33,10 +33,13 @@ const Header = () => {
   const [activeDotOpacity, setActiveDotOpacity] = useState(0);
 
   useEffect(() => {
-    const handleResize = () => setIsMobile(window.innerWidth < 768);
+    const mediaQuery = window.matchMedia('(max-width: 1279px)');
+    const handleResize = () => setIsMobile(mediaQuery.matches);
+
     handleResize();
-    window.addEventListener('resize', handleResize);
-    return () => window.removeEventListener('resize', handleResize);
+    mediaQuery.addEventListener('change', handleResize);
+
+    return () => mediaQuery.removeEventListener('change', handleResize);
   }, []);
 
   useEffect(() => {
@@ -96,7 +99,7 @@ const Header = () => {
     setDotOpacity(0);
   };
 
-  const filteredLinks = NavLinks;
+  const filteredLinks = getHeaderNavLinks(isAuthenticated);
   const floatingLinks = filteredLinks;
 
   return (
@@ -155,7 +158,7 @@ const Header = () => {
 
       <header
         ref={headerRef}
-        className="font-poppins relative z-[100] flex items-center justify-end border-gray-400 max-md:border-b-[1px] md:justify-center dark:border-gray-600/30"
+        className="font-poppins relative z-[100] flex items-center justify-end border-gray-400 max-xl:border-b-[1px] xl:justify-center dark:border-gray-600/30"
       >
         {isMobile ? (
           <MobileNav isAuthenticated={isAuthenticated} />

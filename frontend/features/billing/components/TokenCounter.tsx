@@ -25,8 +25,8 @@ const badgeVariants = cva(
   {
     variants: {
       size: {
-        default: '-mt-2.5 h-9 w-[85%] text-xs',
-        small: '-mt-2 h-6 w-[75%] text-[12px]',
+        default: '-mt-2.5 h-9 w-[85%] pt-2.5 text-xs',
+        small: '-mt-2 h-7 w-[75%] pt-2 text-[10px]',
       },
     },
     defaultVariants: {
@@ -71,7 +71,7 @@ export const TokenCounter = ({
         <div
           className={cn(badgeVariants({ size }), isSubscribed ? 'text-[#915EFF]' : 'text-gray-400')}
         >
-          <p className={cn(size === 'small' ? 'mt-1' : 'mt-2')}>{statusLabel}</p>
+          <p className={cn(size === 'small' ? 'leading-none' : 'mt-2')}>{statusLabel}</p>
         </div>
 
         {subscriptionStatus && (

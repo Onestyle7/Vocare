@@ -13,7 +13,7 @@ import SocialProofCard from './social-proof-card';
 
 const SocialProof = () => {
   return (
-    <div className="relative grid w-full grid-cols-1 items-start gap-5 overflow-hidden lg:grid-cols-2">
+    <div className="relative grid w-full grid-cols-1 items-start gap-5 overflow-hidden min-[1400px]:grid-cols-2">
       <div className="flex flex-col gap-5">
         <SocialProofCard
           compact
@@ -23,7 +23,7 @@ const SocialProof = () => {
           occupation="Studentka"
         />
 
-        <div className="grid grid-cols-1 gap-5 sm:grid-cols-2">
+        <div className="grid grid-cols-1 gap-5 min-[1400px]:grid-cols-2">
           <SocialProofCard
             description="„Zrobiłem analizę SWOT na Vocare i pierwszy raz mam czarno na białym, gdzie mam luki w CV, a co jest moim asem w rękawie. Cała roadmapa kariery wygenerowana pod moje cele to totalny gamechanger. To nie jest portal do nauki, to jest narzędzie do robienia awansu. Bardzo polecam każdemu, kto chce wejść na wyższy level.”"
             avatarImg={avatar_3}
@@ -48,7 +48,7 @@ const SocialProof = () => {
           occupation="Pracownik IT"
         />
 
-        <div className="grid grid-cols-1 gap-5 sm:grid-cols-2">
+        <div className="grid grid-cols-1 gap-5 min-[1400px]:grid-cols-2">
           <SocialProofCard
             description="“Zaskoczyło mnie, jak płynnie to wszystko działa. Od analizy moich kompetencji, przez wyznaczenie konkretnej ścieżki, aż po dopasowane oferty pracy. Nie muszę wychodzić z platformy, żeby zaplanować kolejny rok swojego życia zawodowego.”"
             avatarImg={avatar_6}
