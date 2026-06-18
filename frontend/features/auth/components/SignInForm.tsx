@@ -41,7 +41,7 @@ export function SignInFrom({ reason, callbackUrl }: { reason?: string; callbackU
   const handleGoogleSignIn = async () => {
     console.log('Initiated google sign-in');
     startTransition(async () => {
-      await OAuthSignIn('google');
+      await OAuthSignIn('google', callbackUrl);
     });
   };
 

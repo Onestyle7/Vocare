@@ -19,8 +19,6 @@ export default async function DashboardPage() {
   const [userAttibutesError, userAttributesData] = await getUserAttributesQuery();
   const [paymentError, paymentsData] = await getPaymentHistoryQuery(50);
 
-  let isProfileEmpty = false;
-
   if (paymentError) {
     switch (paymentError.type) {
       case 'Unauthorized': {
@@ -39,7 +37,6 @@ export default async function DashboardPage() {
         break;
       }
       case 'EmptyProfile': {
-        isProfileEmpty = true;
         break;
       }
       default: {
@@ -55,7 +52,6 @@ export default async function DashboardPage() {
         break;
       }
       case 'EmptyProfile': {
-        isProfileEmpty = true;
         break;
       }
       default: {
@@ -66,14 +62,9 @@ export default async function DashboardPage() {
 
   return (
     <div className="grid grid-cols-1 gap-4 p-4 lg:grid-cols-5 lg:grid-rows-[minmax(0,390px)_minmax(0,390px)] lg:overflow-hidden">
-      <SummaryCard
-        isProfileEmpty={isProfileEmpty}
-        data={parseProfileSummary(userProfileSummaryData)}
-        className="lg:col-span-2"
-      />
+      <SummaryCard data={parseProfileSummary(userProfileSummaryData)} className="lg:col-span-2" />
       {/* TODO: To zajmuje długo - dodać loading.tsx albo rozbić na serverowy + kliencki i użyć suspense */}
       <AttributesCard
-        isProfileEmpty={isProfileEmpty}
         data={parseProfileAttributesForChart(userAttributesData)}
         className="lg:col-span-3"
       />

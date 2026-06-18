@@ -23,7 +23,6 @@ export async function getUserProfileSummaryService(
           };
         }
         case 'NotFoundError': {
-          console.log('DETAILS', dashboardErr.details?.errorCode);
           if (dashboardErr.details?.errorCode === 'USER_PROFILE_NOT_FOUND') {
             return {
               type: 'EmptyProfile',

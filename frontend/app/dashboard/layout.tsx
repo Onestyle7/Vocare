@@ -42,10 +42,7 @@ export default async function DashboardLayoutPage({ children }: { children: Reac
           <SidebarProvider>
             <DashboardSidebar />
             <div className="flex min-w-0 flex-1 flex-col">
-              <DashboardHeader
-                fullName={`${userProfileData?.firstName} ${userProfileData?.lastName}`}
-                email={userProfileData?.email ?? ''}
-              />
+              <DashboardHeader userProfileData={userProfileData} />
               <main className="min-w-0 flex-1 overflow-x-hidden">{children}</main>
             </div>
           </SidebarProvider>
