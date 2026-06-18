@@ -324,7 +324,7 @@ const Features = () => {
                 1. Krok
               </h4>
               <p className="text-[13px] leading-relaxed font-light text-[#F1F4FF] opacity-[0.46] sm:text-[14px]">
-                Wskaż kierunek kariery z wygenerowanych propozycji lub stwórz własny
+                Wskaż kierunek kariery z wygenerowanych propozycji
               </p>
             </div>
 

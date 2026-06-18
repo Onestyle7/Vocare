@@ -29,7 +29,8 @@ async function authProxy(request: NextRequest) {
 
   if (
     !request.cookies.has('token') &&
-    restrictedPages.some((page) => request.nextUrl.pathname.startsWith(page))
+    isRestrictedPath(request.nextUrl.pathname) &&
+    !isPublicAssetPath(request.nextUrl.pathname)
   ) {
     const signInUrl = new URL('/sign-in', request.url);
     return NextResponse.redirect(signInUrl);
@@ -39,7 +40,21 @@ async function authProxy(request: NextRequest) {
 }
 
 const authPages = ['/sign-in', '/sign-up', '/forgot-password', '/reset-password'];
-const restrictedPages = ['/dashboard', '/dashboard/resume', '/dashboard/roadmap'];
+const restrictedExactPages = ['/dashboard'];
+const restrictedPagePrefixes = ['/dashboard/', '/resume/', '/roadmap/'];
+const publicAssetExtensionPattern =
+  /\.(?:avif|webp|png|jpe?g|gif|svg|ico|mp4|webm|mov|woff2?|ttf|otf|eot|json|txt|xml|pdf)$/i;
+
+function isRestrictedPath(pathname: string) {
+  return (
+    restrictedExactPages.includes(pathname) ||
+    restrictedPagePrefixes.some((prefix) => pathname.startsWith(prefix))
+  );
+}
+
+function isPublicAssetPath(pathname: string) {
+  return publicAssetExtensionPattern.test(pathname);
+}
 
 export const config = {
   matcher: ['/:path*'],

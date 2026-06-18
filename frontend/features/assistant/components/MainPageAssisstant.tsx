@@ -169,18 +169,18 @@ export default function AssistantPage({
 
   return (
     <Section
-      className="relative -mt-[5.25rem] flex items-center justify-center pt-[3.5rem]"
+      className="relative -mt-[5.25rem] flex w-full items-center justify-center overflow-x-hidden pt-[3.5rem]"
       crosses
       crossesOffset="lg:translate-y-[7.5rem]"
       customPaddings
       id="profile"
     >
-      <div className="mt-8 xl:mx-10 xl:mt-12 2xl:mx-30">
-        <div className="font-korbin mx-auto flex flex-col items-center justify-center p-4 md:p-8">
+      <div className="mt-8 w-full min-w-0 px-4 xl:mt-12 xl:px-10 2xl:px-30">
+        <div className="font-korbin mx-auto flex w-full max-w-7xl min-w-0 flex-col items-center justify-center md:p-8">
           <h2 className="font-korbin mt-1 mb-6 flex h-[38px] w-[180px] items-center justify-center rounded-full border-[0.5px] border-white/60 text-sm">
             Doradca kariery AI
           </h2>
-          <div className="relative mb-4 w-full rounded-[28px] bg-[linear-gradient(90deg,rgba(146,150,253,1)_0%,rgba(132,145,254,1)_50%,rgba(199,169,254,1)_100%,rgba(157,155,255,1)_77%)] px-1 pt-16 pb-1">
+          <div className="relative mb-4 w-full min-w-0 rounded-[28px] bg-[linear-gradient(90deg,rgba(146,150,253,1)_0%,rgba(132,145,254,1)_50%,rgba(199,169,254,1)_100%,rgba(157,155,255,1)_77%)] px-1 pt-16 pb-1">
             {/* „Belka” nad kafelkiem – dokładnie jak Best Deal */}
             <div className="absolute top-4 left-1/2 flex w-full -translate-x-1/2 items-center justify-center gap-2">
               <Undo2 className="h-5 w-5 -rotate-90 text-white" />
@@ -188,8 +188,8 @@ export default function AssistantPage({
             </div>
 
             {/* Właściwy kafelek z rekomendacją */}
-            <div className="clip-corner-bevel relative z-30 flex flex-col overflow-hidden rounded-[24px] border shadow-sm backdrop-blur-md md:flex-row dark:border-gray-500/40 dark:bg-[#090d16]">
-              <div className="relative flex items-center justify-center overflow-hidden p-4 md:w-1/6 md:border-r">
+            <div className="clip-corner-bevel relative z-30 flex w-full min-w-0 flex-col overflow-hidden rounded-[24px] border shadow-sm backdrop-blur-md md:flex-row dark:border-gray-500/40 dark:bg-[#090d16]">
+              <div className="relative flex items-center justify-center overflow-hidden p-4 md:w-1/6 md:shrink-0 md:border-r">
                 <Image
                   src={cone_1}
                   alt="decor"
@@ -209,17 +209,17 @@ export default function AssistantPage({
                 </span>
               </div>
 
-              <div className="p-4 max-md:border-t md:w-5/6 md:p-6">
-                <div className="flex flex-row items-center justify-between">
-                  <h2 className="font-grotesk mb-1 text-xl">Najlepsze dopasowanie</h2>
+              <div className="min-w-0 p-4 max-md:border-t md:w-5/6 md:p-6">
+                <div className="flex min-w-0 flex-row items-center justify-between gap-3">
+                  <h2 className="font-grotesk mb-1 min-w-0 text-xl">Najlepsze dopasowanie</h2>
                   <CollapsibleButton isCollapsed={isCollapsed} toggleCollapse={toggleCollapse} />
                 </div>
 
-                <h3 className="text-md ibm-plex-mono-regular mb-2 w-fit rounded-lg border-gray-600/40 font-medium text-[#915EFF] sm:text-lg">
+                <h3 className="text-md ibm-plex-mono-regular mb-2 max-w-full rounded-lg border-gray-600/40 font-medium break-words text-[#915EFF] sm:text-lg">
                   {recommendations.recommendation.primaryPath}
                 </h3>
 
-                <p className="font-grotesk text-gray-400">
+                <p className="font-grotesk break-words text-gray-400">
                   {recommendations.recommendation.justification}
                 </p>
 

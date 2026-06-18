@@ -216,6 +216,30 @@ export const NavLinks: NavLink[] = [
   { label: 'Pricing', url: '/pricing' },
 ];
 
+type HeaderNavLinkConfig = Omit<NavLink, 'url'> & {
+  publicUrl?: string;
+  authenticatedUrl: string;
+};
+
+const HeaderNavLinks: HeaderNavLinkConfig[] = [
+  { label: 'Profil', authenticatedUrl: '/dashboard/profile' },
+  { label: 'Doradca', publicUrl: '/assistant', authenticatedUrl: '/dashboard/assistant' },
+  {
+    label: 'Analiza',
+    publicUrl: '/market-analysis',
+    authenticatedUrl: '/dashboard/market-analysis',
+  },
+  { label: 'Roadmap', publicUrl: '/roadmap', authenticatedUrl: '/dashboard/roadmap' },
+  { label: 'Kreator', publicUrl: '/resume-creator', authenticatedUrl: '/dashboard/resume' },
+  { label: 'Pricing', publicUrl: '/pricing', authenticatedUrl: '/pricing' },
+];
+
+export const getHeaderNavLinks = (isAuthenticated: boolean): NavLink[] =>
+  HeaderNavLinks.flatMap(({ publicUrl, authenticatedUrl, ...link }) => {
+    const url = isAuthenticated ? authenticatedUrl : publicUrl;
+    return url ? [{ ...link, url }] : [];
+  });
+
 // export const companies = [
 //   { name: 'Google', url: 'https://cdn.magicui.design/companies/Google.svg' },
 //   { name: 'Microsoft', url: 'https://cdn.magicui.design/companies/Microsoft.svg' },

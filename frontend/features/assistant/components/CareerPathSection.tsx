@@ -21,14 +21,13 @@ import { Skeleton } from '@/components/ui/skeleton';
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
 import ReusableCard from '@/features/market-analysis/components/AssistantCards';
 import SwotAnalysis from '@/features/market-analysis/components/SwotAnalysis';
-
+import { cone_3, cone_4, cone_5, cone_6, cone_7, cone_8 } from '@/features/marketing/constants';
 import { useCollapse } from '@/lib/hooks/useCollapse';
 import { CareerPathMatchResult, ConfidenceLevel, ScoredJobOffer } from '@/lib/types/jobOffers';
 import { CareerPath } from '@/lib/types/recommendation';
 
 import CollapsibleButton from './CollapsibleButton';
 import HorizontalCarousel from './HorizontalCarousel';
-import { cone_3, cone_4, cone_5, cone_6, cone_7, cone_8 } from '@/features/marketing/constants';
 
 const conePairs = [
   [cone_3, cone_4],
@@ -279,8 +278,8 @@ export default function CareerPathSection({
   };
 
   return (
-    <div className="clip-corner-bevel mb-4 flex flex-col overflow-hidden rounded-[28px] border-t border-b border-l shadow-sm sm:border md:flex-row">
-      <div className="relative flex items-center justify-center overflow-hidden p-4 md:w-1/6 md:border-r md:p-8">
+    <div className="clip-corner-bevel mb-4 flex w-full min-w-0 flex-col overflow-hidden rounded-[28px] border-t border-b border-l shadow-sm sm:border md:flex-row">
+      <div className="relative flex items-center justify-center overflow-hidden p-4 md:w-1/6 md:shrink-0 md:border-r md:p-8">
         <Image
           src={leftImg}
           alt="decor"
@@ -300,7 +299,7 @@ export default function CareerPathSection({
         </span>
       </div>
 
-      <div className="p-4 max-md:border-t md:w-5/6 md:p-6">
+      <div className="min-w-0 p-4 max-md:border-t md:w-5/6 md:p-6">
         <div className="mb-3 flex flex-wrap items-start justify-between gap-3 sm:mb-0">
           <h2 className="font-grotesk mb-1 text-xl">Alternatywna ścieżka</h2>
           <div className="relative flex items-center gap-2">
@@ -329,11 +328,11 @@ export default function CareerPathSection({
           </div>
         </div>
 
-        <h3 className="text-md ibm-plex-mono-regular mb-2 font-medium text-[#915EFF] sm:text-lg">
+        <h3 className="text-md ibm-plex-mono-regular mb-2 max-w-full font-medium break-words text-[#915EFF] sm:text-lg">
           {path.careerName}
         </h3>
 
-        <p className="font-grotesk text-gray-500">{path.description}</p>
+        <p className="font-grotesk break-words text-gray-500">{path.description}</p>
 
         <div
           ref={contentWrapperRef}

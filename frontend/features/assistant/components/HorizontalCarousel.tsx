@@ -27,7 +27,7 @@ export default function HorizontalCarousel({
 
   return (
     <div
-      className="relative w-full max-w-full" // ⬅️ Dodane max-w-full
+      className="relative w-full max-w-full min-w-0 overflow-hidden"
       style={
         {
           // mobile 1 karta, na lg ~2.33 karty
@@ -42,7 +42,7 @@ export default function HorizontalCarousel({
         className="no-scrollbar flex w-full max-w-full snap-x snap-mandatory overflow-x-auto px-1"
         style={{
           width: '100%',
-          maxWidth: '80vw',
+          maxWidth: '100%',
         }}
       >
         {children}
