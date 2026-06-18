@@ -437,9 +437,9 @@ export default function ProfileDetails() {
 
             <div className="bg-background dark:bg-background relative z-20 w-full rounded-xl border p-4 xl:h-3/4 xl:w-3/5 2xl:w-1/2">
               <div className="flex h-full flex-col">
-                <div className="flex flex-col gap-4 border-b pb-4 sm:flex-row sm:items-start sm:justify-between">
-                  <div className="flex items-start justify-between gap-3">
-                    <h1 className="text-2xl font-bold text-gray-800 xl:text-3xl dark:text-gray-200">
+                <div className="flex min-w-0 flex-col gap-4 border-b pb-4 2xl:flex-row 2xl:items-start 2xl:justify-between">
+                  <div className="flex min-w-0 items-start justify-between gap-3">
+                    <h1 className="min-w-0 text-2xl font-bold break-words text-gray-800 xl:text-3xl dark:text-gray-200">
                       {isProfileEmpty ? 'Mój Profil' : `${profile?.firstName} ${profile?.lastName}`}
                     </h1>
                     <div className="flex items-center gap-2 sm:hidden">
@@ -476,13 +476,13 @@ export default function ProfileDetails() {
                       </Button>
                     </div>
                   </div>
-                  <div className="flex w-full flex-col gap-3 sm:w-auto sm:flex-row sm:items-center sm:justify-end sm:gap-2">
-                    <div className="grid w-full grid-cols-1 gap-2 sm:flex sm:w-auto sm:flex-row sm:flex-nowrap sm:justify-end">
-                      <UploadCvButton className="order-1 w-full sm:order-1 sm:w-auto" />
+                  <div className="flex w-full min-w-0 flex-col gap-3 2xl:w-auto 2xl:flex-row 2xl:items-center 2xl:justify-end 2xl:gap-2">
+                    <div className="flex w-full min-w-0 flex-wrap justify-start gap-2 2xl:w-auto 2xl:flex-nowrap">
+                      <UploadCvButton className="order-1 max-w-full sm:order-1" />
                       <Button
                         onClick={handleEdit}
                         size="lg"
-                        className="order-2 w-full justify-center rounded-lg bg-[#915EFF] text-white shadow-[0_12px_30px_rgba(145,94,255,0.35)] transition-shadow hover:bg-[#a779ff] hover:shadow-[0_16px_38px_rgba(145,94,255,0.4)] sm:order-2 sm:w-auto sm:px-6"
+                        className="order-2 shrink-0 justify-center rounded-lg bg-[#915EFF] text-white shadow-[0_12px_30px_rgba(145,94,255,0.35)] transition-shadow hover:bg-[#a779ff] hover:shadow-[0_16px_38px_rgba(145,94,255,0.4)] max-sm:w-full sm:order-2 sm:px-6"
                       >
                         Edytuj
                       </Button>
@@ -490,7 +490,7 @@ export default function ProfileDetails() {
                         asChild
                         variant="outline"
                         size="lg"
-                        className="order-3 hidden h-10 w-10 justify-center rounded-full p-0 sm:order-3 sm:inline-flex sm:w-10 sm:rounded-[7px]"
+                        className="order-3 hidden h-10 w-10 shrink-0 justify-center rounded-full p-0 sm:order-3 sm:inline-flex sm:w-10 sm:rounded-[7px]"
                         aria-label="Subskrypcja"
                       >
                         <Link href="/dashboard/profile/payments">
@@ -502,7 +502,7 @@ export default function ProfileDetails() {
                         disabled={isPending}
                         variant="outline"
                         size="lg"
-                        className="order-4 hidden h-10 w-10 justify-center rounded-full p-0 sm:order-4 sm:inline-flex sm:w-10 sm:rounded-[7px]"
+                        className="order-4 hidden h-10 w-10 shrink-0 justify-center rounded-full p-0 sm:order-4 sm:inline-flex sm:w-10 sm:rounded-[7px]"
                         aria-label="Wyloguj"
                       >
                         {isPending ? (

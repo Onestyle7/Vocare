@@ -7,7 +7,7 @@ import { usePathname } from 'next/navigation';
 import React, { useEffect, useRef } from 'react';
 
 import { Sheet, SheetClose, SheetContent, SheetTitle, SheetTrigger } from '@/components/ui/sheet';
-import { logo, NavLinks } from '@/features/marketing/constants';
+import { getHeaderNavLinks, logo } from '@/features/marketing/constants';
 import { useIsMobile } from '@/lib/hooks/useIsMobile';
 import { cn } from '@/lib/utils';
 
@@ -71,7 +71,7 @@ const MobileNav: React.FC<MobileNavProps> = ({ isAuthenticated }) => {
     }
   }, [isOpen]);
 
-  const filteredLinks = NavLinks;
+  const filteredLinks = getHeaderNavLinks(isAuthenticated);
   const ctaHref = isAuthenticated ? '/dashboard' : '/sign-in';
   const ctaLabel = isAuthenticated ? 'Pulpit' : 'Zaloguj się';
 

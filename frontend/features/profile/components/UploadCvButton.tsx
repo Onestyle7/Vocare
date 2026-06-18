@@ -41,10 +41,10 @@ export default function UploadCvButton({ className }: UploadCvButtonProps) {
     }
 
     setIsUploading(true);
-    
+
     // Cała logika HTTP, komend serwerowych i obsługi błędów jest w hooku!
     await handleCvImport(file);
-    
+
     setIsUploading(false);
     event.target.value = '';
   };
