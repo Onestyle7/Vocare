@@ -88,7 +88,7 @@ export function ForgotPasswordForm() {
     <>
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)} className="auth-form font-poppins">
-          <h1 className="form-title">Reset Password</h1>
+          <h1 className="form-title">Zresetuj hasło</h1>
 
           {serverError && (
             <div className="mb-4 rounded-md border border-red-200 bg-red-50 p-3 text-sm text-red-600">
@@ -105,7 +105,7 @@ export function ForgotPasswordForm() {
                   <FormLabel className="shad-form-label mb-2">E-mail</FormLabel>
                   <FormControl>
                     <Input
-                      placeholder="Enter Your e-mail"
+                      placeholder="johndoe@gmail.com"
                       className="input-profile"
                       type="email"
                       autoComplete="email"
@@ -123,7 +123,7 @@ export function ForgotPasswordForm() {
             className="group form-button"
             disabled={isPending || !form.watch('email') || !!form.formState.errors.email}
           >
-            {isPending ? 'Sending...' : 'Reset Password'}
+            {isPending ? 'Sending...' : 'Zresetuj'}
             <span className="arrow-animation">
               <ArrowRight />
             </span>
@@ -143,7 +143,7 @@ export function ForgotPasswordForm() {
               href="/sign-in"
               className="relative ml-2 font-semibold text-[#915EFF] transition duration-300 after:absolute after:bottom-0 after:left-0 after:h-[2px] after:w-0 after:bg-[#915EFF] after:transition-all after:duration-300 after:content-[''] hover:after:w-full"
             >
-              I remember the password
+              Jednak pamiętam hasło
             </Link>
           </div>
         </form>
