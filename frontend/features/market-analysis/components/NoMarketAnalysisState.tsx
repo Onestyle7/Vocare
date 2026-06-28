@@ -38,8 +38,7 @@ export default function NoMarketAnalysisState({
   const { tokenBalance, hasActiveSubscription } = useTokenBalanceContext();
 
   const hasEnoughTokens =
-    hasActiveSubscription ||
-    (typeof tokenBalance === 'number' && tokenBalance >= GENERATE_PRICE);
+    hasActiveSubscription || (typeof tokenBalance === 'number' && tokenBalance >= GENERATE_PRICE);
 
   const handleConfirmGenerate = () => {
     setIsDialogOpen(false);
@@ -92,7 +91,7 @@ export default function NoMarketAnalysisState({
                           <Plus className="h-4 w-4" />
                           Wygeneruj
                           {!hasActiveSubscription && (
-                            <span className="opacity-70 text-xs">• {GENERATE_PRICE} tokenów</span>
+                            <span className="text-xs opacity-70">• {GENERATE_PRICE} tokenów</span>
                           )}
                         </Button>
                       </>
@@ -114,8 +113,8 @@ export default function NoMarketAnalysisState({
             <AlertDialogDescription className="text-foreground text-center">
               {!hasActiveSubscription ? (
                 <>
-                  Zostanie pobrane{' '}
-                  <b className="text-[#915EFF]">{GENERATE_PRICE} tokenów</b> z Twojego konta.
+                  Zostanie pobrane <b className="text-[#915EFF]">{GENERATE_PRICE} tokenów</b> z
+                  Twojego konta.
                   {!hasEnoughTokens && (
                     <p className="mt-2 text-sm text-red-500">
                       Niewystarczające saldo ({tokenBalance}/{GENERATE_PRICE} tokenów)

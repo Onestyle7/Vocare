@@ -159,7 +159,6 @@ const NarrationCard = ({ title, text, icon }: NarrationCardProps) => (
   </div>
 );
 
-
 const SalaryChart = ({ progression }: { progression?: SalaryProgressionDto[] }) => {
   const data = (progression ?? []).map((item) => ({
     level: item.careerLevel,

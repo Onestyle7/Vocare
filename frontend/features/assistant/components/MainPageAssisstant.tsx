@@ -98,7 +98,7 @@ export default function AssistantPage({
       const newUrl = pathname + (params.toString() ? `?${params.toString()}` : '');
       router.replace(newUrl, { scroll: false });
     }
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const matchByName = useMemo(() => {
