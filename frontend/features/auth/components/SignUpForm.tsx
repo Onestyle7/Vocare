@@ -146,13 +146,13 @@ export function SignUpForm() {
 
           <FormField
             control={form.control}
-            name="marketingConsent"
+            name="acceptMarketingConsent"
             render={({ field }) => (
               <FormItem className="w-full space-y-2 rounded-lg border border-transparent transition-colors">
                 <div className="flex items-start gap-3">
                   <FormControl>
                     <Checkbox
-                      id="marketingConsent"
+                      id="acceptMarketingConsent"
                       checked={field.value}
                       onCheckedChange={(checked) => field.onChange(checked === true)}
                     />

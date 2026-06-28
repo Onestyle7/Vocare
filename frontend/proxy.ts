@@ -1,4 +1,4 @@
-import type { NextRequest } from 'next/server';
+import { NextRequest } from 'next/server';
 import { NextResponse } from 'next/server';
 
 export async function proxy(request: NextRequest) {
@@ -33,6 +33,8 @@ async function authProxy(request: NextRequest) {
     !isPublicAssetPath(request.nextUrl.pathname)
   ) {
     const signInUrl = new URL('/sign-in', request.url);
+    signInUrl.searchParams.append('callbackUrl', request.nextUrl.pathname);
+    signInUrl.searchParams.append('reason', 'Sesja wygasła. Zaloguj się ponownie');
     return NextResponse.redirect(signInUrl);
   }
 

@@ -300,4 +300,4 @@ obj/
 
 # Agent files
 .gemini
-.agents
+.instructions

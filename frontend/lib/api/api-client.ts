@@ -4,6 +4,7 @@ import { err, ok, Result } from 'neverthrow';
 import { cookies } from 'next/headers';
 
 import env from '../env/server';
+import { Logger } from '../logger';
 import { BaseAppError, BaseAppErrorDetails } from '../types/result';
 
 interface ApiConfig {
@@ -92,15 +93,15 @@ export class ApiClient {
     const requestOptions = await this.buildRequestOptions(options);
 
     try {
-      // console.log('REQUEST_LOGGER', { url, ...requestOptions });
+      Logger.debug('[REQUEST LOGGER]', { url, ...requestOptions });
       const response = await fetch(url, {
         ...requestOptions,
       });
 
       if (!response.ok) {
-        // console.log('RAW_ERROR', response);
+        Logger.debug('[RAW ERROR]', response);
         const error = await this.handleErrorResponse(response);
-        // console.log('ERROR_LOGGER', error);
+        Logger.error(error);
         return error;
       }
 
@@ -110,7 +111,7 @@ export class ApiClient {
         return err(parseResult.error);
       }
 
-      // console.log('RESPONSE_LOGGER', parseResult);
+      Logger.debug('[RESPONSE LOGGER]', parseResult);
 
       return ok({
         success: true,

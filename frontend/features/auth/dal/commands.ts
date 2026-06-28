@@ -23,9 +23,11 @@ import {
   verifyOauthTokenService,
 } from './services';
 
-export async function OAuthSignIn(provider: OAuthProvider) {
+export async function OAuthSignIn(provider: OAuthProvider, callbackUrl?: string) {
   const oAuthClient = getOauthClient(provider);
-  redirect(oAuthClient.createAuthUrl());
+  const redirectUrl = oAuthClient.createAuthUrl(await cookies(), { callbackUrl });
+  console.log('[OAUTH REDIRECT URL]', redirectUrl);
+  redirect(redirectUrl);
 }
 
 export async function OAuthVerify(provider: OAuthProvider, providerToken: string) {

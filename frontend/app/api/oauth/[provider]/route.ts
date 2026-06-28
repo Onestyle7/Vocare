@@ -5,7 +5,7 @@ import z from 'zod';
 
 import { getOAuthEndpoint } from '@/features/auth/dal/api';
 import { verifyOauthTokenService } from '@/features/auth/dal/services';
-import { getOauthClient, oAuthProviders } from '@/features/auth/oauth/base';
+import { getOauthClient, oAuthProviders, STATE_COOKIE_KEY } from '@/features/auth/oauth/base';
 
 export async function GET(
   request: NextRequest,
@@ -13,10 +13,11 @@ export async function GET(
 ) {
   const { provider: rawProvider } = await params;
   const code = request.nextUrl.searchParams.get('code');
+  const state = request.nextUrl.searchParams.get('state');
   const provider = z.enum(oAuthProviders).parse(rawProvider);
   const redirectUrl = new URL('/sign-in', request.url);
 
-  if (typeof code !== 'string') {
+  if (typeof code !== 'string' || typeof state !== 'string') {
     redirectUrl.searchParams.set(
       'oauthError',
       'Nie udało się połączyć z serwerem. Spróbuj ponownie'
@@ -25,7 +26,7 @@ export async function GET(
   }
 
   const oAuthClient = getOauthClient(provider);
-  const tokenResult = await oAuthClient.fetchToken(code);
+  const tokenResult = await oAuthClient.fetchToken(code, state, await cookies());
   if (tokenResult.isErr()) {
     console.error(`${provider} error: ${tokenResult.error}`);
     redirectUrl.searchParams.set(
@@ -46,9 +47,17 @@ export async function GET(
   const cookieStore = await cookies();
   cookieStore.set('token', result.value.accessToken, {
     httpOnly: true,
+    secure: process.env.NODE_ENV !== 'development',
     sameSite: 'lax',
     path: '/',
   });
+  cookieStore.delete(STATE_COOKIE_KEY);
+
+  const callbackUrl = cookieStore.get('oauthCallbackUrl')?.value;
+  if (callbackUrl) {
+    cookieStore.delete('oauthCallbackUrl');
+  }
+
   cookieStore.set('userId', result.value.userId, { httpOnly: true, sameSite: 'lax', path: '/' });
-  redirect('/dashboard');
+  redirect(callbackUrl || '/dashboard');
 }

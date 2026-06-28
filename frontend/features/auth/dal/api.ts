@@ -38,7 +38,7 @@ export type RegisterCommand = {
   email: string;
   password: string;
   confirmPassword: string;
-  marketingConsent: boolean;
+  acceptMarketingConsent: boolean;
 };
 
 export type ForgotPasswordCommand = {
