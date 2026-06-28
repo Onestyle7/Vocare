@@ -60,6 +60,9 @@ import { Button } from '../../../components/ui/button';
 import { Separator } from '../../../components/ui/separator';
 import { MarketAnalysisDomainError } from '../dal/services';
 import { useMarketAnalysisActions } from '../hooks/useMarketAnalysisActions';
+import { GridBackgroundDemo } from './GridBackgroundDemo';
+import { TerminalDemo } from './LoadingTerminal';
+import NoMarketAnalysisState from './NoMarketAnalysisState';
 
 const numberFormatter = new Intl.NumberFormat('pl-PL');
 
@@ -156,68 +159,6 @@ const NarrationCard = ({ title, text, icon }: NarrationCardProps) => (
   </div>
 );
 
-type EmptyAnalysisStateProps = {
-  error?: string | null;
-  requiresCareerPaths?: boolean;
-  onOpenAdvisor: () => void;
-  onGenerateAnalysis: () => void;
-  isGenerating: boolean;
-  isLoading: boolean;
-};
-
-const EmptyAnalysisState = ({
-  error,
-  requiresCareerPaths,
-  onOpenAdvisor,
-}: EmptyAnalysisStateProps) => (
-  <div className="relative overflow-hidden rounded-3xl border p-10 shadow-2xl shadow-slate-950/40">
-    <div className="pointer-events-none absolute inset-0"></div>
-
-    <div className="relative z-10 flex flex-col gap-8">
-      <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
-        <div className="space-y-3">
-          <div>
-            <h3 className="text-3xl font-semibold text-white">Zacznij od ścieżki zawodowej</h3>
-            <p className="mt-2 max-w-2xl text-sm text-slate-300">
-              {requiresCareerPaths
-                ? 'Aby stworzyć analizę rynku, wygeneruj rekomendacje kariery w Doradcy. Na ich podstawie dobierzemy branże, wynagrodzenia i popyt na umiejętności dopasowane pod Twój profil.'
-                : error ||
-                  'Najpierw wygeneruj rekomendacje zawodowe w "Doradcy", a następnie uruchom tworzenie analizy rynku.'}
-            </p>
-          </div>
-        </div>
-
-        <div className="flex w-full flex-col gap-3 sm:w-auto sm:flex-row">
-          <Button
-            onClick={onOpenAdvisor}
-            className="group h-11 rounded-[10px] border border-slate-700/80 bg-white px-4 font-semibold text-[#0b0d14] transition hover:-translate-y-1 hover:shadow-[0_10px_40px_rgba(255,255,255,0.18)]"
-          >
-            Przejdź do Doradcy
-            <ArrowRight className="ml-2 h-4 w-4 transition group-hover:translate-x-1" />
-          </Button>
-        </div>
-      </div>
-
-      <div className="grid gap-3 md:grid-cols-2">
-        <div className="rounded-2xl border p-4 shadow-inner shadow-white/5">
-          <p className="text-xs text-slate-400">Krok 1</p>
-          <h4 className="text-lg font-semibold text-white">Rekomendacje zawodowe</h4>
-          <p className="mt-2 text-sm text-slate-300">
-            Uzupełnij profil i preferencje, aby asystent AI zapisał Twoje ścieżki kariery.
-          </p>
-        </div>
-        <div className="rounded-2xl border p-4 shadow-inner shadow-white/5">
-          <p className="text-xs text-slate-400">Krok 2</p>
-
-          <h4 className="text-lg font-semibold text-white">Analiza rynku</h4>
-          <p className="mt-2 text-sm text-slate-300">
-            Na bazie rekomendacji wygenerujemy trendy, popyt na umiejętności oraz prognozy płac.
-          </p>
-        </div>
-      </div>
-    </div>
-  </div>
-);
 
 const SalaryChart = ({ progression }: { progression?: SalaryProgressionDto[] }) => {
   const data = (progression ?? []).map((item) => ({
@@ -503,6 +444,8 @@ export default function DetailedMarketAnalysis({
   const showEmptyState = !isGenerating && (!analysis || !hasAnalysisContent);
   const errorMsg = errorObj?.message || null;
 
+  const openAdvisor = () => router.push('/dashboard/assistant');
+
   const maxSalaryValue = useMemo(() => {
     if (!analysis?.industryStatistics?.length) return 0;
     let max = 0;
@@ -520,7 +463,24 @@ export default function DetailedMarketAnalysis({
 
   const generationDate = useMemo(() => new Date().toLocaleDateString('pl-PL'), []);
 
-  const openAdvisor = () => router.push('/dashboard/assistant');
+  if (isGenerating && !hasAnalysisContent) {
+    return (
+      <div className="mx-auto mt-20 mb-1 flex h-screen max-w-7xl flex-col items-center justify-center overflow-hidden rounded-[28px] max-xl:mx-4">
+        <GridBackgroundDemo />
+        <TerminalDemo />
+      </div>
+    );
+  }
+
+  if (showEmptyState) {
+    return (
+      <NoMarketAnalysisState
+        requiresCareerPaths={requiresCareerPaths}
+        onOpenAdvisor={openAdvisor}
+        onGenerate={handleGenerateNewAnalysis}
+      />
+    );
+  }
 
   const downloadPdf = async () => {
     if (!pdfReportRef.current || !analysis || !hasAnalysisContent) return;
@@ -720,15 +680,6 @@ export default function DetailedMarketAnalysis({
               ))}
             </div>
           </div>
-        ) : showEmptyState ? (
-          <EmptyAnalysisState
-            error={errorMsg}
-            requiresCareerPaths={requiresCareerPaths}
-            onOpenAdvisor={openAdvisor}
-            onGenerateAnalysis={handleGenerateNewAnalysis}
-            isGenerating={isGenerating}
-            isLoading={isLoading}
-          />
         ) : null}
       </div>
       {analysis && hasAnalysisContent && (

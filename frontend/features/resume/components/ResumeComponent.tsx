@@ -1956,12 +1956,12 @@ const CVCreator: React.FC<CVCreatorProps> = ({ initialCv }) => {
                   <GripVertical size={20} />
                 </span>
                 <User className="mr-2" size={20} />
-                Personal profile
+                Profil osobisty
               </h2>
             </div>
             <p className="mb-4 text-sm text-gray-600">
-              A short summary at the top of your CV that highlights relevant experience and
-              qualifications in 4–6 sentences.
+              Krótki opis na początku CV, który w 4–6 zdaniach podkreśla Twoje odpowiednie
+              doświadczenie i kwalifikacje.
             </p>
             <RichTextToolbar
               className="mb-2"
@@ -2011,7 +2011,7 @@ const CVCreator: React.FC<CVCreatorProps> = ({ initialCv }) => {
               <button
                 className={`flex flex-row items-center justify-center rounded-sm border bg-[#915EFF] px-3 py-2 text-sm text-white transition-all hover:bg-[#713ae8] focus:outline-none ${isPremium ? 'cursor-pointer' : 'cursor-not-allowed opacity-50'}`}
               >
-                <span className="text-sm text-white">Achieve more with AI</span>
+                <span className="text-sm text-white">Popraw z AI</span>
                 <StarsIcon className="ml-2 scale-70" />
               </button>
             </div>
@@ -2058,12 +2058,12 @@ const CVCreator: React.FC<CVCreatorProps> = ({ initialCv }) => {
                   <GripVertical size={20} />
                 </span>
                 <Briefcase className="mr-2" size={20} />
-                Work experience
+                Doświadczenie zawodowe
               </h2>
             </div>
             <p className="mb-4 text-sm text-gray-600">
-              Showcase your achievements by describing your daily responsibilities in 3–6 sentences,
-              then list at least two key accomplishments.
+              Przedstaw swoje osiągnięcia, opisując codzienne obowiązki w 3–6 zdaniach, a następnie
+              wypisz co najmniej dwa kluczowe osiągnięcia.
             </p>
             {experiences.map((exp) => {
               const formattingState = experienceFormattingState[exp.id] ?? EMPTY_FORMATTING_STATE;
@@ -2078,14 +2078,14 @@ const CVCreator: React.FC<CVCreatorProps> = ({ initialCv }) => {
                       <div className="mb-2 grid grid-cols-1 gap-4 sm:grid-cols-2">
                         <input
                           type="text"
-                          placeholder="Company"
+                          placeholder="Firma"
                           value={exp.company}
                           onChange={(e) => updateExperience(exp.id, 'company', e.target.value)}
                           className="w-full rounded-sm border border-gray-300 px-3 py-3 focus:ring-2 focus:ring-blue-500 focus:outline-none"
                         />
                         <input
                           type="text"
-                          placeholder="Position"
+                          placeholder="Stanowisko"
                           value={exp.position}
                           onChange={(e) => updateExperience(exp.id, 'position', e.target.value)}
                           className="w-full rounded-sm border border-gray-300 px-3 py-3 focus:ring-2 focus:ring-blue-500 focus:outline-none"
@@ -2093,18 +2093,22 @@ const CVCreator: React.FC<CVCreatorProps> = ({ initialCv }) => {
                       </div>
                       <div className="mb-2 grid grid-cols-1 gap-4 sm:grid-cols-2">
                         <div>
-                          <label className="mb-1 block text-sm text-gray-600">Start date</label>
+                          <label className="mb-1 block text-sm text-gray-600">
+                            Data rozpoczęcia
+                          </label>
                           <DatePickerWithCurrent
                             value={exp.startDate}
                             onChange={(date) => updateExperience(exp.id, 'startDate', date)}
                             isCurrent={false}
                             onCurrentChange={() => {}}
                             showCurrentToggle={false}
-                            placeholder="Select start date"
+                            placeholder="Wybierz datę rozpoczęcia"
                           />
                         </div>
                         <div>
-                          <label className="mb-1 block text-sm text-gray-600">End date</label>
+                          <label className="mb-1 block text-sm text-gray-600">
+                            Data zakończenia
+                          </label>
                           <DatePickerWithCurrent
                             value={exp.endDate}
                             onChange={(date) => updateExperience(exp.id, 'endDate', date)}
@@ -2112,7 +2116,7 @@ const CVCreator: React.FC<CVCreatorProps> = ({ initialCv }) => {
                             onCurrentChange={(current) =>
                               updateExperience(exp.id, 'isCurrent', current)
                             }
-                            placeholder="Select end date"
+                            placeholder="Wybierz datę zakończenia"
                           />
                         </div>
                       </div>
@@ -2178,14 +2182,18 @@ const CVCreator: React.FC<CVCreatorProps> = ({ initialCv }) => {
                           <HoverCardContent className="font-poppins w-80">
                             <div className="flex justify-between gap-4">
                               <div className="space-y-1">
-                                <h4 className="text-sm font-semibold">Will it acutally help me?</h4>
+                                <h4 className="text-sm font-semibold">
+                                  Czy to rzeczywiście mi pomoże?
+                                </h4>
                                 <p className="text-sm">
-                                  It&apos;ll surely do. Our AI models are trained specifically to
-                                  match requirements of the algorithms used by recruiters.
+                                  Zdecydowanie tak. Nasze modele AI są trenowane specjalnie po to,
+                                  aby dopasowywać CV do wymagań algorytmów używanych przez
+                                  rekruterów.
                                 </p>
-                                <div className="text-muted-foreground text-xs">
-                                  Confirmed by 1000+ users.
-                                </div>
+                                {/* do odkomentowania jak bedzie AI w CV */}
+                                {/* <div className="text-muted-foreground text-xs">
+                                  Potwierdzone przz 1000+ osób.
+                                </div> */}
                               </div>
                             </div>
                           </HoverCardContent>
@@ -2193,7 +2201,7 @@ const CVCreator: React.FC<CVCreatorProps> = ({ initialCv }) => {
                         <button
                           className={`flex flex-row items-center justify-center rounded-sm border bg-[#915EFF] px-3 py-2 text-sm text-white transition-all hover:bg-[#713ae8] focus:outline-none ${isPremium ? 'cursor-pointer' : 'cursor-not-allowed opacity-50'}`}
                         >
-                          <span className="text-sm text-white">Achieve more with AI</span>
+                          <span className="text-sm text-white">Popraw z AI</span>
                           <StarsIcon className="ml-2 scale-70" />
                         </button>
                       </div>
@@ -2207,7 +2215,7 @@ const CVCreator: React.FC<CVCreatorProps> = ({ initialCv }) => {
               className="flex cursor-pointer items-center font-medium text-[#915EFF]"
             >
               <span className="mr-2 text-xl">+</span>
-              Add work experience
+              Doświadczenie zawodowe
             </button>
           </div>
         );
@@ -2252,12 +2260,12 @@ const CVCreator: React.FC<CVCreatorProps> = ({ initialCv }) => {
                   <GripVertical size={20} />
                 </span>
                 <FolderOpen className="mr-2" size={20} />
-                Projects
+                Projekty
               </h2>
             </div>
             <p className="mb-4 text-sm text-gray-600">
-              Add your most relevant projects with a clickable title, repository or live link, and a
-              short description of what you built.
+              Dodaj swoje najważniejsze projekty z klikalnym tytułem, linkiem do repozytorium lub
+              wersji live oraz krótkim opisem tego, co zbudowałeś.
             </p>
             {projects.map((project) => (
               <div
@@ -2269,7 +2277,7 @@ const CVCreator: React.FC<CVCreatorProps> = ({ initialCv }) => {
                     <div className="mb-2 grid grid-cols-1 gap-4 sm:grid-cols-2">
                       <input
                         type="text"
-                        placeholder="Project title"
+                        placeholder="Tytuł projektu"
                         value={project.title}
                         onChange={(e) => updateProject(project.id, 'title', e.target.value)}
                         className="w-full rounded-sm border border-gray-300 px-3 py-3 focus:ring-2 focus:ring-blue-500 focus:outline-none"
@@ -2283,7 +2291,7 @@ const CVCreator: React.FC<CVCreatorProps> = ({ initialCv }) => {
                       />
                     </div>
                     <textarea
-                      placeholder="Short project description"
+                      placeholder="Krótki opis projektu"
                       value={project.description}
                       onChange={(e) => updateProject(project.id, 'description', e.target.value)}
                       rows={3}
@@ -2305,7 +2313,7 @@ const CVCreator: React.FC<CVCreatorProps> = ({ initialCv }) => {
               className="flex cursor-pointer items-center font-medium text-[#915EFF]"
             >
               <span className="mr-2 text-xl">+</span>
-              Add project
+              Dodaj projekt
             </button>
           </div>
         );
@@ -2350,12 +2358,12 @@ const CVCreator: React.FC<CVCreatorProps> = ({ initialCv }) => {
                   <GripVertical size={20} />
                 </span>
                 <GraduationCap className="mr-2" size={20} />
-                Education
+                Edukacja
               </h2>
             </div>
             <p className="mb-4 text-sm text-gray-600">
-              Add your education, whether it&apos;s secondary or higher. If needed, include relevant
-              courses, projects, or achievements (e.g. grades).
+              Dodaj swoje wykształcenie - średnie lub wyższe. W razie potrzeby uwzględnij
+              odpowiednie kursy, projekty lub osiągnięcia, np. oceny.
             </p>
             {education.map((edu) => {
               const formattingState = educationFormattingState[edu.id] ?? EMPTY_FORMATTING_STATE;
@@ -2370,21 +2378,21 @@ const CVCreator: React.FC<CVCreatorProps> = ({ initialCv }) => {
                       <div className="mb-2 grid grid-cols-1 gap-4 sm:grid-cols-2">
                         <input
                           type="text"
-                          placeholder="School/University"
+                          placeholder="Szkoła/Uczelnia"
                           value={edu.school}
                           onChange={(e) => updateEducation(edu.id, 'school', e.target.value)}
                           className="w-full rounded-sm border border-gray-300 px-3 py-3 focus:ring-2 focus:ring-blue-500 focus:outline-none"
                         />
                         <input
                           type="text"
-                          placeholder="Degree"
+                          placeholder="Stopień"
                           value={edu.degree}
                           onChange={(e) => updateEducation(edu.id, 'degree', e.target.value)}
                           className="w-full rounded-sm border border-gray-300 px-3 py-3 focus:ring-2 focus:ring-blue-500 focus:outline-none"
                         />
                         <input
                           type="text"
-                          placeholder="Field of study"
+                          placeholder="Kierunek studiów/szkoły"
                           value={edu.field}
                           onChange={(e) => updateEducation(edu.id, 'field', e.target.value)}
                           className="w-full rounded-sm border border-gray-300 px-3 py-3 focus:ring-2 focus:ring-blue-500 focus:outline-none"
@@ -2392,18 +2400,22 @@ const CVCreator: React.FC<CVCreatorProps> = ({ initialCv }) => {
                       </div>
                       <div className="mb-2 grid grid-cols-1 gap-4 sm:grid-cols-2">
                         <div>
-                          <label className="mb-1 block text-sm text-gray-600">Start date</label>
+                          <label className="mb-1 block text-sm text-gray-600">
+                            Data rozpoczęcia
+                          </label>
                           <DatePickerWithCurrent
                             value={edu.startDate}
                             onChange={(date) => updateEducation(edu.id, 'startDate', date)}
                             isCurrent={false}
                             onCurrentChange={() => {}}
                             showCurrentToggle={false}
-                            placeholder="Select start date"
+                            placeholder="Wybierz datę rozpoczęcia"
                           />
                         </div>
                         <div>
-                          <label className="mb-1 block text-sm text-gray-600">End date</label>
+                          <label className="mb-1 block text-sm text-gray-600">
+                            Data zakończenia
+                          </label>
                           <DatePickerWithCurrent
                             value={edu.endDate}
                             onChange={(date) => updateEducation(edu.id, 'endDate', date)}
@@ -2414,7 +2426,7 @@ const CVCreator: React.FC<CVCreatorProps> = ({ initialCv }) => {
                                 updateEducation(edu.id, 'endDate', '');
                               }
                             }}
-                            placeholder="Select end date"
+                            placeholder="Wybierz datę zakończenia"
                           />
                         </div>
                       </div>
@@ -2433,7 +2445,7 @@ const CVCreator: React.FC<CVCreatorProps> = ({ initialCv }) => {
                             delete educationTextareaRefs.current[edu.id];
                           }
                         }}
-                        placeholder="Achievements, coursework, GPA, notable projects"
+                        placeholder="Osiągnięcia, kursy/zajęcia, średnia ocen, ważne projekty."
                         value={stripFormattingTokens(edu.description)}
                         onChange={(e) => {
                           const plainValue = e.target.value;
@@ -2477,7 +2489,7 @@ const CVCreator: React.FC<CVCreatorProps> = ({ initialCv }) => {
               className="flex cursor-pointer items-center font-medium text-[#915EFF]"
             >
               <span className="mr-2 text-xl">+</span>
-              Add education
+              Edukacja
             </button>
           </div>
         );
@@ -2522,10 +2534,10 @@ const CVCreator: React.FC<CVCreatorProps> = ({ initialCv }) => {
                   <GripVertical size={20} />
                 </span>
                 <Award className="mr-2" size={20} />
-                Certificates
+                Certyfikaty
               </h2>
             </div>
-            <p className="mb-4 text-sm text-gray-600">List your certifications.</p>
+            <p className="mb-4 text-sm text-gray-600">Lista Twoich certyfiaktów</p>
             {certificates.map((cert) => (
               <div
                 key={cert.id}
@@ -2534,7 +2546,7 @@ const CVCreator: React.FC<CVCreatorProps> = ({ initialCv }) => {
                 <div className="flex flex-col gap-3 sm:flex-row sm:items-center">
                   <input
                     type="text"
-                    placeholder="Certificate name"
+                    placeholder="Nazwa certyfikatu"
                     value={cert.name}
                     onChange={(e) => updateCertificate(cert.id, 'name', e.target.value)}
                     className="flex-1 focus:outline-none"
@@ -2551,9 +2563,9 @@ const CVCreator: React.FC<CVCreatorProps> = ({ initialCv }) => {
                           updateCertificate(cert.id, 'date', '');
                         }
                       }}
-                      toggleLabel="Has date"
-                      toggledButtonText="No date"
-                      placeholder="Select date"
+                      toggleLabel="Ma datę"
+                      toggledButtonText="Bez daty"
+                      placeholder="Wybierz datę"
                     />
                   </div>
                   <button
@@ -2571,7 +2583,7 @@ const CVCreator: React.FC<CVCreatorProps> = ({ initialCv }) => {
               className="flex cursor-pointer items-center font-medium text-[#915EFF]"
             >
               <span className="mr-2 text-xl">+</span>
-              Add certificate
+              Dodaj certyfikat
             </button>
           </div>
         );
@@ -2616,11 +2628,12 @@ const CVCreator: React.FC<CVCreatorProps> = ({ initialCv }) => {
                   <GripVertical size={20} />
                 </span>
                 <Award className="mr-2" size={20} />
-                Skills
+                Umiejętności
               </h2>
             </div>
             <p className="mb-4 text-sm text-gray-600">
-              Describe your areas of specialization, focusing on relevant hard skills.
+              Opisz swoje obszary specjalizacji, koncentrując się na odpowiednich umiejętnościach
+              twardych.
             </p>
             {skills.map((skill) => (
               <div
@@ -2630,7 +2643,7 @@ const CVCreator: React.FC<CVCreatorProps> = ({ initialCv }) => {
                 <div className="flex items-center justify-between">
                   <input
                     type="text"
-                    placeholder="Skill name"
+                    placeholder="Nazwa umiejętności"
                     value={skill.name}
                     onChange={(e) => updateSkill(skill.id, 'name', e.target.value)}
                     className="flex-1 focus:outline-none"
@@ -2650,7 +2663,7 @@ const CVCreator: React.FC<CVCreatorProps> = ({ initialCv }) => {
               className="flex cursor-pointer items-center font-medium text-[#915EFF]"
             >
               <span className="mr-2 text-xl">+</span>
-              Add skill
+              Dodaj umiejętność
             </button>
           </div>
         );
@@ -2695,11 +2708,11 @@ const CVCreator: React.FC<CVCreatorProps> = ({ initialCv }) => {
                   <GripVertical size={20} />
                 </span>
                 <Languages className="mr-2" size={20} />
-                Languages
+                Języki
               </h2>
             </div>
             <p className="mb-4 text-sm text-gray-600">
-              Add the languages you know along with your level of proficiency.
+              Dodaj języki, które znasz, wraz z poziomem biegłości.
             </p>
             {languages.map((language) => (
               <div
@@ -2710,7 +2723,7 @@ const CVCreator: React.FC<CVCreatorProps> = ({ initialCv }) => {
                   <div className="flex flex-1 gap-3">
                     <input
                       type="text"
-                      placeholder="Language"
+                      placeholder="Język"
                       value={language.name}
                       onChange={(e) => updateLanguage(language.id, 'name', e.target.value)}
                       className="flex-1 focus:outline-none"
@@ -2746,7 +2759,7 @@ const CVCreator: React.FC<CVCreatorProps> = ({ initialCv }) => {
               className="flex cursor-pointer items-center font-medium text-[#915EFF]"
             >
               <span className="mr-2 text-xl">+</span>
-              Add language
+              Dodaj język
             </button>
           </div>
         );
@@ -2791,11 +2804,12 @@ const CVCreator: React.FC<CVCreatorProps> = ({ initialCv }) => {
                   <GripVertical size={20} />
                 </span>
                 <Tag className="mr-2" size={20} />
-                Hobby
+                Zainteresowania
               </h2>
             </div>
             <p className="mb-4 text-sm text-gray-600">
-              Add your interests and extracurricular activities that reflect your personality.
+              Dodaj swoje zainteresowania i aktywności pozalekcyjne, które odzwierciedlają Twoją
+              osobowość.
             </p>
             {hobbies.map((hobby) => (
               <div
@@ -2804,7 +2818,7 @@ const CVCreator: React.FC<CVCreatorProps> = ({ initialCv }) => {
               >
                 <input
                   type="text"
-                  placeholder="e.g. Reading, Traveling, Cooking"
+                  placeholder="np. czytanie, podróżowanie, gotowanie."
                   value={hobby.name}
                   onChange={(e) => updateHobby(hobby.id, 'name', e.target.value)}
                   className="flex-1 focus:outline-none"
@@ -2819,7 +2833,7 @@ const CVCreator: React.FC<CVCreatorProps> = ({ initialCv }) => {
             ))}
             <button onClick={addHobby} className="flex items-center font-medium text-[#915EFF]">
               <span className="mr-2 text-xl">+</span>
-              Add hobby
+              Dodaj zainteresowania
             </button>
           </div>
         );
@@ -2863,14 +2877,14 @@ const CVCreator: React.FC<CVCreatorProps> = ({ initialCv }) => {
                   <GripVertical size={20} />
                 </span>
                 <PencilLine className="mr-2" size={20} />
-                Privacy Statement
+                Klauzula informacyjna
               </h2>
             </div>
             <p className="mb-4 text-sm text-gray-600">
-              Add your privacy statement or data processing consent information.
+              Dodaj klauzulę informacyjną dotyczącą prywatności lub zgodę na przetwarzanie danych.
             </p>
             <textarea
-              placeholder="I agree to the processing of personal data provided in this document for the purposes of the recruitment process..."
+              placeholder="Wyrażam zgodę na przetwarzanie danych osobowych podanych w tym dokumencie na potrzeby procesu rekrutacyjnego..."
               value={privacyStatement.content}
               onChange={(e) =>
                 setPrivacyStatement({ ...privacyStatement, content: e.target.value })
@@ -2903,7 +2917,7 @@ const CVCreator: React.FC<CVCreatorProps> = ({ initialCv }) => {
             data-section="profile"
           >
             <h3 className="mb-2 border-b border-gray-300 pb-1 text-lg font-semibold text-gray-800">
-              Personal Profile
+              Profil osobisty
             </h3>
             <div className="text-sm leading-relaxed break-words text-gray-700">
               {splitRichTextParagraphs(personalInfo.summary || '').map((para, i) => (
@@ -2928,7 +2942,7 @@ const CVCreator: React.FC<CVCreatorProps> = ({ initialCv }) => {
           >
             <h3 className="mb-2 flex items-center border-b border-gray-300 pb-1 text-lg font-semibold text-gray-800">
               <Briefcase size={16} className="mr-2" />
-              Work Experience
+              Doświadczenie zawodowe
             </h3>
             {experiences.map((exp) => (
               <div key={exp.id} className="exp-item mb-4" data-item-id={exp.id}>
@@ -2944,7 +2958,7 @@ const CVCreator: React.FC<CVCreatorProps> = ({ initialCv }) => {
                   </div>
                   <div className="ml-2 flex-shrink-0 text-xs text-gray-600">
                     {formatDate(exp.startDate)} -{' '}
-                    {exp.isCurrent || !exp.endDate ? 'present' : formatDate(exp.endDate)}
+                    {exp.isCurrent || !exp.endDate ? 'obecnie' : formatDate(exp.endDate)}
                   </div>
                 </div>
 
@@ -2965,7 +2979,7 @@ const CVCreator: React.FC<CVCreatorProps> = ({ initialCv }) => {
           >
             <h3 className="mb-2 flex items-center border-b border-gray-300 pb-1 text-lg font-semibold text-gray-800">
               <FolderOpen size={16} className="mr-2" />
-              Projects
+              Projekty
             </h3>
             {projects.map((project) => {
               const projectUrl = normalizeExternalUrl(project.url);
@@ -3007,7 +3021,7 @@ const CVCreator: React.FC<CVCreatorProps> = ({ initialCv }) => {
           >
             <h3 className="mb-2 flex items-center border-b border-gray-300 pb-1 text-lg font-semibold text-gray-800">
               <GraduationCap size={16} className="mr-2" />
-              Education
+              Edukacja
             </h3>
             {education.map((edu) => (
               <div key={edu.id} className="edu-item mb-3" data-item-id={edu.id}>
@@ -3022,7 +3036,7 @@ const CVCreator: React.FC<CVCreatorProps> = ({ initialCv }) => {
                   </div>
                   <div className="ml-2 flex-shrink-0 text-xs text-gray-600">
                     {formatDate(edu.startDate)} -{' '}
-                    {edu.isCurrent || !edu.endDate ? 'present' : formatDate(edu.endDate)}
+                    {edu.isCurrent || !edu.endDate ? 'obecnie' : formatDate(edu.endDate)}
                   </div>
                 </div>
                 {edu.description && (
@@ -3046,7 +3060,7 @@ const CVCreator: React.FC<CVCreatorProps> = ({ initialCv }) => {
           >
             <h3 className="mb-2 flex items-center border-b border-gray-300 pb-1 text-lg font-semibold text-gray-800">
               <Award size={16} className="mr-2" />
-              Certificates
+              Certyfikaty
             </h3>
             <div className="space-y-1">
               {certificates.map((cert) => (
@@ -3071,7 +3085,7 @@ const CVCreator: React.FC<CVCreatorProps> = ({ initialCv }) => {
           >
             <h3 className="mb-2 flex items-center border-b border-gray-300 pb-1 text-lg font-semibold text-gray-800">
               <Award size={16} className="mr-2" />
-              Skills
+              Umiejętności
             </h3>
             <div className="flex flex-wrap gap-2">
               {skills.map((skill) => (
@@ -3096,7 +3110,7 @@ const CVCreator: React.FC<CVCreatorProps> = ({ initialCv }) => {
           >
             <h3 className="mb-2 flex items-center border-b border-gray-300 pb-1 text-lg font-semibold text-gray-800">
               <Languages size={16} className="mr-2" />
-              Languages
+              Języki
             </h3>
             <div className="flex flex-wrap gap-2">
               {languages.map((language) => (
@@ -3121,7 +3135,7 @@ const CVCreator: React.FC<CVCreatorProps> = ({ initialCv }) => {
           >
             <h3 className="mb-2 flex items-center border-b border-gray-300 pb-1 text-lg font-semibold text-gray-800">
               <Tag size={16} className="mr-2" />
-              Hobby
+              Zainteresowania
             </h3>
             <div className="flex flex-wrap gap-2">
               {hobbies.map((hobby) => (
@@ -3145,7 +3159,7 @@ const CVCreator: React.FC<CVCreatorProps> = ({ initialCv }) => {
             data-section="privacy"
           >
             <h3 className="mb-2 border-b border-gray-300 pb-1 text-lg font-semibold text-gray-800">
-              Privacy Statement
+              Klauzula informacyjna
             </h3>
             <div className="text-xs leading-relaxed break-words text-gray-700">
               {(privacyStatement.content || '')
@@ -3217,21 +3231,21 @@ const CVCreator: React.FC<CVCreatorProps> = ({ initialCv }) => {
       case 'profile':
         return (
           <h3 className="mb-2 border-b border-gray-300 pb-1 text-lg font-semibold text-gray-800">
-            Personal Profile
+            Profil osobisty
           </h3>
         );
       case 'experience':
         return (
           <h3 className="mb-2 flex items-center border-b border-gray-300 pb-1 text-lg font-semibold text-gray-800">
             <Briefcase size={16} className="mr-2" />
-            Work Experience
+            Doświadczenie zawodowe
           </h3>
         );
       case 'projects':
         return (
           <h3 className="mb-2 flex items-center border-b border-gray-300 pb-1 text-lg font-semibold text-gray-800">
             <FolderOpen size={16} className="mr-2" />
-            Projects
+            Projekty
           </h3>
         );
       case 'education':
@@ -3245,13 +3259,13 @@ const CVCreator: React.FC<CVCreatorProps> = ({ initialCv }) => {
         return (
           <h3 className="mb-2 flex items-center border-b border-gray-300 pb-1 text-lg font-semibold text-gray-800">
             <Award size={16} className="mr-2" />
-            Certificates
+            Certyfikaty
           </h3>
         );
       case 'privacy':
         return (
           <h3 className="mb-2 border-b border-gray-300 pb-1 text-lg font-semibold text-gray-800">
-            Privacy Statement
+            Klauzula informacyjna
           </h3>
         );
       default:
@@ -3364,7 +3378,7 @@ const CVCreator: React.FC<CVCreatorProps> = ({ initialCv }) => {
               </div>
               <div className="ml-2 flex-shrink-0 text-xs text-gray-600">
                 {formatDate(exp.startDate)} -{' '}
-                {exp.isCurrent || !exp.endDate ? 'present' : formatDate(exp.endDate)}
+                {exp.isCurrent || !exp.endDate ? 'obecnie' : formatDate(exp.endDate)}
               </div>
             </div>
             {renderExperienceDescription(exp)}
@@ -3427,7 +3441,7 @@ const CVCreator: React.FC<CVCreatorProps> = ({ initialCv }) => {
               </div>
               <div className="ml-2 flex-shrink-0 text-xs text-gray-600">
                 {formatDate(edu.startDate)} -{' '}
-                {edu.isCurrent || !edu.endDate ? 'present' : formatDate(edu.endDate)}
+                {edu.isCurrent || !edu.endDate ? 'obecnie' : formatDate(edu.endDate)}
               </div>
             </div>
             {edu.description && (
@@ -3631,10 +3645,10 @@ const CVCreator: React.FC<CVCreatorProps> = ({ initialCv }) => {
           <HoverCardContent className="font-poppins w-80">
             <div className="flex justify-between gap-4">
               <div className="space-y-1">
-                <h4 className="text-sm font-semibold">Beta version</h4>
+                <h4 className="text-sm font-semibold">Wersja beta</h4>
                 <p className="text-sm">
-                  Be aware of bugs or missing features. We are working hard to improve the
-                  application.
+                  Pamiętaj, że aplikacja może zawierać błędy lub brakujące funkcje. Ciężko pracujemy
+                  nad jej ulepszeniem.
                 </p>
                 <div className="text-muted-foreground text-xs">Vocare team</div>
               </div>
@@ -3653,9 +3667,9 @@ const CVCreator: React.FC<CVCreatorProps> = ({ initialCv }) => {
           <div className="h-full overflow-y-auto rounded-lg bg-white shadow-lg lg:w-[48%]">
             <div className="max-h-full overflow-y-auto p-4 lg:p-6">
               <div className="mb-6 flex flex-col items-start justify-between gap-4 sm:flex-row sm:items-center">
-                <h1 className="text-xl font-bold text-gray-800 lg:text-xl">Resume creator</h1>
+                <h1 className="text-xl font-bold text-gray-800 lg:text-xl">Kreator CV</h1>
                 <div className="flex items-center space-x-3">
-                  <label className="text-sm text-gray-600">Date format:</label>
+                  <label className="text-sm text-gray-600">Format daty:</label>
                   <Select
                     value={showFullDates ? 'full' : 'year'}
                     onValueChange={(value) => setShowFullDates(value === 'full')}
@@ -3664,8 +3678,8 @@ const CVCreator: React.FC<CVCreatorProps> = ({ initialCv }) => {
                       <SelectValue />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="full">Month & year</SelectItem>
-                      <SelectItem value="year">Just year</SelectItem>
+                      <SelectItem value="full">Miesiąc i rok</SelectItem>
+                      <SelectItem value="year">Tylko rok</SelectItem>
                     </SelectContent>
                   </Select>
                   <button
@@ -3674,7 +3688,7 @@ const CVCreator: React.FC<CVCreatorProps> = ({ initialCv }) => {
                     title="Load data from profile and save time"
                   >
                     <Upload size={16} className="mr-2 text-white" />
-                    Load profile
+                    Pobierz z profilu
                   </button>
                 </div>
               </div>
@@ -3683,12 +3697,12 @@ const CVCreator: React.FC<CVCreatorProps> = ({ initialCv }) => {
               <div className="mb-6 rounded-lg bg-gray-50 p-4 lg:p-6">
                 <h2 className="mb-4 flex items-center text-lg font-semibold text-gray-700">
                   <User className="mr-2" size={20} />
-                  Personal details
+                  Dane kontaktowe
                 </h2>
                 <div className="space-y-4">
                   <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
                     <div>
-                      <label className="mb-1 block text-sm text-gray-600">Name</label>
+                      <label className="mb-1 block text-sm text-gray-600">Imię</label>
                       <input
                         type="text"
                         placeholder="Joe"
@@ -3700,7 +3714,7 @@ const CVCreator: React.FC<CVCreatorProps> = ({ initialCv }) => {
                       />
                     </div>
                     <div>
-                      <label className="mb-1 block text-sm text-gray-600">Last Name</label>
+                      <label className="mb-1 block text-sm text-gray-600">Nazwisko</label>
                       <input
                         type="text"
                         placeholder="Doe"
@@ -3714,7 +3728,7 @@ const CVCreator: React.FC<CVCreatorProps> = ({ initialCv }) => {
                   </div>
 
                   <div>
-                    <label className="mb-1 block text-sm text-gray-600">E-mail address</label>
+                    <label className="mb-1 block text-sm text-gray-600">E-mail</label>
                     <input
                       type="email"
                       placeholder="joedoe@gmail.com"
@@ -3725,7 +3739,7 @@ const CVCreator: React.FC<CVCreatorProps> = ({ initialCv }) => {
                   </div>
 
                   <div>
-                    <label className="mb-1 block text-sm text-gray-600">Position</label>
+                    <label className="mb-1 block text-sm text-gray-600">Stanowisko</label>
                     <input
                       type="text"
                       placeholder="e.g. Project Manager"
@@ -3740,12 +3754,12 @@ const CVCreator: React.FC<CVCreatorProps> = ({ initialCv }) => {
                   {/* Collapsible Additional Fields */}
                   <details className="group">
                     <summary className="cursor-pointer font-medium text-[#915EFF]">
-                      Show additional fields
+                      Pokaż dodatkowe pola
                     </summary>
                     <div className="mt-4 space-y-4">
                       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
                         <div>
-                          <label className="mb-1 block text-sm text-gray-600">Phone number</label>
+                          <label className="mb-1 block text-sm text-gray-600">Numer telefonu</label>
                           <input
                             type="tel"
                             placeholder="e.g. +48 22 263 98 31"
@@ -3757,7 +3771,7 @@ const CVCreator: React.FC<CVCreatorProps> = ({ initialCv }) => {
                           />
                         </div>
                         <div>
-                          <label className="mb-1 block text-sm text-gray-600">Address</label>
+                          <label className="mb-1 block text-sm text-gray-600">Adres</label>
                           <input
                             type="text"
                             placeholder="e.g. 221B Baker Street, London"
@@ -3769,7 +3783,7 @@ const CVCreator: React.FC<CVCreatorProps> = ({ initialCv }) => {
                           />
                         </div>
                         <div>
-                          <label className="mb-1 block text-sm text-gray-600">Country</label>
+                          <label className="mb-1 block text-sm text-gray-600">Kraj</label>
                           <input
                             type="text"
                             placeholder="e.g. Poland"
@@ -3782,7 +3796,7 @@ const CVCreator: React.FC<CVCreatorProps> = ({ initialCv }) => {
                         </div>
                         <div className="col-span-full">
                           <label className="mb-2 block text-sm font-medium text-gray-600">
-                            Links
+                            Linki
                           </label>
                           {personalInfo.socialLinks.map((link) => (
                             <div key={link.id} className="mb-2 flex items-center gap-2">
@@ -3851,7 +3865,7 @@ const CVCreator: React.FC<CVCreatorProps> = ({ initialCv }) => {
                             className="flex cursor-pointer items-center font-medium text-[#915EFF]"
                           >
                             <span className="mr-2 text-xl">+</span>
-                            Add link
+                            Dodaj linki
                           </button>
                         </div>
                       </div>
@@ -3911,7 +3925,7 @@ const CVCreator: React.FC<CVCreatorProps> = ({ initialCv }) => {
             </div>
           ) : (
             <div className="flex flex-wrap items-center gap-3 border-b border-gray-200 bg-white p-4">
-              <h2 className="text-lg font-semibold text-gray-700">Resume Preview</h2>
+              <h2 className="text-lg font-semibold text-gray-700">Podgląd CV</h2>
               <div className="flex flex-wrap items-center gap-2 sm:ml-auto">
                 <button
                   onClick={downloadPDF}
@@ -3949,7 +3963,7 @@ const CVCreator: React.FC<CVCreatorProps> = ({ initialCv }) => {
                       strokeLinecap="round"
                     />
                   </svg>
-                  <span>Download</span>
+                  <span>Pobierz</span>
                 </button>
 
                 <div className="flex flex-wrap items-center gap-2 rounded bg-gray-50 px-2 py-1 sm:bg-transparent sm:px-0">
@@ -3975,11 +3989,11 @@ const CVCreator: React.FC<CVCreatorProps> = ({ initialCv }) => {
                     className="cursor-pointer rounded p-2 text-xs transition-colors hover:bg-gray-100 sm:text-sm"
                     title="Resetuj widok"
                   >
-                    Reset
+                    Zreestuj
                   </button>
                   <div className="flex items-center text-xs text-gray-500 sm:text-sm">
                     <Move size={16} className="mr-1" />
-                    Drag and move
+                    Złap i przesuń
                   </div>
                 </div>
               </div>
