@@ -129,6 +129,7 @@ interface SocialLink {
 type FormattingType = 'bold' | 'italic' | 'underline';
 
 type FormattingState = Record<FormattingType, boolean>;
+type ResumePreviewLanguage = 'pl' | 'en';
 
 const createDefaultFormattingState = (): FormattingState => ({
   bold: false,
@@ -153,6 +154,48 @@ const DEFAULT_SECTION_ORDER = [
   'hobbies',
   'privacy',
 ] as const;
+
+type SectionId = (typeof DEFAULT_SECTION_ORDER)[number];
+
+const RESUME_PREVIEW_LABELS: Record<
+  ResumePreviewLanguage,
+  {
+    current: string;
+    locale: string;
+    sections: Record<SectionId, string>;
+  }
+> = {
+  pl: {
+    current: 'obecnie',
+    locale: 'pl-PL',
+    sections: {
+      profile: 'Profil osobisty',
+      experience: 'Doświadczenie zawodowe',
+      projects: 'Projekty',
+      education: 'Edukacja',
+      certificates: 'Certyfikaty',
+      skills: 'Umiejętności',
+      languages: 'Języki',
+      hobbies: 'Zainteresowania',
+      privacy: 'Klauzula informacyjna',
+    },
+  },
+  en: {
+    current: 'present',
+    locale: 'en-US',
+    sections: {
+      profile: 'Personal profile',
+      experience: 'Work experience',
+      projects: 'Projects',
+      education: 'Education',
+      certificates: 'Certificates',
+      skills: 'Skills',
+      languages: 'Languages',
+      hobbies: 'Hobby',
+      privacy: 'Privacy statement',
+    },
+  },
+};
 
 const DEFAULT_PERSONAL_INFO: PersonalInfo = {
   firstName: '',
@@ -406,6 +449,8 @@ const CVCreator: React.FC<CVCreatorProps> = ({ initialCv }) => {
     return saved ? JSON.parse(saved) : [];
   });
   const [showFullDates, setShowFullDates] = useState(true);
+  const [resumePreviewLanguage, setResumePreviewLanguage] = useState<ResumePreviewLanguage>('pl');
+  const previewLabels = RESUME_PREVIEW_LABELS[resumePreviewLanguage];
   const [languages, setLanguages] = useState<Language[]>(() => {
     const saved = localStorage.getItem('languages');
     return saved ? JSON.parse(saved) : [];
@@ -837,8 +882,9 @@ const CVCreator: React.FC<CVCreatorProps> = ({ initialCv }) => {
   const formatDate = (dateString: string) => {
     if (!dateString) return '';
     const date = new Date(dateString);
+    if (Number.isNaN(date.getTime())) return '';
     if (showFullDates) {
-      return date.toLocaleDateString('pl-PL', { year: 'numeric', month: 'long' });
+      return date.toLocaleDateString(previewLabels.locale, { year: 'numeric', month: 'long' });
     } else {
       return date.getFullYear().toString();
     }
@@ -1886,6 +1932,7 @@ const CVCreator: React.FC<CVCreatorProps> = ({ initialCv }) => {
     hobbies,
     privacyStatement,
     sectionOrder,
+    resumePreviewLanguage,
     pageContentHeightPx,
     isSectionVisible,
   ]);
@@ -2917,7 +2964,7 @@ const CVCreator: React.FC<CVCreatorProps> = ({ initialCv }) => {
             data-section="profile"
           >
             <h3 className="mb-2 border-b border-gray-300 pb-1 text-lg font-semibold text-gray-800">
-              Profil osobisty
+              {previewLabels.sections.profile}
             </h3>
             <div className="text-sm leading-relaxed break-words text-gray-700">
               {splitRichTextParagraphs(personalInfo.summary || '').map((para, i) => (
@@ -2942,7 +2989,7 @@ const CVCreator: React.FC<CVCreatorProps> = ({ initialCv }) => {
           >
             <h3 className="mb-2 flex items-center border-b border-gray-300 pb-1 text-lg font-semibold text-gray-800">
               <Briefcase size={16} className="mr-2" />
-              Doświadczenie zawodowe
+              {previewLabels.sections.experience}
             </h3>
             {experiences.map((exp) => (
               <div key={exp.id} className="exp-item mb-4" data-item-id={exp.id}>
@@ -2958,7 +3005,9 @@ const CVCreator: React.FC<CVCreatorProps> = ({ initialCv }) => {
                   </div>
                   <div className="ml-2 flex-shrink-0 text-xs text-gray-600">
                     {formatDate(exp.startDate)} -{' '}
-                    {exp.isCurrent || !exp.endDate ? 'obecnie' : formatDate(exp.endDate)}
+                    {exp.isCurrent || !exp.endDate
+                      ? previewLabels.current
+                      : formatDate(exp.endDate)}
                   </div>
                 </div>
 
@@ -2979,7 +3028,7 @@ const CVCreator: React.FC<CVCreatorProps> = ({ initialCv }) => {
           >
             <h3 className="mb-2 flex items-center border-b border-gray-300 pb-1 text-lg font-semibold text-gray-800">
               <FolderOpen size={16} className="mr-2" />
-              Projekty
+              {previewLabels.sections.projects}
             </h3>
             {projects.map((project) => {
               const projectUrl = normalizeExternalUrl(project.url);
@@ -3021,7 +3070,7 @@ const CVCreator: React.FC<CVCreatorProps> = ({ initialCv }) => {
           >
             <h3 className="mb-2 flex items-center border-b border-gray-300 pb-1 text-lg font-semibold text-gray-800">
               <GraduationCap size={16} className="mr-2" />
-              Edukacja
+              {previewLabels.sections.education}
             </h3>
             {education.map((edu) => (
               <div key={edu.id} className="edu-item mb-3" data-item-id={edu.id}>
@@ -3036,7 +3085,9 @@ const CVCreator: React.FC<CVCreatorProps> = ({ initialCv }) => {
                   </div>
                   <div className="ml-2 flex-shrink-0 text-xs text-gray-600">
                     {formatDate(edu.startDate)} -{' '}
-                    {edu.isCurrent || !edu.endDate ? 'obecnie' : formatDate(edu.endDate)}
+                    {edu.isCurrent || !edu.endDate
+                      ? previewLabels.current
+                      : formatDate(edu.endDate)}
                   </div>
                 </div>
                 {edu.description && (
@@ -3060,7 +3111,7 @@ const CVCreator: React.FC<CVCreatorProps> = ({ initialCv }) => {
           >
             <h3 className="mb-2 flex items-center border-b border-gray-300 pb-1 text-lg font-semibold text-gray-800">
               <Award size={16} className="mr-2" />
-              Certyfikaty
+              {previewLabels.sections.certificates}
             </h3>
             <div className="space-y-1">
               {certificates.map((cert) => (
@@ -3085,7 +3136,7 @@ const CVCreator: React.FC<CVCreatorProps> = ({ initialCv }) => {
           >
             <h3 className="mb-2 flex items-center border-b border-gray-300 pb-1 text-lg font-semibold text-gray-800">
               <Award size={16} className="mr-2" />
-              Umiejętności
+              {previewLabels.sections.skills}
             </h3>
             <div className="flex flex-wrap gap-2">
               {skills.map((skill) => (
@@ -3110,7 +3161,7 @@ const CVCreator: React.FC<CVCreatorProps> = ({ initialCv }) => {
           >
             <h3 className="mb-2 flex items-center border-b border-gray-300 pb-1 text-lg font-semibold text-gray-800">
               <Languages size={16} className="mr-2" />
-              Języki
+              {previewLabels.sections.languages}
             </h3>
             <div className="flex flex-wrap gap-2">
               {languages.map((language) => (
@@ -3135,7 +3186,7 @@ const CVCreator: React.FC<CVCreatorProps> = ({ initialCv }) => {
           >
             <h3 className="mb-2 flex items-center border-b border-gray-300 pb-1 text-lg font-semibold text-gray-800">
               <Tag size={16} className="mr-2" />
-              Zainteresowania
+              {previewLabels.sections.hobbies}
             </h3>
             <div className="flex flex-wrap gap-2">
               {hobbies.map((hobby) => (
@@ -3159,7 +3210,7 @@ const CVCreator: React.FC<CVCreatorProps> = ({ initialCv }) => {
             data-section="privacy"
           >
             <h3 className="mb-2 border-b border-gray-300 pb-1 text-lg font-semibold text-gray-800">
-              Klauzula informacyjna
+              {previewLabels.sections.privacy}
             </h3>
             <div className="text-xs leading-relaxed break-words text-gray-700">
               {(privacyStatement.content || '')
@@ -3231,41 +3282,41 @@ const CVCreator: React.FC<CVCreatorProps> = ({ initialCv }) => {
       case 'profile':
         return (
           <h3 className="mb-2 border-b border-gray-300 pb-1 text-lg font-semibold text-gray-800">
-            Profil osobisty
+            {previewLabels.sections.profile}
           </h3>
         );
       case 'experience':
         return (
           <h3 className="mb-2 flex items-center border-b border-gray-300 pb-1 text-lg font-semibold text-gray-800">
             <Briefcase size={16} className="mr-2" />
-            Doświadczenie zawodowe
+            {previewLabels.sections.experience}
           </h3>
         );
       case 'projects':
         return (
           <h3 className="mb-2 flex items-center border-b border-gray-300 pb-1 text-lg font-semibold text-gray-800">
             <FolderOpen size={16} className="mr-2" />
-            Projekty
+            {previewLabels.sections.projects}
           </h3>
         );
       case 'education':
         return (
           <h3 className="mb-2 flex items-center border-b border-gray-300 pb-1 text-lg font-semibold text-gray-800">
             <GraduationCap size={16} className="mr-2" />
-            Education
+            {previewLabels.sections.education}
           </h3>
         );
       case 'certificates':
         return (
           <h3 className="mb-2 flex items-center border-b border-gray-300 pb-1 text-lg font-semibold text-gray-800">
             <Award size={16} className="mr-2" />
-            Certyfikaty
+            {previewLabels.sections.certificates}
           </h3>
         );
       case 'privacy':
         return (
           <h3 className="mb-2 border-b border-gray-300 pb-1 text-lg font-semibold text-gray-800">
-            Klauzula informacyjna
+            {previewLabels.sections.privacy}
           </h3>
         );
       default:
@@ -3378,7 +3429,7 @@ const CVCreator: React.FC<CVCreatorProps> = ({ initialCv }) => {
               </div>
               <div className="ml-2 flex-shrink-0 text-xs text-gray-600">
                 {formatDate(exp.startDate)} -{' '}
-                {exp.isCurrent || !exp.endDate ? 'obecnie' : formatDate(exp.endDate)}
+                {exp.isCurrent || !exp.endDate ? previewLabels.current : formatDate(exp.endDate)}
               </div>
             </div>
             {renderExperienceDescription(exp)}
@@ -3441,7 +3492,7 @@ const CVCreator: React.FC<CVCreatorProps> = ({ initialCv }) => {
               </div>
               <div className="ml-2 flex-shrink-0 text-xs text-gray-600">
                 {formatDate(edu.startDate)} -{' '}
-                {edu.isCurrent || !edu.endDate ? 'obecnie' : formatDate(edu.endDate)}
+                {edu.isCurrent || !edu.endDate ? previewLabels.current : formatDate(edu.endDate)}
               </div>
             </div>
             {edu.description && (
@@ -3614,7 +3665,7 @@ const CVCreator: React.FC<CVCreatorProps> = ({ initialCv }) => {
 
       {/* Sidebar for Desktop */}
       <div className="mx-3 hidden w-16 flex-col items-center justify-between rounded-lg bg-white py-6 shadow-lg lg:flex">
-        <div>
+        <div className="flex flex-col items-center gap-1">
           <button
             onClick={() => router.push('/dashboard/resume')}
             className="cursor-pointer rounded-lg p-3 transition-colors hover:bg-gray-100"
@@ -3634,6 +3685,24 @@ const CVCreator: React.FC<CVCreatorProps> = ({ initialCv }) => {
               {autosaveStatus === 'error' && <span className="text-red-500">Save failed</span>}
             </div>
           </button>
+          <div className="flex flex-col items-center gap-1 rounded-lg p-1" title="Język CV">
+            <Languages size={16} className="text-gray-500" />
+            <Select
+              value={resumePreviewLanguage}
+              onValueChange={(value) => setResumePreviewLanguage(value as ResumePreviewLanguage)}
+            >
+              <SelectTrigger
+                aria-label="Język CV"
+                className="font-poppins relative h-8 w-12 justify-center rounded-sm border border-gray-200 bg-gray-50 px-1 text-center text-[10px] focus:ring-2 focus:ring-blue-500 focus:outline-none [&_[data-slot=select-value]]:absolute [&_[data-slot=select-value]]:left-1/2 [&_[data-slot=select-value]]:-translate-x-1/2 [&_svg]:absolute [&_svg]:right-1.5 [&_svg]:size-3"
+              >
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent className="min-w-24">
+                <SelectItem value="pl">PL</SelectItem>
+                <SelectItem value="en">EN</SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
         </div>
 
         <HoverCard>
