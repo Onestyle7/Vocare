@@ -1998,10 +1998,10 @@ const CVCreator: React.FC<CVCreatorProps> = ({ initialCv }) => {
                 <HoverCardContent className="font-poppins w-80">
                   <div className="flex justify-between gap-4">
                     <div className="space-y-1">
-                      <h4 className="text-sm font-semibold">Will it actually help me?</h4>
+                      <h4 className="text-sm font-semibold">Czy to rzeczywiście mi pomoże?</h4>
                       <p className="text-sm">
-                        It&apos;ll surely do. Our AI models are trained specifically to match
-                        requirements of the algorithms used by recruiters.
+                        Zdecydowanie tak. Nasze modele AI są trenowane specjalnie po to, aby
+                        dopasowywać CV do wymagań algorytmów używanych przez rekruterów.
                       </p>
                       <div className="text-muted-foreground text-xs">Confirmed by 1000+ users.</div>
                     </div>
