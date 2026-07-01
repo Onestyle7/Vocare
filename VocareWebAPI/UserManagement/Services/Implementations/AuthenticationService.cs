@@ -59,7 +59,7 @@ namespace VocareWebAPI.UserManagement.Services.Implementations
             {
                 _logger.LogWarning("Failed login attempt for non-existent user: {Email}", email);
                 return Result<LoginResult>.Fail(
-                    new Error("INVALID_CREDENTIALS", "Invalid email or password.")
+                    new Error("INVALID_CREDENTIALS", "Invalid email or password.", 401)
                 );
             }
 
@@ -133,14 +133,15 @@ namespace VocareWebAPI.UserManagement.Services.Implementations
                     return Result<RegisterResult>.Fail(
                         new Error(
                             "GOOGLE_ACCOUNT_EXISTS",
-                            "An account with this email already exists via Google login"
+                            "An account with this email already exists via Google login",
+                            409
                         )
                     );
                 }
 
                 _logger.LogWarning("User with password login already exists: {Email}", email);
                 return Result<RegisterResult>.Fail(
-                    new Error("ACCOUNT_EXISTS", "An account with this email already exists")
+                    new Error("ACCOUNT_EXISTS", "An account with this email already exists", 409)
                 );
             }
 
