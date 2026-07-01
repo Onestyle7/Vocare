@@ -42,7 +42,7 @@ export function SignUpForm() {
       const [error] = await register(formValues);
 
       if (error) {
-        toast.error(error.message);
+        toast.error(error.message, { position: 'top-center' });
         return;
       }
 
