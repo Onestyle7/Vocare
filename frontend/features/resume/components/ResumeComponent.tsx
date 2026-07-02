@@ -3851,18 +3851,6 @@ const CVCreator: React.FC<CVCreatorProps> = ({ initialCv }) => {
                             className="w-full rounded-sm border border-gray-300 px-3 py-3 focus:ring-2 focus:ring-blue-500 focus:outline-none"
                           />
                         </div>
-                        <div>
-                          <label className="mb-1 block text-sm text-gray-600">Kraj</label>
-                          <input
-                            type="text"
-                            placeholder="e.g. Poland"
-                            value={personalInfo.country}
-                            onChange={(e) =>
-                              setPersonalInfo({ ...personalInfo, country: e.target.value })
-                            }
-                            className="w-full rounded-sm border border-gray-300 px-3 py-3 focus:ring-2 focus:ring-blue-500 focus:outline-none"
-                          />
-                        </div>
                         <div className="col-span-full">
                           <label className="mb-2 block text-sm font-medium text-gray-600">
                             Linki
