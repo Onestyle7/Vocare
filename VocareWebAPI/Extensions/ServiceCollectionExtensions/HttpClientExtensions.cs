@@ -15,7 +15,6 @@ using VocareWebAPI.Repositories.Interfaces;
 using VocareWebAPI.RoadmapService.Services.Implementations;
 using VocareWebAPI.RoadmapService.Services.Interfaces;
 using VocareWebAPI.Services;
-using VocareWebAPI.Services.Implementations;
 using VocareWebAPI.Shared.Services.Implementations;
 using VocareWebAPI.Shared.Services.Interfaces;
 
