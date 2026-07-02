@@ -445,7 +445,7 @@ namespace VocareWebAPI.Billing.Services.Implementations
             }
         }
 
-        public async Task<string> CreateCustomerPortalSessionAsync(string userId, string returnUrl)
+        public async Task<string> CreateCustomerPortalSessionAsync(string userId)
         {
             if (string.IsNullOrEmpty(userId))
                 throw new ArgumentException("User ID cannot be null or empty.");
@@ -455,6 +455,7 @@ namespace VocareWebAPI.Billing.Services.Implementations
             if (string.IsNullOrEmpty(userBilling.StripeCustomerId))
                 throw new MissingStripeCustomerException(userId);
 
+            var returnUrl = _configuration["Stripe:ReturnUrl"];
             var options = new Stripe.BillingPortal.SessionCreateOptions
             {
                 Customer = userBilling.StripeCustomerId,

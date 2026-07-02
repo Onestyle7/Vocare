@@ -178,13 +178,7 @@ namespace VocareWebAPI.Controllers
             if (string.IsNullOrEmpty(userId))
                 return BadRequest("Brak identyfikatora użytkownika w tokenie.");
 
-            // URL powrotu do aplikacji
-            var returnUrl = $"{Request.Scheme}://{Request.Host}/dashboard";
-
-            var portalUrl = await _stripeService.CreateCustomerPortalSessionAsync(
-                userId,
-                returnUrl
-            );
+            var portalUrl = await _stripeService.CreateCustomerPortalSessionAsync(userId);
 
             return Ok(new { Url = portalUrl });
         }
@@ -218,7 +212,7 @@ namespace VocareWebAPI.Controllers
                     userBilling.SubscriptionEndDate
                 );
             }
-
+            // TODO: zmienić na url frontu z _configuration
             var returnUrl = $"{Request.Scheme}://{Request.Host}/dashboard";
 
             _logger.LogInformation(
@@ -226,8 +220,7 @@ namespace VocareWebAPI.Controllers
                 userId
             );
             var portalUrl = await _stripeService.CreateCustomerPortalSessionAsync(
-                userId,
-                returnUrl
+                userId
             );
 
             return Ok(

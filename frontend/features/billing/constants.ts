@@ -1,3 +1,5 @@
+import env from '@/lib/env/client';
+
 import { BillingType } from './dal/api';
 import { SubscriptionStatuses } from './types';
 
@@ -10,7 +12,7 @@ export const pricingPlans = [
     price: 19,
     save: undefined,
     tokens: 500 as number | string,
-    priceId: 'price_1TJd11Ls2ndSVWb2D6fJnV78',
+    priceId: env.NEXT_PUBLIC_PERSONAL_PRICE_ID,
     type: 'tokens' as BillingType,
     features: [
       '500 tokenów w pakiecie',
@@ -26,7 +28,7 @@ export const pricingPlans = [
     price: 29,
     save: '35%',
     tokens: 'Nielimitowany' as number | string,
-    priceId: 'price_1ShEeGLs2ndSVWb29ieLO1TM',
+    priceId: env.NEXT_PUBLIC_GROWTH_PRICE_ID,
     type: 'subscription' as BillingType,
     features: [
       'Nielimitowany dostęp',
@@ -42,7 +44,7 @@ export const pricingPlans = [
     price: 99,
     save: '65%',
     tokens: '—' as number | string,
-    priceId: 'price_1ShEeCLs2ndSVWb2MNv3RTBY',
+    priceId: env.NEXT_PUBLIC_INDIVIDUAL_PRICE_ID,
     type: 'individual' as BillingType,
     features: [
       'Analiza CV przez eksperta kariery',
