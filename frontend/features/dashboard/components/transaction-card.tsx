@@ -1,5 +1,10 @@
 import { Info } from 'lucide-react';
 
+import {
+  formatPaymentAmount,
+  getTypeLabel,
+  PAYMENT_DATE_FORMATTER,
+} from '@/features/billing/billingUtils';
 import { PaymentHistoryItem } from '@/features/billing/dal/api';
 import { cn } from '@/lib/utils';
 
@@ -14,10 +19,6 @@ export default function TransactionCard({
   data,
   className,
 }: { data: PaymentHistoryItem[] } & React.ComponentProps<'div'>) {
-  const dateFormatter = new Intl.DateTimeFormat(undefined, {
-    dateStyle: 'short',
-  });
-
   return (
     <DashboardCard className={cn('', className)} title="Historia transakcji">
       <DashboardCardHeader>
@@ -30,13 +31,15 @@ export default function TransactionCard({
               key={`${payment.type}-${payment.amount}-${payment.createdAt}`}
               className="border-dashboard-border flex items-start justify-between gap-4 border-b px-4 py-2"
             >
-              <p className="text-dashboard-primary-foreground text-lg">{payment.type}</p>
+              <p className="text-dashboard-primary-foreground text-lg">
+                {getTypeLabel(payment.type)}
+              </p>
               <div>
                 <p className="text-dashboard-primary-foreground text-lg">
-                  {payment.amount} {payment.currency}
+                  {formatPaymentAmount(payment.amount, payment.currency)}
                 </p>
                 <p className="text-dashboard-secondary-foreground text-sm">
-                  {dateFormatter.format(new Date(payment.createdAt))}
+                  {PAYMENT_DATE_FORMATTER.format(new Date(payment.createdAt))}
                 </p>
               </div>
             </div>

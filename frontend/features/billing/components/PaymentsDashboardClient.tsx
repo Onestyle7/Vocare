@@ -2,7 +2,9 @@
 
 import { ArrowLeft, Loader2 } from 'lucide-react';
 import Link from 'next/link';
-import React, { useCallback, useEffect, useMemo, useState } from 'react';
+import { usePathname, useSearchParams } from 'next/navigation';
+import { useEffect, useMemo, useState } from 'react';
+import { toast } from 'sonner';
 
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
@@ -19,6 +21,12 @@ import { useTokenBalanceContext } from '@/features/billing/components/Subscripti
 import { useBillingActions } from '@/features/billing/hooks/useBillingActions';
 import { useMarketingActions } from '@/features/marketing/hooks/useMarketingActions';
 
+import {
+  formatPaymentAmount,
+  getStatusBadgeVariant,
+  getTypeLabel,
+  PAYMENT_DATE_FORMATTER,
+} from '../billingUtils';
 import { PaymentHistoryItem } from '../dal/api';
 
 export interface PaymentsDashboardClientProps {
@@ -36,6 +44,24 @@ export default function PaymentsDashboardClient({
 
   const [marketingConsent, setMarketingConsent] = useState<boolean>(initialMarketingConsent);
 
+  const searchParams = useSearchParams();
+  const pathname = usePathname();
+
+  useEffect(() => {
+    const success = searchParams.get('success');
+    if (success?.toLowerCase() === 'true') {
+      setTimeout(() => {
+        toast.success('Płatność powiodła się');
+      }, 300);
+      window.history.replaceState(null, '', pathname);
+    } else if (success?.toLowerCase() === 'false') {
+      setTimeout(() => {
+        toast.info('Płatność została anulowana.');
+      }, 300);
+      window.history.replaceState(null, '', pathname);
+    }
+  }, [searchParams, pathname]);
+
   useEffect(() => {
     setMarketingConsent(initialMarketingConsent);
   }, [initialMarketingConsent]);
@@ -49,45 +75,6 @@ export default function PaymentsDashboardClient({
     : 'Brak aktywnej subskrypcji';
   const subscriptionBadgeVariant = hasActiveSubscription ? 'default' : 'outline';
   const subscriptionBadgeText = hasActiveSubscription ? 'Aktywna' : 'Nieaktywna';
-
-  const dateFormatter = useMemo(
-    () =>
-      new Intl.DateTimeFormat(undefined, {
-        dateStyle: 'medium',
-        timeStyle: 'short',
-      }),
-    []
-  );
-
-  const formatPaymentAmount = useCallback((amount: number, currency?: string) => {
-    if (!Number.isFinite(amount)) return '—';
-    const normalizedCurrency = (currency ?? 'USD').toUpperCase();
-    const value = amount / 100;
-    try {
-      return new Intl.NumberFormat(undefined, {
-        style: 'currency',
-        currency: normalizedCurrency,
-      }).format(value);
-    } catch {
-      return `${value.toFixed(2)} ${normalizedCurrency}`;
-    }
-  }, []);
-
-  const getStatusBadgeVariant = useCallback((status?: string) => {
-    const normalized = status?.toLowerCase();
-    if (normalized === 'succeeded' || normalized === 'paid') return 'secondary';
-    if (normalized === 'pending' || normalized === 'processing' || normalized === 'open')
-      return 'outline';
-    if (normalized === 'failed' || normalized === 'canceled') return 'destructive';
-    return 'default';
-  }, []);
-
-  const formatTypeLabel = useCallback((type?: string) => {
-    const normalized = type?.toLowerCase();
-    if (normalized === 'subscription') return 'Subscription payment';
-    if (normalized === 'token_purchase') return 'Token purchase';
-    return type ?? 'Payment';
-  }, []);
 
   const payments = useMemo(() => {
     if (!initialPayments) return [];
@@ -106,7 +93,7 @@ export default function PaymentsDashboardClient({
 
   return (
     <main className="font-korbin bg-background min-h-screen w-full">
-      <div className="mx-auto flex w-full max-w-5xl flex-col gap-8 px-4 pt-20 pb-16 sm:px-6 lg:px-8">
+      <div className="mx-auto flex w-full max-w-5xl flex-col gap-8 px-4 pt-10 pb-16 sm:px-6 lg:px-8">
         <div className="flex flex-wrap items-center justify-between gap-4">
           <div className="space-y-1">
             <h1 className="text-foreground text-3xl font-semibold tracking-tight">Płatności</h1>
@@ -219,7 +206,7 @@ export default function PaymentsDashboardClient({
                 Śledź zakupy i wykorzystanie tokenów powiązanych z Twoim kontem.
               </CardDescription>
             </CardHeader>
-            <CardContent className="space-y-4">
+            <CardContent className="show-scrollbar space-y-4 overflow-y-auto">
               {payments.length === 0 ? (
                 <div className="border-border/60 bg-muted/20 flex flex-col items-center justify-center gap-2 rounded-lg border border-dashed px-6 py-12 text-center">
                   <span className="text-foreground text-sm font-medium">Brak płatności</span>
@@ -235,7 +222,7 @@ export default function PaymentsDashboardClient({
                       if (Number.isNaN(parsedDate.getTime())) {
                         return '—';
                       }
-                      return dateFormatter.format(parsedDate);
+                      return PAYMENT_DATE_FORMATTER.format(parsedDate);
                     })();
 
                     const key = `${payment.createdAt}-${payment.type}-${payment.amount}-${payment.status}`;
@@ -247,7 +234,7 @@ export default function PaymentsDashboardClient({
                       >
                         <div className="space-y-1">
                           <p className="text-foreground text-sm font-medium">
-                            {payment.description ?? formatTypeLabel(payment.type)}
+                            {payment.description ?? getTypeLabel(payment.type)}
                           </p>
                           <span className="text-muted-foreground text-xs">{formattedDate}</span>
                           {typeof payment.tokenAmount === 'number' && (
