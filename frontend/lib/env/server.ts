@@ -11,6 +11,13 @@ const env = createEnv({
     OAUTH_GOOGLE_CLIENT_ID: z.string(),
   },
   experimental__runtimeEnv: process.env,
+  onValidationError: (issues) => {
+    console.error('\nEnvironment configuration error:');
+    const errorDetails = issues
+      .map((issue) => `- ${issue.path?.join('.')}: ${issue.message}`)
+      .join('\n');
+    throw new Error(`Application terminated due to configuration errors\n${errorDetails}\n\n`);
+  },
 });
 
 export default env;
