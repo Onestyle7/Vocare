@@ -55,7 +55,7 @@ namespace VocareWebAPI.JobOffers.Services.Implementations
 
             var foundNames = cachedEmbeddings.Select(e => e.NormalizedSkillName).ToHashSet();
             var missingNormalized = uniqueNormalizedSkills
-                .Where(n => !foundNames.Contains(n))
+                .Where(n => !foundNames.Contains(n) && n.Length <= 200)
                 .ToList();
 
             var newEmbeddings = new List<SkillEmbedding>();

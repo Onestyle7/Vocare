@@ -17,7 +17,7 @@ import {
 } from './api';
 
 export type AuthDomainError = BaseAppError<'OAuthError' | 'InvalidCredentials'>;
-export type RegisterDomainError = BaseAppError;
+export type RegisterDomainError = BaseAppError<'EmailAlreadyTaken'>;
 export type ForgotPasswordDomainError = BaseAppError<'InvalidEmailError'>;
 export type ResetPasswordDomainError = BaseAppError<'InvalidResetToken' | 'ExpiredResetToken'>;
 
@@ -87,6 +87,13 @@ export async function registerService(
     .map((response) => response.data)
     .mapErr((authError): RegisterDomainError => {
       switch (authError.type) {
+        case 'ConflictError': {
+          return {
+            type: 'EmailAlreadyTaken',
+            message: 'Użytkownik z takim adresem e-mail już istnieje',
+            details: authError.details,
+          };
+        }
         default: {
           return {
             type: 'GenericApiError',
