@@ -45,6 +45,7 @@ import { CvDetailsDto, CvDto, UpdateCvDto } from '@/lib/types/cv';
 import { FLUENCY_OPTIONS, normalizeFluency } from '@/lib/utils/normalizeFluency';
 import { makeSocialLinkId, SOCIAL_LINK_SUGGESTIONS } from '@/lib/utils/socialLinks';
 
+import { RESUME_PREVIEW_LABELS, type ResumePreviewLanguage } from '../constants';
 import { useResumeDetailsActions } from '../hooks/useResumeDetailsActions';
 import { DatePickerWithCurrent } from './DatePickerWithCurrent';
 
@@ -129,7 +130,6 @@ interface SocialLink {
 type FormattingType = 'bold' | 'italic' | 'underline';
 
 type FormattingState = Record<FormattingType, boolean>;
-type ResumePreviewLanguage = 'pl' | 'en';
 
 const createDefaultFormattingState = (): FormattingState => ({
   bold: false,
@@ -154,48 +154,6 @@ const DEFAULT_SECTION_ORDER = [
   'hobbies',
   'privacy',
 ] as const;
-
-type SectionId = (typeof DEFAULT_SECTION_ORDER)[number];
-
-const RESUME_PREVIEW_LABELS: Record<
-  ResumePreviewLanguage,
-  {
-    current: string;
-    locale: string;
-    sections: Record<SectionId, string>;
-  }
-> = {
-  pl: {
-    current: 'obecnie',
-    locale: 'pl-PL',
-    sections: {
-      profile: 'Profil osobisty',
-      experience: 'Doświadczenie zawodowe',
-      projects: 'Projekty',
-      education: 'Edukacja',
-      certificates: 'Certyfikaty',
-      skills: 'Umiejętności',
-      languages: 'Języki',
-      hobbies: 'Zainteresowania',
-      privacy: 'Klauzula informacyjna',
-    },
-  },
-  en: {
-    current: 'present',
-    locale: 'en-US',
-    sections: {
-      profile: 'Personal profile',
-      experience: 'Work experience',
-      projects: 'Projects',
-      education: 'Education',
-      certificates: 'Certificates',
-      skills: 'Skills',
-      languages: 'Languages',
-      hobbies: 'Hobby',
-      privacy: 'Privacy statement',
-    },
-  },
-};
 
 const DEFAULT_PERSONAL_INFO: PersonalInfo = {
   firstName: '',
