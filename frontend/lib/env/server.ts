@@ -3,6 +3,7 @@ import { z } from 'zod';
 
 const env = createEnv({
   emptyStringAsUndefined: true,
+  skipValidation: !!process.env.SKIP_ENV_VALIDATION,
   server: {
     API_BASE_URL: z.string().url(),
     OAUTH_REDIRECT_URL_BASE: z.string().url(),
