@@ -12,16 +12,14 @@ export default async function DashboardPage() {
   }
 
   return (
-    <main className="min-h-screen bg-[#05070b] text-white">
-      <div className="mx-auto">
-        <div className="font-poppins p-4">
-          <RoadmapDashboardPage
-            initialRoadmaps={roadmaps ?? []}
-            initialError={roadmapsError?.message || null}
-            availableCareerPaths={recommendation?.careerPaths || []}
-          />
-        </div>
+    <div className="w-full">
+      <div className="p-4">
+        <RoadmapDashboardPage
+          initialRoadmaps={roadmaps ?? []}
+          initialError={roadmapsError?.message || null}
+          availableCareerPaths={recommendation?.careerPaths || []}
+        />
       </div>
-    </main>
+    </div>
   );
 }

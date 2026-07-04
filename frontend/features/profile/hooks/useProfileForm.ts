@@ -39,6 +39,7 @@ export function useProfileForm(
   const [isPending, startTransition] = useTransition();
   const [isEditMode, setEditMode] = useState(false);
   const [currentStep, setCurrentStep] = useState(1);
+  const [showRecommendDialog, setShowRecommendDialog] = useState(false);
   const { unauthorizedToast } = useUnauthorizedToast();
   const totalSteps = 5;
   const router = useRouter();
@@ -122,6 +123,7 @@ export function useProfileForm(
   const prevStep = () => setCurrentStep((prev) => Math.max(prev - 1, 1));
 
   const onSubmit = (data: CreateProfileFormType) => {
+    const wasDirty = form.formState.isDirty;
     const formattedData = formatProfileDates(data);
 
     startTransition(async () => {
@@ -149,8 +151,17 @@ export function useProfileForm(
         setEditMode(true);
       }
 
-      setIsEditing(false);
+      if (wasDirty) {
+        setShowRecommendDialog(true);
+      } else {
+        setIsEditing(false);
+      }
     });
+  };
+
+  const closeRecommendDialog = () => {
+    setShowRecommendDialog(false);
+    setIsEditing(false);
   };
 
   const handleDelete = () => {
@@ -180,5 +191,7 @@ export function useProfileForm(
     prevStep,
     onSubmit,
     handleDelete,
+    showRecommendDialog,
+    closeRecommendDialog,
   };
 }

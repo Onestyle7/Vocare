@@ -280,7 +280,7 @@ export default function RoadmapDashboardPage({
 
   return (
     <div className="min-h-screen">
-      <div className="font-poppins relative">
+      <div className="font-grotesk relative">
         <GridBackgroundDemo />
 
         <div className="relative z-10 w-full">
@@ -323,7 +323,7 @@ export default function RoadmapDashboardPage({
                   <h2 className="font-regular max-w-xl text-left text-3xl tracking-tighter md:text-5xl">
                     Twoje roadmapy
                   </h2>
-                  <p className="text-muted-foreground font-grotesk max-w-xl text-left text-lg leading-relaxed tracking-tight lg:max-w-lg">
+                  <p className="text-muted-foreground max-w-xl text-left text-lg leading-relaxed tracking-tight lg:max-w-lg">
                     {roadmapLimitDescription}
                   </p>
                 </div>
@@ -685,8 +685,7 @@ function CreateRoadmapButton({
   const button = (
     <Button
       type="button"
-      variant="outline"
-      className={cn('font-poppins gap-2', disabled && 'cursor-not-allowed', className)}
+      className={cn('gap-2', disabled && 'cursor-not-allowed', className)}
       onClick={onClick}
       disabled={disabled}
     >
@@ -726,7 +725,7 @@ function EmptyState({
     <div className="col-span-full flex h-[400px] flex-col items-center justify-center rounded-xl border border-dashed p-6 text-center md:p-8">
       <Layers3 className="text-muted-foreground mb-4 h-12 w-12" />
       <h3 className="mb-2 text-lg font-medium">Brak aktywnych roadmap</h3>
-      <p className="text-muted-foreground mb-4 max-w-sm text-sm leading-relaxed">
+      <p className="text-muted-foreground mb-4 max-w-sm text-center text-sm leading-relaxed">
         Nie masz jeszcze żadnej aktywnej roadmapy.
       </p>
       <CreateRoadmapButton
