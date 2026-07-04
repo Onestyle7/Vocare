@@ -3,6 +3,7 @@ import { z } from 'zod';
 
 const env = createEnv({
   emptyStringAsUndefined: true,
+  skipValidation: !!process.env.SKIP_ENV_VALIDATION,
   client: {
     NEXT_PUBLIC_APP_URL: z.string().url(),
   },
