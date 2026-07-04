@@ -1,5 +1,6 @@
 'use client';
 import { zodResolver } from '@hookform/resolvers/zod';
+import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 
@@ -16,6 +17,7 @@ import { UserProfile } from '@/lib/types/profile';
 
 import { useProfileForm } from '../hooks/useProfileForm';
 import { CreateProfileFormType, createProfileSchema } from '../profileSchema';
+import GenerateAfterSaveDialog from './GenerateAfterSaveDialog';
 
 export default function ProfileForm({
   initialData,
@@ -55,6 +57,8 @@ export default function ProfileForm({
     },
   });
 
+  const router = useRouter();
+
   const {
     isPending,
     isEditMode,
@@ -64,7 +68,14 @@ export default function ProfileForm({
     prevStep,
     onSubmit,
     handleDelete,
+    showRecommendDialog,
+    closeRecommendDialog,
   } = useProfileForm(form, setIsEditing, initialData);
+
+  const handleGenerateAndNavigate = () => {
+    closeRecommendDialog();
+    router.push('/dashboard/assistant?autoGenerate=1');
+  };
 
   const CancelButton = () => {
     const [open, setOpen] = useState(false);
@@ -165,18 +176,26 @@ export default function ProfileForm({
   };
 
   return (
-    <div className="relative mx-2 h-[620px] max-w-2xl overflow-y-auto rounded-xl border bg-[#f3f3f3] p-0 max-sm:mt-2 sm:mx-auto lg:mt-10 dark:bg-[#0e100f]">
-      <div className="relative z-30">
-        <div className="sticky top-0 z-40">
-          <div className="bg-[#f3f3f3] px-6 pt-6 pb-2 dark:bg-[#0e100f]">
-            <StepProgress currentStep={currentStep} totalSteps={totalSteps} />
+    <>
+      <div className="relative mx-2 h-[620px] max-w-2xl overflow-y-auto rounded-xl border bg-[#f3f3f3] p-0 max-sm:mt-2 sm:mx-auto lg:mt-10 dark:bg-[#0e100f]">
+        <div className="relative z-30">
+          <div className="sticky top-0 z-40">
+            <div className="bg-[#f3f3f3] px-6 pt-6 pb-2 dark:bg-[#0e100f]">
+              <StepProgress currentStep={currentStep} totalSteps={totalSteps} />
+            </div>
+          </div>
+
+          <div className="px-6 pb-6">
+            <Form {...form}>{renderStep()}</Form>
           </div>
         </div>
-
-        <div className="px-6 pb-6">
-          <Form {...form}>{renderStep()}</Form>
-        </div>
       </div>
-    </div>
+
+      <GenerateAfterSaveDialog
+        open={showRecommendDialog}
+        onGenerate={handleGenerateAndNavigate}
+        onSkip={closeRecommendDialog}
+      />
+    </>
   );
 }

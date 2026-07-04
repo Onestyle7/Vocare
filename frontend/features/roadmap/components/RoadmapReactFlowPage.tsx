@@ -1545,7 +1545,6 @@ export const RoadmapReactFlowPage = ({
           stepId: selectedNode.data.persistenceId,
           status: nextStatus,
         });
-        onRestorePresetLayout();
       } catch {
         setNodes((currentNodes) => applyStepStatusToNodes(currentNodes, stepId, previousStatus));
         toast.error('Nie udalo sie zapisac statusu kroku');
@@ -2245,20 +2244,22 @@ export const RoadmapReactFlowPage = ({
 
   const onRestorePresetLayout = useCallback(() => {
     const defaultNodesById = new Map(defaultLayoutNodes.map((node) => [node.id, node]));
-    const nextNodes = nodes.map((node) => {
-      const defaultNode = defaultNodesById.get(node.id);
-      if (!defaultNode) return node;
+    setNodes((currentNodes) => {
+      const nextNodes = currentNodes.map((node) => {
+        const defaultNode = defaultNodesById.get(node.id);
+        if (!defaultNode) return node;
 
-      return {
-        ...node,
-        position: defaultNode.position,
-      };
+        return {
+          ...node,
+          position: defaultNode.position,
+        };
+      });
+
+      void persistCurrentNodePositions(nextNodes);
+      return nextNodes;
     });
-
-    setNodes(nextNodes);
-    void persistCurrentNodePositions(nextNodes);
     closeEdgeInspector();
-  }, [closeEdgeInspector, defaultLayoutNodes, nodes, persistCurrentNodePositions, setNodes]);
+  }, [closeEdgeInspector, defaultLayoutNodes, persistCurrentNodePositions, setNodes]);
 
   const onNodeDragStop = useCallback(
     (_event: ReactMouseEvent | MouseEvent, node: RoadmapNode) => {

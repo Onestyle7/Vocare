@@ -450,7 +450,7 @@ export default function ProfileDetails() {
                         className="h-10 w-10 justify-center rounded-[7px] p-0"
                         aria-label="Subskrypcja"
                       >
-                        <Link href="/payments">
+                        <Link href="/dashboard/profile/payments">
                           <Settings className="h-4 w-4" />
                         </Link>
                       </Button>

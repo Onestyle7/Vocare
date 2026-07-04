@@ -34,13 +34,11 @@ export function useRoadmapDetailsActions(roadmapId: string) {
     });
   };
 
-  const handleUpdateStatus = (stepId: string, status: StepStatus) => {
-    startTransition(async () => {
-      const [error] = await updateRoadmapStepStatusCommand(roadmapId, stepId, status);
-      if (error) {
-        toast.error('Nie udało się zaktualizować statusu');
-      }
-    });
+  const handleUpdateStatus = async (stepId: string, status: StepStatus) => {
+    const [error] = await updateRoadmapStepStatusCommand(roadmapId, stepId, status);
+    if (error) {
+      throw error;
+    }
   };
 
   const handleUpdatePhaseName = (phaseId: string, newName: string) => {
