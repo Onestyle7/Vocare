@@ -101,7 +101,7 @@ export class ApiClient {
       if (!response.ok) {
         Logger.debug('[RAW ERROR]', response);
         const error = await this.handleErrorResponse(response);
-        Logger.error(error);
+        Logger.error(...error, { url });
         return error;
       }
 

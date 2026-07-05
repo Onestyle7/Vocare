@@ -4,7 +4,7 @@ import { PersonalityType } from '@/lib/types/personalityTypes';
 import { Risk } from '@/lib/types/risk';
 
 const certificateEntrySchema = z.object({
-  name: z.string().min(1, 'Certificate name is required'),
+  name: z.string().min(1, 'Nazwa certyfikatu jest wymagana'),
   issuer: z.string().optional(),
   issueDate: z.string().optional(),
   expiryDate: z.string().optional(),
@@ -12,7 +12,7 @@ const certificateEntrySchema = z.object({
 });
 
 const educationEntrySchema = z.object({
-  institution: z.string().min(1, 'Institution name is required'),
+  institution: z.string().min(1, 'Nazwa instytucji jest wymagana'),
   degree: z.string().optional(),
   field: z.string().optional(),
   startDate: z.string().optional(),
@@ -21,9 +21,9 @@ const educationEntrySchema = z.object({
 });
 
 const workExperienceEntrySchema = z.object({
-  company: z.string().min(1, 'Company name is required'),
-  position: z.string().min(1, 'Position is required'),
-  description: z.string().min(1, 'Company name is required'),
+  company: z.string().min(1, 'Nazwa firmy jest wymagana'),
+  position: z.string().min(1, 'Stanowisko jest wymagane'),
+  description: z.string().min(1, 'Opis jest wymagany'),
   responsibilities: z.array(z.string()).optional(),
   startDate: z.string().optional(),
   endDate: z.string().optional(),
@@ -31,16 +31,30 @@ const workExperienceEntrySchema = z.object({
 });
 
 const languageEntrySchema = z.object({
-  language: z.string().min(1, 'Language name is required'),
+  language: z.string().min(1, 'Nazwa języka jest wymagana'),
   level: z.string().optional(),
 });
 
 const financialSurveySchema = z.object({
   currentSalary: z
-    .preprocess((val) => (val === '' || val === null ? undefined : Number(val)), z.number())
+    .preprocess(
+      (val) => (val === '' || val === null ? undefined : Number(val)),
+      z
+        .number({ invalid_type_error: 'Wprowadź poprawną liczbę' })
+        .int('Pensja musi być liczbą całkowitą')
+        .positive('Pensja musi być liczbą dodatnią')
+        .optional()
+    )
     .optional(),
   desiredSalary: z
-    .preprocess((val) => (val === '' || val === null ? undefined : Number(val)), z.number())
+    .preprocess(
+      (val) => (val === '' || val === null ? undefined : Number(val)),
+      z
+        .number({ invalid_type_error: 'Wprowadź poprawną liczbę' })
+        .int('Oczekiwana pensja musi być liczbą całkowitą')
+        .positive('Oczekiwana pensja musi byc liczbą dodatnią')
+        .optional()
+    )
     .optional(),
   hasLoans: z.boolean().default(false),
   loanDetails: z.string().optional(),
@@ -49,10 +63,10 @@ const financialSurveySchema = z.object({
 });
 
 const baseProfileSchema = z.object({
-  firstName: z.string().min(1, 'First name is required'),
-  lastName: z.string().min(1, 'Last name is required'),
-  country: z.string().min(1, 'Country is required'),
-  address: z.string().min(1, 'Address is required'),
+  firstName: z.string().min(1, 'Imię jest wymagane'),
+  lastName: z.string().min(1, 'Nazwisko jest wymagane'),
+  country: z.string().min(1, 'Kraj jest wymagany'),
+  address: z.string().min(1, 'Adres jest wymagany'),
   phoneNumber: z.preprocess(
     (val) => {
       if (typeof val === 'string') {
@@ -62,8 +76,8 @@ const baseProfileSchema = z.object({
     },
     z
       .string()
-      .min(1, 'Phone number is required')
-      .regex(/^\d{9}$/, 'Nmber must be 9 digits long')
+      .min(1, 'Numer telefonu jest wymagany')
+      .regex(/^\d{9}$/, 'Numer telefonu musi składać się dokładnie z 9 cyfr')
   ),
   education: z.array(educationEntrySchema).optional(),
   workExperience: z.array(workExperienceEntrySchema).optional(),

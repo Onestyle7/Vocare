@@ -16,7 +16,7 @@ import {
 } from './api';
 
 export type RoadmapDomainError = BaseAppError<
-  'Unauthorized' | 'NotFound' | 'InvalidOperation' | 'GenericApiError'
+  'Unauthorized' | 'NotFound' | 'InvalidOperation' | 'GenericApiError' | 'DuplicateRoadmap'
 >;
 
 const mapRoadmapError = (error: ApiError): RoadmapDomainError => {
@@ -24,6 +24,14 @@ const mapRoadmapError = (error: ApiError): RoadmapDomainError => {
     return {
       type: 'Unauthorized',
       message: 'Zaloguj się, aby wyświetlić roadmapy.',
+      details: error.details,
+    };
+  }
+
+  if (error.type === 'ConflictError') {
+    return {
+      type: 'DuplicateRoadmap',
+      message: 'Posiadasz już roadmapę dla tej ścieżki zawodowej.',
       details: error.details,
     };
   }

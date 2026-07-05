@@ -11,7 +11,7 @@ import { PersonalityType } from '@/lib/types/personalityTypes';
 import { UserProfile } from '@/lib/types/profile';
 import { Risk } from '@/lib/types/risk';
 
-import { createProfileCommand, deleteProfileCommand, updateProfileCommand } from '../dal/commands';
+import { clearProfileCommand, createProfileCommand, updateProfileCommand } from '../dal/commands';
 import { CreateProfileFormType } from '../profileSchema';
 
 // Normalizuje daty do formatu YYYY-MM-DD, bez strefy czasowej/ czasu
@@ -166,7 +166,7 @@ export function useProfileForm(
 
   const handleDelete = () => {
     startTransition(async () => {
-      const [error] = await deleteProfileCommand();
+      const [error] = await clearProfileCommand();
 
       if (error) {
         if (error.type === 'Unauthorized') {
@@ -177,8 +177,9 @@ export function useProfileForm(
         return;
       }
 
-      toast.success('Profil usunięty pomyślnie!');
-      router.push('/');
+      setIsEditing(false);
+      toast.success('Profil wyczyszczony pomyślnie!');
+      router.push('/dashboard/profile');
     });
   };
 

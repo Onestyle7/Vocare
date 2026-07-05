@@ -28,9 +28,18 @@ export function useProfileActions() {
     if (error) {
       if (error.type === 'Unauthorized') {
         unauthorizedToast();
+      } else if (error.type === 'CVImportLimitReached') {
+        toast.error('Osiągnąłeś limit importu CV dla swojego planu', {
+          description: 'Darmowy plan przewiduje tylko jeden import cv.',
+          action: {
+            label: 'Podnieś plan',
+            onClick: () => router.push('/pricing'),
+          },
+        });
       } else {
         toast.error('Nie udało się przetworzyć CV', { description: error.message });
       }
+
       return null;
     }
 

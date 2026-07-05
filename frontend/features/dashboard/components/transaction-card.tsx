@@ -38,7 +38,7 @@ export default function TransactionCard({
                 <p className="text-dashboard-primary-foreground text-lg">
                   {formatPaymentAmount(payment.amount, payment.currency)}
                 </p>
-                <p className="text-dashboard-secondary-foreground text-sm">
+                <p className="text-dashboard-secondary-foreground text-xs">
                   {PAYMENT_DATE_FORMATTER.format(new Date(payment.createdAt))}
                 </p>
               </div>

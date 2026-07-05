@@ -28,6 +28,7 @@ export async function getUserRoadmapsQuery() {
         case 'Unauthorized':
         case 'NotFound':
         case 'InvalidOperation':
+        case 'DuplicateRoadmap':
         case 'GenericApiError':
           return actionErr(error);
         default:
@@ -59,6 +60,7 @@ export async function getRoadmapByIdQuery(roadmapId: string) {
         case 'NotFound':
         case 'InvalidOperation':
         case 'GenericApiError':
+        case 'DuplicateRoadmap':
           return actionErr(error);
         default:
           throw new Error(`ERROR: ${error.type satisfies never}`);
