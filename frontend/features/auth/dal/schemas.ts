@@ -1,7 +1,7 @@
 import z from 'zod';
 
 export const forgotPasswordSchema = z.object({
-  email: z.string().min(1, 'Email is required').email('Invalid email address'),
+  email: z.string().min(1, 'Email is required').email('Niepoprawny adres e-mail'),
 });
 
 export type ForgotPasswordFormType = z.infer<typeof forgotPasswordSchema>;
@@ -30,8 +30,8 @@ export const resetPasswordSchema = z
 export type ResetPasswordFormType = z.infer<typeof resetPasswordSchema>;
 
 export const signInSchema = z.object({
-  email: z.string().email('Invalid email address'),
-  password: z.string().min(1, 'Password is required'),
+  email: z.string().email('Niepoprawny adres email'),
+  password: z.string().min(1, 'Hasło jest wymagane'),
 });
 
 export type SignInFormType = z.infer<typeof signInSchema>;

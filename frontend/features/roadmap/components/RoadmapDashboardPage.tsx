@@ -236,7 +236,9 @@ export default function RoadmapDashboardPage({
   ]);
 
   const isAnyRoadmapGenerating = useMemo(() => {
-    return visibleRoadmaps.some((r) => r.generationStatus === 'Generating');
+    return visibleRoadmaps.some(
+      (r) => r.generationStatus === 'Generating' || r.generationStatus === 'Pending'
+    );
   }, [visibleRoadmaps]);
 
   useEffect(() => {
@@ -357,11 +359,15 @@ export default function RoadmapDashboardPage({
                       <Link
                         key={roadmap.id}
                         href={
-                          roadmap.generationStatus === 'Generating' ? '#' : `/roadmap/${roadmap.id}`
+                          roadmap.generationStatus === 'Generating' ||
+                          roadmap.generationStatus === 'Pending'
+                            ? '#'
+                            : `/roadmap/${roadmap.id}`
                         }
                         className={cn(
                           'block min-w-0',
-                          roadmap.generationStatus === 'Generating' &&
+                          (roadmap.generationStatus === 'Generating' ||
+                            roadmap.generationStatus === 'Pending') &&
                             'pointer-events-none opacity-60'
                         )}
                       >

@@ -7,7 +7,11 @@ import { BaseAppError } from '@/lib/types/result';
 import { CreateProfileCommand, profileApiClient, UpdateProfileCommand } from './api';
 
 export type ProfileDomainError = BaseAppError<
-  'Unauthorized' | 'ProfileNotFound' | 'ValidationFailed' | 'CvImportFailed'
+  | 'Unauthorized'
+  | 'ProfileNotFound'
+  | 'ValidationFailed'
+  | 'CvImportFailed'
+  | 'CVImportLimitReached'
 >;
 
 export async function getUserProfileService(
@@ -108,10 +112,10 @@ export async function updateUserProfileService(
     });
 }
 
-export async function deleteUserProfileService(): Promise<
+export async function clearUserProfileService(): Promise<
   Result<{ message: string }, ProfileDomainError>
 > {
-  const result = await profileApiClient.delete<{ message: string }>('/DeleteCurrentUserProfile');
+  const result = await profileApiClient.put<{ message: string }>('/ClearCurrentUserProfile');
 
   return result
     .map((response) => response.data)
@@ -164,6 +168,16 @@ export async function importProfileFromCvService(
             message: 'Wystąpił błąd parsowania pliku CV',
             details: error.details,
           };
+        }
+        case 'UnprocessableEntityError': {
+          const errorCode = error.details?.errorCode;
+          if (errorCode === 'CV_IMPORT_LIMIT_REACHED') {
+            return {
+              type: 'CVImportLimitReached',
+              message: 'Osiągnięto limit importów cv dla twojego planu',
+              details: error.details,
+            };
+          }
         }
         default: {
           return {

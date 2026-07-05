@@ -28,8 +28,7 @@ export async function generateRoadmapCommand(payload: GenerateRoadmapPayload) {
   return result.match(
     async (response) => {
       revalidateTag(CACHE_TAGS.roadmap(response.id), { expire: 0 });
-      await invalidateUserTag('userRoadmaps');
-      await invalidateUserTag('subscriptionStatus');
+      await invalidateUserTag(['userRoadmaps', 'subscriptionStatus', 'profileStats']);
       return actionOk(response);
     },
     (error) => actionErr(error)

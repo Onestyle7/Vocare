@@ -5,8 +5,8 @@ import { actionErr, actionOk } from '@/lib/types/result';
 
 import { CreateProfileCommand, UpdateProfileCommand } from './api';
 import {
+  clearUserProfileService,
   createUserProfileService,
-  deleteUserProfileService,
   importProfileFromCvService,
   updateUserProfileService,
 } from './services';
@@ -35,12 +35,12 @@ export async function updateProfileCommand(command: UpdateProfileCommand) {
   );
 }
 
-export async function deleteProfileCommand() {
-  const result = await deleteUserProfileService();
+export async function clearProfileCommand() {
+  const result = await clearUserProfileService();
 
   return result.match(
     async (response) => {
-      await invalidateUserTag(['userProfile', 'profileStats']);
+      await invalidateUserTag(['userProfile', 'profileStats', 'profileAttributes']);
       return actionOk(response);
     },
     (error) => actionErr(error)

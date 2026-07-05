@@ -32,6 +32,7 @@ export async function getUserProfileQuery() {
         case 'Unauthorized':
         case 'CvImportFailed':
         case 'ValidationFailed':
+        case 'CVImportLimitReached':
         case 'GenericApiError': {
           return actionErr(error);
         }
