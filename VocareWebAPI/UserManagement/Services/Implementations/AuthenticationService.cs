@@ -59,7 +59,7 @@ namespace VocareWebAPI.UserManagement.Services.Implementations
             {
                 _logger.LogWarning("Failed login attempt for non-existent user: {Email}", email);
                 return Result<LoginResult>.Fail(
-                    new Error("INVALID_CREDENTIALS", "Invalid email or password.")
+                    new Error("INVALID_CREDENTIALS", "Invalid email or password.", 401)
                 );
             }
 
@@ -133,14 +133,15 @@ namespace VocareWebAPI.UserManagement.Services.Implementations
                     return Result<RegisterResult>.Fail(
                         new Error(
                             "GOOGLE_ACCOUNT_EXISTS",
-                            "An account with this email already exists via Google login"
+                            "An account with this email already exists via Google login",
+                            409
                         )
                     );
                 }
 
                 _logger.LogWarning("User with password login already exists: {Email}", email);
                 return Result<RegisterResult>.Fail(
-                    new Error("ACCOUNT_EXISTS", "An account with this email already exists")
+                    new Error("ACCOUNT_EXISTS", "An account with this email already exists", 409)
                 );
             }
 
@@ -493,7 +494,7 @@ Zespół Vocare
             if (accessToken == null)
             {
                 return Result<OAuthLoginResult>.Fail(
-                    new Error("MISSING_GOOGLE_TOKEN", "Google access token is required.")
+                    new Error("MISSING_GOOGLE_TOKEN", "Google access token is required.", 400)
                 );
             }
             try
@@ -508,7 +509,7 @@ Zespół Vocare
                         response.StatusCode
                     );
                     return Result<OAuthLoginResult>.Fail(
-                        new Error("INVALID_GOOGLE_TOKEN", "Invalid google access token.")
+                        new Error("INVALID_GOOGLE_TOKEN", "Invalid google access token.", 400)
                     );
                 }
 
@@ -519,7 +520,7 @@ Zespół Vocare
                 if (string.IsNullOrEmpty(email))
                 {
                     return Result<OAuthLoginResult>.Fail(
-                        new Error("MISSING_GOOGLE_EMAIL", "Google token does not contain email.")
+                        new Error("MISSING_GOOGLE_EMAIL", "Google token does not contain email.", 404)
                     );
                 }
 
@@ -549,7 +550,8 @@ Zespół Vocare
                             return Result<OAuthLoginResult>.Fail(
                                 new Error(
                                     "GOOGLE_USER_CREATION_FAILED",
-                                    "Failed to create user account for Google login."
+                                    "Failed to create user account for Google login.",
+                                    500
                                 )
                             );
                         }
@@ -572,7 +574,8 @@ Zespół Vocare
                             return Result<OAuthLoginResult>.Fail(
                                 new Error(
                                     "GOOGLE_LOGIN_ASSOCIATION_FAILED",
-                                    "Failed to associate Google login with user account."
+                                    "Failed to associate Google login with user account.",
+                                    500
                                 )
                             );
                         }
@@ -586,7 +589,8 @@ Zespół Vocare
                         return Result<OAuthLoginResult>.Fail(
                             new Error(
                                 "GOOGLE_VERIFICATION_FAILED",
-                                "Google token verification failed."
+                                "Google token verification failed.",
+                                500
                             )
                         );
                     }
@@ -616,7 +620,8 @@ Zespół Vocare
                             return Result<OAuthLoginResult>.Fail(
                                 new Error(
                                     "GOOGLE_LOGIN_ASSOCIATION_FAILED",
-                                    "Failed to associate Google login with user account."
+                                    "Failed to associate Google login with user account.",
+                                    500
                                 )
                             );
                         }
@@ -661,7 +666,7 @@ Zespół Vocare
             {
                 _logger.LogError(ex, "Error in GoogleVerify");
                 return Result<OAuthLoginResult>.Fail(
-                    new Error("GOOGLE_VERIFICATION_FAILED", "Google token verification failed.")
+                    new Error("GOOGLE_VERIFICATION_FAILED", "Google token verification failed.", 500)
                 );
             }
         }

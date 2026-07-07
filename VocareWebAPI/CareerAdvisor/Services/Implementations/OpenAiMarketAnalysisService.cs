@@ -170,7 +170,7 @@ namespace VocareWebAPI.CareerAdvisor.Services.Implementations
                 "marketAnalysis": {
                     "industryStatistics": [
                     {
-                        "industry": "Nazwa branży",
+                        "industry": "Nazwa branży",(nazwa branży jest nazwą rekomendowanej ściezki kariery)
                         "minSalary": 6000,
                         "maxSalary": 18000,
                         "employmentRate": 85,
