@@ -307,15 +307,6 @@ const ensureProjectDefaults = (project: Partial<Project>): Project => ({
   description: project.description ?? '',
 });
 
-const makeProjectId = () => `${Date.now()}-${Math.random().toString(36).slice(2, 8)}-proj`;
-
-const ensureProjectDefaults = (project: Partial<Project>): Project => ({
-  id: typeof project.id === 'string' && project.id.length > 0 ? project.id : makeProjectId(),
-  title: project.title ?? '',
-  url: project.url ?? '',
-  description: project.description ?? '',
-});
-
 const makeCertificateId = () => `${Date.now()}-${Math.random().toString(36).slice(2, 8)}-cert`;
 
 const ensureCertificateDefaults = (cert: Partial<Certificate>): Certificate => ({
@@ -406,18 +397,7 @@ const CVCreator: React.FC<CVCreatorProps> = ({ initialCv }) => {
       return [];
     }
   });
-  const [projects, setProjects] = useState<Project[]>(() => {
-    const saved = localStorage.getItem('projects');
-    if (!saved) return [];
-    try {
-      const parsed = JSON.parse(saved);
-      if (!Array.isArray(parsed)) return [];
-      return parsed.map((item) => ensureProjectDefaults(item));
-    } catch (err) {
-      console.warn('Failed to parse stored projects', err);
-      return [];
-    }
-  });
+
   const [projects, setProjects] = useState<Project[]>(() => {
     const saved = localStorage.getItem('projects');
     if (!saved) return [];
@@ -490,16 +470,6 @@ const CVCreator: React.FC<CVCreatorProps> = ({ initialCv }) => {
 
   const [sectionOrder, setSectionOrder] = useState<string[]>(() => {
     const saved = localStorage.getItem('sectionOrder');
-    if (!saved) {
-      return [...DEFAULT_SECTION_ORDER];
-    }
-
-    try {
-      return mergeSectionOrder(JSON.parse(saved));
-    } catch (err) {
-      console.warn('Failed to parse stored section order', err);
-      return [...DEFAULT_SECTION_ORDER];
-    }
     if (!saved) {
       return [...DEFAULT_SECTION_ORDER];
     }
@@ -834,26 +804,6 @@ const CVCreator: React.FC<CVCreatorProps> = ({ initialCv }) => {
       delete next[id];
       return next;
     });
-  };
-
-  const addProject = () => {
-    const newProject: Project = {
-      id: makeProjectId(),
-      title: '',
-      url: '',
-      description: '',
-    };
-    setProjects((prev) => [...prev, newProject]);
-  };
-
-  const updateProject = (id: string, field: keyof Project, value: string) => {
-    setProjects((prev) =>
-      prev.map((project) => (project.id === id ? { ...project, [field]: value } : project))
-    );
-  };
-
-  const removeProject = (id: string) => {
-    setProjects((prev) => prev.filter((project) => project.id !== id));
   };
 
   const addProject = () => {
@@ -1499,7 +1449,6 @@ const CVCreator: React.FC<CVCreatorProps> = ({ initialCv }) => {
         id: `${Date.now()}${idx}`,
         name: l.language,
         level: normalizeFluency(l.fluency),
-        level: normalizeFluency(l.fluency),
       })) || []
     );
   }, []);
@@ -1744,7 +1693,7 @@ const CVCreator: React.FC<CVCreatorProps> = ({ initialCv }) => {
             personalInfo.phone ||
             personalInfo.address ||
             personalInfo.profession ||
-            personalInfo.summary
+            personalInfo.summary ||
             personalInfo.lastName ||
             personalInfo.email ||
             personalInfo.phone ||
@@ -3645,42 +3594,6 @@ const CVCreator: React.FC<CVCreatorProps> = ({ initialCv }) => {
             {renderExperienceDescription(exp)}
           </div>
         ))}
-      </>
-    );
-  };
-
-  const renderProjectItems = (ids?: string[]) => {
-    const list = ids ? projects.filter((project) => ids.includes(project.id)) : projects;
-
-    return (
-      <>
-        {list.map((project) => {
-          const projectUrl = normalizeExternalUrl(project.url);
-
-          return (
-            <div key={project.id} className="project-item mb-3" data-item-id={project.id}>
-              {projectUrl ? (
-                <a
-                  href={projectUrl}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="font-semibold text-[#915EFF] underline underline-offset-2"
-                >
-                  {project.title || 'Project title'}
-                </a>
-              ) : (
-                <div className="font-semibold text-gray-900">
-                  {project.title || 'Project title'}
-                </div>
-              )}
-              {project.description && (
-                <p className="mt-1 text-sm leading-relaxed break-words text-gray-700">
-                  {project.description}
-                </p>
-              )}
-            </div>
-          );
-        })}
       </>
     );
   };
