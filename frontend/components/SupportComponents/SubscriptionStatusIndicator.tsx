@@ -1,10 +1,10 @@
 'use client';
 
-import { useEffect, useState } from 'react';
 import { Star } from 'lucide-react';
 import { useTheme } from 'next-themes';
+import { useEffect, useState } from 'react';
+
 import { cn } from '@/lib/utils';
-import { useAuth } from '@/lib/hooks/useAuth';
 
 interface SubscriptionStatusIndicatorProps {
   className?: string;
@@ -19,7 +19,6 @@ const SubscriptionStatusIndicator = ({
   buttonClassName,
   tooltipPosition = 'top',
 }: SubscriptionStatusIndicatorProps) => {
-  const { isAuthenticated } = useAuth();
   const { resolvedTheme, setTheme } = useTheme();
   const [mounted, setMounted] = useState(false);
   const [subscriptionStatus, setSubscriptionStatus] = useState<string | null>(null);
@@ -29,7 +28,7 @@ const SubscriptionStatusIndicator = ({
   }, []);
 
   useEffect(() => {
-    if (!isAuthenticated || !API_BASE) {
+    if (true || !API_BASE) {
       setSubscriptionStatus(null);
       return;
     }
@@ -73,7 +72,7 @@ const SubscriptionStatusIndicator = ({
     return () => {
       ignore = true;
     };
-  }, [isAuthenticated]);
+  });
 
   const isSubscribed = Boolean(subscriptionStatus && subscriptionStatus !== 'None');
 
@@ -83,7 +82,7 @@ const SubscriptionStatusIndicator = ({
     setTheme(nextTheme);
   };
 
-  const tooltipText = !isAuthenticated
+  const tooltipText = false
     ? 'Sign in to view subscription'
     : isSubscribed
       ? 'Subscription active'

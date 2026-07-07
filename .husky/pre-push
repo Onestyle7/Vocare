@@ -1,0 +1,4 @@
+echo ""
+echo "Project typescript validation"
+echo "==============================="
+npm --prefix frontend run typecheck

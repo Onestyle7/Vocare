@@ -1,17 +1,19 @@
 'use client';
 
-import React, { useRef, useEffect } from 'react';
-import { logo, NavLinks } from '@/app/constants';
+import { gsap } from 'gsap';
+import Image from 'next/image';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { cn } from '@/lib/utils';
-import { Sheet, SheetContent, SheetTrigger, SheetClose, SheetTitle } from '@/components/ui/sheet';
-import { gsap } from 'gsap';
-// import ThemeSwitch from '../SupportComponents/ThemeSwitch';
-import { TokenCounter } from '../PricingComponents/TokenCounter';
-import Image from 'next/image';
-import { Badge } from '../ui/badge';
+import React, { useEffect, useRef } from 'react';
+
+import { Sheet, SheetClose, SheetContent, SheetTitle, SheetTrigger } from '@/components/ui/sheet';
+import { getHeaderNavLinks, logo } from '@/features/marketing/constants';
 import { useIsMobile } from '@/lib/hooks/useIsMobile';
+import { cn } from '@/lib/utils';
+
+import { Badge } from '../ui/badge';
+
+// import ThemeSwitch from '../SupportComponents/ThemeSwitch';
 
 interface MobileNavProps {
   isAuthenticated: boolean;
@@ -69,7 +71,9 @@ const MobileNav: React.FC<MobileNavProps> = ({ isAuthenticated }) => {
     }
   }, [isOpen]);
 
-  const filteredLinks = isAuthenticated ? NavLinks : [];
+  const filteredLinks = getHeaderNavLinks(isAuthenticated);
+  const ctaHref = isAuthenticated ? '/dashboard' : '/sign-in';
+  const ctaLabel = isAuthenticated ? 'Pulpit' : 'Zaloguj się';
 
   return (
     <Sheet open={isOpen} onOpenChange={setIsOpen}>
@@ -127,24 +131,11 @@ const MobileNav: React.FC<MobileNavProps> = ({ isAuthenticated }) => {
               </li>
             );
           })}
-          <SheetClose>
-            {!pathname.includes('blog') && (
-              <Link href="/blog">
-                <p className="text-[18px] font-normal uppercase">Blog</p>
-              </Link>
-            )}
-            {!isAuthenticated && (
-              <>
-                <Link href="/pricing">
-                  <p className="text-[18px] font-normal uppercase">Pricing</p>
-                </Link>
-                <Link href="/sign-in" className="text-[18px] font-normal uppercase">
-                  Sign In
-                </Link>
-              </>
-            )}
+          <SheetClose asChild>
+            <Link href={ctaHref} className="text-[18px] font-normal uppercase">
+              {ctaLabel}
+            </Link>
           </SheetClose>
-          {isAuthenticated && <TokenCounter />}
           {/* <ThemeSwitch /> */}
         </ul>
       </SheetContent>

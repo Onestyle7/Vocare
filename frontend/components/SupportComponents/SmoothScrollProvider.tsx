@@ -1,8 +1,9 @@
 // components/SmoothScrollProvider.tsx
 'use client';
 
+import { createContext, useContext, useEffect, useState } from 'react';
+
 import { SmoothScroll } from '@/lib/utils/smooth-scroll';
-import { useEffect, createContext, useContext, useState } from 'react';
 
 const SmoothScrollContext = createContext<SmoothScroll | null>(null);
 
