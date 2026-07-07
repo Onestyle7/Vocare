@@ -11,6 +11,9 @@
 
 @import 'tailwindcss';
 
+@import '../features/dashboard/sidebar/sidebar.css';
+@import '../features/dashboard/dashboard.css';
+
 @utility remove-scrollbar {
   &::-webkit-scrollbar {
     width: 0px;
@@ -29,6 +32,13 @@
   }
   -ms-overflow-style: none; /* IE i Edge */
   scrollbar-width: none; /* Firefox */
+}
+
+@utility show-scrollbar {
+  scrollbar-width: thin;
+  -ms-overflow-style: auto;
+  scrollbar-width: thin !important;
+  scrollbar-color: var(--dashboard-accent-foreground) transparent !important;
 }
 
 @layer utilities {
@@ -715,14 +725,6 @@
   --chart-3: oklch(0.398 0.07 227.392);
   --chart-4: oklch(0.828 0.189 84.429);
   --chart-5: oklch(0.769 0.188 70.08);
-  --sidebar: oklch(0.985 0 0);
-  --sidebar-foreground: oklch(0.145 0 0);
-  --sidebar-primary: oklch(0.205 0 0);
-  --sidebar-primary-foreground: oklch(0.985 0 0);
-  --sidebar-accent: oklch(0.97 0 0);
-  --sidebar-accent-foreground: oklch(0.205 0 0);
-  --sidebar-border: oklch(0.922 0 0);
-  --sidebar-ring: oklch(0.708 0 0);
   --color-1: hsl(0 100% 63%);
   --color-2: hsl(270 100% 63%);
   --color-3: hsl(210 100% 63%);
@@ -760,14 +762,6 @@
   --chart-3: oklch(0.769 0.188 70.08);
   --chart-4: oklch(0.627 0.265 303.9);
   --chart-5: oklch(0.645 0.246 16.439);
-  --sidebar: oklch(0.205 0 0);
-  --sidebar-foreground: oklch(0.985 0 0);
-  --sidebar-primary: oklch(0.488 0.243 264.376);
-  --sidebar-primary-foreground: oklch(0.985 0 0);
-  --sidebar-accent: oklch(0.269 0 0);
-  --sidebar-accent-foreground: oklch(0.985 0 0);
-  --sidebar-border: oklch(1 0 0 / 10%);
-  --sidebar-ring: oklch(0.556 0 0);
   --color-1: hsl(0 100% 63%);
   --color-2: hsl(270 100% 63%);
   --color-3: hsl(210 100% 63%);
@@ -927,5 +921,35 @@ input:-webkit-autofill {
   100% {
     opacity: 1;
     transform: translate(-50%, -40%) scale(1);
+  }
+}
+
+@layer components {
+  .glass-card {
+    position: relative;
+  }
+
+  .glass-card::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border-radius: inherit; /* dziedziczy zaokrąglenie hosta */
+    padding: 1px; /* grubość obramowania */
+    background: linear-gradient(
+      to bottom,
+      rgba(255, 255, 255, 0.15) 0%,
+      rgba(255, 255, 255, 0.06) 40%,
+      rgba(255, 255, 255, 0.02) 100%
+    );
+    /* maska zostawia widoczny tylko 1px ring (sam border) */
+    -webkit-mask:
+      linear-gradient(#fff 0 0) content-box,
+      linear-gradient(#fff 0 0);
+    -webkit-mask-composite: xor;
+    mask:
+      linear-gradient(#fff 0 0) content-box,
+      linear-gradient(#fff 0 0);
+    mask-composite: exclude;
+    pointer-events: none;
   }
 }

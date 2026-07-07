@@ -1,11 +1,12 @@
 'use client';
 
-import { useEffect, useRef } from 'react';
 import gsap from 'gsap';
 import { ArrowRight } from 'lucide-react';
-import { letterImg } from '@/app/constants';
 import Image from 'next/image';
 import Link from 'next/link';
+import { useEffect, useRef } from 'react';
+
+import { letterImg } from '@/features/marketing/constants';
 import { Button } from '@/components/ui/button';
 
 const Mockup = () => {
@@ -119,7 +120,7 @@ const Mockup = () => {
               </div>
             </div>
 
-            <Link href="/profile">
+            <Link href="/dashboard/profile">
               <Button className="group flex h-[56px] rounded-full bg-[#915EFF] text-[clamp(1.3rem,1vw,12rem)] font-semibold max-md:mt-6 xl:w-[250px]">
                 <span className="flex flex-row items-center">
                   Profile

@@ -1,4 +1,4 @@
-import { Risk } from '@/lib/enums/risk';
+import { Risk } from '@/lib/types/risk';
 
 export type CertificateEntry = {
   name: string;
@@ -64,6 +64,7 @@ export type FinancialSurvey = {
 export type UserProfile = {
   firstName: string;
   lastName: string;
+  email: string;
   country: string;
   address?: string;
   phoneNumber?: string;

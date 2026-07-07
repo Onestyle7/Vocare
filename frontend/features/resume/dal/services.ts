@@ -1,0 +1,113 @@
+import { Result } from 'neverthrow';
+
+import { ApiError } from '@/lib/api/api-client';
+import { BaseAppError } from '@/lib/types/result';
+
+import {
+  CreateCvDto,
+  cvApiClient,
+  CvDetailsDto,
+  CvDto,
+  CvLimits,
+  CvListItemDto,
+  UpdateCvDto,
+} from './api';
+
+export type CvDomainError = BaseAppError<
+  'Unauthorized' | 'NotFound' | 'InvalidOperation' | 'GenericApiError'
+>;
+
+const mapCvError = (error: ApiError): CvDomainError => {
+  switch (error.type) {
+    case 'UnauthorizedError':
+      return {
+        type: 'Unauthorized',
+        message: 'Zaloguj się, aby zaimportować CV',
+        details: error.details,
+      };
+    case 'NotFoundError':
+      return {
+        type: 'NotFound',
+        message: 'Nie znaleziono odpowiadającego cv',
+        details: error.details,
+      };
+    case 'BadRequestError':
+    default: {
+      return {
+        type: 'GenericApiError',
+        message: 'Coś poszło nie tak podczas przetważania twojego żądania',
+        details: error.details,
+      };
+    }
+  }
+};
+
+const normalizeCvDto = (raw: Partial<CvDto>): CvDto => ({
+  basics: raw.basics,
+  work: raw.work ?? [],
+  education: raw.education ?? [],
+  certificates: raw.certificates ?? [],
+  projects: raw.projects ?? [],
+  social: raw.social ?? [],
+  skills: raw.skills ?? [],
+  languages: raw.languages ?? [],
+});
+
+const normalizeDetails = (data: CvDetailsDto): CvDetailsDto => ({
+  ...data,
+  cvData: normalizeCvDto(data.cvData),
+});
+
+export async function getUserCvsService(
+  requestOptions?: RequestInit
+): Promise<Result<CvListItemDto[], CvDomainError>> {
+  const result = await cvApiClient.get<CvListItemDto[]>('my-cvs', requestOptions);
+  return result.map((response) => response.data).mapErr(mapCvError);
+}
+
+export async function getCvLimitsService(
+  requestOptions?: RequestInit
+): Promise<Result<CvLimits, CvDomainError>> {
+  const result = await cvApiClient.get<CvLimits>('limits', requestOptions);
+  return result.map((response) => response.data).mapErr(mapCvError);
+}
+
+export async function getCvDetailsService(
+  id: string,
+  requestOptions?: RequestInit
+): Promise<Result<CvDetailsDto, CvDomainError>> {
+  const result = await cvApiClient.get<CvDetailsDto>(`details/${id}`, requestOptions);
+  return result.map((response) => normalizeDetails(response.data)).mapErr(mapCvError);
+}
+
+export async function createCvService(
+  payload: CreateCvDto,
+  requestOptions?: RequestInit
+): Promise<Result<CvDetailsDto, CvDomainError>> {
+  const result = await cvApiClient.post<CvDetailsDto, CreateCvDto>(
+    'create',
+    payload,
+    requestOptions
+  );
+  return result.map((response) => normalizeDetails(response.data)).mapErr(mapCvError);
+}
+
+export async function deleteCvService(
+  id: string,
+  requestOptions?: RequestInit
+): Promise<Result<void, CvDomainError>> {
+  const result = await cvApiClient.delete<void>(`delete/${id}`, requestOptions);
+  return result.map((response) => response.data).mapErr(mapCvError);
+}
+
+export async function updateCvService(
+  payload: UpdateCvDto,
+  requestOptions?: RequestInit
+): Promise<Result<CvDetailsDto, CvDomainError>> {
+  const result = await cvApiClient.put<CvDetailsDto, UpdateCvDto>(
+    `update/${payload.id}`,
+    payload,
+    requestOptions
+  );
+  return result.map((response) => normalizeDetails(response.data)).mapErr(mapCvError);
+}
