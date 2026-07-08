@@ -1,7 +1,3 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using VocareWebAPI.CareerAdvisor.Models.Entities.MarketAnalysis;
 using VocareWebAPI.CareerAdvisor.Repositories.Interfaces;
@@ -30,7 +26,7 @@ namespace VocareWebAPI.CareerAdvisor.Repositories.Implementations
         {
             return await _context
                 .SalaryProgressions.Where(sp => sp.CareerStatisticsId == careerStatisticsId)
-                .OrderBy(sp => sp.CareerLevel)
+                .OrderBy(sp => sp.MaxSalary)
                 .ToListAsync();
         }
 

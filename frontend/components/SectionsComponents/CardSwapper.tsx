@@ -1,9 +1,11 @@
 'use client';
 
-import CardSwap, { Card } from '@/components/CardSwap/CardSwap';
 import { ArrowRight, ArrowUp, FileQuestion, PencilLine } from 'lucide-react';
 import Link from 'next/link';
 import React from 'react';
+
+import CardSwap, { Card } from '@/components/SupportComponents/CardSwap';
+
 import { Button } from '../ui/button';
 
 const CardFeature = () => {
@@ -19,7 +21,7 @@ const CardFeature = () => {
               className="group relative z-20 mt-8 h-12 w-2/3 rounded-full bg-[linear-gradient(90deg,rgba(146,150,253,1)_0%,rgba(132,145,254,1)_50%,rgba(199,169,254,1)_100%,rgba(157,155,255,1)_77%)] font-bold text-white md:mt-8 md:w-2/3"
               variant="default"
             >
-              <Link href="/profile">
+              <Link href="/dashboard/profile">
                 Sprawdź za darmo
                 <ArrowRight className="ml-2 transition-all ease-in-out group-hover:translate-x-2" />
               </Link>

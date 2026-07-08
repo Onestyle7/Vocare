@@ -47,14 +47,10 @@ namespace VocareWebAPI.Controllers
         {
             string userId = User.FindFirstValue(ClaimTypes.NameIdentifier)!;
             if (string.IsNullOrEmpty(userId))
-            {
                 return BadRequest("Brak identyfikatora użytkownika w tokenie.");
-            }
+
             var profile = await _userProfileService.GetUserProfileAsync(userId);
-            if (profile == null)
-            {
-                return NotFound("Profil użytkownika nie został znaleziony.");
-            }
+
             return Ok(profile);
         }
 
@@ -92,11 +88,7 @@ namespace VocareWebAPI.Controllers
             {
                 return BadRequest("Brak identyfikatora użytkownika w tokenie.");
             }
-            var profile = await _userProfileService.UpdateUserProfileAsync(userId, userProfile);
-            if (profile == null)
-            {
-                return NotFound("Profil użytkownika nie został znaleziony.");
-            }
+            await _userProfileService.UpdateUserProfileAsync(userId, userProfile);
             return Ok(new { message = "Profil użytkownika został zaktualizowany." });
         }
 
@@ -112,11 +104,8 @@ namespace VocareWebAPI.Controllers
             {
                 return BadRequest("Brak identyfikatora użytkownika w tokenie.");
             }
-            var profile = await _userProfileService.DeleteUserProfileAsync(userId);
-            if (profile == null)
-            {
-                return NotFound("Profil użytkownika nie został znaleziony.");
-            }
+            await _userProfileService.DeleteUserProfileAsync(userId);
+
             return Ok(new { message = "Profil użytkownika został usunięty." });
         }
 
@@ -125,37 +114,25 @@ namespace VocareWebAPI.Controllers
         {
             string userId = User.FindFirstValue(ClaimTypes.NameIdentifier)!;
             if (string.IsNullOrEmpty(userId))
-            {
                 return BadRequest("Brak identyfikatora użytkownika w tokenie.");
-            }
 
             if (file == null || file.Length == 0)
-            {
                 return BadRequest("Nie przesłano pliku");
-            }
 
-            try
-            {
-                var profile = await _cvParserService.ParseAndSaveAsync(file, userId);
-                return Ok(profile);
-            }
-            catch (NotSupportedException ex)
-            {
-                return BadRequest(new { message = ex.Message });
-            }
-            catch (InvalidOperationException ex)
-            {
-                return BadRequest(new { message = ex.Message });
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(
-                    ex,
-                    "Nieoczekiwany błąd podczas importu CV dla użytkownika {UserId}",
-                    userId
-                );
-                return StatusCode(500, new { message = "Wystąpił nieoczekiwany błąd." });
-            }
+            var profile = await _cvParserService.ParseAndSaveAsync(file, userId);
+            return Ok(profile);
+        }
+
+        [HttpPut("ClearCurrentUserProfile")]
+        public async Task<IActionResult> ClearCurrentUserProfile()
+        {
+            string userId = User.FindFirstValue(ClaimTypes.NameIdentifier)!;
+            if (string.IsNullOrEmpty(userId))
+                return BadRequest("Brak identyfikatora użytkownika w tokenie.");
+
+            await _userProfileService.ClearUserProfileAsync(userId);
+
+            return Ok(new { message = "Dane profilu zostały wyzerowane" });
         }
     }
 }

@@ -18,22 +18,24 @@ namespace VocareWebAPI.Extensions.ServiceCollectionExtensions
             IConfiguration configuration
         )
         {
+            var connectionString = GetConnectionString(configuration);
+
+            var dataSourceBuilder = new NpgsqlDataSourceBuilder(connectionString);
+            dataSourceBuilder.EnableDynamicJson();
+            dataSourceBuilder.UseVector();
+            var dataSource = dataSourceBuilder.Build();
+
+            services.AddSingleton(dataSource);
+
             services.AddDbContext<AppDbContext>(options =>
             {
-                var connectionString = GetConnectionString(configuration);
-
-                var dataSourceBuilder = new NpgsqlDataSourceBuilder(connectionString);
-                dataSourceBuilder.EnableDynamicJson();
-                dataSourceBuilder.UseVector();
-                var dataSource = dataSourceBuilder.Build();
-
                 options.UseNpgsql(dataSource, o => o.UseVector());
             });
 
             return services;
         }
 
-        private static string GetConnectionString(IConfiguration configuration)
+        internal static string GetConnectionString(IConfiguration configuration)
         {
             var databaseUrl = Environment.GetEnvironmentVariable("DATABASE_URL");
 

@@ -52,53 +52,65 @@ namespace VocareWebAPI.JobOffers.Services.Implementations
 
             var result = new SkillMatchResult { TotalRequired = requiredSkills.Count };
             double totalSimilarity = 0;
+            var skillsWithEmbeddings = 0;
 
             foreach (var requiredSkill in requiredSkills)
             {
-                var requiredEmbedding = requiredEmbeddings[requiredSkill];
-                var (matchedSkill, similarity) = FindBestMatch(
-                    requiredEmbedding,
-                    offerSkills,
-                    offerEmbeddings
-                );
+                if (requiredEmbeddings.TryGetValue(requiredSkill, out var requiredEmbedding))
+                {
+                    var (matchedSkill, similarity) = FindBestMatch(
+                        requiredEmbedding,
+                        offerSkills,
+                        offerEmbeddings
+                    );
 
-                if (similarity >= FullMatchThreshold)
-                {
-                    // Pełne dopasowanie >= 80%
-                    result.FullMatches[requiredSkill] = new SkillMatchDetail
+                    if (similarity >= FullMatchThreshold)
                     {
-                        MatchedSkill = matchedSkill,
-                        Similarity = similarity,
-                    };
-                    totalSimilarity += similarity;
-                }
-                else if (similarity >= PartialMatchThreshold)
-                {
-                    // Częściowe dopasowanie 60-80%
-                    result.PartialMatches[requiredSkill] = new SkillMatchDetail
+                        // Pełne dopasowanie >= 80%
+                        result.FullMatches[requiredSkill] = new SkillMatchDetail
+                        {
+                            MatchedSkill = matchedSkill,
+                            Similarity = similarity,
+                        };
+                        totalSimilarity += similarity;
+                        skillsWithEmbeddings++;
+                    }
+                    else if (similarity >= PartialMatchThreshold)
                     {
-                        MatchedSkill = matchedSkill,
-                        Similarity = similarity,
-                    };
-                    totalSimilarity += similarity;
+                        // Częściowe dopasowanie 60-80%
+                        result.PartialMatches[requiredSkill] = new SkillMatchDetail
+                        {
+                            MatchedSkill = matchedSkill,
+                            Similarity = similarity,
+                        };
+                        totalSimilarity += similarity;
+                        skillsWithEmbeddings++;
+                    }
+                    else
+                    {
+                        // Brak dopasowania < 60%
+                        result.MissingSkills.Add(requiredSkill);
+                        skillsWithEmbeddings++;
+                    }
                 }
                 else
                 {
-                    // Brak dopasowania < 60%
                     result.MissingSkills.Add(requiredSkill);
                 }
             }
             result.MatchedCount = result.FullMatches.Count + result.PartialMatches.Count;
-            result.Score = totalSimilarity / requiredSkills.Count * 100;
+
+            result.Score =
+                skillsWithEmbeddings > 0 ? (totalSimilarity / skillsWithEmbeddings * 100) : 0;
+
             return result;
         }
 
         private double CalculateCosineSimilarity(float[] vectorA, float[] vectorB)
         {
             if (vectorA.Length != vectorB.Length)
-            {
                 throw new ArgumentException("Vectors must be of the same length");
-            }
+
             double dotProduct = 0;
             double magnitudeA = 0;
             double magnitudeB = 0;
@@ -131,12 +143,21 @@ namespace VocareWebAPI.JobOffers.Services.Implementations
 
             foreach (var skill in offerSkills)
             {
-                var offerEmbedding = offerEmbeddings[skill];
-                var similarity = CalculateCosineSimilarity(requiredEmbedding, offerEmbedding);
-                if (similarity > bestSimilarity)
+                if (offerEmbeddings.TryGetValue(skill, out var offerEmbedding))
                 {
-                    bestSimilarity = similarity;
-                    bestSkill = skill;
+                    var similarity = CalculateCosineSimilarity(requiredEmbedding, offerEmbedding);
+                    if (similarity > bestSimilarity)
+                    {
+                        bestSimilarity = similarity;
+                        bestSkill = skill;
+                    }
+                }
+                else
+                {
+                    _logger.LogWarning(
+                        "Brak embeddingu dla umiejętności '{Skill}' w ofercie",
+                        skill
+                    );
                 }
             }
             return (bestSkill, bestSimilarity);

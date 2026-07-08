@@ -1,10 +1,7 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Security.Claims;
-using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using VocareWebAPI.Billing.Models.Entities;
+using VocareWebAPI.UserManagement.Exceptions;
 using VocareWebAPI.UserManagement.Models.Dtos;
 using VocareWebAPI.UserManagement.Repositories.Interfaces;
 
@@ -60,11 +57,11 @@ namespace VocareWebAPI.UserManagement.Controllers
         /// </summary>
         /// <returns>Potwierdzenie udzielenia zgody</returns>
         /// <response code="200">Zgoda została udzielona</response>
-        /// <response code="400">Jeśli zgoda jest już aktywna</response>
+        /// <response code="409">Jeśli zgoda marketingowa jest już aktywna</response>
         /// <response code="401">Jeśli użytkownik nie jest zalogowany</response>
         [HttpPost("consent")]
         [ProducesResponseType(StatusCodes.Status200OK)]
-        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status409Conflict)]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         public async Task<IActionResult> GiveMarketingConsent()
         {
@@ -79,7 +76,7 @@ namespace VocareWebAPI.UserManagement.Controllers
 
             if (existingConsent != null && existingConsent.IsConsentGiven)
             {
-                return BadRequest(new { message = "Zgoda marketingowa jest już aktywna." });
+                throw new MarketingConsentAlreadyActiveException();
             }
 
             if (existingConsent == null)
@@ -123,11 +120,11 @@ namespace VocareWebAPI.UserManagement.Controllers
         /// </summary>
         /// <returns>Potwierdzenie wycofania zgody</returns>
         /// <response code="200">Zgoda została wycofana</response>
-        /// <response code="400">Jeśli zgoda nie jest aktywna</response>
+        /// <response code="422">Jeśli zgoda marketingowa nie jest aktywna</response>
         /// <response code="401">Jeśli użytkownik nie jest zalogowany</response>
         [HttpDelete("consent")]
         [ProducesResponseType(StatusCodes.Status200OK)]
-        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status422UnprocessableEntity)]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         public async Task<IActionResult> WithdrawMarketingConsent()
         {
@@ -141,9 +138,7 @@ namespace VocareWebAPI.UserManagement.Controllers
 
             if (consent == null || !consent.IsConsentGiven)
             {
-                return BadRequest(
-                    new { message = "Brak aktywnej zgody marketingowej do wycofania." }
-                );
+                throw new MarketingConsentNotActiveException();
             }
 
             consent.IsConsentGiven = false;

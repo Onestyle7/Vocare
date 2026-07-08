@@ -2,6 +2,7 @@ using VocareWebAPI.CvGenerator.Models.Dtos;
 using VocareWebAPI.CvGenerator.Services.Interfaces;
 using VocareWebAPI.Models.Entities;
 using VocareWebAPI.Repositories;
+using VocareWebAPI.UserManagement.Exceptions;
 using VocareWebAPI.UserManagement.Models.Entities;
 
 namespace VocareWebAPI.CvGenerator.Services.Implementations
@@ -25,35 +26,17 @@ namespace VocareWebAPI.CvGenerator.Services.Implementations
 
         public async Task<CvDto> GenerateCvAsync(string userId, string? position)
         {
-            try
-            {
-                _logger.LogInformation(
-                    $"Starting CV generation for user: {userId}, position: {position}"
-                );
+            _logger.LogInformation(
+                $"Starting CV generation for user: {userId}, position: {position}"
+            );
 
-                var userProfile = await _userProfileRepository.GetUserProfileByIdAsync(userId);
-                if (userProfile == null)
-                {
-                    throw new KeyNotFoundException($"User profile not found for userId: {userId}");
-                }
+            var userProfile = await _userProfileRepository.GetUserProfileByIdAsync(userId);
+            if (userProfile == null)
+                throw new UserProfileNotFoundException(userId);
 
-                var cvDto = MapUserProfileToCv(userProfile, position);
-                _logger.LogInformation($"Cv generation completed successfully for user: {userId}");
-                return cvDto;
-            }
-            catch (KeyNotFoundException)
-            {
-                throw;
-            }
-            catch (ArgumentException)
-            {
-                throw;
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, "Error generating CV for user {UserId}", userId);
-                throw new Exception("An error occurred while generating the CV.");
-            }
+            var cvDto = MapUserProfileToCv(userProfile, position);
+            _logger.LogInformation($"Cv generation completed successfully for user: {userId}");
+            return cvDto;
         }
 
         private CvDto MapUserProfileToCv(UserProfile userProfile, string? position)

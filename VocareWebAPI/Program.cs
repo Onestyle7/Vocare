@@ -42,10 +42,12 @@ builder.Services.AddRateLimiting(builder.Environment);
 builder
     .Services.AddConfiguration(builder.Configuration)
     .AddDatabase(builder.Configuration)
+    .AddHangfireExtension(builder.Configuration)
     .AddHttpClients(builder.Configuration)
     .AddApplicationServices()
     .AddRepositories()
-    .AddAutoMapper(typeof(UserProfileService).Assembly);
+    .AddAutoMapper(typeof(UserProfileService).Assembly)
+    .AddGlobalExceptionHandling();
 
 // ===== AUTHENTICATION & AUTHORIZATION =====
 builder.Services.AddAuthenticationConfiguration(builder.Configuration);
@@ -93,18 +95,13 @@ app.UseSwaggerConfiguration(app.Environment);
 // ===== MIDDLEWARE PIPELINE - PRAWIDŁOWA KOLEJNOŚĆ =====
 
 // 1. Exception handling i request logging
+app.UseGlobalExceptionHandling();
+
 if (app.Environment.IsDevelopment() || app.Environment.IsStaging())
 {
     app.UseRequestLogging(); // Logowanie requestów
     app.UseCorsLoggingMiddleware(); // Debugowanie CORS
 }
-else
-{
-    app.UseExceptionHandler("/error");
-}
-
-// Global exception handling dla wszystkich środowisk
-app.UseGlobalExceptionHandling();
 
 // 2. HTTPS Redirection (tylko produkcja)
 if (app.Environment.IsProduction())
@@ -143,6 +140,8 @@ app.UseRateLimiter();
 app.UseAuthentication();
 app.UseCustomTokenValidation(); // Twój custom token validation
 app.UseAuthorization();
+
+app.UseHangfireDashboardWithAuth(builder.Configuration);
 
 // 8. Opcjonalne middleware dla staging
 if (app.Environment.IsStaging())

@@ -2,12 +2,14 @@ using System.Text.Json;
 using System.Text.Json.Serialization;
 using AutoMapper;
 using Microsoft.Extensions.Options;
+using VocareWebAPI.CareerAdvisor.Exceptions;
 using VocareWebAPI.Models;
 using VocareWebAPI.Models.Dtos;
 using VocareWebAPI.Models.Entities;
 using VocareWebAPI.Models.OpenAIConfig;
 using VocareWebAPI.Repositories;
 using VocareWebAPI.Services;
+using VocareWebAPI.Shared.Exceptions;
 using VocareWebAPI.Shared.Services.Interfaces;
 
 namespace VocareWebAPI.CareerAdvisor.Services.Implementations
@@ -75,7 +77,7 @@ namespace VocareWebAPI.CareerAdvisor.Services.Implementations
                     _logger.LogError(
                         $"OpenAI API error: {response.StatusCode} - {responseContent}"
                     );
-                    throw new Exception(
+                    throw new AiServiceException(
                         $"OpenAI API error: {response.StatusCode} - {responseContent}"
                     );
                 }
@@ -86,14 +88,11 @@ namespace VocareWebAPI.CareerAdvisor.Services.Implementations
                 );
 
                 if (apiResponse?.Choices == null || apiResponse.Choices.Count == 0)
-                {
                     throw new AiServiceException("Invalid API response: missing choices.");
-                }
+
                 var content = apiResponse.Choices[0].Message?.Content;
                 if (string.IsNullOrWhiteSpace(content))
-                {
                     throw new AiServiceException("Invalid API response: empty content.");
-                }
 
                 //Parsowanie JSON z odpowiedzi OpenAI
                 var result = JsonSerializer.Deserialize<AiCareerResponseDto>(
@@ -102,14 +101,12 @@ namespace VocareWebAPI.CareerAdvisor.Services.Implementations
                 );
 
                 if (result == null)
-                {
                     throw new AiServiceException(
                         "Failed to parse career recommendations from JSON"
                     );
-                }
+
                 // Inicjalizacja nullowych właściwości
                 InitializeNullProperties(result);
-                await SaveRecommendationToUserProfile(profile.UserId, result);
 
                 var savedEntity = await SaveRecommendationToUserProfile(profile.UserId, result);
 
@@ -135,9 +132,7 @@ namespace VocareWebAPI.CareerAdvisor.Services.Implementations
         {
             var recommendation = await _aiRecommendationRepository.GetLatestByUserIdAsync(userId);
             if (recommendation == null)
-            {
-                throw new AiServiceException("No recommendation found");
-            }
+                throw new RecommendationNotFoundException(userId);
 
             var dto = new AiCareerResponseDto
             {
@@ -182,51 +177,43 @@ namespace VocareWebAPI.CareerAdvisor.Services.Implementations
             AiCareerResponseDto recommendation
         )
         {
-            try
-            {
-                var recommendationEntity = _mapper.Map<AiRecommendation>(recommendation);
-                recommendationEntity.UserId = userId;
-                recommendationEntity.RecommendationDate = DateTime.UtcNow;
+            var recommendationEntity = _mapper.Map<AiRecommendation>(recommendation);
+            recommendationEntity.UserId = userId;
+            recommendationEntity.RecommendationDate = DateTime.UtcNow;
 
-                foreach (var careerPath in recommendationEntity.CareerPaths)
+            foreach (var careerPath in recommendationEntity.CareerPaths)
+            {
+                try
                 {
-                    try
-                    {
-                        var textForEmbedding = BuildCareerPathTextForEmbedding(careerPath);
+                    var textForEmbedding = BuildCareerPathTextForEmbedding(careerPath);
 
-                        _logger.LogDebug(
-                            "Generuję embedding dla ściezki: {CareerName}",
-                            careerPath.CareerName
-                        );
-                        careerPath.Embedding = await _embeddingService.GenerateEmbeddingAsync(
-                            textForEmbedding
-                        );
+                    _logger.LogDebug(
+                        "Generuję embedding dla ściezki: {CareerName}",
+                        careerPath.CareerName
+                    );
+                    careerPath.Embedding = await _embeddingService.GenerateEmbeddingAsync(
+                        textForEmbedding
+                    );
 
-                        _logger.LogDebug(
-                            "Wygenerowano embedding dla ścieżki: {CareerName}",
-                            careerPath.CareerName
-                        );
-                    }
-                    catch (Exception ex)
-                    {
-                        _logger.LogWarning(
-                            ex,
-                            "Nie udało się wygenerować embeddingu dla ścieżki: {CareerName}. Kontynuuję bez embeddingu.",
-                            careerPath.CareerName
-                        ); // Nie blokujemy zapisu rekomendacji, kontynuujemy w razie błędu bez zpisu embeddingu
-                    }
+                    _logger.LogDebug(
+                        "Wygenerowano embedding dla ścieżki: {CareerName}",
+                        careerPath.CareerName
+                    );
                 }
-
-                await _aiRecommendationRepository.AddRecommendationAsync(recommendationEntity);
-                _logger.LogInformation($"Saved recommendation for user: {userId}");
-
-                return recommendationEntity;
+                catch (Exception ex)
+                {
+                    _logger.LogWarning(
+                        ex,
+                        "Nie udało się wygenerować embeddingu dla ścieżki: {CareerName}. Kontynuuję bez embeddingu.",
+                        careerPath.CareerName
+                    ); // Nie blokujemy zapisu rekomendacji, kontynuujemy w razie błędu bez zpisu embeddingu
+                }
             }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, $"Error saving recommendation for user: {userId}");
-                throw;
-            }
+
+            await _aiRecommendationRepository.AddRecommendationAsync(recommendationEntity);
+            _logger.LogInformation($"Saved recommendation for user: {userId}");
+
+            return recommendationEntity;
         }
 
         private void InitializeNullProperties(AiCareerResponseDto response)
@@ -368,15 +355,6 @@ namespace VocareWebAPI.CareerAdvisor.Services.Implementations
             """;
         }
 
-        public class AiServiceException : Exception
-        {
-            public AiServiceException(string message)
-                : base(message) { }
-
-            public AiServiceException(string message, Exception inner)
-                : base(message, inner) { }
-        }
-
         private string BuildCareerPathTextForEmbedding(CareerPath careerPath)
         {
             var skills =
@@ -387,9 +365,7 @@ namespace VocareWebAPI.CareerAdvisor.Services.Implementations
             var text = $"{careerPath.CareerName}. {careerPath.Description}";
 
             if (!string.IsNullOrEmpty(skills))
-            {
                 text += $"Wymagane umiejętności: {skills}";
-            }
 
             return text;
         }

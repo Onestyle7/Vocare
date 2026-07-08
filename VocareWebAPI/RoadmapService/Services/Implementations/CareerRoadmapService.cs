@@ -1,33 +1,47 @@
+using System.Data;
+using Hangfire;
 using Microsoft.EntityFrameworkCore;
-using Stripe;
 using VocareWebAPI.Billing.Models.Enums;
+using VocareWebAPI.Billing.Repositories.Interfaces;
+using VocareWebAPI.CareerAdvisor.Repositories.Interfaces;
 using VocareWebAPI.Data;
+using VocareWebAPI.JobOffers.Exceptions;
+using VocareWebAPI.Repositories;
+using VocareWebAPI.RoadmapService.Exceptions;
+using VocareWebAPI.RoadmapService.Jobs.Interfaces;
 using VocareWebAPI.RoadmapService.Models.Dtos;
 using VocareWebAPI.RoadmapService.Models.Entities;
 using VocareWebAPI.RoadmapService.Models.Enums;
 using VocareWebAPI.RoadmapService.Repositories.Interfaces;
 using VocareWebAPI.RoadmapService.Services.Interfaces;
+using VocareWebAPI.UserManagement.Exceptions;
 
 namespace VocareWebAPI.RoadmapService.Services.Implementations
 {
     public class CareerRoadmapService : ICareerRoadmapService
     {
-        private readonly IRoadmapGeneratorService _roadmapGeneratorService;
         private readonly IRoadmapRepository _roadmapRepository;
-        private readonly ILogger<CareerRoadmapService> _logger;
         private readonly AppDbContext _context;
+        private readonly IBackgroundJobClient _backgroundJobClient;
+        private readonly IUserProfileRepository _userProfileRepository;
+        private readonly ICareerPathRepository _careerPathRepository;
+        private readonly IUserBillingRepository _userBillingsRepository;
 
         public CareerRoadmapService(
-            IRoadmapGeneratorService roadmapGeneratorService,
             IRoadmapRepository roadmapRepository,
-            ILogger<CareerRoadmapService> logger,
-            AppDbContext context
+            AppDbContext context,
+            IBackgroundJobClient backgroundJobClient,
+            IUserProfileRepository userProfileRepository,
+            ICareerPathRepository careerPathRepository,
+            IUserBillingRepository userBillingsRepository
         )
         {
-            _roadmapGeneratorService = roadmapGeneratorService;
             _roadmapRepository = roadmapRepository;
-            _logger = logger;
             _context = context;
+            _backgroundJobClient = backgroundJobClient;
+            _userProfileRepository = userProfileRepository;
+            _careerPathRepository = careerPathRepository;
+            _userBillingsRepository = userBillingsRepository;
         }
 
         public async Task<Roadmap> GenerateRoadmapAsync(
@@ -36,69 +50,53 @@ namespace VocareWebAPI.RoadmapService.Services.Implementations
             int timeHorizonMonths
         )
         {
-            var billing = await _context.UserBillings.FirstOrDefaultAsync(b => b.UserId == userId);
+            var billing = await _userBillingsRepository.GetByUserIdAsync(userId);
             var isPremium = billing?.SubscriptionStatus == SubscriptionStatus.Active;
             var maxRoadmaps = isPremium ? 10 : 1;
             var limit = await _roadmapRepository.CountActiveRoadmapsAsync(userId);
 
             if (limit >= maxRoadmaps)
-            {
-                _logger.LogWarning(
-                    "User {UserId} has reached the limit of active roadmaps ({limit})",
-                    userId,
-                    limit
-                );
-                throw new Exception(
-                    "Limit aktywnych roadmap przekroczony. Proszę zarchiwizować istniejące roadmapy, lub wykupić suksrypcję"
-                );
-            }
+                throw new RoadmapLimitReachedException(userId, maxRoadmaps);
+
             var duplicate = await _roadmapRepository.GetByCareerPathIdAsync(careerPathId);
+
             if (duplicate != null)
-            {
-                _logger.LogWarning(
-                    "User {UserId} already has a roadmap for career path {CareerPathId}",
-                    userId,
-                    careerPathId
-                );
-                throw new Exception(
-                    "Masz już aktywną roadmapę dla tej ścieżki kariery. Proszę zarchiwizować istniejącą roadmapę, lub wykupić subskrypcję"
-                );
-            }
+                throw new DuplicateRoadmapException(userId, careerPathId);
 
             if (timeHorizonMonths < 3 || timeHorizonMonths > 24)
-            {
-                _logger.LogWarning(
-                    "Invalid time horizon {TimeHorizonMonths} for user {UserId}",
-                    timeHorizonMonths,
-                    userId
-                );
-                throw new Exception(
-                    "Nieprawidłowy horyzont czasowy. Dozwolony zakres to 3-24 miesiące."
-                );
-            }
+                throw new InvalidRoadmapTimeHorizonException(userId, timeHorizonMonths);
 
             var ownsCareerPath = await _context.AiRecommendations.AnyAsync(r =>
                 r.UserId == userId && r.CareerPaths.Any(cp => cp.Id == careerPathId)
             );
 
             if (!ownsCareerPath)
-            {
-                throw new UnauthorizedAccessException(
-                    "Ta ścieżka kariery nie należy do Twojego profilu."
-                );
-            }
-            var careerPath = await _context.CareerPaths.FindAsync(careerPathId);
-            var userProfile = await _context.UserProfiles.FindAsync(userId);
+                throw new RoadmapAccessDeniedException(careerPathId, userId);
 
-            if (careerPath == null || userProfile == null)
+            // Przenieść do repository
+            var careerPath = await _careerPathRepository.GetByIdAsync(careerPathId);
+            var userProfile = await _userProfileRepository.GetUserProfileByIdAsync(userId);
+
+            if (careerPath == null)
+                throw new CareerPathNotFoundException(careerPathId);
+
+            if (userProfile == null)
+                throw new UserProfileNotFoundException(userId);
+
+            var roadmap = new Roadmap
             {
-                _logger.LogWarning(
-                    "Career path {CareerPathId} or user profile for user {UserId} not found",
-                    careerPathId,
-                    userId
-                );
-                throw new Exception("Nie można znaleźć ścieżki kariery lub profilu użytkownika.");
-            }
+                GenerationStatus = GenerationStatus.Pending,
+                LifecycleStatus = LifecycleStatus.Draft,
+                Title = "Generowananie...",
+                Phases = [],
+                UserId = userId,
+                CareerPathId = careerPathId,
+                CreatedAt = DateTime.UtcNow,
+                UpdatedAt = DateTime.UtcNow,
+                TimeHorizonMonths = timeHorizonMonths,
+            };
+
+            await _roadmapRepository.AddAsync(roadmap);
 
             var roadmapRequest = new RoadmapGenerationRequest
             {
@@ -109,78 +107,12 @@ namespace VocareWebAPI.RoadmapService.Services.Implementations
                 TimeHorizonMonths = timeHorizonMonths,
             };
 
-            var generateRoadmap = await _roadmapGeneratorService.GenerateAsync(roadmapRequest);
+            var jobId = _backgroundJobClient.Enqueue<IRoadmapGenerationJob>(job =>
+                job.GenerateAsync(roadmap.Id, roadmapRequest, null!) // Ustawiam null bo Hangfire go napisze kolejkując joba
+            );
 
-            var roadmap = new Roadmap
-            {
-                Id = Guid.NewGuid(),
-                UserId = userId,
-                CareerPathId = careerPathId,
-                Title = generateRoadmap.Title,
-                TimeHorizonMonths = timeHorizonMonths,
-                Status = RoadmapStatus.Draft,
-                CreatedAt = DateTime.UtcNow,
-                UpdatedAt = DateTime.UtcNow,
-                Phases = new List<RoadmapPhase>(),
-            };
-
-            var tempIdToGuid = new Dictionary<string, Guid>();
-
-            foreach (var phaseDto in generateRoadmap.Phases)
-            {
-                var phase = new RoadmapPhase
-                {
-                    Id = Guid.NewGuid(),
-                    RoadmapId = roadmap.Id,
-                    Title = phaseDto.Title,
-                    OrderIndex = phaseDto.OrderIndex,
-                    Steps = new List<RoadmapStep>(),
-                    StartMonth = phaseDto.StartMonth,
-                    EndMonth = phaseDto.EndMonth,
-                };
-
-                foreach (var stepDto in phaseDto.Steps)
-                {
-                    var stepId = Guid.NewGuid();
-                    tempIdToGuid[stepDto.TempId] = stepId;
-
-                    var step = new RoadmapStep
-                    {
-                        Id = stepId,
-                        PhaseId = phase.Id,
-                        Title = stepDto.Title,
-                        Subtitle = stepDto.Subtitle,
-                        Description = stepDto.Description,
-                        Topics = stepDto.Topics ?? new List<string>(),
-                        StepType =
-                            stepDto.StepType == "optional" ? StepType.Optional : StepType.Required,
-                        Status = StepStatus.NotStarted,
-                        OrderIndex = stepDto.OrderIndex,
-                        ParentStepId = null, // ustawimy w przebiegu 2
-                    };
-
-                    phase.Steps.Add(step);
-                }
-
-                roadmap.Phases.Add(phase);
-            }
-
-            foreach (var phase in roadmap.Phases)
-            {
-                foreach (var step in phase.Steps)
-                {
-                    var stepDto = generateRoadmap
-                        .Phases.SelectMany(p => p.Steps)
-                        .FirstOrDefault(s => tempIdToGuid[s.TempId] == step.Id);
-
-                    if (stepDto?.ParentRef != null && tempIdToGuid.ContainsKey(stepDto.ParentRef))
-                    {
-                        step.ParentStepId = tempIdToGuid[stepDto.ParentRef];
-                    }
-                }
-            }
-
-            await _roadmapRepository.AddAsync(roadmap);
+            roadmap.HangfireJobId = jobId;
+            await _roadmapRepository.UpdateAsync(roadmap);
 
             return roadmap;
         }
@@ -188,57 +120,41 @@ namespace VocareWebAPI.RoadmapService.Services.Implementations
         public async Task<Roadmap?> GetByIdAsync(Guid roadmapId, string userId)
         {
             if (string.IsNullOrEmpty(userId))
-            {
-                _logger.LogWarning(
-                    "User ID is null or empty when trying to get roadmap by ID {RoadmapId}",
-                    roadmapId
-                );
-                throw new Exception("User ID cannot be null or empty.");
-            }
+                throw new ArgumentException("User ID cannot be null or empty.");
+
             var roadmap = await _roadmapRepository.GetByIdAsync(roadmapId);
-            if (roadmap == null || roadmap.UserId != userId)
-            {
-                _logger.LogWarning(
-                    "Roadmap with ID {RoadmapId} not found for user {UserId}",
-                    roadmapId,
-                    userId
-                );
-                return null;
-            }
+
+            if (roadmap == null)
+                throw new RoadmapNotFoundException(roadmapId);
+
+            if (roadmap.UserId != userId)
+                throw new RoadmapAccessDeniedException(roadmapId, userId);
+
             return roadmap;
         }
 
         public async Task<List<Roadmap>> GetUserRoadmapsAsync(string userId)
         {
             if (string.IsNullOrEmpty(userId))
-            {
-                _logger.LogWarning("User ID is null or empty when trying to get user roadmaps");
-                throw new Exception("User ID cannot be null or empty.");
-            }
+                throw new ArgumentException("User ID cannot be null or empty.");
+
             return await _roadmapRepository.GetByUserIdAsync(userId);
         }
 
-        public async Task UpdateStatusAsync(Guid roadmapId, string userId, RoadmapStatus status)
+        public async Task UpdateStatusAsync(Guid roadmapId, string userId, LifecycleStatus status)
         {
             if (string.IsNullOrEmpty(userId))
-            {
-                _logger.LogWarning(
-                    "User ID is null or empty when trying to update roadmap status for roadmap {RoadmapId}",
-                    roadmapId
-                );
-                throw new Exception("User ID cannot be null or empty.");
-            }
+                throw new ArgumentException("User ID cannot be null or empty.");
+
             var roadmap = await _roadmapRepository.GetByIdAsync(roadmapId);
-            if (roadmap == null || roadmap.UserId != userId)
-            {
-                _logger.LogWarning(
-                    "Roadmap with ID {RoadmapId} not found for user {UserId} when trying to update status",
-                    roadmapId,
-                    userId
-                );
-                throw new Exception("Roadmap not found.");
-            }
-            roadmap.Status = status;
+
+            if (roadmap == null)
+                throw new RoadmapNotFoundException(roadmapId);
+
+            if (roadmap.UserId != userId)
+                throw new RoadmapAccessDeniedException(roadmapId, userId);
+
+            roadmap.LifecycleStatus = status;
             roadmap.UpdatedAt = DateTime.UtcNow;
 
             await _roadmapRepository.UpdateAsync(roadmap);
@@ -247,20 +163,15 @@ namespace VocareWebAPI.RoadmapService.Services.Implementations
         public async Task ArchiveAsync(Guid roadmapId, string userId)
         {
             if (string.IsNullOrEmpty(userId))
-            {
-                _logger.LogWarning(
-                    "User ID is null or empty when trying to archive roadmap {RoadmapId}",
-                    roadmapId
-                );
-                throw new Exception("User ID cannot be null or empty.");
-            }
+                throw new ArgumentException("User ID cannot be null or empty.");
 
             var roadmap = await _roadmapRepository.GetByIdAsync(roadmapId);
 
-            if (roadmap == null || roadmap.UserId != userId)
-            {
-                throw new Exception("Roadmap not found.");
-            }
+            if (roadmap == null)
+                throw new RoadmapNotFoundException(roadmapId);
+
+            if (roadmap.UserId != userId)
+                throw new RoadmapAccessDeniedException(roadmapId, userId);
 
             await _roadmapRepository.DeleteAsync(roadmapId);
         }
@@ -268,23 +179,16 @@ namespace VocareWebAPI.RoadmapService.Services.Implementations
         public async Task<double> CalculateProgressAsync(Guid roadmapId, string userId)
         {
             if (string.IsNullOrEmpty(userId))
-            {
-                _logger.LogWarning(
-                    "User ID is null or empty when trying to calculate progress for roadmap {RoadmapId}",
-                    roadmapId
-                );
-                throw new Exception("User ID cannot be null or empty.");
-            }
+                throw new ArgumentException("User ID cannot be null or empty.");
+
             var roadmap = await _roadmapRepository.GetByIdAsync(roadmapId);
-            if (roadmap == null || roadmap.UserId != userId)
-            {
-                _logger.LogWarning(
-                    "Roadmap with ID {RoadmapId} not found for user {UserId} when trying to calculate progress",
-                    roadmapId,
-                    userId
-                );
-                throw new Exception("Roadmap not found.");
-            }
+
+            if (roadmap == null)
+                throw new RoadmapNotFoundException(roadmapId);
+
+            if (roadmap.UserId != userId)
+                throw new RoadmapAccessDeniedException(roadmapId, userId);
+
             var requiredSteps = roadmap
                 .Phases.SelectMany(p => p.Steps)
                 .Where(s => s.StepType == StepType.Required)
@@ -296,6 +200,48 @@ namespace VocareWebAPI.RoadmapService.Services.Implementations
 
             var completedSteps = requiredSteps.Count(s => s.Status == StepStatus.Completed);
             return (double)completedSteps / totalSteps * 100.0;
+        }
+
+        public async Task<Roadmap> RetryGenerationAsync(Guid roadmapId, string userId)
+        {
+            var roadmap = await _roadmapRepository.GetByIdAsync(roadmapId);
+            if (roadmap == null)
+                throw new RoadmapNotFoundException(roadmapId);
+
+            if (userId != roadmap.UserId)
+                throw new RoadmapAccessDeniedException(roadmapId, userId);
+
+            if (roadmap.GenerationStatus != GenerationStatus.Failed)
+                throw new InvalidRoadmapStateException(
+                    roadmapId,
+                    roadmap.GenerationStatus.ToString()
+                );
+
+            roadmap.GenerationStatus = GenerationStatus.Pending;
+            roadmap.FailureReason = null;
+            roadmap.UpdatedAt = DateTime.UtcNow;
+
+            // Przenieść do repository
+            var careerPath = await _careerPathRepository.GetByIdAsync(roadmap.CareerPathId);
+            var userProfile = await _userProfileRepository.GetUserProfileByIdAsync(userId);
+
+            var roadmapRequest = new RoadmapGenerationRequest
+            {
+                CareerPathName = careerPath.CareerName,
+                RequiredSkills = userProfile.Skills,
+                UserSkills = userProfile.Skills.Concat(userProfile.SoftSkills).ToList(),
+                SuggestedSeniority = careerPath.SuggestedSeniority,
+                TimeHorizonMonths = roadmap.TimeHorizonMonths,
+            };
+
+            var jobId = _backgroundJobClient.Enqueue<IRoadmapGenerationJob>(job =>
+                job.GenerateAsync(roadmap.Id, roadmapRequest, null!)
+            );
+
+            roadmap.HangfireJobId = jobId;
+            await _roadmapRepository.UpdateAsync(roadmap);
+
+            return roadmap;
         }
     }
 }

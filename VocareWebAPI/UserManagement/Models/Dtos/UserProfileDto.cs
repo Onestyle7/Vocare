@@ -19,6 +19,7 @@ namespace VocareWebAPI.Models.Dtos
 
         [Required(ErrorMessage = "Nazwisko jest wymagane.")]
         public string LastName { get; set; } = string.Empty;
+        public string Email { get; set; } = string.Empty;
 
         [Required(ErrorMessage = "Kraj jest wymagany.")]
         public string Country { get; set; } = string.Empty;

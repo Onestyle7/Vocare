@@ -1,13 +1,13 @@
-using System.Linq.Expressions;
 using System.Net.Http.Headers;
 using System.Text.Json;
 using System.Web;
-using AutoMapper;
 using Microsoft.AspNetCore.DataProtection;
 using Microsoft.AspNetCore.Identity;
 using VocareWebAPI.Billing.Models.Entities;
+using VocareWebAPI.Data;
 using VocareWebAPI.Models.Entities;
-using VocareWebAPI.Shared.Models;
+using VocareWebAPI.Shared.Exceptions;
+using VocareWebAPI.Shared.Results;
 using VocareWebAPI.UserManagement.Models.Results;
 using VocareWebAPI.UserManagement.Repositories.Interfaces;
 using VocareWebAPI.UserManagement.Services.Interfaces;
@@ -25,6 +25,7 @@ namespace VocareWebAPI.UserManagement.Services.Implementations
         private readonly IEmailService _emailService;
         private readonly UserRegistrationHandler _registrationHandler;
         private readonly IMarketingConsentRepository _marketingConsentRepository;
+        private readonly AppDbContext _dbContext;
 
         public AuthenticationService(
             UserManager<User> userManager,
@@ -35,7 +36,8 @@ namespace VocareWebAPI.UserManagement.Services.Implementations
             IHttpContextAccessor httpContextAccessor,
             IEmailService emailService,
             UserRegistrationHandler registrationHandler,
-            IMarketingConsentRepository marketingConsentRepository
+            IMarketingConsentRepository marketingConsentRepository,
+            AppDbContext dbContext
         )
         {
             _userManager = userManager;
@@ -47,6 +49,7 @@ namespace VocareWebAPI.UserManagement.Services.Implementations
             _emailService = emailService;
             _registrationHandler = registrationHandler;
             _marketingConsentRepository = marketingConsentRepository;
+            _dbContext = dbContext;
         }
 
         public async Task<Result<LoginResult>> LoginAsync(string email, string password)
@@ -55,7 +58,9 @@ namespace VocareWebAPI.UserManagement.Services.Implementations
             if (user == null)
             {
                 _logger.LogWarning("Failed login attempt for non-existent user: {Email}", email);
-                return Result<LoginResult>.Failure("Invalid email or password.");
+                return Result<LoginResult>.Fail(
+                    new Error("INVALID_CREDENTIALS", "Invalid email or password.", 401)
+                );
             }
 
             var result = await _signInManager.CheckPasswordSignInAsync(
@@ -68,21 +73,26 @@ namespace VocareWebAPI.UserManagement.Services.Implementations
                 if (result.IsLockedOut)
                 {
                     _logger.LogWarning("User account locked out: {Email}", email);
-                    return Result<LoginResult>.Failure(
-                        "Account is locked out. Please try again later."
+                    return Result<LoginResult>.Fail(
+                        new Error(
+                            "ACCOUNT_LOCKED",
+                            "Account is locked due to multiple failed login attempts. Please try again later.",
+                            429
+                        )
                     );
                 }
                 _logger.LogWarning("Failed login attempt for: {Email}", email);
-                return Result<LoginResult>.Failure("Invalid email or password.");
+                return Result<LoginResult>.Fail(
+                    new Error("INVALID_CREDENTIALS", "Invalid email or password.", 401)
+                );
             }
 
-            // Generuj token
             var token = GenerateIdentityCompatibleToken(user);
 
             _logger.LogInformation("User logged in successfully: {UserId}", user.Id);
 
             var loginResult = LoginResult.Successful(token, user.Id, user.Email, 3600);
-            return Result<LoginResult>.Success(loginResult);
+            return Result<LoginResult>.Ok(loginResult);
         }
 
         private string GenerateIdentityCompatibleToken(User user)
@@ -111,8 +121,6 @@ namespace VocareWebAPI.UserManagement.Services.Implementations
             string? ipAddress
         )
         {
-            _logger.LogInformation("=== REGISTER START === Email: {Email}", email);
-
             var existingUser = await _userManager.FindByEmailAsync(email);
             if (existingUser != null)
             {
@@ -122,27 +130,65 @@ namespace VocareWebAPI.UserManagement.Services.Implementations
                 if (logins.Any(l => l.LoginProvider == "Google"))
                 {
                     _logger.LogWarning("User with Google login already exists: {Email}", email);
-                    return Result<RegisterResult>.Failure(
-                        "Account already exists with Google login. Please sign in using Google."
+                    return Result<RegisterResult>.Fail(
+                        new Error(
+                            "GOOGLE_ACCOUNT_EXISTS",
+                            "An account with this email already exists via Google login",
+                            409
+                        )
                     );
                 }
 
                 _logger.LogWarning("User with password login already exists: {Email}", email);
-                return Result<RegisterResult>.Failure("Account already exists.");
+                return Result<RegisterResult>.Fail(
+                    new Error("ACCOUNT_EXISTS", "An account with this email already exists", 409)
+                );
             }
 
             var user = new User { UserName = email, Email = email };
-            var result = await _userManager.CreateAsync(user, password);
 
-            if (!result.Succeeded)
+            // Robimy transakcję ponieważ obligatorijnie musimy mieć profil użytkownika zarówno w bilings jak i aspnetusers - jeśli dostaniemy faila na billing,
+            // a przejdzie profil na aspnetusers, to zostaniemy z wiszącym profilem, który nie będzie mógł wywoływać żadnych usług - będzie do skasowania
+            // ręcznie z bazy danych, nie mamy dedykowanych narzędzi do takich działań
+            await using var transaction = await _dbContext.Database.BeginTransactionAsync();
+            try
+            {
+                var result = await _userManager.CreateAsync(user, password);
+
+                if (!result.Succeeded)
+                {
+                    _logger.LogError(
+                        "User creation failed for {Email}: {Errors}",
+                        email,
+                        string.Join(", ", result.Errors.Select(e => e.Description))
+                    );
+                    // automatyczny rollback przy wyjściu z using, nie musimy ręcznie rollbackować
+                    return Result<RegisterResult>.Fail(
+                        new Error("REGISTRATION_FAILED", "User registration failed.")
+                    );
+                }
+
+                await _registrationHandler.HandleUserRegistrationAsync(user.Id);
+
+                await transaction.CommitAsync();
+
+                _logger.LogInformation("User registered successfully: {UserId}", user.Id);
+            }
+            catch (Exception ex)
             {
                 _logger.LogError(
-                    "User creation failed for {Email}: {Errors}",
-                    email,
-                    string.Join(", ", result.Errors.Select(e => e.Description))
+                    ex,
+                    "Error during post-registration setup for user: {UserId}",
+                    user.Id
                 );
-                return Result<RegisterResult>.Failure("Registration failed");
+                return Result<RegisterResult>.Fail(
+                    new Error("REGISTRATION_FAILED", "User registration failed.")
+                );
             }
+
+            // Zgody są poza transakcją z tego względu, że nie są krytyczne do działania konta
+            // Jeśli coś pójdzie nie tak z zapisaniem zgody to puszczamy fallback ze zgodą na false - w najgorszym przypadku nie zbierzemy zgody
+            // TODO: Kiedyś może wydzielić wewnętrzy try/catch żeby bylo trochę ładniej
             if (acceptMarketingConsent)
             {
                 try
@@ -166,44 +212,38 @@ namespace VocareWebAPI.UserManagement.Services.Implementations
                 }
                 catch (Exception ex)
                 {
-                    _logger.LogError(
-                        ex,
-                        "Failed to record marketing consent for user: {UserId}",
-                        user.Id
-                    );
+                    try
+                    {
+                        _logger.LogError(
+                            ex,
+                            "Failed to record marketing consent for user: {UserId}",
+                            user.Id
+                        );
+                        var consent = new MarketingConsent
+                        {
+                            UserId = user.Id,
+                            IsConsentGiven = false,
+                            ConsentDate = DateTime.UtcNow,
+                            ConsentSource = "registration_form",
+                            IpAddress = ipAddress,
+                        };
+                        await _marketingConsentRepository.CreateAsync(consent);
+                        _logger.LogInformation(
+                            "Fallback marketing consent (not given) recorded for user: {UserId}",
+                            user.Id
+                        );
+                    }
+                    catch (Exception exception)
+                    {
+                        _logger.LogError(
+                            exception,
+                            "Failed to record marketing consent for user: {UserId}",
+                            user.Id
+                        );
+                    }
                 }
             }
-
-            _logger.LogInformation(
-                "=== USER CREATED === UserId: {UserId}, Email: {Email}",
-                user.Id,
-                user.Email
-            );
-
-            try
-            {
-                _logger.LogInformation(
-                    "=== CALLING HandleUserRegistrationAsync === UserId: {UserId}",
-                    user.Id
-                );
-
-                await _registrationHandler.HandleUserRegistrationAsync(user.Id);
-
-                _logger.LogInformation("=== BILLING SETUP COMPLETE === UserId: {UserId}", user.Id);
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(
-                    ex,
-                    "=== BILLING SETUP FAILED === UserId: {UserId}, Error: {Error}",
-                    user.Id,
-                    ex.Message
-                );
-                return Result<RegisterResult>.Failure("User registered, but billing setup failed");
-            }
-
-            _logger.LogInformation("=== REGISTER COMPLETE === UserId: {UserId}", user.Id);
-            return Result<RegisterResult>.Success(RegisterResult.Successful(user.Id));
+            return Result<RegisterResult>.Ok(RegisterResult.Successful(user.Id));
         }
 
         public async Task<Result<ForgotPasswordResult>> ForgotPasswordAsync(string email)
@@ -215,7 +255,7 @@ namespace VocareWebAPI.UserManagement.Services.Implementations
                     "Password reset requested for non-existent email {Email}",
                     email
                 );
-                return Result<ForgotPasswordResult>.Success(
+                return Result<ForgotPasswordResult>.Ok(
                     ForgotPasswordResult.Successful(
                         "If entered email is registered, a reset link will be sent."
                     )
@@ -231,7 +271,7 @@ namespace VocareWebAPI.UserManagement.Services.Implementations
                     email
                 );
                 // Dla bezpieczeństwa zwracamy ten sam komunikat
-                return Result<ForgotPasswordResult>.Success(
+                return Result<ForgotPasswordResult>.Ok(
                     ForgotPasswordResult.Successful(
                         "If entered email is registered, a reset link will be sent."
                     )
@@ -274,9 +314,15 @@ Zespół Vocare
                     "Error sending password reset email for user: {UserId}",
                     user?.Id
                 );
+                // Dla bezpieczeństwa zwracamy ten sam komunikat, nawet jeśli wysyłka emaila się nie powiodła
+                return Result<ForgotPasswordResult>.Ok(
+                    ForgotPasswordResult.Successful(
+                        "If entered email is registered, a reset link will be sent."
+                    )
+                );
             }
 
-            return Result<ForgotPasswordResult>.Success(
+            return Result<ForgotPasswordResult>.Ok(
                 ForgotPasswordResult.Successful(
                     "If entered email is registered, a reset link will be sent."
                 )
@@ -296,7 +342,9 @@ Zespół Vocare
                     "Password reset attempted for non-existent email: {Email}",
                     email
                 );
-                return Result<ResetPasswordResult>.Failure("Invalid email or token.");
+                return Result<ResetPasswordResult>.Fail(
+                    new Error("INVALID_RESET_TOKEN", "Invalid or expired token.")
+                );
             }
 
             var result = await _userManager.ResetPasswordAsync(user, token, newPassword);
@@ -311,12 +359,17 @@ Zespół Vocare
 
                 if (result.Errors.Any(e => e.Code.Contains("Password")))
                 {
-                    return Result<ResetPasswordResult>.Failure(
-                        "Password does not meet requirements."
+                    return Result<ResetPasswordResult>.Fail(
+                        new Error(
+                            "WEAK_PASSWORD",
+                            "The new password does not meet complexity requirements."
+                        )
                     );
                 }
 
-                return Result<ResetPasswordResult>.Failure("Invalid or expired token.");
+                return Result<ResetPasswordResult>.Fail(
+                    new Error("INVALID_RESET_TOKEN", "Invalid or expired token.")
+                );
             }
             _logger.LogInformation("Password reset successful for user: {UserId}", user.Id);
 
@@ -336,7 +389,7 @@ Zespół Vocare
                     user.Id
                 );
             }
-            return Result<ResetPasswordResult>.Success(
+            return Result<ResetPasswordResult>.Ok(
                 ResetPasswordResult.Successful("Password has been reset successfully.")
             );
         }
@@ -348,14 +401,18 @@ Zespół Vocare
         {
             if (string.IsNullOrEmpty(token) || string.IsNullOrEmpty(email))
             {
-                return Result<ValidateResetTokenResult>.Failure("Token and email are required.");
+                return Result<ValidateResetTokenResult>.Fail(
+                    new Error("MISSING_TOKEN_OR_EMAIL", "Token or email is missing.")
+                );
             }
 
             var user = await _userManager.FindByEmailAsync(email);
             if (user == null)
-            {
-                return Result<ValidateResetTokenResult>.Failure("User not found.");
-            }
+                return Result<ValidateResetTokenResult>.Ok(
+                    ValidateResetTokenResult.Successful(false, "Token is invalid or expired.")
+                );
+            // Nie ujawniamy, że email jest nieprawidłowy, więc zwracamy, że token jest nieprawidłowy
+
             try
             {
                 var isValid = await _userManager.VerifyUserTokenAsync(
@@ -366,13 +423,13 @@ Zespół Vocare
                 );
                 if (isValid)
                 {
-                    return Result<ValidateResetTokenResult>.Success(
+                    return Result<ValidateResetTokenResult>.Ok(
                         ValidateResetTokenResult.Successful(true, "Token ważny")
                     );
                 }
                 else
                 {
-                    return Result<ValidateResetTokenResult>.Success(
+                    return Result<ValidateResetTokenResult>.Ok(
                         ValidateResetTokenResult.Successful(
                             false,
                             "Token wygasł lub jest nieprawidłowy"
@@ -383,14 +440,22 @@ Zespół Vocare
             catch (Exception ex)
             {
                 _logger.LogError(ex, "Error validating reset token for user: {Email}", email);
-                return Result<ValidateResetTokenResult>.Failure("Błąd walidacji tokenu.");
+                return Result<ValidateResetTokenResult>.Fail(
+                    new Error(
+                        "TOKEN_VALIDATION_FAILED",
+                        "An error occurred while validating the token. Please try again later."
+                    )
+                );
             }
         }
 
         public async Task<Result<RefreshResult>> RefreshAsync(string refreshToken)
         {
+            // TODO: Zaimplementować - tymczasowo zwracamy błąd
             _logger.LogInformation("Refresh token request received");
-            return Result<RefreshResult>.Failure("Please login again to refresh your session");
+            return Result<RefreshResult>.Fail(
+                new Error("NOT_IMPLEMENTED", "Token refresh functionality is not implemented yet.")
+            );
         }
 
         public async Task<Result<LogoutResult>> LogoutAsync()
@@ -402,18 +467,25 @@ Zespół Vocare
                 {
                     await _signInManager.SignOutAsync();
                     _logger.LogInformation("User logged out: {UserId}", user.Id);
-                    return Result<LogoutResult>.Success(LogoutResult.Successful());
+                    return Result<LogoutResult>.Ok(LogoutResult.Successful());
                 }
                 else
                 {
                     _logger.LogWarning("Logout attempt for non-logged in user.");
-                    return Result<LogoutResult>.Failure("User is not logged in.");
+                    return Result<LogoutResult>.Fail(
+                        new Error("NOT_LOGGED_IN", "User is not logged in.")
+                    );
                 }
             }
             catch (Exception ex)
             {
                 _logger.LogError(ex, "Error logging out user.");
-                return Result<LogoutResult>.Failure("An error occurred while logging out.");
+                return Result<LogoutResult>.Fail(
+                    new Error(
+                        "LOGOUT_FAILED",
+                        "An error occurred while logging out. Please try again later."
+                    )
+                );
             }
         }
 
@@ -421,7 +493,9 @@ Zespół Vocare
         {
             if (accessToken == null)
             {
-                return Result<OAuthLoginResult>.Failure("Access token is required");
+                return Result<OAuthLoginResult>.Fail(
+                    new Error("MISSING_GOOGLE_TOKEN", "Google access token is required.", 400)
+                );
             }
             try
             {
@@ -434,7 +508,9 @@ Zespół Vocare
                         "Failed to validate Google access token: {StatusCode}",
                         response.StatusCode
                     );
-                    return Result<OAuthLoginResult>.Failure("Invalid Google token");
+                    return Result<OAuthLoginResult>.Fail(
+                        new Error("INVALID_GOOGLE_TOKEN", "Invalid google access token.", 400)
+                    );
                 }
 
                 var tokenInfo = await response.Content.ReadAsStringAsync();
@@ -443,7 +519,9 @@ Zespół Vocare
 
                 if (string.IsNullOrEmpty(email))
                 {
-                    return Result<OAuthLoginResult>.Failure("No email in Google token");
+                    return Result<OAuthLoginResult>.Fail(
+                        new Error("MISSING_GOOGLE_EMAIL", "Google token does not contain email.", 404)
+                    );
                 }
 
                 var user = await _userManager.FindByEmailAsync(email);
@@ -458,28 +536,64 @@ Zespół Vocare
                         Email = email,
                         EmailConfirmed = true,
                     };
-
-                    var createResult = await _userManager.CreateAsync(user);
-                    if (!createResult.Succeeded)
+                    await using var transaction = await _dbContext.Database.BeginTransactionAsync();
+                    try
                     {
-                        _logger.LogError(
-                            "Failed to create user for Google login: {Email}. Errors: {Errors}",
-                            email,
-                            string.Join(", ", createResult.Errors.Select(e => e.Description))
+                        var createResult = await _userManager.CreateAsync(user);
+                        if (!createResult.Succeeded)
+                        {
+                            _logger.LogError(
+                                "Failed to create user for Google login: {Email}. Errors: {Errors}",
+                                email,
+                                string.Join(", ", createResult.Errors.Select(e => e.Description))
+                            );
+                            return Result<OAuthLoginResult>.Fail(
+                                new Error(
+                                    "GOOGLE_USER_CREATION_FAILED",
+                                    "Failed to create user account for Google login.",
+                                    500
+                                )
+                            );
+                        }
+
+                        var addLogin = await _userManager.AddLoginAsync(
+                            user,
+                            new UserLoginInfo(
+                                "Google",
+                                json.RootElement.GetProperty("user_id").GetString() ?? email,
+                                "Google"
+                            )
                         );
-                        return Result<OAuthLoginResult>.Failure("Failed to create user account");
+                        if (!addLogin.Succeeded)
+                        {
+                            _logger.LogError(
+                                "Failed to add Google login to user: {Email}. Errors: {Errors}",
+                                email,
+                                string.Join(", ", addLogin.Errors.Select(e => e.Description))
+                            );
+                            return Result<OAuthLoginResult>.Fail(
+                                new Error(
+                                    "GOOGLE_LOGIN_ASSOCIATION_FAILED",
+                                    "Failed to associate Google login with user account.",
+                                    500
+                                )
+                            );
+                        }
+
+                        await _registrationHandler.HandleUserRegistrationAsync(user.Id);
+                        await transaction.CommitAsync();
                     }
-
-                    await _userManager.AddLoginAsync(
-                        user,
-                        new UserLoginInfo(
-                            "Google",
-                            json.RootElement.GetProperty("user_id").GetString() ?? email,
-                            "Google"
-                        )
-                    );
-
-                    await _registrationHandler.HandleUserRegistrationAsync(user.Id);
+                    catch (Exception ex)
+                    {
+                        _logger.LogError(ex, "Error in GoogleVerify");
+                        return Result<OAuthLoginResult>.Fail(
+                            new Error(
+                                "GOOGLE_VERIFICATION_FAILED",
+                                "Google token verification failed.",
+                                500
+                            )
+                        );
+                    }
                 }
                 else
                 {
@@ -490,10 +604,27 @@ Zespół Vocare
                     {
                         var googleUserId =
                             json.RootElement.GetProperty("user_id").GetString() ?? email;
-                        await _userManager.AddLoginAsync(
+
+                        var addLogin = await _userManager.AddLoginAsync(
                             user,
                             new UserLoginInfo("Google", googleUserId, "Google")
                         );
+
+                        if (!addLogin.Succeeded)
+                        {
+                            _logger.LogError(
+                                "Failed to add Google login to user: {Email}. Errors: {Errors}",
+                                email,
+                                string.Join(", ", addLogin.Errors.Select(e => e.Description))
+                            );
+                            return Result<OAuthLoginResult>.Fail(
+                                new Error(
+                                    "GOOGLE_LOGIN_ASSOCIATION_FAILED",
+                                    "Failed to associate Google login with user account.",
+                                    500
+                                )
+                            );
+                        }
 
                         _logger.LogInformation(
                             "Added Google login to existing user: {UserId}",
@@ -505,14 +636,22 @@ Zespół Vocare
                 var accessTokenGenerated = GenerateIdentityCompatibleToken(user);
                 var refreshToken = Guid.NewGuid().ToString();
 
-                await _userManager.SetAuthenticationTokenAsync(
-                    user,
-                    IdentityConstants.BearerScheme,
-                    "refresh_token",
-                    refreshToken
-                );
+                try
+                {
+                    await _userManager.SetAuthenticationTokenAsync(
+                        user,
+                        IdentityConstants.BearerScheme,
+                        "refresh_token",
+                        refreshToken
+                    );
+                }
+                catch (Exception ex)
+                {
+                    // Nie przerywamy logowania, bo to nie jest krytyczny błąd - użytkownik się zaloguje, ale nie będzie miał możliwości odświeżenia tokena, póki nie zaloguje się ponownie
+                    _logger.LogError(ex, "Failed to set refresh token for user: {UserId}", user.Id);
+                }
 
-                return Result<OAuthLoginResult>.Success(
+                return Result<OAuthLoginResult>.Ok(
                     OAuthLoginResult.Successful(
                         accessTokenGenerated,
                         refreshToken,
@@ -526,7 +665,9 @@ Zespół Vocare
             catch (Exception ex)
             {
                 _logger.LogError(ex, "Error in GoogleVerify");
-                return Result<OAuthLoginResult>.Failure("Google verification failed");
+                return Result<OAuthLoginResult>.Fail(
+                    new Error("GOOGLE_VERIFICATION_FAILED", "Google token verification failed.", 500)
+                );
             }
         }
 
@@ -537,7 +678,12 @@ Zespół Vocare
         {
             if (string.IsNullOrEmpty(code) || string.IsNullOrEmpty(redirectUri))
             {
-                return Result<OAuthLoginResult>.Failure("Code and redirect URI are required.");
+                return Result<OAuthLoginResult>.Fail(
+                    new Error(
+                        "MISSING_LINKEDIN_PARAMS",
+                        "Authorization code and redirect URI are required."
+                    )
+                );
             }
 
             var tokenRequest = new FormUrlEncodedContent(
@@ -564,7 +710,9 @@ Zespół Vocare
                         "Failed to validate LinkedIn access token {StatusCode}",
                         tokenResponse.StatusCode
                     );
-                    return Result<OAuthLoginResult>.Failure("Invalid LinkedIn token");
+                    return Result<OAuthLoginResult>.Fail(
+                        new Error("INVALID_LINKEDIN_TOKEN", "Invalid LinkedIn authorization code.")
+                    );
                 }
 
                 var tokenJson = await tokenResponse.Content.ReadAsStringAsync();
@@ -585,8 +733,11 @@ Zespół Vocare
 
                 if (!profileResponse.IsSuccessStatusCode)
                 {
-                    return Result<OAuthLoginResult>.Failure(
-                        "Failed to fetch LinkedIn user profile"
+                    return Result<OAuthLoginResult>.Fail(
+                        new Error(
+                            "LINKEDIN_PROFILE_FETCH_FAILED",
+                            "Failed to fetch LinkedIn user profile."
+                        )
                     );
                 }
 
@@ -598,7 +749,12 @@ Zespół Vocare
 
                 if (string.IsNullOrEmpty(email))
                 {
-                    return Result<OAuthLoginResult>.Failure("No email in LinkedIn token");
+                    return Result<OAuthLoginResult>.Fail(
+                        new Error(
+                            "MISSING_LINKEDIN_EMAIL",
+                            "LinkedIn profile does not contain email."
+                        )
+                    );
                 }
 
                 var user = await _userManager.FindByEmailAsync(email);
@@ -613,22 +769,57 @@ Zespół Vocare
                         Email = email,
                         EmailConfirmed = true,
                     };
-
-                    var createResult = await _userManager.CreateAsync(user);
-                    if (!createResult.Succeeded)
+                    await using var transaction = await _dbContext.Database.BeginTransactionAsync();
+                    try
                     {
-                        _logger.LogError(
-                            "Failed to create user for LinkedIn login: {Email}. Errors: {Errors}",
-                            email,
-                            string.Join(", ", createResult.Errors.Select(e => e.Description))
+                        var createResult = await _userManager.CreateAsync(user);
+                        if (!createResult.Succeeded)
+                        {
+                            _logger.LogError(
+                                "Failed to create user for LinkedIn login: {Email}. Errors: {Errors}",
+                                email,
+                                string.Join(", ", createResult.Errors.Select(e => e.Description))
+                            );
+                            return Result<OAuthLoginResult>.Fail(
+                                new Error(
+                                    "LINKEDIN_USER_CREATION_FAILED",
+                                    "Failed to create user account for LinkedIn login."
+                                )
+                            );
+                        }
+
+                        var addLogin = await _userManager.AddLoginAsync(
+                            user,
+                            new UserLoginInfo("LinkedIn", linkedInUserId ?? email, "LinkedIn")
                         );
-                        return Result<OAuthLoginResult>.Failure("Failed to create user account");
+                        if (!addLogin.Succeeded)
+                        {
+                            _logger.LogError(
+                                "Failed to add LinkedIn login to user: {Email}. Errors: {Errors}",
+                                email,
+                                string.Join(", ", addLogin.Errors.Select(e => e.Description))
+                            );
+                            return Result<OAuthLoginResult>.Fail(
+                                new Error(
+                                    "LINKEDIN_LOGIN_ASSOCIATION_FAILED",
+                                    "Failed to associate LinkedIn login with user account."
+                                )
+                            );
+                        }
+
+                        await _registrationHandler.HandleUserRegistrationAsync(user.Id);
+                        await transaction.CommitAsync();
                     }
-                    await _userManager.AddLoginAsync(
-                        user,
-                        new UserLoginInfo("LinkedIn", linkedInUserId ?? email, "LinkedIn")
-                    );
-                    await _registrationHandler.HandleUserRegistrationAsync(user.Id);
+                    catch (Exception ex)
+                    {
+                        _logger.LogError(ex, "Error in LinkedIn Login");
+                        return Result<OAuthLoginResult>.Fail(
+                            new Error(
+                                "LINKEDIN_VERIFICATION_FAILED",
+                                "LinkedIn token verification failed."
+                            )
+                        );
+                    }
                 }
                 else
                 {
@@ -637,23 +828,45 @@ Zespół Vocare
 
                     if (!hasLinkedInLogin)
                     {
-                        await _userManager.AddLoginAsync(
+                        var addlogin = await _userManager.AddLoginAsync(
                             user,
                             new UserLoginInfo("LinkedIn", linkedInUserId ?? email, "LinkedIn")
                         );
+                        if (!addlogin.Succeeded)
+                        {
+                            _logger.LogError(
+                                "Failed to add Linkedin login to user: {Email}. Errors: {Errors}",
+                                email,
+                                string.Join(", ", addlogin.Errors.Select(e => e.Description))
+                            );
+                            return Result<OAuthLoginResult>.Fail(
+                                new Error(
+                                    "LINKEDIN_LOGIN_ASSOCIATION_FAILED",
+                                    "Failed to associate Linkedin login with user account."
+                                )
+                            );
+                        }
                     }
                 }
                 var accessTokenGenerated = GenerateIdentityCompatibleToken(user);
                 var refreshToken = Guid.NewGuid().ToString();
 
-                await _userManager.SetAuthenticationTokenAsync(
-                    user,
-                    IdentityConstants.BearerScheme,
-                    "refresh_token",
-                    refreshToken
-                );
+                try
+                {
+                    await _userManager.SetAuthenticationTokenAsync(
+                        user,
+                        IdentityConstants.BearerScheme,
+                        "refresh_token",
+                        refreshToken
+                    );
+                }
+                catch (Exception ex)
+                {
+                    // Nie przerywamy logowania, bo to nie jest krytyczny błąd - użytkownik się zaloguje, ale nie będzie miał możliwości odświeżenia tokena, póki nie zaloguje się ponownie
+                    _logger.LogError(ex, "Failed to set refresh token for user: {UserId}", user.Id);
+                }
 
-                return Result<OAuthLoginResult>.Success(
+                return Result<OAuthLoginResult>.Ok(
                     OAuthLoginResult.Successful(
                         accessTokenGenerated,
                         refreshToken,
@@ -667,7 +880,12 @@ Zespół Vocare
             catch (Exception ex)
             {
                 _logger.LogError(ex, "Error in LinkedIn login");
-                return Result<OAuthLoginResult>.Failure("LinkedIn verification failed");
+                return Result<OAuthLoginResult>.Fail(
+                    new Error(
+                        "LINKEDIN_VERIFICATION_FAILED",
+                        "An error occurred during LinkedIn login. Please try again later."
+                    )
+                );
             }
         }
     }

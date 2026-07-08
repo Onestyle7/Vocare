@@ -1,12 +1,14 @@
-using System.Diagnostics;
 using System.Text.Json;
 using Microsoft.Extensions.Options;
 using VocareWebAPI.CareerAdvisor.Services.Implementations;
+using VocareWebAPI.CvGenerator.Exceptions;
 using VocareWebAPI.CvGenerator.Models.Dtos;
 using VocareWebAPI.CvGenerator.Models.Entities;
 using VocareWebAPI.CvGenerator.Repositories.Interfaces;
 using VocareWebAPI.CvGenerator.Services.Interfaces;
 using VocareWebAPI.Models.OpenAIConfig;
+using VocareWebAPI.Shared.Exceptions;
+using static VocareWebAPI.Services.PerplexityAiService;
 
 namespace VocareWebAPI.CvGenerator.Services.Implementation
 {
@@ -42,12 +44,12 @@ namespace VocareWebAPI.CvGenerator.Services.Implementation
             var cv = await _generatedCvRepository.GetByIdAsync(cvId);
             if (cv == null || string.IsNullOrEmpty(cv.CvJson))
             {
-                throw new KeyNotFoundException("Cv not exist");
+                throw new CvNotFoundException(cvId);
             }
             var cvBelongsTouser = await _generatedCvRepository.BelongsToUserAsync(cvId, userId);
             if (!cvBelongsTouser)
             {
-                throw new UnauthorizedAccessException("Cv not belong to user");
+                throw new CvAccessDeniedException(cvId);
             }
             var prompt = BuildPrompt(cv.CvJson, cv.TargetPosition);
             var requestBody = new
@@ -80,7 +82,7 @@ namespace VocareWebAPI.CvGenerator.Services.Implementation
                     _logger.LogError(
                         $"OpenAI API error: {response.StatusCode} - {responseContent}"
                     );
-                    throw new Exception(
+                    throw new AiServiceException(
                         $"OpenAi API error: {response.StatusCode} - {responseContent}"
                     );
                 }
@@ -88,15 +90,14 @@ namespace VocareWebAPI.CvGenerator.Services.Implementation
                     responseContent,
                     new JsonSerializerOptions { PropertyNameCaseInsensitive = true }
                 );
+
                 if (apiResponse?.Choices == null || apiResponse.Choices.Count == 0)
-                {
                     throw new AiServiceException("Invalid API reponse: missing choices");
-                }
+
                 var content = apiResponse.Choices[0].Message?.Content;
+
                 if (string.IsNullOrWhiteSpace(content))
-                {
                     throw new AiServiceException("Invalid API reponse: empty content");
-                }
 
                 var result = JsonSerializer.Deserialize<CvAnalysisResultDto>(
                     content,
@@ -128,30 +129,22 @@ namespace VocareWebAPI.CvGenerator.Services.Implementation
 
         public async Task<CvAnalysisResultDto> GetAnalysisAsync(Guid cvId, string userId)
         {
+            var cv = await _generatedCvRepository.GetByIdAsync(cvId);
+            if (cv == null)
+                throw new CvNotFoundException(cvId);
+
             var cvBelongsToUser = await _generatedCvRepository.BelongsToUserAsync(cvId, userId);
             if (!cvBelongsToUser)
-            {
-                throw new UnauthorizedAccessException("Cv not belong to user");
-            }
+                throw new CvAccessDeniedException(cvId);
+
             var analysis = await _cvAnalysisRepository.GetByCvIdAsync(cvId);
             if (analysis == null)
-            {
-                throw new KeyNotFoundException("Cv analysis not exist");
-            }
+                throw new CvAnalysisNotFoundException(cvId);
 
             return JsonSerializer.Deserialize<CvAnalysisResultDto>(
                     analysis.ResultJson,
                     new JsonSerializerOptions { PropertyNameCaseInsensitive = true }
-                ) ?? throw new Exception("Failed to deserialize reulst");
-        }
-
-        private class AiServiceException : Exception
-        {
-            public AiServiceException(string message)
-                : base(message) { }
-
-            public AiServiceException(string message, Exception inner)
-                : base(message, inner) { }
+                ) ?? throw new AiServiceException("Failed to deserialize reulst");
         }
 
         private string BuildPrompt(string cvJson, string? targetPosition)
@@ -168,7 +161,8 @@ namespace VocareWebAPI.CvGenerator.Services.Implementation
                 ZASADY OCENY:
                 1. OverallScore (0-100) — ogólna jakość CV.
                 2. TargetPositionScore (0-100) — dopasowanie do stanowiska docelowego (jeśli podane w CV). Jeśli brak stanowiska, ustaw 0.
-                3. Oceń każdą sekcję osobno w SectionScores. Sekcje: Basics, Work, Education, Certificates, Skills, Languages, Projects, Social.                4. Dla każdej sekcji podaj konkretne, actionable insighty — co poprawić, czego brakuje.
+                3. Oceń każdą sekcję osobno w SectionScores. Sekcje: Basics, Work, Education, Certificates, Skills, Languages, Projects, Social.                
+                4. Dla każdej sekcji podaj konkretne, actionable insighty — co poprawić, czego brakuje.
                 5. TopImprovements — 3 najważniejsze zmiany, które najbardziej podniosą jakość CV.
 
                 KRYTERIA OCENY SEKCJI:

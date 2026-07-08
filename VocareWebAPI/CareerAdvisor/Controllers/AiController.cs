@@ -21,7 +21,6 @@ namespace VocareWebAPI.Controllers
         private readonly IAiService _aiService;
         private readonly IUserProfileRepository _userProfileRepository;
         private IBillingService _billingService;
-        private readonly ILogger<AiController> _logger;
 
         /// <summary>
         /// Inicjalizuje nową instancję kontrolera AiController.
@@ -31,14 +30,12 @@ namespace VocareWebAPI.Controllers
         public AiController(
             IAiService aiService,
             IUserProfileRepository userProfileRepository,
-            IBillingService billingService,
-            ILogger<AiController> logger
+            IBillingService billingService
         )
         {
             _billingService = billingService;
             _aiService = aiService;
             _userProfileRepository = userProfileRepository;
-            _logger = logger;
         }
 
         /// <summary>
@@ -51,32 +48,17 @@ namespace VocareWebAPI.Controllers
         {
             var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
             if (string.IsNullOrEmpty(userId))
-                return Unauthorized("Brak identyfikatora użytkownika w tokenie.");
+                return BadRequest("Brak identyfikatora użytkownika w tokenie.");
 
-            var hasAccess = await _billingService.CanAccessServiceAsync(userId, "AnalyzeProfile");
-            if (!hasAccess)
-                return Forbid("Brak tokenów lub subskrypcja nieaktywna.");
+            await _billingService.CanAccessServiceAsync(userId, "AnalyzeProfile");
 
             var profile = await _userProfileRepository.GetUserProfileByIdAsync(userId);
-            if (profile is null)
-                return NotFound("Profil użytkownika nie został znaleziony.");
 
-            try
-            {
-                var result = await _aiService.GetCareerRecommendationsAsync(profile);
+            var result = await _aiService.GetCareerRecommendationsAsync(profile);
 
-                await _billingService.DeductTokensForServiceAsync(userId, "AnalyzeProfile");
+            await _billingService.DeductTokensForServiceAsync(userId, "AnalyzeProfile");
 
-                return Ok(result);
-            }
-            catch (AiServiceException e)
-            {
-                return Problem(
-                    title: "Błąd usługi AI",
-                    detail: e.Message,
-                    statusCode: StatusCodes.Status503ServiceUnavailable
-                );
-            }
+            return Ok(result);
         }
 
         /// <summary>
@@ -88,23 +70,11 @@ namespace VocareWebAPI.Controllers
         {
             var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
             if (string.IsNullOrEmpty(userId))
-                return Unauthorized();
+                return BadRequest("Brak identyfikatora użytkownika w tokenie.");
 
-            try
-            {
-                var recommendation = await _aiService.GetLastRecommendationAsync(userId);
-                if (recommendation == null)
-                    return NotFound("Brak ostatniej rekomendacji.");
+            var recommendation = await _aiService.GetLastRecommendationAsync(userId);
 
-                return Ok(recommendation);
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, "Error getting last recommendation");
-                return NotFound(
-                    new { message = "Brak ostatniej rekomendacji.", error = ex.Message }
-                );
-            }
+            return Ok(recommendation);
         }
     }
 }

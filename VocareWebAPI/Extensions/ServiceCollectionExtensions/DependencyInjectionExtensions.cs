@@ -1,4 +1,3 @@
-using UglyToad.PdfPig.Graphics.Operations.TextState;
 using VocareWebAPI.Billing.Repositories.Implementations;
 using VocareWebAPI.Billing.Repositories.Interfaces;
 using VocareWebAPI.Billing.Services.Implementations;
@@ -7,12 +6,13 @@ using VocareWebAPI.CareerAdvisor.Repositories.Implementations;
 using VocareWebAPI.CareerAdvisor.Repositories.Interfaces;
 using VocareWebAPI.CareerAdvisor.Services.Implementations;
 using VocareWebAPI.CareerAdvisor.Services.Interfaces;
+using VocareWebAPI.CvGenerator.Implementations;
+using VocareWebAPI.CvGenerator.Interfaces;
 using VocareWebAPI.CvGenerator.Repositories.Implementations;
 using VocareWebAPI.CvGenerator.Repositories.Interfaces;
 using VocareWebAPI.CvGenerator.Services.Implementation;
 using VocareWebAPI.CvGenerator.Services.Implementations;
 using VocareWebAPI.CvGenerator.Services.Interfaces;
-using VocareWebAPI.JobOffers.BackgroundJobs;
 using VocareWebAPI.JobOffers.Repositories.Implementations;
 using VocareWebAPI.JobOffers.Repositories.Interfaces;
 using VocareWebAPI.JobOffers.Services.Implementations;
@@ -22,9 +22,15 @@ using VocareWebAPI.MarketNews.Repositories.Interfaces;
 using VocareWebAPI.MarketNews.services.Implementations;
 using VocareWebAPI.MarketNews.Services.Implementations;
 using VocareWebAPI.MarketNews.Services.Interfaces;
+using VocareWebAPI.Notifications.Repositories.Implementations;
+using VocareWebAPI.Notifications.Repositories.Interfaces;
+using VocareWebAPI.Notifications.Services.Implementations;
+using VocareWebAPI.Notifications.Services.Interfaces;
 using VocareWebAPI.Repositories;
 using VocareWebAPI.Repositories.Implementations;
 using VocareWebAPI.Repositories.Interfaces;
+using VocareWebAPI.RoadmapService.Jobs.Implementations;
+using VocareWebAPI.RoadmapService.Jobs.Interfaces;
 using VocareWebAPI.RoadmapService.Repositories.Implementations;
 using VocareWebAPI.RoadmapService.Repositories.Interfaces;
 using VocareWebAPI.RoadmapService.Services.Implementations;
@@ -52,6 +58,7 @@ namespace VocareWebAPI.Extensions.ServiceCollectionExtensions
             services.AddScoped<IUserSetupService, UserSetupService>();
             services.AddScoped<IAuthenticationServiceOwn, AuthenticationService>();
             services.AddScoped<ICvParserService, CvParserService>();
+            services.AddScoped<IDashboardService, DashboardService>();
 
             // AI services (Główną implementacją jest OpenAI)
             services.AddScoped<IAiService, OpenAIService>();
@@ -83,8 +90,12 @@ namespace VocareWebAPI.Extensions.ServiceCollectionExtensions
             services.AddScoped<IScoringService, ScoringService>();
             services.AddScoped<ISkillEmbeddingService, SkillEmbeddingService>();
 
-            // Background services
+            // Background services/jobs
             services.AddHostedService<MarketNewsBackgroundService>();
+            services.AddScoped<IRoadmapGenerationJob, RoadmapGenerationJob>();
+
+            // Notification
+            services.AddScoped<INotificationService, NotificationService>();
 
             return services;
         }
@@ -96,6 +107,8 @@ namespace VocareWebAPI.Extensions.ServiceCollectionExtensions
             services.AddScoped<IUserBillingRepository, UserBillingRepository>();
             services.AddScoped<IMarketingConsentRepository, MarketingConsentRepository>();
             services.AddScoped<ICvParseHistoryRepository, CvParseHistoryRepository>();
+            services.AddScoped<IDashboardRepository, DashboardRepository>();
+            services.AddScoped<IProfileAttributesRepository, ProfileAttributesRepository>();
 
             // Transaction repositories
             services.AddScoped<ITokenTransactionRepository, TokenTransactionRepository>();
@@ -110,7 +123,7 @@ namespace VocareWebAPI.Extensions.ServiceCollectionExtensions
             services.AddScoped<IWorkAttributesRepository, WorkAttributesRepository>();
             services.AddScoped<IEntryDifficultyRepository, EntryDifficultyRepository>();
             services.AddScoped<IAiNarratorRepository, AiNarratorRepository>();
-
+            services.AddScoped<ICareerPathRepository, CareerPathRepository>();
             // RoadmapRepositories
             services.AddScoped<IRoadmapRepository, RoadmapRepository>();
 
@@ -127,6 +140,9 @@ namespace VocareWebAPI.Extensions.ServiceCollectionExtensions
                 JobOfferRecommendationRepository
             >();
             services.AddScoped<ISkillEmbeddingRepository, SkillEmbeddingRepository>();
+
+            // Notification
+            services.AddScoped<INotificationRepository, NotificationRepository>();
 
             return services;
         }

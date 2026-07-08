@@ -1,6 +1,8 @@
 using System.Text.Json;
 using Microsoft.Extensions.Options;
 using VocareWebAPI.CareerAdvisor.Services.Implementations;
+using VocareWebAPI.CvGenerator.Exceptions;
+using VocareWebAPI.CvGenerator.Interfaces;
 using VocareWebAPI.CvGenerator.Models;
 using VocareWebAPI.CvGenerator.Models.Dtos;
 using VocareWebAPI.CvGenerator.Repositories.Interfaces;
@@ -8,8 +10,12 @@ using VocareWebAPI.CvGenerator.Services.Interfaces;
 using VocareWebAPI.Models.OpenAIConfig;
 using VocareWebAPI.Repositories;
 using VocareWebAPI.Services;
+using VocareWebAPI.Shared.Exceptions;
+using VocareWebAPI.Shared.Results;
+using VocareWebAPI.UserManagement.Exceptions;
+using static VocareWebAPI.Services.PerplexityAiService;
 
-namespace VocareWebAPI.CvGenerator.Repositories.Implementations
+namespace VocareWebAPI.CvGenerator.Implementations
 {
     public class CvTailoringService : ICvTailoringService
     {
@@ -48,15 +54,11 @@ namespace VocareWebAPI.CvGenerator.Repositories.Implementations
         {
             var cv = await _generatedCvRepository.GetByIdAsync(dto.CvId);
             if (cv == null)
-            {
-                throw new KeyNotFoundException("Cv not exist");
-            }
+                throw new CvNotFoundException(dto.CvId);
 
             var belongsToUser = await _generatedCvRepository.BelongsToUserAsync(dto.CvId, userId);
             if (!belongsToUser)
-            {
-                throw new UnauthorizedAccessException("Cv not belong to user");
-            }
+                throw new CvAccessDeniedException(dto.CvId);
 
             var prompt = BuildPrompt(cv.CvJson, dto.JobDescription);
             var tailoredCv = await CallOpenAiAsync(prompt);
@@ -80,22 +82,23 @@ namespace VocareWebAPI.CvGenerator.Repositories.Implementations
             };
         }
 
-        public async Task<CvDetailsDto> GenerateCvFromProfileAsync(
+        public async Task<Result<CvDetailsDto>> GenerateCvFromProfileAsync(
             GenerateCvFromProfileDto dto,
             string userId
         )
         {
             var userProfile = await _userProfileRepository.GetUserProfileByIdAsync(userId);
             if (userProfile == null)
-            {
-                throw new KeyNotFoundException("User profile not found");
-            }
+                throw new UserProfileNotFoundException(userId);
 
             var canCreate = await _cvManagementService.CanCreateNewCvAsync(userId);
             if (!canCreate)
             {
-                throw new InvalidOperationException(
-                    "CV limit reached. Upgrade to premium or delete existing CV."
+                return Result<CvDetailsDto>.Fail(
+                    new Error(
+                        "CV_LIMIT_REACHED",
+                        $"CV limit reached for user {userId}. Cannot create more CVs."
+                    )
                 );
             }
 
@@ -125,17 +128,19 @@ namespace VocareWebAPI.CvGenerator.Repositories.Implementations
                 Version = 1,
             };
             await _generatedCvRepository.AddAsync(newCv);
-            return new CvDetailsDto
-            {
-                Id = newCv.Id,
-                Name = newCv.Name,
-                TargetPosition = newCv.TargetPosition,
-                CvData = generatedCv,
-                IsDefault = newCv.IsDefault,
-                CreatedAt = newCv.CreatedAt,
-                LastModifiedAt = newCv.LastModifiedAt,
-                Version = newCv.Version,
-            };
+            return Result<CvDetailsDto>.Ok(
+                new CvDetailsDto
+                {
+                    Id = newCv.Id,
+                    Name = newCv.Name,
+                    TargetPosition = newCv.TargetPosition,
+                    CvData = generatedCv,
+                    IsDefault = newCv.IsDefault,
+                    CreatedAt = newCv.CreatedAt,
+                    LastModifiedAt = newCv.LastModifiedAt,
+                    Version = newCv.Version,
+                }
+            );
         }
 
         private async Task<CvDto> CallOpenAiAsync(string prompt)
@@ -169,7 +174,7 @@ namespace VocareWebAPI.CvGenerator.Repositories.Implementations
                     _logger.LogError(
                         $"OpenAI API error: {response.StatusCode} - {responseContent}"
                     );
-                    throw new Exception(
+                    throw new AiServiceException(
                         $"OpenAi API error: {response.StatusCode} - {responseContent}"
                     );
                 }
@@ -204,15 +209,6 @@ namespace VocareWebAPI.CvGenerator.Repositories.Implementations
                 _logger.LogError(ex, "Error comunicating with OpenAI API");
                 throw new AiServiceException("Błąd komunikacji z API", ex);
             }
-        }
-
-        private class AiServiceException : Exception // TODO: przenieść do osobnego pliku, ta sama klasa używana w CvAnalysisService i innych AI services
-        {
-            public AiServiceException(string message)
-                : base(message) { }
-
-            public AiServiceException(string message, Exception inner)
-                : base(message, inner) { }
         }
 
         private string BuildPrompt(string sourceData, string jobDescription)

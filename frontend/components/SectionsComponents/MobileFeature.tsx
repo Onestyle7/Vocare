@@ -1,14 +1,15 @@
 'use client';
-import React, { useRef, useEffect } from 'react';
-import { ScrollParallax } from 'react-just-parallax';
-import { Search, CheckCircle, ListChecks } from 'lucide-react';
-import { SplitText, ScrollTrigger } from 'gsap/all';
-
 import { gsap } from 'gsap';
-import { avatars, mobileView, shape1 } from '@/app/constants';
-import Iphone15Pro from '@/components/magicui/iphone-15-pro';
-import { AvatarCircles } from '@/components/magicui/avatar-circles';
+import { ScrollTrigger, SplitText } from 'gsap/all';
+import { CheckCircle, ListChecks, Search } from 'lucide-react';
 import Image from 'next/image';
+import React, { useEffect, useRef } from 'react';
+import { ScrollParallax } from 'react-just-parallax';
+
+import { avatars, mobileView, shape1 } from '@/features/marketing/constants';
+import { AvatarCircles } from '@/components/magicui/avatar-circles';
+import Iphone15Pro from '@/components/magicui/iphone-15-pro';
+
 import Copy from '../SupportComponents/Copy';
 import Section from '../SupportComponents/Section';
 

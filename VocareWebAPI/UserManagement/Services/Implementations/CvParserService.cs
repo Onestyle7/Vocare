@@ -2,6 +2,7 @@ using System.Text;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 using Microsoft.Extensions.Options;
+using Pgvector.EntityFrameworkCore;
 using UglyToad.PdfPig;
 using VocareWebAPI.Billing.Models.Enums;
 using VocareWebAPI.Billing.Repositories.Interfaces;
@@ -9,6 +10,8 @@ using VocareWebAPI.CareerAdvisor.Services.Interfaces;
 using VocareWebAPI.Models.Dtos;
 using VocareWebAPI.Models.OpenAIConfig;
 using VocareWebAPI.Services;
+using VocareWebAPI.Shared.Exceptions;
+using VocareWebAPI.UserManagement.Exceptions;
 using VocareWebAPI.UserManagement.Models.Entities;
 using VocareWebAPI.UserManagement.Models.Enums;
 using VocareWebAPI.UserManagement.Repositories.Interfaces;
@@ -23,6 +26,7 @@ namespace VocareWebAPI.CareerAdvisor.Services.Implementations
         private readonly UserProfileService _userProfileService;
         private readonly OpenAIConfig _config;
         private const long MaxFileSizeBytes = 2 * 1024 * 1024; // 2MB
+        private const int FreeParseLimit = 1; // TODO: W przyszłości mozna to zmienić na IOptions<>
         private readonly IUserBillingRepository _userBillingRepository;
 
         public CvParserService(
@@ -48,47 +52,29 @@ namespace VocareWebAPI.CareerAdvisor.Services.Implementations
 
         public async Task<UserProfileDto> ParseAndSaveAsync(IFormFile file, string userId)
         {
-            // 1. Walidacja pliku
             string fileType = Path.GetExtension(file.FileName).ToLower();
             if (fileType != ".pdf")
-            {
-                throw new NotSupportedException(
-                    "Nie wspierane rozszerzenie pliku. Obsługiwany format to PDF!"
-                );
-            }
+                throw new UnsupportedFileFormatException(fileType);
 
             if (file.Length > MaxFileSizeBytes)
-            {
-                throw new NotSupportedException(
-                    "Plik jest zbyt duży. Maksymalny rozmiar pliku to 2MB."
-                );
-            }
+                throw new FileSizeExceededException(file.Length, MaxFileSizeBytes);
 
             var userBilling = await _userBillingRepository.GetByUserIdAsync(userId);
             var hasActiveSubscription =
                 userBilling?.SubscriptionStatus == SubscriptionStatus.Active;
 
-            // 2. Sprawdzenie czy user już używał parsera
             if (!hasActiveSubscription)
             {
                 var parseCount = await _cvParseHistoryRepository.CountByUserIdAsync(userId);
-                if (parseCount > 0)
-                {
-                    throw new InvalidOperationException(
-                        "Funkcja importu CV została już wykorzystana. Wykup subskrypcję, aby korzystać bez limitu."
-                    );
-                }
+                if (parseCount >= FreeParseLimit)
+                    throw new CvImportLimitReachedException(parseCount, FreeParseLimit);
             }
 
-            // 3. Ekstrakcja tekstu z PDF
             string extractedText = ExtractTextFromPdf(file);
 
             if (string.IsNullOrWhiteSpace(extractedText))
-            {
-                throw new InvalidOperationException("Nie udało się wyodrębnić tekstu z pliku PDF.");
-            }
+                throw new CvParsingFailedException("Failed to extract text from PDF");
 
-            // 4. Wywołanie OpenAI
             var prompt = BuildCvParsePrompt(extractedText);
             var requestBody = new
             {
@@ -121,21 +107,21 @@ namespace VocareWebAPI.CareerAdvisor.Services.Implementations
                         response.StatusCode,
                         responseContent
                     );
-                    throw new Exception($"OpenAI API returned error: {response.StatusCode}");
+                    throw new CvParsingFailedException($"OpenAI API error: {response.StatusCode}");
                 }
 
-                // 5. Deserializacja odpowiedzi
                 var apiResponse = JsonSerializer.Deserialize<OpenAiResponse>(
                     responseContent,
                     new JsonSerializerOptions { PropertyNameCaseInsensitive = true }
                 );
 
-                var content = apiResponse?.Choices[0].Message?.Content;
+                if (apiResponse?.Choices == null || apiResponse.Choices.Count == 0)
+                    throw new CvParsingFailedException("OpenAI API returned no choices.");
+
+                var content = apiResponse.Choices[0].Message?.Content;
 
                 if (string.IsNullOrWhiteSpace(content))
-                {
-                    throw new InvalidOperationException("OpenAI zwróciło pustą odpowiedź.");
-                }
+                    throw new CvParsingFailedException("OpenAI API returned empty content.");
 
                 var result = JsonSerializer.Deserialize<UserProfileDto>(
                     content,
@@ -143,20 +129,17 @@ namespace VocareWebAPI.CareerAdvisor.Services.Implementations
                 );
 
                 if (result == null)
-                {
-                    throw new InvalidOperationException(
-                        "Nie udało się sparsować odpowiedzi z OpenAI."
+                    throw new CvParsingFailedException(
+                        "Failed to deserialize OpenAI response into UserProfileDto."
                     );
-                }
+
                 result.FirstName ??= string.Empty;
                 result.LastName ??= string.Empty;
                 result.Country ??= string.Empty;
                 result.PersonalityType ??= PersonalityType.Unknown;
 
-                // 6. Zapis profilu
                 await _userProfileService.CreateUserProfileAsync(userId, result);
 
-                // 7. Zapis do historii
                 var history = new CvParseHistory
                 {
                     UserId = userId,
@@ -175,10 +158,8 @@ namespace VocareWebAPI.CareerAdvisor.Services.Implementations
             }
             catch (HttpRequestException ex)
             {
-                _logger.LogError(ex, "Błąd podczas komunikacji z OpenAI API.");
-                throw new InvalidOperationException(
-                    "Nie udało się przetworzyć CV. Spróbuj ponownie później."
-                );
+                _logger.LogError(ex, "Error communicating with OpenAI API.");
+                throw new AiServiceException("Error communicating with OpenAI API.", ex);
             }
         }
 
@@ -211,7 +192,7 @@ namespace VocareWebAPI.CareerAdvisor.Services.Implementations
                     "lastName": "string lub null",
                     "country": "string lub null",
                     "address": "string lub null",
-                    "phoneNumber": "string lub null",
+                    "phoneNumber": "string zawierający dokładnie 9 cyfr ciągiem (np. '123456789') lub null", 
                     "education": [
                         {
                             "institution": "nazwa uczelni/szkoły",
@@ -254,6 +235,7 @@ namespace VocareWebAPI.CareerAdvisor.Services.Implementations
                 - Daty w formacie YYYY-MM-DD. Jeśli znany tylko rok, użyj YYYY-01-01
                 - Rozróżniaj skills (techniczne: języki programowania, narzędzia) od softSkills (komunikacja, praca zespołowa)
                 - Nie wymyślaj danych których nie ma w CV
+                - Pole 'phoneNumber': Zidentyfikuj numer telefonu. Najpierw usuń z niego numer kierunkowy kraju (np. +48, 0048, 48) oraz absolutnie wszystkie spacje, myślniki i nawiasy. Wynik końcowy MUSI być ciągiem tekstowym składającym się z dokładnie 9 cyfr (np. "123456789"). Jeśli po oczyszczeniu numer nie ma 9 cyfr, zwróć null.
 
                 CV:
                 {{cvText}}

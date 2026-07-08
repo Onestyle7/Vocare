@@ -1,4 +1,4 @@
-export type RoadmapStatus = 'Draft' | 'Active' | 'Completed' | 'Archived';
+export type RoadmapStatus = 'Generating' | 'Draft' | 'Active' | 'Completed' | 'Archived';
 export type StepStatus = 'NotStarted' | 'InProgress' | 'Completed';
 export type StepType = 'Required' | 'Optional';
 
@@ -32,6 +32,8 @@ export interface RoadmapListItemDto {
   createdAt: string;
   careerPathName: string;
   progress: number;
+  failureReason: string;
+  generationStatus: string;
 }
 
 export interface RoadmapStepDto {
@@ -67,4 +69,22 @@ export interface RoadmapDetailsDto {
   careerPathName: string;
   progress: number;
   phases: RoadmapPhaseDto[];
+}
+
+export interface UpdateStepRequestDto {
+  title?: string;
+  subtitle?: string;
+  description?: string;
+  topics?: string[];
+  stepType?: StepType;
+}
+
+export interface AddStepRequestDto {
+  phaseId: string;
+  parentStepId?: string;
+  title: string;
+  subtitle: string;
+  description?: string;
+  topics?: string[];
+  stepType: StepType;
 }

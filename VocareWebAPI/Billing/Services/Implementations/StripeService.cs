@@ -1,16 +1,16 @@
-using Microsoft.AspNetCore.Mvc.ApplicationModels;
-using Microsoft.AspNetCore.Mvc.ModelBinding.Binders;
-using Microsoft.AspNetCore.Mvc.TagHelpers;
 using Microsoft.EntityFrameworkCore;
+using Resend;
 using Stripe;
 using Stripe.Checkout;
 using VocareWebAPI.Billing.Configuration;
+using VocareWebAPI.Billing.Exceptions;
 using VocareWebAPI.Billing.Models.Dtos;
 using VocareWebAPI.Billing.Models.Entities;
 using VocareWebAPI.Billing.Models.Enums;
 using VocareWebAPI.Billing.Repositories.Interfaces;
 using VocareWebAPI.Billing.Services.Interfaces;
 using VocareWebAPI.Data;
+using VocareWebAPI.Shared.Exceptions;
 
 namespace VocareWebAPI.Billing.Services.Implementations
 {
@@ -40,21 +40,14 @@ namespace VocareWebAPI.Billing.Services.Implementations
         public async Task<string> CreateCustomerAsync(string userId, string email)
         {
             if (string.IsNullOrEmpty(userId) || string.IsNullOrEmpty(email))
-            {
-                _logger.LogWarning(
-                    "Attempted to create customer with invalid arguments: userId={UserId}, email={Email}",
-                    userId,
-                    email
-                );
                 throw new ArgumentException("User ID and email cannot be null or empty.");
-            }
 
             UserBilling userBilling;
             try
             {
                 userBilling = await _userBillingRepository.GetByUserIdAsync(userId);
             }
-            catch (KeyNotFoundException)
+            catch (UserBillingNotFoundException)
             {
                 _logger.LogInformation(
                     "UserBilling not found for userId={UserId}. Creating new record.",
@@ -74,7 +67,7 @@ namespace VocareWebAPI.Billing.Services.Implementations
                     await _userBillingRepository.CreateAsync(userBilling);
                     await transaction.CommitAsync();
                 }
-                catch (Exception ex)
+                catch (Exception ex) when (ex is not DomainException)
                 {
                     await transaction.RollbackAsync();
                     _logger.LogError(
@@ -82,17 +75,12 @@ namespace VocareWebAPI.Billing.Services.Implementations
                         "Failed to create UserBilling for userId={UserId}.",
                         userId
                     );
-                    throw new InvalidOperationException(
-                        $"Failed to create UserBilling for user {userId}.",
-                        ex
-                    );
+                    throw;
                 }
             }
 
             if (!string.IsNullOrEmpty(userBilling.StripeCustomerId))
-            {
                 return userBilling.StripeCustomerId;
-            }
 
             var customerOptions = new CustomerCreateOptions
             {
@@ -116,7 +104,7 @@ namespace VocareWebAPI.Billing.Services.Implementations
                     );
                     return customer.Id;
                 }
-                catch (Exception ex)
+                catch (Exception ex) when (ex is not DomainException)
                 {
                     await transaction.RollbackAsync();
                     _logger.LogError(
@@ -124,10 +112,7 @@ namespace VocareWebAPI.Billing.Services.Implementations
                         "Failed to save Stripe customer for userId={UserId}.",
                         userId
                     );
-                    throw new InvalidOperationException(
-                        $"Failed to save Stripe customer for user {userId}.",
-                        ex
-                    );
+                    throw;
                 }
             }
             catch (StripeException ex)
@@ -138,27 +123,15 @@ namespace VocareWebAPI.Billing.Services.Implementations
                     userId,
                     ex.StripeError?.Message
                 );
-                throw new InvalidOperationException(
-                    $"Failed to create customer in Stripe: {ex.StripeError?.Message}",
-                    ex
-                );
+                throw;
             }
         }
 
         public async Task<string> CreateCheckoutSessionForTokenAsync(string userId, string priceId)
         {
-            // ---------- walidacja parametrów ----------
             if (string.IsNullOrEmpty(userId) || string.IsNullOrEmpty(priceId))
-            {
-                _logger.LogWarning(
-                    "Attempted to create checkout session with invalid arguments: userId={UserId}, priceId={PriceId}",
-                    userId,
-                    priceId
-                );
                 throw new ArgumentException("User ID and price ID cannot be null or empty.");
-            }
 
-            // ---------- sprawdzenie pakietu tokenów ----------
             var tokenPackage = TokenPackagesConfiguration.GetPackageByPriceId(priceId);
             if (tokenPackage == null)
             {
@@ -167,7 +140,7 @@ namespace VocareWebAPI.Billing.Services.Implementations
                     priceId,
                     userId
                 );
-                throw new InvalidOperationException($"Unknown price ID: {priceId}");
+                throw new TokenPackageNotFoundException(priceId);
             }
 
             _logger.LogInformation(
@@ -177,7 +150,6 @@ namespace VocareWebAPI.Billing.Services.Implementations
                 tokenPackage.TokenAmount
             );
 
-            // ---------- pobranie / przygotowanie UserBilling ----------
             bool isNew = false;
             UserBilling userBilling;
 
@@ -185,9 +157,8 @@ namespace VocareWebAPI.Billing.Services.Implementations
             {
                 userBilling = await _userBillingRepository.GetByUserIdAsync(userId);
             }
-            catch (KeyNotFoundException)
+            catch (UserBillingNotFoundException)
             {
-                // rekord nie istnieje – przygotujemy nowy
                 isNew = true;
                 userBilling = new UserBilling
                 {
@@ -195,7 +166,6 @@ namespace VocareWebAPI.Billing.Services.Implementations
                     TokenBalance = 0,
                     SubscriptionStatus = SubscriptionStatus.None,
                     SubscriptionLevel = SubscriptionLevel.None,
-                    // StripeCustomerId ustawimy po utworzeniu klienta Stripe
                 };
 
                 _logger.LogInformation(
@@ -206,7 +176,6 @@ namespace VocareWebAPI.Billing.Services.Implementations
 
             if (string.IsNullOrEmpty(userBilling.StripeCustomerId))
             {
-                // pobranie e‑maila zalogowanego użytkownika z ASP Identity
                 string? email = await _dbContext
                     .Users.Where(u => u.Id == userId)
                     .Select(u => u.Email)
@@ -218,9 +187,7 @@ namespace VocareWebAPI.Billing.Services.Implementations
                         "Email is required to create a Stripe customer for userId={UserId}.",
                         userId
                     );
-                    throw new InvalidOperationException(
-                        "Email is required to create a Stripe customer."
-                    );
+                    throw new MissingUserEmailException(userId);
                 }
 
                 var customerService = new CustomerService();
@@ -249,14 +216,11 @@ namespace VocareWebAPI.Billing.Services.Implementations
                         userId
                     );
                 }
-                catch (Exception ex)
+                catch (Exception ex) when (ex is not DomainException)
                 {
                     await trx.RollbackAsync();
                     _logger.LogError(ex, "Failed to save userBilling for userId={UserId}.", userId);
-                    throw new InvalidOperationException(
-                        $"Failed to save UserBilling for user {userId}.",
-                        ex
-                    );
+                    throw;
                 }
             }
 
@@ -308,10 +272,7 @@ namespace VocareWebAPI.Billing.Services.Implementations
                     userId,
                     ex.StripeError?.Message
                 );
-                throw new InvalidOperationException(
-                    $"Failed to create checkout session: {ex.StripeError?.Message}",
-                    ex
-                );
+                throw;
             }
         }
 
@@ -320,17 +281,9 @@ namespace VocareWebAPI.Billing.Services.Implementations
             string priceId
         )
         {
-            // Walidacja parametrów
             if (string.IsNullOrEmpty(userId) || string.IsNullOrEmpty(priceId))
-            {
-                _logger.LogWarning(
-                    "Attempted to create subscription checkout with invalid arguments: userId={UserId}, priceId={PriceId}",
-                    userId,
-                    priceId
-                );
                 throw new ArgumentException("User ID and price ID cannot be null or empty.");
-            }
-            // Sprawdzenie pakietu subskrypcji
+
             var subscriptionPackage = SubscriptionPackagesConfiguration.GetPackageByPriceId(
                 priceId
             );
@@ -341,7 +294,7 @@ namespace VocareWebAPI.Billing.Services.Implementations
                     priceId,
                     userId
                 );
-                throw new InvalidOperationException($"Unknown subscription price ID: {priceId}");
+                throw new SubscriptionPackageNotFoundException(priceId);
             }
             if (!subscriptionPackage.IsActive)
             {
@@ -350,9 +303,7 @@ namespace VocareWebAPI.Billing.Services.Implementations
                     priceId,
                     userId
                 );
-                throw new InvalidOperationException(
-                    $"Subscription package {priceId} is not active"
-                );
+                throw new InactiveSubscriptionPackageException(priceId);
             }
             _logger.LogInformation(
                 "Creating subscrription checkout for userId={UserId}, priceId={PriceId}, package={PackageName}",
@@ -368,7 +319,7 @@ namespace VocareWebAPI.Billing.Services.Implementations
             {
                 userBilling = await _userBillingRepository.GetByUserIdAsync(userId);
             }
-            catch (KeyNotFoundException)
+            catch (UserBillingNotFoundException)
             {
                 isNew = true;
                 userBilling = new UserBilling
@@ -384,18 +335,10 @@ namespace VocareWebAPI.Billing.Services.Implementations
                     userId
                 );
             }
-            // Sprawdzamy czy ma już aktywną subskrypcję
-            if (userBilling.SubscriptionStatus == SubscriptionStatus.Active)
-            {
-                _logger.LogWarning(
-                    "User {UserId} already has active subscription.",
-                    userId,
-                    userBilling.StripeSubscriptionId
-                );
-                throw new InvalidOperationException("User already has an active subscription.");
-            }
 
-            // Utworzenie/aktualizacja Stripe Customer
+            if (userBilling.SubscriptionStatus == SubscriptionStatus.Active)
+                throw new SubscriptionAlreadyActiveException(userId);
+
             if (string.IsNullOrEmpty(userBilling.StripeCustomerId))
             {
                 string? email = await _dbContext
@@ -404,11 +347,7 @@ namespace VocareWebAPI.Billing.Services.Implementations
                     .FirstOrDefaultAsync();
 
                 if (string.IsNullOrEmpty(email))
-                {
-                    throw new InvalidOperationException(
-                        "Email is required to create a Stripe customer."
-                    );
-                }
+                    throw new MissingUserEmailException(userId);
 
                 var customerService = new CustomerService();
                 var customer = await customerService.CreateAsync(
@@ -435,7 +374,7 @@ namespace VocareWebAPI.Billing.Services.Implementations
                         userId
                     );
                 }
-                catch (Exception ex)
+                catch (Exception ex) when (ex is not DomainException)
                 {
                     await trx.RollbackAsync();
                     _logger.LogError(
@@ -443,10 +382,7 @@ namespace VocareWebAPI.Billing.Services.Implementations
                         "Failed to save userBilling for subscription userId={UserId}",
                         userId
                     );
-                    throw new InvalidOperationException(
-                        $"Failed to save UserBilling for user {userId}.",
-                        ex
-                    );
+                    throw;
                 }
             }
 
@@ -505,14 +441,11 @@ namespace VocareWebAPI.Billing.Services.Implementations
                     userId,
                     ex.StripeError?.Message
                 );
-                throw new InvalidOperationException(
-                    $"Failed to create subscription checkout session: {ex.StripeError?.Message}",
-                    ex
-                );
+                throw;
             }
         }
 
-        public async Task<string> CreateCustomerPortalSessionAsync(string userId, string returnUrl)
+        public async Task<string> CreateCustomerPortalSessionAsync(string userId)
         {
             if (string.IsNullOrEmpty(userId))
                 throw new ArgumentException("User ID cannot be null or empty.");
@@ -520,8 +453,9 @@ namespace VocareWebAPI.Billing.Services.Implementations
             var userBilling = await _userBillingRepository.GetByUserIdAsync(userId);
 
             if (string.IsNullOrEmpty(userBilling.StripeCustomerId))
-                throw new InvalidOperationException("User does not have a Stripe customer record.");
+                throw new MissingStripeCustomerException(userId);
 
+            var returnUrl = _configuration["Stripe:ReturnUrl"];
             var options = new Stripe.BillingPortal.SessionCreateOptions
             {
                 Customer = userBilling.StripeCustomerId,
@@ -565,7 +499,7 @@ namespace VocareWebAPI.Billing.Services.Implementations
             {
                 userBilling = await _userBillingRepository.GetByUserIdAsync(userId);
             }
-            catch (KeyNotFoundException)
+            catch (UserBillingNotFoundException)
             {
                 _logger.LogInformation(
                     "No UserBilling found for userId={UserId}. Returning empty payment history.",
@@ -644,18 +578,15 @@ namespace VocareWebAPI.Billing.Services.Implementations
                     paymentHistory.Add(invoiceDto);
                 }
             }
-            catch (Stripe.StripeException ex)
+            catch (StripeException ex)
             {
                 _logger.LogError(
                     ex,
-                    "Stripe error while fetching payment history for userId={}",
+                    "Stripe error while fetching payment history for userId={UserId}",
                     userId,
                     ex.StripeError?.Message
                 );
-                throw new InvalidOperationException(
-                    $"Failed to fetch payment history from Stripe: {ex.StripeError?.Message}",
-                    ex
-                );
+                throw;
             }
 
             var sortedHistory = paymentHistory

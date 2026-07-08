@@ -1,10 +1,7 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using VocareWebAPI.Data;
 using VocareWebAPI.JobOffers.Models.Entities;
+using VocareWebAPI.JobOffers.Models.Records;
 using VocareWebAPI.JobOffers.Repositories.Interfaces;
 
 namespace VocareWebAPI.JobOffers.Repositories.Implementations
@@ -12,12 +9,10 @@ namespace VocareWebAPI.JobOffers.Repositories.Implementations
     public class JobOfferRepository : IJobOfferRepository
     {
         private readonly AppDbContext _context;
-        private readonly ILogger<JobOfferRepository> _logger;
 
-        public JobOfferRepository(AppDbContext context, ILogger<JobOfferRepository> logger)
+        public JobOfferRepository(AppDbContext context)
         {
             _context = context;
-            _logger = logger;
         }
 
         public async Task<JobOffer?> GetByReferenceNumberAsync(string refNumber)
@@ -27,9 +22,13 @@ namespace VocareWebAPI.JobOffers.Repositories.Implementations
             );
         }
 
-        public async Task<IEnumerable<string>> GetAllReferenceNumbersAsync()
+        public async Task<IEnumerable<JobStaleInfo>> GetAllReferenceNumbersAsync()
         {
-            return await _context.JobOffers.Select(j => j.ReferenceNumber).ToListAsync();
+            var activeJobs = await _context
+                .JobOffers.Select(p => new JobStaleInfo(p.ReferenceNumber, p.UpdatedAt))
+                .ToListAsync();
+
+            return activeJobs;
         }
 
         public async Task AddAsync(JobOffer offer)
