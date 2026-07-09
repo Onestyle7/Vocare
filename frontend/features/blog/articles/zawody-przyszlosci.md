@@ -126,37 +126,55 @@ Dobra wiadomość: większość zawodów z perspektywami nie wymaga 5-letnich st
 ## Zawody przyszłości - kompetencje i widełki
 
 **Analityk danych**
+<<<<<<< HEAD:frontend/articles/zawody-przyszlosci.md
+=======
 
+>>>>>>> staging:frontend/features/blog/articles/zawody-przyszlosci.md
 - Kluczowe kompetencje: SQL, Excel/Power BI, Python podstawy
 - Ścieżka wejścia: kurs 3-6 mies. + praktyka
 - Widełki (Polska 2026): 7-15k PLN/mies.
 
 **Fizjoterapeuta**
+<<<<<<< HEAD:frontend/articles/zawody-przyszlosci.md
+=======
 
+>>>>>>> staging:frontend/features/blog/articles/zawody-przyszlosci.md
 - Kluczowe kompetencje: studia licencjackie/magisterskie
 - Ścieżka wejścia: 3-5 lat nauki
 - Widełki (Polska 2026): 5-10k PLN/mies.
 
 **Specjalista ESG**
+<<<<<<< HEAD:frontend/articles/zawody-przyszlosci.md
+=======
 
+>>>>>>> staging:frontend/features/blog/articles/zawody-przyszlosci.md
 - Kluczowe kompetencje: prawo, finanse, raportowanie
 - Ścieżka wejścia: studia/kurs + certyfikat
 - Widełki (Polska 2026): 8-16k PLN/mies.
 
 **Technik PV**
+<<<<<<< HEAD:frontend/articles/zawody-przyszlosci.md
+=======
 
+>>>>>>> staging:frontend/features/blog/articles/zawody-przyszlosci.md
 - Kluczowe kompetencje: wiedza elektryczna + instalacje
 - Ścieżka wejścia: kurs 2-4 mies.
 - Widełki (Polska 2026): 5-9k PLN/mies.
 
 **Prompt engineer**
+<<<<<<< HEAD:frontend/articles/zawody-przyszlosci.md
+=======
 
+>>>>>>> staging:frontend/features/blog/articles/zawody-przyszlosci.md
 - Kluczowe kompetencje: AI tools, pisanie, logika
 - Ścieżka wejścia: samokształcenie
 - Widełki (Polska 2026): 8-18k PLN/mies.
 
 **Specjalista cybersec**
+<<<<<<< HEAD:frontend/articles/zawody-przyszlosci.md
+=======
 
+>>>>>>> staging:frontend/features/blog/articles/zawody-przyszlosci.md
 - Kluczowe kompetencje: sieci, Linux, narzędzia sec
 - Ścieżka wejścia: kurs/bootcamp + certyfikat
 - Widełki (Polska 2026): 10-20k PLN/mies.

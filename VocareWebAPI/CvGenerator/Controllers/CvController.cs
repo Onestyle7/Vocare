@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 using VocareWebAPI.Billing.Services.Interfaces;
 using VocareWebAPI.CvGenerator.Interfaces;
 using VocareWebAPI.CvGenerator.Models.Dtos;
+using VocareWebAPI.CvGenerator.Repositories.Interfaces;
 using VocareWebAPI.CvGenerator.Services.Interfaces;
 using VocareWebAPI.Shared.Results;
 
