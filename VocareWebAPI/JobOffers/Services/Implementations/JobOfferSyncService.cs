@@ -130,13 +130,8 @@ namespace VocareWebAPI.JobOffers.Services.Implementations
                 };
             }
 
-            var cutoffDate = DateTime.UtcNow.AddDays(-31);
-
             var staleReferenceNumbers = dbReferenceNumbers
-                .Where(info =>
-                    !feedReferenceNumbers.Contains(info.ReferenceNumber)
-                    && info.UpdatedAt < cutoffDate
-                )
+                .Where(info => !feedReferenceNumbers.Contains(info.ReferenceNumber))
                 .Select(info => info.ReferenceNumber)
                 .ToList();
 
