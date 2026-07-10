@@ -137,7 +137,7 @@ export default async function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  const gaId = process.env.NEXT_PUBLIC_GA_ID;
+  const gaId = env.NEXT_PUBLIC_GA_ID;
   const cookieStore = await cookies();
   const isAuthenticated = cookieStore.has('token');
 
