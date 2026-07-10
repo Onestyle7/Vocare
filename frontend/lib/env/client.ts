@@ -9,12 +9,14 @@ const env = createEnv({
     NEXT_PUBLIC_PERSONAL_PRICE_ID: z.string(),
     NEXT_PUBLIC_GROWTH_PRICE_ID: z.string(),
     NEXT_PUBLIC_INDIVIDUAL_PRICE_ID: z.string(),
+    NEXT_PUBLIC_GA_ID: z.string(),
   },
   experimental__runtimeEnv: {
     NEXT_PUBLIC_APP_URL: process.env.NEXT_PUBLIC_APP_URL,
     NEXT_PUBLIC_PERSONAL_PRICE_ID: process.env.NEXT_PUBLIC_PERSONAL_PRICE_ID,
     NEXT_PUBLIC_GROWTH_PRICE_ID: process.env.NEXT_PUBLIC_GROWTH_PRICE_ID,
     NEXT_PUBLIC_INDIVIDUAL_PRICE_ID: process.env.NEXT_PUBLIC_INDIVIDUAL_PRICE_ID,
+    NEXT_PUBLIC_GA_ID: process.env.NEXT_PUBLIC_GA_ID,
   },
   onValidationError: (issues) => {
     console.error('\n[ERROR LOGGER] Environment configuration error');
