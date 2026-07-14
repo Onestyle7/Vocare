@@ -39,7 +39,14 @@ namespace VocareWebAPI.JobOffers.Repositories.Implementations
 
         public async Task UpdateAsync(JobOffer offer)
         {
-            _context.JobOffers.Update(offer);
+            
+            if (_context.Entry(offer).State == EntityState.Detached)
+            {
+                _context.JobOffers.Update(offer);
+            }
+
+            _context.Entry(offer).Property(x => x.Embedding).IsModified = false;
+
             await _context.SaveChangesAsync();
         }
 
