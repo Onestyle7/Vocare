@@ -91,7 +91,10 @@ namespace VocareWebAPI.CvGenerator.Services.Implementations
                         Position = work.Position,
                         StartDate = FormatDate(work.StartDate),
                         EndDate = FormatDate(work.EndDate) ?? "Present",
-                        Description = BuildWorkDescription(work),
+                        Responsibilities = work.Responsibilities?.Any() == true ? work.Responsibilities.ToList() 
+                        : !string.IsNullOrWhiteSpace(work.Description) 
+                        ? new List<string> { work.Description } 
+                        : new List<string>(),
                     })
                     .ToList() ?? new List<CvWorkEntryDto>();
         }
@@ -135,44 +138,6 @@ namespace VocareWebAPI.CvGenerator.Services.Implementations
                         Fluency = lang.Level,
                     })
                     .ToList() ?? new List<CvLanguageEntryDto>();
-        }
-
-        private string BuildWorkDescription(WorkExperienceEntry work)
-        {
-            var descriptionParts = new List<string>();
-
-            if (!string.IsNullOrEmpty(work.Description))
-            {
-                descriptionParts.Add(work.Description);
-            }
-            if (work.Responsibilities?.Any() == true)
-            {
-                var responsibilitesText =
-                    "Główne obowiązki: " + string.Join(", ", work.Responsibilities);
-                descriptionParts.Add(responsibilitesText);
-            }
-            return descriptionParts.Any()
-                ? string.Join(" ", descriptionParts)
-                : $"Praca na stanowisku {work.Position} w firmie {work.Company}.";
-        }
-
-        private int CalculateYearsOfExperience(List<WorkExperienceEntry> workExperience)
-        {
-            if (workExperience?.Any() != true)
-            {
-                return 0;
-            }
-            var totalMonths = 0;
-            foreach (var work in workExperience.Where(w => w.StartDate.HasValue))
-            {
-                var startDate = work.StartDate!.Value;
-                var endDate = work.EndDate ?? DateTime.Now;
-
-                var months =
-                    ((endDate.Year - startDate.Year) * 12) + endDate.Month - startDate.Month;
-                totalMonths += Math.Max(0, months);
-            }
-            return totalMonths / 12;
         }
 
         private string? FormatDate(DateTime? date)
