@@ -5,7 +5,9 @@ import { GoogleAnalytics } from '@next/third-parties/google';
 import type { Metadata } from 'next';
 import localFont from 'next/font/local';
 import { cookies } from 'next/headers';
+import Script from 'next/script';
 
+import { CookieBanner } from '@/components/SupportComponents/CookieBanner';
 import { Toaster } from '@/components/ui/sonner';
 import { ThemeProvider } from '@/components/ui/theme-provider';
 import { AuthProvider } from '@/features/auth/components/AuthProvider';
@@ -140,6 +142,8 @@ export default async function RootLayout({
   const gaId = env.NEXT_PUBLIC_GA_ID;
   const cookieStore = await cookies();
   const isAuthenticated = cookieStore.has('token');
+  const consentCookie = cookieStore.get('cookie_consent')?.value;
+  const isConsentGranted = consentCookie === 'granted';
 
   let tokenCount = 0;
   let subscribtionStatus: SubscriptionStatus = 'None';
@@ -151,6 +155,21 @@ export default async function RootLayout({
 
   return (
     <html lang="en" suppressHydrationWarning>
+      <head>
+        <Script
+          id="google-consent"
+          strategy="beforeInteractive"
+          dangerouslySetInnerHTML={{
+            __html: `
+              window.dataLayer = window.dataLayer || [];
+              function gtag(){dataLayer.push(arguments);}
+              gtag('consent', 'default', {
+                'analytics_storage': '${isConsentGranted ? 'granted' : 'denied'}'
+              });
+            `,
+          }}
+        />
+      </head>
       <body
         className={`${sizmoPro.className} ${spaceGrotesk.variable} h-full antialiased selection:bg-[#915EFF]`}
       >
@@ -158,12 +177,13 @@ export default async function RootLayout({
           <TokenBalanceProvider tokenBalance={tokenCount} subscriptionStatus={subscribtionStatus}>
             <ThemeProvider attribute="class" defaultTheme="dark">
               {children}
+              <CookieBanner />
               <Toaster />
             </ThemeProvider>
           </TokenBalanceProvider>
         </AuthProvider>
+        {gaId ? <GoogleAnalytics gaId={gaId} /> : null}
       </body>
-      {gaId ? <GoogleAnalytics gaId={gaId} /> : null}
     </html>
   );
 }

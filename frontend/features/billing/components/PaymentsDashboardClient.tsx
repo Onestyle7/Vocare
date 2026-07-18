@@ -20,9 +20,11 @@ import { Switch } from '@/components/ui/switch';
 import { useTokenBalanceContext } from '@/features/billing/components/SubscriptionTokenProvider';
 import { useBillingActions } from '@/features/billing/hooks/useBillingActions';
 import { useMarketingActions } from '@/features/marketing/hooks/useMarketingActions';
+import { getCookie, setCookie } from '@/lib/utils';
 
 import {
   formatPaymentAmount,
+  getStatusBadgeText,
   getStatusBadgeVariant,
   getTypeLabel,
   PAYMENT_DATE_FORMATTER,
@@ -43,6 +45,7 @@ export default function PaymentsDashboardClient({
   const { handleMarketingToggle, isPending: isUpdatingConsent } = useMarketingActions();
 
   const [marketingConsent, setMarketingConsent] = useState<boolean>(initialMarketingConsent);
+  const [analyticsConsent, setAnalyticsConsent] = useState<boolean>(false);
 
   const searchParams = useSearchParams();
   const pathname = usePathname();
@@ -66,8 +69,27 @@ export default function PaymentsDashboardClient({
     setMarketingConsent(initialMarketingConsent);
   }, [initialMarketingConsent]);
 
+  useEffect(() => {
+    const hasConsent = getCookie('cookie_consent') === 'granted';
+    setAnalyticsConsent(hasConsent);
+  }, []);
+
   const onToggleConsent = (nextValue: boolean) => {
     handleMarketingToggle(nextValue, setMarketingConsent);
+  };
+
+  const onToggleAnalyticsConsent = (nextValue: boolean) => {
+    setAnalyticsConsent(nextValue);
+    const cookieValue = nextValue ? 'granted' : 'denied';
+    setCookie('cookie_consent', cookieValue, 365);
+
+    if (typeof window !== 'undefined' && window.gtag) {
+      window.gtag('consent', 'update', {
+        analytics_storage: cookieValue,
+        ad_storage: cookieValue,
+      });
+    }
+    toast.success('Zaktualizowano preferencje ciasteczek');
   };
 
   const subscriptionStatusLabel = hasActiveSubscription
@@ -92,7 +114,7 @@ export default function PaymentsDashboardClient({
   }, [initialPayments]);
 
   return (
-    <main className="font-korbin bg-background min-h-screen w-full">
+    <main className="font-korbin bg-background w-full">
       <div className="mx-auto flex w-full max-w-5xl flex-col gap-8 px-4 pt-10 pb-16 sm:px-6 lg:px-8">
         <div className="flex flex-wrap items-center justify-between gap-4">
           <div className="space-y-1">
@@ -110,7 +132,7 @@ export default function PaymentsDashboardClient({
           </Button>
         </div>
 
-        <div className="grid gap-6 lg:grid-cols-[minmax(0,1.05fr)_minmax(0,0.95fr)]">
+        <div className="lg:grid-rows grid gap-6 lg:grid-cols-[minmax(0,1.05fr)_minmax(0,0.95fr)]">
           <div className="flex flex-col gap-6">
             <Card className="border-border/60 bg-card/80 border shadow-sm backdrop-blur">
               <CardHeader>
@@ -196,68 +218,93 @@ export default function PaymentsDashboardClient({
                   <span className="text-muted-foreground text-xs">Zapisywanie preferencji…</span>
                 )}
               </CardContent>
+              <CardContent className="space-y-4">
+                <div className="border-border/60 bg-background/70 flex flex-col gap-3 rounded-lg border px-4 py-4 sm:flex-row sm:items-center sm:justify-between">
+                  <div className="space-y-1">
+                    <label
+                      htmlFor="analytics-consent-toggle"
+                      className="text-foreground text-sm font-medium"
+                    >
+                      Zgoda na korzystanie z ciasteczek analitycznych
+                    </label>
+                    <p className="text-muted-foreground text-xs">
+                      {analyticsConsent
+                        ? 'Pomagasz nam ulepszać Vocare udostępniając anonimowe dane o ruchu.'
+                        : 'Włącz, aby pomóc nam ulepszać aplikację na podstawie anonimowych danych analitycznych.'}
+                    </p>
+                  </div>
+                  <Switch
+                    id="analytics-consent-toggle"
+                    checked={analyticsConsent}
+                    onCheckedChange={onToggleAnalyticsConsent}
+                    aria-label="Toggle analytics consent"
+                  />
+                </div>
+              </CardContent>
             </Card>
           </div>
 
-          <Card className="border-border/60 bg-card/80 border shadow-sm backdrop-blur">
-            <CardHeader>
-              <CardTitle>Historia transakcji</CardTitle>
-              <CardDescription>
-                Śledź zakupy i wykorzystanie tokenów powiązanych z Twoim kontem.
-              </CardDescription>
-            </CardHeader>
-            <CardContent className="show-scrollbar space-y-4 overflow-y-auto">
-              {payments.length === 0 ? (
-                <div className="border-border/60 bg-muted/20 flex flex-col items-center justify-center gap-2 rounded-lg border border-dashed px-6 py-12 text-center">
-                  <span className="text-foreground text-sm font-medium">Brak płatności</span>
-                  <span className="text-muted-foreground text-xs">
-                    Opłaty za tokeny i subskrypcje pojawią się tutaj, gdy będą dostępne.
-                  </span>
-                </div>
-              ) : (
-                <div className="space-y-3">
-                  {payments.map((payment) => {
-                    const formattedDate = (() => {
-                      const parsedDate = new Date(payment.createdAt);
-                      if (Number.isNaN(parsedDate.getTime())) {
-                        return '—';
-                      }
-                      return PAYMENT_DATE_FORMATTER.format(parsedDate);
-                    })();
+          <div className="relative lg:min-h-0">
+            <Card className="border-border/60 bg-card/80 flex h-full flex-col overflow-hidden border shadow-sm backdrop-blur lg:absolute lg:inset-0">
+              <CardHeader>
+                <CardTitle>Historia transakcji</CardTitle>
+                <CardDescription>
+                  Śledź zakupy i wykorzystanie tokenów powiązanych z Twoim kontem.
+                </CardDescription>
+              </CardHeader>
+              <CardContent className="show-scrollbar flex-1 space-y-4 overflow-y-auto">
+                {payments.length === 0 ? (
+                  <div className="border-border/60 bg-muted/20 flex flex-col items-center justify-center gap-2 rounded-lg border border-dashed px-6 py-12 text-center">
+                    <span className="text-foreground text-sm font-medium">Brak płatności</span>
+                    <span className="text-muted-foreground text-xs">
+                      Opłaty za tokeny i subskrypcje pojawią się tutaj, gdy będą dostępne.
+                    </span>
+                  </div>
+                ) : (
+                  <div className="space-y-3">
+                    {payments.map((payment) => {
+                      const formattedDate = (() => {
+                        const parsedDate = new Date(payment.createdAt);
+                        if (Number.isNaN(parsedDate.getTime())) {
+                          return '—';
+                        }
+                        return PAYMENT_DATE_FORMATTER.format(parsedDate);
+                      })();
 
-                    const key = `${payment.createdAt}-${payment.type}-${payment.amount}-${payment.status}`;
+                      const key = `${payment.createdAt}-${payment.type}-${payment.amount}-${payment.status}`;
 
-                    return (
-                      <div
-                        key={key}
-                        className="border-border/60 bg-background/70 flex flex-col gap-3 rounded-lg border px-4 py-4 sm:flex-row sm:items-center sm:justify-between"
-                      >
-                        <div className="space-y-1">
-                          <p className="text-foreground text-sm font-medium">
-                            {payment.description ?? getTypeLabel(payment.type)}
-                          </p>
-                          <span className="text-muted-foreground text-xs">{formattedDate}</span>
-                          {typeof payment.tokenAmount === 'number' && (
-                            <span className="text-muted-foreground text-xs">
-                              {payment.tokenAmount} tokens
+                      return (
+                        <div
+                          key={key}
+                          className="border-border/60 bg-background/70 flex flex-col gap-3 rounded-lg border px-4 py-4 sm:flex-row sm:items-center sm:justify-between"
+                        >
+                          <div className="space-y-1">
+                            <p className="text-foreground text-sm font-medium">
+                              {getTypeLabel(payment.type)}
+                            </p>
+                            <span className="text-muted-foreground text-xs">{formattedDate}</span>
+                            {typeof payment.tokenAmount === 'number' && (
+                              <span className="text-muted-foreground text-xs">
+                                {payment.tokenAmount} tokens
+                              </span>
+                            )}
+                          </div>
+                          <div className="flex flex-col items-start gap-2 sm:items-end">
+                            <Badge variant={getStatusBadgeVariant(payment.status)}>
+                              {getStatusBadgeText(payment.status)}
+                            </Badge>
+                            <span className="text-foreground text-sm font-semibold">
+                              {formatPaymentAmount(payment.amount, payment.currency)}
                             </span>
-                          )}
+                          </div>
                         </div>
-                        <div className="flex flex-col items-start gap-2 sm:items-end">
-                          <Badge variant={getStatusBadgeVariant(payment.status)}>
-                            {payment.status ?? 'Unknown'}
-                          </Badge>
-                          <span className="text-foreground text-sm font-semibold">
-                            {formatPaymentAmount(payment.amount, payment.currency)}
-                          </span>
-                        </div>
-                      </div>
-                    );
-                  })}
-                </div>
-              )}
-            </CardContent>
-          </Card>
+                      );
+                    })}
+                  </div>
+                )}
+              </CardContent>
+            </Card>
+          </div>
         </div>
       </div>
     </main>
