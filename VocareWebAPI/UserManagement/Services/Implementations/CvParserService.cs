@@ -135,14 +135,13 @@ namespace VocareWebAPI.CareerAdvisor.Services.Implementations
 
                 result.FirstName ??= string.Empty;
                 result.LastName ??= string.Empty;
-                result.Country ??= string.Empty;
                 result.PersonalityType ??= PersonalityType.Unknown;
 
-                if(result.Country != null)
+                if (string.IsNullOrWhiteSpace(result.Country))
                 {
                     result.Country = "Poland";
                 }
-                
+
                 if(result.Education != null)
                 {
                     foreach(var record in result.Education)
@@ -151,6 +150,9 @@ namespace VocareWebAPI.CareerAdvisor.Services.Implementations
                         record.Degree ??= string.Empty;
                         record.Field ??= string.Empty;
                     }
+                    result.Education = result.Education
+                        .Where(e => !string.IsNullOrWhiteSpace(e.Institution))
+                        .ToList();
                 }
 
                 if(result.WorkExperience != null)
@@ -162,6 +164,9 @@ namespace VocareWebAPI.CareerAdvisor.Services.Implementations
                         record.Description ??= string.Empty;
                         record.Responsibilities ??= new List<string>();
                     } 
+                    result.WorkExperience = result.WorkExperience
+                        .Where(w => !string.IsNullOrWhiteSpace(w.Company))
+                        .ToList();
                 }
 
                 if(result.Certificates != null)
@@ -170,6 +175,9 @@ namespace VocareWebAPI.CareerAdvisor.Services.Implementations
                     {
                         record.Name ??= string.Empty;
                     }
+                    result.Certificates = result.Certificates
+                        .Where(c => !string.IsNullOrWhiteSpace(c.Name))
+                        .ToList();
                 }
 
                 if(result.Languages != null)
@@ -179,9 +187,10 @@ namespace VocareWebAPI.CareerAdvisor.Services.Implementations
                         record.Language ??= string.Empty;
                         record.Level ??= string.Empty;
                     }
+                    result.Languages = result.Languages
+                        .Where(l => !string.IsNullOrWhiteSpace(l.Language))
+                        .ToList();
                 }
-
-
 
                 await _userProfileService.CreateUserProfileAsync(userId, result);
 
