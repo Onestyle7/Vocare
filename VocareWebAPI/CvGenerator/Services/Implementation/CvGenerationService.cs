@@ -79,6 +79,7 @@ namespace VocareWebAPI.CvGenerator.Services.Implementations
                     City = profile.Address ?? string.Empty,
                     Country = profile.Country,
                 },
+                Summary = profile.AboutMe ?? string.Empty,
             };
         }
 
