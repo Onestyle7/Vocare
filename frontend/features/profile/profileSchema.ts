@@ -23,8 +23,7 @@ const educationEntrySchema = z.object({
 const workExperienceEntrySchema = z.object({
   company: z.string().min(1, 'Nazwa firmy jest wymagana'),
   position: z.string().min(1, 'Stanowisko jest wymagane'),
-  description: z.string().min(1, 'Opis jest wymagany'),
-  responsibilities: z.array(z.string()).optional(),
+  responsibilities: z.array(z.string()).default([]),
   startDate: z.string().optional(),
   endDate: z.string().optional(),
   current: z.boolean().default(false),

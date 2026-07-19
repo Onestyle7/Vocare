@@ -7,11 +7,11 @@ import {
   CreateCvDto,
   cvApiClient,
   CvDetailsDto,
-  CvDto,
   CvLimits,
   CvListItemDto,
   UpdateCvDto,
 } from './api';
+import { normalizeCvDto } from './cvNormalization';
 
 export type CvDomainError = BaseAppError<
   'Unauthorized' | 'NotFound' | 'InvalidOperation' | 'GenericApiError'
@@ -41,17 +41,6 @@ const mapCvError = (error: ApiError): CvDomainError => {
     }
   }
 };
-
-const normalizeCvDto = (raw: Partial<CvDto>): CvDto => ({
-  basics: raw.basics,
-  work: raw.work ?? [],
-  education: raw.education ?? [],
-  certificates: raw.certificates ?? [],
-  projects: raw.projects ?? [],
-  social: raw.social ?? [],
-  skills: raw.skills ?? [],
-  languages: raw.languages ?? [],
-});
 
 const normalizeDetails = (data: CvDetailsDto): CvDetailsDto => ({
   ...data,

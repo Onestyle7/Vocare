@@ -296,8 +296,12 @@ export default function ProfileDetails() {
               <Separator />
 
               <div className="flex items-start justify-between gap-4">
-                <span className="font-medium text-gray-600 dark:text-gray-200">Opis:</span>
-                <span className="ml-2 max-w-md text-left text-sm">{exp.description || '—'}</span>
+                <span className="font-medium text-gray-600 dark:text-gray-200">Obowiązki:</span>
+                <ul className="ml-2 max-w-md list-disc space-y-1 pl-5 text-left text-sm">
+                  {(exp.responsibilities ?? []).map((responsibility, itemIndex) => (
+                    <li key={itemIndex}>{responsibility}</li>
+                  ))}
+                </ul>
               </div>
               <Separator />
 
