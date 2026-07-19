@@ -138,6 +138,46 @@ namespace VocareWebAPI.CareerAdvisor.Services.Implementations
                 result.Country ??= string.Empty;
                 result.PersonalityType ??= PersonalityType.Unknown;
 
+                if(result.Education != null)
+                {
+                    foreach(var record in result.Education)
+                    {
+                        record.Institution ??= string.Empty;
+                        record.Degree ??= string.Empty;
+                        record.Field ??= string.Empty;
+                    }
+                }
+
+                if(result.WorkExperience != null)
+                {
+                    foreach(var record in result.WorkExperience)
+                    {
+                        record.Company ??= string.Empty;
+                        record.Position ??= string.Empty;
+                        record.Description ??= string.Empty;
+                        record.Responsibilities ??= new List<string>();
+                    } 
+                }
+
+                if(result.Certificates != null)
+                {
+                    foreach(var record in result.Certificates)
+                    {
+                        record.Name ??= string.Empty;
+                    }
+                }
+
+                if(result.Languages != null)
+                {
+                    foreach(var record in result.Languages)
+                    {
+                        record.Language ??= string.Empty;
+                        record.Level ??= string.Empty;
+                    }
+                }
+
+
+
                 await _userProfileService.CreateUserProfileAsync(userId, result);
 
                 var history = new CvParseHistory
