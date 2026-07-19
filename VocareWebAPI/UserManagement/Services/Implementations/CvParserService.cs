@@ -138,6 +138,11 @@ namespace VocareWebAPI.CareerAdvisor.Services.Implementations
                 result.Country ??= string.Empty;
                 result.PersonalityType ??= PersonalityType.Unknown;
 
+                if(result.Country != null)
+                {
+                    result.Country = "Poland";
+                }
+                
                 if(result.Education != null)
                 {
                     foreach(var record in result.Education)
@@ -224,58 +229,67 @@ namespace VocareWebAPI.CareerAdvisor.Services.Implementations
         private string BuildCvParsePrompt(string cvText)
         {
             return $$"""
-                Przeanalizuj poniższe CV i wyodrębnij następujące informacje do formatu JSON.
+                Przeanalizuj poniższe CV i wyodrębnij dane do formatu JSON.
+                Odpowiedz WYŁĄCZNIE poprawnym JSONem — bez komentarzy, bez markdown, bez tekstu przed/po JSON.
 
-                Zwróć wyłącznie JSON zgodny z tą strukturą:
+                ZASADY KRYTYCZNE (naruszenie którejkolwiek dyskwalifikuje odpowiedź):
+                1. ZAKAZ FABRYKACJI: Wyodrębniaj WYŁĄCZNIE informacje, które jawnie występują w tekście CV. Nie domyślaj się, nie uzupełniaj, nie generuj danych na podstawie kontekstu. Jeśli czegoś nie ma — zwróć null lub pustą tablicę [].
+                2. DUPLIKATY: Jeśli te same dane pojawiają się w CV wielokrotnie (np. to samo stanowisko w tej samej firmie z tym samym okresem), zwróć JE TYLKO RAZ. Zduplikowane wpisy oznaczają błąd w ekstrakcji tekstu z PDF, nie dwa osobne doświadczenia.
+                3. WALIDACJA WPISÓW: Jeśli wpis nie zawiera wystarczających danych do identyfikacji (np. brak nazwy firmy LUB brak stanowiska w doświadczeniu zawodowym, brak nazwy uczelni w edukacji), POMIŃ go całkowicie zamiast zwracać wpis z pustymi polami.
+
+                ZASADY EKSTRAKCJI:
+                4. DATY: Format YYYY-MM-DD. Jeśli znany tylko miesiąc i rok (np. "March 2025"), użyj pierwszego dnia miesiąca (2025-03-01). Jeśli znany tylko rok, użyj YYYY-01-01. Jeśli praca trwa do teraz ("present", "obecnie", "current"), ustaw endDate na null.
+                5. NUMER TELEFONU: Zidentyfikuj numer telefonu. Usuń numer kierunkowy kraju (np. +48, 0048) oraz wszystkie spacje, myślniki i nawiasy. Wynik MUSI być ciągiem dokładnie 9 cyfr (np. "123456789"). Jeśli po oczyszczeniu numer nie ma 9 cyfr, zwróć null.
+                6. UMIEJĘTNOŚCI: Rozdziel na skills (techniczne: języki programowania, narzędzia, platformy, frameworki) i softSkills (komunikacja, praca zespołowa, zarządzanie czasem). Każda umiejętność to JEDEN krótki termin, nie zdanie.
+                7. DOŚWIADCZENIE ZAWODOWE: Pole "description" to krótkie podsumowanie roli (1-2 zdania). Pole "responsibilities" to tablica konkretnych obowiązków — jeden obowiązek na element, bez kropki na końcu. Jeśli CV opisuje obowiązki ciągłym tekstem, rozbij go na logiczne punkty.
+                8. JĘZYK ODPOWIEDZI: Zachowaj oryginalny język treści z CV. Nie tłumacz.
+
+                WYMAGANY FORMAT JSON:
                 {
-                    "firstName": "string lub null",
-                    "lastName": "string lub null",
-                    "country": "string lub null",
-                    "address": "string lub null",
-                    "phoneNumber": "string zawierający dokładnie 9 cyfr ciągiem (np. '123456789') lub null", 
+                    "firstName": "string — dokładnie z CV, lub null",
+                    "lastName": "string — dokładnie z CV, lub null",
+                    "country": "string — kraj, lub null",
+                    "address": "string — miasto/adres, lub null",
+                    "phoneNumber": "string — 9 cyfr po oczyszczeniu, lub null",
                     "education": [
                         {
-                            "institution": "nazwa uczelni/szkoły",
-                            "degree": "tytuł/stopień",
-                            "field": "kierunek",
+                            "institution": "string — dokładna nazwa uczelni/szkoły",
+                            "degree": "string — tytuł/stopień (np. Engineer's Degree, Master's Degree)",
+                            "field": "string — kierunek studiów",
                             "startDate": "YYYY-MM-DD",
                             "endDate": "YYYY-MM-DD lub null jeśli w trakcie"
                         }
                     ],
                     "workExperience": [
                         {
-                            "company": "nazwa firmy",
-                            "position": "stanowisko",
-                            "description": "opis obowiązków",
-                            "responsibilities": ["obowiązek1", "obowiązek2"],
+                            "company": "string — dokładna nazwa firmy",
+                            "position": "string — dokładne stanowisko z CV",
+                            "description": "string — krótkie podsumowanie roli, 1-2 zdania",
+                            "responsibilities": [
+                                "string — jeden konkretny obowiązek",
+                                "string — kolejny obowiązek"
+                            ],
                             "startDate": "YYYY-MM-DD",
                             "endDate": "YYYY-MM-DD lub null jeśli obecna praca"
                         }
                     ],
-                    "skills": ["umiejętność1", "umiejętność2"],
-                    "softSkills": ["umiejętność miękka1", "umiejętność miękka2"],
+                    "skills": ["string — umiejętność techniczna"],
+                    "softSkills": ["string — umiejętność miękka"],
                     "certificates": [
                         {
-                            "name": "nazwa certyfikatu",
+                            "name": "string — nazwa certyfikatu",
                             "date": "YYYY-MM-DD lub null",
-                            "issuer": "wydawca lub null"
+                            "issuer": "string — wydawca, lub null"
                         }
                     ],
                     "languages": [
                         {
-                            "language": "nazwa języka",
-                            "level": "poziom np. B2, native, biegły"
+                            "language": "string — nazwa języka",
+                            "level": "string — poziom (np. B2, C1, native, Advanced)"
                         }
                     ],
-                    "aboutMe": "string lub null - jeśli CV zawiera sekcję 'o mnie' lub podsumowanie zawodowe"
+                    "aboutMe": "string — sekcja 'o mnie' / podsumowanie zawodowe, lub null"
                 }
-
-                Zasady:
-                - Jeśli jakiejś informacji nie ma w CV, ustaw null lub pustą tablicę []
-                - Daty w formacie YYYY-MM-DD. Jeśli znany tylko rok, użyj YYYY-01-01
-                - Rozróżniaj skills (techniczne: języki programowania, narzędzia) od softSkills (komunikacja, praca zespołowa)
-                - Nie wymyślaj danych których nie ma w CV
-                - Pole 'phoneNumber': Zidentyfikuj numer telefonu. Najpierw usuń z niego numer kierunkowy kraju (np. +48, 0048, 48) oraz absolutnie wszystkie spacje, myślniki i nawiasy. Wynik końcowy MUSI być ciągiem tekstowym składającym się z dokładnie 9 cyfr (np. "123456789"). Jeśli po oczyszczeniu numer nie ma 9 cyfr, zwróć null.
 
                 CV:
                 {{cvText}}
