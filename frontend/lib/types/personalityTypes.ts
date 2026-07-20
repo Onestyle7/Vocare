@@ -19,7 +19,6 @@ export enum PersonalityType {
 }
 
 export const personalityTypeLabels: Record<string, string> = {
-  0: 'Nie wiem',
   1: 'Pośrednik',
   2: 'Rzecznik',
   3: 'Logik',
