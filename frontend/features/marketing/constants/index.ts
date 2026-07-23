@@ -609,3 +609,8 @@ export const tile_4 = '/main-page/tile-4.png';
 export const arrow_01 = '/main-page/arrow-1.svg';
 export const arrow_02 = '/main-page/arrow-2.svg';
 export const arrow_03 = '/main-page/arrow-3.svg';
+
+// resume icons
+
+export const file_edit = '/svg/file-edit.svg';
+export const file_document = '/svg/file-document.svg';

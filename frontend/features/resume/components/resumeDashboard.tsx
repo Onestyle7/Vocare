@@ -1,5 +1,6 @@
 'use client';
 import { Clock, FileText, Plus, Trash2 } from 'lucide-react';
+import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 
@@ -16,8 +17,16 @@ import {
 } from '@/components/ui/alert-dialog';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+} from '@/components/ui/dialog';
 import { Separator } from '@/components/ui/separator';
 import { GridBackgroundDemo } from '@/features/market-analysis/components/GridBackgroundDemo';
+import { file_document, file_edit } from '@/features/marketing/constants';
 import { useIsMobile } from '@/lib/hooks/useIsMobile';
 import { CvLimits, CvListItemDto } from '@/lib/types/cv';
 
@@ -31,6 +40,7 @@ interface ResumeDashboardProps {
 const ResumeDashboard = ({ initialCvs, initialLimits }: ResumeDashboardProps) => {
   const router = useRouter();
   const [showLimitDialog, setShowLimitDialog] = useState(false);
+  const [showCreateCvDialog, setShowCreateCvDialog] = useState(false);
   const isMobile = useIsMobile();
   const { handleDeleteResume, handleCreateResume, isCreating } = useResumeDashboardActions();
   const cvs = initialCvs;
@@ -69,7 +79,7 @@ const ResumeDashboard = ({ initialCvs, initialLimits }: ResumeDashboardProps) =>
   };
 
   const EmptyState = () => (
-    <div className="col-span-full flex h-[400px] flex-col items-center justify-center rounded-xl border border-dashed">
+    <div className="col-span-full flex h-100 flex-col items-center justify-center rounded-xl border border-dashed">
       <FileText className="text-muted-foreground mb-4 h-12 w-12" />
       <h3 className="mb-2 text-lg font-medium">Brak CV</h3>
       <p className="text-muted-foreground mb-4 max-w-sm text-center text-sm">
@@ -78,7 +88,7 @@ const ResumeDashboard = ({ initialCvs, initialLimits }: ResumeDashboardProps) =>
           : 'Rozpocznij tworzenie swojego pierwszego CV, klikając przycisk poniżej.'}
       </p>
       {!isMobile && (
-        <Button className="gap-2" onClick={handleCreateResume} disabled={isCreating}>
+        <Button className="gap-2" onClick={handleNewResumeClick} disabled={isCreating}>
           <Plus className="h-4 w-4" />
           {isCreating ? 'Tworzenie...' : 'Stwórz CV'}
         </Button>
@@ -91,7 +101,7 @@ const ResumeDashboard = ({ initialCvs, initialLimits }: ResumeDashboardProps) =>
     if (limits && limits.currentCount >= limits.maxLimit) {
       setShowLimitDialog(true);
     } else {
-      handleCreateResume();
+      setShowCreateCvDialog(true);
     }
   };
 
@@ -150,7 +160,7 @@ const ResumeDashboard = ({ initialCvs, initialLimits }: ResumeDashboardProps) =>
                         onClick={() => router.push(`/resume/${cv.id}`)}
                         className="block cursor-pointer"
                       >
-                        <div className="group bg-background flex h-[400px] flex-col gap-2 rounded-xl border p-4 transition-shadow hover:shadow-lg">
+                        <div className="group bg-background flex h-100 flex-col gap-2 rounded-xl border p-4 transition-shadow hover:shadow-lg">
                           <div className="flex h-full flex-col rounded-md border">
                             <div className="bg-muted group relative mb-2 h-1/2 rounded-tl-md rounded-tr-md">
                               {/* Badge - conditionally rendered based on CV status */}
@@ -230,13 +240,13 @@ const ResumeDashboard = ({ initialCvs, initialLimits }: ResumeDashboardProps) =>
                             <Separator className="w-full" />
 
                             {/* Card Actions */}
-                            <div className="flex min-h-[72px] flex-row items-center justify-between p-4">
+                            <div className="flex min-h-18 flex-row items-center justify-between p-4">
                               <Button size="sm">{isMobile ? 'Podgląd' : 'Edytuj'}</Button>
                               <div className="flex flex-row items-center justify-center gap-2">
                                 <Clock className="text-muted-foreground h-4 w-4" />
                                 <p className="text-muted-foreground text-sm font-semibold">
                                   {cv.lastModifiedAt
-                                    ? `Zmodyfikowano ${formatDateTime(cv.lastModifiedAt)}`
+                                    ? `Zmodyf. ${formatDateTime(cv.lastModifiedAt)}`
                                     : 'Utworzono niedawno'}
                                 </p>
                               </div>
@@ -274,6 +284,70 @@ const ResumeDashboard = ({ initialCvs, initialLimits }: ResumeDashboardProps) =>
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>
+
+      <Dialog open={showCreateCvDialog} onOpenChange={setShowCreateCvDialog}>
+        <DialogContent className="font-poppins h-auto w-[calc(100%-2rem)] max-w-170 gap-0 overflow-hidden rounded-3xl border-0 bg-[#17181d] px-8 pt-12 pb-12 text-white sm:h-90 sm:max-h-90 sm:max-w-170 sm:px-16 [&>button]:top-5 [&>button]:right-5 [&>button]:text-white/60 [&>button]:opacity-100 [&>button:hover]:text-white [&>button>svg]:size-6">
+          <DialogHeader className="flex w-full items-center gap-2 text-center sm:text-center">
+            <DialogTitle className="text-[22px] leading-tight font-normal text-white">
+              Jak chcesz utworzyć CV?
+            </DialogTitle>
+            <DialogDescription className="text-[14px] leading-relaxed font-light text-white/75">
+              Wybierz sposób, w jaki chcesz rozpocząć tworzenie swojego CV.
+            </DialogDescription>
+          </DialogHeader>
+
+          <div className="mt-9 grid w-full grid-cols-1 gap-6 sm:grid-cols-2">
+            <button
+              type="button"
+              onClick={handleCreateResume}
+              disabled={isCreating}
+              className="group flex h-44 w-full cursor-pointer flex-col overflow-hidden rounded-2xl text-white focus-visible:ring-2 focus-visible:ring-[#7178ee] focus-visible:ring-offset-2 focus-visible:ring-offset-[#17181d] focus-visible:outline-none disabled:pointer-events-none disabled:opacity-60"
+            >
+              <span className="flex min-h-0 flex-1 items-center justify-center self-stretch bg-[#292a30]">
+                <Image
+                  src={file_document}
+                  width={57.17}
+                  height={73.5}
+                  alt="file-edit"
+                  className="translate-y-8 transition-transform duration-300 ease-out group-hover:translate-y-1"
+                />
+              </span>
+              <span className="relative z-10 flex h-18 shrink-0 items-center justify-center bg-[#686fde] px-4 text-[16px] font-normal">
+                {isCreating ? (
+                  'Tworzenie...'
+                ) : (
+                  <span>
+                    Stwórz <strong className="font-medium">puste CV</strong>
+                  </span>
+                )}
+              </span>
+            </button>
+
+            <button
+              type="button"
+              className="group flex h-44 w-full cursor-pointer flex-col overflow-hidden rounded-2xl text-white focus-visible:ring-2 focus-visible:ring-[#7178ee] focus-visible:ring-offset-2 focus-visible:ring-offset-[#17181d] focus-visible:outline-none"
+              onClick={() => {
+                // TODO generowanie pod ofertę
+              }}
+            >
+              <span className="flex min-h-0 flex-1 items-center justify-center self-stretch bg-[#292a30]">
+                <Image
+                  src={file_edit}
+                  width={57.17}
+                  height={73.5}
+                  alt="file-edit"
+                  className="translate-y-8 transition-transform duration-300 ease-out group-hover:translate-y-1"
+                />
+              </span>
+              <span className="relative z-10 flex h-18 shrink-0 items-center justify-center bg-[#686fde] px-8 text-center text-[16px] leading-snug font-normal">
+                <span>
+                  Wygeneruj CV pod <strong className="font-medium">konkretną ofertę</strong>
+                </span>
+              </span>
+            </button>
+          </div>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 };
