@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.Mvc.ModelBinding.Binders;
 using Microsoft.AspNetCore.Mvc.RazorPages.Infrastructure;
 using VocareWebAPI.JobOffers.Models.Dtos;
 using VocareWebAPI.JobOffers.Models.Entities;
+using VocareWebAPI.JobOffers.Models.Enums;
 using VocareWebAPI.JobOffers.Repositories.Interfaces;
 using VocareWebAPI.JobOffers.Services.Interfaces;
 using VocareWebAPI.Shared.Services.Interfaces;
@@ -42,7 +43,7 @@ namespace VocareWebAPI.JobOffers.Services.Implementations
                     try
                     {
                         var existing = await _repository.GetByReferenceNumberAsync(
-                            offer.ReferenceNumber
+                            offer.ReferenceNumber, offer.Source
                         );
 
                         if (existing == null)
@@ -108,9 +109,9 @@ namespace VocareWebAPI.JobOffers.Services.Implementations
             return result;
         }
 
-        public async Task<CleanupResult> CleanupStaleOffersAsync()
+        public async Task<CleanupResult> CleanupStaleOffersAsync(JobOfferSource source)
         {
-            var dbReferenceNumbers = await _repository.GetAllReferenceNumbersAsync();
+            var dbReferenceNumbers = await _repository.GetAllReferenceNumbersAsync(source);
 
             var feedOffers = await _parser.ParseFromUrlAsync(FeedUrl);
             var feedReferenceNumbers = feedOffers.Select(o => o.ReferenceNumber).ToHashSet();

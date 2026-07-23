@@ -1,6 +1,7 @@
 using Microsoft.EntityFrameworkCore;
 using VocareWebAPI.Data;
 using VocareWebAPI.JobOffers.Models.Entities;
+using VocareWebAPI.JobOffers.Models.Enums;
 using VocareWebAPI.JobOffers.Models.Records;
 using VocareWebAPI.JobOffers.Repositories.Interfaces;
 
@@ -15,17 +16,19 @@ namespace VocareWebAPI.JobOffers.Repositories.Implementations
             _context = context;
         }
 
-        public async Task<JobOffer?> GetByReferenceNumberAsync(string refNumber)
+        public async Task<JobOffer?> GetByReferenceNumberAsync(string refNumber, JobOfferSource source)
         {
             return await _context.JobOffers.FirstOrDefaultAsync(x =>
-                x.ReferenceNumber == refNumber
+                x.ReferenceNumber == refNumber && x.Source == source
             );
         }
 
-        public async Task<IEnumerable<JobStaleInfo>> GetAllReferenceNumbersAsync()
+        public async Task<IEnumerable<JobStaleInfo>> GetAllReferenceNumbersAsync(JobOfferSource source)
         {
             var activeJobs = await _context
-                .JobOffers.Select(p => new JobStaleInfo(p.ReferenceNumber, p.UpdatedAt))
+                .JobOffers
+                .Where(j => j.Source == source)
+                .Select(p => new JobStaleInfo(p.ReferenceNumber,p.Source, p.UpdatedAt))
                 .ToListAsync();
 
             return activeJobs;
@@ -50,10 +53,11 @@ namespace VocareWebAPI.JobOffers.Repositories.Implementations
             await _context.SaveChangesAsync();
         }
 
-        public async Task DeleteByReferenceNumberAsync(IEnumerable<string> refNumbers)
+        public async Task DeleteByReferenceNumberAsync(IEnumerable<string> refNumbers, JobOfferSource source)
         {
             var toDelete = await _context
                 .JobOffers.Where(j => refNumbers.Contains(j.ReferenceNumber))
+                .Where(j => j.Source == source)
                 .ToListAsync();
 
             _context.JobOffers.RemoveRange(toDelete);
