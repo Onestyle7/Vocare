@@ -286,7 +286,7 @@ const ResumeDashboard = ({ initialCvs, initialLimits }: ResumeDashboardProps) =>
       </AlertDialog>
 
       <Dialog open={showCreateCvDialog} onOpenChange={setShowCreateCvDialog}>
-        <DialogContent className="font-poppins h-auto w-[calc(100%-2rem)] max-w-170 gap-0 overflow-hidden rounded-3xl border-0 bg-[#17181d] px-8 pt-12 pb-12 text-white sm:h-90 sm:max-h-90 sm:max-w-170 sm:px-16 [&>button]:top-5 [&>button]:right-5 [&>button]:text-white/60 [&>button]:opacity-100 [&>button:hover]:text-white [&>button>svg]:size-6">
+        <DialogContent className="font-poppins h-auto w-[calc(100%-2rem)] max-w-170 content-start gap-0 overflow-hidden rounded-3xl border-0 bg-[#17181d] px-8 pt-12 pb-12 text-white sm:h-96 sm:max-h-92 sm:max-w-170 sm:px-16 [&>button]:top-5 [&>button]:right-5 [&>button]:text-white/60 [&>button]:opacity-100 [&>button:hover]:text-white [&>button>svg]:size-6">
           <DialogHeader className="flex w-full items-center gap-2 text-center sm:text-center">
             <DialogTitle className="text-[22px] leading-tight font-normal text-white">
               Jak chcesz utworzyć CV?
