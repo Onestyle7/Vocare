@@ -217,14 +217,21 @@ namespace VocareWebAPI.CvGenerator.Implementations
                 Na podstawie poniższych danych źródłowych wygeneruj CV zoptymalizowane pod podaną ofertę pracy.
                 Odpowiedz WYŁĄCZNIE poprawnym JSONem — bez komentarzy, bez markdown, bez tekstu przed/po JSON.
 
-                ZASADY:
-                1. NIE WYMYŚLAJ danych, których nie ma w źródle. Nie dodawaj fałszywego doświadczenia, firm, projektów ani umiejętności.
-                2. PRZEFORMUŁUJ opisy doświadczenia tak, aby podkreślały aspekty najbardziej istotne dla oferty.
-                3. PRIORYTETYZUJ umiejętności — te najważniejsze dla oferty przenieś na początek listy.
-                4. DOSTOSUJ podsumowanie zawodowe (summary) — powinno jasno komunikować dopasowanie do roli z oferty.
-                5. Zachowaj WSZYSTKIE sekcje CV, nawet jeśli są puste — zwróć je jako puste listy [].
-                6. Zachowaj prawdziwe daty, nazwy firm, uczelni i certyfikatów — nie modyfikuj faktów.
-                8. Jeśli w danych źródłowych brakuje sekcji Projects lub Social, zwróć puste listy.
+                ZASADY KRYTYCZNE (naruszenie którejkolwiek dyskwalifikuje odpowiedź):
+                1. ZAKAZ FABRYKACJI: Używaj wyłącznie faktów obecnych w danych źródłowych. Nie dodawaj doświadczenia, firm, projektów, certyfikatów ani umiejętności, których tam nie ma. Jeśli oferta wymaga umiejętności, której kandydat nie posiada — NIE dodawaj jej. Lepsze jest CV bez danej umiejętności niż CV z kłamstwem.
+                2. FAKTY SĄ NIEZMIENNE: Daty, nazwy firm, uczelni, stanowisk i certyfikatów przepisz dokładnie tak, jak występują w źródle. Wolno Ci je pominąć, jeśli są nieistotne — nie wolno ich modyfikować.
+                3. DANE KONTAKTOWE: Przepisz firstName, lastName, phoneNumber, email i location dokładnie ze źródła, bez żadnych zmian. Jeśli któregoś pola brakuje w źródle, zwróć pusty string "".
+
+                ZASADY OPTYMALIZACJI (w ramach powyższych ograniczeń):
+                4. PRZEFORMUŁUJ opisy doświadczenia tak, aby podkreślały aspekty najbardziej istotne dla oferty. Przeformułowanie = zmiana sformułowań i akcentów, NIE zmiana treści merytorycznej.
+                5. ROZBIJ obowiązki na punkty: pole "responsibilities" to tablica stringów, gdzie każdy element to JEDEN konkretny obowiązek lub osiągnięcie. Jeśli źródło opisuje doświadczenie ciągłym tekstem, podziel go na logiczne, samodzielne punkty. Zwięźle: 1 zdanie na punkt, bez kropki na końcu.
+                6. PRIORYTETYZUJ: umiejętności najważniejsze dla oferty umieść na początku listy "skills"; analogicznie uporządkuj "responsibilities" w każdej pozycji — od najbardziej istotnych dla oferty.
+                7. DOSTOSUJ "summary": 2-4 zdania jasno komunikujące dopasowanie kandydata do roli z oferty, oparte wyłącznie na faktach ze źródła.
+
+                ZASADY STRUKTURY:
+                8. Zwróć WSZYSTKIE sekcje ze schematu. Sekcje bez danych w źródle (np. projects, social, certificates) zwróć jako puste listy [].
+                9. Język CV: taki sam jak język OPISU OFERTY PRACY. Jeśli dane źródłowe są w innym języku niż oferta — przetłumacz treści na język oferty, zachowując merytoryczną dokładność. Nie tłumacz nazw własnych (nazwy firm, uczelni, certyfikatów).
+                10. Odpowiedź musi być poprawnym JSONem zgodnym ze schematem poniżej — bez dodatkowych pól, bez zmian nazw kluczy.
 
                 OPIS OFERTY PRACY:
                 {{jobDescription}}
@@ -232,14 +239,14 @@ namespace VocareWebAPI.CvGenerator.Implementations
                 DANE ŹRÓDŁOWE (profil użytkownika lub istniejące CV):
                 {{sourceData}}
 
-                WYMAGANY FORMAT JSON (CvDto):
+                WYMAGANY FORMAT JSON:
                 {
                     "basics": {
-                        "firstName": "string",
-                        "lastName": "string",
-                        "phoneNumber": "string",
-                        "email": "string",
-                        "summary": "string — podsumowanie dostosowane do oferty pracy",
+                        "firstName": "string — dokładnie ze źródła",
+                        "lastName": "string — dokładnie ze źródła",
+                        "phoneNumber": "string — dokładnie ze źródła",
+                        "email": "string — dokładnie ze źródła",
+                        "summary": "string — 2-4 zdania dostosowane do oferty",
                         "location": {
                             "city": "string",
                             "country": "string"
@@ -247,11 +254,14 @@ namespace VocareWebAPI.CvGenerator.Implementations
                     },
                     "work": [
                         {
-                            "company": "string",
-                            "position": "string",
+                            "company": "string — dokładnie ze źródła",
+                            "position": "string — dokładnie ze źródła",
                             "startDate": "YYYY-MM-DD",
                             "endDate": "YYYY-MM-DD lub Present",
-                            "description": "string — opis przeformułowany pod ofertę, podkreślający relevant doświadczenie"
+                            "responsibilities": [
+                                "string — jeden konkretny obowiązek lub osiągnięcie",
+                                "string — kolejny obowiązek, posortowane od najistotniejszych dla oferty"
+                            ]
                         }
                     ],
                     "education": [

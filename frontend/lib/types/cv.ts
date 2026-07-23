@@ -17,7 +17,8 @@ export interface CvWorkEntryDto {
   position?: string;
   startDate?: string;
   endDate?: string;
-  description?: string;
+  description?: string | null;
+  responsibilities?: string[] | null;
 }
 
 export interface CvEducationEntryDto {

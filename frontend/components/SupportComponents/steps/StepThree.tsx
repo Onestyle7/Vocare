@@ -19,6 +19,10 @@ import {
 } from '@/components/ui/select';
 import { TagInput } from '@/features/profile/components/TagInput';
 import { CreateProfileFormType, UpdateProfileFormType } from '@/features/profile/profileSchema';
+import {
+  normalizeResponsibilitiesForPayload,
+  textToResponsibilityLines,
+} from '@/lib/utils/workResponsibilities';
 
 const getRangeEndLabel = (endDate?: string, current?: boolean) => {
   if (current || !endDate) {
@@ -45,7 +49,7 @@ type WorkExperience = {
   position: string;
   startDate: string;
   endDate: string;
-  description: string;
+  responsibilities: string[];
   current: boolean;
 };
 
@@ -174,19 +178,25 @@ const WorkExperiencePopover = ({ value = [], onChange }: WorkExperiencePopoverPr
     position: '',
     startDate: '',
     endDate: '',
-    description: '',
+    responsibilities: [],
     current: false,
   });
 
   const handleAddWorkExperience = () => {
     if (workExp.company && workExp.position && workExp.startDate) {
-      onChange([...value, workExp]);
+      onChange([
+        ...value,
+        {
+          ...workExp,
+          responsibilities: normalizeResponsibilitiesForPayload(workExp.responsibilities),
+        },
+      ]);
       setWorkExp({
         company: '',
         position: '',
         startDate: '',
         endDate: '',
-        description: '',
+        responsibilities: [],
         current: false,
       });
     }
@@ -285,12 +295,17 @@ const WorkExperiencePopover = ({ value = [], onChange }: WorkExperiencePopoverPr
             </div>
 
             <div className="space-y-2">
-              <FormLabel>Opis</FormLabel>
+              <FormLabel>Obowiązki</FormLabel>
               <textarea
                 className="min-h-[100px] w-full rounded-md border p-2"
-                value={workExp.description}
-                onChange={(e) => setWorkExp({ ...workExp, description: e.target.value })}
-                placeholder="Opisz swoje stanowisko i obowiązki"
+                value={workExp.responsibilities.join('\n')}
+                onChange={(e) =>
+                  setWorkExp({
+                    ...workExp,
+                    responsibilities: textToResponsibilityLines(e.target.value),
+                  })
+                }
+                placeholder="Każdy obowiązek wpisz w osobnej linii"
               />
             </div>
 
@@ -667,6 +682,7 @@ export default function StepThree({ form, onNext, onBack }: StepThreeProps) {
                   ...item,
                   startDate: item.startDate ?? '',
                   endDate: item.endDate ?? '',
+                  responsibilities: item.responsibilities ?? [],
                 }))}
                 onChange={field.onChange}
               />
