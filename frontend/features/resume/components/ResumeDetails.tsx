@@ -18,8 +18,7 @@ interface Education {
 interface WorkExperience {
   company: string;
   position: string;
-  description: string;
-  responsibilities: string[];
+  responsibilities: string[] | null;
   startDate: string | null;
   endDate: string | null;
 }
@@ -78,27 +77,38 @@ const mockData: CvData = {
     {
       company: 'Allegro',
       position: 'QA Automation Engineer',
-      description:
-        'Tworzenie i utrzymanie testów automatycznych w Cypress i Playwright\nIntegracja testów z CI/CD w GitHub Actions\nWspółpraca z zespołem developerskim w metodyce Agile\nAutomatyzacja scenariuszy e2e dla aplikacji e-commerce',
-      responsibilities: [],
+      responsibilities: [
+        'Tworzenie i utrzymanie testów automatycznych w Cypress i Playwright',
+        'Integracja testów z CI/CD w GitHub Actions',
+        'Współpraca z zespołem developerskim w metodyce Agile',
+        'Automatyzacja scenariuszy e2e dla aplikacji e-commerce',
+      ],
       startDate: '8.06.2019 02:00:00',
       endDate: '8.06.2021 02:00:00',
     },
     {
       company: 'CD PROJEKT RED',
       position: 'QA Specialist (Manual)',
-      description:
-        'Testowanie nowych funkcji w grach AAA na PC i konsole\nWeryfikacja zgodności scenariuszy fabularnych i systemów RPG\nZgłaszanie błędów w Jira oraz regresje\nBliska współpraca z zespołem narrative, UX i dev',
-      responsibilities: [],
+      responsibilities: [
+        'Przeprowadzanie testów manualnych funkcjonalności gry, mechanik rozgrywki oraz interfejsu (UI) na różnych platformach (PC, konsole)',
+        'Raportowanie, śledzenie i weryfikacja błędów w systemie Jira, w tym tworzenie precyzyjnych kroków do ich reprodukcji (repro steps)',
+        'Tworzenie, utrzymywanie i realizacja przypadków testowych (test cases) na podstawie dokumentacji projektowej',
+        'Wykonywanie testów regresyjnych oraz weryfikacja poprawek (bug fixes) w kolejnych buildach gry',
+        'Ścisła współpraca z programistami, level designerami i producentami w celu zapewnienia najwyższej jakości produktu',
+      ],
       startDate: '20.08.2021 02:00:00',
       endDate: '8.02.2024 01:00:00',
     },
     {
       company: 'Brainly',
       position: 'QA Engineer',
-      description:
-        'Prowadzenie testów manualnych i automatycznych REST API oraz frontendów\nUdział w testowaniu aplikacji mobilnej (Android/iOS)\nTworzenie dokumentacji testowej i przypadków testowych\nTestowanie wydajnościowe przy użyciu JMeter',
-      responsibilities: [],
+      responsibilities: [
+        'Tworzenie i utrzymywanie testów automatycznych (E2E, integracyjnych) dla platformy edukacyjnej webowej za pomocą Cypress / Playwright',
+        'Projektowanie i weryfikacja testów API (REST) przy użyciu takich narzędzi jak Postman lub Newman',
+        'Konfiguracja i utrzymywanie procesów testowych w potokach CI/CD z wykorzystaniem GitHub Actions',
+        'Współpraca z zespołem produktowym w metodyce Agile (Scrum) nad definiowaniem kryteriów akceptacji dla nowych funkcjonalności',
+        'Monitorowanie jakości i stabilności aplikacji działającej na dużą skalę (wielomilionowy ruch użytkowników)',
+      ],
       startDate: '8.01.2025 01:00:00',
       endDate: null,
     },
@@ -191,10 +201,6 @@ export default function MinimalistCVTemplate() {
     }
   };
 
-  const formatDescription = (description: string): string[] => {
-    return description.split('\n').filter((line) => line.trim() !== '');
-  };
-
   const getAnimationStyle = (delay: number = 0) => ({
     opacity: isLoaded ? 1 : 0,
     transform: isLoaded ? 'translateY(0)' : 'translateY(20px)',
@@ -259,7 +265,7 @@ export default function MinimalistCVTemplate() {
                         </div>
                       </div>
                       <ul className="list-disc space-y-1 pl-5 text-gray-700 dark:text-gray-300">
-                        {formatDescription(work.description).map((item, i) => (
+                        {(work.responsibilities ?? []).map((item, i) => (
                           <li key={i}>{item}</li>
                         ))}
                       </ul>

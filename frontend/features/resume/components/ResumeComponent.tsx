@@ -44,6 +44,11 @@ import { useIsMobile } from '@/lib/hooks/useIsMobile';
 import { CvDetailsDto, CvDto, UpdateCvDto } from '@/lib/types/cv';
 import { FLUENCY_OPTIONS, normalizeFluency } from '@/lib/utils/normalizeFluency';
 import { makeSocialLinkId, SOCIAL_LINK_SUGGESTIONS } from '@/lib/utils/socialLinks';
+import {
+  normalizeResponsibilitiesForPayload,
+  responsibilityLinesToText,
+  textToResponsibilityLines,
+} from '@/lib/utils/workResponsibilities';
 
 import { RESUME_PREVIEW_LABELS, type ResumePreviewLanguage } from '../constants';
 import { useResumeDetailsActions } from '../hooks/useResumeDetailsActions';
@@ -67,7 +72,7 @@ interface Experience {
   position: string;
   startDate: string;
   endDate: string;
-  description: string;
+  responsibilities: string[];
   isCurrent: boolean;
   useBulletList: boolean;
 }
@@ -280,7 +285,7 @@ const ensureExperienceDefaults = (exp: Partial<Experience>): Experience => ({
   position: exp.position ?? '',
   startDate: exp.startDate ?? '',
   endDate: exp.endDate ?? '',
-  description: exp.description ?? '',
+  responsibilities: exp.responsibilities ?? [],
   isCurrent: Boolean(exp.isCurrent),
   useBulletList: Boolean(exp.useBulletList),
 });
@@ -711,37 +716,36 @@ const CVCreator: React.FC<CVCreatorProps> = ({ initialCv }) => {
       position: '',
       startDate: '',
       endDate: '',
-      description: '',
+      responsibilities: [],
       isCurrent: false,
       useBulletList: false,
     };
     setExperiences((prev) => [...prev, newExp]);
   };
 
-  const updateExperience = (id: string, field: keyof Experience, value: string | boolean) => {
+  const updateExperience = (
+    id: string,
+    field: keyof Experience,
+    value: string | boolean | string[]
+  ) => {
     setExperiences((prev) =>
       prev.map((exp) => {
         if (exp.id !== id) return exp;
-
-        if (field === 'description' && typeof value === 'string') {
-          return {
-            ...exp,
-            description: mergePlainWithTokens(exp.description, value),
-          };
-        }
 
         if (field === 'isCurrent' && typeof value === 'boolean') {
           return { ...exp, isCurrent: value };
         }
 
-        return { ...exp, [field]: value };
+        return { ...exp, [field]: value } as Experience;
       })
     );
   };
 
-  const setExperienceDescriptionTokens = (id: string, tokens: string) => {
+  const setExperienceResponsibilitiesTokens = (id: string, tokens: string) => {
     setExperiences((prev) =>
-      prev.map((exp) => (exp.id === id ? { ...exp, description: tokens } : exp))
+      prev.map((exp) =>
+        exp.id === id ? { ...exp, responsibilities: textToResponsibilityLines(tokens) } : exp
+      )
     );
   };
 
@@ -1296,7 +1300,7 @@ const CVCreator: React.FC<CVCreatorProps> = ({ initialCv }) => {
       type,
       textarea,
       currentValue || '',
-      (value) => setExperienceDescriptionTokens(expId, value),
+      (value) => setExperienceResponsibilitiesTokens(expId, value),
       () => experienceTextareaRefs.current[expId],
       ({ value, selectionStart, selectionEnd }) =>
         setExperienceFormattingState((prev) => ({
@@ -1331,7 +1335,11 @@ const CVCreator: React.FC<CVCreatorProps> = ({ initialCv }) => {
     const selectionEnd = textarea.selectionEnd ?? selectionStart;
     setExperienceFormattingState((prev) => ({
       ...prev,
-      [id]: computeFormattingState(exp.description, selectionStart, selectionEnd),
+      [id]: computeFormattingState(
+        responsibilityLinesToText(exp.responsibilities),
+        selectionStart,
+        selectionEnd
+      ),
     }));
   };
 
@@ -1387,7 +1395,7 @@ const CVCreator: React.FC<CVCreatorProps> = ({ initialCv }) => {
           position: w.position || '',
           startDate: w.startDate || '',
           endDate: w.endDate && w.endDate !== 'Present' ? w.endDate : '',
-          description: w.description || '',
+          responsibilities: Array.isArray(w.responsibilities) ? w.responsibilities : [],
           isCurrent: w.endDate === 'Present',
           useBulletList: false,
         })
@@ -1471,7 +1479,7 @@ const CVCreator: React.FC<CVCreatorProps> = ({ initialCv }) => {
         position: w.position,
         startDate: w.startDate,
         endDate: w.isCurrent ? 'Present' : w.endDate,
-        description: w.description,
+        responsibilities: normalizeResponsibilitiesForPayload(w.responsibilities),
       })),
       education: education.map((e) => ({
         institution: e.school,
@@ -2120,6 +2128,7 @@ const CVCreator: React.FC<CVCreatorProps> = ({ initialCv }) => {
               wypisz co najmniej dwa kluczowe osiągnięcia.
             </p>
             {experiences.map((exp) => {
+              const responsibilitiesText = responsibilityLinesToText(exp.responsibilities);
               const formattingState = experienceFormattingState[exp.id] ?? EMPTY_FORMATTING_STATE;
 
               return (
@@ -2177,7 +2186,7 @@ const CVCreator: React.FC<CVCreatorProps> = ({ initialCv }) => {
                       <RichTextToolbar
                         className="mt-2 mb-2"
                         onFormat={(type) =>
-                          handleExperienceFormatting(exp.id, exp.description, type)
+                          handleExperienceFormatting(exp.id, responsibilitiesText, type)
                         }
                         formattingState={formattingState}
                       />
@@ -2189,17 +2198,20 @@ const CVCreator: React.FC<CVCreatorProps> = ({ initialCv }) => {
                             delete experienceTextareaRefs.current[exp.id];
                           }
                         }}
-                        placeholder="Job description / Responsibilities"
-                        value={stripFormattingTokens(exp.description)}
+                        placeholder="Obowiązki - każdy w osobnej linii"
+                        value={stripFormattingTokens(responsibilitiesText)}
                         onChange={(e) => {
                           const plainValue = e.target.value;
                           const selectionStart = e.target.selectionStart ?? 0;
                           const selectionEnd = e.target.selectionEnd ?? selectionStart;
-                          const nextTokens = mergePlainWithTokens(exp.description, plainValue);
+                          const nextTokens = mergePlainWithTokens(responsibilitiesText, plainValue);
                           setExperiences((prev) =>
                             prev.map((experience) =>
                               experience.id === exp.id
-                                ? { ...experience, description: nextTokens }
+                                ? {
+                                    ...experience,
+                                    responsibilities: textToResponsibilityLines(nextTokens),
+                                  }
                                 : experience
                             )
                           );
@@ -3484,90 +3496,24 @@ const CVCreator: React.FC<CVCreatorProps> = ({ initialCv }) => {
   };
 
   const renderExperienceDescription = (exp: Experience) => {
-    if (!exp.description) {
+    const responsibilities = normalizeResponsibilitiesForPayload(exp.responsibilities);
+
+    if (!responsibilities.length) {
       return null;
     }
 
-    const rawLines = exp.description.split(/\r?\n/);
-
-    if (exp.useBulletList) {
-      const blocks: Array<{ type: 'bullet'; items: string[] } | { type: 'text'; content: string }> =
-        [];
-
-      rawLines.forEach((line) => {
-        const trimmed = line.trim();
-        if (!trimmed) {
-          return;
-        }
-
-        const bulletPrefixes = ['- ', '• '];
-        const prefix = bulletPrefixes.find((p) => trimmed.startsWith(p));
-
-        if (prefix) {
-          const content = trimmed.slice(prefix.length).trim();
-          if (!content) {
-            return;
-          }
-          const lastBlock = blocks[blocks.length - 1];
-          if (lastBlock && lastBlock.type === 'bullet') {
-            lastBlock.items.push(content);
-          } else {
-            blocks.push({ type: 'bullet', items: [content] });
-          }
-        } else {
-          const lastBlock = blocks[blocks.length - 1];
-          if (lastBlock && lastBlock.type === 'text') {
-            lastBlock.content = `${lastBlock.content}\n${trimmed}`;
-          } else {
-            blocks.push({ type: 'text', content: trimmed });
-          }
-        }
-      });
-
-      if (blocks.length > 0) {
-        return (
-          <div className="space-y-2 text-sm leading-relaxed text-gray-700">
-            {blocks.map((block, idx) => {
-              if (block.type === 'bullet') {
-                return (
-                  <ul
-                    key={`${exp.id}-bullets-${idx}`}
-                    className="ml-5 space-y-1 text-sm leading-relaxed text-gray-700"
-                  >
-                    {block.items.map((item, itemIdx) => (
-                      <li
-                        key={`${exp.id}-bullet-${idx}-${itemIdx}`}
-                        className="flex items-start gap-2"
-                      >
-                        <span className="mt-[2px] text-gray-500">-</span>
-                        <span
-                          className="flex-1"
-                          dangerouslySetInnerHTML={{ __html: formatRichTextToHtml(item) }}
-                        />
-                      </li>
-                    ))}
-                  </ul>
-                );
-              }
-
-              return (
-                <p
-                  key={`${exp.id}-text-${idx}`}
-                  className="text-sm leading-relaxed text-gray-700"
-                  dangerouslySetInnerHTML={{ __html: formatRichTextToHtml(block.content) }}
-                />
-              );
-            })}
-          </div>
-        );
-      }
-    }
-
     return (
-      <div
-        className="exp-desc text-sm leading-relaxed text-gray-700"
-        dangerouslySetInnerHTML={{ __html: formatRichTextToHtml(exp.description) }}
-      />
+      <ul className="ml-5 space-y-1 text-sm leading-relaxed text-gray-700">
+        {responsibilities.map((item, index) => (
+          <li key={`${exp.id}-responsibility-${index}`} className="flex items-start gap-2">
+            <span className="mt-[2px] text-gray-500">-</span>
+            <span
+              className="flex-1"
+              dangerouslySetInnerHTML={{ __html: formatRichTextToHtml(item) }}
+            />
+          </li>
+        ))}
+      </ul>
     );
   };
 
