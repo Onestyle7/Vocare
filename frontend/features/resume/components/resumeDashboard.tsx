@@ -46,6 +46,8 @@ type CreateCvSetup = 'choose-method' | 'job-offer';
 const FADE_MS = 200;
 /** Wspólny easing dla resize'u kontenera (wolne wyjście, miękkie dojście). */
 const EASE = 'cubic-bezier(0.22, 1, 0.36, 1)';
+/** Czas animacji wyjścia Radixa — reset stanu czeka, żeby nie mignął pierwszy krok. */
+const EXIT_MS = 220;
 
 const ResumeDashboard = ({ initialCvs, initialLimits }: ResumeDashboardProps) => {
   const router = useRouter();
@@ -63,6 +65,7 @@ const ResumeDashboard = ({ initialCvs, initialLimits }: ResumeDashboardProps) =>
   // commicie, więc useLayoutEffect trafiałby na null i nigdy nie zmierzył wysokości.
   const [contentNode, setContentNode] = useState<HTMLDivElement | null>(null);
   const fadeTimeout = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const resetTimeout = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   const [jobOfferForm, setJobOfferForm] = useState({
     targetPosition: '',
@@ -98,6 +101,7 @@ const ResumeDashboard = ({ initialCvs, initialLimits }: ResumeDashboardProps) =>
   useEffect(
     () => () => {
       if (fadeTimeout.current) clearTimeout(fadeTimeout.current);
+      if (resetTimeout.current) clearTimeout(resetTimeout.current);
     },
     []
   );
@@ -117,19 +121,29 @@ const ResumeDashboard = ({ initialCvs, initialLimits }: ResumeDashboardProps) =>
     return () => observer.disconnect();
   }, [contentNode, renderedSetup]);
 
+  const resetCreateCvState = () => {
+    if (fadeTimeout.current) clearTimeout(fadeTimeout.current);
+    setCreateCvSetup('choose-method');
+    setRenderedSetup('choose-method');
+    setIsContentVisible(true);
+    setContentHeight(undefined);
+    setJobOfferForm({
+      targetPosition: '',
+      jobDescription: '',
+    });
+  };
+
   const handleCreateCvDialogChange = (open: boolean) => {
     setShowCreateCvDialog(open);
+    if (resetTimeout.current) clearTimeout(resetTimeout.current);
 
-    if (!open) {
-      if (fadeTimeout.current) clearTimeout(fadeTimeout.current);
-      setCreateCvSetup('choose-method');
-      setRenderedSetup('choose-method');
-      setIsContentVisible(true);
-      setContentHeight(undefined);
-      setJobOfferForm({
-        targetPosition: '',
-        jobDescription: '',
-      });
+    if (open) {
+      // Ponowne otwarcie przed końcem animacji wyjścia — czyścimy od razu.
+      resetCreateCvState();
+    } else {
+      // Radix trzyma treść zamontowaną przez czas animacji wyjścia; reset przed
+      // jej końcem pokazałby na moment pierwszy krok.
+      resetTimeout.current = setTimeout(resetCreateCvState, EXIT_MS);
     }
   };
 
@@ -490,7 +504,7 @@ const ResumeDashboard = ({ initialCvs, initialLimits }: ResumeDashboardProps) =>
                         }
                         placeholder="Frontend Developer"
                         maxLength={100}
-                        className="h-14 rounded-2xl border-0 bg-[#292a30] px-5 text-white placeholder:text-white/25"
+                        className="h-14 rounded-2xl border-0 bg-[#292a30] px-5 text-white placeholder:text-white/25 dark:bg-[#292a30]"
                       />
                     </div>
 
@@ -514,7 +528,7 @@ const ResumeDashboard = ({ initialCvs, initialLimits }: ResumeDashboardProps) =>
                         }
                         placeholder="Wklej tutaj treść oferty pracy..."
                         maxLength={15000}
-                        className="min-h-36 resize-none rounded-2xl border-0 bg-[#292a30] px-5 py-4 text-white placeholder:text-white/25"
+                        className="min-h-36 resize-none rounded-2xl border-0 bg-[#292a30] px-5 py-4 text-white placeholder:text-white/25 focus-visible:border-0 focus-visible:ring-0 focus-visible:ring-offset-0 focus-visible:outline-none dark:bg-[#292a30]"
                       />
                     </div>
 
