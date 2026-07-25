@@ -42,6 +42,7 @@ import {
 import { useAutosave } from '@/lib/hooks/useAutosave';
 import { useIsMobile } from '@/lib/hooks/useIsMobile';
 import { CvDetailsDto, CvDto, UpdateCvDto } from '@/lib/types/cv';
+import { getEducationDegreeLabel } from '@/lib/types/profile';
 import { FLUENCY_OPTIONS, normalizeFluency } from '@/lib/utils/normalizeFluency';
 import { makeSocialLinkId, SOCIAL_LINK_SUGGESTIONS } from '@/lib/utils/socialLinks';
 import {
@@ -3241,7 +3242,13 @@ const CVCreator: React.FC<CVCreatorProps> = ({ initialCv }) => {
                 <div className="mb-1 flex items-start justify-between">
                   <div className="min-w-0 flex-1">
                     <h4 className="truncate font-semibold text-gray-900">
-                      {edu.field || 'Field of study'} - {edu.degree || 'Degree'}
+                      {edu.field ||
+                        (resumePreviewLanguage === 'pl'
+                          ? 'Kierunek studiów'
+                          : 'Field of study')}{' '}
+                      -{' '}
+                      {getEducationDegreeLabel(edu.degree, resumePreviewLanguage) ||
+                        (resumePreviewLanguage === 'pl' ? 'Stopień' : 'Degree')}
                     </h4>
                     <p className="truncate font-medium text-gray-700">
                       {edu.school || 'School/University'}
@@ -3589,7 +3596,11 @@ const CVCreator: React.FC<CVCreatorProps> = ({ initialCv }) => {
             <div className="mb-1 flex items-start justify-between">
               <div className="min-w-0 flex-1">
                 <h4 className="truncate font-semibold text-gray-900">
-                  {edu.field || 'Field of study'} - {edu.degree || 'Degree'}
+                  {edu.field ||
+                    (resumePreviewLanguage === 'pl' ? 'Kierunek studiów' : 'Field of study')}{' '}
+                  -{' '}
+                  {getEducationDegreeLabel(edu.degree, resumePreviewLanguage) ||
+                    (resumePreviewLanguage === 'pl' ? 'Stopień' : 'Degree')}
                 </h4>
                 <p className="truncate font-medium text-gray-700">
                   {edu.school || 'School/University'}

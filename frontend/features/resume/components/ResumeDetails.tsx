@@ -4,6 +4,8 @@ import html2canvas from 'html2canvas-pro';
 import jsPDF from 'jspdf';
 import { useEffect, useRef, useState } from 'react';
 
+import { getEducationDegreeLabel } from '@/lib/types/profile';
+
 import { GridBackgroundDemo } from '../../market-analysis/components/GridBackgroundDemo';
 
 // Types based on the provided JSON format
@@ -287,7 +289,7 @@ export default function MinimalistCVTemplate() {
                         <div>
                           <h3 className="text-xl font-medium">{edu.institution}</h3>
                           <p className="text-gray-600 dark:text-gray-300">
-                            {edu.degree} in {edu.field}
+                            {getEducationDegreeLabel(edu.degree)} — {edu.field}
                           </p>
                         </div>
                         <div>

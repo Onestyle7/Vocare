@@ -72,7 +72,8 @@ const ResumeDashboard = ({ initialCvs, initialLimits }: ResumeDashboardProps) =>
     jobDescription: '',
   });
   const isMobile = useIsMobile();
-  const { handleDeleteResume, handleCreateResume, isCreating } = useResumeDashboardActions();
+  const { handleDeleteResume, handleCreateResume, handleGenerateResume, isCreating, isGenerating } =
+    useResumeDashboardActions();
   const cvs = initialCvs;
   const limits = initialLimits;
 
@@ -134,6 +135,8 @@ const ResumeDashboard = ({ initialCvs, initialLimits }: ResumeDashboardProps) =>
   };
 
   const handleCreateCvDialogChange = (open: boolean) => {
+    if (!open && isGenerating) return;
+
     setShowCreateCvDialog(open);
     if (resetTimeout.current) clearTimeout(resetTimeout.current);
 
@@ -528,7 +531,7 @@ const ResumeDashboard = ({ initialCvs, initialLimits }: ResumeDashboardProps) =>
                         }
                         placeholder="Wklej tutaj treść oferty pracy..."
                         maxLength={15000}
-                        className="min-h-36 resize-none rounded-2xl border-0 bg-[#292a30] px-5 py-4 text-white placeholder:text-white/25 focus-visible:border-0 focus-visible:ring-0 focus-visible:ring-offset-0 focus-visible:outline-none dark:bg-[#292a30]"
+                        className="field-sizing-fixed h-36 min-h-36 max-h-36 resize-none overflow-y-auto rounded-2xl border-0 bg-[#292a30] px-5 py-4 text-white placeholder:text-white/25 focus-visible:border-0 focus-visible:ring-0 focus-visible:ring-offset-0 focus-visible:outline-none dark:bg-[#292a30]"
                       />
                     </div>
 
@@ -542,19 +545,28 @@ const ResumeDashboard = ({ initialCvs, initialLimits }: ResumeDashboardProps) =>
                         type="button"
                         variant="outline"
                         onClick={() => goToSetup('choose-method')}
+                        disabled={isGenerating}
                         className="h-12 min-w-36 border-white/30 bg-transparent text-white hover:bg-white/5 hover:text-white"
                       >
                         Anuluj
                       </Button>
                       <Button
                         type="button"
+                        onClick={() =>
+                          handleGenerateResume({
+                            targetPosition: jobOfferForm.targetPosition,
+                            jobDescription: jobOfferForm.jobDescription,
+                          })
+                        }
                         disabled={
-                          !jobOfferForm.targetPosition.trim() || !jobOfferForm.jobDescription.trim()
+                          isGenerating ||
+                          !jobOfferForm.targetPosition.trim() ||
+                          !jobOfferForm.jobDescription.trim()
                         }
                         className="h-12 min-w-36 bg-[#686fde] text-white hover:bg-[#7379e5]"
                       >
-                        Stwórz CV
-                        <ChevronRight />
+                        {isGenerating ? 'Generowanie...' : 'Stwórz CV'}
+                        {!isGenerating && <ChevronRight />}
                       </Button>
                     </div>
                   </div>

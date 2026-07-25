@@ -106,3 +106,8 @@ export interface UpdateCvDto {
   cvData: CvDto;
   notes?: string;
 }
+
+export interface GenerateCvFromProfileDto {
+  name: string;
+  jobDescription: string;
+}
