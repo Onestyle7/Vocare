@@ -19,6 +19,7 @@ import {
 } from '@/components/ui/select';
 import { TagInput } from '@/features/profile/components/TagInput';
 import { CreateProfileFormType, UpdateProfileFormType } from '@/features/profile/profileSchema';
+import { getEducationDegreeLabel } from '@/lib/types/profile';
 import {
   normalizeResponsibilitiesForPayload,
   textToResponsibilityLines,
@@ -359,7 +360,7 @@ const EducationPopover = ({ value = [], onChange }: EducationPopoverProps) => {
               <div className="flex justify-between">
                 <div>
                   <h4 className="font-medium">
-                    {item.degree} in {item.field}
+                    {getEducationDegreeLabel(item.degree)} - {item.field}
                   </h4>
                   <p className="text-sm text-gray-500">{item.institution}</p>
                   <p className="text-xs">
