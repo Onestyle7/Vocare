@@ -15,82 +15,36 @@ namespace VocareWebAPI.JobOffers.Services.Implementations
         private readonly INoFluffJobsParser _parser;
         private readonly ILogger<JobOfferSyncService> _logger;
         private readonly IEmbeddingService _embeddingService;
+        private readonly ISolidJobsParser _solidJobsParser;
         private const string FeedUrl = "https://nofluffjobs.com/api/xml/jooble";
 
         public JobOfferSyncService(
             IJobOfferRepository repository,
             INoFluffJobsParser parser,
             ILogger<JobOfferSyncService> logger,
-            IEmbeddingService embeddingService
+            IEmbeddingService embeddingService,
+            ISolidJobsParser solidJobsParser
         )
         {
             _repository = repository;
             _parser = parser;
             _logger = logger;
             _embeddingService = embeddingService;
+            _solidJobsParser = solidJobsParser;
         }
 
         public async Task<SyncResult> SyncOffersAsync()
         {
-            var result = new SyncResult();
+            SyncResult processResult;
             try
             {
-                var offers = await _parser.ParseFromUrlAsync(FeedUrl);
-                result.Total = offers.Count();
+                var offersNofluffJobs = await _parser.ParseFromUrlAsync(FeedUrl);
+                var offersSolidJobs = await _solidJobsParser.FetchOffersAsync();
 
-                foreach (var offer in offers)
-                {
-                    try
-                    {
-                        var existing = await _repository.GetByReferenceNumberAsync(
-                            offer.ReferenceNumber, offer.Source
-                        );
+                var combinedOffers = offersNofluffJobs.Concat(offersSolidJobs);
 
-                        if (existing == null)
-                        {
-                            await GenerateEmbeddingForOffer(offer);
-
-                            await _repository.AddAsync(offer);
-                            result.Added++;
-                        }
-                        else
-                        {
-                            // Aktualizujemy wszystkie pola oprócz Id, ReferenceNumber, CreatedAt
-                            existing.Title = offer.Title;
-                            existing.CompanyName = offer.CompanyName;
-                            existing.Url = offer.Url;
-                            existing.Country = offer.Country;
-                            existing.Category = offer.Category;
-                            existing.SeniorityLevel = offer.SeniorityLevel;
-                            existing.JobType = offer.JobType;
-                            existing.Description = offer.Description;
-                            existing.BriefDescription = offer.BriefDescription;
-                            existing.SalaryMin = offer.SalaryMin;
-                            existing.SalaryMax = offer.SalaryMax;
-                            existing.SalaryCurrency = offer.SalaryCurrency;
-                            existing.SalaryPeriod = offer.SalaryPeriod;
-                            existing.PublishedAt = offer.PublishedAt;
-                            existing.UpdatedAt = DateTime.UtcNow;
-
-                            if (existing.Embedding == null)
-                            {
-                                await GenerateEmbeddingForOffer(existing);
-                            }
-
-                            await _repository.UpdateAsync(existing);
-                            result.Updated++;
-                        }
-                    }
-                    catch (Exception ex)
-                    {
-                        _logger.LogError(
-                            ex,
-                            "Błąd przy przetwarzaniu oferty {RefNumber}",
-                            offer.ReferenceNumber
-                        );
-                        result.Failed++;
-                    }
-                }
+                processResult = await ProcessOffersAsync(combinedOffers);
+                processResult.Total = combinedOffers.Count();
             }
             catch (Exception ex)
             {
@@ -100,12 +54,72 @@ namespace VocareWebAPI.JobOffers.Services.Implementations
 
             _logger.LogInformation(
                 "Sync zakończony: {Added} dodanych, {Updated} zaktualizowanych, {Failed} błędów z {Total} total",
-                result.Added,
-                result.Updated,
-                result.Failed,
-                result.Total
+                processResult.Added,
+                processResult.Updated,
+                processResult.Failed,
+                processResult.Total
             );
 
+            return processResult;
+        }
+
+        private async Task<SyncResult> ProcessOffersAsync(IEnumerable<JobOffer> offers)
+        {
+            var result = new SyncResult();
+            foreach (var offer in offers)
+            {
+                try
+                {
+                    var existing = await _repository.GetByReferenceNumberAsync(
+                        offer.ReferenceNumber,
+                        offer.Source
+                    );
+
+                    if (existing == null)
+                    {
+                        await GenerateEmbeddingForOffer(offer);
+
+                        await _repository.AddAsync(offer);
+                        result.Added++;
+                    }
+                    else
+                    {
+                        // Aktualizujemy wszystkie pola oprócz Id, ReferenceNumber, CreatedAt
+                        existing.Title = offer.Title;
+                        existing.CompanyName = offer.CompanyName;
+                        existing.Url = offer.Url;
+                        existing.Country = offer.Country;
+                        existing.Category = offer.Category;
+                        existing.SeniorityLevel = offer.SeniorityLevel;
+                        existing.JobType = offer.JobType;
+                        existing.Description = offer.Description;
+                        existing.BriefDescription = offer.BriefDescription;
+                        existing.SalaryMin = offer.SalaryMin;
+                        existing.SalaryMax = offer.SalaryMax;
+                        existing.SalaryCurrency = offer.SalaryCurrency;
+                        existing.SalaryPeriod = offer.SalaryPeriod;
+                        existing.PublishedAt = offer.PublishedAt;
+                        existing.UpdatedAt = DateTime.UtcNow;
+
+                        if (existing.Embedding == null)
+                        {
+                            await GenerateEmbeddingForOffer(existing);
+                        }
+
+                        await _repository.UpdateAsync(existing);
+                        result.Updated++;
+                    }
+                }
+                catch (Exception ex)
+                {
+                    _logger.LogError(
+                        ex,
+                        "Błąd przy przetwarzaniu oferty {RefNumber}",
+                        offer.ReferenceNumber
+                    );
+                    result.Failed++;
+                }
+            }
             return result;
         }
 
@@ -113,10 +127,15 @@ namespace VocareWebAPI.JobOffers.Services.Implementations
         {
             var dbReferenceNumbers = await _repository.GetAllReferenceNumbersAsync(source);
 
-            var feedOffers = await _parser.ParseFromUrlAsync(FeedUrl);
-            var feedReferenceNumbers = feedOffers.Select(o => o.ReferenceNumber).ToHashSet();
+            var jobOffersIds = source switch
+            {
+                JobOfferSource.NofluffJobs => await _parser.ParseFromUrlAsync(FeedUrl),
+                JobOfferSource.SolidJobs => await _solidJobsParser.FetchOffersAsync(),
+                _ => throw new InvalidOperationException($"Nieobsługiwane źródło ofert: {source}"),
+            };
 
-            if (feedReferenceNumbers.Count() == 0)
+            var feedReferenceNumbers = jobOffersIds.Select(o => o.ReferenceNumber).ToHashSet();
+            if (jobOffersIds.Count() == 0)
             {
                 _logger.LogWarning(
                     "Nie udało się pobrać ofert z feedu podczas czyszczenia. Brak usuwania ofert."
@@ -138,7 +157,7 @@ namespace VocareWebAPI.JobOffers.Services.Implementations
 
             if (staleReferenceNumbers.Any())
             {
-                await _repository.DeleteByReferenceNumberAsync(staleReferenceNumbers);
+                await _repository.DeleteByReferenceNumberAsync(staleReferenceNumbers, source);
                 _logger.LogInformation(
                     "Usunięto {Count} nieaktualnych ofert",
                     staleReferenceNumbers.Count
