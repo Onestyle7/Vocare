@@ -216,10 +216,11 @@ export const NavLinks: NavLink[] = [
   { label: 'Pricing', url: '/pricing' },
 ];
 
-type HeaderNavLinkConfig = Omit<NavLink, 'url'> & {
-  publicUrl?: string;
-  authenticatedUrl: string;
-};
+type HeaderNavLinkConfig = Omit<NavLink, 'url'> &
+  (
+    | { publicUrl: string; authenticatedUrl?: string }
+    | { publicUrl?: string; authenticatedUrl: string }
+  );
 
 const HeaderNavLinks: HeaderNavLinkConfig[] = [
   { label: 'Profil', authenticatedUrl: '/dashboard/profile' },
@@ -232,6 +233,7 @@ const HeaderNavLinks: HeaderNavLinkConfig[] = [
   { label: 'Roadmap', publicUrl: '/roadmap', authenticatedUrl: '/dashboard/roadmap' },
   { label: 'Kreator', publicUrl: '/resume-creator', authenticatedUrl: '/dashboard/resume' },
   { label: 'Pricing', publicUrl: '/pricing', authenticatedUrl: '/pricing' },
+  { label: 'Preferences', publicUrl: '/preferences' },
 ];
 
 export const getHeaderNavLinks = (isAuthenticated: boolean): NavLink[] =>
