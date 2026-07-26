@@ -15,6 +15,7 @@ import { TokenBalanceProvider } from '@/features/billing/components/Subscription
 import { SubscriptionStatus } from '@/features/billing/dal/api';
 import { getTokenSubscriptionStatus } from '@/features/billing/dal/queries';
 import env from '@/lib/env/client';
+import { COOKIE_CONSENT_KEY } from '@/lib/utils/consent';
 
 import { toAbsoluteUrl } from '../features/blog/utils/blogUtils';
 
@@ -142,7 +143,7 @@ export default async function RootLayout({
   const gaId = env.NEXT_PUBLIC_GA_ID;
   const cookieStore = await cookies();
   const isAuthenticated = cookieStore.has('token');
-  const consentCookie = cookieStore.get('cookie_consent')?.value;
+  const consentCookie = cookieStore.get(COOKIE_CONSENT_KEY)?.value;
   const isConsentGranted = consentCookie === 'granted';
 
   let tokenCount = 0;
@@ -164,7 +165,10 @@ export default async function RootLayout({
               window.dataLayer = window.dataLayer || [];
               function gtag(){dataLayer.push(arguments);}
               gtag('consent', 'default', {
-                'analytics_storage': '${isConsentGranted ? 'granted' : 'denied'}'
+                'analytics_storage': '${isConsentGranted ? 'granted' : 'denied'}',
+                'ad_storage': 'denied',
+                'ad_user_data': 'denied',
+                'ad_personalization': 'denied',
               });
             `,
           }}

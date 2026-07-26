@@ -6,6 +6,7 @@ import { usePathname, useSearchParams } from 'next/navigation';
 import { useEffect, useMemo, useState } from 'react';
 import { toast } from 'sonner';
 
+import { AnalyticsConsentCard } from '@/components/SupportComponents/AnalyticsConsentCard';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import {
@@ -20,7 +21,6 @@ import { Switch } from '@/components/ui/switch';
 import { useTokenBalanceContext } from '@/features/billing/components/SubscriptionTokenProvider';
 import { useBillingActions } from '@/features/billing/hooks/useBillingActions';
 import { useMarketingActions } from '@/features/marketing/hooks/useMarketingActions';
-import { getCookie, setCookie } from '@/lib/utils';
 
 import {
   formatPaymentAmount,
@@ -45,7 +45,6 @@ export default function PaymentsDashboardClient({
   const { handleMarketingToggle, isPending: isUpdatingConsent } = useMarketingActions();
 
   const [marketingConsent, setMarketingConsent] = useState<boolean>(initialMarketingConsent);
-  const [analyticsConsent, setAnalyticsConsent] = useState<boolean>(false);
 
   const searchParams = useSearchParams();
   const pathname = usePathname();
@@ -69,27 +68,8 @@ export default function PaymentsDashboardClient({
     setMarketingConsent(initialMarketingConsent);
   }, [initialMarketingConsent]);
 
-  useEffect(() => {
-    const hasConsent = getCookie('cookie_consent') === 'granted';
-    setAnalyticsConsent(hasConsent);
-  }, []);
-
   const onToggleConsent = (nextValue: boolean) => {
     handleMarketingToggle(nextValue, setMarketingConsent);
-  };
-
-  const onToggleAnalyticsConsent = (nextValue: boolean) => {
-    setAnalyticsConsent(nextValue);
-    const cookieValue = nextValue ? 'granted' : 'denied';
-    setCookie('cookie_consent', cookieValue, 365);
-
-    if (typeof window !== 'undefined' && window.gtag) {
-      window.gtag('consent', 'update', {
-        analytics_storage: cookieValue,
-        ad_storage: cookieValue,
-      });
-    }
-    toast.success('Zaktualizowano preferencje ciasteczek');
   };
 
   const subscriptionStatusLabel = hasActiveSubscription
@@ -219,27 +199,7 @@ export default function PaymentsDashboardClient({
                 )}
               </CardContent>
               <CardContent className="space-y-4">
-                <div className="border-border/60 bg-background/70 flex flex-col gap-3 rounded-lg border px-4 py-4 sm:flex-row sm:items-center sm:justify-between">
-                  <div className="space-y-1">
-                    <label
-                      htmlFor="analytics-consent-toggle"
-                      className="text-foreground text-sm font-medium"
-                    >
-                      Zgoda na korzystanie z ciasteczek analitycznych
-                    </label>
-                    <p className="text-muted-foreground text-xs">
-                      {analyticsConsent
-                        ? 'Pomagasz nam ulepszać Vocare udostępniając anonimowe dane o ruchu.'
-                        : 'Włącz, aby pomóc nam ulepszać aplikację na podstawie anonimowych danych analitycznych.'}
-                    </p>
-                  </div>
-                  <Switch
-                    id="analytics-consent-toggle"
-                    checked={analyticsConsent}
-                    onCheckedChange={onToggleAnalyticsConsent}
-                    aria-label="Toggle analytics consent"
-                  />
-                </div>
+                <AnalyticsConsentCard />
               </CardContent>
             </Card>
           </div>

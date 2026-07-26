@@ -3,41 +3,27 @@
 import { useEffect, useState } from 'react';
 
 import { Button } from '@/components/ui/button';
-import { getCookie, setCookie } from '@/lib/utils';
+import { getCookie } from '@/lib/utils';
+import { COOKIE_CONSENT_KEY, updateAnalyticsConsent } from '@/lib/utils/consent';
 
 export function CookieBanner() {
   const [showBanner, setShowBanner] = useState(false);
 
   useEffect(() => {
-    const consent = getCookie('cookie_consent');
+    const consent = getCookie(COOKIE_CONSENT_KEY);
     if (!consent) {
       setShowBanner(true);
     }
   }, []);
 
   const handleAccept = () => {
-    setCookie('cookie_consent', 'granted', 365);
+    updateAnalyticsConsent('granted');
     setShowBanner(false);
-
-    if (typeof window !== 'undefined' && window.gtag) {
-      window.gtag('consent', 'update', {
-        analytics_storage: 'granted',
-        ad_storage: 'granted',
-      });
-    }
   };
 
   const handleDecline = () => {
-    setCookie('cookie_consent', 'denied', 365);
+    updateAnalyticsConsent('denied');
     setShowBanner(false);
-
-    // Explicitly update just in case
-    if (typeof window !== 'undefined' && window.gtag) {
-      window.gtag('consent', 'update', {
-        analytics_storage: 'denied',
-        ad_storage: 'denied',
-      });
-    }
   };
 
   if (!showBanner) return null;
