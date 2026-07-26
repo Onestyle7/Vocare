@@ -7,9 +7,15 @@ import { UseFormReturn } from 'react-hook-form';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from '@/components/ui/dialog';
 import { FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
-import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import {
   Select,
   SelectContent,
@@ -94,6 +100,7 @@ interface StepThreeProps {
 
 // Komponent LanguagePopover
 const LanguagePopover = ({ value = [], onChange }: LanguagePopoverProps) => {
+  const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [language, setLanguage] = useState('');
   const [level, setLevel] = useState('');
 
@@ -102,6 +109,7 @@ const LanguagePopover = ({ value = [], onChange }: LanguagePopoverProps) => {
       onChange([...value, { language, level }]);
       setLanguage('');
       setLevel('');
+      setIsDialogOpen(false);
     }
   };
 
@@ -126,16 +134,18 @@ const LanguagePopover = ({ value = [], onChange }: LanguagePopoverProps) => {
         ))}
       </div>
 
-      <Popover>
-        <PopoverTrigger asChild>
-          <Button variant="outline" className="flex items-center gap-2">
+      <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
+        <DialogTrigger asChild>
+          <Button type="button" variant="outline" className="flex items-center gap-2">
             <Plus size={16} /> Dodaj język
           </Button>
-        </PopoverTrigger>
-        <PopoverContent className="font-poppins w-84 translate-x-[8.5%] p-4 xl:w-96">
-          <div className="space-y-4">
-            <h4 className="font-medium">Dodaj język</h4>
+        </DialogTrigger>
+        <DialogContent className="font-poppins max-h-[calc(100dvh-2rem)] overflow-y-auto sm:max-w-lg">
+          <DialogHeader>
+            <DialogTitle>Dodaj język</DialogTitle>
+          </DialogHeader>
 
+          <div className="space-y-4">
             <div className="space-y-2">
               <FormLabel>Język</FormLabel>
               <Input
@@ -162,18 +172,19 @@ const LanguagePopover = ({ value = [], onChange }: LanguagePopoverProps) => {
               </Select>
             </div>
 
-            <Button onClick={handleAddLanguage} className="profile-button">
+            <Button type="button" onClick={handleAddLanguage} className="profile-button">
               Dodaj
             </Button>
           </div>
-        </PopoverContent>
-      </Popover>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 };
 
 // Komponent WorkExperiencePopover
 const WorkExperiencePopover = ({ value = [], onChange }: WorkExperiencePopoverProps) => {
+  const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [workExp, setWorkExp] = useState<WorkExperience>({
     company: '',
     position: '',
@@ -200,6 +211,7 @@ const WorkExperiencePopover = ({ value = [], onChange }: WorkExperiencePopoverPr
         responsibilities: [],
         current: false,
       });
+      setIsDialogOpen(false);
     }
   };
 
@@ -232,16 +244,18 @@ const WorkExperiencePopover = ({ value = [], onChange }: WorkExperiencePopoverPr
         ))}
       </div>
 
-      <Popover>
-        <PopoverTrigger asChild>
-          <Button variant="outline" className="flex items-center gap-2">
+      <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
+        <DialogTrigger asChild>
+          <Button type="button" variant="outline" className="flex items-center gap-2">
             <Plus size={16} /> Dodaj doświadczenie zawodowe
           </Button>
-        </PopoverTrigger>
-        <PopoverContent className="font-poppins w-84 translate-x-[8.5%] p-4 xl:w-96">
-          <div className="space-y-4">
-            <h4 className="font-medium">Dodaj doświadczenie zawodowe</h4>
+        </DialogTrigger>
+        <DialogContent className="font-poppins max-h-[calc(100dvh-2rem)] overflow-y-auto sm:max-w-lg">
+          <DialogHeader>
+            <DialogTitle>Dodaj doświadczenie zawodowe</DialogTitle>
+          </DialogHeader>
 
+          <div className="space-y-4">
             <div className="space-y-2">
               <FormLabel>Firma</FormLabel>
               <Input
@@ -310,18 +324,19 @@ const WorkExperiencePopover = ({ value = [], onChange }: WorkExperiencePopoverPr
               />
             </div>
 
-            <Button onClick={handleAddWorkExperience} className="profile-button">
+            <Button type="button" onClick={handleAddWorkExperience} className="profile-button">
               Dodaj
             </Button>
           </div>
-        </PopoverContent>
-      </Popover>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 };
 
 // Komponent EducationPopover
 const EducationPopover = ({ value = [], onChange }: EducationPopoverProps) => {
+  const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [education, setEducation] = useState<Education>({
     institution: '',
     degree: '',
@@ -342,6 +357,7 @@ const EducationPopover = ({ value = [], onChange }: EducationPopoverProps) => {
         endDate: '',
         current: false,
       });
+      setIsDialogOpen(false);
     }
   };
 
@@ -376,16 +392,18 @@ const EducationPopover = ({ value = [], onChange }: EducationPopoverProps) => {
         ))}
       </div>
 
-      <Popover>
-        <PopoverTrigger asChild>
-          <Button variant="outline" className="flex items-center gap-2">
+      <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
+        <DialogTrigger asChild>
+          <Button type="button" variant="outline" className="flex items-center gap-2">
             <Plus size={16} /> Dodaj edukację
           </Button>
-        </PopoverTrigger>
-        <PopoverContent className="font-poppins w-84 translate-x-[8.5%] p-4 xl:w-96">
-          <div className="space-y-4">
-            <h4 className="font-medium">Dodaj edukację</h4>
+        </DialogTrigger>
+        <DialogContent className="font-poppins max-h-[calc(100dvh-2rem)] overflow-y-auto sm:max-w-lg">
+          <DialogHeader>
+            <DialogTitle>Dodaj edukację</DialogTitle>
+          </DialogHeader>
 
+          <div className="space-y-4">
             <div className="space-y-2">
               <FormLabel>Instytut</FormLabel>
               <Input
@@ -459,18 +477,19 @@ const EducationPopover = ({ value = [], onChange }: EducationPopoverProps) => {
               <label htmlFor="currentEducation">Obecnie tu studiuję</label>
             </div>
 
-            <Button onClick={handleAddEducation} className="profile-button">
+            <Button type="button" onClick={handleAddEducation} className="profile-button">
               Dodaj
             </Button>
           </div>
-        </PopoverContent>
-      </Popover>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 };
 
 // Komponent CertificatePopover
 const CertificatePopover = ({ value = [], onChange }: CertificatePopoverProps) => {
+  const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [certificate, setCertificate] = useState<Certificate>({
     name: '',
     issuer: '',
@@ -489,6 +508,7 @@ const CertificatePopover = ({ value = [], onChange }: CertificatePopoverProps) =
         expiryDate: '',
         noExpiry: false,
       });
+      setIsDialogOpen(false);
     }
   };
 
@@ -526,16 +546,18 @@ const CertificatePopover = ({ value = [], onChange }: CertificatePopoverProps) =
         ))}
       </div>
 
-      <Popover>
-        <PopoverTrigger asChild>
-          <Button variant="outline" className="flex items-center gap-2">
+      <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
+        <DialogTrigger asChild>
+          <Button type="button" variant="outline" className="flex items-center gap-2">
             <Plus size={16} /> Dodaj certyfikat
           </Button>
-        </PopoverTrigger>
-        <PopoverContent className="font-poppins w-84 translate-x-[8.5%] p-4 xl:w-96">
-          <div className="space-y-4">
-            <h4 className="font-medium">Dodaj certyfikat</h4>
+        </DialogTrigger>
+        <DialogContent className="font-poppins max-h-[calc(100dvh-2rem)] overflow-y-auto sm:max-w-lg">
+          <DialogHeader>
+            <DialogTitle>Dodaj certyfikat</DialogTitle>
+          </DialogHeader>
 
+          <div className="space-y-4">
             <div className="space-y-2">
               <FormLabel>Nazwa certyfikatu</FormLabel>
               <Input
@@ -589,12 +611,12 @@ const CertificatePopover = ({ value = [], onChange }: CertificatePopoverProps) =
               <label htmlFor="noExpiry">Certyfikat bez daty waności</label>
             </div>
 
-            <Button onClick={handleAddCertificate} className="profile-button">
+            <Button type="button" onClick={handleAddCertificate} className="profile-button">
               Dodaj
             </Button>
           </div>
-        </PopoverContent>
-      </Popover>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 };
