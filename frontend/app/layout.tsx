@@ -5,7 +5,9 @@ import { GoogleAnalytics } from '@next/third-parties/google';
 import type { Metadata } from 'next';
 import localFont from 'next/font/local';
 import { cookies } from 'next/headers';
+import Script from 'next/script';
 
+import { CookieBanner } from '@/components/SupportComponents/CookieBanner';
 import { Toaster } from '@/components/ui/sonner';
 import { ThemeProvider } from '@/components/ui/theme-provider';
 import { AuthProvider } from '@/features/auth/components/AuthProvider';
@@ -13,6 +15,7 @@ import { TokenBalanceProvider } from '@/features/billing/components/Subscription
 import { SubscriptionStatus } from '@/features/billing/dal/api';
 import { getTokenSubscriptionStatus } from '@/features/billing/dal/queries';
 import env from '@/lib/env/client';
+import { COOKIE_CONSENT_KEY } from '@/lib/utils/consent';
 
 import { toAbsoluteUrl } from '../features/blog/utils/blogUtils';
 
@@ -140,6 +143,8 @@ export default async function RootLayout({
   const gaId = env.NEXT_PUBLIC_GA_ID;
   const cookieStore = await cookies();
   const isAuthenticated = cookieStore.has('token');
+  const consentCookie = cookieStore.get(COOKIE_CONSENT_KEY)?.value;
+  const isConsentGranted = consentCookie === 'granted';
 
   let tokenCount = 0;
   let subscribtionStatus: SubscriptionStatus = 'None';
@@ -151,6 +156,24 @@ export default async function RootLayout({
 
   return (
     <html lang="en" suppressHydrationWarning>
+      <head>
+        <Script
+          id="google-consent"
+          strategy="beforeInteractive"
+          dangerouslySetInnerHTML={{
+            __html: `
+              window.dataLayer = window.dataLayer || [];
+              function gtag(){dataLayer.push(arguments);}
+              gtag('consent', 'default', {
+                'analytics_storage': '${isConsentGranted ? 'granted' : 'denied'}',
+                'ad_storage': 'denied',
+                'ad_user_data': 'denied',
+                'ad_personalization': 'denied',
+              });
+            `,
+          }}
+        />
+      </head>
       <body
         className={`${sizmoPro.className} ${spaceGrotesk.variable} h-full antialiased selection:bg-[#915EFF]`}
       >
@@ -158,12 +181,13 @@ export default async function RootLayout({
           <TokenBalanceProvider tokenBalance={tokenCount} subscriptionStatus={subscribtionStatus}>
             <ThemeProvider attribute="class" defaultTheme="dark">
               {children}
+              <CookieBanner />
               <Toaster />
             </ThemeProvider>
           </TokenBalanceProvider>
         </AuthProvider>
+        {gaId ? <GoogleAnalytics gaId={gaId} /> : null}
       </body>
-      {gaId ? <GoogleAnalytics gaId={gaId} /> : null}
     </html>
   );
 }
