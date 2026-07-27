@@ -13,6 +13,7 @@ using VocareWebAPI.CvGenerator.Repositories.Interfaces;
 using VocareWebAPI.CvGenerator.Services.Implementation;
 using VocareWebAPI.CvGenerator.Services.Implementations;
 using VocareWebAPI.CvGenerator.Services.Interfaces;
+using VocareWebAPI.JobOffers.BackgroundJobs;
 using VocareWebAPI.JobOffers.Repositories.Implementations;
 using VocareWebAPI.JobOffers.Repositories.Interfaces;
 using VocareWebAPI.JobOffers.Services.Implementations;
@@ -92,6 +93,7 @@ namespace VocareWebAPI.Extensions.ServiceCollectionExtensions
 
             // Background services/jobs
             services.AddHostedService<MarketNewsBackgroundService>();
+            services.AddHostedService<JobOfferSyncBackgroundService>();
             services.AddScoped<IRoadmapGenerationJob, RoadmapGenerationJob>();
 
             // Notification
@@ -133,7 +135,7 @@ namespace VocareWebAPI.Extensions.ServiceCollectionExtensions
 
             // Job Offer repositories
             services.AddScoped<IJobOfferRepository, JobOfferRepository>();
-            services.AddScoped<INoFluffJobsParser, NoFluffJobsParser>();
+            services.AddScoped<ISolidJobsParser, SolidJobsParser>();
             services.AddScoped<IMarketNewsRepository, MarketNewsRepository>();
             services.AddScoped<
                 IJobOfferRecommendationRepository,

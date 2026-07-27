@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
+using VocareWebAPI.JobOffers.Models.Dtos;
+using VocareWebAPI.JobOffers.Models.Enums;
 using VocareWebAPI.JobOffers.Services.Interfaces;
 
 namespace VocareWebAPI.JobOffers.Controllers
@@ -45,9 +47,14 @@ namespace VocareWebAPI.JobOffers.Controllers
             {
                 return Unauthorized();
             }
-
-            var result = await _syncService.CleanupStaleOffersAsync();
-            return Ok(result);
+            // Robocza robota, logika nie powinna być w kontrolerze, ale dla uproszczenia tutaj ląduje. TODO: Przenieść do serwisu
+            var results = new List<CleanupResult>();
+            foreach (var source in Enum.GetValues<JobOfferSource>())
+            {
+                var result = await _syncService.CleanupStaleOffersAsync(source);
+                results.Add(result);
+            }
+            return Ok(results);
         }
     }
 }

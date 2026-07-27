@@ -1,11 +1,12 @@
 using VocareWebAPI.JobOffers.Models.Dtos;
+using VocareWebAPI.JobOffers.Models.Enums;
 
 namespace VocareWebAPI.JobOffers.Services.Interfaces
 {
     public interface IJobOfferSyncService
     {
         Task<SyncResult> SyncOffersAsync();
-        Task<CleanupResult> CleanupStaleOffersAsync();
+        Task<CleanupResult> CleanupStaleOffersAsync(JobOfferSource source);
         Task<BackfillResult> BackfillEmbeddingsAsync(int batchSize = 100);
     }
 
