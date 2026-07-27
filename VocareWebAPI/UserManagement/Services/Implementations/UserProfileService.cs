@@ -50,7 +50,23 @@ namespace VocareWebAPI.Services
             var profile = await _userProfileRepository.GetUserProfileByIdAsync(UserId);
 
             _logger.LogInformation("Profile found for UserId: {UserId}", UserId);
-            return _mapper.Map<UserProfileDto>(profile);
+
+            var dto = _mapper.Map<UserProfileDto>(profile);
+
+            if (dto.WorkExperience != null)
+            {
+                foreach (var work in dto.WorkExperience)
+                {
+                    if (
+                        (work.Responsibilities is null || work.Responsibilities.Count == 0)
+                        && !string.IsNullOrWhiteSpace(work.Description)
+                    )
+                    {
+                        work.Responsibilities = new List<string> { work.Description };
+                    }
+                }
+            }
+            return dto;
         }
 
         /// <summary>

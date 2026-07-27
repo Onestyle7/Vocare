@@ -10,6 +10,7 @@ import { useUnauthorizedToast } from '@/lib/hooks/useUnauthorizedToast';
 import { PersonalityType } from '@/lib/types/personalityTypes';
 import { UserProfile } from '@/lib/types/profile';
 import { Risk } from '@/lib/types/risk';
+import { normalizeResponsibilitiesForPayload } from '@/lib/utils/workResponsibilities';
 
 import { clearProfileCommand, createProfileCommand, updateProfileCommand } from '../dal/commands';
 import { CreateProfileFormType } from '../profileSchema';
@@ -73,11 +74,11 @@ export function useProfileForm(
         data.workExperience?.map((work: any) => {
           const normalizedEndDate = formatDateIfNeeded(work.endDate) ?? '';
           return {
-            ...work,
-            startDate: formatDateIfNeeded(work.startDate),
+            company: work.company ?? '',
+            position: work.position ?? '',
+            startDate: formatDateIfNeeded(work.startDate) ?? '',
             endDate: normalizedEndDate,
-            description: work.description ?? '',
-            responsibilities: work.responsibilities ?? [],
+            responsibilities: normalizeResponsibilitiesForPayload(work.responsibilities),
             current: work.current === true || normalizedEndDate === '',
           };
         }) ?? [],

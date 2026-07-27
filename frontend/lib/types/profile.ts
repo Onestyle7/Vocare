@@ -20,10 +20,10 @@ export type EducationEntry = {
 export type WorkExperienceEntry = {
   company: string;
   position: string;
-  description: string;
+  description?: string | null;
   responsibilities?: string[];
-  startDate?: string; // yyyy-MM-dd
-  endDate?: string; // yyyy-MM-dd lub 'Present'
+  startDate?: string;
+  endDate?: string;
   current?: boolean;
 };
 

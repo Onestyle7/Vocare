@@ -1,8 +1,3 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-
 namespace VocareWebAPI.JobOffers.Configuration
 {
     public class JobOfferSyncSettings
@@ -16,7 +11,7 @@ namespace VocareWebAPI.JobOffers.Configuration
         /// Czy automatyczna synchronizacja jest włączona
         /// </summary>
         public bool EnableAutoSync { get; set; }
-        public int SyncIntervalHours { get; set; } = 2;
+        public int SyncIntervalHours { get; set; } = 24;
         public bool GenerateEmbeddingsOnSync { get; set; } = true;
     }
 }
