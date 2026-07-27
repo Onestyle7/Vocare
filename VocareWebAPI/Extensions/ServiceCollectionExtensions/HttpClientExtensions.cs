@@ -6,6 +6,7 @@ using Polly;
 using Polly.Extensions.Http;
 using VocareWebAPI.CareerAdvisor.Models.Config;
 using VocareWebAPI.CareerAdvisor.Services.Implementations;
+using VocareWebAPI.JobOffers.ExternalClients.SolidJobs;
 using VocareWebAPI.JobOffers.Services.Implementations;
 using VocareWebAPI.JobOffers.Services.Interfaces;
 using VocareWebAPI.MarketNews.Services.Implementations;
@@ -73,6 +74,12 @@ namespace VocareWebAPI.Extensions.ServiceCollectionExtensions
 
             // Job services
             services.AddHttpClient<INoFluffJobsParser, NoFluffJobsParser>();
+            services.AddHttpClient<SolidJobsClient>(client =>
+            {
+                client.BaseAddress = new Uri("https://solid.jobs/");
+                client.DefaultRequestHeaders.Add("X-Api-Version", "1.0");
+                client.Timeout = TimeSpan.FromSeconds(30);
+            });
 
             // Embedding Service
             services

@@ -634,6 +634,9 @@ namespace VocareWebAPI.Migrations
                     b.Property<int>("SeniorityLevel")
                         .HasColumnType("integer");
 
+                    b.Property<int>("Source")
+                        .HasColumnType("integer");
+
                     b.Property<string>("Title")
                         .IsRequired()
                         .HasColumnType("text");
@@ -648,6 +651,9 @@ namespace VocareWebAPI.Migrations
                     b.HasKey("Id");
 
                     b.HasIndex("ReferenceNumber")
+                        .IsUnique();
+
+                    b.HasIndex("ReferenceNumber", "Source")
                         .IsUnique();
 
                     b.ToTable("JobOffers", "public");
