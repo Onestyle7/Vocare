@@ -1,7 +1,8 @@
 'use client';
-import { Clock, FileText, Plus, Trash2 } from 'lucide-react';
+import { ChevronRight, Clock, FileText, Plus, Trash2 } from 'lucide-react';
+import Image from 'next/image';
 import { useRouter } from 'next/navigation';
-import { useState } from 'react';
+import { useEffect, useLayoutEffect, useRef, useState } from 'react';
 
 import {
   AlertDialog,
@@ -16,8 +17,19 @@ import {
 } from '@/components/ui/alert-dialog';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+} from '@/components/ui/dialog';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
 import { Separator } from '@/components/ui/separator';
+import { Textarea } from '@/components/ui/textarea';
 import { GridBackgroundDemo } from '@/features/market-analysis/components/GridBackgroundDemo';
+import { file_document, file_edit } from '@/features/marketing/constants';
 import { useIsMobile } from '@/lib/hooks/useIsMobile';
 import { CvLimits, CvListItemDto } from '@/lib/types/cv';
 
@@ -28,13 +40,115 @@ interface ResumeDashboardProps {
   initialLimits: CvLimits | null;
 }
 
+type CreateCvSetup = 'choose-method' | 'job-offer';
+
+/** Czas znikania starej treści — musi być równy klasie duration-200 na wrapperze treści. */
+const FADE_MS = 200;
+/** Wspólny easing dla resize'u kontenera (wolne wyjście, miękkie dojście). */
+const EASE = 'cubic-bezier(0.22, 1, 0.36, 1)';
+/** Czas animacji wyjścia Radixa — reset stanu czeka, żeby nie mignął pierwszy krok. */
+const EXIT_MS = 220;
+
 const ResumeDashboard = ({ initialCvs, initialLimits }: ResumeDashboardProps) => {
   const router = useRouter();
   const [showLimitDialog, setShowLimitDialog] = useState(false);
+  const [showCreateCvDialog, setShowCreateCvDialog] = useState(false);
+
+  // Stan docelowy — steruje szerokością/paddingiem modala i zmienia się natychmiast.
+  const [createCvSetup, setCreateCvSetup] = useState<CreateCvSetup>('choose-method');
+  // Stan renderowany — podmieniany dopiero wtedy, gdy treść jest już niewidoczna.
+  const [renderedSetup, setRenderedSetup] = useState<CreateCvSetup>('choose-method');
+  const [isContentVisible, setIsContentVisible] = useState(true);
+  const [contentHeight, setContentHeight] = useState<number>();
+
+  // Ref jako state, nie useRef: Radix montuje treść w portalu dopiero po pierwszym
+  // commicie, więc useLayoutEffect trafiałby na null i nigdy nie zmierzył wysokości.
+  const [contentNode, setContentNode] = useState<HTMLDivElement | null>(null);
+  const fadeTimeout = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const resetTimeout = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  const [jobOfferForm, setJobOfferForm] = useState({
+    targetPosition: '',
+    jobDescription: '',
+  });
   const isMobile = useIsMobile();
-  const { handleDeleteResume, handleCreateResume, isCreating } = useResumeDashboardActions();
+  const { handleDeleteResume, handleCreateResume, handleGenerateResume, isCreating, isGenerating } =
+    useResumeDashboardActions();
   const cvs = initialCvs;
   const limits = initialLimits;
+
+  /**
+   * Przejście między krokami modala:
+   * 1. treść znika (opacity + lekki lift),
+   * 2. równolegle kontener animuje max-width / padding / height,
+   * 3. po zakończeniu fade-outu podmieniamy treść „pod zasłoną",
+   * 4. nowa treść pojawia się ze staggerem na polach formularza.
+   */
+  const goToSetup = (next: CreateCvSetup) => {
+    if (next === renderedSetup) return;
+
+    setIsContentVisible(false);
+    setCreateCvSetup(next);
+
+    if (fadeTimeout.current) clearTimeout(fadeTimeout.current);
+    fadeTimeout.current = setTimeout(() => {
+      setRenderedSetup(next);
+      // Podwójna ramka: pozwala przeglądarce zamalować nową treść w stanie ukrytym,
+      // zanim włączymy fade-in (bez tego przejście zostałoby pominięte).
+      requestAnimationFrame(() => requestAnimationFrame(() => setIsContentVisible(true)));
+    }, FADE_MS);
+  };
+
+  useEffect(
+    () => () => {
+      if (fadeTimeout.current) clearTimeout(fadeTimeout.current);
+      if (resetTimeout.current) clearTimeout(resetTimeout.current);
+    },
+    []
+  );
+
+  // Mierzymy realną wysokość treści — bez tego nie da się animować height z auto.
+  useLayoutEffect(() => {
+    if (!contentNode) return;
+
+    const update = () => setContentHeight(contentNode.scrollHeight);
+    update();
+
+    // Pierwsze otwarcie potrafi mierzyć fallbackowym fontem — mierzymy ponownie po dociągnięciu.
+    document.fonts?.ready.then(update).catch(() => {});
+
+    const observer = new ResizeObserver(update);
+    observer.observe(contentNode);
+    return () => observer.disconnect();
+  }, [contentNode, renderedSetup]);
+
+  const resetCreateCvState = () => {
+    if (fadeTimeout.current) clearTimeout(fadeTimeout.current);
+    setCreateCvSetup('choose-method');
+    setRenderedSetup('choose-method');
+    setIsContentVisible(true);
+    setContentHeight(undefined);
+    setJobOfferForm({
+      targetPosition: '',
+      jobDescription: '',
+    });
+  };
+
+  const handleCreateCvDialogChange = (open: boolean) => {
+    if (!open && isGenerating) return;
+
+    setShowCreateCvDialog(open);
+    if (resetTimeout.current) clearTimeout(resetTimeout.current);
+
+    if (open) {
+      // Ponowne otwarcie przed końcem animacji wyjścia — czyścimy od razu.
+      resetCreateCvState();
+    } else {
+      // Radix trzyma treść zamontowaną przez czas animacji wyjścia; reset przed
+      // jej końcem pokazałby na moment pierwszy krok.
+      resetTimeout.current = setTimeout(resetCreateCvState, EXIT_MS);
+    }
+  };
 
   const formatDateTime = (dateString: string) => {
     const date = new Date(dateString);
@@ -68,8 +182,17 @@ const ResumeDashboard = ({ initialCvs, initialLimits }: ResumeDashboardProps) =>
     return null;
   };
 
+  const handleNewResumeClick = () => {
+    if (isMobile) return;
+    if (limits && limits.currentCount >= limits.maxLimit) {
+      setShowLimitDialog(true);
+    } else {
+      setShowCreateCvDialog(true);
+    }
+  };
+
   const EmptyState = () => (
-    <div className="col-span-full flex h-[400px] flex-col items-center justify-center rounded-xl border border-dashed">
+    <div className="col-span-full flex h-100 flex-col items-center justify-center rounded-xl border border-dashed">
       <FileText className="text-muted-foreground mb-4 h-12 w-12" />
       <h3 className="mb-2 text-lg font-medium">Brak CV</h3>
       <p className="text-muted-foreground mb-4 max-w-sm text-center text-sm">
@@ -78,22 +201,13 @@ const ResumeDashboard = ({ initialCvs, initialLimits }: ResumeDashboardProps) =>
           : 'Rozpocznij tworzenie swojego pierwszego CV, klikając przycisk poniżej.'}
       </p>
       {!isMobile && (
-        <Button className="gap-2" onClick={handleCreateResume} disabled={isCreating}>
+        <Button className="gap-2" onClick={handleNewResumeClick} disabled={isCreating}>
           <Plus className="h-4 w-4" />
           {isCreating ? 'Tworzenie...' : 'Stwórz CV'}
         </Button>
       )}
     </div>
   );
-
-  const handleNewResumeClick = () => {
-    if (isMobile) return;
-    if (limits && limits.currentCount >= limits.maxLimit) {
-      setShowLimitDialog(true);
-    } else {
-      handleCreateResume();
-    }
-  };
 
   return (
     <div className="min-h-screen">
@@ -150,7 +264,7 @@ const ResumeDashboard = ({ initialCvs, initialLimits }: ResumeDashboardProps) =>
                         onClick={() => router.push(`/resume/${cv.id}`)}
                         className="block cursor-pointer"
                       >
-                        <div className="group bg-background flex h-[400px] flex-col gap-2 rounded-xl border p-4 transition-shadow hover:shadow-lg">
+                        <div className="group bg-background flex h-100 flex-col gap-2 rounded-xl border p-4 transition-shadow hover:shadow-lg">
                           <div className="flex h-full flex-col rounded-md border">
                             <div className="bg-muted group relative mb-2 h-1/2 rounded-tl-md rounded-tr-md">
                               {/* Badge - conditionally rendered based on CV status */}
@@ -230,13 +344,13 @@ const ResumeDashboard = ({ initialCvs, initialLimits }: ResumeDashboardProps) =>
                             <Separator className="w-full" />
 
                             {/* Card Actions */}
-                            <div className="flex min-h-[72px] flex-row items-center justify-between p-4">
+                            <div className="flex min-h-18 flex-row items-center justify-between p-4">
                               <Button size="sm">{isMobile ? 'Podgląd' : 'Edytuj'}</Button>
                               <div className="flex flex-row items-center justify-center gap-2">
                                 <Clock className="text-muted-foreground h-4 w-4" />
                                 <p className="text-muted-foreground text-sm font-semibold">
                                   {cv.lastModifiedAt
-                                    ? `Zmodyfikowano ${formatDateTime(cv.lastModifiedAt)}`
+                                    ? `Zmodyf. ${formatDateTime(cv.lastModifiedAt)}`
                                     : 'Utworzono niedawno'}
                                 </p>
                               </div>
@@ -274,6 +388,194 @@ const ResumeDashboard = ({ initialCvs, initialLimits }: ResumeDashboardProps) =>
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>
+
+      <Dialog open={showCreateCvDialog} onOpenChange={handleCreateCvDialogChange}>
+        <DialogContent
+          style={{ transitionTimingFunction: EASE }}
+          className={`font-poppins h-auto w-[calc(100%-2rem)] content-start gap-0 overflow-hidden rounded-3xl border-0 bg-[#17181d] px-8 pt-12 pb-12 text-white transition-[max-width,padding] duration-500 motion-reduce:transition-none [&>button]:top-5 [&>button]:right-5 [&>button]:text-white/60 [&>button]:opacity-100 [&>button:hover]:text-white [&>button>svg]:size-6 ${
+            createCvSetup === 'choose-method'
+              ? 'max-w-170 sm:max-w-170 sm:px-16'
+              : 'max-w-[860px] sm:max-w-[860px] sm:px-20'
+          }`}
+        >
+          {/* Warstwa 1: animowana wysokość kontenera */}
+          <div
+            className="w-full overflow-hidden transition-[height] duration-500 motion-reduce:transition-none"
+            style={{
+              height: contentHeight !== undefined ? `${contentHeight}px` : undefined,
+              transitionTimingFunction: EASE,
+            }}
+          >
+            {/* Warstwa 2: fade-out / fade-in treści */}
+            <div
+              ref={setContentNode}
+              className={`w-full transition-[opacity,transform] duration-200 ease-out motion-reduce:transition-none ${
+                isContentVisible ? 'translate-y-0 opacity-100' : '-translate-y-1 opacity-0'
+              }`}
+            >
+              {renderedSetup === 'choose-method' ? (
+                <>
+                  <DialogHeader className="flex w-full items-center gap-2 text-center sm:text-center">
+                    <DialogTitle className="text-[22px] leading-tight font-normal text-white">
+                      Jak chcesz utworzyć CV?
+                    </DialogTitle>
+                    <DialogDescription className="text-[14px] leading-relaxed font-light text-white/75">
+                      Wybierz sposób, w jaki chcesz rozpocząć tworzenie swojego CV.
+                    </DialogDescription>
+                  </DialogHeader>
+
+                  <div className="mt-9 grid w-full grid-cols-1 gap-6 sm:grid-cols-2">
+                    <button
+                      type="button"
+                      onClick={handleCreateResume}
+                      disabled={isCreating}
+                      className="group flex h-44 w-full cursor-pointer flex-col overflow-hidden rounded-2xl text-white focus-visible:ring-2 focus-visible:ring-[#7178ee] focus-visible:ring-offset-2 focus-visible:ring-offset-[#17181d] focus-visible:outline-none disabled:pointer-events-none disabled:opacity-60"
+                    >
+                      <span className="flex min-h-0 flex-1 items-center justify-center self-stretch bg-[#292a30]">
+                        <Image
+                          src={file_document}
+                          width={57.17}
+                          height={73.5}
+                          alt="file-edit"
+                          className="translate-y-8 transition-transform duration-300 ease-out group-hover:translate-y-1"
+                        />
+                      </span>
+                      <span className="relative z-10 flex h-18 shrink-0 items-center justify-center bg-[#686fde] px-4 text-[16px] font-normal">
+                        {isCreating ? (
+                          'Tworzenie...'
+                        ) : (
+                          <span>
+                            Stwórz <strong className="font-medium">puste CV</strong>
+                          </span>
+                        )}
+                      </span>
+                    </button>
+
+                    <button
+                      type="button"
+                      className="group flex h-44 w-full cursor-pointer flex-col overflow-hidden rounded-2xl text-white focus-visible:ring-2 focus-visible:ring-[#7178ee] focus-visible:ring-offset-2 focus-visible:ring-offset-[#17181d] focus-visible:outline-none"
+                      onClick={() => goToSetup('job-offer')}
+                    >
+                      <span className="flex min-h-0 flex-1 items-center justify-center self-stretch bg-[#292a30]">
+                        <Image
+                          src={file_edit}
+                          width={57.17}
+                          height={73.5}
+                          alt="file-edit"
+                          className="translate-y-8 transition-transform duration-300 ease-out group-hover:translate-y-1"
+                        />
+                      </span>
+                      <span className="relative z-10 flex h-18 shrink-0 items-center justify-center bg-[#686fde] px-8 text-center text-[16px] leading-snug font-normal">
+                        <span>
+                          Wygeneruj CV pod <strong className="font-medium">konkretną ofertę</strong>
+                        </span>
+                      </span>
+                    </button>
+                  </div>
+                </>
+              ) : (
+                <>
+                  <DialogHeader className="flex w-full items-center gap-2 text-center sm:text-center">
+                    <DialogTitle className="text-[28px] leading-tight font-normal text-white">
+                      Wygeneruj CV pod ofertę
+                    </DialogTitle>
+                    <DialogDescription className="max-w-xl text-[15px] leading-relaxed font-light text-white/75">
+                      Uzupełnij informacje o stanowisku i wklej opis oferty.
+                      <br />
+                      Na tej podstawie dopasujemy treść Twojego CV.
+                    </DialogDescription>
+                  </DialogHeader>
+
+                  <div className="mt-9 grid gap-6">
+                    <div
+                      className={`grid gap-2 transition-[opacity,transform] duration-400 ease-out motion-reduce:transition-none ${
+                        isContentVisible ? 'translate-y-0 opacity-100' : 'translate-y-2 opacity-0'
+                      }`}
+                      style={{ transitionDelay: isContentVisible ? '120ms' : '0ms' }}
+                    >
+                      <Label htmlFor="target-position" className="text-white/60">
+                        Tytuł stanowiska
+                      </Label>
+                      <Input
+                        id="target-position"
+                        value={jobOfferForm.targetPosition}
+                        onChange={(event) =>
+                          setJobOfferForm((current) => ({
+                            ...current,
+                            targetPosition: event.target.value,
+                          }))
+                        }
+                        placeholder="Frontend Developer"
+                        maxLength={100}
+                        className="h-14 rounded-2xl border-0 bg-[#292a30] px-5 text-white placeholder:text-white/25 dark:bg-[#292a30]"
+                      />
+                    </div>
+
+                    <div
+                      className={`grid gap-2 transition-[opacity,transform] duration-400 ease-out motion-reduce:transition-none ${
+                        isContentVisible ? 'translate-y-0 opacity-100' : 'translate-y-2 opacity-0'
+                      }`}
+                      style={{ transitionDelay: isContentVisible ? '200ms' : '0ms' }}
+                    >
+                      <Label htmlFor="job-description" className="text-white/60">
+                        Opis oferty
+                      </Label>
+                      <Textarea
+                        id="job-description"
+                        value={jobOfferForm.jobDescription}
+                        onChange={(event) =>
+                          setJobOfferForm((current) => ({
+                            ...current,
+                            jobDescription: event.target.value,
+                          }))
+                        }
+                        placeholder="Wklej tutaj treść oferty pracy..."
+                        maxLength={15000}
+                        className="field-sizing-fixed h-36 min-h-36 max-h-36 resize-none overflow-y-auto rounded-2xl border-0 bg-[#292a30] px-5 py-4 text-white placeholder:text-white/25 focus-visible:border-0 focus-visible:ring-0 focus-visible:ring-offset-0 focus-visible:outline-none dark:bg-[#292a30]"
+                      />
+                    </div>
+
+                    <div
+                      className={`mt-2 flex justify-end gap-4 transition-[opacity,transform] duration-400 ease-out motion-reduce:transition-none ${
+                        isContentVisible ? 'translate-y-0 opacity-100' : 'translate-y-2 opacity-0'
+                      }`}
+                      style={{ transitionDelay: isContentVisible ? '280ms' : '0ms' }}
+                    >
+                      <Button
+                        type="button"
+                        variant="outline"
+                        onClick={() => goToSetup('choose-method')}
+                        disabled={isGenerating}
+                        className="h-12 min-w-36 border-white/30 bg-transparent text-white hover:bg-white/5 hover:text-white"
+                      >
+                        Anuluj
+                      </Button>
+                      <Button
+                        type="button"
+                        onClick={() =>
+                          handleGenerateResume({
+                            targetPosition: jobOfferForm.targetPosition,
+                            jobDescription: jobOfferForm.jobDescription,
+                          })
+                        }
+                        disabled={
+                          isGenerating ||
+                          !jobOfferForm.targetPosition.trim() ||
+                          !jobOfferForm.jobDescription.trim()
+                        }
+                        className="h-12 min-w-36 bg-[#686fde] text-white hover:bg-[#7379e5]"
+                      >
+                        {isGenerating ? 'Generowanie...' : 'Stwórz CV'}
+                        {!isGenerating && <ChevronRight />}
+                      </Button>
+                    </div>
+                  </div>
+                </>
+              )}
+            </div>
+          </div>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 };

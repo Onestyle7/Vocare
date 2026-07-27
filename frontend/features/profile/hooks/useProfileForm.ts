@@ -76,6 +76,7 @@ export function useProfileForm(
           return {
             company: work.company ?? '',
             position: work.position ?? '',
+            description: work.description ?? '',
             startDate: formatDateIfNeeded(work.startDate) ?? '',
             endDate: normalizedEndDate,
             responsibilities: normalizeResponsibilitiesForPayload(work.responsibilities),

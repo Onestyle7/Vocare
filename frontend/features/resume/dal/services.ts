@@ -9,6 +9,7 @@ import {
   CvDetailsDto,
   CvLimits,
   CvListItemDto,
+  GenerateCvFromProfileDto,
   UpdateCvDto,
 } from './api';
 import { normalizeCvDto } from './cvNormalization';
@@ -98,5 +99,18 @@ export async function updateCvService(
     payload,
     requestOptions
   );
+  return result.map((response) => normalizeDetails(response.data)).mapErr(mapCvError);
+}
+
+export async function GenerateCvFromProfileService(
+  payload: GenerateCvFromProfileDto,
+  requestOptions?: RequestInit
+): Promise<Result<CvDetailsDto, CvDomainError>> {
+  const result = await cvApiClient.post<CvDetailsDto, GenerateCvFromProfileDto>(
+    'generate-from-profile',
+    payload,
+    requestOptions
+  );
+
   return result.map((response) => normalizeDetails(response.data)).mapErr(mapCvError);
 }

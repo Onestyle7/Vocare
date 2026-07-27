@@ -7,6 +7,7 @@ import { useEffect, useRef, useState } from 'react';
 
 import { spinner_terminal } from '@/features/marketing/constants/index';
 import { PersonalityType, personalityTypeLabels } from '@/lib/types/personalityTypes';
+import { getEducationDegreeLabel } from '@/lib/types/profile';
 import { Risk, riskLabels } from '@/lib/types/risk';
 
 import { formatDate } from '../../../components/SupportComponents/formatSimpleDate';
@@ -155,7 +156,9 @@ export default function ProfileDetails() {
 
                   <div className="flex justify-between">
                     <span className="font-medium text-gray-600 dark:text-gray-200">Stopień:</span>
-                    <span className="ml-2 text-right">{edu.degree}</span>
+                    <span className="ml-2 text-right">
+                      {getEducationDegreeLabel(edu.degree)}
+                    </span>
                   </div>
                   <Separator />
 
