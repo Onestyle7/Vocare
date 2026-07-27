@@ -2,11 +2,12 @@
 
 import React from 'react';
 
+import { textToResponsibilityLines } from '@/lib/utils/workResponsibilities';
+
 interface WorkExperienceEntry {
   company: string;
   position: string;
-  description: string;
-  responsibilities?: string[];
+  responsibilities: string[];
   startDate?: string;
   endDate?: string;
   current?: boolean;
@@ -24,7 +25,6 @@ export function WorkExperienceInput({ value, onChange }: WorkExperienceInputProp
       {
         company: '',
         position: '',
-        description: '',
         responsibilities: [],
         startDate: '',
         endDate: '',
@@ -68,9 +68,11 @@ export function WorkExperienceInput({ value, onChange }: WorkExperienceInputProp
             className="input-profile w-full"
           />
           <textarea
-            placeholder="Description"
-            value={entry.description}
-            onChange={(e) => updateExperience(index, 'description', e.target.value)}
+            placeholder="Responsibilities - one per line"
+            value={(entry.responsibilities ?? []).join('\n')}
+            onChange={(e) =>
+              updateExperience(index, 'responsibilities', textToResponsibilityLines(e.target.value))
+            }
             className="input-profile w-full"
           />
           <input

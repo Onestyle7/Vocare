@@ -1,5 +1,6 @@
 using Microsoft.Extensions.Options;
 using VocareWebAPI.JobOffers.Configuration;
+using VocareWebAPI.JobOffers.Models.Enums;
 using VocareWebAPI.JobOffers.Services.Interfaces;
 
 namespace VocareWebAPI.JobOffers.BackgroundJobs
@@ -58,11 +59,21 @@ namespace VocareWebAPI.JobOffers.BackgroundJobs
                     if (ShouldRunCleanup())
                     {
                         _logger.LogInformation("Rozpoczynam nocny cleanup nieaktualnych ofert...");
-                        var cleanupResult = await syncService.CleanupStaleOffersAsync();
+                        var totalRemoved = 0;
+                        foreach (var source in Enum.GetValues<JobOfferSource>())
+                        {
+                            var cleanupResult = await syncService.CleanupStaleOffersAsync(source);
+                            totalRemoved += cleanupResult.RemovedCount;
+                            _logger.LogInformation(
+                                "Cleanup {Source}: usunięto: {Removed} ofert",
+                                source,
+                                cleanupResult.RemovedCount
+                            );
+                        }
                         _lastCleanupDate = DateTime.UtcNow.Date;
                         _logger.LogInformation(
-                            "Cleanup zakończony. Usunięto {Removed} ofert.",
-                            cleanupResult.RemovedCount
+                            "Cleanup zakończony. Łącznie usunięto {Total} ofert.",
+                            totalRemoved
                         );
                     }
                 }

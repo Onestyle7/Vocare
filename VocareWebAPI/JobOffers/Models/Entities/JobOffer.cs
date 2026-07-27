@@ -1,9 +1,11 @@
 using System.ComponentModel.DataAnnotations;
+using Microsoft.EntityFrameworkCore;
 using Pgvector;
 using VocareWebAPI.JobOffers.Models.Enums;
 
 namespace VocareWebAPI.JobOffers.Models.Entities
 {
+    [Index(nameof(ReferenceNumber), nameof(Source), IsUnique = true)]
     public class JobOffer
     {
         [Key]
@@ -34,5 +36,6 @@ namespace VocareWebAPI.JobOffers.Models.Entities
         public ICollection<JobOfferLocation> Locations { get; set; } = new List<JobOfferLocation>();
         public ICollection<JobOfferSkill> Skills { get; set; } = new List<JobOfferSkill>();
         public Vector? Embedding { get; set; }
+        public JobOfferSource Source { get; set; } = JobOfferSource.NofluffJobs;
     }
 }

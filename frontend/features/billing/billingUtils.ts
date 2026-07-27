@@ -57,3 +57,13 @@ export function getTypeLabel(type: string) {
     }
   }
 }
+
+/** Get translated status badge */
+export function getStatusBadgeText(status: string) {
+  switch (status) {
+    case 'succeeded':
+      return 'sukces';
+    default:
+      return 'niepowodzenie';
+  }
+}
