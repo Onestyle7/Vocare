@@ -1,5 +1,33 @@
 import { Risk } from '@/lib/types/risk';
 
+export const educationDegreeLabels: Record<string, string> = {
+  Bachelor: 'Inżynier/Licencjat',
+  Master: 'Magister',
+  PhD: 'Doktor',
+  Associate: 'Studia podyplomowe',
+  'High School': 'Wykształcenie średnie',
+  Other: 'Inne',
+};
+
+const educationDegreeLabelsEn: Record<string, string> = {
+  Bachelor: 'Bachelor',
+  Master: 'Master',
+  PhD: 'PhD',
+  Associate: 'Postgraduate',
+  'High School': 'High School',
+  Other: 'Other',
+};
+
+export const getEducationDegreeLabel = (
+  degree?: string,
+  language: 'pl' | 'en' = 'pl'
+): string => {
+  if (!degree) return '';
+
+  const labels = language === 'pl' ? educationDegreeLabels : educationDegreeLabelsEn;
+  return labels[degree] ?? degree;
+};
+
 export type CertificateEntry = {
   name: string;
   issuer?: string;
