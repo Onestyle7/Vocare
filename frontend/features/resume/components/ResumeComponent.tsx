@@ -1615,6 +1615,10 @@ const CVCreator: React.FC<CVCreatorProps> = ({ initialCv }) => {
 
     // 2. CSS naprawczy tylko dla wydruku
     const printStyles = `
+    html, body, .cv-page, .cv-page * {
+      font-family: 'Poppins', sans-serif !important;
+    }
+
     @media print {
       @page { size: A4; margin: 0; }
       body {
@@ -1635,8 +1639,6 @@ const CVCreator: React.FC<CVCreatorProps> = ({ initialCv }) => {
         break-after: page !important;
         display: block !important;
       }
-      /* Upewniamy się, że czcionka Poppins i kolory Tailwind działają */
-      * { font-family: 'Poppins', sans-serif !important; }
     }
   `;
 
@@ -1656,12 +1658,54 @@ const CVCreator: React.FC<CVCreatorProps> = ({ initialCv }) => {
 
     const pagesMarkup = pagesNodes.map((page) => page.outerHTML).join('');
 
+    let hasPrinted = false;
+    printFrame.onload = async () => {
+      if (hasPrinted) return;
+      hasPrinted = true;
+
+      const win = printFrame.contentWindow;
+      if (!win) return;
+
+      try {
+        const fontWeights = [300, 400, 500, 600, 700, 800];
+        await Promise.all(
+          fontWeights.map((weight) =>
+            win.document.fonts.load(`${weight} 16px Poppins`, 'Vocare CV')
+          )
+        );
+        await win.document.fonts.ready;
+
+        // Dwie klatki pozwalają przeglądarce przeliczyć layout już z Poppins.
+        await new Promise<void>((resolve) => {
+          win.requestAnimationFrame(() => win.requestAnimationFrame(() => resolve()));
+        });
+      } catch (error) {
+        console.warn('Nie udało się załadować czcionki Poppins do eksportu PDF.', error);
+      } finally {
+        win.focus();
+        win.print();
+
+        setTimeout(() => {
+          if (document.body.contains(printFrame)) {
+            document.body.removeChild(printFrame);
+          }
+        }, 1000);
+      }
+    };
+
     printDoc.open();
     printDoc.write(`
     <!doctype html>
-    <html class="light"> <head>
+    <html class="light">
+      <head>
         <title>${fileName}</title>
         <base href="${baseHref}" />
+        <link rel="preconnect" href="https://fonts.googleapis.com" />
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+        <link
+          rel="stylesheet"
+          href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap"
+        />
         ${styles}
         <style>${printStyles}</style>
       </head>
@@ -1671,23 +1715,6 @@ const CVCreator: React.FC<CVCreatorProps> = ({ initialCv }) => {
     </html>
   `);
     printDoc.close();
-
-    // 3. Czekamy na załadowanie czcionek i stylów przed drukiem
-    printFrame.onload = () => {
-      // Dajemy przeglądarce 500ms na sparsowanie CSS v4
-      setTimeout(() => {
-        const win = printFrame.contentWindow;
-        if (!win) return;
-
-        // Opcjonalnie: czekamy na załadowanie customowych fontów
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        (win as any).document.fonts.ready.then(() => {
-          win.focus();
-          win.print();
-          setTimeout(() => document.body.removeChild(printFrame), 1000);
-        });
-      }, 500);
-    };
   };
 
   // Section visibility helper (must match preview rendering conditions)
