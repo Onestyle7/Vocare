@@ -18,6 +18,7 @@ interface DatePickerWithCurrentProps {
   onCurrentChange: (current: boolean) => void;
   placeholder?: string;
   disabled?: boolean;
+  allowFutureDates?: boolean;
   showCurrentToggle?: boolean; // show/hide Present switch (default true)
   toggleLabel?: string;
   toggledButtonText?: string;
@@ -30,6 +31,7 @@ export const DatePickerWithCurrent: React.FC<DatePickerWithCurrentProps> = ({
   onCurrentChange,
   placeholder = 'Wybierz datę',
   disabled = false,
+  allowFutureDates = false,
   showCurrentToggle = true,
   toggleLabel = 'Obecnie',
   toggledButtonText = 'Obecnie',
@@ -127,7 +129,11 @@ export const DatePickerWithCurrent: React.FC<DatePickerWithCurrentProps> = ({
               selected={selectedDate}
               onSelect={handleDateSelect}
               captionLayout={captionLayout}
-              disabled={(date) => date > new Date() || date < new Date(1900, 0, 1)}
+              disabled={(date) => {
+                const isBefore1900 = date < new Date(1900, 0, 1);
+                const isFuture = !allowFutureDates && date > new Date();
+                return isBefore1900 || isFuture;
+              }}
               className="font-poppins rounded-lg border shadow-sm"
               initialFocus
             />
