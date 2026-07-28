@@ -2601,6 +2601,7 @@ const CVCreator: React.FC<CVCreatorProps> = ({ initialCv }) => {
                             isCurrent={false}
                             onCurrentChange={() => {}}
                             showCurrentToggle={false}
+                            allowFutureDates={true}
                             placeholder="Wybierz datę rozpoczęcia"
                           />
                         </div>
@@ -2618,6 +2619,7 @@ const CVCreator: React.FC<CVCreatorProps> = ({ initialCv }) => {
                                 updateEducation(edu.id, 'endDate', '');
                               }
                             }}
+                            allowFutureDates={true}
                             placeholder="Wybierz datę zakończenia"
                           />
                         </div>
@@ -3141,10 +3143,10 @@ const CVCreator: React.FC<CVCreatorProps> = ({ initialCv }) => {
                 {/* Nagłówek stanowisko + firma */}
                 <div className="exp-header mb-1 flex items-start justify-between">
                   <div className="min-w-0 flex-1">
-                    <div className="truncate font-semibold text-gray-900">
+                    <div className="font-semibold break-words text-gray-900">
                       {exp.position || 'Position'}
                     </div>
-                    <div className="truncate font-medium text-gray-700">
+                    <div className="font-medium break-words text-gray-700">
                       {exp.company || 'Company name'}
                     </div>
                   </div>
@@ -3263,7 +3265,7 @@ const CVCreator: React.FC<CVCreatorProps> = ({ initialCv }) => {
               <div key={edu.id} className="edu-item mb-3" data-item-id={edu.id}>
                 <div className="mb-1 flex items-start justify-between">
                   <div className="min-w-0 flex-1">
-                    <h4 className="truncate font-semibold text-gray-900">
+                    <h4 className="font-semibold break-words text-gray-900">
                       {edu.field ||
                         (resumePreviewLanguage === 'pl'
                           ? 'Kierunek studiów'
@@ -3272,7 +3274,7 @@ const CVCreator: React.FC<CVCreatorProps> = ({ initialCv }) => {
                       {getEducationDegreeLabel(edu.degree, resumePreviewLanguage) ||
                         (resumePreviewLanguage === 'pl' ? 'Stopień' : 'Degree')}
                     </h4>
-                    <p className="truncate font-medium text-gray-700">
+                    <p className="font-medium break-words text-gray-700">
                       {edu.school || 'School/University'}
                     </p>
                   </div>
@@ -3555,10 +3557,10 @@ const CVCreator: React.FC<CVCreatorProps> = ({ initialCv }) => {
           <div key={exp.id} className="exp-item mb-4" data-item-id={exp.id}>
             <div className="exp-header mb-1 flex items-start justify-between">
               <div className="min-w-0 flex-1">
-                <div className="truncate font-semibold text-gray-900">
+                <div className="font-semibold break-words text-gray-900">
                   {exp.position || 'Position'}
                 </div>
-                <div className="truncate font-medium text-gray-700">
+                <div className="font-medium break-words text-gray-700">
                   {exp.company || 'Company name'}
                 </div>
               </div>
@@ -3618,14 +3620,14 @@ const CVCreator: React.FC<CVCreatorProps> = ({ initialCv }) => {
           <div key={edu.id} className="edu-item mb-3" data-item-id={edu.id}>
             <div className="mb-1 flex items-start justify-between">
               <div className="min-w-0 flex-1">
-                <h4 className="truncate font-semibold text-gray-900">
+                <h4 className="font-semibold break-words text-gray-900">
                   {edu.field ||
                     (resumePreviewLanguage === 'pl' ? 'Kierunek studiów' : 'Field of study')}{' '}
                   -{' '}
                   {getEducationDegreeLabel(edu.degree, resumePreviewLanguage) ||
                     (resumePreviewLanguage === 'pl' ? 'Stopień' : 'Degree')}
                 </h4>
-                <p className="truncate font-medium text-gray-700">
+                <p className="font-medium break-words text-gray-700">
                   {edu.school || 'School/University'}
                 </p>
               </div>
