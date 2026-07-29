@@ -43,6 +43,9 @@ export const signUpSchema = z
     confirmPassword: signUpPasswordSchema,
     fullName: z.string().min(2).max(50),
     acceptMarketingConsent: z.boolean().default(false),
+    acceptTermsAndConditions: z
+      .boolean()
+      .refine((val) => val === true, 'Akceptacja regulaminu jest wymagana'),
   })
   .superRefine((data, ctx) => {
     if (data.password !== data.confirmPassword) {

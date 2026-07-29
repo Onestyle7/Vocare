@@ -32,8 +32,12 @@ export function SignUpForm() {
   const form = useForm<SignUpFormType>({
     resolver,
     defaultValues: {
+      fullName: '',
       email: '',
       password: '',
+      confirmPassword: '',
+      acceptMarketingConsent: false,
+      acceptTermsAndConditions: false,
     },
   });
 
@@ -146,6 +150,41 @@ export function SignUpForm() {
 
           <FormField
             control={form.control}
+            name="acceptTermsAndConditions"
+            render={({ field }) => (
+              <FormItem className="w-full space-y-2 rounded-lg border border-transparent transition-colors">
+                <div className="flex items-start gap-3">
+                  <FormControl>
+                    <Checkbox
+                      id="acceptTermsAndConditions"
+                      checked={field.value}
+                      onCheckedChange={(checked) => field.onChange(checked === true)}
+                    />
+                  </FormControl>
+                  <div className="space-y-2 text-sm leading-snug">
+                    <FormLabel
+                      htmlFor="acceptTermsAndConditions"
+                      className="text-foreground block font-medium"
+                    >
+                      Oświadczam, że zapoznałem/am się z{' '}
+                      <Link href="/terms-of-service" className="underline hover:text-[#915EFF]">
+                        regulaminem
+                      </Link>{' '}
+                      oraz{' '}
+                      <Link href="/privacy-policy" className="underline hover:text-[#915EFF]">
+                        polityką prywatności
+                      </Link>{' '}
+                      serwisu i akceptuję jego treść.
+                    </FormLabel>
+                  </div>
+                </div>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+
+          <FormField
+            control={form.control}
             name="acceptMarketingConsent"
             render={({ field }) => (
               <FormItem className="w-full space-y-2 rounded-lg border border-transparent transition-colors">
@@ -158,7 +197,10 @@ export function SignUpForm() {
                     />
                   </FormControl>
                   <div className="space-y-2 text-sm leading-snug">
-                    <FormLabel htmlFor="marketingConsent" className="text-foreground font-medium">
+                    <FormLabel
+                      htmlFor="acceptMarketingConsent"
+                      className="text-foreground font-medium"
+                    >
                       Wyrażam zgodę na otrzymywanie od firmy Vocare okazjonalnych aktualizacji
                       produktów i wiadomości e-mail o charakterze marketingowym.
                     </FormLabel>
