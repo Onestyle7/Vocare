@@ -136,9 +136,20 @@ export function SignInFrom({ reason, callbackUrl }: { reason?: string; callbackU
             <div className="h-[0.5px] w-full bg-gray-500/80" />
           </div>
 
-          <div className="tems-center mt-4 flex w-full flex-row justify-center gap-2">
+          <div className="flex w-full flex-row items-center justify-center gap-2">
             <OAuthButton icon={google} label="Zaloguj się Google" onClick={handleGoogleSignIn} />
           </div>
+          <p className="text-center text-xs leading-normal text-gray-500">
+            Logując się lub tworząc konto przez Google, akceptujesz nasz{' '}
+            <Link href="/terms-of-service" className="underline hover:text-[#915EFF]">
+              Regulamin
+            </Link>{' '}
+            oraz{' '}
+            <Link href="/privacy-policy" className="underline hover:text-[#915EFF]">
+              Politykę Prywatności
+            </Link>
+            .
+          </p>
         </div>
       </form>
     </Form>
