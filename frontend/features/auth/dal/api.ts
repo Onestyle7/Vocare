@@ -39,6 +39,7 @@ export type RegisterCommand = {
   password: string;
   confirmPassword: string;
   acceptMarketingConsent: boolean;
+  acceptTermsAndConditions?: boolean;
 };
 
 export type ForgotPasswordCommand = {
