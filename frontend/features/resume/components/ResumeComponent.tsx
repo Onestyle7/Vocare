@@ -43,7 +43,7 @@ import { useAutosave } from '@/lib/hooks/useAutosave';
 import { useIsMobile } from '@/lib/hooks/useIsMobile';
 import { CvDetailsDto, CvDto, UpdateCvDto } from '@/lib/types/cv';
 import { getEducationDegreeLabel } from '@/lib/types/profile';
-import { FLUENCY_OPTIONS, normalizeFluency } from '@/lib/utils/normalizeFluency';
+import { FLUENCY_OPTIONS, getFluencyLabel, normalizeFluency } from '@/lib/utils/normalizeFluency';
 import { makeSocialLinkId, SOCIAL_LINK_SUGGESTIONS } from '@/lib/utils/socialLinks';
 import {
   normalizeResponsibilitiesForPayload,
@@ -2921,7 +2921,7 @@ const CVCreator: React.FC<CVCreatorProps> = ({ initialCv }) => {
                       className="flex-1 focus:outline-none"
                     />
                     <Select
-                      value={language.level}
+                      value={normalizeFluency(language.level)}
                       onValueChange={(value) => updateLanguage(language.id, 'level', value)}
                     >
                       <SelectTrigger className="font-poppins h-10 w-40 rounded-sm border border-gray-300 px-2 text-sm focus:ring-2 focus:ring-blue-500 focus:outline-none">
@@ -2930,12 +2930,7 @@ const CVCreator: React.FC<CVCreatorProps> = ({ initialCv }) => {
                       <SelectContent>
                         {FLUENCY_OPTIONS.map((option) => (
                           <SelectItem key={option} value={option}>
-                            {option}
-                          </SelectItem>
-                        ))}
-                        {FLUENCY_OPTIONS.map((option) => (
-                          <SelectItem key={option} value={option}>
-                            {option}
+                            {getFluencyLabel(option, 'pl')}
                           </SelectItem>
                         ))}
                       </SelectContent>
@@ -3367,7 +3362,8 @@ const CVCreator: React.FC<CVCreatorProps> = ({ initialCv }) => {
                   key={language.id}
                   className="rounded-full bg-purple-100 px-2 py-1 text-xs font-medium text-purple-800"
                 >
-                  {language.name || 'Language'} - {language.level}
+                  {language.name || (resumePreviewLanguage === 'pl' ? 'Język' : 'Language')} -{' '}
+                  {getFluencyLabel(language.level, resumePreviewLanguage)}
                 </span>
               ))}
             </div>
