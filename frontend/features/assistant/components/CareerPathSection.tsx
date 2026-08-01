@@ -216,6 +216,17 @@ export default function CareerPathSection({
               <p className="text-xs font-bold whitespace-nowrap text-[#915EFF]">
                 {formatSalary(offer)}
               </p>
+              <div className="mt-2 space-y-0.5">
+                <p className="text-[9px] font-bold text-gray-500">Opublikowano</p>
+                <p className="text-[10px] font-semibold whitespace-nowrap text-gray-400 @min-[32rem]/offer:text-xs @min-[32rem]/offer:text-gray-200">
+                  <span className="@min-[32rem]/offer:hidden">
+                    {formatDateShort(offer.publishedAt) || '—'}
+                  </span>
+                  <span className="hidden @min-[32rem]/offer:inline">
+                    {formatDate(offer.publishedAt) || '—'}
+                  </span>
+                </p>
+              </div>
             </div>
           </div>
 
@@ -267,45 +278,27 @@ export default function CareerPathSection({
           </div>
         </div>
 
-        <div className="relative z-10 flex shrink-0 flex-col gap-3 px-5 py-4 @min-[24rem]/offer:flex-row @min-[24rem]/offer:items-center @min-[24rem]/offer:justify-between">
-          {/* Data kurczy się, żeby zrobić miejsce buttonom: najpierw znika label,
-              potem pełna data zamienia się na skróconą. */}
-          <div className="flex min-w-0 flex-col space-y-0.5">
-            <p className="hidden text-[10px] font-bold tracking-tight text-gray-500 @min-[32rem]/offer:block">
-              Opublikowano
-            </p>
-            <p className="text-[11px] font-semibold whitespace-nowrap text-gray-400 @min-[32rem]/offer:text-sm @min-[32rem]/offer:text-gray-200">
-              <span className="@min-[32rem]/offer:hidden">
-                {formatDateShort(offer.publishedAt) || '—'}
-              </span>
-              <span className="hidden @min-[32rem]/offer:inline">
-                {formatDate(offer.publishedAt) || '—'}
-              </span>
-            </p>
-          </div>
+        <div className="relative z-10 flex shrink-0 items-center justify-between gap-2 px-5 py-4">
+          <Link
+            href={{
+              pathname: '/dashboard/resume',
+              query: { create: '1' },
+            }}
+            aria-label="Przejdź do kreatora CV"
+            className="btn-light-edge flex flex-1 cursor-pointer items-center justify-center rounded-full bg-white/[0.03] px-3.5 py-2.5 text-[12px] font-bold whitespace-nowrap text-white transition-colors hover:bg-white/[0.07] focus-visible:ring-2 focus-visible:ring-white/30 focus-visible:outline-none @min-[24rem]/offer:flex-none @min-[30rem]/offer:px-5 @min-[30rem]/offer:text-[13px]"
+          >
+            Stwórz cv
+          </Link>
 
-          <div className="flex w-full items-center gap-2 @min-[24rem]/offer:w-auto @min-[24rem]/offer:shrink-0">
-            <Link
-              href={{
-                pathname: '/dashboard/resume',
-                query: { create: '1' },
-              }}
-              aria-label="Przejdź do kreatora CV"
-              className="btn-light-edge flex flex-1 cursor-pointer items-center justify-center rounded-full bg-white/[0.03] px-3.5 py-2.5 text-[12px] font-bold whitespace-nowrap text-white transition-colors hover:bg-white/[0.07] focus-visible:ring-2 focus-visible:ring-white/30 focus-visible:outline-none @min-[24rem]/offer:flex-none @min-[30rem]/offer:px-5 @min-[30rem]/offer:text-[13px]"
+          {offer.url && (
+            <button
+              onClick={() => window.open(offer.url, '_blank')}
+              className="group flex flex-1 cursor-pointer items-center justify-center gap-2 rounded-full border bg-white/[0.03] px-3.5 py-2.5 text-[12px] font-bold whitespace-nowrap text-white shadow-lg transition-colors hover:bg-white/[0.07] focus-visible:ring-2 focus-visible:ring-white/30 focus-visible:outline-none @min-[24rem]/offer:flex-none @min-[30rem]/offer:px-5 @min-[30rem]/offer:text-[13px]"
             >
-              Stwórz cv
-            </Link>
-
-            {offer.url && (
-              <button
-                onClick={() => window.open(offer.url, '_blank')}
-                className="group flex flex-1 cursor-pointer items-center justify-center gap-2 rounded-full border bg-white/[0.03] px-3.5 py-2.5 text-[12px] font-bold whitespace-nowrap text-white shadow-lg transition-colors hover:bg-white/[0.07] focus-visible:ring-2 focus-visible:ring-white/30 focus-visible:outline-none @min-[24rem]/offer:flex-none @min-[30rem]/offer:px-5 @min-[30rem]/offer:text-[13px]"
-              >
-                Zobacz ofertę
-                <ExternalLink className="h-3.5 w-3.5 shrink-0" />
-              </button>
-            )}
-          </div>
+              Zobacz ofertę
+              <ExternalLink className="h-3.5 w-3.5 shrink-0" />
+            </button>
+          )}
         </div>
       </div>
     );
