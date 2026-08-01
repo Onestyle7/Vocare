@@ -4,6 +4,7 @@ import {
   Award,
   Bold,
   Briefcase,
+  CalendarDays,
   ChevronLeft,
   ChevronRight,
   FolderOpen,
@@ -23,11 +24,11 @@ import {
   Tag,
   Trash2,
   Underline,
-  Upload,
   User,
   ZoomIn,
   ZoomOut,
 } from 'lucide-react';
+import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 import React, { useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react';
 
@@ -39,6 +40,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
+import { download_propfile_cv, offer_type } from '@/features/marketing/constants';
 import { useAutosave } from '@/lib/hooks/useAutosave';
 import { useIsMobile } from '@/lib/hooks/useIsMobile';
 import { CvDetailsDto, CvDto, UpdateCvDto } from '@/lib/types/cv';
@@ -3831,30 +3833,59 @@ const CVCreator: React.FC<CVCreatorProps> = ({ initialCv }) => {
             title="Save resume"
           >
             <Save size={16} className="h-6 w-6 text-gray-600" />
-            <div className="mt-2 flex flex-row items-center justify-center text-[9px]">
+            <div className="flex flex-row items-center justify-center text-[9px]">
               {autosaveStatus === 'saving' && <span className="text-gray-500">Saving…</span>}
               {autosaveStatus === 'saved' && <span className="text-green-600">Saved ✓</span>}
               {autosaveStatus === 'error' && <span className="text-red-500">Save failed</span>}
             </div>
           </button>
-          <div className="flex flex-col items-center gap-1 rounded-lg p-1" title="Język CV">
-            <Languages size={16} className="text-gray-500" />
-            <Select
-              value={resumePreviewLanguage}
-              onValueChange={(value) => setResumePreviewLanguage(value as ResumePreviewLanguage)}
+          <Select
+            value={showFullDates ? 'full' : 'year'}
+            onValueChange={(value) => setShowFullDates(value === 'full')}
+          >
+            <SelectTrigger
+              aria-label={`Format daty: ${showFullDates ? 'Miesiąc i rok' : 'Tylko rok'}`}
+              title="Format daty"
+              className="h-12 w-12 cursor-pointer justify-center gap-0 rounded-lg border-0 bg-transparent p-0 shadow-none transition-colors hover:bg-gray-100! [&>svg:last-child]:hidden"
             >
-              <SelectTrigger
-                aria-label="Język CV"
-                className="font-poppins relative h-8 w-12 justify-center rounded-sm border border-gray-200 bg-gray-50 px-1 text-center text-[10px] focus:ring-2 focus:ring-blue-500 focus:outline-none [&_[data-slot=select-value]]:absolute [&_[data-slot=select-value]]:left-1/2 [&_[data-slot=select-value]]:-translate-x-1/2 [&_svg]:absolute [&_svg]:right-1.5 [&_svg]:size-3"
-              >
-                <SelectValue />
-              </SelectTrigger>
-              <SelectContent className="min-w-24">
-                <SelectItem value="pl">PL</SelectItem>
-                <SelectItem value="en">EN</SelectItem>
-              </SelectContent>
-            </Select>
-          </div>
+              <CalendarDays aria-hidden="true" className="h-6! w-6! text-gray-600" />
+            </SelectTrigger>
+            <SelectContent
+              position="popper"
+              side="right"
+              align="center"
+              sideOffset={8}
+              avoidCollisions={false}
+              className="min-w-40"
+            >
+              <SelectItem value="full">Miesiąc i rok</SelectItem>
+              <SelectItem value="year">Tylko rok</SelectItem>
+            </SelectContent>
+          </Select>
+
+          <Select
+            value={resumePreviewLanguage}
+            onValueChange={(value) => setResumePreviewLanguage(value as ResumePreviewLanguage)}
+          >
+            <SelectTrigger
+              aria-label={`Język CV: ${resumePreviewLanguage.toUpperCase()}`}
+              title="Język CV"
+              className="h-12 w-12 cursor-pointer justify-center gap-0 rounded-lg border-0 bg-transparent p-0 shadow-none transition-colors hover:bg-gray-100! [&>svg:last-child]:hidden"
+            >
+              <Languages aria-hidden="true" className="h-6! w-6! text-gray-600" />
+            </SelectTrigger>
+            <SelectContent
+              position="popper"
+              side="right"
+              align="center"
+              sideOffset={8}
+              avoidCollisions={false}
+              className="min-w-24"
+            >
+              <SelectItem value="pl">PL</SelectItem>
+              <SelectItem value="en">EN</SelectItem>
+            </SelectContent>
+          </Select>
         </div>
 
         <HoverCard>
@@ -3887,29 +3918,25 @@ const CVCreator: React.FC<CVCreatorProps> = ({ initialCv }) => {
         {!isMobile && (
           <div className="h-full overflow-y-auto rounded-lg bg-white shadow-lg lg:w-[48%]">
             <div className="max-h-full overflow-y-auto p-4 lg:p-6">
-              <div className="mb-6 flex flex-col items-start justify-between gap-4 sm:flex-row sm:items-center">
+              <div className="mb-6 flex flex-wrap items-center justify-between gap-4">
                 <h1 className="text-xl font-bold text-gray-800 lg:text-xl">Kreator CV</h1>
-                <div className="flex items-center space-x-3">
-                  <label className="text-sm text-gray-600">Format daty:</label>
-                  <Select
-                    value={showFullDates ? 'full' : 'year'}
-                    onValueChange={(value) => setShowFullDates(value === 'full')}
-                  >
-                    <SelectTrigger className="font-poppins h-10 w-40 rounded-sm border border-gray-300 px-2 text-sm focus:ring-2 focus:ring-blue-500 focus:outline-none">
-                      <SelectValue />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="full">Miesiąc i rok</SelectItem>
-                      <SelectItem value="year">Tylko rok</SelectItem>
-                    </SelectContent>
-                  </Select>
+                <div className="flex flex-wrap items-center gap-3">
                   <button
+                    type="button"
                     onClick={loadFromProfile}
-                    className="flex cursor-pointer items-center space-x-2 rounded border border-[#915EFF] bg-[#915EFF] px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-[#713ae8]"
-                    title="Load data from profile and save time"
+                    className="flex cursor-pointer items-center justify-center gap-2 rounded-[6px] border-[1.5px] border-transparent px-4 py-2 text-sm font-medium whitespace-nowrap text-gray-900 [background:linear-gradient(#fff,#fff)_padding-box,linear-gradient(135deg,#9296FD_0%,#8491FE_50%,#9D9BFF_77%,#C7A9FE_100%)_border-box] hover:[background:linear-gradient(#F7F3FF,#F7F3FF)_padding-box,linear-gradient(135deg,#9296FD_0%,#8491FE_50%,#9D9BFF_77%,#C7A9FE_100%)_border-box] focus-visible:ring-2 focus-visible:ring-[#915EFF]/40 focus-visible:outline-none"
                   >
-                    <Upload size={16} className="mr-2 text-white" />
-                    Pobierz z profilu
+                    Zaimportuj z profilu
+                    <Image src={download_propfile_cv} width={14} height={14} alt="offer-icon" />
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => router.push('/dashboard/resume?create=1')}
+                    className="flex cursor-pointer items-center justify-center gap-2 rounded-[6px] border-2 border-[#915EFF] bg-[#915EFF] px-4 py-2 text-sm font-medium whitespace-nowrap text-white transition-colors hover:border-[#713AE8] hover:bg-[#713AE8] focus-visible:ring-2 focus-visible:ring-[#915EFF]/40 focus-visible:ring-offset-2 focus-visible:outline-none"
+                    title="Stwórz CV na podstawie oferty pracy"
+                  >
+                    Stwórz CV pod ofertę
+                    <Image src={offer_type} width={16} height={16} alt="offer-icon" />
                   </button>
                 </div>
               </div>
