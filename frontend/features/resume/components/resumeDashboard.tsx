@@ -3,6 +3,7 @@ import { ChevronRight, Clock, FileText, Plus, Trash2 } from 'lucide-react';
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 import { useEffect, useLayoutEffect, useRef, useState } from 'react';
+import { toast } from 'sonner';
 
 import {
   AlertDialog,
@@ -38,6 +39,7 @@ import { useResumeDashboardActions } from '../hooks/useResumeDashboardActions';
 interface ResumeDashboardProps {
   initialCvs: CvListItemDto[];
   initialLimits: CvLimits | null;
+  autoOpenCreateDialog?: boolean;
 }
 
 type CreateCvSetup = 'choose-method' | 'job-offer';
@@ -49,7 +51,11 @@ const EASE = 'cubic-bezier(0.22, 1, 0.36, 1)';
 /** Czas animacji wyjścia Radixa — reset stanu czeka, żeby nie mignął pierwszy krok. */
 const EXIT_MS = 220;
 
-const ResumeDashboard = ({ initialCvs, initialLimits }: ResumeDashboardProps) => {
+const ResumeDashboard = ({
+  initialCvs,
+  initialLimits,
+  autoOpenCreateDialog = false,
+}: ResumeDashboardProps) => {
   const router = useRouter();
   const [showLimitDialog, setShowLimitDialog] = useState(false);
   const [showCreateCvDialog, setShowCreateCvDialog] = useState(false);
@@ -190,6 +196,30 @@ const ResumeDashboard = ({ initialCvs, initialLimits }: ResumeDashboardProps) =>
       setShowCreateCvDialog(true);
     }
   };
+
+  const hasHandledAutoOpen = useRef(false);
+
+  // Wejście z karty oferty (?create=1) — otwieramy ten sam modal co „Stwórz nowe".
+  useEffect(() => {
+    if (!autoOpenCreateDialog || hasHandledAutoOpen.current) return;
+    hasHandledAutoOpen.current = true;
+
+    // Czyścimy query, żeby odświeżenie strony nie otwierało modala ponownie.
+    router.replace('/dashboard/resume', { scroll: false });
+
+    if (isMobile) {
+      toast.info('Tworzenie CV jest dostępne na komputerze.');
+      return;
+    }
+
+    if (limits && limits.currentCount >= limits.maxLimit) {
+      setShowLimitDialog(true);
+      return;
+    }
+
+    handleCreateCvDialogChange(true);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [autoOpenCreateDialog, isMobile, limits, router]);
 
   const EmptyState = () => (
     <div className="col-span-full flex h-100 flex-col items-center justify-center rounded-xl border border-dashed">
