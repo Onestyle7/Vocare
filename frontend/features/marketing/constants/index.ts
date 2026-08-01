@@ -616,3 +616,5 @@ export const arrow_03 = '/main-page/arrow-3.svg';
 
 export const file_edit = '/svg/file-edit.svg';
 export const file_document = '/svg/file-document.svg';
+export const download_propfile_cv = '/svg/download-propfile-cv.svg';
+export const offer_type = '/svg/offer_type.svg';
