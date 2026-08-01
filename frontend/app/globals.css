@@ -89,6 +89,46 @@
     z-index: 1;
   }
 
+  /* Obramowanie 1px, które nie jest jednolite — rozjaśnia się w lewym górnym
+     i prawym dolnym rogu, jakby padało na nie światło pod kątem. */
+  .btn-light-edge {
+    position: relative;
+    isolation: isolate;
+  }
+
+  .btn-light-edge::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    padding: 1px;
+    border-radius: inherit;
+    pointer-events: none;
+    background: linear-gradient(
+      140deg,
+      rgba(255, 255, 255, 0.62) 0%,
+      rgba(255, 255, 255, 0.26) 15%,
+      rgba(255, 255, 255, 0.06) 36%,
+      rgba(255, 255, 255, 0.03) 58%,
+      rgba(255, 255, 255, 0.18) 82%,
+      rgba(255, 255, 255, 0.48) 100%
+    );
+    -webkit-mask:
+      linear-gradient(#fff 0 0) content-box,
+      linear-gradient(#fff 0 0);
+    -webkit-mask-composite: xor;
+    mask:
+      linear-gradient(#fff 0 0) content-box,
+      linear-gradient(#fff 0 0);
+    mask-composite: exclude;
+    opacity: 0.85;
+    transition: opacity 0.3s ease;
+  }
+
+  .btn-light-edge:hover::before,
+  .btn-light-edge:focus-visible::before {
+    opacity: 1;
+  }
+
   .border-light-sweep::after {
     content: '';
     position: absolute;
