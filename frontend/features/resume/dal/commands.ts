@@ -5,11 +5,29 @@ import { actionErr, actionOk } from '@/lib/types/result';
 
 import { CreateCvDto, GenerateCvFromProfileDto, UpdateCvDto } from './api';
 import {
+  analyzeCvService,
   createCvService,
   deleteCvService,
   GenerateCvFromProfileService,
+  getCvAnalysisService,
   updateCvService,
 } from './services';
+
+export async function getCvAnalysisCommand(cvId: string) {
+  const result = await getCvAnalysisService(cvId, { cache: 'no-store' });
+  return result.match(
+    (response) => actionOk(response),
+    (error) => actionErr(error)
+  );
+}
+
+export async function analyzeCvCommand(cvId: string) {
+  const result = await analyzeCvService(cvId, { cache: 'no-store' });
+  return result.match(
+    (response) => actionOk(response),
+    (error) => actionErr(error)
+  );
+}
 
 export async function createCvCommand(payload: CreateCvDto) {
   const result = await createCvService(payload);

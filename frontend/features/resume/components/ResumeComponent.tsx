@@ -28,6 +28,7 @@ import {
   ZoomIn,
   ZoomOut,
 } from 'lucide-react';
+import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 import React, { useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react';
 
@@ -39,6 +40,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
+import { ai_magic } from '@/features/marketing/constants';
 import { useAutosave } from '@/lib/hooks/useAutosave';
 import { useIsMobile } from '@/lib/hooks/useIsMobile';
 import { CvDetailsDto, CvDto, UpdateCvDto } from '@/lib/types/cv';
@@ -53,6 +55,7 @@ import {
 
 import { RESUME_PREVIEW_LABELS, type ResumePreviewLanguage } from '../constants';
 import { useResumeDetailsActions } from '../hooks/useResumeDetailsActions';
+import { CvAnalysisDrawer } from './CvAnalysisDrawer';
 import { DatePickerWithCurrent } from './DatePickerWithCurrent';
 
 interface PersonalInfo {
@@ -355,6 +358,7 @@ const CVCreator: React.FC<CVCreatorProps> = ({ initialCv }) => {
   const [skipAutosaveOnce, setSkipAutosaveOnce] = useState(false);
   const [isPremium] = useState(false);
   const [cvId, setCvId] = useState<string | null>(initialCv?.id ?? null);
+  const [isAnalysisOpen, setIsAnalysisOpen] = useState(false);
   const [resumeName] = useState<string>(initialCv?.name ?? 'New Resume');
   const isMobile = useIsMobile();
 
@@ -1524,13 +1528,13 @@ const CVCreator: React.FC<CVCreatorProps> = ({ initialCv }) => {
   };
 
   const autosaveFn = async (payload: typeof autosavePayload) => {
-    handleAutosave(payload);
+    await handleAutosave(payload);
   };
 
   const { status: autosaveStatus, trigger } = useAutosave({
     value: autosavePayload,
     enabled: canAutosave,
-    delay: 60000, // 60s od ostatniej zmiany
+    delay: 2000, // 2s od ostatniej zmiany
     skipOnce: skipAutosaveOnce, // flaga ustawiana po "Load profile"
     onSkipConsumed: () => setSkipAutosaveOnce(false),
   });
@@ -1543,7 +1547,6 @@ const CVCreator: React.FC<CVCreatorProps> = ({ initialCv }) => {
     personalInfo,
     experiences,
     education,
-    projects,
     projects,
     skills,
     languages,
@@ -1762,7 +1765,6 @@ const CVCreator: React.FC<CVCreatorProps> = ({ initialCv }) => {
     [
       personalInfo,
       experiences,
-      projects,
       projects,
       education,
       certificates,
@@ -3836,6 +3838,15 @@ const CVCreator: React.FC<CVCreatorProps> = ({ initialCv }) => {
               {autosaveStatus === 'error' && <span className="text-red-500">Save failed</span>}
             </div>
           </button>
+          <button
+            onClick={() => setIsAnalysisOpen(true)}
+            className="flex cursor-pointer flex-col items-center justify-center rounded-lg p-3 text-gray-600 transition-colors hover:bg-[#915EFF]/10 hover:text-[#915EFF]"
+            title="Analiza jakości CV"
+            disabled={!cvId}
+          >
+            <Image src={ai_magic} width={26} height={26} alt="ai-analysys" />
+            <span className="mt-1 text-[9px]">Analiza</span>
+          </button>
           <div className="flex flex-col items-center gap-1 rounded-lg p-1" title="Język CV">
             <Languages size={16} className="text-gray-500" />
             <Select
@@ -3859,7 +3870,7 @@ const CVCreator: React.FC<CVCreatorProps> = ({ initialCv }) => {
         <HoverCard>
           <HoverCardTrigger asChild>
             <button className="flex h-12 w-12 cursor-pointer items-center justify-center rounded-sm bg-gray-100">
-              v1.0.0
+              v1.1.0
             </button>
           </HoverCardTrigger>
           <HoverCardContent className="font-poppins w-80">
@@ -3880,6 +3891,14 @@ const CVCreator: React.FC<CVCreatorProps> = ({ initialCv }) => {
           <span className="font-poppins">v0.1.2</span>
         </div> */}
       </div>
+
+      <CvAnalysisDrawer
+        cvId={cvId}
+        cvName={resumeName}
+        targetPosition={personalInfo.profession || undefined}
+        open={isAnalysisOpen}
+        onOpenChange={setIsAnalysisOpen}
+      />
 
       {/* Main Content */}
       <div className="flex h-full flex-1 flex-col gap-3 overflow-hidden px-3 lg:flex-row lg:px-0">

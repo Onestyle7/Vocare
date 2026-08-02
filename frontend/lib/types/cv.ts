@@ -91,6 +91,19 @@ export interface CvLimits {
   maxLimit: number;
 }
 
+export interface CvAnalysisSectionScore {
+  sectionName: string;
+  score: number;
+  insights: string[];
+}
+
+export interface CvAnalysisResult {
+  overallScore: number;
+  targetPositionScore: number;
+  sectionScores: CvAnalysisSectionScore[];
+  topImprovements: string[];
+}
+
 export interface CreateCvDto {
   name: string;
   targetPosition?: string;
