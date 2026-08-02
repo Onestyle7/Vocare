@@ -24,7 +24,10 @@ export async function getCvAnalysisCommand(cvId: string) {
 export async function analyzeCvCommand(cvId: string) {
   const result = await analyzeCvService(cvId, { cache: 'no-store' });
   return result.match(
-    (response) => actionOk(response),
+    async (response) => {
+      await invalidateUserTag('subscriptionStatus');
+      return actionOk(response);
+    },
     (error) => actionErr(error)
   );
 }

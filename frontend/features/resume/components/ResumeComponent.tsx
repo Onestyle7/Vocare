@@ -359,6 +359,7 @@ const CVCreator: React.FC<CVCreatorProps> = ({ initialCv }) => {
   const [isPremium] = useState(false);
   const [cvId, setCvId] = useState<string | null>(initialCv?.id ?? null);
   const [isAnalysisOpen, setIsAnalysisOpen] = useState(false);
+  const [highlightedFormSection, setHighlightedFormSection] = useState<string | null>(null);
   const [resumeName] = useState<string>(initialCv?.name ?? 'New Resume');
   const isMobile = useIsMobile();
 
@@ -465,6 +466,7 @@ const CVCreator: React.FC<CVCreatorProps> = ({ initialCv }) => {
     Record<string, FormattingState>
   >({});
   const dragIntentSectionRef = useRef<string | null>(null);
+  const sectionHighlightTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   // CV Preview controls
   const getDefaultScale = () => {
@@ -619,6 +621,13 @@ const CVCreator: React.FC<CVCreatorProps> = ({ initialCv }) => {
       }
     };
   }, []);
+
+  useEffect(
+    () => () => {
+      if (sectionHighlightTimeoutRef.current) clearTimeout(sectionHighlightTimeoutRef.current);
+    },
+    []
+  );
 
   const addLanguage = () => {
     const newLanguage: Language = {
@@ -1572,6 +1581,64 @@ const CVCreator: React.FC<CVCreatorProps> = ({ initialCv }) => {
     } catch (err) {
       console.error('Manual save failed', err);
     }
+  };
+
+  const handleNavigateToFormSection = (sectionId: string) => {
+    const sectionElement = document.querySelector<HTMLElement>(
+      `[data-cv-form-section="${sectionId}"]`
+    );
+    if (!sectionElement) return;
+
+    const findScrollParent = (element: HTMLElement): HTMLElement | null => {
+      let parent = element.parentElement;
+      while (parent) {
+        const overflowY = window.getComputedStyle(parent).overflowY;
+        if (
+          (overflowY === 'auto' || overflowY === 'scroll') &&
+          parent.scrollHeight > parent.clientHeight
+        ) {
+          return parent;
+        }
+        parent = parent.parentElement;
+      }
+      return null;
+    };
+
+    const scrollParent = findScrollParent(sectionElement);
+    let scrollSettleTimeout: ReturnType<typeof setTimeout> | null = null;
+    let scrollFallbackTimeout: ReturnType<typeof setTimeout> | null = null;
+    let hasHighlighted = false;
+
+    const highlightSection = () => {
+      if (hasHighlighted) return;
+      hasHighlighted = true;
+
+      if (scrollSettleTimeout) clearTimeout(scrollSettleTimeout);
+      if (scrollFallbackTimeout) clearTimeout(scrollFallbackTimeout);
+      scrollParent?.removeEventListener('scroll', handleScroll);
+
+      setHighlightedFormSection(sectionId);
+
+      if (sectionHighlightTimeoutRef.current) {
+        clearTimeout(sectionHighlightTimeoutRef.current);
+      }
+      sectionHighlightTimeoutRef.current = setTimeout(() => {
+        setHighlightedFormSection((current) => (current === sectionId ? null : current));
+      }, 1100);
+    };
+
+    const handleScroll = () => {
+      if (scrollSettleTimeout) clearTimeout(scrollSettleTimeout);
+      scrollSettleTimeout = setTimeout(highlightSection, 140);
+    };
+
+    scrollParent?.addEventListener('scroll', handleScroll, { passive: true });
+    sectionElement.scrollIntoView({ behavior: 'smooth', block: 'center' });
+
+    // Obsługuje także sekcję, która już znajduje się w docelowym miejscu.
+    scrollSettleTimeout = setTimeout(highlightSection, 180);
+    // Zabezpieczenie dla przeglądarek emitujących scroll bez wyraźnego końca.
+    scrollFallbackTimeout = setTimeout(highlightSection, 1600);
   };
 
   const loadFromProfile = async () => {
@@ -3898,6 +3965,7 @@ const CVCreator: React.FC<CVCreatorProps> = ({ initialCv }) => {
         targetPosition={personalInfo.profession || undefined}
         open={isAnalysisOpen}
         onOpenChange={setIsAnalysisOpen}
+        onNavigateToSection={handleNavigateToFormSection}
       />
 
       {/* Main Content */}
@@ -3933,7 +4001,14 @@ const CVCreator: React.FC<CVCreatorProps> = ({ initialCv }) => {
               </div>
 
               {/* Personal Information Section */}
-              <div className="mb-6 rounded-lg bg-gray-50 p-4 lg:p-6">
+              <div
+                data-cv-form-section="contact"
+                className={`mb-6 origin-center transform-gpu scroll-m-6 rounded-lg bg-gray-50 p-4 transition-[transform,box-shadow] duration-500 [transition-timing-function:cubic-bezier(0.22,1,0.36,1)] will-change-transform motion-reduce:transform-none lg:p-6 ${
+                  highlightedFormSection === 'contact'
+                    ? 'scale-[1.015] shadow-[0_0_0_3px_rgba(145,94,255,0.28),0_12px_32px_rgba(145,94,255,0.18)]'
+                    : 'scale-100'
+                }`}
+              >
                 <h2 className="mb-4 flex items-center text-lg font-semibold text-gray-700">
                   <User className="mr-2" size={20} />
                   Dane kontaktowe
@@ -4101,7 +4176,19 @@ const CVCreator: React.FC<CVCreatorProps> = ({ initialCv }) => {
                 </div>
               </div>
 
-              {sectionOrder.map((sectionId) => renderSectionInForm(sectionId))}
+              {sectionOrder.map((sectionId) => (
+                <div
+                  key={sectionId}
+                  data-cv-form-section={sectionId}
+                  className={`origin-center transform-gpu scroll-m-6 rounded-lg transition-[transform,box-shadow] duration-500 [transition-timing-function:cubic-bezier(0.22,1,0.36,1)] will-change-transform motion-reduce:transform-none ${
+                    highlightedFormSection === sectionId
+                      ? 'scale-[1.015] shadow-[0_0_0_3px_rgba(145,94,255,0.28),0_12px_32px_rgba(145,94,255,0.18)]'
+                      : 'scale-100'
+                  }`}
+                >
+                  {renderSectionInForm(sectionId)}
+                </div>
+              ))}
             </div>
           </div>
         )}

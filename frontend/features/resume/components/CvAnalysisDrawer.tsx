@@ -2,17 +2,28 @@
 
 import {
   AlertCircle,
+  ArrowRight,
   ArrowUpRight,
   BriefcaseBusiness,
   CircleHelp,
   LoaderCircle,
-  Sparkles,
   X,
 } from 'lucide-react';
 import Image from 'next/image';
+import Link from 'next/link';
 import { useEffect, useState } from 'react';
 import { Cell, Pie, PieChart } from 'recharts';
 
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from '@/components/ui/alert-dialog';
 import { Button } from '@/components/ui/button';
 import { ChartConfig, ChartContainer } from '@/components/ui/chart';
 import { HoverCard, HoverCardContent, HoverCardTrigger } from '@/components/ui/hover-card';
@@ -24,6 +35,7 @@ import {
   SheetHeader,
   SheetTitle,
 } from '@/components/ui/sheet';
+import { useTokenBalanceContext } from '@/features/billing/components/SubscriptionTokenProvider';
 import { ai_magic } from '@/features/marketing/constants';
 import { CvAnalysisResult } from '@/lib/types/cv';
 import { cn } from '@/lib/utils';
@@ -36,6 +48,7 @@ interface CvAnalysisDrawerProps {
   targetPosition?: string;
   open: boolean;
   onOpenChange: (open: boolean) => void;
+  onNavigateToSection: (sectionId: string) => void;
 }
 
 const SECTION_LABELS: Record<string, string> = {
@@ -47,6 +60,19 @@ const SECTION_LABELS: Record<string, string> = {
   Languages: 'Języki',
   Projects: 'Projekty',
   Social: 'Linki i portfolio',
+};
+
+const ANALYZE_CV_PRICE = 10;
+
+const SECTION_FORM_IDS: Record<string, string> = {
+  Basics: 'profile',
+  Work: 'experience',
+  Education: 'education',
+  Certificates: 'certificates',
+  Skills: 'skills',
+  Languages: 'languages',
+  Projects: 'projects',
+  Social: 'contact',
 };
 
 const OVERALL_SCORE_CHART_CONFIG = {
@@ -100,11 +126,17 @@ export function CvAnalysisDrawer({
   targetPosition,
   open,
   onOpenChange,
+  onNavigateToSection,
 }: CvAnalysisDrawerProps) {
   const [analysis, setAnalysis] = useState<CvAnalysisResult | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [isAnalyzing, setIsAnalyzing] = useState(false);
+  const [isCostDialogOpen, setIsCostDialogOpen] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const { tokenBalance, hasActiveSubscription } = useTokenBalanceContext();
+
+  const hasEnoughTokens =
+    hasActiveSubscription || (typeof tokenBalance === 'number' && tokenBalance >= ANALYZE_CV_PRICE);
 
   useEffect(() => {
     if (!open || !cvId) return;
@@ -148,6 +180,11 @@ export function CvAnalysisDrawer({
       setAnalysis(result);
     }
     setIsAnalyzing(false);
+  };
+
+  const handleConfirmAnalyze = () => {
+    setIsCostDialogOpen(false);
+    void handleAnalyze();
   };
 
   const overallScore = clampScore(analysis?.overallScore ?? 0);
@@ -194,8 +231,8 @@ export function CvAnalysisDrawer({
               </div>
               <h3 className="text-lg font-semibold">Analizujemy Twoje CV</h3>
               <p className="mt-2 max-w-xs text-sm leading-6 text-slate-600">
-                Sprawdzamy kompletność sekcji, jakość opisów i najważniejsze obszary do poprawy. To
-                może potrwać chwilę.
+                Sprawdzamy kompletność sekcji, jakość opisów i najważniejsze obszary do poprawy.
+                Zajmie to do minuty.
               </p>
             </div>
           ) : analysis ? (
@@ -343,9 +380,19 @@ export function CvAnalysisDrawer({
                   {sections.map((section, index) => (
                     <details
                       key={`${section.sectionName}-${index}`}
-                      className="group rounded-xl border border-slate-200 bg-white p-4 text-slate-900 open:bg-slate-50"
+                      className="group rounded-xl border border-slate-200 bg-white p-4 text-slate-900 transition-colors open:bg-slate-50 hover:border-[#915EFF]/40"
                     >
-                      <summary className="cursor-pointer list-none">
+                      <summary
+                        className="cursor-pointer list-none text-left focus-visible:ring-2 focus-visible:ring-[#915EFF] focus-visible:ring-offset-4 focus-visible:outline-none"
+                        onClick={(event) => {
+                          const details = event.currentTarget.parentElement as HTMLDetailsElement;
+                          const isCurrentlyOpen = details.open;
+                          if (isCurrentlyOpen) return;
+
+                          const formSectionId = SECTION_FORM_IDS[section.sectionName];
+                          if (formSectionId) onNavigateToSection(formSectionId);
+                        }}
+                      >
                         <div className="flex items-center justify-between gap-4">
                           <span className="text-sm font-medium">
                             {SECTION_LABELS[section.sectionName] ?? section.sectionName}
@@ -381,7 +428,7 @@ export function CvAnalysisDrawer({
               </p>
               <Button
                 className="w-full bg-[#915EFF] text-white hover:bg-[#713ae8] hover:text-white"
-                onClick={handleAnalyze}
+                onClick={() => setIsCostDialogOpen(true)}
               >
                 <Image src={ai_magic} width={20} height={20} alt="ai-analysys" className="invert" />
                 Analizuj ponownie
@@ -389,24 +436,19 @@ export function CvAnalysisDrawer({
             </div>
           ) : (
             <div className="flex min-h-96 flex-col items-center justify-center text-center">
-              <div className="mb-5 rounded-2xl bg-[#915EFF]/10 p-4">
-                <Sparkles className="size-8 text-[#915EFF]" />
-              </div>
-              <h3 className="text-xl font-semibold">Sprawdź jakość swojego CV</h3>
+              <h3 className="text-xl font-medium">Sprawdź jakość swojego CV</h3>
               <p className="mt-3 max-w-sm text-sm leading-6 text-slate-600">
                 Ocenimy kompletność, doświadczenie, umiejętności i pozostałe sekcje oraz wskażemy
                 trzy najważniejsze poprawki.
               </p>
               <Button
                 className="mt-6 bg-[#915EFF] text-white hover:bg-[#713ae8] hover:text-white"
-                onClick={handleAnalyze}
+                onClick={() => setIsCostDialogOpen(true)}
                 disabled={!cvId}
               >
-                <Sparkles /> Analizuj CV
+                <Image src={ai_magic} width={20} height={20} alt="ai-analysys" className="invert" />
+                Analizuj CV
               </Button>
-              <p className="mt-3 text-xs text-slate-500">
-                Analiza może wykorzystać środki z Twojego planu.
-              </p>
             </div>
           )}
 
@@ -419,7 +461,7 @@ export function CvAnalysisDrawer({
                   variant="outline"
                   size="sm"
                   className="mt-3 border-rose-300 bg-white text-rose-800 hover:bg-rose-100 hover:text-rose-900"
-                  onClick={handleAnalyze}
+                  onClick={() => setIsCostDialogOpen(true)}
                 >
                   Spróbuj ponownie
                 </Button>
@@ -428,6 +470,59 @@ export function CvAnalysisDrawer({
           )}
         </div>
       </SheetContent>
+
+      <AlertDialog open={isCostDialogOpen} onOpenChange={setIsCostDialogOpen}>
+        <AlertDialogContent className="font-poppins mx-auto max-w-sm border-slate-200 bg-white text-slate-950">
+          <AlertDialogHeader>
+            <AlertDialogTitle className="text-center text-xl font-bold text-slate-950">
+              Przeanalizować CV?
+            </AlertDialogTitle>
+            <AlertDialogDescription className="text-center text-slate-700">
+              {!hasActiveSubscription ? (
+                <>
+                  Zostanie pobrane <b className="text-[#915EFF]">{ANALYZE_CV_PRICE} tokenów</b> z
+                  Twojego konta.
+                  {!hasEnoughTokens && (
+                    <span className="mt-2 block font-medium text-rose-600">
+                      Niewystarczające saldo ({tokenBalance}/{ANALYZE_CV_PRICE} tokenów)
+                    </span>
+                  )}
+                </>
+              ) : (
+                <span>
+                  Jesteś na aktywnej subskrypcji, więc ta akcja nie wykorzysta żadnych tokenów.
+                </span>
+              )}
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+
+          <AlertDialogFooter className="mt-8 flex flex-row justify-center gap-4 sm:justify-center">
+            <AlertDialogCancel className="w-[130px] border-slate-200 bg-white text-slate-700 hover:bg-slate-50 hover:text-slate-950">
+              Anuluj
+            </AlertDialogCancel>
+
+            {!hasEnoughTokens ? (
+              <Link href="/pricing">
+                <AlertDialogAction
+                  className="group bg-[#915EFF] text-white hover:bg-[#7b4ee0] hover:text-white"
+                  onClick={() => setIsCostDialogOpen(false)}
+                >
+                  Zdobądź tokeny
+                  <ArrowRight className="scale-90 transition-transform group-hover:translate-x-1" />
+                </AlertDialogAction>
+              </Link>
+            ) : (
+              <AlertDialogAction
+                onClick={handleConfirmAnalyze}
+                className="bg-[#915EFF] text-white hover:bg-[#7b4ee0] hover:text-white"
+              >
+                Analizuj
+                <Image src={ai_magic} width={16} height={16} alt="" className="invert" />
+              </AlertDialogAction>
+            )}
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </Sheet>
   );
 }
