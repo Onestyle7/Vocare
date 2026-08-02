@@ -616,5 +616,7 @@ export const arrow_03 = '/main-page/arrow-3.svg';
 
 export const file_edit = '/svg/file-edit.svg';
 export const file_document = '/svg/file-document.svg';
+export const ai_magic = '/svg/ai-magic.svg';
+export const arrow_resume = '/images/arrow-resume.png';
 export const download_propfile_cv = '/svg/download-propfile-cv.svg';
 export const offer_type = '/svg/offer_type.svg';
