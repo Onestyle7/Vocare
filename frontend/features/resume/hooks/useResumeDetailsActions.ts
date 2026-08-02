@@ -7,10 +7,11 @@ import { createCvCommand, deleteCvCommand, updateCvCommand } from '../dal/comman
 export function useResumeDetailsActions() {
   const [isPending, startTransition] = useTransition();
 
-  const handleAutosave = (payload: UpdateCvDto) => {
-    startTransition(async () => {
-      await updateCvCommand(payload);
-    });
+  const handleAutosave = async (payload: UpdateCvDto) => {
+    const [error] = await updateCvCommand(payload);
+    if (error) {
+      throw new Error(error.message);
+    }
   };
 
   const handleManualSave = async (payload: UpdateCvDto) => {

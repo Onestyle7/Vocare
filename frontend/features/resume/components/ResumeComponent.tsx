@@ -40,6 +40,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
+import { ai_magic } from '@/features/marketing/constants';
 import { download_propfile_cv, offer_type } from '@/features/marketing/constants';
 import { useAutosave } from '@/lib/hooks/useAutosave';
 import { useIsMobile } from '@/lib/hooks/useIsMobile';
@@ -55,6 +56,7 @@ import {
 
 import { RESUME_PREVIEW_LABELS, type ResumePreviewLanguage } from '../constants';
 import { useResumeDetailsActions } from '../hooks/useResumeDetailsActions';
+import { CvAnalysisDrawer } from './CvAnalysisDrawer';
 import { DatePickerWithCurrent } from './DatePickerWithCurrent';
 
 interface PersonalInfo {
@@ -357,6 +359,8 @@ const CVCreator: React.FC<CVCreatorProps> = ({ initialCv }) => {
   const [skipAutosaveOnce, setSkipAutosaveOnce] = useState(false);
   const [isPremium] = useState(false);
   const [cvId, setCvId] = useState<string | null>(initialCv?.id ?? null);
+  const [isAnalysisOpen, setIsAnalysisOpen] = useState(false);
+  const [highlightedFormSection, setHighlightedFormSection] = useState<string | null>(null);
   const [resumeName] = useState<string>(initialCv?.name ?? 'New Resume');
   const isMobile = useIsMobile();
 
@@ -463,6 +467,7 @@ const CVCreator: React.FC<CVCreatorProps> = ({ initialCv }) => {
     Record<string, FormattingState>
   >({});
   const dragIntentSectionRef = useRef<string | null>(null);
+  const sectionHighlightTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   // CV Preview controls
   const getDefaultScale = () => {
@@ -617,6 +622,13 @@ const CVCreator: React.FC<CVCreatorProps> = ({ initialCv }) => {
       }
     };
   }, []);
+
+  useEffect(
+    () => () => {
+      if (sectionHighlightTimeoutRef.current) clearTimeout(sectionHighlightTimeoutRef.current);
+    },
+    []
+  );
 
   const addLanguage = () => {
     const newLanguage: Language = {
@@ -1526,13 +1538,13 @@ const CVCreator: React.FC<CVCreatorProps> = ({ initialCv }) => {
   };
 
   const autosaveFn = async (payload: typeof autosavePayload) => {
-    handleAutosave(payload);
+    await handleAutosave(payload);
   };
 
   const { status: autosaveStatus, trigger } = useAutosave({
     value: autosavePayload,
     enabled: canAutosave,
-    delay: 60000, // 60s od ostatniej zmiany
+    delay: 2000, // 2s od ostatniej zmiany
     skipOnce: skipAutosaveOnce, // flaga ustawiana po "Load profile"
     onSkipConsumed: () => setSkipAutosaveOnce(false),
   });
@@ -1545,7 +1557,6 @@ const CVCreator: React.FC<CVCreatorProps> = ({ initialCv }) => {
     personalInfo,
     experiences,
     education,
-    projects,
     projects,
     skills,
     languages,
@@ -1571,6 +1582,64 @@ const CVCreator: React.FC<CVCreatorProps> = ({ initialCv }) => {
     } catch (err) {
       console.error('Manual save failed', err);
     }
+  };
+
+  const handleNavigateToFormSection = (sectionId: string) => {
+    const sectionElement = document.querySelector<HTMLElement>(
+      `[data-cv-form-section="${sectionId}"]`
+    );
+    if (!sectionElement) return;
+
+    const findScrollParent = (element: HTMLElement): HTMLElement | null => {
+      let parent = element.parentElement;
+      while (parent) {
+        const overflowY = window.getComputedStyle(parent).overflowY;
+        if (
+          (overflowY === 'auto' || overflowY === 'scroll') &&
+          parent.scrollHeight > parent.clientHeight
+        ) {
+          return parent;
+        }
+        parent = parent.parentElement;
+      }
+      return null;
+    };
+
+    const scrollParent = findScrollParent(sectionElement);
+    let scrollSettleTimeout: ReturnType<typeof setTimeout> | null = null;
+    let scrollFallbackTimeout: ReturnType<typeof setTimeout> | null = null;
+    let hasHighlighted = false;
+
+    const highlightSection = () => {
+      if (hasHighlighted) return;
+      hasHighlighted = true;
+
+      if (scrollSettleTimeout) clearTimeout(scrollSettleTimeout);
+      if (scrollFallbackTimeout) clearTimeout(scrollFallbackTimeout);
+      scrollParent?.removeEventListener('scroll', handleScroll);
+
+      setHighlightedFormSection(sectionId);
+
+      if (sectionHighlightTimeoutRef.current) {
+        clearTimeout(sectionHighlightTimeoutRef.current);
+      }
+      sectionHighlightTimeoutRef.current = setTimeout(() => {
+        setHighlightedFormSection((current) => (current === sectionId ? null : current));
+      }, 1100);
+    };
+
+    const handleScroll = () => {
+      if (scrollSettleTimeout) clearTimeout(scrollSettleTimeout);
+      scrollSettleTimeout = setTimeout(highlightSection, 140);
+    };
+
+    scrollParent?.addEventListener('scroll', handleScroll, { passive: true });
+    sectionElement.scrollIntoView({ behavior: 'smooth', block: 'center' });
+
+    // Obsługuje także sekcję, która już znajduje się w docelowym miejscu.
+    scrollSettleTimeout = setTimeout(highlightSection, 180);
+    // Zabezpieczenie dla przeglądarek emitujących scroll bez wyraźnego końca.
+    scrollFallbackTimeout = setTimeout(highlightSection, 1600);
   };
 
   const loadFromProfile = async () => {
@@ -1764,7 +1833,6 @@ const CVCreator: React.FC<CVCreatorProps> = ({ initialCv }) => {
     [
       personalInfo,
       experiences,
-      projects,
       projects,
       education,
       certificates,
@@ -3838,6 +3906,15 @@ const CVCreator: React.FC<CVCreatorProps> = ({ initialCv }) => {
               {autosaveStatus === 'error' && <span className="text-red-500">Save failed</span>}
             </div>
           </button>
+          <button
+            onClick={() => setIsAnalysisOpen(true)}
+            className="flex cursor-pointer flex-col items-center justify-center rounded-lg p-3 text-gray-600 transition-colors hover:bg-[#915EFF]/10 hover:text-[#915EFF]"
+            title="Analiza jakości CV"
+            disabled={!cvId}
+          >
+            <Image src={ai_magic} width={26} height={26} alt="ai-analysys" />
+            <span className="mt-1 text-[9px]">Analiza</span>
+          </button>
           <Select
             value={showFullDates ? 'full' : 'year'}
             onValueChange={(value) => setShowFullDates(value === 'full')}
@@ -3890,7 +3967,7 @@ const CVCreator: React.FC<CVCreatorProps> = ({ initialCv }) => {
         <HoverCard>
           <HoverCardTrigger asChild>
             <button className="flex h-12 w-12 cursor-pointer items-center justify-center rounded-sm bg-gray-100">
-              v1.0.0
+              v1.1.0
             </button>
           </HoverCardTrigger>
           <HoverCardContent className="font-poppins w-80">
@@ -3911,6 +3988,15 @@ const CVCreator: React.FC<CVCreatorProps> = ({ initialCv }) => {
           <span className="font-poppins">v0.1.2</span>
         </div> */}
       </div>
+
+      <CvAnalysisDrawer
+        cvId={cvId}
+        cvName={resumeName}
+        targetPosition={personalInfo.profession || undefined}
+        open={isAnalysisOpen}
+        onOpenChange={setIsAnalysisOpen}
+        onNavigateToSection={handleNavigateToFormSection}
+      />
 
       {/* Main Content */}
       <div className="flex h-full flex-1 flex-col gap-3 overflow-hidden px-3 lg:flex-row lg:px-0">
@@ -3941,7 +4027,14 @@ const CVCreator: React.FC<CVCreatorProps> = ({ initialCv }) => {
               </div>
 
               {/* Personal Information Section */}
-              <div className="mb-6 rounded-lg bg-gray-50 p-4 lg:p-6">
+              <div
+                data-cv-form-section="contact"
+                className={`mb-6 origin-center transform-gpu scroll-m-6 rounded-lg bg-gray-50 p-4 transition-[transform,box-shadow] duration-500 [transition-timing-function:cubic-bezier(0.22,1,0.36,1)] will-change-transform motion-reduce:transform-none lg:p-6 ${
+                  highlightedFormSection === 'contact'
+                    ? 'scale-[1.015] shadow-[0_0_0_3px_rgba(145,94,255,0.28),0_12px_32px_rgba(145,94,255,0.18)]'
+                    : 'scale-100'
+                }`}
+              >
                 <h2 className="mb-4 flex items-center text-lg font-semibold text-gray-700">
                   <User className="mr-2" size={20} />
                   Dane kontaktowe
@@ -4109,7 +4202,19 @@ const CVCreator: React.FC<CVCreatorProps> = ({ initialCv }) => {
                 </div>
               </div>
 
-              {sectionOrder.map((sectionId) => renderSectionInForm(sectionId))}
+              {sectionOrder.map((sectionId) => (
+                <div
+                  key={sectionId}
+                  data-cv-form-section={sectionId}
+                  className={`origin-center transform-gpu scroll-m-6 rounded-lg transition-[transform,box-shadow] duration-500 [transition-timing-function:cubic-bezier(0.22,1,0.36,1)] will-change-transform motion-reduce:transform-none ${
+                    highlightedFormSection === sectionId
+                      ? 'scale-[1.015] shadow-[0_0_0_3px_rgba(145,94,255,0.28),0_12px_32px_rgba(145,94,255,0.18)]'
+                      : 'scale-100'
+                  }`}
+                >
+                  {renderSectionInForm(sectionId)}
+                </div>
+              ))}
             </div>
           </div>
         )}

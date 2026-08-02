@@ -5,6 +5,7 @@ import { BaseAppError } from '@/lib/types/result';
 
 import {
   CreateCvDto,
+  CvAnalysisResult,
   cvApiClient,
   CvDetailsDto,
   CvLimits,
@@ -113,4 +114,24 @@ export async function GenerateCvFromProfileService(
   );
 
   return result.map((response) => normalizeDetails(response.data)).mapErr(mapCvError);
+}
+
+export async function getCvAnalysisService(
+  id: string,
+  requestOptions?: RequestInit
+): Promise<Result<CvAnalysisResult, CvDomainError>> {
+  const result = await cvApiClient.get<CvAnalysisResult>(`analysis/${id}`, requestOptions);
+  return result.map((response) => response.data).mapErr(mapCvError);
+}
+
+export async function analyzeCvService(
+  id: string,
+  requestOptions?: RequestInit
+): Promise<Result<CvAnalysisResult, CvDomainError>> {
+  const result = await cvApiClient.post<CvAnalysisResult>(
+    `analyze/${id}`,
+    undefined,
+    requestOptions
+  );
+  return result.map((response) => response.data).mapErr(mapCvError);
 }
