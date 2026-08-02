@@ -461,7 +461,7 @@ const ResumeDashboard = ({
                       disabled={isCreating}
                       className="group flex h-44 w-full cursor-pointer flex-col overflow-hidden rounded-2xl text-white focus-visible:ring-2 focus-visible:ring-[#7178ee] focus-visible:ring-offset-2 focus-visible:ring-offset-[#17181d] focus-visible:outline-none disabled:pointer-events-none disabled:opacity-60"
                     >
-                      <span className="flex min-h-0 flex-1 items-center justify-center self-stretch bg-[#292a30]">
+                      <span className="flex min-h-0 flex-1 items-center justify-center self-stretch overflow-hidden bg-[#292a30]">
                         <Image
                           src={file_document}
                           width={57.17}
@@ -470,7 +470,7 @@ const ResumeDashboard = ({
                           className="translate-y-8 transition-transform duration-300 ease-out group-hover:translate-y-1"
                         />
                       </span>
-                      <span className="relative z-10 flex h-18 shrink-0 items-center justify-center bg-[#686fde] px-4 text-[16px] font-normal">
+                      <span className="relative z-10 flex h-18 w-full shrink-0 items-center justify-center bg-[#686fde] px-4 text-[16px] font-normal">
                         {isCreating ? (
                           'Tworzenie...'
                         ) : (
@@ -486,7 +486,7 @@ const ResumeDashboard = ({
                       className="group flex h-44 w-full cursor-pointer flex-col overflow-hidden rounded-2xl text-white focus-visible:ring-2 focus-visible:ring-[#7178ee] focus-visible:ring-offset-2 focus-visible:ring-offset-[#17181d] focus-visible:outline-none"
                       onClick={() => goToSetup('job-offer')}
                     >
-                      <span className="flex min-h-0 flex-1 items-center justify-center self-stretch bg-[#292a30]">
+                      <span className="flex min-h-0 flex-1 items-center justify-center self-stretch overflow-hidden bg-[#292a30]">
                         <Image
                           src={file_edit}
                           width={57.17}
@@ -495,7 +495,7 @@ const ResumeDashboard = ({
                           className="translate-y-8 transition-transform duration-300 ease-out group-hover:translate-y-1"
                         />
                       </span>
-                      <span className="relative z-10 flex h-18 shrink-0 items-center justify-center bg-[#686fde] px-8 text-center text-[16px] leading-snug font-normal">
+                      <span className="relative z-10 flex h-18 w-full shrink-0 items-center justify-center bg-[#686fde] px-8 text-center text-[16px] leading-snug font-normal">
                         <span>
                           Wygeneruj CV pod <strong className="font-medium">konkretną ofertę</strong>
                         </span>
