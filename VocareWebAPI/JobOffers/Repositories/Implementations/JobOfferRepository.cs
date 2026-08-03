@@ -16,19 +16,23 @@ namespace VocareWebAPI.JobOffers.Repositories.Implementations
             _context = context;
         }
 
-        public async Task<JobOffer?> GetByReferenceNumberAsync(string refNumber, JobOfferSource source)
+        public async Task<JobOffer?> GetByReferenceNumberAsync(
+            string refNumber,
+            JobOfferSource source
+        )
         {
             return await _context.JobOffers.FirstOrDefaultAsync(x =>
                 x.ReferenceNumber == refNumber && x.Source == source
             );
         }
 
-        public async Task<IEnumerable<JobStaleInfo>> GetAllReferenceNumbersAsync(JobOfferSource source)
+        public async Task<IEnumerable<JobStaleInfo>> GetAllReferenceNumbersAsync(
+            JobOfferSource source
+        )
         {
             var activeJobs = await _context
-                .JobOffers
-                .Where(j => j.Source == source)
-                .Select(p => new JobStaleInfo(p.ReferenceNumber,p.Source, p.UpdatedAt))
+                .JobOffers.Where(j => j.Source == source)
+                .Select(p => new JobStaleInfo(p.ReferenceNumber, p.Source, p.UpdatedAt))
                 .ToListAsync();
 
             return activeJobs;
@@ -42,7 +46,6 @@ namespace VocareWebAPI.JobOffers.Repositories.Implementations
 
         public async Task UpdateAsync(JobOffer offer)
         {
-            
             if (_context.Entry(offer).State == EntityState.Detached)
             {
                 _context.JobOffers.Update(offer);
@@ -53,7 +56,10 @@ namespace VocareWebAPI.JobOffers.Repositories.Implementations
             await _context.SaveChangesAsync();
         }
 
-        public async Task DeleteByReferenceNumberAsync(IEnumerable<string> refNumbers, JobOfferSource source)
+        public async Task DeleteByReferenceNumberAsync(
+            IEnumerable<string> refNumbers,
+            JobOfferSource source
+        )
         {
             var toDelete = await _context
                 .JobOffers.Where(j => refNumbers.Contains(j.ReferenceNumber))
@@ -90,6 +96,30 @@ namespace VocareWebAPI.JobOffers.Repositories.Implementations
                 .Select(s => s.Name)
                 .Distinct()
                 .ToListAsync();
+        }
+
+        public async Task AddToContextAsync(JobOffer offer)
+        {
+            await _context.JobOffers.AddAsync(offer);
+        }
+
+        public void UpdateInContext(JobOffer offer)
+        {
+            if (_context.Entry(offer).State == EntityState.Detached)
+            {
+                _context.JobOffers.Update(offer);
+            }
+            _context.Entry(offer).Property(x => x.Embedding).IsModified = false;
+        }
+
+        public async Task SaveChangesAsync()
+        {
+            await _context.SaveChangesAsync();
+        }
+
+        public void ClearChangeTracker()
+        {
+            _context.ChangeTracker.Clear();
         }
     }
 }
