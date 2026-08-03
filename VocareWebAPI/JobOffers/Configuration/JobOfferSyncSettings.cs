@@ -12,6 +12,7 @@ namespace VocareWebAPI.JobOffers.Configuration
         /// </summary>
         public bool EnableAutoSync { get; set; }
         public int SyncIntervalHours { get; set; } = 24;
+        public int SyncIntervalMinutes { get; set; }
         public bool GenerateEmbeddingsOnSync { get; set; } = true;
     }
 }
