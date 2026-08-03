@@ -3268,9 +3268,8 @@ const CVCreator: React.FC<CVCreatorProps> = ({ initialCv }) => {
                         (resumePreviewLanguage === 'pl'
                           ? 'Kierunek studiów'
                           : 'Field of study')}{' '}
-                      -{' '}
-                      {getEducationDegreeLabel(edu.degree, resumePreviewLanguage) ||
-                        (resumePreviewLanguage === 'pl' ? 'Stopień' : 'Degree')}
+                      {edu.degree.trim() &&
+                        `- ${getEducationDegreeLabel(edu.degree, resumePreviewLanguage)}`}
                     </h4>
                     <p className="truncate font-medium text-gray-700">
                       {edu.school || 'School/University'}
