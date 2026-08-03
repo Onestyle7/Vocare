@@ -47,7 +47,7 @@ namespace VocareWebAPI.JobOffers.BackgroundJobs
                         scope.ServiceProvider.GetRequiredService<IJobOfferSyncService>();
 
                     _logger.LogInformation("Rozpoczynam synchronizację ofert...");
-                    var result = await syncService.SyncOffersAsync();
+                    var result = await syncService.SyncOffersAsync(stoppingToken);
 
                     _logger.LogInformation(
                         "Sync zakończony: +{Added} nowych, ~{Updated} zaktualizowanych, {Failed} błędów",
@@ -62,7 +62,10 @@ namespace VocareWebAPI.JobOffers.BackgroundJobs
                         var totalRemoved = 0;
                         foreach (var source in Enum.GetValues<JobOfferSource>())
                         {
-                            var cleanupResult = await syncService.CleanupStaleOffersAsync(source);
+                            var cleanupResult = await syncService.CleanupStaleOffersAsync(
+                                source,
+                                stoppingToken
+                            );
                             totalRemoved += cleanupResult.RemovedCount;
                             _logger.LogInformation(
                                 "Cleanup {Source}: usunięto: {Removed} ofert",

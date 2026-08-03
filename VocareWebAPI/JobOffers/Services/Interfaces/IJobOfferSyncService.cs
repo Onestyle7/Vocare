@@ -5,8 +5,11 @@ namespace VocareWebAPI.JobOffers.Services.Interfaces
 {
     public interface IJobOfferSyncService
     {
-        Task<SyncResult> SyncOffersAsync();
-        Task<CleanupResult> CleanupStaleOffersAsync(JobOfferSource source);
+        Task<SyncResult> SyncOffersAsync(CancellationToken cancellationToken = default);
+        Task<CleanupResult> CleanupStaleOffersAsync(
+            JobOfferSource source,
+            CancellationToken cancellationToken = default
+        );
         Task<BackfillResult> BackfillEmbeddingsAsync(int batchSize = 100);
     }
 
