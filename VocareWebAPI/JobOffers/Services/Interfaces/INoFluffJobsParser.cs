@@ -1,13 +1,13 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+using System.Runtime.CompilerServices;
 using VocareWebAPI.JobOffers.Models.Entities;
 
 namespace VocareWebAPI.JobOffers.Services.Interfaces
 {
     public interface INoFluffJobsParser
     {
-        Task<IEnumerable<JobOffer>> ParseFromUrlAsync(string url);
+        IAsyncEnumerable<JobOffer> ParseFromUrlAsync(
+            string url,
+            CancellationToken cancellationToken = default
+        );
     }
 }
