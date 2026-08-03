@@ -15,5 +15,9 @@ namespace VocareWebAPI.JobOffers.Repositories.Interfaces
         Task<List<JobOffer>> GetOffersWithoutEmbeddingAsync(int limit);
         Task<int> CountOffersWithoutEmbeddingAsync();
         Task<List<string>> GetAllUniqueSkillNamesAsync();
+        Task AddToContextAsync(JobOffer offer);
+        Task SaveChangesAsync();
+        void UpdateInContext(JobOffer offer);
+        void ClearChangeTracker();
     }
 }

@@ -1,4 +1,5 @@
 using System.Globalization;
+using System.Runtime.CompilerServices;
 using System.Text.RegularExpressions;
 using System.Xml;
 using System.Xml.Linq;
@@ -19,49 +20,73 @@ namespace VocareWebAPI.JobOffers.Services.Implementations
             _logger = logger;
         }
 
-        public async Task<IEnumerable<JobOffer>> ParseFromUrlAsync(string url)
+        public async IAsyncEnumerable<JobOffer> ParseFromUrlAsync(
+            string url,
+            [EnumeratorCancellation] CancellationToken cancellationToken = default
+        )
         {
-            // Pobieramy XML
             await using var stream = await _httpClient.GetStreamAsync(url);
 
-            // Wczytujemy do obiektu
             using var reader = XmlReader.Create(stream, new XmlReaderSettings { Async = true });
-            var doc = await XDocument.LoadAsync(reader, LoadOptions.None, CancellationToken.None);
 
-            var jobElements = doc.Descendants("job");
-
-            var result = new List<JobOffer>();
-
-            foreach (var jobElement in jobElements)
+            while (await reader.ReadAsync())
             {
-                var offer = new JobOffer
+                cancellationToken.ThrowIfCancellationRequested();
+                if (reader.NodeType == XmlNodeType.Element && reader.Name == "job")
                 {
-                    Id = Guid.NewGuid(),
-                    ReferenceNumber = jobElement.Element("referencenumber")?.Value ?? "",
-                    Title = jobElement.Element("title")?.Value ?? "",
-                    CompanyName = jobElement.Element("company")?.Value ?? "",
-                    Url = jobElement.Element("url")?.Value ?? "",
-                    Country = jobElement.Element("country")?.Value,
-                    Category = jobElement.Element("category")?.Value ?? "",
-                    JobType = jobElement.Element("jobtype")?.Value ?? "",
-                    Description = jobElement.Element("description")?.Value ?? "",
-                    BriefDescription = jobElement.Element("brief_job_description")?.Value ?? "",
-                    PublishedAt = ParseDate(jobElement.Element("date")?.Value),
-                    CreatedAt = DateTime.UtcNow,
-                    UpdatedAt = DateTime.UtcNow,
-                    SeniorityLevel = ParseSeniority(jobElement.Element("seniority")?.Value),
-                };
-                var salary = ParseSalary(jobElement.Element("salary")?.Value);
-                offer.SalaryMin = salary.Min;
-                offer.SalaryMax = salary.Max;
-                offer.SalaryCurrency = salary.Currency;
-                offer.SalaryPeriod = salary.Period;
-                offer.Locations = ParseLocations(jobElement.Element("city")?.Value, offer.Id);
-                offer.Skills = ParseSkills(jobElement.Element("description")?.Value, offer.Id);
+                    using var subtreeReader = reader.ReadSubtree();
+                    var jobElement = XElement.Load(subtreeReader);
 
-                result.Add(offer);
+                    JobOffer? offer = null;
+                    var referenceNumber = jobElement.Element("referencenumber")?.Value;
+
+                    try
+                    {
+                        offer = new JobOffer
+                        {
+                            Id = Guid.NewGuid(),
+                            ReferenceNumber = jobElement.Element("referencenumber")?.Value ?? "",
+                            Title = jobElement.Element("title")?.Value ?? "",
+                            CompanyName = jobElement.Element("company")?.Value ?? "",
+                            Url = jobElement.Element("url")?.Value ?? "",
+                            Country = jobElement.Element("country")?.Value,
+                            Category = jobElement.Element("category")?.Value ?? "",
+                            JobType = jobElement.Element("jobtype")?.Value ?? "",
+                            Description = jobElement.Element("description")?.Value ?? "",
+                            BriefDescription =
+                                jobElement.Element("brief_job_description")?.Value ?? "",
+                            PublishedAt = ParseDate(jobElement.Element("date")?.Value),
+                            CreatedAt = DateTime.UtcNow,
+                            UpdatedAt = DateTime.UtcNow,
+                            SeniorityLevel = ParseSeniority(jobElement.Element("seniority")?.Value),
+                        };
+                        var salary = ParseSalary(jobElement.Element("salary")?.Value);
+                        offer.SalaryMin = salary.Min;
+                        offer.SalaryMax = salary.Max;
+                        offer.SalaryCurrency = salary.Currency;
+                        offer.SalaryPeriod = salary.Period;
+                        offer.Locations = ParseLocations(
+                            jobElement.Element("city")?.Value,
+                            offer.Id
+                        );
+                        offer.Skills = ParseSkills(
+                            jobElement.Element("description")?.Value,
+                            offer.Id
+                        );
+                    }
+                    catch (Exception ex)
+                    {
+                        _logger.LogWarning(
+                            ex,
+                            "Nie udało się sparsować oferty pracy {ReferenceNumber} z NoFluffJobs",
+                            referenceNumber
+                        );
+                    }
+
+                    if (offer is not null)
+                        yield return offer;
+                }
             }
-            return result;
         }
 
         private SeniorityLevel ParseSeniority(string? seniorityText)
