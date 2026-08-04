@@ -16,13 +16,15 @@ namespace VocareWebAPI.JobOffers.Controllers
         private readonly IJobOfferMatchingService _matchingService;
         private readonly ISkillMatchingService _skillMatchingService;
         private readonly ISkillEmbeddingService _skillEmbeddingService;
+        private readonly IJobOfferDetailsService _jobOfferDetailsService;
 
         public JobOffersController(
             IJobOfferSyncService syncService,
             IJobOfferRepository repository,
             IJobOfferMatchingService matchingService,
             ISkillMatchingService skillMatchingService,
-            ISkillEmbeddingService skillEmbeddingService
+            ISkillEmbeddingService skillEmbeddingService,
+            IJobOfferDetailsService jobOfferDetailsService
         )
         {
             _syncService = syncService;
@@ -30,6 +32,7 @@ namespace VocareWebAPI.JobOffers.Controllers
             _matchingService = matchingService;
             _skillMatchingService = skillMatchingService;
             _skillEmbeddingService = skillEmbeddingService;
+            _jobOfferDetailsService = jobOfferDetailsService;
         }
 
         [Authorize]
@@ -156,6 +159,14 @@ namespace VocareWebAPI.JobOffers.Controllers
                 limit
             );
             return Ok(result);
+        }
+
+        [Authorize]
+        [HttpGet("{id:guid}")]
+        public async Task<ActionResult<JobOfferDetailsDto>> GetJobOfferDetails(Guid id)
+        {
+            var jobOfferDetails = await _jobOfferDetailsService.GetDetailsByIdAsync(id);
+            return Ok(jobOfferDetails);
         }
 
         #region DO USUNIĘCIA PO PRZEROBIENIU BACKFILLA SKILL EMBEDDINGÓW
