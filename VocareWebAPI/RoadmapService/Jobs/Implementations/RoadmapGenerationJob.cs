@@ -41,7 +41,7 @@ namespace VocareWebAPI.RoadmapService.Jobs.Implementations
             if (roadmap == null)
                 throw new RoadmapNotFoundException(roadmapId);
 
-            // Idempotency check, sprawdzamy czy wygenerowana, lub w trakcie generowania
+            // Idempotency check, sprawdzamy czy wygenerowana, lub w trakcie generowania przez inny proces
             if (roadmap.GenerationStatus is GenerationStatus.Ready or GenerationStatus.Generating)
                 return;
 
@@ -120,8 +120,9 @@ namespace VocareWebAPI.RoadmapService.Jobs.Implementations
             }
             catch (Exception ex)
             {
-                var retryCount = context.GetJobParameter<int>("RetryCount");
-                bool isFinalAttempt = retryCount >= 1;
+                var retryCount = context?.GetJobParameter<int>("RetryCount") ?? 0;
+                const int maxRetries = 1;
+                bool isFinalAttempt = retryCount >= maxRetries;
 
                 if (isFinalAttempt)
                 {
@@ -138,6 +139,13 @@ namespace VocareWebAPI.RoadmapService.Jobs.Implementations
                         relatedEntityId: roadmap.Id
                     );
                 }
+                else
+                {
+                    roadmap.GenerationStatus = GenerationStatus.Pending;
+                    roadmap.UpdatedAt = DateTime.UtcNow;
+                    await _roadmapRepository.UpdateAsync(roadmap);
+                }
+
                 if (ex is DomainException)
                     throw;
 
