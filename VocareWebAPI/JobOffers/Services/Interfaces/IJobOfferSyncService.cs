@@ -23,5 +23,6 @@ namespace VocareWebAPI.JobOffers.Services.Interfaces
         public int Updated { get; set; }
         public int Failed { get; set; }
         public int Total { get; set; }
+        public int Skipped { get; set; }
     }
 }
