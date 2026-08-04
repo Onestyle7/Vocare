@@ -1,4 +1,4 @@
-export type RoadmapStatus = 'Generating' | 'Draft' | 'Active' | 'Completed' | 'Archived';
+export type RoadmapStatus = 'Generating' | 'Draft' | 'Active' | 'Completed' | 'Archived' | 'Failed';
 export type StepStatus = 'NotStarted' | 'InProgress' | 'Completed';
 export type StepType = 'Required' | 'Optional';
 
