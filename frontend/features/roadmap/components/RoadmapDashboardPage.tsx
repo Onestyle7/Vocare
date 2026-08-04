@@ -67,7 +67,12 @@ const formatRoadmapLimitNoun = (count: number) => {
   return 'roadmap';
 };
 
-const formatRoadmapStatusLabel = (status: RoadmapListItemDto['status']) => {
+const formatRoadmapStatusLabel = (
+  status: RoadmapListItemDto['status'],
+  generationStatus?: string
+) => {
+  if (generationStatus === 'Failed') return 'Błąd generacji';
+
   switch (status) {
     case 'Generating':
       return 'Generowanie...';
@@ -355,139 +360,196 @@ export default function RoadmapDashboardPage({
                   />
                 ) : (
                   <>
-                    {visibleRoadmaps.map((roadmap) => (
-                      <Link
-                        key={roadmap.id}
-                        href={
-                          roadmap.generationStatus === 'Generating' ||
-                          roadmap.generationStatus === 'Pending'
-                            ? '#'
-                            : `/roadmap/${roadmap.id}`
-                        }
-                        className={cn(
-                          'block min-w-0',
-                          (roadmap.generationStatus === 'Generating' ||
-                            roadmap.generationStatus === 'Pending') &&
-                            'pointer-events-none opacity-60'
-                        )}
-                      >
-                        <div className="group bg-background flex h-[400px] min-w-0 flex-col gap-2 overflow-hidden rounded-xl border p-3 transition-shadow hover:shadow-lg md:p-4">
-                          <div className="flex h-full min-w-0 flex-col rounded-md border">
-                            <div className="bg-muted group relative mb-2 h-1/2 rounded-tl-md rounded-tr-md">
-                              <div className="absolute top-0 right-0 p-2">
-                                <div className="flex flex-col items-end gap-2">
-                                  <Badge className="font-poppins rounded-[7px] border border-white/60 bg-white/90 px-2.5 py-1 text-slate-800 shadow-none backdrop-blur-sm hover:bg-white">
-                                    {roadmap.timeHorizonMonths} mies.
-                                  </Badge>
-                                  <Badge
-                                    variant="secondary"
-                                    className="font-poppins rounded-[7px] border border-white/60 bg-white/85 px-2.5 py-1 text-slate-700 shadow-none backdrop-blur-sm hover:bg-white"
-                                  >
-                                    {formatRoadmapStatusLabel(roadmap.status)}
-                                  </Badge>
-                                </div>
-                              </div>
+                    {visibleRoadmaps.map((roadmap) => {
+                      const isFailed = roadmap.generationStatus === 'Failed';
+                      const isGeneratingOrPending =
+                        roadmap.generationStatus === 'Generating' ||
+                        roadmap.generationStatus === 'Pending';
+                      const isBlocked = isFailed || isGeneratingOrPending;
 
-                              <div className="absolute top-0 left-0 p-2">
-                                <AlertDialog
-                                  open={deleteDialogRoadmapId === roadmap.id}
-                                  onOpenChange={(open) =>
-                                    setDeleteDialogRoadmapId(open ? roadmap.id : null)
-                                  }
-                                >
-                                  <AlertDialogTrigger asChild>
-                                    <button
-                                      type="button"
-                                      onClick={(event) => {
-                                        event.preventDefault();
-                                        event.stopPropagation();
-                                        setDeleteDialogRoadmapId(roadmap.id);
-                                      }}
-                                      disabled={deletingRoadmapId === roadmap.id}
-                                      className="flex h-9 w-9 cursor-pointer items-center justify-center rounded border border-white/20 bg-white/30 p-2 text-white opacity-100 shadow-md backdrop-blur-md transition-all hover:bg-red-500/80 disabled:cursor-not-allowed disabled:opacity-100 md:h-10 md:w-10 md:opacity-0 md:group-hover:opacity-100"
+                      const failureReasonText =
+                        roadmap.failureReason && roadmap.failureReason.trim().length > 0
+                          ? roadmap.failureReason
+                          : 'Generowanie nie powiodło się - usuń roadmapę i spróbuj ponownie';
+
+                      return (
+                        <Link
+                          key={roadmap.id}
+                          href={isBlocked ? '#' : `/roadmap/${roadmap.id}`}
+                          onClick={(e) => {
+                            if (isBlocked) {
+                              e.preventDefault();
+                            }
+                          }}
+                          className={cn(
+                            'block min-w-0',
+                            isBlocked ? 'cursor-not-allowed' : 'cursor-pointer'
+                          )}
+                        >
+                          <div
+                            className={cn(
+                              'group bg-background flex h-[400px] min-w-0 flex-col gap-2 overflow-hidden rounded-xl border p-3 transition-shadow md:p-4',
+                              !isBlocked && 'hover:shadow-lg',
+                              isFailed &&
+                                'border-rose-300 bg-rose-50/20 dark:border-rose-900/50 dark:bg-rose-950/20',
+                              isGeneratingOrPending && 'opacity-60'
+                            )}
+                          >
+                            <div className="flex h-full min-w-0 flex-col rounded-md border">
+                              <div className="bg-muted group relative mb-2 h-1/2 rounded-tl-md rounded-tr-md">
+                                <div className="absolute top-0 right-0 p-2">
+                                  <div className="flex flex-col items-end gap-2">
+                                    {!isFailed && (
+                                      <Badge className="font-poppins rounded-[7px] border border-white/60 bg-white/90 px-2.5 py-1 text-slate-800 shadow-none backdrop-blur-sm hover:bg-white">
+                                        {roadmap.timeHorizonMonths} mies.
+                                      </Badge>
+                                    )}
+                                    <Badge
+                                      variant={isFailed ? 'destructive' : 'secondary'}
+                                      className={cn(
+                                        'font-poppins rounded-[7px] px-2.5 py-1 shadow-none backdrop-blur-sm',
+                                        isFailed
+                                          ? 'border border-rose-600 bg-rose-500 text-white hover:bg-rose-600'
+                                          : 'border border-white/60 bg-white/85 text-slate-700 hover:bg-white'
+                                      )}
                                     >
-                                      <Trash2
-                                        size={16}
-                                        className="transition-all hover:scale-110"
-                                      />
-                                    </button>
-                                  </AlertDialogTrigger>
+                                      {formatRoadmapStatusLabel(
+                                        roadmap.status,
+                                        roadmap.generationStatus
+                                      )}
+                                    </Badge>
+                                  </div>
+                                </div>
 
-                                  <AlertDialogContent className="font-grotesk border-white/10 bg-[#0b1016] text-white shadow-[0_24px_80px_-32px_rgba(0,0,0,0.65)]">
-                                    <AlertDialogHeader>
-                                      <AlertDialogTitle className="text-white">
-                                        Usunąć roadmapę?
-                                      </AlertDialogTitle>
-                                      <AlertDialogDescription className="text-white/60">
-                                        Ta akcja nie może być cofnięta.
-                                      </AlertDialogDescription>
-                                    </AlertDialogHeader>
-                                    <AlertDialogFooter>
-                                      <AlertDialogCancel
+                                <div className="absolute top-0 left-0 z-10 p-2">
+                                  <AlertDialog
+                                    open={deleteDialogRoadmapId === roadmap.id}
+                                    onOpenChange={(open) =>
+                                      setDeleteDialogRoadmapId(open ? roadmap.id : null)
+                                    }
+                                  >
+                                    <AlertDialogTrigger asChild>
+                                      <button
+                                        type="button"
                                         onClick={(event) => {
                                           event.preventDefault();
                                           event.stopPropagation();
-                                          setDeleteDialogRoadmapId(null);
+                                          setDeleteDialogRoadmapId(roadmap.id);
                                         }}
-                                        className="border-white/10 bg-white/[0.03] text-white/75 hover:bg-white/[0.06] hover:text-white"
+                                        disabled={deletingRoadmapId === roadmap.id}
+                                        className={cn(
+                                          'flex h-9 w-9 cursor-pointer items-center justify-center rounded border p-2 text-white shadow-md backdrop-blur-md transition-all disabled:cursor-not-allowed disabled:opacity-100 md:h-10 md:w-10',
+                                          isFailed
+                                            ? 'border-rose-400 bg-rose-500 opacity-100 hover:bg-rose-600'
+                                            : 'border-white/20 bg-white/30 opacity-100 hover:bg-red-500/80 md:opacity-0 md:group-hover:opacity-100'
+                                        )}
                                       >
-                                        Zachowaj roadmapę
-                                      </AlertDialogCancel>
-                                      <AlertDialogAction
-                                        className="bg-red-500 text-white hover:bg-red-400"
-                                        onClick={(event) => {
-                                          event.stopPropagation();
-                                          void handleDeleteRoadmap(roadmap.id);
-                                        }}
-                                      >
-                                        Tak, chcę usunąć
-                                      </AlertDialogAction>
-                                    </AlertDialogFooter>
-                                  </AlertDialogContent>
-                                </AlertDialog>
-                              </div>
+                                        <Trash2
+                                          size={16}
+                                          className="transition-all hover:scale-110"
+                                        />
+                                      </button>
+                                    </AlertDialogTrigger>
 
-                              <div className="flex h-full min-w-0 flex-col items-center justify-center overflow-hidden px-4 md:px-5">
-                                <Layers3 className="text-muted-foreground/50 h-56 w-56 translate-y-[65%] transition-all group-hover:translate-y-[50%] md:h-72 md:w-72" />
+                                    <AlertDialogContent className="font-grotesk border-white/10 bg-[#0b1016] text-white shadow-[0_24px_80px_-32px_rgba(0,0,0,0.65)]">
+                                      <AlertDialogHeader>
+                                        <AlertDialogTitle className="text-white">
+                                          Usunąć roadmapę?
+                                        </AlertDialogTitle>
+                                        <AlertDialogDescription className="text-white/60">
+                                          Ta akcja nie może być cofnięta.
+                                        </AlertDialogDescription>
+                                      </AlertDialogHeader>
+                                      <AlertDialogFooter>
+                                        <AlertDialogCancel
+                                          onClick={(event) => {
+                                            event.preventDefault();
+                                            event.stopPropagation();
+                                            setDeleteDialogRoadmapId(null);
+                                          }}
+                                          className="border-white/10 bg-white/[0.03] text-white/75 hover:bg-white/[0.06] hover:text-white"
+                                        >
+                                          Zachowaj roadmapę
+                                        </AlertDialogCancel>
+                                        <AlertDialogAction
+                                          className="bg-red-500 text-white hover:bg-red-400"
+                                          onClick={(event) => {
+                                            event.stopPropagation();
+                                            void handleDeleteRoadmap(roadmap.id);
+                                          }}
+                                        >
+                                          Tak, chcę usunąć
+                                        </AlertDialogAction>
+                                      </AlertDialogFooter>
+                                    </AlertDialogContent>
+                                  </AlertDialog>
+                                </div>
 
-                                <div className="mt-5 w-full">
-                                  <div className="bg-muted mt-3 h-2 rounded-full">
-                                    <div
-                                      className="bg-foreground h-full rounded-full"
-                                      style={{ width: `${roadmap.progress}%` }}
-                                    />
+                                <div className="flex h-full min-w-0 flex-col items-center justify-center overflow-hidden px-4 md:px-5">
+                                  <Layers3 className="text-muted-foreground/50 h-56 w-56 translate-y-[65%] transition-all group-hover:translate-y-[50%] md:h-72 md:w-72" />
+
+                                  <div className="mt-5 w-full">
+                                    <div className="bg-muted mt-3 h-2 rounded-full">
+                                      <div
+                                        className="bg-foreground h-full rounded-full"
+                                        style={{ width: `${roadmap.progress}%` }}
+                                      />
+                                    </div>
                                   </div>
                                 </div>
                               </div>
-                            </div>
 
-                            <div className="min-w-0 flex-1 p-3 md:p-4">
-                              <h3 className="line-clamp-2 text-base font-semibold break-words md:text-xl">
-                                {roadmap.title}
-                              </h3>
-                              <p className="text-muted-foreground mt-1 line-clamp-2 text-sm break-words">
-                                {roadmap.careerPathName}
-                              </p>
-                            </div>
-
-                            <Separator className="w-full" />
-
-                            <div className="flex min-h-[72px] min-w-0 items-center justify-between gap-3 p-3 md:p-4">
-                              <Button size="sm" className="shrink-0">
-                                Otwórz
-                              </Button>
-
-                              <div className="text-muted-foreground flex min-w-0 items-center gap-2">
-                                <Clock className="h-4 w-4 shrink-0" />
-                                <p className="min-w-0 text-sm font-semibold break-words">
-                                  Utworzono {formatDate(roadmap.createdAt)}
+                              <div className="min-w-0 flex-1 p-3 md:p-4">
+                                <h3 className="line-clamp-1 text-base font-semibold break-words md:text-xl">
+                                  {!isFailed && roadmap.title}
+                                </h3>
+                                <p className="text-muted-foreground mt-0.5 line-clamp-1 text-sm break-words">
+                                  {roadmap.careerPathName}
                                 </p>
+
+                                {isFailed && (
+                                  <div className="mt-2 rounded-lg border border-rose-200 bg-rose-50 p-2 dark:border-rose-900/60 dark:bg-rose-950/40">
+                                    <p className="line-clamp-2 text-xs leading-relaxed font-medium text-rose-700 dark:text-rose-300">
+                                      {failureReasonText}
+                                    </p>
+                                  </div>
+                                )}
+                              </div>
+
+                              <Separator className="w-full" />
+
+                              <div className="flex min-h-[72px] min-w-0 items-center justify-between gap-3 p-3 md:p-4">
+                                {isFailed ? (
+                                  <Button
+                                    size="sm"
+                                    variant="destructive"
+                                    disabled
+                                    className="shrink-0 cursor-not-allowed opacity-80"
+                                  >
+                                    Błąd
+                                  </Button>
+                                ) : (
+                                  <Button
+                                    size="sm"
+                                    className="shrink-0"
+                                    disabled={isGeneratingOrPending}
+                                  >
+                                    Otwórz
+                                  </Button>
+                                )}
+
+                                <div className="text-muted-foreground flex min-w-0 items-center gap-2">
+                                  <Clock className="h-4 w-4 shrink-0" />
+                                  <p className="min-w-0 text-sm font-semibold break-words">
+                                    Utworzono {formatDate(roadmap.createdAt)}
+                                  </p>
+                                </div>
                               </div>
                             </div>
                           </div>
-                        </div>
-                      </Link>
-                    ))}
+                        </Link>
+                      );
+                    })}
                   </>
                 )}
               </div>
