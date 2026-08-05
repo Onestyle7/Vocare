@@ -11,15 +11,37 @@ import {
   CvLimits,
   CvListItemDto,
   GenerateCvFromProfileDto,
+  TailorCvDto,
   UpdateCvDto,
 } from './api';
 import { normalizeCvDto } from './cvNormalization';
 
 export type CvDomainError = BaseAppError<
-  'Unauthorized' | 'NotFound' | 'InvalidOperation' | 'GenericApiError'
+  | 'Unauthorized'
+  | 'NotFound'
+  | 'InvalidOperation'
+  | 'CvLimitReached'
+  | 'InsufficientTokens'
+  | 'GenericApiError'
 >;
 
 const mapCvError = (error: ApiError): CvDomainError => {
+  if (error.details?.errorCode === 'CV_LIMIT_REACHED') {
+    return {
+      type: 'CvLimitReached',
+      message: 'Osiągnięto limit CV dla Twojego planu',
+      details: error.details,
+    };
+  }
+
+  if (error.details?.errorCode === 'INSUFFICIENT_TOKENS') {
+    return {
+      type: 'InsufficientTokens',
+      message: 'Masz za mało tokenów, aby wykonać tę operację',
+      details: error.details,
+    };
+  }
+
   switch (error.type) {
     case 'UnauthorizedError':
       return {
@@ -46,7 +68,9 @@ const mapCvError = (error: ApiError): CvDomainError => {
 
 const normalizeDetails = (data: CvDetailsDto): CvDetailsDto => ({
   ...data,
+  targetPosition: data.targetPosition ?? undefined,
   cvData: normalizeCvDto(data.cvData),
+  notes: data.notes ?? undefined,
 });
 
 export async function getUserCvsService(
@@ -109,6 +133,19 @@ export async function GenerateCvFromProfileService(
 ): Promise<Result<CvDetailsDto, CvDomainError>> {
   const result = await cvApiClient.post<CvDetailsDto, GenerateCvFromProfileDto>(
     'generate-from-profile',
+    payload,
+    requestOptions
+  );
+
+  return result.map((response) => normalizeDetails(response.data)).mapErr(mapCvError);
+}
+
+export async function tailorCvService(
+  payload: TailorCvDto,
+  requestOptions?: RequestInit
+): Promise<Result<CvDetailsDto, CvDomainError>> {
+  const result = await cvApiClient.post<CvDetailsDto, TailorCvDto>(
+    'tailor',
     payload,
     requestOptions
   );

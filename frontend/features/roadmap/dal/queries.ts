@@ -29,6 +29,8 @@ export async function getUserRoadmapsQuery() {
         case 'NotFound':
         case 'InvalidOperation':
         case 'DuplicateRoadmap':
+        case 'RoadmapLimitReached':
+        case 'InsufficientTokens':
         case 'GenericApiError':
           return actionErr(error);
         default:
@@ -61,6 +63,8 @@ export async function getRoadmapByIdQuery(roadmapId: string) {
         case 'InvalidOperation':
         case 'GenericApiError':
         case 'DuplicateRoadmap':
+        case 'RoadmapLimitReached':
+        case 'InsufficientTokens':
           return actionErr(error);
         default:
           throw new Error(`ERROR: ${error.type satisfies never}`);

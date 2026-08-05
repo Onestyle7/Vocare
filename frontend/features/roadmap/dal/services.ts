@@ -5,6 +5,7 @@ import { ApiError } from '@/lib/api/api-client';
 import { BaseAppError } from '@/lib/types/result';
 
 import {
+  GenerateRoadmapAcceptedDto,
   GenerateRoadmapPayload,
   roadmapApiClient,
   RoadmapDetailsDto,
@@ -16,10 +17,40 @@ import {
 } from './api';
 
 export type RoadmapDomainError = BaseAppError<
-  'Unauthorized' | 'NotFound' | 'InvalidOperation' | 'GenericApiError' | 'DuplicateRoadmap'
+  | 'Unauthorized'
+  | 'NotFound'
+  | 'InvalidOperation'
+  | 'GenericApiError'
+  | 'DuplicateRoadmap'
+  | 'RoadmapLimitReached'
+  | 'InsufficientTokens'
 >;
 
 const mapRoadmapError = (error: ApiError): RoadmapDomainError => {
+  if (error.details?.errorCode === 'INSUFFICIENT_TOKENS') {
+    return {
+      type: 'InsufficientTokens',
+      message: 'Masz za mało tokenów, aby wygenerować roadmapę.',
+      details: error.details,
+    };
+  }
+
+  if (error.details?.errorCode === 'ROADMAP_LIMIT_REACHED') {
+    return {
+      type: 'RoadmapLimitReached',
+      message: 'Osiągnięto limit roadmap dla Twojego planu.',
+      details: error.details,
+    };
+  }
+
+  if (error.details?.errorCode === 'DUPLICATE_ROADMAP') {
+    return {
+      type: 'DuplicateRoadmap',
+      message: 'Posiadasz już roadmapę dla tej ścieżki zawodowej.',
+      details: error.details,
+    };
+  }
+
   if (error.type === 'UnauthorizedError') {
     return {
       type: 'Unauthorized',
@@ -30,8 +61,8 @@ const mapRoadmapError = (error: ApiError): RoadmapDomainError => {
 
   if (error.type === 'ConflictError') {
     return {
-      type: 'DuplicateRoadmap',
-      message: 'Posiadasz już roadmapę dla tej ścieżki zawodowej.',
+      type: 'InvalidOperation',
+      message: 'Stan roadmapy nie pozwala wykonać tej operacji.',
       details: error.details,
     };
   }
@@ -69,8 +100,8 @@ export async function getUserRoadmapsService(
 export async function generateRoadmapService(
   payload: GenerateRoadmapPayload,
   requestOptions?: RequestInit
-): Promise<Result<RoadmapDetailsDto, RoadmapDomainError>> {
-  const result = await roadmapApiClient.post<RoadmapDetailsDto, GenerateRoadmapPayload>(
+): Promise<Result<GenerateRoadmapAcceptedDto, RoadmapDomainError>> {
+  const result = await roadmapApiClient.post<GenerateRoadmapAcceptedDto, GenerateRoadmapPayload>(
     '/generate',
     payload,
     requestOptions

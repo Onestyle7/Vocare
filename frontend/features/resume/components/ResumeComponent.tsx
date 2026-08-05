@@ -31,6 +31,7 @@ import {
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 import React, { useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react';
+import { toast } from 'sonner';
 
 import { HoverCard, HoverCardContent, HoverCardTrigger } from '@/components/ui/hover-card';
 import {
@@ -40,11 +41,10 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
-import { ai_magic } from '@/features/marketing/constants';
 import { download_propfile_cv, offer_type } from '@/features/marketing/constants';
 import { useAutosave } from '@/lib/hooks/useAutosave';
 import { useIsMobile } from '@/lib/hooks/useIsMobile';
-import { CvDetailsDto, CvDto, UpdateCvDto } from '@/lib/types/cv';
+import { CvDetailsDto, CvDto, CvLimits } from '@/lib/types/cv';
 import { getEducationDegreeLabel } from '@/lib/types/profile';
 import { FLUENCY_OPTIONS, getFluencyLabel, normalizeFluency } from '@/lib/utils/normalizeFluency';
 import { makeSocialLinkId, SOCIAL_LINK_SUGGESTIONS } from '@/lib/utils/socialLinks';
@@ -58,6 +58,11 @@ import { RESUME_PREVIEW_LABELS, type ResumePreviewLanguage } from '../constants'
 import { useResumeDetailsActions } from '../hooks/useResumeDetailsActions';
 import { CvAnalysisDrawer } from './CvAnalysisDrawer';
 import { DatePickerWithCurrent } from './DatePickerWithCurrent';
+import { ResumeAnalysisPromoButton } from './ResumeAnalysisPromoButton';
+import TailorCvFromEditorDialog, {
+  TailorCvMode,
+  TailorCvSubmitResult,
+} from './TailorCvFromEditorDialog';
 
 interface PersonalInfo {
   firstName: string;
@@ -137,6 +142,7 @@ interface PrivacyStatement {
 
 interface CVCreatorProps {
   initialCv?: CvDetailsDto;
+  initialLimits?: CvLimits | null;
 }
 interface SocialLink {
   id: string;
@@ -326,9 +332,15 @@ const ensureCertificateDefaults = (cert: Partial<Certificate>): Certificate => (
   hasDate: cert.hasDate ?? Boolean(cert.date),
 });
 
-const CVCreator: React.FC<CVCreatorProps> = ({ initialCv }) => {
+const CVCreator: React.FC<CVCreatorProps> = ({ initialCv, initialLimits = null }) => {
   const router = useRouter();
-  const { handleAutosave, handleManualSave, handleLoadFromProfile } = useResumeDetailsActions();
+  const {
+    handleAutosave,
+    handleGetCvLimits,
+    handleLoadFromProfile,
+    handleCreateTailoredCopy,
+    handleReplaceWithTailoredCv,
+  } = useResumeDetailsActions();
   const [personalInfo, setPersonalInfo] = useState<PersonalInfo>(() => {
     const saved = localStorage.getItem('personalInfo');
     if (!saved) {
@@ -356,12 +368,20 @@ const CVCreator: React.FC<CVCreatorProps> = ({ initialCv }) => {
     }
   });
 
-  const [skipAutosaveOnce, setSkipAutosaveOnce] = useState(false);
   const [isPremium] = useState(false);
   const [cvId, setCvId] = useState<string | null>(initialCv?.id ?? null);
   const [isAnalysisOpen, setIsAnalysisOpen] = useState(false);
+  const [isTailorDialogOpen, setIsTailorDialogOpen] = useState(false);
+  const [isTailoring, setIsTailoring] = useState(false);
+  const [isCheckingCvLimits, setIsCheckingCvLimits] = useState(false);
+  const [isLoadingProfile, setIsLoadingProfile] = useState(false);
+  const [isManualSaving, setIsManualSaving] = useState(false);
+  const [cvLimits, setCvLimits] = useState<CvLimits | null>(initialLimits);
   const [highlightedFormSection, setHighlightedFormSection] = useState<string | null>(null);
   const [resumeName] = useState<string>(initialCv?.name ?? 'New Resume');
+  const pendingAutosaveHydrationRef = useRef<'saved' | 'needs-save' | null>(null);
+  const editorOperationRef = useRef<'save' | 'profile' | 'tailor' | null>(null);
+  const limitsRequestRef = useRef(0);
   const isMobile = useIsMobile();
 
   // Pagination (computed from measured pages)
@@ -1541,16 +1561,32 @@ const CVCreator: React.FC<CVCreatorProps> = ({ initialCv }) => {
     await handleAutosave(payload);
   };
 
-  const { status: autosaveStatus, trigger } = useAutosave({
+  const {
+    status: autosaveStatus,
+    trigger,
+    pause: pauseAutosave,
+    flush: flushAutosave,
+    resume: resumeAutosave,
+    reset: resetAutosave,
+  } = useAutosave({
     value: autosavePayload,
     enabled: canAutosave,
     delay: 2000, // 2s od ostatniej zmiany
-    skipOnce: skipAutosaveOnce, // flaga ustawiana po "Load profile"
-    onSkipConsumed: () => setSkipAutosaveOnce(false),
   });
 
   useEffect(() => {
     if (!canAutosave) return;
+
+    const pendingHydration = pendingAutosaveHydrationRef.current;
+    if (pendingHydration) {
+      pendingAutosaveHydrationRef.current = null;
+      if (pendingHydration === 'saved') {
+        resetAutosave(autosavePayload);
+      }
+      resumeAutosave();
+      return;
+    }
+
     trigger(autosaveFn);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [
@@ -1567,20 +1603,167 @@ const CVCreator: React.FC<CVCreatorProps> = ({ initialCv }) => {
     resumeName,
   ]);
 
-  const handleSave = async () => {
-    if (!cvId) return;
+  const handleTailorCvFromEditor = async (
+    values: { targetPosition: string; jobDescription: string },
+    mode: TailorCvMode
+  ): Promise<TailorCvSubmitResult> => {
+    if (!cvId) {
+      toast.error('Nie znaleziono aktualnie otwartego CV');
+      return 'error';
+    }
 
-    const payload: UpdateCvDto = {
-      id: cvId,
-      name: resumeName,
-      targetPosition: personalInfo.profession || undefined,
-      cvData: buildCvDto(),
-    };
+    if (editorOperationRef.current) {
+      toast.info('Poczekaj na zakończenie trwającej operacji');
+      return 'error';
+    }
+
+    editorOperationRef.current = 'tailor';
+    setIsTailoring(true);
+    pauseAutosave();
 
     try {
-      await handleManualSave(payload);
+      await flushAutosave(autosaveFn);
+
+      if (mode === 'copy') {
+        const result = await handleCreateTailoredCopy({
+          sourceCv: buildCvDto(),
+          targetPosition: values.targetPosition,
+          jobDescription: values.jobDescription,
+        });
+
+        if (result.status === 'limit-reached') {
+          resumeAutosave();
+          return 'limit-reached';
+        }
+
+        if (result.status === 'insufficient-tokens') {
+          resumeAutosave();
+          router.refresh();
+          if (result.cleanupFailed) {
+            toast.warning('Sprawdź listę swoich CV', {
+              description:
+                'Nie pobrano tokenów, ale utworzona kopia może nadal zajmować miejsce na Twoim koncie.',
+            });
+          }
+          return 'insufficient-tokens';
+        }
+
+        if (result.status === 'error') {
+          resumeAutosave();
+          router.refresh();
+          toast.error('Nie udało się utworzyć CV pod ofertę', {
+            description: result.cleanupFailed
+              ? 'Utworzona kopia może nadal zajmować miejsce. Sprawdź listę CV na dashboardzie.'
+              : 'Bazowe CV nie zostało zastąpione. Przed ponowną próbą sprawdź listę CV.',
+          });
+          return 'error';
+        }
+
+        setIsTailorDialogOpen(false);
+        toast.success('Utworzono CV pod ofertę', {
+          description: 'Bazowe CV nadal jest dostępne jako osobny dokument.',
+        });
+        resumeAutosave();
+        router.push(`/resume/${result.cv.id}`);
+        return 'success';
+      }
+
+      const result = await handleReplaceWithTailoredCv({
+        cvId,
+        resumeName,
+        targetPosition: values.targetPosition,
+        jobDescription: values.jobDescription,
+      });
+
+      if (result.status === 'insufficient-tokens') {
+        if (result.latestCv) {
+          pendingAutosaveHydrationRef.current = 'saved';
+          populateFromCv(result.latestCv.cvData, result.latestCv.targetPosition ?? '');
+        } else {
+          toast.error('Nie udało się potwierdzić stanu CV', {
+            description: 'Odświeżamy kreator, aby nie nadpisać nowszej treści.',
+          });
+          window.location.reload();
+          return 'error';
+        }
+        router.refresh();
+        return 'insufficient-tokens';
+      }
+
+      if (result.status === 'error') {
+        router.refresh();
+        if (result.latestCv) {
+          pendingAutosaveHydrationRef.current = 'saved';
+          populateFromCv(result.latestCv.cvData, result.latestCv.targetPosition ?? '');
+          setIsTailorDialogOpen(false);
+          toast.error('Nie udało się potwierdzić całej operacji', {
+            description:
+              'Wczytaliśmy ostatni stan CV z serwera. Sprawdź jego treść przed ponowną próbą.',
+          });
+        } else {
+          toast.error('Nie udało się potwierdzić stanu CV', {
+            description: 'Odświeżamy kreator, aby nie nadpisać nowszej treści.',
+          });
+          window.location.reload();
+        }
+        return 'error';
+      }
+
+      pendingAutosaveHydrationRef.current = result.metadataSaved ? 'saved' : 'needs-save';
+      populateFromCv(result.cv.cvData, values.targetPosition);
+      setIsTailorDialogOpen(false);
+      toast.success('CV zostało dopasowane pod ofertę', {
+        description: 'Poprzednia wersja aktualnego CV została zastąpiona.',
+      });
+
+      if (!result.metadataSaved) {
+        toast.warning('Spróbujemy zapisać stanowisko automatycznie', {
+          description: 'Treść CV została już poprawnie dopasowana.',
+        });
+      }
+
+      return 'success';
+    } catch (error) {
+      resumeAutosave();
+      router.refresh();
+      console.error('Failed to prepare CV for tailoring', error);
+      toast.error('Nie udało się zakończyć operacji', {
+        description: 'Odśwież listę CV i sprawdź dane przed ponowną próbą.',
+      });
+      return 'error';
+    } finally {
+      editorOperationRef.current = null;
+      setIsTailoring(false);
+    }
+  };
+
+  const handleOpenTailorDialog = () => {
+    const requestId = ++limitsRequestRef.current;
+    setCvLimits(null);
+    setIsCheckingCvLimits(true);
+    setIsTailorDialogOpen(true);
+
+    void handleGetCvLimits().then((limits) => {
+      if (limitsRequestRef.current !== requestId) return;
+      setCvLimits(limits);
+      setIsCheckingCvLimits(false);
+    });
+  };
+
+  const handleSave = async () => {
+    if (!cvId || editorOperationRef.current) return;
+
+    editorOperationRef.current = 'save';
+    setIsManualSaving(true);
+    try {
+      await flushAutosave(autosaveFn);
+      toast.success('CV zostało zapisane');
     } catch (err) {
       console.error('Manual save failed', err);
+      toast.error('Nie udało się zapisać CV');
+    } finally {
+      editorOperationRef.current = null;
+      setIsManualSaving(false);
     }
   };
 
@@ -1643,23 +1826,31 @@ const CVCreator: React.FC<CVCreatorProps> = ({ initialCv }) => {
   };
 
   const loadFromProfile = async () => {
+    if (!cvId || editorOperationRef.current) return;
+
+    editorOperationRef.current = 'profile';
+    setIsLoadingProfile(true);
+    pauseAutosave();
+
     try {
-      if (!cvId) return;
+      await flushAutosave(autosaveFn);
 
       const generated = await handleLoadFromProfile(cvId, resumeName, personalInfo.profession);
 
-      // Wypełnij formularz danymi
+      pendingAutosaveHydrationRef.current = 'saved';
       populateFromCv(generated.cvData, generated.targetPosition || undefined);
-
-      // Pomiń JEDEN autosave (żeby nie zapisywać od razu po wczytaniu profilu)
-      setSkipAutosaveOnce(true);
     } catch (err) {
+      resumeAutosave();
       console.error('Failed to load from profile', err);
+    } finally {
+      editorOperationRef.current = null;
+      setIsLoadingProfile(false);
     }
   };
 
   useEffect(() => {
     if (initialCv) {
+      pendingAutosaveHydrationRef.current = 'saved';
       populateFromCv(initialCv.cvData, initialCv.targetPosition || undefined);
       setCvId(initialCv.id);
     }
@@ -3886,7 +4077,7 @@ const CVCreator: React.FC<CVCreatorProps> = ({ initialCv }) => {
       </div>
 
       {/* Sidebar for Desktop */}
-      <div className="mx-3 hidden w-16 flex-col items-center justify-between rounded-lg bg-white py-6 shadow-lg lg:flex">
+      <div className="relative z-30 mx-3 hidden w-16 shrink-0 flex-col items-center justify-between overflow-visible rounded-lg bg-white py-6 shadow-lg lg:flex">
         <div className="flex flex-col items-center gap-1">
           <button
             onClick={() => router.push('/dashboard/resume')}
@@ -3896,8 +4087,10 @@ const CVCreator: React.FC<CVCreatorProps> = ({ initialCv }) => {
             <Home size={24} className="text-gray-600" />
           </button>
           <button
+            type="button"
             onClick={handleSave}
-            className="flex cursor-pointer flex-col items-center justify-center rounded-lg p-3 transition-colors hover:bg-gray-100"
+            disabled={isManualSaving || isLoadingProfile || isTailoring}
+            className="flex cursor-pointer flex-col items-center justify-center rounded-lg p-3 transition-colors hover:bg-gray-100 disabled:cursor-not-allowed disabled:opacity-50"
             title="Save resume"
           >
             <Save size={16} className="h-6 w-6 text-gray-600" />
@@ -3907,15 +4100,7 @@ const CVCreator: React.FC<CVCreatorProps> = ({ initialCv }) => {
               {autosaveStatus === 'error' && <span className="text-red-500">Save failed</span>}
             </div>
           </button>
-          <button
-            onClick={() => setIsAnalysisOpen(true)}
-            className="flex cursor-pointer flex-col items-center justify-center rounded-lg p-3 text-gray-600 transition-colors hover:bg-[#915EFF]/10 hover:text-[#915EFF]"
-            title="Analiza jakości CV"
-            disabled={!cvId}
-          >
-            <Image src={ai_magic} width={26} height={26} alt="ai-analysys" />
-            <span className="mt-1 text-[9px]">Analiza</span>
-          </button>
+          <ResumeAnalysisPromoButton cvId={cvId} onAnalyze={() => setIsAnalysisOpen(true)} />
           <Select
             value={showFullDates ? 'full' : 'year'}
             onValueChange={(value) => setShowFullDates(value === 'full')}
@@ -3999,6 +4184,18 @@ const CVCreator: React.FC<CVCreatorProps> = ({ initialCv }) => {
         onNavigateToSection={handleNavigateToFormSection}
       />
 
+      <TailorCvFromEditorDialog
+        open={isTailorDialogOpen}
+        limits={cvLimits}
+        currentCvName={resumeName}
+        defaultTargetPosition={personalInfo.profession}
+        isCheckingLimits={isCheckingCvLimits}
+        isSubmitting={isTailoring}
+        onOpenChange={setIsTailorDialogOpen}
+        onSubmit={handleTailorCvFromEditor}
+        onUpgrade={() => router.push('/pricing')}
+      />
+
       {/* Main Content */}
       <div className="flex h-full flex-1 flex-col gap-3 overflow-hidden px-3 lg:flex-row lg:px-0">
         {!isMobile && (
@@ -4010,15 +4207,17 @@ const CVCreator: React.FC<CVCreatorProps> = ({ initialCv }) => {
                   <button
                     type="button"
                     onClick={loadFromProfile}
-                    className="flex cursor-pointer items-center justify-center gap-2 rounded-[6px] border-[1.5px] border-transparent px-4 py-2 text-sm font-medium whitespace-nowrap text-gray-900 [background:linear-gradient(#fff,#fff)_padding-box,linear-gradient(135deg,#9296FD_0%,#8491FE_50%,#9D9BFF_77%,#C7A9FE_100%)_border-box] hover:[background:linear-gradient(#F7F3FF,#F7F3FF)_padding-box,linear-gradient(135deg,#9296FD_0%,#8491FE_50%,#9D9BFF_77%,#C7A9FE_100%)_border-box] focus-visible:ring-2 focus-visible:ring-[#915EFF]/40 focus-visible:outline-none"
+                    disabled={isLoadingProfile || isTailoring || isManualSaving}
+                    className="flex cursor-pointer items-center justify-center gap-2 rounded-[6px] border-[1.5px] border-transparent px-4 py-2 text-sm font-medium whitespace-nowrap text-gray-900 [background:linear-gradient(#fff,#fff)_padding-box,linear-gradient(135deg,#9296FD_0%,#8491FE_50%,#9D9BFF_77%,#C7A9FE_100%)_border-box] hover:[background:linear-gradient(#F7F3FF,#F7F3FF)_padding-box,linear-gradient(135deg,#9296FD_0%,#8491FE_50%,#9D9BFF_77%,#C7A9FE_100%)_border-box] focus-visible:ring-2 focus-visible:ring-[#915EFF]/40 focus-visible:outline-none disabled:cursor-not-allowed disabled:opacity-50"
                   >
-                    Zaimportuj z profilu
+                    {isLoadingProfile ? 'Importowanie...' : 'Zaimportuj z profilu'}
                     <Image src={download_propfile_cv} width={14} height={14} alt="offer-icon" />
                   </button>
                   <button
                     type="button"
-                    onClick={() => router.push('/dashboard/resume?create=1')}
-                    className="flex cursor-pointer items-center justify-center gap-2 rounded-[6px] border-2 border-[#915EFF] bg-[#915EFF] px-4 py-2 text-sm font-medium whitespace-nowrap text-white transition-colors hover:border-[#713AE8] hover:bg-[#713AE8] focus-visible:ring-2 focus-visible:ring-[#915EFF]/40 focus-visible:ring-offset-2 focus-visible:outline-none"
+                    onClick={handleOpenTailorDialog}
+                    disabled={isTailoring || isLoadingProfile || isManualSaving}
+                    className="flex cursor-pointer items-center justify-center gap-2 rounded-[6px] border-2 border-[#915EFF] bg-[#915EFF] px-4 py-2 text-sm font-medium whitespace-nowrap text-white transition-colors hover:border-[#713AE8] hover:bg-[#713AE8] focus-visible:ring-2 focus-visible:ring-[#915EFF]/40 focus-visible:ring-offset-2 focus-visible:outline-none disabled:cursor-not-allowed disabled:opacity-50"
                     title="Stwórz CV na podstawie oferty pracy"
                   >
                     Stwórz CV pod ofertę

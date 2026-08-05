@@ -1,32 +1,20 @@
 'use client';
 
 import { ArrowRight, BarChart3, Plus } from 'lucide-react';
-import Image from 'next/image';
-import Link from 'next/link';
 import { useState } from 'react';
 
-import {
-  AlertDialog,
-  AlertDialogAction,
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle,
-} from '@/components/ui/alert-dialog';
 import { Button } from '@/components/ui/button';
 import { useTokenBalanceContext } from '@/features/billing/components/SubscriptionTokenProvider';
-import { star_generate } from '@/features/marketing/constants';
+import { MARKET_ANALYSIS_PRICE } from '@/features/billing/constants';
+import type { ServiceCostActionResult } from '@/features/billing/types';
 
 import { GridBackgroundDemo } from './GridBackgroundDemo';
-
-const GENERATE_PRICE = 50;
+import MarketAnalysisCostConfirmationDialog from './MarketAnalysisCostConfirmationDialog';
 
 interface NoMarketAnalysisStateProps {
   requiresCareerPaths?: boolean;
   onOpenAdvisor: () => void;
-  onGenerate: () => void;
+  onGenerate: () => Promise<ServiceCostActionResult>;
 }
 
 export default function NoMarketAnalysisState({
@@ -35,15 +23,8 @@ export default function NoMarketAnalysisState({
   onGenerate,
 }: NoMarketAnalysisStateProps) {
   const [isDialogOpen, setIsDialogOpen] = useState(false);
-  const { tokenBalance, hasActiveSubscription } = useTokenBalanceContext();
-
-  const hasEnoughTokens =
-    hasActiveSubscription || (typeof tokenBalance === 'number' && tokenBalance >= GENERATE_PRICE);
-
-  const handleConfirmGenerate = () => {
-    setIsDialogOpen(false);
-    onGenerate();
-  };
+  const { subscriptionStatus } = useTokenBalanceContext();
+  const hasUnlimitedAccess = subscriptionStatus === 'Active';
 
   return (
     <>
@@ -90,8 +71,10 @@ export default function NoMarketAnalysisState({
                         <Button className="gap-2" onClick={() => setIsDialogOpen(true)}>
                           <Plus className="h-4 w-4" />
                           Wygeneruj
-                          {!hasActiveSubscription && (
-                            <span className="text-xs opacity-70">• {GENERATE_PRICE} tokenów</span>
+                          {!hasUnlimitedAccess && (
+                            <span className="text-xs opacity-70">
+                              • {MARKET_ANALYSIS_PRICE} tokenów
+                            </span>
                           )}
                         </Button>
                       </>
@@ -104,58 +87,11 @@ export default function NoMarketAnalysisState({
         </div>
       </div>
 
-      <AlertDialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
-        <AlertDialogContent className="font-grotesk mx-auto max-w-sm">
-          <AlertDialogHeader>
-            <AlertDialogTitle className="text-center text-xl font-bold">
-              Wygenerować analizę rynku?
-            </AlertDialogTitle>
-            <AlertDialogDescription className="text-foreground text-center">
-              {!hasActiveSubscription ? (
-                <>
-                  Zostanie pobrane <b className="text-[#915EFF]">{GENERATE_PRICE} tokenów</b> z
-                  Twojego konta.
-                  {!hasEnoughTokens && (
-                    <p className="mt-2 text-sm text-red-500">
-                      Niewystarczające saldo ({tokenBalance}/{GENERATE_PRICE} tokenów)
-                    </p>
-                  )}
-                </>
-              ) : (
-                <p className="mx-auto max-w-xs">
-                  Jesteś na aktywnej subskrypcji, więc ta akcja nie wykorzysta żadnych tokenów.
-                </p>
-              )}
-            </AlertDialogDescription>
-          </AlertDialogHeader>
-
-          <AlertDialogFooter className="mt-8 flex flex-row justify-center gap-4 sm:justify-center">
-            <AlertDialogCancel className="border-muted-foreground/20 w-[130px]">
-              Anuluj
-            </AlertDialogCancel>
-
-            {!hasEnoughTokens ? (
-              <Link href="/pricing">
-                <AlertDialogAction
-                  className="group bg-[#915EFF] text-white hover:bg-[#7b4ee0]"
-                  onClick={() => setIsDialogOpen(false)}
-                >
-                  Zdobądź tokeny
-                  <ArrowRight className="scale-90 transition-all ease-in-out group-hover:translate-x-2" />
-                </AlertDialogAction>
-              </Link>
-            ) : (
-              <AlertDialogAction
-                onClick={handleConfirmGenerate}
-                className="bg-[#915EFF] text-white hover:bg-[#7b4ee0]"
-              >
-                Generuj
-                <Image src={star_generate} alt="star" width={16} height={16} />
-              </AlertDialogAction>
-            )}
-          </AlertDialogFooter>
-        </AlertDialogContent>
-      </AlertDialog>
+      <MarketAnalysisCostConfirmationDialog
+        open={isDialogOpen}
+        onOpenChange={setIsDialogOpen}
+        onConfirm={onGenerate}
+      />
     </>
   );
 }
