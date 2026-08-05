@@ -5,6 +5,11 @@ import { SubscriptionStatuses } from './types';
 
 export const ACTIVE_SUBSCRIPTION_STATUSES: SubscriptionStatuses[] = ['Active', 'Trialing'];
 
+export const ASSISTANT_RECOMMENDATIONS_PRICE = 60;
+export const MARKET_ANALYSIS_PRICE = 50;
+// Backend Roadmap nie korzysta obecnie z BillingService.
+export const ROADMAP_GENERATION_PRICE = 0;
+
 export const pricingPlans = [
   {
     name: 'Osobiste',

@@ -15,8 +15,15 @@ export type MarketAnalysisDomainError = BaseAppError<
 >;
 
 const mapMarketAnalysisError = (error: ApiError): MarketAnalysisDomainError => {
-  const detail =
-    typeof error.details?.detail === 'string' ? error.details.detail.toLowerCase() : '';
+  const detail = typeof error.details?.detail === 'string' ? error.details.detail : '';
+
+  if (error.details?.errorCode === 'INSUFFICIENT_TOKENS') {
+    return {
+      type: 'InsufficientTokens',
+      message: 'Brak tokenów lub aktywnej subskrypcji.',
+      details: error.details,
+    };
+  }
 
   if (error.type === 'UnauthorizedError') {
     return {
@@ -26,18 +33,22 @@ const mapMarketAnalysisError = (error: ApiError): MarketAnalysisDomainError => {
     };
   }
 
-  if (error.type === 'ForbiddenError') {
-    return {
-      type: 'InsufficientTokens',
-      message: 'Brak tokenów lub subskrypcja nieaktywna.',
-      details: error.details,
-    };
-  }
-
   if (error.type === 'NotFoundError') {
     return {
       type: 'MissingCareerPaths',
       message: 'Brak ścieżek kariery z asystenta AI. Wygeneruj rekomendacje w Doradcy kariery.',
+      details: error.details,
+    };
+  }
+
+  if (
+    error.type === 'BadGatewayError' ||
+    error.type === 'ServiceUnavailableError' ||
+    error.type === 'GatewayTimeoutError'
+  ) {
+    return {
+      type: 'GenericApiError',
+      message: 'Usługa AI jest chwilowo niedostępna. Spróbuj ponownie później.',
       details: error.details,
     };
   }

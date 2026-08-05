@@ -1,5 +1,8 @@
 export type ResumePreviewLanguage = 'pl' | 'en';
 
+export const GENERATE_CV_FROM_PROFILE_PRICE = 20;
+export const TAILOR_CV_PRICE = 20;
+
 type ResumePreviewSectionId =
   | 'profile'
   | 'experience'

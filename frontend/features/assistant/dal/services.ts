@@ -50,6 +50,14 @@ export async function generateRecommendationsService(
   return result
     .map((response) => response.data)
     .mapErr((error): AssistantDomainError => {
+      if (error.details?.errorCode === 'INSUFFICIENT_TOKENS') {
+        return {
+          type: 'InsufficientTokens',
+          message: 'Brak tokenów lub subskrypcja nieaktywna.',
+          details: error.details,
+        };
+      }
+
       switch (error.type) {
         case 'UnauthorizedError':
           return {
@@ -69,7 +77,9 @@ export async function generateRecommendationsService(
             message: 'Profil użytkownika nie został znaleziony.',
             details: error.details,
           };
+        case 'BadGatewayError':
         case 'ServiceUnavailableError':
+        case 'GatewayTimeoutError':
           return {
             type: 'AiServiceUnavailable',
             message: 'Błąd usługi AI, spróbuj ponownie później.',
