@@ -53,11 +53,12 @@ namespace VocareWebAPI.JobOffers.Services.Implementations
             }
 
             _logger.LogInformation(
-                "Sync zakończony: {Added} dodanych, {Updated} zaktualizowanych, {Failed} błędów z {Total} total",
+                "Sync zakończony: {Added} dodanych, {Updated} zaktualizowanych, {Failed} błędów z {Total} total oraz {Skipped} pominiętych",
                 processResult.Added,
                 processResult.Updated,
                 processResult.Failed,
-                processResult.Total
+                processResult.Total,
+                processResult.Skipped
             );
 
             return processResult;
@@ -84,6 +85,12 @@ namespace VocareWebAPI.JobOffers.Services.Implementations
                     }
                     else
                     {
+                        if (!HasChanges(existing, offer))
+                        {
+                            result.Skipped++;
+                            continue;
+                        }
+
                         // Aktualizujemy wszystkie pola oprócz Id, ReferenceNumber, CreatedAt
                         existing.Title = offer.Title;
                         existing.CompanyName = offer.CompanyName;
@@ -266,6 +273,24 @@ namespace VocareWebAPI.JobOffers.Services.Implementations
             );
 
             return result;
+        }
+
+        private bool HasChanges(JobOffer existing, JobOffer offer)
+        {
+            return existing.Title != offer.Title
+                || existing.CompanyName != offer.CompanyName
+                || existing.Url != offer.Url
+                || existing.Country != offer.Country
+                || existing.Category != offer.Category
+                || existing.SeniorityLevel != offer.SeniorityLevel
+                || existing.JobType != offer.JobType
+                || existing.Description != offer.Description
+                || existing.BriefDescription != offer.BriefDescription
+                || existing.SalaryMin != offer.SalaryMin
+                || existing.SalaryMax != offer.SalaryMax
+                || existing.SalaryCurrency != offer.SalaryCurrency
+                || existing.SalaryPeriod != offer.SalaryPeriod
+                || existing.PublishedAt != offer.PublishedAt;
         }
     }
 }
