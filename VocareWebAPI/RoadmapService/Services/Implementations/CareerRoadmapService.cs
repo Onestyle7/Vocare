@@ -87,7 +87,7 @@ namespace VocareWebAPI.RoadmapService.Services.Implementations
             {
                 GenerationStatus = GenerationStatus.Pending,
                 LifecycleStatus = LifecycleStatus.Draft,
-                Title = "Generowananie...",
+                Title = "Generowanie...",
                 Phases = [],
                 UserId = userId,
                 CareerPathId = careerPathId,

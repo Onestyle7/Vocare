@@ -1,5 +1,15 @@
 'use client';
-import { ChevronRight, Clock, FileText, Plus, Trash2 } from 'lucide-react';
+import {
+  AlertTriangle,
+  ArrowRight,
+  BriefcaseBusiness,
+  ChevronLeft,
+  ChevronRight,
+  Clock,
+  FileText,
+  Plus,
+  Trash2,
+} from 'lucide-react';
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 import { useEffect, useLayoutEffect, useRef, useState } from 'react';
@@ -29,8 +39,10 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Separator } from '@/components/ui/separator';
 import { Textarea } from '@/components/ui/textarea';
+import { useTokenBalanceContext } from '@/features/billing/components/SubscriptionTokenProvider';
 import { GridBackgroundDemo } from '@/features/market-analysis/components/GridBackgroundDemo';
-import { file_document, file_edit } from '@/features/marketing/constants';
+import { ai_magic, file_document, file_edit } from '@/features/marketing/constants';
+import { GENERATE_CV_FROM_PROFILE_PRICE } from '@/features/resume/constants';
 import { useIsMobile } from '@/lib/hooks/useIsMobile';
 import { CvLimits, CvListItemDto } from '@/lib/types/cv';
 
@@ -42,7 +54,7 @@ interface ResumeDashboardProps {
   autoOpenCreateDialog?: boolean;
 }
 
-type CreateCvSetup = 'choose-method' | 'job-offer';
+type CreateCvSetup = 'choose-method' | 'job-offer' | 'confirm-cost' | 'limit-reached';
 
 /** Czas znikania starej treści — musi być równy klasie duration-200 na wrapperze treści. */
 const FADE_MS = 200;
@@ -77,11 +89,31 @@ const ResumeDashboard = ({
     targetPosition: '',
     jobDescription: '',
   });
+  const [insufficientTokensDetected, setInsufficientTokensDetected] = useState(false);
+  const [generateSubmitError, setGenerateSubmitError] = useState(false);
+  const jobOfferTitleRef = useRef<HTMLHeadingElement>(null);
+  const costTitleRef = useRef<HTMLHeadingElement>(null);
+  const limitTitleRef = useRef<HTMLHeadingElement>(null);
+  const upgradeButtonRef = useRef<HTMLButtonElement>(null);
+  const rejectedBillingSnapshotRef = useRef<string | null>(null);
+  const generateLockRef = useRef(false);
   const isMobile = useIsMobile();
+  const { tokenBalance, subscriptionStatus } = useTokenBalanceContext();
   const { handleDeleteResume, handleCreateResume, handleGenerateResume, isCreating, isGenerating } =
     useResumeDashboardActions();
   const cvs = initialCvs;
   const limits = initialLimits;
+
+  // BillingService zwalnia z opłaty wyłącznie aktywną subskrypcję.
+  const hasUnlimitedGeneration = subscriptionStatus === 'Active';
+  const hasConfirmedUnlimitedGeneration = hasUnlimitedGeneration && !insufficientTokensDetected;
+  const hasEnoughTokens =
+    hasConfirmedUnlimitedGeneration ||
+    (!insufficientTokensDetected && tokenBalance >= GENERATE_CV_FROM_PROFILE_PRICE);
+  const billingSnapshot = `${subscriptionStatus}:${tokenBalance}`;
+  const hasReachedCvLimit = Boolean(
+    limits && (!limits.canCreateNew || limits.currentCount >= limits.maxLimit)
+  );
 
   /**
    * Przejście między krokami modala:
@@ -128,6 +160,51 @@ const ResumeDashboard = ({
     return () => observer.disconnect();
   }, [contentNode, renderedSetup]);
 
+  useEffect(() => {
+    if (showCreateCvDialog && renderedSetup === 'job-offer' && isContentVisible) {
+      jobOfferTitleRef.current?.focus();
+    }
+  }, [isContentVisible, renderedSetup, showCreateCvDialog]);
+
+  useEffect(() => {
+    if (
+      showCreateCvDialog &&
+      renderedSetup === 'confirm-cost' &&
+      isContentVisible &&
+      hasEnoughTokens
+    ) {
+      costTitleRef.current?.focus();
+    }
+  }, [hasEnoughTokens, isContentVisible, renderedSetup, showCreateCvDialog]);
+
+  useEffect(() => {
+    if (showCreateCvDialog && renderedSetup === 'limit-reached' && isContentVisible) {
+      limitTitleRef.current?.focus();
+    }
+  }, [isContentVisible, renderedSetup, showCreateCvDialog]);
+
+  useEffect(() => {
+    if (
+      showCreateCvDialog &&
+      renderedSetup === 'confirm-cost' &&
+      isContentVisible &&
+      !hasEnoughTokens
+    ) {
+      upgradeButtonRef.current?.focus();
+    }
+  }, [hasEnoughTokens, isContentVisible, renderedSetup, showCreateCvDialog]);
+
+  useEffect(() => {
+    if (
+      insufficientTokensDetected &&
+      rejectedBillingSnapshotRef.current &&
+      rejectedBillingSnapshotRef.current !== billingSnapshot
+    ) {
+      rejectedBillingSnapshotRef.current = null;
+      setInsufficientTokensDetected(false);
+    }
+  }, [billingSnapshot, insufficientTokensDetected]);
+
   const resetCreateCvState = () => {
     if (fadeTimeout.current) clearTimeout(fadeTimeout.current);
     setCreateCvSetup('choose-method');
@@ -138,6 +215,10 @@ const ResumeDashboard = ({
       targetPosition: '',
       jobDescription: '',
     });
+    setInsufficientTokensDetected(false);
+    setGenerateSubmitError(false);
+    rejectedBillingSnapshotRef.current = null;
+    generateLockRef.current = false;
   };
 
   const handleCreateCvDialogChange = (open: boolean) => {
@@ -190,11 +271,61 @@ const ResumeDashboard = ({
 
   const handleNewResumeClick = () => {
     if (isMobile) return;
-    if (limits && limits.currentCount >= limits.maxLimit) {
+    if (hasReachedCvLimit) {
       setShowLimitDialog(true);
     } else {
-      setShowCreateCvDialog(true);
+      handleCreateCvDialogChange(true);
     }
+  };
+
+  const handleRequestGenerate = () => {
+    if (isGenerating || !jobOfferForm.targetPosition.trim() || !jobOfferForm.jobDescription.trim())
+      return;
+
+    setGenerateSubmitError(false);
+    goToSetup('confirm-cost');
+  };
+
+  const handleConfirmGenerate = async () => {
+    if (generateLockRef.current || isGenerating || !hasEnoughTokens) return;
+    generateLockRef.current = true;
+    setGenerateSubmitError(false);
+    let completed = false;
+
+    try {
+      const result = await handleGenerateResume({
+        targetPosition: jobOfferForm.targetPosition,
+        jobDescription: jobOfferForm.jobDescription,
+      });
+
+      if (result === 'success') {
+        completed = true;
+        handleCreateCvDialogChange(false);
+        return;
+      }
+
+      if (result === 'insufficient-tokens') {
+        rejectedBillingSnapshotRef.current = billingSnapshot;
+        setInsufficientTokensDetected(true);
+        return;
+      }
+
+      if (result === 'limit-reached') {
+        goToSetup('limit-reached');
+        return;
+      }
+
+      setGenerateSubmitError(true);
+    } catch {
+      setGenerateSubmitError(true);
+    } finally {
+      if (!completed) generateLockRef.current = false;
+    }
+  };
+
+  const handleUpgradeTokens = () => {
+    handleCreateCvDialogChange(false);
+    router.push('/pricing');
   };
 
   const hasHandledAutoOpen = useRef(false);
@@ -212,14 +343,14 @@ const ResumeDashboard = ({
       return;
     }
 
-    if (limits && limits.currentCount >= limits.maxLimit) {
+    if (hasReachedCvLimit) {
       setShowLimitDialog(true);
       return;
     }
 
     handleCreateCvDialogChange(true);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [autoOpenCreateDialog, isMobile, limits, router]);
+  }, [autoOpenCreateDialog, hasReachedCvLimit, isMobile, router]);
 
   const EmptyState = () => (
     <div className="col-span-full flex h-100 flex-col items-center justify-center rounded-xl border border-dashed">
@@ -380,7 +511,7 @@ const ResumeDashboard = ({
                                 <Clock className="text-muted-foreground h-4 w-4" />
                                 <p className="text-muted-foreground text-sm font-semibold">
                                   {cv.lastModifiedAt
-                                    ? `Zmodyf. ${formatDateTime(cv.lastModifiedAt)}`
+                                    ? `Eytowano ${formatDateTime(cv.lastModifiedAt)}`
                                     : 'Utworzono niedawno'}
                                 </p>
                               </div>
@@ -422,11 +553,18 @@ const ResumeDashboard = ({
       <Dialog open={showCreateCvDialog} onOpenChange={handleCreateCvDialogChange}>
         <DialogContent
           style={{ transitionTimingFunction: EASE }}
-          className={`font-poppins h-auto w-[calc(100%-2rem)] content-start gap-0 overflow-hidden rounded-3xl border-0 bg-[#17181d] px-8 pt-12 pb-12 text-white transition-[max-width,padding] duration-500 motion-reduce:transition-none [&>button]:top-5 [&>button]:right-5 [&>button]:text-white/60 [&>button]:opacity-100 [&>button:hover]:text-white [&>button>svg]:size-6 ${
+          aria-busy={isGenerating}
+          onEscapeKeyDown={(event) => {
+            if (isGenerating) event.preventDefault();
+          }}
+          onInteractOutside={(event) => {
+            if (isGenerating) event.preventDefault();
+          }}
+          className={`font-poppins max-h-[calc(100dvh-2rem)] w-[calc(100%-2rem)] content-start gap-0 overflow-y-auto rounded-3xl border-0 bg-[#17181d] px-8 pt-12 pb-12 text-white transition-[max-width,padding] duration-500 motion-reduce:transition-none [&>button]:top-5 [&>button]:right-5 [&>button]:text-white/60 [&>button]:opacity-100 [&>button:hover]:text-white [&>button>svg]:size-6 ${
             createCvSetup === 'choose-method'
               ? 'max-w-170 sm:max-w-170 sm:px-16'
               : 'max-w-[860px] sm:max-w-[860px] sm:px-20'
-          }`}
+          } ${isGenerating ? '[&>button]:pointer-events-none [&>button]:opacity-30' : ''}`}
         >
           {/* Warstwa 1: animowana wysokość kontenera */}
           <div
@@ -503,10 +641,14 @@ const ResumeDashboard = ({
                     </button>
                   </div>
                 </>
-              ) : (
+              ) : renderedSetup === 'job-offer' ? (
                 <>
                   <DialogHeader className="flex w-full items-center gap-2 text-center sm:text-center">
-                    <DialogTitle className="text-[28px] leading-tight font-normal text-white">
+                    <DialogTitle
+                      ref={jobOfferTitleRef}
+                      tabIndex={-1}
+                      className="text-[28px] leading-tight font-normal text-white focus:outline-none"
+                    >
                       Wygeneruj CV pod ofertę
                     </DialogTitle>
                     <DialogDescription className="max-w-xl text-[15px] leading-relaxed font-light text-white/75">
@@ -561,7 +703,7 @@ const ResumeDashboard = ({
                         }
                         placeholder="Wklej tutaj treść oferty pracy..."
                         maxLength={15000}
-                        className="field-sizing-fixed h-36 min-h-36 max-h-36 resize-none overflow-y-auto rounded-2xl border-0 bg-[#292a30] px-5 py-4 text-white placeholder:text-white/25 focus-visible:border-0 focus-visible:ring-0 focus-visible:ring-offset-0 focus-visible:outline-none dark:bg-[#292a30]"
+                        className="field-sizing-fixed h-36 max-h-36 min-h-36 resize-none overflow-y-auto rounded-2xl border-0 bg-[#292a30] px-5 py-4 text-white placeholder:text-white/25 focus-visible:border-0 focus-visible:ring-0 focus-visible:ring-offset-0 focus-visible:outline-none dark:bg-[#292a30]"
                       />
                     </div>
 
@@ -582,12 +724,7 @@ const ResumeDashboard = ({
                       </Button>
                       <Button
                         type="button"
-                        onClick={() =>
-                          handleGenerateResume({
-                            targetPosition: jobOfferForm.targetPosition,
-                            jobDescription: jobOfferForm.jobDescription,
-                          })
-                        }
+                        onClick={handleRequestGenerate}
                         disabled={
                           isGenerating ||
                           !jobOfferForm.targetPosition.trim() ||
@@ -599,6 +736,147 @@ const ResumeDashboard = ({
                         {!isGenerating && <ChevronRight />}
                       </Button>
                     </div>
+                  </div>
+                </>
+              ) : renderedSetup === 'confirm-cost' ? (
+                <>
+                  <DialogHeader className="flex w-full items-center gap-3 text-center sm:text-center">
+                    <div className="mb-2 flex size-14 items-center justify-center rounded-full bg-[#686fde]/15 text-[#9da3ff]">
+                      <BriefcaseBusiness aria-hidden="true" className="size-7" />
+                    </div>
+                    <DialogTitle
+                      ref={costTitleRef}
+                      tabIndex={-1}
+                      className="text-[26px] leading-tight font-normal text-white focus:outline-none"
+                    >
+                      Wygenerować CV pod ofertę?
+                    </DialogTitle>
+                    <DialogDescription className="max-w-xl text-[15px] leading-relaxed font-light text-white/70">
+                      {hasConfirmedUnlimitedGeneration ? (
+                        <>Masz aktywną subskrypcję, więc ta akcja nie wykorzysta żadnych tokenów.</>
+                      ) : (
+                        <>
+                          Zostanie pobrane{' '}
+                          <strong className="font-medium text-[#9da3ff]">
+                            {GENERATE_CV_FROM_PROFILE_PRICE} tokenów
+                          </strong>{' '}
+                          z Twojego konta.
+                        </>
+                      )}
+                    </DialogDescription>
+                  </DialogHeader>
+
+                  {!hasEnoughTokens && (
+                    <div
+                      role="alert"
+                      className="mt-6 rounded-2xl border border-red-400/20 bg-red-400/10 px-5 py-4 text-center text-sm font-light text-red-50"
+                    >
+                      {insufficientTokensDetected
+                        ? `Saldo tokenów zmieniło się. Potrzebujesz ${GENERATE_CV_FROM_PROFILE_PRICE} tokenów, aby wygenerować CV.`
+                        : `Niewystarczające saldo (${tokenBalance}/${GENERATE_CV_FROM_PROFILE_PRICE} tokenów)`}
+                    </div>
+                  )}
+
+                  {generateSubmitError && (
+                    <div
+                      role="alert"
+                      className="mt-6 rounded-2xl border border-red-400/20 bg-red-400/10 px-5 py-4 text-center text-sm font-light text-red-50"
+                    >
+                      Nie udało się potwierdzić wyniku operacji. Przed ponowną próbą sprawdź listę
+                      CV - nowa pozycja mogła już zostać zapisana.
+                    </div>
+                  )}
+
+                  {isGenerating && (
+                    <p role="status" className="sr-only">
+                      Trwa generowanie CV pod ofertę.
+                    </p>
+                  )}
+
+                  <div className="mt-8 flex flex-col-reverse justify-center gap-3 sm:flex-row sm:gap-4">
+                    <Button
+                      type="button"
+                      variant="outline"
+                      onClick={() =>
+                        generateSubmitError
+                          ? handleCreateCvDialogChange(false)
+                          : goToSetup('job-offer')
+                      }
+                      disabled={isGenerating}
+                      className="h-12 w-full min-w-32 border-white/30 bg-transparent text-white hover:bg-white/5 hover:text-white sm:w-auto"
+                    >
+                      {!generateSubmitError && <ChevronLeft aria-hidden="true" />}
+                      {generateSubmitError ? 'Wróć do dashboardu' : 'Wróć'}
+                    </Button>
+
+                    {generateSubmitError ? null : !hasEnoughTokens ? (
+                      <Button
+                        ref={upgradeButtonRef}
+                        type="button"
+                        onClick={handleUpgradeTokens}
+                        className="h-12 w-full min-w-44 bg-[#686fde] text-white hover:bg-[#7379e5] sm:w-auto"
+                      >
+                        Zdobądź tokeny
+                        <ArrowRight aria-hidden="true" />
+                      </Button>
+                    ) : (
+                      <Button
+                        type="button"
+                        onClick={() => void handleConfirmGenerate()}
+                        disabled={isGenerating}
+                        className="h-12 w-full min-w-44 bg-[#686fde] text-white hover:bg-[#7379e5] sm:w-auto"
+                      >
+                        {isGenerating ? 'Generowanie CV...' : 'Generuj'}
+                        {!isGenerating && (
+                          <Image
+                            src={ai_magic}
+                            width={24}
+                            height={24}
+                            alt="ai_magic"
+                            className="invert"
+                            aria-hidden="true"
+                          />
+                        )}
+                      </Button>
+                    )}
+                  </div>
+                </>
+              ) : (
+                <>
+                  <DialogHeader className="flex w-full items-center gap-3 text-center sm:text-center">
+                    <div className="mb-2 flex size-14 items-center justify-center rounded-full bg-amber-400/10 text-amber-300">
+                      <AlertTriangle aria-hidden="true" className="size-7" />
+                    </div>
+                    <DialogTitle
+                      ref={limitTitleRef}
+                      tabIndex={-1}
+                      className="text-[26px] leading-tight font-normal text-white focus:outline-none"
+                    >
+                      Osiągnąłeś limit CV dla swojego planu
+                    </DialogTitle>
+                    <DialogDescription className="max-w-xl text-[15px] leading-relaxed font-light text-white/70">
+                      Limit zmienił się podczas generowania. Sprawdź listę CV albo zwiększ limit
+                      swojego planu.
+                    </DialogDescription>
+                  </DialogHeader>
+
+                  <div className="mt-8 flex flex-col-reverse justify-center gap-3 sm:flex-row sm:gap-4">
+                    <Button
+                      type="button"
+                      variant="outline"
+                      onClick={() => handleCreateCvDialogChange(false)}
+                      className="h-12 w-full min-w-40 border-white/30 bg-transparent text-white hover:bg-white/5 hover:text-white sm:w-auto"
+                    >
+                      Wróć do dashboardu
+                    </Button>
+                    <Button
+                      type="button"
+                      onClick={handleUpgradeTokens}
+                      className="h-12 w-full min-w-44 bg-[#686fde] text-white hover:bg-[#7379e5] sm:w-auto"
+                    >
+                      Zwiększ limit CV
+                      <ArrowRight aria-hidden="true" />
+                    </Button>
                   </div>
                 </>
               )}

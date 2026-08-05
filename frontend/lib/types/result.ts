@@ -5,11 +5,12 @@ export type BaseAppError<T extends string = ''> = {
 };
 
 export type BaseAppErrorDetails = {
-  title: string;
-  status: number;
-  detail: string | Record<string, unknown>;
-  errorCode: string;
-  traceId: string;
+  title?: string;
+  status?: number;
+  detail?: string | Record<string, unknown>;
+  errorCode?: string;
+  traceId?: string;
+  [key: string]: unknown;
 };
 
 export type Result<S, E extends BaseAppError<string>> = [E, null] | [null, S];

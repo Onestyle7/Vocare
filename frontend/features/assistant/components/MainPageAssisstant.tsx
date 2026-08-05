@@ -1,30 +1,19 @@
 'use client';
 
-import { ArrowRight, Undo2 } from 'lucide-react';
+import { BriefcaseBusiness, Undo2 } from 'lucide-react';
 import Image from 'next/image';
-import Link from 'next/link';
 import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 import { useEffect, useMemo, useRef, useState } from 'react';
 
 import Section from '@/components/SupportComponents/Section';
-import {
-  AlertDialog,
-  AlertDialogAction,
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle,
-} from '@/components/ui/alert-dialog';
 import ButtonGenerate from '@/components/ui/ButtonGenerate';
-import { useTokenBalanceContext } from '@/features/billing/components/SubscriptionTokenProvider';
+import ServiceCostConfirmationDialog from '@/features/billing/components/ServiceCostConfirmationDialog';
+import { ASSISTANT_RECOMMENDATIONS_PRICE } from '@/features/billing/constants';
 import { GridBackgroundDemo } from '@/features/market-analysis/components/GridBackgroundDemo';
 import { TerminalDemo } from '@/features/market-analysis/components/LoadingTerminal';
 import {
   cone_1,
   cone_2,
-  star_generate,
   timeline_icon_1,
   timeline_icon_2,
   timeline_icon_3,
@@ -35,6 +24,7 @@ import { useCollapse } from '@/lib/hooks/useCollapse';
 import { CareerPathMatchResult } from '@/lib/types/jobOffers';
 import { AiCareerResponse, CareerPath } from '@/lib/types/recommendation';
 
+import { ASSISTANT_AUTO_GENERATE_CONFIRMATION_KEY } from '../constants';
 import { useAssistantActions } from '../hooks/useAssistantActions';
 import CareerPathSection from './CareerPathSection';
 import CollapsibleButton from './CollapsibleButton';
@@ -57,13 +47,8 @@ export default function AssistantPage({
 }: AssistantPageProps) {
   const { profile, isProfileEmpty } = useProfileContext();
 
-  const {
-    handleGenerateNewRecommendations,
-    handleAutoGenerateRecommendations,
-    isPending,
-    isAutoGenerating,
-    generateError,
-  } = useAssistantActions();
+  const { handleGenerateNewRecommendations, handleAutoGenerateRecommendations, isAutoGenerating } =
+    useAssistantActions();
 
   const searchParams = useSearchParams();
   const router = useRouter();
@@ -71,14 +56,12 @@ export default function AssistantPage({
 
   const recommendations = initialRecommendation;
   const jobMatches = initialJobMatches;
-  const error = recommendationError || generateError;
   const offersError = jobMatchesError;
 
-  const isLoading = isPending || isAutoGenerating;
-  const isOffersLoading = isPending || isAutoGenerating;
+  const isLoading = isAutoGenerating;
+  const isOffersLoading = isAutoGenerating;
 
   const [isConfirmDialogOpen, setIsConfirmDialogOpen] = useState(false);
-  const { tokenBalance, hasActiveSubscription } = useTokenBalanceContext();
 
   const contentRef = useRef<HTMLDivElement>(null);
   const contentWrapperRef = useRef<HTMLDivElement>(null);
@@ -87,16 +70,24 @@ export default function AssistantPage({
   const [showFixedButton, setShowFixedButton] = useState(false);
   const lastScrollY = useRef(0);
 
-  const generatePricePerUse = 60;
-
   const shouldAutoGenerate = searchParams.get('autoGenerate') === '1';
 
   useEffect(() => {
-    if (shouldAutoGenerate) {
-      const params = new URLSearchParams(searchParams.toString());
-      params.delete('autoGenerate');
-      const newUrl = pathname + (params.toString() ? `?${params.toString()}` : '');
-      router.replace(newUrl, { scroll: false });
+    if (!shouldAutoGenerate) return;
+
+    const params = new URLSearchParams(searchParams.toString());
+    params.delete('autoGenerate');
+    const newUrl = pathname + (params.toString() ? `?${params.toString()}` : '');
+    router.replace(newUrl, { scroll: false });
+
+    const wasConfirmed = sessionStorage.getItem(ASSISTANT_AUTO_GENERATE_CONFIRMATION_KEY) === '1';
+    sessionStorage.removeItem(ASSISTANT_AUTO_GENERATE_CONFIRMATION_KEY);
+
+    // The dashboard layout provider can still contain the pre-save profile snapshot during
+    // same-layout navigation. The one-shot confirmation is authoritative here; the backend
+    // performs the final profile validation.
+    if (wasConfirmed) {
+      void handleAutoGenerateRecommendations();
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
@@ -125,11 +116,6 @@ export default function AssistantPage({
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
-  const handleManualGenerate = () => {
-    setIsConfirmDialogOpen(false);
-    handleGenerateNewRecommendations();
-  };
-
   const icons = [timeline_icon_1, timeline_icon_2, timeline_icon_3, timeline_icon_4];
 
   const timelineItems =
@@ -144,7 +130,7 @@ export default function AssistantPage({
     return <GenerateRecommendation />;
   }
 
-  if (error && !recommendations) {
+  if (recommendationError && !recommendations) {
     return <GenerateRecommendation />;
   }
 
@@ -158,12 +144,7 @@ export default function AssistantPage({
   }
 
   if (!recommendations) {
-    return (
-      <NoRecommendationsState
-        onGenerate={handleAutoGenerateRecommendations}
-        autoGenerate={shouldAutoGenerate}
-      />
-    );
+    return <NoRecommendationsState onGenerate={handleGenerateNewRecommendations} />;
   }
 
   return (
@@ -287,56 +268,19 @@ export default function AssistantPage({
             </ButtonGenerate>
           </div>
 
-          <AlertDialog open={isConfirmDialogOpen} onOpenChange={setIsConfirmDialogOpen}>
-            <AlertDialogContent className="font-grotesk font-korbin mx-auto max-w-sm">
-              <AlertDialogHeader>
-                <AlertDialogTitle className="text-center text-xl font-bold">
-                  Wygenerować nowe rekomendacje?
-                </AlertDialogTitle>
-                <AlertDialogDescription className="text-foreground text-center">
-                  {!hasActiveSubscription ? (
-                    <>
-                      Zostanie pobrane{' '}
-                      <b className="text-[#915EFF]">{generatePricePerUse} tokenów</b> z Twojego
-                      konta.
-                    </>
-                  ) : (
-                    <p className="mx-auto max-w-xs">
-                      Jesteś na aktywnej subskrypcji, więc ta akcja nie wykorzysta żadnych tokenów.
-                    </p>
-                  )}
-                </AlertDialogDescription>
-              </AlertDialogHeader>
-
-              <AlertDialogFooter className="mt-8 flex flex-row justify-center gap-4 sm:justify-center">
-                <AlertDialogCancel className="border-muted-foreground/20 w-[130px]">
-                  Anuluj
-                </AlertDialogCancel>
-
-                {!hasActiveSubscription &&
-                typeof tokenBalance === 'number' &&
-                tokenBalance < generatePricePerUse ? (
-                  <Link href="/pricing">
-                    <AlertDialogAction
-                      className="group bg-[#915EFF] text-white hover:bg-[#7b4ee0]"
-                      onClick={() => setIsConfirmDialogOpen(false)}
-                    >
-                      Zdobądź tokeny
-                      <ArrowRight className="scale-90 transition-all ease-in-out group-hover:translate-x-2" />
-                    </AlertDialogAction>
-                  </Link>
-                ) : (
-                  <AlertDialogAction
-                    onClick={handleManualGenerate}
-                    className="bg-[#915EFF] text-white hover:bg-[#7b4ee0]"
-                  >
-                    Generuj
-                    <Image src={star_generate} alt="star" width={16} height={16} />
-                  </AlertDialogAction>
-                )}
-              </AlertDialogFooter>
-            </AlertDialogContent>
-          </AlertDialog>
+          <ServiceCostConfirmationDialog
+            open={isConfirmDialogOpen}
+            onOpenChange={setIsConfirmDialogOpen}
+            icon={BriefcaseBusiness}
+            title="Wygenerować nowe rekomendacje?"
+            tokenCost={ASSISTANT_RECOMMENDATIONS_PRICE}
+            actionLabel="Generuj"
+            pendingLabel="Generowanie..."
+            errorBackLabel="Wróć do Asystenta"
+            statusLabel="Trwa generowanie nowych rekomendacji."
+            errorMessage="Nie udało się potwierdzić wyniku generowania. Sprawdź, czy nowe rekomendacje nie zostały już zapisane."
+            onConfirm={handleGenerateNewRecommendations}
+          />
         </div>
       </div>
     </Section>
