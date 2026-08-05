@@ -133,7 +133,7 @@ export class ApiClient {
 
     try {
       const contentType = response.headers.get('content-type');
-      if (contentType?.includes('application/json')) {
+      if (contentType?.includes('json')) {
         errorDetails = await response.json();
       }
     } catch {}

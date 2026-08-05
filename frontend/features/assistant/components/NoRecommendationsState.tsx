@@ -1,53 +1,20 @@
 'use client';
 
-import { ArrowRight, BriefcaseBusiness, Plus, Sparkles } from 'lucide-react';
-import Image from 'next/image';
-import Link from 'next/link';
-import { useEffect, useState } from 'react';
+import { BriefcaseBusiness, Plus } from 'lucide-react';
+import { useState } from 'react';
 
-import {
-  AlertDialog,
-  AlertDialogAction,
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle,
-} from '@/components/ui/alert-dialog';
 import { Button } from '@/components/ui/button';
-import { useTokenBalanceContext } from '@/features/billing/components/SubscriptionTokenProvider';
+import ServiceCostConfirmationDialog from '@/features/billing/components/ServiceCostConfirmationDialog';
+import { ASSISTANT_RECOMMENDATIONS_PRICE } from '@/features/billing/constants';
+import type { ServiceCostActionResult } from '@/features/billing/types';
 import { GridBackgroundDemo } from '@/features/market-analysis/components/GridBackgroundDemo';
-import { star_generate } from '@/features/marketing/constants';
-
-const GENERATE_PRICE = 60;
 
 interface NoRecommendationsStateProps {
-  onGenerate: () => void;
-  autoGenerate?: boolean;
+  onGenerate: () => Promise<ServiceCostActionResult> | ServiceCostActionResult;
 }
 
-export default function NoRecommendationsState({
-  onGenerate,
-  autoGenerate,
-}: NoRecommendationsStateProps) {
+export default function NoRecommendationsState({ onGenerate }: NoRecommendationsStateProps) {
   const [isDialogOpen, setIsDialogOpen] = useState(false);
-  const { tokenBalance, hasActiveSubscription } = useTokenBalanceContext();
-
-  const hasEnoughTokens =
-    hasActiveSubscription || (typeof tokenBalance === 'number' && tokenBalance >= GENERATE_PRICE);
-
-  useEffect(() => {
-    if (autoGenerate) {
-      onGenerate();
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
-
-  const handleConfirmGenerate = () => {
-    setIsDialogOpen(false);
-    onGenerate();
-  };
 
   return (
     <>
@@ -87,58 +54,19 @@ export default function NoRecommendationsState({
         </div>
       </div>
 
-      <AlertDialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
-        <AlertDialogContent className="font-grotesk font-korbin mx-auto max-w-sm">
-          <AlertDialogHeader>
-            <AlertDialogTitle className="text-center text-xl font-bold">
-              Wygenerować rekomendacje?
-            </AlertDialogTitle>
-            <AlertDialogDescription className="text-foreground text-center">
-              {!hasActiveSubscription ? (
-                <>
-                  Zostanie pobrane <b className="text-[#915EFF]">{GENERATE_PRICE} tokenów</b> z
-                  Twojego konta.
-                  {!hasEnoughTokens && (
-                    <p className="mt-2 text-sm text-red-500">
-                      Niewystarczające saldo ({tokenBalance}/{GENERATE_PRICE} tokenów)
-                    </p>
-                  )}
-                </>
-              ) : (
-                <p className="mx-auto max-w-xs">
-                  Jesteś na aktywnej subskrypcji, więc ta akcja nie wykorzysta żadnych tokenów.
-                </p>
-              )}
-            </AlertDialogDescription>
-          </AlertDialogHeader>
-
-          <AlertDialogFooter className="mt-8 flex flex-row justify-center gap-4 sm:justify-center">
-            <AlertDialogCancel className="border-muted-foreground/20 w-[130px]">
-              Anuluj
-            </AlertDialogCancel>
-
-            {!hasEnoughTokens ? (
-              <Link href="/pricing">
-                <AlertDialogAction
-                  className="group bg-[#915EFF] text-white hover:bg-[#7b4ee0]"
-                  onClick={() => setIsDialogOpen(false)}
-                >
-                  Zdobądź tokeny
-                  <ArrowRight className="scale-90 transition-all ease-in-out group-hover:translate-x-2" />
-                </AlertDialogAction>
-              </Link>
-            ) : (
-              <AlertDialogAction
-                onClick={handleConfirmGenerate}
-                className="bg-[#915EFF] text-white hover:bg-[#7b4ee0]"
-              >
-                Generuj
-                <Image src={star_generate} alt="star" width={16} height={16} />
-              </AlertDialogAction>
-            )}
-          </AlertDialogFooter>
-        </AlertDialogContent>
-      </AlertDialog>
+      <ServiceCostConfirmationDialog
+        open={isDialogOpen}
+        onOpenChange={setIsDialogOpen}
+        icon={BriefcaseBusiness}
+        title="Wygenerować rekomendacje?"
+        tokenCost={ASSISTANT_RECOMMENDATIONS_PRICE}
+        actionLabel="Generuj"
+        pendingLabel="Generowanie..."
+        errorBackLabel="Wróć do Asystenta"
+        statusLabel="Trwa generowanie rekomendacji."
+        errorMessage="Nie udało się potwierdzić wyniku generowania. Sprawdź, czy rekomendacje nie zostały już zapisane."
+        onConfirm={onGenerate}
+      />
     </>
   );
 }
