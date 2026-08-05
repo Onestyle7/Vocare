@@ -4,6 +4,8 @@ import { toast } from 'sonner';
 
 import { createCvCommand, deleteCvCommand, GenerateCvFromProfileCommand } from '../dal/commands';
 
+export type GenerateResumeResult = 'success' | 'insufficient-tokens' | 'limit-reached' | 'error';
+
 export function useResumeDashboardActions() {
   const [isPending, startTransition] = useTransition();
   const [deletingId, setDeletingId] = useState<string | null>(null);
@@ -38,33 +40,46 @@ export function useResumeDashboardActions() {
     });
   };
 
-  const handleGenerateResume = ({
+  const handleGenerateResume = async ({
     targetPosition,
     jobDescription,
   }: {
     targetPosition: string;
     jobDescription: string;
-  }) => {
+  }): Promise<GenerateResumeResult> => {
     const position = targetPosition.trim();
     const description = jobDescription.trim();
 
     setIsGenerating(true);
-    startTransition(async () => {
+
+    try {
       const [error, data] = await GenerateCvFromProfileCommand({
         name: position,
         jobDescription: [`Stanowisko ${position}`, '', description].join('\n'),
       });
 
       if (error) {
-        toast.error('Nie udało się wygenerować CV');
-        setIsGenerating(false);
-        return;
+        router.refresh();
+
+        if (error.type === 'InsufficientTokens') return 'insufficient-tokens';
+        if (error.type === 'CvLimitReached') return 'limit-reached';
+        return 'error';
       }
+
       if (data) {
         toast.success('Wygenerowano CV');
         router.push(`/resume/${data.id}`);
+        return 'success';
       }
-    });
+
+      router.refresh();
+      return 'error';
+    } catch {
+      router.refresh();
+      return 'error';
+    } finally {
+      setIsGenerating(false);
+    }
   };
 
   return {

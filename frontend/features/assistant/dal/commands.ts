@@ -10,11 +10,24 @@ export async function generateRecommendationsCommand() {
 
   return result.match(
     async (response) => {
-      await invalidateUserTag('lastRecommendation');
-      await invalidateUserTag('jobMatches');
-      await invalidateUserTag('subscriptionStatus');
+      await invalidateUserTag([
+        'lastRecommendation',
+        'jobMatches',
+        'subscriptionStatus',
+        'profileStats',
+      ]);
       return actionOk(response);
     },
-    (error) => actionErr(error)
+    async (error) => {
+      // Rekomendacja jest zapisywana przed końcowym rozliczeniem tokenów, więc również
+      // odpowiedź błędna może oznaczać, że pojawił się nowy wynik lub zmieniło się saldo.
+      await invalidateUserTag([
+        'lastRecommendation',
+        'jobMatches',
+        'subscriptionStatus',
+        'profileStats',
+      ]);
+      return actionErr(error);
+    }
   );
 }

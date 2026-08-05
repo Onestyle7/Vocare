@@ -1,9 +1,9 @@
 'use client';
 
-import { ArrowRight, Clock, Layers3, Plus, Trash2 } from 'lucide-react';
+import { ArrowRight, Clock, Layers3, Map, Plus, Trash2 } from 'lucide-react';
 import Link from 'next/link';
 import { usePathname, useRouter, useSearchParams } from 'next/navigation';
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { toast } from 'sonner';
 
 import {
@@ -36,7 +36,9 @@ import {
 } from '@/components/ui/select';
 import { Separator } from '@/components/ui/separator';
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
+import ServiceCostConfirmationDialog from '@/features/billing/components/ServiceCostConfirmationDialog';
 import { useTokenBalanceContext } from '@/features/billing/components/SubscriptionTokenProvider';
+import { ROADMAP_GENERATION_PRICE } from '@/features/billing/constants';
 import { GridBackgroundDemo } from '@/features/market-analysis/components/GridBackgroundDemo';
 import type { CareerPath } from '@/lib/types/recommendation';
 import type { GenerateRoadmapPayload, RoadmapListItemDto } from '@/lib/types/roadmap';
@@ -48,6 +50,7 @@ const timeHorizonOptions = [3, 6, 9, 12, 18, 24] as const;
 const DEFAULT_ROADMAP_LIMIT = 1;
 const PREMIUM_ROADMAP_LIMIT = 10;
 const ROADMAPS_SECTION_ID = 'active-roadmaps-section';
+const DIALOG_HANDOFF_DELAY_MS = 220;
 
 type CareerPathOption = Pick<CareerPath, 'id' | 'careerName' | 'description'>;
 
@@ -102,9 +105,14 @@ export default function RoadmapDashboardPage({
 
   const [timeHorizonMonths, setTimeHorizonMonths] = useState<number>(9);
   const [isCreateDialogOpen, setIsCreateDialogOpen] = useState(false);
+  const [isCostDialogOpen, setIsCostDialogOpen] = useState(false);
+  const [pendingCreatePayload, setPendingCreatePayload] = useState<GenerateRoadmapPayload | null>(
+    null
+  );
   const [selectedCareerPathId, setSelectedCareerPathId] = useState('');
   const [selectedCareerPathName, setSelectedCareerPathName] = useState('');
   const [deleteDialogRoadmapId, setDeleteDialogRoadmapId] = useState<string | null>(null);
+  const dialogHandoffTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   const roadmaps = initialRoadmaps;
   const roadmapsError = initialError;
@@ -128,7 +136,11 @@ export default function RoadmapDashboardPage({
     () => roadmaps.filter((roadmap) => roadmap.status !== 'Archived'),
     [roadmaps]
   );
-  const currentRoadmapCount = roadmaps.length;
+  const activeRoadmapsForLimits = useMemo(
+    () => visibleRoadmaps.filter((roadmap) => roadmap.generationStatus !== 'Failed'),
+    [visibleRoadmaps]
+  );
+  const currentRoadmapCount = activeRoadmapsForLimits.length;
   const isRoadmapLimitReached = currentRoadmapCount >= roadmapLimit;
 
   const availableCareerPaths = useMemo(() => {
@@ -156,11 +168,11 @@ export default function RoadmapDashboardPage({
     }
 
     return (
-      visibleRoadmaps.find(
+      activeRoadmapsForLimits.find(
         (roadmap) => roadmap.careerPathName.trim().toLowerCase() === normalizedCareerPathName
       ) ?? null
     );
-  }, [selectedCareerPathName, visibleRoadmaps]);
+  }, [activeRoadmapsForLimits, selectedCareerPathName]);
 
   const canCreateRoadmap =
     selectedCareerPathId.length > 0 &&
@@ -196,6 +208,25 @@ export default function RoadmapDashboardPage({
     });
   }, [router]);
 
+  const clearDialogHandoffTimeout = useCallback(() => {
+    if (!dialogHandoffTimeoutRef.current) return;
+    clearTimeout(dialogHandoffTimeoutRef.current);
+    dialogHandoffTimeoutRef.current = null;
+  }, []);
+
+  const scheduleDialogHandoff = useCallback(
+    (callback: () => void) => {
+      clearDialogHandoffTimeout();
+      dialogHandoffTimeoutRef.current = setTimeout(() => {
+        dialogHandoffTimeoutRef.current = null;
+        callback();
+      }, DIALOG_HANDOFF_DELAY_MS);
+    },
+    [clearDialogHandoffTimeout]
+  );
+
+  useEffect(() => () => clearDialogHandoffTimeout(), [clearDialogHandoffTimeout]);
+
   const handleManageRoadmaps = useCallback(() => {
     document
       .getElementById(ROADMAPS_SECTION_ID)
@@ -208,8 +239,11 @@ export default function RoadmapDashboardPage({
       return;
     }
 
+    clearDialogHandoffTimeout();
+    setPendingCreatePayload(null);
+    setIsCostDialogOpen(false);
     setIsCreateDialogOpen(true);
-  }, [isRoadmapLimitReached, showRoadmapLimitReachedToast]);
+  }, [clearDialogHandoffTimeout, isRoadmapLimitReached, showRoadmapLimitReachedToast]);
 
   useEffect(() => {
     if (!intentCareerPathId) {
@@ -222,6 +256,9 @@ export default function RoadmapDashboardPage({
     if (isRoadmapLimitReached) {
       showRoadmapLimitReachedToast();
     } else {
+      clearDialogHandoffTimeout();
+      setPendingCreatePayload(null);
+      setIsCostDialogOpen(false);
       setIsCreateDialogOpen(true);
     }
 
@@ -232,6 +269,7 @@ export default function RoadmapDashboardPage({
     isRoadmapLimitReached,
     pathname,
     router,
+    clearDialogHandoffTimeout,
     showRoadmapLimitReachedToast,
   ]);
 
@@ -262,7 +300,7 @@ export default function RoadmapDashboardPage({
     setSelectedCareerPathName(nextCareerPath?.careerName ?? '');
   };
 
-  const handleCreateRoadmap = () => {
+  const handleRequestCreateRoadmap = () => {
     if (isRoadmapLimitReached) {
       showRoadmapLimitReachedToast();
       return;
@@ -270,8 +308,41 @@ export default function RoadmapDashboardPage({
 
     if (!canCreateRoadmap) return;
 
+    setPendingCreatePayload(createPayload);
     setIsCreateDialogOpen(false);
-    handleGenerateRoadmap(createPayload);
+    scheduleDialogHandoff(() => setIsCostDialogOpen(true));
+  };
+
+  const handleBackToCreateRoadmap = () => {
+    setIsCostDialogOpen(false);
+    scheduleDialogHandoff(() => setIsCreateDialogOpen(true));
+  };
+
+  const handleCostDialogOpenChange = (open: boolean) => {
+    setIsCostDialogOpen(open);
+
+    if (!open) {
+      clearDialogHandoffTimeout();
+      setPendingCreatePayload(null);
+    }
+  };
+
+  const handleConfirmCreateRoadmap = async () => {
+    if (!pendingCreatePayload) return 'error' as const;
+
+    if (isRoadmapLimitReached) {
+      showRoadmapLimitReachedToast();
+      return 'handled-error' as const;
+    }
+
+    if (selectedPathExistingRoadmap) {
+      toast.error('Masz już roadmapę dla tej ścieżki.', {
+        description: 'Otwórz istniejącą roadmapę zamiast tworzyć duplikat.',
+      });
+      return 'handled-error' as const;
+    }
+
+    return handleGenerateRoadmap(pendingCreatePayload);
   };
 
   const handleDeleteRoadmap = (roadmapId: string) => {
@@ -296,7 +367,7 @@ export default function RoadmapDashboardPage({
                 onCareerPathChange={handleSelectCareerPath}
                 timeHorizonMonths={timeHorizonMonths}
                 onTimeHorizonChange={setTimeHorizonMonths}
-                onCreate={handleCreateRoadmap}
+                onCreate={handleRequestCreateRoadmap}
                 onReloadCareerPaths={() => Promise.resolve()} // obsolete
                 isCreatingRoadmap={isCreatingRoadmap}
                 isLoadingCareerPaths={false}
@@ -305,6 +376,26 @@ export default function RoadmapDashboardPage({
                 isRoadmapLimitReached={isRoadmapLimitReached}
                 roadmapLimitReachedDescription={roadmapLimitHoverMessage}
                 onManageRoadmaps={handleManageRoadmaps}
+              />
+
+              <ServiceCostConfirmationDialog
+                open={isCostDialogOpen}
+                onOpenChange={handleCostDialogOpenChange}
+                icon={Map}
+                title="Wygenerować roadmapę?"
+                tokenCost={ROADMAP_GENERATION_PRICE}
+                pendingLabel="Uruchamianie generowania..."
+                statusLabel="Trwa uruchamianie generowania roadmapy."
+                errorBackLabel="Wróć do roadmap"
+                freeDescription="Generowanie roadmapy jest obecnie bezpłatne i nie wykorzysta żadnych tokenów."
+                additionalDescription={
+                  pendingCreatePayload
+                    ? `Ścieżka: ${selectedCareerPathName || 'wybrana ścieżka kariery'}, horyzont: ${pendingCreatePayload.timeHorizonMonths} mies.`
+                    : undefined
+                }
+                errorMessage="Nie udało się potwierdzić wyniku operacji. Przed ponowną próbą sprawdź listę roadmap — nowe generowanie mogło już zostać uruchomione."
+                onBack={handleBackToCreateRoadmap}
+                onConfirm={handleConfirmCreateRoadmap}
               />
 
               <div className="flex flex-col items-start gap-4">
@@ -534,6 +625,7 @@ function CreateRoadmapDialog({
   roadmapLimitReachedDescription: string;
   onManageRoadmaps: () => void;
 }) {
+  const titleRef = useRef<HTMLHeadingElement>(null);
   const canSubmit =
     selectedCareerPathId.length > 0 &&
     !isCreatingRoadmap &&
@@ -542,9 +634,19 @@ function CreateRoadmapDialog({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="font-poppins max-w-xl rounded-[24px] border p-0 shadow-[0_24px_80px_-32px_rgba(15,23,42,0.25)]">
+      <DialogContent
+        onOpenAutoFocus={(event) => {
+          event.preventDefault();
+          titleRef.current?.focus();
+        }}
+        className="font-poppins max-w-xl rounded-[24px] border p-0 shadow-[0_24px_80px_-32px_rgba(15,23,42,0.25)]"
+      >
         <DialogHeader className="px-6 pt-6">
-          <DialogTitle className="text-2xl font-semibold tracking-tight">
+          <DialogTitle
+            ref={titleRef}
+            tabIndex={-1}
+            className="text-2xl font-semibold tracking-tight focus:outline-none"
+          >
             Utwórz roadmapę
           </DialogTitle>
           <DialogDescription className="text-sm leading-relaxed">
@@ -606,6 +708,7 @@ function CreateRoadmapDialog({
                 <button
                   key={option}
                   type="button"
+                  aria-pressed={option === timeHorizonMonths}
                   onClick={() => onTimeHorizonChange(option)}
                   className={cn(
                     'font-poppins min-w-0 flex-1 basis-[calc(50%-0.25rem)] cursor-pointer rounded-[7px] border px-3 py-2 text-center text-sm transition-colors md:flex-none md:basis-auto',

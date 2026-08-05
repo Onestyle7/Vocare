@@ -124,3 +124,8 @@ export interface GenerateCvFromProfileDto {
   name: string;
   jobDescription: string;
 }
+
+export interface TailorCvDto {
+  cvId: string;
+  jobDescription: string;
+}

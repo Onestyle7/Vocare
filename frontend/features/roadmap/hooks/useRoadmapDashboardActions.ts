@@ -1,23 +1,25 @@
 import { useState, useTransition } from 'react';
 import { toast } from 'sonner';
 
+import type { ServiceCostActionResult } from '@/features/billing/types';
 import { useUnauthorizedToast } from '@/lib/hooks/useUnauthorizedToast';
-import { GenerateRoadmapPayload } from '@/lib/types/roadmap';
+import type { GenerateRoadmapPayload } from '@/lib/types/roadmap';
 
 import { archiveRoadmapCommand, generateRoadmapCommand } from '../dal/commands';
 import { RoadmapDomainError } from '../dal/services';
 
 export function useRoadmapDashboardActions() {
-  const [isPending, startTransition] = useTransition();
+  const [isTransitionPending, startTransition] = useTransition();
+  const [isGenerating, setIsGenerating] = useState(false);
   const [actionError, setActionError] = useState<RoadmapDomainError | null>(null);
   const [deletingId, setDeletingId] = useState<string | null>(null);
   const { unauthorizedToast } = useUnauthorizedToast();
 
-  const handleError = (error: RoadmapDomainError) => {
+  const handleArchiveError = (error: RoadmapDomainError) => {
     if (error.type === 'Unauthorized') {
       unauthorizedToast();
     } else {
-      toast.error('Nie udało się utworzyć roadmapy', {
+      toast.error('Nie udało się usunąć roadmapy', {
         description: error.message || 'Wystąpił nieoczekiwany błąd serwera.',
       });
     }
@@ -25,18 +27,58 @@ export function useRoadmapDashboardActions() {
     setActionError(error);
   };
 
-  const handleGenerateRoadmap = (payload: GenerateRoadmapPayload, onSuccess?: () => void) => {
-    startTransition(async () => {
-      setActionError(null);
-      const [error] = await generateRoadmapCommand(payload);
+  const handleGenerateRoadmap = async (
+    payload: GenerateRoadmapPayload
+  ): Promise<ServiceCostActionResult> => {
+    setActionError(null);
+    setIsGenerating(true);
+
+    try {
+      const [error, response] = await generateRoadmapCommand(payload);
 
       if (error) {
-        handleError(error);
-      } else {
-        toast.success('Rozpoczęto generowanie roadmapy w tle');
-        if (onSuccess) onSuccess();
+        setActionError(error);
+
+        switch (error.type) {
+          case 'InsufficientTokens':
+            return 'insufficient-tokens';
+          case 'Unauthorized':
+            unauthorizedToast();
+            return 'handled-error';
+          case 'RoadmapLimitReached':
+          case 'DuplicateRoadmap':
+          case 'NotFound':
+          case 'InvalidOperation':
+            toast.error('Nie udało się utworzyć roadmapy', {
+              description: error.message,
+            });
+            return 'handled-error';
+          case 'GenericApiError':
+            return 'error';
+          default:
+            return error.type satisfies never;
+        }
       }
-    });
+
+      if (!response?.roadmapId) {
+        setActionError({
+          type: 'GenericApiError',
+          message: 'Serwer nie zwrócił identyfikatora uruchomionej roadmapy.',
+        });
+        return 'error';
+      }
+
+      toast.success('Rozpoczęto generowanie roadmapy w tle');
+      return 'success';
+    } catch {
+      setActionError({
+        type: 'GenericApiError',
+        message: 'Nie udało się potwierdzić wyniku generowania roadmapy.',
+      });
+      return 'error';
+    } finally {
+      setIsGenerating(false);
+    }
   };
 
   const handleArchiveRoadmap = (roadmapId: string, onSuccess?: () => void) => {
@@ -46,7 +88,7 @@ export function useRoadmapDashboardActions() {
       const [error] = await archiveRoadmapCommand(roadmapId);
 
       if (error) {
-        handleError(error);
+        handleArchiveError(error);
       } else {
         toast.success('Roadmapa została usunięta');
         if (onSuccess) onSuccess();
@@ -58,7 +100,8 @@ export function useRoadmapDashboardActions() {
   return {
     handleGenerateRoadmap,
     handleArchiveRoadmap,
-    isPending,
+    isPending: isTransitionPending || isGenerating,
+    isGenerating,
     actionError,
     deletingId,
   };
