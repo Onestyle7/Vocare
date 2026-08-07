@@ -115,12 +115,15 @@ namespace VocareWebAPI.JobOffers.Services.Implementations
                         existing.PublishedAt = offer.PublishedAt;
                         existing.UpdatedAt = DateTime.UtcNow;
 
+                        var embeddingGenerated = false;
+
                         if (existing.Embedding == null)
                         {
                             await GenerateEmbeddingForOffer(existing);
+                            embeddingGenerated = true;
                         }
 
-                        _repository.UpdateInContext(existing);
+                        _repository.UpdateInContext(existing, embeddingGenerated);
                         result.Updated++;
                         processedInBatch++;
                     }

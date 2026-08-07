@@ -40,8 +40,9 @@ namespace VocareWebAPI.JobOffers.Services.Implementations
                         divisionOffers.Add(MapToJobOffer(offer));
                     }
                     _logger.LogInformation(
-                        "Fetched {Count} offers from all divisions",
-                        divisionOffers.Count
+                        "Fetched {Count} offers for division {Division}",
+                        divisionOffers.Count,
+                        division
                     );
                 }
                 catch (Exception ex)
