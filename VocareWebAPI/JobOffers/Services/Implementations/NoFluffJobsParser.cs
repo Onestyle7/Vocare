@@ -25,7 +25,7 @@ namespace VocareWebAPI.JobOffers.Services.Implementations
             [EnumeratorCancellation] CancellationToken cancellationToken = default
         )
         {
-            await using var stream = await _httpClient.GetStreamAsync(url);
+            await using var stream = await _httpClient.GetStreamAsync(url, cancellationToken);
 
             using var reader = XmlReader.Create(stream, new XmlReaderSettings { Async = true });
 
