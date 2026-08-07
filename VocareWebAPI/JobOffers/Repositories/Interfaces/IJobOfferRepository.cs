@@ -17,7 +17,7 @@ namespace VocareWebAPI.JobOffers.Repositories.Interfaces
         Task<List<string>> GetAllUniqueSkillNamesAsync();
         Task AddToContextAsync(JobOffer offer);
         Task SaveChangesAsync();
-        void UpdateInContext(JobOffer offer);
+        void UpdateInContext(JobOffer offer, bool embeddingGenerated = false);
         void ClearChangeTracker();
     }
 }
