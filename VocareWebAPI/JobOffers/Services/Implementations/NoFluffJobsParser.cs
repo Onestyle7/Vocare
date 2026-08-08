@@ -25,67 +25,92 @@ namespace VocareWebAPI.JobOffers.Services.Implementations
             [EnumeratorCancellation] CancellationToken cancellationToken = default
         )
         {
-            await using var stream = await _httpClient.GetStreamAsync(url, cancellationToken);
-
-            using var reader = XmlReader.Create(stream, new XmlReaderSettings { Async = true });
-
-            while (await reader.ReadAsync())
+            var tempPath = Path.GetTempFileName();
+            try
             {
-                cancellationToken.ThrowIfCancellationRequested();
-                if (reader.NodeType == XmlNodeType.Element && reader.Name == "job")
+                await using (
+                    var httpStream = await _httpClient.GetStreamAsync(url, cancellationToken)
+                )
+                await using (var fileStream = File.Create(tempPath))
                 {
-                    using var subtreeReader = reader.ReadSubtree();
-                    var jobElement = XElement.Load(subtreeReader);
-
-                    JobOffer? offer = null;
-                    var referenceNumber = jobElement.Element("referencenumber")?.Value;
-
-                    try
-                    {
-                        offer = new JobOffer
-                        {
-                            Id = Guid.NewGuid(),
-                            ReferenceNumber = jobElement.Element("referencenumber")?.Value ?? "",
-                            Title = jobElement.Element("title")?.Value ?? "",
-                            CompanyName = jobElement.Element("company")?.Value ?? "",
-                            Url = jobElement.Element("url")?.Value ?? "",
-                            Country = jobElement.Element("country")?.Value,
-                            Category = jobElement.Element("category")?.Value ?? "",
-                            JobType = jobElement.Element("jobtype")?.Value ?? "",
-                            Description = jobElement.Element("description")?.Value ?? "",
-                            BriefDescription =
-                                jobElement.Element("brief_job_description")?.Value ?? "",
-                            PublishedAt = ParseDate(jobElement.Element("date")?.Value),
-                            CreatedAt = DateTime.UtcNow,
-                            UpdatedAt = DateTime.UtcNow,
-                            SeniorityLevel = ParseSeniority(jobElement.Element("seniority")?.Value),
-                        };
-                        var salary = ParseSalary(jobElement.Element("salary")?.Value);
-                        offer.SalaryMin = salary.Min;
-                        offer.SalaryMax = salary.Max;
-                        offer.SalaryCurrency = salary.Currency;
-                        offer.SalaryPeriod = salary.Period;
-                        offer.Locations = ParseLocations(
-                            jobElement.Element("city")?.Value,
-                            offer.Id
-                        );
-                        offer.Skills = ParseSkills(
-                            jobElement.Element("description")?.Value,
-                            offer.Id
-                        );
-                    }
-                    catch (Exception ex)
-                    {
-                        _logger.LogWarning(
-                            ex,
-                            "Nie udało się sparsować oferty pracy {ReferenceNumber} z NoFluffJobs",
-                            referenceNumber
-                        );
-                    }
-
-                    if (offer is not null)
-                        yield return offer;
+                    await httpStream.CopyToAsync(fileStream, cancellationToken);
                 }
+                await using var localStream = File.OpenRead(tempPath);
+                using var reader = XmlReader.Create(
+                    localStream,
+                    new XmlReaderSettings { Async = true }
+                );
+                while (await reader.ReadAsync())
+                {
+                    cancellationToken.ThrowIfCancellationRequested();
+                    if (reader.NodeType == XmlNodeType.Element && reader.Name == "job")
+                    {
+                        using var subtreeReader = reader.ReadSubtree();
+
+                        var jobElement = await XElement.LoadAsync(
+                            subtreeReader,
+                            LoadOptions.None,
+                            cancellationToken
+                        );
+
+                        JobOffer? offer = null;
+                        var referenceNumber = jobElement.Element("referencenumber")?.Value;
+
+                        try
+                        {
+                            offer = new JobOffer
+                            {
+                                Id = Guid.NewGuid(),
+                                ReferenceNumber =
+                                    jobElement.Element("referencenumber")?.Value ?? "",
+                                Title = jobElement.Element("title")?.Value ?? "",
+                                CompanyName = jobElement.Element("company")?.Value ?? "",
+                                Url = jobElement.Element("url")?.Value ?? "",
+                                Country = jobElement.Element("country")?.Value,
+                                Category = jobElement.Element("category")?.Value ?? "",
+                                JobType = jobElement.Element("jobtype")?.Value ?? "",
+                                Description = jobElement.Element("description")?.Value ?? "",
+                                BriefDescription =
+                                    jobElement.Element("brief_job_description")?.Value ?? "",
+                                PublishedAt = ParseDate(jobElement.Element("date")?.Value),
+                                CreatedAt = DateTime.UtcNow,
+                                UpdatedAt = DateTime.UtcNow,
+                                SeniorityLevel = ParseSeniority(
+                                    jobElement.Element("seniority")?.Value
+                                ),
+                            };
+                            var salary = ParseSalary(jobElement.Element("salary")?.Value);
+                            offer.SalaryMin = salary.Min;
+                            offer.SalaryMax = salary.Max;
+                            offer.SalaryCurrency = salary.Currency;
+                            offer.SalaryPeriod = salary.Period;
+                            offer.Locations = ParseLocations(
+                                jobElement.Element("city")?.Value,
+                                offer.Id
+                            );
+                            offer.Skills = ParseSkills(
+                                jobElement.Element("description")?.Value,
+                                offer.Id
+                            );
+                        }
+                        catch (Exception ex)
+                        {
+                            _logger.LogWarning(
+                                ex,
+                                "Nie udało się sparsować oferty pracy {ReferenceNumber} z NoFluffJobs",
+                                referenceNumber
+                            );
+                        }
+
+                        if (offer is not null)
+                            yield return offer;
+                    }
+                }
+            }
+            finally
+            {
+                if (File.Exists(tempPath))
+                    File.Delete(tempPath);
             }
         }
 
