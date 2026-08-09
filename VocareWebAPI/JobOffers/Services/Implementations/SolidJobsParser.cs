@@ -1,3 +1,4 @@
+using System.Runtime.CompilerServices;
 using VocareWebAPI.JobOffers.ExternalClients.SolidJobs;
 using VocareWebAPI.JobOffers.Models.Entities;
 using VocareWebAPI.JobOffers.Models.Enums;
@@ -18,13 +19,13 @@ namespace VocareWebAPI.JobOffers.Services.Implementations
             _logger = logger;
         }
 
-        public async Task<IEnumerable<JobOffer>> FetchOffersAsync(
-            CancellationToken cancellationToken = default
+        public async IAsyncEnumerable<JobOffer> FetchOffersAsync(
+            [EnumeratorCancellation] CancellationToken cancellationToken = default
         )
         {
-            var results = new List<JobOffer>();
             foreach (var division in Enum.GetValues<SolidJobsModels.Division>())
             {
+                var divisionOffers = new List<JobOffer>();
                 try
                 {
                     await foreach (
@@ -36,20 +37,23 @@ namespace VocareWebAPI.JobOffers.Services.Implementations
                         )
                     )
                     {
-                        var mappedOffer = MapToJobOffer(offer);
-                        results.Add(mappedOffer);
+                        divisionOffers.Add(MapToJobOffer(offer));
                     }
                     _logger.LogInformation(
-                        "Fetched {Count} offers from all divisions",
-                        results.Count
+                        "Fetched {Count} offers for division {Division}",
+                        divisionOffers.Count,
+                        division
                     );
                 }
                 catch (Exception ex)
                 {
                     _logger.LogError(ex, "Error fetching offers for division {Division}", division);
                 }
+                foreach (var offer in divisionOffers)
+                {
+                    yield return offer;
+                }
             }
-            return results;
         }
 
         private JobOffer MapToJobOffer(SolidJobsModels.JobOffer offer)

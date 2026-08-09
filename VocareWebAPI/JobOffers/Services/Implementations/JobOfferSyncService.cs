@@ -1,5 +1,7 @@
+using System.Runtime.CompilerServices;
 using Microsoft.AspNetCore.Mvc.ModelBinding.Binders;
 using Microsoft.AspNetCore.Mvc.RazorPages.Infrastructure;
+using VocareWebAPI.JobOffers.Exceptions;
 using VocareWebAPI.JobOffers.Models.Dtos;
 using VocareWebAPI.JobOffers.Models.Entities;
 using VocareWebAPI.JobOffers.Models.Enums;
@@ -33,24 +35,22 @@ namespace VocareWebAPI.JobOffers.Services.Implementations
             _solidJobsParser = solidJobsParser;
         }
 
-        public async Task<SyncResult> SyncOffersAsync()
+        public async Task<SyncResult> SyncOffersAsync(CancellationToken cancellationToken = default)
         {
             SyncResult processResult;
             try
             {
-                var offersNofluffJobs = await _parser.ParseFromUrlAsync(FeedUrl);
-                var offersSolidJobs = await _solidJobsParser.FetchOffersAsync();
-
-                var combinedOffers = offersNofluffJobs.Concat(offersSolidJobs);
-
-                processResult = await ProcessOffersAsync(combinedOffers);
-                processResult.Total = combinedOffers.Count();
+                var combinedOffers = GetCombinedOffersAsync(cancellationToken);
+                processResult = await ProcessOffersAsync(combinedOffers, cancellationToken);
             }
             catch (Exception ex)
             {
                 _logger.LogError(ex, "Błąd podczas synchronizacji ofert");
                 throw;
             }
+
+            processResult.Total =
+                processResult.Added + processResult.Updated + processResult.Failed;
 
             _logger.LogInformation(
                 "Sync zakończony: {Added} dodanych, {Updated} zaktualizowanych, {Failed} błędów z {Total} total oraz {Skipped} pominiętych",
@@ -64,10 +64,16 @@ namespace VocareWebAPI.JobOffers.Services.Implementations
             return processResult;
         }
 
-        private async Task<SyncResult> ProcessOffersAsync(IEnumerable<JobOffer> offers)
+        private async Task<SyncResult> ProcessOffersAsync(
+            IAsyncEnumerable<JobOffer> offers,
+            CancellationToken cancellationToken
+        )
         {
+            const int batchSize = 100;
+            var processedInBatch = 0;
+
             var result = new SyncResult();
-            foreach (var offer in offers)
+            await foreach (var offer in offers.WithCancellation(cancellationToken))
             {
                 try
                 {
@@ -80,8 +86,9 @@ namespace VocareWebAPI.JobOffers.Services.Implementations
                     {
                         await GenerateEmbeddingForOffer(offer);
 
-                        await _repository.AddAsync(offer);
+                        await _repository.AddToContextAsync(offer);
                         result.Added++;
+                        processedInBatch++;
                     }
                     else
                     {
@@ -108,13 +115,17 @@ namespace VocareWebAPI.JobOffers.Services.Implementations
                         existing.PublishedAt = offer.PublishedAt;
                         existing.UpdatedAt = DateTime.UtcNow;
 
+                        var embeddingGenerated = false;
+
                         if (existing.Embedding == null)
                         {
                             await GenerateEmbeddingForOffer(existing);
+                            embeddingGenerated = true;
                         }
 
-                        await _repository.UpdateAsync(existing);
+                        _repository.UpdateInContext(existing, embeddingGenerated);
                         result.Updated++;
+                        processedInBatch++;
                     }
                 }
                 catch (Exception ex)
@@ -126,23 +137,49 @@ namespace VocareWebAPI.JobOffers.Services.Implementations
                     );
                     result.Failed++;
                 }
+                if (processedInBatch >= batchSize)
+                {
+                    await _repository.SaveChangesAsync();
+                    _repository.ClearChangeTracker();
+                    processedInBatch = 0;
+                }
+            }
+            if (processedInBatch > 0)
+            {
+                await _repository.SaveChangesAsync();
+                _repository.ClearChangeTracker();
             }
             return result;
         }
 
-        public async Task<CleanupResult> CleanupStaleOffersAsync(JobOfferSource source)
+        public async Task<CleanupResult> CleanupStaleOffersAsync(
+            JobOfferSource source,
+            CancellationToken cancellationToken = default
+        )
         {
             var dbReferenceNumbers = await _repository.GetAllReferenceNumbersAsync(source);
 
-            var jobOffersIds = source switch
-            {
-                JobOfferSource.NofluffJobs => await _parser.ParseFromUrlAsync(FeedUrl),
-                JobOfferSource.SolidJobs => await _solidJobsParser.FetchOffersAsync(),
-                _ => throw new InvalidOperationException($"Nieobsługiwane źródło ofert: {source}"),
-            };
+            var feedReferenceNumbers = new HashSet<string>();
 
-            var feedReferenceNumbers = jobOffersIds.Select(o => o.ReferenceNumber).ToHashSet();
-            if (jobOffersIds.Count() == 0)
+            if (source == JobOfferSource.NofluffJobs)
+            {
+                await foreach (var offer in _parser.ParseFromUrlAsync(FeedUrl, cancellationToken))
+                {
+                    feedReferenceNumbers.Add(offer.ReferenceNumber);
+                }
+            }
+            else if (source == JobOfferSource.SolidJobs)
+            {
+                var solidOffers = _solidJobsParser.FetchOffersAsync(cancellationToken);
+
+                await foreach (var offer in solidOffers)
+                    feedReferenceNumbers.Add(offer.ReferenceNumber);
+            }
+            else
+            {
+                throw new UnsupportedSourceException(source);
+            }
+            if (feedReferenceNumbers.Count == 0)
             {
                 _logger.LogWarning(
                     "Nie udało się pobrać ofert z feedu podczas czyszczenia. Brak usuwania ofert."
@@ -291,6 +328,22 @@ namespace VocareWebAPI.JobOffers.Services.Implementations
                 || existing.SalaryCurrency != offer.SalaryCurrency
                 || existing.SalaryPeriod != offer.SalaryPeriod
                 || existing.PublishedAt != offer.PublishedAt;
+        }
+
+        private async IAsyncEnumerable<JobOffer> GetCombinedOffersAsync(
+            [EnumeratorCancellation] CancellationToken cancellationToken = default
+        )
+        {
+            await foreach (var offer in _parser.ParseFromUrlAsync(FeedUrl, cancellationToken))
+            {
+                yield return offer;
+            }
+
+            var solidOffers = _solidJobsParser.FetchOffersAsync(cancellationToken);
+            await foreach (var offer in solidOffers)
+            {
+                yield return offer;
+            }
         }
     }
 }
