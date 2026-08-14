@@ -60,6 +60,7 @@ export interface CvDto {
   social: CvSocialDto[];
   skills: string[];
   languages: CvLanguageEntryDto[];
+  hobbies?: string[] | null;
 }
 
 export interface CvDetailsDto {
@@ -72,6 +73,7 @@ export interface CvDetailsDto {
   lastModifiedAt: string;
   version: number;
   notes?: string;
+  hasPersistedHobbies?: boolean;
 }
 
 export interface CvListItemDto {

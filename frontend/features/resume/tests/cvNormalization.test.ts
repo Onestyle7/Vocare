@@ -2,7 +2,7 @@
 
 import { describe, expect, it } from 'vitest';
 
-import { normalizeCvDto } from '../dal/cvNormalization';
+import { hasPersistedHobbies, normalizeCvDto } from '../dal/cvNormalization';
 
 describe('normalizeCvDto', () => {
   it('defaults missing CV collections to empty arrays', () => {
@@ -15,7 +15,21 @@ describe('normalizeCvDto', () => {
       social: [],
       skills: [],
       languages: [],
+      hobbies: [],
     });
+  });
+
+  it('preserves the saved hobby order', () => {
+    expect(normalizeCvDto({ hobbies: ['Fotografia', 'Bieganie'] }).hobbies).toEqual([
+      'Fotografia',
+      'Bieganie',
+    ]);
+  });
+
+  it('distinguishes historical CVs from CVs with an intentionally empty hobby list', () => {
+    expect(hasPersistedHobbies({})).toBe(false);
+    expect(hasPersistedHobbies({ hobbies: null })).toBe(false);
+    expect(hasPersistedHobbies({ hobbies: [] })).toBe(true);
   });
 
   it('normalizes null responsibilities to an empty array without falling back to description', () => {

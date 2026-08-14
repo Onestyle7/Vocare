@@ -60,8 +60,40 @@ namespace VocareWebAPI.CvGenerator.Implementations
             if (!belongsToUser)
                 throw new CvAccessDeniedException(dto.CvId);
 
+            var sourceCv = JsonSerializer.Deserialize<CvDto>(
+                cv.CvJson,
+                new JsonSerializerOptions { PropertyNameCaseInsensitive = true }
+            ) ?? new CvDto();
             var prompt = BuildPrompt(cv.CvJson, dto.JobDescription);
             var tailoredCv = await CallOpenAiAsync(prompt);
+            tailoredCv.Hobbies = sourceCv.Hobbies?.ToList() ?? new List<string>();
+            var sourceEducationEntries = sourceCv.Education?.ToList()
+                ?? new List<CvEducationEntryDto>();
+            foreach (var tailoredEducation in tailoredCv.Education ?? new List<CvEducationEntryDto>())
+            {
+                var sourceEducationIndex = sourceEducationEntries.FindIndex(source =>
+                    source.Institution == tailoredEducation.Institution
+                    && source.Degree == tailoredEducation.Degree
+                    && source.Field == tailoredEducation.Field
+                    && source.StartDate == tailoredEducation.StartDate
+                    && source.EndDate == tailoredEducation.EndDate
+                );
+                if (sourceEducationIndex < 0)
+                {
+                    sourceEducationIndex = sourceEducationEntries.FindIndex(source =>
+                        source.Institution == tailoredEducation.Institution
+                        && source.StartDate == tailoredEducation.StartDate
+                        && source.EndDate == tailoredEducation.EndDate
+                    );
+                }
+
+                if (sourceEducationIndex >= 0)
+                {
+                    var sourceEducation = sourceEducationEntries[sourceEducationIndex];
+                    tailoredEducation.Description = sourceEducation.Description;
+                    sourceEducationEntries.RemoveAt(sourceEducationIndex);
+                }
+            }
             cv.CvJson = JsonSerializer.Serialize(
                 tailoredCv,
                 new JsonSerializerOptions { PropertyNamingPolicy = JsonNamingPolicy.CamelCase }
@@ -110,6 +142,7 @@ namespace VocareWebAPI.CvGenerator.Implementations
 
             var prompt = BuildPrompt(sourceData, dto.JobDescription);
             var generatedCv = await CallOpenAiAsync(prompt);
+            generatedCv.Hobbies ??= new List<string>();
 
             var newCv = new GeneratedCv
             {
@@ -270,7 +303,8 @@ namespace VocareWebAPI.CvGenerator.Implementations
                             "degree": "string",
                             "field": "string",
                             "startDate": "YYYY-MM-DD",
-                            "endDate": "YYYY-MM-DD"
+                            "endDate": "YYYY-MM-DD",
+                            "description": "string — opis ze źródła; pusty string, jeśli go brak"
                         }
                     ],
                     "certificates": [
