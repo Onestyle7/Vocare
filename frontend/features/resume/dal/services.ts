@@ -14,7 +14,7 @@ import {
   TailorCvDto,
   UpdateCvDto,
 } from './api';
-import { normalizeCvDto } from './cvNormalization';
+import { hasPersistedHobbies, normalizeCvDto } from './cvNormalization';
 
 export type CvDomainError = BaseAppError<
   | 'Unauthorized'
@@ -69,6 +69,7 @@ const mapCvError = (error: ApiError): CvDomainError => {
 const normalizeDetails = (data: CvDetailsDto): CvDetailsDto => ({
   ...data,
   targetPosition: data.targetPosition ?? undefined,
+  hasPersistedHobbies: hasPersistedHobbies(data.cvData),
   cvData: normalizeCvDto(data.cvData),
   notes: data.notes ?? undefined,
 });

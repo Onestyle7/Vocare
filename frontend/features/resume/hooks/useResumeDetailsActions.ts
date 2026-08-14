@@ -66,7 +66,8 @@ export function useResumeDetailsActions() {
   const handleLoadFromProfile = async (
     cvId: string,
     resumeName: string,
-    targetPosition?: string
+    targetPosition?: string,
+    preservedHobbies: string[] = []
   ): Promise<{ targetPosition?: string; cvData: CvDto }> => {
     return new Promise((resolve, reject) => {
       startTransition(async () => {
@@ -82,11 +83,16 @@ export function useResumeDetailsActions() {
             return reject(createError);
           }
 
+          const cvData = {
+            ...generated.cvData,
+            hobbies: preservedHobbies,
+          };
+
           const [updateError] = await updateCvCommand({
             id: cvId,
             name: resumeName,
             targetPosition: generated.targetPosition,
-            cvData: generated.cvData,
+            cvData,
           });
 
           if (updateError) {
@@ -97,7 +103,7 @@ export function useResumeDetailsActions() {
           await deleteCvCommand(generated.id);
 
           toast.success('Pomyślnie załadowano dane z profilu');
-          resolve({ targetPosition: generated.targetPosition, cvData: generated.cvData });
+          resolve({ targetPosition: generated.targetPosition, cvData });
         } catch (err) {
           toast.error('Wystąpił nieoczekiwany błąd podczas ładowania');
           reject(err);
