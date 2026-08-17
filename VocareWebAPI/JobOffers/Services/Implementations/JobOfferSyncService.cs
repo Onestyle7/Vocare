@@ -1,6 +1,4 @@
 using System.Runtime.CompilerServices;
-using Microsoft.AspNetCore.Mvc.ModelBinding.Binders;
-using Microsoft.AspNetCore.Mvc.RazorPages.Infrastructure;
 using VocareWebAPI.JobOffers.Exceptions;
 using VocareWebAPI.JobOffers.Models.Dtos;
 using VocareWebAPI.JobOffers.Models.Entities;
@@ -14,25 +12,21 @@ namespace VocareWebAPI.JobOffers.Services.Implementations
     public class JobOfferSyncService : IJobOfferSyncService
     {
         private readonly IJobOfferRepository _repository;
-        private readonly INoFluffJobsParser _parser;
         private readonly ILogger<JobOfferSyncService> _logger;
         private readonly IEmbeddingService _embeddingService;
-        private readonly ISolidJobsParser _solidJobsParser;
-        private const string FeedUrl = "https://nofluffjobs.com/api/xml/jooble";
+        private readonly IEnumerable<IJobOfferProvider> _providers;
 
         public JobOfferSyncService(
             IJobOfferRepository repository,
-            INoFluffJobsParser parser,
             ILogger<JobOfferSyncService> logger,
             IEmbeddingService embeddingService,
-            ISolidJobsParser solidJobsParser
+            IEnumerable<IJobOfferProvider> providers
         )
         {
             _repository = repository;
-            _parser = parser;
             _logger = logger;
             _embeddingService = embeddingService;
-            _solidJobsParser = solidJobsParser;
+            _providers = providers;
         }
 
         public async Task<SyncResult> SyncOffersAsync(CancellationToken cancellationToken = default)
@@ -158,27 +152,18 @@ namespace VocareWebAPI.JobOffers.Services.Implementations
         )
         {
             var dbReferenceNumbers = await _repository.GetAllReferenceNumbersAsync(source);
+            var provider = _providers.FirstOrDefault(p => p.Source == source);
+
+            if (provider is null)
+                throw new UnsupportedSourceException(source);
 
             var feedReferenceNumbers = new HashSet<string>();
 
-            if (source == JobOfferSource.NofluffJobs)
+            await foreach (var offer in provider.FetchOffersAsync(cancellationToken))
             {
-                await foreach (var offer in _parser.ParseFromUrlAsync(FeedUrl, cancellationToken))
-                {
-                    feedReferenceNumbers.Add(offer.ReferenceNumber);
-                }
+                feedReferenceNumbers.Add(offer.ReferenceNumber);
             }
-            else if (source == JobOfferSource.SolidJobs)
-            {
-                var solidOffers = _solidJobsParser.FetchOffersAsync(cancellationToken);
 
-                await foreach (var offer in solidOffers)
-                    feedReferenceNumbers.Add(offer.ReferenceNumber);
-            }
-            else
-            {
-                throw new UnsupportedSourceException(source);
-            }
             if (feedReferenceNumbers.Count == 0)
             {
                 _logger.LogWarning(
@@ -334,15 +319,26 @@ namespace VocareWebAPI.JobOffers.Services.Implementations
             [EnumeratorCancellation] CancellationToken cancellationToken = default
         )
         {
-            await foreach (var offer in _parser.ParseFromUrlAsync(FeedUrl, cancellationToken))
+            foreach (var provider in _providers)
             {
-                yield return offer;
-            }
-
-            var solidOffers = _solidJobsParser.FetchOffersAsync(cancellationToken);
-            await foreach (var offer in solidOffers)
-            {
-                yield return offer;
+                var offerList = new List<JobOffer>();
+                try
+                {
+                    _logger.LogInformation("Fetching offers from {Source}", provider.Source);
+                    await foreach (var offer in provider.FetchOffersAsync(cancellationToken))
+                    {
+                        offerList.Add(offer);
+                    }
+                }
+                catch (Exception ex)
+                {
+                    _logger.LogError(ex, "Error fetching offers from {Source}", provider.Source);
+                    continue;
+                }
+                foreach (var offer in offerList)
+                {
+                    yield return offer;
+                }
             }
         }
     }

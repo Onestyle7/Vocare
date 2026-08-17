@@ -135,7 +135,6 @@ namespace VocareWebAPI.Extensions.ServiceCollectionExtensions
 
             // Job Offer repositories
             services.AddScoped<IJobOfferRepository, JobOfferRepository>();
-            services.AddScoped<ISolidJobsParser, SolidJobsParser>();
             services.AddScoped<IMarketNewsRepository, MarketNewsRepository>();
             services.AddScoped<
                 IJobOfferRecommendationRepository,
