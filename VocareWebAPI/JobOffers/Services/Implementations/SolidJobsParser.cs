@@ -7,8 +7,9 @@ using SolidJobsModels = VocareWebAPI.JobOffers.ExternalClients.SolidJobs.Models;
 
 namespace VocareWebAPI.JobOffers.Services.Implementations
 {
-    public class SolidJobsParser : ISolidJobsParser
+    public class SolidJobsParser : IJobOfferProvider
     {
+        public JobOfferSource Source { get; } = JobOfferSource.SolidJobs;
         private const string CampaignName = "vocare";
         private readonly SolidJobsClient _client;
         private readonly ILogger<SolidJobsParser> _logger;
