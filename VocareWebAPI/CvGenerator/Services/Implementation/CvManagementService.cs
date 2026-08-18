@@ -174,14 +174,6 @@ namespace VocareWebAPI.CvGenerator.Services.Implementation
             cv.Name = updateDto.Name;
             cv.TargetPosition = updateDto.TargetPosition;
             cv.Notes = updateDto.Notes;
-            if (updateDto.CvData.Hobbies == null)
-            {
-                var storedCvData = JsonSerializer.Deserialize<CvDto>(
-                    cv.CvJson,
-                    new JsonSerializerOptions { PropertyNameCaseInsensitive = true }
-                );
-                updateDto.CvData.Hobbies = storedCvData?.Hobbies?.ToList();
-            }
             cv.CvJson = JsonSerializer.Serialize(
                 updateDto.CvData,
                 new JsonSerializerOptions { PropertyNamingPolicy = JsonNamingPolicy.CamelCase }

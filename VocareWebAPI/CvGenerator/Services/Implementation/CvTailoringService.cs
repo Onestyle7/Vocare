@@ -66,34 +66,7 @@ namespace VocareWebAPI.CvGenerator.Implementations
             ) ?? new CvDto();
             var prompt = BuildPrompt(cv.CvJson, dto.JobDescription);
             var tailoredCv = await CallOpenAiAsync(prompt);
-            tailoredCv.Hobbies = sourceCv.Hobbies?.ToList() ?? new List<string>();
-            var sourceEducationEntries = sourceCv.Education?.ToList()
-                ?? new List<CvEducationEntryDto>();
-            foreach (var tailoredEducation in tailoredCv.Education ?? new List<CvEducationEntryDto>())
-            {
-                var sourceEducationIndex = sourceEducationEntries.FindIndex(source =>
-                    source.Institution == tailoredEducation.Institution
-                    && source.Degree == tailoredEducation.Degree
-                    && source.Field == tailoredEducation.Field
-                    && source.StartDate == tailoredEducation.StartDate
-                    && source.EndDate == tailoredEducation.EndDate
-                );
-                if (sourceEducationIndex < 0)
-                {
-                    sourceEducationIndex = sourceEducationEntries.FindIndex(source =>
-                        source.Institution == tailoredEducation.Institution
-                        && source.StartDate == tailoredEducation.StartDate
-                        && source.EndDate == tailoredEducation.EndDate
-                    );
-                }
-
-                if (sourceEducationIndex >= 0)
-                {
-                    var sourceEducation = sourceEducationEntries[sourceEducationIndex];
-                    tailoredEducation.Description = sourceEducation.Description;
-                    sourceEducationEntries.RemoveAt(sourceEducationIndex);
-                }
-            }
+            RestoreEducationDescriptions(sourceCv, tailoredCv);
             cv.CvJson = JsonSerializer.Serialize(
                 tailoredCv,
                 new JsonSerializerOptions { PropertyNamingPolicy = JsonNamingPolicy.CamelCase }
@@ -113,6 +86,41 @@ namespace VocareWebAPI.CvGenerator.Implementations
                 Notes = cv.Notes,
             };
         }
+
+        private void RestoreEducationDescriptions(CvDto sourceCv, CvDto tailoredCv)
+{
+    var sourceEducationEntries = sourceCv.Education?.ToList()
+        ?? new List<CvEducationEntryDto>();
+
+    foreach (var tailoredEducation in tailoredCv.Education ?? new List<CvEducationEntryDto>())
+    {
+        var sourceEducationIndex = sourceEducationEntries.FindIndex(source =>
+            source.Institution == tailoredEducation.Institution
+            && source.Degree == tailoredEducation.Degree
+            && source.Field == tailoredEducation.Field
+            && source.StartDate == tailoredEducation.StartDate
+            && source.EndDate == tailoredEducation.EndDate
+        );
+
+        if (sourceEducationIndex < 0)
+        {
+            sourceEducationIndex = sourceEducationEntries.FindIndex(source =>
+                source.Institution == tailoredEducation.Institution
+                && source.StartDate == tailoredEducation.StartDate
+                && source.EndDate == tailoredEducation.EndDate
+            );
+        }
+
+        if (sourceEducationIndex >= 0)
+        {
+            var sourceEducation = sourceEducationEntries[sourceEducationIndex];
+
+            tailoredEducation.Description = sourceEducation.Description;
+
+            sourceEducationEntries.RemoveAt(sourceEducationIndex);
+        }
+    }
+}
 
         public async Task<Result<CvDetailsDto>> GenerateCvFromProfileAsync(
             GenerateCvFromProfileDto dto,
@@ -142,7 +150,6 @@ namespace VocareWebAPI.CvGenerator.Implementations
 
             var prompt = BuildPrompt(sourceData, dto.JobDescription);
             var generatedCv = await CallOpenAiAsync(prompt);
-            generatedCv.Hobbies ??= new List<string>();
 
             var newCv = new GeneratedCv
             {
@@ -265,6 +272,7 @@ namespace VocareWebAPI.CvGenerator.Implementations
                 8. Zwróć WSZYSTKIE sekcje ze schematu. Sekcje bez danych w źródle (np. projects, social, certificates) zwróć jako puste listy [].
                 9. Język CV: taki sam jak język OPISU OFERTY PRACY. Jeśli dane źródłowe są w innym języku niż oferta — przetłumacz treści na język oferty, zachowując merytoryczną dokładność. Nie tłumacz nazw własnych (nazwy firm, uczelni, certyfikatów).
                 10. Odpowiedź musi być poprawnym JSONem zgodnym ze schematem poniżej — bez dodatkowych pól, bez zmian nazw kluczy.
+                11. HOBBIES: Zwróć wyłącznie hobby obecne w danych źródłowych. Nie dodawaj nowych hobby. Jeśli w źródle ich nie ma, zwróć pustą listę [].
 
                 OPIS OFERTY PRACY:
                 {{jobDescription}}
@@ -332,6 +340,9 @@ namespace VocareWebAPI.CvGenerator.Implementations
                             "social": "string",
                             "link": "string"
                         }
+                    ],
+                    "hobbies": [
+                        "string - hobby wyłącznie z danych źródłowych"
                     ]
                 }
                 """;
