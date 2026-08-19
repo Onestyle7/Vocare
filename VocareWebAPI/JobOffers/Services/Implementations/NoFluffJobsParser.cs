@@ -3,7 +3,6 @@ using System.Runtime.CompilerServices;
 using System.Text.RegularExpressions;
 using System.Xml;
 using System.Xml.Linq;
-using Hangfire.Common;
 using Microsoft.Extensions.Options;
 using VocareWebAPI.JobOffers.Models.Entities;
 using VocareWebAPI.JobOffers.Models.Enums;

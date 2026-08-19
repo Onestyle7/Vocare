@@ -1,4 +1,5 @@
 using System.Runtime.CompilerServices;
+using Microsoft.EntityFrameworkCore.Scaffolding;
 using VocareWebAPI.JobOffers.Exceptions;
 using VocareWebAPI.JobOffers.Models.Dtos;
 using VocareWebAPI.JobOffers.Models.Entities;
@@ -31,31 +32,44 @@ namespace VocareWebAPI.JobOffers.Services.Implementations
 
         public async Task<SyncResult> SyncOffersAsync(CancellationToken cancellationToken = default)
         {
-            SyncResult processResult;
-            try
+            var totalResult = new SyncResult();
+            foreach (var provider in _providers)
             {
-                var combinedOffers = GetCombinedOffersAsync(cancellationToken);
-                processResult = await ProcessOffersAsync(combinedOffers, cancellationToken);
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, "Błąd podczas synchronizacji ofert");
-                throw;
-            }
+                try
+                {
+                    _logger.LogInformation(
+                        "Rozpoczynam synchronizację ofert pracy z {Source}",
+                        provider.Source
+                    );
+                    var processResult = await ProcessOffersAsync(
+                        provider.FetchOffersAsync(cancellationToken),
+                        cancellationToken
+                    );
 
-            processResult.Total =
-                processResult.Added + processResult.Updated + processResult.Failed;
+                    totalResult.Added += processResult.Added;
+                    totalResult.Updated += processResult.Updated;
+                    totalResult.Failed += processResult.Failed;
+                    totalResult.Skipped += processResult.Skipped;
+                }
+                catch (Exception ex)
+                {
+                    _logger.LogError(ex, "Błąd podczas synchronizacji ofert");
+                    continue;
+                }
+            }
+            totalResult.Total =
+                totalResult.Added + totalResult.Updated + totalResult.Failed + totalResult.Skipped;
 
             _logger.LogInformation(
-                "Sync zakończony: {Added} dodanych, {Updated} zaktualizowanych, {Failed} błędów z {Total} total oraz {Skipped} pominiętych",
-                processResult.Added,
-                processResult.Updated,
-                processResult.Failed,
-                processResult.Total,
-                processResult.Skipped
+                "Zakończono synchronizację ofert pracy: {Added} dodanych, {Updated} zaktualizowanych, {Failed} nieudanych, {Skipped} pominiętych, {Total} łącznie",
+                totalResult.Added,
+                totalResult.Updated,
+                totalResult.Failed,
+                totalResult.Skipped,
+                totalResult.Total
             );
 
-            return processResult;
+            return totalResult;
         }
 
         private async Task<SyncResult> ProcessOffersAsync(
@@ -313,33 +327,6 @@ namespace VocareWebAPI.JobOffers.Services.Implementations
                 || existing.SalaryCurrency != offer.SalaryCurrency
                 || existing.SalaryPeriod != offer.SalaryPeriod
                 || existing.PublishedAt != offer.PublishedAt;
-        }
-
-        private async IAsyncEnumerable<JobOffer> GetCombinedOffersAsync(
-            [EnumeratorCancellation] CancellationToken cancellationToken = default
-        )
-        {
-            foreach (var provider in _providers)
-            {
-                var offerList = new List<JobOffer>();
-                try
-                {
-                    _logger.LogInformation("Fetching offers from {Source}", provider.Source);
-                    await foreach (var offer in provider.FetchOffersAsync(cancellationToken))
-                    {
-                        offerList.Add(offer);
-                    }
-                }
-                catch (Exception ex)
-                {
-                    _logger.LogError(ex, "Error fetching offers from {Source}", provider.Source);
-                    continue;
-                }
-                foreach (var offer in offerList)
-                {
-                    yield return offer;
-                }
-            }
         }
     }
 }
