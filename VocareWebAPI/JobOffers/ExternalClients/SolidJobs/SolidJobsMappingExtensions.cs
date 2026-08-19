@@ -34,6 +34,7 @@ namespace VocareWebAPI.JobOffers.ExternalClients.SolidJobs
                 SalaryCurrency = offer.Salary.Currency,
                 SalaryPeriod = Enum.TryParse<SalaryPeriod>(
                     offer.Salary.Period,
+                    true,
                     out var salaryPeriod
                 )
                     ? salaryPeriod
