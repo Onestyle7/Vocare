@@ -3,25 +3,33 @@ using System.Runtime.CompilerServices;
 using System.Text.RegularExpressions;
 using System.Xml;
 using System.Xml.Linq;
+using Microsoft.Extensions.Options;
 using VocareWebAPI.JobOffers.Models.Entities;
 using VocareWebAPI.JobOffers.Models.Enums;
+using VocareWebAPI.JobOffers.Models.Options;
 using VocareWebAPI.JobOffers.Services.Interfaces;
 
 namespace VocareWebAPI.JobOffers.Services.Implementations
 {
-    public class NoFluffJobsParser : INoFluffJobsParser
+    public class NoFluffJobsParser : IJobOfferProvider
     {
+        public JobOfferSource Source { get; } = JobOfferSource.NofluffJobs;
         private readonly HttpClient _httpClient;
         private readonly ILogger<NoFluffJobsParser> _logger;
+        private readonly NofluffJobsFetchOptions _nofluffJobsUrl;
 
-        public NoFluffJobsParser(HttpClient httpClient, ILogger<NoFluffJobsParser> logger)
+        public NoFluffJobsParser(
+            HttpClient httpClient,
+            ILogger<NoFluffJobsParser> logger,
+            IOptions<NofluffJobsFetchOptions> nofluffJobsUrl
+        )
         {
             _httpClient = httpClient;
             _logger = logger;
+            _nofluffJobsUrl = nofluffJobsUrl.Value;
         }
 
-        public async IAsyncEnumerable<JobOffer> ParseFromUrlAsync(
-            string url,
+        public async IAsyncEnumerable<JobOffer> FetchOffersAsync(
             [EnumeratorCancellation] CancellationToken cancellationToken = default
         )
         {
@@ -29,7 +37,10 @@ namespace VocareWebAPI.JobOffers.Services.Implementations
             try
             {
                 await using (
-                    var httpStream = await _httpClient.GetStreamAsync(url, cancellationToken)
+                    var httpStream = await _httpClient.GetStreamAsync(
+                        _nofluffJobsUrl.NoFluffJobsfeed,
+                        cancellationToken
+                    )
                 )
                 await using (var fileStream = File.Create(tempPath))
                 {
