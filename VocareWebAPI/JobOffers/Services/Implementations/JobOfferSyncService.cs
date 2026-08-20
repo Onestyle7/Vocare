@@ -1,6 +1,5 @@
 using System.Runtime.CompilerServices;
-using Microsoft.AspNetCore.Mvc.ModelBinding.Binders;
-using Microsoft.AspNetCore.Mvc.RazorPages.Infrastructure;
+using Microsoft.EntityFrameworkCore.Scaffolding;
 using VocareWebAPI.JobOffers.Exceptions;
 using VocareWebAPI.JobOffers.Models.Dtos;
 using VocareWebAPI.JobOffers.Models.Entities;
@@ -14,54 +13,63 @@ namespace VocareWebAPI.JobOffers.Services.Implementations
     public class JobOfferSyncService : IJobOfferSyncService
     {
         private readonly IJobOfferRepository _repository;
-        private readonly INoFluffJobsParser _parser;
         private readonly ILogger<JobOfferSyncService> _logger;
         private readonly IEmbeddingService _embeddingService;
-        private readonly ISolidJobsParser _solidJobsParser;
-        private const string FeedUrl = "https://nofluffjobs.com/api/xml/jooble";
+        private readonly IEnumerable<IJobOfferProvider> _providers;
 
         public JobOfferSyncService(
             IJobOfferRepository repository,
-            INoFluffJobsParser parser,
             ILogger<JobOfferSyncService> logger,
             IEmbeddingService embeddingService,
-            ISolidJobsParser solidJobsParser
+            IEnumerable<IJobOfferProvider> providers
         )
         {
             _repository = repository;
-            _parser = parser;
             _logger = logger;
             _embeddingService = embeddingService;
-            _solidJobsParser = solidJobsParser;
+            _providers = providers;
         }
 
         public async Task<SyncResult> SyncOffersAsync(CancellationToken cancellationToken = default)
         {
-            SyncResult processResult;
-            try
+            var totalResult = new SyncResult();
+            foreach (var provider in _providers)
             {
-                var combinedOffers = GetCombinedOffersAsync(cancellationToken);
-                processResult = await ProcessOffersAsync(combinedOffers, cancellationToken);
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, "Błąd podczas synchronizacji ofert");
-                throw;
-            }
+                try
+                {
+                    _logger.LogInformation(
+                        "Rozpoczynam synchronizację ofert pracy z {Source}",
+                        provider.Source
+                    );
+                    var processResult = await ProcessOffersAsync(
+                        provider.FetchOffersAsync(cancellationToken),
+                        cancellationToken
+                    );
 
-            processResult.Total =
-                processResult.Added + processResult.Updated + processResult.Failed;
+                    totalResult.Added += processResult.Added;
+                    totalResult.Updated += processResult.Updated;
+                    totalResult.Failed += processResult.Failed;
+                    totalResult.Skipped += processResult.Skipped;
+                }
+                catch (Exception ex)
+                {
+                    _logger.LogError(ex, "Błąd podczas synchronizacji ofert");
+                    continue;
+                }
+            }
+            totalResult.Total =
+                totalResult.Added + totalResult.Updated + totalResult.Failed + totalResult.Skipped;
 
             _logger.LogInformation(
-                "Sync zakończony: {Added} dodanych, {Updated} zaktualizowanych, {Failed} błędów z {Total} total oraz {Skipped} pominiętych",
-                processResult.Added,
-                processResult.Updated,
-                processResult.Failed,
-                processResult.Total,
-                processResult.Skipped
+                "Zakończono synchronizację ofert pracy: {Added} dodanych, {Updated} zaktualizowanych, {Failed} nieudanych, {Skipped} pominiętych, {Total} łącznie",
+                totalResult.Added,
+                totalResult.Updated,
+                totalResult.Failed,
+                totalResult.Skipped,
+                totalResult.Total
             );
 
-            return processResult;
+            return totalResult;
         }
 
         private async Task<SyncResult> ProcessOffersAsync(
@@ -158,27 +166,18 @@ namespace VocareWebAPI.JobOffers.Services.Implementations
         )
         {
             var dbReferenceNumbers = await _repository.GetAllReferenceNumbersAsync(source);
+            var provider = _providers.FirstOrDefault(p => p.Source == source);
+
+            if (provider is null)
+                throw new UnsupportedSourceException(source);
 
             var feedReferenceNumbers = new HashSet<string>();
 
-            if (source == JobOfferSource.NofluffJobs)
+            await foreach (var offer in provider.FetchOffersAsync(cancellationToken))
             {
-                await foreach (var offer in _parser.ParseFromUrlAsync(FeedUrl, cancellationToken))
-                {
-                    feedReferenceNumbers.Add(offer.ReferenceNumber);
-                }
+                feedReferenceNumbers.Add(offer.ReferenceNumber);
             }
-            else if (source == JobOfferSource.SolidJobs)
-            {
-                var solidOffers = _solidJobsParser.FetchOffersAsync(cancellationToken);
 
-                await foreach (var offer in solidOffers)
-                    feedReferenceNumbers.Add(offer.ReferenceNumber);
-            }
-            else
-            {
-                throw new UnsupportedSourceException(source);
-            }
             if (feedReferenceNumbers.Count == 0)
             {
                 _logger.LogWarning(
@@ -328,22 +327,6 @@ namespace VocareWebAPI.JobOffers.Services.Implementations
                 || existing.SalaryCurrency != offer.SalaryCurrency
                 || existing.SalaryPeriod != offer.SalaryPeriod
                 || existing.PublishedAt != offer.PublishedAt;
-        }
-
-        private async IAsyncEnumerable<JobOffer> GetCombinedOffersAsync(
-            [EnumeratorCancellation] CancellationToken cancellationToken = default
-        )
-        {
-            await foreach (var offer in _parser.ParseFromUrlAsync(FeedUrl, cancellationToken))
-            {
-                yield return offer;
-            }
-
-            var solidOffers = _solidJobsParser.FetchOffersAsync(cancellationToken);
-            await foreach (var offer in solidOffers)
-            {
-                yield return offer;
-            }
         }
     }
 }

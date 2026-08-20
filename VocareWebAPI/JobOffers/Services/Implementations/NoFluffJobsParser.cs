@@ -21,12 +21,12 @@ namespace VocareWebAPI.JobOffers.Services.Implementations
         public NoFluffJobsParser(
             HttpClient httpClient,
             ILogger<NoFluffJobsParser> logger,
-            IOptions<NofluffJobsFetchOptions> nofluffJobsUrl
+            IOptions<NofluffJobsFetchOptions> nofluffJobsFetchOptions
         )
         {
             _httpClient = httpClient;
             _logger = logger;
-            _nofluffJobsUrl = nofluffJobsUrl.Value;
+            _nofluffJobsUrl = nofluffJobsFetchOptions.Value;
         }
 
         public async IAsyncEnumerable<JobOffer> FetchOffersAsync(
