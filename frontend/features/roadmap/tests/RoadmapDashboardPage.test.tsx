@@ -124,7 +124,8 @@ describe('RoadmapDashboardPage generation confirmation', () => {
       ],
     });
 
-    expect(await screen.findByText('Nieudana roadmapa')).toBeTruthy();
+    expect(await screen.findByText('Błąd generacji')).toBeTruthy();
+    expect(screen.getByText('Generation failed')).toBeTruthy();
     expect(screen.getByText('0/1')).toBeTruthy();
     expect(screen.queryByText('Masz juz roadmapę dla tej sciezki.')).toBeNull();
 

@@ -46,6 +46,7 @@ import { useAutosave } from '@/lib/hooks/useAutosave';
 import { useIsMobile } from '@/lib/hooks/useIsMobile';
 import { CvDetailsDto, CvDto, CvLimits } from '@/lib/types/cv';
 import { getEducationDegreeLabel } from '@/lib/types/profile';
+import { makeClientId } from '@/lib/utils/id';
 import { FLUENCY_OPTIONS, getFluencyLabel, normalizeFluency } from '@/lib/utils/normalizeFluency';
 import { makeSocialLinkId, SOCIAL_LINK_SUGGESTIONS } from '@/lib/utils/socialLinks';
 import {
@@ -297,10 +298,8 @@ const RichTextToolbar = ({
   );
 };
 
-const makeExperienceId = () => `${Date.now()}-${Math.random().toString(36).slice(2, 8)}`;
-
 const ensureExperienceDefaults = (exp: Partial<Experience>): Experience => ({
-  id: typeof exp.id === 'string' && exp.id.length > 0 ? exp.id : makeExperienceId(),
+  id: typeof exp.id === 'string' && exp.id.length > 0 ? exp.id : makeClientId(),
   company: exp.company ?? '',
   position: exp.position ?? '',
   startDate: exp.startDate ?? '',
@@ -310,10 +309,8 @@ const ensureExperienceDefaults = (exp: Partial<Experience>): Experience => ({
   useBulletList: Boolean(exp.useBulletList),
 });
 
-const makeEducationId = () => `${Date.now()}-${Math.random().toString(36).slice(2, 8)}-edu`;
-
 const ensureEducationDefaults = (edu: Partial<Education>): Education => ({
-  id: typeof edu.id === 'string' && edu.id.length > 0 ? edu.id : makeEducationId(),
+  id: typeof edu.id === 'string' && edu.id.length > 0 ? edu.id : makeClientId(),
   school: edu.school ?? '',
   degree: edu.degree ?? '',
   field: edu.field ?? '',
@@ -323,25 +320,15 @@ const ensureEducationDefaults = (edu: Partial<Education>): Education => ({
   description: edu.description ?? '',
 });
 
-const makeProjectId = () => `${Date.now()}-${Math.random().toString(36).slice(2, 8)}-proj`;
-
 const ensureProjectDefaults = (project: Partial<Project>): Project => ({
-  id: typeof project.id === 'string' && project.id.length > 0 ? project.id : makeProjectId(),
+  id: typeof project.id === 'string' && project.id.length > 0 ? project.id : makeClientId(),
   title: project.title ?? '',
   url: project.url ?? '',
   description: project.description ?? '',
 });
 
-const makeCertificateId = () => `${Date.now()}-${Math.random().toString(36).slice(2, 8)}-cert`;
-
-const makeSkillId = () => `${Date.now()}-${Math.random().toString(36).slice(2, 8)}-skill`;
-
-const makeLanguageId = () => `${Date.now()}-${Math.random().toString(36).slice(2, 8)}-lang`;
-
-const makeHobbyId = () => `${Date.now()}-${Math.random().toString(36).slice(2, 8)}-hobby`;
-
 const ensureCertificateDefaults = (cert: Partial<Certificate>): Certificate => ({
-  id: typeof cert.id === 'string' && cert.id.length > 0 ? cert.id : makeCertificateId(),
+  id: typeof cert.id === 'string' && cert.id.length > 0 ? cert.id : makeClientId(),
   name: cert.name ?? '',
   date: cert.date ?? '',
   hasDate: cert.hasDate ?? Boolean(cert.date),
@@ -687,7 +674,7 @@ const CVCreator: React.FC<CVCreatorProps> = ({ initialCv, initialLimits = null }
 
   const addLanguage = () => {
     const newLanguage: Language = {
-      id: makeLanguageId(),
+      id: makeClientId(),
       name: '',
       level: 'Beginner',
     };
@@ -706,7 +693,7 @@ const CVCreator: React.FC<CVCreatorProps> = ({ initialCv, initialLimits = null }
 
   const addCertificate = () => {
     const newCert: Certificate = {
-      id: makeCertificateId(),
+      id: makeClientId(),
       name: '',
       date: '',
       hasDate: true,
@@ -1184,7 +1171,7 @@ const CVCreator: React.FC<CVCreatorProps> = ({ initialCv, initialLimits = null }
 
   const addExperience = () => {
     const newExp: Experience = {
-      id: makeExperienceId(),
+      id: makeClientId(),
       company: '',
       position: '',
       startDate: '',
@@ -1234,7 +1221,7 @@ const CVCreator: React.FC<CVCreatorProps> = ({ initialCv, initialLimits = null }
 
   const addEducation = () => {
     const newEdu: Education = {
-      id: makeEducationId(),
+      id: makeClientId(),
       school: '',
       degree: '',
       field: '',
@@ -1285,7 +1272,7 @@ const CVCreator: React.FC<CVCreatorProps> = ({ initialCv, initialLimits = null }
 
   const addProject = () => {
     const newProject: Project = {
-      id: makeProjectId(),
+      id: makeClientId(),
       title: '',
       url: '',
       description: '',
@@ -1305,7 +1292,7 @@ const CVCreator: React.FC<CVCreatorProps> = ({ initialCv, initialLimits = null }
 
   const addSkill = () => {
     const newSkill: Skill = {
-      id: makeSkillId(),
+      id: makeClientId(),
       name: '',
     };
     setSkills((prev) => [...prev, newSkill]);
@@ -1322,7 +1309,7 @@ const CVCreator: React.FC<CVCreatorProps> = ({ initialCv, initialLimits = null }
   };
 
   const addHobby = () => {
-    const newHobby: Hobby = { id: makeHobbyId(), name: '' };
+    const newHobby: Hobby = { id: makeClientId(), name: '' };
     setHobbies((prev) => [...prev, newHobby]);
   };
 
@@ -1868,7 +1855,7 @@ const CVCreator: React.FC<CVCreatorProps> = ({ initialCv, initialLimits = null }
       setExperiences(
         cv.work?.map((w) =>
           ensureExperienceDefaults({
-            id: makeExperienceId(),
+            id: makeClientId(),
             company: w.company || '',
             position: w.position || '',
             startDate: w.startDate || '',
@@ -1883,7 +1870,7 @@ const CVCreator: React.FC<CVCreatorProps> = ({ initialCv, initialLimits = null }
       setEducation(
         cv.education?.map((e) =>
           ensureEducationDefaults({
-            id: makeEducationId(),
+            id: makeClientId(),
             school: e.institution || '',
             degree: e.degree || '',
             field: e.field || '',
@@ -1898,7 +1885,7 @@ const CVCreator: React.FC<CVCreatorProps> = ({ initialCv, initialLimits = null }
       setProjects(
         projectLinks.map((project) =>
           ensureProjectDefaults({
-            id: makeProjectId(),
+            id: makeClientId(),
             title: project.name || '',
             url: project.link || '',
             description: project.description || '',
@@ -1909,7 +1896,7 @@ const CVCreator: React.FC<CVCreatorProps> = ({ initialCv, initialLimits = null }
       setCertificates(
         cv.certificates?.map((c) =>
           ensureCertificateDefaults({
-            id: makeCertificateId(),
+            id: makeClientId(),
             name: c.name,
             date: c.date || '',
             hasDate: Boolean(c.date),
@@ -1917,18 +1904,18 @@ const CVCreator: React.FC<CVCreatorProps> = ({ initialCv, initialLimits = null }
         ) || []
       );
 
-      setSkills(cv.skills?.map((skill) => ({ id: makeSkillId(), name: skill })) || []);
+      setSkills(cv.skills?.map((skill) => ({ id: makeClientId(), name: skill })) || []);
 
       setLanguages(
         cv.languages?.map((l) => ({
-          id: makeLanguageId(),
+          id: makeClientId(),
           name: l.language,
           level: normalizeFluency(l.fluency),
         })) || []
       );
 
       const hobbyNames = hobbyNamesOverride ?? cv.hobbies ?? [];
-      setHobbies(hobbyNames.map((hobby) => ({ id: makeHobbyId(), name: hobby })));
+      setHobbies(hobbyNames.map((hobby) => ({ id: makeClientId(), name: hobby })));
     },
     []
   );
