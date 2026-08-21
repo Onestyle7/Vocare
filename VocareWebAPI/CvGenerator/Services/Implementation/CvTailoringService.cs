@@ -87,40 +87,46 @@ namespace VocareWebAPI.CvGenerator.Implementations
             };
         }
 
+        private static bool EducationTextEquals(string? left, string? right) =>
+            string.Equals(left?.Trim(), right?.Trim(), StringComparison.OrdinalIgnoreCase);
+
         private void RestoreEducationDescriptions(CvDto sourceCv, CvDto tailoredCv)
-{
-    var sourceEducationEntries = sourceCv.Education?.ToList()
-        ?? new List<CvEducationEntryDto>();
-
-    foreach (var tailoredEducation in tailoredCv.Education ?? new List<CvEducationEntryDto>())
-    {
-        var sourceEducationIndex = sourceEducationEntries.FindIndex(source =>
-            source.Institution == tailoredEducation.Institution
-            && source.Degree == tailoredEducation.Degree
-            && source.Field == tailoredEducation.Field
-            && source.StartDate == tailoredEducation.StartDate
-            && source.EndDate == tailoredEducation.EndDate
-        );
-
-        if (sourceEducationIndex < 0)
         {
-            sourceEducationIndex = sourceEducationEntries.FindIndex(source =>
-                source.Institution == tailoredEducation.Institution
-                && source.StartDate == tailoredEducation.StartDate
-                && source.EndDate == tailoredEducation.EndDate
-            );
+            var sourceEducationEntries =
+                sourceCv.Education?.ToList() ?? new List<CvEducationEntryDto>();
+
+            foreach (
+                var tailoredEducation in tailoredCv.Education
+                    ?? new List<CvEducationEntryDto>()
+            )
+            {
+                var sourceEducationIndex = sourceEducationEntries.FindIndex(source =>
+                    EducationTextEquals(source.Institution, tailoredEducation.Institution)
+                    && EducationTextEquals(source.Degree, tailoredEducation.Degree)
+                    && EducationTextEquals(source.Field, tailoredEducation.Field)
+                    && source.StartDate == tailoredEducation.StartDate
+                    && source.EndDate == tailoredEducation.EndDate
+                );
+
+                if (sourceEducationIndex < 0)
+                {
+                    sourceEducationIndex = sourceEducationEntries.FindIndex(source =>
+                        EducationTextEquals(source.Institution, tailoredEducation.Institution)
+                        && source.StartDate == tailoredEducation.StartDate
+                        && source.EndDate == tailoredEducation.EndDate
+                    );
+                }
+
+                if (sourceEducationIndex >= 0)
+                {
+                    var sourceEducation = sourceEducationEntries[sourceEducationIndex];
+
+                    tailoredEducation.Description = sourceEducation.Description;
+
+                    sourceEducationEntries.RemoveAt(sourceEducationIndex);
+                }
+            }
         }
-
-        if (sourceEducationIndex >= 0)
-        {
-            var sourceEducation = sourceEducationEntries[sourceEducationIndex];
-
-            tailoredEducation.Description = sourceEducation.Description;
-
-            sourceEducationEntries.RemoveAt(sourceEducationIndex);
-        }
-    }
-}
 
         public async Task<Result<CvDetailsDto>> GenerateCvFromProfileAsync(
             GenerateCvFromProfileDto dto,

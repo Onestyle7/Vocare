@@ -221,8 +221,10 @@ describe('ResumeComponent item reordering', () => {
     });
 
     expect(
-      (screen.getByPlaceholderText('Obowiązki - każdy w osobnej linii') as HTMLTextAreaElement).rows
-    ).toBe(4);
+      screen
+        .getAllByPlaceholderText('Obowiązki - każdy w osobnej linii')
+        .map((element) => (element as HTMLTextAreaElement).rows)
+    ).toEqual([4, 4]);
     expect(
       (
         screen.getByPlaceholderText(
