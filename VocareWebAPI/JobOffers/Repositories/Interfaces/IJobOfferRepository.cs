@@ -1,4 +1,3 @@
-using VocareWebAPI.JobOffers.Models.Dtos;
 using VocareWebAPI.JobOffers.Models.Entities;
 using VocareWebAPI.JobOffers.Models.Enums;
 using VocareWebAPI.JobOffers.Models.Records;
@@ -20,5 +19,6 @@ namespace VocareWebAPI.JobOffers.Repositories.Interfaces
         Task SaveChangesAsync();
         void UpdateInContext(JobOffer offer, bool embeddingGenerated = false);
         void ClearChangeTracker();
+        Task<JobOffer?> GetDetailsByIdAsync(Guid id);
     }
 }
