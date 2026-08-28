@@ -123,5 +123,13 @@ namespace VocareWebAPI.JobOffers.Repositories.Implementations
         {
             _context.ChangeTracker.Clear();
         }
+
+        public async Task<JobOffer?> GetDetailsByIdAsync(Guid id)
+        {
+            return await _context.JobOffers
+                .AsNoTracking()
+                .Include(offer => offer.Skills)
+                .FirstOrDefaultAsync(offer => offer.Id == id);
+        }
     }
 }

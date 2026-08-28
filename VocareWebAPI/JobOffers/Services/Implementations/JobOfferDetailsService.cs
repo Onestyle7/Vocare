@@ -21,7 +21,16 @@ namespace VocareWebAPI.JobOffers.Services.Implementations
             if (jobOffer is null)
                 throw new JobOfferNotFoundException(id);
 
-            return jobOffer;
+            return new JobOfferDetailsDto
+            {
+                Id = jobOffer.Id,
+                Title = jobOffer.Title,
+                CompanyName = jobOffer.CompanyName,
+                Country = jobOffer.Country ?? string.Empty,
+                Description = jobOffer.Description,
+                Category = jobOffer.Category,
+                Skills = [.. jobOffer.Skills.Select(s => s.Name)]
+            };
         }
     }
 }
