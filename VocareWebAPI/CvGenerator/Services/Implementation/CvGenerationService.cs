@@ -62,6 +62,7 @@ namespace VocareWebAPI.CvGenerator.Services.Implementations
                 Certificates = MapCertificates(userProfile.Certificates),
                 Skills = userProfile.Skills ?? new List<string>(),
                 Languages = MapLanguages(userProfile.Languages),
+                Hobbies = new List<string>(),
             };
             return cv;
         }

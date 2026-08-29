@@ -31,11 +31,7 @@ export default async function ResumeDetailPage({ params }: ResumeDetailPageProps
   return (
     <div className="font-poppins">
       <div className="relative z-10">
-        <CVCreator
-          key={`${cv.id}:${cv.version}`}
-          initialCv={cv}
-          initialLimits={limitsError ? null : limits}
-        />
+        <CVCreator key={cv.id} initialCv={cv} initialLimits={limitsError ? null : limits} />
       </div>
     </div>
   );

@@ -12,5 +12,6 @@ namespace VocareWebAPI.CvGenerator.Models.Dtos
         public string? Field { get; set; }
         public string? StartDate { get; set; } // Format: YYYY-MM-DD
         public string? EndDate { get; set; } // Format: YYYY-MM-DD | "Present"
+        public string? Description { get; set; }
     }
 }
