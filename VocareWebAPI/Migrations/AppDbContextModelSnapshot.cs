@@ -738,6 +738,87 @@ namespace VocareWebAPI.Migrations
                     b.ToTable("SkillEmbeddings", "public");
                 });
 
+            modelBuilder.Entity("VocareWebAPI.Legal.Models.Entities.LegalDocument", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("ContentPath")
+                        .IsRequired()
+                        .HasMaxLength(255)
+                        .HasColumnType("character varying(255)");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("boolean");
+
+                    b.Property<string>("Type")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<DateTime>("ValidFrom")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("Version")
+                        .IsRequired()
+                        .HasMaxLength(20)
+                        .HasColumnType("character varying(20)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("IsActive")
+                        .HasFilter("\"IsActive\" = true");
+
+                    b.HasIndex("Type", "Version")
+                        .IsUnique();
+
+                    b.ToTable("LegalDocuments", "public");
+                });
+
+            modelBuilder.Entity("VocareWebAPI.Legal.Models.Entities.UserConsent", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<DateTime>("AcceptedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("ConsentSource")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("character varying(100)");
+
+                    b.Property<string>("IpAddress")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("character varying(50)");
+
+                    b.Property<Guid>("LegalDocumentId")
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("UserAgent")
+                        .IsRequired()
+                        .HasMaxLength(1000)
+                        .HasColumnType("character varying(1000)");
+
+                    b.Property<string>("UserId")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("LegalDocumentId");
+
+                    b.HasIndex("UserId", "LegalDocumentId")
+                        .IsUnique();
+
+                    b.ToTable("UserConsents", "public");
+                });
+
             modelBuilder.Entity("VocareWebAPI.MarketNews.Models.Entities.MarketNewsEntity", b =>
                 {
                     b.Property<Guid>("Id")
@@ -1686,6 +1767,25 @@ namespace VocareWebAPI.Migrations
                     b.Navigation("JobOffer");
                 });
 
+            modelBuilder.Entity("VocareWebAPI.Legal.Models.Entities.UserConsent", b =>
+                {
+                    b.HasOne("VocareWebAPI.Legal.Models.Entities.LegalDocument", "LegalDocument")
+                        .WithMany("UserConsents")
+                        .HasForeignKey("LegalDocumentId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("VocareWebAPI.Models.Entities.User", "User")
+                        .WithMany("UserConsents")
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("LegalDocument");
+
+                    b.Navigation("User");
+                });
+
             modelBuilder.Entity("VocareWebAPI.Models.AiRecommendation", b =>
                 {
                     b.HasOne("VocareWebAPI.Models.AiRecommendation", null)
@@ -1900,6 +2000,11 @@ namespace VocareWebAPI.Migrations
                     b.Navigation("Skills");
                 });
 
+            modelBuilder.Entity("VocareWebAPI.Legal.Models.Entities.LegalDocument", b =>
+                {
+                    b.Navigation("UserConsents");
+                });
+
             modelBuilder.Entity("VocareWebAPI.Models.AiRecommendation", b =>
                 {
                     b.Navigation("CareerPaths");
@@ -1930,6 +2035,8 @@ namespace VocareWebAPI.Migrations
                 {
                     b.Navigation("Billing")
                         .IsRequired();
+
+                    b.Navigation("UserConsents");
 
                     b.Navigation("UserProfile")
                         .IsRequired();
