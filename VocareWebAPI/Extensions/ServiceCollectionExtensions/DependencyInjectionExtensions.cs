@@ -18,6 +18,10 @@ using VocareWebAPI.JobOffers.Repositories.Implementations;
 using VocareWebAPI.JobOffers.Repositories.Interfaces;
 using VocareWebAPI.JobOffers.Services.Implementations;
 using VocareWebAPI.JobOffers.Services.Interfaces;
+using VocareWebAPI.Legal.Repositories.Implementations;
+using VocareWebAPI.Legal.Repositories.Interfaces;
+using VocareWebAPI.Legal.Services.Implementations;
+using VocareWebAPI.Legal.Services.Interfaces;
 using VocareWebAPI.MarketNews.Repositories.Implementations;
 using VocareWebAPI.MarketNews.Repositories.Interfaces;
 using VocareWebAPI.MarketNews.services.Implementations;
@@ -100,6 +104,9 @@ namespace VocareWebAPI.Extensions.ServiceCollectionExtensions
             // Notification
             services.AddScoped<INotificationService, NotificationService>();
 
+            // Legal
+            services.AddScoped<ILegalService, LegalService>();
+
             return services;
         }
 
@@ -145,6 +152,9 @@ namespace VocareWebAPI.Extensions.ServiceCollectionExtensions
 
             // Notification
             services.AddScoped<INotificationRepository, NotificationRepository>();
+
+            // Legal
+            services.AddScoped<ILegalRepository, LegalRepository>();
 
             return services;
         }
