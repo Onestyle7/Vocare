@@ -7,6 +7,7 @@ export const legalApiClient = new ApiClient({
 
 export type {
   AcceptConsentsCommand,
+  AcceptConsentsResult,
   ConsentStatusResult,
   LegalDocumentType,
   PendingDocumentDto,

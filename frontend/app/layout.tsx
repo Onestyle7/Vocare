@@ -14,6 +14,9 @@ import { AuthProvider } from '@/features/auth/components/AuthProvider';
 import { TokenBalanceProvider } from '@/features/billing/components/SubscriptionTokenProvider';
 import { SubscriptionStatus } from '@/features/billing/dal/api';
 import { getTokenSubscriptionStatus } from '@/features/billing/dal/queries';
+import { LegalConsentProvider } from '@/features/legal/components/LegalConsentProvider';
+import { getPendingLegalDocuments } from '@/features/legal/dal/queries';
+import { PendingDocumentDto } from '@/features/legal/types';
 import env from '@/lib/env/client';
 import { COOKIE_CONSENT_KEY } from '@/lib/utils/consent';
 
@@ -146,12 +149,22 @@ export default async function RootLayout({
   const consentCookie = cookieStore.get(COOKIE_CONSENT_KEY)?.value;
   const isConsentGranted = consentCookie === 'granted';
 
+  let pendingLegalDocuments: PendingDocumentDto[] = [];
+  if (isAuthenticated) {
+    const [pendingLegalErr, pendingLegalData] = await getPendingLegalDocuments();
+    if (!pendingLegalErr && pendingLegalData) {
+      pendingLegalDocuments = pendingLegalData;
+    }
+  }
+
   let tokenCount = 0;
   let subscribtionStatus: SubscriptionStatus = 'None';
-  const [tokenBalanceError, tokenBalanceData] = await getTokenSubscriptionStatus();
-  if (!tokenBalanceError) {
-    tokenCount = tokenBalanceData.tokenBalance;
-    subscribtionStatus = tokenBalanceData.subscriptionStatus;
+  if (isAuthenticated && pendingLegalDocuments.length === 0) {
+    const [tokenBalanceError, tokenBalanceData] = await getTokenSubscriptionStatus();
+    if (!tokenBalanceError) {
+      tokenCount = tokenBalanceData.tokenBalance;
+      subscribtionStatus = tokenBalanceData.subscriptionStatus;
+    }
   }
 
   return (
@@ -178,13 +191,15 @@ export default async function RootLayout({
         className={`${sizmoPro.className} ${spaceGrotesk.variable} h-full antialiased selection:bg-[#915EFF]`}
       >
         <AuthProvider isAuthenticated={isAuthenticated}>
-          <TokenBalanceProvider tokenBalance={tokenCount} subscriptionStatus={subscribtionStatus}>
-            <ThemeProvider attribute="class" defaultTheme="dark">
-              {children}
-              <CookieBanner />
-              <Toaster />
-            </ThemeProvider>
-          </TokenBalanceProvider>
+          <LegalConsentProvider initialPendingDocuments={pendingLegalDocuments}>
+            <TokenBalanceProvider tokenBalance={tokenCount} subscriptionStatus={subscribtionStatus}>
+              <ThemeProvider attribute="class" defaultTheme="dark">
+                {children}
+                <CookieBanner />
+                <Toaster />
+              </ThemeProvider>
+            </TokenBalanceProvider>
+          </LegalConsentProvider>
         </AuthProvider>
         {gaId ? <GoogleAnalytics gaId={gaId} /> : null}
       </body>

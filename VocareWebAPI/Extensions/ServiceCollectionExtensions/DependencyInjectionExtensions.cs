@@ -61,6 +61,7 @@ namespace VocareWebAPI.Extensions.ServiceCollectionExtensions
             services.AddScoped<UserProfileService>();
             services.AddScoped<UserRegistrationHandler>();
             services.AddScoped<IUserSetupService, UserSetupService>();
+            services.AddScoped<ITokenService, TokenService>();
             services.AddScoped<IAuthenticationServiceOwn, AuthenticationService>();
             services.AddScoped<ICvParserService, CvParserService>();
             services.AddScoped<IDashboardService, DashboardService>();
