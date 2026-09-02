@@ -140,6 +140,7 @@ app.UseRateLimiter();
 app.UseAuthentication();
 app.UseCustomTokenValidation(); // Twój custom token validation
 app.UseAuthorization();
+app.UseLegalConsentsValidation();
 
 app.UseHangfireDashboardWithAuth(builder.Configuration);
 

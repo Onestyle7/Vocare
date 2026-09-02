@@ -77,6 +77,17 @@ namespace VocareWebAPI.Legal.Services.Implementations
                 throw new EmptyConsentDocumentsException();
             }
 
+            var activeDocuments = await _repository.GetActiveDocumentsAsync();
+            var activeDocumentIds = activeDocuments.Select(d => d.Id).ToHashSet();
+
+            foreach (var docId in documentIds)
+            {
+                if (!activeDocumentIds.Contains(docId))
+                {
+                    throw new LegalDocumentNotFoundException(docId);
+                }
+            }
+
             var distinctDocumentIds = documentIds.Distinct().ToList();
             var now = DateTime.UtcNow;
 
