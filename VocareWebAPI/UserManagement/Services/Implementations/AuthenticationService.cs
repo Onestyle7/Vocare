@@ -31,6 +31,7 @@ namespace VocareWebAPI.UserManagement.Services.Implementations
         private readonly IUserSetupService _userSetupService;
         private readonly ILegalService _legalService;
         private readonly ILegalRepository _legalRepository;
+        private readonly ITokenService _tokenService;
         private readonly AppDbContext _dbContext;
 
         public AuthenticationService(
@@ -46,6 +47,7 @@ namespace VocareWebAPI.UserManagement.Services.Implementations
             IUserSetupService userSetupService,
             ILegalService legalService,
             ILegalRepository legalRepository,
+            ITokenService tokenService,
             AppDbContext dbContext
         )
         {
@@ -61,6 +63,7 @@ namespace VocareWebAPI.UserManagement.Services.Implementations
             _userSetupService = userSetupService;
             _legalService = legalService;
             _legalRepository = legalRepository;
+            _tokenService = tokenService;
             _dbContext = dbContext;
         }
 
@@ -100,32 +103,12 @@ namespace VocareWebAPI.UserManagement.Services.Implementations
             }
 
             var hasValidConsents = await _legalService.HasValidConsentsAsync(user.Id);
-            var token = GenerateIdentityCompatibleToken(user, hasValidConsents);
+            var token = _tokenService.GenerateToken(user, hasValidConsents);
 
             _logger.LogInformation("User logged in successfully: {UserId}, ConsentsValid: {ConsentsValid}", user.Id, hasValidConsents);
 
             var loginResult = LoginResult.Successful(token, user.Id, user.Email, 3600);
             return Result<LoginResult>.Ok(loginResult);
-        }
-
-        private string GenerateIdentityCompatibleToken(User user, bool consentsValid)
-        {
-            var protector = _httpContextAccessor
-                .HttpContext.RequestServices.GetRequiredService<IDataProtectionProvider>()
-                .CreateProtector("VocareAuth");
-
-            var tokenData = new
-            {
-                sub = user.Id,
-                email = user.Email,
-                consents_valid = consentsValid,
-                jti = Guid.NewGuid().ToString(),
-                exp = DateTimeOffset.UtcNow.AddHours(1).ToUnixTimeSeconds(),
-                iat = DateTimeOffset.UtcNow.ToUnixTimeSeconds(),
-            };
-
-            var json = JsonSerializer.Serialize(tokenData);
-            return protector.Protect(json);
         }
 
         public async Task<Result<RegisterResult>> RegisterAsync(
@@ -702,7 +685,7 @@ Zespół Vocare
                 }
 
                 var hasValidConsents = await _legalService.HasValidConsentsAsync(user.Id);
-                var accessTokenGenerated = GenerateIdentityCompatibleToken(user, hasValidConsents);
+                var accessTokenGenerated = _tokenService.GenerateToken(user, hasValidConsents);
                 var refreshToken = Guid.NewGuid().ToString();
 
                 try
@@ -922,7 +905,7 @@ Zespół Vocare
                     }
                 }
                 var hasValidConsents = await _legalService.HasValidConsentsAsync(user.Id);
-                var accessTokenGenerated = GenerateIdentityCompatibleToken(user, hasValidConsents);
+                var accessTokenGenerated = _tokenService.GenerateToken(user, hasValidConsents);
                 var refreshToken = Guid.NewGuid().ToString();
 
                 try

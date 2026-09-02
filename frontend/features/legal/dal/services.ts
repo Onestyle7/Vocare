@@ -7,6 +7,7 @@ import { BaseAppError } from '@/lib/types/result';
 
 import {
   AcceptConsentsCommand,
+  AcceptConsentsResult,
   ConsentStatusResult,
   legalApiClient,
   PendingDocumentDto,
@@ -45,8 +46,8 @@ export async function getPendingLegalDocumentsService(
 
 export async function acceptLegalConsentsService(
   command: AcceptConsentsCommand
-): Promise<Result<{ success: boolean }, LegalDomainError>> {
-  const result = await legalApiClient.post<{ success: boolean }>('/accept', command);
+): Promise<Result<AcceptConsentsResult, LegalDomainError>> {
+  const result = await legalApiClient.post<AcceptConsentsResult>('/accept', command);
 
   return result
     .map((response) => response.data)
@@ -80,7 +81,7 @@ export async function acceptLegalConsentsService(
         case 'BadRequestError':
         case 'UnprocessableEntityError': {
           return {
-            type: 'GenericApiError',
+            type: 'EmptyDocumentsError',
             message: 'Lista dokumentów do akceptacji jest nieprawidłowa.',
             details: error.details,
           };

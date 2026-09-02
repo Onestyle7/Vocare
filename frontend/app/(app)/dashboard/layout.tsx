@@ -4,6 +4,7 @@ import { SidebarProvider } from '@/components/ui/sidebar';
 import { forceLoginRedirect } from '@/features/auth/utils/login-redirect';
 import DashboardHeader from '@/features/dashboard/header/components/dashboard-header';
 import DashboardSidebar from '@/features/dashboard/sidebar/components/dashboard-sidebar';
+import { getPendingLegalDocuments } from '@/features/legal/dal/queries';
 import { ProfileProvider } from '@/features/profile/components/ProfileProvider';
 import { getUserProfileQuery } from '@/features/profile/dal/queries';
 
@@ -15,6 +16,13 @@ export const metadata: Metadata = {
 };
 
 export default async function DashboardLayoutPage({ children }: { children: React.ReactNode }) {
+  const [pendingLegalErr, pendingLegalData] = await getPendingLegalDocuments();
+  const hasPendingConsents = !pendingLegalErr && pendingLegalData && pendingLegalData.length > 0;
+
+  if (hasPendingConsents) {
+    return <main className="bg-background h-screen w-screen overflow-hidden" />;
+  }
+
   const [userProfileError, userProfileData] = await getUserProfileQuery();
 
   if (userProfileError) {

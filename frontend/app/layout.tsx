@@ -10,6 +10,12 @@ import { CookieBanner } from '@/components/SupportComponents/CookieBanner';
 import { Toaster } from '@/components/ui/sonner';
 import { ThemeProvider } from '@/components/ui/theme-provider';
 import { AuthProvider } from '@/features/auth/components/AuthProvider';
+import { TokenBalanceProvider } from '@/features/billing/components/SubscriptionTokenProvider';
+import { SubscriptionStatus } from '@/features/billing/dal/api';
+import { getTokenSubscriptionStatus } from '@/features/billing/dal/queries';
+import { LegalConsentProvider } from '@/features/legal/components/LegalConsentProvider';
+import { getPendingLegalDocuments } from '@/features/legal/dal/queries';
+import { PendingDocumentDto } from '@/features/legal/types';
 import env from '@/lib/env/client';
 
 import { toAbsoluteUrl } from '../features/blog/utils/blogUtils';
@@ -127,12 +133,34 @@ export const metadata: Metadata = {
   },
 };
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
   const gaId = env.NEXT_PUBLIC_GA_ID;
+  const cookieStore = await cookies();
+  const isAuthenticated = cookieStore.has('token');
+  const consentCookie = cookieStore.get(COOKIE_CONSENT_KEY)?.value;
+  const isConsentGranted = consentCookie === 'granted';
+
+  let pendingLegalDocuments: PendingDocumentDto[] = [];
+  if (isAuthenticated) {
+    const [pendingLegalErr, pendingLegalData] = await getPendingLegalDocuments();
+    if (!pendingLegalErr && pendingLegalData) {
+      pendingLegalDocuments = pendingLegalData;
+    }
+  }
+
+  let tokenCount = 0;
+  let subscribtionStatus: SubscriptionStatus = 'None';
+  if (isAuthenticated && pendingLegalDocuments.length === 0) {
+    const [tokenBalanceError, tokenBalanceData] = await getTokenSubscriptionStatus();
+    if (!tokenBalanceError) {
+      tokenCount = tokenBalanceData.tokenBalance;
+      subscribtionStatus = tokenBalanceData.subscriptionStatus;
+    }
+  }
 
   return (
     <html lang="pl" suppressHydrationWarning>
@@ -162,12 +190,16 @@ export default function RootLayout({
       <body
         className={`${sizmoPro.className} ${spaceGrotesk.variable} h-full antialiased selection:bg-[#915EFF]`}
       >
-        <AuthProvider>
-          <ThemeProvider attribute="class" defaultTheme="dark">
-            {children}
-            <CookieBanner />
-            <Toaster />
-          </ThemeProvider>
+        <AuthProvider isAuthenticated={isAuthenticated}>
+          <LegalConsentProvider initialPendingDocuments={pendingLegalDocuments}>
+            <TokenBalanceProvider tokenBalance={tokenCount} subscriptionStatus={subscribtionStatus}>
+              <ThemeProvider attribute="class" defaultTheme="dark">
+                {children}
+                <CookieBanner />
+                <Toaster />
+              </ThemeProvider>
+            </TokenBalanceProvider>
+          </LegalConsentProvider>
         </AuthProvider>
         {gaId ? <GoogleAnalytics gaId={gaId} /> : null}
       </body>

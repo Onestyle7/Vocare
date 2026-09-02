@@ -13,6 +13,11 @@ export interface AcceptConsentsCommand {
   documentIds: string[];
 }
 
+export interface AcceptConsentsResult {
+  success: boolean;
+  accessToken?: string;
+}
+
 export interface ConsentStatusResult {
   hasValidConsents: boolean;
 }
