@@ -14,11 +14,17 @@ tags:
     'jak napisać list motywacyjny',
     'aplikacja o pracę',
   ]
+slug: 'wzor-listu-motywacyjnego'
 ---
 
 # Wzór listu motywacyjnego 2026 - szablony z instrukcją
 
-Znalazłeś idealny wzór listu motywacyjnego w internecie. Wypełniasz go. Wysyłasz. Cisza. Dlaczego? Bo rekruter dostał ten sam wzór od 30 innych kandydatów tego samego dnia. **Dobry wzór listu motywacyjnego to szkielet, nie gotowy produkt. Różnica między szablonem a skutecznym listem leży w personalizacji: konkretnym osiągnięciu, konkretnym powodzie zainteresowania firmą i autentycznym głosie.** Oto szablony, które faktycznie działają - plus instrukcja jak je personalzować.
+Znalazłeś idealny wzór listu motywacyjnego w internecie. Wypełniasz go. Wysyłasz. Cisza. Dlaczego? Bo rekruter dostał ten sam wzór od 30 innych kandydatów tego samego dnia. **Dobry wzór listu motywacyjnego** to szkielet, nie gotowy produkt - różnica między szablonem a skutecznym listem leży w personalizacji: konkretnym osiągnięciu, konkretnym powodzie zainteresowania firmą i autentycznym głosie. Oto szablony, które faktycznie działają - plus instrukcja jak je personalizować.
+
+> **Najważniejsze wnioski**
+> - Wzór to szkielet, nie gotowy produkt - personalizacja akapitu 1 i 2 jest obowiązkowa
+> - Metoda STAR (Sytuacja → Działanie → Efekt z liczbą) w akapicie 2 robi największą różnicę
+> - Zawsze PDF, jeden konkretny powód zainteresowania firmą, maksymalnie jedna strona
 
 ---
 
@@ -183,7 +189,9 @@ Z poważaniem,
 
 ---
 
-## Jak personalzować wzór - instrukcja krok po kroku
+Wszystkie trzy wzory powyżej mają tę samą architekturę: mocne otwarcie, jedno osiągnięcie metodą STAR, konkretny powód zainteresowania firmą. Zmienia się tylko materiał, nie struktura.
+
+## Jak personalizować wzór - instrukcja krok po kroku
 
 ### Krok 1: Zmień nagłówek i adresata
 
@@ -212,7 +220,7 @@ Spędź 10 minut na researchu: strona firmy, LinkedIn, Google. Znajdź jeden kon
 ## FAQ - wzór listu motywacyjnego
 
 **Czy wzory listu motywacyjnego z internetu działają?**
-Jako szkielet - tak. Jako gotowy produkt - nie. Zawsze musisz personalzować minimum akapit 1 i 2.
+Jako szkielet - tak. Jako gotowy produkt - nie. Zawsze musisz personalizować minimum akapit 1 i 2.
 
 **Jaki format - Word czy PDF?**
 PDF. Zawsze PDF, chyba że oferta wymaga inaczej.
@@ -233,3 +241,10 @@ Zanim napiszesz list, skorzystaj z **[Vocare.pl](https://vocare.pl)** - platform
 Wzór listu motywacyjnego to mapa, nie gotowy produkt. Najlepsza strategia: weź szkielet, usuń wszystko co ogólne, wstaw własne: osiągnięcie w liczbach, konkretny powód zainteresowania firmą i pewne zakończenie. 30 minut pracy, które może zadecydować o zaproszeniu na rozmowę.
 
 Zanim zaczniesz pisać list - upewnij się, że Twoje CV jest dopasowane do tej oferty. **[Vocare.pl](https://vocare.pl)** robi to automatycznie: wklejasz ogłoszenie, system generuje CV pod wymagania tej roli. Wtedy wiesz dokładnie, co w liście podkreślić.
+
+---
+
+## Powiązane artykuły
+- [Jak napisać list motywacyjny 2026 - wzór i przykłady](/blog/CV/jak-napisac-list-motywacyjny)
+- [List motywacyjny 2026 - czy nadal potrzebny i jak go napisać](/blog/CV/list-motywacyjny)
+- [CV wzór 2026 - darmowe szablony do pobrania i edycji](/blog/CV/cv-wzor)

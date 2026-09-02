@@ -7,11 +7,17 @@ author: 'Vocare'
 category: 'CV'
 coverImage: '/images/blog/professional-cv.webp'
 tags: ['profesjonalne cv', 'jak napisać cv', 'cv 2026', 'cv do pracy', 'cv poradnik']
+slug: 'profesjonalne-cv'
 ---
 
 # Profesjonalne CV 2026 - co odróżnia je od przeciętnego
 
-Profesjonalne CV nie musi wyglądać jak projekt graficzny. Nie potrzebuje kółkowych wykresów umiejętności, kolorowych ramek ani ikon przy każdej sekcji. **Profesjonalne CV to takie, które rekruter czyta i myśli: "Ten kandydat rozumie tę rolę i wie jak o sobie opowiadać".** Oto konkretne różnice między CV, które robi wrażenie, a takim które tylko zajmuje miejsce na twardym dysku.
+Profesjonalne CV nie musi wyglądać jak projekt graficzny. Nie potrzebuje kółkowych wykresów umiejętności, kolorowych ramek ani ikon przy każdej sekcji. **Profesjonalne CV** to dokument, po którego przeczytaniu rekruter myśli: "Ten kandydat rozumie tę rolę i wie jak o sobie opowiadać" - nie ten, który wygląda najładniej. Oto konkretne różnice między CV, które robi wrażenie, a takim które tylko zajmuje miejsce na twardym dysku.
+
+> **Najważniejsze wnioski**
+> - Profesjonalizm to treść, nie design - liczby, dopasowanie do oferty i zero błędów biją kolorowy szablon
+> - Każdy punkt doświadczenia powinien odpowiadać: czasownik akcji + co zrobiłeś + liczba/efekt
+> - Długość: 1 strona do 3 lat doświadczenia, 1-2 strony przy 3-10 latach, maks. 2 strony powyżej 10 lat
 
 ---
 
@@ -92,7 +98,7 @@ Brak skracania przez zmniejszenie czcionki do 8pt lub marginesów do 0,5cm. Leps
 
 Literówki, błędy gramatyczne, niekonsekwentna interpunkcja. To sygnał braku dbałości o szczegóły - śmiertelny dla stanowisk wymagających precyzji.
 
-**Jak sprawdzić:** Wbudowany spell-checker + Languagetool.org dla języka polskiego + przeczytaj CV na głos (słuch wyłapuje błędy, których wzrok nie widzi) + daj komuś do przeczytania.
+**Jak sprawdzić:** Wbudowany spell-checker + [LanguageTool.org](https://languagetool.org/pl) dla języka polskiego + przeczytaj CV na głos (słuch wyłapuje błędy, których wzrok nie widzi) + daj komuś do przeczytania.
 
 ### 8. Profesjonalne dane kontaktowe
 
@@ -119,6 +125,8 @@ Potem sprawdź: czy każdy punkt zaczyna się od czasownika akcji? Jeśli nie - 
 Potem sprawdź: czy profil zawodowy jest konkretny i dopasowany do oferty? Jeśli nie - przepisz.
 
 ---
+
+Z 10 cech opisanych wyżej wynika jeden wzorzec: profesjonalizm to konsekwentna konkretność (liczby, dopasowanie, brak błędów), nie estetyka.
 
 ## Co profesjonalne CV musi mieć w 2026?
 
@@ -170,3 +178,11 @@ Może pomóc z formułowaniem zdań i sugestią struktury - ale konkretne osiąg
 Profesjonalne CV w 2026 roku to nie kwestia designu - to kwestia treści. Konkretne osiągnięcia w liczbach, dopasowanie do oferty, czytelna struktura i zero błędów. Możesz to osiągnąć w Google Docs, bez specjalistycznych narzędzi i bez opłat.
 
 Jeśli chcesz sprawdzić jak profesjonalne jest Twoje CV i co konkretnie zmienić przed wysłaniem, **[Vocare.pl](https://vocare.pl)** przeanalizuje je i wskaże konkretne usprawnienia.
+
+---
+
+## Powiązane artykuły
+- [CV wzór 2026 - darmowe szablony do pobrania i edycji](/blog/CV/cv-wzor)
+- [Umiejętności do CV 2026 - co wpisać, żeby wyróżnić aplikację](/blog/CV/umiejetnosci-do-cv)
+- [Jak zrobić CV 2026 - praktyczny poradnik od zera do gotowego pliku](/blog/CV/jak-zrobic-cv)
+- [Referencje zawodowe 2026 - jak i kogo poprosić o rekomendację](/blog/CV/referencje-zawodowe)

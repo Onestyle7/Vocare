@@ -1,0 +1,1085 @@
+{
+  "audit_date": "2026-09-02",
+  "scope": "frontend/features/blog/articles/",
+  "total_published": 35,
+  "total_drafts": 3,
+  "average_score_published": 54.3,
+  "score_band_counts": {
+    "90+": 0,
+    "70-89": 0,
+    "50-69": 35,
+    "<50": 0
+  },
+  "orphan_pages_count": 35,
+  "dead_end_pages_count": 35,
+  "posts_with_schema": 0,
+  "posts_with_og_tags": 0,
+  "posts_with_last_updated": 0,
+  "site_wide_issue_frequency": {
+    "No internal links - add 3-10 contextual internal links": 35,
+    "No differentiated evidence or analysis found - add original data, a sourced synthesis, a case example, or a clearly labeled unique insight": 35,
+    "No JSON-LD schema markup detected - add BlogPosting schema": 35,
+    "Reader utility is limited - add a relevant example, summary, table, or decision aid when useful": 35,
+    "3 sentences over 40 words - consider splitting": 9,
+    "No entity definitions found - use **term** is/are patterns": 35,
+    "2 sentences over 40 words - consider splitting": 7,
+    "1 sentences over 40 words - consider splitting": 4,
+    "4 sentences over 40 words - consider splitting": 7,
+    "5 sentences over 40 words - consider splitting": 5,
+    "7 sentences over 40 words - consider splitting": 3,
+    "Flesch reading ease (40.5) outside acceptable range (55-75)": 1,
+    "Flesch reading ease (39.7) outside acceptable range (55-75)": 1,
+    "Flesch reading ease (36.0) outside acceptable range (55-75)": 1,
+    "Flesch reading ease (30.3) outside acceptable range (55-75)": 1,
+    "Flesch reading ease (44.4) outside acceptable range (55-75)": 1,
+    "Flesch reading ease (39.8) outside acceptable range (55-75)": 1,
+    "Flesch reading ease (39.5) outside acceptable range (55-75)": 1,
+    "Flesch reading ease (43.4) outside acceptable range (55-75)": 1,
+    "Flesch reading ease (44.5) outside acceptable range (55-75)": 1,
+    "Flesch reading ease (38.5) outside acceptable range (55-75)": 1,
+    "Flesch reading ease (36.8) outside acceptable range (55-75)": 1
+  },
+  "per_post_scores": [
+    {
+      "file": "przykladowe-cv.md",
+      "score": 51,
+      "rating": "Rewrite",
+      "categories": {
+        "content_quality": 14,
+        "seo_optimization": 17,
+        "eeat_signals": 7,
+        "technical_elements": 5,
+        "ai_citation_readiness": 8
+      },
+      "issues": [
+        "No internal links - add 3-10 contextual internal links",
+        "Flesch reading ease (38.5) outside acceptable range (55-75)",
+        "No differentiated evidence or analysis found - add original data, a sourced synthesis, a case example, or a clearly labeled unique insight",
+        "No JSON-LD schema markup detected - add BlogPosting schema",
+        "Reader utility is limited - add a relevant example, summary, table, or decision aid when useful",
+        "7 sentences over 40 words - consider splitting",
+        "No entity definitions found - use **term** is/are patterns"
+      ],
+      "internal_links_out": 0,
+      "external_links_out": 3,
+      "has_schema": false,
+      "has_og_tags": false,
+      "date": "2026-04-12",
+      "category": "CV"
+    },
+    {
+      "file": "zawody-przyszlosci-2026.md",
+      "score": 51,
+      "rating": "Rewrite",
+      "categories": {
+        "content_quality": 13,
+        "seo_optimization": 18,
+        "eeat_signals": 7,
+        "technical_elements": 5,
+        "ai_citation_readiness": 8
+      },
+      "issues": [
+        "No internal links - add 3-10 contextual internal links",
+        "Flesch reading ease (36.8) outside acceptable range (55-75)",
+        "No differentiated evidence or analysis found - add original data, a sourced synthesis, a case example, or a clearly labeled unique insight",
+        "No JSON-LD schema markup detected - add BlogPosting schema",
+        "Reader utility is limited - add a relevant example, summary, table, or decision aid when useful",
+        "3 sentences over 40 words - consider splitting",
+        "No entity definitions found - use **term** is/are patterns"
+      ],
+      "internal_links_out": 0,
+      "external_links_out": 3,
+      "has_schema": false,
+      "has_og_tags": false,
+      "date": "2026-03-24",
+      "category": "rynek-pracy"
+    },
+    {
+      "file": "jaki-zawod-wybrac.md",
+      "score": 52,
+      "rating": "Rewrite",
+      "categories": {
+        "content_quality": 13,
+        "seo_optimization": 18,
+        "eeat_signals": 7,
+        "technical_elements": 5,
+        "ai_citation_readiness": 9
+      },
+      "issues": [
+        "No internal links - add 3-10 contextual internal links",
+        "Flesch reading ease (44.4) outside acceptable range (55-75)",
+        "No differentiated evidence or analysis found - add original data, a sourced synthesis, a case example, or a clearly labeled unique insight",
+        "No JSON-LD schema markup detected - add BlogPosting schema",
+        "Reader utility is limited - add a relevant example, summary, table, or decision aid when useful",
+        "2 sentences over 40 words - consider splitting",
+        "No entity definitions found - use **term** is/are patterns"
+      ],
+      "internal_links_out": 0,
+      "external_links_out": 3,
+      "has_schema": false,
+      "has_og_tags": false,
+      "date": "2026-03-24",
+      "category": "Kariera"
+    },
+    {
+      "file": "najlepiej-platne-zawody.md",
+      "score": 52,
+      "rating": "Rewrite",
+      "categories": {
+        "content_quality": 14,
+        "seo_optimization": 18,
+        "eeat_signals": 7,
+        "technical_elements": 5,
+        "ai_citation_readiness": 8
+      },
+      "issues": [
+        "No internal links - add 3-10 contextual internal links",
+        "Flesch reading ease (39.8) outside acceptable range (55-75)",
+        "No differentiated evidence or analysis found - add original data, a sourced synthesis, a case example, or a clearly labeled unique insight",
+        "No JSON-LD schema markup detected - add BlogPosting schema",
+        "Reader utility is limited - add a relevant example, summary, table, or decision aid when useful",
+        "1 sentences over 40 words - consider splitting",
+        "No entity definitions found - use **term** is/are patterns"
+      ],
+      "internal_links_out": 0,
+      "external_links_out": 3,
+      "has_schema": false,
+      "has_og_tags": false,
+      "date": "2026-04-12",
+      "category": "rynek-pracy"
+    },
+    {
+      "file": "test-kompetencji-zawodowych.md",
+      "score": 52,
+      "rating": "Rewrite",
+      "categories": {
+        "content_quality": 14,
+        "seo_optimization": 18,
+        "eeat_signals": 7,
+        "technical_elements": 5,
+        "ai_citation_readiness": 8
+      },
+      "issues": [
+        "No internal links - add 3-10 contextual internal links",
+        "Flesch reading ease (39.5) outside acceptable range (55-75)",
+        "No differentiated evidence or analysis found - add original data, a sourced synthesis, a case example, or a clearly labeled unique insight",
+        "No JSON-LD schema markup detected - add BlogPosting schema",
+        "Reader utility is limited - add a relevant example, summary, table, or decision aid when useful",
+        "4 sentences over 40 words - consider splitting",
+        "No entity definitions found - use **term** is/are patterns"
+      ],
+      "internal_links_out": 0,
+      "external_links_out": 3,
+      "has_schema": false,
+      "has_og_tags": false,
+      "date": "2026-04-12",
+      "category": "Kariera"
+    },
+    {
+      "file": "umiejetnosci-do-cv.md",
+      "score": 52,
+      "rating": "Rewrite",
+      "categories": {
+        "content_quality": 14,
+        "seo_optimization": 18,
+        "eeat_signals": 7,
+        "technical_elements": 5,
+        "ai_citation_readiness": 8
+      },
+      "issues": [
+        "No internal links - add 3-10 contextual internal links",
+        "Flesch reading ease (43.4) outside acceptable range (55-75)",
+        "No differentiated evidence or analysis found - add original data, a sourced synthesis, a case example, or a clearly labeled unique insight",
+        "No JSON-LD schema markup detected - add BlogPosting schema",
+        "Reader utility is limited - add a relevant example, summary, table, or decision aid when useful",
+        "4 sentences over 40 words - consider splitting",
+        "No entity definitions found - use **term** is/are patterns"
+      ],
+      "internal_links_out": 0,
+      "external_links_out": 3,
+      "has_schema": false,
+      "has_og_tags": false,
+      "date": "2026-04-12",
+      "category": "CV"
+    },
+    {
+      "file": "wzor-cv.md",
+      "score": 52,
+      "rating": "Rewrite",
+      "categories": {
+        "content_quality": 14,
+        "seo_optimization": 18,
+        "eeat_signals": 7,
+        "technical_elements": 5,
+        "ai_citation_readiness": 8
+      },
+      "issues": [
+        "No internal links - add 3-10 contextual internal links",
+        "Flesch reading ease (44.5) outside acceptable range (55-75)",
+        "No differentiated evidence or analysis found - add original data, a sourced synthesis, a case example, or a clearly labeled unique insight",
+        "No JSON-LD schema markup detected - add BlogPosting schema",
+        "Reader utility is limited - add a relevant example, summary, table, or decision aid when useful",
+        "7 sentences over 40 words - consider splitting",
+        "No entity definitions found - use **term** is/are patterns"
+      ],
+      "internal_links_out": 0,
+      "external_links_out": 3,
+      "has_schema": false,
+      "has_og_tags": false,
+      "date": "2026-04-12",
+      "category": "CV"
+    },
+    {
+      "file": "cv-studenta.md",
+      "score": 53,
+      "rating": "Rewrite",
+      "categories": {
+        "content_quality": 14,
+        "seo_optimization": 18,
+        "eeat_signals": 8,
+        "technical_elements": 5,
+        "ai_citation_readiness": 8
+      },
+      "issues": [
+        "No internal links - add 3-10 contextual internal links",
+        "Flesch reading ease (40.5) outside acceptable range (55-75)",
+        "No differentiated evidence or analysis found - add original data, a sourced synthesis, a case example, or a clearly labeled unique insight",
+        "No JSON-LD schema markup detected - add BlogPosting schema",
+        "Reader utility is limited - add a relevant example, summary, table, or decision aid when useful",
+        "5 sentences over 40 words - consider splitting",
+        "No entity definitions found - use **term** is/are patterns"
+      ],
+      "internal_links_out": 0,
+      "external_links_out": 3,
+      "has_schema": false,
+      "has_og_tags": false,
+      "date": "2026-04-12",
+      "category": "CV"
+    },
+    {
+      "file": "doradca-zawodowy.md",
+      "score": 53,
+      "rating": "Rewrite",
+      "categories": {
+        "content_quality": 14,
+        "seo_optimization": 18,
+        "eeat_signals": 7,
+        "technical_elements": 5,
+        "ai_citation_readiness": 9
+      },
+      "issues": [
+        "No internal links - add 3-10 contextual internal links",
+        "Flesch reading ease (39.7) outside acceptable range (55-75)",
+        "No differentiated evidence or analysis found - add original data, a sourced synthesis, a case example, or a clearly labeled unique insight",
+        "No JSON-LD schema markup detected - add BlogPosting schema",
+        "Reader utility is limited - add a relevant example, summary, table, or decision aid when useful",
+        "2 sentences over 40 words - consider splitting",
+        "No entity definitions found - use **term** is/are patterns"
+      ],
+      "internal_links_out": 0,
+      "external_links_out": 3,
+      "has_schema": false,
+      "has_og_tags": false,
+      "date": "2026-04-12",
+      "category": "Kariera"
+    },
+    {
+      "file": "doradztwo-zawodowe.md",
+      "score": 53,
+      "rating": "Rewrite",
+      "categories": {
+        "content_quality": 14,
+        "seo_optimization": 18,
+        "eeat_signals": 7,
+        "technical_elements": 5,
+        "ai_citation_readiness": 9
+      },
+      "issues": [
+        "No internal links - add 3-10 contextual internal links",
+        "Flesch reading ease (36.0) outside acceptable range (55-75)",
+        "No differentiated evidence or analysis found - add original data, a sourced synthesis, a case example, or a clearly labeled unique insight",
+        "No JSON-LD schema markup detected - add BlogPosting schema",
+        "Reader utility is limited - add a relevant example, summary, table, or decision aid when useful",
+        "5 sentences over 40 words - consider splitting",
+        "No entity definitions found - use **term** is/are patterns"
+      ],
+      "internal_links_out": 0,
+      "external_links_out": 4,
+      "has_schema": false,
+      "has_og_tags": false,
+      "date": "2026-04-12",
+      "category": "Kariera"
+    },
+    {
+      "file": "jak-zmienic-branze.md",
+      "score": 53,
+      "rating": "Rewrite",
+      "categories": {
+        "content_quality": 15,
+        "seo_optimization": 18,
+        "eeat_signals": 7,
+        "technical_elements": 5,
+        "ai_citation_readiness": 8
+      },
+      "issues": [
+        "No internal links - add 3-10 contextual internal links",
+        "No differentiated evidence or analysis found - add original data, a sourced synthesis, a case example, or a clearly labeled unique insight",
+        "No JSON-LD schema markup detected - add BlogPosting schema",
+        "Reader utility is limited - add a relevant example, summary, table, or decision aid when useful",
+        "4 sentences over 40 words - consider splitting",
+        "No entity definitions found - use **term** is/are patterns"
+      ],
+      "internal_links_out": 0,
+      "external_links_out": 3,
+      "has_schema": false,
+      "has_og_tags": false,
+      "date": "2026-03-24",
+      "category": "Kariera"
+    },
+    {
+      "file": "wypalenie-zawodowe-co-dalej.md",
+      "score": 53,
+      "rating": "Rewrite",
+      "categories": {
+        "content_quality": 15,
+        "seo_optimization": 18,
+        "eeat_signals": 7,
+        "technical_elements": 5,
+        "ai_citation_readiness": 8
+      },
+      "issues": [
+        "No internal links - add 3-10 contextual internal links",
+        "No differentiated evidence or analysis found - add original data, a sourced synthesis, a case example, or a clearly labeled unique insight",
+        "No JSON-LD schema markup detected - add BlogPosting schema",
+        "Reader utility is limited - add a relevant example, summary, table, or decision aid when useful",
+        "2 sentences over 40 words - consider splitting",
+        "No entity definitions found - use **term** is/are patterns"
+      ],
+      "internal_links_out": 0,
+      "external_links_out": 3,
+      "has_schema": false,
+      "has_og_tags": false,
+      "date": "2026-03-24",
+      "category": "Kariera"
+    },
+    {
+      "file": "zawody-przyszlosci.md",
+      "score": 53,
+      "rating": "Rewrite",
+      "categories": {
+        "content_quality": 14,
+        "seo_optimization": 18,
+        "eeat_signals": 8,
+        "technical_elements": 5,
+        "ai_citation_readiness": 8
+      },
+      "issues": [
+        "No internal links - add 3-10 contextual internal links",
+        "Flesch reading ease (30.3) outside acceptable range (55-75)",
+        "No differentiated evidence or analysis found - add original data, a sourced synthesis, a case example, or a clearly labeled unique insight",
+        "No JSON-LD schema markup detected - add BlogPosting schema",
+        "Reader utility is limited - add a relevant example, summary, table, or decision aid when useful",
+        "5 sentences over 40 words - consider splitting",
+        "No entity definitions found - use **term** is/are patterns"
+      ],
+      "internal_links_out": 0,
+      "external_links_out": 3,
+      "has_schema": false,
+      "has_og_tags": false,
+      "date": "2026-04-12",
+      "category": "rynek-pracy"
+    },
+    {
+      "file": "cv-bez-doswiadczenia.md",
+      "score": 54,
+      "rating": "Rewrite",
+      "categories": {
+        "content_quality": 16,
+        "seo_optimization": 18,
+        "eeat_signals": 7,
+        "technical_elements": 5,
+        "ai_citation_readiness": 8
+      },
+      "issues": [
+        "No internal links - add 3-10 contextual internal links",
+        "No differentiated evidence or analysis found - add original data, a sourced synthesis, a case example, or a clearly labeled unique insight",
+        "No JSON-LD schema markup detected - add BlogPosting schema",
+        "Reader utility is limited - add a relevant example, summary, table, or decision aid when useful",
+        "3 sentences over 40 words - consider splitting",
+        "No entity definitions found - use **term** is/are patterns"
+      ],
+      "internal_links_out": 0,
+      "external_links_out": 3,
+      "has_schema": false,
+      "has_og_tags": false,
+      "date": "2026-04-12",
+      "category": "CV"
+    },
+    {
+      "file": "gdzie-szukac-pracy.md",
+      "score": 54,
+      "rating": "Rewrite",
+      "categories": {
+        "content_quality": 16,
+        "seo_optimization": 18,
+        "eeat_signals": 7,
+        "technical_elements": 5,
+        "ai_citation_readiness": 8
+      },
+      "issues": [
+        "No internal links - add 3-10 contextual internal links",
+        "No differentiated evidence or analysis found - add original data, a sourced synthesis, a case example, or a clearly labeled unique insight",
+        "No JSON-LD schema markup detected - add BlogPosting schema",
+        "Reader utility is limited - add a relevant example, summary, table, or decision aid when useful",
+        "3 sentences over 40 words - consider splitting",
+        "No entity definitions found - use **term** is/are patterns"
+      ],
+      "internal_links_out": 0,
+      "external_links_out": 3,
+      "has_schema": false,
+      "has_og_tags": false,
+      "date": "2026-04-12",
+      "category": "Job"
+    },
+    {
+      "file": "jak-napisac-cv.md",
+      "score": 54,
+      "rating": "Rewrite",
+      "categories": {
+        "content_quality": 16,
+        "seo_optimization": 18,
+        "eeat_signals": 7,
+        "technical_elements": 5,
+        "ai_citation_readiness": 8
+      },
+      "issues": [
+        "No internal links - add 3-10 contextual internal links",
+        "No differentiated evidence or analysis found - add original data, a sourced synthesis, a case example, or a clearly labeled unique insight",
+        "No JSON-LD schema markup detected - add BlogPosting schema",
+        "Reader utility is limited - add a relevant example, summary, table, or decision aid when useful",
+        "3 sentences over 40 words - consider splitting",
+        "No entity definitions found - use **term** is/are patterns"
+      ],
+      "internal_links_out": 0,
+      "external_links_out": 4,
+      "has_schema": false,
+      "has_og_tags": false,
+      "date": "2026-04-12",
+      "category": "CV"
+    },
+    {
+      "file": "jak-znalezc-prace.md",
+      "score": 54,
+      "rating": "Rewrite",
+      "categories": {
+        "content_quality": 16,
+        "seo_optimization": 18,
+        "eeat_signals": 7,
+        "technical_elements": 5,
+        "ai_citation_readiness": 8
+      },
+      "issues": [
+        "No internal links - add 3-10 contextual internal links",
+        "No differentiated evidence or analysis found - add original data, a sourced synthesis, a case example, or a clearly labeled unique insight",
+        "No JSON-LD schema markup detected - add BlogPosting schema",
+        "Reader utility is limited - add a relevant example, summary, table, or decision aid when useful",
+        "4 sentences over 40 words - consider splitting",
+        "No entity definitions found - use **term** is/are patterns"
+      ],
+      "internal_links_out": 0,
+      "external_links_out": 3,
+      "has_schema": false,
+      "has_og_tags": false,
+      "date": "2026-04-12",
+      "category": "Job"
+    },
+    {
+      "file": "profesjonalne-cv.md",
+      "score": 54,
+      "rating": "Rewrite",
+      "categories": {
+        "content_quality": 16,
+        "seo_optimization": 18,
+        "eeat_signals": 7,
+        "technical_elements": 5,
+        "ai_citation_readiness": 8
+      },
+      "issues": [
+        "No internal links - add 3-10 contextual internal links",
+        "No differentiated evidence or analysis found - add original data, a sourced synthesis, a case example, or a clearly labeled unique insight",
+        "No JSON-LD schema markup detected - add BlogPosting schema",
+        "Reader utility is limited - add a relevant example, summary, table, or decision aid when useful",
+        "4 sentences over 40 words - consider splitting",
+        "No entity definitions found - use **term** is/are patterns"
+      ],
+      "internal_links_out": 0,
+      "external_links_out": 3,
+      "has_schema": false,
+      "has_og_tags": false,
+      "date": "2026-04-12",
+      "category": "CV"
+    },
+    {
+      "file": "szukanie-pracy.md",
+      "score": 54,
+      "rating": "Rewrite",
+      "categories": {
+        "content_quality": 16,
+        "seo_optimization": 18,
+        "eeat_signals": 7,
+        "technical_elements": 5,
+        "ai_citation_readiness": 8
+      },
+      "issues": [
+        "No internal links - add 3-10 contextual internal links",
+        "No differentiated evidence or analysis found - add original data, a sourced synthesis, a case example, or a clearly labeled unique insight",
+        "No JSON-LD schema markup detected - add BlogPosting schema",
+        "Reader utility is limited - add a relevant example, summary, table, or decision aid when useful",
+        "1 sentences over 40 words - consider splitting",
+        "No entity definitions found - use **term** is/are patterns"
+      ],
+      "internal_links_out": 0,
+      "external_links_out": 3,
+      "has_schema": false,
+      "has_og_tags": false,
+      "date": "2026-04-12",
+      "category": "Job"
+    },
+    {
+      "file": "test-kariery-online.md",
+      "score": 54,
+      "rating": "Rewrite",
+      "categories": {
+        "content_quality": 15,
+        "seo_optimization": 18,
+        "eeat_signals": 7,
+        "technical_elements": 5,
+        "ai_citation_readiness": 9
+      },
+      "issues": [
+        "No internal links - add 3-10 contextual internal links",
+        "No differentiated evidence or analysis found - add original data, a sourced synthesis, a case example, or a clearly labeled unique insight",
+        "No JSON-LD schema markup detected - add BlogPosting schema",
+        "Reader utility is limited - add a relevant example, summary, table, or decision aid when useful",
+        "2 sentences over 40 words - consider splitting",
+        "No entity definitions found - use **term** is/are patterns"
+      ],
+      "internal_links_out": 0,
+      "external_links_out": 3,
+      "has_schema": false,
+      "has_og_tags": false,
+      "date": "2026-03-24",
+      "category": "Kariera"
+    },
+    {
+      "file": "wzor-listu-motywacyjnego.md",
+      "score": 54,
+      "rating": "Rewrite",
+      "categories": {
+        "content_quality": 16,
+        "seo_optimization": 18,
+        "eeat_signals": 7,
+        "technical_elements": 5,
+        "ai_citation_readiness": 8
+      },
+      "issues": [
+        "No internal links - add 3-10 contextual internal links",
+        "No differentiated evidence or analysis found - add original data, a sourced synthesis, a case example, or a clearly labeled unique insight",
+        "No JSON-LD schema markup detected - add BlogPosting schema",
+        "Reader utility is limited - add a relevant example, summary, table, or decision aid when useful",
+        "7 sentences over 40 words - consider splitting",
+        "No entity definitions found - use **term** is/are patterns"
+      ],
+      "internal_links_out": 0,
+      "external_links_out": 3,
+      "has_schema": false,
+      "has_og_tags": false,
+      "date": "2026-04-12",
+      "category": "CV"
+    },
+    {
+      "file": "kreator-cv.md",
+      "score": 55,
+      "rating": "Rewrite",
+      "categories": {
+        "content_quality": 16,
+        "seo_optimization": 18,
+        "eeat_signals": 8,
+        "technical_elements": 5,
+        "ai_citation_readiness": 8
+      },
+      "issues": [
+        "No internal links - add 3-10 contextual internal links",
+        "No differentiated evidence or analysis found - add original data, a sourced synthesis, a case example, or a clearly labeled unique insight",
+        "No JSON-LD schema markup detected - add BlogPosting schema",
+        "Reader utility is limited - add a relevant example, summary, table, or decision aid when useful",
+        "2 sentences over 40 words - consider splitting",
+        "No entity definitions found - use **term** is/are patterns"
+      ],
+      "internal_links_out": 0,
+      "external_links_out": 5,
+      "has_schema": false,
+      "has_og_tags": false,
+      "date": "2026-04-12",
+      "category": "CV"
+    },
+    {
+      "file": "praca-bez-doswiadczenia.md",
+      "score": 55,
+      "rating": "Rewrite",
+      "categories": {
+        "content_quality": 16,
+        "seo_optimization": 18,
+        "eeat_signals": 8,
+        "technical_elements": 5,
+        "ai_citation_readiness": 8
+      },
+      "issues": [
+        "No internal links - add 3-10 contextual internal links",
+        "No differentiated evidence or analysis found - add original data, a sourced synthesis, a case example, or a clearly labeled unique insight",
+        "No JSON-LD schema markup detected - add BlogPosting schema",
+        "Reader utility is limited - add a relevant example, summary, table, or decision aid when useful",
+        "3 sentences over 40 words - consider splitting",
+        "No entity definitions found - use **term** is/are patterns"
+      ],
+      "internal_links_out": 0,
+      "external_links_out": 3,
+      "has_schema": false,
+      "has_og_tags": false,
+      "date": "2026-04-12",
+      "category": "Job"
+    },
+    {
+      "file": "praca-dla-studenta.md",
+      "score": 55,
+      "rating": "Rewrite",
+      "categories": {
+        "content_quality": 16,
+        "seo_optimization": 18,
+        "eeat_signals": 7,
+        "technical_elements": 5,
+        "ai_citation_readiness": 9
+      },
+      "issues": [
+        "No internal links - add 3-10 contextual internal links",
+        "No differentiated evidence or analysis found - add original data, a sourced synthesis, a case example, or a clearly labeled unique insight",
+        "No JSON-LD schema markup detected - add BlogPosting schema",
+        "Reader utility is limited - add a relevant example, summary, table, or decision aid when useful",
+        "5 sentences over 40 words - consider splitting",
+        "No entity definitions found - use **term** is/are patterns"
+      ],
+      "internal_links_out": 0,
+      "external_links_out": 3,
+      "has_schema": false,
+      "has_og_tags": false,
+      "date": "2026-04-12",
+      "category": "Job"
+    },
+    {
+      "file": "rozmowa-kwalifikacyjna.md",
+      "score": 55,
+      "rating": "Rewrite",
+      "categories": {
+        "content_quality": 16,
+        "seo_optimization": 18,
+        "eeat_signals": 7,
+        "technical_elements": 5,
+        "ai_citation_readiness": 9
+      },
+      "issues": [
+        "No internal links - add 3-10 contextual internal links",
+        "No differentiated evidence or analysis found - add original data, a sourced synthesis, a case example, or a clearly labeled unique insight",
+        "No JSON-LD schema markup detected - add BlogPosting schema",
+        "Reader utility is limited - add a relevant example, summary, table, or decision aid when useful",
+        "3 sentences over 40 words - consider splitting",
+        "No entity definitions found - use **term** is/are patterns"
+      ],
+      "internal_links_out": 0,
+      "external_links_out": 3,
+      "has_schema": false,
+      "has_og_tags": false,
+      "date": "2026-04-12",
+      "category": "Job"
+    },
+    {
+      "file": "sciezka-kariery.md",
+      "score": 55,
+      "rating": "Rewrite",
+      "categories": {
+        "content_quality": 16,
+        "seo_optimization": 18,
+        "eeat_signals": 7,
+        "technical_elements": 5,
+        "ai_citation_readiness": 9
+      },
+      "issues": [
+        "No internal links - add 3-10 contextual internal links",
+        "No differentiated evidence or analysis found - add original data, a sourced synthesis, a case example, or a clearly labeled unique insight",
+        "No JSON-LD schema markup detected - add BlogPosting schema",
+        "Reader utility is limited - add a relevant example, summary, table, or decision aid when useful",
+        "4 sentences over 40 words - consider splitting",
+        "No entity definitions found - use **term** is/are patterns"
+      ],
+      "internal_links_out": 0,
+      "external_links_out": 3,
+      "has_schema": false,
+      "has_og_tags": false,
+      "date": "2026-04-12",
+      "category": "Kariera"
+    },
+    {
+      "file": "zainteresowania-w-cv.md",
+      "score": 55,
+      "rating": "Rewrite",
+      "categories": {
+        "content_quality": 16,
+        "seo_optimization": 18,
+        "eeat_signals": 7,
+        "technical_elements": 5,
+        "ai_citation_readiness": 9
+      },
+      "issues": [
+        "No internal links - add 3-10 contextual internal links",
+        "No differentiated evidence or analysis found - add original data, a sourced synthesis, a case example, or a clearly labeled unique insight",
+        "No JSON-LD schema markup detected - add BlogPosting schema",
+        "Reader utility is limited - add a relevant example, summary, table, or decision aid when useful",
+        "5 sentences over 40 words - consider splitting",
+        "No entity definitions found - use **term** is/are patterns"
+      ],
+      "internal_links_out": 0,
+      "external_links_out": 3,
+      "has_schema": false,
+      "has_og_tags": false,
+      "date": "2026-04-12",
+      "category": "CV"
+    },
+    {
+      "file": "cv.md",
+      "score": 56,
+      "rating": "Rewrite",
+      "categories": {
+        "content_quality": 18,
+        "seo_optimization": 18,
+        "eeat_signals": 7,
+        "technical_elements": 5,
+        "ai_citation_readiness": 8
+      },
+      "issues": [
+        "No internal links - add 3-10 contextual internal links",
+        "No differentiated evidence or analysis found - add original data, a sourced synthesis, a case example, or a clearly labeled unique insight",
+        "No JSON-LD schema markup detected - add BlogPosting schema",
+        "Reader utility is limited - add a relevant example, summary, table, or decision aid when useful",
+        "4 sentences over 40 words - consider splitting",
+        "No entity definitions found - use **term** is/are patterns"
+      ],
+      "internal_links_out": 0,
+      "external_links_out": 3,
+      "has_schema": false,
+      "has_og_tags": false,
+      "date": "2026-04-12",
+      "category": "CV"
+    },
+    {
+      "file": "pytania-na-rozmowie-kwalifikacyjnej.md",
+      "score": 56,
+      "rating": "Rewrite",
+      "categories": {
+        "content_quality": 18,
+        "seo_optimization": 18,
+        "eeat_signals": 7,
+        "technical_elements": 5,
+        "ai_citation_readiness": 8
+      },
+      "issues": [
+        "No internal links - add 3-10 contextual internal links",
+        "No differentiated evidence or analysis found - add original data, a sourced synthesis, a case example, or a clearly labeled unique insight",
+        "No JSON-LD schema markup detected - add BlogPosting schema",
+        "Reader utility is limited - add a relevant example, summary, table, or decision aid when useful",
+        "1 sentences over 40 words - consider splitting",
+        "No entity definitions found - use **term** is/are patterns"
+      ],
+      "internal_links_out": 0,
+      "external_links_out": 3,
+      "has_schema": false,
+      "has_og_tags": false,
+      "date": "2026-04-12",
+      "category": "Job"
+    },
+    {
+      "file": "cv-do-pracy.md",
+      "score": 57,
+      "rating": "Rewrite",
+      "categories": {
+        "content_quality": 18,
+        "seo_optimization": 18,
+        "eeat_signals": 7,
+        "technical_elements": 6,
+        "ai_citation_readiness": 8
+      },
+      "issues": [
+        "No internal links - add 3-10 contextual internal links",
+        "No differentiated evidence or analysis found - add original data, a sourced synthesis, a case example, or a clearly labeled unique insight",
+        "No JSON-LD schema markup detected - add BlogPosting schema",
+        "Reader utility is limited - add a relevant example, summary, table, or decision aid when useful",
+        "2 sentences over 40 words - consider splitting",
+        "No entity definitions found - use **term** is/are patterns"
+      ],
+      "internal_links_out": 0,
+      "external_links_out": 3,
+      "has_schema": false,
+      "has_og_tags": false,
+      "date": "2026-04-12",
+      "category": "CV"
+    },
+    {
+      "file": "cv-wzor.md",
+      "score": 57,
+      "rating": "Rewrite",
+      "categories": {
+        "content_quality": 18,
+        "seo_optimization": 18,
+        "eeat_signals": 7,
+        "technical_elements": 6,
+        "ai_citation_readiness": 8
+      },
+      "issues": [
+        "No internal links - add 3-10 contextual internal links",
+        "No differentiated evidence or analysis found - add original data, a sourced synthesis, a case example, or a clearly labeled unique insight",
+        "No JSON-LD schema markup detected - add BlogPosting schema",
+        "Reader utility is limited - add a relevant example, summary, table, or decision aid when useful",
+        "3 sentences over 40 words - consider splitting",
+        "No entity definitions found - use **term** is/are patterns"
+      ],
+      "internal_links_out": 0,
+      "external_links_out": 4,
+      "has_schema": false,
+      "has_og_tags": false,
+      "date": "2026-04-12",
+      "category": "CV"
+    },
+    {
+      "file": "jak-zrobic-cv.md",
+      "score": 57,
+      "rating": "Rewrite",
+      "categories": {
+        "content_quality": 18,
+        "seo_optimization": 18,
+        "eeat_signals": 8,
+        "technical_elements": 5,
+        "ai_citation_readiness": 8
+      },
+      "issues": [
+        "No internal links - add 3-10 contextual internal links",
+        "No differentiated evidence or analysis found - add original data, a sourced synthesis, a case example, or a clearly labeled unique insight",
+        "No JSON-LD schema markup detected - add BlogPosting schema",
+        "Reader utility is limited - add a relevant example, summary, table, or decision aid when useful",
+        "1 sentences over 40 words - consider splitting",
+        "No entity definitions found - use **term** is/are patterns"
+      ],
+      "internal_links_out": 0,
+      "external_links_out": 5,
+      "has_schema": false,
+      "has_og_tags": false,
+      "date": "2026-04-12",
+      "category": "CV"
+    },
+    {
+      "file": "darmowy-kreator-cv.md",
+      "score": 58,
+      "rating": "Rewrite",
+      "categories": {
+        "content_quality": 18,
+        "seo_optimization": 18,
+        "eeat_signals": 8,
+        "technical_elements": 6,
+        "ai_citation_readiness": 8
+      },
+      "issues": [
+        "No internal links - add 3-10 contextual internal links",
+        "No differentiated evidence or analysis found - add original data, a sourced synthesis, a case example, or a clearly labeled unique insight",
+        "No JSON-LD schema markup detected - add BlogPosting schema",
+        "Reader utility is limited - add a relevant example, summary, table, or decision aid when useful",
+        "3 sentences over 40 words - consider splitting",
+        "No entity definitions found - use **term** is/are patterns"
+      ],
+      "internal_links_out": 0,
+      "external_links_out": 8,
+      "has_schema": false,
+      "has_og_tags": false,
+      "date": "2026-04-12",
+      "category": "CV"
+    },
+    {
+      "file": "jak-napisac-list-motywacyjny.md",
+      "score": 58,
+      "rating": "Rewrite",
+      "categories": {
+        "content_quality": 20,
+        "seo_optimization": 18,
+        "eeat_signals": 7,
+        "technical_elements": 5,
+        "ai_citation_readiness": 8
+      },
+      "issues": [
+        "No internal links - add 3-10 contextual internal links",
+        "No differentiated evidence or analysis found - add original data, a sourced synthesis, a case example, or a clearly labeled unique insight",
+        "No JSON-LD schema markup detected - add BlogPosting schema",
+        "Reader utility is limited - add a relevant example, summary, table, or decision aid when useful",
+        "2 sentences over 40 words - consider splitting",
+        "No entity definitions found - use **term** is/are patterns"
+      ],
+      "internal_links_out": 0,
+      "external_links_out": 3,
+      "has_schema": false,
+      "has_og_tags": false,
+      "date": "2026-04-12",
+      "category": "CV"
+    },
+    {
+      "file": "list-motywacyjny.md",
+      "score": 58,
+      "rating": "Rewrite",
+      "categories": {
+        "content_quality": 20,
+        "seo_optimization": 18,
+        "eeat_signals": 7,
+        "technical_elements": 5,
+        "ai_citation_readiness": 8
+      },
+      "issues": [
+        "No internal links - add 3-10 contextual internal links",
+        "No differentiated evidence or analysis found - add original data, a sourced synthesis, a case example, or a clearly labeled unique insight",
+        "No JSON-LD schema markup detected - add BlogPosting schema",
+        "Reader utility is limited - add a relevant example, summary, table, or decision aid when useful",
+        "3 sentences over 40 words - consider splitting",
+        "No entity definitions found - use **term** is/are patterns"
+      ],
+      "internal_links_out": 0,
+      "external_links_out": 3,
+      "has_schema": false,
+      "has_og_tags": false,
+      "date": "2026-04-12",
+      "category": "CV"
+    }
+  ],
+  "drafts": [
+    {
+      "file": "_szukanie-pracy-w-dobie-ai.md",
+      "score": 48,
+      "rating": "Rewrite"
+    },
+    {
+      "file": "_ukryty-rynek-pracy.md",
+      "score": 46,
+      "rating": "Rewrite"
+    },
+    {
+      "file": "_doradca-finansowy-kiedy-skorzystac.md",
+      "score": 40,
+      "rating": "Rewrite"
+    }
+  ],
+  "cannibalization_clusters": [
+    {
+      "keyword": "CV template / wzor CV",
+      "posts": [
+        "cv-wzor.md",
+        "wzor-cv.md",
+        "przykladowe-cv.md"
+      ],
+      "recommendation": "Merge cv-wzor.md + wzor-cv.md; differentiate przykladowe-cv.md as role-specific examples"
+    },
+    {
+      "keyword": "How to write a CV",
+      "posts": [
+        "cv.md",
+        "jak-napisac-cv.md",
+        "jak-zrobic-cv.md",
+        "profesjonalne-cv.md"
+      ],
+      "recommendation": "Merge jak-napisac-cv.md + jak-zrobic-cv.md; keep cv.md as pillar, profesjonalne-cv.md as formatting spoke"
+    },
+    {
+      "keyword": "CV builder / kreator CV",
+      "posts": [
+        "kreator-cv.md",
+        "darmowy-kreator-cv.md"
+      ],
+      "recommendation": "Differentiate: general tool comparison vs free-tier specific"
+    },
+    {
+      "keyword": "Cover letter",
+      "posts": [
+        "list-motywacyjny.md",
+        "jak-napisac-list-motywacyjny.md",
+        "wzor-listu-motywacyjnego.md"
+      ],
+      "recommendation": "Differentiate as pillar/how-to/templates hub-and-spoke; add cross-links"
+    },
+    {
+      "keyword": "Job search",
+      "posts": [
+        "szukanie-pracy.md",
+        "jak-znalezc-prace.md",
+        "gdzie-szukac-pracy.md"
+      ],
+      "recommendation": "Merge szukanie-pracy.md + jak-znalezc-prace.md; keep gdzie-szukac-pracy.md as channels spoke"
+    },
+    {
+      "keyword": "Career advisor",
+      "posts": [
+        "doradca-zawodowy.md",
+        "doradztwo-zawodowe.md"
+      ],
+      "recommendation": "Differentiate: person/role vs service/concept"
+    },
+    {
+      "keyword": "Future professions",
+      "posts": [
+        "zawody-przyszlosci.md",
+        "zawody-przyszlosci-2026.md"
+      ],
+      "recommendation": "Merge, redirect weaker to stronger"
+    },
+    {
+      "keyword": "No experience angle",
+      "posts": [
+        "cv-bez-doswiadczenia.md",
+        "praca-bez-doswiadczenia.md"
+      ],
+      "recommendation": "Keep separate, add reciprocal internal links"
+    }
+  ],
+  "orphan_seed_links": {
+    "cv-bez-doswiadczenia.md": [
+      "praca-bez-doswiadczenia.md",
+      "cv-studenta.md",
+      "jak-napisac-cv.md"
+    ],
+    "praca-dla-studenta.md": [
+      "cv-studenta.md",
+      "praca-bez-doswiadczenia.md",
+      "jak-znalezc-prace.md"
+    ],
+    "sciezka-kariery.md": [
+      "jaki-zawod-wybrac.md",
+      "test-kariery-online.md",
+      "doradca-zawodowy.md"
+    ],
+    "wypalenie-zawodowe-co-dalej.md": [
+      "sciezka-kariery.md",
+      "jak-zmienic-branze.md",
+      "doradca-zawodowy.md"
+    ],
+    "pytania-na-rozmowie-kwalifikacyjnej.md": [
+      "rozmowa-kwalifikacyjna.md",
+      "cv.md"
+    ]
+  },
+  "skipped_checks": [
+    "GSC queries/URL Inspection/GA4 (SKIPPED: credentials unavailable)",
+    "PageSpeed/CrUX Core Web Vitals (SKIPPED: credentials unavailable)",
+    "robots.txt/sitemap.xml/canonical/hreflang/redirect checks (SKIPPED: no live deploy URL / files not found under frontend/public)",
+    "Live crawler-access (GPTBot/ClaudeBot/PerplexityBot/Google-Extended, JS-gating) (SKIPPED: requires live site crawl)"
+  ]
+}

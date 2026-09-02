@@ -14,11 +14,17 @@ tags:
     'rozmowa o pracę',
     'rekrutacja 2026',
   ]
+slug: 'rozmowa-kwalifikacyjna'
 ---
 
 # Rozmowa kwalifikacyjna 2026 - jak się przygotować, żeby dostać pracę
 
-Dostałeś zaproszenie na rozmowę kwalifikacyjną. Serce bije szybciej, mózg zaczyna produkować scenariusze katastroficzne. To normalne. Ale tak jak egzamin - rozmowa kwalifikacyjna jest testem przygotowania, a nie talentu. **Kandydaci, którzy dostają oferty, nie są bardziej utalentowani - są lepiej przygotowani.** Oto kompletny przewodnik, który da Ci przewagę nad innymi kandydatami.
+Dostałeś zaproszenie na rozmowę kwalifikacyjną. Serce bije szybciej, mózg zaczyna produkować scenariusze katastroficzne. To normalne. **Rozmowa kwalifikacyjna** to test przygotowania, nie talentu - tak jak egzamin. Kandydaci, którzy dostają oferty, nie są bardziej utalentowani - są lepiej przygotowani. Oto kompletny przewodnik, który da Ci przewagę nad innymi kandydatami.
+
+> **Najważniejsze wnioski**
+> - Rozmowa jest dwustronna: rekruter ocenia Ciebie, ale Ty też oceniasz firmę
+> - **Metoda STAR** (Sytuacja, Zadanie, Akcja, Rezultat) to najprostszy sposób na ustrukturyzowaną odpowiedź na pytania behawioralne
+> - Zawsze przygotuj minimum 3 pytania do rekrutera - ich brak jest częstym błędem eliminującym kandydatów
 
 ---
 
@@ -133,6 +139,8 @@ Unikaj pytań o benefity i urlop na pierwszej rozmowie - to można omówić przy
 
 ---
 
+Większość błędów rekrutacyjnych sprowadza się do braku przygotowania w jednym z trzech obszarów: wiedzy o firmie, konkretnych przykładów z metody STAR lub pytań do rekrutera.
+
 ## Błędy, które eliminują kandydatów
 
 **Spóźnienie.** Nawet 5 minut na online rozmowie (loguj się 5 minut wcześniej). Na stacjonarną przyjedź 10 minut wcześniej.
@@ -176,3 +184,11 @@ Mów głośno jak myślisz. "Nie znam odpowiedzi, ale podszedłbym do tego tak..
 Rozmowa kwalifikacyjna to umiejętność, którą można trenować. Im więcej rozmów, tym lepsza jest Twoja odpowiedź. Kluczowe: badaj firmę, przygotuj odpowiedzi metodą STAR, miej konkretne pytania, wyślij follow-up. I pamiętaj - to też jest Twoja ocena firmy.
 
 Jeśli chcesz przygotować się jeszcze lepiej i wiedzieć jak Twoje doświadczenie wpisuje się w konkretne role na rynku, sprawdź **[Vocare.pl](https://vocare.pl)** - AI przeprowadzi Cię przez analizę dopasowania i wskaże, na co zwrócić uwagę.
+
+---
+
+## Powiązane artykuły
+- [Pytania na rozmowie kwalifikacyjnej 2026 - jak odpowiadać](/blog/Job/pytania-na-rozmowie-kwalifikacyjnej)
+- [CV 2026 - kompletny poradnik jak napisać dobre CV](/blog/CV/cv)
+- [Jak znaleźć pracę w 2026 - sprawdzone strategie krok po kroku](/blog/Job/jak-znalezc-prace)
+- [Assessment center 2026 - jak się przygotować i co Cię czeka](/blog/Job/assessment-center)

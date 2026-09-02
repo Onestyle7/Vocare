@@ -7,11 +7,17 @@ author: 'Vocare'
 category: 'CV'
 coverImage: '/images/blog/cv-interests.webp'
 tags: ['zainteresowania w cv', 'hobby w cv', 'co wpisać do cv', 'cv 2026', 'sekcja zainteresowania']
+slug: 'zainteresowania-w-cv'
 ---
 
 # Zainteresowania w CV - co wpisać i jak to zrobić mądrze
 
-"Czytanie książek, muzyka, sport" - tę trójkę widzisz w co drugim CV. Nic nie mówi, niczym nie zaskakuje i w efekcie niczego nie robi dla Twojej kandydatury. Sekcja zainteresowania to jedno z tych miejsc w CV, które albo pracuje na Twoją korzyść, albo delikatnie pracuje przeciwko. **Dobra sekcja zainteresowania to nie lista słów - to konkretne aktywności, które coś o Tobie mówią: że jesteś ciekawy świata, masz inicjatywę, rozwijasz się poza pracą.** Oto jak ją napisać.
+"Czytanie książek, muzyka, sport" - tę trójkę widzisz w co drugim CV. Nic nie mówi, niczym nie zaskakuje i w efekcie niczego nie robi dla Twojej kandydatury. **Dobra sekcja zainteresowania** to nie lista słów - to konkretne aktywności, które coś o Tobie mówią: że jesteś ciekawy świata, masz inicjatywę, rozwijasz się poza pracą. Oto jak ją napisać.
+
+> **Najważniejsze wnioski**
+> - Nie zawsze warto wpisywać zainteresowania - liczy się to, ile miejsca masz i co dana aktywność mówi o Tobie
+> - Konkretne aktywności (np. "wspinaczka - 3x w tygodniu") biją ogólniki ("sport", "muzyka")
+> - Zainteresowania działają najlepiej, gdy mają choćby luźny związek z rolą lub pokazują inicjatywę
 
 ---
 
@@ -106,6 +112,8 @@ Szachy, brydż, strategiczne gry planszowe. Sygnalizują **analityczne myślenie
 
 ---
 
+Zainteresowania, które wzmacniają CV, mają wspólną cechę: dają się poprzeć konkretem (częstotliwość, wynik, rola), tak samo jak osiągnięcia zawodowe.
+
 ## Jak sformatować zainteresowania w CV?
 
 Sekcja zainteresowania powinna być krótka - 3-6 pozycji, ewentualnie z jednozdaniowym opisem.
@@ -167,3 +175,10 @@ Każdy ma zainteresowania - nie każdy myśli o nich w tych kategoriach. Zastan�
 Zainteresowania w CV to nie obowiązkowy element - to opcjonalne miejsce, które może wzmocnić Twoją kandydaturę. Ale tylko wtedy, gdy wpiszesz konkretne, autentyczne aktywności, które coś o Tobie mówią. "Czytanie i muzyka" nic nie mówi. "Trójbój siłowy i nauka hiszpańskiego" - już jest o czym porozmawiać.
 
 Jeśli masz wątpliwości co do całej struktury swojego CV, **[Vocare.pl](https://vocare.pl)** oceni jego ogólną jakość, a osobna funkcja automatycznie dopasuje CV do konkretnej oferty po wklejeniu ogłoszenia.
+
+---
+
+## Powiązane artykuły
+- [Umiejętności do CV 2026 - co wpisać, żeby wyróżnić aplikację](/blog/CV/umiejetnosci-do-cv)
+- [CV wzór 2026 - darmowe szablony do pobrania i edycji](/blog/CV/cv-wzor)
+- [Profesjonalne CV 2026 - jak wyglądać poważnie na papierze](/blog/CV/profesjonalne-cv)

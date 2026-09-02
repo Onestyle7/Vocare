@@ -5,7 +5,12 @@ const env = createEnv({
   emptyStringAsUndefined: true,
   skipValidation: !!process.env.SKIP_ENV_VALIDATION,
   client: {
-    NEXT_PUBLIC_APP_URL: z.string().url(),
+    // Trailing slash stripped so consumers can safely concatenate paths
+    // (`${NEXT_PUBLIC_APP_URL}/blog/...`) without producing a double slash.
+    NEXT_PUBLIC_APP_URL: z
+      .string()
+      .url()
+      .transform((url) => url.replace(/\/+$/, '')),
     NEXT_PUBLIC_PERSONAL_PRICE_ID: z.string(),
     NEXT_PUBLIC_GROWTH_PRICE_ID: z.string(),
     NEXT_PUBLIC_INDIVIDUAL_PRICE_ID: z.string(),

@@ -31,6 +31,32 @@ const nextConfig: NextConfig = {
       },
     ],
   },
+  async redirects() {
+    // Blog posts merged during the 2026-09-02 cannibalization cleanup.
+    // Keep these permanent (301) so backlinks/search rankings transfer to the surviving post.
+    return [
+      {
+        source: '/blog/CV/wzor-cv',
+        destination: '/blog/CV/cv-wzor',
+        permanent: true,
+      },
+      {
+        source: '/blog/CV/jak-napisac-cv',
+        destination: '/blog/CV/jak-zrobic-cv',
+        permanent: true,
+      },
+      {
+        source: '/blog/rynek-pracy/zawody-przyszlosci',
+        destination: '/blog/rynek-pracy/zawody-przyszlosci-2026',
+        permanent: true,
+      },
+      {
+        source: '/blog/Job/szukanie-pracy',
+        destination: '/blog/Job/jak-znalezc-prace',
+        permanent: true,
+      },
+    ];
+  },
 };
 
 export default nextConfig;
