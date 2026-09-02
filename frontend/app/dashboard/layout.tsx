@@ -4,10 +4,18 @@ import { TokenBalanceProvider } from '@/features/billing/components/Subscription
 import { getTokenSubscriptionStatus } from '@/features/billing/dal/queries';
 import DashboardHeader from '@/features/dashboard/header/components/dashboard-header';
 import DashboardSidebar from '@/features/dashboard/sidebar/components/dashboard-sidebar';
+import { getPendingLegalDocuments } from '@/features/legal/dal/queries';
 import { ProfileProvider } from '@/features/profile/components/ProfileProvider';
 import { getUserProfileQuery } from '@/features/profile/dal/queries';
 
 export default async function DashboardLayoutPage({ children }: { children: React.ReactNode }) {
+  const [pendingLegalErr, pendingLegalData] = await getPendingLegalDocuments();
+  const hasPendingConsents = !pendingLegalErr && pendingLegalData && pendingLegalData.length > 0;
+
+  if (hasPendingConsents) {
+    return <main className="h-screen w-screen overflow-hidden bg-background" />;
+  }
+
   const [tokenBalanceError, tokenBalanceData] = await getTokenSubscriptionStatus();
   const [userProfileError, userProfileData] = await getUserProfileQuery();
 

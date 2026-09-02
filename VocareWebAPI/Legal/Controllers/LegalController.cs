@@ -1,9 +1,12 @@
 using System.Security.Claims;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using VocareWebAPI.Legal.Models.Dtos;
 using VocareWebAPI.Legal.Models.Enums;
 using VocareWebAPI.Legal.Services.Interfaces;
+using VocareWebAPI.Models.Entities;
+using VocareWebAPI.UserManagement.Services.Interfaces;
 
 namespace VocareWebAPI.Legal.Controllers
 {
@@ -12,11 +15,19 @@ namespace VocareWebAPI.Legal.Controllers
     public class LegalController : ControllerBase
     {
         private readonly ILegalService _legalService;
+        private readonly UserManager<User> _userManager;
+        private readonly ITokenService _tokenService;
         private readonly ILogger<LegalController> _logger;
 
-        public LegalController(ILegalService legalService, ILogger<LegalController> logger)
+        public LegalController(
+            ILegalService legalService,
+            UserManager<User> userManager,
+            ITokenService tokenService,
+            ILogger<LegalController> logger)
         {
             _legalService = legalService;
+            _userManager = userManager;
+            _tokenService = tokenService;
             _logger = logger;
         }
 
@@ -40,7 +51,7 @@ namespace VocareWebAPI.Legal.Controllers
         }
 
         /// <summary>
-        /// Accepts specified legal documents for the current user.
+        /// Accepts specified legal documents for the current user and reissues an updated access token.
         /// </summary>
         [HttpPost("accept")]
         [Authorize]
@@ -69,7 +80,16 @@ namespace VocareWebAPI.Legal.Controllers
 
             _logger.LogInformation("User {UserId} accepted legal documents: {DocumentIds}", userId, string.Join(", ", request?.DocumentIds ?? []));
 
-            return Ok(new { success = true });
+            var user = await _userManager.FindByIdAsync(userId);
+            if (user == null)
+            {
+                throw new UnauthorizedAccessException("User not found.");
+            }
+
+            var hasValidConsents = await _legalService.HasValidConsentsAsync(userId);
+            var newToken = _tokenService.GenerateToken(user, hasValidConsents);
+
+            return Ok(new { success = true, accessToken = newToken });
         }
 
         /// <summary>
