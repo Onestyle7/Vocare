@@ -5,6 +5,9 @@ using Microsoft.AspNetCore.DataProtection;
 using Microsoft.AspNetCore.Identity;
 using VocareWebAPI.Billing.Models.Entities;
 using VocareWebAPI.Data;
+using VocareWebAPI.Legal.Models.Enums;
+using VocareWebAPI.Legal.Repositories.Interfaces;
+using VocareWebAPI.Legal.Services.Interfaces;
 using VocareWebAPI.Models.Entities;
 using VocareWebAPI.Shared.Exceptions;
 using VocareWebAPI.Shared.Results;
@@ -25,6 +28,8 @@ namespace VocareWebAPI.UserManagement.Services.Implementations
         private readonly IEmailService _emailService;
         private readonly UserRegistrationHandler _registrationHandler;
         private readonly IMarketingConsentRepository _marketingConsentRepository;
+        private readonly ILegalService _legalService;
+        private readonly ILegalRepository _legalRepository;
         private readonly AppDbContext _dbContext;
 
         public AuthenticationService(
@@ -37,6 +42,8 @@ namespace VocareWebAPI.UserManagement.Services.Implementations
             IEmailService emailService,
             UserRegistrationHandler registrationHandler,
             IMarketingConsentRepository marketingConsentRepository,
+            ILegalService legalService,
+            ILegalRepository legalRepository,
             AppDbContext dbContext
         )
         {
@@ -49,6 +56,8 @@ namespace VocareWebAPI.UserManagement.Services.Implementations
             _emailService = emailService;
             _registrationHandler = registrationHandler;
             _marketingConsentRepository = marketingConsentRepository;
+            _legalService = legalService;
+            _legalRepository = legalRepository;
             _dbContext = dbContext;
         }
 
@@ -87,15 +96,16 @@ namespace VocareWebAPI.UserManagement.Services.Implementations
                 );
             }
 
-            var token = GenerateIdentityCompatibleToken(user);
+            var hasValidConsents = await _legalService.HasValidConsentsAsync(user.Id);
+            var token = GenerateIdentityCompatibleToken(user, hasValidConsents);
 
-            _logger.LogInformation("User logged in successfully: {UserId}", user.Id);
+            _logger.LogInformation("User logged in successfully: {UserId}, ConsentsValid: {ConsentsValid}", user.Id, hasValidConsents);
 
             var loginResult = LoginResult.Successful(token, user.Id, user.Email, 3600);
             return Result<LoginResult>.Ok(loginResult);
         }
 
-        private string GenerateIdentityCompatibleToken(User user)
+        private string GenerateIdentityCompatibleToken(User user, bool consentsValid)
         {
             var protector = _httpContextAccessor
                 .HttpContext.RequestServices.GetRequiredService<IDataProtectionProvider>()
@@ -105,6 +115,7 @@ namespace VocareWebAPI.UserManagement.Services.Implementations
             {
                 sub = user.Id,
                 email = user.Email,
+                consents_valid = consentsValid,
                 jti = Guid.NewGuid().ToString(),
                 exp = DateTimeOffset.UtcNow.AddHours(1).ToUnixTimeSeconds(),
                 iat = DateTimeOffset.UtcNow.ToUnixTimeSeconds(),
@@ -186,7 +197,28 @@ namespace VocareWebAPI.UserManagement.Services.Implementations
                 );
             }
 
-            // Zgody są poza transakcją z tego względu, że nie są krytyczne do działania konta
+            try
+            {
+                var activeDocuments = await _legalRepository.GetActiveDocumentsAsync();
+                if (activeDocuments.Count > 0)
+                {
+                    var userAgent = _httpContextAccessor.HttpContext?.Request.Headers.UserAgent.ToString() ?? "Registration";
+                    await _legalService.AcceptConsentsAsync(
+                        user.Id,
+                        activeDocuments.Select(d => d.Id).ToList(),
+                        ipAddress ?? "unknown",
+                        userAgent,
+                        ConsentSource.Registration
+                    );
+                    _logger.LogInformation("Legal consents recorded for registered user: {UserId}", user.Id);
+                }
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Failed to record legal consents upon registration for user: {UserId}", user.Id);
+            }
+
+            // Zgody marketingowe są poza transakcją z tego względu, że nie są krytyczne do działania konta
             // Jeśli coś pójdzie nie tak z zapisaniem zgody to puszczamy fallback ze zgodą na false - w najgorszym przypadku nie zbierzemy zgody
             // TODO: Kiedyś może wydzielić wewnętrzy try/catch żeby bylo trochę ładniej
             if (acceptMarketingConsent)
@@ -582,6 +614,28 @@ Zespół Vocare
 
                         await _registrationHandler.HandleUserRegistrationAsync(user.Id);
                         await transaction.CommitAsync();
+
+                        try
+                        {
+                            var activeDocuments = await _legalRepository.GetActiveDocumentsAsync();
+                            if (activeDocuments.Count > 0)
+                            {
+                                var userAgent = _httpContextAccessor.HttpContext?.Request.Headers.UserAgent.ToString() ?? "GoogleSSO";
+                                var ipAddress = _httpContextAccessor.HttpContext?.Connection.RemoteIpAddress?.ToString() ?? "unknown";
+                                await _legalService.AcceptConsentsAsync(
+                                    user.Id,
+                                    activeDocuments.Select(d => d.Id).ToList(),
+                                    ipAddress,
+                                    userAgent,
+                                    ConsentSource.Registration
+                                );
+                                _logger.LogInformation("Legal consents recorded for Google SSO user: {UserId}", user.Id);
+                            }
+                        }
+                        catch (Exception ex)
+                        {
+                            _logger.LogError(ex, "Failed to record legal consents during Google registration for user: {UserId}", user.Id);
+                        }
                     }
                     catch (Exception ex)
                     {
@@ -633,7 +687,8 @@ Zespół Vocare
                     }
                 }
 
-                var accessTokenGenerated = GenerateIdentityCompatibleToken(user);
+                var hasValidConsents = await _legalService.HasValidConsentsAsync(user.Id);
+                var accessTokenGenerated = GenerateIdentityCompatibleToken(user, hasValidConsents);
                 var refreshToken = Guid.NewGuid().ToString();
 
                 try
@@ -848,7 +903,8 @@ Zespół Vocare
                         }
                     }
                 }
-                var accessTokenGenerated = GenerateIdentityCompatibleToken(user);
+                var hasValidConsents = await _legalService.HasValidConsentsAsync(user.Id);
+                var accessTokenGenerated = GenerateIdentityCompatibleToken(user, hasValidConsents);
                 var refreshToken = Guid.NewGuid().ToString();
 
                 try
