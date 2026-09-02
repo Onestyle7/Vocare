@@ -1,0 +1,94 @@
+using System.Security.Claims;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
+using VocareWebAPI.Legal.Models.Dtos;
+using VocareWebAPI.Legal.Models.Enums;
+using VocareWebAPI.Legal.Services.Interfaces;
+
+namespace VocareWebAPI.Legal.Controllers
+{
+    [ApiController]
+    [Route("api/[controller]")]
+    public class LegalController : ControllerBase
+    {
+        private readonly ILegalService _legalService;
+        private readonly ILogger<LegalController> _logger;
+
+        public LegalController(ILegalService legalService, ILogger<LegalController> logger)
+        {
+            _legalService = legalService;
+            _logger = logger;
+        }
+
+        /// <summary>
+        /// Retrieves the list of legal documents that the current user has not accepted yet.
+        /// </summary>
+        [HttpGet("pending")]
+        [Authorize]
+        [ProducesResponseType(typeof(List<PendingDocumentDto>), StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+        public async Task<IActionResult> GetPendingDocuments()
+        {
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            if (string.IsNullOrEmpty(userId))
+            {
+                throw new UnauthorizedAccessException("User ID not found in token claims.");
+            }
+
+            var pendingDocuments = await _legalService.GetPendingDocumentsAsync(userId);
+            return Ok(pendingDocuments);
+        }
+
+        /// <summary>
+        /// Accepts specified legal documents for the current user.
+        /// </summary>
+        [HttpPost("accept")]
+        [Authorize]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+        [ProducesResponseType(StatusCodes.Status422UnprocessableEntity)]
+        public async Task<IActionResult> AcceptConsents([FromBody] AcceptConsentsRequestDto request)
+        {
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            if (string.IsNullOrEmpty(userId))
+            {
+                throw new UnauthorizedAccessException("User ID not found in token claims.");
+            }
+
+            var ipAddress = HttpContext.Connection.RemoteIpAddress?.ToString() ?? "unknown";
+            var userAgent = Request.Headers.UserAgent.ToString();
+
+            await _legalService.AcceptConsentsAsync(
+                userId,
+                request?.DocumentIds ?? [],
+                ipAddress,
+                userAgent,
+                ConsentSource.ConsentModal
+            );
+
+            _logger.LogInformation("User {UserId} accepted legal documents: {DocumentIds}", userId, string.Join(", ", request?.DocumentIds ?? []));
+
+            return Ok(new { success = true });
+        }
+
+        /// <summary>
+        /// Checks whether the current user has accepted all active legal documents.
+        /// </summary>
+        [HttpGet("status")]
+        [Authorize]
+        [ProducesResponseType(typeof(object), StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+        public async Task<IActionResult> GetConsentStatus()
+        {
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            if (string.IsNullOrEmpty(userId))
+            {
+                throw new UnauthorizedAccessException("User ID not found in token claims.");
+            }
+
+            var hasValidConsents = await _legalService.HasValidConsentsAsync(userId);
+            return Ok(new { hasValidConsents });
+        }
+    }
+}
