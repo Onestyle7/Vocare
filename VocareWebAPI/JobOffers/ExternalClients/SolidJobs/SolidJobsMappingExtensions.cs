@@ -55,6 +55,14 @@ namespace VocareWebAPI.JobOffers.ExternalClients.SolidJobs
                     {
                         Id = Guid.NewGuid(),
                         Name = skill.Name,
+                        Level = skill.Level switch
+                        {
+                            SolidJobsModels.SkillLevel.NiceToHave => SkillLevel.NiceToHave,
+                            SolidJobsModels.SkillLevel.Basic => SkillLevel.Regular,
+                            SolidJobsModels.SkillLevel.Advanced => SkillLevel.Advanced,
+                            SolidJobsModels.SkillLevel.Expert => SkillLevel.Expert,
+                            _ => null,
+                        },
                     })
                     .ToList(),
                 Embedding = null,
