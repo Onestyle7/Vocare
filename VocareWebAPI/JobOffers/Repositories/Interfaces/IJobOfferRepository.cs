@@ -20,5 +20,7 @@ namespace VocareWebAPI.JobOffers.Repositories.Interfaces
         void UpdateInContext(JobOffer offer, bool embeddingGenerated = false);
         void ClearChangeTracker();
         Task<JobOffer?> GetDetailsByIdAsync(Guid id);
+        Task<Dictionary<string, JobOfferSnapshot>> GetSnapshotsBySourceAsync(JobOfferSource source);
+        Task<JobOffer?> GetTrackedByIdAsync(Guid id);
     }
 }

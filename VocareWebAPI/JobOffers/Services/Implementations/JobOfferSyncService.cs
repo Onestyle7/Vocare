@@ -4,6 +4,7 @@ using VocareWebAPI.JobOffers.Exceptions;
 using VocareWebAPI.JobOffers.Models.Dtos;
 using VocareWebAPI.JobOffers.Models.Entities;
 using VocareWebAPI.JobOffers.Models.Enums;
+using VocareWebAPI.JobOffers.Models.Records;
 using VocareWebAPI.JobOffers.Repositories.Interfaces;
 using VocareWebAPI.JobOffers.Services.Interfaces;
 using VocareWebAPI.Shared.Services.Interfaces;
@@ -327,6 +328,24 @@ namespace VocareWebAPI.JobOffers.Services.Implementations
                 || existing.SalaryCurrency != offer.SalaryCurrency
                 || existing.SalaryPeriod != offer.SalaryPeriod
                 || existing.PublishedAt != offer.PublishedAt;
+        }
+
+        private bool HasChanges(JobOfferSnapshot snapshot, JobOffer offer)
+        {
+            return snapshot.Title != offer.Title
+                || snapshot.CompanyName != offer.CompanyName
+                || snapshot.Url != offer.Url
+                || snapshot.Country != offer.Country
+                || snapshot.Category != offer.Category
+                || snapshot.SeniorityLevel != offer.SeniorityLevel
+                || snapshot.JobType != offer.JobType
+                || snapshot.Description != offer.Description
+                || snapshot.BriefDescription != offer.BriefDescription
+                || snapshot.SalaryMin != offer.SalaryMin
+                || snapshot.SalaryMax != offer.SalaryMax
+                || snapshot.SalaryCurrency != offer.SalaryCurrency
+                || snapshot.SalaryPeriod != offer.SalaryPeriod
+                || snapshot.PublishedAt != offer.PublishedAt;
         }
     }
 }
