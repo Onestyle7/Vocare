@@ -26,34 +26,24 @@ namespace VocareWebAPI.JobOffers.Services.Implementations
         {
             foreach (var division in Enum.GetValues<SolidJobsModels.Division>())
             {
-                var divisionOffers = new List<JobOffer>();
-                try
-                {
-                    await foreach (
-                        var offer in _client.GetAllOffersAsync(
-                            division,
-                            CampaignName,
-                            null,
-                            cancellationToken
-                        )
+                var count = 0;
+                await foreach (
+                    var offer in _client.GetAllOffersAsync(
+                        division,
+                        CampaignName,
+                        null,
+                        cancellationToken
                     )
-                    {
-                        divisionOffers.Add(offer.ToJobOfferEntity());
-                    }
-                    _logger.LogInformation(
-                        "Fetched {Count} offers for division {Division}",
-                        divisionOffers.Count,
-                        division
-                    );
-                }
-                catch (Exception ex)
+                )
                 {
-                    _logger.LogError(ex, "Error fetching offers for division {Division}", division);
+                    yield return offer.ToJobOfferEntity();
+                    count++;
                 }
-                foreach (var offer in divisionOffers)
-                {
-                    yield return offer;
-                }
+                _logger.LogInformation(
+                    "Fetched {Count} offers for division {Division}",
+                    count,
+                    division
+                );
             }
         }
     }

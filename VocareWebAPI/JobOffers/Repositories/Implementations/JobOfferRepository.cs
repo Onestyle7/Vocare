@@ -57,18 +57,17 @@ namespace VocareWebAPI.JobOffers.Repositories.Implementations
             await _context.SaveChangesAsync();
         }
 
-        public async Task DeleteByReferenceNumberAsync(
+        public async Task<int> DeleteByReferenceNumberAsync(
             IEnumerable<string> refNumbers,
             JobOfferSource source
         )
         {
-            var toDelete = await _context
-                .JobOffers.Where(j => refNumbers.Contains(j.ReferenceNumber))
-                .Where(j => j.Source == source)
-                .ToListAsync();
+            var refList = refNumbers.ToList();
 
-            _context.JobOffers.RemoveRange(toDelete);
-            await _context.SaveChangesAsync();
+            return await _context
+                .JobOffers.Where(j => j.Source == source)
+                .Where(j => refList.Contains(j.ReferenceNumber))
+                .ExecuteDeleteAsync();
         }
 
         public async Task<int> GetCountAsync()

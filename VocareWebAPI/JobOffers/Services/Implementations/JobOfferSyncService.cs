@@ -83,6 +83,7 @@ namespace VocareWebAPI.JobOffers.Services.Implementations
             var result = new SyncResult();
 
             var snapshots = await _repository.GetSnapshotsBySourceAsync(source);
+            var processedRefs = new HashSet<string>();
 
             _logger.LogInformation(
                 "Pobrano {Count} snapshotów ofert z bazy danych dla źródła {Source}",
@@ -92,6 +93,11 @@ namespace VocareWebAPI.JobOffers.Services.Implementations
 
             await foreach (var offer in offers.WithCancellation(cancellationToken))
             {
+                if (!processedRefs.Add(offer.ReferenceNumber))
+                {
+                    result.Skipped++;
+                    continue;
+                }
                 try
                 {
                     if (!snapshots.TryGetValue(offer.ReferenceNumber, out var snapshot))
@@ -211,19 +217,21 @@ namespace VocareWebAPI.JobOffers.Services.Implementations
                 .Select(info => info.ReferenceNumber)
                 .ToList();
 
+            var deletedCount = 0;
+
             if (staleReferenceNumbers.Any())
             {
-                await _repository.DeleteByReferenceNumberAsync(staleReferenceNumbers, source);
-                _logger.LogInformation(
-                    "Usunięto {Count} nieaktualnych ofert",
-                    staleReferenceNumbers.Count
+                deletedCount = await _repository.DeleteByReferenceNumberAsync(
+                    staleReferenceNumbers,
+                    source
                 );
+                _logger.LogInformation("Usunięto {Count} nieaktualnych ofert", deletedCount);
             }
 
             return new CleanupResult
             {
                 Skipped = false,
-                RemovedCount = staleReferenceNumbers.Count,
+                RemovedCount = deletedCount,
                 FeedSize = feedReferenceNumbers.Count,
                 DbSize = dbReferenceNumbers.Count(),
             };
@@ -339,7 +347,13 @@ namespace VocareWebAPI.JobOffers.Services.Implementations
                 || snapshot.SalaryMax != offer.SalaryMax
                 || snapshot.SalaryCurrency != offer.SalaryCurrency
                 || snapshot.SalaryPeriod != offer.SalaryPeriod
-                || snapshot.PublishedAt != offer.PublishedAt;
+                || TruncateToMicroseconds(snapshot.PublishedAt)
+                    != TruncateToMicroseconds(offer.PublishedAt);
+        }
+
+        private static DateTime TruncateToMicroseconds(DateTime dt)
+        {
+            return dt.AddTicks(-(dt.Ticks % (TimeSpan.TicksPerMillisecond / 1000)));
         }
     }
 }
