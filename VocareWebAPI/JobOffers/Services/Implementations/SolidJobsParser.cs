@@ -27,18 +27,33 @@ namespace VocareWebAPI.JobOffers.Services.Implementations
             foreach (var division in Enum.GetValues<SolidJobsModels.Division>())
             {
                 var count = 0;
-                await foreach (
-                    var offer in _client.GetAllOffersAsync(
-                        division,
-                        CampaignName,
-                        null,
-                        cancellationToken
-                    )
-                )
+
+                await using var enumerator = _client
+                    .GetAllOffersAsync(division, CampaignName, null, cancellationToken)
+                    .GetAsyncEnumerator(cancellationToken);
+
+                while (true)
                 {
-                    yield return offer.ToJobOfferEntity();
+                    try
+                    {
+                        if (!await enumerator.MoveNextAsync())
+                            break;
+                    }
+                    catch (Exception ex)
+                    {
+                        _logger.LogError(
+                            ex,
+                            "Error fetching offers for division {Division} after {Count} offers",
+                            division,
+                            count
+                        );
+                        break;
+                    }
+
+                    yield return enumerator.Current.ToJobOfferEntity();
                     count++;
                 }
+
                 _logger.LogInformation(
                     "Fetched {Count} offers for division {Division}",
                     count,

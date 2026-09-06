@@ -8,6 +8,7 @@ using VocareWebAPI.JobOffers.Models.Entities;
 using VocareWebAPI.JobOffers.Models.Enums;
 using VocareWebAPI.JobOffers.Models.Options;
 using VocareWebAPI.JobOffers.Services.Interfaces;
+using VocareWebAPI.Shared.Extensions;
 
 namespace VocareWebAPI.JobOffers.Services.Implementations
 {
@@ -83,7 +84,8 @@ namespace VocareWebAPI.JobOffers.Services.Implementations
                                 Description = jobElement.Element("description")?.Value ?? "",
                                 BriefDescription =
                                     jobElement.Element("brief_job_description")?.Value ?? "",
-                                PublishedAt = ParseDate(jobElement.Element("date")?.Value),
+                                PublishedAt = ParseDate(jobElement.Element("date")?.Value)
+                                    .TruncateToMicroseconds(),
                                 CreatedAt = DateTime.UtcNow,
                                 UpdatedAt = DateTime.UtcNow,
                                 SeniorityLevel = ParseSeniority(

@@ -347,13 +347,7 @@ namespace VocareWebAPI.JobOffers.Services.Implementations
                 || snapshot.SalaryMax != offer.SalaryMax
                 || snapshot.SalaryCurrency != offer.SalaryCurrency
                 || snapshot.SalaryPeriod != offer.SalaryPeriod
-                || TruncateToMicroseconds(snapshot.PublishedAt)
-                    != TruncateToMicroseconds(offer.PublishedAt);
-        }
-
-        private static DateTime TruncateToMicroseconds(DateTime dt)
-        {
-            return dt.AddTicks(-(dt.Ticks % (TimeSpan.TicksPerMillisecond / 1000)));
+                || snapshot.PublishedAt != offer.PublishedAt;
         }
     }
 }
