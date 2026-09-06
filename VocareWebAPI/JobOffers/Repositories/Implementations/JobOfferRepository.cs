@@ -126,10 +126,45 @@ namespace VocareWebAPI.JobOffers.Repositories.Implementations
 
         public async Task<JobOffer?> GetDetailsByIdAsync(Guid id)
         {
-            return await _context.JobOffers
-                .AsNoTracking()
+            return await _context
+                .JobOffers.AsNoTracking()
                 .Include(offer => offer.Skills)
                 .FirstOrDefaultAsync(offer => offer.Id == id);
+        }
+
+        public async Task<Dictionary<string, JobOfferSnapshot>> GetSnapshotsBySourceAsync(
+            JobOfferSource source
+        )
+        {
+            return await _context
+                .JobOffers.AsNoTracking()
+                .Where(j => j.Source == source)
+                .Select(j => new JobOfferSnapshot(
+                    j.Id,
+                    j.ReferenceNumber,
+                    j.Source,
+                    j.Title,
+                    j.CompanyName,
+                    j.Url,
+                    j.Country,
+                    j.Category,
+                    j.SeniorityLevel,
+                    j.JobType,
+                    j.Description,
+                    j.BriefDescription,
+                    j.SalaryMin,
+                    j.SalaryMax,
+                    j.SalaryCurrency,
+                    j.SalaryPeriod,
+                    j.PublishedAt,
+                    j.Embedding != null
+                ))
+                .ToDictionaryAsync(s => s.ReferenceNumber);
+        }
+
+        public async Task<JobOffer?> GetTrackedByIdAsync(Guid id)
+        {
+            return await _context.JobOffers.FirstOrDefaultAsync(j => j.Id == id);
         }
     }
 }
