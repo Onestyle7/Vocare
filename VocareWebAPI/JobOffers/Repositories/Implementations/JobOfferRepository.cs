@@ -57,18 +57,17 @@ namespace VocareWebAPI.JobOffers.Repositories.Implementations
             await _context.SaveChangesAsync();
         }
 
-        public async Task DeleteByReferenceNumberAsync(
+        public async Task<int> DeleteByReferenceNumberAsync(
             IEnumerable<string> refNumbers,
             JobOfferSource source
         )
         {
-            var toDelete = await _context
-                .JobOffers.Where(j => refNumbers.Contains(j.ReferenceNumber))
-                .Where(j => j.Source == source)
-                .ToListAsync();
+            var refList = refNumbers.ToList();
 
-            _context.JobOffers.RemoveRange(toDelete);
-            await _context.SaveChangesAsync();
+            return await _context
+                .JobOffers.Where(j => j.Source == source)
+                .Where(j => refList.Contains(j.ReferenceNumber))
+                .ExecuteDeleteAsync();
         }
 
         public async Task<int> GetCountAsync()
@@ -126,10 +125,45 @@ namespace VocareWebAPI.JobOffers.Repositories.Implementations
 
         public async Task<JobOffer?> GetDetailsByIdAsync(Guid id)
         {
-            return await _context.JobOffers
-                .AsNoTracking()
+            return await _context
+                .JobOffers.AsNoTracking()
                 .Include(offer => offer.Skills)
                 .FirstOrDefaultAsync(offer => offer.Id == id);
+        }
+
+        public async Task<Dictionary<string, JobOfferSnapshot>> GetSnapshotsBySourceAsync(
+            JobOfferSource source
+        )
+        {
+            return await _context
+                .JobOffers.AsNoTracking()
+                .Where(j => j.Source == source)
+                .Select(j => new JobOfferSnapshot(
+                    j.Id,
+                    j.ReferenceNumber,
+                    j.Source,
+                    j.Title,
+                    j.CompanyName,
+                    j.Url,
+                    j.Country,
+                    j.Category,
+                    j.SeniorityLevel,
+                    j.JobType,
+                    j.Description,
+                    j.BriefDescription,
+                    j.SalaryMin,
+                    j.SalaryMax,
+                    j.SalaryCurrency,
+                    j.SalaryPeriod,
+                    j.PublishedAt,
+                    j.Embedding != null
+                ))
+                .ToDictionaryAsync(s => s.ReferenceNumber);
+        }
+
+        public async Task<JobOffer?> GetTrackedByIdAsync(Guid id)
+        {
+            return await _context.JobOffers.FirstOrDefaultAsync(j => j.Id == id);
         }
     }
 }

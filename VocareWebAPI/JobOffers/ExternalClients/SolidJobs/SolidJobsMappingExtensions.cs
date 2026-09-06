@@ -1,5 +1,6 @@
 using VocareWebAPI.JobOffers.Models.Entities;
 using VocareWebAPI.JobOffers.Models.Enums;
+using VocareWebAPI.Shared.Extensions;
 using SolidJobsModels = VocareWebAPI.JobOffers.ExternalClients.SolidJobs.Models;
 
 namespace VocareWebAPI.JobOffers.ExternalClients.SolidJobs
@@ -39,7 +40,7 @@ namespace VocareWebAPI.JobOffers.ExternalClients.SolidJobs
                 )
                     ? salaryPeriod
                     : SalaryPeriod.Month,
-                PublishedAt = offer.ValidFrom.UtcDateTime,
+                PublishedAt = offer.ValidFrom.UtcDateTime.TruncateToMicroseconds(),
                 CreatedAt = DateTime.UtcNow,
                 UpdatedAt = DateTime.UtcNow,
                 Locations = offer

@@ -1,9 +1,8 @@
-using System.Runtime.CompilerServices;
-using Microsoft.EntityFrameworkCore.Scaffolding;
 using VocareWebAPI.JobOffers.Exceptions;
 using VocareWebAPI.JobOffers.Models.Dtos;
 using VocareWebAPI.JobOffers.Models.Entities;
 using VocareWebAPI.JobOffers.Models.Enums;
+using VocareWebAPI.JobOffers.Models.Records;
 using VocareWebAPI.JobOffers.Repositories.Interfaces;
 using VocareWebAPI.JobOffers.Services.Interfaces;
 using VocareWebAPI.Shared.Services.Interfaces;
@@ -43,6 +42,7 @@ namespace VocareWebAPI.JobOffers.Services.Implementations
                     );
                     var processResult = await ProcessOffersAsync(
                         provider.FetchOffersAsync(cancellationToken),
+                        provider.Source,
                         cancellationToken
                     );
 
@@ -74,39 +74,56 @@ namespace VocareWebAPI.JobOffers.Services.Implementations
 
         private async Task<SyncResult> ProcessOffersAsync(
             IAsyncEnumerable<JobOffer> offers,
+            JobOfferSource source,
             CancellationToken cancellationToken
         )
         {
             const int batchSize = 100;
             var processedInBatch = 0;
-
             var result = new SyncResult();
+
+            var snapshots = await _repository.GetSnapshotsBySourceAsync(source);
+            var processedRefs = new HashSet<string>();
+
+            _logger.LogInformation(
+                "Pobrano {Count} snapshotów ofert z bazy danych dla źródła {Source}",
+                snapshots.Count(),
+                source
+            );
+
             await foreach (var offer in offers.WithCancellation(cancellationToken))
             {
+                if (!processedRefs.Add(offer.ReferenceNumber))
+                {
+                    result.Skipped++;
+                    continue;
+                }
                 try
                 {
-                    var existing = await _repository.GetByReferenceNumberAsync(
-                        offer.ReferenceNumber,
-                        offer.Source
-                    );
-
-                    if (existing == null)
+                    if (!snapshots.TryGetValue(offer.ReferenceNumber, out var snapshot))
                     {
                         await GenerateEmbeddingForOffer(offer);
-
                         await _repository.AddToContextAsync(offer);
                         result.Added++;
                         processedInBatch++;
                     }
+                    else if (!HasChanges(snapshot, offer))
+                    {
+                        result.Skipped++;
+                    }
                     else
                     {
-                        if (!HasChanges(existing, offer))
+                        var existing = await _repository.GetTrackedByIdAsync(snapshot.Id);
+                        if (existing == null)
                         {
-                            result.Skipped++;
+                            _logger.LogWarning(
+                                "Snapshot istnieje ale encja nie znaleziona dla Id {Id}",
+                                snapshot.Id
+                            );
+                            result.Failed++;
                             continue;
                         }
 
-                        // Aktualizujemy wszystkie pola oprócz Id, ReferenceNumber, CreatedAt
                         existing.Title = offer.Title;
                         existing.CompanyName = offer.CompanyName;
                         existing.Url = offer.Url;
@@ -124,8 +141,7 @@ namespace VocareWebAPI.JobOffers.Services.Implementations
                         existing.UpdatedAt = DateTime.UtcNow;
 
                         var embeddingGenerated = false;
-
-                        if (existing.Embedding == null)
+                        if (!snapshot.HasEmbedding)
                         {
                             await GenerateEmbeddingForOffer(existing);
                             embeddingGenerated = true;
@@ -145,6 +161,7 @@ namespace VocareWebAPI.JobOffers.Services.Implementations
                     );
                     result.Failed++;
                 }
+
                 if (processedInBatch >= batchSize)
                 {
                     await _repository.SaveChangesAsync();
@@ -152,11 +169,13 @@ namespace VocareWebAPI.JobOffers.Services.Implementations
                     processedInBatch = 0;
                 }
             }
+
             if (processedInBatch > 0)
             {
                 await _repository.SaveChangesAsync();
                 _repository.ClearChangeTracker();
             }
+
             return result;
         }
 
@@ -198,19 +217,21 @@ namespace VocareWebAPI.JobOffers.Services.Implementations
                 .Select(info => info.ReferenceNumber)
                 .ToList();
 
+            var deletedCount = 0;
+
             if (staleReferenceNumbers.Any())
             {
-                await _repository.DeleteByReferenceNumberAsync(staleReferenceNumbers, source);
-                _logger.LogInformation(
-                    "Usunięto {Count} nieaktualnych ofert",
-                    staleReferenceNumbers.Count
+                deletedCount = await _repository.DeleteByReferenceNumberAsync(
+                    staleReferenceNumbers,
+                    source
                 );
+                _logger.LogInformation("Usunięto {Count} nieaktualnych ofert", deletedCount);
             }
 
             return new CleanupResult
             {
                 Skipped = false,
-                RemovedCount = staleReferenceNumbers.Count,
+                RemovedCount = deletedCount,
                 FeedSize = feedReferenceNumbers.Count,
                 DbSize = dbReferenceNumbers.Count(),
             };
@@ -311,22 +332,22 @@ namespace VocareWebAPI.JobOffers.Services.Implementations
             return result;
         }
 
-        private bool HasChanges(JobOffer existing, JobOffer offer)
+        private bool HasChanges(JobOfferSnapshot snapshot, JobOffer offer)
         {
-            return existing.Title != offer.Title
-                || existing.CompanyName != offer.CompanyName
-                || existing.Url != offer.Url
-                || existing.Country != offer.Country
-                || existing.Category != offer.Category
-                || existing.SeniorityLevel != offer.SeniorityLevel
-                || existing.JobType != offer.JobType
-                || existing.Description != offer.Description
-                || existing.BriefDescription != offer.BriefDescription
-                || existing.SalaryMin != offer.SalaryMin
-                || existing.SalaryMax != offer.SalaryMax
-                || existing.SalaryCurrency != offer.SalaryCurrency
-                || existing.SalaryPeriod != offer.SalaryPeriod
-                || existing.PublishedAt != offer.PublishedAt;
+            return snapshot.Title != offer.Title
+                || snapshot.CompanyName != offer.CompanyName
+                || snapshot.Url != offer.Url
+                || snapshot.Country != offer.Country
+                || snapshot.Category != offer.Category
+                || snapshot.SeniorityLevel != offer.SeniorityLevel
+                || snapshot.JobType != offer.JobType
+                || snapshot.Description != offer.Description
+                || snapshot.BriefDescription != offer.BriefDescription
+                || snapshot.SalaryMin != offer.SalaryMin
+                || snapshot.SalaryMax != offer.SalaryMax
+                || snapshot.SalaryCurrency != offer.SalaryCurrency
+                || snapshot.SalaryPeriod != offer.SalaryPeriod
+                || snapshot.PublishedAt != offer.PublishedAt;
         }
     }
 }

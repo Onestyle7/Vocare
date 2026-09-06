@@ -26,34 +26,39 @@ namespace VocareWebAPI.JobOffers.Services.Implementations
         {
             foreach (var division in Enum.GetValues<SolidJobsModels.Division>())
             {
-                var divisionOffers = new List<JobOffer>();
-                try
+                var count = 0;
+
+                await using var enumerator = _client
+                    .GetAllOffersAsync(division, CampaignName, null, cancellationToken)
+                    .GetAsyncEnumerator(cancellationToken);
+
+                while (true)
                 {
-                    await foreach (
-                        var offer in _client.GetAllOffersAsync(
-                            division,
-                            CampaignName,
-                            null,
-                            cancellationToken
-                        )
-                    )
+                    try
                     {
-                        divisionOffers.Add(offer.ToJobOfferEntity());
+                        if (!await enumerator.MoveNextAsync())
+                            break;
                     }
-                    _logger.LogInformation(
-                        "Fetched {Count} offers for division {Division}",
-                        divisionOffers.Count,
-                        division
-                    );
+                    catch (Exception ex)
+                    {
+                        _logger.LogError(
+                            ex,
+                            "Error fetching offers for division {Division} after {Count} offers",
+                            division,
+                            count
+                        );
+                        break;
+                    }
+
+                    yield return enumerator.Current.ToJobOfferEntity();
+                    count++;
                 }
-                catch (Exception ex)
-                {
-                    _logger.LogError(ex, "Error fetching offers for division {Division}", division);
-                }
-                foreach (var offer in divisionOffers)
-                {
-                    yield return offer;
-                }
+
+                _logger.LogInformation(
+                    "Fetched {Count} offers for division {Division}",
+                    count,
+                    division
+                );
             }
         }
     }
