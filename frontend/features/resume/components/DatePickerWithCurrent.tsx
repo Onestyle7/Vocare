@@ -94,19 +94,27 @@ export const DatePickerWithCurrent: React.FC<DatePickerWithCurrentProps> = ({
     return new Date(maxYear, 11);
   }, [allowFutureDates, selectedDate]);
 
+  const displayText = currentChecked
+    ? toggledButtonText
+    : value
+      ? formatDisplayDate(value)
+      : placeholder;
+
   return (
-    <div className="force-light-theme">
+    <div className="force-light-theme w-full min-w-0">
       <Popover open={isOpen} onOpenChange={setIsOpen}>
         <PopoverTrigger asChild>
           <Button
             variant="outline"
-            className={`h-12 w-full justify-start rounded-sm text-left font-normal ${disabled ? 'cursor-not-allowed opacity-50' : ''} ${
+            className={`h-12 w-full min-w-0 justify-start overflow-hidden rounded-sm text-left font-normal ${disabled ? 'cursor-not-allowed opacity-50' : ''} ${
               !value && !isCurrent ? 'text-muted-foreground' : ''
             }`}
             disabled={disabled}
+            aria-label={displayText}
+            title={displayText}
           >
-            <CalendarIcon className="mr-2 h-4 w-4" />
-            {currentChecked ? toggledButtonText : value ? formatDisplayDate(value) : placeholder}
+            <CalendarIcon className="h-4 w-4 shrink-0" />
+            <span className="min-w-0 truncate">{displayText}</span>
           </Button>
         </PopoverTrigger>
 

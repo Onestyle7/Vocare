@@ -87,6 +87,7 @@ namespace VocareWebAPI.Extensions.ServiceCollectionExtensions
             // Jobs services
             services.AddScoped<IJobOfferSyncService, JobOfferSyncService>();
             services.AddScoped<IJobOfferMatchingService, JobOfferMatchingService>();
+            services.AddScoped<IJobOfferDetailsService, JobOfferDetailsService>();
             services.AddScoped<ISkillMatchingService, SkillMatchingService>();
             services.AddScoped<IScoringService, ScoringService>();
             services.AddScoped<ISkillEmbeddingService, SkillEmbeddingService>();
@@ -135,7 +136,6 @@ namespace VocareWebAPI.Extensions.ServiceCollectionExtensions
 
             // Job Offer repositories
             services.AddScoped<IJobOfferRepository, JobOfferRepository>();
-            services.AddScoped<ISolidJobsParser, SolidJobsParser>();
             services.AddScoped<IMarketNewsRepository, MarketNewsRepository>();
             services.AddScoped<
                 IJobOfferRecommendationRepository,

@@ -1,6 +1,7 @@
 using VocareWebAPI.CareerAdvisor.Models.Config;
 using VocareWebAPI.CvGenerator.Models.Dtos;
 using VocareWebAPI.JobOffers.Configuration;
+using VocareWebAPI.JobOffers.Models.Options;
 using VocareWebAPI.Models.OpenAIConfig;
 using VocareWebAPI.UserManagement.Models.Entities;
 
@@ -26,7 +27,9 @@ namespace VocareWebAPI.Extensions.ServiceCollectionExtensions
                 .BindConfiguration(CvLimitsConfig.SectionName)
                 .ValidateDataAnnotations()
                 .ValidateOnStart();
-
+            services.Configure<NofluffJobsFetchOptions>(
+                configuration.GetSection(NofluffJobsFetchOptions.SectionName)
+            );
             return services;
         }
     }

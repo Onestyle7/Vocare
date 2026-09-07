@@ -46,6 +46,7 @@ import { useAutosave } from '@/lib/hooks/useAutosave';
 import { useIsMobile } from '@/lib/hooks/useIsMobile';
 import { CvDetailsDto, CvDto, CvLimits } from '@/lib/types/cv';
 import { getEducationDegreeLabel } from '@/lib/types/profile';
+import { makeClientId } from '@/lib/utils/id';
 import { FLUENCY_OPTIONS, getFluencyLabel, normalizeFluency } from '@/lib/utils/normalizeFluency';
 import { makeSocialLinkId, SOCIAL_LINK_SUGGESTIONS } from '@/lib/utils/socialLinks';
 import {
@@ -56,6 +57,8 @@ import {
 
 import { RESUME_PREVIEW_LABELS, type ResumePreviewLanguage } from '../constants';
 import { useResumeDetailsActions } from '../hooks/useResumeDetailsActions';
+import { claimLegacyHobbiesForCv } from '../utils/legacyHobbies';
+import { reorderResumeItemByOffset, reorderResumeItems } from '../utils/reorderResumeItems';
 import { CvAnalysisDrawer } from './CvAnalysisDrawer';
 import { DatePickerWithCurrent } from './DatePickerWithCurrent';
 import { ResumeAnalysisPromoButton } from './ResumeAnalysisPromoButton';
@@ -95,13 +98,6 @@ interface Education {
   startDate: string;
   endDate: string;
   isCurrent: boolean;
-  description: string;
-}
-
-interface Project {
-  id: string;
-  title: string;
-  url: string;
   description: string;
 }
 
@@ -182,6 +178,25 @@ const DEFAULT_SECTION_ORDER = [
   'hobbies',
   'privacy',
 ] as const;
+
+type ReorderableItemSection =
+  | 'experience'
+  | 'projects'
+  | 'education'
+  | 'certificates'
+  | 'skills'
+  | 'languages'
+  | 'hobbies';
+
+interface DraggedResumeItem {
+  sectionId: ReorderableItemSection;
+  itemId: string;
+}
+
+const PRIVACY_CONSENT_TEMPLATES: Record<ResumePreviewLanguage, string> = {
+  pl: 'Wyrażam zgodę na przetwarzanie moich danych osobowych dla potrzeb niezbędnych do realizacji procesu rekrutacji zgodnie z Rozporządzeniem Parlamentu Europejskiego i Rady (UE) 2016/679 z dnia 27 kwietnia 2016 r. w sprawie ochrony osób fizycznych w związku z przetwarzaniem danych osobowych i w sprawie swobodnego przepływu takich danych oraz uchylenia dyrektywy 95/46/WE (RODO).',
+  en: 'I hereby give consent for my personal data included in this application to be processed for the purposes of the recruitment process under the Regulation (EU) 2016/679 of the European Parliament and of the Council of 27 April 2016 on the protection of natural persons with regard to the processing of personal data and on the free movement of such data (GDPR).',
+};
 
 const DEFAULT_PERSONAL_INFO: PersonalInfo = {
   firstName: '',
@@ -288,10 +303,8 @@ const RichTextToolbar = ({
   );
 };
 
-const makeExperienceId = () => `${Date.now()}-${Math.random().toString(36).slice(2, 8)}`;
-
 const ensureExperienceDefaults = (exp: Partial<Experience>): Experience => ({
-  id: typeof exp.id === 'string' && exp.id.length > 0 ? exp.id : makeExperienceId(),
+  id: typeof exp.id === 'string' && exp.id.length > 0 ? exp.id : makeClientId(),
   company: exp.company ?? '',
   position: exp.position ?? '',
   startDate: exp.startDate ?? '',
@@ -301,10 +314,8 @@ const ensureExperienceDefaults = (exp: Partial<Experience>): Experience => ({
   useBulletList: Boolean(exp.useBulletList),
 });
 
-const makeEducationId = () => `${Date.now()}-${Math.random().toString(36).slice(2, 8)}-edu`;
-
 const ensureEducationDefaults = (edu: Partial<Education>): Education => ({
-  id: typeof edu.id === 'string' && edu.id.length > 0 ? edu.id : makeEducationId(),
+  id: typeof edu.id === 'string' && edu.id.length > 0 ? edu.id : makeClientId(),
   school: edu.school ?? '',
   degree: edu.degree ?? '',
   field: edu.field ?? '',
@@ -314,19 +325,15 @@ const ensureEducationDefaults = (edu: Partial<Education>): Education => ({
   description: edu.description ?? '',
 });
 
-const makeProjectId = () => `${Date.now()}-${Math.random().toString(36).slice(2, 8)}-proj`;
-
 const ensureProjectDefaults = (project: Partial<Project>): Project => ({
-  id: typeof project.id === 'string' && project.id.length > 0 ? project.id : makeProjectId(),
+  id: typeof project.id === 'string' && project.id.length > 0 ? project.id : makeClientId(),
   title: project.title ?? '',
   url: project.url ?? '',
   description: project.description ?? '',
 });
 
-const makeCertificateId = () => `${Date.now()}-${Math.random().toString(36).slice(2, 8)}-cert`;
-
 const ensureCertificateDefaults = (cert: Partial<Certificate>): Certificate => ({
-  id: typeof cert.id === 'string' && cert.id.length > 0 ? cert.id : makeCertificateId(),
+  id: typeof cert.id === 'string' && cert.id.length > 0 ? cert.id : makeClientId(),
   name: cert.name ?? '',
   date: cert.date ?? '',
   hasDate: cert.hasDate ?? Boolean(cert.date),
@@ -379,6 +386,7 @@ const CVCreator: React.FC<CVCreatorProps> = ({ initialCv, initialLimits = null }
   const [cvLimits, setCvLimits] = useState<CvLimits | null>(initialLimits);
   const [highlightedFormSection, setHighlightedFormSection] = useState<string | null>(null);
   const [resumeName] = useState<string>(initialCv?.name ?? 'New Resume');
+  const hydratedCvIdRef = useRef<string | null>(null);
   const pendingAutosaveHydrationRef = useRef<'saved' | 'needs-save' | null>(null);
   const editorOperationRef = useRef<'save' | 'profile' | 'tailor' | null>(null);
   const limitsRequestRef = useRef(0);
@@ -487,6 +495,11 @@ const CVCreator: React.FC<CVCreatorProps> = ({ initialCv, initialLimits = null }
     Record<string, FormattingState>
   >({});
   const dragIntentSectionRef = useRef<string | null>(null);
+  const activeDraggedItemRef = useRef<DraggedResumeItem | null>(null);
+  const dragOverItemRef = useRef<DraggedResumeItem | null>(null);
+  const pointerScrollContainerRef = useRef<HTMLElement | null>(null);
+  const pointerPositionRef = useRef<{ clientX: number; clientY: number } | null>(null);
+  const pointerAutoScrollFrameRef = useRef<number | null>(null);
   const sectionHighlightTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   // CV Preview controls
@@ -516,6 +529,22 @@ const CVCreator: React.FC<CVCreatorProps> = ({ initialCv, initialLimits = null }
   });
   const [draggedSection, setDraggedSection] = useState<string | null>(null);
   const [dragOverSection, setDragOverSection] = useState<string | null>(null);
+  const [draggedItem, setDraggedItem] = useState<DraggedResumeItem | null>(null);
+  const [dragOverItem, setDragOverItem] = useState<DraggedResumeItem | null>(null);
+  const [keyboardGrabbedItem, setKeyboardGrabbedItem] = useState<DraggedResumeItem | null>(null);
+
+  const updateDragOverItem = (nextItem: DraggedResumeItem | null) => {
+    const currentItem = dragOverItemRef.current;
+    if (
+      currentItem?.sectionId === nextItem?.sectionId &&
+      currentItem?.itemId === nextItem?.itemId
+    ) {
+      return;
+    }
+
+    dragOverItemRef.current = nextItem;
+    setDragOverItem(nextItem);
+  };
 
   const [isHovered, setIsHovered] = useState(false);
 
@@ -533,11 +562,6 @@ const CVCreator: React.FC<CVCreatorProps> = ({ initialCv, initialLimits = null }
   useEffect(() => {
     localStorage.setItem('education', JSON.stringify(education));
   }, [education]);
-
-  // Save projects to localStorage
-  useEffect(() => {
-    localStorage.setItem('projects', JSON.stringify(projects));
-  }, [projects]);
 
   // Save projects to localStorage
   useEffect(() => {
@@ -629,6 +653,8 @@ const CVCreator: React.FC<CVCreatorProps> = ({ initialCv, initialLimits = null }
     style.textContent = `
       .cv-section { break-inside: avoid; page-break-inside: avoid; }
       .cv-page { background: #fff; }
+      .cv-text { overflow-wrap: anywhere; word-break: normal; }
+      .cv-text * { min-width: 0; }
       @media print {
         body { background: #fff !important; }
         .cv-page { width: 210mm; height: 297mm; page-break-after: always; box-shadow: none !important; }
@@ -646,35 +672,40 @@ const CVCreator: React.FC<CVCreatorProps> = ({ initialCv, initialLimits = null }
   useEffect(
     () => () => {
       if (sectionHighlightTimeoutRef.current) clearTimeout(sectionHighlightTimeoutRef.current);
+      if (pointerAutoScrollFrameRef.current !== null) {
+        cancelAnimationFrame(pointerAutoScrollFrameRef.current);
+      }
     },
     []
   );
 
   const addLanguage = () => {
     const newLanguage: Language = {
-      id: Date.now().toString(),
+      id: makeClientId(),
       name: '',
       level: 'Beginner',
     };
-    setLanguages([...languages, newLanguage]);
+    setLanguages((prev) => [...prev, newLanguage]);
   };
 
   const updateLanguage = (id: string, field: keyof Language, value: string) => {
-    setLanguages(languages.map((lang) => (lang.id === id ? { ...lang, [field]: value } : lang)));
+    setLanguages((prev) =>
+      prev.map((lang) => (lang.id === id ? { ...lang, [field]: value } : lang))
+    );
   };
 
   const removeLanguage = (id: string) => {
-    setLanguages(languages.filter((lang) => lang.id !== id));
+    setLanguages((prev) => prev.filter((lang) => lang.id !== id));
   };
 
   const addCertificate = () => {
     const newCert: Certificate = {
-      id: makeCertificateId(),
+      id: makeClientId(),
       name: '',
       date: '',
       hasDate: true,
     };
-    setCertificates([...certificates, newCert]);
+    setCertificates((prev) => [...prev, newCert]);
   };
 
   const updateCertificate = (id: string, field: keyof Certificate, value: string | boolean) => {
@@ -690,11 +721,18 @@ const CVCreator: React.FC<CVCreatorProps> = ({ initialCv, initialLimits = null }
   };
 
   const removeCertificate = (id: string) => {
-    setCertificates(certificates.filter((cert) => cert.id !== id));
+    setCertificates((prev) => prev.filter((cert) => cert.id !== id));
   };
 
   // Section drag & drop handlers
   const handleSectionDragStart = (e: React.DragEvent, sectionId: string) => {
+    if (activeDraggedItemRef.current) {
+      e.preventDefault();
+      e.stopPropagation();
+      updateDragOverItem(null);
+      return;
+    }
+
     if (dragIntentSectionRef.current !== sectionId) {
       e.preventDefault();
       e.stopPropagation();
@@ -707,6 +745,13 @@ const CVCreator: React.FC<CVCreatorProps> = ({ initialCv, initialLimits = null }
   };
 
   const handleSectionDragOver = (e: React.DragEvent, sectionId: string) => {
+    if (activeDraggedItemRef.current) {
+      e.preventDefault();
+      e.stopPropagation();
+      updateDragOverItem(null);
+      return;
+    }
+
     e.preventDefault();
     e.dataTransfer.dropEffect = 'move';
     setDragOverSection(sectionId);
@@ -717,6 +762,12 @@ const CVCreator: React.FC<CVCreatorProps> = ({ initialCv, initialLimits = null }
   };
 
   const handleSectionDrop = (e: React.DragEvent, targetSectionId: string) => {
+    if (activeDraggedItemRef.current) {
+      e.preventDefault();
+      e.stopPropagation();
+      return;
+    }
+
     e.preventDefault();
 
     if (!draggedSection || draggedSection === targetSectionId) {
@@ -744,9 +795,390 @@ const CVCreator: React.FC<CVCreatorProps> = ({ initialCv, initialLimits = null }
     dragIntentSectionRef.current = null;
   };
 
+  const reorderItemsInSection = (
+    sectionId: ReorderableItemSection,
+    draggedItemId: string,
+    targetItemId: string
+  ) => {
+    switch (sectionId) {
+      case 'experience':
+        setExperiences((items) => reorderResumeItems(items, draggedItemId, targetItemId));
+        break;
+      case 'projects':
+        setProjects((items) => reorderResumeItems(items, draggedItemId, targetItemId));
+        break;
+      case 'education':
+        setEducation((items) => reorderResumeItems(items, draggedItemId, targetItemId));
+        break;
+      case 'certificates':
+        setCertificates((items) => reorderResumeItems(items, draggedItemId, targetItemId));
+        break;
+      case 'skills':
+        setSkills((items) => reorderResumeItems(items, draggedItemId, targetItemId));
+        break;
+      case 'languages':
+        setLanguages((items) => reorderResumeItems(items, draggedItemId, targetItemId));
+        break;
+      case 'hobbies':
+        setHobbies((items) => reorderResumeItems(items, draggedItemId, targetItemId));
+        break;
+    }
+  };
+
+  const moveItemInSection = (sectionId: ReorderableItemSection, itemId: string, offset: -1 | 1) => {
+    switch (sectionId) {
+      case 'experience':
+        setExperiences((items) => reorderResumeItemByOffset(items, itemId, offset));
+        break;
+      case 'projects':
+        setProjects((items) => reorderResumeItemByOffset(items, itemId, offset));
+        break;
+      case 'education':
+        setEducation((items) => reorderResumeItemByOffset(items, itemId, offset));
+        break;
+      case 'certificates':
+        setCertificates((items) => reorderResumeItemByOffset(items, itemId, offset));
+        break;
+      case 'skills':
+        setSkills((items) => reorderResumeItemByOffset(items, itemId, offset));
+        break;
+      case 'languages':
+        setLanguages((items) => reorderResumeItemByOffset(items, itemId, offset));
+        break;
+      case 'hobbies':
+        setHobbies((items) => reorderResumeItemByOffset(items, itemId, offset));
+        break;
+    }
+  };
+
+  const handleItemDragStart = (
+    e: React.DragEvent,
+    sectionId: ReorderableItemSection,
+    itemId: string
+  ) => {
+    const nextDraggedItem = { sectionId, itemId };
+    activeDraggedItemRef.current = nextDraggedItem;
+    setDraggedItem(nextDraggedItem);
+    setKeyboardGrabbedItem(null);
+    updateDragOverItem(null);
+    e.dataTransfer.effectAllowed = 'move';
+    e.dataTransfer.setData('text/plain', `${sectionId}:${itemId}`);
+    e.stopPropagation();
+  };
+
+  const handleItemDragOver = (
+    e: React.DragEvent,
+    sectionId: ReorderableItemSection,
+    itemId: string
+  ) => {
+    const activeItem = activeDraggedItemRef.current;
+    if (!activeItem) return;
+
+    e.preventDefault();
+    e.stopPropagation();
+
+    if (activeItem.sectionId !== sectionId) {
+      e.dataTransfer.dropEffect = 'none';
+      updateDragOverItem(null);
+      return;
+    }
+
+    e.dataTransfer.dropEffect = 'move';
+    updateDragOverItem({ sectionId, itemId });
+  };
+
+  const clearItemDragState = () => {
+    activeDraggedItemRef.current = null;
+    pointerPositionRef.current = null;
+    pointerScrollContainerRef.current = null;
+    if (pointerAutoScrollFrameRef.current !== null) {
+      cancelAnimationFrame(pointerAutoScrollFrameRef.current);
+      pointerAutoScrollFrameRef.current = null;
+    }
+    setDraggedItem(null);
+    updateDragOverItem(null);
+  };
+
+  const handleItemDrop = (
+    e: React.DragEvent,
+    sectionId: ReorderableItemSection,
+    targetItemId: string
+  ) => {
+    const activeItem = activeDraggedItemRef.current;
+    if (!activeItem) return;
+
+    e.preventDefault();
+    e.stopPropagation();
+
+    if (activeItem.sectionId === sectionId) {
+      reorderItemsInSection(sectionId, activeItem.itemId, targetItemId);
+    }
+
+    clearItemDragState();
+  };
+
+  const handleItemDragEnd = (e: React.DragEvent) => {
+    e.stopPropagation();
+    clearItemDragState();
+  };
+
+  const getPointerDropTarget = (
+    clientX: number,
+    clientY: number,
+    sectionId: ReorderableItemSection
+  ) => {
+    const element = document.elementFromPoint(clientX, clientY);
+    const target = element?.closest<HTMLElement>('[data-reorder-section][data-reorder-item-id]');
+
+    if (!target || target.dataset.reorderSection !== sectionId) return null;
+    return target.dataset.reorderItemId || null;
+  };
+
+  const getScrollableAncestor = (element: HTMLElement) => {
+    let current = element.parentElement;
+
+    while (current && current !== document.body) {
+      const overflowY = window.getComputedStyle(current).overflowY;
+      if (
+        (overflowY === 'auto' || overflowY === 'scroll') &&
+        current.scrollHeight > current.clientHeight
+      ) {
+        return current;
+      }
+      current = current.parentElement;
+    }
+
+    return document.scrollingElement as HTMLElement | null;
+  };
+
+  const runPointerAutoScroll = (): void => {
+    const activeItem = activeDraggedItemRef.current;
+    const pointerPosition = pointerPositionRef.current;
+
+    if (!activeItem || !pointerPosition) {
+      pointerAutoScrollFrameRef.current = null;
+      return;
+    }
+
+    const scrollContainer = pointerScrollContainerRef.current;
+    const usesViewport =
+      !scrollContainer ||
+      scrollContainer === document.scrollingElement ||
+      scrollContainer === document.documentElement ||
+      scrollContainer === document.body;
+    const containerRect = usesViewport ? null : scrollContainer.getBoundingClientRect();
+    const topEdge = containerRect ? Math.max(0, containerRect.top) : 0;
+    const bottomEdge = containerRect
+      ? Math.min(window.innerHeight, containerRect.bottom)
+      : window.innerHeight;
+    const edgeSize = Math.min(72, Math.max(32, (bottomEdge - topEdge) / 4));
+    let scrollDelta = 0;
+
+    if (pointerPosition.clientY < topEdge + edgeSize) {
+      const intensity = Math.min(1, (topEdge + edgeSize - pointerPosition.clientY) / edgeSize);
+      scrollDelta = -Math.max(2, Math.round(18 * intensity));
+    } else if (pointerPosition.clientY > bottomEdge - edgeSize) {
+      const intensity = Math.min(1, (pointerPosition.clientY - (bottomEdge - edgeSize)) / edgeSize);
+      scrollDelta = Math.max(2, Math.round(18 * intensity));
+    }
+
+    if (scrollDelta !== 0) {
+      if (scrollContainer) {
+        scrollContainer.scrollTop += scrollDelta;
+      } else {
+        window.scrollBy({ top: scrollDelta });
+      }
+
+      const targetItemId = getPointerDropTarget(
+        pointerPosition.clientX,
+        pointerPosition.clientY,
+        activeItem.sectionId
+      );
+      updateDragOverItem(
+        targetItemId ? { sectionId: activeItem.sectionId, itemId: targetItemId } : null
+      );
+    }
+
+    pointerAutoScrollFrameRef.current = requestAnimationFrame(runPointerAutoScroll);
+  };
+
+  const handleItemPointerDown = (
+    e: React.PointerEvent<HTMLButtonElement>,
+    sectionId: ReorderableItemSection,
+    itemId: string
+  ) => {
+    if (e.pointerType === 'mouse') return;
+
+    e.preventDefault();
+    const nextDraggedItem = { sectionId, itemId };
+    activeDraggedItemRef.current = nextDraggedItem;
+    setDraggedItem(nextDraggedItem);
+    setKeyboardGrabbedItem(null);
+    updateDragOverItem(null);
+    pointerPositionRef.current = { clientX: e.clientX, clientY: e.clientY };
+    pointerScrollContainerRef.current = getScrollableAncestor(e.currentTarget);
+    e.currentTarget.setPointerCapture(e.pointerId);
+    if (pointerAutoScrollFrameRef.current === null) {
+      pointerAutoScrollFrameRef.current = requestAnimationFrame(runPointerAutoScroll);
+    }
+  };
+
+  const handleItemPointerMove = (e: React.PointerEvent<HTMLButtonElement>) => {
+    if (e.pointerType === 'mouse') return;
+
+    const activeItem = activeDraggedItemRef.current;
+    if (!activeItem) return;
+
+    e.preventDefault();
+    pointerPositionRef.current = { clientX: e.clientX, clientY: e.clientY };
+    const targetItemId = getPointerDropTarget(e.clientX, e.clientY, activeItem.sectionId);
+    updateDragOverItem(
+      targetItemId ? { sectionId: activeItem.sectionId, itemId: targetItemId } : null
+    );
+  };
+
+  const handleItemPointerUp = (e: React.PointerEvent<HTMLButtonElement>) => {
+    if (e.pointerType === 'mouse') return;
+
+    const activeItem = activeDraggedItemRef.current;
+    if (!activeItem) return;
+
+    e.preventDefault();
+    const targetItemId = getPointerDropTarget(e.clientX, e.clientY, activeItem.sectionId);
+    if (targetItemId) {
+      reorderItemsInSection(activeItem.sectionId, activeItem.itemId, targetItemId);
+    }
+
+    if (e.currentTarget.hasPointerCapture(e.pointerId)) {
+      e.currentTarget.releasePointerCapture(e.pointerId);
+    }
+    clearItemDragState();
+  };
+
+  const handleItemPointerCancel = (e: React.PointerEvent<HTMLButtonElement>) => {
+    if (e.pointerType === 'mouse') return;
+    if (e.currentTarget.hasPointerCapture(e.pointerId)) {
+      e.currentTarget.releasePointerCapture(e.pointerId);
+    }
+    clearItemDragState();
+  };
+
+  const isDraggedItem = (sectionId: ReorderableItemSection, itemId: string) =>
+    draggedItem?.sectionId === sectionId && draggedItem.itemId === itemId;
+
+  const isItemDragTarget = (sectionId: ReorderableItemSection, itemId: string) =>
+    dragOverItem?.sectionId === sectionId &&
+    dragOverItem.itemId === itemId &&
+    !isDraggedItem(sectionId, itemId);
+
+  const getReorderableItemClassName = (
+    sectionId: ReorderableItemSection,
+    itemId: string,
+    baseClassName: string
+  ) =>
+    `${baseClassName} transition-all ${
+      isItemDragTarget(sectionId, itemId) ? '!bg-violet-50 ring-2 ring-[#915EFF]' : ''
+    } ${isDraggedItem(sectionId, itemId) ? 'opacity-50' : ''}`;
+
+  const getItemDropProps = (sectionId: ReorderableItemSection, itemId: string) => ({
+    'data-reorder-section': sectionId,
+    'data-reorder-item-id': itemId,
+    onDragOver: (e: React.DragEvent<HTMLDivElement>) => handleItemDragOver(e, sectionId, itemId),
+    onDragLeave: (e: React.DragEvent<HTMLDivElement>) => {
+      e.stopPropagation();
+      if (!e.currentTarget.contains(e.relatedTarget as Node | null)) {
+        const currentTarget = dragOverItemRef.current;
+        if (currentTarget?.sectionId === sectionId && currentTarget.itemId === itemId) {
+          updateDragOverItem(null);
+        }
+      }
+    },
+    onDrop: (e: React.DragEvent<HTMLDivElement>) => handleItemDrop(e, sectionId, itemId),
+  });
+
+  const renderItemDragHandle = (
+    sectionId: ReorderableItemSection,
+    itemId: string,
+    label: string,
+    className = 'mr-2 h-10 w-6 self-start'
+  ) => {
+    const isKeyboardGrabbed =
+      keyboardGrabbedItem?.sectionId === sectionId && keyboardGrabbedItem.itemId === itemId;
+
+    return (
+      <button
+        type="button"
+        className={`${className} inline-flex shrink-0 cursor-grab touch-none items-center justify-center border-0 bg-transparent p-0 text-gray-400 transition-colors select-none hover:text-[#915EFF] active:cursor-grabbing`}
+        data-item-drag-handle="true"
+        draggable
+        aria-label={`${isKeyboardGrabbed ? 'Upuść' : 'Zmień kolejność'}: ${label}`}
+        aria-pressed={isKeyboardGrabbed}
+        aria-keyshortcuts="ArrowUp ArrowDown"
+        title="Przeciągnij lub użyj strzałek, aby zmienić kolejność"
+        onDragStart={(e) => handleItemDragStart(e, sectionId, itemId)}
+        onDragEnd={handleItemDragEnd}
+        onPointerDown={(e) => handleItemPointerDown(e, sectionId, itemId)}
+        onPointerMove={handleItemPointerMove}
+        onPointerUp={handleItemPointerUp}
+        onPointerCancel={handleItemPointerCancel}
+        onClick={(e) => {
+          if (e.detail !== 0) return;
+          setKeyboardGrabbedItem((current) =>
+            current?.sectionId === sectionId && current.itemId === itemId
+              ? null
+              : { sectionId, itemId }
+          );
+        }}
+        onBlur={() => {
+          setKeyboardGrabbedItem((current) =>
+            current?.sectionId === sectionId && current.itemId === itemId ? null : current
+          );
+        }}
+        onKeyDown={(e) => {
+          if (e.key === 'Escape') {
+            e.preventDefault();
+            setKeyboardGrabbedItem(null);
+            return;
+          }
+          if (e.key !== 'ArrowUp' && e.key !== 'ArrowDown') return;
+          e.preventDefault();
+          e.stopPropagation();
+          setKeyboardGrabbedItem({ sectionId, itemId });
+          moveItemInSection(sectionId, itemId, e.key === 'ArrowUp' ? -1 : 1);
+        }}
+      >
+        <GripVertical size={18} />
+      </button>
+    );
+  };
+
+  const renderItemActionRail = (
+    sectionId: ReorderableItemSection,
+    itemId: string,
+    label: string,
+    onRemove: () => void
+  ) => (
+    <div
+      className="mr-2 flex w-7 shrink-0 flex-col items-center gap-1 self-start"
+      data-item-action-rail="true"
+    >
+      {renderItemDragHandle(sectionId, itemId, label, 'h-8 w-7')}
+      <button
+        type="button"
+        data-item-delete-button="true"
+        onClick={onRemove}
+        className="pointer-events-auto inline-flex h-8 w-7 items-center justify-center rounded p-0 text-red-500 opacity-100 transition-all hover:bg-red-50 hover:text-red-700 focus-visible:opacity-100 focus-visible:ring-2 focus-visible:ring-red-200 focus-visible:outline-none sm:pointer-events-none sm:opacity-0 sm:group-focus-within:pointer-events-auto sm:group-focus-within:opacity-100 sm:group-hover:pointer-events-auto sm:group-hover:opacity-100"
+        aria-label={`Usuń: ${label}`}
+        title={`Usuń: ${label}`}
+      >
+        <Trash2 size={16} />
+      </button>
+    </div>
+  );
+
   const addExperience = () => {
     const newExp: Experience = {
-      id: makeExperienceId(),
+      id: makeClientId(),
       company: '',
       position: '',
       startDate: '',
@@ -796,7 +1228,7 @@ const CVCreator: React.FC<CVCreatorProps> = ({ initialCv, initialLimits = null }
 
   const addEducation = () => {
     const newEdu: Education = {
-      id: makeEducationId(),
+      id: makeClientId(),
       school: '',
       degree: '',
       field: '',
@@ -847,7 +1279,7 @@ const CVCreator: React.FC<CVCreatorProps> = ({ initialCv, initialLimits = null }
 
   const addProject = () => {
     const newProject: Project = {
-      id: makeProjectId(),
+      id: makeClientId(),
       title: '',
       url: '',
       description: '',
@@ -867,31 +1299,35 @@ const CVCreator: React.FC<CVCreatorProps> = ({ initialCv, initialLimits = null }
 
   const addSkill = () => {
     const newSkill: Skill = {
-      id: Date.now().toString(),
+      id: makeClientId(),
       name: '',
     };
-    setSkills([...skills, newSkill]);
+    setSkills((prev) => [...prev, newSkill]);
   };
 
   const updateSkill = (id: string, field: keyof Skill, value: string) => {
-    setSkills(skills.map((skill) => (skill.id === id ? { ...skill, [field]: value } : skill)));
+    setSkills((prev) =>
+      prev.map((skill) => (skill.id === id ? { ...skill, [field]: value } : skill))
+    );
   };
 
   const removeSkill = (id: string) => {
-    setSkills(skills.filter((skill) => skill.id !== id));
+    setSkills((prev) => prev.filter((skill) => skill.id !== id));
   };
 
   const addHobby = () => {
-    const newHobby: Hobby = { id: Date.now().toString(), name: '' };
-    setHobbies([...hobbies, newHobby]);
+    const newHobby: Hobby = { id: makeClientId(), name: '' };
+    setHobbies((prev) => [...prev, newHobby]);
   };
 
   const updateHobby = (id: string, field: keyof Hobby, value: string) => {
-    setHobbies(hobbies.map((hobby) => (hobby.id === id ? { ...hobby, [field]: value } : hobby)));
+    setHobbies((prev) =>
+      prev.map((hobby) => (hobby.id === id ? { ...hobby, [field]: value } : hobby))
+    );
   };
 
   const removeHobby = (id: string) => {
-    setHobbies(hobbies.filter((hobby) => hobby.id !== id));
+    setHobbies((prev) => prev.filter((hobby) => hobby.id !== id));
   };
 
   const formatDate = (dateString: string) => {
@@ -903,6 +1339,19 @@ const CVCreator: React.FC<CVCreatorProps> = ({ initialCv, initialLimits = null }
     } else {
       return date.getFullYear().toString();
     }
+  };
+
+  const privacyConsentTemplate = PRIVACY_CONSENT_TEMPLATES[resumePreviewLanguage];
+  const hasPrivacyConsentTemplate = privacyStatement.content.includes(privacyConsentTemplate);
+
+  const applyPrivacyConsentTemplate = () => {
+    setPrivacyStatement((prev) => {
+      const current = prev.content.trim();
+      return {
+        ...prev,
+        content: current ? `${current}\n\n${privacyConsentTemplate}` : privacyConsentTemplate,
+      };
+    });
   };
 
   const handleZoomIn = () => {
@@ -1391,110 +1840,105 @@ const CVCreator: React.FC<CVCreatorProps> = ({ initialCv, initialLimits = null }
     }));
   };
 
-  const populateFromCv = React.useCallback((cv: CvDto, position?: string) => {
-    const basics = cv.basics;
-    const projectLinks = cv.projects ?? [];
+  const populateFromCv = React.useCallback(
+    (cv: CvDto, position?: string, hobbyNamesOverride?: string[]) => {
+      const basics = cv.basics;
+      const projectLinks = cv.projects ?? [];
 
-    const socialLinks: SocialLink[] = (cv.social ?? [])
-      .filter((s) => s.link.trim())
-      .map((s) => ({
-        id: makeSocialLinkId(),
-        label: s.social,
-        url: s.link,
-      }));
+      const socialLinks: SocialLink[] = (cv.social ?? [])
+        .filter((s) => s.link.trim())
+        .map((s) => ({
+          id: makeSocialLinkId(),
+          label: s.social,
+          url: s.link,
+        }));
 
-    if (basics) {
-      setPersonalInfo((prev) => ({
-        firstName: basics.firstName,
-        lastName: basics.lastName,
-        email: basics.email,
-        phone: basics.phoneNumber,
-        address: basics.location?.city || '',
-        country: basics.location?.country || '',
-        socialLinks,
-        profession: position ?? prev.profession,
-        summary: basics.summary,
-      }));
-    } else {
-      setPersonalInfo((prev) => ({
-        ...prev,
-        socialLinks,
-      }));
-    }
+      if (basics) {
+        setPersonalInfo((prev) => ({
+          firstName: basics.firstName,
+          lastName: basics.lastName,
+          email: basics.email,
+          phone: basics.phoneNumber,
+          address: basics.location?.city || '',
+          country: basics.location?.country || '',
+          socialLinks,
+          profession: position ?? prev.profession,
+          summary: basics.summary,
+        }));
+      } else {
+        setPersonalInfo((prev) => ({
+          ...prev,
+          socialLinks,
+        }));
+      }
 
-    setExperiences(
-      cv.work?.map((w) =>
-        ensureExperienceDefaults({
-          id: makeExperienceId(),
-          company: w.company || '',
-          position: w.position || '',
-          startDate: w.startDate || '',
-          endDate: w.endDate && w.endDate !== 'Present' ? w.endDate : '',
-          responsibilities: Array.isArray(w.responsibilities) ? w.responsibilities : [],
-          isCurrent: w.endDate === 'Present',
-          useBulletList: false,
-        })
-      ) || []
-    );
+      setExperiences(
+        cv.work?.map((w) =>
+          ensureExperienceDefaults({
+            id: makeClientId(),
+            company: w.company || '',
+            position: w.position || '',
+            startDate: w.startDate || '',
+            endDate: w.endDate && w.endDate !== 'Present' ? w.endDate : '',
+            responsibilities: Array.isArray(w.responsibilities) ? w.responsibilities : [],
+            isCurrent: w.endDate === 'Present',
+            useBulletList: false,
+          })
+        ) || []
+      );
 
-    setEducation(
-      cv.education?.map((e) =>
-        ensureEducationDefaults({
-          id: makeEducationId(),
-          school: e.institution || '',
-          degree: e.degree || '',
-          field: e.field || '',
-          startDate: e.startDate || '',
-          endDate: e.endDate && e.endDate !== 'Present' ? e.endDate : '',
-          isCurrent: e.endDate === 'Present',
-          description: (e as { description?: string })?.description || '',
-        })
-      ) || []
-    );
+      setEducation(
+        cv.education?.map((e) =>
+          ensureEducationDefaults({
+            id: makeClientId(),
+            school: e.institution || '',
+            degree: e.degree || '',
+            field: e.field || '',
+            startDate: e.startDate || '',
+            endDate: e.endDate && e.endDate !== 'Present' ? e.endDate : '',
+            isCurrent: e.endDate === 'Present',
+            description: (e as { description?: string })?.description || '',
+          })
+        ) || []
+      );
 
-    setProjects(
-      projectLinks.map((project) =>
-        ensureProjectDefaults({
-          id: makeProjectId(),
-          title: project.name || '',
-          url: project.link || '',
-          description: project.description || '',
-        })
-      )
-    );
+      setProjects(
+        projectLinks.map((project) =>
+          ensureProjectDefaults({
+            id: makeClientId(),
+            title: project.name || '',
+            url: project.link || '',
+            description: project.description || '',
+          })
+        )
+      );
 
-    setProjects(
-      projectLinks.map((project) =>
-        ensureProjectDefaults({
-          id: makeProjectId(),
-          title: project.name || '',
-          url: project.link || '',
-          description: project.description || '',
-        })
-      )
-    );
+      setCertificates(
+        cv.certificates?.map((c) =>
+          ensureCertificateDefaults({
+            id: makeClientId(),
+            name: c.name,
+            date: c.date || '',
+            hasDate: Boolean(c.date),
+          })
+        ) || []
+      );
 
-    setCertificates(
-      cv.certificates?.map((c) =>
-        ensureCertificateDefaults({
-          id: makeCertificateId(),
-          name: c.name,
-          date: c.date || '',
-          hasDate: Boolean(c.date),
-        })
-      ) || []
-    );
+      setSkills(cv.skills?.map((skill) => ({ id: makeClientId(), name: skill })) || []);
 
-    setSkills(cv.skills?.map((s, idx) => ({ id: `${Date.now()}${idx}`, name: s })) || []);
+      setLanguages(
+        cv.languages?.map((l) => ({
+          id: makeClientId(),
+          name: l.language,
+          level: normalizeFluency(l.fluency),
+        })) || []
+      );
 
-    setLanguages(
-      cv.languages?.map((l, idx) => ({
-        id: `${Date.now()}${idx}`,
-        name: l.language,
-        level: normalizeFluency(l.fluency),
-      })) || []
-    );
-  }, []);
+      const hobbyNames = hobbyNamesOverride ?? cv.hobbies ?? [];
+      setHobbies(hobbyNames.map((hobby) => ({ id: makeClientId(), name: hobby })));
+    },
+    []
+  );
 
   const buildCvDto = (): CvDto => {
     return {
@@ -1545,6 +1989,7 @@ const CVCreator: React.FC<CVCreatorProps> = ({ initialCv, initialLimits = null }
         })),
       skills: skills.map((s) => s.name),
       languages: languages.map((l) => ({ language: l.name, fluency: l.level })),
+      hobbies: hobbies.map((hobby) => hobby.name),
     };
   };
 
@@ -1582,6 +2027,8 @@ const CVCreator: React.FC<CVCreatorProps> = ({ initialCv, initialLimits = null }
       pendingAutosaveHydrationRef.current = null;
       if (pendingHydration === 'saved') {
         resetAutosave(autosavePayload);
+      } else {
+        trigger(autosaveFn);
       }
       resumeAutosave();
       return;
@@ -1835,7 +2282,12 @@ const CVCreator: React.FC<CVCreatorProps> = ({ initialCv, initialLimits = null }
     try {
       await flushAutosave(autosaveFn);
 
-      const generated = await handleLoadFromProfile(cvId, resumeName, personalInfo.profession);
+      const generated = await handleLoadFromProfile(
+        cvId,
+        resumeName,
+        personalInfo.profession,
+        hobbies.map((hobby) => hobby.name)
+      );
 
       pendingAutosaveHydrationRef.current = 'saved';
       populateFromCv(generated.cvData, generated.targetPosition || undefined);
@@ -1849,11 +2301,21 @@ const CVCreator: React.FC<CVCreatorProps> = ({ initialCv, initialLimits = null }
   };
 
   useEffect(() => {
-    if (initialCv) {
-      pendingAutosaveHydrationRef.current = 'saved';
-      populateFromCv(initialCv.cvData, initialCv.targetPosition || undefined);
-      setCvId(initialCv.id);
-    }
+    if (!initialCv || hydratedCvIdRef.current === initialCv.id) return;
+
+    hydratedCvIdRef.current = initialCv.id;
+    const shouldMigrateLegacyHobbies = initialCv.hasPersistedHobbies === false;
+    const legacyHobbies = shouldMigrateLegacyHobbies
+      ? claimLegacyHobbiesForCv(localStorage, initialCv.id)
+      : [];
+
+    pendingAutosaveHydrationRef.current = shouldMigrateLegacyHobbies ? 'needs-save' : 'saved';
+    populateFromCv(
+      initialCv.cvData,
+      initialCv.targetPosition || undefined,
+      legacyHobbies.length > 0 ? legacyHobbies : undefined
+    );
+    setCvId(initialCv.id);
   }, [initialCv, populateFromCv]);
 
   const downloadPDF = async () => {
@@ -2003,8 +2465,6 @@ const CVCreator: React.FC<CVCreatorProps> = ({ initialCv, initialLimits = null }
           return experiences.length > 0;
         case 'projects':
           return projects.length > 0;
-        case 'projects':
-          return projects.length > 0;
         case 'education':
           return education.length > 0;
         case 'certificates':
@@ -2089,15 +2549,6 @@ const CVCreator: React.FC<CVCreatorProps> = ({ initialCv, initialLimits = null }
         });
       } else if (id === 'education') {
         const nodes = el.querySelectorAll<HTMLElement>('.edu-item[data-item-id]');
-        nodes.forEach((n) => {
-          const csI = getComputedStyle(n);
-          const mti = parseFloat(csI.marginTop || '0') || 0;
-          const mbi = parseFloat(csI.marginBottom || '0') || 0;
-          const itemId = n.getAttribute('data-item-id') || '';
-          items.push({ id: itemId, h: n.offsetHeight + mti + mbi });
-        });
-      } else if (id === 'projects') {
-        const nodes = el.querySelectorAll<HTMLElement>('.project-item[data-item-id]');
         nodes.forEach((n) => {
           const csI = getComputedStyle(n);
           const mti = parseFloat(csI.marginTop || '0') || 0;
@@ -2321,7 +2772,7 @@ const CVCreator: React.FC<CVCreatorProps> = ({ initialCv, initialLimits = null }
             />
             <textarea
               ref={summaryTextareaRef}
-              placeholder="Project Manager with over 5 years of experience, seeking new opportunities."
+              placeholder="Project Manager z ponad 5-letnim doświadczeniem, poszukujący nowych możliwości zawodowych."
               value={stripFormattingTokens(personalInfo.summary || '')}
               onChange={(e) => {
                 const plainValue = e.target.value;
@@ -2423,10 +2874,21 @@ const CVCreator: React.FC<CVCreatorProps> = ({ initialCv, initialLimits = null }
               return (
                 <div
                   key={exp.id}
-                  className="group mb-4 rounded-lg border border-gray-200 bg-white p-4"
+                  {...getItemDropProps('experience', exp.id)}
+                  className={getReorderableItemClassName(
+                    'experience',
+                    exp.id,
+                    'group mb-4 rounded-lg border border-gray-200 bg-white p-4'
+                  )}
                 >
-                  <div className="mb-2 flex items-start justify-between">
-                    <div className="flex-1">
+                  <div className="mb-2 flex min-w-0 items-start">
+                    {renderItemActionRail(
+                      'experience',
+                      exp.id,
+                      exp.position || exp.company || 'doświadczenie zawodowe',
+                      () => removeExperience(exp.id)
+                    )}
+                    <div className="min-w-0 flex-1">
                       <div className="mb-2 grid grid-cols-1 gap-4 sm:grid-cols-2">
                         <input
                           type="text"
@@ -2443,8 +2905,8 @@ const CVCreator: React.FC<CVCreatorProps> = ({ initialCv, initialLimits = null }
                           className="w-full rounded-sm border border-gray-300 px-3 py-3 focus:ring-2 focus:ring-blue-500 focus:outline-none"
                         />
                       </div>
-                      <div className="mb-2 grid grid-cols-1 gap-4 sm:grid-cols-2">
-                        <div>
+                      <div className="mb-2 grid grid-cols-[repeat(auto-fit,minmax(min(100%,15rem),1fr))] gap-4">
+                        <div className="min-w-0">
                           <label className="mb-1 block text-sm text-gray-600">
                             Data rozpoczęcia
                           </label>
@@ -2457,7 +2919,7 @@ const CVCreator: React.FC<CVCreatorProps> = ({ initialCv, initialLimits = null }
                             placeholder="Wybierz datę rozpoczęcia"
                           />
                         </div>
-                        <div>
+                        <div className="min-w-0">
                           <label className="mb-1 block text-sm text-gray-600">
                             Data zakończenia
                           </label>
@@ -2516,18 +2978,11 @@ const CVCreator: React.FC<CVCreatorProps> = ({ initialCv, initialLimits = null }
                         onSelect={() => updateExperienceFormattingFromSelection(exp.id)}
                         onKeyUp={() => updateExperienceFormattingFromSelection(exp.id)}
                         onMouseUp={() => updateExperienceFormattingFromSelection(exp.id)}
-                        rows={2}
+                        rows={4}
                         className="w-full rounded-sm border border-gray-300 px-3 py-3 focus:ring-2 focus:ring-blue-500 focus:outline-none"
                       />
 
                       <div className="flex w-full items-center justify-end space-x-2">
-                        <button
-                          onClick={() => removeExperience(exp.id)}
-                          className="ml-2 flex h-10 w-10 cursor-pointer items-center justify-center rounded p-2 text-red-500 opacity-0 transition-all group-hover:opacity-100 hover:bg-red-50 hover:text-red-700"
-                          title="remove Work experience"
-                        >
-                          <Trash2 size={16} />
-                        </button>
                         <HoverCard>
                           <HoverCardTrigger asChild>
                             <button className="flex h-10 w-10 cursor-pointer items-center justify-center rounded-sm bg-gray-100">
@@ -2625,10 +3080,18 @@ const CVCreator: React.FC<CVCreatorProps> = ({ initialCv, initialLimits = null }
             {projects.map((project) => (
               <div
                 key={project.id}
-                className="group mb-4 rounded-lg border border-gray-200 bg-white p-4"
+                {...getItemDropProps('projects', project.id)}
+                className={getReorderableItemClassName(
+                  'projects',
+                  project.id,
+                  'group mb-4 rounded-lg border border-gray-200 bg-white p-4'
+                )}
               >
-                <div className="flex items-start justify-between">
-                  <div className="flex-1">
+                <div className="flex min-w-0 items-start">
+                  {renderItemActionRail('projects', project.id, project.title || 'projekt', () =>
+                    removeProject(project.id)
+                  )}
+                  <div className="min-w-0 flex-1">
                     <div className="mb-2 grid grid-cols-1 gap-4 sm:grid-cols-2">
                       <input
                         type="text"
@@ -2653,111 +3116,6 @@ const CVCreator: React.FC<CVCreatorProps> = ({ initialCv, initialLimits = null }
                       className="w-full resize-none rounded-sm border border-gray-300 px-3 py-3 focus:ring-2 focus:ring-blue-500 focus:outline-none"
                     />
                   </div>
-                  <button
-                    onClick={() => removeProject(project.id)}
-                    className="ml-2 flex h-10 w-10 cursor-pointer items-center justify-center rounded p-2 text-red-500 opacity-0 transition-all group-hover:opacity-100 hover:bg-red-50 hover:text-red-700"
-                    title="Remove project"
-                  >
-                    <Trash2 size={16} />
-                  </button>
-                </div>
-              </div>
-            ))}
-            <button
-              onClick={addProject}
-              className="flex cursor-pointer items-center font-medium text-[#915EFF]"
-            >
-              <span className="mr-2 text-xl">+</span>
-              Dodaj projekt
-            </button>
-          </div>
-        );
-
-      case 'projects':
-        return (
-          <div
-            key="projects"
-            className={`mb-6 rounded-lg bg-gray-50 p-4 transition-all lg:p-6 ${
-              dragOverSection === 'projects' ? 'bg-blue-50 ring-2 ring-blue-400' : ''
-            } ${draggedSection === 'projects' ? 'opacity-50' : ''}`}
-            draggable
-            onDragStart={(e) => handleSectionDragStart(e, 'projects')}
-            onDragOver={(e) => handleSectionDragOver(e, 'projects')}
-            onDragLeave={handleSectionDragLeave}
-            onDrop={(e) => handleSectionDrop(e, 'projects')}
-            onDragEnd={handleSectionDragEnd}
-          >
-            <div className="mb-4 flex items-center justify-between">
-              <h2 className="flex items-center text-lg font-semibold text-gray-700">
-                <span
-                  className="mr-2 cursor-grab text-gray-400"
-                  data-drag-handle="true"
-                  role="button"
-                  tabIndex={0}
-                  aria-label="Drag section"
-                  onMouseDown={() => {
-                    dragIntentSectionRef.current = 'projects';
-                  }}
-                  onMouseUp={() => {
-                    dragIntentSectionRef.current = null;
-                  }}
-                  onKeyDown={(event) => {
-                    if (event.key === 'Enter' || event.key === ' ') {
-                      dragIntentSectionRef.current = 'projects';
-                    }
-                  }}
-                  onKeyUp={() => {
-                    dragIntentSectionRef.current = null;
-                  }}
-                >
-                  <GripVertical size={20} />
-                </span>
-                <FolderOpen className="mr-2" size={20} />
-                Projekty
-              </h2>
-            </div>
-            <p className="mb-4 text-sm text-gray-600">
-              Dodaj swoje najważniejsze projekty z klikalnym tytułem, linkiem do repozytorium lub
-              wersji live oraz krótkim opisem tego, co zbudowałeś.
-            </p>
-            {projects.map((project) => (
-              <div
-                key={project.id}
-                className="group mb-4 rounded-lg border border-gray-200 bg-white p-4"
-              >
-                <div className="flex items-start justify-between">
-                  <div className="flex-1">
-                    <div className="mb-2 grid grid-cols-1 gap-4 sm:grid-cols-2">
-                      <input
-                        type="text"
-                        placeholder="Tytuł projektu"
-                        value={project.title}
-                        onChange={(e) => updateProject(project.id, 'title', e.target.value)}
-                        className="w-full rounded-sm border border-gray-300 px-3 py-3 focus:ring-2 focus:ring-blue-500 focus:outline-none"
-                      />
-                      <input
-                        type="url"
-                        placeholder="https://your-project.com"
-                        value={project.url}
-                        onChange={(e) => updateProject(project.id, 'url', e.target.value)}
-                        className="w-full rounded-sm border border-gray-300 px-3 py-3 focus:ring-2 focus:ring-blue-500 focus:outline-none"
-                      />
-                    </div>
-                    <textarea
-                      placeholder="Krótki opis projektu"
-                      value={project.description}
-                      onChange={(e) => updateProject(project.id, 'description', e.target.value)}
-                      rows={3}
-                      className="w-full resize-none rounded-sm border border-gray-300 px-3 py-3 focus:ring-2 focus:ring-blue-500 focus:outline-none"
-                    />
-                  </div>
-                  <button
-                    onClick={() => removeProject(project.id)}
-                    className="ml-2 flex h-10 w-10 cursor-pointer items-center justify-center rounded p-2 text-red-500 opacity-0 transition-all group-hover:opacity-100 hover:bg-red-50 hover:text-red-700"
-                    title="Remove project"
-                  >
-                    <Trash2 size={16} />
-                  </button>
                 </div>
               </div>
             ))}
@@ -2824,10 +3182,21 @@ const CVCreator: React.FC<CVCreatorProps> = ({ initialCv, initialLimits = null }
               return (
                 <div
                   key={edu.id}
-                  className="group mb-4 rounded-lg border border-gray-200 bg-white p-4"
+                  {...getItemDropProps('education', edu.id)}
+                  className={getReorderableItemClassName(
+                    'education',
+                    edu.id,
+                    'group mb-4 rounded-lg border border-gray-200 bg-white p-4'
+                  )}
                 >
-                  <div className="flex items-start justify-between">
-                    <div className="flex-1">
+                  <div className="flex min-w-0 items-start">
+                    {renderItemActionRail(
+                      'education',
+                      edu.id,
+                      edu.field || edu.school || 'edukację',
+                      () => removeEducation(edu.id)
+                    )}
+                    <div className="min-w-0 flex-1">
                       <div className="mb-2 grid grid-cols-1 gap-4 sm:grid-cols-2">
                         <input
                           type="text"
@@ -2851,8 +3220,8 @@ const CVCreator: React.FC<CVCreatorProps> = ({ initialCv, initialLimits = null }
                           className="w-full rounded-sm border border-gray-300 px-3 py-3 focus:ring-2 focus:ring-blue-500 focus:outline-none"
                         />
                       </div>
-                      <div className="mb-2 grid grid-cols-1 gap-4 sm:grid-cols-2">
-                        <div>
+                      <div className="mb-2 grid grid-cols-[repeat(auto-fit,minmax(min(100%,15rem),1fr))] gap-4">
+                        <div className="min-w-0">
                           <label className="mb-1 block text-sm text-gray-600">
                             Data rozpoczęcia
                           </label>
@@ -2866,7 +3235,7 @@ const CVCreator: React.FC<CVCreatorProps> = ({ initialCv, initialLimits = null }
                             placeholder="Wybierz datę rozpoczęcia"
                           />
                         </div>
-                        <div>
+                        <div className="min-w-0">
                           <label className="mb-1 block text-sm text-gray-600">
                             Data zakończenia
                           </label>
@@ -2924,17 +3293,10 @@ const CVCreator: React.FC<CVCreatorProps> = ({ initialCv, initialLimits = null }
                         onSelect={() => updateEducationFormattingFromSelection(edu.id)}
                         onKeyUp={() => updateEducationFormattingFromSelection(edu.id)}
                         onMouseUp={() => updateEducationFormattingFromSelection(edu.id)}
-                        rows={2}
+                        rows={4}
                         className="w-full rounded-sm border border-gray-300 px-3 py-3 focus:ring-2 focus:ring-blue-500 focus:outline-none"
                       />
                     </div>
-                    <button
-                      onClick={() => removeEducation(edu.id)}
-                      className="ml-2 flex h-10 w-10 cursor-pointer items-center justify-center rounded p-2 text-red-500 opacity-0 transition-all group-hover:opacity-100 hover:bg-red-50 hover:text-red-700"
-                      title="Remove education"
-                    >
-                      <Trash2 size={16} />
-                    </button>
                   </div>
                 </div>
               );
@@ -2996,40 +3358,56 @@ const CVCreator: React.FC<CVCreatorProps> = ({ initialCv, initialLimits = null }
             {certificates.map((cert) => (
               <div
                 key={cert.id}
-                className="group mb-3 rounded-lg border border-gray-200 bg-white p-3"
+                {...getItemDropProps('certificates', cert.id)}
+                className={getReorderableItemClassName(
+                  'certificates',
+                  cert.id,
+                  'group mb-3 rounded-lg border border-gray-200 bg-white p-3'
+                )}
               >
-                <div className="flex flex-col gap-3 sm:flex-row sm:items-center">
-                  <input
-                    type="text"
-                    placeholder="Nazwa certyfikatu"
-                    value={cert.name}
-                    onChange={(e) => updateCertificate(cert.id, 'name', e.target.value)}
-                    className="flex-1 focus:outline-none"
-                  />
-                  <div className="flex flex-1 justify-end">
-                    <DatePickerWithCurrent
-                      value={cert.date}
-                      onChange={(date) => updateCertificate(cert.id, 'date', date)}
-                      isCurrent={!cert.hasDate}
-                      onCurrentChange={(checked) => {
-                        const hasDate = !checked;
-                        updateCertificate(cert.id, 'hasDate', hasDate);
-                        if (checked) {
-                          updateCertificate(cert.id, 'date', '');
-                        }
-                      }}
-                      toggleLabel="Ma datę"
-                      toggledButtonText="Bez daty"
-                      placeholder="Wybierz datę"
+                <div className="flex items-center">
+                  {renderItemDragHandle(
+                    'certificates',
+                    cert.id,
+                    cert.name || 'certyfikat',
+                    'mr-2 h-10 w-6 self-center'
+                  )}
+                  <div className="flex min-w-0 flex-1 flex-col gap-3 sm:flex-row sm:items-center">
+                    <input
+                      type="text"
+                      placeholder="Nazwa certyfikatu"
+                      value={cert.name}
+                      onChange={(e) => updateCertificate(cert.id, 'name', e.target.value)}
+                      className="w-full min-w-0 flex-1 focus:outline-none"
                     />
+                    <div className="flex w-full min-w-0 flex-1 justify-end">
+                      <DatePickerWithCurrent
+                        value={cert.date}
+                        onChange={(date) => updateCertificate(cert.id, 'date', date)}
+                        isCurrent={!cert.hasDate}
+                        onCurrentChange={(checked) => {
+                          const hasDate = !checked;
+                          updateCertificate(cert.id, 'hasDate', hasDate);
+                          if (checked) {
+                            updateCertificate(cert.id, 'date', '');
+                          }
+                        }}
+                        toggleLabel="Ma datę"
+                        toggledButtonText="Bez daty"
+                        placeholder="Wybierz datę"
+                      />
+                    </div>
+                    <button
+                      type="button"
+                      data-item-delete-button="true"
+                      onClick={() => removeCertificate(cert.id)}
+                      className="ml-0 shrink-0 rounded p-2 text-red-500 opacity-0 transition-all group-hover:opacity-100 hover:bg-red-50 hover:text-red-700 focus-visible:opacity-100 sm:ml-2"
+                      aria-label={`Usuń: ${cert.name || 'certyfikat'}`}
+                      title="Usuń certyfikat"
+                    >
+                      <Trash2 size={16} />
+                    </button>
                   </div>
-                  <button
-                    onClick={() => removeCertificate(cert.id)}
-                    className="ml-0 rounded p-2 text-red-500 opacity-0 transition-all group-hover:opacity-100 hover:bg-red-50 hover:text-red-700 sm:ml-2"
-                    title="Remove certificate"
-                  >
-                    <Trash2 size={16} />
-                  </button>
                 </div>
               </div>
             ))}
@@ -3093,20 +3471,29 @@ const CVCreator: React.FC<CVCreatorProps> = ({ initialCv, initialLimits = null }
             {skills.map((skill) => (
               <div
                 key={skill.id}
-                className="group mb-3 rounded-md border border-gray-200 bg-white p-3"
+                {...getItemDropProps('skills', skill.id)}
+                className={getReorderableItemClassName(
+                  'skills',
+                  skill.id,
+                  'group mb-3 rounded-md border border-gray-200 bg-white p-3'
+                )}
               >
-                <div className="flex items-center justify-between">
+                <div className="flex min-w-0 items-center justify-between">
+                  {renderItemDragHandle('skills', skill.id, skill.name || 'umiejętność')}
                   <input
                     type="text"
                     placeholder="Nazwa umiejętności"
                     value={skill.name}
                     onChange={(e) => updateSkill(skill.id, 'name', e.target.value)}
-                    className="flex-1 focus:outline-none"
+                    className="min-w-0 flex-1 focus:outline-none"
                   />
                   <button
+                    type="button"
+                    data-item-delete-button="true"
                     onClick={() => removeSkill(skill.id)}
-                    className="ml-2 rounded p-2 text-red-500 opacity-0 transition-all group-hover:opacity-100 hover:bg-red-50 hover:text-red-700"
-                    title="Remove skill"
+                    className="ml-2 shrink-0 rounded p-2 text-red-500 opacity-0 transition-all group-hover:opacity-100 hover:bg-red-50 hover:text-red-700 focus-visible:opacity-100"
+                    aria-label={`Usuń: ${skill.name || 'umiejętność'}`}
+                    title="Usuń umiejętność"
                   >
                     <Trash2 size={16} />
                   </button>
@@ -3172,22 +3559,33 @@ const CVCreator: React.FC<CVCreatorProps> = ({ initialCv, initialLimits = null }
             {languages.map((language) => (
               <div
                 key={language.id}
-                className="group mb-3 rounded-lg border border-gray-200 bg-white/60 p-3"
+                {...getItemDropProps('languages', language.id)}
+                className={getReorderableItemClassName(
+                  'languages',
+                  language.id,
+                  'group mb-3 rounded-lg border border-gray-200 bg-white/60 p-3'
+                )}
               >
-                <div className="flex items-center justify-between">
-                  <div className="flex flex-1 gap-3">
+                <div className="flex min-w-0 items-center">
+                  {renderItemDragHandle(
+                    'languages',
+                    language.id,
+                    language.name || 'język',
+                    'mr-2 h-10 w-6 self-center'
+                  )}
+                  <div className="flex min-w-0 flex-1 flex-col gap-3 sm:flex-row sm:items-center">
                     <input
                       type="text"
                       placeholder="Język"
                       value={language.name}
                       onChange={(e) => updateLanguage(language.id, 'name', e.target.value)}
-                      className="flex-1 focus:outline-none"
+                      className="h-10 w-full min-w-0 flex-1 focus:outline-none"
                     />
                     <Select
                       value={normalizeFluency(language.level)}
                       onValueChange={(value) => updateLanguage(language.id, 'level', value)}
                     >
-                      <SelectTrigger className="font-poppins h-10 w-40 rounded-sm border border-gray-300 px-2 text-sm focus:ring-2 focus:ring-blue-500 focus:outline-none">
+                      <SelectTrigger className="font-poppins h-10 w-full rounded-sm border border-gray-300 px-2 text-sm focus:ring-2 focus:ring-blue-500 focus:outline-none sm:w-40">
                         <SelectValue />
                       </SelectTrigger>
                       <SelectContent>
@@ -3200,9 +3598,12 @@ const CVCreator: React.FC<CVCreatorProps> = ({ initialCv, initialLimits = null }
                     </Select>
                   </div>
                   <button
+                    type="button"
+                    data-item-delete-button="true"
                     onClick={() => removeLanguage(language.id)}
-                    className="ml-2 rounded p-2 text-red-500 opacity-0 transition-all group-hover:opacity-100 hover:bg-red-50 hover:text-red-700"
-                    title="Remove language"
+                    className="ml-2 shrink-0 rounded p-2 text-red-500 opacity-0 transition-all group-hover:opacity-100 hover:bg-red-50 hover:text-red-700 focus-visible:opacity-100"
+                    aria-label={`Usuń: ${language.name || 'język'}`}
+                    title="Usuń język"
                   >
                     <Trash2 size={16} />
                   </button>
@@ -3269,21 +3670,33 @@ const CVCreator: React.FC<CVCreatorProps> = ({ initialCv, initialLimits = null }
             {hobbies.map((hobby) => (
               <div
                 key={hobby.id}
-                className="group mb-3 flex items-center rounded-lg border border-gray-200 bg-white p-3"
+                {...getItemDropProps('hobbies', hobby.id)}
+                className={getReorderableItemClassName(
+                  'hobbies',
+                  hobby.id,
+                  'group mb-3 rounded-lg border border-gray-200 bg-white p-3'
+                )}
               >
-                <input
-                  type="text"
-                  placeholder="np. czytanie, podróżowanie, gotowanie."
-                  value={hobby.name}
-                  onChange={(e) => updateHobby(hobby.id, 'name', e.target.value)}
-                  className="flex-1 focus:outline-none"
-                />
-                <button
-                  onClick={() => removeHobby(hobby.id)}
-                  className="ml-2 rounded p-2 text-red-500 opacity-0 group-hover:opacity-100 hover:bg-red-50 hover:text-red-700"
-                >
-                  <Trash2 size={16} />
-                </button>
+                <div className="flex min-w-0 items-center">
+                  {renderItemDragHandle('hobbies', hobby.id, hobby.name || 'zainteresowanie')}
+                  <input
+                    type="text"
+                    placeholder="np. czytanie, podróżowanie, gotowanie."
+                    value={hobby.name}
+                    onChange={(e) => updateHobby(hobby.id, 'name', e.target.value)}
+                    className="min-w-0 flex-1 focus:outline-none"
+                  />
+                  <button
+                    type="button"
+                    data-item-delete-button="true"
+                    onClick={() => removeHobby(hobby.id)}
+                    className="ml-2 shrink-0 rounded p-2 text-red-500 opacity-0 transition-all group-hover:opacity-100 hover:bg-red-50 hover:text-red-700 focus-visible:opacity-100"
+                    aria-label={`Usuń: ${hobby.name || 'zainteresowanie'}`}
+                    title="Usuń zainteresowanie"
+                  >
+                    <Trash2 size={16} />
+                  </button>
+                </div>
               </div>
             ))}
             <button onClick={addHobby} className="flex items-center font-medium text-[#915EFF]">
@@ -3339,7 +3752,7 @@ const CVCreator: React.FC<CVCreatorProps> = ({ initialCv, initialLimits = null }
               Dodaj klauzulę informacyjną dotyczącą prywatności lub zgodę na przetwarzanie danych.
             </p>
             <textarea
-              placeholder="Wyrażam zgodę na przetwarzanie danych osobowych podanych w tym dokumencie na potrzeby procesu rekrutacyjnego..."
+              placeholder="Wyrażam zgodę na przetwarzanie danych osobowych..."
               value={privacyStatement.content}
               onChange={(e) =>
                 setPrivacyStatement({ ...privacyStatement, content: e.target.value })
@@ -3347,6 +3760,16 @@ const CVCreator: React.FC<CVCreatorProps> = ({ initialCv, initialLimits = null }
               rows={3}
               className="w-full resize-none rounded-lg border border-gray-300 px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:outline-none"
             />
+            <button
+              type="button"
+              onClick={applyPrivacyConsentTemplate}
+              disabled={hasPrivacyConsentTemplate}
+              className="mt-2 flex cursor-pointer items-center font-medium text-[#915EFF] disabled:cursor-not-allowed disabled:opacity-50"
+              title="Wklej standardową zgodę RODO"
+            >
+              <span className="mr-2 text-xl">+</span>
+              Użyj gotowej zgody
+            </button>
           </div>
         );
 
@@ -3423,48 +3846,6 @@ const CVCreator: React.FC<CVCreatorProps> = ({ initialCv, initialLimits = null }
                 {renderExperienceDescription(exp)}
               </div>
             ))}
-          </div>
-        ) : null;
-
-      case 'projects':
-        return projects.length > 0 ? (
-          <div
-            className="cv-section mb-5"
-            key="projects"
-            data-block-id="projects"
-            data-section="projects"
-          >
-            <h3 className="mb-2 flex items-center border-b border-gray-300 pb-1 text-lg font-semibold text-gray-800">
-              <FolderOpen size={16} className="mr-2" />
-              {previewLabels.sections.projects}
-            </h3>
-            {projects.map((project) => {
-              const projectUrl = normalizeExternalUrl(project.url);
-
-              return (
-                <div key={project.id} className="project-item mb-3" data-item-id={project.id}>
-                  {projectUrl ? (
-                    <a
-                      href={projectUrl}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="font-semibold text-[#915EFF] underline underline-offset-2"
-                    >
-                      {project.title || 'Project title'}
-                    </a>
-                  ) : (
-                    <div className="font-semibold text-gray-900">
-                      {project.title || 'Project title'}
-                    </div>
-                  )}
-                  {project.description && (
-                    <p className="mt-1 text-sm leading-relaxed break-words text-gray-700">
-                      {project.description}
-                    </p>
-                  )}
-                </div>
-              );
-            })}
           </div>
         ) : null;
 
@@ -3691,7 +4072,7 @@ const CVCreator: React.FC<CVCreatorProps> = ({ initialCv, initialLimits = null }
       <h1 className="mb-2 text-3xl leading-tight font-bold text-gray-900">
         {personalInfo.firstName || personalInfo.lastName
           ? `${personalInfo.firstName} ${personalInfo.lastName}`.trim()
-          : 'Joe Doe'}
+          : ''}
       </h1>
       {personalInfo.profession && (
         <h2 className="mb-4 text-xl text-gray-600">{personalInfo.profession}</h2>
@@ -3700,7 +4081,7 @@ const CVCreator: React.FC<CVCreatorProps> = ({ initialCv, initialLimits = null }
         {personalInfo.email && (
           <div className="flex items-center">
             <Mail size={14} className="mr-2 flex-shrink-0" />
-            <span className="break-all">{personalInfo.email}</span>
+            <span>{personalInfo.email}</span>
           </div>
         )}
         {personalInfo.phone && (
@@ -3746,13 +4127,6 @@ const CVCreator: React.FC<CVCreatorProps> = ({ initialCv, initialLimits = null }
           <h3 className="mb-2 flex items-center border-b border-gray-300 pb-1 text-lg font-semibold text-gray-800">
             <Briefcase size={16} className="mr-2" />
             {previewLabels.sections.experience}
-          </h3>
-        );
-      case 'projects':
-        return (
-          <h3 className="mb-2 flex items-center border-b border-gray-300 pb-1 text-lg font-semibold text-gray-800">
-            <FolderOpen size={16} className="mr-2" />
-            {previewLabels.sections.projects}
           </h3>
         );
       case 'projects':
@@ -3972,18 +4346,6 @@ const CVCreator: React.FC<CVCreatorProps> = ({ initialCv, initialLimits = null }
           >
             {includeTitle && renderSectionTitle('experience')}
             {renderExperienceItems(items)}
-          </div>
-        );
-      case 'projects':
-        return (
-          <div
-            className="cv-section mb-5"
-            data-block-id="projects"
-            data-section="projects"
-            key={`chunk-projects-${items.join('-')}`}
-          >
-            {includeTitle && renderSectionTitle('projects')}
-            {renderProjectItems(items)}
           </div>
         );
       case 'projects':
@@ -4245,7 +4607,7 @@ const CVCreator: React.FC<CVCreatorProps> = ({ initialCv, initialLimits = null }
                       <label className="mb-1 block text-sm text-gray-600">Imię</label>
                       <input
                         type="text"
-                        placeholder="Joe"
+                        placeholder="Grzegorz"
                         value={personalInfo.firstName}
                         onChange={(e) =>
                           setPersonalInfo({ ...personalInfo, firstName: e.target.value })
@@ -4257,7 +4619,7 @@ const CVCreator: React.FC<CVCreatorProps> = ({ initialCv, initialLimits = null }
                       <label className="mb-1 block text-sm text-gray-600">Nazwisko</label>
                       <input
                         type="text"
-                        placeholder="Doe"
+                        placeholder="Brzenczyszczykiewicz"
                         value={personalInfo.lastName}
                         onChange={(e) =>
                           setPersonalInfo({ ...personalInfo, lastName: e.target.value })
@@ -4271,7 +4633,7 @@ const CVCreator: React.FC<CVCreatorProps> = ({ initialCv, initialLimits = null }
                     <label className="mb-1 block text-sm text-gray-600">E-mail</label>
                     <input
                       type="email"
-                      placeholder="joedoe@gmail.com"
+                      placeholder="gbrzenczyszczykiewicz@gmail.com"
                       value={personalInfo.email}
                       onChange={(e) => setPersonalInfo({ ...personalInfo, email: e.target.value })}
                       className="w-full rounded-sm border border-gray-300 px-3 py-3 focus:ring-2 focus:ring-blue-500 focus:outline-none"
@@ -4282,7 +4644,7 @@ const CVCreator: React.FC<CVCreatorProps> = ({ initialCv, initialLimits = null }
                     <label className="mb-1 block text-sm text-gray-600">Stanowisko</label>
                     <input
                       type="text"
-                      placeholder="e.g. Project Manager"
+                      placeholder="np. Project Manager"
                       value={personalInfo.profession}
                       onChange={(e) =>
                         setPersonalInfo({ ...personalInfo, profession: e.target.value })
@@ -4302,7 +4664,7 @@ const CVCreator: React.FC<CVCreatorProps> = ({ initialCv, initialLimits = null }
                           <label className="mb-1 block text-sm text-gray-600">Numer telefonu</label>
                           <input
                             type="tel"
-                            placeholder="e.g. +48 22 263 98 31"
+                            placeholder="np. +48 222 639 831"
                             value={personalInfo.phone}
                             onChange={(e) =>
                               setPersonalInfo({ ...personalInfo, phone: e.target.value })
@@ -4314,7 +4676,7 @@ const CVCreator: React.FC<CVCreatorProps> = ({ initialCv, initialLimits = null }
                           <label className="mb-1 block text-sm text-gray-600">Adres</label>
                           <input
                             type="text"
-                            placeholder="e.g. 221B Baker Street, London"
+                            placeholder="np. 221B Baker Street, Londyn"
                             value={personalInfo.address}
                             onChange={(e) =>
                               setPersonalInfo({ ...personalInfo, address: e.target.value })
@@ -4554,6 +4916,7 @@ const CVCreator: React.FC<CVCreatorProps> = ({ initialCv, initialLimits = null }
             {/* Hidden measurement container to compute heights */}
             <div
               ref={measureContainerRef}
+              className="cv-text"
               style={{
                 position: 'absolute',
                 left: '-10000px',
@@ -4592,7 +4955,7 @@ const CVCreator: React.FC<CVCreatorProps> = ({ initialCv, initialLimits = null }
                 ).map((page, idx) => (
                   <div
                     key={`page-${idx}`}
-                    className="cv-page mb-6 overflow-hidden rounded-sm shadow"
+                    className="cv-page cv-text mb-6 overflow-hidden rounded-sm shadow"
                     style={{
                       width: `${PAGE_WIDTH_MM}mm`,
                       height: `${PAGE_HEIGHT_MM}mm`,
@@ -4622,7 +4985,8 @@ const CVCreator: React.FC<CVCreatorProps> = ({ initialCv, initialLimits = null }
                         education.length === 0 && (
                           <div className="mt-20 text-center text-gray-500">
                             <p className="text-lg">
-                              Start filling the form on the left to create your CV.
+                              Zacznij od uzupełnienia pól po lewej stronie. <br /> Efeket będziesz
+                              widział tutaj na bieżąco.
                             </p>
                           </div>
                         )}

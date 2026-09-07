@@ -7,11 +7,17 @@ author: 'Vocare'
 category: 'CV'
 coverImage: '/images/blog/make-cv.webp'
 tags: ['jak zrobić cv', 'jak napisać cv', 'tworzenie cv', 'cv od zera', 'cv 2026']
+slug: 'jak-zrobic-cv'
 ---
 
 # Jak zrobić CV 2026 - od pustej strony do gotowego pliku w kilka godzin
 
-Czemu tak trudno zacząć pisać CV? Bo siada się do pustego dokumentu i próbuje się wymyślić jak "sprzedać" siebie na jednej stronie. A to złe podejście. **Robienie CV zaczyna się nie od pisania, ale od zebrania materiałów. Gdy masz wszystkie dane przed sobą - samo pisanie zajmuje godzinę.** Oto jak to zrobić krok po kroku, bez zbędnego stresu.
+Czemu tak trudno zacząć pisać CV? Bo siada się do pustego dokumentu i próbuje się wymyślić jak "sprzedać" siebie na jednej stronie. A to złe podejście. **Pierwszy krok robienia CV** to nie pisanie, tylko zebranie materiałów - gdy masz wszystkie dane przed sobą, samo pisanie zajmuje godzinę. Oto jak to zrobić krok po kroku, bez zbędnego stresu.
+
+> **Najważniejsze wnioski**
+> - Zbierz materiały (historia zatrudnienia, wykształcenie, umiejętności, osiągnięcia z liczbami) zanim zaczniesz pisać
+> - Format chronologiczny sprawdza się w 99% przypadków - funkcjonalny i hybrydowy to wyjątki
+> - Pierwsze CV od zera zajmuje 3-5 godzin; dopasowanie do konkretnej oferty tylko 10-20 minut
 
 ---
 
@@ -52,6 +58,18 @@ Jak zacząć: docs.google.com → "Nowe" → "Z szablonu" → wybierz CV.
 
 ---
 
+## Jaki format CV wybrać?
+
+**CV chronologiczne** (reverse-chronological) to najpopularniejszy i preferowany przez ATS format - doświadczenie od najnowszego. Sprawdza się dla każdego, kto ma ciągłość zawodową w jednej branży.
+
+**CV funkcjonalne** - eksponuje umiejętności zamiast historii zatrudnienia. Stosuj ostrożnie - niektórzy rekruterzy go nie lubią, bo ukrywa luki w doświadczeniu.
+
+**CV kombinowane (hybrydowe)** - łączy jedno i drugie: profil umiejętności na górze + historia zawodowa poniżej. Dobre przy zmianie branży.
+
+**W 99% przypadków sprawdzi się format chronologiczny.**
+
+---
+
 ## Struktura CV - co powinno być w środku
 
 ### Górna sekcja: Dane kontaktowe
@@ -71,6 +89,13 @@ Nie dodawaj: daty urodzenia, stanu cywilnego, pełnego adresu, PESEL.
 3-5 zdań. Kim jesteś zawodowo + kluczowe doświadczenie lub osiągnięcie + czego szukasz.
 
 Pisz go OSTATNI - kiedy reszta CV jest gotowa, łatwiej podsumować.
+
+**Formuła profilu zawodowego:**
+
+> [Kim jesteś zawodowo] z [X latami doświadczenia] w [branży/specjalizacji]. [Kluczowe osiągnięcie lub kompetencja]. Szukam roli [nazwa stanowiska], gdzie będę mógł [co chcesz robić].
+
+**Przykład dla studenta:**
+_"Student IV roku informatyki na Politechnice Warszawskiej, specjalizacja w data science. Realizowałem projekty z uczenia maszynowego (Python, PyTorch) i stażowałem w firmie analitycznej. Szukam pierwszej roli Junior Data Analyst lub ML Engineer."_
 
 ### Doświadczenie zawodowe
 
@@ -147,6 +172,8 @@ Gotowe. 10 minut, które podwajają szansę na odpowiedź.
 
 ---
 
+Błędy poniżej mają wspólny mianownik: traktowanie CV jako dokumentu wysyłanego raz, zamiast materiału aktualizowanego pod każdą ofertę.
+
 ## Najczęstsze błędy przy robieniu CV
 
 **Używanie jednego CV do wszystkich aplikacji.** Dopasowanie do oferty to minimum.
@@ -191,6 +218,12 @@ Tak - oszczędzają czas na formatowaniu. Ale treść zawsze musi być Twoja, ko
 **Co jeśli mam duże luki w CV?**
 Zaznacz je szczerze, krótko wytłumacz (opieka nad dzieckiem, choroba, kurs, własna działalność) i skup się na tym co zdobyłeś w tym czasie.
 
+**Czy pisać CV po polsku czy angielsku?**
+Pisz w języku, w którym jest ogłoszenie. Do polskiej firmy - po polsku. Do zagranicznej lub gdy oferta wprost wymaga - po angielsku.
+
+**Jak opisać doświadczenie freelancerskie?**
+Traktuj je jak normalną pracę: "Freelancer / Konsultant [branża] | [daty] | Klienci: X, Y, Z (opcjonalnie)". Opisz projekty jak osiągnięcia, z liczbami tam gdzie to możliwe.
+
 **Czy jest narzędzie, które sprawdzi moje CV przed wysłaniem?**
 **[Vocare.pl](https://vocare.pl)** analizuje ogólną jakość CV i automatycznie generuje wersję dopasowaną do konkretnej oferty. Dobre uzupełnienie checklisty gdy zależy Ci na precyzji.
 
@@ -201,3 +234,10 @@ Zaznacz je szczerze, krótko wytłumacz (opieka nad dzieckiem, choroba, kurs, w�
 Zrobienie dobrego CV to kwestia metody, nie talentu. Zbierz materiały → wybierz narzędzie → wypełnij sekcje z osiągnięciami w liczbach → dostosuj do oferty → sprawdź błędy → wyślij jako PDF. Powtórz dla każdej aplikacji.
 
 Jeśli chcesz mieć pewność, że Twoje CV jest zoptymalizowane pod konkretną ofertę, **[Vocare.pl](https://vocare.pl)** przeanalizuje je i powie Ci dokładnie co poprawić.
+
+---
+
+## Powiązane artykuły
+- [CV 2026 - kompletny poradnik jak napisać dobre CV](/blog/CV/cv)
+- [CV wzór 2026 - darmowe szablony do pobrania i edycji](/blog/CV/cv-wzor)
+- [Przykładowe CV 2026 - wzory dla różnych stanowisk i branż](/blog/CV/przykladowe-cv)

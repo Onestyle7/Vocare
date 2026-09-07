@@ -73,7 +73,10 @@ namespace VocareWebAPI.Extensions.ServiceCollectionExtensions
                 .AddPolicyHandler(retryPolicy);
 
             // Job services
-            services.AddHttpClient<INoFluffJobsParser, NoFluffJobsParser>();
+            services.AddHttpClient<NoFluffJobsParser>();
+            services.AddScoped<IJobOfferProvider>(sp => sp.GetRequiredService<NoFluffJobsParser>());
+            services.AddScoped<IJobOfferProvider, SolidJobsParser>();
+
             services.AddHttpClient<SolidJobsClient>(client =>
             {
                 client.BaseAddress = new Uri("https://solid.jobs/");

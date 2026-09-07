@@ -15,6 +15,12 @@ import {
   ParagraphProps,
   PreProps,
   StrongProps,
+  TableBodyProps,
+  TableCellProps,
+  TableHeadProps,
+  TableHeaderCellProps,
+  TableProps,
+  TableRowProps,
 } from '../types';
 import { getImageSizeFromTitle } from '../utils/blogUtils';
 
@@ -101,4 +107,37 @@ export function Strong(props: StrongProps) {
 
 export function Em(props: EmProps) {
   return <em className="text-foreground/80 italic" {...props} />;
+}
+
+export function Table(props: TableProps) {
+  return (
+    <div className="border-border/60 my-6 overflow-x-auto rounded-xl border">
+      <table className="w-full border-collapse text-left text-sm" {...props} />
+    </div>
+  );
+}
+
+export function THead(props: TableHeadProps) {
+  return <thead className="bg-muted" {...props} />;
+}
+
+export function TBody(props: TableBodyProps) {
+  return <tbody className="divide-border/60 divide-y" {...props} />;
+}
+
+export function TR(props: TableRowProps) {
+  return <tr className="even:bg-muted/40" {...props} />;
+}
+
+export function TH(props: TableHeaderCellProps) {
+  return (
+    <th
+      className="text-foreground border-border/60 border-b px-4 py-3 font-semibold whitespace-nowrap"
+      {...props}
+    />
+  );
+}
+
+export function TD(props: TableCellProps) {
+  return <td className="text-foreground/90 px-4 py-3 align-top" {...props} />;
 }

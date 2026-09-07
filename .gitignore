@@ -54,6 +54,8 @@ bld/
 *.VisualState.xml
 TestResult.xml
 
+**/coveragereport/
+
 # Build Results of an ATL Project
 [Dd]ebugPS/
 [Rr]eleasePS/

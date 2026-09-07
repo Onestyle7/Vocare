@@ -62,6 +62,7 @@ namespace VocareWebAPI.CvGenerator.Services.Implementations
                 Certificates = MapCertificates(userProfile.Certificates),
                 Skills = userProfile.Skills ?? new List<string>(),
                 Languages = MapLanguages(userProfile.Languages),
+                Hobbies = new List<string>(),
             };
             return cv;
         }
@@ -92,9 +93,9 @@ namespace VocareWebAPI.CvGenerator.Services.Implementations
                         Position = work.Position,
                         StartDate = FormatDate(work.StartDate),
                         EndDate = FormatDate(work.EndDate) ?? "Present",
-                        Responsibilities = work.Responsibilities?.Any() == true ? work.Responsibilities.ToList() 
-                        : !string.IsNullOrWhiteSpace(work.Description) 
-                        ? new List<string> { work.Description } 
+                        Responsibilities = work.Responsibilities?.Any() == true ? work.Responsibilities.ToList()
+                        : !string.IsNullOrWhiteSpace(work.Description)
+                        ? new List<string> { work.Description }
                         : new List<string>(),
                     })
                     .ToList() ?? new List<CvWorkEntryDto>();

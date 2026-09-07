@@ -12,7 +12,13 @@ export const articleSchema = z.object({
   author: z.string().optional(),
   coverImage: z.string().startsWith('/'),
   date: z.coerce.date(),
+  updatedAt: z.coerce.date().optional(),
   tags: z.array(z.string()),
+  // Declarative slug mirroring the filename. The app still derives the
+  // canonical slug from the filename (see blogUtils.ts) - this field exists
+  // so external tooling (SEO/content analyzers) that read frontmatter
+  // directly can see the URL without inferring it from the file path.
+  slug: z.string().optional(),
 });
 
 export type ArticleMetadata = z.infer<typeof articleSchema> & { slug: string };
@@ -31,3 +37,9 @@ export type HrProps = ComponentPropsWithoutRef<'hr'>;
 export type StrongProps = ComponentPropsWithoutRef<'strong'>;
 export type EmProps = ComponentPropsWithoutRef<'em'>;
 export type HeadingTwoProps = ComponentPropsWithoutRef<'h2'>;
+export type TableProps = ComponentPropsWithoutRef<'table'>;
+export type TableHeadProps = ComponentPropsWithoutRef<'thead'>;
+export type TableBodyProps = ComponentPropsWithoutRef<'tbody'>;
+export type TableRowProps = ComponentPropsWithoutRef<'tr'>;
+export type TableHeaderCellProps = ComponentPropsWithoutRef<'th'>;
+export type TableCellProps = ComponentPropsWithoutRef<'td'>;

@@ -270,6 +270,7 @@ namespace VocareWebAPI.CvGenerator.Services.Implementation
                 Languages = new List<CvLanguageEntryDto>(),
                 Projects = new List<CvProjectDto>(),
                 Social = new List<CvSocialDto>(),
+                Hobbies = new List<string>(),
             };
         }
     }

@@ -107,6 +107,11 @@ namespace VocareWebAPI.Services
                 profile.WorkExperience.Clear();
                 profile.Certificates.Clear();
                 profile.Languages.Clear();
+
+                profile.Education.Clear();
+                profile.WorkExperience.Clear();
+                profile.Certificates.Clear();
+                profile.Languages.Clear();
             }
 
             // Zachowujemy istniejącą ankietę finansową, aby uniknąć duplikacji

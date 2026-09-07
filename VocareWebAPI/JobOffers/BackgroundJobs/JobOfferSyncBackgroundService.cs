@@ -66,6 +66,7 @@ namespace VocareWebAPI.JobOffers.BackgroundJobs
                                 source,
                                 stoppingToken
                             );
+
                             totalRemoved += cleanupResult.RemovedCount;
                             _logger.LogInformation(
                                 "Cleanup {Source}: usunięto: {Removed} ofert",
