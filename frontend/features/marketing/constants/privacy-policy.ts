@@ -13,7 +13,7 @@ export const privacy_policy = {
       title: '§ 2. Administrator Danych Osobowych',
       points: [
         'Administratorem Twoich danych osobowych jest: Kacper Jóźwik, prowadzący działalność nieewidencjonowaną zgodnie z art. 5 ust. 1 ustawy Prawo przedsiębiorców.',
-        'Adres e-mail: vocarecontact@gmail.com.',
+        'Adres e-mail: kontakt@vocare.pl.',
         'Vocare zobowiązuje się odpowiedzieć na wiadomości od Użytkowników w terminie do 48 godzin.',
         'Administrator nie powołał Inspektora Ochrony Danych. We wszelkich sprawach związanych z przetwarzaniem danych można kontaktować się bezpośrednio z Administratorem mailowo.',
       ],

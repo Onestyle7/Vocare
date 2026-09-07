@@ -379,7 +379,7 @@ export const links_pages = [
   { name: 'BLOG', url: '/blog' },
 ];
 
-export const contact_pages = [{ name: 'EMAIL', url: 'mailto:vocarecontact@gmail.com' }];
+export const contact_pages = [{ name: 'EMAIL', url: 'mailto:kontakt@vocare.pl' }];
 
 export const down_links = [
   { name: '2026©', url: '/' },
