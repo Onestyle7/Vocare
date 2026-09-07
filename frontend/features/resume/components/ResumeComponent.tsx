@@ -193,6 +193,11 @@ interface DraggedResumeItem {
   itemId: string;
 }
 
+const PRIVACY_CONSENT_TEMPLATES: Record<ResumePreviewLanguage, string> = {
+  pl: 'Wyrażam zgodę na przetwarzanie moich danych osobowych dla potrzeb niezbędnych do realizacji procesu rekrutacji zgodnie z Rozporządzeniem Parlamentu Europejskiego i Rady (UE) 2016/679 z dnia 27 kwietnia 2016 r. w sprawie ochrony osób fizycznych w związku z przetwarzaniem danych osobowych i w sprawie swobodnego przepływu takich danych oraz uchylenia dyrektywy 95/46/WE (RODO).',
+  en: 'I hereby give consent for my personal data included in this application to be processed for the purposes of the recruitment process under the Regulation (EU) 2016/679 of the European Parliament and of the Council of 27 April 2016 on the protection of natural persons with regard to the processing of personal data and on the free movement of such data (GDPR).',
+};
+
 const DEFAULT_PERSONAL_INFO: PersonalInfo = {
   firstName: '',
   lastName: '',
@@ -648,6 +653,8 @@ const CVCreator: React.FC<CVCreatorProps> = ({ initialCv, initialLimits = null }
     style.textContent = `
       .cv-section { break-inside: avoid; page-break-inside: avoid; }
       .cv-page { background: #fff; }
+      .cv-text { overflow-wrap: anywhere; word-break: normal; }
+      .cv-text * { min-width: 0; }
       @media print {
         body { background: #fff !important; }
         .cv-page { width: 210mm; height: 297mm; page-break-after: always; box-shadow: none !important; }
@@ -1332,6 +1339,19 @@ const CVCreator: React.FC<CVCreatorProps> = ({ initialCv, initialLimits = null }
     } else {
       return date.getFullYear().toString();
     }
+  };
+
+  const privacyConsentTemplate = PRIVACY_CONSENT_TEMPLATES[resumePreviewLanguage];
+  const hasPrivacyConsentTemplate = privacyStatement.content.includes(privacyConsentTemplate);
+
+  const applyPrivacyConsentTemplate = () => {
+    setPrivacyStatement((prev) => {
+      const current = prev.content.trim();
+      return {
+        ...prev,
+        content: current ? `${current}\n\n${privacyConsentTemplate}` : privacyConsentTemplate,
+      };
+    });
   };
 
   const handleZoomIn = () => {
@@ -3732,7 +3752,7 @@ const CVCreator: React.FC<CVCreatorProps> = ({ initialCv, initialLimits = null }
               Dodaj klauzulę informacyjną dotyczącą prywatności lub zgodę na przetwarzanie danych.
             </p>
             <textarea
-              placeholder="Wyrażam zgodę na przetwarzanie danych osobowych podanych w tym dokumencie na potrzeby procesu rekrutacyjnego..."
+              placeholder="Wyrażam zgodę na przetwarzanie danych osobowych..."
               value={privacyStatement.content}
               onChange={(e) =>
                 setPrivacyStatement({ ...privacyStatement, content: e.target.value })
@@ -3740,6 +3760,16 @@ const CVCreator: React.FC<CVCreatorProps> = ({ initialCv, initialLimits = null }
               rows={3}
               className="w-full resize-none rounded-lg border border-gray-300 px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:outline-none"
             />
+            <button
+              type="button"
+              onClick={applyPrivacyConsentTemplate}
+              disabled={hasPrivacyConsentTemplate}
+              className="mt-2 flex cursor-pointer items-center font-medium text-[#915EFF] disabled:cursor-not-allowed disabled:opacity-50"
+              title="Wklej standardową zgodę RODO"
+            >
+              <span className="mr-2 text-xl">+</span>
+              Użyj gotowej zgody
+            </button>
           </div>
         );
 
@@ -4051,7 +4081,7 @@ const CVCreator: React.FC<CVCreatorProps> = ({ initialCv, initialLimits = null }
         {personalInfo.email && (
           <div className="flex items-center">
             <Mail size={14} className="mr-2 flex-shrink-0" />
-            <span className="break-all">{personalInfo.email}</span>
+            <span>{personalInfo.email}</span>
           </div>
         )}
         {personalInfo.phone && (
@@ -4886,6 +4916,7 @@ const CVCreator: React.FC<CVCreatorProps> = ({ initialCv, initialLimits = null }
             {/* Hidden measurement container to compute heights */}
             <div
               ref={measureContainerRef}
+              className="cv-text"
               style={{
                 position: 'absolute',
                 left: '-10000px',
@@ -4924,7 +4955,7 @@ const CVCreator: React.FC<CVCreatorProps> = ({ initialCv, initialLimits = null }
                 ).map((page, idx) => (
                   <div
                     key={`page-${idx}`}
-                    className="cv-page mb-6 overflow-hidden rounded-sm shadow"
+                    className="cv-page cv-text mb-6 overflow-hidden rounded-sm shadow"
                     style={{
                       width: `${PAGE_WIDTH_MM}mm`,
                       height: `${PAGE_HEIGHT_MM}mm`,
