@@ -10,6 +10,7 @@ import { CookieBanner } from '@/components/SupportComponents/CookieBanner';
 import { Toaster } from '@/components/ui/sonner';
 import { ThemeProvider } from '@/components/ui/theme-provider';
 import { AuthProvider } from '@/features/auth/components/AuthProvider';
+import { forceLoginRedirect } from '@/features/auth/utils/login-redirect';
 import { TokenBalanceProvider } from '@/features/billing/components/SubscriptionTokenProvider';
 import { SubscriptionStatus } from '@/features/billing/dal/api';
 import { getTokenSubscriptionStatus } from '@/features/billing/dal/queries';
@@ -147,9 +148,16 @@ export default async function RootLayout({
   let pendingLegalDocuments: PendingDocumentDto[] = [];
   if (isAuthenticated) {
     const [pendingLegalErr, pendingLegalData] = await getPendingLegalDocuments();
-    if (!pendingLegalErr && pendingLegalData) {
-      pendingLegalDocuments = pendingLegalData;
+
+    if (pendingLegalErr) {
+      if (pendingLegalErr.type === 'Unauthorized') {
+        await forceLoginRedirect(pendingLegalErr.message);
+      }
+
+      throw new Error(pendingLegalErr.message);
     }
+
+    pendingLegalDocuments = pendingLegalData;
   }
 
   let tokenCount = 0;

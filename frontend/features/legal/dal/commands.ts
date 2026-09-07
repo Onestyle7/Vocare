@@ -2,6 +2,7 @@
 
 import { cookies } from 'next/headers';
 
+import { AUTH_COOKIE_OPTIONS } from '@/features/auth/auth-cookie';
 import { invalidateUserTag } from '@/lib/tags';
 import { actionErr, actionOk } from '@/lib/types/result';
 
@@ -13,16 +14,17 @@ export async function acceptLegalConsents(command: AcceptConsentsCommand) {
 
   return result.match(
     async (response) => {
-      if (response.accessToken) {
-        const cookieStore = await cookies();
-        cookieStore.set('token', response.accessToken, {
-          httpOnly: true,
-          sameSite: 'lax',
-          path: '/',
-        });
+      if (!response.accessToken) {
+        return actionErr({
+          type: 'GenericApiError',
+          message: 'Nie udało się odświeżyć sesji po zapisaniu zgód.',
+        } as const);
       }
+
+      const cookieStore = await cookies();
+      cookieStore.set('token', response.accessToken, AUTH_COOKIE_OPTIONS);
       await invalidateUserTag('legalConsents');
-      return actionOk(response);
+      return actionOk({ success: response.success });
     },
     (error) => actionErr(error)
   );

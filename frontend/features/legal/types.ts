@@ -15,7 +15,7 @@ export interface AcceptConsentsCommand {
 
 export interface AcceptConsentsResult {
   success: boolean;
-  accessToken?: string;
+  accessToken: string;
 }
 
 export interface ConsentStatusResult {

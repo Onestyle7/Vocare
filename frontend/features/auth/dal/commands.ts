@@ -4,6 +4,7 @@ import { revalidatePath } from 'next/cache';
 import { cookies } from 'next/headers';
 import { redirect } from 'next/navigation';
 
+import { AUTH_COOKIE_OPTIONS } from '@/features/auth/auth-cookie';
 import {
   ForgotPasswordCommand,
   getOAuthEndpoint,
@@ -45,16 +46,8 @@ export async function signIn(command: SignInCommand) {
 
   return result.match(
     (signInResult) => {
-      cookieStore.set('token', signInResult.accessToken, {
-        httpOnly: true,
-        sameSite: 'lax',
-        path: '/',
-      });
-      cookieStore.set('userId', signInResult.userId, {
-        httpOnly: true,
-        sameSite: 'lax',
-        path: '/',
-      });
+      cookieStore.set('token', signInResult.accessToken, AUTH_COOKIE_OPTIONS);
+      cookieStore.set('userId', signInResult.userId, AUTH_COOKIE_OPTIONS);
       return actionOk({ success: true });
     },
     (error) => actionErr(error)
