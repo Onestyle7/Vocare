@@ -3,6 +3,7 @@ import { redirect } from 'next/navigation';
 import { NextRequest, NextResponse } from 'next/server';
 import z from 'zod';
 
+import { AUTH_COOKIE_OPTIONS } from '@/features/auth/auth-cookie';
 import { getOAuthEndpoint } from '@/features/auth/dal/api';
 import { verifyOauthTokenService } from '@/features/auth/dal/services';
 import { getOauthClient, oAuthProviders, STATE_COOKIE_KEY } from '@/features/auth/oauth/base';
@@ -45,12 +46,7 @@ export async function GET(
   }
 
   const cookieStore = await cookies();
-  cookieStore.set('token', result.value.accessToken, {
-    httpOnly: true,
-    secure: process.env.NODE_ENV !== 'development',
-    sameSite: 'lax',
-    path: '/',
-  });
+  cookieStore.set('token', result.value.accessToken, AUTH_COOKIE_OPTIONS);
   cookieStore.delete(STATE_COOKIE_KEY);
 
   const callbackUrl = cookieStore.get('oauthCallbackUrl')?.value;
@@ -58,6 +54,6 @@ export async function GET(
     cookieStore.delete('oauthCallbackUrl');
   }
 
-  cookieStore.set('userId', result.value.userId, { httpOnly: true, sameSite: 'lax', path: '/' });
+  cookieStore.set('userId', result.value.userId, AUTH_COOKIE_OPTIONS);
   redirect(callbackUrl || '/dashboard');
 }

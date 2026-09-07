@@ -56,7 +56,8 @@ export function LegalConsentModal({
     });
   };
 
-  const isAllAccepted = documents.length > 0 && acceptedDocIds.size === documents.length;
+  const isAllAccepted =
+    documents.length > 0 && documents.every((document) => acceptedDocIds.has(document.id));
 
   const handleSubmit = async () => {
     if (!isAllAccepted || isSubmitting || isLoggingOut) return;
@@ -64,43 +65,45 @@ export function LegalConsentModal({
     setIsSubmitting(true);
     setErrorMessage(null);
 
-    const [error, data] = await acceptLegalConsents({
-      documentIds: Array.from(acceptedDocIds),
-    });
+    try {
+      const [error] = await acceptLegalConsents({
+        documentIds: Array.from(acceptedDocIds),
+      });
 
-    setIsSubmitting(false);
+      if (error) {
+        setErrorMessage(error.message || 'Wystąpił błąd podczas akceptacji regulaminów.');
+        toast.error('Nie udało się zapisać zgód. Spróbuj ponownie.');
+        return;
+      }
 
-    if (error) {
-      setErrorMessage(error.message || 'Wystąpił błąd podczas akceptacji regulaminów.');
+      toast.success('Zgody prawne zostały pomyślnie zaakceptowane.');
+      onSuccess();
+    } catch {
+      setErrorMessage('Wystąpił błąd podczas akceptacji regulaminów.');
       toast.error('Nie udało się zapisać zgód. Spróbuj ponownie.');
-      return;
+    } finally {
+      setIsSubmitting(false);
     }
-
-    if (data?.accessToken && typeof window !== 'undefined') {
-      localStorage.setItem('token', data.accessToken);
-    }
-
-    toast.success('Zgody prawne zostały pomyślnie zaakceptowane.');
-    onSuccess();
   };
 
   const handleLogout = async () => {
+    if (isSubmitting || isLoggingOut) return;
+
     setIsLoggingOut(true);
+
     try {
-      onLogout?.();
       await logOut();
-      if (typeof window !== 'undefined') {
+      onLogout?.();
+
+      try {
         localStorage.removeItem('token');
-        window.location.href = '/sign-in';
-      } else {
-        router.replace('/sign-in');
+      } catch {
+        // Legacy storage can be unavailable without preventing a cookie-based logout.
       }
+
+      router.replace('/sign-in');
     } catch {
-      if (typeof window !== 'undefined') {
-        window.location.href = '/sign-in';
-      } else {
-        router.replace('/sign-in');
-      }
+      toast.error('Nie udało się wylogować. Spróbuj ponownie.');
     } finally {
       setIsLoggingOut(false);
     }
@@ -113,22 +116,22 @@ export function LegalConsentModal({
   return (
     <Dialog open={isOpen}>
       <DialogContent
-        hideCloseButton={true}
+        hideCloseButton
         onEscapeKeyDown={(e) => e.preventDefault()}
         onPointerDownOutside={(e) => e.preventDefault()}
-        className="max-w-lg border-zinc-800 bg-zinc-950 p-6 text-zinc-100 shadow-2xl"
+        className="border-border bg-background text-foreground max-h-[calc(100dvh-2rem)] max-w-lg overflow-y-auto p-6 shadow-2xl"
       >
         <DialogHeader className="gap-2">
-          <div className="flex items-center gap-2 text-primary">
+          <div className="text-primary flex items-center gap-2">
             <ShieldCheck className="size-6 text-[#915EFF]" />
-            <span className="text-xs font-semibold uppercase tracking-wider text-[#915EFF]">
+            <span className="text-xs font-semibold tracking-wider text-[#915EFF] uppercase">
               Wymagana akceptacja
             </span>
           </div>
-          <DialogTitle className="text-xl font-bold text-white">
+          <DialogTitle className="text-foreground text-xl font-bold">
             Aktualizacja Dokumentów Prawnych
           </DialogTitle>
-          <DialogDescription className="text-sm text-zinc-400">
+          <DialogDescription className="text-muted-foreground text-sm">
             Aby kontynuować korzystanie z serwisu Vocare, zapoznaj się z poniższymi dokumentami i
             potwierdź ich akceptację.
           </DialogDescription>
@@ -142,15 +145,15 @@ export function LegalConsentModal({
             return (
               <div
                 key={doc.id}
-                className="rounded-lg border border-zinc-800 bg-zinc-900/60 p-4 transition-colors hover:border-zinc-700"
+                className="border-border bg-muted/40 hover:border-muted-foreground/40 rounded-lg border p-4 transition-colors"
               >
-                <div className="flex items-start justify-between gap-3">
+                <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
                   <div className="flex items-center gap-2">
-                    <FileText className="size-4.5 text-zinc-400" />
+                    <FileText className="text-muted-foreground size-4.5" />
                     <div>
-                      <p className="text-sm font-medium text-zinc-100">
+                      <p className="text-foreground text-sm font-medium">
                         {label}{' '}
-                        <span className="text-xs text-zinc-500 font-normal">
+                        <span className="text-muted-foreground text-xs font-normal">
                           (wersja {doc.version})
                         </span>
                       </p>
@@ -167,17 +170,17 @@ export function LegalConsentModal({
                   </a>
                 </div>
 
-                <div className="mt-3 flex items-center space-x-2 pt-2 border-t border-zinc-800/80">
+                <div className="border-border mt-3 flex items-start space-x-2 border-t pt-2">
                   <Checkbox
                     id={`consent-${doc.id}`}
                     checked={isChecked}
                     onCheckedChange={() => toggleDocument(doc.id)}
                     disabled={isSubmitting || isLoggingOut}
-                    className="data-[state=checked]:bg-[#915EFF] data-[state=checked]:border-[#915EFF]"
+                    className="data-[state=checked]:border-[#915EFF] data-[state=checked]:bg-[#915EFF]"
                   />
                   <label
                     htmlFor={`consent-${doc.id}`}
-                    className="cursor-pointer text-xs text-zinc-300 select-none leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+                    className="text-foreground/80 cursor-pointer text-xs leading-snug select-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
                   >
                     Oświadczam, że zapoznałem się z dokumentem i akceptuję jego postanowienia.
                   </label>
@@ -188,16 +191,18 @@ export function LegalConsentModal({
         </div>
 
         {errorMessage && (
-          <p className="text-xs text-rose-500 text-center font-medium">{errorMessage}</p>
+          <p role="alert" className="text-destructive text-center text-xs font-medium">
+            {errorMessage}
+          </p>
         )}
 
-        <DialogFooter className="mt-4 flex flex-col-reverse gap-2 sm:flex-row sm:justify-between sm:space-x-2">
+        <DialogFooter className="mt-4 sm:justify-between">
           <Button
             type="button"
             variant="outline"
             onClick={handleLogout}
             disabled={isSubmitting || isLoggingOut}
-            className="border-zinc-800 bg-zinc-900/80 text-zinc-400 hover:bg-zinc-800 hover:text-zinc-200"
+            className="text-muted-foreground hover:text-foreground"
           >
             {isLoggingOut ? (
               <>
@@ -216,7 +221,7 @@ export function LegalConsentModal({
             type="button"
             onClick={handleSubmit}
             disabled={!isAllAccepted || isSubmitting || isLoggingOut}
-            className="bg-[#915EFF] hover:bg-[#7d4de3] text-white font-medium disabled:opacity-50"
+            className="bg-[#915EFF] font-medium text-white hover:bg-[#7d4de3] disabled:opacity-50"
           >
             {isSubmitting ? (
               <>
