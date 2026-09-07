@@ -30,7 +30,6 @@ namespace VocareWebAPI.JobOffers.Services.Implementations
         }
 
         public async Task<SyncResult> SyncOffersAsync(CancellationToken cancellationToken = default)
-        public async Task<SyncResult> SyncOffersAsync(CancellationToken cancellationToken = default)
         {
             var totalResult = new SyncResult();
             foreach (var provider in _providers)
@@ -183,10 +182,6 @@ namespace VocareWebAPI.JobOffers.Services.Implementations
             return result;
         }
 
-        public async Task<CleanupResult> CleanupStaleOffersAsync(
-            JobOfferSource source,
-            CancellationToken cancellationToken = default
-        )
         public async Task<CleanupResult> CleanupStaleOffersAsync(
             JobOfferSource source,
             CancellationToken cancellationToken = default

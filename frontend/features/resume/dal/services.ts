@@ -6,13 +6,11 @@ import { BaseAppError } from '@/lib/types/result';
 import {
   CreateCvDto,
   CvAnalysisResult,
-  CvAnalysisResult,
   cvApiClient,
   CvDetailsDto,
   CvLimits,
   CvListItemDto,
   GenerateCvFromProfileDto,
-  TailorCvDto,
   TailorCvDto,
   UpdateCvDto,
 } from './api';
@@ -25,31 +23,9 @@ export type CvDomainError = BaseAppError<
   | 'CvLimitReached'
   | 'InsufficientTokens'
   | 'GenericApiError'
-  | 'Unauthorized'
-  | 'NotFound'
-  | 'InvalidOperation'
-  | 'CvLimitReached'
-  | 'InsufficientTokens'
-  | 'GenericApiError'
 >;
 
 const mapCvError = (error: ApiError): CvDomainError => {
-  if (error.details?.errorCode === 'CV_LIMIT_REACHED') {
-    return {
-      type: 'CvLimitReached',
-      message: 'Osiągnięto limit CV dla Twojego planu',
-      details: error.details,
-    };
-  }
-
-  if (error.details?.errorCode === 'INSUFFICIENT_TOKENS') {
-    return {
-      type: 'InsufficientTokens',
-      message: 'Masz za mało tokenów, aby wykonać tę operację',
-      details: error.details,
-    };
-  }
-
   if (error.details?.errorCode === 'CV_LIMIT_REACHED') {
     return {
       type: 'CvLimitReached',
@@ -95,7 +71,6 @@ const normalizeDetails = (data: CvDetailsDto): CvDetailsDto => ({
   targetPosition: data.targetPosition ?? undefined,
   hasPersistedHobbies: hasPersistedHobbies(data.cvData),
   cvData: normalizeCvDto(data.cvData),
-  notes: data.notes ?? undefined,
   notes: data.notes ?? undefined,
 });
 
@@ -164,39 +139,6 @@ export async function GenerateCvFromProfileService(
   );
 
   return result.map((response) => normalizeDetails(response.data)).mapErr(mapCvError);
-}
-
-export async function tailorCvService(
-  payload: TailorCvDto,
-  requestOptions?: RequestInit
-): Promise<Result<CvDetailsDto, CvDomainError>> {
-  const result = await cvApiClient.post<CvDetailsDto, TailorCvDto>(
-    'tailor',
-    payload,
-    requestOptions
-  );
-
-  return result.map((response) => normalizeDetails(response.data)).mapErr(mapCvError);
-}
-
-export async function getCvAnalysisService(
-  id: string,
-  requestOptions?: RequestInit
-): Promise<Result<CvAnalysisResult, CvDomainError>> {
-  const result = await cvApiClient.get<CvAnalysisResult>(`analysis/${id}`, requestOptions);
-  return result.map((response) => response.data).mapErr(mapCvError);
-}
-
-export async function analyzeCvService(
-  id: string,
-  requestOptions?: RequestInit
-): Promise<Result<CvAnalysisResult, CvDomainError>> {
-  const result = await cvApiClient.post<CvAnalysisResult>(
-    `analyze/${id}`,
-    undefined,
-    requestOptions
-  );
-  return result.map((response) => response.data).mapErr(mapCvError);
 }
 
 export async function tailorCvService(

@@ -5,7 +5,6 @@ import {
   Bold,
   Briefcase,
   CalendarDays,
-  CalendarDays,
   ChevronLeft,
   ChevronRight,
   FolderOpen,
@@ -30,10 +29,8 @@ import {
   ZoomOut,
 } from 'lucide-react';
 import Image from 'next/image';
-import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 import React, { useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react';
-import { toast } from 'sonner';
 import { toast } from 'sonner';
 
 import { HoverCard, HoverCardContent, HoverCardTrigger } from '@/components/ui/hover-card';
@@ -45,10 +42,8 @@ import {
   SelectValue,
 } from '@/components/ui/select';
 import { download_propfile_cv, offer_type } from '@/features/marketing/constants';
-import { download_propfile_cv, offer_type } from '@/features/marketing/constants';
 import { useAutosave } from '@/lib/hooks/useAutosave';
 import { useIsMobile } from '@/lib/hooks/useIsMobile';
-import { CvDetailsDto, CvDto, CvLimits } from '@/lib/types/cv';
 import { CvDetailsDto, CvDto, CvLimits } from '@/lib/types/cv';
 import { getEducationDegreeLabel } from '@/lib/types/profile';
 import { makeClientId } from '@/lib/utils/id';
@@ -66,11 +61,6 @@ import { claimLegacyHobbiesForCv } from '../utils/legacyHobbies';
 import { reorderResumeItemByOffset, reorderResumeItems } from '../utils/reorderResumeItems';
 import { CvAnalysisDrawer } from './CvAnalysisDrawer';
 import { DatePickerWithCurrent } from './DatePickerWithCurrent';
-import { ResumeAnalysisPromoButton } from './ResumeAnalysisPromoButton';
-import TailorCvFromEditorDialog, {
-  TailorCvMode,
-  TailorCvSubmitResult,
-} from './TailorCvFromEditorDialog';
 import { ResumeAnalysisPromoButton } from './ResumeAnalysisPromoButton';
 import TailorCvFromEditorDialog, {
   TailorCvMode,
@@ -148,7 +138,6 @@ interface PrivacyStatement {
 
 interface CVCreatorProps {
   initialCv?: CvDetailsDto;
-  initialLimits?: CvLimits | null;
   initialLimits?: CvLimits | null;
 }
 interface SocialLink {
@@ -351,15 +340,7 @@ const ensureCertificateDefaults = (cert: Partial<Certificate>): Certificate => (
 });
 
 const CVCreator: React.FC<CVCreatorProps> = ({ initialCv, initialLimits = null }) => {
-const CVCreator: React.FC<CVCreatorProps> = ({ initialCv, initialLimits = null }) => {
   const router = useRouter();
-  const {
-    handleAutosave,
-    handleGetCvLimits,
-    handleLoadFromProfile,
-    handleCreateTailoredCopy,
-    handleReplaceWithTailoredCv,
-  } = useResumeDetailsActions();
   const {
     handleAutosave,
     handleGetCvLimits,
@@ -396,14 +377,6 @@ const CVCreator: React.FC<CVCreatorProps> = ({ initialCv, initialLimits = null }
 
   const [isPremium] = useState(false);
   const [cvId, setCvId] = useState<string | null>(initialCv?.id ?? null);
-  const [isAnalysisOpen, setIsAnalysisOpen] = useState(false);
-  const [isTailorDialogOpen, setIsTailorDialogOpen] = useState(false);
-  const [isTailoring, setIsTailoring] = useState(false);
-  const [isCheckingCvLimits, setIsCheckingCvLimits] = useState(false);
-  const [isLoadingProfile, setIsLoadingProfile] = useState(false);
-  const [isManualSaving, setIsManualSaving] = useState(false);
-  const [cvLimits, setCvLimits] = useState<CvLimits | null>(initialLimits);
-  const [highlightedFormSection, setHighlightedFormSection] = useState<string | null>(null);
   const [isAnalysisOpen, setIsAnalysisOpen] = useState(false);
   const [isTailorDialogOpen, setIsTailorDialogOpen] = useState(false);
   const [isTailoring, setIsTailoring] = useState(false);
@@ -2031,7 +2004,6 @@ const CVCreator: React.FC<CVCreatorProps> = ({ initialCv, initialLimits = null }
 
   const autosaveFn = async (payload: typeof autosavePayload) => {
     await handleAutosave(payload);
-    await handleAutosave(payload);
   };
 
   const {
@@ -2042,17 +2014,8 @@ const CVCreator: React.FC<CVCreatorProps> = ({ initialCv, initialLimits = null }
     resume: resumeAutosave,
     reset: resetAutosave,
   } = useAutosave({
-  const {
-    status: autosaveStatus,
-    trigger,
-    pause: pauseAutosave,
-    flush: flushAutosave,
-    resume: resumeAutosave,
-    reset: resetAutosave,
-  } = useAutosave({
     value: autosavePayload,
     enabled: canAutosave,
-    delay: 2000, // 2s od ostatniej zmiany
     delay: 2000, // 2s od ostatniej zmiany
   });
 
@@ -2087,161 +2050,6 @@ const CVCreator: React.FC<CVCreatorProps> = ({ initialCv, initialLimits = null }
     resumeName,
   ]);
 
-  const handleTailorCvFromEditor = async (
-    values: { targetPosition: string; jobDescription: string },
-    mode: TailorCvMode
-  ): Promise<TailorCvSubmitResult> => {
-    if (!cvId) {
-      toast.error('Nie znaleziono aktualnie otwartego CV');
-      return 'error';
-    }
-
-    if (editorOperationRef.current) {
-      toast.info('Poczekaj na zakończenie trwającej operacji');
-      return 'error';
-    }
-
-    editorOperationRef.current = 'tailor';
-    setIsTailoring(true);
-    pauseAutosave();
-
-    try {
-      await flushAutosave(autosaveFn);
-
-      if (mode === 'copy') {
-        const result = await handleCreateTailoredCopy({
-          sourceCv: buildCvDto(),
-          targetPosition: values.targetPosition,
-          jobDescription: values.jobDescription,
-        });
-
-        if (result.status === 'limit-reached') {
-          resumeAutosave();
-          return 'limit-reached';
-        }
-
-        if (result.status === 'insufficient-tokens') {
-          resumeAutosave();
-          router.refresh();
-          if (result.cleanupFailed) {
-            toast.warning('Sprawdź listę swoich CV', {
-              description:
-                'Nie pobrano tokenów, ale utworzona kopia może nadal zajmować miejsce na Twoim koncie.',
-            });
-          }
-          return 'insufficient-tokens';
-        }
-
-        if (result.status === 'error') {
-          resumeAutosave();
-          router.refresh();
-          toast.error('Nie udało się utworzyć CV pod ofertę', {
-            description: result.cleanupFailed
-              ? 'Utworzona kopia może nadal zajmować miejsce. Sprawdź listę CV na dashboardzie.'
-              : 'Bazowe CV nie zostało zastąpione. Przed ponowną próbą sprawdź listę CV.',
-          });
-          return 'error';
-        }
-
-        setIsTailorDialogOpen(false);
-        toast.success('Utworzono CV pod ofertę', {
-          description: 'Bazowe CV nadal jest dostępne jako osobny dokument.',
-        });
-        resumeAutosave();
-        router.push(`/resume/${result.cv.id}`);
-        return 'success';
-      }
-
-      const result = await handleReplaceWithTailoredCv({
-        cvId,
-        resumeName,
-        targetPosition: values.targetPosition,
-        jobDescription: values.jobDescription,
-      });
-
-      if (result.status === 'insufficient-tokens') {
-        if (result.latestCv) {
-          pendingAutosaveHydrationRef.current = 'saved';
-          populateFromCv(result.latestCv.cvData, result.latestCv.targetPosition ?? '');
-        } else {
-          toast.error('Nie udało się potwierdzić stanu CV', {
-            description: 'Odświeżamy kreator, aby nie nadpisać nowszej treści.',
-          });
-          window.location.reload();
-          return 'error';
-        }
-        router.refresh();
-        return 'insufficient-tokens';
-      }
-
-      if (result.status === 'error') {
-        router.refresh();
-        if (result.latestCv) {
-          pendingAutosaveHydrationRef.current = 'saved';
-          populateFromCv(result.latestCv.cvData, result.latestCv.targetPosition ?? '');
-          setIsTailorDialogOpen(false);
-          toast.error('Nie udało się potwierdzić całej operacji', {
-            description:
-              'Wczytaliśmy ostatni stan CV z serwera. Sprawdź jego treść przed ponowną próbą.',
-          });
-        } else {
-          toast.error('Nie udało się potwierdzić stanu CV', {
-            description: 'Odświeżamy kreator, aby nie nadpisać nowszej treści.',
-          });
-          window.location.reload();
-        }
-        return 'error';
-      }
-
-      pendingAutosaveHydrationRef.current = result.metadataSaved ? 'saved' : 'needs-save';
-      populateFromCv(result.cv.cvData, values.targetPosition);
-      setIsTailorDialogOpen(false);
-      toast.success('CV zostało dopasowane pod ofertę', {
-        description: 'Poprzednia wersja aktualnego CV została zastąpiona.',
-      });
-
-      if (!result.metadataSaved) {
-        toast.warning('Spróbujemy zapisać stanowisko automatycznie', {
-          description: 'Treść CV została już poprawnie dopasowana.',
-        });
-      }
-
-      return 'success';
-    } catch (error) {
-      resumeAutosave();
-      router.refresh();
-      console.error('Failed to prepare CV for tailoring', error);
-      toast.error('Nie udało się zakończyć operacji', {
-        description: 'Odśwież listę CV i sprawdź dane przed ponowną próbą.',
-      });
-      return 'error';
-    } finally {
-      editorOperationRef.current = null;
-      setIsTailoring(false);
-    }
-  };
-
-  const handleOpenTailorDialog = () => {
-    const requestId = ++limitsRequestRef.current;
-    setCvLimits(null);
-    setIsCheckingCvLimits(true);
-    setIsTailorDialogOpen(true);
-
-    void handleGetCvLimits().then((limits) => {
-      if (limitsRequestRef.current !== requestId) return;
-      setCvLimits(limits);
-      setIsCheckingCvLimits(false);
-    });
-  };
-
-  const handleSave = async () => {
-    if (!cvId || editorOperationRef.current) return;
-
-    editorOperationRef.current = 'save';
-    setIsManualSaving(true);
-    try {
-      await flushAutosave(autosaveFn);
-      toast.success('CV zostało zapisane');
   const handleTailorCvFromEditor = async (
     values: { targetPosition: string; jobDescription: string },
     mode: TailorCvMode
@@ -2462,80 +2270,9 @@ const CVCreator: React.FC<CVCreatorProps> = ({ initialCv, initialLimits = null }
     scrollSettleTimeout = setTimeout(highlightSection, 180);
     // Zabezpieczenie dla przeglądarek emitujących scroll bez wyraźnego końca.
     scrollFallbackTimeout = setTimeout(highlightSection, 1600);
-      toast.error('Nie udało się zapisać CV');
-    } finally {
-      editorOperationRef.current = null;
-      setIsManualSaving(false);
-    }
-  };
-
-  const handleNavigateToFormSection = (sectionId: string) => {
-    const sectionElement = document.querySelector<HTMLElement>(
-      `[data-cv-form-section="${sectionId}"]`
-    );
-    if (!sectionElement) return;
-
-    const findScrollParent = (element: HTMLElement): HTMLElement | null => {
-      let parent = element.parentElement;
-      while (parent) {
-        const overflowY = window.getComputedStyle(parent).overflowY;
-        if (
-          (overflowY === 'auto' || overflowY === 'scroll') &&
-          parent.scrollHeight > parent.clientHeight
-        ) {
-          return parent;
-        }
-        parent = parent.parentElement;
-      }
-      return null;
-    };
-
-    const scrollParent = findScrollParent(sectionElement);
-    let scrollSettleTimeout: ReturnType<typeof setTimeout> | null = null;
-    let scrollFallbackTimeout: ReturnType<typeof setTimeout> | null = null;
-    let hasHighlighted = false;
-
-    const highlightSection = () => {
-      if (hasHighlighted) return;
-      hasHighlighted = true;
-
-      if (scrollSettleTimeout) clearTimeout(scrollSettleTimeout);
-      if (scrollFallbackTimeout) clearTimeout(scrollFallbackTimeout);
-      scrollParent?.removeEventListener('scroll', handleScroll);
-
-      setHighlightedFormSection(sectionId);
-
-      if (sectionHighlightTimeoutRef.current) {
-        clearTimeout(sectionHighlightTimeoutRef.current);
-      }
-      sectionHighlightTimeoutRef.current = setTimeout(() => {
-        setHighlightedFormSection((current) => (current === sectionId ? null : current));
-      }, 1100);
-    };
-
-    const handleScroll = () => {
-      if (scrollSettleTimeout) clearTimeout(scrollSettleTimeout);
-      scrollSettleTimeout = setTimeout(highlightSection, 140);
-    };
-
-    scrollParent?.addEventListener('scroll', handleScroll, { passive: true });
-    sectionElement.scrollIntoView({ behavior: 'smooth', block: 'center' });
-
-    // Obsługuje także sekcję, która już znajduje się w docelowym miejscu.
-    scrollSettleTimeout = setTimeout(highlightSection, 180);
-    // Zabezpieczenie dla przeglądarek emitujących scroll bez wyraźnego końca.
-    scrollFallbackTimeout = setTimeout(highlightSection, 1600);
   };
 
   const loadFromProfile = async () => {
-    if (!cvId || editorOperationRef.current) return;
-
-    editorOperationRef.current = 'profile';
-    setIsLoadingProfile(true);
-    pauseAutosave();
-
-    try {
-      await flushAutosave(autosaveFn);
     if (!cvId || editorOperationRef.current) return;
 
     editorOperationRef.current = 'profile';
@@ -2553,15 +2290,10 @@ const CVCreator: React.FC<CVCreatorProps> = ({ initialCv, initialLimits = null }
       );
 
       pendingAutosaveHydrationRef.current = 'saved';
-      pendingAutosaveHydrationRef.current = 'saved';
       populateFromCv(generated.cvData, generated.targetPosition || undefined);
     } catch (err) {
       resumeAutosave();
-      resumeAutosave();
       console.error('Failed to load from profile', err);
-    } finally {
-      editorOperationRef.current = null;
-      setIsLoadingProfile(false);
     } finally {
       editorOperationRef.current = null;
       setIsLoadingProfile(false);
@@ -3500,7 +3232,6 @@ const CVCreator: React.FC<CVCreatorProps> = ({ initialCv, initialLimits = null }
                             onCurrentChange={() => {}}
                             showCurrentToggle={false}
                             allowFutureDates={true}
-                            allowFutureDates={true}
                             placeholder="Wybierz datę rozpoczęcia"
                           />
                         </div>
@@ -3518,7 +3249,6 @@ const CVCreator: React.FC<CVCreatorProps> = ({ initialCv, initialLimits = null }
                                 updateEducation(edu.id, 'endDate', '');
                               }
                             }}
-                            allowFutureDates={true}
                             allowFutureDates={true}
                             placeholder="Wybierz datę zakończenia"
                           />
@@ -3853,7 +3583,6 @@ const CVCreator: React.FC<CVCreatorProps> = ({ initialCv, initialLimits = null }
                     />
                     <Select
                       value={normalizeFluency(language.level)}
-                      value={normalizeFluency(language.level)}
                       onValueChange={(value) => updateLanguage(language.id, 'level', value)}
                     >
                       <SelectTrigger className="font-poppins h-10 w-full rounded-sm border border-gray-300 px-2 text-sm focus:ring-2 focus:ring-blue-500 focus:outline-none sm:w-40">
@@ -3862,7 +3591,6 @@ const CVCreator: React.FC<CVCreatorProps> = ({ initialCv, initialLimits = null }
                       <SelectContent>
                         {FLUENCY_OPTIONS.map((option) => (
                           <SelectItem key={option} value={option}>
-                            {getFluencyLabel(option, 'pl')}
                             {getFluencyLabel(option, 'pl')}
                           </SelectItem>
                         ))}
@@ -4100,10 +3828,8 @@ const CVCreator: React.FC<CVCreatorProps> = ({ initialCv, initialLimits = null }
                 <div className="exp-header mb-1 flex items-start justify-between">
                   <div className="min-w-0 flex-1">
                     <div className="font-semibold break-words text-gray-900">
-                    <div className="font-semibold break-words text-gray-900">
                       {exp.position || 'Position'}
                     </div>
-                    <div className="font-medium break-words text-gray-700">
                     <div className="font-medium break-words text-gray-700">
                       {exp.company || 'Company name'}
                     </div>
@@ -4182,17 +3908,13 @@ const CVCreator: React.FC<CVCreatorProps> = ({ initialCv, initialLimits = null }
                 <div className="mb-1 flex items-start justify-between">
                   <div className="min-w-0 flex-1">
                     <h4 className="font-semibold break-words text-gray-900">
-                    <h4 className="font-semibold break-words text-gray-900">
                       {edu.field ||
                         (resumePreviewLanguage === 'pl'
                           ? 'Kierunek studiów'
                           : 'Field of study')}{' '}
                       {edu.degree.trim() &&
                         `- ${getEducationDegreeLabel(edu.degree, resumePreviewLanguage)}`}
-                      {edu.degree.trim() &&
-                        `- ${getEducationDegreeLabel(edu.degree, resumePreviewLanguage)}`}
                     </h4>
-                    <p className="font-medium break-words text-gray-700">
                     <p className="font-medium break-words text-gray-700">
                       {edu.school || 'School/University'}
                     </p>
@@ -4283,8 +4005,6 @@ const CVCreator: React.FC<CVCreatorProps> = ({ initialCv, initialLimits = null }
                   key={language.id}
                   className="rounded-full bg-purple-100 px-2 py-1 text-xs font-medium text-purple-800"
                 >
-                  {language.name || (resumePreviewLanguage === 'pl' ? 'Język' : 'Language')} -{' '}
-                  {getFluencyLabel(language.level, resumePreviewLanguage)}
                   {language.name || (resumePreviewLanguage === 'pl' ? 'Język' : 'Language')} -{' '}
                   {getFluencyLabel(language.level, resumePreviewLanguage)}
                 </span>
@@ -4472,10 +4192,8 @@ const CVCreator: React.FC<CVCreatorProps> = ({ initialCv, initialLimits = null }
             <div className="exp-header mb-1 flex items-start justify-between">
               <div className="min-w-0 flex-1">
                 <div className="font-semibold break-words text-gray-900">
-                <div className="font-semibold break-words text-gray-900">
                   {exp.position || 'Position'}
                 </div>
-                <div className="font-medium break-words text-gray-700">
                 <div className="font-medium break-words text-gray-700">
                   {exp.company || 'Company name'}
                 </div>
@@ -4537,14 +4255,12 @@ const CVCreator: React.FC<CVCreatorProps> = ({ initialCv, initialLimits = null }
             <div className="mb-1 flex items-start justify-between">
               <div className="min-w-0 flex-1">
                 <h4 className="font-semibold break-words text-gray-900">
-                <h4 className="font-semibold break-words text-gray-900">
                   {edu.field ||
                     (resumePreviewLanguage === 'pl' ? 'Kierunek studiów' : 'Field of study')}{' '}
                   -{' '}
                   {getEducationDegreeLabel(edu.degree, resumePreviewLanguage) ||
                     (resumePreviewLanguage === 'pl' ? 'Stopień' : 'Degree')}
                 </h4>
-                <p className="font-medium break-words text-gray-700">
                 <p className="font-medium break-words text-gray-700">
                   {edu.school || 'School/University'}
                 </p>
@@ -4724,7 +4440,6 @@ const CVCreator: React.FC<CVCreatorProps> = ({ initialCv, initialLimits = null }
 
       {/* Sidebar for Desktop */}
       <div className="relative z-30 mx-3 hidden w-16 shrink-0 flex-col items-center justify-between overflow-visible rounded-lg bg-white py-6 shadow-lg lg:flex">
-      <div className="relative z-30 mx-3 hidden w-16 shrink-0 flex-col items-center justify-between overflow-visible rounded-lg bg-white py-6 shadow-lg lg:flex">
         <div className="flex flex-col items-center gap-1">
           <button
             onClick={() => router.push('/dashboard/resume')}
@@ -4735,16 +4450,12 @@ const CVCreator: React.FC<CVCreatorProps> = ({ initialCv, initialLimits = null }
           </button>
           <button
             type="button"
-            type="button"
             onClick={handleSave}
-            disabled={isManualSaving || isLoadingProfile || isTailoring}
-            className="flex cursor-pointer flex-col items-center justify-center rounded-lg p-3 transition-colors hover:bg-gray-100 disabled:cursor-not-allowed disabled:opacity-50"
             disabled={isManualSaving || isLoadingProfile || isTailoring}
             className="flex cursor-pointer flex-col items-center justify-center rounded-lg p-3 transition-colors hover:bg-gray-100 disabled:cursor-not-allowed disabled:opacity-50"
             title="Save resume"
           >
             <Save size={16} className="h-6 w-6 text-gray-600" />
-            <div className="flex flex-row items-center justify-center text-[9px]">
             <div className="flex flex-row items-center justify-center text-[9px]">
               {autosaveStatus === 'saving' && <span className="text-gray-500">Saving…</span>}
               {autosaveStatus === 'saved' && <span className="text-green-600">Saved ✓</span>}
@@ -4799,60 +4510,11 @@ const CVCreator: React.FC<CVCreatorProps> = ({ initialCv, initialLimits = null }
               <SelectItem value="en">EN</SelectItem>
             </SelectContent>
           </Select>
-          <ResumeAnalysisPromoButton cvId={cvId} onAnalyze={() => setIsAnalysisOpen(true)} />
-          <Select
-            value={showFullDates ? 'full' : 'year'}
-            onValueChange={(value) => setShowFullDates(value === 'full')}
-          >
-            <SelectTrigger
-              aria-label={`Format daty: ${showFullDates ? 'Miesiąc i rok' : 'Tylko rok'}`}
-              title="Format daty"
-              className="h-12 w-12 cursor-pointer justify-center gap-0 rounded-lg border-0 bg-transparent p-0 shadow-none transition-colors hover:bg-gray-100! [&>svg:last-child]:hidden"
-            >
-              <CalendarDays aria-hidden="true" className="h-6! w-6! text-gray-600" />
-            </SelectTrigger>
-            <SelectContent
-              position="popper"
-              side="right"
-              align="center"
-              sideOffset={8}
-              avoidCollisions={false}
-              className="min-w-40"
-            >
-              <SelectItem value="full">Miesiąc i rok</SelectItem>
-              <SelectItem value="year">Tylko rok</SelectItem>
-            </SelectContent>
-          </Select>
-
-          <Select
-            value={resumePreviewLanguage}
-            onValueChange={(value) => setResumePreviewLanguage(value as ResumePreviewLanguage)}
-          >
-            <SelectTrigger
-              aria-label={`Język CV: ${resumePreviewLanguage.toUpperCase()}`}
-              title="Język CV"
-              className="h-12 w-12 cursor-pointer justify-center gap-0 rounded-lg border-0 bg-transparent p-0 shadow-none transition-colors hover:bg-gray-100! [&>svg:last-child]:hidden"
-            >
-              <Languages aria-hidden="true" className="h-6! w-6! text-gray-600" />
-            </SelectTrigger>
-            <SelectContent
-              position="popper"
-              side="right"
-              align="center"
-              sideOffset={8}
-              avoidCollisions={false}
-              className="min-w-24"
-            >
-              <SelectItem value="pl">PL</SelectItem>
-              <SelectItem value="en">EN</SelectItem>
-            </SelectContent>
-          </Select>
         </div>
 
         <HoverCard>
           <HoverCardTrigger asChild>
             <button className="flex h-12 w-12 cursor-pointer items-center justify-center rounded-sm bg-gray-100">
-              v1.1.0
               v1.1.0
             </button>
           </HoverCardTrigger>
@@ -4896,56 +4558,17 @@ const CVCreator: React.FC<CVCreatorProps> = ({ initialCv, initialLimits = null }
         onUpgrade={() => router.push('/pricing')}
       />
 
-      <CvAnalysisDrawer
-        cvId={cvId}
-        cvName={resumeName}
-        targetPosition={personalInfo.profession || undefined}
-        open={isAnalysisOpen}
-        onOpenChange={setIsAnalysisOpen}
-        onNavigateToSection={handleNavigateToFormSection}
-      />
-
-      <TailorCvFromEditorDialog
-        open={isTailorDialogOpen}
-        limits={cvLimits}
-        currentCvName={resumeName}
-        defaultTargetPosition={personalInfo.profession}
-        isCheckingLimits={isCheckingCvLimits}
-        isSubmitting={isTailoring}
-        onOpenChange={setIsTailorDialogOpen}
-        onSubmit={handleTailorCvFromEditor}
-        onUpgrade={() => router.push('/pricing')}
-      />
-
       {/* Main Content */}
       <div className="flex h-full flex-1 flex-col gap-3 overflow-hidden px-3 lg:flex-row lg:px-0">
         {!isMobile && (
           <div className="h-full overflow-y-auto rounded-lg bg-white shadow-lg lg:w-[48%]">
             <div className="max-h-full overflow-y-auto p-4 lg:p-6">
               <div className="mb-6 flex flex-wrap items-center justify-between gap-4">
-              <div className="mb-6 flex flex-wrap items-center justify-between gap-4">
                 <h1 className="text-xl font-bold text-gray-800 lg:text-xl">Kreator CV</h1>
                 <div className="flex flex-wrap items-center gap-3">
-                <div className="flex flex-wrap items-center gap-3">
                   <button
-                    type="button"
                     type="button"
                     onClick={loadFromProfile}
-                    disabled={isLoadingProfile || isTailoring || isManualSaving}
-                    className="flex cursor-pointer items-center justify-center gap-2 rounded-[6px] border-[1.5px] border-transparent px-4 py-2 text-sm font-medium whitespace-nowrap text-gray-900 [background:linear-gradient(#fff,#fff)_padding-box,linear-gradient(135deg,#9296FD_0%,#8491FE_50%,#9D9BFF_77%,#C7A9FE_100%)_border-box] hover:[background:linear-gradient(#F7F3FF,#F7F3FF)_padding-box,linear-gradient(135deg,#9296FD_0%,#8491FE_50%,#9D9BFF_77%,#C7A9FE_100%)_border-box] focus-visible:ring-2 focus-visible:ring-[#915EFF]/40 focus-visible:outline-none disabled:cursor-not-allowed disabled:opacity-50"
-                  >
-                    {isLoadingProfile ? 'Importowanie...' : 'Zaimportuj z profilu'}
-                    <Image src={download_propfile_cv} width={14} height={14} alt="offer-icon" />
-                  </button>
-                  <button
-                    type="button"
-                    onClick={handleOpenTailorDialog}
-                    disabled={isTailoring || isLoadingProfile || isManualSaving}
-                    className="flex cursor-pointer items-center justify-center gap-2 rounded-[6px] border-2 border-[#915EFF] bg-[#915EFF] px-4 py-2 text-sm font-medium whitespace-nowrap text-white transition-colors hover:border-[#713AE8] hover:bg-[#713AE8] focus-visible:ring-2 focus-visible:ring-[#915EFF]/40 focus-visible:ring-offset-2 focus-visible:outline-none disabled:cursor-not-allowed disabled:opacity-50"
-                    title="Stwórz CV na podstawie oferty pracy"
-                  >
-                    Stwórz CV pod ofertę
-                    <Image src={offer_type} width={16} height={16} alt="offer-icon" />
                     disabled={isLoadingProfile || isTailoring || isManualSaving}
                     className="flex cursor-pointer items-center justify-center gap-2 rounded-[6px] border-[1.5px] border-transparent px-4 py-2 text-sm font-medium whitespace-nowrap text-gray-900 [background:linear-gradient(#fff,#fff)_padding-box,linear-gradient(135deg,#9296FD_0%,#8491FE_50%,#9D9BFF_77%,#C7A9FE_100%)_border-box] hover:[background:linear-gradient(#F7F3FF,#F7F3FF)_padding-box,linear-gradient(135deg,#9296FD_0%,#8491FE_50%,#9D9BFF_77%,#C7A9FE_100%)_border-box] focus-visible:ring-2 focus-visible:ring-[#915EFF]/40 focus-visible:outline-none disabled:cursor-not-allowed disabled:opacity-50"
                   >
@@ -4966,14 +4589,6 @@ const CVCreator: React.FC<CVCreatorProps> = ({ initialCv, initialLimits = null }
               </div>
 
               {/* Personal Information Section */}
-              <div
-                data-cv-form-section="contact"
-                className={`mb-6 origin-center transform-gpu scroll-m-6 rounded-lg bg-gray-50 p-4 transition-[transform,box-shadow] duration-500 [transition-timing-function:cubic-bezier(0.22,1,0.36,1)] will-change-transform motion-reduce:transform-none lg:p-6 ${
-                  highlightedFormSection === 'contact'
-                    ? 'scale-[1.015] shadow-[0_0_0_3px_rgba(145,94,255,0.28),0_12px_32px_rgba(145,94,255,0.18)]'
-                    : 'scale-100'
-                }`}
-              >
               <div
                 data-cv-form-section="contact"
                 className={`mb-6 origin-center transform-gpu scroll-m-6 rounded-lg bg-gray-50 p-4 transition-[transform,box-shadow] duration-500 [transition-timing-function:cubic-bezier(0.22,1,0.36,1)] will-change-transform motion-reduce:transform-none lg:p-6 ${
@@ -5149,19 +4764,6 @@ const CVCreator: React.FC<CVCreatorProps> = ({ initialCv, initialLimits = null }
                 </div>
               </div>
 
-              {sectionOrder.map((sectionId) => (
-                <div
-                  key={sectionId}
-                  data-cv-form-section={sectionId}
-                  className={`origin-center transform-gpu scroll-m-6 rounded-lg transition-[transform,box-shadow] duration-500 [transition-timing-function:cubic-bezier(0.22,1,0.36,1)] will-change-transform motion-reduce:transform-none ${
-                    highlightedFormSection === sectionId
-                      ? 'scale-[1.015] shadow-[0_0_0_3px_rgba(145,94,255,0.28),0_12px_32px_rgba(145,94,255,0.18)]'
-                      : 'scale-100'
-                  }`}
-                >
-                  {renderSectionInForm(sectionId)}
-                </div>
-              ))}
               {sectionOrder.map((sectionId) => (
                 <div
                   key={sectionId}

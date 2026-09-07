@@ -3,7 +3,6 @@ import { notFound } from 'next/navigation';
 import { forceLoginRedirect } from '@/features/auth/utils/login-redirect';
 import CVCreator from '@/features/resume/components/ResumeComponent';
 import { getCvDetailsQuery, getCvLimitsQuery } from '@/features/resume/dal/queries';
-import { getCvDetailsQuery, getCvLimitsQuery } from '@/features/resume/dal/queries';
 
 interface ResumeDetailPageProps {
   params: Promise<{ resumeId: string }>;
@@ -16,10 +15,6 @@ export default async function ResumeDetailPage({ params }: ResumeDetailPageProps
     notFound();
   }
 
-  const [[error, cv], [limitsError, limits]] = await Promise.all([
-    getCvDetailsQuery(resumeId),
-    getCvLimitsQuery(),
-  ]);
   const [[error, cv], [limitsError, limits]] = await Promise.all([
     getCvDetailsQuery(resumeId),
     getCvLimitsQuery(),
