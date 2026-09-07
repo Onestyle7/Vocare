@@ -14,11 +14,17 @@ tags:
     'zmiana kariery',
     'rozwój zawodowy',
   ]
+slug: 'doradztwo-zawodowe'
 ---
 
 # Doradztwo zawodowe 2026 - kiedy naprawdę warto skorzystać
 
-Masz wrażenie, że pracujesz w złym miejscu, w złej branży, albo po prostu nie wiesz co chcesz robić zawodowo. I słyszysz: "idź do doradcy zawodowego". Ale co to właściwie jest? Czy to terapia, coaching, test osobowości czy coś zupełnie innego? **Doradztwo zawodowe to profesjonalna pomoc w podejmowaniu świadomych decyzji o karierze - oparta na diagnozie kompetencji, wartości i rynku pracy, nie na intuicji i wróżeniu z fusów.** Oto kiedy rzeczywiście warto, a kiedy możesz sobie poradzić sam.
+Masz wrażenie, że pracujesz w złym miejscu, w złej branży, albo po prostu nie wiesz co chcesz robić zawodowo. I słyszysz: "idź do doradcy zawodowego". Ale co to właściwie jest? Czy to terapia, coaching, test osobowości czy coś zupełnie innego? **Doradztwo zawodowe** to profesjonalna pomoc w podejmowaniu świadomych decyzji o karierze - oparta na diagnozie kompetencji, wartości i rynku pracy, nie na intuicji i wróżeniu z fusów. Oto kiedy rzeczywiście warto, a kiedy możesz sobie poradzić sam.
+
+> **Najważniejsze wnioski**
+> - Doradztwo zawodowe diagnozuje i planuje karierę - to nie headhunting, coaching ani terapia psychologiczna
+> - Bezpłatne opcje: PUP, WUP, OHP; prywatny doradca kosztuje 150-400 zł/sesję, pełny proces to 3-6 sesji
+> - Dobry doradca pyta o wartości, używa uznanych metod (RIASEC, MBTI) i daje konkretne, wykonalne kroki
 
 ---
 
@@ -42,7 +48,7 @@ Doradztwo zawodowe NIE jest:
 
 ## Kto prowadzi doradztwo zawodowe w Polsce?
 
-**Doradcy zawodowi** to osoby z wykształceniem i uprawnieniami do świadczenia tej usługi. W Polsce doradca zawodowy to zawód regulowany (kod zawodu 242304 w klasyfikacji GUS).
+**Doradcy zawodowi** to osoby z wykształceniem i uprawnieniami do świadczenia tej usługi. W Polsce doradca zawodowy to zawód regulowany (kod zawodu 242304 w [klasyfikacji zawodów GUS](https://stat.gov.pl)).
 
 **Gdzie można znaleźć doradcę zawodowego:**
 
@@ -112,10 +118,6 @@ Kompleksowy proces doradztwa zawodowego zazwyczaj obejmuje 3-6 sesji.
 **Alternatywa cyfrowa:**
 
 **[Vocare.pl](https://vocare.pl)** oferuje funkcje, które normalnie wymagają kilku sesji z doradcą - bezpłatnie i bez umawiania się:
-<<<<<<< HEAD:frontend/articles/doradztwo-zawodowe.md
-=======
-
->>>>>>> staging:frontend/features/blog/articles/doradztwo-zawodowe.md
 - Analiza kompetencji i wartości zawodowych
 - Rekomendacje ścieżek kariery z danymi rynkowymi (wynagrodzenia, deficyty kadrowe, wymagane umiejętności)
 - Roadmapa kompetencyjna do wybranej ścieżki - konkretne kroki, kursy, certyfikaty
@@ -125,21 +127,15 @@ Kompleksowy proces doradztwa zawodowego zazwyczaj obejmuje 3-6 sesji.
 
 ## Czym różni się doradca zawodowy od coacha kariery?
 
-**Doradca zawodowy**
-<<<<<<< HEAD:frontend/articles/doradztwo-zawodowe.md
-=======
+Różnica sprowadza się do podejścia: doradca aktywnie radzi i rekomenduje kierunek, coach pyta i pomaga Ci samodzielnie dojść do odpowiedzi. Wiele osób korzysta z obu na różnych etapach.
 
->>>>>>> staging:frontend/features/blog/articles/doradztwo-zawodowe.md
+**Doradca zawodowy**
 - **Podejście:** Diagnoza i rekomendacje - aktywnie radzi i sugeruje kierunki
 - **Cel:** Konkretna decyzja lub plan zawodowy
 - **Certyfikaty:** Zawód regulowany w Polsce (kod GUS 242304)
 - **Koszt:** Często bezpłatny w ramach PUP/WUP
 
 **Coach kariery**
-<<<<<<< HEAD:frontend/articles/doradztwo-zawodowe.md
-=======
-
->>>>>>> staging:frontend/features/blog/articles/doradztwo-zawodowe.md
 - **Podejście:** Facylitatywne - pyta i pomaga odkrywać własne odpowiedzi
 - **Cel:** Rozwój samoświadomości i praca nad mindsetem
 - **Certyfikaty:** Brak regulacji, różne certyfikaty (ICF, EMCC i inne)
@@ -192,3 +188,11 @@ Tak - coraz więcej doradców pracuje zdalnie. Platformy AI takie jak **[Vocare.
 Doradztwo zawodowe ma największy sens gdy stoisz na rozdrożu: nie wiesz w którą stronę iść, myślisz o zmianie branży lub czujesz się wypalony zawodowo. Publiczne doradztwo w PUP jest bezpłatne i dostępne dla każdego. Prywatny doradca lub coach to większa elastyczność i specjalizacja.
 
 Jeśli chcesz zacząć od własnej diagnozy - przed sesją z doradcą lub zamiast niej - **[Vocare.pl](https://vocare.pl)** przeprowadza pełną analizę kariery: bada Twoje kompetencje i wartości, rekomenduje dopasowane ścieżki zawodowe z danymi rynkowymi i generuje konkretną roadmapę co robić dalej. Bezpłatnie, bez umawiania się, dostępne od razu.
+
+---
+
+## Powiązane artykuły
+- [Doradca zawodowy - co robi, ile kosztuje i czy warto](/blog/Kariera/doradca-zawodowy)
+- [Ścieżka kariery - jak zaplanować rozwój zawodowy w 2026](/blog/Kariera/sciezka-kariery)
+- [Wypalenie zawodowe - co dalej? Jak wrócić do równowagi i odbudować karierę](/blog/Kariera/wypalenie-zawodowe-co-dalej)
+- [Rynek pracy w edukacji 2026 - deficyt nauczycieli i nowe ścieżki](/blog/rynek-pracy/rynek-pracy-edukacja)

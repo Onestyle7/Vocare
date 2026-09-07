@@ -8,11 +8,17 @@ category: 'CV'
 coverImage: '/images/blog/cv-skills.webp'
 tags:
   ['umiejętności do cv', 'umiejętności w cv', 'co wpisać do cv', 'hard skills cv', 'soft skills cv']
+slug: 'umiejetnosci-do-cv'
 ---
 
 # Umiejętności do CV 2026 - co wpisać i jak to zrobić mądrze
 
-"Komunikatywny, zaangażowany, zorientowany na cel" - te trzy słowa pojawiają się w 80% CV, które trafiają na biurko rekrutera. Nic nie mówią, niczym nie różnicują i lądują w mentalnym koszu w ciągu sekund. **Dobra sekcja umiejętności w CV to konkretne, weryfikowalne kompetencje opisane językiem branży - nie lista przymiotników, które pasują do każdego.** Oto jak to zrobić dobrze.
+"Komunikatywny, zaangażowany, zorientowany na cel" - te trzy słowa pojawiają się w 80% CV, które trafiają na biurko rekrutera. Nic nie mówią, niczym nie różnicują i lądują w mentalnym koszu w ciągu sekund. Dobra sekcja umiejętności w CV to konkretne, weryfikowalne kompetencje opisane językiem branży - nie lista przymiotników, które pasują do każdego. Oto jak to zrobić dobrze.
+
+> **Najważniejsze wnioski**
+> - Hard skills decydują, czy CV przejdzie przez ATS; soft skills decydują, czy dostaniesz ofertę - ale w CV hard skills są priorytetem
+> - 8-15 konkretnych hard skills, maksymalnie 3-5 soft skills poparte przykładem - więcej nie znaczy lepiej
+> - Używaj dokładnie tych słów co w ogłoszeniu, nie synonimów - to one przechodzą przez filtry ATS
 
 ---
 
@@ -98,6 +104,21 @@ To dwa razy mocniejsze niż "Excel - zaawansowany" w sekcji umiejętności.
 
 ---
 
+## Test na "pusty przymiotnik" - jak sprawdzić własną sekcję umiejętności
+
+Porównując przykłady z tego poradnika, widać jeden wspólny wzorzec: każda dobra pozycja da się zamienić na parę "narzędzie/kompetencja + dowód", a każda słaba nie przechodzi tego testu.
+
+| Wpis w CV | Przechodzi test? | Dlaczego |
+| --- | --- | --- |
+| "Komunikatywność" | Nie | Brak dowodu, pasuje do każdego kandydata |
+| "Prowadziłem prezentacje dla zarządów firm 200+ osobowych" | Tak | Konkretna sytuacja, weryfikowalna |
+| "Excel" | Nie | Nie wiadomo, na jakim poziomie |
+| "Excel - zaawansowany (Power Query, VBA)" | Tak | Poziom i zakres jasno określony |
+
+Jeśli dana pozycja nie przechodzi testu - albo ją doprecyzuj, albo usuń.
+
+---
+
 ## Czego NIE wpisywać do sekcji umiejętności
 
 **"Obsługa pakietu Office"** - to standard, nie umiejętność. Doprecyzuj: Excel (zaawansowany), PowerPoint (prezentacje zarządowe), Word (edycja dokumentów prawnych).
@@ -176,3 +197,11 @@ W 2026 roku - absolutnie nie. To jak pisać "umiem chodzić" w rubryce sport. Za
 Sekcja umiejętności w CV jest czytana przez rekruterów w 10-15 sekund. Dlatego musi być krystalicznie jasna: konkretne narzędzia, realne poziomy, brak ogólników. Dopasuj umiejętności do oferty, używaj słów kluczowych z ogłoszenia i potwierdzaj je w sekcji doświadczenia.
 
 Chcesz mieć pewność, że sekcja umiejętności trafia w to czego rekruter szuka? **[Vocare.pl](https://vocare.pl)** automatycznie dopasowuje CV do konkretnej oferty - wklejasz ogłoszenie, system generuje wersję CV gotową do wysłania na to stanowisko.
+
+---
+
+## Powiązane artykuły
+- [CV wzór 2026 - darmowe szablony do pobrania i edycji](/blog/CV/cv-wzor)
+- [Profesjonalne CV 2026 - jak wyglądać poważnie na papierze](/blog/CV/profesjonalne-cv)
+- [Jak zrobić CV 2026 - praktyczny poradnik od zera do gotowego pliku](/blog/CV/jak-zrobic-cv)
+- [Zainteresowania w CV - co wpisać, żeby wypaść profesjonalnie](/blog/CV/zainteresowania-w-cv)

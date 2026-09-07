@@ -18,6 +18,12 @@ import {
   P,
   Pre,
   Strong,
+  Table,
+  TBody,
+  TD,
+  TH,
+  THead,
+  TR,
   UL,
 } from '@/features/blog/components/MarkdownComponents';
 import PageWithBackButton from '@/features/blog/components/PageWIthBackButton';
@@ -83,6 +89,7 @@ export default async function BlogPage(props: MetadataProps) {
   const canonicalPath = `/blog/${encodeURIComponent(category)}/${encodeURIComponent(slug)}`;
   const articleUrl = toAbsoluteUrl(canonicalPath);
   const imageUrl = toAbsoluteUrl(metadata.coverImage);
+  const lastModified = metadata.updatedAt ?? metadata.date;
   const jsonLd = {
     '@context': 'https://schema.org',
     '@type': 'BlogPosting',
@@ -90,28 +97,45 @@ export default async function BlogPage(props: MetadataProps) {
     description: metadata.description,
     image: [imageUrl],
     datePublished: metadata.date.toISOString(),
-    dateModified: metadata.date.toISOString(),
+    dateModified: lastModified.toISOString(),
     mainEntityOfPage: articleUrl,
     author: metadata.author
       ? {
           '@type': 'Person',
           name: metadata.author,
+          url: toAbsoluteUrl('/blog'),
         }
       : undefined,
     publisher: {
       '@type': 'Organization',
       name: 'Vocare',
+      logo: {
+        '@type': 'ImageObject',
+        url: toAbsoluteUrl('/metadata/og-image.png'),
+      },
     },
     keywords: metadata.tags.join(', '),
     articleSection: metadata.category,
     inLanguage: 'pl-PL',
   };
+  const breadcrumbLd = {
+  '@context': 'https://schema.org',
+  '@type': 'BreadcrumbList',
+  itemListElement: [
+    { '@type': 'ListItem', position: 1, name: 'Blog', item: toAbsoluteUrl('/blog') },
+    { '@type': 'ListItem', position: 2, name: metadata.title, item: articleUrl },
+  ],
+};
 
   return (
     <PageWithBackButton backButtonHref="/blog">
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbLd) }}
       />
       <section className="font-poppins space-y-2 text-center">
         <Badge className="mb-5">
@@ -125,6 +149,13 @@ export default async function BlogPage(props: MetadataProps) {
             month: 'long',
             year: 'numeric',
           })}
+          {metadata.updatedAt &&
+            metadata.updatedAt.getTime() !== metadata.date.getTime() &&
+            ` | Zaktualizowano: ${metadata.updatedAt.toLocaleDateString('pl-PL', {
+              day: 'numeric',
+              month: 'long',
+              year: 'numeric',
+            })}`}
         </p>
         <p className="text-muted-foreground text-xs"></p>
         <p className="text-muted-foreground text-xs">{metadata.estimatedReadTime} min. czytania</p>
@@ -155,6 +186,12 @@ export default async function BlogPage(props: MetadataProps) {
             p: P,
             pre: Pre,
             strong: Strong,
+            table: Table,
+            thead: THead,
+            tbody: TBody,
+            tr: TR,
+            th: TH,
+            td: TD,
             ul: UL,
           }}
         >

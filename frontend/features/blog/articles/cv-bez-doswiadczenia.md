@@ -14,11 +14,17 @@ tags:
     'jak napisać cv studenta',
     'cv absolwent',
   ]
+slug: 'cv-bez-doswiadczenia'
 ---
 
 # CV bez doświadczenia 2026 - jak napisać CV gdy "nie masz co wpisać"
 
-"Nie mam doświadczenia - co wpisać w CV?" To pytanie zadaje sobie każdy, kto po raz pierwszy siada do pisania CV. I to dobra wiadomość, bo skoro zadajesz to pytanie, to znaczy że podchodzisz do tego poważnie. **CV bez doświadczenia zawodowego jest możliwe - i może być dobre - jeśli wiesz jak zastąpić brak historii pracy dowodem potencjału.** Oto konkretna metoda.
+"Nie mam doświadczenia - co wpisać w CV?" To pytanie zadaje sobie każdy, kto po raz pierwszy siada do pisania CV. I to dobra wiadomość, bo skoro zadajesz to pytanie, to znaczy że podchodzisz do tego poważnie. **CV bez doświadczenia** to CV, w którym historię zatrudnienia zastępują projekty, staże, kursy i aktywności opisane jak prawdziwe osiągnięcia - z konkretem i efektem, nie listą przymiotników. Oto konkretna metoda.
+
+> **Najważniejsze wnioski**
+> - Masz 7 źródeł materiału zamiast historii pracy: projekty studenckie, projekty własne, staże, prace dorywcze, wolontariat, kursy, aktywności studenckie
+> - Zmień kolejność sekcji: Wykształcenie i Projekty idą przed (brakującym) Doświadczeniem
+> - Nigdy nie pisz "brak doświadczenia zawodowego" - opisuj co masz, nie czego nie masz
 
 ---
 
@@ -163,6 +169,8 @@ Języki:
 
 ---
 
+Siedem źródeł materiału opisanych wyżej łączy jeden mechanizm: każde da się opisać jak pracę - cel, działanie, efekt - niezależnie od tego, czy to był płatny etat.
+
 ## Co absolutnie NIE powinno być w CV bez doświadczenia
 
 **"Brak doświadczenia zawodowego"** - nigdy tego nie pisz. Opisuj co masz, nie czego nie masz.
@@ -201,3 +209,10 @@ Absolutnie nie. Kłamstwa są weryfikowane (LinkedIn, referencje) i prowadzą do
 CV bez doświadczenia zawodowego nie jest skazane na porażkę. Jest inne - i musi być napisane inaczej. Skup się na tym co masz: projekty, staże, kursy, aktywności. Opisuj je konkretnie, z miarami i efektami. Pokaż potencjał, nie wyjścia na imprezy.
 
 Chcesz zbudować przekonujące CV mimo braku doświadczenia? Platforma **[Vocare.pl](https://vocare.pl)** pomoże Ci zidentyfikować kompetencje, które masz, i powiedzieć jak je najlepiej przedstawić.
+
+---
+
+## Powiązane artykuły
+- [Praca bez doświadczenia 2026 - jak dostać pierwszą pracę](/blog/Job/praca-bez-doswiadczenia)
+- [CV studenta 2026 - jak napisać CV na pierwszą pracę lub staż](/blog/CV/cv-studenta)
+- [Jak zrobić CV 2026 - praktyczny poradnik od zera do gotowego pliku](/blog/CV/jak-zrobic-cv)

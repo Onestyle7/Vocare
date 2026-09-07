@@ -14,11 +14,17 @@ tags:
     'analiza kompetencji',
     'doradztwo zawodowe',
   ]
+slug: 'test-kompetencji-zawodowych'
 ---
 
 # Test kompetencji zawodowych - które testy warto zrobić i jak je interpretować
 
-Wszyscy mówią "idź w kierunek swoich mocnych stron". Problem w tym, że większość ludzi nie wie jakie są ich mocne strony. Nie dlatego że są przeciętni - ale dlatego że nigdy nie sprawdzili tego w systematyczny sposób. **Test kompetencji zawodowych to narzędzie, które pomaga wyjść poza "wydaje mi się, że jestem dobry w komunikacji" i zobaczyć swój profil zawodowy w oparciu o dane.** Oto jakie testy warto zrobić i co z wynikami.
+Wszyscy mówią "idź w kierunek swoich mocnych stron". Problem w tym, że większość ludzi nie wie jakie są ich mocne strony. Nie dlatego że są przeciętni - ale dlatego że nigdy nie sprawdzili tego w systematyczny sposób. **Test kompetencji zawodowych** to narzędzie, które pomaga wyjść poza "wydaje mi się, że jestem dobry w komunikacji" i zobaczyć swój profil zawodowy w oparciu o dane. Oto jakie testy warto zrobić i co z wynikami.
+
+> **Najważniejsze wnioski**
+> - Test kompetencji mierzy umiejętności, zainteresowania, wartości lub osobowość - różne testy badają różne rzeczy
+> - Wynik to hipoteza do zweryfikowania w praktyce, nie ostateczna etykieta
+> - Warto łączyć kilka testów (np. Holland Code + Big Five) zamiast polegać na jednym
 
 ---
 
@@ -91,7 +97,7 @@ Najlepszy efekt daje kombinacja kilku narzędzi - bo żadne jedno nie daje pełn
 
 **Wynik:** Jeden z 16 typów osobowości (np. INTJ, ENFP) z opisem profilu i sugestiami zawodów.
 
-**Gdzie zrobić:** 16personalities.com (darmowe, naukowa wersja MBTI dostępna płatnie u certyfikowanego praktyka).
+**Gdzie zrobić:** [16personalities.com](https://www.16personalities.com) (darmowe, naukowa wersja MBTI dostępna płatnie u certyfikowanego praktyka).
 
 **Ograniczenia:** MBTI ma umiarkowane dowody naukowe i jego wyniki mogą się różnić przy ponownym teście. Traktuj jako punkt startowy do refleksji, nie jako diagnozę.
 
@@ -151,51 +157,33 @@ Testy mówią o preferencjach i tendencjach - nie o realnych kompetencjach. "Lub
 
 ## Zestawienie testów kompetencji
 
-**Holland Code (RIASEC)**
-<<<<<<< HEAD:frontend/articles/test-kompetencji-zawodowych.md
-=======
+Sześć testów opisanych wyżej mierzy różne warstwy tego samego problemu: zainteresowania, mocne strony, osobowość i wartości. Żaden pojedynczy test nie daje pełnego obrazu - dopiero zestawienie 2-3 z nich pokazuje spójny wzorzec.
 
->>>>>>> staging:frontend/features/blog/articles/test-kompetencji-zawodowych.md
+**Holland Code (RIASEC)**
 - Co mierzy: zainteresowania zawodowe
 - Koszt: bezpłatny
 - Rzetelność naukowa: wysoka
 - Dla kogo: każdy
 
 **Gallup StrengthsFinder**
-<<<<<<< HEAD:frontend/articles/test-kompetencji-zawodowych.md
-=======
-
->>>>>>> staging:frontend/features/blog/articles/test-kompetencji-zawodowych.md
 - Co mierzy: mocne strony
 - Koszt: ~25 USD
 - Rzetelność naukowa: wysoka
 - Dla kogo: pracujący
 
 **MBTI**
-<<<<<<< HEAD:frontend/articles/test-kompetencji-zawodowych.md
-=======
-
->>>>>>> staging:frontend/features/blog/articles/test-kompetencji-zawodowych.md
 - Co mierzy: osobowość
 - Koszt: bezpłatna wersja online
 - Rzetelność naukowa: umiarkowana
 - Dla kogo: każdy
 
 **Big Five**
-<<<<<<< HEAD:frontend/articles/test-kompetencji-zawodowych.md
-=======
-
->>>>>>> staging:frontend/features/blog/articles/test-kompetencji-zawodowych.md
 - Co mierzy: osobowość
 - Koszt: bezpłatny
 - Rzetelność naukowa: bardzo wysoka
 - Dla kogo: każdy
 
 **Wartości zawodowe**
-<<<<<<< HEAD:frontend/articles/test-kompetencji-zawodowych.md
-=======
-
->>>>>>> staging:frontend/features/blog/articles/test-kompetencji-zawodowych.md
 - Co mierzy: priorytety w pracy
 - Koszt: bezpłatny w PUP
 - Rzetelność naukowa: wysoka
@@ -227,3 +215,10 @@ Coraz więcej pracodawców używa testów kompetencyjnych i osobowości w proces
 Testy kompetencji zawodowych to najszybsza droga do zrozumienia własnego profilu zawodowego. Zacznij od Holland Code (bezpłatny, dobra podstawa) i Gallup StrengthsFinder (płatny, ale bardzo wartościowy). Omów wyniki z doradcą zawodowym i skonfrontuj z realnym doświadczeniem.
 
 Chcesz przeprowadzić szybką diagnostykę kariery bez konieczności umawia sesji z doradcą? **[Vocare.pl](https://vocare.pl)** oferuje spersonalizowaną analizę kompetencji i wskazuje konkretne ścieżki kariery dopasowane do Twojego profilu.
+
+---
+
+## Powiązane artykuły
+- [Test kariery online - jak wybrać zawód dopasowany do Ciebie?](/blog/Kariera/test-kariery-online)
+- [Ścieżka kariery - jak zaplanować rozwój zawodowy w 2026](/blog/Kariera/sciezka-kariery)
+- [Jaki zawód wybrać? Praktyczny poradnik na 2026 rok](/blog/Kariera/jaki-zawod-wybrac)

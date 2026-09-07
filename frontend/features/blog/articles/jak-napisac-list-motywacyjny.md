@@ -14,11 +14,17 @@ tags:
     'list motywacyjny przykład',
     'aplikacja o pracę',
   ]
+slug: 'jak-napisac-list-motywacyjny'
 ---
 
 # Jak napisać list motywacyjny 2026 - krok po kroku z przykładami
 
-Większość listów motywacyjnych zaczyna się od "W odpowiedzi na Państwa ogłoszenie, niniejszym pragnę przedstawić moją kandydaturę..." i kończy w koszu w ciągu 5 sekund. Nie dlatego, że kandydat był zły - tylko że list był nieczytelny, generyczny i napisany jakby autor bał się powiedzieć coś konkretnego. **Dobry list motywacyjny w 2026 roku to krótki, konkretny dokument, który opowiada historię: dlaczego Ty, dlaczego ta firma, co możesz dla niej zrobić.** Oto jak to napisać.
+Większość listów motywacyjnych zaczyna się od "W odpowiedzi na Państwa ogłoszenie, niniejszym pragnę przedstawić moją kandydaturę..." i kończy w koszu w ciągu 5 sekund. Nie dlatego, że kandydat był zły - tylko że list był nieczytelny, generyczny i napisany jakby autor bał się powiedzieć coś konkretnego. **Dobry list motywacyjny** to krótki, konkretny dokument, który opowiada historię: dlaczego Ty, dlaczego ta firma, co możesz dla niej zrobić. Oto jak to napisać.
+
+> **Najważniejsze wnioski**
+> - Nigdy nie zaczynaj od "W odpowiedzi na Państwa ogłoszenie" - to sygnał, że list jest generyczny
+> - Struktura: mocne otwarcie → jedno konkretne osiągnięcie metodą STAR → dlaczego ta firma → pewne zakończenie
+> - Jedna strona, zawsze PDF, minimum akapitu 1 i 2 musi być spersonalizowane pod ofertę
 
 ---
 
@@ -142,6 +148,8 @@ Jan Kowalski
 
 ---
 
+Struktura krok po kroku pokazuje jeden wzorzec: każdy akapit ma jedno zadanie (otwarcie, dowód, dopasowanie do firmy) - antywzorce poniżej to najczęściej próba robienia wszystkiego naraz w jednym akapicie.
+
 ## Czego unikać - antywzorce listu motywacyjnego
 
 **Nieszczery entuzjazm.** "Jestem ogromnie podekscytowany perspektywą dołączenia do Waszego wspaniałego zespołu." To brzmi jak template, nie jak człowiek.
@@ -183,3 +191,10 @@ Zanim napiszesz list, użyj **[Vocare.pl](https://vocare.pl)** do analizy oferty
 Dobry list motywacyjny pisze się w 30-45 minut jeśli wiesz co chcesz powiedzieć. Kluczowe: konkretne osiągnięcie w akapicie 2, prawdziwy powód zainteresowania firmą w akapicie 3, pewne zakończenie. Zrezygnuj z szablonowych frazesów - i napisz jak człowiek do człowieka.
 
 Chcesz mieć pewność, że Twój list uderza w dokładnie te kompetencje, których rekruter szuka? **[Vocare.pl](https://vocare.pl)** przeanalizuje ofertę i wskaże Ci, co warto podkreślić - żebyś pisał z konkretami, nie na oślep.
+
+---
+
+## Powiązane artykuły
+- [List motywacyjny 2026 - czy nadal potrzebny i jak go napisać](/blog/CV/list-motywacyjny)
+- [Wzór listu motywacyjnego 2026 - gotowe szablony do edycji](/blog/CV/wzor-listu-motywacyjnego)
+- [CV 2026 - kompletny poradnik jak napisać dobre CV](/blog/CV/cv)

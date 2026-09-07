@@ -14,17 +14,23 @@ tags:
     'zmiana pracy',
     'rozwój zawodowy',
   ]
+slug: 'doradca-zawodowy'
 ---
 
 # Doradca zawodowy - kto to jest i kiedy naprawdę pomaga
 
-"Idź do doradcy zawodowego" - to rada, którą słyszysz na każdym kroku. Ale co to w praktyce oznacza? Co doradca faktycznie robi, co może Ci dać, a czego nie? I czy jest różnica między doradcą zawodowym, coachem kariery a headhunterem? **Doradca zawodowy to specjalista od diagnozy kariery i planowania ścieżki zawodowej - nie znajdzie Ci pracy, ale pomoże Ci zrozumieć w jakim kierunku iść i jak to osiągnąć.** Oto wszystko, co powinieneś wiedzieć.
+"Idź do doradcy zawodowego" - to rada, którą słyszysz na każdym kroku. Ale co to w praktyce oznacza? Co doradca faktycznie robi, co może Ci dać, a czego nie? I czy jest różnica między doradcą zawodowym, coachem kariery a headhunterem? **Doradca zawodowy** to specjalista od diagnozy kariery i planowania ścieżki zawodowej - nie znajdzie Ci pracy, ale pomoże Ci zrozumieć w jakim kierunku iść i jak to osiągnąć. Oto wszystko, co powinieneś wiedzieć.
+
+> **Najważniejsze wnioski**
+> - Doradca zawodowy diagnozuje i planuje karierę - nie szuka za Ciebie pracy i nie zastępuje psychologa
+> - Bezpłatne opcje (PUP, WUP, OHP, centrum kariery uczelni) mają zmienną jakość; prywatny doradca kosztuje 150-400 zł/sesję
+> - Pełny proces to zwykle 2-4 sesje; więcej przy głębszych decyzjach (np. zmiana branży)
 
 ---
 
 ## Kim jest doradca zawodowy?
 
-Doradca zawodowy (ang. career counselor) to specjalista z wykształceniem i uprawnieniami w zakresie poradnictwa zawodowego. W Polsce jest to zawód regulowany - kod zawodu 242304 w klasyfikacji GUS.
+Doradca zawodowy (ang. career counselor) to specjalista z wykształceniem i uprawnieniami w zakresie poradnictwa zawodowego. W Polsce jest to zawód regulowany - kod zawodu 242304 w [klasyfikacji zawodów GUS](https://stat.gov.pl).
 
 **Co robi doradca zawodowy:**
 
@@ -45,7 +51,7 @@ Doradca zawodowy (ang. career counselor) to specjalista z wykształceniem i upra
 
 ## Doradca zawodowy vs coach kariery vs headhunter - różnice
 
-To trzy różne zawody, które ludzie często mylą:
+To trzy różne zawody, które ludzie często mylą - a różnica sprowadza się do jednego pytania: dla kogo dana osoba pracuje. Doradca i coach pracują dla Ciebie, headhunter dla pracodawcy.
 
 **Doradca zawodowy**
 
@@ -192,3 +198,11 @@ Tak - **[Vocare.pl](https://vocare.pl)** przeprowadza spersonalizowaną analizę
 Doradca zawodowy jest wart swojego czasu i pieniędzy wtedy, gdy stoisz na rozdrożu, chcesz zmienić branżę lub doświadczasz wypalenia. Publiczne opcje (PUP, WUP, centrum kariery) są bezpłatne i dostępne dla każdego. Prywatni doradcy kosztują więcej, ale oferują większą elastyczność i specjalizację.
 
 Zacznij od bezpłatnej diagnozy na **[Vocare.pl](https://vocare.pl)** - AI przeprowadzi Cię przez analizę kompetencji i wskaże kierunki kariery dopasowane do Twojego profilu.
+
+---
+
+## Powiązane artykuły
+- [Doradztwo zawodowe 2026 - czym jest i kiedy skorzystać](/blog/Kariera/doradztwo-zawodowe)
+- [Ścieżka kariery - jak zaplanować rozwój zawodowy w 2026](/blog/Kariera/sciezka-kariery)
+- [Jaki zawód wybrać? Praktyczny poradnik na 2026 rok](/blog/Kariera/jaki-zawod-wybrac)
+- [Mentoring zawodowy 2026 - jak znaleźć mentora i na tym skorzystać](/blog/Kariera/mentoring-zawodowy)
