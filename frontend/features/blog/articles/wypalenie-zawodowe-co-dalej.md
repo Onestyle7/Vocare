@@ -15,13 +15,19 @@ tags:
     'kariera',
     'równowaga praca-życie',
   ]
+slug: 'wypalenie-zawodowe-co-dalej'
 ---
 
 Wstajesz rano i już czujesz ciężar nadchodzącego dnia. Praca, która kiedyś dawała Ci energię i satysfakcję, teraz wydaje się bezsensowna i wyczerpująca. Przestałeś się angażować, robisz minimum, czujesz się oderwany od zadań, od współpracowników, od siebie. Jeśli to brzmi znajomo, możliwe, że doświadczasz wypalenia zawodowego. Ale nie jesteś bez wyjścia. Ten artykuł pokaże Ci, co dalej, krok po kroku.
 
+> **Najważniejsze wnioski**
+> - WHO oficjalnie definiuje burnout jako syndrom wynikający z chronicznego, nieopanowanego stresu zawodowego - nie chorobę psychiczną
+> - Ponad 40% polskich pracowników zgłasza objawy wypalenia (Kantar/LinkedIn, 2024)
+> - Kluczowa różnica z depresją: wypalenie ustępuje poza pracą (weekendy, urlop), depresja przenika całe życie
+
 ## Czym jest wypalenie zawodowe i dlaczego dotyczy coraz więcej osób?
 
-Wypalenie zawodowe (ang. _burnout_) zostało oficjalnie uznane przez Światową Organizację Zdrowia (WHO) za syndrom wynikający z chronicznego stresu w miejscu pracy, który nie został skutecznie opanowany. Nie jest to choroba psychiczna, ale może prowadzić do poważnych problemów zdrowotnych, jeśli pozostanie nierozpoznane.
+**Wypalenie zawodowe** to syndrom wynikający z chronicznego, nieopanowanego stresu w miejscu pracy - oficjalnie uznany przez [Światową Organizację Zdrowia (WHO)](https://www.who.int/news/item/28-05-2019-burn-out-an-occupational-phenomenon-international-classification-of-diseases). Nie jest to choroba psychiczna, ale może prowadzić do poważnych problemów zdrowotnych, jeśli pozostanie nierozpoznane.
 
 WHO definiuje burnout przez trzy wymiary:
 
@@ -142,6 +148,8 @@ Jeśli sama natura Twojej pracy jest źródłem wypalenia, czas na głębszą zm
 
 ---
 
+Pięć etapów planu działania podąża za jedną logiką: najpierw regeneracja biologiczna, dopiero potem decyzje zawodowe - odwrócenie tej kolejności to najczęstszy błąd przy wychodzeniu z wypalenia.
+
 ## Jak zapobiegać wypaleniu zawodowemu w przyszłości?
 
 Kiedy wyjdziesz z kryzysu, warto zbudować zabezpieczenia na przyszłość.
@@ -188,3 +196,11 @@ Wypalenie zawodowe to poważny sygnał, że coś w Twoim życiu zawodowym wymaga
 Zatrzymaj się. Zregeneruj się. Poproś o pomoc. I dopiero wtedy planuj kolejny krok.
 
 Jeśli szukasz wsparcia w podjęciu decyzji o dalszej karierze - platforma **[Vocare.pl](https://vocare.pl)** może pomóc. Nasz asystent AI przeprowadzi Cię przez analizę Twoich wartości, kompetencji i preferencji zawodowych, żebyś mógł podjąć decyzję w oparciu o dane, a nie z pozycji wyczerpania i niepewności.
+
+---
+
+## Powiązane artykuły
+- [Ścieżka kariery - jak zaplanować rozwój zawodowy w 2026](/blog/Kariera/sciezka-kariery)
+- [Jak zmienić branżę - praktyczny przewodnik krok po kroku](/blog/Kariera/jak-zmienic-branze)
+- [Doradca zawodowy - co robi, ile kosztuje i czy warto](/blog/Kariera/doradca-zawodowy)
+- [Powrót do pracy po urlopie macierzyńskim 2026 - jak się przygotować](/blog/Kariera/powrot-do-pracy-po-macierzynskim)

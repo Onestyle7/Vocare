@@ -9,7 +9,8 @@ import { ArticleMetadata, articleSchema, ImageProps } from '../types';
 /** Getting absolute image url from relative 'public' folder image path */
 export function toAbsoluteUrl(path: string) {
   const normalizedPath = path.startsWith('/') ? path : `/${path}`;
-  return `${env.NEXT_PUBLIC_APP_URL}${normalizedPath}`;
+  const baseUrl = (env.NEXT_PUBLIC_APP_URL ?? '').replace(/\/+$/, '');
+  return `${baseUrl}${normalizedPath}`;
 }
 
 /** Get article content based on article slug and source folder name */

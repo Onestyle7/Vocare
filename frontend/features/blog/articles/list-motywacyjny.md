@@ -14,11 +14,17 @@ tags:
     'aplikacja o pracę',
     'cv',
   ]
+slug: 'list-motywacyjny'
 ---
 
 # List motywacyjny 2026 - kiedy pisać i jak zrobić to dobrze
 
-"Prosimy dołączyć list motywacyjny" - ta prośba wzbudza w kandydatach mieszaninę rezygnacji i paniki. Bo kto w 2026 roku jeszcze pisze listy? Odpowiedź może Cię zaskoczyć. **List motywacyjny wciąż jest czytany przez rekruterów, ale tylko wtedy, gdy jest konkretny, autentyczny i napisany pod konkretną firmę.** Generyczny list z frazami "jestem osobą ambitną i komunikatywną" leci do kosza szybciej niż otwarty. Ten artykuł pokaże Ci, jak napisać taki, który faktycznie działa.
+"Prosimy dołączyć list motywacyjny" - ta prośba wzbudza w kandydatach mieszaninę rezygnacji i paniki. Bo kto w 2026 roku jeszcze pisze listy? Odpowiedź może Cię zaskoczyć. **List motywacyjny** to dokument towarzyszący CV, wciąż czytany przez rekruterów - ale tylko wtedy, gdy jest konkretny, autentyczny i napisany pod konkretną firmę. Generyczny list z frazami "jestem osobą ambitną i komunikatywną" leci do kosza szybciej niż otwarty. Ten artykuł pokaże Ci, jak napisać taki, który faktycznie działa.
+
+> **Najważniejsze wnioski**
+> - List motywacyjny jest wciąż czytany - ale tylko konkretny, autentyczny i napisany pod tę konkretną firmę
+> - Generyczne frazy typu "ambitna i komunikatywna osoba" dyskwalifikują list w kilka sekund
+> - Nie zawsze jest wymagany - jeśli oferta o niego nie prosi, krótki mail z aplikacją wystarczy
 
 ---
 
@@ -99,6 +105,8 @@ Zanim zaczniesz pisać akapit 2 ("dlaczego Ty"), upewnij się że Twoje CV jest 
 
 ---
 
+Struktura opisana wyżej i antywzorce poniżej łączy jedna zasada: konkret zawsze bije ogólnik, niezależnie od tego, w której części listu się pojawia.
+
 ## Ton listu motywacyjnego - jak pisać po polsku bez korpo-mowy
 
 Pisz tak, jakbyś pisał email do szefa, którego szanujesz. Formalnie, ale nie urzędowo. Merytorycznie, ale nie sucho.
@@ -139,3 +147,10 @@ List motywacyjny nie umarł - ale jego stara forma tak. W 2026 roku wygrywają l
 Zacznij od CV, a list motywacyjny traktuj jako uzupełnienie - miejsce gdzie możesz powiedzieć to, czego liczby i punkty w CV nie oddają: dlaczego właśnie ta firma i właśnie to stanowisko.
 
 Nim zaczniesz pisać - upewnij się, że Twoje CV jest dopasowane do tej oferty. **[Vocare.pl](https://vocare.pl)** robi to automatycznie: wklejasz ogłoszenie, system generuje CV pod wymagania tej roli. Mając dopasowane CV, wiesz co w liście podkreślić.
+
+---
+
+## Powiązane artykuły
+- [Jak napisać list motywacyjny 2026 - wzór i przykłady](/blog/CV/jak-napisac-list-motywacyjny)
+- [Wzór listu motywacyjnego 2026 - gotowe szablony do edycji](/blog/CV/wzor-listu-motywacyjnego)
+- [CV 2026 - kompletny poradnik jak napisać dobre CV](/blog/CV/cv)

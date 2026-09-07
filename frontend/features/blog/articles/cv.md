@@ -7,17 +7,23 @@ author: 'Vocare'
 category: 'CV'
 coverImage: '/images/blog/cv-guide.webp'
 tags: ['cv', 'jak napisać cv', 'wzór cv', 'cv 2026', 'aplikacja o pracę']
+slug: 'cv'
 ---
 
 # CV 2026 - kompletny poradnik jak napisać CV, które działa
 
-Twoje CV ma średnio 7 sekund na zrobienie pierwszego wrażenia. Tyle czasu poświęca mu rekruter zanim zdecyduje, czy warto przeczytać je dokładniej. Ale zanim w ogóle trafi do człowieka, musi przejść przez system ATS - algorytm skanujący aplikacje pod kątem słów kluczowych. **Dobre CV w 2026 roku musi robić dwie rzeczy naraz: być czytelne dla algorytmu i przekonujące dla człowieka.** Ten poradnik pokaże Ci, jak to osiągnąć krok po kroku.
+Twoje CV ma średnio 7 sekund na zrobienie pierwszego wrażenia. Tyle czasu poświęca mu rekruter zanim zdecyduje, czy warto przeczytać je dokładniej. Ale zanim w ogóle trafi do człowieka, musi przejść przez system ATS - algorytm skanujący aplikacje pod kątem słów kluczowych. Dobre CV w 2026 roku musi robić dwie rzeczy naraz: być czytelne dla algorytmu i przekonujące dla człowieka. Ten poradnik pokaże Ci, jak to osiągnąć krok po kroku.
+
+> **Najważniejsze wnioski**
+> - Nawet 75% CV jest odrzucanych przez algorytmy ATS, zanim trafią do rekrutera
+> - CV to narzędzie marketingowe, nie dokument autobiograficzny - dopasuj je do każdej oferty osobno
+> - Struktura ma znaczenie: dane kontaktowe → profil zawodowy → doświadczenie z liczbami → wykształcenie → umiejętności
 
 ---
 
 ## Czym jest CV i po co je w ogóle pisać?
 
-CV (łac. _curriculum vitae_ - przebieg życia) to dokument, który podsumowuje Twoje doświadczenie zawodowe, wykształcenie i umiejętności w kontekście konkretnego stanowiska pracy. To Twoja zawodowa wizytówka - pierwsza rzecz, którą widzi rekruter.
+**CV** to dokument (od łac. _curriculum vitae_ - przebieg życia), który podsumowuje Twoje doświadczenie zawodowe, wykształcenie i umiejętności w kontekście konkretnego stanowiska pracy. To Twoja zawodowa wizytówka - pierwsza rzecz, którą widzi rekruter.
 
 **Kluczowa zasada:** CV nie jest dokumentem autobiograficznym. To narzędzie marketingowe, które ma sprzedać Cię jako kandydata na konkretne stanowisko. Każde CV powinno być dopasowane do konkretnej oferty pracy - jedno CV do wszystkich aplikacji to przepis na brak odpowiedzi.
 
@@ -110,6 +116,8 @@ Ręczne dopasowywanie CV do każdej oferty jest żmudne. **[Vocare.pl](https://v
 
 ---
 
+Optymalizacja pod ATS i dobre formatowanie wizualne to w praktyce ta sama zasada zastosowana dwa razy: prostota i przewidywalna struktura czytelna zarówno dla algorytmu, jak i dla człowieka.
+
 ## Formatowanie CV - jak powinno wyglądać
 
 - **Czcionka:** Arial, Calibri lub Helvetica, rozmiar 10-12 pt
@@ -152,3 +160,10 @@ Po każdej ważniejszej zmianie w karierze: nowa rola, certyfikat, projekt. Nie 
 Dobre CV w 2026 roku to dokument, który: jest dopasowany do konkretnej oferty, przechodzi przez filtry ATS, pokazuje osiągnięcia w liczbach, ma czytelną strukturę i jest wolne od błędów. To nie talent ani szczęście - to umiejętność, którą można się nauczyć.
 
 Jeśli chcesz, żeby Twoje CV było automatycznie dopasowywane do treści ofert pracy, sprawdź **[Vocare.pl](https://vocare.pl)** - narzędzie AI, które analizuje Twoje CV i sugeruje konkretne zmiany pod każdą ofertę, na którą aplikujesz.
+
+---
+
+## Powiązane artykuły
+- [Jak zrobić CV 2026 - praktyczny poradnik od zera do gotowego pliku](/blog/CV/jak-zrobic-cv)
+- [CV wzór 2026 - darmowe szablony do pobrania i edycji](/blog/CV/cv-wzor)
+- [Umiejętności do CV 2026 - co wpisać, żeby wyróżnić aplikację](/blog/CV/umiejetnosci-do-cv)

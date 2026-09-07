@@ -8,11 +8,17 @@ category: 'CV'
 coverImage: '/images/blog/student-cv.webp'
 tags:
   ['cv studenta', 'cv student', 'jak napisać cv studenta', 'pierwsze cv', 'cv bez doświadczenia']
+slug: 'cv-studenta'
 ---
 
 # CV studenta 2026 - jak napisać CV gdy nie masz co wpisać
 
-"Nie mam żadnego doświadczenia" - to zdanie słyszę od studentów najczęściej. Ale gdy zaczynam pytać: czy robiłeś jakieś projekty na zajęciach? Czy brałeś udział w kole naukowym? Czy miałeś jakiś staż, nawet krótki? Czy nie robiłeś nic wakacyjnie? - okazuje się, że materiału jest znacznie więcej niż się wydawało. **CV studenta bez doświadczenia zawodowego to nie "puste CV" - to CV, które musi inteligentnie eksponować potencjał zamiast historii pracy.** Oto jak to zrobić.
+"Nie mam żadnego doświadczenia" - to zdanie słyszę od studentów najczęściej. Ale gdy zaczynam pytać: czy robiłeś jakieś projekty na zajęciach? Czy brałeś udział w kole naukowym? Czy miałeś jakiś staż, nawet krótki? Czy nie robiłeś nic wakacyjnie? - okazuje się, że materiału jest znacznie więcej niż się wydawało. **CV studenta** to dokument aplikacyjny, który zamiast historii zatrudnienia eksponuje potencjał: projekty, staże, aktywności i konkretne umiejętności. To nie "puste CV" - to inny rodzaj dowodu na to, że warto kogoś zaprosić na rozmowę. Oto jak to zrobić.
+
+> **Najważniejsze wnioski**
+> - Wykształcenie idzie przed doświadczeniem - odwrotnie niż w CV pracownika z stażem
+> - Każdy projekt studencki opisuj jak pracę: cel, działanie, efekt z liczbą
+> - Nawet praca dorywcza (kelner, kasjer) ma wartość, jeśli pokażesz przełożenie na umiejętności miękkie
 
 ---
 
@@ -198,6 +204,21 @@ Angielski C1 | Niemiecki B1
 
 ---
 
+## Czym zastąpić brakujące doświadczenie - ściągawka
+
+Powyższe przykłady pokazują ten sam wzorzec: każdy element studenckiego CV (staż, projekt, aktywność) da się opisać z liczbą, nawet bez etatu. Poniżej krótka ściągawka, czym zastąpić brakujące sekcje:
+
+| Czego brakuje | Czym zastąpić | Gdzie wpisać liczbę |
+| --- | --- | --- |
+| Doświadczenia zawodowego | Projekt studencki lub staż wakacyjny | Ocena, zasięg, skala danych, czas realizacji |
+| Stażu w branży docelowej | Praca dorywcza opisana pod kątem transferowalnych umiejętności | Liczba klientów/zgłoszeń dziennie, liczba przeszkolonych osób |
+| Certyfikatów branżowych | Kurs online z ukończonym projektem (nie sam certyfikat ukończenia) | Wynik/accuracy modelu, ocena z obrony projektu |
+| Rekomendacji od pracodawcy | Aktywność w kole naukowym lub wolontariacie z odpowiedzialnością budżetową/organizacyjną | Budżet, liczba uczestników wydarzenia |
+
+Zasada jest zawsze ta sama: rekruter nie oczekuje od studenta historii pracy - oczekuje dowodu, że kandydat potrafi doprowadzić coś do końca i to zmierzyć.
+
+---
+
 ## FAQ - CV studenta
 
 **Czy CV studenta może mieć więcej niż 1 stronę?**
@@ -222,3 +243,10 @@ Tak - **[Vocare.pl](https://vocare.pl)** automatycznie dopasowuje CV do konkretn
 CV studenta bez doświadczenia zawodowego to wyzwanie, ale nie niemożność. Klucz: opisz konkretnie to co masz - projekty, staże, aktywności - z miarami i efektami. Brak doświadczenia zawodowego to nie przekreślenie - to punkt startowy, który dobrze opisany wyróżnia Cię z tłumu.
 
 Chcesz sprawdzić jak Twoje studenckie CV wygląda w oczach rekrutera i co można ulepszyć? **[Vocare.pl](https://vocare.pl)** pomoże Ci to ocenić.
+
+---
+
+## Powiązane artykuły
+- [Praca dla studenta 2026 - najlepsze opcje i jak zacząć](/blog/Job/praca-dla-studenta)
+- [CV bez doświadczenia 2026 - co wpisać gdy nie masz historii pracy](/blog/CV/cv-bez-doswiadczenia)
+- [Jak znaleźć pracę w 2026 - sprawdzone strategie krok po kroku](/blog/Job/jak-znalezc-prace)
