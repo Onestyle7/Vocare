@@ -10,10 +10,17 @@ import { getUserProfileQuery } from '@/features/profile/dal/queries';
 
 export default async function DashboardLayoutPage({ children }: { children: React.ReactNode }) {
   const [pendingLegalErr, pendingLegalData] = await getPendingLegalDocuments();
-  const hasPendingConsents = !pendingLegalErr && pendingLegalData && pendingLegalData.length > 0;
 
-  if (hasPendingConsents) {
-    return <main className="h-screen w-screen overflow-hidden bg-background" />;
+  if (pendingLegalErr) {
+    if (pendingLegalErr.type === 'Unauthorized') {
+      await forceLoginRedirect(pendingLegalErr.message);
+    }
+
+    throw new Error(pendingLegalErr.message);
+  }
+
+  if (pendingLegalData.length > 0) {
+    return <main className="bg-background h-screen w-screen overflow-hidden" />;
   }
 
   const [tokenBalanceError, tokenBalanceData] = await getTokenSubscriptionStatus();
