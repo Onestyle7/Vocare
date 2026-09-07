@@ -3,7 +3,7 @@ export const postanowienia_ogolne = {
   points: [
     'Niniejszy Regulamin określa zasady korzystania z serwisu internetowego dostępnego pod adresem vocare.pl, rodzaje i zakres usług świadczonych drogą elektroniczną, warunki zawierania i rozwiązywania umów o świadczenie usług, a także tryb postępowania reklamacyjnego.',
     'Właścicielem i administratorem Serwisu jest Kacper Jóźwik, prowadzący działalność nieewidencjonowaną (nierejestrowaną) zgodnie z art. 5 ust. 1 ustawy z dnia 6 marca 2018 r. – Prawo przedsiębiorców.',
-    'Dane kontaktowe Usługodawcy: Adres e-mail: vocarecontact@gmail.com.',
+    'Dane kontaktowe Usługodawcy: Adres e-mail: kontakt@vocare.pl.',
     'Vocare zobowiązuje się odpowiedzieć na wiadomości od Użytkowników w terminie do 48 godzin.',
     'Działalność prowadzona przez Usługodawcę nie podlega wpisowi do Centralnej Ewidencji i Informacji o Działalności Gospodarczej (CEIDG). Przychód należny z działalności nie przekracza w żadnym miesiącu 75% kwoty minimalnego wynagrodzenia za pracę.',
     'Usługodawca nie jest czynnym podatnikiem podatku od towarów i usług (VAT) i korzysta ze zwolnienia podmiotowego. Ceny podane w Serwisie są cenami końcowymi brutto.',
@@ -63,7 +63,7 @@ export const reklamacje = {
   title: 'Reklamacje',
   points: [
     'W przypadku nieprawidłowego działania Usługi, Użytkownik ma prawo złożyć reklamację.',
-    'Reklamacje należy składać drogą elektroniczną na adres e-mail: vocarecontact@gmail.com.',
+    'Reklamacje należy składać drogą elektroniczną na adres e-mail: kontakt@vocare.pl.',
     'Zgłoszenie reklamacyjne powinno zawierać: dane Użytkownika, opis problemu oraz datę jego wystąpienia.',
     'Usługodawca rozpatrzy reklamację w terminie 14 dni od daty jej otrzymania. Odpowiedź zostanie wysłana na adres e-mail Użytkownika.',
   ],

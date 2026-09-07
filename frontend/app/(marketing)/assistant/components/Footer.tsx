@@ -92,7 +92,7 @@ const Footer = () => {
             Kontakt
           </p>
           <p className="font-regular text-[15px] break-all sm:text-[18px] sm:break-normal">
-            vocarecontact@gmail.com
+            kontakt@vocare.pl
           </p>
         </div>
 
