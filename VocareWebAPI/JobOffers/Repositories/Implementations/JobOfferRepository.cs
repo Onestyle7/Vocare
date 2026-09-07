@@ -21,6 +21,10 @@ namespace VocareWebAPI.JobOffers.Repositories.Implementations
             string refNumber,
             JobOfferSource source
         )
+        public async Task<JobOffer?> GetByReferenceNumberAsync(
+            string refNumber,
+            JobOfferSource source
+        )
         {
             return await _context.JobOffers.FirstOrDefaultAsync(x =>
                 x.ReferenceNumber == refNumber && x.Source == source
@@ -30,8 +34,13 @@ namespace VocareWebAPI.JobOffers.Repositories.Implementations
         public async Task<IEnumerable<JobStaleInfo>> GetAllReferenceNumbersAsync(
             JobOfferSource source
         )
+        public async Task<IEnumerable<JobStaleInfo>> GetAllReferenceNumbersAsync(
+            JobOfferSource source
+        )
         {
             var activeJobs = await _context
+                .JobOffers.Where(j => j.Source == source)
+                .Select(p => new JobStaleInfo(p.ReferenceNumber, p.Source, p.UpdatedAt))
                 .JobOffers.Where(j => j.Source == source)
                 .Select(p => new JobStaleInfo(p.ReferenceNumber, p.Source, p.UpdatedAt))
                 .ToListAsync();

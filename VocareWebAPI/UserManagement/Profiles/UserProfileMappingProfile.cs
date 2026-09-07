@@ -94,8 +94,14 @@ namespace VocareWebAPI.Profiles
             CreateMap<UserProfile, UserProfileDto>()
                 .ForMember(dest => dest.Email, opt => opt.MapFrom(src => src.User.Email));
 
+
             CreateMap<UserProfileDto, UserProfile>()
                 .ForMember(dest => dest.User, opt => opt.Ignore())
+                .ForMember(dest => dest.UserId, opt => opt.Ignore())
+                .ForMember(dest => dest.Education, opt => opt.UseDestinationValue())
+                .ForMember(dest => dest.WorkExperience, opt => opt.UseDestinationValue())
+                .ForMember(dest => dest.Certificates, opt => opt.UseDestinationValue())
+                .ForMember(dest => dest.Languages, opt => opt.UseDestinationValue());
                 .ForMember(dest => dest.UserId, opt => opt.Ignore())
                 .ForMember(dest => dest.Education, opt => opt.UseDestinationValue())
                 .ForMember(dest => dest.WorkExperience, opt => opt.UseDestinationValue())

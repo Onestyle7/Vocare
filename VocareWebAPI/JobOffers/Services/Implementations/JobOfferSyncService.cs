@@ -30,6 +30,7 @@ namespace VocareWebAPI.JobOffers.Services.Implementations
         }
 
         public async Task<SyncResult> SyncOffersAsync(CancellationToken cancellationToken = default)
+        public async Task<SyncResult> SyncOffersAsync(CancellationToken cancellationToken = default)
         {
             var totalResult = new SyncResult();
             foreach (var provider in _providers)
@@ -145,10 +146,13 @@ namespace VocareWebAPI.JobOffers.Services.Implementations
                         {
                             await GenerateEmbeddingForOffer(existing);
                             embeddingGenerated = true;
+                            embeddingGenerated = true;
                         }
 
                         _repository.UpdateInContext(existing, embeddingGenerated);
+                        _repository.UpdateInContext(existing, embeddingGenerated);
                         result.Updated++;
+                        processedInBatch++;
                         processedInBatch++;
                     }
                 }
@@ -179,6 +183,10 @@ namespace VocareWebAPI.JobOffers.Services.Implementations
             return result;
         }
 
+        public async Task<CleanupResult> CleanupStaleOffersAsync(
+            JobOfferSource source,
+            CancellationToken cancellationToken = default
+        )
         public async Task<CleanupResult> CleanupStaleOffersAsync(
             JobOfferSource source,
             CancellationToken cancellationToken = default

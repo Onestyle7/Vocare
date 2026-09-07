@@ -88,6 +88,11 @@ namespace VocareWebAPI.Services
                 .Include(u => u.Certificates)
                 .Include(u => u.Languages)
                 .Include(u => u.FinancialSurvey)
+                .UserProfiles.Include(u => u.Education)
+                .Include(u => u.WorkExperience)
+                .Include(u => u.Certificates)
+                .Include(u => u.Languages)
+                .Include(u => u.FinancialSurvey)
                 .FirstOrDefaultAsync(u => u.UserId == UserId);
 
             if (profile == null)
@@ -102,6 +107,11 @@ namespace VocareWebAPI.Services
             else
             {
                 _logger.LogInformation("Profile already exists for UserId: {UserId}", UserId);
+
+                profile.Education.Clear();
+                profile.WorkExperience.Clear();
+                profile.Certificates.Clear();
+                profile.Languages.Clear();
 
                 profile.Education.Clear();
                 profile.WorkExperience.Clear();
