@@ -90,6 +90,7 @@ Zastanawiasz się, która ścieżka w budownictwie pasuje do Twoich kompetencji?
 ---
 
 ## Powiązane artykuły
+- [Rynek pracy w Polsce 2026 - kompletny przegląd 12 branż](/blog/rynek-pracy/rynek-pracy-w-polsce)
 - [Zawody przyszłości 2026 - które profesje będą najbardziej poszukiwane?](/blog/rynek-pracy/zawody-przyszlosci-2026)
 - [Rynek pracy w medycynie i ochronie zdrowia 2026 - zapotrzebowanie i zarobki](/blog/rynek-pracy/rynek-pracy-medycyna)
 - [Jak zmienić branżę - praktyczny przewodnik krok po kroku](/blog/Kariera/jak-zmienic-branze)

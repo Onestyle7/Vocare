@@ -84,6 +84,7 @@ Zastanawiasz się, która ścieżka w sprzedaży pasuje do Twoich kompetencji? *
 ---
 
 ## Powiązane artykuły
+- [Rynek pracy w Polsce 2026 - kompletny przegląd 12 branż](/blog/rynek-pracy/rynek-pracy-w-polsce)
 - [Rynek pracy w marketingu 2026 - kompetencje i zarobki](/blog/rynek-pracy/rynek-pracy-marketing)
 - [Rozmowa kwalifikacyjna 2026 - jak się przygotować i wypaść świetnie](/blog/Job/rozmowa-kwalifikacyjna)
 - [Najlepiej płatne zawody w Polsce 2026 - ranking i zarobki](/blog/rynek-pracy/najlepiej-platne-zawody)

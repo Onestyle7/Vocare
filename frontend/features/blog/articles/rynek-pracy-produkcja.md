@@ -91,6 +91,7 @@ Zastanawiasz się, jak rozwinąć karierę w produkcji w kierunku bardziej techn
 ---
 
 ## Powiązane artykuły
+- [Rynek pracy w Polsce 2026 - kompletny przegląd 12 branż](/blog/rynek-pracy/rynek-pracy-w-polsce)
 - [Rynek pracy w budownictwie 2026 - deficyt kadr i zarobki](/blog/rynek-pracy/rynek-pracy-budownictwo)
 - [Zawody przyszłości 2026 - które profesje będą najbardziej poszukiwane?](/blog/rynek-pracy/zawody-przyszlosci-2026)
 - [Jak zmienić branżę - praktyczny przewodnik krok po kroku](/blog/Kariera/jak-zmienic-branze)

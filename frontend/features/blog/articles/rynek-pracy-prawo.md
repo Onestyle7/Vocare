@@ -89,6 +89,7 @@ Zastanawiasz się, która ścieżka prawnicza pasuje do Twoich kompetencji? **[V
 ---
 
 ## Powiązane artykuły
+- [Rynek pracy w Polsce 2026 - kompletny przegląd 12 branż](/blog/rynek-pracy/rynek-pracy-w-polsce)
 - [Rynek pracy w finansach i bankowości 2026 - trendy i zarobki](/blog/rynek-pracy/rynek-pracy-finanse)
 - [Najlepiej płatne zawody w Polsce 2026 - ranking i zarobki](/blog/rynek-pracy/najlepiej-platne-zawody)
 - [Jaki zawód wybrać? Praktyczny poradnik na 2026 rok](/blog/Kariera/jaki-zawod-wybrac)

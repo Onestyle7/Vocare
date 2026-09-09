@@ -86,6 +86,7 @@ Zastanawiasz się, która ścieżka w logistyce pasuje do Twoich kompetencji? **
 ---
 
 ## Powiązane artykuły
+- [Rynek pracy w Polsce 2026 - kompletny przegląd 12 branż](/blog/rynek-pracy/rynek-pracy-w-polsce)
 - [Rynek pracy w produkcji i przemyśle 2026 - automatyzacja i zatrudnienie](/blog/rynek-pracy/rynek-pracy-produkcja)
 - [Gdzie szukać pracy w Polsce 2026 - portale i metody](/blog/Job/gdzie-szukac-pracy)
 - [Najlepiej płatne zawody w Polsce 2026 - ranking i zarobki](/blog/rynek-pracy/najlepiej-platne-zawody)
