@@ -2,7 +2,8 @@
 title: 'Przykładowe CV 2026 - wzory dla różnych stanowisk i branż'
 description: 'Szukasz przykładowego CV? Sprawdź gotowe wzory CV dla programisty, marketera, handlowca, studenta i innych stanowisk. Z komentarzami co działa.'
 estimatedReadTime: 10
-date: '2026-04-12'
+date: '2026-04-29'
+updatedAt: '2026-09-02'
 author: 'Vocare'
 category: 'CV'
 coverImage: '/images/blog/example-cv.webp'

@@ -2,7 +2,8 @@
 title: 'Kreator CV online 2026 - najlepsze narzędzia do tworzenia CV'
 description: 'Szukasz kreatora CV online? Sprawdź ranking najlepszych narzędzi 2026 - darmowych i płatnych. Który kreator CV wybrać do swojej branży?'
 estimatedReadTime: 8
-date: '2026-04-12'
+date: '2026-04-17'
+updatedAt: '2026-09-02'
 author: 'Vocare'
 category: 'CV'
 coverImage: '/images/blog/cv-builder.webp'

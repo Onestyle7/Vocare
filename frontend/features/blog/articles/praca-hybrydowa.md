@@ -2,7 +2,8 @@
 title: 'Praca hybrydowa 2026 - jak negocjować model pracy'
 description: 'Czym jest praca hybrydowa i jak negocjować taki model zatrudnienia? Sprawdź, jak wygląda praca hybrydowa w 2026 roku i jak zaproponować ją pracodawcy.'
 estimatedReadTime: 7
-date: '2026-09-02'
+date: '2026-06-17'
+updatedAt: '2026-09-09'
 author: 'Vocare'
 category: 'Job'
 coverImage: '/images/blog/job-search.webp'
@@ -86,3 +87,6 @@ Szukasz oferty z modelem pracy dopasowanym do Twoich potrzeb? **[Vocare.pl](http
 - [Praca zdalna 2026 - jak ją znaleźć i utrzymać produktywność](/blog/Job/praca-zdalna)
 - [Umowa o pracę vs B2B vs zlecenie 2026 - co wybrać?](/blog/Job/umowa-o-prace-vs-b2b)
 - [Negocjacje wynagrodzenia 2026 - jak negocjować pensję skutecznie](/blog/Job/negocjacje-wynagrodzenia)
+- [Praca dla osób z niepełnosprawnością 2026 - prawa i wsparcie](/blog/Job/praca-dla-osob-niepelnosprawnych)
+- [Delegacja służbowa 2026 - dieta, rozliczenie i Twoje prawa](/blog/Job/delegacja-sluzbowa)
+- [Elastyczny czas pracy 2026 - jak negocjować ruchomy grafik](/blog/Job/czas-pracy-elastyczny)

@@ -2,7 +2,8 @@
 title: 'Jak znaleźć pracę w 2026 - sprawdzone strategie krok po kroku'
 description: 'Jak znaleźć pracę w 2026? Sprawdź sprawdzone strategie szukania pracy, które zwiększają szanse na odpowiedź i skracają czas do oferty.'
 estimatedReadTime: 9
-date: '2026-04-12'
+date: '2026-04-14'
+updatedAt: '2026-09-09'
 author: 'Vocare'
 category: 'Job'
 coverImage: '/images/blog/find-job.webp'
@@ -223,3 +224,4 @@ Chcesz wiedzieć jakie oferty najlepiej pasują do Twojego profilu? **[Vocare.pl
 - [Rozmowa kwalifikacyjna 2026 - jak się przygotować i wypaść świetnie](/blog/Job/rozmowa-kwalifikacyjna)
 - [CV 2026 - kompletny poradnik jak napisać dobre CV](/blog/CV/cv)
 - [Onboarding 2026 - jak przetrwać pierwsze dni w nowej pracy](/blog/Job/onboarding-nowa-praca)
+- [Zasiłek dla bezrobotnych 2026 - ile wynosi i jak go uzyskać](/blog/Job/zasilek-dla-bezrobotnych)

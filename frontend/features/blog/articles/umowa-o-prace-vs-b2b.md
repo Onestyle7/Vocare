@@ -2,7 +2,8 @@
 title: 'Umowa o pracę vs B2B vs zlecenie 2026 - co wybrać?'
 description: 'Umowa o pracę, kontrakt B2B czy umowa zlecenie? Sprawdź różnice w wynagrodzeniu, stabilności i obowiązkach, żeby świadomie wybrać formę zatrudnienia w 2026 roku.'
 estimatedReadTime: 8
-date: '2026-09-02'
+date: '2026-07-17'
+updatedAt: '2026-09-09'
 author: 'Vocare'
 category: 'Job'
 coverImage: '/images/blog/job-portals.webp'
@@ -90,7 +91,12 @@ Niezależnie od wybranej formy zatrudnienia, **[Vocare.pl](https://vocare.pl)** 
 ---
 
 ## Powiązane artykuły
+- [Umowa na czas określony 2026 - ile razy można ją podpisać](/blog/Job/umowa-na-czas-okreslony-limit)
+- [Urlop wypoczynkowy 2026 - ile dni przysługuje i jak liczyć](/blog/Job/urlop-wypoczynkowy)
 - [Negocjacje wynagrodzenia 2026 - jak negocjować pensję skutecznie](/blog/Job/negocjacje-wynagrodzenia)
 - [Praca zdalna 2026 - jak ją znaleźć i utrzymać produktywność](/blog/Job/praca-zdalna)
 - [Rynek pracy w IT 2026 - trendy, zarobki i zapotrzebowanie](/blog/rynek-pracy/rynek-pracy-it)
 - [Portfolio career 2026 - praca na kilku projektach zamiast jednego etatu](/blog/Kariera/portfolio-career)
+- [CV freelancera 2026 - jak pokazać projekty zamiast etatów](/blog/CV/cv-freelancera)
+- [Praca w korporacji czy w startupie 2026 - co wybrać](/blog/Kariera/korporacja-czy-startup)
+- [Umowa o dzieło 2026 - zasady, składki i różnice od zlecenia](/blog/Job/umowa-o-dzielo)

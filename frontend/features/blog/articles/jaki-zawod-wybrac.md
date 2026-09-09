@@ -3,6 +3,7 @@ title: 'Jaki zawód wybrać? Praktyczny poradnik na 2026 rok'
 description: 'Nie wiesz, jaki zawód wybrać? Poznaj sprawdzone metody, które pomogą Ci znaleźć ścieżkę kariery dopasowaną do Twoich mocnych stron.'
 estimatedReadTime: 9
 date: '2026-03-24'
+updatedAt: '2026-09-02'
 author: 'Vocare'
 category: 'Kariera'
 coverImage: '/images/blog/career-path.webp'

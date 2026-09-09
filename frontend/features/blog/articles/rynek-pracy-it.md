@@ -2,7 +2,8 @@
 title: 'Rynek pracy w IT 2026 - trendy, zarobki i zapotrzebowanie'
 description: 'Jak wygląda rynek pracy w IT w 2026 roku? Sprawdź, które specjalizacje są najbardziej poszukiwane, jakie są widełki wynagrodzeń i czego szukają dziś pracodawcy.'
 estimatedReadTime: 8
-date: '2026-09-02'
+date: '2026-07-02'
+updatedAt: '2026-09-09'
 author: 'Vocare'
 category: 'rynek-pracy'
 coverImage: '/images/blog/future-work.webp'
@@ -102,7 +103,9 @@ Chcesz sprawdzić, jak Twój profil kompetencyjny wypada na tle aktualnego rynku
 ---
 
 ## Powiązane artykuły
-- [Rynek pracy w Polsce 2026 - kompletny przegląd 12 branż](/blog/rynek-pracy/rynek-pracy-w-polsce)
+- [Rynek pracy w Polsce 2026 - kompletny przegląd 21 branż](/blog/rynek-pracy/rynek-pracy-w-polsce)
 - [Najlepiej płatne zawody w Polsce 2026 - ranking i zarobki](/blog/rynek-pracy/najlepiej-platne-zawody)
 - [Zawody przyszłości 2026 - które profesje będą najbardziej poszukiwane?](/blog/rynek-pracy/zawody-przyszlosci-2026)
 - [Jak zmienić branżę - praktyczny przewodnik krok po kroku](/blog/Kariera/jak-zmienic-branze)
+- [CV programisty 2026 - jak napisać CV, które przejdzie przez ATS w IT](/blog/CV/cv-programisty)
+- [CV analityka danych 2026 - jak pokazać projekty analityczne](/blog/CV/cv-analityka-danych)

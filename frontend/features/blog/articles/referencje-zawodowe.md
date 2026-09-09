@@ -2,7 +2,7 @@
 title: 'Referencje zawodowe 2026 - jak i kogo poprosić o rekomendację'
 description: 'Jak zdobyć dobre referencje zawodowe? Sprawdź kogo prosić o referencje, jak o to zapytać i jak przygotować listę kontaktów referencyjnych dla rekrutera.'
 estimatedReadTime: 7
-date: '2026-09-02'
+date: '2026-06-22'
 author: 'Vocare'
 category: 'CV'
 coverImage: '/images/blog/cv-templates-industry.webp'

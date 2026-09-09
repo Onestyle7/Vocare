@@ -2,7 +2,7 @@
 title: 'Awans zawodowy 2026 - jak go uzyskać i o niego poprosić'
 description: 'Jak uzyskać awans zawodowy w 2026 roku? Sprawdź, jak zbudować silny case do rozmowy z przełożonym, kiedy o awans prosić i jakich błędów unikać.'
 estimatedReadTime: 8
-date: '2026-09-02'
+date: '2026-05-18'
 author: 'Vocare'
 category: 'Kariera'
 coverImage: '/images/blog/career-path.webp'
@@ -95,6 +95,8 @@ Zastanawiasz się, czy Twoje kompetencje odpowiadają wyższemu stanowisku? **[V
 ---
 
 ## Powiązane artykuły
+- [Plan rozwoju zawodowego 2026 - jak go napisać krok po kroku](/blog/Kariera/plan-rozwoju-zawodowego)
+- [Feedback w pracy 2026 - jak dawać i przyjmować krytykę](/blog/Kariera/feedback-w-pracy)
 - [Ścieżka kariery - jak zaplanować rozwój zawodowy w 2026](/blog/Kariera/sciezka-kariery)
 - [Negocjacje wynagrodzenia 2026 - jak negocjować pensję skutecznie](/blog/Job/negocjacje-wynagrodzenia)
 - [Doradca zawodowy - co robi, ile kosztuje i czy warto](/blog/Kariera/doradca-zawodowy)

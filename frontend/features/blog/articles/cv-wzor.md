@@ -2,7 +2,8 @@
 title: 'CV wzór 2026 - darmowe szablony do pobrania i edycji'
 description: 'Szukasz gotowego wzoru CV do pobrania? Sprawdź sprawdzone szablony CV na 2026 rok dla każdej branży - z przykładami i wskazówkami.'
 estimatedReadTime: 8
-date: '2026-04-12'
+date: '2026-03-31'
+updatedAt: '2026-09-02'
 author: 'Vocare'
 category: 'CV'
 coverImage: '/images/blog/cv-template.webp'

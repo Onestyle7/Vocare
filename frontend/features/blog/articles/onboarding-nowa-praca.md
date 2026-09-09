@@ -2,7 +2,8 @@
 title: 'Onboarding 2026 - jak przetrwać pierwsze dni w nowej pracy'
 description: 'Jak dobrze wypaść w pierwszych dniach nowej pracy? Sprawdź jak przygotować się do onboardingu, czego unikać i jak szybko zbudować dobre wrażenie w nowym zespole.'
 estimatedReadTime: 7
-date: '2026-09-02'
+date: '2026-06-09'
+updatedAt: '2026-09-09'
 author: 'Vocare'
 category: 'Job'
 coverImage: '/images/blog/cv-job-application.webp'
@@ -101,3 +102,5 @@ Chcesz wejść do nowej roli dobrze przygotowany? **[Vocare.pl](https://vocare.p
 - [Rozmowa kwalifikacyjna 2026 - jak się przygotować i wypaść świetnie](/blog/Job/rozmowa-kwalifikacyjna)
 - [Jak znaleźć pracę w 2026 - sprawdzone strategie krok po kroku](/blog/Job/jak-znalezc-prace)
 - [Ścieżka kariery - jak zaplanować rozwój zawodowy w 2026](/blog/Kariera/sciezka-kariery)
+- [Badania lekarskie do pracy 2026 - kiedy i jakie są obowiązkowe](/blog/Job/badania-lekarskie-do-pracy)
+- [Szkolenie BHP wstępne 2026 - kto musi je przejść i ile trwa](/blog/Job/szkolenie-bhp-wstepne)

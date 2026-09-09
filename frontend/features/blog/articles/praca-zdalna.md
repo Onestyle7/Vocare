@@ -2,7 +2,7 @@
 title: 'Praca zdalna 2026 - jak ją znaleźć i utrzymać produktywność'
 description: 'Jak znaleźć pracę zdalną w 2026 roku i jak efektywnie w niej funkcjonować? Sprawdź, gdzie szukać ofert remote, jakich błędów unikać i jak zadbać o produktywność.'
 estimatedReadTime: 8
-date: '2026-09-02'
+date: '2026-06-18'
 author: 'Vocare'
 category: 'Job'
 coverImage: '/images/blog/job-search.webp'

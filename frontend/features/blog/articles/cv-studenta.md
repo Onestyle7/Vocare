@@ -2,7 +2,8 @@
 title: 'CV studenta 2026 - jak napisać CV na pierwszą pracę lub staż'
 description: 'Jak napisać CV studenta gdy nie masz doświadczenia zawodowego? Sprawdź wzór CV studenta 2026 z przykładami dla każdego kierunku studiów.'
 estimatedReadTime: 9
-date: '2026-04-12'
+date: '2026-03-27'
+updatedAt: '2026-09-02'
 author: 'Vocare'
 category: 'CV'
 coverImage: '/images/blog/student-cv.webp'

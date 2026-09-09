@@ -2,7 +2,7 @@
 title: 'Executive search i headhunting 2026 - jak działa rekrutacja na wyższe stanowiska'
 description: 'Czym różni się executive search od zwykłej rekrutacji? Sprawdź jak działa headhunting, jak reagować na kontakt od headhuntera i jak zbudować widoczność dla rekruterów wykonawczych.'
 estimatedReadTime: 7
-date: '2026-09-02'
+date: '2026-05-25'
 author: 'Vocare'
 category: 'Job'
 coverImage: '/images/blog/interview-questions.webp'

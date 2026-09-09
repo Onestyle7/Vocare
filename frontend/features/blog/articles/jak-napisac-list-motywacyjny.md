@@ -2,7 +2,8 @@
 title: 'Jak napisać list motywacyjny 2026 - wzór i przykłady'
 description: 'Jak napisać list motywacyjny, który rekruter przeczyta do końca? Sprawdź strukturę, wzór i przykłady dobrego listu motywacyjnego w 2026.'
 estimatedReadTime: 9
-date: '2026-04-12'
+date: '2026-04-10'
+updatedAt: '2026-09-02'
 author: 'Vocare'
 category: 'CV'
 coverImage: '/images/blog/how-to-cover-letter.webp'

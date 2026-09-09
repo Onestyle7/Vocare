@@ -2,7 +2,7 @@
 title: 'Praca zdalna dla zagranicznego pracodawcy 2026 - jak ją znaleźć i rozliczyć'
 description: 'Jak znaleźć pracę zdalną dla zagranicznej firmy mieszkając w Polsce? Sprawdź gdzie szukać ofert, jak wygląda rozliczenie podatkowe i czego unikać.'
 estimatedReadTime: 9
-date: '2026-09-09'
+date: '2026-07-20'
 author: 'Vocare'
 category: 'Job'
 coverImage: '/images/blog/job-search.webp'
@@ -104,3 +104,4 @@ Chcesz sprawdzić, czy Twoje CV i kompetencje są gotowe na aplikacje do zagrani
 - [CV po angielsku 2026 - jak napisać angielskie CV krok po kroku](/blog/CV/cv-po-angielsku)
 - [LinkedIn - jak zbudować profil, który przyciąga rekruterów 2026](/blog/CV/linkedin-profil)
 - [Praca zdalna 2026 - jak ją znaleźć i utrzymać produktywność](/blog/Job/praca-zdalna)
+- [Praca sezonowa za granicą 2026 - gdzie jechać i ile można zarobić](/blog/Job/praca-sezonowa-za-granica)

@@ -2,7 +2,8 @@
 title: 'Darmowy kreator CV 2026 - stwórz CV online bez ukrytych opłat'
 description: 'Szukasz darmowego kreatora CV z prawdziwymi funkcjami? Vocare.pl pozwala tworzyć wiele wersji CV, analizować je AI i dopasowywać do konkretnych ofert - bez opłat.'
 estimatedReadTime: 7
-date: '2026-04-12'
+date: '2026-04-03'
+updatedAt: '2026-09-02'
 author: 'Vocare'
 category: 'CV'
 coverImage: '/images/blog/free-cv-builder.webp'
