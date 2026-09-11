@@ -28,6 +28,7 @@
     <!-- Database packages -->
     <PackageReference Include="Microsoft.EntityFrameworkCore.InMemory" Version="9.0.0" />
     <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="9.0.4" />
+    <PackageReference Include="Pgvector" Version="0.3.2" />
     
     <!-- ASP.NET Core packages (same versions as main project) -->
     <PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="9.0.3" />
@@ -43,6 +44,9 @@
     
     <!-- Stripe for billing tests -->
     <PackageReference Include="Stripe.net" Version="48.0.0" />
+
+    <!-- Hangfire for roadmap background-job tests -->
+    <PackageReference Include="Hangfire.Core" Version="1.8.23" />
   </ItemGroup>
 
   <ItemGroup>

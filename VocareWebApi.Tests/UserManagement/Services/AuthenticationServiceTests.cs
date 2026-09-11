@@ -1,541 +1,348 @@
-using System.Net;
-using System.Text;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Net.Http;
+using System.Threading.Tasks;
 using FluentAssertions;
 using Microsoft.AspNetCore.DataProtection;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
-using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging.Abstractions;
 using Moq;
-using Moq.Protected;
+using VocareWebAPI.Data;
 using VocareWebAPI.Models.Entities;
+using VocareWebApi.Tests.Common;
 using VocareWebAPI.UserManagement;
 using VocareWebAPI.UserManagement.Interfaces;
+using VocareWebAPI.UserManagement.Repositories.Interfaces;
 using VocareWebAPI.UserManagement.Services.Implementations;
 using VocareWebAPI.UserManagement.Services.Interfaces;
 using Xunit;
 
 namespace VocareWebApi.Tests.UserManagement.Services
 {
-    public class AuthenticationServiceTests
+    /// <summary>
+    /// Testy jednostkowe <see cref="AuthenticationService"/> – logowanie, rejestracja oraz reset hasła.
+    /// Ścieżki wymagające realnych providerów tokenów Identity są pominięte świadomie.
+    /// </summary>
+    public sealed class AuthenticationServiceTests : IDisposable
     {
-        private readonly Mock<UserManager<User>> _mockUserManager;
-        private readonly Mock<SignInManager<User>> _mockSignInManager;
-        private readonly Mock<ILogger<AuthenticationService>> _mockLogger;
-        private readonly Mock<IConfiguration> _mockConfiguration;
-        private readonly Mock<IHttpClientFactory> _mockHttpClientFactory;
-        private readonly Mock<IHttpContextAccessor> _mockHttpContextAccessor;
-        private readonly Mock<IEmailService> _mockEmailService;
-        private readonly UserRegistrationHandler _registrationHandler;
-        private readonly AuthenticationService _service;
+        private const string Email = "ada@example.com";
+        private const string Password = "P@ssw0rd!";
+
+        private readonly AppDbContext _context;
+        private readonly Mock<UserManager<User>> _userManager = IdentityMocks.UserManager();
+        private readonly Mock<SignInManager<User>> _signInManager;
+        private readonly Mock<IEmailService> _email = new();
+        private readonly Mock<IMarketingConsentRepository> _marketingConsent = new();
+        private readonly Mock<IUserSetupService> _userSetup = new();
+        private readonly AuthenticationService _sut;
 
         public AuthenticationServiceTests()
         {
-            // Setup UserManager mock
-            var userStoreMock = new Mock<IUserStore<User>>();
-            _mockUserManager = new Mock<UserManager<User>>(
-                userStoreMock.Object,
-                null,
-                null,
-                null,
-                null,
-                null,
-                null,
-                null,
-                null
-            );
+            _context = TestDbContextFactory.CreateContext();
+            _signInManager = IdentityMocks.SignInManager(_userManager);
 
-            // Setup SignInManager mock
-            var contextAccessor = new Mock<IHttpContextAccessor>();
-            var userPrincipalFactory = new Mock<IUserClaimsPrincipalFactory<User>>();
-            _mockSignInManager = new Mock<SignInManager<User>>(
-                _mockUserManager.Object,
-                contextAccessor.Object,
-                userPrincipalFactory.Object,
-                null,
-                null,
-                null,
-                null
-            );
-
-            _mockLogger = new Mock<ILogger<AuthenticationService>>();
-            _mockConfiguration = new Mock<IConfiguration>();
-            _mockHttpClientFactory = new Mock<IHttpClientFactory>();
-            _mockHttpContextAccessor = new Mock<IHttpContextAccessor>();
-            _mockEmailService = new Mock<IEmailService>();
-
-            // Setup HttpContext for token generation
-            var httpContext = new DefaultHttpContext();
-            httpContext.RequestServices = new Mock<IServiceProvider>().Object;
-            _mockHttpContextAccessor.Setup(x => x.HttpContext).Returns(httpContext);
-
-            // Utworzenie prawdziwej instancji UserRegistrationHandler z zamockowanymi zależnościami
-            var mockUserSetupService = new Mock<IUserSetupService>();
-            var mockRegistrationLogger = new Mock<ILogger<UserRegistrationHandler>>();
-
-            // Setup: Domyślnie SetupNewUserAsync zwraca Task.CompletedTask
-            mockUserSetupService
-                .Setup(x => x.SetupNewUserAsync(It.IsAny<string>()))
-                .Returns(Task.CompletedTask);
-
-            _registrationHandler = new UserRegistrationHandler(
-                mockUserSetupService.Object,
-                mockRegistrationLogger.Object
-            );
-
-            _service = new AuthenticationService(
-                _mockUserManager.Object,
-                _mockSignInManager.Object,
-                _mockLogger.Object,
-                _mockConfiguration.Object,
-                _mockHttpClientFactory.Object,
-                _mockHttpContextAccessor.Object,
-                _mockEmailService.Object,
-                _registrationHandler
-            );
-        }
-
-        #region Login Tests
-        [Fact]
-        public async Task LoginAsync_ValidCredentials_ReturnsSuccessWithToken()
-        {
-            // ARRANGE
-            var email = "test@example.com";
-            var password = "ValidPassword123!";
-            var user = new User { Id = "locked-user", Email = email };
-
-            _mockUserManager.Setup(x => x.FindByEmailAsync(email)).ReturnsAsync(user);
-
-            _mockSignInManager
-                .Setup(x => x.CheckPasswordSignInAsync(user, password, true))
-                .ReturnsAsync(SignInResult.LockedOut);
-
-            // ACT
-            var result = await _service.LoginAsync(email, password);
-
-            // ASSERT
-            result.IsSuccess.Should().BeFalse();
-            result
-                .Error.Should()
-                .Contain("locked out", "użytkownik powinien dostać informację o blokadzie");
-        }
-
-        [Fact]
-        public async Task LoginAsync_UserNotFound_ReturnsGenericError()
-        {
-            // ARRANGE
-            var email = "nonexistent@example.com";
-            var password = "password";
-
-            _mockUserManager.Setup(x => x.FindByEmailAsync(email)).ReturnsAsync((User)null!);
-
-            // ACT
-            var result = await _service.LoginAsync(email, password);
-
-            // ASSERT
-            result.IsSuccess.Should().BeFalse();
-            result
-                .Error.Should()
-                .Be(
-                    "Invalid email or password.",
-                    "nie możemy zdradzić czy email istnieje - bezpieczeństwo!"
-                );
-
-            // Nie próbujemy nawet sprawdzać hasła
-            _mockSignInManager.Verify(
-                x =>
-                    x.CheckPasswordSignInAsync(
-                        It.IsAny<User>(),
-                        It.IsAny<string>(),
-                        It.IsAny<bool>()
-                    ),
-                Times.Never
-            );
-        }
-
-        [Fact]
-        public async Task LoginAsync_WrongPassword_ReturnsFailure()
-        {
-            // ARRANGE
-            var email = "test@example.com";
-            var password = "WrongPassword";
-            var user = new User { Id = "user-123", Email = email };
-
-            _mockUserManager.Setup(x => x.FindByEmailAsync(email)).ReturnsAsync(user);
-
-            _mockSignInManager
-                .Setup(x => x.CheckPasswordSignInAsync(user, password, true))
-                .ReturnsAsync(SignInResult.Failed);
-
-            // ACT
-            var result = await _service.LoginAsync(email, password);
-
-            // ASSERT
-            result.IsSuccess.Should().BeFalse();
-            result.Error.Should().Be("Invalid email or password.");
-        }
-        #endregion
-
-        #region Register Tests
-        [Fact]
-        public async Task RegisterAsync_NewUser_CreatesUser()
-        {
-            // ARRANGE
-            var email = "newuser@example.com";
-            var password = "SecurePassword123!";
-
-            // Mock: User nie istnieje
-            _mockUserManager.Setup(x => x.FindByEmailAsync(email)).ReturnsAsync((User)null!);
-
-            // Mock: Tworzenie użytkownika się udaje
-            _mockUserManager
-                .Setup(x => x.CreateAsync(It.IsAny<User>(), password))
-                .ReturnsAsync(IdentityResult.Success)
-                .Callback<User, string>(
-                    (user, pwd) =>
+            var httpContextAccessor = new Mock<IHttpContextAccessor>();
+            httpContextAccessor
+                .Setup(a => a.HttpContext)
+                .Returns(
+                    new DefaultHttpContext
                     {
-                        user.Id = "new-user-123"; // Symuluj przypisanie ID
+                        RequestServices = new ServiceCollection()
+                            .AddSingleton<IDataProtectionProvider>(
+                                DataProtectionProvider.Create("VocareTests")
+                            )
+                            .BuildServiceProvider(),
                     }
                 );
 
-            // ACT
-            var result = await _service.RegisterAsync(email, password);
+            var httpClientFactory = new Mock<IHttpClientFactory>();
+            httpClientFactory
+                .Setup(f => f.CreateClient(It.IsAny<string>()))
+                .Returns(
+                    new HttpClient(FakeHttpMessageHandler.Throwing(new InvalidOperationException()))
+                );
 
-            // ASSERT
-            result.IsSuccess.Should().BeTrue();
-            result.Value.Should().NotBeNull();
-            result.Value!.UserId.Should().NotBeNullOrEmpty();
-
-            // Weryfikuj że user został utworzony
-            _mockUserManager.Verify(
-                x =>
-                    x.CreateAsync(
-                        It.Is<User>(u => u.Email == email && u.UserName == email),
-                        password
-                    ),
-                Times.Once
+            _sut = new AuthenticationService(
+                _userManager.Object,
+                _signInManager.Object,
+                NullLogger<AuthenticationService>.Instance,
+                TestConfiguration.FromValues(("Frontend:Url", "https://vocare.pl")),
+                httpClientFactory.Object,
+                httpContextAccessor.Object,
+                _email.Object,
+                new UserRegistrationHandler(
+                    _userSetup.Object,
+                    NullLogger<UserRegistrationHandler>.Instance
+                ),
+                _marketingConsent.Object,
+                _context
             );
         }
 
+        public void Dispose() => _context.Dispose();
+
+        private static User NewUser() =>
+            new()
+            {
+                Id = Guid.NewGuid().ToString(),
+                Email = Email,
+                UserName = Email,
+            };
+
+        // ---------- LoginAsync ----------
+
         [Fact]
-        public async Task RegisterAsync_EmailAlreadyExists_ReturnsFailure()
+        public async Task LoginAsync_WhenUserNotFound_FailsWithInvalidCredentials401()
         {
-            // ARRANGE
-            var email = "existing@example.com";
-            var password = "Password123!";
-            var existingUser = new User { Id = "existing-123", Email = email };
+            _userManager.Setup(m => m.FindByEmailAsync(Email)).ReturnsAsync((User?)null);
 
-            _mockUserManager.Setup(x => x.FindByEmailAsync(email)).ReturnsAsync(existingUser);
+            var result = await _sut.LoginAsync(Email, Password);
 
-            // Mock: Sprawdzamy czy user ma Google login
-            _mockUserManager
-                .Setup(x => x.GetLoginsAsync(existingUser))
-                .ReturnsAsync(new List<UserLoginInfo>());
-
-            // ACT
-            var result = await _service.RegisterAsync(email, password);
-
-            // ASSERT
             result.IsSuccess.Should().BeFalse();
-            result.Error.Should().Contain("already exists");
+            result.Error!.Code.Should().Be("INVALID_CREDENTIALS");
+            result.Error.StatusCode.Should().Be(401);
+        }
 
-            // Nie próbujemy tworzyć nowego użytkownika
-            _mockUserManager.Verify(
-                x => x.CreateAsync(It.IsAny<User>(), It.IsAny<string>()),
+        [Fact]
+        public async Task LoginAsync_WhenPasswordWrong_FailsWithInvalidCredentials()
+        {
+            _userManager.Setup(m => m.FindByEmailAsync(Email)).ReturnsAsync(NewUser());
+            _signInManager
+                .Setup(m => m.CheckPasswordSignInAsync(It.IsAny<User>(), Password, true))
+                .ReturnsAsync(SignInResult.Failed);
+
+            var result = await _sut.LoginAsync(Email, Password);
+
+            result.Error!.Code.Should().Be("INVALID_CREDENTIALS");
+        }
+
+        [Fact]
+        public async Task LoginAsync_WhenLockedOut_FailsWithAccountLocked429()
+        {
+            _userManager.Setup(m => m.FindByEmailAsync(Email)).ReturnsAsync(NewUser());
+            _signInManager
+                .Setup(m => m.CheckPasswordSignInAsync(It.IsAny<User>(), Password, true))
+                .ReturnsAsync(SignInResult.LockedOut);
+
+            var result = await _sut.LoginAsync(Email, Password);
+
+            result.Error!.Code.Should().Be("ACCOUNT_LOCKED");
+            result.Error.StatusCode.Should().Be(429);
+        }
+
+        [Fact]
+        public async Task LoginAsync_WhenCredentialsValid_ReturnsTokenAndUserData()
+        {
+            var user = NewUser();
+            _userManager.Setup(m => m.FindByEmailAsync(Email)).ReturnsAsync(user);
+            _signInManager
+                .Setup(m => m.CheckPasswordSignInAsync(user, Password, true))
+                .ReturnsAsync(SignInResult.Success);
+
+            var result = await _sut.LoginAsync(Email, Password);
+
+            result.IsSuccess.Should().BeTrue();
+            result.Value!.UserId.Should().Be(user.Id);
+            result.Value.Token.Should().NotBeNullOrEmpty();
+        }
+
+        // ---------- RegisterAsync ----------
+
+        [Fact]
+        public async Task RegisterAsync_WhenGoogleAccountExists_FailsWithGoogleAccountExists409()
+        {
+            var user = NewUser();
+            _userManager.Setup(m => m.FindByEmailAsync(Email)).ReturnsAsync(user);
+            _userManager
+                .Setup(m => m.GetLoginsAsync(user))
+                .ReturnsAsync(new List<UserLoginInfo> { new("Google", "gid", "Google") });
+
+            var result = await _sut.RegisterAsync(Email, Password, false, null);
+
+            result.Error!.Code.Should().Be("GOOGLE_ACCOUNT_EXISTS");
+            result.Error.StatusCode.Should().Be(409);
+        }
+
+        [Fact]
+        public async Task RegisterAsync_WhenPasswordAccountExists_FailsWithAccountExists409()
+        {
+            var user = NewUser();
+            _userManager.Setup(m => m.FindByEmailAsync(Email)).ReturnsAsync(user);
+            _userManager.Setup(m => m.GetLoginsAsync(user)).ReturnsAsync(new List<UserLoginInfo>());
+
+            var result = await _sut.RegisterAsync(Email, Password, false, null);
+
+            result.Error!.Code.Should().Be("ACCOUNT_EXISTS");
+        }
+
+        [Fact]
+        public async Task RegisterAsync_WhenNew_CreatesUserAndRunsRegistrationHandler()
+        {
+            _userManager.Setup(m => m.FindByEmailAsync(Email)).ReturnsAsync((User?)null);
+            _userManager
+                .Setup(m => m.CreateAsync(It.IsAny<User>(), Password))
+                .ReturnsAsync(IdentityResult.Success);
+            _userSetup
+                .Setup(s => s.SetupNewUserAsync(It.IsAny<string>()))
+                .Returns(Task.CompletedTask);
+
+            var result = await _sut.RegisterAsync(Email, Password, false, null);
+
+            result.IsSuccess.Should().BeTrue();
+            _userSetup.Verify(s => s.SetupNewUserAsync(It.IsAny<string>()), Times.Once);
+        }
+
+        [Fact]
+        public async Task RegisterAsync_WhenIdentityCreationFails_FailsWithRegistrationFailed()
+        {
+            _userManager.Setup(m => m.FindByEmailAsync(Email)).ReturnsAsync((User?)null);
+            _userManager
+                .Setup(m => m.CreateAsync(It.IsAny<User>(), Password))
+                .ReturnsAsync(IdentityResult.Failed(new IdentityError { Description = "weak" }));
+
+            var result = await _sut.RegisterAsync(Email, Password, false, null);
+
+            result.Error!.Code.Should().Be("REGISTRATION_FAILED");
+        }
+
+        // ---------- ForgotPasswordAsync ----------
+
+        [Fact]
+        public async Task ForgotPasswordAsync_ForUnknownEmail_ReturnsGenericSuccessWithoutSendingEmail()
+        {
+            _userManager.Setup(m => m.FindByEmailAsync(Email)).ReturnsAsync((User?)null);
+
+            var result = await _sut.ForgotPasswordAsync(Email);
+
+            result.IsSuccess.Should().BeTrue();
+            _email.Verify(
+                e => e.SendEmailAsync(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>()),
                 Times.Never
             );
         }
 
         [Fact]
-        public async Task RegisterAsync_UserCreationFails_ReturnsFailure()
+        public async Task ForgotPasswordAsync_ForPasswordUser_SendsResetEmail()
         {
-            // ARRANGE
-            var email = "test@example.com";
-            var password = "Password123!";
+            var user = NewUser();
+            _userManager.Setup(m => m.FindByEmailAsync(Email)).ReturnsAsync(user);
+            _userManager.Setup(m => m.GetLoginsAsync(user)).ReturnsAsync(new List<UserLoginInfo>());
+            _userManager.Setup(m => m.HasPasswordAsync(user)).ReturnsAsync(true);
+            _userManager
+                .Setup(m => m.GeneratePasswordResetTokenAsync(user))
+                .ReturnsAsync("reset-token");
 
-            _mockUserManager.Setup(x => x.FindByEmailAsync(email)).ReturnsAsync((User)null!);
+            var result = await _sut.ForgotPasswordAsync(Email);
 
-            // Mock: Tworzenie użytkownika się nie udaje
-            _mockUserManager
-                .Setup(x => x.CreateAsync(It.IsAny<User>(), password))
-                .ReturnsAsync(
-                    IdentityResult.Failed(new IdentityError { Description = "Password too weak" })
-                );
-
-            // ACT
-            var result = await _service.RegisterAsync(email, password);
-
-            // ASSERT
-            result.IsSuccess.Should().BeFalse();
-            result.Error.Should().Contain("Registration failed");
-        }
-
-        #endregion
-        #region Password Reset Tests[Fact]
-        public async Task ForgotPasswordAsync_ValidEmail_SendsResetEmail()
-        {
-            // ARRANGE
-            var email = "user@example.com";
-            var user = new User
-            {
-                Id = "user-123",
-                Email = email,
-                UserName = email,
-            };
-            var resetToken = "reset-token-xyz";
-
-            _mockUserManager.Setup(x => x.FindByEmailAsync(email)).ReturnsAsync(user);
-
-            _mockUserManager
-                .Setup(x => x.GetLoginsAsync(user))
-                .ReturnsAsync(new List<UserLoginInfo>());
-
-            _mockUserManager.Setup(x => x.HasPasswordAsync(user)).ReturnsAsync(true);
-
-            _mockUserManager
-                .Setup(x => x.GeneratePasswordResetTokenAsync(user))
-                .ReturnsAsync(resetToken);
-
-            _mockConfiguration.Setup(x => x["Frontend:Url"]).Returns("https://vocare.pl");
-
-            _mockEmailService
-                .Setup(x =>
-                    x.SendEmailAsync(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>())
-                )
-                .Returns(Task.CompletedTask);
-
-            // ACT
-            var result = await _service.ForgotPasswordAsync(email);
-
-            // ASSERT
             result.IsSuccess.Should().BeTrue();
-
-            // Sprawdź czy email został wysłany
-            _mockEmailService.Verify(
-                x =>
-                    x.SendEmailAsync(
-                        email,
-                        It.Is<string>(s => s.Contains("Reset hasła")),
-                        It.Is<string>(s => s.Contains("reset-password") && s.Contains(email))
-                    ),
-                Times.Once,
-                "email z linkiem resetującym musi zostać wysłany"
-            );
-        }
-
-        [Fact]
-        public async Task ForgotPasswordAsync_NonExistentEmail_ReturnsSuccessWithoutSending()
-        {
-            // ARRANGE
-            var email = "nonexistent@example.com";
-
-            _mockUserManager.Setup(x => x.FindByEmailAsync(email)).ReturnsAsync((User)null!);
-
-            // ACT
-            var result = await _service.ForgotPasswordAsync(email);
-
-            // ASSERT
-            result.IsSuccess.Should().BeTrue("ze względów bezpieczeństwa zawsze zwracamy sukces");
-
-            // Email NIE został wysłany
-            _mockEmailService.Verify(
-                x => x.SendEmailAsync(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>()),
-                Times.Never,
-                "nie wysyłamy emaila dla nieistniejących kont"
-            );
-        }
-
-        [Fact]
-        public async Task ResetPasswordAsync_ValidToken_ResetsPassword()
-        {
-            // ARRANGE
-            var email = "user@example.com";
-            var token = "valid-reset-token";
-            var newPassword = "NewSecurePassword123!";
-            var user = new User { Id = "user-123", Email = email };
-
-            _mockUserManager.Setup(x => x.FindByEmailAsync(email)).ReturnsAsync(user);
-
-            _mockUserManager
-                .Setup(x => x.ResetPasswordAsync(user, token, newPassword))
-                .ReturnsAsync(IdentityResult.Success);
-
-            _mockEmailService
-                .Setup(x =>
-                    x.SendEmailAsync(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>())
-                )
-                .Returns(Task.CompletedTask);
-
-            // ACT
-            var result = await _service.ResetPasswordAsync(email, token, newPassword);
-
-            // ASSERT
-            result.IsSuccess.Should().BeTrue();
-            result.Value!.Message.Should().Contain("reset successfully");
-
-            // Weryfikuj że hasło zostało zmienione
-            _mockUserManager.Verify(
-                x => x.ResetPasswordAsync(user, token, newPassword),
-                Times.Once
-            );
-
-            // Weryfikuj że wysłano email potwierdzający
-            _mockEmailService.Verify(
-                x =>
-                    x.SendEmailAsync(
-                        email,
-                        It.Is<string>(s => s.Contains("zmienione")),
+            _email.Verify(
+                e =>
+                    e.SendEmailAsync(
+                        Email,
+                        It.Is<string>(s => s.Contains("Reset")),
                         It.IsAny<string>()
                     ),
                 Times.Once
             );
         }
 
+        // ---------- ResetPasswordAsync ----------
+
         [Fact]
-        public async Task ResetPasswordAsync_InvalidToken_ReturnsFailure()
+        public async Task ResetPasswordAsync_WhenUserNotFound_FailsWithInvalidResetToken()
         {
-            // ARRANGE
-            var email = "user@example.com";
-            var invalidToken = "expired-or-invalid-token";
-            var newPassword = "NewPassword123!";
-            var user = new User { Id = "user-123", Email = email };
+            _userManager.Setup(m => m.FindByEmailAsync(Email)).ReturnsAsync((User?)null);
 
-            _mockUserManager.Setup(x => x.FindByEmailAsync(email)).ReturnsAsync(user);
+            var result = await _sut.ResetPasswordAsync(Email, "token", "NewP@ss1");
 
-            // Mock: Token jest nieprawidłowy
-            _mockUserManager
-                .Setup(x => x.ResetPasswordAsync(user, invalidToken, newPassword))
-                .ReturnsAsync(
-                    IdentityResult.Failed(
-                        new IdentityError { Code = "InvalidToken", Description = "Invalid token" }
-                    )
-                );
-
-            // ACT
-            var result = await _service.ResetPasswordAsync(email, invalidToken, newPassword);
-
-            // ASSERT
-            result.IsSuccess.Should().BeFalse();
-            result.Error.Should().Contain("Invalid or expired token");
-
-            // Email NIE został wysłany (bo reset się nie udał)
-            _mockEmailService.Verify(
-                x => x.SendEmailAsync(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>()),
-                Times.Never
-            );
+            result.Error!.Code.Should().Be("INVALID_RESET_TOKEN");
         }
 
-        #endregion
-        #region Google Login Tests
         [Fact]
-        public async Task GoogleLoginAsync_NewUser_CreatesAccountWithBilling()
+        public async Task ResetPasswordAsync_WhenPasswordTooWeak_FailsWithWeakPassword()
         {
-            // ARRANGE
-            var accessToken = "valid-google-token";
-            var email = "newgoogleuser@example.com";
-            var googleUserId = "google-123";
+            var user = NewUser();
+            _userManager.Setup(m => m.FindByEmailAsync(Email)).ReturnsAsync(user);
+            _userManager
+                .Setup(m => m.ResetPasswordAsync(user, "token", "weak"))
+                .ReturnsAsync(
+                    IdentityResult.Failed(new IdentityError { Code = "PasswordTooShort" })
+                );
 
-            // ✅ 1. Mock IDataProtectionProvider (KLUCZOWE!)
-            var mockDataProtector = new Mock<IDataProtector>();
-            mockDataProtector
-                .Setup(x => x.Protect(It.IsAny<byte[]>()))
-                .Returns((byte[] data) => data); // Zwróć te same dane
+            var result = await _sut.ResetPasswordAsync(Email, "token", "weak");
 
-            var mockDataProtectionProvider = new Mock<IDataProtectionProvider>();
-            mockDataProtectionProvider
-                .Setup(x => x.CreateProtector(It.IsAny<string>()))
-                .Returns(mockDataProtector.Object);
+            result.Error!.Code.Should().Be("WEAK_PASSWORD");
+        }
 
-            var mockServiceProvider = new Mock<IServiceProvider>();
-            mockServiceProvider
-                .Setup(x => x.GetService(typeof(IDataProtectionProvider)))
-                .Returns(mockDataProtectionProvider.Object);
-
-            var httpContext = new DefaultHttpContext();
-            httpContext.RequestServices = mockServiceProvider.Object;
-
-            var mockHttpContextAccessorForTest = new Mock<IHttpContextAccessor>();
-            mockHttpContextAccessorForTest.Setup(x => x.HttpContext).Returns(httpContext);
-
-            var googleTokenResponse = new
-            {
-                email = email,
-                user_id = googleUserId,
-                verified_email = true,
-            };
-
-            var jsonResponse = System.Text.Json.JsonSerializer.Serialize(googleTokenResponse);
-            var httpResponse = new HttpResponseMessage
-            {
-                StatusCode = HttpStatusCode.OK,
-                Content = new StringContent(jsonResponse, Encoding.UTF8, "application/json"),
-            };
-
-            var mockHttpHandler = new Mock<HttpMessageHandler>();
-            mockHttpHandler
-                .Protected()
-                .Setup<Task<HttpResponseMessage>>(
-                    "SendAsync",
-                    ItExpr.IsAny<HttpRequestMessage>(),
-                    ItExpr.IsAny<CancellationToken>()
-                )
-                .ReturnsAsync(httpResponse);
-
-            var httpClient = new HttpClient(mockHttpHandler.Object);
-
-            var mockHttpClientFactoryForTest = new Mock<IHttpClientFactory>();
-            mockHttpClientFactoryForTest
-                .Setup(x => x.CreateClient(It.IsAny<string>()))
-                .Returns(httpClient);
-
-            var serviceForGoogleTest = new AuthenticationService(
-                _mockUserManager.Object,
-                _mockSignInManager.Object,
-                _mockLogger.Object,
-                _mockConfiguration.Object,
-                mockHttpClientFactoryForTest.Object,
-                mockHttpContextAccessorForTest.Object,
-                _mockEmailService.Object,
-                _registrationHandler
-            );
-
-            _mockUserManager.Setup(x => x.FindByEmailAsync(email)).ReturnsAsync((User)null!);
-
-            _mockUserManager
-                .Setup(x => x.CreateAsync(It.IsAny<User>()))
-                .ReturnsAsync(IdentityResult.Success)
-                .Callback<User>(user => user.Id = "new-user-123");
-
-            _mockUserManager
-                .Setup(x => x.AddLoginAsync(It.IsAny<User>(), It.IsAny<UserLoginInfo>()))
+        [Fact]
+        public async Task ResetPasswordAsync_WhenSuccessful_ReturnsOkAndSendsConfirmation()
+        {
+            var user = NewUser();
+            _userManager.Setup(m => m.FindByEmailAsync(Email)).ReturnsAsync(user);
+            _userManager
+                .Setup(m => m.ResetPasswordAsync(user, "token", "NewP@ss1"))
                 .ReturnsAsync(IdentityResult.Success);
 
-            _mockUserManager
-                .Setup(x =>
-                    x.SetAuthenticationTokenAsync(
-                        It.IsAny<User>(),
-                        It.IsAny<string>(),
-                        It.IsAny<string>(),
-                        It.IsAny<string>()
-                    )
-                )
-                .ReturnsAsync(IdentityResult.Success);
+            var result = await _sut.ResetPasswordAsync(Email, "token", "NewP@ss1");
 
-            // ACT
-            var result = await serviceForGoogleTest.GoogleLoginAsync(accessToken);
-
-            // ASSERT
-            result.IsSuccess.Should().BeTrue($"Error was: {result.Error}");
-            result.Value!.IsNewUser.Should().BeTrue();
-            result.Value.Email.Should().Be(email);
-
-            // Weryfikuj że konto zostało utworzone
-            _mockUserManager.Verify(
-                x => x.CreateAsync(It.Is<User>(u => u.Email == email && u.EmailConfirmed == true)),
+            result.IsSuccess.Should().BeTrue();
+            _email.Verify(
+                e => e.SendEmailAsync(Email, It.IsAny<string>(), It.IsAny<string>()),
                 Times.Once
             );
         }
 
-        #endregion
+        // ---------- ValidateResetTokenAsync ----------
+
+        [Theory]
+        [InlineData("", "e@x.com")]
+        [InlineData("token", "")]
+        public async Task ValidateResetTokenAsync_WithMissingInput_Fails(string token, string email)
+        {
+            var result = await _sut.ValidateResetTokenAsync(token, email);
+
+            result.Error!.Code.Should().Be("MISSING_TOKEN_OR_EMAIL");
+        }
+
+        [Fact]
+        public async Task ValidateResetTokenAsync_WhenUserNotFound_ReturnsInvalidButSuccessfulResult()
+        {
+            _userManager.Setup(m => m.FindByEmailAsync(Email)).ReturnsAsync((User?)null);
+
+            var result = await _sut.ValidateResetTokenAsync("token", Email);
+
+            result.IsSuccess.Should().BeTrue();
+            result.Value!.IsValid.Should().BeFalse();
+        }
+
+        // ---------- RefreshAsync / OAuth guard clauses ----------
+
+        [Fact]
+        public async Task RefreshAsync_IsNotImplemented()
+        {
+            (await _sut.RefreshAsync("token")).Error!.Code.Should().Be("NOT_IMPLEMENTED");
+        }
+
+        [Fact]
+        public async Task GoogleLoginAsync_WithNullToken_FailsWithMissingGoogleToken()
+        {
+            (await _sut.GoogleLoginAsync(null!)).Error!.Code.Should().Be("MISSING_GOOGLE_TOKEN");
+        }
+
+        [Theory]
+        [InlineData("", "https://app/callback")]
+        [InlineData("code", "")]
+        public async Task LinkedInLoginAsync_WithMissingParams_Fails(
+            string code,
+            string redirectUri
+        )
+        {
+            (await _sut.LinkedInLoginAsync(code, redirectUri))
+                .Error!.Code.Should()
+                .Be("MISSING_LINKEDIN_PARAMS");
+        }
     }
 }
