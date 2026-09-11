@@ -2,7 +2,8 @@
 title: 'Networking zawodowy 2026 - jak budować sieć kontaktów bez wciskania się'
 description: 'Jak budować networking zawodowy w 2026 roku? Sprawdź sprawdzone metody budowania sieci kontaktów, które realnie pomagają w karierze, bez naciągania relacji.'
 estimatedReadTime: 8
-date: '2026-09-02'
+date: '2026-06-08'
+updatedAt: '2026-09-09'
 author: 'Vocare'
 category: 'Kariera'
 coverImage: '/images/blog/career-advisor.webp'
@@ -97,3 +98,5 @@ Zastanawiasz się, w jakim kierunku rozwijać swoją sieć zawodową? **[Vocare.
 - [Ścieżka kariery - jak zaplanować rozwój zawodowy w 2026](/blog/Kariera/sciezka-kariery)
 - [Executive search i headhunting 2026 - jak działa rekrutacja na wyższe stanowiska](/blog/Job/executive-search-headhunting)
 - [Awans zawodowy 2026 - jak go uzyskać i o niego poprosić](/blog/Kariera/awans-zawodowy)
+- [Kompetencje miękkie 2026 - jak je rozwijać, nie tylko deklarować](/blog/Kariera/kompetencje-miekkie-jak-rozwijac)
+- [Budowanie marki osobistej 2026 - jak zacząć bez zażenowania](/blog/Kariera/budowanie-marki-osobistej)

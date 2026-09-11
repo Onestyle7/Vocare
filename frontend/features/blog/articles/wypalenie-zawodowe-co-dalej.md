@@ -3,6 +3,7 @@ title: 'Wypalenie zawodowe - co dalej? Jak wrócić do równowagi i odbudować k
 description: 'Wypalenie zawodowe to nie słabość, to sygnał do zmiany. Dowiedz się, jak rozpoznać burnout i co zrobić, żeby wyjść z niego silniejszym.'
 estimatedReadTime: 10
 date: '2026-03-24'
+updatedAt: '2026-09-09'
 author: 'Vocare'
 category: 'Kariera'
 coverImage: '/images/blog/burnout.webp'
@@ -200,7 +201,13 @@ Jeśli szukasz wsparcia w podjęciu decyzji o dalszej karierze - platforma **[Vo
 ---
 
 ## Powiązane artykuły
+- [Zwolnienie lekarskie L4 2026 - ile trwa i jakie masz prawa](/blog/Job/zwolnienie-lekarskie-l4)
 - [Ścieżka kariery - jak zaplanować rozwój zawodowy w 2026](/blog/Kariera/sciezka-kariery)
 - [Jak zmienić branżę - praktyczny przewodnik krok po kroku](/blog/Kariera/jak-zmienic-branze)
 - [Doradca zawodowy - co robi, ile kosztuje i czy warto](/blog/Kariera/doradca-zawodowy)
 - [Powrót do pracy po urlopie macierzyńskim 2026 - jak się przygotować](/blog/Kariera/powrot-do-pracy-po-macierzynskim)
+- [Urlop od kariery (sabbatical) 2026 - jak go zaplanować bez ryzyka](/blog/Kariera/urlop-od-kariery-sabbatical)
+- [Mobbing w pracy 2026 - jak go rozpoznać i co możesz zrobić](/blog/Job/mobbing-w-pracy)
+- [Asertywność w pracy 2026 - jak stawiać granice bez konfliktu](/blog/Kariera/asertywnosc-w-pracy)
+- [Prokrastynacja w pracy 2026 - dlaczego się pojawia i jak ją pokonać](/blog/Kariera/prokrastynacja-w-pracy)
+- [Kryzys w połowie kariery 2026 - jak sobie z nim poradzić](/blog/Kariera/kryzys-polowy-kariery)

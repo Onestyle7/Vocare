@@ -102,6 +102,16 @@ namespace VocareWebAPI.Services
             else
             {
                 _logger.LogInformation("Profile already exists for UserId: {UserId}", UserId);
+
+                profile.Education.Clear();
+                profile.WorkExperience.Clear();
+                profile.Certificates.Clear();
+                profile.Languages.Clear();
+
+                profile.Education.Clear();
+                profile.WorkExperience.Clear();
+                profile.Certificates.Clear();
+                profile.Languages.Clear();
             }
 
             // Zachowujemy istniejącą ankietę finansową, aby uniknąć duplikacji

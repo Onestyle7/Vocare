@@ -3,6 +3,7 @@ title: 'Test kariery online - jak wybrać zawód dopasowany do Ciebie?'
 description: 'Test kariery online pomoże Ci odkryć pasujące zawody i ścieżki kariery. Dowiedz się, jak działa test zawodowy i co możesz z niego wynieść.'
 estimatedReadTime: 7
 date: '2026-03-24'
+updatedAt: '2026-09-02'
 author: 'Vocare'
 category: 'Kariera'
 coverImage: '/images/blog/assessment.webp'

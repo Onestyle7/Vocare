@@ -2,7 +2,8 @@
 title: 'Wzór listu motywacyjnego 2026 - gotowe szablony do edycji'
 description: 'Szukasz wzoru listu motywacyjnego? Sprawdź gotowe szablony listu motywacyjnego 2026 dla różnych stanowisk z instrukcją jak je wypełnić skutecznie.'
 estimatedReadTime: 9
-date: '2026-04-12'
+date: '2026-05-12'
+updatedAt: '2026-09-02'
 author: 'Vocare'
 category: 'CV'
 coverImage: '/images/blog/cover-letter-template.webp'

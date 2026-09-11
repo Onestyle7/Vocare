@@ -2,7 +2,8 @@
 title: 'Jak zrobić CV 2026 - praktyczny poradnik od zera do gotowego pliku'
 description: 'Jak zrobić CV szybko i skutecznie? Sprawdź praktyczny przewodnik z konkretnymi krokami, narzędziami i przykładami, żeby stworzyć CV gotowe do wysłania.'
 estimatedReadTime: 8
-date: '2026-04-12'
+date: '2026-04-15'
+updatedAt: '2026-09-02'
 author: 'Vocare'
 category: 'CV'
 coverImage: '/images/blog/make-cv.webp'

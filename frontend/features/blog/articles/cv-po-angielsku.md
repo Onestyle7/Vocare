@@ -2,7 +2,8 @@
 title: 'CV po angielsku 2026 - jak napisać angielskie CV krok po kroku'
 description: 'Jak napisać CV po angielsku, które przejdzie przez ATS i przekona zagranicznego rekrutera? Sprawdź różnice względem polskiego CV, strukturę i przykłady.'
 estimatedReadTime: 9
-date: '2026-09-02'
+date: '2026-05-21'
+updatedAt: '2026-09-09'
 author: 'Vocare'
 category: 'CV'
 coverImage: '/images/blog/cv-guide.webp'
@@ -103,6 +104,11 @@ Chcesz sprawdzić, czy Twoje CV po angielsku jest dobrze dopasowane do zagranicz
 ---
 
 ## Powiązane artykuły
+- [CV po niemiecku 2026 - jak napisać Lebenslauf krok po kroku](/blog/CV/cv-po-niemiecku)
 - [CV 2026 - kompletny poradnik jak napisać dobre CV](/blog/CV/cv)
 - [LinkedIn - jak zbudować profil, który przyciąga rekruterów](/blog/CV/linkedin-profil)
 - [Profesjonalne CV 2026 - jak wyglądać poważnie na papierze](/blog/CV/profesjonalne-cv)
+- [List motywacyjny po angielsku 2026 - jak napisać cover letter](/blog/CV/list-motywacyjny-po-angielsku)
+- [Europass CV 2026 - czy warto i jak go wypełnić](/blog/CV/europass-cv)
+- [CV po hiszpańsku 2026 - jak napisać currículum do Hiszpanii](/blog/CV/cv-po-hiszpansku)
+- [CV po francusku 2026 - jak napisać CV do Francji](/blog/CV/cv-po-francusku)

@@ -2,7 +2,8 @@
 title: 'Praca bez doświadczenia 2026 - jak dostać pierwszą pracę'
 description: 'Jak znaleźć pracę bez doświadczenia w 2026? Sprawdź sprawdzone strategie dla absolwentów i osób wchodzących na rynek pracy - jak wyróżnić CV i gdzie szukać.'
 estimatedReadTime: 9
-date: '2026-04-12'
+date: '2026-04-23'
+updatedAt: '2026-09-02'
 author: 'Vocare'
 category: 'Job'
 coverImage: '/images/blog/no-experience-job.webp'

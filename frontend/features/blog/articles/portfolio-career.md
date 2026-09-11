@@ -2,7 +2,7 @@
 title: 'Portfolio career 2026 - praca na kilku projektach zamiast jednego etatu'
 description: 'Czym jest portfolio career i dla kogo się sprawdza? Sprawdź jak zbudować karierę opartą na kilku źródłach dochodu zamiast jednego etatu i jakie ma to zalety i ryzyka.'
 estimatedReadTime: 8
-date: '2026-09-02'
+date: '2026-06-11'
 author: 'Vocare'
 category: 'Kariera'
 coverImage: '/images/blog/career-change.webp'
@@ -98,6 +98,7 @@ Zastanawiasz się, jakie dodatkowe kierunki rozwoju pasują do Twoich kompetencj
 ---
 
 ## Powiązane artykuły
+- [CV freelancera 2026 - jak pokazać projekty zamiast etatów](/blog/CV/cv-freelancera)
 - [Umowa o pracę vs B2B vs zlecenie 2026 - co wybrać?](/blog/Job/umowa-o-prace-vs-b2b)
 - [Praca zdalna 2026 - jak ją znaleźć i utrzymać produktywność](/blog/Job/praca-zdalna)
 - [Ścieżka kariery - jak zaplanować rozwój zawodowy w 2026](/blog/Kariera/sciezka-kariery)

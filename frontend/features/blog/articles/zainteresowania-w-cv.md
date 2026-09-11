@@ -2,7 +2,8 @@
 title: 'Zainteresowania w CV - co wpisać, żeby wypaść profesjonalnie'
 description: 'Co wpisać w zainteresowania w CV? Sprawdź które hobby warto umieścić w CV 2026, które lepiej pominąć i jak opisać zainteresowania, żeby pracowały na Twoją korzyść.'
 estimatedReadTime: 7
-date: '2026-04-12'
+date: '2026-05-13'
+updatedAt: '2026-09-02'
 author: 'Vocare'
 category: 'CV'
 coverImage: '/images/blog/cv-interests.webp'

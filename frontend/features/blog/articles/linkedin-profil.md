@@ -2,7 +2,8 @@
 title: 'LinkedIn - jak zbudować profil, który przyciąga rekruterów 2026'
 description: 'Jak zbudować profil LinkedIn, który realnie przyciąga rekruterów? Sprawdź jak uzupełnić poszczególne sekcje, jak pisać nagłówek i jak zwiększyć widoczność profilu.'
 estimatedReadTime: 9
-date: '2026-09-02'
+date: '2026-05-29'
+updatedAt: '2026-09-09'
 author: 'Vocare'
 category: 'CV'
 coverImage: '/images/blog/professional-cv.webp'
@@ -94,3 +95,6 @@ Chcesz upewnić się, że Twój profil zawodowy - LinkedIn i CV - działają sp�
 - [CV po angielsku 2026 - jak napisać angielskie CV krok po kroku](/blog/CV/cv-po-angielsku)
 - [Networking zawodowy 2026 - jak budować sieć kontaktów bez wciskania się](/blog/Kariera/networking-zawodowy)
 - [Executive search i headhunting 2026 - jak działa rekrutacja na wyższe stanowiska](/blog/Job/executive-search-headhunting)
+- [CV po niemiecku 2026 - jak napisać Lebenslauf krok po kroku](/blog/CV/cv-po-niemiecku)
+- [CV wideo 2026 - kiedy warto nagrać wideo-CV i jak to zrobić](/blog/CV/cv-wideo)
+- [Budowanie marki osobistej 2026 - jak zacząć bez zażenowania](/blog/Kariera/budowanie-marki-osobistej)

@@ -2,7 +2,8 @@
 title: 'Umiejętności do CV 2026 - co wpisać, żeby wyróżnić aplikację'
 description: 'Co wpisać w umiejętności w CV? Sprawdź, które umiejętności do CV są cenione w 2026 i jak je opisać, żeby rekruter potraktował je poważnie.'
 estimatedReadTime: 8
-date: '2026-04-12'
+date: '2026-05-11'
+updatedAt: '2026-09-02'
 author: 'Vocare'
 category: 'CV'
 coverImage: '/images/blog/cv-skills.webp'
@@ -201,6 +202,7 @@ Chcesz mieć pewność, że sekcja umiejętności trafia w to czego rekruter szu
 ---
 
 ## Powiązane artykuły
+- [Kompetencje miękkie 2026 - jak je rozwijać, nie tylko deklarować](/blog/Kariera/kompetencje-miekkie-jak-rozwijac)
 - [CV wzór 2026 - darmowe szablony do pobrania i edycji](/blog/CV/cv-wzor)
 - [Profesjonalne CV 2026 - jak wyglądać poważnie na papierze](/blog/CV/profesjonalne-cv)
 - [Jak zrobić CV 2026 - praktyczny poradnik od zera do gotowego pliku](/blog/CV/jak-zrobic-cv)

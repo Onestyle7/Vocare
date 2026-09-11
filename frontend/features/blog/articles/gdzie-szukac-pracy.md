@@ -2,7 +2,8 @@
 title: 'Gdzie szukać pracy w Polsce 2026 - portale i metody'
 description: 'Gdzie szukać pracy w Polsce w 2026? Sprawdź ranking portali pracy, metody dotarcia do ukrytego rynku pracy i gdzie naprawdę są najlepsze oferty.'
 estimatedReadTime: 8
-date: '2026-04-12'
+date: '2026-04-09'
+updatedAt: '2026-09-09'
 author: 'Vocare'
 category: 'Job'
 coverImage: '/images/blog/job-portals.webp'
@@ -175,3 +176,4 @@ Chcesz od razu wiedzieć, które stanowiska najlepiej pasują do Twojego profilu
 - [Jak znaleźć pracę w 2026 - sprawdzone strategie krok po kroku](/blog/Job/jak-znalezc-prace)
 - [Pytania na rozmowie kwalifikacyjnej 2026 - jak odpowiadać](/blog/Job/pytania-na-rozmowie-kwalifikacyjnej)
 - [Praca bez doświadczenia 2026 - jak dostać pierwszą pracę](/blog/Job/praca-bez-doswiadczenia)
+- [Praca sezonowa za granicą 2026 - gdzie jechać i ile można zarobić](/blog/Job/praca-sezonowa-za-granica)

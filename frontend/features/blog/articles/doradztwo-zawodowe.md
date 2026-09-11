@@ -2,7 +2,8 @@
 title: 'Doradztwo zawodowe 2026 - czym jest i kiedy skorzystać'
 description: 'Czym jest doradztwo zawodowe i kiedy naprawdę pomaga? Sprawdź co oferuje doradca zawodowy, ile kosztuje i jak odróżnić dobrego od złego.'
 estimatedReadTime: 9
-date: '2026-04-12'
+date: '2026-04-08'
+updatedAt: '2026-09-02'
 author: 'Vocare'
 category: 'Kariera'
 coverImage: '/images/blog/career-counseling.webp'
