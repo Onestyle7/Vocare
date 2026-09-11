@@ -2,7 +2,8 @@
 title: 'CV bez doświadczenia 2026 - co wpisać gdy nie masz historii pracy'
 description: 'Jak napisać CV bez doświadczenia zawodowego? Sprawdź co wpisać w CV gdy zaczynasz od zera - z przykładami i strategiami na wyróżnienie się bez historii pracy.'
 estimatedReadTime: 8
-date: '2026-04-12'
+date: '2026-03-25'
+updatedAt: '2026-09-02'
 author: 'Vocare'
 category: 'CV'
 coverImage: '/images/blog/cv-no-experience.webp'

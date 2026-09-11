@@ -2,7 +2,7 @@
 title: 'Assessment center 2026 - jak się przygotować i co Cię czeka'
 description: 'Czym jest assessment center i jak się do niego przygotować? Sprawdź, jakie zadania Cię czekają, czego oceniają rekruterzy i jak wypaść najlepiej.'
 estimatedReadTime: 8
-date: '2026-09-02'
+date: '2026-05-15'
 author: 'Vocare'
 category: 'Job'
 coverImage: '/images/blog/assessment.webp'

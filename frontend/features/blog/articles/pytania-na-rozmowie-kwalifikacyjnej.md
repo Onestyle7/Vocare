@@ -2,7 +2,8 @@
 title: 'Pytania na rozmowie kwalifikacyjnej 2026 - jak odpowiadać'
 description: 'Jakie pytania zadają rekruterzy na rozmowie kwalifikacyjnej? Sprawdź najczęstsze pytania rekrutacyjne 2026 i jak na nie odpowiadać, żeby dostać ofertę.'
 estimatedReadTime: 11
-date: '2026-04-12'
+date: '2026-05-01'
+updatedAt: '2026-09-02'
 author: 'Vocare'
 category: 'Job'
 coverImage: '/images/blog/interview-questions.webp'

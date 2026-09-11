@@ -2,7 +2,8 @@
 title: 'Doradca zawodowy - co robi, ile kosztuje i czy warto'
 description: 'Kim jest doradca zawodowy i co konkretnie robi? Sprawdź kiedy warto skorzystać z pomocy doradcy zawodowego, ile kosztuje i jak go znaleźć w Polsce.'
 estimatedReadTime: 8
-date: '2026-04-12'
+date: '2026-04-06'
+updatedAt: '2026-09-02'
 author: 'Vocare'
 category: 'Kariera'
 coverImage: '/images/blog/career-advisor.webp'

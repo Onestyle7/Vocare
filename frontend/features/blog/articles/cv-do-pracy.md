@@ -2,7 +2,8 @@
 title: 'CV do pracy 2026 - jak dopasować aplikację do każdej oferty'
 description: 'Jak napisać CV do pracy, które przejdzie przez ATS i trafi do rekrutera? Sprawdź jak dopasować CV do oferty, żeby zwiększyć szanse na zaproszenie.'
 estimatedReadTime: 8
-date: '2026-04-12'
+date: '2026-03-26'
+updatedAt: '2026-09-02'
 author: 'Vocare'
 category: 'CV'
 coverImage: '/images/blog/cv-job-application.webp'

@@ -2,7 +2,8 @@
 title: 'CV 2026 - kompletny poradnik jak napisać dobre CV'
 description: 'Jak napisać CV, które przejdzie przez ATS i trafi do rekrutera? Sprawdzony poradnik tworzenia CV w 2026 z przykładami i checklistą.'
 estimatedReadTime: 10
-date: '2026-04-12'
+date: '2026-04-01'
+updatedAt: '2026-09-02'
 author: 'Vocare'
 category: 'CV'
 coverImage: '/images/blog/cv-guide.webp'

@@ -2,7 +2,8 @@
 title: 'Jak zrezygnować z pracy 2026 - wypowiedzenie bez spalania mostów'
 description: 'Jak elegancko zrezygnować z pracy? Sprawdź jak napisać wypowiedzenie, jak przeprowadzić rozmowę z przełożonym i jak zachować dobre relacje po odejściu z firmy.'
 estimatedReadTime: 8
-date: '2026-09-02'
+date: '2026-05-26'
+updatedAt: '2026-09-09'
 author: 'Vocare'
 category: 'Job'
 coverImage: '/images/blog/find-job.webp'
@@ -23,7 +24,7 @@ Znalazłeś nową ofertę albo po prostu czas na zmianę - teraz przed Tobą jed
 
 ## Zanim złożysz wypowiedzenie
 
-**Sprawdź okres wypowiedzenia w swojej umowie.** Przy umowie o pracę na czas nieokreślony standardowe okresy to 2 tygodnie (do 6 miesięcy stażu), 1 miesiąc (6 miesięcy - 3 lata) lub 3 miesiące (powyżej 3 lat stażu) - ale sprawdź swoją konkretną umowę, bo mogą być odstępstwa.
+**Sprawdź okres wypowiedzenia w swojej umowie.** Przy umowie o pracę na czas nieokreślony ustawowe okresy z [Kodeksu pracy](https://isap.sejm.gov.pl/isap.nsf/DocDetails.xsp?id=wdu19740240141) to 2 tygodnie (do 6 miesięcy stażu), 1 miesiąc (6 miesięcy - 3 lata) lub 3 miesiące (powyżej 3 lat stażu) - ale sprawdź swoją konkretną umowę, bo mogą być odstępstwa.
 
 **Upewnij się co do nowej oferty.** Złóż wypowiedzenie dopiero po otrzymaniu pisemnego potwierdzenia nowej oferty (umowa lub list intencyjny), nie na podstawie ustnych deklaracji.
 
@@ -91,3 +92,4 @@ Zastanawiasz się, czy nowa oferta rzeczywiście jest krokiem naprzód? **[Vocar
 - [Jak znaleźć pracę w 2026 - sprawdzone strategie krok po kroku](/blog/Job/jak-znalezc-prace)
 - [Negocjacje wynagrodzenia 2026 - jak negocjować pensję skutecznie](/blog/Job/negocjacje-wynagrodzenia)
 - [Wypalenie zawodowe - co dalej? Jak wrócić do równowagi i odbudować karierę](/blog/Kariera/wypalenie-zawodowe-co-dalej)
+- [Okres wypowiedzenia umowy o pracę 2026 - ile trwa i jak liczyć](/blog/Job/wypowiedzenie-umowy-o-prace)

@@ -2,7 +2,7 @@
 title: 'Portfolio zawodowe 2026 - jak je zbudować i czym wyróżnić aplikację'
 description: 'Jak zbudować portfolio zawodowe, które wyróżni Twoją aplikację? Sprawdź co powinno zawierać portfolio dla różnych branż i jak je efektywnie prezentować rekruterom.'
 estimatedReadTime: 8
-date: '2026-09-02'
+date: '2026-06-12'
 author: 'Vocare'
 category: 'CV'
 coverImage: '/images/blog/cv-skills.webp'
@@ -97,6 +97,9 @@ Zastanawiasz się, które projekty najlepiej pokażą Twoje kompetencje na docel
 ---
 
 ## Powiązane artykuły
+- [CV wideo 2026 - kiedy warto nagrać wideo-CV i jak to zrobić](/blog/CV/cv-wideo)
 - [CV managera 2026 - jak napisać CV na stanowisko kierownicze](/blog/CV/cv-managera)
 - [Umiejętności do CV 2026 - co wpisać, żeby wyróżnić aplikację](/blog/CV/umiejetnosci-do-cv)
 - [Rynek pracy w IT 2026 - trendy, zarobki i zapotrzebowanie](/blog/rynek-pracy/rynek-pracy-it)
+- [CV inżyniera 2026 - jak pokazać projekty techniczne](/blog/CV/cv-inzyniera)
+- [Rynek pracy w kulturze i mediach 2026 - trendy i zarobki](/blog/rynek-pracy/rynek-pracy-kultura-media)

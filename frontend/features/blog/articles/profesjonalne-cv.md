@@ -2,7 +2,8 @@
 title: 'Profesjonalne CV 2026 - jak wyglądać poważnie na papierze'
 description: 'Jak zrobić profesjonalne CV, które robi dobre wrażenie? Sprawdź co odróżnia profesjonalne CV od przeciętnego i jak podnieść jakość swojej aplikacji.'
 estimatedReadTime: 8
-date: '2026-04-12'
+date: '2026-04-28'
+updatedAt: '2026-09-02'
 author: 'Vocare'
 category: 'CV'
 coverImage: '/images/blog/professional-cv.webp'
@@ -182,6 +183,7 @@ Jeśli chcesz sprawdzić jak profesjonalne jest Twoje CV i co konkretnie zmieni�
 ---
 
 ## Powiązane artykuły
+- [Zdjęcie do CV 2026 - czy warto i jak je dobrze zrobić](/blog/CV/zdjecie-do-cv)
 - [CV wzór 2026 - darmowe szablony do pobrania i edycji](/blog/CV/cv-wzor)
 - [Umiejętności do CV 2026 - co wpisać, żeby wyróżnić aplikację](/blog/CV/umiejetnosci-do-cv)
 - [Jak zrobić CV 2026 - praktyczny poradnik od zera do gotowego pliku](/blog/CV/jak-zrobic-cv)

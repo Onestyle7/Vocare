@@ -2,7 +2,8 @@
 title: 'Rozmowa kwalifikacyjna 2026 - jak się przygotować i wypaść świetnie'
 description: 'Jak przygotować się do rozmowy kwalifikacyjnej? Sprawdź sprawdzone metody, typowe pytania i błędy, których unikać, żeby dostać tę pracę.'
 estimatedReadTime: 11
-date: '2026-04-12'
+date: '2026-05-04'
+updatedAt: '2026-09-02'
 author: 'Vocare'
 category: 'Job'
 coverImage: '/images/blog/job-interview.webp'

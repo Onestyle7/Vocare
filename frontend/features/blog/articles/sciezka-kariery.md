@@ -2,7 +2,8 @@
 title: 'Ścieżka kariery - jak zaplanować rozwój zawodowy w 2026'
 description: 'Jak zaplanować ścieżkę kariery? Sprawdź praktyczny przewodnik planowania rozwoju zawodowego w 2026 - od diagnozy do konkretnego planu działania.'
 estimatedReadTime: 10
-date: '2026-04-12'
+date: '2026-05-06'
+updatedAt: '2026-09-09'
 author: 'Vocare'
 category: 'Kariera'
 coverImage: '/images/blog/career-path2.webp'
@@ -225,3 +226,5 @@ Chcesz pomocy w zaplanowaniu Twojej ścieżki kariery i zrozumieniu jakie kierun
 - [Test kariery online - jak wybrać zawód dopasowany do Ciebie?](/blog/Kariera/test-kariery-online)
 - [Doradca zawodowy - co robi, ile kosztuje i czy warto](/blog/Kariera/doradca-zawodowy)
 - [Mentoring zawodowy 2026 - jak znaleźć mentora i na tym skorzystać](/blog/Kariera/mentoring-zawodowy)
+- [Plan rozwoju zawodowego 2026 - jak go napisać krok po kroku](/blog/Kariera/plan-rozwoju-zawodowego)
+- [Praca w korporacji czy w startupie 2026 - co wybrać](/blog/Kariera/korporacja-czy-startup)

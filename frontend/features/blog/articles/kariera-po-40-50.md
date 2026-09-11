@@ -2,7 +2,8 @@
 title: 'Kariera po 40 i 50 roku życia 2026 - jak zostać docenionym mimo wieku'
 description: 'Jak budować karierę po 40 i 50 roku życia? Sprawdź jak radzić sobie z dyskryminacją wiekową w rekrutacji, jakie masz atuty i jak je skutecznie komunikować.'
 estimatedReadTime: 8
-date: '2026-09-02'
+date: '2026-05-28'
+updatedAt: '2026-09-09'
 author: 'Vocare'
 category: 'Kariera'
 coverImage: '/images/blog/career-path2.webp'
@@ -23,7 +24,7 @@ Mimo że rynek pracy w Polsce cierpi na strukturalny deficyt kadr w wielu branż
 
 ## Dlaczego demografia działa na korzyść dojrzałych pracowników
 
-Polska, podobnie jak większość Europy, mierzy się ze starzejącym się społeczeństwem i kurczącą się liczbą osób wchodzących na rynek pracy. To strukturalnie zwiększa wartość doświadczonych pracowników - firmy nie mogą sobie pozwolić na ignorowanie dużej grupy kompetentnych kandydatów tylko ze względu na wiek, szczególnie w deficytowych branżach.
+Polska, podobnie jak większość Europy, mierzy się ze starzejącym się społeczeństwem i kurczącą się liczbą osób wchodzących na rynek pracy - trend regularnie dokumentowany w danych demograficznych [GUS](https://stat.gov.pl). To strukturalnie zwiększa wartość doświadczonych pracowników - firmy nie mogą sobie pozwolić na ignorowanie dużej grupy kompetentnych kandydatów tylko ze względu na wiek, szczególnie w deficytowych branżach.
 
 Problem nie leży więc w realnym braku popytu na doświadczenie, tylko w nieformalnych uprzedzeniach części rekruterów i procesach zoptymalizowanych pod młodszych kandydatów (np. filtrowanie CV pod kątem "świeżości" doświadczenia).
 
@@ -95,3 +96,4 @@ Zastanawiasz się, jak najlepiej wykorzystać swoje wieloletnie doświadczenie n
 - [Jak zmienić branżę - praktyczny przewodnik krok po kroku](/blog/Kariera/jak-zmienic-branze)
 - [Doradca zawodowy - co robi, ile kosztuje i czy warto](/blog/Kariera/doradca-zawodowy)
 - [Networking zawodowy 2026 - jak budować sieć kontaktów bez wciskania się](/blog/Kariera/networking-zawodowy)
+- [Odprawa emerytalna 2026 - komu przysługuje i ile wynosi](/blog/Job/odprawa-emerytalna)

@@ -2,7 +2,8 @@
 title: 'Test kompetencji zawodowych - jak sprawdzić swoje mocne strony'
 description: 'Chcesz sprawdzić swoje kompetencje zawodowe? Dowiedz się jakie testy kompetencji warto zrobić w 2026, jak je interpretować i co z wynikami zrobić.'
 estimatedReadTime: 9
-date: '2026-04-12'
+date: '2026-05-07'
+updatedAt: '2026-09-02'
 author: 'Vocare'
 category: 'Kariera'
 coverImage: '/images/blog/competency-test.webp'

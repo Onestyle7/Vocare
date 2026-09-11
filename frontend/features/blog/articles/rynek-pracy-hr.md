@@ -2,7 +2,8 @@
 title: 'Rynek pracy w HR i rekrutacji 2026 - trendy i zarobki'
 description: 'Jak wygląda rynek pracy w HR w 2026 roku? Sprawdź, które specjalizacje HR są dziś najbardziej poszukiwane, jak zmieniła się rekrutacja i ile można zarobić.'
 estimatedReadTime: 7
-date: '2026-09-02'
+date: '2026-07-01'
+updatedAt: '2026-09-09'
 author: 'Vocare'
 category: 'rynek-pracy'
 coverImage: '/images/blog/future-work.webp'
@@ -86,6 +87,7 @@ Zastanawiasz się, która ścieżka w HR najlepiej pasuje do Twojego profilu? **
 ---
 
 ## Powiązane artykuły
+- [Rynek pracy w Polsce 2026 - kompletny przegląd 21 branż](/blog/rynek-pracy/rynek-pracy-w-polsce)
 - [Rynek pracy w marketingu 2026 - kompetencje i zarobki](/blog/rynek-pracy/rynek-pracy-marketing)
 - [Doradca zawodowy - co robi, ile kosztuje i czy warto](/blog/Kariera/doradca-zawodowy)
 - [Pytania na rozmowie kwalifikacyjnej 2026 - jak odpowiadać](/blog/Job/pytania-na-rozmowie-kwalifikacyjnej)
