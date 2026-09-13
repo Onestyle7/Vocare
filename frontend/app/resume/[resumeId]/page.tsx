@@ -1,8 +1,16 @@
+import type { Metadata } from 'next';
 import { notFound } from 'next/navigation';
 
 import { forceLoginRedirect } from '@/features/auth/utils/login-redirect';
 import CVCreator from '@/features/resume/components/ResumeComponent';
 import { getCvDetailsQuery, getCvLimitsQuery } from '@/features/resume/dal/queries';
+
+export const metadata: Metadata = {
+  robots: {
+    index: false,
+    follow: false,
+  },
+};
 
 interface ResumeDetailPageProps {
   params: Promise<{ resumeId: string }>;

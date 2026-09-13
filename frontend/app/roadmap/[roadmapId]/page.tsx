@@ -1,8 +1,16 @@
+import type { Metadata } from 'next';
 import { notFound } from 'next/navigation';
 
 import { forceLoginRedirect } from '@/features/auth/utils/login-redirect';
 import RoadmapDetailsPage from '@/features/roadmap/components/RoadmapDetailsPage';
 import { getRoadmapByIdQuery } from '@/features/roadmap/dal/queries';
+
+export const metadata: Metadata = {
+  robots: {
+    index: false,
+    follow: false,
+  },
+};
 
 export default async function RoadmapDetailRoute({
   params,

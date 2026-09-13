@@ -1,7 +1,17 @@
 import { ArrowLeft } from 'lucide-react';
+import type { Metadata } from 'next';
 import Link from 'next/link';
 
 import { privacy_policy } from '@/features/marketing/constants/privacy-policy';
+
+export const metadata: Metadata = {
+  title: 'Polityka Prywatności',
+  description:
+    'Zasady przetwarzania danych osobowych oraz ochrony prywatności użytkowników serwisu Vocare. Dowiedz się, jak dbamy o Twoje dane.',
+  alternates: {
+    canonical: '/privacy-policy',
+  },
+};
 
 type Section = {
   title: string;
