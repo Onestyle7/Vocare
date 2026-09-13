@@ -1,12 +1,22 @@
+import type { Metadata } from 'next';
 import Image from 'next/image';
 
 import Header from '@/components/SectionsComponents/Header';
+import Copy from '@/components/SupportComponents/Copy';
 import { PricingInteractive } from '@/features/billing/components/PricingInteractive';
 import { curve_pricing } from '@/features/marketing/constants';
+import { buildMarketingMetadata } from '@/features/marketing/utils/metadata';
 
-import Copy from '../../components/SupportComponents/Copy';
 import Footer from '../(marketing)/assistant/components/Footer';
 import Maintenance from '../maintenance/page';
+
+export const metadata: Metadata = buildMarketingMetadata({
+  path: '/pricing',
+  title: 'Cennik',
+  description:
+    'Sprawdź cennik Vocare i pakiety tokenów AI. Darmowy start bez karty płatniczej. Wybierz elastyczny plan dopasowany do Twojego rozwoju zawodowego.',
+  ogAlt: 'Cennik Vocare',
+});
 
 export default async function PricingPage() {
   const isMaintenance = false;
