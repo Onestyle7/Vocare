@@ -19,10 +19,9 @@ using VocareWebAPI.JobOffers.Repositories.Interfaces;
 using VocareWebAPI.JobOffers.Services.Implementations;
 using VocareWebAPI.JobOffers.Services.Interfaces;
 using VocareWebAPI.MarketNews.Repositories.Implementations;
-using VocareWebAPI.MarketNews.Repositories.Interfaces;
+using VocareWebAPI.MarketNews.repositories.Interfaces;
 using VocareWebAPI.MarketNews.services.Implementations;
-using VocareWebAPI.MarketNews.Services.Implementations;
-using VocareWebAPI.MarketNews.Services.Interfaces;
+using VocareWebAPI.MarketNews.services.interfaces;
 using VocareWebAPI.Notifications.Repositories.Implementations;
 using VocareWebAPI.Notifications.Repositories.Interfaces;
 using VocareWebAPI.Notifications.Services.Implementations;
@@ -76,7 +75,7 @@ namespace VocareWebAPI.Extensions.ServiceCollectionExtensions
 
             // Other services
             services.AddScoped<IEmailService, EmailService>();
-            services.AddScoped<IMarketNewsService, MarketNewsService>();
+            services.AddScoped<IMarketPulseService, MarketPulseService>();
 
             // Roadmap services
             services.AddScoped<ICareerRoadmapService, CareerRoadmapService>();
@@ -136,7 +135,7 @@ namespace VocareWebAPI.Extensions.ServiceCollectionExtensions
 
             // Job Offer repositories
             services.AddScoped<IJobOfferRepository, JobOfferRepository>();
-            services.AddScoped<IMarketNewsRepository, MarketNewsRepository>();
+            services.AddScoped<IMarketPulseRepository, MarketPulseRepository>();
             services.AddScoped<
                 IJobOfferRecommendationRepository,
                 JobOfferRecommendationRepository

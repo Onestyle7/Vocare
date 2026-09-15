@@ -92,6 +92,7 @@ namespace VocareWebAPI.Data
         public DbSet<CvAnalysis> CvAnalyses { get; set; }
         public DbSet<Notification> Notifications { get; set; }
         public DbSet<ProfileAttributes> ProfileAttributes { get; set; }
+        public DbSet<MarketPulsePost> MarketPulsePosts { get; set; }
 
         /// <summary>
         /// Konfiguruje model bazy danych, definiując schemat i relacje między encjami.
