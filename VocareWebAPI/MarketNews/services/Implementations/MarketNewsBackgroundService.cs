@@ -1,8 +1,4 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using VocareWebAPI.MarketNews.Services.Interfaces;
+using VocareWebAPI.MarketNews.services.interfaces;
 
 namespace VocareWebAPI.MarketNews.services.Implementations
 {
@@ -41,9 +37,9 @@ namespace VocareWebAPI.MarketNews.services.Implementations
                 {
                     using var scope = _serviceProvider.CreateScope();
                     var marketNewsService =
-                        scope.ServiceProvider.GetRequiredService<IMarketNewsService>();
+                        scope.ServiceProvider.GetRequiredService<IMarketPulseGeneratorService>();
 
-                    var generated = await marketNewsService.GenerateWeeklyNewsAsync();
+                    var generated = await marketNewsService.GenerateAsync();
 
                     if (generated)
                         _logger.LogInformation(

@@ -1,7 +1,3 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 using Polly;
 using Polly.Extensions.Http;
 using VocareWebAPI.CareerAdvisor.Models.Config;
@@ -9,8 +5,8 @@ using VocareWebAPI.CareerAdvisor.Services.Implementations;
 using VocareWebAPI.JobOffers.ExternalClients.SolidJobs;
 using VocareWebAPI.JobOffers.Services.Implementations;
 using VocareWebAPI.JobOffers.Services.Interfaces;
-using VocareWebAPI.MarketNews.Services.Implementations;
-using VocareWebAPI.MarketNews.Services.Interfaces;
+using VocareWebAPI.MarketNews.services.Implementations;
+using VocareWebAPI.MarketNews.services.interfaces;
 using VocareWebAPI.Models.OpenAIConfig;
 using VocareWebAPI.Repositories.Interfaces;
 using VocareWebAPI.RoadmapService.Services.Implementations;
@@ -63,12 +59,12 @@ namespace VocareWebAPI.Extensions.ServiceCollectionExtensions
                 })
                 .AddPolicyHandler(retryPolicy);
 
-            // Market News Service
+            // Market Pulse Generator Service
             services
-                .AddHttpClient<IMarketNewsService, MarketNewsService>(client =>
+                .AddHttpClient<IMarketPulseGeneratorService, MarketPulseGeneratorService>(client =>
                 {
-                    ConfigurePerplexityClient(client, configuration);
-                    client.Timeout = TimeSpan.FromMinutes(3);
+                    ConfigureOpenAIClient(client, configuration);
+                    client.Timeout = TimeSpan.FromMinutes(25);
                 })
                 .AddPolicyHandler(retryPolicy);
 
