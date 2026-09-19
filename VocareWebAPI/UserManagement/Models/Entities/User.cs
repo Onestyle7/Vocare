@@ -16,6 +16,9 @@ namespace VocareWebAPI.Models.Entities
         public UserProfile UserProfile { get; set; } = default!;
         public UserBilling Billing { get; set; } = default!;
         public MarketingConsent? marketingConsent { get; set; }
+
+        public bool IsDeleted { get; set; } = false;
+        public DateTime? DeletedAt { get; set; }
         public virtual ICollection<UserConsent> UserConsents { get; set; } = [];
     }
 }

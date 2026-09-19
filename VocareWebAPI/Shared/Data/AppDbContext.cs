@@ -95,6 +95,7 @@ namespace VocareWebAPI.Data
         public DbSet<ProfileAttributes> ProfileAttributes { get; set; }
         public DbSet<UserConsent> UserConsents { get; set; }
         public DbSet<LegalDocument> LegalDocuments { get; set; }
+        public DbSet<AccountAntiAbuseRegistry> AccountAntiAbuseRegistries { get; set; }
 
         /// <summary>
         /// Konfiguruje model bazy danych, definiując schemat i relacje między encjami.
@@ -207,6 +208,10 @@ namespace VocareWebAPI.Data
                 .HasOne(u => u.UserProfile)
                 .WithOne(u => u.User)
                 .HasForeignKey<UserProfile>(u => u.UserId);
+
+            builder
+                .Entity<User>()
+                .HasIndex(u => u.IsDeleted);
 
             // Relacja 1:1 między User a UserBilling
             builder

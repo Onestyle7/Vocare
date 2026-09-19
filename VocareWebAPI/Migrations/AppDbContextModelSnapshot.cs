@@ -890,6 +890,30 @@ namespace VocareWebAPI.Migrations
                     b.ToTable("AiRecommendations", "public");
                 });
 
+            modelBuilder.Entity("VocareWebAPI.Models.Entities.AccountAntiAbuseRegistry", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("EmailHash")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<bool>("HadWelcomeBonus")
+                        .HasColumnType("boolean");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("EmailHash")
+                        .IsUnique();
+
+                    b.ToTable("AccountAntiAbuseRegistries", "public");
+                });
+
             modelBuilder.Entity("VocareWebAPI.Models.Entities.CareerPath", b =>
                 {
                     b.Property<Guid>("Id")
@@ -1111,11 +1135,17 @@ namespace VocareWebAPI.Migrations
                         .IsConcurrencyToken()
                         .HasColumnType("text");
 
+                    b.Property<DateTime?>("DeletedAt")
+                        .HasColumnType("timestamp with time zone");
+
                     b.Property<string>("Email")
                         .HasMaxLength(256)
                         .HasColumnType("character varying(256)");
 
                     b.Property<bool>("EmailConfirmed")
+                        .HasColumnType("boolean");
+
+                    b.Property<bool>("IsDeleted")
                         .HasColumnType("boolean");
 
                     b.Property<bool>("LockoutEnabled")
@@ -1152,6 +1182,8 @@ namespace VocareWebAPI.Migrations
                         .HasColumnType("character varying(256)");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("IsDeleted");
 
                     b.HasIndex("NormalizedEmail")
                         .HasDatabaseName("EmailIndex");
