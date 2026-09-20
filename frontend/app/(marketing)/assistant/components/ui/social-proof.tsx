@@ -17,24 +17,24 @@ const SocialProof = () => {
       <div className="flex flex-col gap-5">
         <SocialProofCard
           compact
-          description="“Totalnie zaskoczyło mnie to, jak bardzo można tu sobie skroić naukę pod siebie. Nie musisz lecieć sztywnym planem - system dopasowuje trudność i tempo pod Twój realny skill. Pierwszy raz widzę, żeby platforma tak serio podchodziła do indywidualnego tempa użytkownika.”"
-          avatarImg={avatar_1}
-          name="Natalia"
-          occupation="Studentka"
+          description="“w nazwie stanowiska jest limit słów, czyli widać 3/4 tego, co wpisałam i trzy kropki. Udało mi się to skrócić, ale szkoda. Poza tym to chyba najlepiej wyglądający darmowy kreator CV, jakiego używałam, i na pewno jeszcze skorzystam”"
+          avatarImg={avatar_4}
+          name="Anonim"
+          occupation="Opinia z Facebooka"
         />
 
         <div className="grid grid-cols-1 gap-5 min-[1400px]:grid-cols-2">
           <SocialProofCard
-            description="„Zrobiłem analizę SWOT na Vocare i pierwszy raz mam czarno na białym, gdzie mam luki w CV, a co jest moim asem w rękawie. Cała roadmapa kariery wygenerowana pod moje cele to totalny gamechanger. To nie jest portal do nauki, to jest narzędzie do robienia awansu. Bardzo polecam każdemu, kto chce wejść na wyższy level.”"
+            description="„Korzystałam już z kilku kreatorów CV, ale ten chyba najbardziej mi odpowiada. Duży plus za wygląd i to, że można zrobić wszystko za darmo. Przydałoby się tylko trochę więcej miejsca na niektóre opisy”"
             avatarImg={avatar_3}
-            name="Franek"
-            occupation="IT Support"
+            name="Wiktoria"
+            occupation="Opinia z Facebooka"
           />
           <SocialProofCard
-            description="„Zawsze miałem problem z tym, co robić 'dalej'. Vocare ogarnęło mi spersonalizowaną ścieżkę kariery, która nie jest generycznym PDF-em, tylko żywym planem. Analiza moich mocnych i słabych stron (SWOT) była tak trafna, że aż trochę creepy. Ale dzięki temu w końcu wiem, na czym się skupić, żeby podbić stawkę.”"
+            description="„jestem pozytywnie zaskoczona. Myślałam, że darmowy kreator będzie mocno ograniczony, a tutaj CV wygląda naprawdę dobrze. Kilka drobiazgów można jeszcze poprawić, ale ogólnie bardzo na plus.”"
             avatarImg={avatar_2}
-            name="Aleksandra"
-            occupation="Fizjoterapetka"
+            name="Ola"
+            occupation="Opinia z Facebooka"
           />
         </div>
       </div>
@@ -42,24 +42,24 @@ const SocialProof = () => {
       <div className="flex flex-col gap-5">
         <SocialProofCard
           className="text-[20px] lg:text-[24px] [&_p:first-child]:text-inherit"
-          description="“Najlepszy feature? Integracja z No Fluff Jobs i ten algorytm dopasowania. Nie muszę filtrować setek ogłoszeń, bo Vocare samo wyrzuca mi oferty, które realnie pasują do mojej aktualnej roadmapy. Widzisz konkretny krok, robisz go i od razu masz podpięte pod to realne opcje pracy. Geniusz.”"
-          avatarImg={avatar_4}
-          name="Kajtek"
-          occupation="Pracownik IT"
+          description="“Super aplikacja, całkiem coś innego niż np. znane pracuj.pl.”"
+          avatarImg={avatar_6}
+          name="Bożysia"
+          occupation="Opinia z Facebooka"
         />
 
         <div className="grid grid-cols-1 gap-5 min-[1400px]:grid-cols-2">
           <SocialProofCard
-            description="“Zaskoczyło mnie, jak płynnie to wszystko działa. Od analizy moich kompetencji, przez wyznaczenie konkretnej ścieżki, aż po dopasowane oferty pracy. Nie muszę wychodzić z platformy, żeby zaplanować kolejny rok swojego życia zawodowego.”"
-            avatarImg={avatar_6}
-            name="Marta"
-            occupation="UX Designer"
+            description="“Strona ładna, przejrzysta.”"
+            avatarImg={avatar_1}
+            name="Viktoria"
+            occupation="Opinia z Facebooka"
           />
           <SocialProofCard
-            description="„Miałem totalny paraliż decyzyjny, jeśli chodzi o rozwój. Vocare wjechało z analizą SWOT i nagle wszystko stało się jasne. To nie jest wróżenie z fusów, tylko twarde dane o moich skillach zestawione z tym, czego realnie szukają na rynku.”"
+            description="“Jeden z lepszych darmowych kreatorów, z jakich korzystałam. Ładnie, prosto i bez miliona reklam czy wyskakujących okienek. Oby tak dalej”"
             avatarImg={avatar_5}
             name="Bartek"
-            occupation="Junior Dev"
+            occupation="Opinia z Facebooka"
           />
         </div>
       </div>
