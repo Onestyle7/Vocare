@@ -108,6 +108,9 @@ namespace VocareWebAPI.Extensions.ServiceCollectionExtensions
             // Legal
             services.AddScoped<ILegalService, LegalService>();
 
+            // Email hashing (anti abuse)
+            services.AddScoped<IEmailHashService, EmailHashService>();
+
             return services;
         }
 
@@ -156,6 +159,9 @@ namespace VocareWebAPI.Extensions.ServiceCollectionExtensions
 
             // Legal
             services.AddScoped<ILegalRepository, LegalRepository>();
+
+            // Anti abuse
+            services.AddScoped<IAccountAntiAbuseReporitory, AccountAntiAbuseRepository>();
 
             return services;
         }

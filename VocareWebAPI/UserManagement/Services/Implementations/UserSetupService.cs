@@ -2,41 +2,48 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Options;
 using VocareWebAPI.Billing.Exceptions;
 using VocareWebAPI.Billing.Models.Entities;
 using VocareWebAPI.Billing.Models.Enums;
 using VocareWebAPI.Billing.Repositories.Interfaces;
+using VocareWebAPI.Models.Entities;
+using VocareWebAPI.Repositories;
 using VocareWebAPI.UserManagement.Interfaces;
 using VocareWebAPI.UserManagement.Models.Entities;
+using VocareWebAPI.UserManagement.Repositories.Interfaces;
+using VocareWebAPI.UserManagement.Services.Interfaces;
 
 namespace VocareWebAPI.UserManagement.Services
 {
-    public class UserSetupService : IUserSetupService
+    public class UserSetupService(
+        IUserBillingRepository userBillingRepository,
+        IOptions<UserRegistrationConfig> config,
+        ILogger<UserSetupService> logger,
+        IAccountAntiAbuseReporitory antiAbuseReporitory,
+        IEmailHashService emailHashService,
+        UserManager<User> userManager
+        ) : IUserSetupService
     {
-        private readonly IUserBillingRepository _userBillingRepository;
-        private readonly UserRegistrationConfig _config;
-        private readonly ILogger<UserSetupService> _logger;
-
-        public UserSetupService(
-            IUserBillingRepository userBillingRepository,
-            IOptions<UserRegistrationConfig> config,
-            ILogger<UserSetupService> logger
-        )
-        {
-            _userBillingRepository = userBillingRepository;
-            _config = config.Value;
-            _logger = logger;
-        }
+        private readonly IUserBillingRepository _userBillingRepository = userBillingRepository;
+        private readonly UserRegistrationConfig _config = config.Value;
+        private readonly ILogger<UserSetupService> _logger = logger;
+        private readonly IAccountAntiAbuseReporitory _antiAbuseRepository = antiAbuseReporitory;
+        private readonly IEmailHashService _emailHashService = emailHashService;
+        private readonly UserManager<User> _userManager = userManager;
 
         public async Task SetupNewUserAsync(string userId)
         {
             try
             {
-                _logger.LogInformation($"Setting up new user: {userId}");
+                var hadPriorAccount = await HadPriorAccount(userId);
+                var initialTokenBalance = CalculateInitialTokens(hadPriorAccount);
+
+                _logger.LogInformation("Setting up new user: {userId}", userId);
                 _logger.LogInformation(
                     "Config - WelcomeTokens: {WelcomeTokens}, DefaultSubscriptionStatus: {DefaultSubscriptionStatus}, DefaultSubscriptionLevel: {DefaultSubscriptionLevel}",
-                    _config.WelcomeTokens,
+                    initialTokenBalance,
                     _config.DefaultSubscriptionStatus,
                     _config.DefaultSubscriptionLevel
                 );
@@ -73,7 +80,7 @@ namespace VocareWebAPI.UserManagement.Services
                         0,
                         _config.WelcomeTokens - existingBilling.TokenBalance
                     );
-                    if (tokensToAdd > 0)
+                    if (tokensToAdd > 0 && !hadPriorAccount)
                     {
                         existingBilling.TokenBalance += tokensToAdd;
                         await _userBillingRepository.UpdateAsync(existingBilling);
@@ -89,7 +96,7 @@ namespace VocareWebAPI.UserManagement.Services
                 var userBilling = new UserBilling
                 {
                     UserId = userId,
-                    TokenBalance = _config.WelcomeTokens,
+                    TokenBalance = initialTokenBalance,
                     SubscriptionStatus = (SubscriptionStatus)_config.DefaultSubscriptionStatus,
                     SubscriptionLevel = (SubscriptionLevel)_config.DefaultSubscriptionLevel,
                     LastTokenPurchaseDate = DateTime.UtcNow,
@@ -107,5 +114,29 @@ namespace VocareWebAPI.UserManagement.Services
                 throw;
             }
         }
+
+        private async Task<bool> HadPriorAccount(string userId)
+        {
+            var user = await _userManager.FindByIdAsync(userId);
+            var email = user?.Email;
+            var hadPriorAccount = false;
+            if (!string.IsNullOrWhiteSpace(email))
+            {
+                var emailHash = _emailHashService.ComputeHash(email);
+                hadPriorAccount = await _antiAbuseRepository.HasPriorBonusAsync(emailHash);
+                if (hadPriorAccount)
+                {
+                    _logger.LogWarning(
+                        "Re-registration deteected for email hash: {emailHash}. Welcome tokens withheld for user: {userId}",
+                        emailHash,
+                        userId
+                    );
+                }
+            }
+
+            return hadPriorAccount;
+        }
+
+        private int CalculateInitialTokens(bool hadPriorAccount) => hadPriorAccount ? 0 : _config.WelcomeTokens;
     }
 }

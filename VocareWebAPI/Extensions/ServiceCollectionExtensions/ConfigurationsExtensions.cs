@@ -3,6 +3,7 @@ using VocareWebAPI.CvGenerator.Models.Dtos;
 using VocareWebAPI.JobOffers.Configuration;
 using VocareWebAPI.JobOffers.Models.Options;
 using VocareWebAPI.Models.OpenAIConfig;
+using VocareWebAPI.UserManagement.Configuration;
 using VocareWebAPI.UserManagement.Models.Entities;
 
 namespace VocareWebAPI.Extensions.ServiceCollectionExtensions
@@ -30,6 +31,14 @@ namespace VocareWebAPI.Extensions.ServiceCollectionExtensions
             services.Configure<NofluffJobsFetchOptions>(
                 configuration.GetSection(NofluffJobsFetchOptions.SectionName)
             );
+            services
+                .AddOptions<AntiAbuseOptions>()
+                .BindConfiguration(AntiAbuseOptions.SectionName)
+                .Validate(
+                    opt => !string.IsNullOrWhiteSpace(opt.EmailHashKey),
+                    "AntiAbuse:EmailHashKey configuration is missing or empty."
+                )
+                .ValidateOnStart();
             return services;
         }
     }
