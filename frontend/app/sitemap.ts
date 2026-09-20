@@ -2,9 +2,9 @@ import type { MetadataRoute } from 'next';
 
 import env from '@/lib/env/client';
 
+import { ArticleMetadata } from '../features/blog/types';
 import { getArticlesMetadata } from '../features/blog/utils/blogUtils';
 import { ARTICLES_FOLDER } from '../features/blog/utils/constants';
-import { ArticleMetadata } from '../features/blog/types';
 
 type RouteConfig = {
   path: string;
@@ -19,6 +19,9 @@ export default function sitemap(): MetadataRoute.Sitemap {
   const appRoutes: RouteConfig[] = [
     { path: '/', changeFrequency: 'weekly', priority: 1 },
     { path: '/assistant', changeFrequency: 'weekly', priority: 0.8 },
+    { path: '/market-analysis', changeFrequency: 'weekly', priority: 0.8 },
+    { path: '/resume-creator', changeFrequency: 'weekly', priority: 0.8 },
+    { path: '/roadmap', changeFrequency: 'weekly', priority: 0.8 },
     { path: '/pricing', changeFrequency: 'weekly', priority: 0.8 },
     { path: '/privacy-policy', changeFrequency: 'yearly', priority: 0.6 },
     { path: '/terms-of-service', changeFrequency: 'yearly', priority: 0.6 },

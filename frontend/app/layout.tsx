@@ -95,9 +95,6 @@ export const metadata: Metadata = {
   },
   description:
     'Vocare pomaga odkryc Twoja sciezke kariery z AI. Sprawdz mocne strony, analizuj rynek i podejmuj trafne decyzje zawodowe na podstawie danych.',
-  alternates: {
-    canonical: '/',
-  },
   robots: {
     index: true,
     follow: true,
@@ -155,7 +152,7 @@ export default async function RootLayout({
   }
 
   return (
-    <html lang="en" suppressHydrationWarning>
+    <html lang="pl" suppressHydrationWarning>
       <head>
         <Script
           id="google-consent"
