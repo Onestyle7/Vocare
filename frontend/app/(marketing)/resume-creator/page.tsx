@@ -1,6 +1,6 @@
 import type { Metadata } from 'next';
 
-import { toAbsoluteUrl } from '@/features/blog/utils/blogUtils';
+import { buildMarketingMetadata } from '@/features/marketing/utils/metadata';
 
 import Footer from '../assistant/components/Footer';
 import TrustScore from '../assistant/components/TrustScore';
@@ -8,37 +8,13 @@ import Benefits from './components/Benefits';
 import Features from './components/Features';
 import Hero from './components/Hero';
 
-const title = 'Kreator CV z AI i audytem ATS | Vocare';
-const description =
-  'Stwórz profesjonalne CV odporne na systemy ATS. Kreator Vocare wyróżnia kluczowe osiągnięcia i optymalizuje dokument pod wymagania rekruterów.';
-const ogImage = toAbsoluteUrl('/metadata/og-image.png');
-
-export const metadata: Metadata = {
+export const metadata: Metadata = buildMarketingMetadata({
+  path: '/resume-creator',
   title: 'Kreator CV z AI i audytem ATS',
-  description,
-  alternates: {
-    canonical: '/resume-creator',
-  },
-  openGraph: {
-    title,
-    description,
-    url: '/resume-creator',
-    images: [
-      {
-        url: ogImage,
-        width: 1200,
-        height: 630,
-        alt: 'Kreator CV z AI i audytem ATS - Vocare',
-      },
-    ],
-  },
-  twitter: {
-    card: 'summary_large_image',
-    title,
-    description,
-    images: [ogImage],
-  },
-};
+  description:
+    'Stwórz profesjonalne CV odporne na systemy ATS. Kreator Vocare wyróżnia kluczowe osiągnięcia i optymalizuje dokument pod wymagania rekruterów.',
+  ogAlt: 'Kreator CV z AI i audytem ATS - Vocare',
+});
 
 const page = () => {
   return (
