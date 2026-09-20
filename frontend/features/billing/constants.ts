@@ -18,9 +18,9 @@ export const pricingPlans: readonly PricingPlan[] = [
     description: '120 tokenów na start. Wykorzystaj je tak, jak potrzebujesz.',
     features: [
       { text: 'Nielimitowana edycja i pobieranie CV' },
-      { text: 'Kreator CV - do 3 CV na koncie' },
-      { text: 'Ocena jakości CV - do 5 ocen jakości CV', alternative: true },
-      { text: 'Dopasowanie CV do ofert pracy - do 5 dopasowań do ofert pracy', alternative: true },
+      { text: 'Do 3 CV na koncie' },
+      { text: 'Do 5 ocen jakości CV', alternative: true },
+      { text: 'Do 5 dopasowań do ofert pracy', alternative: true },
       { text: 'Dopracowanie CV na bazie profilu - do 5 dopracowań CV', alternative: true },
       { text: '3 rekomendowane ścieżki zawodowe' },
       { text: 'Dopasowane oferty pracy do każdej rekomendacji' },
