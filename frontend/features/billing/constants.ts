@@ -21,7 +21,7 @@ export const pricingPlans: readonly PricingPlan[] = [
       { text: 'Do 3 CV na koncie' },
       { text: 'Do 5 ocen jakości CV', alternative: true },
       { text: 'Do 5 dopasowań do ofert pracy', alternative: true },
-      { text: 'Dopracowanie CV na bazie profilu - do 5 dopracowań CV', alternative: true },
+      { text: 'Do 5 dopracowań CV', alternative: true },
       { text: '3 rekomendowane ścieżki zawodowe' },
       { text: 'Dopasowane oferty pracy do każdej rekomendacji' },
       { text: 'Analiza rynkowa do każdej zarekomendowanej ścieżki' },
