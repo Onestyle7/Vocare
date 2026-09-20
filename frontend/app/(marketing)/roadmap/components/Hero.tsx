@@ -76,7 +76,7 @@ const Hero = () => {
       <div className="relative mx-auto flex min-h-[calc(100svh-1.5rem)] w-full max-w-none flex-col overflow-hidden rounded-3xl bg-[#16161A] sm:min-h-[calc(100svh-2.5rem)] lg:min-h-0 xl:min-h-[calc(100svh-2.5rem)] 2xl:min-h-[calc(55svh-2.5rem)] 2xl:max-w-7xl">
         <Header />
 
-        <div className="relative mx-auto flex w-full max-w-7xl flex-1 flex-col px-4 py-6 sm:px-8 sm:py-8 md:px-12 lg:px-16 lg:pt-8 lg:pb-12 2xl:pt-20">
+        <div className="relative mx-auto flex w-full max-w-7xl flex-1 flex-col px-4 pt-10 pb-6 sm:px-8 sm:pt-12 sm:pb-8 md:px-12 lg:px-16 lg:pt-[clamp(3rem,10svh,7rem)] lg:pb-12 2xl:pt-20">
           <div className="relative z-10 flex flex-col items-center gap-6 sm:gap-10 lg:flex-row lg:items-start lg:gap-10">
             <div className="flex w-full max-w-142.75 flex-col items-center text-center lg:flex-1 lg:items-start lg:self-stretch lg:text-left">
               <h1 className="w-full text-[28px] leading-[1.15] font-light text-[#F1F4FF] sm:text-[36px] lg:text-[48px] lg:leading-[1.1]">
