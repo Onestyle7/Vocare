@@ -1,4 +1,5 @@
 import { ArrowLeft } from 'lucide-react';
+import type { Metadata } from 'next';
 import Link from 'next/link';
 
 import {
@@ -12,6 +13,15 @@ import {
   uslugi_i_wylaczenie_odpowiedzialnosci_ai,
   wymagania_techniczne,
 } from '@/features/marketing/constants/terms-of-service';
+
+export const metadata: Metadata = {
+  title: 'Regulamin Serwisu',
+  description:
+    'Regulamin świadczenia usług drogą elektroniczną w serwisie Vocare. Poznaj warunki korzystania z platformy i zasady świadczenia usług cyfrowych.',
+  alternates: {
+    canonical: '/terms-of-service',
+  },
+};
 
 type Section = {
   title: string;

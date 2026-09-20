@@ -1,367 +1,271 @@
 using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Linq.Expressions;
-using System.Threading;
 using System.Threading.Tasks;
+using FluentAssertions;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.ChangeTracking;
-using Microsoft.EntityFrameworkCore.Infrastructure;
-using Microsoft.EntityFrameworkCore.Query;
-using Microsoft.EntityFrameworkCore.Storage;
-using Microsoft.Extensions.Logging;
-using Moq;
+using Microsoft.Extensions.Logging.Abstractions;
+using VocareWebAPI.Billing.Exceptions;
 using VocareWebAPI.Billing.Models.Entities;
+using VocareWebAPI.Billing.Models.Enums;
 using VocareWebAPI.Billing.Repositories.Implementations;
 using VocareWebAPI.Data;
+using VocareWebApi.Tests.Common;
 using Xunit;
 
-namespace VocareWebAPI.Tests.Billing.Repositories
+namespace VocareWebApi.Tests.Billing.Repositories
 {
-    public class UserBillingRepositoryTests : IDisposable
+    /// <summary>
+    /// Testy jednostkowe <see cref="UserBillingRepository"/> na dostawcy EF Core InMemory.
+    /// Metody wykorzystujące surowy SQL (<c>DeductTokensAsync</c>) pokryte są jedynie w zakresie
+    /// walidacji argumentów – ścieżka blokady wiersza (<c>FOR UPDATE</c>) wymaga bazy PostgreSQL.
+    /// </summary>
+    public sealed class UserBillingRepositoryTests : IDisposable
     {
+        private const string UserId = "user-123";
+
         private readonly AppDbContext _context;
-        private readonly Mock<ILogger<UserBillingRepository>> _mockLogger;
-        private readonly UserBillingRepository _repository;
-        private readonly DbContextOptions<AppDbContext> _dbContextOptions;
+        private readonly UserBillingRepository _sut;
 
         public UserBillingRepositoryTests()
         {
-            // Używamy in-memory database TYLKO dla konstruktora DbContext
-            // ale nadal będziemy mockować DbSet dla prawdziwych testów jednostkowych
-            _dbContextOptions = new DbContextOptionsBuilder<AppDbContext>()
-                .UseInMemoryDatabase(databaseName: Guid.NewGuid().ToString())
-                .Options;
-
-            _context = new AppDbContext(_dbContextOptions);
-            _mockLogger = new Mock<ILogger<UserBillingRepository>>();
-            _repository = new UserBillingRepository(_context, _mockLogger.Object);
+            _context = TestDbContextFactory.CreateContext();
+            _sut = new UserBillingRepository(_context, NullLogger<UserBillingRepository>.Instance);
         }
 
-        public void Dispose()
-        {
-            _context?.Dispose();
-        }
+        public void Dispose() => _context.Dispose();
 
-        [Fact]
-        public async Task GetByUserIdAsync_WhenUserBillingExists_ShouldReturnUserBilling()
+        private async Task<UserBilling> SeedBillingAsync(
+            int balance = 100,
+            string? customerId = null,
+            SubscriptionStatus status = SubscriptionStatus.None
+        )
         {
-            // Arrange
-            var userId = "test-user-123";
-            var expectedUserBilling = new UserBilling
+            var billing = new UserBilling
             {
-                UserId = userId,
-                TokenBalance = 100,
-                StripeCustomerId = "stripe-123",
-            };
-
-            await _context.UserBillings.AddAsync(expectedUserBilling);
-            await _context.SaveChangesAsync();
-
-            // Act
-            var result = await _repository.GetByUserIdAsync(userId);
-
-            // Assert
-            Assert.NotNull(result);
-            Assert.Equal(userId, result.UserId);
-            Assert.Equal(100, result.TokenBalance);
-        }
-
-        [Fact]
-        public async Task GetByUserIdAsync_WhenUserIdIsEmpty_ShouldThrowArgumentException()
-        {
-            // Act & Assert
-            await Assert.ThrowsAsync<ArgumentException>(
-                () => _repository.GetByUserIdAsync(string.Empty)
-            );
-        }
-
-        [Fact]
-        public async Task GetByUserIdAsync_WhenUserBillingNotFound_ShouldThrowKeyNotFoundException()
-        {
-            // Act & Assert
-            await Assert.ThrowsAsync<KeyNotFoundException>(
-                () => _repository.GetByUserIdAsync("non-existent-user")
-            );
-        }
-
-        [Fact]
-        public async Task CreateAsync_WhenValidUserBilling_ShouldCreateSuccessfully()
-        {
-            // Arrange
-            var userBilling = new UserBilling
-            {
-                UserId = "new-user-123",
-                TokenBalance = 50,
-                StripeCustomerId = "stripe-new-123",
-            };
-
-            // Act
-            var result = await _repository.CreateAsync(userBilling);
-
-            // Assert
-            Assert.NotNull(result);
-            Assert.Equal(userBilling.UserId, result.UserId);
-
-            // Verify it was actually saved
-            var savedBilling = await _context.UserBillings.FirstOrDefaultAsync(ub =>
-                ub.UserId == userBilling.UserId
-            );
-            Assert.NotNull(savedBilling);
-            Assert.Equal(50, savedBilling.TokenBalance);
-        }
-
-        [Fact]
-        public async Task CreateAsync_WhenUserBillingIsNull_ShouldThrowArgumentNullException()
-        {
-            // Act & Assert
-            await Assert.ThrowsAsync<ArgumentNullException>(() => _repository.CreateAsync(null));
-        }
-
-        [Fact]
-        public async Task CreateAsync_WhenUserIdIsEmpty_ShouldThrowArgumentException()
-        {
-            // Arrange
-            var userBilling = new UserBilling { UserId = string.Empty };
-
-            // Act & Assert
-            await Assert.ThrowsAsync<ArgumentException>(() => _repository.CreateAsync(userBilling));
-        }
-
-        [Fact]
-        public async Task CreateAsync_WhenUserBillingAlreadyExists_ShouldThrowInvalidOperationException()
-        {
-            // Arrange
-            var existingUserBilling = new UserBilling
-            {
-                UserId = "existing-user",
-                TokenBalance = 100,
-            };
-
-            await _context.UserBillings.AddAsync(existingUserBilling);
-            await _context.SaveChangesAsync();
-
-            var newUserBilling = new UserBilling { UserId = "existing-user", TokenBalance = 50 };
-
-            // Act & Assert
-            await Assert.ThrowsAsync<InvalidOperationException>(
-                () => _repository.CreateAsync(newUserBilling)
-            );
-        }
-
-        [Fact]
-        public async Task UpdateAsync_WhenValidUserBilling_ShouldUpdateSuccessfully()
-        {
-            // Arrange
-            var existingUserBilling = new UserBilling { UserId = "user-123", TokenBalance = 100 };
-
-            await _context.UserBillings.AddAsync(existingUserBilling);
-            await _context.SaveChangesAsync();
-
-            var updatedUserBilling = new UserBilling { UserId = "user-123", TokenBalance = 200 };
-
-            // Act
-            await _repository.UpdateAsync(updatedUserBilling);
-
-            // Assert
-            var result = await _context.UserBillings.FirstOrDefaultAsync(ub =>
-                ub.UserId == "user-123"
-            );
-            Assert.Equal(200, result.TokenBalance);
-        }
-
-        [Fact]
-        public async Task UpdateAsync_WhenUserBillingIsNull_ShouldThrowArgumentNullException()
-        {
-            // Act & Assert
-            await Assert.ThrowsAsync<ArgumentNullException>(() => _repository.UpdateAsync(null));
-        }
-
-        [Fact]
-        public async Task UpdateAsync_WhenUserBillingNotFound_ShouldThrowInvalidOperationException()
-        {
-            // Arrange
-            var userBilling = new UserBilling { UserId = "non-existent", TokenBalance = 100 };
-
-            // Act & Assert
-            await Assert.ThrowsAsync<InvalidOperationException>(
-                () => _repository.UpdateAsync(userBilling)
-            );
-        }
-
-        [Fact]
-        public async Task HasEnoughTokensAsync_WhenHasEnoughTokens_ShouldReturnTrue()
-        {
-            // Arrange
-            var userId = "user-123";
-            var userBilling = new UserBilling { UserId = userId, TokenBalance = 100 };
-
-            await _context.UserBillings.AddAsync(userBilling);
-            await _context.SaveChangesAsync();
-
-            // Act
-            var result = await _repository.HasEnoughTokensAsync(userId, 50);
-
-            // Assert
-            Assert.True(result);
-        }
-
-        [Fact]
-        public async Task HasEnoughTokensAsync_WhenNotEnoughTokens_ShouldReturnFalse()
-        {
-            // Arrange
-            var userId = "user-123";
-            var userBilling = new UserBilling { UserId = userId, TokenBalance = 30 };
-
-            await _context.UserBillings.AddAsync(userBilling);
-            await _context.SaveChangesAsync();
-
-            // Act
-            var result = await _repository.HasEnoughTokensAsync(userId, 50);
-
-            // Assert
-            Assert.False(result);
-        }
-
-        [Fact]
-        public async Task HasEnoughTokensAsync_WhenUserIdIsEmpty_ShouldThrowArgumentException()
-        {
-            // Act & Assert
-            await Assert.ThrowsAsync<ArgumentException>(
-                () => _repository.HasEnoughTokensAsync(string.Empty, 50)
-            );
-        }
-
-        [Fact]
-        public async Task HasEnoughTokensAsync_WhenRequiredTokensIsZero_ShouldThrowArgumentException()
-        {
-            // Act & Assert
-            await Assert.ThrowsAsync<ArgumentException>(
-                () => _repository.HasEnoughTokensAsync("user-123", 0)
-            );
-        }
-
-        [Fact]
-        public async Task AddTokensAsync_WhenUserExists_ShouldAddTokensSuccessfully()
-        {
-            // Arrange
-            var userId = "user-123";
-            var userBilling = new UserBilling
-            {
-                UserId = userId,
-                TokenBalance = 50,
-                LastTokenPurchaseDate = DateTime.UtcNow.AddDays(-5),
-            };
-
-            await _context.UserBillings.AddAsync(userBilling);
-            await _context.SaveChangesAsync();
-
-            // Act
-            await _repository.AddTokensAsync(userId, 100);
-
-            // Assert
-            var result = await _context.UserBillings.FirstOrDefaultAsync(ub => ub.UserId == userId);
-            Assert.Equal(150, result.TokenBalance);
-        }
-
-        [Fact]
-        public async Task AddTokensAsync_WhenUserIdIsEmpty_ShouldThrowArgumentException()
-        {
-            // Act & Assert
-            await Assert.ThrowsAsync<ArgumentException>(() => _repository.AddTokensAsync("", 100));
-        }
-
-        [Fact]
-        public async Task AddTokensAsync_WhenAmountIsZero_ShouldThrowArgumentException()
-        {
-            // Act & Assert
-            await Assert.ThrowsAsync<ArgumentException>(
-                () => _repository.AddTokensAsync("user-123", 0)
-            );
-        }
-
-        [Fact]
-        public async Task AddTokensAsync_WhenUserNotFound_ShouldThrowKeyNotFoundException()
-        {
-            // Act & Assert
-            await Assert.ThrowsAsync<KeyNotFoundException>(
-                () => _repository.AddTokensAsync("non-existent", 100)
-            );
-        }
-
-        [Fact]
-        public async Task GetUserIdByCustomerIdAsync_WhenCustomerExists_ShouldReturnUserId()
-        {
-            // Arrange
-            var customerId = "stripe-customer-123";
-            var userId = "user-123";
-            var userBilling = new UserBilling
-            {
-                UserId = userId,
+                UserId = UserId,
+                TokenBalance = balance,
                 StripeCustomerId = customerId,
-                TokenBalance = 100,
+                SubscriptionStatus = status,
             };
-
-            await _context.UserBillings.AddAsync(userBilling);
+            _context.UserBillings.Add(billing);
             await _context.SaveChangesAsync();
+            _context.ChangeTracker.Clear();
+            return billing;
+        }
 
-            // Act
-            var result = await _repository.GetUserIdByCustomerIdAsync(customerId);
+        // ---------- GetByUserIdAsync ----------
 
-            // Assert
-            Assert.Equal(userId, result);
+        [Fact]
+        public async Task GetByUserIdAsync_WhenRecordExists_ReturnsRecord()
+        {
+            await SeedBillingAsync(balance: 250);
+
+            var result = await _sut.GetByUserIdAsync(UserId);
+
+            result.TokenBalance.Should().Be(250);
         }
 
         [Fact]
-        public async Task GetUserIdByCustomerIdAsync_WhenCustomerNotFound_ShouldReturnNull()
+        public async Task GetByUserIdAsync_WhenRecordMissing_ThrowsUserBillingNotFound()
         {
-            // Act
-            var result = await _repository.GetUserIdByCustomerIdAsync("non-existent-customer");
-
-            // Assert
-            Assert.Null(result);
+            await _sut.Invoking(r => r.GetByUserIdAsync("ghost"))
+                .Should()
+                .ThrowAsync<UserBillingNotFoundException>();
         }
 
-        // Testy dla DeductTokensAsync nie mogą być wykonane w pełni jako unit testy
-        // ponieważ używają FromSqlRaw, który nie działa z in-memory database.
-        // Poniżej alternatywne podejście - test integracyjny lub pomijamy te testy
-
-        [Fact(Skip = "FromSqlRaw not supported in in-memory database - requires integration test")]
-        public async Task DeductTokensAsync_WhenHasEnoughTokens_ShouldDeductSuccessfully()
+        [Theory]
+        [InlineData(null)]
+        [InlineData("")]
+        public async Task GetByUserIdAsync_WithInvalidUserId_ThrowsArgumentException(string? userId)
         {
-            // This test requires a real database or test database
-            // FromSqlRaw with FOR UPDATE is not supported by in-memory provider
+            await _sut.Invoking(r => r.GetByUserIdAsync(userId!))
+                .Should()
+                .ThrowAsync<ArgumentException>();
+        }
+
+        // ---------- CreateAsync ----------
+
+        [Fact]
+        public async Task CreateAsync_WithNewRecord_PersistsAndReturnsIt()
+        {
+            var billing = new UserBilling { UserId = UserId, TokenBalance = 30 };
+
+            var result = await _sut.CreateAsync(billing);
+
+            result.UserId.Should().Be(UserId);
+            _context.ChangeTracker.Clear();
+            (await _context.UserBillings.AsNoTracking().SingleAsync()).TokenBalance.Should().Be(30);
         }
 
         [Fact]
-        public async Task DeductTokensAsync_WhenUserIdIsEmpty_ShouldThrowArgumentException()
+        public async Task CreateAsync_WithNull_ThrowsArgumentNullException()
         {
-            // Act & Assert
-            await Assert.ThrowsAsync<ArgumentException>(
-                () => _repository.DeductTokensAsync(string.Empty, 50)
+            await _sut.Invoking(r => r.CreateAsync(null!))
+                .Should()
+                .ThrowAsync<ArgumentNullException>();
+        }
+
+        [Fact]
+        public async Task CreateAsync_WithEmptyUserId_ThrowsArgumentException()
+        {
+            await _sut.Invoking(r => r.CreateAsync(new UserBilling { UserId = "" }))
+                .Should()
+                .ThrowAsync<ArgumentException>();
+        }
+
+        [Fact]
+        public async Task CreateAsync_WhenRecordAlreadyExists_ThrowsAlreadyExists()
+        {
+            await SeedBillingAsync();
+
+            await _sut.Invoking(r => r.CreateAsync(new UserBilling { UserId = UserId }))
+                .Should()
+                .ThrowAsync<UserBillingAlreadyExistsException>();
+        }
+
+        // ---------- UpdateAsync ----------
+
+        [Fact]
+        public async Task UpdateAsync_WithExistingRecord_PersistsChangedValues()
+        {
+            await SeedBillingAsync(balance: 10);
+
+            await _sut.UpdateAsync(
+                new UserBilling
+                {
+                    UserId = UserId,
+                    TokenBalance = 999,
+                    SubscriptionStatus = SubscriptionStatus.Active,
+                }
             );
+
+            var reloaded = await _context.UserBillings.AsNoTracking().SingleAsync();
+            reloaded.TokenBalance.Should().Be(999);
+            reloaded.SubscriptionStatus.Should().Be(SubscriptionStatus.Active);
         }
 
         [Fact]
-        public async Task DeductTokensAsync_WhenAmountIsZero_ShouldThrowArgumentException()
+        public async Task UpdateAsync_WithNull_ThrowsArgumentNullException()
         {
-            // Act & Assert
-            await Assert.ThrowsAsync<ArgumentException>(
-                () => _repository.DeductTokensAsync("user-123", 0)
-            );
+            await _sut.Invoking(r => r.UpdateAsync(null!))
+                .Should()
+                .ThrowAsync<ArgumentNullException>();
         }
 
-        [Fact(Skip = "FromSqlRaw not supported in in-memory database - requires integration test")]
-        public async Task ConcurrentDeductions_ShouldBeHandledSafely()
+        [Fact]
+        public async Task UpdateAsync_WhenRecordMissing_ThrowsUserBillingNotFound()
         {
-            // This test requires a real database with transaction support
-            // In-memory database doesn't support FromSqlRaw with FOR UPDATE
+            await _sut.Invoking(r => r.UpdateAsync(new UserBilling { UserId = "ghost" }))
+                .Should()
+                .ThrowAsync<UserBillingNotFoundException>();
         }
 
-        [Fact(Skip = "FromSqlRaw not supported in in-memory database - requires integration test")]
-        public async Task CompleteTokenPurchaseFlow_ShouldWorkCorrectly()
+        // ---------- HasEnoughTokensAsync ----------
+
+        [Theory]
+        [InlineData(100, 100, true)]
+        [InlineData(100, 101, false)]
+        [InlineData(100, 1, true)]
+        public async Task HasEnoughTokensAsync_ComparesBalanceAgainstRequirement(
+            int balance,
+            int required,
+            bool expected
+        )
         {
-            // This test requires a real database for full flow with transactions
+            await SeedBillingAsync(balance);
+
+            (await _sut.HasEnoughTokensAsync(UserId, required)).Should().Be(expected);
+        }
+
+        [Fact]
+        public async Task HasEnoughTokensAsync_WhenRecordMissing_ThrowsUserBillingNotFound()
+        {
+            await _sut.Invoking(r => r.HasEnoughTokensAsync("ghost", 1))
+                .Should()
+                .ThrowAsync<UserBillingNotFoundException>();
+        }
+
+        [Theory]
+        [InlineData("", 10)]
+        [InlineData(UserId, 0)]
+        [InlineData(UserId, -5)]
+        public async Task HasEnoughTokensAsync_WithInvalidArguments_ThrowsArgumentException(
+            string userId,
+            int required
+        )
+        {
+            await _sut.Invoking(r => r.HasEnoughTokensAsync(userId, required))
+                .Should()
+                .ThrowAsync<ArgumentException>();
+        }
+
+        // ---------- AddTokensAsync ----------
+
+        [Fact]
+        public async Task AddTokensAsync_IncrementsBalanceAndStampsPurchaseDate()
+        {
+            await SeedBillingAsync(balance: 40);
+
+            await _sut.AddTokensAsync(UserId, 60);
+
+            var reloaded = await _context.UserBillings.AsNoTracking().SingleAsync();
+            reloaded.TokenBalance.Should().Be(100);
+            reloaded
+                .LastTokenPurchaseDate.Should()
+                .BeCloseTo(DateTime.UtcNow, TimeSpan.FromSeconds(5));
+        }
+
+        [Theory]
+        [InlineData("", 10)]
+        [InlineData(UserId, 0)]
+        public async Task AddTokensAsync_WithInvalidArguments_ThrowsArgumentException(
+            string userId,
+            int amount
+        )
+        {
+            await _sut.Invoking(r => r.AddTokensAsync(userId, amount))
+                .Should()
+                .ThrowAsync<ArgumentException>();
+        }
+
+        [Fact]
+        public async Task AddTokensAsync_WhenRecordMissing_ThrowsUserBillingNotFound()
+        {
+            await _sut.Invoking(r => r.AddTokensAsync("ghost", 10))
+                .Should()
+                .ThrowAsync<UserBillingNotFoundException>();
+        }
+
+        // ---------- GetUserIdByCustomerIdAsync ----------
+
+        [Fact]
+        public async Task GetUserIdByCustomerIdAsync_WhenCustomerKnown_ReturnsUserId()
+        {
+            await SeedBillingAsync(customerId: "cus_1");
+
+            (await _sut.GetUserIdByCustomerIdAsync("cus_1")).Should().Be(UserId);
+        }
+
+        [Fact]
+        public async Task GetUserIdByCustomerIdAsync_WhenCustomerUnknown_ReturnsNull()
+        {
+            (await _sut.GetUserIdByCustomerIdAsync("cus_missing")).Should().BeNull();
+        }
+
+        // ---------- DeductTokensAsync (walidacja argumentów) ----------
+
+        [Theory]
+        [InlineData("", 10)]
+        [InlineData(UserId, 0)]
+        [InlineData(UserId, -1)]
+        public async Task DeductTokensAsync_WithInvalidArguments_ThrowsArgumentException(
+            string userId,
+            int amount
+        )
+        {
+            await _sut.Invoking(r => r.DeductTokensAsync(userId, amount))
+                .Should()
+                .ThrowAsync<ArgumentException>();
         }
     }
 }

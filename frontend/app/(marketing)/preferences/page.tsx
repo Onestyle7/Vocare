@@ -1,7 +1,21 @@
 import { ArrowLeft } from 'lucide-react';
+import type { Metadata } from 'next';
 import Link from 'next/link';
 
 import { AnalyticsConsentCard } from '@/components/SupportComponents/AnalyticsConsentCard';
+
+export const metadata: Metadata = {
+  title: 'Preferencje Prywatności',
+  description:
+    'Zarządzaj swoimi ustawieniami dotyczącymi plików cookies i przetwarzania danych analitycznych w serwisie Vocare.',
+  alternates: {
+    canonical: '/preferences',
+  },
+  robots: {
+    index: false,
+    follow: true,
+  },
+};
 
 export default function PreferencesPage() {
   return (

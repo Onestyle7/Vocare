@@ -94,10 +94,7 @@ export const metadata: Metadata = {
     template: '%s | Vocare',
   },
   description:
-    'Vocare pomaga odkryc Twoja sciezke kariery z AI. Sprawdz mocne strony, analizuj rynek i podejmuj trafne decyzje zawodowe na podstawie danych.',
-  alternates: {
-    canonical: '/',
-  },
+    'Vocare pomaga odkryć Twoją ścieżkę kariery z AI. Sprawdź mocne strony, analizuj rynek i podejmuj trafne decyzje zawodowe na podstawie danych.',
   robots: {
     index: true,
     follow: true,
@@ -114,7 +111,7 @@ export const metadata: Metadata = {
     url: env.NEXT_PUBLIC_APP_URL,
     title: 'Vocare',
     description:
-      'Vocare pomaga odkryc Twoja sciezke kariery z AI. Sprawdz mocne strony, analizuj rynek i podejmuj trafne decyzje zawodowe na podstawie danych.',
+      'Vocare pomaga odkryć Twoją ścieżkę kariery z AI. Sprawdź mocne strony, analizuj rynek i podejmuj trafne decyzje zawodowe na podstawie danych.',
     siteName: 'Vocare',
     locale: 'pl_PL',
     images: [
@@ -130,7 +127,7 @@ export const metadata: Metadata = {
     card: 'summary_large_image',
     title: 'Vocare',
     description:
-      'Vocare pomaga odkryc Twoja sciezke kariery z AI. Sprawdz mocne strony, analizuj rynek i podejmuj trafne decyzje zawodowe na podstawie danych.',
+      'Vocare pomaga odkryć Twoją ścieżkę kariery z AI. Sprawdź mocne strony, analizuj rynek i podejmuj trafne decyzje zawodowe na podstawie danych.',
     images: [toAbsoluteUrl('/metadata/og-image.png')],
   },
 };
@@ -155,7 +152,7 @@ export default async function RootLayout({
   }
 
   return (
-    <html lang="en" suppressHydrationWarning>
+    <html lang="pl" suppressHydrationWarning>
       <head>
         <Script
           id="google-consent"
