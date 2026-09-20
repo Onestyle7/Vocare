@@ -65,6 +65,7 @@ namespace VocareWebAPI.Extensions.ServiceCollectionExtensions
             services.AddScoped<IAuthenticationServiceOwn, AuthenticationService>();
             services.AddScoped<ICvParserService, CvParserService>();
             services.AddScoped<IDashboardService, DashboardService>();
+            services.AddScoped<IUserDeletionService, UserDeletionService>();
 
             // AI services (Główną implementacją jest OpenAI)
             services.AddScoped<IAiService, OpenAIService>();
@@ -123,6 +124,7 @@ namespace VocareWebAPI.Extensions.ServiceCollectionExtensions
             services.AddScoped<ICvParseHistoryRepository, CvParseHistoryRepository>();
             services.AddScoped<IDashboardRepository, DashboardRepository>();
             services.AddScoped<IProfileAttributesRepository, ProfileAttributesRepository>();
+            services.AddScoped<IUserDataCleanupRepository, UserDataCleanupRepository>();
 
             // Transaction repositories
             services.AddScoped<ITokenTransactionRepository, TokenTransactionRepository>();
