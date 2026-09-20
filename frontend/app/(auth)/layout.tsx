@@ -1,3 +1,4 @@
+import type { Metadata } from 'next';
 import Image from 'next/image';
 import React, { lazy, Suspense } from 'react';
 
@@ -6,6 +7,13 @@ import { VelocityScroll } from '@/components/magicui/scroll-based-velocity';
 import { logo, Spinner } from '../../features/marketing/constants';
 
 const LazySpline = lazy(() => import('@splinetool/react-spline'));
+
+export const metadata: Metadata = {
+  robots: {
+    index: false,
+    follow: false,
+  },
+};
 
 const Layout = ({ children }: { children: React.ReactNode }) => {
   return (

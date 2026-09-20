@@ -1,7 +1,6 @@
 import env from '@/lib/env/client';
 
-import { BillingType } from './dal/api';
-import { SubscriptionStatuses } from './types';
+import type { PricingPlan, SubscriptionStatuses } from './types';
 
 export const ACTIVE_SUBSCRIPTION_STATUSES: SubscriptionStatuses[] = ['Active', 'Trialing'];
 
@@ -10,53 +9,72 @@ export const MARKET_ANALYSIS_PRICE = 50;
 // Backend Roadmap nie korzysta obecnie z BillingService.
 export const ROADMAP_GENERATION_PRICE = 0;
 
-export const pricingPlans = [
+export const pricingPlans: readonly PricingPlan[] = [
   {
-    name: 'Osobiste',
-    description: 'Idealne do znalezienia swojej ścieżki zawodowej.',
-    price: 19,
-    save: undefined,
-    tokens: 500 as number | string,
-    priceId: env.NEXT_PUBLIC_PERSONAL_PRICE_ID,
-    type: 'tokens' as BillingType,
+    type: 'free',
+    name: 'Free',
+    price: 0,
+    priceLabel: '/ na zawsze',
+    description: '120 tokenów na start. Wykorzystaj je tak, jak potrzebujesz.',
     features: [
-      '500 tokenów w pakiecie',
-      'Indywidualne doradztwo kariery',
-      'Spersonalizowane propozycje ścieżek kariery',
-      'Analizy rynku pracy',
+      { text: 'Nielimitowana edycja i pobieranie CV' },
+      { text: 'Do 3 CV na koncie' },
+      { text: 'Do 5 ocen jakości CV', alternative: true },
+      { text: 'Do 5 dopasowań do ofert pracy', alternative: true },
+      { text: 'Do 5 dopracowań CV', alternative: true },
+      { text: '3 rekomendowane ścieżki zawodowe' },
+      { text: 'Dopasowane oferty pracy do każdej rekomendacji' },
+      { text: 'Analiza rynkowa do każdej zarekomendowanej ścieżki' },
+      { text: '1 Roadmapa do wybranej ścieżki zawodowej' },
     ],
+    ctaLabel: 'Zarejestruj się za darmo',
+    microcopy: 'Start w 2 minuty.',
+    microcopyEmphasis: 'Bez karty płatniczej.',
+    microcopyEmphasisPosition: 'start',
     popular: false,
   },
   {
-    name: 'Rozwój',
-    description: 'Najlepszy wybór do rozwoju Twojej kariery.',
+    type: 'subscription',
+    name: 'Premium',
     price: 29,
-    save: '35%',
-    tokens: 'Nielimitowany' as number | string,
+    priceLabel: '/ miesiąc',
+    description: '0,93 zł/dzień za personalizowane doradztwo zawodowe',
     priceId: env.NEXT_PUBLIC_GROWTH_PRICE_ID,
-    type: 'subscription' as BillingType,
     features: [
-      'Nielimitowany dostęp',
-      'Indywidualne doradztwo kariery',
-      'Spersonalizowane propozycje ścieżek kariery',
-      'Analizy rynku pracy dla Twoich kierunków kariery',
+      { text: 'Nielimitowana edycja i pobieranie CV' },
+      { text: 'Do 20 różnych CV na koncie' },
+      { text: 'Nielimitowana ocena jakości CV' },
+      { text: 'Nielimitowane dopasowanie CV do ofert pracy' },
+      { text: 'Nielimitowane dopracowanie CV na bazie profilu' },
+      { text: 'Nielimitowane, personalizowane rekomendacje zawodowe' },
+      { text: 'Dopasowane oferty pracy do każdej rekomendacji' },
+      { text: 'Nielimitowane analizy rynkowe' },
+      { text: 'Nielimitowane, w pełni zarządzalne roadmapy do wszystkich rekomendowanych ścieżek' },
     ],
+    commitment: 'Anuluj w każdej chwili. Żadnych zobowiązań.',
+    ctaLabel: 'Wybierz Premium',
+    microcopy: 'Pierwsza płatność dziś, kolejna za miesiąc.',
+    microcopyEmphasis: 'Rezygnacja bez zobowiązań.',
     popular: true,
   },
   {
-    name: 'Indywidualne',
-    description: 'Twoja kariera prowadzona przez naszych ekspertów.',
-    price: 99,
-    save: '65%',
-    tokens: '—' as number | string,
-    priceId: env.NEXT_PUBLIC_INDIVIDUAL_PRICE_ID,
-    type: 'individual' as BillingType,
+    type: 'tokens',
+    name: 'Pakiet 500 tokenów',
+    price: 19,
+    priceLabel: 'jednorazowo',
+    description: 'Dla kogoś, kto wykorzystał limit Free i szuka więcej.',
+    priceId: env.NEXT_PUBLIC_PERSONAL_PRICE_ID,
+    featuresIntro: 'To co w planie darmowym, plus:',
     features: [
-      'Analiza CV przez eksperta kariery',
-      'Optymalizacja CV',
-      '5 spersonalizowanych ścieżek kariery',
-      'Wyniki w ciągu 48 godzin',
+      { text: 'Brak subskrypcji - nie musisz podpinać karty na stałe' },
+      { text: 'Płatność jednorazowa, Apple Pay, Blik lub karta' },
+      { text: 'Do 50 ocen jakości CV', alternative: true },
+      { text: 'Do 25 dopasowań CV do ofert pracy', alternative: true },
+      { text: 'Do 25 dopracowań CV na bazie profilu', alternative: true },
+      { text: 'Dowolna kombinacja powyższych - Ty decydujesz, na co wydać' },
     ],
+    ctaLabel: 'Dokup 500 tokenów',
+    microcopy: 'Tokeny nie wygasają.',
     popular: false,
   },
-] as const;
+];

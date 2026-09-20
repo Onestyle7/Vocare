@@ -109,7 +109,7 @@ const heroLines = [
 const Hero = () => {
   return (
     <div className="font-poppins flex flex-col bg-[#0F1013] p-3 sm:p-5">
-      <div className="relative mx-auto flex min-h-[calc(100dvh-1.5rem)] w-full max-w-none flex-col overflow-hidden rounded-3xl bg-[#16161A] sm:min-h-[calc(100dvh-2.5rem)] lg:min-h-0 2xl:max-w-7xl">
+      <div className="relative mx-auto flex min-h-[calc(100svh-1.5rem)] w-full max-w-none flex-col overflow-hidden rounded-3xl bg-[#16161A] sm:min-h-[calc(100svh-2.5rem)] lg:min-h-0 xl:min-h-[calc(100svh-2.5rem)] 2xl:min-h-[calc(55svh-2.5rem)] 2xl:max-w-7xl">
         <div
           aria-hidden
           className="pointer-events-none absolute top-0 right-0 hidden h-198.5 w-238.75 overflow-hidden lg:block xl:-right-20.5 2xl:hidden"
@@ -134,12 +134,12 @@ const Hero = () => {
 
         <Header />
 
-        <div className="relative mx-auto flex w-full max-w-7xl flex-1 flex-col px-4 py-6 sm:px-8 sm:py-8 md:px-12 lg:px-16 lg:pt-8 lg:pb-12 2xl:pt-20">
+        <div className="relative mx-auto flex w-full max-w-7xl flex-1 flex-col px-4 pt-10 pb-6 sm:px-8 sm:pt-12 sm:pb-8 md:px-12 lg:px-16 lg:pt-[clamp(3rem,10svh,7rem)] lg:pb-12 2xl:pt-20">
           <div className="relative z-10 flex flex-1 flex-col items-center gap-10 sm:gap-14 lg:flex-row lg:items-start lg:gap-10">
             <div className="flex w-full max-w-142.75 flex-col items-center text-center lg:flex-1 lg:items-start lg:text-left">
-              <h1 className="w-full text-[28px] leading-[1.15] text-[#F1F4FF] sm:text-[36px] lg:text-[48px] lg:leading-[1.1]">
+              <h1 className="w-full text-[28px] leading-[1.15] font-light text-[#F1F4FF] sm:text-[36px] lg:text-[48px] lg:leading-[1.1]">
                 <span className="opacity-[0.79]">Nie szukaj pracy, Zaplanuj </span>
-                <span className="bg-[linear-gradient(180deg,#9296FD_0%,#8491FE_50%,#9D9BFF_77%,#C7A9FE_100%)] bg-clip-text font-medium text-transparent">
+                <span className="bg-[linear-gradient(180deg,#9296FD_0%,#8491FE_50%,#9D9BFF_77%,#C7A9FE_100%)] bg-clip-text font-normal text-transparent">
                   całą karierę
                 </span>
               </h1>

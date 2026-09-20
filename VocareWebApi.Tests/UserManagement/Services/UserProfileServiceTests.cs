@@ -1,13 +1,19 @@
-using AutoMapper;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
 using FluentAssertions;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Logging.Abstractions;
 using Moq;
 using VocareWebAPI.Data;
 using VocareWebAPI.Models.Dtos;
 using VocareWebAPI.Models.Entities;
 using VocareWebAPI.Profiles;
+using VocareWebAPI.Repositories;
 using VocareWebAPI.Services;
+using VocareWebApi.Tests.Common;
+using VocareWebAPI.UserManagement.Exceptions;
 using VocareWebAPI.UserManagement.Models.Dtos;
 using VocareWebAPI.UserManagement.Models.Entities;
 using VocareWebAPI.UserManagement.Models.Enums;
@@ -15,173 +21,183 @@ using Xunit;
 
 namespace VocareWebApi.Tests.UserManagement.Services
 {
-    public class UserProfileServiceTests : IDisposable
+    /// <summary>
+    /// Testy jednostkowe <see cref="UserProfileService"/> (dostawca InMemory + realny AutoMapper).
+    /// </summary>
+    public sealed class UserProfileServiceTests : IDisposable
     {
+        private const string UserId = "user-123";
+
         private readonly AppDbContext _context;
-        private readonly IMapper _mapper;
-        private readonly Mock<ILogger<UserProfileService>> _mockLogger;
-        private readonly UserProfileService _service;
+        private readonly Mock<IUserProfileRepository> _repository = new();
+        private readonly UserProfileService _sut;
 
         public UserProfileServiceTests()
         {
-            // Setup in-memory database
-            var options = new DbContextOptionsBuilder<AppDbContext>()
-                .UseInMemoryDatabase(databaseName: Guid.NewGuid().ToString())
-                .Options;
-            _context = new AppDbContext(options);
-
-            // Setup AutoMapper
-            var config = new MapperConfiguration(cfg =>
-            {
-                cfg.AddProfile<UserProfileMappingProfile>();
-            });
-            _mapper = config.CreateMapper();
-
-            _mockLogger = new Mock<ILogger<UserProfileService>>();
-
-            _service = new UserProfileService(_context, _mapper, _mockLogger.Object);
-        }
-
-        [Fact]
-        public async Task GetUserProfileAsync_ExistingProfile_ReturnsDto()
-        {
-            // Arrange
-            var userId = "test-user-123";
-            var profile = new UserProfile
-            {
-                UserId = userId,
-                FirstName = "John",
-                LastName = "Doe",
-                Country = "Poland",
-                Skills = new List<string> { "C#", "JavaScript" },
-                PersonalityType = PersonalityType.Architect,
-            };
-
-            _context.UserProfiles.Add(profile);
-            await _context.SaveChangesAsync();
-
-            // Act
-            var result = await _service.GetUserProfileAsync(userId);
-
-            // Assert
-            result.Should().NotBeNull();
-            result.FirstName.Should().Be("John");
-            result.LastName.Should().Be("Doe");
-            result.Country.Should().Be("Poland");
-            result.Skills.Should().ContainInOrder("C#", "JavaScript");
-            result.PersonalityType.Should().Be(PersonalityType.Architect);
-        }
-
-        [Fact]
-        public async Task GetUserProfileAsync_NonExistentProfile_ThrowsKeyNotFoundException()
-        {
-            // Arrange
-            var userId = "non-existent-user";
-
-            // Act & Assert
-            await Assert.ThrowsAsync<KeyNotFoundException>(
-                () => _service.GetUserProfileAsync(userId)
+            _context = TestDbContextFactory.CreateContext();
+            _sut = new UserProfileService(
+                _context,
+                MapperFactory.Create(typeof(UserProfileMappingProfile)),
+                NullLogger<UserProfileService>.Instance,
+                _repository.Object
             );
         }
 
-        [Fact]
-        public async Task CreateUserProfileAsync_NewProfile_CreatesSuccessfully()
+        public void Dispose() => _context.Dispose();
+
+        private async Task SeedProfileAsync(Action<UserProfile>? configure = null)
         {
-            // Arrange
-            var userId = "new-user-123";
-            var profileDto = new UserProfileDto
+            var profile = new UserProfile
             {
-                FirstName = "Jane",
-                LastName = "Smith",
-                Country = "USA",
-                Skills = new List<string> { "Python", "SQL" },
-                PersonalityType = PersonalityType.Mediator,
-                FinancialSurvey = new FinancialSurveyDto
-                {
-                    CurrentSalary = 5000,
-                    DesiredSalary = 7000,
-                    HasLoans = false,
-                    RiskAppetite = Risk.Medium,
-                    WillingToRelocate = true,
-                },
+                UserId = UserId,
+                FirstName = "Ada",
+                LastName = "Byron",
+                Country = "Poland",
             };
+            configure?.Invoke(profile);
+            _context.UserProfiles.Add(profile);
+            await _context.SaveChangesAsync();
+            _context.ChangeTracker.Clear();
+        }
 
-            // Act
-            var result = await _service.CreateUserProfileAsync(userId, profileDto);
+        // ---------- GetUserProfileAsync ----------
 
-            // Assert
-            result.Should().NotBeNull();
-            result.FirstName.Should().Be("Jane");
+        [Fact]
+        public async Task GetUserProfileAsync_BackfillsWorkResponsibilitiesFromDescription()
+        {
+            _repository
+                .Setup(r => r.GetUserProfileByIdAsync(UserId))
+                .ReturnsAsync(
+                    new UserProfile
+                    {
+                        UserId = UserId,
+                        FirstName = "Ada",
+                        WorkExperience = new List<WorkExperienceEntry>
+                        {
+                            new()
+                            {
+                                Company = "Acme",
+                                Position = "Dev",
+                                Description = "Built the billing system",
+                                Responsibilities = null,
+                            },
+                        },
+                    }
+                );
 
-            // Verify in database
-            var savedProfile = await _context
-                .UserProfiles.Include(p => p.FinancialSurvey)
-                .FirstOrDefaultAsync(p => p.UserId == userId);
+            var dto = await _sut.GetUserProfileAsync(UserId);
 
-            savedProfile.Should().NotBeNull();
-            savedProfile!.FinancialSurvey.Should().NotBeNull();
-            savedProfile.FinancialSurvey!.CurrentSalary.Should().Be(5000);
+            dto.WorkExperience.Should().ContainSingle();
+            dto.WorkExperience![0]
+                .Responsibilities.Should()
+                .ContainSingle()
+                .Which.Should()
+                .Be("Built the billing system");
+        }
+
+        // ---------- UpdateUserProfileAsync ----------
+
+        [Fact]
+        public async Task UpdateUserProfileAsync_WhenProfileMissing_Throws()
+        {
+            await _sut.Invoking(s => s.UpdateUserProfileAsync(UserId, new UserProfileDto()))
+                .Should()
+                .ThrowAsync<UserProfileNotFoundException>();
         }
 
         [Fact]
-        public async Task UpdateUserProfileAsync_ExistingProfile_UpdatesSuccessfully()
+        public async Task UpdateUserProfileAsync_PersistsBasicFieldsAndReplacesCollections()
         {
-            // Arrange
-            var userId = "update-test-user";
-            var existingProfile = new UserProfile
-            {
-                UserId = userId,
-                FirstName = "Old",
-                LastName = "Name",
-                Country = "Poland",
-                Education = new List<EducationEntry>
-                {
-                    new EducationEntry
-                    {
-                        Institution = "Old University",
-                        Degree = "Bachelor",
-                        Field = "CS",
-                    },
-                },
-            };
+            await SeedProfileAsync(p =>
+                p.Education.Add(new EducationEntry { Institution = "Old school" })
+            );
 
-            _context.UserProfiles.Add(existingProfile);
-            await _context.SaveChangesAsync();
-            _context.ChangeTracker.Clear(); // Ważne dla testów
-
-            var updateDto = new UserProfileDto
+            var dto = new UserProfileDto
             {
-                FirstName = "New",
-                LastName = "Name",
-                Country = "Germany",
-                PersonalityType = PersonalityType.Commander,
+                FirstName = "Grace",
+                LastName = "Hopper",
+                Country = "USA",
+                Skills = new List<string> { "COBOL" },
                 Education = new List<EducationEntryDto>
                 {
-                    new EducationEntryDto
+                    new()
                     {
-                        Institution = "New University",
-                        Degree = "Master",
-                        Field = "AI",
-                        StartDate = "2020-09-01",
-                        EndDate = "2022-06-30",
+                        Institution = "Yale",
+                        Degree = "PhD",
+                        Field = "Math",
                     },
                 },
             };
 
-            // Act
-            var result = await _service.UpdateUserProfileAsync(userId, updateDto);
+            var result = await _sut.UpdateUserProfileAsync(UserId, dto);
 
-            // Assert
-            result.FirstName.Should().Be("New");
-            result.LastName.Should().Be("Name");
-            result.Country.Should().Be("Germany");
-            result.Education.Should().HaveCount(1);
-            result.Education![0].Institution.Should().Be("New University");
+            result.FirstName.Should().Be("Grace");
+            _context.ChangeTracker.Clear();
+            var reloaded = await _context.UserProfiles.Include(p => p.Education).SingleAsync();
+            reloaded.FirstName.Should().Be("Grace");
+            reloaded.Education.Should().ContainSingle().Which.Institution.Should().Be("Yale");
         }
 
-        public void Dispose()
+        // ---------- DeleteUserProfileAsync ----------
+
+        [Fact]
+        public async Task DeleteUserProfileAsync_WhenMissing_Throws()
         {
-            _context.Dispose();
+            await _sut.Invoking(s => s.DeleteUserProfileAsync(UserId))
+                .Should()
+                .ThrowAsync<UserProfileNotFoundException>();
+        }
+
+        [Fact]
+        public async Task DeleteUserProfileAsync_RemovesProfile()
+        {
+            await SeedProfileAsync();
+
+            await _sut.DeleteUserProfileAsync(UserId);
+
+            _context.ChangeTracker.Clear();
+            (await _context.UserProfiles.AnyAsync()).Should().BeFalse();
+        }
+
+        // ---------- ClearUserProfileAsync ----------
+
+        [Fact]
+        public async Task ClearUserProfileAsync_ResetsScalarFieldsAndCollections()
+        {
+            var tracked = new UserProfile
+            {
+                UserId = UserId,
+                FirstName = "Ada",
+                LastName = "Byron",
+                Country = "Poland",
+                Address = "Warsaw",
+                WillingToRebrand = true,
+                PersonalityType = PersonalityType.Architect,
+                Skills = new List<string> { "C#" },
+                Education = new List<EducationEntry> { new() { Institution = "MIT" } },
+                FinancialSurvey = new FinancialSurvey
+                {
+                    UserId = UserId,
+                    CurrentSalary = 5000,
+                    HasLoans = true,
+                },
+            };
+            _repository
+                .Setup(r => r.GetTrackedProfileWithCollectionsAsync(UserId))
+                .ReturnsAsync(tracked);
+            _repository.Setup(r => r.SaveChangesAsync()).Returns(Task.CompletedTask);
+
+            await _sut.ClearUserProfileAsync(UserId);
+
+            tracked.FirstName.Should().BeEmpty();
+            tracked.Address.Should().BeNull();
+            tracked.WillingToRebrand.Should().BeFalse();
+            tracked.PersonalityType.Should().Be(PersonalityType.Unknown);
+            tracked.Skills.Should().BeEmpty();
+            tracked.Education.Should().BeEmpty();
+            tracked.FinancialSurvey!.CurrentSalary.Should().BeNull();
+            tracked.FinancialSurvey.HasLoans.Should().BeFalse();
+            _repository.Verify(r => r.SaveChangesAsync(), Times.Once);
         }
     }
 }
