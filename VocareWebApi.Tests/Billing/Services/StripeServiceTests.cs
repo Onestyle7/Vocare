@@ -1,222 +1,237 @@
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 using FluentAssertions;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Configuration; // ✅ Prawidłowy using
-using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Logging.Abstractions;
 using Moq;
+using VocareWebAPI.Billing.Exceptions;
 using VocareWebAPI.Billing.Models.Entities;
 using VocareWebAPI.Billing.Models.Enums;
 using VocareWebAPI.Billing.Repositories.Interfaces;
 using VocareWebAPI.Billing.Services.Implementations;
 using VocareWebAPI.Data;
-using VocareWebAPI.Models.Entities;
+using VocareWebApi.Tests.Common;
 using Xunit;
 
 namespace VocareWebApi.Tests.Billing.Services
 {
-    public class StripeServiceTests : IDisposable
+    /// <summary>
+    /// Testy jednostkowe <see cref="StripeService"/> obejmujące ścieżki nie wymagające kontaktu
+    /// z API Stripe: walidację argumentów oraz reguły biznesowe wykonywane przed wywołaniem SDK.
+    /// </summary>
+    [Collection(StripeStaticsCollection.Name)]
+    public sealed class StripeServiceTests : IDisposable
     {
-        private readonly Mock<IUserBillingRepository> _mockBillingRepo;
-        private readonly Mock<IConfiguration> _mockConfiguration;
-        private readonly Mock<ILogger<StripeService>> _mockLogger;
+        private const string UserId = "user-123";
+        private const string TokenPriceId = "price_token_1";
+        private const string ActiveSubPriceId = "price_sub_active";
+        private const string InactiveSubPriceId = "price_sub_inactive";
+
         private readonly AppDbContext _context;
-        private readonly StripeService _service;
+        private readonly Mock<IUserBillingRepository> _userBillings = new(MockBehavior.Strict);
+        private readonly StripeService _sut;
 
         public StripeServiceTests()
         {
-            // Setup InMemory database
-            var options = new DbContextOptionsBuilder<AppDbContext>()
-                .UseInMemoryDatabase(databaseName: Guid.NewGuid().ToString())
-                .Options;
-            _context = new AppDbContext(options);
-
-            _mockBillingRepo = new Mock<IUserBillingRepository>();
-            _mockConfiguration = new Mock<IConfiguration>();
-            _mockLogger = new Mock<ILogger<StripeService>>();
-
-            // ✅ Mock IConfiguration - kluczowe wartości Stripe
-            _mockConfiguration
-                .Setup(x => x["Stripe:SuccessUrl"])
-                .Returns("https://vocare.pl/success");
-            _mockConfiguration
-                .Setup(x => x["Stripe:CancelUrl"])
-                .Returns("https://vocare.pl/cancel");
-            _mockConfiguration
-                .Setup(x => x["Stripe:SecretKey"])
-                .Returns("sk_test_fake_key_for_testing");
-            _mockConfiguration
-                .Setup(x => x["Stripe:PublishableKey"])
-                .Returns("pk_test_fake_key_for_testing");
-
-            // ✅ Mock sekcji TokenPackages (wymagane przez TokenPackagesConfiguration.Initialize)
-            var mockTokenPackagesSection = new Mock<IConfigurationSection>();
-
-            // Setup: GetSection("TokenPackages") zwraca mock sekcji
-            _mockConfiguration
-                .Setup(x => x.GetSection("TokenPackages"))
-                .Returns(mockTokenPackagesSection.Object);
-
-            // Setup: Sekcja ma GetChildren() która zwraca puste (lub testowe pakiety)
-            mockTokenPackagesSection
-                .Setup(x => x.GetChildren())
-                .Returns(new List<IConfigurationSection>());
-
-            // ✅ Mock sekcji SubscriptionPackages (wymagane przez SubscriptionPackagesConfiguration.Initialize)
-            var mockSubscriptionPackagesSection = new Mock<IConfigurationSection>();
-
-            // Setup: GetSection("SubscriptionPackages") zwraca mock sekcji
-            _mockConfiguration
-                .Setup(x => x.GetSection("SubscriptionPackages"))
-                .Returns(mockSubscriptionPackagesSection.Object);
-
-            // Setup: Sekcja ma GetChildren() która zwraca puste
-            mockSubscriptionPackagesSection
-                .Setup(x => x.GetChildren())
-                .Returns(new List<IConfigurationSection>());
-
-            _service = new StripeService(
-                _mockBillingRepo.Object,
-                _mockConfiguration.Object,
-                _mockLogger.Object,
+            _context = TestDbContextFactory.CreateContext();
+            _sut = new StripeService(
+                _userBillings.Object,
+                BuildConfiguration(),
+                NullLogger<StripeService>.Instance,
                 _context
             );
         }
 
-        #region CreateCustomer Tests
+        public void Dispose() => _context.Dispose();
 
-        /// <summary>
-        /// FLOW: Użytkownik już ma customer ID -> po prostu go zwracamy
-        ///
-        /// DLACZEGO WAŻNE: Nie chcemy tworzyć duplikatów w Stripe!
-        /// </summary>
-        [Fact]
-        public async Task CreateCustomerAsync_ExistingCustomer_ReturnsExistingCustomerId()
-        {
-            // ARRANGE
-            var userId = "existing-user";
-            var email = "existing@example.com";
-            var existingCustomerId = "cus_existing123";
+        private static IConfiguration BuildConfiguration() =>
+            new ConfigurationBuilder()
+                .AddInMemoryCollection(
+                    new Dictionary<string, string?>
+                    {
+                        ["Stripe:SuccessUrl"] = "https://app.test/success",
+                        ["Stripe:CancelUrl"] = "https://app.test/cancel",
+                        ["Stripe:ReturnUrl"] = "https://app.test/dashboard",
+                        ["TokenPackages:0:PriceId"] = TokenPriceId,
+                        ["TokenPackages:0:Name"] = "Token Pack",
+                        ["TokenPackages:0:TokenAmount"] = "50",
+                        ["SubscriptionPackages:0:PriceId"] = ActiveSubPriceId,
+                        ["SubscriptionPackages:0:Name"] = "Active Plan",
+                        ["SubscriptionPackages:0:Level"] = nameof(SubscriptionLevel.Monthly),
+                        ["SubscriptionPackages:0:IsActive"] = "true",
+                        ["SubscriptionPackages:1:PriceId"] = InactiveSubPriceId,
+                        ["SubscriptionPackages:1:Name"] = "Retired Plan",
+                        ["SubscriptionPackages:1:IsActive"] = "false",
+                    }
+                )
+                .Build();
 
-            var userBilling = new UserBilling
+        private UserBilling Billing(
+            string? customerId = null,
+            SubscriptionStatus status = SubscriptionStatus.None
+        ) =>
+            new()
             {
-                UserId = userId,
-                StripeCustomerId = existingCustomerId,
-                TokenBalance = 100,
+                UserId = UserId,
+                StripeCustomerId = customerId,
+                SubscriptionStatus = status,
             };
 
-            _mockBillingRepo.Setup(x => x.GetByUserIdAsync(userId)).ReturnsAsync(userBilling);
+        // ---------- CreateCustomerAsync ----------
 
-            // ACT
-            var result = await _service.CreateCustomerAsync(userId, email);
-
-            // ASSERT
-            result.Should().Be(existingCustomerId);
-
-            // NIE tworzymy nowego customer
-            _mockBillingRepo.Verify(
-                x => x.UpdateAsync(It.IsAny<UserBilling>()),
-                Times.Never,
-                "nie powinniśmy aktualizować billing jeśli customer już istnieje"
-            );
-        }
-
-        /// <summary>
-        /// FLOW: Próbujemy utworzyć customer bez email
-        ///
-        /// DLACZEGO WAŻNE: Email jest WYMAGANY - testujemy walidację
-        /// </summary>
         [Theory]
-        [InlineData(null)]
-        [InlineData("")]
-        public async Task CreateCustomerAsync_InvalidEmail_ThrowsArgumentException(
-            string invalidEmail
+        [InlineData("", "a@b.com")]
+        [InlineData(UserId, "")]
+        public async Task CreateCustomerAsync_WithInvalidArguments_ThrowsArgumentException(
+            string userId,
+            string email
         )
         {
-            // ARRANGE
-            var userId = "user-123";
-
-            // ACT & ASSERT
-            await Assert.ThrowsAsync<ArgumentException>(
-                () => _service.CreateCustomerAsync(userId, invalidEmail)
-            );
-
-            // Nie próbujemy nic robić w Stripe
-            _mockBillingRepo.Verify(x => x.CreateAsync(It.IsAny<UserBilling>()), Times.Never);
+            await _sut.Invoking(s => s.CreateCustomerAsync(userId, email))
+                .Should()
+                .ThrowAsync<ArgumentException>();
         }
 
-        #endregion
+        // ---------- CreateCheckoutSessionForTokenAsync ----------
 
-        #region Subscription Tests
+        [Theory]
+        [InlineData("", "price")]
+        [InlineData(UserId, "")]
+        public async Task CreateCheckoutSessionForTokenAsync_WithInvalidArguments_ThrowsArgumentException(
+            string userId,
+            string priceId
+        )
+        {
+            await _sut.Invoking(s => s.CreateCheckoutSessionForTokenAsync(userId, priceId))
+                .Should()
+                .ThrowAsync<ArgumentException>();
+        }
 
-        /// <summary>
-        /// FLOW: User próbuje kupić drugą subskrypcję mając już aktywną
-        ///
-        /// DLACZEGO WAŻNE: Nie możemy mieć wielu aktywnych subskrypcji!
-        /// Testujemy logikę biznesową - warunek sprawdzający status.
-        /// </summary>
         [Fact]
-        public async Task CreateCheckoutSessionForSubscriptionAsync_UserHasActiveSubscription_ThrowsException()
+        public async Task CreateCheckoutSessionForTokenAsync_WithUnknownPriceId_ThrowsTokenPackageNotFound()
         {
-            // ARRANGE
-            var userId = "user-with-sub";
-            var priceId = "price_1S9q33Ls2ndSVWb2KeB4Y3AD";
-
-            var userBilling = new UserBilling
-            {
-                UserId = userId,
-                SubscriptionStatus = SubscriptionStatus.Active,
-                StripeSubscriptionId = "sub_existing123",
-            };
-
-            _mockBillingRepo.Setup(x => x.GetByUserIdAsync(userId)).ReturnsAsync(userBilling);
-
-            // ACT & ASSERT
-            var exception = await Assert.ThrowsAsync<InvalidOperationException>(
-                () => _service.CreateCheckoutSessionForSubscriptionAsync(userId, priceId)
-            );
-
-            exception.Message.Should().Contain("already has an active subscription");
+            await _sut.Invoking(s => s.CreateCheckoutSessionForTokenAsync(UserId, "price_unknown"))
+                .Should()
+                .ThrowAsync<TokenPackageNotFoundException>();
         }
 
-        #endregion
+        // ---------- CreateCheckoutSessionForSubscriptionAsync ----------
 
-        #region Customer Portal Tests
+        [Theory]
+        [InlineData("", "price")]
+        [InlineData(UserId, "")]
+        public async Task CreateCheckoutSessionForSubscriptionAsync_WithInvalidArguments_ThrowsArgumentException(
+            string userId,
+            string priceId
+        )
+        {
+            await _sut.Invoking(s => s.CreateCheckoutSessionForSubscriptionAsync(userId, priceId))
+                .Should()
+                .ThrowAsync<ArgumentException>();
+        }
 
-        /// <summary>
-        /// FLOW: User bez customer ID próbuje otworzyć portal
-        ///
-        /// DLACZEGO WAŻNE: Bez customer ID nie możemy utworzyć portal session
-        /// Testujemy walidację - czy metoda sprawdza czy customer ID istnieje.
-        /// </summary>
         [Fact]
-        public async Task CreateCustomerPortalSessionAsync_NoCustomerId_ThrowsException()
+        public async Task CreateCheckoutSessionForSubscriptionAsync_WithUnknownPriceId_ThrowsSubscriptionPackageNotFound()
         {
-            // ARRANGE
-            var userId = "user-no-customer";
-            var returnUrl = "https://vocare.pl/dashboard";
-
-            var userBilling = new UserBilling
-            {
-                UserId = userId,
-                StripeCustomerId = null, // Brak customer ID!
-            };
-
-            _mockBillingRepo.Setup(x => x.GetByUserIdAsync(userId)).ReturnsAsync(userBilling);
-
-            // ACT & ASSERT
-            await Assert.ThrowsAsync<InvalidOperationException>(
-                () => _service.CreateCustomerPortalSessionAsync(userId, returnUrl)
-            );
+            await _sut.Invoking(s =>
+                    s.CreateCheckoutSessionForSubscriptionAsync(UserId, "price_unknown")
+                )
+                .Should()
+                .ThrowAsync<SubscriptionPackageNotFoundException>();
         }
 
-        #endregion
-
-        public void Dispose()
+        [Fact]
+        public async Task CreateCheckoutSessionForSubscriptionAsync_WithInactivePackage_ThrowsInactivePackage()
         {
-            _context?.Dispose();
+            await _sut.Invoking(s =>
+                    s.CreateCheckoutSessionForSubscriptionAsync(UserId, InactiveSubPriceId)
+                )
+                .Should()
+                .ThrowAsync<InactiveSubscriptionPackageException>();
+        }
+
+        [Fact]
+        public async Task CreateCheckoutSessionForSubscriptionAsync_WhenSubscriptionAlreadyActive_ThrowsConflict()
+        {
+            _userBillings
+                .Setup(r => r.GetByUserIdAsync(UserId))
+                .ReturnsAsync(Billing(customerId: "cus_1", status: SubscriptionStatus.Active));
+
+            await _sut.Invoking(s =>
+                    s.CreateCheckoutSessionForSubscriptionAsync(UserId, ActiveSubPriceId)
+                )
+                .Should()
+                .ThrowAsync<SubscriptionAlreadyActiveException>();
+        }
+
+        // ---------- CreateCustomerPortalSessionAsync ----------
+
+        [Fact]
+        public async Task CreateCustomerPortalSessionAsync_WithEmptyUserId_ThrowsArgumentException()
+        {
+            await _sut.Invoking(s => s.CreateCustomerPortalSessionAsync(""))
+                .Should()
+                .ThrowAsync<ArgumentException>();
+        }
+
+        [Fact]
+        public async Task CreateCustomerPortalSessionAsync_WithoutStripeCustomer_ThrowsMissingStripeCustomer()
+        {
+            _userBillings
+                .Setup(r => r.GetByUserIdAsync(UserId))
+                .ReturnsAsync(Billing(customerId: null));
+
+            await _sut.Invoking(s => s.CreateCustomerPortalSessionAsync(UserId))
+                .Should()
+                .ThrowAsync<MissingStripeCustomerException>();
+        }
+
+        // ---------- GetPaymentHistoryAsync ----------
+
+        [Fact]
+        public async Task GetPaymentHistoryAsync_WithEmptyUserId_ThrowsArgumentException()
+        {
+            await _sut.Invoking(s => s.GetPaymentHistoryAsync(""))
+                .Should()
+                .ThrowAsync<ArgumentException>();
+        }
+
+        [Theory]
+        [InlineData(0)]
+        [InlineData(-1)]
+        [InlineData(101)]
+        public async Task GetPaymentHistoryAsync_WithOutOfRangeLimit_ThrowsArgumentException(
+            int limit
+        )
+        {
+            await _sut.Invoking(s => s.GetPaymentHistoryAsync(UserId, limit))
+                .Should()
+                .ThrowAsync<ArgumentException>();
+        }
+
+        [Fact]
+        public async Task GetPaymentHistoryAsync_WhenBillingRecordMissing_ReturnsEmptyList()
+        {
+            _userBillings
+                .Setup(r => r.GetByUserIdAsync(UserId))
+                .ThrowsAsync(new UserBillingNotFoundException(UserId));
+
+            var result = await _sut.GetPaymentHistoryAsync(UserId);
+
+            result.Should().BeEmpty();
+        }
+
+        [Fact]
+        public async Task GetPaymentHistoryAsync_WhenNoStripeCustomer_ReturnsEmptyList()
+        {
+            _userBillings
+                .Setup(r => r.GetByUserIdAsync(UserId))
+                .ReturnsAsync(Billing(customerId: null));
+
+            var result = await _sut.GetPaymentHistoryAsync(UserId);
+
+            result.Should().BeEmpty();
         }
     }
 }

@@ -1,119 +1,75 @@
 using System;
 using System.Net;
 using System.Net.Http;
-using System.Threading;
 using System.Threading.Tasks;
 using FluentAssertions;
-using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Logging.Abstractions;
 using Moq;
-using Moq.Protected;
+using VocareWebApi.Tests.Common;
 using VocareWebAPI.UserManagement.Services.Implementations;
 using Xunit;
 
 namespace VocareWebApi.Tests.UserManagement.Services
 {
-    public class EmailServiceTests
+    /// <summary>Testy jednostkowe <see cref="EmailService"/> (klient Resend).</summary>
+    public sealed class EmailServiceTests
     {
-        private readonly Mock<IConfiguration> _mockConfiguration;
-        private readonly Mock<ILogger<EmailService>> _mockLogger;
-        private readonly Mock<HttpMessageHandler> _mockHttpMessageHandler;
-        private readonly EmailService _emailService;
-
-        public EmailServiceTests()
+        private static EmailService CreateSut(FakeHttpMessageHandler handler)
         {
-            _mockConfiguration = new Mock<IConfiguration>();
-            _mockLogger = new Mock<ILogger<EmailService>>();
+            var factory = new Mock<IHttpClientFactory>();
+            factory.Setup(f => f.CreateClient(It.IsAny<string>())).Returns(new HttpClient(handler));
 
-            // Setup configuration
-            _mockConfiguration.Setup(x => x["Resend:ApiKey"]).Returns("test-api-key");
-            _mockConfiguration.Setup(x => x["Resend:FromEmail"]).Returns("noreply@vocare.pl");
-            _mockConfiguration.Setup(x => x["Resend:FromName"]).Returns("Vocare Team");
-
-            // Setup HttpClient mock
-            _mockHttpMessageHandler = new Mock<HttpMessageHandler>();
-            var httpClient = new HttpClient(_mockHttpMessageHandler.Object)
-            {
-                BaseAddress = new Uri("https://api.resend.com/"),
-            };
-
-            var httpClientFactory = new Mock<IHttpClientFactory>();
-            httpClientFactory.Setup(x => x.CreateClient(It.IsAny<string>())).Returns(httpClient);
-
-            _emailService = new EmailService(
-                _mockConfiguration.Object,
-                _mockLogger.Object,
-                httpClientFactory.Object
+            return new EmailService(
+                TestConfiguration.FromValues(
+                    ("Resend:ApiKey", "re_test"),
+                    ("Resend:FromEmail", "noreply@vocare.pl")
+                ),
+                NullLogger<EmailService>.Instance,
+                factory.Object
             );
         }
 
         [Fact]
-        public async Task SendEmailAsync_ValidEmail_SendsSuccessfully()
+        public void Constructor_WhenApiKeyMissing_Throws()
         {
-            // Arrange
-            var to = "test@example.com";
-            var subject = "Test Subject";
-            var body = "Test email body";
+            var factory = new Mock<IHttpClientFactory>();
 
-            _mockHttpMessageHandler
-                .Protected()
-                .Setup<Task<HttpResponseMessage>>(
-                    "SendAsync",
-                    ItExpr.IsAny<HttpRequestMessage>(),
-                    ItExpr.IsAny<CancellationToken>()
-                )
-                .ReturnsAsync(
-                    new HttpResponseMessage
-                    {
-                        StatusCode = HttpStatusCode.OK,
-                        Content = new StringContent("{\"id\":\"email-123\"}"),
-                    }
+            var act = () =>
+                new EmailService(
+                    TestConfiguration.FromValues(),
+                    NullLogger<EmailService>.Instance,
+                    factory.Object
                 );
 
-            // Act
-            await _emailService.SendEmailAsync(to, subject, body);
-
-            // Assert
-            _mockHttpMessageHandler
-                .Protected()
-                .Verify(
-                    "SendAsync",
-                    Times.Once(),
-                    ItExpr.Is<HttpRequestMessage>(req =>
-                        req.Method == HttpMethod.Post
-                        && req.RequestUri!.ToString().Contains("emails")
-                    ),
-                    ItExpr.IsAny<CancellationToken>()
-                );
+            act.Should().Throw<InvalidOperationException>();
         }
 
         [Fact]
-        public async Task SendEmailAsync_ApiError_ThrowsHttpRequestException()
+        public async Task SendEmailAsync_WhenResendAccepts_CompletesAndPostsToEmailsEndpoint()
         {
-            // Arrange
-            var to = "test@example.com";
-            var subject = "Test Subject";
-            var body = "Test email body";
+            var handler = FakeHttpMessageHandler.Returning(HttpStatusCode.OK, "{\"id\":\"e_1\"}");
 
-            _mockHttpMessageHandler
-                .Protected()
-                .Setup<Task<HttpResponseMessage>>(
-                    "SendAsync",
-                    ItExpr.IsAny<HttpRequestMessage>(),
-                    ItExpr.IsAny<CancellationToken>()
-                )
-                .ReturnsAsync(
-                    new HttpResponseMessage
-                    {
-                        StatusCode = HttpStatusCode.BadRequest,
-                        Content = new StringContent("{\"error\":\"Invalid API key\"}"),
-                    }
-                );
+            await CreateSut(handler)
+                .Invoking(s => s.SendEmailAsync("to@example.com", "Subject", "Body line 1\nLine 2"))
+                .Should()
+                .NotThrowAsync();
 
-            // Act & Assert
-            await Assert.ThrowsAsync<HttpRequestException>(
-                () => _emailService.SendEmailAsync(to, subject, body)
+            handler.LastRequest!.RequestUri!.ToString().Should().EndWith("/emails");
+            handler.LastRequestBody.Should().Contain("to@example.com").And.Contain("Subject");
+        }
+
+        [Fact]
+        public async Task SendEmailAsync_WhenResendRejects_ThrowsHttpRequestException()
+        {
+            var handler = FakeHttpMessageHandler.Returning(
+                HttpStatusCode.UnprocessableEntity,
+                "{\"message\":\"invalid from\"}"
             );
+
+            await CreateSut(handler)
+                .Invoking(s => s.SendEmailAsync("to@example.com", "Subject", "Body"))
+                .Should()
+                .ThrowAsync<HttpRequestException>();
         }
     }
 }

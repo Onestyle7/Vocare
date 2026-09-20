@@ -1,230 +1,373 @@
 using System;
 using System.Collections.Generic;
-using System.Security.Claims;
+using System.IO;
+using System.Text;
 using System.Threading.Tasks;
 using FluentAssertions;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Logging.Abstractions;
 using Moq;
+using VocareWebAPI.Billing.Exceptions;
 using VocareWebAPI.Billing.Models.Dtos;
 using VocareWebAPI.Billing.Models.Entities;
 using VocareWebAPI.Billing.Models.Enums;
-using VocareWebAPI.Billing.Repositories.Interfaces;
 using VocareWebAPI.Billing.Services.Interfaces;
 using VocareWebAPI.Controllers;
+using VocareWebApi.Tests.Common;
 using Xunit;
 
 namespace VocareWebApi.Tests.Billing.Controllers
 {
-    public class BillingControllerTests
+    /// <summary>
+    /// Testy jednostkowe <see cref="BillingController"/> – walidacja wejścia, mapowanie
+    /// wyników serwisów na odpowiedzi HTTP oraz reguły autoryzacji zasobu.
+    /// </summary>
+    public sealed class BillingControllerTests
     {
-        private readonly Mock<IStripeService> _mockStripeService;
-        private readonly Mock<IBillingService> _mockBillingService;
-        private readonly Mock<ILogger<BillingController>> _mockLogger;
-        private readonly BillingController _controller;
-        private readonly Mock<IUserBillingRepository> _mockUserBillingRepository;
+        private const string UserId = "user-123";
+
+        private readonly Mock<IStripeService> _stripe = new(MockBehavior.Strict);
+        private readonly Mock<IBillingService> _billing = new(MockBehavior.Strict);
+        private readonly BillingController _sut;
 
         public BillingControllerTests()
         {
-            // Arrange - inicjalizacja mocków
-            _mockStripeService = new Mock<IStripeService>();
-            _mockBillingService = new Mock<IBillingService>();
-            _mockUserBillingRepository = new Mock<IUserBillingRepository>(); // ✅ Dodano
-            _mockLogger = new Mock<ILogger<BillingController>>();
-
-            // Tworzenie instancji kontrolera z mockami
-            _controller = new BillingController(
-                _mockStripeService.Object,
-                _mockBillingService.Object,
-                _mockLogger.Object,
-                _mockUserBillingRepository.Object // ✅ Dodano
+            _sut = new BillingController(
+                _stripe.Object,
+                _billing.Object,
+                NullLogger<BillingController>.Instance
             );
-
-            // Konfiguracja kontekstu HTTP z użytkownikiem
-            var user = new ClaimsPrincipal(
-                new ClaimsIdentity(
-                    new Claim[] { new Claim(ClaimTypes.NameIdentifier, "test-user-123") },
-                    "mock"
-                )
-            );
-
-            _controller.ControllerContext = new ControllerContext
-            {
-                HttpContext = new DefaultHttpContext { User = user },
-            };
+            _sut.WithUser(UserId);
         }
 
-        [Fact]
-        public async Task GetAccessStatus_UserExists_ReturnsOkWithBalance()
-        {
-            // ARRANGE
-            var expectedBalance = 50;
-            var userBilling = new UserBilling
+        private static UserBilling Billing(
+            int balance = 0,
+            SubscriptionStatus status = SubscriptionStatus.None,
+            string? subscriptionId = null
+        ) =>
+            new()
             {
-                UserId = "test-user-123",
-                TokenBalance = expectedBalance,
-                SubscriptionStatus = SubscriptionStatus.Active,
+                UserId = UserId,
+                TokenBalance = balance,
+                SubscriptionStatus = status,
+                SubscriptionLevel = SubscriptionLevel.Monthly,
+                StripeSubscriptionId = subscriptionId,
             };
 
-            _mockBillingService
-                .Setup(x => x.GetUserBillingAsync("test-user-123"))
-                .ReturnsAsync(userBilling);
-
-            // ACT
-            var result = await _controller.GetAccessStatus();
-
-            // ASSERT
-            result.Should().BeOfType<OkObjectResult>();
-            var okResult = result as OkObjectResult;
-
-            var tokenBalanceProperty = okResult!.Value!.GetType().GetProperty("tokenBalance");
-            var actualBalance = tokenBalanceProperty!.GetValue(okResult.Value);
-            actualBalance.Should().Be(expectedBalance);
-        }
+        // ---------- CreateCheckoutSession ----------
 
         [Fact]
-        public async Task CreateCheckoutSession_ValidRequest_ReturnsOkWithUrl()
+        public async Task CreateCheckoutSession_WithValidRequest_ReturnsOkWithUrl()
         {
-            // Arrange
-            var request = new CreateCheckoutSessionRequestDto { PriceId = "price_123" };
-            var expectedUrl = "https://checkout.stripe.com/session123";
+            _stripe
+                .Setup(s => s.CreateCheckoutSessionForTokenAsync(UserId, "price_1"))
+                .ReturnsAsync("https://checkout.stripe.com/s/1");
 
-            _mockStripeService
-                .Setup(x => x.CreateCheckoutSessionForTokenAsync("test-user-123", "price_123"))
-                .ReturnsAsync(expectedUrl);
-
-            // Act
-            var result = await _controller.CreateCheckoutSession(request);
-
-            // Assert
-            result.Should().BeOfType<OkObjectResult>();
-            var okResult = result as OkObjectResult;
-
-            var urlProperty = okResult!.Value!.GetType().GetProperty("Url");
-            urlProperty.Should().NotBeNull();
-            var actualUrl = urlProperty!.GetValue(okResult.Value);
-            actualUrl.Should().Be(expectedUrl);
-
-            // Weryfikacja wywołania
-            _mockStripeService.Verify(
-                x => x.CreateCheckoutSessionForTokenAsync("test-user-123", "price_123"),
-                Times.Once
+            var result = await _sut.CreateCheckoutSession(
+                new CreateCheckoutSessionRequestDto { PriceId = "price_1" }
             );
+
+            var ok = result.Should().BeOfType<OkObjectResult>().Subject;
+            ok.Value!.GetProperty("Url").Should().Be("https://checkout.stripe.com/s/1");
         }
 
         [Fact]
-        public async Task CreateCheckoutSession_NullRequest_ReturnsBadRequest()
+        public async Task CreateCheckoutSession_WithNullRequest_ReturnsBadRequest()
         {
-            // Act
-            var result = await _controller.CreateCheckoutSession(null!);
+            var result = await _sut.CreateCheckoutSession(null!);
 
-            // Assert
-            result.Should().BeOfType<BadRequestObjectResult>();
-            var badRequestResult = result as BadRequestObjectResult;
-
-            var errorProperty = badRequestResult!.Value!.GetType().GetProperty("Error");
-            errorProperty.Should().NotBeNull();
-            var errorMessage = errorProperty!.GetValue(badRequestResult.Value);
-            errorMessage.Should().Be("PriceId is required.");
+            result
+                .Should()
+                .BeOfType<BadRequestObjectResult>()
+                .Which.Value!.GetProperty("Error")
+                .Should()
+                .Be("PriceId is required.");
+            _stripe.VerifyNoOtherCalls();
         }
 
-        [Fact]
-        public async Task CreateCheckoutSession_EmptyPriceId_ReturnsBadRequest()
+        [Theory]
+        [InlineData("")]
+        [InlineData(null)]
+        public async Task CreateCheckoutSession_WithEmptyPriceId_ReturnsBadRequest(string? priceId)
         {
-            // Arrange
-            var request = new CreateCheckoutSessionRequestDto { PriceId = "" };
-
-            // Act
-            var result = await _controller.CreateCheckoutSession(request);
-
-            // Assert
-            result.Should().BeOfType<BadRequestObjectResult>();
-            _mockStripeService.Verify(
-                x => x.CreateCheckoutSessionForTokenAsync(It.IsAny<string>(), It.IsAny<string>()),
-                Times.Never
+            var result = await _sut.CreateCheckoutSession(
+                new CreateCheckoutSessionRequestDto { PriceId = priceId! }
             );
-        }
 
-        [Fact]
-        public async Task CreateCheckoutSession_InvalidOperationException_ReturnsBadRequest()
-        {
-            // Arrange
-            var request = new CreateCheckoutSessionRequestDto { PriceId = "price_123" };
-            _mockStripeService
-                .Setup(x =>
-                    x.CreateCheckoutSessionForTokenAsync(It.IsAny<string>(), It.IsAny<string>())
-                )
-                .ThrowsAsync(new InvalidOperationException("Invalid price"));
-
-            // Act
-            var result = await _controller.CreateCheckoutSession(request);
-
-            // Assert
             result.Should().BeOfType<BadRequestObjectResult>();
-            var badRequestResult = result as BadRequestObjectResult;
-
-            var errorProperty = badRequestResult!.Value!.GetType().GetProperty("Error");
-            var errorMessage = errorProperty!.GetValue(badRequestResult.Value);
-            errorMessage.Should().Be("Invalid price");
+            _stripe.VerifyNoOtherCalls();
         }
 
         [Fact]
-        public async Task Webhook_ValidRequest_ReturnsOk()
+        public async Task CreateCheckoutSession_WithoutUserClaim_ReturnsBadRequest()
         {
-            // Arrange
-            var json = "{\"type\":\"checkout.session.completed\"}";
-            var stripeSignature = "valid_signature";
+            _sut.WithoutUser();
 
-            _controller.ControllerContext.HttpContext.Request.Body = new System.IO.MemoryStream(
-                System.Text.Encoding.UTF8.GetBytes(json)
+            var result = await _sut.CreateCheckoutSession(
+                new CreateCheckoutSessionRequestDto { PriceId = "price_1" }
             );
-            _controller.ControllerContext.HttpContext.Request.Headers["Stripe-Signature"] =
-                stripeSignature;
 
-            _mockBillingService
-                .Setup(x => x.HandleWebhookAsync(json, stripeSignature))
+            result.Should().BeOfType<BadRequestObjectResult>();
+            _stripe.VerifyNoOtherCalls();
+        }
+
+        // ---------- CreateSubscriptionCheckout ----------
+
+        [Fact]
+        public async Task CreateSubscriptionCheckout_WithValidRequest_ReturnsOkWithUrl()
+        {
+            _stripe
+                .Setup(s => s.CreateCheckoutSessionForSubscriptionAsync(UserId, "price_sub"))
+                .ReturnsAsync("https://checkout.stripe.com/sub");
+
+            var result = await _sut.CreateSubscriptionCheckout(
+                new CreateCheckoutSessionRequestDto { PriceId = "price_sub" }
+            );
+
+            result
+                .Should()
+                .BeOfType<OkObjectResult>()
+                .Which.Value!.GetProperty("Url")
+                .Should()
+                .Be("https://checkout.stripe.com/sub");
+        }
+
+        [Fact]
+        public async Task CreateSubscriptionCheckout_WithEmptyPriceId_ReturnsBadRequest()
+        {
+            var result = await _sut.CreateSubscriptionCheckout(
+                new CreateCheckoutSessionRequestDto { PriceId = "" }
+            );
+
+            result.Should().BeOfType<BadRequestObjectResult>();
+        }
+
+        // ---------- GetAccessStatus ----------
+
+        [Fact]
+        public async Task GetAccessStatus_ReturnsTokenBalanceAndSubscriptionStatus()
+        {
+            _billing
+                .Setup(b => b.GetUserBillingAsync(UserId))
+                .ReturnsAsync(Billing(balance: 75, status: SubscriptionStatus.Active));
+
+            var result = await _sut.GetAccessStatus();
+
+            var value = result.Should().BeOfType<OkObjectResult>().Subject.Value!;
+            value.GetProperty("tokenBalance").Should().Be(75);
+            value.GetProperty("subscriptionStatus").Should().Be("Active");
+        }
+
+        // ---------- GetSubscriptionStatus ----------
+
+        [Fact]
+        public async Task GetSubscriptionStatus_ReturnsSubscriptionDetails()
+        {
+            var endDate = new DateTime(2026, 1, 1, 0, 0, 0, DateTimeKind.Utc);
+            _billing
+                .Setup(b => b.GetUserBillingAsync(UserId))
+                .ReturnsAsync(
+                    new UserBilling
+                    {
+                        UserId = UserId,
+                        SubscriptionStatus = SubscriptionStatus.Active,
+                        SubscriptionLevel = SubscriptionLevel.Monthly,
+                        SubscriptionEndDate = endDate,
+                        StripeSubscriptionId = "sub_1",
+                    }
+                );
+
+            var result = await _sut.GetSubscriptionStatus();
+
+            var value = result.Should().BeOfType<OkObjectResult>().Subject.Value!;
+            value.GetProperty("subscriptionStatus").Should().Be("Active");
+            value.GetProperty("subscriptionLevel").Should().Be("Monthly");
+            value.GetProperty("subscriptionEndDate").Should().Be(endDate);
+            value.GetProperty("subscriptionId").Should().Be("sub_1");
+        }
+
+        // ---------- Webhook ----------
+
+        [Fact]
+        public async Task Webhook_WithValidPayload_DelegatesToServiceAndReturnsOk()
+        {
+            const string json = "{\"type\":\"checkout.session.completed\"}";
+            SetRequestBody(json, signature: "sig_header");
+            _billing
+                .Setup(b => b.HandleWebhookAsync(json, "sig_header"))
                 .Returns(Task.CompletedTask);
 
-            // Act
-            var result = await _controller.Webhook();
+            var result = await _sut.Webhook();
 
-            // Assert
             result.Should().BeOfType<OkResult>();
-            _mockBillingService.Verify(
-                x => x.HandleWebhookAsync(json, stripeSignature),
-                Times.Once
-            );
+            _billing.Verify(b => b.HandleWebhookAsync(json, "sig_header"), Times.Once);
         }
 
         [Fact]
-        public void Success_ReturnsOkWithMessage()
+        public async Task Webhook_WithoutSignatureHeader_ReturnsBadRequest()
         {
-            // Act
-            var result = _controller.Success();
+            SetRequestBody("{\"type\":\"x\"}", signature: null);
 
-            // Assert
-            result.Should().BeOfType<OkObjectResult>();
-            var okResult = result as OkObjectResult;
+            var result = await _sut.Webhook();
 
-            var messageProperty = okResult!.Value!.GetType().GetProperty("Message");
-            var message = messageProperty!.GetValue(okResult.Value);
-            message.Should().Be("Payment successful. Thank you!");
+            result.Should().BeOfType<BadRequestObjectResult>();
+            _billing.VerifyNoOtherCalls();
         }
 
         [Fact]
-        public void Cancel_ReturnsOkWithMessage()
+        public async Task Webhook_WithEmptyBody_ReturnsBadRequest()
         {
-            // Act
-            var result = _controller.Cancel();
+            SetRequestBody(string.Empty, signature: "sig");
 
-            // Assert
-            result.Should().BeOfType<OkObjectResult>();
-            var okResult = result as OkObjectResult;
+            var result = await _sut.Webhook();
 
-            var messageProperty = okResult!.Value!.GetType().GetProperty("Message");
-            var message = messageProperty!.GetValue(okResult.Value);
-            message.Should().Be("Payment canceled.");
+            result.Should().BeOfType<BadRequestObjectResult>();
+            _billing.VerifyNoOtherCalls();
+        }
+
+        // ---------- CancelSubscription ----------
+
+        [Fact]
+        public async Task CancelSubscription_WithoutActiveSubscription_ThrowsNoActiveSubscription()
+        {
+            _billing
+                .Setup(b => b.GetUserBillingAsync(UserId))
+                .ReturnsAsync(Billing(subscriptionId: null));
+
+            await _sut.Invoking(c => c.CancelSubscription())
+                .Should()
+                .ThrowAsync<NoActiveSubscriptionException>();
+        }
+
+        [Fact]
+        public async Task CancelSubscription_WhenAlreadyCanceled_ThrowsConflict()
+        {
+            _billing
+                .Setup(b => b.GetUserBillingAsync(UserId))
+                .ReturnsAsync(
+                    Billing(status: SubscriptionStatus.Canceled, subscriptionId: "sub_1")
+                );
+
+            await _sut.Invoking(c => c.CancelSubscription())
+                .Should()
+                .ThrowAsync<SubscriptionAlreadyCanceledException>();
+        }
+
+        [Fact]
+        public async Task CancelSubscription_WithActiveSubscription_ReturnsPortalUrl()
+        {
+            _billing
+                .Setup(b => b.GetUserBillingAsync(UserId))
+                .ReturnsAsync(Billing(status: SubscriptionStatus.Active, subscriptionId: "sub_1"));
+            _stripe
+                .Setup(s => s.CreateCustomerPortalSessionAsync(UserId))
+                .ReturnsAsync("https://billing.stripe.com/p/1");
+
+            var result = await _sut.CancelSubscription();
+
+            result
+                .Should()
+                .BeOfType<OkObjectResult>()
+                .Which.Value!.GetProperty("Url")
+                .Should()
+                .Be("https://billing.stripe.com/p/1");
+        }
+
+        // ---------- CreateCustomerPortalSession ----------
+
+        [Fact]
+        public async Task CreateCustomerPortalSession_ReturnsOkWithUrl()
+        {
+            _stripe
+                .Setup(s => s.CreateCustomerPortalSessionAsync(UserId))
+                .ReturnsAsync("https://billing.stripe.com/portal");
+
+            var result = await _sut.CreateCustomerPortalSession();
+
+            result
+                .Should()
+                .BeOfType<OkObjectResult>()
+                .Which.Value!.GetProperty("Url")
+                .Should()
+                .Be("https://billing.stripe.com/portal");
+        }
+
+        // ---------- GetPaymentHistory ----------
+
+        [Fact]
+        public async Task GetPaymentHistory_WithValidLimit_ReturnsPaymentsAndCount()
+        {
+            var payments = new List<PaymentHistoryDto>
+            {
+                new()
+                {
+                    Type = "token_purchase",
+                    Amount = 5000,
+                    Currency = "pln",
+                    Status = "succeeded",
+                },
+            };
+            _stripe.Setup(s => s.GetPaymentHistoryAsync(UserId, 25)).ReturnsAsync(payments);
+
+            var result = await _sut.GetPaymentHistory(25);
+
+            var value = result.Should().BeOfType<OkObjectResult>().Subject.Value!;
+            value.GetProperty("count").Should().Be(1);
+            value.GetProperty("payments").Should().BeSameAs(payments);
+        }
+
+        [Theory]
+        [InlineData(0)]
+        [InlineData(-1)]
+        [InlineData(101)]
+        public async Task GetPaymentHistory_WithOutOfRangeLimit_ReturnsBadRequest(int limit)
+        {
+            var result = await _sut.GetPaymentHistory(limit);
+
+            result.Should().BeOfType<BadRequestObjectResult>();
+            _stripe.VerifyNoOtherCalls();
+        }
+
+        [Fact]
+        public async Task GetPaymentHistory_WithoutUserClaim_ReturnsBadRequest()
+        {
+            _sut.WithoutUser();
+
+            var result = await _sut.GetPaymentHistory();
+
+            result.Should().BeOfType<BadRequestObjectResult>();
+        }
+
+        // ---------- Success / Cancel ----------
+
+        [Fact]
+        public void Success_ReturnsConfirmationMessage()
+        {
+            _sut.Success()
+                .Should()
+                .BeOfType<OkObjectResult>()
+                .Which.Value!.GetProperty("Message")
+                .Should()
+                .Be("Payment successful. Thank you!");
+        }
+
+        [Fact]
+        public void Cancel_ReturnsCancellationMessage()
+        {
+            _sut.Cancel()
+                .Should()
+                .BeOfType<OkObjectResult>()
+                .Which.Value!.GetProperty("Message")
+                .Should()
+                .Be("Payment canceled.");
+        }
+
+        private void SetRequestBody(string json, string? signature)
+        {
+            var httpContext = _sut.ControllerContext.HttpContext;
+            httpContext.Request.Body = new MemoryStream(Encoding.UTF8.GetBytes(json));
+            if (signature is not null)
+                httpContext.Request.Headers["Stripe-Signature"] = signature;
         }
     }
 }
