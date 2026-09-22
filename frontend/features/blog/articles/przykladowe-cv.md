@@ -166,7 +166,7 @@ Angielski C1, Niemiecki B1
 - Aktywności studenckie pokazują zaangażowanie i inicjatywę
 - Nie ma pustych frazesów o "ambicji i komunikatywności"
 
-Masz wzorzec do naśladowania - teraz zadbaj, żeby Twoje własne CV było równie trafnie dobrane pod konkretną ofertę. **[Vocare.pl](https://vocare.pl)** automatycznie dopasowuje CV do oferty - wklejasz ogłoszenie, system generuje wersję CV pod te wymagania.
+Masz wzorzec do naśladowania - teraz zadbaj, żeby Twoje własne CV było równie trafnie dobrane pod konkretną ofertę. [Dopasowanie CV do oferty w Vocare](/resume-creator) automatycznie dopasowuje CV do oferty - wklejasz ogłoszenie, system generuje wersję CV pod te wymagania.
 
 ---
 
@@ -217,7 +217,7 @@ Większość nie - szablony sprzed 5 lat zawierają przestarzałe sekcje (cel za
 Dla 1 strony: ok. 400-600 słów. Dla 2 stron: ok. 700-900 słów. CV to nie esej - liczy się gęstość informacji, nie objętość.
 
 **Jak sprawdzić, czy moje CV (napisane na wzór przykładów) jest dobrze dopasowane do oferty, na którą aplikuję?**
-**[Vocare.pl](https://vocare.pl)** automatycznie dopasowuje CV do konkretnej oferty - wklejasz treść ogłoszenia, a system generuje wersję CV gotową do wysłania na to stanowisko.
+[Analiza profilu zawodowego w Vocare](/assistant) automatycznie dopasowuje CV do konkretnej oferty - wklejasz treść ogłoszenia, a system generuje wersję CV gotową do wysłania na to stanowisko.
 
 ---
 
@@ -225,7 +225,7 @@ Dla 1 strony: ok. 400-600 słów. Dla 2 stron: ok. 700-900 słów. CV to nie ese
 
 Przykładowe CV są najlepszym narzędziem nauki - ale tylko gdy rozumiesz, co w nich działa i dlaczego. Kluczowe: osiągnięcia w liczbach, czasowniki akcji, czytelna struktura, dopasowanie do stanowiska.
 
-Przed wysłaniem warto sprawdzić swoje CV przez narzędzia AI - takie jak **[Vocare.pl](https://vocare.pl)** - które przeanalizują je pod kątem konkretnej oferty i powiedzą, co warto zmienić.
+Przed wysłaniem warto sprawdzić swoje CV przez narzędzia AI - takie jak [Kreator CV w Vocare](/resume-creator) - które przeanalizują je pod kątem konkretnej oferty i powiedzą, co warto zmienić.
 
 ---
 

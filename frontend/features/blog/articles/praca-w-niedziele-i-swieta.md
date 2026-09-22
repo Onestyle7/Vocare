@@ -3,6 +3,7 @@ title: 'Praca w niedziele i święta 2026 - zasady i wynagrodzenie'
 description: 'Kiedy praca w niedziele i święta jest dozwolona w 2026 roku? Sprawdź wyjątki od zakazu handlu, zasady dnia wolnego i wysokość dodatku za pracę.'
 estimatedReadTime: 7
 date: '2026-09-04'
+updatedAt: '2026-09-22'
 author: 'Vocare'
 category: 'praca'
 coverImage: '/images/blog/job-search.webp'
@@ -21,7 +22,7 @@ Zasada brzmi prosto - niedziele i święta są wolne od pracy - ale lista wyjąt
 
 ## Kto może legalnie pracować w niedziele i święta?
 
-Ustawa o ograniczeniu handlu w niedziele i święta wprowadza zakaz handlu i czynności z nim związanych, ale przewiduje szereg wyjątków, między innymi:
+[Ustawa z 10 stycznia 2018 r. o ograniczeniu handlu w niedziele i święta](https://eli.gov.pl/eli/DU/2018/305/ogl) (tekst jednolity: Dz.U. 2023 poz. 158) wprowadza zakaz handlu i czynności z nim związanych, ale przewiduje szereg wyjątków, między innymi:
 
 - stacje benzynowe i paliwowe,
 - apteki i punkty apteczne,
@@ -30,6 +31,8 @@ Ustawa o ograniczeniu handlu w niedziele i święta wprowadza zakaz handlu i czy
 - sklepy internetowe i platformy sprzedażowe,
 - placówki handlowe w hotelach i na dworcach,
 - sklepy, w których właściciel handluje osobiście, bez zatrudniania pracowników.
+
+Przestrzegania ustawy pilnuje Państwowa Inspekcja Pracy; [Ministerstwo Rodziny prowadzi też zestawienie pytań i odpowiedzi o zakazie handlu](https://www.gov.pl/web/rodzina/handel-w-niedziele-pytania-i-odpowiedzi).
 
 Poza handlem, praca w niedziele i święta jest też dopuszczalna w innych sytuacjach przewidzianych w Kodeksie pracy - m.in. w ruchu ciągłym, przy pracach koniecznych ze względu na ich użyteczność społeczną (np. służba zdrowia, transport publiczny) czy przy pilnowaniu mienia.
 
@@ -66,7 +69,7 @@ Tak, to odrębne świadczenia - dodatek za pracę w niedzielę/święto dotyczy 
 Tak, sprzedaż internetowa jest jednym z wyjątków od zakazu handlu, ale pracownicy obsługujący logistykę i magazyn wciąż podlegają standardowym zasadom rekompensaty za pracę w niedziele.
 
 **Jak sprawdzić, czy Twoje wynagrodzenie za pracę w niedziele i święta jest rozliczane prawidłowo?**
-**[Vocare.pl](https://vocare.pl)** pomoże Ci ocenić Twoją sytuację zawodową i porównać warunki zatrudnienia z rynkiem.
+[Analiza profilu zawodowego w Vocare](/assistant) pomoże Ci ocenić Twoją sytuację zawodową i porównać warunki zatrudnienia z rynkiem.
 
 ---
 
@@ -74,7 +77,7 @@ Tak, sprzedaż internetowa jest jednym z wyjątków od zakazu handlu, ale pracow
 
 Praca w niedziele i święta jest co do zasady zakazana, ale liczne wyjątki (stacje benzynowe, apteki, gastronomia, e-commerce) sprawiają, że dotyczy to sporej części pracujących. Za pracę w te dni przysługuje inny dzień wolny w określonym terminie, a jeśli nie da się go udzielić - dodatek w wysokości 100% wynagrodzenia.
 
-Zastanawiasz się, czy Twoje warunki pracy odpowiadają obowiązującym przepisom? **[Vocare.pl](https://vocare.pl)** pomoże Ci to ocenić.
+Zastanawiasz się, czy Twoje warunki pracy odpowiadają obowiązującym przepisom? [Dopasowanie CV do oferty w Vocare](/resume-creator) pomoże Ci to ocenić.
 
 ---
 

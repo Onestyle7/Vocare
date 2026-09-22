@@ -120,7 +120,7 @@ Priorytet: Sekcje, które zastępują doświadczenie.
 **Profil zawodowy studenta - przykład:**
 _"Absolwent informatyki (2026) z doświadczeniem w Pythonie, SQL i podstawach machine learning. Realizowałem projekty z analizy danych i zdobyłem certyfikat Google Data Analytics. Szukam pierwszej roli Junior Data Analyst, gdzie rozwinę się w pracy z realnymi danymi biznesowymi."_
 
-Masz zbudowane CV, ale nie wiesz czy "trafi" w wymagania konkretnej oferty juniorskiej? **[Vocare.pl](https://vocare.pl)** porównuje CV z wymaganiami oferty i wskazuje, które projekty i umiejętności warto uwydatnić - żeby rekruter od razu widział dopasowanie.
+Masz zbudowane CV, ale nie wiesz czy "trafi" w wymagania konkretnej oferty juniorskiej? [Dopasowanie CV do oferty w Vocare](/resume-creator) porównuje CV z wymaganiami oferty i wskazuje, które projekty i umiejętności warto uwydatnić - żeby rekruter od razu widział dopasowanie.
 
 ---
 
@@ -173,7 +173,7 @@ Nie, ale bardzo pomaga. Alternatywy: silne projekty własne, portfolio, certyfik
 Sam je znajdź. Strony kariery firm, Pracuj.pl, LinkedIn - nie czekaj aż uczelnia coś zorganizuje.
 
 **Jak sprawdzić, na jakie stanowiska realnie mogę aplikować przy moim profilu?**
-**[Vocare.pl](https://vocare.pl)** analizuje Twoje kompetencje i wskazuje, które oferty entry-level są najlepiej dopasowane - zamiast strzelać na ślepo i tracić czas na aplikacje bez szans odpowiedzi.
+[Analiza rynku pracy w Vocare](/market-analysis) analizuje Twoje kompetencje i wskazuje, które oferty entry-level są najlepiej dopasowane - zamiast strzelać na ślepo i tracić czas na aplikacje bez szans odpowiedzi.
 
 ---
 
@@ -181,7 +181,7 @@ Sam je znajdź. Strony kariery firm, Pracuj.pl, LinkedIn - nie czekaj aż uczeln
 
 Praca bez doświadczenia jest możliwa - ale wymaga innej strategii. Kluczowe: opisz to co masz (projekty, staże, aktywności) konkretnie i z miarami; celuj w staże, programy graduate i małe firmy; buduj sieć kontaktów; i nie czekaj na "idealną" ofertę.
 
-Jeśli chcesz wiedzieć, jakie stanowiska są realistyczne dla Twojego profilu i jak najlepiej zaprezentować swoje kompetencje, **[Vocare.pl](https://vocare.pl)** przeprowadzi Cię przez spersonalizowaną analizę i wskaże konkretne kierunki.
+Jeśli chcesz wiedzieć, jakie stanowiska są realistyczne dla Twojego profilu i jak najlepiej zaprezentować swoje kompetencje, [Analiza profilu zawodowego w Vocare](/assistant) przeprowadzi Cię przez spersonalizowaną analizę i wskaże konkretne kierunki.
 
 ---
 

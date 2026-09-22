@@ -60,7 +60,7 @@ Nie, informacje o kontroli i jej wyniku podlegają ochronie danych osobowych i n
 Odmowa może być traktowana jako naruszenie obowiązków pracowniczych, jeśli kontrola została prawidłowo wprowadzona zgodnie z przepisami.
 
 **Jak sprawdzić swoje prawa, jeśli podejrzewasz nieprawidłowości przy kontroli trzeźwości w Twojej firmie?**
-**[Vocare.pl](https://vocare.pl)** pomoże Ci ocenić Twoją sytuację zawodową i zaplanować dalsze kroki, jeśli rozważasz zmianę pracy.
+[Analiza rynku pracy w Vocare](/market-analysis) pomoże Ci ocenić Twoją sytuację zawodową i zaplanować dalsze kroki, jeśli rozważasz zmianę pracy.
 
 ---
 
@@ -68,7 +68,7 @@ Odmowa może być traktowana jako naruszenie obowiązków pracowniczych, jeśli 
 
 Kontrola trzeźwości w pracy to uprawnienie, nie obowiązek pracodawcy, dopuszczalne tylko wtedy, gdy jest niezbędne dla ochrony życia, zdrowia lub mienia. Musi być prawidłowo wprowadzona (z wyprzedzeniem, w regulaminie), przeprowadzana metodą niewymagającą laboratorium i z poszanowaniem godności pracownika.
 
-Zastanawiasz się nad zmianą pracy w związku z warunkami zatrudnienia? **[Vocare.pl](https://vocare.pl)** pomoże Ci zaplanować kolejny krok.
+Zastanawiasz się nad zmianą pracy w związku z warunkami zatrudnienia? [Analiza profilu zawodowego w Vocare](/assistant) pomoże Ci zaplanować kolejny krok.
 
 ---
 

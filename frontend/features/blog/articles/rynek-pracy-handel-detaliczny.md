@@ -72,7 +72,7 @@ To zależy od preferencji - logistyka oferuje często bardziej przewidywalne god
 Podstawy systemów POS, obsługa zwrotów z zakupów online i umiejętność doradztwa eksperckiego w danej kategorii produktowej.
 
 **Jak sprawdzić, która ścieżka w handlu detalicznym pasuje do moich kompetencji?**
-**[Vocare.pl](https://vocare.pl)** analizuje Twój profil i wskazuje konkretne kierunki rozwoju zawodowego.
+[Analiza profilu zawodowego w Vocare](/assistant) analizuje Twój profil i wskazuje konkretne kierunki rozwoju zawodowego.
 
 ---
 
@@ -80,7 +80,7 @@ Podstawy systemów POS, obsługa zwrotów z zakupów online i umiejętność dor
 
 E-commerce nie zlikwidował pracy w handlu detalicznym - przesunął ją w stronę logistyki, obsługi wielokanałowej i doradztwa eksperckiego. Kierownicy sklepów i regionów pozostają stabilną ścieżką awansu, a nowe role na styku sprzedaży i technologii rosną najszybciej.
 
-Zastanawiasz się, jak rozwinąć karierę w handlu w kierunku bardziej technicznym lub zarządczym? **[Vocare.pl](https://vocare.pl)** pomoże Ci to zaplanować.
+Zastanawiasz się, jak rozwinąć karierę w handlu w kierunku bardziej technicznym lub zarządczym? [Analiza rynku pracy w Vocare](/market-analysis) pomoże Ci to zaplanować.
 
 ---
 

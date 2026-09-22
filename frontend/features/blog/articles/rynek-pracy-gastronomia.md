@@ -72,7 +72,7 @@ Szef kuchni i manager restauracji - obie role łączą kompetencje operacyjne z 
 Tak, szczególnie w lokalach turystycznych i hotelach - komunikacja z gośćmi zagranicznymi przekłada się na wyższe napiwki i lepsze stanowiska.
 
 **Jak sprawdzić, która ścieżka w gastronomii lub hotelarstwie pasuje do moich kompetencji?**
-**[Vocare.pl](https://vocare.pl)** analizuje Twój profil i porównuje go z aktualnym zapotrzebowaniem rynkowym.
+[Rekomendacje ścieżki kariery od Vocare](/roadmap) analizuje Twój profil i porównuje go z aktualnym zapotrzebowaniem rynkowym.
 
 ---
 
@@ -80,7 +80,7 @@ Tak, szczególnie w lokalach turystycznych i hotelach - komunikacja z gośćmi z
 
 Rynek pracy w gastronomii i hotelarstwie rośnie wraz z turystyką, ale traci pracowników przez pracę zmianową i weekendową. Doświadczeni kucharze, managerowie i pracownicy ze znajomością języków obcych mają dziś realną przewagę negocjacyjną, mimo ogólnego wizerunku branży jako nisko płatnej.
 
-Zastanawiasz się, która ścieżka w tej branży pasuje do Twoich kompetencji? **[Vocare.pl](https://vocare.pl)** przeprowadzi bezpłatną analizę.
+Zastanawiasz się, która ścieżka w tej branży pasuje do Twoich kompetencji? [Analiza profilu zawodowego w Vocare](/assistant) przeprowadzi bezpłatną analizę.
 
 ---
 

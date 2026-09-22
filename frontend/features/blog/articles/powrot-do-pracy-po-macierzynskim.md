@@ -75,7 +75,7 @@ Kursy online, webinary i śledzenie branżowych źródeł nawet w małym wymiarz
 To zależy od Twojej sytuacji rodzinnej i polityki firmy - wiele firm oferuje stopniowy powrót (np. część etatu przez pierwsze miesiące), warto o to zapytać wprost.
 
 **Jak sprawdzić, jakie oferty pracy oferują dziś elastyczność dla rodziców wracających po przerwie?**
-**[Vocare.pl](https://vocare.pl)** analizuje Twój profil i wskazuje oferty najlepiej dopasowane do Twoich potrzeb, w tym oczekiwań co do elastyczności.
+[Roadmapa kariery w Vocare](/roadmap) analizuje Twój profil i wskazuje oferty najlepiej dopasowane do Twoich potrzeb, w tym oczekiwań co do elastyczności.
 
 ---
 
@@ -83,7 +83,7 @@ To zależy od Twojej sytuacji rodzinnej i polityki firmy - wiele firm oferuje st
 
 Powrót do pracy po urlopie macierzyńskim lub rodzicielskim jest łatwiejszy, gdy potraktujesz przerwę jako neutralny fakt, nie temat wymagający usprawiedliwienia. Warto zacząć aktualizować kompetencje jeszcze przed formalnym powrotem i otwarcie pytać o elastyczne formy pracy - dziś dostępne są częściej niż kilka lat temu.
 
-Zastanawiasz się, jak Twoje kompetencje wypadają po przerwie zawodowej? **[Vocare.pl](https://vocare.pl)** pomoże Ci to sprawdzić i zaplanować dalsze kroki.
+Zastanawiasz się, jak Twoje kompetencje wypadają po przerwie zawodowej? [Rekomendacje ścieżki kariery od Vocare](/roadmap) pomoże Ci to sprawdzić i zaplanować dalsze kroki.
 
 ---
 

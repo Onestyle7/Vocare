@@ -68,7 +68,7 @@ Czasem tak, ale warto to poprzedzić dokładną diagnozą źródła niezadowolen
 Bardzo różnie, od kilku miesięcy do kilku lat, zależnie od tego, jak szybko dana osoba podejmie konkretne działania diagnostyczne i naprawcze.
 
 **Jak sprawdzić, czy potrzebujesz zmiany pracy, czy zmiany podejścia do obecnej roli?**
-**[Vocare.pl](https://vocare.pl)** pomoże Ci ocenić Twoje kompetencje i wartości względem dostępnych kierunków rozwoju.
+[Roadmapa kariery w Vocare](/roadmap) pomoże Ci ocenić Twoje kompetencje i wartości względem dostępnych kierunków rozwoju.
 
 ---
 
@@ -76,7 +76,7 @@ Bardzo różnie, od kilku miesięcy do kilku lat, zależnie od tego, jak szybko 
 
 Kryzys w połowie kariery to okres utraty motywacji i rozczarowania tempem rozwoju, który może dotknąć na dowolnym etapie ścieżki zawodowej, niezależnie od obiektywnych sukcesów. Kluczem jest dokładna diagnoza źródła niezadowolenia - czy problemem jest konkretna firma, sama natura pracy, czy głębsze wypalenie wymagające najpierw regeneracji.
 
-Zastanawiasz się, czy Twoja obecna ścieżka zawodowa nadal Ci odpowiada? **[Vocare.pl](https://vocare.pl)** pomoże Ci to ocenić.
+Zastanawiasz się, czy Twoja obecna ścieżka zawodowa nadal Ci odpowiada? [Rekomendacje ścieżki kariery od Vocare](/roadmap) pomoże Ci to ocenić.
 
 ---
 

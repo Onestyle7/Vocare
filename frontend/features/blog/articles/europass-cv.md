@@ -64,7 +64,7 @@ Nie, wszystkie narzędzia i szablony Europass są darmowe i dostępne przez ofic
 Możliwości personalizacji wizualnej są bardzo ograniczone - to świadomy kompromis na rzecz ujednoliconej, czytelnej struktury.
 
 **Jak sprawdzić, który format CV najlepiej pasuje do mojej sytuacji i branży?**
-**[Vocare.pl](https://vocare.pl)** pomoże Ci ocenić, jak Twój profil zawodowy wypada na tle wymagań konkretnych ofert.
+[Dopasowanie CV do oferty w Vocare](/resume-creator) pomoże Ci ocenić, jak Twój profil zawodowy wypada na tle wymagań konkretnych ofert.
 
 ---
 
@@ -72,7 +72,7 @@ Możliwości personalizacji wizualnej są bardzo ograniczone - to świadomy komp
 
 Europass CV sprawdza się przy aplikacjach do instytucji unijnych, na stypendia i staże międzynarodowe, ale w sektorze prywatnym - szczególnie kreatywnym i technologicznym - bywa odbierany jako zbyt sztywny. Warto traktować go jako jeden z dostępnych formatów, nie uniwersalne rozwiązanie na każdą rekrutację.
 
-Zastanawiasz się, jaki format CV najlepiej pasuje do Twojej sytuacji? **[Vocare.pl](https://vocare.pl)** pomoże Ci to ocenić.
+Zastanawiasz się, jaki format CV najlepiej pasuje do Twojej sytuacji? [Analiza profilu zawodowego w Vocare](/assistant) pomoże Ci to ocenić.
 
 ---
 

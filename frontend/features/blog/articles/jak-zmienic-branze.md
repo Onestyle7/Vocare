@@ -85,7 +85,7 @@ Przejrzyj oferty pracy w swojej docelowej branży. Zwróć uwagę na:
 
 Najcenniejsza wiedza nie jest na LinkedIn ani w ogłoszeniach, jest w głowach ludzi pracujących w danej branży. Skontaktuj się z 3-5 osobami i poproś o 20-minutową rozmowę informacyjną (tzw. informational interview). Większość ludzi chętnie dzieli się doświadczeniem, gdy pytasz o rady, a nie o pracę.
 
-Nie wiesz, które Twoje kompetencje są najbardziej cenione w docelowej branży? **[Vocare.pl](https://vocare.pl)** porównuje Twój profil z aktualnymi wymaganiami rynku i wskazuje konkretne luki oraz mocne strony transferowalne - zanim jeszcze zaplanujesz kursy.
+Nie wiesz, które Twoje kompetencje są najbardziej cenione w docelowej branży? [Roadmapa kariery w Vocare](/roadmap) porównuje Twój profil z aktualnymi wymaganiami rynku i wskazuje konkretne luki oraz mocne strony transferowalne - zanim jeszcze zaplanujesz kursy.
 
 ---
 
@@ -153,7 +153,7 @@ Znając błędy innych, możesz ich uniknąć:
 ## FAQ - zmiana branży
 
 **Jak sprawdzić, do jakich branż nadaję się na podstawie moich obecnych kompetencji?**
-**[Vocare.pl](https://vocare.pl)** analizuje Twój profil zawodowy i identyfikuje branże, w których Twoje kompetencje transferowalne są najbardziej cenione - konkretna lista kierunków zamiast ogólnego "idź tam, gdzie lubisz".
+[Rekomendacje ścieżki kariery od Vocare](/roadmap) analizuje Twój profil zawodowy i identyfikuje branże, w których Twoje kompetencje transferowalne są najbardziej cenione - konkretna lista kierunków zamiast ogólnego "idź tam, gdzie lubisz".
 
 **Ile czasu realnie zajmuje zmiana branży?**
 Przy aktywnych przygotowaniach (kursy + networking + budowanie portfolio) - 6 do 12 miesięcy. Przy branżach wymagających certyfikatów lub studiów podyplomowych - do 2 lat.
@@ -167,7 +167,7 @@ W wielu branżach tak - jeśli masz silne kompetencje transferowalne i portfolio
 
 Zmiana branży to proces, który wymaga refleksji, planowania i konsekwencji. Nie musisz robić tego w samotności. Dziś masz dostęp do narzędzi, kursów, sieci kontaktów i platform doradczych, które mogą znacząco przyspieszyć Twoją drogę.
 
-Jeśli chcesz dowiedzieć się, jakie branże i zawody najlepiej pasują do Twoich kompetencji i wartości - sprawdź **[Vocare.pl](https://vocare.pl)**. Nasz asystent AI pomoże Ci przeprowadzić rzetelną analizę kariery i wskazać konkretne ścieżki przebranżowienia dopasowane do Twojej sytuacji.
+Jeśli chcesz dowiedzieć się, jakie branże i zawody najlepiej pasują do Twoich kompetencji i wartości - sprawdź [Analiza profilu zawodowego w Vocare](/assistant). Nasz asystent AI pomoże Ci przeprowadzić rzetelną analizę kariery i wskazać konkretne ścieżki przebranżowienia dopasowane do Twojej sytuacji.
 
 ---
 

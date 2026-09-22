@@ -64,7 +64,7 @@ Często tak, szczególnie na wczesnym etapie rozwoju firmy, choć zależy to od 
 Zależy od Twojej tolerancji na ryzyko i etapu rozwoju firmy - equity we wczesnym, niesprawdzonym startupie wiąże się z dużą niepewnością co do jego przyszłej wartości.
 
 **Jak sprawdzić, które środowisko pracy - korporacyjne czy startupowe - lepiej pasuje do moich preferencji?**
-**[Vocare.pl](https://vocare.pl)** analizuje Twój profil zawodowy i pomaga określić, jakie środowisko pracy najlepiej odpowiada Twoim priorytetom.
+[Analiza profilu zawodowego w Vocare](/assistant) analizuje Twój profil zawodowy i pomaga określić, jakie środowisko pracy najlepiej odpowiada Twoim priorytetom.
 
 ---
 
@@ -72,7 +72,7 @@ Zależy od Twojej tolerancji na ryzyko i etapu rozwoju firmy - equity we wczesny
 
 Wybór między korporacją a startupem to wybór priorytetów na danym etapie kariery - stabilność i struktura kontra tempo i bezpośredni wpływ. Żadna opcja nie jest uniwersalnie lepsza - korporacja sprawdzi się, gdy cenisz przewidywalność, startup, gdy chcesz szybko nauczyć się wielu rzeczy naraz i akceptujesz wyższe ryzyko.
 
-Zastanawiasz się, które środowisko pracy pasuje do Twoich priorytetów zawodowych? **[Vocare.pl](https://vocare.pl)** pomoże Ci to ocenić.
+Zastanawiasz się, które środowisko pracy pasuje do Twoich priorytetów zawodowych? [Roadmapa kariery w Vocare](/roadmap) pomoże Ci to ocenić.
 
 ---
 

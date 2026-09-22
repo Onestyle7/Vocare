@@ -76,7 +76,7 @@ Instalacje odnawialnych źródeł energii (fotowoltaika, pompy ciepła) - napęd
 Można, ale to droga donikąd - brak formalnych uprawnień ogranicza dostęp do lepiej płatnych zleceń i utrudnia awans na stanowiska kierownicze.
 
 **Jak sprawdzić, która ścieżka w budownictwie pasuje do moich predyspozycji?**
-**[Vocare.pl](https://vocare.pl)** analizuje Twój profil kompetencyjny i porównuje go z aktualnym zapotrzebowaniem rynkowym, wskazując konkretne kierunki rozwoju.
+[Analiza rynku pracy w Vocare](/market-analysis) analizuje Twój profil kompetencyjny i porównuje go z aktualnym zapotrzebowaniem rynkowym, wskazując konkretne kierunki rozwoju.
 
 ---
 
@@ -84,7 +84,7 @@ Można, ale to droga donikąd - brak formalnych uprawnień ogranicza dostęp do 
 
 Rynek pracy w budownictwie w 2026 roku to rynek fachowca, nie pracodawcy - deficyt kadr dotyczy zarówno zawodów wykonawczych, jak i inżynierskich. Transformacja energetyczna dodatkowo napędza popyt na instalatorów OZE, a ścieżka wejścia do zawodu jest jedną z najszybszych na całym rynku pracy.
 
-Zastanawiasz się, która ścieżka w budownictwie pasuje do Twoich kompetencji? **[Vocare.pl](https://vocare.pl)** przeprowadzi bezpłatną analizę i wskaże konkretne kierunki rozwoju.
+Zastanawiasz się, która ścieżka w budownictwie pasuje do Twoich kompetencji? [Rekomendacje ścieżki kariery od Vocare](/roadmap) przeprowadzi bezpłatną analizę i wskaże konkretne kierunki rozwoju.
 
 ---
 

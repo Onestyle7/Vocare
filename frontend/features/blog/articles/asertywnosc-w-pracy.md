@@ -59,7 +59,7 @@ To umiejętność, którą da się rozwijać poprzez świadomą praktykę konkre
 Kluczem jest forma - jasne wyrażenie granicy w sposób rzeczowy i pozbawiony oskarżeń zwykle jest odbierane lepiej niż milczące niezadowolenie prowadzące do późniejszego wybuchu.
 
 **Jak sprawdzić, w jakich sytuacjach zawodowych najbardziej brakuje mi asertywności?**
-**[Vocare.pl](https://vocare.pl)** pomoże Ci zidentyfikować obszary rozwoju kompetencji miękkich dopasowane do Twojej roli.
+[Roadmapa kariery w Vocare](/roadmap) pomoże Ci zidentyfikować obszary rozwoju kompetencji miękkich dopasowane do Twojej roli.
 
 ---
 
@@ -67,7 +67,7 @@ Kluczem jest forma - jasne wyrażenie granicy w sposób rzeczowy i pozbawiony os
 
 Asertywność w pracy to wyrażanie własnych potrzeb i granic w sposób jasny i bezpośredni, bez wpadania w uległość lub agresję. Konkretne techniki - zdanie "widzę - czuję - potrzebuję", technika zdartej płyty czy świadome odraczanie odpowiedzi - pomagają stawiać granice bez niepotrzebnej eskalacji konfliktu.
 
-Zastanawiasz się, które kompetencje miękkie warto u siebie rozwinąć? **[Vocare.pl](https://vocare.pl)** pomoże Ci to zidentyfikować.
+Zastanawiasz się, które kompetencje miękkie warto u siebie rozwinąć? [Rekomendacje ścieżki kariery od Vocare](/roadmap) pomoże Ci to zidentyfikować.
 
 ---
 

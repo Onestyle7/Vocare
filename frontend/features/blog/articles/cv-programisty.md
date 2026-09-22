@@ -69,7 +69,7 @@ Dla osób na starcie kariery - tak. Przy dłuższym doświadczeniu (5+ lat) dwie
 Pomagają, szczególnie na start kariery lub przy zmianie specjalizacji, ale nigdy nie zastępują konkretnych projektów i realnego doświadczenia.
 
 **Jak sprawdzić, jakie kompetencje warto rozwinąć pod docelową rolę w IT?**
-**[Vocare.pl](https://vocare.pl)** analizuje Twój profil i porównuje go z wymaganiami konkretnych ofert, wskazując, co warto uzupełnić.
+[Kreator CV w Vocare](/resume-creator) analizuje Twój profil i porównuje go z wymaganiami konkretnych ofert, wskazując, co warto uzupełnić.
 
 ---
 
@@ -77,7 +77,7 @@ Pomagają, szczególnie na start kariery lub przy zmianie specjalizacji, ale nig
 
 CV programisty przekonuje konkretem - mierzalnym wynikiem projektu, nie listą technologii bez kontekstu. Dopasowanie słów kluczowych do ogłoszenia pomaga przejść przez systemy ATS, a link do realnych projektów (GitHub, portfolio) waży dziś więcej niż sam certyfikat.
 
-Zastanawiasz się, jak wypadają Twoje kompetencje na tle aktualnych wymagań rynku IT? **[Vocare.pl](https://vocare.pl)** pomoże Ci to sprawdzić.
+Zastanawiasz się, jak wypadają Twoje kompetencje na tle aktualnych wymagań rynku IT? [Dopasowanie CV do oferty w Vocare](/resume-creator) pomoże Ci to sprawdzić.
 
 ---
 

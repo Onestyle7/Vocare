@@ -86,7 +86,7 @@ B2B zwykle daje wyższą stawkę netto, ale wymaga samodzielnego ogarnięcia ksi
 Ustal z zespołem minimalne okno nakładających się godzin pracy (zwykle 2-4h) i resztę dnia planuj asynchronicznie - jasno komunikuj dostępność w kalendarzu widocznym dla całego zespołu.
 
 **Jak sprawdzić, czy moje kompetencje i CV są gotowe na rekrutację międzynarodową?**
-**[Vocare.pl](https://vocare.pl)** analizuje Twój profil zawodowy i pomaga dopasować CV do wymagań konkretnej oferty - również tych publikowanych przez zagraniczne firmy.
+[Analiza profilu zawodowego w Vocare](/assistant) analizuje Twój profil zawodowy i pomaga dopasować CV do wymagań konkretnej oferty - również tych publikowanych przez zagraniczne firmy.
 
 ---
 
@@ -94,7 +94,7 @@ Ustal z zespołem minimalne okno nakładających się godzin pracy (zwykle 2-4h)
 
 Praca zdalna dla zagranicznego pracodawcy to realna, coraz bardziej dostępna ścieżka - ale wymaga innego podejścia niż szukanie pracy zdalnej u polskiej firmy: innych platform, CV w konwencji anglosaskiej i świadomego wyboru modelu rozliczenia (B2B, EOR lub umowa bezpośrednia). Kwestie podatkowe warto skonsultować z księgowym przed podpisaniem pierwszego kontraktu, nie po.
 
-Chcesz sprawdzić, czy Twoje CV i kompetencje są gotowe na aplikacje do zagranicznych firm? **[Vocare.pl](https://vocare.pl)** pomoże Ci to ocenić.
+Chcesz sprawdzić, czy Twoje CV i kompetencje są gotowe na aplikacje do zagranicznych firm? [Dopasowanie CV do oferty w Vocare](/resume-creator) pomoże Ci to ocenić.
 
 ---
 

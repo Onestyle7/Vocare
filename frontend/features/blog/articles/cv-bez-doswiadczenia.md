@@ -135,7 +135,7 @@ _"Ambitny student szukający pierwszej pracy. Chcę się rozwijać i zdobywać n
 **Dobry profil:**
 _"Student III roku informatyki (Politechnika Gdańska), specjalizacja sieci komputerowe. Zrealizowałem 4 projekty w Pythonie i C++, w tym aplikację webową z 150 aktywnymi użytkownikami. Szukam stażu lub pracy juniorskiej w obszarze backend development."_
 
-Nie wiesz które z Twoich projektów i umiejętności są relevantne dla konkretnej roli? **[Vocare.pl](https://vocare.pl)** porównuje Twój profil z wymaganiami oferty i wskazuje, co warto wyeksponować na pierwszej stronie - nawet jeśli nie masz historii zawodowej.
+Nie wiesz które z Twoich projektów i umiejętności są relevantne dla konkretnej roli? [Analiza profilu zawodowego w Vocare](/assistant) porównuje Twój profil z wymaganiami oferty i wskazuje, co warto wyeksponować na pierwszej stronie - nawet jeśli nie masz historii zawodowej.
 
 ---
 
@@ -199,7 +199,7 @@ Przy aktywnym działaniu (staże, networking, kursy) - 2-4 miesiące. Pasywne wy
 Absolutnie nie. Kłamstwa są weryfikowane (LinkedIn, referencje) i prowadzą do natychmiastowej dyskwalifikacji lub zwolnienia.
 
 **Jak sprawdzić, czy moje CV bez doświadczenia przejdzie przez selekcję ATS?**
-**[Vocare.pl](https://vocare.pl)** analizuje CV pod kątem zgodności ze słowami kluczowymi z oferty - wskazuje, które sekcje warto uzupełnić i jak opisać projekty studenckie językiem, który ATS i rekruter rozumie.
+[Kreator CV w Vocare](/resume-creator) analizuje CV pod kątem zgodności ze słowami kluczowymi z oferty - wskazuje, które sekcje warto uzupełnić i jak opisać projekty studenckie językiem, który ATS i rekruter rozumie.
 
 ---
 
@@ -207,7 +207,7 @@ Absolutnie nie. Kłamstwa są weryfikowane (LinkedIn, referencje) i prowadzą do
 
 CV bez doświadczenia zawodowego nie jest skazane na porażkę. Jest inne - i musi być napisane inaczej. Skup się na tym co masz: projekty, staże, kursy, aktywności. Opisuj je konkretnie, z miarami i efektami. Pokaż potencjał, nie wyjścia na imprezy.
 
-Chcesz zbudować przekonujące CV mimo braku doświadczenia? Platforma **[Vocare.pl](https://vocare.pl)** pomoże Ci zidentyfikować kompetencje, które masz, i powiedzieć jak je najlepiej przedstawić.
+Chcesz zbudować przekonujące CV mimo braku doświadczenia? Platforma [Dopasowanie CV do oferty w Vocare](/resume-creator) pomoże Ci zidentyfikować kompetencje, które masz, i powiedzieć jak je najlepiej przedstawić.
 
 ---
 

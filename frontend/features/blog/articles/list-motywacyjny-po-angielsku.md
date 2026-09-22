@@ -66,7 +66,7 @@ Zwykle 250-400 słów, mieszczące się na jednej stronie - dłuższy list rzadk
 Nie, personalizacja pod konkretną firmę i stanowisko wyraźnie zwiększa szansę na zauważenie aplikacji przez rekrutera.
 
 **Jak sprawdzić, czy mój list motywacyjny dobrze dopasowuje moje kompetencje do oferty?**
-**[Vocare.pl](https://vocare.pl)** analizuje Twój profil i porównuje go z wymaganiami konkretnych ofert pracy.
+[Dopasowanie CV do oferty w Vocare](/resume-creator) analizuje Twój profil i porównuje go z wymaganiami konkretnych ofert pracy.
 
 ---
 
@@ -74,7 +74,7 @@ Nie, personalizacja pod konkretną firmę i stanowisko wyraźnie zwiększa szans
 
 Dobry list motywacyjny po angielsku jest krótszy i bardziej bezpośredni niż polska tradycja formalnej korespondencji - struktura "hook - dowód - dopasowanie - call to action" sprawdza się lepiej niż sztywny szablon. Unikanie dosłownych tłumaczeń polskich zwrotów formalnych i personalizacja pod konkretną firmę robią największą różnicę w odbiorze przez zagranicznego rekrutera.
 
-Aplikujesz za granicę i chcesz sprawdzić, jak Twoje kompetencje wypadają na tle wymagań oferty? **[Vocare.pl](https://vocare.pl)** pomoże Ci to ocenić.
+Aplikujesz za granicę i chcesz sprawdzić, jak Twoje kompetencje wypadają na tle wymagań oferty? [Analiza profilu zawodowego w Vocare](/assistant) pomoże Ci to ocenić.
 
 ---
 

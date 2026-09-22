@@ -63,7 +63,7 @@ Osobno dla każdej placówki, z jasnym określeniem wymiaru godzin i przedmiotu 
 Tak, referencje od przełożonego w edukacji mają dużą wagę, szczególnie przy zmianie placówki lub etapu edukacyjnego.
 
 **Jak sprawdzić, jakie dodatkowe kwalifikacje warto zdobyć pod docelową ścieżkę w edukacji?**
-**[Vocare.pl](https://vocare.pl)** analizuje Twój profil zawodowy i porównuje go z wymaganiami konkretnych ofert.
+[Dopasowanie CV do oferty w Vocare](/resume-creator) analizuje Twój profil zawodowy i porównuje go z wymaganiami konkretnych ofert.
 
 ---
 
@@ -71,7 +71,7 @@ Tak, referencje od przełożonego w edukacji mają dużą wagę, szczególnie pr
 
 CV nauczyciela musi jasno pokazywać kwalifikacje formalne i stopień awansu zawodowego, ale wyróżnia się konkretnymi rezultatami pracy dydaktycznej - wynikami uczniów, wdrożonymi metodami, mierzalną poprawą. CV do edukacji cyfrowej wymaga innego akcentu niż CV do szkoły publicznej, z większym naciskiem na portfolio i opinie.
 
-Zastanawiasz się, jakie kompetencje warto rozwinąć w swojej ścieżce w edukacji? **[Vocare.pl](https://vocare.pl)** pomoże Ci to sprawdzić.
+Zastanawiasz się, jakie kompetencje warto rozwinąć w swojej ścieżce w edukacji? [Analiza profilu zawodowego w Vocare](/assistant) pomoże Ci to sprawdzić.
 
 ---
 

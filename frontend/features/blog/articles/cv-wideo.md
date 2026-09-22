@@ -68,7 +68,7 @@ Nie. Wiele systemów rekrutacyjnych wymaga tekstowego CV do dalszego przetwarzan
 Telefon w zupełności wystarczy. Liczy się dobre światło i cichy dźwięk, nie profesjonalny sprzęt.
 
 **Jak sprawdzić, czy moje klasyczne CV jest gotowe, zanim dodam wideo?**
-**[Vocare.pl](https://vocare.pl)** analizuje jakość Twojego CV tekstowego, które zawsze powinno być podstawą aplikacji.
+[Kreator CV w Vocare](/resume-creator) analizuje jakość Twojego CV tekstowego, które zawsze powinno być podstawą aplikacji.
 
 ---
 
@@ -76,7 +76,7 @@ Telefon w zupełności wystarczy. Liczy się dobre światło i cichy dźwięk, n
 
 CV wideo działa w wąskiej grupie branż z bezpośrednim kontaktem z klientem lub w rolach kreatywnych. Nigdy nie zastępuje klasycznego CV - systemy ATS go nie odczytują, a większość rekruterów wciąż oczekuje standardowego dokumentu jako podstawy.
 
-Zanim pomyślisz o wideo-CV, upewnij się, że Twoje klasyczne CV działa. **[Vocare.pl](https://vocare.pl)** pomoże Ci je sprawdzić.
+Zanim pomyślisz o wideo-CV, upewnij się, że Twoje klasyczne CV działa. [Dopasowanie CV do oferty w Vocare](/resume-creator) pomoże Ci je sprawdzić.
 
 ---
 

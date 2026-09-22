@@ -61,7 +61,7 @@ Zwykle od 6 miesięcy do roku regularnej pracy, zanim polecenia i powracający k
 Dla początkujących praca w ramach biura zwykle daje dostęp do szkoleń, marki i części klientów - własna działalność bez zaplecza bywa trudniejsza na starcie.
 
 **Jak sprawdzić, czy praca w nieruchomościach pasuje do moich kompetencji sprzedażowych?**
-**[Vocare.pl](https://vocare.pl)** analizuje Twój profil i porównuje go z wymaganiami ról sprzedażowych, w tym w branży nieruchomości.
+[Analiza rynku pracy w Vocare](/market-analysis) analizuje Twój profil i porównuje go z wymaganiami ról sprzedażowych, w tym w branży nieruchomości.
 
 ---
 
@@ -69,7 +69,7 @@ Dla początkujących praca w ramach biura zwykle daje dostęp do szkoleń, marki
 
 Rynek pracy w nieruchomościach to sektor oparty na prowizji, gdzie pierwsze miesiące bywają finansowo najtrudniejsze, a realne zarobki przychodzą wraz z bazą klientów i poleceniami. Specjalizacja w segmencie premium lub komercyjnym daje wyraźnie wyższe prowizje niż standardowy rynek mieszkaniowy, ale wymaga więcej czasu na zbudowanie pozycji.
 
-Zastanawiasz się, czy praca w sprzedaży nieruchomości pasuje do Twoich kompetencji? **[Vocare.pl](https://vocare.pl)** pomoże Ci to sprawdzić.
+Zastanawiasz się, czy praca w sprzedaży nieruchomości pasuje do Twoich kompetencji? [Rekomendacje ścieżki kariery od Vocare](/roadmap) pomoże Ci to sprawdzić.
 
 ---
 

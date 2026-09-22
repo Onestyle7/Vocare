@@ -37,7 +37,7 @@ Zanim wypełnisz jakikolwiek wzór, odpowiedz sobie:
 
 Bez odpowiedzi na te pytania - żaden wzór nie pomoże.
 
-Nie wiesz, które osiągnięcie pasuje do danej roli? **[Vocare.pl](https://vocare.pl)** porównuje Twój profil z wymaganiami oferty i wskazuje, co rekruter uzna za najbardziej wartościowe - zanim zaczniesz wypełniać wzór.
+Nie wiesz, które osiągnięcie pasuje do danej roli? [Kreator CV w Vocare](/resume-creator) porównuje Twój profil z wymaganiami oferty i wskazuje, co rekruter uzna za najbardziej wartościowe - zanim zaczniesz wypełniać wzór.
 
 ---
 
@@ -231,7 +231,7 @@ Nie musi, ale warto żeby były spójne. Jeśli CV ma subtelny akcent kolorystyc
 Absolutnie nie w 2026. Elektroniczny podpis lub samo imię i nazwisko w stopce w zupełności wystarczają.
 
 **Jak przygotować się do pisania listu pod konkretną ofertę?**
-Zanim napiszesz list, skorzystaj z **[Vocare.pl](https://vocare.pl)** - platforma analizuje ofertę i automatycznie dopasowuje do niej Twoje CV. Wiedząc jakie kompetencje CV eksponuje pod tę ofertę, wiesz też co warto podkreślić w liście.
+Zanim napiszesz list, skorzystaj z [Dopasowanie CV do oferty w Vocare](/resume-creator) - platforma analizuje ofertę i automatycznie dopasowuje do niej Twoje CV. Wiedząc jakie kompetencje CV eksponuje pod tę ofertę, wiesz też co warto podkreślić w liście.
 
 ---
 
@@ -239,7 +239,7 @@ Zanim napiszesz list, skorzystaj z **[Vocare.pl](https://vocare.pl)** - platform
 
 Wzór listu motywacyjnego to mapa, nie gotowy produkt. Najlepsza strategia: weź szkielet, usuń wszystko co ogólne, wstaw własne: osiągnięcie w liczbach, konkretny powód zainteresowania firmą i pewne zakończenie. 30 minut pracy, które może zadecydować o zaproszeniu na rozmowę.
 
-Zanim zaczniesz pisać list - upewnij się, że Twoje CV jest dopasowane do tej oferty. **[Vocare.pl](https://vocare.pl)** robi to automatycznie: wklejasz ogłoszenie, system generuje CV pod wymagania tej roli. Wtedy wiesz dokładnie, co w liście podkreślić.
+Zanim zaczniesz pisać list - upewnij się, że Twoje CV jest dopasowane do tej oferty. [Analiza profilu zawodowego w Vocare](/assistant) robi to automatycznie: wklejasz ogłoszenie, system generuje CV pod wymagania tej roli. Wtedy wiesz dokładnie, co w liście podkreślić.
 
 ---
 

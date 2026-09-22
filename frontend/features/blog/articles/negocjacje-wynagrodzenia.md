@@ -92,7 +92,7 @@ Zapytaj o harmonogram - kiedy budżet może się pojawić - i negocjuj alternaty
 Nie musisz - w wielu krajach (i coraz częściej w Polsce) to pytanie jest niezalecane. Możesz przekierować rozmowę na oczekiwania wobec nowej roli, nie na historię zarobków.
 
 **Jak sprawdzić, jakie są realne widełki dla mojego stanowiska?**
-**[Vocare.pl](https://vocare.pl)** analizuje Twój profil kompetencyjny i porównuje go z aktualnymi danymi rynkowymi, wskazując realne widełki wynagrodzenia dla Twojej roli i doświadczenia.
+[Dopasowanie CV do oferty w Vocare](/resume-creator) analizuje Twój profil kompetencyjny i porównuje go z aktualnymi danymi rynkowymi, wskazując realne widełki wynagrodzenia dla Twojej roli i doświadczenia.
 
 ---
 
@@ -100,7 +100,7 @@ Nie musisz - w wielu krajach (i coraz częściej w Polsce) to pytanie jest nieza
 
 Negocjacje wynagrodzenia to nie konfrontacja, tylko rozmowa oparta na danych - firmy zwykle mają margines negocjacyjny, a brak negocjacji oznacza rezygnację z pieniędzy, które i tak były dostępne. Kluczem jest przygotowanie: dane rynkowe, udokumentowane osiągnięcia i jasno określone minimum.
 
-Chcesz wiedzieć, jakie realnie widełki możesz negocjować na swoim stanowisku? **[Vocare.pl](https://vocare.pl)** przeanalizuje Twój profil i porówna go z aktualnymi danymi rynkowymi.
+Chcesz wiedzieć, jakie realnie widełki możesz negocjować na swoim stanowisku? [Analiza rynku pracy w Vocare](/market-analysis) przeanalizuje Twój profil i porówna go z aktualnymi danymi rynkowymi.
 
 ---
 

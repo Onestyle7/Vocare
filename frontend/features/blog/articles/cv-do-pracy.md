@@ -121,7 +121,7 @@ Wypisz 10 kluczowych fraz z oferty na kartce. Dla każdej sprawdź czy jest w CV
 **Metoda 2: AI**
 "Porównaj to CV z tą ofertą pracy i powiedz mi jakich słów kluczowych brakuje" - proste zapytanie do ChatGPT lub Claude daje konkretne wskazówki.
 
-Polską alternatywą jest **[Vocare.pl](https://vocare.pl)** - bezpłatna analiza jakości CV z możliwością dopasowania do oferty i konkretną oceną match rate.
+Polską alternatywą jest [Analiza profilu zawodowego w Vocare](/assistant) - bezpłatna analiza jakości CV z możliwością dopasowania do oferty i konkretną oceną match rate.
 
 ---
 
@@ -140,7 +140,7 @@ Tak - keyword stuffing (bezsensowne wpychanie słów) jest rozpoznawane przez no
 Skupi się na tym, co jest wymienione jako "wymagania". Ogólne oferty często mają szczegółowe wymagania ukryte w środku tekstu.
 
 **Czy jest polskie narzędzie, które automatycznie dopasuje moje CV do oferty?**
-Tak - **[Vocare.pl](https://vocare.pl)** dopasowuje Twoje CV do wybranej oferty pracy. Szczególnie przydatne zanim wyślesz aplikację do firmy z systemem ATS.
+Tak - [Kreator CV w Vocare](/resume-creator) dopasowuje Twoje CV do wybranej oferty pracy. Szczególnie przydatne zanim wyślesz aplikację do firmy z systemem ATS.
 
 ---
 
@@ -148,7 +148,7 @@ Tak - **[Vocare.pl](https://vocare.pl)** dopasowuje Twoje CV do wybranej oferty 
 
 CV do pracy to narzędzie, które działa gdy jest precyzyjne. Dopasowanie CV do oferty przez zmianę profilu zawodowego, słów kluczowych i kolejności umiejętności zajmuje 10-15 minut i radykalnie zwiększa szanse na odpowiedź.
 
-Jeśli chcesz zautomatyzować ten proces, **[Vocare.pl](https://vocare.pl)** analizuje Twoje CV i ofertę pracy, wskazując dokładnie jakie zmiany wprowadzić żeby przejść przez ATS i trafić na biurko rekrutera.
+Jeśli chcesz zautomatyzować ten proces, [Dopasowanie CV do oferty w Vocare](/resume-creator) analizuje Twoje CV i ofertę pracy, wskazując dokładnie jakie zmiany wprowadzić żeby przejść przez ATS i trafić na biurko rekrutera.
 
 ---
 

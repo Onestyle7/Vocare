@@ -70,7 +70,7 @@ Tak - role takie jak SDR (Sales Development Representative) są zaprojektowane j
 Znajomość systemów CRM (Salesforce, HubSpot, Pipedrive) oraz podstawowa analiza danych sprzedażowych - to dziś standardowe wymagania na większości stanowisk.
 
 **Jak sprawdzić, która ścieżka w sprzedaży pasuje do moich kompetencji?**
-**[Vocare.pl](https://vocare.pl)** analizuje Twój profil i porównuje go z aktualnym zapotrzebowaniem rynkowym, wskazując konkretne kierunki rozwoju zawodowego.
+[Analiza profilu zawodowego w Vocare](/assistant) analizuje Twój profil i porównuje go z aktualnym zapotrzebowaniem rynkowym, wskazując konkretne kierunki rozwoju zawodowego.
 
 ---
 
@@ -78,7 +78,7 @@ Znajomość systemów CRM (Salesforce, HubSpot, Pipedrive) oraz podstawowa anali
 
 Rynek pracy w sprzedaży i obsłudze klienta w 2026 roku przesuwa się w stronę ról wymagających relacji, empatii i strategicznego zarządzania klientem - proste, transakcyjne stanowiska przejmuje automatyzacja. Key Account Management i Customer Success należą dziś do najbardziej perspektywicznych ścieżek.
 
-Zastanawiasz się, która ścieżka w sprzedaży pasuje do Twoich kompetencji? **[Vocare.pl](https://vocare.pl)** przeprowadzi bezpłatną analizę i wskaże konkretne kierunki rozwoju.
+Zastanawiasz się, która ścieżka w sprzedaży pasuje do Twoich kompetencji? [Analiza rynku pracy w Vocare](/market-analysis) przeprowadzi bezpłatną analizę i wskaże konkretne kierunki rozwoju.
 
 ---
 

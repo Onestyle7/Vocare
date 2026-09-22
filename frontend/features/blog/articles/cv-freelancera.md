@@ -66,7 +66,7 @@ Podkreśl długość współpracy z powracającymi klientami i łączny czas dzi
 Rzadko wprost, ale wskazanie skali projektu (budżet klienta, wielkość zespołu, zasięg kampanii) daje podobny efekt bez ujawniania konkretnych stawek.
 
 **Jak sprawdzić, czy moje CV freelancera dobrze pokazuje moje kompetencje?**
-**[Vocare.pl](https://vocare.pl)** analizuje CV pod kątem wymagań konkretnej oferty, również przy współpracy projektowej.
+[Analiza profilu zawodowego w Vocare](/assistant) analizuje CV pod kątem wymagań konkretnej oferty, również przy współpracy projektowej.
 
 ---
 
@@ -74,7 +74,7 @@ Rzadko wprost, ale wskazanie skali projektu (budżet klienta, wielkość zespoł
 
 CV freelancera zamienia chronologię stanowisk na chronologię projektów. Kluczem jest wybór 5-8 reprezentatywnych zleceń opisanych z konkretnym efektem, nie pełna lista wszystkich klientów. Referencje od zleceniodawców budują wiarygodność, której brakuje bez jednego stałego pracodawcy.
 
-Chcesz sprawdzić, czy Twoje CV freelancera dobrze prezentuje Twoje projekty? **[Vocare.pl](https://vocare.pl)** pomoże Ci to ocenić.
+Chcesz sprawdzić, czy Twoje CV freelancera dobrze prezentuje Twoje projekty? [Kreator CV w Vocare](/resume-creator) pomoże Ci to ocenić.
 
 ---
 

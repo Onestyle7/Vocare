@@ -83,7 +83,7 @@ Tak. Z pozostałej części można zrezygnować i wrócić do pracy - ale trzeba
 Tak, zasiłek macierzyński podlega opodatkowaniu na zasadach ogólnych, podobnie jak wynagrodzenie za pracę.
 
 **Jak zaplanować powrót do pracy po urlopie macierzyńskim?**
-Warto zacząć od zmapowania kompetencji sprzed przerwy i sprawdzenia, co zmieniło się w Twojej roli przez rok. [Analiza profilu zawodowego w Vocare](https://vocare.pl) pokaże, które kompetencje wymagają odświeżenia.
+Warto zacząć od zmapowania kompetencji sprzed przerwy i sprawdzenia, co zmieniło się w Twojej roli przez rok. [Analiza profilu zawodowego w Vocare](/assistant) pokaże, które kompetencje wymagają odświeżenia.
 
 ---
 
@@ -91,7 +91,7 @@ Warto zacząć od zmapowania kompetencji sprzed przerwy i sprawdzenia, co zmieni
 
 Urlop macierzyński i rodzicielski dają łącznie 61 tygodni płatnej przerwy przy jednym dziecku, a wybór między stawką 100%/70% a jednolitą 81,5% zależy od terminu złożenia wniosku do ZUS - 21 dni od porodu. Z tych 61 tygodni jeden rodzic wykorzysta maksymalnie 52 - pozostałe 9 tygodni jest zarezerwowane dla drugiego rodzica i bez niego przepada. Warto policzyć obie opcje dla własnego wynagrodzenia, zanim wniosek trafi do ZUS, bo różnica w łącznej kwocie bywa realna.
 
-Planujesz powrót do pracy i zastanawiasz się nad dalszymi krokami? [Rekomendacje ścieżki kariery od Vocare](https://vocare.pl) pomogą uporządkować kierunek.
+Planujesz powrót do pracy i zastanawiasz się nad dalszymi krokami? [Rekomendacje ścieżki kariery od Vocare](/roadmap) pomogą uporządkować kierunek.
 
 ---
 

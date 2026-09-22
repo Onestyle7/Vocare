@@ -80,7 +80,7 @@ Zwykle miesiące, nie tygodnie - networking to inwestycja długoterminowa. Efekt
 Nie - najpierw zbuduj relację, dopiero potem, jeśli sytuacja tego wymaga, poproś o konkretną pomoc. Prośba na starcie relacji rzadko działa dobrze.
 
 **Jak sprawdzić, które branże i firmy warto uwzględnić w budowaniu sieci kontaktów?**
-**[Vocare.pl](https://vocare.pl)** analizuje Twój profil kompetencyjny i wskazuje branże oraz kierunki kariery najlepiej dopasowane do Twoich mocnych stron.
+[Analiza profilu zawodowego w Vocare](/assistant) analizuje Twój profil kompetencyjny i wskazuje branże oraz kierunki kariery najlepiej dopasowane do Twoich mocnych stron.
 
 ---
 
@@ -88,7 +88,7 @@ Nie - najpierw zbuduj relację, dopiero potem, jeśli sytuacja tego wymaga, popr
 
 Networking zawodowy dobrze prowadzony to długoterminowe budowanie relacji opartych na wzajemnej wartości, nie transakcyjne zbieranie kontaktów. Kluczem jest dawanie wartości zanim o coś poprosisz oraz konsekwencja - regularne, małe działania budują silniejszą sieć niż sporadyczne duże akcje.
 
-Zastanawiasz się, w jakim kierunku rozwijać swoją sieć zawodową? **[Vocare.pl](https://vocare.pl)** pomoże Ci zidentyfikować branże i role najlepiej dopasowane do Twojego profilu.
+Zastanawiasz się, w jakim kierunku rozwijać swoją sieć zawodową? [Roadmapa kariery w Vocare](/roadmap) pomoże Ci zidentyfikować branże i role najlepiej dopasowane do Twojego profilu.
 
 ---
 

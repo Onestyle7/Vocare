@@ -103,17 +103,25 @@ export default async function BlogPage(props: MetadataProps) {
     image: [imageUrl],
     datePublished: metadata.date.toISOString(),
     dateModified: lastModified.toISOString(),
-    mainEntityOfPage: articleUrl,
-    author: metadata.author
-      ? {
-          '@type': 'Person',
-          name: metadata.author,
-          url: toAbsoluteUrl('/blog'),
-        }
-      : undefined,
+    mainEntityOfPage: {
+      '@type': 'WebPage',
+      '@id': articleUrl,
+    },
+    // `author` is an Organization, not a Person. Every post is credited to
+    // "Vocare", which is a company: emitting it as a Person with /blog as its
+    // profile URL claimed a human author that does not exist. schema.org
+    // allows an Organization here, so this states what is actually true.
+    // Swap to Person only once posts are credited to named people with real
+    // credentials - see the E-E-A-T task.
+    author: {
+      '@type': 'Organization',
+      name: metadata.author ?? 'Vocare',
+      url: toAbsoluteUrl('/'),
+    },
     publisher: {
       '@type': 'Organization',
       name: 'Vocare',
+      url: toAbsoluteUrl('/'),
       logo: {
         '@type': 'ImageObject',
         url: toAbsoluteUrl('/metadata/og-image.png'),

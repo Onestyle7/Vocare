@@ -78,7 +78,7 @@ Daj czas na ochłonięcie. Zaproponuj kontynuację rozmowy później, zamiast ko
 Nie. Krótka, bieżąca uwaga po konkretnej sytuacji często działa lepiej niż formalna rozmowa zaplanowana tygodnie później.
 
 **Jak sprawdzić, które kompetencje warto rozwinąć na podstawie otrzymanego feedbacku?**
-**[Vocare.pl](https://vocare.pl)** pomoże Ci przełożyć feedback na konkretny plan rozwoju kompetencji.
+[Rekomendacje ścieżki kariery od Vocare](/roadmap) pomoże Ci przełożyć feedback na konkretny plan rozwoju kompetencji.
 
 ---
 
@@ -86,7 +86,7 @@ Nie. Krótka, bieżąca uwaga po konkretnej sytuacji często działa lepiej niż
 
 Konstruktywny feedback opisuje konkretne zachowanie i jego efekt, nie ocenia charakteru. Model SBI (sytuacja, zachowanie, wpływ) daje prostą strukturę do trudnych rozmów. Przyjmowanie krytyki bez defensywności wymaga oddzielenia informacji od emocji - to umiejętność do wyćwiczenia, nie wrodzona cecha.
 
-Zastanawiasz się, jak przełożyć otrzymany feedback na konkretny rozwój kariery? **[Vocare.pl](https://vocare.pl)** pomoże Ci to zaplanować.
+Zastanawiasz się, jak przełożyć otrzymany feedback na konkretny rozwój kariery? [Analiza profilu zawodowego w Vocare](/assistant) pomoże Ci to zaplanować.
 
 ---
 

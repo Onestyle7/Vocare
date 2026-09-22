@@ -88,7 +88,7 @@ Cloud, cybersecurity i MLOps - obszary, w których automatyzacja nie zastępuje 
 Zazwyczaj tak pod względem stawki brutto, ale trzeba doliczyć koszty ZUS, brak płatnego urlopu i mniejszą stabilność. Wybór zależy od etapu życia i tolerancji na ryzyko.
 
 **Jak sprawdzić, czy moje kompetencje IT pasują do aktualnego rynku?**
-**[Vocare.pl](https://vocare.pl)** analizuje Twój profil kompetencyjny i porównuje go z aktualnym zapotrzebowaniem rynkowym, wskazując konkretne kierunki rozwoju i role, w których masz największe szanse.
+[Analiza rynku pracy w Vocare](/market-analysis) analizuje Twój profil kompetencyjny i porównuje go z aktualnym zapotrzebowaniem rynkowym, wskazując konkretne kierunki rozwoju i role, w których masz największe szanse.
 
 ---
 
@@ -96,7 +96,7 @@ Zazwyczaj tak pod względem stawki brutto, ale trzeba doliczyć koszty ZUS, brak
 
 Rynek pracy w IT w 2026 roku nagradza specjalizację i konkret, nie ogólną znajomość technologii. Cloud, AI/ML i cybersecurity to obszary z najsilniejszą pozycją negocjacyjną, a portfolio realnych projektów liczy się dziś bardziej niż kiedykolwiek.
 
-Chcesz sprawdzić, jak Twój profil kompetencyjny wypada na tle aktualnego rynku IT? **[Vocare.pl](https://vocare.pl)** przeprowadzi bezpłatną analizę i wskaże konkretne kierunki rozwoju dopasowane do Twoich umiejętności.
+Chcesz sprawdzić, jak Twój profil kompetencyjny wypada na tle aktualnego rynku IT? [Rekomendacje ścieżki kariery od Vocare](/roadmap) przeprowadzi bezpłatną analizę i wskaże konkretne kierunki rozwoju dopasowane do Twoich umiejętności.
 
 ---
 

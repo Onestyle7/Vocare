@@ -83,7 +83,7 @@ Niekoniecznie na starcie - można łączyć część etatu z umowami zlecenie cz
 Zacznij od małego projektu pobocznego w wolnym czasie, zanim zdecydujesz się na redukcję etatu - to pozwala przetestować model bez dużego ryzyka finansowego.
 
 **Jak sprawdzić, które dodatkowe źródła dochodu pasują do moich kompetencji?**
-**[Vocare.pl](https://vocare.pl)** analizuje Twój profil kompetencyjny i wskazuje możliwe kierunki rozwoju, w tym potencjalne dodatkowe ścieżki zawodowe.
+[Roadmapa kariery w Vocare](/roadmap) analizuje Twój profil kompetencyjny i wskazuje możliwe kierunki rozwoju, w tym potencjalne dodatkowe ścieżki zawodowe.
 
 ---
 
@@ -91,7 +91,7 @@ Zacznij od małego projektu pobocznego w wolnym czasie, zanim zdecydujesz się n
 
 Portfolio career to świadome budowanie kariery z kilku źródeł dochodu i aktywności zawodowej zamiast polegania na jednym etacie. Sprawdza się najlepiej dla osób z rozwiniętą samoorganizacją i tolerancją na zmienność dochodu - kluczem do bezpiecznego startu jest stopniowe budowanie dodatkowych strumieni obok obecnej pracy, nie nagła rezygnacja z etatu.
 
-Zastanawiasz się, jakie dodatkowe kierunki rozwoju pasują do Twoich kompetencji? **[Vocare.pl](https://vocare.pl)** przeprowadzi bezpłatną analizę.
+Zastanawiasz się, jakie dodatkowe kierunki rozwoju pasują do Twoich kompetencji? [Rekomendacje ścieżki kariery od Vocare](/roadmap) przeprowadzi bezpłatną analizę.
 
 ---
 

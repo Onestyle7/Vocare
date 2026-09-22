@@ -74,7 +74,7 @@ Profesjonalne CV nie jest wysyłane do 50 firm bez zmian. Jest kalibrowane pod k
 
 Rekruter czytający CV, które wydaje się pisane dla jego konkretnej oferty, automatycznie traktuje kandydata poważniej.
 
-Manualna kalibracja każdego CV jest czasochłonna. **[Vocare.pl](https://vocare.pl)** robi to automatycznie - wklejasz treść ogłoszenia, a system generuje wersję CV dopasowaną do wymagań tej oferty.
+Manualna kalibracja każdego CV jest czasochłonna. [Dopasowanie CV do oferty w Vocare](/resume-creator) robi to automatycznie - wklejasz treść ogłoszenia, a system generuje wersję CV dopasowaną do wymagań tej oferty.
 
 ### 5. Czytelna hierarchia wizualna
 
@@ -168,7 +168,7 @@ Pierwsza wersja od zera: 3-5 godzin. Aktualizacja istniejącego: 1-2 godziny. Do
 Może pomóc z formułowaniem zdań i sugestią struktury - ale konkretne osiągnięcia, liczby i historia zawodowa muszą być Twoje. CV napisane w 100% przez AI jest rozpoznawalne i nieprofesjonalne.
 
 **Jak sprawdzić, czy moje CV spełnia standardy profesjonalnego dokumentu przed wysłaniem?**
-**[Vocare.pl](https://vocare.pl)** analizuje ogólną jakość CV - ocenia kompletność sekcji, konkretność osiągnięć i czytelność dla ATS. Osobna funkcja automatycznie generuje wersję CV dopasowaną do konkretnej oferty po wklejeniu ogłoszenia.
+[Analiza profilu zawodowego w Vocare](/assistant) analizuje ogólną jakość CV - ocenia kompletność sekcji, konkretność osiągnięć i czytelność dla ATS. Osobna funkcja automatycznie generuje wersję CV dopasowaną do konkretnej oferty po wklejeniu ogłoszenia.
 
 ---
 
@@ -176,7 +176,7 @@ Może pomóc z formułowaniem zdań i sugestią struktury - ale konkretne osiąg
 
 Profesjonalne CV w 2026 roku to nie kwestia designu - to kwestia treści. Konkretne osiągnięcia w liczbach, dopasowanie do oferty, czytelna struktura i zero błędów. Możesz to osiągnąć w Google Docs, bez specjalistycznych narzędzi i bez opłat.
 
-Jeśli chcesz sprawdzić jak profesjonalne jest Twoje CV i co konkretnie zmienić przed wysłaniem, **[Vocare.pl](https://vocare.pl)** przeanalizuje je i wskaże konkretne usprawnienia.
+Jeśli chcesz sprawdzić jak profesjonalne jest Twoje CV i co konkretnie zmienić przed wysłaniem, [Kreator CV w Vocare](/resume-creator) przeanalizuje je i wskaże konkretne usprawnienia.
 
 ---
 

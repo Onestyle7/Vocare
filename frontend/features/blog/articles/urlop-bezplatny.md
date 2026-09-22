@@ -63,7 +63,7 @@ Tak, o ile nie narusza to ewentualnego zakazu konkurencji z obecnym pracodawcą 
 Nie, okres urlopu bezpłatnego nie jest okresem składkowym, chyba że pracownik samodzielnie opłaca w tym czasie dobrowolne składki.
 
 **Jak zaplanować powrót do pracy po dłuższym urlopie bezpłatnym?**
-**[Vocare.pl](https://vocare.pl)** pomoże Ci ocenić, jak Twoje kompetencje wypadają po przerwie i jakie kierunki rozwoju warto rozważyć.
+[Analiza rynku pracy w Vocare](/market-analysis) pomoże Ci ocenić, jak Twoje kompetencje wypadają po przerwie i jakie kierunki rozwoju warto rozważyć.
 
 ---
 
@@ -71,7 +71,7 @@ Nie, okres urlopu bezpłatnego nie jest okresem składkowym, chyba że pracownik
 
 Urlop bezpłatny wymaga tylko pisemnego wniosku bez podawania przyczyny, ale wiąże się z realnymi konsekwencjami - zawieszeniem ubezpieczeń społecznych i utratą prawa do bezpłatnych świadczeń zdrowotnych po 30 dniach, jeśli nie zadbasz o alternatywny tytuł ubezpieczenia. Okres urlopu nie wlicza się też do stażu pracy determinującego inne uprawnienia pracownicze.
 
-Planujesz dłuższą przerwę od pracy i zastanawiasz się nad dalszymi krokami zawodowymi? **[Vocare.pl](https://vocare.pl)** pomoże Ci to zaplanować.
+Planujesz dłuższą przerwę od pracy i zastanawiasz się nad dalszymi krokami zawodowymi? [Analiza profilu zawodowego w Vocare](/assistant) pomoże Ci to zaplanować.
 
 ---
 

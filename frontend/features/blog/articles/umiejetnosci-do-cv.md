@@ -144,7 +144,7 @@ To jest sekret, który robi różnicę między CV, które trafia do ATS-kosza, a
 
 **Krok 4:** Umieść te umiejętności wysoko - na początku listy w sekcji umiejętności i wplecione w punkty doświadczenia.
 
-Kroki 1-3 to żmudna praca ręczna. **[Vocare.pl](https://vocare.pl)** robi to automatycznie - wklejasz treść ogłoszenia, a system generuje wersję CV z umiejętnościami dopasowanymi do wymagań tej oferty.
+Kroki 1-3 to żmudna praca ręczna. [Dopasowanie CV do oferty w Vocare](/resume-creator) robi to automatycznie - wklejasz treść ogłoszenia, a system generuje wersję CV z umiejętnościami dopasowanymi do wymagań tej oferty.
 
 ---
 
@@ -187,7 +187,7 @@ Najlepiej obydwa: osobna sekcja dla ATS + wplecione w punkty doświadczenia jako
 W 2026 roku - absolutnie nie. To jak pisać "umiem chodzić" w rubryce sport. Zastąp to konkretnymi narzędziami.
 
 **Jak sprawdzić, czy moje umiejętności są wystarczające dla konkretnej oferty?**
-**[Vocare.pl](https://vocare.pl)** automatycznie dopasowuje CV do konkretnej oferty - wklejasz ogłoszenie, a system generuje wersję CV z umiejętnościami dopasowanymi do wymagań tej roli.
+[Analiza profilu zawodowego w Vocare](/assistant) automatycznie dopasowuje CV do konkretnej oferty - wklejasz ogłoszenie, a system generuje wersję CV z umiejętnościami dopasowanymi do wymagań tej roli.
 
 ---
 
@@ -195,7 +195,7 @@ W 2026 roku - absolutnie nie. To jak pisać "umiem chodzić" w rubryce sport. Za
 
 Sekcja umiejętności w CV jest czytana przez rekruterów w 10-15 sekund. Dlatego musi być krystalicznie jasna: konkretne narzędzia, realne poziomy, brak ogólników. Dopasuj umiejętności do oferty, używaj słów kluczowych z ogłoszenia i potwierdzaj je w sekcji doświadczenia.
 
-Chcesz mieć pewność, że sekcja umiejętności trafia w to czego rekruter szuka? **[Vocare.pl](https://vocare.pl)** automatycznie dopasowuje CV do konkretnej oferty - wklejasz ogłoszenie, system generuje wersję CV gotową do wysłania na to stanowisko.
+Chcesz mieć pewność, że sekcja umiejętności trafia w to czego rekruter szuka? [Kreator CV w Vocare](/resume-creator) automatycznie dopasowuje CV do konkretnej oferty - wklejasz ogłoszenie, system generuje wersję CV gotową do wysłania na to stanowisko.
 
 ---
 

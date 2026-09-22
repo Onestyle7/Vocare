@@ -67,7 +67,7 @@ Zasady są takie same jak w innych branżach w Polsce - zdjęcie jest opcjonalne
 Certyfikaty resuscytacji zwykle wymagają odnowienia co 1-2 lata - warto podawać w CV datę uzyskania lub odnowienia, żeby rekruter widział, że uprawnienia są aktualne.
 
 **Jak sprawdzić, jakie dodatkowe kompetencje warto rozwinąć pod docelową specjalizację?**
-**[Vocare.pl](https://vocare.pl)** analizuje Twój profil zawodowy i porównuje go z wymaganiami konkretnych ofert w sektorze medycznym.
+[Dopasowanie CV do oferty w Vocare](/resume-creator) analizuje Twój profil zawodowy i porównuje go z wymaganiami konkretnych ofert w sektorze medycznym.
 
 ---
 
@@ -75,7 +75,7 @@ Certyfikaty resuscytacji zwykle wymagają odnowienia co 1-2 lata - warto podawa�
 
 CV w zawodach medycznych różni się od CV w innych branżach koniecznością jasnego pokazania formalnych uprawnień - numeru PWZ, przynależności do izby i aktualnych certyfikatów. Konkretny opis doświadczenia klinicznego, z nazwą oddziału i zakresem obowiązków, przekonuje rekrutera skuteczniej niż ogólne sformułowania.
 
-Zastanawiasz się, jakie kompetencje warto rozwinąć w swojej ścieżce medycznej? **[Vocare.pl](https://vocare.pl)** pomoże Ci to sprawdzić.
+Zastanawiasz się, jakie kompetencje warto rozwinąć w swojej ścieżce medycznej? [Analiza profilu zawodowego w Vocare](/assistant) pomoże Ci to sprawdzić.
 
 ---
 

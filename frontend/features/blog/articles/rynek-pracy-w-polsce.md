@@ -81,7 +81,7 @@ To nie jest optymistyczne uproszczenie - to wzorzec widoczny w każdym z artyku�
 
 **Nie wiesz jeszcze, w którą stronę iść:** zacznij od diagnozy własnych kompetencji i wartości, nie od rankingu zarobków - metodologia opisana w [jaki zawód wybrać](/blog/kariera/jaki-zawod-wybrac) i [ścieżce kariery](/blog/kariera/sciezka-kariery) pomoże zawęzić wybór, zanim porównasz konkretne branże.
 
-Nie chcesz robić tej analizy ręcznie dla każdej branży z osobna? **[Vocare.pl](https://vocare.pl)** analizuje Twój profil kompetencyjny i porównuje go jednocześnie z zapotrzebowaniem we wszystkich 21 branżach, wskazując te, w których masz dziś realnie największe szanse.
+Nie chcesz robić tej analizy ręcznie dla każdej branży z osobna? [Rekomendacje ścieżki kariery od Vocare](/roadmap) analizuje Twój profil kompetencyjny i porównuje go jednocześnie z zapotrzebowaniem we wszystkich 21 branżach, wskazując te, w których masz dziś realnie największe szanse.
 
 ---
 
@@ -123,7 +123,7 @@ Budownictwo, energetyka odnawialna i opieka medyczna na poziomie pomocniczym maj
 Nie - branża z wysokimi medianami, ale też wysoką konkurencją i długą ścieżką wejścia (np. medycyna specjalistyczna) nie zawsze jest lepszym wyborem niż branża ze skromniejszymi, ale stabilnymi zarobkami i realnym, natychmiastowym zapotrzebowaniem.
 
 **Jak sprawdzić, która z 21 branż najlepiej pasuje do moich kompetencji?**
-**[Vocare.pl](https://vocare.pl)** analizuje Twój profil zawodowy i porównuje go jednocześnie z zapotrzebowaniem rynkowym we wszystkich branżach, zamiast kazać Ci przeglądać każdą z osobna.
+[Analiza profilu zawodowego w Vocare](/assistant) analizuje Twój profil zawodowy i porównuje go jednocześnie z zapotrzebowaniem rynkowym we wszystkich branżach, zamiast kazać Ci przeglądać każdą z osobna.
 
 ---
 
@@ -131,7 +131,7 @@ Nie - branża z wysokimi medianami, ale też wysoką konkurencją i długą ści
 
 Rynek pracy w Polsce w 2026 roku to dwadzieścia jeden branż poruszających się w różnym tempie - żadna uniwersalna rada "idź w tę branżę" nie sprawdzi się dla każdego. Wysokie zarobki (medycyna, IT, prawo) i wysoki deficyt kadrowy (budownictwo, energetyka, gastronomia, opieka medyczna) to dwa różne kryteria wyboru, które warto rozważać osobno, w kontekście Twoich własnych kompetencji i tolerancji na długość ścieżki wejścia.
 
-Chcesz zobaczyć, jak Twój profil wypada na tle wszystkich 21 branż naraz? **[Vocare.pl](https://vocare.pl)** przeprowadzi bezpłatną analizę i wskaże konkretne kierunki.
+Chcesz zobaczyć, jak Twój profil wypada na tle wszystkich 21 branż naraz? [Analiza rynku pracy w Vocare](/market-analysis) przeprowadzi bezpłatną analizę i wskaże konkretne kierunki.
 
 ---
 

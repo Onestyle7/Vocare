@@ -159,7 +159,7 @@ Porównując ranking powyżej, widać wspólny mianownik: każdy z TOP 15 zawod�
 
 **Branża i wielkość firmy:** Startup po serii A płaci zwykle mniej niż corporate, ale może oferować equity. Korporacja płaci stabilnie ale ogranicza wzrost.
 
-Nie wiesz, w której specjalizacji masz największy potencjał? **[Vocare.pl](https://vocare.pl)** analizuje Twój profil zawodowy i wskazuje konkretne ścieżki kariery - z uwzględnieniem aktualnych widełek wynagrodzenia dla Twoich kompetencji.
+Nie wiesz, w której specjalizacji masz największy potencjał? [Rekomendacje ścieżki kariery od Vocare](/roadmap) analizuje Twój profil zawodowy i wskazuje konkretne ścieżki kariery - z uwzględnieniem aktualnych widełek wynagrodzenia dla Twoich kompetencji.
 
 ---
 
@@ -178,7 +178,7 @@ Nie dla większości branż - ale luka się zmniejsza, szczególnie w IT i finan
 NoFluffJobs (IT), Pracuj.pl (wszystkie branże), GUS dane płacowe, Glassdoor.
 
 **Jak dowiedzieć się, na jakie zarobki mogę realnie liczyć przy moim profilu?**
-**[Vocare.pl](https://vocare.pl)** konfrontuje Twoje kompetencje z aktualnymi danymi rynkowymi i pokazuje realistyczne widełki dla stanowisk dopasowanych do Twojego doświadczenia - nie tylko mediany dla całej branży.
+[Analiza profilu zawodowego w Vocare](/assistant) konfrontuje Twoje kompetencje z aktualnymi danymi rynkowymi i pokazuje realistyczne widełki dla stanowisk dopasowanych do Twojego doświadczenia - nie tylko mediany dla całej branży.
 
 ---
 
@@ -186,7 +186,7 @@ NoFluffJobs (IT), Pracuj.pl (wszystkie branże), GUS dane płacowe, Glassdoor.
 
 Najlepiej płatne zawody w Polsce 2026 to medycyna specjalistyczna, IT (ML, cloud, senior engineering, product), prawo korporacyjne i finanse. Kluczem do górnych widełek jest specjalizacja, certyfikaty i dobry angielski.
 
-Pamiętaj: zarobki to jeden czynnik wyboru kariery. Dopasowanie do własnych kompetencji i wartości jest równie ważne - praca, którą lubisz i w której jesteś dobry, zazwyczaj też gorzej nie płaci. Chcesz sprawdzić, jaki zawód najlepiej pasuje do Twojego profilu? **[Vocare.pl](https://vocare.pl)** pomoże Ci to odkryć.
+Pamiętaj: zarobki to jeden czynnik wyboru kariery. Dopasowanie do własnych kompetencji i wartości jest równie ważne - praca, którą lubisz i w której jesteś dobry, zazwyczaj też gorzej nie płaci. Chcesz sprawdzić, jaki zawód najlepiej pasuje do Twojego profilu? [Analiza rynku pracy w Vocare](/market-analysis) pomoże Ci to odkryć.
 
 ---
 

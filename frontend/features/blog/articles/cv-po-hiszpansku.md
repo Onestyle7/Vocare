@@ -61,7 +61,7 @@ Przy słabszej znajomości języka warto skorzystać z pomocy native speakera lu
 Podobna długość - jedna, maksymalnie dwie strony, z naciskiem na zwięzłość i konkret.
 
 **Jak sprawdzić, jak moje kompetencje wypadają na tle wymagań hiszpańskiego rynku pracy?**
-**[Vocare.pl](https://vocare.pl)** pomoże Ci ocenić Twój profil zawodowy względem konkretnych ofert pracy.
+[Analiza profilu zawodowego w Vocare](/assistant) pomoże Ci ocenić Twój profil zawodowy względem konkretnych ofert pracy.
 
 ---
 
@@ -69,7 +69,7 @@ Podobna długość - jedna, maksymalnie dwie strony, z naciskiem na zwięzłoś�
 
 CV po hiszpańsku różni się od polskiego przede wszystkim kolejnością sekcji - wykształcenie często trafia wyżej w dokumencie niż w polskiej konwencji. Unikanie dosłownego tłumaczenia, dbałość o poprawność językową i dopasowanie do konkretnej oferty robią największą różnicę w odbiorze przez hiszpańskiego rekrutera.
 
-Planujesz aplikować do pracy w Hiszpanii i chcesz sprawdzić swoje kompetencje? **[Vocare.pl](https://vocare.pl)** pomoże Ci to ocenić.
+Planujesz aplikować do pracy w Hiszpanii i chcesz sprawdzić swoje kompetencje? [Kreator CV w Vocare](/resume-creator) pomoże Ci to ocenić.
 
 ---
 

@@ -70,7 +70,7 @@ Zwykle nie - kadra kierownicza zarządzająca w imieniu pracodawcy jest wyłącz
 Wynagrodzenie za nadgodziny zwykle nie wchodzi do podstawy wymiaru wynagrodzenia urlopowego, chyba że ma charakter stały i regularny.
 
 **Jak sprawdzić, czy Twoje wynagrodzenie odpowiada realnemu nakładowi pracy?**
-**[Vocare.pl](https://vocare.pl)** pomoże Ci ocenić Twoją pozycję na rynku pracy i porównać ją z aktualnymi widełkami w Twojej branży.
+[Analiza profilu zawodowego w Vocare](/assistant) pomoże Ci ocenić Twoją pozycję na rynku pracy i porównać ją z aktualnymi widełkami w Twojej branży.
 
 ---
 
@@ -78,7 +78,7 @@ Wynagrodzenie za nadgodziny zwykle nie wchodzi do podstawy wymiaru wynagrodzenia
 
 Dodatek za nadgodziny wynosi 50% lub 100% w zależności od tego, kiedy dokładnie wypadła dana nadgodzina - w nocy, w niedziele i święta niebędące dniem pracy przysługuje wyższa stawka. Roczny limit 150 godzin można podnieść w regulaminie, ale maksymalnie do 416 godzin, a łączny czas pracy nie może przeciętnie przekraczać 48 godzin tygodniowo.
 
-Zastanawiasz się, czy Twoje wynagrodzenie odpowiada realnemu obciążeniu pracą? **[Vocare.pl](https://vocare.pl)** pomoże Ci to ocenić.
+Zastanawiasz się, czy Twoje wynagrodzenie odpowiada realnemu obciążeniu pracą? [Dopasowanie CV do oferty w Vocare](/resume-creator) pomoże Ci to ocenić.
 
 ---
 

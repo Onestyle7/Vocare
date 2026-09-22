@@ -55,7 +55,7 @@ Doradztwo zawodowe NIE jest:
 - **Ochotnicze Hufce Pracy (OHP)** - doradztwo dla młodych do 25. roku życia
 - **Centra Informacji i Planowania Kariery Zawodowej WUP** - bezpłatne dla mieszkańców województwa
 - **Prywatni doradcy** - płatna sesja (koszt: 150-400 zł/h), bardziej elastyczne godziny, często specjalizacja branżowa
-- **Platformy AI** - **[Vocare.pl](https://vocare.pl)** przeprowadza pełną diagnostykę kariery: analizuje Twoje kompetencje i wartości, rekomenduje konkretne ścieżki zawodowe z danymi rynkowymi (wynagrodzenia, wymagane umiejętności) i generuje roadmapę rozwoju - dostępne 24/7, bezpłatnie
+- **Platformy AI** - [Analiza profilu zawodowego w Vocare](/assistant) przeprowadza pełną diagnostykę kariery: analizuje Twoje kompetencje i wartości, rekomenduje konkretne ścieżki zawodowe z danymi rynkowymi (wynagrodzenia, wymagane umiejętności) i generuje roadmapę rozwoju - dostępne 24/7, bezpłatnie
 
 ---
 
@@ -116,7 +116,7 @@ Kompleksowy proces doradztwa zawodowego zazwyczaj obejmuje 3-6 sesji.
 
 **Alternatywa cyfrowa:**
 
-**[Vocare.pl](https://vocare.pl)** oferuje funkcje, które normalnie wymagają kilku sesji z doradcą - bezpłatnie i bez umawiania się:
+[Roadmapa kariery w Vocare](/roadmap) oferuje funkcje, które normalnie wymagają kilku sesji z doradcą - bezpłatnie i bez umawiania się:
 - Analiza kompetencji i wartości zawodowych
 - Rekomendacje ścieżek kariery z danymi rynkowymi (wynagrodzenia, deficyty kadrowe, wymagane umiejętności)
 - Roadmapa kompetencyjna do wybranej ścieżki - konkretne kroki, kursy, certyfikaty
@@ -178,7 +178,7 @@ Testy takie jak RIASEC, MBTI czy StrengthsFinder mają podstawy naukowe i są sz
 Jakość jest różna w zależności od placówki i doradcy. Ogólnie - dobry punkt startowy, szczególnie przy ograniczonym budżecie.
 
 **Czy można skorzystać z doradztwa zawodowego online?**
-Tak - coraz więcej doradców pracuje zdalnie. Platformy AI takie jak **[Vocare.pl](https://vocare.pl)** oferują pierwszą diagnozę kompetencji i ścieżek kariery dostępną natychmiast i bezpłatnie - bez konieczności umawiania sesji.
+Tak - coraz więcej doradców pracuje zdalnie. Platformy AI takie jak [Rekomendacje ścieżki kariery od Vocare](/roadmap) oferują pierwszą diagnozę kompetencji i ścieżek kariery dostępną natychmiast i bezpłatnie - bez konieczności umawiania sesji.
 
 ---
 
@@ -186,7 +186,7 @@ Tak - coraz więcej doradców pracuje zdalnie. Platformy AI takie jak **[Vocare.
 
 Doradztwo zawodowe ma największy sens gdy stoisz na rozdrożu: nie wiesz w którą stronę iść, myślisz o zmianie branży lub czujesz się wypalony zawodowo. Publiczne doradztwo w PUP jest bezpłatne i dostępne dla każdego. Prywatny doradca lub coach to większa elastyczność i specjalizacja.
 
-Jeśli chcesz zacząć od własnej diagnozy - przed sesją z doradcą lub zamiast niej - **[Vocare.pl](https://vocare.pl)** przeprowadza pełną analizę kariery: bada Twoje kompetencje i wartości, rekomenduje dopasowane ścieżki zawodowe z danymi rynkowymi i generuje konkretną roadmapę co robić dalej. Bezpłatnie, bez umawiania się, dostępne od razu.
+Jeśli chcesz zacząć od własnej diagnozy - przed sesją z doradcą lub zamiast niej - [Analiza profilu zawodowego w Vocare](/assistant) przeprowadza pełną analizę kariery: bada Twoje kompetencje i wartości, rekomenduje dopasowane ścieżki zawodowe z danymi rynkowymi i generuje konkretną roadmapę co robić dalej. Bezpłatnie, bez umawiania się, dostępne od razu.
 
 ---
 

@@ -77,7 +77,7 @@ Podstawy automatyki i mechatroniki, obsługa maszyn CNC oraz certyfikaty jakośc
 Zdecydowanie tak - różnica w wynagrodzeniu między operatorem prostej linii a automatykiem czy specjalistą utrzymania ruchu bywa bardzo duża, a ścieżka przekwalifikowania (kursy, szkolenia zakładowe) jest stosunkowo krótka.
 
 **Jak sprawdzić, która ścieżka w produkcji pasuje do moich kompetencji?**
-**[Vocare.pl](https://vocare.pl)** analizuje Twój profil i porównuje go z aktualnym zapotrzebowaniem rynkowym, wskazując konkretne kierunki rozwoju zawodowego.
+[Rekomendacje ścieżki kariery od Vocare](/roadmap) analizuje Twój profil i porównuje go z aktualnym zapotrzebowaniem rynkowym, wskazując konkretne kierunki rozwoju zawodowego.
 
 ---
 
@@ -85,7 +85,7 @@ Zdecydowanie tak - różnica w wynagrodzeniu między operatorem prostej linii a 
 
 Automatyzacja nie likwiduje pracy w produkcji - przesuwa jej wartość w stronę technicznego nadzoru, programowania i utrzymania ruchu. Automatycy, mechatronicy i inżynierowie jakości należą dziś do najbardziej poszukiwanych i najlepiej wynagradzanych specjalistów w przemyśle.
 
-Zastanawiasz się, jak rozwinąć karierę w produkcji w kierunku bardziej technicznym? **[Vocare.pl](https://vocare.pl)** przeprowadzi bezpłatną analizę kompetencji i wskaże konkretne kierunki rozwoju.
+Zastanawiasz się, jak rozwinąć karierę w produkcji w kierunku bardziej technicznym? [Analiza profilu zawodowego w Vocare](/assistant) przeprowadzi bezpłatną analizę kompetencji i wskaże konkretne kierunki rozwoju.
 
 ---
 

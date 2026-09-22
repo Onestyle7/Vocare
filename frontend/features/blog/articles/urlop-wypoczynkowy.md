@@ -81,7 +81,7 @@ Nowy pracodawca ma obowiązek uwzględnić urlop już wykorzystany u poprzednieg
 
 Wymiar urlopu wypoczynkowego (20 lub 26 dni) zależy od łącznego stażu pracy, do którego wlicza się też ukończona edukacja. W pierwszym roku pracy urlop nalicza się proporcjonalnie, a niewykorzystane dni nie przepadają - muszą zostać udzielone do 30 września kolejnego roku.
 
-Planujesz zmianę pracy i zastanawiasz się, jak to wpłynie na Twoje uprawnienia urlopowe? **[Vocare.pl](https://vocare.pl)** pomoże Ci ocenić nową ofertę na tle Twojej obecnej sytuacji zawodowej.
+Planujesz zmianę pracy i zastanawiasz się, jak to wpłynie na Twoje uprawnienia urlopowe? [Analiza profilu zawodowego w Vocare](/assistant) pomoże Ci ocenić nową ofertę na tle Twojej obecnej sytuacji zawodowej.
 
 ---
 

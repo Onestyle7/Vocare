@@ -78,7 +78,7 @@ Skup się na merytorycznej odpowiedzi dotyczącej Twoich kompetencji i adaptacyj
 Tak - doradca pomoże zidentyfikować kompetencje transferowalne i zaplanować realistyczną ścieżkę, co jest szczególnie wartościowe przy większej zmianie zawodowej.
 
 **Jak sprawdzić, jakie branże i role najlepiej wykorzystają moje wieloletnie doświadczenie?**
-**[Vocare.pl](https://vocare.pl)** analizuje Twój profil kompetencyjny i wskazuje konkretne kierunki, w których Twoje doświadczenie jest dziś najbardziej cenione.
+[Analiza profilu zawodowego w Vocare](/assistant) analizuje Twój profil kompetencyjny i wskazuje konkretne kierunki, w których Twoje doświadczenie jest dziś najbardziej cenione.
 
 ---
 
@@ -86,7 +86,7 @@ Tak - doradca pomoże zidentyfikować kompetencje transferowalne i zaplanować r
 
 Kariera po 40 i 50 roku życia wymaga świadomej strategii komunikowania wartości doświadczenia, nie jego ukrywania. Demografia i deficyty kadrowe działają dziś na korzyść dojrzałych pracowników - kluczem jest zaktualizowane CV, eksponowanie aktualności kompetencji i aktywne adresowanie potencjalnych obaw rekrutera.
 
-Zastanawiasz się, jak najlepiej wykorzystać swoje wieloletnie doświadczenie na dzisiejszym rynku pracy? **[Vocare.pl](https://vocare.pl)** przeprowadzi bezpłatną analizę Twoich kompetencji.
+Zastanawiasz się, jak najlepiej wykorzystać swoje wieloletnie doświadczenie na dzisiejszym rynku pracy? [Roadmapa kariery w Vocare](/roadmap) przeprowadzi bezpłatną analizę Twoich kompetencji.
 
 ---
 

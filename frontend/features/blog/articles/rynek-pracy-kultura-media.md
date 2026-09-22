@@ -67,7 +67,7 @@ Zmienia charakter pracy, przesuwając wartość w stronę nadzoru, strategii i o
 Zależy od specjalizacji i formy zatrudnienia - etat w agencji lub korporacji daje większą stabilność niż czysty freelancing, ale często niższe stawki godzinowe.
 
 **Jak sprawdzić, która specjalizacja kreatywna najlepiej pasuje do moich kompetencji?**
-**[Vocare.pl](https://vocare.pl)** analizuje Twój profil i porównuje go z aktualnym zapotrzebowaniem rynkowym.
+[Analiza profilu zawodowego w Vocare](/assistant) analizuje Twój profil i porównuje go z aktualnym zapotrzebowaniem rynkowym.
 
 ---
 
@@ -75,7 +75,7 @@ Zależy od specjalizacji i formy zatrudnienia - etat w agencji lub korporacji da
 
 Rynek pracy w kulturze i mediach w 2026 roku to sektor generujący ponad 45 mld zł przychodu rocznie, w którym rozwój AI przesuwa wartość w stronę ról nadzorczych i strategicznych, zamiast eliminować zapotrzebowanie na specjalistów. Wysoka fragmentacja form zatrudnienia (nawet 40% freelance/B2B) czyni tę branżę jedną z najbardziej elastycznych, ale i najmniej przewidywalnych finansowo.
 
-Zastanawiasz się, która specjalizacja kreatywna pasuje do Twoich kompetencji? **[Vocare.pl](https://vocare.pl)** pomoże Ci to sprawdzić.
+Zastanawiasz się, która specjalizacja kreatywna pasuje do Twoich kompetencji? [Analiza rynku pracy w Vocare](/market-analysis) pomoże Ci to sprawdzić.
 
 ---
 

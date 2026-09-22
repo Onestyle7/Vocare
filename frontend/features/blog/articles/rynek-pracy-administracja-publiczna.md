@@ -82,7 +82,7 @@ Tak, wraz ze stażem i awansem na wyższe stanowiska - tempo wzrostu bywa jednak
 Zależy od priorytetów. Jeśli cenisz stabilność i przewidywalność bardziej niż maksymalizację zarobków, to uzasadniony wybór.
 
 **Jak sprawdzić, czy moje kompetencje pasują do pracy w administracji publicznej?**
-**[Vocare.pl](https://vocare.pl)** analizuje Twój profil i wskazuje, które ścieżki kariery najlepiej odpowiadają Twoim priorytetom.
+[Analiza profilu zawodowego w Vocare](/assistant) analizuje Twój profil i wskazuje, które ścieżki kariery najlepiej odpowiadają Twoim priorytetom.
 
 ---
 
@@ -90,7 +90,7 @@ Zależy od priorytetów. Jeśli cenisz stabilność i przewidywalność bardziej
 
 Administracja publiczna oferuje stabilność zatrudnienia i przewidywalny czas pracy w zamian za niższe zarobki na start. Cyfryzacja usług publicznych tworzy nowe, lepiej płatne stanowiska dla specjalistów IT i analityków danych wewnątrz sektora.
 
-Zastanawiasz się, czy administracja publiczna pasuje do Twoich priorytetów zawodowych? **[Vocare.pl](https://vocare.pl)** pomoże Ci to ocenić.
+Zastanawiasz się, czy administracja publiczna pasuje do Twoich priorytetów zawodowych? [Analiza rynku pracy w Vocare](/market-analysis) pomoże Ci to ocenić.
 
 ---
 

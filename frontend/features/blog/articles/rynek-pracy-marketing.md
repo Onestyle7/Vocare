@@ -77,7 +77,7 @@ Performance marketing i marketing automation - ze względu na bezpośrednie prze
 Tak, szczególnie certyfikaty platform (Google Ads, Meta Blueprint, HubSpot Academy) - są darmowe lub tanie i realnie podnoszą wiarygodność w procesie rekrutacyjnym.
 
 **Jak sprawdzić, która specjalizacja marketingowa pasuje do moich kompetencji?**
-**[Vocare.pl](https://vocare.pl)** analizuje Twój profil i porównuje go z aktualnym zapotrzebowaniem na rynku marketingowym, wskazując konkretne kierunki rozwoju.
+[Analiza rynku pracy w Vocare](/market-analysis) analizuje Twój profil i porównuje go z aktualnym zapotrzebowaniem na rynku marketingowym, wskazując konkretne kierunki rozwoju.
 
 ---
 
@@ -85,7 +85,7 @@ Tak, szczególnie certyfikaty platform (Google Ads, Meta Blueprint, HubSpot Acad
 
 Rynek pracy w marketingu w 2026 roku nagradza specjalizację połączoną z umiejętnością pracy z danymi i narzędziami AI. Performance marketing i automatyzacja pozostają najlepiej płatnymi ścieżkami, a rola contentu ewoluuje w stronę strategii widocznej także w wyszukiwarkach AI.
 
-Zastanawiasz się, która ścieżka marketingowa najlepiej pasuje do Twojego profilu? **[Vocare.pl](https://vocare.pl)** przeprowadzi bezpłatną analizę kompetencji i wskaże konkretne kierunki rozwoju.
+Zastanawiasz się, która ścieżka marketingowa najlepiej pasuje do Twojego profilu? [Rekomendacje ścieżki kariery od Vocare](/roadmap) przeprowadzi bezpłatną analizę kompetencji i wskaże konkretne kierunki rozwoju.
 
 ---
 

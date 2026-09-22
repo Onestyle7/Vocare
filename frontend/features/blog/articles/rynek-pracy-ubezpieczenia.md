@@ -60,7 +60,7 @@ Nie zawsze - wielu agentów pracuje na podstawie umów agencyjnych lub prowadzi 
 Zwykle kilka lat regularnej pracy - dochód rośnie stopniowo wraz z liczbą aktywnych polis i powtarzających się odnowień.
 
 **Jak sprawdzić, czy praca w sprzedaży ubezpieczeń pasuje do moich kompetencji?**
-**[Vocare.pl](https://vocare.pl)** analizuje Twój profil zawodowy i porównuje go z wymaganiami ról sprzedażowych i doradczych.
+[Analiza profilu zawodowego w Vocare](/assistant) analizuje Twój profil zawodowy i porównuje go z wymaganiami ról sprzedażowych i doradczych.
 
 ---
 
@@ -68,7 +68,7 @@ Zwykle kilka lat regularnej pracy - dochód rośnie stopniowo wraz z liczbą akt
 
 Rynek pracy w ubezpieczeniach opiera się na modelu prowizyjnym, w którym portfel klientów i regularne odnowienia polis są prawdziwym kapitałem długoterminowym - nie tylko nowa sprzedaż. Specjalizacja w ubezpieczeniach życiowych, zdrowotnych lub korporacyjnych daje wyższe prowizje niż standardowe polisy komunikacyjne, ale wymaga czasu na zbudowanie odpowiedniej pozycji.
 
-Zastanawiasz się, czy praca w sprzedaży lub doradztwie ubezpieczeniowym pasuje do Twoich kompetencji? **[Vocare.pl](https://vocare.pl)** pomoże Ci to sprawdzić.
+Zastanawiasz się, czy praca w sprzedaży lub doradztwie ubezpieczeniowym pasuje do Twoich kompetencji? [Analiza rynku pracy w Vocare](/market-analysis) pomoże Ci to sprawdzić.
 
 ---
 

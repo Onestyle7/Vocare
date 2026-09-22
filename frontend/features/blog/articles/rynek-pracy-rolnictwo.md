@@ -59,7 +59,7 @@ Częściowo tak - intensywność prac wzrasta w okresie siewów i żniw, ale pro
 Tak, dane pokazują wyraźnie wyższe stawki dla operatorów z tymi kompetencjami w porównaniu do obsługi wyłącznie podstawowego sprzętu.
 
 **Jak sprawdzić, czy praca w nowoczesnym rolnictwie pasuje do moich kompetencji?**
-**[Vocare.pl](https://vocare.pl)** analizuje Twój profil i porównuje go z aktualnym zapotrzebowaniem rynkowym.
+[Rekomendacje ścieżki kariery od Vocare](/roadmap) analizuje Twój profil i porównuje go z aktualnym zapotrzebowaniem rynkowym.
 
 ---
 
@@ -67,7 +67,7 @@ Tak, dane pokazują wyraźnie wyższe stawki dla operatorów z tymi kompetencjam
 
 Rynek pracy w rolnictwie przechodzi zmianę strukturalną - ogólne zatrudnienie spada wraz z automatyzacją prostych czynności, ale zarobki operatorów maszyn z kompetencjami rolnictwa precyzyjnego rosną wyraźnie szybciej niż w tradycyjnych rolach fizycznych. Znajomość systemów GPS i nawigacji satelitarnej to dziś jeden z najbardziej opłacalnych kierunków rozwoju w tej branży.
 
-Zastanawiasz się, która ścieżka w rolnictwie pasuje do Twoich kompetencji? **[Vocare.pl](https://vocare.pl)** pomoże Ci to sprawdzić.
+Zastanawiasz się, która ścieżka w rolnictwie pasuje do Twoich kompetencji? [Analiza profilu zawodowego w Vocare](/assistant) pomoże Ci to sprawdzić.
 
 ---
 

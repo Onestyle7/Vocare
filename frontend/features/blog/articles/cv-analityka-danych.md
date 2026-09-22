@@ -60,7 +60,7 @@ Tak, jeśli masz tam projekty związane z analizą danych - kod SQL, notebooki P
 Jedna strona dla osób na starcie kariery, maksymalnie dwie przy dłuższym, zróżnicowanym doświadczeniu.
 
 **Jak sprawdzić, jakie kompetencje analityczne warto rozwinąć pod docelową rolę?**
-**[Vocare.pl](https://vocare.pl)** analizuje Twój profil i porównuje go z wymaganiami konkretnych ofert w analizie danych.
+[Kreator CV w Vocare](/resume-creator) analizuje Twój profil i porównuje go z wymaganiami konkretnych ofert w analizie danych.
 
 ---
 
@@ -68,7 +68,7 @@ Jedna strona dla osób na starcie kariery, maksymalnie dwie przy dłuższym, zr�
 
 CV analityka danych przekonuje konkretnym projektem z mierzalnym wpływem biznesowym, nie listą narzędzi bez kontekstu. Jasne rozróżnienie roli analitycznej od inżynierskiej oraz portfolio z przykładowymi analizami dodatkowo wzmacniają aplikację na rynku pełnym konkurencyjnych ofert.
 
-Zastanawiasz się, jakie kompetencje analityczne warto u siebie rozwinąć? **[Vocare.pl](https://vocare.pl)** pomoże Ci to sprawdzić.
+Zastanawiasz się, jakie kompetencje analityczne warto u siebie rozwinąć? [Dopasowanie CV do oferty w Vocare](/resume-creator) pomoże Ci to sprawdzić.
 
 ---
 

@@ -62,7 +62,7 @@ Wprost i bez obaw - podaj aktualny rok aplikacji i planowany termin egzaminu, to
 Tak, szczególnie przy prawie gospodarczym i międzynarodowym - warto podać konkretny poziom i kontekst używania (np. "prowadzenie korespondencji prawniczej w języku angielskim").
 
 **Jak sprawdzić, jaka specjalizacja prawnicza najlepiej pasuje do moich kompetencji?**
-**[Vocare.pl](https://vocare.pl)** analizuje Twój profil i porównuje go z wymaganiami konkretnych ról w kancelariach i działach prawnych.
+[Dopasowanie CV do oferty w Vocare](/resume-creator) analizuje Twój profil i porównuje go z wymaganiami konkretnych ról w kancelariach i działach prawnych.
 
 ---
 
@@ -70,7 +70,7 @@ Tak, szczególnie przy prawie gospodarczym i międzynarodowym - warto podać kon
 
 CV prawnika wyróżnia się jasnym wskazaniem etapu uprawnień zawodowych i konkretnej specjalizacji, a nie ogólną listą gałęzi prawa. Opisanie realnych spraw i projektów, z konkretną rolą i zakresem odpowiedzialności, przekonuje rekrutera skuteczniej niż standardowy, powtarzalny opis "praktyka w kancelarii".
 
-Zastanawiasz się, jaka specjalizacja prawnicza pasuje do Twoich kompetencji? **[Vocare.pl](https://vocare.pl)** pomoże Ci to sprawdzić.
+Zastanawiasz się, jaka specjalizacja prawnicza pasuje do Twoich kompetencji? [Analiza profilu zawodowego w Vocare](/assistant) pomoże Ci to sprawdzić.
 
 ---
 

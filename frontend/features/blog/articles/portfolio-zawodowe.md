@@ -82,7 +82,7 @@ Zależy od branży i liczby projektów, ale zwykle kilka tygodni przy regularnej
 Nie - projekty własne, kursowe czy pro bono również się liczą, szczególnie na wczesnym etapie kariery, o ile są dobrze wykonane i opisane.
 
 **Jak sprawdzić, które projekty warto uwzględnić w portfolio pod konkretną ofertę?**
-**[Vocare.pl](https://vocare.pl)** analizuje wymagania oferty i pomaga zidentyfikować, które Twoje doświadczenia i projekty warto najbardziej wyeksponować.
+[Dopasowanie CV do oferty w Vocare](/resume-creator) analizuje wymagania oferty i pomaga zidentyfikować, które Twoje doświadczenia i projekty warto najbardziej wyeksponować.
 
 ---
 
@@ -90,7 +90,7 @@ Nie - projekty własne, kursowe czy pro bono również się liczą, szczególnie
 
 Portfolio zawodowe pokazuje w praktyce to, co CV opisuje w punktach - i w wielu branżach jest dziś standardem, nie dodatkiem. Kluczem jest wybór 3-6 najlepszych, relevantnych projektów, opisanych w strukturze problem-działanie-efekt, i umieszczenie ich na platformie łatwo dostępnej dla rekrutera.
 
-Zastanawiasz się, które projekty najlepiej pokażą Twoje kompetencje na docelowe stanowisko? **[Vocare.pl](https://vocare.pl)** pomoże Ci to zidentyfikować.
+Zastanawiasz się, które projekty najlepiej pokażą Twoje kompetencje na docelowe stanowisko? [Analiza profilu zawodowego w Vocare](/assistant) pomoże Ci to zidentyfikować.
 
 ---
 

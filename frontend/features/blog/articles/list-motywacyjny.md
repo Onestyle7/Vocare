@@ -84,7 +84,7 @@ Zamiast tego: pokaż, że odrobiłeś lekcję. Wspomnij konkretny produkt, proje
 
 Krótkie, pewne siebie. Wyraź gotowość do rozmowy, podaj kiedy jesteś dostępny. Nie przepraszaj za "śmiałość".
 
-Zanim zaczniesz pisać akapit 2 ("dlaczego Ty"), upewnij się że Twoje CV jest już dopasowane do tej oferty. **[Vocare.pl](https://vocare.pl)** robi to automatycznie - wklejasz ogłoszenie, system generuje wersję CV pod wymagania tej roli. CV dopasowane do oferty pokazuje Ci, które Twoje osiągnięcia są dla niej najbardziej relevantne.
+Zanim zaczniesz pisać akapit 2 ("dlaczego Ty"), upewnij się że Twoje CV jest już dopasowane do tej oferty. [Kreator CV w Vocare](/resume-creator) robi to automatycznie - wklejasz ogłoszenie, system generuje wersję CV pod wymagania tej roli. CV dopasowane do oferty pokazuje Ci, które Twoje osiągnięcia są dla niej najbardziej relevantne.
 
 ---
 
@@ -135,7 +135,7 @@ Nie w 2026 roku. Elektroniczny podpis lub samo imię i nazwisko w stopce wystarc
 Możesz - ale wtedy MUSI być naprawdę dobry. Słaby list tylko osłabi Twoją kandydaturę.
 
 **Czy jest narzędzie, które pomoże mi przygotować się do pisania listu pod konkretną ofertę?**
-Tak - zanim napiszesz list, dopasuj CV do tej oferty na **[Vocare.pl](https://vocare.pl)**. System automatycznie generuje wersję CV pod wymagania ogłoszenia - a to daje Ci gotowy materiał do akapitu "dlaczego Ty": wiesz które kompetencje i osiągnięcia pasują do tej roli.
+Tak - zanim napiszesz list, dopasuj CV do tej oferty na [Dopasowanie CV do oferty w Vocare](/resume-creator). System automatycznie generuje wersję CV pod wymagania ogłoszenia - a to daje Ci gotowy materiał do akapitu "dlaczego Ty": wiesz które kompetencje i osiągnięcia pasują do tej roli.
 
 ---
 
@@ -145,7 +145,7 @@ List motywacyjny nie umarł - ale jego stara forma tak. W 2026 roku wygrywają l
 
 Zacznij od CV, a list motywacyjny traktuj jako uzupełnienie - miejsce gdzie możesz powiedzieć to, czego liczby i punkty w CV nie oddają: dlaczego właśnie ta firma i właśnie to stanowisko.
 
-Nim zaczniesz pisać - upewnij się, że Twoje CV jest dopasowane do tej oferty. **[Vocare.pl](https://vocare.pl)** robi to automatycznie: wklejasz ogłoszenie, system generuje CV pod wymagania tej roli. Mając dopasowane CV, wiesz co w liście podkreślić.
+Nim zaczniesz pisać - upewnij się, że Twoje CV jest dopasowane do tej oferty. [Analiza profilu zawodowego w Vocare](/assistant) robi to automatycznie: wklejasz ogłoszenie, system generuje CV pod wymagania tej roli. Mając dopasowane CV, wiesz co w liście podkreślić.
 
 ---
 

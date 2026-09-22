@@ -74,7 +74,7 @@ Tak, warto przynajmniej uprzejmie odpowiedzieć i utrzymać kontakt - sytuacja z
 Sprawdź profil LinkedIn osoby kontaktującej się, historię jej publikacji i to, czy reprezentuje rozpoznawalną agencję rekrutacyjną - profesjonalni headhunterzy nie unikają weryfikacji tożsamości.
 
 **Jak zwiększyć swoją widoczność dla headhunterów w mojej branży?**
-**[Vocare.pl](https://vocare.pl)** pomaga zbudować spójny profil kompetencyjny i wskazuje, jak pozycjonować swoje doświadczenie, żeby było bardziej widoczne dla rekruterów i headhunterów.
+[Analiza profilu zawodowego w Vocare](/assistant) pomaga zbudować spójny profil kompetencyjny i wskazuje, jak pozycjonować swoje doświadczenie, żeby było bardziej widoczne dla rekruterów i headhunterów.
 
 ---
 
@@ -82,7 +82,7 @@ Sprawdź profil LinkedIn osoby kontaktującej się, historię jej publikacji i t
 
 Executive search to odwrócony model rekrutacji - to firma i headhunter szukają konkretnej osoby, nie kandydat aplikuje na ogłoszenie. Kluczem do zwiększenia szans na taki kontakt jest konsekwentna widoczność zawodowa: aktualny profil LinkedIn, publiczna aktywność branżowa i otwartość na rozmowy nawet bez aktywnego poszukiwania pracy.
 
-Chcesz zwiększyć swoją widoczność zawodową dla rekruterów? **[Vocare.pl](https://vocare.pl)** pomoże Ci zbudować spójny, konkurencyjny profil kompetencyjny.
+Chcesz zwiększyć swoją widoczność zawodową dla rekruterów? [Dopasowanie CV do oferty w Vocare](/resume-creator) pomoże Ci zbudować spójny, konkurencyjny profil kompetencyjny.
 
 ---
 

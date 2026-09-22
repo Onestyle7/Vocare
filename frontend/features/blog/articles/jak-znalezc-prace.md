@@ -85,7 +85,7 @@ Bez trackera po 3 tygodniach nie pamiętasz gdzie aplikowałeś, kiedy możesz w
 
 **Cel:** 3-5 wartościowych aplikacji tygodniowo, nie 20 masowych.
 
-Nie wiesz w którym kierunku szukać? **[Vocare.pl](https://vocare.pl)** analizuje Twój profil kompetencyjny i wskazuje, które branże i typy ról najlepiej do Ciebie pasują - zamiast aplikować na wszystko po kolei. Kiedy już masz konkretną ofertę, to samo narzędzie dopasuje Twoje CV do jej wymagań.
+Nie wiesz w którym kierunku szukać? [Analiza rynku pracy w Vocare](/market-analysis) analizuje Twój profil kompetencyjny i wskazuje, które branże i typy ról najlepiej do Ciebie pasują - zamiast aplikować na wszystko po kolei. Kiedy już masz konkretną ofertę, to samo narzędzie dopasuje Twoje CV do jej wymagań.
 
 ---
 
@@ -205,7 +205,7 @@ Nie informuj firmy. Używaj prywatnego emaila. LinkedIn: ustaw "Open to Work" wi
 Zmień taktykę: poproś kogoś o review CV, rozszerz kryteria szukania, zintensyfikuj networking, rozważ kursy uzupełniające luki w kompetencjach.
 
 **Jak sprawdzić, czy problem leży w CV czy w wyborze ofert?**
-**[Vocare.pl](https://vocare.pl)** analizuje ogólną jakość CV oraz automatycznie dopasowuje je do konkretnej oferty - wklejasz ogłoszenie i system generuje dopasowaną wersję CV.
+[Analiza profilu zawodowego w Vocare](/assistant) analizuje ogólną jakość CV oraz automatycznie dopasowuje je do konkretnej oferty - wklejasz ogłoszenie i system generuje dopasowaną wersję CV.
 
 ---
 
@@ -213,7 +213,7 @@ Zmień taktykę: poproś kogoś o review CV, rozszerz kryteria szukania, zintens
 
 Znalezienie pracy to projekt zarządzany. Zdefiniuj cel, przygotuj fundamenty (CV, LinkedIn), stwórz system aplikowania, dywersyfikuj kanały i bądź konsekwentny. Wyniki przychodzą po tygodniach, nie dniach - i zawsze do tych, którzy są przygotowani.
 
-Chcesz wiedzieć jakie oferty najlepiej pasują do Twojego profilu? **[Vocare.pl](https://vocare.pl)** pomoże Ci dopasować kompetencje do rynku i wybrać najbardziej obiecujące kierunki aplikowania.
+Chcesz wiedzieć jakie oferty najlepiej pasują do Twojego profilu? [Dopasowanie CV do oferty w Vocare](/resume-creator) pomoże Ci dopasować kompetencje do rynku i wybrać najbardziej obiecujące kierunki aplikowania.
 
 ---
 

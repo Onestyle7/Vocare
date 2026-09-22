@@ -67,7 +67,7 @@ Tak, o ile przedsiębiorca opłacał w tym czasie składki na ubezpieczenia spo�
 Tak, urząd pracy wymaga stawiania się na wyznaczone terminy i przyjmowania odpowiednich ofert pracy lub szkoleń - odmowa bez uzasadnionej przyczyny może skutkować utratą statusu bezrobotnego.
 
 **Jak wykorzystać czas pobierania zasiłku, żeby efektywnie zaplanować powrót na rynek pracy?**
-**[Vocare.pl](https://vocare.pl)** pomoże Ci ocenić kompetencje i wskazać konkretne kierunki dalszej kariery.
+[Dopasowanie CV do oferty w Vocare](/resume-creator) pomoże Ci ocenić kompetencje i wskazać konkretne kierunki dalszej kariery.
 
 ---
 
@@ -75,7 +75,7 @@ Tak, urząd pracy wymaga stawiania się na wyznaczone terminy i przyjmowania odp
 
 Zasiłek dla bezrobotnych wymaga udokumentowania co najmniej 365 dni stażu w ciągu ostatnich 18 miesięcy, a jego wysokość zależy od całkowitego stażu pracy i spada po pierwszych 90 dniach pobierania. Standardowy okres wypłaty to 180 dni, wydłużany do 365 dni w określonych sytuacjach, takich jak wysokie bezrobocie lokalne czy dzieci na utrzymaniu.
 
-Zastanawiasz się, jak efektywnie wykorzystać czas poszukiwania nowej pracy? **[Vocare.pl](https://vocare.pl)** pomoże Ci zaplanować kolejne kroki.
+Zastanawiasz się, jak efektywnie wykorzystać czas poszukiwania nowej pracy? [Analiza rynku pracy w Vocare](/market-analysis) pomoże Ci zaplanować kolejne kroki.
 
 ---
 

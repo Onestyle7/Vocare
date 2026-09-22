@@ -76,7 +76,7 @@ Magazynowanie energii i inteligentne sieci energetyczne - to obszary wciąż roz
 Instalacje fotowoltaiczne mają pewną sezonowość (więcej zleceń wiosną i latem), ale pompy ciepła, audyty energetyczne i projektowanie są zwykle stabilne przez cały rok.
 
 **Jak sprawdzić, która ścieżka w energetyce odnawialnej pasuje do moich kompetencji?**
-**[Vocare.pl](https://vocare.pl)** analizuje Twój profil i porównuje go z aktualnym zapotrzebowaniem rynkowym, wskazując konkretne kierunki rozwoju.
+[Rekomendacje ścieżki kariery od Vocare](/roadmap) analizuje Twój profil i porównuje go z aktualnym zapotrzebowaniem rynkowym, wskazując konkretne kierunki rozwoju.
 
 ---
 
@@ -84,7 +84,7 @@ Instalacje fotowoltaiczne mają pewną sezonowość (więcej zleceń wiosną i l
 
 Rynek pracy w energetyce odnawialnej w 2026 roku to jeden z najbardziej przewidywalnych sektorów wzrostu - napędzany regulacjami unijnymi i dotacjami, które będą obowiązywać przez kolejne lata. Instalatorzy fotowoltaiki i pomp ciepła mają dziś jedną z najkrótszych ścieżek wejścia na rynek pracy przy solidnych zarobkach.
 
-Zastanawiasz się, która ścieżka w energetyce odnawialnej pasuje do Twoich kompetencji? **[Vocare.pl](https://vocare.pl)** przeprowadzi bezpłatną analizę i wskaże konkretne kierunki rozwoju.
+Zastanawiasz się, która ścieżka w energetyce odnawialnej pasuje do Twoich kompetencji? [Analiza profilu zawodowego w Vocare](/assistant) przeprowadzi bezpłatną analizę i wskaże konkretne kierunki rozwoju.
 
 ---
 

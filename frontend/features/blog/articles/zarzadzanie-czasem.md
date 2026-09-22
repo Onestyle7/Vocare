@@ -62,7 +62,7 @@ Nie, wystarczy kartka podzielona na cztery pola lub prosta tabela - efektywnoś�
 Zwykle kilka tygodni regularnego stosowania, zanim metoda stanie się naturalnym elementem dnia pracy, nie dodatkowym wysiłkiem.
 
 **Jak sprawdzić, które nawyki organizacyjne warto u siebie rozwinąć?**
-**[Vocare.pl](https://vocare.pl)** pomoże Ci zidentyfikować obszary rozwoju kompetencji dopasowane do Twojej roli.
+[Rekomendacje ścieżki kariery od Vocare](/roadmap) pomoże Ci zidentyfikować obszary rozwoju kompetencji dopasowane do Twojej roli.
 
 ---
 
@@ -70,7 +70,7 @@ Zwykle kilka tygodni regularnego stosowania, zanim metoda stanie się naturalnym
 
 Zarządzanie czasem w pracy działa najlepiej, gdy łączy priorytetyzację (macierz Eisenhowera) z metodą wykonania (technika Pomodoro) - żadna pojedyncza technika nie rozwiązuje wszystkich problemów naraz. Kluczem jest dopasowanie metody do własnego stylu pracy, nie sztywne trzymanie się jednego systemu.
 
-Zastanawiasz się, jakie nawyki organizacyjne warto u siebie rozwinąć? **[Vocare.pl](https://vocare.pl)** pomoże Ci to zidentyfikować.
+Zastanawiasz się, jakie nawyki organizacyjne warto u siebie rozwinąć? [Analiza profilu zawodowego w Vocare](/assistant) pomoże Ci to zidentyfikować.
 
 ---
 

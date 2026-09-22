@@ -89,7 +89,7 @@ Zwykle nie, szczególnie przy aplikacjach do USA, Wielkiej Brytanii czy Kanady -
 Resume w USA - zwykle 1 strona, nawet przy dłuższym doświadczeniu. CV w Wielkiej Brytanii i Europie - 1-2 strony, podobnie jak w Polsce.
 
 **Jak sprawdzić, czy moje angielskie CV jest dobrze dopasowane do zagranicznej oferty?**
-**[Vocare.pl](https://vocare.pl)** analizuje CV pod kątem dopasowania do konkretnej oferty i wskazuje, co warto poprawić przed wysłaniem aplikacji.
+[Analiza profilu zawodowego w Vocare](/assistant) analizuje CV pod kątem dopasowania do konkretnej oferty i wskazuje, co warto poprawić przed wysłaniem aplikacji.
 
 ---
 
@@ -97,7 +97,7 @@ Resume w USA - zwykle 1 strona, nawet przy dłuższym doświadczeniu. CV w Wielk
 
 CV po angielsku wymaga nie tłumaczenia, tylko napisania dokumentu od nowa w konwencji języka i rynku docelowego. Kluczowe różnice to brak zdjęcia i danych osobowych typowych dla polskiego CV, bardziej bezpośredni styl opisu osiągnięć i konieczność dostosowania długości do konkretnego rynku (USA vs Europa).
 
-Chcesz sprawdzić, czy Twoje CV po angielsku jest dobrze dopasowane do zagranicznej oferty? **[Vocare.pl](https://vocare.pl)** pomoże Ci to ocenić.
+Chcesz sprawdzić, czy Twoje CV po angielsku jest dobrze dopasowane do zagranicznej oferty? [Kreator CV w Vocare](/resume-creator) pomoże Ci to ocenić.
 
 ---
 

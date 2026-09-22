@@ -86,7 +86,7 @@ Tak, to częsta i sensowna strategia - certyfikat buduje głęboką specjalizacj
 Wiele dużych firm ma budżety szkoleniowe pokrywające część lub całość kosztów, szczególnie jeśli rozwój wiąże się z konkretną ścieżką awansu w firmie - warto o to zapytać przed samodzielnym finansowaniem.
 
 **Jak sprawdzić, która ścieżka rozwoju najlepiej pasuje do moich celów zawodowych?**
-**[Vocare.pl](https://vocare.pl)** analizuje Twój profil kompetencyjny i cele zawodowe, wskazując, czy bardziej opłaca się inwestycja w szeroką wiedzę biznesową, czy w konkretną specjalizację techniczną.
+[Rekomendacje ścieżki kariery od Vocare](/roadmap) analizuje Twój profil kompetencyjny i cele zawodowe, wskazując, czy bardziej opłaca się inwestycja w szeroką wiedzę biznesową, czy w konkretną specjalizację techniczną.
 
 ---
 
@@ -94,7 +94,7 @@ Wiele dużych firm ma budżety szkoleniowe pokrywające część lub całość k
 
 MBA i certyfikaty branżowe odpowiadają na różne potrzeby - MBA sprawdza się przy awansie na stanowiska zarządcze i budowaniu szerokiej sieci kontaktów, certyfikat branżowy daje szybszy, bardziej mierzalny zwrot z inwestycji przy pogłębianiu konkretnej specjalizacji. Wybór zależy od tego, gdzie realnie jesteś w karierze, nie od prestiżu opcji.
 
-Zastanawiasz się, która ścieżka rozwoju najlepiej pasuje do Twoich celów? **[Vocare.pl](https://vocare.pl)** pomoże Ci to ocenić na podstawie Twojego profilu kompetencyjnego.
+Zastanawiasz się, która ścieżka rozwoju najlepiej pasuje do Twoich celów? [Analiza profilu zawodowego w Vocare](/assistant) pomoże Ci to ocenić na podstawie Twojego profilu kompetencyjnego.
 
 ---
 

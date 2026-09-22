@@ -63,7 +63,7 @@ Nie, obniżenie wynagrodzenia wymaga formalnego wypowiedzenia zmieniającego - j
 Formalnie dokument zawiera konkretną propozycję, ale nic nie stoi na przeszkodzie, by przed podjęciem decyzji porozmawiać z pracodawcą o innych możliwych rozwiązaniach.
 
 **Jak ocenić, czy warto przyjąć nowe warunki, czy szukać innej pracy?**
-**[Vocare.pl](https://vocare.pl)** pomoże Ci ocenić Twoje kompetencje na tle rynku i sprawdzić, jakie alternatywy są dziś dostępne.
+[Analiza rynku pracy w Vocare](/market-analysis) pomoże Ci ocenić Twoje kompetencje na tle rynku i sprawdzić, jakie alternatywy są dziś dostępne.
 
 ---
 
@@ -71,7 +71,7 @@ Formalnie dokument zawiera konkretną propozycję, ale nic nie stoi na przeszkod
 
 Wypowiedzenie zmieniające pozwala pracodawcy jednostronnie zaproponować nowe, konkretne warunki pracy lub płacy - ale milczenie pracownika po połowie okresu wypowiedzenia oznacza domniemaną zgodę, dlatego reakcja w odpowiednim terminie jest kluczowa. Odmowa skutkuje rozwiązaniem umowy na tych samych zasadach co zwykłe wypowiedzenie.
 
-Zastanawiasz się, czy nowe warunki pracy są dla Ciebie korzystne, czy lepiej poszukać alternatywy? **[Vocare.pl](https://vocare.pl)** pomoże Ci to ocenić.
+Zastanawiasz się, czy nowe warunki pracy są dla Ciebie korzystne, czy lepiej poszukać alternatywy? [Analiza profilu zawodowego w Vocare](/assistant) pomoże Ci to ocenić.
 
 ---
 

@@ -82,7 +82,7 @@ Może pomóc jako punkt startowy, ale bez praktyki w codziennej pracy szkolenie 
 Regularny feedback od współpracowników i przełożonego to najbardziej wiarygodna metoda - trudno ocenić własny postęp bez zewnętrznej perspektywy.
 
 **Jak sprawdzić, które kompetencje miękkie warto rozwijać pod moją docelową rolę?**
-**[Vocare.pl](https://vocare.pl)** analizuje wymagania oferty i wskazuje, które kompetencje warto wyeksponować lub rozwinąć.
+[Analiza profilu zawodowego w Vocare](/assistant) analizuje wymagania oferty i wskazuje, które kompetencje warto wyeksponować lub rozwinąć.
 
 ---
 
@@ -90,7 +90,7 @@ Regularny feedback od współpracowników i przełożonego to najbardziej wiaryg
 
 Kompetencje miękkie rozwija się przez świadomą praktykę i feedback, nie przez samą deklarację w CV. Komunikacja, zarządzanie priorytetami i adaptacyjność dają dziś największą przewagę na rynku pracy - i wszystkie da się rozwijać konkretnymi, powtarzalnymi ćwiczeniami.
 
-Zastanawiasz się, które kompetencje warto rozwinąć pod Twoją docelową rolę? **[Vocare.pl](https://vocare.pl)** pomoże Ci to zidentyfikować.
+Zastanawiasz się, które kompetencje warto rozwinąć pod Twoją docelową rolę? [Roadmapa kariery w Vocare](/roadmap) pomoże Ci to zidentyfikować.
 
 ---
 

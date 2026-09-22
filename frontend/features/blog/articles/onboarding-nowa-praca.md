@@ -84,7 +84,7 @@ Lepiej poczekać kilka tygodni, żeby zrozumieć kontekst - pomysł zgłoszony p
 Weź inicjatywę sam - zapytaj przełożonego o priorytety, poproś o wprowadzenie do kluczowych osób i dokumentację, jeśli istnieje.
 
 **Jak sprawdzić, czy moje kompetencje faktycznie pasują do nowej roli przed startem?**
-**[Vocare.pl](https://vocare.pl)** analizuje Twój profil względem wymagań oferty jeszcze przed aplikacją, żebyś wiedział, na czym budować od pierwszego dnia.
+[Analiza rynku pracy w Vocare](/market-analysis) analizuje Twój profil względem wymagań oferty jeszcze przed aplikacją, żebyś wiedział, na czym budować od pierwszego dnia.
 
 ---
 
@@ -92,7 +92,7 @@ Weź inicjatywę sam - zapytaj przełożonego o priorytety, poproś o wprowadzen
 
 Pierwsze 90 dni w nowej pracy budują wrażenie, które utrzymuje się długo. Kluczem jest aktywne zadawanie pytań, poznawanie kultury organizacyjnej przed sugerowaniem zmian i jasne ustalenie oczekiwań z przełożonym od samego początku.
 
-Chcesz wejść do nowej roli dobrze przygotowany? **[Vocare.pl](https://vocare.pl)** pomoże Ci zrozumieć, jak Twoje kompetencje wpisują się w wymagania stanowiska.
+Chcesz wejść do nowej roli dobrze przygotowany? [Analiza profilu zawodowego w Vocare](/assistant) pomoże Ci zrozumieć, jak Twoje kompetencje wpisują się w wymagania stanowiska.
 
 ---
 

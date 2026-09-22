@@ -39,7 +39,7 @@ Zanim otworzysz dokument, odpowiedz sobie na te trzy pytania. Twój list będzie
 
 Jeśli nie możesz odpowiedzieć na te pytania - spędź 15 minut na stronie firmy i przeczytaj ofertę pracy jeszcze raz. Bez tej wiedzy nie napiszesz dobrego listu.
 
-Szczególnie pytanie 2 sprawia problemy - masz wiele osiągnięć, ale nie wiesz które wziąć do listu. **[Vocare.pl](https://vocare.pl)** analizuje wymagania konkretnej oferty i wskazuje, które elementy Twojego doświadczenia rekruter uzna za najbardziej trafne - zanim napiszesz choćby jedno zdanie.
+Szczególnie pytanie 2 sprawia problemy - masz wiele osiągnięć, ale nie wiesz które wziąć do listu. [Dopasowanie CV do oferty w Vocare](/resume-creator) analizuje wymagania konkretnej oferty i wskazuje, które elementy Twojego doświadczenia rekruter uzna za najbardziej trafne - zanim napiszesz choćby jedno zdanie.
 
 ---
 
@@ -181,7 +181,7 @@ Wtedy opisz konkretny projekt, sytuację lub wyzwanie, z którym się zmierzyłe
 Badania LinkedIn (2025) wskazują, że 48% rekruterów uważa go za ważny, ale tylko gdy jest konkretny i personalizowany. Generyczny list motywacyjny nie pomaga - i często szkodzi.
 
 **Jak sprawdzić, że list motywacyjny odpowiada na to, czego rekruter szuka?**
-Zanim napiszesz list, użyj **[Vocare.pl](https://vocare.pl)** do analizy oferty - platforma wskaże, które kompetencje i słowa kluczowe są kluczowe dla tej roli. Dzięki temu wiesz co podkreślić w liście, zamiast zgadywać.
+Zanim napiszesz list, użyj [Analiza profilu zawodowego w Vocare](/assistant) do analizy oferty - platforma wskaże, które kompetencje i słowa kluczowe są kluczowe dla tej roli. Dzięki temu wiesz co podkreślić w liście, zamiast zgadywać.
 
 ---
 
@@ -189,7 +189,7 @@ Zanim napiszesz list, użyj **[Vocare.pl](https://vocare.pl)** do analizy oferty
 
 Dobry list motywacyjny pisze się w 30-45 minut jeśli wiesz co chcesz powiedzieć. Kluczowe: konkretne osiągnięcie w akapicie 2, prawdziwy powód zainteresowania firmą w akapicie 3, pewne zakończenie. Zrezygnuj z szablonowych frazesów - i napisz jak człowiek do człowieka.
 
-Chcesz mieć pewność, że Twój list uderza w dokładnie te kompetencje, których rekruter szuka? **[Vocare.pl](https://vocare.pl)** przeanalizuje ofertę i wskaże Ci, co warto podkreślić - żebyś pisał z konkretami, nie na oślep.
+Chcesz mieć pewność, że Twój list uderza w dokładnie te kompetencje, których rekruter szuka? [Kreator CV w Vocare](/resume-creator) przeanalizuje ofertę i wskaże Ci, co warto podkreślić - żebyś pisał z konkretami, nie na oślep.
 
 ---
 

@@ -63,7 +63,7 @@ Zależy od kraju i systemu ubezpieczeń, w którym pracownik był zgłoszony - w
 Zwykle od kilku tygodni (zbiory) do kilku miesięcy (sezon turystyczny), zależnie od branży i kraju.
 
 **Jak sprawdzić, czy praca sezonowa czy stała ścieżka kariery lepiej pasuje do moich planów?**
-**[Vocare.pl](https://vocare.pl)** pomoże Ci ocenić kompetencje i porównać różne kierunki rozwoju zawodowego, w tym pracę za granicą.
+[Analiza profilu zawodowego w Vocare](/assistant) pomoże Ci ocenić kompetencje i porównać różne kierunki rozwoju zawodowego, w tym pracę za granicą.
 
 ---
 
@@ -71,7 +71,7 @@ Zwykle od kilku tygodni (zbiory) do kilku miesięcy (sezon turystyczny), zależn
 
 Praca sezonowa za granicą oferuje zwykle wyższe stawki niż porównywalne stanowiska w Polsce, ale opłacalność zależy od kosztów zakwaterowania, transportu i lokalnych cen życia. Najpopularniejsze kierunki - Niemcy, Holandia, Norwegia i Czechy - różnią się profilem ofert i stawek, dlatego warto porównać kilka opcji przez oficjalne kanały, takie jak EURES, zanim podejmiesz decyzję.
 
-Zastanawiasz się, czy praca za granicą pasuje do Twoich długoterminowych planów zawodowych? **[Vocare.pl](https://vocare.pl)** pomoże Ci to ocenić.
+Zastanawiasz się, czy praca za granicą pasuje do Twoich długoterminowych planów zawodowych? [Dopasowanie CV do oferty w Vocare](/resume-creator) pomoże Ci to ocenić.
 
 ---
 

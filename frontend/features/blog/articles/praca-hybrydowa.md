@@ -69,7 +69,7 @@ Zwykle nie bezpośrednio, ale niektóre firmy różnicują stawki w zależności
 Warto to zgłosić przełożonemu - jeśli fizyczna obecność nie przekłada się na realną współpracę zespołową, to konkretny argument za elastycznością.
 
 **Jak sprawdzić, które oferty pracy faktycznie oferują elastyczny model hybrydowy?**
-**[Vocare.pl](https://vocare.pl)** pomaga porównać oferty względem Twoich preferencji, w tym oczekiwań co do modelu pracy.
+[Dopasowanie CV do oferty w Vocare](/resume-creator) pomaga porównać oferty względem Twoich preferencji, w tym oczekiwań co do modelu pracy.
 
 ---
 
@@ -77,7 +77,7 @@ Warto to zgłosić przełożonemu - jeśli fizyczna obecność nie przekłada si
 
 Praca hybrydowa w 2026 roku jest standardem, ale konkretne warunki różnią się mocno między firmami. Kluczem jest ustalenie szczegółów - liczby dni, elastyczności wyboru i stabilności polityki - jeszcze przed podpisaniem umowy, kiedy masz największą siłę negocjacyjną.
 
-Szukasz oferty z modelem pracy dopasowanym do Twoich potrzeb? **[Vocare.pl](https://vocare.pl)** pomoże Ci porównać oferty i priorytety.
+Szukasz oferty z modelem pracy dopasowanym do Twoich potrzeb? [Analiza rynku pracy w Vocare](/market-analysis) pomoże Ci porównać oferty i priorytety.
 
 ---
 

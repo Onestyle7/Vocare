@@ -158,7 +158,7 @@ Narzędzia: Excel (zaawansowany), Power BI (podstawy), Jupyter Notebook
 Języki: Angielski C1, Niemiecki B1
 ```
 
-Nie wiesz, które projekty i aktywności są najbardziej wartościowe dla danej roli? **[Vocare.pl](https://vocare.pl)** analizuje wymagania oferty i wskazuje, które elementy Twojego studenckiego profilu warto wyeksponować - żebyś nie zgadywał, tylko pisał celnie.
+Nie wiesz, które projekty i aktywności są najbardziej wartościowe dla danej roli? [Kreator CV w Vocare](/resume-creator) analizuje wymagania oferty i wskazuje, które elementy Twojego studenckiego profilu warto wyeksponować - żebyś nie zgadywał, tylko pisał celnie.
 
 ---
 
@@ -233,7 +233,7 @@ Możesz, ale lepiej jest mieć profesjonalny mail (@gmail.com lub podobny), któ
 Tylko jeśli wynosi 4.5 lub więcej. Niższe oceny pomijaj - to nie jest informacja, którą rekruter potrzebuje.
 
 **Czy jest narzędzie, które sprawdzi, czy moje studenckie CV pasuje do konkretnej oferty stażowej?**
-Tak - **[Vocare.pl](https://vocare.pl)** automatycznie dopasowuje CV do konkretnej oferty po wklejeniu treści ogłoszenia. Przydatne szczególnie gdy aplikujesz na staż i chcesz mieć pewność, że CV trafia w to, czego rekruter szuka.
+Tak - [Dopasowanie CV do oferty w Vocare](/resume-creator) automatycznie dopasowuje CV do konkretnej oferty po wklejeniu treści ogłoszenia. Przydatne szczególnie gdy aplikujesz na staż i chcesz mieć pewność, że CV trafia w to, czego rekruter szuka.
 
 ---
 
@@ -241,7 +241,7 @@ Tak - **[Vocare.pl](https://vocare.pl)** automatycznie dopasowuje CV do konkretn
 
 CV studenta bez doświadczenia zawodowego to wyzwanie, ale nie niemożność. Klucz: opisz konkretnie to co masz - projekty, staże, aktywności - z miarami i efektami. Brak doświadczenia zawodowego to nie przekreślenie - to punkt startowy, który dobrze opisany wyróżnia Cię z tłumu.
 
-Chcesz sprawdzić jak Twoje studenckie CV wygląda w oczach rekrutera i co można ulepszyć? **[Vocare.pl](https://vocare.pl)** pomoże Ci to ocenić.
+Chcesz sprawdzić jak Twoje studenckie CV wygląda w oczach rekrutera i co można ulepszyć? [Analiza profilu zawodowego w Vocare](/assistant) pomoże Ci to ocenić.
 
 ---
 

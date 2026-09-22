@@ -61,7 +61,7 @@ Instruktaż ogólny w niektórych przypadkach może być przeprowadzony w formie
 Instruktaż ogólny jest ważny bezterminowo (chyba że zmienia się pracodawca), a kolejne szkolenia okresowe BHP są wymagane cyklicznie w trakcie zatrudnienia.
 
 **Jak sprawdzić, jakie dodatkowe wymogi BHP obowiązują na stanowiskach, które Cię interesują?**
-**[Vocare.pl](https://vocare.pl)** pomoże Ci ocenić wymagania konkretnych ofert pracy względem Twojego profilu.
+[Dopasowanie CV do oferty w Vocare](/resume-creator) pomoże Ci ocenić wymagania konkretnych ofert pracy względem Twojego profilu.
 
 ---
 
@@ -69,7 +69,7 @@ Instruktaż ogólny jest ważny bezterminowo (chyba że zmienia się pracodawca)
 
 Szkolenie BHP wstępne to obowiązkowy, dwuetapowy proces - instruktaż ogólny (minimum 3 godziny) prowadzony przez służbę BHP oraz instruktaż stanowiskowy (minimum 8 godzin, mniej dla stanowisk biurowych) prowadzony przez bezpośredniego przełożonego. Obejmuje nie tylko nowych pracowników, ale też praktykantów i uczniów odbywających naukę zawodu.
 
-Zastanawiasz się, jakie wymagania stawiają dziś oferty pracy w Twojej branży? **[Vocare.pl](https://vocare.pl)** pomoże Ci to sprawdzić.
+Zastanawiasz się, jakie wymagania stawiają dziś oferty pracy w Twojej branży? [Analiza rynku pracy w Vocare](/market-analysis) pomoże Ci to sprawdzić.
 
 ---
 

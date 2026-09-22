@@ -88,7 +88,7 @@ Bardziej szczegółowe, skierowane do osób z doświadczeniem zawodowym, które 
 
 Najnowsza generacja testów kariery wykorzystuje sztuczną inteligencję do analizy odpowiedzi w czasie rzeczywistym i generowania spersonalizowanych rekomendacji. Takie podejście pozwala uwzględnić niuanse i kontekst, które umykają tradycyjnym testom opartym na punktacji.
 
-Przykładem polskiego narzędzia z tej kategorii jest **[Vocare.pl](https://vocare.pl)** - łączy diagnostykę kariery z analizą aktualnych danych rynkowych, wskazując konkretne stanowiska i branże dopasowane do Twojego profilu.
+Przykładem polskiego narzędzia z tej kategorii jest [Analiza profilu zawodowego w Vocare](/assistant) - łączy diagnostykę kariery z analizą aktualnych danych rynkowych, wskazując konkretne stanowiska i branże dopasowane do Twojego profilu.
 
 ### Badania 360 stopni
 
@@ -152,7 +152,7 @@ Test zawodowy jest szczególnie przydatny dla:
 Rzetelny test zawodowy zajmuje 15-30 minut. Krótszy (5 minut) to zazwyczaj zbyt powierzchowna diagnostyka. Dłuższy nie zawsze daje lepsze wyniki.
 
 **Czy test kariery online jest bezpłatny?**
-Wiele testów bazowych jest bezpłatnych (Holland Code na [kariera.gov.pl](https://kariera.gov.pl), [16personalities.com](https://www.16personalities.com)). **[Vocare.pl](https://vocare.pl)** oferuje bezpłatną diagnostykę kariery online - bez rejestracji karty kredytowej.
+Wiele testów bazowych jest bezpłatnych (Holland Code na [kariera.gov.pl](https://kariera.gov.pl), [16personalities.com](https://www.16personalities.com)). [Roadmapa kariery w Vocare](/roadmap) oferuje bezpłatną diagnostykę kariery online - bez rejestracji karty kredytowej.
 
 **Jak często powtarzać test kariery?**
 Warto go powtórzyć po znaczących zmianach życiowych: zakończeniu studiów, po kilku latach pracy, po zmianie priorytetów lub po wypaleniu zawodowym.
@@ -163,7 +163,7 @@ Warto go powtórzyć po znaczących zmianach życiowych: zakończeniu studiów, 
 
 Test kariery online to jedno z najbardziej dostępnych i efektywnych narzędzi orientacji zawodowej, jakie masz do dyspozycji. Dobrze przeprowadzony test zawodowy może oszczędzić Ci lat błądzenia i dać rzetelną podstawę do świadomych decyzji zawodowych.
 
-Chcesz sprawdzić, jakie zawody i branże najlepiej odpowiadają Twoim predyspozycjom? Wejdź na **[Vocare.pl](https://vocare.pl)** i sprawdź naszego inteligentnego doradcę zawodowego - opartego na nowoczesnych algorytmach wspieranego przez AI. Wyniki otrzymasz od razu, a nasz system zarekomenduje Ci dopasowane ścieżki zawodowe do Twojego profilu!
+Chcesz sprawdzić, jakie zawody i branże najlepiej odpowiadają Twoim predyspozycjom? Wejdź na [Rekomendacje ścieżki kariery od Vocare](/roadmap) i sprawdź naszego inteligentnego doradcę zawodowego - opartego na nowoczesnych algorytmach wspieranego przez AI. Wyniki otrzymasz od razu, a nasz system zarekomenduje Ci dopasowane ścieżki zawodowe do Twojego profilu!
 
 ---
 

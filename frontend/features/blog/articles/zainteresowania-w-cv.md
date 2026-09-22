@@ -132,7 +132,7 @@ Zainteresowania:
 Zainteresowania: triatlon, fotografia dokumentalna, nauka języka japońskiego, meetupy AI
 ```
 
-Nie wiesz, jak całe Twoje CV wypada jakościowo? **[Vocare.pl](https://vocare.pl)** analizuje ogólną jakość CV - ocenia kompletność sekcji, konkretność osiągnięć i czytelność dla ATS.
+Nie wiesz, jak całe Twoje CV wypada jakościowo? [Kreator CV w Vocare](/resume-creator) analizuje ogólną jakość CV - ocenia kompletność sekcji, konkretność osiągnięć i czytelność dla ATS.
 
 ---
 
@@ -165,7 +165,7 @@ Zależy od branży. W IT, gamingowe firmy, startupy - owszem. W konserwatywnych 
 Każdy ma zainteresowania - nie każdy myśli o nich w tych kategoriach. Zastanów się: co robisz w wolnym czasie? Co oglądasz na YouTube? O czym możesz rozmawiać godzinami? To są Twoje zainteresowania.
 
 **Jak sprawdzić, czy moje CV jako całość (nie tylko zainteresowania) jest gotowe do wysłania?**
-**[Vocare.pl](https://vocare.pl)** bezpłatnie analizuje ogólną jakość CV - ocenia kompletność sekcji, konkretność osiągnięć i czytelność dla ATS. Osobna funkcja automatycznie dopasowuje CV do konkretnej oferty po wklejeniu ogłoszenia.
+[Dopasowanie CV do oferty w Vocare](/resume-creator) bezpłatnie analizuje ogólną jakość CV - ocenia kompletność sekcji, konkretność osiągnięć i czytelność dla ATS. Osobna funkcja automatycznie dopasowuje CV do konkretnej oferty po wklejeniu ogłoszenia.
 
 ---
 
@@ -173,7 +173,7 @@ Każdy ma zainteresowania - nie każdy myśli o nich w tych kategoriach. Zastan�
 
 Zainteresowania w CV to nie obowiązkowy element - to opcjonalne miejsce, które może wzmocnić Twoją kandydaturę. Ale tylko wtedy, gdy wpiszesz konkretne, autentyczne aktywności, które coś o Tobie mówią. "Czytanie i muzyka" nic nie mówi. "Trójbój siłowy i nauka hiszpańskiego" - już jest o czym porozmawiać.
 
-Jeśli masz wątpliwości co do całej struktury swojego CV, **[Vocare.pl](https://vocare.pl)** oceni jego ogólną jakość, a osobna funkcja automatycznie dopasuje CV do konkretnej oferty po wklejeniu ogłoszenia.
+Jeśli masz wątpliwości co do całej struktury swojego CV, [Analiza profilu zawodowego w Vocare](/assistant) oceni jego ogólną jakość, a osobna funkcja automatycznie dopasuje CV do konkretnej oferty po wklejeniu ogłoszenia.
 
 ---
 

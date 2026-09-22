@@ -79,7 +79,7 @@ Nie. Nawet prywatna notatka w dokumencie tekstowym działa, jeśli regularnie do
 Realizuj plan samodzielnie, korzystając z dostępnych zasobów poza firmą. Brak wsparcia przełożonego nie musi oznaczać braku rozwoju.
 
 **Jak sprawdzić, jakie kompetencje warto uwzględnić w moim planie rozwoju?**
-**[Vocare.pl](https://vocare.pl)** analizuje Twój profil i porównuje go z wymaganiami docelowej roli, wskazując konkretne luki do wypełnienia.
+[Roadmapa kariery w Vocare](/roadmap) analizuje Twój profil i porównuje go z wymaganiami docelowej roli, wskazując konkretne luki do wypełnienia.
 
 ---
 
@@ -87,7 +87,7 @@ Realizuj plan samodzielnie, korzystając z dostępnych zasobów poza firmą. Bra
 
 Plan rozwoju zawodowego różni się od marzeń konkretem - mierzalnymi celami, terminami i sposobem weryfikacji postępów. Warto go rewidować co kwartał i wykorzystywać w rozmowach z przełożonym jako punkt wyjścia do konkretnego wsparcia, nie tylko ogólnych rad.
 
-Zastanawiasz się, jakie kompetencje uwzględnić w swoim planie rozwoju? **[Vocare.pl](https://vocare.pl)** pomoże Ci zidentyfikować konkretne kierunki.
+Zastanawiasz się, jakie kompetencje uwzględnić w swoim planie rozwoju? [Rekomendacje ścieżki kariery od Vocare](/roadmap) pomoże Ci zidentyfikować konkretne kierunki.
 
 ---
 

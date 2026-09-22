@@ -65,7 +65,7 @@ Termin ważności ustala lekarz medycyny pracy indywidualnie, zależnie od stano
 Nie, tylko po nieprzerwanej nieobecności z powodu choroby trwającej dłużej niż 30 dni.
 
 **Jak sprawdzić, czy dane stanowisko wymaga dodatkowych badań specjalistycznych?**
-**[Vocare.pl](https://vocare.pl)** pomoże Ci ocenić wymagania konkretnych ofert pracy i dopasować je do Twojego profilu zawodowego.
+[Dopasowanie CV do oferty w Vocare](/resume-creator) pomoże Ci ocenić wymagania konkretnych ofert pracy i dopasować je do Twojego profilu zawodowego.
 
 ---
 
@@ -73,7 +73,7 @@ Nie, tylko po nieprzerwanej nieobecności z powodu choroby trwającej dłużej n
 
 Badania lekarskie do pracy - wstępne, okresowe i kontrolne - są w całości finansowane przez pracodawcę i stanowią obowiązek, którego nie można pominąć ani przenieść na pracownika. Badania kontrolne są wymagane po dłuższej (ponad 30 dni) nieobecności chorobowej, a częstotliwość badań okresowych ustala lekarz medycyny pracy, nie sam pracodawca.
 
-Zastanawiasz się, jakie wymagania stawiają dziś oferty pracy w Twojej branży? **[Vocare.pl](https://vocare.pl)** pomoże Ci to sprawdzić.
+Zastanawiasz się, jakie wymagania stawiają dziś oferty pracy w Twojej branży? [Analiza rynku pracy w Vocare](/market-analysis) pomoże Ci to sprawdzić.
 
 ---
 

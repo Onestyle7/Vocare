@@ -106,7 +106,7 @@ Delegacja krajowa uprawnia do diety 45 zł za pełną dobę i 22,50 zł przy pod
 
 Najczęstsze błędy w rozliczeniach to stosowanie zagranicznych stawek pomniejszeń do delegacji krajowej oraz opieranie się na kwocie 60 zł z niewdrożonego projektu.
 
-Chcesz sprawdzić, czy Twoje warunki zatrudnienia odpowiadają rynkowym standardom? [Analiza profilu zawodowego w Vocare](https://vocare.pl) porówna Twoją sytuację z danymi rynkowymi.
+Chcesz sprawdzić, czy Twoje warunki zatrudnienia odpowiadają rynkowym standardom? [Analiza profilu zawodowego w Vocare](/assistant) porówna Twoją sytuację z danymi rynkowymi.
 
 ---
 

@@ -75,7 +75,7 @@ Tak, szczególnie dla osób szukających szybszej ścieżki wejścia na rynek - 
 Psychiatria, geriatria, anestezjologia i medycyna rodzinna - szczególnie poza dużymi miastami, gdzie dostęp do specjalistów jest najbardziej ograniczony.
 
 **Jak sprawdzić, która ścieżka w ochronie zdrowia pasuje do moich kompetencji?**
-**[Vocare.pl](https://vocare.pl)** analizuje Twój profil i porównuje go z aktualnym zapotrzebowaniem rynkowym, wskazując konkretne kierunki rozwoju zawodowego.
+[Rekomendacje ścieżki kariery od Vocare](/roadmap) analizuje Twój profil i porównuje go z aktualnym zapotrzebowaniem rynkowym, wskazując konkretne kierunki rozwoju zawodowego.
 
 ---
 
@@ -83,7 +83,7 @@ Psychiatria, geriatria, anestezjologia i medycyna rodzinna - szczególnie poza d
 
 Rynek pracy w ochronie zdrowia to jeden z najbardziej stabilnych sektorów w Polsce - deficyt kadrowy jest strukturalny i nie zależy od koniunktury gospodarczej. Pielęgniarki, fizjoterapeuci, opiekunowie medyczni i psycholodzy należą dziś do zawodów z gwarantowanym zatrudnieniem.
 
-Zastanawiasz się, jak Twoje kompetencje wypadają na tle rynku pracy w medycynie? **[Vocare.pl](https://vocare.pl)** przeprowadzi bezpłatną analizę i wskaże konkretne kierunki rozwoju.
+Zastanawiasz się, jak Twoje kompetencje wypadają na tle rynku pracy w medycynie? [Analiza profilu zawodowego w Vocare](/assistant) przeprowadzi bezpłatną analizę i wskaże konkretne kierunki rozwoju.
 
 ---
 

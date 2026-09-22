@@ -68,7 +68,7 @@ Przy niepewnej znajomości języka warto skorzystać z pomocy native speakera - 
 Tak, sektor publiczny (administracja, instytucje państwowe) często wymaga bardziej sformalizowanych dokumentów, czasem nawet w formacie zbliżonym do Europass.
 
 **Jak sprawdzić, jak moje kompetencje wypadają na tle wymagań francuskiego rynku pracy?**
-**[Vocare.pl](https://vocare.pl)** pomoże Ci ocenić Twój profil zawodowy względem konkretnych ofert pracy.
+[Analiza profilu zawodowego w Vocare](/assistant) pomoże Ci ocenić Twój profil zawodowy względem konkretnych ofert pracy.
 
 ---
 
@@ -76,7 +76,7 @@ Tak, sektor publiczny (administracja, instytucje państwowe) często wymaga bard
 
 CV po francusku różni się od polskiego przede wszystkim naciskiem na zwięzłość, precyzję i skalowaną ocenę umiejętności językowych według CEFR. Format jednej strony, kwantyfikacja osiągnięć i bezbłędny język robią największą różnicę w odbiorze przez francuskiego rekrutera.
 
-Planujesz aplikować do pracy we Francji i chcesz sprawdzić swoje kompetencje? **[Vocare.pl](https://vocare.pl)** pomoże Ci to ocenić.
+Planujesz aplikować do pracy we Francji i chcesz sprawdzić swoje kompetencje? [Kreator CV w Vocare](/resume-creator) pomoże Ci to ocenić.
 
 ---
 

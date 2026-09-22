@@ -132,7 +132,7 @@ Wypalenie zawodowe wymaga wsparcia. Nie musisz przez to przechodzić sam.
 
 **Doradca zawodowy lub coach kariery** - gdy jesteś już stabilny emocjonalnie i chcesz zaplanować kolejny krok zawodowy. Pomaga zdefiniować, czego chcesz od pracy i jak do tego dojść.
 
-Gdy jesteś gotowy na planowanie kariery, ale nie wiesz od czego zacząć, **[Vocare.pl](https://vocare.pl)** przeprowadza analizę wartości zawodowych i kompetencji - wskazując kierunki, które lepiej pasują do Ciebie niż obecna ścieżka.
+Gdy jesteś gotowy na planowanie kariery, ale nie wiesz od czego zacząć, [Roadmapa kariery w Vocare](/roadmap) przeprowadza analizę wartości zawodowych i kompetencji - wskazując kierunki, które lepiej pasują do Ciebie niż obecna ścieżka.
 
 ### Etap 5 - Oceń, co wymaga zmiany w pracy
 
@@ -180,7 +180,7 @@ Nawet w rutynowej pracy można znaleźć elementy znaczące. Zapytaj siebie: kom
 ## FAQ - wypalenie zawodowe
 
 **Jak zdecydować, czy po wypaleniu zmienić firmę, branżę czy tylko warunki pracy?**
-Najlepiej zacząć od diagnozy źródła wypalenia (krok 3 powyżej). **[Vocare.pl](https://vocare.pl)** przeprowadza analizę wartości zawodowych i kompetencji - pomaga rozróżnić, czy potrzebujesz zmiany środowiska, czy całej ścieżki kariery.
+Najlepiej zacząć od diagnozy źródła wypalenia (krok 3 powyżej). [Rekomendacje ścieżki kariery od Vocare](/roadmap) przeprowadza analizę wartości zawodowych i kompetencji - pomaga rozróżnić, czy potrzebujesz zmiany środowiska, czy całej ścieżki kariery.
 
 **Czy można wrócić do tej samej pracy po wypaleniu?**
 Tak - jeśli źródłem wypalenia były warunki (przeciążenie, szef, kultura), a nie sama natura pracy. Wiele osób z powodzeniem wraca po skutecznym urlopie i renegocjacji warunków.
@@ -196,7 +196,7 @@ Wypalenie zawodowe to poważny sygnał, że coś w Twoim życiu zawodowym wymaga
 
 Zatrzymaj się. Zregeneruj się. Poproś o pomoc. I dopiero wtedy planuj kolejny krok.
 
-Jeśli szukasz wsparcia w podjęciu decyzji o dalszej karierze - platforma **[Vocare.pl](https://vocare.pl)** może pomóc. Nasz asystent AI przeprowadzi Cię przez analizę Twoich wartości, kompetencji i preferencji zawodowych, żebyś mógł podjąć decyzję w oparciu o dane, a nie z pozycji wyczerpania i niepewności.
+Jeśli szukasz wsparcia w podjęciu decyzji o dalszej karierze - platforma [Analiza profilu zawodowego w Vocare](/assistant) może pomóc. Nasz asystent AI przeprowadzi Cię przez analizę Twoich wartości, kompetencji i preferencji zawodowych, żebyś mógł podjąć decyzję w oparciu o dane, a nie z pozycji wyczerpania i niepewności.
 
 ---
 

@@ -78,7 +78,7 @@ Zależy od celu. Regeneracja po wypaleniu może wymagać 1-3 miesięcy, nauka no
 Zależy od ustaleń przed wyjściem. Formalne programy sabbaticalowe zwykle gwarantują powrót na to samo lub podobne stanowisko - nieformalne przerwy nie dają takiej gwarancji.
 
 **Jak sprawdzić, czy moje kompetencje są aktualne po dłuższej przerwie?**
-**[Vocare.pl](https://vocare.pl)** analizuje Twój profil i porównuje go z aktualnym zapotrzebowaniem rynkowym, niezależnie od długości przerwy w karierze.
+[Rekomendacje ścieżki kariery od Vocare](/roadmap) analizuje Twój profil i porównuje go z aktualnym zapotrzebowaniem rynkowym, niezależnie od długości przerwy w karierze.
 
 ---
 
@@ -86,7 +86,7 @@ Zależy od ustaleń przed wyjściem. Formalne programy sabbaticalowe zwykle gwar
 
 Sabbatical to świadoma, zaplanowana przerwa w karierze - różni się od zwykłego urlopu skalą i celem. Kluczem do bezpiecznego sabbaticalu jest bufor finansowy na 3-6 miesięcy i jasny plan powrotu, nie sama zgoda pracodawcy na wyjście.
 
-Wracasz do pracy po dłuższej przerwie i zastanawiasz się, jak wypadają Twoje kompetencje? **[Vocare.pl](https://vocare.pl)** pomoże Ci to sprawdzić.
+Wracasz do pracy po dłuższej przerwie i zastanawiasz się, jak wypadają Twoje kompetencje? [Analiza profilu zawodowego w Vocare](/assistant) pomoże Ci to sprawdzić.
 
 ---
 

@@ -76,7 +76,7 @@ Warto zacząć od mniejszej platformy lub własnego kanału, budując portfolio 
 Tak, szczególnie dla osób z doświadczeniem dydaktycznym i zainteresowaniem konkretną branżą - firmy chętnie zatrudniają byłych nauczycieli do projektowania szkoleń wewnętrznych.
 
 **Jak sprawdzić, która ścieżka w edukacji pasuje do moich kompetencji?**
-**[Vocare.pl](https://vocare.pl)** analizuje Twój profil i porównuje go z aktualnym zapotrzebowaniem rynkowym, wskazując konkretne kierunki rozwoju zawodowego.
+[Analiza rynku pracy w Vocare](/market-analysis) analizuje Twój profil i porównuje go z aktualnym zapotrzebowaniem rynkowym, wskazując konkretne kierunki rozwoju zawodowego.
 
 ---
 
@@ -84,7 +84,7 @@ Tak, szczególnie dla osób z doświadczeniem dydaktycznym i zainteresowaniem ko
 
 Rynek pracy w edukacji w 2026 roku wykracza daleko poza tradycyjną szkołę - deficyt nauczycieli przedmiotów ścisłych i języków tworzy realne możliwości, a edukacja cyfrowa (kursy online, korepetycje, L&D korporacyjny) otwiera nowe, często lepiej płatne ścieżki dla osób z kompetencjami dydaktycznymi.
 
-Zastanawiasz się, która ścieżka w edukacji pasuje do Twoich kompetencji? **[Vocare.pl](https://vocare.pl)** przeprowadzi bezpłatną analizę i wskaże konkretne kierunki rozwoju.
+Zastanawiasz się, która ścieżka w edukacji pasuje do Twoich kompetencji? [Rekomendacje ścieżki kariery od Vocare](/roadmap) przeprowadzi bezpłatną analizę i wskaże konkretne kierunki rozwoju.
 
 ---
 

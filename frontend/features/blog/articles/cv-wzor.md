@@ -88,7 +88,7 @@ Eksponuj certyfikaty zawodowe i uprawnienia, doświadczenie z konkretnymi maszyn
 
 **Overleaf (LaTeX)** - dla IT i naukowców. Trudniejsze w edycji, ale daje bardzo profesjonalne rezultaty.
 
-**UWAGA:** Unikaj stron oferujących "szablony CV" z dużą ilością grafik i zdjęć stockowych. Wyglądają ładnie, ale często nie przechodzą przez filtry ATS, a ich edycja w darmowych narzędziach bywa niemożliwa. Świetnym wyborem będzie tutaj kreator CV dostępny na **[Vocare.pl](https://vocare.pl)**
+**UWAGA:** Unikaj stron oferujących "szablony CV" z dużą ilością grafik i zdjęć stockowych. Wyglądają ładnie, ale często nie przechodzą przez filtry ATS, a ich edycja w darmowych narzędziach bywa niemożliwa. Świetnym wyborem będzie tutaj kreator CV dostępny na [Analiza profilu zawodowego w Vocare](/assistant)
 
 ---
 
@@ -108,7 +108,7 @@ Umiejętności najważniejsze dla danego stanowiska powinny być na początku li
 **Krok 4: Sprawdź słowa kluczowe.**
 Porównaj swoje CV z ogłoszeniem - czy wszystkie kluczowe frazy (np. "Scrum", "zarządzanie budżetem", "obsługa SAP") się pojawiają?
 
-Krok 4 można zautomatyzować: **[Vocare.pl](https://vocare.pl)** porównuje Twoje CV z treścią oferty i dopasowuje je do oferty wedle standardów.
+Krok 4 można zautomatyzować: [Kreator CV w Vocare](/resume-creator) porównuje Twoje CV z treścią oferty i dopasowuje je do oferty wedle standardów.
 
 ---
 
@@ -157,7 +157,7 @@ Nie - powinieneś mieć bazowy szablon i modyfikować go pod każdą ofertę. Sz
 Co 1-2 lata lub po każdej ważniejszej zmianie kariery (nowa rola, kurs, projekt).
 
 **Skąd wiem, że mój wypełniony wzór CV jest dopasowany do konkretnej oferty?**
-**[Vocare.pl](https://vocare.pl)** automatycznie dopasowuje CV do konkretnej oferty - wklejasz ogłoszenie, system generuje wersję CV gotową do wysłania.
+[Dopasowanie CV do oferty w Vocare](/resume-creator) automatycznie dopasowuje CV do konkretnej oferty - wklejasz ogłoszenie, system generuje wersję CV gotową do wysłania.
 
 ---
 
@@ -165,7 +165,7 @@ Co 1-2 lata lub po każdej ważniejszej zmianie kariery (nowa rola, kurs, projek
 
 Dobry wzór CV to solidny punkt startowy, ale nie zrobi całej pracy za Ciebie. Kluczem jest wypełnienie go konkretną, mierzalną treścią i dopasowanie do każdej oferty z osobna. Jeden wzór, dobrze dostosowany, jest warty więcej niż dziesięć wysłanych bezmyślnie.
 
-Chcesz mieć CV, które jest automatycznie analizowane i optymalizowane pod konkretne oferty? Sprawdź **[Vocare.pl](https://vocare.pl)** - AI, które wskaże Ci dokładnie, co zmienić w CV, żeby zwiększyć szanse na zaproszenie.
+Chcesz mieć CV, które jest automatycznie analizowane i optymalizowane pod konkretne oferty? Sprawdź [Analiza profilu zawodowego w Vocare](/assistant) - AI, które wskaże Ci dokładnie, co zmienić w CV, żeby zwiększyć szanse na zaproszenie.
 
 ---
 

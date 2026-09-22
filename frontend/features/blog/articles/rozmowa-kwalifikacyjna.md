@@ -78,7 +78,7 @@ Większość pytań na rozmowie to pytania behawioralne: "Opowiedz o sytuacji, g
 
 **R - Result (Wynik):** Jaki był mierzalny efekt? Liczby, procenty, nagrody.
 
-Żeby odpowiedzi STAR były naprawdę trafne, musisz wiedzieć, które kompetencje rekruter sprawdza w pierwszej kolejności. **[Vocare.pl](https://vocare.pl)** analizuje wymagania konkretnej oferty i wskazuje, które obszary doświadczenia warto przygotować jako historię STAR - zanim wejdziesz na rozmowę.
+Żeby odpowiedzi STAR były naprawdę trafne, musisz wiedzieć, które kompetencje rekruter sprawdza w pierwszej kolejności. [Dopasowanie CV do oferty w Vocare](/resume-creator) analizuje wymagania konkretnej oferty i wskazuje, które obszary doświadczenia warto przygotować jako historię STAR - zanim wejdziesz na rozmowę.
 
 **Przykład:**
 
@@ -174,7 +174,7 @@ Jeśli rekruter podał termin - czekaj 2-3 dni po tym terminie. Jeśli nie poda�
 Mów głośno jak myślisz. "Nie znam odpowiedzi, ale podszedłbym do tego tak..." Pokazujesz myślenie, nie tylko wiedzę.
 
 **Jak przygotować się do rozmowy pod konkretną ofertę, a nie ogólnie?**
-**[Vocare.pl](https://vocare.pl)** porównuje Twój profil z wymaganiami ogłoszenia - pokazuje, które kompetencje rekruter będzie weryfikował najdokładniej, i jakie historyjki STAR warto przygotować.
+[Analiza rynku pracy w Vocare](/market-analysis) porównuje Twój profil z wymaganiami ogłoszenia - pokazuje, które kompetencje rekruter będzie weryfikował najdokładniej, i jakie historyjki STAR warto przygotować.
 
 ---
 
@@ -182,7 +182,7 @@ Mów głośno jak myślisz. "Nie znam odpowiedzi, ale podszedłbym do tego tak..
 
 Rozmowa kwalifikacyjna to umiejętność, którą można trenować. Im więcej rozmów, tym lepsza jest Twoja odpowiedź. Kluczowe: badaj firmę, przygotuj odpowiedzi metodą STAR, miej konkretne pytania, wyślij follow-up. I pamiętaj - to też jest Twoja ocena firmy.
 
-Jeśli chcesz przygotować się jeszcze lepiej i wiedzieć jak Twoje doświadczenie wpisuje się w konkretne role na rynku, sprawdź **[Vocare.pl](https://vocare.pl)** - AI przeprowadzi Cię przez analizę dopasowania i wskaże, na co zwrócić uwagę.
+Jeśli chcesz przygotować się jeszcze lepiej i wiedzieć jak Twoje doświadczenie wpisuje się w konkretne role na rynku, sprawdź [Analiza profilu zawodowego w Vocare](/assistant) - AI przeprowadzi Cię przez analizę dopasowania i wskaże, na co zwrócić uwagę.
 
 ---
 

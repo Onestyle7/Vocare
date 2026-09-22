@@ -64,7 +64,7 @@ Nie - to przeciwieństwo tłumienia. Wysokie EQ to świadome rozpoznawanie emocj
 Tak, istnieje kilka uznanych narzędzi (np. testy oparte na modelu Golemana czy Bar-Ona), choć żaden test nie zastąpi regularnej informacji zwrotnej od innych ludzi.
 
 **Jak sprawdzić, które kompetencje miękkie, w tym emocjonalne, warto u siebie rozwinąć?**
-**[Vocare.pl](https://vocare.pl)** analizuje Twój profil kompetencyjny i wskazuje obszary, które warto rozwinąć pod kątem docelowej roli.
+[Analiza profilu zawodowego w Vocare](/assistant) analizuje Twój profil kompetencyjny i wskazuje obszary, które warto rozwinąć pod kątem docelowej roli.
 
 ---
 
@@ -72,7 +72,7 @@ Tak, istnieje kilka uznanych narzędzi (np. testy oparte na modelu Golemana czy 
 
 Inteligencja emocjonalna w pracy - samoświadomość, samoregulacja, empatia i zarządzanie relacjami - koreluje z wynikami zawodowymi silniej niż wiele innych kompetencji, a w przeciwieństwie do IQ można ją świadomie rozwijać w dowolnym momencie kariery. Małe, konkretne ćwiczenia każdego z czterech filarów przynoszą efekty szybciej niż ogólna deklaracja "chcę być bardziej empatyczny".
 
-Zastanawiasz się, które kompetencje - techniczne i miękkie - warto u siebie rozwinąć? **[Vocare.pl](https://vocare.pl)** pomoże Ci to zidentyfikować.
+Zastanawiasz się, które kompetencje - techniczne i miękkie - warto u siebie rozwinąć? [Roadmapa kariery w Vocare](/roadmap) pomoże Ci to zidentyfikować.
 
 ---
 

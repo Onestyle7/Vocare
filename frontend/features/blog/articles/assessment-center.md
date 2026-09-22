@@ -79,7 +79,7 @@ Od kilku godzin do całego dnia, w zależności od liczby zadań i poziomu stano
 Tak - dlatego warto ćwiczyć pracę grupową osobno, nawet jeśli czujesz się pewnie w rozmowach jeden na jeden. To inny zestaw umiejętności.
 
 **Jak sprawdzić, jakie kompetencje warto podkreślić na assessment center dla konkretnej roli?**
-**[Vocare.pl](https://vocare.pl)** analizuje wymagania oferty i wskazuje, które Twoje kompetencje warto zaakcentować podczas procesu rekrutacyjnego.
+[Dopasowanie CV do oferty w Vocare](/resume-creator) analizuje wymagania oferty i wskazuje, które Twoje kompetencje warto zaakcentować podczas procesu rekrutacyjnego.
 
 ---
 
@@ -87,7 +87,7 @@ Tak - dlatego warto ćwiczyć pracę grupową osobno, nawet jeśli czujesz się 
 
 Assessment center ocenia Cię z wielu perspektyw jednocześnie - case study, dyskusje grupowe, symulacje i wywiady razem dają pracodawcy pełniejszy obraz niż sama rozmowa. Kluczem do sukcesu jest przygotowanie konkretnych przykładów metodą STAR i ćwiczenie zarówno komunikacji indywidualnej, jak i grupowej.
 
-Chcesz wiedzieć, które kompetencje warto podkreślić podczas rekrutacji na konkretne stanowisko? **[Vocare.pl](https://vocare.pl)** przeanalizuje wymagania oferty i wskaże Twoje mocne strony.
+Chcesz wiedzieć, które kompetencje warto podkreślić podczas rekrutacji na konkretne stanowisko? [Analiza rynku pracy w Vocare](/market-analysis) przeanalizuje wymagania oferty i wskaże Twoje mocne strony.
 
 ---
 

@@ -77,7 +77,7 @@ Nawet regularne komentowanie postów innych osób (kilka razy w tygodniu) daje e
 Tak, szczególnie z osobami z Twojej branży lub docelowych firm - warto jednak personalizować zaproszenie krótką wiadomością wyjaśniającą powód kontaktu.
 
 **Jak sprawdzić, czy mój profil LinkedIn dobrze koresponduje z moim CV i celami zawodowymi?**
-**[Vocare.pl](https://vocare.pl)** analizuje Twój profil kompetencyjny i pomaga dopasować komunikację zawodową - w CV i poza nim - do Twoich celów.
+[Dopasowanie CV do oferty w Vocare](/resume-creator) analizuje Twój profil kompetencyjny i pomaga dopasować komunikację zawodową - w CV i poza nim - do Twoich celów.
 
 ---
 
@@ -85,7 +85,7 @@ Tak, szczególnie z osobami z Twojej branży lub docelowych firm - warto jednak 
 
 Profil LinkedIn, który realnie przyciąga rekruterów, wymaga więcej niż jednorazowego uzupełnienia - kluczowe są opisowy nagłówek, konkretna sekcja "Informacje", rekomendacje od współpracowników i regularna aktywność zwiększająca widoczność w wynikach wyszukiwania.
 
-Chcesz upewnić się, że Twój profil zawodowy - LinkedIn i CV - działają spójnie na Twoją korzyść? **[Vocare.pl](https://vocare.pl)** pomoże Ci to ocenić.
+Chcesz upewnić się, że Twój profil zawodowy - LinkedIn i CV - działają spójnie na Twoją korzyść? [Analiza profilu zawodowego w Vocare](/assistant) pomoże Ci to ocenić.
 
 ---
 

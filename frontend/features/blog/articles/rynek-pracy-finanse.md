@@ -83,7 +83,7 @@ Nie zawsze, ale w bankowości inwestycyjnej i zarządzaniu aktywami jest często
 SQL i Excel (zaawansowany, z Power Query/VBA) to podstawa. Python i Power BI dają wyraźną przewagę konkurencyjną przy analizie dużych zbiorów danych.
 
 **Jak sprawdzić, która ścieżka w finansach pasuje do moich kompetencji?**
-**[Vocare.pl](https://vocare.pl)** analizuje Twój profil i porównuje go z aktualnym zapotrzebowaniem rynkowym w finansach, wskazując konkretne role i certyfikaty warte rozważenia.
+[Analiza rynku pracy w Vocare](/market-analysis) analizuje Twój profil i porównuje go z aktualnym zapotrzebowaniem rynkowym w finansach, wskazując konkretne role i certyfikaty warte rozważenia.
 
 ---
 
@@ -91,7 +91,7 @@ SQL i Excel (zaawansowany, z Power Query/VBA) to podstawa. Python i Power BI daj
 
 Rynek pracy w finansach nagradza dziś połączenie wiedzy finansowej z umiejętnościami analitycznymi i technicznymi. Automatyzacja eliminuje proste zadania, ale zwiększa zapotrzebowanie na analityków, kontrolerów i specjalistów ds. ryzyka.
 
-Zastanawiasz się, która ścieżka w finansach najlepiej pasuje do Twojego profilu? **[Vocare.pl](https://vocare.pl)** przeprowadzi bezpłatną analizę kompetencji i wskaże konkretne kierunki rozwoju.
+Zastanawiasz się, która ścieżka w finansach najlepiej pasuje do Twojego profilu? [Rekomendacje ścieżki kariery od Vocare](/roadmap) przeprowadzi bezpłatną analizę kompetencji i wskaże konkretne kierunki rozwoju.
 
 ---
 

@@ -42,7 +42,7 @@ Sprawdzanie pisowni, obsługa polskich znaków diakrytycznych, szablony dostosow
 
 ### 1. Vocare.pl - kreator CV z AI
 
-**[Vocare.pl](https://vocare.pl)** to jedyny kreator CV, który łączy tworzenie dokumentu z aktywną analizą i dopasowaniem do ofert pracy - i jest dostępny bezpłatnie.
+[Analiza profilu zawodowego w Vocare](/assistant) to jedyny kreator CV, który łączy tworzenie dokumentu z aktywną analizą i dopasowaniem do ofert pracy - i jest dostępny bezpłatnie.
 
 **Zalety:** Tworzenie i pobieranie CV bez opłat, możliwość posiadania kilku wersji CV w jednym miejscu (przydatne przy aplikowaniu do różnych branż lub stanowisk), analiza jakości CV z AI (kompletność, konkretność osiągnięć, czytelność dla ATS), automatyczne dopasowanie CV do konkretnej oferty po wklejeniu ogłoszenia.
 **Wady:** Mniej szablonów wizualnych niż Canva.
@@ -97,7 +97,7 @@ W 2026 roku pojawiły się kreatory CV z wbudowaną AI, które nie tylko formatu
 
 **Zasada:** Używaj AI do korekty i sugestii, ale treść - osiągnięcia, liczby, historia zawodowa - musi pochodzić od Ciebie.
 
-**[Vocare.pl](https://vocare.pl)** łączy oba światy: budujesz CV w kreatorze, AI ocenia jego ogólną jakość (kompletność, konkretność osiągnięć, czytelność dla ATS), a osobna funkcja automatycznie generuje wersję CV dopasowaną do konkretnej oferty po wklejeniu ogłoszenia.
+[Kreator CV w Vocare](/resume-creator) łączy oba światy: budujesz CV w kreatorze, AI ocenia jego ogólną jakość (kompletność, konkretność osiągnięć, czytelność dla ATS), a osobna funkcja automatycznie generuje wersję CV dopasowaną do konkretnej oferty po wklejeniu ogłoszenia.
 
 ---
 
@@ -111,7 +111,7 @@ W 2026 roku pojawiły się kreatory CV z wbudowaną AI, które nie tylko formatu
 
 **Krok 4:** Zapisz CV i sprawdź jak wygląda wydrukowane / w PDF. Czy jest czytelne? Czy żadne elementy nie są obcięte?
 
-**Krok 5:** Przed wysłaniem wklej treść ogłoszenia na **[Vocare.pl](https://vocare.pl)** - system automatycznie wygeneruje wersję CV dopasowaną do wymagań tej oferty.
+**Krok 5:** Przed wysłaniem wklej treść ogłoszenia na [Dopasowanie CV do oferty w Vocare](/resume-creator) - system automatycznie wygeneruje wersję CV dopasowaną do wymagań tej oferty.
 
 ---
 
@@ -133,13 +133,13 @@ Popularne zagraniczne kreatory (Zety, Resume.io) to ~45 zł/miesiąc - i blokuj�
 Google Docs, Canva i Zety obsługują język polski w pełni. Niektóre zagraniczne narzędzia mogą mieć problemy z polską czcionką lub ortografią.
 
 **Jak sprawdzić, czy CV z kreatora jest dobrze dopasowane do konkretnej oferty?**
-**[Vocare.pl](https://vocare.pl)** automatycznie dopasowuje gotowe CV do konkretnej oferty - wklejasz ogłoszenie i system generuje wersję CV pod te wymagania. Idealne jako krok przed wysłaniem aplikacji.
+[Analiza profilu zawodowego w Vocare](/assistant) automatycznie dopasowuje gotowe CV do konkretnej oferty - wklejasz ogłoszenie i system generuje wersję CV pod te wymagania. Idealne jako krok przed wysłaniem aplikacji.
 
 ---
 
 ## Podsumowanie
 
-Najlepszy kreator CV to taki, który nie kończy się na formatowaniu - ale pomaga Ci upewnić się, że CV trafi do rekrutera, a nie wyląduje w koszu ATS. **[Vocare.pl](https://vocare.pl)** łączy kreator, analizę AI i dopasowanie do ofert w jednym miejscu - bezpłatnie. Google Docs i Canva zostają jako opcje gdy potrzebujesz tylko prostego formatowania lub wizualnego projektu dla branż kreatywnych.
+Najlepszy kreator CV to taki, który nie kończy się na formatowaniu - ale pomaga Ci upewnić się, że CV trafi do rekrutera, a nie wyląduje w koszu ATS. [Kreator CV w Vocare](/resume-creator) łączy kreator, analizę AI i dopasowanie do ofert w jednym miejscu - bezpłatnie. Google Docs i Canva zostają jako opcje gdy potrzebujesz tylko prostego formatowania lub wizualnego projektu dla branż kreatywnych.
 
 Pamiętaj: kreator jest tylko narzędziem. Najważniejsza jest treść CV - konkretne osiągnięcia, odpowiednie słowa kluczowe i dopasowanie do stanowiska, na które aplikujesz.
 

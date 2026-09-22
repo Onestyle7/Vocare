@@ -67,7 +67,7 @@ Tak, odprawa podlega opodatkowaniu na zasadach ogólnych, podobnie jak inne świ
 Tak, tak samo jak przy standardowym wypowiedzeniu - w terminie 21 dni od doręczenia wypowiedzenia można złożyć odwołanie do sądu pracy.
 
 **Jak zaplanować dalsze kroki zawodowe po zwolnieniu grupowym?**
-**[Vocare.pl](https://vocare.pl)** pomoże Ci ocenić Twoje kompetencje i wskazać kierunki dalszego rozwoju zawodowego.
+[Analiza profilu zawodowego w Vocare](/assistant) pomoże Ci ocenić Twoje kompetencje i wskazać kierunki dalszego rozwoju zawodowego.
 
 ---
 
@@ -75,7 +75,7 @@ Tak, tak samo jak przy standardowym wypowiedzeniu - w terminie 21 dni od doręcz
 
 Zwolnienie grupowe wymaga spełnienia konkretnych progów liczby zwalnianych pracowników w ciągu 30 dni, zależnych od wielkości pracodawcy, i gwarantuje odprawę od jedno- do trzymiesięcznego wynagrodzenia, zależnie od stażu pracy - z ustawowym limitem 15-krotności minimalnego wynagrodzenia. Warto znać te progi i zasady, jeśli Twoja firma ogłasza redukcję etatów.
 
-Szukasz nowego kierunku zawodowego po zwolnieniu grupowym? **[Vocare.pl](https://vocare.pl)** pomoże Ci zaplanować kolejny krok.
+Szukasz nowego kierunku zawodowego po zwolnieniu grupowym? [Dopasowanie CV do oferty w Vocare](/resume-creator) pomoże Ci zaplanować kolejny krok.
 
 ---
 

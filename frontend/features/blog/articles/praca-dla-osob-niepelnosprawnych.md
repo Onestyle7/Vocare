@@ -67,7 +67,7 @@ Prawo do dodatkowego urlopu wypoczynkowego nabywa się po przepracowaniu roku od
 Nie wszystkie - część uprawnień (np. dodatkowy urlop, skrócony czas pracy) dotyczy tylko stopnia znacznego i umiarkowanego, choć niektóre firmowe benefity mogą obejmować szerszy krąg pracowników.
 
 **Jak sprawdzić, które oferty pracy realnie uwzględniają potrzeby związane z niepełnosprawnością?**
-**[Vocare.pl](https://vocare.pl)** pomoże Ci ocenić kompetencje i dopasować profil zawodowy do dostępnych ścieżek kariery.
+[Analiza profilu zawodowego w Vocare](/assistant) pomoże Ci ocenić kompetencje i dopasować profil zawodowy do dostępnych ścieżek kariery.
 
 ---
 
@@ -75,7 +75,7 @@ Nie wszystkie - część uprawnień (np. dodatkowy urlop, skrócony czas pracy) 
 
 Orzeczenie o znacznym lub umiarkowanym stopniu niepełnosprawności daje konkretne uprawnienia pracownicze - skrócony czas pracy, dodatkowy urlop, dodatkową przerwę i zakaz nadgodzin oraz pracy nocnej. Dofinansowania z PFRON dla pracodawców realnie zwiększają liczbę dostępnych ofert i skłonność firm do inwestowania w dostosowanie stanowisk pracy.
 
-Zastanawiasz się, jak Twoje kompetencje wypadają na rynku pracy? **[Vocare.pl](https://vocare.pl)** pomoże Ci to sprawdzić.
+Zastanawiasz się, jak Twoje kompetencje wypadają na rynku pracy? [Dopasowanie CV do oferty w Vocare](/resume-creator) pomoże Ci to sprawdzić.
 
 ---
 

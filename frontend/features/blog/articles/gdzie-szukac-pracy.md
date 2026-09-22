@@ -73,7 +73,7 @@ Wiele branż ma swoje specyficzne portale:
 
 **Ukryty rynek pracy** to stanowiska nigdy niepublikowane na portalach ogłoszeniowych - obsadzane przez polecenia, headhunterów i bezpośrednie zgłoszenia. Szacuje się, że tylko 30% stanowisk jest w ogóle publikowanych na portalach.
 
-Zanim zaczniesz szukać, warto wiedzieć w którym kierunku celować. **[Vocare.pl](https://vocare.pl)** porównuje Twój profil z aktualnymi danymi rynkowymi i wskazuje, które branże i typy firm są najlepiej dopasowane do Twoich kompetencji - żebyś szukał tam, gdzie masz realne szanse, nie wszędzie naraz. Reszta obsadzana jest przez:
+Zanim zaczniesz szukać, warto wiedzieć w którym kierunku celować. [Analiza profilu zawodowego w Vocare](/assistant) porównuje Twój profil z aktualnymi danymi rynkowymi i wskazuje, które branże i typy firm są najlepiej dopasowane do Twoich kompetencji - żebyś szukał tam, gdzie masz realne szanse, nie wszędzie naraz. Reszta obsadzana jest przez:
 
 - Polecenia wewnętrzne
 - Kontakty rekrutacyjne
@@ -158,7 +158,7 @@ W branżach tradycyjnych (produkcja, handel, usługi) - tak. W IT, marketingu, f
 3-5 dopasowanych aplikacji tygodniowo jest lepsze niż 20 masowych. Badania pokazują wyraźnie wyższy współczynnik odpowiedzi przy personalizowanych aplikacjach.
 
 **Jak sprawdzić, które oferty są najlepiej dopasowane do mojego profilu?**
-Zamiast przeglądać setki ogłoszeń, możesz skorzystać z **[Vocare.pl](https://vocare.pl)** - platforma analizuje Twoje kompetencje i wskazuje typy stanowisk oraz branże, w których masz największe szanse. Oszczędza czas i kieruje energię tam, gdzie ma to sens.
+Zamiast przeglądać setki ogłoszeń, możesz skorzystać z [Dopasowanie CV do oferty w Vocare](/resume-creator) - platforma analizuje Twoje kompetencje i wskazuje typy stanowisk oraz branże, w których masz największe szanse. Oszczędza czas i kieruje energię tam, gdzie ma to sens.
 
 ---
 
@@ -166,7 +166,7 @@ Zamiast przeglądać setki ogłoszeń, możesz skorzystać z **[Vocare.pl](https
 
 Najlepsze wyniki daje kombinacja: portale ogłoszeniowe (Pracuj.pl, LinkedIn, branżowe) + networking na LinkedIn + bezpośredni kontakt z firmami + agencje dla stanowisk specjalistycznych. Nie ograniczaj się do jednego kanału. I zawsze personalizuj - generyczne CV do 100 firm daje gorsze wyniki niż dopasowane CV do 10 trafnych ofert.
 
-Chcesz od razu wiedzieć, które stanowiska najlepiej pasują do Twojego profilu, i mieć CV dopasowane pod każdą ofertę? **[Vocare.pl](https://vocare.pl)** zrobi to za Ciebie - analiza profilu i dopasowanie do rynku w kilka minut.
+Chcesz od razu wiedzieć, które stanowiska najlepiej pasują do Twojego profilu, i mieć CV dopasowane pod każdą ofertę? [Analiza rynku pracy w Vocare](/market-analysis) zrobi to za Ciebie - analiza profilu i dopasowanie do rynku w kilka minut.
 
 ---
 

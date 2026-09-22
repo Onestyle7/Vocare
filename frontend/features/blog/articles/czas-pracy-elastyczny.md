@@ -67,7 +67,7 @@ Nie, to odrębne rozwiązania - elastyczny czas pracy dotyczy godzin rozpoczęci
 Ustawowe prawo do złożenia wniosku przysługuje raz w roku kalendarzowym, choć nic nie stoi na przeszkodzie, by nieformalnie renegocjować warunki częściej, jeśli pracodawca się na to zgadza.
 
 **Jak przygotować argumentację do wniosku o elastyczny czas pracy?**
-**[Vocare.pl](https://vocare.pl)** pomoże Ci ocenić Twoją sytuację zawodową i lepiej przygotować się do rozmowy z pracodawcą.
+[Dopasowanie CV do oferty w Vocare](/resume-creator) pomoże Ci ocenić Twoją sytuację zawodową i lepiej przygotować się do rozmowy z pracodawcą.
 
 ---
 
@@ -75,7 +75,7 @@ Ustawowe prawo do złożenia wniosku przysługuje raz w roku kalendarzowym, cho�
 
 Elastyczny (ruchomy) czas pracy pozwala na indywidualne godziny rozpoczynania pracy lub swobodny wybór w ustalonym przedziale czasowym, na pisemny wniosek składany raz w roku kalendarzowym. Rodzice dzieci do 8. roku życia mają dodatkowe, wzmocnione prawo do takiego wnioskowania, obejmujące też inne formy elastycznej organizacji pracy.
 
-Zastanawiasz się, jak wynegocjować lepsze warunki czasu pracy? **[Vocare.pl](https://vocare.pl)** pomoże Ci ocenić Twoją sytuację zawodową.
+Zastanawiasz się, jak wynegocjować lepsze warunki czasu pracy? [Analiza rynku pracy w Vocare](/market-analysis) pomoże Ci ocenić Twoją sytuację zawodową.
 
 ---
 

@@ -62,7 +62,7 @@ Zależy od stanowiska - część ról (np. projektant bez samodzielnej funkcji t
 Tak, szczególnie w specjalizacjach projektowych - link do portfolio z przykładowymi rysunkami czy wizualizacjami 3D wzmacnia CV znacznie skuteczniej niż sam opis tekstowy.
 
 **Jak sprawdzić, jakie kompetencje techniczne warto rozwinąć pod docelową specjalizację?**
-**[Vocare.pl](https://vocare.pl)** analizuje Twój profil zawodowy i porównuje go z wymaganiami konkretnych ofert inżynierskich.
+[Analiza profilu zawodowego w Vocare](/assistant) analizuje Twój profil zawodowy i porównuje go z wymaganiami konkretnych ofert inżynierskich.
 
 ---
 
@@ -70,7 +70,7 @@ Tak, szczególnie w specjalizacjach projektowych - link do portfolio z przykład
 
 CV inżyniera wyróżnia się konkretnymi, zrealizowanymi projektami z parametrami - skalą, budżetem, mierzalnym efektem - a nie ogólną listą narzędzi i norm technicznych. Uprawnienia zawodowe, jeśli są wymagane w danej specjalizacji, powinny być widoczne od razu, z numerem i zakresem.
 
-Zastanawiasz się, jakie kompetencje techniczne warto rozwinąć w swojej specjalizacji? **[Vocare.pl](https://vocare.pl)** pomoże Ci to sprawdzić.
+Zastanawiasz się, jakie kompetencje techniczne warto rozwinąć w swojej specjalizacji? [Kreator CV w Vocare](/resume-creator) pomoże Ci to sprawdzić.
 
 ---
 

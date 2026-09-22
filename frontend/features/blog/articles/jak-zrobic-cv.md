@@ -43,7 +43,7 @@ To najważniejsza lista. Zapisz wszystko co zrobiłeś i do czego możesz przypi
 
 ## Wybierz narzędzie - gdzie robić CV?
 
-**[Vocare.pl](https://vocare.pl)** - kreator CV z funkcjami, których nie mają inne narzędzia: możesz tworzyć kilka wersji CV w jednym miejscu (przydatne gdy aplikujesz do różnych branż lub stanowisk), analizować jakość CV z AI i automatycznie dopasować je do konkretnej oferty po wklejeniu ogłoszenia. Bezpłatnie.
+[Kreator CV w Vocare](/resume-creator) - kreator CV z funkcjami, których nie mają inne narzędzia: możesz tworzyć kilka wersji CV w jednym miejscu (przydatne gdy aplikujesz do różnych branż lub stanowisk), analizować jakość CV z AI i automatycznie dopasować je do konkretnej oferty po wklejeniu ogłoszenia. Bezpłatnie.
 
 **Google Docs** - dobre do prostego formatowania jeśli masz już gotową treść. Darmowy, eksport do PDF jednym kliknięciem.
 
@@ -167,7 +167,7 @@ Wysłanie identycznego CV na 50 ofert daje gorsze wyniki niż dopasowanie CV do 
 
 Gotowe. 10 minut, które podwajają szansę na odpowiedź.
 
-**[Vocare.pl](https://vocare.pl)** robi to automatycznie - wklejasz treść ogłoszenia, a system generuje wersję CV dopasowaną do tej oferty. Zamiast 10 minut ręcznej analizy - gotowe CV w kilka sekund.
+[Dopasowanie CV do oferty w Vocare](/resume-creator) robi to automatycznie - wklejasz treść ogłoszenia, a system generuje wersję CV dopasowaną do tej oferty. Zamiast 10 minut ręcznej analizy - gotowe CV w kilka sekund.
 
 ---
 
@@ -209,7 +209,7 @@ Błędy poniżej mają wspólny mianownik: traktowanie CV jako dokumentu wysyła
 Pierwsze CV od zera: 3-5 godzin. Aktualizacja istniejącego: 30-60 minut. Dopasowanie do konkretnej oferty: 10-20 minut.
 
 **Czy powinienem mieć jedno czy kilka CV?**
-Kilka - jedno bazowe i osobne wersje dla różnych typów stanowisk lub branż. **[Vocare.pl](https://vocare.pl)** pozwala przechowywać kilka wersji CV w jednym miejscu i edytować je niezależnie. Przy każdej aplikacji - 10-minutowe dopasowanie do konkretnej oferty.
+Kilka - jedno bazowe i osobne wersje dla różnych typów stanowisk lub branż. [Analiza profilu zawodowego w Vocare](/assistant) pozwala przechowywać kilka wersji CV w jednym miejscu i edytować je niezależnie. Przy każdej aplikacji - 10-minutowe dopasowanie do konkretnej oferty.
 
 **Czy warto korzystać z szablonów CV online?**
 Tak - oszczędzają czas na formatowaniu. Ale treść zawsze musi być Twoja, konkretna i dopasowana.
@@ -224,7 +224,7 @@ Pisz w języku, w którym jest ogłoszenie. Do polskiej firmy - po polsku. Do za
 Traktuj je jak normalną pracę: "Freelancer / Konsultant [branża] | [daty] | Klienci: X, Y, Z (opcjonalnie)". Opisz projekty jak osiągnięcia, z liczbami tam gdzie to możliwe.
 
 **Czy jest narzędzie, które sprawdzi moje CV przed wysłaniem?**
-**[Vocare.pl](https://vocare.pl)** analizuje ogólną jakość CV i automatycznie generuje wersję dopasowaną do konkretnej oferty. Dobre uzupełnienie checklisty gdy zależy Ci na precyzji.
+[Kreator CV w Vocare](/resume-creator) analizuje ogólną jakość CV i automatycznie generuje wersję dopasowaną do konkretnej oferty. Dobre uzupełnienie checklisty gdy zależy Ci na precyzji.
 
 ---
 
@@ -232,7 +232,7 @@ Traktuj je jak normalną pracę: "Freelancer / Konsultant [branża] | [daty] | K
 
 Zrobienie dobrego CV to kwestia metody, nie talentu. Zbierz materiały → wybierz narzędzie → wypełnij sekcje z osiągnięciami w liczbach → dostosuj do oferty → sprawdź błędy → wyślij jako PDF. Powtórz dla każdej aplikacji.
 
-Jeśli chcesz mieć pewność, że Twoje CV jest zoptymalizowane pod konkretną ofertę, **[Vocare.pl](https://vocare.pl)** przeanalizuje je i powie Ci dokładnie co poprawić.
+Jeśli chcesz mieć pewność, że Twoje CV jest zoptymalizowane pod konkretną ofertę, [Dopasowanie CV do oferty w Vocare](/resume-creator) przeanalizuje je i powie Ci dokładnie co poprawić.
 
 ---
 

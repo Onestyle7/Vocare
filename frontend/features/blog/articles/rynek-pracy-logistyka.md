@@ -72,7 +72,7 @@ Tak - wiele stanowisk magazynowych i podstawowych logistycznych nie wymaga wcze�
 Znajomość systemów WMS/ERP, podstawy analizy danych (Excel, SQL) oraz języki obce przy pracy w logistyce międzynarodowej.
 
 **Jak sprawdzić, która ścieżka w logistyce pasuje do moich kompetencji?**
-**[Vocare.pl](https://vocare.pl)** analizuje Twój profil i porównuje go z aktualnym zapotrzebowaniem rynkowym, wskazując konkretne kierunki rozwoju.
+[Analiza rynku pracy w Vocare](/market-analysis) analizuje Twój profil i porównuje go z aktualnym zapotrzebowaniem rynkowym, wskazując konkretne kierunki rozwoju.
 
 ---
 
@@ -80,7 +80,7 @@ Znajomość systemów WMS/ERP, podstawy analizy danych (Excel, SQL) oraz języki
 
 Rynek pracy w logistyce rośnie napędzany e-commerce i potrzebą odbudowy odpornych łańcuchów dostaw. Kierowcy zawodowi pozostają jednym z najbardziej deficytowych zawodów w Polsce, a automatyzacja magazynów tworzy nowe, lepiej płatne role techniczne zamiast likwidować zatrudnienie.
 
-Zastanawiasz się, która ścieżka w logistyce pasuje do Twoich kompetencji? **[Vocare.pl](https://vocare.pl)** przeprowadzi bezpłatną analizę i wskaże konkretne kierunki rozwoju.
+Zastanawiasz się, która ścieżka w logistyce pasuje do Twoich kompetencji? [Rekomendacje ścieżki kariery od Vocare](/roadmap) przeprowadzi bezpłatną analizę i wskaże konkretne kierunki rozwoju.
 
 ---
 

@@ -78,7 +78,7 @@ Nie - standardem jest sformułowanie "referencje dostępne na życzenie" i przek
 To się zdarza i nie musi oznaczać nic negatywnego - poszukaj innej osoby z tego samego okresu zatrudnienia, np. współpracownika lub przedstawiciela HR.
 
 **Jak sprawdzić, czy moje doświadczenie zawodowe jest dobrze udokumentowane na potrzeby przyszłych referencji?**
-**[Vocare.pl](https://vocare.pl)** pomaga uporządkować i zaprezentować Twoje doświadczenie zawodowe w sposób spójny z tym, co mogą potwierdzić Twoi referenci.
+[Kreator CV w Vocare](/resume-creator) pomaga uporządkować i zaprezentować Twoje doświadczenie zawodowe w sposób spójny z tym, co mogą potwierdzić Twoi referenci.
 
 ---
 
@@ -86,7 +86,7 @@ To się zdarza i nie musi oznaczać nic negatywnego - poszukaj innej osoby z teg
 
 Referencje zawodowe warto przygotować z wyprzedzeniem, nie w pośpiechu na finałowym etapie rekrutacji. Kluczem jest wybór osób, które mogą mówić konkretnie o Twoich efektach pracy, wcześniejsze uzyskanie ich zgody i przygotowanie zaktualizowanej listy kontaktów referencyjnych.
 
-Chcesz upewnić się, że Twoje doświadczenie zawodowe jest spójnie zaprezentowane w CV i gotowe na etap referencji? **[Vocare.pl](https://vocare.pl)** pomoże Ci to sprawdzić.
+Chcesz upewnić się, że Twoje doświadczenie zawodowe jest spójnie zaprezentowane w CV i gotowe na etap referencji? [Dopasowanie CV do oferty w Vocare](/resume-creator) pomoże Ci to sprawdzić.
 
 ---
 

@@ -75,7 +75,7 @@ Prawo nowych technologii, ochrona danych i ESG - obszary regulacyjnie rosnące s
 To zależy od priorytetów - kancelaria daje szybszy rozwój i ekspozycję na różnorodne sprawy, dział in-house oferuje większą stabilność i lepszy balans między pracą a życiem prywatnym.
 
 **Jak sprawdzić, która ścieżka prawnicza pasuje do moich kompetencji?**
-**[Vocare.pl](https://vocare.pl)** analizuje Twój profil i porównuje go z aktualnym zapotrzebowaniem rynkowym, wskazując konkretne kierunki rozwoju.
+[Analiza profilu zawodowego w Vocare](/assistant) analizuje Twój profil i porównuje go z aktualnym zapotrzebowaniem rynkowym, wskazując konkretne kierunki rozwoju.
 
 ---
 
@@ -83,7 +83,7 @@ To zależy od priorytetów - kancelaria daje szybszy rozwój i ekspozycję na r�
 
 Rynek pracy w branży prawniczej w 2026 roku polaryzuje się - rutynowa analiza dokumentów traci na wartości wraz z rozwojem AI, a rośnie znaczenie doradztwa strategicznego i nowych specjalizacji regulacyjnych, takich jak prawo technologii, ochrona danych i ESG.
 
-Zastanawiasz się, która ścieżka prawnicza pasuje do Twoich kompetencji? **[Vocare.pl](https://vocare.pl)** przeprowadzi bezpłatną analizę i wskaże konkretne kierunki rozwoju.
+Zastanawiasz się, która ścieżka prawnicza pasuje do Twoich kompetencji? [Analiza rynku pracy w Vocare](/market-analysis) przeprowadzi bezpłatną analizę i wskaże konkretne kierunki rozwoju.
 
 ---
 

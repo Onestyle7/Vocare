@@ -146,7 +146,7 @@ Jeśli Holland Code mówi IE (Badawczo-Przedsiębiorczy), Gallup pokazuje Futuri
 
 Wynik testu jest znacznie wartościowszy gdy omówisz go z doradcą zawodowym lub mentorem. Wyniki mają kontekst, który sam możesz przeoczyć.
 
-Chcesz zobaczyć jak wyniki testów kompetencji przekładają się na konkretne stanowiska i branże na rynku? **[Vocare.pl](https://vocare.pl)** łączy diagnostykę kariery z analizą aktualnych wymagań rynkowych - żebyś wiedział nie tylko "jaki jesteś", ale "co z tym zrobić".
+Chcesz zobaczyć jak wyniki testów kompetencji przekładają się na konkretne stanowiska i branże na rynku? [Analiza profilu zawodowego w Vocare](/assistant) łączy diagnostykę kariery z analizą aktualnych wymagań rynkowych - żebyś wiedział nie tylko "jaki jesteś", ale "co z tym zrobić".
 
 ### Zasada 4: Skonfrontuj z rzeczywistością
 
@@ -205,7 +205,7 @@ Potraktuj to jako ciekawe dane, nie jako problem. Zastanów się: dlaczego wynik
 Coraz więcej pracodawców używa testów kompetencyjnych i osobowości w procesie rekrutacji (szczególnie duże firmy). Warto je znać, żeby nie być zaskoczonym.
 
 **Gdzie mogę zrobić test kompetencji i od razu zobaczyć, jakie zawody i branże mi odpowiadają?**
-**[Vocare.pl](https://vocare.pl)** przeprowadza spersonalizowaną analizę kariery łączącą diagnozę kompetencji z aktualnymi danymi rynkowymi - wyniki pokazują konkretne kierunki zawodowe, nie tylko abstrakcyjne typy osobowości.
+[Roadmapa kariery w Vocare](/roadmap) przeprowadza spersonalizowaną analizę kariery łączącą diagnozę kompetencji z aktualnymi danymi rynkowymi - wyniki pokazują konkretne kierunki zawodowe, nie tylko abstrakcyjne typy osobowości.
 
 ---
 
@@ -213,7 +213,7 @@ Coraz więcej pracodawców używa testów kompetencyjnych i osobowości w proces
 
 Testy kompetencji zawodowych to najszybsza droga do zrozumienia własnego profilu zawodowego. Zacznij od Holland Code (bezpłatny, dobra podstawa) i Gallup StrengthsFinder (płatny, ale bardzo wartościowy). Omów wyniki z doradcą zawodowym i skonfrontuj z realnym doświadczeniem.
 
-Chcesz przeprowadzić szybką diagnostykę kariery bez konieczności umawia sesji z doradcą? **[Vocare.pl](https://vocare.pl)** oferuje spersonalizowaną analizę kompetencji i wskazuje konkretne ścieżki kariery dopasowane do Twojego profilu.
+Chcesz przeprowadzić szybką diagnostykę kariery bez konieczności umawia sesji z doradcą? [Rekomendacje ścieżki kariery od Vocare](/roadmap) oferuje spersonalizowaną analizę kompetencji i wskazuje konkretne ścieżki kariery dopasowane do Twojego profilu.
 
 ---
 

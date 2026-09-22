@@ -80,7 +80,7 @@ Warto zapytać o alternatywy - awans stanowiska bez podwyżki, dodatkowe obowią
 Często tak - zmiana pracodawcy bywa szybszą ścieżką do wyższego stanowiska i wynagrodzenia niż wewnętrzny awans, szczególnie w firmach o wolnych, sztywnych strukturach.
 
 **Jak sprawdzić, czy moje kompetencje odpowiadają wyższemu stanowisku, o które chcę się starać?**
-**[Vocare.pl](https://vocare.pl)** analizuje Twój profil kompetencyjny i porównuje go z wymaganiami wyższych stanowisk, wskazując, co warto rozwinąć przed rozmową o awansie.
+[Analiza profilu zawodowego w Vocare](/assistant) analizuje Twój profil kompetencyjny i porównuje go z wymaganiami wyższych stanowisk, wskazując, co warto rozwinąć przed rozmową o awansie.
 
 ---
 
@@ -88,7 +88,7 @@ Często tak - zmiana pracodawcy bywa szybszą ścieżką do wyższego stanowiska
 
 Awans zawodowy rzadko przychodzi automatycznie - wymaga świadomego budowania widoczności, dokumentowania osiągnięć i jasnego komunikowania intencji rozwoju. Kluczem jest przygotowanie konkretnego case'u opartego na wynikach, nie subiektywnym przekonaniu o własnej wartości.
 
-Zastanawiasz się, czy Twoje kompetencje odpowiadają wyższemu stanowisku? **[Vocare.pl](https://vocare.pl)** pomoże Ci to sprawdzić i zaplanować dalszy rozwój.
+Zastanawiasz się, czy Twoje kompetencje odpowiadają wyższemu stanowisku? [Roadmapa kariery w Vocare](/roadmap) pomoże Ci to sprawdzić i zaplanować dalszy rozwój.
 
 ---
 

@@ -128,7 +128,7 @@ Jak znaleźć: LinkedIn (wyszukaj "doradca zawodowy"), portale: SuperProfs.pl, e
 **Agencje doradztwa kariery**
 Firmy oferujące kompleksową usługę: diagnoza, coaching, CV, przygotowanie do rozmów. Ceny wyższe (2000-5000 zł za pakiet), ale często z gwarantowanymi efektami.
 
-**Platformy AI-assisted (m.in. [Vocare.pl](https://vocare.pl))**
+**Platformy AI-assisted (m.in. [Analiza profilu zawodowego w Vocare](/assistant))**
 Nowe rozwiązanie dostępne 24/7, które łączy diagnostykę kariery z analizą rynku pracy i dopasowaniem CV do ofert. Tańsze niż prywatny doradca, dostępne natychmiast - dobre jako punkt startowy w formie podręcznego doradcy zawodowego.
 
 ---
@@ -188,7 +188,7 @@ Jakość jest różna. W dużych miastach są wyspecjalizowani doradcy z wielole
 Tak - coraz więcej doradców pracuje zdalnie. Jakość online nie jest gorsza niż stacjonarnie.
 
 **Czy jest narzędzie online, które zrobi wstępną diagnostykę kariery przed sesją z doradcą?**
-Tak - **[Vocare.pl](https://vocare.pl)** przeprowadza spersonalizowaną analizę kompetencji i wartości zawodowych, wskazując dopasowane kierunki kariery. Przydatne jako przygotowanie do sesji z doradcą lub samodzielne narzędzie rozpoznania.
+Tak - [Roadmapa kariery w Vocare](/roadmap) przeprowadza spersonalizowaną analizę kompetencji i wartości zawodowych, wskazując dopasowane kierunki kariery. Przydatne jako przygotowanie do sesji z doradcą lub samodzielne narzędzie rozpoznania.
 
 ---
 
@@ -196,7 +196,7 @@ Tak - **[Vocare.pl](https://vocare.pl)** przeprowadza spersonalizowaną analizę
 
 Doradca zawodowy jest wart swojego czasu i pieniędzy wtedy, gdy stoisz na rozdrożu, chcesz zmienić branżę lub doświadczasz wypalenia. Publiczne opcje (PUP, WUP, centrum kariery) są bezpłatne i dostępne dla każdego. Prywatni doradcy kosztują więcej, ale oferują większą elastyczność i specjalizację.
 
-Zacznij od bezpłatnej diagnozy na **[Vocare.pl](https://vocare.pl)** - AI przeprowadzi Cię przez analizę kompetencji i wskaże kierunki kariery dopasowane do Twojego profilu.
+Zacznij od bezpłatnej diagnozy na [Rekomendacje ścieżki kariery od Vocare](/roadmap) - AI przeprowadzi Cię przez analizę kompetencji i wskaże kierunki kariery dopasowane do Twojego profilu.
 
 ---
 

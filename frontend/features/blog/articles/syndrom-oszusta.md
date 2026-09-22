@@ -64,7 +64,7 @@ Nie do końca - osoba z syndromem oszusta może mieć wysoką samoocenę w innyc
 Jeśli silnie ogranicza codzienne funkcjonowanie zawodowe (unikanie awansów, chroniczny stres, wypalenie), warto rozważyć wsparcie psychologa lub coacha kariery.
 
 **Jak sprawdzić, czy moje kompetencje realnie odpowiadają zajmowanemu stanowisku?**
-**[Vocare.pl](https://vocare.pl)** analizuje Twój profil zawodowy i porównuje go obiektywnie z wymaganiami rynku pracy.
+[Analiza profilu zawodowego w Vocare](/assistant) analizuje Twój profil zawodowy i porównuje go obiektywnie z wymaganiami rynku pracy.
 
 ---
 
@@ -72,7 +72,7 @@ Jeśli silnie ogranicza codzienne funkcjonowanie zawodowe (unikanie awansów, ch
 
 Syndrom oszusta to uporczywe poczucie, że sukcesy zawodowe wynikają z przypadku, a nie realnych kompetencji - dotyka zaskakująco dużej części pracowników, niezależnie od faktycznego poziomu doświadczenia. Dokumentowanie konkretnych osiągnięć, nazywanie tej myśli wprost i szukanie zewnętrznego feedbacku to konkretne, sprawdzone sposoby radzenia sobie z tym zjawiskiem.
 
-Zastanawiasz się, jak Twoje kompetencje realnie wypadają na rynku pracy? **[Vocare.pl](https://vocare.pl)** pomoże Ci to obiektywnie ocenić.
+Zastanawiasz się, jak Twoje kompetencje realnie wypadają na rynku pracy? [Roadmapa kariery w Vocare](/roadmap) pomoże Ci to obiektywnie ocenić.
 
 ---
 

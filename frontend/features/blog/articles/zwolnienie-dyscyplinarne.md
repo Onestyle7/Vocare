@@ -72,7 +72,7 @@ Zwykle nie - wymagane jest ciężkie naruszenie obowiązków, a pojedyncze spó�
 Nie ma takiego ustawowego wymogu przy najcięższych naruszeniach, choć w praktyce brak wcześniejszych ostrzeżeń bywa argumentem pracownika w sądzie przy mniej oczywistych sprawach.
 
 **Jak zaplanować dalsze kroki po zwolnieniu dyscyplinarnym?**
-**[Vocare.pl](https://vocare.pl)** pomoże Ci ocenić Twoje kompetencje i zaplanować kolejne kroki zawodowe, niezależnie od okoliczności poprzedniego zatrudnienia.
+[Analiza profilu zawodowego w Vocare](/assistant) pomoże Ci ocenić Twoje kompetencje i zaplanować kolejne kroki zawodowe, niezależnie od okoliczności poprzedniego zatrudnienia.
 
 ---
 
@@ -80,7 +80,7 @@ Nie ma takiego ustawowego wymogu przy najcięższych naruszeniach, choć w prakt
 
 Zwolnienie dyscyplinarne wymaga spełnienia jednej z trzech ściśle określonych przesłanek z art. 52 KP i musi nastąpić w ciągu miesiąca od powzięcia wiadomości o przyczynie przez pracodawcę. Jeśli podejrzewasz, że zwolnienie było wadliwe lub niesłuszne, masz 21 dni na odwołanie do sądu pracy - warto to sprawdzić, zanim termin minie.
 
-Szukasz nowego kierunku zawodowego po trudnym zakończeniu poprzedniej pracy? **[Vocare.pl](https://vocare.pl)** pomoże Ci zaplanować kolejny krok.
+Szukasz nowego kierunku zawodowego po trudnym zakończeniu poprzedniej pracy? [Dopasowanie CV do oferty w Vocare](/resume-creator) pomoże Ci zaplanować kolejny krok.
 
 ---
 

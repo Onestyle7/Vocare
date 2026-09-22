@@ -72,7 +72,7 @@ IT, marketing cyfrowy, obsługa klienta online, content i copywriting oraz role 
 To zależy od firmy i modelu - niektóre firmy stosują wynagrodzenie zależne od lokalizacji kandydata, inne płacą tak samo niezależnie od tego, gdzie pracownik pracuje.
 
 **Jak sprawdzić, które oferty pracy zdalnej pasują do mojego profilu?**
-**[Vocare.pl](https://vocare.pl)** analizuje Twoje kompetencje i porównuje je z aktualnymi ofertami rynkowymi, wskazując, które role - w tym zdalne - najlepiej pasują do Twojego profilu.
+[Dopasowanie CV do oferty w Vocare](/resume-creator) analizuje Twoje kompetencje i porównuje je z aktualnymi ofertami rynkowymi, wskazując, które role - w tym zdalne - najlepiej pasują do Twojego profilu.
 
 ---
 
@@ -80,7 +80,7 @@ To zależy od firmy i modelu - niektóre firmy stosują wynagrodzenie zależne o
 
 Praca zdalna w 2026 roku jest wciąż dostępna, ale wymaga dziś udowodnionej samodzielności i dobrej organizacji, nie tylko preferencji. Kluczem do znalezienia realnie zdalnej oferty jest weryfikacja modelu pracy przed aplikowaniem, a do utrzymania produktywności - sztywna struktura dnia zastępująca naturalne rytuały biura.
 
-Zastanawiasz się, które oferty pracy zdalnej najlepiej pasują do Twojego profilu? **[Vocare.pl](https://vocare.pl)** przeprowadzi bezpłatną analizę kompetencji.
+Zastanawiasz się, które oferty pracy zdalnej najlepiej pasują do Twojego profilu? [Analiza rynku pracy w Vocare](/market-analysis) przeprowadzi bezpłatną analizę kompetencji.
 
 ---
 

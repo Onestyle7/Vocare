@@ -74,7 +74,7 @@ Możesz się zgodzić, jeśli to dla Ciebie wykonalne i nie koliduje z terminem 
 Zwykle nie - poza wyjątkowymi sytuacjami (mobbing, łamanie prawa) rozwiązanie umowy bez zachowania okresu wypowiedzenia może wiązać się z konsekwencjami prawnymi i zaszkodzić reputacji zawodowej.
 
 **Jak sprawdzić, czy nowa oferta faktycznie jest lepsza od obecnej pracy?**
-**[Vocare.pl](https://vocare.pl)** pomaga porównać Twój profil kompetencyjny z wymaganiami nowej roli, żebyś podejmował decyzję o zmianie pracy w oparciu o dane, nie tylko emocje.
+[Dopasowanie CV do oferty w Vocare](/resume-creator) pomaga porównać Twój profil kompetencyjny z wymaganiami nowej roli, żebyś podejmował decyzję o zmianie pracy w oparciu o dane, nie tylko emocje.
 
 ---
 
@@ -82,7 +82,7 @@ Zwykle nie - poza wyjątkowymi sytuacjami (mobbing, łamanie prawa) rozwiązanie
 
 Rezygnacja z pracy dobrze przeprowadzona - z wyprzedzeniem, osobistą rozmową i profesjonalizmem do ostatniego dnia - chroni Twoją reputację zawodową na lata. Sprawdź okres wypowiedzenia, przygotuj krótką, konkretną rozmowę i unikaj krytyki firmy, nawet jeśli to część Twojej motywacji do zmiany.
 
-Zastanawiasz się, czy nowa oferta rzeczywiście jest krokiem naprzód? **[Vocare.pl](https://vocare.pl)** pomoże Ci to ocenić na podstawie danych, nie tylko emocji.
+Zastanawiasz się, czy nowa oferta rzeczywiście jest krokiem naprzód? [Analiza rynku pracy w Vocare](/market-analysis) pomoże Ci to ocenić na podstawie danych, nie tylko emocji.
 
 ---
 

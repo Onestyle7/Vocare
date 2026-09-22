@@ -61,7 +61,7 @@ Tak, przepis obejmuje zarówno przejście na emeryturę, jak i na rentę z tytu�
 Tak, jeśli wewnętrzne regulacje pracodawcy (układ zbiorowy, regulamin wynagradzania) przewidują korzystniejsze warunki niż ustawowe minimum.
 
 **Jak zaplanować finansowo ostatni etap kariery zawodowej przed emeryturą?**
-**[Vocare.pl](https://vocare.pl)** pomoże Ci ocenić Twoją sytuację zawodową na ostatnim etapie kariery.
+[Analiza profilu zawodowego w Vocare](/assistant) pomoże Ci ocenić Twoją sytuację zawodową na ostatnim etapie kariery.
 
 ---
 
@@ -69,7 +69,7 @@ Tak, jeśli wewnętrzne regulacje pracodawcy (układ zbiorowy, regulamin wynagra
 
 Odprawa emerytalna w wysokości jednomiesięcznego wynagrodzenia przysługuje pracownikowi, którego zatrudnienie kończy się w związku z przejściem na emeryturę lub rentę z tytułu niezdolności do pracy - niezależnie od tego, kto zainicjował rozwiązanie umowy. Nie przysługuje przy rencie rodzinnej i nie można jej nabyć powtórnie.
 
-Zbliżasz się do końca kariery zawodowej i chcesz zaplanować ten etap? **[Vocare.pl](https://vocare.pl)** pomoże Ci to zrobić.
+Zbliżasz się do końca kariery zawodowej i chcesz zaplanować ten etap? [Dopasowanie CV do oferty w Vocare](/resume-creator) pomoże Ci to zrobić.
 
 ---
 

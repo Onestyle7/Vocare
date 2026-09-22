@@ -69,7 +69,7 @@ Nie zawsze. Dobre zdjęcie telefonem przy naturalnym świetle często wystarcza.
 Format portretowy, twarz i górna część klatki piersiowej. Rozdzielczość wystarczająca do druku bez pikselizacji.
 
 **Jak sprawdzić, czy moje CV ze zdjęciem robi dobre wrażenie?**
-**[Vocare.pl](https://vocare.pl)** analizuje kompletność i profesjonalizm Twojego CV, wskazując konkretne elementy do poprawy.
+[Dopasowanie CV do oferty w Vocare](/resume-creator) analizuje kompletność i profesjonalizm Twojego CV, wskazując konkretne elementy do poprawy.
 
 ---
 
@@ -77,7 +77,7 @@ Format portretowy, twarz i górna część klatki piersiowej. Rozdzielczość wy
 
 Zdjęcie do CV w Polsce jest opcjonalne, ale w niektórych branżach realnie pomaga. Dobre zdjęcie robisz dziś telefonem - liczy się światło, neutralne tło i naturalny wyraz twarzy. Złe zdjęcie szkodzi bardziej niż jego całkowity brak.
 
-Chcesz sprawdzić, jak Twoje CV wypada jako całość, nie tylko samo zdjęcie? **[Vocare.pl](https://vocare.pl)** przeanalizuje je kompleksowo.
+Chcesz sprawdzić, jak Twoje CV wypada jako całość, nie tylko samo zdjęcie? [Analiza profilu zawodowego w Vocare](/assistant) przeanalizuje je kompleksowo.
 
 ---
 

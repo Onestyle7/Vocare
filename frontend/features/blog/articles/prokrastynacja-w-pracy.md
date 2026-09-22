@@ -64,7 +64,7 @@ Może się nasilać przy pracy zdalnej z powodu mniejszej liczby zewnętrznych s
 Rzadko całkowicie, ale da się znacząco ograniczyć jej częstotliwość i wpływ poprzez konkretne, powtarzalne strategie organizacyjne.
 
 **Jak sprawdzić, czy odkładanie zadań wynika z organizacji czasu, czy z niedopasowania do roli?**
-**[Vocare.pl](https://vocare.pl)** pomoże Ci ocenić, czy Twoje kompetencje i wartości pasują do obecnej ścieżki zawodowej.
+[Rekomendacje ścieżki kariery od Vocare](/roadmap) pomoże Ci ocenić, czy Twoje kompetencje i wartości pasują do obecnej ścieżki zawodowej.
 
 ---
 
@@ -72,7 +72,7 @@ Rzadko całkowicie, ale da się znacząco ograniczyć jej częstotliwość i wp�
 
 Prokrastynacja dotyczy zdecydowanej większości pracujących i rzadko wynika z lenistwa - częściej z lęku przed porażką, perfekcjonizmu lub trudności w planowaniu. Rozbicie zadania na małe, konkretne kroki i ustalenie minimalnego pierwszego działania to jedne z najskuteczniejszych, praktycznych strategii jej przełamywania.
 
-Zastanawiasz się, czy odkładanie zadań to kwestia organizacji, czy głębszego niedopasowania zawodowego? **[Vocare.pl](https://vocare.pl)** pomoże Ci to ocenić.
+Zastanawiasz się, czy odkładanie zadań to kwestia organizacji, czy głębszego niedopasowania zawodowego? [Analiza profilu zawodowego w Vocare](/assistant) pomoże Ci to ocenić.
 
 ---
 

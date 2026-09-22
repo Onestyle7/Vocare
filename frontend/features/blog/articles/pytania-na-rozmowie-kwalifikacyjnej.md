@@ -45,7 +45,7 @@ Oceniają konkretne umiejętności.
 
 Metoda STAR (Situation-Task-Action-Result) działa najlepiej przy pytaniach behawioralnych i sytuacyjnych.
 
-Chcesz przećwiczyć odpowiedzi metodą STAR zanim wejdziesz do sali? **[Vocare.pl](https://vocare.pl)** analizuje wymagania konkretnej oferty i wskazuje, które kompetencje powinieneś zaakcentować i jakimi przykładami z własnej kariery to poprzeć.
+Chcesz przećwiczyć odpowiedzi metodą STAR zanim wejdziesz do sali? [Analiza profilu zawodowego w Vocare](/assistant) analizuje wymagania konkretnej oferty i wskazuje, które kompetencje powinieneś zaakcentować i jakimi przykładami z własnej kariery to poprzeć.
 
 ---
 
@@ -195,7 +195,7 @@ Pytania merytoryczne są takie same. Różni się kontekst: na online zadbaj o s
 "Nie znam odpowiedzi na to pytanie, ale podszedłbym do niego w taki sposób..." - myśl głośno. Rekruterzy często cenią sposób myślenia bardziej niż gotową odpowiedź.
 
 **Czy jest narzędzie, które pomoże mi przygotować się do konkretnej rozmowy?**
-Tak - **[Vocare.pl](https://vocare.pl)** porównuje Twoje CV z wymaganiami oferty i pokazuje, na które kompetencje rekruter zwróci szczególną uwagę. Dzięki temu wiesz, jakich pytań się spodziewać i które przykłady z kariery warto mieć gotowe.
+Tak - [Dopasowanie CV do oferty w Vocare](/resume-creator) porównuje Twoje CV z wymaganiami oferty i pokazuje, na które kompetencje rekruter zwróci szczególną uwagę. Dzięki temu wiesz, jakich pytań się spodziewać i które przykłady z kariery warto mieć gotowe.
 
 ---
 
@@ -203,7 +203,7 @@ Tak - **[Vocare.pl](https://vocare.pl)** porównuje Twoje CV z wymaganiami ofert
 
 Dobre odpowiedzi na pytania rekrutacyjne to nie talent - to przygotowanie. Przejdź przez 10-15 najczęstszych pytań, przygotuj do każdego historię metodą STAR z konkretnymi liczbami i trenuj odpowiedzi na głos. Im więcej przećwiczysz, tym naturalniej będzie szło na rozmowie.
 
-Chcesz wiedzieć, które pytania są najbardziej prawdopodobne dla danej roli i jak Twoje doświadczenie odpowiada na wymagania rekrutera? **[Vocare.pl](https://vocare.pl)** przeanalizuje ofertę i Twój profil, żebyś wszedł na rozmowę z konkretnym planem odpowiedzi.
+Chcesz wiedzieć, które pytania są najbardziej prawdopodobne dla danej roli i jak Twoje doświadczenie odpowiada na wymagania rekrutera? [Analiza rynku pracy w Vocare](/market-analysis) przeanalizuje ofertę i Twój profil, żebyś wszedł na rozmowę z konkretnym planem odpowiedzi.
 
 ---
 

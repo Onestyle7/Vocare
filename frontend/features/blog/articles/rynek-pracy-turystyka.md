@@ -60,7 +60,7 @@ Zależy od miasta i rodzaju oprowadzania - część miast wymaga licencji przewo
 Warto planować budżet na cały rok, uwzględniając miesiące niższego popytu, oraz rozważyć łączenie kilku źródeł przychodu w turystyce (np. przewodnictwo i obsługa eventów).
 
 **Jak sprawdzić, która ścieżka w turystyce najlepiej pasuje do moich kompetencji?**
-**[Vocare.pl](https://vocare.pl)** analizuje Twój profil i porównuje go z aktualnym zapotrzebowaniem rynkowym.
+[Analiza profilu zawodowego w Vocare](/assistant) analizuje Twój profil i porównuje go z aktualnym zapotrzebowaniem rynkowym.
 
 ---
 
@@ -68,7 +68,7 @@ Warto planować budżet na cały rok, uwzględniając miesiące niższego popytu
 
 Rynek pracy w turystyce w 2026 roku charakteryzuje się silną sezonowością, która wpływa na stabilność dochodów bardziej niż w większości innych branż. Role związane z całoroczną sprzedażą wyjazdów, turystyką biznesową czy pracą w kurortach całorocznych dają dziś większą stabilność niż typowo sezonowe przewodnictwo.
 
-Zastanawiasz się, która ścieżka w turystyce pasuje do Twoich kompetencji? **[Vocare.pl](https://vocare.pl)** pomoże Ci to sprawdzić.
+Zastanawiasz się, która ścieżka w turystyce pasuje do Twoich kompetencji? [Analiza rynku pracy w Vocare](/market-analysis) pomoże Ci to sprawdzić.
 
 ---
 

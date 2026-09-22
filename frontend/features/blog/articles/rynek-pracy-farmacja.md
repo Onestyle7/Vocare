@@ -60,7 +60,7 @@ Tak, m.in. w hurtowniach farmaceutycznych, instytucjach regulacyjnych (np. Urzą
 Tempo wzrostu (8-12% rocznie) jest porównywalne z innymi deficytowymi specjalizacjami medycznymi, choć bazowe widełki różnią się znacząco między rolami.
 
 **Jak sprawdzić, która ścieżka w farmacji - apteka czy przemysł - pasuje do moich kompetencji?**
-**[Vocare.pl](https://vocare.pl)** analizuje Twój profil i porównuje go z aktualnym zapotrzebowaniem rynkowym.
+[Analiza rynku pracy w Vocare](/market-analysis) analizuje Twój profil i porównuje go z aktualnym zapotrzebowaniem rynkowym.
 
 ---
 
@@ -68,7 +68,7 @@ Tempo wzrostu (8-12% rocznie) jest porównywalne z innymi deficytowymi specjaliz
 
 Rynek pracy w farmacji dzieli się na dwie wyraźnie różne ścieżki - aptekę i przemysł farmaceutyczny - z istotnie różnymi widełkami zarobków. Specjaliści ds. jakości, walidacji procesów i transferu technologii w przemyśle mają dziś dostęp do znacząco wyższych zarobków niż standardowa praca za pierwszym stołem w aptece.
 
-Zastanawiasz się, która ścieżka w farmacji pasuje do Twoich kompetencji? **[Vocare.pl](https://vocare.pl)** pomoże Ci to sprawdzić.
+Zastanawiasz się, która ścieżka w farmacji pasuje do Twoich kompetencji? [Rekomendacje ścieżki kariery od Vocare](/roadmap) pomoże Ci to sprawdzić.
 
 ---
 
