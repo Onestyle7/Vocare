@@ -93,7 +93,7 @@ Zastanawiasz się, która ścieżka marketingowa najlepiej pasuje do Twojego pro
 - [Rynek pracy w Polsce 2026 - kompletny przegląd 21 branż](/blog/rynek-pracy/rynek-pracy-w-polsce)
 - [Rynek pracy w IT 2026 - trendy, zarobki i zapotrzebowanie](/blog/rynek-pracy/rynek-pracy-it)
 - [Najlepiej płatne zawody w Polsce 2026 - ranking i zarobki](/blog/rynek-pracy/najlepiej-platne-zawody)
-- [Umiejętności do CV 2026 - co wpisać, żeby wyróżnić aplikację](/blog/CV/umiejetnosci-do-cv)
+- [Umiejętności do CV 2026 - co wpisać, żeby wyróżnić aplikację](/blog/cv/umiejetnosci-do-cv)
 - [Rynek pracy w kulturze i mediach 2026 - trendy i zarobki](/blog/rynek-pracy/rynek-pracy-kultura-media)
 - [Rynek pracy w HR i rekrutacji 2026 - trendy i zarobki](/blog/rynek-pracy/rynek-pracy-hr)
 - [Rynek pracy w sprzedaży i obsłudze klienta 2026 - trendy i zarobki](/blog/rynek-pracy/rynek-pracy-sprzedaz)

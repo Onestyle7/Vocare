@@ -4,7 +4,7 @@ description: 'Ile wynosi zasiłek dla bezrobotnych w 2026 roku i jaki staż prac
 estimatedReadTime: 7
 date: '2026-09-01'
 author: 'Vocare'
-category: 'Job'
+category: 'praca'
 coverImage: '/images/blog/job-search.webp'
 tags: ['zasiłek dla bezrobotnych', 'kuroniówka', 'ile wynosi zasiłek', 'rejestracja w urzędzie pracy', 'zasiłek dla bezrobotnych staż pracy']
 slug: 'zasilek-dla-bezrobotnych'
@@ -80,6 +80,6 @@ Zastanawiasz się, jak efektywnie wykorzystać czas poszukiwania nowej pracy? **
 ---
 
 ## Powiązane artykuły
-- [Zwolnienie grupowe 2026 - Twoje prawa i wysokość odprawy](/blog/Job/zwolnienie-grupowe)
-- [Jak znaleźć pracę w 2026 - sprawdzone strategie krok po kroku](/blog/Job/jak-znalezc-prace)
-- [Gdzie szukać pracy w Polsce 2026 - portale i metody](/blog/Job/gdzie-szukac-pracy)
+- [Zwolnienie grupowe 2026 - Twoje prawa i wysokość odprawy](/blog/praca/zwolnienie-grupowe)
+- [Jak znaleźć pracę w 2026 - sprawdzone strategie krok po kroku](/blog/praca/jak-znalezc-prace)
+- [Gdzie szukać pracy w Polsce 2026 - portale i metody](/blog/praca/gdzie-szukac-pracy)

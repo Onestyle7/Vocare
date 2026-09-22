@@ -5,7 +5,7 @@ estimatedReadTime: 9
 date: '2026-04-08'
 updatedAt: '2026-09-02'
 author: 'Vocare'
-category: 'Kariera'
+category: 'kariera'
 coverImage: '/images/blog/career-counseling.webp'
 tags:
   [
@@ -191,7 +191,7 @@ Jeśli chcesz zacząć od własnej diagnozy - przed sesją z doradcą lub zamias
 ---
 
 ## Powiązane artykuły
-- [Doradca zawodowy - co robi, ile kosztuje i czy warto](/blog/Kariera/doradca-zawodowy)
-- [Ścieżka kariery - jak zaplanować rozwój zawodowy w 2026](/blog/Kariera/sciezka-kariery)
-- [Wypalenie zawodowe - co dalej? Jak wrócić do równowagi i odbudować karierę](/blog/Kariera/wypalenie-zawodowe-co-dalej)
+- [Doradca zawodowy - co robi, ile kosztuje i czy warto](/blog/kariera/doradca-zawodowy)
+- [Ścieżka kariery - jak zaplanować rozwój zawodowy w 2026](/blog/kariera/sciezka-kariery)
+- [Wypalenie zawodowe - co dalej? Jak wrócić do równowagi i odbudować karierę](/blog/kariera/wypalenie-zawodowe-co-dalej)
 - [Rynek pracy w edukacji 2026 - deficyt nauczycieli i nowe ścieżki](/blog/rynek-pracy/rynek-pracy-edukacja)

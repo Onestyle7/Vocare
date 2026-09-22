@@ -1,10 +1,10 @@
 ---
-title: 'Praca sezonowa za granicą 2026 - gdzie jechać i ile można zarobić'
+title: 'Praca sezonowa za granicą 2026 - gdzie jechać i ile zarobić'
 description: 'Gdzie Polacy najczęściej wyjeżdżają do pracy sezonowej w 2026 roku? Sprawdź zarobki w Niemczech, Holandii i Norwegii oraz jak bezpiecznie znaleźć legalną ofertę.'
 estimatedReadTime: 8
 date: '2026-08-17'
 author: 'Vocare'
-category: 'Job'
+category: 'praca'
 coverImage: '/images/blog/future-work.webp'
 tags: ['praca sezonowa za granicą', 'praca za granicą', 'praca w Niemczech', 'praca w Holandii', 'EURES praca sezonowa']
 slug: 'praca-sezonowa-za-granica'
@@ -76,8 +76,8 @@ Zastanawiasz się, czy praca za granicą pasuje do Twoich długoterminowych plan
 ---
 
 ## Powiązane artykuły
-- [Praca zdalna dla zagranicznego pracodawcy 2026 - jak ją znaleźć i rozliczyć](/blog/Job/praca-zdalna-dla-zagranicznego-pracodawcy)
-- [Praca dla studenta 2026 - najlepsze opcje i jak zacząć](/blog/Job/praca-dla-studenta)
-- [Gdzie szukać pracy w Polsce 2026 - portale i metody](/blog/Job/gdzie-szukac-pracy)
-- [Europass CV 2026 - czy warto i jak go wypełnić](/blog/CV/europass-cv)
+- [Praca zdalna dla zagranicznego pracodawcy 2026 - jak ją znaleźć i rozliczyć](/blog/praca/praca-zdalna-dla-zagranicznego-pracodawcy)
+- [Praca dla studenta 2026 - najlepsze opcje i jak zacząć](/blog/praca/praca-dla-studenta)
+- [Gdzie szukać pracy w Polsce 2026 - portale i metody](/blog/praca/gdzie-szukac-pracy)
+- [Europass CV 2026 - czy warto i jak go wypełnić](/blog/cv/europass-cv)
 - [Rynek pracy w turystyce 2026 - biura podróży i przewodnicy](/blog/rynek-pracy/rynek-pracy-turystyka)

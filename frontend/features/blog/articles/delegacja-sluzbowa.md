@@ -4,7 +4,7 @@ description: 'Ile wynosi dieta za delegację służbową w 2026 roku i jak ją r
 estimatedReadTime: 7
 date: '2026-09-03'
 author: 'Vocare'
-category: 'Job'
+category: 'praca'
 coverImage: '/images/blog/job-search.webp'
 tags: ['delegacja służbowa', 'dieta delegacja 2026', 'rozliczenie podróży służbowej', 'stawki delegacji', 'ryczałt za nocleg']
 slug: 'delegacja-sluzbowa'
@@ -78,6 +78,6 @@ Zastanawiasz się, czy Twoje warunki zatrudnienia odpowiadają dzisiejszym stand
 ---
 
 ## Powiązane artykuły
-- [Nadgodziny w pracy 2026 - ile powinieneś za nie dostać](/blog/Job/nadgodziny-wynagrodzenie)
-- [Praca hybrydowa 2026 - jak negocjować model pracy](/blog/Job/praca-hybrydowa)
-- [Negocjacje wynagrodzenia 2026 - jak negocjować pensję skutecznie](/blog/Job/negocjacje-wynagrodzenia)
+- [Nadgodziny w pracy 2026 - ile powinieneś za nie dostać](/blog/praca/nadgodziny-wynagrodzenie)
+- [Praca hybrydowa 2026 - jak negocjować model pracy](/blog/praca/praca-hybrydowa)
+- [Negocjacje wynagrodzenia 2026 - jak negocjować pensję skutecznie](/blog/praca/negocjacje-wynagrodzenia)

@@ -87,5 +87,5 @@ Zastanawiasz się, która ścieżka w HR najlepiej pasuje do Twojego profilu? **
 ## Powiązane artykuły
 - [Rynek pracy w Polsce 2026 - kompletny przegląd 21 branż](/blog/rynek-pracy/rynek-pracy-w-polsce)
 - [Rynek pracy w marketingu 2026 - kompetencje i zarobki](/blog/rynek-pracy/rynek-pracy-marketing)
-- [Doradca zawodowy - co robi, ile kosztuje i czy warto](/blog/Kariera/doradca-zawodowy)
-- [Pytania na rozmowie kwalifikacyjnej 2026 - jak odpowiadać](/blog/Job/pytania-na-rozmowie-kwalifikacyjnej)
+- [Doradca zawodowy - co robi, ile kosztuje i czy warto](/blog/kariera/doradca-zawodowy)
+- [Pytania na rozmowie kwalifikacyjnej 2026 - jak odpowiadać](/blog/praca/pytania-na-rozmowie-kwalifikacyjnej)

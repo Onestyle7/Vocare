@@ -1,10 +1,10 @@
 ---
-title: 'Urlop od kariery (sabbatical) 2026 - jak go zaplanować bez ryzyka'
+title: 'Urlop od kariery (sabbatical) - jak go zaplanować'
 description: 'Czym jest sabbatical i jak zaplanować dłuższą przerwę w karierze? Sprawdź jak przygotować się finansowo, rozmawiać z pracodawcą i wrócić bez straty na CV.'
 estimatedReadTime: 8
 date: '2026-08-04'
 author: 'Vocare'
-category: 'Kariera'
+category: 'kariera'
 coverImage: '/images/blog/career-change.webp'
 tags: ['sabbatical', 'urlop od kariery', 'dłuższa przerwa w pracy', 'urlop bezpłatny', 'przerwa zawodowa']
 slug: 'urlop-od-kariery-sabbatical'
@@ -91,7 +91,7 @@ Wracasz do pracy po dłuższej przerwie i zastanawiasz się, jak wypadają Twoje
 ---
 
 ## Powiązane artykuły
-- [Powrót do pracy po urlopie macierzyńskim 2026 - jak się przygotować](/blog/Kariera/powrot-do-pracy-po-macierzynskim)
-- [Wypalenie zawodowe - co dalej? Jak wrócić do równowagi i odbudować karierę](/blog/Kariera/wypalenie-zawodowe-co-dalej)
-- [Urlop wypoczynkowy 2026 - ile dni przysługuje i jak liczyć](/blog/Job/urlop-wypoczynkowy)
-- [Urlop bezpłatny 2026 - zasady, wniosek i skutki dla ubezpieczenia](/blog/Job/urlop-bezplatny)
+- [Powrót do pracy po urlopie macierzyńskim 2026 - jak się przygotować](/blog/kariera/powrot-do-pracy-po-macierzynskim)
+- [Wypalenie zawodowe - co dalej? Jak wrócić do równowagi i odbudować karierę](/blog/kariera/wypalenie-zawodowe-co-dalej)
+- [Urlop wypoczynkowy 2026 - ile dni przysługuje i jak liczyć](/blog/praca/urlop-wypoczynkowy)
+- [Urlop bezpłatny 2026 - zasady, wniosek i skutki dla ubezpieczenia](/blog/praca/urlop-bezplatny)

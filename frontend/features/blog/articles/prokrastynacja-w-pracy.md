@@ -1,10 +1,10 @@
 ---
-title: 'Prokrastynacja w pracy 2026 - dlaczego się pojawia i jak ją pokonać'
+title: 'Prokrastynacja w pracy 2026 - przyczyny i jak ją pokonać'
 description: 'Dlaczego odkładamy ważne zadania na później? Sprawdź psychologiczne przyczyny prokrastynacji w pracy i konkretne strategie, które pomagają ją przełamać.'
 estimatedReadTime: 7
 date: '2026-09-08'
 author: 'Vocare'
-category: 'Kariera'
+category: 'kariera'
 coverImage: '/images/blog/career-counseling.webp'
 tags: ['prokrastynacja', 'prokrastynacja w pracy', 'jak przestać odkładać zadania', 'odkładanie na później', 'przyczyny prokrastynacji']
 slug: 'prokrastynacja-w-pracy'
@@ -77,6 +77,6 @@ Zastanawiasz się, czy odkładanie zadań to kwestia organizacji, czy głębszeg
 ---
 
 ## Powiązane artykuły
-- [Zarządzanie czasem w pracy 2026 - metody, które realnie działają](/blog/Kariera/zarzadzanie-czasem)
-- [Syndrom oszusta w pracy 2026 - jak sobie z nim radzić](/blog/Kariera/syndrom-oszusta)
-- [Wypalenie zawodowe - co dalej? Jak wrócić do równowagi i odbudować karierę](/blog/Kariera/wypalenie-zawodowe-co-dalej)
+- [Zarządzanie czasem w pracy 2026 - metody, które realnie działają](/blog/kariera/zarzadzanie-czasem)
+- [Syndrom oszusta w pracy 2026 - jak sobie z nim radzić](/blog/kariera/syndrom-oszusta)
+- [Wypalenie zawodowe - co dalej? Jak wrócić do równowagi i odbudować karierę](/blog/kariera/wypalenie-zawodowe-co-dalej)

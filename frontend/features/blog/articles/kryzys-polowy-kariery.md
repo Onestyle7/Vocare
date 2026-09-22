@@ -4,7 +4,7 @@ description: 'Czym jest kryzys w połowie kariery i dlaczego dotyka nawet zadowo
 estimatedReadTime: 8
 date: '2026-08-11'
 author: 'Vocare'
-category: 'Kariera'
+category: 'kariera'
 coverImage: '/images/blog/career-counseling.webp'
 tags: ['kryzys w połowie kariery', 'kryzys zawodowy', 'utrata motywacji w pracy', 'zmiana kariery w połowie', 'kryzys wieku średniego praca']
 slug: 'kryzys-polowy-kariery'
@@ -81,6 +81,6 @@ Zastanawiasz się, czy Twoja obecna ścieżka zawodowa nadal Ci odpowiada? **[Vo
 ---
 
 ## Powiązane artykuły
-- [Wypalenie zawodowe - co dalej? Jak wrócić do równowagi i odbudować karierę](/blog/Kariera/wypalenie-zawodowe-co-dalej)
-- [Jak zmienić branżę - praktyczny przewodnik krok po kroku](/blog/Kariera/jak-zmienic-branze)
-- [Kariera po 40 i 50 roku życia - jak zaplanować dalsze kroki](/blog/Kariera/kariera-po-40-50)
+- [Wypalenie zawodowe - co dalej? Jak wrócić do równowagi i odbudować karierę](/blog/kariera/wypalenie-zawodowe-co-dalej)
+- [Jak zmienić branżę - praktyczny przewodnik krok po kroku](/blog/kariera/jak-zmienic-branze)
+- [Kariera po 40 i 50 roku życia - jak zaplanować dalsze kroki](/blog/kariera/kariera-po-40-50)

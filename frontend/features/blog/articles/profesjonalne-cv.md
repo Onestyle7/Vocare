@@ -5,7 +5,7 @@ estimatedReadTime: 8
 date: '2026-04-28'
 updatedAt: '2026-09-02'
 author: 'Vocare'
-category: 'CV'
+category: 'cv'
 coverImage: '/images/blog/professional-cv.webp'
 tags: ['profesjonalne cv', 'jak napisać cv', 'cv 2026', 'cv do pracy', 'cv poradnik']
 slug: 'profesjonalne-cv'
@@ -181,8 +181,8 @@ Jeśli chcesz sprawdzić jak profesjonalne jest Twoje CV i co konkretnie zmieni�
 ---
 
 ## Powiązane artykuły
-- [Zdjęcie do CV 2026 - czy warto i jak je dobrze zrobić](/blog/CV/zdjecie-do-cv)
-- [CV wzór 2026 - darmowe szablony do pobrania i edycji](/blog/CV/cv-wzor)
-- [Umiejętności do CV 2026 - co wpisać, żeby wyróżnić aplikację](/blog/CV/umiejetnosci-do-cv)
-- [Jak zrobić CV 2026 - praktyczny poradnik od zera do gotowego pliku](/blog/CV/jak-zrobic-cv)
-- [Referencje zawodowe 2026 - jak i kogo poprosić o rekomendację](/blog/CV/referencje-zawodowe)
+- [Zdjęcie do CV 2026 - czy warto i jak je dobrze zrobić](/blog/cv/zdjecie-do-cv)
+- [CV wzór 2026 - darmowe szablony do pobrania i edycji](/blog/cv/cv-wzor)
+- [Umiejętności do CV 2026 - co wpisać, żeby wyróżnić aplikację](/blog/cv/umiejetnosci-do-cv)
+- [Jak zrobić CV 2026 - praktyczny poradnik od zera do gotowego pliku](/blog/cv/jak-zrobic-cv)
+- [Referencje zawodowe 2026 - jak i kogo poprosić o rekomendację](/blog/cv/referencje-zawodowe)

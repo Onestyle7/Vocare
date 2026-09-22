@@ -5,7 +5,7 @@ estimatedReadTime: 7
 date: '2026-06-17'
 updatedAt: '2026-09-09'
 author: 'Vocare'
-category: 'Job'
+category: 'praca'
 coverImage: '/images/blog/job-search.webp'
 tags: ['praca hybrydowa', 'model pracy hybrydowej', 'negocjowanie dni w biurze', 'praca zdalna i stacjonarna', 'elastyczny czas pracy']
 slug: 'praca-hybrydowa'
@@ -82,9 +82,9 @@ Szukasz oferty z modelem pracy dopasowanym do Twoich potrzeb? **[Vocare.pl](http
 ---
 
 ## Powiązane artykuły
-- [Praca zdalna 2026 - jak ją znaleźć i utrzymać produktywność](/blog/Job/praca-zdalna)
-- [Umowa o pracę vs B2B vs zlecenie 2026 - co wybrać?](/blog/Job/umowa-o-prace-vs-b2b)
-- [Negocjacje wynagrodzenia 2026 - jak negocjować pensję skutecznie](/blog/Job/negocjacje-wynagrodzenia)
-- [Praca dla osób z niepełnosprawnością 2026 - prawa i wsparcie](/blog/Job/praca-dla-osob-niepelnosprawnych)
-- [Delegacja służbowa 2026 - dieta, rozliczenie i Twoje prawa](/blog/Job/delegacja-sluzbowa)
-- [Elastyczny czas pracy 2026 - jak negocjować ruchomy grafik](/blog/Job/czas-pracy-elastyczny)
+- [Praca zdalna 2026 - jak ją znaleźć i utrzymać produktywność](/blog/praca/praca-zdalna)
+- [Umowa o pracę vs B2B vs zlecenie 2026 - co wybrać?](/blog/praca/umowa-o-prace-vs-b2b)
+- [Negocjacje wynagrodzenia 2026 - jak negocjować pensję skutecznie](/blog/praca/negocjacje-wynagrodzenia)
+- [Praca dla osób z niepełnosprawnością 2026 - prawa i wsparcie](/blog/praca/praca-dla-osob-niepelnosprawnych)
+- [Delegacja służbowa 2026 - dieta, rozliczenie i Twoje prawa](/blog/praca/delegacja-sluzbowa)
+- [Elastyczny czas pracy 2026 - jak negocjować ruchomy grafik](/blog/praca/czas-pracy-elastyczny)

@@ -1,6 +1,6 @@
 ---
 title: 'Rynek pracy w nieruchomościach 2026 - trendy i zarobki'
-description: 'Jak wygląda rynek pracy w nieruchomościach w 2026 roku? Sprawdź, ile zarabia pośrednik nieruchomości, jak wygląda pierwszy rok w zawodzie i które role rosną najszybciej.'
+description: 'Jak wygląda rynek pracy w nieruchomościach w 2026 roku? Sprawdź, ile zarabia pośrednik i które role rosną najszybciej.'
 estimatedReadTime: 7
 date: '2026-08-24'
 author: 'Vocare'

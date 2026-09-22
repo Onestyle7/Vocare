@@ -1,10 +1,10 @@
 ---
-title: 'Praca zdalna dla zagranicznego pracodawcy 2026 - jak ją znaleźć i rozliczyć'
+title: 'Praca zdalna dla zagranicznego pracodawcy - jak rozliczyć'
 description: 'Jak znaleźć pracę zdalną dla zagranicznej firmy mieszkając w Polsce? Sprawdź gdzie szukać ofert, jak wygląda rozliczenie podatkowe i czego unikać.'
 estimatedReadTime: 9
 date: '2026-07-20'
 author: 'Vocare'
-category: 'Job'
+category: 'praca'
 coverImage: '/images/blog/job-search.webp'
 tags: ['praca zdalna za granicą', 'praca dla zagranicznej firmy', 'remote job polska', 'b2b za granicą', 'employer of record']
 slug: 'praca-zdalna-dla-zagranicznego-pracodawcy'
@@ -53,12 +53,12 @@ Rzadziej spotykana i bardziej skomplikowana administracyjnie - zagraniczna firma
 
 ## Jak dostosować CV i profil pod rekrutację międzynarodową?
 
-Aplikując do zagranicznej firmy, dostosuj dokumenty do konwencji rynku docelowego, nie polskiej - pełny przewodnik po różnicach znajdziesz w [CV po angielsku](/blog/CV/cv-po-angielsku). Kluczowe różnice względem polskiej rekrutacji:
+Aplikując do zagranicznej firmy, dostosuj dokumenty do konwencji rynku docelowego, nie polskiej - pełny przewodnik po różnicach znajdziesz w [CV po angielsku](/blog/cv/cv-po-angielsku). Kluczowe różnice względem polskiej rekrutacji:
 
 - **Strefa czasowa w CV lub liście motywacyjnym** - jawnie wskaż swoją strefę czasową i gotowość do pracy w godzinach nakładających się z zespołem (np. "CET, dostępny/a do 3h nakładania się z PST").
 - **Doświadczenie w pracy zdalnej i asynchronicznej** - jeśli masz, wyeksponuj je: praca w rozproszonych zespołach, komunikacja pisemna, narzędzia (Slack, Notion, Linear).
 - **Angielski na poziomie C1 jako punkt wyjścia, nie atut** - w rekrutacji międzynarodowej to standard, nie wyróżnik.
-- **Profil LinkedIn w pełni po angielsku** - szczegóły w [poradniku o budowie profilu LinkedIn](/blog/CV/linkedin-profil).
+- **Profil LinkedIn w pełni po angielsku** - szczegóły w [poradniku o budowie profilu LinkedIn](/blog/cv/linkedin-profil).
 
 ---
 
@@ -99,7 +99,7 @@ Chcesz sprawdzić, czy Twoje CV i kompetencje są gotowe na aplikacje do zagrani
 ---
 
 ## Powiązane artykuły
-- [CV po angielsku 2026 - jak napisać angielskie CV krok po kroku](/blog/CV/cv-po-angielsku)
-- [LinkedIn - jak zbudować profil, który przyciąga rekruterów 2026](/blog/CV/linkedin-profil)
-- [Praca zdalna 2026 - jak ją znaleźć i utrzymać produktywność](/blog/Job/praca-zdalna)
-- [Praca sezonowa za granicą 2026 - gdzie jechać i ile można zarobić](/blog/Job/praca-sezonowa-za-granica)
+- [CV po angielsku 2026 - jak napisać angielskie CV krok po kroku](/blog/cv/cv-po-angielsku)
+- [LinkedIn - jak zbudować profil, który przyciąga rekruterów 2026](/blog/cv/linkedin-profil)
+- [Praca zdalna 2026 - jak ją znaleźć i utrzymać produktywność](/blog/praca/praca-zdalna)
+- [Praca sezonowa za granicą 2026 - gdzie jechać i ile można zarobić](/blog/praca/praca-sezonowa-za-granica)

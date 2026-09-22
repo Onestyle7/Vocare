@@ -4,7 +4,7 @@ description: 'Komu przysługuje odprawa emerytalna w 2026 roku i ile wynosi? Spr
 estimatedReadTime: 6
 date: '2026-08-05'
 author: 'Vocare'
-category: 'Job'
+category: 'praca'
 coverImage: '/images/blog/job-search.webp'
 tags: ['odprawa emerytalna', 'odprawa rentowa', 'komu przysługuje odprawa emerytalna', 'ile wynosi odprawa emerytalna', 'przejście na emeryturę odprawa']
 slug: 'odprawa-emerytalna'
@@ -74,6 +74,6 @@ Zbliżasz się do końca kariery zawodowej i chcesz zaplanować ten etap? **[Voc
 ---
 
 ## Powiązane artykuły
-- [Zwolnienie grupowe 2026 - Twoje prawa i wysokość odprawy](/blog/Job/zwolnienie-grupowe)
-- [Kariera po 40 i 50 roku życia - jak zaplanować dalsze kroki](/blog/Kariera/kariera-po-40-50)
-- [Okres wypowiedzenia umowy o pracę 2026 - ile trwa i jak liczyć](/blog/Job/wypowiedzenie-umowy-o-prace)
+- [Zwolnienie grupowe 2026 - Twoje prawa i wysokość odprawy](/blog/praca/zwolnienie-grupowe)
+- [Kariera po 40 i 50 roku życia - jak zaplanować dalsze kroki](/blog/kariera/kariera-po-40-50)
+- [Okres wypowiedzenia umowy o pracę 2026 - ile trwa i jak liczyć](/blog/praca/wypowiedzenie-umowy-o-prace)

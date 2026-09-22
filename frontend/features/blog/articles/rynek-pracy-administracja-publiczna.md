@@ -1,5 +1,5 @@
 ---
-title: 'Rynek pracy w administracji publicznej 2026 - stabilność i zarobki'
+title: 'Rynek pracy w administracji 2026 - stabilność i zarobki'
 description: 'Jak wygląda rynek pracy w administracji publicznej w 2026 roku? Sprawdź zarobki urzędników, stabilność zatrudnienia i jak zacząć karierę w sektorze publicznym.'
 estimatedReadTime: 7
 date: '2026-08-07'
@@ -97,4 +97,4 @@ Zastanawiasz się, czy administracja publiczna pasuje do Twoich priorytetów zaw
 ## Powiązane artykuły
 - [Rynek pracy w Polsce 2026 - kompletny przegląd 21 branż](/blog/rynek-pracy/rynek-pracy-w-polsce)
 - [Rynek pracy w edukacji 2026 - deficyt nauczycieli i nowe ścieżki](/blog/rynek-pracy/rynek-pracy-edukacja)
-- [Urlop wypoczynkowy 2026 - ile dni przysługuje i jak liczyć](/blog/Job/urlop-wypoczynkowy)
+- [Urlop wypoczynkowy 2026 - ile dni przysługuje i jak liczyć](/blog/praca/urlop-wypoczynkowy)

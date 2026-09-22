@@ -1,10 +1,10 @@
 ---
 title: 'List motywacyjny po angielsku 2026 - jak napisać cover letter'
-description: 'Jak napisać list motywacyjny po angielsku (cover letter) w 2026 roku? Sprawdź strukturę, zwroty, których używają rodzimi użytkownicy języka, i najczęstsze błędy Polaków.'
+description: 'Jak napisać list motywacyjny po angielsku (cover letter)? Sprawdź strukturę, naturalne zwroty i najczęstsze błędy Polaków.'
 estimatedReadTime: 8
 date: '2026-09-07'
 author: 'Vocare'
-category: 'CV'
+category: 'cv'
 coverImage: '/images/blog/cover-letter.webp'
 tags: ['list motywacyjny po angielsku', 'cover letter', 'jak napisać cover letter', 'list motywacyjny angielski wzór', 'cv po angielsku list motywacyjny']
 slug: 'list-motywacyjny-po-angielsku'
@@ -79,6 +79,6 @@ Aplikujesz za granicę i chcesz sprawdzić, jak Twoje kompetencje wypadają na t
 ---
 
 ## Powiązane artykuły
-- [CV po angielsku 2026 - jak napisać angielskie CV krok po kroku](/blog/CV/cv-po-angielsku)
-- [List motywacyjny 2026 - jak go napisać krok po kroku](/blog/CV/list-motywacyjny)
-- [Praca zdalna dla zagranicznego pracodawcy 2026 - jak ją znaleźć i rozliczyć](/blog/Job/praca-zdalna-dla-zagranicznego-pracodawcy)
+- [CV po angielsku 2026 - jak napisać angielskie CV krok po kroku](/blog/cv/cv-po-angielsku)
+- [List motywacyjny 2026 - jak go napisać krok po kroku](/blog/cv/list-motywacyjny)
+- [Praca zdalna dla zagranicznego pracodawcy 2026 - jak ją znaleźć i rozliczyć](/blog/praca/praca-zdalna-dla-zagranicznego-pracodawcy)

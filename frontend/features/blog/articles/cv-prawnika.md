@@ -4,7 +4,7 @@ description: 'Jak napisać CV prawnika w 2026 roku? Sprawdź, jak pokazać etap 
 estimatedReadTime: 7
 date: '2026-09-04'
 author: 'Vocare'
-category: 'CV'
+category: 'cv'
 coverImage: '/images/blog/professional-cv.webp'
 tags: ['cv prawnika', 'cv aplikanta radcowskiego', 'cv do kancelarii', 'jak napisać cv prawnicze', 'cv radcy prawnego']
 slug: 'cv-prawnika'
@@ -76,5 +76,5 @@ Zastanawiasz się, jaka specjalizacja prawnicza pasuje do Twoich kompetencji? **
 
 ## Powiązane artykuły
 - [Rynek pracy w branży prawniczej 2026 - specjalizacje i zarobki](/blog/rynek-pracy/rynek-pracy-prawo)
-- [Profesjonalne CV 2026 - jak wyglądać poważnie na papierze](/blog/CV/profesjonalne-cv)
-- [MBA czy certyfikaty branżowe 2026 - co się bardziej opłaca?](/blog/Kariera/mba-czy-certyfikaty)
+- [Profesjonalne CV 2026 - jak wyglądać poważnie na papierze](/blog/cv/profesjonalne-cv)
+- [MBA czy certyfikaty branżowe 2026 - co się bardziej opłaca?](/blog/kariera/mba-czy-certyfikaty)

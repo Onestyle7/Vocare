@@ -5,7 +5,7 @@ estimatedReadTime: 8
 date: '2026-04-09'
 updatedAt: '2026-09-09'
 author: 'Vocare'
-category: 'Job'
+category: 'praca'
 coverImage: '/images/blog/job-portals.webp'
 tags: ['gdzie szukać pracy', 'portale pracy', 'szukanie pracy', 'oferty pracy', 'rynek pracy 2026']
 slug: 'gdzie-szukac-pracy'
@@ -171,7 +171,7 @@ Chcesz od razu wiedzieć, które stanowiska najlepiej pasują do Twojego profilu
 ---
 
 ## Powiązane artykuły
-- [Jak znaleźć pracę w 2026 - sprawdzone strategie krok po kroku](/blog/Job/jak-znalezc-prace)
-- [Pytania na rozmowie kwalifikacyjnej 2026 - jak odpowiadać](/blog/Job/pytania-na-rozmowie-kwalifikacyjnej)
-- [Praca bez doświadczenia 2026 - jak dostać pierwszą pracę](/blog/Job/praca-bez-doswiadczenia)
-- [Praca sezonowa za granicą 2026 - gdzie jechać i ile można zarobić](/blog/Job/praca-sezonowa-za-granica)
+- [Jak znaleźć pracę w 2026 - sprawdzone strategie krok po kroku](/blog/praca/jak-znalezc-prace)
+- [Pytania na rozmowie kwalifikacyjnej 2026 - jak odpowiadać](/blog/praca/pytania-na-rozmowie-kwalifikacyjnej)
+- [Praca bez doświadczenia 2026 - jak dostać pierwszą pracę](/blog/praca/praca-bez-doswiadczenia)
+- [Praca sezonowa za granicą 2026 - gdzie jechać i ile można zarobić](/blog/praca/praca-sezonowa-za-granica)

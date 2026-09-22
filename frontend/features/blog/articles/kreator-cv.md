@@ -5,7 +5,7 @@ estimatedReadTime: 8
 date: '2026-04-17'
 updatedAt: '2026-09-02'
 author: 'Vocare'
-category: 'CV'
+category: 'cv'
 coverImage: '/images/blog/cv-builder.webp'
 tags: ['kreator cv', 'kreator cv online', 'narzędzia cv', 'darmowy kreator cv', 'jak zrobić cv']
 slug: 'kreator-cv'
@@ -146,7 +146,7 @@ Pamiętaj: kreator jest tylko narzędziem. Najważniejsza jest treść CV - konk
 ---
 
 ## Powiązane artykuły
-- [Darmowy kreator CV 2026 - stwórz CV online bez ukrytych opłat](/blog/CV/darmowy-kreator-cv)
-- [CV wzór 2026 - darmowe szablony do pobrania i edycji](/blog/CV/cv-wzor)
-- [Jak zrobić CV 2026 - praktyczny poradnik od zera do gotowego pliku](/blog/CV/jak-zrobic-cv)
-- [Portfolio zawodowe 2026 - jak je zbudować i czym wyróżnić aplikację](/blog/CV/portfolio-zawodowe)
+- [Darmowy kreator CV 2026 - stwórz CV online bez ukrytych opłat](/blog/cv/darmowy-kreator-cv)
+- [CV wzór 2026 - darmowe szablony do pobrania i edycji](/blog/cv/cv-wzor)
+- [Jak zrobić CV 2026 - praktyczny poradnik od zera do gotowego pliku](/blog/cv/jak-zrobic-cv)
+- [Portfolio zawodowe 2026 - jak je zbudować i czym wyróżnić aplikację](/blog/cv/portfolio-zawodowe)

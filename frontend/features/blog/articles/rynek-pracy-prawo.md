@@ -1,5 +1,5 @@
 ---
-title: 'Rynek pracy w branży prawniczej 2026 - specjalizacje i zarobki'
+title: 'Rynek pracy w branży prawniczej 2026 - zarobki'
 description: 'Jak wygląda rynek pracy w branży prawniczej w 2026 roku? Sprawdź, które specjalizacje prawnicze są dziś najbardziej poszukiwane i jak AI zmienia pracę prawnika.'
 estimatedReadTime: 7
 date: '2026-07-10'
@@ -91,5 +91,5 @@ Zastanawiasz się, która ścieżka prawnicza pasuje do Twoich kompetencji? **[V
 - [Rynek pracy w Polsce 2026 - kompletny przegląd 21 branż](/blog/rynek-pracy/rynek-pracy-w-polsce)
 - [Rynek pracy w finansach i bankowości 2026 - trendy i zarobki](/blog/rynek-pracy/rynek-pracy-finanse)
 - [Najlepiej płatne zawody w Polsce 2026 - ranking i zarobki](/blog/rynek-pracy/najlepiej-platne-zawody)
-- [Jaki zawód wybrać? Praktyczny poradnik na 2026 rok](/blog/Kariera/jaki-zawod-wybrac)
-- [CV prawnika 2026 - jak napisać CV aplikanta i radcy prawnego](/blog/CV/cv-prawnika)
+- [Jaki zawód wybrać? Praktyczny poradnik na 2026 rok](/blog/kariera/jaki-zawod-wybrac)
+- [CV prawnika 2026 - jak napisać CV aplikanta i radcy prawnego](/blog/cv/cv-prawnika)

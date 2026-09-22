@@ -5,7 +5,7 @@ estimatedReadTime: 8
 date: '2026-04-06'
 updatedAt: '2026-09-02'
 author: 'Vocare'
-category: 'Kariera'
+category: 'kariera'
 coverImage: '/images/blog/career-advisor.webp'
 tags:
   [
@@ -201,7 +201,7 @@ Zacznij od bezpłatnej diagnozy na **[Vocare.pl](https://vocare.pl)** - AI przep
 ---
 
 ## Powiązane artykuły
-- [Doradztwo zawodowe 2026 - czym jest i kiedy skorzystać](/blog/Kariera/doradztwo-zawodowe)
-- [Ścieżka kariery - jak zaplanować rozwój zawodowy w 2026](/blog/Kariera/sciezka-kariery)
-- [Jaki zawód wybrać? Praktyczny poradnik na 2026 rok](/blog/Kariera/jaki-zawod-wybrac)
-- [Mentoring zawodowy 2026 - jak znaleźć mentora i na tym skorzystać](/blog/Kariera/mentoring-zawodowy)
+- [Doradztwo zawodowe 2026 - czym jest i kiedy skorzystać](/blog/kariera/doradztwo-zawodowe)
+- [Ścieżka kariery - jak zaplanować rozwój zawodowy w 2026](/blog/kariera/sciezka-kariery)
+- [Jaki zawód wybrać? Praktyczny poradnik na 2026 rok](/blog/kariera/jaki-zawod-wybrac)
+- [Mentoring zawodowy 2026 - jak znaleźć mentora i na tym skorzystać](/blog/kariera/mentoring-zawodowy)

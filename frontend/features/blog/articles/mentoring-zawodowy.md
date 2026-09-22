@@ -1,10 +1,10 @@
 ---
-title: 'Mentoring zawodowy 2026 - jak znaleźć mentora i na tym skorzystać'
+title: 'Mentoring zawodowy 2026 - jak znaleźć mentora'
 description: 'Jak znaleźć mentora zawodowego i jak zbudować z nim wartościową relację? Sprawdź jak działa mentoring, czym różni się od coachingu i jak o niego poprosić.'
 estimatedReadTime: 7
 date: '2026-06-03'
 author: 'Vocare'
-category: 'Kariera'
+category: 'kariera'
 coverImage: '/images/blog/career-advisor.webp'
 tags: ['mentoring zawodowy', 'jak znaleźć mentora', 'mentor w karierze', 'rozwój zawodowy', 'relacja mentor mentee']
 slug: 'mentoring-zawodowy'
@@ -87,7 +87,7 @@ Zastanawiasz się, w jakim obszarze rozwoju najbardziej przydałoby Ci się wspa
 ---
 
 ## Powiązane artykuły
-- [Feedback w pracy 2026 - jak dawać i przyjmować krytykę](/blog/Kariera/feedback-w-pracy)
-- [Networking zawodowy 2026 - jak budować sieć kontaktów bez wciskania się](/blog/Kariera/networking-zawodowy)
-- [Doradca zawodowy - co robi, ile kosztuje i czy warto](/blog/Kariera/doradca-zawodowy)
-- [Awans zawodowy 2026 - jak go uzyskać i o niego poprosić](/blog/Kariera/awans-zawodowy)
+- [Feedback w pracy 2026 - jak dawać i przyjmować krytykę](/blog/kariera/feedback-w-pracy)
+- [Networking zawodowy 2026 - jak budować sieć kontaktów bez wciskania się](/blog/kariera/networking-zawodowy)
+- [Doradca zawodowy - co robi, ile kosztuje i czy warto](/blog/kariera/doradca-zawodowy)
+- [Awans zawodowy 2026 - jak go uzyskać i o niego poprosić](/blog/kariera/awans-zawodowy)

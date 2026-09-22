@@ -1,11 +1,11 @@
 ---
-title: 'Test kompetencji zawodowych - jak sprawdzić swoje mocne strony'
+title: 'Test kompetencji zawodowych - jak poznać mocne strony'
 description: 'Chcesz sprawdzić swoje kompetencje zawodowe? Dowiedz się jakie testy kompetencji warto zrobić w 2026, jak je interpretować i co z wynikami zrobić.'
 estimatedReadTime: 9
 date: '2026-05-07'
 updatedAt: '2026-09-02'
 author: 'Vocare'
-category: 'Kariera'
+category: 'kariera'
 coverImage: '/images/blog/competency-test.webp'
 tags:
   [
@@ -218,6 +218,6 @@ Chcesz przeprowadzić szybką diagnostykę kariery bez konieczności umawia sesj
 ---
 
 ## Powiązane artykuły
-- [Test kariery online - jak wybrać zawód dopasowany do Ciebie?](/blog/Kariera/test-kariery-online)
-- [Ścieżka kariery - jak zaplanować rozwój zawodowy w 2026](/blog/Kariera/sciezka-kariery)
-- [Jaki zawód wybrać? Praktyczny poradnik na 2026 rok](/blog/Kariera/jaki-zawod-wybrac)
+- [Test kariery online - jak wybrać zawód dopasowany do Ciebie?](/blog/kariera/test-kariery-online)
+- [Ścieżka kariery - jak zaplanować rozwój zawodowy w 2026](/blog/kariera/sciezka-kariery)
+- [Jaki zawód wybrać? Praktyczny poradnik na 2026 rok](/blog/kariera/jaki-zawod-wybrac)

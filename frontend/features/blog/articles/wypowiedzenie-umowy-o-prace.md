@@ -1,10 +1,10 @@
 ---
-title: 'Okres wypowiedzenia umowy o pracę 2026 - ile trwa i jak liczyć'
+title: 'Okres wypowiedzenia umowy o pracę 2026 - ile trwa'
 description: 'Ile trwa okres wypowiedzenia umowy o pracę w 2026 roku? Sprawdź zasady liczenia, wyjątki i co robić, gdy pracodawca skraca lub łamie okres wypowiedzenia.'
 estimatedReadTime: 8
 date: '2026-08-11'
 author: 'Vocare'
-category: 'Job'
+category: 'praca'
 coverImage: '/images/blog/job-search.webp'
 tags: ['okres wypowiedzenia', 'wypowiedzenie umowy o pracę', 'ile trwa wypowiedzenie', 'kodeks pracy wypowiedzenie', 'zwolnienie z pracy']
 slug: 'wypowiedzenie-umowy-o-prace'
@@ -88,6 +88,6 @@ Kończysz jedną pracę i zastanawiasz się, jaki kierunek wybrać dalej? **[Voc
 ---
 
 ## Powiązane artykuły
-- [Umowa na czas określony 2026 - ile razy można ją podpisać](/blog/Job/umowa-na-czas-okreslony-limit)
-- [Jak zrezygnować z pracy 2026 - jak to zrobić profesjonalnie](/blog/Job/jak-zrezygnowac-z-pracy)
-- [Urlop wypoczynkowy 2026 - ile dni przysługuje i jak liczyć](/blog/Job/urlop-wypoczynkowy)
+- [Umowa na czas określony 2026 - ile razy można ją podpisać](/blog/praca/umowa-na-czas-okreslony-limit)
+- [Jak zrezygnować z pracy 2026 - jak to zrobić profesjonalnie](/blog/praca/jak-zrezygnowac-z-pracy)
+- [Urlop wypoczynkowy 2026 - ile dni przysługuje i jak liczyć](/blog/praca/urlop-wypoczynkowy)

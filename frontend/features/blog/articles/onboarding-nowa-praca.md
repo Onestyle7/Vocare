@@ -5,7 +5,7 @@ estimatedReadTime: 7
 date: '2026-06-09'
 updatedAt: '2026-09-09'
 author: 'Vocare'
-category: 'Job'
+category: 'praca'
 coverImage: '/images/blog/cv-job-application.webp'
 tags: ['onboarding', 'pierwsze dni w pracy', 'nowa praca', 'adaptacja w pracy', 'jak zacząć nową pracę']
 slug: 'onboarding-nowa-praca'
@@ -97,8 +97,8 @@ Chcesz wejść do nowej roli dobrze przygotowany? **[Vocare.pl](https://vocare.p
 ---
 
 ## Powiązane artykuły
-- [Rozmowa kwalifikacyjna 2026 - jak się przygotować i wypaść świetnie](/blog/Job/rozmowa-kwalifikacyjna)
-- [Jak znaleźć pracę w 2026 - sprawdzone strategie krok po kroku](/blog/Job/jak-znalezc-prace)
-- [Ścieżka kariery - jak zaplanować rozwój zawodowy w 2026](/blog/Kariera/sciezka-kariery)
-- [Badania lekarskie do pracy 2026 - kiedy i jakie są obowiązkowe](/blog/Job/badania-lekarskie-do-pracy)
-- [Szkolenie BHP wstępne 2026 - kto musi je przejść i ile trwa](/blog/Job/szkolenie-bhp-wstepne)
+- [Rozmowa kwalifikacyjna 2026 - jak się przygotować i wypaść świetnie](/blog/praca/rozmowa-kwalifikacyjna)
+- [Jak znaleźć pracę w 2026 - sprawdzone strategie krok po kroku](/blog/praca/jak-znalezc-prace)
+- [Ścieżka kariery - jak zaplanować rozwój zawodowy w 2026](/blog/kariera/sciezka-kariery)
+- [Badania lekarskie do pracy 2026 - kiedy i jakie są obowiązkowe](/blog/praca/badania-lekarskie-do-pracy)
+- [Szkolenie BHP wstępne 2026 - kto musi je przejść i ile trwa](/blog/praca/szkolenie-bhp-wstepne)

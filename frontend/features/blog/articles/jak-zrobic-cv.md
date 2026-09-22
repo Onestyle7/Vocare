@@ -1,11 +1,11 @@
 ---
-title: 'Jak zrobić CV 2026 - praktyczny poradnik od zera do gotowego pliku'
+title: 'Jak zrobić CV 2026 - poradnik od zera do gotowego pliku'
 description: 'Jak zrobić CV szybko i skutecznie? Sprawdź praktyczny przewodnik z konkretnymi krokami, narzędziami i przykładami, żeby stworzyć CV gotowe do wysłania.'
 estimatedReadTime: 8
 date: '2026-04-15'
 updatedAt: '2026-09-02'
 author: 'Vocare'
-category: 'CV'
+category: 'cv'
 coverImage: '/images/blog/make-cv.webp'
 tags: ['jak zrobić cv', 'jak napisać cv', 'tworzenie cv', 'cv od zera', 'cv 2026']
 slug: 'jak-zrobic-cv'
@@ -237,6 +237,6 @@ Jeśli chcesz mieć pewność, że Twoje CV jest zoptymalizowane pod konkretną 
 ---
 
 ## Powiązane artykuły
-- [CV 2026 - kompletny poradnik jak napisać dobre CV](/blog/CV/cv)
-- [CV wzór 2026 - darmowe szablony do pobrania i edycji](/blog/CV/cv-wzor)
-- [Przykładowe CV 2026 - wzory dla różnych stanowisk i branż](/blog/CV/przykladowe-cv)
+- [CV 2026 - kompletny poradnik jak napisać dobre CV](/blog/cv/cv)
+- [CV wzór 2026 - darmowe szablony do pobrania i edycji](/blog/cv/cv-wzor)
+- [Przykładowe CV 2026 - wzory dla różnych stanowisk i branż](/blog/cv/przykladowe-cv)

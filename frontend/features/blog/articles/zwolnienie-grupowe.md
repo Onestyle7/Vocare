@@ -4,7 +4,7 @@ description: 'Czym jest zwolnienie grupowe i kiedy ma zastosowanie w 2026 roku? 
 estimatedReadTime: 8
 date: '2026-08-28'
 author: 'Vocare'
-category: 'Job'
+category: 'praca'
 coverImage: '/images/blog/job-search.webp'
 tags: ['zwolnienia grupowe', 'odprawa zwolnienie grupowe', 'ustawa o zwolnieniach grupowych', 'ile wynosi odprawa', 'redukcja etatów']
 slug: 'zwolnienie-grupowe'
@@ -80,7 +80,7 @@ Szukasz nowego kierunku zawodowego po zwolnieniu grupowym? **[Vocare.pl](https:/
 ---
 
 ## Powiązane artykuły
-- [Okres wypowiedzenia umowy o pracę 2026 - ile trwa i jak liczyć](/blog/Job/wypowiedzenie-umowy-o-prace)
-- [Zwolnienie dyscyplinarne 2026 - kiedy grozi i jak się przed nim bronić](/blog/Job/zwolnienie-dyscyplinarne)
-- [Zasiłek dla bezrobotnych 2026 - ile wynosi i jak go uzyskać](/blog/Job/zasilek-dla-bezrobotnych)
-- [Wypowiedzenie zmieniające 2026 - kiedy pracodawca może zmienić warunki pracy](/blog/Job/wypowiedzenie-zmieniajace)
+- [Okres wypowiedzenia umowy o pracę 2026 - ile trwa i jak liczyć](/blog/praca/wypowiedzenie-umowy-o-prace)
+- [Zwolnienie dyscyplinarne 2026 - kiedy grozi i jak się przed nim bronić](/blog/praca/zwolnienie-dyscyplinarne)
+- [Zasiłek dla bezrobotnych 2026 - ile wynosi i jak go uzyskać](/blog/praca/zasilek-dla-bezrobotnych)
+- [Wypowiedzenie zmieniające 2026 - kiedy pracodawca może zmienić warunki pracy](/blog/praca/wypowiedzenie-zmieniajace)

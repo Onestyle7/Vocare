@@ -4,6 +4,23 @@
 **Podstawa:** [blog-audit-2026-09-22.md](blog-audit-2026-09-22.md) — 123 opublikowane posty, średnia 75.9/100
 **Cel:** 75.9 → ~86/100 bez powiększania korpusu
 
+> ### Korekta analizatora: po Fazie 0 wynosi +7, nie +6
+>
+> Audyt korygował surowy wynik o **+6** (schema 4/4 + social_meta 2/2 emitowane przez trasę Next.js,
+> niewidoczne dla analizatora czytającego sam markdown).
+>
+> Faza 0.1 usunęła nagłówki `# ` z treści, więc analizator widzi teraz `h1_count: 0` i obniża
+> `content_quality.structure` o ~1 pkt na post (3.96 → 3.00). **H1 nadal jest na stronie** — renderuje
+> go trasa z pola `title`, co potwierdza `curl` (dokładnie jeden `<h1>`). To ten sam artefakt pomiaru,
+> nie regresja.
+>
+> **Korekta to teraz +7.** Surowa średnia 69.0 → skorygowana **76.0**.
+>
+> Faza 1 nie podniosła punktacji analizatora, bo żadna z jej zmian nie jest przez niego mierzalna:
+> huby kategorii, `lastmod`, realne czasy czytania i długość renderowanego `<title>` (analizator nie
+> wie o szablonie `" | Vocare"`) leżą poza markdownem. Efekt jest realny, ale widoczny dopiero w GSC —
+> patrz Faza 5.
+
 ---
 
 ## Zasada porządkowania

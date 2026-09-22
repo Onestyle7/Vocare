@@ -4,7 +4,7 @@ description: 'Czym jest umowa o dzieło w 2026 roku i czym różni się od zlece
 estimatedReadTime: 7
 date: '2026-08-04'
 author: 'Vocare'
-category: 'Job'
+category: 'praca'
 coverImage: '/images/blog/job-search.webp'
 tags: ['umowa o dzieło', 'umowa o dzieło a zlecenie', 'umowa o dzieło zus', 'koszty uzyskania przychodu 50%', 'prawa autorskie umowa o dzieło']
 slug: 'umowa-o-dzielo'
@@ -69,6 +69,6 @@ Zastanawiasz się, jaka forma współpracy najlepiej pasuje do Twojej sytuacji z
 ---
 
 ## Powiązane artykuły
-- [Umowa o pracę vs B2B vs zlecenie 2026 - co wybrać?](/blog/Job/umowa-o-prace-vs-b2b)
-- [CV freelancera 2026 - jak pokazać projekty zamiast etatów](/blog/CV/cv-freelancera)
-- [Umowa na czas określony 2026 - ile razy można ją podpisać](/blog/Job/umowa-na-czas-okreslony-limit)
+- [Umowa o pracę vs B2B vs zlecenie 2026 - co wybrać?](/blog/praca/umowa-o-prace-vs-b2b)
+- [CV freelancera 2026 - jak pokazać projekty zamiast etatów](/blog/cv/cv-freelancera)
+- [Umowa na czas określony 2026 - ile razy można ją podpisać](/blog/praca/umowa-na-czas-okreslony-limit)

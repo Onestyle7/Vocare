@@ -4,7 +4,7 @@ description: 'Korporacja czy startup - gdzie lepiej rozwijać karierę w 2026 ro
 estimatedReadTime: 8
 date: '2026-08-21'
 author: 'Vocare'
-category: 'Kariera'
+category: 'kariera'
 coverImage: '/images/blog/career-path2.webp'
 tags: ['korporacja czy startup', 'praca w korporacji', 'praca w startupie', 'gdzie pracować', 'wybór pracodawcy']
 slug: 'korporacja-czy-startup'
@@ -77,6 +77,6 @@ Zastanawiasz się, które środowisko pracy pasuje do Twoich priorytetów zawodo
 ---
 
 ## Powiązane artykuły
-- [Ścieżka kariery - jak zaplanować rozwój zawodowy w 2026](/blog/Kariera/sciezka-kariery)
-- [Jak zmienić branżę - praktyczny przewodnik krok po kroku](/blog/Kariera/jak-zmienic-branze)
-- [Umowa o pracę vs B2B vs zlecenie 2026 - co wybrać?](/blog/Job/umowa-o-prace-vs-b2b)
+- [Ścieżka kariery - jak zaplanować rozwój zawodowy w 2026](/blog/kariera/sciezka-kariery)
+- [Jak zmienić branżę - praktyczny przewodnik krok po kroku](/blog/kariera/jak-zmienic-branze)
+- [Umowa o pracę vs B2B vs zlecenie 2026 - co wybrać?](/blog/praca/umowa-o-prace-vs-b2b)

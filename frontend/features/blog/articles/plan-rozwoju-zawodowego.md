@@ -4,7 +4,7 @@ description: 'Jak napisać plan rozwoju zawodowego (IDP)? Sprawdź konkretną st
 estimatedReadTime: 8
 date: '2026-08-03'
 author: 'Vocare'
-category: 'Kariera'
+category: 'kariera'
 coverImage: '/images/blog/career-path.webp'
 tags: ['plan rozwoju zawodowego', 'idp individual development plan', 'cele zawodowe', 'rozwój kariery plan', 'plan kariery']
 slug: 'plan-rozwoju-zawodowego'
@@ -92,7 +92,7 @@ Zastanawiasz się, jakie kompetencje uwzględnić w swoim planie rozwoju? **[Voc
 ---
 
 ## Powiązane artykuły
-- [Awans zawodowy 2026 - jak go uzyskać i o niego poprosić](/blog/Kariera/awans-zawodowy)
-- [Kompetencje miękkie 2026 - jak je rozwijać, nie tylko deklarować](/blog/Kariera/kompetencje-miekkie-jak-rozwijac)
-- [Ścieżka kariery - jak zaplanować rozwój zawodowy w 2026](/blog/Kariera/sciezka-kariery)
-- [Zarządzanie czasem w pracy 2026 - metody, które realnie działają](/blog/Kariera/zarzadzanie-czasem)
+- [Awans zawodowy 2026 - jak go uzyskać i o niego poprosić](/blog/kariera/awans-zawodowy)
+- [Kompetencje miękkie 2026 - jak je rozwijać, nie tylko deklarować](/blog/kariera/kompetencje-miekkie-jak-rozwijac)
+- [Ścieżka kariery - jak zaplanować rozwój zawodowy w 2026](/blog/kariera/sciezka-kariery)
+- [Zarządzanie czasem w pracy 2026 - metody, które realnie działają](/blog/kariera/zarzadzanie-czasem)

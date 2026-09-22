@@ -1,5 +1,6 @@
 import type { Metadata } from 'next';
 import Image from 'next/image';
+import Link from 'next/link';
 import Markdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 
@@ -32,7 +33,11 @@ import {
   getArticlesMetadata,
   toAbsoluteUrl,
 } from '@/features/blog/utils/blogUtils';
-import { ARTICLES_FOLDER } from '@/features/blog/utils/constants';
+import {
+  ARTICLES_FOLDER,
+  BLOG_CATEGORIES,
+  isBlogCategorySlug,
+} from '@/features/blog/utils/constants';
 
 type MetadataProps = {
   params: Promise<{ category: string; slug: string }>;
@@ -118,14 +123,23 @@ export default async function BlogPage(props: MetadataProps) {
     articleSection: metadata.category,
     inLanguage: 'pl-PL',
   };
+  const categoryLabel = isBlogCategorySlug(metadata.category)
+    ? BLOG_CATEGORIES[metadata.category].label
+    : metadata.category;
   const breadcrumbLd = {
-  '@context': 'https://schema.org',
-  '@type': 'BreadcrumbList',
-  itemListElement: [
-    { '@type': 'ListItem', position: 1, name: 'Blog', item: toAbsoluteUrl('/blog') },
-    { '@type': 'ListItem', position: 2, name: metadata.title, item: articleUrl },
-  ],
-};
+    '@context': 'https://schema.org',
+    '@type': 'BreadcrumbList',
+    itemListElement: [
+      { '@type': 'ListItem', position: 1, name: 'Blog', item: toAbsoluteUrl('/blog') },
+      {
+        '@type': 'ListItem',
+        position: 2,
+        name: categoryLabel,
+        item: toAbsoluteUrl(`/blog/${encodeURIComponent(metadata.category)}`),
+      },
+      { '@type': 'ListItem', position: 3, name: metadata.title, item: articleUrl },
+    ],
+  };
 
   return (
     <PageWithBackButton backButtonHref="/blog">
@@ -138,9 +152,9 @@ export default async function BlogPage(props: MetadataProps) {
         dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbLd) }}
       />
       <section className="font-poppins space-y-2 text-center">
-        <Badge className="mb-5">
-          {metadata.category.charAt(0).toUpperCase() + metadata.category.replace('-', ' ').slice(1)}
-        </Badge>
+        <Link href={`/blog/${encodeURIComponent(metadata.category)}`}>
+          <Badge className="mb-5">{categoryLabel}</Badge>
+        </Link>
         <h1 className="mb-5 text-4xl font-semibold">{metadata.title}</h1>
         <p className="text-muted-foreground text-sm">
           {metadata.author && `Autor: ${metadata.author} |`} Opublikowano:{' '}

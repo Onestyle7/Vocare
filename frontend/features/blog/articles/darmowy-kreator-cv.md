@@ -5,7 +5,7 @@ estimatedReadTime: 7
 date: '2026-04-03'
 updatedAt: '2026-09-02'
 author: 'Vocare'
-category: 'CV'
+category: 'cv'
 coverImage: '/images/blog/free-cv-builder.webp'
 tags: ['darmowy kreator cv', 'kreator cv', 'bezpłatne cv', 'cv online', 'jak zrobić cv za darmo']
 slug: 'darmowy-kreator-cv'
@@ -150,6 +150,6 @@ Darmowy kreator CV w 2026 roku wystarczy dla zdecydowanej większości kandydat�
 ---
 
 ## Powiązane artykuły
-- [Kreator CV online 2026 - najlepsze narzędzia do tworzenia CV](/blog/CV/kreator-cv)
-- [CV wzór 2026 - darmowe szablony do pobrania i edycji](/blog/CV/cv-wzor)
-- [Jak zrobić CV 2026 - praktyczny poradnik od zera do gotowego pliku](/blog/CV/jak-zrobic-cv)
+- [Kreator CV online 2026 - najlepsze narzędzia do tworzenia CV](/blog/cv/kreator-cv)
+- [CV wzór 2026 - darmowe szablony do pobrania i edycji](/blog/cv/cv-wzor)
+- [Jak zrobić CV 2026 - praktyczny poradnik od zera do gotowego pliku](/blog/cv/jak-zrobic-cv)

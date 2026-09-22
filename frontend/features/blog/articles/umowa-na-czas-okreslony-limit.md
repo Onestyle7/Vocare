@@ -4,7 +4,7 @@ description: 'Ile umów o pracę na czas określony można podpisać z jednym pr
 estimatedReadTime: 7
 date: '2026-07-21'
 author: 'Vocare'
-category: 'Job'
+category: 'praca'
 coverImage: '/images/blog/job-portals.webp'
 tags: ['umowa na czas określony', 'limit umów na czas określony', '33 miesiące umowa', 'trzecia umowa o pracę', 'umowa o pracę na czas nieokreślony']
 slug: 'umowa-na-czas-okreslony-limit'
@@ -77,8 +77,8 @@ Zastanawiasz się nad zmianą pracy zamiast czekania na przekształcenie umowy? 
 ---
 
 ## Powiązane artykuły
-- [Umowa o pracę vs B2B vs zlecenie 2026 - co wybrać?](/blog/Job/umowa-o-prace-vs-b2b)
-- [Zwolnienie lekarskie L4 2026 - ile trwa i jakie masz prawa](/blog/Job/zwolnienie-lekarskie-l4)
-- [Negocjacje wynagrodzenia 2026 - jak negocjować pensję skutecznie](/blog/Job/negocjacje-wynagrodzenia)
-- [Okres wypowiedzenia umowy o pracę 2026 - ile trwa i jak liczyć](/blog/Job/wypowiedzenie-umowy-o-prace)
-- [Odprawa emerytalna 2026 - komu przysługuje i ile wynosi](/blog/Job/odprawa-emerytalna)
+- [Umowa o pracę vs B2B vs zlecenie 2026 - co wybrać?](/blog/praca/umowa-o-prace-vs-b2b)
+- [Zwolnienie lekarskie L4 2026 - ile trwa i jakie masz prawa](/blog/praca/zwolnienie-lekarskie-l4)
+- [Negocjacje wynagrodzenia 2026 - jak negocjować pensję skutecznie](/blog/praca/negocjacje-wynagrodzenia)
+- [Okres wypowiedzenia umowy o pracę 2026 - ile trwa i jak liczyć](/blog/praca/wypowiedzenie-umowy-o-prace)
+- [Odprawa emerytalna 2026 - komu przysługuje i ile wynosi](/blog/praca/odprawa-emerytalna)

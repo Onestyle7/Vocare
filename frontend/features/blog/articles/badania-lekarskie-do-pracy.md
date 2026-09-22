@@ -1,10 +1,10 @@
 ---
-title: 'Badania lekarskie do pracy 2026 - kiedy i jakie są obowiązkowe'
-description: 'Jakie badania lekarskie są obowiązkowe przed rozpoczęciem pracy w 2026 roku? Sprawdź różnicę między badaniami wstępnymi, okresowymi i kontrolnymi oraz kto za nie płaci.'
+title: 'Badania lekarskie do pracy 2026 - jakie są obowiązkowe'
+description: 'Jakie badania lekarskie są obowiązkowe przed rozpoczęciem pracy? Sprawdź różnicę między badaniami wstępnymi, okresowymi i kontrolnymi.'
 estimatedReadTime: 7
 date: '2026-08-31'
 author: 'Vocare'
-category: 'Job'
+category: 'praca'
 coverImage: '/images/blog/job-search.webp'
 tags: ['badania lekarskie do pracy', 'badania wstępne', 'badania okresowe', 'medycyna pracy', 'kto płaci za badania lekarskie']
 slug: 'badania-lekarskie-do-pracy'
@@ -78,8 +78,8 @@ Zastanawiasz się, jakie wymagania stawiają dziś oferty pracy w Twojej branży
 ---
 
 ## Powiązane artykuły
-- [Zwolnienie lekarskie L4 2026 - ile trwa i jakie masz prawa](/blog/Job/zwolnienie-lekarskie-l4)
-- [Onboarding w nowej pracy 2026 - jak dobrze zacząć](/blog/Job/onboarding-nowa-praca)
-- [Praca dla osób z niepełnosprawnością 2026 - prawa i wsparcie](/blog/Job/praca-dla-osob-niepelnosprawnych)
-- [Kontrola trzeźwości w pracy 2026 - co może pracodawca](/blog/Job/kontrola-trzezwosci-w-pracy)
-- [Szkolenie BHP wstępne 2026 - kto musi je przejść i ile trwa](/blog/Job/szkolenie-bhp-wstepne)
+- [Zwolnienie lekarskie L4 2026 - ile trwa i jakie masz prawa](/blog/praca/zwolnienie-lekarskie-l4)
+- [Onboarding w nowej pracy 2026 - jak dobrze zacząć](/blog/praca/onboarding-nowa-praca)
+- [Praca dla osób z niepełnosprawnością 2026 - prawa i wsparcie](/blog/praca/praca-dla-osob-niepelnosprawnych)
+- [Kontrola trzeźwości w pracy 2026 - co może pracodawca](/blog/praca/kontrola-trzezwosci-w-pracy)
+- [Szkolenie BHP wstępne 2026 - kto musi je przejść i ile trwa](/blog/praca/szkolenie-bhp-wstepne)

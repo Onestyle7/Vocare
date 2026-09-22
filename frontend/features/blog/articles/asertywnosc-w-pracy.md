@@ -4,7 +4,7 @@ description: 'Czym jest asertywność w pracy i czym różni się od uległości
 estimatedReadTime: 7
 date: '2026-09-09'
 author: 'Vocare'
-category: 'Kariera'
+category: 'kariera'
 coverImage: '/images/blog/career-advisor.webp'
 tags: ['asertywność w pracy', 'jak być asertywnym', 'stawianie granic w pracy', 'asertywna komunikacja', 'asertywność vs agresja']
 slug: 'asertywnosc-w-pracy'
@@ -72,6 +72,6 @@ Zastanawiasz się, które kompetencje miękkie warto u siebie rozwinąć? **[Voc
 ---
 
 ## Powiązane artykuły
-- [Syndrom oszusta w pracy 2026 - jak sobie z nim radzić](/blog/Kariera/syndrom-oszusta)
-- [Feedback w pracy 2026 - jak dawać i przyjmować krytykę](/blog/Kariera/feedback-w-pracy)
-- [Kompetencje miękkie 2026 - jak je rozwijać, nie tylko deklarować](/blog/Kariera/kompetencje-miekkie-jak-rozwijac)
+- [Syndrom oszusta w pracy 2026 - jak sobie z nim radzić](/blog/kariera/syndrom-oszusta)
+- [Feedback w pracy 2026 - jak dawać i przyjmować krytykę](/blog/kariera/feedback-w-pracy)
+- [Kompetencje miękkie 2026 - jak je rozwijać, nie tylko deklarować](/blog/kariera/kompetencje-miekkie-jak-rozwijac)

@@ -1,10 +1,10 @@
 ---
-title: 'Powrót do pracy po urlopie macierzyńskim 2026 - jak się przygotować'
-description: 'Jak wrócić do pracy po urlopie macierzyńskim lub rodzicielskim? Sprawdź jak zaktualizować kompetencje, jak rozmawiać z pracodawcą i jak poradzić sobie z obawami przed powrotem.'
+title: 'Powrót do pracy po macierzyńskim 2026 - jak się przygotować'
+description: 'Jak wrócić do pracy po urlopie macierzyńskim lub rodzicielskim? Sprawdź jak zaktualizować kompetencje i jak rozmawiać z pracodawcą.'
 estimatedReadTime: 8
 date: '2026-06-15'
 author: 'Vocare'
-category: 'Kariera'
+category: 'kariera'
 coverImage: '/images/blog/career-change.webp'
 tags: ['powrót do pracy po macierzyńskim', 'urlop rodzicielski praca', 'powrót po urlopie wychowawczym', 'rodzic wraca do pracy', 'kariera po przerwie']
 slug: 'powrot-do-pracy-po-macierzynskim'
@@ -88,9 +88,9 @@ Zastanawiasz się, jak Twoje kompetencje wypadają po przerwie zawodowej? **[Voc
 ---
 
 ## Powiązane artykuły
-- [Urlop od kariery (sabbatical) 2026 - jak go zaplanować bez ryzyka](/blog/Kariera/urlop-od-kariery-sabbatical)
-- [Ścieżka kariery - jak zaplanować rozwój zawodowy w 2026](/blog/Kariera/sciezka-kariery)
-- [Praca hybrydowa 2026 - jak negocjować model pracy](/blog/Job/praca-hybrydowa)
-- [Jak zmienić branżę - praktyczny przewodnik krok po kroku](/blog/Kariera/jak-zmienic-branze)
-- [Urlop bezpłatny 2026 - zasady, wniosek i skutki dla ubezpieczenia](/blog/Job/urlop-bezplatny)
-- [Elastyczny czas pracy 2026 - jak negocjować ruchomy grafik](/blog/Job/czas-pracy-elastyczny)
+- [Urlop od kariery (sabbatical) 2026 - jak go zaplanować bez ryzyka](/blog/kariera/urlop-od-kariery-sabbatical)
+- [Ścieżka kariery - jak zaplanować rozwój zawodowy w 2026](/blog/kariera/sciezka-kariery)
+- [Praca hybrydowa 2026 - jak negocjować model pracy](/blog/praca/praca-hybrydowa)
+- [Jak zmienić branżę - praktyczny przewodnik krok po kroku](/blog/kariera/jak-zmienic-branze)
+- [Urlop bezpłatny 2026 - zasady, wniosek i skutki dla ubezpieczenia](/blog/praca/urlop-bezplatny)
+- [Elastyczny czas pracy 2026 - jak negocjować ruchomy grafik](/blog/praca/czas-pracy-elastyczny)

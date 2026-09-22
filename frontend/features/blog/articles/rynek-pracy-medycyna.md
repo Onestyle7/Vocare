@@ -1,5 +1,5 @@
 ---
-title: 'Rynek pracy w medycynie i ochronie zdrowia 2026 - zapotrzebowanie i zarobki'
+title: 'Rynek pracy w medycynie 2026 - zapotrzebowanie i zarobki'
 description: 'Jak wygląda rynek pracy w ochronie zdrowia w 2026 roku? Sprawdź, które zawody medyczne mają dziś największy deficyt kadrowy i jakie są realne widełki wynagrodzeń.'
 estimatedReadTime: 8
 date: '2026-07-09'
@@ -91,6 +91,6 @@ Zastanawiasz się, jak Twoje kompetencje wypadają na tle rynku pracy w medycyni
 - [Rynek pracy w Polsce 2026 - kompletny przegląd 21 branż](/blog/rynek-pracy/rynek-pracy-w-polsce)
 - [Zawody przyszłości 2026 - które profesje będą najbardziej poszukiwane?](/blog/rynek-pracy/zawody-przyszlosci-2026)
 - [Najlepiej płatne zawody w Polsce 2026 - ranking i zarobki](/blog/rynek-pracy/najlepiej-platne-zawody)
-- [Wypalenie zawodowe - co dalej? Jak wrócić do równowagi i odbudować karierę](/blog/Kariera/wypalenie-zawodowe-co-dalej)
+- [Wypalenie zawodowe - co dalej? Jak wrócić do równowagi i odbudować karierę](/blog/kariera/wypalenie-zawodowe-co-dalej)
 - [Rynek pracy w farmacji 2026 - trendy i zarobki](/blog/rynek-pracy/rynek-pracy-farmacja)
-- [CV pielęgniarki i lekarza 2026 - jak napisać CV w medycynie](/blog/CV/cv-w-medycynie)
+- [CV pielęgniarki i lekarza 2026 - jak napisać CV w medycynie](/blog/cv/cv-w-medycynie)

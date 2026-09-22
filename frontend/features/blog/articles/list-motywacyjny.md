@@ -5,7 +5,7 @@ estimatedReadTime: 9
 date: '2026-04-20'
 updatedAt: '2026-09-09'
 author: 'Vocare'
-category: 'CV'
+category: 'cv'
 coverImage: '/images/blog/cover-letter.webp'
 tags:
   [
@@ -150,7 +150,7 @@ Nim zaczniesz pisać - upewnij się, że Twoje CV jest dopasowane do tej oferty.
 ---
 
 ## Powiązane artykuły
-- [Jak napisać list motywacyjny 2026 - wzór i przykłady](/blog/CV/jak-napisac-list-motywacyjny)
-- [Wzór listu motywacyjnego 2026 - gotowe szablony do edycji](/blog/CV/wzor-listu-motywacyjnego)
-- [CV 2026 - kompletny poradnik jak napisać dobre CV](/blog/CV/cv)
-- [List motywacyjny po angielsku 2026 - jak napisać cover letter](/blog/CV/list-motywacyjny-po-angielsku)
+- [Jak napisać list motywacyjny 2026 - wzór i przykłady](/blog/cv/jak-napisac-list-motywacyjny)
+- [Wzór listu motywacyjnego 2026 - gotowe szablony do edycji](/blog/cv/wzor-listu-motywacyjnego)
+- [CV 2026 - kompletny poradnik jak napisać dobre CV](/blog/cv/cv)
+- [List motywacyjny po angielsku 2026 - jak napisać cover letter](/blog/cv/list-motywacyjny-po-angielsku)

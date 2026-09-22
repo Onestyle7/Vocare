@@ -4,7 +4,7 @@ description: 'Jakie prawa pracownicze przysługują osobom z niepełnosprawnośc
 estimatedReadTime: 8
 date: '2026-09-02'
 author: 'Vocare'
-category: 'Job'
+category: 'praca'
 coverImage: '/images/blog/job-search.webp'
 tags: ['praca dla osób niepełnosprawnych', 'prawa pracownika z niepełnosprawnością', 'PFRON', 'dodatkowy urlop niepełnosprawność', 'skrócony czas pracy']
 slug: 'praca-dla-osob-niepelnosprawnych'
@@ -80,6 +80,6 @@ Zastanawiasz się, jak Twoje kompetencje wypadają na rynku pracy? **[Vocare.pl]
 ---
 
 ## Powiązane artykuły
-- [Badania lekarskie do pracy 2026 - kiedy i jakie są obowiązkowe](/blog/Job/badania-lekarskie-do-pracy)
-- [Urlop wypoczynkowy 2026 - ile dni przysługuje i jak liczyć](/blog/Job/urlop-wypoczynkowy)
-- [Praca hybrydowa 2026 - jak negocjować model pracy](/blog/Job/praca-hybrydowa)
+- [Badania lekarskie do pracy 2026 - kiedy i jakie są obowiązkowe](/blog/praca/badania-lekarskie-do-pracy)
+- [Urlop wypoczynkowy 2026 - ile dni przysługuje i jak liczyć](/blog/praca/urlop-wypoczynkowy)
+- [Praca hybrydowa 2026 - jak negocjować model pracy](/blog/praca/praca-hybrydowa)

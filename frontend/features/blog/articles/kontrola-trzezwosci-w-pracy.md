@@ -4,7 +4,7 @@ description: 'Czy pracodawca może badać trzeźwość pracowników w 2026 roku?
 estimatedReadTime: 7
 date: '2026-09-02'
 author: 'Vocare'
-category: 'Job'
+category: 'praca'
 coverImage: '/images/blog/job-search.webp'
 tags: ['kontrola trzeźwości w pracy', 'badanie trzeźwości pracownika', 'prewencyjna kontrola trzeźwości', 'kodeks pracy alkomat', 'prawa pracownika trzeźwość']
 slug: 'kontrola-trzezwosci-w-pracy'
@@ -73,7 +73,7 @@ Zastanawiasz się nad zmianą pracy w związku z warunkami zatrudnienia? **[Voca
 ---
 
 ## Powiązane artykuły
-- [Zwolnienie dyscyplinarne 2026 - kiedy grozi i jak się przed nim bronić](/blog/Job/zwolnienie-dyscyplinarne)
-- [Badania lekarskie do pracy 2026 - kiedy i jakie są obowiązkowe](/blog/Job/badania-lekarskie-do-pracy)
-- [Mobbing w pracy 2026 - jak go rozpoznać i co możesz zrobić](/blog/Job/mobbing-w-pracy)
-- [Szkolenie BHP wstępne 2026 - kto musi je przejść i ile trwa](/blog/Job/szkolenie-bhp-wstepne)
+- [Zwolnienie dyscyplinarne 2026 - kiedy grozi i jak się przed nim bronić](/blog/praca/zwolnienie-dyscyplinarne)
+- [Badania lekarskie do pracy 2026 - kiedy i jakie są obowiązkowe](/blog/praca/badania-lekarskie-do-pracy)
+- [Mobbing w pracy 2026 - jak go rozpoznać i co możesz zrobić](/blog/praca/mobbing-w-pracy)
+- [Szkolenie BHP wstępne 2026 - kto musi je przejść i ile trwa](/blog/praca/szkolenie-bhp-wstepne)

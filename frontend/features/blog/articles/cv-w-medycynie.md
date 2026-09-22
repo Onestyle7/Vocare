@@ -1,10 +1,10 @@
 ---
 title: 'CV pielęgniarki i lekarza 2026 - jak napisać CV w medycynie'
-description: 'Jak napisać CV pielęgniarki, lekarza lub innego specjalisty medycznego w 2026 roku? Sprawdź, jakie dokumenty i uprawnienia musisz uwzględnić i jak pokazać doświadczenie kliniczne.'
+description: 'Jak napisać CV pielęgniarki, lekarza lub innego specjalisty medycznego? Sprawdź, jakie uprawnienia uwzględnić i jak pokazać doświadczenie kliniczne.'
 estimatedReadTime: 8
 date: '2026-08-19'
 author: 'Vocare'
-category: 'CV'
+category: 'cv'
 coverImage: '/images/blog/cv-templates-industry.webp'
 tags: ['cv pielęgniarki', 'cv lekarza', 'cv w medycynie', 'cv zawody medyczne', 'prawo wykonywania zawodu']
 slug: 'cv-w-medycynie'
@@ -81,6 +81,6 @@ Zastanawiasz się, jakie kompetencje warto rozwinąć w swojej ścieżce medyczn
 
 ## Powiązane artykuły
 - [Rynek pracy w medycynie i ochronie zdrowia 2026 - zapotrzebowanie i zarobki](/blog/rynek-pracy/rynek-pracy-medycyna)
-- [Referencje zawodowe 2026 - jak i kogo poprosić o rekomendację](/blog/CV/referencje-zawodowe)
-- [Profesjonalne CV 2026 - jak wyglądać poważnie na papierze](/blog/CV/profesjonalne-cv)
+- [Referencje zawodowe 2026 - jak i kogo poprosić o rekomendację](/blog/cv/referencje-zawodowe)
+- [Profesjonalne CV 2026 - jak wyglądać poważnie na papierze](/blog/cv/profesjonalne-cv)
 - [Rynek pracy w farmacji 2026 - trendy i zarobki](/blog/rynek-pracy/rynek-pracy-farmacja)

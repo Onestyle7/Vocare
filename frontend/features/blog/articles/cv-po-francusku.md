@@ -4,7 +4,7 @@ description: 'Jak napisać CV po francusku w 2026 roku? Sprawdź strukturę, fra
 estimatedReadTime: 7
 date: '2026-08-07'
 author: 'Vocare'
-category: 'CV'
+category: 'cv'
 coverImage: '/images/blog/cv-template.webp'
 tags: ['cv po francusku', 'praca we francji cv', 'jak napisać cv po francusku', 'cv francuskie wzór', 'currículum vitae francuski']
 slug: 'cv-po-francusku'
@@ -81,6 +81,6 @@ Planujesz aplikować do pracy we Francji i chcesz sprawdzić swoje kompetencje? 
 ---
 
 ## Powiązane artykuły
-- [CV po angielsku 2026 - jak napisać angielskie CV krok po kroku](/blog/CV/cv-po-angielsku)
-- [CV po hiszpańsku 2026 - jak napisać currículum do Hiszpanii](/blog/CV/cv-po-hiszpansku)
-- [Europass CV 2026 - czy warto i jak go wypełnić](/blog/CV/europass-cv)
+- [CV po angielsku 2026 - jak napisać angielskie CV krok po kroku](/blog/cv/cv-po-angielsku)
+- [CV po hiszpańsku 2026 - jak napisać currículum do Hiszpanii](/blog/cv/cv-po-hiszpansku)
+- [Europass CV 2026 - czy warto i jak go wypełnić](/blog/cv/europass-cv)

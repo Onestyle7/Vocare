@@ -5,7 +5,7 @@ estimatedReadTime: 8
 date: '2026-03-31'
 updatedAt: '2026-09-02'
 author: 'Vocare'
-category: 'CV'
+category: 'cv'
 coverImage: '/images/blog/cv-template.webp'
 tags: ['cv wzór', 'wzór cv', 'szablon cv', 'cv do pobrania', 'cv 2026']
 slug: 'cv-wzor'
@@ -170,7 +170,7 @@ Chcesz mieć CV, które jest automatycznie analizowane i optymalizowane pod konk
 ---
 
 ## Powiązane artykuły
-- [Przykładowe CV 2026 - wzory dla różnych stanowisk i branż](/blog/CV/przykladowe-cv)
-- [Jak zrobić CV 2026 - praktyczny poradnik od zera do gotowego pliku](/blog/CV/jak-zrobic-cv)
-- [Kreator CV online 2026 - najlepsze narzędzia do tworzenia CV](/blog/CV/kreator-cv)
-- [CV do pracy 2026 - jak dopasować aplikację do każdej oferty](/blog/CV/cv-do-pracy)
+- [Przykładowe CV 2026 - wzory dla różnych stanowisk i branż](/blog/cv/przykladowe-cv)
+- [Jak zrobić CV 2026 - praktyczny poradnik od zera do gotowego pliku](/blog/cv/jak-zrobic-cv)
+- [Kreator CV online 2026 - najlepsze narzędzia do tworzenia CV](/blog/cv/kreator-cv)
+- [CV do pracy 2026 - jak dopasować aplikację do każdej oferty](/blog/cv/cv-do-pracy)

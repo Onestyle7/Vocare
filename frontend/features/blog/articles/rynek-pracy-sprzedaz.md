@@ -1,5 +1,5 @@
 ---
-title: 'Rynek pracy w sprzedaży i obsłudze klienta 2026 - trendy i zarobki'
+title: 'Rynek pracy w sprzedaży 2026 - trendy i zarobki'
 description: 'Jak wygląda rynek pracy w sprzedaży w 2026 roku? Sprawdź, które role sprzedażowe są dziś najbardziej poszukiwane i jak zmienia je automatyzacja obsługi klienta.'
 estimatedReadTime: 7
 date: '2026-07-15'
@@ -85,7 +85,7 @@ Zastanawiasz się, która ścieżka w sprzedaży pasuje do Twoich kompetencji? *
 ## Powiązane artykuły
 - [Rynek pracy w Polsce 2026 - kompletny przegląd 21 branż](/blog/rynek-pracy/rynek-pracy-w-polsce)
 - [Rynek pracy w marketingu 2026 - kompetencje i zarobki](/blog/rynek-pracy/rynek-pracy-marketing)
-- [Rozmowa kwalifikacyjna 2026 - jak się przygotować i wypaść świetnie](/blog/Job/rozmowa-kwalifikacyjna)
+- [Rozmowa kwalifikacyjna 2026 - jak się przygotować i wypaść świetnie](/blog/praca/rozmowa-kwalifikacyjna)
 - [Najlepiej płatne zawody w Polsce 2026 - ranking i zarobki](/blog/rynek-pracy/najlepiej-platne-zawody)
 - [Rynek pracy w handlu detalicznym 2026 - trendy i zarobki](/blog/rynek-pracy/rynek-pracy-handel-detaliczny)
 - [Rynek pracy w nieruchomościach 2026 - trendy i zarobki](/blog/rynek-pracy/rynek-pracy-nieruchomosci)

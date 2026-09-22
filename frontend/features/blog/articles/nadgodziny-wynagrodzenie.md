@@ -4,7 +4,7 @@ description: 'Ile wynosi dodatek za nadgodziny w 2026 roku? Sprawdź kiedy przys
 estimatedReadTime: 8
 date: '2026-08-27'
 author: 'Vocare'
-category: 'Job'
+category: 'praca'
 coverImage: '/images/blog/job-search.webp'
 tags: ['nadgodziny', 'dodatek za nadgodziny', 'wynagrodzenie za nadgodziny', 'limit nadgodzin', 'kodeks pracy nadgodziny']
 slug: 'nadgodziny-wynagrodzenie'
@@ -83,8 +83,8 @@ Zastanawiasz się, czy Twoje wynagrodzenie odpowiada realnemu obciążeniu prac�
 ---
 
 ## Powiązane artykuły
-- [Okres wypowiedzenia umowy o pracę 2026 - ile trwa i jak liczyć](/blog/Job/wypowiedzenie-umowy-o-prace)
-- [Negocjacje wynagrodzenia 2026 - jak negocjować pensję skutecznie](/blog/Job/negocjacje-wynagrodzenia)
-- [Wypalenie zawodowe - co dalej? Jak wrócić do równowagi i odbudować karierę](/blog/Kariera/wypalenie-zawodowe-co-dalej)
-- [Delegacja służbowa 2026 - dieta, rozliczenie i Twoje prawa](/blog/Job/delegacja-sluzbowa)
-- [Praca w niedziele i święta 2026 - zasady i wynagrodzenie](/blog/Job/praca-w-niedziele-i-swieta)
+- [Okres wypowiedzenia umowy o pracę 2026 - ile trwa i jak liczyć](/blog/praca/wypowiedzenie-umowy-o-prace)
+- [Negocjacje wynagrodzenia 2026 - jak negocjować pensję skutecznie](/blog/praca/negocjacje-wynagrodzenia)
+- [Wypalenie zawodowe - co dalej? Jak wrócić do równowagi i odbudować karierę](/blog/kariera/wypalenie-zawodowe-co-dalej)
+- [Delegacja służbowa 2026 - dieta, rozliczenie i Twoje prawa](/blog/praca/delegacja-sluzbowa)
+- [Praca w niedziele i święta 2026 - zasady i wynagrodzenie](/blog/praca/praca-w-niedziele-i-swieta)

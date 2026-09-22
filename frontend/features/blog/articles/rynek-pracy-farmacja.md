@@ -75,4 +75,4 @@ Zastanawiasz się, która ścieżka w farmacji pasuje do Twoich kompetencji? **[
 ## Powiązane artykuły
 - [Rynek pracy w Polsce 2026 - kompletny przegląd 21 branż](/blog/rynek-pracy/rynek-pracy-w-polsce)
 - [Rynek pracy w medycynie i ochronie zdrowia 2026 - zapotrzebowanie i zarobki](/blog/rynek-pracy/rynek-pracy-medycyna)
-- [CV pielęgniarki i lekarza 2026 - jak napisać CV w medycynie](/blog/CV/cv-w-medycynie)
+- [CV pielęgniarki i lekarza 2026 - jak napisać CV w medycynie](/blog/cv/cv-w-medycynie)

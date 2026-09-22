@@ -1,10 +1,10 @@
 ---
-title: 'CV programisty 2026 - jak napisać CV, które przejdzie przez ATS w IT'
+title: 'CV programisty 2026 - jak przejść przez ATS w IT'
 description: 'Jak napisać CV programisty w 2026 roku? Sprawdź, co pokazać zamiast listy technologii, jak przejść przez systemy ATS i jakich błędów unikać w rekrutacji IT.'
 estimatedReadTime: 8
 date: '2026-08-18'
 author: 'Vocare'
-category: 'CV'
+category: 'cv'
 coverImage: '/images/blog/cv-template.webp'
 tags: ['cv programisty', 'cv dla it', 'cv developera', 'jak napisać cv it', 'ats cv programista']
 slug: 'cv-programisty'
@@ -83,6 +83,6 @@ Zastanawiasz się, jak wypadają Twoje kompetencje na tle aktualnych wymagań ry
 
 ## Powiązane artykuły
 - [Rynek pracy w IT 2026 - trendy, zarobki i zapotrzebowanie](/blog/rynek-pracy/rynek-pracy-it)
-- [Portfolio zawodowe 2026 - jak je zbudować i czym wyróżnić aplikację](/blog/CV/portfolio-zawodowe)
-- [Umiejętności do CV 2026 - co wpisać, żeby wyróżnić aplikację](/blog/CV/umiejetnosci-do-cv)
-- [CV analityka danych 2026 - jak pokazać projekty analityczne](/blog/CV/cv-analityka-danych)
+- [Portfolio zawodowe 2026 - jak je zbudować i czym wyróżnić aplikację](/blog/cv/portfolio-zawodowe)
+- [Umiejętności do CV 2026 - co wpisać, żeby wyróżnić aplikację](/blog/cv/umiejetnosci-do-cv)
+- [CV analityka danych 2026 - jak pokazać projekty analityczne](/blog/cv/cv-analityka-danych)

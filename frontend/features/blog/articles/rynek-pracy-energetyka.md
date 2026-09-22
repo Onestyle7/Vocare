@@ -1,6 +1,6 @@
 ---
-title: 'Rynek pracy w energetyce odnawialnej 2026 - inwestycje i zarobki'
-description: 'Jak wygląda rynek pracy w energetyce odnawialnej w 2026 roku? Sprawdź, które specjalizacje OZE są dziś najbardziej poszukiwane i skąd biorą się inwestycje napędzające branżę.'
+title: 'Rynek pracy w energetyce OZE 2026 - inwestycje i zarobki'
+description: 'Jak wygląda rynek pracy w energetyce odnawialnej w 2026 roku? Sprawdź, które specjalizacje OZE są dziś najbardziej poszukiwane.'
 estimatedReadTime: 7
 date: '2026-06-26'
 updatedAt: '2026-09-09'
@@ -92,5 +92,5 @@ Zastanawiasz się, która ścieżka w energetyce odnawialnej pasuje do Twoich ko
 - [Rynek pracy w Polsce 2026 - kompletny przegląd 21 branż](/blog/rynek-pracy/rynek-pracy-w-polsce)
 - [Rynek pracy w budownictwie 2026 - deficyt kadr i zarobki](/blog/rynek-pracy/rynek-pracy-budownictwo)
 - [Zawody przyszłości 2026 - które profesje będą najbardziej poszukiwane?](/blog/rynek-pracy/zawody-przyszlosci-2026)
-- [Jak zmienić branżę - praktyczny przewodnik krok po kroku](/blog/Kariera/jak-zmienic-branze)
-- [CV inżyniera 2026 - jak pokazać projekty techniczne](/blog/CV/cv-inzyniera)
+- [Jak zmienić branżę - praktyczny przewodnik krok po kroku](/blog/kariera/jak-zmienic-branze)
+- [CV inżyniera 2026 - jak pokazać projekty techniczne](/blog/cv/cv-inzyniera)

@@ -5,7 +5,7 @@ estimatedReadTime: 9
 date: '2026-04-27'
 updatedAt: '2026-09-09'
 author: 'Vocare'
-category: 'Job'
+category: 'praca'
 coverImage: '/images/blog/student-work.webp'
 tags: ['praca dla studenta', 'praca studenta', 'staż', 'praktyki studenckie', 'pierwsza praca']
 slug: 'praca-dla-studenta'
@@ -174,7 +174,7 @@ Chcesz wiedzieć, jakie role i branże najlepiej pasują do Twoich kompetencji i
 ---
 
 ## Powiązane artykuły
-- [CV studenta 2026 - jak napisać CV na pierwszą pracę lub staż](/blog/CV/cv-studenta)
-- [Praca bez doświadczenia 2026 - jak dostać pierwszą pracę](/blog/Job/praca-bez-doswiadczenia)
-- [Jak znaleźć pracę w 2026 - sprawdzone strategie krok po kroku](/blog/Job/jak-znalezc-prace)
+- [CV studenta 2026 - jak napisać CV na pierwszą pracę lub staż](/blog/cv/cv-studenta)
+- [Praca bez doświadczenia 2026 - jak dostać pierwszą pracę](/blog/praca/praca-bez-doswiadczenia)
+- [Jak znaleźć pracę w 2026 - sprawdzone strategie krok po kroku](/blog/praca/jak-znalezc-prace)
 - [Rynek pracy w gastronomii i hotelarstwie 2026 - deficyt i zarobki](/blog/rynek-pracy/rynek-pracy-gastronomia)

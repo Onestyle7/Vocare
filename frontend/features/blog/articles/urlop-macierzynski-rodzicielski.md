@@ -1,10 +1,10 @@
 ---
-title: 'Urlop macierzyński i rodzicielski 2026 - ile dni i ile wynosi zasiłek'
+title: 'Urlop macierzyński i rodzicielski 2026 - ile dni i zasiłek'
 description: 'Ile trwa urlop macierzyński i rodzicielski w 2026 roku? Sprawdź dokładne liczby tygodni, wysokość zasiłku macierzyńskiego z ZUS i terminy złożenia wniosku.'
 estimatedReadTime: 8
 date: '2026-08-12'
 author: 'Vocare'
-category: 'Job'
+category: 'praca'
 coverImage: '/images/blog/career-counseling.webp'
 tags: ['urlop macierzyński', 'urlop rodzicielski', 'zasiłek macierzyński', 'ile trwa urlop macierzyński', 'ZUS zasiłek macierzyński']
 slug: 'urlop-macierzynski-rodzicielski'
@@ -76,7 +76,7 @@ Planujesz powrót do pracy po urlopie i zastanawiasz się nad dalszymi krokami z
 ---
 
 ## Powiązane artykuły
-- [Powrót do pracy po urlopie macierzyńskim 2026 - jak się przygotować](/blog/Kariera/powrot-do-pracy-po-macierzynskim)
-- [Urlop wypoczynkowy 2026 - ile dni przysługuje i jak liczyć](/blog/Job/urlop-wypoczynkowy)
-- [Zwolnienie lekarskie L4 2026 - ile trwa i jakie masz prawa](/blog/Job/zwolnienie-lekarskie-l4)
-- [Urlop ojcowski 2026 - ile dni przysługuje i jak go wykorzystać](/blog/Job/urlop-ojcowski)
+- [Powrót do pracy po urlopie macierzyńskim 2026 - jak się przygotować](/blog/kariera/powrot-do-pracy-po-macierzynskim)
+- [Urlop wypoczynkowy 2026 - ile dni przysługuje i jak liczyć](/blog/praca/urlop-wypoczynkowy)
+- [Zwolnienie lekarskie L4 2026 - ile trwa i jakie masz prawa](/blog/praca/zwolnienie-lekarskie-l4)
+- [Urlop ojcowski 2026 - ile dni przysługuje i jak go wykorzystać](/blog/praca/urlop-ojcowski)

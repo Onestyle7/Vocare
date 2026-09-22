@@ -5,7 +5,7 @@ estimatedReadTime: 7
 date: '2026-03-24'
 updatedAt: '2026-09-02'
 author: 'Vocare'
-category: 'Kariera'
+category: 'kariera'
 coverImage: '/images/blog/assessment.webp'
 tags: ['test kariery', 'test zawodowy', 'wybór zawodu', 'orientacja zawodowa', 'kariera']
 slug: 'test-kariery-online'
@@ -168,6 +168,6 @@ Chcesz sprawdzić, jakie zawody i branże najlepiej odpowiadają Twoim predyspoz
 ---
 
 ## Powiązane artykuły
-- [Test kompetencji zawodowych - jak sprawdzić swoje mocne strony](/blog/Kariera/test-kompetencji-zawodowych)
-- [Ścieżka kariery - jak zaplanować rozwój zawodowy w 2026](/blog/Kariera/sciezka-kariery)
-- [Jaki zawód wybrać? Praktyczny poradnik na 2026 rok](/blog/Kariera/jaki-zawod-wybrac)
+- [Test kompetencji zawodowych - jak sprawdzić swoje mocne strony](/blog/kariera/test-kompetencji-zawodowych)
+- [Ścieżka kariery - jak zaplanować rozwój zawodowy w 2026](/blog/kariera/sciezka-kariery)
+- [Jaki zawód wybrać? Praktyczny poradnik na 2026 rok](/blog/kariera/jaki-zawod-wybrac)

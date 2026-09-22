@@ -4,7 +4,7 @@ description: 'Jak napisać CV freelancera bez tradycyjnej historii zatrudnienia?
 estimatedReadTime: 8
 date: '2026-07-30'
 author: 'Vocare'
-category: 'CV'
+category: 'cv'
 coverImage: '/images/blog/cv-job-application.webp'
 tags: ['cv freelancera', 'cv dla freelancera', 'cv b2b', 'cv projekty zamiast etatu', 'freelancer aplikacja']
 slug: 'cv-freelancera'
@@ -79,7 +79,7 @@ Chcesz sprawdzić, czy Twoje CV freelancera dobrze prezentuje Twoje projekty? **
 ---
 
 ## Powiązane artykuły
-- [Portfolio career 2026 - praca na kilku projektach zamiast jednego etatu](/blog/Kariera/portfolio-career)
-- [Umowa o pracę vs B2B vs zlecenie 2026 - co wybrać?](/blog/Job/umowa-o-prace-vs-b2b)
-- [Portfolio zawodowe 2026 - jak je zbudować i czym wyróżnić aplikację](/blog/CV/portfolio-zawodowe)
-- [Umowa o dzieło 2026 - zasady, składki i różnice od zlecenia](/blog/Job/umowa-o-dzielo)
+- [Portfolio career 2026 - praca na kilku projektach zamiast jednego etatu](/blog/kariera/portfolio-career)
+- [Umowa o pracę vs B2B vs zlecenie 2026 - co wybrać?](/blog/praca/umowa-o-prace-vs-b2b)
+- [Portfolio zawodowe 2026 - jak je zbudować i czym wyróżnić aplikację](/blog/cv/portfolio-zawodowe)
+- [Umowa o dzieło 2026 - zasady, składki i różnice od zlecenia](/blog/praca/umowa-o-dzielo)

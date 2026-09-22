@@ -4,7 +4,7 @@ description: 'Ile dni urlopu wypoczynkowego przysługuje w 2026 roku? Sprawdź z
 estimatedReadTime: 8
 date: '2026-07-22'
 author: 'Vocare'
-category: 'Job'
+category: 'praca'
 coverImage: '/images/blog/job-portals.webp'
 tags: ['urlop wypoczynkowy', 'ile dni urlopu', 'urlop proporcjonalny', 'wymiar urlopu 2026', 'kodeks pracy urlop']
 slug: 'urlop-wypoczynkowy'
@@ -86,8 +86,8 @@ Planujesz zmianę pracy i zastanawiasz się, jak to wpłynie na Twoje uprawnieni
 ---
 
 ## Powiązane artykuły
-- [Umowa o pracę vs B2B vs zlecenie 2026 - co wybrać?](/blog/Job/umowa-o-prace-vs-b2b)
-- [Jak zrezygnować z pracy 2026 - wypowiedzenie bez spalania mostów](/blog/Job/jak-zrezygnowac-z-pracy)
-- [Negocjacje wynagrodzenia 2026 - jak negocjować pensję skutecznie](/blog/Job/negocjacje-wynagrodzenia)
-- [Urlop macierzyński i rodzicielski 2026 - ile dni i ile wynosi zasiłek](/blog/Job/urlop-macierzynski-rodzicielski)
-- [Urlop bezpłatny 2026 - zasady, wniosek i skutki dla ubezpieczenia](/blog/Job/urlop-bezplatny)
+- [Umowa o pracę vs B2B vs zlecenie 2026 - co wybrać?](/blog/praca/umowa-o-prace-vs-b2b)
+- [Jak zrezygnować z pracy 2026 - wypowiedzenie bez spalania mostów](/blog/praca/jak-zrezygnowac-z-pracy)
+- [Negocjacje wynagrodzenia 2026 - jak negocjować pensję skutecznie](/blog/praca/negocjacje-wynagrodzenia)
+- [Urlop macierzyński i rodzicielski 2026 - ile dni i ile wynosi zasiłek](/blog/praca/urlop-macierzynski-rodzicielski)
+- [Urlop bezpłatny 2026 - zasady, wniosek i skutki dla ubezpieczenia](/blog/praca/urlop-bezplatny)

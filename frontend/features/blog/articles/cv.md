@@ -5,7 +5,7 @@ estimatedReadTime: 10
 date: '2026-04-01'
 updatedAt: '2026-09-02'
 author: 'Vocare'
-category: 'CV'
+category: 'cv'
 coverImage: '/images/blog/cv-guide.webp'
 tags: ['cv', 'jak napisać cv', 'wzór cv', 'cv 2026', 'aplikacja o pracę']
 slug: 'cv'
@@ -163,6 +163,6 @@ Jeśli chcesz, żeby Twoje CV było automatycznie dopasowywane do treści ofert 
 ---
 
 ## Powiązane artykuły
-- [Jak zrobić CV 2026 - praktyczny poradnik od zera do gotowego pliku](/blog/CV/jak-zrobic-cv)
-- [CV wzór 2026 - darmowe szablony do pobrania i edycji](/blog/CV/cv-wzor)
-- [Umiejętności do CV 2026 - co wpisać, żeby wyróżnić aplikację](/blog/CV/umiejetnosci-do-cv)
+- [Jak zrobić CV 2026 - praktyczny poradnik od zera do gotowego pliku](/blog/cv/jak-zrobic-cv)
+- [CV wzór 2026 - darmowe szablony do pobrania i edycji](/blog/cv/cv-wzor)
+- [Umiejętności do CV 2026 - co wpisać, żeby wyróżnić aplikację](/blog/cv/umiejetnosci-do-cv)

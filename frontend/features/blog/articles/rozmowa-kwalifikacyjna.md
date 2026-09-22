@@ -1,11 +1,11 @@
 ---
-title: 'Rozmowa kwalifikacyjna 2026 - jak się przygotować i wypaść świetnie'
+title: 'Rozmowa kwalifikacyjna 2026 - jak się przygotować'
 description: 'Jak przygotować się do rozmowy kwalifikacyjnej? Sprawdź sprawdzone metody, typowe pytania i błędy, których unikać, żeby dostać tę pracę.'
 estimatedReadTime: 11
 date: '2026-05-04'
 updatedAt: '2026-09-02'
 author: 'Vocare'
-category: 'Job'
+category: 'praca'
 coverImage: '/images/blog/job-interview.webp'
 tags:
   [
@@ -187,7 +187,7 @@ Jeśli chcesz przygotować się jeszcze lepiej i wiedzieć jak Twoje doświadcze
 ---
 
 ## Powiązane artykuły
-- [Pytania na rozmowie kwalifikacyjnej 2026 - jak odpowiadać](/blog/Job/pytania-na-rozmowie-kwalifikacyjnej)
-- [CV 2026 - kompletny poradnik jak napisać dobre CV](/blog/CV/cv)
-- [Jak znaleźć pracę w 2026 - sprawdzone strategie krok po kroku](/blog/Job/jak-znalezc-prace)
-- [Assessment center 2026 - jak się przygotować i co Cię czeka](/blog/Job/assessment-center)
+- [Pytania na rozmowie kwalifikacyjnej 2026 - jak odpowiadać](/blog/praca/pytania-na-rozmowie-kwalifikacyjnej)
+- [CV 2026 - kompletny poradnik jak napisać dobre CV](/blog/cv/cv)
+- [Jak znaleźć pracę w 2026 - sprawdzone strategie krok po kroku](/blog/praca/jak-znalezc-prace)
+- [Assessment center 2026 - jak się przygotować i co Cię czeka](/blog/praca/assessment-center)

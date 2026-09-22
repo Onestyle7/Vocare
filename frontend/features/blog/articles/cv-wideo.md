@@ -4,7 +4,7 @@ description: 'Czym jest CV wideo i kiedy warto je nagrać? Sprawdź, w jakich br
 estimatedReadTime: 7
 date: '2026-07-29'
 author: 'Vocare'
-category: 'CV'
+category: 'cv'
 coverImage: '/images/blog/cv-skills.webp'
 tags: ['cv wideo', 'video cv', 'nagranie cv', 'wideo prezentacja kandydata', 'kreatywne cv']
 slug: 'cv-wideo'
@@ -81,6 +81,6 @@ Zanim pomyślisz o wideo-CV, upewnij się, że Twoje klasyczne CV działa. **[Vo
 ---
 
 ## Powiązane artykuły
-- [Portfolio zawodowe 2026 - jak je zbudować i czym wyróżnić aplikację](/blog/CV/portfolio-zawodowe)
-- [Zdjęcie do CV 2026 - czy warto i jak je dobrze zrobić](/blog/CV/zdjecie-do-cv)
-- [LinkedIn - jak zbudować profil, który przyciąga rekruterów 2026](/blog/CV/linkedin-profil)
+- [Portfolio zawodowe 2026 - jak je zbudować i czym wyróżnić aplikację](/blog/cv/portfolio-zawodowe)
+- [Zdjęcie do CV 2026 - czy warto i jak je dobrze zrobić](/blog/cv/zdjecie-do-cv)
+- [LinkedIn - jak zbudować profil, który przyciąga rekruterów 2026](/blog/cv/linkedin-profil)

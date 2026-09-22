@@ -4,7 +4,7 @@ description: 'Jak dawać konstruktywny feedback i jak go dobrze przyjmować? Spr
 estimatedReadTime: 8
 date: '2026-08-05'
 author: 'Vocare'
-category: 'Kariera'
+category: 'kariera'
 coverImage: '/images/blog/career-counseling.webp'
 tags: ['feedback w pracy', 'konstruktywna krytyka', 'jak dawać feedback', 'jak przyjmować krytykę', 'rozmowa oceniająca']
 slug: 'feedback-w-pracy'
@@ -91,7 +91,7 @@ Zastanawiasz się, jak przełożyć otrzymany feedback na konkretny rozwój kari
 ---
 
 ## Powiązane artykuły
-- [Kompetencje miękkie 2026 - jak je rozwijać, nie tylko deklarować](/blog/Kariera/kompetencje-miekkie-jak-rozwijac)
-- [Plan rozwoju zawodowego 2026 - jak go napisać krok po kroku](/blog/Kariera/plan-rozwoju-zawodowego)
-- [Awans zawodowy 2026 - jak go uzyskać i o niego poprosić](/blog/Kariera/awans-zawodowy)
-- [Inteligencja emocjonalna w pracy 2026 - jak ją rozwijać i dlaczego się liczy](/blog/Kariera/inteligencja-emocjonalna-w-pracy)
+- [Kompetencje miękkie 2026 - jak je rozwijać, nie tylko deklarować](/blog/kariera/kompetencje-miekkie-jak-rozwijac)
+- [Plan rozwoju zawodowego 2026 - jak go napisać krok po kroku](/blog/kariera/plan-rozwoju-zawodowego)
+- [Awans zawodowy 2026 - jak go uzyskać i o niego poprosić](/blog/kariera/awans-zawodowy)
+- [Inteligencja emocjonalna w pracy 2026 - jak ją rozwijać i dlaczego się liczy](/blog/kariera/inteligencja-emocjonalna-w-pracy)

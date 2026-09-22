@@ -1,10 +1,10 @@
 ---
-title: 'Kompetencje miękkie 2026 - jak je rozwijać, nie tylko deklarować'
+title: 'Kompetencje miękkie 2026 - jak je realnie rozwijać'
 description: 'Jak realnie rozwijać kompetencje miękkie? Sprawdź konkretne metody rozwoju komunikacji, zarządzania czasem i pracy zespołowej - bez pustych deklaracji w CV.'
 estimatedReadTime: 8
 date: '2026-07-31'
 author: 'Vocare'
-category: 'Kariera'
+category: 'kariera'
 coverImage: '/images/blog/career-advisor.webp'
 tags: ['kompetencje miękkie', 'jak rozwijać soft skills', 'rozwój komunikacji', 'umiejętności interpersonalne', 'rozwój zawodowy']
 slug: 'kompetencje-miekkie-jak-rozwijac'
@@ -95,9 +95,9 @@ Zastanawiasz się, które kompetencje warto rozwinąć pod Twoją docelową rol�
 ---
 
 ## Powiązane artykuły
-- [Umiejętności do CV 2026 - co wpisać, żeby wyróżnić aplikację](/blog/CV/umiejetnosci-do-cv)
-- [Networking zawodowy 2026 - jak budować sieć kontaktów bez wciskania się](/blog/Kariera/networking-zawodowy)
-- [Mentoring zawodowy 2026 - jak znaleźć mentora i na tym skorzystać](/blog/Kariera/mentoring-zawodowy)
-- [Inteligencja emocjonalna w pracy 2026 - jak ją rozwijać i dlaczego się liczy](/blog/Kariera/inteligencja-emocjonalna-w-pracy)
-- [Syndrom oszusta w pracy 2026 - jak sobie z nim radzić](/blog/Kariera/syndrom-oszusta)
-- [Zarządzanie czasem w pracy 2026 - metody, które realnie działają](/blog/Kariera/zarzadzanie-czasem)
+- [Umiejętności do CV 2026 - co wpisać, żeby wyróżnić aplikację](/blog/cv/umiejetnosci-do-cv)
+- [Networking zawodowy 2026 - jak budować sieć kontaktów bez wciskania się](/blog/kariera/networking-zawodowy)
+- [Mentoring zawodowy 2026 - jak znaleźć mentora i na tym skorzystać](/blog/kariera/mentoring-zawodowy)
+- [Inteligencja emocjonalna w pracy 2026 - jak ją rozwijać i dlaczego się liczy](/blog/kariera/inteligencja-emocjonalna-w-pracy)
+- [Syndrom oszusta w pracy 2026 - jak sobie z nim radzić](/blog/kariera/syndrom-oszusta)
+- [Zarządzanie czasem w pracy 2026 - metody, które realnie działają](/blog/kariera/zarzadzanie-czasem)

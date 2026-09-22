@@ -4,7 +4,7 @@ description: 'Jak napisać CV inżyniera w 2026 roku? Sprawdź, jak pokazać pro
 estimatedReadTime: 7
 date: '2026-09-04'
 author: 'Vocare'
-category: 'CV'
+category: 'cv'
 coverImage: '/images/blog/cv-template.webp'
 tags: ['cv inżyniera', 'cv inżynier budownictwa', 'cv techniczne', 'jak napisać cv inżyniera', 'uprawnienia budowlane cv']
 slug: 'cv-inzyniera'
@@ -77,4 +77,4 @@ Zastanawiasz się, jakie kompetencje techniczne warto rozwinąć w swojej specja
 ## Powiązane artykuły
 - [Rynek pracy w budownictwie 2026 - trendy i zarobki](/blog/rynek-pracy/rynek-pracy-budownictwo)
 - [Rynek pracy w energetyce odnawialnej 2026 - trendy i zarobki](/blog/rynek-pracy/rynek-pracy-energetyka)
-- [Portfolio zawodowe 2026 - jak je zbudować i czym wyróżnić aplikację](/blog/CV/portfolio-zawodowe)
+- [Portfolio zawodowe 2026 - jak je zbudować i czym wyróżnić aplikację](/blog/cv/portfolio-zawodowe)

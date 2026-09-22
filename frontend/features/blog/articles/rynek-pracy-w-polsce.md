@@ -79,7 +79,7 @@ To nie jest optymistyczne uproszczenie - to wzorzec widoczny w każdym z artyku�
 
 **Zmieniasz branżę i masz kompetencje transferowalne z poprzedniej roli:** marketing, HR, sprzedaż i analiza danych przyjmują najwięcej osób z innych sektorów, o ile potrafisz pokazać konkretne, przenoszalne umiejętności.
 
-**Nie wiesz jeszcze, w którą stronę iść:** zacznij od diagnozy własnych kompetencji i wartości, nie od rankingu zarobków - metodologia opisana w [jaki zawód wybrać](/blog/Kariera/jaki-zawod-wybrac) i [ścieżce kariery](/blog/Kariera/sciezka-kariery) pomoże zawęzić wybór, zanim porównasz konkretne branże.
+**Nie wiesz jeszcze, w którą stronę iść:** zacznij od diagnozy własnych kompetencji i wartości, nie od rankingu zarobków - metodologia opisana w [jaki zawód wybrać](/blog/kariera/jaki-zawod-wybrac) i [ścieżce kariery](/blog/kariera/sciezka-kariery) pomoże zawęzić wybór, zanim porównasz konkretne branże.
 
 Nie chcesz robić tej analizy ręcznie dla każdej branży z osobna? **[Vocare.pl](https://vocare.pl)** analizuje Twój profil kompetencyjny i porównuje go jednocześnie z zapotrzebowaniem we wszystkich 21 branżach, wskazując te, w których masz dziś realnie największe szanse.
 
@@ -138,4 +138,4 @@ Chcesz zobaczyć, jak Twój profil wypada na tle wszystkich 21 branż naraz? **[
 ## Powiązane artykuły
 - [Najlepiej płatne zawody w Polsce 2026 - ranking i zarobki](/blog/rynek-pracy/najlepiej-platne-zawody)
 - [Zawody przyszłości 2026 - które profesje będą najbardziej poszukiwane?](/blog/rynek-pracy/zawody-przyszlosci-2026)
-- [Jaki zawód wybrać? Praktyczny poradnik na 2026 rok](/blog/Kariera/jaki-zawod-wybrac)
+- [Jaki zawód wybrać? Praktyczny poradnik na 2026 rok](/blog/kariera/jaki-zawod-wybrac)

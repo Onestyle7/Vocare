@@ -88,4 +88,4 @@ Zastanawiasz się, jak rozwinąć karierę w handlu w kierunku bardziej technicz
 - [Rynek pracy w Polsce 2026 - kompletny przegląd 21 branż](/blog/rynek-pracy/rynek-pracy-w-polsce)
 - [Rynek pracy w sprzedaży i obsłudze klienta 2026 - trendy i zarobki](/blog/rynek-pracy/rynek-pracy-sprzedaz)
 - [Rynek pracy w logistyce i transporcie 2026 - trendy i zarobki](/blog/rynek-pracy/rynek-pracy-logistyka)
-- [Praca w niedziele i święta 2026 - zasady i wynagrodzenie](/blog/Job/praca-w-niedziele-i-swieta)
+- [Praca w niedziele i święta 2026 - zasady i wynagrodzenie](/blog/praca/praca-w-niedziele-i-swieta)

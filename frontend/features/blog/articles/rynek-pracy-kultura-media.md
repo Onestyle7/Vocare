@@ -82,4 +82,4 @@ Zastanawiasz się, która specjalizacja kreatywna pasuje do Twoich kompetencji? 
 ## Powiązane artykuły
 - [Rynek pracy w Polsce 2026 - kompletny przegląd 21 branż](/blog/rynek-pracy/rynek-pracy-w-polsce)
 - [Rynek pracy w marketingu 2026 - kompetencje i zarobki](/blog/rynek-pracy/rynek-pracy-marketing)
-- [Portfolio zawodowe 2026 - jak je zbudować i czym wyróżnić aplikację](/blog/CV/portfolio-zawodowe)
+- [Portfolio zawodowe 2026 - jak je zbudować i czym wyróżnić aplikację](/blog/cv/portfolio-zawodowe)

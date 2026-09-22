@@ -1,10 +1,10 @@
 ---
-title: 'Zarządzanie czasem w pracy 2026 - metody, które realnie działają'
+title: 'Zarządzanie czasem w pracy 2026 - metody, które działają'
 description: 'Jak skutecznie zarządzać czasem w pracy w 2026 roku? Sprawdź technikę Pomodoro, macierz Eisenhowera i jak dopasować metodę do swojego stylu pracy.'
 estimatedReadTime: 8
 date: '2026-09-08'
 author: 'Vocare'
-category: 'Kariera'
+category: 'kariera'
 coverImage: '/images/blog/career-advisor.webp'
 tags: ['zarządzanie czasem', 'technika pomodoro', 'macierz eisenhowera', 'jak zarządzać czasem w pracy', 'produktywność w pracy']
 slug: 'zarzadzanie-czasem'
@@ -75,6 +75,6 @@ Zastanawiasz się, jakie nawyki organizacyjne warto u siebie rozwinąć? **[Voca
 ---
 
 ## Powiązane artykuły
-- [Prokrastynacja w pracy 2026 - dlaczego się pojawia i jak ją pokonać](/blog/Kariera/prokrastynacja-w-pracy)
-- [Kompetencje miękkie 2026 - jak je rozwijać, nie tylko deklarować](/blog/Kariera/kompetencje-miekkie-jak-rozwijac)
-- [Plan rozwoju zawodowego 2026 - jak go napisać krok po kroku](/blog/Kariera/plan-rozwoju-zawodowego)
+- [Prokrastynacja w pracy 2026 - dlaczego się pojawia i jak ją pokonać](/blog/kariera/prokrastynacja-w-pracy)
+- [Kompetencje miękkie 2026 - jak je rozwijać, nie tylko deklarować](/blog/kariera/kompetencje-miekkie-jak-rozwijac)
+- [Plan rozwoju zawodowego 2026 - jak go napisać krok po kroku](/blog/kariera/plan-rozwoju-zawodowego)

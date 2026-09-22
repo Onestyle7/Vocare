@@ -4,7 +4,7 @@ description: 'Ile trwa wstępne szkolenie BHP w 2026 roku i kto musi je odbyć p
 estimatedReadTime: 6
 date: '2026-08-03'
 author: 'Vocare'
-category: 'Job'
+category: 'praca'
 coverImage: '/images/blog/job-search.webp'
 tags: ['szkolenie bhp wstępne', 'instruktaż ogólny bhp', 'instruktaż stanowiskowy', 'ile trwa szkolenie bhp', 'bhp dla nowego pracownika']
 slug: 'szkolenie-bhp-wstepne'
@@ -74,6 +74,6 @@ Zastanawiasz się, jakie wymagania stawiają dziś oferty pracy w Twojej branży
 ---
 
 ## Powiązane artykuły
-- [Badania lekarskie do pracy 2026 - kiedy i jakie są obowiązkowe](/blog/Job/badania-lekarskie-do-pracy)
-- [Onboarding w nowej pracy 2026 - jak dobrze zacząć](/blog/Job/onboarding-nowa-praca)
-- [Kontrola trzeźwości w pracy 2026 - co może pracodawca](/blog/Job/kontrola-trzezwosci-w-pracy)
+- [Badania lekarskie do pracy 2026 - kiedy i jakie są obowiązkowe](/blog/praca/badania-lekarskie-do-pracy)
+- [Onboarding w nowej pracy 2026 - jak dobrze zacząć](/blog/praca/onboarding-nowa-praca)
+- [Kontrola trzeźwości w pracy 2026 - co może pracodawca](/blog/praca/kontrola-trzezwosci-w-pracy)

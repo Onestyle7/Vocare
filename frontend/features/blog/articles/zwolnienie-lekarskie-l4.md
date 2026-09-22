@@ -4,7 +4,7 @@ description: 'Ile może trwać zwolnienie lekarskie L4? Sprawdź zasady wynagrod
 estimatedReadTime: 8
 date: '2026-07-23'
 author: 'Vocare'
-category: 'Job'
+category: 'praca'
 coverImage: '/images/blog/job-portals.webp'
 tags: ['zwolnienie lekarskie l4', 'l4 ile trwa', 'wynagrodzenie chorobowe', 'zwolnienie lekarskie a zwolnienie z pracy', 'okres zasiłkowy']
 slug: 'zwolnienie-lekarskie-l4'
@@ -80,7 +80,7 @@ Wracasz do pracy po dłuższej przerwie zdrowotnej i zastanawiasz się nad zmian
 ---
 
 ## Powiązane artykuły
-- [Urlop wypoczynkowy 2026 - ile dni przysługuje i jak liczyć](/blog/Job/urlop-wypoczynkowy)
-- [Jak zrezygnować z pracy 2026 - wypowiedzenie bez spalania mostów](/blog/Job/jak-zrezygnowac-z-pracy)
-- [Wypalenie zawodowe - co dalej? Jak wrócić do równowagi i odbudować karierę](/blog/Kariera/wypalenie-zawodowe-co-dalej)
-- [Urlop macierzyński i rodzicielski 2026 - ile dni i ile wynosi zasiłek](/blog/Job/urlop-macierzynski-rodzicielski)
+- [Urlop wypoczynkowy 2026 - ile dni przysługuje i jak liczyć](/blog/praca/urlop-wypoczynkowy)
+- [Jak zrezygnować z pracy 2026 - wypowiedzenie bez spalania mostów](/blog/praca/jak-zrezygnowac-z-pracy)
+- [Wypalenie zawodowe - co dalej? Jak wrócić do równowagi i odbudować karierę](/blog/kariera/wypalenie-zawodowe-co-dalej)
+- [Urlop macierzyński i rodzicielski 2026 - ile dni i ile wynosi zasiłek](/blog/praca/urlop-macierzynski-rodzicielski)

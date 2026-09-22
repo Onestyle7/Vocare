@@ -5,7 +5,7 @@ estimatedReadTime: 9
 date: '2026-04-23'
 updatedAt: '2026-09-02'
 author: 'Vocare'
-category: 'Job'
+category: 'praca'
 coverImage: '/images/blog/no-experience-job.webp'
 tags:
   [
@@ -186,6 +186,6 @@ Jeśli chcesz wiedzieć, jakie stanowiska są realistyczne dla Twojego profilu i
 ---
 
 ## Powiązane artykuły
-- [CV bez doświadczenia 2026 - co wpisać gdy nie masz historii pracy](/blog/CV/cv-bez-doswiadczenia)
-- [Praca dla studenta 2026 - najlepsze opcje i jak zacząć](/blog/Job/praca-dla-studenta)
-- [Jak znaleźć pracę w 2026 - sprawdzone strategie krok po kroku](/blog/Job/jak-znalezc-prace)
+- [CV bez doświadczenia 2026 - co wpisać gdy nie masz historii pracy](/blog/cv/cv-bez-doswiadczenia)
+- [Praca dla studenta 2026 - najlepsze opcje i jak zacząć](/blog/praca/praca-dla-studenta)
+- [Jak znaleźć pracę w 2026 - sprawdzone strategie krok po kroku](/blog/praca/jak-znalezc-prace)

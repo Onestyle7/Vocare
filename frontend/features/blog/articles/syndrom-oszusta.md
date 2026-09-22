@@ -1,10 +1,10 @@
 ---
 title: 'Syndrom oszusta w pracy 2026 - jak sobie z nim radzić'
-description: 'Czym jest syndrom oszusta i dlaczego dotyka nawet najbardziej kompetentnych pracowników? Sprawdź, jak go rozpoznać i jakie konkretne strategie pomagają sobie z nim radzić.'
+description: 'Czym jest syndrom oszusta i dlaczego dotyka nawet kompetentnych pracowników? Sprawdź, jak go rozpoznać i jakie strategie pomagają.'
 estimatedReadTime: 8
 date: '2026-09-08'
 author: 'Vocare'
-category: 'Kariera'
+category: 'kariera'
 coverImage: '/images/blog/career-counseling.webp'
 tags: ['syndrom oszusta', 'impostor syndrome', 'jak radzić sobie z syndromem oszusta', 'brak pewności siebie w pracy', 'niska samoocena zawodowa']
 slug: 'syndrom-oszusta'
@@ -77,7 +77,7 @@ Zastanawiasz się, jak Twoje kompetencje realnie wypadają na rynku pracy? **[Vo
 ---
 
 ## Powiązane artykuły
-- [Feedback w pracy 2026 - jak dawać i przyjmować krytykę](/blog/Kariera/feedback-w-pracy)
-- [Asertywność w pracy 2026 - jak stawiać granice bez konfliktu](/blog/Kariera/asertywnosc-w-pracy)
-- [Wypalenie zawodowe - co dalej? Jak wrócić do równowagi i odbudować karierę](/blog/Kariera/wypalenie-zawodowe-co-dalej)
-- [Prokrastynacja w pracy 2026 - dlaczego się pojawia i jak ją pokonać](/blog/Kariera/prokrastynacja-w-pracy)
+- [Feedback w pracy 2026 - jak dawać i przyjmować krytykę](/blog/kariera/feedback-w-pracy)
+- [Asertywność w pracy 2026 - jak stawiać granice bez konfliktu](/blog/kariera/asertywnosc-w-pracy)
+- [Wypalenie zawodowe - co dalej? Jak wrócić do równowagi i odbudować karierę](/blog/kariera/wypalenie-zawodowe-co-dalej)
+- [Prokrastynacja w pracy 2026 - dlaczego się pojawia i jak ją pokonać](/blog/kariera/prokrastynacja-w-pracy)

@@ -4,7 +4,7 @@ description: 'Kiedy praca w niedziele i święta jest dozwolona w 2026 roku? Spr
 estimatedReadTime: 7
 date: '2026-09-04'
 author: 'Vocare'
-category: 'Job'
+category: 'praca'
 coverImage: '/images/blog/job-search.webp'
 tags: ['praca w niedziele i święta', 'niedziele handlowe 2026', 'dzień wolny za niedzielę', 'dodatek za pracę w niedzielę', 'zakaz handlu w niedziele']
 slug: 'praca-w-niedziele-i-swieta'
@@ -79,6 +79,6 @@ Zastanawiasz się, czy Twoje warunki pracy odpowiadają obowiązującym przepiso
 ---
 
 ## Powiązane artykuły
-- [Nadgodziny w pracy 2026 - ile powinieneś za nie dostać](/blog/Job/nadgodziny-wynagrodzenie)
+- [Nadgodziny w pracy 2026 - ile powinieneś za nie dostać](/blog/praca/nadgodziny-wynagrodzenie)
 - [Rynek pracy w handlu detalicznym 2026 - trendy i zarobki](/blog/rynek-pracy/rynek-pracy-handel-detaliczny)
-- [Delegacja służbowa 2026 - dieta, rozliczenie i Twoje prawa](/blog/Job/delegacja-sluzbowa)
+- [Delegacja służbowa 2026 - dieta, rozliczenie i Twoje prawa](/blog/praca/delegacja-sluzbowa)

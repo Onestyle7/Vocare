@@ -5,7 +5,7 @@ estimatedReadTime: 9
 date: '2026-05-12'
 updatedAt: '2026-09-02'
 author: 'Vocare'
-category: 'CV'
+category: 'cv'
 coverImage: '/images/blog/cover-letter-template.webp'
 tags:
   [
@@ -244,6 +244,6 @@ Zanim zaczniesz pisać list - upewnij się, że Twoje CV jest dopasowane do tej 
 ---
 
 ## Powiązane artykuły
-- [Jak napisać list motywacyjny 2026 - wzór i przykłady](/blog/CV/jak-napisac-list-motywacyjny)
-- [List motywacyjny 2026 - czy nadal potrzebny i jak go napisać](/blog/CV/list-motywacyjny)
-- [CV wzór 2026 - darmowe szablony do pobrania i edycji](/blog/CV/cv-wzor)
+- [Jak napisać list motywacyjny 2026 - wzór i przykłady](/blog/cv/jak-napisac-list-motywacyjny)
+- [List motywacyjny 2026 - czy nadal potrzebny i jak go napisać](/blog/cv/list-motywacyjny)
+- [CV wzór 2026 - darmowe szablony do pobrania i edycji](/blog/cv/cv-wzor)

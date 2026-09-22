@@ -1,11 +1,11 @@
 ---
-title: 'Negocjacje wynagrodzenia 2026 - jak negocjować pensję skutecznie'
-description: 'Jak negocjować wynagrodzenie podczas rozmowy o pracę lub przy podwyżce? Sprawdź sprawdzone techniki negocjacyjne, częste błędy i jak przygotować się do rozmowy o pieniądzach.'
+title: 'Negocjacje wynagrodzenia 2026 - jak skutecznie negocjować'
+description: 'Jak negocjować wynagrodzenie podczas rozmowy o pracę lub przy podwyżce? Sprawdź skuteczne techniki, częste błędy i jak się przygotować.'
 estimatedReadTime: 9
 date: '2026-06-04'
 updatedAt: '2026-09-09'
 author: 'Vocare'
-category: 'Job'
+category: 'praca'
 coverImage: '/images/blog/job-interview.webp'
 tags: ['negocjacje wynagrodzenia', 'jak negocjować pensję', 'podwyżka', 'widełki wynagrodzenia', 'rozmowa o pieniądzach']
 slug: 'negocjacje-wynagrodzenia'
@@ -105,9 +105,9 @@ Chcesz wiedzieć, jakie realnie widełki możesz negocjować na swoim stanowisku
 ---
 
 ## Powiązane artykuły
-- [Rozmowa kwalifikacyjna 2026 - jak się przygotować i wypaść świetnie](/blog/Job/rozmowa-kwalifikacyjna)
+- [Rozmowa kwalifikacyjna 2026 - jak się przygotować i wypaść świetnie](/blog/praca/rozmowa-kwalifikacyjna)
 - [Najlepiej płatne zawody w Polsce 2026 - ranking i zarobki](/blog/rynek-pracy/najlepiej-platne-zawody)
-- [Pytania na rozmowie kwalifikacyjnej 2026 - jak odpowiadać](/blog/Job/pytania-na-rozmowie-kwalifikacyjnej)
-- [Nadgodziny w pracy 2026 - ile powinieneś za nie dostać](/blog/Job/nadgodziny-wynagrodzenie)
-- [Delegacja służbowa 2026 - dieta, rozliczenie i Twoje prawa](/blog/Job/delegacja-sluzbowa)
-- [Wypowiedzenie zmieniające 2026 - kiedy pracodawca może zmienić warunki pracy](/blog/Job/wypowiedzenie-zmieniajace)
+- [Pytania na rozmowie kwalifikacyjnej 2026 - jak odpowiadać](/blog/praca/pytania-na-rozmowie-kwalifikacyjnej)
+- [Nadgodziny w pracy 2026 - ile powinieneś za nie dostać](/blog/praca/nadgodziny-wynagrodzenie)
+- [Delegacja służbowa 2026 - dieta, rozliczenie i Twoje prawa](/blog/praca/delegacja-sluzbowa)
+- [Wypowiedzenie zmieniające 2026 - kiedy pracodawca może zmienić warunki pracy](/blog/praca/wypowiedzenie-zmieniajace)

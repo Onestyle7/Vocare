@@ -4,7 +4,7 @@ description: 'Jak napisać CV po hiszpańsku w 2026 roku? Sprawdź strukturę cu
 estimatedReadTime: 7
 date: '2026-09-07'
 author: 'Vocare'
-category: 'CV'
+category: 'cv'
 coverImage: '/images/blog/cv-template.webp'
 tags: ['cv po hiszpańsku', 'currículum vitae', 'praca w hiszpanii cv', 'jak napisać cv po hiszpańsku', 'cv hiszpania wzór']
 slug: 'cv-po-hiszpansku'
@@ -74,7 +74,7 @@ Planujesz aplikować do pracy w Hiszpanii i chcesz sprawdzić swoje kompetencje?
 ---
 
 ## Powiązane artykuły
-- [CV po angielsku 2026 - jak napisać angielskie CV krok po kroku](/blog/CV/cv-po-angielsku)
-- [CV po niemiecku 2026 - jak napisać Lebenslauf krok po kroku](/blog/CV/cv-po-niemiecku)
-- [Praca sezonowa za granicą 2026 - gdzie jechać i ile można zarobić](/blog/Job/praca-sezonowa-za-granica)
-- [CV po francusku 2026 - jak napisać CV do Francji](/blog/CV/cv-po-francusku)
+- [CV po angielsku 2026 - jak napisać angielskie CV krok po kroku](/blog/cv/cv-po-angielsku)
+- [CV po niemiecku 2026 - jak napisać Lebenslauf krok po kroku](/blog/cv/cv-po-niemiecku)
+- [Praca sezonowa za granicą 2026 - gdzie jechać i ile można zarobić](/blog/praca/praca-sezonowa-za-granica)
+- [CV po francusku 2026 - jak napisać CV do Francji](/blog/cv/cv-po-francusku)

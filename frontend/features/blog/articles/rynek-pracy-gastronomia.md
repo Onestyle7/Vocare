@@ -1,5 +1,5 @@
 ---
-title: 'Rynek pracy w gastronomii i hotelarstwie 2026 - deficyt i zarobki'
+title: 'Rynek pracy w gastronomii 2026 - deficyt i zarobki'
 description: 'Jak wygląda rynek pracy w gastronomii i hotelarstwie w 2026 roku? Sprawdź, których pracowników najbardziej brakuje i ile można dziś zarobić w tej branży.'
 estimatedReadTime: 7
 date: '2026-08-06'
@@ -87,5 +87,5 @@ Zastanawiasz się, która ścieżka w tej branży pasuje do Twoich kompetencji? 
 ## Powiązane artykuły
 - [Rynek pracy w Polsce 2026 - kompletny przegląd 21 branż](/blog/rynek-pracy/rynek-pracy-w-polsce)
 - [Rynek pracy w sprzedaży i obsłudze klienta 2026 - trendy i zarobki](/blog/rynek-pracy/rynek-pracy-sprzedaz)
-- [Praca dla studenta 2026 - najlepsze opcje i jak zacząć](/blog/Job/praca-dla-studenta)
+- [Praca dla studenta 2026 - najlepsze opcje i jak zacząć](/blog/praca/praca-dla-studenta)
 - [Rynek pracy w turystyce 2026 - biura podróży i przewodnicy](/blog/rynek-pracy/rynek-pracy-turystyka)

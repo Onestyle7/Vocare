@@ -4,7 +4,7 @@ description: 'Jak napisać CV analityka danych w 2026 roku? Sprawdź, jak pokaza
 estimatedReadTime: 7
 date: '2026-08-10'
 author: 'Vocare'
-category: 'CV'
+category: 'cv'
 coverImage: '/images/blog/cv-template.webp'
 tags: ['cv analityka danych', 'cv data analyst', 'jak napisać cv analityka', 'cv analiza danych', 'portfolio analityka danych']
 slug: 'cv-analityka-danych'
@@ -74,5 +74,5 @@ Zastanawiasz się, jakie kompetencje analityczne warto u siebie rozwinąć? **[V
 
 ## Powiązane artykuły
 - [Rynek pracy w IT 2026 - trendy, zarobki i zapotrzebowanie](/blog/rynek-pracy/rynek-pracy-it)
-- [CV programisty 2026 - jak napisać CV, które przejdzie przez ATS w IT](/blog/CV/cv-programisty)
-- [Portfolio zawodowe 2026 - jak je zbudować i czym wyróżnić aplikację](/blog/CV/portfolio-zawodowe)
+- [CV programisty 2026 - jak napisać CV, które przejdzie przez ATS w IT](/blog/cv/cv-programisty)
+- [Portfolio zawodowe 2026 - jak je zbudować i czym wyróżnić aplikację](/blog/cv/portfolio-zawodowe)

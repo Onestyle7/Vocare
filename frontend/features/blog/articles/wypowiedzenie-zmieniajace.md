@@ -1,10 +1,10 @@
 ---
-title: 'Wypowiedzenie zmieniające 2026 - kiedy pracodawca może zmienić warunki pracy'
+title: 'Wypowiedzenie zmieniające 2026 - zmiana warunków pracy'
 description: 'Czym jest wypowiedzenie zmieniające i jak na nie reagować w 2026 roku? Sprawdź zasady, termin na odmowę i skutki nieprzyjęcia nowych warunków.'
 estimatedReadTime: 7
 date: '2026-07-31'
 author: 'Vocare'
-category: 'Job'
+category: 'praca'
 coverImage: '/images/blog/job-search.webp'
 tags: ['wypowiedzenie zmieniające', 'zmiana warunków pracy', 'art 42 kodeksu pracy', 'odmowa nowych warunków pracy', 'wypowiedzenie warunków płacy']
 slug: 'wypowiedzenie-zmieniajace'
@@ -76,6 +76,6 @@ Zastanawiasz się, czy nowe warunki pracy są dla Ciebie korzystne, czy lepiej p
 ---
 
 ## Powiązane artykuły
-- [Okres wypowiedzenia umowy o pracę 2026 - ile trwa i jak liczyć](/blog/Job/wypowiedzenie-umowy-o-prace)
-- [Zwolnienie grupowe 2026 - Twoje prawa i wysokość odprawy](/blog/Job/zwolnienie-grupowe)
-- [Negocjacje wynagrodzenia 2026 - jak negocjować pensję skutecznie](/blog/Job/negocjacje-wynagrodzenia)
+- [Okres wypowiedzenia umowy o pracę 2026 - ile trwa i jak liczyć](/blog/praca/wypowiedzenie-umowy-o-prace)
+- [Zwolnienie grupowe 2026 - Twoje prawa i wysokość odprawy](/blog/praca/zwolnienie-grupowe)
+- [Negocjacje wynagrodzenia 2026 - jak negocjować pensję skutecznie](/blog/praca/negocjacje-wynagrodzenia)

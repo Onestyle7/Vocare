@@ -5,7 +5,7 @@ estimatedReadTime: 9
 date: '2026-03-27'
 updatedAt: '2026-09-02'
 author: 'Vocare'
-category: 'CV'
+category: 'cv'
 coverImage: '/images/blog/student-cv.webp'
 tags:
   ['cv studenta', 'cv student', 'jak napisać cv studenta', 'pierwsze cv', 'cv bez doświadczenia']
@@ -246,6 +246,6 @@ Chcesz sprawdzić jak Twoje studenckie CV wygląda w oczach rekrutera i co możn
 ---
 
 ## Powiązane artykuły
-- [Praca dla studenta 2026 - najlepsze opcje i jak zacząć](/blog/Job/praca-dla-studenta)
-- [CV bez doświadczenia 2026 - co wpisać gdy nie masz historii pracy](/blog/CV/cv-bez-doswiadczenia)
-- [Jak znaleźć pracę w 2026 - sprawdzone strategie krok po kroku](/blog/Job/jak-znalezc-prace)
+- [Praca dla studenta 2026 - najlepsze opcje i jak zacząć](/blog/praca/praca-dla-studenta)
+- [CV bez doświadczenia 2026 - co wpisać gdy nie masz historii pracy](/blog/cv/cv-bez-doswiadczenia)
+- [Jak znaleźć pracę w 2026 - sprawdzone strategie krok po kroku](/blog/praca/jak-znalezc-prace)

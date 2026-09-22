@@ -1,10 +1,10 @@
 ---
-title: 'Urlop bezpłatny 2026 - zasady, wniosek i skutki dla ubezpieczenia'
+title: 'Urlop bezpłatny 2026 - zasady, wniosek i ubezpieczenie'
 description: 'Jak wziąć urlop bezpłatny w 2026 roku i jakie ma skutki dla ubezpieczenia zdrowotnego? Sprawdź zasady wniosku i co się dzieje ze składkami.'
 estimatedReadTime: 7
 date: '2026-09-03'
 author: 'Vocare'
-category: 'Job'
+category: 'praca'
 coverImage: '/images/blog/job-search.webp'
 tags: ['urlop bezpłatny', 'urlop bezpłatny a ubezpieczenie zdrowotne', 'wniosek o urlop bezpłatny', 'kodeks pracy urlop bezpłatny', 'urlop bezpłatny zasady']
 slug: 'urlop-bezplatny'
@@ -76,6 +76,6 @@ Planujesz dłuższą przerwę od pracy i zastanawiasz się nad dalszymi krokami 
 ---
 
 ## Powiązane artykuły
-- [Urlop od kariery (sabbatical) 2026 - jak go zaplanować bez ryzyka](/blog/Kariera/urlop-od-kariery-sabbatical)
-- [Urlop wypoczynkowy 2026 - ile dni przysługuje i jak liczyć](/blog/Job/urlop-wypoczynkowy)
-- [Powrót do pracy po urlopie macierzyńskim 2026 - jak się przygotować](/blog/Kariera/powrot-do-pracy-po-macierzynskim)
+- [Urlop od kariery (sabbatical) 2026 - jak go zaplanować bez ryzyka](/blog/kariera/urlop-od-kariery-sabbatical)
+- [Urlop wypoczynkowy 2026 - ile dni przysługuje i jak liczyć](/blog/praca/urlop-wypoczynkowy)
+- [Powrót do pracy po urlopie macierzyńskim 2026 - jak się przygotować](/blog/kariera/powrot-do-pracy-po-macierzynskim)

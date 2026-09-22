@@ -4,7 +4,7 @@ description: 'Czym jest mobbing w pracy według Kodeksu pracy? Sprawdź, jak odr
 estimatedReadTime: 9
 date: '2026-08-13'
 author: 'Vocare'
-category: 'Job'
+category: 'praca'
 coverImage: '/images/blog/burnout.webp'
 tags: ['mobbing w pracy', 'jak rozpoznać mobbing', 'mobbing kodeks pracy', 'zgłoszenie mobbingu', 'odszkodowanie za mobbing']
 slug: 'mobbing-w-pracy'
@@ -79,7 +79,7 @@ Zastanawiasz się nad zmianą pracy po trudnych doświadczeniach zawodowych? **[
 ---
 
 ## Powiązane artykuły
-- [Wypalenie zawodowe - co dalej? Jak wrócić do równowagi i odbudować karierę](/blog/Kariera/wypalenie-zawodowe-co-dalej)
-- [Jak zrezygnować z pracy 2026 - jak to zrobić profesjonalnie](/blog/Job/jak-zrezygnowac-z-pracy)
-- [Zwolnienie dyscyplinarne 2026 - kiedy grozi i jak się przed nim bronić](/blog/Job/zwolnienie-dyscyplinarne)
-- [Kontrola trzeźwości w pracy 2026 - co może pracodawca](/blog/Job/kontrola-trzezwosci-w-pracy)
+- [Wypalenie zawodowe - co dalej? Jak wrócić do równowagi i odbudować karierę](/blog/kariera/wypalenie-zawodowe-co-dalej)
+- [Jak zrezygnować z pracy 2026 - jak to zrobić profesjonalnie](/blog/praca/jak-zrezygnowac-z-pracy)
+- [Zwolnienie dyscyplinarne 2026 - kiedy grozi i jak się przed nim bronić](/blog/praca/zwolnienie-dyscyplinarne)
+- [Kontrola trzeźwości w pracy 2026 - co może pracodawca](/blog/praca/kontrola-trzezwosci-w-pracy)

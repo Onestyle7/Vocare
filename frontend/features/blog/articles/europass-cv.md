@@ -4,7 +4,7 @@ description: 'Czym jest Europass CV i czy warto go używać w 2026 roku? Sprawd�
 estimatedReadTime: 6
 date: '2026-09-07'
 author: 'Vocare'
-category: 'CV'
+category: 'cv'
 coverImage: '/images/blog/cv-template.webp'
 tags: ['europass cv', 'cv europass wzór', 'europass kreator', 'czy warto europass cv', 'cv do pracy w unii europejskiej']
 slug: 'europass-cv'
@@ -77,7 +77,7 @@ Zastanawiasz się, jaki format CV najlepiej pasuje do Twojej sytuacji? **[Vocare
 ---
 
 ## Powiązane artykuły
-- [CV po angielsku 2026 - jak napisać angielskie CV krok po kroku](/blog/CV/cv-po-angielsku)
-- [CV po niemiecku 2026 - jak napisać Lebenslauf krok po kroku](/blog/CV/cv-po-niemiecku)
-- [Praca sezonowa za granicą 2026 - gdzie jechać i ile można zarobić](/blog/Job/praca-sezonowa-za-granica)
-- [CV po francusku 2026 - jak napisać CV do Francji](/blog/CV/cv-po-francusku)
+- [CV po angielsku 2026 - jak napisać angielskie CV krok po kroku](/blog/cv/cv-po-angielsku)
+- [CV po niemiecku 2026 - jak napisać Lebenslauf krok po kroku](/blog/cv/cv-po-niemiecku)
+- [Praca sezonowa za granicą 2026 - gdzie jechać i ile można zarobić](/blog/praca/praca-sezonowa-za-granica)
+- [CV po francusku 2026 - jak napisać CV do Francji](/blog/cv/cv-po-francusku)

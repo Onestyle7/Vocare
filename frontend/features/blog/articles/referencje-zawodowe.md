@@ -4,7 +4,7 @@ description: 'Jak zdobyć dobre referencje zawodowe? Sprawdź kogo prosić o ref
 estimatedReadTime: 7
 date: '2026-06-22'
 author: 'Vocare'
-category: 'CV'
+category: 'cv'
 coverImage: '/images/blog/cv-templates-industry.webp'
 tags: ['referencje zawodowe', 'jak poprosić o referencje', 'lista referencyjna', 'rekomendacje w pracy', 'kontakty referencyjne']
 slug: 'referencje-zawodowe'
@@ -91,6 +91,6 @@ Chcesz upewnić się, że Twoje doświadczenie zawodowe jest spójnie zaprezento
 ---
 
 ## Powiązane artykuły
-- [CV managera 2026 - jak napisać CV na stanowisko kierownicze](/blog/CV/cv-managera)
-- [Jak zrezygnować z pracy 2026 - wypowiedzenie bez spalania mostów](/blog/Job/jak-zrezygnowac-z-pracy)
-- [Networking zawodowy 2026 - jak budować sieć kontaktów bez wciskania się](/blog/Kariera/networking-zawodowy)
+- [CV managera 2026 - jak napisać CV na stanowisko kierownicze](/blog/cv/cv-managera)
+- [Jak zrezygnować z pracy 2026 - wypowiedzenie bez spalania mostów](/blog/praca/jak-zrezygnowac-z-pracy)
+- [Networking zawodowy 2026 - jak budować sieć kontaktów bez wciskania się](/blog/kariera/networking-zawodowy)

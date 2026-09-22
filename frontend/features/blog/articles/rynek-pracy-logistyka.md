@@ -1,6 +1,6 @@
 ---
 title: 'Rynek pracy w logistyce i transporcie 2026 - trendy i zarobki'
-description: 'Jak wygląda rynek pracy w logistyce i transporcie w 2026 roku? Sprawdź, które role są dziś najbardziej poszukiwane i jak e-commerce zmienił zapotrzebowanie na specjalistów.'
+description: 'Jak wygląda rynek pracy w logistyce i transporcie w 2026 roku? Sprawdź, które role są dziś najbardziej poszukiwane.'
 estimatedReadTime: 7
 date: '2026-07-06'
 updatedAt: '2026-09-09'
@@ -87,6 +87,6 @@ Zastanawiasz się, która ścieżka w logistyce pasuje do Twoich kompetencji? **
 ## Powiązane artykuły
 - [Rynek pracy w Polsce 2026 - kompletny przegląd 21 branż](/blog/rynek-pracy/rynek-pracy-w-polsce)
 - [Rynek pracy w produkcji i przemyśle 2026 - automatyzacja i zatrudnienie](/blog/rynek-pracy/rynek-pracy-produkcja)
-- [Gdzie szukać pracy w Polsce 2026 - portale i metody](/blog/Job/gdzie-szukac-pracy)
+- [Gdzie szukać pracy w Polsce 2026 - portale i metody](/blog/praca/gdzie-szukac-pracy)
 - [Najlepiej płatne zawody w Polsce 2026 - ranking i zarobki](/blog/rynek-pracy/najlepiej-platne-zawody)
 - [Rynek pracy w handlu detalicznym 2026 - trendy i zarobki](/blog/rynek-pracy/rynek-pracy-handel-detaliczny)

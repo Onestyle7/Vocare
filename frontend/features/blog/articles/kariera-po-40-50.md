@@ -1,11 +1,11 @@
 ---
-title: 'Kariera po 40 i 50 roku życia 2026 - jak zostać docenionym mimo wieku'
+title: 'Kariera po 40 i 50 roku życia - jak zostać docenionym'
 description: 'Jak budować karierę po 40 i 50 roku życia? Sprawdź jak radzić sobie z dyskryminacją wiekową w rekrutacji, jakie masz atuty i jak je skutecznie komunikować.'
 estimatedReadTime: 8
 date: '2026-05-28'
 updatedAt: '2026-09-09'
 author: 'Vocare'
-category: 'Kariera'
+category: 'kariera'
 coverImage: '/images/blog/career-path2.webp'
 tags: ['kariera po 40', 'kariera po 50', 'ageizm w rekrutacji', 'praca dla dojrzałych pracowników', 'doświadczenie zawodowe']
 slug: 'kariera-po-40-50'
@@ -91,7 +91,7 @@ Zastanawiasz się, jak najlepiej wykorzystać swoje wieloletnie doświadczenie n
 ---
 
 ## Powiązane artykuły
-- [Jak zmienić branżę - praktyczny przewodnik krok po kroku](/blog/Kariera/jak-zmienic-branze)
-- [Doradca zawodowy - co robi, ile kosztuje i czy warto](/blog/Kariera/doradca-zawodowy)
-- [Networking zawodowy 2026 - jak budować sieć kontaktów bez wciskania się](/blog/Kariera/networking-zawodowy)
-- [Odprawa emerytalna 2026 - komu przysługuje i ile wynosi](/blog/Job/odprawa-emerytalna)
+- [Jak zmienić branżę - praktyczny przewodnik krok po kroku](/blog/kariera/jak-zmienic-branze)
+- [Doradca zawodowy - co robi, ile kosztuje i czy warto](/blog/kariera/doradca-zawodowy)
+- [Networking zawodowy 2026 - jak budować sieć kontaktów bez wciskania się](/blog/kariera/networking-zawodowy)
+- [Odprawa emerytalna 2026 - komu przysługuje i ile wynosi](/blog/praca/odprawa-emerytalna)

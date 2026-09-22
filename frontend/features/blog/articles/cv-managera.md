@@ -1,10 +1,10 @@
 ---
 title: 'CV managera 2026 - jak napisać CV na stanowisko kierownicze'
-description: 'Jak napisać CV na stanowisko managerskie? Sprawdź, czym CV managera różni się od CV specjalisty, jak pokazać kompetencje przywódcze i jakich osiągnięć oczekują rekruterzy.'
+description: 'Jak napisać CV na stanowisko managerskie? Sprawdź, czym różni się od CV specjalisty i jak pokazać kompetencje przywódcze.'
 estimatedReadTime: 8
 date: '2026-05-20'
 author: 'Vocare'
-category: 'CV'
+category: 'cv'
 coverImage: '/images/blog/cv-template.webp'
 tags: ['cv managera', 'cv na stanowisko kierownicze', 'cv dla managera', 'kompetencje przywódcze cv', 'cv dyrektora']
 slug: 'cv-managera'
@@ -86,6 +86,6 @@ Chcesz sprawdzić, czy Twoje CV skutecznie pokazuje kompetencje przywódcze? **[
 ---
 
 ## Powiązane artykuły
-- [Profesjonalne CV 2026 - jak wyglądać poważnie na papierze](/blog/CV/profesjonalne-cv)
-- [Awans zawodowy 2026 - jak go uzyskać i o niego poprosić](/blog/Kariera/awans-zawodowy)
-- [Negocjacje wynagrodzenia 2026 - jak negocjować pensję skutecznie](/blog/Job/negocjacje-wynagrodzenia)
+- [Profesjonalne CV 2026 - jak wyglądać poważnie na papierze](/blog/cv/profesjonalne-cv)
+- [Awans zawodowy 2026 - jak go uzyskać i o niego poprosić](/blog/kariera/awans-zawodowy)
+- [Negocjacje wynagrodzenia 2026 - jak negocjować pensję skutecznie](/blog/praca/negocjacje-wynagrodzenia)

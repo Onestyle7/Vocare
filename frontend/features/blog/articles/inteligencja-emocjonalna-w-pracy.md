@@ -1,10 +1,10 @@
 ---
-title: 'Inteligencja emocjonalna w pracy 2026 - jak ją rozwijać i dlaczego się liczy'
-description: 'Czym jest inteligencja emocjonalna w pracy i dlaczego ma znaczenie dla kariery? Sprawdź, jak ją rozwijać i dlaczego badania łączą wysokie EQ z lepszymi wynikami zawodowymi.'
+title: 'Inteligencja emocjonalna w pracy 2026 - jak ją rozwijać'
+description: 'Czym jest inteligencja emocjonalna w pracy i dlaczego ma znaczenie dla kariery? Sprawdź, jak ją rozwijać i co mówią badania.'
 estimatedReadTime: 8
 date: '2026-08-20'
 author: 'Vocare'
-category: 'Kariera'
+category: 'kariera'
 coverImage: '/images/blog/career-advisor.webp'
 tags: ['inteligencja emocjonalna', 'eq w pracy', 'jak rozwijać inteligencję emocjonalną', 'kompetencje emocjonalne', 'samoświadomość w pracy']
 slug: 'inteligencja-emocjonalna-w-pracy'
@@ -77,6 +77,6 @@ Zastanawiasz się, które kompetencje - techniczne i miękkie - warto u siebie r
 ---
 
 ## Powiązane artykuły
-- [Kompetencje miękkie 2026 - jak je rozwijać, nie tylko deklarować](/blog/Kariera/kompetencje-miekkie-jak-rozwijac)
-- [Feedback w pracy 2026 - jak dawać i przyjmować krytykę](/blog/Kariera/feedback-w-pracy)
-- [Mentoring zawodowy 2026 - jak znaleźć mentora i na tym skorzystać](/blog/Kariera/mentoring-zawodowy)
+- [Kompetencje miękkie 2026 - jak je rozwijać, nie tylko deklarować](/blog/kariera/kompetencje-miekkie-jak-rozwijac)
+- [Feedback w pracy 2026 - jak dawać i przyjmować krytykę](/blog/kariera/feedback-w-pracy)
+- [Mentoring zawodowy 2026 - jak znaleźć mentora i na tym skorzystać](/blog/kariera/mentoring-zawodowy)

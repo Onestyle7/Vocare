@@ -4,7 +4,7 @@ description: 'Jak napisać CV nauczyciela w 2026 roku? Sprawdź, jakie kwalifika
 estimatedReadTime: 7
 date: '2026-09-03'
 author: 'Vocare'
-category: 'CV'
+category: 'cv'
 coverImage: '/images/blog/cv-template.webp'
 tags: ['cv nauczyciela', 'cv do szkoły', 'jak napisać cv nauczyciela', 'kwalifikacje pedagogiczne cv', 'cv korepetytora']
 slug: 'cv-nauczyciela'
@@ -77,5 +77,5 @@ Zastanawiasz się, jakie kompetencje warto rozwinąć w swojej ścieżce w eduka
 
 ## Powiązane artykuły
 - [Rynek pracy w edukacji 2026 - deficyt nauczycieli i nowe ścieżki](/blog/rynek-pracy/rynek-pracy-edukacja)
-- [Referencje zawodowe 2026 - jak i kogo poprosić o rekomendację](/blog/CV/referencje-zawodowe)
-- [Profesjonalne CV 2026 - jak wyglądać poważnie na papierze](/blog/CV/profesjonalne-cv)
+- [Referencje zawodowe 2026 - jak i kogo poprosić o rekomendację](/blog/cv/referencje-zawodowe)
+- [Profesjonalne CV 2026 - jak wyglądać poważnie na papierze](/blog/cv/profesjonalne-cv)

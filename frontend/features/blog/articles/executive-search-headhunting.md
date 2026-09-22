@@ -1,10 +1,10 @@
 ---
-title: 'Executive search i headhunting 2026 - jak działa rekrutacja na wyższe stanowiska'
-description: 'Czym różni się executive search od zwykłej rekrutacji? Sprawdź jak działa headhunting, jak reagować na kontakt od headhuntera i jak zbudować widoczność dla rekruterów wykonawczych.'
+title: 'Executive search i headhunting 2026 - jak działa rekrutacja'
+description: 'Czym różni się executive search od zwykłej rekrutacji? Sprawdź jak działa headhunting i jak reagować na kontakt od headhuntera.'
 estimatedReadTime: 7
 date: '2026-05-25'
 author: 'Vocare'
-category: 'Job'
+category: 'praca'
 coverImage: '/images/blog/interview-questions.webp'
 tags: ['executive search', 'headhunting', 'headhunter', 'rekrutacja na stanowiska kierownicze', 'poszukiwanie kadry zarządzającej']
 slug: 'executive-search-headhunting'
@@ -87,6 +87,6 @@ Chcesz zwiększyć swoją widoczność zawodową dla rekruterów? **[Vocare.pl](
 ---
 
 ## Powiązane artykuły
-- [Negocjacje wynagrodzenia 2026 - jak negocjować pensję skutecznie](/blog/Job/negocjacje-wynagrodzenia)
-- [Rozmowa kwalifikacyjna 2026 - jak się przygotować i wypaść świetnie](/blog/Job/rozmowa-kwalifikacyjna)
-- [Doradca zawodowy - co robi, ile kosztuje i czy warto](/blog/Kariera/doradca-zawodowy)
+- [Negocjacje wynagrodzenia 2026 - jak negocjować pensję skutecznie](/blog/praca/negocjacje-wynagrodzenia)
+- [Rozmowa kwalifikacyjna 2026 - jak się przygotować i wypaść świetnie](/blog/praca/rozmowa-kwalifikacyjna)
+- [Doradca zawodowy - co robi, ile kosztuje i czy warto](/blog/kariera/doradca-zawodowy)

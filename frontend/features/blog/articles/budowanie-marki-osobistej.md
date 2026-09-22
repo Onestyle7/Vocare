@@ -4,7 +4,7 @@ description: 'Jak budować markę osobistą na LinkedIn w 2026 roku bez sztuczno
 estimatedReadTime: 7
 date: '2026-08-12'
 author: 'Vocare'
-category: 'Kariera'
+category: 'kariera'
 coverImage: '/images/blog/career-advisor.webp'
 tags: ['marka osobista', 'personal branding', 'budowanie marki na linkedin', 'jak zacząć publikować na linkedin', 'personal branding w karierze']
 slug: 'budowanie-marki-osobistej'
@@ -75,6 +75,6 @@ Zastanawiasz się, jaką specjalizację warto rozwijać w swojej marce zawodowej
 ---
 
 ## Powiązane artykuły
-- [LinkedIn - jak zbudować profil, który przyciąga rekruterów 2026](/blog/CV/linkedin-profil)
-- [Networking zawodowy 2026 - jak budować sieć kontaktów bez wciskania się](/blog/Kariera/networking-zawodowy)
-- [Portfolio zawodowe 2026 - jak je zbudować i czym wyróżnić aplikację](/blog/CV/portfolio-zawodowe)
+- [LinkedIn - jak zbudować profil, który przyciąga rekruterów 2026](/blog/cv/linkedin-profil)
+- [Networking zawodowy 2026 - jak budować sieć kontaktów bez wciskania się](/blog/kariera/networking-zawodowy)
+- [Portfolio zawodowe 2026 - jak je zbudować i czym wyróżnić aplikację](/blog/cv/portfolio-zawodowe)

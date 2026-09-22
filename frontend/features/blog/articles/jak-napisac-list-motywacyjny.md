@@ -5,7 +5,7 @@ estimatedReadTime: 9
 date: '2026-04-10'
 updatedAt: '2026-09-02'
 author: 'Vocare'
-category: 'CV'
+category: 'cv'
 coverImage: '/images/blog/how-to-cover-letter.webp'
 tags:
   [
@@ -194,6 +194,6 @@ Chcesz mieć pewność, że Twój list uderza w dokładnie te kompetencje, któr
 ---
 
 ## Powiązane artykuły
-- [List motywacyjny 2026 - czy nadal potrzebny i jak go napisać](/blog/CV/list-motywacyjny)
-- [Wzór listu motywacyjnego 2026 - gotowe szablony do edycji](/blog/CV/wzor-listu-motywacyjnego)
-- [CV 2026 - kompletny poradnik jak napisać dobre CV](/blog/CV/cv)
+- [List motywacyjny 2026 - czy nadal potrzebny i jak go napisać](/blog/cv/list-motywacyjny)
+- [Wzór listu motywacyjnego 2026 - gotowe szablony do edycji](/blog/cv/wzor-listu-motywacyjnego)
+- [CV 2026 - kompletny poradnik jak napisać dobre CV](/blog/cv/cv)

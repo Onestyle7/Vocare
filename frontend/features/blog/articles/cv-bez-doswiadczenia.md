@@ -1,11 +1,11 @@
 ---
-title: 'CV bez doświadczenia 2026 - co wpisać gdy nie masz historii pracy'
+title: 'CV bez doświadczenia 2026 - co wpisać, gdy nie masz stażu'
 description: 'Jak napisać CV bez doświadczenia zawodowego? Sprawdź co wpisać w CV gdy zaczynasz od zera - z przykładami i strategiami na wyróżnienie się bez historii pracy.'
 estimatedReadTime: 8
 date: '2026-03-25'
 updatedAt: '2026-09-02'
 author: 'Vocare'
-category: 'CV'
+category: 'cv'
 coverImage: '/images/blog/cv-no-experience.webp'
 tags:
   [
@@ -212,6 +212,6 @@ Chcesz zbudować przekonujące CV mimo braku doświadczenia? Platforma **[Vocare
 ---
 
 ## Powiązane artykuły
-- [Praca bez doświadczenia 2026 - jak dostać pierwszą pracę](/blog/Job/praca-bez-doswiadczenia)
-- [CV studenta 2026 - jak napisać CV na pierwszą pracę lub staż](/blog/CV/cv-studenta)
-- [Jak zrobić CV 2026 - praktyczny poradnik od zera do gotowego pliku](/blog/CV/jak-zrobic-cv)
+- [Praca bez doświadczenia 2026 - jak dostać pierwszą pracę](/blog/praca/praca-bez-doswiadczenia)
+- [CV studenta 2026 - jak napisać CV na pierwszą pracę lub staż](/blog/cv/cv-studenta)
+- [Jak zrobić CV 2026 - praktyczny poradnik od zera do gotowego pliku](/blog/cv/jak-zrobic-cv)

@@ -5,7 +5,7 @@ estimatedReadTime: 8
 date: '2026-05-11'
 updatedAt: '2026-09-02'
 author: 'Vocare'
-category: 'CV'
+category: 'cv'
 coverImage: '/images/blog/cv-skills.webp'
 tags:
   ['umiejętności do cv', 'umiejętności w cv', 'co wpisać do cv', 'hard skills cv', 'soft skills cv']
@@ -200,8 +200,8 @@ Chcesz mieć pewność, że sekcja umiejętności trafia w to czego rekruter szu
 ---
 
 ## Powiązane artykuły
-- [Kompetencje miękkie 2026 - jak je rozwijać, nie tylko deklarować](/blog/Kariera/kompetencje-miekkie-jak-rozwijac)
-- [CV wzór 2026 - darmowe szablony do pobrania i edycji](/blog/CV/cv-wzor)
-- [Profesjonalne CV 2026 - jak wyglądać poważnie na papierze](/blog/CV/profesjonalne-cv)
-- [Jak zrobić CV 2026 - praktyczny poradnik od zera do gotowego pliku](/blog/CV/jak-zrobic-cv)
-- [Zainteresowania w CV - co wpisać, żeby wypaść profesjonalnie](/blog/CV/zainteresowania-w-cv)
+- [Kompetencje miękkie 2026 - jak je rozwijać, nie tylko deklarować](/blog/kariera/kompetencje-miekkie-jak-rozwijac)
+- [CV wzór 2026 - darmowe szablony do pobrania i edycji](/blog/cv/cv-wzor)
+- [Profesjonalne CV 2026 - jak wyglądać poważnie na papierze](/blog/cv/profesjonalne-cv)
+- [Jak zrobić CV 2026 - praktyczny poradnik od zera do gotowego pliku](/blog/cv/jak-zrobic-cv)
+- [Zainteresowania w CV - co wpisać, żeby wypaść profesjonalnie](/blog/cv/zainteresowania-w-cv)

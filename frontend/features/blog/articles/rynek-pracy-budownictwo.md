@@ -1,6 +1,6 @@
 ---
 title: 'Rynek pracy w budownictwie 2026 - deficyt kadr i zarobki'
-description: 'Jak wygląda rynek pracy w budownictwie w 2026 roku? Sprawdź, których specjalistów najbardziej brakuje, jak zmienia się branża pod wpływem nowych technologii i ile można zarobić.'
+description: 'Jak wygląda rynek pracy w budownictwie w 2026 roku? Sprawdź, których specjalistów najbardziej brakuje i ile można zarobić.'
 estimatedReadTime: 7
 date: '2026-06-23'
 updatedAt: '2026-09-09'
@@ -92,6 +92,6 @@ Zastanawiasz się, która ścieżka w budownictwie pasuje do Twoich kompetencji?
 - [Rynek pracy w Polsce 2026 - kompletny przegląd 21 branż](/blog/rynek-pracy/rynek-pracy-w-polsce)
 - [Zawody przyszłości 2026 - które profesje będą najbardziej poszukiwane?](/blog/rynek-pracy/zawody-przyszlosci-2026)
 - [Rynek pracy w medycynie i ochronie zdrowia 2026 - zapotrzebowanie i zarobki](/blog/rynek-pracy/rynek-pracy-medycyna)
-- [Jak zmienić branżę - praktyczny przewodnik krok po kroku](/blog/Kariera/jak-zmienic-branze)
-- [CV inżyniera 2026 - jak pokazać projekty techniczne](/blog/CV/cv-inzyniera)
+- [Jak zmienić branżę - praktyczny przewodnik krok po kroku](/blog/kariera/jak-zmienic-branze)
+- [CV inżyniera 2026 - jak pokazać projekty techniczne](/blog/cv/cv-inzyniera)
 - [Rynek pracy w energetyce odnawialnej 2026 - inwestycje i zarobki](/blog/rynek-pracy/rynek-pracy-energetyka)

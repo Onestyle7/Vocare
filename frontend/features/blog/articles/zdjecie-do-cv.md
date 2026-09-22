@@ -4,7 +4,7 @@ description: 'Czy do CV trzeba dołączać zdjęcie? Sprawdź kiedy zdjęcie pom
 estimatedReadTime: 7
 date: '2026-07-28'
 author: 'Vocare'
-category: 'CV'
+category: 'cv'
 coverImage: '/images/blog/cv-interests.webp'
 tags: ['zdjęcie do cv', 'czy cv musi mieć zdjęcie', 'profesjonalne zdjęcie cv', 'zdjęcie do życiorysu', 'cv bez zdjęcia']
 slug: 'zdjecie-do-cv'
@@ -82,6 +82,6 @@ Chcesz sprawdzić, jak Twoje CV wypada jako całość, nie tylko samo zdjęcie? 
 ---
 
 ## Powiązane artykuły
-- [Profesjonalne CV 2026 - jak wyglądać poważnie na papierze](/blog/CV/profesjonalne-cv)
-- [CV bez doświadczenia 2026 - co wpisać gdy nie masz historii pracy](/blog/CV/cv-bez-doswiadczenia)
-- [Umiejętności do CV 2026 - co wpisać, żeby wyróżnić aplikację](/blog/CV/umiejetnosci-do-cv)
+- [Profesjonalne CV 2026 - jak wyglądać poważnie na papierze](/blog/cv/profesjonalne-cv)
+- [CV bez doświadczenia 2026 - co wpisać gdy nie masz historii pracy](/blog/cv/cv-bez-doswiadczenia)
+- [Umiejętności do CV 2026 - co wpisać, żeby wyróżnić aplikację](/blog/cv/umiejetnosci-do-cv)

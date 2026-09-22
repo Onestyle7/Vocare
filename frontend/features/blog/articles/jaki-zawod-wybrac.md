@@ -5,7 +5,7 @@ estimatedReadTime: 9
 date: '2026-03-24'
 updatedAt: '2026-09-02'
 author: 'Vocare'
-category: 'Kariera'
+category: 'kariera'
 coverImage: '/images/blog/career-path.webp'
 tags:
   [
@@ -176,6 +176,6 @@ Nie musisz tego robić sam. Jeśli chcesz w kilka minut sprawdzić, jaki zawód 
 ---
 
 ## Powiązane artykuły
-- [Ścieżka kariery - jak zaplanować rozwój zawodowy w 2026](/blog/Kariera/sciezka-kariery)
-- [Test kariery online - jak wybrać zawód dopasowany do Ciebie?](/blog/Kariera/test-kariery-online)
+- [Ścieżka kariery - jak zaplanować rozwój zawodowy w 2026](/blog/kariera/sciezka-kariery)
+- [Test kariery online - jak wybrać zawód dopasowany do Ciebie?](/blog/kariera/test-kariery-online)
 - [Najlepiej płatne zawody w Polsce 2026 - ranking i zarobki](/blog/rynek-pracy/najlepiej-platne-zawody)

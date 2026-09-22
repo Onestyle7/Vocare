@@ -5,7 +5,7 @@ estimatedReadTime: 7
 date: '2026-05-13'
 updatedAt: '2026-09-02'
 author: 'Vocare'
-category: 'CV'
+category: 'cv'
 coverImage: '/images/blog/cv-interests.webp'
 tags: ['zainteresowania w cv', 'hobby w cv', 'co wpisać do cv', 'cv 2026', 'sekcja zainteresowania']
 slug: 'zainteresowania-w-cv'
@@ -178,6 +178,6 @@ Jeśli masz wątpliwości co do całej struktury swojego CV, **[Vocare.pl](https
 ---
 
 ## Powiązane artykuły
-- [Umiejętności do CV 2026 - co wpisać, żeby wyróżnić aplikację](/blog/CV/umiejetnosci-do-cv)
-- [CV wzór 2026 - darmowe szablony do pobrania i edycji](/blog/CV/cv-wzor)
-- [Profesjonalne CV 2026 - jak wyglądać poważnie na papierze](/blog/CV/profesjonalne-cv)
+- [Umiejętności do CV 2026 - co wpisać, żeby wyróżnić aplikację](/blog/cv/umiejetnosci-do-cv)
+- [CV wzór 2026 - darmowe szablony do pobrania i edycji](/blog/cv/cv-wzor)
+- [Profesjonalne CV 2026 - jak wyglądać poważnie na papierze](/blog/cv/profesjonalne-cv)

@@ -4,7 +4,7 @@ description: 'Jak działa elastyczny (ruchomy) czas pracy w 2026 roku i jak zło
 estimatedReadTime: 7
 date: '2026-08-06'
 author: 'Vocare'
-category: 'Job'
+category: 'praca'
 coverImage: '/images/blog/job-search.webp'
 tags: ['elastyczny czas pracy', 'ruchomy czas pracy', 'wniosek o elastyczny czas pracy', 'indywidualny rozkład czasu pracy', 'elastyczna organizacja pracy rodzice']
 slug: 'czas-pracy-elastyczny'
@@ -80,6 +80,6 @@ Zastanawiasz się, jak wynegocjować lepsze warunki czasu pracy? **[Vocare.pl](h
 ---
 
 ## Powiązane artykuły
-- [Praca hybrydowa 2026 - jak negocjować model pracy](/blog/Job/praca-hybrydowa)
-- [Powrót do pracy po urlopie macierzyńskim 2026 - jak się przygotować](/blog/Kariera/powrot-do-pracy-po-macierzynskim)
-- [Nadgodziny w pracy 2026 - ile powinieneś za nie dostać](/blog/Job/nadgodziny-wynagrodzenie)
+- [Praca hybrydowa 2026 - jak negocjować model pracy](/blog/praca/praca-hybrydowa)
+- [Powrót do pracy po urlopie macierzyńskim 2026 - jak się przygotować](/blog/kariera/powrot-do-pracy-po-macierzynskim)
+- [Nadgodziny w pracy 2026 - ile powinieneś za nie dostać](/blog/praca/nadgodziny-wynagrodzenie)

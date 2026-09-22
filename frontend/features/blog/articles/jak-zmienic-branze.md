@@ -5,7 +5,7 @@ estimatedReadTime: 9
 date: '2026-03-24'
 updatedAt: '2026-09-02'
 author: 'Vocare'
-category: 'Kariera'
+category: 'kariera'
 coverImage: '/images/blog/career-change.webp'
 tags: ['zmiana branży', 'przebranżowienie', 'zmiana kariery', 'kariera', 'rozwój zawodowy']
 slug: 'jak-zmienic-branze'
@@ -172,8 +172,8 @@ Jeśli chcesz dowiedzieć się, jakie branże i zawody najlepiej pasują do Twoi
 ---
 
 ## Powiązane artykuły
-- [Ścieżka kariery - jak zaplanować rozwój zawodowy w 2026](/blog/Kariera/sciezka-kariery)
-- [Doradca zawodowy - co robi, ile kosztuje i czy warto](/blog/Kariera/doradca-zawodowy)
-- [Wypalenie zawodowe - co dalej? Jak wrócić do równowagi i odbudować karierę](/blog/Kariera/wypalenie-zawodowe-co-dalej)
-- [Kariera po 40 i 50 roku życia 2026 - jak zostać docenionym mimo wieku](/blog/Kariera/kariera-po-40-50)
-- [Kryzys w połowie kariery 2026 - jak sobie z nim poradzić](/blog/Kariera/kryzys-polowy-kariery)
+- [Ścieżka kariery - jak zaplanować rozwój zawodowy w 2026](/blog/kariera/sciezka-kariery)
+- [Doradca zawodowy - co robi, ile kosztuje i czy warto](/blog/kariera/doradca-zawodowy)
+- [Wypalenie zawodowe - co dalej? Jak wrócić do równowagi i odbudować karierę](/blog/kariera/wypalenie-zawodowe-co-dalej)
+- [Kariera po 40 i 50 roku życia 2026 - jak zostać docenionym mimo wieku](/blog/kariera/kariera-po-40-50)
+- [Kryzys w połowie kariery 2026 - jak sobie z nim poradzić](/blog/kariera/kryzys-polowy-kariery)

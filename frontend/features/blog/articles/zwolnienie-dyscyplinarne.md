@@ -1,10 +1,10 @@
 ---
-title: 'Zwolnienie dyscyplinarne 2026 - kiedy grozi i jak się przed nim bronić'
+title: 'Zwolnienie dyscyplinarne 2026 - kiedy grozi i jak się bronić'
 description: 'Kiedy pracodawca może zwolnić dyscyplinarnie na podstawie art. 52 Kodeksu pracy? Sprawdź przesłanki, termin miesiąca i jak odwołać się od niesłusznego zwolnienia.'
 estimatedReadTime: 8
 date: '2026-08-14'
 author: 'Vocare'
-category: 'Job'
+category: 'praca'
 coverImage: '/images/blog/job-search.webp'
 tags: ['zwolnienie dyscyplinarne', 'art 52 kodeksu pracy', 'rozwiązanie umowy bez wypowiedzenia', 'zwolnienie z winy pracownika', 'odwołanie od zwolnienia']
 slug: 'zwolnienie-dyscyplinarne'
@@ -85,7 +85,7 @@ Szukasz nowego kierunku zawodowego po trudnym zakończeniu poprzedniej pracy? **
 ---
 
 ## Powiązane artykuły
-- [Okres wypowiedzenia umowy o pracę 2026 - ile trwa i jak liczyć](/blog/Job/wypowiedzenie-umowy-o-prace)
-- [Mobbing w pracy 2026 - jak go rozpoznać i co możesz zrobić](/blog/Job/mobbing-w-pracy)
-- [Jak zrezygnować z pracy 2026 - jak to zrobić profesjonalnie](/blog/Job/jak-zrezygnowac-z-pracy)
-- [Kontrola trzeźwości w pracy 2026 - co może pracodawca](/blog/Job/kontrola-trzezwosci-w-pracy)
+- [Okres wypowiedzenia umowy o pracę 2026 - ile trwa i jak liczyć](/blog/praca/wypowiedzenie-umowy-o-prace)
+- [Mobbing w pracy 2026 - jak go rozpoznać i co możesz zrobić](/blog/praca/mobbing-w-pracy)
+- [Jak zrezygnować z pracy 2026 - jak to zrobić profesjonalnie](/blog/praca/jak-zrezygnowac-z-pracy)
+- [Kontrola trzeźwości w pracy 2026 - co może pracodawca](/blog/praca/kontrola-trzezwosci-w-pracy)

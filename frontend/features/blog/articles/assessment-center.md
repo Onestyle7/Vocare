@@ -4,7 +4,7 @@ description: 'Czym jest assessment center i jak się do niego przygotować? Spra
 estimatedReadTime: 8
 date: '2026-05-15'
 author: 'Vocare'
-category: 'Job'
+category: 'praca'
 coverImage: '/images/blog/assessment.webp'
 tags: ['assessment center', 'jak przygotować się do assessment center', 'rekrutacja grupowa', 'zadania rekrutacyjne', 'ocena kompetencji']
 slug: 'assessment-center'
@@ -92,6 +92,6 @@ Chcesz wiedzieć, które kompetencje warto podkreślić podczas rekrutacji na ko
 ---
 
 ## Powiązane artykuły
-- [Rozmowa kwalifikacyjna 2026 - jak się przygotować i wypaść świetnie](/blog/Job/rozmowa-kwalifikacyjna)
-- [Pytania na rozmowie kwalifikacyjnej 2026 - jak odpowiadać](/blog/Job/pytania-na-rozmowie-kwalifikacyjnej)
-- [Test kompetencji zawodowych - jak sprawdzić swoje mocne strony](/blog/Kariera/test-kompetencji-zawodowych)
+- [Rozmowa kwalifikacyjna 2026 - jak się przygotować i wypaść świetnie](/blog/praca/rozmowa-kwalifikacyjna)
+- [Pytania na rozmowie kwalifikacyjnej 2026 - jak odpowiadać](/blog/praca/pytania-na-rozmowie-kwalifikacyjnej)
+- [Test kompetencji zawodowych - jak sprawdzić swoje mocne strony](/blog/kariera/test-kompetencji-zawodowych)

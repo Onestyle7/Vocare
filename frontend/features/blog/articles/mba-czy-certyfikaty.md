@@ -5,7 +5,7 @@ estimatedReadTime: 8
 date: '2026-06-01'
 updatedAt: '2026-09-09'
 author: 'Vocare'
-category: 'Kariera'
+category: 'kariera'
 coverImage: '/images/blog/career-counseling.webp'
 tags: ['mba czy warto', 'certyfikaty branżowe', 'rozwój kariery', 'studia podyplomowe', 'inwestycja w edukację']
 slug: 'mba-czy-certyfikaty'
@@ -99,6 +99,6 @@ Zastanawiasz się, która ścieżka rozwoju najlepiej pasuje do Twoich celów? *
 ---
 
 ## Powiązane artykuły
-- [Awans zawodowy 2026 - jak go uzyskać i o niego poprosić](/blog/Kariera/awans-zawodowy)
-- [Ścieżka kariery - jak zaplanować rozwój zawodowy w 2026](/blog/Kariera/sciezka-kariery)
+- [Awans zawodowy 2026 - jak go uzyskać i o niego poprosić](/blog/kariera/awans-zawodowy)
+- [Ścieżka kariery - jak zaplanować rozwój zawodowy w 2026](/blog/kariera/sciezka-kariery)
 - [Rynek pracy w finansach i bankowości 2026 - trendy i zarobki](/blog/rynek-pracy/rynek-pracy-finanse)

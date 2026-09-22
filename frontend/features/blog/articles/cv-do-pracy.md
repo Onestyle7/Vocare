@@ -5,7 +5,7 @@ estimatedReadTime: 8
 date: '2026-03-26'
 updatedAt: '2026-09-02'
 author: 'Vocare'
-category: 'CV'
+category: 'cv'
 coverImage: '/images/blog/cv-job-application.webp'
 tags: ['cv do pracy', 'jak dopasować cv', 'aplikacja o pracę', 'cv do oferty', 'ats optymalizacja']
 slug: 'cv-do-pracy'
@@ -153,6 +153,6 @@ Jeśli chcesz zautomatyzować ten proces, **[Vocare.pl](https://vocare.pl)** ana
 ---
 
 ## Powiązane artykuły
-- [Jak zrobić CV 2026 - praktyczny poradnik od zera do gotowego pliku](/blog/CV/jak-zrobic-cv)
-- [CV wzór 2026 - darmowe szablony do pobrania i edycji](/blog/CV/cv-wzor)
-- [Umiejętności do CV 2026 - co wpisać, żeby wyróżnić aplikację](/blog/CV/umiejetnosci-do-cv)
+- [Jak zrobić CV 2026 - praktyczny poradnik od zera do gotowego pliku](/blog/cv/jak-zrobic-cv)
+- [CV wzór 2026 - darmowe szablony do pobrania i edycji](/blog/cv/cv-wzor)
+- [Umiejętności do CV 2026 - co wpisać, żeby wyróżnić aplikację](/blog/cv/umiejetnosci-do-cv)

@@ -5,7 +5,7 @@ estimatedReadTime: 11
 date: '2026-05-01'
 updatedAt: '2026-09-02'
 author: 'Vocare'
-category: 'Job'
+category: 'praca'
 coverImage: '/images/blog/interview-questions.webp'
 tags:
   [
@@ -208,7 +208,7 @@ Chcesz wiedzieć, które pytania są najbardziej prawdopodobne dla danej roli i 
 ---
 
 ## Powiązane artykuły
-- [Rozmowa kwalifikacyjna 2026 - jak się przygotować i wypaść świetnie](/blog/Job/rozmowa-kwalifikacyjna)
-- [CV 2026 - kompletny poradnik jak napisać dobre CV](/blog/CV/cv)
-- [Jak zrobić CV 2026 - praktyczny poradnik od zera do gotowego pliku](/blog/CV/jak-zrobic-cv)
-- [Assessment center 2026 - jak się przygotować i co Cię czeka](/blog/Job/assessment-center)
+- [Rozmowa kwalifikacyjna 2026 - jak się przygotować i wypaść świetnie](/blog/praca/rozmowa-kwalifikacyjna)
+- [CV 2026 - kompletny poradnik jak napisać dobre CV](/blog/cv/cv)
+- [Jak zrobić CV 2026 - praktyczny poradnik od zera do gotowego pliku](/blog/cv/jak-zrobic-cv)
+- [Assessment center 2026 - jak się przygotować i co Cię czeka](/blog/praca/assessment-center)

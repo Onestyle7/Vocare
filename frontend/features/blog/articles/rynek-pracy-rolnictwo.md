@@ -74,4 +74,4 @@ Zastanawiasz się, która ścieżka w rolnictwie pasuje do Twoich kompetencji? *
 ## Powiązane artykuły
 - [Rynek pracy w Polsce 2026 - kompletny przegląd 21 branż](/blog/rynek-pracy/rynek-pracy-w-polsce)
 - [Rynek pracy w produkcji i przemyśle 2026 - automatyzacja i zatrudnienie](/blog/rynek-pracy/rynek-pracy-produkcja)
-- [Praca sezonowa za granicą 2026 - gdzie jechać i ile można zarobić](/blog/Job/praca-sezonowa-za-granica)
+- [Praca sezonowa za granicą 2026 - gdzie jechać i ile można zarobić](/blog/praca/praca-sezonowa-za-granica)

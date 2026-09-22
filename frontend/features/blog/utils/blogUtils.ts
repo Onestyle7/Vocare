@@ -13,6 +13,23 @@ export function toAbsoluteUrl(path: string) {
   return `${baseUrl}${normalizedPath}`;
 }
 
+/** Average adult reading speed in Polish, in words per minute. */
+const WORDS_PER_MINUTE = 200;
+
+/**
+ * Reading time in whole minutes, derived from the article body.
+ *
+ * The `estimatedReadTime` frontmatter field was hand-written and wrong on 110
+ * of 123 posts (it clustered on 7-9 minutes while the bodies average ~760
+ * words, i.e. ~4 minutes), always overstating, never understating. The field
+ * is kept in the schema for backwards compatibility but the displayed value is
+ * computed here so it cannot drift from the content again.
+ */
+export function calculateReadTime(content: string): number {
+  const words = content.trim().split(/\s+/).filter(Boolean).length;
+  return Math.max(1, Math.round(words / WORDS_PER_MINUTE));
+}
+
 /** Get article content based on article slug and source folder name */
 export const getArticleContent = cache((slug: string, baseFolder: string) => {
   try {
@@ -23,7 +40,10 @@ export const getArticleContent = cache((slug: string, baseFolder: string) => {
 
     return {
       ...matter_result,
-      data: metadata,
+      data: {
+        ...metadata,
+        estimatedReadTime: calculateReadTime(matter_result.content),
+      },
     };
   } catch (error) {
     console.log(`Error occured when getting content of: ${slug} article`);
@@ -43,11 +63,12 @@ export function getArticlesMetadata(basePath: string): ArticleMetadata[] {
         throw new Error(`${filename}: Invalid filename can't be parsed as slug`);
 
       const fileContent = fs.readFileSync(`${basePath}${filename}`, 'utf-8');
-      const { data } = matter(fileContent);
+      const { data, content } = matter(fileContent);
       const matterResult = articleSchema.parse(data);
 
       return {
         ...matterResult,
+        estimatedReadTime: calculateReadTime(content),
         slug: filename.replace('.md', ''),
       };
     } catch (error) {

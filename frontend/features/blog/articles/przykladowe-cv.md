@@ -5,7 +5,7 @@ estimatedReadTime: 10
 date: '2026-04-29'
 updatedAt: '2026-09-02'
 author: 'Vocare'
-category: 'CV'
+category: 'cv'
 coverImage: '/images/blog/example-cv.webp'
 tags: ['przykładowe cv', 'wzór cv', 'cv przykład', 'cv dla programisty', 'cv dla studenta']
 slug: 'przykladowe-cv'
@@ -230,6 +230,6 @@ Przed wysłaniem warto sprawdzić swoje CV przez narzędzia AI - takie jak **[Vo
 ---
 
 ## Powiązane artykuły
-- [CV wzór 2026 - darmowe szablony do pobrania i edycji](/blog/CV/cv-wzor)
-- [Kreator CV online 2026 - najlepsze narzędzia do tworzenia CV](/blog/CV/kreator-cv)
-- [Profesjonalne CV 2026 - jak wyglądać poważnie na papierze](/blog/CV/profesjonalne-cv)
+- [CV wzór 2026 - darmowe szablony do pobrania i edycji](/blog/cv/cv-wzor)
+- [Kreator CV online 2026 - najlepsze narzędzia do tworzenia CV](/blog/cv/kreator-cv)
+- [Profesjonalne CV 2026 - jak wyglądać poważnie na papierze](/blog/cv/profesjonalne-cv)

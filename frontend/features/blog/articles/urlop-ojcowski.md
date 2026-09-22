@@ -1,10 +1,10 @@
 ---
-title: 'Urlop ojcowski 2026 - ile dni przysługuje i jak go wykorzystać'
+title: 'Urlop ojcowski 2026 - ile dni przysługuje'
 description: 'Ile trwa urlop ojcowski w 2026 roku i do kiedy trzeba go wykorzystać? Sprawdź zasady podziału na części, wysokość zasiłku i jak złożyć wniosek.'
 estimatedReadTime: 7
 date: '2026-08-26'
 author: 'Vocare'
-category: 'Job'
+category: 'praca'
 coverImage: '/images/blog/career-counseling.webp'
 tags: ['urlop ojcowski', 'ile dni urlop ojcowski', 'zasiłek ojcowski', 'urlop ojcowski wniosek', 'kodeks pracy urlop ojcowski']
 slug: 'urlop-ojcowski'
@@ -72,6 +72,6 @@ Planujesz powrót do pracy po urlopie związanym z rodzicielstwem? **[Vocare.pl]
 ---
 
 ## Powiązane artykuły
-- [Urlop macierzyński i rodzicielski 2026 - ile dni i ile wynosi zasiłek](/blog/Job/urlop-macierzynski-rodzicielski)
-- [Powrót do pracy po urlopie macierzyńskim 2026 - jak się przygotować](/blog/Kariera/powrot-do-pracy-po-macierzynskim)
-- [Urlop wypoczynkowy 2026 - ile dni przysługuje i jak liczyć](/blog/Job/urlop-wypoczynkowy)
+- [Urlop macierzyński i rodzicielski 2026 - ile dni i ile wynosi zasiłek](/blog/praca/urlop-macierzynski-rodzicielski)
+- [Powrót do pracy po urlopie macierzyńskim 2026 - jak się przygotować](/blog/kariera/powrot-do-pracy-po-macierzynskim)
+- [Urlop wypoczynkowy 2026 - ile dni przysługuje i jak liczyć](/blog/praca/urlop-wypoczynkowy)

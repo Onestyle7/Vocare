@@ -75,4 +75,4 @@ Zastanawiasz się, która ścieżka w turystyce pasuje do Twoich kompetencji? **
 ## Powiązane artykuły
 - [Rynek pracy w Polsce 2026 - kompletny przegląd 21 branż](/blog/rynek-pracy/rynek-pracy-w-polsce)
 - [Rynek pracy w gastronomii i hotelarstwie 2026 - deficyt i zarobki](/blog/rynek-pracy/rynek-pracy-gastronomia)
-- [Praca sezonowa za granicą 2026 - gdzie jechać i ile można zarobić](/blog/Job/praca-sezonowa-za-granica)
+- [Praca sezonowa za granicą 2026 - gdzie jechać i ile można zarobić](/blog/praca/praca-sezonowa-za-granica)

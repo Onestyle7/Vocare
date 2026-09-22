@@ -5,7 +5,7 @@ estimatedReadTime: 10
 date: '2026-05-06'
 updatedAt: '2026-09-09'
 author: 'Vocare'
-category: 'Kariera'
+category: 'kariera'
 coverImage: '/images/blog/career-path2.webp'
 tags:
   [
@@ -220,9 +220,9 @@ Chcesz pomocy w zaplanowaniu Twojej ścieżki kariery i zrozumieniu jakie kierun
 ---
 
 ## Powiązane artykuły
-- [Jaki zawód wybrać? Praktyczny poradnik na 2026 rok](/blog/Kariera/jaki-zawod-wybrac)
-- [Test kariery online - jak wybrać zawód dopasowany do Ciebie?](/blog/Kariera/test-kariery-online)
-- [Doradca zawodowy - co robi, ile kosztuje i czy warto](/blog/Kariera/doradca-zawodowy)
-- [Mentoring zawodowy 2026 - jak znaleźć mentora i na tym skorzystać](/blog/Kariera/mentoring-zawodowy)
-- [Plan rozwoju zawodowego 2026 - jak go napisać krok po kroku](/blog/Kariera/plan-rozwoju-zawodowego)
-- [Praca w korporacji czy w startupie 2026 - co wybrać](/blog/Kariera/korporacja-czy-startup)
+- [Jaki zawód wybrać? Praktyczny poradnik na 2026 rok](/blog/kariera/jaki-zawod-wybrac)
+- [Test kariery online - jak wybrać zawód dopasowany do Ciebie?](/blog/kariera/test-kariery-online)
+- [Doradca zawodowy - co robi, ile kosztuje i czy warto](/blog/kariera/doradca-zawodowy)
+- [Mentoring zawodowy 2026 - jak znaleźć mentora i na tym skorzystać](/blog/kariera/mentoring-zawodowy)
+- [Plan rozwoju zawodowego 2026 - jak go napisać krok po kroku](/blog/kariera/plan-rozwoju-zawodowego)
+- [Praca w korporacji czy w startupie 2026 - co wybrać](/blog/kariera/korporacja-czy-startup)

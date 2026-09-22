@@ -4,7 +4,7 @@ description: 'Jak uzyskać awans zawodowy w 2026 roku? Sprawdź, jak zbudować s
 estimatedReadTime: 8
 date: '2026-05-18'
 author: 'Vocare'
-category: 'Kariera'
+category: 'kariera'
 coverImage: '/images/blog/career-path.webp'
 tags: ['awans zawodowy', 'jak dostać awans', 'rozmowa o awansie', 'rozwój kariery', 'awans w pracy']
 slug: 'awans-zawodowy'
@@ -93,8 +93,8 @@ Zastanawiasz się, czy Twoje kompetencje odpowiadają wyższemu stanowisku? **[V
 ---
 
 ## Powiązane artykuły
-- [Plan rozwoju zawodowego 2026 - jak go napisać krok po kroku](/blog/Kariera/plan-rozwoju-zawodowego)
-- [Feedback w pracy 2026 - jak dawać i przyjmować krytykę](/blog/Kariera/feedback-w-pracy)
-- [Ścieżka kariery - jak zaplanować rozwój zawodowy w 2026](/blog/Kariera/sciezka-kariery)
-- [Negocjacje wynagrodzenia 2026 - jak negocjować pensję skutecznie](/blog/Job/negocjacje-wynagrodzenia)
-- [Doradca zawodowy - co robi, ile kosztuje i czy warto](/blog/Kariera/doradca-zawodowy)
+- [Plan rozwoju zawodowego 2026 - jak go napisać krok po kroku](/blog/kariera/plan-rozwoju-zawodowego)
+- [Feedback w pracy 2026 - jak dawać i przyjmować krytykę](/blog/kariera/feedback-w-pracy)
+- [Ścieżka kariery - jak zaplanować rozwój zawodowy w 2026](/blog/kariera/sciezka-kariery)
+- [Negocjacje wynagrodzenia 2026 - jak negocjować pensję skutecznie](/blog/praca/negocjacje-wynagrodzenia)
+- [Doradca zawodowy - co robi, ile kosztuje i czy warto](/blog/kariera/doradca-zawodowy)

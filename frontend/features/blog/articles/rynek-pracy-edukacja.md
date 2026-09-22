@@ -1,5 +1,5 @@
 ---
-title: 'Rynek pracy w edukacji 2026 - deficyt nauczycieli i nowe ścieżki'
+title: 'Rynek pracy w edukacji 2026 - deficyt nauczycieli'
 description: 'Jak wygląda rynek pracy w edukacji w 2026 roku? Sprawdź, dlaczego brakuje nauczycieli, jakie nowe role tworzy edukacja cyfrowa i ile można zarobić w tej branży.'
 estimatedReadTime: 7
 date: '2026-06-25'
@@ -91,7 +91,7 @@ Zastanawiasz się, która ścieżka w edukacji pasuje do Twoich kompetencji? **[
 ## Powiązane artykuły
 - [Rynek pracy w Polsce 2026 - kompletny przegląd 21 branż](/blog/rynek-pracy/rynek-pracy-w-polsce)
 - [Zawody przyszłości 2026 - które profesje będą najbardziej poszukiwane?](/blog/rynek-pracy/zawody-przyszlosci-2026)
-- [Doradca zawodowy - co robi, ile kosztuje i czy warto](/blog/Kariera/doradca-zawodowy)
-- [Jak zmienić branżę - praktyczny przewodnik krok po kroku](/blog/Kariera/jak-zmienic-branze)
+- [Doradca zawodowy - co robi, ile kosztuje i czy warto](/blog/kariera/doradca-zawodowy)
+- [Jak zmienić branżę - praktyczny przewodnik krok po kroku](/blog/kariera/jak-zmienic-branze)
 - [Rynek pracy w administracji publicznej 2026 - stabilność i zarobki](/blog/rynek-pracy/rynek-pracy-administracja-publiczna)
-- [CV nauczyciela 2026 - jak napisać, żeby przejść rekrutację](/blog/CV/cv-nauczyciela)
+- [CV nauczyciela 2026 - jak napisać, żeby przejść rekrutację](/blog/cv/cv-nauczyciela)
