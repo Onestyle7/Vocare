@@ -10,8 +10,6 @@ tags: ['cv programisty', 'cv dla it', 'cv developera', 'jak napisać cv it', 'at
 slug: 'cv-programisty'
 ---
 
-# CV programisty 2026 - jak napisać CV, które przejdzie przez ATS w IT
-
 Lista technologii pod nagłówkiem "Skills" nie robi dziś różnicy - większość kandydatów w IT ją ma. **CV programisty** to dokument, który wyróżnia się nie listą frameworków, tylko konkretnymi projektami i mierzalnym wpływem na wynik. Rynek rekrutacyjny w IT wciąż rośnie - liczba ofert pracy w 2025 roku była [o 44% wyższa niż rok wcześniej](https://wp-insights.s3.eu-central-1.amazonaws.com/wp-content/uploads/2026/01/15073644/Rynek-pracy-IT-w-Polsce-20252026-No-Fluff-Jobs.pdf) według raportu No Fluff Jobs, ale konkurencja o najlepsze oferty jest dziś większa niż kilka lat temu.
 
 > **Najważniejsze wnioski**

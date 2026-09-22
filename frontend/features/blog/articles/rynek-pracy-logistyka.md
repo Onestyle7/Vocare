@@ -11,8 +11,6 @@ tags: ['rynek pracy logistyka', 'praca w transporcie', 'zarobki logistyka 2026',
 slug: 'rynek-pracy-logistyka'
 ---
 
-# Rynek pracy w logistyce i transporcie 2026 - napędza go e-commerce
-
 Boom na zakupy online trwale zmienił zapotrzebowanie na pracowników w logistyce - to już nie tylko magazynierzy i kierowcy, ale coraz częściej specjaliści od optymalizacji łańcuchów dostaw i automatyzacji magazynów. **Rynek pracy w logistyce** w 2026 roku rośnie szybciej niż wiele innych sektorów, napędzany strukturalnym wzrostem handlu internetowego.
 
 > **Najważniejsze wnioski**

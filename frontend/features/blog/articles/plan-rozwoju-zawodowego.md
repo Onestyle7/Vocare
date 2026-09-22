@@ -10,8 +10,6 @@ tags: ['plan rozwoju zawodowego', 'idp individual development plan', 'cele zawod
 slug: 'plan-rozwoju-zawodowego'
 ---
 
-# Plan rozwoju zawodowego 2026 - konkretny dokument, nie lista życzeń
-
 Wiele osób ma ogólne poczucie kierunku, ale nie ma tego zapisanego. **Plan rozwoju zawodowego** to konkretny dokument (ang. Individual Development Plan, IDP) łączący cele z działaniami i terminami. Różni się od marzeń tym, że da się go zrealizować i sprawdzić.
 
 > **Najważniejsze wnioski**

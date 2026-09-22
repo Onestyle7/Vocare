@@ -10,8 +10,6 @@ tags: ['praca w urzędzie', 'rynek pracy administracja publiczna', 'zarobki urz�
 slug: 'rynek-pracy-administracja-publiczna'
 ---
 
-# Rynek pracy w administracji publicznej 2026 - stabilność zamiast wysokich zarobków
-
 Praca w urzędzie ma opinię nudnej, ale stabilnej. **Rynek pracy w administracji publicznej** to sektor, który rzeczywiście oferuje bezpieczeństwo zatrudnienia rzadko spotykane w sektorze prywatnym. W zamian zarobki na start są niższe niż w biznesie.
 
 > **Najważniejsze wnioski**

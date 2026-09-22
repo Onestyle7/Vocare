@@ -10,8 +10,6 @@ tags: ['cv po hiszpańsku', 'currículum vitae', 'praca w hiszpanii cv', 'jak na
 slug: 'cv-po-hiszpansku'
 ---
 
-# CV po hiszpańsku 2026 - jak napisać currículum do Hiszpanii
-
 Kolejność sekcji, która działa w polskim CV, wcale nie jest optymalna po hiszpańsku - w Hiszpanii wykształcenie często wędruje bliżej góry dokumentu niż w Polsce. **Currículum vitae** to hiszpański odpowiednik CV, [rządzący się własną konwencją strukturalną](https://www.livecareer.pl/cv/cv-po-hiszpansku), w której wykształcenie bywa kluczowym kryterium selekcji już na pierwszym etapie rekrutacji.
 
 > **Najważniejsze wnioski**

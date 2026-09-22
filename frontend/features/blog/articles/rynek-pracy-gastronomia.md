@@ -10,8 +10,6 @@ tags: ['rynek pracy gastronomia', 'praca w hotelarstwie', 'zarobki kucharz', 'de
 slug: 'rynek-pracy-gastronomia'
 ---
 
-# Rynek pracy w gastronomii i hotelarstwie 2026 - kto jest dziś poszukiwany
-
 Restauracje i hotele od lat mierzą się z brakiem rąk do pracy. **Rynek pracy w gastronomii** to sektor, który rośnie wraz z turystyką i wydatkami na jedzenie poza domem. Jednocześnie branża traci pracowników na rzecz mniej wymagających fizycznie zawodów.
 
 > **Najważniejsze wnioski**

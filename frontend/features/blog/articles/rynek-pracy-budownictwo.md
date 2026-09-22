@@ -11,8 +11,6 @@ tags: ['rynek pracy budownictwo', 'praca w budownictwie', 'zarobki budowlaniec',
 slug: 'rynek-pracy-budownictwo'
 ---
 
-# Rynek pracy w budownictwie 2026 - dlaczego fachowców wciąż brakuje
-
 Budownictwo to jedna z branż, w których deficyt kadrowy jest odczuwalny w całym kraju od lat - i nic nie wskazuje, żeby miał szybko zniknąć. **Rynek pracy w budownictwie** w 2026 roku to rynek, na którym doświadczeni fachowcy dyktują warunki, a firmy konkurują o nich stawką i elastycznością.
 
 > **Najważniejsze wnioski**

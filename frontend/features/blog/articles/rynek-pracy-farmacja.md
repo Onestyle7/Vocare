@@ -10,8 +10,6 @@ tags: ['rynek pracy farmacja', 'zarobki farmaceuta', 'praca w przemyśle farmace
 slug: 'rynek-pracy-farmacja'
 ---
 
-# Rynek pracy w farmacji 2026 - apteka to dziś tylko jedna ścieżka
-
 Wielu myśli o farmacji wyłącznie jako o pracy za pierwszym stołem w aptece, tymczasem przemysł farmaceutyczny oferuje dziś zupełnie inną skalę zarobków. **Rynek pracy w farmacji** obejmuje dwie wyraźnie różne ścieżki - aptekę i przemysł - farmaceuta z prawem wykonywania zawodu zarabia w aptece [6000-9000 zł brutto, podczas gdy w przemyśle farmaceutycznym i regulacyjnym zarobki sięgają 8000-16 000 zł brutto](https://farmacjapraktyczna.pl/aktualnosci/raporty-i-sondy/ile-zarabia-farmaceuta-w-polsce-aktualny-raport).
 
 > **Najważniejsze wnioski**

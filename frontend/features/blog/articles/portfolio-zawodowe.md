@@ -10,8 +10,6 @@ tags: ['portfolio zawodowe', 'jak zbudować portfolio', 'portfolio dla programis
 slug: 'portfolio-zawodowe'
 ---
 
-# Portfolio zawodowe 2026 - jak pokazać, co naprawdę potrafisz
-
 CV mówi o Twoim doświadczeniu, ale portfolio pokazuje je w praktyce - konkretne projekty, kod, prace graficzne czy analizy, które rekruter może obejrzeć, nie tylko przeczytać o nich w punktach. **Portfolio zawodowe** to dziś standard w wielu branżach (IT, design, marketing, dziennikarstwo) i realnie zwiększa szanse na wyróżnienie się spośród innych kandydatów.
 
 > **Najważniejsze wnioski**

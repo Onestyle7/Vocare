@@ -11,8 +11,6 @@ tags: ['praca dla studenta', 'praca studenta', 'staż', 'praktyki studenckie', '
 slug: 'praca-dla-studenta'
 ---
 
-# Praca dla studenta 2026 - jak znaleźć pracę na studiach i co wybrać
-
 Studia i praca jednocześnie. Brzmi jak przepis na stres i niedosypianie. Ale patrząc na to z drugiej strony: studenci, którzy pracują w trakcie studiów, wchodzą na rynek pracy z CV, które mówi coś więcej niż "absolwent z oceną 4.5". **Praca dla studenta** to nie tylko pieniądze na miesięczne wydatki - to budowanie doświadczenia, które zadecyduje o Twojej pierwszej poważnej pracy po dyplomie. Oto co warto wiedzieć.
 
 > **Najważniejsze wnioski**

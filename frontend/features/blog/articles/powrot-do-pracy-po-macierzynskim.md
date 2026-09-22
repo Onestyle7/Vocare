@@ -10,8 +10,6 @@ tags: ['powrót do pracy po macierzyńskim', 'urlop rodzicielski praca', 'powró
 slug: 'powrot-do-pracy-po-macierzynskim'
 ---
 
-# Powrót do pracy po urlopie macierzyńskim 2026 - jak się przygotować
-
 Kilka miesięcy lub lat przerwy w karierze potrafi wywołać niepewność: czy moje kompetencje są nadal aktualne, czy branża mnie wyprzedziła, jak wytłumaczyć lukę w CV? **Powrót do pracy po urlopie macierzyńskim** czy rodzicielskim to realne wyzwanie, ale znacznie łatwiejsze do pokonania niż podpowiadają obawy - luka w karierze związana z rodzicielstwem jest dziś powszechnie rozumiana przez pracodawców.
 
 > **Najważniejsze wnioski**

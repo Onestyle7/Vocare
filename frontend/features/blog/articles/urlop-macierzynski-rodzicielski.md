@@ -10,8 +10,6 @@ tags: ['urlop macierzyński', 'urlop rodzicielski', 'zasiłek macierzyński', 'i
 slug: 'urlop-macierzynski-rodzicielski'
 ---
 
-# Urlop macierzyński i rodzicielski 2026 - ile dni i ile wynosi zasiłek
-
 Liczby tygodni i procenty zasiłku różnią się w zależności od wybranej opcji - a decyzję trzeba podjąć szybko, bo termin złożenia wniosku wpływa na wysokość świadczenia. **Urlop macierzyński i rodzicielski** to łącznie 61 tygodni płatnej przerwy na opiekę nad dzieckiem, wypłacanej przez [ZUS](https://www.biznes.gov.pl/pl/portal/00136) w formie zasiłku macierzyńskiego.
 
 > **Najważniejsze wnioski**

@@ -10,8 +10,6 @@ tags: ['okres wypowiedzenia', 'wypowiedzenie umowy o pracę', 'ile trwa wypowied
 slug: 'wypowiedzenie-umowy-o-prace'
 ---
 
-# Okres wypowiedzenia umowy o pracę 2026 - ile trwa i jak liczyć
-
 Data na wypowiedzeniu to nie data ostatniego dnia pracy. **Okres wypowiedzenia** to czas, jaki musi upłynąć między złożeniem wypowiedzenia a rozwiązaniem umowy o pracę - jego długość zależy od stażu u danego pracodawcy, nie od rodzaju umowy. Zgodnie z [art. 36 Kodeksu pracy](https://lexlege.pl/kp/art-36/) zasady są identyczne dla umowy na czas określony i nieokreślony.
 
 > **Najważniejsze wnioski**

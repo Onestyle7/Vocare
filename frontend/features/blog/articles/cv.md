@@ -11,8 +11,6 @@ tags: ['cv', 'jak napisać cv', 'wzór cv', 'cv 2026', 'aplikacja o pracę']
 slug: 'cv'
 ---
 
-# CV 2026 - kompletny poradnik jak napisać CV, które działa
-
 Twoje CV ma średnio 7 sekund na zrobienie pierwszego wrażenia. Tyle czasu poświęca mu rekruter zanim zdecyduje, czy warto przeczytać je dokładniej. Ale zanim w ogóle trafi do człowieka, musi przejść przez system ATS - algorytm skanujący aplikacje pod kątem słów kluczowych. Dobre CV w 2026 roku musi robić dwie rzeczy naraz: być czytelne dla algorytmu i przekonujące dla człowieka. Ten poradnik pokaże Ci, jak to osiągnąć krok po kroku.
 
 > **Najważniejsze wnioski**

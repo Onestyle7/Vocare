@@ -10,8 +10,6 @@ tags: ['zwolnienia grupowe', 'odprawa zwolnienie grupowe', 'ustawa o zwolnieniac
 slug: 'zwolnienie-grupowe'
 ---
 
-# Zwolnienie grupowe 2026 - Twoje prawa i wysokość odprawy
-
 Nie każda fala zwolnień w firmie automatycznie kwalifikuje się jako zwolnienie grupowe - decydują konkretne progi liczbowe zależne od wielkości pracodawcy. **Zwolnienie grupowe** to procedura uregulowana odrębną ustawą, która wymaga spełnienia określonych progów liczby zwalnianych pracowników w ciągu 30 dni i gwarantuje pracownikom odprawę pieniężną, [zależnie od stażu pracy](https://interviewme.pl/blog/zwolnienia-grupowe).
 
 > **Najważniejsze wnioski**

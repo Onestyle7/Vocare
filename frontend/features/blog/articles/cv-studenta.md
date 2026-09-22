@@ -12,8 +12,6 @@ tags:
 slug: 'cv-studenta'
 ---
 
-# CV studenta 2026 - jak napisać CV gdy nie masz co wpisać
-
 "Nie mam żadnego doświadczenia" - to zdanie słyszę od studentów najczęściej. Ale gdy zaczynam pytać: czy robiłeś jakieś projekty na zajęciach? Czy brałeś udział w kole naukowym? Czy miałeś jakiś staż, nawet krótki? Czy nie robiłeś nic wakacyjnie? - okazuje się, że materiału jest znacznie więcej niż się wydawało. **CV studenta** to dokument aplikacyjny, który zamiast historii zatrudnienia eksponuje potencjał: projekty, staże, aktywności i konkretne umiejętności. To nie "puste CV" - to inny rodzaj dowodu na to, że warto kogoś zaprosić na rozmowę. Oto jak to zrobić.
 
 > **Najważniejsze wnioski**

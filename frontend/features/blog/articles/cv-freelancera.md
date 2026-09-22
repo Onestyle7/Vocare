@@ -10,8 +10,6 @@ tags: ['cv freelancera', 'cv dla freelancera', 'cv b2b', 'cv projekty zamiast et
 slug: 'cv-freelancera'
 ---
 
-# CV freelancera 2026 - projekty liczą się jak etaty
-
 Freelancer nie ma jednego pracodawcy. Ma dziesiątki projektów i klientów - w Polsce działa dziś [około 330-380 tys. freelancerów](https://useme.com/pl/blog/raport-freelancing-w-polsce/), a większość z nich planuje kontynuować tę formę pracy również w kolejnym roku. **CV freelancera** to dokument, który wymaga innej struktury niż CV etatowca. Chronologia miejsc pracy ustępuje miejsca chronologii projektów i wyników.
 
 > **Najważniejsze wnioski**

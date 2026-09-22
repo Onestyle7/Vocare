@@ -11,8 +11,6 @@ tags: ['rynek pracy produkcja', 'praca w przemyśle', 'automatyzacja produkcji',
 slug: 'rynek-pracy-produkcja'
 ---
 
-# Rynek pracy w produkcji i przemyśle 2026 - co zmienia automatyzacja
-
 Automatyzacja i robotyzacja linii produkcyjnych to najczęściej wymieniane zagrożenie dla pracy w przemyśle - ale rzeczywistość jest bardziej złożona. **Rynek pracy w produkcji** w 2026 roku nie kurczy się, tylko zmienia charakter: prostsze, powtarzalne stanowiska znikają, a rośnie zapotrzebowanie na osoby potrafiące obsługiwać, nadzorować i naprawiać zautomatyzowane systemy.
 
 > **Najważniejsze wnioski**

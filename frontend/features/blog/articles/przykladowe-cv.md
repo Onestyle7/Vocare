@@ -11,8 +11,6 @@ tags: ['przykładowe cv', 'wzór cv', 'cv przykład', 'cv dla programisty', 'cv 
 slug: 'przykladowe-cv'
 ---
 
-# Przykładowe CV 2026 - wzory z komentarzami dla różnych stanowisk
-
 Teoria pisania CV jest prosta. Praktyka - już nie. Najszybciej uczysz się patrząc na konkretne przykłady: co działa, dlaczego to działa i jak przenieść to na swoje doświadczenie. **Przykładowe CV** to gotowy wzorzec pokazujący, jak konkretne osiągnięcia zawodowe wygląda opisane profesjonalnie i z miarami - nie dokument do dosłownego skopiowania, tylko mapa struktury i języka. Poniżej znajdziesz wzory dla trzech najczęściej szukanych profili: programisty, handlowca i studenta bez doświadczenia.
 
 **Który przykład jest dla Ciebie?** Programista i inne role techniczne - patrz na wzór z sekcją "Tech Stack" i projektami z linkami do repozytoriów. Sprzedaż, obsługa klienta i role z celami liczbowymi - patrz na wzór z wynikami w procentach i wartościach PLN. Student, absolwent lub zmiana branży bez doświadczenia komercyjnego - patrz na wzór, w którym staż i projekty studenckie zastępują etat.

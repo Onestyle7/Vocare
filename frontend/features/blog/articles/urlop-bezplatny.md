@@ -10,8 +10,6 @@ tags: ['urlop bezpłatny', 'urlop bezpłatny a ubezpieczenie zdrowotne', 'wniose
 slug: 'urlop-bezplatny'
 ---
 
-# Urlop bezpłatny 2026 - zasady, wniosek i skutki dla ubezpieczenia
-
 Zgoda pracodawcy na urlop bezpłatny to dopiero połowa sprawy - druga połowa to konsekwencje, o których wielu pracowników dowiaduje się dopiero po fakcie. **Urlop bezpłatny** to przerwa w świadczeniu pracy udzielana na pisemny wniosek pracownika, uregulowana w [art. 174 Kodeksu pracy](https://poradnikprzedsiebiorcy.pl/-urlop-bezplatny-a-ubezpieczenie-zdrowotne), która zawiesza tytuł do ubezpieczeń społecznych i zdrowotnych.
 
 > **Najważniejsze wnioski**

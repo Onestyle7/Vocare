@@ -11,8 +11,6 @@ tags: ['networking zawodowy', 'budowanie sieci kontaktów', 'networking linkedin
 slug: 'networking-zawodowy'
 ---
 
-# Networking zawodowy 2026 - jak budować relacje, które faktycznie działają
-
 Słowo "networking" wywołuje u wielu osób dyskomfort - kojarzy się z nachalnym wymienianiem wizytówek albo pisaniem "cześć, mamy jakieś wspólne kontakty" bez żadnego kontekstu. **Networking zawodowy** dobrze prowadzony to nie transakcyjne zbieranie kontaktów, tylko długoterminowe budowanie relacji opartych na wzajemnej wartości.
 
 > **Najważniejsze wnioski**

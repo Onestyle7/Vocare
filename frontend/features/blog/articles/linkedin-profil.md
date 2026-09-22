@@ -11,8 +11,6 @@ tags: ['linkedin profil', 'jak zbudować profil linkedin', 'linkedin dla rekruta
 slug: 'linkedin-profil'
 ---
 
-# LinkedIn 2026 - jak zbudować profil, który realnie przyciąga rekruterów
-
 Rekruterzy sprawdzają profil LinkedIn niemal po każdej aplikacji - niespójny lub pusty profil potrafi podważyć wiarygodność nawet świetnego CV. **Profil LinkedIn** to dziś Twoja druga, publicznie dostępna wizytówka zawodowa, którą warto traktować z taką samą starannością jak CV, a nie jako formalność do "kiedyś uzupełnienia".
 
 > **Najważniejsze wnioski**

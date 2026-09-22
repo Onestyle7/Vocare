@@ -10,8 +10,6 @@ tags: ['cv nauczyciela', 'cv do szkoły', 'jak napisać cv nauczyciela', 'kwalif
 slug: 'cv-nauczyciela'
 ---
 
-# CV nauczyciela 2026 - jak napisać, żeby przejść rekrutację
-
 Kwalifikacje formalne to warunek konieczny, ale nie wystarczający - dyrektorzy szkół i platformy edukacyjne szukają dziś czegoś więcej niż samego dyplomu. **CV nauczyciela** to dokument, który musi jasno pokazywać kwalifikacje pedagogiczne wymagane prawem oświatowym, ale wyróżnia się dopiero wtedy, gdy pokazuje konkretne, mierzalne rezultaty pracy z uczniami.
 
 > **Najważniejsze wnioski**

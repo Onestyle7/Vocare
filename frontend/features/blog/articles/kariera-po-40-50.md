@@ -11,8 +11,6 @@ tags: ['kariera po 40', 'kariera po 50', 'ageizm w rekrutacji', 'praca dla dojrz
 slug: 'kariera-po-40-50'
 ---
 
-# Kariera po 40 i 50 roku życia 2026 - jak grać swoimi atutami
-
 Mimo że rynek pracy w Polsce cierpi na strukturalny deficyt kadr w wielu branżach, dojrzali kandydaci wciąż spotykają się z nieformalną dyskryminacją wiekową w rekrutacji. **Kariera po 40 i 50 roku życia** wymaga dziś świadomej strategii - nie dlatego, że doświadczenie traci na wartości, ale dlatego, że trzeba umieć je odpowiednio zaprezentować w świecie zdominowanym przez młodszych rekruterów i algorytmy ATS.
 
 > **Najważniejsze wnioski**

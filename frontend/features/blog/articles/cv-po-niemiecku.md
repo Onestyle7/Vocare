@@ -10,8 +10,6 @@ tags: ['cv po niemiecku', 'lebenslauf', 'cv niemcy', 'praca w niemczech cv', 'ja
 slug: 'cv-po-niemiecku'
 ---
 
-# CV po niemiecku 2026 - Lebenslauf, który przejdzie rekrutację
-
 Niemiecki rynek pracy ma swoje własne, dość sztywne zasady dotyczące CV - [oficjalny portal rządowy Make it in Germany](https://www.make-it-in-germany.com/de/arbeiten-in-deutschland/job/bewerbung) rekomenduje maksymalnie dwie strony A4 i przejrzysty, stonowany układ bez nadmiaru kolorów. **Lebenslauf** to niemiecki odpowiednik CV (dosłownie "przebieg życia"). Różni się od polskiego formatem, tonem i oczekiwaną zawartością. Kopiowanie polskiego CV i tłumaczenie go słowo w słowo to najczęstszy błąd kandydatów.
 
 > **Najważniejsze wnioski**

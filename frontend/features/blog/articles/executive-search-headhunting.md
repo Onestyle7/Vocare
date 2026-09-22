@@ -10,8 +10,6 @@ tags: ['executive search', 'headhunting', 'headhunter', 'rekrutacja na stanowisk
 slug: 'executive-search-headhunting'
 ---
 
-# Executive search i headhunting 2026 - jak działa polowanie na talenty
-
 Na stanowiska specjalistyczne i kierownicze firmy coraz częściej nie czekają na aplikacje - aktywnie poszukują konkretnych osób poprzez wyspecjalizowane agencje. **Executive search** (nazywany też headhuntingiem) to proces odwrotny do standardowej rekrutacji: to firma i headhunter szukają Ciebie, nie Ty aplikujesz na ogłoszenie.
 
 > **Najważniejsze wnioski**

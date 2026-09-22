@@ -10,8 +10,6 @@ tags: ['syndrom oszusta', 'impostor syndrome', 'jak radzić sobie z syndromem os
 slug: 'syndrom-oszusta'
 ---
 
-# Syndrom oszusta w pracy 2026 - dotyka najbardziej kompetentnych
-
 Paradoksalnie, im więcej ktoś osiąga, tym silniej bywa przekonany, że to kwestia szczęścia, nie kompetencji. **Syndrom oszusta** to uporczywe poczucie, że sukcesy zawodowe wynikają z przypadku, a nie realnych umiejętności - mimo obiektywnych dowodów przeciwnych. Zjawisko to opisano po raz pierwszy w [badaniu z 1978 roku](https://interviewme.pl/blog/syndrom-oszusta-badanie), a dziś dotyczy zaskakująco dużej części pracowników.
 
 > **Najważniejsze wnioski**

@@ -11,8 +11,6 @@ tags: ['cv wzór', 'wzór cv', 'szablon cv', 'cv do pobrania', 'cv 2026']
 slug: 'cv-wzor'
 ---
 
-# CV wzór 2026 - darmowe szablony i jak z nich korzystać
-
 Wpisałeś w Google "cv wzór" i dostałeś setki wyników. Problem w tym, że większość szablonów wygląda świetnie, ale albo ATS ich nie przeczyta, albo są tak ogólne, że nie pomogą Ci wyróżnić się z tłumu. **Dobry wzór CV** to taki, który jest czytelny dla algorytmów rekrutacyjnych, dopasowany do Twojej branży i możliwy do edycji bez specjalistycznego oprogramowania. Oto co musisz wiedzieć zanim pobierzesz pierwszy lepszy szablon.
 
 > **Najważniejsze wnioski**

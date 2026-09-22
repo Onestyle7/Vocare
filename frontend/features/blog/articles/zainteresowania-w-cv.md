@@ -11,8 +11,6 @@ tags: ['zainteresowania w cv', 'hobby w cv', 'co wpisać do cv', 'cv 2026', 'sek
 slug: 'zainteresowania-w-cv'
 ---
 
-# Zainteresowania w CV - co wpisać i jak to zrobić mądrze
-
 "Czytanie książek, muzyka, sport" - tę trójkę widzisz w co drugim CV. Nic nie mówi, niczym nie zaskakuje i w efekcie niczego nie robi dla Twojej kandydatury. **Dobra sekcja zainteresowania** to nie lista słów - to konkretne aktywności, które coś o Tobie mówią: że jesteś ciekawy świata, masz inicjatywę, rozwijasz się poza pracą. Oto jak ją napisać.
 
 > **Najważniejsze wnioski**

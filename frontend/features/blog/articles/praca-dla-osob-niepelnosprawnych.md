@@ -10,8 +10,6 @@ tags: ['praca dla osób niepełnosprawnych', 'prawa pracownika z niepełnosprawn
 slug: 'praca-dla-osob-niepelnosprawnych'
 ---
 
-# Praca dla osób z niepełnosprawnością 2026 - prawa i wsparcie
-
 Orzeczenie o niepełnosprawności daje konkretne, ustawowe uprawnienia pracownicze - nie tylko formalny status, ale realne różnice w czasie pracy, urlopie i warunkach zatrudnienia. **Prawa pracownika z niepełnosprawnością** to konkretny zestaw uprawnień obejmujący skrócony czas pracy, dodatkowy urlop wypoczynkowy i dodatkowe przerwy, [uregulowane w ustawie o rehabilitacji zawodowej i społecznej oraz zatrudnianiu osób niepełnosprawnych](https://www.infor.pl/prawo/pomoc-spoleczna/niepelnosprawni/7400385,prawa-pracownika-z-niepelnosprawnoscia-w-2026-roku-skrocony-czas-pra.html).
 
 > **Najważniejsze wnioski**

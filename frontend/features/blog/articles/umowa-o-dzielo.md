@@ -10,8 +10,6 @@ tags: ['umowa o dzieło', 'umowa o dzieło a zlecenie', 'umowa o dzieło zus', '
 slug: 'umowa-o-dzielo'
 ---
 
-# Umowa o dzieło 2026 - zasady, składki i różnice od zlecenia
-
 Brak obowiązkowych składek ZUS sprawia, że ta forma umowy bywa kusząca - ale nie każde zadanie kwalifikuje się prawnie jako "dzieło". **Umowa o dzieło** to umowa cywilnoprawna zobowiązująca do osiągnięcia konkretnego, mierzalnego rezultatu, [w przeciwieństwie do umowy zlecenia, która polega na starannym wykonywaniu czynności](https://www.vatax.pl/blog/umowa-zlecenie-a-umowa-o-dzielo-co-wybrac) - to rozróżnienie ma kluczowe znaczenie dla rozliczeń podatkowych i ZUS.
 
 > **Najważniejsze wnioski**

@@ -18,8 +18,6 @@ tags:
 slug: 'doradca-zawodowy'
 ---
 
-# Doradca zawodowy - kto to jest i kiedy naprawdę pomaga
-
 "Idź do doradcy zawodowego" - to rada, którą słyszysz na każdym kroku. Ale co to w praktyce oznacza? Co doradca faktycznie robi, co może Ci dać, a czego nie? I czy jest różnica między doradcą zawodowym, coachem kariery a headhunterem? **Doradca zawodowy** to specjalista od diagnozy kariery i planowania ścieżki zawodowej - nie znajdzie Ci pracy, ale pomoże Ci zrozumieć w jakim kierunku iść i jak to osiągnąć. Oto wszystko, co powinieneś wiedzieć.
 
 > **Najważniejsze wnioski**

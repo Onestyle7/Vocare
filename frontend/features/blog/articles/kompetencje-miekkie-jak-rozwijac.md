@@ -10,8 +10,6 @@ tags: ['kompetencje miękkie', 'jak rozwijać soft skills', 'rozwój komunikacji
 slug: 'kompetencje-miekkie-jak-rozwijac'
 ---
 
-# Kompetencje miękkie 2026 - jak je realnie rozwijać
-
 "Komunikatywny, zorganizowany, dobrze pracuje w zespole" - te słowa pojawiają się w niemal każdym CV. **Kompetencje miękkie** to umiejętności, które rzadko rozwijają się przez samą deklarację. Wymagają świadomej praktyki, podobnie jak umiejętności twarde.
 
 > **Najważniejsze wnioski**

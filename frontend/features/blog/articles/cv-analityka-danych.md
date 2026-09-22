@@ -10,8 +10,6 @@ tags: ['cv analityka danych', 'cv data analyst', 'jak napisać cv analityka', 'c
 slug: 'cv-analityka-danych'
 ---
 
-# CV analityka danych 2026 - jak pokazać projekty analityczne
-
 Rynek pracy dla tego zawodu jest dziś wyjątkowo szeroki - portale rekrutacyjne prezentują dziesiątki tysięcy ofert, ale konkurencja o najlepsze z nich jest równie duża. **CV analityka danych** to dokument, który wyróżnia się dopiero wtedy, gdy pokazuje konkretny wpływ analizy na decyzję biznesową, a nie samą listę narzędzi. Mediana wynagrodzenia w tym zawodzie w Polsce wynosi dziś [13 000 zł brutto miesięcznie](https://www.ilezarabia24.pl/analityk-danych/), z bardzo szerokim rozrzutem zależnym od doświadczenia i specjalizacji.
 
 > **Najważniejsze wnioski**

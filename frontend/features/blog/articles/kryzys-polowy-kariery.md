@@ -10,8 +10,6 @@ tags: ['kryzys w połowie kariery', 'kryzys zawodowy', 'utrata motywacji w pracy
 slug: 'kryzys-polowy-kariery'
 ---
 
-# Kryzys w połowie kariery 2026 - jak sobie z nim poradzić
-
 Może dotknąć nawet osobę, która obiektywnie osiągnęła sukces - stabilną pozycję, dobre wynagrodzenie, uznanie w branży. **Kryzys w połowie kariery** to okres utraty motywacji, rozczarowania tempem rozwoju i poczucia braku perspektyw, który może pojawić się na każdym etapie ścieżki zawodowej, [nie tylko w klasycznie kojarzonym z nim wieku średnim](https://instytutbennewicz.pl/blog/kryzys-srodka-kariery/).
 
 > **Najważniejsze wnioski**

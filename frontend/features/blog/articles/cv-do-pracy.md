@@ -11,8 +11,6 @@ tags: ['cv do pracy', 'jak dopasować cv', 'aplikacja o pracę', 'cv do oferty',
 slug: 'cv-do-pracy'
 ---
 
-# CV do pracy 2026 - jak dopasować aplikację żeby nie trafić do kosza
-
 Wysłałeś świetne CV i nie dostałeś żadnej odpowiedzi. Dlaczego? W 80% przypadków odpowiedź jest prosta: CV nie było dopasowane do konkretnej oferty. Nie chodzi o to, że byłeś złym kandydatem - chodzi o to, że algorytm ATS nie znalazł w Twoim CV słów kluczowych z ogłoszenia. **CV do pracy** to nie stały dokument, który wysyłasz wszędzie - to narzędzie, które kalibrujesz pod każdą ofertę z osobna. Oto jak to robić efektywnie.
 
 > **Najważniejsze wnioski**

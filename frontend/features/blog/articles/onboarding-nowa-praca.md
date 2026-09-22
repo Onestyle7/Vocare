@@ -11,8 +11,6 @@ tags: ['onboarding', 'pierwsze dni w pracy', 'nowa praca', 'adaptacja w pracy', 
 slug: 'onboarding-nowa-praca'
 ---
 
-# Onboarding 2026 - jak dobrze wypaść w pierwszych tygodniach
-
 Dostałeś ofertę, podpisałeś umowę - teraz zaczyna się kolejny etap, który decyduje o tym, jak szybko poczujesz się pewnie w nowej roli. **Onboarding** to proces wdrożenia nowego pracownika, ale to, jak go wykorzystasz, w dużej mierze zależy od Ciebie, nie tylko od firmy.
 
 > **Najważniejsze wnioski**

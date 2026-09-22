@@ -11,8 +11,6 @@ tags: ['negocjacje wynagrodzenia', 'jak negocjować pensję', 'podwyżka', 'wide
 slug: 'negocjacje-wynagrodzenia'
 ---
 
-# Negocjacje wynagrodzenia 2026 - jak rozmawiać o pieniądzach bez stresu
-
 Większość kandydatów akceptuje pierwszą zaproponowaną stawkę, bo negocjacje kojarzą się z konfliktem i ryzykiem utraty oferty. To błąd - w praktyce firmy zwykle mają margines negocjacyjny wbudowany w proces, a brak negocjacji to najczęściej po prostu pozostawione na stole pieniądze. **Negocjacje wynagrodzenia** to nie konfrontacja, tylko rozmowa oparta na danych rynkowych i Twojej wartości dla firmy.
 
 > **Najważniejsze wnioski**

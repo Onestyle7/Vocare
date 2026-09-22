@@ -10,8 +10,6 @@ tags: ['zwolnienie dyscyplinarne', 'art 52 kodeksu pracy', 'rozwiązanie umowy b
 slug: 'zwolnienie-dyscyplinarne'
 ---
 
-# Zwolnienie dyscyplinarne 2026 - kiedy grozi i jak się przed nim bronić
-
 To najostrzejsza forma rozwiązania umowy o pracę - i jedna z najczęściej błędnie stosowanych przez pracodawców. **Zwolnienie dyscyplinarne** to rozwiązanie umowy bez zachowania okresu wypowiedzenia z winy pracownika, uregulowane w [art. 52 Kodeksu pracy](https://standardyprawa.pl/akt/21/art/5934). Wymaga spełnienia ściśle określonych warunków - byle jaki błąd pracownika nie wystarczy.
 
 > **Najważniejsze wnioski**

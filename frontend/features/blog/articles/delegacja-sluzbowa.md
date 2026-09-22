@@ -10,8 +10,6 @@ tags: ['delegacja służbowa', 'dieta delegacja 2026', 'rozliczenie podróży s�
 slug: 'delegacja-sluzbowa'
 ---
 
-# Delegacja służbowa 2026 - dieta, rozliczenie i Twoje prawa
-
 Stawki wzrosły znacząco w 2026 roku, więc warto sprawdzić, czy Twój pracodawca rozlicza delegacje według aktualnych kwot. **Delegacja służbowa** to wykonywanie zadania służbowego poza stałym miejscem pracy na polecenie pracodawcy, za które przysługuje dieta oraz zwrot kosztów przejazdu i noclegu - [stawka diety krajowej w 2026 roku wzrosła do 60 zł za dobę](https://faktyplus.pl/diety-delegacje-2026-podwyzka/), czyli o 30% w porównaniu z poprzednią kwotą.
 
 > **Najważniejsze wnioski**

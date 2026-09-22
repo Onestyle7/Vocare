@@ -18,8 +18,6 @@ tags:
 slug: 'wzor-listu-motywacyjnego'
 ---
 
-# Wzór listu motywacyjnego 2026 - szablony z instrukcją
-
 Znalazłeś idealny wzór listu motywacyjnego w internecie. Wypełniasz go. Wysyłasz. Cisza. Dlaczego? Bo rekruter dostał ten sam wzór od 30 innych kandydatów tego samego dnia. **Dobry wzór listu motywacyjnego** to szkielet, nie gotowy produkt - różnica między szablonem a skutecznym listem leży w personalizacji: konkretnym osiągnięciu, konkretnym powodzie zainteresowania firmą i autentycznym głosie. Oto szablony, które faktycznie działają - plus instrukcja jak je personalizować.
 
 > **Najważniejsze wnioski**

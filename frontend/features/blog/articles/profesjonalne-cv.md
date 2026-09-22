@@ -11,8 +11,6 @@ tags: ['profesjonalne cv', 'jak napisać cv', 'cv 2026', 'cv do pracy', 'cv pora
 slug: 'profesjonalne-cv'
 ---
 
-# Profesjonalne CV 2026 - co odróżnia je od przeciętnego
-
 Profesjonalne CV nie musi wyglądać jak projekt graficzny. Nie potrzebuje kółkowych wykresów umiejętności, kolorowych ramek ani ikon przy każdej sekcji. **Profesjonalne CV** to dokument, po którego przeczytaniu rekruter myśli: "Ten kandydat rozumie tę rolę i wie jak o sobie opowiadać" - nie ten, który wygląda najładniej. Oto konkretne różnice między CV, które robi wrażenie, a takim które tylko zajmuje miejsce na twardym dysku.
 
 > **Najważniejsze wnioski**

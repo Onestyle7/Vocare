@@ -10,8 +10,6 @@ tags: ['badania lekarskie do pracy', 'badania wstępne', 'badania okresowe', 'me
 slug: 'badania-lekarskie-do-pracy'
 ---
 
-# Badania lekarskie do pracy 2026 - kiedy i jakie są obowiązkowe
-
 Koszt tych badań w całości obciąża pracodawcę - żaden zapis w umowie, nawet za pisemną zgodą pracownika, nie może tego zmienić. **Badania lekarskie do pracy** to trzy rodzaje badań - wstępne, okresowe i kontrolne - uregulowane w [art. 229 Kodeksu pracy](https://lexlege.pl/kp/art-229/), a obowiązek ich sfinansowania spoczywa wyłącznie na pracodawcy.
 
 > **Najważniejsze wnioski**

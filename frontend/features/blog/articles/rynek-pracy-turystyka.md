@@ -10,8 +10,6 @@ tags: ['rynek pracy turystyka', 'praca w biurze podróży', 'zarobki przewodnik 
 slug: 'rynek-pracy-turystyka'
 ---
 
-# Rynek pracy w turystyce 2026 - nieregularność zleceń rządzi wszystkim
-
 W odróżnieniu od gastronomii i hotelarstwa, gdzie deficyt kadrowy jest głównym tematem, w turystyce najbardziej dokucza nieregularność zleceń, nie brak rąk do pracy. **Rynek pracy w turystyce** to sektor silnie sezonowy - orientacyjne zarobki przewodnika miejskiego w 2026 roku mieszczą się [w przedziale 3800-5600 zł brutto miesięcznie](https://www.suerteprzewodnicy.pl/ile-zarabia-przewodnik-turystyczny-i-jak-wyglada-jego-praca-dane-na-2026-rok/), ale wahania sezonowe potrafią być bardzo duże.
 
 > **Najważniejsze wnioski**

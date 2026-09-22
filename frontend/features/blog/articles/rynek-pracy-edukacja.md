@@ -11,8 +11,6 @@ tags: ['rynek pracy edukacja', 'praca nauczyciel', 'zarobki nauczyciel 2026', 'e
 slug: 'rynek-pracy-edukacja'
 ---
 
-# Rynek pracy w edukacji 2026 - dlaczego brakuje nauczycieli
-
 Polska oświata od lat mierzy się z deficytem kadrowym, który pogłębia się z rokiem na rok - szczególnie w przedmiotach ścisłych i językach obcych. **Rynek pracy w edukacji** w 2026 roku to nie tylko szkoły publiczne - to także rosnący rynek edukacji prywatnej, korepetycji online i szkoleń korporacyjnych.
 
 > **Najważniejsze wnioski**

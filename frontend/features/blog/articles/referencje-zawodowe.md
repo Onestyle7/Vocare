@@ -10,8 +10,6 @@ tags: ['referencje zawodowe', 'jak poprosić o referencje', 'lista referencyjna'
 slug: 'referencje-zawodowe'
 ---
 
-# Referencje zawodowe 2026 - jak je zdobyć i dobrze przygotować
-
 Wiele ogłoszeń kończy się zdaniem "referencje dostępne na życzenie" - ale mało kto zastanawia się nad tym wcześniej, żeby nie szukać ich w pośpiechu tuż przed finałową rozmową. **Referencje zawodowe** to jeden z ostatnich etapów procesu rekrutacyjnego, ale przygotowanie do nich warto zacząć znacznie wcześniej, najlepiej zaraz po zakończeniu współpracy z daną osobą.
 
 > **Najważniejsze wnioski**

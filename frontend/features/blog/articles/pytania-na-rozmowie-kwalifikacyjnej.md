@@ -18,8 +18,6 @@ tags:
 slug: 'pytania-na-rozmowie-kwalifikacyjnej'
 ---
 
-# Pytania na rozmowie kwalifikacyjnej 2026 - jak odpowiadać, żeby dostać pracę
-
 Żaden rekruter nie pyta "ile gwiazdek ma flaga USA?" na rozmowie o pracę (no, prawie żaden). **Pytania rekrutacyjne** to narzędzie oceny trzech rzeczy: czy możesz wykonywać tę pracę, czy będziesz chciał ją wykonywać i czy pasujesz do zespołu. Znajomość typowych pytań i przygotowanie konkretnych odpowiedzi z przykładami z Twojej kariery to różnica między kandydatem, który dostaje ofertę, a tym, który dostaje odmowę. Oto 20 najczęstszych pytań z przykładami odpowiedzi.
 
 > **Najważniejsze wnioski**

@@ -10,8 +10,6 @@ tags: ['cv managera', 'cv na stanowisko kierownicze', 'cv dla managera', 'kompet
 slug: 'cv-managera'
 ---
 
-# CV managera 2026 - jak pokazać, że potrafisz zarządzać, nie tylko wykonywać
-
 CV specjalisty koncentruje się na indywidualnych osiągnięciach - CV managera musi pokazać coś więcej: umiejętność prowadzenia zespołu, podejmowania decyzji strategicznych i wpływania na wyniki poprzez innych ludzi, nie tylko własną pracę. **CV managera** ocenia się inaczej niż CV specjalisty - rekruter szuka dowodów przywództwa, nie tylko kompetencji technicznych.
 
 > **Najważniejsze wnioski**

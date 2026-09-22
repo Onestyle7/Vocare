@@ -10,8 +10,6 @@ tags: ['europass cv', 'cv europass wzór', 'europass kreator', 'czy warto europa
 slug: 'europass-cv'
 ---
 
-# Europass CV 2026 - czy warto i jak go wypełnić
-
 Wiele osób sięga po ten format automatycznie, bez sprawdzenia, czy w danej rekrutacji w ogóle się przyda. **Europass CV** to ujednolicony format życiorysu stworzony przez Komisję Europejską w 2014 roku, mający ułatwić porównywanie kwalifikacji zawodowych między krajami Unii Europejskiej.
 
 > **Najważniejsze wnioski**

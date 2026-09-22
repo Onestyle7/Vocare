@@ -10,8 +10,6 @@ tags: ['szkolenie bhp wstępne', 'instruktaż ogólny bhp', 'instruktaż stanowi
 slug: 'szkolenie-bhp-wstepne'
 ---
 
-# Szkolenie BHP wstępne 2026 - kto musi je przejść i ile trwa
-
 Zanim nowy pracownik usiądzie przy biurku lub stanie przy maszynie, prawo wymaga od pracodawcy konkretnego, dwuetapowego procesu szkoleniowego. **Szkolenie BHP wstępne** to obowiązkowe przeszkolenie przeprowadzane przed dopuszczeniem pracownika do pracy, [składające się z instruktażu ogólnego i instruktażu stanowiskowego](https://www.bhp-center.com.pl/ile-trwa-szkolenie-bhp-wstepne-i-okresowe/) - każdy z innym czasem trwania i innym prowadzącym.
 
 > **Najważniejsze wnioski**

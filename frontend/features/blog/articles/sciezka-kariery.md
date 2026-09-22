@@ -18,8 +18,6 @@ tags:
 slug: 'sciezka-kariery'
 ---
 
-# Ścieżka kariery - jak ją zaplanować i nie zgubić się po drodze
-
 "Planowanie kariery" brzmi jak coś, co robisz raz w roku podczas rozmowy oceniającej i zapominasz zaraz po. Tymczasem brak świadomego planowania kariery to jeden z głównych powodów, dla których ludzie budzą się po 10 latach pracy z poczuciem, że dryfowali zamiast zmierzali w konkretnym kierunku. **Ścieżka kariery** to nie sztywny plan na 30 lat - to świadome zarządzanie kierunkiem, w którym zmierzasz, z elastycznością na zmiany po drodze. Oto jak to zrobić praktycznie.
 
 > **Najważniejsze wnioski**

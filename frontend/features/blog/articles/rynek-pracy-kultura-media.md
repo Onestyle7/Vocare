@@ -10,8 +10,6 @@ tags: ['rynek pracy kultura', 'rynek pracy media', 'branża kreatywna zarobki', 
 slug: 'rynek-pracy-kultura-media'
 ---
 
-# Rynek pracy w kulturze i mediach 2026 - AI zmienia zasady gry
-
 Branża, która jeszcze niedawno kojarzyła się głównie z niepewnością zatrudnienia, dziś generuje realne pieniądze - ale forma pracy wygląda inaczej niż etat w tradycyjnym rozumieniu. **Rynek pracy w kulturze i mediach** to sektor kreatywny obejmujący projektowanie, produkcję wideo i media cyfrowe, który w Polsce generuje [ponad 45 mld zł przychodu rocznie i zatrudnia około 350 tysięcy osób](https://www.parp.gov.pl/component/content/article/56099:przemysly-kreatywne-w-polsce-perspektywy-rozwoju), według danych PARP.
 
 > **Najważniejsze wnioski**

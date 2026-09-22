@@ -18,8 +18,6 @@ tags:
 slug: 'test-kompetencji-zawodowych'
 ---
 
-# Test kompetencji zawodowych - które testy warto zrobić i jak je interpretować
-
 Wszyscy mówią "idź w kierunek swoich mocnych stron". Problem w tym, że większość ludzi nie wie jakie są ich mocne strony. Nie dlatego że są przeciętni - ale dlatego że nigdy nie sprawdzili tego w systematyczny sposób. **Test kompetencji zawodowych** to narzędzie, które pomaga wyjść poza "wydaje mi się, że jestem dobry w komunikacji" i zobaczyć swój profil zawodowy w oparciu o dane. Oto jakie testy warto zrobić i co z wynikami.
 
 > **Najważniejsze wnioski**

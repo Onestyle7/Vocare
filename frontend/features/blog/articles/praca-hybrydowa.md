@@ -11,8 +11,6 @@ tags: ['praca hybrydowa', 'model pracy hybrydowej', 'negocjowanie dni w biurze',
 slug: 'praca-hybrydowa'
 ---
 
-# Praca hybrydowa 2026 - jak wynegocjować model, który Ci odpowiada
-
 Po latach wahania między pełnym remote a powrotem do biura, większość dużych firm w Polsce osiadła w 2026 roku na modelu pośrednim. **Praca hybrydowa** to dziś standard, nie wyjątek - ale konkretne warunki (ile dni w biurze, które dni, czy elastycznie czy sztywno) różnią się mocno między firmami i wciąż są przedmiotem negocjacji.
 
 > **Najważniejsze wnioski**

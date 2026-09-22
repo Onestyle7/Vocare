@@ -18,8 +18,6 @@ tags:
 slug: 'rozmowa-kwalifikacyjna'
 ---
 
-# Rozmowa kwalifikacyjna 2026 - jak się przygotować, żeby dostać pracę
-
 Dostałeś zaproszenie na rozmowę kwalifikacyjną. Serce bije szybciej, mózg zaczyna produkować scenariusze katastroficzne. To normalne. **Rozmowa kwalifikacyjna** to test przygotowania, nie talentu - tak jak egzamin. Kandydaci, którzy dostają oferty, nie są bardziej utalentowani - są lepiej przygotowani. Oto kompletny przewodnik, który da Ci przewagę nad innymi kandydatami.
 
 > **Najważniejsze wnioski**

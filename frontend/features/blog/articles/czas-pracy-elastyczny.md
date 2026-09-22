@@ -10,8 +10,6 @@ tags: ['elastyczny czas pracy', 'ruchomy czas pracy', 'wniosek o elastyczny czas
 slug: 'czas-pracy-elastyczny'
 ---
 
-# Elastyczny czas pracy 2026 - jak negocjować ruchomy grafik
-
 Nie każdy musi zaczynać dzień dokładnie o 8:00 - Kodeks pracy od dawna daje narzędzie do negocjowania innych godzin, o ile wynika to z uzasadnionych potrzeb. **Elastyczny czas pracy**, zwany też ruchomym czasem pracy, pozwala ustalić różne godziny rozpoczynania pracy w poszczególnych dniach lub przedział czasowy, w którym pracownik sam decyduje o rozpoczęciu dnia - [na pisemny wniosek pracownika, zgodnie z art. 142 Kodeksu pracy](https://www.gowork.pl/blog/ruchomy-czas-pracy-co-to-wniosek-wady-zalety/).
 
 > **Najważniejsze wnioski**

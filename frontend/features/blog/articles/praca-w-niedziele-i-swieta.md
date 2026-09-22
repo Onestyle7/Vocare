@@ -10,8 +10,6 @@ tags: ['praca w niedziele i święta', 'niedziele handlowe 2026', 'dzień wolny 
 slug: 'praca-w-niedziele-i-swieta'
 ---
 
-# Praca w niedziele i święta 2026 - zasady i wynagrodzenie
-
 Zasada brzmi prosto - niedziele i święta są wolne od pracy - ale lista wyjątków jest na tyle długa, że w praktyce dotyczy milionów pracujących Polaków. **Praca w niedziele i święta** jest co do zasady zakazana, a zatrudnianie w tym czasie stanowi wyjątek, nie regułę - potwierdza to [analiza EY dotycząca dopuszczalności pracy w te dni](https://www.ey.com/pl_pl/insights/law/praca-w-niedziele-i-swieta), obwarowana konkretnymi zasadami wynagradzania i rekompensaty.
 
 > **Najważniejsze wnioski**

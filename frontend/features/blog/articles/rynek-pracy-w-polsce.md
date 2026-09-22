@@ -10,8 +10,6 @@ tags: ['rynek pracy w polsce', 'rynek pracy 2026', 'deficyt kadrowy', 'zarobki w
 slug: 'rynek-pracy-w-polsce'
 ---
 
-# Rynek pracy w Polsce 2026 - który sektor wybrać
-
 Pytanie "w jakiej branży jest dziś najlepiej" nie ma jednej odpowiedzi - IT wciąż płaci najwięcej, ale rekrutuje wolniej niż w 2021 roku, medycyna ma deficyt kadrowy silniejszy niż jakakolwiek inna branża, a energetyka odnawialna rośnie szybciej niż ktokolwiek zdąży wykształcić do niej specjalistów. **Rynek pracy w Polsce** to w 2026 roku nie jeden rynek, tylko dwadzieścia jeden różnych rynków poruszających się w różnym tempie. Ten przegląd zestawia je obok siebie, żeby dało się je realnie porównać.
 
 > **Najważniejsze wnioski**

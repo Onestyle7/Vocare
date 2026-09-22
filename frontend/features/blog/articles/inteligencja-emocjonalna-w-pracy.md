@@ -10,8 +10,6 @@ tags: ['inteligencja emocjonalna', 'eq w pracy', 'jak rozwijać inteligencję em
 slug: 'inteligencja-emocjonalna-w-pracy'
 ---
 
-# Inteligencja emocjonalna w pracy 2026 - dlaczego liczy się bardziej niż IQ
-
 Dwóch specjalistów o tym samym poziomie wiedzy technicznej może osiągać zupełnie różne wyniki zawodowe - różnicę często robi to, jak radzą sobie z presją, konfliktem i relacjami. **Inteligencja emocjonalna w pracy** to zdolność rozpoznawania i regulowania własnych emocji oraz trafnego odczytywania emocji innych ludzi. [Badania TalentSmart](https://www.talentsmarteq.com/emotional-intelligence-at-workplace-to-improve-performance/) obejmujące ponad milion osób wskazują EQ jako najsilniejszy pojedynczy predyktor wyników zawodowych spośród 34 przebadanych kompetencji.
 
 > **Najważniejsze wnioski**

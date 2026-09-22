@@ -10,8 +10,6 @@ tags: ['assessment center', 'jak przygotować się do assessment center', 'rekru
 slug: 'assessment-center'
 ---
 
-# Assessment center 2026 - jak się przygotować krok po kroku
-
 Zaproszenie na assessment center zamiast klasycznej rozmowy o pracę potrafi wywołać dodatkowy stres - to dłuższy, bardziej wymagający format rekrutacji, stosowany zwykle przy stanowiskach managerskich, programach graduate lub rolach wymagających konkretnych kompetencji miękkich. **Assessment center** to nie jeden test, tylko seria zadań oceniających Cię z różnych perspektyw jednocześnie.
 
 > **Najważniejsze wnioski**

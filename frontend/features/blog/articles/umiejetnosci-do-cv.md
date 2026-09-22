@@ -12,8 +12,6 @@ tags:
 slug: 'umiejetnosci-do-cv'
 ---
 
-# Umiejętności do CV 2026 - co wpisać i jak to zrobić mądrze
-
 "Komunikatywny, zaangażowany, zorientowany na cel" - te trzy słowa pojawiają się w 80% CV, które trafiają na biurko rekrutera. Nic nie mówią, niczym nie różnicują i lądują w mentalnym koszu w ciągu sekund. Dobra sekcja umiejętności w CV to konkretne, weryfikowalne kompetencje opisane językiem branży - nie lista przymiotników, które pasują do każdego. Oto jak to zrobić dobrze.
 
 > **Najważniejsze wnioski**

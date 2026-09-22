@@ -10,8 +10,6 @@ tags: ['cv po francusku', 'praca we francji cv', 'jak napisać cv po francusku',
 slug: 'cv-po-francusku'
 ---
 
-# CV po francusku 2026 - jak napisać CV do Francji
-
 Pisanie o sobie w trzeciej osobie brzmi nienaturalnie po polsku, ale we Francji to powszechnie przyjęta konwencja. **CV po francusku** to dokument, który rządzi się trzema zasadami cenionymi przez francuskich pracodawców - [klarownością (clarté), zwięzłością (concision) i adekwatnością (pertinence)](https://prestonpublishing.pl/blog/jezyk-francuski/jak-napisac-cv-po-francusku-to-musisz-wiedziec-jesli-szukasz-pracy-we-francji/), inaczej rozłożonymi niż w polskiej konwencji.
 
 > **Najważniejsze wnioski**

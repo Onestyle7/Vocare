@@ -11,8 +11,6 @@ tags: ['cv po angielsku', 'english cv', 'resume', 'cv za granicą', 'jak napisa�
 slug: 'cv-po-angielsku'
 ---
 
-# CV po angielsku 2026 - jak napisać dokument, który przejdzie przez ATS
-
 Tłumaczenie polskiego CV słowo w słowo na angielski to jeden z najczęstszych błędów kandydatów aplikujących do międzynarodowych firm lub za granicę. **CV po angielsku** rządzi się częściowo innymi zasadami niż polskie - inna struktura, inne konwencje i inne oczekiwania rekruterów, szczególnie w krajach anglosaskich.
 
 > **Najważniejsze wnioski**

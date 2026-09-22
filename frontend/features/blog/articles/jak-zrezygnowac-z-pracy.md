@@ -11,8 +11,6 @@ tags: ['jak zrezygnować z pracy', 'wypowiedzenie umowy o pracę', 'odejście z 
 slug: 'jak-zrezygnowac-z-pracy'
 ---
 
-# Jak zrezygnować z pracy 2026 - elegancko i bez palenia mostów
-
 Znalazłeś nową ofertę albo po prostu czas na zmianę - teraz przed Tobą jedna z trudniejszych rozmów zawodowych: poinformowanie przełożonego o odejściu. **Rezygnacja z pracy** dobrze przeprowadzona chroni Twoją reputację zawodową na lata - świat branżowy jest mniejszy, niż się wydaje, a byli przełożeni często stają się przyszłymi referencjami lub kontaktami.
 
 > **Najważniejsze wnioski**

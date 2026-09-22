@@ -18,8 +18,6 @@ tags:
 slug: 'praca-bez-doswiadczenia'
 ---
 
-# Praca bez doświadczenia 2026 - jak wyróżnić się gdy nie masz co wpisać
-
 "Wymagane min. 2 lata doświadczenia" - i już wiesz, że to nie dla Ciebie. Ale zaraz, a skąd masz zdobyć 2 lata doświadczenia, skoro nikt Cię nie przyjmuje bez doświadczenia? To klasyczny paradoks wejścia na rynek pracy. Praca bez doświadczenia jest możliwa - ale wymaga innej strategii niż wysyłanie CV na oferty z wymaganiem "minimum 3 lata". Oto co naprawdę działa.
 
 > **Najważniejsze wnioski**

@@ -10,8 +10,6 @@ tags: ['cv prawnika', 'cv aplikanta radcowskiego', 'cv do kancelarii', 'jak napi
 slug: 'cv-prawnika'
 ---
 
-# CV prawnika 2026 - jak napisać CV aplikanta i radcy prawnego
-
 Kancelarie i działy prawne dostają dziesiątki CV o niemal identycznej strukturze - wydział prawa, aplikacja, staż. **CV prawnika** wyróżnia się dopiero wtedy, gdy jasno pokazuje etap uprawnień zawodowych i konkretną specjalizację, a nie ogólne "prawo cywilne i gospodarcze" bez kontekstu. Sam wpis na listę radców prawnych wymaga [ukończenia aplikacji trwającej trzy lata i zdania egzaminu zawodowego](https://www.biznes.gov.pl/pl/portal/ou182), więc jasne wskazanie etapu tej drogi jest w CV kluczowe.
 
 > **Najważniejsze wnioski**

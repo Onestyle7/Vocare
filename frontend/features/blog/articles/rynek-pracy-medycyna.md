@@ -11,8 +11,6 @@ tags: ['rynek pracy medycyna', 'praca w ochronie zdrowia', 'zarobki lekarz', 'de
 slug: 'rynek-pracy-medycyna'
 ---
 
-# Rynek pracy w medycynie i ochronie zdrowia 2026 - gdzie jest największy deficyt
-
 Starzejące się społeczeństwo i rosnąca świadomość zdrowotna sprawiają, że **rynek pracy w ochronie zdrowia** to jeden z niewielu sektorów w Polsce, w którym popyt na pracowników strukturalnie i trwale przewyższa podaż - niezależnie od koniunktury gospodarczej.
 
 > **Najważniejsze wnioski**

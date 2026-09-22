@@ -11,8 +11,6 @@ tags: ['rynek pracy energetyka', 'praca oze', 'zarobki fotowoltaika', 'kariera w
 slug: 'rynek-pracy-energetyka'
 ---
 
-# Rynek pracy w energetyce odnawialnej 2026 - dokąd płyną inwestycje
-
 Zobowiązania klimatyczne Unii Europejskiej oznaczają dziesiątki miliardów euro inwestycji w Polsce w kolejnych latach - to nie slogan, to realny napęd dla jednego z najszybciej rosnących segmentów rynku pracy. **Rynek pracy w energetyce odnawialnej** w 2026 roku oferuje jedną z niższych barier wejścia przy jednoczesnym solidnym wzroście wynagrodzeń.
 
 > **Najważniejsze wnioski**

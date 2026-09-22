@@ -10,8 +10,6 @@ tags: ['urlop ojcowski', 'ile dni urlop ojcowski', 'zasiłek ojcowski', 'urlop o
 slug: 'urlop-ojcowski'
 ---
 
-# Urlop ojcowski 2026 - ile dni przysługuje i jak go wykorzystać
-
 Termin wykorzystania tego urlopu jest sztywny i nieprzedłużalny - spóźnienie się oznacza bezpowrotną utratę uprawnienia. **Urlop ojcowski** to 14 dni kalendarzowych płatnego urlopu, uregulowane w [art. 182³ Kodeksu pracy](https://lexlege.pl/kp/), z których trzeba skorzystać najpóźniej do ukończenia przez dziecko 12. miesiąca życia.
 
 > **Najważniejsze wnioski**

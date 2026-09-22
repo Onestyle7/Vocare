@@ -10,8 +10,6 @@ tags: ['praca sezonowa za granicą', 'praca za granicą', 'praca w Niemczech', '
 slug: 'praca-sezonowa-za-granica'
 ---
 
-# Praca sezonowa za granicą 2026 - gdzie jechać i ile można zarobić
-
 Zbiory owoców, praca w hotelu nad Morzem Północnym, sezon w gastronomii w Alpach - **praca sezonowa za granicą** co roku przyciąga setki tysięcy Europejczyków, w tym dużą grupę Polaków. Według danych przywoływanych przez [portal EURES](https://eures.praca.gov.pl/), rocznie około 850 tys. obywateli UE podejmuje tego typu zatrudnienie poza własnym krajem, mając te same prawa pracownicze co pracownicy lokalni.
 
 > **Najważniejsze wnioski**

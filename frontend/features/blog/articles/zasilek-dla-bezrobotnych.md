@@ -10,8 +10,6 @@ tags: ['zasiłek dla bezrobotnych', 'kuroniówka', 'ile wynosi zasiłek', 'rejes
 slug: 'zasilek-dla-bezrobotnych'
 ---
 
-# Zasiłek dla bezrobotnych 2026 - ile wynosi i jak go uzyskać
-
 Wysokość świadczenia zależy nie tylko od stażu pracy, ale też od tego, jak długo już je pobierasz - kwota spada po pierwszych 90 dniach. **Zasiłek dla bezrobotnych** to świadczenie potocznie zwane "kuroniówką", które przysługuje osobom zarejestrowanym w urzędzie pracy - pod warunkiem, że udokumentują [co najmniej 365 dni okresu uprawniającego w ciągu ostatnich 18 miesięcy](https://poradnikprzedsiebiorcy.pl/-zasilek-dla-bezrobotnych).
 
 > **Najważniejsze wnioski**

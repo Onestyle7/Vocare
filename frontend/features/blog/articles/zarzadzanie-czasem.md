@@ -10,8 +10,6 @@ tags: ['zarządzanie czasem', 'technika pomodoro', 'macierz eisenhowera', 'jak z
 slug: 'zarzadzanie-czasem'
 ---
 
-# Zarządzanie czasem w pracy 2026 - metody, które realnie działają
-
 Żadna pojedyncza metoda nie działa jednakowo dobrze dla wszystkich - dopasowanie techniki do własnego stylu pracy liczy się bardziej niż samo jej poznanie. **Zarządzanie czasem w pracy** to świadome planowanie i priorytetyzowanie zadań, a dwie najczęściej sprawdzane w praktyce metody to [technika Pomodoro i macierz Eisenhowera](https://www.icproject.com/blog/macierz-eisenhowera) - obie proste we wdrożeniu, ale rozwiązujące różne problemy.
 
 > **Najważniejsze wnioski**

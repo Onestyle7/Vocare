@@ -11,8 +11,6 @@ tags: ['rynek pracy it', 'praca w it', 'zarobki it 2026', 'programista praca', '
 slug: 'rynek-pracy-it'
 ---
 
-# Rynek pracy w IT 2026 - kogo szukają pracodawcy i ile płacą
-
 Po falach zwolnień z lat 2022-2024 rynek IT w Polsce się ustabilizował, ale zmienił charakter. **Rynek pracy w IT** to dziś rynek zrównoważony - nie tak łatwy dla juniorów jak w 2021 roku, ale wciąż z realnym deficytem w konkretnych specjalizacjach. Oto co się faktycznie liczy w 2026 roku.
 
 > **Najważniejsze wnioski**

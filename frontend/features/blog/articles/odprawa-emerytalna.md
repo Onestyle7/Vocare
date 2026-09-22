@@ -10,8 +10,6 @@ tags: ['odprawa emerytalna', 'odprawa rentowa', 'komu przysługuje odprawa emery
 slug: 'odprawa-emerytalna'
 ---
 
-# Odprawa emerytalna 2026 - komu przysługuje i ile wynosi
-
 Sposób, w jaki kończy się zatrudnienie, nie ma tu żadnego znaczenia - liczy się tylko sam fakt przejścia na emeryturę lub rentę. **Odprawa emerytalna** to jednorazowe świadczenie pieniężne przysługujące pracownikowi, którego stosunek pracy ustał w związku z przejściem na emeryturę lub rentę, uregulowane w [art. 92[1] Kodeksu pracy](https://lexlege.pl/kp/art-92-1/).
 
 > **Najważniejsze wnioski**

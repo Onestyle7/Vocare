@@ -10,8 +10,6 @@ tags: ['prokrastynacja', 'prokrastynacja w pracy', 'jak przestać odkładać zad
 slug: 'prokrastynacja-w-pracy'
 ---
 
-# Prokrastynacja w pracy 2026 - dlaczego się pojawia i jak ją pokonać
-
 To zjawisko dotyczy zdecydowanej większości pracujących, choć rzadko się o nim głośno mówi. **Prokrastynacja** to dobrowolne i nielogiczne odkładanie realizacji zadań, które sami uznajemy za ważne - [badanie CATI z próbą 500 dorosłych Polaków](https://porady.pracuj.pl/rozwoj/prokrastynacja-nowa-grozna-choroba-cywilizacyjna) pokazało, że odwlekanie różnych czynności deklaruje aż 85% mężczyzn i 80% kobiet, a około 20% robi to chronicznie.
 
 > **Najważniejsze wnioski**

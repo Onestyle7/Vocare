@@ -10,8 +10,6 @@ tags: ['asertywność w pracy', 'jak być asertywnym', 'stawianie granic w pracy
 slug: 'asertywnosc-w-pracy'
 ---
 
-# Asertywność w pracy 2026 - jak stawiać granice bez konfliktu
-
 Wielu ludzi myli asertywność z byciem nieustępliwym lub konfliktowym - to dokładne przeciwieństwo. **Asertywność w pracy** to wyrażanie własnych potrzeb i granic w sposób jasny i bezpośredni, przy jednoczesnym poszanowaniu potrzeb innych osób - [pośrodku kontinuum między uległością a agresją](https://vita.edu.pl/blog/asertywnosc-vs-agresja-vs-uleglosc).
 
 > **Najważniejsze wnioski**

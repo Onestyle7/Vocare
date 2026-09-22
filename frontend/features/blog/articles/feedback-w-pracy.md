@@ -10,8 +10,6 @@ tags: ['feedback w pracy', 'konstruktywna krytyka', 'jak dawać feedback', 'jak 
 slug: 'feedback-w-pracy'
 ---
 
-# Feedback w pracy 2026 - trudna rozmowa, którą można uprościć
-
 Wiele osób unika dawania feedbacku, żeby nie zepsuć relacji. Inne osoby przyjmują każdą uwagę jak atak osobisty. **Feedback w pracy** to rozmowa, która działa najlepiej, gdy oddziela zachowanie od osoby i skupia się na konkretach, nie na ogólnych ocenach.
 
 > **Najważniejsze wnioski**

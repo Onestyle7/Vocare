@@ -10,8 +10,6 @@ tags: ['umowa na czas określony', 'limit umów na czas określony', '33 miesią
 slug: 'umowa-na-czas-okreslony-limit'
 ---
 
-# Umowa na czas określony 2026 - kiedy musi przejść w bezterminową
-
 Trzecia z rzędu umowa na czas określony z tym samym pracodawcą to często moment, w którym pracownicy zaczynają się zastanawiać, czy firma może przedłużać ją w nieskończoność. **Umowa na czas określony** ma w polskim prawie pracy jasno określony limit - zarówno co do liczby umów, jak i łącznego czasu ich trwania - a jego przekroczenie ma automatyczny skutek prawny.
 
 > **Najważniejsze wnioski**

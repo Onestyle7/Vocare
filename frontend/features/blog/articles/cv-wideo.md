@@ -10,8 +10,6 @@ tags: ['cv wideo', 'video cv', 'nagranie cv', 'wideo prezentacja kandydata', 'kr
 slug: 'cv-wideo'
 ---
 
-# CV wideo 2026 - dodatek, nie zamiennik klasycznego CV
-
 Wideo-CV wraca co jakiś czas jako trend rekrutacyjny - [raport People Trends 2026](https://www.hrlink.pl/blog/people-trends-2026-wideo-w-rekrutacji-i-komunikacji-eb/) wskazuje wideo jako rosnący kanał komunikacji między pracodawcami a kandydatami, choć głównie po stronie employer brandingu, nie samych aplikacji. **CV wideo** to krótkie nagranie, w którym kandydat sam się przedstawia. Działa dobrze w wąskiej grupie branż. W większości procesów rekrutacyjnych jest zbędne lub ryzykowne.
 
 > **Najważniejsze wnioski**

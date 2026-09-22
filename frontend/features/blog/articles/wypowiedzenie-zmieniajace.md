@@ -10,8 +10,6 @@ tags: ['wypowiedzenie zmieniające', 'zmiana warunków pracy', 'art 42 kodeksu p
 slug: 'wypowiedzenie-zmieniajace'
 ---
 
-# Wypowiedzenie zmieniające 2026 - kiedy pracodawca może zmienić warunki pracy
-
 Milczenie po otrzymaniu takiego dokumentu wcale nie jest neutralne - może oznaczać automatyczną zgodę na nowe warunki. **Wypowiedzenie zmieniające** to sposób, w jaki pracodawca może jednostronnie zmienić warunki pracy lub płacy, uregulowany w [art. 42 Kodeksu pracy](https://lexlege.pl/kp/art-42/), do którego stosuje się odpowiednio przepisy o zwykłym wypowiedzeniu umowy.
 
 > **Najważniejsze wnioski**

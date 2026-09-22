@@ -10,8 +10,6 @@ tags: ['zwolnienie lekarskie l4', 'l4 ile trwa', 'wynagrodzenie chorobowe', 'zwo
 slug: 'zwolnienie-lekarskie-l4'
 ---
 
-# Zwolnienie lekarskie L4 2026 - co warto wiedzieć zanim pójdziesz na chorobowe
-
 Choroba przychodzi bez zapowiedzi, ale zasady dotyczące zwolnienia lekarskiego warto znać, zanim będziesz ich pilnie potrzebować - szczególnie jeśli L4 się przedłuża. **Zwolnienie lekarskie (L4)** to dokument uprawniający do wynagrodzenia lub zasiłku chorobowego oraz do ochrony przed zwolnieniem z pracy w trakcie jego trwania.
 
 > **Najważniejsze wnioski**

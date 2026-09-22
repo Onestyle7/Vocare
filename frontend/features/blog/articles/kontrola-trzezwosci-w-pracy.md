@@ -10,8 +10,6 @@ tags: ['kontrola trzeźwości w pracy', 'badanie trzeźwości pracownika', 'prew
 slug: 'kontrola-trzezwosci-w-pracy'
 ---
 
-# Kontrola trzeźwości w pracy 2026 - co może pracodawca
-
 Od lutego 2023 roku pracodawcy w Polsce mają narzędzie, którego wcześniej nie mieli - prawo do samodzielnego, prewencyjnego sprawdzania trzeźwości załogi, bez wzywania policji. **Kontrola trzeźwości w pracy** to uprawnienie pracodawcy uregulowane w [art. 221c-221h Kodeksu pracy](https://www.prawo.pl/akty/dz-u-2023-240,21789455.html), wprowadzone nowelizacją z grudnia 2022 roku - ale to uprawnienie, nie obowiązek, i podlega konkretnym ograniczeniom.
 
 > **Najważniejsze wnioski**

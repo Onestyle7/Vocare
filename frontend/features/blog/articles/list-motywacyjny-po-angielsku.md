@@ -10,8 +10,6 @@ tags: ['list motywacyjny po angielsku', 'cover letter', 'jak napisać cover lett
 slug: 'list-motywacyjny-po-angielsku'
 ---
 
-# List motywacyjny po angielsku 2026 - jak napisać cover letter
-
 Dosłowne tłumaczenie polskiego listu motywacyjnego na angielski niemal zawsze brzmi sztucznie. **Cover letter** to angielski odpowiednik listu motywacyjnego, rządzący się własną konwencją - krótszą i bardziej bezpośrednią niż polski oryginał. Dobry list motywacyjny po angielsku ma zwykle 3-4 akapity i mieści się na jednej stronie, bez rozbudowanych, formalnych zwrotów typowych dla polskiej tradycji korespondencji urzędowej.
 
 > **Najważniejsze wnioski**

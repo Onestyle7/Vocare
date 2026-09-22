@@ -10,8 +10,6 @@ tags: ['mentoring zawodowy', 'jak znaleźć mentora', 'mentor w karierze', 'rozw
 slug: 'mentoring-zawodowy'
 ---
 
-# Mentoring zawodowy 2026 - jak znaleźć mentora, który realnie pomoże
-
 Wielu ludzi sukcesu wskazuje mentora jako jeden z kluczowych czynników przyspieszających ich karierę - kogoś, kto podzielił się doświadczeniem, otworzył drzwi lub po prostu zadał właściwe pytanie we właściwym momencie. **Mentoring zawodowy** to relacja, w której bardziej doświadczona osoba dzieli się wiedzą i perspektywą z kimś na wcześniejszym etapie kariery - ale znalezienie dobrego mentora rzadko dzieje się przypadkiem.
 
 > **Najważniejsze wnioski**

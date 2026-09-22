@@ -18,8 +18,6 @@ tags:
 slug: 'doradztwo-zawodowe'
 ---
 
-# Doradztwo zawodowe 2026 - kiedy naprawdę warto skorzystać
-
 Masz wrażenie, że pracujesz w złym miejscu, w złej branży, albo po prostu nie wiesz co chcesz robić zawodowo. I słyszysz: "idź do doradcy zawodowego". Ale co to właściwie jest? Czy to terapia, coaching, test osobowości czy coś zupełnie innego? **Doradztwo zawodowe** to profesjonalna pomoc w podejmowaniu świadomych decyzji o karierze - oparta na diagnozie kompetencji, wartości i rynku pracy, nie na intuicji i wróżeniu z fusów. Oto kiedy rzeczywiście warto, a kiedy możesz sobie poradzić sam.
 
 > **Najważniejsze wnioski**

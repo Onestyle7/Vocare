@@ -10,8 +10,6 @@ tags: ['zdjęcie do cv', 'czy cv musi mieć zdjęcie', 'profesjonalne zdjęcie c
 slug: 'zdjecie-do-cv'
 ---
 
-# Zdjęcie do CV 2026 - dodać czy nie dodawać
-
 To pytanie wraca przy każdym pisaniu CV. Zgodnie z [analizą Grant Thornton](https://grantthornton.pl/publikacja/czy-pracodawca-moze-zadac-od-kandydata-do-pracy-umieszczenia-zdjecia-w-cv/) pracodawca nie może wymagać zdjęcia od kandydata na podstawie art. 22¹ § 1 Kodeksu pracy - katalog danych, o które wolno pytać, zdjęcia po prostu nie obejmuje. **Zdjęcie do CV** jest opcjonalne w Polsce. Decyzja zależy od branży, kraju docelowego i osobistych preferencji. Złe zdjęcie szkodzi bardziej niż jego brak.
 
 > **Najważniejsze wnioski**

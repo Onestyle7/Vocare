@@ -11,8 +11,6 @@ tags: ['jak zrobić cv', 'jak napisać cv', 'tworzenie cv', 'cv od zera', 'cv 20
 slug: 'jak-zrobic-cv'
 ---
 
-# Jak zrobić CV 2026 - od pustej strony do gotowego pliku w kilka godzin
-
 Czemu tak trudno zacząć pisać CV? Bo siada się do pustego dokumentu i próbuje się wymyślić jak "sprzedać" siebie na jednej stronie. A to złe podejście. **Pierwszy krok robienia CV** to nie pisanie, tylko zebranie materiałów - gdy masz wszystkie dane przed sobą, samo pisanie zajmuje godzinę. Oto jak to zrobić krok po kroku, bez zbędnego stresu.
 
 > **Najważniejsze wnioski**

@@ -10,8 +10,6 @@ tags: ['nadgodziny', 'dodatek za nadgodziny', 'wynagrodzenie za nadgodziny', 'li
 slug: 'nadgodziny-wynagrodzenie'
 ---
 
-# Nadgodziny w pracy 2026 - ile powinieneś za nie dostać
-
 Nie każda dodatkowa godzina pracy jest wynagradzana tak samo - stawka dodatku zależy od tego, kiedy dokładnie nadgodzina wypadła. **Nadgodziny** to praca wykonywana ponad obowiązujące pracownika normy czasu pracy, za którą Kodeks pracy gwarantuje normalne wynagrodzenie powiększone o dodatek 50% lub 100%, w zależności od okoliczności - dokładne zasady opisuje [praktyczny przewodnik po rozliczaniu nadgodzin](https://inewi.pl/blog/kiedy-50-a-kiedy-100-za-nadgodziny-praktyczny-przewodnik).
 
 > **Najważniejsze wnioski**

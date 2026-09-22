@@ -11,8 +11,6 @@ tags: ['rynek pracy hr', 'praca w hr', 'zarobki hr 2026', 'rekruter praca', 'kar
 slug: 'rynek-pracy-hr'
 ---
 
-# Rynek pracy w HR i rekrutacji 2026 - kto jest dziś poszukiwany
-
 Dział HR przeszedł w ostatnich latach transformację z funkcji administracyjnej w funkcję strategiczną. **Rynek pracy w HR** w 2026 roku nagradza specjalistów, którzy potrafią łączyć wiedzę o ludziach z danymi i technologią - nie tylko prowadzić rekrutację i dokumentację kadrową.
 
 > **Najważniejsze wnioski**

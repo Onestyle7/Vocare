@@ -10,8 +10,6 @@ tags: ['portfolio career', 'kilka źródeł dochodu', 'praca na kilku etatach', 
 slug: 'portfolio-career'
 ---
 
-# Portfolio career 2026 - kariera zbudowana z kilku klocków, nie jednego etatu
-
 Model "jedna praca, jeden pracodawca, jedna ścieżka awansu" przestał być jedyną opcją myślenia o karierze. **Portfolio career** to podejście, w którym zamiast jednego pełnego etatu łączysz kilka źródeł dochodu i aktywności zawodowych - część etatu, projekty freelancerskie, własny produkt czy szkolenia - budując dochód i rozwój z kilku kierunków naraz.
 
 > **Najważniejsze wnioski**

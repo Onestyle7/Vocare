@@ -18,8 +18,6 @@ tags:
 slug: 'cv-bez-doswiadczenia'
 ---
 
-# CV bez doświadczenia 2026 - jak napisać CV gdy "nie masz co wpisać"
-
 "Nie mam doświadczenia - co wpisać w CV?" To pytanie zadaje sobie każdy, kto po raz pierwszy siada do pisania CV. I to dobra wiadomość, bo skoro zadajesz to pytanie, to znaczy że podchodzisz do tego poważnie. **CV bez doświadczenia** to CV, w którym historię zatrudnienia zastępują projekty, staże, kursy i aktywności opisane jak prawdziwe osiągnięcia - z konkretem i efektem, nie listą przymiotników. Oto konkretna metoda.
 
 > **Najważniejsze wnioski**

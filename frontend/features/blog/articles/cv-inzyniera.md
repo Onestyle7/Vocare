@@ -10,8 +10,6 @@ tags: ['cv inżyniera', 'cv inżynier budownictwa', 'cv techniczne', 'jak napisa
 slug: 'cv-inzyniera'
 ---
 
-# CV inżyniera 2026 - jak pokazać projekty techniczne
-
 Lista narzędzi CAD i norm technicznych nie robi dziś różnicy - większość kandydatów w danej specjalizacji zna te same programy i przepisy. **CV inżyniera** to dokument, który wyróżnia się dopiero wtedy, gdy pokazuje konkretne zrealizowane projekty z mierzalnym efektem, a nie samą listę kompetencji technicznych.
 
 > **Najważniejsze wnioski**

@@ -10,8 +10,6 @@ tags: ['urlop wypoczynkowy', 'ile dni urlopu', 'urlop proporcjonalny', 'wymiar u
 slug: 'urlop-wypoczynkowy'
 ---
 
-# Urlop wypoczynkowy 2026 - ile dni Ci przysługuje
-
 "Ile mam jeszcze dni urlopu?" to pytanie, które większość pracowników zadaje sobie dopiero przy planowaniu wakacji - a wtedy bywa już za późno, żeby wykorzystać go optymalnie. **Urlop wypoczynkowy** to płatne prawo pracownika zatrudnionego na umowę o pracę, którego wymiar zależy od stażu pracy i wykształcenia, nie od dobrej woli pracodawcy.
 
 > **Najważniejsze wnioski**

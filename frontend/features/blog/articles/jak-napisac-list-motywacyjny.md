@@ -18,8 +18,6 @@ tags:
 slug: 'jak-napisac-list-motywacyjny'
 ---
 
-# Jak napisać list motywacyjny 2026 - krok po kroku z przykładami
-
 Większość listów motywacyjnych zaczyna się od "W odpowiedzi na Państwa ogłoszenie, niniejszym pragnę przedstawić moją kandydaturę..." i kończy w koszu w ciągu 5 sekund. Nie dlatego, że kandydat był zły - tylko że list był nieczytelny, generyczny i napisany jakby autor bał się powiedzieć coś konkretnego. **Dobry list motywacyjny** to krótki, konkretny dokument, który opowiada historię: dlaczego Ty, dlaczego ta firma, co możesz dla niej zrobić. Oto jak to napisać.
 
 > **Najważniejsze wnioski**

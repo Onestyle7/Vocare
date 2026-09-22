@@ -10,8 +10,6 @@ tags: ['mobbing w pracy', 'jak rozpoznać mobbing', 'mobbing kodeks pracy', 'zg�
 slug: 'mobbing-w-pracy'
 ---
 
-# Mobbing w pracy 2026 - jak go rozpoznać i co możesz zrobić
-
 Nie każdy trudny szef i nie każdy konflikt w zespole to mobbing - ale ignorowanie realnego mobbingu jako "zwykłych tarć" bywa równie szkodliwe. **Mobbing w pracy** to zjawisko precyzyjnie zdefiniowane w [art. 94(3) Kodeksu pracy](https://lexlege.pl/kp/art-94-3/), a nie każde nieprzyjemne zachowanie w miejscu pracy się do tej definicji kwalifikuje.
 
 > **Najważniejsze wnioski**

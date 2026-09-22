@@ -18,8 +18,6 @@ tags:
 slug: 'list-motywacyjny'
 ---
 
-# List motywacyjny 2026 - kiedy pisać i jak zrobić to dobrze
-
 "Prosimy dołączyć list motywacyjny" - ta prośba wzbudza w kandydatach mieszaninę rezygnacji i paniki. Bo kto w 2026 roku jeszcze pisze listy? Odpowiedź może Cię zaskoczyć. **List motywacyjny** to dokument towarzyszący CV, wciąż czytany przez rekruterów - ale tylko wtedy, gdy jest konkretny, autentyczny i napisany pod konkretną firmę. Generyczny list z frazami "jestem osobą ambitną i komunikatywną" leci do kosza szybciej niż otwarty. Ten artykuł pokaże Ci, jak napisać taki, który faktycznie działa.
 
 > **Najważniejsze wnioski**

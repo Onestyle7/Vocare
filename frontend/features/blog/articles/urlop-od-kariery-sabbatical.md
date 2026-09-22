@@ -10,8 +10,6 @@ tags: ['sabbatical', 'urlop od kariery', 'dłuższa przerwa w pracy', 'urlop bez
 slug: 'urlop-od-kariery-sabbatical'
 ---
 
-# Urlop od kariery 2026 - jak zaplanować sabbatical bez ryzyka
-
 Coraz więcej osób rozważa dłuższą przerwę w karierze, nie tylko standardowy urlop. **Sabbatical** to zaplanowana przerwa zawodowa trwająca zwykle od kilku tygodni do kilku miesięcy. W przeciwieństwie do zwolnienia z pracy jest świadomą decyzją, nie sytuacją kryzysową.
 
 > **Najważniejsze wnioski**
