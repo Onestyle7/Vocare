@@ -165,5 +165,5 @@ Zastanawiasz się, jakie dodatkowe kierunki rozwoju pasują do Twoich kompetencj
 - [CV freelancera 2026 - jak pokazać projekty zamiast etatów](/blog/cv/cv-freelancera)
 - [Umowa o pracę vs B2B vs zlecenie 2026 - co wybrać?](/blog/praca/umowa-o-prace-vs-b2b)
 - [Umowa o dzieło 2026 - kiedy można ją zawrzeć i ile wynoszą koszty](/blog/praca/umowa-o-dzielo)
-- [Praca zdalna 2026 - jak ją znaleźć i utrzymać produktywność](/blog/praca/praca-zdalna)
+- [Praca zdalna 2026 - prawa, ryczałt i jak ją znaleźć](/blog/praca/praca-zdalna)
 - [Ścieżka kariery - jak zaplanować rozwój zawodowy w 2026](/blog/kariera/sciezka-kariery)

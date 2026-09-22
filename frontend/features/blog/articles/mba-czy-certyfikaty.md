@@ -11,7 +11,7 @@ tags: ['mba czy warto', 'certyfikaty branżowe', 'rozwój kariery', 'studia pody
 slug: 'mba-czy-certyfikaty'
 ---
 
-Kilkadziesiąt tysięcy złotych i dwa lata czasu na MBA, czy kilka tygodni i kilkaset złotych na certyfikat branżowy? **MBA i certyfikaty branżowe** odpowiadają na różne potrzeby zawodowe - wybór między nimi zależy od tego, gdzie realnie jesteś w karierze i jaki problem chcesz rozwiązać, nie od tego, co brzmi bardziej prestiżowo.
+Kilkadziesiąt tysięcy złotych i dwa lata czasu na MBA, czy kilka tygodni i kilkaset złotych na certyfikat branżowy? **MBA i certyfikaty branżowe** odpowiadają na różne potrzeby zawodowe - wybór między nimi zależy od tego, gdzie realnie jesteś w karierze i jaki problem chcesz rozwiązać, nie od tego, co brzmi bardziej prestiżowo. **MBA** to podyplomowy program zarządzania ogólnego, nastawiony na szerokie kompetencje menedżerskie i sieć kontaktów. **Certyfikat branżowy** to potwierdzenie konkretnej, wąskiej umiejętności, zwykle wydawane przez organizację lub producenta technologii.
 
 > **Najważniejsze wnioski**
 > - MBA ma sens głównie dla osób mierzących w stanowiska zarządcze wyższego szczebla lub zmieniających ścieżkę na bardziej biznesową

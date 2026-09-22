@@ -3,6 +3,7 @@ title: 'Zwolnienie grupowe 2026 - Twoje prawa i wysokość odprawy'
 description: 'Czym jest zwolnienie grupowe i kiedy ma zastosowanie w 2026 roku? Sprawdź progi liczby zwalnianych pracowników, wysokość odprawy i limit ustawowy.'
 estimatedReadTime: 8
 date: '2026-08-28'
+updatedAt: '2026-09-22'
 author: 'Vocare'
 category: 'praca'
 coverImage: '/images/blog/job-search.webp'
@@ -41,7 +42,64 @@ Wysokość odprawy zależy wyłącznie od stażu pracy u danego pracodawcy, niez
 - **Dwumiesięczne wynagrodzenie** - staż od 2 do 8 lat
 - **Trzymiesięczne wynagrodzenie** - staż dłuższy niż 8 lat
 
-Odprawa podlega ustawowemu limitowi - nie może przekroczyć 15-krotności minimalnego wynagrodzenia za pracę obowiązującego w dniu rozwiązania umowy. Oznacza to, że nawet przy bardzo wysokim wynagrodzeniu, kwota odprawy ma górny pułap.
+Odprawa podlega ustawowemu limitowi - nie może przekroczyć 15-krotności minimalnego wynagrodzenia za pracę obowiązującego w dniu rozwiązania umowy. Przy minimalnym wynagrodzeniu 4806 zł brutto w 2026 roku daje to pułap **72 090 zł brutto**.
+
+W praktyce limit dotyka osób zarabiających powyżej ok. 24 000 zł brutto miesięcznie przy najdłuższym stażu - poniżej tego poziomu odprawa jest zwykłą wielokrotnością wynagrodzenia.
+
+**Uwaga:** odprawa przysługuje niezależnie od tego, czy znajdziesz nową pracę następnego dnia. To świadczenie związane z rozwiązaniem umowy, nie z okresem pozostawania bez pracy.
+
+---
+
+## Procedura krok po kroku - czego pracodawca musi dopełnić
+
+Zwolnienie grupowe to nie decyzja, tylko procedura. Jej pominięcie lub skrócenie daje podstawę do zakwestionowania wypowiedzenia.
+
+| Etap | Co się dzieje |
+| --- | --- |
+| 1. Zawiadomienie strony społecznej | Pracodawca informuje związki zawodowe lub przedstawicieli pracowników o zamiarze zwolnień, przyczynach, liczbie i grupach zawodowych |
+| 2. Konsultacje | Strony negocjują możliwość uniknięcia lub ograniczenia zwolnień oraz warunki dla odchodzących |
+| 3. Porozumienie lub regulamin | Ustalenia zapisuje się w porozumieniu; przy jego braku pracodawca wydaje regulamin |
+| 4. Zawiadomienie urzędu pracy | Powiatowy urząd pracy dostaje informację o ustaleniach |
+| 5. Wypowiedzenia | Dopiero teraz pracodawca może wręczać wypowiedzenia |
+
+**Kolejność ma znaczenie prawne.** Wypowiedzenie wręczone przed zakończeniem konsultacji jest wadliwe proceduralnie, niezależnie od tego, czy merytoryczna przyczyna zwolnienia była uzasadniona.
+
+**Co sprawdzić we własnym wypowiedzeniu:** czy podano przyczynę niedotyczącą pracownika, czy wskazano kryteria doboru do zwolnienia i czy naliczono odprawę. Brak kryteriów doboru to jedna z najczęstszych podstaw odwołań do sądu pracy.
+
+---
+
+## Kogo chroni szczególna ochrona
+
+Część pracowników jest chroniona przed wypowiedzeniem także przy zwolnieniach grupowych - najczęściej pracodawca może wtedy jedynie wypowiedzieć warunki pracy i płacy, nie samą umowę. Dotyczy to m.in.:
+
+- pracowników w wieku przedemerytalnym (do 4 lat przed osiągnięciem wieku emerytalnego),
+- pracownic w ciąży oraz osób na urlopach związanych z rodzicielstwem,
+- członków zarządów zakładowych organizacji związkowych i społecznych inspektorów pracy,
+- osób na usprawiedliwionej nieobecności, w tym na zwolnieniu lekarskim - w granicach okresów ochronnych.
+
+Jeśli należysz do którejś z tych grup, a otrzymałeś wypowiedzenie umowy, a nie warunków - to pierwsza rzecz do zweryfikowania.
+
+---
+
+## Zwolnienie indywidualne z przyczyn niedotyczących pracownika
+
+Najczęstsze nieporozumienie wokół tego tematu: wiele osób zakłada, że odprawa należy się wyłącznie przy zwolnieniach grupowych. Tak nie jest.
+
+Jeśli pracodawca zatrudnia **co najmniej 20 osób** i rozwiązuje umowę z przyczyn **niedotyczących pracownika** - likwidacja stanowiska, restrukturyzacja, względy ekonomiczne - odprawa przysługuje także przy zwolnieniu pojedynczej osoby, w tej samej wysokości.
+
+Warunkiem jest, by przyczyny niedotyczące pracownika stanowiły **wyłączny powód** wypowiedzenia. Jeśli w wypowiedzeniu pojawia się dodatkowo ocena pracy czy zachowania pracownika, prawo do odprawy bywa kwestionowane - dlatego warto uważnie przeczytać uzasadnienie wypowiedzenia.
+
+---
+
+## Prawo pierwszeństwa przy ponownym zatrudnieniu
+
+To uprawnienie, o którym wie niewielu zwolnionych, a bywa realnie przydatne.
+
+Jeśli w ciągu **15 miesięcy** od zwolnień grupowych pracodawca ponownie zatrudnia w tej samej grupie zawodowej, **ma obowiązek dać pierwszeństwo osobom wcześniej zwolnionym**.
+
+Warunek jest jednak po stronie pracownika: trzeba **zgłosić chęć powrotu w ciągu 12 miesięcy** od rozwiązania stosunku pracy. Bez tego zgłoszenia obowiązek pracodawcy nie powstaje.
+
+Praktyczny wniosek: jeśli zostałeś objęty zwolnieniem grupowym i nie wykluczasz powrotu, wyślij pisemne zgłoszenie chęci ponownego zatrudnienia i zachowaj potwierdzenie. To jedno pismo, które kosztuje kwadrans, a otwiera uprawnienie na ponad rok.
 
 ---
 

@@ -11,7 +11,7 @@ tags: ['rynek pracy prawo', 'praca prawnik', 'zarobki radca prawny', 'kariera pr
 slug: 'rynek-pracy-prawo'
 ---
 
-Narzędzia AI potrafią dziś przeanalizować tysiące stron dokumentacji prawnej w minuty - zadanie, które kiedyś zajmowało aplikantom całe dni. **Rynek pracy w branży prawniczej** w 2026 roku nie kurczy się, ale wyraźnie się polaryzuje: rutynowa analiza dokumentów traci na wartości, rośnie znaczenie doradztwa strategicznego i specjalizacji regulacyjnych.
+Narzędzia AI potrafią dziś przeanalizować tysiące stron dokumentacji prawnej w minuty - zadanie, które kiedyś zajmowało aplikantom całe dni. **Rynek pracy w branży prawniczej** w 2026 roku nie kurczy się, ale wyraźnie się polaryzuje: rutynowa analiza dokumentów traci na wartości, rośnie znaczenie doradztwa strategicznego i specjalizacji regulacyjnych. **Radca prawny i adwokat** to zawody zaufania publicznego, wymagające trzyletniej aplikacji i egzaminu zawodowego. **Prawnik in-house** pracuje w dziale prawnym firmy, niekoniecznie posiadając te uprawnienia.
 
 > **Najważniejsze wnioski**
 > - AI przejmuje research prawny i analizę dokumentów - rośnie wartość prawników potrafiących doradzać strategicznie, nie tylko analizować

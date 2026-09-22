@@ -11,7 +11,7 @@ tags: ['rynek pracy farmacja', 'zarobki farmaceuta', 'praca w przemyśle farmace
 slug: 'rynek-pracy-farmacja'
 ---
 
-Wielu myśli o farmacji wyłącznie jako o pracy za pierwszym stołem w aptece, tymczasem przemysł farmaceutyczny oferuje dziś zupełnie inną skalę zarobków. **Rynek pracy w farmacji** obejmuje dwie wyraźnie różne ścieżki - aptekę i przemysł - farmaceuta z prawem wykonywania zawodu zarabia w aptece [6000-9000 zł brutto, podczas gdy w przemyśle farmaceutycznym i regulacyjnym zarobki sięgają 8000-16 000 zł brutto](https://farmacjapraktyczna.pl/aktualnosci/raporty-i-sondy/ile-zarabia-farmaceuta-w-polsce-aktualny-raport).
+Wielu myśli o farmacji wyłącznie jako o pracy za pierwszym stołem w aptece, tymczasem przemysł farmaceutyczny oferuje dziś zupełnie inną skalę zarobków. **Rynek pracy w farmacji** obejmuje dwie wyraźnie różne ścieżki - aptekę i przemysł - farmaceuta z prawem wykonywania zawodu zarabia w aptece [6000-9000 zł brutto, podczas gdy w przemyśle farmaceutycznym i regulacyjnym zarobki sięgają 8000-16 000 zł brutto](https://farmacjapraktyczna.pl/aktualnosci/raporty-i-sondy/ile-zarabia-farmaceuta-w-polsce-aktualny-raport). **Farmaceuta** to zawód regulowany, wymagający prawa wykonywania zawodu wydanego przez izbę aptekarską. **Technik farmaceutyczny** wykonuje węższy zakres czynności i kształci się w szkole policealnej.
 
 > **Najważniejsze wnioski**
 > - Praca w przemyśle farmaceutycznym oferuje wyraźnie wyższe zarobki niż praca w aptece otwartej, szczególnie na stanowiskach związanych z jakością i produkcją

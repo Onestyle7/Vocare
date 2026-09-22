@@ -11,7 +11,7 @@ tags: ['umowa o pracę', 'kontrakt b2b', 'umowa zlecenie', 'forma zatrudnienia',
 slug: 'umowa-o-prace-vs-b2b'
 ---
 
-"Możemy zaproponować UoP albo B2B, co wolisz?" - to pytanie słyszy dziś coraz więcej kandydatów, szczególnie w IT, marketingu i konsultingu. Wybór nie jest oczywisty - **forma zatrudnienia** zmienia nie tylko kwotę na wypłacie, ale też stabilność, obowiązki administracyjne i dostęp do świadczeń socjalnych.
+"Możemy zaproponować UoP albo B2B, co wolisz?" - to pytanie słyszy dziś coraz więcej kandydatów, szczególnie w IT, marketingu i konsultingu. Wybór nie jest oczywisty - **forma zatrudnienia** zmienia nie tylko kwotę na wypłacie, ale też stabilność, obowiązki administracyjne i dostęp do świadczeń socjalnych. **Umowa o pracę** to stosunek pracy podporządkowanej, objęty Kodeksem pracy i pełnym pakietem uprawnień pracowniczych. **B2B** to umowa między dwoma przedsiębiorcami, w której nie ma urlopu, wynagrodzenia chorobowego ani ochrony przed wypowiedzeniem.
 
 > **Najważniejsze wnioski**
 > - B2B daje zwykle wyższą stawkę brutto, ale wymaga samodzielnego opłacania ZUS i nie gwarantuje płatnego urlopu ani L4
@@ -92,7 +92,7 @@ Niezależnie od wybranej formy zatrudnienia, [Analiza rynku pracy w Vocare](/mar
 - [Umowa na czas określony 2026 - ile razy można ją podpisać](/blog/praca/umowa-na-czas-okreslony-limit)
 - [Urlop wypoczynkowy 2026 - ile dni przysługuje i jak liczyć](/blog/praca/urlop-wypoczynkowy)
 - [Negocjacje wynagrodzenia 2026 - jak negocjować pensję skutecznie](/blog/praca/negocjacje-wynagrodzenia)
-- [Praca zdalna 2026 - jak ją znaleźć i utrzymać produktywność](/blog/praca/praca-zdalna)
+- [Praca zdalna 2026 - prawa, ryczałt i jak ją znaleźć](/blog/praca/praca-zdalna)
 - [Rynek pracy w IT 2026 - trendy, zarobki i zapotrzebowanie](/blog/rynek-pracy/rynek-pracy-it)
 - [Portfolio career 2026 - praca na kilku projektach zamiast jednego etatu](/blog/kariera/portfolio-career)
 - [CV freelancera 2026 - jak pokazać projekty zamiast etatów](/blog/cv/cv-freelancera)

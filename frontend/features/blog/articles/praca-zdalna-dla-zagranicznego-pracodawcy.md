@@ -101,5 +101,5 @@ Chcesz sprawdzić, czy Twoje CV i kompetencje są gotowe na aplikacje do zagrani
 ## Powiązane artykuły
 - [CV po angielsku 2026 - jak napisać angielskie CV krok po kroku](/blog/cv/cv-po-angielsku)
 - [LinkedIn - jak zbudować profil, który przyciąga rekruterów 2026](/blog/cv/linkedin-profil)
-- [Praca zdalna 2026 - jak ją znaleźć i utrzymać produktywność](/blog/praca/praca-zdalna)
+- [Praca zdalna 2026 - prawa, ryczałt i jak ją znaleźć](/blog/praca/praca-zdalna)
 - [Praca sezonowa za granicą 2026 - gdzie jechać i ile można zarobić](/blog/praca/praca-sezonowa-za-granica)

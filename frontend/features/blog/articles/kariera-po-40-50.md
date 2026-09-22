@@ -11,7 +11,7 @@ tags: ['kariera po 40', 'kariera po 50', 'ageizm w rekrutacji', 'praca dla dojrz
 slug: 'kariera-po-40-50'
 ---
 
-Mimo że rynek pracy w Polsce cierpi na strukturalny deficyt kadr w wielu branżach, dojrzali kandydaci wciąż spotykają się z nieformalną dyskryminacją wiekową w rekrutacji. **Kariera po 40 i 50 roku życia** wymaga dziś świadomej strategii - nie dlatego, że doświadczenie traci na wartości, ale dlatego, że trzeba umieć je odpowiednio zaprezentować w świecie zdominowanym przez młodszych rekruterów i algorytmy ATS.
+Mimo że rynek pracy w Polsce cierpi na strukturalny deficyt kadr w wielu branżach, dojrzali kandydaci wciąż spotykają się z nieformalną dyskryminacją wiekową w rekrutacji. **Kariera po 40 i 50 roku życia** wymaga dziś świadomej strategii - nie dlatego, że doświadczenie traci na wartości, ale dlatego, że trzeba umieć je odpowiednio zaprezentować w świecie zdominowanym przez młodszych rekruterów i algorytmy ATS. **Dyskryminacja ze względu na wiek** to nierówne traktowanie w zatrudnieniu zakazane przez Kodeks pracy, ale działa najczęściej nieformalnie - na etapie selekcji CV, a nie jawnej odmowy.
 
 > **Najważniejsze wnioski**
 > - Starzejące się społeczeństwo i deficyty kadrowe w wielu branżach realnie zwiększają wartość doświadczonych pracowników - trend demograficzny działa na korzyść dojrzałych kandydatów

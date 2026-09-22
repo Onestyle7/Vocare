@@ -3,6 +3,7 @@ title: 'CV managera 2026 - jak napisać CV na stanowisko kierownicze'
 description: 'Jak napisać CV na stanowisko managerskie? Sprawdź, czym różni się od CV specjalisty i jak pokazać kompetencje przywódcze.'
 estimatedReadTime: 8
 date: '2026-05-20'
+updatedAt: '2026-09-22'
 author: 'Vocare'
 category: 'cv'
 coverImage: '/images/blog/cv-template.webp'
@@ -10,7 +11,7 @@ tags: ['cv managera', 'cv na stanowisko kierownicze', 'cv dla managera', 'kompet
 slug: 'cv-managera'
 ---
 
-CV specjalisty koncentruje się na indywidualnych osiągnięciach - CV managera musi pokazać coś więcej: umiejętność prowadzenia zespołu, podejmowania decyzji strategicznych i wpływania na wyniki poprzez innych ludzi, nie tylko własną pracę. **CV managera** ocenia się inaczej niż CV specjalisty - rekruter szuka dowodów przywództwa, nie tylko kompetencji technicznych.
+CV specjalisty koncentruje się na indywidualnych osiągnięciach - CV managera musi pokazać coś więcej: umiejętność prowadzenia zespołu, podejmowania decyzji strategicznych i wpływania na wyniki poprzez innych ludzi, nie tylko własną pracę. **CV managera** ocenia się inaczej niż CV specjalisty - rekruter szuka dowodów przywództwa, nie tylko kompetencji technicznych. **CV managera** to dokument aplikacyjny, w którym jednostką osiągnięcia jest wynik zespołu, a nie samodzielnie wykonane zadanie.
 
 > **Najważniejsze wnioski**
 > - Osiągnięcia w CV managera powinny pokazywać wpływ na zespół i wyniki biznesowe, nie tylko osobiste kompetencje

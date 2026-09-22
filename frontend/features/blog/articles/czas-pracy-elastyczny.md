@@ -3,6 +3,7 @@ title: 'Elastyczny czas pracy 2026 - jak negocjować ruchomy grafik'
 description: 'Jak działa elastyczny (ruchomy) czas pracy w 2026 roku i jak złożyć wniosek? Sprawdź zasady, terminy odpowiedzi pracodawcy i prawa rodziców.'
 estimatedReadTime: 7
 date: '2026-08-06'
+updatedAt: '2026-09-22'
 author: 'Vocare'
 category: 'praca'
 coverImage: '/images/blog/job-search.webp'
@@ -10,7 +11,7 @@ tags: ['elastyczny czas pracy', 'ruchomy czas pracy', 'wniosek o elastyczny czas
 slug: 'czas-pracy-elastyczny'
 ---
 
-Nie każdy musi zaczynać dzień dokładnie o 8:00 - Kodeks pracy od dawna daje narzędzie do negocjowania innych godzin, o ile wynika to z uzasadnionych potrzeb. **Elastyczny czas pracy**, zwany też ruchomym czasem pracy, pozwala ustalić różne godziny rozpoczynania pracy w poszczególnych dniach lub przedział czasowy, w którym pracownik sam decyduje o rozpoczęciu dnia - [na pisemny wniosek pracownika, zgodnie z art. 142 Kodeksu pracy](https://www.gowork.pl/blog/ruchomy-czas-pracy-co-to-wniosek-wady-zalety/).
+Nie każdy musi zaczynać dzień dokładnie o 8:00 - Kodeks pracy od dawna daje narzędzie do negocjowania innych godzin, o ile wynika to z uzasadnionych potrzeb. **Elastyczny czas pracy**, zwany też ruchomym czasem pracy, pozwala ustalić różne godziny rozpoczynania pracy w poszczególnych dniach lub przedział czasowy, w którym pracownik sam decyduje o rozpoczęciu dnia - [na pisemny wniosek pracownika, zgodnie z art. 142 Kodeksu pracy](https://www.gowork.pl/blog/ruchomy-czas-pracy-co-to-wniosek-wady-zalety/). **Ruchomy czas pracy** to instytucja Kodeksu pracy, a nie nieformalna zgoda przełożonego - wprowadza się go w regulaminie, układzie zbiorowym albo na pisemny wniosek pracownika.
 
 > **Najważniejsze wnioski**
 > - Pracownik ma prawo złożyć wniosek o indywidualny rozkład czasu pracy raz w ciągu roku kalendarzowego

@@ -11,7 +11,7 @@ tags: ['rynek pracy hr', 'praca w hr', 'zarobki hr 2026', 'rekruter praca', 'kar
 slug: 'rynek-pracy-hr'
 ---
 
-Dział HR przeszedł w ostatnich latach transformację z funkcji administracyjnej w funkcję strategiczną. **Rynek pracy w HR** w 2026 roku nagradza specjalistów, którzy potrafią łączyć wiedzę o ludziach z danymi i technologią - nie tylko prowadzić rekrutację i dokumentację kadrową.
+Dział HR przeszedł w ostatnich latach transformację z funkcji administracyjnej w funkcję strategiczną. **Rynek pracy w HR** w 2026 roku nagradza specjalistów, którzy potrafią łączyć wiedzę o ludziach z danymi i technologią - nie tylko prowadzić rekrutację i dokumentację kadrową. **HR (human resources)** to obszar odpowiadający za pozyskiwanie, rozwój i utrzymanie pracowników. **HR Business Partner** to rola doradcza wobec biznesu, odrębna od administracji kadrowo-płacowej.
 
 > **Najważniejsze wnioski**
 > - Narzędzia AI przejęły wstępną selekcję CV - rośnie wartość rekruterów potrafiących ocenić dopasowanie kulturowe i prowadzić trudne rozmowy

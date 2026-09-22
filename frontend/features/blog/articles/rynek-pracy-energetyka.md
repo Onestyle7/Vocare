@@ -11,7 +11,7 @@ tags: ['rynek pracy energetyka', 'praca oze', 'zarobki fotowoltaika', 'kariera w
 slug: 'rynek-pracy-energetyka'
 ---
 
-Zobowiązania klimatyczne Unii Europejskiej oznaczają dziesiątki miliardów euro inwestycji w Polsce w kolejnych latach - to nie slogan, to realny napęd dla jednego z najszybciej rosnących segmentów rynku pracy. **Rynek pracy w energetyce odnawialnej** w 2026 roku oferuje jedną z niższych barier wejścia przy jednoczesnym solidnym wzroście wynagrodzeń.
+Zobowiązania klimatyczne Unii Europejskiej oznaczają dziesiątki miliardów euro inwestycji w Polsce w kolejnych latach - to nie slogan, to realny napęd dla jednego z najszybciej rosnących segmentów rynku pracy. **Rynek pracy w energetyce odnawialnej** w 2026 roku oferuje jedną z niższych barier wejścia przy jednoczesnym solidnym wzroście wynagrodzeń. **Energetyka odnawialna (OZE)** obejmuje wytwarzanie energii ze źródeł niewyczerpywalnych - głównie fotowoltaiki, wiatru, biomasy i geotermii - wraz z ich projektowaniem, montażem i serwisem.
 
 > **Najważniejsze wnioski**
 > - Instalacje fotowoltaiczne i pompy ciepła to dziś najszybciej rosnące segmenty zatrudnienia w energetyce

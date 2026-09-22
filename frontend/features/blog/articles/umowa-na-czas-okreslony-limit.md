@@ -11,7 +11,7 @@ tags: ['umowa na czas określony', 'limit umów na czas określony', '33 miesią
 slug: 'umowa-na-czas-okreslony-limit'
 ---
 
-Trzecia z rzędu umowa na czas określony z tym samym pracodawcą to często moment, w którym pracownicy zaczynają się zastanawiać, czy firma może przedłużać ją w nieskończoność. **Umowa na czas określony** ma w polskim prawie pracy jasno określony limit - zarówno co do liczby umów, jak i łącznego czasu ich trwania - a jego przekroczenie ma automatyczny skutek prawny.
+Trzecia z rzędu umowa na czas określony z tym samym pracodawcą to często moment, w którym pracownicy zaczynają się zastanawiać, czy firma może przedłużać ją w nieskończoność. **Umowa na czas określony** ma w polskim prawie pracy jasno określony limit - zarówno co do liczby umów, jak i łącznego czasu ich trwania - a jego przekroczenie ma automatyczny skutek prawny. **Umowa na czas określony** to umowa o pracę zawarta na z góry oznaczony okres, która po przekroczeniu limitu 3 umów lub 33 miesięcy przekształca się z mocy prawa w umowę na czas nieokreślony.
 
 > **Najważniejsze wnioski**
 > - Limit to maksymalnie 3 umowy na czas określony między tym samym pracodawcą a pracownikiem, łącznie nie dłużej niż 33 miesiące

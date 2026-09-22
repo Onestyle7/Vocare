@@ -44,9 +44,65 @@ Zasiłek za czas urlopu ojcowskiego wypłaca ZUS (lub pracodawca, jeśli jest p�
 
 ---
 
+## Urlop ojcowski a urlop rodzicielski - to dwa różne uprawnienia
+
+Te dwa urlopy bywają mylone, a przysługują niezależnie i można je łączyć.
+
+| | Urlop ojcowski | Urlop rodzicielski |
+| --- | --- | --- |
+| Wymiar | 14 dni kalendarzowych | 41 tygodni dla obojga rodziców, w tym **9 tygodni wyłącznie dla ojca** |
+| Komu przysługuje | Wyłącznie ojcu, niezależnie od matki | Obojgu rodzicom do podziału |
+| Termin wykorzystania | Do 12. miesiąca życia dziecka | Do końca roku, w którym dziecko kończy 6 lat |
+| Zasiłek | 100% podstawy | 70% lub 81,5% podstawy, zależnie od terminu wniosku |
+| Czy przepada | Tak, bezpowrotnie po 12 miesiącach | 9 tygodni ojca przepada, jeśli ich nie wykorzysta |
+
+W praktyce ojciec może wykorzystać **oba**: 14 dni urlopu ojcowskiego oraz swoje 9 tygodni urlopu rodzicielskiego. Szczegóły drugiego z nich opisuje artykuł o [urlopie macierzyńskim i rodzicielskim](/blog/praca/urlop-macierzynski-rodzicielski).
+
+Różnica w zasiłku bywa zaskoczeniem: za urlop ojcowski przysługuje 100% podstawy, a za nieprzenoszalne tygodnie urlopu rodzicielskiego - 70%.
+
+---
+
+## Ochrona przed zwolnieniem
+
+W okresie urlopu ojcowskiego pracownik jest chroniony przed wypowiedzeniem i rozwiązaniem umowy o pracę, na zasadach zbliżonych do ochrony w czasie urlopu macierzyńskiego.
+
+Ochrona obejmuje również okres od złożenia wniosku o urlop do jego zakończenia. Wyjątki są wąskie - należą do nich upadłość lub likwidacja pracodawcy oraz przyczyny uzasadniające rozwiązanie umowy bez wypowiedzenia z winy pracownika.
+
+---
+
+## Co z ojcami na umowach cywilnoprawnych i B2B
+
+Urlop ojcowski jako uprawnienie pracownicze wynika z Kodeksu pracy i przysługuje osobom zatrudnionym na umowę o pracę.
+
+Osoby na umowie zlecenia lub prowadzące działalność gospodarczą nie mają "urlopu" w sensie pracowniczym, ale **mogą mieć prawo do zasiłku macierzyńskiego za okres odpowiadający urlopowi ojcowskiemu** - pod warunkiem podlegania dobrowolnemu ubezpieczeniu chorobowemu i opłacania składek.
+
+To istotna różnica: przy umowie o pracę składka chorobowa jest obowiązkowa, przy działalności i zleceniu - dobrowolna. Ojcowie planujący skorzystanie z uprawnienia powinni sprawdzić, czy faktycznie są objęci tym ubezpieczeniem, zanim złożą wniosek.
+
+---
+
 ## Co jeśli nie wykorzystasz urlopu ojcowskiego na czas?
 
 W przeciwieństwie do urlopu wypoczynkowego, urlop ojcowski nie przechodzi na kolejny rok i nie można go wykorzystać po ukończeniu przez dziecko 12 miesięcy - termin jest nieprzekraczalny niezależnie od okoliczności (np. choroby ojca w tym okresie). Warto zaplanować wykorzystanie urlopu z wyprzedzeniem, żeby uniknąć utraty tego uprawnienia.
+
+---
+
+## Co zawiera wniosek i o czym łatwo zapomnieć
+
+Wniosek o urlop ojcowski jest krótki, ale musi zawierać konkretne elementy: imię i nazwisko pracownika, wskazanie okresu urlopu (konkretne daty) oraz oświadczenie o niewykorzystaniu urlopu ojcowskiego w całości lub części wcześniej.
+
+Do wniosku dołącza się skrócony odpis aktu urodzenia dziecka albo jego kopię. Termin: **najpóźniej 7 dni** przed planowanym rozpoczęciem urlopu. Pracodawca nie ma tu uznania - musi udzielić urlopu na wskazane daty.
+
+**Osobne uprawnienie, o którym się zapomina:** z okazji urodzenia się dziecka przysługują dodatkowo **2 dni zwolnienia od pracy** z zachowaniem prawa do wynagrodzenia. To nie jest część urlopu ojcowskiego i nie pomniejsza jego wymiaru - wielu ojców wykorzystuje tylko jedno z tych uprawnień, nie wiedząc o drugim.
+
+---
+
+## Skrócony termin po zmianie przepisów
+
+Do 2023 roku urlop ojcowski można było wykorzystać do ukończenia przez dziecko **24 miesięcy**. Nowelizacja skróciła ten okres do **12 miesięcy**.
+
+Konsekwencja jest praktyczna: część ojców planowała wykorzystanie drugiego tygodnia w drugim roku życia dziecka i po zmianie przepisów straciła tę możliwość. Dziś obowiązuje wyłącznie termin 12-miesięczny, a jego upływ jest nieprzekraczalny - niezależnie od okoliczności, w tym choroby ojca w tym okresie.
+
+Przy przysposobieniu termin liczy się od uprawomocnienia postanowienia, nie dłużej niż do ukończenia przez dziecko 14 lat.
 
 ---
 
