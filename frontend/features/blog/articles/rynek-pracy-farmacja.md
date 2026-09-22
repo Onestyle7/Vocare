@@ -3,6 +3,7 @@ title: 'Rynek pracy w farmacji 2026 - trendy i zarobki'
 description: 'Jak wygląda rynek pracy w farmacji w 2026 roku? Sprawdź zarobki farmaceutów w aptekach i przemyśle oraz które specjalizacje rosną najszybciej.'
 estimatedReadTime: 7
 date: '2026-09-09'
+updatedAt: '2026-09-22'
 author: 'Vocare'
 category: 'rynek-pracy'
 coverImage: '/images/blog/future-careers.webp'
@@ -33,6 +34,8 @@ Wielu myśli o farmacji wyłącznie jako o pracy za pierwszym stołem w aptece, 
 ---
 
 ## Które specjalizacje w farmacji rosną najszybciej?
+
+Zanim uznasz którykolwiek z tych zawodów za pewny wybór, sprawdź go lokalnie. farmaceuci i technicy farmaceutyczni - to zawody, których status w [Barometrze Zawodów](https://www.barometrzawodow.pl/) bywa różny w zależności od powiatu. Barometr to coroczna prognoza Ministerstwa Rodziny, Pracy i Polityki Społecznej, dzieląca zawody na deficytowe, zrównoważone i nadwyżkowe, publikowana osobno dla każdego powiatu. Dla kalibracji widełek: krajowa mediana wynagrodzeń to [7690,82 zł brutto (luty 2026)](https://ssgk.stat.gov.pl/Wynagrodzenia_i_swiadczenia_spoleczne.html) według GUS - połowa pracujących w Polsce zarabia mniej.
 
 **Specjaliści ds. jakości i walidacji procesów.** Rosnące wymagania regulacyjne wobec produkcji leków napędzają zapotrzebowanie na ekspertów pilnujących zgodności procesów produkcyjnych z normami.
 

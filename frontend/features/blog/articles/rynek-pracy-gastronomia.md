@@ -3,6 +3,7 @@ title: 'Rynek pracy w gastronomii 2026 - deficyt i zarobki'
 description: 'Jak wygląda rynek pracy w gastronomii i hotelarstwie w 2026 roku? Sprawdź, których pracowników najbardziej brakuje i ile można dziś zarobić w tej branży.'
 estimatedReadTime: 7
 date: '2026-08-06'
+updatedAt: '2026-09-22'
 author: 'Vocare'
 category: 'rynek-pracy'
 coverImage: '/images/blog/future-work.webp'
@@ -20,6 +21,8 @@ Restauracje i hotele od lat mierzą się z brakiem rąk do pracy. **Rynek pracy 
 ---
 
 ## Dlaczego w gastronomii brakuje ludzi?
+
+Warto zweryfikować te wnioski dla swojego regionu. [Barometrze Zawodów](https://www.barometrzawodow.pl/) - prognoza Ministerstwa Rodziny, Pracy i Polityki Społecznej - klasyfikuje zawody takie jak kucharze, kelnerzy i barmani oraz pracownicy hotelarstwa jako deficytowe, zrównoważone lub nadwyżkowe, osobno dla każdego powiatu. Punkt odniesienia dla podawanych kwot: krajowa mediana wynagrodzeń to [7690,82 zł brutto (luty 2026)](https://ssgk.stat.gov.pl/Wynagrodzenia_i_swiadczenia_spoleczne.html) (GUS).
 
 Praca zmianowa, weekendy i święta w pracy zniechęcają wielu kandydatów. Fizyczne obciążenie i presja czasu w kuchni dodatkowo zwiększają rotację.
 

@@ -30,6 +30,8 @@ Jednocześnie rosną wymagania: firmy logistyczne inwestują w automatyzację (s
 
 ## Które role w logistyce są dziś najbardziej poszukiwane?
 
+Dla kalibracji podawanych kwot: mediana wynagrodzeń w gospodarce narodowej wynosi [7690,82 zł brutto (luty 2026)](https://ssgk.stat.gov.pl/Wynagrodzenia_i_swiadczenia_spoleczne.html) według GUS - połowa pracujących w Polsce zarabia mniej.
+
 ### Kierowcy zawodowi (kat. C, C+E)
 
 Jeden z najbardziej deficytowych zawodów w Polsce od lat, regularnie potwierdzany w [Barometrze Zawodów](https://barometrzawodow.pl). Starzejąca się kadra kierowców i rosnący wolumen transportu drogowego sprawiają, że firmy transportowe oferują coraz wyższe stawki i dodatkowe benefity.

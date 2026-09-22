@@ -30,6 +30,8 @@ W przeciwieństwie do wielu innych branż, ten wzrost jest w dużej mierze zabez
 
 ## Które role w energetyce odnawialnej są dziś najbardziej poszukiwane?
 
+Zapotrzebowanie różni się regionalnie mocniej, niż sugerują ogólnokrajowe zestawienia. Status zawodów takich jak elektrycy i monterzy instalacji odnawialnych źródeł energii sprawdzisz dla konkretnego powiatu w [Barometrze Zawodów](https://www.barometrzawodow.pl/), publikowanym co roku przez Ministerstwo Rodziny, Pracy i Polityki Społecznej. Dla porównania widełek: mediana wynagrodzeń w gospodarce narodowej to [7690,82 zł brutto (luty 2026)](https://ssgk.stat.gov.pl/Wynagrodzenia_i_swiadczenia_spoleczne.html) według GUS.
+
 ### Instalatorzy fotowoltaiki
 
 Montaż i uruchamianie instalacji PV w domach i firmach - jedna z ról z najkrótszą ścieżką wejścia (kurs 2-4 miesiące) i stabilnym, rosnącym popytem.

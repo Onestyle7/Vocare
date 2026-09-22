@@ -3,6 +3,7 @@ title: 'Rynek pracy w turystyce 2026 - biura podróży i przewodnicy'
 description: 'Jak wygląda rynek pracy w turystyce w 2026 roku? Sprawdź zarobki w biurach podróży, pracy przewodnika i jak radzić sobie z sezonowością branży.'
 estimatedReadTime: 7
 date: '2026-09-09'
+updatedAt: '2026-09-22'
 author: 'Vocare'
 category: 'rynek-pracy'
 coverImage: '/images/blog/future-work.webp'
@@ -39,6 +40,8 @@ Popyt na usługi turystyczne koncentruje się w określonych miesiącach (lato, 
 ---
 
 ## Które role w turystyce dają dziś większą stabilność?
+
+Zapotrzebowanie różni się regionalnie mocniej, niż sugerują ogólnokrajowe zestawienia. Status zawodów takich jak pracownicy obsługi ruchu turystycznego i przewodnicy sprawdzisz dla konkretnego powiatu w [Barometrze Zawodów](https://www.barometrzawodow.pl/), publikowanym co roku przez Ministerstwo Rodziny, Pracy i Polityki Społecznej. Dla porównania widełek: mediana wynagrodzeń w gospodarce narodowej to [7690,82 zł brutto (luty 2026)](https://ssgk.stat.gov.pl/Wynagrodzenia_i_swiadczenia_spoleczne.html) według GUS.
 
 **Pracownicy biur podróży obsługujący klientów całorocznie.** W przeciwieństwie do przewodników związanych z konkretnym sezonem, sprzedaż wyjazdów (w tym zimowych i pozasezonowych) daje bardziej równomierny rozkład zleceń w ciągu roku.
 

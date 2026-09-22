@@ -30,6 +30,8 @@ Jednocześnie rośnie wartość specjalistów, którzy zajmują się sprawami, z
 
 ## Które role sprzedażowe są dziś najbardziej poszukiwane?
 
+Warto zweryfikować te wnioski dla swojego regionu. [Barometrze Zawodów](https://www.barometrzawodow.pl/) - prognoza Ministerstwa Rodziny, Pracy i Polityki Społecznej - klasyfikuje zawody takie jak sprzedawcy i przedstawiciele handlowi jako deficytowe, zrównoważone lub nadwyżkowe, osobno dla każdego powiatu. Punkt odniesienia dla podawanych kwot: krajowa mediana wynagrodzeń to [7690,82 zł brutto (luty 2026)](https://ssgk.stat.gov.pl/Wynagrodzenia_i_swiadczenia_spoleczne.html) (GUS).
+
 ### Key Account Manager (KAM)
 
 Zarządzanie relacjami z kluczowymi klientami B2B - rola wymagająca zarówno umiejętności sprzedażowych, jak i strategicznego zarządzania relacją długoterminową. Jedna z najlepiej płatnych ścieżek w sprzedaży bez wymogu studiów kierunkowych.

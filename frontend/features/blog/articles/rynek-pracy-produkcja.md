@@ -30,6 +30,8 @@ W praktyce oznacza to przesunięcie: mniej osób przy prostych, ręcznych czynno
 
 ## Które role w produkcji są dziś najbardziej poszukiwane?
 
+Zanim uznasz którykolwiek z tych zawodów za pewny wybór, sprawdź go lokalnie. operatorzy maszyn, automatycy i ślusarze - to zawody, których status w [Barometrze Zawodów](https://www.barometrzawodow.pl/) bywa różny w zależności od powiatu. Barometr to coroczna prognoza Ministerstwa Rodziny, Pracy i Polityki Społecznej, dzieląca zawody na deficytowe, zrównoważone i nadwyżkowe, publikowana osobno dla każdego powiatu. Dla kalibracji widełek: krajowa mediana wynagrodzeń to [7690,82 zł brutto (luty 2026)](https://ssgk.stat.gov.pl/Wynagrodzenia_i_swiadczenia_spoleczne.html) według GUS - połowa pracujących w Polsce zarabia mniej.
+
 ### Operatorzy maszyn CNC
 
 Obsługa maszyn sterowanych numerycznie wymaga dziś wiedzy technicznej wykraczającej poza proste operowanie przyciskami - programowanie i odczytywanie dokumentacji technicznej to standard.

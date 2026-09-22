@@ -3,6 +3,7 @@ title: 'Rynek pracy w administracji 2026 - stabilność i zarobki'
 description: 'Jak wygląda rynek pracy w administracji publicznej w 2026 roku? Sprawdź zarobki urzędników, stabilność zatrudnienia i jak zacząć karierę w sektorze publicznym.'
 estimatedReadTime: 7
 date: '2026-08-07'
+updatedAt: '2026-09-22'
 author: 'Vocare'
 category: 'rynek-pracy'
 coverImage: '/images/blog/future-careers.webp'
@@ -40,6 +41,8 @@ Wymagania formalne są jasno określone w ogłoszeniu. Wykształcenie kierunkowe
 ---
 
 ## Które role w administracji publicznej rosną najszybciej?
+
+Zanim uznasz którykolwiek z tych zawodów za pewny wybór, sprawdź go lokalnie. pracownicy administracyjni i biurowi - to zawody, których status w [Barometrze Zawodów](https://www.barometrzawodow.pl/) bywa różny w zależności od powiatu. Barometr to coroczna prognoza Ministerstwa Rodziny, Pracy i Polityki Społecznej, dzieląca zawody na deficytowe, zrównoważone i nadwyżkowe, publikowana osobno dla każdego powiatu. Dla kalibracji widełek: krajowa mediana wynagrodzeń to [7690,82 zł brutto (luty 2026)](https://ssgk.stat.gov.pl/Wynagrodzenia_i_swiadczenia_spoleczne.html) według GUS - połowa pracujących w Polsce zarabia mniej.
 
 ### Specjaliści ds. cyfryzacji usług publicznych
 

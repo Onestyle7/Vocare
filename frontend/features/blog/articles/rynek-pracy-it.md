@@ -30,6 +30,8 @@ To nie oznacza kryzysu w IT - oznacza normalizację. Specjaliści z realnymi kom
 
 ## Które specjalizacje IT są dziś najbardziej poszukiwane?
 
+Deficyt kadrowy nie jest równomierny w całym kraju. programiści, testerzy i specjaliści ds. cyberbezpieczeństwa mogą być zawodem deficytowym w jednym powiecie i zrównoważonym w sąsiednim - aktualną prognozę dla swojej okolicy znajdziesz w [Barometrze Zawodów](https://www.barometrzawodow.pl/), corocznym badaniu Ministerstwa Rodziny, Pracy i Polityki Społecznej. Widełki poniżej warto odnosić do krajowej mediany wynagrodzeń, która według GUS wynosi [7690,82 zł brutto (luty 2026)](https://ssgk.stat.gov.pl/Wynagrodzenia_i_swiadczenia_spoleczne.html).
+
 ### Sztuczna inteligencja i uczenie maszynowe
 
 Największy wzrost zapotrzebowania ostatnich lat. Firmy szukają nie tylko badaczy ML, ale przede wszystkim inżynierów potrafiących wdrażać modele do produkcji (MLOps) i integrować rozwiązania LLM z istniejącymi systemami.

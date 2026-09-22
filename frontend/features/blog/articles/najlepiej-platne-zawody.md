@@ -18,7 +18,7 @@ tags:
 slug: 'najlepiej-platne-zawody'
 ---
 
-"Ile zarabia X?" to jedno z najczęściej wpisywanych zapytań w Google. I trudno się dziwić - zarobki to jeden z kluczowych czynników przy wyborze kariery. Problem w tym, że większość rankingów zarobków opiera się na danych deklaratywnych (co ludzie sami podają) lub uśrednionych danych GUS, które nie oddają rzeczywistości. **Mediana zarobków** to wartość środkowa - bardziej odporna na zniekształcenie przez pojedyncze wysokie pensje niż średnia. Poniżej zestawiamy mediany zarobków z najbardziej wiarygodnych źródeł - [NoFluffJobs](https://nofluffjobs.com) - dla zawodów z najwyższymi wynagrodzeniami w Polsce w 2026.
+"Ile zarabia X?" to jedno z najczęściej wpisywanych zapytań w Google. I trudno się dziwić - zarobki to jeden z kluczowych czynników przy wyborze kariery. Problem w tym, że każde źródło danych o zarobkach ma inne ograniczenia, a rankingi rzadko to przyznają. **Mediana zarobków** to wartość środkowa - bardziej odporna na zniekształcenie przez pojedyncze wysokie pensje niż średnia. Poniżej zestawiamy mediany dla zawodów z najwyższymi wynagrodzeniami w Polsce w 2026 - wraz z uczciwą informacją, skąd każda liczba pochodzi.
 
 > **Najważniejsze wnioski**
 > - Mediana, nie średnia, to bardziej wiarygodna miara "typowego" zarobku - nie zawyżają jej pojedyncze wysokie pensje
@@ -36,6 +36,17 @@ Zanim przejdziemy do rankingu - ważna metodologiczna uwaga.
 **Mediana** to wartość środkowa - połowa zarabia więcej, połowa mniej. To bardziej wiarygodna miara "typowego" zarobku.
 
 Wszystkie dane poniżej to **mediana brutto miesięcznie** na podstawie danych 2025-2026.
+
+### Skąd pochodzą liczby - i czego nie obejmują
+
+Ten ranking łączy dwa rodzaje źródeł, bo żadne pojedyncze nie pokrywa wszystkich zawodów:
+
+- **Role IT i biurowe** - mediany z ogłoszeń o pracę ([NoFluffJobs](https://nofluffjobs.com), Pracuj.pl). Mocna strona: pokazują, ile pracodawcy realnie oferują dziś. Słaba: obejmują wyłącznie stanowiska ogłaszane publicznie.
+- **Pozostałe zawody** (medycyna, lotnictwo, prawo) - szacunki rynkowe z praktyki branżowej. **Te zawody w większości nie są rekrutowane przez portale IT**, a znaczna część dochodu pochodzi z kontraktów B2B, dyżurów i prowizji, których żadne zestawienie ogłoszeń nie widzi. Traktuj je jako rzędy wielkości, nie precyzyjne mediany.
+
+Najbardziej metodycznie rzetelnym źródłem median według zawodów pozostaje badanie GUS [Struktura wynagrodzeń według zawodów](https://stat.gov.pl/obszary-tematyczne/rynek-pracy/pracujacy-zatrudnieni-wynagrodzenia-koszty-pracy/). Ma jedno ograniczenie: publikowane jest co dwa lata i obejmuje firmy zatrudniające 10+ osób, więc nie łapie najnowszych zmian ani małych podmiotów - dlatego nie zastępuje danych z ogłoszeń, tylko je uzupełnia.
+
+**Punkt odniesienia dla całego rankingu:** mediana wynagrodzeń w gospodarce narodowej to [7690,82 zł brutto (luty 2026)](https://ssgk.stat.gov.pl/Wynagrodzenia_i_swiadczenia_spoleczne.html). Każda pozycja poniżej jest wielokrotnością tej kwoty.
 
 ---
 

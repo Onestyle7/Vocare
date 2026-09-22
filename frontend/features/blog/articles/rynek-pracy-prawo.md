@@ -30,6 +30,8 @@ Wartość przesuwa się w stronę umiejętności, których AI nie ma: oceny ryzy
 
 ## Które specjalizacje prawnicze są dziś najbardziej poszukiwane?
 
+Zapotrzebowanie różni się regionalnie mocniej, niż sugerują ogólnokrajowe zestawienia. Status zawodów takich jak prawnicy i pracownicy obsługi prawnej sprawdzisz dla konkretnego powiatu w [Barometrze Zawodów](https://www.barometrzawodow.pl/), publikowanym co roku przez Ministerstwo Rodziny, Pracy i Polityki Społecznej. Dla porównania widełek: mediana wynagrodzeń w gospodarce narodowej to [7690,82 zł brutto (luty 2026)](https://ssgk.stat.gov.pl/Wynagrodzenia_i_swiadczenia_spoleczne.html) według GUS.
+
 ### Prawo nowych technologii i AI
 
 Regulacje dotyczące sztucznej inteligencji, danych i cyberbezpieczeństwa rozwijają się szybciej niż kadra prawnicza potrafiąca je obsługiwać - to jedna z najbardziej perspektywicznych, choć wciąż niszowych specjalizacji.

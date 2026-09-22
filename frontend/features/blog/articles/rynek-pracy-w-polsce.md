@@ -3,6 +3,7 @@ title: 'Rynek pracy w Polsce 2026 - kompletny przegląd 21 branż'
 description: 'Jak wygląda rynek pracy w Polsce w 2026 roku? Porównaj widełki zarobków, deficyt kadrowy i perspektywy w 21 kluczowych branżach - od IT po rolnictwo.'
 estimatedReadTime: 11
 date: '2026-07-24'
+updatedAt: '2026-09-22'
 author: 'Vocare'
 category: 'rynek-pracy'
 coverImage: '/images/blog/future-work.webp'
@@ -16,6 +17,8 @@ Pytanie "w jakiej branży jest dziś najlepiej" nie ma jednej odpowiedzi - IT wc
 > - Najwyższe mediany zarobków notują dziś technologie, finanse i wybrane specjalizacje medyczne i prawnicze - ale wysoki deficyt kadrowy (medycyna, budownictwo, energetyka OZE) częściej gwarantuje szybkie zatrudnienie niż samą wysokość widełek
 > - Bariera wejścia i wysokość zarobków rosną razem tylko do pewnego momentu - budownictwo i energetyka OZE oferują krótkie ścieżki wejścia przy solidnych, choć nie najwyższych, zarobkach
 > - Automatyzacja i AI nie likwidują całych branż - przesuwają wartość w stronę ról nadzorczych, analitycznych i strategicznych w każdej z 21 branż jednocześnie
+
+_Dane: GUS (luty 2026), Barometr Zawodów, mediany ogłoszeń. Stan na 22 września 2026 r._
 
 ---
 
@@ -33,7 +36,13 @@ Zanim spojrzysz na tabelę poniżej, warto ustalić, co właściwie porównujesz
 
 ## Porównanie 21 branż - widełki, deficyt, bariera wejścia
 
-Dane o medianach zarobków per branża pochodzą z tego samego zestawienia i tej samej metodologii (mediana z ofert NoFluffJobs/Pracuj.pl), co ranking najlepiej płatnych zawodów - dzięki temu liczby są wzajemnie spójne w obrębie całego bloga.
+### Skąd pochodzą te liczby i jak je czytać
+
+**Punkt odniesienia.** Mediana wynagrodzeń w całej gospodarce narodowej wyniosła [7690,82 zł brutto w lutym 2026 r.](https://ssgk.stat.gov.pl/Wynagrodzenia_i_swiadczenia_spoleczne.html) według GUS. Połowa pracujących zarabia mniej. Widełki w tabeli warto czytać na tym tle - większość z nich leży powyżej krajowej mediany, bo dotyczą konkretnych ról w konkretnych branżach, a nie przekroju całego rynku.
+
+**Widełki zarobków** pochodzą z median ogłoszeń o pracę (NoFluffJobs, Pracuj.pl) i mają dwa znane ograniczenia: opisują stanowiska *ogłaszane*, a nie wszystkie istniejące, oraz są najdokładniejsze dla ról biurowych i IT, a najmniej dla zawodów rekrutowanych lokalnie i poza portalami (gastronomia, rolnictwo, budownictwo wykonawcze). Pełne dane o medianach według zawodów publikuje GUS w badaniu [Struktura wynagrodzeń według zawodów](https://stat.gov.pl/obszary-tematyczne/rynek-pracy/pracujacy-zatrudnieni-wynagrodzenia-koszty-pracy/), realizowanym co dwa lata.
+
+**Kolumna deficytu kadrowego** opiera się na [Barometrze Zawodów](https://www.barometrzawodow.pl/) - corocznej prognozie Ministerstwa Rodziny, Pracy i Polityki Społecznej, która dzieli zawody na deficytowe, zrównoważone i nadwyżkowe. Barometr podaje dane w podziale na powiaty, więc jeśli rozważasz konkretne miasto, warto sprawdzić tam sytuację lokalnie - różnice między powiatami bywają większe niż między branżami.
 
 | Branża | Mediana zarobków (PLN brutto/mies.) | Deficyt kadrowy | Bariera wejścia |
 | --- | --- | --- | --- |
@@ -59,7 +68,7 @@ Dane o medianach zarobków per branża pochodzą z tego samego zestawienia i tej
 | Rolnictwo | 4 000 - 8 000 dla operatorów maszyn, do 10 000 przy specjalizacji w rolnictwie precyzyjnym | Strukturalny, konkurencja o pracowników z przemysłem | Niska - kursy operatorskie, bez wymogu wyższego wykształcenia |
 | Farmacja | 6 000 - 9 000 w aptece, 8 000 - 16 000 w przemyśle farmaceutycznym | Umiarkowany, rosnący w jakości i produkcji | Wysoka - studia farmaceutyczne i prawo wykonywania zawodu |
 
-*Widełki dla technologii, finansów, medycyny, prawa i energetyki pochodzą z pełnego rankingu top 15 zawodów - zobacz [najlepiej płatne zawody w Polsce 2026](/blog/rynek-pracy/najlepiej-platne-zawody) po szczegółowe stanowiska i źródła. Marketing, HR, logistyka i produkcja nie mają w tym rankingu bezpośrednich odpowiedników na tym poziomie ogólności - dokładne widełki dla konkretnych ról znajdziesz w artykułach branżowych linkowanych niżej.*
+*Widełki dla technologii, finansów, medycyny, prawa i energetyki rozpisane są na konkretne stanowiska w [rankingu najlepiej płatnych zawodów](/blog/rynek-pracy/najlepiej-platne-zawody). Marketing, HR, logistyka i produkcja nie mają w tym rankingu bezpośrednich odpowiedników na tym poziomie ogólności - dokładne widełki dla konkretnych ról znajdziesz w artykułach branżowych linkowanych niżej.*
 
 ---
 

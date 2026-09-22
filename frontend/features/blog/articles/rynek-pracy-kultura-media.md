@@ -3,6 +3,7 @@ title: 'Rynek pracy w kulturze i mediach 2026 - trendy i zarobki'
 description: 'Jak wygląda rynek pracy w branży kreatywnej i mediach w 2026 roku? Sprawdź zarobki designerów, twórców wideo i jak zmienia je rozwój sztucznej inteligencji.'
 estimatedReadTime: 7
 date: '2026-09-09'
+updatedAt: '2026-09-22'
 author: 'Vocare'
 category: 'rynek-pracy'
 coverImage: '/images/blog/future-careers.webp'
@@ -40,6 +41,8 @@ Boom na content wideo, rozwój narzędzi generatywnych i rosnąca rola AI w proc
 ---
 
 ## Które role rosną najszybciej?
+
+Warto zweryfikować te wnioski dla swojego regionu. [Barometrze Zawodów](https://www.barometrzawodow.pl/) - prognoza Ministerstwa Rodziny, Pracy i Polityki Społecznej - klasyfikuje zawody takie jak graficy komputerowi, montażyści i specjaliści ds. reklamy jako deficytowe, zrównoważone lub nadwyżkowe, osobno dla każdego powiatu. Punkt odniesienia dla podawanych kwot: krajowa mediana wynagrodzeń to [7690,82 zł brutto (luty 2026)](https://ssgk.stat.gov.pl/Wynagrodzenia_i_swiadczenia_spoleczne.html) (GUS).
 
 **Specjaliści od treści wideo i short-form content.** Rosnące zapotrzebowanie na krótkie, angażujące materiały wideo napędza popyt na montażystów, twórców treści i strategów social media.
 

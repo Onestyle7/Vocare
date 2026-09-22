@@ -22,6 +22,8 @@ Polska oświata od lat mierzy się z deficytem kadrowym, który pogłębia się 
 
 ## Dlaczego w polskiej oświacie brakuje nauczycieli?
 
+Warto zweryfikować te wnioski dla swojego regionu. [Barometrze Zawodów](https://www.barometrzawodow.pl/) - prognoza Ministerstwa Rodziny, Pracy i Polityki Społecznej - klasyfikuje zawody takie jak nauczyciele przedmiotów ścisłych i zawodowych jako deficytowe, zrównoważone lub nadwyżkowe, osobno dla każdego powiatu. Punkt odniesienia dla podawanych kwot: krajowa mediana wynagrodzeń to [7690,82 zł brutto (luty 2026)](https://ssgk.stat.gov.pl/Wynagrodzenia_i_swiadczenia_spoleczne.html) (GUS).
+
 Niskie wynagrodzenia w relacji do wymagań i odpowiedzialności zawodu, obciążenie biurokracją oraz starzejąca się kadra sprawiają, że liczba nowych nauczycieli nie nadąża za potrzebami systemu. Deficyt jest szczególnie widoczny w przedmiotach, w których absolwenci mają atrakcyjniejsze alternatywy zawodowe - matematyce, fizyce, informatyce.
 
 To sprawia, że nauczyciele tych przedmiotów mają dziś realną siłę negocjacyjną, zarówno w szkołach publicznych, jak i - jeszcze bardziej - w edukacji prywatnej.

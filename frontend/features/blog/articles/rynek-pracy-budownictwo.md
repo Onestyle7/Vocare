@@ -22,6 +22,8 @@ Budownictwo to jedna z branż, w których deficyt kadrowy jest odczuwalny w cał
 
 ## Dlaczego w budownictwie brakuje ludzi?
 
+Deficyt kadrowy nie jest równomierny w całym kraju. elektrycy, spawacze, murarze i monterzy instalacji mogą być zawodem deficytowym w jednym powiecie i zrównoważonym w sąsiednim - aktualną prognozę dla swojej okolicy znajdziesz w [Barometrze Zawodów](https://www.barometrzawodow.pl/), corocznym badaniu Ministerstwa Rodziny, Pracy i Polityki Społecznej. Widełki poniżej warto odnosić do krajowej mediany wynagrodzeń, która według GUS wynosi [7690,82 zł brutto (luty 2026)](https://ssgk.stat.gov.pl/Wynagrodzenia_i_swiadczenia_spoleczne.html).
+
 Deficyt w budownictwie ma kilka nakładających się przyczyn: starzenie się obecnej kadry fachowców, spadek zainteresowania szkolnictwem zawodowym w poprzednich dekadach oraz rosnąca liczba inwestycji (mieszkaniowych, infrastrukturalnych, energetycznych) napędzana funduszami unijnymi.
 
 W efekcie firmy budowlane od lat zgłaszają trudności z obsadzeniem stanowisk - zarówno na poziomie wykonawczym, jak i kierowniczym.

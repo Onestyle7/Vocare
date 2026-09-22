@@ -30,6 +30,8 @@ Marketerzy, którzy traktują AI jako narzędzie przyspieszające pracę, a nie 
 
 ## Które specjalizacje marketingowe są dziś najbardziej poszukiwane?
 
+Zanim uznasz którykolwiek z tych zawodów za pewny wybór, sprawdź go lokalnie. specjaliści ds. marketingu i reklamy - to zawody, których status w [Barometrze Zawodów](https://www.barometrzawodow.pl/) bywa różny w zależności od powiatu. Barometr to coroczna prognoza Ministerstwa Rodziny, Pracy i Polityki Społecznej, dzieląca zawody na deficytowe, zrównoważone i nadwyżkowe, publikowana osobno dla każdego powiatu. Dla kalibracji widełek: krajowa mediana wynagrodzeń to [7690,82 zł brutto (luty 2026)](https://ssgk.stat.gov.pl/Wynagrodzenia_i_swiadczenia_spoleczne.html) według GUS - połowa pracujących w Polsce zarabia mniej.
+
 ### Performance marketing / paid media
 
 Zarządzanie kampaniami Google Ads, Meta Ads i innymi platformami płatnymi - z bezpośrednim przełożeniem na wynik sprzedażowy. To jedna z nielicznych ról marketingowych ocenianych czysto liczbami (ROAS, CPA, konwersja).

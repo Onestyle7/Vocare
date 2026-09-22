@@ -30,6 +30,8 @@ Firmy potrzebują ludzi, którzy rozumieją, co system wygenerował, potrafią t
 
 ## Które role w finansach są dziś najbardziej poszukiwane?
 
+Deficyt kadrowy nie jest równomierny w całym kraju. księgowi, analitycy finansowi i specjaliści ds. ryzyka mogą być zawodem deficytowym w jednym powiecie i zrównoważonym w sąsiednim - aktualną prognozę dla swojej okolicy znajdziesz w [Barometrze Zawodów](https://www.barometrzawodow.pl/), corocznym badaniu Ministerstwa Rodziny, Pracy i Polityki Społecznej. Widełki poniżej warto odnosić do krajowej mediany wynagrodzeń, która według GUS wynosi [7690,82 zł brutto (luty 2026)](https://ssgk.stat.gov.pl/Wynagrodzenia_i_swiadczenia_spoleczne.html).
+
 ### Analityk finansowy / FP&A
 
 Łączy wiedzę finansową z umiejętnością budowania modeli, prognoz i raportów zarządczych. Jedna z najbardziej stabilnych i dobrze płatnych ścieżek w finansach korporacyjnych.

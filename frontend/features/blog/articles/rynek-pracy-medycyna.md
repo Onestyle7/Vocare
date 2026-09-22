@@ -22,6 +22,8 @@ Starzejące się społeczeństwo i rosnąca świadomość zdrowotna sprawiają, 
 
 ## Dlaczego deficyt kadr medycznych jest trwały?
 
+Deficyt kadrowy nie jest równomierny w całym kraju. lekarze, pielęgniarki i położne oraz opiekunowie osób starszych mogą być zawodem deficytowym w jednym powiecie i zrównoważonym w sąsiednim - aktualną prognozę dla swojej okolicy znajdziesz w [Barometrze Zawodów](https://www.barometrzawodow.pl/), corocznym badaniu Ministerstwa Rodziny, Pracy i Polityki Społecznej. Widełki poniżej warto odnosić do krajowej mediany wynagrodzeń, która według GUS wynosi [7690,82 zł brutto (luty 2026)](https://ssgk.stat.gov.pl/Wynagrodzenia_i_swiadczenia_spoleczne.html).
+
 W przeciwieństwie do wielu branż, gdzie niedobór specjalistów jest cykliczny (związany z koniunkturą), deficyt w ochronie zdrowia ma podłoże demograficzne. Społeczeństwo się starzeje, co zwiększa zapotrzebowanie na opiekę, jednocześnie liczba absolwentów kierunków medycznych rośnie wolniej niż potrzeby rynku.
 
 To sprawia, że praca w medycynie należy do najbardziej stabilnych zawodowo wyborów - ryzyko utraty pracy z powodu automatyzacji lub spowolnienia gospodarczego jest tu wyjątkowo niskie.
