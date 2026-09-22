@@ -3,6 +3,7 @@ title: 'Umowa na czas określony 2026 - ile razy można ją podpisać'
 description: 'Ile umów o pracę na czas określony można podpisać z jednym pracodawcą? Sprawdź limit 33 miesięcy i 3 umów oraz co się dzieje po jego przekroczeniu.'
 estimatedReadTime: 7
 date: '2026-07-21'
+updatedAt: '2026-09-22'
 author: 'Vocare'
 category: 'praca'
 coverImage: '/images/blog/job-portals.webp'
@@ -16,6 +17,8 @@ Trzecia z rzędu umowa na czas określony z tym samym pracodawcą to często mom
 > - Limit to maksymalnie 3 umowy na czas określony między tym samym pracodawcą a pracownikiem, łącznie nie dłużej niż 33 miesiące
 > - Przekroczenie któregokolwiek z limitów automatycznie przekształca umowę w umowę na czas nieokreślony - nie trzeba nic dodatkowo podpisywać
 > - Umowa na okres próbny nie wlicza się do tego limitu - liczą się tylko umowy na czas określony
+
+_Stan prawny: 22 września 2026 r._
 
 ---
 
@@ -41,6 +44,12 @@ Zgodnie z [Kodeksem pracy](https://isap.sejm.gov.pl/isap.nsf/DocDetails.xsp?id=w
 | Standardowa umowa na czas określony (poza wyjątkami) | Tak |
 
 Pracodawca korzystający z wyjątków (np. zastępstwo) musi wskazać obiektywną przyczynę leżącą po jego stronie - nie może dowolnie omijać limitu, nazywając zwykłą umowę "zastępstwem" bez faktycznej podstawy.
+
+### Jak sprawdzić, czy wyjątek jest prawdziwy
+
+Tu jest narzędzie, o którym mało kto wie: pracodawca, który zawiera umowę terminową z powołaniem na obiektywne przyczyny, **ma obowiązek zawiadomić o tym okręgowego inspektora pracy w ciągu 5 dni roboczych** od jej zawarcia, wraz ze wskazaniem przyczyny. Obowiązek opisuje [Państwowa Inspekcja Pracy](https://www.pip.gov.pl/dla-pracodawcow/pytania-i-odpowiedzi/czy-pracodawca-moze-zawrzec-z-pracownikiem-umowe-o-prace-na-czas-okreslony-przekraczajacy-33-miesiace), a samo zgłoszenie opisane jest w [procedurze na biznes.gov.pl](https://www.biznes.gov.pl/pl/portal/ou781).
+
+Jeśli więc w Twojej umowie pojawia się zapis o obiektywnych przyczynach, a zgłoszenia nie było, jest to sygnał, że wyjątek mógł zostać użyty bezpodstawnie. Zasady limitów podsumowuje też [Zielona Linia](https://zielonalinia.gov.pl/33-miesiace-i-3-umowy-czyli-limity-umowy-terminowej/).
 
 ---
 

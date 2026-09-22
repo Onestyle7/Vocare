@@ -3,6 +3,7 @@ title: 'Nadgodziny w pracy 2026 - ile powinieneś za nie dostać'
 description: 'Ile wynosi dodatek za nadgodziny w 2026 roku? Sprawdź kiedy przysługuje 50%, kiedy 100%, jaki jest roczny limit nadgodzin i jak je wyliczyć.'
 estimatedReadTime: 8
 date: '2026-08-27'
+updatedAt: '2026-09-22'
 author: 'Vocare'
 category: 'praca'
 coverImage: '/images/blog/job-search.webp'
@@ -10,12 +11,14 @@ tags: ['nadgodziny', 'dodatek za nadgodziny', 'wynagrodzenie za nadgodziny', 'li
 slug: 'nadgodziny-wynagrodzenie'
 ---
 
-Nie każda dodatkowa godzina pracy jest wynagradzana tak samo - stawka dodatku zależy od tego, kiedy dokładnie nadgodzina wypadła. **Nadgodziny** to praca wykonywana ponad obowiązujące pracownika normy czasu pracy, za którą Kodeks pracy gwarantuje normalne wynagrodzenie powiększone o dodatek 50% lub 100%, w zależności od okoliczności - dokładne zasady opisuje [praktyczny przewodnik po rozliczaniu nadgodzin](https://inewi.pl/blog/kiedy-50-a-kiedy-100-za-nadgodziny-praktyczny-przewodnik).
+Nie każda dodatkowa godzina pracy jest wynagradzana tak samo - stawka dodatku zależy od tego, kiedy dokładnie nadgodzina wypadła. **Nadgodziny** to praca wykonywana ponad obowiązujące pracownika normy czasu pracy, za którą Kodeks pracy gwarantuje normalne wynagrodzenie powiększone o dodatek 50% lub 100%, w zależności od okoliczności - zasady opisuje [Ministerstwo Rodziny w informacji o pracy nadliczbowej](https://www.gov.pl/web/rodzina/praca-nadliczbowa).
 
 > **Najważniejsze wnioski**
 > - Dodatek 100% przysługuje za nadgodziny w nocy, w niedziele i święta niebędące dla pracownika dniami pracy, dodatek 50% - za pozostałe nadgodziny
 > - Roczny limit nadgodzin wynosi 150 godzin, ale pracodawca może go podnieść w regulaminie maksymalnie do 416 godzin rocznie
 > - Łączny czas pracy z nadgodzinami nie może przeciętnie przekraczać 48 godzin tygodniowo w okresie rozliczeniowym
+
+_Stan prawny: 22 września 2026 r._
 
 ---
 
@@ -39,6 +42,8 @@ Nie każda dodatkowa godzina pracy jest wynagradzana tak samo - stawka dodatku z
 Kodeks pracy ustala domyślny limit 150 godzin nadliczbowych rocznie na pracownika. Pracodawca może ten limit podnieść w regulaminie pracy, układzie zbiorowym lub umowie o pracę - ale nawet podniesiony limit nie może przekroczyć 416 godzin w roku kalendarzowym.
 
 Niezależnie od ustalonego limitu, łączny czas pracy (norma plus nadgodziny) nie może przeciętnie przekraczać 48 godzin tygodniowo w przyjętym okresie rozliczeniowym - to ograniczenie działa niezależnie od limitu rocznego.
+
+**Czego wiele osób nie wie:** nadgodziny zrekompensowane czasem wolnym **i tak wliczają się do limitu 150 godzin**. Forma rekompensaty - dodatek czy dzień wolny - nie ma tu znaczenia, co potwierdza [Państwowa Inspekcja Pracy](https://www.pip.gov.pl/dla-pracownikow/pytania-i-odpowiedzi/czy-godziny-nadliczbowe-zrekompensowane-czasem-wolnym-nalezy-wliczac-do-limitu-150-godzin-nadliczbowych-w-ciagu-roku). Pracodawca nie „wyzeruje" limitu, oddając Ci wolne.
 
 ---
 

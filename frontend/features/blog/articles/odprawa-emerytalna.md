@@ -3,6 +3,7 @@ title: 'Odprawa emerytalna 2026 - komu przysługuje i ile wynosi'
 description: 'Komu przysługuje odprawa emerytalna w 2026 roku i ile wynosi? Sprawdź zasady wypłaty, wyjątki i czy sposób rozwiązania umowy ma znaczenie.'
 estimatedReadTime: 6
 date: '2026-08-05'
+updatedAt: '2026-09-22'
 author: 'Vocare'
 category: 'praca'
 coverImage: '/images/blog/job-search.webp'
@@ -16,6 +17,8 @@ Sposób, w jaki kończy się zatrudnienie, nie ma tu żadnego znaczenia - liczy 
 > - Odprawa emerytalna wynosi równowartość jednomiesięcznego wynagrodzenia pracownika
 > - Sposób rozwiązania stosunku pracy (z inicjatywy pracownika, pracodawcy czy za porozumieniem stron) nie ma znaczenia dla prawa do odprawy
 > - Odprawa nie przysługuje pracownikowi uprawnionemu do renty rodzinnej, a raz otrzymana nie może być nabyta ponownie
+
+_Stan prawny: 22 września 2026 r._
 
 ---
 
@@ -35,7 +38,9 @@ Odprawa przysługuje pracownikowi, który spełnia warunki uprawniające do emer
 | Termin wypłaty | W dniu rozwiązania stosunku pracy |
 | Możliwość ponownego nabycia | Nie - raz otrzymana odprawa wyklucza kolejną |
 
-Warto pamiętać, że [przepisy szczególne](https://poradnikprzedsiebiorcy.pl/-odprawa-emerytalno-rentowa-dla-pracownika) (np. układy zbiorowe pracy, regulaminy wynagradzania) mogą przewidywać wyższą odprawę emerytalną niż ustawowe minimum - warto to sprawdzić w wewnętrznych dokumentach swojego pracodawcy.
+Jednomiesięczne wynagrodzenie to **ustawowe minimum, nie sztywna kwota**. Układy zbiorowe pracy, regulaminy wynagradzania i przepisy branżowe często przewidują odprawy wielokrotnie wyższe - w sferze budżetowej i w dużych zakładach spotyka się odprawy w wysokości trzech, a nawet sześciu pensji, zależnie od stażu. Zanim złożysz wypowiedzenie, sprawdź regulamin wynagradzania swojego pracodawcy: to dokument, który ma obowiązek Ci udostępnić.
+
+Odprawę liczy się według zasad obowiązujących przy ustalaniu ekwiwalentu za urlop wypoczynkowy, a ogólne zasady dotyczące stosunku pracy wyjaśnia [Państwowa Inspekcja Pracy](https://www.pip.gov.pl/dla-pracodawcow/porady-prawne/stosunek-pracy).
 
 ---
 
