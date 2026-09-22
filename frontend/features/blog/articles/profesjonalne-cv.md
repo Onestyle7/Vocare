@@ -181,6 +181,7 @@ Jeśli chcesz sprawdzić jak profesjonalne jest Twoje CV i co konkretnie zmieni�
 ---
 
 ## Powiązane artykuły
+- [CV 2026 - kompletny poradnik jak napisać dobre CV](/blog/cv/cv)
 - [Zdjęcie do CV 2026 - czy warto i jak je dobrze zrobić](/blog/cv/zdjecie-do-cv)
 - [CV wzór 2026 - darmowe szablony do pobrania i edycji](/blog/cv/cv-wzor)
 - [Umiejętności do CV 2026 - co wpisać, żeby wyróżnić aplikację](/blog/cv/umiejetnosci-do-cv)

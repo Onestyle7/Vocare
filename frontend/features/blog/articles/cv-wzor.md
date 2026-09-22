@@ -170,6 +170,7 @@ Chcesz mieć CV, które jest automatycznie analizowane i optymalizowane pod konk
 ---
 
 ## Powiązane artykuły
+- [CV 2026 - kompletny poradnik jak napisać dobre CV](/blog/cv/cv)
 - [Przykładowe CV 2026 - wzory dla różnych stanowisk i branż](/blog/cv/przykladowe-cv)
 - [Jak zrobić CV 2026 - praktyczny poradnik od zera do gotowego pliku](/blog/cv/jak-zrobic-cv)
 - [Kreator CV online 2026 - najlepsze narzędzia do tworzenia CV](/blog/cv/kreator-cv)

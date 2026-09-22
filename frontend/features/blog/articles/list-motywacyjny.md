@@ -48,7 +48,9 @@ Badanie LinkedIn z 2025 roku pokazuje, że 48% rekruterów w Polsce twierdzi, ż
 
 ---
 
-## Struktura listu motywacyjnego - jak go zbudować
+## Co musi osiągnąć każda część listu
+
+Poniżej rola każdego elementu - czemu służy i kiedy nie spełnia zadania. Jeśli szukasz procesu pisania krok po kroku, z pytaniami pomocniczymi i kompletnym przykładem, opisuje go artykuł [jak napisać list motywacyjny](/blog/cv/jak-napisac-list-motywacyjny).
 
 ### Nagłówek
 

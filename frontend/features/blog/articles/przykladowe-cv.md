@@ -230,6 +230,7 @@ Przed wysłaniem warto sprawdzić swoje CV przez narzędzia AI - takie jak [Krea
 ---
 
 ## Powiązane artykuły
+- [CV 2026 - kompletny poradnik jak napisać dobre CV](/blog/cv/cv)
 - [CV wzór 2026 - darmowe szablony do pobrania i edycji](/blog/cv/cv-wzor)
 - [Kreator CV online 2026 - najlepsze narzędzia do tworzenia CV](/blog/cv/kreator-cv)
 - [Profesjonalne CV 2026 - jak wyglądać poważnie na papierze](/blog/cv/profesjonalne-cv)

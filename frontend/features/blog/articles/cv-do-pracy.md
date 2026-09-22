@@ -153,6 +153,7 @@ Jeśli chcesz zautomatyzować ten proces, [Dopasowanie CV do oferty w Vocare](/r
 ---
 
 ## Powiązane artykuły
+- [CV 2026 - kompletny poradnik jak napisać dobre CV](/blog/cv/cv)
 - [Jak zrobić CV 2026 - praktyczny poradnik od zera do gotowego pliku](/blog/cv/jak-zrobic-cv)
 - [CV wzór 2026 - darmowe szablony do pobrania i edycji](/blog/cv/cv-wzor)
 - [Umiejętności do CV 2026 - co wpisać, żeby wyróżnić aplikację](/blog/cv/umiejetnosci-do-cv)

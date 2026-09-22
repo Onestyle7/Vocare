@@ -27,7 +27,9 @@ Znalazłeś idealny wzór listu motywacyjnego w internecie. Wypełniasz go. Wysy
 
 ---
 
-## Zanim pobierzesz wzór - 3 pytania, na które musisz znać odpowiedź
+## Który z trzech wzorów jest dla Ciebie
+
+Wzory różnią się nie stylistyką, tylko problemem, który rozwiązują. Zanim wybierzesz, odpowiedz sobie na trzy pytania - od nich zależy, który szablon ma sens w Twojej sytuacji.
 
 Zanim wypełnisz jakikolwiek wzór, odpowiedz sobie:
 

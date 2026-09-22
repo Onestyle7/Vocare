@@ -119,7 +119,9 @@ Podpisz się: "Z poważaniem, [Imię Nazwisko]"
 
 ---
 
-## Przykładowy list motywacyjny - gotowy wzór
+## Przykład - ta metoda zastosowana od początku do końca
+
+Poniżej jeden kompletny list napisany krok po kroku według powyższej struktury. To ilustracja metody, nie szablon do skopiowania - gotowe wzory dla trzech różnych profili kandydata (specjalista, absolwent, zmiana branży) znajdziesz w artykule ze [wzorami listu motywacyjnego](/blog/cv/wzor-listu-motywacyjnego).
 
 ---
 
@@ -149,19 +151,10 @@ Jan Kowalski
 
 Struktura krok po kroku pokazuje jeden wzorzec: każdy akapit ma jedno zadanie (otwarcie, dowód, dopasowanie do firmy) - antywzorce poniżej to najczęściej próba robienia wszystkiego naraz w jednym akapicie.
 
-## Czego unikać - antywzorce listu motywacyjnego
+## Najczęstsze błędy
 
-**Nieszczery entuzjazm.** "Jestem ogromnie podekscytowany perspektywą dołączenia do Waszego wspaniałego zespołu." To brzmi jak template, nie jak człowiek.
+Metoda opisana wyżej chroni przed większością typowych potknięć, ale warto znać je z nazwy - frazesy bez pokrycia, przepisywanie CV własnymi słowami i nieszczery entuzjazm to trzy, które rekruterzy wychwytują najszybciej. Pełną listę wraz z tym, co postawić w ich miejsce, zebrano w artykule o [liście motywacyjnym](/blog/cv/list-motywacyjny).
 
-**Przepisywanie CV.** Rekruter właśnie przeczytał Twoje CV. Nie powtarzaj tego co tam jest.
-
-**Zbyt długi list.** Jedna strona A4 to maksimum. 300-400 słów to optimum.
-
-**Brak personalizacji.** Jeśli zmieniłeś tylko nazwę firmy - to nie jest personalizacja, to jest kopia.
-
-**Niższe poczucie własnej wartości.** "Śmiem mieć nadzieję, że moja skromna kandydatura spotka się z Państwa łaskawym zainteresowaniem." Nie. Piszesz jak partner, nie petent.
-
----
 
 ## FAQ - jak napisać list motywacyjny
 
