@@ -1,6 +1,7 @@
 import type { Metadata } from 'next';
 import Image from 'next/image';
 import Link from 'next/link';
+import { notFound } from 'next/navigation';
 import Markdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 
@@ -43,9 +44,21 @@ type MetadataProps = {
   params: Promise<{ category: string; slug: string }>;
 };
 
+export const dynamicParams = false;
+
 export async function generateMetadata({ params }: MetadataProps) {
   const { slug, category } = await params;
-  const { data: metadata } = getArticleContent(slug, ARTICLES_FOLDER);
+  const article = getArticleContent(slug, ARTICLES_FOLDER);
+  if (!article || article.data.category !== category) {
+    return {
+      title: 'Nie znaleziono artykułu',
+      robots: {
+        index: false,
+        follow: false,
+      },
+    };
+  }
+  const { data: metadata } = article;
   const canonicalPath = `/blog/${encodeURIComponent(category)}/${encodeURIComponent(slug)}`;
   const articleUrl = toAbsoluteUrl(canonicalPath);
   const coverImageUrl = toAbsoluteUrl(metadata.coverImage);
@@ -90,7 +103,11 @@ export async function generateStaticParams() {
 
 export default async function BlogPage(props: MetadataProps) {
   const { slug, category } = await props.params;
-  const { content, data: metadata } = getArticleContent(slug, ARTICLES_FOLDER);
+  const article = getArticleContent(slug, ARTICLES_FOLDER);
+  if (!article || article.data.category !== category) {
+    notFound();
+  }
+  const { content, data: metadata } = article;
   const canonicalPath = `/blog/${encodeURIComponent(category)}/${encodeURIComponent(slug)}`;
   const articleUrl = toAbsoluteUrl(canonicalPath);
   const imageUrl = toAbsoluteUrl(metadata.coverImage);

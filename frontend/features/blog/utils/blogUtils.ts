@@ -34,7 +34,20 @@ export function calculateReadTime(content: string): number {
 export const getArticleContent = cache((slug: string, baseFolder: string) => {
   try {
     const article_path = baseFolder + `${slug}.md`;
-    const fileContent = fs.readFileSync(article_path, 'utf-8');
+    let fileContent: string;
+    try {
+      fileContent = fs.readFileSync(article_path, 'utf-8');
+    } catch (err: unknown) {
+      if (
+        err &&
+        typeof err === 'object' &&
+        'code' in err &&
+        (err as { code: string }).code === 'ENOENT'
+      ) {
+        return null;
+      }
+      throw err;
+    }
     const matter_result = matter(fileContent);
     const metadata = articleSchema.parse(matter_result.data);
 

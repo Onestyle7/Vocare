@@ -50,6 +50,7 @@ async function authProxy(request: NextRequest) {
   if (searchParams.has('reason')) {
     response.cookies.delete('token');
     response.cookies.delete('userId');
+    response.cookies.delete('is_authenticated');
     return response;
   }
 
@@ -65,7 +66,19 @@ async function authProxy(request: NextRequest) {
     const signInUrl = new URL('/sign-in', request.url);
     signInUrl.searchParams.append('callbackUrl', request.nextUrl.pathname);
     signInUrl.searchParams.append('reason', 'Sesja wygasła. Zaloguj się ponownie');
-    return NextResponse.redirect(signInUrl);
+    const redirectResponse = NextResponse.redirect(signInUrl);
+    redirectResponse.cookies.delete('is_authenticated');
+    return redirectResponse;
+  }
+
+  if (request.cookies.has('token') && !request.cookies.has('is_authenticated')) {
+    response.cookies.set('is_authenticated', '1', {
+      path: '/',
+      sameSite: 'lax',
+      httpOnly: false,
+    });
+  } else if (!request.cookies.has('token') && request.cookies.has('is_authenticated')) {
+    response.cookies.delete('is_authenticated');
   }
 
   return response;

@@ -1,20 +1,38 @@
 'use client';
 
-import { createContext, ReactNode, useContext } from 'react';
+import { createContext, ReactNode, useContext, useEffect, useState } from 'react';
 
-interface AuhtContextType {
+import { getCookie } from '@/lib/utils';
+
+interface AuthContextType {
   isAuthenticated: boolean;
 }
 
-const AuthContext = createContext<AuhtContextType>({ isAuthenticated: false });
+const AuthContext = createContext<AuthContextType>({ isAuthenticated: false });
 
 export function AuthProvider({
-  isAuthenticated,
+  isAuthenticated: initialIsAuthenticated,
   children,
 }: {
-  isAuthenticated: boolean;
+  isAuthenticated?: boolean;
   children: ReactNode;
 }) {
+  const [isAuthenticated, setIsAuthenticated] = useState<boolean>(() => {
+    if (typeof initialIsAuthenticated === 'boolean') {
+      return initialIsAuthenticated;
+    }
+    return false;
+  });
+
+  useEffect(() => {
+    if (typeof initialIsAuthenticated === 'boolean') {
+      setIsAuthenticated(initialIsAuthenticated);
+      return;
+    }
+    const hasAuthCookie = getCookie('is_authenticated') === '1';
+    setIsAuthenticated(hasAuthCookie);
+  }, [initialIsAuthenticated]);
+
   return <AuthContext.Provider value={{ isAuthenticated }}>{children}</AuthContext.Provider>;
 }
 
