@@ -92,7 +92,7 @@ namespace VocareWebAPI.UserManagement.Services
             );
             if (alreadyTaken)
             {
-                _logger.LogInformation("User alredy has taken Welcome bonus tokens");
+                _logger.LogInformation("User {UserId} already received welcome bonus", userId);
                 return 0;
             }
             try
