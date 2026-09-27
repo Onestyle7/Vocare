@@ -8,5 +8,6 @@ namespace VocareWebAPI.UserManagement.Interfaces
     public interface IUserSetupService
     {
         Task SetupNewUserAsync(string userId);
+        Task<int> GrantWelcomeTokensAsync(string userId);
     }
 }

@@ -219,6 +219,12 @@ namespace VocareWebAPI.Data
 
             // Konfiguracja TokenTransaction
             builder.Entity<TokenTransaction>().HasKey(tt => tt.Id);
+            builder
+                .Entity<TokenTransaction>()
+                .HasIndex(tt => tt.UserId)
+                .IsUnique()
+                .HasFilter("\"Type\" = 2")
+                .HasDatabaseName("IX_TokenTransactions_UserId_WelcomeBonus");
 
             // Konfiguracja ServiceCost
             builder.Entity<ServiceCost>().HasKey(sc => sc.Id);

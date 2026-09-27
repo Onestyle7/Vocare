@@ -1,10 +1,8 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
+using Npgsql;
 using VocareWebAPI.Billing.Exceptions;
 using VocareWebAPI.Billing.Models.Entities;
+using VocareWebAPI.Billing.Models.Enums;
 using VocareWebAPI.Billing.Repositories.Interfaces;
 using VocareWebAPI.Data;
 using VocareWebAPI.Shared.Exceptions;
@@ -270,6 +268,53 @@ namespace VocareWebAPI.Billing.Repositories.Implementations
                 .UserBillings.Where(ub => ub.StripeCustomerId == customerId)
                 .Select(ub => ub.UserId)
                 .FirstOrDefaultAsync();
+        }
+
+        public async Task AddTokensWithTransactionAsync(
+            string userId,
+            int amount,
+            TransactionType type,
+            string serviceName
+        )
+        {
+            if (string.IsNullOrWhiteSpace(userId))
+                throw new ArgumentException("User ID cannot be null or empty.", nameof(userId));
+
+            if (amount <= 0)
+                throw new ArgumentException("Amount must be greater than zero.", nameof(amount));
+
+            var userBilling = await _context.UserBillings.FirstOrDefaultAsync(u =>
+                u.UserId == userId
+            );
+
+            if (userBilling == null)
+                throw new UserBillingNotFoundException(userId);
+
+            userBilling.TokenBalance += amount;
+
+            var tokenTransaction = new TokenTransaction
+            {
+                UserId = userId,
+                ServiceName = serviceName,
+                Amount = amount,
+                Type = type,
+                CreatedAt = DateTime.UtcNow,
+            };
+
+            await _context.TokenTransactions.AddAsync(tokenTransaction);
+            try
+            {
+                await _context.SaveChangesAsync();
+            }
+            catch (DbUpdateException ex)
+                when (ex.InnerException is PostgresException pg
+                    && pg.SqlState == PostgresErrorCodes.UniqueViolation
+                    && pg.ConstraintName == "IX_TokenTransactions_UserId_WelcomeBonus"
+                )
+            {
+                _context.ChangeTracker.Clear();
+                throw new WelcomeBonusAlreadyGrantedException(userId);
+            }
         }
     }
 }

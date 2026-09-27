@@ -1,7 +1,3 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 using Microsoft.Extensions.Options;
 using VocareWebAPI.Billing.Exceptions;
 using VocareWebAPI.Billing.Models.Entities;
@@ -17,15 +13,19 @@ namespace VocareWebAPI.UserManagement.Services
         private readonly IUserBillingRepository _userBillingRepository;
         private readonly UserRegistrationConfig _config;
         private readonly ILogger<UserSetupService> _logger;
+        private readonly ITokenTransactionRepository _tokenTransactionRepository;
+        private const string WelcomeBonusServiceName = "WelcomeBonus-MarketingConsent";
 
         public UserSetupService(
             IUserBillingRepository userBillingRepository,
             IOptions<UserRegistrationConfig> config,
+            ITokenTransactionRepository tokenTransactionRepository,
             ILogger<UserSetupService> logger
         )
         {
             _userBillingRepository = userBillingRepository;
             _config = config.Value;
+            _tokenTransactionRepository = tokenTransactionRepository;
             _logger = logger;
         }
 
@@ -56,40 +56,13 @@ namespace VocareWebAPI.UserManagement.Services
                 {
                     _logger.LogInformation("UserBilling already exists for user: {UserId}", userId);
 
-                    // Sprawdzamy czy ma już tokeny welcome
-                    if (existingBilling.TokenBalance >= _config.WelcomeTokens)
-                    {
-                        _logger.LogInformation(
-                            "User {userId} already has enough tokens: {TokenBalance}",
-                            userId,
-                            existingBilling.TokenBalance
-                        );
-                        return;
-                    }
-
-                    // Jeśli ma mniej niż welcome tokens, to ustawiamy mu je
-
-                    var tokensToAdd = Math.Max(
-                        0,
-                        _config.WelcomeTokens - existingBilling.TokenBalance
-                    );
-                    if (tokensToAdd > 0)
-                    {
-                        existingBilling.TokenBalance += tokensToAdd;
-                        await _userBillingRepository.UpdateAsync(existingBilling);
-                        _logger.LogInformation(
-                            "Added {TokensToAdd} welcome tokens to user: {UserId}",
-                            tokensToAdd,
-                            userId
-                        );
-                    }
                     return;
                 }
                 // Tworzenie nowego billing dla nowego użytkownika
                 var userBilling = new UserBilling
                 {
                     UserId = userId,
-                    TokenBalance = _config.WelcomeTokens,
+                    TokenBalance = 0,
                     SubscriptionStatus = (SubscriptionStatus)_config.DefaultSubscriptionStatus,
                     SubscriptionLevel = (SubscriptionLevel)_config.DefaultSubscriptionLevel,
                     LastTokenPurchaseDate = DateTime.UtcNow,
@@ -106,6 +79,46 @@ namespace VocareWebAPI.UserManagement.Services
                 _logger.LogInformation(ex, "Created UserBilling for user: {UserId} failed", userId);
                 throw;
             }
+        }
+
+        public async Task<int> GrantWelcomeTokensAsync(string userId)
+        {
+            if (_config.WelcomeTokens <= 0)
+                return 0;
+
+            var alreadyTaken = await _tokenTransactionRepository.HasTransactionOfTypeAsync(
+                userId,
+                TransactionType.WelcomeBonus
+            );
+            if (alreadyTaken)
+            {
+                _logger.LogInformation("User alredy has taken Welcome bonus tokens");
+                return 0;
+            }
+            try
+            {
+                await _userBillingRepository.AddTokensWithTransactionAsync(
+                    userId,
+                    _config.WelcomeTokens,
+                    TransactionType.WelcomeBonus,
+                    WelcomeBonusServiceName
+                );
+                _logger.LogInformation(
+                    "Granted {Amount} welcome tokens to user {UserId}",
+                    _config.WelcomeTokens,
+                    userId
+                );
+            }
+            catch (WelcomeBonusAlreadyGrantedException)
+            {
+                _logger.LogInformation(
+                    "User {UserId} already received welcome bonus (concurrent request)",
+                    userId
+                );
+                return 0;
+            }
+
+            return _config.WelcomeTokens;
         }
     }
 }
