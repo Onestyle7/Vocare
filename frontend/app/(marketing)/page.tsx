@@ -4,12 +4,14 @@ import Features from './main-components/Features';
 import Hero from './main-components/Hero';
 import HowItWorks from './main-components/HowItWorks';
 import Pricing from './main-components/Pricing';
+import ProductShowcase from './main-components/product-showcase/ProductShowcase';
 
 export default function MainPage() {
   return (
     <>
       <main className="font-poppins w-full overflow-x-hidden">
         <Hero />
+        <ProductShowcase />
         <Features />
         <HowItWorks />
         <TrustScore />
