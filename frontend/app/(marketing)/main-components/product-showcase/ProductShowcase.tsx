@@ -7,6 +7,7 @@ import { cn } from '@/lib/utils';
 
 import { BACKDROP_HEIGHT, BACKDROP_WIDTH } from './backdrop';
 import { productFeatures } from './data';
+import { persona } from './persona';
 import styles from './product-showcase.module.css';
 import ProductShowcaseContent from './ProductShowcaseContent';
 import ProductShowcasePreview from './ProductShowcasePreview';
@@ -24,15 +25,29 @@ export default function ProductShowcase() {
       className={cn(styles.section, 'font-poppins px-4 py-12 sm:px-8 sm:py-16 lg:py-20')}
     >
       <div className="mx-auto mb-8 max-w-2xl text-center sm:mb-10">
-        <p className="mb-3 text-[11px] font-medium tracking-[0.18em] text-[#9296FD] uppercase sm:text-xs">
-          Poznaj swoje miejsce w Vocare
-        </p>
         <h2
           id="product-showcase-title"
-          className="text-[26px] leading-[1.15] font-light text-balance text-[#F1F4FF] sm:text-[34px] lg:text-[40px]"
+          className="w-full text-center text-[28px] leading-[1.15] font-light text-[#F1F4FF] sm:text-[36px] lg:text-[48px] lg:leading-[1.1]"
         >
-          Od pierwszego pytania do gotowego CV.
+          <span className="opacity-[0.79]">Od pierwszego pytania</span>
+          <br />
+          <span className="opacity-[0.79]">do</span>{' '}
+          <span className="bg-[linear-gradient(180deg,#9296FD_0%,#8491FE_50%,#9D9BFF_77%,#C7A9FE_100%)] bg-clip-text font-normal text-transparent">
+            gotowego CV
+          </span>
         </h2>
+        <p className="mx-auto mt-5 flex max-w-xl items-center justify-center gap-3 text-left text-sm leading-relaxed text-[#F1F4FF]/65">
+          <span
+            aria-hidden="true"
+            className="grid size-10 shrink-0 place-items-center rounded-full bg-[linear-gradient(180deg,#9296FD_0%,#C7A9FE_100%)] text-sm font-medium text-[#0F1013]"
+          >
+            {persona.initials}
+          </span>
+          <span>
+            Poznaj {persona.firstNameAccusative}: od 4 lat pracuje w obsłudze klienta e-commerce i
+            szuka kierunku z większym rozwojem. Oto jej droga przez Vocare.
+          </span>
+        </p>
       </div>
       <div
         data-tour-stage
@@ -100,7 +115,7 @@ export default function ProductShowcase() {
                   index === activeIndex ? 'visible' : 'invisible'
                 )}
               >
-                <ProductShowcaseContent feature={feature} />
+                <ProductShowcaseContent feature={feature} step={index + 1} />
                 <ProductShowcasePreview feature={feature} />
               </div>
             ))}
@@ -108,7 +123,8 @@ export default function ProductShowcase() {
         </div>
       </div>
       <p className="mt-5 text-center text-[11px] text-[#F1F4FF]/45">
-        Przykładowe dane · Twój wynik zależy od profilu
+        {persona.firstName} to przykładowa użytkowniczka, a dane są ilustracyjne · Twój wynik zależy
+        od profilu
       </p>
     </section>
   );

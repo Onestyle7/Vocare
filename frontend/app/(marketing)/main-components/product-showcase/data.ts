@@ -1,7 +1,8 @@
 import { ChartNoAxesCombined, Compass, FileText, Route } from 'lucide-react';
 
 // Capabilities verified in assistant, market-analysis, roadmap and resume DAL/UI.
-// Previews use illustrative data, never a request to a paid generation endpoint.
+// The copy follows one made-up user (see persona.ts) through the four steps; previews use
+// illustrative data, never a request to a paid generation endpoint.
 // Colors: accent fills the tab and label icon, soft backs the preview, tint backs chips,
 // ink is the accessible text color on white and tint.
 export const productFeatures = [
@@ -9,52 +10,52 @@ export const productFeatures = [
     id: 'direction',
     label: 'Kierunek',
     eyebrow: 'Doradca kariery',
-    title: 'Zobacz, dokąd prowadzi Twoje doświadczenie',
+    title: 'Marta odkrywa nowy kierunek',
     description:
-      'Porównaj ścieżki dopasowane do Twojego profilu. Zobacz uzasadnienie, potrzebne umiejętności i kolejne kroki.',
+      'Po 4 latach w obsłudze klienta doradca AI analizuje jej profil i wskazuje Customer Success Managera. Z uzasadnieniem, kolejnymi krokami i alternatywami.',
     icon: Compass,
     href: '/assistant',
     cta: 'Poznaj doradcę kariery',
-    screen: 'Rekomendacje zawodowe',
+    screen: 'Doradca kariery AI: rekomendacja dla Marty',
     colors: { accent: '#4890e3', soft: '#c3dffe', tint: '#e6f0fd', ink: '#1a5fb4' },
   },
   {
     id: 'market',
     label: 'Rynek',
     eyebrow: 'Analiza rynku',
-    title: 'Sprawdź rynek, zanim wybierzesz cel',
+    title: 'Sprawdza rynek, zanim zacznie naukę',
     description:
-      'Porównaj wynagrodzenia na różnych poziomach doświadczenia. Sprawdź, które kompetencje warto rozwinąć przed wejściem do branży.',
+      'Widzi widełki od juniora do leada i to, jak trudno wejść do zawodu. Od gotowości dzielą ją trzy umiejętności i kilka miesięcy nauki.',
     icon: ChartNoAxesCombined,
     href: '/market-analysis',
     cta: 'Zobacz analizę rynku',
-    screen: 'Analiza rynku pracy',
+    screen: 'Analiza rynku: Customer Success Manager',
     colors: { accent: '#14c1b6', soft: '#bdefea', tint: '#e2f7f5', ink: '#0b6f69' },
   },
   {
     id: 'roadmap',
     label: 'Plan',
     eyebrow: 'Twoja roadmapa',
-    title: 'Zamień wybrany kierunek w plan działania',
+    title: 'Dostaje plan na cztery miesiące',
     description:
-      'Wybierz ścieżkę i czas na naukę. Otrzymasz mapę etapów z zadaniami. Oznaczaj postępy i sprawdzaj, co dalej.',
+      'Roadmapa rozpisuje drogę do celu na etapy i zadania, także te brakujące umiejętności. Marta oznacza kolejne kroki i widzi swój postęp.',
     icon: Route,
     href: '/roadmap',
     cta: 'Poznaj roadmapę',
-    screen: 'Roadmapa rozwoju',
+    screen: 'Roadmapa Marty na cztery miesiące',
     colors: { accent: '#997edf', soft: '#ddd3fa', tint: '#efeafc', ink: '#5f45b8' },
   },
   {
     id: 'resume',
     label: 'CV',
     eyebrow: 'Kreator CV',
-    title: 'Przygotuj CV do konkretnej oferty',
+    title: 'Kończy z CV pod konkretną ofertę',
     description:
-      'Wklej ofertę, a Vocare przygotuje CV z Twojego profilu. Uzupełnij treść w edytorze i pobierz gotowy dokument.',
+      'Wkleja ogłoszenie, a kreator buduje CV z jej profilu pod tę ofertę. Audyt jakości ocenia dokument i dopasowanie do stanowiska.',
     icon: FileText,
     href: '/resume-creator',
     cta: 'Zobacz kreator CV',
-    screen: 'CV dopasowane do oferty',
+    screen: 'CV Marty dopasowane do oferty',
     colors: { accent: '#e07bdb', soft: '#f7d4f5', tint: '#fcebfb', ink: '#9b2f95' },
   },
 ] as const;

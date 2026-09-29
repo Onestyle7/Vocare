@@ -4,6 +4,13 @@ import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { renderToString } from 'react-dom/server';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
+import {
+  cv,
+  market,
+  persona,
+  recommendation,
+  roadmap,
+} from '@/app/(marketing)/main-components/product-showcase/persona';
 import ProductShowcase from '@/app/(marketing)/main-components/product-showcase/ProductShowcase';
 import {
   EDGE_SCROLL,
@@ -78,11 +85,22 @@ describe('ProductShowcase', () => {
     const html = renderToString(<ProductShowcase />);
 
     expect(html).toContain('Główna rekomendacja');
-    expect(html).toContain('Wynagrodzenie a doświadczenie');
-    expect(html).toContain('Przećwicz onboarding');
-    expect(html).toContain('Gotowe do edycji i pobrania');
+    expect(html).toContain('Progresja wynagrodzeń');
+    expect(html).toContain('Kurs HubSpot CRM');
+    expect(html).toContain('Wynik ogólny');
     expect(html.match(/aria-selected="true"/g)).toHaveLength(1);
     expect(html.match(/aria-hidden="false"/g)).toHaveLength(1);
+  });
+
+  it("follows one user's path from the recommendation to the CV", () => {
+    const html = renderToString(<ProductShowcase />);
+
+    for (const role of [market.careerName, roadmap.careerPathName, cv.targetPosition]) {
+      expect(role).toBe(recommendation.primaryPath);
+    }
+    // What the market analysis says she lacks is what her CV finally lists.
+    expect(cv.skills).toEqual(expect.arrayContaining(market.entryDifficulty.missingSkills));
+    expect(html.split(persona.firstName).length - 1).toBeGreaterThanOrEqual(4);
   });
 
   it('supports arrow keys, wraparound, Home and End without exposing inactive panels', () => {
@@ -116,7 +134,7 @@ describe('ProductShowcase', () => {
     const { container, unmount } = render(<ProductShowcase />);
     fireEvent.click(screen.getByRole('tab', { name: 'Rynek' }));
 
-    expect(screen.getByRole('tabpanel').textContent).toContain('Wynagrodzenie a doświadczenie');
+    expect(screen.getByRole('tabpanel').textContent).toContain('Progresja wynagrodzeń');
     expect(screen.getByRole('link', { name: 'Zobacz analizę rynku' }).getAttribute('href')).toBe(
       '/market-analysis'
     );
