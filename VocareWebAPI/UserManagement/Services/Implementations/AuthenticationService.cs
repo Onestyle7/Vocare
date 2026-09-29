@@ -3,11 +3,9 @@ using System.Text.Json;
 using System.Web;
 using Microsoft.AspNetCore.DataProtection;
 using Microsoft.AspNetCore.Identity;
-using Microsoft.AspNetCore.Mvc.ModelBinding.Binders;
 using VocareWebAPI.Billing.Models.Entities;
 using VocareWebAPI.Data;
 using VocareWebAPI.Models.Entities;
-using VocareWebAPI.Shared.Exceptions;
 using VocareWebAPI.Shared.Results;
 using VocareWebAPI.UserManagement.Interfaces;
 using VocareWebAPI.UserManagement.Models.Results;
@@ -194,7 +192,8 @@ namespace VocareWebAPI.UserManagement.Services.Implementations
             // Zgody są poza transakcją z tego względu, że nie są krytyczne do działania konta
             // Jeśli coś pójdzie nie tak z zapisaniem zgody to puszczamy fallback ze zgodą na false - w najgorszym przypadku nie zbierzemy zgody
             // TODO: Kiedyś może wydzielić wewnętrzy try/catch żeby bylo trochę ładniej
-            var welcomeTokensGranted = 0;
+            WelcomeBonusResult? welcomeBonus = null;
+
             if (acceptMarketingConsent)
             {
                 try
@@ -215,20 +214,10 @@ namespace VocareWebAPI.UserManagement.Services.Implementations
                         "Marketing consent recorded for user: {UserId}",
                         user.Id
                     );
-                    try
-                    {
-                        welcomeTokensGranted = await _userSetupService.GrantWelcomeTokensAsync(
-                            user.Id
-                        );
-                    }
-                    catch (Exception ex)
-                    {
-                        _logger.LogError(
-                            ex,
-                            "failed to grant welcome tokens for user: {UserId}",
-                            user.Id
-                        );
-                    }
+
+                    welcomeBonus = await _userSetupService.GrantOrScheduleWelcomeTokensAsync(
+                        user.Id
+                    );
                 }
                 catch (Exception ex)
                 {
@@ -264,9 +253,7 @@ namespace VocareWebAPI.UserManagement.Services.Implementations
                 }
             }
 
-            return Result<RegisterResult>.Ok(
-                RegisterResult.Successful(user.Id, welcomeTokensGranted)
-            );
+            return Result<RegisterResult>.Ok(RegisterResult.Successful(user.Id, welcomeBonus));
         }
 
         public async Task<Result<ForgotPasswordResult>> ForgotPasswordAsync(string email)

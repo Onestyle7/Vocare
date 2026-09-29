@@ -1,3 +1,4 @@
+using Hangfire;
 using Microsoft.Extensions.Options;
 using VocareWebAPI.Billing.Exceptions;
 using VocareWebAPI.Billing.Models.Entities;
@@ -5,6 +6,8 @@ using VocareWebAPI.Billing.Models.Enums;
 using VocareWebAPI.Billing.Repositories.Interfaces;
 using VocareWebAPI.UserManagement.Interfaces;
 using VocareWebAPI.UserManagement.Models.Entities;
+using VocareWebAPI.UserManagement.Models.Enums;
+using VocareWebAPI.UserManagement.Models.Results;
 
 namespace VocareWebAPI.UserManagement.Services
 {
@@ -14,18 +17,21 @@ namespace VocareWebAPI.UserManagement.Services
         private readonly UserRegistrationConfig _config;
         private readonly ILogger<UserSetupService> _logger;
         private readonly ITokenTransactionRepository _tokenTransactionRepository;
+        private readonly IBackgroundJobClient _backgroundJobClient;
         private const string WelcomeBonusServiceName = "WelcomeBonus-MarketingConsent";
 
         public UserSetupService(
             IUserBillingRepository userBillingRepository,
             IOptions<UserRegistrationConfig> config,
             ITokenTransactionRepository tokenTransactionRepository,
-            ILogger<UserSetupService> logger
+            ILogger<UserSetupService> logger,
+            IBackgroundJobClient backgroundJobClient
         )
         {
             _userBillingRepository = userBillingRepository;
             _config = config.Value;
             _tokenTransactionRepository = tokenTransactionRepository;
+            _backgroundJobClient = backgroundJobClient;
             _logger = logger;
         }
 
@@ -81,10 +87,10 @@ namespace VocareWebAPI.UserManagement.Services
             }
         }
 
-        public async Task<int> GrantWelcomeTokensAsync(string userId)
+        public async Task<WelcomeBonusResult> GrantWelcomeTokensAsync(string userId)
         {
             if (_config.WelcomeTokens <= 0)
-                return 0;
+                return new WelcomeBonusResult(WelcomeBonusStatus.Disabled, 0);
 
             var alreadyTaken = await _tokenTransactionRepository.HasTransactionOfTypeAsync(
                 userId,
@@ -93,7 +99,7 @@ namespace VocareWebAPI.UserManagement.Services
             if (alreadyTaken)
             {
                 _logger.LogInformation("User {UserId} already received welcome bonus", userId);
-                return 0;
+                return new WelcomeBonusResult(WelcomeBonusStatus.AlreadyClaimed, 0);
             }
             try
             {
@@ -115,10 +121,36 @@ namespace VocareWebAPI.UserManagement.Services
                     "User {UserId} already received welcome bonus (concurrent request)",
                     userId
                 );
-                return 0;
+                return new WelcomeBonusResult(WelcomeBonusStatus.AlreadyClaimed, 0);
             }
 
-            return _config.WelcomeTokens;
+            return new WelcomeBonusResult(WelcomeBonusStatus.Granted, _config.WelcomeTokens);
+        }
+
+        public async Task<WelcomeBonusResult> GrantOrScheduleWelcomeTokensAsync(string userId)
+        {
+            try
+            {
+                var result = await GrantWelcomeTokensAsync(userId);
+                return result;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Błąd przypisania tokenów {UserId}", userId);
+                try
+                {
+                    _backgroundJobClient.Enqueue<IUserSetupService>(s =>
+                        s.GrantWelcomeTokensAsync(userId)
+                    );
+
+                    return new WelcomeBonusResult(WelcomeBonusStatus.Pending, 0);
+                }
+                catch (Exception ex2)
+                {
+                    _logger.LogError(ex2, "Failed to grant tokens for user {UserId}", userId);
+                    return new WelcomeBonusResult(WelcomeBonusStatus.Failed, 0);
+                }
+            }
         }
     }
 }

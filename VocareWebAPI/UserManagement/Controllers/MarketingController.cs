@@ -115,18 +115,15 @@ namespace VocareWebAPI.UserManagement.Controllers
 
                 _logger.LogInformation("Marketing consent re-granted by user: {UserId}", userId);
             }
-            var welcomeTokensGranted = 0;
 
-            try
-            {
-                welcomeTokensGranted = await _userSetupService.GrantWelcomeTokensAsync(userId);
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, "Failed to grant welcome tokens for user: {UserId}", userId);
-            }
+            var welcomeBonus = await _userSetupService.GrantOrScheduleWelcomeTokensAsync(userId);
             return Ok(
-                new { message = "Zgoda marketingowa została udzielona.", welcomeTokensGranted }
+                new
+                {
+                    message = "Zgoda marketingowa została udzielona.",
+                    welcomeBonusStatus = welcomeBonus.Status,
+                    welcomeTokensGranted = welcomeBonus.Amount,
+                }
             );
         }
 

@@ -1,5 +1,9 @@
+using System;
 using System.Threading.Tasks;
 using FluentAssertions;
+using Hangfire;
+using Hangfire.Common;
+using Hangfire.States;
 using Microsoft.Extensions.Logging.Abstractions;
 using Microsoft.Extensions.Options;
 using Moq;
@@ -9,6 +13,8 @@ using VocareWebAPI.Billing.Models.Enums;
 using VocareWebAPI.Billing.Repositories.Interfaces;
 using VocareWebAPI.UserManagement.Interfaces;
 using VocareWebAPI.UserManagement.Models.Entities;
+using VocareWebAPI.UserManagement.Models.Enums;
+using VocareWebAPI.UserManagement.Models.Results;
 using VocareWebAPI.UserManagement.Services;
 using Xunit;
 
@@ -26,13 +32,15 @@ namespace VocareWebApi.Tests.UserManagement.Services
 
         private readonly Mock<IUserBillingRepository> _billing = new(MockBehavior.Strict);
         private readonly Mock<ITokenTransactionRepository> _transactions = new(MockBehavior.Strict);
+        private readonly Mock<IBackgroundJobClient> _jobs = new();
 
         private UserSetupService CreateSut(int welcomeTokens = WelcomeTokens) =>
             new(
                 _billing.Object,
                 Options.Create(new UserRegistrationConfig { WelcomeTokens = welcomeTokens }),
                 _transactions.Object,
-                NullLogger<UserSetupService>.Instance
+                NullLogger<UserSetupService>.Instance,
+                _jobs.Object
             );
 
         // ---------- SetupNewUserAsync ----------
@@ -92,7 +100,7 @@ namespace VocareWebApi.Tests.UserManagement.Services
 
             var granted = await CreateSut().GrantWelcomeTokensAsync(UserId);
 
-            granted.Should().Be(WelcomeTokens);
+            granted.Should().Be(new WelcomeBonusResult(WelcomeBonusStatus.Granted, WelcomeTokens));
             _billing.Verify(
                 r =>
                     r.AddTokensWithTransactionAsync(
@@ -106,7 +114,7 @@ namespace VocareWebApi.Tests.UserManagement.Services
         }
 
         [Fact]
-        public async Task GrantWelcomeTokensAsync_WhenAlreadyGranted_ReturnsZeroWithoutAddingTokens()
+        public async Task GrantWelcomeTokensAsync_WhenAlreadyGranted_ReturnsAlreadyClaimedWithoutAddingTokens()
         {
             _transactions
                 .Setup(r => r.HasTransactionOfTypeAsync(UserId, TransactionType.WelcomeBonus))
@@ -114,12 +122,12 @@ namespace VocareWebApi.Tests.UserManagement.Services
 
             var granted = await CreateSut().GrantWelcomeTokensAsync(UserId);
 
-            granted.Should().Be(0);
+            granted.Should().Be(new WelcomeBonusResult(WelcomeBonusStatus.AlreadyClaimed, 0));
             _billing.VerifyNoOtherCalls();
         }
 
         [Fact]
-        public async Task GrantWelcomeTokensAsync_WhenConcurrentRequestGrantedFirst_ReturnsZero()
+        public async Task GrantWelcomeTokensAsync_WhenConcurrentRequestGrantedFirst_ReturnsAlreadyClaimed()
         {
             _transactions
                 .Setup(r => r.HasTransactionOfTypeAsync(UserId, TransactionType.WelcomeBonus))
@@ -137,21 +145,85 @@ namespace VocareWebApi.Tests.UserManagement.Services
 
             var granted = await CreateSut().GrantWelcomeTokensAsync(UserId);
 
-            granted.Should().Be(0);
+            granted.Should().Be(new WelcomeBonusResult(WelcomeBonusStatus.AlreadyClaimed, 0));
         }
 
         [Theory]
         [InlineData(0)]
         [InlineData(-5)]
-        public async Task GrantWelcomeTokensAsync_WhenWelcomeTokensDisabled_ReturnsZeroWithoutTouchingRepositories(
+        public async Task GrantWelcomeTokensAsync_WhenWelcomeTokensDisabled_ReturnsDisabledWithoutTouchingRepositories(
             int welcomeTokens
         )
         {
             var granted = await CreateSut(welcomeTokens).GrantWelcomeTokensAsync(UserId);
 
-            granted.Should().Be(0);
+            granted.Should().Be(new WelcomeBonusResult(WelcomeBonusStatus.Disabled, 0));
             _transactions.VerifyNoOtherCalls();
             _billing.VerifyNoOtherCalls();
+        }
+
+        // ---------- GrantOrScheduleWelcomeTokensAsync ----------
+
+        [Fact]
+        public async Task GrantOrScheduleWelcomeTokensAsync_WhenGrantSucceeds_ReturnsGrantedWithoutEnqueueing()
+        {
+            _transactions
+                .Setup(r => r.HasTransactionOfTypeAsync(UserId, TransactionType.WelcomeBonus))
+                .ReturnsAsync(false);
+            _billing
+                .Setup(r =>
+                    r.AddTokensWithTransactionAsync(
+                        UserId,
+                        WelcomeTokens,
+                        TransactionType.WelcomeBonus,
+                        WelcomeBonusServiceName
+                    )
+                )
+                .Returns(Task.CompletedTask);
+
+            var result = await CreateSut().GrantOrScheduleWelcomeTokensAsync(UserId);
+
+            result.Should().Be(new WelcomeBonusResult(WelcomeBonusStatus.Granted, WelcomeTokens));
+            _jobs.Verify(c => c.Create(It.IsAny<Job>(), It.IsAny<IState>()), Times.Never);
+        }
+
+        [Fact]
+        public async Task GrantOrScheduleWelcomeTokensAsync_WhenGrantThrows_EnqueuesRetryAndReturnsPending()
+        {
+            _transactions
+                .Setup(r => r.HasTransactionOfTypeAsync(UserId, TransactionType.WelcomeBonus))
+                .ThrowsAsync(new InvalidOperationException("db down"));
+
+            var result = await CreateSut().GrantOrScheduleWelcomeTokensAsync(UserId);
+
+            result.Should().Be(new WelcomeBonusResult(WelcomeBonusStatus.Pending, 0));
+            _jobs.Verify(
+                c =>
+                    c.Create(
+                        It.Is<Job>(j =>
+                            j.Type == typeof(IUserSetupService)
+                            && j.Method.Name == nameof(IUserSetupService.GrantWelcomeTokensAsync)
+                            && (string)j.Args[0] == UserId
+                        ),
+                        It.IsAny<EnqueuedState>()
+                    ),
+                Times.Once
+            );
+        }
+
+        [Fact]
+        public async Task GrantOrScheduleWelcomeTokensAsync_WhenEnqueueAlsoFails_ReturnsFailed()
+        {
+            _transactions
+                .Setup(r => r.HasTransactionOfTypeAsync(UserId, TransactionType.WelcomeBonus))
+                .ThrowsAsync(new InvalidOperationException("db down"));
+            _jobs
+                .Setup(c => c.Create(It.IsAny<Job>(), It.IsAny<IState>()))
+                .Throws(new InvalidOperationException("hangfire down"));
+
+            var result = await CreateSut().GrantOrScheduleWelcomeTokensAsync(UserId);
+
+            result.Should().Be(new WelcomeBonusResult(WelcomeBonusStatus.Failed, 0));
         }
     }
 }

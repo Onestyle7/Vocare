@@ -20,6 +20,7 @@ using VocareWebAPI.UserManagement.Controllers;
 using VocareWebAPI.UserManagement.Exceptions;
 using VocareWebAPI.UserManagement.Interfaces;
 using VocareWebAPI.UserManagement.Models.Dtos;
+using VocareWebAPI.UserManagement.Models.Enums;
 using VocareWebAPI.UserManagement.Models.Results;
 using VocareWebAPI.UserManagement.Repositories.Interfaces;
 using VocareWebAPI.UserManagement.Services.Interfaces;
@@ -197,16 +198,15 @@ namespace VocareWebApi.Tests.UserManagement.Controllers
             _repository
                 .Setup(r => r.CreateAsync(It.IsAny<MarketingConsent>()))
                 .Returns(Task.CompletedTask);
-            _userSetup.Setup(s => s.GrantWelcomeTokensAsync(UserId)).ReturnsAsync(120);
+            _userSetup
+                .Setup(s => s.GrantOrScheduleWelcomeTokensAsync(UserId))
+                .ReturnsAsync(new WelcomeBonusResult(WelcomeBonusStatus.Granted, 120));
 
             var result = await _sut.GiveMarketingConsent();
 
-            result
-                .Should()
-                .BeOfType<OkObjectResult>()
-                .Which.Value!.GetProperty("welcomeTokensGranted")
-                .Should()
-                .Be(120);
+            var value = result.Should().BeOfType<OkObjectResult>().Which.Value!;
+            value.GetProperty("welcomeTokensGranted").Should().Be(120);
+            value.GetProperty("welcomeBonusStatus").Should().Be(WelcomeBonusStatus.Granted);
             _repository.Verify(
                 r => r.CreateAsync(It.Is<MarketingConsent>(c => c.IsConsentGiven)),
                 Times.Once
@@ -214,27 +214,26 @@ namespace VocareWebApi.Tests.UserManagement.Controllers
         }
 
         [Fact]
-        public async Task GiveMarketingConsent_WhenRestoringWithdrawnConsent_ReturnsGrantResult()
+        public async Task GiveMarketingConsent_WhenRestoringWithdrawnConsent_ReturnsAlreadyClaimed()
         {
             var consent = new MarketingConsent { UserId = UserId, IsConsentGiven = false };
             _repository.Setup(r => r.GetByUserIdAsync(UserId)).ReturnsAsync(consent);
             _repository.Setup(r => r.UpdateAsync(consent)).Returns(Task.CompletedTask);
-            _userSetup.Setup(s => s.GrantWelcomeTokensAsync(UserId)).ReturnsAsync(0);
+            _userSetup
+                .Setup(s => s.GrantOrScheduleWelcomeTokensAsync(UserId))
+                .ReturnsAsync(new WelcomeBonusResult(WelcomeBonusStatus.AlreadyClaimed, 0));
 
             var result = await _sut.GiveMarketingConsent();
 
             consent.IsConsentGiven.Should().BeTrue();
-            result
-                .Should()
-                .BeOfType<OkObjectResult>()
-                .Which.Value!.GetProperty("welcomeTokensGranted")
-                .Should()
-                .Be(0);
-            _userSetup.Verify(s => s.GrantWelcomeTokensAsync(UserId), Times.Once);
+            var value = result.Should().BeOfType<OkObjectResult>().Which.Value!;
+            value.GetProperty("welcomeTokensGranted").Should().Be(0);
+            value.GetProperty("welcomeBonusStatus").Should().Be(WelcomeBonusStatus.AlreadyClaimed);
+            _userSetup.Verify(s => s.GrantOrScheduleWelcomeTokensAsync(UserId), Times.Once);
         }
 
         [Fact]
-        public async Task GiveMarketingConsent_WhenGrantFails_StillReturnsOkWithZeroTokens()
+        public async Task GiveMarketingConsent_WhenGrantIsScheduled_ReturnsOkWithPendingStatus()
         {
             _repository
                 .Setup(r => r.GetByUserIdAsync(UserId))
@@ -243,17 +242,14 @@ namespace VocareWebApi.Tests.UserManagement.Controllers
                 .Setup(r => r.CreateAsync(It.IsAny<MarketingConsent>()))
                 .Returns(Task.CompletedTask);
             _userSetup
-                .Setup(s => s.GrantWelcomeTokensAsync(UserId))
-                .ThrowsAsync(new InvalidOperationException("db down"));
+                .Setup(s => s.GrantOrScheduleWelcomeTokensAsync(UserId))
+                .ReturnsAsync(new WelcomeBonusResult(WelcomeBonusStatus.Pending, 0));
 
             var result = await _sut.GiveMarketingConsent();
 
-            result
-                .Should()
-                .BeOfType<OkObjectResult>()
-                .Which.Value!.GetProperty("welcomeTokensGranted")
-                .Should()
-                .Be(0);
+            var value = result.Should().BeOfType<OkObjectResult>().Which.Value!;
+            value.GetProperty("welcomeTokensGranted").Should().Be(0);
+            value.GetProperty("welcomeBonusStatus").Should().Be(WelcomeBonusStatus.Pending);
         }
 
         [Fact]

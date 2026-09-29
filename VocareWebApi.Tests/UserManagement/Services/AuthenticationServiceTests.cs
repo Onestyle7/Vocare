@@ -16,6 +16,8 @@ using VocareWebAPI.Models.Entities;
 using VocareWebApi.Tests.Common;
 using VocareWebAPI.UserManagement;
 using VocareWebAPI.UserManagement.Interfaces;
+using VocareWebAPI.UserManagement.Models.Enums;
+using VocareWebAPI.UserManagement.Models.Results;
 using VocareWebAPI.UserManagement.Repositories.Interfaces;
 using VocareWebAPI.UserManagement.Services.Implementations;
 using VocareWebAPI.UserManagement.Services.Interfaces;
@@ -215,20 +217,27 @@ namespace VocareWebApi.Tests.UserManagement.Services
 
             var result = await _sut.RegisterAsync(Email, Password, false, null);
 
-            result.Value!.WelcomeTokensGranted.Should().Be(0);
-            _userSetup.Verify(s => s.GrantWelcomeTokensAsync(It.IsAny<string>()), Times.Never);
+            result.Value!.WelcomeBonus.Should().BeNull();
+            _userSetup.Verify(
+                s => s.GrantOrScheduleWelcomeTokensAsync(It.IsAny<string>()),
+                Times.Never
+            );
         }
 
         [Fact]
         public async Task RegisterAsync_WithMarketingConsent_GrantsWelcomeTokensAndReturnsAmount()
         {
             SetupSuccessfulIdentityCreation();
-            _userSetup.Setup(s => s.GrantWelcomeTokensAsync(It.IsAny<string>())).ReturnsAsync(120);
+            _userSetup
+                .Setup(s => s.GrantOrScheduleWelcomeTokensAsync(It.IsAny<string>()))
+                .ReturnsAsync(new WelcomeBonusResult(WelcomeBonusStatus.Granted, 120));
 
             var result = await _sut.RegisterAsync(Email, Password, true, "127.0.0.1");
 
             result.IsSuccess.Should().BeTrue();
-            result.Value!.WelcomeTokensGranted.Should().Be(120);
+            result
+                .Value!.WelcomeBonus.Should()
+                .Be(new WelcomeBonusResult(WelcomeBonusStatus.Granted, 120));
             _marketingConsent.Verify(
                 r => r.CreateAsync(It.Is<MarketingConsent>(c => c.IsConsentGiven)),
                 Times.Once
@@ -246,22 +255,27 @@ namespace VocareWebApi.Tests.UserManagement.Services
             var result = await _sut.RegisterAsync(Email, Password, true, null);
 
             result.IsSuccess.Should().BeTrue();
-            result.Value!.WelcomeTokensGranted.Should().Be(0);
-            _userSetup.Verify(s => s.GrantWelcomeTokensAsync(It.IsAny<string>()), Times.Never);
+            result.Value!.WelcomeBonus.Should().BeNull();
+            _userSetup.Verify(
+                s => s.GrantOrScheduleWelcomeTokensAsync(It.IsAny<string>()),
+                Times.Never
+            );
         }
 
         [Fact]
-        public async Task RegisterAsync_WhenGrantFails_SucceedsWithoutFallbackConsent()
+        public async Task RegisterAsync_WhenGrantIsScheduled_SucceedsWithPendingBonusAndWithoutFallbackConsent()
         {
             SetupSuccessfulIdentityCreation();
             _userSetup
-                .Setup(s => s.GrantWelcomeTokensAsync(It.IsAny<string>()))
-                .ThrowsAsync(new InvalidOperationException("db down"));
+                .Setup(s => s.GrantOrScheduleWelcomeTokensAsync(It.IsAny<string>()))
+                .ReturnsAsync(new WelcomeBonusResult(WelcomeBonusStatus.Pending, 0));
 
             var result = await _sut.RegisterAsync(Email, Password, true, null);
 
             result.IsSuccess.Should().BeTrue();
-            result.Value!.WelcomeTokensGranted.Should().Be(0);
+            result
+                .Value!.WelcomeBonus.Should()
+                .Be(new WelcomeBonusResult(WelcomeBonusStatus.Pending, 0));
             _marketingConsent.Verify(
                 r => r.CreateAsync(It.Is<MarketingConsent>(c => !c.IsConsentGiven)),
                 Times.Never
