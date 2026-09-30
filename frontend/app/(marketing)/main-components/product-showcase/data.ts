@@ -36,13 +36,13 @@ export const productFeatures = [
     id: 'roadmap',
     label: 'Plan',
     eyebrow: 'Twoja roadmapa',
-    title: 'Dostaje plan na cztery miesiące',
+    title: 'Dostaje plan na trzy miesiące',
     description:
       'Roadmapa rozpisuje drogę do celu na etapy i zadania, także te brakujące umiejętności. Marta oznacza kolejne kroki i widzi swój postęp.',
     icon: Route,
     href: '/roadmap',
     cta: 'Poznaj roadmapę',
-    screen: 'Roadmapa Marty na cztery miesiące',
+    screen: 'Roadmapa Marty na trzy miesiące',
     colors: { accent: '#997edf', soft: '#ddd3fa', tint: '#efeafc', ink: '#5f45b8' },
   },
   {

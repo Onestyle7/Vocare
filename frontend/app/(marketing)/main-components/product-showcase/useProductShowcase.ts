@@ -48,6 +48,11 @@ export function useProductShowcase() {
       const close = find('[data-tour-close]');
       const panels = gsap.utils.toArray<HTMLElement>('[data-tour-panel]', section);
       const tabs = gsap.utils.toArray<HTMLButtonElement>('[role="tab"]', section);
+      const videos = panels.map((panel) =>
+        panel.querySelector<HTMLVideoElement>('[data-tour-video]')
+      );
+      // The first play waits until the preview is on screen; later ones follow the tabs.
+      let hasPlayedVideo = false;
       let media: gsap.MatchMedia | undefined;
       let minimumHeight = 0;
       let resizeFrame = 0;
@@ -75,7 +80,6 @@ export function useProductShowcase() {
           (mediaContext) => {
             const reduced = Boolean(mediaContext.conditions?.reduced);
             let transition: gsap.core.Timeline | undefined;
-            let preview: gsap.core.Timeline | undefined;
             let trackTween: gsap.core.Tween | undefined;
             let expandTween: gsap.core.Timeline | undefined;
             let scrollTween: gsap.core.Tween | undefined;
@@ -88,35 +92,31 @@ export function useProductShowcase() {
 
             // Bind callbacks to this media context, not its parent useGSAP context.
             // That also reverts event-created animations when a media query changes.
-            const revealPreview = mediaContext.add('revealPreview', (index: number) => {
-              preview?.kill();
-              if (reduced) return;
-              const panel = panels[index];
-              preview = gsap
-                .timeline({ defaults: { ease: 'power2.out' } })
-                .fromTo(
-                  panel.querySelectorAll('[data-tour-reveal]'),
-                  { opacity: 0, y: 6 },
-                  { opacity: 1, y: 0, duration: 0.4, stagger: 0.07 },
-                  0.1
-                );
-              const bars = panel.querySelectorAll('[data-tour-bar]');
-              if (bars.length) {
-                preview.fromTo(
-                  bars,
-                  { scaleX: 0 },
-                  { scaleX: 1, duration: 0.7, stagger: 0.1 },
-                  0.2
-                );
-              }
-            });
+            // A walkthrough plays from the start whenever its feature is shown and stops on its
+            // last frame; hidden ones pause. Reduced motion keeps the final frame still.
+            const playVideos = (index: number) => {
+              videos.forEach((video, videoIndex) => {
+                if (!video) return;
+                if (reduced || videoIndex !== index) {
+                  video.pause();
+                  if (reduced && video.currentTime > 0 && Number.isFinite(video.duration)) {
+                    video.currentTime = video.duration;
+                  }
+                  return;
+                }
+                hasPlayedVideo = true;
+                video.currentTime = 0;
+                // Playback can be refused (e.g. power saving); the poster then stays.
+                video.play().catch(() => {});
+              });
+            };
+            if (reduced) playVideos(activeRef.current);
 
             const activate = mediaContext.add('activate', (index: number) => {
               if (index === activeRef.current) return;
               const previous = panels[activeRef.current];
               const next = panels[index];
               transition?.kill();
-              preview?.kill();
               trackTween?.kill();
 
               // Never leave keyboard focus inside a panel that is becoming inert.
@@ -125,6 +125,7 @@ export function useProductShowcase() {
               }
               activeRef.current = index;
               setActiveIndex(index); // Only a feature boundary changes React state.
+              playVideos(index);
 
               const inactive = panels.filter((panel) => panel !== previous && panel !== next);
               gsap.set(inactive, { autoAlpha: 0 });
@@ -144,17 +145,33 @@ export function useProductShowcase() {
                 .timeline({ defaults: { ease: 'power1.inOut' } })
                 .to(previous, { autoAlpha: 0, duration: 0.2 }, 0)
                 .fromTo(next, { autoAlpha: 0 }, { autoAlpha: 1, duration: 0.3 }, 0.12);
-              revealPreview(index);
             });
 
             selectRef.current = (index) => activate(index);
 
             if (!reduced) {
+              // Fetch the walkthrough before it is needed, then start it once it is visible.
+              ScrollTrigger.create({
+                trigger: stage,
+                start: 'top bottom+=50%',
+                once: true,
+                onEnter: () => {
+                  for (const video of videos) if (video) video.preload = 'auto';
+                },
+              });
+              ScrollTrigger.create({
+                trigger: section.querySelector('[data-tour-card]'),
+                start: 'center 90%',
+                once: true,
+                onEnter: () => {
+                  if (!hasPlayedVideo) playVideos(activeRef.current);
+                },
+              });
+
               gsap
                 .timeline({
                   defaults: { ease: 'power2.out' },
                   scrollTrigger: { trigger: stage, start: 'top 85%', once: true },
-                  onStart: () => revealPreview(activeRef.current),
                 })
                 .fromTo(backdrop, { opacity: 0 }, { opacity: 1, duration: 0.8 })
                 .fromTo(
@@ -333,7 +350,6 @@ export function useProductShowcase() {
               isNavigating = false;
               scrollTween?.kill();
               transition?.kill();
-              preview?.kill();
               trackTween?.kill();
               expandTween?.kill();
               delete section.dataset.tourPinned;
@@ -342,9 +358,7 @@ export function useProductShowcase() {
               // Reset only our animated properties before reduced motion or a new layout.
               mediaContext.ignore(() => {
                 gsap.set(
-                  section.querySelectorAll(
-                    '[data-tour-panel], [data-tour-reveal], [data-tour-bar], [data-tour-card], [data-tour-tabs]'
-                  ),
+                  section.querySelectorAll('[data-tour-panel], [data-tour-card], [data-tour-tabs]'),
                   { clearProps: 'transform,opacity,visibility' }
                 );
                 gsap.set([veil, backdrop, content], { clearProps: 'all' });

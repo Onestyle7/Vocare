@@ -40,6 +40,9 @@ beforeEach(() => {
   vi.stubGlobal('scrollTo', vi.fn());
   // jsdom has no 2D canvas; the backdrop simply stays its fallback color.
   vi.spyOn(HTMLCanvasElement.prototype, 'getContext').mockReturnValue(null);
+  // jsdom has no media playback.
+  vi.spyOn(HTMLMediaElement.prototype, 'play').mockResolvedValue(undefined);
+  vi.spyOn(HTMLMediaElement.prototype, 'pause').mockImplementation(() => {});
 });
 
 afterEach(() => {
@@ -84,10 +87,14 @@ describe('ProductShowcase', () => {
   it('renders real product examples and the initial selection on the server', () => {
     const html = renderToString(<ProductShowcase />);
 
+    // Every feature is a video; screen readers get what each one shows.
     expect(html).toContain('Główna rekomendacja');
     expect(html).toContain('Progresja wynagrodzeń');
-    expect(html).toContain('Kurs HubSpot CRM');
-    expect(html).toContain('Wynik ogólny');
+    expect(html).toContain('Kurs HubSpot CRM (ukończono)');
+    expect(html).toContain('wynik ogólny 86/100');
+    for (const poster of ['doradca-kariery', 'analiza-rynku', 'roadmapa', 'kreator-cv']) {
+      expect(html).toContain(`/videos/${poster}-poster.webp`);
+    }
     expect(html.match(/aria-selected="true"/g)).toHaveLength(1);
     expect(html.match(/aria-hidden="false"/g)).toHaveLength(1);
   });
@@ -100,7 +107,9 @@ describe('ProductShowcase', () => {
     }
     // What the market analysis says she lacks is what her CV finally lists.
     expect(cv.skills).toEqual(expect.arrayContaining(market.entryDifficulty.missingSkills));
-    expect(html.split(persona.firstName).length - 1).toBeGreaterThanOrEqual(4);
+    // She is named across the story, in any grammatical case (Marta, Marty, Martę).
+    const stem = persona.firstName.slice(0, -1);
+    expect(html.match(new RegExp(`${stem}[aęy]`, 'g'))?.length).toBeGreaterThanOrEqual(4);
   });
 
   it('supports arrow keys, wraparound, Home and End without exposing inactive panels', () => {
@@ -128,6 +137,51 @@ describe('ProductShowcase', () => {
         screen.getAllByRole('tabpanel', { hidden: true }).filter((el) => el.hasAttribute('inert'))
       ).toHaveLength(3);
     }
+  });
+
+  it('plays each walkthrough from the start whenever its tab is shown', () => {
+    vi.stubGlobal('matchMedia', (query: string) => ({
+      matches: query.includes('max-width'),
+      media: query,
+      addListener: vi.fn(),
+      removeListener: vi.fn(),
+    }));
+    const { container } = render(<ProductShowcase />);
+    const advisor = container.querySelector<HTMLVideoElement>('#tour-panel-direction video')!;
+    const market = container.querySelector<HTMLVideoElement>('#tour-panel-market video')!;
+    const play = vi.mocked(HTMLMediaElement.prototype.play);
+    const pause = vi.mocked(HTMLMediaElement.prototype.pause);
+    expect(advisor.getAttribute('poster')).toContain('doradca-kariery-poster');
+    expect(market.getAttribute('poster')).toContain('analiza-rynku-poster');
+    expect(market.getAttribute('aria-hidden')).toBe('true');
+    play.mockClear();
+    pause.mockClear();
+
+    fireEvent.click(screen.getByRole('tab', { name: 'Rynek' }));
+    expect(play.mock.contexts).toEqual([market]);
+    expect(pause.mock.contexts).toContain(advisor);
+    expect(market.currentTime).toBe(0);
+
+    play.mockClear();
+    fireEvent.click(screen.getByRole('tab', { name: 'Kierunek' }));
+    expect(play.mock.contexts).toEqual([advisor]);
+    expect(pause.mock.contexts).toContain(market);
+
+    // Each video is described for screen readers by what it shows.
+    expect(container.querySelector('#tour-panel-direction')!.textContent).toContain(
+      'Customer Success Manager'
+    );
+    expect(container.querySelector('#tour-panel-market')!.textContent).toContain(
+      'Wynagrodzenia od 6 500 do 20 000 PLN'
+    );
+  });
+
+  it('never plays the walkthrough in reduced motion', () => {
+    render(<ProductShowcase />);
+    fireEvent.click(screen.getByRole('tab', { name: 'Rynek' }));
+    fireEvent.click(screen.getByRole('tab', { name: 'Kierunek' }));
+
+    expect(HTMLMediaElement.prototype.play).not.toHaveBeenCalled();
   });
 
   it('shows a complete preview immediately without pinning in reduced motion', () => {

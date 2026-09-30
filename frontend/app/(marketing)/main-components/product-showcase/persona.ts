@@ -73,7 +73,8 @@ export const roadmap: {
   phases: PreviewPhase[];
 } = {
   careerPathName: targetRole,
-  timeHorizonMonths: 4,
+  // The roadmap creator offers 3, 6, 9, 12, 18 or 24 months.
+  timeHorizonMonths: 3,
   phases: [
     {
       title: 'Fundamenty Customer Success',
@@ -87,17 +88,18 @@ export const roadmap: {
     {
       title: 'Narzędzia i praktyka',
       startMonth: 2,
-      endMonth: 3,
+      endMonth: 2,
       steps: [
-        { title: 'Kurs HubSpot CRM', status: 'InProgress', stepType: 'Required' },
+        // Completed on screen in the roadmap video, which ends on this state.
+        { title: 'Kurs HubSpot CRM', status: 'Completed', stepType: 'Required' },
         { title: 'Scenariusz onboardingu B2B', status: 'NotStarted', stepType: 'Required' },
         { title: 'Case study z obecnej pracy', status: 'NotStarted', stepType: 'Optional' },
       ],
     },
     {
       title: 'Rekrutacja',
-      startMonth: 4,
-      endMonth: 4,
+      startMonth: 3,
+      endMonth: 3,
       steps: [
         { title: 'CV pod konkretną ofertę', status: 'NotStarted', stepType: 'Required' },
         { title: 'Próbna rozmowa', status: 'NotStarted', stepType: 'Optional' },
