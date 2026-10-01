@@ -15,11 +15,7 @@ import { Badge } from '../ui/badge';
 
 // import ThemeSwitch from '../SupportComponents/ThemeSwitch';
 
-interface MobileNavProps {
-  isAuthenticated: boolean;
-}
-
-const MobileNav: React.FC<MobileNavProps> = ({ isAuthenticated }) => {
+const MobileNav: React.FC = () => {
   const pathname = usePathname();
   const isMobile = useIsMobile('(max-width: 767px)');
   const line1Ref = useRef(null);
@@ -71,9 +67,9 @@ const MobileNav: React.FC<MobileNavProps> = ({ isAuthenticated }) => {
     }
   }, [isOpen]);
 
-  const filteredLinks = getHeaderNavLinks(isAuthenticated);
-  const ctaHref = isAuthenticated ? '/dashboard' : '/sign-in';
-  const ctaLabel = isAuthenticated ? 'Pulpit' : 'Zaloguj się';
+  const filteredLinks = getHeaderNavLinks(false);
+  const ctaHref = '/sign-in';
+  const ctaLabel = 'zaloguj się';
 
   return (
     <Sheet open={isOpen} onOpenChange={setIsOpen}>

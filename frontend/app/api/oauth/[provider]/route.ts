@@ -59,11 +59,5 @@ export async function GET(
   }
 
   cookieStore.set('userId', result.value.userId, { httpOnly: true, sameSite: 'lax', path: '/' });
-  cookieStore.set('is_authenticated', '1', {
-    httpOnly: false,
-    secure: process.env.NODE_ENV !== 'development',
-    sameSite: 'lax',
-    path: '/',
-  });
   redirect(callbackUrl || '/dashboard');
 }

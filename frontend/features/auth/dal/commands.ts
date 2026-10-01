@@ -55,11 +55,6 @@ export async function signIn(command: SignInCommand) {
         sameSite: 'lax',
         path: '/',
       });
-      cookieStore.set('is_authenticated', '1', {
-        httpOnly: false,
-        sameSite: 'lax',
-        path: '/',
-      });
       return actionOk({ success: true });
     },
     (error) => actionErr(error)
@@ -80,7 +75,6 @@ export async function logOut() {
   await logoutService();
   cookieStore.delete('token');
   cookieStore.delete('userId');
-  cookieStore.delete('is_authenticated');
   revalidatePath('/', 'layout');
   return actionOk({ success: true });
 }

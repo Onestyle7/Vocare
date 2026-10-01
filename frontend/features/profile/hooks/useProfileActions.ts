@@ -15,7 +15,7 @@ export function useProfileActions() {
   const handleLogout = () => {
     startTransition(async () => {
       await logOut();
-      router.replace('/sign-in');
+      window.location.href = '/sign-in';
     });
   };
 
