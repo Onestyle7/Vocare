@@ -10,7 +10,6 @@ export const persona = {
   // Polish accusative, as in "Poznaj Martę".
   firstNameAccusative: 'Martę',
   lastName: 'Wiśniewska',
-  initials: 'MW',
   city: 'Kraków',
 };
 

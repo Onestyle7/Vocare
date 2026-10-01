@@ -3,52 +3,53 @@ import { type ProductFeatureId, productFeatures } from './data';
 // [x, y, width, height] in percent of one feature's field, then the glow color.
 type Glow = readonly [number, number, number, number, string];
 
-// One soft color field per feature. The fields sit side by side on a track that slides to the
-// active feature, so neighbouring colors sweep through the stage while the tabs change.
+// One glowing field per feature on the dark page: a deep tinted base with light sources in the
+// feature's color. The fields sit side by side on a track that slides to the active feature, so
+// neighbouring colors sweep through the stage while the tabs change.
 const fields: Record<ProductFeatureId, { base: string; glows: readonly Glow[] }> = {
   direction: {
-    base: '#bcd6f5',
+    base: '#10121f',
     glows: [
-      [38, 26, 34, 58, '#4f86de'],
-      [4, 48, 24, 56, '#cfc5f5'],
-      [10, 88, 28, 46, '#bdeefa'],
-      [42, 98, 30, 40, '#80abe6'],
-      [80, 90, 32, 46, '#96e1d2'],
-      [86, 10, 34, 46, '#eef6fc'],
-      [98, 56, 20, 50, '#b4e7ea'],
+      [38, 22, 34, 58, '#4a57d8'],
+      [4, 50, 24, 56, '#5a3fb8'],
+      [12, 90, 28, 46, '#1d5f91'],
+      [44, 98, 30, 40, '#2f3da0'],
+      [80, 92, 32, 46, '#155a70'],
+      [86, 10, 34, 46, '#2b2f70'],
+      [98, 56, 20, 50, '#1c4b6e'],
     ],
   },
   market: {
-    base: '#bfeee8',
+    base: '#0c1719',
     glows: [
-      [36, 28, 34, 58, '#34c8bd'],
-      [6, 22, 24, 50, '#c9f1f6'],
-      [12, 86, 28, 46, '#93e3d8'],
-      [60, 96, 30, 40, '#7fd6cc'],
-      [84, 14, 32, 46, '#f1f8d8'],
-      [86, 84, 32, 46, '#a9d0f6'],
+      [36, 24, 34, 58, '#128a82'],
+      [6, 22, 24, 50, '#1a566e'],
+      [12, 88, 28, 46, '#0e6b64'],
+      [60, 96, 30, 40, '#137169'],
+      [84, 14, 32, 46, '#23604a'],
+      [86, 84, 32, 46, '#1c4a85'],
     ],
   },
   roadmap: {
-    base: '#dcd3f9',
+    base: '#130f26',
     glows: [
-      [38, 28, 34, 58, '#9a80e6'],
-      [6, 24, 24, 50, '#ccbdf7'],
-      [10, 82, 28, 46, '#a9c8f7'],
-      [52, 96, 30, 40, '#b59df0'],
-      [86, 14, 32, 46, '#f3eefd'],
-      [84, 84, 32, 46, '#f1b8ee'],
+      [38, 24, 34, 58, '#6344cf'],
+      [6, 24, 24, 50, '#43349e'],
+      [10, 84, 28, 46, '#2d43a3'],
+      [52, 96, 30, 40, '#5335b5'],
+      [86, 14, 32, 46, '#352a70'],
+      [84, 84, 32, 46, '#7a3890'],
     ],
   },
   resume: {
-    base: '#f5d5f3',
+    base: '#1a0f1f',
     glows: [
-      [38, 28, 34, 58, '#e27fdd'],
-      [6, 24, 24, 50, '#fbe4f8'],
-      [10, 84, 28, 46, '#d2c3fa'],
-      [52, 96, 30, 40, '#ee9fe4'],
-      [86, 14, 32, 46, '#fff2d6'],
-      [84, 84, 32, 46, '#fbc6da'],
+      [38, 24, 34, 58, '#9a3a93'],
+      [6, 24, 24, 50, '#552a72'],
+      [10, 86, 28, 46, '#45359c'],
+      [52, 96, 30, 40, '#a14176'],
+      [86, 14, 32, 46, '#6e3450'],
+      [84, 84, 32, 46, '#8f3565'],
     ],
   },
 };

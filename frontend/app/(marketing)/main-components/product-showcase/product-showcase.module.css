@@ -1,12 +1,13 @@
-/* The stage is a light product surface on the always-dark marketing frame (see Hero and
-   Features), so its palette does not follow the app theme. */
+/* Dark like the rest of the marketing frame (see Hero and Features), so the palette does not
+   follow the app theme. Each feature adds --feature-accent and --feature-light on its panel. */
 .section {
   --showcase-page: #0f1013;
-  --showcase-card: #fcfbf8;
-  --showcase-ink: #071a31;
-  --showcase-muted: #5f6d77;
-  --showcase-idle: #dfe3e7;
-  --showcase-focus: #1974dc;
+  --showcase-card: #16161a;
+  --showcase-ink: #f1f4ff;
+  --showcase-muted: #9ea2b3;
+  --showcase-idle: #25262e;
+  --showcase-idle-glyph: #7d8193;
+  --showcase-focus: #9296fd;
   position: relative;
   isolation: isolate;
   background: var(--showcase-page);
@@ -38,7 +39,7 @@
   inset: 0;
   overflow: hidden;
   border-radius: 32px;
-  background: #bcd6f5;
+  background: #151730;
 }
 
 .backdrop[data-painted='true'] {
@@ -55,18 +56,17 @@
   will-change: transform;
 }
 
-/* Dark on frosted card color stays legible over every feature's light color field. */
 .close {
   color: var(--showcase-ink);
-  background: rgb(252 251 248 / 0.45);
-  border: 1px solid rgb(252 251 248 / 0.8);
+  background: rgb(255 255 255 / 0.06);
+  border: 1px solid rgb(255 255 255 / 0.14);
   opacity: 0;
   visibility: hidden;
   transition: background-color 150ms;
 }
 
 .close:hover {
-  background: rgb(252 251 248 / 0.75);
+  background: rgb(255 255 255 / 0.12);
 }
 
 .close:focus-visible {
@@ -82,15 +82,13 @@
 /* Only the small tab row uses a filter, so the shadow still follows the squircles and the neck;
    the card's rounded box-shadow is painted once instead of blurred on every frame. */
 .tabs {
-  filter: drop-shadow(0 4px 5px rgb(95 109 119 / 0.05))
-    drop-shadow(0 10px 15px rgb(95 109 119 / 0.06));
+  filter: drop-shadow(0 4px 6px rgb(0 0 0 / 0.25)) drop-shadow(0 12px 18px rgb(0 0 0 / 0.3));
 }
 
 .card {
   box-shadow:
-    0 4px 5px rgb(95 109 119 / 0.04),
-    0 10px 15px rgb(95 109 119 / 0.04),
-    0 40px 50px rgb(95 109 119 / 0.1);
+    0 30px 60px -30px rgb(0 0 0 / 0.7),
+    0 50px 100px -40px rgb(0 0 0 / 0.5);
 }
 
 .tab {
@@ -116,17 +114,15 @@
 }
 
 .tabGlyph {
-  color: var(--showcase-ink);
-  opacity: 0.35;
-  transition: opacity 600ms cubic-bezier(0.5, 0, 0.5, 1);
+  color: var(--showcase-idle-glyph);
+  transition: color 600ms cubic-bezier(0.5, 0, 0.5, 1);
 }
 
 .tab:hover .tabGlyph {
-  opacity: 0.7;
+  color: #c9ccd8;
 }
 
-.tab[aria-selected='true'] .tabConnector,
-.tab[aria-selected='true'] .tabGlyph {
+.tab[aria-selected='true'] .tabConnector {
   opacity: 1;
 }
 
@@ -134,43 +130,18 @@
   color: var(--tab-accent);
 }
 
-/* Neighbouring screens peeking out from behind the preview card, like a carousel. They sit in
-   their own clipped layer, so the preview box can still grow taller than its aspect ratio. */
-.ghosts {
-  --preview-edge: calc(50% - min(220px, 50% - 1rem));
-  position: absolute;
-  inset: 0;
-  overflow: hidden;
-  border-radius: 20px;
+/* Dark glyph on the light accents, as on the label icons in the card. */
+.tab[aria-selected='true'] .tabGlyph {
+  color: var(--showcase-page);
 }
 
-.ghost {
-  position: absolute;
-  top: 27%;
-  width: 48px;
-  height: 46%;
-  border-radius: 18px;
-  background: color-mix(in srgb, var(--feature-accent) 35%, transparent);
-}
-
-.ghostFar {
-  background: color-mix(in srgb, var(--feature-accent) 20%, transparent);
-}
-
-.ghostLeft {
-  left: calc(var(--preview-edge) - 24px);
-}
-
-.ghostRight {
-  right: calc(var(--preview-edge) - 24px);
-}
-
-.ghostFar.ghostLeft {
-  left: calc(var(--preview-edge) - 60px);
-}
-
-.ghostFar.ghostRight {
-  right: calc(var(--preview-edge) - 60px);
+/* The recorded app window fills the whole preview and keeps its light UI; a hairline and a
+   glow in the feature's color seat it on the dark card. */
+.videoWindow {
+  box-shadow:
+    0 0 0 1px rgb(255 255 255 / 0.06),
+    0 28px 56px -24px rgb(0 0 0 / 0.85),
+    0 0 64px -18px color-mix(in srgb, var(--feature-accent) 60%, transparent);
 }
 
 /* Every panel participates in sizing: text and previews never change the card's height.

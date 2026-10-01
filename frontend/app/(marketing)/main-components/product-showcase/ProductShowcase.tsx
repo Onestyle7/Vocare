@@ -36,18 +36,10 @@ export default function ProductShowcase() {
             gotowego CV
           </span>
         </h2>
-        <p className="mx-auto mt-5 flex max-w-xl items-center justify-center gap-3 text-left text-sm leading-relaxed text-[#F1F4FF]/65">
-          <span
-            aria-hidden="true"
-            className="grid size-10 shrink-0 place-items-center rounded-full bg-[linear-gradient(180deg,#9296FD_0%,#C7A9FE_100%)] text-sm font-medium text-[#0F1013]"
-          >
-            {persona.initials}
-          </span>
-          <span>
-            Poznaj {persona.firstNameAccusative}: od 4 lat pracuje w obsłudze klienta e-commerce i
-            szuka kierunku z większym rozwojem. Oto jej droga przez Vocare.
-          </span>
-        </p>
+        {/* <p className="mx-auto mt-5 max-w-xl text-center text-sm leading-relaxed text-[#F1F4FF]/65">
+          Poznaj {persona.firstNameAccusative}: od 4 lat pracuje w obsłudze klienta e-commerce i
+          szuka kierunku z większym rozwojem. Oto jej droga przez Vocare.
+        </p> */}
       </div>
       <div
         data-tour-stage
@@ -104,9 +96,7 @@ export default function ProductShowcase() {
                 style={
                   {
                     '--feature-accent': feature.colors.accent,
-                    '--feature-soft': feature.colors.soft,
-                    '--feature-tint': feature.colors.tint,
-                    '--feature-ink': feature.colors.ink,
+                    '--feature-light': feature.colors.light,
                   } as CSSProperties
                 }
                 className={cn(

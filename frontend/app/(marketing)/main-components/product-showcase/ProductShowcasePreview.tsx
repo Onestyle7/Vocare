@@ -89,28 +89,23 @@ function ProductShowcasePreview({ feature }: { feature: ProductFeature }) {
     <div
       role="group"
       aria-label={feature.screen}
-      className="relative flex aspect-[278/172.314] w-full min-w-0 items-center justify-center rounded-[20px] bg-(--feature-soft) py-5 sm:aspect-484/300 lg:aspect-516/333"
+      className={cn(
+        styles.videoWindow,
+        'relative aspect-1548/1000 w-full min-w-0 overflow-hidden rounded-[20px] bg-white'
+      )}
     >
-      <div aria-hidden="true" className={styles.ghosts}>
-        <span className={cn(styles.ghost, styles.ghostFar, styles.ghostLeft)} />
-        <span className={cn(styles.ghost, styles.ghostLeft)} />
-        <span className={cn(styles.ghost, styles.ghostRight)} />
-        <span className={cn(styles.ghost, styles.ghostFar, styles.ghostRight)} />
-      </div>
-      <div className="relative aspect-1548/1000 w-[calc(100%-1rem)] max-w-110 overflow-hidden rounded-[14px] bg-white shadow-[0_1px_2px_rgb(7_26_49/0.06),0_14px_32px_-12px_rgb(7_26_49/0.28)] sm:w-[calc(100%-2rem)]">
-        <video
-          data-tour-video
-          src={video.src}
-          poster={video.poster}
-          muted
-          playsInline
-          preload="metadata"
-          disablePictureInPicture
-          aria-hidden="true"
-          className="absolute inset-0 size-full object-cover"
-        />
-        <p className="sr-only">{video.transcript}</p>
-      </div>
+      <video
+        data-tour-video
+        src={video.src}
+        poster={video.poster}
+        muted
+        playsInline
+        preload="metadata"
+        disablePictureInPicture
+        aria-hidden="true"
+        className="absolute inset-0 size-full object-cover"
+      />
+      <p className="sr-only">{video.transcript}</p>
     </div>
   );
 }
