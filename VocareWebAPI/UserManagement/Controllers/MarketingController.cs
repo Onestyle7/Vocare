@@ -2,6 +2,7 @@ using System.Security.Claims;
 using Microsoft.AspNetCore.Mvc;
 using VocareWebAPI.Billing.Models.Entities;
 using VocareWebAPI.UserManagement.Exceptions;
+using VocareWebAPI.UserManagement.Interfaces;
 using VocareWebAPI.UserManagement.Models.Dtos;
 using VocareWebAPI.UserManagement.Repositories.Interfaces;
 
@@ -12,14 +13,17 @@ namespace VocareWebAPI.UserManagement.Controllers
     public class MarketingController : ControllerBase
     {
         private readonly IMarketingConsentRepository _marketingConsentRepository;
+        private readonly IUserSetupService _userSetupService;
         private readonly ILogger<MarketingController> _logger;
 
         public MarketingController(
             IMarketingConsentRepository marketingConsentRepository,
-            ILogger<MarketingController> logger
+            ILogger<MarketingController> logger,
+            IUserSetupService userSetupService
         )
         {
             _marketingConsentRepository = marketingConsentRepository;
+            _userSetupService = userSetupService;
             _logger = logger;
         }
 
@@ -112,7 +116,15 @@ namespace VocareWebAPI.UserManagement.Controllers
                 _logger.LogInformation("Marketing consent re-granted by user: {UserId}", userId);
             }
 
-            return Ok(new { message = "Zgoda marketingowa została udzielona." });
+            var welcomeBonus = await _userSetupService.GrantOrScheduleWelcomeTokensAsync(userId);
+            return Ok(
+                new
+                {
+                    message = "Zgoda marketingowa została udzielona.",
+                    welcomeBonusStatus = welcomeBonus.Status,
+                    welcomeTokensGranted = welcomeBonus.Amount,
+                }
+            );
         }
 
         /// <summary>

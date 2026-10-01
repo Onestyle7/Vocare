@@ -10,7 +10,7 @@ export async function giveMarketingConsentCommand() {
 
   return result.match(
     async (response) => {
-      await invalidateUserTag('marketingConsent');
+      await invalidateUserTag(['marketingConsent', 'subscriptionStatus']);
       return actionOk(response);
     },
     (error) => actionErr(error)
