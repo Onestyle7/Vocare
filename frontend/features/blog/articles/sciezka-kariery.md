@@ -5,7 +5,7 @@ estimatedReadTime: 10
 date: '2026-05-06'
 updatedAt: '2026-09-09'
 author: 'Vocare'
-category: 'Kariera'
+category: 'kariera'
 coverImage: '/images/blog/career-path2.webp'
 tags:
   [
@@ -17,8 +17,6 @@ tags:
   ]
 slug: 'sciezka-kariery'
 ---
-
-# Ścieżka kariery - jak ją zaplanować i nie zgubić się po drodze
 
 "Planowanie kariery" brzmi jak coś, co robisz raz w roku podczas rozmowy oceniającej i zapominasz zaraz po. Tymczasem brak świadomego planowania kariery to jeden z głównych powodów, dla których ludzie budzą się po 10 latach pracy z poczuciem, że dryfowali zamiast zmierzali w konkretnym kierunku. **Ścieżka kariery** to nie sztywny plan na 30 lat - to świadome zarządzanie kierunkiem, w którym zmierzasz, z elastycznością na zmiany po drodze. Oto jak to zrobić praktycznie.
 
@@ -106,7 +104,7 @@ Między tym gdzie jesteś a gdzie chcesz być - są luki. To nie jest problem, t
 
 Sprawdź: wejdź na LinkedIn i przejrzyj profile 10 osób, które mają stanowisko, do którego zmierzasz. Jakie mają wykształcenie? Jakie kompetencje? Skąd przyszły?
 
-**[Vocare.pl](https://vocare.pl)** może zautomatyzować to rozeznanie - porównuje Twój aktualny profil z wymaganiami docelowych stanowisk i wskazuje precyzyjnie, jakie luki warto uzupełnić w pierwszej kolejności.
+[Roadmapa kariery w Vocare](/roadmap) może zautomatyzować to rozeznanie - porównuje Twój aktualny profil z wymaganiami docelowych stanowisk i wskazuje precyzyjnie, jakie luki warto uzupełnić w pierwszej kolejności.
 
 **Luki sieciowe:** Kogo znasz w docelowej branży/roli? Kogo powinieneś znać?
 
@@ -209,7 +207,7 @@ Zależy od branży i firmy. W IT - Junior do Mid: 2-3 lata. Mid do Senior: 3-5 l
 Tak - w wielu branżach konkretne certyfikaty (AWS, PMP, CFA, ACCA) realnie otwierają drzwi lub uzasadniają wyższe wynagrodzenie.
 
 **Czy jest narzędzie, które pomoże mi zaplanować konkretną ścieżkę kariery?**
-**[Vocare.pl](https://vocare.pl)** przeprowadza spersonalizowaną analizę kariery - identyfikuje Twoje mocne strony, wskazuje dopasowane kierunki zawodowe i sugeruje konkretne kroki do celu.
+[Rekomendacje ścieżki kariery od Vocare](/roadmap) przeprowadza spersonalizowaną analizę kariery - identyfikuje Twoje mocne strony, wskazuje dopasowane kierunki zawodowe i sugeruje konkretne kroki do celu.
 
 ---
 
@@ -217,14 +215,14 @@ Tak - w wielu branżach konkretne certyfikaty (AWS, PMP, CFA, ACCA) realnie otwi
 
 Ścieżka kariery to coś, czym warto zarządzać aktywnie, a nie coś co się "jakoś ułoży". Zacznij od diagnozy (kompetencje + wartości), zdefiniuj kierunek na 3-5 lat, zidentyfikuj luki i zbuduj konkretny roczny plan. Weryfikuj co 6 miesięcy.
 
-Chcesz pomocy w zaplanowaniu Twojej ścieżki kariery i zrozumieniu jakie kierunki są dla Ciebie najbardziej naturalne? **[Vocare.pl](https://vocare.pl)** przeprowadzi Cię przez spersonalizowaną analizę kariery i wskaże konkretne kroki dostosowane do Twojego profilu.
+Chcesz pomocy w zaplanowaniu Twojej ścieżki kariery i zrozumieniu jakie kierunki są dla Ciebie najbardziej naturalne? [Analiza profilu zawodowego w Vocare](/assistant) przeprowadzi Cię przez spersonalizowaną analizę kariery i wskaże konkretne kroki dostosowane do Twojego profilu.
 
 ---
 
 ## Powiązane artykuły
-- [Jaki zawód wybrać? Praktyczny poradnik na 2026 rok](/blog/Kariera/jaki-zawod-wybrac)
-- [Test kariery online - jak wybrać zawód dopasowany do Ciebie?](/blog/Kariera/test-kariery-online)
-- [Doradca zawodowy - co robi, ile kosztuje i czy warto](/blog/Kariera/doradca-zawodowy)
-- [Mentoring zawodowy 2026 - jak znaleźć mentora i na tym skorzystać](/blog/Kariera/mentoring-zawodowy)
-- [Plan rozwoju zawodowego 2026 - jak go napisać krok po kroku](/blog/Kariera/plan-rozwoju-zawodowego)
-- [Praca w korporacji czy w startupie 2026 - co wybrać](/blog/Kariera/korporacja-czy-startup)
+- [Jaki zawód wybrać? Praktyczny poradnik na 2026 rok](/blog/kariera/jaki-zawod-wybrac)
+- [Test kariery online - jak wybrać zawód dopasowany do Ciebie?](/blog/kariera/test-kariery-online)
+- [Doradca zawodowy - co robi, ile kosztuje i czy warto](/blog/kariera/doradca-zawodowy)
+- [Mentoring zawodowy 2026 - jak znaleźć mentora i na tym skorzystać](/blog/kariera/mentoring-zawodowy)
+- [Plan rozwoju zawodowego 2026 - jak go napisać krok po kroku](/blog/kariera/plan-rozwoju-zawodowego)
+- [Praca w korporacji czy w startupie 2026 - co wybrać](/blog/kariera/korporacja-czy-startup)

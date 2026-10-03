@@ -1,16 +1,14 @@
 ---
 title: 'Syndrom oszusta w pracy 2026 - jak sobie z nim radzić'
-description: 'Czym jest syndrom oszusta i dlaczego dotyka nawet najbardziej kompetentnych pracowników? Sprawdź, jak go rozpoznać i jakie konkretne strategie pomagają sobie z nim radzić.'
+description: 'Czym jest syndrom oszusta i dlaczego dotyka nawet kompetentnych pracowników? Sprawdź, jak go rozpoznać i jakie strategie pomagają.'
 estimatedReadTime: 8
 date: '2026-09-08'
 author: 'Vocare'
-category: 'Kariera'
+category: 'kariera'
 coverImage: '/images/blog/career-counseling.webp'
 tags: ['syndrom oszusta', 'impostor syndrome', 'jak radzić sobie z syndromem oszusta', 'brak pewności siebie w pracy', 'niska samoocena zawodowa']
 slug: 'syndrom-oszusta'
 ---
-
-# Syndrom oszusta w pracy 2026 - dotyka najbardziej kompetentnych
 
 Paradoksalnie, im więcej ktoś osiąga, tym silniej bywa przekonany, że to kwestia szczęścia, nie kompetencji. **Syndrom oszusta** to uporczywe poczucie, że sukcesy zawodowe wynikają z przypadku, a nie realnych umiejętności - mimo obiektywnych dowodów przeciwnych. Zjawisko to opisano po raz pierwszy w [badaniu z 1978 roku](https://interviewme.pl/blog/syndrom-oszusta-badanie), a dziś dotyczy zaskakująco dużej części pracowników.
 
@@ -66,7 +64,7 @@ Nie do końca - osoba z syndromem oszusta może mieć wysoką samoocenę w innyc
 Jeśli silnie ogranicza codzienne funkcjonowanie zawodowe (unikanie awansów, chroniczny stres, wypalenie), warto rozważyć wsparcie psychologa lub coacha kariery.
 
 **Jak sprawdzić, czy moje kompetencje realnie odpowiadają zajmowanemu stanowisku?**
-**[Vocare.pl](https://vocare.pl)** analizuje Twój profil zawodowy i porównuje go obiektywnie z wymaganiami rynku pracy.
+[Analiza profilu zawodowego w Vocare](/assistant) analizuje Twój profil zawodowy i porównuje go obiektywnie z wymaganiami rynku pracy.
 
 ---
 
@@ -74,12 +72,12 @@ Jeśli silnie ogranicza codzienne funkcjonowanie zawodowe (unikanie awansów, ch
 
 Syndrom oszusta to uporczywe poczucie, że sukcesy zawodowe wynikają z przypadku, a nie realnych kompetencji - dotyka zaskakująco dużej części pracowników, niezależnie od faktycznego poziomu doświadczenia. Dokumentowanie konkretnych osiągnięć, nazywanie tej myśli wprost i szukanie zewnętrznego feedbacku to konkretne, sprawdzone sposoby radzenia sobie z tym zjawiskiem.
 
-Zastanawiasz się, jak Twoje kompetencje realnie wypadają na rynku pracy? **[Vocare.pl](https://vocare.pl)** pomoże Ci to obiektywnie ocenić.
+Zastanawiasz się, jak Twoje kompetencje realnie wypadają na rynku pracy? [Roadmapa kariery w Vocare](/roadmap) pomoże Ci to obiektywnie ocenić.
 
 ---
 
 ## Powiązane artykuły
-- [Feedback w pracy 2026 - jak dawać i przyjmować krytykę](/blog/Kariera/feedback-w-pracy)
-- [Asertywność w pracy 2026 - jak stawiać granice bez konfliktu](/blog/Kariera/asertywnosc-w-pracy)
-- [Wypalenie zawodowe - co dalej? Jak wrócić do równowagi i odbudować karierę](/blog/Kariera/wypalenie-zawodowe-co-dalej)
-- [Prokrastynacja w pracy 2026 - dlaczego się pojawia i jak ją pokonać](/blog/Kariera/prokrastynacja-w-pracy)
+- [Feedback w pracy 2026 - jak dawać i przyjmować krytykę](/blog/kariera/feedback-w-pracy)
+- [Asertywność w pracy 2026 - jak stawiać granice bez konfliktu](/blog/kariera/asertywnosc-w-pracy)
+- [Wypalenie zawodowe - co dalej? Jak wrócić do równowagi i odbudować karierę](/blog/kariera/wypalenie-zawodowe-co-dalej)
+- [Prokrastynacja w pracy 2026 - dlaczego się pojawia i jak ją pokonać](/blog/kariera/prokrastynacja-w-pracy)

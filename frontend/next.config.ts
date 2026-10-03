@@ -32,17 +32,20 @@ const nextConfig: NextConfig = {
     ],
   },
   async redirects() {
-    // Blog posts merged during the 2026-09-02 cannibalization cleanup.
-    // Keep these permanent (301) so backlinks/search rankings transfer to the surviving post.
+    // Order matters: Next.js applies the first matching rule, so the per-post
+    // rules below must stay ahead of the category-wide ones. Their destinations
+    // already use the new lowercase categories so no request is redirected twice.
     return [
+      // Blog posts merged during the 2026-09-02 cannibalization cleanup.
+      // Keep these permanent (301) so backlinks/search rankings transfer to the surviving post.
       {
         source: '/blog/CV/wzor-cv',
-        destination: '/blog/CV/cv-wzor',
+        destination: '/blog/cv/cv-wzor',
         permanent: true,
       },
       {
         source: '/blog/CV/jak-napisac-cv',
-        destination: '/blog/CV/jak-zrobic-cv',
+        destination: '/blog/cv/jak-zrobic-cv',
         permanent: true,
       },
       {
@@ -52,9 +55,15 @@ const nextConfig: NextConfig = {
       },
       {
         source: '/blog/Job/szukanie-pracy',
-        destination: '/blog/Job/jak-znalezc-prace',
+        destination: '/blog/praca/jak-znalezc-prace',
         permanent: true,
       },
+
+      // NOTE: the 2026-09-22 category rename (CV -> cv, Job -> praca,
+      // Kariera -> kariera) is NOT handled here. `source` matching is
+      // case-insensitive, so '/blog/CV/:slug' also matches '/blog/cv/:slug'
+      // and every cv/ and kariera/ post would redirect to itself forever.
+      // It lives in proxy.ts instead, which compares the segment exactly.
     ];
   },
 };

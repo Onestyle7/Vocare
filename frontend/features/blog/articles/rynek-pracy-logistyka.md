@@ -1,6 +1,6 @@
 ---
 title: 'Rynek pracy w logistyce i transporcie 2026 - trendy i zarobki'
-description: 'Jak wygląda rynek pracy w logistyce i transporcie w 2026 roku? Sprawdź, które role są dziś najbardziej poszukiwane i jak e-commerce zmienił zapotrzebowanie na specjalistów.'
+description: 'Jak wygląda rynek pracy w logistyce i transporcie w 2026 roku? Sprawdź, które role są dziś najbardziej poszukiwane.'
 estimatedReadTime: 7
 date: '2026-07-06'
 updatedAt: '2026-09-09'
@@ -11,9 +11,7 @@ tags: ['rynek pracy logistyka', 'praca w transporcie', 'zarobki logistyka 2026',
 slug: 'rynek-pracy-logistyka'
 ---
 
-# Rynek pracy w logistyce i transporcie 2026 - napędza go e-commerce
-
-Boom na zakupy online trwale zmienił zapotrzebowanie na pracowników w logistyce - to już nie tylko magazynierzy i kierowcy, ale coraz częściej specjaliści od optymalizacji łańcuchów dostaw i automatyzacji magazynów. **Rynek pracy w logistyce** w 2026 roku rośnie szybciej niż wiele innych sektorów, napędzany strukturalnym wzrostem handlu internetowego.
+Boom na zakupy online trwale zmienił zapotrzebowanie na pracowników w logistyce - to już nie tylko magazynierzy i kierowcy, ale coraz częściej specjaliści od optymalizacji łańcuchów dostaw i automatyzacji magazynów. **Rynek pracy w logistyce** w 2026 roku rośnie szybciej niż wiele innych sektorów, napędzany strukturalnym wzrostem handlu internetowego. **Logistyka** to planowanie i realizacja przepływu towarów oraz informacji od dostawcy do odbiorcy. **Spedycja** jest jej częścią i obejmuje organizowanie transportu, nie samo przewożenie.
 
 > **Najważniejsze wnioski**
 > - Pandemia i kryzysy geopolityczne obnażyły słabości globalnych łańcuchów dostaw - firmy masowo inwestują w ich lokalizację i optymalizację
@@ -31,6 +29,8 @@ Jednocześnie rosną wymagania: firmy logistyczne inwestują w automatyzację (s
 ---
 
 ## Które role w logistyce są dziś najbardziej poszukiwane?
+
+Dla kalibracji podawanych kwot: mediana wynagrodzeń w gospodarce narodowej wynosi [7690,82 zł brutto (luty 2026)](https://ssgk.stat.gov.pl/Wynagrodzenia_i_swiadczenia_spoleczne.html) według GUS - połowa pracujących w Polsce zarabia mniej.
 
 ### Kierowcy zawodowi (kat. C, C+E)
 
@@ -74,7 +74,7 @@ Tak - wiele stanowisk magazynowych i podstawowych logistycznych nie wymaga wcze�
 Znajomość systemów WMS/ERP, podstawy analizy danych (Excel, SQL) oraz języki obce przy pracy w logistyce międzynarodowej.
 
 **Jak sprawdzić, która ścieżka w logistyce pasuje do moich kompetencji?**
-**[Vocare.pl](https://vocare.pl)** analizuje Twój profil i porównuje go z aktualnym zapotrzebowaniem rynkowym, wskazując konkretne kierunki rozwoju.
+[Analiza rynku pracy w Vocare](/market-analysis) analizuje Twój profil i porównuje go z aktualnym zapotrzebowaniem rynkowym, wskazując konkretne kierunki rozwoju.
 
 ---
 
@@ -82,13 +82,13 @@ Znajomość systemów WMS/ERP, podstawy analizy danych (Excel, SQL) oraz języki
 
 Rynek pracy w logistyce rośnie napędzany e-commerce i potrzebą odbudowy odpornych łańcuchów dostaw. Kierowcy zawodowi pozostają jednym z najbardziej deficytowych zawodów w Polsce, a automatyzacja magazynów tworzy nowe, lepiej płatne role techniczne zamiast likwidować zatrudnienie.
 
-Zastanawiasz się, która ścieżka w logistyce pasuje do Twoich kompetencji? **[Vocare.pl](https://vocare.pl)** przeprowadzi bezpłatną analizę i wskaże konkretne kierunki rozwoju.
+Zastanawiasz się, która ścieżka w logistyce pasuje do Twoich kompetencji? [Rekomendacje ścieżki kariery od Vocare](/roadmap) przeprowadzi bezpłatną analizę i wskaże konkretne kierunki rozwoju.
 
 ---
 
 ## Powiązane artykuły
 - [Rynek pracy w Polsce 2026 - kompletny przegląd 21 branż](/blog/rynek-pracy/rynek-pracy-w-polsce)
 - [Rynek pracy w produkcji i przemyśle 2026 - automatyzacja i zatrudnienie](/blog/rynek-pracy/rynek-pracy-produkcja)
-- [Gdzie szukać pracy w Polsce 2026 - portale i metody](/blog/Job/gdzie-szukac-pracy)
+- [Gdzie szukać pracy w Polsce 2026 - portale i metody](/blog/praca/gdzie-szukac-pracy)
 - [Najlepiej płatne zawody w Polsce 2026 - ranking i zarobki](/blog/rynek-pracy/najlepiej-platne-zawody)
 - [Rynek pracy w handlu detalicznym 2026 - trendy i zarobki](/blog/rynek-pracy/rynek-pracy-handel-detaliczny)

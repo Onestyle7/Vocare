@@ -1,16 +1,14 @@
 ---
-title: 'Wypowiedzenie zmieniające 2026 - kiedy pracodawca może zmienić warunki pracy'
+title: 'Wypowiedzenie zmieniające 2026 - zmiana warunków pracy'
 description: 'Czym jest wypowiedzenie zmieniające i jak na nie reagować w 2026 roku? Sprawdź zasady, termin na odmowę i skutki nieprzyjęcia nowych warunków.'
 estimatedReadTime: 7
 date: '2026-07-31'
 author: 'Vocare'
-category: 'Job'
+category: 'praca'
 coverImage: '/images/blog/job-search.webp'
 tags: ['wypowiedzenie zmieniające', 'zmiana warunków pracy', 'art 42 kodeksu pracy', 'odmowa nowych warunków pracy', 'wypowiedzenie warunków płacy']
 slug: 'wypowiedzenie-zmieniajace'
 ---
-
-# Wypowiedzenie zmieniające 2026 - kiedy pracodawca może zmienić warunki pracy
 
 Milczenie po otrzymaniu takiego dokumentu wcale nie jest neutralne - może oznaczać automatyczną zgodę na nowe warunki. **Wypowiedzenie zmieniające** to sposób, w jaki pracodawca może jednostronnie zmienić warunki pracy lub płacy, uregulowany w [art. 42 Kodeksu pracy](https://lexlege.pl/kp/art-42/), do którego stosuje się odpowiednio przepisy o zwykłym wypowiedzeniu umowy.
 
@@ -65,7 +63,7 @@ Nie, obniżenie wynagrodzenia wymaga formalnego wypowiedzenia zmieniającego - j
 Formalnie dokument zawiera konkretną propozycję, ale nic nie stoi na przeszkodzie, by przed podjęciem decyzji porozmawiać z pracodawcą o innych możliwych rozwiązaniach.
 
 **Jak ocenić, czy warto przyjąć nowe warunki, czy szukać innej pracy?**
-**[Vocare.pl](https://vocare.pl)** pomoże Ci ocenić Twoje kompetencje na tle rynku i sprawdzić, jakie alternatywy są dziś dostępne.
+[Analiza rynku pracy w Vocare](/market-analysis) pomoże Ci ocenić Twoje kompetencje na tle rynku i sprawdzić, jakie alternatywy są dziś dostępne.
 
 ---
 
@@ -73,11 +71,11 @@ Formalnie dokument zawiera konkretną propozycję, ale nic nie stoi na przeszkod
 
 Wypowiedzenie zmieniające pozwala pracodawcy jednostronnie zaproponować nowe, konkretne warunki pracy lub płacy - ale milczenie pracownika po połowie okresu wypowiedzenia oznacza domniemaną zgodę, dlatego reakcja w odpowiednim terminie jest kluczowa. Odmowa skutkuje rozwiązaniem umowy na tych samych zasadach co zwykłe wypowiedzenie.
 
-Zastanawiasz się, czy nowe warunki pracy są dla Ciebie korzystne, czy lepiej poszukać alternatywy? **[Vocare.pl](https://vocare.pl)** pomoże Ci to ocenić.
+Zastanawiasz się, czy nowe warunki pracy są dla Ciebie korzystne, czy lepiej poszukać alternatywy? [Analiza profilu zawodowego w Vocare](/assistant) pomoże Ci to ocenić.
 
 ---
 
 ## Powiązane artykuły
-- [Okres wypowiedzenia umowy o pracę 2026 - ile trwa i jak liczyć](/blog/Job/wypowiedzenie-umowy-o-prace)
-- [Zwolnienie grupowe 2026 - Twoje prawa i wysokość odprawy](/blog/Job/zwolnienie-grupowe)
-- [Negocjacje wynagrodzenia 2026 - jak negocjować pensję skutecznie](/blog/Job/negocjacje-wynagrodzenia)
+- [Okres wypowiedzenia umowy o pracę 2026 - ile trwa i jak liczyć](/blog/praca/wypowiedzenie-umowy-o-prace)
+- [Zwolnienie grupowe 2026 - Twoje prawa i wysokość odprawy](/blog/praca/zwolnienie-grupowe)
+- [Negocjacje wynagrodzenia 2026 - jak negocjować pensję skutecznie](/blog/praca/negocjacje-wynagrodzenia)

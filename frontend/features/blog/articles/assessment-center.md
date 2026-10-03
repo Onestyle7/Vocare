@@ -4,13 +4,11 @@ description: 'Czym jest assessment center i jak się do niego przygotować? Spra
 estimatedReadTime: 8
 date: '2026-05-15'
 author: 'Vocare'
-category: 'Job'
+category: 'praca'
 coverImage: '/images/blog/assessment.webp'
 tags: ['assessment center', 'jak przygotować się do assessment center', 'rekrutacja grupowa', 'zadania rekrutacyjne', 'ocena kompetencji']
 slug: 'assessment-center'
 ---
-
-# Assessment center 2026 - jak się przygotować krok po kroku
 
 Zaproszenie na assessment center zamiast klasycznej rozmowy o pracę potrafi wywołać dodatkowy stres - to dłuższy, bardziej wymagający format rekrutacji, stosowany zwykle przy stanowiskach managerskich, programach graduate lub rolach wymagających konkretnych kompetencji miękkich. **Assessment center** to nie jeden test, tylko seria zadań oceniających Cię z różnych perspektyw jednocześnie.
 
@@ -81,7 +79,7 @@ Od kilku godzin do całego dnia, w zależności od liczby zadań i poziomu stano
 Tak - dlatego warto ćwiczyć pracę grupową osobno, nawet jeśli czujesz się pewnie w rozmowach jeden na jeden. To inny zestaw umiejętności.
 
 **Jak sprawdzić, jakie kompetencje warto podkreślić na assessment center dla konkretnej roli?**
-**[Vocare.pl](https://vocare.pl)** analizuje wymagania oferty i wskazuje, które Twoje kompetencje warto zaakcentować podczas procesu rekrutacyjnego.
+[Dopasowanie CV do oferty w Vocare](/resume-creator) analizuje wymagania oferty i wskazuje, które Twoje kompetencje warto zaakcentować podczas procesu rekrutacyjnego.
 
 ---
 
@@ -89,11 +87,11 @@ Tak - dlatego warto ćwiczyć pracę grupową osobno, nawet jeśli czujesz się 
 
 Assessment center ocenia Cię z wielu perspektyw jednocześnie - case study, dyskusje grupowe, symulacje i wywiady razem dają pracodawcy pełniejszy obraz niż sama rozmowa. Kluczem do sukcesu jest przygotowanie konkretnych przykładów metodą STAR i ćwiczenie zarówno komunikacji indywidualnej, jak i grupowej.
 
-Chcesz wiedzieć, które kompetencje warto podkreślić podczas rekrutacji na konkretne stanowisko? **[Vocare.pl](https://vocare.pl)** przeanalizuje wymagania oferty i wskaże Twoje mocne strony.
+Chcesz wiedzieć, które kompetencje warto podkreślić podczas rekrutacji na konkretne stanowisko? [Dopasowanie CV do oferty w Vocare](/resume-creator) wygeneruje wersję CV pod wymagania tej roli - od razu zobaczysz, które kompetencje wysunąć na pierwszy plan.
 
 ---
 
 ## Powiązane artykuły
-- [Rozmowa kwalifikacyjna 2026 - jak się przygotować i wypaść świetnie](/blog/Job/rozmowa-kwalifikacyjna)
-- [Pytania na rozmowie kwalifikacyjnej 2026 - jak odpowiadać](/blog/Job/pytania-na-rozmowie-kwalifikacyjnej)
-- [Test kompetencji zawodowych - jak sprawdzić swoje mocne strony](/blog/Kariera/test-kompetencji-zawodowych)
+- [Rozmowa kwalifikacyjna 2026 - jak się przygotować i wypaść świetnie](/blog/praca/rozmowa-kwalifikacyjna)
+- [Pytania na rozmowie kwalifikacyjnej 2026 - jak odpowiadać](/blog/praca/pytania-na-rozmowie-kwalifikacyjnej)
+- [Test kompetencji zawodowych - jak sprawdzić swoje mocne strony](/blog/kariera/test-kompetencji-zawodowych)

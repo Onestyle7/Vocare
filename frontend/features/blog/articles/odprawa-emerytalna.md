@@ -3,14 +3,13 @@ title: 'Odprawa emerytalna 2026 - komu przysługuje i ile wynosi'
 description: 'Komu przysługuje odprawa emerytalna w 2026 roku i ile wynosi? Sprawdź zasady wypłaty, wyjątki i czy sposób rozwiązania umowy ma znaczenie.'
 estimatedReadTime: 6
 date: '2026-08-05'
+updatedAt: '2026-09-22'
 author: 'Vocare'
-category: 'Job'
+category: 'praca'
 coverImage: '/images/blog/job-search.webp'
 tags: ['odprawa emerytalna', 'odprawa rentowa', 'komu przysługuje odprawa emerytalna', 'ile wynosi odprawa emerytalna', 'przejście na emeryturę odprawa']
 slug: 'odprawa-emerytalna'
 ---
-
-# Odprawa emerytalna 2026 - komu przysługuje i ile wynosi
 
 Sposób, w jaki kończy się zatrudnienie, nie ma tu żadnego znaczenia - liczy się tylko sam fakt przejścia na emeryturę lub rentę. **Odprawa emerytalna** to jednorazowe świadczenie pieniężne przysługujące pracownikowi, którego stosunek pracy ustał w związku z przejściem na emeryturę lub rentę, uregulowane w [art. 92[1] Kodeksu pracy](https://lexlege.pl/kp/art-92-1/).
 
@@ -18,6 +17,8 @@ Sposób, w jaki kończy się zatrudnienie, nie ma tu żadnego znaczenia - liczy 
 > - Odprawa emerytalna wynosi równowartość jednomiesięcznego wynagrodzenia pracownika
 > - Sposób rozwiązania stosunku pracy (z inicjatywy pracownika, pracodawcy czy za porozumieniem stron) nie ma znaczenia dla prawa do odprawy
 > - Odprawa nie przysługuje pracownikowi uprawnionemu do renty rodzinnej, a raz otrzymana nie może być nabyta ponownie
+
+_Stan prawny: 22 września 2026 r._
 
 ---
 
@@ -37,7 +38,9 @@ Odprawa przysługuje pracownikowi, który spełnia warunki uprawniające do emer
 | Termin wypłaty | W dniu rozwiązania stosunku pracy |
 | Możliwość ponownego nabycia | Nie - raz otrzymana odprawa wyklucza kolejną |
 
-Warto pamiętać, że [przepisy szczególne](https://poradnikprzedsiebiorcy.pl/-odprawa-emerytalno-rentowa-dla-pracownika) (np. układy zbiorowe pracy, regulaminy wynagradzania) mogą przewidywać wyższą odprawę emerytalną niż ustawowe minimum - warto to sprawdzić w wewnętrznych dokumentach swojego pracodawcy.
+Jednomiesięczne wynagrodzenie to **ustawowe minimum, nie sztywna kwota**. Układy zbiorowe pracy, regulaminy wynagradzania i przepisy branżowe często przewidują odprawy wielokrotnie wyższe - w sferze budżetowej i w dużych zakładach spotyka się odprawy w wysokości trzech, a nawet sześciu pensji, zależnie od stażu. Zanim złożysz wypowiedzenie, sprawdź regulamin wynagradzania swojego pracodawcy: to dokument, który ma obowiązek Ci udostępnić.
+
+Odprawę liczy się według zasad obowiązujących przy ustalaniu ekwiwalentu za urlop wypoczynkowy, a ogólne zasady dotyczące stosunku pracy wyjaśnia [Państwowa Inspekcja Pracy](https://www.pip.gov.pl/dla-pracodawcow/porady-prawne/stosunek-pracy).
 
 ---
 
@@ -63,7 +66,7 @@ Tak, przepis obejmuje zarówno przejście na emeryturę, jak i na rentę z tytu�
 Tak, jeśli wewnętrzne regulacje pracodawcy (układ zbiorowy, regulamin wynagradzania) przewidują korzystniejsze warunki niż ustawowe minimum.
 
 **Jak zaplanować finansowo ostatni etap kariery zawodowej przed emeryturą?**
-**[Vocare.pl](https://vocare.pl)** pomoże Ci ocenić Twoją sytuację zawodową na ostatnim etapie kariery.
+[Analiza profilu zawodowego w Vocare](/assistant) pomoże Ci ocenić Twoją sytuację zawodową na ostatnim etapie kariery.
 
 ---
 
@@ -71,11 +74,11 @@ Tak, jeśli wewnętrzne regulacje pracodawcy (układ zbiorowy, regulamin wynagra
 
 Odprawa emerytalna w wysokości jednomiesięcznego wynagrodzenia przysługuje pracownikowi, którego zatrudnienie kończy się w związku z przejściem na emeryturę lub rentę z tytułu niezdolności do pracy - niezależnie od tego, kto zainicjował rozwiązanie umowy. Nie przysługuje przy rencie rodzinnej i nie można jej nabyć powtórnie.
 
-Zbliżasz się do końca kariery zawodowej i chcesz zaplanować ten etap? **[Vocare.pl](https://vocare.pl)** pomoże Ci to zrobić.
+Zbliżasz się do końca kariery zawodowej i chcesz zaplanować ten etap? [Analiza profilu zawodowego w Vocare](/assistant) pomoże Ci to zrobić.
 
 ---
 
 ## Powiązane artykuły
-- [Zwolnienie grupowe 2026 - Twoje prawa i wysokość odprawy](/blog/Job/zwolnienie-grupowe)
-- [Kariera po 40 i 50 roku życia - jak zaplanować dalsze kroki](/blog/Kariera/kariera-po-40-50)
-- [Okres wypowiedzenia umowy o pracę 2026 - ile trwa i jak liczyć](/blog/Job/wypowiedzenie-umowy-o-prace)
+- [Zwolnienie grupowe 2026 - Twoje prawa i wysokość odprawy](/blog/praca/zwolnienie-grupowe)
+- [Kariera po 40 i 50 roku życia - jak zaplanować dalsze kroki](/blog/kariera/kariera-po-40-50)
+- [Okres wypowiedzenia umowy o pracę 2026 - ile trwa i jak liczyć](/blog/praca/wypowiedzenie-umowy-o-prace)

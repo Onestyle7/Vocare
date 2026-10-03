@@ -1,11 +1,11 @@
 ---
-title: 'CV bez doświadczenia 2026 - co wpisać gdy nie masz historii pracy'
+title: 'CV bez doświadczenia 2026 - co wpisać, gdy nie masz stażu'
 description: 'Jak napisać CV bez doświadczenia zawodowego? Sprawdź co wpisać w CV gdy zaczynasz od zera - z przykładami i strategiami na wyróżnienie się bez historii pracy.'
 estimatedReadTime: 8
 date: '2026-03-25'
 updatedAt: '2026-09-02'
 author: 'Vocare'
-category: 'CV'
+category: 'cv'
 coverImage: '/images/blog/cv-no-experience.webp'
 tags:
   [
@@ -17,8 +17,6 @@ tags:
   ]
 slug: 'cv-bez-doswiadczenia'
 ---
-
-# CV bez doświadczenia 2026 - jak napisać CV gdy "nie masz co wpisać"
 
 "Nie mam doświadczenia - co wpisać w CV?" To pytanie zadaje sobie każdy, kto po raz pierwszy siada do pisania CV. I to dobra wiadomość, bo skoro zadajesz to pytanie, to znaczy że podchodzisz do tego poważnie. **CV bez doświadczenia** to CV, w którym historię zatrudnienia zastępują projekty, staże, kursy i aktywności opisane jak prawdziwe osiągnięcia - z konkretem i efektem, nie listą przymiotników. Oto konkretna metoda.
 
@@ -137,7 +135,7 @@ _"Ambitny student szukający pierwszej pracy. Chcę się rozwijać i zdobywać n
 **Dobry profil:**
 _"Student III roku informatyki (Politechnika Gdańska), specjalizacja sieci komputerowe. Zrealizowałem 4 projekty w Pythonie i C++, w tym aplikację webową z 150 aktywnymi użytkownikami. Szukam stażu lub pracy juniorskiej w obszarze backend development."_
 
-Nie wiesz które z Twoich projektów i umiejętności są relevantne dla konkretnej roli? **[Vocare.pl](https://vocare.pl)** porównuje Twój profil z wymaganiami oferty i wskazuje, co warto wyeksponować na pierwszej stronie - nawet jeśli nie masz historii zawodowej.
+Nie wiesz które z Twoich projektów i umiejętności są relevantne dla konkretnej roli? [Analiza profilu zawodowego w Vocare](/assistant) porównuje Twój profil z wymaganiami oferty i wskazuje, co warto wyeksponować na pierwszej stronie - nawet jeśli nie masz historii zawodowej.
 
 ---
 
@@ -201,7 +199,7 @@ Przy aktywnym działaniu (staże, networking, kursy) - 2-4 miesiące. Pasywne wy
 Absolutnie nie. Kłamstwa są weryfikowane (LinkedIn, referencje) i prowadzą do natychmiastowej dyskwalifikacji lub zwolnienia.
 
 **Jak sprawdzić, czy moje CV bez doświadczenia przejdzie przez selekcję ATS?**
-**[Vocare.pl](https://vocare.pl)** analizuje CV pod kątem zgodności ze słowami kluczowymi z oferty - wskazuje, które sekcje warto uzupełnić i jak opisać projekty studenckie językiem, który ATS i rekruter rozumie.
+[Kreator CV w Vocare](/resume-creator) analizuje CV pod kątem zgodności ze słowami kluczowymi z oferty - wskazuje, które sekcje warto uzupełnić i jak opisać projekty studenckie językiem, który ATS i rekruter rozumie.
 
 ---
 
@@ -209,11 +207,11 @@ Absolutnie nie. Kłamstwa są weryfikowane (LinkedIn, referencje) i prowadzą do
 
 CV bez doświadczenia zawodowego nie jest skazane na porażkę. Jest inne - i musi być napisane inaczej. Skup się na tym co masz: projekty, staże, kursy, aktywności. Opisuj je konkretnie, z miarami i efektami. Pokaż potencjał, nie wyjścia na imprezy.
 
-Chcesz zbudować przekonujące CV mimo braku doświadczenia? Platforma **[Vocare.pl](https://vocare.pl)** pomoże Ci zidentyfikować kompetencje, które masz, i powiedzieć jak je najlepiej przedstawić.
+Chcesz zbudować przekonujące CV mimo braku doświadczenia? Platforma [Dopasowanie CV do oferty w Vocare](/resume-creator) pomoże Ci zidentyfikować kompetencje, które masz, i powiedzieć jak je najlepiej przedstawić.
 
 ---
 
 ## Powiązane artykuły
-- [Praca bez doświadczenia 2026 - jak dostać pierwszą pracę](/blog/Job/praca-bez-doswiadczenia)
-- [CV studenta 2026 - jak napisać CV na pierwszą pracę lub staż](/blog/CV/cv-studenta)
-- [Jak zrobić CV 2026 - praktyczny poradnik od zera do gotowego pliku](/blog/CV/jak-zrobic-cv)
+- [Praca bez doświadczenia 2026 - jak dostać pierwszą pracę](/blog/praca/praca-bez-doswiadczenia)
+- [CV studenta 2026 - jak napisać CV na pierwszą pracę lub staż](/blog/cv/cv-studenta)
+- [Jak zrobić CV 2026 - praktyczny poradnik od zera do gotowego pliku](/blog/cv/jak-zrobic-cv)

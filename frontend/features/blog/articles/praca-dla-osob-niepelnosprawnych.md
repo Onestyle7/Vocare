@@ -4,13 +4,11 @@ description: 'Jakie prawa pracownicze przysługują osobom z niepełnosprawnośc
 estimatedReadTime: 8
 date: '2026-09-02'
 author: 'Vocare'
-category: 'Job'
+category: 'praca'
 coverImage: '/images/blog/job-search.webp'
 tags: ['praca dla osób niepełnosprawnych', 'prawa pracownika z niepełnosprawnością', 'PFRON', 'dodatkowy urlop niepełnosprawność', 'skrócony czas pracy']
 slug: 'praca-dla-osob-niepelnosprawnych'
 ---
-
-# Praca dla osób z niepełnosprawnością 2026 - prawa i wsparcie
 
 Orzeczenie o niepełnosprawności daje konkretne, ustawowe uprawnienia pracownicze - nie tylko formalny status, ale realne różnice w czasie pracy, urlopie i warunkach zatrudnienia. **Prawa pracownika z niepełnosprawnością** to konkretny zestaw uprawnień obejmujący skrócony czas pracy, dodatkowy urlop wypoczynkowy i dodatkowe przerwy, [uregulowane w ustawie o rehabilitacji zawodowej i społecznej oraz zatrudnianiu osób niepełnosprawnych](https://www.infor.pl/prawo/pomoc-spoleczna/niepelnosprawni/7400385,prawa-pracownika-z-niepelnosprawnoscia-w-2026-roku-skrocony-czas-pra.html).
 
@@ -69,7 +67,7 @@ Prawo do dodatkowego urlopu wypoczynkowego nabywa się po przepracowaniu roku od
 Nie wszystkie - część uprawnień (np. dodatkowy urlop, skrócony czas pracy) dotyczy tylko stopnia znacznego i umiarkowanego, choć niektóre firmowe benefity mogą obejmować szerszy krąg pracowników.
 
 **Jak sprawdzić, które oferty pracy realnie uwzględniają potrzeby związane z niepełnosprawnością?**
-**[Vocare.pl](https://vocare.pl)** pomoże Ci ocenić kompetencje i dopasować profil zawodowy do dostępnych ścieżek kariery.
+[Analiza profilu zawodowego w Vocare](/assistant) pomoże Ci ocenić kompetencje i dopasować profil zawodowy do dostępnych ścieżek kariery.
 
 ---
 
@@ -77,11 +75,11 @@ Nie wszystkie - część uprawnień (np. dodatkowy urlop, skrócony czas pracy) 
 
 Orzeczenie o znacznym lub umiarkowanym stopniu niepełnosprawności daje konkretne uprawnienia pracownicze - skrócony czas pracy, dodatkowy urlop, dodatkową przerwę i zakaz nadgodzin oraz pracy nocnej. Dofinansowania z PFRON dla pracodawców realnie zwiększają liczbę dostępnych ofert i skłonność firm do inwestowania w dostosowanie stanowisk pracy.
 
-Zastanawiasz się, jak Twoje kompetencje wypadają na rynku pracy? **[Vocare.pl](https://vocare.pl)** pomoże Ci to sprawdzić.
+Zastanawiasz się, jak Twoje kompetencje wypadają na rynku pracy? [Analiza rynku pracy w Vocare](/market-analysis) pomoże Ci to sprawdzić.
 
 ---
 
 ## Powiązane artykuły
-- [Badania lekarskie do pracy 2026 - kiedy i jakie są obowiązkowe](/blog/Job/badania-lekarskie-do-pracy)
-- [Urlop wypoczynkowy 2026 - ile dni przysługuje i jak liczyć](/blog/Job/urlop-wypoczynkowy)
-- [Praca hybrydowa 2026 - jak negocjować model pracy](/blog/Job/praca-hybrydowa)
+- [Badania lekarskie do pracy 2026 - kiedy i jakie są obowiązkowe](/blog/praca/badania-lekarskie-do-pracy)
+- [Urlop wypoczynkowy 2026 - ile dni przysługuje i jak liczyć](/blog/praca/urlop-wypoczynkowy)
+- [Praca hybrydowa 2026 - jak negocjować model pracy](/blog/praca/praca-hybrydowa)

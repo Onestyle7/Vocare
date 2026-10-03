@@ -1,11 +1,11 @@
 ---
-title: 'Wypalenie zawodowe - co dalej? Jak wrócić do równowagi i odbudować karierę'
+title: 'Wypalenie zawodowe - co dalej? Jak wrócić do równowagi'
 description: 'Wypalenie zawodowe to nie słabość, to sygnał do zmiany. Dowiedz się, jak rozpoznać burnout i co zrobić, żeby wyjść z niego silniejszym.'
 estimatedReadTime: 10
 date: '2026-03-24'
 updatedAt: '2026-09-09'
 author: 'Vocare'
-category: 'Kariera'
+category: 'kariera'
 coverImage: '/images/blog/burnout.webp'
 tags:
   [
@@ -132,7 +132,7 @@ Wypalenie zawodowe wymaga wsparcia. Nie musisz przez to przechodzić sam.
 
 **Doradca zawodowy lub coach kariery** - gdy jesteś już stabilny emocjonalnie i chcesz zaplanować kolejny krok zawodowy. Pomaga zdefiniować, czego chcesz od pracy i jak do tego dojść.
 
-Gdy jesteś gotowy na planowanie kariery, ale nie wiesz od czego zacząć, **[Vocare.pl](https://vocare.pl)** przeprowadza analizę wartości zawodowych i kompetencji - wskazując kierunki, które lepiej pasują do Ciebie niż obecna ścieżka.
+Gdy jesteś gotowy na planowanie kariery, ale nie wiesz od czego zacząć, [Analiza profilu zawodowego w Vocare](/assistant) przeprowadza analizę wartości zawodowych i kompetencji - wskazując kierunki, które lepiej pasują do Ciebie niż obecna ścieżka.
 
 ### Etap 5 - Oceń, co wymaga zmiany w pracy
 
@@ -180,7 +180,7 @@ Nawet w rutynowej pracy można znaleźć elementy znaczące. Zapytaj siebie: kom
 ## FAQ - wypalenie zawodowe
 
 **Jak zdecydować, czy po wypaleniu zmienić firmę, branżę czy tylko warunki pracy?**
-Najlepiej zacząć od diagnozy źródła wypalenia (krok 3 powyżej). **[Vocare.pl](https://vocare.pl)** przeprowadza analizę wartości zawodowych i kompetencji - pomaga rozróżnić, czy potrzebujesz zmiany środowiska, czy całej ścieżki kariery.
+Najlepiej zacząć od diagnozy źródła wypalenia (krok 3 powyżej). [Analiza profilu zawodowego w Vocare](/assistant) przeprowadza analizę wartości zawodowych i kompetencji - pomaga rozróżnić, czy potrzebujesz zmiany środowiska, czy całej ścieżki kariery.
 
 **Czy można wrócić do tej samej pracy po wypaleniu?**
 Tak - jeśli źródłem wypalenia były warunki (przeciążenie, szef, kultura), a nie sama natura pracy. Wiele osób z powodzeniem wraca po skutecznym urlopie i renegocjacji warunków.
@@ -196,18 +196,18 @@ Wypalenie zawodowe to poważny sygnał, że coś w Twoim życiu zawodowym wymaga
 
 Zatrzymaj się. Zregeneruj się. Poproś o pomoc. I dopiero wtedy planuj kolejny krok.
 
-Jeśli szukasz wsparcia w podjęciu decyzji o dalszej karierze - platforma **[Vocare.pl](https://vocare.pl)** może pomóc. Nasz asystent AI przeprowadzi Cię przez analizę Twoich wartości, kompetencji i preferencji zawodowych, żebyś mógł podjąć decyzję w oparciu o dane, a nie z pozycji wyczerpania i niepewności.
+Jeśli szukasz wsparcia w podjęciu decyzji o dalszej karierze - platforma [Analiza profilu zawodowego w Vocare](/assistant) może pomóc. Nasz asystent AI przeprowadzi Cię przez analizę Twoich wartości, kompetencji i preferencji zawodowych, żebyś mógł podjąć decyzję w oparciu o dane, a nie z pozycji wyczerpania i niepewności.
 
 ---
 
 ## Powiązane artykuły
-- [Zwolnienie lekarskie L4 2026 - ile trwa i jakie masz prawa](/blog/Job/zwolnienie-lekarskie-l4)
-- [Ścieżka kariery - jak zaplanować rozwój zawodowy w 2026](/blog/Kariera/sciezka-kariery)
-- [Jak zmienić branżę - praktyczny przewodnik krok po kroku](/blog/Kariera/jak-zmienic-branze)
-- [Doradca zawodowy - co robi, ile kosztuje i czy warto](/blog/Kariera/doradca-zawodowy)
-- [Powrót do pracy po urlopie macierzyńskim 2026 - jak się przygotować](/blog/Kariera/powrot-do-pracy-po-macierzynskim)
-- [Urlop od kariery (sabbatical) 2026 - jak go zaplanować bez ryzyka](/blog/Kariera/urlop-od-kariery-sabbatical)
-- [Mobbing w pracy 2026 - jak go rozpoznać i co możesz zrobić](/blog/Job/mobbing-w-pracy)
-- [Asertywność w pracy 2026 - jak stawiać granice bez konfliktu](/blog/Kariera/asertywnosc-w-pracy)
-- [Prokrastynacja w pracy 2026 - dlaczego się pojawia i jak ją pokonać](/blog/Kariera/prokrastynacja-w-pracy)
-- [Kryzys w połowie kariery 2026 - jak sobie z nim poradzić](/blog/Kariera/kryzys-polowy-kariery)
+- [Zwolnienie lekarskie L4 2026 - ile trwa i jakie masz prawa](/blog/praca/zwolnienie-lekarskie-l4)
+- [Ścieżka kariery - jak zaplanować rozwój zawodowy w 2026](/blog/kariera/sciezka-kariery)
+- [Jak zmienić branżę - praktyczny przewodnik krok po kroku](/blog/kariera/jak-zmienic-branze)
+- [Doradca zawodowy - co robi, ile kosztuje i czy warto](/blog/kariera/doradca-zawodowy)
+- [Powrót do pracy po urlopie macierzyńskim 2026 - jak się przygotować](/blog/kariera/powrot-do-pracy-po-macierzynskim)
+- [Urlop od kariery (sabbatical) 2026 - jak go zaplanować bez ryzyka](/blog/kariera/urlop-od-kariery-sabbatical)
+- [Mobbing w pracy 2026 - jak go rozpoznać i co możesz zrobić](/blog/praca/mobbing-w-pracy)
+- [Asertywność w pracy 2026 - jak stawiać granice bez konfliktu](/blog/kariera/asertywnosc-w-pracy)
+- [Prokrastynacja w pracy 2026 - dlaczego się pojawia i jak ją pokonać](/blog/kariera/prokrastynacja-w-pracy)
+- [Kryzys w połowie kariery 2026 - jak sobie z nim poradzić](/blog/kariera/kryzys-polowy-kariery)

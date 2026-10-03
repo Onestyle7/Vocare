@@ -1,16 +1,14 @@
 ---
-title: 'Kompetencje miękkie 2026 - jak je rozwijać, nie tylko deklarować'
+title: 'Kompetencje miękkie 2026 - jak je realnie rozwijać'
 description: 'Jak realnie rozwijać kompetencje miękkie? Sprawdź konkretne metody rozwoju komunikacji, zarządzania czasem i pracy zespołowej - bez pustych deklaracji w CV.'
 estimatedReadTime: 8
 date: '2026-07-31'
 author: 'Vocare'
-category: 'Kariera'
+category: 'kariera'
 coverImage: '/images/blog/career-advisor.webp'
 tags: ['kompetencje miękkie', 'jak rozwijać soft skills', 'rozwój komunikacji', 'umiejętności interpersonalne', 'rozwój zawodowy']
 slug: 'kompetencje-miekkie-jak-rozwijac'
 ---
-
-# Kompetencje miękkie 2026 - jak je realnie rozwijać
 
 "Komunikatywny, zorganizowany, dobrze pracuje w zespole" - te słowa pojawiają się w niemal każdym CV. **Kompetencje miękkie** to umiejętności, które rzadko rozwijają się przez samą deklarację. Wymagają świadomej praktyki, podobnie jak umiejętności twarde.
 
@@ -84,7 +82,7 @@ Może pomóc jako punkt startowy, ale bez praktyki w codziennej pracy szkolenie 
 Regularny feedback od współpracowników i przełożonego to najbardziej wiarygodna metoda - trudno ocenić własny postęp bez zewnętrznej perspektywy.
 
 **Jak sprawdzić, które kompetencje miękkie warto rozwijać pod moją docelową rolę?**
-**[Vocare.pl](https://vocare.pl)** analizuje wymagania oferty i wskazuje, które kompetencje warto wyeksponować lub rozwinąć.
+[Analiza profilu zawodowego w Vocare](/assistant) analizuje wymagania oferty i wskazuje, które kompetencje warto wyeksponować lub rozwinąć.
 
 ---
 
@@ -92,14 +90,14 @@ Regularny feedback od współpracowników i przełożonego to najbardziej wiaryg
 
 Kompetencje miękkie rozwija się przez świadomą praktykę i feedback, nie przez samą deklarację w CV. Komunikacja, zarządzanie priorytetami i adaptacyjność dają dziś największą przewagę na rynku pracy - i wszystkie da się rozwijać konkretnymi, powtarzalnymi ćwiczeniami.
 
-Zastanawiasz się, które kompetencje warto rozwinąć pod Twoją docelową rolę? **[Vocare.pl](https://vocare.pl)** pomoże Ci to zidentyfikować.
+Zastanawiasz się, które kompetencje warto rozwinąć pod Twoją docelową rolę? [Roadmapa kariery w Vocare](/roadmap) pomoże Ci to zidentyfikować.
 
 ---
 
 ## Powiązane artykuły
-- [Umiejętności do CV 2026 - co wpisać, żeby wyróżnić aplikację](/blog/CV/umiejetnosci-do-cv)
-- [Networking zawodowy 2026 - jak budować sieć kontaktów bez wciskania się](/blog/Kariera/networking-zawodowy)
-- [Mentoring zawodowy 2026 - jak znaleźć mentora i na tym skorzystać](/blog/Kariera/mentoring-zawodowy)
-- [Inteligencja emocjonalna w pracy 2026 - jak ją rozwijać i dlaczego się liczy](/blog/Kariera/inteligencja-emocjonalna-w-pracy)
-- [Syndrom oszusta w pracy 2026 - jak sobie z nim radzić](/blog/Kariera/syndrom-oszusta)
-- [Zarządzanie czasem w pracy 2026 - metody, które realnie działają](/blog/Kariera/zarzadzanie-czasem)
+- [Umiejętności do CV 2026 - co wpisać, żeby wyróżnić aplikację](/blog/cv/umiejetnosci-do-cv)
+- [Networking zawodowy 2026 - jak budować sieć kontaktów bez wciskania się](/blog/kariera/networking-zawodowy)
+- [Mentoring zawodowy 2026 - jak znaleźć mentora i na tym skorzystać](/blog/kariera/mentoring-zawodowy)
+- [Inteligencja emocjonalna w pracy 2026 - jak ją rozwijać i dlaczego się liczy](/blog/kariera/inteligencja-emocjonalna-w-pracy)
+- [Syndrom oszusta w pracy 2026 - jak sobie z nim radzić](/blog/kariera/syndrom-oszusta)
+- [Zarządzanie czasem w pracy 2026 - metody, które realnie działają](/blog/kariera/zarzadzanie-czasem)

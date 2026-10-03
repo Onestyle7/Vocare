@@ -5,7 +5,7 @@ estimatedReadTime: 9
 date: '2026-05-12'
 updatedAt: '2026-09-02'
 author: 'Vocare'
-category: 'CV'
+category: 'cv'
 coverImage: '/images/blog/cover-letter-template.webp'
 tags:
   [
@@ -18,8 +18,6 @@ tags:
 slug: 'wzor-listu-motywacyjnego'
 ---
 
-# Wzór listu motywacyjnego 2026 - szablony z instrukcją
-
 Znalazłeś idealny wzór listu motywacyjnego w internecie. Wypełniasz go. Wysyłasz. Cisza. Dlaczego? Bo rekruter dostał ten sam wzór od 30 innych kandydatów tego samego dnia. **Dobry wzór listu motywacyjnego** to szkielet, nie gotowy produkt - różnica między szablonem a skutecznym listem leży w personalizacji: konkretnym osiągnięciu, konkretnym powodzie zainteresowania firmą i autentycznym głosie. Oto szablony, które faktycznie działają - plus instrukcja jak je personalizować.
 
 > **Najważniejsze wnioski**
@@ -29,7 +27,9 @@ Znalazłeś idealny wzór listu motywacyjnego w internecie. Wypełniasz go. Wysy
 
 ---
 
-## Zanim pobierzesz wzór - 3 pytania, na które musisz znać odpowiedź
+## Który z trzech wzorów jest dla Ciebie
+
+Wzory różnią się nie stylistyką, tylko problemem, który rozwiązują. Zanim wybierzesz, odpowiedz sobie na trzy pytania - od nich zależy, który szablon ma sens w Twojej sytuacji.
 
 Zanim wypełnisz jakikolwiek wzór, odpowiedz sobie:
 
@@ -39,7 +39,7 @@ Zanim wypełnisz jakikolwiek wzór, odpowiedz sobie:
 
 Bez odpowiedzi na te pytania - żaden wzór nie pomoże.
 
-Nie wiesz, które osiągnięcie pasuje do danej roli? **[Vocare.pl](https://vocare.pl)** porównuje Twój profil z wymaganiami oferty i wskazuje, co rekruter uzna za najbardziej wartościowe - zanim zaczniesz wypełniać wzór.
+Nie wiesz, które osiągnięcie pasuje do danej roli? [Kreator CV w Vocare](/resume-creator) porównuje Twój profil z wymaganiami oferty i wskazuje, co rekruter uzna za najbardziej wartościowe - zanim zaczniesz wypełniać wzór.
 
 ---
 
@@ -233,7 +233,7 @@ Nie musi, ale warto żeby były spójne. Jeśli CV ma subtelny akcent kolorystyc
 Absolutnie nie w 2026. Elektroniczny podpis lub samo imię i nazwisko w stopce w zupełności wystarczają.
 
 **Jak przygotować się do pisania listu pod konkretną ofertę?**
-Zanim napiszesz list, skorzystaj z **[Vocare.pl](https://vocare.pl)** - platforma analizuje ofertę i automatycznie dopasowuje do niej Twoje CV. Wiedząc jakie kompetencje CV eksponuje pod tę ofertę, wiesz też co warto podkreślić w liście.
+Zanim napiszesz list, skorzystaj z [Dopasowanie CV do oferty w Vocare](/resume-creator) - platforma analizuje ofertę i automatycznie dopasowuje do niej Twoje CV. Wiedząc jakie kompetencje CV eksponuje pod tę ofertę, wiesz też co warto podkreślić w liście.
 
 ---
 
@@ -241,11 +241,11 @@ Zanim napiszesz list, skorzystaj z **[Vocare.pl](https://vocare.pl)** - platform
 
 Wzór listu motywacyjnego to mapa, nie gotowy produkt. Najlepsza strategia: weź szkielet, usuń wszystko co ogólne, wstaw własne: osiągnięcie w liczbach, konkretny powód zainteresowania firmą i pewne zakończenie. 30 minut pracy, które może zadecydować o zaproszeniu na rozmowę.
 
-Zanim zaczniesz pisać list - upewnij się, że Twoje CV jest dopasowane do tej oferty. **[Vocare.pl](https://vocare.pl)** robi to automatycznie: wklejasz ogłoszenie, system generuje CV pod wymagania tej roli. Wtedy wiesz dokładnie, co w liście podkreślić.
+Zanim zaczniesz pisać list - upewnij się, że Twoje CV jest dopasowane do tej oferty. [Dopasowanie CV do oferty w Vocare](/resume-creator) robi to automatycznie: wklejasz ogłoszenie, system generuje CV pod wymagania tej roli. Wtedy wiesz dokładnie, co w liście podkreślić.
 
 ---
 
 ## Powiązane artykuły
-- [Jak napisać list motywacyjny 2026 - wzór i przykłady](/blog/CV/jak-napisac-list-motywacyjny)
-- [List motywacyjny 2026 - czy nadal potrzebny i jak go napisać](/blog/CV/list-motywacyjny)
-- [CV wzór 2026 - darmowe szablony do pobrania i edycji](/blog/CV/cv-wzor)
+- [Jak napisać list motywacyjny 2026 - wzór i przykłady](/blog/cv/jak-napisac-list-motywacyjny)
+- [List motywacyjny 2026 - czy nadal potrzebny i jak go napisać](/blog/cv/list-motywacyjny)
+- [CV wzór 2026 - darmowe szablony do pobrania i edycji](/blog/cv/cv-wzor)

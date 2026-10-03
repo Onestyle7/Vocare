@@ -3,14 +3,13 @@ title: 'Umowa o dzieło 2026 - zasady, składki i różnice od zlecenia'
 description: 'Czym jest umowa o dzieło w 2026 roku i czym różni się od zlecenia? Sprawdź zasady składek ZUS, koszty uzyskania przychodu i kiedy warto ją wybrać.'
 estimatedReadTime: 7
 date: '2026-08-04'
+updatedAt: '2026-09-22'
 author: 'Vocare'
-category: 'Job'
+category: 'praca'
 coverImage: '/images/blog/job-search.webp'
 tags: ['umowa o dzieło', 'umowa o dzieło a zlecenie', 'umowa o dzieło zus', 'koszty uzyskania przychodu 50%', 'prawa autorskie umowa o dzieło']
 slug: 'umowa-o-dzielo'
 ---
-
-# Umowa o dzieło 2026 - zasady, składki i różnice od zlecenia
 
 Brak obowiązkowych składek ZUS sprawia, że ta forma umowy bywa kusząca - ale nie każde zadanie kwalifikuje się prawnie jako "dzieło". **Umowa o dzieło** to umowa cywilnoprawna zobowiązująca do osiągnięcia konkretnego, mierzalnego rezultatu, [w przeciwieństwie do umowy zlecenia, która polega na starannym wykonywaniu czynności](https://www.vatax.pl/blog/umowa-zlecenie-a-umowa-o-dzielo-co-wybrac) - to rozróżnienie ma kluczowe znaczenie dla rozliczeń podatkowych i ZUS.
 
@@ -36,7 +35,11 @@ Brak obowiązkowych składek ZUS sprawia, że ta forma umowy bywa kusząca - ale
 
 ## Jak działają koszty uzyskania przychodu (KUP)?
 
-Standardowa umowa o dzieło korzysta z 20% kosztów uzyskania przychodu, co obniża podstawę opodatkowania. Jeśli umowa zawiera zapis o przeniesieniu praw autorskich do dzieła o charakterze twórczym (np. tekst, projekt graficzny, program komputerowy), koszty te wzrastają do 50% - ale tylko do rocznego limitu 120 000 zł, liczonego łącznie ze wszystkimi źródłami korzystającymi z tej podwyższonej stawki.
+Standardowa umowa o dzieło korzysta z 20% kosztów uzyskania przychodu, co obniża podstawę opodatkowania. Jeśli umowa zawiera zapis o przeniesieniu praw autorskich do dzieła o charakterze twórczym (np. tekst, projekt graficzny, program komputerowy), koszty te wzrastają do 50% - ale tylko do [rocznego limitu 120 000 zł](https://www.pit.pl/koszty-uzyskania-pity-roczne/), liczonego łącznie ze wszystkimi źródłami korzystającymi z tej podwyższonej stawki.
+
+**Co się dzieje po przekroczeniu limitu?** Nadwyżka honorarium ponad 120 000 zł rozliczana jest już bez podwyższonych kosztów - przy umowie o dzieło wraca do standardowych 20%. Limit obejmuje wszystkie źródła łącznie, więc twórca z etatem autorskim i dodatkowymi umowami o dzieło musi sumować je samodzielnie.
+
+Warunkiem zastosowania 50% kosztów jest faktyczne powstanie utworu w rozumieniu prawa autorskiego i przeniesienie praw - sam zapis w umowie nie wystarczy, jeśli rezultat pracy nie ma charakteru twórczego.
 
 ---
 
@@ -49,7 +52,7 @@ Wyjątkiem od braku obowiązkowych składek jest sytuacja, w której umowę o dz
 ## FAQ - umowa o dzieło
 
 **Czy umowę o dzieło trzeba zgłaszać do ZUS?**
-Nie do ubezpieczeń, ale zleceniodawca ma obowiązek zgłosić zawarcie takiej umowy do ZUS w celach ewidencyjnych (formularz RUD), nawet jeśli nie odprowadza od niej składek.
+Nie do ubezpieczeń, ale zamawiający ma obowiązek zgłosić zawarcie takiej umowy do ZUS w celach ewidencyjnych na [formularzu RUD](https://www.zus.pl/firmy/rozliczenia-z-zus/umowa-o-dzielo-formularz-rud), w terminie 7 dni od jej zawarcia - nawet jeśli nie odprowadza od niej składek.
 
 **Czy umowa o dzieło daje prawo do zwolnienia lekarskiego czy urlopu?**
 Nie, umowa o dzieło nie jest umową o pracę i nie daje żadnych z tych uprawnień pracowniczych.
@@ -58,7 +61,7 @@ Nie, umowa o dzieło nie jest umową o pracę i nie daje żadnych z tych uprawni
 Tak, formalnie jest to możliwe, ale warto uważać, żeby charakter współpracy faktycznie odpowiadał definicji dzieła, a nie ukrywał stały stosunek pracy.
 
 **Jak sprawdzić, która forma współpracy - umowa o dzieło, zlecenie czy etat - najlepiej pasuje do mojej sytuacji?**
-**[Vocare.pl](https://vocare.pl)** pomoże Ci ocenić Twoją sytuację zawodową i porównać dostępne opcje.
+[Analiza profilu zawodowego w Vocare](/assistant) pomoże Ci ocenić Twoją sytuację zawodową i porównać dostępne opcje.
 
 ---
 
@@ -66,11 +69,11 @@ Tak, formalnie jest to możliwe, ale warto uważać, żeby charakter współprac
 
 Umowa o dzieło zobowiązuje do osiągnięcia konkretnego rezultatu i, poza wyjątkiem umowy z własnym pracownikiem, nie podlega obowiązkowym składkom ZUS - co czyni ją atrakcyjną podatkowo, ale ograniczoną do zadań o jasno mierzalnym efekcie. Przeniesienie praw autorskich do dzieła twórczego podnosi koszty uzyskania przychodu z 20% do 50%, do rocznego limitu 120 000 zł.
 
-Zastanawiasz się, jaka forma współpracy najlepiej pasuje do Twojej sytuacji zawodowej? **[Vocare.pl](https://vocare.pl)** pomoże Ci to ocenić.
+Zastanawiasz się, w jakim kierunku rozwijać karierę - na etacie czy projektowo? [Analiza profilu zawodowego w Vocare](/assistant) pomoże Ci to ocenić.
 
 ---
 
 ## Powiązane artykuły
-- [Umowa o pracę vs B2B vs zlecenie 2026 - co wybrać?](/blog/Job/umowa-o-prace-vs-b2b)
-- [CV freelancera 2026 - jak pokazać projekty zamiast etatów](/blog/CV/cv-freelancera)
-- [Umowa na czas określony 2026 - ile razy można ją podpisać](/blog/Job/umowa-na-czas-okreslony-limit)
+- [Umowa o pracę vs B2B vs zlecenie 2026 - co wybrać?](/blog/praca/umowa-o-prace-vs-b2b)
+- [CV freelancera 2026 - jak pokazać projekty zamiast etatów](/blog/cv/cv-freelancera)
+- [Umowa na czas określony 2026 - ile razy można ją podpisać](/blog/praca/umowa-na-czas-okreslony-limit)

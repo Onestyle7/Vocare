@@ -1,0 +1,267 @@
+{
+  "snapshot_date": "2026-09-22",
+  "okres": {
+    "start": "2026-06-24",
+    "end": "2026-09-19"
+  },
+  "property": "sc-domain:vocare.pl",
+  "uwaga": "Baseline SPRZED wdrozenia Faz 0-3. Rename kategorii NIE byl jeszcze wdrozony - wszystkie URL-e w starych kategoriach (CV/Job/Kariera).",
+  "caly_serwis": {
+    "clicks": 561,
+    "impressions": 24817,
+    "ctr": 2.26,
+    "position": 0
+  },
+  "blog": {
+    "strony_z_wyswietleniami": 74,
+    "klikniecia": 278,
+    "wyswietlenia": 21550,
+    "ctr_proc": 1.29
+  },
+  "rozklad_pozycji_blog": {
+    "1-3": {
+      "wyswietlenia": 813,
+      "klikniecia": 52,
+      "ctr_proc": 6.4
+    },
+    "4-10": {
+      "wyswietlenia": 1335,
+      "klikniecia": 12,
+      "ctr_proc": 0.9
+    },
+    "11-20": {
+      "wyswietlenia": 1708,
+      "klikniecia": 3,
+      "ctr_proc": 0.18
+    },
+    "21-50": {
+      "wyswietlenia": 3339,
+      "klikniecia": 1,
+      "ctr_proc": 0.03
+    },
+    "50+": {
+      "wyswietlenia": 131,
+      "klikniecia": 2,
+      "ctr_proc": 1.53
+    }
+  },
+  "top_strony": [
+    {
+      "url": "https://vocare.pl/blog/rynek-pracy/najlepiej-platne-zawody",
+      "wyswietlenia": 6946,
+      "klikniecia": 65,
+      "pozycja": 8.0,
+      "ctr": 0.94
+    },
+    {
+      "url": "https://vocare.pl/blog/Kariera/jaki-zawod-wybrac",
+      "wyswietlenia": 3826,
+      "klikniecia": 20,
+      "pozycja": 14.3,
+      "ctr": 0.52
+    },
+    {
+      "url": "https://vocare.pl/blog/CV/darmowy-kreator-cv",
+      "wyswietlenia": 1377,
+      "klikniecia": 86,
+      "pozycja": 11.5,
+      "ctr": 6.25
+    },
+    {
+      "url": "https://vocare.pl/blog/Kariera/doradca-zawodowy",
+      "wyswietlenia": 1293,
+      "klikniecia": 9,
+      "pozycja": 14.0,
+      "ctr": 0.7
+    },
+    {
+      "url": "https://vocare.pl/blog/CV/cv",
+      "wyswietlenia": 987,
+      "klikniecia": 6,
+      "pozycja": 9.1,
+      "ctr": 0.61
+    },
+    {
+      "url": "https://vocare.pl/blog/CV/cv-wzor",
+      "wyswietlenia": 984,
+      "klikniecia": 3,
+      "pozycja": 20.6,
+      "ctr": 0.3
+    },
+    {
+      "url": "https://vocare.pl/blog/rynek-pracy/zawody-przyszlosci-2026",
+      "wyswietlenia": 940,
+      "klikniecia": 25,
+      "pozycja": 10.4,
+      "ctr": 2.66
+    },
+    {
+      "url": "https://vocare.pl/blog/Job/delegacja-sluzbowa",
+      "wyswietlenia": 831,
+      "klikniecia": 9,
+      "pozycja": 6.8,
+      "ctr": 1.08
+    },
+    {
+      "url": "https://vocare.pl/blog/CV/przykladowe-cv",
+      "wyswietlenia": 387,
+      "klikniecia": 9,
+      "pozycja": 8.2,
+      "ctr": 2.33
+    },
+    {
+      "url": "https://vocare.pl/blog/Kariera/test-kompetencji-zawodowych",
+      "wyswietlenia": 334,
+      "klikniecia": 1,
+      "pozycja": 21.1,
+      "ctr": 0.3
+    },
+    {
+      "url": "https://vocare.pl/blog/Job/praca-dla-studenta",
+      "wyswietlenia": 330,
+      "klikniecia": 2,
+      "pozycja": 10.9,
+      "ctr": 0.61
+    },
+    {
+      "url": "https://vocare.pl/blog/Job/gdzie-szukac-pracy",
+      "wyswietlenia": 326,
+      "klikniecia": 1,
+      "pozycja": 9.7,
+      "ctr": 0.31
+    },
+    {
+      "url": "https://vocare.pl/blog/CV/cv-po-angielsku",
+      "wyswietlenia": 283,
+      "klikniecia": 1,
+      "pozycja": 20.8,
+      "ctr": 0.35
+    },
+    {
+      "url": "https://vocare.pl/blog/CV/list-motywacyjny",
+      "wyswietlenia": 227,
+      "klikniecia": 3,
+      "pozycja": 5.7,
+      "ctr": 1.32
+    },
+    {
+      "url": "https://vocare.pl/blog/Job/executive-search-headhunting",
+      "wyswietlenia": 222,
+      "klikniecia": 0,
+      "pozycja": 23.2,
+      "ctr": 0
+    },
+    {
+      "url": "https://vocare.pl/blog/Job/assessment-center",
+      "wyswietlenia": 180,
+      "klikniecia": 0,
+      "pozycja": 28.1,
+      "ctr": 0
+    },
+    {
+      "url": "https://vocare.pl/blog/CV/kreator-cv",
+      "wyswietlenia": 159,
+      "klikniecia": 2,
+      "pozycja": 12.4,
+      "ctr": 1.26
+    },
+    {
+      "url": "https://vocare.pl/blog/CV/cv-managera",
+      "wyswietlenia": 157,
+      "klikniecia": 0,
+      "pozycja": 15.3,
+      "ctr": 0
+    },
+    {
+      "url": "https://vocare.pl/blog/rynek-pracy/rynek-pracy-prawo",
+      "wyswietlenia": 149,
+      "klikniecia": 8,
+      "pozycja": 5.7,
+      "ctr": 5.37
+    },
+    {
+      "url": "https://vocare.pl/blog/Job/negocjacje-wynagrodzenia",
+      "wyswietlenia": 133,
+      "klikniecia": 3,
+      "pozycja": 12.3,
+      "ctr": 2.26
+    },
+    {
+      "url": "https://vocare.pl/blog/CV/jak-napisac-list-motywacyjny",
+      "wyswietlenia": 128,
+      "klikniecia": 0,
+      "pozycja": 25.3,
+      "ctr": 0
+    },
+    {
+      "url": "https://vocare.pl/blog/Kariera/wypalenie-zawodowe-co-dalej",
+      "wyswietlenia": 100,
+      "klikniecia": 7,
+      "pozycja": 6.9,
+      "ctr": 7.0
+    },
+    {
+      "url": "https://vocare.pl/blog/Kariera/awans-zawodowy",
+      "wyswietlenia": 89,
+      "klikniecia": 1,
+      "pozycja": 12.1,
+      "ctr": 1.12
+    },
+    {
+      "url": "https://vocare.pl/blog/CV/jak-napisac-cv",
+      "wyswietlenia": 84,
+      "klikniecia": 1,
+      "pozycja": 9.5,
+      "ctr": 1.19
+    },
+    {
+      "url": "https://vocare.pl/blog/Job/pytania-na-rozmowie-kwalifikacyjnej",
+      "wyswietlenia": 82,
+      "klikniecia": 3,
+      "pozycja": 4.1,
+      "ctr": 3.66
+    },
+    {
+      "url": "https://vocare.pl/blog/CV/cv-inzyniera",
+      "wyswietlenia": 71,
+      "klikniecia": 1,
+      "pozycja": 20.9,
+      "ctr": 1.41
+    },
+    {
+      "url": "https://vocare.pl/blog/Job/szkolenie-bhp-wstepne",
+      "wyswietlenia": 65,
+      "klikniecia": 0,
+      "pozycja": 37.4,
+      "ctr": 0
+    },
+    {
+      "url": "https://vocare.pl/blog/Job/praca-bez-doswiadczenia",
+      "wyswietlenia": 58,
+      "klikniecia": 0,
+      "pozycja": 7.7,
+      "ctr": 0
+    },
+    {
+      "url": "https://vocare.pl/blog/CV/jak-zrobic-cv",
+      "wyswietlenia": 56,
+      "klikniecia": 0,
+      "pozycja": 9.8,
+      "ctr": 0
+    },
+    {
+      "url": "https://vocare.pl/blog/Kariera/mba-czy-certyfikaty",
+      "wyswietlenia": 53,
+      "klikniecia": 1,
+      "pozycja": 8.9,
+      "ctr": 1.89
+    }
+  ],
+  "cele_do_obserwacji": {
+    "jaki-zawod-wybrac": "frazy rdzeniowe na poz. 13-22, 695 wysw. lacznie",
+    "cv-wzor": "\"cv wzor podglad\" poz. 19.2, 186 wysw.",
+    "najlepiej-platne-zawody": "poz. 6-7 na frazy z rokiem, 24-34 na frazy bez roku",
+    "20_postow_fazy_3": "rozbudowane z 11829 do 24468 slow",
+    "40_skroconych_tytulow": "faza 1.4 - efekt widoczny w CTR na poz. 1-10"
+  }
+}

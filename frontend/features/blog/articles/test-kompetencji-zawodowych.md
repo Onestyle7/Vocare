@@ -1,11 +1,11 @@
 ---
-title: 'Test kompetencji zawodowych - jak sprawdzić swoje mocne strony'
+title: 'Test kompetencji zawodowych - jak poznać mocne strony'
 description: 'Chcesz sprawdzić swoje kompetencje zawodowe? Dowiedz się jakie testy kompetencji warto zrobić w 2026, jak je interpretować i co z wynikami zrobić.'
 estimatedReadTime: 9
 date: '2026-05-07'
 updatedAt: '2026-09-02'
 author: 'Vocare'
-category: 'Kariera'
+category: 'kariera'
 coverImage: '/images/blog/competency-test.webp'
 tags:
   [
@@ -17,8 +17,6 @@ tags:
   ]
 slug: 'test-kompetencji-zawodowych'
 ---
-
-# Test kompetencji zawodowych - które testy warto zrobić i jak je interpretować
 
 Wszyscy mówią "idź w kierunek swoich mocnych stron". Problem w tym, że większość ludzi nie wie jakie są ich mocne strony. Nie dlatego że są przeciętni - ale dlatego że nigdy nie sprawdzili tego w systematyczny sposób. **Test kompetencji zawodowych** to narzędzie, które pomaga wyjść poza "wydaje mi się, że jestem dobry w komunikacji" i zobaczyć swój profil zawodowy w oparciu o dane. Oto jakie testy warto zrobić i co z wynikami.
 
@@ -148,7 +146,7 @@ Jeśli Holland Code mówi IE (Badawczo-Przedsiębiorczy), Gallup pokazuje Futuri
 
 Wynik testu jest znacznie wartościowszy gdy omówisz go z doradcą zawodowym lub mentorem. Wyniki mają kontekst, który sam możesz przeoczyć.
 
-Chcesz zobaczyć jak wyniki testów kompetencji przekładają się na konkretne stanowiska i branże na rynku? **[Vocare.pl](https://vocare.pl)** łączy diagnostykę kariery z analizą aktualnych wymagań rynkowych - żebyś wiedział nie tylko "jaki jesteś", ale "co z tym zrobić".
+Chcesz zobaczyć jak wyniki testów kompetencji przekładają się na konkretne stanowiska i branże na rynku? [Analiza profilu zawodowego w Vocare](/assistant) łączy diagnostykę kariery z analizą aktualnych wymagań rynkowych - żebyś wiedział nie tylko "jaki jesteś", ale "co z tym zrobić".
 
 ### Zasada 4: Skonfrontuj z rzeczywistością
 
@@ -207,7 +205,7 @@ Potraktuj to jako ciekawe dane, nie jako problem. Zastanów się: dlaczego wynik
 Coraz więcej pracodawców używa testów kompetencyjnych i osobowości w procesie rekrutacji (szczególnie duże firmy). Warto je znać, żeby nie być zaskoczonym.
 
 **Gdzie mogę zrobić test kompetencji i od razu zobaczyć, jakie zawody i branże mi odpowiadają?**
-**[Vocare.pl](https://vocare.pl)** przeprowadza spersonalizowaną analizę kariery łączącą diagnozę kompetencji z aktualnymi danymi rynkowymi - wyniki pokazują konkretne kierunki zawodowe, nie tylko abstrakcyjne typy osobowości.
+[Analiza profilu zawodowego w Vocare](/assistant) przeprowadza spersonalizowaną analizę kariery łączącą diagnozę kompetencji z aktualnymi danymi rynkowymi - wyniki pokazują konkretne kierunki zawodowe, nie tylko abstrakcyjne typy osobowości.
 
 ---
 
@@ -215,11 +213,11 @@ Coraz więcej pracodawców używa testów kompetencyjnych i osobowości w proces
 
 Testy kompetencji zawodowych to najszybsza droga do zrozumienia własnego profilu zawodowego. Zacznij od Holland Code (bezpłatny, dobra podstawa) i Gallup StrengthsFinder (płatny, ale bardzo wartościowy). Omów wyniki z doradcą zawodowym i skonfrontuj z realnym doświadczeniem.
 
-Chcesz przeprowadzić szybką diagnostykę kariery bez konieczności umawia sesji z doradcą? **[Vocare.pl](https://vocare.pl)** oferuje spersonalizowaną analizę kompetencji i wskazuje konkretne ścieżki kariery dopasowane do Twojego profilu.
+Chcesz przeprowadzić szybką diagnostykę kariery bez konieczności umawia sesji z doradcą? [Analiza profilu zawodowego w Vocare](/assistant) oferuje spersonalizowaną analizę kompetencji i wskazuje konkretne ścieżki kariery dopasowane do Twojego profilu.
 
 ---
 
 ## Powiązane artykuły
-- [Test kariery online - jak wybrać zawód dopasowany do Ciebie?](/blog/Kariera/test-kariery-online)
-- [Ścieżka kariery - jak zaplanować rozwój zawodowy w 2026](/blog/Kariera/sciezka-kariery)
-- [Jaki zawód wybrać? Praktyczny poradnik na 2026 rok](/blog/Kariera/jaki-zawod-wybrac)
+- [Test kariery online - jak wybrać zawód dopasowany do Ciebie?](/blog/kariera/test-kariery-online)
+- [Ścieżka kariery - jak zaplanować rozwój zawodowy w 2026](/blog/kariera/sciezka-kariery)
+- [Jaki zawód wybrać? Praktyczny poradnik na 2026 rok](/blog/kariera/jaki-zawod-wybrac)

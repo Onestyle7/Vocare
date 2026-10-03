@@ -4,13 +4,11 @@ description: 'Jak zdobyć dobre referencje zawodowe? Sprawdź kogo prosić o ref
 estimatedReadTime: 7
 date: '2026-06-22'
 author: 'Vocare'
-category: 'CV'
+category: 'cv'
 coverImage: '/images/blog/cv-templates-industry.webp'
 tags: ['referencje zawodowe', 'jak poprosić o referencje', 'lista referencyjna', 'rekomendacje w pracy', 'kontakty referencyjne']
 slug: 'referencje-zawodowe'
 ---
-
-# Referencje zawodowe 2026 - jak je zdobyć i dobrze przygotować
 
 Wiele ogłoszeń kończy się zdaniem "referencje dostępne na życzenie" - ale mało kto zastanawia się nad tym wcześniej, żeby nie szukać ich w pośpiechu tuż przed finałową rozmową. **Referencje zawodowe** to jeden z ostatnich etapów procesu rekrutacyjnego, ale przygotowanie do nich warto zacząć znacznie wcześniej, najlepiej zaraz po zakończeniu współpracy z daną osobą.
 
@@ -80,7 +78,7 @@ Nie - standardem jest sformułowanie "referencje dostępne na życzenie" i przek
 To się zdarza i nie musi oznaczać nic negatywnego - poszukaj innej osoby z tego samego okresu zatrudnienia, np. współpracownika lub przedstawiciela HR.
 
 **Jak sprawdzić, czy moje doświadczenie zawodowe jest dobrze udokumentowane na potrzeby przyszłych referencji?**
-**[Vocare.pl](https://vocare.pl)** pomaga uporządkować i zaprezentować Twoje doświadczenie zawodowe w sposób spójny z tym, co mogą potwierdzić Twoi referenci.
+[Kreator CV w Vocare](/resume-creator) pomaga uporządkować i zaprezentować Twoje doświadczenie zawodowe w sposób spójny z tym, co mogą potwierdzić Twoi referenci.
 
 ---
 
@@ -88,11 +86,11 @@ To się zdarza i nie musi oznaczać nic negatywnego - poszukaj innej osoby z teg
 
 Referencje zawodowe warto przygotować z wyprzedzeniem, nie w pośpiechu na finałowym etapie rekrutacji. Kluczem jest wybór osób, które mogą mówić konkretnie o Twoich efektach pracy, wcześniejsze uzyskanie ich zgody i przygotowanie zaktualizowanej listy kontaktów referencyjnych.
 
-Chcesz upewnić się, że Twoje doświadczenie zawodowe jest spójnie zaprezentowane w CV i gotowe na etap referencji? **[Vocare.pl](https://vocare.pl)** pomoże Ci to sprawdzić.
+Chcesz upewnić się, że Twoje doświadczenie zawodowe jest spójnie zaprezentowane w CV i gotowe na etap referencji? [Dopasowanie CV do oferty w Vocare](/resume-creator) pomoże Ci to sprawdzić.
 
 ---
 
 ## Powiązane artykuły
-- [CV managera 2026 - jak napisać CV na stanowisko kierownicze](/blog/CV/cv-managera)
-- [Jak zrezygnować z pracy 2026 - wypowiedzenie bez spalania mostów](/blog/Job/jak-zrezygnowac-z-pracy)
-- [Networking zawodowy 2026 - jak budować sieć kontaktów bez wciskania się](/blog/Kariera/networking-zawodowy)
+- [CV managera 2026 - jak napisać CV na stanowisko kierownicze](/blog/cv/cv-managera)
+- [Jak zrezygnować z pracy 2026 - wypowiedzenie bez spalania mostów](/blog/praca/jak-zrezygnowac-z-pracy)
+- [Networking zawodowy 2026 - jak budować sieć kontaktów bez wciskania się](/blog/kariera/networking-zawodowy)

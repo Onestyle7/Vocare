@@ -11,9 +11,7 @@ tags: ['rynek pracy hr', 'praca w hr', 'zarobki hr 2026', 'rekruter praca', 'kar
 slug: 'rynek-pracy-hr'
 ---
 
-# Rynek pracy w HR i rekrutacji 2026 - kto jest dziś poszukiwany
-
-Dział HR przeszedł w ostatnich latach transformację z funkcji administracyjnej w funkcję strategiczną. **Rynek pracy w HR** w 2026 roku nagradza specjalistów, którzy potrafią łączyć wiedzę o ludziach z danymi i technologią - nie tylko prowadzić rekrutację i dokumentację kadrową.
+Dział HR przeszedł w ostatnich latach transformację z funkcji administracyjnej w funkcję strategiczną. **Rynek pracy w HR** w 2026 roku nagradza specjalistów, którzy potrafią łączyć wiedzę o ludziach z danymi i technologią - nie tylko prowadzić rekrutację i dokumentację kadrową. **HR (human resources)** to obszar odpowiadający za pozyskiwanie, rozwój i utrzymanie pracowników. **HR Business Partner** to rola doradcza wobec biznesu, odrębna od administracji kadrowo-płacowej.
 
 > **Najważniejsze wnioski**
 > - Narzędzia AI przejęły wstępną selekcję CV - rośnie wartość rekruterów potrafiących ocenić dopasowanie kulturowe i prowadzić trudne rozmowy
@@ -31,6 +29,8 @@ Rekruterzy, którzy dziś wygrywają na rynku pracy, to ci, którzy potrafią ef
 ---
 
 ## Które specjalizacje HR są dziś najbardziej poszukiwane?
+
+Zanim uznasz którykolwiek z tych zawodów za pewny wybór, sprawdź go lokalnie. specjaliści ds. kadr, płac i rekrutacji - to zawody, których status w [Barometrze Zawodów](https://www.barometrzawodow.pl/) bywa różny w zależności od powiatu. Barometr to coroczna prognoza Ministerstwa Rodziny, Pracy i Polityki Społecznej, dzieląca zawody na deficytowe, zrównoważone i nadwyżkowe, publikowana osobno dla każdego powiatu. Dla kalibracji widełek: krajowa mediana wynagrodzeń to [7690,82 zł brutto (luty 2026)](https://ssgk.stat.gov.pl/Wynagrodzenia_i_swiadczenia_spoleczne.html) według GUS - połowa pracujących w Polsce zarabia mniej.
 
 ### People analytics / HR data
 
@@ -74,7 +74,7 @@ People analytics i HR business partnering - obie łączą wiedzę o ludziach z b
 Certyfikaty (np. z zakresu prawa pracy, coachingu czy narzędzi ATS) pomagają, ale w HR liczy się przede wszystkim doświadczenie w prowadzeniu realnych procesów i projektów.
 
 **Jak sprawdzić, która ścieżka w HR pasuje do moich kompetencji?**
-**[Vocare.pl](https://vocare.pl)** analizuje Twój profil i porównuje go z aktualnym zapotrzebowaniem rynkowym, wskazując konkretne kierunki rozwoju w HR i rekrutacji.
+[Analiza rynku pracy w Vocare](/market-analysis) analizuje Twój profil i porównuje go z aktualnym zapotrzebowaniem rynkowym, wskazując konkretne kierunki rozwoju w HR i rekrutacji.
 
 ---
 
@@ -82,12 +82,12 @@ Certyfikaty (np. z zakresu prawa pracy, coachingu czy narzędzi ATS) pomagają, 
 
 Rynek pracy w HR w 2026 roku przesuwa się w stronę danych, strategii i doświadczenia kandydata. People analytics i HR business partnering to dziś najbardziej perspektywiczne ścieżki, a rola klasycznego rekrutera ewoluuje w stronę doradcy, nie tylko selekcjonera CV.
 
-Zastanawiasz się, która ścieżka w HR najlepiej pasuje do Twojego profilu? **[Vocare.pl](https://vocare.pl)** przeprowadzi bezpłatną analizę kompetencji i wskaże konkretne kierunki rozwoju.
+Zastanawiasz się, która ścieżka w HR najlepiej pasuje do Twojego profilu? [Analiza profilu zawodowego w Vocare](/assistant) przeprowadzi bezpłatną analizę kompetencji i wskaże konkretne kierunki rozwoju.
 
 ---
 
 ## Powiązane artykuły
 - [Rynek pracy w Polsce 2026 - kompletny przegląd 21 branż](/blog/rynek-pracy/rynek-pracy-w-polsce)
 - [Rynek pracy w marketingu 2026 - kompetencje i zarobki](/blog/rynek-pracy/rynek-pracy-marketing)
-- [Doradca zawodowy - co robi, ile kosztuje i czy warto](/blog/Kariera/doradca-zawodowy)
-- [Pytania na rozmowie kwalifikacyjnej 2026 - jak odpowiadać](/blog/Job/pytania-na-rozmowie-kwalifikacyjnej)
+- [Doradca zawodowy - co robi, ile kosztuje i czy warto](/blog/kariera/doradca-zawodowy)
+- [Pytania na rozmowie kwalifikacyjnej 2026 - jak odpowiadać](/blog/praca/pytania-na-rozmowie-kwalifikacyjnej)

@@ -5,7 +5,7 @@ estimatedReadTime: 9
 date: '2026-04-20'
 updatedAt: '2026-09-09'
 author: 'Vocare'
-category: 'CV'
+category: 'cv'
 coverImage: '/images/blog/cover-letter.webp'
 tags:
   [
@@ -17,8 +17,6 @@ tags:
   ]
 slug: 'list-motywacyjny'
 ---
-
-# List motywacyjny 2026 - kiedy pisać i jak zrobić to dobrze
 
 "Prosimy dołączyć list motywacyjny" - ta prośba wzbudza w kandydatach mieszaninę rezygnacji i paniki. Bo kto w 2026 roku jeszcze pisze listy? Odpowiedź może Cię zaskoczyć. **List motywacyjny** to dokument towarzyszący CV, wciąż czytany przez rekruterów - ale tylko wtedy, gdy jest konkretny, autentyczny i napisany pod konkretną firmę. Generyczny list z frazami "jestem osobą ambitną i komunikatywną" leci do kosza szybciej niż otwarty. Ten artykuł pokaże Ci, jak napisać taki, który faktycznie działa.
 
@@ -50,7 +48,9 @@ Badanie LinkedIn z 2025 roku pokazuje, że 48% rekruterów w Polsce twierdzi, ż
 
 ---
 
-## Struktura listu motywacyjnego - jak go zbudować
+## Co musi osiągnąć każda część listu
+
+Poniżej rola każdego elementu - czemu służy i kiedy nie spełnia zadania. Jeśli szukasz procesu pisania krok po kroku, z pytaniami pomocniczymi i kompletnym przykładem, opisuje go artykuł [jak napisać list motywacyjny](/blog/cv/jak-napisac-list-motywacyjny).
 
 ### Nagłówek
 
@@ -86,7 +86,7 @@ Zamiast tego: pokaż, że odrobiłeś lekcję. Wspomnij konkretny produkt, proje
 
 Krótkie, pewne siebie. Wyraź gotowość do rozmowy, podaj kiedy jesteś dostępny. Nie przepraszaj za "śmiałość".
 
-Zanim zaczniesz pisać akapit 2 ("dlaczego Ty"), upewnij się że Twoje CV jest już dopasowane do tej oferty. **[Vocare.pl](https://vocare.pl)** robi to automatycznie - wklejasz ogłoszenie, system generuje wersję CV pod wymagania tej roli. CV dopasowane do oferty pokazuje Ci, które Twoje osiągnięcia są dla niej najbardziej relevantne.
+Zanim zaczniesz pisać akapit 2 ("dlaczego Ty"), upewnij się że Twoje CV jest już dopasowane do tej oferty. [Kreator CV w Vocare](/resume-creator) robi to automatycznie - wklejasz ogłoszenie, system generuje wersję CV pod wymagania tej roli. CV dopasowane do oferty pokazuje Ci, które Twoje osiągnięcia są dla niej najbardziej relevantne.
 
 ---
 
@@ -137,7 +137,7 @@ Nie w 2026 roku. Elektroniczny podpis lub samo imię i nazwisko w stopce wystarc
 Możesz - ale wtedy MUSI być naprawdę dobry. Słaby list tylko osłabi Twoją kandydaturę.
 
 **Czy jest narzędzie, które pomoże mi przygotować się do pisania listu pod konkretną ofertę?**
-Tak - zanim napiszesz list, dopasuj CV do tej oferty na **[Vocare.pl](https://vocare.pl)**. System automatycznie generuje wersję CV pod wymagania ogłoszenia - a to daje Ci gotowy materiał do akapitu "dlaczego Ty": wiesz które kompetencje i osiągnięcia pasują do tej roli.
+Tak - zanim napiszesz list, dopasuj CV do tej oferty na [Dopasowanie CV do oferty w Vocare](/resume-creator). System automatycznie generuje wersję CV pod wymagania ogłoszenia - a to daje Ci gotowy materiał do akapitu "dlaczego Ty": wiesz które kompetencje i osiągnięcia pasują do tej roli.
 
 ---
 
@@ -147,12 +147,12 @@ List motywacyjny nie umarł - ale jego stara forma tak. W 2026 roku wygrywają l
 
 Zacznij od CV, a list motywacyjny traktuj jako uzupełnienie - miejsce gdzie możesz powiedzieć to, czego liczby i punkty w CV nie oddają: dlaczego właśnie ta firma i właśnie to stanowisko.
 
-Nim zaczniesz pisać - upewnij się, że Twoje CV jest dopasowane do tej oferty. **[Vocare.pl](https://vocare.pl)** robi to automatycznie: wklejasz ogłoszenie, system generuje CV pod wymagania tej roli. Mając dopasowane CV, wiesz co w liście podkreślić.
+Nim zaczniesz pisać - upewnij się, że Twoje CV jest dopasowane do tej oferty. [Dopasowanie CV do oferty w Vocare](/resume-creator) robi to automatycznie: wklejasz ogłoszenie, system generuje CV pod wymagania tej roli. Mając dopasowane CV, wiesz co w liście podkreślić.
 
 ---
 
 ## Powiązane artykuły
-- [Jak napisać list motywacyjny 2026 - wzór i przykłady](/blog/CV/jak-napisac-list-motywacyjny)
-- [Wzór listu motywacyjnego 2026 - gotowe szablony do edycji](/blog/CV/wzor-listu-motywacyjnego)
-- [CV 2026 - kompletny poradnik jak napisać dobre CV](/blog/CV/cv)
-- [List motywacyjny po angielsku 2026 - jak napisać cover letter](/blog/CV/list-motywacyjny-po-angielsku)
+- [Jak napisać list motywacyjny 2026 - wzór i przykłady](/blog/cv/jak-napisac-list-motywacyjny)
+- [Wzór listu motywacyjnego 2026 - gotowe szablony do edycji](/blog/cv/wzor-listu-motywacyjnego)
+- [CV 2026 - kompletny poradnik jak napisać dobre CV](/blog/cv/cv)
+- [List motywacyjny po angielsku 2026 - jak napisać cover letter](/blog/cv/list-motywacyjny-po-angielsku)

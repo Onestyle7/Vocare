@@ -1,16 +1,14 @@
 ---
-title: 'Okres wypowiedzenia umowy o pracę 2026 - ile trwa i jak liczyć'
+title: 'Okres wypowiedzenia umowy o pracę 2026 - ile trwa'
 description: 'Ile trwa okres wypowiedzenia umowy o pracę w 2026 roku? Sprawdź zasady liczenia, wyjątki i co robić, gdy pracodawca skraca lub łamie okres wypowiedzenia.'
 estimatedReadTime: 8
 date: '2026-08-11'
 author: 'Vocare'
-category: 'Job'
+category: 'praca'
 coverImage: '/images/blog/job-search.webp'
 tags: ['okres wypowiedzenia', 'wypowiedzenie umowy o pracę', 'ile trwa wypowiedzenie', 'kodeks pracy wypowiedzenie', 'zwolnienie z pracy']
 slug: 'wypowiedzenie-umowy-o-prace'
 ---
-
-# Okres wypowiedzenia umowy o pracę 2026 - ile trwa i jak liczyć
 
 Data na wypowiedzeniu to nie data ostatniego dnia pracy. **Okres wypowiedzenia** to czas, jaki musi upłynąć między złożeniem wypowiedzenia a rozwiązaniem umowy o pracę - jego długość zależy od stażu u danego pracodawcy, nie od rodzaju umowy. Zgodnie z [art. 36 Kodeksu pracy](https://lexlege.pl/kp/art-36/) zasady są identyczne dla umowy na czas określony i nieokreślony.
 
@@ -77,7 +75,7 @@ Tak, pracodawca może jednostronnie zwolnić pracownika z obowiązku świadczeni
 Tak, przy wypowiedzeniu przez pracodawcę i okresie co najmniej dwutygodniowym przysługują dni wolne na poszukiwanie pracy - 2 lub 3 dni robocze, zależnie od długości okresu wypowiedzenia, z zachowaniem prawa do wynagrodzenia.
 
 **Jak sprawdzić, czy mój okres wypowiedzenia został policzony prawidłowo?**
-**[Vocare.pl](https://vocare.pl)** pomoże Ci zaplanować dalsze kroki zawodowe, gdy już wiesz, kiedy kończy się Twoja umowa - w razie wątpliwości co do samego wyliczenia warto skonsultować się z działem kadr lub prawnikiem.
+[Roadmapa kariery w Vocare](/roadmap) pomoże Ci zaplanować dalsze kroki zawodowe, gdy już wiesz, kiedy kończy się Twoja umowa - w razie wątpliwości co do samego wyliczenia warto skonsultować się z działem kadr lub prawnikiem.
 
 ---
 
@@ -85,11 +83,11 @@ Tak, przy wypowiedzeniu przez pracodawcę i okresie co najmniej dwutygodniowym p
 
 Okres wypowiedzenia umowy o pracę zależy wyłącznie od stażu u danego pracodawcy - 2 tygodnie, 1 miesiąc lub 3 miesiące, niezależnie od rodzaju umowy. Sposób liczenia końca okresu różni się dla tygodni (zawsze sobota) i miesięcy (koniec miesiąca kalendarzowego) - warto to sprawdzić dokładnie, zanim zaplanujesz kolejne kroki zawodowe.
 
-Kończysz jedną pracę i zastanawiasz się, jaki kierunek wybrać dalej? **[Vocare.pl](https://vocare.pl)** pomoże Ci zaplanować następny krok kariery.
+Kończysz jedną pracę i zastanawiasz się, jaki kierunek wybrać dalej? [Analiza profilu zawodowego w Vocare](/assistant) pomoże Ci zaplanować następny krok kariery.
 
 ---
 
 ## Powiązane artykuły
-- [Umowa na czas określony 2026 - ile razy można ją podpisać](/blog/Job/umowa-na-czas-okreslony-limit)
-- [Jak zrezygnować z pracy 2026 - jak to zrobić profesjonalnie](/blog/Job/jak-zrezygnowac-z-pracy)
-- [Urlop wypoczynkowy 2026 - ile dni przysługuje i jak liczyć](/blog/Job/urlop-wypoczynkowy)
+- [Umowa na czas określony 2026 - ile razy można ją podpisać](/blog/praca/umowa-na-czas-okreslony-limit)
+- [Jak zrezygnować z pracy 2026 - jak to zrobić profesjonalnie](/blog/praca/jak-zrezygnowac-z-pracy)
+- [Urlop wypoczynkowy 2026 - ile dni przysługuje i jak liczyć](/blog/praca/urlop-wypoczynkowy)

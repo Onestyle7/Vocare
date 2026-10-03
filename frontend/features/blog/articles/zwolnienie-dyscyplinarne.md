@@ -1,16 +1,14 @@
 ---
-title: 'Zwolnienie dyscyplinarne 2026 - kiedy grozi i jak się przed nim bronić'
+title: 'Zwolnienie dyscyplinarne 2026 - kiedy grozi i jak się bronić'
 description: 'Kiedy pracodawca może zwolnić dyscyplinarnie na podstawie art. 52 Kodeksu pracy? Sprawdź przesłanki, termin miesiąca i jak odwołać się od niesłusznego zwolnienia.'
 estimatedReadTime: 8
 date: '2026-08-14'
 author: 'Vocare'
-category: 'Job'
+category: 'praca'
 coverImage: '/images/blog/job-search.webp'
 tags: ['zwolnienie dyscyplinarne', 'art 52 kodeksu pracy', 'rozwiązanie umowy bez wypowiedzenia', 'zwolnienie z winy pracownika', 'odwołanie od zwolnienia']
 slug: 'zwolnienie-dyscyplinarne'
 ---
-
-# Zwolnienie dyscyplinarne 2026 - kiedy grozi i jak się przed nim bronić
 
 To najostrzejsza forma rozwiązania umowy o pracę - i jedna z najczęściej błędnie stosowanych przez pracodawców. **Zwolnienie dyscyplinarne** to rozwiązanie umowy bez zachowania okresu wypowiedzenia z winy pracownika, uregulowane w [art. 52 Kodeksu pracy](https://standardyprawa.pl/akt/21/art/5934). Wymaga spełnienia ściśle określonych warunków - byle jaki błąd pracownika nie wystarczy.
 
@@ -74,7 +72,7 @@ Zwykle nie - wymagane jest ciężkie naruszenie obowiązków, a pojedyncze spó�
 Nie ma takiego ustawowego wymogu przy najcięższych naruszeniach, choć w praktyce brak wcześniejszych ostrzeżeń bywa argumentem pracownika w sądzie przy mniej oczywistych sprawach.
 
 **Jak zaplanować dalsze kroki po zwolnieniu dyscyplinarnym?**
-**[Vocare.pl](https://vocare.pl)** pomoże Ci ocenić Twoje kompetencje i zaplanować kolejne kroki zawodowe, niezależnie od okoliczności poprzedniego zatrudnienia.
+[Analiza profilu zawodowego w Vocare](/assistant) pomoże Ci ocenić Twoje kompetencje i zaplanować kolejne kroki zawodowe, niezależnie od okoliczności poprzedniego zatrudnienia.
 
 ---
 
@@ -82,12 +80,12 @@ Nie ma takiego ustawowego wymogu przy najcięższych naruszeniach, choć w prakt
 
 Zwolnienie dyscyplinarne wymaga spełnienia jednej z trzech ściśle określonych przesłanek z art. 52 KP i musi nastąpić w ciągu miesiąca od powzięcia wiadomości o przyczynie przez pracodawcę. Jeśli podejrzewasz, że zwolnienie było wadliwe lub niesłuszne, masz 21 dni na odwołanie do sądu pracy - warto to sprawdzić, zanim termin minie.
 
-Szukasz nowego kierunku zawodowego po trudnym zakończeniu poprzedniej pracy? **[Vocare.pl](https://vocare.pl)** pomoże Ci zaplanować kolejny krok.
+Szukasz nowego kierunku zawodowego po trudnym zakończeniu poprzedniej pracy? [Analiza profilu zawodowego w Vocare](/assistant) pomoże Ci zaplanować kolejny krok.
 
 ---
 
 ## Powiązane artykuły
-- [Okres wypowiedzenia umowy o pracę 2026 - ile trwa i jak liczyć](/blog/Job/wypowiedzenie-umowy-o-prace)
-- [Mobbing w pracy 2026 - jak go rozpoznać i co możesz zrobić](/blog/Job/mobbing-w-pracy)
-- [Jak zrezygnować z pracy 2026 - jak to zrobić profesjonalnie](/blog/Job/jak-zrezygnowac-z-pracy)
-- [Kontrola trzeźwości w pracy 2026 - co może pracodawca](/blog/Job/kontrola-trzezwosci-w-pracy)
+- [Okres wypowiedzenia umowy o pracę 2026 - ile trwa i jak liczyć](/blog/praca/wypowiedzenie-umowy-o-prace)
+- [Mobbing w pracy 2026 - jak go rozpoznać i co możesz zrobić](/blog/praca/mobbing-w-pracy)
+- [Jak zrezygnować z pracy 2026 - jak to zrobić profesjonalnie](/blog/praca/jak-zrezygnowac-z-pracy)
+- [Kontrola trzeźwości w pracy 2026 - co może pracodawca](/blog/praca/kontrola-trzezwosci-w-pracy)
