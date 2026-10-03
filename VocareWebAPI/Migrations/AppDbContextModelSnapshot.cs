@@ -906,10 +906,16 @@ namespace VocareWebAPI.Migrations
                     b.Property<bool>("HadWelcomeBonus")
                         .HasColumnType("boolean");
 
+                    b.Property<string>("UserId")
+                        .IsRequired()
+                        .HasColumnType("text");
+
                     b.HasKey("Id");
 
                     b.HasIndex("EmailHash")
                         .IsUnique();
+
+                    b.HasIndex("UserId");
 
                     b.ToTable("AccountAntiAbuseRegistries", "public");
                 });

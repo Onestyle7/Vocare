@@ -6,6 +6,7 @@ import { redirect } from 'next/navigation';
 
 import { AUTH_COOKIE_OPTIONS } from '@/features/auth/auth-cookie';
 import {
+  DeleteAccountCommand,
   ForgotPasswordCommand,
   getOAuthEndpoint,
   RegisterCommand,
@@ -16,6 +17,7 @@ import { getOauthClient, OAuthProvider } from '@/features/auth/oauth/base';
 import { actionErr, actionOk } from '@/lib/types/result';
 
 import {
+  deleteAccountService,
   forgotPasswordService,
   logoutService,
   registerService,
@@ -86,6 +88,20 @@ export async function resetPassword(command: ResetPasswordCommand) {
 
   return result.match(
     () => actionOk({ success: true }),
+    (error) => actionErr(error)
+  );
+}
+
+export async function deleteAccount(command?: DeleteAccountCommand) {
+  const result = await deleteAccountService(command);
+  const cookieStore = await cookies();
+
+  return result.match(
+    () => {
+      cookieStore.delete('token');
+      cookieStore.delete('userId');
+      return actionOk({ success: true });
+    },
     (error) => actionErr(error)
   );
 }

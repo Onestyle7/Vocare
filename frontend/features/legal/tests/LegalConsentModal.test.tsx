@@ -18,6 +18,7 @@ vi.mock('next/navigation', () => ({
 
 vi.mock('@/features/auth/dal/commands', () => ({
   logOut: mocks.logOut,
+  deleteAccount: vi.fn(),
 }));
 
 vi.mock('../dal/commands', () => ({
@@ -57,6 +58,27 @@ const renderModal = ({ onSuccess = vi.fn(), onLogout = vi.fn() } = {}) => {
 
   return { onSuccess, onLogout };
 };
+
+const storageMock = (() => {
+  let store: Record<string, string> = {};
+  return {
+    getItem: vi.fn((key: string) => store[key] ?? null),
+    setItem: vi.fn((key: string, value: string) => {
+      store[key] = value.toString();
+    }),
+    removeItem: vi.fn((key: string) => {
+      delete store[key];
+    }),
+    clear: vi.fn(() => {
+      store = {};
+    }),
+  };
+})();
+
+Object.defineProperty(globalThis, 'localStorage', {
+  value: storageMock,
+  writable: true,
+});
 
 beforeEach(() => {
   localStorage.clear();

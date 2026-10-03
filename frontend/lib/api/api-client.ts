@@ -81,8 +81,12 @@ export class ApiClient {
     });
   }
 
-  async delete<T>(endpoint: string, options?: RequestInit) {
-    return this.makeRequest<T>(endpoint, { ...options, method: 'DELETE' });
+  async delete<T, D = unknown>(endpoint: string, data?: D, options?: RequestInit) {
+    return this.makeRequest<T>(endpoint, {
+      ...options,
+      method: 'DELETE',
+      body: data ? JSON.stringify(data) : undefined,
+    });
   }
 
   private async makeRequest<T>(

@@ -4,11 +4,15 @@ using VocareWebAPI.Models.Entities;
 
 namespace VocareWebAPI.UserManagement.Configuration;
 
-public class AccountAntiAbuseRegistryConfiguration : IEntityTypeConfiguration<AccountAntiAbuseRegistry>
+public class AccountAntiAbuseRegistryConfiguration
+    : IEntityTypeConfiguration<AccountAntiAbuseRegistry>
 {
     public void Configure(EntityTypeBuilder<AccountAntiAbuseRegistry> builder)
     {
         builder.HasKey(e => e.Id);
+        builder.Property(e => e.EmailHash).IsRequired();
+        builder.Property(e => e.UserId).IsRequired();
         builder.HasIndex(e => e.EmailHash).IsUnique();
+        builder.HasIndex(e => e.UserId);
     }
 }

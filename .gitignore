@@ -303,3 +303,7 @@ obj/
 # Agent files
 .gemini
 .instructions
+Library/
+.local/
+.nuget/
+

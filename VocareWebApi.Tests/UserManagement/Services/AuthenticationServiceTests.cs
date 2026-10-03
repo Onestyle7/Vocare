@@ -11,6 +11,8 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging.Abstractions;
 using Moq;
 using VocareWebAPI.Data;
+using VocareWebAPI.Legal.Repositories.Interfaces;
+using VocareWebAPI.Legal.Services.Interfaces;
 using VocareWebAPI.Models.Entities;
 using VocareWebApi.Tests.Common;
 using VocareWebAPI.UserManagement;
@@ -37,6 +39,9 @@ namespace VocareWebApi.Tests.UserManagement.Services
         private readonly Mock<IEmailService> _email = new();
         private readonly Mock<IMarketingConsentRepository> _marketingConsent = new();
         private readonly Mock<IUserSetupService> _userSetup = new();
+        private readonly Mock<ILegalService> _legalService = new();
+        private readonly Mock<ILegalRepository> _legalRepository = new();
+        private readonly Mock<ITokenService> _tokenService = new();
         private readonly AuthenticationService _sut;
 
         public AuthenticationServiceTests()
@@ -65,6 +70,10 @@ namespace VocareWebApi.Tests.UserManagement.Services
                     new HttpClient(FakeHttpMessageHandler.Throwing(new InvalidOperationException()))
                 );
 
+            _tokenService
+                .Setup(t => t.GenerateToken(It.IsAny<User>(), It.IsAny<bool>(), It.IsAny<int>()))
+                .Returns("test-jwt-token");
+
             _sut = new AuthenticationService(
                 _userManager.Object,
                 _signInManager.Object,
@@ -78,6 +87,9 @@ namespace VocareWebApi.Tests.UserManagement.Services
                     NullLogger<UserRegistrationHandler>.Instance
                 ),
                 _marketingConsent.Object,
+                _legalService.Object,
+                _legalRepository.Object,
+                _tokenService.Object,
                 _context
             );
         }
@@ -98,6 +110,20 @@ namespace VocareWebApi.Tests.UserManagement.Services
         public async Task LoginAsync_WhenUserNotFound_FailsWithInvalidCredentials401()
         {
             _userManager.Setup(m => m.FindByEmailAsync(Email)).ReturnsAsync((User?)null);
+
+            var result = await _sut.LoginAsync(Email, Password);
+
+            result.IsSuccess.Should().BeFalse();
+            result.Error!.Code.Should().Be("INVALID_CREDENTIALS");
+            result.Error.StatusCode.Should().Be(401);
+        }
+
+        [Fact]
+        public async Task LoginAsync_WhenUserIsDeleted_FailsWithInvalidCredentials401()
+        {
+            var user = NewUser();
+            user.IsDeleted = true;
+            _userManager.Setup(m => m.FindByEmailAsync(Email)).ReturnsAsync(user);
 
             var result = await _sut.LoginAsync(Email, Password);
 

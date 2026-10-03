@@ -58,6 +58,10 @@ export type ValidateResetPasswordCommand = {
   token: string;
 };
 
+export type DeleteAccountCommand = {
+  password?: string;
+};
+
 export type ValidateResetPasswordResult = {
   isValid: boolean;
 };

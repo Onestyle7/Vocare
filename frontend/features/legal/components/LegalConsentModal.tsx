@@ -15,6 +15,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from '@/components/ui/dialog';
+import { DeleteAccountDialog } from '@/features/auth/components/DeleteAccountDialog';
 import { logOut } from '@/features/auth/dal/commands';
 
 import { acceptLegalConsents } from '../dal/commands';
@@ -41,6 +42,7 @@ export function LegalConsentModal({
   const [acceptedDocIds, setAcceptedDocIds] = useState<Set<string>>(new Set());
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isLoggingOut, setIsLoggingOut] = useState(false);
+  const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const router = useRouter();
 
@@ -119,7 +121,7 @@ export function LegalConsentModal({
         hideCloseButton
         onEscapeKeyDown={(e) => e.preventDefault()}
         onPointerDownOutside={(e) => e.preventDefault()}
-        className="border-border bg-background text-foreground max-h-[calc(100dvh-2rem)] max-w-lg overflow-y-auto p-6 shadow-2xl"
+        className="border-border font-poppins bg-background text-foreground max-h-[calc(100dvh-2rem)] max-w-lg overflow-y-auto p-6 shadow-2xl"
       >
         <DialogHeader className="gap-2">
           <div className="text-primary flex items-center gap-2">
@@ -196,26 +198,39 @@ export function LegalConsentModal({
           </p>
         )}
 
-        <DialogFooter className="mt-4 sm:justify-between">
-          <Button
-            type="button"
-            variant="outline"
-            onClick={handleLogout}
-            disabled={isSubmitting || isLoggingOut}
-            className="text-muted-foreground hover:text-foreground"
-          >
-            {isLoggingOut ? (
-              <>
-                <Loader2 className="mr-2 size-4 animate-spin" />
-                Wylogowywanie...
-              </>
-            ) : (
-              <>
-                <LogOut className="mr-2 size-4" />
-                Wyloguj się
-              </>
-            )}
-          </Button>
+        <DialogFooter className="mt-4 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+          <div className="flex flex-wrap items-center gap-2">
+            <Button
+              type="button"
+              variant="outline"
+              onClick={handleLogout}
+              disabled={isSubmitting || isLoggingOut}
+              className="text-muted-foreground hover:text-foreground"
+            >
+              {isLoggingOut ? (
+                <>
+                  <Loader2 className="mr-2 size-4 animate-spin" />
+                  Wylogowywanie...
+                </>
+              ) : (
+                <>
+                  <LogOut className="mr-2 size-4" />
+                  Wyloguj się
+                </>
+              )}
+            </Button>
+
+            <Button
+              type="button"
+              variant="ghost"
+              size="sm"
+              onClick={() => setIsDeleteDialogOpen(true)}
+              disabled={isSubmitting || isLoggingOut}
+              className="text-muted-foreground hover:bg-destructive/10 hover:text-destructive text-xs"
+            >
+              Usuń konto
+            </Button>
+          </div>
 
           <Button
             type="button"
@@ -234,6 +249,11 @@ export function LegalConsentModal({
           </Button>
         </DialogFooter>
       </DialogContent>
+
+      <DeleteAccountDialog
+        isOpen={isDeleteDialogOpen}
+        onClose={() => setIsDeleteDialogOpen(false)}
+      />
     </Dialog>
   );
 }
