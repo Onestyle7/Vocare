@@ -89,7 +89,7 @@ Zwykle nie, szczególnie przy aplikacjach do USA, Wielkiej Brytanii czy Kanady -
 Resume w USA - zwykle 1 strona, nawet przy dłuższym doświadczeniu. CV w Wielkiej Brytanii i Europie - 1-2 strony, podobnie jak w Polsce.
 
 **Jak sprawdzić, czy moje angielskie CV jest dobrze dopasowane do zagranicznej oferty?**
-[Analiza profilu zawodowego w Vocare](/assistant) analizuje CV pod kątem dopasowania do konkretnej oferty i wskazuje, co warto poprawić przed wysłaniem aplikacji.
+[Dopasowanie CV do oferty w Vocare](/resume-creator) automatycznie dopasowuje CV do konkretnej oferty - wklejasz ogłoszenie, a system generuje wersję CV pod wymagania tej roli.
 
 ---
 

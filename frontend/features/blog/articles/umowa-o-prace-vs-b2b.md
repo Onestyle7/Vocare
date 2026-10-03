@@ -76,7 +76,7 @@ Przy wyższych stawkach - często tak, netto. Trzeba jednak doliczyć koszt ZUS,
 Nie ma ustawowego prawa do płatnego urlopu jak przy UoP, ale niektóre firmy oferują dni wolne w ramach dobrej praktyki, mimo braku formalnego obowiązku.
 
 **Jak sprawdzić, która forma zatrudnienia najlepiej pasuje do mojej sytuacji?**
-[Dopasowanie CV do oferty w Vocare](/resume-creator) pomaga zrozumieć, jakie oferty i formy współpracy najlepiej odpowiadają Twojemu profilowi zawodowemu i priorytetom.
+[Analiza rynku pracy w Vocare](/market-analysis) pokazuje realne widełki wynagrodzeń dla Twojej ścieżki - to dobry punkt wyjścia do porównania oferty etatowej i B2B.
 
 ---
 
@@ -84,7 +84,7 @@ Nie ma ustawowego prawa do płatnego urlopu jak przy UoP, ale niektóre firmy of
 
 Wybór między umową o pracę, B2B a zleceniem to kompromis między stabilnością a stawką netto. Umowa o pracę daje pełną ochronę i najlepszą zdolność kredytową, B2B - wyższą stawkę przy większym ryzyku, a zlecenie sprawdza się jako forma przejściowa lub dodatkowa.
 
-Niezależnie od wybranej formy zatrudnienia, [Analiza rynku pracy w Vocare](/market-analysis) pomoże Ci znaleźć oferty dopasowane do Twojego profilu kompetencyjnego.
+Niezależnie od wybranej formy zatrudnienia, [Analiza profilu zawodowego w Vocare](/assistant) wskaże ścieżki kariery dopasowane do Twojego profilu kompetencyjnego.
 
 ---
 

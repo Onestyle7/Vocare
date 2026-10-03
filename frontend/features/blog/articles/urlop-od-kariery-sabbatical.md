@@ -78,7 +78,7 @@ Zależy od celu. Regeneracja po wypaleniu może wymagać 1-3 miesięcy, nauka no
 Zależy od ustaleń przed wyjściem. Formalne programy sabbaticalowe zwykle gwarantują powrót na to samo lub podobne stanowisko - nieformalne przerwy nie dają takiej gwarancji.
 
 **Jak sprawdzić, czy moje kompetencje są aktualne po dłuższej przerwie?**
-[Rekomendacje ścieżki kariery od Vocare](/roadmap) analizuje Twój profil i porównuje go z aktualnym zapotrzebowaniem rynkowym, niezależnie od długości przerwy w karierze.
+[Analiza profilu zawodowego w Vocare](/assistant) analizuje Twój profil i porównuje go z aktualnym zapotrzebowaniem rynkowym, niezależnie od długości przerwy w karierze.
 
 ---
 

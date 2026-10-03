@@ -121,7 +121,7 @@ Wypisz 10 kluczowych fraz z oferty na kartce. Dla każdej sprawdź czy jest w CV
 **Metoda 2: AI**
 "Porównaj to CV z tą ofertą pracy i powiedz mi jakich słów kluczowych brakuje" - proste zapytanie do ChatGPT lub Claude daje konkretne wskazówki.
 
-Polską alternatywą jest [Analiza profilu zawodowego w Vocare](/assistant) - bezpłatna analiza jakości CV z możliwością dopasowania do oferty i konkretną oceną match rate.
+Polską alternatywą jest [Kreator CV w Vocare](/resume-creator) - bezpłatna analiza ogólnej jakości CV oraz funkcja, która po wklejeniu ogłoszenia automatycznie generuje wersję CV dopasowaną do oferty.
 
 ---
 

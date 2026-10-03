@@ -72,7 +72,7 @@ Zwykle od kilku tygodni (zbiory) do kilku miesięcy (sezon turystyczny), zależn
 
 Praca sezonowa za granicą oferuje zwykle wyższe stawki niż porównywalne stanowiska w Polsce, ale opłacalność zależy od kosztów zakwaterowania, transportu i lokalnych cen życia. Najpopularniejsze kierunki - Niemcy, Holandia, Norwegia i Czechy - różnią się profilem ofert i stawek, dlatego warto porównać kilka opcji przez oficjalne kanały, takie jak EURES, zanim podejmiesz decyzję.
 
-Zastanawiasz się, czy praca za granicą pasuje do Twoich długoterminowych planów zawodowych? [Dopasowanie CV do oferty w Vocare](/resume-creator) pomoże Ci to ocenić.
+Zastanawiasz się, czy praca za granicą pasuje do Twoich długoterminowych planów zawodowych? [Analiza profilu zawodowego w Vocare](/assistant) pomoże Ci to ocenić.
 
 ---
 

@@ -62,7 +62,7 @@ Tak, pisanie daje więcej czasu na przemyślenie treści niż bezpośrednia rozm
 Tak, treści pokazujące realne wyzwania i wyciągnięte z nich lekcje często angażują odbiorców bardziej niż same historie sukcesu.
 
 **Jak sprawdzić, jaka specjalizacja tematyczna najlepiej pasuje do mojego profilu zawodowego?**
-[Roadmapa kariery w Vocare](/roadmap) pomoże Ci zidentyfikować mocne strony i obszary, w których warto budować widoczność zawodową.
+[Analiza profilu zawodowego w Vocare](/assistant) pomoże Ci zidentyfikować mocne strony i obszary, w których warto budować widoczność zawodową.
 
 ---
 
@@ -70,7 +70,7 @@ Tak, treści pokazujące realne wyzwania i wyciągnięte z nich lekcje często a
 
 Budowanie marki osobistej to świadome kształtowanie tego, jak jesteś postrzegany zawodowo - nie autopromocja, tylko konsekwentne dzielenie się wartościową wiedzą w wybranej, wąskiej specjalizacji. Niski odsetek aktywnych publikujących na polskim LinkedIn (ok. 2%) to realna okazja do wyróżnienia się bez ogromnej konkurencji.
 
-Zastanawiasz się, jaką specjalizację warto rozwijać w swojej marce zawodowej? [Rekomendacje ścieżki kariery od Vocare](/roadmap) pomoże Ci to zidentyfikować.
+Zastanawiasz się, jaką specjalizację warto rozwijać w swojej marce zawodowej? [Analiza profilu zawodowego w Vocare](/assistant) pomoże Ci to zidentyfikować.
 
 ---
 

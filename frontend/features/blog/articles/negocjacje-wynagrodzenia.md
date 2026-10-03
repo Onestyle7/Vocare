@@ -92,7 +92,7 @@ Zapytaj o harmonogram - kiedy budżet może się pojawić - i negocjuj alternaty
 Nie musisz - w wielu krajach (i coraz częściej w Polsce) to pytanie jest niezalecane. Możesz przekierować rozmowę na oczekiwania wobec nowej roli, nie na historię zarobków.
 
 **Jak sprawdzić, jakie są realne widełki dla mojego stanowiska?**
-[Dopasowanie CV do oferty w Vocare](/resume-creator) analizuje Twój profil kompetencyjny i porównuje go z aktualnymi danymi rynkowymi, wskazując realne widełki wynagrodzenia dla Twojej roli i doświadczenia.
+[Analiza rynku pracy w Vocare](/market-analysis) analizuje Twój profil kompetencyjny i porównuje go z aktualnymi danymi rynkowymi, wskazując realne widełki wynagrodzenia dla Twojej roli i doświadczenia.
 
 ---
 

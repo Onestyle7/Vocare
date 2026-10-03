@@ -173,7 +173,7 @@ Każdy ma zainteresowania - nie każdy myśli o nich w tych kategoriach. Zastan�
 
 Zainteresowania w CV to nie obowiązkowy element - to opcjonalne miejsce, które może wzmocnić Twoją kandydaturę. Ale tylko wtedy, gdy wpiszesz konkretne, autentyczne aktywności, które coś o Tobie mówią. "Czytanie i muzyka" nic nie mówi. "Trójbój siłowy i nauka hiszpańskiego" - już jest o czym porozmawiać.
 
-Jeśli masz wątpliwości co do całej struktury swojego CV, [Analiza profilu zawodowego w Vocare](/assistant) oceni jego ogólną jakość, a osobna funkcja automatycznie dopasuje CV do konkretnej oferty po wklejeniu ogłoszenia.
+Jeśli masz wątpliwości co do całej struktury swojego CV, [Kreator CV w Vocare](/resume-creator) oceni jego ogólną jakość, a osobna funkcja automatycznie dopasuje CV do konkretnej oferty po wklejeniu ogłoszenia.
 
 ---
 

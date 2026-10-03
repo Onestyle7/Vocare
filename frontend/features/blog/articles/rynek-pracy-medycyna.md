@@ -77,7 +77,7 @@ Tak, szczególnie dla osób szukających szybszej ścieżki wejścia na rynek - 
 Psychiatria, geriatria, anestezjologia i medycyna rodzinna - szczególnie poza dużymi miastami, gdzie dostęp do specjalistów jest najbardziej ograniczony.
 
 **Jak sprawdzić, która ścieżka w ochronie zdrowia pasuje do moich kompetencji?**
-[Rekomendacje ścieżki kariery od Vocare](/roadmap) analizuje Twój profil i porównuje go z aktualnym zapotrzebowaniem rynkowym, wskazując konkretne kierunki rozwoju zawodowego.
+[Analiza profilu zawodowego w Vocare](/assistant) analizuje Twój profil i porównuje go z aktualnym zapotrzebowaniem rynkowym, wskazując konkretne kierunki rozwoju zawodowego.
 
 ---
 

@@ -93,7 +93,7 @@ SQL i Excel (zaawansowany, z Power Query/VBA) to podstawa. Python i Power BI daj
 
 Rynek pracy w finansach nagradza dziś połączenie wiedzy finansowej z umiejętnościami analitycznymi i technicznymi. Automatyzacja eliminuje proste zadania, ale zwiększa zapotrzebowanie na analityków, kontrolerów i specjalistów ds. ryzyka.
 
-Zastanawiasz się, która ścieżka w finansach najlepiej pasuje do Twojego profilu? [Rekomendacje ścieżki kariery od Vocare](/roadmap) przeprowadzi bezpłatną analizę kompetencji i wskaże konkretne kierunki rozwoju.
+Zastanawiasz się, która ścieżka w finansach najlepiej pasuje do Twojego profilu? [Analiza profilu zawodowego w Vocare](/assistant) przeprowadzi bezpłatną analizę kompetencji i wskaże konkretne kierunki rozwoju.
 
 ---
 

@@ -62,7 +62,7 @@ Częściowo tak - intensywność prac wzrasta w okresie siewów i żniw, ale pro
 Tak, dane pokazują wyraźnie wyższe stawki dla operatorów z tymi kompetencjami w porównaniu do obsługi wyłącznie podstawowego sprzętu.
 
 **Jak sprawdzić, czy praca w nowoczesnym rolnictwie pasuje do moich kompetencji?**
-[Rekomendacje ścieżki kariery od Vocare](/roadmap) analizuje Twój profil i porównuje go z aktualnym zapotrzebowaniem rynkowym.
+[Analiza profilu zawodowego w Vocare](/assistant) analizuje Twój profil i porównuje go z aktualnym zapotrzebowaniem rynkowym.
 
 ---
 

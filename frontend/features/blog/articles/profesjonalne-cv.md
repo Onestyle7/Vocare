@@ -168,7 +168,7 @@ Pierwsza wersja od zera: 3-5 godzin. Aktualizacja istniejącego: 1-2 godziny. Do
 Może pomóc z formułowaniem zdań i sugestią struktury - ale konkretne osiągnięcia, liczby i historia zawodowa muszą być Twoje. CV napisane w 100% przez AI jest rozpoznawalne i nieprofesjonalne.
 
 **Jak sprawdzić, czy moje CV spełnia standardy profesjonalnego dokumentu przed wysłaniem?**
-[Analiza profilu zawodowego w Vocare](/assistant) analizuje ogólną jakość CV - ocenia kompletność sekcji, konkretność osiągnięć i czytelność dla ATS. Osobna funkcja automatycznie generuje wersję CV dopasowaną do konkretnej oferty po wklejeniu ogłoszenia.
+[Kreator CV w Vocare](/resume-creator) analizuje ogólną jakość CV - ocenia kompletność sekcji, konkretność osiągnięć i czytelność dla ATS. Osobna funkcja automatycznie generuje wersję CV dopasowaną do konkretnej oferty po wklejeniu ogłoszenia.
 
 ---
 

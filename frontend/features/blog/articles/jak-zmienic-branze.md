@@ -85,7 +85,7 @@ Przejrzyj oferty pracy w swojej docelowej branży. Zwróć uwagę na:
 
 Najcenniejsza wiedza nie jest na LinkedIn ani w ogłoszeniach, jest w głowach ludzi pracujących w danej branży. Skontaktuj się z 3-5 osobami i poproś o 20-minutową rozmowę informacyjną (tzw. informational interview). Większość ludzi chętnie dzieli się doświadczeniem, gdy pytasz o rady, a nie o pracę.
 
-Nie wiesz, które Twoje kompetencje są najbardziej cenione w docelowej branży? [Roadmapa kariery w Vocare](/roadmap) porównuje Twój profil z aktualnymi wymaganiami rynku i wskazuje konkretne luki oraz mocne strony transferowalne - zanim jeszcze zaplanujesz kursy.
+Nie wiesz, które Twoje kompetencje są najbardziej cenione w docelowej branży? [Analiza profilu zawodowego w Vocare](/assistant) porównuje Twój profil z aktualnymi wymaganiami rynku i wskazuje konkretne luki oraz mocne strony transferowalne - zanim jeszcze zaplanujesz kursy.
 
 ---
 
@@ -153,7 +153,7 @@ Znając błędy innych, możesz ich uniknąć:
 ## FAQ - zmiana branży
 
 **Jak sprawdzić, do jakich branż nadaję się na podstawie moich obecnych kompetencji?**
-[Rekomendacje ścieżki kariery od Vocare](/roadmap) analizuje Twój profil zawodowy i identyfikuje branże, w których Twoje kompetencje transferowalne są najbardziej cenione - konkretna lista kierunków zamiast ogólnego "idź tam, gdzie lubisz".
+[Analiza profilu zawodowego w Vocare](/assistant) analizuje Twój profil zawodowy i identyfikuje branże, w których Twoje kompetencje transferowalne są najbardziej cenione - konkretna lista kierunków zamiast ogólnego "idź tam, gdzie lubisz".
 
 **Ile czasu realnie zajmuje zmiana branży?**
 Przy aktywnych przygotowaniach (kursy + networking + budowanie portfolio) - 6 do 12 miesięcy. Przy branżach wymagających certyfikatów lub studiów podyplomowych - do 2 lat.

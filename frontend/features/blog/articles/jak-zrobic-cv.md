@@ -209,7 +209,7 @@ Błędy poniżej mają wspólny mianownik: traktowanie CV jako dokumentu wysyła
 Pierwsze CV od zera: 3-5 godzin. Aktualizacja istniejącego: 30-60 minut. Dopasowanie do konkretnej oferty: 10-20 minut.
 
 **Czy powinienem mieć jedno czy kilka CV?**
-Kilka - jedno bazowe i osobne wersje dla różnych typów stanowisk lub branż. [Analiza profilu zawodowego w Vocare](/assistant) pozwala przechowywać kilka wersji CV w jednym miejscu i edytować je niezależnie. Przy każdej aplikacji - 10-minutowe dopasowanie do konkretnej oferty.
+Kilka - jedno bazowe i osobne wersje dla różnych typów stanowisk lub branż. [Kreator CV w Vocare](/resume-creator) pozwala przechowywać kilka wersji CV w jednym miejscu i edytować je niezależnie. Przy każdej aplikacji - 10-minutowe dopasowanie do konkretnej oferty.
 
 **Czy warto korzystać z szablonów CV online?**
 Tak - oszczędzają czas na formatowaniu. Ale treść zawsze musi być Twoja, konkretna i dopasowana.

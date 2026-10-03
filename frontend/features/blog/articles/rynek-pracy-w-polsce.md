@@ -90,7 +90,7 @@ To nie jest optymistyczne uproszczenie - to wzorzec widoczny w każdym z artyku�
 
 **Nie wiesz jeszcze, w którą stronę iść:** zacznij od diagnozy własnych kompetencji i wartości, nie od rankingu zarobków - metodologia opisana w [jaki zawód wybrać](/blog/kariera/jaki-zawod-wybrac) i [ścieżce kariery](/blog/kariera/sciezka-kariery) pomoże zawęzić wybór, zanim porównasz konkretne branże.
 
-Nie chcesz robić tej analizy ręcznie dla każdej branży z osobna? [Rekomendacje ścieżki kariery od Vocare](/roadmap) analizuje Twój profil kompetencyjny i porównuje go jednocześnie z zapotrzebowaniem we wszystkich 21 branżach, wskazując te, w których masz dziś realnie największe szanse.
+Nie chcesz robić tej analizy ręcznie dla każdej branży z osobna? [Analiza profilu zawodowego w Vocare](/assistant) analizuje Twój profil kompetencyjny i porównuje go jednocześnie z zapotrzebowaniem we wszystkich 21 branżach, wskazując te, w których masz dziś realnie największe szanse.
 
 ---
 

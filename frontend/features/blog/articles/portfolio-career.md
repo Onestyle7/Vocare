@@ -145,7 +145,7 @@ Może ograniczyć działalność konkurencyjną, jeśli umowa zawiera zakaz konk
 Zacznij od małego projektu pobocznego w wolnym czasie, zanim zdecydujesz się na redukcję etatu - to pozwala przetestować model bez dużego ryzyka finansowego.
 
 **Jak sprawdzić, które dodatkowe źródła dochodu pasują do moich kompetencji?**
-[Roadmapa kariery w Vocare](/roadmap) analizuje Twój profil kompetencyjny i wskazuje możliwe kierunki rozwoju, w tym potencjalne dodatkowe ścieżki zawodowe.
+[Analiza profilu zawodowego w Vocare](/assistant) analizuje Twój profil kompetencyjny i wskazuje możliwe kierunki rozwoju, w tym potencjalne dodatkowe ścieżki zawodowe.
 
 ---
 
@@ -155,7 +155,7 @@ Portfolio career to świadome budowanie kariery z kilku źródeł dochodu i akty
 
 Od strony finansowej najważniejszy jest jeden próg: etat z wynagrodzeniem co najmniej minimalnym (4806 zł brutto w 2026) sprawia, że z działalności płacisz tylko składkę zdrowotną. Zejście poniżej tego progu lub rezygnacja z etatu uruchamia pełne składki społeczne i zmienia cały rachunek opłacalności.
 
-Zastanawiasz się, jakie dodatkowe kierunki rozwoju pasują do Twoich kompetencji? [Rekomendacje ścieżki kariery od Vocare](/roadmap) przeprowadzi bezpłatną analizę.
+Zastanawiasz się, jakie dodatkowe kierunki rozwoju pasują do Twoich kompetencji? [Analiza profilu zawodowego w Vocare](/assistant) przeprowadzi bezpłatną analizę.
 
 ---
 

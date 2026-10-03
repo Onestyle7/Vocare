@@ -124,7 +124,7 @@ Warto to zgłosić przełożonemu - jeśli fizyczna obecność nie przekłada si
 Jeśli model pracy nie jest zapisany w umowie ani porozumieniu, firma może zmienić politykę wewnętrzną. Dlatego warto ustalić warunki na piśmie przed startem.
 
 **Jak sprawdzić, które oferty pracy faktycznie oferują elastyczny model hybrydowy?**
-[Dopasowanie CV do oferty w Vocare](/resume-creator) pomaga porównać oferty względem Twoich preferencji, w tym oczekiwań co do modelu pracy.
+Model pracy najpewniej zweryfikujesz w treści ogłoszenia i pytając wprost na rozmowie. [Analiza profilu zawodowego w Vocare](/assistant) wskaże z kolei ścieżki kariery dopasowane do Twojego profilu - łatwiej wtedy zawęzić poszukiwania do ról, w których praca hybrydowa jest standardem.
 
 ---
 

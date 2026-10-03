@@ -187,7 +187,7 @@ Najlepiej obydwa: osobna sekcja dla ATS + wplecione w punkty doświadczenia jako
 W 2026 roku - absolutnie nie. To jak pisać "umiem chodzić" w rubryce sport. Zastąp to konkretnymi narzędziami.
 
 **Jak sprawdzić, czy moje umiejętności są wystarczające dla konkretnej oferty?**
-[Analiza profilu zawodowego w Vocare](/assistant) automatycznie dopasowuje CV do konkretnej oferty - wklejasz ogłoszenie, a system generuje wersję CV z umiejętnościami dopasowanymi do wymagań tej roli.
+[Dopasowanie CV do oferty w Vocare](/resume-creator) automatycznie dopasowuje CV do konkretnej oferty - wklejasz ogłoszenie, a system generuje wersję CV z umiejętnościami dopasowanymi do wymagań tej roli.
 
 ---
 

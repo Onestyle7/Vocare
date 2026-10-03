@@ -60,7 +60,7 @@ Nie, informacje o kontroli i jej wyniku podlegają ochronie danych osobowych i n
 Odmowa może być traktowana jako naruszenie obowiązków pracowniczych, jeśli kontrola została prawidłowo wprowadzona zgodnie z przepisami.
 
 **Jak sprawdzić swoje prawa, jeśli podejrzewasz nieprawidłowości przy kontroli trzeźwości w Twojej firmie?**
-[Analiza rynku pracy w Vocare](/market-analysis) pomoże Ci ocenić Twoją sytuację zawodową i zaplanować dalsze kroki, jeśli rozważasz zmianę pracy.
+[Analiza profilu zawodowego w Vocare](/assistant) pomoże Ci ocenić Twoją sytuację zawodową i zaplanować dalsze kroki, jeśli rozważasz zmianę pracy.
 
 ---
 

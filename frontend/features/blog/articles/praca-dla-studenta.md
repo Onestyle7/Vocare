@@ -91,7 +91,7 @@ Klasyczne 20-30h/tydzień w firmie. Dobra gdy firma daje Ci doświadczenie zawod
 - Korepetycje i edukacja
 - Badania i ankietowanie
 
-Nie wiesz, która z tych form pracy (staż, freelancing, part-time) jest najlepiej dopasowana do Twojego kierunku studiów i celów kariery? [Dopasowanie CV do oferty w Vocare](/resume-creator) analizuje Twój profil i wskazuje, które rodzaje doświadczenia będą najcenniejsze dla docelowej roli po dyplomie.
+Nie wiesz, która z tych form pracy (staż, freelancing, part-time) jest najlepiej dopasowana do Twojego kierunku studiów i celów kariery? [Roadmapa kariery w Vocare](/roadmap) rozpisuje kolejne kroki do docelowej roli i wskazuje, które rodzaje doświadczenia będą najcenniejsze dla docelowej roli po dyplomie.
 
 ---
 
@@ -161,7 +161,7 @@ Zależy od wymiaru i organizacji. Badania pokazują, że studenci pracujący do 
 Nie musisz, ale warto sprawdzić regulamin uczelni i grupy zajęciowej. Niektóre uczelnie mają zasady dotyczące obecności i możliwości zaliczenia przy dużej liczbie nieobecności.
 
 **Jak sprawdzić, które staże i oferty juniorskie są najlepiej dopasowane do mojego profilu studenckiego?**
-[Analiza rynku pracy w Vocare](/market-analysis) automatycznie dopasowuje CV do konkretnej oferty - wklejasz ogłoszenie, system generuje wersję CV pod wymagania tej roli. Przydatne gdy masz pierwsze CV z projektami i chcesz jak najlepiej dopasować je do stażu.
+[Dopasowanie CV do oferty w Vocare](/resume-creator) automatycznie dopasowuje CV do konkretnej oferty - wklejasz ogłoszenie, system generuje wersję CV pod wymagania tej roli. Przydatne gdy masz pierwsze CV z projektami i chcesz jak najlepiej dopasować je do stażu.
 
 ---
 

@@ -88,7 +88,7 @@ Eksponuj certyfikaty zawodowe i uprawnienia, doświadczenie z konkretnymi maszyn
 
 **Overleaf (LaTeX)** - dla IT i naukowców. Trudniejsze w edycji, ale daje bardzo profesjonalne rezultaty.
 
-**UWAGA:** Unikaj stron oferujących "szablony CV" z dużą ilością grafik i zdjęć stockowych. Wyglądają ładnie, ale często nie przechodzą przez filtry ATS, a ich edycja w darmowych narzędziach bywa niemożliwa. Świetnym wyborem będzie tutaj kreator CV dostępny na [Analiza profilu zawodowego w Vocare](/assistant)
+**UWAGA:** Unikaj stron oferujących "szablony CV" z dużą ilością grafik i zdjęć stockowych. Wyglądają ładnie, ale często nie przechodzą przez filtry ATS, a ich edycja w darmowych narzędziach bywa niemożliwa. Świetnym wyborem będzie tutaj [Kreator CV w Vocare](/resume-creator)
 
 ---
 
@@ -165,7 +165,7 @@ Co 1-2 lata lub po każdej ważniejszej zmianie kariery (nowa rola, kurs, projek
 
 Dobry wzór CV to solidny punkt startowy, ale nie zrobi całej pracy za Ciebie. Kluczem jest wypełnienie go konkretną, mierzalną treścią i dopasowanie do każdej oferty z osobna. Jeden wzór, dobrze dostosowany, jest warty więcej niż dziesięć wysłanych bezmyślnie.
 
-Chcesz mieć CV, które jest automatycznie analizowane i optymalizowane pod konkretne oferty? Sprawdź [Analiza profilu zawodowego w Vocare](/assistant) - AI, które wskaże Ci dokładnie, co zmienić w CV, żeby zwiększyć szanse na zaproszenie.
+Chcesz mieć CV, które jest automatycznie analizowane i optymalizowane pod konkretne oferty? Sprawdź [Dopasowanie CV do oferty w Vocare](/resume-creator) - wklejasz ogłoszenie, a system generuje wersję CV pod wymagania tej roli.
 
 ---
 

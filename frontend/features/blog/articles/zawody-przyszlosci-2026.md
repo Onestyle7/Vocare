@@ -122,7 +122,7 @@ Oto konkretne kroki, które możesz podjąć:
 4. **Buduj sieć kontaktów** - w wielu zawodach przyszłości to właśnie relacje otwierają drzwi.
 5. **Testuj, zanim zdecydujesz** - wolontariat, projekty poboczne i freelancing to świetny sposób na sprawdzenie nowej branży bez porzucania obecnej pracy.
 
-Zanim zaczniesz od kroku 2, warto solidnie zrealizować krok 1. [Rekomendacje ścieżki kariery od Vocare](/roadmap) przeprowadza bezpłatną analizę kompetencji i konfrontuje Twój profil z aktualnymi danymi rynkowymi - żebyś wiedział, w którym kierunku warto się przebranżowić.
+Zanim zaczniesz od kroku 2, warto solidnie zrealizować krok 1. [Analiza profilu zawodowego w Vocare](/assistant) przeprowadza bezpłatną analizę kompetencji i konfrontuje Twój profil z aktualnymi danymi rynkowymi - żebyś wiedział, w którym kierunku warto się przebranżowić.
 
 ---
 
@@ -178,7 +178,7 @@ W wielu przypadkach tak. Data analyst, specjalista automatyzacji, technik PV, pr
 
 Zawody przyszłości w 2026 roku to nie tylko programiści i inżynierowie AI. To terapeuci, pielęgniarki, specjaliści ESG, logistycy i nauczyciele, każdy z nich działający w środowisku, które zmienia się szybciej niż kiedykolwiek. Kluczem do sukcesu nie jest wybór „właściwego" zawodu raz na całe życie, ale gotowość do ciągłego uczenia się i adaptacji.
 
-Nie wiesz, który kierunek jest dla Ciebie? Skorzystaj z platformy [Analiza rynku pracy w Vocare](/market-analysis) i sprawdź, jakie zawody najlepiej odpowiadają Twoim kompetencjom, wartościom i aspiracjom. Nasz asystent AI przeprowadzi Cię przez spersonalizowaną analizę kariery - bezpłatnie i bez zobowiązań.
+Nie wiesz, który kierunek jest dla Ciebie? Skorzystaj z platformy [Analiza profilu zawodowego w Vocare](/assistant) i sprawdź, jakie zawody najlepiej odpowiadają Twoim kompetencjom, wartościom i aspiracjom. Nasz asystent AI przeprowadzi Cię przez spersonalizowaną analizę kariery - bezpłatnie i bez zobowiązań.
 
 ---
 

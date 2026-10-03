@@ -75,7 +75,7 @@ Nie wszystkie - część uprawnień (np. dodatkowy urlop, skrócony czas pracy) 
 
 Orzeczenie o znacznym lub umiarkowanym stopniu niepełnosprawności daje konkretne uprawnienia pracownicze - skrócony czas pracy, dodatkowy urlop, dodatkową przerwę i zakaz nadgodzin oraz pracy nocnej. Dofinansowania z PFRON dla pracodawców realnie zwiększają liczbę dostępnych ofert i skłonność firm do inwestowania w dostosowanie stanowisk pracy.
 
-Zastanawiasz się, jak Twoje kompetencje wypadają na rynku pracy? [Dopasowanie CV do oferty w Vocare](/resume-creator) pomoże Ci to sprawdzić.
+Zastanawiasz się, jak Twoje kompetencje wypadają na rynku pracy? [Analiza rynku pracy w Vocare](/market-analysis) pomoże Ci to sprawdzić.
 
 ---
 

@@ -80,7 +80,7 @@ Nie ma takiego ustawowego wymogu przy najcięższych naruszeniach, choć w prakt
 
 Zwolnienie dyscyplinarne wymaga spełnienia jednej z trzech ściśle określonych przesłanek z art. 52 KP i musi nastąpić w ciągu miesiąca od powzięcia wiadomości o przyczynie przez pracodawcę. Jeśli podejrzewasz, że zwolnienie było wadliwe lub niesłuszne, masz 21 dni na odwołanie do sądu pracy - warto to sprawdzić, zanim termin minie.
 
-Szukasz nowego kierunku zawodowego po trudnym zakończeniu poprzedniej pracy? [Dopasowanie CV do oferty w Vocare](/resume-creator) pomoże Ci zaplanować kolejny krok.
+Szukasz nowego kierunku zawodowego po trudnym zakończeniu poprzedniej pracy? [Analiza profilu zawodowego w Vocare](/assistant) pomoże Ci zaplanować kolejny krok.
 
 ---
 

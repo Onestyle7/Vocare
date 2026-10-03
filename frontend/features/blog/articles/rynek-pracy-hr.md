@@ -82,7 +82,7 @@ Certyfikaty (np. z zakresu prawa pracy, coachingu czy narzędzi ATS) pomagają, 
 
 Rynek pracy w HR w 2026 roku przesuwa się w stronę danych, strategii i doświadczenia kandydata. People analytics i HR business partnering to dziś najbardziej perspektywiczne ścieżki, a rola klasycznego rekrutera ewoluuje w stronę doradcy, nie tylko selekcjonera CV.
 
-Zastanawiasz się, która ścieżka w HR najlepiej pasuje do Twojego profilu? [Rekomendacje ścieżki kariery od Vocare](/roadmap) przeprowadzi bezpłatną analizę kompetencji i wskaże konkretne kierunki rozwoju.
+Zastanawiasz się, która ścieżka w HR najlepiej pasuje do Twojego profilu? [Analiza profilu zawodowego w Vocare](/assistant) przeprowadzi bezpłatną analizę kompetencji i wskaże konkretne kierunki rozwoju.
 
 ---
 

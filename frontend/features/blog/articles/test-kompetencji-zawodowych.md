@@ -205,7 +205,7 @@ Potraktuj to jako ciekawe dane, nie jako problem. Zastanów się: dlaczego wynik
 Coraz więcej pracodawców używa testów kompetencyjnych i osobowości w procesie rekrutacji (szczególnie duże firmy). Warto je znać, żeby nie być zaskoczonym.
 
 **Gdzie mogę zrobić test kompetencji i od razu zobaczyć, jakie zawody i branże mi odpowiadają?**
-[Roadmapa kariery w Vocare](/roadmap) przeprowadza spersonalizowaną analizę kariery łączącą diagnozę kompetencji z aktualnymi danymi rynkowymi - wyniki pokazują konkretne kierunki zawodowe, nie tylko abstrakcyjne typy osobowości.
+[Analiza profilu zawodowego w Vocare](/assistant) przeprowadza spersonalizowaną analizę kariery łączącą diagnozę kompetencji z aktualnymi danymi rynkowymi - wyniki pokazują konkretne kierunki zawodowe, nie tylko abstrakcyjne typy osobowości.
 
 ---
 
@@ -213,7 +213,7 @@ Coraz więcej pracodawców używa testów kompetencyjnych i osobowości w proces
 
 Testy kompetencji zawodowych to najszybsza droga do zrozumienia własnego profilu zawodowego. Zacznij od Holland Code (bezpłatny, dobra podstawa) i Gallup StrengthsFinder (płatny, ale bardzo wartościowy). Omów wyniki z doradcą zawodowym i skonfrontuj z realnym doświadczeniem.
 
-Chcesz przeprowadzić szybką diagnostykę kariery bez konieczności umawia sesji z doradcą? [Rekomendacje ścieżki kariery od Vocare](/roadmap) oferuje spersonalizowaną analizę kompetencji i wskazuje konkretne ścieżki kariery dopasowane do Twojego profilu.
+Chcesz przeprowadzić szybką diagnostykę kariery bez konieczności umawia sesji z doradcą? [Analiza profilu zawodowego w Vocare](/assistant) oferuje spersonalizowaną analizę kompetencji i wskazuje konkretne ścieżki kariery dopasowane do Twojego profilu.
 
 ---
 

@@ -160,7 +160,7 @@ Zacznij od diagnozy siebie, nie od przeglądania ofert. Wypisz swoje mocne stron
 Tak - kompetencje transferowalne (komunikacja, analiza, pisanie) są cenione w wielu branżach technicznych (UX writing, product management, analityka). Kluczem jest uzupełnienie braków technicznych przez kursy lub bootcampy, nie kolejne studia.
 
 **Czy jest narzędzie, które pomoże mi wybrać zawód dopasowany do moich mocnych stron i aktualnego rynku pracy?**
-[Roadmapa kariery w Vocare](/roadmap) przeprowadza spersonalizowaną analizę kariery - ocenia Twoje predyspozycje, konfrontuje je z danymi rynkowymi i proponuje konkretne zawody i ścieżki rozwoju zamiast ogólnych wskazówek.
+[Analiza profilu zawodowego w Vocare](/assistant) przeprowadza spersonalizowaną analizę kariery - ocenia Twoje predyspozycje, konfrontuje je z danymi rynkowymi i proponuje konkretne zawody i ścieżki rozwoju zamiast ogólnych wskazówek.
 
 **Jak szybko można znaleźć pracę po zmianie zawodu?**
 Zależy od branży i luki kompetencyjnej. W zawodach deficytowych (logistyka, budownictwo, ochrona zdrowia) - często kilka tygodni. W branżach wymagających certyfikatów lub portfolio (IT, finanse) - 3-12 miesięcy aktywnego przygotowania.
@@ -171,7 +171,7 @@ Zależy od branży i luki kompetencyjnej. W zawodach deficytowych (logistyka, bu
 
 Pytanie „jaki zawód wybrać" nie wymaga genialnej intuicji ani szczęścia. Wymaga systematycznego podejścia: poznania swoich mocnych stron, zbadania rynku, przetestowania opcji i ułożenia planu. Rynek pracy w Polsce w 2026 roku daje realne szanse, zarówno w zawodach deficytowych, takich jak ochrona zdrowia, edukacja czy budownictwo, jak i w dynamicznie rosnących branżach technologicznych.
 
-Nie musisz tego robić sam. Jeśli chcesz w kilka minut sprawdzić, jaki zawód pasuje do Twoich predyspozycji - skorzystaj z darmowej analizy na [Rekomendacje ścieżki kariery od Vocare](/roadmap). Platforma przeanalizuje Twoje mocne strony, porówna je z aktualnymi danymi rynkowymi i zaproponuje ścieżki kariery dopasowane właśnie do Ciebie. Bo wybór zawodu to zbyt ważna decyzja, żeby zostawiać ją przypadkowi.
+Nie musisz tego robić sam. Jeśli chcesz w kilka minut sprawdzić, jaki zawód pasuje do Twoich predyspozycji - skorzystaj z darmowej analizy na [Analiza profilu zawodowego w Vocare](/assistant). Platforma przeanalizuje Twoje mocne strony, porówna je z aktualnymi danymi rynkowymi i zaproponuje ścieżki kariery dopasowane właśnie do Ciebie. Bo wybór zawodu to zbyt ważna decyzja, żeby zostawiać ją przypadkowi.
 
 ---
 

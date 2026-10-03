@@ -241,7 +241,7 @@ Tak - [Dopasowanie CV do oferty w Vocare](/resume-creator) automatycznie dopasow
 
 CV studenta bez doświadczenia zawodowego to wyzwanie, ale nie niemożność. Klucz: opisz konkretnie to co masz - projekty, staże, aktywności - z miarami i efektami. Brak doświadczenia zawodowego to nie przekreślenie - to punkt startowy, który dobrze opisany wyróżnia Cię z tłumu.
 
-Chcesz sprawdzić jak Twoje studenckie CV wygląda w oczach rekrutera i co można ulepszyć? [Analiza profilu zawodowego w Vocare](/assistant) pomoże Ci to ocenić.
+Chcesz sprawdzić jak Twoje studenckie CV wygląda w oczach rekrutera i co można ulepszyć? [Kreator CV w Vocare](/resume-creator) pomoże Ci to ocenić.
 
 ---
 

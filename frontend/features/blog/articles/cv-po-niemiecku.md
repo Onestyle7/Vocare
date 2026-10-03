@@ -85,7 +85,7 @@ Tak, znacznie częściej niż w Polsce. Niemiecki proces rekrutacyjny tradycyjni
 Standardowo 1-2 strony, podobnie jak w Polsce. Więcej niż 2 strony jest akceptowalne tylko przy bardzo długim, seniorskim doświadczeniu.
 
 **Jak sprawdzić, czy moje CV pasuje do wymagań niemieckiego pracodawcy?**
-[Analiza profilu zawodowego w Vocare](/assistant) pomaga dopasować CV do konkretnej oferty pracy, również tej publikowanej przez zagraniczne firmy.
+[Dopasowanie CV do oferty w Vocare](/resume-creator) pomaga dopasować CV do konkretnej oferty pracy, również tej publikowanej przez zagraniczne firmy.
 
 ---
 

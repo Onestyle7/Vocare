@@ -86,7 +86,7 @@ B2B zwykle daje wyższą stawkę netto, ale wymaga samodzielnego ogarnięcia ksi
 Ustal z zespołem minimalne okno nakładających się godzin pracy (zwykle 2-4h) i resztę dnia planuj asynchronicznie - jasno komunikuj dostępność w kalendarzu widocznym dla całego zespołu.
 
 **Jak sprawdzić, czy moje kompetencje i CV są gotowe na rekrutację międzynarodową?**
-[Analiza profilu zawodowego w Vocare](/assistant) analizuje Twój profil zawodowy i pomaga dopasować CV do wymagań konkretnej oferty - również tych publikowanych przez zagraniczne firmy.
+[Kreator CV w Vocare](/resume-creator) analizuje ogólną jakość CV i automatycznie dopasowuje je do wymagań konkretnej oferty - również tych publikowanych przez zagraniczne firmy.
 
 ---
 

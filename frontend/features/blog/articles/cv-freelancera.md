@@ -133,7 +133,7 @@ Opisz go kategorią i skalą zamiast nazwą. Rekruter potrzebuje kontekstu, nie 
 Sama przerwa rzadko. Szkodzi niewyjaśniona przerwa, którą rekruter interpretuje po swojemu. Jedna linia wyjaśnienia rozwiązuje problem.
 
 **Jak sprawdzić, czy moje CV freelancera dobrze pokazuje moje kompetencje?**
-[Analiza profilu zawodowego w Vocare](/assistant) analizuje CV pod kątem wymagań konkretnej oferty, również przy współpracy projektowej.
+[Kreator CV w Vocare](/resume-creator) analizuje ogólną jakość CV - kompletność sekcji, konkretność osiągnięć i czytelność dla ATS - a po wklejeniu ogłoszenia automatycznie dopasowuje CV do oferty, również przy współpracy projektowej.
 
 ---
 

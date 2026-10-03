@@ -147,7 +147,7 @@ List motywacyjny nie umarł - ale jego stara forma tak. W 2026 roku wygrywają l
 
 Zacznij od CV, a list motywacyjny traktuj jako uzupełnienie - miejsce gdzie możesz powiedzieć to, czego liczby i punkty w CV nie oddają: dlaczego właśnie ta firma i właśnie to stanowisko.
 
-Nim zaczniesz pisać - upewnij się, że Twoje CV jest dopasowane do tej oferty. [Analiza profilu zawodowego w Vocare](/assistant) robi to automatycznie: wklejasz ogłoszenie, system generuje CV pod wymagania tej roli. Mając dopasowane CV, wiesz co w liście podkreślić.
+Nim zaczniesz pisać - upewnij się, że Twoje CV jest dopasowane do tej oferty. [Dopasowanie CV do oferty w Vocare](/resume-creator) robi to automatycznie: wklejasz ogłoszenie, system generuje CV pod wymagania tej roli. Mając dopasowane CV, wiesz co w liście podkreślić.
 
 ---
 

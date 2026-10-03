@@ -87,7 +87,7 @@ Tak, szczególnie certyfikaty platform (Google Ads, Meta Blueprint, HubSpot Acad
 
 Rynek pracy w marketingu w 2026 roku nagradza specjalizację połączoną z umiejętnością pracy z danymi i narzędziami AI. Performance marketing i automatyzacja pozostają najlepiej płatnymi ścieżkami, a rola contentu ewoluuje w stronę strategii widocznej także w wyszukiwarkach AI.
 
-Zastanawiasz się, która ścieżka marketingowa najlepiej pasuje do Twojego profilu? [Rekomendacje ścieżki kariery od Vocare](/roadmap) przeprowadzi bezpłatną analizę kompetencji i wskaże konkretne kierunki rozwoju.
+Zastanawiasz się, która ścieżka marketingowa najlepiej pasuje do Twojego profilu? [Analiza profilu zawodowego w Vocare](/assistant) przeprowadzi bezpłatną analizę kompetencji i wskaże konkretne kierunki rozwoju.
 
 ---
 

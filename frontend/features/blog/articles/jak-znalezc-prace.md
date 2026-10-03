@@ -205,7 +205,7 @@ Nie informuj firmy. Używaj prywatnego emaila. LinkedIn: ustaw "Open to Work" wi
 Zmień taktykę: poproś kogoś o review CV, rozszerz kryteria szukania, zintensyfikuj networking, rozważ kursy uzupełniające luki w kompetencjach.
 
 **Jak sprawdzić, czy problem leży w CV czy w wyborze ofert?**
-[Analiza profilu zawodowego w Vocare](/assistant) analizuje ogólną jakość CV oraz automatycznie dopasowuje je do konkretnej oferty - wklejasz ogłoszenie i system generuje dopasowaną wersję CV.
+[Kreator CV w Vocare](/resume-creator) analizuje ogólną jakość CV oraz automatycznie dopasowuje je do konkretnej oferty - wklejasz ogłoszenie i system generuje dopasowaną wersję CV.
 
 ---
 

@@ -75,7 +75,7 @@ Tak, pracodawca może jednostronnie zwolnić pracownika z obowiązku świadczeni
 Tak, przy wypowiedzeniu przez pracodawcę i okresie co najmniej dwutygodniowym przysługują dni wolne na poszukiwanie pracy - 2 lub 3 dni robocze, zależnie od długości okresu wypowiedzenia, z zachowaniem prawa do wynagrodzenia.
 
 **Jak sprawdzić, czy mój okres wypowiedzenia został policzony prawidłowo?**
-[Dopasowanie CV do oferty w Vocare](/resume-creator) pomoże Ci zaplanować dalsze kroki zawodowe, gdy już wiesz, kiedy kończy się Twoja umowa - w razie wątpliwości co do samego wyliczenia warto skonsultować się z działem kadr lub prawnikiem.
+[Roadmapa kariery w Vocare](/roadmap) pomoże Ci zaplanować dalsze kroki zawodowe, gdy już wiesz, kiedy kończy się Twoja umowa - w razie wątpliwości co do samego wyliczenia warto skonsultować się z działem kadr lub prawnikiem.
 
 ---
 
@@ -83,7 +83,7 @@ Tak, przy wypowiedzeniu przez pracodawcę i okresie co najmniej dwutygodniowym p
 
 Okres wypowiedzenia umowy o pracę zależy wyłącznie od stażu u danego pracodawcy - 2 tygodnie, 1 miesiąc lub 3 miesiące, niezależnie od rodzaju umowy. Sposób liczenia końca okresu różni się dla tygodni (zawsze sobota) i miesięcy (koniec miesiąca kalendarzowego) - warto to sprawdzić dokładnie, zanim zaplanujesz kolejne kroki zawodowe.
 
-Kończysz jedną pracę i zastanawiasz się, jaki kierunek wybrać dalej? [Analiza rynku pracy w Vocare](/market-analysis) pomoże Ci zaplanować następny krok kariery.
+Kończysz jedną pracę i zastanawiasz się, jaki kierunek wybrać dalej? [Analiza profilu zawodowego w Vocare](/assistant) pomoże Ci zaplanować następny krok kariery.
 
 ---
 

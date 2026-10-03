@@ -78,7 +78,7 @@ Magazynowanie energii i inteligentne sieci energetyczne - to obszary wciąż roz
 Instalacje fotowoltaiczne mają pewną sezonowość (więcej zleceń wiosną i latem), ale pompy ciepła, audyty energetyczne i projektowanie są zwykle stabilne przez cały rok.
 
 **Jak sprawdzić, która ścieżka w energetyce odnawialnej pasuje do moich kompetencji?**
-[Rekomendacje ścieżki kariery od Vocare](/roadmap) analizuje Twój profil i porównuje go z aktualnym zapotrzebowaniem rynkowym, wskazując konkretne kierunki rozwoju.
+[Analiza profilu zawodowego w Vocare](/assistant) analizuje Twój profil i porównuje go z aktualnym zapotrzebowaniem rynkowym, wskazując konkretne kierunki rozwoju.
 
 ---
 

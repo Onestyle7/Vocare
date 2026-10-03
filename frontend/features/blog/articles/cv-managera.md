@@ -82,7 +82,7 @@ Wskaż nieformalne doświadczenie przywódcze - prowadzenie projektów, mentorin
 
 CV managera musi pokazać wpływ na zespół i wyniki biznesowe, nie tylko osobiste kompetencje - kluczowe są konkretne liczby (wielkość zespołu, budżet, wyniki) oraz dowody rozwijania ludzi, nie tylko zarządzania nimi. Każde osiągnięcie warto opisywać na poziomie wyniku organizacji, nie samej aktywności.
 
-Chcesz sprawdzić, czy Twoje CV skutecznie pokazuje kompetencje przywódcze? [Analiza profilu zawodowego w Vocare](/assistant) przeanalizuje je pod kątem wymagań docelowej roli.
+Chcesz sprawdzić, czy Twoje CV skutecznie pokazuje kompetencje przywódcze? [Kreator CV w Vocare](/resume-creator) oceni jego ogólną jakość, a po wklejeniu ogłoszenia automatycznie dopasuje CV do wymagań docelowej roli.
 
 ---
 

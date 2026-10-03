@@ -87,7 +87,7 @@ Tak - dlatego warto ćwiczyć pracę grupową osobno, nawet jeśli czujesz się 
 
 Assessment center ocenia Cię z wielu perspektyw jednocześnie - case study, dyskusje grupowe, symulacje i wywiady razem dają pracodawcy pełniejszy obraz niż sama rozmowa. Kluczem do sukcesu jest przygotowanie konkretnych przykładów metodą STAR i ćwiczenie zarówno komunikacji indywidualnej, jak i grupowej.
 
-Chcesz wiedzieć, które kompetencje warto podkreślić podczas rekrutacji na konkretne stanowisko? [Analiza rynku pracy w Vocare](/market-analysis) przeanalizuje wymagania oferty i wskaże Twoje mocne strony.
+Chcesz wiedzieć, które kompetencje warto podkreślić podczas rekrutacji na konkretne stanowisko? [Dopasowanie CV do oferty w Vocare](/resume-creator) wygeneruje wersję CV pod wymagania tej roli - od razu zobaczysz, które kompetencje wysunąć na pierwszy plan.
 
 ---
 

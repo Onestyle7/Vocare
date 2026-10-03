@@ -83,7 +83,7 @@ Wynagrodzenie za nadgodziny zwykle nie wchodzi do podstawy wymiaru wynagrodzenia
 
 Dodatek za nadgodziny wynosi 50% lub 100% w zależności od tego, kiedy dokładnie wypadła dana nadgodzina - w nocy, w niedziele i święta niebędące dniem pracy przysługuje wyższa stawka. Roczny limit 150 godzin można podnieść w regulaminie, ale maksymalnie do 416 godzin, a łączny czas pracy nie może przeciętnie przekraczać 48 godzin tygodniowo.
 
-Zastanawiasz się, czy Twoje wynagrodzenie odpowiada realnemu obciążeniu pracą? [Dopasowanie CV do oferty w Vocare](/resume-creator) pomoże Ci to ocenić.
+Zastanawiasz się, czy Twoje wynagrodzenie odpowiada realnemu obciążeniu pracą? [Analiza rynku pracy w Vocare](/market-analysis) pokaże realne widełki płacowe dla Twojej ścieżki zawodowej.
 
 ---
 

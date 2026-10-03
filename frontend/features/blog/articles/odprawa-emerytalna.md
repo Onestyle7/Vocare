@@ -74,7 +74,7 @@ Tak, jeśli wewnętrzne regulacje pracodawcy (układ zbiorowy, regulamin wynagra
 
 Odprawa emerytalna w wysokości jednomiesięcznego wynagrodzenia przysługuje pracownikowi, którego zatrudnienie kończy się w związku z przejściem na emeryturę lub rentę z tytułu niezdolności do pracy - niezależnie od tego, kto zainicjował rozwiązanie umowy. Nie przysługuje przy rencie rodzinnej i nie można jej nabyć powtórnie.
 
-Zbliżasz się do końca kariery zawodowej i chcesz zaplanować ten etap? [Dopasowanie CV do oferty w Vocare](/resume-creator) pomoże Ci to zrobić.
+Zbliżasz się do końca kariery zawodowej i chcesz zaplanować ten etap? [Analiza profilu zawodowego w Vocare](/assistant) pomoże Ci to zrobić.
 
 ---
 

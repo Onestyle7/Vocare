@@ -68,7 +68,7 @@ Nie, to odrębne rozwiązania - elastyczny czas pracy dotyczy godzin rozpoczęci
 Ustawowe prawo do złożenia wniosku przysługuje raz w roku kalendarzowym, choć nic nie stoi na przeszkodzie, by nieformalnie renegocjować warunki częściej, jeśli pracodawca się na to zgadza.
 
 **Jak przygotować argumentację do wniosku o elastyczny czas pracy?**
-[Dopasowanie CV do oferty w Vocare](/resume-creator) pomoże Ci ocenić Twoją sytuację zawodową i lepiej przygotować się do rozmowy z pracodawcą.
+[Analiza profilu zawodowego w Vocare](/assistant) pomoże Ci ocenić Twoją sytuację zawodową i lepiej przygotować się do rozmowy z pracodawcą.
 
 ---
 

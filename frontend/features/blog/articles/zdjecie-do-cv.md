@@ -139,7 +139,7 @@ Zdjęcie do CV w Polsce jest opcjonalne, ale w niektórych branżach realnie pom
 
 Dobre zdjęcie robisz dziś telefonem: światło od okna, neutralne tło, kadr od głowy po ramiona, naturalny wyraz twarzy. Złe zdjęcie szkodzi bardziej niż jego całkowity brak - to jedyny element CV, o którym da się to powiedzieć.
 
-Chcesz sprawdzić, jak Twoje CV wypada jako całość, nie tylko samo zdjęcie? [Analiza profilu zawodowego w Vocare](/assistant) przeanalizuje je kompleksowo.
+Chcesz sprawdzić, jak Twoje CV wypada jako całość, nie tylko samo zdjęcie? [Kreator CV w Vocare](/resume-creator) oceni jego ogólną jakość - kompletność sekcji, konkretność osiągnięć i czytelność dla ATS.
 
 ---
 

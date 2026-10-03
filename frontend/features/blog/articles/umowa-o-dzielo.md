@@ -69,7 +69,7 @@ Tak, formalnie jest to możliwe, ale warto uważać, żeby charakter współprac
 
 Umowa o dzieło zobowiązuje do osiągnięcia konkretnego rezultatu i, poza wyjątkiem umowy z własnym pracownikiem, nie podlega obowiązkowym składkom ZUS - co czyni ją atrakcyjną podatkowo, ale ograniczoną do zadań o jasno mierzalnym efekcie. Przeniesienie praw autorskich do dzieła twórczego podnosi koszty uzyskania przychodu z 20% do 50%, do rocznego limitu 120 000 zł.
 
-Zastanawiasz się, jaka forma współpracy najlepiej pasuje do Twojej sytuacji zawodowej? [Dopasowanie CV do oferty w Vocare](/resume-creator) pomoże Ci to ocenić.
+Zastanawiasz się, w jakim kierunku rozwijać karierę - na etacie czy projektowo? [Analiza profilu zawodowego w Vocare](/assistant) pomoże Ci to ocenić.
 
 ---
 

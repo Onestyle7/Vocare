@@ -81,7 +81,7 @@ Zbierz kopie wszystkich umów z danym pracodawcą i policz łączny okres oraz l
 
 Umowa na czas określony ma w Polsce dwa niezależne limity - maksymalnie 3 umowy i łącznie 33 miesiące z tym samym pracodawcą. Przekroczenie któregokolwiek z nich automatycznie, z mocy prawa, przekształca zatrudnienie w umowę na czas nieokreślony, bez potrzeby dodatkowego podpisywania dokumentów.
 
-Zastanawiasz się nad zmianą pracy zamiast czekania na przekształcenie umowy? [Dopasowanie CV do oferty w Vocare](/resume-creator) pomoże Ci ocenić dostępne opcje na rynku.
+Zastanawiasz się nad zmianą pracy zamiast czekania na przekształcenie umowy? [Analiza rynku pracy w Vocare](/market-analysis) pokaże perspektywy i widełki płacowe dla Twojej ścieżki zawodowej.
 
 ---
 

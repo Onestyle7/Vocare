@@ -66,7 +66,7 @@ W wyjątkowych przypadkach tak, jeśli miała szczególnie dotkliwy charakter, a
 Tak - obowiązek przeciwdziałania mobbingowi spoczywa na pracodawcy niezależnie od tego, czy sprawcą jest przełożony, współpracownik czy podwładny.
 
 **Co zrobić, jeśli po zgłoszeniu mobbingu rozważam zmianę pracy?**
-[Dopasowanie CV do oferty w Vocare](/resume-creator) pomoże Ci ocenić Twoje kompetencje i wskazać kierunki, w których warto szukać nowego zatrudnienia.
+[Analiza profilu zawodowego w Vocare](/assistant) pomoże Ci ocenić Twoje kompetencje i wskazać kierunki, w których warto szukać nowego zatrudnienia.
 
 ---
 
@@ -74,7 +74,7 @@ Tak - obowiązek przeciwdziałania mobbingowi spoczywa na pracodawcy niezależni
 
 Mobbing w pracy to prawnie zdefiniowane zjawisko wymagające łącznie uporczywości, długotrwałości i celu lub skutku w postaci poniżenia czy izolacji - nie każdy konflikt się do tego kwalifikuje. Dokumentowanie zdarzeń, zgłoszenie wewnętrzne, a w razie potrzeby PIP lub sąd pracy, to kolejne kroki, jeśli podejrzewasz, że doświadczasz mobbingu.
 
-Zastanawiasz się nad zmianą pracy po trudnych doświadczeniach zawodowych? [Analiza rynku pracy w Vocare](/market-analysis) pomoże Ci zaplanować kolejny krok.
+Zastanawiasz się nad zmianą pracy po trudnych doświadczeniach zawodowych? [Analiza profilu zawodowego w Vocare](/assistant) pomoże Ci zaplanować kolejny krok.
 
 ---
 

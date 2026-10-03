@@ -35,7 +35,7 @@ Większość darmowych kreatorów zatrzymuje się na formatowaniu. To za mało, 
 
 ## Vocare.pl - darmowy kreator CV z AI
 
-[Analiza profilu zawodowego w Vocare](/assistant) to jedyne narzędzie, które łączy tworzenie CV z aktywną analizą AI - i jest dostępne bezpłatnie.
+[Kreator CV w Vocare](/resume-creator) to jedyne narzędzie, które łączy tworzenie CV z aktywną analizą AI - i jest dostępne bezpłatnie.
 
 **Co możesz zrobić za darmo:**
 
@@ -94,7 +94,7 @@ Jeśli aktywnie szukasz pracy przez kilka miesięcy - płacenie za kreator może
 | ------------------------------------ | ------------------------------------------------------------------------------------------------------- |
 | Aktywne szukanie pracy               | &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[Kreator CV w Vocare](/resume-creator) - wiele wersji CV + analiza AI         |
 | Dopasowanie CV do konkretnej oferty  | &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[Dopasowanie CV do oferty w Vocare](/resume-creator) - generowanie CV pod ofertę            |
-| Brak doświadczenia / student         | &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[Analiza profilu zawodowego w Vocare](/assistant) - AI wskazuje co uzupełnić             |
+| Brak doświadczenia / student         | &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[Kreator CV w Vocare](/resume-creator) - analiza jakości CV             |
 | Zmiana branży                        | &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[Kreator CV w Vocare](/resume-creator) - analiza kompetencji transferowalnych |
 | Prosta edycja gotowego CV            | &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Google Docs                                                               |
 | CV do kreatywnej agencji z portfolio | &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Canva                                                                     |
@@ -137,7 +137,7 @@ To model freemium - tworzenie jest darmowe, żeby Cię wciągnąć, ale pobieran
 Absolutnie nie - pod warunkiem, że treść jest dobra. Rekruter nie widzi z jakiego kreatora skorzystałeś. Widzi osiągnięcia, słowa kluczowe i strukturę.
 
 **Czy jest darmowe narzędzie, które sprawdzi, czy moje CV pasuje do konkretnej oferty?**
-Tak - [Analiza profilu zawodowego w Vocare](/assistant) automatycznie dopasowuje CV do konkretnej oferty. Wklejasz treść ogłoszenia, a system generuje wersję CV dostosowaną do wymagań tej roli.
+Tak - [Dopasowanie CV do oferty w Vocare](/resume-creator) automatycznie dopasowuje CV do konkretnej oferty. Wklejasz treść ogłoszenia, a system generuje wersję CV dostosowaną do wymagań tej roli.
 
 ---
 

@@ -170,7 +170,7 @@ Porównując ranking powyżej, widać wspólny mianownik: każdy z TOP 15 zawod�
 
 **Branża i wielkość firmy:** Startup po serii A płaci zwykle mniej niż corporate, ale może oferować equity. Korporacja płaci stabilnie ale ogranicza wzrost.
 
-Nie wiesz, w której specjalizacji masz największy potencjał? [Rekomendacje ścieżki kariery od Vocare](/roadmap) analizuje Twój profil zawodowy i wskazuje konkretne ścieżki kariery - z uwzględnieniem aktualnych widełek wynagrodzenia dla Twoich kompetencji.
+Nie wiesz, w której specjalizacji masz największy potencjał? [Analiza profilu zawodowego w Vocare](/assistant) analizuje Twój profil zawodowy i wskazuje konkretne ścieżki kariery - z uwzględnieniem aktualnych widełek wynagrodzenia dla Twoich kompetencji.
 
 ---
 

@@ -118,7 +118,7 @@ Przysługuje pracownikom zatrudnionym na podstawie umowy o pracę - osoby na umo
 Nie, maksymalny podział to dwie części, każda w wymiarze co najmniej tygodnia.
 
 **Jak zaplanować powrót do pracy i dalszy rozwój zawodowy po urlopie ojcowskim?**
-[Dopasowanie CV do oferty w Vocare](/resume-creator) pomoże Ci ocenić Twoje kompetencje i zaplanować kolejne kroki zawodowe.
+[Analiza profilu zawodowego w Vocare](/assistant) pomoże Ci ocenić Twoje kompetencje i zaplanować kolejne kroki zawodowe.
 
 ---
 
@@ -126,7 +126,7 @@ Nie, maksymalny podział to dwie części, każda w wymiarze co najmniej tygodni
 
 Urlop ojcowski to 14 dni płatnego urlopu, które trzeba wykorzystać do ukończenia przez dziecko 12. miesiąca życia - termin jest sztywny i niewykorzystanego urlopu nie da się odzyskać. Wniosek złożony z wyprzedzeniem co najmniej 7 dni gwarantuje pracodawcy czas na organizację zastępstwa, a zasiłek w wysokości 100% podstawy wypłaca ZUS.
 
-Planujesz powrót do pracy po urlopie związanym z rodzicielstwem? [Analiza rynku pracy w Vocare](/market-analysis) pomoże Ci zaplanować dalsze kroki.
+Planujesz powrót do pracy po urlopie związanym z rodzicielstwem? [Roadmapa kariery w Vocare](/roadmap) pomoże Ci zaplanować dalsze kroki.
 
 ---
 

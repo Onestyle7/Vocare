@@ -120,7 +120,7 @@ Kompleksowy proces doradztwa zawodowego zazwyczaj obejmuje 3-6 sesji.
 
 **Alternatywa cyfrowa:**
 
-[Roadmapa kariery w Vocare](/roadmap) oferuje funkcje, które normalnie wymagają kilku sesji z doradcą - bezpłatnie i bez umawiania się:
+[Analiza profilu zawodowego w Vocare](/assistant) oferuje funkcje, które normalnie wymagają kilku sesji z doradcą - bezpłatnie i bez umawiania się:
 - Analiza kompetencji i wartości zawodowych
 - Rekomendacje ścieżek kariery z danymi rynkowymi (wynagrodzenia, deficyty kadrowe, wymagane umiejętności)
 - Roadmapa kompetencyjna do wybranej ścieżki - konkretne kroki, kursy, certyfikaty
@@ -183,7 +183,7 @@ Testy takie jak RIASEC, MBTI czy StrengthsFinder mają podstawy naukowe i są sz
 Jakość jest różna w zależności od placówki i doradcy. Ogólnie - dobry punkt startowy, szczególnie przy ograniczonym budżecie.
 
 **Czy można skorzystać z doradztwa zawodowego online?**
-Tak - coraz więcej doradców pracuje zdalnie. Platformy AI takie jak [Rekomendacje ścieżki kariery od Vocare](/roadmap) oferują pierwszą diagnozę kompetencji i ścieżek kariery dostępną natychmiast i bezpłatnie - bez konieczności umawiania sesji.
+Tak - coraz więcej doradców pracuje zdalnie. Platformy AI takie jak [Analiza profilu zawodowego w Vocare](/assistant) oferują pierwszą diagnozę kompetencji i ścieżek kariery dostępną natychmiast i bezpłatnie - bez konieczności umawiania sesji.
 
 ---
 

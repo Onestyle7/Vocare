@@ -157,7 +157,7 @@ Tak, ale mniej powszechnie niż w szczycie 2021-2022. Wiele firm przeszło na mo
 To zależy od firmy - część stosuje wynagrodzenie zależne od lokalizacji, część płaci tak samo niezależnie od miejsca pracy.
 
 **Jak sprawdzić, które oferty pracy zdalnej pasują do mojego profilu?**
-[Dopasowanie CV do oferty w Vocare](/resume-creator) analizuje Twoje kompetencje i porównuje je z aktualnymi ofertami rynkowymi, wskazując, które role - w tym zdalne - najlepiej pasują do Twojego profilu.
+[Analiza profilu zawodowego w Vocare](/assistant) analizuje Twoje kompetencje i wskazuje, które role - w tym zdalne - najlepiej pasują do Twojego profilu.
 
 ---
 

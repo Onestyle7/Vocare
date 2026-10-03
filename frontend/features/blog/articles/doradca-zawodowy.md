@@ -190,7 +190,7 @@ Jakość jest różna. W dużych miastach są wyspecjalizowani doradcy z wielole
 Tak - coraz więcej doradców pracuje zdalnie. Jakość online nie jest gorsza niż stacjonarnie.
 
 **Czy jest narzędzie online, które zrobi wstępną diagnostykę kariery przed sesją z doradcą?**
-Tak - [Roadmapa kariery w Vocare](/roadmap) przeprowadza spersonalizowaną analizę kompetencji i wartości zawodowych, wskazując dopasowane kierunki kariery. Przydatne jako przygotowanie do sesji z doradcą lub samodzielne narzędzie rozpoznania.
+Tak - [Analiza profilu zawodowego w Vocare](/assistant) przeprowadza spersonalizowaną analizę kompetencji i wartości zawodowych, wskazując dopasowane kierunki kariery. Przydatne jako przygotowanie do sesji z doradcą lub samodzielne narzędzie rozpoznania.
 
 ---
 
@@ -198,7 +198,7 @@ Tak - [Roadmapa kariery w Vocare](/roadmap) przeprowadza spersonalizowaną anali
 
 Doradca zawodowy jest wart swojego czasu i pieniędzy wtedy, gdy stoisz na rozdrożu, chcesz zmienić branżę lub doświadczasz wypalenia. Publiczne opcje (PUP, WUP, centrum kariery) są bezpłatne i dostępne dla każdego. Prywatni doradcy kosztują więcej, ale oferują większą elastyczność i specjalizację.
 
-Zacznij od bezpłatnej diagnozy na [Rekomendacje ścieżki kariery od Vocare](/roadmap) - AI przeprowadzi Cię przez analizę kompetencji i wskaże kierunki kariery dopasowane do Twojego profilu.
+Zacznij od bezpłatnej diagnozy na [Analiza profilu zawodowego w Vocare](/assistant) - AI przeprowadzi Cię przez analizę kompetencji i wskaże kierunki kariery dopasowane do Twojego profilu.
 
 ---
 

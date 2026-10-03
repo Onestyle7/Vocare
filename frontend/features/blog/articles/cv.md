@@ -150,7 +150,7 @@ Tak - szczególnie w IT, finansach i większości branż technicznych. Zdjęcie 
 Po każdej ważniejszej zmianie w karierze: nowa rola, certyfikat, projekt. Nie czekaj do momentu, gdy potrzebujesz CV pilnie - wtedy zawsze coś się zapomina.
 
 **Jak sprawdzić, czy moje CV jest dobrze dopasowane do konkretnej oferty?**
-[Analiza profilu zawodowego w Vocare](/assistant) bezpłatnie analizuje jakość CV - ocenia kompletność sekcji, konkretność osiągnięć i ogólną czytelność dla ATS. Osobna funkcja automatycznie dopasowuje CV do konkretnej oferty po wklejeniu ogłoszenia.
+[Kreator CV w Vocare](/resume-creator) bezpłatnie analizuje jakość CV - ocenia kompletność sekcji, konkretność osiągnięć i ogólną czytelność dla ATS. Osobna funkcja automatycznie dopasowuje CV do konkretnej oferty po wklejeniu ogłoszenia.
 
 ---
 

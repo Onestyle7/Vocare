@@ -241,7 +241,7 @@ Zanim napiszesz list, skorzystaj z [Dopasowanie CV do oferty w Vocare](/resume-c
 
 Wzór listu motywacyjnego to mapa, nie gotowy produkt. Najlepsza strategia: weź szkielet, usuń wszystko co ogólne, wstaw własne: osiągnięcie w liczbach, konkretny powód zainteresowania firmą i pewne zakończenie. 30 minut pracy, które może zadecydować o zaproszeniu na rozmowę.
 
-Zanim zaczniesz pisać list - upewnij się, że Twoje CV jest dopasowane do tej oferty. [Analiza profilu zawodowego w Vocare](/assistant) robi to automatycznie: wklejasz ogłoszenie, system generuje CV pod wymagania tej roli. Wtedy wiesz dokładnie, co w liście podkreślić.
+Zanim zaczniesz pisać list - upewnij się, że Twoje CV jest dopasowane do tej oferty. [Dopasowanie CV do oferty w Vocare](/resume-creator) robi to automatycznie: wklejasz ogłoszenie, system generuje CV pod wymagania tej roli. Wtedy wiesz dokładnie, co w liście podkreślić.
 
 ---
 

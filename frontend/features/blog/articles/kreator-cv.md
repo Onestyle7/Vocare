@@ -42,7 +42,7 @@ Sprawdzanie pisowni, obsługa polskich znaków diakrytycznych, szablony dostosow
 
 ### 1. Vocare.pl - kreator CV z AI
 
-[Analiza profilu zawodowego w Vocare](/assistant) to jedyny kreator CV, który łączy tworzenie dokumentu z aktywną analizą i dopasowaniem do ofert pracy - i jest dostępny bezpłatnie.
+[Kreator CV w Vocare](/resume-creator) to jedyny kreator CV, który łączy tworzenie dokumentu z aktywną analizą i dopasowaniem do ofert pracy - i jest dostępny bezpłatnie.
 
 **Zalety:** Tworzenie i pobieranie CV bez opłat, możliwość posiadania kilku wersji CV w jednym miejscu (przydatne przy aplikowaniu do różnych branż lub stanowisk), analiza jakości CV z AI (kompletność, konkretność osiągnięć, czytelność dla ATS), automatyczne dopasowanie CV do konkretnej oferty po wklejeniu ogłoszenia.
 **Wady:** Mniej szablonów wizualnych niż Canva.
@@ -133,7 +133,7 @@ Popularne zagraniczne kreatory (Zety, Resume.io) to ~45 zł/miesiąc - i blokuj�
 Google Docs, Canva i Zety obsługują język polski w pełni. Niektóre zagraniczne narzędzia mogą mieć problemy z polską czcionką lub ortografią.
 
 **Jak sprawdzić, czy CV z kreatora jest dobrze dopasowane do konkretnej oferty?**
-[Analiza profilu zawodowego w Vocare](/assistant) automatycznie dopasowuje gotowe CV do konkretnej oferty - wklejasz ogłoszenie i system generuje wersję CV pod te wymagania. Idealne jako krok przed wysłaniem aplikacji.
+[Dopasowanie CV do oferty w Vocare](/resume-creator) automatycznie dopasowuje gotowe CV do konkretnej oferty - wklejasz ogłoszenie i system generuje wersję CV pod te wymagania. Idealne jako krok przed wysłaniem aplikacji.
 
 ---
 

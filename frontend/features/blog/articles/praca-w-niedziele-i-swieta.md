@@ -77,7 +77,7 @@ Tak, sprzedaż internetowa jest jednym z wyjątków od zakazu handlu, ale pracow
 
 Praca w niedziele i święta jest co do zasady zakazana, ale liczne wyjątki (stacje benzynowe, apteki, gastronomia, e-commerce) sprawiają, że dotyczy to sporej części pracujących. Za pracę w te dni przysługuje inny dzień wolny w określonym terminie, a jeśli nie da się go udzielić - dodatek w wysokości 100% wynagrodzenia.
 
-Zastanawiasz się, czy Twoje warunki pracy odpowiadają obowiązującym przepisom? [Dopasowanie CV do oferty w Vocare](/resume-creator) pomoże Ci to ocenić.
+Zastanawiasz się nad pracą z bardziej przewidywalnym grafikiem? [Analiza profilu zawodowego w Vocare](/assistant) wskaże ścieżki kariery dopasowane do Twoich kompetencji.
 
 ---
 
