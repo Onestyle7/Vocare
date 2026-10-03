@@ -115,6 +115,18 @@ tags: ['testTag', 'testTag2']
 
       expect(() => blogUtils.getArticleContent('test-slug', '/fake/path/')).toThrow();
     });
+
+    it('should return null when markdown file does not exist (ENOENT)', () => {
+      const enoentError = Object.assign(new Error('ENOENT: no such file or directory'), {
+        code: 'ENOENT',
+      });
+      readSpy.mockImplementation(() => {
+        throw enoentError;
+      });
+
+      const result = blogUtils.getArticleContent('non-existent-slug', '/fake/path/');
+      expect(result).toBeNull();
+    });
   });
 
   describe('getArticlesMetadata', () => {
