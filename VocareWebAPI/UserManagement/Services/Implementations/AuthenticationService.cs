@@ -634,14 +634,6 @@ Zespół Vocare
                 }
                 else
                 {
-                    if (user.IsDeleted)
-                    {
-                        _logger.LogWarning("Google login attempt for deleted user: {Email}", email);
-                        return Result<OAuthLoginResult>.Fail(
-                            new Error("ACCOUNT_DELETED", "Account has been deleted.", 401)
-                        );
-                    }
-
                     var logins = await _userManager.GetLoginsAsync(user);
                     var hasGoogleLogin = logins.Any(l => l.LoginProvider == "Google");
 
@@ -869,14 +861,6 @@ Zespół Vocare
                 }
                 else
                 {
-                    if (user.IsDeleted)
-                    {
-                        _logger.LogWarning("LinkedIn login attempt for deleted user: {Email}", email);
-                        return Result<OAuthLoginResult>.Fail(
-                            new Error("ACCOUNT_DELETED", "Account has been deleted.", 401)
-                        );
-                    }
-
                     var logins = await _userManager.GetLoginsAsync(user);
                     var hasLinkedInLogin = logins.Any(l => l.LoginProvider == "LinkedIn");
 

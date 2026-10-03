@@ -1843,11 +1843,13 @@ namespace VocareWebAPI.Migrations
                 {
                     b.HasOne("VocareWebAPI.Models.AiRecommendation", null)
                         .WithMany("CareerPaths")
-                        .HasForeignKey("AiRecommendationId");
+                        .HasForeignKey("AiRecommendationId")
+                        .OnDelete(DeleteBehavior.Cascade);
 
                     b.HasOne("VocareWebAPI.Models.Entities.MarketAnalysis.CareerStatistics", "CareerStatistics")
                         .WithMany()
-                        .HasForeignKey("CareerStatisticsId");
+                        .HasForeignKey("CareerStatisticsId")
+                        .OnDelete(DeleteBehavior.Cascade);
 
                     b.HasOne("VocareWebAPI.Models.Entities.SwotAnalysis", "SwotAnalysis")
                         .WithMany()
@@ -1893,7 +1895,8 @@ namespace VocareWebAPI.Migrations
                 {
                     b.HasOne("VocareWebAPI.Models.AiRecommendation", null)
                         .WithMany("NextSteps")
-                        .HasForeignKey("AiRecommendationId");
+                        .HasForeignKey("AiRecommendationId")
+                        .OnDelete(DeleteBehavior.Cascade);
                 });
 
             modelBuilder.Entity("VocareWebAPI.Models.Entities.UserProfile", b =>

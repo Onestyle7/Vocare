@@ -166,6 +166,27 @@ namespace VocareWebAPI.Data
                 .OnDelete(DeleteBehavior.Cascade);
 
             builder
+                .Entity<AiRecommendation>()
+                .HasMany(ar => ar.CareerPaths)
+                .WithOne()
+                .HasForeignKey("AiRecommendationId")
+                .OnDelete(DeleteBehavior.Cascade);
+
+            builder
+                .Entity<AiRecommendation>()
+                .HasMany(ar => ar.NextSteps)
+                .WithOne()
+                .HasForeignKey("AiRecommendationId")
+                .OnDelete(DeleteBehavior.Cascade);
+
+            builder
+                .Entity<CareerPath>()
+                .HasOne(cp => cp.CareerStatistics)
+                .WithMany()
+                .HasForeignKey(cp => cp.CareerStatisticsId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            builder
                 .Entity<MarketTrends>()
                 .HasOne(m => m.AiRecommendation)
                 .WithMany(a => a.MarketTrends)

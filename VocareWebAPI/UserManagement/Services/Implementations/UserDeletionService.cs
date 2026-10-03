@@ -1,5 +1,6 @@
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Identity;
+using Stripe;
 using VocareWebAPI.Billing.Exceptions;
 using VocareWebAPI.Billing.Repositories.Interfaces;
 using VocareWebAPI.Models.Entities;
@@ -54,12 +55,22 @@ public class UserDeletionService(
                     var subscriptionService = new Stripe.SubscriptionService();
                     await subscriptionService.CancelAsync(userBilling.StripeSubscriptionId);
                 }
-                catch
+                catch (StripeException ex)
                 {
+                    logger.LogError("Message: {message}, source: {source}, trace: {trace}", ex.Message, ex.Source, ex.StackTrace);
                     return Result<bool>.Fail(new Error(
                         "STRIPE_ERROR",
                         $"Failed to cancel existing stripe subscripition for {userId}",
                         502
+                    ));
+                }
+                catch (Exception ex)
+                {
+                    logger.LogError("Message: {message}, source: {source}, trace: {trace}", ex.Message, ex.Source, ex.StackTrace);
+                    return Result<bool>.Fail(new Error(
+                        "SERVER_ERROR",
+                        $"Failed to cancel existing stripe subscripition for {userId}",
+                        500
                     ));
                 }
             }

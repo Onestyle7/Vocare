@@ -34,6 +34,14 @@ public class UserDataCleanupRepository(
 
             await _dbContext.MarketingConsents.Where(c => c.UserId == user.Id).ExecuteDeleteAsync();
 
+            await _dbContext.UserLogins.Where(l => l.UserId == user.Id).ExecuteDeleteAsync();
+
+            await _dbContext.UserTokens.Where(t => t.UserId == user.Id).ExecuteDeleteAsync();
+
+            await _dbContext.UserRoles.Where(r => r.UserId == user.Id).ExecuteDeleteAsync();
+
+            await _dbContext.UserClaims.Where(c => c.UserId == user.Id).ExecuteDeleteAsync();
+
             var existingRegistry = await _dbContext.AccountAntiAbuseRegistries.FirstOrDefaultAsync(
                 r => r.EmailHash == emailHash
             );
