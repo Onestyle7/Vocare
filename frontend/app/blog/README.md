@@ -1,8 +1,14 @@
 # Blog Content Guide
 
-Articles are stored as `.md` files in `frontend/articles/`.
+Articles are stored as `.md` files in `frontend/features/blog/articles/` (see `ARTICLES_FOLDER` in `features/blog/utils/constants.ts`).
 File title is taken as a `slug` - so make sure the title is descriptive and not too long, also separated by hyphens.
 Files that starts with `_` will be ignored. So you can "hide" unused / test articles without deleting them.
+
+> **Do not start the article body with a `# ` heading.**
+> The route already renders the frontmatter `title` as the page `<h1>`
+> (`app/blog/[category]/[slug]/page.tsx`). A markdown `# ` is mapped to a real
+> `<h1>` too, so adding one ships two `<h1>` elements and shows the title twice
+> on screen. Start the body with the intro paragraph and use `##` for sections.
 
 ## 1. Metadata Schema (Frontmatter)
 

@@ -1,16 +1,14 @@
 ---
-title: 'Inteligencja emocjonalna w pracy 2026 - jak ją rozwijać i dlaczego się liczy'
-description: 'Czym jest inteligencja emocjonalna w pracy i dlaczego ma znaczenie dla kariery? Sprawdź, jak ją rozwijać i dlaczego badania łączą wysokie EQ z lepszymi wynikami zawodowymi.'
+title: 'Inteligencja emocjonalna w pracy 2026 - jak ją rozwijać'
+description: 'Czym jest inteligencja emocjonalna w pracy i dlaczego ma znaczenie dla kariery? Sprawdź, jak ją rozwijać i co mówią badania.'
 estimatedReadTime: 8
 date: '2026-08-20'
 author: 'Vocare'
-category: 'Kariera'
+category: 'kariera'
 coverImage: '/images/blog/career-advisor.webp'
 tags: ['inteligencja emocjonalna', 'eq w pracy', 'jak rozwijać inteligencję emocjonalną', 'kompetencje emocjonalne', 'samoświadomość w pracy']
 slug: 'inteligencja-emocjonalna-w-pracy'
 ---
-
-# Inteligencja emocjonalna w pracy 2026 - dlaczego liczy się bardziej niż IQ
 
 Dwóch specjalistów o tym samym poziomie wiedzy technicznej może osiągać zupełnie różne wyniki zawodowe - różnicę często robi to, jak radzą sobie z presją, konfliktem i relacjami. **Inteligencja emocjonalna w pracy** to zdolność rozpoznawania i regulowania własnych emocji oraz trafnego odczytywania emocji innych ludzi. [Badania TalentSmart](https://www.talentsmarteq.com/emotional-intelligence-at-workplace-to-improve-performance/) obejmujące ponad milion osób wskazują EQ jako najsilniejszy pojedynczy predyktor wyników zawodowych spośród 34 przebadanych kompetencji.
 
@@ -66,7 +64,7 @@ Nie - to przeciwieństwo tłumienia. Wysokie EQ to świadome rozpoznawanie emocj
 Tak, istnieje kilka uznanych narzędzi (np. testy oparte na modelu Golemana czy Bar-Ona), choć żaden test nie zastąpi regularnej informacji zwrotnej od innych ludzi.
 
 **Jak sprawdzić, które kompetencje miękkie, w tym emocjonalne, warto u siebie rozwinąć?**
-**[Vocare.pl](https://vocare.pl)** analizuje Twój profil kompetencyjny i wskazuje obszary, które warto rozwinąć pod kątem docelowej roli.
+[Analiza profilu zawodowego w Vocare](/assistant) analizuje Twój profil kompetencyjny i wskazuje obszary, które warto rozwinąć pod kątem docelowej roli.
 
 ---
 
@@ -74,11 +72,11 @@ Tak, istnieje kilka uznanych narzędzi (np. testy oparte na modelu Golemana czy 
 
 Inteligencja emocjonalna w pracy - samoświadomość, samoregulacja, empatia i zarządzanie relacjami - koreluje z wynikami zawodowymi silniej niż wiele innych kompetencji, a w przeciwieństwie do IQ można ją świadomie rozwijać w dowolnym momencie kariery. Małe, konkretne ćwiczenia każdego z czterech filarów przynoszą efekty szybciej niż ogólna deklaracja "chcę być bardziej empatyczny".
 
-Zastanawiasz się, które kompetencje - techniczne i miękkie - warto u siebie rozwinąć? **[Vocare.pl](https://vocare.pl)** pomoże Ci to zidentyfikować.
+Zastanawiasz się, które kompetencje - techniczne i miękkie - warto u siebie rozwinąć? [Roadmapa kariery w Vocare](/roadmap) pomoże Ci to zidentyfikować.
 
 ---
 
 ## Powiązane artykuły
-- [Kompetencje miękkie 2026 - jak je rozwijać, nie tylko deklarować](/blog/Kariera/kompetencje-miekkie-jak-rozwijac)
-- [Feedback w pracy 2026 - jak dawać i przyjmować krytykę](/blog/Kariera/feedback-w-pracy)
-- [Mentoring zawodowy 2026 - jak znaleźć mentora i na tym skorzystać](/blog/Kariera/mentoring-zawodowy)
+- [Kompetencje miękkie 2026 - jak je rozwijać, nie tylko deklarować](/blog/kariera/kompetencje-miekkie-jak-rozwijac)
+- [Feedback w pracy 2026 - jak dawać i przyjmować krytykę](/blog/kariera/feedback-w-pracy)
+- [Mentoring zawodowy 2026 - jak znaleźć mentora i na tym skorzystać](/blog/kariera/mentoring-zawodowy)

@@ -6,8 +6,8 @@ using Microsoft.AspNetCore.Identity;
 using VocareWebAPI.Billing.Models.Entities;
 using VocareWebAPI.Data;
 using VocareWebAPI.Models.Entities;
-using VocareWebAPI.Shared.Exceptions;
 using VocareWebAPI.Shared.Results;
+using VocareWebAPI.UserManagement.Interfaces;
 using VocareWebAPI.UserManagement.Models.Results;
 using VocareWebAPI.UserManagement.Repositories.Interfaces;
 using VocareWebAPI.UserManagement.Services.Interfaces;
@@ -25,6 +25,7 @@ namespace VocareWebAPI.UserManagement.Services.Implementations
         private readonly IEmailService _emailService;
         private readonly UserRegistrationHandler _registrationHandler;
         private readonly IMarketingConsentRepository _marketingConsentRepository;
+        private readonly IUserSetupService _userSetupService;
         private readonly AppDbContext _dbContext;
 
         public AuthenticationService(
@@ -37,6 +38,7 @@ namespace VocareWebAPI.UserManagement.Services.Implementations
             IEmailService emailService,
             UserRegistrationHandler registrationHandler,
             IMarketingConsentRepository marketingConsentRepository,
+            IUserSetupService userSetupService,
             AppDbContext dbContext
         )
         {
@@ -49,6 +51,7 @@ namespace VocareWebAPI.UserManagement.Services.Implementations
             _emailService = emailService;
             _registrationHandler = registrationHandler;
             _marketingConsentRepository = marketingConsentRepository;
+            _userSetupService = userSetupService;
             _dbContext = dbContext;
         }
 
@@ -189,6 +192,8 @@ namespace VocareWebAPI.UserManagement.Services.Implementations
             // Zgody są poza transakcją z tego względu, że nie są krytyczne do działania konta
             // Jeśli coś pójdzie nie tak z zapisaniem zgody to puszczamy fallback ze zgodą na false - w najgorszym przypadku nie zbierzemy zgody
             // TODO: Kiedyś może wydzielić wewnętrzy try/catch żeby bylo trochę ładniej
+            WelcomeBonusResult? welcomeBonus = null;
+
             if (acceptMarketingConsent)
             {
                 try
@@ -207,6 +212,10 @@ namespace VocareWebAPI.UserManagement.Services.Implementations
                     await _marketingConsentRepository.CreateAsync(consent);
                     _logger.LogInformation(
                         "Marketing consent recorded for user: {UserId}",
+                        user.Id
+                    );
+
+                    welcomeBonus = await _userSetupService.GrantOrScheduleWelcomeTokensAsync(
                         user.Id
                     );
                 }
@@ -243,7 +252,8 @@ namespace VocareWebAPI.UserManagement.Services.Implementations
                     }
                 }
             }
-            return Result<RegisterResult>.Ok(RegisterResult.Successful(user.Id));
+
+            return Result<RegisterResult>.Ok(RegisterResult.Successful(user.Id, welcomeBonus));
         }
 
         public async Task<Result<ForgotPasswordResult>> ForgotPasswordAsync(string email)
@@ -520,7 +530,11 @@ Zespół Vocare
                 if (string.IsNullOrEmpty(email))
                 {
                     return Result<OAuthLoginResult>.Fail(
-                        new Error("MISSING_GOOGLE_EMAIL", "Google token does not contain email.", 404)
+                        new Error(
+                            "MISSING_GOOGLE_EMAIL",
+                            "Google token does not contain email.",
+                            404
+                        )
                     );
                 }
 
@@ -666,7 +680,11 @@ Zespół Vocare
             {
                 _logger.LogError(ex, "Error in GoogleVerify");
                 return Result<OAuthLoginResult>.Fail(
-                    new Error("GOOGLE_VERIFICATION_FAILED", "Google token verification failed.", 500)
+                    new Error(
+                        "GOOGLE_VERIFICATION_FAILED",
+                        "Google token verification failed.",
+                        500
+                    )
                 );
             }
         }

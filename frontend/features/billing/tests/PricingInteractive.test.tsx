@@ -2,15 +2,14 @@ import { act, cleanup, fireEvent, render, screen, waitFor, within } from '@testi
 import type { ReactNode } from 'react';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
-import { AuthProvider } from '@/features/auth/components/AuthProvider';
 import { PricingInteractive } from '@/features/billing/components/PricingInteractive';
-import { TokenBalanceProvider } from '@/features/billing/components/SubscriptionTokenProvider';
 import type { SubscriptionStatuses } from '@/features/billing/types';
 
 const billing = vi.hoisted(() => ({
   createCheckout: vi.fn(),
   getCustomerPortalUrl: vi.fn(),
   cancelSubscriptionCommand: vi.fn(),
+  getSubscriptionStatusAction: vi.fn(),
   toastError: vi.fn(),
 }));
 
@@ -40,19 +39,26 @@ function renderPricing({
   isAuthenticated?: boolean;
   subscriptionStatus?: SubscriptionStatuses;
 } = {}) {
-  return render(
-    <AuthProvider isAuthenticated={isAuthenticated}>
-      <TokenBalanceProvider tokenBalance={0} subscriptionStatus={subscriptionStatus}>
-        <PricingInteractive />
-      </TokenBalanceProvider>
-    </AuthProvider>
-  );
+  if (isAuthenticated) {
+    billing.getSubscriptionStatusAction.mockResolvedValue([
+      undefined,
+      { tokenBalance: 0, subscriptionStatus },
+    ]);
+  } else {
+    billing.getSubscriptionStatusAction.mockResolvedValue([
+      { type: 'Unauthorized', message: 'Not authenticated' },
+    ]);
+  }
+  return render(<PricingInteractive />);
 }
 
 beforeEach(() => {
   vi.clearAllMocks();
   billing.createCheckout.mockResolvedValue([undefined]);
   billing.getCustomerPortalUrl.mockResolvedValue([undefined]);
+  billing.getSubscriptionStatusAction.mockResolvedValue([
+    { type: 'Unauthorized', message: 'Not authenticated' },
+  ]);
 });
 
 afterEach(cleanup);
@@ -90,12 +96,11 @@ describe('PricingInteractive', () => {
     expect(billing.createCheckout).not.toHaveBeenCalled();
   });
 
-  it('links an authenticated Free user to the dashboard without initiating checkout', () => {
+  it('links an authenticated Free user to the dashboard without initiating checkout', async () => {
     renderPricing({ isAuthenticated: true });
 
-    expect(screen.getByRole('link', { name: 'Przejdź do pulpitu' }).getAttribute('href')).toBe(
-      '/dashboard'
-    );
+    const link = await screen.findByRole('link', { name: 'Przejdź do pulpitu' });
+    expect(link.getAttribute('href')).toBe('/dashboard');
     expect(billing.createCheckout).not.toHaveBeenCalled();
   });
 
@@ -105,7 +110,8 @@ describe('PricingInteractive', () => {
   ])('routes %s to the correct checkout mode and configured price', async (cta, type, priceId) => {
     renderPricing({ isAuthenticated: true });
 
-    fireEvent.click(screen.getByRole('button', { name: cta }));
+    const button = await screen.findByRole('button', { name: cta });
+    fireEvent.click(button);
 
     await waitFor(() => expect(billing.createCheckout).toHaveBeenCalledTimes(1));
     expect(billing.createCheckout).toHaveBeenCalledWith(type, { priceId });
@@ -117,8 +123,9 @@ describe('PricingInteractive', () => {
     async (subscriptionStatus) => {
       renderPricing({ isAuthenticated: true, subscriptionStatus });
 
+      const button = await screen.findByRole('button', { name: 'Zarządzaj subskrypcją' });
       expect(screen.queryByRole('button', { name: 'Wybierz Premium' })).toBeNull();
-      fireEvent.click(screen.getByRole('button', { name: 'Zarządzaj subskrypcją' }));
+      fireEvent.click(button);
 
       await waitFor(() => expect(billing.getCustomerPortalUrl).toHaveBeenCalledTimes(1));
       expect(billing.createCheckout).not.toHaveBeenCalled();
@@ -129,7 +136,8 @@ describe('PricingInteractive', () => {
   it('still allows a token purchase for a subscriber', async () => {
     renderPricing({ isAuthenticated: true, subscriptionStatus: 'Active' });
 
-    fireEvent.click(screen.getByRole('button', { name: 'Dokup 500 tokenów' }));
+    const button = await screen.findByRole('button', { name: 'Dokup 500 tokenów' });
+    fireEvent.click(button);
 
     await waitFor(() =>
       expect(billing.createCheckout).toHaveBeenCalledWith('tokens', {
@@ -147,8 +155,8 @@ describe('PricingInteractive', () => {
     );
     renderPricing({ isAuthenticated: true });
 
-    const premiumButton = screen.getByRole('button', { name: 'Wybierz Premium' });
-    const tokensButton = screen.getByRole('button', { name: 'Dokup 500 tokenów' });
+    const premiumButton = await screen.findByRole('button', { name: 'Wybierz Premium' });
+    const tokensButton = await screen.findByRole('button', { name: 'Dokup 500 tokenów' });
     fireEvent.click(premiumButton);
     fireEvent.click(premiumButton);
     fireEvent.click(tokensButton);
@@ -168,7 +176,7 @@ describe('PricingInteractive', () => {
     ]);
     renderPricing({ isAuthenticated: true });
 
-    const button = screen.getByRole('button', { name: 'Dokup 500 tokenów' });
+    const button = await screen.findByRole('button', { name: 'Dokup 500 tokenów' });
     fireEvent.click(button);
 
     await waitFor(() =>
@@ -178,13 +186,47 @@ describe('PricingInteractive', () => {
     expect(billing.createCheckout).toHaveBeenCalledTimes(1);
   });
 
-  it('keeps the payment timing accessible from the Premium action', () => {
+  it('keeps the payment timing accessible from the Premium action', async () => {
     renderPricing({ isAuthenticated: true });
 
-    const button = screen.getByRole('button', { name: 'Wybierz Premium' });
+    const button = await screen.findByRole('button', { name: 'Wybierz Premium' });
     const description = document.getElementById(button.getAttribute('aria-describedby') ?? '');
     expect(description?.textContent).toBe(
       'Pierwsza płatność dziś, kolejna za miesiąc. Rezygnacja bez zobowiązań.'
+    );
+  });
+
+  it('detects an active subscriber on a static page without an AuthProvider and shows subscription management', async () => {
+    billing.getSubscriptionStatusAction.mockResolvedValue([
+      undefined,
+      { tokenBalance: 100, subscriptionStatus: 'Active' },
+    ]);
+
+    render(<PricingInteractive />);
+
+    const button = await screen.findByRole('button', { name: 'Zarządzaj subskrypcją' });
+    expect(button).toBeTruthy();
+
+    fireEvent.click(button);
+    await waitFor(() => expect(billing.getCustomerPortalUrl).toHaveBeenCalledTimes(1));
+  });
+
+  it('detects a logged-in user without a subscription on a static page and initiates checkout', async () => {
+    billing.getSubscriptionStatusAction.mockResolvedValue([
+      undefined,
+      { tokenBalance: 50, subscriptionStatus: 'None' },
+    ]);
+
+    render(<PricingInteractive />);
+
+    const button = await screen.findByRole('button', { name: 'Wybierz Premium' });
+    expect(button).toBeTruthy();
+
+    fireEvent.click(button);
+    await waitFor(() =>
+      expect(billing.createCheckout).toHaveBeenCalledWith('subscription', {
+        priceId: 'price_test_premium_monthly',
+      })
     );
   });
 });

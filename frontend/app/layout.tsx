@@ -4,18 +4,13 @@ import './globals.css';
 import { GoogleAnalytics } from '@next/third-parties/google';
 import type { Metadata } from 'next';
 import localFont from 'next/font/local';
-import { cookies } from 'next/headers';
 import Script from 'next/script';
 
 import { CookieBanner } from '@/components/SupportComponents/CookieBanner';
 import { Toaster } from '@/components/ui/sonner';
 import { ThemeProvider } from '@/components/ui/theme-provider';
 import { AuthProvider } from '@/features/auth/components/AuthProvider';
-import { TokenBalanceProvider } from '@/features/billing/components/SubscriptionTokenProvider';
-import { SubscriptionStatus } from '@/features/billing/dal/api';
-import { getTokenSubscriptionStatus } from '@/features/billing/dal/queries';
 import env from '@/lib/env/client';
-import { COOKIE_CONSENT_KEY } from '@/lib/utils/consent';
 
 import { toAbsoluteUrl } from '../features/blog/utils/blogUtils';
 
@@ -132,24 +127,12 @@ export const metadata: Metadata = {
   },
 };
 
-export default async function RootLayout({
+export default function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
   const gaId = env.NEXT_PUBLIC_GA_ID;
-  const cookieStore = await cookies();
-  const isAuthenticated = cookieStore.has('token');
-  const consentCookie = cookieStore.get(COOKIE_CONSENT_KEY)?.value;
-  const isConsentGranted = consentCookie === 'granted';
-
-  let tokenCount = 0;
-  let subscribtionStatus: SubscriptionStatus = 'None';
-  const [tokenBalanceError, tokenBalanceData] = await getTokenSubscriptionStatus();
-  if (!tokenBalanceError) {
-    tokenCount = tokenBalanceData.tokenBalance;
-    subscribtionStatus = tokenBalanceData.subscriptionStatus;
-  }
 
   return (
     <html lang="pl" suppressHydrationWarning>
@@ -162,11 +145,16 @@ export default async function RootLayout({
               window.dataLayer = window.dataLayer || [];
               function gtag(){dataLayer.push(arguments);}
               gtag('consent', 'default', {
-                'analytics_storage': '${isConsentGranted ? 'granted' : 'denied'}',
+                'analytics_storage': 'denied',
                 'ad_storage': 'denied',
                 'ad_user_data': 'denied',
                 'ad_personalization': 'denied',
               });
+              if (typeof document !== 'undefined' && document.cookie.indexOf('cookie_consent=granted') !== -1) {
+                gtag('consent', 'update', {
+                  'analytics_storage': 'granted'
+                });
+              }
             `,
           }}
         />
@@ -174,14 +162,12 @@ export default async function RootLayout({
       <body
         className={`${sizmoPro.className} ${spaceGrotesk.variable} h-full antialiased selection:bg-[#915EFF]`}
       >
-        <AuthProvider isAuthenticated={isAuthenticated}>
-          <TokenBalanceProvider tokenBalance={tokenCount} subscriptionStatus={subscribtionStatus}>
-            <ThemeProvider attribute="class" defaultTheme="dark">
-              {children}
-              <CookieBanner />
-              <Toaster />
-            </ThemeProvider>
-          </TokenBalanceProvider>
+        <AuthProvider>
+          <ThemeProvider attribute="class" defaultTheme="dark">
+            {children}
+            <CookieBanner />
+            <Toaster />
+          </ThemeProvider>
         </AuthProvider>
         {gaId ? <GoogleAnalytics gaId={gaId} /> : null}
       </body>

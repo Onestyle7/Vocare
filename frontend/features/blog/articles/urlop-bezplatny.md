@@ -1,16 +1,14 @@
 ---
-title: 'Urlop bezpłatny 2026 - zasady, wniosek i skutki dla ubezpieczenia'
+title: 'Urlop bezpłatny 2026 - zasady, wniosek i ubezpieczenie'
 description: 'Jak wziąć urlop bezpłatny w 2026 roku i jakie ma skutki dla ubezpieczenia zdrowotnego? Sprawdź zasady wniosku i co się dzieje ze składkami.'
 estimatedReadTime: 7
 date: '2026-09-03'
 author: 'Vocare'
-category: 'Job'
+category: 'praca'
 coverImage: '/images/blog/job-search.webp'
 tags: ['urlop bezpłatny', 'urlop bezpłatny a ubezpieczenie zdrowotne', 'wniosek o urlop bezpłatny', 'kodeks pracy urlop bezpłatny', 'urlop bezpłatny zasady']
 slug: 'urlop-bezplatny'
 ---
-
-# Urlop bezpłatny 2026 - zasady, wniosek i skutki dla ubezpieczenia
 
 Zgoda pracodawcy na urlop bezpłatny to dopiero połowa sprawy - druga połowa to konsekwencje, o których wielu pracowników dowiaduje się dopiero po fakcie. **Urlop bezpłatny** to przerwa w świadczeniu pracy udzielana na pisemny wniosek pracownika, uregulowana w [art. 174 Kodeksu pracy](https://poradnikprzedsiebiorcy.pl/-urlop-bezplatny-a-ubezpieczenie-zdrowotne), która zawiesza tytuł do ubezpieczeń społecznych i zdrowotnych.
 
@@ -65,7 +63,7 @@ Tak, o ile nie narusza to ewentualnego zakazu konkurencji z obecnym pracodawcą 
 Nie, okres urlopu bezpłatnego nie jest okresem składkowym, chyba że pracownik samodzielnie opłaca w tym czasie dobrowolne składki.
 
 **Jak zaplanować powrót do pracy po dłuższym urlopie bezpłatnym?**
-**[Vocare.pl](https://vocare.pl)** pomoże Ci ocenić, jak Twoje kompetencje wypadają po przerwie i jakie kierunki rozwoju warto rozważyć.
+[Analiza rynku pracy w Vocare](/market-analysis) pomoże Ci ocenić, jak Twoje kompetencje wypadają po przerwie i jakie kierunki rozwoju warto rozważyć.
 
 ---
 
@@ -73,11 +71,11 @@ Nie, okres urlopu bezpłatnego nie jest okresem składkowym, chyba że pracownik
 
 Urlop bezpłatny wymaga tylko pisemnego wniosku bez podawania przyczyny, ale wiąże się z realnymi konsekwencjami - zawieszeniem ubezpieczeń społecznych i utratą prawa do bezpłatnych świadczeń zdrowotnych po 30 dniach, jeśli nie zadbasz o alternatywny tytuł ubezpieczenia. Okres urlopu nie wlicza się też do stażu pracy determinującego inne uprawnienia pracownicze.
 
-Planujesz dłuższą przerwę od pracy i zastanawiasz się nad dalszymi krokami zawodowymi? **[Vocare.pl](https://vocare.pl)** pomoże Ci to zaplanować.
+Planujesz dłuższą przerwę od pracy i zastanawiasz się nad dalszymi krokami zawodowymi? [Analiza profilu zawodowego w Vocare](/assistant) pomoże Ci to zaplanować.
 
 ---
 
 ## Powiązane artykuły
-- [Urlop od kariery (sabbatical) 2026 - jak go zaplanować bez ryzyka](/blog/Kariera/urlop-od-kariery-sabbatical)
-- [Urlop wypoczynkowy 2026 - ile dni przysługuje i jak liczyć](/blog/Job/urlop-wypoczynkowy)
-- [Powrót do pracy po urlopie macierzyńskim 2026 - jak się przygotować](/blog/Kariera/powrot-do-pracy-po-macierzynskim)
+- [Urlop od kariery (sabbatical) 2026 - jak go zaplanować bez ryzyka](/blog/kariera/urlop-od-kariery-sabbatical)
+- [Urlop wypoczynkowy 2026 - ile dni przysługuje i jak liczyć](/blog/praca/urlop-wypoczynkowy)
+- [Powrót do pracy po urlopie macierzyńskim 2026 - jak się przygotować](/blog/kariera/powrot-do-pracy-po-macierzynskim)

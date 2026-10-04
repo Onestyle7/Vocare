@@ -1,16 +1,14 @@
 ---
-title: 'Executive search i headhunting 2026 - jak działa rekrutacja na wyższe stanowiska'
-description: 'Czym różni się executive search od zwykłej rekrutacji? Sprawdź jak działa headhunting, jak reagować na kontakt od headhuntera i jak zbudować widoczność dla rekruterów wykonawczych.'
+title: 'Executive search i headhunting 2026 - jak działa rekrutacja'
+description: 'Czym różni się executive search od zwykłej rekrutacji? Sprawdź jak działa headhunting i jak reagować na kontakt od headhuntera.'
 estimatedReadTime: 7
 date: '2026-05-25'
 author: 'Vocare'
-category: 'Job'
+category: 'praca'
 coverImage: '/images/blog/interview-questions.webp'
 tags: ['executive search', 'headhunting', 'headhunter', 'rekrutacja na stanowiska kierownicze', 'poszukiwanie kadry zarządzającej']
 slug: 'executive-search-headhunting'
 ---
-
-# Executive search i headhunting 2026 - jak działa polowanie na talenty
 
 Na stanowiska specjalistyczne i kierownicze firmy coraz częściej nie czekają na aplikacje - aktywnie poszukują konkretnych osób poprzez wyspecjalizowane agencje. **Executive search** (nazywany też headhuntingiem) to proces odwrotny do standardowej rekrutacji: to firma i headhunter szukają Ciebie, nie Ty aplikujesz na ogłoszenie.
 
@@ -76,7 +74,7 @@ Tak, warto przynajmniej uprzejmie odpowiedzieć i utrzymać kontakt - sytuacja z
 Sprawdź profil LinkedIn osoby kontaktującej się, historię jej publikacji i to, czy reprezentuje rozpoznawalną agencję rekrutacyjną - profesjonalni headhunterzy nie unikają weryfikacji tożsamości.
 
 **Jak zwiększyć swoją widoczność dla headhunterów w mojej branży?**
-**[Vocare.pl](https://vocare.pl)** pomaga zbudować spójny profil kompetencyjny i wskazuje, jak pozycjonować swoje doświadczenie, żeby było bardziej widoczne dla rekruterów i headhunterów.
+[Analiza profilu zawodowego w Vocare](/assistant) pomaga zbudować spójny profil kompetencyjny i wskazuje, jak pozycjonować swoje doświadczenie, żeby było bardziej widoczne dla rekruterów i headhunterów.
 
 ---
 
@@ -84,11 +82,11 @@ Sprawdź profil LinkedIn osoby kontaktującej się, historię jej publikacji i t
 
 Executive search to odwrócony model rekrutacji - to firma i headhunter szukają konkretnej osoby, nie kandydat aplikuje na ogłoszenie. Kluczem do zwiększenia szans na taki kontakt jest konsekwentna widoczność zawodowa: aktualny profil LinkedIn, publiczna aktywność branżowa i otwartość na rozmowy nawet bez aktywnego poszukiwania pracy.
 
-Chcesz zwiększyć swoją widoczność zawodową dla rekruterów? **[Vocare.pl](https://vocare.pl)** pomoże Ci zbudować spójny, konkurencyjny profil kompetencyjny.
+Chcesz zwiększyć swoją widoczność zawodową dla rekruterów? [Dopasowanie CV do oferty w Vocare](/resume-creator) pomoże Ci zbudować spójny, konkurencyjny profil kompetencyjny.
 
 ---
 
 ## Powiązane artykuły
-- [Negocjacje wynagrodzenia 2026 - jak negocjować pensję skutecznie](/blog/Job/negocjacje-wynagrodzenia)
-- [Rozmowa kwalifikacyjna 2026 - jak się przygotować i wypaść świetnie](/blog/Job/rozmowa-kwalifikacyjna)
-- [Doradca zawodowy - co robi, ile kosztuje i czy warto](/blog/Kariera/doradca-zawodowy)
+- [Negocjacje wynagrodzenia 2026 - jak negocjować pensję skutecznie](/blog/praca/negocjacje-wynagrodzenia)
+- [Rozmowa kwalifikacyjna 2026 - jak się przygotować i wypaść świetnie](/blog/praca/rozmowa-kwalifikacyjna)
+- [Doradca zawodowy - co robi, ile kosztuje i czy warto](/blog/kariera/doradca-zawodowy)

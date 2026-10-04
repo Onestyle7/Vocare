@@ -1,16 +1,14 @@
 ---
-title: 'CV programisty 2026 - jak napisać CV, które przejdzie przez ATS w IT'
+title: 'CV programisty 2026 - jak przejść przez ATS w IT'
 description: 'Jak napisać CV programisty w 2026 roku? Sprawdź, co pokazać zamiast listy technologii, jak przejść przez systemy ATS i jakich błędów unikać w rekrutacji IT.'
 estimatedReadTime: 8
 date: '2026-08-18'
 author: 'Vocare'
-category: 'CV'
+category: 'cv'
 coverImage: '/images/blog/cv-template.webp'
 tags: ['cv programisty', 'cv dla it', 'cv developera', 'jak napisać cv it', 'ats cv programista']
 slug: 'cv-programisty'
 ---
-
-# CV programisty 2026 - jak napisać CV, które przejdzie przez ATS w IT
 
 Lista technologii pod nagłówkiem "Skills" nie robi dziś różnicy - większość kandydatów w IT ją ma. **CV programisty** to dokument, który wyróżnia się nie listą frameworków, tylko konkretnymi projektami i mierzalnym wpływem na wynik. Rynek rekrutacyjny w IT wciąż rośnie - liczba ofert pracy w 2025 roku była [o 44% wyższa niż rok wcześniej](https://wp-insights.s3.eu-central-1.amazonaws.com/wp-content/uploads/2026/01/15073644/Rynek-pracy-IT-w-Polsce-20252026-No-Fluff-Jobs.pdf) według raportu No Fluff Jobs, ale konkurencja o najlepsze oferty jest dziś większa niż kilka lat temu.
 
@@ -71,7 +69,7 @@ Dla osób na starcie kariery - tak. Przy dłuższym doświadczeniu (5+ lat) dwie
 Pomagają, szczególnie na start kariery lub przy zmianie specjalizacji, ale nigdy nie zastępują konkretnych projektów i realnego doświadczenia.
 
 **Jak sprawdzić, jakie kompetencje warto rozwinąć pod docelową rolę w IT?**
-**[Vocare.pl](https://vocare.pl)** analizuje Twój profil i porównuje go z wymaganiami konkretnych ofert, wskazując, co warto uzupełnić.
+[Kreator CV w Vocare](/resume-creator) analizuje Twój profil i porównuje go z wymaganiami konkretnych ofert, wskazując, co warto uzupełnić.
 
 ---
 
@@ -79,12 +77,12 @@ Pomagają, szczególnie na start kariery lub przy zmianie specjalizacji, ale nig
 
 CV programisty przekonuje konkretem - mierzalnym wynikiem projektu, nie listą technologii bez kontekstu. Dopasowanie słów kluczowych do ogłoszenia pomaga przejść przez systemy ATS, a link do realnych projektów (GitHub, portfolio) waży dziś więcej niż sam certyfikat.
 
-Zastanawiasz się, jak wypadają Twoje kompetencje na tle aktualnych wymagań rynku IT? **[Vocare.pl](https://vocare.pl)** pomoże Ci to sprawdzić.
+Zastanawiasz się, jak wypadają Twoje kompetencje na tle aktualnych wymagań rynku IT? [Dopasowanie CV do oferty w Vocare](/resume-creator) pomoże Ci to sprawdzić.
 
 ---
 
 ## Powiązane artykuły
 - [Rynek pracy w IT 2026 - trendy, zarobki i zapotrzebowanie](/blog/rynek-pracy/rynek-pracy-it)
-- [Portfolio zawodowe 2026 - jak je zbudować i czym wyróżnić aplikację](/blog/CV/portfolio-zawodowe)
-- [Umiejętności do CV 2026 - co wpisać, żeby wyróżnić aplikację](/blog/CV/umiejetnosci-do-cv)
-- [CV analityka danych 2026 - jak pokazać projekty analityczne](/blog/CV/cv-analityka-danych)
+- [Portfolio zawodowe 2026 - jak je zbudować i czym wyróżnić aplikację](/blog/cv/portfolio-zawodowe)
+- [Umiejętności do CV 2026 - co wpisać, żeby wyróżnić aplikację](/blog/cv/umiejetnosci-do-cv)
+- [CV analityka danych 2026 - jak pokazać projekty analityczne](/blog/cv/cv-analityka-danych)

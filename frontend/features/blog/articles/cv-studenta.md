@@ -5,14 +5,12 @@ estimatedReadTime: 9
 date: '2026-03-27'
 updatedAt: '2026-09-02'
 author: 'Vocare'
-category: 'CV'
+category: 'cv'
 coverImage: '/images/blog/student-cv.webp'
 tags:
   ['cv studenta', 'cv student', 'jak napisać cv studenta', 'pierwsze cv', 'cv bez doświadczenia']
 slug: 'cv-studenta'
 ---
-
-# CV studenta 2026 - jak napisać CV gdy nie masz co wpisać
 
 "Nie mam żadnego doświadczenia" - to zdanie słyszę od studentów najczęściej. Ale gdy zaczynam pytać: czy robiłeś jakieś projekty na zajęciach? Czy brałeś udział w kole naukowym? Czy miałeś jakiś staż, nawet krótki? Czy nie robiłeś nic wakacyjnie? - okazuje się, że materiału jest znacznie więcej niż się wydawało. **CV studenta** to dokument aplikacyjny, który zamiast historii zatrudnienia eksponuje potencjał: projekty, staże, aktywności i konkretne umiejętności. To nie "puste CV" - to inny rodzaj dowodu na to, że warto kogoś zaprosić na rozmowę. Oto jak to zrobić.
 
@@ -160,7 +158,7 @@ Narzędzia: Excel (zaawansowany), Power BI (podstawy), Jupyter Notebook
 Języki: Angielski C1, Niemiecki B1
 ```
 
-Nie wiesz, które projekty i aktywności są najbardziej wartościowe dla danej roli? **[Vocare.pl](https://vocare.pl)** analizuje wymagania oferty i wskazuje, które elementy Twojego studenckiego profilu warto wyeksponować - żebyś nie zgadywał, tylko pisał celnie.
+Nie wiesz, które projekty i aktywności są najbardziej wartościowe dla danej roli? [Kreator CV w Vocare](/resume-creator) analizuje wymagania oferty i wskazuje, które elementy Twojego studenckiego profilu warto wyeksponować - żebyś nie zgadywał, tylko pisał celnie.
 
 ---
 
@@ -235,7 +233,7 @@ Możesz, ale lepiej jest mieć profesjonalny mail (@gmail.com lub podobny), któ
 Tylko jeśli wynosi 4.5 lub więcej. Niższe oceny pomijaj - to nie jest informacja, którą rekruter potrzebuje.
 
 **Czy jest narzędzie, które sprawdzi, czy moje studenckie CV pasuje do konkretnej oferty stażowej?**
-Tak - **[Vocare.pl](https://vocare.pl)** automatycznie dopasowuje CV do konkretnej oferty po wklejeniu treści ogłoszenia. Przydatne szczególnie gdy aplikujesz na staż i chcesz mieć pewność, że CV trafia w to, czego rekruter szuka.
+Tak - [Dopasowanie CV do oferty w Vocare](/resume-creator) automatycznie dopasowuje CV do konkretnej oferty po wklejeniu treści ogłoszenia. Przydatne szczególnie gdy aplikujesz na staż i chcesz mieć pewność, że CV trafia w to, czego rekruter szuka.
 
 ---
 
@@ -243,11 +241,11 @@ Tak - **[Vocare.pl](https://vocare.pl)** automatycznie dopasowuje CV do konkretn
 
 CV studenta bez doświadczenia zawodowego to wyzwanie, ale nie niemożność. Klucz: opisz konkretnie to co masz - projekty, staże, aktywności - z miarami i efektami. Brak doświadczenia zawodowego to nie przekreślenie - to punkt startowy, który dobrze opisany wyróżnia Cię z tłumu.
 
-Chcesz sprawdzić jak Twoje studenckie CV wygląda w oczach rekrutera i co można ulepszyć? **[Vocare.pl](https://vocare.pl)** pomoże Ci to ocenić.
+Chcesz sprawdzić jak Twoje studenckie CV wygląda w oczach rekrutera i co można ulepszyć? [Kreator CV w Vocare](/resume-creator) pomoże Ci to ocenić.
 
 ---
 
 ## Powiązane artykuły
-- [Praca dla studenta 2026 - najlepsze opcje i jak zacząć](/blog/Job/praca-dla-studenta)
-- [CV bez doświadczenia 2026 - co wpisać gdy nie masz historii pracy](/blog/CV/cv-bez-doswiadczenia)
-- [Jak znaleźć pracę w 2026 - sprawdzone strategie krok po kroku](/blog/Job/jak-znalezc-prace)
+- [Praca dla studenta 2026 - najlepsze opcje i jak zacząć](/blog/praca/praca-dla-studenta)
+- [CV bez doświadczenia 2026 - co wpisać gdy nie masz historii pracy](/blog/cv/cv-bez-doswiadczenia)
+- [Jak znaleźć pracę w 2026 - sprawdzone strategie krok po kroku](/blog/praca/jak-znalezc-prace)

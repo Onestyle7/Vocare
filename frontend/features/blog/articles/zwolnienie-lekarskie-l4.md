@@ -3,14 +3,13 @@ title: 'Zwolnienie lekarskie L4 2026 - ile trwa i jakie masz prawa'
 description: 'Ile może trwać zwolnienie lekarskie L4? Sprawdź zasady wynagrodzenia chorobowego, ochronę przed zwolnieniem i co się dzieje po przekroczeniu 182 dni.'
 estimatedReadTime: 8
 date: '2026-07-23'
+updatedAt: '2026-09-22'
 author: 'Vocare'
-category: 'Job'
+category: 'praca'
 coverImage: '/images/blog/job-portals.webp'
 tags: ['zwolnienie lekarskie l4', 'l4 ile trwa', 'wynagrodzenie chorobowe', 'zwolnienie lekarskie a zwolnienie z pracy', 'okres zasiłkowy']
 slug: 'zwolnienie-lekarskie-l4'
 ---
-
-# Zwolnienie lekarskie L4 2026 - co warto wiedzieć zanim pójdziesz na chorobowe
 
 Choroba przychodzi bez zapowiedzi, ale zasady dotyczące zwolnienia lekarskiego warto znać, zanim będziesz ich pilnie potrzebować - szczególnie jeśli L4 się przedłuża. **Zwolnienie lekarskie (L4)** to dokument uprawniający do wynagrodzenia lub zasiłku chorobowego oraz do ochrony przed zwolnieniem z pracy w trakcie jego trwania.
 
@@ -19,13 +18,15 @@ Choroba przychodzi bez zapowiedzi, ale zasady dotyczące zwolnienia lekarskiego 
 > - Przez pierwsze 33 dni w roku (14 dni dla osób po 50. roku życia) wynagrodzenie chorobowe płaci pracodawca, dopiero potem ZUS przejmuje wypłatę zasiłku
 > - Pracodawca co do zasady nie może zwolnić pracownika przebywającego na zwolnieniu lekarskim - z ważnymi wyjątkami
 
+_Stan prawny: 22 września 2026 r._
+
 ---
 
 ## Ile trwa zwolnienie lekarskie i kto za nie płaci?
 
 ### Pierwsze 33 (lub 14) dni - wynagrodzenie chorobowe od pracodawcy
 
-Przez pierwsze 33 dni niezdolności do pracy w roku kalendarzowym (14 dni dla pracowników, którzy ukończyli 50 lat) wynagrodzenie chorobowe w wysokości 80% podstawy wypłaca **pracodawca** - to nie jest jeszcze świadczenie z ZUS.
+Przez pierwsze 33 dni niezdolności do pracy w roku kalendarzowym (14 dni dla pracowników, którzy ukończyli 50 lat) wynagrodzenie chorobowe w wysokości 80% podstawy wypłaca **pracodawca** - to nie jest jeszcze świadczenie z ZUS. Zasiłek z ZUS zaczyna się dopiero od 34. (lub 15.) dnia, co opisuje [ZUS w informacji dla pracowników po 50. roku życia](https://www.zus.pl/-/zasilek-chorobowy-dla-pracownikow-ktorzy-ukonczyli-50-rok-zycia).
 
 ### Powyżej 33/14 dni - zasiłek chorobowy z ZUS
 
@@ -33,7 +34,9 @@ Po przekroczeniu tego limitu wypłatę przejmuje [Zakład Ubezpieczeń Społeczn
 
 ### Maksymalny okres zasiłkowy - 182 lub 270 dni
 
-Łączny, nieprzerwany okres pobierania zasiłku chorobowego (z tego samego powodu) nie może przekroczyć **182 dni**, a przy gruźlicy lub w przypadku niezdolności do pracy przypadającej w okresie ciąży - **270 dni**. Krótkie przerwy w niezdolności do pracy (do 60 dni) z tej samej przyczyny nie przerywają biegu okresu zasiłkowego - liczą się łącznie.
+Łączny okres pobierania zasiłku chorobowego nie może przekroczyć **182 dni**, a przy gruźlicy lub w przypadku niezdolności do pracy przypadającej w okresie ciąży - **270 dni**.
+
+**Uwaga na częsty błąd:** do jednego okresu zasiłkowego wlicza się poprzednie okresy niezdolności do pracy, jeżeli przerwa między nimi nie przekroczyła 60 dni - i dzieje się tak **niezależnie od przyczyny** tych zwolnień. Nie musi to być ta sama choroba. Złamana noga w marcu i grypa w maju zsumują się, jeśli dzieli je mniej niż 60 dni. Zasady opisuje [ZUS w informacji o prawie do zasiłku chorobowego](https://www.zus.pl/swiadczenia/zasilki/zasilek-chorobowy/z-ubezpieczenia-chorobowego/prawo-do-zasilku-i-okres-przyslugiwania).
 
 ---
 
@@ -77,12 +80,12 @@ Warto to zweryfikować bezpośrednio z działem kadr lub księgowym - to obszar,
 
 Zwolnienie lekarskie L4 daje prawo do wynagrodzenia lub zasiłku chorobowego przez maksymalnie 182 dni (270 przy szczególnych okolicznościach) oraz chroni przed zwolnieniem z pracy - z ważnymi wyjątkami takimi jak upadłość firmy czy przekroczenie maksymalnego okresu zasiłkowego bez rokowań na powrót do pracy.
 
-Wracasz do pracy po dłuższej przerwie zdrowotnej i zastanawiasz się nad zmianą ścieżki zawodowej? **[Vocare.pl](https://vocare.pl)** pomoże Ci ocenić opcje dopasowane do Twojej obecnej sytuacji.
+Wracasz do pracy po dłuższej przerwie zdrowotnej i zastanawiasz się nad zmianą ścieżki zawodowej? [Analiza rynku pracy w Vocare](/market-analysis) pomoże Ci ocenić opcje dopasowane do Twojej obecnej sytuacji.
 
 ---
 
 ## Powiązane artykuły
-- [Urlop wypoczynkowy 2026 - ile dni przysługuje i jak liczyć](/blog/Job/urlop-wypoczynkowy)
-- [Jak zrezygnować z pracy 2026 - wypowiedzenie bez spalania mostów](/blog/Job/jak-zrezygnowac-z-pracy)
-- [Wypalenie zawodowe - co dalej? Jak wrócić do równowagi i odbudować karierę](/blog/Kariera/wypalenie-zawodowe-co-dalej)
-- [Urlop macierzyński i rodzicielski 2026 - ile dni i ile wynosi zasiłek](/blog/Job/urlop-macierzynski-rodzicielski)
+- [Urlop wypoczynkowy 2026 - ile dni przysługuje i jak liczyć](/blog/praca/urlop-wypoczynkowy)
+- [Jak zrezygnować z pracy 2026 - wypowiedzenie bez spalania mostów](/blog/praca/jak-zrezygnowac-z-pracy)
+- [Wypalenie zawodowe - co dalej? Jak wrócić do równowagi i odbudować karierę](/blog/kariera/wypalenie-zawodowe-co-dalej)
+- [Urlop macierzyński i rodzicielski 2026 - ile dni i ile wynosi zasiłek](/blog/praca/urlop-macierzynski-rodzicielski)

@@ -1,19 +1,17 @@
 ---
-title: 'Kariera po 40 i 50 roku życia 2026 - jak zostać docenionym mimo wieku'
+title: 'Kariera po 40 i 50 roku życia - jak zostać docenionym'
 description: 'Jak budować karierę po 40 i 50 roku życia? Sprawdź jak radzić sobie z dyskryminacją wiekową w rekrutacji, jakie masz atuty i jak je skutecznie komunikować.'
 estimatedReadTime: 8
 date: '2026-05-28'
 updatedAt: '2026-09-09'
 author: 'Vocare'
-category: 'Kariera'
+category: 'kariera'
 coverImage: '/images/blog/career-path2.webp'
 tags: ['kariera po 40', 'kariera po 50', 'ageizm w rekrutacji', 'praca dla dojrzałych pracowników', 'doświadczenie zawodowe']
 slug: 'kariera-po-40-50'
 ---
 
-# Kariera po 40 i 50 roku życia 2026 - jak grać swoimi atutami
-
-Mimo że rynek pracy w Polsce cierpi na strukturalny deficyt kadr w wielu branżach, dojrzali kandydaci wciąż spotykają się z nieformalną dyskryminacją wiekową w rekrutacji. **Kariera po 40 i 50 roku życia** wymaga dziś świadomej strategii - nie dlatego, że doświadczenie traci na wartości, ale dlatego, że trzeba umieć je odpowiednio zaprezentować w świecie zdominowanym przez młodszych rekruterów i algorytmy ATS.
+Mimo że rynek pracy w Polsce cierpi na strukturalny deficyt kadr w wielu branżach, dojrzali kandydaci wciąż spotykają się z nieformalną dyskryminacją wiekową w rekrutacji. **Kariera po 40 i 50 roku życia** wymaga dziś świadomej strategii - nie dlatego, że doświadczenie traci na wartości, ale dlatego, że trzeba umieć je odpowiednio zaprezentować w świecie zdominowanym przez młodszych rekruterów i algorytmy ATS. **Dyskryminacja ze względu na wiek** to nierówne traktowanie w zatrudnieniu zakazane przez Kodeks pracy, ale działa najczęściej nieformalnie - na etapie selekcji CV, a nie jawnej odmowy.
 
 > **Najważniejsze wnioski**
 > - Starzejące się społeczeństwo i deficyty kadrowe w wielu branżach realnie zwiększają wartość doświadczonych pracowników - trend demograficzny działa na korzyść dojrzałych kandydatów
@@ -80,7 +78,7 @@ Skup się na merytorycznej odpowiedzi dotyczącej Twoich kompetencji i adaptacyj
 Tak - doradca pomoże zidentyfikować kompetencje transferowalne i zaplanować realistyczną ścieżkę, co jest szczególnie wartościowe przy większej zmianie zawodowej.
 
 **Jak sprawdzić, jakie branże i role najlepiej wykorzystają moje wieloletnie doświadczenie?**
-**[Vocare.pl](https://vocare.pl)** analizuje Twój profil kompetencyjny i wskazuje konkretne kierunki, w których Twoje doświadczenie jest dziś najbardziej cenione.
+[Analiza profilu zawodowego w Vocare](/assistant) analizuje Twój profil kompetencyjny i wskazuje konkretne kierunki, w których Twoje doświadczenie jest dziś najbardziej cenione.
 
 ---
 
@@ -88,12 +86,12 @@ Tak - doradca pomoże zidentyfikować kompetencje transferowalne i zaplanować r
 
 Kariera po 40 i 50 roku życia wymaga świadomej strategii komunikowania wartości doświadczenia, nie jego ukrywania. Demografia i deficyty kadrowe działają dziś na korzyść dojrzałych pracowników - kluczem jest zaktualizowane CV, eksponowanie aktualności kompetencji i aktywne adresowanie potencjalnych obaw rekrutera.
 
-Zastanawiasz się, jak najlepiej wykorzystać swoje wieloletnie doświadczenie na dzisiejszym rynku pracy? **[Vocare.pl](https://vocare.pl)** przeprowadzi bezpłatną analizę Twoich kompetencji.
+Zastanawiasz się, jak najlepiej wykorzystać swoje wieloletnie doświadczenie na dzisiejszym rynku pracy? [Roadmapa kariery w Vocare](/roadmap) przeprowadzi bezpłatną analizę Twoich kompetencji.
 
 ---
 
 ## Powiązane artykuły
-- [Jak zmienić branżę - praktyczny przewodnik krok po kroku](/blog/Kariera/jak-zmienic-branze)
-- [Doradca zawodowy - co robi, ile kosztuje i czy warto](/blog/Kariera/doradca-zawodowy)
-- [Networking zawodowy 2026 - jak budować sieć kontaktów bez wciskania się](/blog/Kariera/networking-zawodowy)
-- [Odprawa emerytalna 2026 - komu przysługuje i ile wynosi](/blog/Job/odprawa-emerytalna)
+- [Jak zmienić branżę - praktyczny przewodnik krok po kroku](/blog/kariera/jak-zmienic-branze)
+- [Doradca zawodowy - co robi, ile kosztuje i czy warto](/blog/kariera/doradca-zawodowy)
+- [Networking zawodowy 2026 - jak budować sieć kontaktów bez wciskania się](/blog/kariera/networking-zawodowy)
+- [Odprawa emerytalna 2026 - komu przysługuje i ile wynosi](/blog/praca/odprawa-emerytalna)

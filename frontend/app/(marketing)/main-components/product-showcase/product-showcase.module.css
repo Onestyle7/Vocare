@@ -1,0 +1,161 @@
+/* Dark like the rest of the marketing frame (see Hero and Features), so the palette does not
+   follow the app theme. Each feature adds --feature-accent and --feature-light on its panel. */
+.section {
+  --showcase-page: #0f1013;
+  --showcase-card: #16161a;
+  --showcase-ink: #f1f4ff;
+  --showcase-muted: #9ea2b3;
+  --showcase-idle: #25262e;
+  --showcase-idle-glyph: #7d8193;
+  --showcase-focus: #9296fd;
+  position: relative;
+  isolation: isolate;
+  background: var(--showcase-page);
+  /* The pin gives the stage a fixed width; never let it widen the page's flex layout. */
+  contain: inline-size;
+}
+
+/* While the tour covers the viewport it must also cover the floating navigation (z-140). */
+.section[data-tour-expanded='true'] {
+  z-index: 150;
+}
+
+/* Page-colored layer behind the expanded stage; sized to the viewport by the tour. Its own
+   layer fades without repainting the pinned stage. */
+.veil {
+  position: absolute;
+  inset: 0;
+  background: var(--showcase-page);
+  opacity: 0;
+  visibility: hidden;
+  will-change: opacity;
+}
+
+/* Without the tour this is simply the stage's rounded background. The tour animates its box out
+   to the viewport; a rounded overflow clip over one texture layer stays on the compositor's
+   fast path, unlike an animated clip-path mask. */
+.backdrop {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  border-radius: 32px;
+  background: #151730;
+}
+
+.backdrop[data-painted='true'] {
+  background: none;
+}
+
+/* A small canvas stretched over one field per feature; sliding it never repaints. */
+.track {
+  position: absolute;
+  top: 0;
+  left: 0;
+  display: block;
+  height: 100%;
+  will-change: transform;
+}
+
+.close {
+  color: var(--showcase-ink);
+  background: rgb(255 255 255 / 0.06);
+  border: 1px solid rgb(255 255 255 / 0.14);
+  opacity: 0;
+  visibility: hidden;
+  transition: background-color 150ms;
+}
+
+.close:hover {
+  background: rgb(255 255 255 / 0.12);
+}
+
+.close:focus-visible {
+  outline: 2px solid var(--showcase-focus);
+  outline-offset: 2px;
+}
+
+/* Moved as one layer when the stage centers its content in the viewport. */
+.content {
+  will-change: transform;
+}
+
+/* Only the small tab row uses a filter, so the shadow still follows the squircles and the neck;
+   the card's rounded box-shadow is painted once instead of blurred on every frame. */
+.tabs {
+  filter: drop-shadow(0 4px 6px rgb(0 0 0 / 0.25)) drop-shadow(0 12px 18px rgb(0 0 0 / 0.3));
+}
+
+.card {
+  box-shadow:
+    0 30px 60px -30px rgb(0 0 0 / 0.7),
+    0 50px 100px -40px rgb(0 0 0 / 0.5);
+}
+
+.tab {
+  border-radius: 16px;
+  outline: none;
+}
+
+.tab:focus-visible {
+  outline: 2px solid var(--showcase-focus);
+  outline-offset: 2px;
+}
+
+.tabConnector {
+  position: absolute;
+  inset: 0;
+  opacity: 0;
+  transition: opacity 600ms cubic-bezier(0.5, 0, 0.5, 1);
+}
+
+.tabFill {
+  color: var(--showcase-idle);
+  transition: color 600ms cubic-bezier(0.5, 0, 0.5, 1);
+}
+
+.tabGlyph {
+  color: var(--showcase-idle-glyph);
+  transition: color 600ms cubic-bezier(0.5, 0, 0.5, 1);
+}
+
+.tab:hover .tabGlyph {
+  color: #c9ccd8;
+}
+
+.tab[aria-selected='true'] .tabConnector {
+  opacity: 1;
+}
+
+.tab[aria-selected='true'] .tabFill {
+  color: var(--tab-accent);
+}
+
+/* Dark glyph on the light accents, as on the label icons in the card. */
+.tab[aria-selected='true'] .tabGlyph {
+  color: var(--showcase-page);
+}
+
+/* The recorded app window fills the whole preview and keeps its light UI; a hairline and a
+   glow in the feature's color seat it on the dark card. */
+.videoWindow {
+  box-shadow:
+    0 0 0 1px rgb(255 255 255 / 0.06),
+    0 28px 56px -24px rgb(0 0 0 / 0.85),
+    0 0 64px -18px color-mix(in srgb, var(--feature-accent) 60%, transparent);
+}
+
+/* Every panel participates in sizing: text and previews never change the card's height.
+   Own layers let the crossfade run on the compositor instead of repainting the card. */
+.panel {
+  grid-area: 1 / 1;
+  min-width: 0;
+  will-change: opacity;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .tabConnector,
+  .tabFill,
+  .tabGlyph {
+    transition: none;
+  }
+}

@@ -1,17 +1,13 @@
 import { useTransition } from 'react';
 import { toast } from 'sonner';
 
-import { useAuthContext } from '@/features/auth/components/AuthProvider';
 import { useUnauthorizedToast } from '@/lib/hooks/useUnauthorizedToast';
 
-import { useTokenBalanceContext } from '../components/SubscriptionTokenProvider';
 import { BillingType } from '../dal/api';
 import { cancelSubscriptionCommand, createCheckout, getCustomerPortalUrl } from '../dal/commands';
 
 export function useBillingActions() {
   const [isPending, startTransition] = useTransition();
-  const { isAuthenticated } = useAuthContext();
-  const { hasActiveSubscription } = useTokenBalanceContext();
   const { unauthorizedToast } = useUnauthorizedToast();
 
   const alreadySubscribedToast = () => {
@@ -25,11 +21,6 @@ export function useBillingActions() {
   };
 
   const handleCustomerPortal = () => {
-    if (!isAuthenticated) {
-      unauthorizedToast();
-      return;
-    }
-
     startTransition(async () => {
       const [error] = await getCustomerPortalUrl();
 
@@ -56,15 +47,6 @@ export function useBillingActions() {
   };
 
   const handleCheckout = (priceId: string, billingType: BillingType) => {
-    if (billingType === 'subscription' && hasActiveSubscription) {
-      alreadySubscribedToast();
-      return;
-    }
-    if (!isAuthenticated) {
-      unauthorizedToast();
-      return;
-    }
-
     startTransition(async () => {
       const [error] = await createCheckout(billingType, { priceId });
 
@@ -95,11 +77,6 @@ export function useBillingActions() {
   };
 
   const handleCancelSubscription = () => {
-    if (!isAuthenticated) {
-      unauthorizedToast();
-      return;
-    }
-
     startTransition(async () => {
       const [error, response] = await cancelSubscriptionCommand();
 

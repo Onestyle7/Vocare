@@ -1,16 +1,14 @@
 ---
-title: 'Urlop od kariery (sabbatical) 2026 - jak go zaplanować bez ryzyka'
+title: 'Urlop od kariery (sabbatical) - jak go zaplanować'
 description: 'Czym jest sabbatical i jak zaplanować dłuższą przerwę w karierze? Sprawdź jak przygotować się finansowo, rozmawiać z pracodawcą i wrócić bez straty na CV.'
 estimatedReadTime: 8
 date: '2026-08-04'
 author: 'Vocare'
-category: 'Kariera'
+category: 'kariera'
 coverImage: '/images/blog/career-change.webp'
 tags: ['sabbatical', 'urlop od kariery', 'dłuższa przerwa w pracy', 'urlop bezpłatny', 'przerwa zawodowa']
 slug: 'urlop-od-kariery-sabbatical'
 ---
-
-# Urlop od kariery 2026 - jak zaplanować sabbatical bez ryzyka
 
 Coraz więcej osób rozważa dłuższą przerwę w karierze, nie tylko standardowy urlop. **Sabbatical** to zaplanowana przerwa zawodowa trwająca zwykle od kilku tygodni do kilku miesięcy. W przeciwieństwie do zwolnienia z pracy jest świadomą decyzją, nie sytuacją kryzysową.
 
@@ -80,7 +78,7 @@ Zależy od celu. Regeneracja po wypaleniu może wymagać 1-3 miesięcy, nauka no
 Zależy od ustaleń przed wyjściem. Formalne programy sabbaticalowe zwykle gwarantują powrót na to samo lub podobne stanowisko - nieformalne przerwy nie dają takiej gwarancji.
 
 **Jak sprawdzić, czy moje kompetencje są aktualne po dłuższej przerwie?**
-**[Vocare.pl](https://vocare.pl)** analizuje Twój profil i porównuje go z aktualnym zapotrzebowaniem rynkowym, niezależnie od długości przerwy w karierze.
+[Analiza profilu zawodowego w Vocare](/assistant) analizuje Twój profil i porównuje go z aktualnym zapotrzebowaniem rynkowym, niezależnie od długości przerwy w karierze.
 
 ---
 
@@ -88,12 +86,12 @@ Zależy od ustaleń przed wyjściem. Formalne programy sabbaticalowe zwykle gwar
 
 Sabbatical to świadoma, zaplanowana przerwa w karierze - różni się od zwykłego urlopu skalą i celem. Kluczem do bezpiecznego sabbaticalu jest bufor finansowy na 3-6 miesięcy i jasny plan powrotu, nie sama zgoda pracodawcy na wyjście.
 
-Wracasz do pracy po dłuższej przerwie i zastanawiasz się, jak wypadają Twoje kompetencje? **[Vocare.pl](https://vocare.pl)** pomoże Ci to sprawdzić.
+Wracasz do pracy po dłuższej przerwie i zastanawiasz się, jak wypadają Twoje kompetencje? [Analiza profilu zawodowego w Vocare](/assistant) pomoże Ci to sprawdzić.
 
 ---
 
 ## Powiązane artykuły
-- [Powrót do pracy po urlopie macierzyńskim 2026 - jak się przygotować](/blog/Kariera/powrot-do-pracy-po-macierzynskim)
-- [Wypalenie zawodowe - co dalej? Jak wrócić do równowagi i odbudować karierę](/blog/Kariera/wypalenie-zawodowe-co-dalej)
-- [Urlop wypoczynkowy 2026 - ile dni przysługuje i jak liczyć](/blog/Job/urlop-wypoczynkowy)
-- [Urlop bezpłatny 2026 - zasady, wniosek i skutki dla ubezpieczenia](/blog/Job/urlop-bezplatny)
+- [Powrót do pracy po urlopie macierzyńskim 2026 - jak się przygotować](/blog/kariera/powrot-do-pracy-po-macierzynskim)
+- [Wypalenie zawodowe - co dalej? Jak wrócić do równowagi i odbudować karierę](/blog/kariera/wypalenie-zawodowe-co-dalej)
+- [Urlop wypoczynkowy 2026 - ile dni przysługuje i jak liczyć](/blog/praca/urlop-wypoczynkowy)
+- [Urlop bezpłatny 2026 - zasady, wniosek i skutki dla ubezpieczenia](/blog/praca/urlop-bezplatny)

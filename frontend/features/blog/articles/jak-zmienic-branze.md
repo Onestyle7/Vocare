@@ -5,7 +5,7 @@ estimatedReadTime: 9
 date: '2026-03-24'
 updatedAt: '2026-09-02'
 author: 'Vocare'
-category: 'Kariera'
+category: 'kariera'
 coverImage: '/images/blog/career-change.webp'
 tags: ['zmiana branży', 'przebranżowienie', 'zmiana kariery', 'kariera', 'rozwój zawodowy']
 slug: 'jak-zmienic-branze'
@@ -85,7 +85,7 @@ Przejrzyj oferty pracy w swojej docelowej branży. Zwróć uwagę na:
 
 Najcenniejsza wiedza nie jest na LinkedIn ani w ogłoszeniach, jest w głowach ludzi pracujących w danej branży. Skontaktuj się z 3-5 osobami i poproś o 20-minutową rozmowę informacyjną (tzw. informational interview). Większość ludzi chętnie dzieli się doświadczeniem, gdy pytasz o rady, a nie o pracę.
 
-Nie wiesz, które Twoje kompetencje są najbardziej cenione w docelowej branży? **[Vocare.pl](https://vocare.pl)** porównuje Twój profil z aktualnymi wymaganiami rynku i wskazuje konkretne luki oraz mocne strony transferowalne - zanim jeszcze zaplanujesz kursy.
+Nie wiesz, które Twoje kompetencje są najbardziej cenione w docelowej branży? [Analiza profilu zawodowego w Vocare](/assistant) porównuje Twój profil z aktualnymi wymaganiami rynku i wskazuje konkretne luki oraz mocne strony transferowalne - zanim jeszcze zaplanujesz kursy.
 
 ---
 
@@ -153,7 +153,7 @@ Znając błędy innych, możesz ich uniknąć:
 ## FAQ - zmiana branży
 
 **Jak sprawdzić, do jakich branż nadaję się na podstawie moich obecnych kompetencji?**
-**[Vocare.pl](https://vocare.pl)** analizuje Twój profil zawodowy i identyfikuje branże, w których Twoje kompetencje transferowalne są najbardziej cenione - konkretna lista kierunków zamiast ogólnego "idź tam, gdzie lubisz".
+[Analiza profilu zawodowego w Vocare](/assistant) analizuje Twój profil zawodowy i identyfikuje branże, w których Twoje kompetencje transferowalne są najbardziej cenione - konkretna lista kierunków zamiast ogólnego "idź tam, gdzie lubisz".
 
 **Ile czasu realnie zajmuje zmiana branży?**
 Przy aktywnych przygotowaniach (kursy + networking + budowanie portfolio) - 6 do 12 miesięcy. Przy branżach wymagających certyfikatów lub studiów podyplomowych - do 2 lat.
@@ -167,13 +167,13 @@ W wielu branżach tak - jeśli masz silne kompetencje transferowalne i portfolio
 
 Zmiana branży to proces, który wymaga refleksji, planowania i konsekwencji. Nie musisz robić tego w samotności. Dziś masz dostęp do narzędzi, kursów, sieci kontaktów i platform doradczych, które mogą znacząco przyspieszyć Twoją drogę.
 
-Jeśli chcesz dowiedzieć się, jakie branże i zawody najlepiej pasują do Twoich kompetencji i wartości - sprawdź **[Vocare.pl](https://vocare.pl)**. Nasz asystent AI pomoże Ci przeprowadzić rzetelną analizę kariery i wskazać konkretne ścieżki przebranżowienia dopasowane do Twojej sytuacji.
+Jeśli chcesz dowiedzieć się, jakie branże i zawody najlepiej pasują do Twoich kompetencji i wartości - sprawdź [Analiza profilu zawodowego w Vocare](/assistant). Nasz asystent AI pomoże Ci przeprowadzić rzetelną analizę kariery i wskazać konkretne ścieżki przebranżowienia dopasowane do Twojej sytuacji.
 
 ---
 
 ## Powiązane artykuły
-- [Ścieżka kariery - jak zaplanować rozwój zawodowy w 2026](/blog/Kariera/sciezka-kariery)
-- [Doradca zawodowy - co robi, ile kosztuje i czy warto](/blog/Kariera/doradca-zawodowy)
-- [Wypalenie zawodowe - co dalej? Jak wrócić do równowagi i odbudować karierę](/blog/Kariera/wypalenie-zawodowe-co-dalej)
-- [Kariera po 40 i 50 roku życia 2026 - jak zostać docenionym mimo wieku](/blog/Kariera/kariera-po-40-50)
-- [Kryzys w połowie kariery 2026 - jak sobie z nim poradzić](/blog/Kariera/kryzys-polowy-kariery)
+- [Ścieżka kariery - jak zaplanować rozwój zawodowy w 2026](/blog/kariera/sciezka-kariery)
+- [Doradca zawodowy - co robi, ile kosztuje i czy warto](/blog/kariera/doradca-zawodowy)
+- [Wypalenie zawodowe - co dalej? Jak wrócić do równowagi i odbudować karierę](/blog/kariera/wypalenie-zawodowe-co-dalej)
+- [Kariera po 40 i 50 roku życia 2026 - jak zostać docenionym mimo wieku](/blog/kariera/kariera-po-40-50)
+- [Kryzys w połowie kariery 2026 - jak sobie z nim poradzić](/blog/kariera/kryzys-polowy-kariery)

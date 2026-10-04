@@ -5,13 +5,11 @@ estimatedReadTime: 8
 date: '2026-03-26'
 updatedAt: '2026-09-02'
 author: 'Vocare'
-category: 'CV'
+category: 'cv'
 coverImage: '/images/blog/cv-job-application.webp'
 tags: ['cv do pracy', 'jak dopasować cv', 'aplikacja o pracę', 'cv do oferty', 'ats optymalizacja']
 slug: 'cv-do-pracy'
 ---
-
-# CV do pracy 2026 - jak dopasować aplikację żeby nie trafić do kosza
 
 Wysłałeś świetne CV i nie dostałeś żadnej odpowiedzi. Dlaczego? W 80% przypadków odpowiedź jest prosta: CV nie było dopasowane do konkretnej oferty. Nie chodzi o to, że byłeś złym kandydatem - chodzi o to, że algorytm ATS nie znalazł w Twoim CV słów kluczowych z ogłoszenia. **CV do pracy** to nie stały dokument, który wysyłasz wszędzie - to narzędzie, które kalibrujesz pod każdą ofertę z osobna. Oto jak to robić efektywnie.
 
@@ -123,7 +121,7 @@ Wypisz 10 kluczowych fraz z oferty na kartce. Dla każdej sprawdź czy jest w CV
 **Metoda 2: AI**
 "Porównaj to CV z tą ofertą pracy i powiedz mi jakich słów kluczowych brakuje" - proste zapytanie do ChatGPT lub Claude daje konkretne wskazówki.
 
-Polską alternatywą jest **[Vocare.pl](https://vocare.pl)** - bezpłatna analiza jakości CV z możliwością dopasowania do oferty i konkretną oceną match rate.
+Polską alternatywą jest [Kreator CV w Vocare](/resume-creator) - bezpłatna analiza ogólnej jakości CV oraz funkcja, która po wklejeniu ogłoszenia automatycznie generuje wersję CV dopasowaną do oferty.
 
 ---
 
@@ -142,7 +140,7 @@ Tak - keyword stuffing (bezsensowne wpychanie słów) jest rozpoznawane przez no
 Skupi się na tym, co jest wymienione jako "wymagania". Ogólne oferty często mają szczegółowe wymagania ukryte w środku tekstu.
 
 **Czy jest polskie narzędzie, które automatycznie dopasuje moje CV do oferty?**
-Tak - **[Vocare.pl](https://vocare.pl)** dopasowuje Twoje CV do wybranej oferty pracy. Szczególnie przydatne zanim wyślesz aplikację do firmy z systemem ATS.
+Tak - [Kreator CV w Vocare](/resume-creator) dopasowuje Twoje CV do wybranej oferty pracy. Szczególnie przydatne zanim wyślesz aplikację do firmy z systemem ATS.
 
 ---
 
@@ -150,11 +148,12 @@ Tak - **[Vocare.pl](https://vocare.pl)** dopasowuje Twoje CV do wybranej oferty 
 
 CV do pracy to narzędzie, które działa gdy jest precyzyjne. Dopasowanie CV do oferty przez zmianę profilu zawodowego, słów kluczowych i kolejności umiejętności zajmuje 10-15 minut i radykalnie zwiększa szanse na odpowiedź.
 
-Jeśli chcesz zautomatyzować ten proces, **[Vocare.pl](https://vocare.pl)** analizuje Twoje CV i ofertę pracy, wskazując dokładnie jakie zmiany wprowadzić żeby przejść przez ATS i trafić na biurko rekrutera.
+Jeśli chcesz zautomatyzować ten proces, [Dopasowanie CV do oferty w Vocare](/resume-creator) analizuje Twoje CV i ofertę pracy, wskazując dokładnie jakie zmiany wprowadzić żeby przejść przez ATS i trafić na biurko rekrutera.
 
 ---
 
 ## Powiązane artykuły
-- [Jak zrobić CV 2026 - praktyczny poradnik od zera do gotowego pliku](/blog/CV/jak-zrobic-cv)
-- [CV wzór 2026 - darmowe szablony do pobrania i edycji](/blog/CV/cv-wzor)
-- [Umiejętności do CV 2026 - co wpisać, żeby wyróżnić aplikację](/blog/CV/umiejetnosci-do-cv)
+- [CV 2026 - kompletny poradnik jak napisać dobre CV](/blog/cv/cv)
+- [Jak zrobić CV 2026 - praktyczny poradnik od zera do gotowego pliku](/blog/cv/jak-zrobic-cv)
+- [CV wzór 2026 - darmowe szablony do pobrania i edycji](/blog/cv/cv-wzor)
+- [Umiejętności do CV 2026 - co wpisać, żeby wyróżnić aplikację](/blog/cv/umiejetnosci-do-cv)

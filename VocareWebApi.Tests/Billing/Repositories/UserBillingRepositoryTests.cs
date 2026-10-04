@@ -236,6 +236,66 @@ namespace VocareWebApi.Tests.Billing.Repositories
                 .ThrowAsync<UserBillingNotFoundException>();
         }
 
+        // ---------- AddTokensWithTransactionAsync ----------
+        // Translacja naruszenia unikalnego indeksu (PostgresException 23505) na
+        // WelcomeBonusAlreadyGrantedException wymaga PostgreSQL – InMemory nie wymusza indeksów.
+
+        [Fact]
+        public async Task AddTokensWithTransactionAsync_IncrementsBalanceAndRecordsTransaction()
+        {
+            await SeedBillingAsync(balance: 10);
+
+            await _sut.AddTokensWithTransactionAsync(
+                UserId,
+                120,
+                TransactionType.WelcomeBonus,
+                "WelcomeBonus-MarketingConsent"
+            );
+
+            _context.ChangeTracker.Clear();
+            var billing = await _context.UserBillings.AsNoTracking().SingleAsync();
+            billing.TokenBalance.Should().Be(130);
+            var transaction = await _context.TokenTransactions.AsNoTracking().SingleAsync();
+            transaction.UserId.Should().Be(UserId);
+            transaction.Amount.Should().Be(120);
+            transaction.Type.Should().Be(TransactionType.WelcomeBonus);
+            transaction.ServiceName.Should().Be("WelcomeBonus-MarketingConsent");
+        }
+
+        [Theory]
+        [InlineData("", 10)]
+        [InlineData("   ", 10)]
+        [InlineData(UserId, 0)]
+        [InlineData(UserId, -1)]
+        public async Task AddTokensWithTransactionAsync_WithInvalidArguments_ThrowsArgumentException(
+            string userId,
+            int amount
+        )
+        {
+            await _sut.Invoking(r =>
+                    r.AddTokensWithTransactionAsync(
+                        userId,
+                        amount,
+                        TransactionType.WelcomeBonus,
+                        "x"
+                    )
+                )
+                .Should()
+                .ThrowAsync<ArgumentException>();
+        }
+
+        [Fact]
+        public async Task AddTokensWithTransactionAsync_WhenRecordMissing_ThrowsWithoutRecordingTransaction()
+        {
+            await _sut.Invoking(r =>
+                    r.AddTokensWithTransactionAsync("ghost", 10, TransactionType.WelcomeBonus, "x")
+                )
+                .Should()
+                .ThrowAsync<UserBillingNotFoundException>();
+
+            (await _context.TokenTransactions.AnyAsync()).Should().BeFalse();
+        }
+
         // ---------- GetUserIdByCustomerIdAsync ----------
 
         [Fact]

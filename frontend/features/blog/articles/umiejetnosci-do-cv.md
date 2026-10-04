@@ -5,14 +5,12 @@ estimatedReadTime: 8
 date: '2026-05-11'
 updatedAt: '2026-09-02'
 author: 'Vocare'
-category: 'CV'
+category: 'cv'
 coverImage: '/images/blog/cv-skills.webp'
 tags:
   ['umiejętności do cv', 'umiejętności w cv', 'co wpisać do cv', 'hard skills cv', 'soft skills cv']
 slug: 'umiejetnosci-do-cv'
 ---
-
-# Umiejętności do CV 2026 - co wpisać i jak to zrobić mądrze
 
 "Komunikatywny, zaangażowany, zorientowany na cel" - te trzy słowa pojawiają się w 80% CV, które trafiają na biurko rekrutera. Nic nie mówią, niczym nie różnicują i lądują w mentalnym koszu w ciągu sekund. Dobra sekcja umiejętności w CV to konkretne, weryfikowalne kompetencje opisane językiem branży - nie lista przymiotników, które pasują do każdego. Oto jak to zrobić dobrze.
 
@@ -146,7 +144,7 @@ To jest sekret, który robi różnicę między CV, które trafia do ATS-kosza, a
 
 **Krok 4:** Umieść te umiejętności wysoko - na początku listy w sekcji umiejętności i wplecione w punkty doświadczenia.
 
-Kroki 1-3 to żmudna praca ręczna. **[Vocare.pl](https://vocare.pl)** robi to automatycznie - wklejasz treść ogłoszenia, a system generuje wersję CV z umiejętnościami dopasowanymi do wymagań tej oferty.
+Kroki 1-3 to żmudna praca ręczna. [Dopasowanie CV do oferty w Vocare](/resume-creator) robi to automatycznie - wklejasz treść ogłoszenia, a system generuje wersję CV z umiejętnościami dopasowanymi do wymagań tej oferty.
 
 ---
 
@@ -189,7 +187,7 @@ Najlepiej obydwa: osobna sekcja dla ATS + wplecione w punkty doświadczenia jako
 W 2026 roku - absolutnie nie. To jak pisać "umiem chodzić" w rubryce sport. Zastąp to konkretnymi narzędziami.
 
 **Jak sprawdzić, czy moje umiejętności są wystarczające dla konkretnej oferty?**
-**[Vocare.pl](https://vocare.pl)** automatycznie dopasowuje CV do konkretnej oferty - wklejasz ogłoszenie, a system generuje wersję CV z umiejętnościami dopasowanymi do wymagań tej roli.
+[Dopasowanie CV do oferty w Vocare](/resume-creator) automatycznie dopasowuje CV do konkretnej oferty - wklejasz ogłoszenie, a system generuje wersję CV z umiejętnościami dopasowanymi do wymagań tej roli.
 
 ---
 
@@ -197,13 +195,13 @@ W 2026 roku - absolutnie nie. To jak pisać "umiem chodzić" w rubryce sport. Za
 
 Sekcja umiejętności w CV jest czytana przez rekruterów w 10-15 sekund. Dlatego musi być krystalicznie jasna: konkretne narzędzia, realne poziomy, brak ogólników. Dopasuj umiejętności do oferty, używaj słów kluczowych z ogłoszenia i potwierdzaj je w sekcji doświadczenia.
 
-Chcesz mieć pewność, że sekcja umiejętności trafia w to czego rekruter szuka? **[Vocare.pl](https://vocare.pl)** automatycznie dopasowuje CV do konkretnej oferty - wklejasz ogłoszenie, system generuje wersję CV gotową do wysłania na to stanowisko.
+Chcesz mieć pewność, że sekcja umiejętności trafia w to czego rekruter szuka? [Kreator CV w Vocare](/resume-creator) automatycznie dopasowuje CV do konkretnej oferty - wklejasz ogłoszenie, system generuje wersję CV gotową do wysłania na to stanowisko.
 
 ---
 
 ## Powiązane artykuły
-- [Kompetencje miękkie 2026 - jak je rozwijać, nie tylko deklarować](/blog/Kariera/kompetencje-miekkie-jak-rozwijac)
-- [CV wzór 2026 - darmowe szablony do pobrania i edycji](/blog/CV/cv-wzor)
-- [Profesjonalne CV 2026 - jak wyglądać poważnie na papierze](/blog/CV/profesjonalne-cv)
-- [Jak zrobić CV 2026 - praktyczny poradnik od zera do gotowego pliku](/blog/CV/jak-zrobic-cv)
-- [Zainteresowania w CV - co wpisać, żeby wypaść profesjonalnie](/blog/CV/zainteresowania-w-cv)
+- [Kompetencje miękkie 2026 - jak je rozwijać, nie tylko deklarować](/blog/kariera/kompetencje-miekkie-jak-rozwijac)
+- [CV wzór 2026 - darmowe szablony do pobrania i edycji](/blog/cv/cv-wzor)
+- [Profesjonalne CV 2026 - jak wyglądać poważnie na papierze](/blog/cv/profesjonalne-cv)
+- [Jak zrobić CV 2026 - praktyczny poradnik od zera do gotowego pliku](/blog/cv/jak-zrobic-cv)
+- [Zainteresowania w CV - co wpisać, żeby wypaść profesjonalnie](/blog/cv/zainteresowania-w-cv)

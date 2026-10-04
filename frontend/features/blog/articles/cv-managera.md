@@ -1,18 +1,17 @@
 ---
 title: 'CV managera 2026 - jak napisać CV na stanowisko kierownicze'
-description: 'Jak napisać CV na stanowisko managerskie? Sprawdź, czym CV managera różni się od CV specjalisty, jak pokazać kompetencje przywódcze i jakich osiągnięć oczekują rekruterzy.'
+description: 'Jak napisać CV na stanowisko managerskie? Sprawdź, czym różni się od CV specjalisty i jak pokazać kompetencje przywódcze.'
 estimatedReadTime: 8
 date: '2026-05-20'
+updatedAt: '2026-09-22'
 author: 'Vocare'
-category: 'CV'
+category: 'cv'
 coverImage: '/images/blog/cv-template.webp'
 tags: ['cv managera', 'cv na stanowisko kierownicze', 'cv dla managera', 'kompetencje przywódcze cv', 'cv dyrektora']
 slug: 'cv-managera'
 ---
 
-# CV managera 2026 - jak pokazać, że potrafisz zarządzać, nie tylko wykonywać
-
-CV specjalisty koncentruje się na indywidualnych osiągnięciach - CV managera musi pokazać coś więcej: umiejętność prowadzenia zespołu, podejmowania decyzji strategicznych i wpływania na wyniki poprzez innych ludzi, nie tylko własną pracę. **CV managera** ocenia się inaczej niż CV specjalisty - rekruter szuka dowodów przywództwa, nie tylko kompetencji technicznych.
+CV specjalisty koncentruje się na indywidualnych osiągnięciach - CV managera musi pokazać coś więcej: umiejętność prowadzenia zespołu, podejmowania decyzji strategicznych i wpływania na wyniki poprzez innych ludzi, nie tylko własną pracę. **CV managera** ocenia się inaczej niż CV specjalisty - rekruter szuka dowodów przywództwa, nie tylko kompetencji technicznych. **CV managera** to dokument aplikacyjny, w którym jednostką osiągnięcia jest wynik zespołu, a nie samodzielnie wykonane zadanie.
 
 > **Najważniejsze wnioski**
 > - Osiągnięcia w CV managera powinny pokazywać wpływ na zespół i wyniki biznesowe, nie tylko osobiste kompetencje
@@ -75,7 +74,7 @@ Nie w samym CV - to temat na rozmowę kwalifikacyjną, gdzie możesz pokazać, j
 Wskaż nieformalne doświadczenie przywódcze - prowadzenie projektów, mentoring młodszych kolegów, koordynację zespołów projektowych bez formalnej podległości.
 
 **Jak sprawdzić, czy moje CV managera dobrze pokazuje kompetencje przywódcze wymagane na docelowym stanowisku?**
-**[Vocare.pl](https://vocare.pl)** analizuje CV pod kątem wymagań konkretnej oferty i wskazuje, które osiągnięcia warto wyeksponować.
+[Dopasowanie CV do oferty w Vocare](/resume-creator) analizuje CV pod kątem wymagań konkretnej oferty i wskazuje, które osiągnięcia warto wyeksponować.
 
 ---
 
@@ -83,11 +82,11 @@ Wskaż nieformalne doświadczenie przywódcze - prowadzenie projektów, mentorin
 
 CV managera musi pokazać wpływ na zespół i wyniki biznesowe, nie tylko osobiste kompetencje - kluczowe są konkretne liczby (wielkość zespołu, budżet, wyniki) oraz dowody rozwijania ludzi, nie tylko zarządzania nimi. Każde osiągnięcie warto opisywać na poziomie wyniku organizacji, nie samej aktywności.
 
-Chcesz sprawdzić, czy Twoje CV skutecznie pokazuje kompetencje przywódcze? **[Vocare.pl](https://vocare.pl)** przeanalizuje je pod kątem wymagań docelowej roli.
+Chcesz sprawdzić, czy Twoje CV skutecznie pokazuje kompetencje przywódcze? [Kreator CV w Vocare](/resume-creator) oceni jego ogólną jakość, a po wklejeniu ogłoszenia automatycznie dopasuje CV do wymagań docelowej roli.
 
 ---
 
 ## Powiązane artykuły
-- [Profesjonalne CV 2026 - jak wyglądać poważnie na papierze](/blog/CV/profesjonalne-cv)
-- [Awans zawodowy 2026 - jak go uzyskać i o niego poprosić](/blog/Kariera/awans-zawodowy)
-- [Negocjacje wynagrodzenia 2026 - jak negocjować pensję skutecznie](/blog/Job/negocjacje-wynagrodzenia)
+- [Profesjonalne CV 2026 - jak wyglądać poważnie na papierze](/blog/cv/profesjonalne-cv)
+- [Awans zawodowy 2026 - jak go uzyskać i o niego poprosić](/blog/kariera/awans-zawodowy)
+- [Negocjacje wynagrodzenia 2026 - jak negocjować pensję skutecznie](/blog/praca/negocjacje-wynagrodzenia)

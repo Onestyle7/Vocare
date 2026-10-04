@@ -71,6 +71,55 @@ namespace VocareWebApi.Tests.Billing.Repositories
                 .ThrowAsync<ArgumentNullException>();
         }
 
+        [Fact]
+        public async Task HasTransactionOfTypeAsync_WhenUserHasTransactionOfType_ReturnsTrue()
+        {
+            await SeedTransactionAsync("user-1", TransactionType.WelcomeBonus);
+
+            (await _sut.HasTransactionOfTypeAsync("user-1", TransactionType.WelcomeBonus))
+                .Should()
+                .BeTrue();
+        }
+
+        [Fact]
+        public async Task HasTransactionOfTypeAsync_WhenOnlyOtherTypesOrUsersMatch_ReturnsFalse()
+        {
+            await SeedTransactionAsync("user-1", TransactionType.Purchase);
+            await SeedTransactionAsync("user-2", TransactionType.WelcomeBonus);
+
+            (await _sut.HasTransactionOfTypeAsync("user-1", TransactionType.WelcomeBonus))
+                .Should()
+                .BeFalse();
+        }
+
+        [Theory]
+        [InlineData("")]
+        [InlineData("   ")]
+        public async Task HasTransactionOfTypeAsync_WithBlankUserId_ThrowsArgumentException(
+            string userId
+        )
+        {
+            await _sut.Invoking(r => r.HasTransactionOfTypeAsync(userId, TransactionType.Usage))
+                .Should()
+                .ThrowAsync<ArgumentException>();
+        }
+
+        private async Task SeedTransactionAsync(string userId, TransactionType type)
+        {
+            _context.TokenTransactions.Add(
+                new TokenTransaction
+                {
+                    UserId = userId,
+                    ServiceName = type.ToString(),
+                    Amount = 1,
+                    Type = type,
+                    CreatedAt = DateTime.UtcNow,
+                }
+            );
+            await _context.SaveChangesAsync();
+            _context.ChangeTracker.Clear();
+        }
+
         [Theory]
         [InlineData("")]
         [InlineData("   ")]

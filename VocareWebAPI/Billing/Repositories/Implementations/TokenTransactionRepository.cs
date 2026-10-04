@@ -1,8 +1,7 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+using Microsoft.EntityFrameworkCore;
+using VocareWebAPI.Billing.Exceptions;
 using VocareWebAPI.Billing.Models.Entities;
+using VocareWebAPI.Billing.Models.Enums;
 using VocareWebAPI.Billing.Repositories.Interfaces;
 using VocareWebAPI.Data;
 
@@ -33,6 +32,16 @@ namespace VocareWebAPI.Billing.Repositories.Implementations
 
             await _context.TokenTransactions.AddAsync(transaction);
             await _context.SaveChangesAsync();
+        }
+
+        public async Task<bool> HasTransactionOfTypeAsync(string userId, TransactionType type)
+        {
+            if (string.IsNullOrWhiteSpace(userId))
+                throw new ArgumentException("User ID cannot be null or empty.", nameof(userId));
+
+            return await _context.TokenTransactions.AnyAsync(t =>
+                t.UserId == userId && t.Type == type
+            );
         }
     }
 }

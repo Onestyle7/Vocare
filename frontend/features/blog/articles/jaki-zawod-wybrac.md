@@ -5,7 +5,7 @@ estimatedReadTime: 9
 date: '2026-03-24'
 updatedAt: '2026-09-02'
 author: 'Vocare'
-category: 'Kariera'
+category: 'kariera'
 coverImage: '/images/blog/career-path.webp'
 tags:
   [
@@ -149,7 +149,7 @@ Zamiast opierać się na przestarzałych danych, platformy doradztwa zawodowego 
 
 AI może nie tylko powiedzieć Ci, jaki zawód wybrać, ale też rozpisać plan dojścia do celu, jakie kursy ukończyć, jakie doświadczenie zdobyć i ile czasu to zajmie. To jak osobisty doradca kariery dostępny 24 godziny na dobę.
 
-Właśnie w ten sposób działa **[Vocare.pl](https://vocare.pl)** - polska platforma doradztwa zawodowego, która wykorzystuje sztuczną inteligencję do analizy Twoich kompetencji, preferencji i realiów rynku pracy. Na tej podstawie proponuje Ci konkretne zawody, analizy zarobków i spersonalizowane ścieżki rozwoju - niezależnie od branży, w której chcesz pracować.
+Właśnie w ten sposób działa [Analiza profilu zawodowego w Vocare](/assistant) - polska platforma doradztwa zawodowego, która wykorzystuje sztuczną inteligencję do analizy Twoich kompetencji, preferencji i realiów rynku pracy. Na tej podstawie proponuje Ci konkretne zawody, analizy zarobków i spersonalizowane ścieżki rozwoju - niezależnie od branży, w której chcesz pracować.
 
 ## FAQ - jaki zawód wybrać
 
@@ -160,7 +160,7 @@ Zacznij od diagnozy siebie, nie od przeglądania ofert. Wypisz swoje mocne stron
 Tak - kompetencje transferowalne (komunikacja, analiza, pisanie) są cenione w wielu branżach technicznych (UX writing, product management, analityka). Kluczem jest uzupełnienie braków technicznych przez kursy lub bootcampy, nie kolejne studia.
 
 **Czy jest narzędzie, które pomoże mi wybrać zawód dopasowany do moich mocnych stron i aktualnego rynku pracy?**
-**[Vocare.pl](https://vocare.pl)** przeprowadza spersonalizowaną analizę kariery - ocenia Twoje predyspozycje, konfrontuje je z danymi rynkowymi i proponuje konkretne zawody i ścieżki rozwoju zamiast ogólnych wskazówek.
+[Analiza profilu zawodowego w Vocare](/assistant) przeprowadza spersonalizowaną analizę kariery - ocenia Twoje predyspozycje, konfrontuje je z danymi rynkowymi i proponuje konkretne zawody i ścieżki rozwoju zamiast ogólnych wskazówek.
 
 **Jak szybko można znaleźć pracę po zmianie zawodu?**
 Zależy od branży i luki kompetencyjnej. W zawodach deficytowych (logistyka, budownictwo, ochrona zdrowia) - często kilka tygodni. W branżach wymagających certyfikatów lub portfolio (IT, finanse) - 3-12 miesięcy aktywnego przygotowania.
@@ -171,11 +171,11 @@ Zależy od branży i luki kompetencyjnej. W zawodach deficytowych (logistyka, bu
 
 Pytanie „jaki zawód wybrać" nie wymaga genialnej intuicji ani szczęścia. Wymaga systematycznego podejścia: poznania swoich mocnych stron, zbadania rynku, przetestowania opcji i ułożenia planu. Rynek pracy w Polsce w 2026 roku daje realne szanse, zarówno w zawodach deficytowych, takich jak ochrona zdrowia, edukacja czy budownictwo, jak i w dynamicznie rosnących branżach technologicznych.
 
-Nie musisz tego robić sam. Jeśli chcesz w kilka minut sprawdzić, jaki zawód pasuje do Twoich predyspozycji - skorzystaj z darmowej analizy na **[Vocare.pl](https://vocare.pl)**. Platforma przeanalizuje Twoje mocne strony, porówna je z aktualnymi danymi rynkowymi i zaproponuje ścieżki kariery dopasowane właśnie do Ciebie. Bo wybór zawodu to zbyt ważna decyzja, żeby zostawiać ją przypadkowi.
+Nie musisz tego robić sam. Jeśli chcesz w kilka minut sprawdzić, jaki zawód pasuje do Twoich predyspozycji - skorzystaj z darmowej analizy na [Analiza profilu zawodowego w Vocare](/assistant). Platforma przeanalizuje Twoje mocne strony, porówna je z aktualnymi danymi rynkowymi i zaproponuje ścieżki kariery dopasowane właśnie do Ciebie. Bo wybór zawodu to zbyt ważna decyzja, żeby zostawiać ją przypadkowi.
 
 ---
 
 ## Powiązane artykuły
-- [Ścieżka kariery - jak zaplanować rozwój zawodowy w 2026](/blog/Kariera/sciezka-kariery)
-- [Test kariery online - jak wybrać zawód dopasowany do Ciebie?](/blog/Kariera/test-kariery-online)
+- [Ścieżka kariery - jak zaplanować rozwój zawodowy w 2026](/blog/kariera/sciezka-kariery)
+- [Test kariery online - jak wybrać zawód dopasowany do Ciebie?](/blog/kariera/test-kariery-online)
 - [Najlepiej płatne zawody w Polsce 2026 - ranking i zarobki](/blog/rynek-pracy/najlepiej-platne-zawody)

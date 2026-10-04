@@ -1,4 +1,5 @@
 using VocareWebAPI.Billing.Models.Entities;
+using VocareWebAPI.Billing.Models.Enums;
 
 namespace VocareWebAPI.Billing.Repositories.Interfaces
 {
@@ -11,5 +12,11 @@ namespace VocareWebAPI.Billing.Repositories.Interfaces
         Task DeductTokensAsync(string userId, int amount);
         Task AddTokensAsync(string userId, int amount);
         Task<string?> GetUserIdByCustomerIdAsync(string customerId);
+        Task AddTokensWithTransactionAsync(
+            string userId,
+            int amount,
+            TransactionType type,
+            string serviceName
+        );
     }
 }

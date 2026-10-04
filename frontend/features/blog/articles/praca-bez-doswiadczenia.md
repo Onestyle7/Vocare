@@ -5,7 +5,7 @@ estimatedReadTime: 9
 date: '2026-04-23'
 updatedAt: '2026-09-02'
 author: 'Vocare'
-category: 'Job'
+category: 'praca'
 coverImage: '/images/blog/no-experience-job.webp'
 tags:
   [
@@ -17,8 +17,6 @@ tags:
   ]
 slug: 'praca-bez-doswiadczenia'
 ---
-
-# Praca bez doświadczenia 2026 - jak wyróżnić się gdy nie masz co wpisać
 
 "Wymagane min. 2 lata doświadczenia" - i już wiesz, że to nie dla Ciebie. Ale zaraz, a skąd masz zdobyć 2 lata doświadczenia, skoro nikt Cię nie przyjmuje bez doświadczenia? To klasyczny paradoks wejścia na rynek pracy. Praca bez doświadczenia jest możliwa - ale wymaga innej strategii niż wysyłanie CV na oferty z wymaganiem "minimum 3 lata". Oto co naprawdę działa.
 
@@ -122,7 +120,7 @@ Priorytet: Sekcje, które zastępują doświadczenie.
 **Profil zawodowy studenta - przykład:**
 _"Absolwent informatyki (2026) z doświadczeniem w Pythonie, SQL i podstawach machine learning. Realizowałem projekty z analizy danych i zdobyłem certyfikat Google Data Analytics. Szukam pierwszej roli Junior Data Analyst, gdzie rozwinę się w pracy z realnymi danymi biznesowymi."_
 
-Masz zbudowane CV, ale nie wiesz czy "trafi" w wymagania konkretnej oferty juniorskiej? **[Vocare.pl](https://vocare.pl)** porównuje CV z wymaganiami oferty i wskazuje, które projekty i umiejętności warto uwydatnić - żeby rekruter od razu widział dopasowanie.
+Masz zbudowane CV, ale nie wiesz czy "trafi" w wymagania konkretnej oferty juniorskiej? [Dopasowanie CV do oferty w Vocare](/resume-creator) porównuje CV z wymaganiami oferty i wskazuje, które projekty i umiejętności warto uwydatnić - żeby rekruter od razu widział dopasowanie.
 
 ---
 
@@ -175,7 +173,7 @@ Nie, ale bardzo pomaga. Alternatywy: silne projekty własne, portfolio, certyfik
 Sam je znajdź. Strony kariery firm, Pracuj.pl, LinkedIn - nie czekaj aż uczelnia coś zorganizuje.
 
 **Jak sprawdzić, na jakie stanowiska realnie mogę aplikować przy moim profilu?**
-**[Vocare.pl](https://vocare.pl)** analizuje Twoje kompetencje i wskazuje, które oferty entry-level są najlepiej dopasowane - zamiast strzelać na ślepo i tracić czas na aplikacje bez szans odpowiedzi.
+[Analiza rynku pracy w Vocare](/market-analysis) analizuje Twoje kompetencje i wskazuje, które oferty entry-level są najlepiej dopasowane - zamiast strzelać na ślepo i tracić czas na aplikacje bez szans odpowiedzi.
 
 ---
 
@@ -183,11 +181,11 @@ Sam je znajdź. Strony kariery firm, Pracuj.pl, LinkedIn - nie czekaj aż uczeln
 
 Praca bez doświadczenia jest możliwa - ale wymaga innej strategii. Kluczowe: opisz to co masz (projekty, staże, aktywności) konkretnie i z miarami; celuj w staże, programy graduate i małe firmy; buduj sieć kontaktów; i nie czekaj na "idealną" ofertę.
 
-Jeśli chcesz wiedzieć, jakie stanowiska są realistyczne dla Twojego profilu i jak najlepiej zaprezentować swoje kompetencje, **[Vocare.pl](https://vocare.pl)** przeprowadzi Cię przez spersonalizowaną analizę i wskaże konkretne kierunki.
+Jeśli chcesz wiedzieć, jakie stanowiska są realistyczne dla Twojego profilu i jak najlepiej zaprezentować swoje kompetencje, [Analiza profilu zawodowego w Vocare](/assistant) przeprowadzi Cię przez spersonalizowaną analizę i wskaże konkretne kierunki.
 
 ---
 
 ## Powiązane artykuły
-- [CV bez doświadczenia 2026 - co wpisać gdy nie masz historii pracy](/blog/CV/cv-bez-doswiadczenia)
-- [Praca dla studenta 2026 - najlepsze opcje i jak zacząć](/blog/Job/praca-dla-studenta)
-- [Jak znaleźć pracę w 2026 - sprawdzone strategie krok po kroku](/blog/Job/jak-znalezc-prace)
+- [CV bez doświadczenia 2026 - co wpisać gdy nie masz historii pracy](/blog/cv/cv-bez-doswiadczenia)
+- [Praca dla studenta 2026 - najlepsze opcje i jak zacząć](/blog/praca/praca-dla-studenta)
+- [Jak znaleźć pracę w 2026 - sprawdzone strategie krok po kroku](/blog/praca/jak-znalezc-prace)

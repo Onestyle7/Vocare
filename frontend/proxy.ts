@@ -2,8 +2,38 @@ import { NextRequest } from 'next/server';
 import { NextResponse } from 'next/server';
 
 export async function proxy(request: NextRequest) {
-  const response = (await authProxy(request)) ?? NextResponse.next();
+  const response =
+    legacyBlogCategoryRedirect(request) ?? (await authProxy(request)) ?? NextResponse.next();
   return response;
+}
+
+/**
+ * Blog category slugs were normalised to lowercase Polish on 2026-09-22.
+ * Old links still point at the capitalised segments, which now 404.
+ *
+ * This cannot live in `next.config.ts`: redirect `source` matching is
+ * case-insensitive, so a '/blog/CV/:slug' rule also matches '/blog/cv/:slug'
+ * and sends every cv/ and kariera/ post into an infinite redirect loop.
+ * Comparing the segment here keeps the match exact.
+ */
+const LEGACY_BLOG_CATEGORIES = new Map([
+  ['CV', 'cv'],
+  ['Job', 'praca'],
+  ['Kariera', 'kariera'],
+]);
+
+function legacyBlogCategoryRedirect(request: NextRequest) {
+  const segments = request.nextUrl.pathname.split('/');
+  // ['', 'blog', '<category>', ...rest]
+  if (segments[1] !== 'blog' || segments.length < 3) return null;
+
+  const replacement = LEGACY_BLOG_CATEGORIES.get(segments[2]);
+  if (!replacement) return null;
+
+  segments[2] = replacement;
+  const url = request.nextUrl.clone();
+  url.pathname = segments.join('/');
+  return NextResponse.redirect(url, 308);
 }
 
 async function authProxy(request: NextRequest) {

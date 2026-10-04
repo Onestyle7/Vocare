@@ -5,13 +5,11 @@ estimatedReadTime: 10
 date: '2026-04-01'
 updatedAt: '2026-09-02'
 author: 'Vocare'
-category: 'CV'
+category: 'cv'
 coverImage: '/images/blog/cv-guide.webp'
 tags: ['cv', 'jak napisać cv', 'wzór cv', 'cv 2026', 'aplikacja o pracę']
 slug: 'cv'
 ---
-
-# CV 2026 - kompletny poradnik jak napisać CV, które działa
 
 Twoje CV ma średnio 7 sekund na zrobienie pierwszego wrażenia. Tyle czasu poświęca mu rekruter zanim zdecyduje, czy warto przeczytać je dokładniej. Ale zanim w ogóle trafi do człowieka, musi przejść przez system ATS - algorytm skanujący aplikacje pod kątem słów kluczowych. Dobre CV w 2026 roku musi robić dwie rzeczy naraz: być czytelne dla algorytmu i przekonujące dla człowieka. Ten poradnik pokaże Ci, jak to osiągnąć krok po kroku.
 
@@ -97,7 +95,7 @@ W zależności od stanowiska rozważ dodanie:
 
 Przykład: jeśli ogłoszenie mówi "zarządzanie projektami" - nie pisz "koordynacja działań". Dosłowne dopasowanie słów kluczowych ma znaczenie.
 
-Ręczne dopasowywanie CV do każdej oferty jest żmudne. **[Vocare.pl](https://vocare.pl)** robi to automatycznie - wklejasz treść ogłoszenia, a system generuje wersję CV dopasowaną do wymagań tej oferty.
+Ręczne dopasowywanie CV do każdej oferty jest żmudne. [Dopasowanie CV do oferty w Vocare](/resume-creator) robi to automatycznie - wklejasz treść ogłoszenia, a system generuje wersję CV dopasowaną do wymagań tej oferty.
 
 ---
 
@@ -152,7 +150,7 @@ Tak - szczególnie w IT, finansach i większości branż technicznych. Zdjęcie 
 Po każdej ważniejszej zmianie w karierze: nowa rola, certyfikat, projekt. Nie czekaj do momentu, gdy potrzebujesz CV pilnie - wtedy zawsze coś się zapomina.
 
 **Jak sprawdzić, czy moje CV jest dobrze dopasowane do konkretnej oferty?**
-**[Vocare.pl](https://vocare.pl)** bezpłatnie analizuje jakość CV - ocenia kompletność sekcji, konkretność osiągnięć i ogólną czytelność dla ATS. Osobna funkcja automatycznie dopasowuje CV do konkretnej oferty po wklejeniu ogłoszenia.
+[Kreator CV w Vocare](/resume-creator) bezpłatnie analizuje jakość CV - ocenia kompletność sekcji, konkretność osiągnięć i ogólną czytelność dla ATS. Osobna funkcja automatycznie dopasowuje CV do konkretnej oferty po wklejeniu ogłoszenia.
 
 ---
 
@@ -160,11 +158,11 @@ Po każdej ważniejszej zmianie w karierze: nowa rola, certyfikat, projekt. Nie 
 
 Dobre CV w 2026 roku to dokument, który: jest dopasowany do konkretnej oferty, przechodzi przez filtry ATS, pokazuje osiągnięcia w liczbach, ma czytelną strukturę i jest wolne od błędów. To nie talent ani szczęście - to umiejętność, którą można się nauczyć.
 
-Jeśli chcesz, żeby Twoje CV było automatycznie dopasowywane do treści ofert pracy, sprawdź **[Vocare.pl](https://vocare.pl)** - narzędzie AI, które analizuje Twoje CV i sugeruje konkretne zmiany pod każdą ofertę, na którą aplikujesz.
+Jeśli chcesz, żeby Twoje CV było automatycznie dopasowywane do treści ofert pracy, sprawdź [Kreator CV w Vocare](/resume-creator) - narzędzie AI, które analizuje Twoje CV i sugeruje konkretne zmiany pod każdą ofertę, na którą aplikujesz.
 
 ---
 
 ## Powiązane artykuły
-- [Jak zrobić CV 2026 - praktyczny poradnik od zera do gotowego pliku](/blog/CV/jak-zrobic-cv)
-- [CV wzór 2026 - darmowe szablony do pobrania i edycji](/blog/CV/cv-wzor)
-- [Umiejętności do CV 2026 - co wpisać, żeby wyróżnić aplikację](/blog/CV/umiejetnosci-do-cv)
+- [Jak zrobić CV 2026 - praktyczny poradnik od zera do gotowego pliku](/blog/cv/jak-zrobic-cv)
+- [CV wzór 2026 - darmowe szablony do pobrania i edycji](/blog/cv/cv-wzor)
+- [Umiejętności do CV 2026 - co wpisać, żeby wyróżnić aplikację](/blog/cv/umiejetnosci-do-cv)

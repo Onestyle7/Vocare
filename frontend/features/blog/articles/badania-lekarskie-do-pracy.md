@@ -1,16 +1,14 @@
 ---
-title: 'Badania lekarskie do pracy 2026 - kiedy i jakie są obowiązkowe'
-description: 'Jakie badania lekarskie są obowiązkowe przed rozpoczęciem pracy w 2026 roku? Sprawdź różnicę między badaniami wstępnymi, okresowymi i kontrolnymi oraz kto za nie płaci.'
+title: 'Badania lekarskie do pracy 2026 - jakie są obowiązkowe'
+description: 'Jakie badania lekarskie są obowiązkowe przed rozpoczęciem pracy? Sprawdź różnicę między badaniami wstępnymi, okresowymi i kontrolnymi.'
 estimatedReadTime: 7
 date: '2026-08-31'
 author: 'Vocare'
-category: 'Job'
+category: 'praca'
 coverImage: '/images/blog/job-search.webp'
 tags: ['badania lekarskie do pracy', 'badania wstępne', 'badania okresowe', 'medycyna pracy', 'kto płaci za badania lekarskie']
 slug: 'badania-lekarskie-do-pracy'
 ---
-
-# Badania lekarskie do pracy 2026 - kiedy i jakie są obowiązkowe
 
 Koszt tych badań w całości obciąża pracodawcę - żaden zapis w umowie, nawet za pisemną zgodą pracownika, nie może tego zmienić. **Badania lekarskie do pracy** to trzy rodzaje badań - wstępne, okresowe i kontrolne - uregulowane w [art. 229 Kodeksu pracy](https://lexlege.pl/kp/art-229/), a obowiązek ich sfinansowania spoczywa wyłącznie na pracodawcy.
 
@@ -67,7 +65,7 @@ Termin ważności ustala lekarz medycyny pracy indywidualnie, zależnie od stano
 Nie, tylko po nieprzerwanej nieobecności z powodu choroby trwającej dłużej niż 30 dni.
 
 **Jak sprawdzić, czy dane stanowisko wymaga dodatkowych badań specjalistycznych?**
-**[Vocare.pl](https://vocare.pl)** pomoże Ci ocenić wymagania konkretnych ofert pracy i dopasować je do Twojego profilu zawodowego.
+[Dopasowanie CV do oferty w Vocare](/resume-creator) pomoże Ci ocenić wymagania konkretnych ofert pracy i dopasować je do Twojego profilu zawodowego.
 
 ---
 
@@ -75,13 +73,13 @@ Nie, tylko po nieprzerwanej nieobecności z powodu choroby trwającej dłużej n
 
 Badania lekarskie do pracy - wstępne, okresowe i kontrolne - są w całości finansowane przez pracodawcę i stanowią obowiązek, którego nie można pominąć ani przenieść na pracownika. Badania kontrolne są wymagane po dłuższej (ponad 30 dni) nieobecności chorobowej, a częstotliwość badań okresowych ustala lekarz medycyny pracy, nie sam pracodawca.
 
-Zastanawiasz się, jakie wymagania stawiają dziś oferty pracy w Twojej branży? **[Vocare.pl](https://vocare.pl)** pomoże Ci to sprawdzić.
+Zastanawiasz się, jakie wymagania stawiają dziś oferty pracy w Twojej branży? [Analiza rynku pracy w Vocare](/market-analysis) pomoże Ci to sprawdzić.
 
 ---
 
 ## Powiązane artykuły
-- [Zwolnienie lekarskie L4 2026 - ile trwa i jakie masz prawa](/blog/Job/zwolnienie-lekarskie-l4)
-- [Onboarding w nowej pracy 2026 - jak dobrze zacząć](/blog/Job/onboarding-nowa-praca)
-- [Praca dla osób z niepełnosprawnością 2026 - prawa i wsparcie](/blog/Job/praca-dla-osob-niepelnosprawnych)
-- [Kontrola trzeźwości w pracy 2026 - co może pracodawca](/blog/Job/kontrola-trzezwosci-w-pracy)
-- [Szkolenie BHP wstępne 2026 - kto musi je przejść i ile trwa](/blog/Job/szkolenie-bhp-wstepne)
+- [Zwolnienie lekarskie L4 2026 - ile trwa i jakie masz prawa](/blog/praca/zwolnienie-lekarskie-l4)
+- [Onboarding w nowej pracy 2026 - jak dobrze zacząć](/blog/praca/onboarding-nowa-praca)
+- [Praca dla osób z niepełnosprawnością 2026 - prawa i wsparcie](/blog/praca/praca-dla-osob-niepelnosprawnych)
+- [Kontrola trzeźwości w pracy 2026 - co może pracodawca](/blog/praca/kontrola-trzezwosci-w-pracy)
+- [Szkolenie BHP wstępne 2026 - kto musi je przejść i ile trwa](/blog/praca/szkolenie-bhp-wstepne)

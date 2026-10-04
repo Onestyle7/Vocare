@@ -4,13 +4,11 @@ description: 'Czym jest mobbing w pracy według Kodeksu pracy? Sprawdź, jak odr
 estimatedReadTime: 9
 date: '2026-08-13'
 author: 'Vocare'
-category: 'Job'
+category: 'praca'
 coverImage: '/images/blog/burnout.webp'
 tags: ['mobbing w pracy', 'jak rozpoznać mobbing', 'mobbing kodeks pracy', 'zgłoszenie mobbingu', 'odszkodowanie za mobbing']
 slug: 'mobbing-w-pracy'
 ---
-
-# Mobbing w pracy 2026 - jak go rozpoznać i co możesz zrobić
 
 Nie każdy trudny szef i nie każdy konflikt w zespole to mobbing - ale ignorowanie realnego mobbingu jako "zwykłych tarć" bywa równie szkodliwe. **Mobbing w pracy** to zjawisko precyzyjnie zdefiniowane w [art. 94(3) Kodeksu pracy](https://lexlege.pl/kp/art-94-3/), a nie każde nieprzyjemne zachowanie w miejscu pracy się do tej definicji kwalifikuje.
 
@@ -68,7 +66,7 @@ W wyjątkowych przypadkach tak, jeśli miała szczególnie dotkliwy charakter, a
 Tak - obowiązek przeciwdziałania mobbingowi spoczywa na pracodawcy niezależnie od tego, czy sprawcą jest przełożony, współpracownik czy podwładny.
 
 **Co zrobić, jeśli po zgłoszeniu mobbingu rozważam zmianę pracy?**
-**[Vocare.pl](https://vocare.pl)** pomoże Ci ocenić Twoje kompetencje i wskazać kierunki, w których warto szukać nowego zatrudnienia.
+[Analiza profilu zawodowego w Vocare](/assistant) pomoże Ci ocenić Twoje kompetencje i wskazać kierunki, w których warto szukać nowego zatrudnienia.
 
 ---
 
@@ -76,12 +74,12 @@ Tak - obowiązek przeciwdziałania mobbingowi spoczywa na pracodawcy niezależni
 
 Mobbing w pracy to prawnie zdefiniowane zjawisko wymagające łącznie uporczywości, długotrwałości i celu lub skutku w postaci poniżenia czy izolacji - nie każdy konflikt się do tego kwalifikuje. Dokumentowanie zdarzeń, zgłoszenie wewnętrzne, a w razie potrzeby PIP lub sąd pracy, to kolejne kroki, jeśli podejrzewasz, że doświadczasz mobbingu.
 
-Zastanawiasz się nad zmianą pracy po trudnych doświadczeniach zawodowych? **[Vocare.pl](https://vocare.pl)** pomoże Ci zaplanować kolejny krok.
+Zastanawiasz się nad zmianą pracy po trudnych doświadczeniach zawodowych? [Analiza profilu zawodowego w Vocare](/assistant) pomoże Ci zaplanować kolejny krok.
 
 ---
 
 ## Powiązane artykuły
-- [Wypalenie zawodowe - co dalej? Jak wrócić do równowagi i odbudować karierę](/blog/Kariera/wypalenie-zawodowe-co-dalej)
-- [Jak zrezygnować z pracy 2026 - jak to zrobić profesjonalnie](/blog/Job/jak-zrezygnowac-z-pracy)
-- [Zwolnienie dyscyplinarne 2026 - kiedy grozi i jak się przed nim bronić](/blog/Job/zwolnienie-dyscyplinarne)
-- [Kontrola trzeźwości w pracy 2026 - co może pracodawca](/blog/Job/kontrola-trzezwosci-w-pracy)
+- [Wypalenie zawodowe - co dalej? Jak wrócić do równowagi i odbudować karierę](/blog/kariera/wypalenie-zawodowe-co-dalej)
+- [Jak zrezygnować z pracy 2026 - jak to zrobić profesjonalnie](/blog/praca/jak-zrezygnowac-z-pracy)
+- [Zwolnienie dyscyplinarne 2026 - kiedy grozi i jak się przed nim bronić](/blog/praca/zwolnienie-dyscyplinarne)
+- [Kontrola trzeźwości w pracy 2026 - co może pracodawca](/blog/praca/kontrola-trzezwosci-w-pracy)

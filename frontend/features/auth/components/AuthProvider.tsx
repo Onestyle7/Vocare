@@ -2,17 +2,17 @@
 
 import { createContext, ReactNode, useContext } from 'react';
 
-interface AuhtContextType {
+interface AuthContextType {
   isAuthenticated: boolean;
 }
 
-const AuthContext = createContext<AuhtContextType>({ isAuthenticated: false });
+const AuthContext = createContext<AuthContextType>({ isAuthenticated: false });
 
 export function AuthProvider({
-  isAuthenticated,
+  isAuthenticated = false,
   children,
 }: {
-  isAuthenticated: boolean;
+  isAuthenticated?: boolean;
   children: ReactNode;
 }) {
   return <AuthContext.Provider value={{ isAuthenticated }}>{children}</AuthContext.Provider>;

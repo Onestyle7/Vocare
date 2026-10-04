@@ -1,16 +1,14 @@
 ---
 title: 'List motywacyjny po angielsku 2026 - jak napisać cover letter'
-description: 'Jak napisać list motywacyjny po angielsku (cover letter) w 2026 roku? Sprawdź strukturę, zwroty, których używają rodzimi użytkownicy języka, i najczęstsze błędy Polaków.'
+description: 'Jak napisać list motywacyjny po angielsku (cover letter)? Sprawdź strukturę, naturalne zwroty i najczęstsze błędy Polaków.'
 estimatedReadTime: 8
 date: '2026-09-07'
 author: 'Vocare'
-category: 'CV'
+category: 'cv'
 coverImage: '/images/blog/cover-letter.webp'
 tags: ['list motywacyjny po angielsku', 'cover letter', 'jak napisać cover letter', 'list motywacyjny angielski wzór', 'cv po angielsku list motywacyjny']
 slug: 'list-motywacyjny-po-angielsku'
 ---
-
-# List motywacyjny po angielsku 2026 - jak napisać cover letter
 
 Dosłowne tłumaczenie polskiego listu motywacyjnego na angielski niemal zawsze brzmi sztucznie. **Cover letter** to angielski odpowiednik listu motywacyjnego, rządzący się własną konwencją - krótszą i bardziej bezpośrednią niż polski oryginał. Dobry list motywacyjny po angielsku ma zwykle 3-4 akapity i mieści się na jednej stronie, bez rozbudowanych, formalnych zwrotów typowych dla polskiej tradycji korespondencji urzędowej.
 
@@ -68,7 +66,7 @@ Zwykle 250-400 słów, mieszczące się na jednej stronie - dłuższy list rzadk
 Nie, personalizacja pod konkretną firmę i stanowisko wyraźnie zwiększa szansę na zauważenie aplikacji przez rekrutera.
 
 **Jak sprawdzić, czy mój list motywacyjny dobrze dopasowuje moje kompetencje do oferty?**
-**[Vocare.pl](https://vocare.pl)** analizuje Twój profil i porównuje go z wymaganiami konkretnych ofert pracy.
+[Dopasowanie CV do oferty w Vocare](/resume-creator) analizuje Twój profil i porównuje go z wymaganiami konkretnych ofert pracy.
 
 ---
 
@@ -76,11 +74,11 @@ Nie, personalizacja pod konkretną firmę i stanowisko wyraźnie zwiększa szans
 
 Dobry list motywacyjny po angielsku jest krótszy i bardziej bezpośredni niż polska tradycja formalnej korespondencji - struktura "hook - dowód - dopasowanie - call to action" sprawdza się lepiej niż sztywny szablon. Unikanie dosłownych tłumaczeń polskich zwrotów formalnych i personalizacja pod konkretną firmę robią największą różnicę w odbiorze przez zagranicznego rekrutera.
 
-Aplikujesz za granicę i chcesz sprawdzić, jak Twoje kompetencje wypadają na tle wymagań oferty? **[Vocare.pl](https://vocare.pl)** pomoże Ci to ocenić.
+Aplikujesz za granicę i chcesz sprawdzić, jak Twoje kompetencje wypadają na tle wymagań oferty? [Analiza profilu zawodowego w Vocare](/assistant) pomoże Ci to ocenić.
 
 ---
 
 ## Powiązane artykuły
-- [CV po angielsku 2026 - jak napisać angielskie CV krok po kroku](/blog/CV/cv-po-angielsku)
-- [List motywacyjny 2026 - jak go napisać krok po kroku](/blog/CV/list-motywacyjny)
-- [Praca zdalna dla zagranicznego pracodawcy 2026 - jak ją znaleźć i rozliczyć](/blog/Job/praca-zdalna-dla-zagranicznego-pracodawcy)
+- [CV po angielsku 2026 - jak napisać angielskie CV krok po kroku](/blog/cv/cv-po-angielsku)
+- [List motywacyjny 2026 - jak go napisać krok po kroku](/blog/cv/list-motywacyjny)
+- [Praca zdalna dla zagranicznego pracodawcy 2026 - jak ją znaleźć i rozliczyć](/blog/praca/praca-zdalna-dla-zagranicznego-pracodawcy)

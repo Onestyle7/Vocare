@@ -1,17 +1,15 @@
 ---
-title: 'LinkedIn - jak zbudować profil, który przyciąga rekruterów 2026'
+title: 'LinkedIn 2026 - jak zbudować profil, który przyciąga'
 description: 'Jak zbudować profil LinkedIn, który realnie przyciąga rekruterów? Sprawdź jak uzupełnić poszczególne sekcje, jak pisać nagłówek i jak zwiększyć widoczność profilu.'
 estimatedReadTime: 9
 date: '2026-05-29'
 updatedAt: '2026-09-09'
 author: 'Vocare'
-category: 'CV'
+category: 'cv'
 coverImage: '/images/blog/professional-cv.webp'
 tags: ['linkedin profil', 'jak zbudować profil linkedin', 'linkedin dla rekrutacji', 'optymalizacja linkedin', 'personal branding linkedin']
 slug: 'linkedin-profil'
 ---
-
-# LinkedIn 2026 - jak zbudować profil, który realnie przyciąga rekruterów
 
 Rekruterzy sprawdzają profil LinkedIn niemal po każdej aplikacji - niespójny lub pusty profil potrafi podważyć wiarygodność nawet świetnego CV. **Profil LinkedIn** to dziś Twoja druga, publicznie dostępna wizytówka zawodowa, którą warto traktować z taką samą starannością jak CV, a nie jako formalność do "kiedyś uzupełnienia".
 
@@ -79,7 +77,7 @@ Nawet regularne komentowanie postów innych osób (kilka razy w tygodniu) daje e
 Tak, szczególnie z osobami z Twojej branży lub docelowych firm - warto jednak personalizować zaproszenie krótką wiadomością wyjaśniającą powód kontaktu.
 
 **Jak sprawdzić, czy mój profil LinkedIn dobrze koresponduje z moim CV i celami zawodowymi?**
-**[Vocare.pl](https://vocare.pl)** analizuje Twój profil kompetencyjny i pomaga dopasować komunikację zawodową - w CV i poza nim - do Twoich celów.
+[Dopasowanie CV do oferty w Vocare](/resume-creator) analizuje Twój profil kompetencyjny i pomaga dopasować komunikację zawodową - w CV i poza nim - do Twoich celów.
 
 ---
 
@@ -87,14 +85,14 @@ Tak, szczególnie z osobami z Twojej branży lub docelowych firm - warto jednak 
 
 Profil LinkedIn, który realnie przyciąga rekruterów, wymaga więcej niż jednorazowego uzupełnienia - kluczowe są opisowy nagłówek, konkretna sekcja "Informacje", rekomendacje od współpracowników i regularna aktywność zwiększająca widoczność w wynikach wyszukiwania.
 
-Chcesz upewnić się, że Twój profil zawodowy - LinkedIn i CV - działają spójnie na Twoją korzyść? **[Vocare.pl](https://vocare.pl)** pomoże Ci to ocenić.
+Chcesz upewnić się, że Twój profil zawodowy - LinkedIn i CV - działają spójnie na Twoją korzyść? [Analiza profilu zawodowego w Vocare](/assistant) pomoże Ci to ocenić.
 
 ---
 
 ## Powiązane artykuły
-- [CV po angielsku 2026 - jak napisać angielskie CV krok po kroku](/blog/CV/cv-po-angielsku)
-- [Networking zawodowy 2026 - jak budować sieć kontaktów bez wciskania się](/blog/Kariera/networking-zawodowy)
-- [Executive search i headhunting 2026 - jak działa rekrutacja na wyższe stanowiska](/blog/Job/executive-search-headhunting)
-- [CV po niemiecku 2026 - jak napisać Lebenslauf krok po kroku](/blog/CV/cv-po-niemiecku)
-- [CV wideo 2026 - kiedy warto nagrać wideo-CV i jak to zrobić](/blog/CV/cv-wideo)
-- [Budowanie marki osobistej 2026 - jak zacząć bez zażenowania](/blog/Kariera/budowanie-marki-osobistej)
+- [CV po angielsku 2026 - jak napisać angielskie CV krok po kroku](/blog/cv/cv-po-angielsku)
+- [Networking zawodowy 2026 - jak budować sieć kontaktów bez wciskania się](/blog/kariera/networking-zawodowy)
+- [Executive search i headhunting 2026 - jak działa rekrutacja na wyższe stanowiska](/blog/praca/executive-search-headhunting)
+- [CV po niemiecku 2026 - jak napisać Lebenslauf krok po kroku](/blog/cv/cv-po-niemiecku)
+- [CV wideo 2026 - kiedy warto nagrać wideo-CV i jak to zrobić](/blog/cv/cv-wideo)
+- [Budowanie marki osobistej 2026 - jak zacząć bez zażenowania](/blog/kariera/budowanie-marki-osobistej)

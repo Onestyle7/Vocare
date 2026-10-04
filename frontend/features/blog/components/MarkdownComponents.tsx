@@ -17,8 +17,8 @@ import {
   StrongProps,
   TableBodyProps,
   TableCellProps,
-  TableHeadProps,
   TableHeaderCellProps,
+  TableHeadProps,
   TableProps,
   TableRowProps,
 } from '../types';

@@ -5,7 +5,7 @@ estimatedReadTime: 11
 date: '2026-05-01'
 updatedAt: '2026-09-02'
 author: 'Vocare'
-category: 'Job'
+category: 'praca'
 coverImage: '/images/blog/interview-questions.webp'
 tags:
   [
@@ -17,8 +17,6 @@ tags:
   ]
 slug: 'pytania-na-rozmowie-kwalifikacyjnej'
 ---
-
-# Pytania na rozmowie kwalifikacyjnej 2026 - jak odpowiadać, żeby dostać pracę
 
 Żaden rekruter nie pyta "ile gwiazdek ma flaga USA?" na rozmowie o pracę (no, prawie żaden). **Pytania rekrutacyjne** to narzędzie oceny trzech rzeczy: czy możesz wykonywać tę pracę, czy będziesz chciał ją wykonywać i czy pasujesz do zespołu. Znajomość typowych pytań i przygotowanie konkretnych odpowiedzi z przykładami z Twojej kariery to różnica między kandydatem, który dostaje ofertę, a tym, który dostaje odmowę. Oto 20 najczęstszych pytań z przykładami odpowiedzi.
 
@@ -47,7 +45,7 @@ Oceniają konkretne umiejętności.
 
 Metoda STAR (Situation-Task-Action-Result) działa najlepiej przy pytaniach behawioralnych i sytuacyjnych.
 
-Chcesz przećwiczyć odpowiedzi metodą STAR zanim wejdziesz do sali? **[Vocare.pl](https://vocare.pl)** analizuje wymagania konkretnej oferty i wskazuje, które kompetencje powinieneś zaakcentować i jakimi przykładami z własnej kariery to poprzeć.
+Chcesz przećwiczyć odpowiedzi metodą STAR zanim wejdziesz do sali? [Analiza profilu zawodowego w Vocare](/assistant) analizuje wymagania konkretnej oferty i wskazuje, które kompetencje powinieneś zaakcentować i jakimi przykładami z własnej kariery to poprzeć.
 
 ---
 
@@ -197,7 +195,7 @@ Pytania merytoryczne są takie same. Różni się kontekst: na online zadbaj o s
 "Nie znam odpowiedzi na to pytanie, ale podszedłbym do niego w taki sposób..." - myśl głośno. Rekruterzy często cenią sposób myślenia bardziej niż gotową odpowiedź.
 
 **Czy jest narzędzie, które pomoże mi przygotować się do konkretnej rozmowy?**
-Tak - **[Vocare.pl](https://vocare.pl)** porównuje Twoje CV z wymaganiami oferty i pokazuje, na które kompetencje rekruter zwróci szczególną uwagę. Dzięki temu wiesz, jakich pytań się spodziewać i które przykłady z kariery warto mieć gotowe.
+Tak - [Dopasowanie CV do oferty w Vocare](/resume-creator) porównuje Twoje CV z wymaganiami oferty i pokazuje, na które kompetencje rekruter zwróci szczególną uwagę. Dzięki temu wiesz, jakich pytań się spodziewać i które przykłady z kariery warto mieć gotowe.
 
 ---
 
@@ -205,12 +203,12 @@ Tak - **[Vocare.pl](https://vocare.pl)** porównuje Twoje CV z wymaganiami ofert
 
 Dobre odpowiedzi na pytania rekrutacyjne to nie talent - to przygotowanie. Przejdź przez 10-15 najczęstszych pytań, przygotuj do każdego historię metodą STAR z konkretnymi liczbami i trenuj odpowiedzi na głos. Im więcej przećwiczysz, tym naturalniej będzie szło na rozmowie.
 
-Chcesz wiedzieć, które pytania są najbardziej prawdopodobne dla danej roli i jak Twoje doświadczenie odpowiada na wymagania rekrutera? **[Vocare.pl](https://vocare.pl)** przeanalizuje ofertę i Twój profil, żebyś wszedł na rozmowę z konkretnym planem odpowiedzi.
+Chcesz wiedzieć, które pytania są najbardziej prawdopodobne dla danej roli i jak Twoje doświadczenie odpowiada na wymagania rekrutera? [Analiza rynku pracy w Vocare](/market-analysis) przeanalizuje ofertę i Twój profil, żebyś wszedł na rozmowę z konkretnym planem odpowiedzi.
 
 ---
 
 ## Powiązane artykuły
-- [Rozmowa kwalifikacyjna 2026 - jak się przygotować i wypaść świetnie](/blog/Job/rozmowa-kwalifikacyjna)
-- [CV 2026 - kompletny poradnik jak napisać dobre CV](/blog/CV/cv)
-- [Jak zrobić CV 2026 - praktyczny poradnik od zera do gotowego pliku](/blog/CV/jak-zrobic-cv)
-- [Assessment center 2026 - jak się przygotować i co Cię czeka](/blog/Job/assessment-center)
+- [Rozmowa kwalifikacyjna 2026 - jak się przygotować i wypaść świetnie](/blog/praca/rozmowa-kwalifikacyjna)
+- [CV 2026 - kompletny poradnik jak napisać dobre CV](/blog/cv/cv)
+- [Jak zrobić CV 2026 - praktyczny poradnik od zera do gotowego pliku](/blog/cv/jak-zrobic-cv)
+- [Assessment center 2026 - jak się przygotować i co Cię czeka](/blog/praca/assessment-center)

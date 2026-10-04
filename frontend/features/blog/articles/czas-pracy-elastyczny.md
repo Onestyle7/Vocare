@@ -3,16 +3,15 @@ title: 'Elastyczny czas pracy 2026 - jak negocjować ruchomy grafik'
 description: 'Jak działa elastyczny (ruchomy) czas pracy w 2026 roku i jak złożyć wniosek? Sprawdź zasady, terminy odpowiedzi pracodawcy i prawa rodziców.'
 estimatedReadTime: 7
 date: '2026-08-06'
+updatedAt: '2026-09-22'
 author: 'Vocare'
-category: 'Job'
+category: 'praca'
 coverImage: '/images/blog/job-search.webp'
 tags: ['elastyczny czas pracy', 'ruchomy czas pracy', 'wniosek o elastyczny czas pracy', 'indywidualny rozkład czasu pracy', 'elastyczna organizacja pracy rodzice']
 slug: 'czas-pracy-elastyczny'
 ---
 
-# Elastyczny czas pracy 2026 - jak negocjować ruchomy grafik
-
-Nie każdy musi zaczynać dzień dokładnie o 8:00 - Kodeks pracy od dawna daje narzędzie do negocjowania innych godzin, o ile wynika to z uzasadnionych potrzeb. **Elastyczny czas pracy**, zwany też ruchomym czasem pracy, pozwala ustalić różne godziny rozpoczynania pracy w poszczególnych dniach lub przedział czasowy, w którym pracownik sam decyduje o rozpoczęciu dnia - [na pisemny wniosek pracownika, zgodnie z art. 142 Kodeksu pracy](https://www.gowork.pl/blog/ruchomy-czas-pracy-co-to-wniosek-wady-zalety/).
+Nie każdy musi zaczynać dzień dokładnie o 8:00 - Kodeks pracy od dawna daje narzędzie do negocjowania innych godzin, o ile wynika to z uzasadnionych potrzeb. **Elastyczny czas pracy**, zwany też ruchomym czasem pracy, pozwala ustalić różne godziny rozpoczynania pracy w poszczególnych dniach lub przedział czasowy, w którym pracownik sam decyduje o rozpoczęciu dnia - [na pisemny wniosek pracownika, zgodnie z art. 142 Kodeksu pracy](https://www.gowork.pl/blog/ruchomy-czas-pracy-co-to-wniosek-wady-zalety/). **Ruchomy czas pracy** to instytucja Kodeksu pracy, a nie nieformalna zgoda przełożonego - wprowadza się go w regulaminie, układzie zbiorowym albo na pisemny wniosek pracownika.
 
 > **Najważniejsze wnioski**
 > - Pracownik ma prawo złożyć wniosek o indywidualny rozkład czasu pracy raz w ciągu roku kalendarzowego
@@ -69,7 +68,7 @@ Nie, to odrębne rozwiązania - elastyczny czas pracy dotyczy godzin rozpoczęci
 Ustawowe prawo do złożenia wniosku przysługuje raz w roku kalendarzowym, choć nic nie stoi na przeszkodzie, by nieformalnie renegocjować warunki częściej, jeśli pracodawca się na to zgadza.
 
 **Jak przygotować argumentację do wniosku o elastyczny czas pracy?**
-**[Vocare.pl](https://vocare.pl)** pomoże Ci ocenić Twoją sytuację zawodową i lepiej przygotować się do rozmowy z pracodawcą.
+[Analiza profilu zawodowego w Vocare](/assistant) pomoże Ci ocenić Twoją sytuację zawodową i lepiej przygotować się do rozmowy z pracodawcą.
 
 ---
 
@@ -77,11 +76,11 @@ Ustawowe prawo do złożenia wniosku przysługuje raz w roku kalendarzowym, cho�
 
 Elastyczny (ruchomy) czas pracy pozwala na indywidualne godziny rozpoczynania pracy lub swobodny wybór w ustalonym przedziale czasowym, na pisemny wniosek składany raz w roku kalendarzowym. Rodzice dzieci do 8. roku życia mają dodatkowe, wzmocnione prawo do takiego wnioskowania, obejmujące też inne formy elastycznej organizacji pracy.
 
-Zastanawiasz się, jak wynegocjować lepsze warunki czasu pracy? **[Vocare.pl](https://vocare.pl)** pomoże Ci ocenić Twoją sytuację zawodową.
+Zastanawiasz się, jak wynegocjować lepsze warunki czasu pracy? [Analiza rynku pracy w Vocare](/market-analysis) pomoże Ci ocenić Twoją sytuację zawodową.
 
 ---
 
 ## Powiązane artykuły
-- [Praca hybrydowa 2026 - jak negocjować model pracy](/blog/Job/praca-hybrydowa)
-- [Powrót do pracy po urlopie macierzyńskim 2026 - jak się przygotować](/blog/Kariera/powrot-do-pracy-po-macierzynskim)
-- [Nadgodziny w pracy 2026 - ile powinieneś za nie dostać](/blog/Job/nadgodziny-wynagrodzenie)
+- [Praca hybrydowa 2026 - jak negocjować model pracy](/blog/praca/praca-hybrydowa)
+- [Powrót do pracy po urlopie macierzyńskim 2026 - jak się przygotować](/blog/kariera/powrot-do-pracy-po-macierzynskim)
+- [Nadgodziny w pracy 2026 - ile powinieneś za nie dostać](/blog/praca/nadgodziny-wynagrodzenie)

@@ -1,5 +1,5 @@
 ---
-title: 'Rynek pracy w edukacji 2026 - deficyt nauczycieli i nowe ścieżki'
+title: 'Rynek pracy w edukacji 2026 - deficyt nauczycieli'
 description: 'Jak wygląda rynek pracy w edukacji w 2026 roku? Sprawdź, dlaczego brakuje nauczycieli, jakie nowe role tworzy edukacja cyfrowa i ile można zarobić w tej branży.'
 estimatedReadTime: 7
 date: '2026-06-25'
@@ -11,8 +11,6 @@ tags: ['rynek pracy edukacja', 'praca nauczyciel', 'zarobki nauczyciel 2026', 'e
 slug: 'rynek-pracy-edukacja'
 ---
 
-# Rynek pracy w edukacji 2026 - dlaczego brakuje nauczycieli
-
 Polska oświata od lat mierzy się z deficytem kadrowym, który pogłębia się z rokiem na rok - szczególnie w przedmiotach ścisłych i językach obcych. **Rynek pracy w edukacji** w 2026 roku to nie tylko szkoły publiczne - to także rosnący rynek edukacji prywatnej, korepetycji online i szkoleń korporacyjnych.
 
 > **Najważniejsze wnioski**
@@ -23,6 +21,8 @@ Polska oświata od lat mierzy się z deficytem kadrowym, który pogłębia się 
 ---
 
 ## Dlaczego w polskiej oświacie brakuje nauczycieli?
+
+Warto zweryfikować te wnioski dla swojego regionu. [Barometrze Zawodów](https://www.barometrzawodow.pl/) - prognoza Ministerstwa Rodziny, Pracy i Polityki Społecznej - klasyfikuje zawody takie jak nauczyciele przedmiotów ścisłych i zawodowych jako deficytowe, zrównoważone lub nadwyżkowe, osobno dla każdego powiatu. Punkt odniesienia dla podawanych kwot: krajowa mediana wynagrodzeń to [7690,82 zł brutto (luty 2026)](https://ssgk.stat.gov.pl/Wynagrodzenia_i_swiadczenia_spoleczne.html) (GUS).
 
 Niskie wynagrodzenia w relacji do wymagań i odpowiedzialności zawodu, obciążenie biurokracją oraz starzejąca się kadra sprawiają, że liczba nowych nauczycieli nie nadąża za potrzebami systemu. Deficyt jest szczególnie widoczny w przedmiotach, w których absolwenci mają atrakcyjniejsze alternatywy zawodowe - matematyce, fizyce, informatyce.
 
@@ -78,7 +78,7 @@ Warto zacząć od mniejszej platformy lub własnego kanału, budując portfolio 
 Tak, szczególnie dla osób z doświadczeniem dydaktycznym i zainteresowaniem konkretną branżą - firmy chętnie zatrudniają byłych nauczycieli do projektowania szkoleń wewnętrznych.
 
 **Jak sprawdzić, która ścieżka w edukacji pasuje do moich kompetencji?**
-**[Vocare.pl](https://vocare.pl)** analizuje Twój profil i porównuje go z aktualnym zapotrzebowaniem rynkowym, wskazując konkretne kierunki rozwoju zawodowego.
+[Analiza rynku pracy w Vocare](/market-analysis) analizuje Twój profil i porównuje go z aktualnym zapotrzebowaniem rynkowym, wskazując konkretne kierunki rozwoju zawodowego.
 
 ---
 
@@ -86,14 +86,14 @@ Tak, szczególnie dla osób z doświadczeniem dydaktycznym i zainteresowaniem ko
 
 Rynek pracy w edukacji w 2026 roku wykracza daleko poza tradycyjną szkołę - deficyt nauczycieli przedmiotów ścisłych i języków tworzy realne możliwości, a edukacja cyfrowa (kursy online, korepetycje, L&D korporacyjny) otwiera nowe, często lepiej płatne ścieżki dla osób z kompetencjami dydaktycznymi.
 
-Zastanawiasz się, która ścieżka w edukacji pasuje do Twoich kompetencji? **[Vocare.pl](https://vocare.pl)** przeprowadzi bezpłatną analizę i wskaże konkretne kierunki rozwoju.
+Zastanawiasz się, która ścieżka w edukacji pasuje do Twoich kompetencji? [Rekomendacje ścieżki kariery od Vocare](/roadmap) przeprowadzi bezpłatną analizę i wskaże konkretne kierunki rozwoju.
 
 ---
 
 ## Powiązane artykuły
 - [Rynek pracy w Polsce 2026 - kompletny przegląd 21 branż](/blog/rynek-pracy/rynek-pracy-w-polsce)
 - [Zawody przyszłości 2026 - które profesje będą najbardziej poszukiwane?](/blog/rynek-pracy/zawody-przyszlosci-2026)
-- [Doradca zawodowy - co robi, ile kosztuje i czy warto](/blog/Kariera/doradca-zawodowy)
-- [Jak zmienić branżę - praktyczny przewodnik krok po kroku](/blog/Kariera/jak-zmienic-branze)
+- [Doradca zawodowy - co robi, ile kosztuje i czy warto](/blog/kariera/doradca-zawodowy)
+- [Jak zmienić branżę - praktyczny przewodnik krok po kroku](/blog/kariera/jak-zmienic-branze)
 - [Rynek pracy w administracji publicznej 2026 - stabilność i zarobki](/blog/rynek-pracy/rynek-pracy-administracja-publiczna)
-- [CV nauczyciela 2026 - jak napisać, żeby przejść rekrutację](/blog/CV/cv-nauczyciela)
+- [CV nauczyciela 2026 - jak napisać, żeby przejść rekrutację](/blog/cv/cv-nauczyciela)
