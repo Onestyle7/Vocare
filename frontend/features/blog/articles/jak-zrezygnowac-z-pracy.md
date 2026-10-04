@@ -1,19 +1,17 @@
 ---
-title: 'Jak zrezygnować z pracy 2026 - wypowiedzenie bez spalania mostów'
+title: 'Jak zrezygnować z pracy 2026 - wypowiedzenie krok po kroku'
 description: 'Jak elegancko zrezygnować z pracy? Sprawdź jak napisać wypowiedzenie, jak przeprowadzić rozmowę z przełożonym i jak zachować dobre relacje po odejściu z firmy.'
 estimatedReadTime: 8
 date: '2026-05-26'
 updatedAt: '2026-09-09'
 author: 'Vocare'
-category: 'Job'
+category: 'praca'
 coverImage: '/images/blog/find-job.webp'
 tags: ['jak zrezygnować z pracy', 'wypowiedzenie umowy o pracę', 'odejście z pracy', 'rezygnacja z pracy', 'okres wypowiedzenia']
 slug: 'jak-zrezygnowac-z-pracy'
 ---
 
-# Jak zrezygnować z pracy 2026 - elegancko i bez palenia mostów
-
-Znalazłeś nową ofertę albo po prostu czas na zmianę - teraz przed Tobą jedna z trudniejszych rozmów zawodowych: poinformowanie przełożonego o odejściu. **Rezygnacja z pracy** dobrze przeprowadzona chroni Twoją reputację zawodową na lata - świat branżowy jest mniejszy, niż się wydaje, a byli przełożeni często stają się przyszłymi referencjami lub kontaktami.
+Znalazłeś nową ofertę albo po prostu czas na zmianę - teraz przed Tobą jedna z trudniejszych rozmów zawodowych: poinformowanie przełożonego o odejściu. **Rezygnacja z pracy** dobrze przeprowadzona chroni Twoją reputację zawodową na lata - świat branżowy jest mniejszy, niż się wydaje, a byli przełożeni często stają się przyszłymi referencjami lub kontaktami. **Wypowiedzenie umowy o pracę** to jednostronne oświadczenie woli, które rozwiązuje umowę po upływie okresu wypowiedzenia - w odróżnieniu od porozumienia stron, kończącego ją w uzgodnionym dniu.
 
 > **Najważniejsze wnioski**
 > - Poinformuj przełożonego osobiście, zanim złożysz formalne wypowiedzenie na piśmie - kolejność ma znaczenie dla relacji
@@ -76,7 +74,7 @@ Możesz się zgodzić, jeśli to dla Ciebie wykonalne i nie koliduje z terminem 
 Zwykle nie - poza wyjątkowymi sytuacjami (mobbing, łamanie prawa) rozwiązanie umowy bez zachowania okresu wypowiedzenia może wiązać się z konsekwencjami prawnymi i zaszkodzić reputacji zawodowej.
 
 **Jak sprawdzić, czy nowa oferta faktycznie jest lepsza od obecnej pracy?**
-**[Vocare.pl](https://vocare.pl)** pomaga porównać Twój profil kompetencyjny z wymaganiami nowej roli, żebyś podejmował decyzję o zmianie pracy w oparciu o dane, nie tylko emocje.
+[Dopasowanie CV do oferty w Vocare](/resume-creator) pomaga porównać Twój profil kompetencyjny z wymaganiami nowej roli, żebyś podejmował decyzję o zmianie pracy w oparciu o dane, nie tylko emocje.
 
 ---
 
@@ -84,12 +82,12 @@ Zwykle nie - poza wyjątkowymi sytuacjami (mobbing, łamanie prawa) rozwiązanie
 
 Rezygnacja z pracy dobrze przeprowadzona - z wyprzedzeniem, osobistą rozmową i profesjonalizmem do ostatniego dnia - chroni Twoją reputację zawodową na lata. Sprawdź okres wypowiedzenia, przygotuj krótką, konkretną rozmowę i unikaj krytyki firmy, nawet jeśli to część Twojej motywacji do zmiany.
 
-Zastanawiasz się, czy nowa oferta rzeczywiście jest krokiem naprzód? **[Vocare.pl](https://vocare.pl)** pomoże Ci to ocenić na podstawie danych, nie tylko emocji.
+Zastanawiasz się, czy nowa oferta rzeczywiście jest krokiem naprzód? [Analiza rynku pracy w Vocare](/market-analysis) pomoże Ci to ocenić na podstawie danych, nie tylko emocji.
 
 ---
 
 ## Powiązane artykuły
-- [Jak znaleźć pracę w 2026 - sprawdzone strategie krok po kroku](/blog/Job/jak-znalezc-prace)
-- [Negocjacje wynagrodzenia 2026 - jak negocjować pensję skutecznie](/blog/Job/negocjacje-wynagrodzenia)
-- [Wypalenie zawodowe - co dalej? Jak wrócić do równowagi i odbudować karierę](/blog/Kariera/wypalenie-zawodowe-co-dalej)
-- [Okres wypowiedzenia umowy o pracę 2026 - ile trwa i jak liczyć](/blog/Job/wypowiedzenie-umowy-o-prace)
+- [Jak znaleźć pracę w 2026 - sprawdzone strategie krok po kroku](/blog/praca/jak-znalezc-prace)
+- [Negocjacje wynagrodzenia 2026 - jak negocjować pensję skutecznie](/blog/praca/negocjacje-wynagrodzenia)
+- [Wypalenie zawodowe - co dalej? Jak wrócić do równowagi i odbudować karierę](/blog/kariera/wypalenie-zawodowe-co-dalej)
+- [Okres wypowiedzenia umowy o pracę 2026 - ile trwa i jak liczyć](/blog/praca/wypowiedzenie-umowy-o-prace)

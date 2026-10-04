@@ -10,11 +10,14 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging.Abstractions;
 using Moq;
+using VocareWebAPI.Billing.Models.Entities;
 using VocareWebAPI.Data;
 using VocareWebAPI.Models.Entities;
 using VocareWebApi.Tests.Common;
 using VocareWebAPI.UserManagement;
 using VocareWebAPI.UserManagement.Interfaces;
+using VocareWebAPI.UserManagement.Models.Enums;
+using VocareWebAPI.UserManagement.Models.Results;
 using VocareWebAPI.UserManagement.Repositories.Interfaces;
 using VocareWebAPI.UserManagement.Services.Implementations;
 using VocareWebAPI.UserManagement.Services.Interfaces;
@@ -78,6 +81,7 @@ namespace VocareWebApi.Tests.UserManagement.Services
                     NullLogger<UserRegistrationHandler>.Instance
                 ),
                 _marketingConsent.Object,
+                _userSetup.Object,
                 _context
             );
         }
@@ -193,6 +197,89 @@ namespace VocareWebApi.Tests.UserManagement.Services
 
             result.IsSuccess.Should().BeTrue();
             _userSetup.Verify(s => s.SetupNewUserAsync(It.IsAny<string>()), Times.Once);
+        }
+
+        private void SetupSuccessfulIdentityCreation()
+        {
+            _userManager.Setup(m => m.FindByEmailAsync(Email)).ReturnsAsync((User?)null);
+            _userManager
+                .Setup(m => m.CreateAsync(It.IsAny<User>(), Password))
+                .ReturnsAsync(IdentityResult.Success);
+            _userSetup
+                .Setup(s => s.SetupNewUserAsync(It.IsAny<string>()))
+                .Returns(Task.CompletedTask);
+        }
+
+        [Fact]
+        public async Task RegisterAsync_WithoutMarketingConsent_DoesNotGrantWelcomeTokens()
+        {
+            SetupSuccessfulIdentityCreation();
+
+            var result = await _sut.RegisterAsync(Email, Password, false, null);
+
+            result.Value!.WelcomeBonus.Should().BeNull();
+            _userSetup.Verify(
+                s => s.GrantOrScheduleWelcomeTokensAsync(It.IsAny<string>()),
+                Times.Never
+            );
+        }
+
+        [Fact]
+        public async Task RegisterAsync_WithMarketingConsent_GrantsWelcomeTokensAndReturnsAmount()
+        {
+            SetupSuccessfulIdentityCreation();
+            _userSetup
+                .Setup(s => s.GrantOrScheduleWelcomeTokensAsync(It.IsAny<string>()))
+                .ReturnsAsync(new WelcomeBonusResult(WelcomeBonusStatus.Granted, 120));
+
+            var result = await _sut.RegisterAsync(Email, Password, true, "127.0.0.1");
+
+            result.IsSuccess.Should().BeTrue();
+            result
+                .Value!.WelcomeBonus.Should()
+                .Be(new WelcomeBonusResult(WelcomeBonusStatus.Granted, 120));
+            _marketingConsent.Verify(
+                r => r.CreateAsync(It.Is<MarketingConsent>(c => c.IsConsentGiven)),
+                Times.Once
+            );
+        }
+
+        [Fact]
+        public async Task RegisterAsync_WhenConsentSaveFails_DoesNotGrantWelcomeTokens()
+        {
+            SetupSuccessfulIdentityCreation();
+            _marketingConsent
+                .Setup(r => r.CreateAsync(It.Is<MarketingConsent>(c => c.IsConsentGiven)))
+                .ThrowsAsync(new InvalidOperationException("db down"));
+
+            var result = await _sut.RegisterAsync(Email, Password, true, null);
+
+            result.IsSuccess.Should().BeTrue();
+            result.Value!.WelcomeBonus.Should().BeNull();
+            _userSetup.Verify(
+                s => s.GrantOrScheduleWelcomeTokensAsync(It.IsAny<string>()),
+                Times.Never
+            );
+        }
+
+        [Fact]
+        public async Task RegisterAsync_WhenGrantIsScheduled_SucceedsWithPendingBonusAndWithoutFallbackConsent()
+        {
+            SetupSuccessfulIdentityCreation();
+            _userSetup
+                .Setup(s => s.GrantOrScheduleWelcomeTokensAsync(It.IsAny<string>()))
+                .ReturnsAsync(new WelcomeBonusResult(WelcomeBonusStatus.Pending, 0));
+
+            var result = await _sut.RegisterAsync(Email, Password, true, null);
+
+            result.IsSuccess.Should().BeTrue();
+            result
+                .Value!.WelcomeBonus.Should()
+                .Be(new WelcomeBonusResult(WelcomeBonusStatus.Pending, 0));
+            _marketingConsent.Verify(
+                r => r.CreateAsync(It.Is<MarketingConsent>(c => !c.IsConsentGiven)),
+                Times.Never
+            );
         }
 
         [Fact]

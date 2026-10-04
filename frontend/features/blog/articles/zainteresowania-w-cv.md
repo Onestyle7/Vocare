@@ -5,13 +5,11 @@ estimatedReadTime: 7
 date: '2026-05-13'
 updatedAt: '2026-09-02'
 author: 'Vocare'
-category: 'CV'
+category: 'cv'
 coverImage: '/images/blog/cv-interests.webp'
 tags: ['zainteresowania w cv', 'hobby w cv', 'co wpisać do cv', 'cv 2026', 'sekcja zainteresowania']
 slug: 'zainteresowania-w-cv'
 ---
-
-# Zainteresowania w CV - co wpisać i jak to zrobić mądrze
 
 "Czytanie książek, muzyka, sport" - tę trójkę widzisz w co drugim CV. Nic nie mówi, niczym nie zaskakuje i w efekcie niczego nie robi dla Twojej kandydatury. **Dobra sekcja zainteresowania** to nie lista słów - to konkretne aktywności, które coś o Tobie mówią: że jesteś ciekawy świata, masz inicjatywę, rozwijasz się poza pracą. Oto jak ją napisać.
 
@@ -134,7 +132,7 @@ Zainteresowania:
 Zainteresowania: triatlon, fotografia dokumentalna, nauka języka japońskiego, meetupy AI
 ```
 
-Nie wiesz, jak całe Twoje CV wypada jakościowo? **[Vocare.pl](https://vocare.pl)** analizuje ogólną jakość CV - ocenia kompletność sekcji, konkretność osiągnięć i czytelność dla ATS.
+Nie wiesz, jak całe Twoje CV wypada jakościowo? [Kreator CV w Vocare](/resume-creator) analizuje ogólną jakość CV - ocenia kompletność sekcji, konkretność osiągnięć i czytelność dla ATS.
 
 ---
 
@@ -167,7 +165,7 @@ Zależy od branży. W IT, gamingowe firmy, startupy - owszem. W konserwatywnych 
 Każdy ma zainteresowania - nie każdy myśli o nich w tych kategoriach. Zastanów się: co robisz w wolnym czasie? Co oglądasz na YouTube? O czym możesz rozmawiać godzinami? To są Twoje zainteresowania.
 
 **Jak sprawdzić, czy moje CV jako całość (nie tylko zainteresowania) jest gotowe do wysłania?**
-**[Vocare.pl](https://vocare.pl)** bezpłatnie analizuje ogólną jakość CV - ocenia kompletność sekcji, konkretność osiągnięć i czytelność dla ATS. Osobna funkcja automatycznie dopasowuje CV do konkretnej oferty po wklejeniu ogłoszenia.
+[Dopasowanie CV do oferty w Vocare](/resume-creator) bezpłatnie analizuje ogólną jakość CV - ocenia kompletność sekcji, konkretność osiągnięć i czytelność dla ATS. Osobna funkcja automatycznie dopasowuje CV do konkretnej oferty po wklejeniu ogłoszenia.
 
 ---
 
@@ -175,11 +173,11 @@ Każdy ma zainteresowania - nie każdy myśli o nich w tych kategoriach. Zastan�
 
 Zainteresowania w CV to nie obowiązkowy element - to opcjonalne miejsce, które może wzmocnić Twoją kandydaturę. Ale tylko wtedy, gdy wpiszesz konkretne, autentyczne aktywności, które coś o Tobie mówią. "Czytanie i muzyka" nic nie mówi. "Trójbój siłowy i nauka hiszpańskiego" - już jest o czym porozmawiać.
 
-Jeśli masz wątpliwości co do całej struktury swojego CV, **[Vocare.pl](https://vocare.pl)** oceni jego ogólną jakość, a osobna funkcja automatycznie dopasuje CV do konkretnej oferty po wklejeniu ogłoszenia.
+Jeśli masz wątpliwości co do całej struktury swojego CV, [Kreator CV w Vocare](/resume-creator) oceni jego ogólną jakość, a osobna funkcja automatycznie dopasuje CV do konkretnej oferty po wklejeniu ogłoszenia.
 
 ---
 
 ## Powiązane artykuły
-- [Umiejętności do CV 2026 - co wpisać, żeby wyróżnić aplikację](/blog/CV/umiejetnosci-do-cv)
-- [CV wzór 2026 - darmowe szablony do pobrania i edycji](/blog/CV/cv-wzor)
-- [Profesjonalne CV 2026 - jak wyglądać poważnie na papierze](/blog/CV/profesjonalne-cv)
+- [Umiejętności do CV 2026 - co wpisać, żeby wyróżnić aplikację](/blog/cv/umiejetnosci-do-cv)
+- [CV wzór 2026 - darmowe szablony do pobrania i edycji](/blog/cv/cv-wzor)
+- [Profesjonalne CV 2026 - jak wyglądać poważnie na papierze](/blog/cv/profesjonalne-cv)

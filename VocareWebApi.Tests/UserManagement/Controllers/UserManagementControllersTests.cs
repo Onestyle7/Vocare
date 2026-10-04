@@ -18,7 +18,9 @@ using VocareWebAPI.Shared.Results;
 using VocareWebApi.Tests.Common;
 using VocareWebAPI.UserManagement.Controllers;
 using VocareWebAPI.UserManagement.Exceptions;
+using VocareWebAPI.UserManagement.Interfaces;
 using VocareWebAPI.UserManagement.Models.Dtos;
+using VocareWebAPI.UserManagement.Models.Enums;
 using VocareWebAPI.UserManagement.Models.Results;
 using VocareWebAPI.UserManagement.Repositories.Interfaces;
 using VocareWebAPI.UserManagement.Services.Interfaces;
@@ -147,13 +149,15 @@ namespace VocareWebApi.Tests.UserManagement.Controllers
         private const string UserId = "user-123";
 
         private readonly Mock<IMarketingConsentRepository> _repository = new(MockBehavior.Strict);
+        private readonly Mock<IUserSetupService> _userSetup = new(MockBehavior.Strict);
         private readonly MarketingController _sut;
 
         public MarketingControllerTests()
         {
             _sut = new MarketingController(
                 _repository.Object,
-                NullLogger<MarketingController>.Instance
+                NullLogger<MarketingController>.Instance,
+                _userSetup.Object
             );
             _sut.WithUser(UserId);
         }
@@ -186,7 +190,7 @@ namespace VocareWebApi.Tests.UserManagement.Controllers
         }
 
         [Fact]
-        public async Task GiveMarketingConsent_WhenNoExistingConsent_CreatesConsent()
+        public async Task GiveMarketingConsent_WhenNoExistingConsent_CreatesConsentAndGrantsWelcomeTokens()
         {
             _repository
                 .Setup(r => r.GetByUserIdAsync(UserId))
@@ -194,10 +198,15 @@ namespace VocareWebApi.Tests.UserManagement.Controllers
             _repository
                 .Setup(r => r.CreateAsync(It.IsAny<MarketingConsent>()))
                 .Returns(Task.CompletedTask);
+            _userSetup
+                .Setup(s => s.GrantOrScheduleWelcomeTokensAsync(UserId))
+                .ReturnsAsync(new WelcomeBonusResult(WelcomeBonusStatus.Granted, 120));
 
             var result = await _sut.GiveMarketingConsent();
 
-            result.Should().BeOfType<OkObjectResult>();
+            var value = result.Should().BeOfType<OkObjectResult>().Which.Value!;
+            value.GetProperty("welcomeTokensGranted").Should().Be(120);
+            value.GetProperty("welcomeBonusStatus").Should().Be(WelcomeBonusStatus.Granted);
             _repository.Verify(
                 r => r.CreateAsync(It.Is<MarketingConsent>(c => c.IsConsentGiven)),
                 Times.Once
@@ -205,7 +214,46 @@ namespace VocareWebApi.Tests.UserManagement.Controllers
         }
 
         [Fact]
-        public async Task GiveMarketingConsent_WhenAlreadyActive_Throws()
+        public async Task GiveMarketingConsent_WhenRestoringWithdrawnConsent_ReturnsAlreadyClaimed()
+        {
+            var consent = new MarketingConsent { UserId = UserId, IsConsentGiven = false };
+            _repository.Setup(r => r.GetByUserIdAsync(UserId)).ReturnsAsync(consent);
+            _repository.Setup(r => r.UpdateAsync(consent)).Returns(Task.CompletedTask);
+            _userSetup
+                .Setup(s => s.GrantOrScheduleWelcomeTokensAsync(UserId))
+                .ReturnsAsync(new WelcomeBonusResult(WelcomeBonusStatus.AlreadyClaimed, 0));
+
+            var result = await _sut.GiveMarketingConsent();
+
+            consent.IsConsentGiven.Should().BeTrue();
+            var value = result.Should().BeOfType<OkObjectResult>().Which.Value!;
+            value.GetProperty("welcomeTokensGranted").Should().Be(0);
+            value.GetProperty("welcomeBonusStatus").Should().Be(WelcomeBonusStatus.AlreadyClaimed);
+            _userSetup.Verify(s => s.GrantOrScheduleWelcomeTokensAsync(UserId), Times.Once);
+        }
+
+        [Fact]
+        public async Task GiveMarketingConsent_WhenGrantIsScheduled_ReturnsOkWithPendingStatus()
+        {
+            _repository
+                .Setup(r => r.GetByUserIdAsync(UserId))
+                .ReturnsAsync((MarketingConsent?)null);
+            _repository
+                .Setup(r => r.CreateAsync(It.IsAny<MarketingConsent>()))
+                .Returns(Task.CompletedTask);
+            _userSetup
+                .Setup(s => s.GrantOrScheduleWelcomeTokensAsync(UserId))
+                .ReturnsAsync(new WelcomeBonusResult(WelcomeBonusStatus.Pending, 0));
+
+            var result = await _sut.GiveMarketingConsent();
+
+            var value = result.Should().BeOfType<OkObjectResult>().Which.Value!;
+            value.GetProperty("welcomeTokensGranted").Should().Be(0);
+            value.GetProperty("welcomeBonusStatus").Should().Be(WelcomeBonusStatus.Pending);
+        }
+
+        [Fact]
+        public async Task GiveMarketingConsent_WhenAlreadyActive_ThrowsWithoutGrantingTokens()
         {
             _repository
                 .Setup(r => r.GetByUserIdAsync(UserId))
@@ -214,6 +262,7 @@ namespace VocareWebApi.Tests.UserManagement.Controllers
             await _sut.Invoking(c => c.GiveMarketingConsent())
                 .Should()
                 .ThrowAsync<MarketingConsentAlreadyActiveException>();
+            _userSetup.VerifyNoOtherCalls();
         }
 
         [Fact]

@@ -5,13 +5,11 @@ estimatedReadTime: 7
 date: '2026-06-09'
 updatedAt: '2026-09-09'
 author: 'Vocare'
-category: 'Job'
+category: 'praca'
 coverImage: '/images/blog/cv-job-application.webp'
 tags: ['onboarding', 'pierwsze dni w pracy', 'nowa praca', 'adaptacja w pracy', 'jak zacząć nową pracę']
 slug: 'onboarding-nowa-praca'
 ---
-
-# Onboarding 2026 - jak dobrze wypaść w pierwszych tygodniach
 
 Dostałeś ofertę, podpisałeś umowę - teraz zaczyna się kolejny etap, który decyduje o tym, jak szybko poczujesz się pewnie w nowej roli. **Onboarding** to proces wdrożenia nowego pracownika, ale to, jak go wykorzystasz, w dużej mierze zależy od Ciebie, nie tylko od firmy.
 
@@ -86,7 +84,7 @@ Lepiej poczekać kilka tygodni, żeby zrozumieć kontekst - pomysł zgłoszony p
 Weź inicjatywę sam - zapytaj przełożonego o priorytety, poproś o wprowadzenie do kluczowych osób i dokumentację, jeśli istnieje.
 
 **Jak sprawdzić, czy moje kompetencje faktycznie pasują do nowej roli przed startem?**
-**[Vocare.pl](https://vocare.pl)** analizuje Twój profil względem wymagań oferty jeszcze przed aplikacją, żebyś wiedział, na czym budować od pierwszego dnia.
+[Analiza rynku pracy w Vocare](/market-analysis) analizuje Twój profil względem wymagań oferty jeszcze przed aplikacją, żebyś wiedział, na czym budować od pierwszego dnia.
 
 ---
 
@@ -94,13 +92,13 @@ Weź inicjatywę sam - zapytaj przełożonego o priorytety, poproś o wprowadzen
 
 Pierwsze 90 dni w nowej pracy budują wrażenie, które utrzymuje się długo. Kluczem jest aktywne zadawanie pytań, poznawanie kultury organizacyjnej przed sugerowaniem zmian i jasne ustalenie oczekiwań z przełożonym od samego początku.
 
-Chcesz wejść do nowej roli dobrze przygotowany? **[Vocare.pl](https://vocare.pl)** pomoże Ci zrozumieć, jak Twoje kompetencje wpisują się w wymagania stanowiska.
+Chcesz wejść do nowej roli dobrze przygotowany? [Analiza profilu zawodowego w Vocare](/assistant) pomoże Ci zrozumieć, jak Twoje kompetencje wpisują się w wymagania stanowiska.
 
 ---
 
 ## Powiązane artykuły
-- [Rozmowa kwalifikacyjna 2026 - jak się przygotować i wypaść świetnie](/blog/Job/rozmowa-kwalifikacyjna)
-- [Jak znaleźć pracę w 2026 - sprawdzone strategie krok po kroku](/blog/Job/jak-znalezc-prace)
-- [Ścieżka kariery - jak zaplanować rozwój zawodowy w 2026](/blog/Kariera/sciezka-kariery)
-- [Badania lekarskie do pracy 2026 - kiedy i jakie są obowiązkowe](/blog/Job/badania-lekarskie-do-pracy)
-- [Szkolenie BHP wstępne 2026 - kto musi je przejść i ile trwa](/blog/Job/szkolenie-bhp-wstepne)
+- [Rozmowa kwalifikacyjna 2026 - jak się przygotować i wypaść świetnie](/blog/praca/rozmowa-kwalifikacyjna)
+- [Jak znaleźć pracę w 2026 - sprawdzone strategie krok po kroku](/blog/praca/jak-znalezc-prace)
+- [Ścieżka kariery - jak zaplanować rozwój zawodowy w 2026](/blog/kariera/sciezka-kariery)
+- [Badania lekarskie do pracy 2026 - kiedy i jakie są obowiązkowe](/blog/praca/badania-lekarskie-do-pracy)
+- [Szkolenie BHP wstępne 2026 - kto musi je przejść i ile trwa](/blog/praca/szkolenie-bhp-wstepne)

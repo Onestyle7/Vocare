@@ -10,7 +10,17 @@ import {
   cancelSubscriptionService,
   createSubscriptionService,
   getCustomerPortalService,
+  getSubscriptionTokenStatusService,
 } from './services';
+
+export async function getSubscriptionStatusAction() {
+  const result = await getSubscriptionTokenStatusService({ cache: 'no-store' });
+
+  return result.match(
+    (data) => actionOk(data),
+    (error) => actionErr(error)
+  );
+}
 
 export async function createCheckout(
   subscriptionType: BillingType,

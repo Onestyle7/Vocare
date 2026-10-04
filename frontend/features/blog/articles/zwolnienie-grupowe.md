@@ -3,14 +3,13 @@ title: 'Zwolnienie grupowe 2026 - Twoje prawa i wysokość odprawy'
 description: 'Czym jest zwolnienie grupowe i kiedy ma zastosowanie w 2026 roku? Sprawdź progi liczby zwalnianych pracowników, wysokość odprawy i limit ustawowy.'
 estimatedReadTime: 8
 date: '2026-08-28'
+updatedAt: '2026-09-22'
 author: 'Vocare'
-category: 'Job'
+category: 'praca'
 coverImage: '/images/blog/job-search.webp'
 tags: ['zwolnienia grupowe', 'odprawa zwolnienie grupowe', 'ustawa o zwolnieniach grupowych', 'ile wynosi odprawa', 'redukcja etatów']
 slug: 'zwolnienie-grupowe'
 ---
-
-# Zwolnienie grupowe 2026 - Twoje prawa i wysokość odprawy
 
 Nie każda fala zwolnień w firmie automatycznie kwalifikuje się jako zwolnienie grupowe - decydują konkretne progi liczbowe zależne od wielkości pracodawcy. **Zwolnienie grupowe** to procedura uregulowana odrębną ustawą, która wymaga spełnienia określonych progów liczby zwalnianych pracowników w ciągu 30 dni i gwarantuje pracownikom odprawę pieniężną, [zależnie od stażu pracy](https://interviewme.pl/blog/zwolnienia-grupowe).
 
@@ -43,7 +42,64 @@ Wysokość odprawy zależy wyłącznie od stażu pracy u danego pracodawcy, niez
 - **Dwumiesięczne wynagrodzenie** - staż od 2 do 8 lat
 - **Trzymiesięczne wynagrodzenie** - staż dłuższy niż 8 lat
 
-Odprawa podlega ustawowemu limitowi - nie może przekroczyć 15-krotności minimalnego wynagrodzenia za pracę obowiązującego w dniu rozwiązania umowy. Oznacza to, że nawet przy bardzo wysokim wynagrodzeniu, kwota odprawy ma górny pułap.
+Odprawa podlega ustawowemu limitowi - nie może przekroczyć 15-krotności minimalnego wynagrodzenia za pracę obowiązującego w dniu rozwiązania umowy. Przy minimalnym wynagrodzeniu 4806 zł brutto w 2026 roku daje to pułap **72 090 zł brutto**.
+
+W praktyce limit dotyka osób zarabiających powyżej ok. 24 000 zł brutto miesięcznie przy najdłuższym stażu - poniżej tego poziomu odprawa jest zwykłą wielokrotnością wynagrodzenia.
+
+**Uwaga:** odprawa przysługuje niezależnie od tego, czy znajdziesz nową pracę następnego dnia. To świadczenie związane z rozwiązaniem umowy, nie z okresem pozostawania bez pracy.
+
+---
+
+## Procedura krok po kroku - czego pracodawca musi dopełnić
+
+Zwolnienie grupowe to nie decyzja, tylko procedura. Jej pominięcie lub skrócenie daje podstawę do zakwestionowania wypowiedzenia.
+
+| Etap | Co się dzieje |
+| --- | --- |
+| 1. Zawiadomienie strony społecznej | Pracodawca informuje związki zawodowe lub przedstawicieli pracowników o zamiarze zwolnień, przyczynach, liczbie i grupach zawodowych |
+| 2. Konsultacje | Strony negocjują możliwość uniknięcia lub ograniczenia zwolnień oraz warunki dla odchodzących |
+| 3. Porozumienie lub regulamin | Ustalenia zapisuje się w porozumieniu; przy jego braku pracodawca wydaje regulamin |
+| 4. Zawiadomienie urzędu pracy | Powiatowy urząd pracy dostaje informację o ustaleniach |
+| 5. Wypowiedzenia | Dopiero teraz pracodawca może wręczać wypowiedzenia |
+
+**Kolejność ma znaczenie prawne.** Wypowiedzenie wręczone przed zakończeniem konsultacji jest wadliwe proceduralnie, niezależnie od tego, czy merytoryczna przyczyna zwolnienia była uzasadniona.
+
+**Co sprawdzić we własnym wypowiedzeniu:** czy podano przyczynę niedotyczącą pracownika, czy wskazano kryteria doboru do zwolnienia i czy naliczono odprawę. Brak kryteriów doboru to jedna z najczęstszych podstaw odwołań do sądu pracy.
+
+---
+
+## Kogo chroni szczególna ochrona
+
+Część pracowników jest chroniona przed wypowiedzeniem także przy zwolnieniach grupowych - najczęściej pracodawca może wtedy jedynie wypowiedzieć warunki pracy i płacy, nie samą umowę. Dotyczy to m.in.:
+
+- pracowników w wieku przedemerytalnym (do 4 lat przed osiągnięciem wieku emerytalnego),
+- pracownic w ciąży oraz osób na urlopach związanych z rodzicielstwem,
+- członków zarządów zakładowych organizacji związkowych i społecznych inspektorów pracy,
+- osób na usprawiedliwionej nieobecności, w tym na zwolnieniu lekarskim - w granicach okresów ochronnych.
+
+Jeśli należysz do którejś z tych grup, a otrzymałeś wypowiedzenie umowy, a nie warunków - to pierwsza rzecz do zweryfikowania.
+
+---
+
+## Zwolnienie indywidualne z przyczyn niedotyczących pracownika
+
+Najczęstsze nieporozumienie wokół tego tematu: wiele osób zakłada, że odprawa należy się wyłącznie przy zwolnieniach grupowych. Tak nie jest.
+
+Jeśli pracodawca zatrudnia **co najmniej 20 osób** i rozwiązuje umowę z przyczyn **niedotyczących pracownika** - likwidacja stanowiska, restrukturyzacja, względy ekonomiczne - odprawa przysługuje także przy zwolnieniu pojedynczej osoby, w tej samej wysokości.
+
+Warunkiem jest, by przyczyny niedotyczące pracownika stanowiły **wyłączny powód** wypowiedzenia. Jeśli w wypowiedzeniu pojawia się dodatkowo ocena pracy czy zachowania pracownika, prawo do odprawy bywa kwestionowane - dlatego warto uważnie przeczytać uzasadnienie wypowiedzenia.
+
+---
+
+## Prawo pierwszeństwa przy ponownym zatrudnieniu
+
+To uprawnienie, o którym wie niewielu zwolnionych, a bywa realnie przydatne.
+
+Jeśli w ciągu **15 miesięcy** od zwolnień grupowych pracodawca ponownie zatrudnia w tej samej grupie zawodowej, **ma obowiązek dać pierwszeństwo osobom wcześniej zwolnionym**.
+
+Warunek jest jednak po stronie pracownika: trzeba **zgłosić chęć powrotu w ciągu 12 miesięcy** od rozwiązania stosunku pracy. Bez tego zgłoszenia obowiązek pracodawcy nie powstaje.
+
+Praktyczny wniosek: jeśli zostałeś objęty zwolnieniem grupowym i nie wykluczasz powrotu, wyślij pisemne zgłoszenie chęci ponownego zatrudnienia i zachowaj potwierdzenie. To jedno pismo, które kosztuje kwadrans, a otwiera uprawnienie na ponad rok.
 
 ---
 
@@ -69,7 +125,7 @@ Tak, odprawa podlega opodatkowaniu na zasadach ogólnych, podobnie jak inne świ
 Tak, tak samo jak przy standardowym wypowiedzeniu - w terminie 21 dni od doręczenia wypowiedzenia można złożyć odwołanie do sądu pracy.
 
 **Jak zaplanować dalsze kroki zawodowe po zwolnieniu grupowym?**
-**[Vocare.pl](https://vocare.pl)** pomoże Ci ocenić Twoje kompetencje i wskazać kierunki dalszego rozwoju zawodowego.
+[Analiza profilu zawodowego w Vocare](/assistant) pomoże Ci ocenić Twoje kompetencje i wskazać kierunki dalszego rozwoju zawodowego.
 
 ---
 
@@ -77,12 +133,12 @@ Tak, tak samo jak przy standardowym wypowiedzeniu - w terminie 21 dni od doręcz
 
 Zwolnienie grupowe wymaga spełnienia konkretnych progów liczby zwalnianych pracowników w ciągu 30 dni, zależnych od wielkości pracodawcy, i gwarantuje odprawę od jedno- do trzymiesięcznego wynagrodzenia, zależnie od stażu pracy - z ustawowym limitem 15-krotności minimalnego wynagrodzenia. Warto znać te progi i zasady, jeśli Twoja firma ogłasza redukcję etatów.
 
-Szukasz nowego kierunku zawodowego po zwolnieniu grupowym? **[Vocare.pl](https://vocare.pl)** pomoże Ci zaplanować kolejny krok.
+Szukasz nowego kierunku zawodowego po zwolnieniu grupowym? [Analiza profilu zawodowego w Vocare](/assistant) pomoże Ci zaplanować kolejny krok.
 
 ---
 
 ## Powiązane artykuły
-- [Okres wypowiedzenia umowy o pracę 2026 - ile trwa i jak liczyć](/blog/Job/wypowiedzenie-umowy-o-prace)
-- [Zwolnienie dyscyplinarne 2026 - kiedy grozi i jak się przed nim bronić](/blog/Job/zwolnienie-dyscyplinarne)
-- [Zasiłek dla bezrobotnych 2026 - ile wynosi i jak go uzyskać](/blog/Job/zasilek-dla-bezrobotnych)
-- [Wypowiedzenie zmieniające 2026 - kiedy pracodawca może zmienić warunki pracy](/blog/Job/wypowiedzenie-zmieniajace)
+- [Okres wypowiedzenia umowy o pracę 2026 - ile trwa i jak liczyć](/blog/praca/wypowiedzenie-umowy-o-prace)
+- [Zwolnienie dyscyplinarne 2026 - kiedy grozi i jak się przed nim bronić](/blog/praca/zwolnienie-dyscyplinarne)
+- [Zasiłek dla bezrobotnych 2026 - ile wynosi i jak go uzyskać](/blog/praca/zasilek-dla-bezrobotnych)
+- [Wypowiedzenie zmieniające 2026 - kiedy pracodawca może zmienić warunki pracy](/blog/praca/wypowiedzenie-zmieniajace)

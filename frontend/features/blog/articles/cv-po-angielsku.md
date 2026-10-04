@@ -1,19 +1,17 @@
 ---
-title: 'CV po angielsku 2026 - jak napisać angielskie CV krok po kroku'
+title: 'CV po angielsku 2026 - jak napisać je krok po kroku'
 description: 'Jak napisać CV po angielsku, które przejdzie przez ATS i przekona zagranicznego rekrutera? Sprawdź różnice względem polskiego CV, strukturę i przykłady.'
 estimatedReadTime: 9
 date: '2026-05-21'
 updatedAt: '2026-09-09'
 author: 'Vocare'
-category: 'CV'
+category: 'cv'
 coverImage: '/images/blog/cv-guide.webp'
 tags: ['cv po angielsku', 'english cv', 'resume', 'cv za granicą', 'jak napisać cv po angielsku']
 slug: 'cv-po-angielsku'
 ---
 
-# CV po angielsku 2026 - jak napisać dokument, który przejdzie przez ATS
-
-Tłumaczenie polskiego CV słowo w słowo na angielski to jeden z najczęstszych błędów kandydatów aplikujących do międzynarodowych firm lub za granicę. **CV po angielsku** rządzi się częściowo innymi zasadami niż polskie - inna struktura, inne konwencje i inne oczekiwania rekruterów, szczególnie w krajach anglosaskich.
+Tłumaczenie polskiego CV słowo w słowo na angielski to jeden z najczęstszych błędów kandydatów aplikujących do międzynarodowych firm lub za granicę. **CV po angielsku** rządzi się częściowo innymi zasadami niż polskie - inna struktura, inne konwencje i inne oczekiwania rekruterów, szczególnie w krajach anglosaskich. **CV po angielsku** to nie tłumaczenie polskiego dokumentu, tylko osobny format, w którym obowiązują inne konwencje długości, danych osobowych i opisu doświadczenia.
 
 > **Najważniejsze wnioski**
 > - Amerykańskie "resume" i brytyjskie/europejskie "CV" różnią się długością i konwencją - sprawdź, czego oczekuje rynek docelowy
@@ -91,7 +89,7 @@ Zwykle nie, szczególnie przy aplikacjach do USA, Wielkiej Brytanii czy Kanady -
 Resume w USA - zwykle 1 strona, nawet przy dłuższym doświadczeniu. CV w Wielkiej Brytanii i Europie - 1-2 strony, podobnie jak w Polsce.
 
 **Jak sprawdzić, czy moje angielskie CV jest dobrze dopasowane do zagranicznej oferty?**
-**[Vocare.pl](https://vocare.pl)** analizuje CV pod kątem dopasowania do konkretnej oferty i wskazuje, co warto poprawić przed wysłaniem aplikacji.
+[Dopasowanie CV do oferty w Vocare](/resume-creator) automatycznie dopasowuje CV do konkretnej oferty - wklejasz ogłoszenie, a system generuje wersję CV pod wymagania tej roli.
 
 ---
 
@@ -99,16 +97,16 @@ Resume w USA - zwykle 1 strona, nawet przy dłuższym doświadczeniu. CV w Wielk
 
 CV po angielsku wymaga nie tłumaczenia, tylko napisania dokumentu od nowa w konwencji języka i rynku docelowego. Kluczowe różnice to brak zdjęcia i danych osobowych typowych dla polskiego CV, bardziej bezpośredni styl opisu osiągnięć i konieczność dostosowania długości do konkretnego rynku (USA vs Europa).
 
-Chcesz sprawdzić, czy Twoje CV po angielsku jest dobrze dopasowane do zagranicznej oferty? **[Vocare.pl](https://vocare.pl)** pomoże Ci to ocenić.
+Chcesz sprawdzić, czy Twoje CV po angielsku jest dobrze dopasowane do zagranicznej oferty? [Kreator CV w Vocare](/resume-creator) pomoże Ci to ocenić.
 
 ---
 
 ## Powiązane artykuły
-- [CV po niemiecku 2026 - jak napisać Lebenslauf krok po kroku](/blog/CV/cv-po-niemiecku)
-- [CV 2026 - kompletny poradnik jak napisać dobre CV](/blog/CV/cv)
-- [LinkedIn - jak zbudować profil, który przyciąga rekruterów](/blog/CV/linkedin-profil)
-- [Profesjonalne CV 2026 - jak wyglądać poważnie na papierze](/blog/CV/profesjonalne-cv)
-- [List motywacyjny po angielsku 2026 - jak napisać cover letter](/blog/CV/list-motywacyjny-po-angielsku)
-- [Europass CV 2026 - czy warto i jak go wypełnić](/blog/CV/europass-cv)
-- [CV po hiszpańsku 2026 - jak napisać currículum do Hiszpanii](/blog/CV/cv-po-hiszpansku)
-- [CV po francusku 2026 - jak napisać CV do Francji](/blog/CV/cv-po-francusku)
+- [CV po niemiecku 2026 - jak napisać Lebenslauf krok po kroku](/blog/cv/cv-po-niemiecku)
+- [CV 2026 - kompletny poradnik jak napisać dobre CV](/blog/cv/cv)
+- [LinkedIn - jak zbudować profil, który przyciąga rekruterów](/blog/cv/linkedin-profil)
+- [Profesjonalne CV 2026 - jak wyglądać poważnie na papierze](/blog/cv/profesjonalne-cv)
+- [List motywacyjny po angielsku 2026 - jak napisać cover letter](/blog/cv/list-motywacyjny-po-angielsku)
+- [Europass CV 2026 - czy warto i jak go wypełnić](/blog/cv/europass-cv)
+- [CV po hiszpańsku 2026 - jak napisać currículum do Hiszpanii](/blog/cv/cv-po-hiszpansku)
+- [CV po francusku 2026 - jak napisać CV do Francji](/blog/cv/cv-po-francusku)

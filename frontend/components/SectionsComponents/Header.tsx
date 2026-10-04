@@ -161,7 +161,7 @@ const Header = () => {
         className="font-poppins relative z-[100] flex items-center justify-end border-gray-400 max-xl:border-b-[1px] xl:justify-center dark:border-gray-600/30"
       >
         {isMobile ? (
-          <MobileNav isAuthenticated={isAuthenticated} />
+          <MobileNav />
         ) : (
           <div className="mx-auto mt-10 w-full max-w-[1280px] px-4 sm:px-8 md:px-12 lg:px-16">
             <nav className="flex w-full items-center justify-between space-x-10">

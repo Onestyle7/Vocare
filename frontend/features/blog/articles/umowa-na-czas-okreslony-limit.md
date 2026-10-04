@@ -3,21 +3,22 @@ title: 'Umowa na czas określony 2026 - ile razy można ją podpisać'
 description: 'Ile umów o pracę na czas określony można podpisać z jednym pracodawcą? Sprawdź limit 33 miesięcy i 3 umów oraz co się dzieje po jego przekroczeniu.'
 estimatedReadTime: 7
 date: '2026-07-21'
+updatedAt: '2026-09-22'
 author: 'Vocare'
-category: 'Job'
+category: 'praca'
 coverImage: '/images/blog/job-portals.webp'
 tags: ['umowa na czas określony', 'limit umów na czas określony', '33 miesiące umowa', 'trzecia umowa o pracę', 'umowa o pracę na czas nieokreślony']
 slug: 'umowa-na-czas-okreslony-limit'
 ---
 
-# Umowa na czas określony 2026 - kiedy musi przejść w bezterminową
-
-Trzecia z rzędu umowa na czas określony z tym samym pracodawcą to często moment, w którym pracownicy zaczynają się zastanawiać, czy firma może przedłużać ją w nieskończoność. **Umowa na czas określony** ma w polskim prawie pracy jasno określony limit - zarówno co do liczby umów, jak i łącznego czasu ich trwania - a jego przekroczenie ma automatyczny skutek prawny.
+Trzecia z rzędu umowa na czas określony z tym samym pracodawcą to często moment, w którym pracownicy zaczynają się zastanawiać, czy firma może przedłużać ją w nieskończoność. **Umowa na czas określony** ma w polskim prawie pracy jasno określony limit - zarówno co do liczby umów, jak i łącznego czasu ich trwania - a jego przekroczenie ma automatyczny skutek prawny. **Umowa na czas określony** to umowa o pracę zawarta na z góry oznaczony okres, która po przekroczeniu limitu 3 umów lub 33 miesięcy przekształca się z mocy prawa w umowę na czas nieokreślony.
 
 > **Najważniejsze wnioski**
 > - Limit to maksymalnie 3 umowy na czas określony między tym samym pracodawcą a pracownikiem, łącznie nie dłużej niż 33 miesiące
 > - Przekroczenie któregokolwiek z limitów automatycznie przekształca umowę w umowę na czas nieokreślony - nie trzeba nic dodatkowo podpisywać
 > - Umowa na okres próbny nie wlicza się do tego limitu - liczą się tylko umowy na czas określony
+
+_Stan prawny: 22 września 2026 r._
 
 ---
 
@@ -43,6 +44,12 @@ Zgodnie z [Kodeksem pracy](https://isap.sejm.gov.pl/isap.nsf/DocDetails.xsp?id=w
 | Standardowa umowa na czas określony (poza wyjątkami) | Tak |
 
 Pracodawca korzystający z wyjątków (np. zastępstwo) musi wskazać obiektywną przyczynę leżącą po jego stronie - nie może dowolnie omijać limitu, nazywając zwykłą umowę "zastępstwem" bez faktycznej podstawy.
+
+### Jak sprawdzić, czy wyjątek jest prawdziwy
+
+Tu jest narzędzie, o którym mało kto wie: pracodawca, który zawiera umowę terminową z powołaniem na obiektywne przyczyny, **ma obowiązek zawiadomić o tym okręgowego inspektora pracy w ciągu 5 dni roboczych** od jej zawarcia, wraz ze wskazaniem przyczyny. Obowiązek opisuje [Państwowa Inspekcja Pracy](https://www.pip.gov.pl/dla-pracodawcow/pytania-i-odpowiedzi/czy-pracodawca-moze-zawrzec-z-pracownikiem-umowe-o-prace-na-czas-okreslony-przekraczajacy-33-miesiace), a samo zgłoszenie opisane jest w [procedurze na biznes.gov.pl](https://www.biznes.gov.pl/pl/portal/ou781).
+
+Jeśli więc w Twojej umowie pojawia się zapis o obiektywnych przyczynach, a zgłoszenia nie było, jest to sygnał, że wyjątek mógł zostać użyty bezpodstawnie. Zasady limitów podsumowuje też [Zielona Linia](https://zielonalinia.gov.pl/33-miesiace-i-3-umowy-czyli-limity-umowy-terminowej/).
 
 ---
 
@@ -74,13 +81,13 @@ Zbierz kopie wszystkich umów z danym pracodawcą i policz łączny okres oraz l
 
 Umowa na czas określony ma w Polsce dwa niezależne limity - maksymalnie 3 umowy i łącznie 33 miesiące z tym samym pracodawcą. Przekroczenie któregokolwiek z nich automatycznie, z mocy prawa, przekształca zatrudnienie w umowę na czas nieokreślony, bez potrzeby dodatkowego podpisywania dokumentów.
 
-Zastanawiasz się nad zmianą pracy zamiast czekania na przekształcenie umowy? **[Vocare.pl](https://vocare.pl)** pomoże Ci ocenić dostępne opcje na rynku.
+Zastanawiasz się nad zmianą pracy zamiast czekania na przekształcenie umowy? [Analiza rynku pracy w Vocare](/market-analysis) pokaże perspektywy i widełki płacowe dla Twojej ścieżki zawodowej.
 
 ---
 
 ## Powiązane artykuły
-- [Umowa o pracę vs B2B vs zlecenie 2026 - co wybrać?](/blog/Job/umowa-o-prace-vs-b2b)
-- [Zwolnienie lekarskie L4 2026 - ile trwa i jakie masz prawa](/blog/Job/zwolnienie-lekarskie-l4)
-- [Negocjacje wynagrodzenia 2026 - jak negocjować pensję skutecznie](/blog/Job/negocjacje-wynagrodzenia)
-- [Okres wypowiedzenia umowy o pracę 2026 - ile trwa i jak liczyć](/blog/Job/wypowiedzenie-umowy-o-prace)
-- [Odprawa emerytalna 2026 - komu przysługuje i ile wynosi](/blog/Job/odprawa-emerytalna)
+- [Umowa o pracę vs B2B vs zlecenie 2026 - co wybrać?](/blog/praca/umowa-o-prace-vs-b2b)
+- [Zwolnienie lekarskie L4 2026 - ile trwa i jakie masz prawa](/blog/praca/zwolnienie-lekarskie-l4)
+- [Negocjacje wynagrodzenia 2026 - jak negocjować pensję skutecznie](/blog/praca/negocjacje-wynagrodzenia)
+- [Okres wypowiedzenia umowy o pracę 2026 - ile trwa i jak liczyć](/blog/praca/wypowiedzenie-umowy-o-prace)
+- [Odprawa emerytalna 2026 - komu przysługuje i ile wynosi](/blog/praca/odprawa-emerytalna)

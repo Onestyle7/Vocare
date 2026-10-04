@@ -4,7 +4,7 @@ description: 'Jak przetrwać i wygrać na zmieniającym się rynku'
 estimatedReadTime: 10
 date: '2026-03-15'
 author: Tomasz Śmiałek
-category: 'Job'
+category: 'praca'
 coverImage: '/images/blog/example-image.webp'
 tags: ['ai', 'job', 'search', 'cv']
 ---

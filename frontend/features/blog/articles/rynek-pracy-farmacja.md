@@ -3,6 +3,7 @@ title: 'Rynek pracy w farmacji 2026 - trendy i zarobki'
 description: 'Jak wygląda rynek pracy w farmacji w 2026 roku? Sprawdź zarobki farmaceutów w aptekach i przemyśle oraz które specjalizacje rosną najszybciej.'
 estimatedReadTime: 7
 date: '2026-09-09'
+updatedAt: '2026-09-22'
 author: 'Vocare'
 category: 'rynek-pracy'
 coverImage: '/images/blog/future-careers.webp'
@@ -10,9 +11,7 @@ tags: ['rynek pracy farmacja', 'zarobki farmaceuta', 'praca w przemyśle farmace
 slug: 'rynek-pracy-farmacja'
 ---
 
-# Rynek pracy w farmacji 2026 - apteka to dziś tylko jedna ścieżka
-
-Wielu myśli o farmacji wyłącznie jako o pracy za pierwszym stołem w aptece, tymczasem przemysł farmaceutyczny oferuje dziś zupełnie inną skalę zarobków. **Rynek pracy w farmacji** obejmuje dwie wyraźnie różne ścieżki - aptekę i przemysł - farmaceuta z prawem wykonywania zawodu zarabia w aptece [6000-9000 zł brutto, podczas gdy w przemyśle farmaceutycznym i regulacyjnym zarobki sięgają 8000-16 000 zł brutto](https://farmacjapraktyczna.pl/aktualnosci/raporty-i-sondy/ile-zarabia-farmaceuta-w-polsce-aktualny-raport).
+Wielu myśli o farmacji wyłącznie jako o pracy za pierwszym stołem w aptece, tymczasem przemysł farmaceutyczny oferuje dziś zupełnie inną skalę zarobków. **Rynek pracy w farmacji** obejmuje dwie wyraźnie różne ścieżki - aptekę i przemysł - farmaceuta z prawem wykonywania zawodu zarabia w aptece [6000-9000 zł brutto, podczas gdy w przemyśle farmaceutycznym i regulacyjnym zarobki sięgają 8000-16 000 zł brutto](https://farmacjapraktyczna.pl/aktualnosci/raporty-i-sondy/ile-zarabia-farmaceuta-w-polsce-aktualny-raport). **Farmaceuta** to zawód regulowany, wymagający prawa wykonywania zawodu wydanego przez izbę aptekarską. **Technik farmaceutyczny** wykonuje węższy zakres czynności i kształci się w szkole policealnej.
 
 > **Najważniejsze wnioski**
 > - Praca w przemyśle farmaceutycznym oferuje wyraźnie wyższe zarobki niż praca w aptece otwartej, szczególnie na stanowiskach związanych z jakością i produkcją
@@ -35,6 +34,8 @@ Wielu myśli o farmacji wyłącznie jako o pracy za pierwszym stołem w aptece, 
 ---
 
 ## Które specjalizacje w farmacji rosną najszybciej?
+
+Zanim uznasz którykolwiek z tych zawodów za pewny wybór, sprawdź go lokalnie. farmaceuci i technicy farmaceutyczni - to zawody, których status w [Barometrze Zawodów](https://www.barometrzawodow.pl/) bywa różny w zależności od powiatu. Barometr to coroczna prognoza Ministerstwa Rodziny, Pracy i Polityki Społecznej, dzieląca zawody na deficytowe, zrównoważone i nadwyżkowe, publikowana osobno dla każdego powiatu. Dla kalibracji widełek: krajowa mediana wynagrodzeń to [7690,82 zł brutto (luty 2026)](https://ssgk.stat.gov.pl/Wynagrodzenia_i_swiadczenia_spoleczne.html) według GUS - połowa pracujących w Polsce zarabia mniej.
 
 **Specjaliści ds. jakości i walidacji procesów.** Rosnące wymagania regulacyjne wobec produkcji leków napędzają zapotrzebowanie na ekspertów pilnujących zgodności procesów produkcyjnych z normami.
 
@@ -62,7 +63,7 @@ Tak, m.in. w hurtowniach farmaceutycznych, instytucjach regulacyjnych (np. Urzą
 Tempo wzrostu (8-12% rocznie) jest porównywalne z innymi deficytowymi specjalizacjami medycznymi, choć bazowe widełki różnią się znacząco między rolami.
 
 **Jak sprawdzić, która ścieżka w farmacji - apteka czy przemysł - pasuje do moich kompetencji?**
-**[Vocare.pl](https://vocare.pl)** analizuje Twój profil i porównuje go z aktualnym zapotrzebowaniem rynkowym.
+[Analiza rynku pracy w Vocare](/market-analysis) analizuje Twój profil i porównuje go z aktualnym zapotrzebowaniem rynkowym.
 
 ---
 
@@ -70,11 +71,11 @@ Tempo wzrostu (8-12% rocznie) jest porównywalne z innymi deficytowymi specjaliz
 
 Rynek pracy w farmacji dzieli się na dwie wyraźnie różne ścieżki - aptekę i przemysł farmaceutyczny - z istotnie różnymi widełkami zarobków. Specjaliści ds. jakości, walidacji procesów i transferu technologii w przemyśle mają dziś dostęp do znacząco wyższych zarobków niż standardowa praca za pierwszym stołem w aptece.
 
-Zastanawiasz się, która ścieżka w farmacji pasuje do Twoich kompetencji? **[Vocare.pl](https://vocare.pl)** pomoże Ci to sprawdzić.
+Zastanawiasz się, która ścieżka w farmacji pasuje do Twoich kompetencji? [Rekomendacje ścieżki kariery od Vocare](/roadmap) pomoże Ci to sprawdzić.
 
 ---
 
 ## Powiązane artykuły
 - [Rynek pracy w Polsce 2026 - kompletny przegląd 21 branż](/blog/rynek-pracy/rynek-pracy-w-polsce)
 - [Rynek pracy w medycynie i ochronie zdrowia 2026 - zapotrzebowanie i zarobki](/blog/rynek-pracy/rynek-pracy-medycyna)
-- [CV pielęgniarki i lekarza 2026 - jak napisać CV w medycynie](/blog/CV/cv-w-medycynie)
+- [CV pielęgniarki i lekarza 2026 - jak napisać CV w medycynie](/blog/cv/cv-w-medycynie)

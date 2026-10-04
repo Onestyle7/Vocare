@@ -1,15 +1,15 @@
 'use client';
 
 import Image from 'next/image';
+import { useEffect, useState } from 'react';
 import { ScrollParallax } from 'react-just-parallax';
 
-import { useAuthContext } from '@/features/auth/components/AuthProvider';
 import { shape1 } from '@/features/marketing/constants';
 
-import { pricingPlans } from '../constants';
+import { ACTIVE_SUBSCRIPTION_STATUSES, pricingPlans } from '../constants';
+import { getSubscriptionStatusAction } from '../dal/commands';
 import { useBillingActions } from '../hooks/useBillingActions';
 import { PricingCard } from './PricingCard';
-import { useTokenBalanceContext } from './SubscriptionTokenProvider';
 
 interface PricingInteractiveProps {
   showGlow?: boolean;
@@ -20,9 +20,32 @@ export function PricingInteractive({
   showGlow = true,
   showShapes = true,
 }: PricingInteractiveProps) {
-  const { isAuthenticated } = useAuthContext();
-  const { hasActiveSubscription } = useTokenBalanceContext();
   const { handleCheckout, handleCustomerPortal, isPending } = useBillingActions();
+
+  const [isAuthenticated, setIsAuthenticated] = useState<boolean>(false);
+  const [hasActiveSubscription, setHasActiveSubscription] = useState<boolean>(false);
+
+  useEffect(() => {
+    let isMounted = true;
+    getSubscriptionStatusAction().then(([error, data]) => {
+      if (!isMounted) return;
+      if (error) {
+        if (error.type === 'Unauthorized') {
+          setIsAuthenticated(false);
+          setHasActiveSubscription(false);
+        }
+        return;
+      }
+      if (data) {
+        setIsAuthenticated(true);
+        setHasActiveSubscription(ACTIVE_SUBSCRIPTION_STATUSES.includes(data.subscriptionStatus));
+      }
+    });
+
+    return () => {
+      isMounted = false;
+    };
+  }, []);
 
   return (
     <div className="relative isolate mt-8 mb-10 w-full px-4 md:px-6">

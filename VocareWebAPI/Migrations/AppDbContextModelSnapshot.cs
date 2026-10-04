@@ -309,6 +309,11 @@ namespace VocareWebAPI.Migrations
 
                     b.HasKey("Id");
 
+                    b.HasIndex("UserId")
+                        .IsUnique()
+                        .HasDatabaseName("IX_TokenTransactions_UserId_WelcomeBonus")
+                        .HasFilter("\"Type\" = 2");
+
                     b.ToTable("TokenTransactions", "public");
                 });
 

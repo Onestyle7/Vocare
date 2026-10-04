@@ -4,13 +4,11 @@ description: 'Jak napisać CV nauczyciela w 2026 roku? Sprawdź, jakie kwalifika
 estimatedReadTime: 7
 date: '2026-09-03'
 author: 'Vocare'
-category: 'CV'
+category: 'cv'
 coverImage: '/images/blog/cv-template.webp'
 tags: ['cv nauczyciela', 'cv do szkoły', 'jak napisać cv nauczyciela', 'kwalifikacje pedagogiczne cv', 'cv korepetytora']
 slug: 'cv-nauczyciela'
 ---
-
-# CV nauczyciela 2026 - jak napisać, żeby przejść rekrutację
 
 Kwalifikacje formalne to warunek konieczny, ale nie wystarczający - dyrektorzy szkół i platformy edukacyjne szukają dziś czegoś więcej niż samego dyplomu. **CV nauczyciela** to dokument, który musi jasno pokazywać kwalifikacje pedagogiczne wymagane prawem oświatowym, ale wyróżnia się dopiero wtedy, gdy pokazuje konkretne, mierzalne rezultaty pracy z uczniami.
 
@@ -65,7 +63,7 @@ Osobno dla każdej placówki, z jasnym określeniem wymiaru godzin i przedmiotu 
 Tak, referencje od przełożonego w edukacji mają dużą wagę, szczególnie przy zmianie placówki lub etapu edukacyjnego.
 
 **Jak sprawdzić, jakie dodatkowe kwalifikacje warto zdobyć pod docelową ścieżkę w edukacji?**
-**[Vocare.pl](https://vocare.pl)** analizuje Twój profil zawodowy i porównuje go z wymaganiami konkretnych ofert.
+[Dopasowanie CV do oferty w Vocare](/resume-creator) analizuje Twój profil zawodowy i porównuje go z wymaganiami konkretnych ofert.
 
 ---
 
@@ -73,11 +71,11 @@ Tak, referencje od przełożonego w edukacji mają dużą wagę, szczególnie pr
 
 CV nauczyciela musi jasno pokazywać kwalifikacje formalne i stopień awansu zawodowego, ale wyróżnia się konkretnymi rezultatami pracy dydaktycznej - wynikami uczniów, wdrożonymi metodami, mierzalną poprawą. CV do edukacji cyfrowej wymaga innego akcentu niż CV do szkoły publicznej, z większym naciskiem na portfolio i opinie.
 
-Zastanawiasz się, jakie kompetencje warto rozwinąć w swojej ścieżce w edukacji? **[Vocare.pl](https://vocare.pl)** pomoże Ci to sprawdzić.
+Zastanawiasz się, jakie kompetencje warto rozwinąć w swojej ścieżce w edukacji? [Analiza profilu zawodowego w Vocare](/assistant) pomoże Ci to sprawdzić.
 
 ---
 
 ## Powiązane artykuły
 - [Rynek pracy w edukacji 2026 - deficyt nauczycieli i nowe ścieżki](/blog/rynek-pracy/rynek-pracy-edukacja)
-- [Referencje zawodowe 2026 - jak i kogo poprosić o rekomendację](/blog/CV/referencje-zawodowe)
-- [Profesjonalne CV 2026 - jak wyglądać poważnie na papierze](/blog/CV/profesjonalne-cv)
+- [Referencje zawodowe 2026 - jak i kogo poprosić o rekomendację](/blog/cv/referencje-zawodowe)
+- [Profesjonalne CV 2026 - jak wyglądać poważnie na papierze](/blog/cv/profesjonalne-cv)

@@ -4,13 +4,11 @@ description: 'Ile dni urlopu wypoczynkowego przysługuje w 2026 roku? Sprawdź z
 estimatedReadTime: 8
 date: '2026-07-22'
 author: 'Vocare'
-category: 'Job'
+category: 'praca'
 coverImage: '/images/blog/job-portals.webp'
 tags: ['urlop wypoczynkowy', 'ile dni urlopu', 'urlop proporcjonalny', 'wymiar urlopu 2026', 'kodeks pracy urlop']
 slug: 'urlop-wypoczynkowy'
 ---
-
-# Urlop wypoczynkowy 2026 - ile dni Ci przysługuje
 
 "Ile mam jeszcze dni urlopu?" to pytanie, które większość pracowników zadaje sobie dopiero przy planowaniu wakacji - a wtedy bywa już za późno, żeby wykorzystać go optymalnie. **Urlop wypoczynkowy** to płatne prawo pracownika zatrudnionego na umowę o pracę, którego wymiar zależy od stażu pracy i wykształcenia, nie od dobrej woli pracodawcy.
 
@@ -83,13 +81,13 @@ Nowy pracodawca ma obowiązek uwzględnić urlop już wykorzystany u poprzednieg
 
 Wymiar urlopu wypoczynkowego (20 lub 26 dni) zależy od łącznego stażu pracy, do którego wlicza się też ukończona edukacja. W pierwszym roku pracy urlop nalicza się proporcjonalnie, a niewykorzystane dni nie przepadają - muszą zostać udzielone do 30 września kolejnego roku.
 
-Planujesz zmianę pracy i zastanawiasz się, jak to wpłynie na Twoje uprawnienia urlopowe? **[Vocare.pl](https://vocare.pl)** pomoże Ci ocenić nową ofertę na tle Twojej obecnej sytuacji zawodowej.
+Planujesz zmianę pracy i zastanawiasz się, jak to wpłynie na Twoje uprawnienia urlopowe? [Analiza profilu zawodowego w Vocare](/assistant) pomoże Ci ocenić nową ofertę na tle Twojej obecnej sytuacji zawodowej.
 
 ---
 
 ## Powiązane artykuły
-- [Umowa o pracę vs B2B vs zlecenie 2026 - co wybrać?](/blog/Job/umowa-o-prace-vs-b2b)
-- [Jak zrezygnować z pracy 2026 - wypowiedzenie bez spalania mostów](/blog/Job/jak-zrezygnowac-z-pracy)
-- [Negocjacje wynagrodzenia 2026 - jak negocjować pensję skutecznie](/blog/Job/negocjacje-wynagrodzenia)
-- [Urlop macierzyński i rodzicielski 2026 - ile dni i ile wynosi zasiłek](/blog/Job/urlop-macierzynski-rodzicielski)
-- [Urlop bezpłatny 2026 - zasady, wniosek i skutki dla ubezpieczenia](/blog/Job/urlop-bezplatny)
+- [Umowa o pracę vs B2B vs zlecenie 2026 - co wybrać?](/blog/praca/umowa-o-prace-vs-b2b)
+- [Jak zrezygnować z pracy 2026 - wypowiedzenie bez spalania mostów](/blog/praca/jak-zrezygnowac-z-pracy)
+- [Negocjacje wynagrodzenia 2026 - jak negocjować pensję skutecznie](/blog/praca/negocjacje-wynagrodzenia)
+- [Urlop macierzyński i rodzicielski 2026 - ile dni i ile wynosi zasiłek](/blog/praca/urlop-macierzynski-rodzicielski)
+- [Urlop bezpłatny 2026 - zasady, wniosek i skutki dla ubezpieczenia](/blog/praca/urlop-bezplatny)

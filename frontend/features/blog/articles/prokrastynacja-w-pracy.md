@@ -1,16 +1,14 @@
 ---
-title: 'Prokrastynacja w pracy 2026 - dlaczego się pojawia i jak ją pokonać'
+title: 'Prokrastynacja w pracy 2026 - przyczyny i jak ją pokonać'
 description: 'Dlaczego odkładamy ważne zadania na później? Sprawdź psychologiczne przyczyny prokrastynacji w pracy i konkretne strategie, które pomagają ją przełamać.'
 estimatedReadTime: 7
 date: '2026-09-08'
 author: 'Vocare'
-category: 'Kariera'
+category: 'kariera'
 coverImage: '/images/blog/career-counseling.webp'
 tags: ['prokrastynacja', 'prokrastynacja w pracy', 'jak przestać odkładać zadania', 'odkładanie na później', 'przyczyny prokrastynacji']
 slug: 'prokrastynacja-w-pracy'
 ---
-
-# Prokrastynacja w pracy 2026 - dlaczego się pojawia i jak ją pokonać
 
 To zjawisko dotyczy zdecydowanej większości pracujących, choć rzadko się o nim głośno mówi. **Prokrastynacja** to dobrowolne i nielogiczne odkładanie realizacji zadań, które sami uznajemy za ważne - [badanie CATI z próbą 500 dorosłych Polaków](https://porady.pracuj.pl/rozwoj/prokrastynacja-nowa-grozna-choroba-cywilizacyjna) pokazało, że odwlekanie różnych czynności deklaruje aż 85% mężczyzn i 80% kobiet, a około 20% robi to chronicznie.
 
@@ -66,7 +64,7 @@ Może się nasilać przy pracy zdalnej z powodu mniejszej liczby zewnętrznych s
 Rzadko całkowicie, ale da się znacząco ograniczyć jej częstotliwość i wpływ poprzez konkretne, powtarzalne strategie organizacyjne.
 
 **Jak sprawdzić, czy odkładanie zadań wynika z organizacji czasu, czy z niedopasowania do roli?**
-**[Vocare.pl](https://vocare.pl)** pomoże Ci ocenić, czy Twoje kompetencje i wartości pasują do obecnej ścieżki zawodowej.
+[Rekomendacje ścieżki kariery od Vocare](/roadmap) pomoże Ci ocenić, czy Twoje kompetencje i wartości pasują do obecnej ścieżki zawodowej.
 
 ---
 
@@ -74,11 +72,11 @@ Rzadko całkowicie, ale da się znacząco ograniczyć jej częstotliwość i wp�
 
 Prokrastynacja dotyczy zdecydowanej większości pracujących i rzadko wynika z lenistwa - częściej z lęku przed porażką, perfekcjonizmu lub trudności w planowaniu. Rozbicie zadania na małe, konkretne kroki i ustalenie minimalnego pierwszego działania to jedne z najskuteczniejszych, praktycznych strategii jej przełamywania.
 
-Zastanawiasz się, czy odkładanie zadań to kwestia organizacji, czy głębszego niedopasowania zawodowego? **[Vocare.pl](https://vocare.pl)** pomoże Ci to ocenić.
+Zastanawiasz się, czy odkładanie zadań to kwestia organizacji, czy głębszego niedopasowania zawodowego? [Analiza profilu zawodowego w Vocare](/assistant) pomoże Ci to ocenić.
 
 ---
 
 ## Powiązane artykuły
-- [Zarządzanie czasem w pracy 2026 - metody, które realnie działają](/blog/Kariera/zarzadzanie-czasem)
-- [Syndrom oszusta w pracy 2026 - jak sobie z nim radzić](/blog/Kariera/syndrom-oszusta)
-- [Wypalenie zawodowe - co dalej? Jak wrócić do równowagi i odbudować karierę](/blog/Kariera/wypalenie-zawodowe-co-dalej)
+- [Zarządzanie czasem w pracy 2026 - metody, które realnie działają](/blog/kariera/zarzadzanie-czasem)
+- [Syndrom oszusta w pracy 2026 - jak sobie z nim radzić](/blog/kariera/syndrom-oszusta)
+- [Wypalenie zawodowe - co dalej? Jak wrócić do równowagi i odbudować karierę](/blog/kariera/wypalenie-zawodowe-co-dalej)

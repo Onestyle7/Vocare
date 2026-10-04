@@ -39,6 +39,24 @@ describe('toAbsoluteUrl', () => {
   });
 });
 
+describe('calculateReadTime', () => {
+  it('should round to the nearest minute at 200 words per minute', () => {
+    expect(blogUtils.calculateReadTime('word '.repeat(400))).toBe(2);
+    expect(blogUtils.calculateReadTime('word '.repeat(700))).toBe(4);
+  });
+
+  it('should never return less than a minute', () => {
+    expect(blogUtils.calculateReadTime('short')).toBe(1);
+    expect(blogUtils.calculateReadTime('')).toBe(1);
+    expect(blogUtils.calculateReadTime('   \n  ')).toBe(1);
+  });
+
+  it('should collapse repeated whitespace instead of counting it as words', () => {
+    expect(blogUtils.calculateReadTime('a\n\n  b\t\tc')).toBe(1);
+    expect(blogUtils.calculateReadTime(`one two${'\n\n'}three`)).toBe(1);
+  });
+});
+
 describe('Articles parsing', () => {
   const validContent = `---
 title: 'Test title'
@@ -76,7 +94,9 @@ tags: ['testTag', 'testTag2']
           data: expect.objectContaining({
             title: 'Test title',
             description: 'Test description',
-            estimatedReadTime: 5,
+            // Computed from the body, not read from frontmatter: the fixture
+            // claims 5 minutes but the body is two words, so it is 1.
+            estimatedReadTime: 1,
             date: new Date('2026-03-15'),
             author: 'Test Author',
             category: 'test-category',
@@ -94,6 +114,18 @@ tags: ['testTag', 'testTag2']
       readSpy.mockReturnValue(invalidContent);
 
       expect(() => blogUtils.getArticleContent('test-slug', '/fake/path/')).toThrow();
+    });
+
+    it('should return null when markdown file does not exist (ENOENT)', () => {
+      const enoentError = Object.assign(new Error('ENOENT: no such file or directory'), {
+        code: 'ENOENT',
+      });
+      readSpy.mockImplementation(() => {
+        throw enoentError;
+      });
+
+      const result = blogUtils.getArticleContent('non-existent-slug', '/fake/path/');
+      expect(result).toBeNull();
     });
   });
 
@@ -119,7 +151,7 @@ tags: ['testTag', 'testTag2']
           slug: 'first-article',
           title: 'Test title',
           description: 'Test description',
-          estimatedReadTime: 5,
+          estimatedReadTime: 1,
           date: new Date('2026-03-15'),
           author: 'Test Author',
           category: 'test-category',
@@ -132,7 +164,7 @@ tags: ['testTag', 'testTag2']
           slug: 'second-article',
           title: 'Test title',
           description: 'Test description',
-          estimatedReadTime: 5,
+          estimatedReadTime: 1,
           date: new Date('2026-03-15'),
           author: 'Test Author',
           category: 'test-category',

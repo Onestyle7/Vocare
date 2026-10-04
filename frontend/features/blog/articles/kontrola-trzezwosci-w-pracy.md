@@ -4,13 +4,11 @@ description: 'Czy pracodawca może badać trzeźwość pracowników w 2026 roku?
 estimatedReadTime: 7
 date: '2026-09-02'
 author: 'Vocare'
-category: 'Job'
+category: 'praca'
 coverImage: '/images/blog/job-search.webp'
 tags: ['kontrola trzeźwości w pracy', 'badanie trzeźwości pracownika', 'prewencyjna kontrola trzeźwości', 'kodeks pracy alkomat', 'prawa pracownika trzeźwość']
 slug: 'kontrola-trzezwosci-w-pracy'
 ---
-
-# Kontrola trzeźwości w pracy 2026 - co może pracodawca
 
 Od lutego 2023 roku pracodawcy w Polsce mają narzędzie, którego wcześniej nie mieli - prawo do samodzielnego, prewencyjnego sprawdzania trzeźwości załogi, bez wzywania policji. **Kontrola trzeźwości w pracy** to uprawnienie pracodawcy uregulowane w [art. 221c-221h Kodeksu pracy](https://www.prawo.pl/akty/dz-u-2023-240,21789455.html), wprowadzone nowelizacją z grudnia 2022 roku - ale to uprawnienie, nie obowiązek, i podlega konkretnym ograniczeniom.
 
@@ -62,7 +60,7 @@ Nie, informacje o kontroli i jej wyniku podlegają ochronie danych osobowych i n
 Odmowa może być traktowana jako naruszenie obowiązków pracowniczych, jeśli kontrola została prawidłowo wprowadzona zgodnie z przepisami.
 
 **Jak sprawdzić swoje prawa, jeśli podejrzewasz nieprawidłowości przy kontroli trzeźwości w Twojej firmie?**
-**[Vocare.pl](https://vocare.pl)** pomoże Ci ocenić Twoją sytuację zawodową i zaplanować dalsze kroki, jeśli rozważasz zmianę pracy.
+[Analiza profilu zawodowego w Vocare](/assistant) pomoże Ci ocenić Twoją sytuację zawodową i zaplanować dalsze kroki, jeśli rozważasz zmianę pracy.
 
 ---
 
@@ -70,12 +68,12 @@ Odmowa może być traktowana jako naruszenie obowiązków pracowniczych, jeśli 
 
 Kontrola trzeźwości w pracy to uprawnienie, nie obowiązek pracodawcy, dopuszczalne tylko wtedy, gdy jest niezbędne dla ochrony życia, zdrowia lub mienia. Musi być prawidłowo wprowadzona (z wyprzedzeniem, w regulaminie), przeprowadzana metodą niewymagającą laboratorium i z poszanowaniem godności pracownika.
 
-Zastanawiasz się nad zmianą pracy w związku z warunkami zatrudnienia? **[Vocare.pl](https://vocare.pl)** pomoże Ci zaplanować kolejny krok.
+Zastanawiasz się nad zmianą pracy w związku z warunkami zatrudnienia? [Analiza profilu zawodowego w Vocare](/assistant) pomoże Ci zaplanować kolejny krok.
 
 ---
 
 ## Powiązane artykuły
-- [Zwolnienie dyscyplinarne 2026 - kiedy grozi i jak się przed nim bronić](/blog/Job/zwolnienie-dyscyplinarne)
-- [Badania lekarskie do pracy 2026 - kiedy i jakie są obowiązkowe](/blog/Job/badania-lekarskie-do-pracy)
-- [Mobbing w pracy 2026 - jak go rozpoznać i co możesz zrobić](/blog/Job/mobbing-w-pracy)
-- [Szkolenie BHP wstępne 2026 - kto musi je przejść i ile trwa](/blog/Job/szkolenie-bhp-wstepne)
+- [Zwolnienie dyscyplinarne 2026 - kiedy grozi i jak się przed nim bronić](/blog/praca/zwolnienie-dyscyplinarne)
+- [Badania lekarskie do pracy 2026 - kiedy i jakie są obowiązkowe](/blog/praca/badania-lekarskie-do-pracy)
+- [Mobbing w pracy 2026 - jak go rozpoznać i co możesz zrobić](/blog/praca/mobbing-w-pracy)
+- [Szkolenie BHP wstępne 2026 - kto musi je przejść i ile trwa](/blog/praca/szkolenie-bhp-wstepne)

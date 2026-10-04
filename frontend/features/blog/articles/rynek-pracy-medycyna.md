@@ -1,5 +1,5 @@
 ---
-title: 'Rynek pracy w medycynie i ochronie zdrowia 2026 - zapotrzebowanie i zarobki'
+title: 'Rynek pracy w medycynie 2026 - zapotrzebowanie i zarobki'
 description: 'Jak wygląda rynek pracy w ochronie zdrowia w 2026 roku? Sprawdź, które zawody medyczne mają dziś największy deficyt kadrowy i jakie są realne widełki wynagrodzeń.'
 estimatedReadTime: 8
 date: '2026-07-09'
@@ -11,8 +11,6 @@ tags: ['rynek pracy medycyna', 'praca w ochronie zdrowia', 'zarobki lekarz', 'de
 slug: 'rynek-pracy-medycyna'
 ---
 
-# Rynek pracy w medycynie i ochronie zdrowia 2026 - gdzie jest największy deficyt
-
 Starzejące się społeczeństwo i rosnąca świadomość zdrowotna sprawiają, że **rynek pracy w ochronie zdrowia** to jeden z niewielu sektorów w Polsce, w którym popyt na pracowników strukturalnie i trwale przewyższa podaż - niezależnie od koniunktury gospodarczej.
 
 > **Najważniejsze wnioski**
@@ -23,6 +21,8 @@ Starzejące się społeczeństwo i rosnąca świadomość zdrowotna sprawiają, 
 ---
 
 ## Dlaczego deficyt kadr medycznych jest trwały?
+
+Deficyt kadrowy nie jest równomierny w całym kraju. lekarze, pielęgniarki i położne oraz opiekunowie osób starszych mogą być zawodem deficytowym w jednym powiecie i zrównoważonym w sąsiednim - aktualną prognozę dla swojej okolicy znajdziesz w [Barometrze Zawodów](https://www.barometrzawodow.pl/), corocznym badaniu Ministerstwa Rodziny, Pracy i Polityki Społecznej. Widełki poniżej warto odnosić do krajowej mediany wynagrodzeń, która według GUS wynosi [7690,82 zł brutto (luty 2026)](https://ssgk.stat.gov.pl/Wynagrodzenia_i_swiadczenia_spoleczne.html).
 
 W przeciwieństwie do wielu branż, gdzie niedobór specjalistów jest cykliczny (związany z koniunkturą), deficyt w ochronie zdrowia ma podłoże demograficzne. Społeczeństwo się starzeje, co zwiększa zapotrzebowanie na opiekę, jednocześnie liczba absolwentów kierunków medycznych rośnie wolniej niż potrzeby rynku.
 
@@ -77,7 +77,7 @@ Tak, szczególnie dla osób szukających szybszej ścieżki wejścia na rynek - 
 Psychiatria, geriatria, anestezjologia i medycyna rodzinna - szczególnie poza dużymi miastami, gdzie dostęp do specjalistów jest najbardziej ograniczony.
 
 **Jak sprawdzić, która ścieżka w ochronie zdrowia pasuje do moich kompetencji?**
-**[Vocare.pl](https://vocare.pl)** analizuje Twój profil i porównuje go z aktualnym zapotrzebowaniem rynkowym, wskazując konkretne kierunki rozwoju zawodowego.
+[Analiza profilu zawodowego w Vocare](/assistant) analizuje Twój profil i porównuje go z aktualnym zapotrzebowaniem rynkowym, wskazując konkretne kierunki rozwoju zawodowego.
 
 ---
 
@@ -85,7 +85,7 @@ Psychiatria, geriatria, anestezjologia i medycyna rodzinna - szczególnie poza d
 
 Rynek pracy w ochronie zdrowia to jeden z najbardziej stabilnych sektorów w Polsce - deficyt kadrowy jest strukturalny i nie zależy od koniunktury gospodarczej. Pielęgniarki, fizjoterapeuci, opiekunowie medyczni i psycholodzy należą dziś do zawodów z gwarantowanym zatrudnieniem.
 
-Zastanawiasz się, jak Twoje kompetencje wypadają na tle rynku pracy w medycynie? **[Vocare.pl](https://vocare.pl)** przeprowadzi bezpłatną analizę i wskaże konkretne kierunki rozwoju.
+Zastanawiasz się, jak Twoje kompetencje wypadają na tle rynku pracy w medycynie? [Analiza profilu zawodowego w Vocare](/assistant) przeprowadzi bezpłatną analizę i wskaże konkretne kierunki rozwoju.
 
 ---
 
@@ -93,6 +93,6 @@ Zastanawiasz się, jak Twoje kompetencje wypadają na tle rynku pracy w medycyni
 - [Rynek pracy w Polsce 2026 - kompletny przegląd 21 branż](/blog/rynek-pracy/rynek-pracy-w-polsce)
 - [Zawody przyszłości 2026 - które profesje będą najbardziej poszukiwane?](/blog/rynek-pracy/zawody-przyszlosci-2026)
 - [Najlepiej płatne zawody w Polsce 2026 - ranking i zarobki](/blog/rynek-pracy/najlepiej-platne-zawody)
-- [Wypalenie zawodowe - co dalej? Jak wrócić do równowagi i odbudować karierę](/blog/Kariera/wypalenie-zawodowe-co-dalej)
+- [Wypalenie zawodowe - co dalej? Jak wrócić do równowagi i odbudować karierę](/blog/kariera/wypalenie-zawodowe-co-dalej)
 - [Rynek pracy w farmacji 2026 - trendy i zarobki](/blog/rynek-pracy/rynek-pracy-farmacja)
-- [CV pielęgniarki i lekarza 2026 - jak napisać CV w medycynie](/blog/CV/cv-w-medycynie)
+- [CV pielęgniarki i lekarza 2026 - jak napisać CV w medycynie](/blog/cv/cv-w-medycynie)

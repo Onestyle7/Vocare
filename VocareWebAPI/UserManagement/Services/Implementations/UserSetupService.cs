@@ -1,7 +1,4 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+using Hangfire;
 using Microsoft.Extensions.Options;
 using VocareWebAPI.Billing.Exceptions;
 using VocareWebAPI.Billing.Models.Entities;
@@ -9,6 +6,8 @@ using VocareWebAPI.Billing.Models.Enums;
 using VocareWebAPI.Billing.Repositories.Interfaces;
 using VocareWebAPI.UserManagement.Interfaces;
 using VocareWebAPI.UserManagement.Models.Entities;
+using VocareWebAPI.UserManagement.Models.Enums;
+using VocareWebAPI.UserManagement.Models.Results;
 
 namespace VocareWebAPI.UserManagement.Services
 {
@@ -17,15 +16,22 @@ namespace VocareWebAPI.UserManagement.Services
         private readonly IUserBillingRepository _userBillingRepository;
         private readonly UserRegistrationConfig _config;
         private readonly ILogger<UserSetupService> _logger;
+        private readonly ITokenTransactionRepository _tokenTransactionRepository;
+        private readonly IBackgroundJobClient _backgroundJobClient;
+        private const string WelcomeBonusServiceName = "WelcomeBonus-MarketingConsent";
 
         public UserSetupService(
             IUserBillingRepository userBillingRepository,
             IOptions<UserRegistrationConfig> config,
-            ILogger<UserSetupService> logger
+            ITokenTransactionRepository tokenTransactionRepository,
+            ILogger<UserSetupService> logger,
+            IBackgroundJobClient backgroundJobClient
         )
         {
             _userBillingRepository = userBillingRepository;
             _config = config.Value;
+            _tokenTransactionRepository = tokenTransactionRepository;
+            _backgroundJobClient = backgroundJobClient;
             _logger = logger;
         }
 
@@ -56,40 +62,13 @@ namespace VocareWebAPI.UserManagement.Services
                 {
                     _logger.LogInformation("UserBilling already exists for user: {UserId}", userId);
 
-                    // Sprawdzamy czy ma już tokeny welcome
-                    if (existingBilling.TokenBalance >= _config.WelcomeTokens)
-                    {
-                        _logger.LogInformation(
-                            "User {userId} already has enough tokens: {TokenBalance}",
-                            userId,
-                            existingBilling.TokenBalance
-                        );
-                        return;
-                    }
-
-                    // Jeśli ma mniej niż welcome tokens, to ustawiamy mu je
-
-                    var tokensToAdd = Math.Max(
-                        0,
-                        _config.WelcomeTokens - existingBilling.TokenBalance
-                    );
-                    if (tokensToAdd > 0)
-                    {
-                        existingBilling.TokenBalance += tokensToAdd;
-                        await _userBillingRepository.UpdateAsync(existingBilling);
-                        _logger.LogInformation(
-                            "Added {TokensToAdd} welcome tokens to user: {UserId}",
-                            tokensToAdd,
-                            userId
-                        );
-                    }
                     return;
                 }
                 // Tworzenie nowego billing dla nowego użytkownika
                 var userBilling = new UserBilling
                 {
                     UserId = userId,
-                    TokenBalance = _config.WelcomeTokens,
+                    TokenBalance = 0,
                     SubscriptionStatus = (SubscriptionStatus)_config.DefaultSubscriptionStatus,
                     SubscriptionLevel = (SubscriptionLevel)_config.DefaultSubscriptionLevel,
                     LastTokenPurchaseDate = DateTime.UtcNow,
@@ -105,6 +84,72 @@ namespace VocareWebAPI.UserManagement.Services
             {
                 _logger.LogInformation(ex, "Created UserBilling for user: {UserId} failed", userId);
                 throw;
+            }
+        }
+
+        public async Task<WelcomeBonusResult> GrantWelcomeTokensAsync(string userId)
+        {
+            if (_config.WelcomeTokens <= 0)
+                return new WelcomeBonusResult(WelcomeBonusStatus.Disabled, 0);
+
+            var alreadyTaken = await _tokenTransactionRepository.HasTransactionOfTypeAsync(
+                userId,
+                TransactionType.WelcomeBonus
+            );
+            if (alreadyTaken)
+            {
+                _logger.LogInformation("User {UserId} already received welcome bonus", userId);
+                return new WelcomeBonusResult(WelcomeBonusStatus.AlreadyClaimed, 0);
+            }
+            try
+            {
+                await _userBillingRepository.AddTokensWithTransactionAsync(
+                    userId,
+                    _config.WelcomeTokens,
+                    TransactionType.WelcomeBonus,
+                    WelcomeBonusServiceName
+                );
+                _logger.LogInformation(
+                    "Granted {Amount} welcome tokens to user {UserId}",
+                    _config.WelcomeTokens,
+                    userId
+                );
+            }
+            catch (WelcomeBonusAlreadyGrantedException)
+            {
+                _logger.LogInformation(
+                    "User {UserId} already received welcome bonus (concurrent request)",
+                    userId
+                );
+                return new WelcomeBonusResult(WelcomeBonusStatus.AlreadyClaimed, 0);
+            }
+
+            return new WelcomeBonusResult(WelcomeBonusStatus.Granted, _config.WelcomeTokens);
+        }
+
+        public async Task<WelcomeBonusResult> GrantOrScheduleWelcomeTokensAsync(string userId)
+        {
+            try
+            {
+                var result = await GrantWelcomeTokensAsync(userId);
+                return result;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Błąd przypisania tokenów {UserId}", userId);
+                try
+                {
+                    _backgroundJobClient.Enqueue<IUserSetupService>(s =>
+                        s.GrantWelcomeTokensAsync(userId)
+                    );
+
+                    return new WelcomeBonusResult(WelcomeBonusStatus.Pending, 0);
+                }
+                catch (Exception ex2)
+                {
+                    _logger.LogError(ex2, "Failed to grant tokens for user {UserId}", userId);
+                    return new WelcomeBonusResult(WelcomeBonusStatus.Failed, 0);
+                }
             }
         }
     }

@@ -1,5 +1,7 @@
 import type { Metadata } from 'next';
 import Image from 'next/image';
+import Link from 'next/link';
+import { notFound } from 'next/navigation';
 import Markdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 
@@ -32,15 +34,31 @@ import {
   getArticlesMetadata,
   toAbsoluteUrl,
 } from '@/features/blog/utils/blogUtils';
-import { ARTICLES_FOLDER } from '@/features/blog/utils/constants';
+import {
+  ARTICLES_FOLDER,
+  BLOG_CATEGORIES,
+  isBlogCategorySlug,
+} from '@/features/blog/utils/constants';
 
 type MetadataProps = {
   params: Promise<{ category: string; slug: string }>;
 };
 
+export const dynamicParams = false;
+
 export async function generateMetadata({ params }: MetadataProps) {
   const { slug, category } = await params;
-  const { data: metadata } = getArticleContent(slug, ARTICLES_FOLDER);
+  const article = getArticleContent(slug, ARTICLES_FOLDER);
+  if (!article || article.data.category !== category) {
+    return {
+      title: 'Nie znaleziono artykułu',
+      robots: {
+        index: false,
+        follow: false,
+      },
+    };
+  }
+  const { data: metadata } = article;
   const canonicalPath = `/blog/${encodeURIComponent(category)}/${encodeURIComponent(slug)}`;
   const articleUrl = toAbsoluteUrl(canonicalPath);
   const coverImageUrl = toAbsoluteUrl(metadata.coverImage);
@@ -85,7 +103,11 @@ export async function generateStaticParams() {
 
 export default async function BlogPage(props: MetadataProps) {
   const { slug, category } = await props.params;
-  const { content, data: metadata } = getArticleContent(slug, ARTICLES_FOLDER);
+  const article = getArticleContent(slug, ARTICLES_FOLDER);
+  if (!article || article.data.category !== category) {
+    notFound();
+  }
+  const { content, data: metadata } = article;
   const canonicalPath = `/blog/${encodeURIComponent(category)}/${encodeURIComponent(slug)}`;
   const articleUrl = toAbsoluteUrl(canonicalPath);
   const imageUrl = toAbsoluteUrl(metadata.coverImage);
@@ -98,17 +120,25 @@ export default async function BlogPage(props: MetadataProps) {
     image: [imageUrl],
     datePublished: metadata.date.toISOString(),
     dateModified: lastModified.toISOString(),
-    mainEntityOfPage: articleUrl,
-    author: metadata.author
-      ? {
-          '@type': 'Person',
-          name: metadata.author,
-          url: toAbsoluteUrl('/blog'),
-        }
-      : undefined,
+    mainEntityOfPage: {
+      '@type': 'WebPage',
+      '@id': articleUrl,
+    },
+    // `author` is an Organization, not a Person. Every post is credited to
+    // "Vocare", which is a company: emitting it as a Person with /blog as its
+    // profile URL claimed a human author that does not exist. schema.org
+    // allows an Organization here, so this states what is actually true.
+    // Swap to Person only once posts are credited to named people with real
+    // credentials - see the E-E-A-T task.
+    author: {
+      '@type': 'Organization',
+      name: metadata.author ?? 'Vocare',
+      url: toAbsoluteUrl('/'),
+    },
     publisher: {
       '@type': 'Organization',
       name: 'Vocare',
+      url: toAbsoluteUrl('/'),
       logo: {
         '@type': 'ImageObject',
         url: toAbsoluteUrl('/metadata/og-image.png'),
@@ -118,14 +148,23 @@ export default async function BlogPage(props: MetadataProps) {
     articleSection: metadata.category,
     inLanguage: 'pl-PL',
   };
+  const categoryLabel = isBlogCategorySlug(metadata.category)
+    ? BLOG_CATEGORIES[metadata.category].label
+    : metadata.category;
   const breadcrumbLd = {
-  '@context': 'https://schema.org',
-  '@type': 'BreadcrumbList',
-  itemListElement: [
-    { '@type': 'ListItem', position: 1, name: 'Blog', item: toAbsoluteUrl('/blog') },
-    { '@type': 'ListItem', position: 2, name: metadata.title, item: articleUrl },
-  ],
-};
+    '@context': 'https://schema.org',
+    '@type': 'BreadcrumbList',
+    itemListElement: [
+      { '@type': 'ListItem', position: 1, name: 'Blog', item: toAbsoluteUrl('/blog') },
+      {
+        '@type': 'ListItem',
+        position: 2,
+        name: categoryLabel,
+        item: toAbsoluteUrl(`/blog/${encodeURIComponent(metadata.category)}`),
+      },
+      { '@type': 'ListItem', position: 3, name: metadata.title, item: articleUrl },
+    ],
+  };
 
   return (
     <PageWithBackButton backButtonHref="/blog">
@@ -138,9 +177,9 @@ export default async function BlogPage(props: MetadataProps) {
         dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbLd) }}
       />
       <section className="font-poppins space-y-2 text-center">
-        <Badge className="mb-5">
-          {metadata.category.charAt(0).toUpperCase() + metadata.category.replace('-', ' ').slice(1)}
-        </Badge>
+        <Link href={`/blog/${encodeURIComponent(metadata.category)}`}>
+          <Badge className="mb-5">{categoryLabel}</Badge>
+        </Link>
         <h1 className="mb-5 text-4xl font-semibold">{metadata.title}</h1>
         <p className="text-muted-foreground text-sm">
           {metadata.author && `Autor: ${metadata.author} |`} Opublikowano:{' '}
