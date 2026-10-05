@@ -65,8 +65,7 @@ export async function register(command: RegisterCommand) {
   const result = await registerService(command);
 
   return result.match(
-    (registerResult) =>
-      actionOk({ success: true, welcomeBonus: registerResult.welcomeBonus ?? null }),
+    () => actionOk({ success: true }),
     (registerError) => actionErr(registerError)
   );
 }

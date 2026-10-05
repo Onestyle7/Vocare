@@ -4,7 +4,6 @@ import { toast } from 'sonner';
 import { useUnauthorizedToast } from '@/lib/hooks/useUnauthorizedToast';
 
 import { giveMarketingConsentCommand, withdrawMarketingConsentCommand } from '../dal/commands';
-import { getMarketingConsentToastMessage } from '../utils/welcomeBonus';
 
 export function useMarketingActions() {
   const [isPending, startTransition] = useTransition();
@@ -12,7 +11,7 @@ export function useMarketingActions() {
 
   const handleMarketingToggle = (nextValue: boolean, setConsent: (consent: boolean) => void) => {
     startTransition(async () => {
-      const [error, response] = nextValue
+      const [error] = nextValue
         ? await giveMarketingConsentCommand()
         : await withdrawMarketingConsentCommand();
 
@@ -24,9 +23,7 @@ export function useMarketingActions() {
           }
           case 'AlreadyActive':
           case 'NoActiveConsent': {
-            // Zgoda jest już w docelowym stanie (np. zmieniona w innej karcie)
-            setConsent(nextValue);
-            return;
+            break;
           }
           default: {
             toast.error(
@@ -43,7 +40,7 @@ export function useMarketingActions() {
 
       toast.success(
         nextValue
-          ? getMarketingConsentToastMessage(response)
+          ? 'Zgody marketingowe włączone. Będziemy w kontakcie!'
           : 'Zgody marketingowe zostały wycofane.'
       );
       setConsent(nextValue);

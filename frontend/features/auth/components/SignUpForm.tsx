@@ -21,7 +21,6 @@ import {
 } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
 import { register } from '@/features/auth/dal/commands';
-import { getRegistrationToastMessage } from '@/features/marketing/utils/welcomeBonus';
 
 import { SignUpFormType, signUpSchema } from '../dal/schemas';
 
@@ -44,14 +43,14 @@ export function SignUpForm() {
 
   const handleSignUp = async (formValues: SignUpFormType) => {
     startTransition(async () => {
-      const [error, data] = await register(formValues);
+      const [error] = await register(formValues);
 
       if (error) {
         toast.error(error.message, { position: 'top-center' });
         return;
       }
 
-      toast.success(getRegistrationToastMessage(data.welcomeBonus));
+      toast.success('Rejestracja ukończona');
       router.push('/sign-in');
     });
   };
@@ -205,9 +204,6 @@ export function SignUpForm() {
                       Wyrażam zgodę na otrzymywanie od firmy Vocare okazjonalnych aktualizacji
                       produktów i wiadomości e-mail o charakterze marketingowym.
                     </FormLabel>
-                    <p className="text-xs font-medium text-[#915EFF]">
-                      W podziękowaniu za zgodę otrzymasz darmowe tokeny na start.
-                    </p>
                   </div>
                 </div>
                 <FormMessage />

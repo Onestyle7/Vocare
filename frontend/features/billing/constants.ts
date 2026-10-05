@@ -15,8 +15,7 @@ export const pricingPlans: readonly PricingPlan[] = [
     name: 'Free',
     price: 0,
     priceLabel: '/ na zawsze',
-    description:
-      '120 tokenów na start za wyrażenie zgody marketingowej. Wykorzystaj je tak, jak potrzebujesz.',
+    description: '120 tokenów na start. Wykorzystaj je tak, jak potrzebujesz.',
     features: [
       { text: 'Nielimitowana edycja i pobieranie CV' },
       { text: 'Do 3 CV na koncie' },

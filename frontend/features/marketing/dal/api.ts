@@ -10,11 +10,3 @@ export type MarketingConsentResponse = {
   consentDate: string | null;
   consentWithdrawnDate: string | null;
 };
-
-export type WelcomeBonusStatus = 'Granted' | 'AlreadyClaimed' | 'Disabled' | 'Pending' | 'Failed';
-
-export type GiveMarketingConsentResponse = {
-  message: string;
-  welcomeBonusStatus: WelcomeBonusStatus;
-  welcomeTokensGranted: number;
-};

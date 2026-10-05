@@ -3,7 +3,7 @@ import { RequestInit } from 'next/dist/server/web/spec-extension/request';
 
 import { BaseAppError } from '@/lib/types/result';
 
-import { GiveMarketingConsentResponse, marketingApiClient, MarketingConsentResponse } from './api';
+import { marketingApiClient, MarketingConsentResponse } from './api';
 
 export type MarketingDomainError = BaseAppError<
   'Unauthorized' | 'AlreadyActive' | 'NoActiveConsent'
@@ -37,9 +37,9 @@ export async function getMarketingConsentService(
 }
 
 export async function giveMarketingConsentService(): Promise<
-  Result<GiveMarketingConsentResponse, MarketingDomainError>
+  Result<{ message: string }, MarketingDomainError>
 > {
-  const result = await marketingApiClient.post<GiveMarketingConsentResponse>('/consent');
+  const result = await marketingApiClient.post<{ message: string }>('/consent');
 
   return result
     .map((response) => response.data)
@@ -52,7 +52,7 @@ export async function giveMarketingConsentService(): Promise<
             details: error.details,
           };
         }
-        case 'ConflictError': {
+        case 'BadRequestError': {
           return {
             type: 'AlreadyActive',
             message: 'Zgoda marketingowa jest już aktywna',
@@ -86,7 +86,7 @@ export async function withdrawMarketingConsentService(): Promise<
             details: error.details,
           };
         }
-        case 'UnprocessableEntityError': {
+        case 'BadRequestError': {
           return {
             type: 'NoActiveConsent',
             message: 'Brak aktywnej zgody do wycofania',

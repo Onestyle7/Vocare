@@ -1,5 +1,4 @@
 import { OAuthProvider } from '@/features/auth/oauth/base';
-import type { WelcomeBonus } from '@/features/marketing/utils/welcomeBonus';
 import { ApiClient } from '@/lib/api/api-client';
 import env from '@/lib/env/server';
 
@@ -33,7 +32,6 @@ export type RegisterResult = {
   success: boolean;
   userId: string;
   errorMessage: string;
-  welcomeBonus: WelcomeBonus | null;
 };
 
 export type RegisterCommand = {
