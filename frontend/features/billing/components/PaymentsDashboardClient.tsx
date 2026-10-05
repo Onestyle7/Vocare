@@ -185,6 +185,11 @@ export default function PaymentsDashboardClient({
                         ? 'Będziesz otrzymywać okazjonalne informacje o produktach Vocare.'
                         : 'Bądź na bieżąco z nowymi funkcjami i poradami dotyczącymi kariery.'}
                     </p>
+                    {!marketingConsent && (
+                      <p className="text-xs font-medium text-[#915EFF]">
+                        Przy pierwszym wyrażeniu zgody otrzymasz jednorazowo darmowe tokeny.
+                      </p>
+                    )}
                   </div>
                   <Switch
                     id="marketing-consent-toggle"
