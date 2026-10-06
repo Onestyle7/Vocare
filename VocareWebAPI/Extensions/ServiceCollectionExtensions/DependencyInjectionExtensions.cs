@@ -65,6 +65,7 @@ namespace VocareWebAPI.Extensions.ServiceCollectionExtensions
             services.AddScoped<IAuthenticationServiceOwn, AuthenticationService>();
             services.AddScoped<ICvParserService, CvParserService>();
             services.AddScoped<IDashboardService, DashboardService>();
+            services.AddScoped<IUserDeletionService, UserDeletionService>();
 
             // AI services (Główną implementacją jest OpenAI)
             services.AddScoped<IAiService, OpenAIService>();
@@ -109,6 +110,9 @@ namespace VocareWebAPI.Extensions.ServiceCollectionExtensions
             // Legal
             services.AddScoped<ILegalService, LegalService>();
 
+            // Email hashing (anti abuse)
+            services.AddScoped<IEmailHashService, EmailHashService>();
+
             return services;
         }
 
@@ -121,6 +125,7 @@ namespace VocareWebAPI.Extensions.ServiceCollectionExtensions
             services.AddScoped<ICvParseHistoryRepository, CvParseHistoryRepository>();
             services.AddScoped<IDashboardRepository, DashboardRepository>();
             services.AddScoped<IProfileAttributesRepository, ProfileAttributesRepository>();
+            services.AddScoped<IUserDataCleanupRepository, UserDataCleanupRepository>();
 
             // Transaction repositories
             services.AddScoped<ITokenTransactionRepository, TokenTransactionRepository>();
@@ -157,6 +162,9 @@ namespace VocareWebAPI.Extensions.ServiceCollectionExtensions
 
             // Legal
             services.AddScoped<ILegalRepository, LegalRepository>();
+
+            // Anti abuse
+            services.AddScoped<IAccountAntiAbuseReporitory, AccountAntiAbuseRepository>();
 
             return services;
         }

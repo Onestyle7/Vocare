@@ -137,6 +137,13 @@ namespace VocareWebAPI.Extensions.ApplicationBuilderExtensions
 
                                 if (user != null)
                                 {
+                                    if (user.IsDeleted)
+                                    {
+                                        var logger = context.RequestServices.GetRequiredService<ILogger<Program>>();
+                                        logger.LogDebug("User: {userId} is deleted", user.Id);
+                                        await next();
+                                        return;
+                                    }
                                     var principal = await context
                                         .RequestServices.GetRequiredService<
                                             IUserClaimsPrincipalFactory<User>

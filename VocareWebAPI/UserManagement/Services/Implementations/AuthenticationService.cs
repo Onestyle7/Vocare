@@ -70,9 +70,9 @@ namespace VocareWebAPI.UserManagement.Services.Implementations
         public async Task<Result<LoginResult>> LoginAsync(string email, string password)
         {
             var user = await _userManager.FindByEmailAsync(email);
-            if (user == null)
+            if (user == null || user.IsDeleted)
             {
-                _logger.LogWarning("Failed login attempt for non-existent user: {Email}", email);
+                _logger.LogWarning("Failed login attempt for non-existent or deleted user: {Email}", email);
                 return Result<LoginResult>.Fail(
                     new Error("INVALID_CREDENTIALS", "Invalid email or password.", 401)
                 );
@@ -274,10 +274,10 @@ namespace VocareWebAPI.UserManagement.Services.Implementations
         public async Task<Result<ForgotPasswordResult>> ForgotPasswordAsync(string email)
         {
             var user = await _userManager.FindByEmailAsync(email);
-            if (user == null)
+            if (user == null || user.IsDeleted)
             {
                 _logger.LogWarning(
-                    "Password reset requested for non-existent email {Email}",
+                    "Password reset requested for non-existent or deleted email {Email}",
                     email
                 );
                 return Result<ForgotPasswordResult>.Ok(
@@ -361,10 +361,10 @@ Zespół Vocare
         )
         {
             var user = await _userManager.FindByEmailAsync(email);
-            if (user == null)
+            if (user == null || user.IsDeleted)
             {
                 _logger.LogWarning(
-                    "Password reset attempted for non-existent email: {Email}",
+                    "Password reset attempted for non-existent or deleted email: {Email}",
                     email
                 );
                 return Result<ResetPasswordResult>.Fail(
@@ -432,7 +432,7 @@ Zespół Vocare
             }
 
             var user = await _userManager.FindByEmailAsync(email);
-            if (user == null)
+            if (user == null || user.IsDeleted)
                 return Result<ValidateResetTokenResult>.Ok(
                     ValidateResetTokenResult.Successful(false, "Token is invalid or expired.")
                 );

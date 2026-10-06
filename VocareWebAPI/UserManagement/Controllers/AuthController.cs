@@ -1,3 +1,4 @@
+using System.Security.Claims;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.RateLimiting;
@@ -13,10 +14,15 @@ namespace VocareWebAPI.UserManagement.Controllers
     public class AuthController : ControllerBase
     {
         private readonly IAuthenticationServiceOwn _authenticationService;
+        private readonly IUserDeletionService _userDeletionService;
 
-        public AuthController(IAuthenticationServiceOwn authenticationService)
+        public AuthController(
+            IAuthenticationServiceOwn authenticationService,
+            IUserDeletionService userDeletionService
+        )
         {
             _authenticationService = authenticationService;
+            _userDeletionService = userDeletionService;
         }
 
         [HttpPost("login")]
@@ -192,6 +198,30 @@ namespace VocareWebAPI.UserManagement.Controllers
                 return result.ToActionResult();
 
             return Ok(result.Value);
+        }
+
+        [HttpDelete("account")]
+        [Authorize]
+        public async Task<ActionResult<bool>> DeleteAccount([FromBody] DeleteAccountRequestDto? request = null)
+        {
+            var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            if (string.IsNullOrEmpty(userId))
+            {
+                return Unauthorized(new ProblemDetails
+                {
+                    Status = StatusCodes.Status401Unauthorized,
+                    Title = "Unauthorized",
+                    Detail = "User ID not found in token."
+                });
+            }
+
+            var result = await _userDeletionService.DeleteCurrentUserAsync(userId, request?.Password);
+            if (!result.IsSuccess)
+            {
+                return result.ToActionResult();
+            }
+
+            return Ok(true);
         }
     }
 }

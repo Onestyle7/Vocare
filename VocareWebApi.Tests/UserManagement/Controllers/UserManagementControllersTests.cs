@@ -32,11 +32,12 @@ namespace VocareWebApi.Tests.UserManagement.Controllers
     public sealed class AuthControllerTests
     {
         private readonly Mock<IAuthenticationServiceOwn> _auth = new(MockBehavior.Strict);
+        private readonly Mock<IUserDeletionService> _userDeletion = new(MockBehavior.Strict);
         private readonly AuthController _sut;
 
         public AuthControllerTests()
         {
-            _sut = new AuthController(_auth.Object);
+            _sut = new AuthController(_auth.Object, _userDeletion.Object);
             _sut.ControllerContext = new ControllerContext
             {
                 HttpContext = new DefaultHttpContext(),
@@ -92,6 +93,50 @@ namespace VocareWebApi.Tests.UserManagement.Controllers
             var result = await _sut.Refresh(new RefreshRequest { RefreshToken = "rt" });
 
             result.Result.Should().BeOfType<ObjectResult>().Which.StatusCode.Should().Be(422);
+        }
+
+        [Fact]
+        public async Task DeleteAccount_WhenNoUserClaim_ReturnsUnauthorized()
+        {
+            _sut.WithoutUser();
+
+            var result = await _sut.DeleteAccount();
+
+            result.Result.Should().BeOfType<UnauthorizedObjectResult>();
+        }
+
+        [Fact]
+        public async Task DeleteAccount_WhenServiceSucceeds_ReturnsOkTrue()
+        {
+            const string userId = "user-123";
+            _sut.WithUser(userId);
+            _userDeletion
+                .Setup(d => d.DeleteCurrentUserAsync(userId, "P@ssw0rd!"))
+                .ReturnsAsync(Result<bool>.Ok(true));
+
+            var result = await _sut.DeleteAccount(
+                new DeleteAccountRequestDto { Password = "P@ssw0rd!" }
+            );
+
+            result.Result.Should().BeOfType<OkObjectResult>().Which.Value.Should().Be(true);
+        }
+
+        [Fact]
+        public async Task DeleteAccount_WhenServiceFails_ReturnsFailureActionResult()
+        {
+            const string userId = "user-123";
+            _sut.WithUser(userId);
+            _userDeletion
+                .Setup(d => d.DeleteCurrentUserAsync(userId, "WrongPassword"))
+                .ReturnsAsync(
+                    Result<bool>.Fail(new Error("INVALID_PASSWORD", "Invalid password", 400))
+                );
+
+            var result = await _sut.DeleteAccount(
+                new DeleteAccountRequestDto { Password = "WrongPassword" }
+            );
+
+            result.Result.Should().BeOfType<ObjectResult>().Which.StatusCode.Should().Be(400);
         }
     }
 
