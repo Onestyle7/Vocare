@@ -1,10 +1,10 @@
 using System;
 using System.Threading.Tasks;
 using FluentAssertions;
-using Microsoft.AspNetCore.Identity;
 using Hangfire;
 using Hangfire.Common;
 using Hangfire.States;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Logging.Abstractions;
 using Microsoft.Extensions.Options;
 using Moq;
@@ -46,12 +46,12 @@ namespace VocareWebApi.Tests.UserManagement.Services
             new(
                 _billing.Object,
                 Options.Create(new UserRegistrationConfig { WelcomeTokens = welcomeTokens }),
-                _transactions.Object,
                 NullLogger<UserSetupService>.Instance,
-                _jobs.Object,
                 _antiAbuse.Object,
                 _emailHash.Object,
-                _userManager.Object
+                _userManager.Object,
+                _transactions.Object,
+                _jobs.Object
             );
 
         // ---------- SetupNewUserAsync ----------
@@ -238,48 +238,28 @@ namespace VocareWebApi.Tests.UserManagement.Services
         }
 
         [Fact]
-        public async Task SetupNewUserAsync_WhenPriorAccountExisted_SetsZeroWelcomeTokens()
+        public async Task GrantWelcomeTokensAsync_WhenPriorAccountExisted_ReturnsAlreadyClaimedWithoutGranting()
         {
             var user = new User { Id = UserId, Email = "returning@example.com" };
             _userManager.Setup(m => m.FindByIdAsync(UserId)).ReturnsAsync(user);
             _emailHash.Setup(h => h.ComputeHash(user.Email)).Returns("hashed-email");
             _antiAbuse.Setup(a => a.HasPriorBonusAsync("hashed-email")).ReturnsAsync(true);
+            _transactions
+                .Setup(r => r.HasTransactionOfTypeAsync(UserId, TransactionType.WelcomeBonus))
+                .ReturnsAsync(false);
 
-            _billing
-                .Setup(r => r.GetByUserIdAsync(UserId))
-                .ThrowsAsync(new UserBillingNotFoundException(UserId));
-            _billing
-                .Setup(r => r.CreateAsync(It.IsAny<UserBilling>()))
-                .ReturnsAsync((UserBilling b) => b);
+            var result = await CreateSut().GrantWelcomeTokensAsync(UserId);
 
-            await _sut.SetupNewUserAsync(UserId);
-
+            result.Should().Be(new WelcomeBonusResult(WelcomeBonusStatus.AlreadyClaimed, 0));
             _billing.Verify(
-                r => r.CreateAsync(It.Is<UserBilling>(b => b.TokenBalance == 0)),
-                Times.Once
-            );
-        }
-
-        [Fact]
-        public async Task SetupNewUserAsync_WhenPriorAccountExisted_SetsZeroWelcomeTokens()
-        {
-            var user = new User { Id = UserId, Email = "returning@example.com" };
-            _userManager.Setup(m => m.FindByIdAsync(UserId)).ReturnsAsync(user);
-            _emailHash.Setup(h => h.ComputeHash(user.Email)).Returns("hashed-email");
-            _antiAbuse.Setup(a => a.HasPriorBonusAsync("hashed-email")).ReturnsAsync(true);
-
-            _billing
-                .Setup(r => r.GetByUserIdAsync(UserId))
-                .ThrowsAsync(new UserBillingNotFoundException(UserId));
-            _billing
-                .Setup(r => r.CreateAsync(It.IsAny<UserBilling>()))
-                .ReturnsAsync((UserBilling b) => b);
-
-            await _sut.SetupNewUserAsync(UserId);
-
-            _billing.Verify(
-                r => r.CreateAsync(It.Is<UserBilling>(b => b.TokenBalance == 0)),
-                Times.Once
+                r =>
+                    r.AddTokensWithTransactionAsync(
+                        It.IsAny<string>(),
+                        It.IsAny<int>(),
+                        It.IsAny<TransactionType>(),
+                        It.IsAny<string>()
+                    ),
+                Times.Never
             );
         }
     }

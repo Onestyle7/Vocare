@@ -1,6 +1,7 @@
 using System.Diagnostics;
 using Microsoft.EntityFrameworkCore;
 using Pgvector.EntityFrameworkCore;
+using VocareWebAPI.Billing.Models.Enums;
 using VocareWebAPI.Data;
 using VocareWebAPI.Models.Entities;
 using VocareWebAPI.UserManagement.Repositories.Interfaces;
@@ -42,6 +43,10 @@ public class UserDataCleanupRepository(
 
             await _dbContext.UserClaims.Where(c => c.UserId == user.Id).ExecuteDeleteAsync();
 
+            var hadWelcomeBonus = await _dbContext.TokenTransactions.AnyAsync(t =>
+                t.UserId == user.Id && t.Type == TransactionType.WelcomeBonus
+            );
+
             var existingRegistry = await _dbContext.AccountAntiAbuseRegistries.FirstOrDefaultAsync(
                 r => r.EmailHash == emailHash
             );
@@ -52,7 +57,7 @@ public class UserDataCleanupRepository(
                     {
                         EmailHash = emailHash,
                         UserId = user.Id,
-                        HadWelcomeBonus = true,
+                        HadWelcomeBonus = hadWelcomeBonus,
                         CreatedAt = DateTime.UtcNow,
                     }
                 );
@@ -61,6 +66,7 @@ public class UserDataCleanupRepository(
             {
                 existingRegistry.UserId = user.Id;
                 existingRegistry.CreatedAt = DateTime.UtcNow;
+                existingRegistry.HadWelcomeBonus |= hadWelcomeBonus;
             }
 
             _dbContext.Users.Update(user);

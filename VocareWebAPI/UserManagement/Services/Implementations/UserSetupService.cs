@@ -25,7 +25,7 @@ namespace VocareWebAPI.UserManagement.Services
         UserManager<User> userManager,
         ITokenTransactionRepository tokenTransactionRepository,
         IBackgroundJobClient backgroundJobClient
-        ) : IUserSetupService
+    ) : IUserSetupService
     {
         private readonly IUserBillingRepository _userBillingRepository = userBillingRepository;
         private readonly UserRegistrationConfig _config = config.Value;
@@ -33,7 +33,8 @@ namespace VocareWebAPI.UserManagement.Services
         private readonly IAccountAntiAbuseReporitory _antiAbuseRepository = antiAbuseReporitory;
         private readonly IEmailHashService _emailHashService = emailHashService;
         private readonly UserManager<User> _userManager = userManager;
-        private readonly ITokenTransactionRepository _tokenTransactionRepository = tokenTransactionRepository;
+        private readonly ITokenTransactionRepository _tokenTransactionRepository =
+            tokenTransactionRepository;
         private readonly IBackgroundJobClient _backgroundJobClient = backgroundJobClient;
         private const string WelcomeBonusServiceName = "WelcomeBonus-MarketingConsent";
 
@@ -41,13 +42,10 @@ namespace VocareWebAPI.UserManagement.Services
         {
             try
             {
-                var hadPriorAccount = await HadPriorAccount(userId);
-                var initialTokenBalance = CalculateInitialTokens(hadPriorAccount);
-
                 _logger.LogInformation("Setting up new user: {userId}", userId);
                 _logger.LogInformation(
                     "Config - WelcomeTokens: {WelcomeTokens}, DefaultSubscriptionStatus: {DefaultSubscriptionStatus}, DefaultSubscriptionLevel: {DefaultSubscriptionLevel}",
-                    initialTokenBalance,
+                    _config.WelcomeTokens,
                     _config.DefaultSubscriptionStatus,
                     _config.DefaultSubscriptionLevel
                 );
@@ -67,40 +65,13 @@ namespace VocareWebAPI.UserManagement.Services
                 {
                     _logger.LogInformation("UserBilling already exists for user: {UserId}", userId);
 
-                    // Sprawdzamy czy ma już tokeny welcome
-                    if (existingBilling.TokenBalance >= _config.WelcomeTokens)
-                    {
-                        _logger.LogInformation(
-                            "User {userId} already has enough tokens: {TokenBalance}",
-                            userId,
-                            existingBilling.TokenBalance
-                        );
-                        return;
-                    }
-
-                    // Jeśli ma mniej niż welcome tokens, to ustawiamy mu je
-
-                    var tokensToAdd = Math.Max(
-                        0,
-                        _config.WelcomeTokens - existingBilling.TokenBalance
-                    );
-                    if (tokensToAdd > 0 && !hadPriorAccount)
-                    {
-                        existingBilling.TokenBalance += tokensToAdd;
-                        await _userBillingRepository.UpdateAsync(existingBilling);
-                        _logger.LogInformation(
-                            "Added {TokensToAdd} welcome tokens to user: {UserId}",
-                            tokensToAdd,
-                            userId
-                        );
-                    }
                     return;
                 }
                 // Tworzenie nowego billing dla nowego użytkownika
                 var userBilling = new UserBilling
                 {
                     UserId = userId,
-                    TokenBalance = initialTokenBalance,
+                    TokenBalance = 0,
                     SubscriptionStatus = (SubscriptionStatus)_config.DefaultSubscriptionStatus,
                     SubscriptionLevel = (SubscriptionLevel)_config.DefaultSubscriptionLevel,
                     LastTokenPurchaseDate = DateTime.UtcNow,
@@ -131,6 +102,11 @@ namespace VocareWebAPI.UserManagement.Services
             if (alreadyTaken)
             {
                 _logger.LogInformation("User {UserId} already received welcome bonus", userId);
+                return new WelcomeBonusResult(WelcomeBonusStatus.AlreadyClaimed, 0);
+            }
+
+            if (await HadPriorAccount(userId))
+            {
                 return new WelcomeBonusResult(WelcomeBonusStatus.AlreadyClaimed, 0);
             }
             try
@@ -206,7 +182,5 @@ namespace VocareWebAPI.UserManagement.Services
 
             return hadPriorAccount;
         }
-
-        private int CalculateInitialTokens(bool hadPriorAccount) => hadPriorAccount ? 0 : _config.WelcomeTokens;
     }
 }
