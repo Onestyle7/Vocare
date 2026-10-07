@@ -11,6 +11,7 @@ import {
   social_instagram,
   social_linkedin,
 } from '@/features/marketing/constants';
+import { SERVICE_PROVIDER } from '@/features/marketing/constants/legal';
 
 const Footer = () => {
   return (
@@ -91,9 +92,12 @@ const Footer = () => {
           <p className="flex w-fit max-w-24.25 items-center justify-center rounded-[7px] bg-[linear-gradient(90deg,#9296FD_0%,#8491FE_50%,#9D9BFF_77%,#C7A9FE_100%)] px-3 py-1 text-[16px] font-medium text-black sm:px-1 sm:text-[20px]">
             Kontakt
           </p>
-          <p className="font-regular text-[15px] break-all sm:text-[18px] sm:break-normal">
-            vocarecontact@gmail.com
-          </p>
+          <a
+            href={`mailto:${SERVICE_PROVIDER.email}`}
+            className="font-regular text-[15px] break-all hover:underline sm:text-[18px] sm:break-normal"
+          >
+            {SERVICE_PROVIDER.email}
+          </a>
         </div>
 
         <div className="w-full max-w-168.25 rounded-[14px] bg-[#222327] px-5 py-8 sm:px-10 sm:py-14.5">

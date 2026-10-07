@@ -39,7 +39,7 @@ export const pricingPlans: readonly PricingPlan[] = [
     name: 'Premium',
     price: 29,
     priceLabel: '/ miesiąc',
-    description: '0,93 zł/dzień za personalizowane doradztwo zawodowe',
+    description: 'Ok. 0,95 zł/dzień za spersonalizowane rekomendacje kariery',
     priceId: env.NEXT_PUBLIC_GROWTH_PRICE_ID,
     features: [
       { text: 'Nielimitowana edycja i pobieranie CV' },

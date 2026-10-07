@@ -35,14 +35,22 @@ namespace VocareWebApi.Tests.Common
         public static string CheckoutSessionCompleted(
             string mode = "payment",
             (string Key, string Value)[]? metadata = null,
-            string sessionId = "cs_test_123"
+            string sessionId = "cs_test_123",
+            string? customerEmail = null,
+            long amountTotal = 1900
         )
         {
+            var customerDetails = customerEmail is null
+                ? "null"
+                : $$"""{ "email": "{{customerEmail}}" }""";
             var dataObject = $$"""
                 {
                   "id": "{{sessionId}}",
                   "object": "checkout.session",
                   "mode": "{{mode}}",
+                  "amount_total": {{amountTotal}},
+                  "currency": "pln",
+                  "customer_details": {{customerDetails}},
                   "metadata": {{BuildMetadata(metadata)}}
                 }
                 """;

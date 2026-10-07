@@ -1,84 +1,122 @@
-export const privacy_policy = {
+import { PRIVACY_POLICY_LAST_UPDATED, SERVICE_PROVIDER } from './legal';
+import type { LegalSection } from './terms-of-service';
+
+const { name, email, address } = SERVICE_PROVIDER;
+
+export const privacy_policy: {
+  title: string;
+  lastUpdated: string;
+  sections: readonly LegalSection[];
+} = {
   title: 'Polityka Prywatności i plików cookies serwisu vocare.pl',
-  lastUpdated: '22 grudnia 2025 r.',
+  lastUpdated: PRIVACY_POLICY_LAST_UPDATED,
   sections: [
     {
-      title: '§ 1. Postanowienia wstępne',
+      title: 'Postanowienia wstępne',
       points: [
-        'Szanujemy Twoją prywatność. Niniejsza Polityka Prywatności określa zasady gromadzenia, przetwarzania i wykorzystywania danych osobowych pozyskanych od Użytkowników przez serwis internetowy vocare.pl (dalej jako "Serwis").',
-        'Zasady te są zgodne z Rozporządzeniem Parlamentu Europejskiego i Rady (UE) 2016/679 z dnia 27 kwietnia 2016 r. (RODO) oraz ustawą o ochronie danych osobowych.',
+        'Niniejsza Polityka Prywatności określa zasady przetwarzania danych osobowych Użytkowników serwisu internetowego vocare.pl (dalej: „Serwis”) oraz zasady korzystania z plików cookies.',
+        'Dane osobowe przetwarzamy zgodnie z rozporządzeniem Parlamentu Europejskiego i Rady (UE) 2016/679 z dnia 27 kwietnia 2016 r. (RODO), ustawą z dnia 10 maja 2018 r. o ochronie danych osobowych oraz ustawą z dnia 12 lipca 2024 r. – Prawo komunikacji elektronicznej.',
       ],
     },
     {
-      title: '§ 2. Administrator Danych Osobowych',
+      title: 'Administrator danych osobowych',
       points: [
-        'Administratorem Twoich danych osobowych jest: Kacper Jóźwik, prowadzący działalność nieewidencjonowaną zgodnie z art. 5 ust. 1 ustawy Prawo przedsiębiorców.',
-        'Adres e-mail: vocarecontact@gmail.com.',
-        'Vocare zobowiązuje się odpowiedzieć na wiadomości od Użytkowników w terminie do 48 godzin.',
-        'Administrator nie powołał Inspektora Ochrony Danych. We wszelkich sprawach związanych z przetwarzaniem danych można kontaktować się bezpośrednio z Administratorem mailowo.',
+        `Administratorem Twoich danych osobowych jest ${name}, wykonujący działalność nierejestrowaną zgodnie z art. 5 ust. 1 ustawy – Prawo przedsiębiorców (dalej: „Administrator”).`,
+        ...(address ? [`Adres do doręczeń: ${address}.`] : []),
+        `Kontakt w sprawach danych osobowych: ${email}. Odpowiadamy niezwłocznie, z reguły w ciągu 48 godzin w dni robocze, a na wnioski dotyczące realizacji Twoich praw – nie później niż w ciągu miesiąca.`,
+        'Administrator nie powołał Inspektora Ochrony Danych.',
       ],
     },
     {
-      title: '§ 3. Zakres, cele i podstawy prawne przetwarzania',
+      title: 'Zakres, cele i podstawy prawne przetwarzania',
       points: [
-        'Zbieramy tylko te dane, które są niezbędne do działania Serwisu.',
-        'Świadczenie usługi doradcy AI (Art. 6 ust. 1 lit. b RODO – wykonanie umowy): Dane: treść zapytań do AI, informacje o wykształceniu, doświadczeniu zawodowym, umiejętnościach (wprowadzane dobrowolnie przez Użytkownika w czacie/formularzu). Cel: wygenerowanie analizy, raportu lub porady zawodowej przez algorytm.',
-        'Ważne: prosimy o niepodawanie w treści zapytań do AI danych wrażliwych (np. o stanie zdrowia, wyznaniu), ani danych identyfikacyjnych osób trzecich.',
-        'Rejestracja konta i obsługa techniczna (Art. 6 ust. 1 lit. b RODO): Dane: adres e-mail, hasło (zaszyfrowane), ID użytkownika. Cel: umożliwienie logowania, utrzymanie sesji, historia analiz.',
-        'Płatności i rozliczenia (Art. 6 ust. 1 lit. c RODO – obowiązek prawny): Dane: imię i nazwisko, adres, dane transakcji. Cel: wystawienie rachunku/faktury (jeśli dotyczy) i prowadzenie uproszczonej ewidencji sprzedaży dla celów podatkowych.',
-        'Statystyka i bezpieczeństwo (Art. 6 ust. 1 lit. f RODO – uzasadniony interes): Dane: adres IP, logi serwera, czas wizyty. Cel: wykrywanie nadużyć, ochrona przed atakami (np. DDoS), poprawa stabilności Serwisu.',
+        'Przetwarzamy wyłącznie dane niezbędne do realizacji celów opisanych poniżej.',
+        'Prowadzenie Konta i świadczenie Usług (art. 6 ust. 1 lit. b RODO – wykonanie umowy). Dane: imię i nazwisko, adres e-mail, hasło (przechowywane wyłącznie w postaci skrótu kryptograficznego), dane z profilu i CV (wykształcenie, doświadczenie zawodowe, umiejętności, oczekiwania finansowe), treści wprowadzane do Funkcji AI, historia analiz. W przypadku logowania przez Google lub LinkedIn otrzymujemy od tych serwisów imię, nazwisko i adres e-mail.',
+        'Ważne: prosimy o niepodawanie w profilu, CV ani zapytaniach do AI danych szczególnych kategorii (np. o stanie zdrowia, wyznaniu, poglądach politycznych) ani danych osób trzecich, jeżeli nie masz do tego podstawy.',
+        'Płatności i rozliczenia (art. 6 ust. 1 lit. b RODO oraz art. 6 ust. 1 lit. c RODO – obowiązki wynikające z przepisów podatkowych). Dane: imię i nazwisko, adres e-mail, dane transakcji. Danych karty płatniczej nie przetwarzamy – obsługuje je operator płatności.',
+        'Przesłanie potwierdzenia zawarcia umowy na trwałym nośniku (art. 6 ust. 1 lit. c RODO w zw. z art. 21 ust. 1 ustawy o prawach konsumenta).',
+        'Rozpatrywanie reklamacji, wniosków i zgłoszeń, w tym zgłoszeń nielegalnych treści (art. 6 ust. 1 lit. c RODO), oraz ustalenie, dochodzenie i obrona roszczeń (art. 6 ust. 1 lit. f RODO – prawnie uzasadniony interes).',
+        'Marketing bezpośredni drogą elektroniczną (art. 6 ust. 1 lit. a RODO – zgoda, oraz art. 398 Prawa komunikacji elektronicznej). Dane: imię i adres e-mail. Zgoda jest dobrowolna i odrębna od akceptacji Regulaminu. Za jej wyrażenie przyznajemy jednorazowo Tokeny powitalne na zasadach Regulaminu; wycofanie zgody nie powoduje ich odebrania.',
+        'Statystyka ruchu w Serwisie (art. 6 ust. 1 lit. a RODO – zgoda wyrażona w banerze cookies). Dane: identyfikatory plików cookies, informacje o urządzeniu i przeglądarce, przybliżona lokalizacja, sposób korzystania z Serwisu.',
+        'Bezpieczeństwo Serwisu (art. 6 ust. 1 lit. f RODO – prawnie uzasadniony interes). Dane: adres IP, logi serwera, czas wizyty. Cel: wykrywanie nadużyć, ochrona przed atakami i poprawa stabilności Serwisu.',
+        'Dokumentowanie akceptacji Regulaminu i Polityki Prywatności oraz wyrażenia i wycofania zgód (art. 6 ust. 1 lit. c i f RODO). Dane: wersja zaakceptowanego dokumentu, data, adres IP, informacja o przeglądarce (User-Agent), źródło i treść zgody.',
+        'Zapobieganie wielokrotnemu uzyskiwaniu Tokenów powitalnych i powiązanie historii zgód z usuniętym Kontem (art. 6 ust. 1 lit. f RODO – prawnie uzasadniony interes). Po usunięciu Konta przechowujemy jednokierunkowy skrót (hash HMAC) adresu e-mail, z którego nie da się odtworzyć adresu, wraz z informacją, że Tokeny powitalne zostały już wykorzystane. Pozwala to rozpoznać ponowną rejestrację na ten sam adres e-mail.',
       ],
     },
     {
-      title: '§ 4. Sztuczna Inteligencja i zautomatyzowane podejmowanie decyzji',
+      title: 'Sztuczna inteligencja i zautomatyzowane podejmowanie decyzji',
       points: [
-        'Serwis wykorzystuje modele językowe (LLM) dostarczane przez zewnętrznych partnerów (m.in. OpenAI) do analizy Twoich zapytań.',
-        'Anonimizacja: dokładamy starań, aby dane przesyłane do modeli AI były zminimalizowane. Dane przesyłane przez API nie są wykorzystywane przez dostawców modeli do trenowania ich sztucznej inteligencji (zgodnie z polityką "Zero Data Retention" dla API biznesowych).',
-        'Brak decyzji prawnych: Serwis nie podejmuje wobec Ciebie w sposób zautomatyzowany decyzji, które wywoływałyby skutki prawne lub w podobny sposób istotnie na Ciebie wpływały (w rozumieniu art. 22 RODO). Wyniki generowane przez AI są jedynie sugestiami i rekomendacjami, które Użytkownik powinien zweryfikować samodzielnie. Ostateczna decyzja o wyborze ścieżki kariery należy zawsze do człowieka.',
+        'Serwis wykorzystuje modele językowe OpenAI do wykonywania Funkcji AI. Przekazujemy mu wyłącznie dane niezbędne do wykonania danej funkcji. Do przygotowywania ogólnych analiz rynku pracy korzystamy także z narzędzi Perplexity AI, którym nie przekazujemy Twoich danych osobowych.',
+        'Zgodnie z warunkami usługi API OpenAI dane przesyłane przez API nie są wykorzystywane do trenowania modeli. OpenAI może przechowywać je przez okres do 30 dni w celu wykrywania nadużyć, po czym są usuwane.',
+        'Serwis nie podejmuje wobec Ciebie decyzji opartych wyłącznie na zautomatyzowanym przetwarzaniu, w tym profilowaniu, które wywoływałyby wobec Ciebie skutki prawne lub w podobny sposób istotnie na Ciebie wpływały (art. 22 RODO). Wyniki generowane przez AI są sugestiami, które należy samodzielnie zweryfikować. Decyzja o wyborze ścieżki kariery zawsze należy do Ciebie.',
       ],
     },
     {
-      title: '§ 5. Odbiorcy danych i transfer poza EOG',
+      title: 'Odbiorcy danych i przekazywanie danych poza EOG',
       points: [
-        'Twoje dane mogą być przekazywane zaufanym podmiotom, które wspierają nas technicznie ("Procesorzy"). Z każdym z nich zawarliśmy odpowiednie umowy powierzenia danych.',
-        'Dostawcy infrastruktury: Railway (USA/UE): hosting aplikacji i bazy danych. Dane są przechowywane na serwerach zlokalizowanych w Europie (region: [np. Amsterdam/Frankfurt]), jednak ze względu na siedzibę dostawcy w USA, może dochodzić do transferu danych administracyjnych.',
-        'OpenAI (USA): dostawca modelu AI. Transfer danych do USA odbywa się na podstawie Standardowych Klauzul Umownych (SCC) lub uczestnictwa dostawcy w programie Data Privacy Framework (DPF), co gwarantuje odpowiedni poziom ochrony.',
-        'Operatorzy płatności: Stripe – w celu procesowania transakcji.',
+        'Dane powierzamy podmiotom, które wspierają nas technicznie i przetwarzają je w naszym imieniu na podstawie umów powierzenia przetwarzania danych.',
+        {
+          text: 'Odbiorcami danych są:',
+          items: [
+            'Railway Corporation (USA) – hosting aplikacji i bazy danych,',
+            'Vercel Inc. (USA) – hosting interfejsu Serwisu,',
+            'OpenAI Ireland Ltd / OpenAI, L.L.C. (USA) – modele sztucznej inteligencji,',
+            'Resend (USA) – wysyłka wiadomości e-mail,',
+            'Stripe Payments Europe, Limited (Irlandia) – obsługa płatności,',
+            'Google Ireland Limited – logowanie przez Google oraz Google Analytics (wyłącznie po wyrażeniu zgody na cookies analityczne),',
+            'LinkedIn Ireland Unlimited Company – logowanie przez LinkedIn.',
+          ],
+        },
+        'Część odbiorców ma siedzibę w USA lub korzysta z podwykonawców w USA. Przekazanie danych odbywa się na podstawie decyzji Komisji Europejskiej stwierdzającej odpowiedni stopień ochrony (EU-US Data Privacy Framework) – w przypadku odbiorców objętych tym programem – albo standardowych klauzul umownych zatwierdzonych przez Komisję Europejską (art. 46 ust. 2 lit. c RODO). Kopię zabezpieczeń możesz otrzymać, kontaktując się z Administratorem.',
+        'Dane możemy udostępnić organom publicznym wyłącznie wtedy, gdy obowiązek taki wynika z przepisów prawa.',
       ],
     },
     {
-      title: '§ 6. Okres przechowywania danych',
+      title: 'Okres przechowywania danych',
       points: [
-        'Dane związane z kontem Użytkownika przechowywane są przez czas posiadania konta w Serwisie.',
-        'Po usunięciu konta, dane mogą być przechowywane przez okres przedawnienia roszczeń (zazwyczaj 3 lata) w celach obronnych.',
-        'Dane księgowe (o ile wystąpiły płatności) przechowujemy przez 5 lat od końca roku podatkowego, zgodnie z wymogami prawa podatkowego.',
+        'Dane związane z Kontem przechowujemy przez czas jego istnienia.',
+        'Po usunięciu Konta niezwłocznie usuwamy dane profilu, CV, roadmapy, powiadomienia i dane logowania, a konto zostaje zanonimizowane. Dłużej przechowujemy wyłącznie dane wskazane w kolejnych punktach.',
+        'Dane dotyczące zawartych umów i płatności mogą być przechowywane do upływu okresu przedawnienia roszczeń, wyłącznie w zakresie niezbędnym do ich ustalenia, dochodzenia lub obrony.',
+        'Dane rozliczeniowe przechowujemy przez 5 lat od końca roku kalendarzowego, w którym powstał obowiązek podatkowy.',
+        'Dane przetwarzane na podstawie zgody marketingowej wykorzystujemy do czasu jej wycofania albo usunięcia Konta (usunięcie Konta oznacza wycofanie zgody).',
+        'Historię akceptacji dokumentów i zgód oraz skrót adresu e-mail usuniętego Konta przechowujemy przez 6 lat od usunięcia Konta (ogólny termin przedawnienia roszczeń), a następnie automatycznie usuwamy.',
+        'Dane statystyczne z Google Analytics są przechowywane przez 14 miesięcy, a następnie automatycznie usuwane.',
       ],
     },
     {
-      title: '§ 7. Twoje prawa',
+      title: 'Twoje prawa',
       points: [
-        'Przysługuje Ci prawo do: dostępu do treści swoich danych oraz otrzymania ich kopii.',
-        'Przysługuje Ci prawo do: sprostowania (poprawiania) swoich danych.',
-        'Przysługuje Ci prawo do: usunięcia danych ("prawo do bycia zapomnianym") – w przypadku, gdy nie ma innej podstawy prawnej do ich przetwarzania.',
-        'Przysługuje Ci prawo do: ograniczenia przetwarzania danych.',
-        'Przysługuje Ci prawo do: przenoszenia danych.',
-        'Przysługuje Ci prawo do: wniesienia sprzeciwu wobec przetwarzania danych.',
-        'Przysługuje Ci prawo do: wniesienia skargi do Prezesa Urzędu Ochrony Danych Osobowych (ul. Stawki 2, 00-193 Warszawa), jeśli uznasz, że przetwarzanie narusza RODO.',
+        {
+          text: 'Przysługuje Ci prawo do:',
+          items: [
+            'dostępu do swoich danych oraz otrzymania ich kopii,',
+            'sprostowania (poprawiania) danych,',
+            'usunięcia danych („prawo do bycia zapomnianym”), jeżeli nie ma innej podstawy prawnej ich przetwarzania,',
+            'ograniczenia przetwarzania danych,',
+            'przenoszenia danych,',
+            'wniesienia sprzeciwu wobec przetwarzania danych na podstawie prawnie uzasadnionego interesu,',
+            'cofnięcia zgody w dowolnym momencie, bez wpływu na zgodność z prawem przetwarzania dokonanego przed jej cofnięciem,',
+            'wniesienia skargi do Prezesa Urzędu Ochrony Danych Osobowych (ul. Stawki 2, 00-193 Warszawa), jeśli uznasz, że przetwarzanie narusza RODO.',
+          ],
+        },
+        `Aby skorzystać ze swoich praw, napisz na adres ${email}. Zgodę marketingową i zgodę na cookies analityczne możesz także zmienić w ustawieniach Konta.`,
+        'Podanie danych jest dobrowolne, ale niezbędne do założenia Konta i korzystania z Usług. Podanie danych w celach marketingowych i statystycznych nie jest warunkiem korzystania z Serwisu.',
       ],
     },
     {
-      title: '§ 8. Pliki cookies',
+      title: 'Pliki cookies',
       points: [
-        'Serwis używa plików cookies (ciasteczek) – małych plików tekstowych zapisywanych na urządzeniu Użytkownika.',
-        'Stosujemy cookies niezbędne (techniczne) do utrzymania sesji zalogowanego Użytkownika oraz zapewnienia bezpieczeństwa.',
-        'Możesz w każdej chwili zmienić ustawienia dotyczące cookies w swojej przeglądarce internetowej, jednak może to utrudnić lub uniemożliwić korzystanie z Serwisu.',
+        'Serwis używa plików cookies – małych plików tekstowych zapisywanych na Twoim urządzeniu.',
+        'Cookies niezbędne służą do utrzymania sesji zalogowanego Użytkownika, zapewnienia bezpieczeństwa oraz zapamiętania Twojej decyzji dotyczącej cookies. Nie wymagają zgody.',
+        'Cookies analityczne (Google Analytics) są używane wyłącznie po wyrażeniu zgody w banerze cookies. Bez zgody Google Analytics działa w trybie ograniczonym (Consent Mode) i nie zapisuje analitycznych plików cookies.',
+        'Zgodę na cookies analityczne możesz w każdej chwili wycofać w ustawieniach Konta albo usuwając pliki cookies w przeglądarce, co spowoduje ponowne wyświetlenie banera. Możesz też zablokować cookies w ustawieniach przeglądarki, co może jednak utrudnić korzystanie z Serwisu.',
       ],
     },
     {
-      title: '§ 9. Zmiany Polityki Prywatności',
+      title: 'Zmiany Polityki Prywatności',
       points: [
-        'Administrator zastrzega sobie prawo do zmiany niniejszej Polityki Prywatności w przypadku zmian w technologii, prawie lub sposobie działania Serwisu.',
-        'O istotnych zmianach Użytkownicy zostaną powiadomieni komunikatem w Serwisie lub mailowo.',
+        'Administrator może zmienić Politykę Prywatności w razie zmian w przepisach prawa, technologii lub sposobie działania Serwisu.',
+        'O istotnych zmianach poinformujemy komunikatem w Serwisie lub wiadomością e-mail.',
       ],
     },
   ],

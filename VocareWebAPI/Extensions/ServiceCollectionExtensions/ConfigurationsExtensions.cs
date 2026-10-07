@@ -1,3 +1,4 @@
+using VocareWebAPI.Billing.Configuration;
 using VocareWebAPI.CareerAdvisor.Models.Config;
 using VocareWebAPI.CvGenerator.Models.Dtos;
 using VocareWebAPI.JobOffers.Configuration;
@@ -25,6 +26,11 @@ namespace VocareWebAPI.Extensions.ServiceCollectionExtensions
             services
                 .AddOptions<CvLimitsConfig>()
                 .BindConfiguration(CvLimitsConfig.SectionName)
+                .ValidateDataAnnotations()
+                .ValidateOnStart();
+            services
+                .AddOptions<LegalOptions>()
+                .BindConfiguration(LegalOptions.SectionName)
                 .ValidateDataAnnotations()
                 .ValidateOnStart();
             services.Configure<NofluffJobsFetchOptions>(

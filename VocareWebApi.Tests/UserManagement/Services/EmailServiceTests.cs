@@ -1,11 +1,13 @@
 using System;
 using System.Net;
 using System.Net.Http;
+using System.Text.Json;
 using System.Threading.Tasks;
 using FluentAssertions;
 using Microsoft.Extensions.Logging.Abstractions;
 using Moq;
 using VocareWebApi.Tests.Common;
+using VocareWebAPI.UserManagement.Models.Dtos;
 using VocareWebAPI.UserManagement.Services.Implementations;
 using Xunit;
 
@@ -56,6 +58,36 @@ namespace VocareWebApi.Tests.UserManagement.Services
 
             handler.LastRequest!.RequestUri!.ToString().Should().EndWith("/emails");
             handler.LastRequestBody.Should().Contain("to@example.com").And.Contain("Subject");
+        }
+
+        [Fact]
+        public async Task SendEmailAsync_WithAttachment_SendsBase64ContentAndFileName()
+        {
+            var handler = FakeHttpMessageHandler.Returning(HttpStatusCode.OK, "{\"id\":\"e_1\"}");
+            var pdf = new byte[] { 0x25, 0x50, 0x44, 0x46 };
+
+            await CreateSut(handler)
+                .SendEmailAsync(
+                    "to@example.com",
+                    "Subject",
+                    "Body",
+                    new[] { new EmailAttachment("regulamin.pdf", pdf) }
+                );
+
+            using var json = JsonDocument.Parse(handler.LastRequestBody!);
+            var attachment = json.RootElement.GetProperty("attachments")[0];
+            attachment.GetProperty("filename").GetString().Should().Be("regulamin.pdf");
+            attachment.GetProperty("content").GetString().Should().Be(Convert.ToBase64String(pdf));
+        }
+
+        [Fact]
+        public async Task SendEmailAsync_WithoutAttachments_OmitsAttachmentsField()
+        {
+            var handler = FakeHttpMessageHandler.Returning(HttpStatusCode.OK, "{\"id\":\"e_1\"}");
+
+            await CreateSut(handler).SendEmailAsync("to@example.com", "Subject", "Body");
+
+            handler.LastRequestBody.Should().NotContain("attachments");
         }
 
         [Fact]

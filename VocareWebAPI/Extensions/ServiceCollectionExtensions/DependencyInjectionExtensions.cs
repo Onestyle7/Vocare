@@ -73,6 +73,7 @@ namespace VocareWebAPI.Extensions.ServiceCollectionExtensions
             // Billing Services
             services.AddScoped<IBillingService, BillingService>();
             services.AddScoped<IStripeService, StripeService>();
+            services.AddScoped<IPurchaseConfirmationService, PurchaseConfirmationService>();
 
             // Other services
             services.AddScoped<IEmailService, EmailService>();
