@@ -1,8 +1,10 @@
+using Hangfire;
 using Microsoft.EntityFrameworkCore;
 using Stripe;
 using Stripe.Checkout;
 using VocareWebAPI.Billing.Configuration;
 using VocareWebAPI.Billing.Exceptions;
+using VocareWebAPI.Billing.Models.Dtos;
 using VocareWebAPI.Billing.Models.Entities;
 using VocareWebAPI.Billing.Models.Enums;
 using VocareWebAPI.Billing.Repositories.Interfaces;
@@ -18,6 +20,7 @@ namespace VocareWebAPI.Billing.Services.Implementations
         private readonly IServiceCostRepository _serviceCostRepository;
         private readonly IUserBillingRepository _userBillingRepository;
         private readonly ITokenTransactionRepository _tokenTransactionRepository;
+        private readonly IBackgroundJobClient _backgroundJobClient;
         private readonly string _webhookSecret;
         private readonly ILogger<BillingService> _logger;
 
@@ -26,6 +29,7 @@ namespace VocareWebAPI.Billing.Services.Implementations
             IServiceCostRepository serviceCostRepository,
             IUserBillingRepository userBillingRepository,
             ITokenTransactionRepository tokenTransactionRepository,
+            IBackgroundJobClient backgroundJobClient,
             IConfiguration configuration,
             ILogger<BillingService> logger
         )
@@ -34,6 +38,7 @@ namespace VocareWebAPI.Billing.Services.Implementations
             _serviceCostRepository = serviceCostRepository;
             _userBillingRepository = userBillingRepository;
             _tokenTransactionRepository = tokenTransactionRepository;
+            _backgroundJobClient = backgroundJobClient;
             _logger = logger;
             _webhookSecret =
                 configuration["Stripe:WebhookSecret"]
@@ -228,6 +233,9 @@ namespace VocareWebAPI.Billing.Services.Implementations
                         throw;
                     }
                 }
+
+                if (session != null)
+                    EnqueuePurchaseConfirmation(session);
             }
             else if (stripeEvent.Type == "customer.subscription.created")
             {
@@ -252,6 +260,51 @@ namespace VocareWebAPI.Billing.Services.Implementations
             else
             {
                 _logger.LogInformation($"Unhandled webhook event type: {stripeEvent.Type}");
+            }
+        }
+
+        /// <summary>
+        /// Zleca wysyłkę potwierdzenia zawarcia umowy na trwałym nośniku.
+        /// Błąd zlecenia nie może przerwać obsługi webhooka – Stripe ponowiłby zdarzenie
+        /// i ponownie doliczył tokeny.
+        /// </summary>
+        private void EnqueuePurchaseConfirmation(Stripe.Checkout.Session session)
+        {
+            var email = session.CustomerDetails?.Email ?? session.CustomerEmail;
+            if (string.IsNullOrEmpty(email))
+            {
+                _logger.LogWarning(
+                    "No customer email for session {SessionId}, purchase confirmation not sent",
+                    session.Id
+                );
+                return;
+            }
+
+            var metadata = session.Metadata ?? new Dictionary<string, string>();
+            var confirmation = new PurchaseConfirmationDto
+            {
+                Email = email,
+                SessionId = session.Id,
+                CheckoutMode = session.Mode,
+                PackageName = metadata.GetValueOrDefault("packageName", "Vocare"),
+                AmountTotal = session.AmountTotal,
+                Currency = session.Currency,
+                PurchasedAtUtc = session.Created == default ? DateTime.UtcNow : session.Created,
+            };
+
+            try
+            {
+                _backgroundJobClient.Enqueue<IPurchaseConfirmationService>(s =>
+                    s.SendPurchaseConfirmationAsync(confirmation)
+                );
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(
+                    ex,
+                    "Failed to enqueue purchase confirmation for session {SessionId}",
+                    session.Id
+                );
             }
         }
 
