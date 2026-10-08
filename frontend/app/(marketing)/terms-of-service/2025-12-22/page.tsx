@@ -2,8 +2,10 @@ import type { Metadata } from 'next';
 import Link from 'next/link';
 
 import { LegalDocument } from '@/features/marketing/components/LegalDocument';
-import { TERMS_VERSION } from '@/features/marketing/constants/legal';
-import { termsOfService20251222 } from '@/features/marketing/constants/terms-of-service-2025-12-22';
+import {
+  termsOfService20251222,
+  termsOfService20251222Validity,
+} from '@/features/marketing/constants/terms-of-service-2025-12-22';
 
 export const metadata: Metadata = {
   title: 'Regulamin Serwisu – wersja archiwalna z 22.12.2025',
@@ -19,9 +21,7 @@ const TermsOfServiceArchive = () => {
       title="Regulamin świadczenia usług drogą elektroniczną"
       subtitle={
         <p>
-          Wersja archiwalna obowiązująca od 22.12.2025. Wobec Użytkowników, którzy zawarli umowę
-          przed {TERMS_VERSION.publishedDate}, stosuje się ją do dnia poprzedzającego{' '}
-          {TERMS_VERSION.effectiveDate}.{' '}
+          {termsOfService20251222Validity}{' '}
           <Link href="/terms-of-service" className="underline hover:text-[#915EFF]">
             Aktualna wersja Regulaminu
           </Link>
