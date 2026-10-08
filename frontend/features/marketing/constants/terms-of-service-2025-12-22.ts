@@ -1,4 +1,9 @@
-// Archiwalna wersja Regulaminu obowiązująca od 22.12.2025 do 21.10.2026. Nie edytować.
+// Archiwalna wersja Regulaminu obowiązująca od 22.12.2025 do 27.10.2026. Nie edytować.
+
+// Daty zamrożone razem z treścią – nie czytamy ich z TERMS_VERSION, bo ten wskazuje zawsze
+// bieżącą wersję. Do czasu wdrożenia muszą zgadzać się z TERMS_VERSION w legal.ts.
+export const termsOfService20251222Validity =
+  'Wersja archiwalna obowiązująca od 22.12.2025. Wobec Użytkowników, którzy zawarli umowę przed 13.10.2026, stosuje się ją do 27.10.2026.';
 
 const postanowienia_ogolne = {
   title: 'Postanowienia ogólne',

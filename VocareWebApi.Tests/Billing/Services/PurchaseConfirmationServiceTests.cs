@@ -30,9 +30,7 @@ namespace VocareWebApi.Tests.Billing.Services
                 ProviderName = "Kacper Jóźwik",
                 ProviderAddress = address,
                 ContactEmail = "kontakt@vocare.pl",
-                TermsUrl = "https://vocare.pl/terms-of-service",
-                PrivacyPolicyUrl = "https://vocare.pl/privacy-policy",
-                TermsPdfUrl = "https://vocare.pl/terms-of-service/pdf",
+                FrontendUrl = "https://vocare.pl/",
             };
 
         private static readonly byte[] TermsPdf = { 0x25, 0x50, 0x44, 0x46, 0x2D };

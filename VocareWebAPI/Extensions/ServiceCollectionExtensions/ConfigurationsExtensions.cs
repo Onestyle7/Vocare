@@ -31,6 +31,7 @@ namespace VocareWebAPI.Extensions.ServiceCollectionExtensions
             services
                 .AddOptions<LegalOptions>()
                 .BindConfiguration(LegalOptions.SectionName)
+                .Configure(options => options.FrontendUrl = configuration["Frontend:Url"] ?? "")
                 .ValidateDataAnnotations()
                 .ValidateOnStart();
             services.Configure<NofluffJobsFetchOptions>(

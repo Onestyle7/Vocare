@@ -19,17 +19,23 @@ namespace VocareWebAPI.Billing.Configuration
         [Required, EmailAddress]
         public string ContactEmail { get; set; } = string.Empty;
 
+        /// <summary>
+        /// Adres frontendu zależny od środowiska – przepisywany z Frontend:Url przy rejestracji opcji,
+        /// żeby adres serwisu był skonfigurowany w jednym miejscu.
+        /// </summary>
         [Required, Url]
-        public string TermsUrl { get; set; } = string.Empty;
+        public string FrontendUrl { get; set; } = string.Empty;
 
-        [Required, Url]
-        public string PrivacyPolicyUrl { get; set; } = string.Empty;
+        public string TermsUrl => BuildUrl("/terms-of-service");
+
+        public string PrivacyPolicyUrl => BuildUrl("/privacy-policy");
 
         /// <summary>
         /// PDF bieżącej wersji Regulaminu (generowany przez frontend), dołączany do potwierdzenia
         /// zakupu – link do strony nie jest trwałym nośnikiem (art. 21 ust. 1 i art. 12 ust. 1 UoPK).
         /// </summary>
-        [Required, Url]
-        public string TermsPdfUrl { get; set; } = string.Empty;
+        public string TermsPdfUrl => BuildUrl("/terms-of-service/pdf");
+
+        private string BuildUrl(string path) => $"{FrontendUrl.TrimEnd('/')}{path}";
     }
 }
