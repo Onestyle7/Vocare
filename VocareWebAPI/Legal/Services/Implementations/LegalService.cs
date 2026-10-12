@@ -25,9 +25,56 @@ namespace VocareWebAPI.Legal.Services.Implementations
             }
 
             var acceptedDocumentIds = await _repository.GetAcceptedDocumentIdsAsync(userId);
-            var acceptedSet = new HashSet<Guid>(acceptedDocumentIds);
 
-            return activeDocuments.All(doc => acceptedSet.Contains(doc.Id));
+            return GetDocumentsToAccept(activeDocuments, acceptedDocumentIds).Count == 0;
+        }
+
+        public async Task<List<Guid>> GetCurrentDocumentIdsAsync()
+        {
+            var activeDocuments = await _repository.GetActiveDocumentsAsync();
+
+            return activeDocuments
+                .GroupBy(doc => doc.Type)
+                .Select(group => group.MaxBy(doc => doc.ValidFrom)!.Id)
+                .ToList();
+        }
+
+        /// <summary>
+        /// For each document type: the required version is the latest one already in effect
+        /// (ValidFrom &lt;= now), the newest is the latest published one – it may take effect in the
+        /// future (terms § 18: it binds existing users only from ValidFrom).
+        /// Consent is valid when the user accepted a version not older than the required one;
+        /// otherwise the newest version has to be accepted.
+        /// </summary>
+        private static List<LegalDocument> GetDocumentsToAccept(
+            List<LegalDocument> activeDocuments,
+            List<Guid> acceptedDocumentIds
+        )
+        {
+            var acceptedSet = acceptedDocumentIds.ToHashSet();
+            var now = DateTime.UtcNow;
+            var toAccept = new List<LegalDocument>();
+
+            foreach (var versions in activeDocuments.GroupBy(doc => doc.Type))
+            {
+                var required = versions
+                    .Where(doc => doc.ValidFrom <= now)
+                    .MaxBy(doc => doc.ValidFrom);
+                if (required == null)
+                {
+                    continue;
+                }
+
+                var hasValidConsent = versions.Any(doc =>
+                    acceptedSet.Contains(doc.Id) && doc.ValidFrom >= required.ValidFrom
+                );
+                if (!hasValidConsent)
+                {
+                    toAccept.Add(versions.MaxBy(doc => doc.ValidFrom)!);
+                }
+            }
+
+            return toAccept;
         }
 
         public async Task<List<PendingDocumentDto>> GetPendingDocumentsAsync(string userId)
@@ -44,10 +91,8 @@ namespace VocareWebAPI.Legal.Services.Implementations
             }
 
             var acceptedDocumentIds = await _repository.GetAcceptedDocumentIdsAsync(userId);
-            var acceptedSet = new HashSet<Guid>(acceptedDocumentIds);
 
-            return activeDocuments
-                .Where(doc => !acceptedSet.Contains(doc.Id))
+            return GetDocumentsToAccept(activeDocuments, acceptedDocumentIds)
                 .Select(doc => new PendingDocumentDto
                 {
                     Id = doc.Id,
@@ -55,7 +100,7 @@ namespace VocareWebAPI.Legal.Services.Implementations
                     Version = doc.Version,
                     ContentPath = doc.ContentPath,
                     ValidFrom = doc.ValidFrom,
-                    CreatedAt = doc.CreatedAt
+                    CreatedAt = doc.CreatedAt,
                 })
                 .ToList();
         }
@@ -65,7 +110,8 @@ namespace VocareWebAPI.Legal.Services.Implementations
             List<Guid> documentIds,
             string ipAddress,
             string userAgent,
-            ConsentSource consentSource)
+            ConsentSource consentSource
+        )
         {
             if (string.IsNullOrWhiteSpace(userId))
             {
@@ -91,16 +137,18 @@ namespace VocareWebAPI.Legal.Services.Implementations
             var distinctDocumentIds = documentIds.Distinct().ToList();
             var now = DateTime.UtcNow;
 
-            var userConsents = distinctDocumentIds.Select(docId => new UserConsent
-            {
-                Id = Guid.NewGuid(),
-                UserId = userId,
-                LegalDocumentId = docId,
-                AcceptedAt = now,
-                IpAddress = ipAddress,
-                UserAgent = userAgent,
-                ConsentSource = consentSource
-            }).ToList();
+            var userConsents = distinctDocumentIds
+                .Select(docId => new UserConsent
+                {
+                    Id = Guid.NewGuid(),
+                    UserId = userId,
+                    LegalDocumentId = docId,
+                    AcceptedAt = now,
+                    IpAddress = ipAddress,
+                    UserAgent = userAgent,
+                    ConsentSource = consentSource,
+                })
+                .ToList();
 
             await _repository.AddConsentsAsync(userConsents);
         }

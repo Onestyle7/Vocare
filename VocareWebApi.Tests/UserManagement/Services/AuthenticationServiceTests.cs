@@ -12,7 +12,6 @@ using Microsoft.Extensions.Logging.Abstractions;
 using Moq;
 using VocareWebAPI.Billing.Models.Entities;
 using VocareWebAPI.Data;
-using VocareWebAPI.Legal.Repositories.Interfaces;
 using VocareWebAPI.Legal.Services.Interfaces;
 using VocareWebAPI.Models.Entities;
 using VocareWebApi.Tests.Common;
@@ -43,7 +42,6 @@ namespace VocareWebApi.Tests.UserManagement.Services
         private readonly Mock<IMarketingConsentRepository> _marketingConsent = new();
         private readonly Mock<IUserSetupService> _userSetup = new();
         private readonly Mock<ILegalService> _legalService = new();
-        private readonly Mock<ILegalRepository> _legalRepository = new();
         private readonly Mock<ITokenService> _tokenService = new();
         private readonly AuthenticationService _sut;
 
@@ -92,7 +90,6 @@ namespace VocareWebApi.Tests.UserManagement.Services
                 _marketingConsent.Object,
                 _userSetup.Object,
                 _legalService.Object,
-                _legalRepository.Object,
                 _tokenService.Object,
                 _context
             );

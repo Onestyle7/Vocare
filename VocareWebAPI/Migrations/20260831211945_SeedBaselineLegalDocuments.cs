@@ -46,7 +46,7 @@ namespace VocareWebAPI.Migrations
         {
             migrationBuilder.Sql(
                 @"
-                    DELETE FROM ""UserConsents"" WHERE ""AuthSource"" = 'System_Migration_Baseline';
+                    DELETE FROM ""UserConsents"" WHERE ""UserAgent"" = 'System_Migration_Baseline';
                     DELETE FROM ""LegalDocuments"" WHERE ""Version"" = '1.0';
                 "
             );

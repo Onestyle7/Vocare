@@ -6,7 +6,6 @@ using Microsoft.AspNetCore.Identity;
 using VocareWebAPI.Billing.Models.Entities;
 using VocareWebAPI.Data;
 using VocareWebAPI.Legal.Models.Enums;
-using VocareWebAPI.Legal.Repositories.Interfaces;
 using VocareWebAPI.Legal.Services.Interfaces;
 using VocareWebAPI.Models.Entities;
 using VocareWebAPI.Shared.Results;
@@ -30,7 +29,6 @@ namespace VocareWebAPI.UserManagement.Services.Implementations
         private readonly IMarketingConsentRepository _marketingConsentRepository;
         private readonly IUserSetupService _userSetupService;
         private readonly ILegalService _legalService;
-        private readonly ILegalRepository _legalRepository;
         private readonly ITokenService _tokenService;
         private readonly AppDbContext _dbContext;
 
@@ -46,7 +44,6 @@ namespace VocareWebAPI.UserManagement.Services.Implementations
             IMarketingConsentRepository marketingConsentRepository,
             IUserSetupService userSetupService,
             ILegalService legalService,
-            ILegalRepository legalRepository,
             ITokenService tokenService,
             AppDbContext dbContext
         )
@@ -62,7 +59,6 @@ namespace VocareWebAPI.UserManagement.Services.Implementations
             _marketingConsentRepository = marketingConsentRepository;
             _userSetupService = userSetupService;
             _legalService = legalService;
-            _legalRepository = legalRepository;
             _tokenService = tokenService;
             _dbContext = dbContext;
         }
@@ -185,13 +181,13 @@ namespace VocareWebAPI.UserManagement.Services.Implementations
 
             try
             {
-                var activeDocuments = await _legalRepository.GetActiveDocumentsAsync();
-                if (activeDocuments.Count > 0)
+                var currentDocumentIds = await _legalService.GetCurrentDocumentIdsAsync();
+                if (currentDocumentIds.Count > 0)
                 {
                     var userAgent = _httpContextAccessor.HttpContext?.Request.Headers.UserAgent.ToString() ?? "Registration";
                     await _legalService.AcceptConsentsAsync(
                         user.Id,
-                        activeDocuments.Select(d => d.Id).ToList(),
+                        currentDocumentIds,
                         ipAddress ?? "unknown",
                         userAgent,
                         ConsentSource.Registration
@@ -614,14 +610,14 @@ Zespół Vocare
 
                         try
                         {
-                            var activeDocuments = await _legalRepository.GetActiveDocumentsAsync();
-                            if (activeDocuments.Count > 0)
+                            var currentDocumentIds = await _legalService.GetCurrentDocumentIdsAsync();
+                            if (currentDocumentIds.Count > 0)
                             {
                                 var userAgent = _httpContextAccessor.HttpContext?.Request.Headers.UserAgent.ToString() ?? "GoogleSSO";
                                 var ipAddress = _httpContextAccessor.HttpContext?.Connection.RemoteIpAddress?.ToString() ?? "unknown";
                                 await _legalService.AcceptConsentsAsync(
                                     user.Id,
-                                    activeDocuments.Select(d => d.Id).ToList(),
+                                    currentDocumentIds,
                                     ipAddress,
                                     userAgent,
                                     ConsentSource.Registration

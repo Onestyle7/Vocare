@@ -33,7 +33,15 @@ public class UserDataCleanupRepository(
 
             await _dbContext.ProfileAttributes.Where(c => c.UserId == user.Id).ExecuteDeleteAsync();
 
-            await _dbContext.MarketingConsents.Where(c => c.UserId == user.Id).ExecuteDeleteAsync();
+            // Marketing consent is kept as evidence (privacy policy: consent history retained for 6 years);
+            // deleting the account counts as withdrawing the consent
+            await _dbContext
+                .MarketingConsents.Where(c => c.UserId == user.Id && c.IsConsentGiven)
+                .ExecuteUpdateAsync(setters =>
+                    setters
+                        .SetProperty(c => c.IsConsentGiven, false)
+                        .SetProperty(c => c.ConsentWithdrawnDate, DateTime.UtcNow)
+                );
 
             await _dbContext.UserLogins.Where(l => l.UserId == user.Id).ExecuteDeleteAsync();
 
