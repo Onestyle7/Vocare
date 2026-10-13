@@ -6,6 +6,7 @@ import { BaseAppError } from '@/lib/types/result';
 
 import {
   authApiClient,
+  DeleteAccountCommand,
   ForgotPasswordCommand,
   RegisterCommand,
   RegisterResult,
@@ -20,6 +21,9 @@ export type AuthDomainError = BaseAppError<'OAuthError' | 'InvalidCredentials'>;
 export type RegisterDomainError = BaseAppError<'EmailAlreadyTaken'>;
 export type ForgotPasswordDomainError = BaseAppError<'InvalidEmailError'>;
 export type ResetPasswordDomainError = BaseAppError<'InvalidResetToken' | 'ExpiredResetToken'>;
+export type DeleteAccountDomainError = BaseAppError<
+  'AccountNotFound' | 'InvalidPassword' | 'StripeServiceError'
+>;
 
 export async function verifyOauthTokenService(
   endpoint: string,
@@ -217,5 +221,41 @@ export async function validateResetPasswordService({
       }
 
       return ok(data);
+    });
+}
+
+export async function deleteAccountService(
+  command?: DeleteAccountCommand
+): Promise<Result<void, DeleteAccountDomainError>> {
+  const result = await authApiClient.delete('/account', command);
+
+  return result
+    .map(() => undefined)
+    .mapErr((error): DeleteAccountDomainError => {
+      switch (error.type) {
+        case 'BadRequestError': {
+          return {
+            type: 'InvalidPassword',
+            message: 'Podane hasło jest nieprawidłowe',
+            details: error.details,
+          };
+        }
+        case 'BadGatewayError': {
+          return {
+            type: 'StripeServiceError',
+            message:
+              'Nie udało się anulować aktualnej subskrybcji stripe. Anuluj subskrybcję i spróbuj ponownie usunąć konto',
+            details: error.details,
+          };
+        }
+        default: {
+          return {
+            type: 'GenericApiError',
+            message:
+              'Coś poszło nie tak podczas usuwania konta. Ponów próbę. Jeśli problem nie ustąpi skontaktuj się z nami mailowo w celu usunięcia konta',
+            details: error.details,
+          };
+        }
+      }
     });
 }

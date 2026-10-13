@@ -140,13 +140,13 @@ export function SignInFrom({ reason, callbackUrl }: { reason?: string; callbackU
             <OAuthButton icon={google} label="Zaloguj się Google" onClick={handleGoogleSignIn} />
           </div>
           <p className="text-center text-xs leading-normal text-gray-500">
-            Logując się lub tworząc konto przez Google, akceptujesz nasz{' '}
+            Tworząc konto przez Google, akceptujesz{' '}
             <Link href="/terms-of-service" className="underline hover:text-[#915EFF]">
               Regulamin
             </Link>{' '}
-            oraz{' '}
+            i oświadczasz, że masz ukończone 16 lat. Zasady przetwarzania danych opisuje{' '}
             <Link href="/privacy-policy" className="underline hover:text-[#915EFF]">
-              Politykę Prywatności
+              Polityka Prywatności
             </Link>
             .
           </p>

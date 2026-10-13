@@ -2,14 +2,19 @@ using System;
 using System.Linq;
 using System.Threading.Tasks;
 using FluentAssertions;
+using Hangfire;
+using Hangfire.Common;
+using Hangfire.States;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging.Abstractions;
 using Moq;
 using VocareWebAPI.Billing.Exceptions;
+using VocareWebAPI.Billing.Models.Dtos;
 using VocareWebAPI.Billing.Models.Entities;
 using VocareWebAPI.Billing.Models.Enums;
 using VocareWebAPI.Billing.Repositories.Interfaces;
 using VocareWebAPI.Billing.Services.Implementations;
+using VocareWebAPI.Billing.Services.Interfaces;
 using VocareWebAPI.Data;
 using VocareWebApi.Tests.Common;
 using Xunit;
@@ -30,6 +35,7 @@ namespace VocareWebApi.Tests.Billing.Services
         private readonly Mock<IServiceCostRepository> _serviceCosts = new(MockBehavior.Strict);
         private readonly Mock<IUserBillingRepository> _userBillings = new(MockBehavior.Strict);
         private readonly Mock<ITokenTransactionRepository> _transactions = new(MockBehavior.Strict);
+        private readonly Mock<IBackgroundJobClient> _jobs = new();
         private readonly BillingService _sut;
 
         public BillingServiceTests()
@@ -40,6 +46,7 @@ namespace VocareWebApi.Tests.Billing.Services
                 _serviceCosts.Object,
                 _userBillings.Object,
                 _transactions.Object,
+                _jobs.Object,
                 TestConfiguration.FromValues(("Stripe:WebhookSecret", WebhookSecret)),
                 NullLogger<BillingService>.Instance
             );
@@ -69,6 +76,7 @@ namespace VocareWebApi.Tests.Billing.Services
                     _serviceCosts.Object,
                     _userBillings.Object,
                     _transactions.Object,
+                    _jobs.Object,
                     TestConfiguration.FromValues(),
                     NullLogger<BillingService>.Instance
                 );
@@ -345,6 +353,120 @@ namespace VocareWebApi.Tests.Billing.Services
             await _sut.Invoking(s => s.HandleWebhookAsync(payload, signature))
                 .Should()
                 .ThrowAsync<InvalidOperationException>();
+        }
+
+        private void VerifyConfirmationEnqueued(
+            Func<PurchaseConfirmationDto, bool> match,
+            Times times
+        ) =>
+            _jobs.Verify(
+                j =>
+                    j.Create(
+                        It.Is<Job>(job =>
+                            job.Type == typeof(IPurchaseConfirmationService)
+                            && job.Args.Count == 1
+                            && match((PurchaseConfirmationDto)job.Args[0])
+                        ),
+                        It.IsAny<IState>()
+                    ),
+                times
+            );
+
+        private void SetupTokenPurchase()
+        {
+            _userBillings.Setup(r => r.GetByUserIdAsync(UserId)).ReturnsAsync(Billing());
+            _userBillings.Setup(r => r.AddTokensAsync(UserId, 500)).Returns(Task.CompletedTask);
+            _transactions
+                .Setup(r => r.AddTransactionAsync(It.IsAny<TokenTransaction>()))
+                .Returns(Task.CompletedTask);
+        }
+
+        [Fact]
+        public async Task HandleWebhookAsync_WithCompletedTokenCheckout_EnqueuesConfirmation()
+        {
+            var payload = StripeWebhookFactory.CheckoutSessionCompleted(
+                mode: "payment",
+                metadata: new[]
+                {
+                    ("userId", UserId),
+                    ("tokenAmount", "500"),
+                    ("packageName", "Pakiet 500 tokenów"),
+                },
+                customerEmail: "jan@example.com"
+            );
+            var signature = StripeWebhookFactory.SignPayload(payload, WebhookSecret);
+            SetupTokenPurchase();
+
+            await _sut.HandleWebhookAsync(payload, signature);
+
+            VerifyConfirmationEnqueued(
+                c =>
+                    c.Email == "jan@example.com"
+                    && c.CheckoutMode == "payment"
+                    && c.PackageName == "Pakiet 500 tokenów"
+                    && c.AmountTotal == 1900,
+                Times.Once()
+            );
+        }
+
+        [Fact]
+        public async Task HandleWebhookAsync_WithCompletedSubscriptionCheckout_EnqueuesConfirmationWithoutAddingTokens()
+        {
+            var payload = StripeWebhookFactory.CheckoutSessionCompleted(
+                mode: "subscription",
+                metadata: new[] { ("userId", UserId), ("packageName", "Premium") },
+                customerEmail: "jan@example.com",
+                amountTotal: 2900
+            );
+            var signature = StripeWebhookFactory.SignPayload(payload, WebhookSecret);
+
+            await _sut.HandleWebhookAsync(payload, signature);
+
+            VerifyConfirmationEnqueued(
+                c => c.CheckoutMode == "subscription" && c.AmountTotal == 2900,
+                Times.Once()
+            );
+            _userBillings.Verify(
+                r => r.AddTokensAsync(It.IsAny<string>(), It.IsAny<int>()),
+                Times.Never
+            );
+        }
+
+        [Fact]
+        public async Task HandleWebhookAsync_WithCompletedCheckoutWithoutEmail_SkipsConfirmation()
+        {
+            var payload = StripeWebhookFactory.CheckoutSessionCompleted(
+                mode: "payment",
+                metadata: new[] { ("userId", UserId), ("tokenAmount", "500") }
+            );
+            var signature = StripeWebhookFactory.SignPayload(payload, WebhookSecret);
+            SetupTokenPurchase();
+
+            await _sut.HandleWebhookAsync(payload, signature);
+
+            VerifyConfirmationEnqueued(_ => true, Times.Never());
+            _userBillings.Verify(r => r.AddTokensAsync(UserId, 500), Times.Once);
+        }
+
+        [Fact]
+        public async Task HandleWebhookAsync_WhenConfirmationCannotBeEnqueued_StillCreditsTokens()
+        {
+            var payload = StripeWebhookFactory.CheckoutSessionCompleted(
+                mode: "payment",
+                metadata: new[] { ("userId", UserId), ("tokenAmount", "500") },
+                customerEmail: "jan@example.com"
+            );
+            var signature = StripeWebhookFactory.SignPayload(payload, WebhookSecret);
+            SetupTokenPurchase();
+            _jobs
+                .Setup(j => j.Create(It.IsAny<Job>(), It.IsAny<IState>()))
+                .Throws(new InvalidOperationException("storage down"));
+
+            await _sut.Invoking(s => s.HandleWebhookAsync(payload, signature))
+                .Should()
+                .NotThrowAsync();
+
+            _userBillings.Verify(r => r.AddTokensAsync(UserId, 500), Times.Once);
         }
 
         [Fact]

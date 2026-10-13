@@ -1,6 +1,7 @@
 using System.Security.Claims;
 using Microsoft.AspNetCore.Mvc;
 using VocareWebAPI.Billing.Models.Entities;
+using VocareWebAPI.Shared.Services.Interfaces;
 using VocareWebAPI.UserManagement.Exceptions;
 using VocareWebAPI.UserManagement.Interfaces;
 using VocareWebAPI.UserManagement.Models.Dtos;
@@ -15,16 +16,19 @@ namespace VocareWebAPI.UserManagement.Controllers
         private readonly IMarketingConsentRepository _marketingConsentRepository;
         private readonly IUserSetupService _userSetupService;
         private readonly ILogger<MarketingController> _logger;
+        private readonly IClientInfoProvider _clientInfoProvider;
 
         public MarketingController(
             IMarketingConsentRepository marketingConsentRepository,
             ILogger<MarketingController> logger,
-            IUserSetupService userSetupService
+            IUserSetupService userSetupService,
+            IClientInfoProvider clientInfoProvider
         )
         {
             _marketingConsentRepository = marketingConsentRepository;
             _userSetupService = userSetupService;
             _logger = logger;
+            _clientInfoProvider = clientInfoProvider;
         }
 
         /// <summary>
@@ -75,7 +79,7 @@ namespace VocareWebAPI.UserManagement.Controllers
                 return Unauthorized();
             }
 
-            var ipAddress = HttpContext.Connection.RemoteIpAddress?.ToString();
+            var ipAddress = _clientInfoProvider.GetClientInfo().IpAddress;
             var existingConsent = await _marketingConsentRepository.GetByUserIdAsync(userId);
 
             if (existingConsent != null && existingConsent.IsConsentGiven)

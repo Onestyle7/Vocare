@@ -18,6 +18,10 @@ using VocareWebAPI.JobOffers.Repositories.Implementations;
 using VocareWebAPI.JobOffers.Repositories.Interfaces;
 using VocareWebAPI.JobOffers.Services.Implementations;
 using VocareWebAPI.JobOffers.Services.Interfaces;
+using VocareWebAPI.Legal.Repositories.Implementations;
+using VocareWebAPI.Legal.Repositories.Interfaces;
+using VocareWebAPI.Legal.Services.Implementations;
+using VocareWebAPI.Legal.Services.Interfaces;
 using VocareWebAPI.MarketNews.Repositories.Implementations;
 using VocareWebAPI.MarketNews.Repositories.Interfaces;
 using VocareWebAPI.MarketNews.services.Implementations;
@@ -37,6 +41,8 @@ using VocareWebAPI.RoadmapService.Repositories.Interfaces;
 using VocareWebAPI.RoadmapService.Services.Implementations;
 using VocareWebAPI.RoadmapService.Services.Interfaces;
 using VocareWebAPI.Services;
+using VocareWebAPI.Shared.Services.Implementations;
+using VocareWebAPI.Shared.Services.Interfaces;
 using VocareWebAPI.UserManagement;
 using VocareWebAPI.UserManagement.Interfaces;
 using VocareWebAPI.UserManagement.Repositories;
@@ -57,9 +63,11 @@ namespace VocareWebAPI.Extensions.ServiceCollectionExtensions
             services.AddScoped<UserProfileService>();
             services.AddScoped<UserRegistrationHandler>();
             services.AddScoped<IUserSetupService, UserSetupService>();
+            services.AddScoped<ITokenService, TokenService>();
             services.AddScoped<IAuthenticationServiceOwn, AuthenticationService>();
             services.AddScoped<ICvParserService, CvParserService>();
             services.AddScoped<IDashboardService, DashboardService>();
+            services.AddScoped<IUserDeletionService, UserDeletionService>();
 
             // AI services (Główną implementacją jest OpenAI)
             services.AddScoped<IAiService, OpenAIService>();
@@ -73,6 +81,7 @@ namespace VocareWebAPI.Extensions.ServiceCollectionExtensions
             // Billing Services
             services.AddScoped<IBillingService, BillingService>();
             services.AddScoped<IStripeService, StripeService>();
+            services.AddScoped<IPurchaseConfirmationService, PurchaseConfirmationService>();
 
             // Other services
             services.AddScoped<IEmailService, EmailService>();
@@ -100,6 +109,16 @@ namespace VocareWebAPI.Extensions.ServiceCollectionExtensions
             // Notification
             services.AddScoped<INotificationService, NotificationService>();
 
+            // Legal
+            services.AddScoped<ILegalService, LegalService>();
+
+            // Email hashing (anti abuse)
+            services.AddScoped<IEmailHashService, EmailHashService>();
+
+            // End user's IP and User-Agent (forwarded by the Next.js server)
+            services.AddHttpContextAccessor();
+            services.AddScoped<IClientInfoProvider, ClientInfoProvider>();
+
             return services;
         }
 
@@ -112,6 +131,7 @@ namespace VocareWebAPI.Extensions.ServiceCollectionExtensions
             services.AddScoped<ICvParseHistoryRepository, CvParseHistoryRepository>();
             services.AddScoped<IDashboardRepository, DashboardRepository>();
             services.AddScoped<IProfileAttributesRepository, ProfileAttributesRepository>();
+            services.AddScoped<IUserDataCleanupRepository, UserDataCleanupRepository>();
 
             // Transaction repositories
             services.AddScoped<ITokenTransactionRepository, TokenTransactionRepository>();
@@ -145,6 +165,12 @@ namespace VocareWebAPI.Extensions.ServiceCollectionExtensions
 
             // Notification
             services.AddScoped<INotificationRepository, NotificationRepository>();
+
+            // Legal
+            services.AddScoped<ILegalRepository, LegalRepository>();
+
+            // Anti abuse
+            services.AddScoped<IAccountAntiAbuseReporitory, AccountAntiAbuseRepository>();
 
             return services;
         }

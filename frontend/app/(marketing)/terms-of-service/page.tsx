@@ -1,91 +1,58 @@
-import { ArrowLeft } from 'lucide-react';
 import type { Metadata } from 'next';
 import Link from 'next/link';
 
+import { LegalDocument } from '@/features/marketing/components/LegalDocument';
+import { TERMS_VERSION } from '@/features/marketing/constants/legal';
 import {
-  definicje,
-  ochrona_danych_osobowych,
-  platnosci_i_zawarcie_umowy,
-  postanowienia_koncowe,
-  postanowienia_ogolne,
-  prawo_odstapienia,
-  reklamacje,
-  uslugi_i_wylaczenie_odpowiedzialnosci_ai,
-  wymagania_techniczne,
+  termsOfServiceSections,
+  withdrawalFormAnnex,
 } from '@/features/marketing/constants/terms-of-service';
 
 export const metadata: Metadata = {
   title: 'Regulamin Serwisu',
   description:
-    'Regulamin świadczenia usług drogą elektroniczną w serwisie Vocare. Poznaj warunki korzystania z platformy i zasady świadczenia usług cyfrowych.',
+    'Regulamin świadczenia usług drogą elektroniczną w serwisie Vocare. Poznaj warunki korzystania z platformy, zasady płatności, prawo odstąpienia i tryb reklamacji.',
   alternates: {
     canonical: '/terms-of-service',
   },
 };
 
-type Section = {
-  title: string;
-  points: string[];
-};
-
-const sections: Section[] = [
-  postanowienia_ogolne,
-  definicje,
-  wymagania_techniczne,
-  uslugi_i_wylaczenie_odpowiedzialnosci_ai,
-  platnosci_i_zawarcie_umowy,
-  prawo_odstapienia,
-  reklamacje,
-  ochrona_danych_osobowych,
-  postanowienia_koncowe,
-];
-
 const TermsOfService = () => {
   return (
-    <div className="font-grotesk min-h-screen bg-neutral-950 text-neutral-200">
-      <div className="mx-auto max-w-4xl px-4 py-10 sm:px-6 lg:px-8">
-        <header className="mb-10">
-          <Link
-            href="/"
-            className="focus-visible:border-ring focus-visible:ring-ring/50 aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive bg-background hover:bg-accent hover:text-accent-foreground dark:bg-input/30 dark:hover:bg-input/50 mb-4 inline-flex shrink-0 cursor-pointer items-center justify-center gap-2 rounded-md border p-2 text-sm font-medium whitespace-nowrap shadow-xs transition-all outline-none focus-visible:ring-[3px] disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4"
-          >
-            <ArrowLeft className="h-4 w-4" />
-            Powrót
-          </Link>
-
-          <h1 className="text-3xl font-semibold tracking-tight text-neutral-100 sm:text-4xl">
-            Regulamin świadczenia usług drogą elektroniczną
-          </h1>
-
-          <p className="mt-3 max-w-2xl text-sm leading-relaxed text-neutral-400">
+    <LegalDocument
+      title="Regulamin świadczenia usług drogą elektroniczną"
+      subtitle={
+        <>
+          <p>
             Dokument określający zasady korzystania z serwisu vocare.pl oraz warunki świadczenia
             usług cyfrowych.
           </p>
-        </header>
-
-        <main className="space-y-10">
-          {sections.map((section, sectionIndex) => (
-            <section key={section.title}>
-              <h2 className="mb-4 text-xl font-semibold text-neutral-100">
-                {sectionIndex + 1}. {section.title}
-              </h2>
-
-              <ol className="space-y-3 pl-5 text-sm leading-relaxed text-neutral-300">
-                {section.points.map((point, pointIndex) => (
-                  <li key={pointIndex} className="list-decimal pl-2 marker:text-neutral-500">
-                    {point}
-                  </li>
-                ))}
-              </ol>
-            </section>
+          <p className="mt-1">
+            Obowiązuje od {TERMS_VERSION.publishedDate} dla nowych umów, a od{' '}
+            {TERMS_VERSION.effectiveDate} dla dotychczasowych Użytkowników.{' '}
+            <Link
+              href={TERMS_VERSION.previousVersion.href}
+              className="underline hover:text-[#915EFF]"
+            >
+              Poprzednia wersja (od {TERMS_VERSION.previousVersion.effectiveDate})
+            </Link>
+          </p>
+        </>
+      }
+      sections={termsOfServiceSections}
+      pdfHref="/terms-of-service/pdf"
+    >
+      <section id="formularz-odstapienia">
+        <h2 className="mb-4 text-xl font-semibold text-neutral-100">{withdrawalFormAnnex.title}</h2>
+        <div className="space-y-2 rounded-lg border border-neutral-800 p-5 text-sm leading-relaxed text-neutral-300">
+          <p className="text-neutral-400 italic">{withdrawalFormAnnex.intro}</p>
+          {withdrawalFormAnnex.lines.map((line) => (
+            <p key={line}>– {line}</p>
           ))}
-        </main>
-
-        <footer className="mt-16 border-t border-neutral-800 pt-6 text-xs text-neutral-500">
-          © {new Date().getFullYear()} Vocare. Wszelkie prawa zastrzeżone.
-        </footer>
-      </div>
-    </div>
+          <p className="text-neutral-400">{withdrawalFormAnnex.footnote}</p>
+        </div>
+      </section>
+    </LegalDocument>
   );
 };
 

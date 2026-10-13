@@ -167,15 +167,15 @@ export function SignUpForm() {
                       htmlFor="acceptTermsAndConditions"
                       className="text-foreground block font-medium"
                     >
-                      Oświadczam, że zapoznałem/am się z{' '}
+                      Akceptuję{' '}
                       <Link href="/terms-of-service" className="underline hover:text-[#915EFF]">
-                        regulaminem
+                        regulamin
                       </Link>{' '}
-                      oraz{' '}
+                      i oświadczam, że mam ukończone 16 lat. Zapoznałem/am się z{' '}
                       <Link href="/privacy-policy" className="underline hover:text-[#915EFF]">
                         polityką prywatności
-                      </Link>{' '}
-                      serwisu i akceptuję jego treść.
+                      </Link>
+                      .
                     </FormLabel>
                   </div>
                 </div>
@@ -202,8 +202,8 @@ export function SignUpForm() {
                       htmlFor="acceptMarketingConsent"
                       className="text-foreground font-medium"
                     >
-                      Wyrażam zgodę na otrzymywanie od firmy Vocare okazjonalnych aktualizacji
-                      produktów i wiadomości e-mail o charakterze marketingowym.
+                      Wyrażam zgodę na otrzymywanie od Vocare informacji o nowościach i ofertach na
+                      podany adres e-mail. Zgodę mogę wycofać w każdej chwili.
                     </FormLabel>
                     <p className="text-xs font-medium text-[#915EFF]">
                       W podziękowaniu za zgodę otrzymasz darmowe tokeny na start.

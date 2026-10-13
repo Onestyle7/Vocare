@@ -6,6 +6,7 @@ const env = createEnv({
   skipValidation: !!process.env.SKIP_ENV_VALIDATION,
   server: {
     API_BASE_URL: z.string().url(),
+    INTERNAL_API_KEY: z.string().min(1),
     OAUTH_REDIRECT_URL_BASE: z.string().url(),
     OAUTH_GOOGLE_CLIENT_SECRET: z.string(),
     OAUTH_GOOGLE_CLIENT_ID: z.string(),
