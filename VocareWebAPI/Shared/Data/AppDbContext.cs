@@ -6,6 +6,7 @@ using VocareWebAPI.CareerAdvisor.Models.Entities.MarketAnalysis;
 using VocareWebAPI.CvGenerator.Models;
 using VocareWebAPI.CvGenerator.Models.Entities;
 using VocareWebAPI.JobOffers.Models.Entities;
+using VocareWebAPI.Legal.Models.Entities;
 using VocareWebAPI.MarketNews.Models.Entities;
 using VocareWebAPI.Models;
 using VocareWebAPI.Models.Entities;
@@ -92,6 +93,9 @@ namespace VocareWebAPI.Data
         public DbSet<CvAnalysis> CvAnalyses { get; set; }
         public DbSet<Notification> Notifications { get; set; }
         public DbSet<ProfileAttributes> ProfileAttributes { get; set; }
+        public DbSet<UserConsent> UserConsents { get; set; }
+        public DbSet<LegalDocument> LegalDocuments { get; set; }
+        public DbSet<AccountAntiAbuseRegistry> AccountAntiAbuseRegistries { get; set; }
 
         /// <summary>
         /// Konfiguruje model bazy danych, definiując schemat i relacje między encjami.
@@ -101,6 +105,7 @@ namespace VocareWebAPI.Data
         {
             builder.HasPostgresExtension("vector");
             base.OnModelCreating(builder);
+            builder.ApplyConfigurationsFromAssembly(typeof(AppDbContext).Assembly);
 
             // Konwersja DateTime na UTC dla wszystkich właściwości DateTime i DateTime?
             var dateTimeConverter = new ValueConverter<DateTime, DateTime>(
@@ -161,6 +166,27 @@ namespace VocareWebAPI.Data
                 .OnDelete(DeleteBehavior.Cascade);
 
             builder
+                .Entity<AiRecommendation>()
+                .HasMany(ar => ar.CareerPaths)
+                .WithOne()
+                .HasForeignKey("AiRecommendationId")
+                .OnDelete(DeleteBehavior.Cascade);
+
+            builder
+                .Entity<AiRecommendation>()
+                .HasMany(ar => ar.NextSteps)
+                .WithOne()
+                .HasForeignKey("AiRecommendationId")
+                .OnDelete(DeleteBehavior.Cascade);
+
+            builder
+                .Entity<CareerPath>()
+                .HasOne(cp => cp.CareerStatistics)
+                .WithMany()
+                .HasForeignKey(cp => cp.CareerStatisticsId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            builder
                 .Entity<MarketTrends>()
                 .HasOne(m => m.AiRecommendation)
                 .WithMany(a => a.MarketTrends)
@@ -203,6 +229,10 @@ namespace VocareWebAPI.Data
                 .HasOne(u => u.UserProfile)
                 .WithOne(u => u.User)
                 .HasForeignKey<UserProfile>(u => u.UserId);
+
+            builder
+                .Entity<User>()
+                .HasIndex(u => u.IsDeleted);
 
             // Relacja 1:1 między User a UserBilling
             builder
@@ -428,11 +458,11 @@ namespace VocareWebAPI.Data
             builder.Entity<Notification>(e =>
             {
                 e.HasIndex(n => new
-                    {
-                        n.UserId,
-                        n.IsRead,
-                        n.CreatedAt,
-                    })
+                {
+                    n.UserId,
+                    n.IsRead,
+                    n.CreatedAt,
+                })
                     .IsDescending(false, false, true);
             });
 
@@ -440,3 +470,4 @@ namespace VocareWebAPI.Data
         }
     }
 }
+

@@ -48,9 +48,15 @@ async function authProxy(request: NextRequest) {
   });
 
   if (searchParams.has('reason')) {
-    response.cookies.delete('token');
-    response.cookies.delete('userId');
-    return response;
+    requestHeaders.delete('cookie');
+    const cleanResponse = NextResponse.next({
+      request: {
+        headers: requestHeaders,
+      },
+    });
+    cleanResponse.cookies.set('token', '', { path: '/', maxAge: 0 });
+    cleanResponse.cookies.set('userId', '', { path: '/', maxAge: 0 });
+    return cleanResponse;
   }
 
   if (request.cookies.has('token') && authPages.includes(request.nextUrl.pathname)) {

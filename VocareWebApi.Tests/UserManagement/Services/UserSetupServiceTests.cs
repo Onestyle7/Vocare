@@ -4,6 +4,7 @@ using FluentAssertions;
 using Hangfire;
 using Hangfire.Common;
 using Hangfire.States;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Logging.Abstractions;
 using Microsoft.Extensions.Options;
 using Moq;
@@ -11,11 +12,15 @@ using VocareWebAPI.Billing.Exceptions;
 using VocareWebAPI.Billing.Models.Entities;
 using VocareWebAPI.Billing.Models.Enums;
 using VocareWebAPI.Billing.Repositories.Interfaces;
+using VocareWebAPI.Models.Entities;
+using VocareWebApi.Tests.Common;
 using VocareWebAPI.UserManagement.Interfaces;
 using VocareWebAPI.UserManagement.Models.Entities;
 using VocareWebAPI.UserManagement.Models.Enums;
 using VocareWebAPI.UserManagement.Models.Results;
+using VocareWebAPI.UserManagement.Repositories.Interfaces;
 using VocareWebAPI.UserManagement.Services;
+using VocareWebAPI.UserManagement.Services.Interfaces;
 using Xunit;
 
 namespace VocareWebApi.Tests.UserManagement.Services
@@ -31,6 +36,9 @@ namespace VocareWebApi.Tests.UserManagement.Services
         private const string WelcomeBonusServiceName = "WelcomeBonus-MarketingConsent";
 
         private readonly Mock<IUserBillingRepository> _billing = new(MockBehavior.Strict);
+        private readonly Mock<IAccountAntiAbuseReporitory> _antiAbuse = new();
+        private readonly Mock<IEmailHashService> _emailHash = new();
+        private readonly Mock<UserManager<User>> _userManager = IdentityMocks.UserManager();
         private readonly Mock<ITokenTransactionRepository> _transactions = new(MockBehavior.Strict);
         private readonly Mock<IBackgroundJobClient> _jobs = new();
 
@@ -38,8 +46,11 @@ namespace VocareWebApi.Tests.UserManagement.Services
             new(
                 _billing.Object,
                 Options.Create(new UserRegistrationConfig { WelcomeTokens = welcomeTokens }),
-                _transactions.Object,
                 NullLogger<UserSetupService>.Instance,
+                _antiAbuse.Object,
+                _emailHash.Object,
+                _userManager.Object,
+                _transactions.Object,
                 _jobs.Object
             );
 
@@ -224,6 +235,32 @@ namespace VocareWebApi.Tests.UserManagement.Services
             var result = await CreateSut().GrantOrScheduleWelcomeTokensAsync(UserId);
 
             result.Should().Be(new WelcomeBonusResult(WelcomeBonusStatus.Failed, 0));
+        }
+
+        [Fact]
+        public async Task GrantWelcomeTokensAsync_WhenPriorAccountExisted_ReturnsAlreadyClaimedWithoutGranting()
+        {
+            var user = new User { Id = UserId, Email = "returning@example.com" };
+            _userManager.Setup(m => m.FindByIdAsync(UserId)).ReturnsAsync(user);
+            _emailHash.Setup(h => h.ComputeHash(user.Email)).Returns("hashed-email");
+            _antiAbuse.Setup(a => a.HasPriorBonusAsync("hashed-email")).ReturnsAsync(true);
+            _transactions
+                .Setup(r => r.HasTransactionOfTypeAsync(UserId, TransactionType.WelcomeBonus))
+                .ReturnsAsync(false);
+
+            var result = await CreateSut().GrantWelcomeTokensAsync(UserId);
+
+            result.Should().Be(new WelcomeBonusResult(WelcomeBonusStatus.AlreadyClaimed, 0));
+            _billing.Verify(
+                r =>
+                    r.AddTokensWithTransactionAsync(
+                        It.IsAny<string>(),
+                        It.IsAny<int>(),
+                        It.IsAny<TransactionType>(),
+                        It.IsAny<string>()
+                    ),
+                Times.Never
+            );
         }
     }
 }

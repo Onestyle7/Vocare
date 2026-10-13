@@ -12,7 +12,9 @@ using Microsoft.Extensions.Logging.Abstractions;
 using Moq;
 using VocareWebAPI.Billing.Models.Entities;
 using VocareWebAPI.Data;
+using VocareWebAPI.Legal.Services.Interfaces;
 using VocareWebAPI.Models.Entities;
+using VocareWebAPI.Shared.Services.Interfaces;
 using VocareWebApi.Tests.Common;
 using VocareWebAPI.UserManagement;
 using VocareWebAPI.UserManagement.Interfaces;
@@ -40,6 +42,8 @@ namespace VocareWebApi.Tests.UserManagement.Services
         private readonly Mock<IEmailService> _email = new();
         private readonly Mock<IMarketingConsentRepository> _marketingConsent = new();
         private readonly Mock<IUserSetupService> _userSetup = new();
+        private readonly Mock<ILegalService> _legalService = new();
+        private readonly Mock<ITokenService> _tokenService = new();
         private readonly AuthenticationService _sut;
 
         public AuthenticationServiceTests()
@@ -68,6 +72,10 @@ namespace VocareWebApi.Tests.UserManagement.Services
                     new HttpClient(FakeHttpMessageHandler.Throwing(new InvalidOperationException()))
                 );
 
+            _tokenService
+                .Setup(t => t.GenerateToken(It.IsAny<User>(), It.IsAny<bool>(), It.IsAny<int>()))
+                .Returns("test-jwt-token");
+
             _sut = new AuthenticationService(
                 _userManager.Object,
                 _signInManager.Object,
@@ -82,7 +90,12 @@ namespace VocareWebApi.Tests.UserManagement.Services
                 ),
                 _marketingConsent.Object,
                 _userSetup.Object,
-                _context
+                _legalService.Object,
+                _tokenService.Object,
+                _context,
+                Mock.Of<IClientInfoProvider>(p =>
+                    p.GetClientInfo() == new ClientInfo("127.0.0.1", "TestBrowser/1.0")
+                )
             );
         }
 
@@ -102,6 +115,20 @@ namespace VocareWebApi.Tests.UserManagement.Services
         public async Task LoginAsync_WhenUserNotFound_FailsWithInvalidCredentials401()
         {
             _userManager.Setup(m => m.FindByEmailAsync(Email)).ReturnsAsync((User?)null);
+
+            var result = await _sut.LoginAsync(Email, Password);
+
+            result.IsSuccess.Should().BeFalse();
+            result.Error!.Code.Should().Be("INVALID_CREDENTIALS");
+            result.Error.StatusCode.Should().Be(401);
+        }
+
+        [Fact]
+        public async Task LoginAsync_WhenUserIsDeleted_FailsWithInvalidCredentials401()
+        {
+            var user = NewUser();
+            user.IsDeleted = true;
+            _userManager.Setup(m => m.FindByEmailAsync(Email)).ReturnsAsync(user);
 
             var result = await _sut.LoginAsync(Email, Password);
 
@@ -164,7 +191,7 @@ namespace VocareWebApi.Tests.UserManagement.Services
                 .Setup(m => m.GetLoginsAsync(user))
                 .ReturnsAsync(new List<UserLoginInfo> { new("Google", "gid", "Google") });
 
-            var result = await _sut.RegisterAsync(Email, Password, false, null);
+            var result = await _sut.RegisterAsync(Email, Password, false);
 
             result.Error!.Code.Should().Be("GOOGLE_ACCOUNT_EXISTS");
             result.Error.StatusCode.Should().Be(409);
@@ -177,7 +204,7 @@ namespace VocareWebApi.Tests.UserManagement.Services
             _userManager.Setup(m => m.FindByEmailAsync(Email)).ReturnsAsync(user);
             _userManager.Setup(m => m.GetLoginsAsync(user)).ReturnsAsync(new List<UserLoginInfo>());
 
-            var result = await _sut.RegisterAsync(Email, Password, false, null);
+            var result = await _sut.RegisterAsync(Email, Password, false);
 
             result.Error!.Code.Should().Be("ACCOUNT_EXISTS");
         }
@@ -193,7 +220,7 @@ namespace VocareWebApi.Tests.UserManagement.Services
                 .Setup(s => s.SetupNewUserAsync(It.IsAny<string>()))
                 .Returns(Task.CompletedTask);
 
-            var result = await _sut.RegisterAsync(Email, Password, false, null);
+            var result = await _sut.RegisterAsync(Email, Password, false);
 
             result.IsSuccess.Should().BeTrue();
             _userSetup.Verify(s => s.SetupNewUserAsync(It.IsAny<string>()), Times.Once);
@@ -215,7 +242,7 @@ namespace VocareWebApi.Tests.UserManagement.Services
         {
             SetupSuccessfulIdentityCreation();
 
-            var result = await _sut.RegisterAsync(Email, Password, false, null);
+            var result = await _sut.RegisterAsync(Email, Password, false);
 
             result.Value!.WelcomeBonus.Should().BeNull();
             _userSetup.Verify(
@@ -232,7 +259,7 @@ namespace VocareWebApi.Tests.UserManagement.Services
                 .Setup(s => s.GrantOrScheduleWelcomeTokensAsync(It.IsAny<string>()))
                 .ReturnsAsync(new WelcomeBonusResult(WelcomeBonusStatus.Granted, 120));
 
-            var result = await _sut.RegisterAsync(Email, Password, true, "127.0.0.1");
+            var result = await _sut.RegisterAsync(Email, Password, true);
 
             result.IsSuccess.Should().BeTrue();
             result
@@ -252,7 +279,7 @@ namespace VocareWebApi.Tests.UserManagement.Services
                 .Setup(r => r.CreateAsync(It.Is<MarketingConsent>(c => c.IsConsentGiven)))
                 .ThrowsAsync(new InvalidOperationException("db down"));
 
-            var result = await _sut.RegisterAsync(Email, Password, true, null);
+            var result = await _sut.RegisterAsync(Email, Password, true);
 
             result.IsSuccess.Should().BeTrue();
             result.Value!.WelcomeBonus.Should().BeNull();
@@ -270,7 +297,7 @@ namespace VocareWebApi.Tests.UserManagement.Services
                 .Setup(s => s.GrantOrScheduleWelcomeTokensAsync(It.IsAny<string>()))
                 .ReturnsAsync(new WelcomeBonusResult(WelcomeBonusStatus.Pending, 0));
 
-            var result = await _sut.RegisterAsync(Email, Password, true, null);
+            var result = await _sut.RegisterAsync(Email, Password, true);
 
             result.IsSuccess.Should().BeTrue();
             result
@@ -290,7 +317,7 @@ namespace VocareWebApi.Tests.UserManagement.Services
                 .Setup(m => m.CreateAsync(It.IsAny<User>(), Password))
                 .ReturnsAsync(IdentityResult.Failed(new IdentityError { Description = "weak" }));
 
-            var result = await _sut.RegisterAsync(Email, Password, false, null);
+            var result = await _sut.RegisterAsync(Email, Password, false);
 
             result.Error!.Code.Should().Be("REGISTRATION_FAILED");
         }

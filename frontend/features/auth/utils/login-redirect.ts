@@ -4,11 +4,15 @@ import { redirect } from 'next/navigation';
 export async function forceLoginRedirect(reason?: string, callbackPath?: string) {
   const defaultReason = 'Sesja wygasła. Zaloguj się ponownie';
 
+  const headersList = await headers();
+  const currentPath = headersList.get('x-current-path') ?? '';
+
+  if (currentPath.startsWith('/sign-in') || currentPath.startsWith('/sign-up')) {
+    return;
+  }
+
   if (!callbackPath) {
-    const headersList = await headers();
-    const currentPath = headersList.get('x-current-path');
-    console.log(currentPath);
-    if (currentPath && currentPath != '/') {
+    if (currentPath && currentPath !== '/') {
       callbackPath = currentPath;
     } else {
       callbackPath = '/';
