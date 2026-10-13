@@ -44,7 +44,11 @@ Vocare/
 - **Code Style & Formatting**: ESLint 9 (flat config), Prettier with Tailwind plugin.
 
 ### Mobile (Flutter)
-- Located in `/mobile` for iOS and Android deployment.
+- Located in `/mobile` for iOS and Android deployment (bundle id `com.vocare.app`). See [mobile/README.md](mobile/README.md).
+- **Stack**: Flutter 3.44 / Dart 3.12, Riverpod 3, go_router, Dio, flutter_secure_storage.
+- **Data access**: repositories in `lib/features/<feature>/data/` return `Result<T, ApiError>` (counterpart of `neverthrow`); copy and validation rules mirror the web DAL.
+- **Liquid Glass**: use the `LiquidGlass` widget (`lib/core/glass/`) — native `UIGlassEffect` on iOS 26+, shader fallback elsewhere. Glass is for chrome only (bars, floating buttons, sheets); content cards stay opaque.
+- **Design tokens** come from the Figma "Mobile App design" page and live in `lib/core/theme/` — never hardcode colours or spacing.
 
 ---
 

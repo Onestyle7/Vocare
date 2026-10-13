@@ -1,64 +1,90 @@
 name: vocare
-description: "A new Flutter project."
+description: "Vocare — AI career advisor"
 publish_to: 'none'
 
 version: 1.0.0+1
 
 environment:
-  sdk: ^3.7.0
+  sdk: ^3.12.2
 
 dependencies:
   flutter:
     sdk: flutter
-  http: ^0.13.6
-  country_picker: ^2.0.20
-  country_code_picker: ^3.0.0
-  shared_preferences: ^2.2.2
-  provider: ^6.0.0
-  flutter_svg: ^2.0.9
-  phosphor_flutter: ^1.0.0
-  cupertino_icons: ^1.0.0
+  flutter_localizations:
+    sdk: flutter
+
+  # State & navigation
+  flutter_riverpod: ^3.4.3
+  go_router: ^18.0.2
+
+  # Networking & storage
+  dio: ^5.11.1
+  flutter_secure_storage: ^11.2.0
+  shared_preferences: ^2.5.6
+
+  # Auth
+  google_sign_in: ^7.2.0
+  flutter_web_auth_2: ^5.1.0
+  app_links: ^7.2.2
+
+  # UI
+  flutter_svg: ^2.3.0
+  liquid_glass_widgets: ^1.11.1
+  fl_chart: ^1.2.0
+  intl: ^0.20.2
+
+  # Documents
+  pdf: ^3.13.1
+  printing: ^5.15.1
+
+  # Platform
+  url_launcher: ^6.3.3
+  file_picker: ^13.1.0
 
 dev_dependencies:
   flutter_test:
     sdk: flutter
-  flutter_lints: ^5.0.0
-  flutter_launcher_icons: ^0.13.1
-
-flutter_icons:
-  android: true
-  ios: true
-  image_path: "assets/img/VocareIcone.png"
+  integration_test:
+    sdk: flutter
+  flutter_lints: ^6.0.0
+  flutter_native_splash: ^2.4.8
+  flutter_launcher_icons: ^0.14.4
 
 flutter:
   uses-material-design: true
 
   assets:
-    - assets/img/vocare.png
-    - assets/icons/home.svg
-    - assets/icons/profile.svg
-    - assets/img/VocareIcone.png
+    - assets/images/
+    - assets/icons/
 
   fonts:
-  - family: Poppins
-    fonts:
-      - asset: assets/fonts/Poppins-Regular.ttf
-        weight: 400
-      - asset: assets/fonts/Poppins-Italic.ttf
-        weight: 400
-        style: italic
-      - asset: assets/fonts/Poppins-Medium.ttf
-        weight: 500
-      - asset: assets/fonts/Poppins-MediumItalic.ttf
-        weight: 500
-        style: italic
-      - asset: assets/fonts/Poppins-SemiBold.ttf
-        weight: 600
-      - asset: assets/fonts/Poppins-SemiBoldItalic.ttf
-        weight: 600
-        style: italic
-      - asset: assets/fonts/Poppins-Bold.ttf
-        weight: 700
-      - asset: assets/fonts/Poppins-BoldItalic.ttf
-        weight: 700
-        style: italic
+    - family: Poppins
+      fonts:
+        - asset: assets/fonts/Poppins-ExtraLight.ttf
+          weight: 200
+        - asset: assets/fonts/Poppins-Light.ttf
+          weight: 300
+        - asset: assets/fonts/Poppins-Regular.ttf
+          weight: 400
+        - asset: assets/fonts/Poppins-Medium.ttf
+          weight: 500
+        - asset: assets/fonts/Poppins-SemiBold.ttf
+          weight: 600
+        - asset: assets/fonts/Poppins-Bold.ttf
+          weight: 700
+
+flutter_native_splash:
+  color: "#16171B"
+  image: assets/images/logo.png
+  android_12:
+    color: "#16171B"
+    image: assets/images/logo.png
+  fullscreen: false
+
+flutter_launcher_icons:
+  android: true
+  ios: true
+  image_path: tool/branding/app_icon.png
+  remove_alpha_ios: true
+  adaptive_icon_background: tool/branding/app_icon_background.png
+  adaptive_icon_foreground: tool/branding/app_icon_foreground.png

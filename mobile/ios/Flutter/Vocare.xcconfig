@@ -1,0 +1,15 @@
+// App-level build settings shared by Debug and Release.
+
+// Reversed iOS OAuth client ID from Google Cloud Console, e.g.
+// com.googleusercontent.apps.1234567890-abcdef. Required for Google Sign-In;
+// pair it with --dart-define=GOOGLE_IOS_CLIENT_ID (see README).
+GOOGLE_REVERSED_CLIENT_ID = com.googleusercontent.apps.REPLACE_ME
+
+// Bundle id of the app. A free (Personal Team) Apple account cannot use
+// com.vocare.app — it is registered elsewhere — so Local.xcconfig may
+// override it with a unique development id.
+VOCARE_BUNDLE_ID = com.vocare.app
+
+// Per-developer signing (DEVELOPMENT_TEAM, VOCARE_BUNDLE_ID) lives in an
+// untracked Local.xcconfig — see README "Running on an iPhone".
+#include? "Local.xcconfig"

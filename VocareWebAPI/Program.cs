@@ -46,7 +46,7 @@ builder
     .AddHttpClients(builder.Configuration)
     .AddApplicationServices()
     .AddRepositories()
-    .AddAutoMapper(typeof(UserProfileService).Assembly)
+    .AddAutoMapper(cfg => { }, typeof(UserProfileService).Assembly)
     .AddGlobalExceptionHandling();
 
 // ===== AUTHENTICATION & AUTHORIZATION =====
