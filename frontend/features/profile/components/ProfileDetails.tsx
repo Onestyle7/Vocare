@@ -1,10 +1,11 @@
 'use client';
 
-import { ArrowDown, ArrowLeft, ArrowRight, ArrowUp, LogOut, Settings } from 'lucide-react';
+import { ArrowDown, ArrowLeft, ArrowRight, ArrowUp, LogOut, Settings, Trash2 } from 'lucide-react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { useEffect, useRef, useState } from 'react';
 
+import { DeleteAccountDialog } from '@/features/auth/components/DeleteAccountDialog';
 import { spinner_terminal } from '@/features/marketing/constants/index';
 import { PersonalityType, personalityTypeLabels } from '@/lib/types/personalityTypes';
 import { getEducationDegreeLabel } from '@/lib/types/profile';
@@ -55,6 +56,7 @@ export default function ProfileDetails() {
 
   const [currentPage, setCurrentPage] = useState(0);
   const [isEditing, setIsEditing] = useState(false);
+  const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
 
   const scrollRef = useRef<HTMLDivElement | null>(null);
   const [atBottom, setAtBottom] = useState(false);
@@ -481,6 +483,16 @@ export default function ProfileDetails() {
                           <LogOut className="h-4 w-4" />
                         )}
                       </Button>
+                      <Button
+                        onClick={() => setIsDeleteDialogOpen(true)}
+                        disabled={isPending}
+                        variant="outline"
+                        size="lg"
+                        className="h-10 w-10 justify-center rounded-[7px] p-0 text-muted-foreground hover:bg-destructive/10 hover:text-destructive hover:border-destructive/30"
+                        aria-label="Usuń konto"
+                      >
+                        <Trash2 className="h-4 w-4" />
+                      </Button>
                     </div>
                   </div>
                   <div className="flex w-full min-w-0 flex-col gap-3 2xl:w-auto 2xl:flex-row 2xl:items-center 2xl:justify-end 2xl:gap-2">
@@ -523,6 +535,16 @@ export default function ProfileDetails() {
                         ) : (
                           <LogOut className="h-4 w-4" />
                         )}
+                      </Button>
+                      <Button
+                        onClick={() => setIsDeleteDialogOpen(true)}
+                        disabled={isPending}
+                        variant="outline"
+                        size="lg"
+                        className="order-5 hidden h-10 w-10 shrink-0 justify-center rounded-full p-0 text-muted-foreground hover:bg-destructive/10 hover:text-destructive hover:border-destructive/30 sm:order-5 sm:inline-flex sm:w-10 sm:rounded-[7px]"
+                        aria-label="Usuń konto"
+                      >
+                        <Trash2 className="h-4 w-4" />
                       </Button>
                     </div>
                   </div>
@@ -569,6 +591,10 @@ export default function ProfileDetails() {
           </div>
         </div>
       </div>
+      <DeleteAccountDialog
+        isOpen={isDeleteDialogOpen}
+        onClose={() => setIsDeleteDialogOpen(false)}
+      />
     </Section>
   );
 }

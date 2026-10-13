@@ -20,5 +20,14 @@ namespace VocareWebAPI.UserManagement.Models.Dtos
         [Compare("Password", ErrorMessage = "Password and confirmation password do not match.")]
         public required string ConfirmPassword { get; set; }
         public bool AcceptMarketingConsent { get; set; } = false;
+
+        // Terms acceptance is recorded at registration, so the account is not created without it
+        [Range(
+            typeof(bool),
+            "true",
+            "true",
+            ErrorMessage = "Terms and conditions must be accepted."
+        )]
+        public bool AcceptTermsAndConditions { get; set; }
     }
 }
