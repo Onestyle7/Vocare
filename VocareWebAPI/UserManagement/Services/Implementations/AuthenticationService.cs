@@ -5,8 +5,11 @@ using Microsoft.AspNetCore.DataProtection;
 using Microsoft.AspNetCore.Identity;
 using VocareWebAPI.Billing.Models.Entities;
 using VocareWebAPI.Data;
+using VocareWebAPI.Legal.Models.Enums;
+using VocareWebAPI.Legal.Services.Interfaces;
 using VocareWebAPI.Models.Entities;
 using VocareWebAPI.Shared.Results;
+using VocareWebAPI.Shared.Services.Interfaces;
 using VocareWebAPI.UserManagement.Interfaces;
 using VocareWebAPI.UserManagement.Models.Results;
 using VocareWebAPI.UserManagement.Repositories.Interfaces;
@@ -26,7 +29,10 @@ namespace VocareWebAPI.UserManagement.Services.Implementations
         private readonly UserRegistrationHandler _registrationHandler;
         private readonly IMarketingConsentRepository _marketingConsentRepository;
         private readonly IUserSetupService _userSetupService;
+        private readonly ILegalService _legalService;
+        private readonly ITokenService _tokenService;
         private readonly AppDbContext _dbContext;
+        private readonly IClientInfoProvider _clientInfoProvider;
 
         public AuthenticationService(
             UserManager<User> userManager,
@@ -39,7 +45,10 @@ namespace VocareWebAPI.UserManagement.Services.Implementations
             UserRegistrationHandler registrationHandler,
             IMarketingConsentRepository marketingConsentRepository,
             IUserSetupService userSetupService,
-            AppDbContext dbContext
+            ILegalService legalService,
+            ITokenService tokenService,
+            AppDbContext dbContext,
+            IClientInfoProvider clientInfoProvider
         )
         {
             _userManager = userManager;
@@ -52,15 +61,18 @@ namespace VocareWebAPI.UserManagement.Services.Implementations
             _registrationHandler = registrationHandler;
             _marketingConsentRepository = marketingConsentRepository;
             _userSetupService = userSetupService;
+            _legalService = legalService;
+            _tokenService = tokenService;
             _dbContext = dbContext;
+            _clientInfoProvider = clientInfoProvider;
         }
 
         public async Task<Result<LoginResult>> LoginAsync(string email, string password)
         {
             var user = await _userManager.FindByEmailAsync(email);
-            if (user == null)
+            if (user == null || user.IsDeleted)
             {
-                _logger.LogWarning("Failed login attempt for non-existent user: {Email}", email);
+                _logger.LogWarning("Failed login attempt for non-existent or deleted user: {Email}", email);
                 return Result<LoginResult>.Fail(
                     new Error("INVALID_CREDENTIALS", "Invalid email or password.", 401)
                 );
@@ -90,40 +102,22 @@ namespace VocareWebAPI.UserManagement.Services.Implementations
                 );
             }
 
-            var token = GenerateIdentityCompatibleToken(user);
+            var hasValidConsents = await _legalService.HasValidConsentsAsync(user.Id);
+            var token = _tokenService.GenerateToken(user, hasValidConsents);
 
-            _logger.LogInformation("User logged in successfully: {UserId}", user.Id);
+            _logger.LogInformation("User logged in successfully: {UserId}, ConsentsValid: {ConsentsValid}", user.Id, hasValidConsents);
 
             var loginResult = LoginResult.Successful(token, user.Id, user.Email, 3600);
             return Result<LoginResult>.Ok(loginResult);
         }
 
-        private string GenerateIdentityCompatibleToken(User user)
-        {
-            var protector = _httpContextAccessor
-                .HttpContext.RequestServices.GetRequiredService<IDataProtectionProvider>()
-                .CreateProtector("VocareAuth");
-
-            var tokenData = new
-            {
-                sub = user.Id,
-                email = user.Email,
-                jti = Guid.NewGuid().ToString(),
-                exp = DateTimeOffset.UtcNow.AddHours(1).ToUnixTimeSeconds(),
-                iat = DateTimeOffset.UtcNow.ToUnixTimeSeconds(),
-            };
-
-            var json = JsonSerializer.Serialize(tokenData);
-            return protector.Protect(json);
-        }
-
         public async Task<Result<RegisterResult>> RegisterAsync(
             string email,
             string password,
-            bool acceptMarketingConsent,
-            string? ipAddress
+            bool acceptMarketingConsent
         )
         {
+            var clientInfo = _clientInfoProvider.GetClientInfo();
             var existingUser = await _userManager.FindByEmailAsync(email);
             if (existingUser != null)
             {
@@ -189,7 +183,27 @@ namespace VocareWebAPI.UserManagement.Services.Implementations
                 );
             }
 
-            // Zgody są poza transakcją z tego względu, że nie są krytyczne do działania konta
+            try
+            {
+                var currentDocumentIds = await _legalService.GetCurrentDocumentIdsAsync();
+                if (currentDocumentIds.Count > 0)
+                {
+                    await _legalService.AcceptConsentsAsync(
+                        user.Id,
+                        currentDocumentIds,
+                        clientInfo.IpAddress,
+                        clientInfo.UserAgent,
+                        ConsentSource.Registration
+                    );
+                    _logger.LogInformation("Legal consents recorded for registered user: {UserId}", user.Id);
+                }
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Failed to record legal consents upon registration for user: {UserId}", user.Id);
+            }
+
+            // Zgody marketingowe są poza transakcją z tego względu, że nie są krytyczne do działania konta
             // Jeśli coś pójdzie nie tak z zapisaniem zgody to puszczamy fallback ze zgodą na false - w najgorszym przypadku nie zbierzemy zgody
             // TODO: Kiedyś może wydzielić wewnętrzy try/catch żeby bylo trochę ładniej
             WelcomeBonusResult? welcomeBonus = null;
@@ -204,7 +218,7 @@ namespace VocareWebAPI.UserManagement.Services.Implementations
                         IsConsentGiven = true,
                         ConsentDate = DateTime.UtcNow,
                         ConsentSource = "registration_form",
-                        IpAddress = ipAddress,
+                        IpAddress = clientInfo.IpAddress,
 
                         ConsentText =
                             "Wyrażam zgodę na otrzymywanie informacji marketingowych od Vocare.",
@@ -234,7 +248,7 @@ namespace VocareWebAPI.UserManagement.Services.Implementations
                             IsConsentGiven = false,
                             ConsentDate = DateTime.UtcNow,
                             ConsentSource = "registration_form",
-                            IpAddress = ipAddress,
+                            IpAddress = clientInfo.IpAddress,
                         };
                         await _marketingConsentRepository.CreateAsync(consent);
                         _logger.LogInformation(
@@ -259,10 +273,10 @@ namespace VocareWebAPI.UserManagement.Services.Implementations
         public async Task<Result<ForgotPasswordResult>> ForgotPasswordAsync(string email)
         {
             var user = await _userManager.FindByEmailAsync(email);
-            if (user == null)
+            if (user == null || user.IsDeleted)
             {
                 _logger.LogWarning(
-                    "Password reset requested for non-existent email {Email}",
+                    "Password reset requested for non-existent or deleted email {Email}",
                     email
                 );
                 return Result<ForgotPasswordResult>.Ok(
@@ -346,10 +360,10 @@ Zespół Vocare
         )
         {
             var user = await _userManager.FindByEmailAsync(email);
-            if (user == null)
+            if (user == null || user.IsDeleted)
             {
                 _logger.LogWarning(
-                    "Password reset attempted for non-existent email: {Email}",
+                    "Password reset attempted for non-existent or deleted email: {Email}",
                     email
                 );
                 return Result<ResetPasswordResult>.Fail(
@@ -417,7 +431,7 @@ Zespół Vocare
             }
 
             var user = await _userManager.FindByEmailAsync(email);
-            if (user == null)
+            if (user == null || user.IsDeleted)
                 return Result<ValidateResetTokenResult>.Ok(
                     ValidateResetTokenResult.Successful(false, "Token is invalid or expired.")
                 );
@@ -596,6 +610,27 @@ Zespół Vocare
 
                         await _registrationHandler.HandleUserRegistrationAsync(user.Id);
                         await transaction.CommitAsync();
+
+                        try
+                        {
+                            var currentDocumentIds = await _legalService.GetCurrentDocumentIdsAsync();
+                            if (currentDocumentIds.Count > 0)
+                            {
+                                var clientInfo = _clientInfoProvider.GetClientInfo();
+                                await _legalService.AcceptConsentsAsync(
+                                    user.Id,
+                                    currentDocumentIds,
+                                    clientInfo.IpAddress,
+                                    clientInfo.UserAgent,
+                                    ConsentSource.Registration
+                                );
+                                _logger.LogInformation("Legal consents recorded for Google SSO user: {UserId}", user.Id);
+                            }
+                        }
+                        catch (Exception ex)
+                        {
+                            _logger.LogError(ex, "Failed to record legal consents during Google registration for user: {UserId}", user.Id);
+                        }
                     }
                     catch (Exception ex)
                     {
@@ -647,7 +682,8 @@ Zespół Vocare
                     }
                 }
 
-                var accessTokenGenerated = GenerateIdentityCompatibleToken(user);
+                var hasValidConsents = await _legalService.HasValidConsentsAsync(user.Id);
+                var accessTokenGenerated = _tokenService.GenerateToken(user, hasValidConsents);
                 var refreshToken = Guid.NewGuid().ToString();
 
                 try
@@ -866,7 +902,8 @@ Zespół Vocare
                         }
                     }
                 }
-                var accessTokenGenerated = GenerateIdentityCompatibleToken(user);
+                var hasValidConsents = await _legalService.HasValidConsentsAsync(user.Id);
+                var accessTokenGenerated = _tokenService.GenerateToken(user, hasValidConsents);
                 var refreshToken = Guid.NewGuid().ToString();
 
                 try

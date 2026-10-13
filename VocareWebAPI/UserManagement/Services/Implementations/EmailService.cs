@@ -8,6 +8,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
+using VocareWebAPI.UserManagement.Models.Dtos;
 using VocareWebAPI.UserManagement.Services.Interfaces;
 
 namespace VocareWebAPI.UserManagement.Services.Implementations
@@ -40,22 +41,49 @@ namespace VocareWebAPI.UserManagement.Services.Implementations
 
         public async Task SendEmailAsync(string to, string subject, string body)
         {
-            await SendViaResend(to, subject, body);
+            await SendViaResend(to, subject, body, Array.Empty<EmailAttachment>());
         }
 
-        private async Task SendViaResend(string to, string subject, string body)
+        public async Task SendEmailAsync(
+            string to,
+            string subject,
+            string body,
+            IReadOnlyCollection<EmailAttachment> attachments
+        )
+        {
+            await SendViaResend(to, subject, body, attachments);
+        }
+
+        private async Task SendViaResend(
+            string to,
+            string subject,
+            string body,
+            IReadOnlyCollection<EmailAttachment> attachments
+        )
         {
             var fromEmail = _configuration["Resend:FromEmail"] ?? "noreply@vocare.pl";
             var fromName = _configuration["Resend:FromName"] ?? "Vocare Team";
 
-            var payload = new
+            var payload = new Dictionary<string, object>
             {
-                from = $"{fromName} <{fromEmail}>",
-                to = new[] { to },
-                subject = subject,
-                html = ConvertToHtml(body),
-                text = StripHtml(body),
+                ["from"] = $"{fromName} <{fromEmail}>",
+                ["to"] = new[] { to },
+                ["subject"] = subject,
+                ["html"] = ConvertToHtml(body),
+                ["text"] = StripHtml(body),
             };
+
+            if (attachments.Count > 0)
+            {
+                // Resend przyjmuje treść załącznika jako Base64
+                payload["attachments"] = attachments
+                    .Select(a => new
+                    {
+                        filename = a.FileName,
+                        content = Convert.ToBase64String(a.Content),
+                    })
+                    .ToArray();
+            }
 
             var jsonPayload = JsonSerializer.Serialize(payload);
             var content = new StringContent(jsonPayload, Encoding.UTF8, "application/json");

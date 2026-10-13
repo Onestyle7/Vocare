@@ -137,11 +137,35 @@ namespace VocareWebAPI.Extensions.ApplicationBuilderExtensions
 
                                 if (user != null)
                                 {
+                                    if (user.IsDeleted)
+                                    {
+                                        var logger = context.RequestServices.GetRequiredService<ILogger<Program>>();
+                                        logger.LogDebug("User: {userId} is deleted", user.Id);
+                                        await next();
+                                        return;
+                                    }
                                     var principal = await context
                                         .RequestServices.GetRequiredService<
                                             IUserClaimsPrincipalFactory<User>
                                         >()
                                         .CreateAsync(user);
+
+                                    if (principal.Identity is System.Security.Claims.ClaimsIdentity identity)
+                                    {
+                                        var consentsValid = false;
+                                        if (tokenData.TryGetProperty("consents_valid", out var cvElement))
+                                        {
+                                            consentsValid = cvElement.ValueKind switch
+                                            {
+                                                JsonValueKind.True => true,
+                                                JsonValueKind.False => false,
+                                                JsonValueKind.String => bool.TryParse(cvElement.GetString(), out var parsed) && parsed,
+                                                _ => false
+                                            };
+                                        }
+                                        identity.AddClaim(new System.Security.Claims.Claim("consents_valid", consentsValid.ToString().ToLower()));
+                                    }
+
                                     context.User = principal;
                                 }
                             }
@@ -195,6 +219,12 @@ namespace VocareWebAPI.Extensions.ApplicationBuilderExtensions
                 );
             }
 
+            return app;
+        }
+
+        public static WebApplication UseLegalConsentsValidation(this WebApplication app)
+        {
+            app.UseMiddleware<VocareWebAPI.Legal.Middlewares.LegalConsentsMiddleware>();
             return app;
         }
     }
