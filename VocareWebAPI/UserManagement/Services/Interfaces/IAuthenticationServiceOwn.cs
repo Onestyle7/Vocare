@@ -18,8 +18,7 @@ namespace VocareWebAPI.UserManagement.Services.Interfaces
         Task<Result<RegisterResult>> RegisterAsync(
             string email,
             string password,
-            bool acceptMarketingConsent,
-            string? ipAddress
+            bool acceptMarketingConsent
         );
 
         Task<Result<LoginResult>> LoginAsync(string email, string password);

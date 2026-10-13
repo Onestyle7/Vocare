@@ -15,6 +15,7 @@ using VocareWebAPI.Profiles;
 using VocareWebAPI.Repositories;
 using VocareWebAPI.Services;
 using VocareWebAPI.Shared.Results;
+using VocareWebAPI.Shared.Services.Interfaces;
 using VocareWebApi.Tests.Common;
 using VocareWebAPI.UserManagement.Controllers;
 using VocareWebAPI.UserManagement.Exceptions;
@@ -202,7 +203,10 @@ namespace VocareWebApi.Tests.UserManagement.Controllers
             _sut = new MarketingController(
                 _repository.Object,
                 NullLogger<MarketingController>.Instance,
-                _userSetup.Object
+                _userSetup.Object,
+                Mock.Of<IClientInfoProvider>(p =>
+                    p.GetClientInfo() == new ClientInfo("127.0.0.1", "TestBrowser/1.0")
+                )
             );
             _sut.WithUser(UserId);
         }

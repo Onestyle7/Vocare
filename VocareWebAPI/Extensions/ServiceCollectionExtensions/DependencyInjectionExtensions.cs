@@ -41,6 +41,8 @@ using VocareWebAPI.RoadmapService.Repositories.Interfaces;
 using VocareWebAPI.RoadmapService.Services.Implementations;
 using VocareWebAPI.RoadmapService.Services.Interfaces;
 using VocareWebAPI.Services;
+using VocareWebAPI.Shared.Services.Implementations;
+using VocareWebAPI.Shared.Services.Interfaces;
 using VocareWebAPI.UserManagement;
 using VocareWebAPI.UserManagement.Interfaces;
 using VocareWebAPI.UserManagement.Repositories;
@@ -112,6 +114,10 @@ namespace VocareWebAPI.Extensions.ServiceCollectionExtensions
 
             // Email hashing (anti abuse)
             services.AddScoped<IEmailHashService, EmailHashService>();
+
+            // End user's IP and User-Agent (forwarded by the Next.js server)
+            services.AddHttpContextAccessor();
+            services.AddScoped<IClientInfoProvider, ClientInfoProvider>();
 
             return services;
         }

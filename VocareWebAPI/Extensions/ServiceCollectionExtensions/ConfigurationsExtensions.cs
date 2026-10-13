@@ -4,6 +4,7 @@ using VocareWebAPI.CvGenerator.Models.Dtos;
 using VocareWebAPI.JobOffers.Configuration;
 using VocareWebAPI.JobOffers.Models.Options;
 using VocareWebAPI.Models.OpenAIConfig;
+using VocareWebAPI.Shared.Configuration;
 using VocareWebAPI.UserManagement.Configuration;
 using VocareWebAPI.UserManagement.Models.Entities;
 
@@ -44,6 +45,14 @@ namespace VocareWebAPI.Extensions.ServiceCollectionExtensions
                 .Validate(
                     opt => !string.IsNullOrWhiteSpace(opt.EmailHashKey),
                     "AntiAbuse:EmailHashKey configuration is missing or empty."
+                )
+                .ValidateOnStart();
+            services
+                .AddOptions<InternalApiOptions>()
+                .BindConfiguration(InternalApiOptions.SectionName)
+                .Validate(
+                    opt => !string.IsNullOrWhiteSpace(opt.Key),
+                    "InternalApi:Key configuration is missing or empty."
                 )
                 .ValidateOnStart();
             return services;

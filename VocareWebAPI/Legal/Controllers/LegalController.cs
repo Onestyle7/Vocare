@@ -6,6 +6,7 @@ using VocareWebAPI.Legal.Models.Dtos;
 using VocareWebAPI.Legal.Models.Enums;
 using VocareWebAPI.Legal.Services.Interfaces;
 using VocareWebAPI.Models.Entities;
+using VocareWebAPI.Shared.Services.Interfaces;
 using VocareWebAPI.UserManagement.Services.Interfaces;
 
 namespace VocareWebAPI.Legal.Controllers
@@ -17,17 +18,20 @@ namespace VocareWebAPI.Legal.Controllers
         private readonly ILegalService _legalService;
         private readonly UserManager<User> _userManager;
         private readonly ITokenService _tokenService;
+        private readonly IClientInfoProvider _clientInfoProvider;
         private readonly ILogger<LegalController> _logger;
 
         public LegalController(
             ILegalService legalService,
             UserManager<User> userManager,
             ITokenService tokenService,
+            IClientInfoProvider clientInfoProvider,
             ILogger<LegalController> logger)
         {
             _legalService = legalService;
             _userManager = userManager;
             _tokenService = tokenService;
+            _clientInfoProvider = clientInfoProvider;
             _logger = logger;
         }
 
@@ -67,14 +71,13 @@ namespace VocareWebAPI.Legal.Controllers
                 throw new UnauthorizedAccessException("User ID not found in token claims.");
             }
 
-            var ipAddress = HttpContext.Connection.RemoteIpAddress?.ToString() ?? "unknown";
-            var userAgent = Request.Headers.UserAgent.ToString();
+            var clientInfo = _clientInfoProvider.GetClientInfo();
 
             await _legalService.AcceptConsentsAsync(
                 userId,
                 request?.DocumentIds ?? [],
-                ipAddress,
-                userAgent,
+                clientInfo.IpAddress,
+                clientInfo.UserAgent,
                 ConsentSource.ConsentModal
             );
 

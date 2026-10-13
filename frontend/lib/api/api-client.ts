@@ -1,7 +1,7 @@
 import 'server-only';
 
 import { err, ok, Result } from 'neverthrow';
-import { cookies } from 'next/headers';
+import { cookies, headers } from 'next/headers';
 
 import env from '../env/server';
 import { Logger } from '../logger';
@@ -257,23 +257,50 @@ export class ApiClient {
     const cookieStore = await cookies();
     const token = cookieStore.get('token')?.value;
 
-    const headers: Record<string, string> = {
+    const requestHeaders: Record<string, string> = {
       ...this.config.defaultHeaders,
+      ...(await this.getClientInfoHeaders()),
       ...(options.headers as Record<string, string>),
     };
 
     if (token) {
-      headers['Authorization'] = `Bearer ${token}`;
+      requestHeaders['Authorization'] = `Bearer ${token}`;
     }
 
     if (options.body instanceof FormData) {
-      delete headers['Content-Type'];
+      delete requestHeaders['Content-Type'];
     }
 
     return {
       ...options,
-      headers,
+      headers: requestHeaders,
     };
+  }
+
+  /**
+   * Forwards the browser's IP and User-Agent to the API, which would otherwise only see
+   * this server. The backend trusts these headers only together with the internal API key.
+   */
+  private async getClientInfoHeaders(): Promise<Record<string, string>> {
+    const incomingHeaders = await headers();
+    const clientIp =
+      incomingHeaders.get('x-forwarded-for')?.split(',')[0]?.trim() ||
+      incomingHeaders.get('x-real-ip');
+    const clientUserAgent = incomingHeaders.get('user-agent');
+
+    const clientInfoHeaders: Record<string, string> = {
+      'X-Internal-Api-Key': env.INTERNAL_API_KEY,
+    };
+
+    if (clientIp) {
+      clientInfoHeaders['X-Client-IP'] = clientIp;
+    }
+
+    if (clientUserAgent) {
+      clientInfoHeaders['X-Client-User-Agent'] = clientUserAgent;
+    }
+
+    return clientInfoHeaders;
   }
 }
 

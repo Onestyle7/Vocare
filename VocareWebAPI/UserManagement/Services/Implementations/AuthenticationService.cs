@@ -9,6 +9,7 @@ using VocareWebAPI.Legal.Models.Enums;
 using VocareWebAPI.Legal.Services.Interfaces;
 using VocareWebAPI.Models.Entities;
 using VocareWebAPI.Shared.Results;
+using VocareWebAPI.Shared.Services.Interfaces;
 using VocareWebAPI.UserManagement.Interfaces;
 using VocareWebAPI.UserManagement.Models.Results;
 using VocareWebAPI.UserManagement.Repositories.Interfaces;
@@ -31,6 +32,7 @@ namespace VocareWebAPI.UserManagement.Services.Implementations
         private readonly ILegalService _legalService;
         private readonly ITokenService _tokenService;
         private readonly AppDbContext _dbContext;
+        private readonly IClientInfoProvider _clientInfoProvider;
 
         public AuthenticationService(
             UserManager<User> userManager,
@@ -45,7 +47,8 @@ namespace VocareWebAPI.UserManagement.Services.Implementations
             IUserSetupService userSetupService,
             ILegalService legalService,
             ITokenService tokenService,
-            AppDbContext dbContext
+            AppDbContext dbContext,
+            IClientInfoProvider clientInfoProvider
         )
         {
             _userManager = userManager;
@@ -61,6 +64,7 @@ namespace VocareWebAPI.UserManagement.Services.Implementations
             _legalService = legalService;
             _tokenService = tokenService;
             _dbContext = dbContext;
+            _clientInfoProvider = clientInfoProvider;
         }
 
         public async Task<Result<LoginResult>> LoginAsync(string email, string password)
@@ -110,10 +114,10 @@ namespace VocareWebAPI.UserManagement.Services.Implementations
         public async Task<Result<RegisterResult>> RegisterAsync(
             string email,
             string password,
-            bool acceptMarketingConsent,
-            string? ipAddress
+            bool acceptMarketingConsent
         )
         {
+            var clientInfo = _clientInfoProvider.GetClientInfo();
             var existingUser = await _userManager.FindByEmailAsync(email);
             if (existingUser != null)
             {
@@ -184,12 +188,11 @@ namespace VocareWebAPI.UserManagement.Services.Implementations
                 var currentDocumentIds = await _legalService.GetCurrentDocumentIdsAsync();
                 if (currentDocumentIds.Count > 0)
                 {
-                    var userAgent = _httpContextAccessor.HttpContext?.Request.Headers.UserAgent.ToString() ?? "Registration";
                     await _legalService.AcceptConsentsAsync(
                         user.Id,
                         currentDocumentIds,
-                        ipAddress ?? "unknown",
-                        userAgent,
+                        clientInfo.IpAddress,
+                        clientInfo.UserAgent,
                         ConsentSource.Registration
                     );
                     _logger.LogInformation("Legal consents recorded for registered user: {UserId}", user.Id);
@@ -215,7 +218,7 @@ namespace VocareWebAPI.UserManagement.Services.Implementations
                         IsConsentGiven = true,
                         ConsentDate = DateTime.UtcNow,
                         ConsentSource = "registration_form",
-                        IpAddress = ipAddress,
+                        IpAddress = clientInfo.IpAddress,
 
                         ConsentText =
                             "Wyrażam zgodę na otrzymywanie informacji marketingowych od Vocare.",
@@ -245,7 +248,7 @@ namespace VocareWebAPI.UserManagement.Services.Implementations
                             IsConsentGiven = false,
                             ConsentDate = DateTime.UtcNow,
                             ConsentSource = "registration_form",
-                            IpAddress = ipAddress,
+                            IpAddress = clientInfo.IpAddress,
                         };
                         await _marketingConsentRepository.CreateAsync(consent);
                         _logger.LogInformation(
@@ -613,13 +616,12 @@ Zespół Vocare
                             var currentDocumentIds = await _legalService.GetCurrentDocumentIdsAsync();
                             if (currentDocumentIds.Count > 0)
                             {
-                                var userAgent = _httpContextAccessor.HttpContext?.Request.Headers.UserAgent.ToString() ?? "GoogleSSO";
-                                var ipAddress = _httpContextAccessor.HttpContext?.Connection.RemoteIpAddress?.ToString() ?? "unknown";
+                                var clientInfo = _clientInfoProvider.GetClientInfo();
                                 await _legalService.AcceptConsentsAsync(
                                     user.Id,
                                     currentDocumentIds,
-                                    ipAddress,
-                                    userAgent,
+                                    clientInfo.IpAddress,
+                                    clientInfo.UserAgent,
                                     ConsentSource.Registration
                                 );
                                 _logger.LogInformation("Legal consents recorded for Google SSO user: {UserId}", user.Id);

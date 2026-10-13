@@ -6,6 +6,7 @@ using Microsoft.Extensions.Logging.Abstractions;
 using Moq;
 using VocareWebAPI.Billing.Exceptions;
 using VocareWebAPI.Billing.Models.Entities;
+using VocareWebAPI.Billing.Models.Enums;
 using VocareWebAPI.Billing.Repositories.Interfaces;
 using VocareWebAPI.Models.Entities;
 using VocareWebApi.Tests.Common;
@@ -177,6 +178,38 @@ namespace VocareWebApi.Tests.UserManagement.Services
             user.PasswordHash.Should().BeNull();
             user.SecurityStamp.Should().NotBeNullOrWhiteSpace();
 
+            _cleanupRepo.Verify(
+                r => r.PurgeUserDataAsync(user, "calculated-email-hash"),
+                Times.Once
+            );
+        }
+
+        [Fact]
+        public async Task DeleteCurrentUserAsync_WhenSubscriptionAlreadyCanceled_SkipsStripeAndDeletes()
+        {
+            var user = CreateValidUser(hasPassword: true);
+            _userManager.Setup(m => m.FindByIdAsync(UserId)).ReturnsAsync(user);
+            _userManager.Setup(m => m.HasPasswordAsync(user)).ReturnsAsync(true);
+            _userManager.Setup(m => m.CheckPasswordAsync(user, Password)).ReturnsAsync(true);
+
+            // Stale subscription id left behind by the subscription.deleted webhook.
+            _billingRepo
+                .Setup(r => r.GetByUserIdAsync(UserId))
+                .ReturnsAsync(
+                    new UserBilling
+                    {
+                        UserId = UserId,
+                        StripeSubscriptionId = "sub_already_canceled",
+                        SubscriptionStatus = SubscriptionStatus.Canceled,
+                    }
+                );
+
+            _emailHashService.Setup(h => h.ComputeHash(Email)).Returns("calculated-email-hash");
+
+            var result = await _sut.DeleteCurrentUserAsync(UserId, Password);
+
+            result.IsSuccess.Should().BeTrue();
+            user.IsDeleted.Should().BeTrue();
             _cleanupRepo.Verify(
                 r => r.PurgeUserDataAsync(user, "calculated-email-hash"),
                 Times.Once

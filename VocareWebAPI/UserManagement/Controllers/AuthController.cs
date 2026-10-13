@@ -64,8 +64,7 @@ namespace VocareWebAPI.UserManagement.Controllers
             var result = await _authenticationService.RegisterAsync(
                 request.Email,
                 request.Password,
-                request.AcceptMarketingConsent,
-                HttpContext.Connection.RemoteIpAddress?.ToString()
+                request.AcceptMarketingConsent
             );
 
             if (!result.IsSuccess)
