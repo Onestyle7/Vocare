@@ -14,14 +14,14 @@ class GeneratingView extends StatefulWidget {
     super.key,
     required this.title,
     required this.steps,
-    this.subtitle = 'To zwykle trwa do minuty — możesz zostać na tym ekranie.',
+    this.subtitle = 'To zwykle trwa do minuty - możesz zostać na tym ekranie.',
     this.stepInterval = const Duration(seconds: 7),
   });
 
   /// Recommendations in the AI assistant.
   const GeneratingView.recommendations({super.key})
     : title = 'Tworzę Twoje rekomendacje',
-      subtitle = 'To zwykle trwa do minuty — możesz zostać na tym ekranie.',
+      subtitle = 'To zwykle trwa do minuty - możesz zostać na tym ekranie.',
       stepInterval = const Duration(seconds: 7),
       steps = const [
         'Analizuję Twój profil',
@@ -34,7 +34,7 @@ class GeneratingView extends StatefulWidget {
   /// Market analysis for the recommended career paths.
   const GeneratingView.marketAnalysis({super.key})
     : title = 'Analizuję rynek pracy',
-      subtitle = 'To zwykle trwa do minuty — możesz zostać na tym ekranie.',
+      subtitle = 'To zwykle trwa do minuty - możesz zostać na tym ekranie.',
       stepInterval = const Duration(seconds: 7),
       steps = const [
         'Zbieram dane o Twoich ścieżkach kariery',
@@ -47,7 +47,7 @@ class GeneratingView extends StatefulWidget {
   /// AI CV written for a job offer.
   const GeneratingView.cvForOffer({super.key})
     : title = 'Tworzę CV pod ofertę',
-      subtitle = 'To zwykle trwa do minuty — nie zamykaj aplikacji.',
+      subtitle = 'To zwykle trwa do minuty - nie zamykaj aplikacji.',
       stepInterval = const Duration(seconds: 6),
       steps = const [
         'Czytam ogłoszenie',
@@ -59,7 +59,7 @@ class GeneratingView extends StatefulWidget {
   /// Existing CV rewritten for a job offer.
   const GeneratingView.cvTailor({super.key})
     : title = 'Dopasowuję CV do oferty',
-      subtitle = 'To zwykle trwa do minuty — nie zamykaj aplikacji.',
+      subtitle = 'To zwykle trwa do minuty - nie zamykaj aplikacji.',
       stepInterval = const Duration(seconds: 6),
       steps = const [
         'Czytam ogłoszenie',

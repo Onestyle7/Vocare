@@ -119,10 +119,11 @@ final routerProvider = Provider<GoRouter>((ref) {
       StatefulShellRoute.indexedStack(
         pageBuilder: (_, state, shell) => _fade(state, MainShell(shell: shell)),
         branches: [
+          // Same order as the tab bar (`_tabs` in main_shell.dart).
           _branch(Routes.home, const DashboardScreen()),
+          _branch(Routes.assistant, const AssistantScreen()),
           _branch(Routes.market, const MarketScreen()),
           _branch(Routes.roadmap, const RoadmapListScreen()),
-          _branch(Routes.assistant, const AssistantScreen()),
           _branch(Routes.cv, const CvListScreen()),
         ],
       ),

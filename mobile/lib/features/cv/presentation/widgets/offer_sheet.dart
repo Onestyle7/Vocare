@@ -158,7 +158,7 @@ class _OfferSheetState extends State<_OfferSheet> {
           ),
           AppTextField(
             controller: _description,
-            hint: 'Wklej treść ogłoszenia — obowiązki i wymagania',
+            hint: 'Wklej treść ogłoszenia - obowiązki i wymagania',
             maxLines: 8,
             keyboardType: TextInputType.multiline,
             textInputAction: TextInputAction.newline,
@@ -174,7 +174,7 @@ class _OfferSheetState extends State<_OfferSheet> {
               title: 'Zapisz jako nowe CV',
               subtitle: widget.canCreateCopy
                   ? 'Aktualne CV zostanie bez zmian. Zalecane.'
-                  : 'Osiągnięto limit CV — usuń nieaktualne CV, aby zapisać kopię.',
+                  : 'Osiągnięto limit CV - usuń nieaktualne CV, aby zapisać kopię.',
               onTap: () => setState(() => _replace = false),
             ),
             const SizedBox(height: 8),

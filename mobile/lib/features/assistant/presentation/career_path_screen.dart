@@ -346,7 +346,7 @@ class _SwotCell extends StatelessWidget {
                   ),
                 ),
               ),
-            if (items.isEmpty) Text('—', style: AppTypography.label),
+            if (items.isEmpty) Text('-', style: AppTypography.label),
           ],
         ),
       ),

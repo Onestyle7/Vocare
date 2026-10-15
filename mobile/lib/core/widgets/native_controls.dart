@@ -142,8 +142,22 @@ class _LiquidGlassSwitchState extends State<LiquidGlassSwitch> {
       ..setMethodCallHandler((call) async {
         if (call.method == 'changed' && call.arguments is bool) {
           widget.onChanged(call.arguments as bool);
+          _syncAfterChange();
         }
       });
+  }
+
+  /// `UISwitch` flips itself the moment it is tapped, but [value] is the
+  /// source of truth: when the parent keeps the old value (e.g. it asks for
+  /// consent first and the person declines) the native switch must snap
+  /// back. Checked after the parent's rebuild, so an accepted change does
+  /// not flicker.
+  void _syncAfterChange() {
+    WidgetsBinding.instance
+      ..addPostFrameCallback((_) {
+        if (mounted) _channel?.invokeMethod<void>('setValue', widget.value);
+      })
+      ..ensureVisualUpdate();
   }
 
   @override

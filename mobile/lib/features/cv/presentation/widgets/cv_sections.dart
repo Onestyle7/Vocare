@@ -109,7 +109,7 @@ class CvSectionsList extends ConsumerWidget {
           filled: data.work.isNotEmpty,
           onAdd: () => _editWork(context, editor, null),
           child: _Entries(
-            empty: 'Dodaj stanowiska, staże i praktyki — najnowsze na górze.',
+            empty: 'Dodaj stanowiska, staże i praktyki - najnowsze na górze.',
             items: [
               for (final w in data.work)
                 (
@@ -132,7 +132,7 @@ class CvSectionsList extends ConsumerWidget {
           onAdd: () => _editProject(context, editor, null),
           child: _Entries(
             empty:
-                'Projekty z GitHuba, studiów lub pracy — z linkiem, jeśli to możliwe.',
+                'Projekty z GitHuba, studiów lub pracy - z linkiem, jeśli to możliwe.',
             items: [
               for (final p in data.projects)
                 (p.name.isEmpty ? 'Projekt' : p.name, p.link),
@@ -227,7 +227,7 @@ class CvSectionsList extends ConsumerWidget {
           filled: data.links.isNotEmpty,
           onAdd: () => _editLink(context, editor, null),
           child: _Entries(
-            empty: 'LinkedIn, GitHub, portfolio — pojawią się w nagłówku CV.',
+            empty: 'LinkedIn, GitHub, portfolio - pojawią się w nagłówku CV.',
             items: [
               for (final l in data.links)
                 (l.label.isEmpty ? 'Link' : l.label, l.url),
@@ -397,7 +397,7 @@ Future<void> _editWork(
       FieldSpec.endDate('endDate', 'Do'),
       FieldSpec(
         'responsibilities',
-        'Obowiązki i osiągnięcia — jeden punkt w linii',
+        'Obowiązki i osiągnięcia - jeden punkt w linii',
         lines: 6,
       ),
     ],
@@ -511,7 +511,7 @@ Future<void> _editProject(
         keyboard: TextInputType.url,
         capitalization: TextCapitalization.none,
       ),
-      FieldSpec('description', 'Opis — co zrobiłeś i jakim efektem', lines: 4),
+      FieldSpec('description', 'Opis - co zrobiłeś i jakim efektem', lines: 4),
     ],
     initial: p == null
         ? const {}

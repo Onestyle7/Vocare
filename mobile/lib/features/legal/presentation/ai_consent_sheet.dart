@@ -92,7 +92,7 @@ class _AiConsentSheet extends StatelessWidget {
           const _Point(
             icon: Icons.dns_outlined,
             title: 'Komu',
-            text: 'OpenAI — dostawcy modeli GPT, z których korzysta Vocare.',
+            text: 'OpenAI - dostawcy modeli GPT, z których korzysta Vocare.',
           ),
           const _Point(
             icon: Icons.touch_app_outlined,

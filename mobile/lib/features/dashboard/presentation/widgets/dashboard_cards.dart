@@ -156,7 +156,7 @@ class _BalanceTile extends StatelessWidget {
             shaderCallback: AppColors.brandGradient.createShader,
             child: Text(
               balance == null
-                  ? '—'
+                  ? '-'
                   : NumberFormat.decimalPattern('pl_PL').format(balance),
               style: AppTypography.metric.copyWith(fontSize: 34),
             ),
@@ -393,7 +393,7 @@ class SalaryProgressCard extends StatelessWidget {
     child: Column(
       children: [
         Text(
-          amount == null || amount == 0 ? '—' : _pln.format(amount),
+          amount == null || amount == 0 ? '-' : _pln.format(amount),
           style: AppTypography.button,
         ),
         Text(label, style: AppTypography.label),

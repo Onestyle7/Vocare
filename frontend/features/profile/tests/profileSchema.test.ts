@@ -51,3 +51,25 @@ describe('profileSchema workExperience', () => {
     expect(result.workExperience?.[0].responsibilities).toEqual([]);
   });
 });
+
+describe('profileSchema phoneNumber', () => {
+  const parsePhone = (phoneNumber: string) =>
+    createProfileSchema.safeParse({ ...baseProfile, phoneNumber });
+
+  it.each([
+    ['600100200', '600100200'],
+    ['600 100 200', '600100200'],
+    ['600-100-200', '600100200'],
+    ['+48 600 100 200', '600100200'],
+    ['0048 600-100-200', '600100200'],
+    ['(+48) 600.100.200', '600100200'],
+  ])('accepts %s and stores 9 digits', (input, expected) => {
+    const result = parsePhone(input);
+    expect(result.success).toBe(true);
+    expect(result.success && result.data.phoneNumber).toBe(expected);
+  });
+
+  it.each(['', '60010020', '6001002000', '+49 600 100 200'])('rejects %s', (input) => {
+    expect(parsePhone(input).success).toBe(false);
+  });
+});

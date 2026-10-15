@@ -334,7 +334,7 @@ class _EmptyState extends StatelessWidget {
         ),
         const SizedBox(height: 10),
         Text(
-          'Stwórz CV w kilka minut — z profilu, pod konkretną ofertę albo od zera. Pobierzesz je jako PDF prosto z telefonu.',
+          'Stwórz CV w kilka minut - z profilu, pod konkretną ofertę albo od zera. Pobierzesz je jako PDF prosto z telefonu.',
           style: AppTypography.body.copyWith(color: AppColors.textSecondary),
           textAlign: TextAlign.center,
         ),

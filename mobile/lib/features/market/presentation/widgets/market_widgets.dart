@@ -14,7 +14,7 @@ import '../../data/market_models.dart';
 
 final _number = NumberFormat.decimalPattern('pl_PL');
 
-String _pln(int value) => value <= 0 ? '—' : '${_number.format(value)} PLN';
+String _pln(int value) => value <= 0 ? '-' : '${_number.format(value)} PLN';
 
 /// Demand level of a skill: high → green, medium → amber, other → muted.
 Color demandLevelColor(String level) {
@@ -799,7 +799,7 @@ class EntryDifficultyCard extends StatelessWidget {
                       icon: Icons.schedule_rounded,
                       label: 'Szacowany czas',
                       value: difficulty.estimatedTime.isEmpty
-                          ? '—'
+                          ? '-'
                           : difficulty.estimatedTime,
                     ),
                     const SizedBox(height: 10),

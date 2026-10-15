@@ -520,7 +520,7 @@ class _CvBuilder {
     padding: const pw.EdgeInsets.only(top: 200),
     child: pw.Center(
       child: pw.Text(
-        'Uzupełnij sekcje w edytorze — podgląd zaktualizuje się na bieżąco.',
+        'Uzupełnij sekcje w edytorze - podgląd zaktualizuje się na bieżąco.',
         textAlign: pw.TextAlign.center,
         style: pw.TextStyle(font: fonts.regular, fontSize: 12, color: _gray400),
       ),

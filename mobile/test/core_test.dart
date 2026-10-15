@@ -4,6 +4,7 @@ import 'package:intl/date_symbol_data_local.dart';
 import 'package:vocare/core/network/api_error.dart';
 import 'package:vocare/features/auth/presentation/validators.dart';
 import 'package:vocare/features/dashboard/data/dashboard_repository.dart';
+import 'package:vocare/features/profile/data/phone_number.dart';
 import 'package:vocare/features/profile/data/profile_dates.dart';
 import 'package:vocare/features/profile/data/user_profile.dart';
 
@@ -99,6 +100,49 @@ void main() {
     });
   });
 
+  group('PhoneNumber', () {
+    test('accepts the web format plus a +48 / 0048 prefix', () {
+      expect(PhoneNumber.normalize('600100200'), '600100200');
+      expect(PhoneNumber.normalize('600 100 200'), '600100200');
+      expect(PhoneNumber.normalize('600-100-200'), '600100200');
+      expect(PhoneNumber.normalize('+48 600 100 200'), '600100200');
+      expect(PhoneNumber.normalize('0048 600-100-200'), '600100200');
+      expect(PhoneNumber.normalize('(+48) 600.100.200'), '600100200');
+    });
+
+    test('rejects anything that is not 9 digits', () {
+      expect(PhoneNumber.normalize('60010020'), isNull);
+      expect(PhoneNumber.normalize('6001002000'), isNull);
+      expect(PhoneNumber.normalize('+49 600 100 200'), isNull);
+      expect(PhoneNumber.normalize('600 100 2OO'), isNull);
+      expect(PhoneNumber.validate(''), 'Numer telefonu jest wymagany');
+      expect(PhoneNumber.validate('123'), isNotNull);
+      expect(PhoneNumber.validate('+48 600 100 200'), isNull);
+    });
+  });
+
+  test('required basics match the web profile schema', () {
+    const complete = UserProfile(
+      firstName: 'Anna',
+      lastName: 'Nowak',
+      country: 'Polska',
+      personalityType: PersonalityType.unknown,
+      phoneNumber: '600100200',
+      address: 'Kraków',
+    );
+    expect(complete.hasRequiredFields, isTrue);
+    expect(
+      const UserProfile(
+        firstName: 'Anna',
+        lastName: 'Nowak',
+        country: 'Polska',
+        personalityType: PersonalityType.unknown,
+        phoneNumber: '12',
+      ).missingBasics,
+      ['telefon', 'miasto / adres'],
+    );
+  });
+
   group('Profile dates sent to the API', () {
     test('ongoing entries are null and API strings are normalised', () {
       final json = const UserProfile(
@@ -123,7 +167,8 @@ void main() {
       final work = (json['workExperience']! as List).single as Map;
       final certificate = (json['certificates']! as List).single as Map;
       expect(education['startDate'], '2022-01-10');
-      expect(education['endDate'], isNull);
+      // Non-nullable on the backend: null is a 400, an empty string is "ongoing".
+      expect(education['endDate'], '');
       expect(work['endDate'], isNull);
       expect(certificate['date'], '2023-01-01');
     });

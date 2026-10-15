@@ -66,7 +66,7 @@ class AuthRepository {
     return _mapErr(result, (e) {
       return switch (e.code) {
         'GOOGLE_ACCOUNT_EXISTS' => e.withMessage(
-          'To konto jest powiązane z Google — zaloguj się przez Google.',
+          'To konto jest powiązane z Google - zaloguj się przez Google.',
         ),
         _ when e.type == ApiErrorType.conflict => e.withMessage(
           'Użytkownik z takim adresem e-mail już istnieje',

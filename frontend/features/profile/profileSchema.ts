@@ -66,17 +66,19 @@ const baseProfileSchema = z.object({
   lastName: z.string().min(1, 'Nazwisko jest wymagane'),
   country: z.string().min(1, 'Kraj jest wymagany'),
   address: z.string().min(1, 'Adres jest wymagany'),
+  // Stored as exactly 9 digits. Separators and a +48 / 0048 prefix are
+  // accepted and stripped — same rule as the mobile app (PhoneNumber).
   phoneNumber: z.preprocess(
     (val) => {
       if (typeof val === 'string') {
-        return val.replace(/[\s\-]/g, '');
+        return val.replace(/[\s\-().]/g, '').replace(/^(\+48|0048)/, '');
       }
       return val;
     },
     z
       .string()
       .min(1, 'Numer telefonu jest wymagany')
-      .regex(/^\d{9}$/, 'Numer telefonu musi składać się dokładnie z 9 cyfr')
+      .regex(/^\d{9}$/, 'Numer telefonu musi mieć 9 cyfr (możesz dodać +48)')
   ),
   education: z.array(educationEntrySchema).optional(),
   workExperience: z.array(workExperienceEntrySchema).optional(),

@@ -8,6 +8,7 @@ import '../../../core/widgets/form_sheets.dart';
 import '../../../core/widgets/glass_widgets.dart';
 import '../../../core/widgets/native_controls.dart';
 import '../../../core/widgets/pressable.dart';
+import '../data/phone_number.dart';
 import '../data/user_profile.dart';
 
 export '../../../core/widgets/form_sheets.dart';
@@ -68,7 +69,8 @@ class _BasicsSheetState extends State<_BasicsSheet> {
         firstName: _first.text.trim(),
         lastName: _last.text.trim(),
         country: _country.text.trim(),
-        phoneNumber: _phone.text.trim(),
+        // Stored as 9 digits, like the web profile.
+        phoneNumber: PhoneNumber.normalize(_phone.text),
         address: _address.text.trim(),
         personalityType: _personality,
       ),
@@ -172,21 +174,23 @@ class _BasicsSheetState extends State<_BasicsSheet> {
               ),
             ),
           const SizedBox(height: 14),
-          const FieldLabel('Telefon'),
+          const FieldLabel('Telefon', required: true),
           AppTextField(
             controller: _phone,
-            hint: '+48 600 000 000',
+            hint: '600 100 200',
             keyboardType: TextInputType.phone,
             textInputAction: TextInputAction.next,
             autofillHints: const [AutofillHints.telephoneNumber],
+            validator: PhoneNumber.validate,
           ),
           const SizedBox(height: 14),
-          const FieldLabel('Miasto / adres'),
+          const FieldLabel('Miasto / adres', required: true),
           AppTextField(
             controller: _address,
             hint: 'np. Warszawa',
             textCapitalization: TextCapitalization.words,
             autofillHints: const [AutofillHints.addressCity],
+            validator: (v) => v.isEmpty ? 'Adres jest wymagany' : null,
           ),
         ],
       ),
@@ -261,6 +265,7 @@ class _FinanceSheet extends StatefulWidget {
 }
 
 class _FinanceSheetState extends State<_FinanceSheet> {
+  final _form = GlobalKey<FormState>();
   late final _current = TextEditingController(
     text: _format(widget.survey.currentSalary),
   );
@@ -290,68 +295,81 @@ class _FinanceSheetState extends State<_FinanceSheet> {
     v.replaceAll(RegExp(r'[^\d.,]'), '').replaceAll(',', '.'),
   );
 
+  /// Web rule: optional, but when given a whole number above zero (digits
+  /// only already rules out fractions and signs).
+  static String? Function(String) _positive(String message) =>
+      (v) => v.isNotEmpty && (int.tryParse(v) ?? 0) <= 0 ? message : null;
+
   @override
   Widget build(BuildContext context) {
     final digits = [FilteringTextInputFormatter.digitsOnly];
-    return SheetFrame(
-      title: 'Finanse i preferencje',
-      onSave: () => Navigator.pop(context, (
-        FinancialSurvey(
-          currentSalary: _parse(_current.text),
-          desiredSalary: _parse(_desired.text),
-          hasLoans: _loans,
-          loanDetails: _loans ? _loanDetails.text.trim() : null,
-          riskAppetite: _risk,
-          willingToRelocate: _relocate,
-        ),
-        _rebrand,
-      )),
-      children: [
-        const FieldLabel('Obecne wynagrodzenie (zł brutto / mies.)'),
-        AppTextField(
-          controller: _current,
-          hint: 'np. 8000',
-          keyboardType: TextInputType.number,
-          inputFormatters: digits,
-        ),
-        const SizedBox(height: 14),
-        const FieldLabel('Oczekiwane wynagrodzenie (zł brutto / mies.)'),
-        AppTextField(
-          controller: _desired,
-          hint: 'np. 12000',
-          keyboardType: TextInputType.number,
-          inputFormatters: digits,
-        ),
-        const SizedBox(height: 18),
-        _RiskSlider(
-          value: _risk,
-          onChanged: (risk) => setState(() => _risk = risk),
-        ),
-        const SizedBox(height: 12),
-        _Toggle(
-          label: 'Gotowość do przeprowadzki',
-          value: _relocate,
-          onChanged: (v) => setState(() => _relocate = v),
-        ),
-        _Toggle(
-          label: 'Otwartość na przebranżowienie',
-          value: _rebrand,
-          onChanged: (v) => setState(() => _rebrand = v),
-        ),
-        _Toggle(
-          label: 'Mam zobowiązania kredytowe',
-          value: _loans,
-          onChanged: (v) => setState(() => _loans = v),
-        ),
-        if (_loans) ...[
-          const SizedBox(height: 8),
+    return Form(
+      key: _form,
+      child: SheetFrame(
+        title: 'Finanse i preferencje',
+        onSave: () {
+          if (!_form.currentState!.validate()) return;
+          Navigator.pop(context, (
+            FinancialSurvey(
+              currentSalary: _parse(_current.text),
+              desiredSalary: _parse(_desired.text),
+              hasLoans: _loans,
+              loanDetails: _loans ? _loanDetails.text.trim() : null,
+              riskAppetite: _risk,
+              willingToRelocate: _relocate,
+            ),
+            _rebrand,
+          ));
+        },
+        children: [
+          const FieldLabel('Obecne wynagrodzenie (zł brutto / mies.)'),
           AppTextField(
-            controller: _loanDetails,
-            hint: 'Szczegóły (opcjonalnie)',
-            maxLines: 3,
+            controller: _current,
+            hint: 'np. 8000',
+            keyboardType: TextInputType.number,
+            inputFormatters: digits,
+            validator: _positive('Pensja musi być liczbą dodatnią'),
           ),
+          const SizedBox(height: 14),
+          const FieldLabel('Oczekiwane wynagrodzenie (zł brutto / mies.)'),
+          AppTextField(
+            controller: _desired,
+            hint: 'np. 12000',
+            keyboardType: TextInputType.number,
+            inputFormatters: digits,
+            validator: _positive('Oczekiwana pensja musi być liczbą dodatnią'),
+          ),
+          const SizedBox(height: 18),
+          _RiskSlider(
+            value: _risk,
+            onChanged: (risk) => setState(() => _risk = risk),
+          ),
+          const SizedBox(height: 12),
+          _Toggle(
+            label: 'Gotowość do przeprowadzki',
+            value: _relocate,
+            onChanged: (v) => setState(() => _relocate = v),
+          ),
+          _Toggle(
+            label: 'Otwartość na przebranżowienie',
+            value: _rebrand,
+            onChanged: (v) => setState(() => _rebrand = v),
+          ),
+          _Toggle(
+            label: 'Mam zobowiązania kredytowe',
+            value: _loans,
+            onChanged: (v) => setState(() => _loans = v),
+          ),
+          if (_loans) ...[
+            const SizedBox(height: 8),
+            AppTextField(
+              controller: _loanDetails,
+              hint: 'Szczegóły (opcjonalnie)',
+              maxLines: 3,
+            ),
+          ],
         ],
-      ],
+      ),
     );
   }
 }

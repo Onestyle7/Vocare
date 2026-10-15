@@ -370,7 +370,7 @@ class _TagsSheetState extends State<_TagsSheet> {
         const SizedBox(height: 16),
         if (_tags.isEmpty)
           Text(
-            'Dodaj kilka pozycji — możesz wpisać kilka naraz, oddzielając je przecinkami.',
+            'Dodaj kilka pozycji - możesz wpisać kilka naraz, oddzielając je przecinkami.',
             style: AppTypography.label,
             textAlign: TextAlign.center,
           ),

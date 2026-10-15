@@ -126,7 +126,7 @@ class RoadmapCard extends StatelessWidget {
                   const SizedBox(width: 10),
                   Expanded(
                     child: Text(
-                      'Generujemy Twoją roadmapę — to potrwa chwilę. Możesz wyjść z aplikacji, damy znać w powiadomieniach.',
+                      'Generujemy Twoją roadmapę - to potrwa chwilę. Możesz wyjść z aplikacji, damy znać w powiadomieniach.',
                       style: AppTypography.label.copyWith(height: 1.45),
                     ),
                   ),
@@ -138,7 +138,7 @@ class RoadmapCard extends StatelessWidget {
                   Text(
                     roadmap.failureReason.isNotEmpty
                         ? roadmap.failureReason
-                        : 'Generowanie nie powiodło się — spróbuj ponownie albo usuń roadmapę.',
+                        : 'Generowanie nie powiodło się - spróbuj ponownie albo usuń roadmapę.',
                     style: AppTypography.label.copyWith(
                       color: AppColors.danger,
                       height: 1.45,

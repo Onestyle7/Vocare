@@ -1,3 +1,4 @@
+import 'phone_number.dart';
 import 'profile_dates.dart';
 
 /// Mirrors `UserProfileDto` in the backend. Enums travel as strings
@@ -52,11 +53,18 @@ class UserProfile {
   }
 
   /// Fields the backend requires before it accepts a save.
-  bool get hasRequiredFields =>
-      firstName.isNotEmpty &&
-      lastName.isNotEmpty &&
-      country.isNotEmpty &&
-      personalityType != null;
+  /// Labels of required basics that are still missing — the same set the
+  /// web profile schema requires before anything can be saved.
+  List<String> get missingBasics => [
+    if (firstName.trim().isEmpty) 'imię',
+    if (lastName.trim().isEmpty) 'nazwisko',
+    if (country.trim().isEmpty) 'kraj',
+    if (personalityType == null) 'typ osobowości',
+    if (PhoneNumber.normalize(phoneNumber ?? '') == null) 'telefon',
+    if ((address ?? '').trim().isEmpty) 'miasto / adres',
+  ];
+
+  bool get hasRequiredFields => missingBasics.isEmpty;
 
   factory UserProfile.fromJson(Map json) => UserProfile(
     firstName: _s(json['firstName']),
@@ -165,8 +173,11 @@ class EducationEntry {
     'institution': institution,
     'degree': degree,
     'field': field,
-    'startDate': _apiDate(startDate),
-    'endDate': _apiDate(endDate),
+    // `EducationEntryDto` declares the dates as non-nullable `string`, so
+    // ASP.NET rejects `null` ("The EndDate field is required.") while an
+    // empty string passes and is stored as "no date" — an ongoing degree.
+    'startDate': _apiDate(startDate) ?? '',
+    'endDate': _apiDate(endDate) ?? '',
   };
 }
 

@@ -475,7 +475,7 @@ class AssistantNoProfile extends StatelessWidget {
       icon: Icons.person_search_rounded,
       title: 'Znajdź idealny zawód\ndla siebie w 60 sekund.',
       body:
-          'Rozpocznij od uzupełnienia swojego profilu — po tym zyskasz dostęp do narzędzi AI.',
+          'Rozpocznij od uzupełnienia swojego profilu - po tym zyskasz dostęp do narzędzi AI.',
       action: PrimaryButton(
         label: 'Przejdź do profilu',
         onPressed: onOpenProfile,

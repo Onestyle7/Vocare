@@ -143,7 +143,7 @@ class RoadmapDetailScreen extends ConsumerWidget {
           child: GeneratingView(
             title: 'Tworzę Twoją roadmapę',
             subtitle:
-                'Generowanie trwa w tle — damy znać w powiadomieniach, gdy plan będzie gotowy.',
+                'Generowanie trwa w tle - damy znać w powiadomieniach, gdy plan będzie gotowy.',
             stepInterval: Duration(seconds: 9),
             steps: [
               'Analizuję wybraną ścieżkę kariery',
@@ -160,7 +160,7 @@ class RoadmapDetailScreen extends ConsumerWidget {
           title: 'Nie udało się wygenerować roadmapy',
           message: value.failureReason.isNotEmpty
               ? value.failureReason
-              : 'Spróbuj ponownie — to zwykle chwilowy problem z usługą AI.',
+              : 'Spróbuj ponownie - to zwykle chwilowy problem z usługą AI.',
           actionLabel: 'Spróbuj ponownie',
           onAction: () async {
             final result = await ref

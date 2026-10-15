@@ -154,19 +154,35 @@ class _ProfileBody extends ConsumerWidget {
               await _save(context, ref, updated);
             }
           },
-          child: p == null || !p.hasRequiredFields
+          child: p == null || p.fullName.trim().isEmpty
               ? const _Empty(
-                  'Imię, nazwisko, kraj i typ osobowości są wymagane.',
+                  'Imię, nazwisko, kraj, typ osobowości, telefon i miasto są wymagane.',
                 )
-              : _KeyValues([
-                  ('Imię i nazwisko', p.fullName),
-                  ('Kraj', p.country),
-                  ('Typ osobowości', p.personalityType?.label ?? '—'),
-                  if (p.phoneNumber?.isNotEmpty == true)
-                    ('Telefon', p.phoneNumber!),
-                  if (p.address?.isNotEmpty == true)
-                    ('Miasto / adres', p.address!),
-                ]),
+              : Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    _KeyValues([
+                      ('Imię i nazwisko', p.fullName),
+                      if (p.country.isNotEmpty) ('Kraj', p.country),
+                      ('Typ osobowości', p.personalityType?.label ?? '-'),
+                      if (p.phoneNumber?.isNotEmpty == true)
+                        ('Telefon', p.phoneNumber!),
+                      if (p.address?.isNotEmpty == true)
+                        ('Miasto / adres', p.address!),
+                    ]),
+                    // Older profiles may lack what is now required (as on
+                    // the web): say what is missing instead of hiding data.
+                    if (p.missingBasics.isNotEmpty) ...[
+                      const SizedBox(height: 10),
+                      Text(
+                        'Uzupełnij: ${p.missingBasics.join(', ')}',
+                        style: AppTypography.label.copyWith(
+                          color: AppColors.warning,
+                        ),
+                      ),
+                    ],
+                  ],
+                ),
         ),
         _Section(
           title: 'O mnie',
@@ -233,7 +249,7 @@ class _ProfileBody extends ConsumerWidget {
             FieldSpec('description', 'Opis', lines: 3),
             FieldSpec(
               'responsibilities',
-              'Obowiązki — jeden w linii',
+              'Obowiązki - jeden w linii',
               lines: 4,
             ),
           ],
@@ -428,11 +444,11 @@ class _ProfileBody extends ConsumerWidget {
     final survey = p?.financialSurvey;
     if (survey == null) {
       return const _Empty(
-        'Podaj oczekiwania finansowe — pomogą dobrać ścieżki kariery.',
+        'Podaj oczekiwania finansowe - pomogą dobrać ścieżki kariery.',
       );
     }
     String money(double? v) =>
-        v == null || v == 0 ? '—' : '${v.toStringAsFixed(0)} zł';
+        v == null || v == 0 ? '-' : '${v.toStringAsFixed(0)} zł';
     return _KeyValues([
       ('Obecnie', money(survey.currentSalary)),
       ('Oczekiwania', money(survey.desiredSalary)),
@@ -463,7 +479,7 @@ class _ProfileBody extends ConsumerWidget {
             Text('Wylogować się?', style: AppTypography.title),
             const SizedBox(height: 8),
             Text(
-              'Twoje dane zostaną na koncie — zalogujesz się w każdej chwili.',
+              'Twoje dane zostaną na koncie - zalogujesz się w każdej chwili.',
               style: AppTypography.caption.copyWith(
                 color: AppColors.textMuted,
                 height: 1.5,

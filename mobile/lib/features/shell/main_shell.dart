@@ -13,11 +13,12 @@ import '../notifications/data/notifications_repository.dart';
 import '../profile/data/profile_repository.dart';
 import 'glass_tab_bar.dart';
 
+/// Same order as the shell branches in `app_router.dart`.
 const _tabs = [
   GlassTab(label: 'Pulpit', icon: TabIcons.dashboard),
+  GlassTab(label: 'Asystent', icon: TabIcons.assistant),
   GlassTab(label: 'Analiza rynku', icon: TabIcons.trending),
   GlassTab(label: 'Roadmapa', icon: TabIcons.map),
-  GlassTab(label: 'Asystent', icon: TabIcons.assistant),
   GlassTab(label: 'CV', icon: TabIcons.cv),
 ];
 
