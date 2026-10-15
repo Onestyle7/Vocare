@@ -41,6 +41,9 @@ class RoadmapCard extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Row(
+            // Top-aligned so the menu stays in the corner when the title
+            // wraps to two lines.
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Container(
                 width: 42,
@@ -79,9 +82,9 @@ class RoadmapCard extends StatelessWidget {
                   ],
                 ),
               ),
-              _StatusBadge(roadmap: roadmap),
               IconButton(
-                tooltip: 'Usuń roadmapę',
+                tooltip: 'Opcje roadmapy',
+                visualDensity: VisualDensity.compact,
                 onPressed: busy ? null : onDelete,
                 icon: const Icon(
                   Icons.more_vert_rounded,
@@ -102,17 +105,9 @@ class RoadmapCard extends StatelessWidget {
                     children: [
                       Text('$progress% ukończone', style: AppTypography.label),
                       const Spacer(),
-                      Text(
-                        'Otwórz',
-                        style: AppTypography.label.copyWith(
-                          color: AppColors.accent,
-                        ),
-                      ),
-                      const Icon(
-                        Icons.chevron_right_rounded,
-                        size: 18,
-                        color: AppColors.accent,
-                      ),
+                      // The whole card opens the roadmap; this corner says
+                      // where it stands (Aktywna / Ukończona / Archiwum).
+                      _StatusBadge(roadmap: roadmap),
                     ],
                   ),
                 ],

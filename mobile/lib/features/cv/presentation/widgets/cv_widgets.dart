@@ -89,68 +89,82 @@ class CvCard extends StatelessWidget {
   Widget build(BuildContext context) {
     return SurfaceCard(
       onTap: onOpen,
-      padding: const EdgeInsets.fromLTRB(16, 16, 6, 16),
-      child: Row(
-        children: [
-          const CvThumbnail(),
-          const SizedBox(width: 16),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Row(
+      padding: const EdgeInsets.fromLTRB(16, 12, 8, 14),
+      child: IntrinsicHeight(
+        child: Row(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            const Padding(
+              padding: EdgeInsets.only(top: 4),
+              child: Align(alignment: Alignment.topLeft, child: CvThumbnail()),
+            ),
+            const SizedBox(width: 16),
+            Expanded(
+              child: Padding(
+                padding: const EdgeInsets.only(top: 4),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Flexible(
-                      child: Text(
-                        cv.name.isEmpty ? 'Moje CV' : cv.name,
-                        style: AppTypography.titleSmall,
-                        maxLines: 1,
-                        overflow: TextOverflow.ellipsis,
-                      ),
+                    Text(
+                      cv.name.isEmpty ? 'Moje CV' : cv.name,
+                      style: AppTypography.titleSmall,
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
                     ),
-                    if (cv.isDefault) ...[
-                      const SizedBox(width: 8),
-                      const _DefaultBadge(),
-                    ],
+                    Text(
+                      cv.targetPosition.isEmpty
+                          ? 'Nie określono stanowiska docelowego'
+                          : cv.targetPosition,
+                      style: AppTypography.label.copyWith(
+                        color: cv.targetPosition.isEmpty
+                            ? AppColors.textSubtle
+                            : AppColors.textMuted,
+                      ),
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                    if (cv.lastModifiedAt != null)
+                      Text(
+                        'Edytowano ${_edited.format(cv.lastModifiedAt!)}',
+                        style: AppTypography.label.copyWith(fontSize: 11.5),
+                      ),
                   ],
                 ),
-                Text(
-                  cv.targetPosition.isEmpty
-                      ? 'Nie określono stanowiska docelowego'
-                      : cv.targetPosition,
-                  style: AppTypography.label.copyWith(
-                    color: cv.targetPosition.isEmpty
-                        ? AppColors.textSubtle
-                        : AppColors.textMuted,
+              ),
+            ),
+            // Menu pinned to the top-right corner, the default badge to the
+            // bottom-right one — same layout as the roadmap cards.
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.end,
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                if (busy)
+                  const Padding(
+                    padding: EdgeInsets.all(12),
+                    child: SizedBox.square(
+                      dimension: 18,
+                      child: CircularProgressIndicator(strokeWidth: 2),
+                    ),
+                  )
+                else
+                  IconButton(
+                    tooltip: 'Opcje CV',
+                    visualDensity: VisualDensity.compact,
+                    onPressed: onMenu,
+                    icon: const Icon(
+                      Icons.more_vert_rounded,
+                      color: AppColors.textSubtle,
+                    ),
                   ),
-                  maxLines: 1,
-                  overflow: TextOverflow.ellipsis,
-                ),
-                if (cv.lastModifiedAt != null)
-                  Text(
-                    'Edytowano ${_edited.format(cv.lastModifiedAt!)}',
-                    style: AppTypography.label.copyWith(fontSize: 11.5),
+                if (cv.isDefault)
+                  const Padding(
+                    padding: EdgeInsets.only(right: 8),
+                    child: _DefaultBadge(),
                   ),
               ],
             ),
-          ),
-          busy
-              ? const Padding(
-                  padding: EdgeInsets.all(14),
-                  child: SizedBox.square(
-                    dimension: 18,
-                    child: CircularProgressIndicator(strokeWidth: 2),
-                  ),
-                )
-              : IconButton(
-                  tooltip: 'Opcje CV',
-                  onPressed: onMenu,
-                  icon: const Icon(
-                    Icons.more_vert_rounded,
-                    color: AppColors.textSubtle,
-                  ),
-                ),
-        ],
+          ],
+        ),
       ),
     );
   }

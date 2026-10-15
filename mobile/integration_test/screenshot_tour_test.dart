@@ -231,7 +231,9 @@ void main() {
     await tester.tap(find.bySemanticsLabel('Roadmapa'));
     await wait(tester, 1400);
     await shot(tester, '28_roadmap_list');
-    await tester.tap(find.text('Otwórz'));
+    await tester.tap(
+      find.text('Data Analyst').first,
+    ); // the whole card opens it
     await wait(tester, 1400);
     await shot(tester, '29_roadmap_detail');
     await tester.drag(find.byType(ListView).first, const Offset(0, -420));
@@ -417,6 +419,8 @@ class _FakeApi extends ApiClient {
       'email': 'kacper@vocare.pl',
       'country': 'Polska',
       'address': 'Warszawa',
+      // Required like on the web (9 digits).
+      'phoneNumber': '600100200',
       'personalityType': 'Architect',
       'aboutMe': 'Frontend developer, który chce wejść w product design i AI.',
       'skills': ['TypeScript', 'React', 'Next.js', 'Flutter', 'Figma'],
