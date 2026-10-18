@@ -4,7 +4,7 @@ import env from '@/lib/env/client';
 
 import { ArticleMetadata } from '../features/blog/types';
 import { getArticlesMetadata } from '../features/blog/utils/blogUtils';
-import { ARTICLES_FOLDER } from '../features/blog/utils/constants';
+import { ARTICLES_FOLDER, BLOG_CATEGORIES } from '../features/blog/utils/constants';
 
 type RouteConfig = {
   path: string;
@@ -41,5 +41,19 @@ export default function sitemap(): MetadataRoute.Sitemap {
     priority: 0.8,
   }));
 
-  return [...staticRoutes, ...articleRoutes];
+  const categoryRoutes: MetadataRoute.Sitemap = Object.keys(BLOG_CATEGORIES).map((category) => {
+    const lastModified = articles
+      .filter((article) => article.category === category)
+      .map((article) => article.updatedAt ?? article.date)
+      .sort((a, b) => b.getTime() - a.getTime())[0];
+
+    return {
+      url: `${baseUrl}/blog/${encodeURIComponent(category)}`,
+      lastModified,
+      changeFrequency: 'weekly',
+      priority: 0.8,
+    };
+  });
+
+  return [...staticRoutes, ...categoryRoutes, ...articleRoutes];
 }
