@@ -3,6 +3,7 @@ title: 'Praca zdalna dla zagranicznego pracodawcy - jak rozliczyć'
 description: 'Jak znaleźć pracę zdalną dla zagranicznej firmy mieszkając w Polsce? Sprawdź gdzie szukać ofert, jak wygląda rozliczenie podatkowe i czego unikać.'
 estimatedReadTime: 9
 date: '2026-07-20'
+updatedAt: '2026-10-18'
 author: 'Vocare'
 category: 'praca'
 coverImage: '/images/blog/job-search.webp'
@@ -66,11 +67,13 @@ Aplikując do zagranicznej firmy, dostosuj dokumenty do konwencji rynku docelowe
 
 Rozliczenia przy pracy dla zagranicznego podmiotu zależą od wybranego modelu współpracy, kraju siedziby pracodawcy i Twojej rezydencji podatkowej - to obszar, w którym błąd potrafi kosztować realne pieniądze, dlatego poniższe punkty traktuj jako mapę tematów do omówienia z księgowym, nie gotowe rozwiązanie.
 
-**Rezydencja podatkowa:** jeśli mieszkasz w Polsce dłużej niż 183 dni w roku, zwykle jesteś polskim rezydentem podatkowym niezależnie od tego, dla kogo pracujesz - to determinuje, gdzie rozliczasz dochód.
+**Rezydencja podatkowa:** jeśli masz w Polsce centrum interesów osobistych lub gospodarczych albo przebywasz tu dłużej niż 183 dni w roku, jesteś [polskim rezydentem podatkowym](https://www.biznes.gov.pl/pl/portal/00229) niezależnie od tego, dla kogo pracujesz - to determinuje, gdzie rozliczasz dochód.
 
-**VAT przy fakturowaniu za granicę:** przy B2B z kontrahentem z UE zwykle stosuje się odwrotne obciążenie (reverse charge) - musisz się zarejestrować jako podatnik VAT-UE, żeby to robić poprawnie.
+**VAT przy fakturowaniu za granicę:** przy B2B z kontrahentem z UE zwykle stosuje się odwrotne obciążenie (reverse charge) - musisz się [zarejestrować jako podatnik VAT-UE](https://www.biznes.gov.pl/pl/portal/ou305), żeby to robić poprawnie. Dotyczy to także osób korzystających ze zwolnienia z VAT - rejestracja nie odbiera zwolnienia.
 
-**Umowy o unikaniu podwójnego opodatkowania:** Polska ma podpisane umowy z większością krajów zachodnich, które chronią przed płaceniem podatku dwa razy od tego samego dochodu - ale wymagają poprawnego udokumentowania.
+**Umowy o unikaniu podwójnego opodatkowania:** Polska ma [podpisane umowy](https://www.podatki.gov.pl/podatkowa-wspolpraca-miedzynarodowa/wykaz-umow-o-unikaniu-podwojnego-opodatkowania) z większością krajów zachodnich, które chronią przed płaceniem podatku dwa razy od tego samego dochodu - ale wymagają poprawnego udokumentowania.
+
+**ZUS przy pracy z Polski dla firmy z UE:** jeśli pracujesz wyłącznie w Polsce, co do zasady podlegasz polskim ubezpieczeniom społecznym, nawet gdy pracodawca ma siedzibę w innym kraju UE. Taki pracodawca może sam zgłosić się do ZUS jako płatnik albo uzgodnić z Tobą, że to Ty [przejmiesz obowiązki płatnika](https://www.zus.pl/firmy/zgloszenie-platnika/firmy/zgloszenie-podmiotu-pelniacego-role-platnika-zagranicznego) i będziesz rozliczać składki w jego imieniu.
 
 ---
 
