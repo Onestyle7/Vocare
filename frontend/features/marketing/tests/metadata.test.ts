@@ -64,18 +64,4 @@ describe('buildMarketingMetadata', () => {
     const ogImages = metadata.openGraph?.images as Array<{ url: string }>;
     expect(ogImages[0].url).toBe(`${baseUrl}/images/custom-og.png`);
   });
-
-  it('should skip the title template and keep the full title in openGraph when absoluteTitle is set', () => {
-    const metadata = buildMarketingMetadata({
-      path: '/',
-      title: 'Vocare – AI doradca kariery',
-      description: 'Opis strony głównej.',
-      ogAlt: 'Vocare',
-      absoluteTitle: true,
-    });
-
-    expect(metadata.title).toEqual({ absolute: 'Vocare – AI doradca kariery' });
-    expect(metadata.openGraph?.title).toBe('Vocare – AI doradca kariery');
-    expect(metadata.twitter?.title).toBe('Vocare – AI doradca kariery');
-  });
 });

@@ -2,16 +2,12 @@ import type { Metadata } from 'next';
 
 import { toAbsoluteUrl } from '@/features/blog/utils/blogUtils';
 
-import { OG_IMAGE, SITE_NAME } from '../constants/seo';
-
 export interface BuildMarketingMetadataProps {
   path: string;
   title: string;
   description: string;
   ogAlt: string;
   ogImagePath?: string;
-  /** Pomija szablon „%s | Vocare” – dla strony głównej, której title już zawiera nazwę. */
-  absoluteTitle?: boolean;
 }
 
 export function buildMarketingMetadata({
@@ -19,21 +15,20 @@ export function buildMarketingMetadata({
   title,
   description,
   ogAlt,
-  ogImagePath = OG_IMAGE.path,
-  absoluteTitle = false,
+  ogImagePath = '/metadata/og-image.png',
 }: BuildMarketingMetadataProps): Metadata {
-  const fullTitle = absoluteTitle ? title : `${title} | ${SITE_NAME}`;
+  const fullTitle = `${title} | Vocare`;
   const ogImageUrl = toAbsoluteUrl(ogImagePath);
 
   return {
-    title: absoluteTitle ? { absolute: title } : title,
+    title,
     description,
     alternates: {
       canonical: path,
     },
     openGraph: {
       type: 'website',
-      siteName: SITE_NAME,
+      siteName: 'Vocare',
       locale: 'pl_PL',
       url: path,
       title: fullTitle,
@@ -41,8 +36,8 @@ export function buildMarketingMetadata({
       images: [
         {
           url: ogImageUrl,
-          width: OG_IMAGE.width,
-          height: OG_IMAGE.height,
+          width: 1200,
+          height: 630,
           alt: ogAlt,
         },
       ],

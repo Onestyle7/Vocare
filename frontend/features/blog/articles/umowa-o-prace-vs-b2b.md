@@ -3,7 +3,7 @@ title: 'Umowa o pracę vs B2B vs zlecenie 2026 - co wybrać?'
 description: 'Umowa o pracę, kontrakt B2B czy umowa zlecenie? Sprawdź różnice w wynagrodzeniu, stabilności i obowiązkach, żeby świadomie wybrać formę zatrudnienia w 2026 roku.'
 estimatedReadTime: 8
 date: '2026-07-17'
-updatedAt: '2026-10-18'
+updatedAt: '2026-09-09'
 author: 'Vocare'
 category: 'praca'
 coverImage: '/images/blog/job-portals.webp'
@@ -11,10 +11,10 @@ tags: ['umowa o pracę', 'kontrakt b2b', 'umowa zlecenie', 'forma zatrudnienia',
 slug: 'umowa-o-prace-vs-b2b'
 ---
 
-"Możemy zaproponować UoP albo B2B, co wolisz?" - to pytanie słyszy dziś coraz więcej kandydatów, szczególnie w IT, marketingu i konsultingu. Wybór nie jest oczywisty - **forma zatrudnienia** zmienia nie tylko kwotę na wypłacie, ale też stabilność, obowiązki administracyjne i dostęp do świadczeń socjalnych. **Umowa o pracę** to stosunek pracy podporządkowanej, objęty [Kodeksem pracy](https://isap.sejm.gov.pl/isap.nsf/DocDetails.xsp?id=wdu19740240141) i pełnym pakietem uprawnień pracowniczych. **B2B** to umowa między dwoma przedsiębiorcami, w której nie ma urlopu, wynagrodzenia chorobowego ani ochrony przed wypowiedzeniem.
+"Możemy zaproponować UoP albo B2B, co wolisz?" - to pytanie słyszy dziś coraz więcej kandydatów, szczególnie w IT, marketingu i konsultingu. Wybór nie jest oczywisty - **forma zatrudnienia** zmienia nie tylko kwotę na wypłacie, ale też stabilność, obowiązki administracyjne i dostęp do świadczeń socjalnych. **Umowa o pracę** to stosunek pracy podporządkowanej, objęty Kodeksem pracy i pełnym pakietem uprawnień pracowniczych. **B2B** to umowa między dwoma przedsiębiorcami, w której nie ma urlopu, wynagrodzenia chorobowego ani ochrony przed wypowiedzeniem.
 
 > **Najważniejsze wnioski**
-> - B2B daje zwykle wyższą stawkę brutto, ale wymaga samodzielnego opłacania ZUS i nie gwarantuje płatnego urlopu, a zasiłek chorobowy daje tylko przy dobrowolnym ubezpieczeniu chorobowym
+> - B2B daje zwykle wyższą stawkę brutto, ale wymaga samodzielnego opłacania ZUS i nie gwarantuje płatnego urlopu ani L4
 > - Umowa o pracę daje pełną ochronę (urlop, zwolnienie chorobowe, okres wypowiedzenia), ale niższą stawkę netto przy tej samej kwocie brutto
 > - Wybór zależy od etapu życia, tolerancji na ryzyko i tego, czy potrzebujesz stabilności czy elastyczności podatkowej
 
@@ -30,7 +30,7 @@ Umowa o pracę to najbardziej chroniona forma zatrudnienia w Polsce: gwarantuje 
 
 ## Kontrakt B2B - wyższa stawka, więcej obowiązków
 
-W modelu B2B pracujesz jako osoba prowadząca jednoosobową działalność gospodarczą, wystawiając fakturę firmie, z którą współpracujesz. Stawki brutto na B2B są zwykle wyższe niż na UoP dla tej samej roli, ale musisz samodzielnie [opłacać składki ZUS](https://www.biznes.gov.pl/pl/portal/00274) i nie masz gwarancji płatnego urlopu (chyba że wynegocjujesz płatne dni wolne w umowie). Zasiłek chorobowy z ZUS dostaniesz tylko wtedy, gdy opłacasz [dobrowolne ubezpieczenie chorobowe](https://www.biznes.gov.pl/pl/portal/00289) - i dopiero po 90 dniach nieprzerwanego ubezpieczenia.
+W modelu B2B pracujesz jako osoba prowadząca jednoosobową działalność gospodarczą, wystawiając fakturę firmie, z którą współpracujesz. Stawki brutto na B2B są zwykle wyższe niż na UoP dla tej samej roli, ale musisz samodzielnie opłacać ZUS, nie masz gwarancji płatnego urlopu ani zwolnienia chorobowego (chyba że wynegocjujesz to w umowie).
 
 **Dla kogo ma sens:** dla doświadczonych specjalistów, którzy cenią wyższą stawkę netto i są gotowi wziąć na siebie ryzyko braku niektórych świadczeń socjalnych.
 
@@ -38,7 +38,7 @@ W modelu B2B pracujesz jako osoba prowadząca jednoosobową działalność gospo
 
 ## Umowa zlecenie - elastyczność bez pełnej ochrony
 
-Pośrednia forma między UoP a B2B - prostsza administracyjnie niż działalność gospodarcza, ale bez pełnej ochrony jaką daje umowa o pracę. Studenci do 26. roku życia są [zwolnieni ze składek ZUS przy umowie zlecenie](https://zielonalinia.gov.pl/praca-studenta-a-skladki-do-zus/) (chyba że podpisują ją z własnym pracodawcą), co czyni ją popularną formą zatrudnienia w tej grupie.
+Pośrednia forma między UoP a B2B - prostsza administracyjnie niż działalność gospodarcza, ale bez pełnej ochrony jaką daje umowa o pracę. Studenci do 26. roku życia są zwolnieni ze składek ZUS przy umowie zlecenie, co czyni ją popularną formą zatrudnienia w tej grupie.
 
 **Dla kogo ma sens:** dla studentów, osób pracujących dorywczo lub przy krótkoterminowych projektach.
 
@@ -52,7 +52,7 @@ Porównując te trzy formy, widać jeden wzorzec: im więcej ochrony socjalnej d
 | --- | --- | --- | --- |
 | Stawka netto przy tej samej kwocie brutto | Niższa | Wyższa | Średnia |
 | Płatny urlop | Tak (ustawowy) | Zwykle nie (chyba że wynegocjowane) | Zwykle nie |
-| Zasiłek chorobowy | Tak | Tylko przy dobrowolnym ubezpieczeniu chorobowym | Tylko przy dobrowolnym ubezpieczeniu chorobowym |
+| Zwolnienie chorobowe | Tak | Zwykle nie | Ograniczone |
 | Okres wypowiedzenia | Ustawowy, chroniony | Zależny od umowy | Krótki, elastyczny |
 | Zdolność kredytowa (hipoteka) | Najwyższa | Niższa, wymaga historii firmy | Niska |
 

@@ -8,7 +8,7 @@ import { ARTICLES_FOLDER } from '../../features/blog/utils/constants';
 export const metadata: Metadata = {
   title: 'Blog',
   description:
-    'Blog Vocare z praktycznymi poradami kariery, trendami rynku pracy, AI w rekrutacji i wskazówkami, jak rozwijać kompetencje zawodowe.',
+    'Blog Vocare z praktycznymi poradami kariery, trendami rynku pracy, AI w rekrutacji i wskazowkami jak rozwijac kompetencje zawodowe.',
   alternates: {
     canonical: '/blog',
   },
@@ -16,10 +16,8 @@ export const metadata: Metadata = {
     type: 'website',
     title: 'Vocare Blog',
     description:
-      'Blog Vocare z praktycznymi poradami kariery, trendami rynku pracy, AI w rekrutacji i wskazówkami, jak rozwijać kompetencje zawodowe.',
+      'Blog Vocare z praktycznymi poradami kariery, trendami rynku pracy, AI w rekrutacji i wskazowkami jak rozwijac kompetencje zawodowe.',
     url: '/blog',
-    siteName: 'Vocare',
-    locale: 'pl_PL',
     images: [
       {
         url: toAbsoluteUrl('/metadata/og-image.png'),
@@ -33,7 +31,7 @@ export const metadata: Metadata = {
     card: 'summary_large_image',
     title: 'Vocare Blog',
     description:
-      'Blog Vocare z praktycznymi poradami kariery, trendami rynku pracy, AI w rekrutacji i wskazówkami, jak rozwijać kompetencje zawodowe.',
+      'Blog Vocare z praktycznymi poradami kariery, trendami rynku pracy, AI w rekrutacji i wskazowkami jak rozwijac kompetencje zawodowe.',
     images: [toAbsoluteUrl('/metadata/og-image.png')],
   },
 };

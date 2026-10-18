@@ -32,7 +32,6 @@ import PageWithBackButton from '@/features/blog/components/PageWIthBackButton';
 import {
   getArticleContent,
   getArticlesMetadata,
-  getPublicImageSize,
   toAbsoluteUrl,
 } from '@/features/blog/utils/blogUtils';
 import {
@@ -40,16 +39,12 @@ import {
   BLOG_CATEGORIES,
   isBlogCategorySlug,
 } from '@/features/blog/utils/constants';
-import { SITE_LOGO } from '@/features/marketing/constants/seo';
 
 type MetadataProps = {
   params: Promise<{ category: string; slug: string }>;
 };
 
 export const dynamicParams = false;
-
-const getCategoryLabel = (category: string) =>
-  isBlogCategorySlug(category) ? BLOG_CATEGORIES[category].label : category;
 
 export async function generateMetadata({ params }: MetadataProps) {
   const { slug, category } = await params;
@@ -67,7 +62,6 @@ export async function generateMetadata({ params }: MetadataProps) {
   const canonicalPath = `/blog/${encodeURIComponent(category)}/${encodeURIComponent(slug)}`;
   const articleUrl = toAbsoluteUrl(canonicalPath);
   const coverImageUrl = toAbsoluteUrl(metadata.coverImage);
-  const coverImageSize = getPublicImageSize(metadata.coverImage);
 
   return {
     title: metadata.title,
@@ -83,14 +77,12 @@ export async function generateMetadata({ params }: MetadataProps) {
       siteName: 'Vocare',
       locale: 'pl_PL',
       publishedTime: metadata.date.toISOString(),
-      modifiedTime: (metadata.updatedAt ?? metadata.date).toISOString(),
       authors: metadata.author ? [metadata.author] : undefined,
-      section: getCategoryLabel(metadata.category),
+      section: metadata.category,
       tags: metadata.tags,
       images: [
         {
           url: coverImageUrl,
-          ...coverImageSize,
           alt: metadata.title,
         },
       ],
@@ -149,16 +141,16 @@ export default async function BlogPage(props: MetadataProps) {
       url: toAbsoluteUrl('/'),
       logo: {
         '@type': 'ImageObject',
-        url: toAbsoluteUrl(SITE_LOGO.path),
-        width: SITE_LOGO.width,
-        height: SITE_LOGO.height,
+        url: toAbsoluteUrl('/metadata/og-image.png'),
       },
     },
     keywords: metadata.tags.join(', '),
-    articleSection: getCategoryLabel(metadata.category),
+    articleSection: metadata.category,
     inLanguage: 'pl-PL',
   };
-  const categoryLabel = getCategoryLabel(metadata.category);
+  const categoryLabel = isBlogCategorySlug(metadata.category)
+    ? BLOG_CATEGORIES[metadata.category].label
+    : metadata.category;
   const breadcrumbLd = {
     '@context': 'https://schema.org',
     '@type': 'BreadcrumbList',

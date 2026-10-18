@@ -48,14 +48,14 @@ const Features = () => {
           </div>
 
           <div className="relative z-10 flex flex-col items-center space-y-6 sm:space-y-7 lg:space-y-8">
-            <h2 className="w-full text-center text-[28px] leading-[1.15] font-light text-[#F1F4FF] sm:text-[36px] lg:text-[48px] lg:leading-[1.1]">
+            <h1 className="w-full text-center text-[28px] leading-[1.15] font-light text-[#F1F4FF] sm:text-[36px] lg:text-[48px] lg:leading-[1.1]">
               <span className="opacity-[0.79]">Poznaj</span>{' '}
               <span className="bg-[linear-gradient(180deg,#9296FD_0%,#8491FE_50%,#9D9BFF_77%,#C7A9FE_100%)] bg-clip-text font-normal text-transparent">
                 Potęgę AI
               </span>
               <br />
               <span className="opacity-[0.79]">w Swojej Karierze</span>
-            </h2>
+            </h1>
 
             <p className="w-full max-w-178 text-center text-[14px] leading-normal font-light text-[#F1F4FF] opacity-[0.46] sm:text-[15px] lg:text-[18px] lg:leading-[1.45]">
               Koniec z chaosem przeglądania ofert i zgadywania, co dalej. Vocare zamienia Twój
