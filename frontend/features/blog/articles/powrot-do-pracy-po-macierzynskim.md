@@ -3,6 +3,7 @@ title: 'Powrót do pracy po macierzyńskim 2026 - jak się przygotować'
 description: 'Jak wrócić do pracy po urlopie macierzyńskim lub rodzicielskim? Sprawdź jak zaktualizować kompetencje i jak rozmawiać z pracodawcą.'
 estimatedReadTime: 8
 date: '2026-06-15'
+updatedAt: '2026-10-18'
 author: 'Vocare'
 category: 'kariera'
 coverImage: '/images/blog/career-change.webp'
@@ -61,6 +62,14 @@ Jeśli podczas przerwy robiłaś/robiłeś cokolwiek rozwojowego (kursy, projekt
 
 Coraz więcej firm oferuje elastyczne rozwiązania dla rodziców wracających do pracy: pracę hybrydową, zadaniowy czas pracy, czasowe skrócenie etatu. Warto zapytać o te opcje wprost, zamiast zakładać, że nie są dostępne - wiele firm ma już wypracowane procedury wsparcia rodziców.
 
+Część z nich to jednak nie dobra wola pracodawcy, tylko Twoje uprawnienia z [Kodeksu pracy](https://isap.sejm.gov.pl/isap.nsf/DocDetails.xsp?id=wdu19740240141):
+
+- **Powrót na to samo stanowisko** - po urlopie macierzyńskim lub rodzicielskim pracodawca musi dopuścić Cię do pracy na dotychczasowym stanowisku, a jeśli to niemożliwe - na równorzędnym, za wynagrodzeniem, jakie dostawałabyś/dostawałbyś bez urlopu ([gov.pl](https://www.gov.pl/web/rodzina/urlop-rodzicielski)).
+- **Praca zdalna dla rodzica dziecka do 4 lat** - pracodawca ma obowiązek uwzględnić Twój wniosek, chyba że nie pozwala na to organizacja lub rodzaj pracy. Odmowę musi uzasadnić w ciągu 7 dni roboczych ([Zielona Linia](https://zielonalinia.gov.pl/elastyczne-formy-zatrudnienia-dla-rodzicow-dzieci-do-lat-8/)).
+- **Elastyczna organizacja pracy dla rodzica dziecka do 8 lat** - możesz wnioskować m.in. o ruchomy czas pracy, indywidualny rozkład czasu pracy czy obniżony wymiar etatu. Wniosek składasz co najmniej 21 dni wcześniej, a pracodawca odpowiada w ciągu 7 dni i musi podać przyczynę ewentualnej odmowy ([gov.pl](https://www.gov.pl/web/rodzina/elastyczna-organizacja-pracy)).
+- **Obniżony etat zamiast urlopu wychowawczego** - jeśli masz prawo do urlopu wychowawczego, możesz zamiast niego pracować w obniżonym wymiarze (nie niższym niż pół etatu), a pracodawca musi taki wniosek uwzględnić ([PIP](https://www.pip.gov.pl/dla-pracodawcow/porady-prawne/rodzicielstwo)).
+- **Przerwy na karmienie** - pracownica karmiąca piersią ma prawo do dwóch półgodzinnych przerw wliczanych do czasu pracy, a przy pracy do 6 godzin dziennie - do jednej ([PIP](https://www.pip.gov.pl/dla-pracodawcow/porady-prawne/rodzicielstwo)).
+
 ---
 
 ## FAQ - powrót do pracy po urlopie macierzyńskim
@@ -72,7 +81,7 @@ Nie w sposób rozbudowany - krótka, rzeczowa informacja wystarczy. Pracodawcy w
 Kursy online, webinary i śledzenie branżowych źródeł nawet w małym wymiarze czasowym pomagają utrzymać aktualność wiedzy - nie trzeba nadrabiać wszystkiego naraz.
 
 **Czy warto wrócić na pełny etat, czy najpierw negocjować część etatu?**
-To zależy od Twojej sytuacji rodzinnej i polityki firmy - wiele firm oferuje stopniowy powrót (np. część etatu przez pierwsze miesiące), warto o to zapytać wprost.
+To zależy od Twojej sytuacji rodzinnej. Jeśli masz prawo do urlopu wychowawczego, możesz złożyć wniosek o obniżenie etatu (nie niżej niż do połowy) i pracodawca musi go uwzględnić. Poza tym wiele firm oferuje stopniowy powrót (np. część etatu przez pierwsze miesiące) - warto o to zapytać wprost.
 
 **Jak sprawdzić, jakie oferty pracy oferują dziś elastyczność dla rodziców wracających po przerwie?**
 [Roadmapa kariery w Vocare](/roadmap) analizuje Twój profil i wskazuje oferty najlepiej dopasowane do Twoich potrzeb, w tym oczekiwań co do elastyczności.
