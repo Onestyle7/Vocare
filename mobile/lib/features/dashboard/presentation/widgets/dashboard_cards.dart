@@ -9,6 +9,7 @@ import '../../../../core/theme/app_typography.dart';
 import '../../../../core/widgets/app_icon.dart';
 import '../../../../core/widgets/buttons.dart';
 import '../../../../core/widgets/glass_widgets.dart';
+import '../../../../core/widgets/pressable.dart';
 import '../../../billing/data/billing_repository.dart';
 import '../../data/dashboard_repository.dart';
 import 'progress_painters.dart';
@@ -190,84 +191,384 @@ class _BalanceTile extends StatelessWidget {
   }
 }
 
-/// "Podsumowanie" — the four counters from the web summary card.
-class SummaryGrid extends StatelessWidget {
-  const SummaryGrid({super.key, required this.summary});
+/// One stop of [JourneyCard]; a step counts as done once it has been used.
+class JourneyStep {
+  const JourneyStep({
+    required this.icon,
+    required this.iconFrame,
+    required this.title,
+    required this.count,
+    required this.doneLabel,
+    required this.todoLabel,
+    required this.route,
+  });
+
+  final AppIcons icon;
+
+  /// Size of the icon's exported frame (see [AppIcons]).
+  final double iconFrame;
+  final String title;
+  final int count;
+  final String doneLabel;
+  final String todoLabel;
+  final String route;
+
+  bool get done => count > 0;
+
+  /// The four dashboard counters in tab-bar order, which is also the order
+  /// the product is meant to be used in.
+  static List<JourneyStep> fromSummary(DashboardSummary s) => [
+    JourneyStep(
+      icon: AppIcons.briefcase,
+      iconFrame: 62,
+      title: 'Rekomendacje',
+      count: s.recommendations,
+      doneLabel:
+          '${s.recommendations} ${polishPlural(s.recommendations, 'analiza', 'analizy', 'analiz')} profilu',
+      todoLabel: 'Poznaj ścieżki kariery dopasowane do Ciebie',
+      route: Routes.assistant,
+    ),
+    JourneyStep(
+      icon: AppIcons.trendingUp,
+      iconFrame: 29,
+      title: 'Analiza rynku',
+      count: s.analyses,
+      doneLabel:
+          '${s.analyses} ${polishPlural(s.analyses, 'raport', 'raporty', 'raportów')} rynku pracy',
+      todoLabel: 'Sprawdź zarobki i popyt',
+      route: Routes.market,
+    ),
+    JourneyStep(
+      icon: AppIcons.map,
+      iconFrame: 62,
+      title: 'Roadmapa',
+      count: s.roadmaps,
+      doneLabel:
+          '${s.roadmaps} ${polishPlural(s.roadmaps, 'plan', 'plany', 'planów')} rozwoju',
+      todoLabel: 'Zaplanuj kolejne kroki rozwoju',
+      route: Routes.roadmap,
+    ),
+    JourneyStep(
+      icon: AppIcons.cv,
+      iconFrame: 62,
+      title: 'CV',
+      count: s.cvs,
+      doneLabel:
+          '${s.cvs} ${polishPlural(s.cvs, 'wersja', 'wersje', 'wersji')} CV',
+      todoLabel: 'Stwórz CV pod wybrane stanowisko',
+      route: Routes.cv,
+    ),
+  ];
+}
+
+/// `1 raport`, `2 raporty`, `5 raportów`, `22 raporty`, `12 raportów`.
+String polishPlural(int n, String one, String few, String many) {
+  if (n == 1) return one;
+  final units = n % 10;
+  final tens = n % 100;
+  if (units >= 2 && units <= 4 && (tens < 12 || tens > 14)) return few;
+  return many;
+}
+
+/// "3 z 4" next to the section title; hidden once every step is done.
+class JourneyProgress extends StatelessWidget {
+  const JourneyProgress({super.key, required this.summary});
 
   final DashboardSummary summary;
 
   @override
   Widget build(BuildContext context) {
-    final items = [
-      (
-        AppIcons.briefcase,
-        62.0,
-        'Rekomendacje',
-        summary.recommendations,
-        Routes.assistant,
+    final steps = JourneyStep.fromSummary(summary);
+    final done = steps.where((s) => s.done).length;
+    if (done == steps.length) return const SizedBox.shrink();
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(999),
+        color: AppColors.surfaceRaised,
       ),
-      (
-        AppIcons.trendingUp,
-        29.0,
-        'Analizy rynku',
-        summary.analyses,
-        Routes.market,
+      child: Text(
+        '$done z ${steps.length}',
+        style: AppTypography.label.copyWith(
+          fontSize: 12,
+          color: AppColors.textMuted,
+        ),
       ),
-      (AppIcons.map, 62.0, 'Roadmapy', summary.roadmaps, Routes.roadmap),
-      (AppIcons.cv, 62.0, 'Wersje CV', summary.cvs, Routes.cv),
-    ];
-    return GridView.count(
-      crossAxisCount: 2,
-      mainAxisSpacing: 12,
-      crossAxisSpacing: 12,
-      childAspectRatio: 1.45,
-      shrinkWrap: true,
-      padding: EdgeInsets.zero,
-      physics: const NeverScrollableScrollPhysics(),
-      children: [
-        for (final (icon, size, label, value, route) in items)
-          SurfaceCard(
-            onTap: () => context.go(route),
-            padding: const EdgeInsets.fromLTRB(16, 12, 16, 14),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Container(
-                  width: 36,
-                  height: 36,
-                  decoration: const BoxDecoration(
-                    shape: BoxShape.circle,
-                    color: AppColors.surfaceRaised,
-                  ),
-                  child: OverflowBox(
-                    minWidth: 0,
-                    minHeight: 0,
-                    maxWidth: 62,
-                    maxHeight: 62,
-                    child: Transform.scale(
-                      scale: 0.8,
-                      child: AppIcon(icon, size: size),
+    );
+  }
+}
+
+/// "Twoje postępy": the dashboard counters as a path through the app instead
+/// of four bare numbers. Each step says what its number means, the line
+/// lights up behind finished steps and the first untouched one is offered as
+/// the next step.
+class JourneyCard extends StatelessWidget {
+  const JourneyCard({super.key, required this.summary});
+
+  final DashboardSummary summary;
+
+  @override
+  Widget build(BuildContext context) {
+    final steps = JourneyStep.fromSummary(summary);
+    final next = steps.indexWhere((s) => !s.done);
+    return SurfaceCard(
+      padding: const EdgeInsets.fromLTRB(16, 20, 14, 4),
+      // The lit line draws itself top to bottom once, on first build.
+      child: TweenAnimationBuilder<double>(
+        tween: Tween(begin: 0, end: 1),
+        duration: const Duration(milliseconds: 900),
+        curve: Curves.easeInOutCubic,
+        builder: (context, t, _) => Column(
+          children: [
+            for (var i = 0; i < steps.length; i++)
+              _JourneyRow(
+                step: steps[i],
+                isNext: i == next,
+                isLast: i == steps.length - 1,
+                lineFill: (t * (steps.length - 1) - i).clamp(0.0, 1.0),
+              ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class _JourneyRow extends StatelessWidget {
+  const _JourneyRow({
+    required this.step,
+    required this.isNext,
+    required this.isLast,
+    required this.lineFill,
+  });
+
+  static const _node = 40.0;
+
+  final JourneyStep step;
+  final bool isNext;
+  final bool isLast;
+  final double lineFill;
+
+  @override
+  Widget build(BuildContext context) {
+    final subtitle = step.done ? step.doneLabel : step.todoLabel;
+    return Pressable.builder(
+      onTap: () => context.go(step.route),
+      semanticLabel: '${step.title}. $subtitle',
+      // Only the text moves on press, so the line stays connected.
+      builder: (context, pressed) => Stack(
+        children: [
+          if (!isLast)
+            Positioned(
+              left: _node / 2 - 1,
+              width: 2,
+              top: _node,
+              bottom: 0,
+              child: _JourneyLine(lit: step.done, fill: lineFill),
+            ),
+          Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              _JourneyNode(step: step, isNext: isNext, size: _node),
+              const SizedBox(width: 14),
+              Expanded(
+                child: AnimatedScale(
+                  scale: pressed ? 0.97 : 1,
+                  alignment: Alignment.centerLeft,
+                  duration: Duration(milliseconds: pressed ? 90 : 220),
+                  curve: pressed ? Curves.easeOut : Curves.easeOutBack,
+                  child: Padding(
+                    padding: EdgeInsets.only(bottom: isLast ? 16 : 26),
+                    child: ExcludeSemantics(
+                      child: ConstrainedBox(
+                        constraints: const BoxConstraints(minHeight: _node),
+                        child: Row(
+                          children: [
+                            Expanded(
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  Text(
+                                    step.title,
+                                    style: AppTypography.button.copyWith(
+                                      fontSize: 15,
+                                      height: 1.3,
+                                      color: step.done || isNext
+                                          ? AppColors.textPrimary
+                                          : AppColors.textMuted,
+                                    ),
+                                  ),
+                                  const SizedBox(height: 2),
+                                  Text(
+                                    subtitle,
+                                    style: AppTypography.label,
+                                    maxLines: 2,
+                                    overflow: TextOverflow.ellipsis,
+                                  ),
+                                ],
+                              ),
+                            ),
+                            const SizedBox(width: 10),
+                            if (isNext)
+                              const _StartPill()
+                            else
+                              const Icon(
+                                Icons.chevron_right_rounded,
+                                size: 22,
+                                color: AppColors.textSubtle,
+                              ),
+                          ],
+                        ),
+                      ),
                     ),
                   ),
                 ),
-                const Spacer(),
-                TweenAnimationBuilder<double>(
-                  tween: Tween(begin: 0, end: value.toDouble()),
-                  duration: const Duration(milliseconds: 700),
-                  curve: Curves.easeOutCubic,
-                  builder: (_, v, _) =>
-                      Text('${v.round()}', style: AppTypography.metric),
-                ),
-                Text(
-                  label,
-                  style: AppTypography.label,
-                  maxLines: 1,
-                  overflow: TextOverflow.ellipsis,
-                ),
-              ],
-            ),
+              ),
+            ],
           ),
-      ],
+        ],
+      ),
+    );
+  }
+}
+
+/// Done steps are filled with the brand gradient; the next step is ringed and
+/// glowing; later steps stay quiet.
+class _JourneyNode extends StatelessWidget {
+  const _JourneyNode({
+    required this.step,
+    required this.isNext,
+    required this.size,
+  });
+
+  final JourneyStep step;
+  final bool isNext;
+  final double size;
+
+  @override
+  Widget build(BuildContext context) {
+    final done = step.done;
+    return Container(
+      width: size,
+      height: size,
+      decoration: BoxDecoration(
+        shape: BoxShape.circle,
+        gradient: done ? AppColors.brandGradient : null,
+        color: done ? null : AppColors.surfaceRaised,
+        border: isNext ? Border.all(color: AppColors.accent, width: 1.5) : null,
+        boxShadow: [
+          if (done)
+            BoxShadow(
+              color: AppColors.gradientMid.withValues(alpha: 0.3),
+              blurRadius: 12,
+              offset: const Offset(0, 3),
+            ),
+          if (isNext)
+            BoxShadow(
+              color: AppColors.accent.withValues(alpha: 0.35),
+              blurRadius: 16,
+            ),
+        ],
+      ),
+      child: OverflowBox(
+        minWidth: 0,
+        minHeight: 0,
+        maxWidth: 62,
+        maxHeight: 62,
+        child: Transform.scale(
+          scale: 0.85,
+          child: AppIcon(
+            step.icon,
+            size: step.iconFrame,
+            color: done
+                ? Colors.white
+                : isNext
+                ? AppColors.accent
+                : AppColors.textSubtle,
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+/// Segment between two nodes: a hairline track, filled with the brand
+/// gradient below a finished step.
+class _JourneyLine extends StatelessWidget {
+  const _JourneyLine({required this.lit, required this.fill});
+
+  final bool lit;
+  final double fill;
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 4),
+      child: Center(
+        child: SizedBox(
+          width: 2,
+          height: double.infinity,
+          child: Stack(
+            fit: StackFit.expand,
+            children: [
+              const DecoratedBox(
+                decoration: BoxDecoration(
+                  color: AppColors.divider,
+                  borderRadius: BorderRadius.all(Radius.circular(1)),
+                ),
+              ),
+              if (lit)
+                Align(
+                  alignment: Alignment.topCenter,
+                  child: FractionallySizedBox(
+                    heightFactor: fill,
+                    widthFactor: 1,
+                    child: const DecoratedBox(
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.all(Radius.circular(1)),
+                        gradient: LinearGradient(
+                          begin: Alignment.topCenter,
+                          end: Alignment.bottomCenter,
+                          colors: [
+                            AppColors.gradientMid,
+                            AppColors.gradientEnd,
+                          ],
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class _StartPill extends StatelessWidget {
+  const _StartPill();
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      height: 32,
+      padding: const EdgeInsets.symmetric(horizontal: 14),
+      alignment: Alignment.center,
+      decoration: BoxDecoration(
+        gradient: AppColors.brandGradient,
+        borderRadius: BorderRadius.circular(999),
+        boxShadow: AppColors.buttonGlow,
+      ),
+      child: Text(
+        'Zacznij',
+        style: AppTypography.label.copyWith(
+          fontSize: 13,
+          fontWeight: FontWeight.w500,
+          color: Colors.white,
+        ),
+      ),
     );
   }
 }

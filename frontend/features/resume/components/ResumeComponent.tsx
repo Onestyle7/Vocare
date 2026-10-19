@@ -61,94 +61,28 @@ import { claimLegacyHobbiesForCv } from '../utils/legacyHobbies';
 import { reorderResumeItemByOffset, reorderResumeItems } from '../utils/reorderResumeItems';
 import { CvAnalysisDrawer } from './CvAnalysisDrawer';
 import { DatePickerWithCurrent } from './DatePickerWithCurrent';
+import { MobileCvEditor, type MobileEditorMode } from './mobile/MobileCvEditor';
 import { ResumeAnalysisPromoButton } from './ResumeAnalysisPromoButton';
+import type {
+  Certificate,
+  Education,
+  Experience,
+  Hobby,
+  Language,
+  PersonalInfo,
+  PrivacyStatement,
+  Project,
+  Skill,
+  SocialLink,
+} from './resumeEditorTypes';
 import TailorCvFromEditorDialog, {
   TailorCvMode,
   TailorCvSubmitResult,
 } from './TailorCvFromEditorDialog';
 
-interface PersonalInfo {
-  firstName: string;
-  lastName: string;
-  email: string;
-  phone: string;
-  address: string;
-  country: string;
-  socialLinks: SocialLink[];
-  profession: string;
-  summary: string;
-}
-
-interface Experience {
-  id: string;
-  company: string;
-  position: string;
-  startDate: string;
-  endDate: string;
-  responsibilities: string[];
-  isCurrent: boolean;
-  useBulletList: boolean;
-}
-
-interface Education {
-  id: string;
-  school: string;
-  degree: string;
-  field: string;
-  startDate: string;
-  endDate: string;
-  isCurrent: boolean;
-  description: string;
-}
-
-interface Project {
-  id: string;
-  title: string;
-  url: string;
-  description: string;
-}
-
-interface Skill {
-  id: string;
-  name: string;
-}
-
-interface Hobby {
-  id: string;
-  name: string;
-}
-
-interface Language {
-  id: string;
-  name: string;
-  level: string;
-}
-
-interface Certificate {
-  id: string;
-  name: string;
-  date: string;
-  hasDate: boolean;
-}
-
-interface PrivacyStatement {
-  id: string;
-  content: string;
-}
-
 interface CVCreatorProps {
   initialCv?: CvDetailsDto;
   initialLimits?: CvLimits | null;
-}
-interface SocialLink {
-  id: string;
-  label: string;
-  url: string;
-}
-interface SocialLink {
-  id: string;
-  label: string;
-  url: string;
 }
 
 type FormattingType = 'bold' | 'italic' | 'underline';
@@ -391,6 +325,7 @@ const CVCreator: React.FC<CVCreatorProps> = ({ initialCv, initialLimits = null }
   const editorOperationRef = useRef<'save' | 'profile' | 'tailor' | null>(null);
   const limitsRequestRef = useRef(0);
   const isMobile = useIsMobile();
+  const [mobileMode, setMobileMode] = useState<MobileEditorMode>('edit');
 
   // Pagination (computed from measured pages)
   const [currentPage, setCurrentPage] = useState(1);
@@ -4418,6 +4353,266 @@ const CVCreator: React.FC<CVCreatorProps> = ({ initialCv, initialLimits = null }
     }
   };
 
+  // Phones: fit one A4 page to the screen width whenever the preview shows.
+  useEffect(() => {
+    if (!isMobile || mobileMode !== 'preview') return;
+    const fit = () => {
+      const width = pagesViewportRef.current?.clientWidth || window.innerWidth;
+      const pagePx = PAGE_WIDTH_MM * (mmRatioRef.current ?? 96 / 25.4);
+      setCvScale(Math.min(1, (width - 24) / pagePx));
+    };
+    fit();
+    window.addEventListener('resize', fit);
+    return () => window.removeEventListener('resize', fit);
+  }, [isMobile, mobileMode]);
+
+  // On phones the analysis "Przejdź do sekcji" may be used from the preview:
+  // switch back to the edit cards first, then scroll to the section.
+  const handleNavigateFromAnalysis = (sectionId: string) => {
+    if (isMobile && mobileMode !== 'edit') {
+      setMobileMode('edit');
+      setTimeout(() => handleNavigateToFormSection(sectionId), 60);
+      return;
+    }
+    handleNavigateToFormSection(sectionId);
+  };
+
+  const editorDialogs = (
+    <>
+      <CvAnalysisDrawer
+        cvId={cvId}
+        cvName={resumeName}
+        targetPosition={personalInfo.profession || undefined}
+        open={isAnalysisOpen}
+        onOpenChange={setIsAnalysisOpen}
+        onNavigateToSection={handleNavigateFromAnalysis}
+      />
+
+      <TailorCvFromEditorDialog
+        open={isTailorDialogOpen}
+        limits={cvLimits}
+        currentCvName={resumeName}
+        defaultTargetPosition={personalInfo.profession}
+        isCheckingLimits={isCheckingCvLimits}
+        isSubmitting={isTailoring}
+        onOpenChange={setIsTailorDialogOpen}
+        onSubmit={handleTailorCvFromEditor}
+        onUpgrade={() => router.push('/pricing')}
+      />
+    </>
+  );
+
+  // CV preview: hidden measurement container + paged A4 viewport.
+  const previewContainer = (
+    <div
+      className="relative flex-1 overflow-hidden bg-gray-100/20"
+      onMouseMove={handleMouseMove}
+      onMouseUp={handleMouseUp}
+      onMouseLeave={() => {
+        handleMouseUp();
+        setIsHovered(false);
+      }}
+      onMouseEnter={() => setIsHovered(true)}
+    >
+      {/* Hidden measurement container to compute heights */}
+      <div
+        ref={measureContainerRef}
+        className="cv-text"
+        style={{
+          position: 'absolute',
+          left: '-10000px',
+          top: '-10000px',
+          width: `${PAGE_WIDTH_MM}mm`,
+          background: '#fff',
+        }}
+      >
+        <div style={{ padding: `${PAGE_PADDING_MM}mm` }}>
+          {renderHeader()}
+          {sectionOrder.filter(isSectionVisible).map((id) => (
+            <React.Fragment key={`m-${id}`}>{renderSectionInPreview(id)}</React.Fragment>
+          ))}
+        </div>
+      </div>
+
+      {/* Pages viewport */}
+      <div ref={pagesViewportRef} className="absolute inset-0 overflow-auto">
+        <div
+          ref={zoomWrapperRef}
+          className={`${isDragging ? 'cursor-grabbing' : 'cursor-grab'} flex flex-col items-center`}
+          style={
+            isMobile
+              ? // `zoom` scales layout too, so no blank scroll area under the pages.
+                { zoom: cvScale, padding: '24px 0 140px' }
+              : {
+                  transform: `translate(${cvPosition.x}px, ${cvPosition.y}px) scale(${cvScale})`,
+                  transformOrigin: 'top center',
+                  padding: '40px 0',
+                }
+          }
+          onMouseDown={handleMouseDown}
+        >
+          {(pages.length
+            ? pages
+            : [
+                [
+                  /* empty page */
+                ] as SectionChunk[],
+              ]
+          ).map((page, idx) => (
+            <div
+              key={`page-${idx}`}
+              className="cv-page cv-text mb-6 overflow-hidden rounded-sm shadow"
+              style={{
+                width: `${PAGE_WIDTH_MM}mm`,
+                height: `${PAGE_HEIGHT_MM}mm`,
+                background: '#fff',
+              }}
+            >
+              <div className="box-border h-full" style={{ padding: `${PAGE_PADDING_MM}mm` }}>
+                {idx === 0 && renderHeader()}
+                {page.map((chunk, cidx) => (
+                  <React.Fragment key={`p${idx}-c${cidx}`}>{renderChunk(chunk)}</React.Fragment>
+                ))}
+                {/* Empty state message on first page */}
+                {idx === 0 &&
+                  !personalInfo.firstName &&
+                  !personalInfo.lastName &&
+                  !personalInfo.email &&
+                  !personalInfo.phone &&
+                  !personalInfo.address &&
+                  personalInfo.socialLinks.length === 0 &&
+                  !personalInfo.summary &&
+                  experiences.length === 0 &&
+                  projects.length === 0 &&
+                  projects.length === 0 &&
+                  skills.length === 0 &&
+                  education.length === 0 && (
+                    <div className="mt-20 text-center text-gray-500">
+                      <p className="text-lg">
+                        Zacznij od uzupełnienia pól po lewej stronie. <br /> Efeket będziesz widział
+                        tutaj na bieżąco.
+                      </p>
+                    </div>
+                  )}
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      {/* Pagination Controls */}
+      {true && (
+        <div
+          className={`absolute bottom-5 left-1/2 -translate-x-1/2 transform transition-all duration-500 ${
+            isHovered ? 'translate-y-0 opacity-100' : 'pointer-events-none translate-y-16 opacity-0'
+          } flex items-center space-x-2 rounded-lg bg-white px-4 py-2 shadow-lg`}
+        >
+          <button
+            onClick={goToPrevPage}
+            disabled={currentPage === 1}
+            className={`rounded p-2 ${
+              currentPage === 1
+                ? 'cursor-not-allowed text-gray-400'
+                : 'cursor-pointer text-gray-700 hover:bg-gray-100'
+            }`}
+          >
+            <ChevronLeft size={16} />
+          </button>
+
+          <div className="flex space-x-1">
+            {Array.from({ length: pages.length || 1 }, (_, i) => i + 1).map((page) => (
+              <button
+                key={page}
+                onClick={() => goToPage(page)}
+                className={`h-8 w-8 cursor-pointer rounded text-sm font-medium ${
+                  currentPage === page
+                    ? 'bg-[#915EFF] text-white'
+                    : 'text-gray-700 hover:bg-gray-100'
+                }`}
+              >
+                {page}
+              </button>
+            ))}
+          </div>
+
+          <button
+            onClick={goToNextPage}
+            disabled={currentPage === (pages.length || 1)}
+            className={`rounded p-2 ${
+              currentPage === (pages.length || 1)
+                ? 'cursor-not-allowed text-gray-400'
+                : 'cursor-pointer text-gray-700 hover:bg-gray-100'
+            }`}
+          >
+            <ChevronRight size={16} />
+          </button>
+
+          <span className="ml-2 text-sm text-gray-600">
+            {currentPage} / {pages.length || 1}
+          </span>
+        </div>
+      )}
+    </div>
+  );
+
+  if (isMobile) {
+    return (
+      <>
+        <MobileCvEditor
+          resumeName={resumeName}
+          mode={mobileMode}
+          onModeChange={setMobileMode}
+          autosaveStatus={autosaveStatus}
+          isBusy={isManualSaving || isLoadingProfile || isTailoring}
+          isLoadingProfile={isLoadingProfile}
+          highlightedSection={highlightedFormSection}
+          data={{
+            personalInfo,
+            experiences,
+            education,
+            projects,
+            certificates,
+            skills,
+            languages,
+            hobbies,
+            privacyStatement,
+          }}
+          setters={{
+            setPersonalInfo,
+            setExperiences,
+            setEducation,
+            setProjects,
+            setCertificates,
+            setSkills,
+            setLanguages,
+            setHobbies,
+            setPrivacyStatement,
+          }}
+          sectionOrder={sectionOrder}
+          privacyTemplate={PRIVACY_CONSENT_TEMPLATES[resumePreviewLanguage]}
+          showFullDates={showFullDates}
+          onShowFullDatesChange={setShowFullDates}
+          previewLanguage={resumePreviewLanguage}
+          onPreviewLanguageChange={setResumePreviewLanguage}
+          onBack={() => {
+            if (typeof window !== 'undefined' && window.history.length > 1) {
+              router.back();
+            } else {
+              router.push('/dashboard/resume');
+            }
+          }}
+          onSaveNow={handleSave}
+          onLoadFromProfile={loadFromProfile}
+          onTailor={handleOpenTailorDialog}
+          onAnalysis={() => setIsAnalysisOpen(true)}
+          onDownload={downloadPDF}
+          preview={previewContainer}
+        />
+        {editorDialogs}
+      </>
+    );
+  }
+
   return (
     <div className="font-poppins flex h-screen flex-col overflow-hidden bg-gray-50 lg:flex-row lg:pt-6 dark:text-black">
       {/* Top Navigation for Mobile */}
@@ -4537,26 +4732,7 @@ const CVCreator: React.FC<CVCreatorProps> = ({ initialCv, initialLimits = null }
         </div> */}
       </div>
 
-      <CvAnalysisDrawer
-        cvId={cvId}
-        cvName={resumeName}
-        targetPosition={personalInfo.profession || undefined}
-        open={isAnalysisOpen}
-        onOpenChange={setIsAnalysisOpen}
-        onNavigateToSection={handleNavigateToFormSection}
-      />
-
-      <TailorCvFromEditorDialog
-        open={isTailorDialogOpen}
-        limits={cvLimits}
-        currentCvName={resumeName}
-        defaultTargetPosition={personalInfo.profession}
-        isCheckingLimits={isCheckingCvLimits}
-        isSubmitting={isTailoring}
-        onOpenChange={setIsTailorDialogOpen}
-        onSubmit={handleTailorCvFromEditor}
-        onUpgrade={() => router.push('/pricing')}
-      />
+      {editorDialogs}
 
       {/* Main Content */}
       <div className="flex h-full flex-1 flex-col gap-3 overflow-hidden px-3 lg:flex-row lg:px-0">
@@ -4902,155 +5078,7 @@ const CVCreator: React.FC<CVCreatorProps> = ({ initialCv, initialLimits = null }
             </div>
           )}
 
-          {/* CV Preview Container */}
-          <div
-            className="relative flex-1 overflow-hidden bg-gray-100/20"
-            onMouseMove={handleMouseMove}
-            onMouseUp={handleMouseUp}
-            onMouseLeave={() => {
-              handleMouseUp();
-              setIsHovered(false);
-            }}
-            onMouseEnter={() => setIsHovered(true)}
-          >
-            {/* Hidden measurement container to compute heights */}
-            <div
-              ref={measureContainerRef}
-              className="cv-text"
-              style={{
-                position: 'absolute',
-                left: '-10000px',
-                top: '-10000px',
-                width: `${PAGE_WIDTH_MM}mm`,
-                background: '#fff',
-              }}
-            >
-              <div style={{ padding: `${PAGE_PADDING_MM}mm` }}>
-                {renderHeader()}
-                {sectionOrder.filter(isSectionVisible).map((id) => (
-                  <React.Fragment key={`m-${id}`}>{renderSectionInPreview(id)}</React.Fragment>
-                ))}
-              </div>
-            </div>
-
-            {/* Pages viewport */}
-            <div ref={pagesViewportRef} className="absolute inset-0 overflow-auto">
-              <div
-                ref={zoomWrapperRef}
-                className={`${isDragging ? 'cursor-grabbing' : 'cursor-grab'} flex flex-col items-center`}
-                style={{
-                  transform: `translate(${cvPosition.x}px, ${cvPosition.y}px) scale(${cvScale})`,
-                  transformOrigin: 'top center',
-                  padding: '40px 0',
-                }}
-                onMouseDown={handleMouseDown}
-              >
-                {(pages.length
-                  ? pages
-                  : [
-                      [
-                        /* empty page */
-                      ] as SectionChunk[],
-                    ]
-                ).map((page, idx) => (
-                  <div
-                    key={`page-${idx}`}
-                    className="cv-page cv-text mb-6 overflow-hidden rounded-sm shadow"
-                    style={{
-                      width: `${PAGE_WIDTH_MM}mm`,
-                      height: `${PAGE_HEIGHT_MM}mm`,
-                      background: '#fff',
-                    }}
-                  >
-                    <div className="box-border h-full" style={{ padding: `${PAGE_PADDING_MM}mm` }}>
-                      {idx === 0 && renderHeader()}
-                      {page.map((chunk, cidx) => (
-                        <React.Fragment key={`p${idx}-c${cidx}`}>
-                          {renderChunk(chunk)}
-                        </React.Fragment>
-                      ))}
-                      {/* Empty state message on first page */}
-                      {idx === 0 &&
-                        !personalInfo.firstName &&
-                        !personalInfo.lastName &&
-                        !personalInfo.email &&
-                        !personalInfo.phone &&
-                        !personalInfo.address &&
-                        personalInfo.socialLinks.length === 0 &&
-                        !personalInfo.summary &&
-                        experiences.length === 0 &&
-                        projects.length === 0 &&
-                        projects.length === 0 &&
-                        skills.length === 0 &&
-                        education.length === 0 && (
-                          <div className="mt-20 text-center text-gray-500">
-                            <p className="text-lg">
-                              Zacznij od uzupełnienia pól po lewej stronie. <br /> Efeket będziesz
-                              widział tutaj na bieżąco.
-                            </p>
-                          </div>
-                        )}
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </div>
-
-            {/* Pagination Controls */}
-            {true && (
-              <div
-                className={`absolute bottom-5 left-1/2 -translate-x-1/2 transform transition-all duration-500 ${
-                  isHovered
-                    ? 'translate-y-0 opacity-100'
-                    : 'pointer-events-none translate-y-16 opacity-0'
-                } flex items-center space-x-2 rounded-lg bg-white px-4 py-2 shadow-lg`}
-              >
-                <button
-                  onClick={goToPrevPage}
-                  disabled={currentPage === 1}
-                  className={`rounded p-2 ${
-                    currentPage === 1
-                      ? 'cursor-not-allowed text-gray-400'
-                      : 'cursor-pointer text-gray-700 hover:bg-gray-100'
-                  }`}
-                >
-                  <ChevronLeft size={16} />
-                </button>
-
-                <div className="flex space-x-1">
-                  {Array.from({ length: pages.length || 1 }, (_, i) => i + 1).map((page) => (
-                    <button
-                      key={page}
-                      onClick={() => goToPage(page)}
-                      className={`h-8 w-8 cursor-pointer rounded text-sm font-medium ${
-                        currentPage === page
-                          ? 'bg-[#915EFF] text-white'
-                          : 'text-gray-700 hover:bg-gray-100'
-                      }`}
-                    >
-                      {page}
-                    </button>
-                  ))}
-                </div>
-
-                <button
-                  onClick={goToNextPage}
-                  disabled={currentPage === (pages.length || 1)}
-                  className={`rounded p-2 ${
-                    currentPage === (pages.length || 1)
-                      ? 'cursor-not-allowed text-gray-400'
-                      : 'cursor-pointer text-gray-700 hover:bg-gray-100'
-                  }`}
-                >
-                  <ChevronRight size={16} />
-                </button>
-
-                <span className="ml-2 text-sm text-gray-600">
-                  {currentPage} / {pages.length || 1}
-                </span>
-              </div>
-            )}
-          </div>
+          {previewContainer}
         </div>
       </div>
     </div>

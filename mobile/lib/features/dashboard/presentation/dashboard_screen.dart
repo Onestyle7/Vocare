@@ -95,8 +95,11 @@ class _Content extends ConsumerWidget {
           onOpenProfile: () => context.push(Routes.profile),
         ),
         const SizedBox(height: 28),
-        const SectionHeader(title: 'Podsumowanie'),
-        SummaryGrid(summary: summary),
+        SectionHeader(
+          title: 'Twoje postępy',
+          trailing: JourneyProgress(summary: summary),
+        ),
+        JourneyCard(summary: summary),
         if (data.attributes case final attributes?
             when attributes.any((a) => a.score > 0)) ...[
           const SizedBox(height: 28),
@@ -130,29 +133,7 @@ class _Skeleton extends StatelessWidget {
           ],
         ),
         SizedBox(height: 28),
-        Row(
-          children: [
-            Expanded(
-              child: SkeletonBox(height: 110, radius: AppSpacing.cardRadius),
-            ),
-            SizedBox(width: 12),
-            Expanded(
-              child: SkeletonBox(height: 110, radius: AppSpacing.cardRadius),
-            ),
-          ],
-        ),
-        SizedBox(height: 12),
-        Row(
-          children: [
-            Expanded(
-              child: SkeletonBox(height: 110, radius: AppSpacing.cardRadius),
-            ),
-            SizedBox(width: 12),
-            Expanded(
-              child: SkeletonBox(height: 110, radius: AppSpacing.cardRadius),
-            ),
-          ],
-        ),
+        SkeletonBox(height: 300, radius: AppSpacing.cardRadius),
       ],
     );
   }
