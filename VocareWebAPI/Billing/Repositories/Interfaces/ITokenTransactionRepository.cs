@@ -7,5 +7,6 @@ namespace VocareWebAPI.Billing.Repositories.Interfaces
     {
         Task AddTransactionAsync(TokenTransaction transaction);
         Task<bool> HasTransactionOfTypeAsync(string userId, TransactionType type);
+        Task<bool> HasEverHadSubscriptionAsync(string userId);
     }
 }

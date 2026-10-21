@@ -1,5 +1,6 @@
 using Hangfire;
 using VocareWebAPI.Billing.Configuration;
+using VocareWebAPI.Billing.Constants;
 using VocareWebAPI.Billing.Exceptions;
 using VocareWebAPI.Billing.Models.Dtos;
 using VocareWebAPI.Billing.Models.Entities;
@@ -374,7 +375,8 @@ namespace VocareWebAPI.Billing.Services.Implementations
                 var transaction = new TokenTransaction
                 {
                     UserId = userId,
-                    ServiceName = $"SubscriptionActivated-{subscriptionLevel}",
+                    ServiceName =
+                        $"{TransactionServiceNames.SubscriptionActivatedPrefix}{subscriptionLevel}",
                     Type = TransactionType.Purchase,
                     Amount = 0,
                     CreatedAt = DateTime.UtcNow,
@@ -567,7 +569,8 @@ namespace VocareWebAPI.Billing.Services.Implementations
 
                 var userBilling = await _userBillingRepository.GetByUserIdAsync(userId);
 
-                userBilling.SubscriptionStatus = SubscriptionStatus.Active;
+                if (invoice.AmountPaid > 0)
+                    userBilling.SubscriptionStatus = SubscriptionStatus.Active;
 
                 DateTime? periodEnd = null;
                 if (invoice.Lines?.Data?.Any() == true)
