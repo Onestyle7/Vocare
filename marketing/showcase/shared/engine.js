@@ -88,15 +88,6 @@
       )
       .join('<br>');
     el._words = [...el.querySelectorAll('.w')];
-    // gradient headlines: give every word a slice of one shared gradient
-    if (el.classList.contains('grad')) {
-      const box = el.getBoundingClientRect();
-      const k = el.offsetWidth / box.width; // undo any ancestor scale
-      el._words.forEach((w) => {
-        w.style.backgroundSize = `${el.offsetWidth}px 100%`;
-        w.style.backgroundPosition = `${-(w.getBoundingClientRect().left - box.left) * k}px 0`;
-      });
-    }
     return el._words;
   }
 
@@ -122,14 +113,6 @@
   function count(el, t, { at, d = 1.6, from = 0, to, decimals = 0, e = ease.outExpo, suffix = '' }) {
     const v = lerp(from, to, prog(t, at, d, e));
     el.textContent = fmt(v, decimals) + suffix;
-  }
-
-  // ---------- ambient background ----------
-  function ambient(t) {
-    const a = document.querySelector('.glow-a');
-    const b = document.querySelector('.glow-b');
-    if (a) a.style.transform = `translate3d(${Math.sin(t * 0.35) * 120}px, ${Math.cos(t * 0.28) * 160}px, 0) scale(${1 + Math.sin(t * 0.5) * 0.06})`;
-    if (b) b.style.transform = `translate3d(${Math.cos(t * 0.3) * 140}px, ${Math.sin(t * 0.22) * 120}px, 0)`;
   }
 
   // ---------- shared outro ----------
@@ -159,10 +142,7 @@
     window.addEventListener('resize', fit);
     fit();
 
-    const frame = (t) => {
-      ambient(t);
-      render(t);
-    };
+    const frame = (t) => render(t);
     window.__duration = duration;
     window.__seek = (t) => frame(t);
 

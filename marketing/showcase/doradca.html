@@ -12,26 +12,25 @@
   .profile-head { display: flex; align-items: center; gap: 34px; }
   .avatar {
     width: 140px; height: 140px; border-radius: 50%; flex: none; display: grid; place-items: center;
-    background: radial-gradient(circle at 30% 25%, #c9b2ff, #915eff 55%, #4a22c9);
-    font-size: 46px; font-weight: 600; letter-spacing: -0.02em;
-    box-shadow: 0 0 60px rgba(145, 94, 255, 0.45);
+    background: var(--accent);
+    font-size: 44px; font-weight: 600;
   }
-  .name { font-size: 60px; font-weight: 600; letter-spacing: -0.03em; }
+  .name { font-size: 56px; font-weight: 600; letter-spacing: -0.02em; }
   .role { font-size: 33px; color: var(--fg-2); margin-top: 8px; }
   .chips { display: flex; flex-wrap: wrap; gap: 16px; margin-top: 44px; }
   .chips .chip { font-size: 32px; padding: 16px 30px; }
 
   .checks { top: 1130px; left: 100px; display: flex; flex-direction: column; gap: 30px; }
-  .check { display: flex; align-items: center; gap: 26px; font-size: 37px; color: var(--fg); }
+  .check { display: flex; align-items: center; gap: 26px; font-size: 36px; color: var(--fg); }
   .check svg { width: 40px; height: 40px; flex: none; }
   .check path { stroke: var(--ok); stroke-width: 3.2; fill: none; stroke-linecap: round; stroke-linejoin: round; stroke-dasharray: 30; }
 
   .cta {
     top: 1430px; left: 170px; width: 740px; height: 132px; border-radius: 999px; overflow: hidden;
     background: var(--accent); display: flex; align-items: center; justify-content: center; gap: 26px;
-    font-size: 42px; font-weight: 500; box-shadow: 0 24px 80px rgba(145, 94, 255, 0.45);
+    font-size: 40px; font-weight: 500;
   }
-  .cta-fill { position: absolute; inset: 0; background: linear-gradient(90deg, rgba(255,255,255,0), rgba(255,255,255,0.22)); transform-origin: left; }
+  .cta-fill { position: absolute; inset: 0; background: rgba(255, 255, 255, 0.16); transform-origin: left; }
   .cta span { position: relative; }
   .dots { display: flex; gap: 12px; }
   .dots i { width: 12px; height: 12px; border-radius: 50%; background: #fff; display: block; }
@@ -43,26 +42,23 @@
   .path { position: relative; display: flex; align-items: center; gap: 36px; padding: 50px 48px; border-radius: 40px; }
   .path .rank { font-size: 30px; color: var(--fg-3); }
   .path .info { flex: 1; }
-  .path .title { font-size: 50px; line-height: 1.08; font-weight: 600; letter-spacing: -0.03em; }
+  .path .title { font-size: 44px; line-height: 1.15; font-weight: 600; letter-spacing: -0.02em; }
   .path .meta { font-size: 30px; color: var(--fg-2); margin-top: 10px; }
   .ring { position: relative; width: 136px; height: 136px; flex: none; }
   .ring svg { position: absolute; inset: 0; transform: rotate(-90deg); }
   .ring circle { fill: none; stroke-width: 9; stroke-linecap: round; }
   .ring .track { stroke: rgba(255,255,255,0.08); }
-  .ring .bar { stroke: url(#rg); stroke-dasharray: 339.3; }
-  .ring b { position: absolute; inset: 0; display: grid; place-items: center; font-size: 36px; font-weight: 600; letter-spacing: -0.02em; }
-  .path .hl { position: absolute; inset: -1px; border-radius: 40px; border: 2px solid var(--accent); box-shadow: 0 0 80px rgba(145, 94, 255, 0.35), inset 0 0 40px rgba(145, 94, 255, 0.12); opacity: 0; }
+  .ring .bar { stroke: var(--accent); stroke-dasharray: 339.3; }
+  .ring b { position: absolute; inset: 0; display: grid; place-items: center; font-size: 34px; font-weight: 600; }
+  .path .hl { position: absolute; inset: -1px; border-radius: 40px; border: 2px solid var(--accent); opacity: 0; }
   .badge { position: absolute; top: -22px; right: 40px; padding: 8px 20px; border-radius: 999px; background: var(--accent); font-size: 24px; opacity: 0; }
 </style>
 </head>
 <body>
 <div class="stage">
-  <div class="glow glow-a"></div>
-  <div class="glow glow-b"></div>
-
   <!-- S1 / S2: statements -->
   <div class="layer"><h1 class="h1" id="s1">Nie wiesz,<br>dokąd dalej?</h1></div>
-  <div class="layer"><h1 class="h1 grad" id="s2">Vocare wie.</h1></div>
+  <div class="layer"><h1 class="h1" id="s2">Zobacz swoje<br><em>opcje.</em></h1></div>
 
   <!-- S3: profile analysis -->
   <div class="scene" id="sc3">
@@ -124,12 +120,9 @@
     <h2 class="h2 outro-title">Doradca kariery AI</h2>
     <img class="outro-logo" src="logo.png" alt="Vocare">
     <div class="outro-line"></div>
-    <div class="outro-tag">Twoja kariera. Zaprojektowana z AI.</div>
+    <div class="outro-tag">Ty wybierasz kierunek.<span>My skracamy drogę.</span></div>
     <div class="outro-url mono">vocare.pl</div>
   </div>
-
-  <div class="vignette"></div>
-  <svg width="0" height="0" style="position:absolute"><defs><linearGradient id="rg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#d9c9ff"/><stop offset="1" stop-color="#915eff"/></linearGradient></defs></svg>
 </div>
 
 <script src="shared/engine.js"></script>

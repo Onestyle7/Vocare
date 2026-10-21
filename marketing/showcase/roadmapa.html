@@ -9,10 +9,10 @@
   /* HUD stays put while the canvas moves underneath */
   .hud { top: 230px; left: 70px; right: 70px; display: flex; flex-direction: column; gap: 22px; z-index: 2; }
   .hud-row { display: flex; justify-content: space-between; align-items: center; }
-  .hud .pct { font-size: 46px; font-weight: 600; letter-spacing: -0.02em; }
-  .hud .pct small { font-size: 26px; color: var(--fg-3); font-weight: 400; margin-right: 14px; font-family: 'IBM Plex Mono', monospace; letter-spacing: 0.18em; text-transform: uppercase; }
+  .hud .pct { font-size: 44px; font-weight: 600; }
+  .hud .pct small { font-size: 28px; color: var(--fg-3); font-weight: 500; margin-right: 14px; }
   .hud-bar { height: 10px; border-radius: 99px; background: rgba(255,255,255,0.08); overflow: hidden; }
-  .hud-bar i { display: block; height: 100%; border-radius: 99px; background: linear-gradient(90deg, #915eff, #c9b2ff); transform-origin: left; }
+  .hud-bar i { display: block; height: 100%; border-radius: 99px; background: var(--accent); transform-origin: left; }
 
   /* canvas */
   .viewport { position: absolute; inset: 0; overflow: hidden;
@@ -21,26 +21,26 @@
   .dots { position: absolute; left: -900px; right: -900px; top: -1200px; bottom: -1200px;
     background-image: radial-gradient(rgba(255,255,255,0.13) 1.6px, transparent 1.8px); background-size: 44px 44px; }
   .wires { position: absolute; inset: 0; overflow: visible; }
-  .wires path { fill: none; stroke: rgba(183, 148, 255, 0.75); stroke-width: 3; stroke-linecap: round; }
+  .wires path { fill: none; stroke: rgba(145, 94, 255, 0.8); stroke-width: 3; stroke-linecap: round; }
 
-  .phase { position: absolute; font-size: 24px; line-height: 1.6; color: var(--accent-2); letter-spacing: 0.16em; text-transform: uppercase; }
+  .phase { position: absolute; font-size: 28px; line-height: 1.45; font-weight: 600; color: var(--accent); }
   .phase span { display: block; color: var(--fg-3); }
   .node { position: absolute; width: 640px; height: 164px; display: flex; align-items: center; gap: 30px; padding: 0 36px; border-radius: 34px; }
   .node .ico { width: 88px; height: 88px; flex: none; border-radius: 24px; display: grid; place-items: center; background: rgba(145, 94, 255, 0.16); border: 1px solid rgba(145, 94, 255, 0.3); }
   .node .ico img { width: 46px; height: 46px; }
   .node .txt { flex: 1; min-width: 0; }
-  .node .t { font-size: 38px; font-weight: 600; letter-spacing: -0.025em; white-space: nowrap; }
-  .node .m { font-size: 24px; color: var(--fg-3); margin-top: 8px; }
+  .node .t { font-size: 33px; font-weight: 600; letter-spacing: -0.015em; white-space: nowrap; }
+  .node .m { font-size: 24px; color: var(--fg-3); margin-top: 4px; }
   .st { width: 52px; height: 52px; flex: none; border-radius: 50%; border: 2px solid rgba(255,255,255,0.18); position: relative; }
   .st .done { position: absolute; inset: -2px; border-radius: 50%; background: var(--ok); display: grid; place-items: center; opacity: 0; }
   .st .done path { stroke: #06140d; stroke-width: 3.4; fill: none; stroke-linecap: round; stroke-linejoin: round; stroke-dasharray: 30; }
   .st .live { position: absolute; inset: 10px; border-radius: 50%; background: var(--accent); opacity: 0; }
   .st .ping { position: absolute; inset: -2px; border-radius: 50%; border: 2px solid var(--accent); opacity: 0; }
   .node .edge { position: absolute; inset: -1px; border-radius: 34px; border: 2px solid; opacity: 0; pointer-events: none; }
-  .node.goal { background: linear-gradient(135deg, rgba(145, 94, 255, 0.5), rgba(145, 94, 255, 0.12)); border-color: rgba(183, 148, 255, 0.6); box-shadow: 0 0 120px rgba(145, 94, 255, 0.35), 0 40px 120px rgba(0,0,0,0.5); }
+  .node.goal { background: var(--accent); border-color: var(--accent); }
   .node.goal .ico { background: rgba(255,255,255,0.14); border-color: rgba(255,255,255,0.3); }
   .node.goal .m { color: rgba(255,255,255,0.75); }
-  .node.goal .t { font-size: 35px; }
+  .node.goal .t { font-size: 31px; }
 
   .s-a, .s-b { top: 0; left: 0; right: 0; bottom: 0; }
   .closing { top: 0; }
@@ -48,12 +48,9 @@
 </head>
 <body>
 <div class="stage">
-  <div class="glow glow-a"></div>
-  <div class="glow glow-b"></div>
-
   <!-- S1 -->
   <div class="layer"><h1 class="h1" id="s1">Masz cel.</h1></div>
-  <div class="layer"><h1 class="h1 grad" id="s2">Teraz masz<br>drogę.</h1></div>
+  <div class="layer"><h1 class="h1" id="s2">Teraz masz<br><em>drogę.</em></h1></div>
 
   <!-- S2: the roadmap canvas -->
   <div class="scene" id="sc">
@@ -82,11 +79,10 @@
     <h2 class="h2 outro-title">Roadmapa kariery</h2>
     <img class="outro-logo" src="logo.png" alt="Vocare">
     <div class="outro-line"></div>
-    <div class="outro-tag">Twoja kariera. Zaprojektowana z AI.</div>
+    <div class="outro-tag">Ty wybierasz kierunek.<span>My skracamy drogę.</span></div>
     <div class="outro-url mono">vocare.pl</div>
   </div>
 
-  <div class="vignette"></div>
 </div>
 
 <script src="shared/engine.js"></script>
@@ -154,10 +150,7 @@
       const a = at(i);
       show(el, t, { at: a, y: 50, s: 0.9, d: 1.0, blur: 12 });
       const n = NODES[i];
-      if (n.goal) {
-        el.style.boxShadow = `0 0 ${lerp(60, 160, prog(t, a + 0.3, 1.4, ease.outQuart))}px rgba(145, 94, 255, 0.4), 0 40px 120px rgba(0,0,0,0.5)`;
-        return;
-      }
+      if (n.goal) return;
       const doneAt = a + 0.65;
       if (n.st === 2) {
         const k = prog(t, doneAt, 0.5, ease.outExpo);

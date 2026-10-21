@@ -1,21 +1,23 @@
-@import url('../fonts/plex.css');
+@import url('../fonts/poppins.css');
 
-@font-face { font-family: 'Grotesk'; src: url('../fonts/SpaceGrotesk-Light.ttf'); font-weight: 300; }
-@font-face { font-family: 'Grotesk'; src: url('../fonts/SpaceGrotesk-Regular.ttf'); font-weight: 400; }
-@font-face { font-family: 'Grotesk'; src: url('../fonts/SpaceGrotesk-Medium.ttf'); font-weight: 500; }
-@font-face { font-family: 'Grotesk'; src: url('../fonts/SpaceGrotesk-SemiBold.ttf'); font-weight: 600; }
-@font-face { font-family: 'Grotesk'; src: url('../fonts/SpaceGrotesk-Bold.ttf'); font-weight: 700; }
+/* Accent typeface. Drop a licensed De Floria file into fonts/ and uncomment to use it
+   for highlighted words (<em> in headlines, .accent elsewhere):
+@font-face { font-family: 'De Floria'; src: url('../fonts/DeFloria.woff2') format('woff2'); }
+:root { --accent-font: 'De Floria', 'Poppins', sans-serif; }
+*/
 
 :root {
-  --bg: #060608;
+  --bg: #0a0a0c;
+  --surface: #141418;
+  --surface-2: #1c1c21;
   --fg: #f5f5f7;
-  --fg-2: rgba(245, 245, 247, 0.62);
-  --fg-3: rgba(245, 245, 247, 0.38);
-  --line: rgba(255, 255, 255, 0.09);
-  --glass: rgba(255, 255, 255, 0.045);
+  --fg-2: rgba(245, 245, 247, 0.64);
+  --fg-3: rgba(245, 245, 247, 0.42);
+  --line: rgba(255, 255, 255, 0.08);
   --accent: #915eff;
-  --accent-2: #b794ff;
+  --accent-soft: rgba(145, 94, 255, 0.16);
   --ok: #3ddc97;
+  --accent-font: 'Poppins', sans-serif;
   --fit: 1;
 }
 
@@ -39,7 +41,7 @@ body { display: grid; place-items: center; }
   overflow: hidden;
   background: var(--bg);
   color: var(--fg);
-  font-family: 'Grotesk', sans-serif;
+  font-family: 'Poppins', sans-serif;
   font-feature-settings: 'tnum' 1;
   transform: scale(var(--fit));
 }
@@ -47,68 +49,42 @@ body { display: grid; place-items: center; }
 html.render body { display: block; }
 html.render .stage { transform: none; }
 
-/* ambient light */
-.glow { position: absolute; border-radius: 50%; pointer-events: none; will-change: transform; }
-.glow-a {
-  width: 1300px; height: 1300px; left: -110px; top: 330px;
-  background: radial-gradient(closest-side, rgba(145, 94, 255, 0.34), rgba(145, 94, 255, 0.1) 55%, transparent);
-}
-.glow-b {
-  width: 1000px; height: 1000px; left: 380px; top: 1080px;
-  background: radial-gradient(closest-side, rgba(84, 70, 255, 0.18), transparent 70%);
-}
-.vignette {
-  position: absolute; inset: 0; pointer-events: none;
-  background: radial-gradient(120% 80% at 50% 50%, transparent 55%, rgba(0, 0, 0, 0.65));
-}
-
 /* layers */
 .layer { position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; }
 .abs { position: absolute; }
+.scene { position: absolute; inset: 0; transform-origin: 50% 50%; will-change: transform; }
 .w { display: inline-block; will-change: transform, opacity, filter; }
 
-/* type */
-.h1 {
-  font-size: 132px; line-height: 1.02; font-weight: 600; letter-spacing: -0.045em; text-align: center;
-}
-.h2 { font-size: 88px; line-height: 1.06; font-weight: 600; letter-spacing: -0.04em; text-align: center; }
-.sub { font-size: 44px; line-height: 1.3; font-weight: 400; color: var(--fg-2); letter-spacing: -0.01em; text-align: center; }
-.mono { font-family: 'IBM Plex Mono', monospace; letter-spacing: 0.02em; }
-.eyebrow {
-  font-family: 'IBM Plex Mono', monospace; font-size: 28px; text-transform: uppercase; letter-spacing: 0.22em; color: var(--fg-3);
-}
-.grad, .grad .w {
-  background: linear-gradient(100deg, #ffffff 0%, #d9c9ff 30%, #a983ff 65%, #7c45ff 100%);
-  -webkit-background-clip: text; background-clip: text; color: transparent;
-}
-/* words carry their own gradient (a transformed child can't be clipped by its parent) */
-.grad:has(.w) { background: none; }
-.scene { position: absolute; inset: 0; transform-origin: 50% 50%; will-change: transform; }
-.dim { color: var(--fg-3); }
+/* type — tight on display sizes, neutral everywhere else, never spaced out */
+.h1 { font-size: 112px; line-height: 1.12; font-weight: 600; letter-spacing: -0.03em; text-align: center; }
+.h2 { font-size: 80px; line-height: 1.14; font-weight: 600; letter-spacing: -0.025em; text-align: center; }
+.sub { font-size: 40px; line-height: 1.4; font-weight: 400; color: var(--fg-2); text-align: center; }
+.eyebrow { font-size: 30px; font-weight: 500; color: var(--fg-3); }
+.mono { font-family: inherit; }
+.h1 em, .h2 em, .accent { font-style: normal; color: var(--accent); font-family: var(--accent-font); }
 
-/* surfaces */
+/* surfaces: flat fills, hairline borders */
 .card {
-  background: linear-gradient(180deg, rgba(255, 255, 255, 0.07), rgba(255, 255, 255, 0.025));
+  background: var(--surface);
   border: 1px solid var(--line);
-  border-radius: 40px;
-  box-shadow: 0 40px 120px rgba(0, 0, 0, 0.55), inset 0 1px 0 rgba(255, 255, 255, 0.08);
-  backdrop-filter: blur(24px);
+  border-radius: 36px;
 }
 .chip {
   display: inline-flex; align-items: center; gap: 14px;
-  padding: 16px 28px; border-radius: 999px; border: 1px solid var(--line);
-  background: rgba(255, 255, 255, 0.05); font-size: 32px; color: var(--fg); white-space: nowrap;
+  padding: 14px 26px; border-radius: 999px; border: 1px solid var(--line);
+  background: var(--surface-2); font-size: 30px; color: var(--fg); white-space: nowrap;
 }
 .pill-label {
   display: inline-flex; padding: 12px 26px; border-radius: 999px; border: 1px solid rgba(255, 255, 255, 0.16);
-  font-size: 30px; color: var(--fg);
+  font-size: 28px; font-weight: 500; color: var(--fg);
 }
 
 /* outro (shared) */
 .outro { gap: 0; }
-.outro-eyebrow { margin-bottom: 36px; }
+.outro-eyebrow { margin-bottom: 28px; }
 .outro-title { margin-bottom: 120px; }
-.outro-logo { width: 560px; height: auto; display: block; }
-.outro-line { width: 560px; height: 2px; margin: 56px 0 48px; transform-origin: left; background: linear-gradient(90deg, var(--accent), rgba(145, 94, 255, 0)); }
-.outro-tag { font-size: 42px; color: var(--fg-2); letter-spacing: -0.01em; }
-.outro-url { margin-top: 26px; font-size: 32px; color: var(--accent-2); }
+.outro-logo { width: 520px; height: auto; display: block; }
+.outro-line { width: 520px; height: 2px; margin: 60px 0 52px; transform-origin: left; background: var(--accent); }
+.outro-tag { font-size: 44px; line-height: 1.35; font-weight: 500; text-align: center; color: var(--fg); }
+.outro-tag span { display: block; color: var(--fg-3); }
+.outro-url { margin-top: 40px; font-size: 32px; font-weight: 500; color: var(--accent); }

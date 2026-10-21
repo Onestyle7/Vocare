@@ -7,24 +7,23 @@
 <link rel="stylesheet" href="shared/base.css">
 <style>
   .pill { top: 330px; left: 0; right: 0; display: flex; justify-content: center; }
-  .pill .pill-label { gap: 14px; align-items: center; background: rgba(145, 94, 255, 0.12); border-color: rgba(145, 94, 255, 0.45); }
+  .pill .pill-label { gap: 14px; align-items: center; background: var(--accent-soft); border-color: rgba(145, 94, 255, 0.45); }
   .spark { width: 30px; height: 30px; }
 
   /* the document */
   .pagecam { position: absolute; left: 180px; top: 440px; width: 720px; height: 1018px; transform-origin: 50% 0; }
   .page {
     position: absolute; inset: 0; border-radius: 22px; padding: 62px 64px; color: #121216;
-    background: linear-gradient(180deg, #ffffff, #f6f5fa);
-    box-shadow: 0 60px 160px rgba(0, 0, 0, 0.6), 0 0 0 1px rgba(255,255,255,0.4), 0 0 140px rgba(145, 94, 255, 0.18);
+    background: #ffffff;
   }
-  .p-name { font-size: 50px; font-weight: 600; letter-spacing: -0.035em; }
-  .p-role { position: relative; height: 36px; margin-top: 8px; font-size: 27px; font-weight: 500; color: #6b3df0; }
+  .p-name { font-size: 46px; font-weight: 600; letter-spacing: -0.02em; }
+  .p-role { position: relative; height: 38px; margin-top: 6px; font-size: 25px; font-weight: 500; color: #6b3df0; }
   .p-role span { position: absolute; left: 0; top: 0; white-space: nowrap; }
   .p-contact { font-size: 19px; color: #8a8a99; margin-top: 12px; }
   .p-hr { height: 1px; background: #e4e2ec; margin: 30px 0 28px; transform-origin: left; }
-  .p-h { font-size: 18px; letter-spacing: 0.2em; color: #9a98a8; text-transform: uppercase; margin: 30px 0 18px; }
+  .p-h { font-size: 21px; font-weight: 600; color: #9a98a8; margin: 28px 0 16px; }
   .p-entry { display: flex; justify-content: space-between; align-items: baseline; margin: 20px 0 14px; }
-  .p-entry b { font-size: 26px; font-weight: 600; letter-spacing: -0.02em; }
+  .p-entry b { font-size: 24px; font-weight: 600; }
   .p-entry span { font-size: 18px; color: #9a98a8; }
   .ln { position: relative; height: 14px; border-radius: 7px; margin-bottom: 13px; }
   .ln i { position: absolute; inset: 0; border-radius: 7px; background: #e5e3ee; transform-origin: left; }
@@ -37,7 +36,7 @@
   .offer { top: 1250px; left: 150px; width: 780px; padding: 40px 44px; border-radius: 34px; }
   .o-head { display: flex; justify-content: space-between; align-items: center; }
   .offer .eyebrow { font-size: 22px; }
-  .offer .o-title { font-size: 40px; font-weight: 600; letter-spacing: -0.03em; margin-top: 14px; }
+  .offer .o-title { font-size: 38px; font-weight: 600; letter-spacing: -0.015em; margin-top: 12px; }
   .offer .o-meta { font-size: 25px; color: var(--fg-2); margin-top: 8px; }
   .offer .o-keys { display: flex; gap: 12px; margin-top: 24px; }
   .offer .chip { font-size: 25px; padding: 10px 20px; }
@@ -49,31 +48,28 @@
   .score svg { position: absolute; inset: 0; transform: rotate(-90deg); }
   .score circle { fill: none; stroke-width: 14; stroke-linecap: round; }
   .score .track { stroke: rgba(255,255,255,0.08); }
-  .score .bar { stroke: url(#sg); stroke-dasharray: 703.7; }
+  .score .bar { stroke: var(--accent); stroke-dasharray: 703.7; }
   .score .num { position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; }
-  .score .num b { font-size: 92px; font-weight: 600; letter-spacing: -0.05em; line-height: 1; }
-  .score .num span { font-size: 21px; color: var(--fg-3); margin-top: 8px; letter-spacing: 0.18em; text-transform: uppercase; }
+  .score .num b { font-size: 88px; font-weight: 600; letter-spacing: -0.03em; line-height: 1; }
+  .score .num span { font-size: 24px; font-weight: 500; color: var(--fg-3); margin-top: 6px; }
   .rows { flex: 1; display: flex; flex-direction: column; gap: 30px; }
   .row-h { display: flex; justify-content: space-between; font-size: 29px; }
   .row-h b { font-weight: 600; }
   .meter { height: 10px; border-radius: 99px; background: rgba(255,255,255,0.08); margin-top: 14px; overflow: hidden; }
-  .meter i { display: block; height: 100%; border-radius: 99px; background: linear-gradient(90deg, #915eff, #c9b2ff); transform-origin: left; }
+  .meter i { display: block; height: 100%; border-radius: 99px; background: var(--accent); transform-origin: left; }
   .audit-title { top: 1500px; left: 0; right: 0; }
 </style>
 </head>
 <body>
 <div class="stage">
-  <div class="glow glow-a"></div>
-  <div class="glow glow-b"></div>
-
   <!-- S1 -->
   <div class="layer"><h1 class="h1" id="s1">Jedno CV.</h1></div>
-  <div class="layer"><h1 class="h1 grad" id="s2">Dopasowane<br>do każdej oferty.</h1></div>
+  <div class="layer"><h1 class="h1" id="s2">Dopasowane<br>do każdej<br><em>oferty.</em></h1></div>
 
   <!-- status pills (crossfade) -->
-  <div class="abs pill" id="pill1"><div class="pill-label"><svg class="spark" viewBox="0 0 24 24"><path d="M12 2l2.2 6.6L21 11l-6.8 2.4L12 20l-2.2-6.6L3 11l6.8-2.4z" fill="#b794ff"/></svg>Generuję z profilu</div></div>
-  <div class="abs pill" id="pill2"><div class="pill-label"><svg class="spark" viewBox="0 0 24 24"><path d="M12 2l2.2 6.6L21 11l-6.8 2.4L12 20l-2.2-6.6L3 11l6.8-2.4z" fill="#b794ff"/></svg>Dopasowuję do oferty</div></div>
-  <div class="abs pill" id="pill3"><div class="pill-label"><svg class="spark" viewBox="0 0 24 24"><path d="M12 2l2.2 6.6L21 11l-6.8 2.4L12 20l-2.2-6.6L3 11l6.8-2.4z" fill="#b794ff"/></svg>Audyt jakości CV</div></div>
+  <div class="abs pill" id="pill1"><div class="pill-label"><svg class="spark" viewBox="0 0 24 24"><path d="M12 2l2.2 6.6L21 11l-6.8 2.4L12 20l-2.2-6.6L3 11l6.8-2.4z" fill="#915eff"/></svg>Generuję z profilu</div></div>
+  <div class="abs pill" id="pill2"><div class="pill-label"><svg class="spark" viewBox="0 0 24 24"><path d="M12 2l2.2 6.6L21 11l-6.8 2.4L12 20l-2.2-6.6L3 11l6.8-2.4z" fill="#915eff"/></svg>Dopasowuję do oferty</div></div>
+  <div class="abs pill" id="pill3"><div class="pill-label"><svg class="spark" viewBox="0 0 24 24"><path d="M12 2l2.2 6.6L21 11l-6.8 2.4L12 20l-2.2-6.6L3 11l6.8-2.4z" fill="#915eff"/></svg>Audyt jakości CV</div></div>
 
   <!-- the CV -->
   <div class="pagecam" id="cam">
@@ -134,12 +130,9 @@
     <h2 class="h2 outro-title">Kreator CV</h2>
     <img class="outro-logo" src="logo.png" alt="Vocare">
     <div class="outro-line"></div>
-    <div class="outro-tag">Twoja kariera. Zaprojektowana z AI.</div>
+    <div class="outro-tag">Ty wybierasz kierunek.<span>My skracamy drogę.</span></div>
     <div class="outro-url mono">vocare.pl</div>
   </div>
-
-  <div class="vignette"></div>
-  <svg width="0" height="0" style="position:absolute"><defs><linearGradient id="sg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#e3d6ff"/><stop offset="1" stop-color="#915eff"/></linearGradient></defs></svg>
 </div>
 
 <script src="shared/engine.js"></script>

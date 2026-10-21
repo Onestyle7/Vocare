@@ -27,7 +27,7 @@ const named = args.filter((a) => FILMS.includes(a));
 const fpsArg = args.find((a) => /^\d+$/.test(a));
 const FPS = fpsArg ? Number(fpsArg) : 60;
 
-const TYPES = { '.html': 'text/html', '.js': 'text/javascript', '.css': 'text/css', '.png': 'image/png', '.ttf': 'font/ttf', '.woff2': 'font/woff2', '.svg': 'image/svg+xml' };
+const TYPES = { '.html': 'text/html', '.js': 'text/javascript', '.css': 'text/css', '.png': 'image/png', '.ttf': 'font/ttf', '.otf': 'font/otf', '.woff2': 'font/woff2', '.svg': 'image/svg+xml' };
 const server = createServer(async (req, res) => {
   try {
     const path = join(ROOT, decodeURIComponent(new URL(req.url, 'http://x').pathname));
@@ -68,8 +68,7 @@ for (const film of named.length ? named : FILMS) {
   const ff = spawn('ffmpeg', [
     '-y', '-loglevel', 'error',
     '-f', 'image2pipe', '-framerate', String(FPS), '-c:v', 'png', '-i', '-',
-    // a touch of temporal grain keeps dark gradients from banding after compression
-    '-vf', 'noise=alls=3:allf=t,format=yuv420p',
+    '-pix_fmt', 'yuv420p',
     '-c:v', 'libx264', '-preset', 'slow', '-crf', '16', '-profile:v', 'high',
     '-r', String(FPS), '-movflags', '+faststart', out,
   ], { stdio: ['pipe', 'inherit', 'inherit'] });

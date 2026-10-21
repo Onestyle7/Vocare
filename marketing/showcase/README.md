@@ -10,15 +10,16 @@ Four vertical (1080×1920, 60 fps) product films, one per feature, for Reels/Sto
 | Kreator CV | `kreator.html` | `out/vocare-kreator.mp4` | 17.6 s |
 
 Every film follows the same arc: statement → answer → the feature at work → shared outro
-(feature name, logo reveal, tagline, `vocare.pl`). Films are silent so music can be added in Instagram.
+(feature name, logo reveal, tagline „Ty wybierasz kierunek. My skracamy drogę.”, `vocare.pl`). Films are silent so music can be added in Instagram.
 
 ## How it works
 
 - `shared/engine.js` — a tiny deterministic timeline. Each frame is a pure function of `t`, so frames
   can be rendered one by one with no dropped or uneven frames.
-- `shared/base.css` — brand tokens (Space Grotesk + IBM Plex Mono, `#915EFF` accent, dark glass surfaces).
+- `shared/base.css` — brand tokens: Poppins only, flat `#915EFF` accent, flat dark surfaces with hairline
+  borders, no gradients, no wide letter-spacing. Highlighted headline words are wrapped in `<em>`.
 - `render.mjs` — opens each film in headless Chromium (Playwright), seeks every frame, and pipes PNGs into
-  ffmpeg (H.264 High, CRF 16, light temporal grain against gradient banding).
+  ffmpeg (H.264 High, CRF 16).
 
 ## Motion language
 
@@ -32,6 +33,12 @@ Every film follows the same arc: statement → answer → the feature at work �
 Entrances: 0.9–1.3 s, blur 14→0 px, rise 40–160 px, scale .9–.97→1, 70 ms word stagger.
 Exits: 0.5 s, faster than entrances. No bounce anywhere — calm, product-first motion.
 Every scene sits under a slow linear push-in (≈4%) so nothing is ever fully static.
+
+## Accent font (De Floria)
+
+Accent words (`<em>` in headlines, `.accent`) use `--accent-font`, currently Poppins in `#915EFF`.
+To switch them to De Floria, put a licensed font file in `fonts/` and uncomment the block at the top of
+`shared/base.css` (adjust the file name), then re-render.
 
 ## Commands
 
