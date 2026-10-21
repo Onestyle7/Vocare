@@ -1,0 +1,201 @@
+<!doctype html>
+<html lang="pl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Vocare — Roadmapa kariery</title>
+<link rel="stylesheet" href="shared/base.css">
+<style>
+  /* HUD stays put while the canvas moves underneath */
+  .hud { top: 230px; left: 70px; right: 70px; display: flex; flex-direction: column; gap: 22px; z-index: 2; }
+  .hud-row { display: flex; justify-content: space-between; align-items: center; }
+  .hud .pct { font-size: 46px; font-weight: 600; letter-spacing: -0.02em; }
+  .hud .pct small { font-size: 26px; color: var(--fg-3); font-weight: 400; margin-right: 14px; font-family: 'IBM Plex Mono', monospace; letter-spacing: 0.18em; text-transform: uppercase; }
+  .hud-bar { height: 10px; border-radius: 99px; background: rgba(255,255,255,0.08); overflow: hidden; }
+  .hud-bar i { display: block; height: 100%; border-radius: 99px; background: linear-gradient(90deg, #915eff, #c9b2ff); transform-origin: left; }
+
+  /* canvas */
+  .viewport { position: absolute; inset: 0; overflow: hidden;
+    -webkit-mask-image: linear-gradient(180deg, transparent 340px, #000 500px, #000 1540px, transparent 1780px); }
+  .world { position: absolute; left: 0; top: 0; width: 1080px; height: 2080px; transform-origin: 540px 0; }
+  .dots { position: absolute; left: -900px; right: -900px; top: -1200px; bottom: -1200px;
+    background-image: radial-gradient(rgba(255,255,255,0.13) 1.6px, transparent 1.8px); background-size: 44px 44px; }
+  .wires { position: absolute; inset: 0; overflow: visible; }
+  .wires path { fill: none; stroke: rgba(183, 148, 255, 0.75); stroke-width: 3; stroke-linecap: round; }
+
+  .phase { position: absolute; font-size: 24px; line-height: 1.6; color: var(--accent-2); letter-spacing: 0.16em; text-transform: uppercase; }
+  .phase span { display: block; color: var(--fg-3); }
+  .node { position: absolute; width: 640px; height: 164px; display: flex; align-items: center; gap: 30px; padding: 0 36px; border-radius: 34px; }
+  .node .ico { width: 88px; height: 88px; flex: none; border-radius: 24px; display: grid; place-items: center; background: rgba(145, 94, 255, 0.16); border: 1px solid rgba(145, 94, 255, 0.3); }
+  .node .ico img { width: 46px; height: 46px; }
+  .node .txt { flex: 1; min-width: 0; }
+  .node .t { font-size: 38px; font-weight: 600; letter-spacing: -0.025em; white-space: nowrap; }
+  .node .m { font-size: 24px; color: var(--fg-3); margin-top: 8px; }
+  .st { width: 52px; height: 52px; flex: none; border-radius: 50%; border: 2px solid rgba(255,255,255,0.18); position: relative; }
+  .st .done { position: absolute; inset: -2px; border-radius: 50%; background: var(--ok); display: grid; place-items: center; opacity: 0; }
+  .st .done path { stroke: #06140d; stroke-width: 3.4; fill: none; stroke-linecap: round; stroke-linejoin: round; stroke-dasharray: 30; }
+  .st .live { position: absolute; inset: 10px; border-radius: 50%; background: var(--accent); opacity: 0; }
+  .st .ping { position: absolute; inset: -2px; border-radius: 50%; border: 2px solid var(--accent); opacity: 0; }
+  .node .edge { position: absolute; inset: -1px; border-radius: 34px; border: 2px solid; opacity: 0; pointer-events: none; }
+  .node.goal { background: linear-gradient(135deg, rgba(145, 94, 255, 0.5), rgba(145, 94, 255, 0.12)); border-color: rgba(183, 148, 255, 0.6); box-shadow: 0 0 120px rgba(145, 94, 255, 0.35), 0 40px 120px rgba(0,0,0,0.5); }
+  .node.goal .ico { background: rgba(255,255,255,0.14); border-color: rgba(255,255,255,0.3); }
+  .node.goal .m { color: rgba(255,255,255,0.75); }
+  .node.goal .t { font-size: 35px; }
+
+  .s-a, .s-b { top: 0; left: 0; right: 0; bottom: 0; }
+  .closing { top: 0; }
+</style>
+</head>
+<body>
+<div class="stage">
+  <div class="glow glow-a"></div>
+  <div class="glow glow-b"></div>
+
+  <!-- S1 -->
+  <div class="layer"><h1 class="h1" id="s1">Masz cel.</h1></div>
+  <div class="layer"><h1 class="h1 grad" id="s2">Teraz masz<br>drogę.</h1></div>
+
+  <!-- S2: the roadmap canvas -->
+  <div class="scene" id="sc">
+    <div class="viewport">
+      <div class="world" id="world">
+        <div class="dots"></div>
+        <svg class="wires" id="wires" viewBox="0 0 1080 2080"></svg>
+      </div>
+    </div>
+    <div class="abs hud" id="hud">
+      <div class="hud-row">
+        <div class="pill-label">Roadmapa · 12 miesięcy</div>
+        <div class="pct"><small>Postęp</small><span id="pct">0%</span></div>
+      </div>
+      <div class="hud-bar"><i id="pbar"></i></div>
+    </div>
+  </div>
+
+  <!-- S3 -->
+  <div class="layer"><h2 class="h2" id="s3">Krok po kroku.</h2></div>
+  <div class="layer" style="padding-top: 210px"><p class="sub" id="s3b">W Twoim tempie. Z jasnym celem na końcu.</p></div>
+
+  <!-- outro -->
+  <div class="layer outro">
+    <div class="eyebrow outro-eyebrow">Nowość w Vocare</div>
+    <h2 class="h2 outro-title">Roadmapa kariery</h2>
+    <img class="outro-logo" src="logo.png" alt="Vocare">
+    <div class="outro-line"></div>
+    <div class="outro-tag">Twoja kariera. Zaprojektowana z AI.</div>
+    <div class="outro-url mono">vocare.pl</div>
+  </div>
+
+  <div class="vignette"></div>
+</div>
+
+<script src="shared/engine.js"></script>
+<script>
+  const { ease, prog, lerp, clamp, apply, show, words, outro, run } = M;
+  const $ = (s) => document.querySelector(s);
+  const $$ = (s) => [...document.querySelectorAll(s)];
+
+  // status: 2 = completed, 1 = in progress, 0 = not started
+  const NODES = [
+    { x: 70,  y: 170,  t: 'Podstawy CRM i SaaS',       m: 'Wymagane · 3 tyg.', ico: 'roadmap_layers', st: 2, phase: 'Faza 1 · Fundamenty' },
+    { x: 370, y: 470,  t: 'Analiza danych: Excel',      m: 'Wymagane · 4 tyg.', ico: 'roadmap_cylinder', st: 2 },
+    { x: 70,  y: 830,  t: 'Projekt: onboarding',        m: 'Wymagane · 6 tyg.', ico: 'Puzzle', st: 1, phase: 'Faza 2 · Praktyka' },
+    { x: 370, y: 1130, t: 'Kurs Customer Success',      m: 'Wymagane · 5 tyg.', ico: 'roadmap_terminal', st: 0 },
+    { x: 70,  y: 1490, t: 'Certyfikat Salesforce',      m: 'Opcjonalne · 8 tyg.', ico: 'Sun', st: 0, phase: 'Faza 3 · Specjalizacja' },
+    { x: 370, y: 1790, t: 'Customer Success Manager',   m: 'Twój cel', ico: 'roadmap_flag', st: 0, goal: true },
+  ];
+  const W = 640, H = 164;
+  const world = $('#world'), wires = $('#wires');
+  NODES.forEach((n, i) => {
+    if (n.phase) {
+      const [num, name] = n.phase.split(' · ');
+      world.insertAdjacentHTML('beforeend', `<div class="phase mono" data-i="${i}" style="left:${n.x + W + 40}px;top:${n.y + 42}px">${name}<span>${num}</span></div>`);
+    }
+    world.insertAdjacentHTML('beforeend', `
+      <div class="node card${n.goal ? ' goal' : ''}" style="left:${n.x}px;top:${n.y}px">
+        <div class="ico"><img src="assets/${n.ico}.svg" alt=""></div>
+        <div class="txt"><div class="t">${n.t}</div><div class="m mono">${n.m}</div></div>
+        ${n.goal ? '' : `<div class="st"><div class="ping"></div><div class="live"></div>
+          <div class="done"><svg viewBox="0 0 40 40" width="30" height="30"><path d="M10 21 l6 6 L30 13"/></svg></div></div>`}
+      </div>`);
+    if (i < NODES.length - 1) {
+      const a = NODES[i], b = NODES[i + 1];
+      const x1 = a.x + W / 2, y1 = a.y + H, x2 = b.x + W / 2, y2 = b.y;
+      const c = (y2 - y1) * 0.6;
+      wires.insertAdjacentHTML('beforeend', `<path d="M${x1} ${y1} C${x1} ${y1 + c} ${x2} ${y2 - c} ${x2} ${y2}"/>`);
+    }
+  });
+  const wireEls = $$('#wires path').map((p) => ((p._len = p.getTotalLength()), (p.style.strokeDasharray = p._len), p));
+  const nodeEls = $$('.node'), phaseEls = $$('.phase');
+
+  const T0 = 4.75, STEP = 0.78;                 // node i lands at T0 + i * STEP
+  const at = (i) => T0 + i * STEP;
+  const centers = NODES.map((n) => n.y + H / 2);
+  const ZOOM = 9.55, OUT = 11.15;
+
+  function render(t) {
+    words($('#s1'), t, { at: 0.35, out: 1.95, stagger: 0.1 });
+    words($('#s2'), t, { at: 2.2, out: 4.15, stagger: 0.09 });
+
+    // camera: one continuous glide down the path, then pull back to reveal the whole plan
+    // framed between the previous and the newest step, so the link is always in shot
+    const sine = (x) => -(Math.cos(Math.PI * x) - 1) / 2;
+    const f = prog(t, T0 - 0.2, (NODES.length - 1) * STEP + 0.5, sine) * (NODES.length - 1.45);
+    const i0 = Math.min(NODES.length - 2, Math.floor(f));
+    const focus = lerp(centers[i0], centers[i0 + 1], f - i0);
+    const z = prog(t, ZOOM, 1.5, ease.inOutQuart);
+    const s = lerp(1, 0.58, z);
+    const ty = lerp(1110 - focus, 1070 - 0.58 * 1040, z);
+    world.style.transform = `translate3d(0, ${ty.toFixed(2)}px, 0) scale(${s.toFixed(4)})`;
+    show($('#sc'), t, { at: T0 - 0.35, out: OUT, d: 1.2, y: 0, s: 1.04, blur: 10, outY: 0, outS: 0.97 });
+    show($('#hud'), t, { at: T0 - 0.2, y: -20, blur: 8, s: 1 });
+
+    nodeEls.forEach((el, i) => {
+      const a = at(i);
+      show(el, t, { at: a, y: 50, s: 0.9, d: 1.0, blur: 12 });
+      const n = NODES[i];
+      if (n.goal) {
+        el.style.boxShadow = `0 0 ${lerp(60, 160, prog(t, a + 0.3, 1.4, ease.outQuart))}px rgba(145, 94, 255, 0.4), 0 40px 120px rgba(0,0,0,0.5)`;
+        return;
+      }
+      const doneAt = a + 0.65;
+      if (n.st === 2) {
+        const k = prog(t, doneAt, 0.5, ease.outExpo);
+        const d = el.querySelector('.done');
+        d.style.opacity = k;
+        d.style.transform = `scale(${lerp(0.6, 1, k)})`;
+        d.querySelector('path').style.strokeDashoffset = 30 * (1 - prog(t, doneAt + 0.15, 0.45, ease.outQuart));
+      }
+      if (n.st === 1) {
+        const k = prog(t, doneAt, 0.6, ease.outExpo);
+        el.querySelector('.live').style.opacity = k;
+        const ph = ((t - doneAt) % 1.4) / 1.4;
+        const ping = el.querySelector('.ping');
+        ping.style.opacity = t > doneAt ? (1 - ph) * 0.9 : 0;
+        ping.style.transform = `scale(${1 + ph * 0.9})`;
+        el.style.borderColor = `rgba(145, 94, 255, ${0.09 + 0.5 * k})`;
+      }
+    });
+    phaseEls.forEach((p) => {
+      show(p, t, { at: at(+p.dataset.i) + 0.2, y: 16, blur: 6, s: 1 });
+    });
+    wireEls.forEach((w, i) => {
+      w.style.strokeDashoffset = w._len * (1 - prog(t, at(i) + 0.25, STEP + 0.1, ease.inOutCubic));
+    });
+
+    // progress follows completed steps: 2 of 6 done
+    const p = prog(t, at(0) + 0.65, at(1) - at(0) + 0.6, ease.inOutCubic) * 33;
+    $('#pct').textContent = Math.round(p) + '%';
+    $('#pbar').style.transform = `scaleX(${p / 100})`;
+
+    // S3
+    words($('#s3'), t, { at: 11.5, out: 13.3 });
+    show($('#s3b'), t, { at: 11.85, out: 13.3, y: 24 });
+
+    outro(t, 13.6);
+  }
+
+  run({ duration: 17.0, render });
+</script>
+</body>
+</html>

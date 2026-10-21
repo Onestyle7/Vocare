@@ -1,0 +1,213 @@
+<!doctype html>
+<html lang="pl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Vocare — Doradca kariery AI</title>
+<link rel="stylesheet" href="shared/base.css">
+<style>
+  /* profile scene */
+  .tag { top: 420px; left: 70px; }
+  .profile { top: 520px; left: 70px; width: 940px; padding: 56px 56px 60px; }
+  .profile-head { display: flex; align-items: center; gap: 34px; }
+  .avatar {
+    width: 140px; height: 140px; border-radius: 50%; flex: none; display: grid; place-items: center;
+    background: radial-gradient(circle at 30% 25%, #c9b2ff, #915eff 55%, #4a22c9);
+    font-size: 46px; font-weight: 600; letter-spacing: -0.02em;
+    box-shadow: 0 0 60px rgba(145, 94, 255, 0.45);
+  }
+  .name { font-size: 60px; font-weight: 600; letter-spacing: -0.03em; }
+  .role { font-size: 33px; color: var(--fg-2); margin-top: 8px; }
+  .chips { display: flex; flex-wrap: wrap; gap: 16px; margin-top: 44px; }
+  .chips .chip { font-size: 32px; padding: 16px 30px; }
+
+  .checks { top: 1130px; left: 100px; display: flex; flex-direction: column; gap: 30px; }
+  .check { display: flex; align-items: center; gap: 26px; font-size: 37px; color: var(--fg); }
+  .check svg { width: 40px; height: 40px; flex: none; }
+  .check path { stroke: var(--ok); stroke-width: 3.2; fill: none; stroke-linecap: round; stroke-linejoin: round; stroke-dasharray: 30; }
+
+  .cta {
+    top: 1430px; left: 170px; width: 740px; height: 132px; border-radius: 999px; overflow: hidden;
+    background: var(--accent); display: flex; align-items: center; justify-content: center; gap: 26px;
+    font-size: 42px; font-weight: 500; box-shadow: 0 24px 80px rgba(145, 94, 255, 0.45);
+  }
+  .cta-fill { position: absolute; inset: 0; background: linear-gradient(90deg, rgba(255,255,255,0), rgba(255,255,255,0.22)); transform-origin: left; }
+  .cta span { position: relative; }
+  .dots { display: flex; gap: 12px; }
+  .dots i { width: 12px; height: 12px; border-radius: 50%; background: #fff; display: block; }
+
+  /* results scene */
+  .res-title { top: 360px; left: 0; right: 0; }
+  .res-sub { top: 500px; left: 0; right: 0; }
+  .paths { top: 650px; left: 70px; width: 940px; display: flex; flex-direction: column; gap: 30px; }
+  .path { position: relative; display: flex; align-items: center; gap: 36px; padding: 50px 48px; border-radius: 40px; }
+  .path .rank { font-size: 30px; color: var(--fg-3); }
+  .path .info { flex: 1; }
+  .path .title { font-size: 50px; line-height: 1.08; font-weight: 600; letter-spacing: -0.03em; }
+  .path .meta { font-size: 30px; color: var(--fg-2); margin-top: 10px; }
+  .ring { position: relative; width: 136px; height: 136px; flex: none; }
+  .ring svg { position: absolute; inset: 0; transform: rotate(-90deg); }
+  .ring circle { fill: none; stroke-width: 9; stroke-linecap: round; }
+  .ring .track { stroke: rgba(255,255,255,0.08); }
+  .ring .bar { stroke: url(#rg); stroke-dasharray: 339.3; }
+  .ring b { position: absolute; inset: 0; display: grid; place-items: center; font-size: 36px; font-weight: 600; letter-spacing: -0.02em; }
+  .path .hl { position: absolute; inset: -1px; border-radius: 40px; border: 2px solid var(--accent); box-shadow: 0 0 80px rgba(145, 94, 255, 0.35), inset 0 0 40px rgba(145, 94, 255, 0.12); opacity: 0; }
+  .badge { position: absolute; top: -22px; right: 40px; padding: 8px 20px; border-radius: 999px; background: var(--accent); font-size: 24px; opacity: 0; }
+</style>
+</head>
+<body>
+<div class="stage">
+  <div class="glow glow-a"></div>
+  <div class="glow glow-b"></div>
+
+  <!-- S1 / S2: statements -->
+  <div class="layer"><h1 class="h1" id="s1">Nie wiesz,<br>dokąd dalej?</h1></div>
+  <div class="layer"><h1 class="h1 grad" id="s2">Vocare wie.</h1></div>
+
+  <!-- S3: profile analysis -->
+  <div class="scene" id="sc3">
+  <div class="abs pill-label tag" id="tag">Doradca kariery AI</div>
+  <div class="abs card profile" id="profile">
+    <div class="profile-head" id="head">
+      <div class="avatar">MW</div>
+      <div>
+        <div class="name">Marta Wiśniewska</div>
+        <div class="role">Specjalistka ds. obsługi klienta · 4 lata</div>
+      </div>
+    </div>
+    <div class="chips">
+      <div class="chip">Obsługa klienta</div>
+      <div class="chip">CRM</div>
+      <div class="chip">Excel</div>
+      <div class="chip">Komunikacja</div>
+      <div class="chip">Negocjacje</div>
+      <div class="chip">Angielski C1</div>
+    </div>
+  </div>
+  <div class="abs checks mono" id="checks">
+    <div class="check"><svg viewBox="0 0 40 40"><path d="M9 21 l7 7 L31 12"/></svg>Analiza doświadczenia i umiejętności</div>
+    <div class="check"><svg viewBox="0 0 40 40"><path d="M9 21 l7 7 L31 12"/></svg>Dopasowanie ścieżek kariery</div>
+    <div class="check"><svg viewBox="0 0 40 40"><path d="M9 21 l7 7 L31 12"/></svg>Przygotowanie rekomendacji</div>
+  </div>
+  <div class="abs cta" id="cta"><div class="cta-fill"></div><span id="cta-label">Analizuję profil</span><span class="dots"><i></i><i></i><i></i></span></div>
+  </div>
+
+  <!-- S4: results -->
+  <div class="scene" id="sc4">
+  <div class="abs res-title"><h2 class="h2" id="res-title">3 ścieżki kariery.</h2></div>
+  <div class="abs res-sub"><p class="sub" id="res-sub">Dopasowane do Ciebie, nie do szablonu.</p></div>
+  <div class="abs paths" id="paths">
+    <div class="card path">
+      <div class="hl"></div><div class="badge mono">Najlepsze dopasowanie</div>
+      <div class="rank mono">01</div>
+      <div class="info"><div class="title">Customer Success Manager</div><div class="meta">Rozwój · 9 800 – 16 500 PLN</div></div>
+      <div class="ring"><svg viewBox="0 0 136 136"><circle class="track" cx="68" cy="68" r="54"/><circle class="bar" cx="68" cy="68" r="54"/></svg><b data-to="94">0%</b></div>
+    </div>
+    <div class="card path">
+      <div class="hl"></div>
+      <div class="rank mono">02</div>
+      <div class="info"><div class="title">Product Owner</div><div class="meta">Zmiana · 11 000 – 19 000 PLN</div></div>
+      <div class="ring"><svg viewBox="0 0 136 136"><circle class="track" cx="68" cy="68" r="54"/><circle class="bar" cx="68" cy="68" r="54"/></svg><b data-to="87">0%</b></div>
+    </div>
+    <div class="card path">
+      <div class="hl"></div>
+      <div class="rank mono">03</div>
+      <div class="info"><div class="title">UX Researcher</div><div class="meta">Zmiana · 9 000 – 15 000 PLN</div></div>
+      <div class="ring"><svg viewBox="0 0 136 136"><circle class="track" cx="68" cy="68" r="54"/><circle class="bar" cx="68" cy="68" r="54"/></svg><b data-to="81">0%</b></div>
+    </div>
+  </div>
+  </div>
+
+  <!-- outro -->
+  <div class="layer outro">
+    <div class="eyebrow outro-eyebrow">Nowość w Vocare</div>
+    <h2 class="h2 outro-title">Doradca kariery AI</h2>
+    <img class="outro-logo" src="logo.png" alt="Vocare">
+    <div class="outro-line"></div>
+    <div class="outro-tag">Twoja kariera. Zaprojektowana z AI.</div>
+    <div class="outro-url mono">vocare.pl</div>
+  </div>
+
+  <div class="vignette"></div>
+  <svg width="0" height="0" style="position:absolute"><defs><linearGradient id="rg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#d9c9ff"/><stop offset="1" stop-color="#915eff"/></linearGradient></defs></svg>
+</div>
+
+<script src="shared/engine.js"></script>
+<script>
+  const { ease, prog, lerp, apply, show, words, outro, run } = M;
+  const $ = (s) => document.querySelector(s);
+  const $$ = (s) => [...document.querySelectorAll(s)];
+
+  const OUT_PROFILE = 8.9;
+  const OUT_RESULTS = 13.1;
+
+  function render(t) {
+    // S1 — question
+    words($('#s1'), t, { at: 0.35, out: 2.35 });
+    // S2 — answer, with a slow push-in for weight
+    words($('#s2'), t, { at: 2.75, out: 4.25, stagger: 0.12 });
+    $('#s2').parentElement.style.transform = `scale(${lerp(0.96, 1.04, prog(t, 2.75, 1.8, ease.linear))})`;
+
+    // S3 — profile card assembles under a slow push-in
+    $('#sc3').style.transform = `scale(${lerp(1, 1.045, prog(t, 4.5, 4.9, ease.linear))})`;
+    show($('#tag'), t, { at: 4.55, out: OUT_PROFILE, y: 24 });
+    show($('#profile'), t, { at: 4.65, out: OUT_PROFILE, y: 140, s: 0.94, d: 1.2 });
+    show($('#head'), t, { at: 4.9, y: 30, blur: 10 });
+    $$('#profile .chip').forEach((c, i) => {
+      const k = prog(t, 5.2 + i * 0.08, 0.8, ease.outExpo);
+      apply(c, { o: k, y: (1 - k) * 22, s: lerp(0.9, 1, k), blur: (1 - k) * 6 });
+    });
+
+    // checklist: line fades in, then its tick draws on
+    $('#checks').style.visibility = t > OUT_PROFILE + 0.7 ? 'hidden' : 'visible';
+    $$('#checks .check').forEach((row, i) => {
+      const at = 6.0 + i * 0.6;
+      show(row, t, { at, out: OUT_PROFILE + i * 0.04, y: 20, blur: 8, s: 1 });
+      const k = prog(t, at + 0.35, 0.55, ease.outQuart);
+      row.querySelector('path').style.strokeDashoffset = 30 * (1 - k);
+    });
+
+    // CTA: progress sweep + breathing dots, then flips to "done"
+    show($('#cta'), t, { at: 5.7, out: OUT_PROFILE, y: 60, s: 0.92 });
+    const fill = prog(t, 6.0, 2.5, ease.inOutCubic);
+    $('#cta .cta-fill').style.transform = `scaleX(${fill})`;
+    $$('#cta .dots i').forEach((d, i) => {
+      const ph = Math.max(0, Math.sin((t - 5.7) * 5.5 - i * 0.9));
+      d.style.opacity = (0.35 + 0.65 * ph).toFixed(3);
+      d.style.transform = `translateY(${-6 * ph}px)`;
+    });
+
+    // S4 — results
+    $('#sc4').style.transform = `scale(${lerp(1, 1.04, prog(t, 9.2, 4.4, ease.linear))})`;
+    words($('#res-title'), t, { at: 9.25, out: OUT_RESULTS });
+    show($('#res-sub'), t, { at: 9.6, out: OUT_RESULTS, y: 24 });
+    $$('#paths .path').forEach((p, i) => {
+      const at = 9.55 + i * 0.16;
+      show(p, t, { at, out: OUT_RESULTS + i * 0.05, y: 120, s: 0.95, d: 1.2 });
+      const k = prog(t, at + 0.35, 1.7, ease.outExpo);
+      const to = +p.querySelector('b').dataset.to;
+      p.querySelector('.bar').style.strokeDashoffset = 339.3 * (1 - (to / 100) * k);
+      p.querySelector('b').textContent = Math.round(to * k) + '%';
+
+      // focus on the winner: others recede, the top match lifts and glows
+      const f = prog(t, 11.55, 0.9, ease.inOutCubic);
+      if (i === 0) {
+        const base = parseFloat(p.style.opacity);
+        const q = prog(t, OUT_RESULTS, 0.5, ease.inOutCubic);
+        p.style.transform += ` scale(${lerp(1, 1.035, f)})`;
+        p.querySelector('.hl').style.opacity = f;
+        const b = prog(t, 11.8, 0.7, ease.outExpo);
+        apply(p.querySelector('.badge'), { o: b * (1 - q), y: (1 - b) * 12 });
+        p.style.opacity = base;
+      } else {
+        p.style.opacity = (parseFloat(p.style.opacity) * lerp(1, 0.42, f)).toFixed(4);
+      }
+    });
+
+    outro(t, 13.35);
+  }
+
+  run({ duration: 16.8, render });
+</script>
+</body>
+</html>

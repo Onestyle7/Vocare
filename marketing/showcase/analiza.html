@@ -1,0 +1,220 @@
+<!doctype html>
+<html lang="pl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Vocare — Analiza rynku AI</title>
+<link rel="stylesheet" href="shared/base.css">
+<style>
+  /* hero number */
+  .hero-eyebrow { top: 700px; left: 0; right: 0; text-align: center; }
+  .hero-num { top: 780px; left: 0; right: 0; text-align: center; font-size: 250px; font-weight: 600; letter-spacing: -0.06em; line-height: 1; }
+  .hero-unit { top: 1060px; left: 0; right: 0; }
+
+  /* path header */
+  .tag { top: 330px; left: 70px; }
+  .kicker { top: 440px; left: 70px; padding: 8px 18px; border-radius: 10px; background: #fff; color: #0b0b0f; font-size: 28px; font-weight: 500; }
+  .path-title { top: 500px; left: 70px; font-size: 76px; font-weight: 600; letter-spacing: -0.04em; text-align: left; }
+  .stats { top: 620px; left: 70px; display: flex; gap: 16px; }
+  .stats .chip { font-size: 31px; padding: 16px 26px; }
+  .stats .chip b { font-weight: 600; }
+  .stats .ok { border-color: rgba(61, 220, 151, 0.55); color: var(--ok); }
+  .arrow { width: 26px; height: 26px; stroke: currentColor; stroke-width: 2.4; fill: none; stroke-linecap: round; stroke-linejoin: round; }
+
+  .chart { top: 780px; left: 70px; width: 940px; height: 700px; padding: 52px 56px 48px; }
+  .chart-head { display: flex; justify-content: space-between; align-items: center; }
+  .chart-head .eyebrow { font-size: 25px; }
+  .growth { padding: 10px 22px; border-radius: 999px; background: rgba(61, 220, 151, 0.12); color: var(--ok); font-size: 28px; font-weight: 600; }
+  .plot { position: relative; height: 470px; margin-top: 40px; }
+  .grid-line { position: absolute; left: 0; right: 0; height: 1px; background: rgba(255,255,255,0.06); }
+  .bar {
+    position: absolute; bottom: 0; width: 132px; border-radius: 22px 22px 8px 8px; transform-origin: bottom;
+    background: linear-gradient(180deg, #b794ff, #915eff 45%, rgba(145, 94, 255, 0.35));
+    box-shadow: 0 0 50px rgba(145, 94, 255, 0.25);
+  }
+  .bar.dim { background: linear-gradient(180deg, rgba(183,148,255,0.55), rgba(145,94,255,0.18)); box-shadow: none; }
+  .val { position: absolute; width: 207px; text-align: center; font-size: 30px; font-weight: 600; letter-spacing: -0.02em; }
+  .lvl { position: absolute; bottom: -62px; width: 207px; text-align: center; font-size: 26px; color: var(--fg-2); }
+  .trend { position: absolute; inset: 0; overflow: visible; }
+  .trend path { fill: none; stroke: #fff; stroke-width: 3; stroke-linecap: round; stroke-linejoin: round; }
+  .trend circle { fill: #fff; }
+
+  /* insight tiles */
+  .ins-title { top: 330px; left: 0; right: 0; }
+  .tiles { top: 520px; left: 70px; width: 940px; display: flex; flex-direction: column; gap: 26px; }
+  .tile { padding: 42px 48px; border-radius: 36px; }
+  .tile-row { display: flex; justify-content: space-between; align-items: baseline; }
+  .tile .eyebrow { font-size: 27px; color: var(--fg-2); }
+  .tile .value { font-size: 52px; font-weight: 600; letter-spacing: -0.03em; }
+  .meter { height: 12px; border-radius: 99px; background: rgba(255,255,255,0.08); margin-top: 26px; overflow: hidden; }
+  .meter i { display: block; height: 100%; border-radius: 99px; background: linear-gradient(90deg, #915eff, #c9b2ff); transform-origin: left; }
+  .segs { display: flex; gap: 10px; margin-top: 26px; }
+  .segs i { flex: 1; height: 12px; border-radius: 99px; background: rgba(255,255,255,0.08); }
+  .segs i.on { background: linear-gradient(90deg, #915eff, #b794ff); }
+  .gaps { display: flex; gap: 14px; margin-top: 26px; flex-wrap: wrap; }
+  .gaps .chip { font-size: 30px; padding: 14px 24px; border-style: dashed; border-color: rgba(183, 148, 255, 0.5); }
+  .gaps .chip::before { content: '+'; color: var(--accent-2); font-weight: 600; }
+</style>
+</head>
+<body>
+<div class="stage">
+  <div class="glow glow-a"></div>
+  <div class="glow glow-b"></div>
+
+  <!-- S1 -->
+  <div class="layer"><h1 class="h1" id="s1">Ile naprawdę<br>możesz zarobić?</h1></div>
+
+  <!-- S2: hero number -->
+  <div class="scene" id="sc2">
+    <div class="abs eyebrow hero-eyebrow" id="hero-eyebrow">Customer Success · Lead</div>
+    <div class="abs hero-num grad" id="hero-num-wrap"><span id="hero-num">0</span></div>
+    <div class="abs hero-unit"><p class="sub" id="hero-unit">PLN miesięcznie. Policzone przez AI.</p></div>
+  </div>
+
+  <!-- S3: career path + salary progression -->
+  <div class="scene" id="sc3">
+    <div class="abs pill-label tag" id="tag">Analiza rynkowa AI</div>
+    <div class="abs kicker" id="kicker">Ścieżka kariery</div>
+    <h2 class="abs path-title" id="path-title">Customer Success Manager</h2>
+    <div class="abs stats" id="stats">
+      <div class="chip"><svg class="arrow" viewBox="0 0 24 24"><path d="M12 4v16M5 13l7 7 7-7"/></svg><b>6 500</b> PLN</div>
+      <div class="chip"><svg class="arrow" viewBox="0 0 24 24"><path d="M12 20V4M5 11l7-7 7 7"/></svg><b>19 994</b> PLN</div>
+      <div class="chip ok">Zatrudnienie: 91%</div>
+    </div>
+    <div class="abs card chart" id="chart">
+      <div class="chart-head"><div class="eyebrow">Progresja wynagrodzeń</div><div class="growth" id="growth">+208%</div></div>
+      <div class="plot" id="plot">
+        <div class="grid-line" style="bottom:0"></div>
+        <div class="grid-line" style="bottom:127px"></div>
+        <div class="grid-line" style="bottom:253px"></div>
+        <div class="grid-line" style="bottom:380px"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- S4: insights -->
+  <div class="scene" id="sc4">
+    <div class="abs ins-title"><h2 class="h2" id="ins-title">Dane, nie przeczucia.</h2></div>
+    <div class="abs tiles" id="tiles">
+      <div class="card tile">
+        <div class="tile-row"><div class="eyebrow">Popyt na rynku</div><div class="value">Wysoki</div></div>
+        <div class="meter"><i data-to="0.86"></i></div>
+      </div>
+      <div class="card tile">
+        <div class="tile-row"><div class="eyebrow">Próg wejścia</div><div class="value">Średni</div></div>
+        <div class="segs"><i class="on"></i><i class="on"></i><i class="on"></i><i></i><i></i></div>
+      </div>
+      <div class="card tile">
+        <div class="tile-row"><div class="eyebrow">Praca zdalna</div><div class="value" id="remote">0%</div></div>
+        <div class="meter"><i data-to="0.78"></i></div>
+      </div>
+      <div class="card tile">
+        <div class="tile-row"><div class="eyebrow">Brakujące umiejętności</div></div>
+        <div class="gaps"><div class="chip">SQL</div><div class="chip">Salesforce</div><div class="chip">Analiza danych</div></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- outro -->
+  <div class="layer outro">
+    <div class="eyebrow outro-eyebrow">Nowość w Vocare</div>
+    <h2 class="h2 outro-title">Analiza rynku AI</h2>
+    <img class="outro-logo" src="logo.png" alt="Vocare">
+    <div class="outro-line"></div>
+    <div class="outro-tag">Twoja kariera. Zaprojektowana z AI.</div>
+    <div class="outro-url mono">vocare.pl</div>
+  </div>
+
+  <div class="vignette"></div>
+</div>
+
+<script src="shared/engine.js"></script>
+<script>
+  const { ease, prog, lerp, apply, show, words, count, fmt, outro, run } = M;
+  const $ = (s) => document.querySelector(s);
+  const $$ = (s) => [...document.querySelectorAll(s)];
+
+  // salary progression — bars and trend line share the same geometry
+  const LEVELS = [['Junior', 6500], ['Mid', 10200], ['Senior', 14800], ['Lead', 19994]];
+  const COL = 207, BAR = 132, MAXH = 380, PLOT_H = 470;
+  const plot = $('#plot');
+  const pts = LEVELS.map(([lvl, v], i) => {
+    const h = (v / 19994) * MAXH;
+    const x = i * COL + COL / 2;
+    plot.insertAdjacentHTML('beforeend',
+      `<div class="bar${i < 3 ? ' dim' : ''}" style="left:${x - BAR / 2}px;height:${h}px"></div>` +
+      `<div class="val" style="left:${i * COL}px;bottom:${h + 24}px">0</div>` +
+      `<div class="lvl mono" style="left:${i * COL}px">${lvl}</div>`);
+    return [x, PLOT_H - h];
+  });
+  plot.insertAdjacentHTML('beforeend',
+    `<svg class="trend" viewBox="0 0 828 ${PLOT_H}"><path d="M${pts.map((p) => p.join(' ')).join(' L')}"/>` +
+    pts.map(([x, y]) => `<circle cx="${x}" cy="${y}" r="0"/>`).join('') + '</svg>');
+  const trend = $('.trend path');
+  const trendLen = trend.getTotalLength();
+  trend.style.strokeDasharray = trendLen;
+
+  const OUT_HERO = 4.85, OUT_CHART = 10.15, OUT_TILES = 13.25;
+
+  function render(t) {
+    words($('#s1'), t, { at: 0.35, out: 2.3 });
+
+    // S2 — the number lands with a long decelerating roll
+    $('#sc2').style.transform = `scale(${lerp(0.97, 1.05, prog(t, 2.55, 2.8, ease.linear))})`;
+    show($('#hero-eyebrow'), t, { at: 2.6, out: OUT_HERO, y: 20 });
+    show($('#hero-num-wrap'), t, { at: 2.6, out: OUT_HERO, y: 70, blur: 24, s: 0.9, d: 1.3 });
+    count($('#hero-num'), t, { at: 2.6, d: 1.9, to: 19994 });
+    show($('#hero-unit'), t, { at: 3.3, out: OUT_HERO, y: 24 });
+
+    // S3 — path header, then the chart builds
+    $('#sc3').style.transform = `scale(${lerp(1, 1.035, prog(t, 5, 5.6, ease.linear))})`;
+    show($('#tag'), t, { at: 5.05, out: OUT_CHART, y: 20 });
+    show($('#kicker'), t, { at: 5.2, out: OUT_CHART, y: 20 });
+    words($('#path-title'), t, { at: 5.3, out: OUT_CHART, stagger: 0.08 });
+    $$('#stats .chip').forEach((c, i) => show(c, t, { at: 5.75 + i * 0.1, out: OUT_CHART, y: 26, s: 0.92 }));
+    show($('#chart'), t, { at: 6.0, out: OUT_CHART, y: 160, s: 0.95, d: 1.3 });
+
+    $$('#plot .bar').forEach((b, i) => {
+      const k = prog(t, 6.55 + i * 0.18, 1.1, ease.outExpo);
+      b.style.transform = `scaleY(${Math.max(0.001, k)})`;
+    });
+    $$('#plot .val').forEach((v, i) => {
+      const at = 6.65 + i * 0.18;
+      show(v, t, { at, y: 18, blur: 6, s: 1 });
+      count(v, t, { at, d: 1.1, to: LEVELS[i][1] });
+    });
+    show(plot.parentElement.querySelector('.chart-head'), t, { at: 6.3, y: 16, blur: 6, s: 1 });
+    $$('#plot .lvl').forEach((l, i) => show(l, t, { at: 6.55 + i * 0.18, y: 12, blur: 4, s: 1 }));
+
+    const draw = prog(t, 7.6, 1.3, ease.inOutCubic);
+    trend.style.strokeDashoffset = trendLen * (1 - draw);
+    $$('.trend circle').forEach((c, i) => {
+      const k = prog(t, 7.6 + i * 0.36, 0.5, ease.outExpo);
+      c.setAttribute('r', (8 * k).toFixed(2));
+    });
+    const g = prog(t, 8.7, 0.8, ease.outExpo);
+    apply($('#growth'), { o: g, s: lerp(0.85, 1, g), blur: (1 - g) * 6 });
+
+    // S4 — insights
+    $('#sc4').style.transform = `scale(${lerp(1, 1.035, prog(t, 10.2, 3.6, ease.linear))})`;
+    words($('#ins-title'), t, { at: 10.3, out: OUT_TILES });
+    $$('#tiles .tile').forEach((tile, i) => {
+      const at = 10.6 + i * 0.14;
+      show(tile, t, { at, out: OUT_TILES + i * 0.04, y: 110, s: 0.95, d: 1.2 });
+      tile.querySelectorAll('.meter i').forEach((m) => {
+        m.style.transform = `scaleX(${prog(t, at + 0.4, 1.4, ease.outExpo) * m.dataset.to})`;
+      });
+      tile.querySelectorAll('.segs i.on').forEach((s, j) => {
+        s.style.opacity = prog(t, at + 0.4 + j * 0.12, 0.5, ease.outQuart);
+      });
+      tile.querySelectorAll('.gaps .chip').forEach((c, j) => show(c, t, { at: at + 0.45 + j * 0.1, y: 16, s: 0.9, blur: 6 }));
+    });
+    count($('#remote'), t, { at: 11.3, d: 1.4, to: 78, suffix: '%' });
+
+    outro(t, 13.5);
+  }
+
+  run({ duration: 16.9, render });
+</script>
+</body>
+</html>
