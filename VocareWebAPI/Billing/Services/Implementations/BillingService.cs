@@ -1,7 +1,4 @@
 using Hangfire;
-using Microsoft.EntityFrameworkCore;
-using Stripe;
-using Stripe.Checkout;
 using VocareWebAPI.Billing.Configuration;
 using VocareWebAPI.Billing.Exceptions;
 using VocareWebAPI.Billing.Models.Dtos;
@@ -58,7 +55,7 @@ namespace VocareWebAPI.Billing.Services.Implementations
             var serviceCost = await _serviceCostRepository.GetServiceCostAsync(serviceName);
             var userBilling = await _userBillingRepository.GetByUserIdAsync(userId);
 
-            if (userBilling.SubscriptionStatus == SubscriptionStatus.Active)
+            if (userBilling.HasPremiumAccess)
                 return;
             if (userBilling.TokenBalance >= serviceCost)
                 return;
@@ -77,7 +74,7 @@ namespace VocareWebAPI.Billing.Services.Implementations
 
             var userBilling = await _userBillingRepository.GetByUserIdAsync(userId);
 
-            if (userBilling.SubscriptionStatus == SubscriptionStatus.Active)
+            if (userBilling.HasPremiumAccess)
                 return;
 
             if (userBilling.TokenBalance < serviceCost)
@@ -368,7 +365,7 @@ namespace VocareWebAPI.Billing.Services.Implementations
                 var userBilling = await _userBillingRepository.GetByUserIdAsync(userId);
 
                 userBilling.StripeSubscriptionId = subscription.Id;
-                userBilling.SubscriptionStatus = SubscriptionStatus.Active;
+                userBilling.SubscriptionStatus = MapStripeStatusToOurStatus(subscription.Status);
                 userBilling.SubscriptionLevel = subscriptionLevel;
                 userBilling.SubscriptionEndDate = subscriptionEndDate;
 

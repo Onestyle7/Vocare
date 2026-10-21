@@ -336,7 +336,10 @@ namespace VocareWebAPI.Billing.Services.Implementations
                 );
             }
 
-            if (userBilling.SubscriptionStatus == SubscriptionStatus.Active)
+            if (
+                userBilling.SubscriptionStatus == SubscriptionStatus.Active
+                || userBilling.SubscriptionStatus == SubscriptionStatus.Trialing
+            )
                 throw new SubscriptionAlreadyActiveException(userId);
 
             if (string.IsNullOrEmpty(userBilling.StripeCustomerId))

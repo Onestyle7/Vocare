@@ -242,7 +242,7 @@ namespace VocareWebAPI.CvGenerator.Services.Implementation
         {
             var billing = await _userBillingRepository.GetByUserIdAsync(userId);
 
-            if (billing?.SubscriptionStatus == SubscriptionStatus.Active)
+            if (billing.HasPremiumAccess)
             {
                 return _cvLimits.PremiumTierLimit;
             }
