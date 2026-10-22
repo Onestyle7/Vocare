@@ -56,6 +56,12 @@ Porównując te trzy formy, widać jeden wzorzec: im więcej ochrony socjalnej d
 | Okres wypowiedzenia | Ustawowy, chroniony | Zależny od umowy | Krótki, elastyczny |
 | Zdolność kredytowa (hipoteka) | Najwyższa | Niższa, wymaga historii firmy | Niska |
 
+Sprawdź na własnych liczbach, ile zostanie Ci na rękę przy każdej formie zatrudnienia:
+
+```vocare-widget
+salary-calculator
+```
+
 ---
 
 ## Jak zdecydować, którą formę wybrać?

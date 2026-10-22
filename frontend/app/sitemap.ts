@@ -23,6 +23,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
     { path: '/resume-creator', changeFrequency: 'weekly', priority: 0.8 },
     { path: '/roadmap', changeFrequency: 'weekly', priority: 0.8 },
     { path: '/pricing', changeFrequency: 'weekly', priority: 0.8 },
+    { path: '/salary-calculator', changeFrequency: 'monthly', priority: 0.8 },
     { path: '/privacy-policy', changeFrequency: 'yearly', priority: 0.6 },
     { path: '/terms-of-service', changeFrequency: 'yearly', priority: 0.6 },
     { path: '/blog', changeFrequency: 'weekly', priority: 0.9 },
