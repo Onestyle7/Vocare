@@ -1,4 +1,5 @@
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Options;
 using Resend;
 using Stripe;
 using Stripe.Checkout;
@@ -20,18 +21,24 @@ namespace VocareWebAPI.Billing.Services.Implementations
         private readonly IConfiguration _configuration;
         private readonly ILogger<StripeService> _logger;
         private readonly AppDbContext _dbContext;
+        private readonly ITokenTransactionRepository _tokenTransactionRepository;
+        private readonly TrialConfig _trialConfig;
 
         public StripeService(
             IUserBillingRepository userBillingRepository,
             IConfiguration configuration,
             ILogger<StripeService> logger,
-            AppDbContext dbContext
+            AppDbContext dbContext,
+            ITokenTransactionRepository tokenTransactionRepository,
+            IOptions<TrialConfig> trialConfig
         )
         {
             _userBillingRepository = userBillingRepository;
             _configuration = configuration;
             _logger = logger;
             _dbContext = dbContext;
+            _tokenTransactionRepository = tokenTransactionRepository;
+            _trialConfig = trialConfig.Value;
 
             TokenPackagesConfiguration.Initialize(configuration);
             SubscriptionPackagesConfiguration.Initialize(configuration);
@@ -397,6 +404,21 @@ namespace VocareWebAPI.Billing.Services.Implementations
                 _configuration["Stripe:CancelUrl"]
                 ?? throw new InvalidOperationException("Cancel URL not configured.");
 
+            var hasEverHadSubscription =
+                await _tokenTransactionRepository.HasEverHadSubscriptionAsync(userId);
+
+            int? trialDays =
+                _trialConfig.TrialPeriodDays > 0 && !hasEverHadSubscription
+                    ? _trialConfig.TrialPeriodDays
+                    : null;
+
+            _logger.LogInformation(
+                "Trial decision for userId={UserId}: trialDays={TrialDays}, hadSubscriptionBefore={Had}",
+                userId,
+                trialDays,
+                hasEverHadSubscription
+            );
+
             var sessionOptions = new SessionCreateOptions
             {
                 Customer = userBilling.StripeCustomerId,
@@ -413,9 +435,10 @@ namespace VocareWebAPI.Billing.Services.Implementations
                     { "subscriptionLevel", subscriptionPackage.Level.ToString() },
                     { "packageName", subscriptionPackage.Name },
                 },
-                // Opcjonalne: trial period
+
                 SubscriptionData = new SessionSubscriptionDataOptions
                 {
+                    TrialPeriodDays = trialDays,
                     Metadata = new Dictionary<string, string>
                     {
                         { "userId", userId },

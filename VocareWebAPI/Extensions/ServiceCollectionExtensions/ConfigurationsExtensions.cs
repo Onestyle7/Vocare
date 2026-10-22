@@ -55,6 +55,12 @@ namespace VocareWebAPI.Extensions.ServiceCollectionExtensions
                     "InternalApi:Key configuration is missing or empty."
                 )
                 .ValidateOnStart();
+
+            services
+                .AddOptions<TrialConfig>()
+                .BindConfiguration(TrialConfig.SectionName)
+                .ValidateDataAnnotations()
+                .ValidateOnStart();
             return services;
         }
     }
