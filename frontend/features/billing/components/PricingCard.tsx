@@ -150,7 +150,7 @@ export function PricingCard({
             id={microcopyId}
             className={cn(
               'mt-3 text-center text-xs leading-5 text-gray-500 dark:text-gray-400',
-              plan.popular && 'lg:min-h-15'
+              plan.popular && 'lg:min-h-10'
             )}
           >
             {plan.microcopyEmphasis && plan.microcopyEmphasisPosition === 'start' && (

@@ -54,7 +54,6 @@ export const pricingPlans: readonly PricingPlan[] = [
     commitment: 'Anuluj w każdej chwili. Żadnych zobowiązań.',
     ctaLabel: 'Wybierz Premium',
     microcopy: 'Pierwsza płatność dziś, kolejna za miesiąc.',
-    microcopyEmphasis: 'Rezygnacja bez zobowiązań.',
     popular: true,
   },
   {
