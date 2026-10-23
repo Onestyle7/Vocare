@@ -77,3 +77,18 @@ export const pricingPlans: readonly PricingPlan[] = [
     popular: false,
   },
 ];
+
+export type BillingPeriod = 'monthly' | 'quarterly';
+
+// Wariant kwartalny karty Premium (przełącznik w karcie). Funkcje i CTA bez zmian –
+// zmienia się tylko cena, okres i Price ID. Bez Price ID przełącznik jest ukryty.
+export const premiumQuarterlyVariant: Pick<
+  PricingPlan,
+  'price' | 'priceLabel' | 'description' | 'microcopy'
+> & { priceId: string | undefined } = {
+  price: 69,
+  priceLabel: '/ 3 miesiące',
+  description: 'Ok. 23 zł/mies. – 21% taniej niż płatność miesięczna',
+  priceId: env.NEXT_PUBLIC_GROWTH_QUARTERLY_PRICE_ID,
+  microcopy: 'Pierwsza płatność dziś, kolejna za 3 miesiące.',
+};

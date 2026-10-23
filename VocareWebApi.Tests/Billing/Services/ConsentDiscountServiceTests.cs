@@ -9,6 +9,8 @@ using VocareWebAPI.Billing.Models.Entities;
 using VocareWebAPI.Billing.Models.Enums;
 using VocareWebAPI.Billing.Repositories.Interfaces;
 using VocareWebAPI.Billing.Services.Implementations;
+using VocareWebAPI.Models.Entities;
+using VocareWebAPI.UserManagement.Services.Interfaces;
 using Xunit;
 
 namespace VocareWebApi.Tests.Billing.Services
@@ -24,9 +26,13 @@ namespace VocareWebApi.Tests.Billing.Services
 
         private readonly Mock<ITokenTransactionRepository> _transactions = new(MockBehavior.Strict);
 
+        // Domyślnie brak wcześniejszego konta na ten e-mail (Loose zwraca null)
+        private readonly Mock<IPriorAccountService> _priorAccount = new();
+
         private ConsentDiscountService CreateSut(string couponId = CouponId) =>
             new(
                 _transactions.Object,
+                _priorAccount.Object,
                 Options.Create(
                     new ConsentDiscountConfig
                     {
@@ -94,6 +100,34 @@ namespace VocareWebApi.Tests.Billing.Services
                     t.HasTransactionOfTypeAsync(UserId, TransactionType.ConsentDiscountGranted)
                 )
                 .ReturnsAsync(true);
+
+            var result = await CreateSut().GrantAsync(UserId);
+
+            result.Should().BeNull();
+            _transactions.Verify(
+                t => t.AddTransactionAsync(It.IsAny<TokenTransaction>()),
+                Times.Never
+            );
+        }
+
+        [Fact]
+        public async Task GrantAsync_WhenPriorAccountWithSameEmailHadDiscount_DoesNotGrant()
+        {
+            _transactions
+                .Setup(t =>
+                    t.HasTransactionOfTypeAsync(UserId, TransactionType.ConsentDiscountGranted)
+                )
+                .ReturnsAsync(false);
+            _priorAccount
+                .Setup(p => p.GetPriorAccountAsync(UserId))
+                .ReturnsAsync(
+                    new AccountAntiAbuseRegistry
+                    {
+                        EmailHash = "hash",
+                        UserId = "deleted-user",
+                        HadConsentDiscount = true,
+                    }
+                );
 
             var result = await CreateSut().GrantAsync(UserId);
 

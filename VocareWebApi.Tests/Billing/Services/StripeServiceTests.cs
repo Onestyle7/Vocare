@@ -14,7 +14,9 @@ using VocareWebAPI.Billing.Repositories.Interfaces;
 using VocareWebAPI.Billing.Services.Implementations;
 using VocareWebAPI.Billing.Services.Interfaces;
 using VocareWebAPI.Data;
+using VocareWebAPI.Models.Entities;
 using VocareWebApi.Tests.Common;
+using VocareWebAPI.UserManagement.Services.Interfaces;
 using Xunit;
 
 namespace VocareWebApi.Tests.Billing.Services
@@ -35,6 +37,9 @@ namespace VocareWebApi.Tests.Billing.Services
         private readonly Mock<IUserBillingRepository> _userBillings = new(MockBehavior.Strict);
         private readonly Mock<ITokenTransactionRepository> _transactions = new(MockBehavior.Strict);
         private readonly Mock<IConsentDiscountService> _consentDiscount = new(MockBehavior.Strict);
+
+        // Domyślnie brak wcześniejszego konta na ten e-mail (Loose zwraca null)
+        private readonly Mock<IPriorAccountService> _priorAccount = new();
         private readonly StripeService _sut;
 
         public StripeServiceTests()
@@ -51,7 +56,8 @@ namespace VocareWebApi.Tests.Billing.Services
                 _context,
                 _transactions.Object,
                 Options.Create(new TrialConfig { TrialPeriodDays = trialPeriodDays }),
-                _consentDiscount.Object
+                _consentDiscount.Object,
+                _priorAccount.Object
             );
 
         public void Dispose() => _context.Dispose();
@@ -208,6 +214,31 @@ namespace VocareWebApi.Tests.Billing.Services
                 .ReturnsAsync(hadSubscription);
 
             var result = await CreateSut(configuredDays).GetTrialDaysAsync(UserId);
+
+            result.Should().Be(expected);
+        }
+
+        [Theory]
+        [InlineData(true, null)]
+        [InlineData(false, 14)]
+        public async Task GetTrialDaysAsync_WhenPriorAccountWithSameEmail_GrantsTrialOnlyIfItHadNoSubscription(
+            bool priorHadSubscription,
+            int? expected
+        )
+        {
+            _transactions.Setup(t => t.HasEverHadSubscriptionAsync(UserId)).ReturnsAsync(false);
+            _priorAccount
+                .Setup(p => p.GetPriorAccountAsync(UserId))
+                .ReturnsAsync(
+                    new AccountAntiAbuseRegistry
+                    {
+                        EmailHash = "hash",
+                        UserId = "deleted-user",
+                        HadSubscription = priorHadSubscription,
+                    }
+                );
+
+            var result = await _sut.GetTrialDaysAsync(UserId);
 
             result.Should().Be(expected);
         }

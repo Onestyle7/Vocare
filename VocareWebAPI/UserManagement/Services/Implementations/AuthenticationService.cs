@@ -3,6 +3,7 @@ using System.Text.Json;
 using System.Web;
 using Microsoft.AspNetCore.DataProtection;
 using Microsoft.AspNetCore.Identity;
+using VocareWebAPI.Billing.Models.Dtos;
 using VocareWebAPI.Billing.Models.Entities;
 using VocareWebAPI.Billing.Services.Interfaces;
 using VocareWebAPI.Data;
@@ -225,6 +226,7 @@ namespace VocareWebAPI.UserManagement.Services.Implementations
             // Jeśli coś pójdzie nie tak z zapisaniem zgody to puszczamy fallback ze zgodą na false - w najgorszym przypadku nie zbierzemy zgody
             // TODO: Kiedyś może wydzielić wewnętrzy try/catch żeby bylo trochę ładniej
             WelcomeBonusResult? welcomeBonus = null;
+            ConsentDiscountOffer? consentDiscount = null;
 
             if (acceptMarketingConsent)
             {
@@ -255,7 +257,9 @@ namespace VocareWebAPI.UserManagement.Services.Implementations
                     // zgodę jako nieudzieloną
                     try
                     {
-                        await _consentDiscountService.GrantAsync(user.Id);
+                        consentDiscount = ConsentDiscountOffer.From(
+                            await _consentDiscountService.GrantAsync(user.Id)
+                        );
                     }
                     catch (Exception discountEx)
                     {
@@ -300,7 +304,9 @@ namespace VocareWebAPI.UserManagement.Services.Implementations
                 }
             }
 
-            return Result<RegisterResult>.Ok(RegisterResult.Successful(user.Id, welcomeBonus));
+            return Result<RegisterResult>.Ok(
+                RegisterResult.Successful(user.Id, welcomeBonus, consentDiscount)
+            );
         }
 
         public async Task<Result<ForgotPasswordResult>> ForgotPasswordAsync(string email)

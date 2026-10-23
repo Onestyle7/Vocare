@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using VocareWebAPI.Billing.Models.Dtos;
 
 namespace VocareWebAPI.UserManagement.Models.Results
 {
@@ -9,16 +10,22 @@ namespace VocareWebAPI.UserManagement.Models.Results
         public string? ErrorMessage { get; private set; }
         public IEnumerable<string>? Errors { get; private set; }
         public WelcomeBonusResult? WelcomeBonus { get; private set; }
+        public ConsentDiscountOffer? ConsentDiscount { get; private set; }
 
         private RegisterResult() { }
 
-        public static RegisterResult Successful(string userId, WelcomeBonusResult? welcomeBonus = null)
+        public static RegisterResult Successful(
+            string userId,
+            WelcomeBonusResult? welcomeBonus = null,
+            ConsentDiscountOffer? consentDiscount = null
+        )
         {
             return new RegisterResult
             {
                 Success = true,
                 UserId = userId,
                 WelcomeBonus = welcomeBonus,
+                ConsentDiscount = consentDiscount,
             };
         }
 

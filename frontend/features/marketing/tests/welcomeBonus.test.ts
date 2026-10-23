@@ -75,4 +75,13 @@ describe('getRegistrationToastMessage', () => {
   it('keeps the plain message without marketing consent', () => {
     expect(getRegistrationToastMessage(null)).toBe('Rejestracja ukończona');
   });
+
+  it('announces the consent discount instead of tokens', () => {
+    expect(
+      getRegistrationToastMessage(
+        { status: 'Disabled', amount: 0 },
+        { percentOff: 25, expiresAt: '2026-10-30T12:00:00Z' }
+      )
+    ).toBe('Rejestracja ukończona. Masz -25% na pakiet tokenów, ważne do 30.10.2026.');
+  });
 });

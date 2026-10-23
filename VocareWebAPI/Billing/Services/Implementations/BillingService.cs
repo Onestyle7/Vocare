@@ -1,4 +1,6 @@
 using Hangfire;
+using Microsoft.EntityFrameworkCore;
+using Npgsql;
 using VocareWebAPI.Billing.Configuration;
 using VocareWebAPI.Billing.Constants;
 using VocareWebAPI.Billing.Exceptions;
@@ -151,6 +153,79 @@ namespace VocareWebAPI.Billing.Services.Implementations
             _logger.LogInformation($"Event type: {stripeEvent.Type}");
             _logger.LogInformation($"Event ID: {stripeEvent.Id}");
 
+            // Stripe ponawia webhooki (timeout, błąd 5xx) i może dostarczyć ten sam event kilka
+            // razy, także równolegle – bez tego tokeny i maile byłyby przyznawane wielokrotnie
+            if (!await TryClaimEventAsync(stripeEvent))
+            {
+                _logger.LogInformation(
+                    "Stripe event {EventId} ({EventType}) already processed, skipping",
+                    stripeEvent.Id,
+                    stripeEvent.Type
+                );
+                return;
+            }
+
+            try
+            {
+                await DispatchEventAsync(stripeEvent);
+            }
+            catch
+            {
+                // Zwalniamy event, żeby ponowienie od Stripe mogło go obsłużyć
+                await ReleaseEventAsync(stripeEvent.Id);
+                throw;
+            }
+        }
+
+        private async Task<bool> TryClaimEventAsync(Stripe.Event stripeEvent)
+        {
+            if (await _dbContext.ProcessedStripeEvents.AnyAsync(e => e.Id == stripeEvent.Id))
+                return false;
+
+            var processedEvent = new ProcessedStripeEvent
+            {
+                Id = stripeEvent.Id,
+                Type = stripeEvent.Type,
+                ProcessedAt = DateTime.UtcNow,
+            };
+            _dbContext.ProcessedStripeEvents.Add(processedEvent);
+
+            try
+            {
+                await _dbContext.SaveChangesAsync();
+                return true;
+            }
+            catch (DbUpdateException ex)
+                when (ex.InnerException
+                        is PostgresException { SqlState: PostgresErrorCodes.UniqueViolation }
+                )
+            {
+                // Równoległa dostawa tego samego eventu zdążyła go zarezerwować
+                _dbContext.Entry(processedEvent).State = EntityState.Detached;
+                return false;
+            }
+        }
+
+        private async Task ReleaseEventAsync(string eventId)
+        {
+            try
+            {
+                // Po błędzie obsługi kontekst może śledzić wycofane zmiany – czyścimy go, żeby
+                // usunięcie rezerwacji nie zapisało ich ponownie
+                _dbContext.ChangeTracker.Clear();
+                _dbContext.ProcessedStripeEvents.Remove(
+                    new ProcessedStripeEvent { Id = eventId, Type = string.Empty }
+                );
+                await _dbContext.SaveChangesAsync();
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Failed to release Stripe event {EventId}", eventId);
+            }
+        }
+
+        private async Task DispatchEventAsync(Stripe.Event stripeEvent)
+        {
             if (stripeEvent.Type == "checkout.session.completed")
             {
                 var session = stripeEvent.Data.Object as Stripe.Checkout.Session;

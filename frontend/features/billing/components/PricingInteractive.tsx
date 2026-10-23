@@ -7,9 +7,17 @@ import { ScrollParallax } from 'react-just-parallax';
 import { shape1 } from '@/features/marketing/constants';
 
 import { applyPricingOffers, type PricingOffers } from '../billingUtils';
-import { ACTIVE_SUBSCRIPTION_STATUSES, DEFAULT_TRIAL_DAYS, pricingPlans } from '../constants';
+import {
+  ACTIVE_SUBSCRIPTION_STATUSES,
+  type BillingPeriod,
+  DEFAULT_TRIAL_DAYS,
+  premiumQuarterlyVariant,
+  pricingPlans,
+} from '../constants';
 import { getSubscriptionStatusAction } from '../dal/commands';
 import { useBillingActions } from '../hooks/useBillingActions';
+import type { PricingPlan } from '../types';
+import { BillingPeriodSwitch } from './BillingPeriodSwitch';
 import { PricingCard } from './PricingCard';
 
 interface PricingInteractiveProps {
@@ -30,6 +38,8 @@ export function PricingInteractive({
     trialDays: DEFAULT_TRIAL_DAYS,
     consentDiscount: null,
   });
+  const [billingPeriod, setBillingPeriod] = useState<BillingPeriod>('monthly');
+  const quarterlyPriceId = premiumQuarterlyVariant.priceId;
 
   useEffect(() => {
     let isMounted = true;
@@ -87,7 +97,11 @@ export function PricingInteractive({
         )}
 
         {pricingPlans.map((basePlan) => {
-          const plan = applyPricingOffers(basePlan, offers);
+          const periodPlan: PricingPlan =
+            basePlan.type === 'subscription' && billingPeriod === 'quarterly' && quarterlyPriceId
+              ? { ...basePlan, ...premiumQuarterlyVariant, priceId: quarterlyPriceId }
+              : basePlan;
+          const plan = applyPricingOffers(periodPlan, offers);
           const isCurrentSubscription =
             isAuthenticated && hasActiveSubscription && plan.type === 'subscription';
           const href =
@@ -105,6 +119,11 @@ export function PricingInteractive({
               plan={plan}
               isPending={isPending}
               href={href}
+              periodSwitch={
+                plan.type === 'subscription' && quarterlyPriceId ? (
+                  <BillingPeriodSwitch value={billingPeriod} onChange={setBillingPeriod} />
+                ) : undefined
+              }
               ctaLabel={
                 isCurrentSubscription
                   ? 'Zarządzaj subskrypcją'

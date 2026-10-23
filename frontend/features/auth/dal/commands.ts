@@ -61,7 +61,11 @@ export async function register(command: RegisterCommand) {
 
   return result.match(
     (registerResult) =>
-      actionOk({ success: true, welcomeBonus: registerResult.welcomeBonus ?? null }),
+      actionOk({
+        success: true,
+        welcomeBonus: registerResult.welcomeBonus ?? null,
+        consentDiscount: registerResult.consentDiscount ?? null,
+      }),
     (registerError) => actionErr(registerError)
   );
 }

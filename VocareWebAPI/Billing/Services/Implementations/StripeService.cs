@@ -12,6 +12,7 @@ using VocareWebAPI.Billing.Repositories.Interfaces;
 using VocareWebAPI.Billing.Services.Interfaces;
 using VocareWebAPI.Data;
 using VocareWebAPI.Shared.Exceptions;
+using VocareWebAPI.UserManagement.Services.Interfaces;
 
 namespace VocareWebAPI.Billing.Services.Implementations
 {
@@ -27,6 +28,7 @@ namespace VocareWebAPI.Billing.Services.Implementations
         private readonly ITokenTransactionRepository _tokenTransactionRepository;
         private readonly TrialConfig _trialConfig;
         private readonly IConsentDiscountService _consentDiscountService;
+        private readonly IPriorAccountService _priorAccountService;
 
         public StripeService(
             IUserBillingRepository userBillingRepository,
@@ -35,7 +37,8 @@ namespace VocareWebAPI.Billing.Services.Implementations
             AppDbContext dbContext,
             ITokenTransactionRepository tokenTransactionRepository,
             IOptions<TrialConfig> trialConfig,
-            IConsentDiscountService consentDiscountService
+            IConsentDiscountService consentDiscountService,
+            IPriorAccountService priorAccountService
         )
         {
             _userBillingRepository = userBillingRepository;
@@ -45,6 +48,7 @@ namespace VocareWebAPI.Billing.Services.Implementations
             _tokenTransactionRepository = tokenTransactionRepository;
             _trialConfig = trialConfig.Value;
             _consentDiscountService = consentDiscountService;
+            _priorAccountService = priorAccountService;
 
             TokenPackagesConfiguration.Initialize(configuration);
             SubscriptionPackagesConfiguration.Initialize(configuration);
@@ -58,7 +62,12 @@ namespace VocareWebAPI.Billing.Services.Implementations
             var hasEverHadSubscription =
                 await _tokenTransactionRepository.HasEverHadSubscriptionAsync(userId);
 
-            return hasEverHadSubscription ? null : _trialConfig.TrialPeriodDays;
+            if (hasEverHadSubscription)
+                return null;
+
+            // Jeden trial na osobę – usunięcie konta i rejestracja na ten sam e-mail go nie odnawia
+            var priorAccount = await _priorAccountService.GetPriorAccountAsync(userId);
+            return priorAccount?.HadSubscription == true ? null : _trialConfig.TrialPeriodDays;
         }
 
         public async Task<string> CreateCustomerAsync(string userId, string email)
@@ -574,30 +583,41 @@ namespace VocareWebAPI.Billing.Services.Implementations
             var paymentHistory = new List<PaymentHistoryDto>();
             try
             {
-                var paymentIntentService = new PaymentIntentService();
-                var paymentIntentOptions = new Stripe.PaymentIntentListOptions
+                // Zakupy tokenów bierzemy z sesji Checkout (tryb payment), nie z PaymentIntentów –
+                // PaymentIntent powstaje też przy opłaceniu faktury subskrypcji i trafiałby do
+                // historii drugi raz jako „Zakup tokenów”. Subskrypcje pokazujemy z faktur niżej.
+                var sessionService = new SessionService();
+                var sessions = await sessionService.ListAsync(
+                    new SessionListOptions
+                    {
+                        Customer = userBilling.StripeCustomerId,
+                        Status = "complete",
+                        Limit = limit,
+                    }
+                );
+                foreach (var session in sessions)
                 {
-                    Customer = userBilling.StripeCustomerId,
-                    Limit = limit,
-                };
-
-                var paymentIntents = await paymentIntentService.ListAsync(paymentIntentOptions);
-                foreach (var intent in paymentIntents)
-                {
-                    if (intent.Status != "succeeded" && intent.Status != "processing")
+                    if (session.Mode != "payment")
                         continue;
 
-                    var paymentDto = new PaymentHistoryDto
-                    {
-                        Type = "token_purchase",
-                        Amount = intent.Amount,
-                        Currency = intent.Currency,
-                        Status = MapPaymentIntentStatus(intent.Status),
-                        CreatedAt = intent.Created,
-                        Description = intent.Description ?? "Zakup tokenów",
-                        TokenAmount = ExtractTokenAmountFromMetadata(intent.Metadata),
-                    };
-                    paymentHistory.Add(paymentDto);
+                    var status = MapCheckoutPaymentStatus(session.PaymentStatus);
+                    if (status is null)
+                        continue;
+
+                    paymentHistory.Add(
+                        new PaymentHistoryDto
+                        {
+                            Type = "token_purchase",
+                            Amount = session.AmountTotal ?? 0,
+                            Currency = session.Currency,
+                            Status = status,
+                            CreatedAt = session.Created,
+                            Description =
+                                session.Metadata?.GetValueOrDefault("packageName")
+                                ?? "Zakup tokenów",
+                            TokenAmount = ExtractTokenAmountFromMetadata(session.Metadata),
+                        }
+                    );
                 }
                 var invoiceService = new Stripe.InvoiceService();
                 var invoiceOptions = new Stripe.InvoiceListOptions
@@ -662,19 +682,17 @@ namespace VocareWebAPI.Billing.Services.Implementations
         /// </summary>
         /// <param name="stripeStatus">Status ze stripe</param>
         /// <returns>nasz ujednolicony status</returns>
-        private string MapPaymentIntentStatus(string stripeStatus)
-        {
-            return stripeStatus switch
+        /// <summary>
+        /// Status płatności sesji Checkout w historii albo null, gdy sesja nie wymagała płatności.
+        /// „unpaid” przy zakończonej sesji oznacza metodę płatności z opóźnionym rozliczeniem.
+        /// </summary>
+        private static string? MapCheckoutPaymentStatus(string paymentStatus) =>
+            paymentStatus switch
             {
-                "succeeded" => "succeeded",
-                "processing" => "pending",
-                "requires_payment_method" => "failed",
-                "requires_confirmation" => "pending",
-                "requires_action" => "pending",
-                "canceled" => "failed",
-                _ => "unknown",
+                "paid" => "succeeded",
+                "unpaid" => "pending",
+                _ => null,
             };
-        }
 
         /// <summary>
         /// Mapuje status invoce ze stripe na nasz uproszczony

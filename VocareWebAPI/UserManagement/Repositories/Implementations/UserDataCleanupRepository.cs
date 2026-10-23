@@ -1,6 +1,7 @@
 using System.Diagnostics;
 using Microsoft.EntityFrameworkCore;
 using Pgvector.EntityFrameworkCore;
+using VocareWebAPI.Billing.Constants;
 using VocareWebAPI.Billing.Models.Enums;
 using VocareWebAPI.Data;
 using VocareWebAPI.Models.Entities;
@@ -55,6 +56,16 @@ public class UserDataCleanupRepository(
                 t.UserId == user.Id && t.Type == TransactionType.WelcomeBonus
             );
 
+            var hadSubscription = await _dbContext.TokenTransactions.AnyAsync(t =>
+                t.UserId == user.Id
+                && t.Type == TransactionType.Purchase
+                && t.ServiceName.StartsWith(TransactionServiceNames.SubscriptionActivatedPrefix)
+            );
+
+            var hadConsentDiscount = await _dbContext.TokenTransactions.AnyAsync(t =>
+                t.UserId == user.Id && t.Type == TransactionType.ConsentDiscountGranted
+            );
+
             var existingRegistry = await _dbContext.AccountAntiAbuseRegistries.FirstOrDefaultAsync(
                 r => r.EmailHash == emailHash
             );
@@ -66,6 +77,8 @@ public class UserDataCleanupRepository(
                         EmailHash = emailHash,
                         UserId = user.Id,
                         HadWelcomeBonus = hadWelcomeBonus,
+                        HadSubscription = hadSubscription,
+                        HadConsentDiscount = hadConsentDiscount,
                         CreatedAt = DateTime.UtcNow,
                     }
                 );
@@ -75,6 +88,8 @@ public class UserDataCleanupRepository(
                 existingRegistry.UserId = user.Id;
                 existingRegistry.CreatedAt = DateTime.UtcNow;
                 existingRegistry.HadWelcomeBonus |= hadWelcomeBonus;
+                existingRegistry.HadSubscription |= hadSubscription;
+                existingRegistry.HadConsentDiscount |= hadConsentDiscount;
             }
 
             _dbContext.Users.Update(user);

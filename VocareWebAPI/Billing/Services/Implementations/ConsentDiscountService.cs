@@ -6,6 +6,7 @@ using VocareWebAPI.Billing.Models.Entities;
 using VocareWebAPI.Billing.Models.Enums;
 using VocareWebAPI.Billing.Repositories.Interfaces;
 using VocareWebAPI.Billing.Services.Interfaces;
+using VocareWebAPI.UserManagement.Services.Interfaces;
 
 namespace VocareWebAPI.Billing.Services.Implementations
 {
@@ -17,15 +18,18 @@ namespace VocareWebAPI.Billing.Services.Implementations
     {
         private readonly ITokenTransactionRepository _tokenTransactionRepository;
         private readonly ConsentDiscountConfig _config;
+        private readonly IPriorAccountService _priorAccountService;
         private readonly ILogger<ConsentDiscountService> _logger;
 
         public ConsentDiscountService(
             ITokenTransactionRepository tokenTransactionRepository,
+            IPriorAccountService priorAccountService,
             IOptions<ConsentDiscountConfig> config,
             ILogger<ConsentDiscountService> logger
         )
         {
             _tokenTransactionRepository = tokenTransactionRepository;
+            _priorAccountService = priorAccountService;
             _config = config.Value;
             _logger = logger;
         }
@@ -43,6 +47,16 @@ namespace VocareWebAPI.Billing.Services.Implementations
             {
                 _logger.LogInformation(
                     "Consent discount already granted to user {UserId}, skipping",
+                    userId
+                );
+                return null;
+            }
+
+            var priorAccount = await _priorAccountService.GetPriorAccountAsync(userId);
+            if (priorAccount?.HadConsentDiscount == true)
+            {
+                _logger.LogWarning(
+                    "Consent discount withheld for user {UserId}: discount already granted to a prior account with the same email",
                     userId
                 );
                 return null;

@@ -51,7 +51,7 @@ export function SignUpForm() {
         return;
       }
 
-      toast.success(getRegistrationToastMessage(data.welcomeBonus));
+      toast.success(getRegistrationToastMessage(data.welcomeBonus, data.consentDiscount));
       router.push('/sign-in');
     });
   };

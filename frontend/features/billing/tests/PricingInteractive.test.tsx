@@ -17,6 +17,7 @@ vi.mock('@/lib/env/client', () => ({
   default: {
     NEXT_PUBLIC_PERSONAL_PRICE_ID: 'price_test_500_tokens',
     NEXT_PUBLIC_GROWTH_PRICE_ID: 'price_test_premium_monthly',
+    NEXT_PUBLIC_GROWTH_QUARTERLY_PRICE_ID: 'price_test_premium_quarterly',
   },
 }));
 
@@ -192,9 +193,7 @@ describe('PricingInteractive', () => {
 
     const button = await screen.findByRole('button', { name: 'Wybierz Premium' });
     const description = document.getElementById(button.getAttribute('aria-describedby') ?? '');
-    expect(description?.textContent).toBe(
-      'Pierwsza płatność dziś, kolejna za miesiąc. Rezygnacja bez zobowiązań.'
-    );
+    expect(description?.textContent).toBe('Pierwsza płatność dziś, kolejna za miesiąc.');
   });
 
   it('offers an eligible user a trial with the price and auto-renewal stated next to the action', async () => {
@@ -207,7 +206,7 @@ describe('PricingInteractive', () => {
     const button = await screen.findByRole('button', { name: 'Testuj 14 dni za darmo' });
     const description = document.getElementById(button.getAttribute('aria-describedby') ?? '');
     expect(description?.textContent).toBe(
-      '0 zł przez 14 dni, potem 29 zł/miesiąc, odnawiane automatycznie. Anuluj przed końcem okresu próbnego – nie zapłacisz nic.'
+      '0 zł przez 14 dni, potem 29 zł/miesiąc, odnawiane automatycznie.'
     );
 
     fireEvent.click(button);
@@ -231,8 +230,9 @@ describe('PricingInteractive', () => {
     render(<PricingInteractive />);
 
     const tokens = within(await screen.findByRole('article', { name: 'Pakiet 500 tokenów' }));
-    await waitFor(() => expect(tokens.getByText('jednorazowo (zamiast 19 zł)')).toBeTruthy());
+    await waitFor(() => expect(tokens.getByText('-25%')).toBeTruthy());
     expect(tokens.getByText(/^14,25/)).toBeTruthy();
+    expect(tokens.getByText('19 zł', { exact: false, selector: 's' })).toBeTruthy();
     expect(tokens.getByText(/Rabat -25% za zgodę marketingową/)).toBeTruthy();
 
     const premium = within(screen.getByRole('article', { name: 'Premium' }));
@@ -271,6 +271,46 @@ describe('PricingInteractive', () => {
       expect(billing.createCheckout).toHaveBeenCalledWith('subscription', {
         priceId: 'price_test_premium_monthly',
       })
+    );
+  });
+
+  it('switches Premium to the quarterly plan with its own price and checkout', async () => {
+    renderPricing({ isAuthenticated: true });
+
+    const premium = within(await screen.findByRole('article', { name: 'Premium' }));
+    const monthly = premium.getByRole('radio', { name: 'Miesięcznie' });
+    expect(monthly.getAttribute('aria-checked')).toBe('true');
+
+    fireEvent.click(premium.getByRole('radio', { name: /Kwartalnie/ }));
+
+    expect(premium.getByText(/^69/)).toBeTruthy();
+    expect(premium.getByText('/ 3 miesiące')).toBeTruthy();
+    const button = premium.getByRole('button', { name: 'Wybierz Premium' });
+    const description = document.getElementById(button.getAttribute('aria-describedby') ?? '');
+    expect(description?.textContent).toBe('Pierwsza płatność dziś, kolejna za 3 miesiące.');
+
+    fireEvent.click(button);
+    await waitFor(() =>
+      expect(billing.createCheckout).toHaveBeenCalledWith('subscription', {
+        priceId: 'price_test_premium_quarterly',
+      })
+    );
+  });
+
+  it('states the quarterly price after the trial', async () => {
+    billing.getSubscriptionStatusAction.mockResolvedValue([
+      undefined,
+      { tokenBalance: 0, subscriptionStatus: 'None', trialDays: 14, consentDiscount: null },
+    ]);
+    render(<PricingInteractive />);
+
+    const premium = within(await screen.findByRole('article', { name: 'Premium' }));
+    fireEvent.click(premium.getByRole('radio', { name: /Kwartalnie/ }));
+
+    const button = await premium.findByRole('button', { name: 'Testuj 14 dni za darmo' });
+    const description = document.getElementById(button.getAttribute('aria-describedby') ?? '');
+    expect(description?.textContent).toBe(
+      '0 zł przez 14 dni, potem 69 zł/3 miesiące, odnawiane automatycznie.'
     );
   });
 });

@@ -32,8 +32,8 @@ export function applyPricingOffers(plan: PricingPlan, offers: PricingOffers): Pr
     return {
       ...plan,
       price: discountedPrice,
-      priceLabel: `jednorazowo (zamiast ${plan.price} zł)`,
       description: `Rabat -${percentOff}% za zgodę marketingową, ważny do ${validUntil}.`,
+      discount: { percentOff, originalPrice: plan.price },
     };
   }
 

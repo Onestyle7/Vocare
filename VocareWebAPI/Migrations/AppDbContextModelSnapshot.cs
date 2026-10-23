@@ -196,6 +196,25 @@ namespace VocareWebAPI.Migrations
                     b.ToTable("MarketingConsents", "public");
                 });
 
+            modelBuilder.Entity("VocareWebAPI.Billing.Models.Entities.ProcessedStripeEvent", b =>
+                {
+                    b.Property<string>("Id")
+                        .HasMaxLength(255)
+                        .HasColumnType("character varying(255)");
+
+                    b.Property<DateTime>("ProcessedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("Type")
+                        .IsRequired()
+                        .HasMaxLength(255)
+                        .HasColumnType("character varying(255)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("ProcessedStripeEvents", "public");
+                });
+
             modelBuilder.Entity("VocareWebAPI.Billing.Models.Entities.ServiceCost", b =>
                 {
                     b.Property<int>("Id")
@@ -907,6 +926,12 @@ namespace VocareWebAPI.Migrations
                     b.Property<string>("EmailHash")
                         .IsRequired()
                         .HasColumnType("text");
+
+                    b.Property<bool>("HadConsentDiscount")
+                        .HasColumnType("boolean");
+
+                    b.Property<bool>("HadSubscription")
+                        .HasColumnType("boolean");
 
                     b.Property<bool>("HadWelcomeBonus")
                         .HasColumnType("boolean");

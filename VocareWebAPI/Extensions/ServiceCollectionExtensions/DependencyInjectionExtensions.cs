@@ -118,6 +118,7 @@ namespace VocareWebAPI.Extensions.ServiceCollectionExtensions
 
             // Email hashing (anti abuse)
             services.AddScoped<IEmailHashService, EmailHashService>();
+            services.AddScoped<IPriorAccountService, PriorAccountService>();
 
             // End user's IP and User-Agent (forwarded by the Next.js server)
             services.AddHttpContextAccessor();

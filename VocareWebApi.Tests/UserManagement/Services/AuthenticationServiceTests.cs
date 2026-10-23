@@ -10,6 +10,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging.Abstractions;
 using Moq;
+using VocareWebAPI.Billing.Models.Dtos;
 using VocareWebAPI.Billing.Models.Entities;
 using VocareWebAPI.Billing.Services.Interfaces;
 using VocareWebAPI.Data;
@@ -319,11 +320,17 @@ namespace VocareWebApi.Tests.UserManagement.Services
             _userSetup
                 .Setup(s => s.GrantOrScheduleWelcomeTokensAsync(It.IsAny<string>()))
                 .ReturnsAsync(new WelcomeBonusResult(WelcomeBonusStatus.Disabled, 0));
+            var expiresAt = new DateTime(2026, 10, 30, 12, 0, 0, DateTimeKind.Utc);
+            _consentDiscount
+                .Setup(d => d.GrantAsync(It.IsAny<string>()))
+                .ReturnsAsync(new ConsentDiscountInfo("coupon_secret", 25, expiresAt));
 
             var result = await _sut.RegisterAsync(Email, Password, true);
 
             result.IsSuccess.Should().BeTrue();
             _consentDiscount.Verify(d => d.GrantAsync(It.IsAny<string>()), Times.Once);
+            // Front dostaje rabat do toasta, ale bez CouponId
+            result.Value!.ConsentDiscount.Should().Be(new ConsentDiscountOffer(25, expiresAt));
         }
 
         [Fact]

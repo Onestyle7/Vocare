@@ -1,3 +1,5 @@
+import type { ConsentDiscount } from '@/features/billing/dal/api';
+
 import type { GiveMarketingConsentResponse, WelcomeBonusStatus } from '../dal/api';
 
 export type WelcomeBonus = {
@@ -16,6 +18,8 @@ const TOKEN_FORMS: Partial<Record<Intl.LDMLPluralRule, string>> = {
 const formatTokens = (count: number) =>
   `${count} ${TOKEN_FORMS[polishPluralRules.select(count)] ?? 'tokenów'}`;
 
+const formatValidUntil = (expiresAt: string) => new Date(expiresAt).toLocaleDateString('pl-PL');
+
 // AlreadyClaimed (stare konto lub ponowna zgoda po wycofaniu), Disabled i Failed
 // celowo nie wspominają o tokenach
 export function getMarketingConsentToastMessage(
@@ -23,8 +27,7 @@ export function getMarketingConsentToastMessage(
 ) {
   if (response?.consentDiscount) {
     const { percentOff, expiresAt } = response.consentDiscount;
-    const validUntil = new Date(expiresAt).toLocaleDateString('pl-PL');
-    return `Zgody marketingowe włączone. Masz -${percentOff}% na pakiet tokenów, ważne do ${validUntil}.`;
+    return `Zgody marketingowe włączone. Masz -${percentOff}% na pakiet tokenów, ważne do ${formatValidUntil(expiresAt)}.`;
   }
 
   switch (response?.welcomeBonusStatus) {
@@ -40,7 +43,14 @@ export function getMarketingConsentToastMessage(
   }
 }
 
-export function getRegistrationToastMessage(welcomeBonus: WelcomeBonus | null) {
+export function getRegistrationToastMessage(
+  welcomeBonus: WelcomeBonus | null,
+  consentDiscount: ConsentDiscount | null = null
+) {
+  if (consentDiscount) {
+    return `Rejestracja ukończona. Masz -${consentDiscount.percentOff}% na pakiet tokenów, ważne do ${formatValidUntil(consentDiscount.expiresAt)}.`;
+  }
+
   switch (welcomeBonus?.status) {
     case 'Granted': {
       return `Rejestracja ukończona, przyznano ${formatTokens(welcomeBonus.amount)}`;

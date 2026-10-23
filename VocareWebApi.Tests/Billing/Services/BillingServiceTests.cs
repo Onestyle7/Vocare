@@ -345,6 +345,58 @@ namespace VocareWebApi.Tests.Billing.Services
         }
 
         [Fact]
+        public async Task HandleWebhookAsync_WhenSameEventDeliveredTwice_AddsTokensOnce()
+        {
+            var payload = StripeWebhookFactory.CheckoutSessionCompleted(
+                mode: "payment",
+                metadata: new[] { ("userId", UserId), ("tokenAmount", "50") },
+                customerEmail: "jan@example.com"
+            );
+            var signature = StripeWebhookFactory.SignPayload(payload, WebhookSecret);
+
+            _userBillings.Setup(r => r.GetByUserIdAsync(UserId)).ReturnsAsync(Billing());
+            _userBillings.Setup(r => r.AddTokensAsync(UserId, 50)).Returns(Task.CompletedTask);
+            _transactions
+                .Setup(r => r.AddTransactionAsync(It.IsAny<TokenTransaction>()))
+                .Returns(Task.CompletedTask);
+
+            await _sut.HandleWebhookAsync(payload, signature);
+            await _sut.HandleWebhookAsync(payload, signature);
+
+            _userBillings.Verify(r => r.AddTokensAsync(UserId, 50), Times.Once);
+            VerifyConfirmationEnqueued(_ => true, Times.Once());
+        }
+
+        [Fact]
+        public async Task HandleWebhookAsync_WhenProcessingFails_AllowsStripeRetryToProcessEvent()
+        {
+            var payload = StripeWebhookFactory.CheckoutSessionCompleted(
+                mode: "payment",
+                metadata: new[] { ("userId", UserId), ("tokenAmount", "50") }
+            );
+            var signature = StripeWebhookFactory.SignPayload(payload, WebhookSecret);
+
+            _userBillings.Setup(r => r.GetByUserIdAsync(UserId)).ReturnsAsync(Billing());
+            _userBillings
+                .SetupSequence(r => r.AddTokensAsync(UserId, 50))
+                .ThrowsAsync(new TimeoutException("db timeout"))
+                .Returns(Task.CompletedTask);
+            _transactions
+                .Setup(r => r.AddTransactionAsync(It.IsAny<TokenTransaction>()))
+                .Returns(Task.CompletedTask);
+
+            await _sut.Invoking(s => s.HandleWebhookAsync(payload, signature))
+                .Should()
+                .ThrowAsync<TimeoutException>();
+            _context.ProcessedStripeEvents.Should().BeEmpty();
+
+            await _sut.HandleWebhookAsync(payload, signature);
+
+            _userBillings.Verify(r => r.AddTokensAsync(UserId, 50), Times.Exactly(2));
+            _context.ProcessedStripeEvents.Should().ContainSingle();
+        }
+
+        [Fact]
         public async Task HandleWebhookAsync_WithCompletedCheckoutNonNumericTokenAmount_ThrowsInvalidOperation()
         {
             var payload = StripeWebhookFactory.CheckoutSessionCompleted(
