@@ -6,7 +6,8 @@ import { ScrollParallax } from 'react-just-parallax';
 
 import { shape1 } from '@/features/marketing/constants';
 
-import { ACTIVE_SUBSCRIPTION_STATUSES, pricingPlans } from '../constants';
+import { applyPricingOffers, type PricingOffers } from '../billingUtils';
+import { ACTIVE_SUBSCRIPTION_STATUSES, DEFAULT_TRIAL_DAYS, pricingPlans } from '../constants';
 import { getSubscriptionStatusAction } from '../dal/commands';
 import { useBillingActions } from '../hooks/useBillingActions';
 import { PricingCard } from './PricingCard';
@@ -24,6 +25,11 @@ export function PricingInteractive({
 
   const [isAuthenticated, setIsAuthenticated] = useState<boolean>(false);
   const [hasActiveSubscription, setHasActiveSubscription] = useState<boolean>(false);
+  // Niezalogowani widzą domyślny trial – po zalogowaniu API mówi, czy konto się kwalifikuje
+  const [offers, setOffers] = useState<PricingOffers>({
+    trialDays: DEFAULT_TRIAL_DAYS,
+    consentDiscount: null,
+  });
 
   useEffect(() => {
     let isMounted = true;
@@ -39,6 +45,10 @@ export function PricingInteractive({
       if (data) {
         setIsAuthenticated(true);
         setHasActiveSubscription(ACTIVE_SUBSCRIPTION_STATUSES.includes(data.subscriptionStatus));
+        setOffers({
+          trialDays: data.trialDays ?? null,
+          consentDiscount: data.consentDiscount ?? null,
+        });
       }
     });
 
@@ -76,7 +86,8 @@ export function PricingInteractive({
           </div>
         )}
 
-        {pricingPlans.map((plan) => {
+        {pricingPlans.map((basePlan) => {
+          const plan = applyPricingOffers(basePlan, offers);
           const isCurrentSubscription =
             isAuthenticated && hasActiveSubscription && plan.type === 'subscription';
           const href =

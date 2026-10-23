@@ -6,6 +6,16 @@ import {
 } from '../utils/welcomeBonus';
 
 describe('getMarketingConsentToastMessage', () => {
+  it('announces the consent discount with its expiry date', () => {
+    expect(
+      getMarketingConsentToastMessage({
+        welcomeBonusStatus: 'Disabled',
+        welcomeTokensGranted: 0,
+        consentDiscount: { percentOff: 25, expiresAt: '2026-10-29T12:00:00Z' },
+      })
+    ).toBe('Zgody marketingowe włączone. Masz -25% na pakiet tokenów, ważne do 29.10.2026.');
+  });
+
   it('mentions the granted amount on the first consent', () => {
     expect(
       getMarketingConsentToastMessage({ welcomeBonusStatus: 'Granted', welcomeTokensGranted: 120 })

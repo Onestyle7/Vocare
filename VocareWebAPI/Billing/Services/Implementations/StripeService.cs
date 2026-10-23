@@ -17,12 +17,16 @@ namespace VocareWebAPI.Billing.Services.Implementations
 {
     public class StripeService : IStripeService
     {
+        /// <summary>Klucz metadanych sesji Checkout oznaczający użycie rabatu za zgodę.</summary>
+        public const string ConsentDiscountMetadataKey = "consentDiscount";
+
         private readonly IUserBillingRepository _userBillingRepository;
         private readonly IConfiguration _configuration;
         private readonly ILogger<StripeService> _logger;
         private readonly AppDbContext _dbContext;
         private readonly ITokenTransactionRepository _tokenTransactionRepository;
         private readonly TrialConfig _trialConfig;
+        private readonly IConsentDiscountService _consentDiscountService;
 
         public StripeService(
             IUserBillingRepository userBillingRepository,
@@ -30,7 +34,8 @@ namespace VocareWebAPI.Billing.Services.Implementations
             ILogger<StripeService> logger,
             AppDbContext dbContext,
             ITokenTransactionRepository tokenTransactionRepository,
-            IOptions<TrialConfig> trialConfig
+            IOptions<TrialConfig> trialConfig,
+            IConsentDiscountService consentDiscountService
         )
         {
             _userBillingRepository = userBillingRepository;
@@ -39,9 +44,21 @@ namespace VocareWebAPI.Billing.Services.Implementations
             _dbContext = dbContext;
             _tokenTransactionRepository = tokenTransactionRepository;
             _trialConfig = trialConfig.Value;
+            _consentDiscountService = consentDiscountService;
 
             TokenPackagesConfiguration.Initialize(configuration);
             SubscriptionPackagesConfiguration.Initialize(configuration);
+        }
+
+        public async Task<int?> GetTrialDaysAsync(string userId)
+        {
+            if (_trialConfig.TrialPeriodDays <= 0)
+                return null;
+
+            var hasEverHadSubscription =
+                await _tokenTransactionRepository.HasEverHadSubscriptionAsync(userId);
+
+            return hasEverHadSubscription ? null : _trialConfig.TrialPeriodDays;
         }
 
         public async Task<string> CreateCustomerAsync(string userId, string email)
@@ -239,6 +256,8 @@ namespace VocareWebAPI.Billing.Services.Implementations
                 _configuration["Stripe:CancelUrl"]
                 ?? throw new InvalidOperationException("Cancel URL not configured.");
 
+            var consentDiscount = await _consentDiscountService.GetActiveAsync(userId);
+
             var sessionOptions = new SessionCreateOptions
             {
                 Customer = userBilling.StripeCustomerId,
@@ -256,6 +275,23 @@ namespace VocareWebAPI.Billing.Services.Implementations
                     { "packageName", tokenPackage.Name },
                 },
             };
+
+            // Rabat za zgodę marketingową – tylko na jednorazowy zakup tokenów, nigdy na
+            // subskrypcję. Wykorzystanie oznaczamy w webhooku po opłaceniu sesji.
+            if (consentDiscount is not null)
+            {
+                sessionOptions.Discounts = new List<SessionDiscountOptions>
+                {
+                    new SessionDiscountOptions { Coupon = consentDiscount.CouponId },
+                };
+                sessionOptions.Metadata[ConsentDiscountMetadataKey] = "true";
+
+                _logger.LogInformation(
+                    "Applying {PercentOff}% consent discount to token checkout for userId={UserId}",
+                    consentDiscount.PercentOff,
+                    userId
+                );
+            }
 
             try
             {
@@ -404,19 +440,12 @@ namespace VocareWebAPI.Billing.Services.Implementations
                 _configuration["Stripe:CancelUrl"]
                 ?? throw new InvalidOperationException("Cancel URL not configured.");
 
-            var hasEverHadSubscription =
-                await _tokenTransactionRepository.HasEverHadSubscriptionAsync(userId);
-
-            int? trialDays =
-                _trialConfig.TrialPeriodDays > 0 && !hasEverHadSubscription
-                    ? _trialConfig.TrialPeriodDays
-                    : null;
+            var trialDays = await GetTrialDaysAsync(userId);
 
             _logger.LogInformation(
-                "Trial decision for userId={UserId}: trialDays={TrialDays}, hadSubscriptionBefore={Had}",
+                "Trial decision for userId={UserId}: trialDays={TrialDays}",
                 userId,
-                trialDays,
-                hasEverHadSubscription
+                trialDays
             );
 
             var sessionOptions = new SessionCreateOptions

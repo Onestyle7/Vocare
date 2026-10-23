@@ -1,6 +1,8 @@
 using System.Security.Claims;
 using Microsoft.AspNetCore.Mvc;
+using VocareWebAPI.Billing.Models.Dtos;
 using VocareWebAPI.Billing.Models.Entities;
+using VocareWebAPI.Billing.Services.Interfaces;
 using VocareWebAPI.Shared.Services.Interfaces;
 using VocareWebAPI.UserManagement.Exceptions;
 using VocareWebAPI.UserManagement.Interfaces;
@@ -17,18 +19,21 @@ namespace VocareWebAPI.UserManagement.Controllers
         private readonly IUserSetupService _userSetupService;
         private readonly ILogger<MarketingController> _logger;
         private readonly IClientInfoProvider _clientInfoProvider;
+        private readonly IConsentDiscountService _consentDiscountService;
 
         public MarketingController(
             IMarketingConsentRepository marketingConsentRepository,
             ILogger<MarketingController> logger,
             IUserSetupService userSetupService,
-            IClientInfoProvider clientInfoProvider
+            IClientInfoProvider clientInfoProvider,
+            IConsentDiscountService consentDiscountService
         )
         {
             _marketingConsentRepository = marketingConsentRepository;
             _userSetupService = userSetupService;
             _logger = logger;
             _clientInfoProvider = clientInfoProvider;
+            _consentDiscountService = consentDiscountService;
         }
 
         /// <summary>
@@ -121,12 +126,31 @@ namespace VocareWebAPI.UserManagement.Controllers
             }
 
             var welcomeBonus = await _userSetupService.GrantOrScheduleWelcomeTokensAsync(userId);
+
+            ConsentDiscountInfo? consentDiscount = null;
+            try
+            {
+                consentDiscount = await _consentDiscountService.GrantAsync(userId);
+            }
+            catch (Exception ex)
+            {
+                // Zgoda jest już zapisana – błąd rabatu nie może jej cofnąć
+                _logger.LogError(ex, "Failed to grant consent discount for user: {UserId}", userId);
+            }
+
             return Ok(
                 new
                 {
                     message = "Zgoda marketingowa została udzielona.",
                     welcomeBonusStatus = welcomeBonus.Status,
                     welcomeTokensGranted = welcomeBonus.Amount,
+                    consentDiscount = consentDiscount is null
+                        ? null
+                        : new
+                        {
+                            percentOff = consentDiscount.PercentOff,
+                            expiresAt = consentDiscount.ExpiresAtUtc,
+                        },
                 }
             );
         }

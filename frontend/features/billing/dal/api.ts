@@ -20,9 +20,18 @@ export type CustomerPortalResult = {
   url: string;
 };
 
+export type ConsentDiscount = {
+  percentOff: number;
+  expiresAt: string;
+};
+
 export type SubscriptionTokenStatusResult = {
   tokenBalance: number;
   subscriptionStatus: SubscriptionStatus;
+  // null gdy trial jest wyłączony lub użytkownik miał już subskrypcję
+  trialDays: number | null;
+  // Rabat na pakiet tokenów za zgodę marketingową (null = brak aktywnego rabatu)
+  consentDiscount: ConsentDiscount | null;
 };
 
 export type CancelSubscriptionResult = {

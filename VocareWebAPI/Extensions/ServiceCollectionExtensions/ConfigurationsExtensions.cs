@@ -61,6 +61,11 @@ namespace VocareWebAPI.Extensions.ServiceCollectionExtensions
                 .BindConfiguration(TrialConfig.SectionName)
                 .ValidateDataAnnotations()
                 .ValidateOnStart();
+            services
+                .AddOptions<ConsentDiscountConfig>()
+                .BindConfiguration(ConsentDiscountConfig.SectionName)
+                .ValidateDataAnnotations()
+                .ValidateOnStart();
             return services;
         }
     }

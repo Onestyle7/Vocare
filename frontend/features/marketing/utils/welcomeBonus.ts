@@ -21,6 +21,12 @@ const formatTokens = (count: number) =>
 export function getMarketingConsentToastMessage(
   response: Partial<GiveMarketingConsentResponse> | null
 ) {
+  if (response?.consentDiscount) {
+    const { percentOff, expiresAt } = response.consentDiscount;
+    const validUntil = new Date(expiresAt).toLocaleDateString('pl-PL');
+    return `Zgody marketingowe włączone. Masz -${percentOff}% na pakiet tokenów, ważne do ${validUntil}.`;
+  }
+
   switch (response?.welcomeBonusStatus) {
     case 'Granted': {
       return `Zgody marketingowe włączone, przyznano ${formatTokens(response.welcomeTokensGranted ?? 0)}. Będziemy w kontakcie!`;

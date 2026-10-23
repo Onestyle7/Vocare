@@ -4,12 +4,15 @@ using System.Threading.Tasks;
 using FluentAssertions;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging.Abstractions;
+using Microsoft.Extensions.Options;
 using Moq;
+using VocareWebAPI.Billing.Configuration;
 using VocareWebAPI.Billing.Exceptions;
 using VocareWebAPI.Billing.Models.Entities;
 using VocareWebAPI.Billing.Models.Enums;
 using VocareWebAPI.Billing.Repositories.Interfaces;
 using VocareWebAPI.Billing.Services.Implementations;
+using VocareWebAPI.Billing.Services.Interfaces;
 using VocareWebAPI.Data;
 using VocareWebApi.Tests.Common;
 using Xunit;
@@ -30,18 +33,26 @@ namespace VocareWebApi.Tests.Billing.Services
 
         private readonly AppDbContext _context;
         private readonly Mock<IUserBillingRepository> _userBillings = new(MockBehavior.Strict);
+        private readonly Mock<ITokenTransactionRepository> _transactions = new(MockBehavior.Strict);
+        private readonly Mock<IConsentDiscountService> _consentDiscount = new(MockBehavior.Strict);
         private readonly StripeService _sut;
 
         public StripeServiceTests()
         {
             _context = TestDbContextFactory.CreateContext();
-            _sut = new StripeService(
+            _sut = CreateSut(trialPeriodDays: 14);
+        }
+
+        private StripeService CreateSut(int trialPeriodDays) =>
+            new(
                 _userBillings.Object,
                 BuildConfiguration(),
                 NullLogger<StripeService>.Instance,
-                _context
+                _context,
+                _transactions.Object,
+                Options.Create(new TrialConfig { TrialPeriodDays = trialPeriodDays }),
+                _consentDiscount.Object
             );
-        }
 
         public void Dispose() => _context.Dispose();
 
@@ -163,6 +174,51 @@ namespace VocareWebApi.Tests.Billing.Services
                 )
                 .Should()
                 .ThrowAsync<SubscriptionAlreadyActiveException>();
+        }
+
+        [Fact]
+        public async Task CreateCheckoutSessionForSubscriptionAsync_WhenTrialing_ThrowsConflict()
+        {
+            _userBillings
+                .Setup(r => r.GetByUserIdAsync(UserId))
+                .ReturnsAsync(Billing(customerId: "cus_1", status: SubscriptionStatus.Trialing));
+
+            await _sut.Invoking(s =>
+                    s.CreateCheckoutSessionForSubscriptionAsync(UserId, ActiveSubPriceId)
+                )
+                .Should()
+                .ThrowAsync<SubscriptionAlreadyActiveException>();
+        }
+
+        // ---------- GetTrialDaysAsync ----------
+
+        [Theory]
+        [InlineData(14, false, 14)]
+        [InlineData(14, true, null)]
+        [InlineData(0, false, null)]
+        [InlineData(0, true, null)]
+        public async Task GetTrialDaysAsync_GrantsTrialOnlyWhenEnabledAndNoPreviousSubscription(
+            int configuredDays,
+            bool hadSubscription,
+            int? expected
+        )
+        {
+            _transactions
+                .Setup(t => t.HasEverHadSubscriptionAsync(UserId))
+                .ReturnsAsync(hadSubscription);
+
+            var result = await CreateSut(configuredDays).GetTrialDaysAsync(UserId);
+
+            result.Should().Be(expected);
+        }
+
+        [Fact]
+        public async Task GetTrialDaysAsync_WhenTrialDisabled_DoesNotQueryTransactions()
+        {
+            var result = await CreateSut(trialPeriodDays: 0).GetTrialDaysAsync(UserId);
+
+            result.Should().BeNull();
+            _transactions.VerifyNoOtherCalls();
         }
 
         // ---------- CreateCustomerPortalSessionAsync ----------

@@ -55,5 +55,20 @@ namespace VocareWebAPI.Billing.Repositories.Implementations
                 && t.ServiceName.StartsWith(TransactionServiceNames.SubscriptionActivatedPrefix)
             );
         }
+
+        public async Task<DateTime?> GetFirstTransactionDateAsync(
+            string userId,
+            TransactionType type
+        )
+        {
+            if (string.IsNullOrWhiteSpace(userId))
+                throw new ArgumentException("User ID cannot be null or empty.", nameof(userId));
+
+            return await _context
+                .TokenTransactions.Where(t => t.UserId == userId && t.Type == type)
+                .OrderBy(t => t.CreatedAt)
+                .Select(t => (DateTime?)t.CreatedAt)
+                .FirstOrDefaultAsync();
+        }
     }
 }

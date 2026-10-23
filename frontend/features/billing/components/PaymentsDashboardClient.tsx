@@ -187,7 +187,8 @@ export default function PaymentsDashboardClient({
                     </p>
                     {!marketingConsent && (
                       <p className="text-xs font-medium text-[#915EFF]">
-                        Przy pierwszym wyrażeniu zgody otrzymasz jednorazowo darmowe tokeny.
+                        Przy pierwszym wyrażeniu zgody otrzymasz jednorazowo rabat na pakiet
+                        tokenów.
                       </p>
                     )}
                   </div>

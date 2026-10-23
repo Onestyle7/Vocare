@@ -13,5 +13,11 @@ namespace VocareWebAPI.Billing.Models.Dtos
         public long? AmountTotal { get; set; }
         public string? Currency { get; set; }
         public DateTime PurchasedAtUtc { get; set; }
+
+        /// <summary>
+        /// Ustawione tylko dla subskrypcji – warunki (trial, cena cykliczna) pobieramy ze Stripe
+        /// w zadaniu wysyłki, bo sesja Checkout ich nie zawiera.
+        /// </summary>
+        public string? SubscriptionId { get; set; }
     }
 }

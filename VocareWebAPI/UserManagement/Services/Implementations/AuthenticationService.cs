@@ -4,6 +4,7 @@ using System.Web;
 using Microsoft.AspNetCore.DataProtection;
 using Microsoft.AspNetCore.Identity;
 using VocareWebAPI.Billing.Models.Entities;
+using VocareWebAPI.Billing.Services.Interfaces;
 using VocareWebAPI.Data;
 using VocareWebAPI.Legal.Models.Enums;
 using VocareWebAPI.Legal.Services.Interfaces;
@@ -33,6 +34,7 @@ namespace VocareWebAPI.UserManagement.Services.Implementations
         private readonly ITokenService _tokenService;
         private readonly AppDbContext _dbContext;
         private readonly IClientInfoProvider _clientInfoProvider;
+        private readonly IConsentDiscountService _consentDiscountService;
 
         public AuthenticationService(
             UserManager<User> userManager,
@@ -48,9 +50,11 @@ namespace VocareWebAPI.UserManagement.Services.Implementations
             ILegalService legalService,
             ITokenService tokenService,
             AppDbContext dbContext,
-            IClientInfoProvider clientInfoProvider
+            IClientInfoProvider clientInfoProvider,
+            IConsentDiscountService consentDiscountService
         )
         {
+            _consentDiscountService = consentDiscountService;
             _userManager = userManager;
             _signInManager = signInManager;
             _logger = logger;
@@ -72,7 +76,10 @@ namespace VocareWebAPI.UserManagement.Services.Implementations
             var user = await _userManager.FindByEmailAsync(email);
             if (user == null || user.IsDeleted)
             {
-                _logger.LogWarning("Failed login attempt for non-existent or deleted user: {Email}", email);
+                _logger.LogWarning(
+                    "Failed login attempt for non-existent or deleted user: {Email}",
+                    email
+                );
                 return Result<LoginResult>.Fail(
                     new Error("INVALID_CREDENTIALS", "Invalid email or password.", 401)
                 );
@@ -105,7 +112,11 @@ namespace VocareWebAPI.UserManagement.Services.Implementations
             var hasValidConsents = await _legalService.HasValidConsentsAsync(user.Id);
             var token = _tokenService.GenerateToken(user, hasValidConsents);
 
-            _logger.LogInformation("User logged in successfully: {UserId}, ConsentsValid: {ConsentsValid}", user.Id, hasValidConsents);
+            _logger.LogInformation(
+                "User logged in successfully: {UserId}, ConsentsValid: {ConsentsValid}",
+                user.Id,
+                hasValidConsents
+            );
 
             var loginResult = LoginResult.Successful(token, user.Id, user.Email, 3600);
             return Result<LoginResult>.Ok(loginResult);
@@ -195,12 +206,19 @@ namespace VocareWebAPI.UserManagement.Services.Implementations
                         clientInfo.UserAgent,
                         ConsentSource.Registration
                     );
-                    _logger.LogInformation("Legal consents recorded for registered user: {UserId}", user.Id);
+                    _logger.LogInformation(
+                        "Legal consents recorded for registered user: {UserId}",
+                        user.Id
+                    );
                 }
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "Failed to record legal consents upon registration for user: {UserId}", user.Id);
+                _logger.LogError(
+                    ex,
+                    "Failed to record legal consents upon registration for user: {UserId}",
+                    user.Id
+                );
             }
 
             // Zgody marketingowe są poza transakcją z tego względu, że nie są krytyczne do działania konta
@@ -232,6 +250,21 @@ namespace VocareWebAPI.UserManagement.Services.Implementations
                     welcomeBonus = await _userSetupService.GrantOrScheduleWelcomeTokensAsync(
                         user.Id
                     );
+
+                    // Osobny try – błąd rabatu nie może uruchomić fallbacku zapisującego
+                    // zgodę jako nieudzieloną
+                    try
+                    {
+                        await _consentDiscountService.GrantAsync(user.Id);
+                    }
+                    catch (Exception discountEx)
+                    {
+                        _logger.LogError(
+                            discountEx,
+                            "Failed to grant consent discount for user: {UserId}",
+                            user.Id
+                        );
+                    }
                 }
                 catch (Exception ex)
                 {
@@ -613,7 +646,8 @@ Zespół Vocare
 
                         try
                         {
-                            var currentDocumentIds = await _legalService.GetCurrentDocumentIdsAsync();
+                            var currentDocumentIds =
+                                await _legalService.GetCurrentDocumentIdsAsync();
                             if (currentDocumentIds.Count > 0)
                             {
                                 var clientInfo = _clientInfoProvider.GetClientInfo();
@@ -624,12 +658,19 @@ Zespół Vocare
                                     clientInfo.UserAgent,
                                     ConsentSource.Registration
                                 );
-                                _logger.LogInformation("Legal consents recorded for Google SSO user: {UserId}", user.Id);
+                                _logger.LogInformation(
+                                    "Legal consents recorded for Google SSO user: {UserId}",
+                                    user.Id
+                                );
                             }
                         }
                         catch (Exception ex)
                         {
-                            _logger.LogError(ex, "Failed to record legal consents during Google registration for user: {UserId}", user.Id);
+                            _logger.LogError(
+                                ex,
+                                "Failed to record legal consents during Google registration for user: {UserId}",
+                                user.Id
+                            );
                         }
                     }
                     catch (Exception ex)

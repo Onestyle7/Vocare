@@ -80,7 +80,8 @@ export function PricingCard({
         <div className="relative">
           <p className="font-grotesk flex flex-wrap items-baseline gap-x-2 gap-y-1 text-gray-900 dark:text-white">
             <span className="text-4xl font-bold tracking-tight whitespace-nowrap">
-              {plan.price} <span className="text-xl font-semibold">zł</span>
+              {plan.price.toLocaleString('pl-PL', { maximumFractionDigits: 2 })}{' '}
+              <span className="text-xl font-semibold">zł</span>
             </span>
             <span className="text-base text-gray-600 dark:text-gray-300">{plan.priceLabel}</span>
           </p>

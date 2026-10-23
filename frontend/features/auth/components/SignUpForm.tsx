@@ -206,7 +206,7 @@ export function SignUpForm() {
                       podany adres e-mail. Zgodę mogę wycofać w każdej chwili.
                     </FormLabel>
                     <p className="text-xs font-medium text-[#915EFF]">
-                      W podziękowaniu za zgodę otrzymasz darmowe tokeny na start.
+                      W podziękowaniu za zgodę otrzymasz rabat na pierwszy pakiet tokenów.
                     </p>
                   </div>
                 </div>

@@ -28,6 +28,7 @@ namespace VocareWebApi.Tests.Billing.Controllers
 
         private readonly Mock<IStripeService> _stripe = new(MockBehavior.Strict);
         private readonly Mock<IBillingService> _billing = new(MockBehavior.Strict);
+        private readonly Mock<IConsentDiscountService> _consentDiscount = new(MockBehavior.Strict);
         private readonly BillingController _sut;
 
         public BillingControllerTests()
@@ -35,6 +36,7 @@ namespace VocareWebApi.Tests.Billing.Controllers
             _sut = new BillingController(
                 _stripe.Object,
                 _billing.Object,
+                _consentDiscount.Object,
                 NullLogger<BillingController>.Instance
             );
             _sut.WithUser(UserId);
@@ -150,12 +152,38 @@ namespace VocareWebApi.Tests.Billing.Controllers
             _billing
                 .Setup(b => b.GetUserBillingAsync(UserId))
                 .ReturnsAsync(Billing(balance: 75, status: SubscriptionStatus.Active));
+            _stripe.Setup(s => s.GetTrialDaysAsync(UserId)).ReturnsAsync((int?)null);
+            _consentDiscount
+                .Setup(c => c.GetActiveAsync(UserId))
+                .ReturnsAsync((ConsentDiscountInfo?)null);
 
             var result = await _sut.GetAccessStatus();
 
             var value = result.Should().BeOfType<OkObjectResult>().Subject.Value!;
             value.GetProperty("tokenBalance").Should().Be(75);
             value.GetProperty("subscriptionStatus").Should().Be("Active");
+            value.GetProperty("trialDays").Should().BeNull();
+            value.GetProperty("consentDiscount").Should().BeNull();
+        }
+
+        [Fact]
+        public async Task GetAccessStatus_ExposesTrialAndConsentDiscountWithoutCouponId()
+        {
+            var expiresAt = new DateTime(2026, 10, 29, 12, 0, 0, DateTimeKind.Utc);
+            _billing.Setup(b => b.GetUserBillingAsync(UserId)).ReturnsAsync(Billing());
+            _stripe.Setup(s => s.GetTrialDaysAsync(UserId)).ReturnsAsync(14);
+            _consentDiscount
+                .Setup(c => c.GetActiveAsync(UserId))
+                .ReturnsAsync(new ConsentDiscountInfo("coupon_secret", 25, expiresAt));
+
+            var result = await _sut.GetAccessStatus();
+
+            var value = result.Should().BeOfType<OkObjectResult>().Subject.Value!;
+            value.GetProperty("trialDays").Should().Be(14);
+            var discount = value.GetProperty("consentDiscount")!;
+            discount.GetProperty("percentOff").Should().Be(25);
+            discount.GetProperty("expiresAt").Should().Be(expiresAt);
+            discount.GetType().GetProperty("couponId").Should().BeNull();
         }
 
         // ---------- GetSubscriptionStatus ----------

@@ -19,6 +19,7 @@ namespace VocareWebAPI.Billing.Services.Implementations
         private readonly IUserBillingRepository _userBillingRepository;
         private readonly ITokenTransactionRepository _tokenTransactionRepository;
         private readonly IBackgroundJobClient _backgroundJobClient;
+        private readonly IConsentDiscountService _consentDiscountService;
         private readonly string _webhookSecret;
         private readonly ILogger<BillingService> _logger;
 
@@ -28,6 +29,7 @@ namespace VocareWebAPI.Billing.Services.Implementations
             IUserBillingRepository userBillingRepository,
             ITokenTransactionRepository tokenTransactionRepository,
             IBackgroundJobClient backgroundJobClient,
+            IConsentDiscountService consentDiscountService,
             IConfiguration configuration,
             ILogger<BillingService> logger
         )
@@ -37,6 +39,7 @@ namespace VocareWebAPI.Billing.Services.Implementations
             _userBillingRepository = userBillingRepository;
             _tokenTransactionRepository = tokenTransactionRepository;
             _backgroundJobClient = backgroundJobClient;
+            _consentDiscountService = consentDiscountService;
             _logger = logger;
             _webhookSecret =
                 configuration["Stripe:WebhookSecret"]
@@ -210,6 +213,14 @@ namespace VocareWebAPI.Billing.Services.Implementations
                         };
                         await _tokenTransactionRepository.AddTransactionAsync(tt);
 
+                        var consentDiscountUsed = session.Metadata?.GetValueOrDefault(
+                            StripeService.ConsentDiscountMetadataKey
+                        );
+                        if (consentDiscountUsed == "true")
+                        {
+                            await _consentDiscountService.MarkRedeemedAsync(userId);
+                        }
+
                         await tx.CommitAsync();
 
                         _logger.LogInformation(
@@ -288,6 +299,7 @@ namespace VocareWebAPI.Billing.Services.Implementations
                 AmountTotal = session.AmountTotal,
                 Currency = session.Currency,
                 PurchasedAtUtc = session.Created == default ? DateTime.UtcNow : session.Created,
+                SubscriptionId = session.SubscriptionId,
             };
 
             try

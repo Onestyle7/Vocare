@@ -4,6 +4,10 @@ import type { PricingPlan, SubscriptionStatuses } from './types';
 
 export const ACTIVE_SUBSCRIPTION_STATUSES: SubscriptionStatuses[] = ['Active', 'Trialing'];
 
+// Domyślna długość triala dla niezalogowanych – zalogowani dostają wartość z API (trialDays),
+// która uwzględnia konfigurację backendu i to, czy konto miało już subskrypcję
+export const DEFAULT_TRIAL_DAYS = 14;
+
 export const ASSISTANT_RECOMMENDATIONS_PRICE = 60;
 export const MARKET_ANALYSIS_PRICE = 50;
 // Backend Roadmap nie korzysta obecnie z BillingService.
@@ -16,17 +20,12 @@ export const pricingPlans: readonly PricingPlan[] = [
     price: 0,
     priceLabel: '/ na zawsze',
     description:
-      '120 tokenów na start za wyrażenie zgody marketingowej. Wykorzystaj je tak, jak potrzebujesz.',
+      'Kreator CV za darmo. Za zgodę marketingową dostajesz rabat na pierwszy pakiet tokenów.',
+    // Funkcje AI wymagają tokenów lub subskrypcji – plan darmowy nie zawiera już tokenów na start
     features: [
       { text: 'Nielimitowana edycja i pobieranie CV' },
       { text: 'Do 3 CV na koncie' },
-      { text: 'Do 5 ocen jakości CV', alternative: true },
-      { text: 'Do 5 dopasowań do ofert pracy', alternative: true },
-      { text: 'Do 5 dopracowań CV', alternative: true },
-      { text: '3 rekomendowane ścieżki zawodowe' },
-      { text: 'Dopasowane oferty pracy do każdej rekomendacji' },
-      { text: 'Analiza rynkowa do każdej zarekomendowanej ścieżki' },
-      { text: '1 Roadmapa do wybranej ścieżki zawodowej' },
+      { text: 'Rabat na pierwszy pakiet tokenów za zgodę marketingową' },
     ],
     ctaLabel: 'Zarejestruj się za darmo',
     microcopy: 'Start w 2 minuty.',

@@ -18,16 +18,19 @@ namespace VocareWebAPI.Controllers
     {
         private readonly IStripeService _stripeService;
         private readonly IBillingService _billingService;
+        private readonly IConsentDiscountService _consentDiscountService;
         private readonly ILogger<BillingController> _logger;
 
         public BillingController(
             IStripeService stripeService,
             IBillingService billingService,
+            IConsentDiscountService consentDiscountService,
             ILogger<BillingController> logger
         )
         {
             _stripeService = stripeService;
             _billingService = billingService;
+            _consentDiscountService = consentDiscountService;
             _logger = logger;
         }
 
@@ -118,12 +121,22 @@ namespace VocareWebAPI.Controllers
                 return BadRequest("Brak identyfikatora użytkownika w tokenie.");
 
             var userBilling = await _billingService.GetUserBillingAsync(userId);
+            var trialDays = await _stripeService.GetTrialDaysAsync(userId);
+            var consentDiscount = await _consentDiscountService.GetActiveAsync(userId);
 
             return Ok(
                 new
                 {
                     tokenBalance = userBilling.TokenBalance,
                     subscriptionStatus = userBilling.SubscriptionStatus.ToString(),
+                    trialDays,
+                    consentDiscount = consentDiscount is null
+                        ? null
+                        : new
+                        {
+                            percentOff = consentDiscount.PercentOff,
+                            expiresAt = consentDiscount.ExpiresAtUtc,
+                        },
                 }
             );
         }
@@ -219,9 +232,7 @@ namespace VocareWebAPI.Controllers
                 "Creating Customer Portal session for userId={UserId} to cancel subscription.",
                 userId
             );
-            var portalUrl = await _stripeService.CreateCustomerPortalSessionAsync(
-                userId
-            );
+            var portalUrl = await _stripeService.CreateCustomerPortalSessionAsync(userId);
 
             return Ok(
                 new

@@ -88,7 +88,8 @@ describe('PricingInteractive', () => {
     expect(
       screen.getByRole('link', { name: 'Zarejestruj się za darmo' }).getAttribute('href')
     ).toBe('/sign-up');
-    for (const name of ['Wybierz Premium', 'Dokup 500 tokenów']) {
+    // Niezalogowany widzi domyślny trial – kwalifikację sprawdza API po zalogowaniu
+    for (const name of ['Testuj 14 dni za darmo', 'Dokup 500 tokenów']) {
       expect(screen.getByRole('link', { name }).getAttribute('href')).toBe(
         '/sign-in?callbackUrl=%2Fpricing'
       );
@@ -194,6 +195,49 @@ describe('PricingInteractive', () => {
     expect(description?.textContent).toBe(
       'Pierwsza płatność dziś, kolejna za miesiąc. Rezygnacja bez zobowiązań.'
     );
+  });
+
+  it('offers an eligible user a trial with the price and auto-renewal stated next to the action', async () => {
+    billing.getSubscriptionStatusAction.mockResolvedValue([
+      undefined,
+      { tokenBalance: 0, subscriptionStatus: 'None', trialDays: 14, consentDiscount: null },
+    ]);
+    render(<PricingInteractive />);
+
+    const button = await screen.findByRole('button', { name: 'Testuj 14 dni za darmo' });
+    const description = document.getElementById(button.getAttribute('aria-describedby') ?? '');
+    expect(description?.textContent).toBe(
+      '0 zł przez 14 dni, potem 29 zł/miesiąc, odnawiane automatycznie. Anuluj przed końcem okresu próbnego – nie zapłacisz nic.'
+    );
+
+    fireEvent.click(button);
+    await waitFor(() =>
+      expect(billing.createCheckout).toHaveBeenCalledWith('subscription', {
+        priceId: 'price_test_premium_monthly',
+      })
+    );
+  });
+
+  it('shows the consent discount price on the token package only', async () => {
+    billing.getSubscriptionStatusAction.mockResolvedValue([
+      undefined,
+      {
+        tokenBalance: 0,
+        subscriptionStatus: 'None',
+        trialDays: null,
+        consentDiscount: { percentOff: 25, expiresAt: '2026-10-29T12:00:00Z' },
+      },
+    ]);
+    render(<PricingInteractive />);
+
+    const tokens = within(await screen.findByRole('article', { name: 'Pakiet 500 tokenów' }));
+    await waitFor(() => expect(tokens.getByText('jednorazowo (zamiast 19 zł)')).toBeTruthy());
+    expect(tokens.getByText(/^14,25/)).toBeTruthy();
+    expect(tokens.getByText(/Rabat -25% za zgodę marketingową/)).toBeTruthy();
+
+    const premium = within(screen.getByRole('article', { name: 'Premium' }));
+    expect(premium.getByText(/^29/)).toBeTruthy();
+    expect(premium.getByRole('button', { name: 'Wybierz Premium' })).toBeTruthy();
   });
 
   it('detects an active subscriber on a static page without an AuthProvider and shows subscription management', async () => {

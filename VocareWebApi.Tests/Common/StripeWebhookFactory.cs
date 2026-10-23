@@ -57,6 +57,48 @@ namespace VocareWebApi.Tests.Common
             return Envelope("checkout.session.completed", dataObject);
         }
 
+        /// <summary>
+        /// Event <c>customer.subscription.*</c> z podanym statusem Stripe (np. <c>trialing</c>).
+        /// </summary>
+        public static string SubscriptionEvent(
+            string type,
+            string status,
+            string customerId = "cus_test",
+            string subscriptionId = "sub_test",
+            string subscriptionLevel = "Monthly"
+        )
+        {
+            var dataObject = $$"""
+                {
+                  "id": "{{subscriptionId}}",
+                  "object": "subscription",
+                  "customer": "{{customerId}}",
+                  "status": "{{status}}",
+                  "metadata": { "subscriptionLevel": "{{subscriptionLevel}}" },
+                  "items": { "object": "list", "data": [] }
+                }
+                """;
+            return Envelope(type, dataObject);
+        }
+
+        /// <summary>Event <c>invoice.payment_succeeded</c> z podaną kwotą zapłaconą.</summary>
+        public static string InvoicePaymentSucceeded(
+            long amountPaid,
+            string customerId = "cus_test"
+        )
+        {
+            var dataObject = $$"""
+                {
+                  "id": "in_test",
+                  "object": "invoice",
+                  "customer": "{{customerId}}",
+                  "amount_paid": {{amountPaid}},
+                  "lines": { "object": "list", "data": [] }
+                }
+                """;
+            return Envelope("invoice.payment_succeeded", dataObject);
+        }
+
         /// <summary>Event o dowolnym typie z generycznym obiektem danych.</summary>
         public static string GenericEvent(string type) =>
             Envelope(type, """{ "id": "obj_test", "object": "thing" }""");
