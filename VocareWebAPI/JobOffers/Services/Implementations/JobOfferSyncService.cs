@@ -145,13 +145,10 @@ namespace VocareWebAPI.JobOffers.Services.Implementations
                         {
                             await GenerateEmbeddingForOffer(existing);
                             embeddingGenerated = true;
-                            embeddingGenerated = true;
                         }
 
                         _repository.UpdateInContext(existing, embeddingGenerated);
-                        _repository.UpdateInContext(existing, embeddingGenerated);
                         result.Updated++;
-                        processedInBatch++;
                         processedInBatch++;
                     }
                 }

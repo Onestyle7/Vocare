@@ -65,6 +65,59 @@ namespace VocareWebApi.Tests.JobOffers
             entity.Source.Should().Be(JobOfferSource.SolidJobs);
             entity.SalaryMin.Should().Be(18000);
             entity.SalaryPeriod.Should().Be(SalaryPeriod.Month);
+            entity.Category.Should().Be("backend");
+        }
+
+        [Theory]
+        [InlineData(0, 0, null, null)]
+        [InlineData(0, 5000, null, 5000)]
+        [InlineData(null, 5000, null, 5000)]
+        [InlineData(4000, 5000, 4000, 5000)]
+        public void ToJobOfferEntity_TreatsZeroSalaryAsMissing(
+            int? from,
+            int? to,
+            int? expectedMin,
+            int? expectedMax
+        )
+        {
+            var source = SourceOffer() with
+            {
+                Salary = SourceOffer().Salary with { From = (decimal?)from, To = (decimal?)to },
+            };
+
+            var entity = source.ToJobOfferEntity();
+
+            entity.SalaryMin.Should().Be((decimal?)expectedMin);
+            entity.SalaryMax.Should().Be((decimal?)expectedMax);
+        }
+
+        [Theory]
+        [InlineData(Sj.JobCategory.Developer, Sj.JobSubCategory.DotNet, "backend")]
+        [InlineData(Sj.JobCategory.Developer, Sj.JobSubCategory.NodeJs, "backend")]
+        [InlineData(Sj.JobCategory.Developer, Sj.JobSubCategory.React, "frontend")]
+        [InlineData(Sj.JobCategory.Developer, Sj.JobSubCategory.JavaScript, "frontend")]
+        [InlineData(Sj.JobCategory.Developer, Sj.JobSubCategory.IOS, "mobile")]
+        [InlineData(Sj.JobCategory.Tester, Sj.JobSubCategory.ManualTester, "testing")]
+        [InlineData(Sj.JobCategory.ItManager, Sj.JobSubCategory.ProjectManager, "projectManager")]
+        [InlineData(Sj.JobCategory.ItManager, Sj.JobSubCategory.ProductOwner, "productManagement")]
+        [InlineData(Sj.JobCategory.ItManager, Sj.JobSubCategory.ScrumMaster, "agile")]
+        [InlineData(Sj.JobCategory.Analyst, Sj.JobSubCategory.Analyst, "businessAnalyst")]
+        [InlineData(
+            Sj.JobCategory.Administrator,
+            Sj.JobSubCategory.CloudAdministrator,
+            "sysAdministrator"
+        )]
+        [InlineData(Sj.JobCategory.UXUIDesigner, Sj.JobSubCategory.UXUIDesigner, "ux")]
+        [InlineData(Sj.JobCategory.OtherIT, Sj.JobSubCategory.ERP, "erp")]
+        [InlineData(Sj.JobCategory.OtherIT, Sj.JobSubCategory.OtherIT, "other")]
+        [InlineData(Sj.JobCategory.Marketing, Sj.JobSubCategory.Marketing, "other")]
+        public void MapCategory_MapsToNoFluffJobsVocabulary(
+            Sj.JobCategory category,
+            Sj.JobSubCategory subCategory,
+            string expected
+        )
+        {
+            SolidJobsMappingExtensions.MapCategory(category, subCategory).Should().Be(expected);
         }
 
         [Theory]

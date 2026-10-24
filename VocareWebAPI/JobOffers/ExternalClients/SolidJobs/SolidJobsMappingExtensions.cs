@@ -28,10 +28,11 @@ namespace VocareWebAPI.JobOffers.ExternalClients.SolidJobs
                 },
                 JobType = offer.ContractTime,
                 Description = offer.Description,
-                Category = offer.Category.ToString(),
+                Category = MapCategory(offer.Category, offer.SubCategory),
                 BriefDescription = "",
-                SalaryMin = offer.Salary.From,
-                SalaryMax = offer.Salary.To,
+                // SolidJobs zwraca 0 zamiast braku kwoty (np. staże bez podanej stawki)
+                SalaryMin = offer.Salary.From > 0 ? offer.Salary.From : null,
+                SalaryMax = offer.Salary.To > 0 ? offer.Salary.To : null,
                 SalaryCurrency = offer.Salary.Currency,
                 SalaryPeriod = Enum.TryParse<SalaryPeriod>(
                     offer.Salary.Period,
@@ -68,6 +69,52 @@ namespace VocareWebAPI.JobOffers.ExternalClients.SolidJobs
                     .ToList(),
                 Embedding = null,
                 Source = JobOfferSource.SolidJobs,
+            };
+        }
+
+        /// <summary>
+        /// Mapuje kategorię SolidJobs na słownik kategorii NoFluffJobs, z którego AI wybiera AllowedJobCategories
+        /// ścieżki kariery (OpenAIService). Bez tego filtr kategorii w matchingu odrzuca większość ofert SolidJobs.
+        /// Synchronizujemy tylko dywizję IT, więc pozostałe kategorie trafiają do "other".
+        /// </summary>
+        public static string MapCategory(
+            SolidJobsModels.JobCategory category,
+            SolidJobsModels.JobSubCategory subCategory
+        )
+        {
+            return category switch
+            {
+                SolidJobsModels.JobCategory.Developer => subCategory switch
+                {
+                    SolidJobsModels.JobSubCategory.JavaScript
+                    or SolidJobsModels.JobSubCategory.Angular
+                    or SolidJobsModels.JobSubCategory.React => "frontend",
+                    SolidJobsModels.JobSubCategory.Android or SolidJobsModels.JobSubCategory.IOS =>
+                        "mobile",
+                    _ => "backend",
+                },
+                SolidJobsModels.JobCategory.Architect => "architecture",
+                SolidJobsModels.JobCategory.Tester => "testing",
+                SolidJobsModels.JobCategory.ItManager => subCategory switch
+                {
+                    SolidJobsModels.JobSubCategory.ProductManager
+                    or SolidJobsModels.JobSubCategory.ProductOwner => "productManagement",
+                    SolidJobsModels.JobSubCategory.ScrumMaster => "agile",
+                    _ => "projectManager",
+                },
+                SolidJobsModels.JobCategory.DataScience => "data",
+                SolidJobsModels.JobCategory.Security => "security",
+                SolidJobsModels.JobCategory.Support => "support",
+                SolidJobsModels.JobCategory.DevOps => "devops",
+                SolidJobsModels.JobCategory.Analyst => "businessAnalyst",
+                SolidJobsModels.JobCategory.Administrator => "sysAdministrator",
+                SolidJobsModels.JobCategory.UXUIDesigner => "ux",
+                SolidJobsModels.JobCategory.OtherIT => subCategory switch
+                {
+                    SolidJobsModels.JobSubCategory.ERP => "erp",
+                    _ => "other",
+                },
+                _ => "other",
             };
         }
     }

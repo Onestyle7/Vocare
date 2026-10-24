@@ -10,6 +10,10 @@ export interface MatchDetails {
 
 export type ConfidenceLevel = 'high' | 'medium' | 'low' | 'very_low';
 
+export type JobOfferSource = 'NofluffJobs' | 'SolidJobs';
+
+export type SalaryPeriod = 'Hour' | 'Day' | 'Month' | 'Year';
+
 export interface ScoredJobOffer {
   id: string;
   title: string;
@@ -18,12 +22,16 @@ export interface ScoredJobOffer {
   category: string;
   seniorityLevel: string;
   briefDescription: string;
+  /** Początek pełnego opisu (HTML, ucięty na backendzie) - fallback, gdy brief jest pusty lub bezużyteczny. */
+  descriptionPreview?: string;
   salaryMin?: number | null;
   salaryMax?: number | null;
   salaryCurrency?: string | null;
+  salaryPeriod?: SalaryPeriod | null;
   locations: string[];
   skills: string[];
   publishedAt: string;
+  source?: JobOfferSource;
   matchScore: number;
   confidenceLevel: ConfidenceLevel;
   matchDetails: MatchDetails;

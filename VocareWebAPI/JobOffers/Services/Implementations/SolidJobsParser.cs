@@ -11,6 +11,16 @@ namespace VocareWebAPI.JobOffers.Services.Implementations
     {
         public JobOfferSource Source { get; } = JobOfferSource.SolidJobs;
         private const string CampaignName = "vocare";
+
+        // API ignoruje pageIndex, jeśli nie dostanie pageSize - bez tego każda strona to ta sama pierwsza strona.
+        // 500 to maksimum API, więc przy okazji robimy najmniej zapytań (limit 300 req/min)
+        private static readonly SolidJobsModels.OfferQuery OffersQuery = new() { PageSize = 500 };
+
+        // Na start synchronizujemy tylko IT - mapowanie kategorii (SolidJobsMappingExtensions.MapCategory) obejmuje tylko IT
+        private static readonly SolidJobsModels.Division[] Divisions =
+        {
+            SolidJobsModels.Division.IT,
+        };
         private readonly SolidJobsClient _client;
         private readonly ILogger<SolidJobsParser> _logger;
 
@@ -24,12 +34,12 @@ namespace VocareWebAPI.JobOffers.Services.Implementations
             [EnumeratorCancellation] CancellationToken cancellationToken = default
         )
         {
-            foreach (var division in Enum.GetValues<SolidJobsModels.Division>())
+            foreach (var division in Divisions)
             {
                 var count = 0;
 
                 await using var enumerator = _client
-                    .GetAllOffersAsync(division, CampaignName, null, cancellationToken)
+                    .GetAllOffersAsync(division, CampaignName, OffersQuery, cancellationToken)
                     .GetAsyncEnumerator(cancellationToken);
 
                 while (true)

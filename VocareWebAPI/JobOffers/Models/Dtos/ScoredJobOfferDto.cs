@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Threading.Tasks;
+using VocareWebAPI.JobOffers.Models.Enums;
 
 namespace VocareWebAPI.JobOffers.Models.Dtos
 {
@@ -15,12 +16,19 @@ namespace VocareWebAPI.JobOffers.Models.Dtos
         public string Category { get; set; } = "";
         public string SeniorityLevel { get; set; } = "";
         public string BriefDescription { get; set; } = "";
+
+        /// <summary>
+        /// Początek pełnego opisu (HTML, ucięty przy mapowaniu) - fallback, gdy BriefDescription jest pusty lub bezużyteczny
+        /// </summary>
+        public string DescriptionPreview { get; set; } = "";
         public decimal? SalaryMin { get; set; }
         public decimal? SalaryMax { get; set; }
         public string? SalaryCurrency { get; set; }
+        public SalaryPeriod? SalaryPeriod { get; set; }
         public List<string> Locations { get; set; } = new();
         public List<string> Skills { get; set; } = new();
         public DateTime PublishedAt { get; set; }
+        public JobOfferSource Source { get; set; }
 
         /// <summary>
         /// Ogólny wynik dopasowania oferty pracy do rekomendowanej ścieżki kariery w skali 0-100
