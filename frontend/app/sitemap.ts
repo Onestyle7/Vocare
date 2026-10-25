@@ -41,16 +41,19 @@ export default function sitemap(): MetadataRoute.Sitemap {
     priority: 0.8,
   }));
 
-  const categoryRoutes: MetadataRoute.Sitemap = Object.keys(BLOG_CATEGORIES).map((category) => {
+  // Empty categories render notFound(), so they must not land in the sitemap
+  const categoryRoutes: MetadataRoute.Sitemap = Object.keys(BLOG_CATEGORIES).flatMap((category) => {
     const lastModified = articles
       .filter((article) => article.category === category)
       .map((article) => article.updatedAt ?? article.date)
       .sort((a, b) => b.getTime() - a.getTime())[0];
 
+    if (!lastModified) return [];
+
     return {
       url: `${baseUrl}/blog/${encodeURIComponent(category)}`,
       lastModified,
-      changeFrequency: 'weekly',
+      changeFrequency: 'weekly' as const,
       priority: 0.8,
     };
   });
