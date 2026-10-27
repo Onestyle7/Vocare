@@ -66,7 +66,8 @@ export const RATES_2026 = {
     // Annual cap on deducting health contributions from flat-tax income.
     healthFlatDeductionCap: 14_100,
 
-    // Lump-sum health contribution tiers by annual revenue (based on Q4 2025 average wage 9228.64 zł).
+    // Lump-sum health contribution tiers by annual revenue reduced by paid social contributions
+    // (art. 81 ust. 2g), based on Q4 2025 average wage 9228.64 zł.
     lumpSumHealthTiers: [
       { maxAnnualRevenue: 60_000, monthly: 498.35 },
       { maxAnnualRevenue: 300_000, monthly: 830.58 },

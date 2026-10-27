@@ -30,7 +30,7 @@ export const CONTRACT_META: Record<
     shortLabel: 'Ryczałt',
     isB2b: true,
     assumptions:
-      'Duży ZUS z chorobowym, brak kosztów firmowych. Składka zdrowotna zależy od rocznego przychodu, 50% zdrowotnej pomniejsza przychód.',
+      'Duży ZUS z chorobowym, brak kosztów firmowych. Składka zdrowotna zależy od rocznego przychodu pomniejszonego o składki społeczne, 50% zdrowotnej pomniejsza przychód.',
   },
   b2bFlat: {
     label: 'B2B – podatek liniowy',

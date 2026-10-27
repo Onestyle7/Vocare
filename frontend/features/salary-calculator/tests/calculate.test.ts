@@ -156,10 +156,19 @@ describe('B2B', () => {
     expect(result.net).toBe(17_773.57);
   });
 
-  it('picks the lump-sum health tier by annual revenue', () => {
-    expect(calculateB2bLumpSum(input(5000)).health).toBe(498.35);
-    expect(calculateB2bLumpSum(input(5000.01)).health).toBe(830.58);
-    expect(calculateB2bLumpSum(input(25_001)).health).toBe(1495.04);
+  it('picks the lump-sum health tier by revenue reduced by social contributions', () => {
+    // Social contributions without the labor fund: 1788.29 zł/month, 21 459.48 zł/year.
+    expect(calculateB2bLumpSum(input(5000.01)).health).toBe(498.35);
+    expect(calculateB2bLumpSum(input(6788.29)).health).toBe(498.35);
+    expect(calculateB2bLumpSum(input(6788.3)).health).toBe(830.58);
+    expect(calculateB2bLumpSum(input(25_000.01)).health).toBe(830.58);
+    expect(calculateB2bLumpSum(input(26_788.29)).health).toBe(830.58);
+    expect(calculateB2bLumpSum(input(26_788.3)).health).toBe(1495.04);
+  });
+
+  it('applies the lower health tier to the lump-sum tax base', () => {
+    // Regression: raw revenue (72 000 zł) used to select the 830.58 zł tier.
+    expect(calculateB2bLumpSum(input(6000)).net).toBe(3099.39);
   });
 
   it('uses the configured lump-sum rate', () => {

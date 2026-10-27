@@ -81,14 +81,15 @@ export function calculateB2bLumpSum(input: SalaryInput, rates: Rates = RATES_202
   const annualRevenue = revenue * 12;
   // Lump-sum tax cannot deduct business costs, so the labor fund is just paid alongside social ZUS.
   const social = roundToGrosz(fullZusSocial(rates) + laborFund(rates));
-  const tier = b2b.lumpSumHealthTiers.find((t) => annualRevenue <= t.maxAnnualRevenue)!;
+  const annualSocial = fullZusSocial(rates) * 12;
+  // Health tiers compare revenue reduced by paid social contributions (art. 81 ust. 2g
+  // ustawy o świadczeniach opieki zdrowotnej), not the raw invoice total.
+  const tierRevenue = Math.max(0, annualRevenue - annualSocial);
+  const tier = b2b.lumpSumHealthTiers.find((t) => tierRevenue <= t.maxAnnualRevenue)!;
   const health = tier.monthly;
 
   const annualBase = roundToZloty(
-    Math.max(
-      0,
-      annualRevenue - fullZusSocial(rates) * 12 - health * 12 * b2b.lumpSumHealthDeductionShare
-    )
+    Math.max(0, annualRevenue - annualSocial - health * 12 * b2b.lumpSumHealthDeductionShare)
   );
   const annualTax = roundToZloty(annualBase * input.lumpSumRate);
 
