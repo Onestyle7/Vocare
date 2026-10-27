@@ -110,7 +110,47 @@ namespace VocareWebApi.Tests.JobOffers
         [InlineData(Sj.JobCategory.UXUIDesigner, Sj.JobSubCategory.UXUIDesigner, "ux")]
         [InlineData(Sj.JobCategory.OtherIT, Sj.JobSubCategory.ERP, "erp")]
         [InlineData(Sj.JobCategory.OtherIT, Sj.JobSubCategory.OtherIT, "other")]
-        [InlineData(Sj.JobCategory.Marketing, Sj.JobSubCategory.Marketing, "other")]
+        [InlineData(Sj.JobCategory.Developer, Sj.JobSubCategory.CCPlusPlus, "embedded")]
+        [InlineData(Sj.JobCategory.Developer, Sj.JobSubCategory.OtherDeveloper, "backend")]
+        [InlineData(
+            Sj.JobCategory.AutomationAndRobotics,
+            Sj.JobSubCategory.AutomationAndRobotics,
+            "automation"
+        )]
+        [InlineData(
+            Sj.JobCategory.MaintenanceEngineering,
+            Sj.JobSubCategory.MaintenanceEngineering,
+            "mechanics"
+        )]
+        [InlineData(
+            Sj.JobCategory.QualityEngineering,
+            Sj.JobSubCategory.QualityEngineering,
+            "testing"
+        )]
+        [InlineData(Sj.JobCategory.Marketing, Sj.JobSubCategory.Marketing, "marketing")]
+        [InlineData(Sj.JobCategory.SEO, Sj.JobSubCategory.SEO, "marketing")]
+        [InlineData(Sj.JobCategory.B2BSales, Sj.JobSubCategory.B2BSales, "sales")]
+        [InlineData(Sj.JobCategory.ECommerce, Sj.JobSubCategory.ECommerce, "sales")]
+        [InlineData(
+            Sj.JobCategory.CustomerSuccess,
+            Sj.JobSubCategory.CustomerSuccess,
+            "customerService"
+        )]
+        [InlineData(Sj.JobCategory.Recruiter, Sj.JobSubCategory.Recruiter, "hr")]
+        [InlineData(Sj.JobCategory.SupplyChain, Sj.JobSubCategory.SupplyChain, "logistics")]
+        [InlineData(Sj.JobCategory.Accounting, Sj.JobSubCategory.Accounting, "finance")]
+        [InlineData(
+            Sj.JobCategory.LawAndAdministration,
+            Sj.JobSubCategory.LawAndAdministration,
+            "law"
+        )]
+        [InlineData(
+            Sj.JobCategory.OtherOther,
+            Sj.JobSubCategory.Backoffice,
+            "officeAdministration"
+        )]
+        [InlineData(Sj.JobCategory.OtherOther, Sj.JobSubCategory.GraphicDesigner, "marketing")]
+        [InlineData(Sj.JobCategory.Management, Sj.JobSubCategory.Management, "other")]
         public void MapCategory_MapsToNoFluffJobsVocabulary(
             Sj.JobCategory category,
             Sj.JobSubCategory subCategory,
@@ -118,6 +158,61 @@ namespace VocareWebApi.Tests.JobOffers
         )
         {
             SolidJobsMappingExtensions.MapCategory(category, subCategory).Should().Be(expected);
+        }
+
+        /// <summary>
+        /// Słownik kategorii, z którego AI wybiera AllowedJobCategories (prompt w OpenAIService).
+        /// Kategoria spoza słownika nigdy nie przejdzie filtra kategorii w matchingu.
+        /// </summary>
+        private static readonly HashSet<string> AiCategoryVocabulary = new()
+        {
+            "agile",
+            "architecture",
+            "artificialIntelligence",
+            "automation",
+            "backend",
+            "businessAnalyst",
+            "businessIntelligence",
+            "consulting",
+            "customerService",
+            "data",
+            "devops",
+            "electricalEng",
+            "electronics",
+            "embedded",
+            "erp",
+            "finance",
+            "frontend",
+            "fullstack",
+            "gameDev",
+            "hr",
+            "law",
+            "logistics",
+            "marketing",
+            "mechanics",
+            "mobile",
+            "officeAdministration",
+            "other",
+            "productManagement",
+            "projectManager",
+            "sales",
+            "security",
+            "support",
+            "sysAdministrator",
+            "telecommunication",
+            "testing",
+            "ux",
+        };
+
+        [Fact]
+        public void MapCategory_AlwaysReturnsCategoryFromAiVocabulary()
+        {
+            var results =
+                from category in Enum.GetValues<Sj.JobCategory>()
+                from subCategory in Enum.GetValues<Sj.JobSubCategory>()
+                select SolidJobsMappingExtensions.MapCategory(category, subCategory);
+
+            results.Distinct().Should().OnlyContain(c => AiCategoryVocabulary.Contains(c));
         }
 
         [Theory]

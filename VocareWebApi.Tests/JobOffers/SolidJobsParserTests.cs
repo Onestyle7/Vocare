@@ -74,10 +74,12 @@ namespace VocareWebApi.Tests.JobOffers
                         query["pageSize"] != null && query["pageIndex"] != null
                             ? int.Parse(query["pageIndex"]!)
                             : 0;
+                    // public-api/offers/{division}
+                    var division = request.RequestUri.AbsolutePath.Split('/')[^1];
 
                     var page = new Sj.OffersResponse
                     {
-                        Jobs = new List<Sj.JobOffer> { Offer($"SJ-{pageIndex}") },
+                        Jobs = new List<Sj.JobOffer> { Offer($"{division}-{pageIndex}") },
                         PageIndex = pageIndex,
                         PageSize = 1,
                         TotalCount = TotalPages,
@@ -98,7 +100,7 @@ namespace VocareWebApi.Tests.JobOffers
             );
 
         [Fact]
-        public async Task FetchOffersAsync_WalksAllPages()
+        public async Task FetchOffersAsync_WalksAllPagesOfAllDivisions()
         {
             var handler = FakeApi();
             var client = new SolidJobsClient(
@@ -110,7 +112,11 @@ namespace VocareWebApi.Tests.JobOffers
             await foreach (var offer in sut.FetchOffersAsync())
                 offers.Add(offer);
 
-            offers.Select(o => o.ReferenceNumber).Should().Equal("SJ-0", "SJ-1", "SJ-2");
+            var expectedKeys =
+                from division in Enum.GetValues<Sj.Division>()
+                from pageIndex in Enumerable.Range(0, TotalPages)
+                select $"{division}-{pageIndex}";
+            offers.Select(o => o.ReferenceNumber).Should().Equal(expectedKeys);
             handler
                 .Requests.Should()
                 .OnlyContain(r => r.RequestUri!.Query.Contains("pageSize=500"));

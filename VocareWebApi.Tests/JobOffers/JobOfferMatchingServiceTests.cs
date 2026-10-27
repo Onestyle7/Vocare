@@ -115,7 +115,9 @@ namespace VocareWebApi.Tests.JobOffers
                 ReferenceNumber = "SJ-1",
                 Title = "Analityk biznesowy",
                 Category = "businessAnalyst",
-                Description = new string('a', 1500),
+                Description =
+                    "<div class=\"well job - description\"><p><strong>Czym będziesz się zajmować?</strong><br><br>"
+                    + "<span style=\"color: rgb(55, 51, 57);\">Analiza wymagań biznesowych</span></p></div>",
                 BriefDescription = "",
                 SalaryMin = 120,
                 SalaryMax = 150,
@@ -167,7 +169,7 @@ namespace VocareWebApi.Tests.JobOffers
 
             dto.Source.Should().Be(JobOfferSource.SolidJobs);
             dto.SalaryPeriod.Should().Be(SalaryPeriod.Hour);
-            dto.DescriptionPreview.Should().HaveLength(1000);
+            dto.DescriptionPreview.Should().Be("Analiza wymagań biznesowych");
             dto.Locations.Should().Equal("Warszawa", "Kraków", "Remote");
         }
 
@@ -183,7 +185,7 @@ namespace VocareWebApi.Tests.JobOffers
 
             dto.Source.Should().Be(JobOfferSource.SolidJobs);
             dto.SalaryPeriod.Should().Be(SalaryPeriod.Hour);
-            dto.DescriptionPreview.Should().HaveLength(1000);
+            dto.DescriptionPreview.Should().Be("Analiza wymagań biznesowych");
             dto.Locations.Should().Equal("Warszawa", "Kraków", "Remote");
         }
 

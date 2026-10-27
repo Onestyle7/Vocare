@@ -30,7 +30,6 @@ import {
   formatLocations,
   formatSalary,
   getCategoryLabel,
-  getOfferPreview,
   getOfferSourceLabel,
 } from '../utils/jobOfferDisplay';
 import CollapsibleButton from './CollapsibleButton';
@@ -239,7 +238,7 @@ export default function CareerPathSection({
 
           <div className="relative mb-6">
             <p className="line-clamp-3 text-[12px] leading-relaxed text-gray-400">
-              {getOfferPreview(offer) ?? 'Szczegóły oferty dostępne po przejściu do ogłoszenia.'}
+              {offer.descriptionPreview || 'Szczegóły oferty dostępne po przejściu do ogłoszenia.'}
             </p>
           </div>
 

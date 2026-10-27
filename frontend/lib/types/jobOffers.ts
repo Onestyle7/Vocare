@@ -21,8 +21,7 @@ export interface ScoredJobOffer {
   url: string;
   category: string;
   seniorityLevel: string;
-  briefDescription: string;
-  /** Początek pełnego opisu (HTML, ucięty na backendzie) - fallback, gdy brief jest pusty lub bezużyteczny. */
+  /** Gotowy do wyświetlenia podgląd opisu (czysty tekst, max 300 znaków) - liczony na backendzie z briefu albo pełnego opisu. */
   descriptionPreview?: string;
   salaryMin?: number | null;
   salaryMax?: number | null;

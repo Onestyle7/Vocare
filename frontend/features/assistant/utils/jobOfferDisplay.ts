@@ -1,33 +1,6 @@
 import { JobOfferSource, SalaryPeriod, ScoredJobOffer } from '@/lib/types/jobOffers';
 
-/**
- * Brief krótszy niż tyle znaków (po usunięciu HTML) nie jest opisem, tylko resztką
- * po formatowaniu - np. "<p><b></b></p>" albo samo jedno zdanie bez treści.
- */
-const MIN_BRIEF_LENGTH = 60;
-
-/** SolidJobs zaczyna każdy opis tym samym nagłówkiem - w podglądzie jest zbędny. */
-const SOLID_JOBS_DESCRIPTION_HEADER = /^czym będziesz się zajmować\?\s*/i;
-
 const REMOTE_LOCATION = 'remote';
-
-const NAMED_HTML_ENTITIES: Record<string, string> = {
-  amp: '&',
-  lt: '<',
-  gt: '>',
-  quot: '"',
-  apos: "'",
-  nbsp: ' ',
-  oacute: 'ó',
-  ndash: '–',
-  mdash: '—',
-  hellip: '…',
-  bull: '•',
-  lsquo: '‘',
-  rsquo: '’',
-  ldquo: '“',
-  rdquo: '”',
-};
 
 const SOURCE_LABELS: Record<JobOfferSource, string> = {
   NofluffJobs: 'No Fluff Jobs',
@@ -80,49 +53,6 @@ const CATEGORY_LABELS: Record<string, string> = {
   testing: 'Testowanie',
   ux: 'UX/UI',
 };
-
-/** Dekoduje encje HTML bez DOM-u - karta renderuje się też na serwerze. */
-export function decodeHtmlEntities(value: string): string {
-  return value.replace(/&(#x[0-9a-f]+|#\d+|[a-z]+);/gi, (match, entity: string) => {
-    if (entity.startsWith('#')) {
-      const isHex = entity[1].toLowerCase() === 'x';
-      const codePoint = parseInt(entity.slice(isHex ? 2 : 1), isHex ? 16 : 10);
-      return codePoint > 0 && codePoint <= 0x10ffff ? String.fromCodePoint(codePoint) : match;
-    }
-    return NAMED_HTML_ENTITIES[entity] ?? match;
-  });
-}
-
-export function stripHtml(value?: string | null): string {
-  if (!value) return '';
-  const withoutTags = value
-    .replace(/<[^>]*>/g, ' ')
-    // Tag ucięty w połowie - descriptionPreview jest przycinany na backendzie bez znajomości HTML-a
-    .replace(/<[^>]*$/, ' ');
-  return decodeHtmlEntities(withoutTags).replace(/\s+/g, ' ').trim();
-}
-
-/**
- * Tekst opisu na kartę: sensowny brief, a gdy go brak (SolidJobs nie ma briefu, część briefów
- * NoFluffJobs to puste tagi albo powtórzony tytuł) - początek pełnego opisu.
- * Zwraca null, gdy nie ma czego pokazać.
- */
-export function getOfferPreview(
-  offer: Pick<ScoredJobOffer, 'title' | 'briefDescription' | 'descriptionPreview'>
-): string | null {
-  const brief = stripHtml(offer.briefDescription);
-  const isBriefSameAsTitle = brief.toLowerCase() === offer.title.trim().toLowerCase();
-
-  if (brief.length >= MIN_BRIEF_LENGTH && !isBriefSameAsTitle) return brief;
-
-  const descriptionPreview = stripHtml(offer.descriptionPreview).replace(
-    SOLID_JOBS_DESCRIPTION_HEADER,
-    ''
-  );
-  if (descriptionPreview) return descriptionPreview;
-
-  return brief && !isBriefSameAsTitle ? brief : null;
-}
 
 export function getOfferSourceLabel(source?: JobOfferSource | null): string | null {
   if (!source) return null;

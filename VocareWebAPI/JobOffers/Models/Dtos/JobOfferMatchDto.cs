@@ -17,10 +17,9 @@ namespace VocareWebAPI.JobOffers.Models.Dtos
         public string Url { get; set; } = "";
         public string Category { get; set; } = "";
         public string SeniorityLevel { get; set; } = "";
-        public string BriefDescription { get; set; } = "";
 
         /// <summary>
-        /// Początek pełnego opisu (HTML, ucięty przy mapowaniu) - fallback, gdy BriefDescription jest pusty lub bezużyteczny
+        /// Gotowy do wyświetlenia podgląd opisu (czysty tekst, max 300 znaków): brief albo, gdy jest bezużyteczny, początek pełnego opisu
         /// </summary>
         public string DescriptionPreview { get; set; } = "";
         public decimal? SalaryMin { get; set; }

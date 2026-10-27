@@ -3,94 +3,13 @@
 import { describe, expect, it } from 'vitest';
 
 import {
-  decodeHtmlEntities,
   formatLocations,
   formatSalary,
   getCategoryLabel,
-  getOfferPreview,
   getOfferSourceLabel,
-  stripHtml,
 } from '../utils/jobOfferDisplay';
 
 const NBSP = ' ';
-const LONG_BRIEF =
-  '<p>We are looking for a <b>Senior Backend Developer</b> to join our team building payment APIs.</p>';
-
-describe('decodeHtmlEntities', () => {
-  it('decodes named and numeric entities found in offers', () => {
-    expect(decodeHtmlEntities('Telephony &amp; Contact &lt;3 &quot;x&quot; it&#39;s')).toBe(
-      'Telephony & Contact <3 "x" it\'s'
-    );
-    expect(decodeHtmlEntities('Kraj&oacute;w&#x21;')).toBe('Krajów!');
-  });
-
-  it('leaves unknown or invalid entities untouched', () => {
-    expect(decodeHtmlEntities('&foo; &#0; &#xFFFFFFF;')).toBe('&foo; &#0; &#xFFFFFFF;');
-  });
-});
-
-describe('stripHtml', () => {
-  it('removes tags, decodes entities and collapses whitespace', () => {
-    expect(stripHtml('<p>Hello&nbsp;<b>world</b></p>\n<br>  again')).toBe('Hello world again');
-  });
-
-  it('removes a tag cut in half at the end of a truncated preview', () => {
-    expect(stripHtml('<p>Opis oferty</p><span style="color: rgb(5')).toBe('Opis oferty');
-  });
-
-  it('returns empty string for missing values', () => {
-    expect(stripHtml(undefined)).toBe('');
-    expect(stripHtml(null)).toBe('');
-  });
-});
-
-describe('getOfferPreview', () => {
-  const offer = (
-    briefDescription: string,
-    descriptionPreview?: string,
-    title = 'Senior QA Java'
-  ) => ({
-    title,
-    briefDescription,
-    descriptionPreview,
-  });
-
-  it('uses a meaningful brief', () => {
-    expect(getOfferPreview(offer(LONG_BRIEF, '<p>Pełny opis</p>'))).toBe(
-      'We are looking for a Senior Backend Developer to join our team building payment APIs.'
-    );
-  });
-
-  it('falls back to the description when the brief is only empty tags', () => {
-    expect(getOfferPreview(offer('<p><b></b></p>\n<p><br></p>', '<p>Pełny opis</p>'))).toBe(
-      'Pełny opis'
-    );
-  });
-
-  it('falls back to the description when the brief repeats the title', () => {
-    expect(getOfferPreview(offer('<h3>Senior QA Java</h3>', '<p>Pełny opis</p>'))).toBe(
-      'Pełny opis'
-    );
-  });
-
-  it('strips the SolidJobs description header', () => {
-    const solidJobsDescription =
-      '<div class="well job - description"><p><strong>Czym będziesz się zajmować?</strong><br><br><h1>Szukamy testera</h1>';
-    expect(getOfferPreview(offer('', solidJobsDescription))).toBe('Szukamy testera');
-  });
-
-  it('keeps a short brief when there is no description', () => {
-    expect(getOfferPreview(offer('<p>Rozwój systemów i oprogramowania.</p>'))).toBe(
-      'Rozwój systemów i oprogramowania.'
-    );
-  });
-
-  it('returns null when there is nothing to show', () => {
-    expect(getOfferPreview(offer('<h3>Senior QA Java</h3>'))).toBeNull();
-    expect(getOfferPreview(offer('', ''))).toBeNull();
-  });
-});
-
 describe('getOfferSourceLabel', () => {
   it('maps known sources to platform names', () => {
     expect(getOfferSourceLabel('NofluffJobs')).toBe('No Fluff Jobs');
