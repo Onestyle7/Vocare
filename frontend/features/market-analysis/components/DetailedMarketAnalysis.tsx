@@ -640,10 +640,11 @@ export default function DetailedMarketAnalysis({
         ) : null}
       </div>
       {analysis && hasAnalysisContent && (
+        // Stałe przesunięcie w px: przy -200vw kontener (794px) wystawał na ekranach węższych niż 397px
         <div
           ref={pdfReportRef}
           aria-hidden
-          className="pointer-events-none absolute top-0 left-[-200vw] w-[794px] bg-white p-8 text-black"
+          className="pointer-events-none absolute top-0 -left-2500 w-[794px] bg-white p-8 text-black"
         >
           <div className="border-b border-gray-200 pb-4">
             <p className="text-[10px] tracking-[0.2em] text-gray-500 uppercase">
