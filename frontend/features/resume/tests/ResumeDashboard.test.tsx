@@ -30,10 +30,6 @@ vi.mock('@/features/market-analysis/components/GridBackgroundDemo', () => ({
   GridBackgroundDemo: () => null,
 }));
 
-vi.mock('@/lib/hooks/useIsMobile', () => ({
-  useIsMobile: () => false,
-}));
-
 vi.mock('../hooks/useResumeDashboardActions', () => ({
   useResumeDashboardActions: () => ({
     handleCreateResume: mocks.handleCreateResume,

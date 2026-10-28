@@ -20,8 +20,7 @@ export default function ResumeDashboardSkeleton() {
               <div className="flex flex-col items-start gap-4">
                 <div className="flex items-center gap-4">
                   <Skeleton className="h-5.5 w-10" />
-                  {/* Przycisk „Stwórz nowe” jest ukryty na telefonie */}
-                  <Skeleton className="hidden h-9 w-34 md:block" />
+                  <Skeleton className="h-9 w-34" />
                 </div>
 
                 <div className="flex w-full flex-col gap-2">

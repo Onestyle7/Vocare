@@ -13,7 +13,6 @@ import {
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 import { useEffect, useLayoutEffect, useRef, useState } from 'react';
-import { toast } from 'sonner';
 
 import {
   AlertDialog,
@@ -43,7 +42,6 @@ import { useTokenBalanceContext } from '@/features/billing/components/Subscripti
 import { GridBackgroundDemo } from '@/features/market-analysis/components/GridBackgroundDemo';
 import { ai_magic, file_document, file_edit } from '@/features/marketing/constants';
 import { GENERATE_CV_FROM_PROFILE_PRICE } from '@/features/resume/constants';
-import { useIsMobile } from '@/lib/hooks/useIsMobile';
 import { CvLimits, CvListItemDto } from '@/lib/types/cv';
 
 import { useResumeDashboardActions } from '../hooks/useResumeDashboardActions';
@@ -97,7 +95,6 @@ const ResumeDashboard = ({
   const upgradeButtonRef = useRef<HTMLButtonElement>(null);
   const rejectedBillingSnapshotRef = useRef<string | null>(null);
   const generateLockRef = useRef(false);
-  const isMobile = useIsMobile();
   const { tokenBalance, subscriptionStatus } = useTokenBalanceContext();
   const { handleDeleteResume, handleCreateResume, handleGenerateResume, isCreating, isGenerating } =
     useResumeDashboardActions();
@@ -270,7 +267,6 @@ const ResumeDashboard = ({
   };
 
   const handleNewResumeClick = () => {
-    if (isMobile) return;
     if (hasReachedCvLimit) {
       setShowLimitDialog(true);
     } else {
@@ -338,11 +334,6 @@ const ResumeDashboard = ({
     // Czyścimy query, żeby odświeżenie strony nie otwierało modala ponownie.
     router.replace('/dashboard/resume', { scroll: false });
 
-    if (isMobile) {
-      toast.info('Tworzenie CV jest dostępne na komputerze.');
-      return;
-    }
-
     if (hasReachedCvLimit) {
       setShowLimitDialog(true);
       return;
@@ -350,23 +341,19 @@ const ResumeDashboard = ({
 
     handleCreateCvDialogChange(true);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [autoOpenCreateDialog, hasReachedCvLimit, isMobile, router]);
+  }, [autoOpenCreateDialog, hasReachedCvLimit, router]);
 
   const EmptyState = () => (
     <div className="col-span-full flex h-100 flex-col items-center justify-center rounded-xl border border-dashed">
       <FileText className="text-muted-foreground mb-4 h-12 w-12" />
       <h3 className="mb-2 text-lg font-medium">Brak CV</h3>
-      <p className="text-muted-foreground mb-4 max-w-sm text-center text-sm">
-        {isMobile
-          ? 'Tworzenie i edycja CV są dostępne na komputerze. Po utworzeniu zobaczysz podgląd w tym miejscu.'
-          : 'Rozpocznij tworzenie swojego pierwszego CV, klikając przycisk poniżej.'}
+      <p className="text-muted-foreground mb-4 max-w-sm px-4 text-center text-sm">
+        Rozpocznij tworzenie swojego pierwszego CV, klikając przycisk poniżej.
       </p>
-      {!isMobile && (
-        <Button className="gap-2" onClick={handleNewResumeClick} disabled={isCreating}>
-          <Plus className="h-4 w-4" />
-          {isCreating ? 'Tworzenie...' : 'Stwórz CV'}
-        </Button>
-      )}
+      <Button className="gap-2" onClick={handleNewResumeClick} disabled={isCreating}>
+        <Plus className="h-4 w-4" />
+        {isCreating ? 'Tworzenie...' : 'Stwórz CV'}
+      </Button>
     </div>
   );
 
@@ -383,7 +370,7 @@ const ResumeDashboard = ({
                   <Badge variant="secondary">
                     {limits ? `${limits.currentCount}/${limits.maxLimit}` : 'Basic'}
                   </Badge>
-                  {cvs.length > 0 && !isMobile && (
+                  {cvs.length > 0 && (
                     <Button
                       variant="outline"
                       className="gap-2"
@@ -404,12 +391,6 @@ const ResumeDashboard = ({
                       ? `Możesz zapisać do ${limits.maxLimit} CV w swoim aktualnym planie.`
                       : 'Zarządzaj swoimi profesjonalnymi CV i śledź swoje aplikacje.'}
                   </p>
-                  {isMobile && (
-                    <p className="text-muted-foreground max-w-xl text-left text-sm leading-relaxed tracking-tight lg:max-w-lg">
-                      Na telefonie dostępny jest podgląd i pobieranie CV. Tworzenie i edycja są
-                      możliwe na komputerze.
-                    </p>
-                  )}
                 </div>
               </div>
 
@@ -451,7 +432,7 @@ const ResumeDashboard = ({
                                 <AlertDialog>
                                   <AlertDialogTrigger asChild>
                                     <button
-                                      className="flex h-10 w-10 cursor-pointer items-center justify-center rounded border border-white/20 bg-white/30 p-2 text-white opacity-0 shadow-md backdrop-blur-md transition-all group-hover:opacity-100 hover:bg-red-500/80"
+                                      className="flex h-10 w-10 cursor-pointer items-center justify-center rounded border border-white/20 bg-white/30 p-2 text-white opacity-0 shadow-md backdrop-blur-md transition-all group-hover:opacity-100 hover:bg-red-500/80 [@media(hover:none)]:opacity-100"
                                       onClick={(e) => {
                                         e.stopPropagation();
                                       }}
@@ -506,12 +487,12 @@ const ResumeDashboard = ({
 
                             {/* Card Actions */}
                             <div className="flex min-h-18 flex-row items-center justify-between p-4">
-                              <Button size="sm">{isMobile ? 'Podgląd' : 'Edytuj'}</Button>
+                              <Button size="sm">Edytuj</Button>
                               <div className="flex flex-row items-center justify-center gap-2">
                                 <Clock className="text-muted-foreground h-4 w-4" />
                                 <p className="text-muted-foreground text-sm font-semibold">
                                   {cv.lastModifiedAt
-                                    ? `Eytowano ${formatDateTime(cv.lastModifiedAt)}`
+                                    ? `Edytowano ${formatDateTime(cv.lastModifiedAt)}`
                                     : 'Utworzono niedawno'}
                                 </p>
                               </div>
@@ -708,7 +689,7 @@ const ResumeDashboard = ({
                     </div>
 
                     <div
-                      className={`mt-2 flex justify-end gap-4 transition-[opacity,transform] duration-400 ease-out motion-reduce:transition-none ${
+                      className={`mt-2 flex flex-col-reverse gap-3 transition-[opacity,transform] duration-400 ease-out motion-reduce:transition-none sm:flex-row sm:justify-end sm:gap-4 ${
                         isContentVisible ? 'translate-y-0 opacity-100' : 'translate-y-2 opacity-0'
                       }`}
                       style={{ transitionDelay: isContentVisible ? '280ms' : '0ms' }}
@@ -718,7 +699,7 @@ const ResumeDashboard = ({
                         variant="outline"
                         onClick={() => goToSetup('choose-method')}
                         disabled={isGenerating}
-                        className="h-12 min-w-36 border-white/30 bg-transparent text-white hover:bg-white/5 hover:text-white"
+                        className="h-12 w-full min-w-36 border-white/30 bg-transparent text-white hover:bg-white/5 hover:text-white sm:w-auto"
                       >
                         Anuluj
                       </Button>
@@ -730,7 +711,7 @@ const ResumeDashboard = ({
                           !jobOfferForm.targetPosition.trim() ||
                           !jobOfferForm.jobDescription.trim()
                         }
-                        className="h-12 min-w-36 bg-[#686fde] text-white hover:bg-[#7379e5]"
+                        className="h-12 w-full min-w-36 bg-[#686fde] text-white hover:bg-[#7379e5] sm:w-auto"
                       >
                         {isGenerating ? 'Generowanie...' : 'Stwórz CV'}
                         {!isGenerating && <ChevronRight />}
