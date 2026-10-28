@@ -214,6 +214,7 @@ export const NavLinks: NavLink[] = [
   { label: 'Kreator', url: '/dashboard/resume' },
 
   { label: 'Pricing', url: '/pricing' },
+  { label: 'Blog', url: '/blog' },
 ];
 
 type HeaderNavLinkConfig = Omit<NavLink, 'url'> &
