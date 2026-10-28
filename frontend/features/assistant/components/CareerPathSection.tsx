@@ -26,6 +26,12 @@ import { useCollapse } from '@/lib/hooks/useCollapse';
 import { CareerPathMatchResult, ConfidenceLevel, ScoredJobOffer } from '@/lib/types/jobOffers';
 import { CareerPath } from '@/lib/types/recommendation';
 
+import {
+  formatLocations,
+  formatSalary,
+  getCategoryLabel,
+  getOfferSourceLabel,
+} from '../utils/jobOfferDisplay';
 import CollapsibleButton from './CollapsibleButton';
 import HorizontalCarousel from './HorizontalCarousel';
 
@@ -77,21 +83,6 @@ export default function CareerPathSection({
     },
   ];
 
-  const formatSalary = (offer: ScoredJobOffer) => {
-    if (offer.salaryMin == null && offer.salaryMax == null) return 'Brak widełek';
-    const formatter = new Intl.NumberFormat('pl-PL', {
-      maximumFractionDigits: 0,
-    });
-    const min = offer.salaryMin != null ? formatter.format(offer.salaryMin) : null;
-    const max = offer.salaryMax != null ? formatter.format(offer.salaryMax) : null;
-    const currency = offer.salaryCurrency ? ` ${offer.salaryCurrency}` : '';
-
-    if (min && max) return `${min}–${max}${currency}`;
-    if (min) return `od ${min}${currency}`;
-    if (max) return `do ${max}${currency}`;
-    return 'Brak widełek';
-  };
-
   const formatDate = (value?: string) => {
     if (!value) return '';
     const date = new Date(value);
@@ -113,14 +104,6 @@ export default function CareerPathSection({
       month: '2-digit',
       year: '2-digit',
     });
-  };
-
-  const stripHtml = (value?: string) => {
-    if (!value) return '';
-    return value
-      .replace(/<[^>]*>/g, ' ')
-      .replace(/\s+/g, ' ')
-      .trim();
   };
 
   const confidenceMeta: Record<
@@ -190,10 +173,15 @@ export default function CareerPathSection({
     );
   };
 
+  // Etykiety w prawym rogu karty mają ten sam styl co nazwa firmy po lewej, żeby górne linie się zgrywały
+  const offerMetaLabelClassName = 'text-[10px] font-bold tracking-wider text-gray-500 uppercase';
+  const offerMetaValueClassName =
+    'mt-0.5 text-[11px] font-semibold whitespace-nowrap text-gray-300 @min-[32rem]/offer:text-xs';
+
   const renderOfferCard = (offer: ScoredJobOffer) => {
-    const locations = offer.locations?.filter(Boolean) ?? [];
-    const primaryLocation = locations.slice(0, 1).join(', ');
-    const locationSuffix = locations.length > 1 ? ` +${locations.length - 1}` : '';
+    const locationLabel = formatLocations(offer.locations);
+    const sourceLabel = getOfferSourceLabel(offer.source);
+    const hasSalary = offer.salaryMin != null || offer.salaryMax != null;
     const confidence = confidenceMeta[offer.confidenceLevel] ?? confidenceMeta.medium;
 
     return (
@@ -202,7 +190,7 @@ export default function CareerPathSection({
         className="font-grotesk @container/offer relative flex w-full flex-col rounded-[18px] border p-1 backdrop-blur-xl transition-all hover:shadow-2xl"
       >
         <div className="relative z-10 flex flex-1 flex-col overflow-hidden rounded-[14px] border bg-white/2 p-5 backdrop-blur-xl">
-          <div className="relative mb-2 flex min-h-[56px] justify-between gap-4">
+          <div className="relative mb-3 flex min-h-[56px] items-start justify-between gap-4">
             <div className="min-w-0 flex-1">
               <p className="mb-0.5 text-[10px] font-bold tracking-wider text-gray-400 uppercase">
                 {offer.companyName}
@@ -210,40 +198,47 @@ export default function CareerPathSection({
               <h5 className="line-clamp-2 text-base leading-tight font-bold text-white sm:text-lg">
                 {offer.title}
               </h5>
-            </div>
-            <div className="shrink-0 text-right">
-              <p className="text-[9px] font-bold text-gray-500">Widełki</p>
-              <p className="text-xs font-bold whitespace-nowrap text-[#915EFF]">
+              <p
+                className={`mt-1.5 text-sm font-bold ${
+                  hasSalary ? 'text-[#915EFF]' : 'font-semibold text-gray-500'
+                }`}
+              >
                 {formatSalary(offer)}
               </p>
-              <div className="mt-2 space-y-0.5">
-                <p className="text-[9px] font-bold text-gray-500">Opublikowano</p>
-                <p className="text-[10px] font-semibold whitespace-nowrap text-gray-400 @min-[32rem]/offer:text-xs @min-[32rem]/offer:text-gray-200">
+            </div>
+            <dl className="shrink-0 space-y-2 text-right">
+              <div>
+                <dt className={offerMetaLabelClassName}>Opublikowano</dt>
+                <dd className={offerMetaValueClassName}>
                   <span className="@min-[32rem]/offer:hidden">
                     {formatDateShort(offer.publishedAt) || '—'}
                   </span>
                   <span className="hidden @min-[32rem]/offer:inline">
                     {formatDate(offer.publishedAt) || '—'}
                   </span>
-                </p>
+                </dd>
               </div>
-            </div>
+              {sourceLabel && (
+                <div>
+                  <dt className={offerMetaLabelClassName}>Źródło</dt>
+                  <dd className={offerMetaValueClassName}>{sourceLabel}</dd>
+                </div>
+              )}
+            </dl>
           </div>
 
           <div className="relative mb-4 flex flex-wrap items-center gap-x-3 gap-y-1 text-[11px] text-gray-300/80">
             <span className="flex items-center gap-1">
-              <MapPin className="h-3 w-3" /> {primaryLocation}
-              {locationSuffix}
+              <MapPin className="h-3 w-3" /> {locationLabel || '—'}
             </span>
             <span className="flex items-center gap-1">
-              <Briefcase className="h-3 w-3" /> {offer.category}
+              <Briefcase className="h-3 w-3" /> {getCategoryLabel(offer.category)}
             </span>
           </div>
 
           <div className="relative mb-6">
             <p className="line-clamp-3 text-[12px] leading-relaxed text-gray-400">
-              {stripHtml(offer.briefDescription) ||
-                'Szczegóły oferty dostępne po przejściu do ogłoszenia.'}
+              {offer.descriptionPreview || 'Szczegóły oferty dostępne po przejściu do ogłoszenia.'}
             </p>
           </div>
 
