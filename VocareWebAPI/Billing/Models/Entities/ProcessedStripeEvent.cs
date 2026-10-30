@@ -8,6 +8,15 @@ namespace VocareWebAPI.Billing.Models.Entities
     {
         public required string Id { get; set; }
         public required string Type { get; set; }
+
+        /// <summary>
+        /// Moment rezerwacji eventu do obsługi. Rezerwacja bez <see cref="CompletedAt"/>
+        /// starsza niż czas dzierżawy oznacza porzuconą obsługę (np. restart procesu) i może
+        /// zostać przejęta przez ponowienie od Stripe.
+        /// </summary>
         public DateTime ProcessedAt { get; set; }
+
+        /// <summary>Moment zakończenia obsługi; null = obsługa w toku lub porzucona.</summary>
+        public DateTime? CompletedAt { get; set; }
     }
 }

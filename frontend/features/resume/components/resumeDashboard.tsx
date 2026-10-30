@@ -95,14 +95,14 @@ const ResumeDashboard = ({
   const upgradeButtonRef = useRef<HTMLButtonElement>(null);
   const rejectedBillingSnapshotRef = useRef<string | null>(null);
   const generateLockRef = useRef(false);
-  const { tokenBalance, subscriptionStatus } = useTokenBalanceContext();
+  const { tokenBalance, subscriptionStatus, hasActiveSubscription } = useTokenBalanceContext();
   const { handleDeleteResume, handleCreateResume, handleGenerateResume, isCreating, isGenerating } =
     useResumeDashboardActions();
   const cvs = initialCvs;
   const limits = initialLimits;
 
-  // BillingService zwalnia z opłaty wyłącznie aktywną subskrypcję.
-  const hasUnlimitedGeneration = subscriptionStatus === 'Active';
+  // BillingService zwalnia z opłaty subskrypcję aktywną i w okresie próbnym (HasPremiumAccess).
+  const hasUnlimitedGeneration = hasActiveSubscription;
   const hasConfirmedUnlimitedGeneration = hasUnlimitedGeneration && !insufficientTokensDetected;
   const hasEnoughTokens =
     hasConfirmedUnlimitedGeneration ||

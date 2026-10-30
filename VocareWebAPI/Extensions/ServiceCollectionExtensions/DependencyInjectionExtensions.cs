@@ -86,6 +86,7 @@ namespace VocareWebAPI.Extensions.ServiceCollectionExtensions
             // Klient Stripe korzysta z globalnego StripeConfiguration.ApiKey (Program.cs);
             // rejestracja w DI pozwala mockować go w testach
             services.AddScoped<Stripe.SubscriptionService>();
+            services.AddScoped<Stripe.Checkout.SessionService>();
 
             // Other services
             services.AddScoped<IEmailService, EmailService>();

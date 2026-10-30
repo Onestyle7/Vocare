@@ -104,7 +104,7 @@ export default function RoadmapDashboardPage({
   const pathname = usePathname();
   const router = useRouter();
   const searchParams = useSearchParams();
-  const { subscriptionStatus } = useTokenBalanceContext();
+  const { hasActiveSubscription } = useTokenBalanceContext();
   const { handleGenerateRoadmap, handleArchiveRoadmap, isPending, deletingId } =
     useRoadmapDashboardActions();
 
@@ -123,8 +123,7 @@ export default function RoadmapDashboardPage({
   const roadmapsError = initialError;
   const isCreatingRoadmap = isPending;
   const deletingRoadmapId = deletingId;
-  const roadmapLimit =
-    subscriptionStatus === 'Active' ? PREMIUM_ROADMAP_LIMIT : DEFAULT_ROADMAP_LIMIT;
+  const roadmapLimit = hasActiveSubscription ? PREMIUM_ROADMAP_LIMIT : DEFAULT_ROADMAP_LIMIT;
 
   const intentCareerPathId = searchParams.get('careerPathId') ?? '';
   const intentCareerPathName = searchParams.get('careerPathName') ?? '';

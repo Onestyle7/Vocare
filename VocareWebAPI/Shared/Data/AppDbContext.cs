@@ -263,6 +263,12 @@ namespace VocareWebAPI.Data
             builder.Entity<ProcessedStripeEvent>().HasKey(e => e.Id);
             builder.Entity<ProcessedStripeEvent>().Property(e => e.Id).HasMaxLength(255);
             builder.Entity<ProcessedStripeEvent>().Property(e => e.Type).HasMaxLength(255);
+            // Przejęcie porzuconej rezerwacji zapisuje się tylko, jeśli nikt jej w międzyczasie
+            // nie przejął (WHERE ProcessedAt = wartość odczytana)
+            builder
+                .Entity<ProcessedStripeEvent>()
+                .Property(e => e.ProcessedAt)
+                .IsConcurrencyToken();
 
             // Konfiguracja ServiceCost
             builder.Entity<ServiceCost>().HasKey(sc => sc.Id);

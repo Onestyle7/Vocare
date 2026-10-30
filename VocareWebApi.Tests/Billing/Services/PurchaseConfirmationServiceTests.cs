@@ -126,6 +126,8 @@ namespace VocareWebApi.Tests.Billing.Services
             body.Should().Contain("pobierzemy 29,00 PLN");
             body.Should().Contain("Masz 14 dni od zawarcia umowy na odstąpienie");
             body.Should().NotContain("zwrócimy całą wpłatę");
+            body.Should().Contain("dostęp zachowasz do końca okresu próbnego");
+            body.Should().NotContain("opłaconego okresu");
             body.Should().NotContain("Cena: 0,00 PLN" + Environment.NewLine);
         }
 

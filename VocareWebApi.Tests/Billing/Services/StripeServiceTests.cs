@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using FluentAssertions;
 using Microsoft.Extensions.Configuration;
@@ -40,6 +41,12 @@ namespace VocareWebApi.Tests.Billing.Services
 
         // Domyślnie brak wcześniejszego konta na ten e-mail (Loose zwraca null)
         private readonly Mock<IPriorAccountService> _priorAccount = new();
+        private readonly Mock<Stripe.SubscriptionService> _stripeSubscriptions = new(
+            MockBehavior.Strict
+        );
+        private readonly Mock<Stripe.Checkout.SessionService> _checkoutSessions = new(
+            MockBehavior.Strict
+        );
         private readonly StripeService _sut;
 
         public StripeServiceTests()
@@ -57,8 +64,33 @@ namespace VocareWebApi.Tests.Billing.Services
                 _transactions.Object,
                 Options.Create(new TrialConfig { TrialPeriodDays = trialPeriodDays }),
                 _consentDiscount.Object,
-                _priorAccount.Object
+                _priorAccount.Object,
+                _stripeSubscriptions.Object,
+                _checkoutSessions.Object
             );
+
+        private void SetupStripeSubscriptions(params string[] statuses) =>
+            _stripeSubscriptions
+                .Setup(s =>
+                    s.ListAsync(
+                        It.Is<Stripe.SubscriptionListOptions>(o =>
+                            o.Customer == "cus_1" && o.Status == "all"
+                        ),
+                        It.IsAny<Stripe.RequestOptions>(),
+                        It.IsAny<System.Threading.CancellationToken>()
+                    )
+                )
+                .ReturnsAsync(
+                    new Stripe.StripeList<Stripe.Subscription>
+                    {
+                        Data = statuses
+                            .Select(
+                                (status, i) =>
+                                    new Stripe.Subscription { Id = $"sub_{i}", Status = status }
+                            )
+                            .ToList(),
+                    }
+                );
 
         public void Dispose() => _context.Dispose();
 
@@ -194,6 +226,29 @@ namespace VocareWebApi.Tests.Billing.Services
                 )
                 .Should()
                 .ThrowAsync<SubscriptionAlreadyActiveException>();
+        }
+
+        [Theory]
+        [InlineData("trialing")]
+        [InlineData("active")]
+        [InlineData("past_due")]
+        [InlineData("incomplete")]
+        public async Task CreateCheckoutSessionForSubscriptionAsync_WhenStripeHasLiveSubscriptionNotYetInDb_ThrowsConflict(
+            string stripeStatus
+        )
+        {
+            // Webhook jeszcze nie dotarł – w naszej bazie brak subskrypcji
+            _userBillings
+                .Setup(r => r.GetByUserIdAsync(UserId))
+                .ReturnsAsync(Billing(customerId: "cus_1"));
+            SetupStripeSubscriptions("canceled", stripeStatus);
+
+            await _sut.Invoking(s =>
+                    s.CreateCheckoutSessionForSubscriptionAsync(UserId, ActiveSubPriceId)
+                )
+                .Should()
+                .ThrowAsync<SubscriptionAlreadyActiveException>();
+            _checkoutSessions.VerifyNoOtherCalls();
         }
 
         // ---------- GetTrialDaysAsync ----------

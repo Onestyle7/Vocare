@@ -37,24 +37,36 @@ namespace VocareWebApi.Tests.Common
             (string Key, string Value)[]? metadata = null,
             string sessionId = "cs_test_123",
             string? customerEmail = null,
-            long amountTotal = 1900
+            long amountTotal = 1900,
+            string paymentStatus = "paid",
+            string eventType = "checkout.session.completed",
+            DateTimeOffset? sessionCreated = null,
+            string? subscriptionId = null
         )
         {
             var customerDetails = customerEmail is null
                 ? "null"
                 : $$"""{ "email": "{{customerEmail}}" }""";
+            var subscription = subscriptionId is null ? "null" : $"\"{subscriptionId}\"";
+            // Sesję domyślnie otwarto 3 h przed zakończeniem – data umowy to moment eventu
+            var created = (
+                sessionCreated ?? DateTimeOffset.UtcNow.AddHours(-3)
+            ).ToUnixTimeSeconds();
             var dataObject = $$"""
                 {
                   "id": "{{sessionId}}",
                   "object": "checkout.session",
                   "mode": "{{mode}}",
+                  "created": {{created}},
+                  "payment_status": "{{paymentStatus}}",
+                  "subscription": {{subscription}},
                   "amount_total": {{amountTotal}},
                   "currency": "pln",
                   "customer_details": {{customerDetails}},
                   "metadata": {{BuildMetadata(metadata)}}
                 }
                 """;
-            return Envelope("checkout.session.completed", dataObject);
+            return Envelope(eventType, dataObject);
         }
 
         /// <summary>

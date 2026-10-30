@@ -155,8 +155,12 @@ namespace VocareWebAPI.Billing.Services.Implementations
 
             if (isSubscription)
             {
+                // W trialu nie ma opłaconego okresu – dostęp trwa do końca okresu próbnego
+                var accessUntil = trialEnd is null
+                    ? "do końca opłaconego okresu"
+                    : "do końca okresu próbnego";
                 body.AppendLine(
-                        "Subskrypcję możesz anulować w każdej chwili w ustawieniach płatności na Koncie – dostęp zachowasz do końca opłaconego okresu."
+                        $"Subskrypcję możesz anulować w każdej chwili w ustawieniach płatności na Koncie – dostęp zachowasz {accessUntil}."
                     )
                     .AppendLine();
             }

@@ -4,6 +4,7 @@ using Resend;
 using Stripe;
 using Stripe.Checkout;
 using VocareWebAPI.Billing.Configuration;
+using VocareWebAPI.Billing.Constants;
 using VocareWebAPI.Billing.Exceptions;
 using VocareWebAPI.Billing.Models.Dtos;
 using VocareWebAPI.Billing.Models.Entities;
@@ -18,8 +19,23 @@ namespace VocareWebAPI.Billing.Services.Implementations
 {
     public class StripeService : IStripeService
     {
-        /// <summary>Klucz metadanych sesji Checkout oznaczający użycie rabatu za zgodę.</summary>
-        public const string ConsentDiscountMetadataKey = "consentDiscount";
+        /// <summary>
+        /// Statusy Stripe, w których subskrypcja nadal istnieje i może pobierać płatności –
+        /// przy każdym z nich nie sprzedajemy drugiej subskrypcji.
+        /// </summary>
+        private static readonly HashSet<string> LiveSubscriptionStatuses = new()
+        {
+            "active",
+            "trialing",
+            "past_due",
+            "unpaid",
+            "incomplete",
+            "paused",
+        };
+
+        /// <summary>Stripe wymaga, by sesja Checkout wygasała co najmniej 30 minut po utworzeniu.</summary>
+        private static readonly TimeSpan MinCheckoutSessionLifetime = TimeSpan.FromMinutes(31);
+        private static readonly TimeSpan MaxCheckoutSessionLifetime = TimeSpan.FromHours(24);
 
         private readonly IUserBillingRepository _userBillingRepository;
         private readonly IConfiguration _configuration;
@@ -29,6 +45,8 @@ namespace VocareWebAPI.Billing.Services.Implementations
         private readonly TrialConfig _trialConfig;
         private readonly IConsentDiscountService _consentDiscountService;
         private readonly IPriorAccountService _priorAccountService;
+        private readonly Stripe.SubscriptionService _stripeSubscriptions;
+        private readonly SessionService _checkoutSessions;
 
         public StripeService(
             IUserBillingRepository userBillingRepository,
@@ -38,9 +56,13 @@ namespace VocareWebAPI.Billing.Services.Implementations
             ITokenTransactionRepository tokenTransactionRepository,
             IOptions<TrialConfig> trialConfig,
             IConsentDiscountService consentDiscountService,
-            IPriorAccountService priorAccountService
+            IPriorAccountService priorAccountService,
+            Stripe.SubscriptionService stripeSubscriptions,
+            SessionService checkoutSessions
         )
         {
+            _stripeSubscriptions = stripeSubscriptions;
+            _checkoutSessions = checkoutSessions;
             _userBillingRepository = userBillingRepository;
             _configuration = configuration;
             _logger = logger;
@@ -68,6 +90,28 @@ namespace VocareWebAPI.Billing.Services.Implementations
             // Jeden trial na osobę – usunięcie konta i rejestracja na ten sam e-mail go nie odnawia
             var priorAccount = await _priorAccountService.GetPriorAccountAsync(userId);
             return priorAccount?.HadSubscription == true ? null : _trialConfig.TrialPeriodDays;
+        }
+
+        private async Task ExpireOpenSubscriptionCheckoutsAsync(string customerId, string userId)
+        {
+            var openSessions = await _checkoutSessions.ListAsync(
+                new SessionListOptions
+                {
+                    Customer = customerId,
+                    Status = "open",
+                    Limit = 100,
+                }
+            );
+
+            foreach (var session in openSessions.Data.Where(s => s.Mode == "subscription"))
+            {
+                await _checkoutSessions.ExpireAsync(session.Id);
+                _logger.LogInformation(
+                    "Expired previous open subscription checkout {SessionId} for userId={UserId}",
+                    session.Id,
+                    userId
+                );
+            }
         }
 
         public async Task<string> CreateCustomerAsync(string userId, string email)
@@ -293,7 +337,18 @@ namespace VocareWebAPI.Billing.Services.Implementations
                 {
                     new SessionDiscountOptions { Coupon = consentDiscount.CouponId },
                 };
-                sessionOptions.Metadata[ConsentDiscountMetadataKey] = "true";
+                sessionOptions.Metadata[CheckoutMetadataKeys.ConsentDiscount] = "true";
+
+                // Sesja Checkout żyje domyślnie 24 h – nie może przeżyć ważności rabatu
+                var now = DateTime.UtcNow;
+                var discountDeadline =
+                    consentDiscount.ExpiresAtUtc < now + MaxCheckoutSessionLifetime
+                        ? consentDiscount.ExpiresAtUtc
+                        : now + MaxCheckoutSessionLifetime;
+                sessionOptions.ExpiresAt =
+                    discountDeadline > now + MinCheckoutSessionLifetime
+                        ? discountDeadline
+                        : now + MinCheckoutSessionLifetime;
 
                 _logger.LogInformation(
                     "Applying {PercentOff}% consent discount to token checkout for userId={UserId}",
@@ -304,8 +359,7 @@ namespace VocareWebAPI.Billing.Services.Implementations
 
             try
             {
-                var sessionService = new SessionService();
-                var session = await sessionService.CreateAsync(sessionOptions);
+                var session = await _checkoutSessions.CreateAsync(sessionOptions);
 
                 _logger.LogInformation(
                     "Created checkout session for userId={UserId} with url={SessionUrl}, tokens={TokenAmount}.",
@@ -449,12 +503,37 @@ namespace VocareWebAPI.Billing.Services.Implementations
                 _configuration["Stripe:CancelUrl"]
                 ?? throw new InvalidOperationException("Cancel URL not configured.");
 
-            var trialDays = await GetTrialDaysAsync(userId);
+            // Nasza baza aktualizuje się dopiero po webhooku – źródłem prawdy o istniejących
+            // subskrypcjach klienta jest Stripe
+            var stripeSubscriptions = await _stripeSubscriptions.ListAsync(
+                new SubscriptionListOptions
+                {
+                    Customer = userBilling.StripeCustomerId,
+                    Status = "all",
+                    Limit = 100,
+                }
+            );
+            if (stripeSubscriptions.Data.Any(s => LiveSubscriptionStatuses.Contains(s.Status)))
+            {
+                _logger.LogWarning(
+                    "Stripe already has a live subscription for userId={UserId}, blocking second checkout",
+                    userId
+                );
+                throw new SubscriptionAlreadyActiveException(userId);
+            }
+
+            // Tylko jedna otwarta sesja subskrypcji na klienta – zapobiega dwóm subskrypcjom
+            // (i dwóm trialom) z równolegle otwartych kart
+            await ExpireOpenSubscriptionCheckoutsAsync(userBilling.StripeCustomerId!, userId);
+
+            var trialDays =
+                stripeSubscriptions.Data.Count > 0 ? null : await GetTrialDaysAsync(userId);
 
             _logger.LogInformation(
-                "Trial decision for userId={UserId}: trialDays={TrialDays}",
+                "Trial decision for userId={UserId}: trialDays={TrialDays}, stripeSubscriptions={Count}",
                 userId,
-                trialDays
+                trialDays,
+                stripeSubscriptions.Data.Count
             );
 
             var sessionOptions = new SessionCreateOptions
@@ -486,8 +565,7 @@ namespace VocareWebAPI.Billing.Services.Implementations
             };
             try
             {
-                var sessionService = new SessionService();
-                var session = await sessionService.CreateAsync(sessionOptions);
+                var session = await _checkoutSessions.CreateAsync(sessionOptions);
 
                 _logger.LogInformation(
                     "Created subscription checkout session for userId={UserId}, with url={SessionUrl}, package={PackageName}.",

@@ -113,6 +113,14 @@ export function PricingCard({
             )}
             <span className="text-base text-gray-600 dark:text-gray-300">{plan.priceLabel}</span>
           </p>
+          {plan.discount && (
+            // Omnibus (art. 6a ustawy o informowaniu o cenach, § 10 ust. 8 Regulaminu). Cena
+            // regularna nie była obniżana w ostatnich 30 dniach, więc jest zarazem najniższą –
+            // przy kolejnych promocjach trzeba podawać faktyczne minimum z 30 dni.
+            <p className="mt-2 text-xs text-gray-500 dark:text-gray-400">
+              Najniższa cena z 30 dni przed obniżką: {plan.discount.originalPrice} zł
+            </p>
+          )}
 
           {plan.popular && (
             <p className="mt-4 text-sm leading-relaxed font-semibold text-[#6267CE] dark:text-[#B5B8FF]">

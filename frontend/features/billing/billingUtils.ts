@@ -20,7 +20,6 @@ export function applyPricingOffers(plan: PricingPlan, offers: PricingOffers): Pr
       ...plan,
       ctaLabel: `Testuj ${offers.trialDays} dni za darmo`,
       microcopy: `0 zł przez ${offers.trialDays} dni, potem ${plan.price} zł${plan.priceLabel.replace('/ ', '/')}, odnawiane automatycznie.`,
-      microcopyEmphasisPosition: 'end',
     };
   }
 

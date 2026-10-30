@@ -8,6 +8,7 @@ using Hangfire.States;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging.Abstractions;
 using Moq;
+using VocareWebAPI.Billing.Constants;
 using VocareWebAPI.Billing.Exceptions;
 using VocareWebAPI.Billing.Models.Dtos;
 using VocareWebAPI.Billing.Models.Entities;
@@ -37,6 +38,9 @@ namespace VocareWebApi.Tests.Billing.Services
         private readonly Mock<ITokenTransactionRepository> _transactions = new(MockBehavior.Strict);
         private readonly Mock<IBackgroundJobClient> _jobs = new();
         private readonly Mock<IConsentDiscountService> _consentDiscount = new(MockBehavior.Strict);
+        private readonly Mock<Stripe.SubscriptionService> _stripeSubscriptions = new(
+            MockBehavior.Strict
+        );
         private readonly BillingService _sut;
 
         public BillingServiceTests()
@@ -49,6 +53,7 @@ namespace VocareWebApi.Tests.Billing.Services
                 _transactions.Object,
                 _jobs.Object,
                 _consentDiscount.Object,
+                _stripeSubscriptions.Object,
                 TestConfiguration.FromValues(("Stripe:WebhookSecret", WebhookSecret)),
                 NullLogger<BillingService>.Instance
             );
@@ -67,6 +72,36 @@ namespace VocareWebApi.Tests.Billing.Services
                 SubscriptionStatus = status,
             };
 
+        /// <summary>Aktualny stan subskrypcji zwracany przez Stripe API (źródło prawdy w handlerach).</summary>
+        private void SetupStripeSubscription(string subscriptionId, string status) =>
+            _stripeSubscriptions
+                .Setup(s =>
+                    s.GetAsync(
+                        subscriptionId,
+                        It.IsAny<Stripe.SubscriptionGetOptions>(),
+                        It.IsAny<Stripe.RequestOptions>(),
+                        It.IsAny<System.Threading.CancellationToken>()
+                    )
+                )
+                .ReturnsAsync(
+                    new Stripe.Subscription
+                    {
+                        Id = subscriptionId,
+                        Status = status,
+                        Metadata = new System.Collections.Generic.Dictionary<string, string>
+                        {
+                            ["subscriptionLevel"] = "Monthly",
+                        },
+                        Items = new Stripe.StripeList<Stripe.SubscriptionItem>
+                        {
+                            Data = new System.Collections.Generic.List<Stripe.SubscriptionItem>(),
+                        },
+                    }
+                );
+
+        private static string EventId(string payload) =>
+            System.Text.Json.JsonDocument.Parse(payload).RootElement.GetProperty("id").GetString()!;
+
         // ---------- Konstruktor ----------
 
         [Fact]
@@ -80,6 +115,7 @@ namespace VocareWebApi.Tests.Billing.Services
                     _transactions.Object,
                     _jobs.Object,
                     _consentDiscount.Object,
+                    _stripeSubscriptions.Object,
                     TestConfiguration.FromValues(),
                     NullLogger<BillingService>.Instance
                 );
@@ -527,22 +563,142 @@ namespace VocareWebApi.Tests.Billing.Services
         [Fact]
         public async Task HandleWebhookAsync_WithCompletedSubscriptionCheckout_PassesSubscriptionIdToConfirmation()
         {
-            var payload = StripeWebhookFactory
-                .CheckoutSessionCompleted(
-                    mode: "subscription",
-                    metadata: new[] { ("userId", UserId), ("packageName", "Premium") },
-                    customerEmail: "jan@example.com",
-                    amountTotal: 0
-                )
-                .Replace(
-                    "\"mode\": \"subscription\",",
-                    "\"mode\": \"subscription\", \"subscription\": \"sub_123\","
-                );
+            var payload = StripeWebhookFactory.CheckoutSessionCompleted(
+                mode: "subscription",
+                metadata: new[] { ("userId", UserId), ("packageName", "Premium") },
+                customerEmail: "jan@example.com",
+                amountTotal: 0,
+                subscriptionId: "sub_123"
+            );
             var signature = StripeWebhookFactory.SignPayload(payload, WebhookSecret);
+            SetupStripeSubscription("sub_123", "active");
 
             await _sut.HandleWebhookAsync(payload, signature);
 
             VerifyConfirmationEnqueued(c => c.SubscriptionId == "sub_123", Times.Once());
+        }
+
+        // ---------- Koniec triala a termin na odstąpienie ----------
+
+        private void SetupTrialingSubscription(string subscriptionId, DateTime trialEndUtc) =>
+            _stripeSubscriptions
+                .Setup(s =>
+                    s.GetAsync(
+                        subscriptionId,
+                        It.IsAny<Stripe.SubscriptionGetOptions>(),
+                        It.IsAny<Stripe.RequestOptions>(),
+                        It.IsAny<System.Threading.CancellationToken>()
+                    )
+                )
+                .ReturnsAsync(
+                    new Stripe.Subscription
+                    {
+                        Id = subscriptionId,
+                        Status = "trialing",
+                        TrialEnd = trialEndUtc,
+                    }
+                );
+
+        private string TrialCheckoutPayload() =>
+            StripeWebhookFactory.CheckoutSessionCompleted(
+                mode: "subscription",
+                metadata: new[] { ("userId", UserId), ("packageName", "Premium") },
+                customerEmail: "jan@example.com",
+                amountTotal: 0,
+                subscriptionId: "sub_trial"
+            );
+
+        [Fact]
+        public async Task HandleWebhookAsync_TrialEndingBeforeWithdrawalDeadline_IsExtendedToDeadline()
+        {
+            var payload = TrialCheckoutPayload();
+            var signature = StripeWebhookFactory.SignPayload(payload, WebhookSecret);
+            // Stripe: trial kończy się dokładnie 14 dni po starcie, o tej samej godzinie
+            SetupTrialingSubscription("sub_trial", DateTime.UtcNow.AddDays(14));
+            Stripe.SubscriptionUpdateOptions? update = null;
+            _stripeSubscriptions
+                .Setup(s =>
+                    s.UpdateAsync(
+                        "sub_trial",
+                        It.IsAny<Stripe.SubscriptionUpdateOptions>(),
+                        It.IsAny<Stripe.RequestOptions>(),
+                        It.IsAny<System.Threading.CancellationToken>()
+                    )
+                )
+                .Callback<
+                    string,
+                    Stripe.SubscriptionUpdateOptions,
+                    Stripe.RequestOptions,
+                    System.Threading.CancellationToken
+                >((_, options, _, _) => update = options)
+                .ReturnsAsync(new Stripe.Subscription { Id = "sub_trial" });
+
+            await _sut.HandleWebhookAsync(payload, signature);
+
+            var expectedDeadline = WithdrawalPeriodCalculator.GetDeadlineUtc(
+                VerifyConfirmationDate()
+            );
+            update.Should().NotBeNull();
+            update!.ProrationBehavior.Should().Be("none");
+            ((DateTime?)update.TrialEnd!.Value).Should().Be(expectedDeadline);
+        }
+
+        [Fact]
+        public async Task HandleWebhookAsync_TrialAlreadyAfterWithdrawalDeadline_IsNotChanged()
+        {
+            var payload = TrialCheckoutPayload();
+            var signature = StripeWebhookFactory.SignPayload(payload, WebhookSecret);
+            SetupTrialingSubscription("sub_trial", DateTime.UtcNow.AddDays(20));
+
+            await _sut.HandleWebhookAsync(payload, signature);
+
+            _stripeSubscriptions.Verify(
+                s =>
+                    s.UpdateAsync(
+                        It.IsAny<string>(),
+                        It.IsAny<Stripe.SubscriptionUpdateOptions>(),
+                        It.IsAny<Stripe.RequestOptions>(),
+                        It.IsAny<System.Threading.CancellationToken>()
+                    ),
+                Times.Never
+            );
+            VerifyConfirmationEnqueued(c => c.SubscriptionId == "sub_trial", Times.Once());
+        }
+
+        [Fact]
+        public async Task HandleWebhookAsync_WhenTrialExtensionFails_DoesNotSendConfirmationAndAllowsRetry()
+        {
+            var payload = TrialCheckoutPayload();
+            var signature = StripeWebhookFactory.SignPayload(payload, WebhookSecret);
+            SetupTrialingSubscription("sub_trial", DateTime.UtcNow.AddDays(14));
+            _stripeSubscriptions
+                .Setup(s =>
+                    s.UpdateAsync(
+                        "sub_trial",
+                        It.IsAny<Stripe.SubscriptionUpdateOptions>(),
+                        It.IsAny<Stripe.RequestOptions>(),
+                        It.IsAny<System.Threading.CancellationToken>()
+                    )
+                )
+                .ThrowsAsync(new Stripe.StripeException("Stripe down"));
+
+            await _sut.Invoking(s => s.HandleWebhookAsync(payload, signature))
+                .Should()
+                .ThrowAsync<Stripe.StripeException>();
+
+            VerifyConfirmationEnqueued(_ => true, Times.Never());
+            _context.ChangeTracker.Clear();
+            _context.ProcessedStripeEvents.Should().BeEmpty();
+        }
+
+        /// <summary>Data zawarcia umowy przekazana do potwierdzenia (= moment eventu).</summary>
+        private DateTime VerifyConfirmationDate()
+        {
+            var job = _jobs
+                .Invocations.Where(i => i.Method.Name == nameof(IBackgroundJobClient.Create))
+                .Select(i => (Job)i.Arguments[0])
+                .Single();
+            return ((PurchaseConfirmationDto)job.Args[0]).PurchasedAtUtc;
         }
 
         [Fact]
@@ -555,7 +711,7 @@ namespace VocareWebApi.Tests.Billing.Services
                     ("userId", UserId),
                     ("tokenAmount", "500"),
                     ("packageName", "Personal"),
-                    (StripeService.ConsentDiscountMetadataKey, "true"),
+                    (CheckoutMetadataKeys.ConsentDiscount, "true"),
                 }
             );
             var signature = StripeWebhookFactory.SignPayload(payload, WebhookSecret);
@@ -607,6 +763,7 @@ namespace VocareWebApi.Tests.Billing.Services
             );
             var signature = StripeWebhookFactory.SignPayload(payload, WebhookSecret);
             var billing = Billing();
+            SetupStripeSubscription("sub_test", stripeStatus);
             _userBillings.Setup(r => r.GetUserIdByCustomerIdAsync("cus_1")).ReturnsAsync(UserId);
             _userBillings.Setup(r => r.GetByUserIdAsync(UserId)).ReturnsAsync(billing);
             _userBillings.Setup(r => r.UpdateAsync(billing)).Returns(Task.CompletedTask);
@@ -636,6 +793,8 @@ namespace VocareWebApi.Tests.Billing.Services
             var payload = StripeWebhookFactory.InvoicePaymentSucceeded(0, customerId: "cus_1");
             var signature = StripeWebhookFactory.SignPayload(payload, WebhookSecret);
             var billing = Billing(status: SubscriptionStatus.Trialing);
+            billing.StripeSubscriptionId = "sub_1";
+            SetupStripeSubscription("sub_1", "trialing");
             _userBillings.Setup(r => r.GetUserIdByCustomerIdAsync("cus_1")).ReturnsAsync(UserId);
             _userBillings.Setup(r => r.GetByUserIdAsync(UserId)).ReturnsAsync(billing);
             _userBillings.Setup(r => r.UpdateAsync(billing)).Returns(Task.CompletedTask);
@@ -651,6 +810,8 @@ namespace VocareWebApi.Tests.Billing.Services
             var payload = StripeWebhookFactory.InvoicePaymentSucceeded(2900, customerId: "cus_1");
             var signature = StripeWebhookFactory.SignPayload(payload, WebhookSecret);
             var billing = Billing(status: SubscriptionStatus.Trialing);
+            billing.StripeSubscriptionId = "sub_1";
+            SetupStripeSubscription("sub_1", "active");
             _userBillings.Setup(r => r.GetUserIdByCustomerIdAsync("cus_1")).ReturnsAsync(UserId);
             _userBillings.Setup(r => r.GetByUserIdAsync(UserId)).ReturnsAsync(billing);
             _userBillings.Setup(r => r.UpdateAsync(billing)).Returns(Task.CompletedTask);
@@ -658,6 +819,43 @@ namespace VocareWebApi.Tests.Billing.Services
             await _sut.HandleWebhookAsync(payload, signature);
 
             billing.SubscriptionStatus.Should().Be(SubscriptionStatus.Active);
+        }
+
+        [Fact]
+        public async Task HandleWebhookAsync_LateInvoiceAfterCancellation_DoesNotRestoreAccess()
+        {
+            var payload = StripeWebhookFactory.InvoicePaymentSucceeded(2900, customerId: "cus_1");
+            var signature = StripeWebhookFactory.SignPayload(payload, WebhookSecret);
+            var billing = Billing(status: SubscriptionStatus.Canceled);
+            billing.StripeSubscriptionId = "sub_1";
+            SetupStripeSubscription("sub_1", "canceled");
+            _userBillings.Setup(r => r.GetUserIdByCustomerIdAsync("cus_1")).ReturnsAsync(UserId);
+            _userBillings.Setup(r => r.GetByUserIdAsync(UserId)).ReturnsAsync(billing);
+            _userBillings.Setup(r => r.UpdateAsync(billing)).Returns(Task.CompletedTask);
+
+            await _sut.HandleWebhookAsync(payload, signature);
+
+            billing.SubscriptionStatus.Should().Be(SubscriptionStatus.Canceled);
+            billing.HasPremiumAccess.Should().BeFalse();
+        }
+
+        [Fact]
+        public async Task HandleWebhookAsync_FailedInvoice_UsesStripeStatusInsteadOfForcingPastDue()
+        {
+            var payload = StripeWebhookFactory
+                .InvoicePaymentSucceeded(2900, customerId: "cus_1")
+                .Replace("\"invoice.payment_succeeded\"", "\"invoice.payment_failed\"");
+            var signature = StripeWebhookFactory.SignPayload(payload, WebhookSecret);
+            var billing = Billing(status: SubscriptionStatus.Active);
+            billing.StripeSubscriptionId = "sub_1";
+            SetupStripeSubscription("sub_1", "past_due");
+            _userBillings.Setup(r => r.GetUserIdByCustomerIdAsync("cus_1")).ReturnsAsync(UserId);
+            _userBillings.Setup(r => r.GetByUserIdAsync(UserId)).ReturnsAsync(billing);
+            _userBillings.Setup(r => r.UpdateAsync(billing)).Returns(Task.CompletedTask);
+
+            await _sut.HandleWebhookAsync(payload, signature);
+
+            billing.SubscriptionStatus.Should().Be(SubscriptionStatus.PastDue);
         }
 
         [Fact]
@@ -684,6 +882,223 @@ namespace VocareWebApi.Tests.Billing.Services
 
             billing.TokenBalance.Should().Be(100);
             (await _context.TokenTransactions.AnyAsync()).Should().BeFalse();
+        }
+
+        // ---------- Płatności z opóźnionym rozliczeniem ----------
+
+        [Fact]
+        public async Task HandleWebhookAsync_UnpaidCompletedCheckout_SendsConfirmationWithoutTokens()
+        {
+            var payload = StripeWebhookFactory.CheckoutSessionCompleted(
+                mode: "payment",
+                metadata: new[] { ("userId", UserId), ("tokenAmount", "500") },
+                customerEmail: "jan@example.com",
+                paymentStatus: "unpaid"
+            );
+            var signature = StripeWebhookFactory.SignPayload(payload, WebhookSecret);
+
+            await _sut.HandleWebhookAsync(payload, signature);
+
+            _userBillings.Verify(
+                r => r.AddTokensAsync(It.IsAny<string>(), It.IsAny<int>()),
+                Times.Never
+            );
+            VerifyConfirmationEnqueued(_ => true, Times.Once());
+        }
+
+        [Fact]
+        public async Task HandleWebhookAsync_AsyncPaymentSucceeded_CreditsTokens()
+        {
+            var payload = StripeWebhookFactory.CheckoutSessionCompleted(
+                mode: "payment",
+                metadata: new[] { ("userId", UserId), ("tokenAmount", "500") },
+                eventType: "checkout.session.async_payment_succeeded"
+            );
+            var signature = StripeWebhookFactory.SignPayload(payload, WebhookSecret);
+            SetupTokenPurchase();
+
+            await _sut.HandleWebhookAsync(payload, signature);
+
+            _userBillings.Verify(r => r.AddTokensAsync(UserId, 500), Times.Once);
+            VerifyConfirmationEnqueued(_ => true, Times.Never());
+        }
+
+        [Fact]
+        public async Task HandleWebhookAsync_AsyncPaymentFailed_DoesNotCreditTokens()
+        {
+            var payload = StripeWebhookFactory.CheckoutSessionCompleted(
+                mode: "payment",
+                metadata: new[] { ("userId", UserId), ("tokenAmount", "500") },
+                paymentStatus: "unpaid",
+                eventType: "checkout.session.async_payment_failed"
+            );
+            var signature = StripeWebhookFactory.SignPayload(payload, WebhookSecret);
+
+            await _sut.HandleWebhookAsync(payload, signature);
+
+            _userBillings.Verify(
+                r => r.AddTokensAsync(It.IsAny<string>(), It.IsAny<int>()),
+                Times.Never
+            );
+        }
+
+        [Fact]
+        public async Task HandleWebhookAsync_ConfirmationUsesCompletionTimeNotSessionOpeningTime()
+        {
+            var payload = StripeWebhookFactory.CheckoutSessionCompleted(
+                mode: "subscription",
+                metadata: new[] { ("userId", UserId), ("packageName", "Premium") },
+                customerEmail: "jan@example.com",
+                sessionCreated: DateTimeOffset.UtcNow.AddHours(-5)
+            );
+            var signature = StripeWebhookFactory.SignPayload(payload, WebhookSecret);
+
+            await _sut.HandleWebhookAsync(payload, signature);
+
+            VerifyConfirmationEnqueued(
+                c => c.PurchasedAtUtc > DateTime.UtcNow.AddMinutes(-1),
+                Times.Once()
+            );
+        }
+
+        // ---------- Rezerwacja eventów (idempotencja) ----------
+
+        [Fact]
+        public async Task HandleWebhookAsync_WhenEventClaimedRecentlyAndNotCompleted_ThrowsInProgress()
+        {
+            var payload = StripeWebhookFactory.GenericEvent("customer.created");
+            var signature = StripeWebhookFactory.SignPayload(payload, WebhookSecret);
+            _context.ProcessedStripeEvents.Add(
+                new ProcessedStripeEvent
+                {
+                    Id = EventId(payload),
+                    Type = "customer.created",
+                    ProcessedAt = DateTime.UtcNow.AddMinutes(-1),
+                }
+            );
+            await _context.SaveChangesAsync();
+            _context.ChangeTracker.Clear();
+
+            await _sut.Invoking(s => s.HandleWebhookAsync(payload, signature))
+                .Should()
+                .ThrowAsync<StripeEventInProgressException>();
+        }
+
+        [Fact]
+        public async Task HandleWebhookAsync_WhenClaimAbandoned_TakesOverAndProcessesEvent()
+        {
+            var payload = StripeWebhookFactory.CheckoutSessionCompleted(
+                mode: "payment",
+                metadata: new[] { ("userId", UserId), ("tokenAmount", "500") }
+            );
+            var signature = StripeWebhookFactory.SignPayload(payload, WebhookSecret);
+            _context.ProcessedStripeEvents.Add(
+                new ProcessedStripeEvent
+                {
+                    Id = EventId(payload),
+                    Type = "checkout.session.completed",
+                    ProcessedAt = DateTime.UtcNow.AddMinutes(-30),
+                }
+            );
+            await _context.SaveChangesAsync();
+            _context.ChangeTracker.Clear();
+            SetupTokenPurchase();
+
+            await _sut.HandleWebhookAsync(payload, signature);
+
+            _userBillings.Verify(r => r.AddTokensAsync(UserId, 500), Times.Once);
+            _context.ChangeTracker.Clear();
+            (await _context.ProcessedStripeEvents.SingleAsync()).CompletedAt.Should().NotBeNull();
+        }
+
+        [Fact]
+        public async Task HandleWebhookAsync_AfterSuccess_MarksEventCompleted()
+        {
+            var payload = StripeWebhookFactory.GenericEvent("customer.created");
+            var signature = StripeWebhookFactory.SignPayload(payload, WebhookSecret);
+
+            await _sut.HandleWebhookAsync(payload, signature);
+
+            _context.ChangeTracker.Clear();
+            var processed = await _context.ProcessedStripeEvents.SingleAsync();
+            processed.Id.Should().Be(EventId(payload));
+            processed.CompletedAt.Should().NotBeNull();
+        }
+
+        // ---------- Kolejność eventów subskrypcji ----------
+
+        [Fact]
+        public async Task HandleWebhookAsync_LateSubscriptionUpdated_UsesCurrentStripeStatus()
+        {
+            var payload = StripeWebhookFactory.SubscriptionEvent(
+                "customer.subscription.updated",
+                "trialing",
+                customerId: "cus_1",
+                subscriptionId: "sub_1"
+            );
+            var signature = StripeWebhookFactory.SignPayload(payload, WebhookSecret);
+            var billing = Billing(status: SubscriptionStatus.Canceled);
+            billing.StripeSubscriptionId = "sub_1";
+            SetupStripeSubscription("sub_1", "canceled");
+            _userBillings.Setup(r => r.GetUserIdByCustomerIdAsync("cus_1")).ReturnsAsync(UserId);
+            _userBillings.Setup(r => r.GetByUserIdAsync(UserId)).ReturnsAsync(billing);
+            _userBillings.Setup(r => r.UpdateAsync(billing)).Returns(Task.CompletedTask);
+
+            await _sut.HandleWebhookAsync(payload, signature);
+
+            billing.SubscriptionStatus.Should().Be(SubscriptionStatus.Canceled);
+        }
+
+        [Theory]
+        [InlineData("customer.subscription.updated")]
+        [InlineData("customer.subscription.deleted")]
+        public async Task HandleWebhookAsync_EventForUntrackedSubscription_DoesNotChangeStatus(
+            string eventType
+        )
+        {
+            var payload = StripeWebhookFactory.SubscriptionEvent(
+                eventType,
+                "canceled",
+                customerId: "cus_1",
+                subscriptionId: "sub_old"
+            );
+            var signature = StripeWebhookFactory.SignPayload(payload, WebhookSecret);
+            var billing = Billing(status: SubscriptionStatus.Active);
+            billing.StripeSubscriptionId = "sub_current";
+            _userBillings.Setup(r => r.GetUserIdByCustomerIdAsync("cus_1")).ReturnsAsync(UserId);
+            _userBillings.Setup(r => r.GetByUserIdAsync(UserId)).ReturnsAsync(billing);
+
+            await _sut.HandleWebhookAsync(payload, signature);
+
+            billing.SubscriptionStatus.Should().Be(SubscriptionStatus.Active);
+            billing.StripeSubscriptionId.Should().Be("sub_current");
+            _userBillings.Verify(r => r.UpdateAsync(It.IsAny<UserBilling>()), Times.Never);
+        }
+
+        [Fact]
+        public async Task HandleWebhookAsync_DuplicateSubscriptionCreated_KeepsTrackedLiveSubscription()
+        {
+            var payload = StripeWebhookFactory.SubscriptionEvent(
+                "customer.subscription.created",
+                "trialing",
+                customerId: "cus_1",
+                subscriptionId: "sub_new"
+            );
+            var signature = StripeWebhookFactory.SignPayload(payload, WebhookSecret);
+            var billing = Billing(status: SubscriptionStatus.Active);
+            billing.StripeSubscriptionId = "sub_current";
+            SetupStripeSubscription("sub_new", "trialing");
+            _userBillings.Setup(r => r.GetUserIdByCustomerIdAsync("cus_1")).ReturnsAsync(UserId);
+            _userBillings.Setup(r => r.GetByUserIdAsync(UserId)).ReturnsAsync(billing);
+            _transactions
+                .Setup(r => r.AddTransactionAsync(It.IsAny<TokenTransaction>()))
+                .Returns(Task.CompletedTask);
+
+            await _sut.HandleWebhookAsync(payload, signature);
+
+            billing.StripeSubscriptionId.Should().Be("sub_current");
+            billing.SubscriptionStatus.Should().Be(SubscriptionStatus.Active);
+            _userBillings.Verify(r => r.UpdateAsync(It.IsAny<UserBilling>()), Times.Never);
         }
 
         [Fact]
