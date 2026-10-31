@@ -36,9 +36,8 @@ namespace VocareWebAPI.Billing.Services.Implementations
 
         public async Task<ConsentDiscountInfo?> GrantAsync(string userId)
         {
-            if (!_config.IsEnabled)
-                return null;
-
+            // Rabat obiecuje Regulamin (§ 9), więc przyznanie zapisujemy zawsze – bez kuponu
+            // (tylko lokalnie, na produkcji wymusza go walidacja configu) Checkout go nie nalicza
             var alreadyGranted = await _tokenTransactionRepository.HasTransactionOfTypeAsync(
                 userId,
                 TransactionType.ConsentDiscountGranted

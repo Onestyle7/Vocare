@@ -92,6 +92,33 @@ namespace VocareWebAPI.Billing.Services.Implementations
             return priorAccount?.HadSubscription == true ? null : _trialConfig.TrialPeriodDays;
         }
 
+        public async Task<TrialSummary?> GetTrialSummaryAsync(string userId)
+        {
+            var userBilling = await _userBillingRepository.GetByUserIdAsync(userId);
+            if (
+                userBilling.SubscriptionStatus != SubscriptionStatus.Trialing
+                || string.IsNullOrEmpty(userBilling.StripeSubscriptionId)
+            )
+                return null;
+
+            // Datę i kwotę pierwszej płatności bierzemy ze Stripe, bo to on ją pobierze
+            var subscription = await _stripeSubscriptions.GetAsync(
+                userBilling.StripeSubscriptionId
+            );
+            if (subscription.TrialEnd is null)
+                return null;
+
+            var price = subscription.Items?.Data?.FirstOrDefault()?.Price;
+            return new TrialSummary(
+                subscription.TrialEnd.Value,
+                price?.UnitAmount,
+                price?.Currency,
+                price?.Recurring?.Interval ?? "month",
+                price?.Recurring?.IntervalCount ?? 1,
+                subscription.CancelAtPeriodEnd
+            );
+        }
+
         private async Task ExpireOpenSubscriptionCheckoutsAsync(string customerId, string userId)
         {
             var openSessions = await _checkoutSessions.ListAsync(

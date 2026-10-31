@@ -10,7 +10,10 @@ namespace VocareWebAPI.Billing.Configuration
     {
         public const string SectionName = "ConsentDiscount";
 
-        /// <summary>ID kuponu Stripe. Pusty = rabat wyłączony.</summary>
+        /// <summary>
+        /// ID kuponu Stripe, wymagane na produkcji. Pusty tylko lokalnie – przyznanie rabatu
+        /// jest zapisywane, ale Checkout go nie nalicza.
+        /// </summary>
         public string CouponId { get; set; } = string.Empty;
 
         /// <summary>

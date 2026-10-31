@@ -1,6 +1,6 @@
 import { BadgeProps } from '@/components/ui/badge';
 
-import type { ConsentDiscount } from './dal/api';
+import type { ConsentDiscount, TrialSummary } from './dal/api';
 import type { PricingPlan } from './types';
 
 export type PricingOffers = {
@@ -19,7 +19,10 @@ export function applyPricingOffers(plan: PricingPlan, offers: PricingOffers): Pr
     return {
       ...plan,
       ctaLabel: `Testuj ${offers.trialDays} dni za darmo`,
-      microcopy: `0 zł przez ${offers.trialDays} dni, potem ${plan.price} zł${plan.priceLabel.replace('/ ', '/')}, odnawiane automatycznie.`,
+      // Cena po trialu pogrubiona tuż pod przyciskiem – ma być równie widoczna co „za darmo”
+      microcopy: `0 zł przez ${offers.trialDays} dni,`,
+      microcopyEmphasis: `potem ${plan.price} zł${plan.priceLabel.replace('/ ', '/')}, odnawiane automatycznie.`,
+      microcopyEmphasisPosition: 'end',
     };
   }
 
@@ -37,6 +40,47 @@ export function applyPricingOffers(plan: PricingPlan, offers: PricingOffers): Pr
   }
 
   return plan;
+}
+
+const TRIAL_END_FORMATTER = new Intl.DateTimeFormat('pl-PL', {
+  day: '2-digit',
+  month: '2-digit',
+  year: 'numeric',
+  timeZone: 'Europe/Warsaw',
+});
+
+const TRIAL_PERIOD_LABELS: Record<string, string> = {
+  day: 'dzień',
+  week: 'tydz.',
+  month: 'mies.',
+  year: 'rok',
+};
+
+/**
+ * Opis trwającego okresu próbnego w panelu płatności: do kiedy trwa i ile zapłaci
+ * użytkownik po jego końcu – albo że nic, jeśli już anulował.
+ */
+export function getTrialStatusText(trial: TrialSummary) {
+  const trialEnd = TRIAL_END_FORMATTER.format(new Date(trial.trialEnd));
+
+  if (trial.cancelAtPeriodEnd) {
+    return `Okres próbny do ${trialEnd}. Subskrypcja jest anulowana – nie pobierzemy żadnej opłaty.`;
+  }
+
+  if (trial.nextPaymentAmount === null) {
+    return `Okres próbny do ${trialEnd}, potem płatność zgodnie z Cennikiem. Anuluj wcześniej, jeśli nie chcesz płacić.`;
+  }
+
+  const price = new Intl.NumberFormat('pl-PL', {
+    style: 'currency',
+    currency: (trial.currency ?? 'pln').toUpperCase(),
+    minimumFractionDigits: 0,
+    maximumFractionDigits: 2,
+  }).format(trial.nextPaymentAmount / 100);
+  const periodLabel = TRIAL_PERIOD_LABELS[trial.interval] ?? trial.interval;
+  const period = trial.intervalCount > 1 ? `${trial.intervalCount} ${periodLabel}` : periodLabel;
+
+  return `Okres próbny do ${trialEnd}, potem ${price}/${period} – anuluj wcześniej, jeśli nie chcesz płacić.`;
 }
 
 export const PAYMENT_DATE_FORMATTER = new Intl.DateTimeFormat('pl-PL', {

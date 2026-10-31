@@ -9,6 +9,7 @@ using Microsoft.Extensions.Options;
 using Moq;
 using VocareWebAPI.Billing.Configuration;
 using VocareWebAPI.Billing.Exceptions;
+using VocareWebAPI.Billing.Models.Dtos;
 using VocareWebAPI.Billing.Models.Entities;
 using VocareWebAPI.Billing.Models.Enums;
 using VocareWebAPI.Billing.Repositories.Interfaces;
@@ -305,6 +306,84 @@ namespace VocareWebApi.Tests.Billing.Services
 
             result.Should().BeNull();
             _transactions.VerifyNoOtherCalls();
+        }
+
+        // ---------- GetTrialSummaryAsync ----------
+
+        [Fact]
+        public async Task GetTrialSummaryAsync_WhenNotTrialing_ReturnsNullWithoutCallingStripe()
+        {
+            _userBillings
+                .Setup(r => r.GetByUserIdAsync(UserId))
+                .ReturnsAsync(
+                    new UserBilling
+                    {
+                        UserId = UserId,
+                        SubscriptionStatus = SubscriptionStatus.Active,
+                        StripeSubscriptionId = "sub_1",
+                    }
+                );
+
+            var result = await _sut.GetTrialSummaryAsync(UserId);
+
+            result.Should().BeNull();
+            _stripeSubscriptions.VerifyNoOtherCalls();
+        }
+
+        [Fact]
+        public async Task GetTrialSummaryAsync_WhenTrialing_ReturnsTrialEndAndRecurringPrice()
+        {
+            var trialEnd = new DateTime(2026, 11, 17, 0, 0, 0, DateTimeKind.Utc);
+            _userBillings
+                .Setup(r => r.GetByUserIdAsync(UserId))
+                .ReturnsAsync(
+                    new UserBilling
+                    {
+                        UserId = UserId,
+                        SubscriptionStatus = SubscriptionStatus.Trialing,
+                        StripeSubscriptionId = "sub_1",
+                    }
+                );
+            _stripeSubscriptions
+                .Setup(s =>
+                    s.GetAsync(
+                        "sub_1",
+                        It.IsAny<Stripe.SubscriptionGetOptions>(),
+                        It.IsAny<Stripe.RequestOptions>(),
+                        It.IsAny<System.Threading.CancellationToken>()
+                    )
+                )
+                .ReturnsAsync(
+                    new Stripe.Subscription
+                    {
+                        Id = "sub_1",
+                        TrialEnd = trialEnd,
+                        CancelAtPeriodEnd = true,
+                        Items = new Stripe.StripeList<Stripe.SubscriptionItem>
+                        {
+                            Data = new List<Stripe.SubscriptionItem>
+                            {
+                                new()
+                                {
+                                    Price = new Stripe.Price
+                                    {
+                                        UnitAmount = 6900,
+                                        Currency = "pln",
+                                        Recurring = new Stripe.PriceRecurring
+                                        {
+                                            Interval = "month",
+                                            IntervalCount = 3,
+                                        },
+                                    },
+                                },
+                            },
+                        },
+                    }
+                );
+
+            var result = await _sut.GetTrialSummaryAsync(UserId);
+
+            result.Should().Be(new TrialSummary(trialEnd, 6900, "pln", "month", 3, true));
         }
 
         // ---------- CreateCustomerPortalSessionAsync ----------

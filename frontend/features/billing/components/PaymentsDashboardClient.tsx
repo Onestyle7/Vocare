@@ -26,19 +26,22 @@ import {
   formatPaymentAmount,
   getStatusBadgeText,
   getStatusBadgeVariant,
+  getTrialStatusText,
   getTypeLabel,
   PAYMENT_DATE_FORMATTER,
 } from '../billingUtils';
-import { PaymentHistoryItem } from '../dal/api';
+import { PaymentHistoryItem, TrialSummary } from '../dal/api';
 
 export interface PaymentsDashboardClientProps {
   initialPayments: PaymentHistoryItem[];
   initialMarketingConsent: boolean;
+  trial: TrialSummary | null;
 }
 
 export default function PaymentsDashboardClient({
   initialPayments,
   initialMarketingConsent,
+  trial,
 }: PaymentsDashboardClientProps) {
   const { hasActiveSubscription } = useTokenBalanceContext();
   const { handleCancelSubscription, isPending: isCancelling } = useBillingActions();
@@ -72,9 +75,11 @@ export default function PaymentsDashboardClient({
     handleMarketingToggle(nextValue, setMarketingConsent);
   };
 
-  const subscriptionStatusLabel = hasActiveSubscription
-    ? 'Aktywna subskrypcja'
-    : 'Brak aktywnej subskrypcji';
+  const subscriptionStatusLabel = trial
+    ? 'Okres próbny'
+    : hasActiveSubscription
+      ? 'Aktywna subskrypcja'
+      : 'Brak aktywnej subskrypcji';
   const subscriptionBadgeVariant = hasActiveSubscription ? 'default' : 'outline';
   const subscriptionBadgeText = hasActiveSubscription ? 'Aktywna' : 'Nieaktywna';
 
@@ -130,6 +135,9 @@ export default function PaymentsDashboardClient({
                     <p className="text-foreground text-lg font-semibold">
                       {subscriptionStatusLabel}
                     </p>
+                    {trial && (
+                      <p className="text-muted-foreground text-sm">{getTrialStatusText(trial)}</p>
+                    )}
                     {!hasActiveSubscription && (
                       <span className="text-muted-foreground text-xs">
                         Wykup plan, aby odblokować pełen dostęp.

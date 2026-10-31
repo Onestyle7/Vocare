@@ -171,6 +171,7 @@ namespace VocareWebAPI.Controllers
                 return BadRequest("Brak identyfikatora użytkownika w tokenie.");
 
             var userBilling = await _billingService.GetUserBillingAsync(userId);
+            var trial = await _stripeService.GetTrialSummaryAsync(userId);
 
             return Ok(
                 new
@@ -179,6 +180,17 @@ namespace VocareWebAPI.Controllers
                     subscriptionLevel = userBilling.SubscriptionLevel.ToString(),
                     subscriptionEndDate = userBilling.SubscriptionEndDate,
                     subscriptionId = userBilling.StripeSubscriptionId,
+                    trial = trial is null
+                        ? null
+                        : new
+                        {
+                            trialEnd = trial.TrialEndUtc,
+                            nextPaymentAmount = trial.RecurringAmount,
+                            currency = trial.Currency,
+                            interval = trial.Interval,
+                            intervalCount = trial.IntervalCount,
+                            cancelAtPeriodEnd = trial.CancelAtPeriodEnd,
+                        },
                 }
             );
         }

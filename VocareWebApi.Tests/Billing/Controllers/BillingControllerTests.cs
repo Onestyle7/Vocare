@@ -204,6 +204,7 @@ namespace VocareWebApi.Tests.Billing.Controllers
                         StripeSubscriptionId = "sub_1",
                     }
                 );
+            _stripe.Setup(s => s.GetTrialSummaryAsync(UserId)).ReturnsAsync((TrialSummary?)null);
 
             var result = await _sut.GetSubscriptionStatus();
 
@@ -212,6 +213,37 @@ namespace VocareWebApi.Tests.Billing.Controllers
             value.GetProperty("subscriptionLevel").Should().Be("Monthly");
             value.GetProperty("subscriptionEndDate").Should().Be(endDate);
             value.GetProperty("subscriptionId").Should().Be("sub_1");
+            value.GetProperty("trial").Should().BeNull();
+        }
+
+        [Fact]
+        public async Task GetSubscriptionStatus_DuringTrial_ReturnsTrialEndAndFirstPayment()
+        {
+            var trialEnd = new DateTime(2026, 11, 17, 0, 0, 0, DateTimeKind.Utc);
+            _billing
+                .Setup(b => b.GetUserBillingAsync(UserId))
+                .ReturnsAsync(
+                    new UserBilling
+                    {
+                        UserId = UserId,
+                        SubscriptionStatus = SubscriptionStatus.Trialing,
+                        StripeSubscriptionId = "sub_1",
+                    }
+                );
+            _stripe
+                .Setup(s => s.GetTrialSummaryAsync(UserId))
+                .ReturnsAsync(new TrialSummary(trialEnd, 2900, "pln", "month", 1, false));
+
+            var result = await _sut.GetSubscriptionStatus();
+
+            var trial = result
+                .Should()
+                .BeOfType<OkObjectResult>()
+                .Subject.Value!.GetProperty("trial")!;
+            trial.GetProperty("trialEnd").Should().Be(trialEnd);
+            trial.GetProperty("nextPaymentAmount").Should().Be(2900L);
+            trial.GetProperty("interval").Should().Be("month");
+            trial.GetProperty("cancelAtPeriodEnd").Should().Be(false);
         }
 
         // ---------- Webhook ----------

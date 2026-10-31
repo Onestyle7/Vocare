@@ -17,6 +17,11 @@ namespace VocareWebAPI.Billing.Services.Interfaces
         /// lub użytkownik miał już subskrypcję (jeden trial na konto).
         /// </summary>
         Task<int?> GetTrialDaysAsync(string userId);
+
+        /// <summary>
+        /// Trwający okres próbny użytkownika ze Stripe albo null, gdy subskrypcja nie jest w trialu.
+        /// </summary>
+        Task<TrialSummary?> GetTrialSummaryAsync(string userId);
         Task<string> CreateCustomerPortalSessionAsync(string userId);
         Task<List<PaymentHistoryDto>> GetPaymentHistoryAsync(string userId, int limit = 50);
     }

@@ -34,6 +34,24 @@ export type SubscriptionTokenStatusResult = {
   consentDiscount: ConsentDiscount | null;
 };
 
+// Trwający okres próbny – dane ze Stripe, bo to on pobierze pierwszą płatność
+export type TrialSummary = {
+  trialEnd: string;
+  // W groszach; null gdy Stripe nie zwrócił ceny
+  nextPaymentAmount: number | null;
+  currency: string | null;
+  interval: string;
+  intervalCount: number;
+  // Anulowana w trialu – po jego końcu nic nie pobierzemy
+  cancelAtPeriodEnd: boolean;
+};
+
+export type SubscriptionDetailsResult = {
+  subscriptionStatus: SubscriptionStatus;
+  subscriptionEndDate: string | null;
+  trial: TrialSummary | null;
+};
+
 export type CancelSubscriptionResult = {
   url: string;
   message: string;

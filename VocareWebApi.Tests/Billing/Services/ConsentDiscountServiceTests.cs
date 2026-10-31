@@ -139,12 +139,30 @@ namespace VocareWebApi.Tests.Billing.Services
         }
 
         [Fact]
-        public async Task GrantAsync_WhenCouponNotConfigured_DoesNothing()
+        public async Task GrantAsync_WhenCouponNotConfigured_StillRecordsGrant()
         {
+            // Rabat obiecuje Regulamin – brak kuponu nie może odebrać go Użytkownikowi
+            _transactions
+                .Setup(t =>
+                    t.HasTransactionOfTypeAsync(UserId, TransactionType.ConsentDiscountGranted)
+                )
+                .ReturnsAsync(false);
+            _transactions
+                .Setup(t => t.AddTransactionAsync(It.IsAny<TokenTransaction>()))
+                .Returns(Task.CompletedTask);
+
             var result = await CreateSut(couponId: "").GrantAsync(UserId);
 
-            result.Should().BeNull();
-            _transactions.VerifyNoOtherCalls();
+            result.Should().NotBeNull();
+            _transactions.Verify(
+                t =>
+                    t.AddTransactionAsync(
+                        It.Is<TokenTransaction>(x =>
+                            x.Type == TransactionType.ConsentDiscountGranted
+                        )
+                    ),
+                Times.Once
+            );
         }
 
         // ---------- GetActiveAsync ----------

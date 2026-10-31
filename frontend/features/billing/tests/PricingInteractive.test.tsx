@@ -208,6 +208,9 @@ describe('PricingInteractive', () => {
     expect(description?.textContent).toBe(
       '0 zł przez 14 dni, potem 29 zł/miesiąc, odnawiane automatycznie.'
     );
+    expect(description?.querySelector('strong')?.textContent).toBe(
+      'potem 29 zł/miesiąc, odnawiane automatycznie.'
+    );
 
     fireEvent.click(button);
     await waitFor(() =>
