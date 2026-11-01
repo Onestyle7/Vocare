@@ -59,7 +59,7 @@ export default function ServiceCostConfirmationDialog({
   onConfirm,
 }: ServiceCostConfirmationDialogProps) {
   const router = useRouter();
-  const { tokenBalance, subscriptionStatus } = useTokenBalanceContext();
+  const { tokenBalance, subscriptionStatus, hasActiveSubscription } = useTokenBalanceContext();
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [insufficientTokensDetected, setInsufficientTokensDetected] = useState(false);
   const [submitError, setSubmitError] = useState(false);
@@ -70,8 +70,8 @@ export default function ServiceCostConfirmationDialog({
   const submitLockRef = useRef(false);
   const returnFocusElementRef = useRef<HTMLElement | null>(null);
 
-  // BillingService zwalnia z kosztu wyłącznie dokładny status Active.
-  const hasUnlimitedAccess = subscriptionStatus === 'Active';
+  // BillingService zwalnia z kosztu subskrypcję aktywną i w okresie próbnym (HasPremiumAccess).
+  const hasUnlimitedAccess = hasActiveSubscription;
   const isFreeService = tokenCost === 0;
   const hasEnoughTokens =
     !insufficientTokensDetected &&

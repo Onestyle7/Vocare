@@ -10,7 +10,9 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging.Abstractions;
 using Moq;
+using VocareWebAPI.Billing.Models.Dtos;
 using VocareWebAPI.Billing.Models.Entities;
+using VocareWebAPI.Billing.Services.Interfaces;
 using VocareWebAPI.Data;
 using VocareWebAPI.Legal.Services.Interfaces;
 using VocareWebAPI.Models.Entities;
@@ -44,6 +46,7 @@ namespace VocareWebApi.Tests.UserManagement.Services
         private readonly Mock<IUserSetupService> _userSetup = new();
         private readonly Mock<ILegalService> _legalService = new();
         private readonly Mock<ITokenService> _tokenService = new();
+        private readonly Mock<IConsentDiscountService> _consentDiscount = new();
         private readonly AuthenticationService _sut;
 
         public AuthenticationServiceTests()
@@ -95,7 +98,8 @@ namespace VocareWebApi.Tests.UserManagement.Services
                 _context,
                 Mock.Of<IClientInfoProvider>(p =>
                     p.GetClientInfo() == new ClientInfo("127.0.0.1", "TestBrowser/1.0")
-                )
+                ),
+                _consentDiscount.Object
             );
         }
 
@@ -303,6 +307,57 @@ namespace VocareWebApi.Tests.UserManagement.Services
             result
                 .Value!.WelcomeBonus.Should()
                 .Be(new WelcomeBonusResult(WelcomeBonusStatus.Pending, 0));
+            _marketingConsent.Verify(
+                r => r.CreateAsync(It.Is<MarketingConsent>(c => !c.IsConsentGiven)),
+                Times.Never
+            );
+        }
+
+        [Fact]
+        public async Task RegisterAsync_WithMarketingConsent_GrantsConsentDiscount()
+        {
+            SetupSuccessfulIdentityCreation();
+            _userSetup
+                .Setup(s => s.GrantOrScheduleWelcomeTokensAsync(It.IsAny<string>()))
+                .ReturnsAsync(new WelcomeBonusResult(WelcomeBonusStatus.Disabled, 0));
+            var expiresAt = new DateTime(2026, 10, 30, 12, 0, 0, DateTimeKind.Utc);
+            _consentDiscount
+                .Setup(d => d.GrantAsync(It.IsAny<string>()))
+                .ReturnsAsync(new ConsentDiscountInfo("coupon_secret", 25, expiresAt));
+
+            var result = await _sut.RegisterAsync(Email, Password, true);
+
+            result.IsSuccess.Should().BeTrue();
+            _consentDiscount.Verify(d => d.GrantAsync(It.IsAny<string>()), Times.Once);
+            // Front dostaje rabat do toasta, ale bez CouponId
+            result.Value!.ConsentDiscount.Should().Be(new ConsentDiscountOffer(25, expiresAt));
+        }
+
+        [Fact]
+        public async Task RegisterAsync_WithoutMarketingConsent_DoesNotGrantConsentDiscount()
+        {
+            SetupSuccessfulIdentityCreation();
+
+            var result = await _sut.RegisterAsync(Email, Password, false);
+
+            result.IsSuccess.Should().BeTrue();
+            _consentDiscount.VerifyNoOtherCalls();
+        }
+
+        [Fact]
+        public async Task RegisterAsync_WhenDiscountGrantFails_KeepsGivenConsentWithoutFallback()
+        {
+            SetupSuccessfulIdentityCreation();
+            _userSetup
+                .Setup(s => s.GrantOrScheduleWelcomeTokensAsync(It.IsAny<string>()))
+                .ReturnsAsync(new WelcomeBonusResult(WelcomeBonusStatus.Disabled, 0));
+            _consentDiscount
+                .Setup(d => d.GrantAsync(It.IsAny<string>()))
+                .ThrowsAsync(new InvalidOperationException("db down"));
+
+            var result = await _sut.RegisterAsync(Email, Password, true);
+
+            result.IsSuccess.Should().BeTrue();
             _marketingConsent.Verify(
                 r => r.CreateAsync(It.Is<MarketingConsent>(c => !c.IsConsentGiven)),
                 Times.Never

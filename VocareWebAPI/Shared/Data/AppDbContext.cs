@@ -65,6 +65,11 @@ namespace VocareWebAPI.Data
         public DbSet<TokenTransaction> TokenTransactions { get; set; }
 
         /// <summary>
+        /// Eventy Stripe przyjęte do obsługi – chronią przed podwójnym przetworzeniem webhooka.
+        /// </summary>
+        public DbSet<ProcessedStripeEvent> ProcessedStripeEvents { get; set; }
+
+        /// <summary>
         /// Zbiór kosztów usług w bazie danych.
         /// </summary>
         public DbSet<ServiceCost> ServiceCosts { get; set; }
@@ -230,9 +235,7 @@ namespace VocareWebAPI.Data
                 .WithOne(u => u.User)
                 .HasForeignKey<UserProfile>(u => u.UserId);
 
-            builder
-                .Entity<User>()
-                .HasIndex(u => u.IsDeleted);
+            builder.Entity<User>().HasIndex(u => u.IsDeleted);
 
             // Relacja 1:1 między User a UserBilling
             builder
@@ -255,6 +258,17 @@ namespace VocareWebAPI.Data
                 .IsUnique()
                 .HasFilter("\"Type\" = 2")
                 .HasDatabaseName("IX_TokenTransactions_UserId_WelcomeBonus");
+
+            // Konfiguracja ProcessedStripeEvent
+            builder.Entity<ProcessedStripeEvent>().HasKey(e => e.Id);
+            builder.Entity<ProcessedStripeEvent>().Property(e => e.Id).HasMaxLength(255);
+            builder.Entity<ProcessedStripeEvent>().Property(e => e.Type).HasMaxLength(255);
+            // Przejęcie porzuconej rezerwacji zapisuje się tylko, jeśli nikt jej w międzyczasie
+            // nie przejął (WHERE ProcessedAt = wartość odczytana)
+            builder
+                .Entity<ProcessedStripeEvent>()
+                .Property(e => e.ProcessedAt)
+                .IsConcurrencyToken();
 
             // Konfiguracja ServiceCost
             builder.Entity<ServiceCost>().HasKey(sc => sc.Id);
@@ -458,11 +472,11 @@ namespace VocareWebAPI.Data
             builder.Entity<Notification>(e =>
             {
                 e.HasIndex(n => new
-                {
-                    n.UserId,
-                    n.IsRead,
-                    n.CreatedAt,
-                })
+                    {
+                        n.UserId,
+                        n.IsRead,
+                        n.CreatedAt,
+                    })
                     .IsDescending(false, false, true);
             });
 
@@ -470,4 +484,3 @@ namespace VocareWebAPI.Data
         }
     }
 }
-

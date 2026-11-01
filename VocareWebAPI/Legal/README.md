@@ -121,6 +121,7 @@ Only active versions count, so users who registered in the meantime (consent to 
 Per GDPR art. 7(1) in conjunction with art. 17(3)(e):
 - Account deletion is a soft delete: personal data is purged and the account is anonymized (`IsDeleted = true`).
 - `AccountAntiAbuseRegistry` keeps the account's `UserId` with an HMAC SHA-256 hash of its email.
+- The same row carries the one-time benefit flags checked when the email registers again: `HadWelcomeBonus` (welcome tokens), `HadConsentDiscount` (consent discount granted) and `HadSubscription` (Premium subscription used, including a trial). The Privacy Policy describes this purpose.
 - `UserConsents` records keep their original `UserId`, preserving the proof chain:
   ```text
   email -> HMAC SHA-256 -> AccountAntiAbuseRegistry.UserId -> UserConsents (AcceptedAt, IpAddress, UserAgent)

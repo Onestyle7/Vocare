@@ -6,7 +6,11 @@ import { CACHE_TAGS } from '@/lib/tags';
 import { actionErr, actionOk } from '@/lib/types/result';
 import { getUserFromCookie } from '@/lib/utils/get-user-from-cookie';
 
-import { getPaymentHistoryService, getSubscriptionTokenStatusService } from './services';
+import {
+  getPaymentHistoryService,
+  getSubscriptionDetailsService,
+  getSubscriptionTokenStatusService,
+} from './services';
 
 export async function getTokenSubscriptionStatus() {
   const userId = getUserFromCookie(await cookies());
@@ -38,6 +42,16 @@ export async function getTokenSubscriptionStatus() {
         }
       }
     }
+  );
+}
+
+export async function getSubscriptionDetailsQuery() {
+  // Bez cache – anulowanie triala w portalu Stripe zmienia stan poza naszymi Server Actions
+  const result = await getSubscriptionDetailsService({ cache: 'no-store' });
+
+  return result.match(
+    (response) => actionOk(response),
+    (error) => actionErr(error)
   );
 }
 

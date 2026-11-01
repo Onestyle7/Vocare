@@ -12,11 +12,11 @@ export const SERVICE_PROVIDER = {
 // publishedDate – dzień publikacji; od niego regulamin wiąże nowe umowy.
 // effectiveDate – od tego dnia wiąże dotychczasowych Użytkowników; co najmniej 14 dni po mailingu
 // z informacją o zmianach (§ 18 ust. 2). Obie daty ustawić przy wdrożeniu – razem z datami
-// w termsOfService20251222Validity i w migracji LegalDocuments w backendzie.
+// w termsOfService20261013Validity i w migracji LegalDocuments w backendzie.
 export const TERMS_VERSION = {
-  publishedDate: '13.10.2026',
-  effectiveDate: '28.10.2026',
-  previousVersion: { effectiveDate: '22.12.2025', href: '/terms-of-service/2025-12-22' },
+  publishedDate: '02.11.2026',
+  effectiveDate: '17.11.2026',
+  previousVersion: { effectiveDate: '13.10.2026', href: '/terms-of-service/2026-10-13' },
 } as const;
 
-export const PRIVACY_POLICY_LAST_UPDATED = '13 października 2026 r.';
+export const PRIVACY_POLICY_LAST_UPDATED = '2 listopada 2026 r.';

@@ -13,6 +13,7 @@ import {
   CreateSubscriptionResult,
   CustomerPortalResult,
   PaymentHistoryResult,
+  SubscriptionDetailsResult,
   SubscriptionTokenStatusResult,
 } from './api';
 
@@ -58,6 +59,43 @@ export async function getSubscriptionTokenStatusService(
           return {
             type: 'GenericApiError',
             message: 'Wystąpił błąd podczas pobierania statusu tokenów / subskrybcji',
+            details: error.details,
+          };
+        }
+      }
+    });
+}
+
+export async function getSubscriptionDetailsService(
+  requestOptions: RequestInit
+): Promise<Result<SubscriptionDetailsResult, SubscriptionStatusError>> {
+  const result = await billingApiClient.get<SubscriptionDetailsResult>(
+    '/subscription-status',
+    requestOptions
+  );
+
+  return result
+    .map((response) => response.data)
+    .mapErr((error): SubscriptionStatusError => {
+      switch (error.type) {
+        case 'UnauthorizedError': {
+          return {
+            type: 'Unauthorized',
+            message: 'Zaloguj się aby wyświetlić informacje o subskrypcji',
+            details: error.details,
+          };
+        }
+        case 'NotFoundError': {
+          return {
+            type: 'PaymentNotFound',
+            message: 'Nie znaleziono informacji o płatności dla tego użytkownika',
+            details: error.details,
+          };
+        }
+        default: {
+          return {
+            type: 'GenericApiError',
+            message: 'Wystąpił błąd podczas pobierania statusu subskrypcji',
             details: error.details,
           };
         }

@@ -37,24 +37,78 @@ namespace VocareWebApi.Tests.Common
             (string Key, string Value)[]? metadata = null,
             string sessionId = "cs_test_123",
             string? customerEmail = null,
-            long amountTotal = 1900
+            long amountTotal = 1900,
+            string paymentStatus = "paid",
+            string eventType = "checkout.session.completed",
+            DateTimeOffset? sessionCreated = null,
+            string? subscriptionId = null
         )
         {
             var customerDetails = customerEmail is null
                 ? "null"
                 : $$"""{ "email": "{{customerEmail}}" }""";
+            var subscription = subscriptionId is null ? "null" : $"\"{subscriptionId}\"";
+            // Sesję domyślnie otwarto 3 h przed zakończeniem – data umowy to moment eventu
+            var created = (
+                sessionCreated ?? DateTimeOffset.UtcNow.AddHours(-3)
+            ).ToUnixTimeSeconds();
             var dataObject = $$"""
                 {
                   "id": "{{sessionId}}",
                   "object": "checkout.session",
                   "mode": "{{mode}}",
+                  "created": {{created}},
+                  "payment_status": "{{paymentStatus}}",
+                  "subscription": {{subscription}},
                   "amount_total": {{amountTotal}},
                   "currency": "pln",
                   "customer_details": {{customerDetails}},
                   "metadata": {{BuildMetadata(metadata)}}
                 }
                 """;
-            return Envelope("checkout.session.completed", dataObject);
+            return Envelope(eventType, dataObject);
+        }
+
+        /// <summary>
+        /// Event <c>customer.subscription.*</c> z podanym statusem Stripe (np. <c>trialing</c>).
+        /// </summary>
+        public static string SubscriptionEvent(
+            string type,
+            string status,
+            string customerId = "cus_test",
+            string subscriptionId = "sub_test",
+            string subscriptionLevel = "Monthly"
+        )
+        {
+            var dataObject = $$"""
+                {
+                  "id": "{{subscriptionId}}",
+                  "object": "subscription",
+                  "customer": "{{customerId}}",
+                  "status": "{{status}}",
+                  "metadata": { "subscriptionLevel": "{{subscriptionLevel}}" },
+                  "items": { "object": "list", "data": [] }
+                }
+                """;
+            return Envelope(type, dataObject);
+        }
+
+        /// <summary>Event <c>invoice.payment_succeeded</c> z podaną kwotą zapłaconą.</summary>
+        public static string InvoicePaymentSucceeded(
+            long amountPaid,
+            string customerId = "cus_test"
+        )
+        {
+            var dataObject = $$"""
+                {
+                  "id": "in_test",
+                  "object": "invoice",
+                  "customer": "{{customerId}}",
+                  "amount_paid": {{amountPaid}},
+                  "lines": { "object": "list", "data": [] }
+                }
+                """;
+            return Envelope("invoice.payment_succeeded", dataObject);
         }
 
         /// <summary>Event o dowolnym typie z generycznym obiektem danych.</summary>

@@ -13,6 +13,8 @@ const env = createEnv({
       .transform((url) => url.replace(/\/+$/, '')),
     NEXT_PUBLIC_PERSONAL_PRICE_ID: z.string(),
     NEXT_PUBLIC_GROWTH_PRICE_ID: z.string(),
+    // Opcjonalne – bez niego pricing nie pokazuje przełącznika na plan kwartalny
+    NEXT_PUBLIC_GROWTH_QUARTERLY_PRICE_ID: z.string().optional(),
     NEXT_PUBLIC_INDIVIDUAL_PRICE_ID: z.string(),
     NEXT_PUBLIC_GA_ID: z.string(),
   },
@@ -20,6 +22,7 @@ const env = createEnv({
     NEXT_PUBLIC_APP_URL: process.env.NEXT_PUBLIC_APP_URL,
     NEXT_PUBLIC_PERSONAL_PRICE_ID: process.env.NEXT_PUBLIC_PERSONAL_PRICE_ID,
     NEXT_PUBLIC_GROWTH_PRICE_ID: process.env.NEXT_PUBLIC_GROWTH_PRICE_ID,
+    NEXT_PUBLIC_GROWTH_QUARTERLY_PRICE_ID: process.env.NEXT_PUBLIC_GROWTH_QUARTERLY_PRICE_ID,
     NEXT_PUBLIC_INDIVIDUAL_PRICE_ID: process.env.NEXT_PUBLIC_INDIVIDUAL_PRICE_ID,
     NEXT_PUBLIC_GA_ID: process.env.NEXT_PUBLIC_GA_ID,
   },

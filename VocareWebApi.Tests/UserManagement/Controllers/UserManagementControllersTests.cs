@@ -6,7 +6,9 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging.Abstractions;
 using Moq;
+using VocareWebAPI.Billing.Models.Dtos;
 using VocareWebAPI.Billing.Models.Entities;
+using VocareWebAPI.Billing.Services.Interfaces;
 using VocareWebAPI.Controllers;
 using VocareWebAPI.Data;
 using VocareWebAPI.Models.Dtos;
@@ -196,6 +198,9 @@ namespace VocareWebApi.Tests.UserManagement.Controllers
 
         private readonly Mock<IMarketingConsentRepository> _repository = new(MockBehavior.Strict);
         private readonly Mock<IUserSetupService> _userSetup = new(MockBehavior.Strict);
+
+        // Luźny mock – domyślnie brak rabatu (null), żeby istniejące scenariusze go nie wymagały
+        private readonly Mock<IConsentDiscountService> _consentDiscount = new();
         private readonly MarketingController _sut;
 
         public MarketingControllerTests()
@@ -206,7 +211,8 @@ namespace VocareWebApi.Tests.UserManagement.Controllers
                 _userSetup.Object,
                 Mock.Of<IClientInfoProvider>(p =>
                     p.GetClientInfo() == new ClientInfo("127.0.0.1", "TestBrowser/1.0")
-                )
+                ),
+                _consentDiscount.Object
             );
             _sut.WithUser(UserId);
         }
@@ -312,6 +318,65 @@ namespace VocareWebApi.Tests.UserManagement.Controllers
                 .Should()
                 .ThrowAsync<MarketingConsentAlreadyActiveException>();
             _userSetup.VerifyNoOtherCalls();
+            _consentDiscount.VerifyNoOtherCalls();
+        }
+
+        [Fact]
+        public async Task GiveMarketingConsent_OnFirstConsent_ReturnsGrantedDiscountWithoutCouponId()
+        {
+            var expiresAt = new DateTime(2026, 10, 29, 12, 0, 0, DateTimeKind.Utc);
+            _repository
+                .Setup(r => r.GetByUserIdAsync(UserId))
+                .ReturnsAsync((MarketingConsent?)null);
+            _repository
+                .Setup(r => r.CreateAsync(It.IsAny<MarketingConsent>()))
+                .Returns(Task.CompletedTask);
+            _userSetup
+                .Setup(s => s.GrantOrScheduleWelcomeTokensAsync(UserId))
+                .ReturnsAsync(new WelcomeBonusResult(WelcomeBonusStatus.Disabled, 0));
+            _consentDiscount
+                .Setup(d => d.GrantAsync(UserId))
+                .ReturnsAsync(new ConsentDiscountInfo("coupon_secret", 25, expiresAt));
+
+            var result = await _sut.GiveMarketingConsent();
+
+            var discount = result
+                .Should()
+                .BeOfType<OkObjectResult>()
+                .Which.Value!.GetProperty("consentDiscount")!;
+            discount.GetProperty("percentOff").Should().Be(25);
+            discount.GetProperty("expiresAt").Should().Be(expiresAt);
+            discount.GetType().GetProperty("couponId").Should().BeNull();
+        }
+
+        [Fact]
+        public async Task GiveMarketingConsent_WhenDiscountGrantFails_StillReturnsOk()
+        {
+            _repository
+                .Setup(r => r.GetByUserIdAsync(UserId))
+                .ReturnsAsync((MarketingConsent?)null);
+            _repository
+                .Setup(r => r.CreateAsync(It.IsAny<MarketingConsent>()))
+                .Returns(Task.CompletedTask);
+            _userSetup
+                .Setup(s => s.GrantOrScheduleWelcomeTokensAsync(UserId))
+                .ReturnsAsync(new WelcomeBonusResult(WelcomeBonusStatus.Disabled, 0));
+            _consentDiscount
+                .Setup(d => d.GrantAsync(UserId))
+                .ThrowsAsync(new InvalidOperationException("db down"));
+
+            var result = await _sut.GiveMarketingConsent();
+
+            result
+                .Should()
+                .BeOfType<OkObjectResult>()
+                .Which.Value!.GetProperty("consentDiscount")
+                .Should()
+                .BeNull();
+            _repository.Verify(
+                r => r.CreateAsync(It.Is<MarketingConsent>(c => c.IsConsentGiven)),
+                Times.Once
+            );
         }
 
         [Fact]

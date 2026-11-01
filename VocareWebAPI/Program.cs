@@ -40,7 +40,7 @@ builder.Services.AddRateLimiting(builder.Environment);
 
 // ===== KONFIGURACJA, BAZA, HTTP, DI - REFACTORED =====
 builder
-    .Services.AddConfiguration(builder.Configuration)
+    .Services.AddConfiguration(builder.Configuration, builder.Environment)
     .AddDatabase(builder.Configuration)
     .AddHangfireExtension(builder.Configuration)
     .AddHttpClients(builder.Configuration)

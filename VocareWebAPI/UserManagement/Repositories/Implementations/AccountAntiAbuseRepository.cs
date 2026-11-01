@@ -12,7 +12,15 @@ public class AccountAntiAbuseRepository(AppDbContext context) : IAccountAntiAbus
 
     public async Task<bool> HasPriorBonusAsync(string emailHash)
     {
-        return await _context.AccountAntiAbuseRegistries
-            .AnyAsync(r => r.EmailHash == emailHash && r.HadWelcomeBonus);
+        return await _context.AccountAntiAbuseRegistries.AnyAsync(r =>
+            r.EmailHash == emailHash && r.HadWelcomeBonus
+        );
+    }
+
+    public async Task<AccountAntiAbuseRegistry?> GetByEmailHashAsync(string emailHash)
+    {
+        return await _context
+            .AccountAntiAbuseRegistries.AsNoTracking()
+            .FirstOrDefaultAsync(r => r.EmailHash == emailHash);
     }
 }

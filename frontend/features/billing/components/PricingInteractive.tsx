@@ -6,9 +6,18 @@ import { ScrollParallax } from 'react-just-parallax';
 
 import { shape1 } from '@/features/marketing/constants';
 
-import { ACTIVE_SUBSCRIPTION_STATUSES, pricingPlans } from '../constants';
+import { applyPricingOffers, type PricingOffers } from '../billingUtils';
+import {
+  ACTIVE_SUBSCRIPTION_STATUSES,
+  type BillingPeriod,
+  DEFAULT_TRIAL_DAYS,
+  premiumQuarterlyVariant,
+  pricingPlans,
+} from '../constants';
 import { getSubscriptionStatusAction } from '../dal/commands';
 import { useBillingActions } from '../hooks/useBillingActions';
+import type { PricingPlan } from '../types';
+import { BillingPeriodSwitch } from './BillingPeriodSwitch';
 import { PricingCard } from './PricingCard';
 
 interface PricingInteractiveProps {
@@ -24,6 +33,13 @@ export function PricingInteractive({
 
   const [isAuthenticated, setIsAuthenticated] = useState<boolean>(false);
   const [hasActiveSubscription, setHasActiveSubscription] = useState<boolean>(false);
+  // Niezalogowani widzą domyślny trial – po zalogowaniu API mówi, czy konto się kwalifikuje
+  const [offers, setOffers] = useState<PricingOffers>({
+    trialDays: DEFAULT_TRIAL_DAYS,
+    consentDiscount: null,
+  });
+  const [billingPeriod, setBillingPeriod] = useState<BillingPeriod>('monthly');
+  const quarterlyPriceId = premiumQuarterlyVariant.priceId;
 
   useEffect(() => {
     let isMounted = true;
@@ -39,6 +55,10 @@ export function PricingInteractive({
       if (data) {
         setIsAuthenticated(true);
         setHasActiveSubscription(ACTIVE_SUBSCRIPTION_STATUSES.includes(data.subscriptionStatus));
+        setOffers({
+          trialDays: data.trialDays ?? null,
+          consentDiscount: data.consentDiscount ?? null,
+        });
       }
     });
 
@@ -76,7 +96,12 @@ export function PricingInteractive({
           </div>
         )}
 
-        {pricingPlans.map((plan) => {
+        {pricingPlans.map((basePlan) => {
+          const periodPlan: PricingPlan =
+            basePlan.type === 'subscription' && billingPeriod === 'quarterly' && quarterlyPriceId
+              ? { ...basePlan, ...premiumQuarterlyVariant, priceId: quarterlyPriceId }
+              : basePlan;
+          const plan = applyPricingOffers(periodPlan, offers);
           const isCurrentSubscription =
             isAuthenticated && hasActiveSubscription && plan.type === 'subscription';
           const href =
@@ -94,6 +119,11 @@ export function PricingInteractive({
               plan={plan}
               isPending={isPending}
               href={href}
+              periodSwitch={
+                plan.type === 'subscription' && quarterlyPriceId ? (
+                  <BillingPeriodSwitch value={billingPeriod} onChange={setBillingPeriod} />
+                ) : undefined
+              }
               ctaLabel={
                 isCurrentSubscription
                   ? 'Zarządzaj subskrypcją'

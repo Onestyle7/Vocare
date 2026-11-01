@@ -22,6 +22,8 @@ export type PricingPlan = {
   microcopyEmphasis?: string;
   microcopyEmphasisPosition?: 'start' | 'end';
   popular: boolean;
+  // Aktywny rabat (np. za zgodę marketingową) – karta wyróżnia go na fioletowo
+  discount?: { percentOff: number; originalPrice: number };
 } & (
   | { type: 'free'; priceId?: never }
   | { type: Extract<BillingType, 'tokens' | 'subscription'>; priceId: string }

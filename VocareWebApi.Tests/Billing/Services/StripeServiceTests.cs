@@ -1,17 +1,24 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using FluentAssertions;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging.Abstractions;
+using Microsoft.Extensions.Options;
 using Moq;
+using VocareWebAPI.Billing.Configuration;
 using VocareWebAPI.Billing.Exceptions;
+using VocareWebAPI.Billing.Models.Dtos;
 using VocareWebAPI.Billing.Models.Entities;
 using VocareWebAPI.Billing.Models.Enums;
 using VocareWebAPI.Billing.Repositories.Interfaces;
 using VocareWebAPI.Billing.Services.Implementations;
+using VocareWebAPI.Billing.Services.Interfaces;
 using VocareWebAPI.Data;
+using VocareWebAPI.Models.Entities;
 using VocareWebApi.Tests.Common;
+using VocareWebAPI.UserManagement.Services.Interfaces;
 using Xunit;
 
 namespace VocareWebApi.Tests.Billing.Services
@@ -30,18 +37,61 @@ namespace VocareWebApi.Tests.Billing.Services
 
         private readonly AppDbContext _context;
         private readonly Mock<IUserBillingRepository> _userBillings = new(MockBehavior.Strict);
+        private readonly Mock<ITokenTransactionRepository> _transactions = new(MockBehavior.Strict);
+        private readonly Mock<IConsentDiscountService> _consentDiscount = new(MockBehavior.Strict);
+
+        // Domyślnie brak wcześniejszego konta na ten e-mail (Loose zwraca null)
+        private readonly Mock<IPriorAccountService> _priorAccount = new();
+        private readonly Mock<Stripe.SubscriptionService> _stripeSubscriptions = new(
+            MockBehavior.Strict
+        );
+        private readonly Mock<Stripe.Checkout.SessionService> _checkoutSessions = new(
+            MockBehavior.Strict
+        );
         private readonly StripeService _sut;
 
         public StripeServiceTests()
         {
             _context = TestDbContextFactory.CreateContext();
-            _sut = new StripeService(
+            _sut = CreateSut(trialPeriodDays: 14);
+        }
+
+        private StripeService CreateSut(int trialPeriodDays) =>
+            new(
                 _userBillings.Object,
                 BuildConfiguration(),
                 NullLogger<StripeService>.Instance,
-                _context
+                _context,
+                _transactions.Object,
+                Options.Create(new TrialConfig { TrialPeriodDays = trialPeriodDays }),
+                _consentDiscount.Object,
+                _priorAccount.Object,
+                _stripeSubscriptions.Object,
+                _checkoutSessions.Object
             );
-        }
+
+        private void SetupStripeSubscriptions(params string[] statuses) =>
+            _stripeSubscriptions
+                .Setup(s =>
+                    s.ListAsync(
+                        It.Is<Stripe.SubscriptionListOptions>(o =>
+                            o.Customer == "cus_1" && o.Status == "all"
+                        ),
+                        It.IsAny<Stripe.RequestOptions>(),
+                        It.IsAny<System.Threading.CancellationToken>()
+                    )
+                )
+                .ReturnsAsync(
+                    new Stripe.StripeList<Stripe.Subscription>
+                    {
+                        Data = statuses
+                            .Select(
+                                (status, i) =>
+                                    new Stripe.Subscription { Id = $"sub_{i}", Status = status }
+                            )
+                            .ToList(),
+                    }
+                );
 
         public void Dispose() => _context.Dispose();
 
@@ -163,6 +213,177 @@ namespace VocareWebApi.Tests.Billing.Services
                 )
                 .Should()
                 .ThrowAsync<SubscriptionAlreadyActiveException>();
+        }
+
+        [Fact]
+        public async Task CreateCheckoutSessionForSubscriptionAsync_WhenTrialing_ThrowsConflict()
+        {
+            _userBillings
+                .Setup(r => r.GetByUserIdAsync(UserId))
+                .ReturnsAsync(Billing(customerId: "cus_1", status: SubscriptionStatus.Trialing));
+
+            await _sut.Invoking(s =>
+                    s.CreateCheckoutSessionForSubscriptionAsync(UserId, ActiveSubPriceId)
+                )
+                .Should()
+                .ThrowAsync<SubscriptionAlreadyActiveException>();
+        }
+
+        [Theory]
+        [InlineData("trialing")]
+        [InlineData("active")]
+        [InlineData("past_due")]
+        [InlineData("incomplete")]
+        public async Task CreateCheckoutSessionForSubscriptionAsync_WhenStripeHasLiveSubscriptionNotYetInDb_ThrowsConflict(
+            string stripeStatus
+        )
+        {
+            // Webhook jeszcze nie dotarł – w naszej bazie brak subskrypcji
+            _userBillings
+                .Setup(r => r.GetByUserIdAsync(UserId))
+                .ReturnsAsync(Billing(customerId: "cus_1"));
+            SetupStripeSubscriptions("canceled", stripeStatus);
+
+            await _sut.Invoking(s =>
+                    s.CreateCheckoutSessionForSubscriptionAsync(UserId, ActiveSubPriceId)
+                )
+                .Should()
+                .ThrowAsync<SubscriptionAlreadyActiveException>();
+            _checkoutSessions.VerifyNoOtherCalls();
+        }
+
+        // ---------- GetTrialDaysAsync ----------
+
+        [Theory]
+        [InlineData(14, false, 14)]
+        [InlineData(14, true, null)]
+        [InlineData(0, false, null)]
+        [InlineData(0, true, null)]
+        public async Task GetTrialDaysAsync_GrantsTrialOnlyWhenEnabledAndNoPreviousSubscription(
+            int configuredDays,
+            bool hadSubscription,
+            int? expected
+        )
+        {
+            _transactions
+                .Setup(t => t.HasEverHadSubscriptionAsync(UserId))
+                .ReturnsAsync(hadSubscription);
+
+            var result = await CreateSut(configuredDays).GetTrialDaysAsync(UserId);
+
+            result.Should().Be(expected);
+        }
+
+        [Theory]
+        [InlineData(true, null)]
+        [InlineData(false, 14)]
+        public async Task GetTrialDaysAsync_WhenPriorAccountWithSameEmail_GrantsTrialOnlyIfItHadNoSubscription(
+            bool priorHadSubscription,
+            int? expected
+        )
+        {
+            _transactions.Setup(t => t.HasEverHadSubscriptionAsync(UserId)).ReturnsAsync(false);
+            _priorAccount
+                .Setup(p => p.GetPriorAccountAsync(UserId))
+                .ReturnsAsync(
+                    new AccountAntiAbuseRegistry
+                    {
+                        EmailHash = "hash",
+                        UserId = "deleted-user",
+                        HadSubscription = priorHadSubscription,
+                    }
+                );
+
+            var result = await _sut.GetTrialDaysAsync(UserId);
+
+            result.Should().Be(expected);
+        }
+
+        [Fact]
+        public async Task GetTrialDaysAsync_WhenTrialDisabled_DoesNotQueryTransactions()
+        {
+            var result = await CreateSut(trialPeriodDays: 0).GetTrialDaysAsync(UserId);
+
+            result.Should().BeNull();
+            _transactions.VerifyNoOtherCalls();
+        }
+
+        // ---------- GetTrialSummaryAsync ----------
+
+        [Fact]
+        public async Task GetTrialSummaryAsync_WhenNotTrialing_ReturnsNullWithoutCallingStripe()
+        {
+            _userBillings
+                .Setup(r => r.GetByUserIdAsync(UserId))
+                .ReturnsAsync(
+                    new UserBilling
+                    {
+                        UserId = UserId,
+                        SubscriptionStatus = SubscriptionStatus.Active,
+                        StripeSubscriptionId = "sub_1",
+                    }
+                );
+
+            var result = await _sut.GetTrialSummaryAsync(UserId);
+
+            result.Should().BeNull();
+            _stripeSubscriptions.VerifyNoOtherCalls();
+        }
+
+        [Fact]
+        public async Task GetTrialSummaryAsync_WhenTrialing_ReturnsTrialEndAndRecurringPrice()
+        {
+            var trialEnd = new DateTime(2026, 11, 17, 0, 0, 0, DateTimeKind.Utc);
+            _userBillings
+                .Setup(r => r.GetByUserIdAsync(UserId))
+                .ReturnsAsync(
+                    new UserBilling
+                    {
+                        UserId = UserId,
+                        SubscriptionStatus = SubscriptionStatus.Trialing,
+                        StripeSubscriptionId = "sub_1",
+                    }
+                );
+            _stripeSubscriptions
+                .Setup(s =>
+                    s.GetAsync(
+                        "sub_1",
+                        It.IsAny<Stripe.SubscriptionGetOptions>(),
+                        It.IsAny<Stripe.RequestOptions>(),
+                        It.IsAny<System.Threading.CancellationToken>()
+                    )
+                )
+                .ReturnsAsync(
+                    new Stripe.Subscription
+                    {
+                        Id = "sub_1",
+                        TrialEnd = trialEnd,
+                        CancelAtPeriodEnd = true,
+                        Items = new Stripe.StripeList<Stripe.SubscriptionItem>
+                        {
+                            Data = new List<Stripe.SubscriptionItem>
+                            {
+                                new()
+                                {
+                                    Price = new Stripe.Price
+                                    {
+                                        UnitAmount = 6900,
+                                        Currency = "pln",
+                                        Recurring = new Stripe.PriceRecurring
+                                        {
+                                            Interval = "month",
+                                            IntervalCount = 3,
+                                        },
+                                    },
+                                },
+                            },
+                        },
+                    }
+                );
+
+            var result = await _sut.GetTrialSummaryAsync(UserId);
+
+            result.Should().Be(new TrialSummary(trialEnd, 6900, "pln", "month", 3, true));
         }
 
         // ---------- CreateCustomerPortalSessionAsync ----------

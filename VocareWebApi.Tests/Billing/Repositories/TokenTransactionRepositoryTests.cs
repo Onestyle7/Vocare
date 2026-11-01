@@ -137,5 +137,88 @@ namespace VocareWebApi.Tests.Billing.Repositories
                 .Should()
                 .ThrowAsync<ArgumentException>();
         }
+
+        // ---------- HasEverHadSubscriptionAsync ----------
+
+        private async Task SeedAsync(
+            string userId,
+            string serviceName,
+            TransactionType type,
+            DateTime? createdAt = null
+        )
+        {
+            _context.TokenTransactions.Add(
+                new TokenTransaction
+                {
+                    UserId = userId,
+                    ServiceName = serviceName,
+                    Amount = 0,
+                    Type = type,
+                    CreatedAt = createdAt ?? DateTime.UtcNow,
+                }
+            );
+            await _context.SaveChangesAsync();
+            _context.ChangeTracker.Clear();
+        }
+
+        [Theory]
+        [InlineData("SubscriptionActivated-Monthly")]
+        [InlineData("SubscriptionActivated-Quarterly")]
+        public async Task HasEverHadSubscriptionAsync_WithSubscriptionActivation_ReturnsTrue(
+            string serviceName
+        )
+        {
+            await SeedAsync("user-1", serviceName, TransactionType.Purchase);
+
+            (await _sut.HasEverHadSubscriptionAsync("user-1")).Should().BeTrue();
+        }
+
+        [Fact]
+        public async Task HasEverHadSubscriptionAsync_WithOnlyTokenPurchasesOrOtherUsers_ReturnsFalse()
+        {
+            await SeedAsync("user-1", "TokenPurchase-Personal", TransactionType.Purchase);
+            await SeedAsync("user-2", "SubscriptionActivated-Monthly", TransactionType.Purchase);
+
+            (await _sut.HasEverHadSubscriptionAsync("user-1")).Should().BeFalse();
+        }
+
+        // ---------- GetFirstTransactionDateAsync ----------
+
+        [Fact]
+        public async Task GetFirstTransactionDateAsync_ReturnsEarliestDateOfGivenType()
+        {
+            var first = new DateTime(2026, 10, 1, 8, 0, 0, DateTimeKind.Utc);
+            await SeedAsync(
+                "user-1",
+                "ConsentDiscount-Granted",
+                TransactionType.ConsentDiscountGranted,
+                first.AddDays(3)
+            );
+            await SeedAsync(
+                "user-1",
+                "ConsentDiscount-Granted",
+                TransactionType.ConsentDiscountGranted,
+                first
+            );
+            await SeedAsync("user-1", "x", TransactionType.Usage, first.AddDays(-5));
+
+            var result = await _sut.GetFirstTransactionDateAsync(
+                "user-1",
+                TransactionType.ConsentDiscountGranted
+            );
+
+            result.Should().Be(first);
+        }
+
+        [Fact]
+        public async Task GetFirstTransactionDateAsync_WhenNoTransaction_ReturnsNull()
+        {
+            var result = await _sut.GetFirstTransactionDateAsync(
+                "user-1",
+                TransactionType.ConsentDiscountGranted
+            );
+
+            result.Should().BeNull();
+        }
     }
 }

@@ -2,9 +2,7 @@ using System.Text;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 using Microsoft.Extensions.Options;
-using Pgvector.EntityFrameworkCore;
 using UglyToad.PdfPig;
-using VocareWebAPI.Billing.Models.Enums;
 using VocareWebAPI.Billing.Repositories.Interfaces;
 using VocareWebAPI.CareerAdvisor.Services.Interfaces;
 using VocareWebAPI.Models.Dtos;
@@ -60,8 +58,7 @@ namespace VocareWebAPI.CareerAdvisor.Services.Implementations
                 throw new FileSizeExceededException(file.Length, MaxFileSizeBytes);
 
             var userBilling = await _userBillingRepository.GetByUserIdAsync(userId);
-            var hasActiveSubscription =
-                userBilling?.SubscriptionStatus == SubscriptionStatus.Active;
+            var hasActiveSubscription = userBilling.HasPremiumAccess;
 
             if (!hasActiveSubscription)
             {
@@ -142,53 +139,53 @@ namespace VocareWebAPI.CareerAdvisor.Services.Implementations
                     result.Country = "Poland";
                 }
 
-                if(result.Education != null)
+                if (result.Education != null)
                 {
-                    foreach(var record in result.Education)
+                    foreach (var record in result.Education)
                     {
                         record.Institution ??= string.Empty;
                         record.Degree ??= string.Empty;
                         record.Field ??= string.Empty;
                     }
-                    result.Education = result.Education
-                        .Where(e => !string.IsNullOrWhiteSpace(e.Institution))
+                    result.Education = result
+                        .Education.Where(e => !string.IsNullOrWhiteSpace(e.Institution))
                         .ToList();
                 }
 
-                if(result.WorkExperience != null)
+                if (result.WorkExperience != null)
                 {
-                    foreach(var record in result.WorkExperience)
+                    foreach (var record in result.WorkExperience)
                     {
                         record.Company ??= string.Empty;
                         record.Position ??= string.Empty;
                         record.Description ??= string.Empty;
                         record.Responsibilities ??= new List<string>();
-                    } 
-                    result.WorkExperience = result.WorkExperience
-                        .Where(w => !string.IsNullOrWhiteSpace(w.Company))
+                    }
+                    result.WorkExperience = result
+                        .WorkExperience.Where(w => !string.IsNullOrWhiteSpace(w.Company))
                         .ToList();
                 }
 
-                if(result.Certificates != null)
+                if (result.Certificates != null)
                 {
-                    foreach(var record in result.Certificates)
+                    foreach (var record in result.Certificates)
                     {
                         record.Name ??= string.Empty;
                     }
-                    result.Certificates = result.Certificates
-                        .Where(c => !string.IsNullOrWhiteSpace(c.Name))
+                    result.Certificates = result
+                        .Certificates.Where(c => !string.IsNullOrWhiteSpace(c.Name))
                         .ToList();
                 }
 
-                if(result.Languages != null)
+                if (result.Languages != null)
                 {
-                    foreach(var record in result.Languages)
+                    foreach (var record in result.Languages)
                     {
                         record.Language ??= string.Empty;
                         record.Level ??= string.Empty;
                     }
-                    result.Languages = result.Languages
-                        .Where(l => !string.IsNullOrWhiteSpace(l.Language))
+                    result.Languages = result
+                        .Languages.Where(l => !string.IsNullOrWhiteSpace(l.Language))
                         .ToList();
                 }
 
