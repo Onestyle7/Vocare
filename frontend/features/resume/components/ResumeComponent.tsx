@@ -150,6 +150,12 @@ const DEFAULT_PERSONAL_INFO: PersonalInfo = {
   summary: '',
 };
 
+// The privacy clause closes a CV, so it stays last whatever order was saved or dragged.
+const pinPrivacyLast = (order: string[]): string[] => [
+  ...order.filter((id) => id !== 'privacy'),
+  'privacy',
+];
+
 const mergeSectionOrder = (value: unknown): string[] => {
   if (!Array.isArray(value)) {
     return [...DEFAULT_SECTION_ORDER];
@@ -179,7 +185,7 @@ const mergeSectionOrder = (value: unknown): string[] => {
     mergedOrder.splice(mergedOrder.indexOf(nextKnownSection), 0, id);
   });
 
-  return mergedOrder;
+  return pinPrivacyLast(mergedOrder);
 };
 
 const normalizeExternalUrl = (value: string) => {
@@ -724,7 +730,7 @@ const CVCreator: React.FC<CVCreatorProps> = ({ initialCv, initialLimits = null }
     currentOrder.splice(draggedIndex, 1);
     currentOrder.splice(targetIndex, 0, draggedSection);
 
-    setSectionOrder(currentOrder);
+    setSectionOrder(pinPrivacyLast(currentOrder));
     setDraggedSection(null);
     setDragOverSection(null);
   };
@@ -3602,39 +3608,13 @@ const CVCreator: React.FC<CVCreatorProps> = ({ initialCv, initialLimits = null }
             key="privacy"
             className={`mb-6 rounded-lg bg-gray-50 p-4 transition-all lg:p-6 ${
               dragOverSection === 'privacy' ? 'bg-blue-50 ring-2 ring-blue-400' : ''
-            } ${draggedSection === 'privacy' ? 'opacity-50' : ''}`}
-            draggable
-            onDragStart={(e) => handleSectionDragStart(e, 'privacy')}
+            }`}
             onDragOver={(e) => handleSectionDragOver(e, 'privacy')}
             onDragLeave={handleSectionDragLeave}
             onDrop={(e) => handleSectionDrop(e, 'privacy')}
-            onDragEnd={handleSectionDragEnd}
           >
             <div className="mb-4 flex items-center justify-between">
               <h2 className="flex items-center text-lg font-semibold text-gray-700">
-                <span
-                  className="mr-2 cursor-grab text-gray-400"
-                  data-drag-handle="true"
-                  role="button"
-                  tabIndex={0}
-                  aria-label="Drag section"
-                  onMouseDown={() => {
-                    dragIntentSectionRef.current = 'privacy';
-                  }}
-                  onMouseUp={() => {
-                    dragIntentSectionRef.current = null;
-                  }}
-                  onKeyDown={(event) => {
-                    if (event.key === 'Enter' || event.key === ' ') {
-                      dragIntentSectionRef.current = 'privacy';
-                    }
-                  }}
-                  onKeyUp={() => {
-                    dragIntentSectionRef.current = null;
-                  }}
-                >
-                  <GripVertical size={20} />
-                </span>
                 <PencilLine className="mr-2" size={20} />
                 Klauzula informacyjna
               </h2>

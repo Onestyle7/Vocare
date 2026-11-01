@@ -242,7 +242,7 @@ export function PrimaryButton({
 
 /**
  * Footer of an entry sheet: save, plus delete and reorder when editing an
- * existing item.
+ * existing item. Reordering saves the sheet's edits first, as Zapisz does.
  */
 export function EntryFooter({
   onSave,
@@ -257,6 +257,11 @@ export function EntryFooter({
   onMoveUp?: () => void;
   onMoveDown?: () => void;
 }) {
+  const saveThen = (move: () => void) => () => {
+    onSave();
+    move();
+  };
+
   return (
     <div className="space-y-2">
       <PrimaryButton onClick={onSave} disabled={!canSave}>
@@ -279,9 +284,10 @@ export function EntryFooter({
             {onMoveUp && (
               <button
                 type="button"
-                onClick={onMoveUp}
+                onClick={saveThen(onMoveUp)}
+                disabled={!canSave}
                 aria-label="Przesuń wyżej"
-                className="text-muted-foreground active:bg-muted flex h-10 w-10 cursor-pointer items-center justify-center rounded-full"
+                className="text-muted-foreground active:bg-muted flex h-10 w-10 cursor-pointer items-center justify-center rounded-full disabled:cursor-not-allowed disabled:opacity-40"
               >
                 <ChevronUp className="h-5 w-5" />
               </button>
@@ -289,9 +295,10 @@ export function EntryFooter({
             {onMoveDown && (
               <button
                 type="button"
-                onClick={onMoveDown}
+                onClick={saveThen(onMoveDown)}
+                disabled={!canSave}
                 aria-label="Przesuń niżej"
-                className="text-muted-foreground active:bg-muted flex h-10 w-10 cursor-pointer items-center justify-center rounded-full"
+                className="text-muted-foreground active:bg-muted flex h-10 w-10 cursor-pointer items-center justify-center rounded-full disabled:cursor-not-allowed disabled:opacity-40"
               >
                 <ChevronDown className="h-5 w-5" />
               </button>
