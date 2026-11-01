@@ -39,6 +39,7 @@ export const DatePickerWithCurrent: React.FC<DatePickerWithCurrentProps> = ({
   const [isOpen, setIsOpen] = React.useState(false);
   const [captionLayout] = React.useState<CaptionLayout>('dropdown');
   const checkboxId = React.useId();
+  const touchSwitchId = React.useId();
   // Local mirror to ensure immediate visual feedback on Switch
   const [currentChecked, setCurrentChecked] = React.useState<boolean>(isCurrent);
   React.useEffect(() => {
@@ -94,6 +95,11 @@ export const DatePickerWithCurrent: React.FC<DatePickerWithCurrentProps> = ({
     return new Date(maxYear, 11);
   }, [allowFutureDates, selectedDate]);
 
+  // Natywny input miesiąca operuje na YYYY-MM; brak przyszłych dat = najpóźniej bieżący miesiąc
+  const nativeMax = allowFutureDates
+    ? undefined
+    : `${new Date().getFullYear()}-${String(new Date().getMonth() + 1).padStart(2, '0')}`;
+
   const displayText = currentChecked
     ? toggledButtonText
     : value
@@ -103,20 +109,36 @@ export const DatePickerWithCurrent: React.FC<DatePickerWithCurrentProps> = ({
   return (
     <div className="force-light-theme w-full min-w-0">
       <Popover open={isOpen} onOpenChange={setIsOpen}>
-        <PopoverTrigger asChild>
-          <Button
-            variant="outline"
-            className={`h-12 w-full min-w-0 justify-start overflow-hidden rounded-sm text-left font-normal ${disabled ? 'cursor-not-allowed opacity-50' : ''} ${
-              !value && !isCurrent ? 'text-muted-foreground' : ''
-            }`}
-            disabled={disabled}
+        <div className="relative">
+          <PopoverTrigger asChild>
+            <Button
+              variant="outline"
+              className={`h-12 w-full min-w-0 justify-start overflow-hidden rounded-sm text-left font-normal ${disabled ? 'cursor-not-allowed opacity-50' : ''} ${
+                !value && !isCurrent ? 'text-muted-foreground' : ''
+              }`}
+              disabled={disabled}
+              aria-label={displayText}
+              title={displayText}
+            >
+              <CalendarIcon className="h-4 w-4 shrink-0" />
+              <span className="min-w-0 truncate">{displayText}</span>
+            </Button>
+          </PopoverTrigger>
+
+          {/* Na ekranach dotykowych przezroczysty natywny input przykrywa przycisk, więc tapnięcie
+              otwiera systemowy wybór miesiąca (koło w iOS, okno w Androidzie) zamiast kalendarza.
+              text-base, bo iOS przybliża stronę przy fokusie na polu z czcionką poniżej 16px */}
+          <input
+            type="month"
+            value={value ? value.slice(0, 7) : ''}
+            min="1900-01"
+            max={nativeMax}
+            onChange={(e) => onChange(e.target.value ? `${e.target.value}-01` : '')}
+            disabled={disabled || currentChecked}
             aria-label={displayText}
-            title={displayText}
-          >
-            <CalendarIcon className="h-4 w-4 shrink-0" />
-            <span className="min-w-0 truncate">{displayText}</span>
-          </Button>
-        </PopoverTrigger>
+            className="absolute inset-0 hidden h-full w-full cursor-pointer text-base opacity-0 pointer-coarse:block"
+          />
+        </div>
 
         <PopoverContent
           align="start"
@@ -160,6 +182,21 @@ export const DatePickerWithCurrent: React.FC<DatePickerWithCurrentProps> = ({
           </div>
         </PopoverContent>
       </Popover>
+
+      {/* Na dotyku popover się nie otwiera, więc przełącznik ląduje pod polem */}
+      {showCurrentToggle && (
+        <div className="mt-2 hidden items-center gap-3 px-1 pointer-coarse:flex">
+          <Label htmlFor={touchSwitchId} className="font-korbin text-sm">
+            {toggleLabel}
+          </Label>
+          <Switch
+            id={touchSwitchId}
+            checked={currentChecked}
+            onCheckedChange={(checked) => handleCurrentToggle(checked)}
+            disabled={disabled}
+          />
+        </div>
+      )}
     </div>
   );
 };

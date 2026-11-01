@@ -297,3 +297,26 @@ describe('ResumeComponent item reordering', () => {
     expect(JSON.parse(localStorage.getItem('sectionOrder') ?? '[]')).toEqual(sectionOrder);
   });
 });
+
+describe('ResumeComponent section order', () => {
+  it('keeps the privacy clause last even when a stored order moved it up', async () => {
+    localStorage.setItem(
+      'sectionOrder',
+      JSON.stringify(['privacy', ...sectionOrder.filter((id) => id !== 'privacy')])
+    );
+
+    render(<ResumeComponent />);
+
+    await waitFor(() => {
+      expect(JSON.parse(localStorage.getItem('sectionOrder') ?? '[]')).toEqual(sectionOrder);
+    });
+
+    const formSectionIds = Array.from(document.querySelectorAll('[data-cv-form-section]')).map(
+      (section) => section.getAttribute('data-cv-form-section')
+    );
+    expect(formSectionIds).toEqual(['contact', ...sectionOrder]);
+    expect(
+      document.querySelector('[data-cv-form-section="privacy"] [data-drag-handle="true"]')
+    ).toBeNull();
+  });
+});
