@@ -56,19 +56,51 @@ const TRIAL_PERIOD_LABELS: Record<string, string> = {
   year: 'rok',
 };
 
+const TRIAL_END_TIME_FORMATTER = new Intl.DateTimeFormat('pl-PL', {
+  hour: '2-digit',
+  minute: '2-digit',
+  timeZone: 'Europe/Warsaw',
+});
+
 /**
- * Opis trwającego okresu próbnego w panelu płatności: do kiedy trwa i ile zapłaci
+ * Rozdziela ostatni dzień triala od dnia pierwszej płatności. Trial kończy się zwykle o północy
+ * czasu polskiego (po upływie terminu na odstąpienie), więc sama data końca („do 17.11”)
+ * czytana jest jako „17.11 włącznie”, choć płatność pobierana jest 17.11 o 00:00.
+ */
+export function describeTrialEnd(trialEndIso: string) {
+  const trialEnd = new Date(trialEndIso);
+  const paymentDay = TRIAL_END_FORMATTER.format(trialEnd);
+  const time = TRIAL_END_TIME_FORMATTER.format(trialEnd);
+
+  if (time === '00:00') {
+    const lastDay = TRIAL_END_FORMATTER.format(new Date(trialEnd.getTime() - 1));
+    return {
+      trialUntil: `do ${lastDay} włącznie`,
+      paymentOn: paymentDay,
+      cancelBy: `najpóźniej ${lastDay}`,
+    };
+  }
+
+  return {
+    trialUntil: `do ${paymentDay}, ${time}`,
+    paymentOn: `${paymentDay} o ${time}`,
+    cancelBy: `przed ${paymentDay}, ${time}`,
+  };
+}
+
+/**
+ * Opis trwającego okresu próbnego w panelu płatności: do kiedy trwa, kiedy i ile zapłaci
  * użytkownik po jego końcu – albo że nic, jeśli już anulował.
  */
 export function getTrialStatusText(trial: TrialSummary) {
-  const trialEnd = TRIAL_END_FORMATTER.format(new Date(trial.trialEnd));
+  const { trialUntil, paymentOn, cancelBy } = describeTrialEnd(trial.trialEnd);
 
   if (trial.cancelAtPeriodEnd) {
-    return `Okres próbny do ${trialEnd}. Subskrypcja jest anulowana – nie pobierzemy żadnej opłaty.`;
+    return `Okres próbny ${trialUntil}. Subskrypcja jest anulowana – nie pobierzemy żadnej opłaty.`;
   }
 
   if (trial.nextPaymentAmount === null) {
-    return `Okres próbny do ${trialEnd}, potem płatność zgodnie z Cennikiem. Anuluj wcześniej, jeśli nie chcesz płacić.`;
+    return `Okres próbny ${trialUntil}. ${paymentOn} pobierzemy pierwszą płatność zgodnie z Cennikiem – anuluj ${cancelBy}, jeśli nie chcesz płacić.`;
   }
 
   const price = new Intl.NumberFormat('pl-PL', {
@@ -80,7 +112,7 @@ export function getTrialStatusText(trial: TrialSummary) {
   const periodLabel = TRIAL_PERIOD_LABELS[trial.interval] ?? trial.interval;
   const period = trial.intervalCount > 1 ? `${trial.intervalCount} ${periodLabel}` : periodLabel;
 
-  return `Okres próbny do ${trialEnd}, potem ${price}/${period} – anuluj wcześniej, jeśli nie chcesz płacić.`;
+  return `Okres próbny ${trialUntil}. ${paymentOn} pobierzemy ${price}/${period} – anuluj ${cancelBy}, jeśli nie chcesz płacić.`;
 }
 
 export const PAYMENT_DATE_FORMATTER = new Intl.DateTimeFormat('pl-PL', {

@@ -19,6 +19,7 @@ import {
 } from '@/components/ui/card';
 import { Switch } from '@/components/ui/switch';
 import { useTokenBalanceContext } from '@/features/billing/components/SubscriptionTokenProvider';
+import { CONSENT_DISCOUNT_OFFER } from '@/features/billing/constants';
 import { useBillingActions } from '@/features/billing/hooks/useBillingActions';
 import { useMarketingActions } from '@/features/marketing/hooks/useMarketingActions';
 
@@ -195,8 +196,7 @@ export default function PaymentsDashboardClient({
                     </p>
                     {!marketingConsent && (
                       <p className="text-xs font-medium text-[#915EFF]">
-                        Przy pierwszym wyrażeniu zgody otrzymasz jednorazowo rabat na pakiet
-                        tokenów.
+                        Przy pierwszym wyrażeniu zgody otrzymasz {CONSENT_DISCOUNT_OFFER}.
                       </p>
                     )}
                   </div>

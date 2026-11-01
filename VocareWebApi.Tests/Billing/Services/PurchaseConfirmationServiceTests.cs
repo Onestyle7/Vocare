@@ -57,7 +57,9 @@ namespace VocareWebApi.Tests.Billing.Services
             );
         }
 
-        private static readonly DateTime TrialEnd = new(2026, 10, 21, 10, 0, 0, DateTimeKind.Utc);
+        // Koniec triala o północy czasu polskiego (po upływie terminu na odstąpienie):
+        // 17.11.2026 00:00 CET = 16.11.2026 23:00 UTC
+        private static readonly DateTime TrialEnd = new(2026, 11, 16, 23, 0, 0, DateTimeKind.Utc);
 
         private static SubscriptionDetails Monthly(DateTime? trialEnd = null) =>
             new(trialEnd, 2900, "pln", "month", 1);
@@ -119,16 +121,32 @@ namespace VocareWebApi.Tests.Billing.Services
             );
 
             body.Should().Contain("bezpłatny okres próbny");
-            body.Should().Contain("Cena: 0,00 PLN do 21.10.2026, następnie 29,00 PLN co miesiąc");
-            body.Should().Contain("Data pierwszej płatności: 21.10.2026 12:00");
             body.Should()
-                .Contain("Jeśli anulujesz subskrypcję przed 21.10.2026 12:00, nie zapłacisz nic");
+                .Contain("Cena: 0,00 PLN do 16.11.2026 włącznie, następnie 29,00 PLN co miesiąc");
+            body.Should().Contain("Data pierwszej płatności: 17.11.2026" + Environment.NewLine);
+            body.Should().Contain("trwa do 16.11.2026 włącznie");
+            body.Should()
+                .Contain("Jeśli anulujesz subskrypcję najpóźniej 16.11.2026, nie zapłacisz nic");
+            body.Should().Contain("W przeciwnym razie 17.11.2026 pobierzemy 29,00 PLN");
             body.Should().Contain("pobierzemy 29,00 PLN");
             body.Should().Contain("Masz 14 dni od zawarcia umowy na odstąpienie");
             body.Should().NotContain("zwrócimy całą wpłatę");
             body.Should().Contain("dostęp zachowasz do końca okresu próbnego");
             body.Should().NotContain("opłaconego okresu");
             body.Should().NotContain("Cena: 0,00 PLN" + Environment.NewLine);
+        }
+
+        [Fact]
+        public void DescribeTrialEnd_WhenTrialEndsAtOtherTime_StatesExactPolishTime()
+        {
+            // 10:00 UTC = 12:00 CEST – bez rozbijania na „ostatni dzień” i „dzień płatności”
+            var wording = PurchaseConfirmationService.DescribeTrialEnd(
+                new DateTime(2026, 10, 21, 10, 0, 0, DateTimeKind.Utc)
+            );
+
+            wording.TrialUntil.Should().Be("do 21.10.2026 12:00");
+            wording.PaymentOn.Should().Be("21.10.2026 12:00");
+            wording.CancelBy.Should().Be("przed 21.10.2026 12:00");
         }
 
         [Fact]
@@ -241,7 +259,7 @@ namespace VocareWebApi.Tests.Billing.Services
 
             sentBody
                 .Should()
-                .Contain("Cena: 0,00 PLN do 21.10.2026, następnie 29,00 PLN co miesiąc");
+                .Contain("Cena: 0,00 PLN do 16.11.2026 włącznie, następnie 29,00 PLN co miesiąc");
         }
 
         [Fact]

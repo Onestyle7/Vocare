@@ -30,7 +30,8 @@ namespace VocareWebAPI.Migrations
                 @"
                     INSERT INTO ""LegalDocuments"" (""Id"", ""Type"", ""Version"", ""ContentPath"", ""IsActive"", ""ValidFrom"", ""CreatedAt"")
                     VALUES (gen_random_uuid(), 'TermsOfService', '2026-11-02', '/terms-of-service/pdf', true, '2026-11-17T00:00:00+01:00', NOW())
-                    ON CONFLICT (""Type"", ""Version"") DO NOTHING;
+                    ON CONFLICT (""Type"", ""Version"") DO UPDATE SET ""IsActive"" = true; -- re-apply after Down
+
                 "
             );
         }
@@ -38,13 +39,13 @@ namespace VocareWebAPI.Migrations
         /// <inheritdoc />
         protected override void Down(MigrationBuilder migrationBuilder)
         {
+            // Rollback deactivates the version instead of deleting it (Legal/README.md § 4) –
+            // user consents to it are proof of acceptance (GDPR art. 7(1)) and must be kept
             migrationBuilder.Sql(
                 @"
-                    DELETE FROM ""UserConsents""
-                    WHERE ""LegalDocumentId"" IN (
-                        SELECT ""Id"" FROM ""LegalDocuments"" WHERE ""Type"" = 'TermsOfService' AND ""Version"" = '2026-11-02'
-                    );
-                    DELETE FROM ""LegalDocuments"" WHERE ""Type"" = 'TermsOfService' AND ""Version"" = '2026-11-02';
+                    UPDATE ""LegalDocuments""
+                    SET ""IsActive"" = false
+                    WHERE ""Type"" = 'TermsOfService' AND ""Version"" = '2026-11-02';
                     UPDATE ""LegalDocuments""
                     SET ""ContentPath"" = '/terms-of-service/pdf'
                     WHERE ""Type"" = 'TermsOfService' AND ""Version"" = '2026-10-13';

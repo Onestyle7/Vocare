@@ -8,6 +8,13 @@ export const ACTIVE_SUBSCRIPTION_STATUSES: SubscriptionStatuses[] = ['Active', '
 // która uwzględnia konfigurację backendu i to, czy konto miało już subskrypcję
 export const DEFAULT_TRIAL_DAYS = 14;
 
+// Rabat za zgodę marketingową – musi zgadzać się z sekcją ConsentDiscount (PercentOff,
+// ValidityDays) w appsettings backendu i z § 9 Regulaminu. Wysokość i ważność rabatu to istotne
+// informacje o ofercie, więc pokazujemy je, zanim użytkownik wyrazi zgodę.
+export const CONSENT_DISCOUNT_PERCENT = 25;
+export const CONSENT_DISCOUNT_VALIDITY_DAYS = 7;
+export const CONSENT_DISCOUNT_OFFER = `jednorazowo ${CONSENT_DISCOUNT_PERCENT}% rabatu na pakiet tokenów, ważny ${CONSENT_DISCOUNT_VALIDITY_DAYS} dni`;
+
 export const ASSISTANT_RECOMMENDATIONS_PRICE = 60;
 export const MARKET_ANALYSIS_PRICE = 50;
 // Backend Roadmap nie korzysta obecnie z BillingService.
@@ -19,13 +26,14 @@ export const pricingPlans: readonly PricingPlan[] = [
     name: 'Free',
     price: 0,
     priceLabel: '/ na zawsze',
-    description:
-      'Kreator CV za darmo. Za zgodę marketingową dostajesz rabat na pierwszy pakiet tokenów.',
+    description: `Kreator CV za darmo. Za zgodę marketingową dostajesz ${CONSENT_DISCOUNT_OFFER}.`,
     // Funkcje AI wymagają tokenów lub subskrypcji – plan darmowy nie zawiera już tokenów na start
     features: [
       { text: 'Nielimitowana edycja i pobieranie CV' },
       { text: 'Do 3 CV na koncie' },
-      { text: 'Rabat na pierwszy pakiet tokenów za zgodę marketingową' },
+      {
+        text: `${CONSENT_DISCOUNT_PERCENT}% rabatu na pakiet tokenów za zgodę marketingową (ważny ${CONSENT_DISCOUNT_VALIDITY_DAYS} dni)`,
+      },
     ],
     ctaLabel: 'Zarejestruj się za darmo',
     microcopy: 'Start w 2 minuty.',

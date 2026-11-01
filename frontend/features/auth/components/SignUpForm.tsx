@@ -21,6 +21,7 @@ import {
 } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
 import { register } from '@/features/auth/dal/commands';
+import { CONSENT_DISCOUNT_OFFER } from '@/features/billing/constants';
 import { getRegistrationToastMessage } from '@/features/marketing/utils/welcomeBonus';
 
 import { SignUpFormType, signUpSchema } from '../dal/schemas';
@@ -206,7 +207,7 @@ export function SignUpForm() {
                       podany adres e-mail. Zgodę mogę wycofać w każdej chwili.
                     </FormLabel>
                     <p className="text-xs font-medium text-[#915EFF]">
-                      W podziękowaniu za zgodę otrzymasz rabat na pierwszy pakiet tokenów.
+                      W podziękowaniu za zgodę otrzymasz {CONSENT_DISCOUNT_OFFER}.
                     </p>
                   </div>
                 </div>

@@ -1,4 +1,4 @@
-using System.Globalization;
+﻿using System.Globalization;
 using System.Text;
 using Microsoft.Extensions.Options;
 using VocareWebAPI.Billing.Configuration;
@@ -107,10 +107,11 @@ namespace VocareWebAPI.Billing.Services.Implementations
                     ? $"Subskrypcja Premium – odnawiana automatycznie {renewal} do czasu anulowania"
                 : $"Subskrypcja Premium – bezpłatny okres próbny, następnie odnawiana automatycznie {renewal} do czasu anulowania";
 
+            var trialWording = trialEnd is null ? null : DescribeTrialEnd(trialEnd.Value);
+
             var price = FormatAmount(confirmation.AmountTotal, confirmation.Currency);
-            if (trialEnd is not null && recurringPrice is not null)
-                price =
-                    $"{price} do {FormatDay(trialEnd.Value)}, następnie {recurringPrice} {renewal}";
+            if (trialWording is not null && recurringPrice is not null)
+                price = $"{price} {trialWording.TrialUntil}, następnie {recurringPrice} {renewal}";
             else if (isSubscription && recurringPrice is not null)
                 price = $"{recurringPrice} {renewal}";
 
@@ -122,14 +123,14 @@ namespace VocareWebAPI.Billing.Services.Implementations
                 .AppendLine($"Usługa: {confirmation.PackageName} ({serviceDescription})")
                 .AppendLine($"Cena: {price}");
 
-            if (trialEnd is not null)
-                body.AppendLine($"Data pierwszej płatności: {FormatDate(trialEnd.Value)}");
+            if (trialWording is not null)
+                body.AppendLine($"Data pierwszej płatności: {trialWording.PaymentOn}");
 
             body.AppendLine($"Data zawarcia umowy: {FormatDate(confirmation.PurchasedAtUtc)}")
                 .AppendLine($"Numer zamówienia: {confirmation.SessionId}")
                 .AppendLine();
 
-            if (trialEnd is not null)
+            if (trialWording is not null)
             {
                 // Przy trialu wpłata wynosi 0 zł – nie obiecujemy zwrotu, tylko opisujemy
                 // jak uniknąć pierwszej płatności
@@ -137,7 +138,7 @@ namespace VocareWebAPI.Billing.Services.Implementations
                     ? "pobierzemy pierwszą płatność zgodnie z Cennikiem"
                     : $"pobierzemy {recurringPrice}";
                 body.AppendLine(
-                        $"Okres próbny jest bezpłatny. Jeśli anulujesz subskrypcję przed {FormatDate(trialEnd.Value)}, nie zapłacisz nic. W przeciwnym razie tego dnia {chargeInfo}, a subskrypcja będzie odnawiana automatycznie {renewal}."
+                        $"Okres próbny jest bezpłatny i trwa {trialWording.TrialUntil}. Jeśli anulujesz subskrypcję {trialWording.CancelBy}, nie zapłacisz nic. W przeciwnym razie {trialWording.PaymentOn} {chargeInfo}, a subskrypcja będzie odnawiana automatycznie {renewal}."
                     )
                     .AppendLine()
                     .AppendLine(
@@ -209,6 +210,30 @@ namespace VocareWebAPI.Billing.Services.Implementations
 
             var amount = amountTotal.Value / 100m;
             return $"{amount.ToString("N2", Polish)} {(currency ?? "pln").ToUpperInvariant()}";
+        }
+
+        /// <summary>Opis końca triala w mailu (ostatni dzień, dzień płatności, termin anulowania).</summary>
+        public record TrialEndWording(string TrialUntil, string PaymentOn, string CancelBy);
+
+        /// <summary>
+        /// Rozdziela ostatni dzień triala od dnia pierwszej płatności. Trial kończy się zwykle
+        /// o północy czasu polskiego (po upływie terminu na odstąpienie) – „do 17.11” byłoby
+        /// czytane jako „17.11 włącznie”, choć płatność jest pobierana 17.11 o 00:00.
+        /// </summary>
+        public static TrialEndWording DescribeTrialEnd(DateTime trialEndUtc)
+        {
+            var trialEnd = FormatDate(trialEndUtc);
+            if (trialEnd.EndsWith(" 00:00"))
+            {
+                var lastDay = FormatDay(trialEndUtc.AddTicks(-1));
+                return new(
+                    $"do {lastDay} włącznie",
+                    FormatDay(trialEndUtc),
+                    $"najpóźniej {lastDay}"
+                );
+            }
+
+            return new($"do {trialEnd}", trialEnd, $"przed {trialEnd}");
         }
 
         private static string FormatDay(DateTime utc) => FormatDate(utc)[..10];
