@@ -1,4 +1,5 @@
 import Image from 'next/image';
+import type { ExtraProps } from 'react-markdown';
 
 import {
   BlockquoteProps,
@@ -22,7 +23,9 @@ import {
   TableProps,
   TableRowProps,
 } from '../types';
+import { isArticleWidgetName } from '../utils/articleWidgets';
 import { getImageSizeFromTitle } from '../utils/blogUtils';
+import ArticleWidget from './ArticleWidget';
 
 export function H1(props: HeadingProps) {
   return <h1 className="mt-10 mb-8 text-center text-4xl font-bold md:text-5xl" {...props} />;
@@ -93,7 +96,28 @@ export function Code(props: CodeProps) {
   return <code className="bg-muted rounded px-1.5 py-0.5 text-sm" {...props} />;
 }
 
-export function Pre(props: PreProps) {
+function getArticleWidgetName(node: ExtraProps['node']) {
+  const code = node?.children[0];
+  if (code?.type !== 'element' || code.tagName !== 'code') return null;
+
+  const classNames = code.properties.className;
+  if (!Array.isArray(classNames) || !classNames.includes('language-vocare-widget')) return null;
+
+  const text = code.children[0];
+  const name = text?.type === 'text' ? text.value.trim() : '';
+  return isArticleWidgetName(name) ? name : null;
+}
+
+export function Pre({ node, ...props }: PreProps & ExtraProps) {
+  const widgetName = getArticleWidgetName(node);
+  if (widgetName) {
+    return (
+      <div className="my-8">
+        <ArticleWidget name={widgetName} />
+      </div>
+    );
+  }
+
   return <pre className="bg-muted/60 my-6 overflow-x-auto rounded-xl p-4 text-sm" {...props} />;
 }
 

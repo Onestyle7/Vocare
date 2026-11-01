@@ -212,6 +212,7 @@ export const NavLinks: NavLink[] = [
   // { label: 'Kreator', url: '/dashboard/resume', highlighted: true, badge: 'stwórz cv' },
   { label: 'Roadmap', url: '/dashboard/roadmap' },
   { label: 'Kreator', url: '/dashboard/resume' },
+  { label: 'Kalkulator', url: '/salary-calculator' },
 
   { label: 'Pricing', url: '/pricing' },
   { label: 'Blog', url: '/blog' },
@@ -234,7 +235,11 @@ const HeaderNavLinks: HeaderNavLinkConfig[] = [
   { label: 'Roadmap', publicUrl: '/roadmap', authenticatedUrl: '/dashboard/roadmap' },
   { label: 'Kreator', publicUrl: '/resume-creator', authenticatedUrl: '/dashboard/resume' },
   { label: 'Cennik', publicUrl: '/pricing', authenticatedUrl: '/pricing' },
-  { label: 'Preferencje', publicUrl: '/preferences' },
+  {
+    label: 'Kalkulator',
+    publicUrl: '/salary-calculator',
+    authenticatedUrl: '/dashboard/salary-calculator',
+  },
 ];
 
 export const getHeaderNavLinks = (isAuthenticated: boolean): NavLink[] =>
@@ -386,6 +391,7 @@ export const down_links = [
   { name: '2026©', url: '/' },
   { name: 'ZGODY I WARUNKI', url: 'terms-of-service' },
   { name: 'POLITYKA PRYWATNOŚCI', url: 'privacy-policy' },
+  { name: 'PREFERENCJE', url: '/preferences' },
 ];
 
 export const letterImg = '/images/as1.png';
