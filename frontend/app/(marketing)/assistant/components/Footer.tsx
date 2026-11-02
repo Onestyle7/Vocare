@@ -135,6 +135,9 @@ const Footer = () => {
         <Link href="terms-of-service" className="font-regular text-[14px] underline sm:text-[16px]">
           Regulamin
         </Link>
+        <Link href="/preferences" className="font-regular text-[14px] underline sm:text-[16px]">
+          Preferencje
+        </Link>
       </div>
 
       <div

@@ -4,5 +4,6 @@ namespace VocareWebAPI.Billing.Models.Enums
     {
         None,
         Monthly,
+        Quarterly,
     }
 }

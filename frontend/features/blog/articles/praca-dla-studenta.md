@@ -3,7 +3,7 @@ title: 'Praca dla studenta 2026 - najlepsze opcje i jak zacząć'
 description: 'Szukasz pracy jako student? Sprawdź najlepsze opcje pracy dla studentów w 2026 - od staży po freelance - z poradami jak zacząć bez doświadczenia.'
 estimatedReadTime: 9
 date: '2026-04-27'
-updatedAt: '2026-09-09'
+updatedAt: '2026-10-18'
 author: 'Vocare'
 category: 'praca'
 coverImage: '/images/blog/student-work.webp'
@@ -22,7 +22,7 @@ Studia i praca jednocześnie. Brzmi jak przepis na stres i niedosypianie. Ale pa
 
 ## Ile godzin można pracować jako student?
 
-**Student do 26. roku życia** korzysta z ważnego przywileju: jest zwolniony z ZUS i zaliczki na PIT przy umowie zlecenia (do określonego progu przychodów w ramach ulgi dla młodych). To sprawia, że student na umowie zlecenia dostaje "na rękę" tyle co brutto - pracodawca też jest na tym benefitujący.
+**Student do 26. roku życia** korzysta z ważnego przywileju: przy umowie zlecenia [nie opłaca się za niego składek ZUS](https://zielonalinia.gov.pl/praca-studenta-a-skladki-do-zus/) (społecznych ani zdrowotnej), a dzięki [uldze dla młodych](https://www.podatki.gov.pl/ulgi-i-odliczenia/ulga-dla-mlodych-pit) nie płaci PIT od przychodów do 85 528 zł rocznie. To sprawia, że student na umowie zlecenia dostaje "na rękę" tyle co brutto - pracodawca też na tym zyskuje, bo nie płaci swojej części składek. Wyjątek: zwolnienie ze składek nie działa, gdy zlecenie podpisujesz z własnym pracodawcą.
 
 **Ile godzin realnie?**
 
@@ -146,7 +146,7 @@ Kilka zasad, które faktycznie działają:
 ## FAQ - praca dla studenta
 
 **Czy jako student mogę założyć własną działalność?**
-Tak - jednoosobowa działalność gospodarcza lub działalność nierejestrowana (do 3225 zł miesięcznie w 2026) są dostępne dla studentów. Nierejestrowana nie wymaga ZUS ani KRS.
+Tak - jednoosobowa działalność gospodarcza lub [działalność nierejestrowana](https://www.biznes.gov.pl/pl/portal/00115) (w 2026 roku przychód do 10 813,50 zł na kwartał) są dostępne dla studentów. Nierejestrowana nie wymaga wpisu do CEIDG, a z jej tytułu nie opłacasz składek ZUS.
 
 **Czy pracodawca może mnie zwolnić bo mam sesję?**
 Przy umowie zlecenia - technicznie tak (to nie umowa o pracę z ochroną). Dlatego warto wybrać pracodawców, którzy wprost deklarują elastyczność wobec studentów.

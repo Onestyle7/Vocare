@@ -82,6 +82,11 @@ namespace VocareWebAPI.Extensions.ServiceCollectionExtensions
             services.AddScoped<IBillingService, BillingService>();
             services.AddScoped<IStripeService, StripeService>();
             services.AddScoped<IPurchaseConfirmationService, PurchaseConfirmationService>();
+            services.AddScoped<IConsentDiscountService, ConsentDiscountService>();
+            // Klient Stripe korzysta z globalnego StripeConfiguration.ApiKey (Program.cs);
+            // rejestracja w DI pozwala mockować go w testach
+            services.AddScoped<Stripe.SubscriptionService>();
+            services.AddScoped<Stripe.Checkout.SessionService>();
 
             // Other services
             services.AddScoped<IEmailService, EmailService>();
@@ -114,6 +119,7 @@ namespace VocareWebAPI.Extensions.ServiceCollectionExtensions
 
             // Email hashing (anti abuse)
             services.AddScoped<IEmailHashService, EmailHashService>();
+            services.AddScoped<IPriorAccountService, PriorAccountService>();
 
             // End user's IP and User-Agent (forwarded by the Next.js server)
             services.AddHttpContextAccessor();

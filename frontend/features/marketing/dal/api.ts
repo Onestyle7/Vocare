@@ -17,4 +17,6 @@ export type GiveMarketingConsentResponse = {
   message: string;
   welcomeBonusStatus: WelcomeBonusStatus;
   welcomeTokensGranted: number;
+  // Ustawione tylko przy pierwszej zgodzie – ponowna zgoda nie daje kolejnego rabatu
+  consentDiscount: { percentOff: number; expiresAt: string } | null;
 };

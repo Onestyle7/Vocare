@@ -1,5 +1,6 @@
 import fs from 'fs';
 import matter from 'gray-matter';
+import { imageSize } from 'image-size';
 import { env } from 'process';
 import { cache } from 'react';
 import { ZodError } from 'zod';
@@ -118,4 +119,19 @@ export function getImageSizeFromTitle(props: ImageProps) {
     width: Number(match[1]),
     height: Number(match[2]),
   };
+}
+
+/**
+ * Real pixel size of an image from the `public` folder, for og:image width/height.
+ * Returns undefined when the file cannot be read, so metadata simply omits the size.
+ */
+export function getPublicImageSize(
+  publicPath: string
+): { width: number; height: number } | undefined {
+  try {
+    const { width, height } = imageSize(fs.readFileSync(`public${publicPath}`));
+    return { width, height };
+  } catch {
+    return undefined;
+  }
 }

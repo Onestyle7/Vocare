@@ -9,6 +9,16 @@ import { salaryFormatter } from '@/lib/utils/number-utils';
 import { SalaryProgressResult } from '../dal/api';
 import { DashboardCard, DashboardCardContent, DashboardCardTitle } from './dashboard-card';
 
+// Zaokrąglone końce segmentów (recharts przycina do połowy grubości pierścienia) i przerwa między nimi
+const ROUNDED_SEGMENT_PROPS = { cornerRadius: '50%', paddingAngle: 4 } as const;
+
+// Pie przekazuje do segmentów pola z danych, więc forceCornerRadius musi być w każdym wpisie —
+// dzięki niemu segment krótszy niż grubość pierścienia rysuje się jako kropka, a nie kwadrat
+const toProgressSegments = (percentage: number) => [
+  { value: percentage, color: 'var(--dashboard-primary, #8b5cf6)', forceCornerRadius: true },
+  { value: 100 - percentage, color: '#1f1f2e', forceCornerRadius: true },
+];
+
 export default function ProgressDoubleCard({
   profileCompletionPercentage = 82,
   salaryStats,
@@ -18,22 +28,8 @@ export default function ProgressDoubleCard({
   profileCompletionPercentage: number;
   salaryStats?: SalaryProgressResult | null;
 } & React.ComponentProps<typeof DashboardCard>) {
-  const profileData = [
-    { value: profileCompletionPercentage, color: 'var(--dashboard-primary, #8b5cf6)' },
-    { value: 100 - profileCompletionPercentage, color: '#1f1f2e' },
-  ];
-
-  let salaryData = [
-    { value: 0, color: 'var(--dashboard-primary, #8b5cf6)' },
-    { value: 100, color: '#1f1f2e' },
-  ];
-
-  if (salaryStats) {
-    salaryData = [
-      { value: salaryStats.goalCompletionPercentage, color: 'var(--dashboard-primary, #8b5cf6)' },
-      { value: 100 - salaryStats.goalCompletionPercentage, color: '#1f1f2e' },
-    ];
-  }
+  const profileData = toProgressSegments(profileCompletionPercentage);
+  const salaryData = toProgressSegments(salaryStats?.goalCompletionPercentage ?? 0);
 
   return (
     <DashboardCard className={cn('px-6 lg:px-0', className)} {...props}>
@@ -59,6 +55,7 @@ export default function ProgressDoubleCard({
                   endAngle={-360}
                   dataKey="value"
                   stroke="none"
+                  {...ROUNDED_SEGMENT_PROPS}
                 >
                   {profileData.map((entry, index) => (
                     <Cell key={`cell-${index}`} fill={entry.color} />
@@ -94,6 +91,7 @@ export default function ProgressDoubleCard({
                   endAngle={0}
                   dataKey="value"
                   stroke="none"
+                  {...ROUNDED_SEGMENT_PROPS}
                 >
                   {salaryData.map((entry, index) => (
                     <Cell key={`cell-${index}`} fill={entry.color} />

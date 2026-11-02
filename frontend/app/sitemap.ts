@@ -4,7 +4,7 @@ import env from '@/lib/env/client';
 
 import { ArticleMetadata } from '../features/blog/types';
 import { getArticlesMetadata } from '../features/blog/utils/blogUtils';
-import { ARTICLES_FOLDER } from '../features/blog/utils/constants';
+import { ARTICLES_FOLDER, BLOG_CATEGORIES } from '../features/blog/utils/constants';
 
 type RouteConfig = {
   path: string;
@@ -23,6 +23,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
     { path: '/resume-creator', changeFrequency: 'weekly', priority: 0.8 },
     { path: '/roadmap', changeFrequency: 'weekly', priority: 0.8 },
     { path: '/pricing', changeFrequency: 'weekly', priority: 0.8 },
+    { path: '/salary-calculator', changeFrequency: 'monthly', priority: 0.8 },
     { path: '/privacy-policy', changeFrequency: 'yearly', priority: 0.6 },
     { path: '/terms-of-service', changeFrequency: 'yearly', priority: 0.6 },
     { path: '/blog', changeFrequency: 'weekly', priority: 0.9 },
@@ -41,5 +42,22 @@ export default function sitemap(): MetadataRoute.Sitemap {
     priority: 0.8,
   }));
 
-  return [...staticRoutes, ...articleRoutes];
+  // Empty categories render notFound(), so they must not land in the sitemap
+  const categoryRoutes: MetadataRoute.Sitemap = Object.keys(BLOG_CATEGORIES).flatMap((category) => {
+    const lastModified = articles
+      .filter((article) => article.category === category)
+      .map((article) => article.updatedAt ?? article.date)
+      .sort((a, b) => b.getTime() - a.getTime())[0];
+
+    if (!lastModified) return [];
+
+    return {
+      url: `${baseUrl}/blog/${encodeURIComponent(category)}`,
+      lastModified,
+      changeFrequency: 'weekly' as const,
+      priority: 0.8,
+    };
+  });
+
+  return [...staticRoutes, ...categoryRoutes, ...articleRoutes];
 }

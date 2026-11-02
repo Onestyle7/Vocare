@@ -5,6 +5,7 @@ using VocareWebAPI.JobOffers.Models.Enums;
 using VocareWebAPI.JobOffers.Models.Records;
 using VocareWebAPI.JobOffers.Repositories.Interfaces;
 using VocareWebAPI.JobOffers.Services.Interfaces;
+using VocareWebAPI.Shared.Extensions;
 using VocareWebAPI.Shared.Services.Interfaces;
 
 namespace VocareWebAPI.JobOffers.Services.Implementations
@@ -145,13 +146,10 @@ namespace VocareWebAPI.JobOffers.Services.Implementations
                         {
                             await GenerateEmbeddingForOffer(existing);
                             embeddingGenerated = true;
-                            embeddingGenerated = true;
                         }
 
                         _repository.UpdateInContext(existing, embeddingGenerated);
-                        _repository.UpdateInContext(existing, embeddingGenerated);
                         result.Updated++;
-                        processedInBatch++;
                         processedInBatch++;
                     }
                 }
@@ -277,11 +275,11 @@ namespace VocareWebAPI.JobOffers.Services.Implementations
             {
                 parts.Add($"Kategoria: {offer.Category}");
             }
-            if (!string.IsNullOrWhiteSpace(offer.Description))
+            // Czysty tekst zamiast HTML-a - tagi i inline style (SolidJobs) zjadały limit 1000 znaków
+            var description = offer.Description.ToPlainText();
+            if (description.Length > 0)
             {
-                var description =
-                    offer.Description.Length > 1000 ? offer.Description[..1000] : offer.Description;
-                parts.Add(description);
+                parts.Add(description.Length > 1000 ? description[..1000] : description);
             }
 
             if (offer.Skills != null && offer.Skills.Any())
@@ -309,18 +307,20 @@ namespace VocareWebAPI.JobOffers.Services.Implementations
 
             foreach (var offer in offersWithoutEmbedding)
             {
-                try
+                // GenerateEmbeddingForOffer sam łapie błędy i zostawia Embedding = null
+                await GenerateEmbeddingForOffer(offer);
+                if (offer.Embedding == null)
                 {
-                    await GenerateEmbeddingForOffer(offer);
-                    await _repository.UpdateAsync(offer);
-                    result.Processed++;
-                }
-                catch (Exception ex)
-                {
-                    _logger.LogWarning(ex, "Backfill: błąd dla oferty {Id}", offer.Id);
                     result.Failed++;
+                    continue;
                 }
+
+                // UpdateAsync celowo pomija kolumnę Embedding, więc tutaj embedding by się nie zapisał
+                _repository.UpdateInContext(offer, embeddingGenerated: true);
+                result.Processed++;
             }
+
+            await _repository.SaveChangesAsync();
 
             // Policz ile zostało
             result.Remaining = await _repository.CountOffersWithoutEmbeddingAsync();

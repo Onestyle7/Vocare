@@ -7,15 +7,15 @@ import {
   termsOfServiceSections,
   withdrawalFormAnnex,
 } from '@/features/marketing/constants/terms-of-service';
+import { buildMarketingMetadata } from '@/features/marketing/utils/metadata';
 
-export const metadata: Metadata = {
+export const metadata: Metadata = buildMarketingMetadata({
+  path: '/terms-of-service',
   title: 'Regulamin Serwisu',
   description:
     'Regulamin świadczenia usług drogą elektroniczną w serwisie Vocare. Poznaj warunki korzystania z platformy, zasady płatności, prawo odstąpienia i tryb reklamacji.',
-  alternates: {
-    canonical: '/terms-of-service',
-  },
-};
+  ogAlt: 'Regulamin Serwisu - Vocare',
+});
 
 const TermsOfService = () => {
   return (

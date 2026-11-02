@@ -212,9 +212,14 @@ namespace VocareWebAPI.JobOffers.Services.Implementations
                     );
                 }
 
+                // Kategorie z AI są w camelCase (np. "businessAnalyst") - porównanie musi ignorować wielkość liter,
+                // tak samo jak filtr w SQL (lower(...) = ANY(...))
                 var categoryMatched =
                     filters.Categories != null
-                    && filters.Categories.Contains(offer.Category.ToLower());
+                    && filters.Categories.Contains(
+                        offer.Category,
+                        StringComparer.OrdinalIgnoreCase
+                    );
                 var seniorityMatched =
                     filters.SeniorityLevels != null
                     && filters.SeniorityLevels.Contains(offer.SeniorityLevel);
@@ -258,15 +263,15 @@ namespace VocareWebAPI.JobOffers.Services.Implementations
                         Url = offer.Url,
                         Category = offer.Category,
                         SeniorityLevel = offer.SeniorityLevel.ToString(),
-                        BriefDescription = offer.BriefDescription,
+                        DescriptionPreview = offer.ToDescriptionPreview(),
                         SalaryMin = offer.SalaryMin,
                         SalaryMax = offer.SalaryMax,
                         SalaryCurrency = offer.SalaryCurrency,
-                        Locations =
-                            offer.Locations?.Select(l => l.IsRemote ? "Remote" : l.City).ToList()
-                            ?? new List<string>(),
+                        SalaryPeriod = offer.SalaryPeriod,
+                        Locations = offer.Locations.ToDisplayLocations(),
                         Skills = offer.Skills?.Select(s => s.Name).ToList() ?? new List<string>(),
                         PublishedAt = offer.PublishedAt,
+                        Source = offer.Source,
 
                         MatchScore = finalScore,
                         ConfidenceLevel = confidenceLevel,
@@ -475,15 +480,15 @@ namespace VocareWebAPI.JobOffers.Services.Implementations
                 Url = offer.Url,
                 Category = offer.Category,
                 SeniorityLevel = offer.SeniorityLevel.ToString(),
-                BriefDescription = offer.BriefDescription,
+                DescriptionPreview = offer.ToDescriptionPreview(),
                 SalaryMin = offer.SalaryMin,
                 SalaryMax = offer.SalaryMax,
                 SalaryCurrency = offer.SalaryCurrency,
-                Locations =
-                    offer.Locations?.Select(l => l.IsRemote ? "Remote" : l.City).ToList()
-                    ?? new List<string>(),
+                SalaryPeriod = offer.SalaryPeriod,
+                Locations = offer.Locations.ToDisplayLocations(),
                 Skills = offer.Skills?.Select(s => s.Name).ToList() ?? new List<string>(),
                 PublishedAt = offer.PublishedAt,
+                Source = offer.Source,
             };
         }
 

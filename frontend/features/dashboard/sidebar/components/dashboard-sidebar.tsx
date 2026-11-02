@@ -1,6 +1,7 @@
 'use client';
 import {
   BriefcaseBusiness,
+  Calculator,
   CreditCard,
   FileCheck,
   Info,
@@ -62,6 +63,11 @@ export const SIDEBAR_DATA = {
       name: 'Kreator CV',
       icon: FileCheck,
       to: '/dashboard/resume',
+    },
+    {
+      name: 'Kalkulator',
+      icon: Calculator,
+      to: '/dashboard/salary-calculator',
     },
   ],
   info: [

@@ -51,7 +51,7 @@ namespace VocareWebAPI.RoadmapService.Services.Implementations
         )
         {
             var billing = await _userBillingsRepository.GetByUserIdAsync(userId);
-            var isPremium = billing?.SubscriptionStatus == SubscriptionStatus.Active;
+            var isPremium = billing.HasPremiumAccess;
             var maxRoadmaps = isPremium ? 10 : 1;
             var limit = await _roadmapRepository.CountActiveRoadmapsAsync(userId);
 

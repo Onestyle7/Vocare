@@ -10,7 +10,7 @@ export function parseProfileSummary(profileSummaryResult?: UserProfileSummaryRes
   return [
     {
       icon: BriefcaseBusinessIcon,
-      name: 'Wygenerowane aekomendacje',
+      name: 'Wygenerowane rekomendacje',
       value: recommendationsCount,
     },
     {

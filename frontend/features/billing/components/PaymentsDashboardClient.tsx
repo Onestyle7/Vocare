@@ -19,6 +19,7 @@ import {
 } from '@/components/ui/card';
 import { Switch } from '@/components/ui/switch';
 import { useTokenBalanceContext } from '@/features/billing/components/SubscriptionTokenProvider';
+import { CONSENT_DISCOUNT_OFFER } from '@/features/billing/constants';
 import { useBillingActions } from '@/features/billing/hooks/useBillingActions';
 import { useMarketingActions } from '@/features/marketing/hooks/useMarketingActions';
 
@@ -26,19 +27,22 @@ import {
   formatPaymentAmount,
   getStatusBadgeText,
   getStatusBadgeVariant,
+  getTrialStatusText,
   getTypeLabel,
   PAYMENT_DATE_FORMATTER,
 } from '../billingUtils';
-import { PaymentHistoryItem } from '../dal/api';
+import { PaymentHistoryItem, TrialSummary } from '../dal/api';
 
 export interface PaymentsDashboardClientProps {
   initialPayments: PaymentHistoryItem[];
   initialMarketingConsent: boolean;
+  trial: TrialSummary | null;
 }
 
 export default function PaymentsDashboardClient({
   initialPayments,
   initialMarketingConsent,
+  trial,
 }: PaymentsDashboardClientProps) {
   const { hasActiveSubscription } = useTokenBalanceContext();
   const { handleCancelSubscription, isPending: isCancelling } = useBillingActions();
@@ -72,9 +76,11 @@ export default function PaymentsDashboardClient({
     handleMarketingToggle(nextValue, setMarketingConsent);
   };
 
-  const subscriptionStatusLabel = hasActiveSubscription
-    ? 'Aktywna subskrypcja'
-    : 'Brak aktywnej subskrypcji';
+  const subscriptionStatusLabel = trial
+    ? 'Okres próbny'
+    : hasActiveSubscription
+      ? 'Aktywna subskrypcja'
+      : 'Brak aktywnej subskrypcji';
   const subscriptionBadgeVariant = hasActiveSubscription ? 'default' : 'outline';
   const subscriptionBadgeText = hasActiveSubscription ? 'Aktywna' : 'Nieaktywna';
 
@@ -130,6 +136,9 @@ export default function PaymentsDashboardClient({
                     <p className="text-foreground text-lg font-semibold">
                       {subscriptionStatusLabel}
                     </p>
+                    {trial && (
+                      <p className="text-muted-foreground text-sm">{getTrialStatusText(trial)}</p>
+                    )}
                     {!hasActiveSubscription && (
                       <span className="text-muted-foreground text-xs">
                         Wykup plan, aby odblokować pełen dostęp.
@@ -187,7 +196,7 @@ export default function PaymentsDashboardClient({
                     </p>
                     {!marketingConsent && (
                       <p className="text-xs font-medium text-[#915EFF]">
-                        Przy pierwszym wyrażeniu zgody otrzymasz jednorazowo darmowe tokeny.
+                        Przy pierwszym wyrażeniu zgody otrzymasz {CONSENT_DISCOUNT_OFFER}.
                       </p>
                     )}
                   </div>

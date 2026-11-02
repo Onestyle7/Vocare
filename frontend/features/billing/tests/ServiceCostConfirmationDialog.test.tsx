@@ -72,17 +72,30 @@ describe('ServiceCostConfirmationDialog', () => {
     expect(screen.getByTestId('ai-magic')).toBeTruthy();
   });
 
-  it('uses the backend subscription rule instead of treating Trialing as unlimited', () => {
-    renderDialog({ tokenBalance: 0, subscriptionStatus: 'Trialing' });
+  it('treats a Trialing subscription like Active, matching backend HasPremiumAccess', async () => {
+    const onConfirm = vi.fn<ConfirmHandler>().mockResolvedValue('success');
+    renderDialog({ tokenBalance: 0, subscriptionStatus: 'Trialing', onConfirm });
 
-    expect(screen.getByRole('alert').textContent).toContain(
-      'Niewystarczające saldo (0/50 tokenów)'
-    );
+    expect(screen.queryByRole('alert')).toBeNull();
     expect(
-      screen.queryByText('Masz aktywną subskrypcję, więc ta akcja nie wykorzysta żadnych tokenów.')
-    ).toBeNull();
-    expect(screen.queryByRole('button', { name: 'Generuj' })).toBeNull();
+      screen.getByText('Masz aktywną subskrypcję, więc ta akcja nie wykorzysta żadnych tokenów.')
+    ).toBeTruthy();
+    fireEvent.click(screen.getByRole('button', { name: 'Generuj' }));
+
+    await waitFor(() => expect(onConfirm).toHaveBeenCalledTimes(1));
   });
+
+  it.each(['PastDue', 'Cancelled'] as const)(
+    'requires tokens for a %s subscription',
+    (subscriptionStatus) => {
+      renderDialog({ tokenBalance: 0, subscriptionStatus });
+
+      expect(screen.getByRole('alert').textContent).toContain(
+        'Niewystarczające saldo (0/50 tokenów)'
+      );
+      expect(screen.queryByRole('button', { name: 'Generuj' })).toBeNull();
+    }
+  );
 
   it('allows an Active subscription without tokens', async () => {
     const onConfirm = vi.fn<ConfirmHandler>().mockResolvedValue('success');

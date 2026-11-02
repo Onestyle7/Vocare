@@ -60,7 +60,7 @@ const TailorCvFromEditorDialog = ({
   onSubmit,
   onUpgrade,
 }: TailorCvFromEditorDialogProps) => {
-  const { tokenBalance, subscriptionStatus } = useTokenBalanceContext();
+  const { tokenBalance, subscriptionStatus, hasActiveSubscription } = useTokenBalanceContext();
   const [screen, setScreen] = useState<TailorCvScreen>('form');
   const [pendingMode, setPendingMode] = useState<TailorCvMode>('copy');
   const [costConfirmed, setCostConfirmed] = useState(false);
@@ -76,8 +76,8 @@ const TailorCvFromEditorDialog = ({
   const rejectedBillingSnapshotRef = useRef<string | null>(null);
   const submitLockRef = useRef(false);
 
-  // BillingService currently exempts only the Active status from token deductions.
-  const hasUnlimitedTailoring = subscriptionStatus === 'Active';
+  // BillingService exempts active and trialing subscriptions from token deductions (HasPremiumAccess).
+  const hasUnlimitedTailoring = hasActiveSubscription;
   const hasConfirmedUnlimitedTailoring = hasUnlimitedTailoring && !insufficientTokensDetected;
   const hasEnoughTokens =
     hasConfirmedUnlimitedTailoring ||

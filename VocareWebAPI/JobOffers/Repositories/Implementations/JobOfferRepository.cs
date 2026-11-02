@@ -77,8 +77,10 @@ namespace VocareWebAPI.JobOffers.Repositories.Implementations
 
         public async Task<List<JobOffer>> GetOffersWithoutEmbeddingAsync(int limit)
         {
+            // Skills są częścią tekstu embeddingu - bez nich backfill liczyłby gorsze embeddingi niż sync
             return await _context
-                .JobOffers.Where(j => j.Embedding == null)
+                .JobOffers.Include(j => j.Skills)
+                .Where(j => j.Embedding == null)
                 .Take(limit)
                 .ToListAsync();
         }

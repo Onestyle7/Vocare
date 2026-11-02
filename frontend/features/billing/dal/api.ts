@@ -20,9 +20,36 @@ export type CustomerPortalResult = {
   url: string;
 };
 
+export type ConsentDiscount = {
+  percentOff: number;
+  expiresAt: string;
+};
+
 export type SubscriptionTokenStatusResult = {
   tokenBalance: number;
   subscriptionStatus: SubscriptionStatus;
+  // null gdy trial jest wyłączony lub użytkownik miał już subskrypcję
+  trialDays: number | null;
+  // Rabat na pakiet tokenów za zgodę marketingową (null = brak aktywnego rabatu)
+  consentDiscount: ConsentDiscount | null;
+};
+
+// Trwający okres próbny – dane ze Stripe, bo to on pobierze pierwszą płatność
+export type TrialSummary = {
+  trialEnd: string;
+  // W groszach; null gdy Stripe nie zwrócił ceny
+  nextPaymentAmount: number | null;
+  currency: string | null;
+  interval: string;
+  intervalCount: number;
+  // Anulowana w trialu – po jego końcu nic nie pobierzemy
+  cancelAtPeriodEnd: boolean;
+};
+
+export type SubscriptionDetailsResult = {
+  subscriptionStatus: SubscriptionStatus;
+  subscriptionEndDate: string | null;
+  trial: TrialSummary | null;
 };
 
 export type CancelSubscriptionResult = {

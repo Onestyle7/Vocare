@@ -23,8 +23,7 @@ export default function NoMarketAnalysisState({
   onGenerate,
 }: NoMarketAnalysisStateProps) {
   const [isDialogOpen, setIsDialogOpen] = useState(false);
-  const { subscriptionStatus } = useTokenBalanceContext();
-  const hasUnlimitedAccess = subscriptionStatus === 'Active';
+  const { hasActiveSubscription: hasUnlimitedAccess } = useTokenBalanceContext();
 
   return (
     <>
