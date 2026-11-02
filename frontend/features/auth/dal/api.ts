@@ -1,4 +1,5 @@
 import { OAuthProvider } from '@/features/auth/oauth/base';
+import type { ConsentDiscount } from '@/features/billing/dal/api';
 import type { WelcomeBonus } from '@/features/marketing/utils/welcomeBonus';
 import { ApiClient } from '@/lib/api/api-client';
 import env from '@/lib/env/server';
@@ -34,6 +35,8 @@ export type RegisterResult = {
   userId: string;
   errorMessage: string;
   welcomeBonus: WelcomeBonus | null;
+  // Rabat za zgodę marketingową – tylko przy pierwszej zgodzie (null = brak rabatu)
+  consentDiscount: ConsentDiscount | null;
 };
 
 export type RegisterCommand = {

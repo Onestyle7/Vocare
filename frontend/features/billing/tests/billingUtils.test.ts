@@ -4,9 +4,11 @@ import { describe, expect, it } from 'vitest';
 import {
   formatPaymentAmount,
   getStatusBadgeVariant,
+  getTrialStatusText,
   getTypeLabel,
   PAYMENT_DATE_FORMATTER,
 } from '../billingUtils';
+import type { TrialSummary } from '../dal/api';
 
 describe('Billing Utils', () => {
   describe('getStatusBadgeVariant', () => {
@@ -63,6 +65,46 @@ describe('Billing Utils', () => {
     it('jest poprawnie zainicjalizowany z językiem pl-PL', () => {
       expect(PAYMENT_DATE_FORMATTER).toBeInstanceOf(Intl.DateTimeFormat);
       expect(PAYMENT_DATE_FORMATTER.resolvedOptions().locale).toBe('pl-PL');
+    });
+  });
+
+  describe('getTrialStatusText', () => {
+    const trial: TrialSummary = {
+      // Koniec triala o północy czasu polskiego: 17.11.2026 00:00 CET = 16.11 23:00 UTC
+      trialEnd: '2026-11-16T23:00:00Z',
+      nextPaymentAmount: 2900,
+      currency: 'pln',
+      interval: 'month',
+      intervalCount: 1,
+      cancelAtPeriodEnd: false,
+    };
+
+    // Intl wstawia twardą spację między kwotą a walutą
+    const textOf = (summary: TrialSummary) => getTrialStatusText(summary).replaceAll(' ', ' ');
+
+    it('przy końcu o północy rozdziela ostatni dzień triala od dnia płatności', () => {
+      expect(textOf(trial)).toBe(
+        'Okres próbny do 16.11.2026 włącznie. 17.11.2026 pobierzemy 29 zł/mies. – anuluj najpóźniej 16.11.2026, jeśli nie chcesz płacić.'
+      );
+    });
+
+    it('dla planu kwartalnego podaje długość okresu', () => {
+      expect(textOf({ ...trial, nextPaymentAmount: 6900, intervalCount: 3 })).toBe(
+        'Okres próbny do 16.11.2026 włącznie. 17.11.2026 pobierzemy 69 zł/3 mies. – anuluj najpóźniej 16.11.2026, jeśli nie chcesz płacić.'
+      );
+    });
+
+    it('przy końcu o innej godzinie podaje godzinę w czasie polskim', () => {
+      // 23:30 UTC to już 17.11 00:30 w Warszawie
+      expect(textOf({ ...trial, trialEnd: '2026-11-16T23:30:00Z' })).toBe(
+        'Okres próbny do 17.11.2026, 00:30. 17.11.2026 o 00:30 pobierzemy 29 zł/mies. – anuluj przed 17.11.2026, 00:30, jeśli nie chcesz płacić.'
+      );
+    });
+
+    it('po anulowaniu nie zapowiada płatności', () => {
+      expect(getTrialStatusText({ ...trial, cancelAtPeriodEnd: true })).toBe(
+        'Okres próbny do 16.11.2026 włącznie. Subskrypcja jest anulowana – nie pobierzemy żadnej opłaty.'
+      );
     });
   });
 });

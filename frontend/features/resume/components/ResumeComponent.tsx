@@ -57,98 +57,38 @@ import {
 
 import { RESUME_PREVIEW_LABELS, type ResumePreviewLanguage } from '../constants';
 import { useResumeDetailsActions } from '../hooks/useResumeDetailsActions';
+import {
+  getParagraphFragments,
+  measureParagraphLines,
+  paginateSections,
+  type SectionChunk,
+} from '../utils/cvPagination';
 import { claimLegacyHobbiesForCv } from '../utils/legacyHobbies';
 import { reorderResumeItemByOffset, reorderResumeItems } from '../utils/reorderResumeItems';
 import { CvAnalysisDrawer } from './CvAnalysisDrawer';
 import { DatePickerWithCurrent } from './DatePickerWithCurrent';
+import { MobileCvEditor, type MobileEditorMode } from './mobile/MobileCvEditor';
 import { ResumeAnalysisPromoButton } from './ResumeAnalysisPromoButton';
+import type {
+  Certificate,
+  Education,
+  Experience,
+  Hobby,
+  Language,
+  PersonalInfo,
+  PrivacyStatement,
+  Project,
+  Skill,
+  SocialLink,
+} from './resumeEditorTypes';
 import TailorCvFromEditorDialog, {
   TailorCvMode,
   TailorCvSubmitResult,
 } from './TailorCvFromEditorDialog';
 
-interface PersonalInfo {
-  firstName: string;
-  lastName: string;
-  email: string;
-  phone: string;
-  address: string;
-  country: string;
-  socialLinks: SocialLink[];
-  profession: string;
-  summary: string;
-}
-
-interface Experience {
-  id: string;
-  company: string;
-  position: string;
-  startDate: string;
-  endDate: string;
-  responsibilities: string[];
-  isCurrent: boolean;
-  useBulletList: boolean;
-}
-
-interface Education {
-  id: string;
-  school: string;
-  degree: string;
-  field: string;
-  startDate: string;
-  endDate: string;
-  isCurrent: boolean;
-  description: string;
-}
-
-interface Project {
-  id: string;
-  title: string;
-  url: string;
-  description: string;
-}
-
-interface Skill {
-  id: string;
-  name: string;
-}
-
-interface Hobby {
-  id: string;
-  name: string;
-}
-
-interface Language {
-  id: string;
-  name: string;
-  level: string;
-}
-
-interface Certificate {
-  id: string;
-  name: string;
-  date: string;
-  hasDate: boolean;
-}
-
-interface PrivacyStatement {
-  id: string;
-  content: string;
-}
-
 interface CVCreatorProps {
   initialCv?: CvDetailsDto;
   initialLimits?: CvLimits | null;
-}
-interface SocialLink {
-  id: string;
-  label: string;
-  url: string;
-}
-interface SocialLink {
-  id: string;
-  label: string;
-  url: string;
 }
 
 type FormattingType = 'bold' | 'italic' | 'underline';
@@ -210,6 +150,12 @@ const DEFAULT_PERSONAL_INFO: PersonalInfo = {
   summary: '',
 };
 
+// The privacy clause closes a CV, so it stays last whatever order was saved or dragged.
+const pinPrivacyLast = (order: string[]): string[] => [
+  ...order.filter((id) => id !== 'privacy'),
+  'privacy',
+];
+
 const mergeSectionOrder = (value: unknown): string[] => {
   if (!Array.isArray(value)) {
     return [...DEFAULT_SECTION_ORDER];
@@ -239,7 +185,7 @@ const mergeSectionOrder = (value: unknown): string[] => {
     mergedOrder.splice(mergedOrder.indexOf(nextKnownSection), 0, id);
   });
 
-  return mergedOrder;
+  return pinPrivacyLast(mergedOrder);
 };
 
 const normalizeExternalUrl = (value: string) => {
@@ -391,10 +337,10 @@ const CVCreator: React.FC<CVCreatorProps> = ({ initialCv, initialLimits = null }
   const editorOperationRef = useRef<'save' | 'profile' | 'tailor' | null>(null);
   const limitsRequestRef = useRef(0);
   const isMobile = useIsMobile();
+  const [mobileMode, setMobileMode] = useState<MobileEditorMode>('edit');
 
   // Pagination (computed from measured pages)
   const [currentPage, setCurrentPage] = useState(1);
-  type SectionChunk = { sectionId: string; items?: string[]; includeTitle?: boolean };
   const [pages, setPages] = useState<SectionChunk[][]>([]);
 
   const summaryTextareaRef = useRef<HTMLTextAreaElement | null>(null);
@@ -784,7 +730,7 @@ const CVCreator: React.FC<CVCreatorProps> = ({ initialCv, initialLimits = null }
     currentOrder.splice(draggedIndex, 1);
     currentOrder.splice(targetIndex, 0, draggedSection);
 
-    setSectionOrder(currentOrder);
+    setSectionOrder(pinPrivacyLast(currentOrder));
     setDraggedSection(null);
     setDragOverSection(null);
   };
@@ -2494,6 +2440,22 @@ const CVCreator: React.FC<CVCreatorProps> = ({ initialCv, initialLimits = null }
     ]
   );
 
+  // Web fonts change text metrics, so pages measured with the fallback font must be re-measured
+  const [fontsVersion, setFontsVersion] = useState(0);
+  useEffect(() => {
+    if (!document.fonts) return; // jsdom
+    let active = true;
+    const remeasure = () => {
+      if (active) setFontsVersion((version) => version + 1);
+    };
+    document.fonts.ready.then(remeasure);
+    document.fonts.addEventListener('loadingdone', remeasure);
+    return () => {
+      active = false;
+      document.fonts.removeEventListener('loadingdone', remeasure);
+    };
+  }, []);
+
   // Build measured pages: render invisible blocks, measure (including margins), then pack
   useLayoutEffect(() => {
     // Wait for mm calibration
@@ -2514,6 +2476,7 @@ const CVCreator: React.FC<CVCreatorProps> = ({ initialCv, initialLimits = null }
       container.querySelectorAll<HTMLElement>('.cv-section[data-block-id]')
     );
     const heights = new Map<string, number>();
+    const sectionSpacing = new Map<string, number>();
     const sectionHeaderHeights = new Map<string, number>();
     const sectionItemHeights = new Map<string, Array<{ id: string; h: number }>>();
     blocks.forEach((el) => {
@@ -2526,6 +2489,7 @@ const CVCreator: React.FC<CVCreatorProps> = ({ initialCv, initialLimits = null }
       const mt = parseFloat(cs.marginTop || '0') || 0;
       const mb = parseFloat(cs.marginBottom || '0') || 0;
       heights.set(id, el.offsetHeight + mt + mb);
+      sectionSpacing.set(id, mt + mb);
 
       // Section header height (h3)
       const h3 = el.querySelector('h3');
@@ -2574,7 +2538,7 @@ const CVCreator: React.FC<CVCreatorProps> = ({ initialCv, initialLimits = null }
           const itemId = n.getAttribute('data-item-id') || '';
           items.push({ id: itemId, h: n.offsetHeight + mti + mbi });
         });
-      } else if (id === 'profile' || id === 'privacy') {
+      } else if (id === 'profile') {
         const nodes = el.querySelectorAll<HTMLElement>('.para-item[data-item-id]');
         nodes.forEach((n) => {
           const csI = getComputedStyle(n);
@@ -2583,95 +2547,27 @@ const CVCreator: React.FC<CVCreatorProps> = ({ initialCv, initialLimits = null }
           const itemId = n.getAttribute('data-item-id') || '';
           items.push({ id: itemId, h: n.offsetHeight + mti + mbi });
         });
+      } else if (id === 'privacy') {
+        // Plain text, so a paragraph longer than the page space left can continue line by line
+        const nodes = el.querySelectorAll<HTMLElement>('.para-item[data-item-id]');
+        nodes.forEach((n, i) => items.push(...measureParagraphLines(n, i)));
       }
       if (items.length) sectionItemHeights.set(id, items);
     });
 
-    const visible = sectionOrder.filter((id) => isSectionVisible(id));
-    const pagesAcc: SectionChunk[][] = [];
-    let current: SectionChunk[] = [];
-    // First page starts with header space allocated
-    let used = headerHeight;
     const SAFETY_PX = 4; // guard for rounding/borders
-    const limit = pageContentHeightPx - SAFETY_PX; // px
-
-    const pushPage = () => {
-      pagesAcc.push(current);
-      current = [];
-      used = 0; // next page without header
-    };
-
-    for (const id of visible) {
-      const wholeH = heights.get(id) ?? 0;
-      if (wholeH <= 0) continue;
-
-      // If whole section fits on current page
-      if ((used > 0 && used + wholeH <= limit) || (used === 0 && wholeH <= limit)) {
-        current.push({ sectionId: id, includeTitle: true });
-        used += wholeH;
-        continue;
-      }
-
-      // If section doesn't fit fully, try to split by items when possible
-      const items = sectionItemHeights.get(id);
-      const secHeaderH = sectionHeaderHeights.get(id) || 0;
-
-      if (!items || !items.length) {
-        // No way to split; move to next page if not empty, then place it (may overflow)
-        if (used > 0) {
-          pushPage();
-        }
-        current.push({ sectionId: id, includeTitle: true });
-        used = wholeH; // may exceed limit; last resort
-        continue;
-      }
-
-      // Split list items across pages
-      let idx = 0;
-      while (idx < items.length) {
-        // Ensure at least header fits, otherwise new page
-        if (used > 0 && used + secHeaderH >= limit) {
-          pushPage();
-        }
-        const chunkIds: string[] = [];
-        let chunkH = secHeaderH;
-        const pageRemaining = limit - used;
-
-        // If even header alone exceeds page, force new page
-        if (chunkH > pageRemaining && used > 0) {
-          pushPage();
-        }
-
-        // Fit as many items as possible on this page
-        while (idx < items.length) {
-          const it = items[idx];
-          if (chunkH + it.h <= limit - used) {
-            chunkIds.push(it.id);
-            chunkH += it.h;
-            idx++;
-          } else {
-            break;
-          }
-        }
-
-        // If nothing fits (single item larger than page), force place one to avoid infinite loop
-        if (chunkIds.length === 0 && idx < items.length) {
-          chunkIds.push(items[idx].id);
-          chunkH += items[idx].h;
-          idx++;
-        }
-
-        current.push({ sectionId: id, includeTitle: true, items: chunkIds });
-        used += chunkH;
-
-        // If next item remains, start a new page for continuation
-        if (idx < items.length) {
-          pushPage();
-        }
-      }
-    }
-
-    if (current.length) pagesAcc.push(current);
+    const pagesAcc = paginateSections(
+      sectionOrder
+        .filter((id) => isSectionVisible(id))
+        .map((id) => ({
+          id,
+          height: heights.get(id) ?? 0,
+          titleHeight: sectionHeaderHeights.get(id) ?? 0,
+          spacing: sectionSpacing.get(id) ?? 0,
+          items: sectionItemHeights.get(id),
+        })),
+      { pageHeight: pageContentHeightPx - SAFETY_PX, firstPageOffset: headerHeight }
+    );
 
     setPages(pagesAcc);
     setCurrentPage((prev) => Math.min(Math.max(prev, 1), Math.max(pagesAcc.length, 1)));
@@ -2690,6 +2586,7 @@ const CVCreator: React.FC<CVCreatorProps> = ({ initialCv, initialLimits = null }
     resumePreviewLanguage,
     pageContentHeightPx,
     isSectionVisible,
+    fontsVersion,
   ]);
 
   // Keep currentPage in sync with scroll position
@@ -3392,7 +3289,7 @@ const CVCreator: React.FC<CVCreatorProps> = ({ initialCv, initialLimits = null }
                             updateCertificate(cert.id, 'date', '');
                           }
                         }}
-                        toggleLabel="Ma datę"
+                        toggleLabel="Bez daty"
                         toggledButtonText="Bez daty"
                         placeholder="Wybierz datę"
                       />
@@ -3711,39 +3608,13 @@ const CVCreator: React.FC<CVCreatorProps> = ({ initialCv, initialLimits = null }
             key="privacy"
             className={`mb-6 rounded-lg bg-gray-50 p-4 transition-all lg:p-6 ${
               dragOverSection === 'privacy' ? 'bg-blue-50 ring-2 ring-blue-400' : ''
-            } ${draggedSection === 'privacy' ? 'opacity-50' : ''}`}
-            draggable
-            onDragStart={(e) => handleSectionDragStart(e, 'privacy')}
+            }`}
             onDragOver={(e) => handleSectionDragOver(e, 'privacy')}
             onDragLeave={handleSectionDragLeave}
             onDrop={(e) => handleSectionDrop(e, 'privacy')}
-            onDragEnd={handleSectionDragEnd}
           >
             <div className="mb-4 flex items-center justify-between">
               <h2 className="flex items-center text-lg font-semibold text-gray-700">
-                <span
-                  className="mr-2 cursor-grab text-gray-400"
-                  data-drag-handle="true"
-                  role="button"
-                  tabIndex={0}
-                  aria-label="Drag section"
-                  onMouseDown={() => {
-                    dragIntentSectionRef.current = 'privacy';
-                  }}
-                  onMouseUp={() => {
-                    dragIntentSectionRef.current = null;
-                  }}
-                  onKeyDown={(event) => {
-                    if (event.key === 'Enter' || event.key === ' ') {
-                      dragIntentSectionRef.current = 'privacy';
-                    }
-                  }}
-                  onKeyUp={() => {
-                    dragIntentSectionRef.current = null;
-                  }}
-                >
-                  <GripVertical size={20} />
-                </span>
                 <PencilLine className="mr-2" size={20} />
                 Klauzula informacyjna
               </h2>
@@ -4394,18 +4265,18 @@ const CVCreator: React.FC<CVCreatorProps> = ({ initialCv, initialLimits = null }
           >
             {includeTitle && renderSectionTitle('privacy')}
             <div className="text-xs leading-relaxed break-words text-gray-700">
-              {(privacyStatement.content || '')
-                .split(/\n+/)
-                .filter(Boolean)
-                .map((para, i) => {
-                  const id = `p${i}`;
-                  if (!items.includes(id)) return null;
-                  return (
-                    <p key={`priv-${i}`} className="para-item mb-2 last:mb-0" data-item-id={id}>
-                      {para}
-                    </p>
-                  );
-                })}
+              {getParagraphFragments(
+                (privacyStatement.content || '').split(/\n+/).filter(Boolean),
+                items
+              ).map(({ index, text }) => (
+                <p
+                  key={`priv-${index}`}
+                  className="para-item mb-2 last:mb-0"
+                  data-item-id={`p${index}`}
+                >
+                  {text}
+                </p>
+              ))}
             </div>
           </div>
         );
@@ -4417,6 +4288,266 @@ const CVCreator: React.FC<CVCreatorProps> = ({ initialCv, initialLimits = null }
         );
     }
   };
+
+  // Phones: fit one A4 page to the screen width whenever the preview shows.
+  useEffect(() => {
+    if (!isMobile || mobileMode !== 'preview') return;
+    const fit = () => {
+      const width = pagesViewportRef.current?.clientWidth || window.innerWidth;
+      const pagePx = PAGE_WIDTH_MM * (mmRatioRef.current ?? 96 / 25.4);
+      setCvScale(Math.min(1, (width - 24) / pagePx));
+    };
+    fit();
+    window.addEventListener('resize', fit);
+    return () => window.removeEventListener('resize', fit);
+  }, [isMobile, mobileMode]);
+
+  // On phones the analysis "Przejdź do sekcji" may be used from the preview:
+  // switch back to the edit cards first, then scroll to the section.
+  const handleNavigateFromAnalysis = (sectionId: string) => {
+    if (isMobile && mobileMode !== 'edit') {
+      setMobileMode('edit');
+      setTimeout(() => handleNavigateToFormSection(sectionId), 60);
+      return;
+    }
+    handleNavigateToFormSection(sectionId);
+  };
+
+  const editorDialogs = (
+    <>
+      <CvAnalysisDrawer
+        cvId={cvId}
+        cvName={resumeName}
+        targetPosition={personalInfo.profession || undefined}
+        open={isAnalysisOpen}
+        onOpenChange={setIsAnalysisOpen}
+        onNavigateToSection={handleNavigateFromAnalysis}
+      />
+
+      <TailorCvFromEditorDialog
+        open={isTailorDialogOpen}
+        limits={cvLimits}
+        currentCvName={resumeName}
+        defaultTargetPosition={personalInfo.profession}
+        isCheckingLimits={isCheckingCvLimits}
+        isSubmitting={isTailoring}
+        onOpenChange={setIsTailorDialogOpen}
+        onSubmit={handleTailorCvFromEditor}
+        onUpgrade={() => router.push('/pricing')}
+      />
+    </>
+  );
+
+  // CV preview: hidden measurement container + paged A4 viewport.
+  const previewContainer = (
+    <div
+      className="relative flex-1 overflow-hidden bg-gray-100/20"
+      onMouseMove={handleMouseMove}
+      onMouseUp={handleMouseUp}
+      onMouseLeave={() => {
+        handleMouseUp();
+        setIsHovered(false);
+      }}
+      onMouseEnter={() => setIsHovered(true)}
+    >
+      {/* Hidden measurement container to compute heights */}
+      <div
+        ref={measureContainerRef}
+        className="cv-text"
+        style={{
+          position: 'absolute',
+          left: '-10000px',
+          top: '-10000px',
+          width: `${PAGE_WIDTH_MM}mm`,
+          background: '#fff',
+        }}
+      >
+        <div style={{ padding: `${PAGE_PADDING_MM}mm` }}>
+          {renderHeader()}
+          {sectionOrder.filter(isSectionVisible).map((id) => (
+            <React.Fragment key={`m-${id}`}>{renderSectionInPreview(id)}</React.Fragment>
+          ))}
+        </div>
+      </div>
+
+      {/* Pages viewport */}
+      <div ref={pagesViewportRef} className="absolute inset-0 overflow-auto">
+        <div
+          ref={zoomWrapperRef}
+          className={`${isDragging ? 'cursor-grabbing' : 'cursor-grab'} flex flex-col items-center`}
+          style={
+            isMobile
+              ? // `zoom` scales layout too, so no blank scroll area under the pages.
+                { zoom: cvScale, padding: '24px 0 140px' }
+              : {
+                  transform: `translate(${cvPosition.x}px, ${cvPosition.y}px) scale(${cvScale})`,
+                  transformOrigin: 'top center',
+                  padding: '40px 0',
+                }
+          }
+          onMouseDown={handleMouseDown}
+        >
+          {(pages.length
+            ? pages
+            : [
+                [
+                  /* empty page */
+                ] as SectionChunk[],
+              ]
+          ).map((page, idx) => (
+            <div
+              key={`page-${idx}`}
+              className="cv-page cv-text mb-6 overflow-hidden rounded-sm shadow"
+              style={{
+                width: `${PAGE_WIDTH_MM}mm`,
+                height: `${PAGE_HEIGHT_MM}mm`,
+                background: '#fff',
+              }}
+            >
+              <div className="box-border h-full" style={{ padding: `${PAGE_PADDING_MM}mm` }}>
+                {idx === 0 && renderHeader()}
+                {page.map((chunk, cidx) => (
+                  <React.Fragment key={`p${idx}-c${cidx}`}>{renderChunk(chunk)}</React.Fragment>
+                ))}
+                {/* Empty state message on first page */}
+                {idx === 0 &&
+                  !personalInfo.firstName &&
+                  !personalInfo.lastName &&
+                  !personalInfo.email &&
+                  !personalInfo.phone &&
+                  !personalInfo.address &&
+                  personalInfo.socialLinks.length === 0 &&
+                  !personalInfo.summary &&
+                  experiences.length === 0 &&
+                  projects.length === 0 &&
+                  projects.length === 0 &&
+                  skills.length === 0 &&
+                  education.length === 0 && (
+                    <div className="mt-20 text-center text-gray-500">
+                      <p className="text-lg">
+                        Zacznij od uzupełnienia pól po lewej stronie. <br /> Efeket będziesz widział
+                        tutaj na bieżąco.
+                      </p>
+                    </div>
+                  )}
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      {/* Pagination Controls */}
+      {true && (
+        <div
+          className={`absolute bottom-5 left-1/2 -translate-x-1/2 transform transition-all duration-500 ${
+            isHovered ? 'translate-y-0 opacity-100' : 'pointer-events-none translate-y-16 opacity-0'
+          } flex items-center space-x-2 rounded-lg bg-white px-4 py-2 shadow-lg`}
+        >
+          <button
+            onClick={goToPrevPage}
+            disabled={currentPage === 1}
+            className={`rounded p-2 ${
+              currentPage === 1
+                ? 'cursor-not-allowed text-gray-400'
+                : 'cursor-pointer text-gray-700 hover:bg-gray-100'
+            }`}
+          >
+            <ChevronLeft size={16} />
+          </button>
+
+          <div className="flex space-x-1">
+            {Array.from({ length: pages.length || 1 }, (_, i) => i + 1).map((page) => (
+              <button
+                key={page}
+                onClick={() => goToPage(page)}
+                className={`h-8 w-8 cursor-pointer rounded text-sm font-medium ${
+                  currentPage === page
+                    ? 'bg-[#915EFF] text-white'
+                    : 'text-gray-700 hover:bg-gray-100'
+                }`}
+              >
+                {page}
+              </button>
+            ))}
+          </div>
+
+          <button
+            onClick={goToNextPage}
+            disabled={currentPage === (pages.length || 1)}
+            className={`rounded p-2 ${
+              currentPage === (pages.length || 1)
+                ? 'cursor-not-allowed text-gray-400'
+                : 'cursor-pointer text-gray-700 hover:bg-gray-100'
+            }`}
+          >
+            <ChevronRight size={16} />
+          </button>
+
+          <span className="ml-2 text-sm text-gray-600">
+            {currentPage} / {pages.length || 1}
+          </span>
+        </div>
+      )}
+    </div>
+  );
+
+  if (isMobile) {
+    return (
+      <>
+        <MobileCvEditor
+          resumeName={resumeName}
+          mode={mobileMode}
+          onModeChange={setMobileMode}
+          autosaveStatus={autosaveStatus}
+          isBusy={isManualSaving || isLoadingProfile || isTailoring}
+          isLoadingProfile={isLoadingProfile}
+          highlightedSection={highlightedFormSection}
+          data={{
+            personalInfo,
+            experiences,
+            education,
+            projects,
+            certificates,
+            skills,
+            languages,
+            hobbies,
+            privacyStatement,
+          }}
+          setters={{
+            setPersonalInfo,
+            setExperiences,
+            setEducation,
+            setProjects,
+            setCertificates,
+            setSkills,
+            setLanguages,
+            setHobbies,
+            setPrivacyStatement,
+          }}
+          sectionOrder={sectionOrder}
+          privacyTemplate={PRIVACY_CONSENT_TEMPLATES[resumePreviewLanguage]}
+          showFullDates={showFullDates}
+          onShowFullDatesChange={setShowFullDates}
+          previewLanguage={resumePreviewLanguage}
+          onPreviewLanguageChange={setResumePreviewLanguage}
+          onBack={() => {
+            if (typeof window !== 'undefined' && window.history.length > 1) {
+              router.back();
+            } else {
+              router.push('/dashboard/resume');
+            }
+          }}
+          onSaveNow={handleSave}
+          onLoadFromProfile={loadFromProfile}
+          onTailor={handleOpenTailorDialog}
+          onAnalysis={() => setIsAnalysisOpen(true)}
+          onDownload={downloadPDF}
+          preview={previewContainer}
+        />
+        {editorDialogs}
+      </>
+    );
+  }
 
   return (
     <div className="font-poppins flex h-screen flex-col overflow-hidden bg-gray-50 lg:flex-row lg:pt-6 dark:text-black">
@@ -4537,26 +4668,7 @@ const CVCreator: React.FC<CVCreatorProps> = ({ initialCv, initialLimits = null }
         </div> */}
       </div>
 
-      <CvAnalysisDrawer
-        cvId={cvId}
-        cvName={resumeName}
-        targetPosition={personalInfo.profession || undefined}
-        open={isAnalysisOpen}
-        onOpenChange={setIsAnalysisOpen}
-        onNavigateToSection={handleNavigateToFormSection}
-      />
-
-      <TailorCvFromEditorDialog
-        open={isTailorDialogOpen}
-        limits={cvLimits}
-        currentCvName={resumeName}
-        defaultTargetPosition={personalInfo.profession}
-        isCheckingLimits={isCheckingCvLimits}
-        isSubmitting={isTailoring}
-        onOpenChange={setIsTailorDialogOpen}
-        onSubmit={handleTailorCvFromEditor}
-        onUpgrade={() => router.push('/pricing')}
-      />
+      {editorDialogs}
 
       {/* Main Content */}
       <div className="flex h-full flex-1 flex-col gap-3 overflow-hidden px-3 lg:flex-row lg:px-0">
@@ -4902,155 +5014,7 @@ const CVCreator: React.FC<CVCreatorProps> = ({ initialCv, initialLimits = null }
             </div>
           )}
 
-          {/* CV Preview Container */}
-          <div
-            className="relative flex-1 overflow-hidden bg-gray-100/20"
-            onMouseMove={handleMouseMove}
-            onMouseUp={handleMouseUp}
-            onMouseLeave={() => {
-              handleMouseUp();
-              setIsHovered(false);
-            }}
-            onMouseEnter={() => setIsHovered(true)}
-          >
-            {/* Hidden measurement container to compute heights */}
-            <div
-              ref={measureContainerRef}
-              className="cv-text"
-              style={{
-                position: 'absolute',
-                left: '-10000px',
-                top: '-10000px',
-                width: `${PAGE_WIDTH_MM}mm`,
-                background: '#fff',
-              }}
-            >
-              <div style={{ padding: `${PAGE_PADDING_MM}mm` }}>
-                {renderHeader()}
-                {sectionOrder.filter(isSectionVisible).map((id) => (
-                  <React.Fragment key={`m-${id}`}>{renderSectionInPreview(id)}</React.Fragment>
-                ))}
-              </div>
-            </div>
-
-            {/* Pages viewport */}
-            <div ref={pagesViewportRef} className="absolute inset-0 overflow-auto">
-              <div
-                ref={zoomWrapperRef}
-                className={`${isDragging ? 'cursor-grabbing' : 'cursor-grab'} flex flex-col items-center`}
-                style={{
-                  transform: `translate(${cvPosition.x}px, ${cvPosition.y}px) scale(${cvScale})`,
-                  transformOrigin: 'top center',
-                  padding: '40px 0',
-                }}
-                onMouseDown={handleMouseDown}
-              >
-                {(pages.length
-                  ? pages
-                  : [
-                      [
-                        /* empty page */
-                      ] as SectionChunk[],
-                    ]
-                ).map((page, idx) => (
-                  <div
-                    key={`page-${idx}`}
-                    className="cv-page cv-text mb-6 overflow-hidden rounded-sm shadow"
-                    style={{
-                      width: `${PAGE_WIDTH_MM}mm`,
-                      height: `${PAGE_HEIGHT_MM}mm`,
-                      background: '#fff',
-                    }}
-                  >
-                    <div className="box-border h-full" style={{ padding: `${PAGE_PADDING_MM}mm` }}>
-                      {idx === 0 && renderHeader()}
-                      {page.map((chunk, cidx) => (
-                        <React.Fragment key={`p${idx}-c${cidx}`}>
-                          {renderChunk(chunk)}
-                        </React.Fragment>
-                      ))}
-                      {/* Empty state message on first page */}
-                      {idx === 0 &&
-                        !personalInfo.firstName &&
-                        !personalInfo.lastName &&
-                        !personalInfo.email &&
-                        !personalInfo.phone &&
-                        !personalInfo.address &&
-                        personalInfo.socialLinks.length === 0 &&
-                        !personalInfo.summary &&
-                        experiences.length === 0 &&
-                        projects.length === 0 &&
-                        projects.length === 0 &&
-                        skills.length === 0 &&
-                        education.length === 0 && (
-                          <div className="mt-20 text-center text-gray-500">
-                            <p className="text-lg">
-                              Zacznij od uzupełnienia pól po lewej stronie. <br /> Efeket będziesz
-                              widział tutaj na bieżąco.
-                            </p>
-                          </div>
-                        )}
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </div>
-
-            {/* Pagination Controls */}
-            {true && (
-              <div
-                className={`absolute bottom-5 left-1/2 -translate-x-1/2 transform transition-all duration-500 ${
-                  isHovered
-                    ? 'translate-y-0 opacity-100'
-                    : 'pointer-events-none translate-y-16 opacity-0'
-                } flex items-center space-x-2 rounded-lg bg-white px-4 py-2 shadow-lg`}
-              >
-                <button
-                  onClick={goToPrevPage}
-                  disabled={currentPage === 1}
-                  className={`rounded p-2 ${
-                    currentPage === 1
-                      ? 'cursor-not-allowed text-gray-400'
-                      : 'cursor-pointer text-gray-700 hover:bg-gray-100'
-                  }`}
-                >
-                  <ChevronLeft size={16} />
-                </button>
-
-                <div className="flex space-x-1">
-                  {Array.from({ length: pages.length || 1 }, (_, i) => i + 1).map((page) => (
-                    <button
-                      key={page}
-                      onClick={() => goToPage(page)}
-                      className={`h-8 w-8 cursor-pointer rounded text-sm font-medium ${
-                        currentPage === page
-                          ? 'bg-[#915EFF] text-white'
-                          : 'text-gray-700 hover:bg-gray-100'
-                      }`}
-                    >
-                      {page}
-                    </button>
-                  ))}
-                </div>
-
-                <button
-                  onClick={goToNextPage}
-                  disabled={currentPage === (pages.length || 1)}
-                  className={`rounded p-2 ${
-                    currentPage === (pages.length || 1)
-                      ? 'cursor-not-allowed text-gray-400'
-                      : 'cursor-pointer text-gray-700 hover:bg-gray-100'
-                  }`}
-                >
-                  <ChevronRight size={16} />
-                </button>
-
-                <span className="ml-2 text-sm text-gray-600">
-                  {currentPage} / {pages.length || 1}
-                </span>
-              </div>
-            )}
-          </div>
+          {previewContainer}
         </div>
       </div>
     </div>

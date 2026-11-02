@@ -63,13 +63,13 @@ const HowItWorks = () => {
 
         <div className="relative mx-auto flex w-full max-w-7xl flex-1 flex-col px-4 py-12 sm:px-8 sm:py-16 md:px-12 lg:px-16 lg:py-20 2xl:py-24">
           <div className="relative z-10 flex flex-col items-center">
-            <h1 className="w-full text-center text-[28px] leading-[1.15] font-light text-[#F1F4FF] sm:text-[36px] lg:text-[48px] lg:leading-[1.1]">
+            <h2 className="w-full text-center text-[28px] leading-[1.15] font-light text-[#F1F4FF] sm:text-[36px] lg:text-[48px] lg:leading-[1.1]">
               <span className="bg-[linear-gradient(180deg,#9296FD_0%,#8491FE_50%,#9D9BFF_77%,#C7A9FE_100%)] bg-clip-text font-normal text-transparent">
                 Twoja Przyszłość
               </span>
               <br />
               <span className="opacity-[0.79]">w 4 Krokach</span>
-            </h1>
+            </h2>
           </div>
 
           <div className="relative z-10 mx-auto mt-12 grid w-full max-w-4xl grid-cols-1 gap-y-12 sm:mt-16 lg:mt-24 lg:grid-cols-2 lg:gap-x-10 lg:gap-y-20">

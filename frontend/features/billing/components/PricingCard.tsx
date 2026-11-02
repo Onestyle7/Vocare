@@ -1,5 +1,6 @@
 import { Check, LoaderCircle, Undo2 } from 'lucide-react';
 import Link from 'next/link';
+import type { ReactNode } from 'react';
 
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
@@ -12,6 +13,8 @@ interface PricingCardProps {
   isPending: boolean;
   href?: string;
   ctaLabel?: string;
+  // Np. przełącznik okresu rozliczeniowego – renderowany nad ceną
+  periodSwitch?: ReactNode;
 }
 
 export function PricingCard({
@@ -20,6 +23,7 @@ export function PricingCard({
   isPending,
   href,
   ctaLabel = plan.ctaLabel,
+  periodSwitch,
 }: PricingCardProps) {
   const headingId = `pricing-${plan.type}-title`;
   const microcopyId = `pricing-${plan.type}-microcopy`;
@@ -52,6 +56,11 @@ export function PricingCard({
           >
             {plan.name}
           </h2>
+          {plan.discount && (
+            <span className="rounded-full bg-[#915EFF]/15 px-3 py-1.5 text-xs font-semibold text-[#915EFF] dark:text-[#C7A9FE]">
+              -{plan.discount.percentOff}%
+            </span>
+          )}
           {plan.popular && (
             <div className="flex items-center gap-1.5 rounded-full bg-[#15162B]/10 px-3 py-1.5 text-xs font-semibold text-[#15162B]">
               <Undo2 aria-hidden className="size-5 shrink-0 -rotate-90" />
@@ -60,7 +69,14 @@ export function PricingCard({
           )}
         </div>
         {!plan.popular && (
-          <p className="text-sm leading-relaxed text-gray-500 dark:text-gray-400">
+          <p
+            className={cn(
+              'text-sm leading-relaxed',
+              plan.discount
+                ? 'font-medium text-[#915EFF] dark:text-[#C7A9FE]'
+                : 'text-gray-500 dark:text-gray-400'
+            )}
+          >
             {plan.description}
           </p>
         )}
@@ -78,12 +94,33 @@ export function PricingCard({
         />
 
         <div className="relative">
+          {periodSwitch && <div className="mb-5">{periodSwitch}</div>}
           <p className="font-grotesk flex flex-wrap items-baseline gap-x-2 gap-y-1 text-gray-900 dark:text-white">
-            <span className="text-4xl font-bold tracking-tight whitespace-nowrap">
-              {plan.price} <span className="text-xl font-semibold">zł</span>
+            <span
+              className={cn(
+                'text-4xl font-bold tracking-tight whitespace-nowrap',
+                plan.discount && 'text-[#915EFF] dark:text-[#C7A9FE]'
+              )}
+            >
+              {plan.price.toLocaleString('pl-PL', { maximumFractionDigits: 2 })}{' '}
+              <span className="text-xl font-semibold">zł</span>
             </span>
+            {plan.discount && (
+              <s className="text-xl font-semibold whitespace-nowrap text-gray-400 dark:text-gray-500">
+                <span className="sr-only">Cena regularna: </span>
+                {plan.discount.originalPrice} zł
+              </s>
+            )}
             <span className="text-base text-gray-600 dark:text-gray-300">{plan.priceLabel}</span>
           </p>
+          {plan.discount && (
+            // Omnibus (art. 6a ustawy o informowaniu o cenach, § 10 ust. 8 Regulaminu). Cena
+            // regularna nie była obniżana w ostatnich 30 dniach, więc jest zarazem najniższą –
+            // przy kolejnych promocjach trzeba podawać faktyczne minimum z 30 dni.
+            <p className="mt-2 text-xs text-gray-500 dark:text-gray-400">
+              Najniższa cena z 30 dni przed obniżką: {plan.discount.originalPrice} zł
+            </p>
+          )}
 
           {plan.popular && (
             <p className="mt-4 text-sm leading-relaxed font-semibold text-[#6267CE] dark:text-[#B5B8FF]">
@@ -149,7 +186,7 @@ export function PricingCard({
             id={microcopyId}
             className={cn(
               'mt-3 text-center text-xs leading-5 text-gray-500 dark:text-gray-400',
-              plan.popular && 'lg:min-h-15'
+              plan.popular && 'lg:min-h-10'
             )}
           >
             {plan.microcopyEmphasis && plan.microcopyEmphasisPosition === 'start' && (

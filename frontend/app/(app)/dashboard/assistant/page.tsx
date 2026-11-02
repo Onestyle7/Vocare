@@ -6,8 +6,10 @@ import {
 import { forceLoginRedirect } from '@/features/auth/utils/login-redirect';
 
 export default async function Page() {
-  const [recommendationError, recommendation] = await getLastRecommendationQuery();
-  const [jobMatchesError, jobMatches] = await getDetailedJobMatchesQuery();
+  const [[recommendationError, recommendation], [jobMatchesError, jobMatches]] = await Promise.all([
+    getLastRecommendationQuery(),
+    getDetailedJobMatchesQuery(),
+  ]);
 
   // TODO: Obsługa błędów rekomendacji
   if (recommendationError && recommendationError.type === 'Unauthorized') {

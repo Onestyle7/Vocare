@@ -3,11 +3,13 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
+using System.Threading;
 using System.Threading.Tasks;
 using FluentAssertions;
 using Microsoft.Extensions.Logging.Abstractions;
 using Microsoft.Extensions.Options;
 using Moq;
+using Stripe;
 using VocareWebAPI.Billing.Configuration;
 using VocareWebAPI.Billing.Models.Dtos;
 using VocareWebAPI.Billing.Services.Implementations;
@@ -37,7 +39,8 @@ namespace VocareWebApi.Tests.Billing.Services
 
         private static PurchaseConfirmationService CreateSut(
             IEmailService emailService,
-            FakeHttpMessageHandler pdfHandler
+            FakeHttpMessageHandler pdfHandler,
+            SubscriptionService? subscriptionService = null
         )
         {
             var factory = new Mock<IHttpClientFactory>();
@@ -48,10 +51,18 @@ namespace VocareWebApi.Tests.Billing.Services
             return new PurchaseConfirmationService(
                 emailService,
                 factory.Object,
+                subscriptionService ?? new Mock<SubscriptionService>(MockBehavior.Strict).Object,
                 Options.Create(Legal()),
                 NullLogger<PurchaseConfirmationService>.Instance
             );
         }
+
+        // Koniec triala o północy czasu polskiego (po upływie terminu na odstąpienie):
+        // 17.11.2026 00:00 CET = 16.11.2026 23:00 UTC
+        private static readonly DateTime TrialEnd = new(2026, 11, 16, 23, 0, 0, DateTimeKind.Utc);
+
+        private static SubscriptionDetails Monthly(DateTime? trialEnd = null) =>
+            new(trialEnd, 2900, "pln", "month", 1);
 
         private static FakeHttpMessageHandler PdfReturning() =>
             FakeHttpMessageHandler.Returning(
@@ -95,6 +106,186 @@ namespace VocareWebApi.Tests.Billing.Services
 
             body.Should().Contain("odnawiana automatycznie co miesiąc");
             body.Should().Contain("Subskrypcję możesz anulować w każdej chwili");
+        }
+
+        [Fact]
+        public void BuildBody_ForTrialSubscription_StatesFreePeriodFirstChargeAndRecurringPrice()
+        {
+            var confirmation = Confirmation("subscription");
+            confirmation.AmountTotal = 0;
+
+            var body = PurchaseConfirmationService.BuildBody(
+                confirmation,
+                Legal(),
+                Monthly(TrialEnd)
+            );
+
+            body.Should().Contain("bezpłatny okres próbny");
+            body.Should()
+                .Contain("Cena: 0,00 PLN do 16.11.2026 włącznie, następnie 29,00 PLN co miesiąc");
+            body.Should().Contain("Data pierwszej płatności: 17.11.2026" + Environment.NewLine);
+            body.Should().Contain("trwa do 16.11.2026 włącznie");
+            body.Should()
+                .Contain("Jeśli anulujesz subskrypcję najpóźniej 16.11.2026, nie zapłacisz nic");
+            body.Should().Contain("W przeciwnym razie 17.11.2026 pobierzemy 29,00 PLN");
+            body.Should().Contain("pobierzemy 29,00 PLN");
+            body.Should().Contain("Masz 14 dni od zawarcia umowy na odstąpienie");
+            body.Should().NotContain("zwrócimy całą wpłatę");
+            body.Should().Contain("dostęp zachowasz do końca okresu próbnego");
+            body.Should().NotContain("opłaconego okresu");
+            body.Should().NotContain("Cena: 0,00 PLN" + Environment.NewLine);
+        }
+
+        [Fact]
+        public void DescribeTrialEnd_WhenTrialEndsAtOtherTime_StatesExactPolishTime()
+        {
+            // 10:00 UTC = 12:00 CEST – bez rozbijania na „ostatni dzień” i „dzień płatności”
+            var wording = PurchaseConfirmationService.DescribeTrialEnd(
+                new DateTime(2026, 10, 21, 10, 0, 0, DateTimeKind.Utc)
+            );
+
+            wording.TrialUntil.Should().Be("do 21.10.2026 12:00");
+            wording.PaymentOn.Should().Be("21.10.2026 12:00");
+            wording.CancelBy.Should().Be("przed 21.10.2026 12:00");
+        }
+
+        [Fact]
+        public void BuildBody_ForQuarterlySubscriptionWithoutTrial_DescribesQuarterlyRenewal()
+        {
+            var confirmation = Confirmation("subscription");
+            confirmation.AmountTotal = 6900;
+
+            var body = PurchaseConfirmationService.BuildBody(
+                confirmation,
+                Legal(),
+                new SubscriptionDetails(null, 6900, "pln", "month", 3)
+            );
+
+            body.Should().Contain("odnawiana automatycznie co 3 miesiące do czasu anulowania");
+            body.Should().Contain("Cena: 69,00 PLN co 3 miesiące");
+            body.Should().Contain("zwrócimy całą wpłatę");
+            body.Should().NotContain("Data pierwszej płatności");
+        }
+
+        [Fact]
+        public void BuildBody_ForTokenPackage_IgnoresSubscriptionDetails()
+        {
+            var body = PurchaseConfirmationService.BuildBody(
+                Confirmation(),
+                Legal(),
+                Monthly(TrialEnd)
+            );
+
+            body.Should().Contain("Cena: 19,00 PLN" + Environment.NewLine);
+            body.Should().NotContain("okres próbny");
+        }
+
+        [Theory]
+        [InlineData("month", 1, "co miesiąc")]
+        [InlineData("month", 3, "co 3 miesiące")]
+        [InlineData("month", 6, "co 6 miesięcy")]
+        [InlineData("month", 12, "co 12 miesięcy")]
+        [InlineData("month", 22, "co 22 miesiące")]
+        [InlineData("year", 1, "co rok")]
+        [InlineData("week", 2, "co 2 tygodnie")]
+        public void FormatInterval_UsesPolishPluralForms(
+            string interval,
+            long count,
+            string expected
+        )
+        {
+            PurchaseConfirmationService.FormatInterval(interval, count).Should().Be(expected);
+        }
+
+        [Fact]
+        public async Task SendPurchaseConfirmationAsync_ForSubscription_UsesTrialAndPriceFromStripe()
+        {
+            var subscriptions = new Mock<SubscriptionService>(MockBehavior.Strict);
+            subscriptions
+                .Setup(s =>
+                    s.GetAsync(
+                        "sub_123",
+                        It.IsAny<SubscriptionGetOptions>(),
+                        It.IsAny<RequestOptions>(),
+                        It.IsAny<CancellationToken>()
+                    )
+                )
+                .ReturnsAsync(
+                    new Subscription
+                    {
+                        TrialEnd = TrialEnd,
+                        Items = new StripeList<SubscriptionItem>
+                        {
+                            Data = new List<SubscriptionItem>
+                            {
+                                new()
+                                {
+                                    Price = new Price
+                                    {
+                                        UnitAmount = 2900,
+                                        Currency = "pln",
+                                        Recurring = new PriceRecurring
+                                        {
+                                            Interval = "month",
+                                            IntervalCount = 1,
+                                        },
+                                    },
+                                },
+                            },
+                        },
+                    }
+                );
+            string? sentBody = null;
+            var email = new Mock<IEmailService>();
+            email
+                .Setup(e =>
+                    e.SendEmailAsync(
+                        It.IsAny<string>(),
+                        It.IsAny<string>(),
+                        It.IsAny<string>(),
+                        It.IsAny<IReadOnlyCollection<EmailAttachment>>()
+                    )
+                )
+                .Callback<string, string, string, IReadOnlyCollection<EmailAttachment>>(
+                    (_, _, body, _) => sentBody = body
+                )
+                .Returns(Task.CompletedTask);
+            var confirmation = Confirmation("subscription");
+            confirmation.AmountTotal = 0;
+            confirmation.SubscriptionId = "sub_123";
+
+            await CreateSut(email.Object, PdfReturning(), subscriptions.Object)
+                .SendPurchaseConfirmationAsync(confirmation);
+
+            sentBody
+                .Should()
+                .Contain("Cena: 0,00 PLN do 16.11.2026 włącznie, następnie 29,00 PLN co miesiąc");
+        }
+
+        [Fact]
+        public async Task SendPurchaseConfirmationAsync_WhenStripeUnavailable_ThrowsWithoutSendingEmail()
+        {
+            var subscriptions = new Mock<SubscriptionService>(MockBehavior.Strict);
+            subscriptions
+                .Setup(s =>
+                    s.GetAsync(
+                        "sub_123",
+                        It.IsAny<SubscriptionGetOptions>(),
+                        It.IsAny<RequestOptions>(),
+                        It.IsAny<CancellationToken>()
+                    )
+                )
+                .ThrowsAsync(new StripeException("Stripe down"));
+            var email = new Mock<IEmailService>(MockBehavior.Strict);
+            var confirmation = Confirmation("subscription");
+            confirmation.SubscriptionId = "sub_123";
+
+            await CreateSut(email.Object, PdfReturning(), subscriptions.Object)
+                .Invoking(s => s.SendPurchaseConfirmationAsync(confirmation))
+                .Should()
+                .ThrowAsync<StripeException>();
+
+            email.VerifyNoOtherCalls();
         }
 
         [Fact]

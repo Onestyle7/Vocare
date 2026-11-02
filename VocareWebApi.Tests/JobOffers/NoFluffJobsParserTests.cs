@@ -109,6 +109,69 @@ namespace VocareWebApi.Tests.JobOffers
             offer.SalaryPeriod.Should().Be(SalaryPeriod.Month);
         }
 
+        [Theory]
+        [InlineData("from 100 to 150 PLN per hour", 100, 150, "PLN", SalaryPeriod.Hour)]
+        [InlineData("from 1200 to 1500 PLN per day", 1200, 1500, "PLN", SalaryPeriod.Day)]
+        [InlineData("from 52.5 PLN per hour", 52.5, 52.5, "PLN", SalaryPeriod.Hour)]
+        [InlineData("from 52.5 to 60.75 EUR per hour", 52.5, 60.75, "EUR", SalaryPeriod.Hour)]
+        public async Task FetchOffersAsync_ParsesFeedSalaryFormats(
+            string salary,
+            double expectedMin,
+            double expectedMax,
+            string expectedCurrency,
+            SalaryPeriod expectedPeriod
+        )
+        {
+            var feed = $"""
+                <source>
+                  <job>
+                    <referencenumber>NFJ-3</referencenumber>
+                    <title>Contractor</title>
+                    <salary><![CDATA[{salary}]]></salary>
+                    <city>Remote</city>
+                  </job>
+                </source>
+                """;
+
+            var offer = (await CollectAsync(CreateSut(feed))).Single();
+
+            offer.SalaryMin.Should().Be((decimal)expectedMin);
+            offer.SalaryMax.Should().Be((decimal)expectedMax);
+            offer.SalaryCurrency.Should().Be(expectedCurrency);
+            offer.SalaryPeriod.Should().Be(expectedPeriod);
+        }
+
+        [Theory]
+        [InlineData("Wed, 30 Sep 2026 14:02:06 CEST", "2026-09-30T12:02:06Z")]
+        [InlineData("Tue, 03 Feb 2026 09:15:00 CET", "2026-02-03T08:15:00Z")]
+        public async Task FetchOffersAsync_ParsesFeedDateWithTimeZoneAbbreviation(
+            string date,
+            string expectedUtc
+        )
+        {
+            var feed = $"""
+                <source>
+                  <job>
+                    <referencenumber>NFJ-4</referencenumber>
+                    <title>Tester</title>
+                    <date><![CDATA[{date}]]></date>
+                  </job>
+                </source>
+                """;
+
+            var offer = (await CollectAsync(CreateSut(feed))).Single();
+
+            offer
+                .PublishedAt.Should()
+                .Be(
+                    DateTime.Parse(
+                        expectedUtc,
+                        null,
+                        System.Globalization.DateTimeStyles.AdjustToUniversal
+                    )
+                );
+        }
+
         [Fact]
         public async Task FetchOffersAsync_ParsesLocationsWithRemoteFlag()
         {

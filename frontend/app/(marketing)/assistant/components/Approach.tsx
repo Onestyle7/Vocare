@@ -24,7 +24,7 @@ const Approach = () => {
       <div className="relative mx-auto flex w-full max-w-none flex-col overflow-hidden rounded-3xl 2xl:max-w-7xl">
         <div className="relative mx-auto flex w-full max-w-7xl flex-1 flex-col px-4 py-12 sm:px-8 sm:py-0">
           <div className="flex flex-col items-center space-y-6 sm:space-y-7 lg:space-y-8">
-            <h1 className="w-full max-w-245 text-center text-[28px] leading-[1.15] font-light text-[#F1F4FF] sm:text-[36px] lg:text-[48px] lg:leading-[1.1]">
+            <h2 className="w-full max-w-245 text-center text-[28px] leading-[1.15] font-light text-[#F1F4FF] sm:text-[36px] lg:text-[48px] lg:leading-[1.1]">
               <span className="block opacity-[0.79]">Innowacyjne Podejście</span>
               <span className="mt-1 inline-flex max-w-full flex-wrap items-baseline justify-center gap-x-2 sm:gap-x-3 lg:mt-0 lg:flex-nowrap">
                 <span className="opacity-[0.79]">w</span>
@@ -33,7 +33,7 @@ const Approach = () => {
                 </span>
                 <span className="opacity-[0.79]">Kariery</span>
               </span>
-            </h1>
+            </h2>
           </div>
 
           <div className="mt-16 flex w-full flex-col gap-16 lg:mt-24">

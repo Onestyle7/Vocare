@@ -4,8 +4,10 @@ import RoadmapDashboardPage from '@/features/roadmap/components/RoadmapDashboard
 import { getUserRoadmapsQuery } from '@/features/roadmap/dal/queries';
 
 export default async function DashboardPage() {
-  const [roadmapsError, roadmaps] = await getUserRoadmapsQuery();
-  const [recommendationError, recommendation] = await getLastRecommendationQuery();
+  const [[roadmapsError, roadmaps], [recommendationError, recommendation]] = await Promise.all([
+    getUserRoadmapsQuery(),
+    getLastRecommendationQuery(),
+  ]);
 
   if (roadmapsError?.type === 'Unauthorized' || recommendationError?.type === 'Unauthorized') {
     await forceLoginRedirect();

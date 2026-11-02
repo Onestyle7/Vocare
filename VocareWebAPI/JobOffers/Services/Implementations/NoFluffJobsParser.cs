@@ -188,10 +188,10 @@ namespace VocareWebAPI.JobOffers.Services.Implementations
 
             try
             {
-                // Wyciągamy liczby z tekstu
+                // Wyciągamy liczby z tekstu, również z częścią ułamkową (np. "from 52.5 PLN per hour")
                 var numbers = Regex
-                    .Matches(salaryText, @"\d+")
-                    .Select(m => decimal.Parse(m.Value))
+                    .Matches(salaryText, @"\d+(?:\.\d+)?")
+                    .Select(m => decimal.Parse(m.Value, CultureInfo.InvariantCulture))
                     .ToList();
 
                 decimal? min = numbers.Count > 0 ? numbers[0] : null;

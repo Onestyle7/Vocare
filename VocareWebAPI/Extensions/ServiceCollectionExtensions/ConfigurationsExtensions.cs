@@ -14,7 +14,8 @@ namespace VocareWebAPI.Extensions.ServiceCollectionExtensions
     {
         public static IServiceCollection AddConfiguration(
             this IServiceCollection services,
-            IConfiguration configuration
+            IConfiguration configuration,
+            IHostEnvironment environment
         )
         {
             services.Configure<PerplexityAIConfig>(configuration.GetSection("PerplexityAI"));
@@ -53,6 +54,21 @@ namespace VocareWebAPI.Extensions.ServiceCollectionExtensions
                 .Validate(
                     opt => !string.IsNullOrWhiteSpace(opt.Key),
                     "InternalApi:Key configuration is missing or empty."
+                )
+                .ValidateOnStart();
+
+            services
+                .AddOptions<TrialConfig>()
+                .BindConfiguration(TrialConfig.SectionName)
+                .ValidateDataAnnotations()
+                .ValidateOnStart();
+            services
+                .AddOptions<ConsentDiscountConfig>()
+                .BindConfiguration(ConsentDiscountConfig.SectionName)
+                .ValidateDataAnnotations()
+                .Validate(
+                    opt => opt.IsEnabled || !environment.IsProduction(),
+                    "ConsentDiscount:CouponId is required in production – the consent discount is promised by the terms (§ 9)."
                 )
                 .ValidateOnStart();
             return services;
