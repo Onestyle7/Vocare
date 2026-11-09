@@ -36,7 +36,10 @@ namespace VocareWebAPI.JobOffers.Repositories.Implementations
                 new NpgsqlParameter("@limit", limit),
             };
 
-            var whereClauses = new List<string> { "j.\"Embedding\" IS NOT NULL" };
+            var whereClauses = new List<string>
+            {
+                "j.\"Embedding\" IS NOT NULL AND \"IsActive\" IS TRUE",
+            };
 
             // Filtr lokalizacji
             if (filters.Cities != null && filters.Cities.Any())

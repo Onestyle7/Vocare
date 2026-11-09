@@ -87,6 +87,24 @@ namespace VocareWebApi.Tests.JobOffers
         }
 
         [Fact]
+        public async Task JobOfferRepository_OffersWithoutEmbedding_ExcludeInactiveOffers()
+        {
+            var sut = new JobOfferRepository(_context);
+            var inactive = Offer("ref-inactive", embedding: null);
+            inactive.IsActive = false;
+            inactive.DeactivatedAt = DateTime.UtcNow;
+            await sut.AddAsync(inactive);
+            await sut.AddAsync(Offer("ref-active", embedding: null));
+
+            (await sut.CountOffersWithoutEmbeddingAsync()).Should().Be(1);
+            (await sut.GetOffersWithoutEmbeddingAsync(10))
+                .Should()
+                .ContainSingle()
+                .Which.ReferenceNumber.Should()
+                .Be("ref-active");
+        }
+
+        [Fact]
         public async Task JobOfferRepository_GetAllUniqueSkillNames_DeduplicatesAcrossOffers()
         {
             var sut = new JobOfferRepository(_context);
