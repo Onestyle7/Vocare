@@ -6,7 +6,7 @@ date: '2026-04-29'
 updatedAt: '2026-09-02'
 author: 'Vocare'
 category: 'cv'
-coverImage: '/images/blog/example-cv.webp'
+coverImage: '/images/blog/cv-templates-industry.webp'
 tags: ['przykładowe cv', 'wzór cv', 'cv przykład', 'cv dla programisty', 'cv dla studenta']
 slug: 'przykladowe-cv'
 ---

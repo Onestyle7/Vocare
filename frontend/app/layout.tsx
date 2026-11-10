@@ -68,18 +68,27 @@ const sizmoPro = localFont({
     },
   ],
   variable: '--font-sizmo-pro',
+  display: 'swap',
+  // `preload` applies to every file of a localFont call, there is no per-face
+  // switch. With it on, all 10 faces were preloaded on every page, while the
+  // public pages render at most 3 of them and none above the fold on the
+  // landing pages (those use Poppins). Faces now load when a page uses them.
+  preload: false,
 });
 
 const spaceGrotesk = localFont({
   src: [
-    { path: '../public/fonts/grotesk/SpaceGrotesk-Light.ttf', weight: '300', style: 'normal' },
-    { path: '../public/fonts/grotesk/SpaceGrotesk-Regular.ttf', weight: '400', style: 'normal' },
-    { path: '../public/fonts/grotesk/SpaceGrotesk-Medium.ttf', weight: '500', style: 'normal' },
-    { path: '../public/fonts/grotesk/SpaceGrotesk-SemiBold.ttf', weight: '600', style: 'normal' },
-    { path: '../public/fonts/grotesk/SpaceGrotesk-Bold.ttf', weight: '700', style: 'normal' },
+    { path: '../public/fonts/grotesk/SpaceGrotesk-Light.woff2', weight: '300', style: 'normal' },
+    { path: '../public/fonts/grotesk/SpaceGrotesk-Regular.woff2', weight: '400', style: 'normal' },
+    { path: '../public/fonts/grotesk/SpaceGrotesk-Medium.woff2', weight: '500', style: 'normal' },
+    { path: '../public/fonts/grotesk/SpaceGrotesk-SemiBold.woff2', weight: '600', style: 'normal' },
+    { path: '../public/fonts/grotesk/SpaceGrotesk-Bold.woff2', weight: '700', style: 'normal' },
   ],
   variable: '--font-grotesk',
   display: 'swap',
+  // Same reasoning as sizmoPro. The .ttf files stay in the folder because the
+  // legal PDF renderer (features/marketing/pdf) reads them from disk.
+  preload: false,
 });
 
 export const metadata: Metadata = {

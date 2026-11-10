@@ -173,6 +173,8 @@ Pytanie „jaki zawód wybrać" nie wymaga genialnej intuicji ani szczęścia. W
 
 Nie musisz tego robić sam. Jeśli chcesz w kilka minut sprawdzić, jaki zawód pasuje do Twoich predyspozycji - skorzystaj z darmowej analizy na [Analiza profilu zawodowego w Vocare](/assistant). Platforma przeanalizuje Twoje mocne strony, porówna je z aktualnymi danymi rynkowymi i zaproponuje ścieżki kariery dopasowane właśnie do Ciebie. Bo wybór zawodu to zbyt ważna decyzja, żeby zostawiać ją przypadkowi.
 
+A kiedy wybierzesz kierunek, [roadmapa kariery w Vocare](/roadmap) ułoży plan dojścia do niego krok po kroku.
+
 ---
 
 ## Powiązane artykuły

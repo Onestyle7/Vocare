@@ -72,6 +72,8 @@ Rynek pracy w rolnictwie przechodzi zmianę strukturalną - ogólne zatrudnienie
 
 Zastanawiasz się, która ścieżka w rolnictwie pasuje do Twoich kompetencji? [Analiza profilu zawodowego w Vocare](/assistant) pomoże Ci to sprawdzić.
 
+Zarobki, trudność wejścia i brakujące umiejętności dla rekomendowanych Ci ścieżek znajdziesz w [analizie rynku pracy Vocare](/market-analysis).
+
 ---
 
 ## Powiązane artykuły

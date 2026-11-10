@@ -215,6 +215,8 @@ Testy kompetencji zawodowych to najszybsza droga do zrozumienia własnego profil
 
 Chcesz przeprowadzić szybką diagnostykę kariery bez konieczności umawia sesji z doradcą? [Analiza profilu zawodowego w Vocare](/assistant) oferuje spersonalizowaną analizę kompetencji i wskazuje konkretne ścieżki kariery dopasowane do Twojego profilu.
 
+Wyniki testów nabierają sensu dopiero z planem: [roadmapa kariery w Vocare](/roadmap) rozpisuje wybraną ścieżkę na etapy i umiejętności do zdobycia.
+
 ---
 
 ## Powiązane artykuły

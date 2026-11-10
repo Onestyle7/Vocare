@@ -240,6 +240,7 @@ const HeaderNavLinks: HeaderNavLinkConfig[] = [
     publicUrl: '/salary-calculator',
     authenticatedUrl: '/dashboard/salary-calculator',
   },
+  { label: 'Blog', publicUrl: '/blog' },
 ];
 
 export const getHeaderNavLinks = (isAuthenticated: boolean): NavLink[] =>
@@ -255,10 +256,7 @@ export const getHeaderNavLinks = (isAuthenticated: boolean): NavLink[] =>
  * logged-out visitor (and every crawler) with a 307 to `/sign-in`, so the
  * site-wide footer passed no internal links to the pages that should rank.
  */
-export const FooterNavLinks: NavLink[] = [
-  ...getHeaderNavLinks(false),
-  { label: 'Blog', url: '/blog' },
-];
+export const FooterNavLinks: NavLink[] = getHeaderNavLinks(false);
 
 // export const companies = [
 //   { name: 'Google', url: 'https://cdn.magicui.design/companies/Google.svg' },

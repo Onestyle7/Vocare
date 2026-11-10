@@ -3,6 +3,7 @@ import Image from 'next/image';
 
 import Header from '@/components/SectionsComponents/Header';
 import Copy from '@/components/SupportComponents/Copy';
+import { PricingFaq } from '@/features/billing/components/PricingFaq';
 import { PricingInteractive } from '@/features/billing/components/PricingInteractive';
 import { curve_pricing } from '@/features/marketing/constants';
 import { buildMarketingMetadata } from '@/features/marketing/utils/metadata';
@@ -12,7 +13,7 @@ import Maintenance from '../maintenance/page';
 
 export const metadata: Metadata = buildMarketingMetadata({
   path: '/pricing',
-  title: 'Cennik',
+  title: 'Cennik – plany i tokeny',
   description:
     'Sprawdź cennik Vocare i pakiety tokenów AI. Darmowy start bez karty płatniczej. Wybierz elastyczny plan dopasowany do Twojego rozwoju zawodowego.',
   ogAlt: 'Cennik Vocare',
@@ -57,6 +58,7 @@ export default async function PricingPage() {
               </div>
             </div>
           </section>
+          <PricingFaq />
           <Footer />
         </>
       )}

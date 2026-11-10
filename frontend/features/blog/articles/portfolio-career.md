@@ -157,6 +157,8 @@ Od strony finansowej najważniejszy jest jeden próg: etat z wynagrodzeniem co n
 
 Zastanawiasz się, jakie dodatkowe kierunki rozwoju pasują do Twoich kompetencji? [Analiza profilu zawodowego w Vocare](/assistant) przeprowadzi bezpłatną analizę.
 
+Wybrany kierunek możesz potem rozpisać w [roadmapie kariery Vocare](/roadmap), z etapami i krokami rozłożonymi w czasie.
+
 ---
 
 ## Powiązane artykuły
