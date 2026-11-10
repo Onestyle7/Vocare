@@ -88,6 +88,8 @@ Sabbatical to świadoma, zaplanowana przerwa w karierze - różni się od zwykł
 
 Wracasz do pracy po dłuższej przerwie i zastanawiasz się, jak wypadają Twoje kompetencje? [Analiza profilu zawodowego w Vocare](/assistant) pomoże Ci to sprawdzić.
 
+Plan powrotu ułożysz w [roadmapie kariery Vocare](/roadmap), która rozpisuje wybraną ścieżkę na etapy i kroki do odhaczania.
+
 ---
 
 ## Powiązane artykuły

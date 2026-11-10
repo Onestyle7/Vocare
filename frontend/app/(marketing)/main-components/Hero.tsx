@@ -122,6 +122,7 @@ const Hero = () => {
                 width={689}
                 height={595}
                 priority
+                fetchPriority="high"
                 className="pointer-events-none h-auto w-full max-w-170 object-contain object-right xl:max-w-147.25"
               />
             </div>

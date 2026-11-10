@@ -193,6 +193,8 @@ Doradztwo zawodowe ma największy sens gdy stoisz na rozdrożu: nie wiesz w któ
 
 Jeśli chcesz zacząć od własnej diagnozy - przed sesją z doradcą lub zamiast niej - [Analiza profilu zawodowego w Vocare](/assistant) przeprowadza pełną analizę kariery: bada Twoje kompetencje i wartości, rekomenduje dopasowane ścieżki zawodowe z danymi rynkowymi i generuje konkretną roadmapę co robić dalej. Bezpłatnie, bez umawiania się, dostępne od razu.
 
+Jak wygląda taki plan, zobaczysz na stronie [roadmapy kariery w Vocare](/roadmap).
+
 ---
 
 ## Powiązane artykuły

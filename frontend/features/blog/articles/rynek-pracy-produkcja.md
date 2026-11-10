@@ -89,6 +89,8 @@ Automatyzacja nie likwiduje pracy w produkcji - przesuwa jej wartość w stronę
 
 Zastanawiasz się, jak rozwinąć karierę w produkcji w kierunku bardziej technicznym? [Analiza profilu zawodowego w Vocare](/assistant) przeprowadzi bezpłatną analizę kompetencji i wskaże konkretne kierunki rozwoju.
 
+Ile można zarobić po takim kroku i czego Ci do niego brakuje, pokaże [analiza rynku pracy w Vocare](/market-analysis) dla ścieżek dopasowanych do Twojego profilu.
+
 ---
 
 ## Powiązane artykuły
