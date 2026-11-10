@@ -77,3 +77,4 @@ Zastanawiasz się, w jakim kierunku rozwijać karierę - na etacie czy projektow
 - [Umowa o pracę vs B2B vs zlecenie 2026 - co wybrać?](/blog/praca/umowa-o-prace-vs-b2b)
 - [CV freelancera 2026 - jak pokazać projekty zamiast etatów](/blog/cv/cv-freelancera)
 - [Umowa na czas określony 2026 - ile razy można ją podpisać](/blog/praca/umowa-na-czas-okreslony-limit)
+- [Umowa zlecenie brutto netto 2026 - ile na rękę](/blog/rynek-pracy/brutto-netto-umowa-zlecenie)

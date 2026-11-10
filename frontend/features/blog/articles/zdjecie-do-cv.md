@@ -150,3 +150,4 @@ Chcesz sprawdzić, jak Twoje CV wypada jako całość, nie tylko samo zdjęcie? 
 - [CV bez doświadczenia 2026 - co wpisać, gdy nie masz stażu](/blog/cv/cv-bez-doswiadczenia)
 - [Umiejętności do CV 2026 - co wpisać, żeby wyróżnić aplikację](/blog/cv/umiejetnosci-do-cv)
 - [LinkedIn 2026 - jak zbudować profil, który przyciąga](/blog/cv/linkedin-profil)
+- [Klauzula RODO do CV 2026 - aktualna treść i wzory](/blog/cv/klauzula-rodo-do-cv)

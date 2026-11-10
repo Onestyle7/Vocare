@@ -4,6 +4,7 @@ import Header from '@/components/SectionsComponents/Header';
 import { PromoBar } from '@/features/marketing/components/PromoSticky';
 import { buildMarketingMetadata } from '@/features/marketing/utils/metadata';
 import SalaryCalculator from '@/features/salary-calculator/components/SalaryCalculator';
+import SalaryCalculatorGuide from '@/features/salary-calculator/components/SalaryCalculatorGuide';
 
 import Footer from '../assistant/components/Footer';
 
@@ -33,6 +34,8 @@ export default function SalaryCalculatorPage() {
           <SalaryCalculator className="mt-10" />
         </div>
       </section>
+
+      <SalaryCalculatorGuide />
 
       <Footer />
       {/* The calculator answers above the fold, so the short scroll and delay let the

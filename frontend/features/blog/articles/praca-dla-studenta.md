@@ -178,3 +178,4 @@ Chcesz wiedzieć, jakie role i branże najlepiej pasują do Twoich kompetencji i
 - [Praca bez doświadczenia 2026 - jak dostać pierwszą pracę](/blog/praca/praca-bez-doswiadczenia)
 - [Jak znaleźć pracę w 2026 - sprawdzone strategie krok po kroku](/blog/praca/jak-znalezc-prace)
 - [Rynek pracy w gastronomii i hotelarstwie 2026 - deficyt i zarobki](/blog/rynek-pracy/rynek-pracy-gastronomia)
+- [Umowa zlecenie brutto netto 2026 - ile na rękę](/blog/rynek-pracy/brutto-netto-umowa-zlecenie)
