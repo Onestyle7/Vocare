@@ -1,6 +1,7 @@
 import type { Metadata } from 'next';
 
 import SearchView from '@/features/blog/components/SearchView';
+import { PromoBar } from '@/features/marketing/components/PromoSticky';
 
 import { getArticlesMetadata, toAbsoluteUrl } from '../../features/blog/utils/blogUtils';
 import { ARTICLES_FOLDER } from '../../features/blog/utils/constants';
@@ -49,6 +50,7 @@ export default function BlogPage() {
         Wiedza, trendy rynkowe i porady zawodowe w jednym miejscu
       </p>
       <SearchView articlesMetadata={articlesMetadata} />
+      <PromoBar variant="cv" />
     </section>
   );
 }
