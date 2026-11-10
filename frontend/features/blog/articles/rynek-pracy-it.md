@@ -109,3 +109,4 @@ Chcesz sprawdzić, jak Twój profil kompetencyjny wypada na tle aktualnego rynku
 - [Jak zmienić branżę - praktyczny przewodnik krok po kroku](/blog/kariera/jak-zmienic-branze)
 - [CV programisty 2026 - jak napisać CV, które przejdzie przez ATS w IT](/blog/cv/cv-programisty)
 - [CV analityka danych 2026 - jak pokazać projekty analityczne](/blog/cv/cv-analityka-danych)
+- [Ile na rękę z B2B w 2026? Ryczałt, liniowy i skala](/blog/rynek-pracy/ile-na-reke-b2b)

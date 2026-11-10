@@ -110,3 +110,4 @@ Chcesz sprawdzić, czy Twoje CV po angielsku jest dobrze dopasowane do zagranicz
 - [Europass CV 2026 - czy warto i jak go wypełnić](/blog/cv/europass-cv)
 - [CV po hiszpańsku 2026 - jak napisać currículum do Hiszpanii](/blog/cv/cv-po-hiszpansku)
 - [CV po francusku 2026 - jak napisać CV do Francji](/blog/cv/cv-po-francusku)
+- [Klauzula RODO do CV 2026 - aktualna treść i wzory](/blog/cv/klauzula-rodo-do-cv)

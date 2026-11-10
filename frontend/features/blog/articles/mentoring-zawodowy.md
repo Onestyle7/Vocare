@@ -3,6 +3,7 @@ title: 'Mentoring zawodowy 2026 - jak znaleźć mentora'
 description: 'Jak znaleźć mentora zawodowego i jak zbudować z nim wartościową relację? Sprawdź jak działa mentoring, czym różni się od coachingu i jak o niego poprosić.'
 estimatedReadTime: 7
 date: '2026-06-03'
+updatedAt: '2026-11-10'
 author: 'Vocare'
 category: 'kariera'
 coverImage: '/images/blog/career-advisor.webp'
@@ -53,6 +54,21 @@ Relacje mentorskie, które trwają i przynoszą realną wartość, łączy jeden
 | Informowanie o wynikach wcześniejszych rad | Buduje poczucie, że relacja ma realny wpływ |
 | Elastyczność co do formy kontaktu (spotkania, mail, krótkie wiadomości) | Ułatwia mentorowi dopasowanie relacji do własnego czasu |
 | Wyrażanie wdzięczności i uznania | Utrzymuje motywację mentora do dalszego zaangażowania |
+
+---
+
+## Mentor czy doradca zawodowy - kogo potrzebujesz?
+
+Mentor i doradca zawodowy odpowiadają na różne pytania. Doradca pomaga ustalić, **dokąd iść**: diagnozuje kompetencje i wskazuje pasujące kierunki. Mentor pomaga **dojść tam szybciej**, bo sam już przeszedł tę drogę w konkretnej branży.
+
+| Twoja sytuacja | Kto pomoże bardziej |
+| --- | --- |
+| Nie wiesz, jaki kierunek wybrać albo czy zmieniać branżę | [Doradca zawodowy](/blog/kariera/doradca-zawodowy) |
+| Znasz cel, ale nie znasz realiów branży ani ludzi | Mentor |
+| Chcesz awansować w obecnej specjalizacji | Mentor |
+| Potrzebujesz diagnozy mocnych stron i planu nauki | Doradca zawodowy |
+
+Dlatego kolejność ma znaczenie: najpierw kierunek, potem mentor. Prośba „pomóż mi wejść do UX” jest dla mentora konkretna, a „nie wiem, co ze sobą zrobić” już nie. Jeśli jesteś na pierwszym etapie, [doradca kariery AI w Vocare](/assistant) wskaże ścieżki dopasowane do Twojego profilu, a z gotową ścieżką łatwiej znaleźć mentora, który ją zna.
 
 ---
 
