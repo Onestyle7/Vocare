@@ -1,6 +1,7 @@
 import type { Metadata } from 'next';
 
 import Header from '@/components/SectionsComponents/Header';
+import { PromoBar } from '@/features/marketing/components/PromoSticky';
 import { buildMarketingMetadata } from '@/features/marketing/utils/metadata';
 import SalaryCalculator from '@/features/salary-calculator/components/SalaryCalculator';
 
@@ -34,6 +35,9 @@ export default function SalaryCalculatorPage() {
       </section>
 
       <Footer />
+      {/* The calculator answers above the fold, so the short scroll and delay let the
+          promo show once the visitor has seen a result. */}
+      <PromoBar variant="salary" scrollThreshold={200} delayMs={8000} />
     </main>
   );
 }

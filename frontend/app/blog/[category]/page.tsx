@@ -10,6 +10,8 @@ import {
   BLOG_CATEGORIES,
   isBlogCategorySlug,
 } from '@/features/blog/utils/constants';
+import { PromoBar } from '@/features/marketing/components/PromoSticky';
+import { getPromoVariantForCategory } from '@/features/marketing/constants/promo';
 
 type CategoryProps = {
   params: Promise<{ category: string }>;
@@ -157,6 +159,7 @@ export default async function BlogCategoryPage({ params }: CategoryProps) {
           </Link>
         ))}
       </section>
+      <PromoBar variant={getPromoVariantForCategory(category)} />
     </PageWithBackButton>
   );
 }

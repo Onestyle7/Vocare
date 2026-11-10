@@ -6,6 +6,7 @@ import Markdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 
 import { Badge } from '@/components/ui/badge';
+import ArticleNextSteps from '@/features/blog/components/ArticleNextSteps';
 import {
   A,
   Blockquote,
@@ -33,6 +34,8 @@ import {
   getArticleContent,
   getArticlesMetadata,
   getPublicImageSize,
+  getRelatedArticles,
+  splitArticleIntro,
   toAbsoluteUrl,
 } from '@/features/blog/utils/blogUtils';
 import {
@@ -40,7 +43,32 @@ import {
   BLOG_CATEGORIES,
   isBlogCategorySlug,
 } from '@/features/blog/utils/constants';
+import { PromoInline, PromoSidebar } from '@/features/marketing/components/PromoSticky';
+import { getPromoVariantForCategory } from '@/features/marketing/constants/promo';
 import { SITE_LOGO } from '@/features/marketing/constants/seo';
+
+const markdownComponents = {
+  a: A,
+  blockquote: Blockquote,
+  code: Code,
+  h1: H1,
+  h2: H2,
+  h3: H3,
+  hr: HR,
+  img: Img,
+  li: LI,
+  ol: OL,
+  p: P,
+  pre: Pre,
+  strong: Strong,
+  table: Table,
+  thead: THead,
+  tbody: TBody,
+  tr: TR,
+  th: TH,
+  td: TD,
+  ul: UL,
+};
 
 type MetadataProps = {
   params: Promise<{ category: string; slug: string }>;
@@ -159,6 +187,12 @@ export default async function BlogPage(props: MetadataProps) {
     inLanguage: 'pl-PL',
   };
   const categoryLabel = getCategoryLabel(metadata.category);
+  const relatedArticles = getRelatedArticles(
+    { slug, category: metadata.category, tags: metadata.tags },
+    getArticlesMetadata(ARTICLES_FOLDER)
+  );
+  const promoVariant = getPromoVariantForCategory(metadata.category);
+  const { intro, rest } = splitArticleIntro(content);
   const breadcrumbLd = {
     '@context': 'https://schema.org',
     '@type': 'BreadcrumbList',
@@ -216,35 +250,24 @@ export default async function BlogPage(props: MetadataProps) {
           />
         </div>
       </section>
-      <article className="font-poppins mx-auto my-10 max-w-250">
-        <Markdown
-          remarkPlugins={[remarkGfm]}
-          components={{
-            a: A,
-            blockquote: Blockquote,
-            code: Code,
-            h1: H1,
-            h2: H2,
-            h3: H3,
-            hr: HR,
-            img: Img,
-            li: LI,
-            ol: OL,
-            p: P,
-            pre: Pre,
-            strong: Strong,
-            table: Table,
-            thead: THead,
-            tbody: TBody,
-            tr: TR,
-            th: TH,
-            td: TD,
-            ul: UL,
-          }}
-        >
-          {content}
-        </Markdown>
-      </article>
+      <div className="xl:grid xl:grid-cols-[minmax(0,1fr)_17rem] xl:gap-10">
+        <article className="font-poppins mx-auto my-10 w-full max-w-250 xl:mx-0">
+          <Markdown remarkPlugins={[remarkGfm]} components={markdownComponents}>
+            {intro}
+          </Markdown>
+          {/* Small screens get the promo here, in the flow of the article, instead
+              of a bar fixed over the text. From xl up the sidebar takes over. */}
+          <PromoInline variant={promoVariant} className="my-8 xl:hidden" />
+          <Markdown remarkPlugins={[remarkGfm]} components={markdownComponents}>
+            {rest}
+          </Markdown>
+        </article>
+        <PromoSidebar variant={promoVariant} className="my-10 hidden xl:block" />
+      </div>
+      <ArticleNextSteps
+        category={isBlogCategorySlug(metadata.category) ? metadata.category : null}
+        relatedArticles={relatedArticles}
+      />
     </PageWithBackButton>
   );
 }
