@@ -7,6 +7,8 @@ import { AUTH_COOKIE_OPTIONS } from '@/features/auth/auth-cookie';
 import { getOAuthEndpoint } from '@/features/auth/dal/api';
 import { verifyOauthTokenService } from '@/features/auth/dal/services';
 import { getOauthClient, oAuthProviders, STATE_COOKIE_KEY } from '@/features/auth/oauth/base';
+import { ADS_CONSENT_KEY } from '@/lib/utils/consent';
+import { NEW_OAUTH_USER_COOKIE } from '@/lib/utils/tracking';
 
 export async function GET(
   request: NextRequest,
@@ -55,5 +57,14 @@ export async function GET(
   }
 
   cookieStore.set('userId', result.value.userId, AUTH_COOKIE_OPTIONS);
+
+  if (result.value.isNewUser && cookieStore.get(ADS_CONSENT_KEY)?.value !== 'denied') {
+    cookieStore.set(NEW_OAUTH_USER_COOKIE, '1', {
+      ...AUTH_COOKIE_OPTIONS,
+      httpOnly: false,
+      maxAge: 5 * 60,
+    });
+  }
+
   redirect(callbackUrl || '/dashboard');
 }

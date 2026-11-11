@@ -2,12 +2,14 @@ import { ArrowLeft } from 'lucide-react';
 import type { Metadata } from 'next';
 import Link from 'next/link';
 
-import { AnalyticsConsentCard } from '@/components/SupportComponents/AnalyticsConsentCard';
+import {
+  AdsConsentCard,
+  AnalyticsConsentCard,
+} from '@/components/SupportComponents/AnalyticsConsentCard';
 
 export const metadata: Metadata = {
   title: 'Preferencje Prywatności',
-  description:
-    'Zarządzaj swoimi ustawieniami dotyczącymi plików cookies i przetwarzania danych analitycznych w serwisie Vocare.',
+  description: 'Zarządzaj zgodami na pliki cookies analityczne i reklamowe w serwisie Vocare.',
   alternates: {
     canonical: '/preferences',
   },
@@ -35,13 +37,14 @@ export default function PreferencesPage() {
           </h1>
 
           <p className="mt-3 max-w-2xl text-sm leading-relaxed text-neutral-400">
-            Zarządzaj swoimi ustawieniami dotyczącymi plików cookies i przetwarzania danych
-            analitycznych.
+            Zarządzaj zgodami na pliki cookies analityczne i reklamowe. Obie zgody są od siebie
+            niezależne.
           </p>
         </header>
 
         <main className="space-y-6">
           <AnalyticsConsentCard className="bg-card/80 rounded-xl p-6 shadow-sm backdrop-blur" />
+          <AdsConsentCard className="bg-card/80 rounded-xl p-6 shadow-sm backdrop-blur" />
         </main>
 
         <footer className="mt-16 border-t border-neutral-800 pt-6 text-xs text-neutral-500">

@@ -10,7 +10,10 @@ import { CookieBanner } from '@/components/SupportComponents/CookieBanner';
 import { Toaster } from '@/components/ui/sonner';
 import { ThemeProvider } from '@/components/ui/theme-provider';
 import { AuthProvider } from '@/features/auth/components/AuthProvider';
+import { OAuthRegistrationTracker } from '@/features/auth/components/OAuthRegistrationTracker';
 import env from '@/lib/env/client';
+import { getMetaPixelScript } from '@/lib/utils/meta-pixel';
+import { getTikTokPixelScript } from '@/lib/utils/tiktok-pixel';
 
 import { toAbsoluteUrl } from '../features/blog/utils/blogUtils';
 
@@ -133,6 +136,8 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   const gaId = env.NEXT_PUBLIC_GA_ID;
+  const tiktokPixelId = env.NEXT_PUBLIC_TIKTOK_PIXEL_ID;
+  const metaPixelId = env.NEXT_PUBLIC_META_PIXEL_ID;
 
   return (
     <html lang="pl" suppressHydrationWarning>
@@ -158,6 +163,20 @@ export default function RootLayout({
             `,
           }}
         />
+        {tiktokPixelId ? (
+          <Script
+            id="tiktok-pixel"
+            strategy="beforeInteractive"
+            dangerouslySetInnerHTML={{ __html: getTikTokPixelScript(tiktokPixelId) }}
+          />
+        ) : null}
+        {metaPixelId ? (
+          <Script
+            id="meta-pixel"
+            strategy="beforeInteractive"
+            dangerouslySetInnerHTML={{ __html: getMetaPixelScript(metaPixelId) }}
+          />
+        ) : null}
       </head>
       <body
         className={`${sizmoPro.className} ${spaceGrotesk.variable} h-full antialiased selection:bg-[#915EFF]`}
@@ -166,6 +185,7 @@ export default function RootLayout({
           <ThemeProvider attribute="class" defaultTheme="dark">
             {children}
             <CookieBanner />
+            <OAuthRegistrationTracker />
             <Toaster />
           </ThemeProvider>
         </AuthProvider>

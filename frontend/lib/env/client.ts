@@ -17,6 +17,10 @@ const env = createEnv({
     NEXT_PUBLIC_GROWTH_QUARTERLY_PRICE_ID: z.string().optional(),
     NEXT_PUBLIC_INDIVIDUAL_PRICE_ID: z.string(),
     NEXT_PUBLIC_GA_ID: z.string(),
+    // Opcjonalne – bez niego TikTok Pixel nie jest ładowany
+    NEXT_PUBLIC_TIKTOK_PIXEL_ID: z.string().optional(),
+    // Opcjonalne – bez niego Meta Pixel nie jest ładowany
+    NEXT_PUBLIC_META_PIXEL_ID: z.string().optional(),
   },
   experimental__runtimeEnv: {
     NEXT_PUBLIC_APP_URL: process.env.NEXT_PUBLIC_APP_URL,
@@ -25,6 +29,8 @@ const env = createEnv({
     NEXT_PUBLIC_GROWTH_QUARTERLY_PRICE_ID: process.env.NEXT_PUBLIC_GROWTH_QUARTERLY_PRICE_ID,
     NEXT_PUBLIC_INDIVIDUAL_PRICE_ID: process.env.NEXT_PUBLIC_INDIVIDUAL_PRICE_ID,
     NEXT_PUBLIC_GA_ID: process.env.NEXT_PUBLIC_GA_ID,
+    NEXT_PUBLIC_TIKTOK_PIXEL_ID: process.env.NEXT_PUBLIC_TIKTOK_PIXEL_ID,
+    NEXT_PUBLIC_META_PIXEL_ID: process.env.NEXT_PUBLIC_META_PIXEL_ID,
   },
   onValidationError: (issues) => {
     console.error('\n[ERROR LOGGER] Environment configuration error');

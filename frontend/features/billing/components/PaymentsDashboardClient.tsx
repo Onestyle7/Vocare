@@ -6,7 +6,10 @@ import { usePathname, useSearchParams } from 'next/navigation';
 import { useEffect, useMemo, useState } from 'react';
 import { toast } from 'sonner';
 
-import { AnalyticsConsentCard } from '@/components/SupportComponents/AnalyticsConsentCard';
+import {
+  AdsConsentCard,
+  AnalyticsConsentCard,
+} from '@/components/SupportComponents/AnalyticsConsentCard';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import {
@@ -31,6 +34,7 @@ import {
   getTypeLabel,
   PAYMENT_DATE_FORMATTER,
 } from '../billingUtils';
+import { trackCheckoutCompleted } from '../checkoutTracking';
 import { PaymentHistoryItem, TrialSummary } from '../dal/api';
 
 export interface PaymentsDashboardClientProps {
@@ -56,6 +60,7 @@ export default function PaymentsDashboardClient({
   useEffect(() => {
     const success = searchParams.get('success');
     if (success?.toLowerCase() === 'true') {
+      trackCheckoutCompleted();
       setTimeout(() => {
         toast.success('Płatność powiodła się');
       }, 300);
@@ -214,6 +219,7 @@ export default function PaymentsDashboardClient({
               </CardContent>
               <CardContent className="space-y-4">
                 <AnalyticsConsentCard />
+                <AdsConsentCard />
               </CardContent>
             </Card>
           </div>

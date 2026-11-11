@@ -7,6 +7,7 @@ import { ScrollParallax } from 'react-just-parallax';
 import { shape1 } from '@/features/marketing/constants';
 
 import { applyPricingOffers, type PricingOffers } from '../billingUtils';
+import { trackCheckoutStarted } from '../checkoutTracking';
 import {
   ACTIVE_SUBSCRIPTION_STATUSES,
   type BillingPeriod,
@@ -136,6 +137,12 @@ export function PricingInteractive({
                 if (isCurrentSubscription) {
                   handleCustomerPortal();
                 } else {
+                  trackCheckoutStarted({
+                    priceId: plan.priceId,
+                    name: plan.name,
+                    value: plan.price,
+                    isTrial: plan.type === 'subscription' && Boolean(offers.trialDays),
+                  });
                   handleCheckout(plan.priceId, plan.type);
                 }
               }}

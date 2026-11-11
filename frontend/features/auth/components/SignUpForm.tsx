@@ -23,6 +23,7 @@ import { Input } from '@/components/ui/input';
 import { register } from '@/features/auth/dal/commands';
 import { CONSENT_DISCOUNT_OFFER } from '@/features/billing/constants';
 import { getRegistrationToastMessage } from '@/features/marketing/utils/welcomeBonus';
+import { trackConversion } from '@/lib/utils/tracking';
 
 import { SignUpFormType, signUpSchema } from '../dal/schemas';
 
@@ -52,6 +53,7 @@ export function SignUpForm() {
         return;
       }
 
+      trackConversion('CompleteRegistration');
       toast.success(getRegistrationToastMessage(data.welcomeBonus, data.consentDiscount));
       router.push('/sign-in');
     });

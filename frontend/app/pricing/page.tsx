@@ -4,6 +4,7 @@ import Image from 'next/image';
 import Header from '@/components/SectionsComponents/Header';
 import Copy from '@/components/SupportComponents/Copy';
 import { PricingInteractive } from '@/features/billing/components/PricingInteractive';
+import { PricingViewTracker } from '@/features/billing/components/PricingViewTracker';
 import { curve_pricing } from '@/features/marketing/constants';
 import { buildMarketingMetadata } from '@/features/marketing/utils/metadata';
 
@@ -27,6 +28,7 @@ export default async function PricingPage() {
         <Maintenance />
       ) : (
         <>
+          <PricingViewTracker />
           <Header />
 
           <section className="relative -mt-21 pt-30 pb-12 md:pb-20" id="pricing">
