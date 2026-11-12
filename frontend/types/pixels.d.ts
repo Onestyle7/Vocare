@@ -3,7 +3,11 @@ interface Window {
   ttq?: {
     grantConsent: () => void;
     revokeConsent: () => void;
-    track: (event: string, params?: Record<string, unknown>) => void;
+    track: (
+      event: string,
+      params?: Record<string, unknown>,
+      options?: { event_id: string }
+    ) => void;
   };
   loadTikTokPixel?: () => void;
   fbq?: (...args: unknown[]) => void;

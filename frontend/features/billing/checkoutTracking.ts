@@ -1,4 +1,4 @@
-import { type ConversionDetails, trackConversion } from '@/lib/utils/tracking';
+import { type ProductDetails, trackEvent } from '@/lib/utils/tracking';
 
 const PENDING_CHECKOUT_KEY = 'pending_checkout';
 const CURRENCY = 'PLN';
@@ -10,7 +10,7 @@ type Checkout = {
   isTrial: boolean;
 };
 
-function toDetails({ priceId, name, value, isTrial }: Checkout): ConversionDetails {
+function toDetails({ priceId, name, value, isTrial }: Checkout): ProductDetails {
   // A trial charges nothing today, whatever the plan costs later
   return { id: priceId, name, value: isTrial ? 0 : value, currency: CURRENCY };
 }
@@ -20,7 +20,7 @@ function toDetails({ priceId, name, value, isTrial }: Checkout): ConversionDetai
  * tab until the visitor comes back. A trial costs 0 zł and must not be reported as a purchase.
  */
 export function trackCheckoutStarted(checkout: Checkout): void {
-  trackConversion('InitiateCheckout', toDetails(checkout));
+  trackEvent('InitiateCheckout', toDetails(checkout));
 
   try {
     sessionStorage.setItem(PENDING_CHECKOUT_KEY, JSON.stringify(checkout));
@@ -43,5 +43,5 @@ export function trackCheckoutCompleted(): void {
 
   if (!pending) return;
 
-  trackConversion(pending.isTrial ? 'StartTrial' : 'Purchase', toDetails(pending));
+  trackEvent(pending.isTrial ? 'StartTrial' : 'Purchase', toDetails(pending));
 }

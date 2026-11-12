@@ -25,7 +25,11 @@ describe('OAuthRegistrationTracker', () => {
     render(<OAuthRegistrationTracker />);
 
     expect(track).toHaveBeenCalledOnce();
-    expect(track).toHaveBeenCalledWith('CompleteRegistration', undefined);
+    expect(track).toHaveBeenCalledWith(
+      'CompleteRegistration',
+      {},
+      { event_id: expect.any(String) }
+    );
     expect(document.cookie).not.toContain(NEW_OAUTH_USER_COOKIE);
   });
 

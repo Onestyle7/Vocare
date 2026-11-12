@@ -1,6 +1,15 @@
 import type { NextConfig } from 'next';
 import path from 'path';
 
+// Short links for social profile bios. Instagram and Facebook show the raw URL on the profile,
+// so the UTM-tagged address lives here, and GA4 reads the source after the redirect.
+const SOCIAL_BIO_LINKS = [
+  { path: '/ig', utmSource: 'instagram' },
+  { path: '/fb', utmSource: 'facebook' },
+  { path: '/tiktok', utmSource: 'tiktok' },
+  { path: '/linkedin', utmSource: 'linkedin' },
+];
+
 const nextConfig: NextConfig = {
   logging: {
     fetches: {
@@ -64,6 +73,14 @@ const nextConfig: NextConfig = {
       // case-insensitive, so '/blog/CV/:slug' also matches '/blog/cv/:slug'
       // and every cv/ and kariera/ post would redirect to itself forever.
       // It lives in proxy.ts instead, which compares the segment exactly.
+
+      // Temporary (307), so browsers don't cache the target and the UTM tags can change later
+      // without touching the links in the profiles.
+      ...SOCIAL_BIO_LINKS.map(({ path, utmSource }) => ({
+        source: path,
+        destination: `/?utm_source=${utmSource}&utm_medium=organic_social&utm_campaign=bio`,
+        permanent: false,
+      })),
     ];
   },
 };

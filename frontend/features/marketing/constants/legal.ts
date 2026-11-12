@@ -19,4 +19,4 @@ export const TERMS_VERSION = {
   previousVersion: { effectiveDate: '13.10.2026', href: '/terms-of-service/2026-10-13' },
 } as const;
 
-export const PRIVACY_POLICY_LAST_UPDATED = '11 listopada 2026 r.';
+export const PRIVACY_POLICY_LAST_UPDATED = '12 listopada 2026 r.';

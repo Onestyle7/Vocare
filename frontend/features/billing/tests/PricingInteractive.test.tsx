@@ -271,9 +271,10 @@ describe('PricingInteractive', () => {
       value: 0,
       currency: 'PLN',
     };
-    expect(track).toHaveBeenCalledWith('InitiateCheckout', trialParams);
-    expect(track).toHaveBeenCalledWith('StartTrial', trialParams);
-    expect(track).not.toHaveBeenCalledWith('Purchase', expect.anything());
+    const eventId = { event_id: expect.any(String) };
+    expect(track).toHaveBeenCalledWith('InitiateCheckout', trialParams, eventId);
+    expect(track).toHaveBeenCalledWith('StartTrial', trialParams, eventId);
+    expect(track).not.toHaveBeenCalledWith('Purchase', expect.anything(), expect.anything());
   });
 
   it('counts a token purchase with the amount after the consent discount', async () => {
@@ -295,24 +296,33 @@ describe('PricingInteractive', () => {
     await waitFor(() => expect(billing.createCheckout).toHaveBeenCalledTimes(1));
     trackCheckoutCompleted();
 
-    expect(track).toHaveBeenCalledWith('Purchase', {
-      contents: [
-        {
-          content_id: 'price_test_500_tokens',
-          content_type: 'product',
-          content_name: 'Pakiet 500 tokenów',
-        },
-      ],
-      value: 14.25,
-      currency: 'PLN',
-    });
-    expect(window.fbq).toHaveBeenCalledWith('track', 'Purchase', {
-      content_ids: ['price_test_500_tokens'],
-      content_type: 'product',
-      content_name: 'Pakiet 500 tokenów',
-      value: 14.25,
-      currency: 'PLN',
-    });
+    expect(track).toHaveBeenCalledWith(
+      'Purchase',
+      {
+        contents: [
+          {
+            content_id: 'price_test_500_tokens',
+            content_type: 'product',
+            content_name: 'Pakiet 500 tokenów',
+          },
+        ],
+        value: 14.25,
+        currency: 'PLN',
+      },
+      { event_id: expect.any(String) }
+    );
+    expect(window.fbq).toHaveBeenCalledWith(
+      'track',
+      'Purchase',
+      {
+        content_ids: ['price_test_500_tokens'],
+        content_type: 'product',
+        content_name: 'Pakiet 500 tokenów',
+        value: 14.25,
+        currency: 'PLN',
+      },
+      { eventID: expect.any(String) }
+    );
   });
 
   it('detects an active subscriber on a static page without an AuthProvider and shows subscription management', async () => {

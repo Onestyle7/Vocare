@@ -16,6 +16,6 @@ describe('PricingViewTracker', () => {
     render(<PricingViewTracker />);
 
     expect(track).toHaveBeenCalledOnce();
-    expect(track).toHaveBeenCalledWith('ViewContent', undefined);
+    expect(track).toHaveBeenCalledWith('ViewContent', {}, { event_id: expect.any(String) });
   });
 });

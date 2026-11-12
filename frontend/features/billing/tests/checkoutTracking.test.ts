@@ -2,9 +2,9 @@ import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { trackCheckoutCompleted, trackCheckoutStarted } from '@/features/billing/checkoutTracking';
 
-const { trackConversion } = vi.hoisted(() => ({ trackConversion: vi.fn() }));
+const { trackEvent } = vi.hoisted(() => ({ trackEvent: vi.fn() }));
 
-vi.mock('@/lib/utils/tracking', () => ({ trackConversion }));
+vi.mock('@/lib/utils/tracking', () => ({ trackEvent }));
 
 const tokens = { priceId: 'price_tokens', name: 'Tokeny', value: 14.25, isTrial: false };
 const trial = { priceId: 'price_premium', name: 'Premium', value: 29, isTrial: true };
@@ -18,7 +18,7 @@ describe('checkoutTracking', () => {
   it('reports the start of a checkout with its amount', () => {
     trackCheckoutStarted(tokens);
 
-    expect(trackConversion).toHaveBeenCalledWith('InitiateCheckout', {
+    expect(trackEvent).toHaveBeenCalledWith('InitiateCheckout', {
       id: 'price_tokens',
       name: 'Tokeny',
       value: 14.25,
@@ -32,8 +32,8 @@ describe('checkoutTracking', () => {
 
     trackCheckoutCompleted();
 
-    expect(trackConversion).toHaveBeenCalledOnce();
-    expect(trackConversion).toHaveBeenCalledWith('Purchase', {
+    expect(trackEvent).toHaveBeenCalledOnce();
+    expect(trackEvent).toHaveBeenCalledWith('Purchase', {
       id: 'price_tokens',
       name: 'Tokeny',
       value: 14.25,
@@ -47,8 +47,8 @@ describe('checkoutTracking', () => {
 
     trackCheckoutCompleted();
 
-    expect(trackConversion).toHaveBeenCalledOnce();
-    expect(trackConversion).toHaveBeenCalledWith('StartTrial', {
+    expect(trackEvent).toHaveBeenCalledOnce();
+    expect(trackEvent).toHaveBeenCalledWith('StartTrial', {
       id: 'price_premium',
       name: 'Premium',
       value: 0,
@@ -63,12 +63,12 @@ describe('checkoutTracking', () => {
     trackCheckoutCompleted();
     trackCheckoutCompleted();
 
-    expect(trackConversion).toHaveBeenCalledOnce();
+    expect(trackEvent).toHaveBeenCalledOnce();
   });
 
   it('reports nothing when no checkout was started in this tab', () => {
     trackCheckoutCompleted();
 
-    expect(trackConversion).not.toHaveBeenCalled();
+    expect(trackEvent).not.toHaveBeenCalled();
   });
 });
