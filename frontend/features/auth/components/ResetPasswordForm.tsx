@@ -25,11 +25,11 @@ import { spinner_terminal } from '@/features/marketing/constants';
 import { ResetPasswordFormType, resetPasswordSchema } from '../dal/schemas';
 
 interface ResetPasswordFormProps {
+  // Shown only; the server action takes the email and token from the cookie set by proxy.ts
   email: string;
-  token: string;
 }
 
-export function ResetPasswordForm({ email, token }: ResetPasswordFormProps) {
+export function ResetPasswordForm({ email }: ResetPasswordFormProps) {
   const [isPending, startTransition] = useTransition();
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
@@ -50,8 +50,6 @@ export function ResetPasswordForm({ email, token }: ResetPasswordFormProps) {
 
     startTransition(async () => {
       const [error] = await resetPassword({
-        email,
-        token,
         newPassword: values.newPassword,
         confirmPassword: values.confirmPassword,
       });

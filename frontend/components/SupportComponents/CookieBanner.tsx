@@ -8,6 +8,7 @@ import { Switch } from '@/components/ui/switch';
 import { getCookie } from '@/lib/utils';
 import {
   ADS_CONSENT_KEY,
+  clearRefusedTrackerData,
   COOKIE_CONSENT_KEY,
   updateAdsConsent,
   updateAnalyticsConsent,
@@ -39,6 +40,9 @@ export function CookieBanner() {
   const [ads, setAds] = useState(false);
 
   useEffect(() => {
+    // The banner is on every page, so this is where leftovers of a refused tool get cleaned up
+    clearRefusedTrackerData();
+
     const analyticsChoice = getCookie(COOKIE_CONSENT_KEY);
     // Visitors who only answered the earlier, analytics-only banner are asked again
     if (!analyticsChoice || !getCookie(ADS_CONSENT_KEY)) {

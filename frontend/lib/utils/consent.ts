@@ -1,4 +1,5 @@
 import { getCookie, setCookie } from '@/lib/utils';
+import { clearAdsData, clearAnalyticsData, clearTrackingHelpers } from '@/lib/utils/tracker-data';
 import { ConsentState } from '@/types/gtag';
 
 // Analytics (Google Analytics). The name predates the advertising choice and stays unchanged,
@@ -30,17 +31,39 @@ export function getAdsConsent(): boolean {
 }
 
 /**
- * Saves the analytics choice in a cookie and updates Google Analytics (gtag) consent
+ * Whether these consent cookie values accept at least one tracking tool. Only then may our
+ * measurement helpers (lib/utils/tracker-data.ts) be stored on the visitor's device: they serve no
+ * other purpose, and storing them before a decision would need the consent not yet given.
+ * Takes the values, so the server can check the request's cookies too.
+ */
+export function hasTrackingConsent(
+  analyticsChoice: string | null | undefined,
+  adsChoice: string | null | undefined
+): boolean {
+  return analyticsChoice === 'granted' || adsChoice === 'granted';
+}
+
+function clearHelpersWithoutConsent(): void {
+  if (!hasTrackingConsent(getCookie(COOKIE_CONSENT_KEY), getCookie(ADS_CONSENT_KEY))) {
+    clearTrackingHelpers();
+  }
+}
+
+/**
+ * Saves the analytics choice in a cookie and starts or stops Google Analytics
+ * (see lib/utils/google-analytics.ts)
  */
 export function updateAnalyticsConsent(consent: ConsentState | boolean): void {
   const cookieValue = toConsentState(consent);
 
   setCookie(COOKIE_CONSENT_KEY, cookieValue, CONSENT_COOKIE_DAYS);
 
-  if (typeof window !== 'undefined' && window.gtag) {
-    window.gtag('consent', 'update', {
-      analytics_storage: cookieValue,
-    });
+  if (cookieValue === 'granted') {
+    window.loadGoogleAnalytics?.();
+  } else {
+    window.disableGoogleAnalytics?.();
+    clearAnalyticsData();
+    clearHelpersWithoutConsent();
   }
 }
 
@@ -60,5 +83,17 @@ export function updateAdsConsent(consent: ConsentState | boolean): void {
   } else {
     window.ttq?.revokeConsent();
     window.fbq?.('consent', 'revoke');
+    clearAdsData();
+    clearHelpersWithoutConsent();
   }
+}
+
+/**
+ * Removes stored identifiers of every tool the visitor has refused. Run on each page load, so it
+ * also cleans up after a refusal made in another tab or before this cleanup existed.
+ */
+export function clearRefusedTrackerData(): void {
+  if (getCookie(COOKIE_CONSENT_KEY) === 'denied') clearAnalyticsData();
+  if (getCookie(ADS_CONSENT_KEY) === 'denied') clearAdsData();
+  clearHelpersWithoutConsent();
 }

@@ -5,6 +5,7 @@ import {
   COOKIE_CONSENT_KEY,
   getAdsConsent,
   getAnalyticsConsent,
+  hasTrackingConsent,
   updateAdsConsent,
   updateAnalyticsConsent,
 } from './consent';
@@ -20,11 +21,17 @@ const installPixels = () => {
   window.loadMetaPixel = vi.fn();
 };
 
+const installGoogleAnalytics = () => {
+  window.loadGoogleAnalytics = vi.fn();
+  window.disableGoogleAnalytics = vi.fn();
+};
+
 describe('consent utils', () => {
   beforeEach(() => {
     clearCookie(COOKIE_CONSENT_KEY);
     clearCookie(ADS_CONSENT_KEY);
-    delete window.gtag;
+    delete window.loadGoogleAnalytics;
+    delete window.disableGoogleAnalytics;
     delete window.ttq;
     delete window.loadTikTokPixel;
     delete window.fbq;
@@ -48,53 +55,35 @@ describe('consent utils', () => {
   });
 
   describe('updateAnalyticsConsent', () => {
-    it('should set granted cookie and call window.gtag', () => {
-      window.gtag = vi.fn();
+    it.each(['granted', true] as const)(
+      'should save the choice and load Google Analytics when consent is %s',
+      (consent) => {
+        installGoogleAnalytics();
 
-      updateAnalyticsConsent('granted');
+        updateAnalyticsConsent(consent);
 
-      expect(document.cookie).toContain(`${COOKIE_CONSENT_KEY}=granted`);
-      expect(window.gtag).toHaveBeenCalledWith('consent', 'update', {
-        analytics_storage: 'granted',
-      });
-    });
+        expect(document.cookie).toContain(`${COOKIE_CONSENT_KEY}=granted`);
+        expect(window.loadGoogleAnalytics).toHaveBeenCalledOnce();
+        expect(window.disableGoogleAnalytics).not.toHaveBeenCalled();
+      }
+    );
 
-    it('should set denied cookie when boolean false is passed', () => {
-      window.gtag = vi.fn();
+    it.each(['denied', false] as const)(
+      'should save the choice and stop Google Analytics without loading it when consent is %s',
+      (consent) => {
+        installGoogleAnalytics();
 
-      updateAnalyticsConsent(false);
+        updateAnalyticsConsent(consent);
 
-      expect(document.cookie).toContain(`${COOKIE_CONSENT_KEY}=denied`);
-      expect(window.gtag).toHaveBeenCalledWith('consent', 'update', {
-        analytics_storage: 'denied',
-      });
-    });
+        expect(document.cookie).toContain(`${COOKIE_CONSENT_KEY}=denied`);
+        expect(window.disableGoogleAnalytics).toHaveBeenCalledOnce();
+        expect(window.loadGoogleAnalytics).not.toHaveBeenCalled();
+      }
+    );
 
-    it('should set granted cookie when boolean true is passed', () => {
-      window.gtag = vi.fn();
-
-      updateAnalyticsConsent(true);
-
-      expect(document.cookie).toContain(`${COOKIE_CONSENT_KEY}=granted`);
-      expect(window.gtag).toHaveBeenCalledWith('consent', 'update', {
-        analytics_storage: 'granted',
-      });
-    });
-
-    it('should set denied cookie when string denied is passed', () => {
-      window.gtag = vi.fn();
-
-      updateAnalyticsConsent('denied');
-
-      expect(document.cookie).toContain(`${COOKIE_CONSENT_KEY}=denied`);
-      expect(window.gtag).toHaveBeenCalledWith('consent', 'update', {
-        analytics_storage: 'denied',
-      });
-    });
-
-    it('should not throw error when window.gtag is undefined', () => {
+    it('should not throw when Google Analytics is not installed', () => {
       expect(() => updateAnalyticsConsent('granted')).not.toThrow();
-      expect(document.cookie).toContain(`${COOKIE_CONSENT_KEY}=granted`);
+      expect(() => updateAnalyticsConsent('denied')).not.toThrow();
     });
 
     it('should leave the advertising choice and pixels untouched', () => {
@@ -107,6 +96,22 @@ describe('consent utils', () => {
       expect(window.loadTikTokPixel).not.toHaveBeenCalled();
       expect(window.fbq).not.toHaveBeenCalled();
       expect(window.loadMetaPixel).not.toHaveBeenCalled();
+    });
+  });
+
+  describe('hasTrackingConsent', () => {
+    it.each([
+      // Either tool alone is enough, e.g. a Google sign-up after refusing only the ad pixels
+      ['granted', 'denied', true],
+      ['denied', 'granted', true],
+      [undefined, 'granted', true],
+      // No decision yet is not consent, so our measurement helpers may not be stored
+      [undefined, undefined, false],
+      ['denied', undefined, false],
+      [null, null, false],
+      ['denied', 'denied', false],
+    ])('analytics %s, ads %s → %s', (analytics, ads, expected) => {
+      expect(hasTrackingConsent(analytics, ads)).toBe(expected);
     });
   });
 
@@ -147,10 +152,14 @@ describe('consent utils', () => {
       expect(window.loadMetaPixel).not.toHaveBeenCalled();
     });
 
-    it('should leave the analytics choice untouched', () => {
+    it('should leave the analytics choice and Google Analytics untouched', () => {
+      installGoogleAnalytics();
+
       updateAdsConsent('granted');
 
       expect(document.cookie).not.toContain(`${COOKIE_CONSENT_KEY}=`);
+      expect(window.loadGoogleAnalytics).not.toHaveBeenCalled();
+      expect(window.disableGoogleAnalytics).not.toHaveBeenCalled();
     });
 
     it('should not throw when the pixels are not installed', () => {

@@ -128,3 +128,24 @@ Per GDPR art. 7(1) in conjunction with art. 17(3)(e):
   ```
 - `MarketingConsents` records are not deleted: deleting the account marks the consent as withdrawn (`IsConsentGiven = false`, `ConsentWithdrawnDate`).
 - According to the Privacy Policy, consent history and email hashes are kept for 6 years after account deletion. Automatic removal is not implemented yet.
+
+---
+
+## 6. Requests About Advertising Pixel Data (TikTok, Meta)
+
+With advertising consent, the frontend loads the TikTok and Meta pixels. For collecting this data and sending it to them, Vocare is a joint controller with each platform (GDPR art. 26). After that, TikTok and Meta process the data as independent controllers. The Privacy Policy describes this split.
+
+| | TikTok | Meta |
+| :--- | :--- | :--- |
+| Joint controller | TikTok Technology Limited (Ireland) and TikTok Information Technologies UK Limited | Meta Platforms Ireland Limited |
+| Joint processing | Collection and transmission; measurement and insight reporting | Collection and transmission |
+| Source | Jurisdiction Specific Terms, Part B (effective 5 Feb 2026; behind the Ads Manager login) | [Controller Addendum](https://www.facebook.com/legal/controller_addendum) (effective 25 Apr 2023) |
+
+Vocare informs users and collects consent. Each platform handles access, rectification, erasure, restriction and portability requests (GDPR art. 15-20) for the data it stores.
+
+When a request about pixel data reaches kontakt@vocare.pl, or a supervisory authority asks about it:
+1. Forward it to the platform:
+   - **Meta:** within **7 calendar days**, using the form linked from the Controller Addendum ("formularz").
+   - **TikTok:** promptly, via https://www.tiktok.com/legal/report/privacy.
+2. Do not answer on the platform's behalf. Vocare forwards the request and then cooperates.
+3. If the person also objects (art. 21) or withdraws consent, handle that for Vocare's own processing: point them to vocare.pl/preferences, where withdrawal stops the pixels and deletes their cookies.

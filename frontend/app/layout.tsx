@@ -1,7 +1,6 @@
 import './globals.css';
 
 // import SmoothScrollProvider from '@/components/SupportComponents/SmoothScrollProvider';
-import { GoogleAnalytics } from '@next/third-parties/google';
 import type { Metadata } from 'next';
 import localFont from 'next/font/local';
 import Script from 'next/script';
@@ -12,6 +11,7 @@ import { ThemeProvider } from '@/components/ui/theme-provider';
 import { AuthProvider } from '@/features/auth/components/AuthProvider';
 import { OAuthRegistrationTracker } from '@/features/auth/components/OAuthRegistrationTracker';
 import env from '@/lib/env/client';
+import { getGoogleAnalyticsScript } from '@/lib/utils/google-analytics';
 import { getMetaPixelScript } from '@/lib/utils/meta-pixel';
 import { getTikTokPixelScript } from '@/lib/utils/tiktok-pixel';
 
@@ -142,27 +142,13 @@ export default function RootLayout({
   return (
     <html lang="pl" suppressHydrationWarning>
       <head>
-        <Script
-          id="google-consent"
-          strategy="beforeInteractive"
-          dangerouslySetInnerHTML={{
-            __html: `
-              window.dataLayer = window.dataLayer || [];
-              function gtag(){dataLayer.push(arguments);}
-              gtag('consent', 'default', {
-                'analytics_storage': 'denied',
-                'ad_storage': 'denied',
-                'ad_user_data': 'denied',
-                'ad_personalization': 'denied',
-              });
-              if (typeof document !== 'undefined' && document.cookie.indexOf('cookie_consent=granted') !== -1) {
-                gtag('consent', 'update', {
-                  'analytics_storage': 'granted'
-                });
-              }
-            `,
-          }}
-        />
+        {gaId ? (
+          <Script
+            id="google-analytics"
+            strategy="beforeInteractive"
+            dangerouslySetInnerHTML={{ __html: getGoogleAnalyticsScript(gaId) }}
+          />
+        ) : null}
         {tiktokPixelId ? (
           <Script
             id="tiktok-pixel"
@@ -189,7 +175,6 @@ export default function RootLayout({
             <Toaster />
           </ThemeProvider>
         </AuthProvider>
-        {gaId ? <GoogleAnalytics gaId={gaId} /> : null}
       </body>
     </html>
   );

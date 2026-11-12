@@ -2,7 +2,7 @@ import { cleanup, render } from '@testing-library/react';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { OAuthRegistrationTracker } from '@/features/auth/components/OAuthRegistrationTracker';
-import { NEW_OAUTH_USER_COOKIE } from '@/lib/utils/tracking';
+import { NEW_OAUTH_USER_COOKIE } from '@/lib/utils/tracker-data';
 
 describe('OAuthRegistrationTracker', () => {
   const track = vi.fn();

@@ -1,6 +1,6 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
-import { ADS_CONSENT_KEY } from './consent';
+import { ADS_CONSENT_KEY, COOKIE_CONSENT_KEY } from './consent';
 import { getMetaPixelScript } from './meta-pixel';
 import { getTikTokPixelScript } from './tiktok-pixel';
 import { trackEvent } from './tracking';
@@ -17,8 +17,13 @@ const installMocks = () => {
   return { ttq, fbq, gtag };
 };
 
+const grantAnalytics = () => {
+  document.cookie = `${COOKIE_CONSENT_KEY}=granted`;
+};
+
 beforeEach(() => {
   document.cookie = `${ADS_CONSENT_KEY}=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;`;
+  document.cookie = `${COOKIE_CONSENT_KEY}=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;`;
   document.head.innerHTML = '<script></script>';
   delete window.ttq;
   delete window.fbq;
@@ -31,6 +36,7 @@ beforeEach(() => {
 describe('trackEvent', () => {
   it('should send the event to GA4 and both pixels in their own formats, under one event ID', () => {
     document.cookie = `${ADS_CONSENT_KEY}=granted`;
+    grantAnalytics();
     const { ttq, fbq, gtag } = installMocks();
 
     trackEvent('Purchase', details);
@@ -77,6 +83,7 @@ describe('trackEvent', () => {
   });
 
   it('should add a transaction ID to GA4 purchases only', () => {
+    grantAnalytics();
     const { gtag } = installMocks();
 
     trackEvent('InitiateCheckout', details);
@@ -89,6 +96,7 @@ describe('trackEvent', () => {
   });
 
   it('should send tool usage with the tool name only, as a custom event in Meta', () => {
+    grantAnalytics();
     const { ttq, fbq, gtag } = installMocks();
 
     trackEvent('ToolUsed', { toolName: 'salary_calculator' });
@@ -102,6 +110,7 @@ describe('trackEvent', () => {
   });
 
   it('should send a CV download to GA4 under its own name and to Meta as a custom event', () => {
+    grantAnalytics();
     const { ttq, fbq, gtag } = installMocks();
 
     trackEvent('Download');
@@ -117,6 +126,7 @@ describe('trackEvent', () => {
   });
 
   it('should leave the pricing view to the automatic GA4 page_view', () => {
+    grantAnalytics();
     const { ttq, gtag } = installMocks();
 
     trackEvent('ViewContent');
@@ -125,8 +135,9 @@ describe('trackEvent', () => {
     expect(ttq.track).toHaveBeenCalledWith('ViewContent', {}, { event_id: expect.any(String) });
   });
 
-  it('should drop the pixel events but leave GA4 to Consent Mode when ads consent is denied', () => {
+  it('should drop the pixel events but still send to GA4 when only ads consent is denied', () => {
     document.cookie = `${ADS_CONSENT_KEY}=denied`;
+    grantAnalytics();
     const { ttq, fbq, gtag } = installMocks();
 
     trackEvent('Purchase', details);
@@ -134,6 +145,22 @@ describe('trackEvent', () => {
     expect(ttq.track).not.toHaveBeenCalled();
     expect(fbq).not.toHaveBeenCalled();
     expect(gtag).toHaveBeenCalledWith('event', 'purchase', expect.any(Object));
+  });
+
+  it.each([
+    ['before the analytics decision', null],
+    ['after analytics consent is denied', 'denied'],
+  ])('should send nothing to GA4 %s, while the pixels follow their own consent', (_, choice) => {
+    if (choice) document.cookie = `${COOKIE_CONSENT_KEY}=${choice}`;
+    document.cookie = `${ADS_CONSENT_KEY}=granted`;
+    const { ttq, gtag } = installMocks();
+
+    trackEvent('Purchase', details);
+
+    expect(gtag).not.toHaveBeenCalled();
+    expect(ttq.track).toHaveBeenCalledWith('Purchase', expect.any(Object), {
+      event_id: expect.any(String),
+    });
   });
 
   it('should keep the event in the page without loading either SDK before a cookie decision', () => {
@@ -162,5 +189,17 @@ describe('trackEvent', () => {
 
   it('should not throw when no tool is installed', () => {
     expect(() => trackEvent('CompleteRegistration')).not.toThrow();
+  });
+
+  it('should send nothing anywhere when both consents are refused', () => {
+    document.cookie = `${COOKIE_CONSENT_KEY}=denied`;
+    document.cookie = `${ADS_CONSENT_KEY}=denied`;
+    const { ttq, fbq, gtag } = installMocks();
+
+    trackEvent('CompleteRegistration');
+
+    expect(gtag).not.toHaveBeenCalled();
+    expect(ttq.track).not.toHaveBeenCalled();
+    expect(fbq).not.toHaveBeenCalled();
   });
 });

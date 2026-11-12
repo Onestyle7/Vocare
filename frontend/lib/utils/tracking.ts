@@ -1,8 +1,5 @@
 import { getCookie } from '@/lib/utils';
-import { ADS_CONSENT_KEY } from '@/lib/utils/consent';
-
-// Set by the OAuth callback for a newly created account, cleared by OAuthRegistrationTracker
-export const NEW_OAUTH_USER_COOKIE = 'new_oauth_user';
+import { ADS_CONSENT_KEY, getAnalyticsConsent } from '@/lib/utils/consent';
 
 /** What was bought; each pixel receives it in its own parameter format. */
 export type ProductDetails = {
@@ -97,7 +94,8 @@ function toMetaParams(details: Details): Params {
  * Reports an event to Google Analytics and to the TikTok and Meta pixels, all under one event ID,
  * so a copy sent later from the server can be deduplicated against it.
  *
- * Google Analytics follows Consent Mode, exactly like its page views. The pixels respect the
+ * Google Analytics gets the event only with analytics consent. Before that its script isn't loaded,
+ * and an event from that time is dropped rather than kept for later. The pixels respect the
  * advertising consent: until the visitor decides, the event only waits in the page's memory, and
  * it leaves the browser only if they accept.
  */
@@ -106,7 +104,9 @@ export function trackEvent<E extends TrackedEvent>(event: E, ...args: DetailsArg
   const eventId = createEventId();
 
   const ga4Event = GA4_EVENT_NAMES[event];
-  if (ga4Event) window.gtag?.('event', ga4Event, toGa4Params(event, details, eventId));
+  if (ga4Event && getAnalyticsConsent()) {
+    window.gtag?.('event', ga4Event, toGa4Params(event, details, eventId));
+  }
 
   if (getCookie(ADS_CONSENT_KEY) === 'denied') return;
 

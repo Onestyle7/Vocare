@@ -126,7 +126,12 @@ export default function RoadmapDashboardPage({
   const roadmapLimit = hasActiveSubscription ? PREMIUM_ROADMAP_LIMIT : DEFAULT_ROADMAP_LIMIT;
 
   const intentCareerPathId = searchParams.get('careerPathId') ?? '';
-  const intentCareerPathName = searchParams.get('careerPathName') ?? '';
+  // Looked up rather than passed in the address, which GA4 and the ad pixels receive.
+  // A string, so the effect below doesn't re-run on every refresh of the server props.
+  const intentCareerPathName = useMemo(
+    () => serverCareerPaths.find((path) => path.id === intentCareerPathId)?.careerName ?? '',
+    [serverCareerPaths, intentCareerPathId]
+  );
 
   const createPayload = useMemo<GenerateRoadmapPayload>(
     () => ({

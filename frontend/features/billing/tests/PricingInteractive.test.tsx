@@ -5,6 +5,12 @@ import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { trackCheckoutCompleted } from '@/features/billing/checkoutTracking';
 import { PricingInteractive } from '@/features/billing/components/PricingInteractive';
 import type { SubscriptionStatuses } from '@/features/billing/types';
+import { ADS_CONSENT_KEY, COOKIE_CONSENT_KEY } from '@/lib/utils/consent';
+
+// The checkout is remembered for the return from Stripe only with tracking consent
+const grantAdsConsent = () => {
+  document.cookie = `${ADS_CONSENT_KEY}=granted; path=/`;
+};
 
 const billing = vi.hoisted(() => ({
   createCheckout: vi.fn(),
@@ -57,6 +63,8 @@ function renderPricing({
 beforeEach(() => {
   vi.clearAllMocks();
   sessionStorage.clear();
+  document.cookie = `${ADS_CONSENT_KEY}=; max-age=0; path=/`;
+  document.cookie = `${COOKIE_CONSENT_KEY}=; max-age=0; path=/`;
   delete window.ttq;
   delete window.fbq;
   billing.createCheckout.mockResolvedValue([undefined]);
@@ -248,6 +256,7 @@ describe('PricingInteractive', () => {
   });
 
   it('counts a return from a trial checkout as a trial start, not a purchase', async () => {
+    grantAdsConsent();
     const track = vi.fn();
     window.ttq = { grantConsent: vi.fn(), revokeConsent: vi.fn(), track };
     billing.getSubscriptionStatusAction.mockResolvedValue([
@@ -278,6 +287,7 @@ describe('PricingInteractive', () => {
   });
 
   it('counts a token purchase with the amount after the consent discount', async () => {
+    grantAdsConsent();
     const track = vi.fn();
     window.ttq = { grantConsent: vi.fn(), revokeConsent: vi.fn(), track };
     billing.getSubscriptionStatusAction.mockResolvedValue([
