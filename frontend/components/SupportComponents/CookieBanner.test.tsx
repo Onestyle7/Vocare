@@ -1,8 +1,12 @@
 import { cleanup, fireEvent, render, screen } from '@testing-library/react';
-import { afterEach, beforeEach, describe, expect, it } from 'vitest';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { CookieBanner } from '@/components/SupportComponents/CookieBanner';
 import { ADS_CONSENT_KEY, COOKIE_CONSENT_KEY } from '@/lib/utils/consent';
+
+const { recordCookieConsentChoice } = vi.hoisted(() => ({ recordCookieConsentChoice: vi.fn() }));
+
+vi.mock('@/lib/utils/consent-record', () => ({ recordCookieConsentChoice }));
 
 const BANNER_TITLE = 'Cenimy Twoją prywatność';
 
@@ -18,6 +22,7 @@ const cookieValue = (name: string) =>
 
 describe('CookieBanner', () => {
   beforeEach(() => {
+    vi.clearAllMocks();
     clearCookie(COOKIE_CONSENT_KEY);
     clearCookie(ADS_CONSENT_KEY);
   });
@@ -49,6 +54,9 @@ describe('CookieBanner', () => {
     expect(cookieValue(COOKIE_CONSENT_KEY)).toBe('granted');
     expect(cookieValue(ADS_CONSENT_KEY)).toBe('granted');
     expect(screen.queryByText(BANNER_TITLE)).toBeNull();
+    // Recorded once, after both cookies hold the new choice
+    expect(recordCookieConsentChoice).toHaveBeenCalledOnce();
+    expect(recordCookieConsentChoice).toHaveBeenCalledWith('Banner');
   });
 
   it('denies both choices with „Tylko niezbędne”', () => {

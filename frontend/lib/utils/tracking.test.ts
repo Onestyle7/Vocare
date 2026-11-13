@@ -1,6 +1,6 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
-import { ADS_CONSENT_KEY, COOKIE_CONSENT_KEY } from './consent';
+import { ADS_CONSENT_KEY, COOKIE_CONSENT_KEY, updateAdsConsent } from './consent';
 import { getMetaPixelScript } from './meta-pixel';
 import { getTikTokPixelScript } from './tiktok-pixel';
 import { trackEvent } from './tracking';
@@ -109,13 +109,13 @@ describe('trackEvent', () => {
     });
   });
 
-  it('should send a CV download to GA4 under its own name and to Meta as a custom event', () => {
+  it('should send a CV export to GA4 under its own name and to Meta as a custom event', () => {
     grantAnalytics();
     const { ttq, fbq, gtag } = installMocks();
 
     trackEvent('Download');
 
-    expect(gtag).toHaveBeenCalledWith('event', 'cv_download', {});
+    expect(gtag).toHaveBeenCalledWith('event', 'cv_export', {});
     expect(ttq.track).toHaveBeenCalledWith('Download', {}, { event_id: expect.any(String) });
     expect(fbq).toHaveBeenCalledWith(
       'trackCustom',
@@ -185,6 +185,45 @@ describe('trackEvent', () => {
       {},
       { eventID: expect.any(String) },
     ]);
+  });
+
+  describe('events waiting for the advertising decision', () => {
+    const runPixelBaseCode = () => {
+      new Function(getTikTokPixelScript('TT_ID'))();
+      new Function(getMetaPixelScript('META_ID'))();
+    };
+    const tiktokQueue = () => window.ttq as unknown as unknown[][];
+    const metaQueue = () =>
+      (window.fbq as unknown as { queue: IArguments[] }).queue.map((args) => Array.from(args));
+    const mentionsRegistration = (entry: unknown[]) => entry.includes('CompleteRegistration');
+
+    it('should go out when the visitor accepts later on the same page', () => {
+      runPixelBaseCode();
+      trackEvent('CompleteRegistration');
+
+      updateAdsConsent(true);
+
+      expect(tiktokQueue().some(mentionsRegistration)).toBe(true);
+      expect(metaQueue().some(mentionsRegistration)).toBe(true);
+    });
+
+    it('should be dropped on refusal, so a later consent on the page sends none of them', () => {
+      runPixelBaseCode();
+      trackEvent('CompleteRegistration');
+
+      updateAdsConsent(false);
+      updateAdsConsent(true);
+
+      expect(tiktokQueue().some(mentionsRegistration)).toBe(false);
+      expect(metaQueue().some(mentionsRegistration)).toBe(false);
+      // The pixels still start configured as intended
+      expect(metaQueue()).toEqual(
+        expect.arrayContaining([
+          ['set', 'autoConfig', false, 'META_ID'],
+          ['init', 'META_ID'],
+        ])
+      );
+    });
   });
 
   it('should not throw when no tool is installed', () => {

@@ -7,8 +7,11 @@ import { ConsentState } from '@/types/gtag';
 export const COOKIE_CONSENT_KEY = 'cookie_consent';
 // Advertising pixels (TikTok, Meta) – a separate choice from analytics
 export const ADS_CONSENT_KEY = 'ads_consent';
+// Random ID of this browser's choices, linking them to the server-side record of each decision
+// (proof of consent, GDPR art. 7(1)); see lib/utils/consent-record.ts
+export const CONSENT_ID_COOKIE = 'consent_id';
 
-const CONSENT_COOKIE_DAYS = 365;
+export const CONSENT_COOKIE_DAYS = 365;
 
 function toConsentState(consent: ConsentState | boolean): ConsentState {
   return typeof consent === 'boolean' ? (consent ? 'granted' : 'denied') : consent;
@@ -50,6 +53,24 @@ function clearHelpersWithoutConsent(): void {
 }
 
 /**
+ * Removes the events waiting in the pixels' queues. Before the SDKs load, their base code
+ * (lib/utils/tiktok-pixel.ts, meta-pixel.ts) only collects calls: TikTok in the `ttq` array itself,
+ * Meta in `fbq.queue`. Setup calls (Meta's `set autoConfig` and `init`) stay, so a later consent
+ * still starts the pixels configured as intended.
+ */
+function dropQueuedPixelEvents(): void {
+  const queues = [window.ttq, (window.fbq as { queue?: unknown } | undefined)?.queue];
+
+  for (const queue of queues) {
+    if (!Array.isArray(queue)) continue;
+    for (let i = queue.length - 1; i >= 0; i--) {
+      const method = (queue[i] as ArrayLike<unknown> | undefined)?.[0];
+      if (method === 'track' || method === 'trackCustom') queue.splice(i, 1);
+    }
+  }
+}
+
+/**
  * Saves the analytics choice in a cookie and starts or stops Google Analytics
  * (see lib/utils/google-analytics.ts)
  */
@@ -72,6 +93,7 @@ export function updateAnalyticsConsent(consent: ConsentState | boolean): void {
  */
 export function updateAdsConsent(consent: ConsentState | boolean): void {
   const cookieValue = toConsentState(consent);
+  const previousChoice = getCookie(ADS_CONSENT_KEY);
 
   setCookie(ADS_CONSENT_KEY, cookieValue, CONSENT_COOKIE_DAYS);
 
@@ -81,6 +103,9 @@ export function updateAdsConsent(consent: ConsentState | boolean): void {
     window.fbq?.('consent', 'grant');
     window.loadMetaPixel?.();
   } else {
+    // Events kept while the visitor was deciding must not go out if they agree later on this page.
+    // With an earlier consent the SDKs are loaded, send at once and keep no queue.
+    if (previousChoice !== 'granted') dropQueuedPixelEvents();
     window.ttq?.revokeConsent();
     window.fbq?.('consent', 'revoke');
     clearAdsData();

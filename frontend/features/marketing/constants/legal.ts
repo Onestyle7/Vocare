@@ -20,3 +20,8 @@ export const TERMS_VERSION = {
 } as const;
 
 export const PRIVACY_POLICY_LAST_UPDATED = '12 listopada 2026 r.';
+
+// Wersja treści, na podstawie których użytkownik wybiera cookies: baneru, preferencji i sekcji
+// „Pliki cookies” w polityce prywatności. Trafia do zapisu każdego wyboru (dowód zgody, art. 7
+// ust. 1 RODO), więc zmień ją (na datę zmiany) przy każdej zmianie tych treści.
+export const COOKIE_CONSENT_TEXT_VERSION = '2026-11-13';

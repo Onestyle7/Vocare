@@ -43,8 +43,14 @@ export default function PreferencesPage() {
         </header>
 
         <main className="space-y-6">
-          <AnalyticsConsentCard className="bg-card/80 rounded-xl p-6 shadow-sm backdrop-blur" />
-          <AdsConsentCard className="bg-card/80 rounded-xl p-6 shadow-sm backdrop-blur" />
+          <AnalyticsConsentCard
+            source="Preferences"
+            className="bg-card/80 rounded-xl p-6 shadow-sm backdrop-blur"
+          />
+          <AdsConsentCard
+            source="Preferences"
+            className="bg-card/80 rounded-xl p-6 shadow-sm backdrop-blur"
+          />
         </main>
 
         <footer className="mt-16 border-t border-neutral-800 pt-6 text-xs text-neutral-500">

@@ -14,7 +14,7 @@ export type ToolName = 'salary_calculator';
 // Event names follow the TikTok and Meta standard events wherever one exists
 type EventDetails = {
   CompleteRegistration: undefined;
-  // CV PDF download
+  // CV export to PDF: the print dialog opened (the browser can't tell whether the file was saved)
   Download: undefined;
   InitiateCheckout: ProductDetails;
   Purchase: ProductDetails;
@@ -35,7 +35,7 @@ type Params = Record<string, unknown>;
 // GA4 uses its own names; null where the automatic page_view already records the moment
 const GA4_EVENT_NAMES: Record<TrackedEvent, string | null> = {
   CompleteRegistration: 'sign_up',
-  Download: 'cv_download',
+  Download: 'cv_export',
   InitiateCheckout: 'begin_checkout',
   Purchase: 'purchase',
   StartTrial: 'start_trial',

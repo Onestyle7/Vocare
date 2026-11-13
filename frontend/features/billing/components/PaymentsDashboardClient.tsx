@@ -218,8 +218,8 @@ export default function PaymentsDashboardClient({
                 )}
               </CardContent>
               <CardContent className="space-y-4">
-                <AnalyticsConsentCard />
-                <AdsConsentCard />
+                <AnalyticsConsentCard source="Account" />
+                <AdsConsentCard source="Account" />
               </CardContent>
             </Card>
           </div>

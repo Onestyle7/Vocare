@@ -13,6 +13,7 @@ import {
   updateAdsConsent,
   updateAnalyticsConsent,
 } from '@/lib/utils/consent';
+import { recordCookieConsentChoice } from '@/lib/utils/consent-record';
 
 interface ConsentSwitchProps {
   id: string;
@@ -54,6 +55,7 @@ export function CookieBanner() {
   const saveChoice = (analyticsGranted: boolean, adsGranted: boolean) => {
     updateAnalyticsConsent(analyticsGranted);
     updateAdsConsent(adsGranted);
+    recordCookieConsentChoice('Banner');
     setShowBanner(false);
   };
 

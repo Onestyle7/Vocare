@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react';
 import { toast } from 'sonner';
 
 import { Switch } from '@/components/ui/switch';
+import type { CookieConsentSource } from '@/features/legal/types';
 import { cn } from '@/lib/utils';
 import {
   getAdsConsent,
@@ -11,9 +12,12 @@ import {
   updateAdsConsent,
   updateAnalyticsConsent,
 } from '@/lib/utils/consent';
+import { recordCookieConsentChoice } from '@/lib/utils/consent-record';
 
 interface ConsentCardProps {
   className?: string;
+  // Where the card is shown, kept with each recorded choice (proof of consent)
+  source: Extract<CookieConsentSource, 'Preferences' | 'Account'>;
 }
 
 interface ConsentToggleCardProps extends ConsentCardProps {
@@ -27,6 +31,7 @@ interface ConsentToggleCardProps extends ConsentCardProps {
 
 function ConsentToggleCard({
   className,
+  source,
   id,
   label,
   grantedDescription,
@@ -43,6 +48,7 @@ function ConsentToggleCard({
   const onToggle = (nextValue: boolean) => {
     setGranted(nextValue);
     updateConsent(nextValue);
+    recordCookieConsentChoice(source);
     toast.success('Zaktualizowano preferencje ciasteczek');
   };
 
@@ -66,10 +72,11 @@ function ConsentToggleCard({
   );
 }
 
-export function AnalyticsConsentCard({ className }: ConsentCardProps) {
+export function AnalyticsConsentCard({ className, source }: ConsentCardProps) {
   return (
     <ConsentToggleCard
       className={className}
+      source={source}
       id="analytics-consent-toggle"
       label="Cookies analityczne (Google Analytics)"
       grantedDescription="Pomagasz nam ulepszać Vocare, udostępniając dane o tym, jak korzystasz z serwisu."
@@ -80,10 +87,11 @@ export function AnalyticsConsentCard({ className }: ConsentCardProps) {
   );
 }
 
-export function AdsConsentCard({ className }: ConsentCardProps) {
+export function AdsConsentCard({ className, source }: ConsentCardProps) {
   return (
     <ConsentToggleCard
       className={className}
+      source={source}
       id="ads-consent-toggle"
       label="Cookies reklamowe (TikTok, Meta)"
       grantedDescription="TikTok i Meta otrzymują informacje o Twoich wizytach i działaniach w Vocare, dzięki czemu mierzymy skuteczność naszych reklam."
