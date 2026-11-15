@@ -105,7 +105,7 @@ export default function PaymentsDashboardClient({
   }, [initialPayments]);
 
   return (
-    <main className="font-korbin bg-background w-full">
+    <main className="font-poppins bg-background w-full">
       <div className="mx-auto flex w-full max-w-5xl flex-col gap-8 px-4 pt-10 pb-16 sm:px-6 lg:px-8">
         <div className="flex flex-wrap items-center justify-between gap-4">
           <div className="space-y-1">
@@ -135,7 +135,7 @@ export default function PaymentsDashboardClient({
               <CardContent className="space-y-4">
                 <div className="border-border/60 bg-background/70 flex flex-col gap-4 rounded-lg border px-4 py-4 sm:flex-row sm:items-center sm:justify-between">
                   <div className="space-y-1">
-                    <span className="text-muted-foreground text-xs font-medium tracking-wide uppercase">
+                    <span className="text-muted-foreground text-xs font-medium">
                       Status
                     </span>
                     <p className="text-foreground text-lg font-semibold">
