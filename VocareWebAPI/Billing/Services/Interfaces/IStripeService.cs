@@ -24,5 +24,9 @@ namespace VocareWebAPI.Billing.Services.Interfaces
         Task<TrialSummary?> GetTrialSummaryAsync(string userId);
         Task<string> CreateCustomerPortalSessionAsync(string userId);
         Task<List<PaymentHistoryDto>> GetPaymentHistoryAsync(string userId, int limit = 50);
+        Task<CheckoutSessionSummaryDto> GetCheckoutSessionSummaryAsync(
+            string userId,
+            string sessionId
+        );
     }
 }

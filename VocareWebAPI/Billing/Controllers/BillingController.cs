@@ -195,6 +195,29 @@ namespace VocareWebAPI.Controllers
             );
         }
 
+        [HttpGet("checkout-session/{sessionId}")]
+        [Authorize]
+        [ProducesResponseType(typeof(CheckoutSessionSummaryDto), StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        public async Task<IActionResult> GetCheckoutSessionSummary(string sessionId)
+        {
+            var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            if (string.IsNullOrEmpty(userId))
+                return BadRequest("Brak identyfikatora użytkownika w tokenie.");
+
+            if (!IsValidCheckoutSessionId(sessionId))
+                return BadRequest("Nieprawidłowy identyfikator sesji.");
+
+            var summary = await _stripeService.GetCheckoutSessionSummaryAsync(userId, sessionId);
+            return Ok(summary);
+        }
+
+        private static bool IsValidCheckoutSessionId(string sessionId) =>
+            sessionId.Length is > 3 and <= 255
+            && sessionId.StartsWith("cs_", StringComparison.Ordinal)
+            && sessionId.All(c => char.IsAsciiLetterOrDigit(c) || c == '_');
+
         [HttpPost("customer-portal")]
         [Authorize]
         public async Task<IActionResult> CreateCustomerPortalSession()

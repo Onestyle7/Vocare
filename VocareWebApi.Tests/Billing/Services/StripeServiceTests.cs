@@ -454,5 +454,175 @@ namespace VocareWebApi.Tests.Billing.Services
 
             result.Should().BeEmpty();
         }
+
+        // ---------- GetCheckoutSessionSummaryAsync ----------
+
+        private const string SessionId = "cs_test_a1B2c3";
+
+        private static Stripe.Checkout.Session CheckoutSession(
+            string mode = "payment",
+            long? amountTotal = 2499,
+            string? ownerId = UserId,
+            string? subscriptionStatus = null
+        ) =>
+            new()
+            {
+                Id = SessionId,
+                Status = "complete",
+                PaymentStatus = mode == "subscription" ? "no_payment_required" : "paid",
+                Mode = mode,
+                AmountTotal = amountTotal,
+                Currency = "pln",
+                Metadata = ownerId is null
+                    ? new Dictionary<string, string>()
+                    : new Dictionary<string, string>
+                    {
+                        ["userId"] = ownerId,
+                        ["packageName"] = "Token Pack",
+                    },
+                LineItems = new Stripe.StripeList<Stripe.LineItem>
+                {
+                    Data = [new Stripe.LineItem { Price = new Stripe.Price { Id = TokenPriceId } }],
+                },
+                Subscription = subscriptionStatus is null
+                    ? null
+                    : new Stripe.Subscription { Id = "sub_1", Status = subscriptionStatus },
+            };
+
+        private void SetupGetSession(Stripe.Checkout.Session session) =>
+            _checkoutSessions
+                .Setup(s =>
+                    s.GetAsync(
+                        SessionId,
+                        It.Is<Stripe.Checkout.SessionGetOptions>(o =>
+                            o.Expand.Contains("line_items") && o.Expand.Contains("subscription")
+                        ),
+                        It.IsAny<Stripe.RequestOptions>(),
+                        It.IsAny<System.Threading.CancellationToken>()
+                    )
+                )
+                .ReturnsAsync(session);
+
+        [Fact]
+        public async Task GetCheckoutSessionSummaryAsync_PaidTokenPurchase_MapsSummary()
+        {
+            SetupGetSession(CheckoutSession());
+
+            var result = await _sut.GetCheckoutSessionSummaryAsync(UserId, SessionId);
+
+            result.SessionId.Should().Be(SessionId);
+            result.Status.Should().Be("complete");
+            result.PaymentStatus.Should().Be("paid");
+            result.Mode.Should().Be("payment");
+            result.IsTrial.Should().BeFalse();
+            result.AmountTotal.Should().Be(24.99m);
+            result.Currency.Should().Be("PLN");
+            result.PriceId.Should().Be(TokenPriceId);
+            result.PackageName.Should().Be("Token Pack");
+        }
+
+        [Fact]
+        public async Task GetCheckoutSessionSummaryAsync_WithConsentDiscount_ReturnsAmountAfterDiscount()
+        {
+            // 24.99 PLN - 25% consent discount = 18.74 PLN, as charged by Stripe
+            SetupGetSession(CheckoutSession(amountTotal: 1874));
+
+            var result = await _sut.GetCheckoutSessionSummaryAsync(UserId, SessionId);
+
+            result.AmountTotal.Should().Be(18.74m);
+        }
+
+        [Fact]
+        public async Task GetCheckoutSessionSummaryAsync_TrialSubscription_IsTrialWithZeroAmount()
+        {
+            SetupGetSession(
+                CheckoutSession(
+                    mode: "subscription",
+                    amountTotal: 0,
+                    subscriptionStatus: "trialing"
+                )
+            );
+
+            var result = await _sut.GetCheckoutSessionSummaryAsync(UserId, SessionId);
+
+            result.IsTrial.Should().BeTrue();
+            result.AmountTotal.Should().Be(0m);
+            result.Mode.Should().Be("subscription");
+        }
+
+        [Fact]
+        public async Task GetCheckoutSessionSummaryAsync_PaidSubscriptionWithoutTrial_IsNotTrial()
+        {
+            SetupGetSession(
+                CheckoutSession(
+                    mode: "subscription",
+                    amountTotal: 3999,
+                    subscriptionStatus: "active"
+                )
+            );
+
+            var result = await _sut.GetCheckoutSessionSummaryAsync(UserId, SessionId);
+
+            result.IsTrial.Should().BeFalse();
+            result.AmountTotal.Should().Be(39.99m);
+        }
+
+        [Theory]
+        [InlineData("other-user")]
+        [InlineData(null)]
+        public async Task GetCheckoutSessionSummaryAsync_ForeignOrUnownedSession_ThrowsNotFound(
+            string? ownerId
+        )
+        {
+            SetupGetSession(CheckoutSession(ownerId: ownerId));
+
+            var act = () => _sut.GetCheckoutSessionSummaryAsync(UserId, SessionId);
+
+            await act.Should().ThrowAsync<CheckoutSessionNotFoundException>();
+        }
+
+        [Fact]
+        public async Task GetCheckoutSessionSummaryAsync_MissingSession_ThrowsNotFound()
+        {
+            _checkoutSessions
+                .Setup(s =>
+                    s.GetAsync(
+                        SessionId,
+                        It.IsAny<Stripe.Checkout.SessionGetOptions>(),
+                        It.IsAny<Stripe.RequestOptions>(),
+                        It.IsAny<System.Threading.CancellationToken>()
+                    )
+                )
+                .ThrowsAsync(
+                    new Stripe.StripeException(
+                        System.Net.HttpStatusCode.NotFound,
+                        new Stripe.StripeError { Code = "resource_missing" },
+                        "No such checkout.session"
+                    )
+                );
+
+            var act = () => _sut.GetCheckoutSessionSummaryAsync(UserId, SessionId);
+
+            await act.Should().ThrowAsync<CheckoutSessionNotFoundException>();
+        }
+
+        [Fact]
+        public async Task GetCheckoutSessionSummaryAsync_OtherStripeError_PropagatesToGlobalHandler()
+        {
+            _checkoutSessions
+                .Setup(s =>
+                    s.GetAsync(
+                        SessionId,
+                        It.IsAny<Stripe.Checkout.SessionGetOptions>(),
+                        It.IsAny<Stripe.RequestOptions>(),
+                        It.IsAny<System.Threading.CancellationToken>()
+                    )
+                )
+                .ThrowsAsync(new Stripe.StripeException("Stripe down"));
+
+            var act = () => _sut.GetCheckoutSessionSummaryAsync(UserId, SessionId);
+
+            await act.Should().ThrowAsync<Stripe.StripeException>();
+        }
     }
 }
