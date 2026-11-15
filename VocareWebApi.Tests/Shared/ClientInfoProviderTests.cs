@@ -128,5 +128,22 @@ namespace VocareWebApi.Tests.Shared
             result.IpAddress.Should().Be("unknown");
             result.UserAgent.Should().BeEmpty();
         }
+
+        [Theory]
+        [InlineData(InternalKey, true)]
+        [InlineData("wrong-key", false)]
+        [InlineData(null, false)]
+        public void HasValidInternalApiKey_ReflectsProvidedKey(string? providedKey, bool expected)
+        {
+            var sut = CreateSut(CreateContext(providedKey));
+
+            sut.HasValidInternalApiKey().Should().Be(expected);
+        }
+
+        [Fact]
+        public void HasValidInternalApiKey_WithoutHttpContext_ReturnsFalse()
+        {
+            CreateSut(null).HasValidInternalApiKey().Should().BeFalse();
+        }
     }
 }

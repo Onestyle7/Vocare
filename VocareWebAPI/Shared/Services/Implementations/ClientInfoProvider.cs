@@ -67,6 +67,12 @@ public class ClientInfoProvider(
         );
     }
 
+    public bool HasValidInternalApiKey()
+    {
+        var request = httpContextAccessor.HttpContext?.Request;
+        return request is not null && HasValidInternalApiKey(request);
+    }
+
     private static string Truncate(string value) =>
         value.Length > MaxUserAgentLength ? value[..MaxUserAgentLength] : value;
 }

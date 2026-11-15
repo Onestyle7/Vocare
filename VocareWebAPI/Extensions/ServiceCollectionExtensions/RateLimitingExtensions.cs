@@ -1,5 +1,6 @@
 using System.Threading.RateLimiting;
 using Microsoft.AspNetCore.RateLimiting;
+using VocareWebAPI.Shared.Services.Interfaces;
 
 namespace VocareWebAPI.Extensions.ServiceCollectionExtensions
 {
@@ -44,6 +45,25 @@ namespace VocareWebAPI.Extensions.ServiceCollectionExtensions
                     {
                         limiterOptions.PermitLimit = 100; // Stripe i tak nie wysyła więcej
                         limiterOptions.Window = TimeSpan.FromMinutes(1);
+                    }
+                );
+                options.AddPolicy(
+                    "CookieConsentPolicy",
+                    context =>
+                    {
+                        var clientIp = context
+                            .RequestServices.GetRequiredService<IClientInfoProvider>()
+                            .GetClientInfo()
+                            .IpAddress;
+
+                        return RateLimitPartition.GetFixedWindowLimiter(
+                            $"cookie_consent_{clientIp}",
+                            _ => new FixedWindowRateLimiterOptions
+                            {
+                                PermitLimit = 20,
+                                Window = TimeSpan.FromMinutes(1),
+                            }
+                        );
                     }
                 );
 

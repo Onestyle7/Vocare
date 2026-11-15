@@ -101,6 +101,7 @@ namespace VocareWebAPI.Data
         public DbSet<UserConsent> UserConsents { get; set; }
         public DbSet<LegalDocument> LegalDocuments { get; set; }
         public DbSet<AccountAntiAbuseRegistry> AccountAntiAbuseRegistries { get; set; }
+        public DbSet<CookieConsentRecord> CookieConsentRecords { get; set; }
 
         /// <summary>
         /// Konfiguruje model bazy danych, definiując schemat i relacje między encjami.
