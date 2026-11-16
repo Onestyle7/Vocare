@@ -14,5 +14,6 @@ namespace VocareWebAPI.JobOffers.Models.Dtos
         public string Description { get; set; } = "";
         public string Category { get; set; } = "";
         public ICollection<string> Skills { get; set; } = new List<string>();
+        public bool IsActive { get; set; }
     }
 }

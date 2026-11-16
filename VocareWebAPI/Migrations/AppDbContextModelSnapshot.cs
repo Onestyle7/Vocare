@@ -687,6 +687,8 @@ namespace VocareWebAPI.Migrations
                     b.HasIndex("ReferenceNumber")
                         .IsUnique();
 
+                    b.HasIndex("IsActive", "DeactivatedAt");
+
                     b.HasIndex("ReferenceNumber", "Source")
                         .IsUnique();
 

@@ -77,7 +77,7 @@ namespace VocareWebAPI.JobOffers.Repositories.Implementations
 
         public async Task<int> GetCountAsync()
         {
-            return await _context.JobOffers.CountAsync();
+            return await _context.JobOffers.CountAsync(j => j.IsActive);
         }
 
         public async Task<List<JobOffer>> GetOffersWithoutEmbeddingAsync(int limit)
@@ -102,6 +102,7 @@ namespace VocareWebAPI.JobOffers.Repositories.Implementations
         {
             return await _context
                 .JobOffers.Where(j => j.Skills != null)
+                .Where(j => j.IsActive)
                 .SelectMany(j => j.Skills!)
                 .Select(s => s.Name)
                 .Distinct()
