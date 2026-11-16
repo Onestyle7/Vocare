@@ -766,6 +766,48 @@ namespace VocareWebAPI.Migrations
                     b.ToTable("SkillEmbeddings", "public");
                 });
 
+            modelBuilder.Entity("VocareWebAPI.Legal.Models.Entities.CookieConsentRecord", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<bool>("AdsGranted")
+                        .HasColumnType("boolean");
+
+                    b.Property<bool>("AnalyticsGranted")
+                        .HasColumnType("boolean");
+
+                    b.Property<Guid>("ConsentId")
+                        .HasColumnType("uuid");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("Source")
+                        .IsRequired()
+                        .HasMaxLength(20)
+                        .HasColumnType("character varying(20)");
+
+                    b.Property<string>("TextVersion")
+                        .IsRequired()
+                        .HasMaxLength(32)
+                        .HasColumnType("character varying(32)");
+
+                    b.Property<string>("UserId")
+                        .HasColumnType("text");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CreatedAt");
+
+                    b.HasIndex("UserId");
+
+                    b.HasIndex("ConsentId", "CreatedAt");
+
+                    b.ToTable("CookieConsentRecords", "public");
+                });
+
             modelBuilder.Entity("VocareWebAPI.Legal.Models.Entities.LegalDocument", b =>
                 {
                     b.Property<Guid>("Id")
@@ -1837,6 +1879,16 @@ namespace VocareWebAPI.Migrations
                         .IsRequired();
 
                     b.Navigation("JobOffer");
+                });
+
+            modelBuilder.Entity("VocareWebAPI.Legal.Models.Entities.CookieConsentRecord", b =>
+                {
+                    b.HasOne("VocareWebAPI.Models.Entities.User", "User")
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.SetNull);
+
+                    b.Navigation("User");
                 });
 
             modelBuilder.Entity("VocareWebAPI.Legal.Models.Entities.UserConsent", b =>

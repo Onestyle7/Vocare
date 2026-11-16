@@ -18,6 +18,7 @@ using VocareWebAPI.JobOffers.Repositories.Implementations;
 using VocareWebAPI.JobOffers.Repositories.Interfaces;
 using VocareWebAPI.JobOffers.Services.Implementations;
 using VocareWebAPI.JobOffers.Services.Interfaces;
+using VocareWebAPI.Legal.Jobs;
 using VocareWebAPI.Legal.Repositories.Implementations;
 using VocareWebAPI.Legal.Repositories.Interfaces;
 using VocareWebAPI.Legal.Services.Implementations;
@@ -174,6 +175,7 @@ namespace VocareWebAPI.Extensions.ServiceCollectionExtensions
 
             // Legal
             services.AddScoped<ILegalRepository, LegalRepository>();
+            services.AddScoped<CookieConsentCleanupJob>();
 
             // Anti abuse
             services.AddScoped<IAccountAntiAbuseReporitory, AccountAntiAbuseRepository>();

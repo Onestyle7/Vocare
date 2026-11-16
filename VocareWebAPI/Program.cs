@@ -1,10 +1,12 @@
 using System.Text.Json.Serialization;
+using Hangfire;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Stripe;
 using VocareWebAPI.Data;
 using VocareWebAPI.Extensions.ApplicationBuilderExtensions;
 using VocareWebAPI.Extensions.ServiceCollectionExtensions;
+using VocareWebAPI.Legal.Jobs;
 using VocareWebAPI.Models.Entities;
 using VocareWebAPI.Services;
 
@@ -143,6 +145,12 @@ app.UseAuthorization();
 app.UseLegalConsentsValidation();
 
 app.UseHangfireDashboardWithAuth(builder.Configuration);
+app.Services.GetRequiredService<IRecurringJobManager>()
+    .AddOrUpdate<CookieConsentCleanupJob>(
+        "cookie-consent-cleanup",
+        job => job.ExecuteAsync(),
+        Cron.Daily(3)
+    );
 
 // 8. Opcjonalne middleware dla staging
 if (app.Environment.IsStaging())

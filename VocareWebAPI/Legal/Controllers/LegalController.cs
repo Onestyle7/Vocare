@@ -2,10 +2,12 @@ using System.Security.Claims;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.RateLimiting;
 using VocareWebAPI.Legal.Models.Dtos;
 using VocareWebAPI.Legal.Models.Enums;
 using VocareWebAPI.Legal.Services.Interfaces;
 using VocareWebAPI.Models.Entities;
+using VocareWebAPI.Shared.Filters;
 using VocareWebAPI.Shared.Services.Interfaces;
 using VocareWebAPI.UserManagement.Services.Interfaces;
 
@@ -26,7 +28,8 @@ namespace VocareWebAPI.Legal.Controllers
             UserManager<User> userManager,
             ITokenService tokenService,
             IClientInfoProvider clientInfoProvider,
-            ILogger<LegalController> logger)
+            ILogger<LegalController> logger
+        )
         {
             _legalService = legalService;
             _userManager = userManager;
@@ -81,7 +84,11 @@ namespace VocareWebAPI.Legal.Controllers
                 ConsentSource.ConsentModal
             );
 
-            _logger.LogInformation("User {UserId} accepted legal documents: {DocumentIds}", userId, string.Join(", ", request?.DocumentIds ?? []));
+            _logger.LogInformation(
+                "User {UserId} accepted legal documents: {DocumentIds}",
+                userId,
+                string.Join(", ", request?.DocumentIds ?? [])
+            );
 
             var user = await _userManager.FindByIdAsync(userId);
             if (user == null)
@@ -112,6 +119,28 @@ namespace VocareWebAPI.Legal.Controllers
 
             var hasValidConsents = await _legalService.HasValidConsentsAsync(userId);
             return Ok(new { hasValidConsents });
+        }
+
+        /// <summary>
+        /// Appends the visitors cookie banner decision to the consent log (GDPR art7.1)
+        /// called only by the next.js server
+        /// </summary>
+        /// <param name="request"></param>
+        /// <returns></returns>
+        [HttpPost("cookie-consent")]
+        [AllowAnonymous]
+        [RequireInternalApiKey]
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+        [EnableRateLimiting("CookieConsentPolicy")]
+        public async Task<IActionResult> RecordCookieConsent(
+            [FromBody] RecordCookieConsentRequestDto request
+        )
+        {
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            await _legalService.RecordCookieConsentAsync(request, userId);
+            return NoContent();
         }
     }
 }
