@@ -21,6 +21,8 @@ namespace VocareWebAPI.JobOffers.Models.Records
         string? SalaryCurrency,
         SalaryPeriod? SalaryPeriod,
         DateTime PublishedAt,
-        bool HasEmbedding
+        bool HasEmbedding,
+        bool IsActive,
+        DateTime? DeactivatedAt
     );
 }

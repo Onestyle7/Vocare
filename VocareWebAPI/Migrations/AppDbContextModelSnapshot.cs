@@ -629,12 +629,18 @@ namespace VocareWebAPI.Migrations
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("timestamp with time zone");
 
+                    b.Property<DateTime?>("DeactivatedAt")
+                        .HasColumnType("timestamp with time zone");
+
                     b.Property<string>("Description")
                         .IsRequired()
                         .HasColumnType("text");
 
                     b.Property<Vector>("Embedding")
                         .HasColumnType("vector(1536)");
+
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("boolean");
 
                     b.Property<string>("JobType")
                         .IsRequired()
@@ -680,6 +686,8 @@ namespace VocareWebAPI.Migrations
 
                     b.HasIndex("ReferenceNumber")
                         .IsUnique();
+
+                    b.HasIndex("IsActive", "DeactivatedAt");
 
                     b.HasIndex("ReferenceNumber", "Source")
                         .IsUnique();
