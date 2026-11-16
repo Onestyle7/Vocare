@@ -146,7 +146,7 @@ export const privacy_policy: {
             'ttclid (TikTok) - zapamiętanie kliknięcia w reklamę, 1 dzień.',
           ],
         },
-        'Jeżeli wyrazisz zgodę na cookies analityczne lub reklamowe, korzystamy też z dwóch krótkotrwałych zapisów pomocniczych, które przekazują narzędziom objętym Twoją zgodą informację o rejestracji lub zakupie: pliku cookie new_oauth_user (po rejestracji przez Google, 5 minut) oraz wpisu pending_checkout w pamięci sesji przeglądarki (od rozpoczęcia płatności do powrotu z serwisu płatności, najdłużej do zamknięcia karty przeglądarki). Bez zgody nie zapisujemy ich na Twoim urządzeniu.',
+        'Jeżeli wyrazisz zgodę na cookies analityczne lub reklamowe, po rejestracji przez Google korzystamy też z krótkotrwałego pliku cookie pomocniczego new_oauth_user (5 minut), który przekazuje narzędziom objętym Twoją zgodą informację o rejestracji. Bez zgody nie zapisujemy go na Twoim urządzeniu.',
         'Piksele zapisują też w pamięci przeglądarki (localStorage i sessionStorage) informacje o kliknięciu w reklamę i bieżącej wizycie. TikTok może ponadto zapisać plik cookie _ttp we własnej domenie (tiktok.com). Okresy ważności plików cookies TikToka i Mety określają te podmioty i mogą się one zmienić.',
         'Zgody na cookies analityczne i reklamowe są od siebie niezależne - możesz wyrazić jedną bez drugiej.',
         'Zgody na cookies możesz w każdej chwili zmienić lub wycofać w ustawieniach Konta, na stronie vocare.pl/preferences albo usuwając pliki cookies w przeglądarce, co spowoduje ponowne wyświetlenie banera. Możesz też zablokować cookies w ustawieniach przeglądarki, co może jednak utrudnić korzystanie z Serwisu.',

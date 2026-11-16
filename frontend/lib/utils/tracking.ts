@@ -7,6 +7,9 @@ export type ProductDetails = {
   name: string;
   value: number;
   currency: string;
+  // Stripe Checkout session ID of a completed checkout. Becomes the event ID and GA4's
+  // transaction_id, so the same purchase is counted once, also against a later server-side copy.
+  transactionId?: string;
 };
 
 export type ToolName = 'salary_calculator';
@@ -101,7 +104,8 @@ function toMetaParams(details: Details): Params {
  */
 export function trackEvent<E extends TrackedEvent>(event: E, ...args: DetailsArgs<E>): void {
   const details = args[0] as Details;
-  const eventId = createEventId();
+  const eventId =
+    (details && 'transactionId' in details && details.transactionId) || createEventId();
 
   const ga4Event = GA4_EVENT_NAMES[event];
   if (ga4Event && getAnalyticsConsent()) {

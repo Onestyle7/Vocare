@@ -9,20 +9,18 @@ import { ArrowRight } from 'lucide-react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { useEffect, useState } from 'react';
-import { lazy, Suspense } from 'react';
 import { ScrollParallax } from 'react-just-parallax';
 
-import { companies, shape1, Spinner } from '@/features/marketing/constants';
+import { companies, shape1 } from '@/features/marketing/constants';
 
 // import CustomCursor from '../SupportComponents/CustomCursor';
 import Copy from '../SupportComponents/Copy';
 import CopyHeader from '../SupportComponents/CopyHeaer';
+import { SafeSpline } from '../SupportComponents/SafeSpline';
 import Section from '../SupportComponents/Section';
 import { Button } from '../ui/button';
 
 gsap.registerPlugin(ScrollTrigger, SplitText);
-
-const LazySpline = lazy(() => import('@splinetool/react-spline'));
 
 const HeroTweak = () => {
   const [showSpline, setShowSpline] = useState(false);
@@ -94,14 +92,12 @@ const HeroTweak = () => {
         </div>
         {!isMobile && (
           <div className="inset-0 flex w-2/5 items-center justify-center lg:border-t lg:border-b lg:border-l">
-            <Suspense fallback={<Image src={Spinner} alt="spinner" width={60} height={60} />}>
-              {showSpline && (
-                <LazySpline
-                  scene="https://prod.spline.design/mZBrYNcnoESGlTUG/scene.splinecode"
-                  className="flex items-center justify-center"
-                />
-              )}
-            </Suspense>
+            {showSpline && (
+              <SafeSpline
+                scene="https://prod.spline.design/mZBrYNcnoESGlTUG/scene.splinecode"
+                className="flex items-center justify-center"
+              />
+            )}
           </div>
         )}
       </div>

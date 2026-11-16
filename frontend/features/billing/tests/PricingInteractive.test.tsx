@@ -2,12 +2,10 @@ import { act, cleanup, fireEvent, render, screen, waitFor, within } from '@testi
 import type { ReactNode } from 'react';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
-import { trackCheckoutCompleted } from '@/features/billing/checkoutTracking';
 import { PricingInteractive } from '@/features/billing/components/PricingInteractive';
 import type { SubscriptionStatuses } from '@/features/billing/types';
 import { ADS_CONSENT_KEY, COOKIE_CONSENT_KEY } from '@/lib/utils/consent';
 
-// The checkout is remembered for the return from Stripe only with tracking consent
 const grantAdsConsent = () => {
   document.cookie = `${ADS_CONSENT_KEY}=granted; path=/`;
 };
@@ -255,7 +253,8 @@ describe('PricingInteractive', () => {
     expect(premium.getByRole('button', { name: 'Wybierz Premium' })).toBeTruthy();
   });
 
-  it('counts a return from a trial checkout as a trial start, not a purchase', async () => {
+  // The purchase or trial itself is reported from the verified Stripe session (checkoutTracking)
+  it('reports the start of a trial checkout with no revenue', async () => {
     grantAdsConsent();
     const track = vi.fn();
     window.ttq = { grantConsent: vi.fn(), revokeConsent: vi.fn(), track };
@@ -267,7 +266,6 @@ describe('PricingInteractive', () => {
 
     fireEvent.click(await screen.findByRole('button', { name: 'Testuj 14 dni za darmo' }));
     await waitFor(() => expect(billing.createCheckout).toHaveBeenCalledTimes(1));
-    trackCheckoutCompleted();
 
     const trialParams = {
       contents: [
@@ -280,13 +278,12 @@ describe('PricingInteractive', () => {
       value: 0,
       currency: 'PLN',
     };
-    const eventId = { event_id: expect.any(String) };
-    expect(track).toHaveBeenCalledWith('InitiateCheckout', trialParams, eventId);
-    expect(track).toHaveBeenCalledWith('StartTrial', trialParams, eventId);
-    expect(track).not.toHaveBeenCalledWith('Purchase', expect.anything(), expect.anything());
+    expect(track).toHaveBeenCalledWith('InitiateCheckout', trialParams, {
+      event_id: expect.any(String),
+    });
   });
 
-  it('counts a token purchase with the amount after the consent discount', async () => {
+  it('reports the start of a token checkout with the amount after the consent discount', async () => {
     grantAdsConsent();
     const track = vi.fn();
     window.ttq = { grantConsent: vi.fn(), revokeConsent: vi.fn(), track };
@@ -304,10 +301,9 @@ describe('PricingInteractive', () => {
 
     fireEvent.click(await screen.findByRole('button', { name: 'Dokup 500 tokenów' }));
     await waitFor(() => expect(billing.createCheckout).toHaveBeenCalledTimes(1));
-    trackCheckoutCompleted();
 
     expect(track).toHaveBeenCalledWith(
-      'Purchase',
+      'InitiateCheckout',
       {
         contents: [
           {
@@ -323,7 +319,7 @@ describe('PricingInteractive', () => {
     );
     expect(window.fbq).toHaveBeenCalledWith(
       'track',
-      'Purchase',
+      'InitiateCheckout',
       {
         content_ids: ['price_test_500_tokens'],
         content_type: 'product',

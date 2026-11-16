@@ -82,6 +82,28 @@ describe('trackEvent', () => {
     expect(first).not.toBe(second);
   });
 
+  it('should use a Stripe session as the one ID of the purchase in GA4 and both pixels', () => {
+    document.cookie = `${ADS_CONSENT_KEY}=granted`;
+    grantAnalytics();
+    const { ttq, fbq, gtag } = installMocks();
+
+    trackEvent('Purchase', { ...details, transactionId: 'cs_test_123' });
+
+    expect(gtag).toHaveBeenCalledWith(
+      'event',
+      'purchase',
+      expect.objectContaining({ transaction_id: 'cs_test_123' })
+    );
+    expect(ttq.track).toHaveBeenCalledWith('Purchase', expect.any(Object), {
+      event_id: 'cs_test_123',
+    });
+    expect(fbq).toHaveBeenCalledWith('track', 'Purchase', expect.any(Object), {
+      eventID: 'cs_test_123',
+    });
+    // The ID identifies the event; it is not sent as a product parameter
+    expect(JSON.stringify(ttq.track.mock.calls[0][1])).not.toContain('cs_test_123');
+  });
+
   it('should add a transaction ID to GA4 purchases only', () => {
     grantAnalytics();
     const { gtag } = installMocks();

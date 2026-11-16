@@ -15,13 +15,11 @@ const AD_LOCAL_STORAGE = [/^multiFbc$/, /^lastExternalReferrer/];
 const AD_SESSION_STORAGE = [/^tt_/];
 
 /**
- * Our own short-lived helpers that carry an event to the tools across a redirect. They serve only
- * the measurement, so they may be stored only while the visitor accepts at least one tool.
+ * Our own short-lived helper that carries a sign-up to the tools across the OAuth redirect. It
+ * serves only the measurement, so it may be stored only while the visitor accepts at least one tool.
+ * Set by the OAuth callback for a newly created account, read and removed by OAuthRegistrationTracker.
  */
-// Set by the OAuth callback for a newly created account, read and removed by OAuthRegistrationTracker
 export const NEW_OAUTH_USER_COOKIE = 'new_oauth_user';
-// What is being bought, kept in sessionStorage until the visitor returns from Stripe
-export const PENDING_CHECKOUT_KEY = 'pending_checkout';
 
 /**
  * The cookie's own host and every parent domain below the top-level one: GA4 and the pixels write
@@ -69,8 +67,7 @@ export function clearAdsData(): void {
   deleteMatchingKeys(() => window.sessionStorage, AD_SESSION_STORAGE);
 }
 
-/** Removes our measurement helpers, for when no tool they could serve is accepted any more. */
+/** Removes our measurement helper, for when no tool it could serve is accepted any more. */
 export function clearTrackingHelpers(): void {
   deleteMatchingCookies([new RegExp(`^${NEW_OAUTH_USER_COOKIE}$`)]);
-  deleteMatchingKeys(() => window.sessionStorage, [new RegExp(`^${PENDING_CHECKOUT_KEY}$`)]);
 }

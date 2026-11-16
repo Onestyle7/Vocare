@@ -1,9 +1,10 @@
-import { getCookie } from '@/lib/utils';
-import { ADS_CONSENT_KEY, COOKIE_CONSENT_KEY, hasTrackingConsent } from '@/lib/utils/consent';
-import { PENDING_CHECKOUT_KEY } from '@/lib/utils/tracker-data';
-import { type ProductDetails, trackEvent } from '@/lib/utils/tracking';
+import type { CheckoutSessionSummary } from '@/features/billing/dal/api';
+import { trackEvent } from '@/lib/utils/tracking';
 
 const CURRENCY = 'PLN';
+
+// Checkout sessions already reported on this page
+const reportedSessions = new Set<string>();
 
 type Checkout = {
   priceId: string;
@@ -12,45 +13,40 @@ type Checkout = {
   isTrial: boolean;
 };
 
-function toDetails({ priceId, name, value, isTrial }: Checkout): ProductDetails {
-  // A trial charges nothing today, whatever the plan costs later
-  return { id: priceId, name, value: isTrial ? 0 : value, currency: CURRENCY };
+/** Reports the click that sends the visitor to Stripe. A trial charges nothing today. */
+export function trackCheckoutStarted({ priceId, name, value, isTrial }: Checkout): void {
+  trackEvent('InitiateCheckout', {
+    id: priceId,
+    name,
+    value: isTrial ? 0 : value,
+    currency: CURRENCY,
+  });
 }
 
 /**
- * Stripe returns to the same URL after every checkout, so what was bought is remembered in this
- * tab until the visitor comes back. A trial costs 0 zł and must not be reported as a purchase.
- *
- * It is remembered only with consent to at least one tracking tool: the note serves nothing but
- * this measurement, so without consent it isn't stored on the device at all.
+ * Reports the checkout the visitor has returned from, as verified by the backend: a purchase only
+ * once Stripe has the money, a trial start for a trial, and nothing for an unpaid or open session
+ * (e.g. a bank transfer still pending). The session ID is the transaction ID, so a reload or a
+ * second tab can't count the same checkout twice.
  */
-export function trackCheckoutStarted(checkout: Checkout): void {
-  trackEvent('InitiateCheckout', toDetails(checkout));
+export function trackCheckoutCompleted(summary: CheckoutSessionSummary | null): void {
+  if (!summary || summary.status !== 'complete') return;
 
-  try {
-    if (hasTrackingConsent(getCookie(COOKIE_CONSENT_KEY), getCookie(ADS_CONSENT_KEY))) {
-      sessionStorage.setItem(PENDING_CHECKOUT_KEY, JSON.stringify(checkout));
-    } else {
-      sessionStorage.removeItem(PENDING_CHECKOUT_KEY);
-    }
-  } catch {
-    // Storage unavailable (e.g. blocked by the browser) – the conversion just won't be reported
-  }
-}
+  const event = summary.isTrial
+    ? 'StartTrial'
+    : summary.paymentStatus === 'paid'
+      ? 'Purchase'
+      : null;
+  // Effects may run twice for one return (React Strict Mode in development, a re-render before the
+  // address is cleaned up); the platforms would deduplicate by ID, but nothing needs to go twice
+  if (!event || reportedSessions.has(summary.sessionId)) return;
+  reportedSessions.add(summary.sessionId);
 
-/** Reports the remembered checkout once, so a repeated visit can't count the same purchase again. */
-export function trackCheckoutCompleted(): void {
-  let pending: Checkout | null;
-
-  try {
-    const stored = sessionStorage.getItem(PENDING_CHECKOUT_KEY);
-    sessionStorage.removeItem(PENDING_CHECKOUT_KEY);
-    pending = stored ? JSON.parse(stored) : null;
-  } catch {
-    return;
-  }
-
-  if (!pending) return;
-
-  trackEvent(pending.isTrial ? 'StartTrial' : 'Purchase', toDetails(pending));
+  trackEvent(event, {
+    id: summary.priceId,
+    name: summary.packageName,
+    value: summary.isTrial ? 0 : summary.amountTotal,
+    currency: summary.currency || CURRENCY,
+    transactionId: summary.sessionId,
+  });
 }

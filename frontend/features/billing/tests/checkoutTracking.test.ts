@@ -1,57 +1,44 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { trackCheckoutCompleted, trackCheckoutStarted } from '@/features/billing/checkoutTracking';
-import { ADS_CONSENT_KEY, COOKIE_CONSENT_KEY } from '@/lib/utils/consent';
-import { PENDING_CHECKOUT_KEY } from '@/lib/utils/tracker-data';
+import type { CheckoutSessionSummary } from '@/features/billing/dal/api';
 
 const { trackEvent } = vi.hoisted(() => ({ trackEvent: vi.fn() }));
 
 vi.mock('@/lib/utils/tracking', () => ({ trackEvent }));
 
-const tokens = { priceId: 'price_tokens', name: 'Tokeny', value: 14.25, isTrial: false };
-const trial = { priceId: 'price_premium', name: 'Premium', value: 29, isTrial: true };
+const paidTokens: CheckoutSessionSummary = {
+  sessionId: 'cs_test_tokens',
+  status: 'complete',
+  paymentStatus: 'paid',
+  mode: 'payment',
+  isTrial: false,
+  amountTotal: 14.25,
+  currency: 'PLN',
+  priceId: 'price_tokens',
+  packageName: 'Pakiet 500 tokenów',
+};
 
-const setConsent = (analytics: string | null, ads: string | null) => {
-  for (const [key, value] of [
-    [COOKIE_CONSENT_KEY, analytics],
-    [ADS_CONSENT_KEY, ads],
-  ] as const) {
-    document.cookie = value ? `${key}=${value}; path=/` : `${key}=; max-age=0; path=/`;
-  }
+const trial: CheckoutSessionSummary = {
+  sessionId: 'cs_test_trial',
+  status: 'complete',
+  paymentStatus: 'no_payment_required',
+  mode: 'subscription',
+  isTrial: true,
+  amountTotal: 0,
+  currency: 'PLN',
+  priceId: 'price_premium',
+  packageName: 'Premium',
 };
 
 describe('checkoutTracking', () => {
   beforeEach(() => {
     vi.clearAllMocks();
     sessionStorage.clear();
-    // The checkout is remembered only with consent to at least one tool
-    setConsent(null, 'granted');
   });
 
-  it.each([
-    ['before any decision', null, null],
-    ['when both tools are refused', 'denied', 'denied'],
-  ])('stores nothing on the device %s, so no purchase is reported', (_, analytics, ads) => {
-    setConsent(analytics, ads);
-
-    trackCheckoutStarted(tokens);
-    vi.clearAllMocks();
-    trackCheckoutCompleted();
-
-    expect(sessionStorage.getItem(PENDING_CHECKOUT_KEY)).toBeNull();
-    expect(trackEvent).not.toHaveBeenCalled();
-  });
-
-  it('remembers the checkout with consent to either tool alone', () => {
-    setConsent('granted', 'denied');
-
-    trackCheckoutStarted(tokens);
-
-    expect(sessionStorage.getItem(PENDING_CHECKOUT_KEY)).not.toBeNull();
-  });
-
-  it('reports the start of a checkout with its amount', () => {
-    trackCheckoutStarted(tokens);
+  it('reports the start of a checkout with its amount, and stores nothing on the device', () => {
+    trackCheckoutStarted({ priceId: 'price_tokens', name: 'Tokeny', value: 14.25, isTrial: false });
 
     expect(trackEvent).toHaveBeenCalledWith('InitiateCheckout', {
       id: 'price_tokens',
@@ -59,28 +46,33 @@ describe('checkoutTracking', () => {
       value: 14.25,
       currency: 'PLN',
     });
+    expect(sessionStorage.length).toBe(0);
   });
 
-  it('reports a paid checkout as a purchase with its amount', () => {
-    trackCheckoutStarted(tokens);
-    vi.clearAllMocks();
+  it('reports a trial checkout start with no revenue', () => {
+    trackCheckoutStarted({ priceId: 'price_premium', name: 'Premium', value: 29, isTrial: true });
 
-    trackCheckoutCompleted();
+    expect(trackEvent).toHaveBeenCalledWith(
+      'InitiateCheckout',
+      expect.objectContaining({ value: 0 })
+    );
+  });
+
+  it('reports a paid session as a purchase with the verified amount and the session as transaction', () => {
+    trackCheckoutCompleted(paidTokens);
 
     expect(trackEvent).toHaveBeenCalledOnce();
     expect(trackEvent).toHaveBeenCalledWith('Purchase', {
       id: 'price_tokens',
-      name: 'Tokeny',
+      name: 'Pakiet 500 tokenów',
       value: 14.25,
       currency: 'PLN',
+      transactionId: 'cs_test_tokens',
     });
   });
 
-  it('reports a trial as a trial start with no revenue and not as a purchase', () => {
-    trackCheckoutStarted(trial);
-    vi.clearAllMocks();
-
-    trackCheckoutCompleted();
+  it('reports a trial as a trial start with no revenue, never as a purchase', () => {
+    trackCheckoutCompleted(trial);
 
     expect(trackEvent).toHaveBeenCalledOnce();
     expect(trackEvent).toHaveBeenCalledWith('StartTrial', {
@@ -88,21 +80,41 @@ describe('checkoutTracking', () => {
       name: 'Premium',
       value: 0,
       currency: 'PLN',
+      transactionId: 'cs_test_trial',
     });
   });
 
-  it('reports a completed checkout only once', () => {
-    trackCheckoutStarted(tokens);
-    vi.clearAllMocks();
+  it.each([
+    ['an unpaid session (payment still pending)', { paymentStatus: 'unpaid' }],
+    ['an open session', { status: 'open' }],
+    ['an expired session', { status: 'expired' }],
+  ])('reports nothing for %s', (_, change) => {
+    trackCheckoutCompleted({ ...paidTokens, ...change });
 
-    trackCheckoutCompleted();
-    trackCheckoutCompleted();
+    expect(trackEvent).not.toHaveBeenCalled();
+  });
+
+  it('reports a session only once, however many times the page asks', () => {
+    const session = { ...paidTokens, sessionId: 'cs_test_twice' };
+
+    trackCheckoutCompleted(session);
+    trackCheckoutCompleted(session);
 
     expect(trackEvent).toHaveBeenCalledOnce();
   });
 
-  it('reports nothing when no checkout was started in this tab', () => {
-    trackCheckoutCompleted();
+  it('still reports a session that was seen unpaid before and is paid now', () => {
+    const session = { ...paidTokens, sessionId: 'cs_test_pending' };
+
+    trackCheckoutCompleted({ ...session, paymentStatus: 'unpaid' });
+    trackCheckoutCompleted(session);
+
+    expect(trackEvent).toHaveBeenCalledOnce();
+    expect(trackEvent).toHaveBeenCalledWith('Purchase', expect.objectContaining({ value: 14.25 }));
+  });
+
+  it('reports nothing without a verified session', () => {
+    trackCheckoutCompleted(null);
 
     expect(trackEvent).not.toHaveBeenCalled();
   });

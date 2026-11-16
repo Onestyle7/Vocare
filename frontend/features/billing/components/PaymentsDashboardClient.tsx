@@ -35,18 +35,21 @@ import {
   PAYMENT_DATE_FORMATTER,
 } from '../billingUtils';
 import { trackCheckoutCompleted } from '../checkoutTracking';
-import { PaymentHistoryItem, TrialSummary } from '../dal/api';
+import { CheckoutSessionSummary, PaymentHistoryItem, TrialSummary } from '../dal/api';
 
 export interface PaymentsDashboardClientProps {
   initialPayments: PaymentHistoryItem[];
   initialMarketingConsent: boolean;
   trial: TrialSummary | null;
+  // The checkout the visitor has just returned from, verified by the backend
+  completedCheckout?: CheckoutSessionSummary | null;
 }
 
 export default function PaymentsDashboardClient({
   initialPayments,
   initialMarketingConsent,
   trial,
+  completedCheckout = null,
 }: PaymentsDashboardClientProps) {
   const { hasActiveSubscription } = useTokenBalanceContext();
   const { handleCancelSubscription, isPending: isCancelling } = useBillingActions();
@@ -60,7 +63,7 @@ export default function PaymentsDashboardClient({
   useEffect(() => {
     const success = searchParams.get('success');
     if (success?.toLowerCase() === 'true') {
-      trackCheckoutCompleted();
+      trackCheckoutCompleted(completedCheckout);
       setTimeout(() => {
         toast.success('Płatność powiodła się');
       }, 300);
@@ -71,7 +74,7 @@ export default function PaymentsDashboardClient({
       }, 300);
       window.history.replaceState(null, '', pathname);
     }
-  }, [searchParams, pathname]);
+  }, [searchParams, pathname, completedCheckout]);
 
   useEffect(() => {
     setMarketingConsent(initialMarketingConsent);
@@ -135,9 +138,7 @@ export default function PaymentsDashboardClient({
               <CardContent className="space-y-4">
                 <div className="border-border/60 bg-background/70 flex flex-col gap-4 rounded-lg border px-4 py-4 sm:flex-row sm:items-center sm:justify-between">
                   <div className="space-y-1">
-                    <span className="text-muted-foreground text-xs font-medium">
-                      Status
-                    </span>
+                    <span className="text-muted-foreground text-xs font-medium">Status</span>
                     <p className="text-foreground text-lg font-semibold">
                       {subscriptionStatusLabel}
                     </p>

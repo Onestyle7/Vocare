@@ -145,12 +145,6 @@ app.UseAuthorization();
 app.UseLegalConsentsValidation();
 
 app.UseHangfireDashboardWithAuth(builder.Configuration);
-app.Services.GetRequiredService<IRecurringJobManager>()
-    .AddOrUpdate<CookieConsentCleanupJob>(
-        "cookie-consent-cleanup",
-        job => job.ExecuteAsync(),
-        Cron.Daily(3)
-    );
 
 // 8. Opcjonalne middleware dla staging
 if (app.Environment.IsStaging())
@@ -246,6 +240,13 @@ while (retries < maxRetries)
         await Task.Delay(delay);
     }
 }
+
+app.Services.GetRequiredService<IRecurringJobManager>()
+    .AddOrUpdate<CookieConsentCleanupJob>(
+        "cookie-consent-cleanup",
+        job => job.ExecuteAsync(),
+        Cron.Daily(3)
+    );
 
 app.Run();
 

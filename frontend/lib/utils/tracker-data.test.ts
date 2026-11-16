@@ -7,7 +7,7 @@ import {
   updateAdsConsent,
   updateAnalyticsConsent,
 } from './consent';
-import { getCookieDomains, NEW_OAUTH_USER_COOKIE, PENDING_CHECKOUT_KEY } from './tracker-data';
+import { getCookieDomains, NEW_OAUTH_USER_COOKIE } from './tracker-data';
 
 // Names as seen in Chromium after accepting everything (plus TikTok's ttcsid)
 const GA_COOKIES = ['_ga', '_ga_HJB398K2LX'];
@@ -28,10 +28,7 @@ const setCookies = (names: string[], value = '1') =>
     document.cookie = `${name}=${value}; path=/`;
   });
 
-const helpersPresent = () => ({
-  cookie: cookieNames().includes(NEW_OAUTH_USER_COOKIE),
-  storage: sessionStorage.getItem(PENDING_CHECKOUT_KEY) !== null,
-});
+const helperPresent = () => cookieNames().includes(NEW_OAUTH_USER_COOKIE);
 
 beforeEach(() => {
   cookieNames().forEach((name) => {
@@ -42,9 +39,7 @@ beforeEach(() => {
 
   setCookies([...GA_COOKIES, ...AD_COOKIES, NEW_OAUTH_USER_COOKIE, OWN_KEY]);
   [...AD_LOCAL_STORAGE, OWN_KEY].forEach((key) => localStorage.setItem(key, '1'));
-  [...AD_SESSION_STORAGE, PENDING_CHECKOUT_KEY, OWN_KEY].forEach((key) =>
-    sessionStorage.setItem(key, '1')
-  );
+  [...AD_SESSION_STORAGE, OWN_KEY].forEach((key) => sessionStorage.setItem(key, '1'));
 });
 
 describe('withdrawing consent', () => {
@@ -78,27 +73,27 @@ describe('withdrawing consent', () => {
       expect.arrayContaining([...GA_COOKIES, ...AD_COOKIES, NEW_OAUTH_USER_COOKIE])
     );
     expect(Object.keys(localStorage)).toHaveLength(AD_LOCAL_STORAGE.length + 1);
-    expect(Object.keys(sessionStorage)).toHaveLength(AD_SESSION_STORAGE.length + 2);
+    expect(Object.keys(sessionStorage)).toHaveLength(AD_SESSION_STORAGE.length + 1);
   });
 });
 
-describe('measurement helpers', () => {
-  it('stay while at least one tool is still accepted', () => {
+describe('measurement helper', () => {
+  it('stays while at least one tool is still accepted', () => {
     setCookies([COOKIE_CONSENT_KEY], 'granted');
 
     updateAdsConsent(false);
 
-    expect(helpersPresent()).toEqual({ cookie: true, storage: true });
+    expect(helperPresent()).toBe(true);
   });
 
-  it('are removed once no tool is accepted any more', () => {
+  it('is removed once no tool is accepted any more', () => {
     setCookies([COOKIE_CONSENT_KEY, ADS_CONSENT_KEY], 'granted');
 
     updateAnalyticsConsent(false);
-    expect(helpersPresent()).toEqual({ cookie: true, storage: true });
+    expect(helperPresent()).toBe(true);
 
     updateAdsConsent(false);
-    expect(helpersPresent()).toEqual({ cookie: false, storage: false });
+    expect(helperPresent()).toBe(false);
     expect(sessionStorage.getItem(OWN_KEY)).toBe('1');
   });
 });
@@ -112,7 +107,7 @@ describe('clearRefusedTrackerData', () => {
 
     expect(cookieNames().filter((name) => GA_COOKIES.includes(name))).toEqual([]);
     expect(cookieNames()).toEqual(expect.arrayContaining(AD_COOKIES));
-    expect(helpersPresent()).toEqual({ cookie: true, storage: true });
+    expect(helperPresent()).toBe(true);
   });
 
   it("leaves the tools' data alone before the visitor decides", () => {
