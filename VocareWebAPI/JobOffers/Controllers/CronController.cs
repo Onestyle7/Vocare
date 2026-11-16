@@ -1,7 +1,3 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using VocareWebAPI.JobOffers.Models.Dtos;
 using VocareWebAPI.JobOffers.Models.Enums;
@@ -54,7 +50,9 @@ namespace VocareWebAPI.JobOffers.Controllers
                 var result = await _syncService.CleanupStaleOffersAsync(source);
                 results.Add(result);
             }
-            return Ok(results);
+            var purged = await _syncService.PurgeExpiredOffersAsync();
+
+            return Ok(new { cleanup = results, purged });
         }
     }
 }

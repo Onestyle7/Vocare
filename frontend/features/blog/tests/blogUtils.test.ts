@@ -3,6 +3,7 @@
 import fs, { Dirent } from 'fs';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
+import type { ArticleMetadata } from '../types';
 import * as blogUtils from '../utils/blogUtils';
 
 describe('toAbsoluteUrl', () => {
@@ -187,5 +188,70 @@ tags: ['testTag', 'testTag2']
 
       expect(blogUtils.getArticlesMetadata).toThrow(Error);
     });
+  });
+});
+
+describe('getRelatedArticles', () => {
+  const makeArticle = (
+    slug: string,
+    category: string,
+    tags: string[],
+    date = '2026-01-01'
+  ): ArticleMetadata => ({
+    slug,
+    category,
+    tags,
+    title: slug,
+    description: slug,
+    estimatedReadTime: 1,
+    coverImage: '/images/blog/cover.webp',
+    date: new Date(date),
+  });
+
+  const current = makeArticle('wzor-cv', 'cv', ['wzór cv', 'cv do pobrania']);
+
+  it('never suggests the article itself', () => {
+    const result = blogUtils.getRelatedArticles(current, [current]);
+    expect(result).toEqual([]);
+  });
+
+  it('ranks shared tag words above a bare category match', () => {
+    const sameCategory = makeArticle('zdjecie', 'cv', ['zdjęcie profilowe']);
+    const sharedWords = makeArticle('przyklad', 'cv', ['przykładowe cv', 'wzór']);
+    const result = blogUtils.getRelatedArticles(current, [sameCategory, sharedWords]);
+    expect(result.map((article) => article.slug)).toEqual(['przyklad', 'zdjecie']);
+  });
+
+  it('leaves out articles that share neither category nor tag words', () => {
+    const unrelated = makeArticle('urlop', 'praca', ['urlop wypoczynkowy']);
+    expect(blogUtils.getRelatedArticles(current, [unrelated])).toEqual([]);
+  });
+
+  it('ignores stop words when matching tags', () => {
+    const stopWordOnly = makeArticle('praca', 'praca', ['praca do zaraz']);
+    expect(blogUtils.getRelatedArticles(current, [stopWordOnly])).toEqual([]);
+  });
+
+  it('breaks ties with the newer article and respects the limit', () => {
+    const older = makeArticle('older', 'cv', ['inne'], '2026-01-01');
+    const newer = makeArticle('newer', 'cv', ['inne'], '2026-06-01');
+    const result = blogUtils.getRelatedArticles(current, [older, newer], 1);
+    expect(result.map((article) => article.slug)).toEqual(['newer']);
+  });
+});
+
+describe('splitArticleIntro', () => {
+  it('splits before the first second-level heading', () => {
+    const result = blogUtils.splitArticleIntro('Intro.\n\n## First\n\nText\n\n## Second');
+    expect(result).toEqual({ intro: 'Intro.\n\n', rest: '## First\n\nText\n\n## Second' });
+  });
+
+  it('does not split on third-level headings', () => {
+    const content = 'Intro.\n\n### Detail';
+    expect(blogUtils.splitArticleIntro(content)).toEqual({ intro: content, rest: '' });
+  });
+
+  it('returns an empty intro when the article opens with a section', () => {
+    expect(blogUtils.splitArticleIntro('## First\n\nText').intro).toBe('');
   });
 });

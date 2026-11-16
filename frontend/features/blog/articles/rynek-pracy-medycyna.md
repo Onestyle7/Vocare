@@ -87,6 +87,8 @@ Rynek pracy w ochronie zdrowia to jeden z najbardziej stabilnych sektorów w Pol
 
 Zastanawiasz się, jak Twoje kompetencje wypadają na tle rynku pracy w medycynie? [Analiza profilu zawodowego w Vocare](/assistant) przeprowadzi bezpłatną analizę i wskaże konkretne kierunki rozwoju.
 
+Jeśli rozważasz zmianę kierunku, [analiza rynku pracy w Vocare](/market-analysis) zestawi zarobki, trudność wejścia i brakujące kompetencje dla ścieżek dopasowanych do Twojego profilu.
+
 ---
 
 ## Powiązane artykuły

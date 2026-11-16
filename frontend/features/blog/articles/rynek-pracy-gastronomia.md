@@ -85,6 +85,8 @@ Rynek pracy w gastronomii i hotelarstwie rośnie wraz z turystyką, ale traci pr
 
 Zastanawiasz się, która ścieżka w tej branży pasuje do Twoich kompetencji? [Analiza profilu zawodowego w Vocare](/assistant) przeprowadzi bezpłatną analizę.
 
+Zanim zdecydujesz, sprawdź liczby: [analiza rynku pracy w Vocare](/market-analysis) pokazuje widełki od juniora do leada i trudność wejścia dla ścieżek dopasowanych do Twojego profilu.
+
 ---
 
 ## Powiązane artykuły

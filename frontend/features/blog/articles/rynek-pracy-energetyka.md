@@ -88,6 +88,8 @@ Rynek pracy w energetyce odnawialnej w 2026 roku to jeden z najbardziej przewidy
 
 Zastanawiasz się, która ścieżka w energetyce odnawialnej pasuje do Twoich kompetencji? [Analiza profilu zawodowego w Vocare](/assistant) przeprowadzi bezpłatną analizę i wskaże konkretne kierunki rozwoju.
 
+Widełki, trudność wejścia i brakujące umiejętności dla ścieżek dopasowanych do Twojego profilu pokazuje [analiza rynku pracy w Vocare](/market-analysis).
+
 ---
 
 ## Powiązane artykuły

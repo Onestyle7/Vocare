@@ -1,6 +1,6 @@
 using Microsoft.EntityFrameworkCore;
+using Pgvector;
 using VocareWebAPI.Data;
-using VocareWebAPI.JobOffers.Models.Dtos;
 using VocareWebAPI.JobOffers.Models.Entities;
 using VocareWebAPI.JobOffers.Models.Enums;
 using VocareWebAPI.JobOffers.Models.Records;
@@ -57,7 +57,7 @@ namespace VocareWebAPI.JobOffers.Repositories.Implementations
             await _context.SaveChangesAsync();
         }
 
-        public async Task<int> DeleteByReferenceNumberAsync(
+        public async Task<int> DeactivateByReferenceNumberAsync(
             IEnumerable<string> refNumbers,
             JobOfferSource source
         )
@@ -67,12 +67,17 @@ namespace VocareWebAPI.JobOffers.Repositories.Implementations
             return await _context
                 .JobOffers.Where(j => j.Source == source)
                 .Where(j => refList.Contains(j.ReferenceNumber))
-                .ExecuteDeleteAsync();
+                .Where(j => j.IsActive)
+                .ExecuteUpdateAsync(j =>
+                    j.SetProperty(s => s.IsActive, false)
+                        .SetProperty(s => s.DeactivatedAt, DateTime.UtcNow)
+                        .SetProperty(s => s.Embedding, (Vector?)null)
+                );
         }
 
         public async Task<int> GetCountAsync()
         {
-            return await _context.JobOffers.CountAsync();
+            return await _context.JobOffers.CountAsync(j => j.IsActive);
         }
 
         public async Task<List<JobOffer>> GetOffersWithoutEmbeddingAsync(int limit)
@@ -80,6 +85,7 @@ namespace VocareWebAPI.JobOffers.Repositories.Implementations
             // Skills są częścią tekstu embeddingu - bez nich backfill liczyłby gorsze embeddingi niż sync
             return await _context
                 .JobOffers.Include(j => j.Skills)
+                .Where(j => j.IsActive)
                 .Where(j => j.Embedding == null)
                 .Take(limit)
                 .ToListAsync();
@@ -87,13 +93,16 @@ namespace VocareWebAPI.JobOffers.Repositories.Implementations
 
         public async Task<int> CountOffersWithoutEmbeddingAsync()
         {
-            return await _context.JobOffers.CountAsync(j => j.Embedding == null);
+            return await _context
+                .JobOffers.Where(j => j.IsActive)
+                .CountAsync(j => j.Embedding == null);
         }
 
         public async Task<List<string>> GetAllUniqueSkillNamesAsync()
         {
             return await _context
                 .JobOffers.Where(j => j.Skills != null)
+                .Where(j => j.IsActive)
                 .SelectMany(j => j.Skills!)
                 .Select(s => s.Name)
                 .Distinct()
@@ -158,7 +167,9 @@ namespace VocareWebAPI.JobOffers.Repositories.Implementations
                     j.SalaryCurrency,
                     j.SalaryPeriod,
                     j.PublishedAt,
-                    j.Embedding != null
+                    j.Embedding != null,
+                    j.IsActive,
+                    j.DeactivatedAt
                 ))
                 .ToDictionaryAsync(s => s.ReferenceNumber);
         }
@@ -166,6 +177,14 @@ namespace VocareWebAPI.JobOffers.Repositories.Implementations
         public async Task<JobOffer?> GetTrackedByIdAsync(Guid id)
         {
             return await _context.JobOffers.FirstOrDefaultAsync(j => j.Id == id);
+        }
+
+        public async Task<int> DeleteExpiredInactiveAsync(DateTime cutoff)
+        {
+            return await _context
+                .JobOffers.Where(j => j.DeactivatedAt < cutoff)
+                .Where(j => j.IsActive == false)
+                .ExecuteDeleteAsync();
         }
     }
 }

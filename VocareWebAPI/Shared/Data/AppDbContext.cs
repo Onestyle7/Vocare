@@ -421,7 +421,7 @@ namespace VocareWebAPI.Data
 
                 // Unikalny indeks na ReferenceNumber - kluczowe dla upsert
                 entity.HasIndex(e => e.ReferenceNumber).IsUnique();
-
+                entity.HasIndex(e => new { e.IsActive, e.DeactivatedAt });
                 entity.Property(e => e.Embedding).HasColumnType("vector(1536)");
                 // Relacja do kaskadowego usuwnia
                 entity

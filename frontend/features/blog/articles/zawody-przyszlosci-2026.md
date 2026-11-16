@@ -180,6 +180,8 @@ Zawody przyszłości w 2026 roku to nie tylko programiści i inżynierowie AI. T
 
 Nie wiesz, który kierunek jest dla Ciebie? Skorzystaj z platformy [Analiza profilu zawodowego w Vocare](/assistant) i sprawdź, jakie zawody najlepiej odpowiadają Twoim kompetencjom, wartościom i aspiracjom. Nasz asystent AI przeprowadzi Cię przez spersonalizowaną analizę kariery - bezpłatnie i bez zobowiązań.
 
+Dla wybranych ścieżek [analiza rynku pracy w Vocare](/market-analysis) pokaże widełki od juniora do leada, trudność wejścia i umiejętności, których Ci brakuje.
+
 ---
 
 ## Powiązane artykuły

@@ -62,11 +62,14 @@ export function CookieBanner() {
   if (!showBanner) return null;
 
   return (
-    <div className="bg-background/75 font-poppins fixed right-0 bottom-0 left-0 z-[9999] border-t p-4 shadow-lg backdrop-blur sm:p-6">
-      <div className="container mx-auto flex flex-col gap-4">
-        <div className="flex flex-col items-center justify-between gap-4 md:flex-row">
-          <div className="text-muted-foreground flex-1 text-sm">
-            <p className="text-foreground mb-1 font-semibold">Cenimy Twoją prywatność</p>
+    <div className="bg-background/75 font-poppins fixed right-0 bottom-0 left-0 z-[9999] border-t px-4 py-3 shadow-lg backdrop-blur sm:p-6">
+      <div className="container mx-auto flex flex-col gap-3 sm:gap-4">
+        <div className="flex flex-col items-center justify-between gap-3 sm:gap-4 md:flex-row">
+          {/* Smaller type on phones keeps the banner compact. The text itself is the same on every
+              screen: it is what visitors consent to (COOKIE_CONSENT_TEXT_VERSION), so a shorter
+              phone version would have to be versioned and must still name the pixels. */}
+          <div className="text-muted-foreground flex-1 text-xs sm:text-sm">
+            <p className="text-foreground mb-1 text-sm font-semibold">Cenimy Twoją prywatność</p>
             Używamy plików cookie niezbędnych do działania strony. Za Twoją zgodą używamy też
             cookies analitycznych (Google Analytics), które pomagają nam rozwijać Vocare, oraz
             reklamowych (piksele TikToka i Mety), które przekazują tym serwisom informacje o Twojej
@@ -81,7 +84,9 @@ export function CookieBanner() {
             </Link>
             .
           </div>
-          <div className="flex w-full shrink-0 flex-col gap-2 sm:w-auto sm:flex-row">
+          {/* Two rows on phones instead of three: accepting and refusing stay side by side and
+              equally prominent, the settings below them */}
+          <div className="grid w-full shrink-0 grid-cols-2 gap-2 sm:flex sm:w-auto sm:flex-row">
             <Button variant="outline" onClick={() => saveChoice(true, true)}>
               Akceptuję wszystkie
             </Button>
@@ -90,6 +95,7 @@ export function CookieBanner() {
             </Button>
             <Button
               variant="outline"
+              className="col-span-2"
               aria-expanded={showSettings}
               onClick={() => setShowSettings((open) => !open)}
             >

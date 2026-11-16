@@ -111,3 +111,4 @@ Chcesz wiedzieć, jakie realnie widełki możesz negocjować na swoim stanowisku
 - [Nadgodziny w pracy 2026 - ile powinieneś za nie dostać](/blog/praca/nadgodziny-wynagrodzenie)
 - [Delegacja służbowa 2026 - dieta, rozliczenie i Twoje prawa](/blog/praca/delegacja-sluzbowa)
 - [Wypowiedzenie zmieniające 2026 - kiedy pracodawca może zmienić warunki pracy](/blog/praca/wypowiedzenie-zmieniajace)
+- [Ile na rękę z B2B w 2026? Ryczałt, liniowy i skala](/blog/rynek-pracy/ile-na-reke-b2b)

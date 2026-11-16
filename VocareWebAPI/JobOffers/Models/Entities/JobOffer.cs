@@ -36,6 +36,8 @@ namespace VocareWebAPI.JobOffers.Models.Entities
         public ICollection<JobOfferLocation> Locations { get; set; } = new List<JobOfferLocation>();
         public ICollection<JobOfferSkill> Skills { get; set; } = new List<JobOfferSkill>();
         public Vector? Embedding { get; set; }
+        public bool IsActive { get; set; } = true;
+        public DateTime? DeactivatedAt { get; set; }
         public JobOfferSource Source { get; set; } = JobOfferSource.NofluffJobs;
     }
 }

@@ -240,6 +240,7 @@ const HeaderNavLinks: HeaderNavLinkConfig[] = [
     publicUrl: '/salary-calculator',
     authenticatedUrl: '/dashboard/salary-calculator',
   },
+  { label: 'Blog', publicUrl: '/blog' },
 ];
 
 export const getHeaderNavLinks = (isAuthenticated: boolean): NavLink[] =>
@@ -247,6 +248,15 @@ export const getHeaderNavLinks = (isAuthenticated: boolean): NavLink[] =>
     const url = isAuthenticated ? authenticatedUrl : publicUrl;
     return url ? [{ ...link, url }] : [];
   });
+
+/**
+ * Footer navigation always points at the public landing pages.
+ *
+ * The footer used to reuse `NavLinks`, whose `/dashboard/*` targets answer a
+ * logged-out visitor (and every crawler) with a 307 to `/sign-in`, so the
+ * site-wide footer passed no internal links to the pages that should rank.
+ */
+export const FooterNavLinks: NavLink[] = getHeaderNavLinks(false);
 
 // export const companies = [
 //   { name: 'Google', url: 'https://cdn.magicui.design/companies/Google.svg' },
@@ -376,12 +386,16 @@ export const links_social = [
   { name: 'LINKEDIN', url: 'https://www.linkedin.com/company/110046691' },
 ];
 
+// Public landing pages only: '/profile' and '/resume' never existed as routes
+// and returned 404 from the footer of every blog page.
 export const links_pages = [
   { name: 'HOME', url: '/' },
-  { name: 'PROFIL', url: '/profile' },
   { name: 'DORADCA', url: '/assistant' },
   { name: 'ANALIZA', url: '/market-analysis' },
-  { name: 'KREATOR', url: '/resume' },
+  { name: 'ROADMAPA', url: '/roadmap' },
+  { name: 'KREATOR CV', url: '/resume-creator' },
+  { name: 'KALKULATOR', url: '/salary-calculator' },
+  { name: 'CENNIK', url: '/pricing' },
   { name: 'BLOG', url: '/blog' },
 ];
 
@@ -389,8 +403,10 @@ export const contact_pages = [{ name: 'EMAIL', url: 'mailto:kontakt@vocare.pl' }
 
 export const down_links = [
   { name: '2026©', url: '/' },
-  { name: 'ZGODY I WARUNKI', url: 'terms-of-service' },
-  { name: 'POLITYKA PRYWATNOŚCI', url: 'privacy-policy' },
+  // Root-relative on purpose: without the leading slash these resolved against
+  // the current path, e.g. /blog/cv/privacy-policy, and returned 404.
+  { name: 'ZGODY I WARUNKI', url: '/terms-of-service' },
+  { name: 'POLITYKA PRYWATNOŚCI', url: '/privacy-policy' },
   { name: 'PREFERENCJE', url: '/preferences' },
 ];
 

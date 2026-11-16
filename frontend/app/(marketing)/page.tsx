@@ -11,6 +11,7 @@ import TrustScore from './assistant/components/TrustScore';
 import Features from './main-components/Features';
 import Hero from './main-components/Hero';
 import HowItWorks from './main-components/HowItWorks';
+import LatestArticles from './main-components/LatestArticles';
 import Pricing from './main-components/Pricing';
 import ProductShowcase from './main-components/product-showcase/ProductShowcase';
 
@@ -41,6 +42,7 @@ export default function MainPage() {
         <HowItWorks />
         <TrustScore />
         <Pricing />
+        <LatestArticles />
         <Footer />
       </main>
     </>
