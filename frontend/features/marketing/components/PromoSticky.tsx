@@ -115,7 +115,7 @@ export function PromoSidebar({
       <div className="relative space-y-4">
         <p
           className={cn(
-            'bg-clip-text pr-6 text-xs font-medium tracking-wide text-transparent uppercase',
+            'bg-clip-text pr-6 text-xs font-medium text-transparent uppercase',
             BRAND_GRADIENT
           )}
         >
@@ -188,7 +188,7 @@ export function PromoInline({ variant, className }: { variant: PromoVariant; cla
         <div className="min-w-[13rem] flex-1 space-y-1.5">
           <p
             className={cn(
-              'bg-clip-text text-xs font-medium tracking-wide text-transparent uppercase',
+              'bg-clip-text text-xs font-medium text-transparent uppercase',
               BRAND_GRADIENT
             )}
           >
@@ -290,7 +290,7 @@ export function PromoBar({
         <div className="min-w-[13rem] flex-1 space-y-1">
           <p
             className={cn(
-              'hidden bg-clip-text text-xs font-medium tracking-wide text-transparent uppercase sm:block',
+              'hidden bg-clip-text text-xs font-medium text-transparent uppercase sm:block',
               BRAND_GRADIENT
             )}
           >
