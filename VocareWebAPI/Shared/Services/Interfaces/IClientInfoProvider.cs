@@ -13,4 +13,5 @@ public record ClientInfo(string IpAddress, string UserAgent);
 public interface IClientInfoProvider
 {
     ClientInfo GetClientInfo();
+    bool HasValidInternalApiKey();
 }

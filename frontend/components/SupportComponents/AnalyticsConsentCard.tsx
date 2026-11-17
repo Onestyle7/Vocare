@@ -4,23 +4,51 @@ import { useEffect, useState } from 'react';
 import { toast } from 'sonner';
 
 import { Switch } from '@/components/ui/switch';
+import type { CookieConsentSource } from '@/features/legal/types';
 import { cn } from '@/lib/utils';
-import { getAnalyticsConsent, updateAnalyticsConsent } from '@/lib/utils/consent';
+import {
+  getAdsConsent,
+  getAnalyticsConsent,
+  updateAdsConsent,
+  updateAnalyticsConsent,
+} from '@/lib/utils/consent';
+import { recordCookieConsentChoice } from '@/lib/utils/consent-record';
 
-interface AnalyticsConsentCardProps {
+interface ConsentCardProps {
   className?: string;
+  // Where the card is shown, kept with each recorded choice (proof of consent)
+  source: Extract<CookieConsentSource, 'Preferences' | 'Account'>;
 }
 
-export function AnalyticsConsentCard({ className }: AnalyticsConsentCardProps) {
-  const [analyticsConsent, setAnalyticsConsent] = useState<boolean>(false);
+interface ConsentToggleCardProps extends ConsentCardProps {
+  id: string;
+  label: string;
+  grantedDescription: string;
+  deniedDescription: string;
+  getConsent: () => boolean;
+  updateConsent: (granted: boolean) => void;
+}
+
+function ConsentToggleCard({
+  className,
+  source,
+  id,
+  label,
+  grantedDescription,
+  deniedDescription,
+  getConsent,
+  updateConsent,
+}: ConsentToggleCardProps) {
+  const [granted, setGranted] = useState<boolean>(false);
 
   useEffect(() => {
-    setAnalyticsConsent(getAnalyticsConsent());
-  }, []);
+    setGranted(getConsent());
+  }, [getConsent]);
 
-  const onToggleAnalyticsConsent = (nextValue: boolean) => {
-    setAnalyticsConsent(nextValue);
-    updateAnalyticsConsent(nextValue);
+  const onToggle = (nextValue: boolean) => {
+    setGranted(nextValue);
+    updateConsent(nextValue);
+    recordCookieConsentChoice(source);
     toast.success('Zaktualizowano preferencje ciasteczek');
   };
 
@@ -32,24 +60,44 @@ export function AnalyticsConsentCard({ className }: AnalyticsConsentCardProps) {
       )}
     >
       <div className="space-y-1">
-        <label
-          htmlFor="analytics-consent-toggle"
-          className="text-foreground cursor-pointer text-sm font-medium"
-        >
-          Zgoda na korzystanie z ciasteczek analitycznych
+        <label htmlFor={id} className="text-foreground cursor-pointer text-sm font-medium">
+          {label}
         </label>
         <p className="text-muted-foreground text-xs leading-relaxed">
-          {analyticsConsent
-            ? 'Pomagasz nam ulepszać Vocare udostępniając anonimowe dane o ruchu.'
-            : 'Włącz, aby pomóc nam ulepszać aplikację na podstawie anonimowych danych analitycznych.'}
+          {granted ? grantedDescription : deniedDescription}
         </p>
       </div>
-      <Switch
-        id="analytics-consent-toggle"
-        checked={analyticsConsent}
-        onCheckedChange={onToggleAnalyticsConsent}
-        aria-label="Toggle analytics consent"
-      />
+      <Switch id={id} checked={granted} onCheckedChange={onToggle} />
     </div>
+  );
+}
+
+export function AnalyticsConsentCard({ className, source }: ConsentCardProps) {
+  return (
+    <ConsentToggleCard
+      className={className}
+      source={source}
+      id="analytics-consent-toggle"
+      label="Cookies analityczne (Google Analytics)"
+      grantedDescription="Pomagasz nam ulepszać Vocare, udostępniając dane o tym, jak korzystasz z serwisu."
+      deniedDescription="Włącz, aby pomóc nam ulepszać Vocare na podstawie statystyk ruchu w serwisie."
+      getConsent={getAnalyticsConsent}
+      updateConsent={updateAnalyticsConsent}
+    />
+  );
+}
+
+export function AdsConsentCard({ className, source }: ConsentCardProps) {
+  return (
+    <ConsentToggleCard
+      className={className}
+      source={source}
+      id="ads-consent-toggle"
+      label="Cookies reklamowe (TikTok, Meta)"
+      grantedDescription="TikTok i Meta otrzymują informacje o Twoich wizytach i działaniach w Vocare, dzięki czemu mierzymy skuteczność naszych reklam."
+      deniedDescription="Włącz, aby pomóc nam mierzyć skuteczność reklam Vocare na TikToku, Facebooku i Instagramie."
+      getConsent={getAdsConsent}
+      updateConsent={updateAdsConsent}
+    />
   );
 }

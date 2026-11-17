@@ -169,6 +169,8 @@ Zmiana branży to proces, który wymaga refleksji, planowania i konsekwencji. Ni
 
 Jeśli chcesz dowiedzieć się, jakie branże i zawody najlepiej pasują do Twoich kompetencji i wartości - sprawdź [Analiza profilu zawodowego w Vocare](/assistant). Nasz asystent AI pomoże Ci przeprowadzić rzetelną analizę kariery i wskazać konkretne ścieżki przebranżowienia dopasowane do Twojej sytuacji.
 
+Samo przebranżowienie rozpiszesz potem w [roadmapie kariery Vocare](/roadmap): na etapy, zadania i umiejętności do nadrobienia, w horyzoncie kwartału, roku albo dwóch lat.
+
 ---
 
 ## Powiązane artykuły

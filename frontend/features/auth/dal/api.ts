@@ -23,6 +23,8 @@ export type SignInResult = {
   accessToken: string;
   userId: string;
   email: string;
+  // Zwracane tylko przy logowaniu przez OAuth
+  isNewUser?: boolean;
 };
 
 export type SignInCommand = {

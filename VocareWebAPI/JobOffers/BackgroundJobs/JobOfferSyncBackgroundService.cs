@@ -69,14 +69,15 @@ namespace VocareWebAPI.JobOffers.BackgroundJobs
 
                             totalRemoved += cleanupResult.RemovedCount;
                             _logger.LogInformation(
-                                "Cleanup {Source}: usunięto: {Removed} ofert",
+                                "Cleanup {Source}: dezaktywowano: {Removed} ofert",
                                 source,
                                 cleanupResult.RemovedCount
                             );
                         }
+                        await syncService.PurgeExpiredOffersAsync();
                         _lastCleanupDate = DateTime.UtcNow.Date;
                         _logger.LogInformation(
-                            "Cleanup zakończony. Łącznie usunięto {Total} ofert.",
+                            "Cleanup zakończony. Łącznie Dezaktywowano {Total} ofert.",
                             totalRemoved
                         );
                     }

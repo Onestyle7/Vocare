@@ -83,5 +83,29 @@ namespace VocareWebApi.Tests.JobOffers
 
             (await _sut.GetDetailsByIdAsync(id)).Country.Should().BeEmpty();
         }
+
+        [Theory]
+        [InlineData(true)]
+        [InlineData(false)]
+        public async Task GetDetailsByIdAsync_ExposesIsActive_SoClientCanFlagExpiredOffer(
+            bool isActive
+        )
+        {
+            var id = Guid.NewGuid();
+            _repository
+                .Setup(r => r.GetDetailsByIdAsync(id))
+                .ReturnsAsync(
+                    new JobOffer
+                    {
+                        Id = id,
+                        ReferenceNumber = "ref-1",
+                        IsActive = isActive,
+                        DeactivatedAt = isActive ? null : DateTime.UtcNow,
+                        Skills = new List<JobOfferSkill>(),
+                    }
+                );
+
+            (await _sut.GetDetailsByIdAsync(id)).IsActive.Should().Be(isActive);
+        }
     }
 }

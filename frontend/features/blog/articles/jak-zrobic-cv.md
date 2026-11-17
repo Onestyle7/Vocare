@@ -240,3 +240,4 @@ Jeśli chcesz mieć pewność, że Twoje CV jest zoptymalizowane pod konkretną 
 - [CV 2026 - kompletny poradnik jak napisać dobre CV](/blog/cv/cv)
 - [CV wzór 2026 - darmowe szablony do pobrania i edycji](/blog/cv/cv-wzor)
 - [Przykładowe CV 2026 - wzory dla różnych stanowisk i branż](/blog/cv/przykladowe-cv)
+- [Klauzula RODO do CV 2026 - aktualna treść i wzory](/blog/cv/klauzula-rodo-do-cv)

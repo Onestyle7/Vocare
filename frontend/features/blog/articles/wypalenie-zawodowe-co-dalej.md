@@ -198,6 +198,8 @@ Zatrzymaj się. Zregeneruj się. Poproś o pomoc. I dopiero wtedy planuj kolejny
 
 Jeśli szukasz wsparcia w podjęciu decyzji o dalszej karierze - platforma [Analiza profilu zawodowego w Vocare](/assistant) może pomóc. Nasz asystent AI przeprowadzi Cię przez analizę Twoich wartości, kompetencji i preferencji zawodowych, żebyś mógł podjąć decyzję w oparciu o dane, a nie z pozycji wyczerpania i niepewności.
 
+Kiedy przyjdzie czas na kolejny krok, [roadmapa kariery w Vocare](/roadmap) rozłoży zmianę na małe etapy, żeby nie zaczynać wszystkiego naraz.
+
 ---
 
 ## Powiązane artykuły

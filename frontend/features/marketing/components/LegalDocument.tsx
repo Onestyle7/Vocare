@@ -12,16 +12,42 @@ interface LegalDocumentProps {
   children?: ReactNode;
 }
 
+// An https address, without the punctuation that ends the sentence after it
+const URL_PATTERN = /(https:\/\/\S+?)(?=[.,;:)]?(?:\s|$))/;
+
+/**
+ * Turns https addresses in legal text into links. TikTok's joint controller terms require
+ * a hyperlink to its privacy notice in ours, and plain text addresses can't be clicked.
+ */
+export function TextWithLinks({ text }: { text: string }) {
+  // split() with a capturing group puts each matched address at an odd index
+  return text.split(new RegExp(URL_PATTERN, 'g')).map((part, index) =>
+    index % 2 === 1 ? (
+      <a
+        key={index}
+        href={part}
+        target="_blank"
+        rel="noopener noreferrer"
+        className="break-all underline hover:text-[#915EFF]"
+      >
+        {part}
+      </a>
+    ) : (
+      part
+    )
+  );
+}
+
 function LegalPointContent({ point }: { point: LegalPoint }) {
-  if (typeof point === 'string') return point;
+  if (typeof point === 'string') return <TextWithLinks text={point} />;
 
   return (
     <>
-      {point.text}
+      <TextWithLinks text={point.text} />
       <ol className="mt-2 list-[lower-alpha] space-y-1.5 pl-5 marker:text-neutral-500">
         {point.items.map((item) => (
           <li key={item} className="pl-1">
-            {item}
+            <TextWithLinks text={item} />
           </li>
         ))}
       </ol>

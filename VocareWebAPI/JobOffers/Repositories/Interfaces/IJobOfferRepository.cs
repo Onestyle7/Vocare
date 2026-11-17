@@ -10,7 +10,7 @@ namespace VocareWebAPI.JobOffers.Repositories.Interfaces
         Task<IEnumerable<JobStaleInfo>> GetAllReferenceNumbersAsync(JobOfferSource source); // Do porównania z feedem(sprawdzamy, które usunąć)
         Task AddAsync(JobOffer offer); // Dodanie nowej
         Task UpdateAsync(JobOffer offer); // Aktualizacja istniejącej
-        Task<int> DeleteByReferenceNumberAsync(
+        Task<int> DeactivateByReferenceNumberAsync(
             IEnumerable<string> refNumbers,
             JobOfferSource source
         ); // Usuwanie niaktualnych
@@ -25,5 +25,6 @@ namespace VocareWebAPI.JobOffers.Repositories.Interfaces
         Task<JobOffer?> GetDetailsByIdAsync(Guid id);
         Task<Dictionary<string, JobOfferSnapshot>> GetSnapshotsBySourceAsync(JobOfferSource source);
         Task<JobOffer?> GetTrackedByIdAsync(Guid id);
+        Task<int> DeleteExpiredInactiveAsync(DateTime cutoff);
     }
 }

@@ -175,3 +175,4 @@ Chcesz mieć CV, które jest automatycznie analizowane i optymalizowane pod konk
 - [Jak zrobić CV 2026 - praktyczny poradnik od zera do gotowego pliku](/blog/cv/jak-zrobic-cv)
 - [Kreator CV online 2026 - najlepsze narzędzia do tworzenia CV](/blog/cv/kreator-cv)
 - [CV do pracy 2026 - jak dopasować aplikację do każdej oferty](/blog/cv/cv-do-pracy)
+- [Klauzula RODO do CV 2026 - aktualna treść i wzory](/blog/cv/klauzula-rodo-do-cv)

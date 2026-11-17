@@ -17,5 +17,6 @@ namespace VocareWebAPI.Legal.Services.Interfaces
             string userAgent,
             ConsentSource authSource
         );
+        Task RecordCookieConsentAsync(RecordCookieConsentRequestDto request, string? userId);
     }
 }

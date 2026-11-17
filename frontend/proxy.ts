@@ -1,9 +1,49 @@
 import { NextRequest } from 'next/server';
 import { NextResponse } from 'next/server';
 
+import {
+  RESET_PASSWORD_COOKIE,
+  RESET_PASSWORD_COOKIE_OPTIONS,
+  RESET_PASSWORD_PATH,
+  serializeResetPasswordLink,
+} from '@/features/auth/reset-password-link';
+
 export async function proxy(request: NextRequest) {
   const response =
-    legacyBlogCategoryRedirect(request) ?? (await authProxy(request)) ?? NextResponse.next();
+    legacyBlogCategoryRedirect(request) ??
+    resetPasswordLinkRedirect(request) ??
+    (await authProxy(request)) ??
+    NextResponse.next();
+  return response;
+}
+
+/**
+ * Moves the token and email from the reset link into an httpOnly cookie and redirects to the bare
+ * /reset-password. The browser follows the redirect before rendering anything, so GA4 and the
+ * pixels never see the link: neither as the page address nor later as the referrer.
+ */
+function resetPasswordLinkRedirect(request: NextRequest) {
+  const { pathname, searchParams } = request.nextUrl;
+  if (pathname !== RESET_PASSWORD_PATH || searchParams.size === 0) return null;
+
+  const token = searchParams.get('token');
+  const email = searchParams.get('email');
+  const response = NextResponse.redirect(new URL(RESET_PASSWORD_PATH, request.url));
+
+  if (token && email) {
+    response.cookies.set(
+      RESET_PASSWORD_COOKIE,
+      serializeResetPasswordLink({ token, email }),
+      RESET_PASSWORD_COOKIE_OPTIONS
+    );
+  } else {
+    // A broken link must not fall back to a cookie left by an earlier one
+    response.cookies.set(RESET_PASSWORD_COOKIE, '', {
+      ...RESET_PASSWORD_COOKIE_OPTIONS,
+      maxAge: 0,
+    });
+  }
+
   return response;
 }
 

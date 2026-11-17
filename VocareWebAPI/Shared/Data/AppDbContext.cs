@@ -101,6 +101,7 @@ namespace VocareWebAPI.Data
         public DbSet<UserConsent> UserConsents { get; set; }
         public DbSet<LegalDocument> LegalDocuments { get; set; }
         public DbSet<AccountAntiAbuseRegistry> AccountAntiAbuseRegistries { get; set; }
+        public DbSet<CookieConsentRecord> CookieConsentRecords { get; set; }
 
         /// <summary>
         /// Konfiguruje model bazy danych, definiując schemat i relacje między encjami.
@@ -420,7 +421,7 @@ namespace VocareWebAPI.Data
 
                 // Unikalny indeks na ReferenceNumber - kluczowe dla upsert
                 entity.HasIndex(e => e.ReferenceNumber).IsUnique();
-
+                entity.HasIndex(e => new { e.IsActive, e.DeactivatedAt });
                 entity.Property(e => e.Embedding).HasColumnType("vector(1536)");
                 // Relacja do kaskadowego usuwnia
                 entity

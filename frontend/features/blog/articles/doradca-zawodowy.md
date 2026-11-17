@@ -200,6 +200,8 @@ Doradca zawodowy jest wart swojego czasu i pieniędzy wtedy, gdy stoisz na rozdr
 
 Zacznij od bezpłatnej diagnozy na [Analiza profilu zawodowego w Vocare](/assistant) - AI przeprowadzi Cię przez analizę kompetencji i wskaże kierunki kariery dopasowane do Twojego profilu.
 
+Po wyborze kierunku [roadmapa kariery w Vocare](/roadmap) zamienia go w plan: etapy, zadania i brakujące umiejętności rozpisane w czasie.
+
 ---
 
 ## Powiązane artykuły

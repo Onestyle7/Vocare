@@ -5,8 +5,8 @@ import Link from 'next/link';
 
 import { Separator } from '@/components/ui/separator';
 import {
+  FooterNavLinks,
   logo,
-  NavLinks,
   social_fb,
   social_instagram,
   social_linkedin,
@@ -24,12 +24,11 @@ const Footer = () => {
             width={160}
             height={40}
             className="pointer-events-none h-8 w-auto invert sm:h-10 dark:invert-0"
-            priority
           />
         </Link>
 
         <ul className="flex flex-row flex-wrap gap-x-4 gap-y-3 sm:gap-5">
-          {NavLinks.map(({ label, url }) => (
+          {FooterNavLinks.map(({ label, url }) => (
             <li key={url}>
               <Link
                 className="text-[14px] font-light opacity-90 transition-opacity hover:opacity-60 sm:text-[16px]"
@@ -129,10 +128,13 @@ const Footer = () => {
         <p className="font-regular text-[14px] sm:text-[16px]">
           © 2026 Vocare. Wszelkie prawa zastrzeżone.
         </p>
-        <Link href="privacy-policy" className="font-regular text-[14px] underline sm:text-[16px]">
+        <Link href="/privacy-policy" className="font-regular text-[14px] underline sm:text-[16px]">
           Polityka Prywatności
         </Link>
-        <Link href="terms-of-service" className="font-regular text-[14px] underline sm:text-[16px]">
+        <Link
+          href="/terms-of-service"
+          className="font-regular text-[14px] underline sm:text-[16px]"
+        >
           Regulamin
         </Link>
         <Link href="/preferences" className="font-regular text-[14px] underline sm:text-[16px]">

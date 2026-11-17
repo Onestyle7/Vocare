@@ -1,10 +1,12 @@
 using System.Text.Json.Serialization;
+using Hangfire;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Stripe;
 using VocareWebAPI.Data;
 using VocareWebAPI.Extensions.ApplicationBuilderExtensions;
 using VocareWebAPI.Extensions.ServiceCollectionExtensions;
+using VocareWebAPI.Legal.Jobs;
 using VocareWebAPI.Models.Entities;
 using VocareWebAPI.Services;
 
@@ -238,6 +240,13 @@ while (retries < maxRetries)
         await Task.Delay(delay);
     }
 }
+
+app.Services.GetRequiredService<IRecurringJobManager>()
+    .AddOrUpdate<CookieConsentCleanupJob>(
+        "cookie-consent-cleanup",
+        job => job.ExecuteAsync(),
+        Cron.Daily(3)
+    );
 
 app.Run();
 
