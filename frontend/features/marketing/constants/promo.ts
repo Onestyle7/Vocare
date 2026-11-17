@@ -3,6 +3,8 @@ import type { BlogCategorySlug } from '@/features/blog/utils/constants';
 
 export type PromoVariant = 'cv' | 'career' | 'market' | 'salary';
 
+export type PromoPlacement = 'sidebar' | 'bar' | 'inline';
+
 export type PromoContent = {
   eyebrow: string;
   title: string;

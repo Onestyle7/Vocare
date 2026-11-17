@@ -1,3 +1,5 @@
+import type { OAuthProvider } from '@/features/auth/oauth/providers';
+import type { PromoPlacement, PromoVariant } from '@/features/marketing/constants/promo';
 import { getCookie } from '@/lib/utils';
 import { ADS_CONSENT_KEY, getAnalyticsConsent } from '@/lib/utils/consent';
 
@@ -14,12 +16,20 @@ export type ProductDetails = {
 
 export type ToolName = 'salary_calculator';
 
+export type SignUpMethod = 'email' | OAuthProvider;
+
+// Which promo (PromoSticky) the visitor acted on, and where it was shown
+type PromoDetails = { variant: PromoVariant; placement: PromoPlacement };
+
 // Event names follow the TikTok and Meta standard events wherever one exists
 type EventDetails = {
-  CompleteRegistration: undefined;
+  CompleteRegistration: { method: SignUpMethod };
   // CV export to PDF: the print dialog opened (the browser can't tell whether the file was saved)
   Download: undefined;
   InitiateCheckout: ProductDetails;
+  // Click on a promo's main button, on the blog and the salary calculator
+  PromoClick: PromoDetails;
+  PromoDismiss: PromoDetails;
   Purchase: ProductDetails;
   StartTrial: ProductDetails;
   ToolUsed: { toolName: ToolName };
@@ -40,6 +50,8 @@ const GA4_EVENT_NAMES: Record<TrackedEvent, string | null> = {
   CompleteRegistration: 'sign_up',
   Download: 'cv_export',
   InitiateCheckout: 'begin_checkout',
+  PromoClick: 'promo_click',
+  PromoDismiss: 'promo_dismiss',
   Purchase: 'purchase',
   StartTrial: 'start_trial',
   ToolUsed: 'tool_used',
@@ -47,7 +59,10 @@ const GA4_EVENT_NAMES: Record<TrackedEvent, string | null> = {
 };
 
 // Meta has no standard event for these
-const META_CUSTOM_EVENTS = new Set<TrackedEvent>(['Download', 'ToolUsed']);
+const META_CUSTOM_EVENTS = new Set<TrackedEvent>(['Download', 'PromoClick', 'ToolUsed']);
+
+// Of no use to the ad platforms, so they don't get them
+const GA4_ONLY_EVENTS = new Set<TrackedEvent>(['PromoDismiss']);
 
 function createEventId(): string {
   // randomUUID exists only on HTTPS and localhost
@@ -56,9 +71,20 @@ function createEventId(): string {
     : `${Date.now()}-${Math.random().toString(36).slice(2)}`;
 }
 
+function isProduct(details: NonNullable<Details>): details is ProductDetails {
+  return 'currency' in details;
+}
+
+// Events other than purchases carry their few parameters to every tool under the same names
+function toSharedParams(details: Exclude<NonNullable<Details>, ProductDetails>): Params {
+  if ('toolName' in details) return { tool_name: details.toolName };
+  if ('method' in details) return { method: details.method };
+  return { promo_variant: details.variant, promo_placement: details.placement };
+}
+
 function toGa4Params(event: TrackedEvent, details: Details, eventId: string): Params {
   if (!details) return {};
-  if ('toolName' in details) return { tool_name: details.toolName };
+  if (!isProduct(details)) return toSharedParams(details);
 
   return {
     currency: details.currency,
@@ -71,7 +97,7 @@ function toGa4Params(event: TrackedEvent, details: Details, eventId: string): Pa
 
 function toTikTokParams(details: Details): Params {
   if (!details) return {};
-  if ('toolName' in details) return { tool_name: details.toolName };
+  if (!isProduct(details)) return toSharedParams(details);
 
   return {
     contents: [{ content_id: details.id, content_type: 'product', content_name: details.name }],
@@ -82,7 +108,7 @@ function toTikTokParams(details: Details): Params {
 
 function toMetaParams(details: Details): Params {
   if (!details) return {};
-  if ('toolName' in details) return { tool_name: details.toolName };
+  if (!isProduct(details)) return toSharedParams(details);
 
   return {
     content_ids: [details.id],
@@ -112,7 +138,7 @@ export function trackEvent<E extends TrackedEvent>(event: E, ...args: DetailsArg
     window.gtag?.('event', ga4Event, toGa4Params(event, details, eventId));
   }
 
-  if (getCookie(ADS_CONSENT_KEY) === 'denied') return;
+  if (GA4_ONLY_EVENTS.has(event) || getCookie(ADS_CONSENT_KEY) === 'denied') return;
 
   window.ttq?.track(event, toTikTokParams(details), { event_id: eventId });
   window.fbq?.(

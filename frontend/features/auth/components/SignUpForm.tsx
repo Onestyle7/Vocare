@@ -53,7 +53,7 @@ export function SignUpForm() {
         return;
       }
 
-      trackEvent('CompleteRegistration');
+      trackEvent('CompleteRegistration', { method: 'email' });
       toast.success(getRegistrationToastMessage(data.welcomeBonus, data.consentDiscount));
       router.push('/sign-in');
     });

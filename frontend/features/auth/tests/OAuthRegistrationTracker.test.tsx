@@ -18,8 +18,8 @@ describe('OAuthRegistrationTracker', () => {
     delete window.ttq;
   });
 
-  it('reports a registration once and clears the marker', () => {
-    document.cookie = `${NEW_OAUTH_USER_COOKIE}=1; path=/`;
+  it('reports a registration once, with the provider as the method, and clears the marker', () => {
+    document.cookie = `${NEW_OAUTH_USER_COOKIE}=google; path=/`;
 
     render(<OAuthRegistrationTracker />);
     render(<OAuthRegistrationTracker />);
@@ -27,9 +27,18 @@ describe('OAuthRegistrationTracker', () => {
     expect(track).toHaveBeenCalledOnce();
     expect(track).toHaveBeenCalledWith(
       'CompleteRegistration',
-      {},
+      { method: 'google' },
       { event_id: expect.any(String) }
     );
+    expect(document.cookie).not.toContain(NEW_OAUTH_USER_COOKIE);
+  });
+
+  it('ignores a marker that names no known provider, and clears it', () => {
+    document.cookie = `${NEW_OAUTH_USER_COOKIE}=facebook; path=/`;
+
+    render(<OAuthRegistrationTracker />);
+
+    expect(track).not.toHaveBeenCalled();
     expect(document.cookie).not.toContain(NEW_OAUTH_USER_COOKIE);
   });
 

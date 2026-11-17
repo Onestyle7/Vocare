@@ -75,8 +75,8 @@ describe('trackEvent', () => {
   it('should give every event its own ID', () => {
     const { ttq } = installMocks();
 
-    trackEvent('CompleteRegistration');
-    trackEvent('CompleteRegistration');
+    trackEvent('CompleteRegistration', { method: 'email' });
+    trackEvent('CompleteRegistration', { method: 'email' });
 
     const [first, second] = ttq.track.mock.calls.map(([, , options]) => options.event_id);
     expect(first).not.toBe(second);
@@ -129,6 +129,51 @@ describe('trackEvent', () => {
     expect(fbq).toHaveBeenCalledWith('trackCustom', 'ToolUsed', params, {
       eventID: expect.any(String),
     });
+  });
+
+  it('should send the sign-up method to GA4 as sign_up and to both pixels', () => {
+    grantAnalytics();
+    const { ttq, fbq, gtag } = installMocks();
+
+    trackEvent('CompleteRegistration', { method: 'google' });
+
+    const params = { method: 'google' };
+    expect(gtag).toHaveBeenCalledWith('event', 'sign_up', params);
+    expect(ttq.track).toHaveBeenCalledWith('CompleteRegistration', params, {
+      event_id: expect.any(String),
+    });
+    expect(fbq).toHaveBeenCalledWith('track', 'CompleteRegistration', params, {
+      eventID: expect.any(String),
+    });
+  });
+
+  it('should send a promo click with its variant and placement, as a custom event in Meta', () => {
+    grantAnalytics();
+    const { ttq, fbq, gtag } = installMocks();
+
+    trackEvent('PromoClick', { variant: 'salary', placement: 'bar' });
+
+    const params = { promo_variant: 'salary', promo_placement: 'bar' };
+    expect(gtag).toHaveBeenCalledWith('event', 'promo_click', params);
+    expect(ttq.track).toHaveBeenCalledWith('PromoClick', params, { event_id: expect.any(String) });
+    expect(fbq).toHaveBeenCalledWith('trackCustom', 'PromoClick', params, {
+      eventID: expect.any(String),
+    });
+  });
+
+  it('should send a closed promo to GA4 only', () => {
+    document.cookie = `${ADS_CONSENT_KEY}=granted`;
+    grantAnalytics();
+    const { ttq, fbq, gtag } = installMocks();
+
+    trackEvent('PromoDismiss', { variant: 'cv', placement: 'sidebar' });
+
+    expect(gtag).toHaveBeenCalledWith('event', 'promo_dismiss', {
+      promo_variant: 'cv',
+      promo_placement: 'sidebar',
+    });
+    expect(ttq.track).not.toHaveBeenCalled();
+    expect(fbq).not.toHaveBeenCalled();
   });
 
   it('should send a CV export to GA4 under its own name and to Meta as a custom event', () => {
@@ -189,13 +234,13 @@ describe('trackEvent', () => {
     new Function(getTikTokPixelScript('TT_ID'))();
     new Function(getMetaPixelScript('META_ID'))();
 
-    trackEvent('CompleteRegistration');
+    trackEvent('CompleteRegistration', { method: 'email' });
 
     expect(document.querySelectorAll('script[src]')).toHaveLength(0);
     expect(window.ttq as unknown as unknown[][]).toContainEqual([
       'track',
       'CompleteRegistration',
-      {},
+      { method: 'email' },
       { event_id: expect.any(String) },
     ]);
     const metaQueue = (window.fbq as unknown as { queue: IArguments[] }).queue.map((args) =>
@@ -204,7 +249,7 @@ describe('trackEvent', () => {
     expect(metaQueue).toContainEqual([
       'track',
       'CompleteRegistration',
-      {},
+      { method: 'email' },
       { eventID: expect.any(String) },
     ]);
   });
@@ -221,7 +266,7 @@ describe('trackEvent', () => {
 
     it('should go out when the visitor accepts later on the same page', () => {
       runPixelBaseCode();
-      trackEvent('CompleteRegistration');
+      trackEvent('CompleteRegistration', { method: 'email' });
 
       updateAdsConsent(true);
 
@@ -231,7 +276,7 @@ describe('trackEvent', () => {
 
     it('should be dropped on refusal, so a later consent on the page sends none of them', () => {
       runPixelBaseCode();
-      trackEvent('CompleteRegistration');
+      trackEvent('CompleteRegistration', { method: 'email' });
 
       updateAdsConsent(false);
       updateAdsConsent(true);
@@ -249,7 +294,7 @@ describe('trackEvent', () => {
   });
 
   it('should not throw when no tool is installed', () => {
-    expect(() => trackEvent('CompleteRegistration')).not.toThrow();
+    expect(() => trackEvent('CompleteRegistration', { method: 'email' })).not.toThrow();
   });
 
   it('should send nothing anywhere when both consents are refused', () => {
@@ -257,7 +302,7 @@ describe('trackEvent', () => {
     document.cookie = `${ADS_CONSENT_KEY}=denied`;
     const { ttq, fbq, gtag } = installMocks();
 
-    trackEvent('CompleteRegistration');
+    trackEvent('CompleteRegistration', { method: 'email' });
 
     expect(gtag).not.toHaveBeenCalled();
     expect(ttq.track).not.toHaveBeenCalled();

@@ -65,7 +65,8 @@ export async function GET(
   );
 
   if (result.value.isNewUser && canReportRegistration) {
-    cookieStore.set(NEW_OAUTH_USER_COOKIE, '1', {
+    // The value is the provider, reported as the sign-up method
+    cookieStore.set(NEW_OAUTH_USER_COOKIE, provider, {
       ...AUTH_COOKIE_OPTIONS,
       httpOnly: false,
       maxAge: 5 * 60,
