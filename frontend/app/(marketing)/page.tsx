@@ -17,10 +17,10 @@ import ProductShowcase from './main-components/product-showcase/ProductShowcase'
 
 export const metadata: Metadata = buildMarketingMetadata({
   path: '/',
-  title: 'Vocare – AI doradca kariery, analiza rynku pracy i kreator CV',
+  title: 'Vocare - AI doradca kariery, analiza rynku pracy i kreator CV',
   description:
     'Vocare pomaga odkryć Twoją ścieżkę kariery z AI. Sprawdź mocne strony, analizuj rynek i podejmuj trafne decyzje zawodowe na podstawie danych.',
-  ogAlt: 'Vocare – AI doradca kariery',
+  ogAlt: 'Vocare - AI doradca kariery',
   absoluteTitle: true,
 });
 
