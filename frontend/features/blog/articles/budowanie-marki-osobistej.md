@@ -72,6 +72,8 @@ Budowanie marki osobistej to świadome kształtowanie tego, jak jesteś postrzeg
 
 Zastanawiasz się, jaką specjalizację warto rozwijać w swojej marce zawodowej? [Analiza profilu zawodowego w Vocare](/assistant) pomoże Ci to zidentyfikować.
 
+Gdy wybierzesz już specjalizację, [roadmapa kariery w Vocare](/roadmap) rozpisze dojście do niej na etapy i konkretne kroki, które możesz odhaczać.
+
 ---
 
 ## Powiązane artykuły

@@ -135,3 +135,74 @@ export function getPublicImageSize(
     return undefined;
   }
 }
+
+/** Words too common in Polish tags to say anything about a shared topic. */
+const TAG_STOP_WORDS = new Set(['w', 'i', 'z', 'do', 'na', 'po', 'dla', 'jak', 'co', 'czy', 'o']);
+
+const getTagTokens = (tags: string[]) =>
+  new Set(
+    tags
+      .flatMap((tag) => tag.toLowerCase().split(/\s+/))
+      .filter((token) => token.length > 1 && !TAG_STOP_WORDS.has(token))
+  );
+
+/**
+ * Articles to suggest under a post, most related first.
+ *
+ * Tags are free-form phrases that rarely repeat verbatim between posts, so
+ * relatedness is scored on the words they share. Each shared word counts for
+ * more the rarer it is across the blog: "cv" appears in every CV post and says
+ * little, "wzór" appears in a few and says a lot. The same category adds a
+ * small bonus and ties go to the newer post. Posts sharing nothing with the
+ * current one are left out instead of padding the list with unrelated links.
+ */
+export function getRelatedArticles(
+  current: Pick<ArticleMetadata, 'slug' | 'category' | 'tags'>,
+  articles: ArticleMetadata[],
+  limit = 3
+): ArticleMetadata[] {
+  const SAME_CATEGORY_BONUS = 1;
+  const currentTokens = getTagTokens(current.tags);
+  const tokensBySlug = new Map(
+    articles.map((article) => [article.slug, getTagTokens(article.tags)])
+  );
+
+  const articlesWithToken = new Map<string, number>();
+  for (const tokens of tokensBySlug.values()) {
+    for (const token of tokens) {
+      articlesWithToken.set(token, (articlesWithToken.get(token) ?? 0) + 1);
+    }
+  }
+  const rarity = (token: string) =>
+    Math.log((articles.length + 1) / (articlesWithToken.get(token) ?? 1));
+
+  return articles
+    .filter((article) => article.slug !== current.slug)
+    .map((article) => {
+      const sharedScore = [...(tokensBySlug.get(article.slug) ?? [])]
+        .filter((token) => currentTokens.has(token))
+        .reduce((sum, token) => sum + rarity(token), 0);
+      const score = sharedScore + (article.category === current.category ? SAME_CATEGORY_BONUS : 0);
+      return { article, score };
+    })
+    .filter(({ score }) => score > 0)
+    .sort(
+      (a, b) =>
+        b.score - a.score ||
+        (b.article.updatedAt ?? b.article.date).getTime() -
+          (a.article.updatedAt ?? a.article.date).getTime()
+    )
+    .slice(0, limit)
+    .map(({ article }) => article);
+}
+
+/**
+ * Splits an article body into the intro and everything from the first `##`
+ * section on, so a block can be placed between them. The intro is empty when
+ * the article opens with a section heading; `rest` is empty when it has none.
+ */
+export function splitArticleIntro(content: string): { intro: string; rest: string } {
+  const firstSection = content.search(/^## /m);
+  if (firstSection === -1) return { intro: content, rest: '' };
+  return { intro: content.slice(0, firstSection), rest: content.slice(firstSection) };
+}

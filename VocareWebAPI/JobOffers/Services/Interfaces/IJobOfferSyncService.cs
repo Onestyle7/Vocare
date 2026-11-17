@@ -11,6 +11,7 @@ namespace VocareWebAPI.JobOffers.Services.Interfaces
         );
         Task<SyncResult> SyncOffersAsync(CancellationToken cancellationToken = default);
         Task<BackfillResult> BackfillEmbeddingsAsync(int batchSize = 100);
+        Task<int> PurgeExpiredOffersAsync();
     }
 
     public class BackfillResult

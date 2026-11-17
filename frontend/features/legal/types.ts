@@ -21,3 +21,15 @@ export interface AcceptConsentsResult {
 export interface ConsentStatusResult {
   hasValidConsents: boolean;
 }
+
+/** Where the visitor made their cookie choice; mirrors the backend's CookieConsentSource. */
+export type CookieConsentSource = 'Banner' | 'Preferences' | 'Account';
+
+/** One cookie choice, as recorded by POST /api/legal/cookie-consent (proof of consent). */
+export interface RecordCookieConsentCommand {
+  consentId: string;
+  analyticsGranted: boolean;
+  adsGranted: boolean;
+  source: CookieConsentSource;
+  textVersion: string;
+}

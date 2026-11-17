@@ -1,12 +1,11 @@
 import type { Metadata } from 'next';
 import Image from 'next/image';
-import React, { lazy, Suspense } from 'react';
+import React from 'react';
 
 import { VelocityScroll } from '@/components/magicui/scroll-based-velocity';
+import { SafeSpline } from '@/components/SupportComponents/SafeSpline';
 
-import { logo, Spinner } from '../../features/marketing/constants';
-
-const LazySpline = lazy(() => import('@splinetool/react-spline'));
+import { logo } from '../../features/marketing/constants';
 
 export const metadata: Metadata = {
   robots: {
@@ -28,12 +27,10 @@ const Layout = ({ children }: { children: React.ReactNode }) => {
               <p className="body-1">learn more • earn more • grow more</p>
             </div>
             <div className="main-font-color relative flex h-96.25 flex-row px-10 lg:w-full">
-              <Suspense fallback={<Image src={Spinner} alt="spinner" width={60} height={60} />}>
-                <LazySpline
-                  scene="https://prod.spline.design/mZBrYNcnoESGlTUG/scene.splinecode"
-                  className="flex items-center justify-center"
-                />
-              </Suspense>
+              <SafeSpline
+                scene="https://prod.spline.design/mZBrYNcnoESGlTUG/scene.splinecode"
+                className="flex items-center justify-center"
+              />
             </div>
           </div>
         </section>

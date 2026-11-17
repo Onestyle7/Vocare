@@ -29,7 +29,8 @@ namespace VocareWebAPI.JobOffers.Services.Implementations
                 Country = jobOffer.Country ?? string.Empty,
                 Description = jobOffer.Description,
                 Category = jobOffer.Category,
-                Skills = [.. jobOffer.Skills.Select(s => s.Name)]
+                Skills = [.. jobOffer.Skills.Select(s => s.Name)],
+                IsActive = jobOffer.IsActive,
             };
         }
     }

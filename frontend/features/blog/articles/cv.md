@@ -165,4 +165,10 @@ Jeśli chcesz, żeby Twoje CV było automatycznie dopasowywane do treści ofert 
 ## Powiązane artykuły
 - [Jak zrobić CV 2026 - praktyczny poradnik od zera do gotowego pliku](/blog/cv/jak-zrobic-cv)
 - [CV wzór 2026 - darmowe szablony do pobrania i edycji](/blog/cv/cv-wzor)
+- [Przykładowe CV 2026 - wzory dla różnych stanowisk i branż](/blog/cv/przykladowe-cv)
 - [Umiejętności do CV 2026 - co wpisać, żeby wyróżnić aplikację](/blog/cv/umiejetnosci-do-cv)
+- [CV bez doświadczenia 2026 - co wpisać, gdy nie masz stażu](/blog/cv/cv-bez-doswiadczenia)
+- [CV po angielsku 2026 - jak napisać je krok po kroku](/blog/cv/cv-po-angielsku)
+- [Zdjęcie do CV 2026 - czy warto i jak je dobrze zrobić](/blog/cv/zdjecie-do-cv)
+- [Klauzula RODO do CV 2026 - aktualna treść i wzory](/blog/cv/klauzula-rodo-do-cv)
+- [List motywacyjny 2026 - czy nadal potrzebny i jak go napisać](/blog/cv/list-motywacyjny)

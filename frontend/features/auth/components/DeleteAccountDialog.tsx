@@ -102,7 +102,7 @@ export function DeleteAccountDialog({ isOpen, onClose }: DeleteAccountDialogProp
             className="border-border"
           />
           <p className="text-muted-foreground text-xs">
-            Pozostaw to pole puste, jeśli logujesz się przez Google lub LinkedIn.
+            Pozostaw to pole puste, jeśli logujesz się przez Google.
           </p>
 
           {errorMsg && (

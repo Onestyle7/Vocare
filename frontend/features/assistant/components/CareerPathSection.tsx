@@ -333,10 +333,11 @@ export default function CareerPathSection({
               <Link
                 href={{
                   pathname: '/dashboard/roadmap',
+                  // No career name here: the address reaches GA4 and the ad pixels,
+                  // so the roadmap page looks the name up by its ID
                   query: {
                     source: 'assistant',
                     careerPathId: path.id,
-                    careerPathName: path.careerName,
                     pathIndex: String(index),
                   },
                 }}

@@ -7,6 +7,7 @@ import { actionErr, actionOk } from '@/lib/types/result';
 import { getUserFromCookie } from '@/lib/utils/get-user-from-cookie';
 
 import {
+  getCheckoutSessionSummaryService,
   getPaymentHistoryService,
   getSubscriptionDetailsService,
   getSubscriptionTokenStatusService,
@@ -83,5 +84,28 @@ export async function getPaymentHistoryQuery(limit: number = 50) {
         }
       }
     }
+  );
+}
+
+// The shape of a Stripe Checkout session ID, checked before asking the API about an address param
+const CHECKOUT_SESSION_ID_PATTERN = /^cs_[A-Za-z0-9_]{1,250}$/;
+
+/**
+ * The checkout the visitor has just returned from, verified by the backend. Stripe appends
+ * `session_id` to the return address; anything that isn't the visitor's own session gives an error.
+ */
+export async function getCheckoutSessionSummaryQuery(sessionId: string) {
+  if (!CHECKOUT_SESSION_ID_PATTERN.test(sessionId)) {
+    return actionErr({
+      type: 'CheckoutSessionNotFound',
+      message: 'Nieprawidłowy identyfikator płatności',
+    } as const);
+  }
+
+  const result = await getCheckoutSessionSummaryService(sessionId);
+
+  return result.match(
+    (summary) => actionOk(summary),
+    (error) => actionErr(error)
   );
 }

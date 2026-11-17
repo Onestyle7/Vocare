@@ -108,7 +108,7 @@ namespace VocareWebAPI.JobOffers.Services.Implementations
                         result.Added++;
                         processedInBatch++;
                     }
-                    else if (!HasChanges(snapshot, offer))
+                    else if (!HasChanges(snapshot, offer) && snapshot.IsActive)
                     {
                         result.Skipped++;
                     }
@@ -140,6 +140,7 @@ namespace VocareWebAPI.JobOffers.Services.Implementations
                         existing.SalaryPeriod = offer.SalaryPeriod;
                         existing.PublishedAt = offer.PublishedAt;
                         existing.UpdatedAt = DateTime.UtcNow;
+                        existing.DeactivatedAt = null;
 
                         var embeddingGenerated = false;
                         if (!snapshot.HasEmbedding)
@@ -148,6 +149,7 @@ namespace VocareWebAPI.JobOffers.Services.Implementations
                             embeddingGenerated = true;
                         }
 
+                        existing.IsActive = true;
                         _repository.UpdateInContext(existing, embeddingGenerated);
                         result.Updated++;
                         processedInBatch++;
@@ -222,11 +224,11 @@ namespace VocareWebAPI.JobOffers.Services.Implementations
 
             if (staleReferenceNumbers.Any())
             {
-                deletedCount = await _repository.DeleteByReferenceNumberAsync(
+                deletedCount = await _repository.DeactivateByReferenceNumberAsync(
                     staleReferenceNumbers,
                     source
                 );
-                _logger.LogInformation("Usunięto {Count} nieaktualnych ofert", deletedCount);
+                _logger.LogInformation("Dezaktywowano {Count} nieaktualnych ofert", deletedCount);
             }
 
             return new CleanupResult
@@ -333,6 +335,19 @@ namespace VocareWebAPI.JobOffers.Services.Implementations
             );
 
             return result;
+        }
+
+        public async Task<int> PurgeExpiredOffersAsync()
+        {
+            var cutoff = DateTime.UtcNow.AddMonths(-3);
+            int numberOfdeleted = await _repository.DeleteExpiredInactiveAsync(cutoff);
+
+            _logger.LogInformation(
+                "Usunięto {Count} ofert nieaktywnych przed {Cutoff}",
+                numberOfdeleted,
+                cutoff
+            );
+            return numberOfdeleted;
         }
 
         private bool HasChanges(JobOfferSnapshot snapshot, JobOffer offer)

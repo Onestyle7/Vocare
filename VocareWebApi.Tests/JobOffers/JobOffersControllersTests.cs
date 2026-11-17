@@ -68,6 +68,38 @@ namespace VocareWebApi.Tests.JobOffers
 
             result.Should().BeOfType<OkObjectResult>().Which.Value.Should().BeSameAs(syncResult);
         }
+
+        [Fact]
+        public async Task CleanupStaleOffers_WithValidApiKey_DeactivatesPerSourceThenPurges()
+        {
+            _sut.ControllerContext.HttpContext.Request.Headers["X-Api-Key"] = CronKey;
+            _syncService
+                .Setup(s =>
+                    s.CleanupStaleOffersAsync(It.IsAny<JobOfferSource>(), It.IsAny<CancellationToken>())
+                )
+                .ReturnsAsync(new CleanupResult { RemovedCount = 2 });
+            _syncService.Setup(s => s.PurgeExpiredOffersAsync()).ReturnsAsync(5);
+
+            var result = await _sut.CleanupStaleOffers();
+
+            var value = result.Should().BeOfType<OkObjectResult>().Which.Value;
+            value.Should().BeEquivalentTo(new { purged = 5 });
+            _syncService.Verify(s => s.PurgeExpiredOffersAsync(), Times.Once);
+            _syncService.Verify(
+                s =>
+                    s.CleanupStaleOffersAsync(It.IsAny<JobOfferSource>(), It.IsAny<CancellationToken>()),
+                Times.Exactly(Enum.GetValues<JobOfferSource>().Length)
+            );
+        }
+
+        [Fact]
+        public async Task CleanupStaleOffers_WithoutApiKeyHeader_ReturnsUnauthorized()
+        {
+            var result = await _sut.CleanupStaleOffers();
+
+            result.Should().BeOfType<UnauthorizedResult>();
+            _syncService.VerifyNoOtherCalls();
+        }
     }
 
     /// <summary>Testy jednostkowe <see cref="JobOffersController"/>.</summary>

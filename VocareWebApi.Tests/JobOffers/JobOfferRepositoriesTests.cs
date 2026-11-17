@@ -65,14 +65,50 @@ namespace VocareWebApi.Tests.JobOffers
             result!.Source.Should().Be(JobOfferSource.SolidJobs);
         }
 
+        private static JobOffer Inactive(JobOffer offer)
+        {
+            offer.IsActive = false;
+            offer.DeactivatedAt = DateTime.UtcNow;
+            return offer;
+        }
+
         [Fact]
-        public async Task JobOfferRepository_GetCountAsync_CountsAllOffers()
+        public async Task JobOfferRepository_GetCountAsync_CountsOnlyActiveOffers()
         {
             var sut = new JobOfferRepository(_context);
             await sut.AddAsync(Offer("ref-1"));
             await sut.AddAsync(Offer("ref-2"));
+            await sut.AddAsync(Inactive(Offer("ref-inactive")));
 
             (await sut.GetCountAsync()).Should().Be(2);
+        }
+
+        [Fact]
+        public async Task JobOfferRepository_GetAllUniqueSkillNames_ExcludesSkillsOfInactiveOffers()
+        {
+            var sut = new JobOfferRepository(_context);
+            await sut.AddAsync(Offer("ref-active", skills: new[] { "C#", "SQL" }));
+            await sut.AddAsync(Inactive(Offer("ref-inactive", skills: new[] { "SQL", "Cobol" })));
+
+            var names = await sut.GetAllUniqueSkillNamesAsync();
+
+            names.Should().BeEquivalentTo(new[] { "C#", "SQL" });
+        }
+
+        [Fact]
+        public void JobOfferModel_HasIndexOnIsActiveAndDeactivatedAt()
+        {
+            var indexes = _context
+                .Model.FindEntityType(typeof(JobOffer))!
+                .GetIndexes()
+                .Select(i => i.Properties.Select(p => p.Name).ToArray());
+
+            indexes
+                .Should()
+                .ContainEquivalentOf(
+                    new[] { nameof(JobOffer.IsActive), nameof(JobOffer.DeactivatedAt) },
+                    o => o.WithStrictOrdering()
+                );
         }
 
         [Fact]
@@ -84,6 +120,24 @@ namespace VocareWebApi.Tests.JobOffers
 
             (await sut.CountOffersWithoutEmbeddingAsync()).Should().Be(1);
             (await sut.GetOffersWithoutEmbeddingAsync(10)).Should().ContainSingle();
+        }
+
+        [Fact]
+        public async Task JobOfferRepository_OffersWithoutEmbedding_ExcludeInactiveOffers()
+        {
+            var sut = new JobOfferRepository(_context);
+            var inactive = Offer("ref-inactive", embedding: null);
+            inactive.IsActive = false;
+            inactive.DeactivatedAt = DateTime.UtcNow;
+            await sut.AddAsync(inactive);
+            await sut.AddAsync(Offer("ref-active", embedding: null));
+
+            (await sut.CountOffersWithoutEmbeddingAsync()).Should().Be(1);
+            (await sut.GetOffersWithoutEmbeddingAsync(10))
+                .Should()
+                .ContainSingle()
+                .Which.ReferenceNumber.Should()
+                .Be("ref-active");
         }
 
         [Fact]

@@ -3,11 +3,11 @@ title: 'Umowa o pracę vs B2B vs zlecenie 2026 - co wybrać?'
 description: 'Umowa o pracę, kontrakt B2B czy umowa zlecenie? Sprawdź różnice w wynagrodzeniu, stabilności i obowiązkach, żeby świadomie wybrać formę zatrudnienia w 2026 roku.'
 estimatedReadTime: 8
 date: '2026-07-17'
-updatedAt: '2026-10-18'
+updatedAt: '2026-11-10'
 author: 'Vocare'
 category: 'praca'
 coverImage: '/images/blog/job-portals.webp'
-tags: ['umowa o pracę', 'kontrakt b2b', 'umowa zlecenie', 'forma zatrudnienia', 'b2b czy uop']
+tags: ['umowa o pracę', 'kontrakt b2b', 'umowa zlecenie', 'forma zatrudnienia', 'b2b czy uop', 'kalkulator b2b vs uop']
 slug: 'umowa-o-prace-vs-b2b'
 ---
 
@@ -56,7 +56,22 @@ Porównując te trzy formy, widać jeden wzorzec: im więcej ochrony socjalnej d
 | Okres wypowiedzenia | Ustawowy, chroniony | Zależny od umowy | Krótki, elastyczny |
 | Zdolność kredytowa (hipoteka) | Najwyższa | Niższa, wymaga historii firmy | Niska |
 
-Sprawdź na własnych liczbach, ile zostanie Ci na rękę przy każdej formie zatrudnienia:
+### B2B vs UoP na kwotach - ile zostaje na rękę w 2026?
+
+Porównanie ma sens tylko przy tym samym koszcie dla firmy, bo etat kosztuje pracodawcę więcej niż kwota brutto z umowy. W tabeli faktura B2B jest równa pełnemu kosztowi etatu:
+
+| UoP: brutto | Koszt dla firmy | UoP: na rękę | B2B ryczałt 12% | B2B liniowy | B2B skala |
+| --- | --- | --- | --- | --- | --- |
+| 8 000 zł | 9 638 zł | 5 783,91 zł | 5 988,49 zł | 5 895,78 zł | 6 391,90 zł |
+| 10 000 zł | 12 048 zł | 7 147,39 zł | 8 109,33 zł | 7 796,47 zł | 8 271,50 zł |
+| 15 000 zł | 18 072 zł | 10 016,75 zł | 13 410,41 zł | 12 436,87 zł | 11 825,67 zł |
+| 20 000 zł | 24 096 zł | 12 562,03 zł | 18 711,58 zł | 17 077,20 zł | 15 379,84 zł |
+
+Założenia dla B2B: pełne składki ZUS z chorobową, brak kosztów firmowych, średnia miesięczna z całego roku. Przy etacie za 8 000 zł brutto B2B daje o 100-600 zł więcej, przy 20 000 zł brutto nawet o 6 000 zł. Od tej różnicy odejmij wartość płatnego urlopu i chorobowego, których na B2B nie masz.
+
+Szczegółowe wyliczenia znajdziesz w osobnych poradnikach: [ile na rękę z B2B](/blog/rynek-pracy/ile-na-reke-b2b) i [umowa zlecenie brutto netto](/blog/rynek-pracy/brutto-netto-umowa-zlecenie).
+
+Sprawdź w kalkulatorze B2B vs UoP, ile zostanie Ci na rękę przy każdej formie zatrudnienia:
 
 ```vocare-widget
 salary-calculator
@@ -104,3 +119,5 @@ Niezależnie od wybranej formy zatrudnienia, [Analiza profilu zawodowego w Vocar
 - [CV freelancera 2026 - jak pokazać projekty zamiast etatów](/blog/cv/cv-freelancera)
 - [Praca w korporacji czy w startupie 2026 - co wybrać](/blog/kariera/korporacja-czy-startup)
 - [Umowa o dzieło 2026 - zasady, składki i różnice od zlecenia](/blog/praca/umowa-o-dzielo)
+- [Ile na rękę z B2B w 2026? Ryczałt, liniowy i skala](/blog/rynek-pracy/ile-na-reke-b2b)
+- [Umowa zlecenie brutto netto 2026 - ile na rękę](/blog/rynek-pracy/brutto-netto-umowa-zlecenie)

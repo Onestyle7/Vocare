@@ -152,5 +152,25 @@ namespace VocareWebAPI.Legal.Services.Implementations
 
             await _repository.AddConsentsAsync(userConsents);
         }
+
+        public async Task RecordCookieConsentAsync(
+            RecordCookieConsentRequestDto request,
+            string? userId
+        )
+        {
+            var record = new CookieConsentRecord
+            {
+                Id = Guid.NewGuid(),
+                ConsentId = request.ConsentId,
+                UserId = string.IsNullOrWhiteSpace(userId) ? null : userId,
+                AnalyticsGranted = request.AnalyticsGranted!.Value,
+                AdsGranted = request.AdsGranted!.Value,
+                Source = request.Source!.Value,
+                TextVersion = request.TextVersion,
+                CreatedAt = DateTime.UtcNow,
+            };
+
+            await _repository.AddCookieConsentRecordAsync(record);
+        }
     }
 }

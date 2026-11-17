@@ -1,6 +1,6 @@
 'use client';
 
-import { useId, useMemo, useState } from 'react';
+import { useId, useMemo, useRef, useState } from 'react';
 
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -14,6 +14,7 @@ import {
 import { Slider } from '@/components/ui/slider';
 import { Switch } from '@/components/ui/switch';
 import { cn } from '@/lib/utils';
+import { trackEvent } from '@/lib/utils/tracking';
 
 import { RATES_2026 } from '../config/rates-2026';
 import {
@@ -55,6 +56,7 @@ export default function SalaryCalculator({ className }: SalaryCalculatorProps) {
   const [copyrightCosts, setCopyrightCosts] = useState(false);
   const [lumpSumRate, setLumpSumRate] = useState<number>(RATES_2026.b2b.defaultLumpSumRate);
   const [selectedType, setSelectedType] = useState<ContractType>('employment');
+  const usageReported = useRef(false);
 
   const amount = Number(amountText) || 0;
 
@@ -69,7 +71,22 @@ export default function SalaryCalculator({ className }: SalaryCalculatorProps) {
   )?.type;
   const selected = results.find((result) => result.type === selectedType);
 
+  // Once per visit, on the first change of any setting. Only the tool's name is sent, never amounts.
+  const reportUsage = () => {
+    if (usageReported.current) return;
+    usageReported.current = true;
+    trackEvent('ToolUsed', { toolName: 'salary_calculator' });
+  };
+
+  const withUsage =
+    <T,>(update: (value: T) => void) =>
+    (value: T) => {
+      reportUsage();
+      update(value);
+    };
+
   const handleAmountChange = (value: string) => {
+    reportUsage();
     const digits = value.replace(/\D/g, '').slice(0, 7);
     setAmountText(String(Math.min(Number(digits) || 0, MAX_INPUT_AMOUNT) || ''));
   };
@@ -106,7 +123,7 @@ export default function SalaryCalculator({ className }: SalaryCalculatorProps) {
             max={AMOUNT_MAX}
             step={AMOUNT_STEP}
             value={[Math.min(Math.max(amount, AMOUNT_MIN), AMOUNT_MAX)]}
-            onValueChange={([value]) => setAmountText(String(value))}
+            onValueChange={withUsage(([value]: number[]) => setAmountText(String(value)))}
           />
           <p className="text-muted-foreground text-xs">
             Dla B2B kwota jest traktowana jako wartość netto faktury.
@@ -120,14 +137,18 @@ export default function SalaryCalculator({ className }: SalaryCalculatorProps) {
               id={`${id}-under26`}
               checked={under26 || student}
               disabled={student}
-              onCheckedChange={setUnder26}
+              onCheckedChange={withUsage(setUnder26)}
             />
           </div>
           <div className="flex items-center justify-between gap-4">
             <Label htmlFor={`${id}-student`}>
               Jestem uczniem lub studentem (zlecenie bez ZUS i zdrowotnej)
             </Label>
-            <Switch id={`${id}-student`} checked={student} onCheckedChange={setStudent} />
+            <Switch
+              id={`${id}-student`}
+              checked={student}
+              onCheckedChange={withUsage(setStudent)}
+            />
           </div>
           <div className="flex items-center justify-between gap-4">
             <Label htmlFor={`${id}-copyright`}>
@@ -136,14 +157,14 @@ export default function SalaryCalculator({ className }: SalaryCalculatorProps) {
             <Switch
               id={`${id}-copyright`}
               checked={copyrightCosts}
-              onCheckedChange={setCopyrightCosts}
+              onCheckedChange={withUsage(setCopyrightCosts)}
             />
           </div>
           <div className="flex items-center justify-between gap-4">
             <Label htmlFor={`${id}-lump-sum`}>Stawka ryczałtu (B2B)</Label>
             <Select
               value={String(lumpSumRate)}
-              onValueChange={(value) => setLumpSumRate(Number(value))}
+              onValueChange={withUsage((value: string) => setLumpSumRate(Number(value)))}
             >
               <SelectTrigger id={`${id}-lump-sum`} className="w-32 shrink-0">
                 <SelectValue />
@@ -173,7 +194,10 @@ export default function SalaryCalculator({ className }: SalaryCalculatorProps) {
                 result={result}
                 isSelected={result.type === selectedType}
                 isBest={result.type === bestType}
-                onSelect={() => setSelectedType(result.type)}
+                onSelect={() => {
+                  reportUsage();
+                  setSelectedType(result.type);
+                }}
               />
             ))}
           </div>

@@ -11,6 +11,7 @@ import {
   ConsentStatusResult,
   legalApiClient,
   PendingDocumentDto,
+  RecordCookieConsentCommand,
 } from './api';
 
 export type LegalDomainError = BaseAppError<
@@ -129,4 +130,24 @@ export async function getLegalConsentStatusService(
         }
       }
     });
+}
+
+/**
+ * Records one cookie choice on the server (proof of consent, GDPR art. 7(1)). The API client adds
+ * the user's token, when signed in, and the visitor's IP for the API's rate limit.
+ */
+export async function recordCookieConsentService(
+  command: RecordCookieConsentCommand
+): Promise<Result<void, LegalDomainError>> {
+  const result = await legalApiClient.post('/cookie-consent', command);
+
+  return result
+    .map(() => undefined)
+    .mapErr(
+      (error): LegalDomainError => ({
+        type: 'GenericApiError',
+        message: 'Nie udało się zapisać wyboru dotyczącego plików cookies.',
+        details: error.details,
+      })
+    );
 }

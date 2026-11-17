@@ -29,11 +29,11 @@ export default function ArticleCard({ article }: { article: ArticleMetadata }) {
       </CardContent>
       <CardFooter className="text- text-muted-foreground mt-auto flex items-center justify-between text-[12px]">
         {/* <p>{article.date.toDateString()}</p> */}
-        <p className="flex items-center gap-2">
+        <p className="font-poppins flex items-center gap-2">
           <Clock7 width={15} />
           {article.estimatedReadTime} min. czytania
         </p>
-        <p>Czytaj dalej&rarr;</p>
+        <p className="font-poppins">Czytaj dalej&rarr;</p>
       </CardFooter>
     </Card>
   );

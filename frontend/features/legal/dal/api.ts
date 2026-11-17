@@ -9,6 +9,8 @@ export type {
   AcceptConsentsCommand,
   AcceptConsentsResult,
   ConsentStatusResult,
+  CookieConsentSource,
   LegalDocumentType,
   PendingDocumentDto,
+  RecordCookieConsentCommand,
 } from '../types';

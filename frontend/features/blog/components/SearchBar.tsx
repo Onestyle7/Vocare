@@ -21,7 +21,7 @@ export default function SearchBar({
     >
       <Search className="text-muted-foreground absolute top-1/2 left-3 h-7 w-7 -translate-y-1/2" />
       <Input
-        className="h-auto rounded-full pl-14 focus-visible:ring-0"
+        className="font-poppins h-auto rounded-full pl-14 focus-visible:ring-0"
         name="article-search"
         type="text"
         placeholder="Szukaj artykułów, porad, trendów..."
