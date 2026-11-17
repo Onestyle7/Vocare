@@ -3,6 +3,7 @@ using VocareWebAPI.CareerAdvisor.Models.Config;
 using VocareWebAPI.CvGenerator.Models.Dtos;
 using VocareWebAPI.JobOffers.Configuration;
 using VocareWebAPI.JobOffers.Models.Options;
+using VocareWebAPI.Legal.Configuration;
 using VocareWebAPI.Models.OpenAIConfig;
 using VocareWebAPI.Shared.Configuration;
 using VocareWebAPI.UserManagement.Configuration;
@@ -29,6 +30,11 @@ namespace VocareWebAPI.Extensions.ServiceCollectionExtensions
             services
                 .AddOptions<CvLimitsConfig>()
                 .BindConfiguration(CvLimitsConfig.SectionName)
+                .ValidateDataAnnotations()
+                .ValidateOnStart();
+            services
+                .AddOptions<CookieConsentConfig>()
+                .BindConfiguration(CookieConsentConfig.SectionName)
                 .ValidateDataAnnotations()
                 .ValidateOnStart();
             services

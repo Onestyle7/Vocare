@@ -16,7 +16,11 @@ export type GtagFunction = {
   (command: string, ...args: unknown[]): void;
 };
 
-interface Window {
-  dataLayer?: unknown[];
-  gtag?: GtagFunction;
+// Globals created by the inline script from lib/utils/google-analytics.ts. `declare global` is
+// needed because this file exports types, which makes it a module.
+declare global {
+  interface Window {
+    dataLayer?: unknown[];
+    gtag?: GtagFunction;
+  }
 }

@@ -4,6 +4,11 @@ import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { PricingInteractive } from '@/features/billing/components/PricingInteractive';
 import type { SubscriptionStatuses } from '@/features/billing/types';
+import { ADS_CONSENT_KEY, COOKIE_CONSENT_KEY } from '@/lib/utils/consent';
+
+const grantAdsConsent = () => {
+  document.cookie = `${ADS_CONSENT_KEY}=granted; path=/`;
+};
 
 const billing = vi.hoisted(() => ({
   createCheckout: vi.fn(),
@@ -55,6 +60,11 @@ function renderPricing({
 
 beforeEach(() => {
   vi.clearAllMocks();
+  sessionStorage.clear();
+  document.cookie = `${ADS_CONSENT_KEY}=; max-age=0; path=/`;
+  document.cookie = `${COOKIE_CONSENT_KEY}=; max-age=0; path=/`;
+  delete window.ttq;
+  delete window.fbq;
   billing.createCheckout.mockResolvedValue([undefined]);
   billing.getCustomerPortalUrl.mockResolvedValue([undefined]);
   billing.getSubscriptionStatusAction.mockResolvedValue([
@@ -241,6 +251,84 @@ describe('PricingInteractive', () => {
     const premium = within(screen.getByRole('article', { name: 'Premium' }));
     expect(premium.getByText(/^29/)).toBeTruthy();
     expect(premium.getByRole('button', { name: 'Wybierz Premium' })).toBeTruthy();
+  });
+
+  // The purchase or trial itself is reported from the verified Stripe session (checkoutTracking)
+  it('reports the start of a trial checkout with no revenue', async () => {
+    grantAdsConsent();
+    const track = vi.fn();
+    window.ttq = { grantConsent: vi.fn(), revokeConsent: vi.fn(), track };
+    billing.getSubscriptionStatusAction.mockResolvedValue([
+      undefined,
+      { tokenBalance: 0, subscriptionStatus: 'None', trialDays: 14, consentDiscount: null },
+    ]);
+    render(<PricingInteractive />);
+
+    fireEvent.click(await screen.findByRole('button', { name: 'Testuj 14 dni za darmo' }));
+    await waitFor(() => expect(billing.createCheckout).toHaveBeenCalledTimes(1));
+
+    const trialParams = {
+      contents: [
+        {
+          content_id: 'price_test_premium_monthly',
+          content_type: 'product',
+          content_name: 'Premium',
+        },
+      ],
+      value: 0,
+      currency: 'PLN',
+    };
+    expect(track).toHaveBeenCalledWith('InitiateCheckout', trialParams, {
+      event_id: expect.any(String),
+    });
+  });
+
+  it('reports the start of a token checkout with the amount after the consent discount', async () => {
+    grantAdsConsent();
+    const track = vi.fn();
+    window.ttq = { grantConsent: vi.fn(), revokeConsent: vi.fn(), track };
+    billing.getSubscriptionStatusAction.mockResolvedValue([
+      undefined,
+      {
+        tokenBalance: 0,
+        subscriptionStatus: 'None',
+        trialDays: null,
+        consentDiscount: { percentOff: 25, expiresAt: '2026-10-29T12:00:00Z' },
+      },
+    ]);
+    window.fbq = vi.fn();
+    render(<PricingInteractive />);
+
+    fireEvent.click(await screen.findByRole('button', { name: 'Dokup 500 tokenów' }));
+    await waitFor(() => expect(billing.createCheckout).toHaveBeenCalledTimes(1));
+
+    expect(track).toHaveBeenCalledWith(
+      'InitiateCheckout',
+      {
+        contents: [
+          {
+            content_id: 'price_test_500_tokens',
+            content_type: 'product',
+            content_name: 'Pakiet 500 tokenów',
+          },
+        ],
+        value: 14.25,
+        currency: 'PLN',
+      },
+      { event_id: expect.any(String) }
+    );
+    expect(window.fbq).toHaveBeenCalledWith(
+      'track',
+      'InitiateCheckout',
+      {
+        content_ids: ['price_test_500_tokens'],
+        content_type: 'product',
+        content_name: 'Pakiet 500 tokenów',
+        value: 14.25,
+        currency: 'PLN',
+      },
+      { eventID: expect.any(String) }
+    );
   });
 
   it('detects an active subscriber on a static page without an AuthProvider and shows subscription management', async () => {

@@ -782,6 +782,47 @@ namespace VocareWebAPI.Billing.Services.Implementations
             return sortedHistory;
         }
 
+        public async Task<CheckoutSessionSummaryDto> GetCheckoutSessionSummaryAsync(
+            string userId,
+            string sessionId
+        )
+        {
+            Session session;
+            try
+            {
+                session = await _checkoutSessions.GetAsync(
+                    sessionId,
+                    new SessionGetOptions { Expand = ["line_items", "subscription"] }
+                );
+            }
+            catch (StripeException ex) when (ex.StripeError?.Code == "resource_missing")
+            {
+                throw new CheckoutSessionNotFoundException(sessionId);
+            }
+
+            // Same 404 for a foreign session as for a missing one: do not reveal that it exists.
+            if (
+                session.Metadata is null
+                || !session.Metadata.TryGetValue("userId", out var ownerId)
+                || ownerId != userId
+            )
+                throw new CheckoutSessionNotFoundException(sessionId);
+
+            return new CheckoutSessionSummaryDto
+            {
+                SessionId = session.Id,
+                Status = session.Status ?? string.Empty,
+                PaymentStatus = session.PaymentStatus ?? string.Empty,
+                Mode = session.Mode ?? string.Empty,
+                IsTrial =
+                    session.Mode == "subscription" && session.Subscription?.Status == "trialing",
+                AmountTotal = (session.AmountTotal ?? 0) / 100m,
+                Currency = session.Currency?.ToUpperInvariant() ?? string.Empty,
+                PriceId = session.LineItems?.Data?.FirstOrDefault()?.Price?.Id ?? string.Empty,
+                PackageName = session.Metadata.GetValueOrDefault("packageName", string.Empty),
+            };
+        }
+
         /// <summary>
         /// Mapuje status payment intent ze stripe na nasz uproszczony
         /// </summary>

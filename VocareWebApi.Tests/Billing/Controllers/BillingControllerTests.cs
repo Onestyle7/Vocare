@@ -422,6 +422,56 @@ namespace VocareWebApi.Tests.Billing.Controllers
                 .Be("Payment canceled.");
         }
 
+        // ---------- GetCheckoutSessionSummary ----------
+
+        [Fact]
+        public async Task GetCheckoutSessionSummary_OwnSession_ReturnsOkWithSummary()
+        {
+            var summary = new CheckoutSessionSummaryDto { SessionId = "cs_test_a1B2c3" };
+            _stripe
+                .Setup(s => s.GetCheckoutSessionSummaryAsync(UserId, "cs_test_a1B2c3"))
+                .ReturnsAsync(summary);
+
+            var result = await _sut.GetCheckoutSessionSummary("cs_test_a1B2c3");
+
+            result.Should().BeOfType<OkObjectResult>().Which.Value.Should().BeSameAs(summary);
+        }
+
+        [Theory]
+        [InlineData("pi_123")]
+        [InlineData("cs_")]
+        [InlineData("cs_test_abc/../v1/customers")]
+        [InlineData("cs_test_abc?expand=customer")]
+        public async Task GetCheckoutSessionSummary_InvalidSessionId_ReturnsBadRequestWithoutCallingStripe(
+            string sessionId
+        )
+        {
+            var result = await _sut.GetCheckoutSessionSummary(sessionId);
+
+            result.Should().BeOfType<BadRequestObjectResult>();
+            // Strict mock: any call to the Stripe service would throw
+        }
+
+        [Fact]
+        public async Task GetCheckoutSessionSummary_TooLongSessionId_ReturnsBadRequest()
+        {
+            var result = await _sut.GetCheckoutSessionSummary("cs_" + new string('a', 253));
+
+            result.Should().BeOfType<BadRequestObjectResult>();
+        }
+
+        [Fact]
+        public async Task GetCheckoutSessionSummary_ForeignSession_PropagatesNotFound()
+        {
+            _stripe
+                .Setup(s => s.GetCheckoutSessionSummaryAsync(UserId, "cs_test_foreign"))
+                .ThrowsAsync(new CheckoutSessionNotFoundException("cs_test_foreign"));
+
+            var act = () => _sut.GetCheckoutSessionSummary("cs_test_foreign");
+
+            await act.Should().ThrowAsync<CheckoutSessionNotFoundException>();
+        }
+
         private void SetRequestBody(string json, string? signature)
         {
             var httpContext = _sut.ControllerContext.HttpContext;

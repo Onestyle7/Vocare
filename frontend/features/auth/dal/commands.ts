@@ -14,6 +14,11 @@ import {
   SignInCommand,
 } from '@/features/auth/dal/api';
 import { getOauthClient, OAuthProvider } from '@/features/auth/oauth/base';
+import {
+  parseResetPasswordLink,
+  RESET_PASSWORD_COOKIE,
+  RESET_PASSWORD_PATH,
+} from '@/features/auth/reset-password-link';
 import { actionErr, actionOk } from '@/lib/types/result';
 
 import {
@@ -21,6 +26,7 @@ import {
   forgotPasswordService,
   logoutService,
   registerService,
+  type ResetPasswordDomainError,
   resetPasswordService,
   signInService,
   verifyOauthTokenService,
@@ -88,11 +94,28 @@ export async function forgotPassword(command: ForgotPasswordCommand) {
   );
 }
 
-export async function resetPassword(command: ResetPasswordCommand) {
-  const result = await resetPasswordService(command);
+/** Takes the token and email from the cookie set by proxy.ts, so the token never reaches the browser. */
+export async function resetPassword(
+  passwords: Pick<ResetPasswordCommand, 'newPassword' | 'confirmPassword'>
+) {
+  const cookieStore = await cookies();
+  const link = parseResetPasswordLink(cookieStore.get(RESET_PASSWORD_COOKIE)?.value);
+
+  if (!link) {
+    const error: ResetPasswordDomainError = {
+      type: 'ExpiredResetToken',
+      message: 'Sesja zmiany hasła wygasła. Otwórz ponownie link z wiadomości e-mail.',
+    };
+    return actionErr(error);
+  }
+
+  const result = await resetPasswordService({ ...link, ...passwords });
 
   return result.match(
-    () => actionOk({ success: true }),
+    () => {
+      cookieStore.delete({ name: RESET_PASSWORD_COOKIE, path: RESET_PASSWORD_PATH });
+      return actionOk({ success: true });
+    },
     (error) => actionErr(error)
   );
 }

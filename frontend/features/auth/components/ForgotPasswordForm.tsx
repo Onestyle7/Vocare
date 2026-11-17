@@ -141,7 +141,7 @@ export function ForgotPasswordForm() {
           <div className="mt-4 flex items-center justify-center">
             <Link
               href="/sign-in"
-              className="relative ml-2 font-semibold text-[#915EFF] transition duration-300 after:absolute after:bottom-0 after:left-0 after:h-[2px] after:w-0 after:bg-[#915EFF] after:transition-all after:duration-300 after:content-[''] hover:after:w-full"
+              className="font-regular relative ml-2 text-[#915EFF] transition duration-300 after:absolute after:bottom-0 after:left-0 after:h-[2px] after:w-0 after:bg-[#915EFF] after:transition-all after:duration-300 after:content-[''] hover:after:w-full"
             >
               Jednak pamiętam hasło
             </Link>

@@ -31,8 +31,8 @@ vi.mock('next/navigation', () => ({
   useRouter: () => mocks.router,
   useSearchParams: () => ({
     get: (key: string) => {
+      // The name is not in the address; the page finds it among availableCareerPaths
       if (key === 'careerPathId') return 'career-path-1';
-      if (key === 'careerPathName') return 'Frontend Developer';
       return null;
     },
   }),

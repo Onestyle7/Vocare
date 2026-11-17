@@ -7,5 +7,7 @@ namespace VocareWebAPI.Legal.Repositories.Interfaces
         Task<List<LegalDocument>> GetActiveDocumentsAsync();
         Task<List<Guid>> GetAcceptedDocumentIdsAsync(string userId);
         Task AddConsentsAsync(IEnumerable<UserConsent> consents);
+        Task AddCookieConsentRecordAsync(CookieConsentRecord record);
+        Task<int> DeleteCookieConsentRecordsOlderThanAsync(DateTime cutoffUtc);
     }
 }

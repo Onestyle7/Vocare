@@ -7,12 +7,13 @@ import { Cookies } from '@/lib/types/api';
 import { BaseAppError } from '@/lib/types/result';
 
 import { createGoogleOAuthClient } from './google';
+import type { OAuthProvider } from './providers';
+
+export { type OAuthProvider, oAuthProviders } from './providers';
 
 export const STATE_COOKIE_KEY = 'oAuthState';
 export const COOKIE_EXPIRATION_SECONDS = 60 * 10;
 
-export type OAuthProvider = 'google';
-export const oAuthProviders = ['google'] as const;
 export class OAuthClient {
   private readonly provider: OAuthProvider;
   private readonly clientId: string;

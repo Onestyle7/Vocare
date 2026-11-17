@@ -49,6 +49,7 @@ import { getEducationDegreeLabel } from '@/lib/types/profile';
 import { makeClientId } from '@/lib/utils/id';
 import { FLUENCY_OPTIONS, getFluencyLabel, normalizeFluency } from '@/lib/utils/normalizeFluency';
 import { makeSocialLinkId, SOCIAL_LINK_SUGGESTIONS } from '@/lib/utils/socialLinks';
+import { trackEvent } from '@/lib/utils/tracking';
 import {
   normalizeResponsibilitiesForPayload,
   responsibilityLinesToText,
@@ -2352,6 +2353,8 @@ const CVCreator: React.FC<CVCreatorProps> = ({ initialCv, initialLimits = null }
       } catch (error) {
         console.warn('Nie udało się załadować czcionki Poppins do eksportu PDF.', error);
       } finally {
+        // Przed print(), bo okno drukowania blokuje stronę, dopóki użytkownik go nie zamknie
+        trackEvent('Download');
         win.focus();
         win.print();
 

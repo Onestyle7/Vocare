@@ -9,6 +9,7 @@ import {
   billingApiClient,
   BillingType,
   CancelSubscriptionResult,
+  CheckoutSessionSummary,
   CreateSubscriptionCommand,
   CreateSubscriptionResult,
   CustomerPortalResult,
@@ -27,6 +28,7 @@ export type CancelSubscriptionError = BaseAppError<
   'Unauthorized' | 'PaymentNotFound' | 'NoActiveSubscription' | 'AlreadyCanceled'
 >;
 export type PaymentHistoryError = BaseAppError<'Unauthorized' | 'InvalidLimit'>;
+export type CheckoutSessionError = BaseAppError<'Unauthorized' | 'CheckoutSessionNotFound'>;
 
 export async function getSubscriptionTokenStatusService(
   requestOptions: RequestInit
@@ -247,6 +249,44 @@ export async function getPaymentHistoryService(
           return {
             type: 'GenericApiError',
             message: 'Wystąpił błąd podczas pobierania historii płatności',
+            details: error.details,
+          };
+        }
+      }
+    });
+}
+
+export async function getCheckoutSessionSummaryService(
+  sessionId: string
+): Promise<Result<CheckoutSessionSummary, CheckoutSessionError>> {
+  // Each return from Stripe is a different session, so nothing to cache
+  const result = await billingApiClient.get<CheckoutSessionSummary>(
+    `/checkout-session/${encodeURIComponent(sessionId)}`,
+    { cache: 'no-store' }
+  );
+
+  return result
+    .map((response) => response.data)
+    .mapErr((error): CheckoutSessionError => {
+      switch (error.type) {
+        case 'UnauthorizedError': {
+          return {
+            type: 'Unauthorized',
+            message: 'Zaloguj się, aby sprawdzić płatność',
+            details: error.details,
+          };
+        }
+        case 'NotFoundError': {
+          return {
+            type: 'CheckoutSessionNotFound',
+            message: 'Nie znaleziono tej płatności',
+            details: error.details,
+          };
+        }
+        default: {
+          return {
+            type: 'GenericApiError',
+            message: 'Nie udało się sprawdzić płatności',
             details: error.details,
           };
         }

@@ -71,3 +71,20 @@ export type PaymentHistoryResult = {
   payments: PaymentHistoryItem[];
   count: number;
 };
+
+/**
+ * A Stripe Checkout session as verified by the backend (GET /api/billing/checkout-session/{id}),
+ * used to report a purchase or a trial start with real amounts. Only the session's owner gets it.
+ */
+export type CheckoutSessionSummary = {
+  sessionId: string;
+  status: 'complete' | 'open' | 'expired' | string;
+  paymentStatus: 'paid' | 'unpaid' | 'no_payment_required' | string;
+  mode: 'payment' | 'subscription' | string;
+  isTrial: boolean;
+  // After discounts, in PLN (not grosze); 0 for a trial
+  amountTotal: number;
+  currency: string;
+  priceId: string;
+  packageName: string;
+};

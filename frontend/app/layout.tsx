@@ -1,7 +1,6 @@
 import './globals.css';
 
 // import SmoothScrollProvider from '@/components/SupportComponents/SmoothScrollProvider';
-import { GoogleAnalytics } from '@next/third-parties/google';
 import type { Metadata } from 'next';
 import localFont from 'next/font/local';
 import Script from 'next/script';
@@ -10,7 +9,11 @@ import { CookieBanner } from '@/components/SupportComponents/CookieBanner';
 import { Toaster } from '@/components/ui/sonner';
 import { ThemeProvider } from '@/components/ui/theme-provider';
 import { AuthProvider } from '@/features/auth/components/AuthProvider';
+import { OAuthRegistrationTracker } from '@/features/auth/components/OAuthRegistrationTracker';
 import env from '@/lib/env/client';
+import { getGoogleAnalyticsScript } from '@/lib/utils/google-analytics';
+import { getMetaPixelScript } from '@/lib/utils/meta-pixel';
+import { getTikTokPixelScript } from '@/lib/utils/tiktok-pixel';
 
 import { toAbsoluteUrl } from '../features/blog/utils/blogUtils';
 
@@ -142,31 +145,33 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   const gaId = env.NEXT_PUBLIC_GA_ID;
+  const tiktokPixelId = env.NEXT_PUBLIC_TIKTOK_PIXEL_ID;
+  const metaPixelId = env.NEXT_PUBLIC_META_PIXEL_ID;
 
   return (
     <html lang="pl" suppressHydrationWarning>
       <head>
-        <Script
-          id="google-consent"
-          strategy="beforeInteractive"
-          dangerouslySetInnerHTML={{
-            __html: `
-              window.dataLayer = window.dataLayer || [];
-              function gtag(){dataLayer.push(arguments);}
-              gtag('consent', 'default', {
-                'analytics_storage': 'denied',
-                'ad_storage': 'denied',
-                'ad_user_data': 'denied',
-                'ad_personalization': 'denied',
-              });
-              if (typeof document !== 'undefined' && document.cookie.indexOf('cookie_consent=granted') !== -1) {
-                gtag('consent', 'update', {
-                  'analytics_storage': 'granted'
-                });
-              }
-            `,
-          }}
-        />
+        {gaId ? (
+          <Script
+            id="google-analytics"
+            strategy="beforeInteractive"
+            dangerouslySetInnerHTML={{ __html: getGoogleAnalyticsScript(gaId) }}
+          />
+        ) : null}
+        {tiktokPixelId ? (
+          <Script
+            id="tiktok-pixel"
+            strategy="beforeInteractive"
+            dangerouslySetInnerHTML={{ __html: getTikTokPixelScript(tiktokPixelId) }}
+          />
+        ) : null}
+        {metaPixelId ? (
+          <Script
+            id="meta-pixel"
+            strategy="beforeInteractive"
+            dangerouslySetInnerHTML={{ __html: getMetaPixelScript(metaPixelId) }}
+          />
+        ) : null}
       </head>
       <body
         className={`${sizmoPro.className} ${spaceGrotesk.variable} h-full antialiased selection:bg-[#915EFF]`}
@@ -175,10 +180,10 @@ export default function RootLayout({
           <ThemeProvider attribute="class" defaultTheme="dark">
             {children}
             <CookieBanner />
+            <OAuthRegistrationTracker />
             <Toaster />
           </ThemeProvider>
         </AuthProvider>
-        {gaId ? <GoogleAnalytics gaId={gaId} /> : null}
       </body>
     </html>
   );

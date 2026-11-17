@@ -128,3 +128,63 @@ Per GDPR art. 7(1) in conjunction with art. 17(3)(e):
   ```
 - `MarketingConsents` records are not deleted: deleting the account marks the consent as withdrawn (`IsConsentGiven = false`, `ConsentWithdrawnDate`).
 - According to the Privacy Policy, consent history and email hashes are kept for 6 years after account deletion. Automatic removal is not implemented yet.
+
+---
+
+## 6. Requests About Advertising Pixel Data (TikTok, Meta)
+
+With advertising consent, the frontend loads the TikTok and Meta pixels. For collecting this data and sending it to them, Vocare is a joint controller with each platform (GDPR art. 26). After that, TikTok and Meta process the data as independent controllers. The Privacy Policy describes this split.
+
+| | TikTok | Meta |
+| :--- | :--- | :--- |
+| Joint controller | TikTok Technology Limited (Ireland) and TikTok Information Technologies UK Limited | Meta Platforms Ireland Limited |
+| Joint processing | Collection and transmission; measurement and insight reporting | Collection and transmission |
+| Source | Jurisdiction Specific Terms, Part B (effective 5 Feb 2026; behind the Ads Manager login) | [Controller Addendum](https://www.facebook.com/legal/controller_addendum) (effective 25 Apr 2023) |
+
+Vocare informs users and collects consent. Each platform handles access, rectification, erasure, restriction and portability requests (GDPR art. 15-20) for the data it stores.
+
+When a request about pixel data reaches kontakt@vocare.pl, or a supervisory authority asks about it:
+1. Forward it to the platform:
+   - **Meta:** within **7 calendar days**, using the form linked from the Controller Addendum ("formularz").
+   - **TikTok:** promptly, via https://www.tiktok.com/legal/report/privacy.
+2. Do not answer on the platform's behalf. Vocare forwards the request and then cooperates.
+3. If the person also objects (art. 21) or withdraws consent, handle that for Vocare's own processing: point them to vocare.pl/preferences, where withdrawal stops the pixels and deletes their cookies.
+
+---
+
+## 7. Cookie Consent Records (proof of consent)
+
+GDPR art. 7(1) requires Vocare to be able to show that a visitor consented to analytics (GA4) or advertising pixels (TikTok, Meta), or withdrew that consent. TikTok's terms also require "verifiable" consents. The cookies in the visitor's browser drive the tools, but they can't serve as proof: the visitor can delete them and Vocare can't read them. Every choice is therefore also appended to the `CookieConsentRecords` table.
+
+### Flow
+1. The visitor decides in the cookie banner, on `/preferences` or in account settings. The frontend saves the choice in the `cookie_consent` and `ads_consent` cookies.
+2. `lib/utils/consent-record.ts` gives the browser a random `consent_id` cookie (12 months, renewed with each choice) and calls the `recordCookieConsent` server action without waiting for it.
+3. The server action reads the choices from the request's cookies and calls `POST /api/legal/cookie-consent` through `legalApiClient`. The request carries `X-Internal-Api-Key` and the visitor's IP, plus the user's token when signed in.
+4. `LegalController.RecordCookieConsent` rejects requests without a valid internal key (`[RequireInternalApiKey]`). It is rate limited per visitor IP (`CookieConsentPolicy`, 20/min) and stores the `UserId` when the token is valid.
+
+### What a record holds
+| Column | Meaning |
+| :--- | :--- |
+| `ConsentId` | The browser's `consent_id`; links all choices made in one browser |
+| `UserId` | The account, when the visitor was signed in; otherwise `NULL` |
+| `AnalyticsGranted`, `AdsGranted` | The choices after the decision (a choice not made yet is stored as `false`) |
+| `Source` | `Banner`, `Preferences` or `Account` |
+| `TextVersion` | `COOKIE_CONSENT_TEXT_VERSION` from `frontend/features/marketing/constants/legal.ts`: the date of the banner and cookie texts the visitor saw (the texts themselves are in git history) |
+| `CreatedAt` | Server time (UTC) |
+
+Records are only appended, never updated, so the history also shows withdrawals. No IP address or User-Agent is stored: the Privacy Policy promises this, and `ConsentId` is enough to link a record to a browser.
+
+**When the banner, `/preferences` texts or the "Pliki cookies" section of the Privacy Policy change, update `COOKIE_CONSENT_TEXT_VERSION`.** Otherwise records point to the wrong text.
+
+### Retention
+`CookieConsentCleanupJob` (Hangfire, daily at 03:00 UTC) deletes records older than `CookieConsent:RetentionYears` (3, pending the lawyer's confirmation). The Privacy Policy states "3 lata od dokonania danego wyboru". Account deletion doesn't remove records, the same as for `UserConsents` (§ 5).
+
+### Checking someone's consent history
+By browser (the person reads `consent_id` from their cookies) or by account:
+```sql
+SELECT "CreatedAt", "Source", "AnalyticsGranted", "AdsGranted", "TextVersion", "UserId"
+FROM "CookieConsentRecords"
+WHERE "ConsentId" = '<consent_id>'   -- or: WHERE "UserId" = '<user id>'
+ORDER BY "CreatedAt";
+```
+The latest row is the choice in force at that time. Requests about the pixel data held by TikTok or Meta follow § 6.

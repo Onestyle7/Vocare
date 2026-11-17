@@ -6,8 +6,9 @@ import { useCallback, useEffect, useState, useSyncExternalStore } from 'react';
 
 import { cn, getCookie } from '@/lib/utils';
 import { COOKIE_CONSENT_KEY } from '@/lib/utils/consent';
+import { trackEvent } from '@/lib/utils/tracking';
 
-import { PROMO_CONTENT, type PromoVariant } from '../constants/promo';
+import { PROMO_CONTENT, type PromoPlacement, type PromoVariant } from '../constants/promo';
 
 const DISMISS_KEY = 'vocare-promo-dismissed-at';
 const DISMISS_EVENT = 'vocare-promo-dismiss';
@@ -15,8 +16,6 @@ const DISMISS_DAYS = 7;
 
 const BRAND_GRADIENT =
   'bg-[linear-gradient(90deg,#9296FD_0%,#8491FE_50%,#9D9BFF_77%,#C7A9FE_100%)]';
-
-type Placement = 'sidebar' | 'bar' | 'inline';
 
 const isDismissed = () => {
   try {
@@ -53,8 +52,12 @@ function usePromoDismissed() {
   return [dismissed, dismiss] as const;
 }
 
-const trackPromo = (action: 'click' | 'dismiss', variant: PromoVariant, placement: Placement) => {
-  window.gtag?.('event', `promo_${action}`, { promo_variant: variant, promo_placement: placement });
+const trackPromo = (
+  action: 'click' | 'dismiss',
+  variant: PromoVariant,
+  placement: PromoPlacement
+) => {
+  trackEvent(action === 'click' ? 'PromoClick' : 'PromoDismiss', { variant, placement });
 };
 
 function CloseButton({ onClick, className }: { onClick: () => void; className?: string }) {
