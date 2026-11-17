@@ -14,8 +14,8 @@ export const SERVICE_PROVIDER = {
 // z informacją o zmianach (§ 18 ust. 2). Obie daty ustawić przy wdrożeniu – razem z datami
 // w termsOfService20261013Validity i w migracji LegalDocuments w backendzie.
 export const TERMS_VERSION = {
-  publishedDate: '02.11.2026',
-  effectiveDate: '17.11.2026',
+  publishedDate: '17.11.2026',
+  effectiveDate: '02.12.2026',
   previousVersion: { effectiveDate: '13.10.2026', href: '/terms-of-service/2026-10-13' },
 } as const;
 
