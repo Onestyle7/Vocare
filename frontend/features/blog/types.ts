@@ -19,6 +19,9 @@ export const articleSchema = z.object({
   // so external tooling (SEO/content analyzers) that read frontmatter
   // directly can see the URL without inferring it from the file path.
   slug: z.string().optional(),
+  // Overrides the promo picked by category. Without it every post in `praca` showed the CV offer,
+  // including the ones about pay and contracts. Values match PromoVariant in marketing/constants/promo.
+  promo: z.enum(['cv', 'career', 'market', 'salary']).optional(),
 });
 
 export type ArticleMetadata = z.infer<typeof articleSchema> & { slug: string };
