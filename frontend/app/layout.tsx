@@ -2,6 +2,7 @@ import './globals.css';
 
 // import SmoothScrollProvider from '@/components/SupportComponents/SmoothScrollProvider';
 import type { Metadata } from 'next';
+import { IBM_Plex_Mono, Poppins } from 'next/font/google';
 import localFont from 'next/font/local';
 import Script from 'next/script';
 
@@ -94,6 +95,26 @@ const spaceGrotesk = localFont({
   preload: false,
 });
 
+// Poppins and IBM Plex Mono used to come from three render-blocking `@import`s
+// of fonts.googleapis.com in globals.css (about 0.8 s of LCP on mobile). next/font
+// self-hosts them and inlines the @font-face, so nothing blocks the first paint.
+// Inter was imported there too but no class or style ever used it.
+const poppins = Poppins({
+  weight: ['300', '400', '500', '600', '700', '800'],
+  subsets: ['latin', 'latin-ext'],
+  variable: '--font-poppins',
+  display: 'swap',
+});
+
+// Only `ibm-plex-mono-regular` is used, and only inside the dashboard.
+const ibmPlexMono = IBM_Plex_Mono({
+  weight: '400',
+  subsets: ['latin', 'latin-ext'],
+  variable: '--font-ibm-plex-mono',
+  display: 'swap',
+  preload: false,
+});
+
 export const metadata: Metadata = {
   metadataBase: new URL(env.NEXT_PUBLIC_APP_URL),
   title: {
@@ -102,6 +123,11 @@ export const metadata: Metadata = {
   },
   description:
     'Vocare pomaga odkryć Twoją ścieżkę kariery z AI. Sprawdź mocne strony, analizuj rynek i podejmuj trafne decyzje zawodowe na podstawie danych.',
+  // site.webmanifest and the touch icon existed in /public but nothing linked to them
+  manifest: '/site.webmanifest',
+  icons: {
+    apple: '/metadata/apple-touch-icon.png',
+  },
   robots: {
     index: true,
     follow: true,
@@ -174,7 +200,7 @@ export default function RootLayout({
         ) : null}
       </head>
       <body
-        className={`${sizmoPro.className} ${spaceGrotesk.variable} h-full antialiased selection:bg-[#915EFF]`}
+        className={`${sizmoPro.className} ${spaceGrotesk.variable} ${poppins.variable} ${ibmPlexMono.variable} h-full antialiased selection:bg-[#915EFF]`}
       >
         <AuthProvider>
           <ThemeProvider attribute="class" defaultTheme="dark">

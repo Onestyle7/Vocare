@@ -1022,7 +1022,9 @@ const getFreeTextNodeSize = (text: string) => {
     freeTextMeasureCanvas ??= document.createElement('canvas');
     const context = freeTextMeasureCanvas.getContext('2d');
     if (context) {
-      context.font = '600 24px Poppins, ui-sans-serif, system-ui, sans-serif';
+      // next/font serves Poppins under a generated family name, exposed as --font-poppins
+      const poppins = getComputedStyle(document.body).getPropertyValue('--font-poppins').trim();
+      context.font = `600 24px ${poppins ? `${poppins}, ` : ''}Poppins, ui-sans-serif, system-ui, sans-serif`;
       textWidth = Math.max(80, context.measureText(longestLine).width);
     }
   }

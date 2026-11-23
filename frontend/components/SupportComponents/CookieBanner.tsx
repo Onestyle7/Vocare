@@ -1,5 +1,6 @@
 'use client';
 
+import { Settings } from 'lucide-react';
 import Link from 'next/link';
 import { useEffect, useState } from 'react';
 
@@ -68,38 +69,56 @@ export function CookieBanner() {
           {/* Smaller type on phones keeps the banner compact. The text itself is the same on every
               screen: it is what visitors consent to (COOKIE_CONSENT_TEXT_VERSION), so a shorter
               phone version would have to be versioned and must still name the pixels. */}
+          {/* The text is split into two paragraphs (same words) so that on phones no single block
+              becomes the page's largest element: the banner renders after hydration, and as the
+              LCP element it pushed mobile LCP to 5–6 s. */}
           <div className="text-muted-foreground flex-1 text-xs sm:text-sm">
             <p className="text-foreground mb-1 text-sm font-semibold">Cenimy Twoją prywatność</p>
-            Używamy plików cookie niezbędnych do działania strony. Za Twoją zgodą używamy też
-            cookies analitycznych (Google Analytics), które pomagają nam rozwijać Vocare, oraz
-            reklamowych (piksele TikToka i Mety), które przekazują tym serwisom informacje o Twojej
-            wizycie, żebyśmy mogli mierzyć skuteczność reklam i docierać z nimi do zainteresowanych
-            osób. Wybór zmienisz w każdej chwili w{' '}
-            <Link href="/preferences" className="text-foreground underline">
-              Preferencjach prywatności
-            </Link>
-            , a szczegóły znajdziesz w{' '}
-            <Link href="/privacy-policy" className="text-foreground underline">
-              Polityce prywatności
-            </Link>
-            .
+            <p>
+              Używamy plików cookie niezbędnych do działania strony. Za Twoją zgodą używamy też
+              cookies analitycznych (Google Analytics), które pomagają nam rozwijać Vocare, oraz
+              reklamowych (piksele TikToka i Mety), które przekazują tym serwisom informacje o
+              Twojej wizycie, żebyśmy mogli mierzyć skuteczność reklam i docierać z nimi do
+              zainteresowanych osób.
+            </p>
+            <p>
+              Wybór zmienisz w każdej chwili w{' '}
+              <Link href="/preferences" className="text-foreground underline">
+                Preferencjach prywatności
+              </Link>
+              , a szczegóły znajdziesz w{' '}
+              <Link href="/privacy-policy" className="text-foreground underline">
+                Polityce prywatności
+              </Link>
+              .
+            </p>
           </div>
-          {/* Two rows on phones instead of three: accepting and refusing stay side by side and
-              equally prominent, the settings below them */}
-          <div className="grid w-full shrink-0 grid-cols-2 gap-2 sm:flex sm:w-auto sm:flex-row">
-            <Button variant="outline" onClick={() => saveChoice(true, true)}>
+          {/* One row on phones: accepting and refusing stay side by side and equally prominent,
+              the settings collapse to an icon button next to them */}
+          <div className="grid w-full shrink-0 grid-cols-[1fr_1fr_auto] gap-2 sm:flex sm:w-auto sm:flex-row">
+            <Button
+              variant="outline"
+              className="px-2 sm:px-4"
+              onClick={() => saveChoice(true, true)}
+            >
               Akceptuję wszystkie
             </Button>
-            <Button variant="outline" onClick={() => saveChoice(false, false)}>
+            <Button
+              variant="outline"
+              className="px-2 sm:px-4"
+              onClick={() => saveChoice(false, false)}
+            >
               Tylko niezbędne
             </Button>
             <Button
               variant="outline"
-              className="col-span-2"
               aria-expanded={showSettings}
+              aria-label="Ustawienia"
+              className="px-2.5 sm:px-4"
               onClick={() => setShowSettings((open) => !open)}
             >
-              Ustawienia
+              <Settings className="sm:hidden" aria-hidden="true" />
+              <span className="hidden sm:inline">Ustawienia</span>
             </Button>
           </div>
         </div>
