@@ -9,6 +9,7 @@ category: 'praca'
 coverImage: '/images/blog/job-search.webp'
 tags: ['praca zdalna za granicą', 'praca dla zagranicznej firmy', 'remote job polska', 'b2b za granicą', 'employer of record']
 slug: 'praca-zdalna-dla-zagranicznego-pracodawcy'
+promo: 'salary'
 ---
 
 Mieszkasz w Polsce, ale chcesz pracować dla firmy z Berlina, Londynu czy San Francisco bez przeprowadzki - to dziś realna i coraz popularniejsza ścieżka, ale rządzi się innymi zasadami niż szukanie pracy zdalnej u polskiego pracodawcy. **Praca zdalna dla zagranicznego pracodawcy** oznacza inne platformy, inny sposób prezentacji CV i, co najważniejsze, inny sposób rozliczenia podatkowego niż standardowa umowa o pracę w Polsce.
@@ -26,7 +27,7 @@ Mieszkasz w Polsce, ale chcesz pracować dla firmy z Berlina, Londynu czy San Fr
 
 Zakładasz jednoosobową działalność gospodarczą w Polsce i wystawiasz faktury zagranicznej firmie, podobnie jak przy współpracy B2B z polskim kontrahentem. To najbardziej elastyczny i najczęściej spotykany model, szczególnie w IT i konsultingu.
 
-**Na co zwrócić uwagę:** rozliczenia VAT przy fakturowaniu za granicę (w UE zwykle stosuje się mechanizm odwrotnego obciążenia), waluta rozliczenia (USD/EUR vs PLN) i różnice kursowe, które wpływają na Twój realny dochód miesiąc do miesiąca.
+**Na co zwrócić uwagę:** rozliczenia VAT przy fakturowaniu za granicę (w UE zwykle stosuje się mechanizm odwrotnego obciążenia), waluta rozliczenia (USD/EUR vs PLN) i różnice kursowe, które wpływają na Twój realny dochód miesiąc do miesiąca. Ile z faktury zostanie Ci po ZUS i podatku przy ryczałcie, liniowym lub skali, policzysz w [kalkulatorze wynagrodzeń](/salary-calculator); różnice kursowe trzeba doliczyć osobno.
 
 ### Employer of Record (EOR)
 

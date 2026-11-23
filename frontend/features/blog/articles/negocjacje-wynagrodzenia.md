@@ -9,9 +9,10 @@ category: 'praca'
 coverImage: '/images/blog/job-interview.webp'
 tags: ['negocjacje wynagrodzenia', 'jak negocjować pensję', 'podwyżka', 'widełki wynagrodzenia', 'rozmowa o pieniądzach']
 slug: 'negocjacje-wynagrodzenia'
+promo: 'salary'
 ---
 
-Większość kandydatów akceptuje pierwszą zaproponowaną stawkę, bo negocjacje kojarzą się z konfliktem i ryzykiem utraty oferty. To błąd - w praktyce firmy zwykle mają margines negocjacyjny wbudowany w proces, a brak negocjacji to najczęściej po prostu pozostawione na stole pieniądze. **Negocjacje wynagrodzenia** to nie konfrontacja, tylko rozmowa oparta na danych rynkowych i Twojej wartości dla firmy.
+Większość kandydatów akceptuje pierwszą zaproponowaną stawkę, bo negocjacje kojarzą się z konfliktem i ryzykiem utraty oferty. To błąd - w praktyce firmy zwykle mają margines negocjacyjny wbudowany w proces, a brak negocjacji to najczęściej po prostu pozostawione na stole pieniądze. **Negocjacje wynagrodzenia** to nie konfrontacja, tylko rozmowa oparta na danych rynkowych i Twojej wartości dla firmy. Zanim podasz kwotę, sprawdź, ile z niej zostanie Ci na rękę - [kalkulator wynagrodzeń](/salary-calculator) przelicza brutto na netto dla umowy o pracę, zlecenia i B2B.
 
 > **Najważniejsze wnioski**
 > - Firmy zwykle zakładają margines negocjacyjny 5-15% ponad pierwszą propozycję - brak negocjacji oznacza rezygnację z tych pieniędzy z góry

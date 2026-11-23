@@ -18,7 +18,7 @@ tags:
 slug: 'pytania-na-rozmowie-kwalifikacyjnej'
 ---
 
-Żaden rekruter nie pyta "ile gwiazdek ma flaga USA?" na rozmowie o pracę (no, prawie żaden). **Pytania rekrutacyjne** to narzędzie oceny trzech rzeczy: czy możesz wykonywać tę pracę, czy będziesz chciał ją wykonywać i czy pasujesz do zespołu. Znajomość typowych pytań i przygotowanie konkretnych odpowiedzi z przykładami z Twojej kariery to różnica między kandydatem, który dostaje ofertę, a tym, który dostaje odmowę. Oto 20 najczęstszych pytań z przykładami odpowiedzi.
+Żaden rekruter nie pyta "ile gwiazdek ma flaga USA?" na rozmowie o pracę (no, prawie żaden). **Pytania rekrutacyjne** to narzędzie oceny trzech rzeczy: czy możesz wykonywać tę pracę, czy będziesz chciał ją wykonywać i czy pasujesz do zespołu. Znajomość typowych pytań i przygotowanie konkretnych odpowiedzi z przykładami z Twojej kariery to różnica między kandydatem, który dostaje ofertę, a tym, który dostaje odmowę. Oto 20 najczęstszych pytań z przykładami odpowiedzi. Rozmowa to etap, do którego prowadzi cały proces szukania pracy - jak dojść do niej szybciej, opisujemy w [przewodniku, jak znaleźć pracę](/blog/praca/jak-znalezc-prace).
 
 > **Najważniejsze wnioski**
 > - Rekruterzy oceniają trzy rzeczy: czy potrafisz wykonać pracę, czy będziesz chciał ją wykonywać i czy pasujesz do zespołu

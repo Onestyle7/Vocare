@@ -9,9 +9,10 @@ category: 'praca'
 coverImage: '/images/blog/job-search.webp'
 tags: ['nadgodziny', 'dodatek za nadgodziny', 'wynagrodzenie za nadgodziny', 'limit nadgodzin', 'kodeks pracy nadgodziny']
 slug: 'nadgodziny-wynagrodzenie'
+promo: 'salary'
 ---
 
-Nie każda dodatkowa godzina pracy jest wynagradzana tak samo - stawka dodatku zależy od tego, kiedy dokładnie nadgodzina wypadła. **Nadgodziny** to praca wykonywana ponad obowiązujące pracownika normy czasu pracy, za którą Kodeks pracy gwarantuje normalne wynagrodzenie powiększone o dodatek 50% lub 100%, w zależności od okoliczności - zasady opisuje [Ministerstwo Rodziny w informacji o pracy nadliczbowej](https://www.gov.pl/web/rodzina/praca-nadliczbowa).
+Nie każda dodatkowa godzina pracy jest wynagradzana tak samo - stawka dodatku zależy od tego, kiedy dokładnie nadgodzina wypadła. **Nadgodziny** to praca wykonywana ponad obowiązujące pracownika normy czasu pracy, za którą Kodeks pracy gwarantuje normalne wynagrodzenie powiększone o dodatek 50% lub 100%, w zależności od okoliczności - zasady opisuje [Ministerstwo Rodziny w informacji o pracy nadliczbowej](https://www.gov.pl/web/rodzina/praca-nadliczbowa). Dodatek za nadgodziny jest wypłacany razem z pensją i podlega tym samym składkom i podatkowi, więc ile realnie zostanie Ci na rękę, policzysz w [kalkulatorze wynagrodzeń](/salary-calculator).
 
 > **Najważniejsze wnioski**
 > - Dodatek 100% przysługuje za nadgodziny w nocy, w niedziele i święta niebędące dla pracownika dniami pracy, dodatek 50% - za pozostałe nadgodziny

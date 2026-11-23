@@ -11,7 +11,7 @@ tags: ['praca sezonowa za granicą', 'praca za granicą', 'praca w Niemczech', '
 slug: 'praca-sezonowa-za-granica'
 ---
 
-Zbiory owoców, praca w hotelu nad Morzem Północnym, sezon w gastronomii w Alpach - **praca sezonowa za granicą** co roku przyciąga setki tysięcy Europejczyków, w tym dużą grupę Polaków. Według danych przywoływanych przez [portal EURES](https://eures.praca.gov.pl/), rocznie około 850 tys. obywateli UE podejmuje tego typu zatrudnienie poza własnym krajem, mając te same prawa pracownicze co pracownicy lokalni. **Praca sezonowa** to zatrudnienie ograniczone do części roku, wynikające z cyklu produkcyjnego lub turystycznego - w UE obywatele Polski podejmują ją bez pozwolenia na pracę.
+Zbiory owoców, praca w hotelu nad Morzem Północnym, sezon w gastronomii w Alpach - **praca sezonowa za granicą** co roku przyciąga setki tysięcy Europejczyków, w tym dużą grupę Polaków. Według danych przywoływanych przez [portal EURES](https://eures.praca.gov.pl/), rocznie około 850 tys. obywateli UE podejmuje tego typu zatrudnienie poza własnym krajem, mając te same prawa pracownicze co pracownicy lokalni. **Praca sezonowa** to zatrudnienie ograniczone do części roku, wynikające z cyklu produkcyjnego lub turystycznego - w UE obywatele Polski podejmują ją bez pozwolenia na pracę. Jeśli zamiast sezonu za granicą szukasz stałego zatrudnienia w Polsce, zajrzyj do [poradnika, jak znaleźć pracę](/blog/praca/jak-znalezc-prace).
 
 > **Najważniejsze wnioski**
 > - Niemcy, Holandia i kraje skandynawskie oferują najwięcej ofert, ale Polacy najchętniej aplikują też do Norwegii mimo mniejszej liczby miejsc

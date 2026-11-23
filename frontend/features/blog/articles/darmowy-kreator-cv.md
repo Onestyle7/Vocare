@@ -1,9 +1,9 @@
 ---
 title: 'Darmowy kreator CV 2026 - stwórz CV online bez ukrytych opłat'
-description: 'Szukasz darmowego kreatora CV z prawdziwymi funkcjami? Vocare.pl pozwala tworzyć wiele wersji CV, analizować je AI i dopasowywać do konkretnych ofert - bez opłat.'
+description: 'Szukasz darmowego kreatora CV? W Vocare.pl tworzysz i pobierasz do 3 CV za darmo, a analizę AI i dopasowanie do ofert odblokujesz w Premium lub za tokeny.'
 estimatedReadTime: 7
 date: '2026-04-03'
-updatedAt: '2026-09-02'
+updatedAt: '2026-11-23'
 author: 'Vocare'
 category: 'cv'
 coverImage: '/images/blog/free-cv-builder.webp'
@@ -35,12 +35,15 @@ Większość darmowych kreatorów zatrzymuje się na formatowaniu. To za mało, 
 
 ## Vocare.pl - darmowy kreator CV z AI
 
-[Kreator CV w Vocare](/resume-creator) to jedyne narzędzie, które łączy tworzenie CV z aktywną analizą AI - i jest dostępne bezpłatnie.
+[Kreator CV w Vocare](/resume-creator) łączy tworzenie CV z analizą AI. Sam kreator jest bezpłatny, a funkcje AI działają w planie Premium albo za tokeny - szczegóły w [cenniku](/pricing).
 
 **Co możesz zrobić za darmo:**
 
 - **Stworzyć i pobrać CV** bez żadnych opłat ani karty kredytowej
-- **Tworzyć wiele wersji CV** - masz kilka ścieżek zawodowych lub aplikujesz do różnych branż? Każde CV jest osobnym dokumentem, który możesz edytować niezależnie
+- **Tworzyć do 3 wersji CV** - masz kilka ścieżek zawodowych lub aplikujesz do różnych branż? Każde CV jest osobnym dokumentem, który możesz edytować niezależnie
+
+**W planie Premium lub za tokeny:**
+
 - **Analizować jakość CV z AI** - algorytm ocenia kompletność, czytelność, poziom konkretności osiągnięć i ogólne dopasowanie do standardów rekrutacyjnych
 - **Generować CV dopasowane do oferty pracy** - wklejasz treść ogłoszenia, a narzędzie automatycznie dopasuje Twoje CV do oferty pracy, tak żeby przeszło skutecznie przez ATS
 
@@ -84,7 +87,7 @@ Kilka popularnych kreatorów CV buduje swój model biznesowy na "darmowym tworze
 - **Resume.io** - podobny model, dobre szablony ale bez analizy ofert
 - **Novoresume** - darmowy plan z jednym CV i ograniczonymi sekcjami
 
-Jeśli aktywnie szukasz pracy przez kilka miesięcy - płacenie za kreator może być frustrujące. Vocare.pl eliminuje ten problem: pełna funkcjonalność, w tym analiza AI i generowanie CV pod ofertę, jest dostępna bezpłatnie.
+Jeśli aktywnie szukasz pracy przez kilka miesięcy - płacenie za kreator może być frustrujące. W Vocare.pl tworzenie, edycja i pobieranie CV są bezpłatne bez limitu czasu, a za analizę AI i generowanie CV pod ofertę płacisz tylko wtedy, gdy ich potrzebujesz - tokenami albo w planie Premium.
 
 ---
 
@@ -122,10 +125,10 @@ Nawet z najlepszym kreatorem - jakość CV zależy od Ciebie. Kilka zasad:
 ## FAQ - darmowy kreator CV
 
 **Czy darmowy kreator CV jest wystarczający?**
-Tak - o ile oferuje realne funkcje, a nie tylko formatowanie. Kreator, który pozwala tylko "ładnie ułożyć tekst", nie pomoże Ci przejść przez filtry ATS ani zwiększyć szansy na rozmowę. [Dopasowanie CV do oferty w Vocare](/resume-creator) jest bezpłatny i oferuje analizę AI oraz dopasowanie CV do konkretnych ofert.
+Tak - o ile oferuje realne funkcje, a nie tylko formatowanie. Kreator, który pozwala tylko "ładnie ułożyć tekst", nie pomoże Ci przejść przez filtry ATS ani zwiększyć szansy na rozmowę. [Kreator CV w Vocare](/resume-creator) jest bezpłatny, a w Premium lub za tokeny dodaje analizę AI i dopasowanie CV do konkretnych ofert.
 
 **Czy mogę mieć kilka wersji CV w jednym narzędziu?**
-W większości kreatorów - nie lub tylko w płatnych planach. Vocare.pl pozwala tworzyć i przechowywać wiele wersji CV w ramach jednego konta, bezpłatnie. To kluczowe przy aktywnym szukaniu pracy w kilku branżach lub na różnych stanowiskach.
+W większości kreatorów - nie lub tylko w płatnych planach. Vocare.pl pozwala bezpłatnie tworzyć i przechowywać do 3 wersji CV w ramach jednego konta (w Premium do 25). To kluczowe przy aktywnym szukaniu pracy w kilku branżach lub na różnych stanowiskach.
 
 **Co to znaczy, że AI analizuje CV?**
 W Vocare.pl algorytm ocenia CV pod kilkoma kątami: kompletność sekcji, konkretność osiągnięć (czy są liczby?), czytelność struktury i ogólna gotowość do przejścia przez ATS. To ocena jakości CV jako dokumentu - niezależna od konkretnej oferty.
@@ -145,7 +148,7 @@ Tak - [Dopasowanie CV do oferty w Vocare](/resume-creator) automatycznie dopasow
 
 Darmowy kreator CV w 2026 roku wystarczy dla zdecydowanej większości kandydatów - ale tylko wtedy, gdy narzędzie oferuje coś więcej niż samo formatowanie. Możliwość tworzenia wielu wersji CV, analiza AI i dopasowanie do konkretnych ofert pracy to funkcje, które realnie zwiększają szansę na rozmowę kwalifikacyjną.
 
-[Kreator CV w Vocare](/resume-creator) łączy wszystkie te funkcje w jednym, bezpłatnym narzędziu. Stwórz CV, przeanalizuj je AI i sprawdź czy jest gotowe na konkretną ofertę - zanim je wyślesz.
+[Kreator CV w Vocare](/resume-creator) łączy wszystkie te funkcje w jednym narzędziu: CV stworzysz i pobierzesz za darmo, a analizę AI i dopasowanie do konkretnej oferty włączysz w Premium lub za tokeny - zanim je wyślesz.
 
 ---
 

@@ -9,6 +9,7 @@ category: 'praca'
 coverImage: '/images/blog/job-portals.webp'
 tags: ['umowa o pracę', 'kontrakt b2b', 'umowa zlecenie', 'forma zatrudnienia', 'b2b czy uop', 'kalkulator b2b vs uop']
 slug: 'umowa-o-prace-vs-b2b'
+promo: 'salary'
 ---
 
 "Możemy zaproponować UoP albo B2B, co wolisz?" - to pytanie słyszy dziś coraz więcej kandydatów, szczególnie w IT, marketingu i konsultingu. Wybór nie jest oczywisty - **forma zatrudnienia** zmienia nie tylko kwotę na wypłacie, ale też stabilność, obowiązki administracyjne i dostęp do świadczeń socjalnych. **Umowa o pracę** to stosunek pracy podporządkowanej, objęty [Kodeksem pracy](https://isap.sejm.gov.pl/isap.nsf/DocDetails.xsp?id=wdu19740240141) i pełnym pakietem uprawnień pracowniczych. **B2B** to umowa między dwoma przedsiębiorcami, w której nie ma urlopu, wynagrodzenia chorobowego ani ochrony przed wypowiedzeniem.
@@ -30,7 +31,7 @@ Umowa o pracę to najbardziej chroniona forma zatrudnienia w Polsce: gwarantuje 
 
 ## Kontrakt B2B - wyższa stawka, więcej obowiązków
 
-W modelu B2B pracujesz jako osoba prowadząca jednoosobową działalność gospodarczą, wystawiając fakturę firmie, z którą współpracujesz. Stawki brutto na B2B są zwykle wyższe niż na UoP dla tej samej roli, ale musisz samodzielnie [opłacać składki ZUS](https://www.biznes.gov.pl/pl/portal/00274) i nie masz gwarancji płatnego urlopu (chyba że wynegocjujesz płatne dni wolne w umowie). Zasiłek chorobowy z ZUS dostaniesz tylko wtedy, gdy opłacasz [dobrowolne ubezpieczenie chorobowe](https://www.biznes.gov.pl/pl/portal/00289) - i dopiero po 90 dniach nieprzerwanego ubezpieczenia.
+W modelu B2B pracujesz jako osoba prowadząca jednoosobową działalność gospodarczą, wystawiając fakturę firmie, z którą współpracujesz. Stawki brutto na B2B są zwykle wyższe niż na UoP dla tej samej roli, ale musisz samodzielnie [opłacać składki ZUS](https://www.biznes.gov.pl/pl/portal/00274) i nie masz gwarancji płatnego urlopu (chyba że wynegocjujesz płatne dni wolne w umowie). Zasiłek chorobowy z ZUS dostaniesz tylko wtedy, gdy opłacasz [dobrowolne ubezpieczenie chorobowe](https://www.biznes.gov.pl/pl/portal/00289) - i dopiero po 90 dniach nieprzerwanego ubezpieczenia. Ile to oznacza w złotówkach przy Twojej stawce, policzysz w [kalkulatorze wynagrodzeń](/salary-calculator): pokazuje kwotę na rękę na umowie o pracę, zleceniu, dziele i B2B (ryczałt, liniowy, skala) obok siebie.
 
 **Dla kogo ma sens:** dla doświadczonych specjalistów, którzy cenią wyższą stawkę netto i są gotowi wziąć na siebie ryzyko braku niektórych świadczeń socjalnych.
 

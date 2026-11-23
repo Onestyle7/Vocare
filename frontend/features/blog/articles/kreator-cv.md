@@ -3,7 +3,7 @@ title: 'Kreator CV online 2026 - najlepsze narzędzia do tworzenia CV'
 description: 'Szukasz kreatora CV online? Sprawdź ranking najlepszych narzędzi 2026 - darmowych i płatnych. Który kreator CV wybrać do swojej branży?'
 estimatedReadTime: 8
 date: '2026-04-17'
-updatedAt: '2026-09-02'
+updatedAt: '2026-11-23'
 author: 'Vocare'
 category: 'cv'
 coverImage: '/images/blog/cv-builder.webp'
@@ -40,11 +40,13 @@ Sprawdzanie pisowni, obsługa polskich znaków diakrytycznych, szablony dostosow
 
 ## Ranking kreatorów CV online 2026
 
+*Vocare to nasz produkt, dlatego jest pierwszy na liście. Pozostałe narzędzia oceniamy według kryteriów z sekcji wyżej: czytelność dla ATS, darmowe pobranie pliku, dopasowanie do oferty i obsługa języka polskiego.*
+
 ### 1. Vocare.pl - kreator CV z AI
 
-[Kreator CV w Vocare](/resume-creator) to jedyny kreator CV, który łączy tworzenie dokumentu z aktywną analizą i dopasowaniem do ofert pracy - i jest dostępny bezpłatnie.
+[Kreator CV w Vocare](/resume-creator) łączy tworzenie dokumentu z analizą AI i dopasowaniem do ofert pracy. Sam kreator i pobieranie PDF są bezpłatne, a analiza AI i dopasowanie działają w planie Premium lub za tokeny.
 
-**Zalety:** Tworzenie i pobieranie CV bez opłat, możliwość posiadania kilku wersji CV w jednym miejscu (przydatne przy aplikowaniu do różnych branż lub stanowisk), analiza jakości CV z AI (kompletność, konkretność osiągnięć, czytelność dla ATS), automatyczne dopasowanie CV do konkretnej oferty po wklejeniu ogłoszenia.
+**Zalety:** Tworzenie i pobieranie CV bez opłat, możliwość posiadania kilku wersji CV w jednym miejscu (przydatne przy aplikowaniu do różnych branż lub stanowisk), analiza jakości CV z AI (kompletność, konkretność osiągnięć, czytelność dla ATS) i automatyczne dopasowanie CV do konkretnej oferty po wklejeniu ogłoszenia - obie w Premium lub za tokeny.
 **Wady:** Mniej szablonów wizualnych niż Canva.
 
 **Dla kogo:** Większość kandydatów - szczególnie aktywnie szukających pracy, zmieniających branżę i tych, którzy chcą mieć CV dopasowane do każdej oferty bez ręcznej analizy.
@@ -73,7 +75,7 @@ Wymaga znajomości podstaw LaTeX, ale generuje perfekcyjnie sformatowane CV. Sta
 
 ### Kreatory z paywallem - uwaga
 
-**Zety** i **Resume.io** pozwalają tworzyć CV za darmo, ale pobieranie pliku jest płatne (~45 zł/miesiąc). To popularny model freemium - wciągają Cię edycją, a płatność pojawia się dopiero na końcu. Jeśli szukasz darmowego kreatora z realną funkcjonalnością - Vocare.pl oferuje to bez ukrytych opłat.
+**Zety** i **Resume.io** pozwalają tworzyć CV za darmo, ale pobieranie pliku jest płatne (~45 zł/miesiąc). To popularny model freemium - wciągają Cię edycją, a płatność pojawia się dopiero na końcu. Jeśli szukasz kreatora, w którym samo pobranie CV jest darmowe - w Vocare.pl tworzysz i pobierasz CV bez opłat.
 
 ---
 
@@ -127,7 +129,7 @@ Możesz stworzyć wstępną wersję, ale finalne dopracowanie i sprawdzenie na d
 Formatowanie - tak. Ocena strategii kariery, dopasowania do stanowiska, przygotowanie do rozmowy - nie. To różne rzeczy.
 
 **Ile kosztują płatne kreatory CV?**
-Popularne zagraniczne kreatory (Zety, Resume.io) to ~45 zł/miesiąc - i blokują pobieranie pliku w darmowym planie. Vocare.pl oferuje pełną funkcjonalność kreatora bezpłatnie, a plan płatny kosztuje 25 zł/miesiąc i odblokuje dodatkowe możliwości.
+Popularne zagraniczne kreatory (Zety, Resume.io) to ~45 zł/miesiąc - i blokują pobieranie pliku w darmowym planie. W Vocare.pl kreator i pobieranie PDF są bezpłatne, a plan Premium (29 zł/miesiąc) odblokowuje analizę AI i dopasowanie do ofert.
 
 **Czy kreator CV generuje CV w języku polskim?**
 Google Docs, Canva i Zety obsługują język polski w pełni. Niektóre zagraniczne narzędzia mogą mieć problemy z polską czcionką lub ortografią.
@@ -139,7 +141,7 @@ Google Docs, Canva i Zety obsługują język polski w pełni. Niektóre zagranic
 
 ## Podsumowanie
 
-Najlepszy kreator CV to taki, który nie kończy się na formatowaniu - ale pomaga Ci upewnić się, że CV trafi do rekrutera, a nie wyląduje w koszu ATS. [Kreator CV w Vocare](/resume-creator) łączy kreator, analizę AI i dopasowanie do ofert w jednym miejscu - bezpłatnie. Google Docs i Canva zostają jako opcje gdy potrzebujesz tylko prostego formatowania lub wizualnego projektu dla branż kreatywnych.
+Najlepszy kreator CV to taki, który nie kończy się na formatowaniu - ale pomaga Ci upewnić się, że CV trafi do rekrutera, a nie wyląduje w koszu ATS. [Kreator CV w Vocare](/resume-creator) łączy kreator, analizę AI i dopasowanie do ofert w jednym miejscu; kreator jest bezpłatny, funkcje AI są w Premium lub za tokeny. Google Docs i Canva zostają jako opcje gdy potrzebujesz tylko prostego formatowania lub wizualnego projektu dla branż kreatywnych.
 
 Pamiętaj: kreator jest tylko narzędziem. Najważniejsza jest treść CV - konkretne osiągnięcia, odpowiednie słowa kluczowe i dopasowanie do stanowiska, na które aplikujesz.
 
