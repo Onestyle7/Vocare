@@ -27,9 +27,13 @@ import { trackEvent } from '@/lib/utils/tracking';
 
 import { SignUpFormType, signUpSchema } from '../dal/schemas';
 
-export function SignUpForm() {
+export function SignUpForm({ callbackUrl }: { callbackUrl?: string } = {}) {
   const [isRegisterPending, startTransition] = useTransition();
   const router = useRouter();
+  // Keeps the tool the visitor came for, so signing in after registration lands them there
+  const signInHref = callbackUrl
+    ? `/sign-in?callbackUrl=${encodeURIComponent(callbackUrl)}`
+    : '/sign-in';
 
   const resolver = zodResolver(signUpSchema);
   const form = useForm<SignUpFormType>({
@@ -55,7 +59,7 @@ export function SignUpForm() {
 
       trackEvent('CompleteRegistration', { method: 'email' });
       toast.success(getRegistrationToastMessage(data.welcomeBonus, data.consentDiscount));
-      router.push('/sign-in');
+      router.push(signInHref);
     });
   };
 
@@ -145,7 +149,7 @@ export function SignUpForm() {
           <div className="flex items-center">
             <p>Masz już konto?</p>
             <Link
-              href="/sign-in"
+              href={signInHref}
               className="relative ml-2 font-semibold text-[#915EFF] transition duration-300 after:absolute after:bottom-0 after:left-0 after:h-[2px] after:w-0 after:bg-[#915EFF] after:transition-all after:duration-300 after:content-[''] hover:after:w-full"
             >
               Zaloguj się

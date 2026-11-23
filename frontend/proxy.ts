@@ -7,6 +7,11 @@ import {
   RESET_PASSWORD_PATH,
   serializeResetPasswordLink,
 } from '@/features/auth/reset-password-link';
+import {
+  SESSION_EXPIRED_REASON,
+  SESSION_MARKER,
+  SESSION_MARKER_COOKIE,
+} from '@/features/auth/session-marker';
 
 export async function proxy(request: NextRequest) {
   const response =
@@ -108,13 +113,32 @@ async function authProxy(request: NextRequest) {
     isRestrictedPath(request.nextUrl.pathname) &&
     !isPublicAssetPath(request.nextUrl.pathname)
   ) {
-    const signInUrl = new URL('/sign-in', request.url);
-    signInUrl.searchParams.append('callbackUrl', request.nextUrl.pathname);
-    signInUrl.searchParams.append('reason', 'Sesja wygasła. Zaloguj się ponownie');
-    return NextResponse.redirect(signInUrl);
+    return redirectToAuth(request);
   }
 
   return response;
+}
+
+/**
+ * Most "Sprawdź za darmo" buttons on the marketing pages link to /dashboard. Without a token that
+ * used to land everyone on /sign-in with "Sesja wygasła", including people who never had an account.
+ */
+function redirectToAuth(request: NextRequest) {
+  const marker = request.cookies.get(SESSION_MARKER_COOKIE)?.value;
+  const callbackUrl = request.nextUrl.pathname;
+
+  if (marker !== SESSION_MARKER.active && marker !== SESSION_MARKER.signedOut) {
+    const signUpUrl = new URL('/sign-up', request.url);
+    signUpUrl.searchParams.append('callbackUrl', callbackUrl);
+    return NextResponse.redirect(signUpUrl);
+  }
+
+  const signInUrl = new URL('/sign-in', request.url);
+  signInUrl.searchParams.append('callbackUrl', callbackUrl);
+  if (marker === SESSION_MARKER.active) {
+    signInUrl.searchParams.append('reason', SESSION_EXPIRED_REASON);
+  }
+  return NextResponse.redirect(signInUrl);
 }
 
 const authPages = ['/sign-in', '/sign-up', '/forgot-password', '/reset-password'];

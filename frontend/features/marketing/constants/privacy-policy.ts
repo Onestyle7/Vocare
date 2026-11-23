@@ -123,6 +123,7 @@ export const privacy_policy: {
           text: 'Cookies niezbędne (ustawiamy je my i tylko my mamy do nich dostęp):',
           items: [
             'token, userId - utrzymanie sesji zalogowanego Użytkownika, 1 godzina,',
+            'vc_session - zapamiętanie, czy na tym urządzeniu ktoś się już logował (zawiera tylko stan „zalogowany” lub „wylogowany”, bez identyfikatora), żeby po wygaśnięciu sesji pokazać ekran logowania zamiast rejestracji, 90 dni,',
             'cookie_consent, ads_consent - zapamiętanie Twoich decyzji dotyczących cookies, 12 miesięcy,',
             'consent_id - losowy identyfikator, który łączy Twoje decyzje dotyczące cookies z ich zapisem po naszej stronie (dowód wyrażenia lub wycofania zgody), 12 miesięcy,',
             'oAuthState, oauthCallbackUrl - bezpieczne logowanie przez Google, 10 minut,',

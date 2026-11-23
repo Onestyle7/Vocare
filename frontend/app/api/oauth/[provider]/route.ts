@@ -7,6 +7,11 @@ import { AUTH_COOKIE_OPTIONS } from '@/features/auth/auth-cookie';
 import { getOAuthEndpoint } from '@/features/auth/dal/api';
 import { verifyOauthTokenService } from '@/features/auth/dal/services';
 import { getOauthClient, oAuthProviders, STATE_COOKIE_KEY } from '@/features/auth/oauth/base';
+import {
+  SESSION_MARKER,
+  SESSION_MARKER_COOKIE,
+  SESSION_MARKER_COOKIE_OPTIONS,
+} from '@/features/auth/session-marker';
 import { ADS_CONSENT_KEY, COOKIE_CONSENT_KEY, hasTrackingConsent } from '@/lib/utils/consent';
 import { NEW_OAUTH_USER_COOKIE } from '@/lib/utils/tracker-data';
 
@@ -57,6 +62,7 @@ export async function GET(
   }
 
   cookieStore.set('userId', result.value.userId, AUTH_COOKIE_OPTIONS);
+  cookieStore.set(SESSION_MARKER_COOKIE, SESSION_MARKER.active, SESSION_MARKER_COOKIE_OPTIONS);
 
   // The cookie only carries the sign-up to the tools the visitor accepted, so it needs that consent
   const canReportRegistration = hasTrackingConsent(

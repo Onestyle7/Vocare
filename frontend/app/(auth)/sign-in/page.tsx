@@ -1,3 +1,5 @@
+import { safeCallbackPath } from '@/features/auth/session-marker';
+
 import { SignInFrom } from '../../../features/auth/components/SignInForm';
 
 export default async function SignIn({
@@ -8,7 +10,7 @@ export default async function SignIn({
   const { reason, callbackUrl } = await searchParams;
   return (
     <>
-      <SignInFrom reason={reason} callbackUrl={callbackUrl} />
+      <SignInFrom reason={reason} callbackUrl={safeCallbackPath(callbackUrl)} />
     </>
   );
 }
