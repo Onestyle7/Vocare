@@ -1,0 +1,6 @@
+User-Agent: *
+Allow: /
+Disallow: /api/
+
+Host: https://vocare.pl
+Sitemap: https://vocare.pl/sitemap.xml

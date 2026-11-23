@@ -1,0 +1,281 @@
+{
+  "summary": {
+    "health_score": 70,
+    "business_type": "SaaS + Publisher (blog)",
+    "top_findings": [
+      "Fałszywe 'bezpłatnie' w artykułach o kreatorze CV (sprzeczne z /pricing)",
+      "CTA 'Sprawdź za darmo' prowadzi do logowania z komunikatem 'Sesja wygasła' (proxy.ts:113)",
+      "/resume-creator to landing, SERP 'kreator cv' wymaga działającego narzędzia; 3 URL kanibalizują frazę",
+      "Brak autorów-osób i strony O nas przy treściach YMYL",
+      "LCP mobile 4,7-6,4 s: baner cookies jako LCP + 3 blokujące @import fontów"
+    ],
+    "quick_wins": [
+      "Przepisać opis darmowy-kreator-cv",
+      "CTA -> /sign-up, reason tylko przy wygasłej sesji",
+      "next/font zamiast @import w globals.css",
+      "poweredByHeader:false, HSTS preload, ujednolicić URL home i LinkedIn",
+      "JSON-LD SoftwareApplication/WebApplication na /pricing, /resume-creator, /salary-calculator"
+    ]
+  },
+  "categories": [
+    {
+      "name": "Technical SEO",
+      "score": 84,
+      "what_works": [
+        "141/141 URL 200, indeksowalne, self-canonical",
+        "Poprawne redirecty http/www/slash/lowercase",
+        "Prerender SSR, brotli, TTFB < 200 ms",
+        "Prawdziwe 404"
+      ],
+      "findings": [
+        {
+          "title": "/blog bez paginacji, 709 KB HTML",
+          "severity": "Medium",
+          "description": "?page=2 zwraca ten sam dokument; app/blog/page.tsx:5,7",
+          "recommendation": "Paginacja SSR"
+        },
+        {
+          "title": "CSP tylko Report-Only",
+          "severity": "Medium",
+          "description": "next.config.ts:15-46, unsafe-inline",
+          "recommendation": "Wymusić CSP z nonce"
+        },
+        {
+          "title": "Nagłówki bezpieczeństwa",
+          "severity": "Low",
+          "description": "HSTS bez preload, X-Powered-By, brak Permissions-Policy",
+          "recommendation": "next.config.ts"
+        },
+        {
+          "title": "Niespójny URL strony głównej",
+          "severity": "Low",
+          "description": "sitemap z /, canonical bez /",
+          "recommendation": "Ujednolicić"
+        }
+      ]
+    },
+    {
+      "name": "Content Quality",
+      "score": 56,
+      "what_works": [
+        "Wzorcowe artykuły finansowe ze źródłami",
+        "Najważniejsze wnioski + FAQ + tabele",
+        "Linki do produktu w każdym artykule"
+      ],
+      "findings": [
+        {
+          "title": "Fałszywe 'bezpłatnie'",
+          "severity": "High",
+          "description": "darmowy-kreator-cv.md:3 obiecuje darmową analizę AI; /pricing 10/20 tokenów",
+          "recommendation": "Przepisać"
+        },
+        {
+          "title": "Brak autorów przy YMYL",
+          "severity": "High",
+          "description": "127/127 'Autor: Vocare', /about 404",
+          "recommendation": "Person + reviewer + /o-nas"
+        },
+        {
+          "title": "Cienkie treści prawne",
+          "severity": "High",
+          "description": "60/127 < 800 słów; 9 prawnych bez źródła urzędowego",
+          "recommendation": "Rozbudować wg wzorca L4"
+        },
+        {
+          "title": "Ślady masowej produkcji",
+          "severity": "High",
+          "description": "Szablonowe akapity, 92 daty na 3 dniach",
+          "recommendation": "updatedAt tylko przy zmianie merytorycznej"
+        },
+        {
+          "title": "Kanibalizacja w klastrze CV",
+          "severity": "High",
+          "description": "list motywacyjny x2, doradca/doradztwo, kreator x3",
+          "recommendation": "301 wg ACTION-PLAN 2.1"
+        }
+      ]
+    },
+    {
+      "name": "On-Page SEO",
+      "score": 74,
+      "what_works": [
+        "Unikalne title/description",
+        "1 H1 = title w artykułach"
+      ],
+      "findings": [
+        {
+          "title": "H1 bez fraz na /blog, /pricing, /assistant",
+          "severity": "Medium",
+          "description": "",
+          "recommendation": "Dodać frazy"
+        },
+        {
+          "title": "99/127 tytułów > 60 znaków",
+          "severity": "Low",
+          "description": "",
+          "recommendation": "Skrócić"
+        },
+        {
+          "title": "CTA per kategoria",
+          "severity": "Medium",
+          "description": "promo.ts",
+          "recommendation": "CTA per artykuł"
+        }
+      ]
+    },
+    {
+      "name": "Schema / Structured Data",
+      "score": 59,
+      "what_works": [
+        "Kompletny BlogPosting + BreadcrumbList",
+        "Organization z sameAs"
+      ],
+      "findings": [
+        {
+          "title": "Brak JSON-LD na stronach produktowych",
+          "severity": "High",
+          "description": "/pricing, /resume-creator, /salary-calculator, /blog",
+          "recommendation": "Snippety w findings/schema.md"
+        },
+        {
+          "title": "Brak @id między encjami",
+          "severity": "Medium",
+          "description": "",
+          "recommendation": "Snippet D"
+        }
+      ]
+    },
+    {
+      "name": "Performance (CWV)",
+      "score": 78,
+      "what_works": [
+        "Desktop 97-98",
+        "TBT 0-65 ms",
+        "Trackery po zgodzie"
+      ],
+      "findings": [
+        {
+          "title": "LCP mobile = baner cookies",
+          "severity": "High",
+          "description": "CookieBanner.tsx:43 useEffect; LCP 4,7-6,4 s",
+          "recommendation": "Kompaktowy baner, hero bez opacity-0"
+        },
+        {
+          "title": "Render-blocking Google Fonts",
+          "severity": "High",
+          "description": "globals.css:1-3, 3x @import",
+          "recommendation": "next/font"
+        },
+        {
+          "title": "Ciężka hydratacja home",
+          "severity": "Medium",
+          "description": "sekcje 'use client', GSAP w bundlu",
+          "recommendation": "next/dynamic"
+        }
+      ]
+    },
+    {
+      "name": "AI Search Readiness",
+      "score": 60,
+      "what_works": [
+        "Boty AI nie blokowane",
+        "SSR, daty spójne"
+      ],
+      "findings": [
+        {
+          "title": "Słaba encja marki",
+          "severity": "High",
+          "description": "Brak O nas, kolizja z Vocare UK",
+          "recommendation": "/o-nas + disambiguatingDescription"
+        },
+        {
+          "title": "Statystyki bez źródeł",
+          "severity": "Medium",
+          "description": "22 artykuły",
+          "recommendation": "Dodać źródła"
+        }
+      ]
+    },
+    {
+      "name": "Images",
+      "score": 74,
+      "what_works": [
+        "AVIF/WebP, fetchpriority hero"
+      ],
+      "findings": [
+        {
+          "title": "Puste alt na kartach bloga",
+          "severity": "Medium",
+          "description": "home, 3 obrazy",
+          "recommendation": "Opisowe alt"
+        },
+        {
+          "title": "career-path.webp ciężki",
+          "severity": "Medium",
+          "description": "224-379 KB",
+          "recommendation": "Rekompresja"
+        },
+        {
+          "title": "Brak sizes na hero mobile",
+          "severity": "Low",
+          "description": "w=1920 na 390px",
+          "recommendation": "sizes"
+        }
+      ]
+    }
+  ],
+  "action_plan": {
+    "phases": [
+      {
+        "name": "Phase 1: Critical Fixes",
+        "timeframe": "Week 1",
+        "items": [
+          "Usunąć fałszywe 'bezpłatnie'",
+          "Naprawić CTA i komunikat Sesja wygasła",
+          "next/font",
+          "Kompaktowy baner cookies",
+          "Drobne nagłówki/metadane",
+          "Podłączyć GSC + Bing WMT"
+        ]
+      },
+      {
+        "name": "Phase 2: High-Impact Improvements",
+        "timeframe": "Weeks 2-3",
+        "items": [
+          "301 kanibalizujących artykułów",
+          "/resume-creator jako narzędzie",
+          "/o-nas + Organization",
+          "Autorzy-osoby YMYL",
+          "JSON-LD produktowe",
+          "Paginacja /blog",
+          "Lżejsza strona główna"
+        ]
+      },
+      {
+        "name": "Phase 3: Content & Authority",
+        "timeframe": "Month 2",
+        "items": [
+          "Treści prawno-finansowe ze źródłami",
+          "najlepiej-platne-zawody",
+          "Linkowanie do filarów i kalkulatora",
+          "Leady answer-first",
+          "Nowe treści z luk",
+          "Link building"
+        ]
+      },
+      {
+        "name": "Phase 4: Monitoring & Iteration",
+        "timeframe": "Ongoing",
+        "items": [
+          "/seo drift baseline + compare",
+          "Miesięczny przegląd GSC i Speed Insights",
+          "Polityka treningu AI w robots.txt"
+        ]
+      }
+    ]
+  },
+  "artifacts": {
+    "findings_dir": "findings/",
+    "screenshots_dir": "screenshots/"
+  }
+}
