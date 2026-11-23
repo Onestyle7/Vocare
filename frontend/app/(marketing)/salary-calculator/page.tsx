@@ -1,8 +1,10 @@
 import type { Metadata } from 'next';
 
 import Header from '@/components/SectionsComponents/Header';
+import { JsonLd } from '@/components/seo/JsonLd';
 import { PromoBar } from '@/features/marketing/components/PromoSticky';
 import { buildMarketingMetadata } from '@/features/marketing/utils/metadata';
+import { buildPageBreadcrumbJsonLd } from '@/features/marketing/utils/structuredData';
 import SalaryCalculator from '@/features/salary-calculator/components/SalaryCalculator';
 import SalaryCalculatorGuide from '@/features/salary-calculator/components/SalaryCalculatorGuide';
 
@@ -19,6 +21,7 @@ export const metadata: Metadata = buildMarketingMetadata({
 export default function SalaryCalculatorPage() {
   return (
     <main className="w-full overflow-x-hidden">
+      <JsonLd data={buildPageBreadcrumbJsonLd('Kalkulator wynagrodzeń', '/salary-calculator')} />
       <Header />
 
       <section className="relative -mt-21 px-4 pt-30 pb-12 md:pb-20">

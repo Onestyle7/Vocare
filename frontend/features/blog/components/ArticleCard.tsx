@@ -4,9 +4,16 @@ import Image from 'next/image';
 import { Badge } from '@/components/ui/badge';
 import { Card, CardContent, CardFooter } from '@/components/ui/card';
 
-import { ArticleMetadata } from '../types';
+import type { ArticleSearchItem } from '../utils/pagination';
 
-export default function ArticleCard({ article }: { article: ArticleMetadata }) {
+export default function ArticleCard({
+  article,
+  priority = false,
+}: {
+  article: ArticleSearchItem;
+  /** For the first cards of a listing: their cover is the LCP image, so it must not be lazy. */
+  priority?: boolean;
+}) {
   return (
     <Card className="group bg-card hover:border-primary flex h-full flex-col overflow-hidden rounded-xl border-2 border-transparent pt-0 text-left duration-300 hover:-translate-y-2 hover:border-2">
       <div className="bg-muted relative aspect-video w-full overflow-hidden">
@@ -14,6 +21,7 @@ export default function ArticleCard({ article }: { article: ArticleMetadata }) {
           src={article.coverImage}
           fill
           alt={article.title}
+          priority={priority}
           sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
           className="object-cover object-center transition-transform duration-500 group-hover:scale-105"
         />

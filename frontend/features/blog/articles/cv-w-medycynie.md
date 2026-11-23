@@ -10,7 +10,7 @@ tags: ['cv pielęgniarki', 'cv lekarza', 'cv w medycynie', 'cv zawody medyczne',
 slug: 'cv-w-medycynie'
 ---
 
-Zawody medyczne rządzą się w rekrutacji innymi zasadami niż większość branż - kluczowe są tu uprawnienia formalne, nie tylko doświadczenie. **CV w medycynie** to dokument, który musi jasno pokazywać prawo wykonywania zawodu, specjalizacje i konkretne kompetencje kliniczne, bo pracodawca prawnie nie może zatrudnić osoby bez odpowiednich uprawnień - zgodnie z wymaganiami opisanymi na [oficjalnym portalu Ministerstwa Zdrowia](https://www.gov.pl/web/zdrowie/uzyskaj-prawo-wykonywania-zawodu-pielegniarki-lub-poloznej-na-okreslony-zakres-czynnosci-zawodowych-czas-i-miejsce-zatrudnienia-w-polsce).
+Zawody medyczne rządzą się w rekrutacji innymi zasadami niż większość branż - kluczowe są tu uprawnienia formalne, nie tylko doświadczenie. **CV w medycynie** to dokument, który musi jasno pokazywać prawo wykonywania zawodu, specjalizacje i konkretne kompetencje kliniczne, bo pracodawca prawnie nie może zatrudnić osoby bez odpowiednich uprawnień - zgodnie z wymaganiami opisanymi na [oficjalnym portalu Ministerstwa Zdrowia](https://www.gov.pl/web/zdrowie/uzyskaj-prawo-wykonywania-zawodu-pielegniarki-lub-poloznej-na-okreslony-zakres-czynnosci-zawodowych-czas-i-miejsce-zatrudnienia-w-polsce). Jak zbudować sam dokument krok po kroku, opisujemy w [poradniku, jak napisać CV](/blog/cv/cv); tutaj skupiamy się na wymogach zawodów medycznych.
 
 > **Najważniejsze wnioski**
 > - Numer prawa wykonywania zawodu (PWZ) i status w rejestrze okręgowej izby to informacje, które powinny pojawić się w CV od razu, nie dopiero na rozmowie

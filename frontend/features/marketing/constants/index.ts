@@ -383,7 +383,7 @@ export const links_social = [
   { name: 'TIKTOK', url: 'https://www.tiktok.com/@vocare.pl?is_from_webapp=1&sender_device=pc' },
   { name: 'INSTAGRAM', url: 'https://www.instagram.com/vocare.pl/' },
   { name: 'FACEBOOK', url: 'https://www.facebook.com/profile.php?id=61583477355189' },
-  { name: 'LINKEDIN', url: 'https://www.linkedin.com/company/110046691' },
+  { name: 'LINKEDIN', url: 'https://www.linkedin.com/company/vocarepl/' },
 ];
 
 // Public landing pages only: '/profile' and '/resume' never existed as routes

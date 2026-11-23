@@ -10,7 +10,7 @@ tags: ['assessment center', 'jak przygotować się do assessment center', 'rekru
 slug: 'assessment-center'
 ---
 
-Zaproszenie na assessment center zamiast klasycznej rozmowy o pracę potrafi wywołać dodatkowy stres - to dłuższy, bardziej wymagający format rekrutacji, stosowany zwykle przy stanowiskach managerskich, programach graduate lub rolach wymagających konkretnych kompetencji miękkich. **Assessment center** to nie jeden test, tylko seria zadań oceniających Cię z różnych perspektyw jednocześnie.
+Zaproszenie na assessment center zamiast klasycznej rozmowy o pracę potrafi wywołać dodatkowy stres - to dłuższy, bardziej wymagający format rekrutacji, stosowany zwykle przy stanowiskach managerskich, programach graduate lub rolach wymagających konkretnych kompetencji miękkich. **Assessment center** to nie jeden test, tylko seria zadań oceniających Cię z różnych perspektyw jednocześnie. To jeden z etapów, na które możesz trafić w procesie opisanym w [przewodniku, jak znaleźć pracę](/blog/praca/jak-znalezc-prace).
 
 > **Najważniejsze wnioski**
 > - Assessment center trwa zwykle pół dnia do całego dnia i łączy kilka metod oceny: zadania indywidualne, grupowe, symulacje i wywiady

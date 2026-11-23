@@ -19,6 +19,11 @@ import {
   RESET_PASSWORD_COOKIE,
   RESET_PASSWORD_PATH,
 } from '@/features/auth/reset-password-link';
+import {
+  SESSION_MARKER,
+  SESSION_MARKER_COOKIE,
+  SESSION_MARKER_COOKIE_OPTIONS,
+} from '@/features/auth/session-marker';
 import { actionErr, actionOk } from '@/lib/types/result';
 
 import {
@@ -56,6 +61,7 @@ export async function signIn(command: SignInCommand) {
     (signInResult) => {
       cookieStore.set('token', signInResult.accessToken, AUTH_COOKIE_OPTIONS);
       cookieStore.set('userId', signInResult.userId, AUTH_COOKIE_OPTIONS);
+      cookieStore.set(SESSION_MARKER_COOKIE, SESSION_MARKER.active, SESSION_MARKER_COOKIE_OPTIONS);
       return actionOk({ success: true });
     },
     (error) => actionErr(error)
@@ -81,6 +87,7 @@ export async function logOut() {
   await logoutService();
   cookieStore.delete('token');
   cookieStore.delete('userId');
+  cookieStore.set(SESSION_MARKER_COOKIE, SESSION_MARKER.signedOut, SESSION_MARKER_COOKIE_OPTIONS);
   revalidatePath('/', 'layout');
   return actionOk({ success: true });
 }
@@ -128,6 +135,7 @@ export async function deleteAccount(command?: DeleteAccountCommand) {
     () => {
       cookieStore.delete('token');
       cookieStore.delete('userId');
+      cookieStore.delete(SESSION_MARKER_COOKIE);
       return actionOk({ success: true });
     },
     (error) => actionErr(error)

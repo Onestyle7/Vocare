@@ -9,6 +9,7 @@ category: 'praca'
 coverImage: '/images/blog/job-search.webp'
 tags: ['umowa o dzieło', 'umowa o dzieło a zlecenie', 'umowa o dzieło zus', 'koszty uzyskania przychodu 50%', 'prawa autorskie umowa o dzieło']
 slug: 'umowa-o-dzielo'
+promo: 'salary'
 ---
 
 Brak obowiązkowych składek ZUS sprawia, że ta forma umowy bywa kusząca - ale nie każde zadanie kwalifikuje się prawnie jako "dzieło". **Umowa o dzieło** to umowa cywilnoprawna zobowiązująca do osiągnięcia konkretnego, mierzalnego rezultatu, [w przeciwieństwie do umowy zlecenia, która polega na starannym wykonywaniu czynności](https://www.vatax.pl/blog/umowa-zlecenie-a-umowa-o-dzielo-co-wybrac) - to rozróżnienie ma kluczowe znaczenie dla rozliczeń podatkowych i ZUS.
@@ -35,7 +36,7 @@ Brak obowiązkowych składek ZUS sprawia, że ta forma umowy bywa kusząca - ale
 
 ## Jak działają koszty uzyskania przychodu (KUP)?
 
-Standardowa umowa o dzieło korzysta z 20% kosztów uzyskania przychodu, co obniża podstawę opodatkowania. Jeśli umowa zawiera zapis o przeniesieniu praw autorskich do dzieła o charakterze twórczym (np. tekst, projekt graficzny, program komputerowy), koszty te wzrastają do 50% - ale tylko do [rocznego limitu 120 000 zł](https://www.pit.pl/koszty-uzyskania-pity-roczne/), liczonego łącznie ze wszystkimi źródłami korzystającymi z tej podwyższonej stawki.
+Standardowa umowa o dzieło korzysta z 20% kosztów uzyskania przychodu, co obniża podstawę opodatkowania. Jeśli umowa zawiera zapis o przeniesieniu praw autorskich do dzieła o charakterze twórczym (np. tekst, projekt graficzny, program komputerowy), koszty te wzrastają do 50% - ale tylko do [rocznego limitu 120 000 zł](https://www.pit.pl/koszty-uzyskania-pity-roczne/), liczonego łącznie ze wszystkimi źródłami korzystającymi z tej podwyższonej stawki. Różnicę między 20% a 50% kosztów najłatwiej zobaczyć na konkretnej kwocie - w [kalkulatorze wynagrodzeń](/salary-calculator) zaznacz opcję umowy o dzieło z prawami autorskimi.
 
 **Co się dzieje po przekroczeniu limitu?** Nadwyżka honorarium ponad 120 000 zł rozliczana jest już bez podwyższonych kosztów - przy umowie o dzieło wraca do standardowych 20%. Limit obejmuje wszystkie źródła łącznie, więc twórca z etatem autorskim i dodatkowymi umowami o dzieło musi sumować je samodzielnie.
 

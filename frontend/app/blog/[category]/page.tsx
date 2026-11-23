@@ -12,6 +12,7 @@ import {
 } from '@/features/blog/utils/constants';
 import { PromoBar } from '@/features/marketing/components/PromoSticky';
 import { getPromoVariantForCategory } from '@/features/marketing/constants/promo';
+import { SCHEMA_IDS } from '@/features/marketing/utils/structuredData';
 
 type CategoryProps = {
   params: Promise<{ category: string }>;
@@ -101,6 +102,7 @@ export default async function BlogCategoryPage({ params }: CategoryProps) {
     inLanguage: 'pl-PL',
     isPartOf: {
       '@type': 'Blog',
+      '@id': SCHEMA_IDS.blog(),
       name: 'Blog Vocare',
       url: toAbsoluteUrl('/blog'),
     },

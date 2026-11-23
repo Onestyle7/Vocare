@@ -10,7 +10,7 @@ tags: ['cv nauczyciela', 'cv do szkoły', 'jak napisać cv nauczyciela', 'kwalif
 slug: 'cv-nauczyciela'
 ---
 
-Kwalifikacje formalne to warunek konieczny, ale nie wystarczający - dyrektorzy szkół i platformy edukacyjne szukają dziś czegoś więcej niż samego dyplomu. **CV nauczyciela** to dokument, który musi jasno pokazywać kwalifikacje pedagogiczne wymagane prawem oświatowym, ale wyróżnia się dopiero wtedy, gdy pokazuje konkretne, mierzalne rezultaty pracy z uczniami.
+Kwalifikacje formalne to warunek konieczny, ale nie wystarczający - dyrektorzy szkół i platformy edukacyjne szukają dziś czegoś więcej niż samego dyplomu. **CV nauczyciela** to dokument, który musi jasno pokazywać kwalifikacje pedagogiczne wymagane prawem oświatowym, ale wyróżnia się dopiero wtedy, gdy pokazuje konkretne, mierzalne rezultaty pracy z uczniami. Uniwersalną strukturę dokumentu opisujemy w [poradniku o tym, jak napisać CV](/blog/cv/cv); poniżej tylko to, czego wymaga rekrutacja w oświacie.
 
 > **Najważniejsze wnioski**
 > - Kwalifikacje formalne (dyplom, przygotowanie pedagogiczne, stopień awansu zawodowego) muszą być widoczne w CV od razu, bo to warunek dopuszczenia do rekrutacji

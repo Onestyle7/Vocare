@@ -8,6 +8,8 @@ namespace VocareWebAPI.Migrations
     /// Terms version of 02.11.2026 (trial, quarterly plan, consent discount instead of welcome tokens).
     /// Dates must match TERMS_VERSION (frontend/features/marketing/constants/legal.ts)
     /// and termsOfService20261013Validity – if the deployment moves, update them in all places.
+    /// The publication moved to 17.11.2026: PostponeTermsOfServiceVersion20261117 renames this
+    /// version to 2026-11-17 and sets ValidFrom to 02.12.2026.
     /// </summary>
     public partial class AddTermsOfServiceVersion20261102 : Migration
     {

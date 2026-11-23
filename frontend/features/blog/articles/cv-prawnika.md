@@ -11,7 +11,7 @@ tags: ['cv prawnika', 'cv aplikanta radcowskiego', 'cv do kancelarii', 'jak napi
 slug: 'cv-prawnika'
 ---
 
-Kancelarie i działy prawne dostają dziesiątki CV o niemal identycznej strukturze - wydział prawa, aplikacja, staż. **CV prawnika** wyróżnia się dopiero wtedy, gdy jasno pokazuje etap uprawnień zawodowych i konkretną specjalizację, a nie ogólne "prawo cywilne i gospodarcze" bez kontekstu. Sam wpis na listę radców prawnych wymaga [ukończenia aplikacji trwającej trzy lata i zdania egzaminu zawodowego](https://www.biznes.gov.pl/pl/portal/ou182), więc jasne wskazanie etapu tej drogi jest w CV kluczowe. **CV prawnika** to dokument, w którym etap uprawnień zawodowych jest informacją nadrzędną wobec doświadczenia - określa, jakie czynności wolno Ci wykonywać samodzielnie.
+Kancelarie i działy prawne dostają dziesiątki CV o niemal identycznej strukturze - wydział prawa, aplikacja, staż. **CV prawnika** wyróżnia się dopiero wtedy, gdy jasno pokazuje etap uprawnień zawodowych i konkretną specjalizację, a nie ogólne "prawo cywilne i gospodarcze" bez kontekstu. Sam wpis na listę radców prawnych wymaga [ukończenia aplikacji trwającej trzy lata i zdania egzaminu zawodowego](https://www.biznes.gov.pl/pl/portal/ou182), więc jasne wskazanie etapu tej drogi jest w CV kluczowe. **CV prawnika** to dokument, w którym etap uprawnień zawodowych jest informacją nadrzędną wobec doświadczenia - określa, jakie czynności wolno Ci wykonywać samodzielnie. Podstawy, czyli kolejność sekcji, długość i format, są w [przewodniku po CV](/blog/cv/cv), a tu znajdziesz to, na co patrzą kancelarie.
 
 > **Najważniejsze wnioski**
 > - Etap uprawnień (student, aplikant, radca prawny, adwokat) musi być jasny od razu - to pierwsza rzecz, którą sprawdza rekruter kancelarii

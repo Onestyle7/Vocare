@@ -11,7 +11,7 @@ tags: ['cv managera', 'cv na stanowisko kierownicze', 'cv dla managera', 'kompet
 slug: 'cv-managera'
 ---
 
-CV specjalisty koncentruje się na indywidualnych osiągnięciach - CV managera musi pokazać coś więcej: umiejętność prowadzenia zespołu, podejmowania decyzji strategicznych i wpływania na wyniki poprzez innych ludzi, nie tylko własną pracę. **CV managera** ocenia się inaczej niż CV specjalisty - rekruter szuka dowodów przywództwa, nie tylko kompetencji technicznych. **CV managera** to dokument aplikacyjny, w którym jednostką osiągnięcia jest wynik zespołu, a nie samodzielnie wykonane zadanie.
+CV specjalisty koncentruje się na indywidualnych osiągnięciach - CV managera musi pokazać coś więcej: umiejętność prowadzenia zespołu, podejmowania decyzji strategicznych i wpływania na wyniki poprzez innych ludzi, nie tylko własną pracę. **CV managera** ocenia się inaczej niż CV specjalisty - rekruter szuka dowodów przywództwa, nie tylko kompetencji technicznych. **CV managera** to dokument aplikacyjny, w którym jednostką osiągnięcia jest wynik zespołu, a nie samodzielnie wykonane zadanie. Jeśli dopiero porządkujesz podstawy dokumentu, zacznij od [przewodnika po pisaniu CV](/blog/cv/cv) - ten tekst dotyczy wyłącznie ról kierowniczych.
 
 > **Najważniejsze wnioski**
 > - Osiągnięcia w CV managera powinny pokazywać wpływ na zespół i wyniki biznesowe, nie tylko osobiste kompetencje

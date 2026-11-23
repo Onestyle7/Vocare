@@ -1,0 +1,182 @@
+{
+  "status": "success",
+  "data": {
+    "target_url": "https://vocare.pl",
+    "summary": {
+      "total": 13,
+      "verified": 4,
+      "lost": 0,
+      "moved": 0,
+      "link_removed": 0,
+      "unverifiable_js": 6,
+      "exists": 0,
+      "error": 3
+    },
+    "results": [
+      {
+        "source_url": "https://hotelbas.pl/ile-zarabia-hotelarz-za-granica",
+        "target_url": "https://vocare.pl",
+        "status": "verified",
+        "http_status": 200,
+        "target_found": true,
+        "anchor_text": "przegl\u0105d pracy sezonowej za granic\u0105",
+        "rel_attributes": [
+          "noreferrer",
+          "nofollow"
+        ],
+        "link_context": null,
+        "error": null,
+        "match_type": "domain_match"
+      },
+      {
+        "source_url": "https://pl.linkedin.com/in/jakub-str\u0105g-906b38272",
+        "target_url": "https://vocare.pl",
+        "status": "error",
+        "http_status": 405,
+        "target_found": false,
+        "anchor_text": null,
+        "rel_attributes": [],
+        "link_context": null,
+        "error": null
+      },
+      {
+        "source_url": "https://pl.linkedin.com/in/rados\u0142aw-kaczmarczyk-466b57282",
+        "target_url": "https://vocare.pl",
+        "status": "error",
+        "http_status": 405,
+        "target_found": false,
+        "anchor_text": null,
+        "rel_attributes": [],
+        "link_context": null,
+        "error": null
+      },
+      {
+        "source_url": "https://pl.linkedin.com/in/tomasz-\u015bmia\u0142ek",
+        "target_url": "https://vocare.pl",
+        "status": "error",
+        "http_status": 405,
+        "target_found": false,
+        "anchor_text": null,
+        "rel_attributes": [],
+        "link_context": null,
+        "error": null
+      },
+      {
+        "source_url": "https://www.reddit.com/r/askcroatia/comments/1qdjim6/cv_maker_besplatni/",
+        "target_url": "https://vocare.pl",
+        "status": "unverifiable_js",
+        "http_status": 200,
+        "target_found": null,
+        "anchor_text": null,
+        "rel_attributes": [],
+        "link_context": null,
+        "error": "Page appears JS-rendered; link may exist but cannot be confirmed via HTTP GET"
+      },
+      {
+        "source_url": "https://www.reddit.com/r/praca/comments/1sangwt/w_kt\u00f3r\u0105_stron\u0119_w_og\u00f3le_p\u00f3j\u015b\u0107/",
+        "target_url": "https://vocare.pl",
+        "status": "unverifiable_js",
+        "http_status": 200,
+        "target_found": null,
+        "anchor_text": null,
+        "rel_attributes": [],
+        "link_context": null,
+        "error": "Page appears JS-rendered; link may exist but cannot be confirmed via HTTP GET"
+      },
+      {
+        "source_url": "https://www.reddit.com/r/praca/comments/1se1q1p/pomys\u0142y_na_\u015bcie\u017ck\u0119_rozwoju/",
+        "target_url": "https://vocare.pl",
+        "status": "unverifiable_js",
+        "http_status": 200,
+        "target_found": null,
+        "anchor_text": null,
+        "rel_attributes": [],
+        "link_context": null,
+        "error": "Page appears JS-rendered; link may exist but cannot be confirmed via HTTP GET"
+      },
+      {
+        "source_url": "https://www.reddit.com/r/praca/comments/1seuul0/praca_po_liceum/",
+        "target_url": "https://vocare.pl",
+        "status": "unverifiable_js",
+        "http_status": 200,
+        "target_found": null,
+        "anchor_text": null,
+        "rel_attributes": [],
+        "link_context": null,
+        "error": "Page appears JS-rendered; link may exist but cannot be confirmed via HTTP GET"
+      },
+      {
+        "source_url": "https://www.reddit.com/r/praca/comments/1sew9bi/m29_pomys\u0142_na_nowy_kierunek_zawodowy/",
+        "target_url": "https://vocare.pl",
+        "status": "unverifiable_js",
+        "http_status": 200,
+        "target_found": null,
+        "anchor_text": null,
+        "rel_attributes": [],
+        "link_context": null,
+        "error": "Page appears JS-rendered; link may exist but cannot be confirmed via HTTP GET"
+      },
+      {
+        "source_url": "https://www.reddit.com/r/praca/comments/1sk1hdo/gdzie_szuka\u0107_pracy_bez_do\u015bwiadczenia_po_liceum/",
+        "target_url": "https://vocare.pl",
+        "status": "unverifiable_js",
+        "http_status": 200,
+        "target_found": null,
+        "anchor_text": null,
+        "rel_attributes": [],
+        "link_context": null,
+        "error": "Page appears JS-rendered; link may exist but cannot be confirmed via HTTP GET"
+      },
+      {
+        "source_url": "https://www.studenckiesprawy.pl/2026/08/jak-napisac-dobre-cv-i-jak-stworzyc-profil-na-linkedin/",
+        "target_url": "https://vocare.pl",
+        "status": "verified",
+        "http_status": 200,
+        "target_found": true,
+        "anchor_text": "Vocare.pl",
+        "rel_attributes": [
+          "noopener"
+        ],
+        "link_context": null,
+        "error": null,
+        "match_type": "domain_match"
+      },
+      {
+        "source_url": "https://wykop.pl/link/7921223/zrobilem-z-kumplem-narzedzie-ktore-pomoze-znalezc-ci-prace",
+        "target_url": "https://vocare.pl",
+        "status": "verified",
+        "http_status": 200,
+        "target_found": true,
+        "anchor_text": "vocare.pl",
+        "rel_attributes": [
+          "follow"
+        ],
+        "link_context": null,
+        "error": null,
+        "match_type": "exact_url"
+      },
+      {
+        "source_url": "https://wykop.pl/ludzie/bartlomiej-klus",
+        "target_url": "https://vocare.pl",
+        "status": "verified",
+        "http_status": 200,
+        "target_found": true,
+        "anchor_text": "vocare.pl",
+        "rel_attributes": [
+          "noopener",
+          "noreferrer",
+          "ugc"
+        ],
+        "link_context": null,
+        "error": null,
+        "match_type": "exact_url"
+      }
+    ]
+  },
+  "error": null,
+  "metadata": {
+    "source": "verify_crawler",
+    "head_only": false,
+    "timestamp": "2026-11-23T16:50:15Z"
+  }
+}

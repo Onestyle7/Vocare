@@ -127,7 +127,7 @@ Pamiętaj o uldze podatkowej dla młodych (PIT 0 do 26. roku życia do limitu 85
 
 ---
 
-Rodzaje pracy dla studenta różnią się elastycznością i wynagrodzeniem, ale wszystkie dobrze opisane w CV budują tę samą przewagę: dowód, że kandydat radzi sobie z wieloma obowiązkami naraz.
+Rodzaje pracy dla studenta różnią się elastycznością i wynagrodzeniem, ale wszystkie dobrze opisane w CV budują tę samą przewagę: dowód, że kandydat radzi sobie z wieloma obowiązkami naraz. Student przed 26. urodzinami zatrudniony na zleceniu nie płaci składek ZUS ani zdrowotnej, a dzięki uldze dla młodych zwykle też podatku - ile dokładnie dostaniesz, policzysz w [kalkulatorze wynagrodzeń](/salary-calculator), zaznaczając opcję dla ucznia lub studenta.
 
 ## Jak pogodzić pracę ze studiami?
 

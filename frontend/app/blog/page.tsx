@@ -1,7 +1,9 @@
 import type { Metadata } from 'next';
 
-import SearchView from '@/features/blog/components/SearchView';
+import { JsonLd } from '@/components/seo/JsonLd';
+import BlogListing from '@/features/blog/components/BlogListing';
 import { PromoBar } from '@/features/marketing/components/PromoSticky';
+import { buildBlogJsonLd } from '@/features/marketing/utils/structuredData';
 
 import { getArticlesMetadata, toAbsoluteUrl } from '../../features/blog/utils/blogUtils';
 import { ARTICLES_FOLDER } from '../../features/blog/utils/constants';
@@ -43,13 +45,14 @@ export default function BlogPage() {
   const articlesMetadata = getArticlesMetadata(ARTICLES_FOLDER);
   return (
     <section className="py-10 text-center md:py-20">
+      <JsonLd data={buildBlogJsonLd()} />
       <h1 className="font-poppins text-4xl font-medium text-balance md:text-6xl">
         Odkryj swój <br /> <span className="text-muted-foreground">potencjał z Vocare</span>
       </h1>
       <p className="text-muted-foreground font-poppins mt-4 text-xl font-extralight text-balance md:mt-8">
         Wiedza, trendy rynkowe i porady zawodowe w jednym miejscu
       </p>
-      <SearchView articlesMetadata={articlesMetadata} />
+      <BlogListing articles={articlesMetadata} page={1} />
       <PromoBar variant="cv" />
     </section>
   );

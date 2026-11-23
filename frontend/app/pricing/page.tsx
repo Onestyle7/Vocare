@@ -2,12 +2,14 @@ import type { Metadata } from 'next';
 import Image from 'next/image';
 
 import Header from '@/components/SectionsComponents/Header';
+import { JsonLd } from '@/components/seo/JsonLd';
 import Copy from '@/components/SupportComponents/Copy';
 import { PricingFaq } from '@/features/billing/components/PricingFaq';
 import { PricingInteractive } from '@/features/billing/components/PricingInteractive';
 import { PricingViewTracker } from '@/features/billing/components/PricingViewTracker';
 import { curve_pricing } from '@/features/marketing/constants';
 import { buildMarketingMetadata } from '@/features/marketing/utils/metadata';
+import { buildPageBreadcrumbJsonLd } from '@/features/marketing/utils/structuredData';
 
 import Footer from '../(marketing)/assistant/components/Footer';
 import Maintenance from '../maintenance/page';
@@ -25,6 +27,7 @@ export default async function PricingPage() {
 
   return (
     <main>
+      <JsonLd data={buildPageBreadcrumbJsonLd('Cennik', '/pricing')} />
       {isMaintenance ? (
         <Maintenance />
       ) : (

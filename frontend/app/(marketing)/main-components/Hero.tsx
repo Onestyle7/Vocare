@@ -2,12 +2,10 @@
 
 import { ChevronRight } from 'lucide-react';
 import Image from 'next/image';
-import { useRef } from 'react';
 
 import Header from '@/components/SectionsComponents/Header';
 import Button from '@/components/ui/assistant-button';
 import { dashboard_img_2, expand_icon } from '@/features/marketing/constants';
-import { useHeroDashboardAnimation } from '@/features/marketing/constants/animations';
 
 import { LightBeam } from './light-beam';
 
@@ -22,10 +20,6 @@ const heroStats = [
 ];
 
 const Hero = () => {
-  const dashboardImageRef = useRef<HTMLDivElement>(null);
-
-  useHeroDashboardAnimation(dashboardImageRef);
-
   const scrollToFeatures = () => {
     const featuresSection = document.getElementById('explore');
     if (featuresSection) {
@@ -112,10 +106,9 @@ const Hero = () => {
               </div>
             </div>
 
-            <div
-              ref={dashboardImageRef}
-              className="relative flex w-[calc(100%+1rem)] justify-center opacity-0 sm:w-[calc(100%+2rem)] md:w-[calc(100%+3rem)] xl:w-full xl:min-w-0 xl:items-center xl:justify-end"
-            >
+            {/* Visible from the first paint: this image is the LCP element, and the old GSAP
+                fade-in kept it at opacity 0 until hydration. The slide-in is CSS now (globals.css). */}
+            <div className="hero-dashboard-in relative flex w-[calc(100%+1rem)] justify-center sm:w-[calc(100%+2rem)] md:w-[calc(100%+3rem)] xl:w-full xl:min-w-0 xl:items-center xl:justify-end">
               <Image
                 src={dashboard_img_2}
                 alt="dashboard-img"
@@ -123,6 +116,8 @@ const Hero = () => {
                 height={595}
                 priority
                 fetchPriority="high"
+                // Without `sizes` a 3x phone picked the 1920 px variant
+                sizes="(min-width: 1280px) 589px, (min-width: 768px) 680px, 100vw"
                 className="pointer-events-none h-auto w-full max-w-170 object-contain object-right xl:max-w-147.25"
               />
             </div>

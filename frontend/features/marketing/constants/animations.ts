@@ -44,31 +44,3 @@ export const useCardsAnimation = (cardsContainerRef: RefObject<HTMLDivElement | 
     { scope: cardsContainerRef }
   );
 };
-
-export const useHeroDashboardAnimation = (dashboardImageRef: RefObject<HTMLDivElement | null>) => {
-  useGSAP(
-    () => {
-      if (!dashboardImageRef.current) return;
-
-      gsap.fromTo(
-        dashboardImageRef.current,
-        {
-          autoAlpha: 0,
-          x: 120,
-          scale: 0.96,
-          filter: 'blur(14px)',
-        },
-        {
-          autoAlpha: 1,
-          x: 0,
-          scale: 1,
-          filter: 'blur(0px)',
-          duration: 1.25,
-          delay: 0.25,
-          ease: 'power3.out',
-        }
-      );
-    },
-    { scope: dashboardImageRef }
-  );
-};

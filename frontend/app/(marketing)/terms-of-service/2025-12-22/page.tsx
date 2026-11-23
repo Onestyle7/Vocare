@@ -9,10 +9,8 @@ import {
 
 export const metadata: Metadata = {
   title: 'Regulamin Serwisu – wersja archiwalna z 22.12.2025',
+  // noindex alone: a canonical pointing at the current version sent the opposite signal
   robots: { index: false, follow: true },
-  alternates: {
-    canonical: '/terms-of-service',
-  },
 };
 
 const TermsOfServiceArchive = () => {

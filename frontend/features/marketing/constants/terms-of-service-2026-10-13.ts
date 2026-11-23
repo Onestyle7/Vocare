@@ -1,10 +1,10 @@
-// Archiwalna wersja Regulaminu obowiązująca od 13.10.2026 do 16.11.2026. Nie edytować.
+// Archiwalna wersja Regulaminu obowiązująca od 13.10.2026 do 01.12.2026. Nie edytować.
 import type { LegalSection } from './terms-of-service';
 
 // Daty zamrożone razem z treścią – nie czytamy ich z TERMS_VERSION, bo ten wskazuje zawsze
 // bieżącą wersję. Do czasu wdrożenia muszą zgadzać się z TERMS_VERSION w legal.ts.
 export const termsOfService20261013Validity =
-  'Wersja archiwalna obowiązująca od 13.10.2026 (wobec Użytkowników, którzy zawarli umowę wcześniej, od 28.10.2026). Wobec Użytkowników, którzy zawarli umowę przed 02.11.2026, stosuje się ją do 16.11.2026.';
+  'Wersja archiwalna obowiązująca od 13.10.2026 (wobec Użytkowników, którzy zawarli umowę wcześniej, od 28.10.2026). Wobec Użytkowników, którzy zawarli umowę przed 17.11.2026, stosuje się ją do 01.12.2026.';
 
 export const termsOfService20261013: readonly LegalSection[] = [
   {

@@ -11,7 +11,7 @@ tags: ['cv inżyniera', 'cv inżynier budownictwa', 'cv techniczne', 'jak napisa
 slug: 'cv-inzyniera'
 ---
 
-Lista narzędzi CAD i norm technicznych nie robi dziś różnicy - większość kandydatów w danej specjalizacji zna te same programy i przepisy. **CV inżyniera** to dokument, który wyróżnia się dopiero wtedy, gdy pokazuje konkretne zrealizowane projekty z mierzalnym efektem, a nie samą listę kompetencji technicznych.
+Lista narzędzi CAD i norm technicznych nie robi dziś różnicy - większość kandydatów w danej specjalizacji zna te same programy i przepisy. **CV inżyniera** to dokument, który wyróżnia się dopiero wtedy, gdy pokazuje konkretne zrealizowane projekty z mierzalnym efektem, a nie samą listę kompetencji technicznych. Ogólne zasady budowy dokumentu znajdziesz w [poradniku, jak napisać CV](/blog/cv/cv), a tutaj skupiamy się na tym, co jest specyficzne dla inżynierów.
 
 > **Najważniejsze wnioski**
 > - Uprawnienia budowlane lub zawodowe (jeśli wymagane w danej specjalizacji) muszą być widoczne w CV od razu, razem z numerem i zakresem uprawnień

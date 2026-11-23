@@ -10,7 +10,7 @@ tags: ['executive search', 'headhunting', 'headhunter', 'rekrutacja na stanowisk
 slug: 'executive-search-headhunting'
 ---
 
-Na stanowiska specjalistyczne i kierownicze firmy coraz częściej nie czekają na aplikacje - aktywnie poszukują konkretnych osób poprzez wyspecjalizowane agencje. **Executive search** (nazywany też headhuntingiem) to proces odwrotny do standardowej rekrutacji: to firma i headhunter szukają Ciebie, nie Ty aplikujesz na ogłoszenie.
+Na stanowiska specjalistyczne i kierownicze firmy coraz częściej nie czekają na aplikacje - aktywnie poszukują konkretnych osób poprzez wyspecjalizowane agencje. **Executive search** (nazywany też headhuntingiem) to proces odwrotny do standardowej rekrutacji: to firma i headhunter szukają Ciebie, nie Ty aplikujesz na ogłoszenie. Headhunting to tylko jedna z dróg do nowej roli - pozostałe zestawiamy w [poradniku, jak znaleźć pracę](/blog/praca/jak-znalezc-prace).
 
 > **Najważniejsze wnioski**
 > - Headhunter pracuje dla pracodawcy, nie dla Ciebie - jest opłacany przez firmę poszukującą kandydata, usługa dla Ciebie jest bezpłatna

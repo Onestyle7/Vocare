@@ -45,7 +45,7 @@ import {
 } from '@/features/blog/utils/constants';
 import { PromoInline, PromoSidebar } from '@/features/marketing/components/PromoSticky';
 import { getPromoVariantForCategory } from '@/features/marketing/constants/promo';
-import { SITE_LOGO } from '@/features/marketing/constants/seo';
+import { organizationRef, SCHEMA_IDS } from '@/features/marketing/utils/structuredData';
 
 const markdownComponents = {
   a: A,
@@ -166,21 +166,17 @@ export default async function BlogPage(props: MetadataProps) {
     // allows an Organization here, so this states what is actually true.
     // Swap to Person only once posts are credited to named people with real
     // credentials - see the E-E-A-T task.
-    author: {
-      '@type': 'Organization',
-      name: metadata.author ?? 'Vocare',
-      url: toAbsoluteUrl('/'),
-    },
-    publisher: {
-      '@type': 'Organization',
-      name: 'Vocare',
-      url: toAbsoluteUrl('/'),
-      logo: {
-        '@type': 'ImageObject',
-        url: toAbsoluteUrl(SITE_LOGO.path),
-        width: SITE_LOGO.width,
-        height: SITE_LOGO.height,
-      },
+    // Credited to "Vocare" it is the same Organization as the publisher, so both point at its @id
+    author:
+      !metadata.author || metadata.author === 'Vocare'
+        ? organizationRef()
+        : { '@type': 'Organization', name: metadata.author },
+    publisher: organizationRef(),
+    isPartOf: {
+      '@type': 'Blog',
+      '@id': SCHEMA_IDS.blog(),
+      name: 'Blog Vocare',
+      url: toAbsoluteUrl('/blog'),
     },
     keywords: metadata.tags.join(', '),
     articleSection: getCategoryLabel(metadata.category),
@@ -191,7 +187,7 @@ export default async function BlogPage(props: MetadataProps) {
     { slug, category: metadata.category, tags: metadata.tags },
     getArticlesMetadata(ARTICLES_FOLDER)
   );
-  const promoVariant = getPromoVariantForCategory(metadata.category);
+  const promoVariant = metadata.promo ?? getPromoVariantForCategory(metadata.category);
   const { intro, rest } = splitArticleIntro(content);
   const breadcrumbLd = {
     '@context': 'https://schema.org',
