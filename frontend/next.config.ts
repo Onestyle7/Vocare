@@ -32,6 +32,15 @@ const contentSecurityPolicyReportOnly = [
 ].join('; ');
 
 const securityHeaders = [
+  // Vercel already sends max-age=63072000; this adds the subdomains. `preload` is left out on
+  // purpose: it is a request to be hard-coded into browsers, which is hard to undo.
+  { key: 'Strict-Transport-Security', value: 'max-age=63072000; includeSubDomains' },
+  // The site uses none of these. Clipboard (footer "copy link") is not affected, and `payment`
+  // stays allowed for Apple Pay / Google Pay in Stripe frames.
+  {
+    key: 'Permissions-Policy',
+    value: 'camera=(), microphone=(), geolocation=(), usb=(), browsing-topics=()',
+  },
   { key: 'X-Content-Type-Options', value: 'nosniff' },
   { key: 'X-Frame-Options', value: 'SAMEORIGIN' },
   { key: 'Referrer-Policy', value: 'strict-origin-when-cross-origin' },
@@ -39,6 +48,7 @@ const securityHeaders = [
 ];
 
 const nextConfig: NextConfig = {
+  poweredByHeader: false,
   logging: {
     fetches: {
       fullUrl: true,

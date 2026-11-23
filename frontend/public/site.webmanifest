@@ -6,7 +6,7 @@
   "display": "standalone",
   "background_color": "#0B0F19",
   "theme_color": "#0B0F19",
-  "description": "Vocare is a modern AI career advisor helping young professionals tackle unemployment with data-driven insights and ATS-ready resumes.",
+  "description": "Vocare to platforma kariery z AI: dopasowana ścieżka zawodowa, analiza rynku pracy, plan rozwoju i CV gotowe pod ATS.",
   "icons": [
     {
       "src": "/metadata/android-chrome-192x192.png",
@@ -33,5 +33,6 @@
       "sizes": "180x180",
       "type": "image/png"
     }
-  ]
+  ],
+  "lang": "pl"
 }

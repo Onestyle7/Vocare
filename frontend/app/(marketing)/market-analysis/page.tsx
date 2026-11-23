@@ -1,6 +1,8 @@
 import type { Metadata } from 'next';
 
+import { JsonLd } from '@/components/seo/JsonLd';
 import { buildMarketingMetadata } from '@/features/marketing/utils/metadata';
+import { buildPageBreadcrumbJsonLd } from '@/features/marketing/utils/structuredData';
 
 import Footer from '../assistant/components/Footer';
 import TrustScore from '../assistant/components/TrustScore';
@@ -18,6 +20,7 @@ export const metadata: Metadata = buildMarketingMetadata({
 const page = () => {
   return (
     <div>
+      <JsonLd data={buildPageBreadcrumbJsonLd('Analiza rynku pracy', '/market-analysis')} />
       <Hero />
       <Features />
       <TrustScore />
