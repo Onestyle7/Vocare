@@ -380,7 +380,7 @@ export const mobileView = '/images/mobileView.jpeg';
 // footer
 
 export const links_social = [
-  { name: 'TIKTOK', url: 'https://www.tiktok.com/@vocare.pl?is_from_webapp=1&sender_device=pc' },
+  { name: 'TIKTOK', url: 'https://www.tiktok.com/@vocare.pl' },
   { name: 'INSTAGRAM', url: 'https://www.instagram.com/vocare.pl/' },
   { name: 'FACEBOOK', url: 'https://www.facebook.com/profile.php?id=61583477355189' },
   { name: 'LINKEDIN', url: 'https://www.linkedin.com/company/110046691' },
@@ -543,6 +543,7 @@ export const social_fb = '/asisstant/social-fb.svg';
 export const social_x = '/asisstant/social-x.svg';
 export const social_linkedin = '/asisstant/social-linkedin.svg';
 export const social_instagram = '/asisstant/social-instagram.svg';
+export const social_tiktok = '/asisstant/social-tiktok.svg';
 
 // Resume creator landing page feature
 export const resume_hero_img_1 = '/resume/resume-hero-img-1.avif';
