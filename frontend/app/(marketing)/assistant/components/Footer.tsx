@@ -10,6 +10,7 @@ import {
   social_fb,
   social_instagram,
   social_linkedin,
+  social_tiktok,
 } from '@/features/marketing/constants';
 import { SERVICE_PROVIDER } from '@/features/marketing/constants/legal';
 
@@ -78,6 +79,20 @@ const Footer = () => {
             <Image
               src={social_instagram}
               alt="instagram"
+              width={30}
+              height={30}
+              className="pointer-events-none h-7 w-7 sm:h-[30px] sm:w-[30px]"
+            />
+          </Link>
+          <Link
+            href="https://www.tiktok.com/@vocare.pl"
+            target="_blank"
+            rel="noopener noreferrer"
+            aria-label="TikTok"
+          >
+            <Image
+              src={social_tiktok}
+              alt="tiktok"
               width={30}
               height={30}
               className="pointer-events-none h-7 w-7 sm:h-[30px] sm:w-[30px]"
