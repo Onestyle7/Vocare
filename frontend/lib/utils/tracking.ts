@@ -33,6 +33,10 @@ type EventDetails = {
   Purchase: ProductDetails;
   StartTrial: ProductDetails;
   ToolUsed: { toolName: ToolName };
+  // In-app trial offer (TrialOfferBanner) for signed-in users without a subscription
+  TrialOfferClick: undefined;
+  TrialOfferDismiss: undefined;
+  TrialOfferView: undefined;
   // Pricing page view
   ViewContent: undefined;
 };
@@ -55,6 +59,9 @@ const GA4_EVENT_NAMES: Record<TrackedEvent, string | null> = {
   Purchase: 'purchase',
   StartTrial: 'start_trial',
   ToolUsed: 'tool_used',
+  TrialOfferClick: 'trial_offer_click',
+  TrialOfferDismiss: 'trial_offer_dismiss',
+  TrialOfferView: 'trial_offer_view',
   ViewContent: null,
 };
 
@@ -62,7 +69,12 @@ const GA4_EVENT_NAMES: Record<TrackedEvent, string | null> = {
 const META_CUSTOM_EVENTS = new Set<TrackedEvent>(['Download', 'PromoClick', 'ToolUsed']);
 
 // Of no use to the ad platforms, so they don't get them
-const GA4_ONLY_EVENTS = new Set<TrackedEvent>(['PromoDismiss']);
+const GA4_ONLY_EVENTS = new Set<TrackedEvent>([
+  'PromoDismiss',
+  'TrialOfferClick',
+  'TrialOfferDismiss',
+  'TrialOfferView',
+]);
 
 function createEventId(): string {
   // randomUUID exists only on HTTPS and localhost

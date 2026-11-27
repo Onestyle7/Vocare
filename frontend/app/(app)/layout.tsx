@@ -3,6 +3,7 @@ import type { Metadata } from 'next';
 import { AuthProvider } from '@/features/auth/components/AuthProvider';
 import { forceLoginRedirect } from '@/features/auth/utils/login-redirect';
 import { TokenBalanceProvider } from '@/features/billing/components/SubscriptionTokenProvider';
+import { TrialOfferBanner } from '@/features/billing/components/TrialOfferBanner';
 import { getTokenSubscriptionStatus } from '@/features/billing/dal/queries';
 import { LegalConsentProvider } from '@/features/legal/components/LegalConsentProvider';
 import { getPendingLegalDocuments } from '@/features/legal/dal/queries';
@@ -50,6 +51,10 @@ export default async function AppLayout({ children }: { children: React.ReactNod
         subscriptionStatus={tokenBalanceData.subscriptionStatus}
       >
         {children}
+        <TrialOfferBanner
+          trialDays={tokenBalanceData.trialDays}
+          subscriptionStatus={tokenBalanceData.subscriptionStatus}
+        />
       </TokenBalanceProvider>
     </AuthProvider>
   );
